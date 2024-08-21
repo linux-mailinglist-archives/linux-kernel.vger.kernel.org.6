@@ -1,227 +1,279 @@
-Return-Path: <linux-kernel+bounces-295263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F796959925
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C99895992F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77C32820E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:10:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0701F24897
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD27A1FEECE;
-	Wed, 21 Aug 2024 09:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD8120098E;
+	Wed, 21 Aug 2024 09:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQQUGmVR"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLX9V2jl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880B11FEEC1;
-	Wed, 21 Aug 2024 09:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB6320096D
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233387; cv=none; b=oExQ24TBFs9Q6cpaffyQfKCeBfdbS1pa9jBbFUAYMAsZcnR5nFovM7TNAaIyBXNdfcUDgkiQbtJDfVBcDAbk0gEd8oCHl5lHOL1BvlQCE7xqi7Pfuf8m6UQL3BCtlrdzoRxSp3/c6XAketakWMHw26WFBNIqXi+bb0Zpz7i35BY=
+	t=1724233409; cv=none; b=vDf2jbolsIyY+FK56LYZRyAAoWO3DWS9kfRIQuPXA9uTvQ4RTKCL9ABrXVCpaiLOtozFEvcCE08x6R3q3jkAdxh2HS5IgTtqrsechhHAYQuKj+BQLdzcbusLjx+4wlMq34K1tc7y7yklMgidOihZRwUFuNTVLmWbyJ7MSkG7lqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233387; c=relaxed/simple;
-	bh=TEgv3aQCM6TxEga1xHs5RFGVl+GDTXhCc2etwGZklwU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e+OrHNxDcHcvFiDxAyaq+CWIOsjQPi6qntVhsjpwrUVo6/ctMp0lXJSUknrmzYWGKur5VSjV4oOGQAbIuDjV9eWQuRVi4NNK/6gLsVXweFvcxdJlOoTg93XagQFuVXNrzKS4nKs4WDCmzW5L/73y0Pz9ha//j+Gnd+4pWzM81UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQQUGmVR; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7141e20e31cso918684b3a.3;
-        Wed, 21 Aug 2024 02:43:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724233385; x=1724838185; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=V5AWHlaVd3ZyOv2zICiGmU6+h+8jTEdnVcyzs1nYn74=;
-        b=QQQUGmVRi8ZO0TKfTU8V1oIZTeJt0sEiEg9jh0GLIqQ8jyyFPttz6mh4Ohng9izs+q
-         rBl9hjA4GCoth9gLCm71UO5W6dFQ9gNJwHRUH4fSJrrPW9AAFTY5bMWYqZjJA6EX+Hpr
-         L0O5xZKr1CG4qtYupeTD9Pc5/EjS9HnZbR7jBUjYSQhFodeiWJyo7AM/vAlO08cR78qE
-         uM+9hUiOQnVBfSr3CvsAiNDww/gfG7+UbPSmp9NBYMCt+TxHiWj+K3fV477SXAVm9Ycv
-         u8f/b+As75pgGvVABna1ju5ojED+Uw533p1PvjQpKTPI3S1IrcGAV2ulkqZcDxA2UzoO
-         zfbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724233385; x=1724838185;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V5AWHlaVd3ZyOv2zICiGmU6+h+8jTEdnVcyzs1nYn74=;
-        b=V6yqKihEyeXISYkoN1umnZFsfE2Xd7SobcBCm64cuGeIN+TpLierocDo8drltBTz9t
-         jR4f83ERWxC+0vt9FPUA4D6gjNx5PHpRS/zYvS/YVD4lmyuxyvZr4sJ/7u7tXqyJ6VVD
-         kLQ0KAn4VhkBrc2PCZrAbAU7R1jedg53eg4ahNWX99i5JcvCdyHlmbxtGrB6KPJbEs8S
-         ldVrvROR5zXgun8462SoNaurQaayr5YKRU7lhmmP7PcKWcY4V8PnhDvHl6HOvD5Nicus
-         4MNhWQfjzNkoXLTFgl7xBcjAXEl4UFXY5E3Fe8Z8JgVkf6tKkOgZTDC3eDR/2M4G6f+T
-         tf6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8UhvgE4G8zeQXTv1OOeB2Qm/c7NTWMbGE8GCTxpsvXFX4ph0f1c9RwwOE8MtUKlcGATADAh42TpNR3w==@vger.kernel.org, AJvYcCWtGTnIFAWr9wLbOyDObJ4jNoMHbq2cPgeM2is5YEb7o9ypQHRFN9uraaPQvdh3l3rGx7h8raiLbrBtYBp5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfMdo0nuw1LyHmIQ2PsIppx8HDJmdM5ak6mVdtoFgQM9QIeAk9
-	x4dKaAM2g14QpRMi1dUFdxYsuDwWnqUYiugYYI3DdxXR6lkEARcF
-X-Google-Smtp-Source: AGHT+IHYadh9Hp8zSziz/4oZMVO20DM64FroX5gWJMm+4hlieWT3ktQntqkJAxmt4+6LVgDi/kryYA==
-X-Received: by 2002:a05:6a00:188d:b0:706:a87e:ff1b with SMTP id d2e1a72fcca58-7142351e471mr2373149b3a.23.1724233384560;
-        Wed, 21 Aug 2024 02:43:04 -0700 (PDT)
-Received: from [127.0.0.1] ([174.139.202.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add721dsm9571457b3a.42.2024.08.21.02.43.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 02:43:04 -0700 (PDT)
-Message-ID: <9343ba32a457acc4f536120e904a3d7fa9ed0adb.camel@gmail.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Date: Wed, 21 Aug 2024 17:42:59 +0800
-In-Reply-To: <00000000000097e583061a45bfcf@google.com>
-References: <00000000000097e583061a45bfcf@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1724233409; c=relaxed/simple;
+	bh=VtLhwjfdoBt6Izefq6nC7rSkdwaapeADWgGxeh/MnKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fpSjVAMCezdl0ijV5ge+SOM6eQ4QY7+iVlYLS14sCa7PJJwvwcYU8LdKgxksrK/4q06dFoC9+Z6+FDlDID5hn6tStpWAapt9CibzsmzwAWRTfScqrZKYD4ph7cU8jrXZW21UKeJ/GiAvQkEg17RtUX2EboyGZW9Ruj7Qxx7mowY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLX9V2jl; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724233407; x=1755769407;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VtLhwjfdoBt6Izefq6nC7rSkdwaapeADWgGxeh/MnKE=;
+  b=iLX9V2jl5wrpQZHW465yRNDXLHcarlLvyp5bSUhMqhKj2jFpCRBuQ+EI
+   j3u6TLwDUMxNAXd7yK6Tz76XSrSamigmpkdOPczKvRxGNy2TBFw2lFAA/
+   3Wh0fFCkWHjJpEKVIte/DSTHy1GLUfg16ZzfDDc5pTXGJyCzH+9fbHdUj
+   R30nrmmHhCRbnFHDYdvY43k2S2+28XpYGuFxmVcNmGSydmDp8cz7GRffe
+   +ayBZK78dSg9SrDhoBARUQQ23uLb9dn8si0It/qOvUL5JLK5HdGLoXgjH
+   3FKX7Qjr/fKq+K3t1rPD3JoeXitUlvpxCj0Aom+Xx+fDVlovHvgiXAeLh
+   A==;
+X-CSE-ConnectionGUID: iKWuNcNDTdutnNbqgKBcIw==
+X-CSE-MsgGUID: 5Ywq/YHMQRaZkkFfExg4nA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22195860"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="22195860"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 02:43:26 -0700
+X-CSE-ConnectionGUID: SCQfpT+4ReKeYb+B1BYMYg==
+X-CSE-MsgGUID: kCUYSb9tRkipB9Te8HIPQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="65388153"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 21 Aug 2024 02:43:23 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sghs9-000BAc-0x;
+	Wed, 21 Aug 2024 09:43:21 +0000
+Date: Wed, 21 Aug 2024 17:43:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
+	gregkh@linuxfoundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	tdavies@darkphysics.net, philipp.g.hortmann@gmail.com,
+	garyrookard@fastmail.org, linux-staging@lists.linux.dev,
+	skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8192e: Replace strcpy with strscpy in
+ rtl819x_translate_scan
+Message-ID: <202408211709.E9iGxQa8-lkp@intel.com>
+References: <20240820184216.45390-1-abhishektamboli9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820184216.45390-1-abhishektamboli9@gmail.com>
 
-On Thu, 2024-06-06 at 22:05 -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
->=20
-> HEAD commit:=C2=A0=C2=A0=C2=A0 d30d0e49da71 Merge tag 'net-6.10-rc3' of
-> git://git.kernel...
-> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
-> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=3D1736820a980000
-> kernel config:=C2=A0
-> https://syzkaller.appspot.com/x/.config?x=3D399230c250e8119c
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3D67ba3c42bcbb4665d3ad
-> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gcc (Debian 12.2.0-14) 12.2=
-.0, GNU ld (GNU Binutils
-> for Debian) 2.40
-> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> https://syzkaller.appspot.com/x/repro.syz?x=3D11a9aa22980000
-> C reproducer:=C2=A0=C2=A0
-> https://syzkaller.appspot.com/x/repro.c?x=3D14c57f16980000
->=20
-> Downloadable assets:
-> disk image (non-bootable):
-> https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_di=
-sk-d30d0e49.raw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/f1276023ed77/vmlinux-d30d0e4=
-9.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/a33f372d4fb8/bzImage-d30d0e4=
-9.xz
-> mounted in repro:
-> https://storage.googleapis.com/syzbot-assets/7fc863ff127d/mount_0.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
->=20
-> ------------[ cut here ]------------
-> kernel BUG at fs/inode.c:626!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 1 PID: 5273 Comm: syz-executor331 Not tainted 6.10.0-rc2-
-> syzkaller-00222-gd30d0e49da71 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-
-> debian-1.16.2-1 04/01/2014
-> RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
-> Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8
-> 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f>
-> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
-> RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
-> RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
-> RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
-> R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
-> R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
-> FS:=C2=A0 000055556268d380(0000) GS:ffff88806b100000(0000)
-> knlGS:0000000000000000
-> CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> =C2=A0<TASK>
-> =C2=A0btrfs_evict_inode+0x529/0xe80 fs/btrfs/inode.c:5262
-> =C2=A0evict+0x2ed/0x6c0 fs/inode.c:667
-> =C2=A0dispose_list+0x117/0x1e0 fs/inode.c:700
-> =C2=A0evict_inodes+0x34e/0x450 fs/inode.c:750
-> =C2=A0generic_shutdown_super+0xb5/0x3d0 fs/super.c:627
-> =C2=A0kill_anon_super+0x3a/0x60 fs/super.c:1226
-> =C2=A0btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
-> =C2=A0deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
-> =C2=A0deactivate_super+0xde/0x100 fs/super.c:506
-> =C2=A0cleanup_mnt+0x222/0x450 fs/namespace.c:1267
-> =C2=A0task_work_run+0x14e/0x250 kernel/task_work.c:180
-> =C2=A0resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-> =C2=A0exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-> =C2=A0exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> =C2=A0__syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> =C2=A0syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
-> =C2=A0do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
-> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f2ba3059777
-> Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66
-> 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48>
-> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
-> RSP: 002b:00007fff42f9ee78 EFLAGS: 00000206 ORIG_RAX:
-> 00000000000000a6
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f2ba3059777
-> RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fff42f9ef30
-> RBP: 00007fff42f9ef30 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00000000ffffffff R11: 0000000000000206 R12: 00007fff42f9ffa0
-> R13: 000055556268f6d0 R14: 431bde82d7b634db R15: 00007fff42f9ffc0
-> =C2=A0</TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
-> Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8
-> 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f>
-> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
-> RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
-> RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
-> RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
-> R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
-> R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
-> FS:=C2=A0 000055556268d380(0000) GS:ffff88806b100000(0000)
-> knlGS:0000000000000000
-> CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->=20
->=20
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before
-> testing.
+Hi Abhishek,
 
-Set the BTRFS_FS_CLOSING_START flag before kill_anon_super()
-to prevent the race conditions between generic_shutdown_super()=20
-and __btrfs_run_defrag_inode()
+kernel test robot noticed the following build errors:
 
-#syz test: upstream d30d0e49da71
+[auto build test ERROR on staging/staging-testing]
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index f05cce7c8b8d..f7e87fe583ab 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2093,6 +2093,7 @@ static int btrfs_get_tree(struct fs_context *fc)
- static void btrfs_kill_super(struct super_block *sb)
- {
- 	struct btrfs_fs_info *fs_info =3D btrfs_sb(sb);
-+	set_bit(BTRFS_FS_CLOSING_START, &fs_info->flags);
- 	kill_anon_super(sb);
- 	btrfs_free_fs_info(fs_info);
- }
+url:    https://github.com/intel-lab-lkp/linux/commits/Abhishek-Tamboli/staging-rtl8192e-Replace-strcpy-with-strscpy-in-rtl819x_translate_scan/20240821-024358
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20240820184216.45390-1-abhishektamboli9%40gmail.com
+patch subject: [PATCH] staging: rtl8192e: Replace strcpy with strscpy in rtl819x_translate_scan
+config: um-allmodconfig (https://download.01.org/0day-ci/archive/20240821/202408211709.E9iGxQa8-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 26670e7fa4f032a019d23d56c6a02926e854e8af)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240821/202408211709.E9iGxQa8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408211709.E9iGxQa8-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/um/include/asm/cacheflush.h:4:
+   In file included from arch/um/include/asm/tlbflush.h:9:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/staging/rtl8192e/rtllib_wx.c:18:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/staging/rtl8192e/rtllib_wx.c:18:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/staging/rtl8192e/rtllib_wx.c:18:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from drivers/staging/rtl8192e/rtllib_wx.c:15:
+   In file included from include/linux/wireless.h:13:
+   In file included from include/uapi/linux/wireless.h:74:
+   In file included from include/linux/socket.h:8:
+   In file included from include/linux/uio.h:10:
+   In file included from include/linux/mm_types.h:8:
+   In file included from include/linux/kref.h:16:
+   In file included from include/linux/spinlock.h:63:
+   In file included from include/linux/lockdep.h:14:
+   In file included from include/linux/smp.h:13:
+   In file included from include/linux/cpumask.h:12:
+   In file included from include/linux/bitmap.h:13:
+   In file included from include/linux/string.h:374:
+>> include/linux/fortify-string.h:293:3: error: call to '__write_overflow' declared with 'error' attribute: detected write beyond size of object (1st parameter)
+     293 |                 __write_overflow();
+         |                 ^
+   13 warnings and 1 error generated.
 
 
+vim +293 include/linux/fortify-string.h
+
+a28a6e860c6cf23 Francis Laniel 2021-02-25  274  
+03699f271de1f4d Kees Cook      2022-09-02  275  /* Defined after fortified strnlen() to reuse it. */
+e6584c3964f2ff7 Kees Cook      2023-09-20  276  extern ssize_t __real_strscpy(char *, const char *, size_t) __RENAME(sized_strscpy);
+e6584c3964f2ff7 Kees Cook      2023-09-20  277  __FORTIFY_INLINE ssize_t sized_strscpy(char * const POS p, const char * const POS q, size_t size)
+a28a6e860c6cf23 Francis Laniel 2021-02-25  278  {
+a28a6e860c6cf23 Francis Laniel 2021-02-25  279  	/* Use string size rather than possible enclosing struct size. */
+21a2c74b0a2a784 Kees Cook      2023-04-07  280  	const size_t p_size = __member_size(p);
+21a2c74b0a2a784 Kees Cook      2023-04-07  281  	const size_t q_size = __member_size(q);
+21a2c74b0a2a784 Kees Cook      2023-04-07  282  	size_t len;
+a28a6e860c6cf23 Francis Laniel 2021-02-25  283  
+a28a6e860c6cf23 Francis Laniel 2021-02-25  284  	/* If we cannot get size of p and q default to call strscpy. */
+311fb40aa0569ab Kees Cook      2022-09-02  285  	if (p_size == SIZE_MAX && q_size == SIZE_MAX)
+a28a6e860c6cf23 Francis Laniel 2021-02-25  286  		return __real_strscpy(p, q, size);
+a28a6e860c6cf23 Francis Laniel 2021-02-25  287  
+a28a6e860c6cf23 Francis Laniel 2021-02-25  288  	/*
+a28a6e860c6cf23 Francis Laniel 2021-02-25  289  	 * If size can be known at compile time and is greater than
+a28a6e860c6cf23 Francis Laniel 2021-02-25  290  	 * p_size, generate a compile time write overflow error.
+a28a6e860c6cf23 Francis Laniel 2021-02-25  291  	 */
+fa35198f39571bb Kees Cook      2022-09-19  292  	if (__compiletime_lessthan(p_size, size))
+a28a6e860c6cf23 Francis Laniel 2021-02-25 @293  		__write_overflow();
+a28a6e860c6cf23 Francis Laniel 2021-02-25  294  
+62e1cbfc5d79538 Kees Cook      2022-10-02  295  	/* Short-circuit for compile-time known-safe lengths. */
+62e1cbfc5d79538 Kees Cook      2022-10-02  296  	if (__compiletime_lessthan(p_size, SIZE_MAX)) {
+62e1cbfc5d79538 Kees Cook      2022-10-02  297  		len = __compiletime_strlen(q);
+62e1cbfc5d79538 Kees Cook      2022-10-02  298  
+62e1cbfc5d79538 Kees Cook      2022-10-02  299  		if (len < SIZE_MAX && __compiletime_lessthan(len, size)) {
+62e1cbfc5d79538 Kees Cook      2022-10-02  300  			__underlying_memcpy(p, q, len + 1);
+62e1cbfc5d79538 Kees Cook      2022-10-02  301  			return len;
+62e1cbfc5d79538 Kees Cook      2022-10-02  302  		}
+62e1cbfc5d79538 Kees Cook      2022-10-02  303  	}
+62e1cbfc5d79538 Kees Cook      2022-10-02  304  
+a28a6e860c6cf23 Francis Laniel 2021-02-25  305  	/*
+a28a6e860c6cf23 Francis Laniel 2021-02-25  306  	 * This call protects from read overflow, because len will default to q
+a28a6e860c6cf23 Francis Laniel 2021-02-25  307  	 * length if it smaller than size.
+a28a6e860c6cf23 Francis Laniel 2021-02-25  308  	 */
+a28a6e860c6cf23 Francis Laniel 2021-02-25  309  	len = strnlen(q, size);
+a28a6e860c6cf23 Francis Laniel 2021-02-25  310  	/*
+a28a6e860c6cf23 Francis Laniel 2021-02-25  311  	 * If len equals size, we will copy only size bytes which leads to
+a28a6e860c6cf23 Francis Laniel 2021-02-25  312  	 * -E2BIG being returned.
+a28a6e860c6cf23 Francis Laniel 2021-02-25  313  	 * Otherwise we will copy len + 1 because of the final '\O'.
+a28a6e860c6cf23 Francis Laniel 2021-02-25  314  	 */
+a28a6e860c6cf23 Francis Laniel 2021-02-25  315  	len = len == size ? size : len + 1;
+a28a6e860c6cf23 Francis Laniel 2021-02-25  316  
+a28a6e860c6cf23 Francis Laniel 2021-02-25  317  	/*
+a28a6e860c6cf23 Francis Laniel 2021-02-25  318  	 * Generate a runtime write overflow error if len is greater than
+a28a6e860c6cf23 Francis Laniel 2021-02-25  319  	 * p_size.
+a28a6e860c6cf23 Francis Laniel 2021-02-25  320  	 */
+3d965b33e40d973 Kees Cook      2023-04-07  321  	if (p_size < len)
+3d965b33e40d973 Kees Cook      2023-04-07  322  		fortify_panic(FORTIFY_FUNC_strscpy, FORTIFY_WRITE, p_size, len, -E2BIG);
+a28a6e860c6cf23 Francis Laniel 2021-02-25  323  
+a28a6e860c6cf23 Francis Laniel 2021-02-25  324  	/*
+a28a6e860c6cf23 Francis Laniel 2021-02-25  325  	 * We can now safely call vanilla strscpy because we are protected from:
+a28a6e860c6cf23 Francis Laniel 2021-02-25  326  	 * 1. Read overflow thanks to call to strnlen().
+a28a6e860c6cf23 Francis Laniel 2021-02-25  327  	 * 2. Write overflow thanks to above ifs.
+a28a6e860c6cf23 Francis Laniel 2021-02-25  328  	 */
+a28a6e860c6cf23 Francis Laniel 2021-02-25  329  	return __real_strscpy(p, q, len);
+a28a6e860c6cf23 Francis Laniel 2021-02-25  330  }
+a28a6e860c6cf23 Francis Laniel 2021-02-25  331  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
