@@ -1,78 +1,57 @@
-Return-Path: <linux-kernel+bounces-296106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EADE95A5B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:13:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B6395A5BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C054B220A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:13:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D0D1C227FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3AA16FF2A;
-	Wed, 21 Aug 2024 20:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6839416FF2A;
+	Wed, 21 Aug 2024 20:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="VNTU/eEH"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRVO8IqT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ECB28DCB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 20:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB43F28DCB;
+	Wed, 21 Aug 2024 20:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724271222; cv=none; b=VIqgj27o5vN4ihiZyz23bT0s+Eq/bkpTfAVmKtctmJwvc0dj+85DqvPiQcV7lRaL4K5UykL8EIG6RhEt+gsDikXD01fuWE0IAGxZgbVnSI6PvQIMD75h5Inb/9HW+hbXUdKFRhQ37AzjAV2uUEK9XkFe82etahA0zptu3VFnth8=
+	t=1724271384; cv=none; b=ZTQghS2uFeRWa2CvfU/alv6DUBq3sSxCYVb5hyTWssX/0ToY1rexl9nchXc83W6CWvGUfSOq0/32RTXR1w3jDZvvn4H4Hs286NncEp51UoT06pyZFr6UQpLQTLYR06NVExiNpLfMgVpXytk+sNkuz1IN5nzHWz1NOKm808alQOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724271222; c=relaxed/simple;
-	bh=LURSiKjo2JQN9dRGWFRkWt6N1bvrp+X/h+jx6sqK4L0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+ORTNSYHvspUDQEVKszL5L5ECq9ND8Cnjri87GpC+WbMiT+mJG/HyzaObK0OWXufIPn7rh2pUea93LghT8+6NVZV32XxuilJppvmhO8fIVZzkoQup26KVa+qxzZmXcoSXq+phnEnavwrwmdZ11T0cYZ5AqsIKQx7V6kO2dU//U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=VNTU/eEH; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e13c23dbabdso118413276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724271220; x=1724876020; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YYmNcsedkOqUFLEQeKe1yqW9pGRfFKO4juWfk6FKFmU=;
-        b=VNTU/eEH94wpXyGmPB1BdqE68+dwIk+Ck91tBIZz89QN/TAWRgFxnuLjLh8CWAygFd
-         Oc5YbbkTAbBBiT3owI6CPH9jSCEM7/xk2Qa0L5qhjygcOgynDVKSYXVqTvx2Bi0/g+Ur
-         2Rzmk+xxYtV5uNvkYoWCVcM2V9LpuO12nvIjtT+AudVjwNgRee3l7cDbSqzazsS+E4lU
-         rd6ZQ7yNtfi9ng02gkbBc1ufcPxkHvWiWNEMedQX4FQ9YiZ05kW3L0WvqpVwide7o1CE
-         D1lZ8PGdH5KXd8t/Cc1rPE+IkXnVAzfcYvem9QLRt56kA7epJB9I8pOC723Jf04zFtGg
-         HFWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724271220; x=1724876020;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YYmNcsedkOqUFLEQeKe1yqW9pGRfFKO4juWfk6FKFmU=;
-        b=P3dIrKf4QYwUO3aFKhwOUSl7mTv2uu/tgq9ToT4aBm4x4wkrBtxxZBzIdS7v5ioQoV
-         n8B7VT5OzB7zaDG+6/GBgKkhlGYyqj8Vdq5oMKUrtdaLc4F1ol4PrtPOn2W47aYLT00Z
-         sGu+PatB7XnRM7EQ3YI6xyeSOcth2jtdmUcY6pixztgxohonVvDBewOleiX/b8+19MDn
-         VRoBkCwRgUr0HTAD5W7yv/2AVyPQOEtPO1s5kpGj1MOL82l6Z2BNvAE2KaTIkyIjXOmg
-         zoVzOzm6aBkwe9tL1ELJctIi3mFpwJwRkXhA1AunFPuxOcSuia1sUNSBMiP78fiwKkjA
-         dU4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWPSyMHBeVXvH7W4Nd1QewV9Vth8WTphzfOKbYG4wgiM4j3N3dskPrJH19Jxe1C/i2rgi8xy6ucwZTBu+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrGYJmvHjMCTVqgvMqZmY0otrQNvk1p+eQYBFQ3/9kmpruJj7Y
-	d1qk6FeYL5JNrIWiLPYoWlcFMS3YUe1ScGLEySkJih9BzeSUrQS85WJSrTyfY6E=
-X-Google-Smtp-Source: AGHT+IGx0uv0WJiwFWZKjviM9+GmZlu0vQylW48VVx9PfvDLz248cWEULf/z5v0Gbzu1ZFB5VbSdUw==
-X-Received: by 2002:a05:6902:2508:b0:e16:4d32:adcd with SMTP id 3f1490d57ef6-e166549c3damr3770246276.29.1724271219864;
-        Wed, 21 Aug 2024 13:13:39 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e67e660sm3818276.54.2024.08.21.13.13.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 13:13:39 -0700 (PDT)
-Date: Wed, 21 Aug 2024 16:13:38 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: syzbot <syzbot+dfb6eff2a68b42d557d3@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (6)
-Message-ID: <20240821201338.GA2109582@perftesting>
-References: <0000000000008f55e4062036c827@google.com>
+	s=arc-20240116; t=1724271384; c=relaxed/simple;
+	bh=u4IEyRI7AbwbX+N5Tu/Kt1Y5We5BuarQCzy6U7tDZlU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hhfhJuPl28lxHld6ZlwSTFRIZjk5sTcpu6iP4CsHjfZD8I4i6az4w0Zv/5OpikYk1w4JdyLDqG7HJVi1vAvsVMtjimNi0t19F1J+fqZq+W1d2ZIRMulo11h7vGfeQl5Rmsyw0fU9orH5uXSrsdl5SWXQg7Qgx23VE9C86AyguBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRVO8IqT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62604C32781;
+	Wed, 21 Aug 2024 20:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724271384;
+	bh=u4IEyRI7AbwbX+N5Tu/Kt1Y5We5BuarQCzy6U7tDZlU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qRVO8IqTr732AA7WyRGGblJ8wkdCOHVdBDiamiZsqxPYHiqfcqRqC4lSbsiuvGB72
+	 8YdcipZn9BnJV5bOuQkCLbIaKsWV7YeeFgiIv3Nha9eQDfEjY7JHalhyCTHw8y5C3m
+	 ByBR1zqAQLyrQ7H5OvQjyV7shw4X7xHfIP3NxxlsOTJgSQcxQgn2PjA2rJFhyi5YIA
+	 Nesg4bxsqMJN4BUJDpVdyhIj+NbDHsjHb4BsYCWOnhk7POsYzEuM4PiL1DO7pCSXDr
+	 DPLBMrRtTLeJtclKCDccYEDCDcG3y1azWRlfpOF3lub3yda2EntJZfwGhd4cB40Ek+
+	 veCze51ImXt3w==
+Date: Wed, 21 Aug 2024 14:16:21 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <ZsZLFS1CsHkKjw+C@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,48 +60,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000008f55e4062036c827@google.com>
 
-On Wed, Aug 21, 2024 at 12:45:25PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    5c43d43bad35 Merge branches 'for-next/acpi', 'for-next/mis..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13471a05980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c91f83ae59feaa1f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=dfb6eff2a68b42d557d3
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10efded5980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e94093980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/cc2dd4be620e/disk-5c43d43b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/81d40d99ddbf/vmlinux-5c43d43b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/bc6aed0f2bc5/Image-5c43d43b.gz.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/d55321fffedc/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+dfb6eff2a68b42d557d3@syzkaller.appspotmail.com
-> 
-> BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+a flexible structure where the size of the flexible-array member
+is known at compile-time, and refactor the rest of the code,
+accordingly.
 
-Can we disable syzbot issues for this specific error?  Btrfs uses lockdep
-annotations for our tree locks, so we _easily_ cross this threshold on the
-default configuration.  Our CI config requires the following settings to get
-lockdep to work longer than two or three tests
+So, with this, fix the following warning:
 
-CONFIG_LOCKDEP_BITS=20
-CONFIG_LOCKDEP_CHAINS_BITS=20
-CONFIG_LOCKDEP_STACK_TRACE_BITS=19
-CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
-CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
+drivers/gpu/drm/nouveau/dispnv50/disp.c:779:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-but there's no way to require that in our config (nor do I think we should
-really be able to tbqh).  It makes more sense for syzbot to just ignore this
-particular error as it's not actually a bug.  Thanks,
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-Josef
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index eed579a6c858..ddddc69640be 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -774,11 +774,9 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
+ 	struct drm_hdmi_info *hdmi = &nv_connector->base.display_info.hdmi;
+ 	union hdmi_infoframe infoframe = { 0 };
+ 	const u8 rekey = 56; /* binary driver, and tegra, constant */
++	DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, 17);
++	const u8 data_len = 17; /* same length as in DEFINE_RAW_FLEX above. */
+ 	u32 max_ac_packet;
+-	struct {
+-		struct nvif_outp_infoframe_v0 infoframe;
+-		u8 data[17];
+-	} args = { 0 };
+ 	int ret, size;
+ 
+ 	max_ac_packet  = mode->htotal - mode->hdisplay;
+@@ -815,29 +813,29 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
+ 		return;
+ 
+ 	/* AVI InfoFrame. */
+-	args.infoframe.version = 0;
+-	args.infoframe.head = nv_crtc->index;
++	args->version = 0;
++	args->head = nv_crtc->index;
+ 
+ 	if (!drm_hdmi_avi_infoframe_from_display_mode(&infoframe.avi, &nv_connector->base, mode)) {
+ 		drm_hdmi_avi_infoframe_quant_range(&infoframe.avi, &nv_connector->base, mode,
+ 						   HDMI_QUANTIZATION_RANGE_FULL);
+ 
+-		size = hdmi_infoframe_pack(&infoframe, args.data, ARRAY_SIZE(args.data));
++		size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
+ 	} else {
+ 		size = 0;
+ 	}
+ 
+-	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, &args.infoframe, size);
++	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, args, size);
+ 
+ 	/* Vendor InfoFrame. */
+-	memset(&args.data, 0, sizeof(args.data));
++	memset(args->data, 0, data_len);
+ 	if (!drm_hdmi_vendor_infoframe_from_display_mode(&infoframe.vendor.hdmi,
+ 							 &nv_connector->base, mode))
+-		size = hdmi_infoframe_pack(&infoframe, args.data, ARRAY_SIZE(args.data));
++		size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
+ 	else
+ 		size = 0;
+ 
+-	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, &args.infoframe, size);
++	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, args, size);
+ 
+ 	nv_encoder->hdmi.enabled = true;
+ }
+-- 
+2.34.1
+
 
