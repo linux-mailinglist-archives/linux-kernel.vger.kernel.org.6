@@ -1,184 +1,158 @@
-Return-Path: <linux-kernel+bounces-295586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD566959EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:28:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31632959EAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C49FC1C21DE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C122823A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7F1199FC0;
-	Wed, 21 Aug 2024 13:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3F0199FD8;
+	Wed, 21 Aug 2024 13:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EvV7XxW1"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzswCW8x"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6305192D90
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388D015B134;
+	Wed, 21 Aug 2024 13:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724246905; cv=none; b=fW4094hPbhofSr0Bvd6cv/xj27GqSYHxxYF9/gCEqG181BBmi9IkyhDfhcP4+zf7n6pn4iGhjNXT7jZo45JL/oGFzVoLFEM3grflrPDWZqHk3znEOj1IFIY7ou5nzNfI2IheTOGomkfiCIyfwW+PIshxop3v+yiTbSPsSYnq644=
+	t=1724247053; cv=none; b=LPS78iqv3bHm3bqVN6cGkd5AaUdmz/fRM7wZj3FgSbnC/DsY0r9o892PWwPPSaAlZmth34gXyGDjqbqHRExQkhJZeBTqOK8nqwjpIxTZZVi+uqJTgxbqIZD87WzADS0kHtXyAZZm1qROdyefz7WXweR8FhdLufsAc+V64vWn+Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724246905; c=relaxed/simple;
-	bh=fSpoUOJjTQB5ZDB5cQn1y/+Ul7d+TOCVAD+4W2KUbsM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nx9PpKUETI6xg8i/kJUmtjF+vb5qxKyekTFPhziyTPuPjx0tZlVbseVonOrGVkKrZ3F1OJs1Lim6HZNrL/GCPfX/qIHu7K9DOKbT/Qh5hM8a1cRbH0HAWwGgatifj847gJOSibNX6OlUh/syUaQXCgGtPi9XxNIh1tbzr9HjvLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EvV7XxW1; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724246899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eQUk5BmPvnlUH/liWbXAjE9cWgM4lXW3TSxeiUPl4o4=;
-	b=EvV7XxW1f0Io08jJ8gLxvsK1rS4TrcsfLI9xCSrrIBXdroM4ubLRLRvxUtJFv5oh0hjchv
-	/93Vbyr8dY4QwgExqze6qhdPRxwi4F4EQAtcICGATur/+W+Y17cJskPm764QK3pI7+y9O7
-	/JmyO9wmJw8rZtnKgueB4G1eF8AL5Gw=
-From: Jeff Xie <jeff.xie@linux.dev>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: mathieu.desnoyers@efficios.com,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	xiehuan09@gmail.com,
-	Jeff Xie <jeff.xie@linux.dev>
-Subject: [PATCH] ftrace: Get the true parent ip for function tracer
-Date: Wed, 21 Aug 2024 21:27:55 +0800
-Message-Id: <20240821132755.2766674-1-jeff.xie@linux.dev>
+	s=arc-20240116; t=1724247053; c=relaxed/simple;
+	bh=/ZlcAclZ37TSTvbQpAc9IvF/OvM+CrJSAoGiSf+Xbn0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uWacb3s1JSOvr9HqvZJ3qUjpaIW0ppDbh+ggjRIH5oOJGrwcgyldmM1AKSZhT5noyPKEK/frXB5AWJ/zWOruDjSPrPp06lDsHDy2QpsJaRzCEajuzO9sH7tghnTSayJZgrQd68pnjocCSTGA1Fve+Lnq4FkpzbSJmqjyIZRsSkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzswCW8x; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3cb747fafso52102231fa.3;
+        Wed, 21 Aug 2024 06:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724247050; x=1724851850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6GMhjOj/io4lNVWIGajJILmq1tA+tWIb/OdK/+JtnDY=;
+        b=DzswCW8x8NhcHjfP/oAQ6W56Ef1fwRIVZf2GI5ZXZwk9rOf91fH6Dn1jDdu21S/yd8
+         TIMwMnqanfoRJZx6EWuJeoO5kvhos9if8NTNBM/CjPm0/fkcnTOQ4wPK5d0XeHjsyc/Q
+         LSEdIGzC8IoxMN3VUkWvjzAj0Lm4/kVLGtUyLoUg5HCwL3kRaX8cGpGXhZhi42Mfs8Eq
+         xwUgUNaJwGE8raDJXZyRrSuwF5Eqgn4/qA0qR7gv3E4DYL7nqqFj3kiAI8mh7ENb+BvE
+         6nv3OIV7WFa0TMGrfqZliyDZdaZk6WKW3KTXc6PM+Qb9WWl+yl49hvDFusEUzr/vBxm0
+         hFfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724247050; x=1724851850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6GMhjOj/io4lNVWIGajJILmq1tA+tWIb/OdK/+JtnDY=;
+        b=BfnSEaDrWFiOx9+MB+0Ok99YZxJnYtDmXJnrOisMaZFUWjtG5g+zQW/1QKBmPXZCGv
+         ZEmsn+lmsIbhpmt4RrusWuU4MtuhyAbKCiEfVZ6VxuW7tvRsQBV9/UCaqY0m0ggP7l3m
+         yC3Wc0AEvNMQrX2Z2CbBHaEXD4wPiUvrbk9yItmL8lzxmeRFOE7dDX4Ga3ko4LXqby5r
+         32LQ1bRbh5vuQ53jGwn2gjqxp2t/0nl/ReBKIK52t3Ir2u9LLQccmvQxrslgTHkIBgrR
+         3TD5wQK43qARdKyPQeHF/XrqCC7jjXEWI4kU5MvnBe9AYnViSLjKGsnlG/MCRvEJbGsY
+         K52w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0STv6XdRgE5fWl+CO4lzlmk/3QF6OBUEFq/AIcXjv9kS7cFpUbFLGrTnNk1NyBDV3xN1AzFjggI2449iw@vger.kernel.org, AJvYcCXgFMsmwss8nTPHNrgj8w2wD85QcTMp4mRDUo8psMBUIpcKh5vGc8UqTCIqbRq3pOqjQpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAQ0+7aYuUb7fObZU9XPEps5m3lbKj5JUU3UinnWmrAuOoeLlH
+	AXHx1Ff+lz1Ji931Ly3B1V1rG/qyVww3ckRgVFKzFvHI6LKkHqQ4F6hHR3BFMbfxg/B7ebIHn+q
+	3sr+PSHn3knrj2gLPN20qREQzth8=
+X-Google-Smtp-Source: AGHT+IH8VOQ2ctJPT4jX29fDswjssKW86maK9GcZiWUqw4Gy3Qr78CeejZhdHpxupBYKm2X/anLDiAr7ZWu70BFGimo=
+X-Received: by 2002:a2e:b687:0:b0:2f3:b77b:dee2 with SMTP id
+ 38308e7fff4ca-2f3f8b7437emr13469741fa.48.1724247049804; Wed, 21 Aug 2024
+ 06:30:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240821112344.54299-3-soma.nakata01@gmail.com> <ecd1af32-8e6b-45d3-8434-0e981fd198ea@wanadoo.fr>
+In-Reply-To: <ecd1af32-8e6b-45d3-8434-0e981fd198ea@wanadoo.fr>
+From: Soma Nakata <soma.nakata01@gmail.com>
+Date: Wed, 21 Aug 2024 22:30:35 +0900
+Message-ID: <CAOpe7SdG_Y0M5dJJ-C3NJ6-bfjHAshz+Ok-MzcBiGuaiYyTeRw@mail.gmail.com>
+Subject: Re: [PATCH v2] libbpf: Initialize st_ops->tname with strdup()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, when using both function tracer and function graph simultaneously,
-it is found that function tracer sometimes captures a fake parent ip(return_to_handler)
-instead of the true parent ip.
+On Wed, Aug 21, 2024 at 9:16=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 21/08/2024 =C3=A0 13:23, Soma Nakata a =C3=A9crit :
+> > `tname` is returned by `btf__name_by_offset()` as well as `var_name`,
+> > and these addresses point to strings in the btf. Since their locations
+> > may change while loading the bpf program, using `strdup()` ensures
+> > `tname` is safely stored.
+> >
+> > Signed-off-by: Soma Nakata <soma.nakata01@gmail.com>
+> > ---
+> >   tools/lib/bpf/libbpf.c | 7 +++++--
+> >   1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > index a3be6f8fac09..f4ad1b993ec5 100644
+> > --- a/tools/lib/bpf/libbpf.c
+> > +++ b/tools/lib/bpf/libbpf.c
+> > @@ -496,7 +496,7 @@ struct bpf_program {
+> >   };
+> >
+> >   struct bpf_struct_ops {
+> > -     const char *tname;
+> > +     char *tname;
+> >       const struct btf_type *type;
+> >       struct bpf_program **progs;
+> >       __u32 *kern_func_off;
+> > @@ -1423,7 +1423,9 @@ static int init_struct_ops_maps(struct bpf_object=
+ *obj, const char *sec_name,
+> >               memcpy(st_ops->data,
+> >                      data->d_buf + vsi->offset,
+> >                      type->size);
+> > -             st_ops->tname =3D tname;
+> > +             st_ops->tname =3D strdup(tname);
+> > +             if (!st_ops->tname)
+> > +                     return -ENOMEM;
+>
+> Certainly a matter of taste, but I would personally move it just after
+> "st_ops->kern_func_off =3D malloc()" and add the NULL check with the
+> existing ones.
+>
+> BTW, there are some memory leaks if 1 or more allocations fail in this
+> function.
+> Not sure if it is an issue or not, and what should be done in this case.
 
-This issue is easy to reproduce. Below are my reproduction steps:
+You mean the line below?
+if (!st_ops->data || !st_ops->progs || !st_ops->kern_func_off)
+seems it says the size of them are in descending order or something.
+But regardless, this looks like a memory leak.
+I will send another patch on this.
 
-jeff-labs:~/bin # ./trace-net.sh
+thanks,
 
-jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
-    trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
-    [...]
-
-The following is my simple trace script:
-
-<snip>
-jeff-labs:~/bin # cat ./trace-net.sh
-TRACE_PATH="/sys/kernel/debug/tracing"
-
-set_events() {
-        echo 1 > $1/events/net/enable
-        echo 1 > $1/events/tcp/enable
-        echo 1 > $1/events/sock/enable
-        echo 1 > $1/events/napi/enable
-        echo 1 > $1/events/fib/enable
-        echo 1 > $1/events/neigh/enable
-}
-
-set_events ${TRACE_PATH}
-echo 1 > ${TRACE_PATH}/options/sym-offset
-echo 1 > ${TRACE_PATH}/options/funcgraph-tail
-echo 1 > ${TRACE_PATH}/options/funcgraph-proc
-echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
-
-
-echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
-echo function_graph > ${TRACE_PATH}/current_tracer
-
-INSTANCE_FOO=${TRACE_PATH}/instances/foo
-if [ ! -e $INSTANCE_FOO ]; then
-        mkdir ${INSTANCE_FOO}
-fi
-set_events ${INSTANCE_FOO}
-echo 1 > ${INSTANCE_FOO}/options/sym-offset
-echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
-echo function > ${INSTANCE_FOO}/current_tracer
-
-echo 1 > ${TRACE_PATH}/tracing_on
-echo 1 > ${INSTANCE_FOO}/tracing_on
-
-echo > ${TRACE_PATH}/trace
-echo > ${INSTANCE_FOO}/trace
-</snip>
-
-Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
----
- kernel/trace/trace_functions.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-index 3b0cea37e029..273b8c7eeb2d 100644
---- a/kernel/trace/trace_functions.c
-+++ b/kernel/trace/trace_functions.c
-@@ -176,6 +176,19 @@ static void function_trace_start(struct trace_array *tr)
- 	tracing_reset_online_cpus(&tr->array_buffer);
- }
- 
-+static unsigned long
-+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
-+{
-+	unsigned long true_parent_ip;
-+	int idx = 0;
-+
-+	true_parent_ip = parent_ip;
-+	if (unlikely(parent_ip == (unsigned long)&return_to_handler))
-+		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
-+				(unsigned long *)fregs->regs.sp);
-+	return true_parent_ip;
-+}
-+
- static void
- function_trace_call(unsigned long ip, unsigned long parent_ip,
- 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
-@@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
- 		return;
- 
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
-+
- 	trace_ctx = tracing_gen_ctx();
- 
- 	cpu = smp_processor_id();
-@@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 	 * recursive protection is performed.
- 	 */
- 	local_irq_save(flags);
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	disabled = atomic_inc_return(&data->disabled);
-@@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
- 		return;
- 
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	if (atomic_read(&data->disabled))
-@@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	 * recursive protection is performed.
- 	 */
- 	local_irq_save(flags);
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	disabled = atomic_inc_return(&data->disabled);
--- 
-2.34.1
-
+>
+> CJ
+>
+>
+> >               st_ops->type =3D type;
+> >               st_ops->type_id =3D type_id;
+> >
+> > @@ -8984,6 +8986,7 @@ static void bpf_map__destroy(struct bpf_map *map)
+> >       map->mmaped =3D NULL;
+> >
+> >       if (map->st_ops) {
+> > +             zfree(&map->st_ops->tname);
+> >               zfree(&map->st_ops->data);
+> >               zfree(&map->st_ops->progs);
+> >               zfree(&map->st_ops->kern_func_off);
+>
 
