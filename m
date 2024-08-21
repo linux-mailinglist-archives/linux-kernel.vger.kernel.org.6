@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-296059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97D995A506
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:06:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD4E95A50A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43E8283F89
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:06:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F068A1C212FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0457416EBE7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C55D16F0DE;
 	Wed, 21 Aug 2024 19:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="i8RUkTgI"
+	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="dkEopwhy"
 Received: from terefe.re (terefe.re [5.255.96.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C15D1607A1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C50E13A24D;
 	Wed, 21 Aug 2024 19:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.255.96.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724267186; cv=none; b=QtWLXZdB9TEzpjsT7cGLV/sUobwT4PzPQxaiTcZB6KKtdVdqgFE5tOAKHymAfwlrBOvy+8WRV2g/oLu4qVo95YqKyORBjhgw3/gDE1kvfuYagjahkdCDaZe1szbV8WG4cBM30O0bWvQe5fEVHdt4lsxd5LrWBL6akLwHsCD1S0o=
+	t=1724267186; cv=none; b=gM/x50B/YLxeXcogBX4Ff0ejCOwQz2kACkfRa+KUGLkE25vZ1zy4PuE9phwX7Cs06rKC3vmVPvvQbYXB+A2jZzRnh3M+qgqb2nw13TW84LX3G5xcQwnS9YV3snpO3n4JlEj5XSVtS3uqs7pBFCQK81GSWnDvi5qIiYwApZATuCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724267186; c=relaxed/simple;
-	bh=fcyVkeBqILTYJFgyq9igStQjjXNj/PBSoqZEcgR5KQY=;
+	bh=hd9wkcPN4CmAARSYR+3zLHtDIyZfHClpBM/3EtyxlK8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lD1SOhAIOZjws3GkE3LJj3fZyuB0EIhOEucbvaQBuucKpuQJTL4Crh96/0lTcexJ8tHCyUxeZKzjmCY5CceV3Iayu1oD7ljs96Eqbui200szwmas0gQhIpa7/iE6lBqI13YYI0AXKalBfHFFHFjxt6AyoP8uNzF44cXFrwkAopM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=i8RUkTgI; arc=none smtp.client-ip=5.255.96.200
+	 MIME-Version; b=aJ4eWBkO3FB5monCyeSXRQV3abms8/1yz95azUNjG0mD2h6QC7jKrqJcsv8UFeiu/TKxdDHQOtwF+wvgUQeVDjJwjhDFS5QzjXZdCYb+n7sLm5HnsyqISlQSdwhq3SuHb3dn1Z1kJNr+Vz6SRL//hz5T7kGt6A2ObY97v2Kw3/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=dkEopwhy; arc=none smtp.client-ip=5.255.96.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=terefe.re
 Received: from localhost.localdomain (unknown [212.106.161.95])
-	by terefe.re (Postfix) with ESMTPSA id 0FC88203EB;
+	by terefe.re (Postfix) with ESMTPSA id 92009203EC;
 	Wed, 21 Aug 2024 20:58:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=terefe.re; s=default;
-	t=1724266717; bh=fcyVkeBqILTYJFgyq9igStQjjXNj/PBSoqZEcgR5KQY=;
+	t=1724266718; bh=hd9wkcPN4CmAARSYR+3zLHtDIyZfHClpBM/3EtyxlK8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=i8RUkTgIpf3IW2WvMJgmExcEOZOeO5Axtse78UFaZOEqdouYo3fL9USeulWJwpg6H
-	 2PlQ6nNC4WI9Gy+l/ZYDgUei5C/Tzig6JvWiTmB2py1dgVX6hmvtcfwdAmC3W24tTK
-	 KbpckTff9+DJzpd4qZSTH8EtWGaaFwZF/Syn+PJqbeUsr9bl3tQTuDbGRbdgQKvaaF
-	 rLhfqSqRbEGuSCBeLU6Jquh1FJeTs7Vv4eQ2hJXzKuwxgcNqD/hiq1y/YV6THvWHRA
-	 rs8aljgSwaLMoPU6kdqr8jr7f7RvNE/r9iz9F+px353ib+DdPY9uZxXZMh3pCrEgk2
-	 T6vgyNRt3gP0Q==
+	b=dkEopwhyq/Fsxyy9feLabgSDb98P3zxOLUuEhkStx/7eIFRbNsX6mvhwRKKsouMaL
+	 qcrne96JvPrzJeTiKPYonuy+GQSaLoPiUVgf76/KbHS07TN/cREakHaDAtMiUdAHg1
+	 tTl/TWiF6Q5bB2I0UOEi+sYlkIDwPwAJfWkz7RcvwZG0Kak+OAs8/tLWrkLiWX7Q5J
+	 MQVjPrRO2r3lsMSta4gC67xplCrIFUAe2rbaT6boLqflHPbgQrbS2S+XxS5xl11wHy
+	 xpa60cP7d2adQb512FRShPPPjjOvFg4GwzW0UmRyKs4jcgugJL9q3XZHGv2Up6Xt0P
+	 f3CYYYqvSyPYQ==
 From: Tomasz Maciej Nowak <tmn505@terefe.re>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -54,9 +54,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Tomasz Maciej Nowak <tmn505@gmail.com>
-Subject: [PATCH 2/3] arm64: tegra: wire up Bluetooth on Jetson TX1 module
-Date: Wed, 21 Aug 2024 20:58:04 +0200
-Message-ID: <20240821185829.20997-3-tmn505@terefe.re>
+Subject: [PATCH 3/3] arm64: tegra: wire up WiFi on Jetson TX1 module
+Date: Wed, 21 Aug 2024 20:58:05 +0200
+Message-ID: <20240821185829.20997-4-tmn505@terefe.re>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240821185829.20997-1-tmn505@terefe.re>
 References: <20240821185829.20997-1-tmn505@terefe.re>
@@ -70,45 +70,50 @@ Content-Transfer-Encoding: 8bit
 
 From: Tomasz Maciej Nowak <tmn505@gmail.com>
 
-P2180 modules have Bluetooth in form of BCM4354 chip, and kernel driver
-supports this one, so enable it for all users. The necessary firmware
-can be obtained from Jetson Linux Archive. bcm4354.hcd file is located
+P2180 modules have WiFi in form of BCM4354 chip, and kernel driver
+supports this one, so enable it for all users. The necessary calibration
+file can be obtained from Jetson Linux Archive. nvram.txt file is located
 in "Driver Package (BSP)" in
 nv_tegra/l4t_deb_packages/nvidia-l4t-firmware_<version>_arm64.deb
-archive.
+archive. The rest of necessary blobs can be obtained from official
+Linux Firmware repository or (newer ones) from Infineon
+ifx-linux-firmware repository (look in older releases).
 
 Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index f8b20af1fd3d..64b8668fcdcd 100644
+index 64b8668fcdcd..c00db75e3910 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -33,6 +33,22 @@ serial@70006000 {
- 		status = "okay";
+@@ -340,6 +340,25 @@ pmc@7000e400 {
+ 		nvidia,sys-clock-req-active-high;
  	};
  
-+	serial@70006300 {
-+		/delete-property/ reg-shift;
++	mmc@700b0200 {
 +		status = "okay";
-+		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
++		bus-width = <4>;
++		non-removable;
++		power-gpios = <&gpio TEGRA_GPIO(H, 0) GPIO_ACTIVE_HIGH>;
++		vqmmc-supply = <&vdd_1v8>;
++		vmmc-supply = <&vdd_3v3_sys>;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+		bluetooth {
-+			compatible = "brcm,bcm43540-bt";
-+			device-wakeup-gpios = <&gpio TEGRA_GPIO(H, 3) GPIO_ACTIVE_HIGH>;
-+			shutdown-gpios = <&gpio TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
++		wifi@1 {
++			compatible = "brcm,bcm4354-fmac";
++			reg = <1>;
 +			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(H, 5) IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-names = "host-wakeup";
++			interrupts = <TEGRA_GPIO(H, 2) IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "host-wake";
 +		};
 +	};
 +
- 	i2c@7000c400 {
+ 	/* eMMC */
+ 	mmc@700b0600 {
  		status = "okay";
- 
 -- 
 2.46.0
 
