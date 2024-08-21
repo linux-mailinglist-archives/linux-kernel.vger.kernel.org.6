@@ -1,472 +1,336 @@
-Return-Path: <linux-kernel+bounces-295730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BF195A0DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:05:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2979A95A0DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB396285561
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2AF71F241D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD027405A;
-	Wed, 21 Aug 2024 15:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3667A13A;
+	Wed, 21 Aug 2024 15:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZGRlk63y"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WRLMcDl3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AaklP7wE";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LaGQxV8c";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iS2wuhBa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE47879F4;
-	Wed, 21 Aug 2024 15:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724252697; cv=fail; b=nQ+RVwc0vWcalFYOmzqSDoRn4TOwIp1f5APM5xGDYvGJBySX1pMhpeor2j9VLiOfdw/m+LawKligAwbgz0vrJbxl28SXtIsKvd0WxMvhlgbYMRLuc9EqWiPbLNeFc4LD5MWAuS0yk3DnysWbWshsvhy7k8hk4nIO5S+dENWfI/E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724252697; c=relaxed/simple;
-	bh=nGiLUexhFHhx4LKxo8DaZwmFSrypUvF58tjof+JPdiA=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ub6fAOonbcwaF+6LYb87v6tRgPM81kmEcKSQplmatNN+MtfKC3YjCLisemf4L06wmlf0B6FXtsBc6F5mBw0Oig9f25LQuu46vRXxSYZtIApXMmLE3/W2GDahktA+vogvSKNkum6t5nVgkOWE8zezgOUUz8CfNE84xctNktaBWhQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZGRlk63y; arc=fail smtp.client-ip=40.107.93.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jseBhFY6xyoZTelvvEVS/bxHdKolvdRFF47VPKruPUn2GCzq2KSJp0BMuhy8kjBKvNxUp5UZ0tOGGV7tL3VjvXUMTZuiuCQfTaPp0Rq1kI2IbZGkZV0/vIH6IlcpFdRsK8BuZNDDO0KAwbfYQpFS9Od43P/WofPfjaCv/1Q+Vx5iuyaWShxIyKokJuirQ5Khdo8x2UfRzTQ72QhCXeBDK7DrvKv0WD1vsAwbz1lpZivjoiesWurwWCwiBSwbKqpYPrr50NBlncQiXv792anQBK7Hgvb7q5mDaE7xves1rACSlw8tZI5GNbyGA6gCTGeMIPpeXFy5E9Ycxoso1OAaHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jXkzxZpv5HAXtxZzuKJLl90pkEgRpSK1srHas5VxKw0=;
- b=u6lLSpK+0Xs0neHqQ3mblTDTopbSJONOsxuNMrY+uPcxfy9x7lCQuLV88HtRiyl3OOSLIOw1PwPKMGI6vug5AdJm+Zx/QuUA/a47Qjq3fcKcta8qpelA/Qr1zHwq0BQ225+MLjuvVqQIEh4qBrsl81PNJeQSz8rSW85FZwmPmZgJOc27/gHgIwo4lQFsOZgQa86RmlDO5X4XlpCMHAW1BrvwKABp/OjBvT1YwNxSa3bLTB3whSU8kqZQXiPWFUVVmBPdSxop27uYbOUPNgo4uJ9mmgSoHTQwq1wv4hq2lzrJ28M82pZmKv8dcA48wgck9e/5ike3LCwhvTYysWOzmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jXkzxZpv5HAXtxZzuKJLl90pkEgRpSK1srHas5VxKw0=;
- b=ZGRlk63yB5DsI4I/Pv1fRyKAa9o3e2Es1HMxB9W8AzwAHEBBwxkOGSupPqOBDSpKFrdmtktDUF+ESUBtyHMDfvlpgsamMhDp+kNXVnYMPOvYPcxTWSdtFWUdqj3zsWC4AtD4Oq70gRVZ9LZh1cvurryNlUTqfiZ8hzp7XhMTE5Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by PH8PR12MB6964.namprd12.prod.outlook.com (2603:10b6:510:1bf::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Wed, 21 Aug
- 2024 15:04:52 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%6]) with mapi id 15.20.7897.014; Wed, 21 Aug 2024
- 15:04:52 +0000
-Message-ID: <04fe3163-3a7c-4eef-b267-4da6e178e427@amd.com>
-Date: Wed, 21 Aug 2024 10:04:48 -0500
-User-Agent: Mozilla Thunderbird
-From: "Moger, Babu" <bmoger@amd.com>
-Subject: Re: [PATCH v6 15/22] x86/resctrl: Add the interface to assign a
- hardware counter
-Reply-To: babu.moger@amd.com
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Babu Moger <babu.moger@amd.com>, corbet@lwn.net, fenghua.yu@intel.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1722981659.git.babu.moger@amd.com>
- <099ecbbe678dd44387a8962d0cb81e61500cd2fa.1722981659.git.babu.moger@amd.com>
- <aa118320-72eb-4dd6-8826-0f3f7287becc@intel.com>
-Content-Language: en-US
-In-Reply-To: <aa118320-72eb-4dd6-8826-0f3f7287becc@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN6PR2101CA0024.namprd21.prod.outlook.com
- (2603:10b6:805:106::34) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9941E522;
+	Wed, 21 Aug 2024 15:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724252679; cv=none; b=aYBfKX9zY9+lQKZSzythinBrLpJnMy6TBk89YYYL9BvOtOyaMdTxRboCaF7VkTSy88ArlLGWs7KD5OTREa7KSsthNJzvkWYN3U4zkkFQNEPS2Yck/1juTeKEFedmINNRUKbAzA/S7PLGzaMDG344n6byLgOA3LyG21qc0B8nzf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724252679; c=relaxed/simple;
+	bh=OkDEoZGly81lf5gW2MbMELkfieiZa8lyDmiQLleQhdg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XNrq6hqxATbuc/pCZcdtXUr6GrEa4uBS0Jcmnv7UuBO+xdp1F9DUsqBuJ/xLMVa0zYNjUnL1yfUrtQVaAqOq1C8IV2VNCABBd7PZfTIT1ljlI1r1MXRI5h5mdsYjSwqdR1DdDExMTC5+Lgn1Jy8KvJZJW2Iv1LRoUVZa4XnDM/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WRLMcDl3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AaklP7wE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LaGQxV8c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iS2wuhBa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CCAE91FDDC;
+	Wed, 21 Aug 2024 15:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724252675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=stiqDtU4ipjBcBh8/CuaxM+WGrTFV6LHVPrhKOsF+m8=;
+	b=WRLMcDl3NQexTpgLc/pis79FAAfYPlGzY3q9qGa147JjpWs67pnwZ0SdupPo6SA3Czuxhv
+	1CEWYfODoPLWrnimBzGGZsLnvQb1P7FhDkrUFXtq9McnRF+qB0+V+b1npyXzes6IenQBfO
+	GrJE9ZJEP/FYTWbXLXihE81oAm1v/b0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724252675;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=stiqDtU4ipjBcBh8/CuaxM+WGrTFV6LHVPrhKOsF+m8=;
+	b=AaklP7wEOTSTMTGgZRAIE5Iu3gkcqoh9T/VuNiwivTH+MrtzuaSpOOM3GLDEtDShc584AK
+	S83MUz+ZZwHUB4AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724252674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=stiqDtU4ipjBcBh8/CuaxM+WGrTFV6LHVPrhKOsF+m8=;
+	b=LaGQxV8c9G7XSTgmxHGEgueH6OuvLfWMsbZxLLnDj5A1C+onJ6gT3ePiH4m1peIyWdwtTh
+	refnNENY8IfL1GyRYkswF9wwykXM77S2pYI2M4MJ813Qma8QwOsglULbD+N83Rm2t1w879
+	5Da+cijYvp2pk+14wP1wvl0+Wc57++U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724252674;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=stiqDtU4ipjBcBh8/CuaxM+WGrTFV6LHVPrhKOsF+m8=;
+	b=iS2wuhBa760WaX/Y2Ue4eZFnj3nWVKhB1t42Ne6DqY+94mjYSYsPg8UYqB20NQgVcyekni
+	ODXQxBOk5JZhi/Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5EBEF13770;
+	Wed, 21 Aug 2024 15:04:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GHmaFQICxmbjQQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 21 Aug 2024 15:04:34 +0000
+Date: Wed, 21 Aug 2024 17:05:16 +0200
+Message-ID: <878qwpq5lf.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Zeno Endemann <zeno.endemann@mailbox.org>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Pavel Hofman <pavel.hofman@ivitera.com>,
+	David Howells
+ <dhowells@redhat.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Subject: Re: [PATCH] ALSA: core: Remove trigger_tstamp_latched
+In-Reply-To: <cea341dc-bcc2-49f2-a641-af365bfd213a@perex.cz>
+References: <20240812142029.46608-1-zeno.endemann@mailbox.org>
+	<dec71400-81f1-4ca6-9010-94b55ecdaafa@linux.intel.com>
+	<3e9cd14b-7355-4fde-b0c1-39d40467e63c@mailbox.org>
+	<8c71ea3d-5c97-423e-a270-3184c16e1603@linux.intel.com>
+	<c2a46079-b9fa-46fb-8d2d-e01e5d620ea7@mailbox.org>
+	<878qx0mtfe.wl-tiwai@suse.de>
+	<f41762a1-048c-4ab6-86ae-f364753210c7@mailbox.org>
+	<874j7omsap.wl-tiwai@suse.de>
+	<aa308e18-f9e0-4b1a-b548-fcc61e641c6f@mailbox.org>
+	<87frqyorzi.wl-tiwai@suse.de>
+	<cea341dc-bcc2-49f2-a641-af365bfd213a@perex.cz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|PH8PR12MB6964:EE_
-X-MS-Office365-Filtering-Correlation-Id: b172ad7d-ee60-46f5-9445-08dcc1f29bd3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NW5mRStOd1ljSk1VWjExdjJMMVhXTHZUOENMdmtPbS9NZEZOeWVnUjlaVUov?=
- =?utf-8?B?MTVyMXlKV3c3WHd0bWdsa2dDa0pLRDcwNGdObngxeGJLK2R1OEtVQzlaYzBH?=
- =?utf-8?B?UGRoa2wyNVREcUtJMUc1ckdxZjJVNUYvN1ArSVphblNsS1RmU29HQWlEeWhr?=
- =?utf-8?B?N3F0TGRjcTVvRUtUckVtbEtDMmwxNU9vM1BQeFVadjQ5UEowcVdQTE5yRGo1?=
- =?utf-8?B?d1U1cjJqN2tyRVlXWEIwdFJiSTJueTZiVE93STArUFRGU2ZQQzIxNHNiNnV6?=
- =?utf-8?B?UlRId0g0YXVYQUQ3R3Z0NW0rVHRVTUJlbHNuendoSlNOY1ZESWhEZGFUU3R6?=
- =?utf-8?B?L0pmNC8xSzcxcVBZN2x3Yldmb3hSTGFSdUJhTHVDekQ0ekdKWG9sbEtZNncz?=
- =?utf-8?B?dXloMEpKQUZrQldhTVdRcTU2MVlaOU9oVXlEZUk3N1pZNW5TNHRMcE9QT3d0?=
- =?utf-8?B?RkFHc1VyMnpiaXpORnpjM09id1BMODNPaDRTS2E4L2kzVE8vUVRZZWZXYXhL?=
- =?utf-8?B?NE42eXhHOGlRbFpYR2R1RXd5ZVM4bzc3VXlGd2N6TTZlM29sQnVJQ2h5UXN3?=
- =?utf-8?B?enhKRWJDKys0R0N3b09FSkdzSmhiY1p1N2dYNHFLbmt5Q05vS2FwYkFQWmlS?=
- =?utf-8?B?dzFBNDdWQUo4dVIwUkV2Zk1KQ3VoQ1J2WUg1Ly9QQ21SSVpEZlNuK0tYWFZO?=
- =?utf-8?B?Z1RvZnQ3aWxUbmU3bHErTmUxZ3R4NncyWnNXa2VwZzdSaFpyb2lBbE8rcmxI?=
- =?utf-8?B?WUtwbklWdHJ2R0pWV3pPNEZZUWtqc2RjdnF3NWVtVzE2N0grbHdvZWpGK21E?=
- =?utf-8?B?U0JCS0g4bFNoSW9RQ0ZwS3hna0p2Y2FFa3lScndVRVpvTG82bktkS2pDRjU3?=
- =?utf-8?B?MFVOb0ZqWHF1aHIvMUV1RHo1V1NGZXNhN2tKc1JOek05THVKYzd1QXpkbzBx?=
- =?utf-8?B?MFFaOFBha1Q1RERhYWYzWVZ3bmZjSnEvamtTSEg1M0pyUFYyS2pNWUlOZ3Rw?=
- =?utf-8?B?aG8vR2wrZmJ0MTBlbW1BK2F4YjBSQTR1YzNrMXdJcHFtREpOdzMvODRsbkh0?=
- =?utf-8?B?d0NXRldQVGE4M1R2WHdOMUliRSs5b255QWtIeGRoRkx6VVJ6bTMzV0FVbUh2?=
- =?utf-8?B?cGJMQzkrVU9peFVGa0Y4cHB2d29rbG1rUDk0Vlh0KytOeW9HZkRlL1NhdEZp?=
- =?utf-8?B?b0p0YnI0UjJYUThrcWJMakVTVks4N2JnTFNuWHFSdkhna09obEtoUU9zNVJP?=
- =?utf-8?B?cjB2STJUTGFxeTJpWFVxU0NrOWJ3TEt3MnltaytqaUNVOEJUK29adUZZK3k3?=
- =?utf-8?B?NDJ4U1NDTUhkTExBbFZaTWtJbXBKT1BOa0xrME52VzFPcVY3clg3d0g0aFhy?=
- =?utf-8?B?UWNoWkxVWGF0L2lsL1IzM3hvd2FEUkIzY3ZZS2FWYVppTHlBU1VuTjZwUGxp?=
- =?utf-8?B?citXTjlKUHlvNyt0cmlNRkVUNGxEMzFXUWNRL0E0ZnFWMExja3pQb092L0Va?=
- =?utf-8?B?Yjd0RllndjJ2dUdZVzVlUFJ3TktuRDdha3ZFYWVQMTZ6ZEdkL2tlbVFzU1Zy?=
- =?utf-8?B?Y29DaWRRdEJFR0NQUisvdVJkdXhPNFdmTlo2ekNkQUliNGxKZTdOdlNkVDFu?=
- =?utf-8?B?dXg1eE1kS2lsUTY5ZnA4eVBsM0E0Wk9kM25kY0FMZHJDRStqVTlJSlY2VTkz?=
- =?utf-8?B?YTJZZFNuNHJSM2NDcExvcGxUOE9BelljTytQN1NNUkRnZnQweWZTcXlJbXNZ?=
- =?utf-8?B?akpYYkU3M29ydjNQeEd1UHUvazJiNTRmbTZuNW1LclArbFZvOG5WM1Q3azN3?=
- =?utf-8?Q?xN5J8O9KeWNv9sXHSZPCqzOuZbX5s7hYvHPMI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NVowVkxUOXVaNlZmd2hTZnprL1NtUHJkSmJUYVB5RDhzZDdFMkpjdXlCeEdN?=
- =?utf-8?B?MEJnUHZFaVlZbGlSVUdyVjR5dDMzaHE0TVg2MjZFa0VRc1JqYlU2b3dEN25W?=
- =?utf-8?B?dkxyaTcwZE42QkNhdXVoWGI0aXlET3BFcVZTRkpONjBBdGg1ZGl2OFJXRVdR?=
- =?utf-8?B?S3dKQ01naGMrRjdEQmRGUjdBcGJkUUQzTjVYSm9rSm5MTndTS2lHeW9DOGdZ?=
- =?utf-8?B?dGhIY29PeVQzbDNyTXE4cmM3S1B1dzI0MmRJVXE4UDBiUWR6L1pMbUtJZDFz?=
- =?utf-8?B?aENza1UydUtaVVlhb0dxQTRpallheURZY3c4MFRKZ0piRVpyZGlTUlorZURP?=
- =?utf-8?B?N29yRnZCM1Vjc0djYjFqZmJJOFFXTUF2NGNGOFBoMFpoV2I0MmJiS2t6UW00?=
- =?utf-8?B?N01RQnhsbkwzNXdjaHk2amd6WHd4Yk9yQ2pZL1pRRDlyZHJiaWtuNEZ4bWJy?=
- =?utf-8?B?bFg1YUh2MkpzM3pNS0x1Rjg1L21vYk5vYlZPWEZqWCtZY0RiOExJdU1PMnln?=
- =?utf-8?B?NDlFOUFtbE9EeHhzait4dE9GSklBbitTNE5CR3FocmZXTklhZHlIeFFzWGRX?=
- =?utf-8?B?V3FvWTJMUGt3Sm1HRVhnMGVBbjBOeU9mZ0liRFZtbkc3NDFySXAvZG9lNytu?=
- =?utf-8?B?djd2ZFRiVjVDTm9XUFFFMkMyRlQ1ckhZeEY3OGZSaW1zVmJkc0k2SlpKeU1H?=
- =?utf-8?B?eklUTU1LL04zSGhodFVRaGN3eFc5YWNPN1dNS1NIOXhJSGFGaWNEakJEYThQ?=
- =?utf-8?B?RjNHQVVJa1cyWGxXQXN2OFBpSFdiNGpxUitOSGhFMitzbEtKTlk4a1RYeEdk?=
- =?utf-8?B?YURTTVk5cHVGOWIwR25mNVVodEw3MERyVjRra3BEWkd2OFlHUHk3UXd1Ujkv?=
- =?utf-8?B?UHV5RHpjWW56V2t1MmVCb2dzT0VVdTE2dmJqSUtIMVcvYVk4R0pJNjg4TUs2?=
- =?utf-8?B?R0wzQVNQNGxVNEdzWWp6OWJvbDdXVVlHMGE0MTJwa2hLTUFCb2IzczI3Um1l?=
- =?utf-8?B?SEZGVTBzaFlaVXRsTFJwVDY5c3JxK01iYnpGenlNT29LVGdzZmRFMmVWL09t?=
- =?utf-8?B?MENCSlBDL3VUaks1bW1SWVR3dXlydWlGcnRDeDdHK1RiZ2pEemt0c1RvLzJm?=
- =?utf-8?B?NGZ6cEdqbXoxaVFkVVI3S2lWaDRQM3dqQVI0b2xkNHpaUEhtM2tGbGJvYW1W?=
- =?utf-8?B?QitzUDNTRFRtb2d5TlJSVkJHMGViUU5wck16c09wamJxcW9SZkwvV3Q1ZlFx?=
- =?utf-8?B?NHU3WmhHcm8xZ3h3dzZQVGkxeTJ1ZUsySVhjYVQyRU9zLzF2dEpMaWFGMHc4?=
- =?utf-8?B?VTg4NE9CMHp0UGpicTNLbE9BMERNb1JLcE9MRmFWWDVBVktWZTR5L0t5bVVj?=
- =?utf-8?B?azdoL3NzSUROejc3U3RQd0I4RGZYSWpvaGRDMWxhaitnN0pqUmlVcTlMUjVK?=
- =?utf-8?B?MmxqTXJIdTN5Y20yeXF0ZnBaVmJMVVQ1MFozWThqeW5zaC9RQWFEMzIvYjJs?=
- =?utf-8?B?OU90TUNtNHEwQjRGbUJ1Nk5DQ1phc0tISkg0aWNrME41WTJNcndxa1BTU0tF?=
- =?utf-8?B?R2hTZThlNHpIWmpYVjZPdk41V3FpWHNSVlk0Y0ZCVnZ6UFRORXc3S1RDZThV?=
- =?utf-8?B?d3UwOUFXZjJxTm5nL0xPSUNNc2QwLzU4WklUSTY3VENMMnlmdFBYOS9NTkZ5?=
- =?utf-8?B?VFhCMTdydlU3T2J0MUcreDFNZTJjRmZXTk5WRGd4bmtWeEpXb0JycENXYTd2?=
- =?utf-8?B?OEdFaGZXS0JPOFZnR2FNZzZUMkhzTUlMUGE2Umo1aldEY0ZjRmFKUU1FMmtp?=
- =?utf-8?B?VWExSjkrTnlrcXRmTEZXODZ6c3lqaThSdGZyTlRpRXlRUGN6dHFVQnhCRzNq?=
- =?utf-8?B?eXBtNDhBM3hGUzZPb3MwSEp5VzZ6NCs0cHBYTkZpalpUVy93V2lReFlXR1lj?=
- =?utf-8?B?SjVWZHdUVHhjZ2t3QkJsSUNlZEJNazZxYThybUluMUlLTllvOER4NHFRcUhI?=
- =?utf-8?B?a2xOVWFWSVpDSE5ER1JUdG92NDJYTVpzWHllSmxWcFhvZmRlb2c5bllMcVU0?=
- =?utf-8?B?ZGtZUWszem94ckpGRTBUSVJzcVZOaWRNRElXRUpnMnpqRm5vQjROam4zcCto?=
- =?utf-8?Q?3wPc=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b172ad7d-ee60-46f5-9445-08dcc1f29bd3
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 15:04:52.2240
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OcFhrjNv8A50rp2mqIpSLXzsFDCF2J29+uO5yYEHC9/STeAr+t0Wy3JSAQ8nnnzP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6964
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-Hi Reinette,
+On Wed, 21 Aug 2024 16:59:41 +0200,
+Jaroslav Kysela wrote:
+> 
+> On 21. 08. 24 16:44, Takashi Iwai wrote:
+> > On Wed, 21 Aug 2024 16:27:43 +0200,
+> > Zeno Endemann wrote:
+> >> 
+> >> Takashi Iwai wrote on 13.08.24 16:05:
+> >>> On Tue, 13 Aug 2024 15:58:13 +0200,
+> >>> Zeno Endemann wrote:
+> >>>> 
+> >>>> Takashi Iwai wrote on 13.08.24 15:41:
+> >>>>> On Tue, 13 Aug 2024 14:54:42 +0200,
+> >>>>> Zeno Endemann wrote:
+> >>>>>> 
+> >>>>>> Pierre-Louis Bossart wrote on 13.08.24 10:04:
+> >>>>>>> by focusing on the trigger timestamp I think you're looking at the wrong
+> >>>>>>> side of the problem. The timestamping is improved by using the same
+> >>>>>>> hardware counter for the trigger AND regular timestamp during
+> >>>>>>> playback/capture. If you look at a hardware counter during
+> >>>>>>> playback/capture but the start position is recorded with another method,
+> >>>>>>> would you agree that there's a systematic non-reproducible offset at
+> >>>>>>> each run? You want the trigger and regular timestamps to be measured in
+> >>>>>>> the same way to avoid measurement differences.
+> >>>>>> 
+> >>>>>> I am not sure what you are talking about. I have not seen any place in the
+> >>>>>> code where the trigger timestamp is taken in any other more sophisticated
+> >>>>>> way than what the default is doing, i.e. calling snd_pcm_gettime. So I do
+> >>>>>> not see how your custom *trigger* timestamps are done "with another method".
+> >>>>>> 
+> >>>>>>> I will not disagree that most applications do not need precise
+> >>>>>>> timestamping, but if you want to try to enable time-of-flight
+> >>>>>>> measurements for presence or gesture detection you will need higher
+> >>>>>>> sampling rates and micro-second level accuracy.
+> >>>>>> 
+> >>>>>> I don't know, this sounds very theoretical at best to me. However I do not
+> >>>>>> have the desire to try to further argue and convince you otherwise.
+> >>>>>> 
+> >>>>>> Do you want to propose a different solution for the stop trigger timestamp
+> >>>>>> bug? That is my main goal after all.
+> >>>>> 
+> >>>>> Ah, I guess that the discussion drifted because of misunderstanding.
+> >>>>> 
+> >>>>> This isn't about the accuracy of the audio timestamp, but rather the
+> >>>>> timing of trigger tstamp.  The commit 2b79d7a6bf34 ("ALSA: pcm: allow
+> >>>>> for trigger_tstamp snapshot in .trigger") allowed the trigger_tstamp
+> >>>>> taken in the driver's trigger callback.  But, the effectiveness of
+> >>>>> this change is dubious, because the timestamp taken in the usual code
+> >>>>> path in PCM core is right after the trigger callback, hence the
+> >>>>> difference should be negligible -- that's the argument.
+> >>>> 
+> >>>> Exactly. Sorry if my communication was not clear on that.
+> >>>> 
+> >>>>> 
+> >>>>> No matter how the fix will be, could you put the Fixes tag pointing to
+> >>>>> the culprit commit(s) at the next submission?
+> >>>> 
+> >>>> Will do. I guess I'll have to look up which commit actually enabled the
+> >>>> trigger_tstamp_latched in hda, as 2b79d7a6bf34 has no driver using that
+> >>>> yet, so is not technically the culprit?
+> >>> 
+> >>> You can take the HD-audio side, the commit ed610af86a71 ("ALSA: hda:
+> >>> read trigger_timestamp immediately after starting DMA") instead, too.
+> >>> Maybe it doesn't matter much which commit is chosen; both should
+> >>> appear in the same kernel version.
+> >> 
+> >> Well, I think I've waited a decent amount of time now for more comments.
+> >> How do we proceed?
+> >> 
+> >> I'm still of the opinion that the removal is the most sensible solution,
+> >> so if we agree I could prepare a V2 where I just improve the commit message
+> >> a bit further.
+> >> 
+> >> But if we don't have a good enough consensus on this, I'd need some guidance
+> >> which alternate path should be taken to at least fix the bug of bad stop
+> >> trigger timestamps for hda devices (e.g. should I try to fix it also for
+> >> soc/intel/skylake without any testing? That seems to me the only other place
+> >> that should be affected, apart from the generic pci hda code).
+> > 
+> > IIUC, the achievement of the timestamp at the exact timing was the
+> > goal of that change (which caused a regression unfortunately), so
+> > keeping that feature may still make sense.  I'd rather try to fix in
+> > HD-audio side at first.
+> > 
+> > If Pierre agrees with the removal of the local timestamp call, we can
+> > revert to there afterwards, too.
+> 
+> What about a patch bellow. I'll send it with proper formatting, when we decide to go with it. Perhaps, the latched flag may be reset when start is false, too.
 
-On 8/16/2024 4:41 PM, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 8/6/24 3:00 PM, Babu Moger wrote:
->> The ABMC feature provides an option to the user to assign a hardware
-> 
-> This patch is a mix of resctrl fs and arch code, could each piece please
-> be desribed clearly?
+It's similar like what I had in mind, too.
+(My version was to drop the call of snd_pcm_gettime() from
+ snd_hdac_stream_timecounter_init() but call it at each place,
+ instead.)
 
-I will separate them. That is probably better.
 
-> 
->> counter to an RMID and monitor the bandwidth as long as it is assigned.
->> The assigned RMID will be tracked by the hardware until the user 
->> unassigns
->> it manually.
->>
->> Counters are configured by writing to L3_QOS_ABMC_CFG MSR and
->> specifying the counter id, bandwidth source, and bandwidth types.
->>
->> Provide the interface to assign the counter ids to RMID.
->>
->> The feature details are documented in the APM listed below [1].
->> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
->>      Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable 
->> Bandwidth
->>      Monitoring (ABMC).
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
->> v6: Removed mbm_cntr_alloc() from this patch to keep fs and arch code
->>      separate.
->>      Added code to update the counter assignment at domain level.
->>
->> v5: Few name changes to match cntr_id.
->>      Changed the function names to
->>        rdtgroup_assign_cntr
->>        resctr_arch_assign_cntr
->>        More comments on commit log.
->>        Added function summary.
->>
->> v4: Commit message update.
->>        User bitmap APIs where applicable.
->>        Changed the interfaces considering MPAM(arm).
->>        Added domain specific assignment.
->>
->> v3: Removed the static from the prototype of rdtgroup_assign_abmc.
->>        The function is not called directly from user anymore. These
->>        changes are related to global assignment interface.
->>
->> v2: Minor text changes in commit message.
->> ---
->>   arch/x86/kernel/cpu/resctrl/internal.h |  4 ++
->>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 97 ++++++++++++++++++++++++++
->>   2 files changed, 101 insertions(+)
->>
->> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h 
->> b/arch/x86/kernel/cpu/resctrl/internal.h
->> index d93082b65d69..4e8109dee174 100644
->> --- a/arch/x86/kernel/cpu/resctrl/internal.h
->> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
->> @@ -685,6 +685,10 @@ int mbm_cntr_alloc(struct rdt_resource *r);
->>   void mbm_cntr_free(u32 cntr_id);
->>   void resctrl_mbm_evt_config_init(struct rdt_hw_mon_domain *hw_dom);
->>   unsigned int mon_event_config_index_get(u32 evtid);
->> +int resctrl_arch_assign_cntr(struct rdt_mon_domain *d, enum 
->> resctrl_event_id evtid,
->> +                 u32 rmid, u32 cntr_id, u32 closid, bool assign);
->> +int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum 
->> resctrl_event_id evtid);
->> +int rdtgroup_alloc_cntr(struct rdtgroup *rdtgrp, int index);
->>   void rdt_staged_configs_clear(void);
->>   bool closid_allocated(unsigned int closid);
->>   int resctrl_find_cleanest_closid(void);
->> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c 
->> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> index 60696b248b56..1ee91a7293a8 100644
->> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> @@ -1864,6 +1864,103 @@ static ssize_t 
->> mbm_local_bytes_config_write(struct kernfs_open_file *of,
->>       return ret ?: nbytes;
->>   }
->> +static void rdtgroup_abmc_cfg(void *info)
-> 
-> This has nothing to do with a resctrl group (arch code has no insight 
-> into the groups anyway).
-> Maybe an arch specific name like "resctrl_abmc_config_one_amd()" to 
-> match earlier
-> "resctrl_abmc_set_one_amd()"?
-> 
-
-Sure.
+Takashi
 
 > 
->> +{
->> +    u64 *msrval = info;
->> +
->> +    wrmsrl(MSR_IA32_L3_QOS_ABMC_CFG, *msrval);
->> +}
->> +
->> +/*
->> + * Send an IPI to the domain to assign the counter id to RMID.
->> + */
->> +int resctrl_arch_assign_cntr(struct rdt_mon_domain *d, enum 
->> resctrl_event_id evtid,
->> +                 u32 rmid, u32 cntr_id, u32 closid, bool assign)
->> +{
->> +    struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
->> +    union l3_qos_abmc_cfg abmc_cfg = { 0 };
->> +    struct arch_mbm_state *arch_mbm;
->> +
->> +    abmc_cfg.split.cfg_en = 1;
->> +    abmc_cfg.split.cntr_en = assign ? 1 : 0;
->> +    abmc_cfg.split.cntr_id = cntr_id;
->> +    abmc_cfg.split.bw_src = rmid;
->> +
->> +    /* Update the event configuration from the domain */
->> +    if (evtid == QOS_L3_MBM_TOTAL_EVENT_ID) {
->> +        abmc_cfg.split.bw_type = hw_dom->mbm_total_cfg;
->> +        arch_mbm = &hw_dom->arch_mbm_total[rmid];
->> +    } else {
->> +        abmc_cfg.split.bw_type = hw_dom->mbm_local_cfg;
->> +        arch_mbm = &hw_dom->arch_mbm_local[rmid];
->> +    }
->> +
->> +    smp_call_function_any(&d->hdr.cpu_mask, rdtgroup_abmc_cfg, 
->> &abmc_cfg, 1);
->> +
->> +    /*
->> +     * Reset the architectural state so that reading of hardware
->> +     * counter is not considered as an overflow in next update.
->> +     */
->> +    if (arch_mbm)
->> +        memset(arch_mbm, 0, sizeof(struct arch_mbm_state));
->> +
->> +    return 0;
->> +}
->> +
->> +/* Allocate a new counter id if the event is unassigned */
->> +int rdtgroup_alloc_cntr(struct rdtgroup *rdtgrp, int index)
->> +{
->> +    struct rdt_resource *r = 
->> &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
->> +    int cntr_id;
->> +
->> +    /* Nothing to do if event has been assigned already */
->> +    if (rdtgrp->mon.cntr_id[index] != MON_CNTR_UNSET) {
->> +        rdt_last_cmd_puts("ABMC counter is assigned already\n");
+> 					Jaroslav
 > 
-> This is resctrl fs code. Please replace the arch specific messages
-> ("ABMC") with resctrl fs terms.
-
-Sure.
-
-> 
->> +        return 0;
->> +    }
->> +
->> +    /*
->> +     * Allocate a new counter id and update domains
->> +     */
->> +    cntr_id = mbm_cntr_alloc(r);
->> +    if (cntr_id < 0) {
->> +        rdt_last_cmd_puts("Out of ABMC counters\n");
-> 
-> here also.
-
-Sure.
-
-> 
->> +        return -ENOSPC;
->> +    }
->> +
->> +    rdtgrp->mon.cntr_id[index] = cntr_id;
->> +
->> +    return 0;
->> +}
->> +
->> +/*
->> + * Assign a hardware counter to the group and assign the counter
->> + * all the domains in the group. It will try to allocate the mbm
->> + * counter if the counter is available.
->> + */
->> +int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum 
->> resctrl_event_id evtid)
->> +{
->> +    struct rdt_resource *r = 
->> &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
->> +    struct rdt_mon_domain *d;
->> +    int index;
->> +
->> +    index = mon_event_config_index_get(evtid);
-> 
-> After going through MPAM series this no longer looks correct. As the 
-> name of this
-> function implies this is an index unique to the monitor event 
-> configuration feature
-> and as the MPAM series highlights, it is unique to the architecture, not 
-> something
-> that is visible to resctrl fs. resctrl fs uses the event IDs and it is 
-> only when the
-> fs makes a request to the architecture that this translation comes into 
-> play.
-> 
-> With this change, what is the architecture specific "mon event config 
-> index" now
-> becomes part of resctrl fs used for something totally different from mon 
-> event
-> configuration.
-> 
-> I think we should separate this to make sure we distinguish between an 
-> architectural
-> translation and a resctrl fs translation, the array index is not the 
-> same as the architecture
-> specific "mov event config index".
-> 
-> How about we start with something simple that is defined by resctrl fs? 
-> for example:
-> #define MBM_EVENT_ARRAY_INDEX(_event) (_event  - 2)
-
-Yes. Good point. We can do that.
-
+> diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
+> index 7e39d486374a..b098ceadbe74 100644
+> --- a/include/sound/hdaudio.h
+> +++ b/include/sound/hdaudio.h
+> @@ -590,7 +590,7 @@ void snd_hdac_stream_sync_trigger(struct hdac_stream *azx_dev, bool set,
+>  void snd_hdac_stream_sync(struct hdac_stream *azx_dev, bool start,
+>  			  unsigned int streams);
+>  void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+> -				      unsigned int streams);
+> +				      unsigned int streams, bool start);
+>  int snd_hdac_get_stream_stripe_ctl(struct hdac_bus *bus,
+>  				struct snd_pcm_substream *substream);
+>  diff --git a/sound/hda/hdac_stream.c b/sound/hda/hdac_stream.c
+> index b53de020309f..0411a8fe9d6f 100644
+> --- a/sound/hda/hdac_stream.c
+> +++ b/sound/hda/hdac_stream.c
+> @@ -664,7 +664,7 @@ static void azx_timecounter_init(struct hdac_stream *azx_dev,
+>   * updated accordingly, too.
+>   */
+>  void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+> -				      unsigned int streams)
+> +				      unsigned int streams, bool start)
+>  {
+>  	struct hdac_bus *bus = azx_dev->bus;
+>  	struct snd_pcm_runtime *runtime = azx_dev->substream->runtime;
+> @@ -672,6 +672,9 @@ void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+>  	bool inited = false;
+>  	u64 cycle_last = 0;
+>  +	if (!start)
+> +		goto skip;
+> +
+>  	list_for_each_entry(s, &bus->stream_list, list) {
+>  		if ((streams & (1 << s->index))) {
+>  			azx_timecounter_init(s, inited, cycle_last);
+> @@ -682,6 +685,7 @@ void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+>  		}
+>  	}
+>  +skip:
+>  	snd_pcm_gettime(runtime, &runtime->trigger_tstamp);
+>  	runtime->trigger_tstamp_latched = true;
+>  }
+> diff --git a/sound/pci/hda/hda_controller.c b/sound/pci/hda/hda_controller.c
+> index 5d86e5a9c814..f3330b7e0fcf 100644
+> --- a/sound/pci/hda/hda_controller.c
+> +++ b/sound/pci/hda/hda_controller.c
+> @@ -275,8 +275,7 @@ static int azx_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+>  	spin_lock(&bus->reg_lock);
+>  	/* reset SYNC bits */
+>  	snd_hdac_stream_sync_trigger(hstr, false, sbits, sync_reg);
+> -	if (start)
+> -		snd_hdac_stream_timecounter_init(hstr, sbits);
+> +	snd_hdac_stream_timecounter_init(hstr, sbits, start);
+>  	spin_unlock(&bus->reg_lock);
+>  	return 0;
+>  }
+> diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
+> index 613b27b8da13..7eec15a2c49e 100644
+> --- a/sound/soc/intel/skylake/skl-pcm.c
+> +++ b/sound/soc/intel/skylake/skl-pcm.c
+> @@ -446,10 +446,10 @@ static int skl_decoupled_trigger(struct snd_pcm_substream *substream,
+>   	if (start) {
+>  		snd_hdac_stream_start(hdac_stream(stream));
+> -		snd_hdac_stream_timecounter_init(hstr, 0);
+>  	} else {
+>  		snd_hdac_stream_stop(hdac_stream(stream));
+>  	}
+> +	snd_hdac_stream_timecounter_init(hstr, 0, start);
+>   	spin_unlock_irqrestore(&bus->reg_lock, cookie);
+>  @@ -1145,8 +1145,7 @@ static int skl_coupled_trigger(struct
+> snd_pcm_substream *substream,
+>   	/* reset SYNC bits */
+>  	snd_hdac_stream_sync_trigger(hstr, false, sbits, AZX_REG_SSYNC);
+> -	if (start)
+> -		snd_hdac_stream_timecounter_init(hstr, sbits);
+> +	snd_hdac_stream_timecounter_init(hstr, sbits, start);
+>  	spin_unlock_irqrestore(&bus->reg_lock, cookie);
+>   	return 0;
 > 
 > 
->> +    if (index == INVALID_CONFIG_INDEX)
->> +        return -EINVAL;
->> +
->> +    if (rdtgroup_alloc_cntr(rdtgrp, index))
->> +        return -EINVAL;
->> +
+> 					Jaroslav
 > 
-> hmmm ... so rdtgroup_alloc_cntr() returns 0 if the counter is assigned 
-> already, and
-> in this case the configuration is done again even if counter was already 
-> assigned.
-> Is this intended?
-
-I didn't think thru this. Yea. It is not required as far as I can see.
-Will address it.
-
+> -- 
+> Jaroslav Kysela <perex@perex.cz>
+> Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
 > 
-> rdtgroup_assign_cntr() seems to be almost identical to 
-> rdtgroup_assign_update()
-> that has protection against the above from happening. It looks like 
-> these two
-> functions can be merged into one?
-
-Yes. We can do that.
-
-> 
->> +    list_for_each_entry(d, &r->mon_domains, hdr.list) {
->> +        resctrl_arch_assign_cntr(d, evtid, rdtgrp->mon.rmid,
->> +                     rdtgrp->mon.cntr_id[index],
-> 
-> There currently seems to be a mismatch between functions needing to
-> access this ID directly as above in some cases while also needing to
-> use helpers like rdtgroup_alloc_cntr().
-
-I think I need to merge rdtgroup_assign_cntr(), rdtgroup_assign_update()
-and rdtgroup_alloc_cntr. It will probably make it clear.
-> 
-> Also, as James indicated, resctrl_arch_assign_cntr() may fail on Arm
-> so this needs error checking even though the x86 implementation always
-> returns success.
-
-Sure. Will do.
-
-> 
->> +                     rdtgrp->closid, true);
->> +        set_bit(rdtgrp->mon.cntr_id[index], d->mbm_cntr_map);
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->>   /* rdtgroup information files for one cache resource. */
->>   static struct rftype res_common_files[] = {
->>       {
-> 
-> Reinette
-> 
-Thanks
-- Babu Moger
 
