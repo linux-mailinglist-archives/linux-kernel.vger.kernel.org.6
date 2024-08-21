@@ -1,59 +1,49 @@
-Return-Path: <linux-kernel+bounces-294851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E5E959358
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:31:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6E7959352
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21E021C2140B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:31:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FE6FB22E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13681547E2;
-	Wed, 21 Aug 2024 03:31:16 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7388215572C;
+	Wed, 21 Aug 2024 03:25:20 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18F81803E;
-	Wed, 21 Aug 2024 03:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07563FD4
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724211076; cv=none; b=GR2jKFfKAlbSsnybLgJzET0MCXY6KpnZXHnCjPQ1k5qBbKFnFFJLgwHN347biOxEYGuDfvrQ4y9Tkoz5pvMKO82tLTtY+bSEQ9rb7y65NxAiIToAobNBtzuwG4KHsZra6RjErN3lJ7G3i0LIyeK35oBQ94BCM6JFcMbSC/FW9Oo=
+	t=1724210720; cv=none; b=By3vVmFB0jmc21htaok+7yr/D8iMpncYCEcEJY01r8dwqdUSwJdz5w9LrEsgSZs7S9HXfIdkncHMQjPm7Fo2vdot4M831i1ven/ED/RORVxWRsxdfOM3pGKIFtUsa1xP57NHKAg96ExqzCL722Hc98rZrslSPUfQ6dA5C5CzxA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724211076; c=relaxed/simple;
-	bh=ULGGJTYhv2rwWZc4fenX5GKTGSd0gEW+tpujNdJUQdU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nHMYc3VlkJDs2w0nv55Ol7YgY0wx7uX63h/QWBbP38cJw0SW13XFmyKDCuzPLtNYkzqbkou/wvCCbyAgv95q6ZmqES0djA/Ce8Go/PnAmEhp+waOSU2ciTVLmPMJr3FVkIOOfgMm0FAMNoxSC+Bdt4moMsP032nA9v2JRYQqNsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L3UUuD022800;
-	Wed, 21 Aug 2024 03:31:04 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412ju6unmu-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 21 Aug 2024 03:31:04 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 20:31:02 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 20:31:00 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <kent.overstreet@linux.dev>
-CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lizhi.xu@windriver.com>,
-        <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH V3] bcachefs: Add journal v2 entry nr value check
-Date: Wed, 21 Aug 2024 11:30:59 +0800
-Message-ID: <20240821033059.2244258-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <vr4n6n25sq5dtcr3njl44ev2dxrawpz6s6xwv6cpjfm33uqmay@uhieqhcxeuns>
-References: <vr4n6n25sq5dtcr3njl44ev2dxrawpz6s6xwv6cpjfm33uqmay@uhieqhcxeuns>
+	s=arc-20240116; t=1724210720; c=relaxed/simple;
+	bh=n5cR9lJCZsSx5Y5+GeaitWM3H54zHzB6RHVB6Oxv1Io=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pn+HLjf6959LTZB/beq00ITt6hAC7zOjnJWQGPZbPsZnWj1vbnZlkkyhhPtQT92Ef02vxB0ikOFyRp49V1IvIme+4CqHomjZ2TP8Xb8oODeN7NWaOkfH5TRpOSAU9kQtF8RF/6dXV2sAN5Y5cJaWk1eNiAZbPNkJ9MExO5Vww3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WpWrV4MmSzpSwQ;
+	Wed, 21 Aug 2024 11:23:38 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7BAF3140138;
+	Wed, 21 Aug 2024 11:25:09 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
+ 2024 11:25:09 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <akpm@linux-foundation.org>, <sunjunchao2870@gmail.com>
+CC: <lihongbo22@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] scripts: make macro_checker.py executable
+Date: Wed, 21 Aug 2024 11:32:39 +0800
+Message-ID: <20240821033239.2233508-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,72 +52,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: ywKoFpMpWX82AjYd9oAP2yhNPsI6gLuo
-X-Authority-Analysis: v=2.4 cv=VdWlP0p9 c=1 sm=1 tr=0 ts=66c55f78 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=e9QManfWWoWEGbeKLPEA:9 a=cQPPKAXgyycSBL8etih5:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: ywKoFpMpWX82AjYd9oAP2yhNPsI6gLuo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_03,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- spamscore=0 malwarescore=0 impostorscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408210023
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Tue, 20 Aug 2024 23:16:50 -0400, Lizhi Xu wrote:
-> > On Tue, 20 Aug 2024 23:00:05 -0400, Kent Overstreet wrote:
-> > > > When the nr value of a signle entry or their sum overflows, it will
-> > > > cause the value of ja->nr to be incorrect, this will result in the
-> > > > allocated memory to ja->buckets being too small, leading to out of
-> > > > bounds access in bch2_dev_journal_init.
-> > > >
-> > > > Reported-by: syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
-> > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > > > ---
-> > > >  fs/bcachefs/journal_sb.c | 16 +++++++++++++++-
-> > > >  1 file changed, 15 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/fs/bcachefs/journal_sb.c b/fs/bcachefs/journal_sb.c
-> > > > index db80e506e3ab..230ed99130e4 100644
-> > > > --- a/fs/bcachefs/journal_sb.c
-> > > > +++ b/fs/bcachefs/journal_sb.c
-> > > > @@ -107,6 +107,7 @@ static int bch2_sb_journal_v2_validate(struct bch_sb *sb, struct bch_sb_field *f
-> > > >  	unsigned nr;
-> > > >  	unsigned i;
-> > > >  	struct u64_range *b;
-> > > > +	u64 total_nr = 0, entry_nr;
-> > > >
-> > > >  	nr = bch2_sb_field_journal_v2_nr_entries(journal);
-> > > >  	if (!nr)
-> > > > @@ -117,8 +118,21 @@ static int bch2_sb_journal_v2_validate(struct bch_sb *sb, struct bch_sb_field *f
-> > > >  		return -BCH_ERR_ENOMEM_sb_journal_v2_validate;
-> > > >
-> > > >  	for (i = 0; i < nr; i++) {
-> > > > +		entry_nr = le64_to_cpu(journal->d[i].nr);
-> > > > +		if (entry_nr > UINT_MAX) {
-> > > > +			prt_printf(err, "Journal v2 entry d[%u] nr %llu overflow\n",
-> > > > +				i, entry_nr);
-> > > > +			goto err;
-> > > > +		}
-> > >
-> > > This check is unnecessary; we know the sum can't overflow a u64 because
-> > > we're also checking that the entries are nonoverlapping.
-> > You didn't read my previous email carefully.
-> > In this issue, journal->d[0] is 7, journal->d[1] is 18446744073709551615,
-> > so the sum of their u64 type values will definitely overflow.
-> 
-> It doesn't matter. We're already checking that the entries are
-> nonoverlapping, and within the range of [1, nbuckets), so total_nr can't
-> overflow nbuckets, much less an s64 (not that that matters).
-Are you sure? Or did I not express myself clearly? See the actual running results below:
-le64_to_cpu(journal->d[1].nr) + le64_to_cpu(journal->d[0].nr) = 7 + 18446744073709551615 will overflow.
+Set 755 for script macro_checker.py as other scripts.
 
-When a u64 overflow occurs, total_nr will not be greater than UINT_MAX,
-so it is not enough to only calculate the total nr of entry to determine.
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ scripts/macro_checker.py | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100644 => 100755 scripts/macro_checker.py
 
-Note: u64 contains 0 ~ 18446744073709551616.
+diff --git a/scripts/macro_checker.py b/scripts/macro_checker.py
+old mode 100644
+new mode 100755
+-- 
+2.34.1
 
-BR,
-Lizhi
 
