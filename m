@@ -1,214 +1,183 @@
-Return-Path: <linux-kernel+bounces-296134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9887A95A617
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7241F95A623
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5460028627A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3031F22B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898E5170A1B;
-	Wed, 21 Aug 2024 20:50:05 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592C1170A3E;
+	Wed, 21 Aug 2024 20:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="co84FhOn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B9B1531C2;
-	Wed, 21 Aug 2024 20:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781D31531C2;
+	Wed, 21 Aug 2024 20:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724273405; cv=none; b=tzlrjcBKhy9s0rKwxlQKgU37/6ExTTB3c2DcbmYHFrhaTTN1q+bknFOz97GKQ4kegvUjJG0vf+PgHK0qSN4yf/576w+LqWGDJprexgMq1/NoC0cm5EvEuH1ikrSu+CYJn9usx7V+KpuYWIrvGq2WRkbtPoE6ol5DzidndeVNWgA=
+	t=1724273524; cv=none; b=kVgjtKDwCJ2kIFNzXqV71DCa5wDpXuFxbVYSAauI0MrBueihR1DK2LD1hXUaq6Kq7GKHAhTdwc8tVlRi0hp6ET+asCGtA9xMtT1n/0bh2BIRH2XKYniACTt5opY+MPv+OI3S/aBHoCZ1UHjK64wImLpaYgPM5PPzpqfmihzEj24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724273405; c=relaxed/simple;
-	bh=bskqMDGqvGrDuMpfciDhhbVvJnZ973MkLP0jG3EJ4qc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=HlFfyeRi+VspDZAUb8Qup1aZAmBgzMhUBKaxD9BsBFAGUn8IpFo0PHIgwrsPuQUXFfQu7wDViOcHY98EC5bAfo8Lij1z5qWvlmgl46CIQ/EaoFTKLq8XEMVuJVR2BzzRFg50odadmyMwrHh7GQ0siQU7N2/xSjNsn4/emRRUg4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (31.173.81.178) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 21 Aug
- 2024 23:49:50 +0300
-Subject: Re: [PATCH] ata: Replace deprecated PCI devres functions
-To: Philipp Stanner <pstanner@redhat.com>, Damien Le Moal
-	<dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Mikael Pettersson
-	<mikpelinux@gmail.com>
-CC: <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240812084839.37580-2-pstanner@redhat.com>
- <c2d21da0-7fe1-f995-5562-7ff04e9f1b8b@omp.ru>
- <94a378e6c2d442e0e7ae06fbd496d02983f9baaa.camel@redhat.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <c4111bbb-b59c-be35-561b-4eb79809918d@omp.ru>
-Date: Wed, 21 Aug 2024 23:49:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1724273524; c=relaxed/simple;
+	bh=L92fXwzpvfy6V5aVSsrMQYQc8poFWLPSnWtKPdphpC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5JWPhL6wXQ2RL0tuYH63Sot8rMx/a+z2vT8sNZKFv04VwAUpgzmFKLa+aL+gazxmmWjMv8s02uEyIgaA0F2lSzHFiB49yJQTst9so2RvQhbYMmJ+BqXpslLeRdaeuMhrOfhA7RiaXTj0KMVX1nLRfJYK0PpAZexfQQfIIbTRKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=co84FhOn; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724273523; x=1755809523;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L92fXwzpvfy6V5aVSsrMQYQc8poFWLPSnWtKPdphpC4=;
+  b=co84FhOnZUZpMuNdeKixnwT9hl0AmVxpkHMWZcPp6lvYNwqp2zBrcBZ0
+   ao8G27TKZYk95yzd0J1fFdrHjrgtre9zfVtQwtdN1Cj5IeroeINoxlsMn
+   fcMcx9/+3spUYxjemiaHWPEspZfnD9F2wUfImZ32PWVYbKX50mLaoxUtn
+   o4Kwm8LzKzxFmEKyKX5AlXl/kKbxwr+bb03w+x2q2+2o26pvi+lDh2Sw+
+   mh0uxEcnhhz9wpe7WpKvuUFgiTw3qYhyvHELbtkIPHOcrSfTW2U2WUKJN
+   upW92sff8AIqCwJdOZhPwKd0FDExXCGlDr3zecU0xt7M8LhHwPOqVRctQ
+   g==;
+X-CSE-ConnectionGUID: ILtEsulAQ6+SjW3B+6PFTQ==
+X-CSE-MsgGUID: v+FvMQS+SEa1e6Hn2cSLGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="26410888"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="26410888"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 13:52:02 -0700
+X-CSE-ConnectionGUID: U4dPVaJbT0qrJgLGR4NhPQ==
+X-CSE-MsgGUID: APZvwVe7QRWjfRcB7XVWVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="61209335"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 21 Aug 2024 13:51:59 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgsJA-000Bwo-1b;
+	Wed, 21 Aug 2024 20:51:56 +0000
+Date: Thu, 22 Aug 2024 04:51:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
+	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+Message-ID: <202408220439.BUcaNSTv-lkp@intel.com>
+References: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <94a378e6c2d442e0e7ae06fbd496d02983f9baaa.camel@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 08/21/2024 20:34:12
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187220 [Aug 21 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 27 0.3.27
- 71302da218a62dcd84ac43314e19b5cc6b38e0b6
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.178 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.81.178
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 08/21/2024 20:37:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 8/21/2024 4:20:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
 
-On 8/16/24 10:47 AM, Philipp Stanner wrote:
-[...]
+Hi Billy,
 
->>> The ata subsystem uses the PCI devres functions pcim_iomap_table()
->>> and
->>> pcim_request_regions(), which have been deprecated in commit
->>> e354bb84a4c1
->>> ("PCI: Deprecate pcim_iomap_table(),
->>> pcim_iomap_regions_request_all()").
->>>
->>> These functions internally already use their successors, notably
->>> pcim_request_region(), so they are quite trivial to replace.
->>>
->>> However, one thing special about ata is that it stores the iomap
->>> table
->>> provided by pcim_iomap_table() in struct ata_host. This can be
->>> replaced
->>> with a __iomem pointer table, statically allocated with size
->>> PCI_STD_NUM_BARS so it can house the maximum number of PCI BARs.
->>> The
->>> only further modification then necessary is to explicitly fill that
->>> table, whereas before it was filled implicitly by
->>> pcim_request_regions().
->>>
->>> Modify the iomap table in struct ata_host.
->>>
->>> Replace all calls to pcim_request_region() with ones to
->>> pcim_request_region().
+kernel test robot noticed the following build warnings:
 
-[...]
+[auto build test WARNING on brgl/gpio/for-next]
+[also build test WARNING on linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->>> diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
->>> index 250f7dae05fd..d58db8226436 100644
->>> --- a/drivers/ata/libata-sff.c
->>> +++ b/drivers/ata/libata-sff.c
->> [...]
->>> @@ -2172,8 +2173,41 @@ int ata_pci_sff_init_host(struct ata_host
->>> *host)
->>>  			continue;
->>>  		}
->>>  
->>> -		rc = pcim_iomap_regions(pdev, 0x3 << base,
->>> -					dev_driver_string(gdev));
->>> +		/*
->>> +		 * In a first loop run, we want to get BARs 0 and
->>> 1.
->>> +		 * In a second run, we want BARs 2 and 3.
->>> +		 */
->>> +		if (i == 0) {
->>> +			io_tmp = pcim_iomap_region(pdev, 0,
->>> drv_name);
->>> +			if (IS_ERR(io_tmp)) {
->>> +				rc = PTR_ERR(io_tmp);
->>> +				goto err;
->>> +			}
->>> +			host->iomap[0] = io_tmp;
->>> +
->>> +			io_tmp = pcim_iomap_region(pdev, 1,
->>> drv_name);
->>> +			if (IS_ERR(io_tmp)) {
->>> +				rc = PTR_ERR(io_tmp);
->>> +				goto err;
->>> +			}
->>> +			host->iomap[1] = io_tmp;
->>> +		} else {
->>> +			io_tmp = pcim_iomap_region(pdev, 2,
->>> drv_name);
->>> +			if (IS_ERR(io_tmp)) {
->>> +				rc = PTR_ERR(io_tmp);
->>> +				goto err;
->>> +			}
->>> +			host->iomap[2] = io_tmp;
->>> +
->>> +			io_tmp = pcim_iomap_region(pdev, 3,
->>> drv_name);
->>> +			if (IS_ERR(io_tmp)) {
->>> +				rc = PTR_ERR(io_tmp);
->>> +				goto err;
->>> +			}
->>> +			host->iomap[3] = io_tmp;
->>> +		}
->>> +
->>
->>    Ugh... Why you couldn't keep using base (or just i * 2) and avoid
->> such code duplication?
-> 
-> I mean, this would at least make it perfectly readable what's being
-> done.
+url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240821-150951
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20240821070740.2378602-3-billy_tsai%40aspeedtech.com
+patch subject: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240822/202408220439.BUcaNSTv-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408220439.BUcaNSTv-lkp@intel.com/reproduce)
 
-   It looks pretty horrible, to my taste... :-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408220439.BUcaNSTv-lkp@intel.com/
 
-> I guess we could do something like this, maybe with a comment explining
-> what is going on:
-> 
-> for_each_set_bit(j, 0x3 << base, PCI_STD_NUM_BARS) {
+All warnings (new ones prefixed by >>):
 
-   We're only interested in 4 first BARs, not all 6 of 'em. :-)
-And you can't just pass 3 << base to for_each_set_bit() -- it needs
-a bitmap ptr... :-)
-   Why not just do s/th like:
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_request':
+>> drivers/gpio/gpio-aspeed-g7.c:474:48: warning: passing argument 1 of 'pinctrl_gpio_request' makes pointer from integer without a cast [-Wint-conversion]
+     474 |         return pinctrl_gpio_request(chip->base + offset);
+         |                                     ~~~~~~~~~~~^~~~~~~~
+         |                                                |
+         |                                                unsigned int
+   In file included from drivers/gpio/gpio-aspeed-g7.c:16:
+   include/linux/pinctrl/consumer.h:30:44: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
+      30 | int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
+         |                          ~~~~~~~~~~~~~~~~~~^~
+   drivers/gpio/gpio-aspeed-g7.c:474:16: error: too few arguments to function 'pinctrl_gpio_request'
+     474 |         return pinctrl_gpio_request(chip->base + offset);
+         |                ^~~~~~~~~~~~~~~~~~~~
+   include/linux/pinctrl/consumer.h:30:5: note: declared here
+      30 | int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
+         |     ^~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_free':
+>> drivers/gpio/gpio-aspeed-g7.c:479:38: warning: passing argument 1 of 'pinctrl_gpio_free' makes pointer from integer without a cast [-Wint-conversion]
+     479 |         pinctrl_gpio_free(chip->base + offset);
+         |                           ~~~~~~~~~~~^~~~~~~~
+         |                                      |
+         |                                      unsigned int
+   include/linux/pinctrl/consumer.h:31:42: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
+      31 | void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
+         |                        ~~~~~~~~~~~~~~~~~~^~
+   drivers/gpio/gpio-aspeed-g7.c:479:9: error: too few arguments to function 'pinctrl_gpio_free'
+     479 |         pinctrl_gpio_free(chip->base + offset);
+         |         ^~~~~~~~~~~~~~~~~
+   include/linux/pinctrl/consumer.h:31:6: note: declared here
+      31 | void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
+         |      ^~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_set_config':
+>> drivers/gpio/gpio-aspeed-g7.c:676:48: warning: passing argument 1 of 'pinctrl_gpio_set_config' makes pointer from integer without a cast [-Wint-conversion]
+     676 |                 return pinctrl_gpio_set_config(offset, config);
+         |                                                ^~~~~~
+         |                                                |
+         |                                                unsigned int
+   include/linux/pinctrl/consumer.h:36:47: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
+      36 | int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+         |                             ~~~~~~~~~~~~~~~~~~^~
+   drivers/gpio/gpio-aspeed-g7.c:676:24: error: too few arguments to function 'pinctrl_gpio_set_config'
+     676 |                 return pinctrl_gpio_set_config(offset, config);
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/pinctrl/consumer.h:36:5: note: declared here
+      36 | int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_request':
+   drivers/gpio/gpio-aspeed-g7.c:475:1: warning: control reaches end of non-void function [-Wreturn-type]
+     475 | }
+         | ^
 
-for (j = base, j < base + 2, j++) {
 
-> 	host->iomap[j] = pcim_iomap_region(pdev, j, drv_name);
-> 	if (IS_ERR(host->iomap[j])) {
-> 		rc = PTR_ERR(host->iomap[j]);
-> 		break;
-> 	}
-> }
-> 
-> if (rc) {
-> 	dev_warn(gdev,
+vim +/pinctrl_gpio_request +474 drivers/gpio/gpio-aspeed-g7.c
 
-[...]
+   468	
+   469	static int aspeed_gpio_g7_request(struct gpio_chip *chip, unsigned int offset)
+   470	{
+   471		if (!have_gpio(gpiochip_get_data(chip), offset))
+   472			return -ENODEV;
+   473	
+ > 474		return pinctrl_gpio_request(chip->base + offset);
+   475	}
+   476	
+   477	static void aspeed_gpio_g7_free(struct gpio_chip *chip, unsigned int offset)
+   478	{
+ > 479		pinctrl_gpio_free(chip->base + offset);
+   480	}
+   481	
 
-MBR, Sergey
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
