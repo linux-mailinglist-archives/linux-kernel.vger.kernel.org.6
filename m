@@ -1,197 +1,144 @@
-Return-Path: <linux-kernel+bounces-296010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4562B95A446
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:58:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5921E95A451
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A1FB236C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:58:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF0BBB2245D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD113E40F;
-	Wed, 21 Aug 2024 17:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CFE1B3B33;
+	Wed, 21 Aug 2024 18:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHqmLwtl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULuxs7d3"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5141C1B2ED8;
-	Wed, 21 Aug 2024 17:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B6D1B2EF0;
+	Wed, 21 Aug 2024 18:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724263126; cv=none; b=r6TO5+LhLHLUGbIbyT1lWIYEjUmmqUTEF3qcB8Ozjc51/0FKQO+6I9e/vU/XuyiJ46WOJ1aAsaQqv3vf6/G36wXd/xokz7WUyDYyrhfFCAz4c4slNY8bBiSjN7UUzY+UHCJI0LkL1PAXlskQnMpQorFkjAZjY8aHjQVHHMIt9WQ=
+	t=1724263341; cv=none; b=KQllrymL1DcDnc3lS7v5e0hNrkOk62w+IBs4SGkZJOpJBHOr3TC8nHer6h99PJY4RM3AuUD4DgFBd1yAVnD7a8iscztlxDbaBR6OtJkPlm8qXhZQd1UGiWEUVIFWNlwX3eMtOgslL7vyZasSu2IwFR5D8m2/NLNGn5gBDLW79Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724263126; c=relaxed/simple;
-	bh=+1/v5jZfzsR36zzUQoIWdG15/0GCUQBPshZcUiVHbok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OiQSIXSQZ8/GnWU7AUKP2WKyQPiQqj2evOqSfxgW4JTxcx1lGEUYGengMSjbic8AinfR0lUS3fkEI2RW9pIwtnp1/2rOpyBYMHkC5MTdxRhK74AyWIY1HjQk5AWeBHrSN3vDtBtyYq8CBsAB7dMxPbcsS40QMzNYqUuSGGrzKgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHqmLwtl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DDF2C32781;
-	Wed, 21 Aug 2024 17:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724263125;
-	bh=+1/v5jZfzsR36zzUQoIWdG15/0GCUQBPshZcUiVHbok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZHqmLwtlv9GTujsaLUbDxDZl6H/6MZHkU0XyLvwHf/NhE30jV8mLs951UMaqjL+BI
-	 Xk6E6F6TPG2ZDD/TzERnotOwpbPYBSJKZb3wePKwWYpZMEJqNt5JqguJ27sTWQ3GNj
-	 +6q4Pvcx9eFnvHvZC+aPEIuaOw1EEjJ6lubCHr8EqdYvm0hOA9EOxO5yZvKw+UTpvU
-	 Ij5sYYVAD4nYuMBMwB8rVhXcBGO1253327gaRVUCR6iniWkKXUUW82hU1mAlRctlNe
-	 1fG/UqHYc0Aj+SC4yJJi2PBiun+NqM3lO3RLrgK9U4mLjUsk/Vrk8uv3lOQ4EpAES9
-	 lBSlku80TuG7w==
-Date: Wed, 21 Aug 2024 10:58:43 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Michal Suchanek <msuchanek@suse.de>, linux-modules@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.com>,
-	Lucas De Marchi <lucas.de.marchi@gmail.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jiri Slaby <jslaby@suse.com>, Jan Engelhardt <jengelh@inai.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] kmod /usr support
-Message-ID: <20240821175843.GA2531464@thelio-3990X>
-References: <e3yow7ih6af2hxzkmjay2oan3jypmo4hda64vxvpfco66ajcew@i3zewn4nbklf>
- <cover.1699618135.git.msuchanek@suse.de>
- <xbgto5tttcah4mrtyjih72ubod3qb375ww6e2fd4pi342rg4eg@wipwd57q43cc>
- <CAK7LNARYK-xjBS8puEM9xFtmjBNW6KJ2Qd6f7diZkdEEbUgVHA@mail.gmail.com>
+	s=arc-20240116; t=1724263341; c=relaxed/simple;
+	bh=b+mYeFiVZHbVG8ssmWhsOdlhBdLi1hOPl4SC6cw/oBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AmHYZoW5jzS9wvoOldL+fW5UyHNKyGBTJxqSziTAq73clvpVhcm0IDUPmWpAC+Ow2u89QEGd0i/Op89bOLJKcJJ8wcXC2JR1FLbsqYqJNPG2xq6nSb5MhVmD+z6lYnhvxraO04zjVNYpCbxojLsOAllTp3UmK6BVCBlXndhvWuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULuxs7d3; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso56096305e9.0;
+        Wed, 21 Aug 2024 11:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724263338; x=1724868138; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i+WA3ONqKSKn0c11QXINszItxJ2m3gC1pQyHe2RXITo=;
+        b=ULuxs7d3aDd4ikN70VgE/l2YZHpE6wMcbFBCTTf2uWT4mqrY9giRHg8MS0/81BLzSg
+         auRHCL16oh3CwhwtHMif4+1l5kTirf3sHTrwOz2gONef1UMOZv/D4z3qUn3hi6YVlJV5
+         SRxjnWAJZYK/QarUNnLPGuyrlBF3m5QAueqzrsX8sa5qOoAWavskNpPK4Kmnbuyug4n1
+         KC3N8z3QU4u9LHchb4APHXZyaxDmA3DUgSQZF9alZPcxHnq2fOOrgRjZc/I1uhH0GNNu
+         DBwcD2ZA9qKiLup579ZteFOltmWB8dVmqVRHN077dM5nrGIryJgeevkgZPWfmKRpI8ve
+         FUOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724263338; x=1724868138;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i+WA3ONqKSKn0c11QXINszItxJ2m3gC1pQyHe2RXITo=;
+        b=n9F92ael9SJ+VugLm25bdE8Ik4LZ1YwPK3DNOfO4OTBhvaP1yq9ylS6khPILZldVqX
+         vawkBs8VCfyH6gM+f9aZdumg/UWDOyQ/CF81GlwqGA9f9ZBwu9VATwQhhave39kzDvDg
+         ZkZsn7aLFA0MbksfX64RvDOyiyA1MFAbvojAu+Jy6vP1cb+CBMmp/pG4xwS3kr6BFatZ
+         ZJi2w4MUR7jpl5DMs0TK8Jh4VP0wr5UEi3ixPFh3ILMz3Ga3u53igHCNCkAS4BGaN7yf
+         mYcLQiziL8dWKE7u8bRWvSfQ7mSR5fV1jIDFVG9X5l95Fx/o/vZeQiH+CXlEktz8jElh
+         eo2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVwbt9S/B4FS4OfL1n6BYNBgYecX1Q0aVs8Z676ZVIfT0XEwB+0ybnzn6prZKOA5ATWqrisbmdzZQFJW9gj@vger.kernel.org, AJvYcCXOEgzFZNPzLkXMH9j/tW48CnfsZVGci6kOdaAhWckIGjXzGnmOdejFcCThH34XOZUFq04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIHglsOHX5KuA+PzMIsme/T2yUnSE+Xg/EZuFxkwDdxW4+Cetz
+	x0Do82CfK3WtZfMqnBLYLdBztUrwF9r2jzn2lvvQGlqlBzWuHE5C8Zg+lpDLRNLLMWyhtsr7CB5
+	v7cUAHNWCr7ap+KRGbfdn5VFM+pU=
+X-Google-Smtp-Source: AGHT+IGehUX8KP5ZFwQK5AObzHD1ANuVkEBjBoPnPbLE19cpFKTYNGiZElYxFxhDB7ibXD55/4qzJLpkFgMHbDHCTlI=
+X-Received: by 2002:a05:600c:190e:b0:42a:ab31:c248 with SMTP id
+ 5b1f17b1804b1-42abd11dc5amr22619445e9.14.1724263337284; Wed, 21 Aug 2024
+ 11:02:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARYK-xjBS8puEM9xFtmjBNW6KJ2Qd6f7diZkdEEbUgVHA@mail.gmail.com>
+References: <AM6PR03MB584837A72DB98E45AE595A9799812@AM6PR03MB5848.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB584837A72DB98E45AE595A9799812@AM6PR03MB5848.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 21 Aug 2024 11:02:05 -0700
+Message-ID: <CAADnVQ+wbFj7-s-VH=bx2MVbWJ5ea_2xdzY-mDKss1m146Ux1A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: Relax KF_ACQUIRE kfuncs strict type
+ matching constraint on non-zero offset pointers
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 19, 2023 at 05:37:31PM +0900, Masahiro Yamada wrote:
-> On Thu, Dec 7, 2023 at 3:37 AM Lucas De Marchi <lucas.demarchi@intel.com> wrote:
-> >
-> > On Fri, Nov 10, 2023 at 01:13:53PM +0100, Michal Suchanek wrote:
-> > >Hello,
-> > >
-> > >This is resend of the last patch in the series that adds prefix support
-> > >to kernel module location together with additional patch for validating
-> > >the user supplied input to options that are interpreted as directories.
-> > >
-> > >Thanks
-> >
-> > applied, thanks
-> >
-> > Lucas De Marchi
-> 
-> 
-> 
-> If I understood this correctly, MODULE_DIRECTORY is determined
-> by "configure --with-module-directory=...", and there is no
-> way to change it after that.
-> 
-> 
-> If so, how to work with cross-building?
-> 
-> Cross-building is typical when building embedded Linux systems.
-> 
-> 
-> Consider this scenario:
-> 
-> - Your build machine adopts
->     MODULE_DIRECTORY=/usr/lib/modules
-> - The target embedded system adopts
->     MODULE_DIRECTORY=/lib/modules
-> 
-> (or vice a versa)
-> 
-> 
-> 
-> 
-> depmod is used also for cross-building because
-> it is executed as a part of "make module_install".
-> 
-> 
-> The counterpart patch set for Kbuild provides
-> KERNEL_MODULE_DIRECTORY, which only changes
-> the destination directory to which *.ko are copied.
-> 
-> You cannot change the directory where the
-> depmod searches for modules, as it is fixed
-> at the compile-time of kmod.
-> 
-> 
-> 
-> 
-> In this case, what we can do is to build another
-> instance of kmod configured for the target system,
-> and use it for modules_install:
-> 
-> 1. In the kmod source directory
->     ./configure --with=module-directory=/lib/modules
->     make
-> 
-> 2. make modules_install INSTALL_MOD_PATH=<staging-dir>
->      KERNEL_MODULE_DIRECTORY=/lib/modules
->      DEPMOD=<new-depmod-you-has-just-built>
-> 
-> 
-> 
-> If you use OpenEmbedded etc., this is what you do
-> because host tools are built from sources.
-> 
-> But, should it be required all the time?
-> Even when the target embedded system uses
-> busybox-based modprobe instead of kmod?
-> 
-> 
-> 
-> depmod provides --basedir option, which changes
-> the prefix part, but there is no way to override
-> the stem part, MODULE_DIRECTRY.
-> 
-> In the review of the counter patch set,
-> I am suggesting an option to override MODULE_DIRECTRY
-> (let's say --moduledir) at least for depmod.
-> 
-> (Perhaps modinfo too, as it also supports --basedir)
-> 
-> 
-> 
-> Then, we can change scripts/depmod.sh so that
-> Kbuild can propagate KERNEL_MODULE_DIRECTORY
-> to depmod.
-> 
-> 
-> if  <depmod supports --moduledir>; then
->     set -- "$@"  --moduledir "${KERNEL_MODULE_DIRECTORY}"
-> fi
-> 
-> 
-> 
-> Does it make sense?
+On Fri, Aug 16, 2024 at 6:24=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
+>
+> Currently the non-zero offset pointer constraint for KF_TRUSTED_ARGS
+> kfuncs has been relaxed in commit 605c96997d89 ("bpf: relax zero fixed
+> offset constraint on KF_TRUSTED_ARGS/KF_RCU"), which means that non-zero
+> offset does not affect whether a pointer is valid.
+>
+> But currently we still cannot pass non-zero offset pointers to
+> KF_ACQUIRE kfuncs. This is because KF_ACQUIRE kfuncs requires strict
+> type matching, but non-zero offset does not change the type of pointer,
+> which causes the ebpf program to be rejected by the verifier.
+>
+> This can cause some problems, one example is that bpf_skb_peek_tail
+> kfunc [0] cannot be implemented by just passing in non-zero offset
+> pointers.
+>
+> This patch makes KF_ACQUIRE kfuncs not require strict type matching
+> on non-zero offset pointers.
+>
+> [0]: https://lore.kernel.org/bpf/AM6PR03MB5848CA39CB4B7A4397D380B099B12@A=
+M6PR03MB5848.eurprd03.prod.outlook.com/
+>
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> ---
+>  kernel/bpf/verifier.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index ebec74c28ae3..3a14002d24a0 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -11484,7 +11484,7 @@ static int process_kf_arg_ptr_to_btf_id(struct bp=
+f_verifier_env *env,
+>          * btf_struct_ids_match() to walk the struct at the 0th offset, a=
+nd
+>          * resolve types.
+>          */
+> -       if (is_kfunc_acquire(meta) ||
+> +       if ((is_kfunc_acquire(meta) && !reg->off) ||
 
-Did this conversation go anywhere? After the upgrade to kmod 33 in Arch
-Linux, which includes building with the configuration option
-'--with-module-directory' set to '/usr/lib/modules' [1], building a
-tarzst-pkg breaks for me, seemingly for the reason noted above.
+Agree that relaxing is fine and calling acquire kfunc like:
+  bpf_kfunc_nested_acquire_test(&sk->sk_write_queue);
 
-  $ make -skj"$(nproc)" ARCH=x86_64 CROSS_COMPILE=x86_64-linux- O=$HOME/tmp/build/linux defconfig tarzst-pkg
-  depmod: ERROR: could not open directory /home/nathan/tmp/build/linux/tar-install/usr/lib/modules/6.11.0-rc4-00019-gb311c1b497e5: No such file or directory
-  depmod: FATAL: could not search modules: No such file or directory
+should be allowed,
+but above check is strange, since
+if offsetof(&sk_write_queue) =3D=3D 0
+it will disallow calling a kfunc.
+I mean if the field is the first in the outer struct this
+condition will force strict type match which will fail, right?
 
-  $ ls $HOME/tmp/build/linux/tar-install
-  boot  lib
+So should we remove the above is_kfunc_acquire() check instead?
 
-I don't see how to get around this without an option to override
-MODULE_DIRECTORY.
-
-I guess I'll ask Arch Linux to revert this option for the time being, as
-it mentions they do not really need it at the moment.
-
-[1]: https://gitlab.archlinux.org/archlinux/packaging/packages/kmod/-/commit/0efd732cb78bc0b7851a8367f4dc8e6933f5b99d
-
-Cheers,
-Nathan
+pw-bot: cr
 
