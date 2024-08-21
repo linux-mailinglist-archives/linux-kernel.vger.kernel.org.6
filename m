@@ -1,385 +1,374 @@
-Return-Path: <linux-kernel+bounces-296212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447FD95A7AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:18:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D45495A7B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4A61F22886
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:18:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75F29B2141D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA4F17BB07;
-	Wed, 21 Aug 2024 22:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C530D17BB33;
+	Wed, 21 Aug 2024 22:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="vKzs8QiK"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="F3zWZofk"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013044.outbound.protection.outlook.com [52.101.67.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169AC17A924
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 22:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724278679; cv=none; b=jbn8rJ6SWf0ULbaQSNOIlTv9mvZgy77pCTH2oDT1z8q5ym6XN8GvYg6Ajl71oi1WLNTmyY64la0Vu39lmE9D8ZcIiSY4c2jAcBgOD5cFPof+tF1IlhToO5TQkeFr7HaLDiI6YrAYw6MvUGs8Rp3RkQjkBEkle+bc3aD/uIPNXKU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724278679; c=relaxed/simple;
-	bh=lTWh4pFD1D1BKypveelHOr5cmZ6NSQkm9gZ/MuVgouw=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=qZDKeRec/EWP/OvcPQeePgsJ2NG+kskLElRAHiWM/28GRuAklqOGWLwZBgOF+3Nn38s1mTJy3rpDOx5iRXRE13yGmapqRjKP1nAcJTzln6eGkqol8OCkvOsyo5Yvw79WGE0aWHQZgoXIkUfgJD3FPRd42Muqd2jiD7g24nuqI4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=vKzs8QiK; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7141e20e31cso150113b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:17:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1724278676; x=1724883476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GA0U69lWqZh9vgiySnbOFG6Yi5OvKjFXU6qSWoDxJ6E=;
-        b=vKzs8QiKkCcSC5gfWD3JKKB8NbM9KjKTYYEclZVP2b+PR4msG4cwcEQL5Bs+O0B4LC
-         rNqv0rKkO8MMtmOfBcXzwsV+E5HvrqwGgXR//Hgtfr+sv8BTmZGSVzCAdiEiAtDD5bWl
-         U7DFwylzGeaZJb4fF5GwLnPf7CsC/rga1F5LtbkAvt9I6h7qaPVBXXff2p63t7vOdJbk
-         vkw0+i/W1rmVyUXa/Cp8SwfvPOaBXkF+wZmY5dTZAklQleq4/rpDopJABA/q9Pmxv50N
-         eIS4BcZu7USBzeox38XP2623tibNWPFOf/756HWWM2JE76vuCqoAJGmDi7E2CChmAY08
-         teBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724278676; x=1724883476;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GA0U69lWqZh9vgiySnbOFG6Yi5OvKjFXU6qSWoDxJ6E=;
-        b=O+p/A3FKI+91Ga8BvNqcgNtsmxB+w7E+DlPJlNR4TlZDhHmsgdUiQ/XFuAkYX4VKm+
-         4rbIittRGtenv/M6YOrZOjTMJhOAg9ij+INxp1tIaU55av1SeUhQ+X3lHPOYYeBVOaFf
-         GsukPZ7dXuQd/3eN0cByAuW8NPkPWBqvVIzSRd5eul2yEhsLY7yTnAHtREEh+R7hESxZ
-         TDclgDCE7D0aRkzxab4YS7PLzPSZbIKGdXz4McQkRZyo3s7wKWkRR4RX6vb5W0titrM8
-         Tmfr6bY6JdzUhZHQcVLuTGJD5ieOvPhf/8q5OYbz8cODrTP6mwtN1xwLMpH4LwRQtZE6
-         vqKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJdP3a4yT/fqnytSQpBK9Eiboiju5Z3UEfF+aEDnuEIn9pHC8+1+Amd1ZV/LEDXszK+SW78sC3aCpMt80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqH7QnM1Qo1fa7HCd5x5f7o1tQefgW7PC2C6q6VpVypoh1qOoB
-	R9EYxmVHnD2pN1zCREiDnSbTbR1c0XvshgqQQXXkU8EkPLbIRSp7otl3UFZWZHY=
-X-Google-Smtp-Source: AGHT+IGGJZWDDJ8OGBrJ+D+6QI5DXa4ye9cGQczHj52PhpdGbXIA0HyWT9z9gUssP2NjkA94cd9eUg==
-X-Received: by 2002:a05:6a00:10c1:b0:706:6af8:e08a with SMTP id d2e1a72fcca58-71423421f05mr3709454b3a.2.1724278676054;
-        Wed, 21 Aug 2024 15:17:56 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434340419sm138329b3a.205.2024.08.21.15.17.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 15:17:55 -0700 (PDT)
-Date: Wed, 21 Aug 2024 15:17:55 -0700 (PDT)
-X-Google-Original-Date: Wed, 21 Aug 2024 15:17:53 PDT (-0700)
-Subject:     Re: [PATCH v3 1/3] riscv: mm: Use hint address in mmap if available
-In-Reply-To: <MEYP282MB2312A08FF95D44014AB78411C68D2@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
-CC: Charlie Jenkins <charlie@rivosinc.com>, cyy@cyyself.name, alexghiti@rivosinc.com,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, shuah@kernel.org, corbet@lwn.net, linux-mm@kvack.org,
-  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-  linux-doc@vger.kernel.org, linux-api@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: rsworktech@outlook.com
-Message-ID: <mhng-7d9e2b27-a53d-4579-b78e-0aec038290fb@palmer-ri-x1c9>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7825717A924;
+	Wed, 21 Aug 2024 22:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724278823; cv=fail; b=IX1qbM/OrUeTJnMrODmbJBUFu6enAI1SVkeZTkE9cWTD17hbNsnVri93khLnbUz+iA/UGMurIbpSzU35jr8zzehJ8AoCqL9dIOFhV4zEg1xZPsFymMotD4/3oB9HMXLDnRWAjYwoVw6ECD52A2XTulqx0tA7Qv0UTWXoEBgYDeA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724278823; c=relaxed/simple;
+	bh=Zt3HlYQ+af9pdHOKgsTcj0mIKlCViMQmVDP763omqIU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YJUXDXfpdtsn4HXTiNo6pNEU5iAZvmADLszJTrG+fEzP62ozHber739pW31hAYmEc3+u1pS4BYrYWJft0cCGNecgkltkXnxbOD0Uykpg2WeR8sV3mWKMkeU2Cg1wafq8OrYxb//8N3AEIq1dz/K1HWeAz5n88zGa4D9cKPOK6Ig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=F3zWZofk; arc=fail smtp.client-ip=52.101.67.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J1AcKLV1KfeWqN2NIvo6DBYMC5JlO1XZS7cDBdBy88OajUdRxrDxtz3mSTNZ9oyGwETmN3t8MgUrCOd4T2vKX4IKr05G3vJUYFaA8cAd7TwD+S+s2qqpyYnklAmpRRCxIN/A7K+dBhMMU5a1FkHMuyoki21Mzl5sGQpkDdco0QnjWtApaG4rnl5/njfeggteOYWMqhHTAFVIIq8ssEnk/whvqIRTFKTX93hMSwLez/MPH9yMTgL+C56QFb2JA0GXKG1FNrmniLI+mvA26iGu4Hxy84kIIXtYd3ZBD8RGrCUg75t5iWQc6+itYG/X51baIRWaPpOALzrQmJ6aI8oO0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lu0wyuHIxaW4MULQ10eIg7Xwoe1j7wex42mam+qlpeQ=;
+ b=AxXHKpz4QFg9wrcWwu/5/Ftxt3AJzgpJEnpmm95757p3fiv9nQLBmsMDdHL4U475D0YepjWpu/oCwK2b+bg5orjjKQC9tfkS1M5pfxFncBuzYx5qpVEUZ83IUK/W6j3UdPReK39zviYsSmYbA2rbnYv0n/o+FM+vCMH2n+8In6CPXU8TlUuZr4NiYdAPwidWzlaWc/WAYusovewP2jjYuKRnvYDNhni3mGp4acqC25a4PdWeQK8B22F7YkYJMUCUucqhL0lHeoqvMPyhf2zK8yvKSKzlpC4Ea+F5IBSI5r+TLGmh6t3Qb9RlM0NxfGLt5dbmy19VqptwLFGnleUrxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lu0wyuHIxaW4MULQ10eIg7Xwoe1j7wex42mam+qlpeQ=;
+ b=F3zWZofkX5LJaRuAlWLU5XVom8K57J73BVO6paPBVw38hCSRPd+mYPT8cvMp3GD7bHuYPrAzJOp0DVoOQhVgbBHUjlps8bZ6hi+C4vkRt1ejoc4zq/ijY51nuvrB3OWs/VcjmgoYpQvq5QVUrouNsdKQaLaAtqSwS8DTO8qupkmm/NFDnFFuFdW4aDP//XnXJIPS7m/IEeHZ1/1d46YtBJvplkLwdqJ1jK57c9+r7xkqD9WWhFNmAo4sHRCWnLaBAQ72u6sTs5y7Cc9NYcdwjEZgr8rsZ1UHc2A/FNvMwUHxxOjOVGIx/UcdlulVPx2LmhQwlWwrHozYG+S17Oj8LQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI1PR04MB6991.eurprd04.prod.outlook.com (2603:10a6:803:12d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Wed, 21 Aug
+ 2024 22:20:18 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 22:20:18 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dan Murphy <dmurphy@ti.com>,
+	linux-leds@vger.kernel.org (open list:LED SUBSYSTEM),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v3 1/1] dt-bindings: leds: convert leds-lm3692x to yaml format
+Date: Wed, 21 Aug 2024 18:20:00 -0400
+Message-Id: <20240821222001.591111-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR02CA0060.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::37) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB6991:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0a006f05-4ab3-4278-3a7c-08dcc22f7045
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sO1seIwp+YKHS+J+01yWRPlYQxBrD+53VWE4utYk+tWTzC/w44X1YvqpohUu?=
+ =?us-ascii?Q?IxyfMKgVDLHTzyV7XpU2F/1gODwUF2dfCwVtv9Zb5sj0EgU14Y9dJlvxnowv?=
+ =?us-ascii?Q?xiL6sqKFEpELQy+oMEy9i6Sf4vnPHWBnIuh0X3Bu7bSnmnCt3d+Io4uRgVvz?=
+ =?us-ascii?Q?YbNq+3o5ywE619ZtltAs3BnKSjKTSaSafZCuFeOSTx8aR7fbQBJYtTrnFC6W?=
+ =?us-ascii?Q?6nNI2frhwddmLdirv2GDnHsClF2NCTciHm/MySUH2urSbBri6Spgn3aInE9I?=
+ =?us-ascii?Q?sik0msq0s8UIHw7dRZWHOycDfx+hAiVumYF1liMIpDwzJLSCHgHJPo4HcrKX?=
+ =?us-ascii?Q?wJijRwLP283xWv3Hu4wuJ//7WGhFQ0cdinAs57KJzp9g5gtgY96C7Ojok1aD?=
+ =?us-ascii?Q?IM1oONYVUR+1+NLv/kp2lBZ238/KpNPbdM9qji39Q5MWBbqBAYd0+ZpwLSV6?=
+ =?us-ascii?Q?e1iYynT5S5VuHRi/cGIM35rBXW2YS3x+XpHPYSUKBYb+2tz3EZdbYBDsnaJc?=
+ =?us-ascii?Q?mZYB9ZhOD03jh7X/epjKo2uH+M8DBzariUrR1tv9qTxrnVOieWDebIHAMb/5?=
+ =?us-ascii?Q?cpcbuHVLZtCY3Jo2BzdzoK0v1Qikfsd1S7SEKk6cXgQSzeaYnWeZfiRsdwjK?=
+ =?us-ascii?Q?egoxkCywwIWkzqEG5PMuhEAI/JeXGeQlAxd9oAOwrNgJDGi87brz8VMge1lG?=
+ =?us-ascii?Q?iwq3xfwNXmP73+yDV1r81KeSjZBObGGAMMSTk0x2MAzCDqax9fsgiJtcZVYk?=
+ =?us-ascii?Q?udnGhK2glW/tGLKyi2o3M+wus5eb8/ItgUTOqaV1swnTdqp87I4V3IN+zMBg?=
+ =?us-ascii?Q?2PNfeYFr+LJ/H2xTUDIdjOgw3DB3RkeRmJL24z3q5Wd8Ful6Imqu//p7r2vO?=
+ =?us-ascii?Q?Q3fhV0M10gNqgGkHIkGWhX1KKOW9a5JX8MhXXC6C5UZfnUSdlCfkWPJYcFSq?=
+ =?us-ascii?Q?CPpaNla42yyvMSS0dkOnqj9lKAYzFI3t9Hfe3QYDQc7FxcRjp4333hSeDA/k?=
+ =?us-ascii?Q?V3XKLSumj2jqCC4erKcH5irwt1rIz2ApJ60Z3N0sqUIaICPAv/dEUmOHR+cf?=
+ =?us-ascii?Q?qJUMJ+MvcUDQxustLPR9gQqGEGLmePD+CMmFXiWzt5aoD9FuSS241bhhkns2?=
+ =?us-ascii?Q?W5cK0DjeIzABtfIOatO6yPCY2fiCUNEWRnJ13u/aKd+C05Q3Co+7BmFIahou?=
+ =?us-ascii?Q?xvp6LevhuSz0zyOiLFlLWKv3s3kbvtvcUMLjfgt2gE0kXn3gVNUEXAVIgUfc?=
+ =?us-ascii?Q?lGrab0gFhrk25FBmAyiTUMx1oW3x7+p/ijBXn+CJ33XCdg8XO361N8gLr+nh?=
+ =?us-ascii?Q?VFUSOnYwZJd4PNixt4FjAYqXD38zNa7RyNMkBZE9gQeVSLgmqyyxEoo3PUez?=
+ =?us-ascii?Q?ladTvu0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FQzrOF84fV15y56W4qjLCxZEAVd0bsJX6X1iLpHbRQA1lTmHy6UhIU1lX5Zx?=
+ =?us-ascii?Q?2UaErZfh5wNibZQxJ8lcYpc2aKY4NuJijQnnNVOcrKTKwHPxS+r0GcwgUo/a?=
+ =?us-ascii?Q?JrgwM2G3Y/vQMPwIc9lb5W3IyDyJKldKwBB2DHAWXCmpBnuYYNNkHwXhJ+m6?=
+ =?us-ascii?Q?mu7OdGF1SqYeRxcWyIvZqn8YPDNw6hHTtMHIQaXofpK0mEVRnWFVQKcKC1hN?=
+ =?us-ascii?Q?E0cPMYK7ZsFnliDmPMbGSDQQRrkqZUFqubVZTMHmuaDbDQxDhzRKILlK4AHK?=
+ =?us-ascii?Q?1wA3kF0tOUiX2ucC34i0twH42unbPsDB3aR8ZBgGF8ugW3+cEzL5zAeoK3qA?=
+ =?us-ascii?Q?BCvIA91V/7QknBNpQB6favIkBKdyGyihZ8Xis8GbXIQHJojMXLKf/WBkzeFm?=
+ =?us-ascii?Q?FEYfS0C1OTZlo2ZTox6J3Ny0n4fI+OX0Dn2y7PLx5UuIpmutpyHgEE7g3m+/?=
+ =?us-ascii?Q?lK1YXf3YcipPiEfXtyKmBq5KGjpHywHKwYp4ilCYXnf3TMAdm2Vg01Guid+J?=
+ =?us-ascii?Q?21hjRDeIbN2mrba7tZ2TD+hTRVJZZSLNvgrV8ZNIfm4Uq9dc/Y5k6HfDKEQE?=
+ =?us-ascii?Q?6vY4eDUkRO1Gl5kg6WVc8q8IMzewP/O9wZS5Tlrr0z2X0sflZgS6BCBW62HV?=
+ =?us-ascii?Q?kPngAAPHNdU5krDGyvhSbueL91JDFRzF+UOO/Qh7YO76RnPW3YxZewdrPCWT?=
+ =?us-ascii?Q?8K2ROLUHFSeGOJv8p+2/9/cyVuqPLFBfwFHykQMzeX9UgXscaZiAyvMz16Kh?=
+ =?us-ascii?Q?iijP7uzJUuPG9aSckZ2DlT5m1eX2NW0decudFE601tPSLQM8EqHlZuMmriMB?=
+ =?us-ascii?Q?74Ua2aa5jIRHO8HZ9CGF6EA+MkybwMx8LDYyYQdWSWrFyAMN8nOO6qDUIiU/?=
+ =?us-ascii?Q?oNSzqyJ+1mSm+WAGy5BjJOAMb+z0ej9fcOBY8wj3Zh9hVZZji2iXgIGqUyo7?=
+ =?us-ascii?Q?YXCw1IbBWUkWPLh+ahQuHsS1KP4+G4d96xKO/cIw9x8kEyQ/FHky+0/KXEn9?=
+ =?us-ascii?Q?WTO6j8jdY3tLwJ1+UfdlZKdtJ9hisXwtGL9cfYsSfuT9E9zj0ltReVrZfvGP?=
+ =?us-ascii?Q?VM3wQuiitHewR2RY3ZflHQzUuroLpSSfeCZ8sG/xOCa9toXiNQ+j+mDDwa3g?=
+ =?us-ascii?Q?31qGcx6lcApuOuJhITrmrtChqvVCBlpsoGadQTcwul7MMzKHVEpOoglJAg1c?=
+ =?us-ascii?Q?S+6VO4nS03OQfaNCF95g8+I+Ul52/gALHNrXHPvSvqH6FDGef8h+FtZG+fp2?=
+ =?us-ascii?Q?Spkd35l9t9Hpa/sA6g81fdE6P4sxUkMSYi+TpQJigZN8Tt7SPzwQ2OMGtO80?=
+ =?us-ascii?Q?q9KyaXH2vnagxlasilluYCrQ0qMSluplPRtyCPdHb1JLLv9OepjY63w2t0Yo?=
+ =?us-ascii?Q?jbO8t/E+DDFc2rk32MEZ9rnowouQT+loiteEHEwFIuxSe5iHwJsv3YQI3kMJ?=
+ =?us-ascii?Q?8mOi5Ht/edwBQL742Ons4DgDTtkHSXuOGRHPVJ/SXkGbdtfCdAn6afo35bLQ?=
+ =?us-ascii?Q?sIzuuRv5rV3vO98DJTl+BL+S8n8AinqPojAulRrVW5AAaxpTZQ0XkE+mKsF5?=
+ =?us-ascii?Q?pGwmKCFIJwZnkDYIqWx2aqaSRexktqo8xQN7P9bH?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a006f05-4ab3-4278-3a7c-08dcc22f7045
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 22:20:18.3946
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9o48RBqFssF15SP4mHx5Yu8BjjQUSlscgsj6cjHgWm2xsggCFwpWb+puEL+rKOon/TDHEAgDEqbWb+r3G6RJIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6991
 
-On Mon, 19 Aug 2024 18:58:18 PDT (-0700), rsworktech@outlook.com wrote:
-> On 2024-08-20 01:00, Charlie Jenkins wrote:
->> On Mon, Aug 19, 2024 at 01:55:57PM +0800, Levi Zim wrote:
->>> On 2024-03-22 22:06, Palmer Dabbelt wrote:
->>>> On Thu, 01 Feb 2024 18:28:06 PST (-0800), Charlie Jenkins wrote:
->>>>> On Wed, Jan 31, 2024 at 11:59:43PM +0800, Yangyu Chen wrote:
->>>>>> On Wed, 2024-01-31 at 22:41 +0800, Yangyu Chen wrote:
->>>>>>> On Tue, 2024-01-30 at 17:07 -0800, Charlie Jenkins wrote:
->>>>>>>> On riscv it is guaranteed that the address returned by mmap is less
->>>>>>>> than
->>>>>>>> the hint address. Allow mmap to return an address all the way up to
->>>>>>>> addr, if provided, rather than just up to the lower address space.
->>>>>>>>>> This provides a performance benefit as well, allowing
->>>>>> mmap to exit
->>>>>>>> after
->>>>>>>> checking that the address is in range rather than searching for a
->>>>>>>> valid
->>>>>>>> address.
->>>>>>>>>> It is possible to provide an address that uses at most the same
->>>>>>>> number
->>>>>>>> of bits, however it is significantly more computationally expensive
->>>>>>>> to
->>>>>>>> provide that number rather than setting the max to be the hint
->>>>>>>> address.
->>>>>>>> There is the instruction clz/clzw in Zbb that returns the highest
->>>>>>>> set
->>>>>>>> bit
->>>>>>>> which could be used to performantly implement this, but it would
->>>>>>>> still
->>>>>>>> be slower than the current implementation. At worst case, half of
->>>>>>>> the
->>>>>>>> address would not be able to be allocated when a hint address is
->>>>>>>> provided.
->>>>>>>>>> Signed-off-by: Charlie Jenkins<charlie@rivosinc.com>
->>>>>>>> ---
->>>>>>>>   arch/riscv/include/asm/processor.h | 27 +++++++++++---------------
->>>>>>>> -
->>>>>>>>   1 file changed, 11 insertions(+), 16 deletions(-)
->>>>>>>>>> diff --git a/arch/riscv/include/asm/processor.h
->>>>>>>> b/arch/riscv/include/asm/processor.h
->>>>>>>> index f19f861cda54..8ece7a8f0e18 100644
->>>>>>>> --- a/arch/riscv/include/asm/processor.h
->>>>>>>> +++ b/arch/riscv/include/asm/processor.h
->>>>>>>> @@ -14,22 +14,16 @@
->>>>>>>>
->>>>>>>>   #include <asm/ptrace.h>
->>>>>>>>
->>>>>>>> -#ifdef CONFIG_64BIT
->>>>>>>> -#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
->>>>>>>> -#define STACK_TOP_MAX        TASK_SIZE_64
->>>>>>>> -
->>>>>>>>   #define arch_get_mmap_end(addr, len, flags)            \
->>>>>>>>   ({                                \
->>>>>>>>       unsigned long
->>>>>>>> mmap_end;                    \
->>>>>>>>       typeof(addr) _addr = (addr);                \
->>>>>>>> -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
->>>>>>>> is_compat_task())) \
->>>>>>>> +    if ((_addr) == 0 ||                    \
->>>>>>>> +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
->>>>>>>> +        ((_addr + len) > BIT(VA_BITS -
->>>>>>>> 1)))            \
->>>>>>>>           mmap_end = STACK_TOP_MAX;            \
->>>>>>>> -    else if ((_addr) >= VA_USER_SV57) \
->>>>>>>> -        mmap_end = STACK_TOP_MAX;            \
->>>>>>>> -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
->>>>>>>> VA_BITS_SV48)) \
->>>>>>>> -        mmap_end = VA_USER_SV48;            \
->>>>>>>>       else                            \
->>>>>>>> -        mmap_end = VA_USER_SV39;            \
->>>>>>>> +        mmap_end = (_addr + len);            \
->>>>>>>>       mmap_end;                        \
->>>>>>>>   })
->>>>>>>>
->>>>>>>> @@ -39,17 +33,18 @@
->>>>>>>>       typeof(addr) _addr = (addr);                \
->>>>>>>>       typeof(base) _base = (base);                \
->>>>>>>>       unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base);    \
->>>>>>>> -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
->>>>>>>> is_compat_task())) \
->>>>>>>> +    if ((_addr) == 0 ||                    \
->>>>>>>> +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
->>>>>>>> +        ((_addr + len) > BIT(VA_BITS -
->>>>>>>> 1)))            \
->>>>>>>>           mmap_base = (_base);                \
->>>>>>>> -    else if (((_addr) >= VA_USER_SV57) && (VA_BITS >=
->>>>>>>> VA_BITS_SV57)) \
->>>>>>>> -        mmap_base = VA_USER_SV57 - rnd_gap; \
->>>>>>>> -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
->>>>>>>> VA_BITS_SV48)) \
->>>>>>>> -        mmap_base = VA_USER_SV48 - rnd_gap; \
->>>>>>>>       else                            \
->>>>>>>> -        mmap_base = VA_USER_SV39 - rnd_gap; \
->>>>>>>> +        mmap_base = (_addr + len) - rnd_gap; \
->>>>>>>>       mmap_base;                        \
->>>>>>>>   })
->>>>>>>>
->>>>>>>> +#ifdef CONFIG_64BIT
->>>>>>>> +#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
->>>>>>>> +#define STACK_TOP_MAX        TASK_SIZE_64
->>>>>>>>   #else
->>>>>>>>   #define DEFAULT_MAP_WINDOW    TASK_SIZE
->>>>>>>>   #define STACK_TOP_MAX        TASK_SIZE
->>>>>>>>>> I have carefully tested your patch on qemu with sv57. A
->>>>>> bug that
->>>>>>> needs
->>>>>>> to be solved is that mmap with the same hint address without
->>>>>>> MAP_FIXED
->>>>>>> set will fail the second time.
->>>>>>>> Userspace code to reproduce the bug:
->>>>>>>> #include <sys/mman.h>
->>>>>>> #include <stdio.h>
->>>>>>> #include <stdint.h>
->>>>>>>> void test(char *addr) {
->>>>>>>      char *res = mmap(addr, 4096, PROT_READ | PROT_WRITE,
->>>>>>> MAP_ANONYMOUS
->>>>>>>> MAP_PRIVATE, -1, 0);
->>>>>>>      printf("hint %p got %p.\n", addr, res);
->>>>>>> }
->>>>>>>> int main (void) {
->>>>>>>      test(1<<30);
->>>>>>>      test(1<<30);
->>>>>>>      test(1<<30);
->>>>>>>      return 0;
->>>>>>> }
->>>>>>>> output:
->>>>>>>> hint 0x40000000 got 0x40000000.
->>>>>>> hint 0x40000000 got 0xffffffffffffffff.
->>>>>>> hint 0x40000000 got 0xffffffffffffffff.
->>>>>>>> output on x86:
->>>>>>>> hint 0x40000000 got 0x40000000.
->>>>>>> hint 0x40000000 got 0x7f9171363000.
->>>>>>> hint 0x40000000 got 0x7f9171362000.
->>>>>>>> It may need to implement a special arch_get_unmapped_area and
->>>>>>> arch_get_unmapped_area_topdown function.
->>>>>>>
->>>>>> This is because hint address < rnd_gap. I have tried to let mmap_base =
->>>>>> min((_addr + len), (base) + TASK_SIZE - DEFAULT_MAP_WINDOW). However it
->>>>>> does not work for bottom-up while ulimit -s is unlimited. You said this
->>>>>> behavior is expected from patch v2 review. However it brings a new
->>>>>> regression even on sv39 systems.
->>>>>>
->>>>>> I still don't know the reason why use addr+len as the upper-bound. I
->>>>>> think solution like x86/arm64/powerpc provide two address space switch
->>>>>> based on whether hint address above the default map window is enough.
->>>>>>
->>>>> Yep this is expected. It is up to the maintainers to decide.
->>>> Sorry I forgot to reply to this, I had a buffer sitting around somewhere
->>>> but I must have lost it.
->>>>
->>>> I think Charlie's approach is the right way to go.  Putting my userspace
->>>> hat on, I'd much rather have my allocations fail rather than silently
->>>> ignore the hint when there's memory pressure.
->>>>
->>>> If there's some real use case that needs these low hints to be silently
->>>> ignored under VA pressure then we can try and figure something out that
->>>> makes those applications work.
->>> I could confirm that this patch has broken chromium's partition allocator on
->>> riscv64. The minimal reproduction I use is chromium-mmap.c:
->>>
->>> #include <stdio.h>
->>> #include <sys/mman.h>
->>>
->>> int main() {
->>>      void* expected = (void*)0x400000000;
->>>      void* addr = mmap(expected, 17179869184, PROT_NONE,
->>> MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
->>>      if (addr != expected) {
->> It is not valid to assume that the address returned by mmap will be the
->> hint address. If the hint address is not available, mmap will return a
->> different address.
->
-> Oh, sorry I didn't make it clear what is the expected behavior.
-> The printf here is solely for debugging purpose and I don't mean that
-> chromium expect it will get the hint address. The expected behavior is
-> that both the two mmap calls will succeed.
->
->>>          printf("Not expected address: %p != %p\n", addr, expected);
->>>      }
->>>      expected = (void*)0x3fffff000;
->>>      addr = mmap(expected, 17179873280, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS,
->>> -1, 0);
->>>      if (addr != expected) {
->>>          printf("Not expected address: %p != %p\n", addr, expected);
->>>      }
->>>      return 0;
->>> }
->>>
->>> The second mmap fails with ENOMEM. Manually reverting this commit fixes the
->>> issue for me. So I think it's clearly a regression and breaks userspace.
->>>
->> The issue here is that overlapping memory is being requested. This
->> second mmap will never be able to provide an address at 0x3fffff000 with
->> a size of 0x400001000 since mmap just provided an address at 0x400000000
->> with a size of 0x400000000.
->>
->> Before this patch, this request causes mmap to return a completely
->> arbitrary value. There is no reason to use a hint address in this manner
->> because the hint can never be respected. Since an arbitrary address is
->> desired, a hint of zero should be used.
->>
->> This patch causes the behavior to be more deterministic. Instead of
->> providing an arbitrary address, it causes the address to be less than or
->> equal to the hint address. This allows for applications to make
->> assumptions about the returned address.
->
-> About the overlap, of course the partition allocator's request for
-> overlapped vma seems unreasonable.
->
-> But I still don't quite understand why mmap cannot use an address higher
-> than the hint address.
-> The hint address, after all, is a hint, not a requirement.
->
-> Quoting the man page:
->
->>    If another mapping already exists there, the kernel picks
->>         a new address that may or may not depend on the hint.  The
->>         address of the new mapping is returned as the result of the call.
->
-> So for casual programmers that only reads man page but not architecture
-> specific kernel documentation, the current behavior of mmap on riscv64
-> failing on overlapped address ranges are quite surprising IMO.
->
-> And quoting the man page again about the errno:
->
->>       ENOMEM No memory is available.
->>
->>       ENOMEM The process's maximum number of mappings would have been
->>              exceeded.  This error can also occur for munmap(), when
->>              unmapping a region in the middle of an existing mapping,
->>              since this results in two smaller mappings on either side
->>              of the region being unmapped.
->>
->>       ENOMEM (since Linux 4.7) The process's RLIMIT_DATA limit,
->>              described in getrlimit(2), would have been exceeded.
->>
->>       ENOMEM We don't like addr, because it exceeds the virtual address
->>              space of the CPU.
->>
->
-> There's no matching description for the ENOMEM returned here.
-> I would suggest removing "because it exceeds the virtual address
-> space of the CPU." from the last item if the ENOMEM behavior here
-> is expected.
->
->> This code is unfortunately relying on the previously mostly undefined
->> behavior of the hint address in mmap.
->
-> Although I haven't read the code of chromium's partition allocator to
-> judge whether it should
-> be improved or fixed for riscv64, I do know that the kernel "don't break
-> userspace" and "never EVER blame the user programs".
+Convert binding doc leds-lm3592x to yaml format.
+Additional change:
+- Add ref to common.yaml for child node.
+- Add i2c node at example.
 
-Ya, sorry for breaking stuff.
+Fix below warning:
+arch/arm64/boot/dts/freescale/imx8mq-librem5-r2.dtb: /soc@0/bus@30800000/i2c@30a40000/backlight@36:
+	failed to match any schema with compatible: ['ti,lm36922']
 
-The goal here was to move to the mmap flag behavor similar to what arm64 
-and x86 have, as that was done in a way that didn't appear to break 
-userspace -- or at least any real userspace programs.  IIRC that first 
-test was pretty broken (it actually depended on the hint address), but 
-sounds like that's not the case.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change from v2 to v3:
+- add . after sentence.
+- use led@[0-3]
+- add allOf: disable led@3 for lm36922
 
-I think maybe this is just luck: we didn't chunk the address space up, 
-we're just hinting on every bit, so we're just more likely to hit the 
-exhaustion.  Doesn't really matter, though, as if it's breaking stuff so 
-we've got to deal with it.
+Change from v1 to v2:
+- fix dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/leds/ti.lm36922.example.dtb: /example-0/i2c/led-controller@36: failed to match any schema with compatible: ['ti,lm3692x']
+---
+ .../devicetree/bindings/leds/leds-lm3692x.txt |  65 -----------
+ .../devicetree/bindings/leds/ti.lm36922.yaml  | 110 ++++++++++++++++++
+ 2 files changed, 110 insertions(+), 65 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/ti.lm36922.yaml
 
-Charlie and I are just talking, and best we can come up with is to move 
-to the behavior where we fall back to larger allocation regions when 
-there's no space in the smaller allocation region.  Charlie's going to 
-try and throw together a patch for that, hopefully it'll sort things 
-out.
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+deleted file mode 100644
+index b1103d961d6ca..0000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
++++ /dev/null
+@@ -1,65 +0,0 @@
+-* Texas Instruments - LM3692x Highly Efficient White LED Driver
+-
+-The LM3692x is an ultra-compact, highly efficient,
+-white-LED driver designed for LCD display backlighting.
+-
+-The main difference between the LM36922 and LM36923 is the number of
+-LED strings it supports.  The LM36922 supports two strings while the LM36923
+-supports three strings.
+-
+-Required properties:
+-	- compatible:
+-		"ti,lm36922"
+-		"ti,lm36923"
+-	- reg :  I2C slave address
+-	- #address-cells : 1
+-	- #size-cells : 0
+-
+-Optional properties:
+-	- enable-gpios : gpio pin to enable/disable the device.
+-	- vled-supply : LED supply
+-	- ti,ovp-microvolt: Overvoltage protection in
+-	    micro-volt, can be 17000000, 21000000, 25000000 or
+-	    29000000. If ti,ovp-microvolt is not specified it
+-	    defaults to 29000000.
+-
+-Required child properties:
+-	- reg : 0 - Will enable all LED sync paths
+-		1 - Will enable the LED1 sync
+-		2 - Will enable the LED2 sync
+-		3 - Will enable the LED3 sync (LM36923 only)
+-
+-Optional child properties:
+-	- function : see Documentation/devicetree/bindings/leds/common.txt
+-	- color : see Documentation/devicetree/bindings/leds/common.txt
+-	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+-	- linux,default-trigger :
+-	   see Documentation/devicetree/bindings/leds/common.txt
+-	- led-max-microamp :
+-	   see Documentation/devicetree/bindings/leds/common.txt
+-
+-Example:
+-
+-#include <dt-bindings/leds/common.h>
+-
+-led-controller@36 {
+-	compatible = "ti,lm3692x";
+-	reg = <0x36>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-
+-	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+-	vled-supply = <&vbatt>;
+-	ti,ovp-microvolt = <29000000>;
+-
+-	led@0 {
+-		reg = <0>;
+-		function = LED_FUNCTION_BACKLIGHT;
+-		color = <LED_COLOR_ID_WHITE>;
+-		linux,default-trigger = "backlight";
+-		led-max-microamp = <20000>;
+-	};
+-}
+-
+-For more product information please see the link below:
+-https://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
+diff --git a/Documentation/devicetree/bindings/leds/ti.lm36922.yaml b/Documentation/devicetree/bindings/leds/ti.lm36922.yaml
+new file mode 100644
+index 0000000000000..8ffbc6b785a3e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/ti.lm36922.yaml
+@@ -0,0 +1,110 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/ti.lm36922.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments - LM3692x Highly Efficient White LED Driver
++
++maintainers:
++  - Dan Murphy <dmurphy@ti.com>
++
++description: |
++  The LM3692x is an ultra-compact, highly efficient,
++  white-LED driver designed for LCD display backlighting.
++
++  The main difference between the LM36922 and LM36923 is the number of
++  LED strings it supports. The LM36922 supports two strings while the LM36923
++  supports three strings.
++
++  For more product information please see the link below:
++  https://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
++
++properties:
++  compatible:
++    enum:
++      - ti,lm36922
++      - ti,lm36923
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  enable-gpios:
++    description: gpio pin to enable/disable the device.
++
++  vled-supply:
++    description: LED supply
++
++  ti,ovp-microvolt:
++    description: Overvoltage protection.
++    default: 29000000
++    enum: [17000000, 21000000, 25000000, 29000000]
++
++patternProperties:
++  '^led@[0-3]$':
++    type: object
++    $ref: common.yaml
++    properties:
++      reg:
++        enum: [0, 1, 2, 3]
++        description: |
++          0 - Will enable all LED sync paths
++          1 - Will enable the LED1 sync
++          2 - Will enable the LED2 sync
++          3 - Will enable the LED3 sync (LM36923 only)
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: ti,lm36922
++    then:
++      properties:
++        led@3: false
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@36 {
++            compatible = "ti,lm36922";
++            reg = <0x36>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++            vled-supply = <&vbatt>;
++            ti,ovp-microvolt = <29000000>;
++
++            led@0 {
++                reg = <0>;
++                function = LED_FUNCTION_BACKLIGHT;
++                color = <LED_COLOR_ID_WHITE>;
++                linux,default-trigger = "backlight";
++                led-max-microamp = <20000>;
++            };
++        };
++    };
++
+-- 
+2.34.1
 
->> The goal of this patch is to help
->> developers have more consistent mmap behavior, but maybe it is necessary
->> to hide this behavior behind an mmap flag.
->
-> Thank you for helping to shape a more consistent mmap behavior.
-> I think this should be fixed ASAP either by allowing the hint address to
-> be ignored
-> (as suggested by the Linux man page), or hide this behavior behind an
-> mmap flag as you said.
->
->> - Charlie
->>
->>> See alsohttps://github.com/riscv-forks/electron/issues/4
->>>
->>>>> - Charlie
->>> Sincerely,
->>> Levi
->>>
->
-> I accidentally introduced some HTML into this reply so this reply is
-> resent as plain text.
->
-> Sincerely,
-> Levi
 
