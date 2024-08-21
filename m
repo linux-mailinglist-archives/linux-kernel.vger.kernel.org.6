@@ -1,88 +1,118 @@
-Return-Path: <linux-kernel+bounces-294754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8E995921D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:18:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FEE95922F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331681C22307
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:18:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85321B22ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE80D22638;
-	Wed, 21 Aug 2024 01:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EBD4D8A1;
+	Wed, 21 Aug 2024 01:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J7HW4rBx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4DDeIsQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ECA33C5;
-	Wed, 21 Aug 2024 01:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E991322B;
+	Wed, 21 Aug 2024 01:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724203119; cv=none; b=M8H6L4so2LZQWxtnk2kUoo/+jQbZ77KO7GzE1RMM9MFSCt6KRInACl/JjZc4xYkAUeKc1Atzt0jGN7mInCVMcQJEi797qCQv876bwBaOq5iudrGDuYh8p5Z7Acy9yBr+3EaZisZ1m7yP/pOHNegWkaNemYaO/1K38ST9QY4F2cE=
+	t=1724203835; cv=none; b=JWHKZzoIVkmsjxhfI0aykx2F0za6A9I0c/PPot3jumhQpfDHOIojmBR3Z+mVAV6cxY/Tls7YORqCbfPPAaFwcco6b1kWioBaQ9tWyor1OJ1Ud92NZPs/rCg9aoPmK8O6mkQj9/cET56ApA6K8ka576ZLJLjGx/Nm7v/SZAPAUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724203119; c=relaxed/simple;
-	bh=bqLgu5rCY6FwxrHMn3oG9AZSGc/vl8klIaH3jFWN1QY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=RFZA5Nmk9qnKlmDTHBZG2foAI0weno7lBoEpscs+REL159kY8kloy58f20l0d9Q17nHNb1cIQi2dWj1b9uR4IfvEy311Hb5vTJpRnD9wnWhxB2NXwi+p9DozD2Eup13doj8M6PsnnUjxtlAcS++b01I6fPI1DK/NVhl2pvquxf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=J7HW4rBx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2772C4AF1C;
-	Wed, 21 Aug 2024 01:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1724203118;
-	bh=bqLgu5rCY6FwxrHMn3oG9AZSGc/vl8klIaH3jFWN1QY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J7HW4rBxhF/HrPEjaCJdLiVU49cBPm7VSaD9bLo71rgfjuow5pC1T829ekAR5qhbt
-	 y0AJp1Dye1XHvNgijTcPSn/K+3aFMY0KrpEYB4Jf2LPy+9du5uUB+wosLhZdsiMS2H
-	 3sOrZ4VDg694Av7PSihHm8BXGsBxnjelk958OsxQ=
-Date: Tue, 20 Aug 2024 18:18:37 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rob Landley <rob@landley.net>, Michael Ellerman <mpe@ellerman.id.au>,
- Nathan Chancellor <nathan@kernel.org>, Guo Ren <guoren@kernel.org>, Brian
- Cain <bcain@quicinc.com>, Dinh Nguyen <dinguyen@kernel.org>, Yoshinori Sato
- <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, John Paul
- Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Richard Weinberger
- <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes
- Berg <johannes@sipsolutions.net>, linux-mm@kvack.org,
- linuxppc-dev@lists.ozlabs.org, christophe.leroy@csgroup.eu,
- jeffxu@google.com, Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org,
- npiggin@gmail.com, oliver.sang@intel.com, pedro.falcato@gmail.com,
- linux-um@lists.infradead.org, linux-csky@vger.kernel.org, linux-hexagon
- <linux-hexagon@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct
- vm_special_mapping
-Message-Id: <20240820181837.4d470b8837db618827b7bef7@linux-foundation.org>
-In-Reply-To: <CAHk-=whvR+z=0=0gzgdfUiK70JTa-=+9vxD-4T=3BagXR6dciA@mail.gmail.com>
-References: <20240812082605.743814-1-mpe@ellerman.id.au>
-	<20240819185253.GA2333884@thelio-3990X>
-	<CAHk-=wj9QPhG4CjiX8YLRC1wHj_Qs-T8wJi0WEhkfp0cszvB9w@mail.gmail.com>
-	<20240819195120.GA1113263@thelio-3990X>
-	<CAHk-=wgsDJ+sA1T01YT-z5TXs3zxJ54f0VDApkZ1pgcr8T=myQ@mail.gmail.com>
-	<CAHk-=wjzYKrwSDK3PFMC1C2x37aKzEuC7dVxg0kGt8h+vjZfjQ@mail.gmail.com>
-	<87y14rso9o.fsf@mail.lhotse>
-	<CAHk-=wiS7PMtL6oR6acNgWZr0NN4Ax4PQD_CYJKCiKS0mT=Z7A@mail.gmail.com>
-	<dff57198-7955-ec09-8909-671982834673@landley.net>
-	<CAHk-=wj78UV2ep6i5JZ-1qhLPZPHV4eUOtjWqqh_3zcqJ7pK-Q@mail.gmail.com>
-	<67108df9-7374-a64e-ca82-8c46d67fb55b@landley.net>
-	<CAHk-=whvR+z=0=0gzgdfUiK70JTa-=+9vxD-4T=3BagXR6dciA@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724203835; c=relaxed/simple;
+	bh=IgbRt2X/eqF3ZxBx7aI8dn140iBIsCi7/UUDBEAx9BU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Mvr2gji3tCWDEX4y+/tjfgl+6OjWzK+HlsK2SSvhZW2iCPc36bmx90x4OPtzE9IS2OBUiX+Ho6Wor/JpfdfvTtxkpRudxSg/mQaah5wxlBJPIT8DUSEv6/XzLTktb+ZHzT2M7+BqOZ9jQ6+rmjLMszQhNTYCGsEtZwjjx530ogk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4DDeIsQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DCB0C4AF0B;
+	Wed, 21 Aug 2024 01:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724203834;
+	bh=IgbRt2X/eqF3ZxBx7aI8dn140iBIsCi7/UUDBEAx9BU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=B4DDeIsQgOkIvmVJvjgYpPgOiydDTojo+sl4F7YuyRShRCvZZCLXApGrOcxMIfh0u
+	 /9pK1UY0HYaQu9y6qmHt9sYN1yLYsR3g5HTtUx/RT18/ZcAWXe8m6kebL7d5IpdWvh
+	 p1CcGCg5m6SgFtqteIVwhTyUeVZi7WNCppouekDnOnWrebGs/hQOstF6OMmjKyRPWn
+	 YtWBa2r2DNiOp+DLNR5IZYpSs4A6SCCBhDbJAv+ro/JpcZJGom8BH9YwK6HG7LjplY
+	 SetPtlMKaO+pOPhLovv2wFyGoh3I4rTg206X1BmllHmg2y82XAX8GErsedA44gHsdi
+	 YJ1UcDjJ1PmTA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FAE3804CB6;
+	Wed, 21 Aug 2024 01:30:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 00/14] mptcp: pm: fix IDs not being reusable
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172420383401.1291081.11218145851509520450.git-patchwork-notify@kernel.org>
+Date: Wed, 21 Aug 2024 01:30:34 +0000
+References: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
+In-Reply-To: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
+To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ shuah@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, stable@vger.kernel.org
 
-On Tue, 20 Aug 2024 16:14:29 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hello:
 
-> Andrew - I think this is good, but there may be other issues lurking.
-> Do with it as you see fit,
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Hey you know me, I'll merge any old thing if I think it'll help nurture
-newbies.
+On Mon, 19 Aug 2024 21:45:18 +0200 you wrote:
+> Here are more fixes for the MPTCP in-kernel path-manager. In this
+> series, the fixes are around the endpoint IDs not being reusable for
+> on-going connections when re-creating endpoints with previously used IDs.
+> 
+> - Patch 1 fixes this case for endpoints being used to send ADD_ADDR.
+>   Patch 2 validates this fix. The issue is present since v5.10.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,01/14] mptcp: pm: re-using ID of unused removed ADD_ADDR
+    https://git.kernel.org/netdev/net/c/e255683c06df
+  - [net,02/14] selftests: mptcp: join: check re-using ID of unused ADD_ADDR
+    https://git.kernel.org/netdev/net/c/a13d5aad4dd9
+  - [net,03/14] mptcp: pm: re-using ID of unused removed subflows
+    https://git.kernel.org/netdev/net/c/edd8b5d868a4
+  - [net,04/14] selftests: mptcp: join: check re-using ID of closed subflow
+    https://git.kernel.org/netdev/net/c/65fb58afa341
+  - [net,05/14] mptcp: pm: re-using ID of unused flushed subflows
+    https://git.kernel.org/netdev/net/c/ef34a6ea0cab
+  - [net,06/14] selftests: mptcp: join: test for flush/re-add endpoints
+    https://git.kernel.org/netdev/net/c/e06959e9eebd
+  - [net,07/14] mptcp: pm: remove mptcp_pm_remove_subflow()
+    https://git.kernel.org/netdev/net/c/f448451aa62d
+  - [net,08/14] mptcp: pm: only mark 'subflow' endp as available
+    https://git.kernel.org/netdev/net/c/322ea3778965
+  - [net,09/14] mptcp: pm: only decrement add_addr_accepted for MPJ req
+    https://git.kernel.org/netdev/net/c/1c1f72137598
+  - [net,10/14] mptcp: pm: check add_addr_accept_max before accepting new ADD_ADDR
+    https://git.kernel.org/netdev/net/c/0137a3c7c2ea
+  - [net,11/14] mptcp: pm: only in-kernel cannot have entries with ID 0
+    https://git.kernel.org/netdev/net/c/ca6e55a703ca
+  - [net,12/14] mptcp: pm: fullmesh: select the right ID later
+    https://git.kernel.org/netdev/net/c/09355f7abb9f
+  - [net,13/14] selftests: mptcp: join: validate fullmesh endp on 1st sf
+    https://git.kernel.org/netdev/net/c/4878f9f8421f
+  - [net,14/14] mptcp: pm: avoid possible UaF when selecting endp
+    https://git.kernel.org/netdev/net/c/48e50dcbcbaa
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
