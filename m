@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-296190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4B895A6F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:44:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D05B95A6FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1EF1C229B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:44:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2390281624
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A2417A931;
-	Wed, 21 Aug 2024 21:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA51179665;
+	Wed, 21 Aug 2024 21:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I30YXryW"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvtH3MC/"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E733713A3E8;
-	Wed, 21 Aug 2024 21:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9BD1531C3
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724276683; cv=none; b=KcjFy24bbvfKbOGCy9cb4Ie5ZY/v0sq6WIFdyw1+zvknpHCLhCsmh0V9jaAR8FL+xVmuwEgz6zh+TpY/VfhLBhrF08eyxSJhREZHey6GGSVcgKUSv7RFIYAcAis6AkMKu533T1qwYWIFtTUScVRKU8MEsqrsfhZCC+rNWRTCsXU=
+	t=1724276869; cv=none; b=NVCqAWH1toGoxyxh/mmMdOIWTMnX/rI2hJnVR+b8MHu3+Jl4M4JlkzEcY0zV5wNUXj4fsCTSFQmUk445FGMOZODx97rnvRXeRyrY9H0Cz98j7yQtXl6ROIZ+MeDjEt9NBfWYGGY6fO6vAylb7F0wgYHR0g27TXwZCUTUX40C30w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724276683; c=relaxed/simple;
-	bh=c5Cc7xVRDAu0e78vBBLsWi4hEbQ6IL85wMQbkWCm6qU=;
+	s=arc-20240116; t=1724276869; c=relaxed/simple;
+	bh=5xwsm4q+oEtOPgmW58wlQq10qR/Mga5nEPHHluceLUc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PBbdT4QjjVGCSVdP9xcOo1uuRA7SDt52U8i7Vhu6+lDILaoC6VTj/Y62rkDlaIGY88JVC/LU2lr4DM5oTLNFjZDyParjKaj5kGBJhXW6pQ+VBAWMTeEqHckaNaPZtRkNiV+XswAYWqDtGLQN/WdmoU/AOWpdl6vKYSwMpUMOJ8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I30YXryW; arc=none smtp.client-ip=209.85.216.54
+	 To:Cc:Content-Type; b=keBtN1yFxSgsLNGX+4r4YR4WdmoEriF6WRFlYvNoLUraHKH5VYQpuEuW80LaBfHwEcYFxxBL6Egk4cqZX5nRUBGzWsmQfGhtMYmedV/QSx9e3dwTSxrz0vDsxzaTyKjSc6LVxnJRpfnWjh1pr+HaHt2Z2QL6XVgzlT2heqsvI7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvtH3MC/; arc=none smtp.client-ip=209.85.221.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso93538a91.1;
-        Wed, 21 Aug 2024 14:44:41 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4fc7bd8763cso49607e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:47:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724276681; x=1724881481; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JUETRfax8sjt9qjrrTeS5cgr6hmWsh2u4gE8+Q0j9eE=;
-        b=I30YXryWfAJjuSCoQcNueqqUTl68VV1x/60W32OoKiXu/O4/nJ8IRqHchego6V1Urs
-         qCRmNIF5zefpfNOZ/Q4eznt9f5jupeJ2YDSI/BboeehI+IopNSX00V4GeYPACwj2GG+Y
-         Mf3vC62Ob4uV+qwSPSkKb3b8OeeYgYl61cfWqkAnvXoLZs5V9GmdZvY1fL6Y1Adh2Ei6
-         5OCnz5fF1H7EOB9/c4i8lQkMZRzDkBAhlLnmhCUBJEkH1Fl0bq8neHaq6SArlfp/KF74
-         hGsBCZxusgP0NkF1U7rnfsKzQ/qXRVcsFSAJDBax71s+ngzdZDicarkMa7oawMdlQ92P
-         3Khw==
+        d=gmail.com; s=20230601; t=1724276867; x=1724881667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=98sniykhgHyIjDFEFBrJSB+NsoobwZCkbD/WwKcnXqA=;
+        b=gvtH3MC/O6vUEWUymuXHBuwoSDfM9A6aQhCoBWcLjWzticUIJwR2ePO9G0JZciJzqr
+         VdD2LAOIwcHevjlcGMNAwtWKnwF8XLeDgi3zqQmBiwcb1tgV0xWg2c1kNz6ZwP5ixC4L
+         UKQOiZ3CpI60aZbsdHLpsPlWB3zDY1A+WILvSy6PEi6ZNKXQ4rJNS8w24ep3ZAfCrlWb
+         GVdOz33pXWuIP82V8wx5hJ0KDg2YZHoT52pFkivC5td8aftWpt9DNurev/tbvXe3TQEp
+         XjvIlO0ECgaHyhvoot3BkNipmVLUjg9bzL957IoZovlgKL8xjwsfZBxHmhG/K80JNGE8
+         s2MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724276681; x=1724881481;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JUETRfax8sjt9qjrrTeS5cgr6hmWsh2u4gE8+Q0j9eE=;
-        b=Dp70z2UUcZjPFTATyf1ViOWKJtEeAxjgZz55umbUJJY6vkeCui7g8SM3SOlx1pjmYm
-         +V32Vck33ZaxjfCgkbFUvhdqIKLptKlkh9vpLvFts3u87kPC1DKg6V3tyEPGFhJrBQOX
-         gLK0Q8LQPb6LuuQntQk6kmJMCS9UurTS0geg5R8p9i51ZsQfgrgCwE/HOSvjdSBk7fcU
-         3mmEl0EWVbJRD2phMHnhlQQ2xRIQwGQBY7qcys8Lr2jJfcr7TdshPx/4TG5ALJI/HWRV
-         wMgXazE8yudg7O+1OpYquoJJx5nX5fCFcE5g0oBfGd0n5sSQ+a1PdfRYm/T7iiq22hh+
-         JFGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCbT36oA5Wo7i4s8qvbZ8YKaRtcCvE+K6ivu9xIqmfn/8jU3rq9lJRS+Q6ZZNOx5o2xqTb13C+@vger.kernel.org, AJvYcCVfH8WbLrNiU/zqRi8Nb8x9pCKmaFqK7ysVhr4L7hUOfx2uu3E+Wd3lPiIuKpDgqi8RP2VRayHObaB88Mo=@vger.kernel.org, AJvYcCWvlOPMrKf9541T+QE5dtK8QFkQzhkgqe4Q+1jwqG6fQqYBPorxiq5DKMcKccVkv3mLj6X+InuFEdaPZ10lYp2M@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkyewWUh5DhA3hUElz6YU+H6mAohOC1zVVIpQ8m28/V1TDneVo
-	PLIm6AgdClQDzNGGUJRePC78QVBwaxu0gFKpxBowaNWcRgDtr85QQ+wBHjGPrZOPVwYmqOJVWSL
-	bmYw3XHYvkFP67YvE9YMLMjyPHYqu5sji
-X-Google-Smtp-Source: AGHT+IFBeiMnAG1bzaXlNSAsbhQSBmunae+tWtpSL2/8ZuK0e+bId+IVwlqeuZpJWwaQ8h3hPdMGRKbG2yJFhGrroj4=
-X-Received: by 2002:a17:90a:55ca:b0:2cb:5829:a491 with SMTP id
- 98e67ed59e1d1-2d60aa4a2a2mr1329320a91.20.1724276681225; Wed, 21 Aug 2024
- 14:44:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724276867; x=1724881667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=98sniykhgHyIjDFEFBrJSB+NsoobwZCkbD/WwKcnXqA=;
+        b=s9JOAzzzbUUF3XUPCmR2IwULCfo/x3E16uw03ofbDv1wXR4qOm3227PyDb4A++9zuV
+         hSN3FKYZUfgkdLVarym0h8VsCGhzZZ2LeFm/K3i8g71eb+RupWm1GDE7BAcAj0p0knrx
+         cRbvp0gM50j4DraDn7IzbALdwQNowAXbGfN1PVG6DHar408xOaI/SeAd338qu0WKnDb4
+         ziYBcMyNpLLY4G9tBgHK0SbsqyidlxRz46HA6IJXl+Uc6KZUEclAMxFpu/fJmNbH//WH
+         STiB1I7g3YZT58r96jwQYAddHFJ70K3IiXswOJ5GRnamLevb5ykTXQOypLsIUvkRikZy
+         VvjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoYx5St29IJpy39JO07BDZwqpAorYElJ9hQfNBo9xoQrTUrgQMoV9IgHfGgm1wYya/4MRoVbDRfMFHiGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1iSXBnGG/ngehgjvZaW6/i/gNmOhM7kSjxc9SkoJWqX02vnLS
+	OqEzoi2u/vhls2SlRWnLeY0WH0TA+1gsupgFVZrjysGeyzh2aYHrhAJ6a3zM112lHngNd0TDEeX
+	AZfIrROtuwFtwdBK7yOwEYta4fZc=
+X-Google-Smtp-Source: AGHT+IE4i6KUS8cNvu8h5bdx1rDgorR2H6gZqTPtMis5YSVU9JCyrkwyPbPBpidyC+Iut0PWkgr1fkIqlTo/oWqOR34=
+X-Received: by 2002:a05:6122:31a3:b0:4fc:f1e3:d238 with SMTP id
+ 71dfb90a1353d-4fcf1e3d3c8mr4395884e0c.1.1724276866613; Wed, 21 Aug 2024
+ 14:47:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815-tcp-ao-selftests-upd-6-12-v3-0-7bd2e22bb81c@gmail.com>
- <20240815-tcp-ao-selftests-upd-6-12-v3-4-7bd2e22bb81c@gmail.com> <20240821191133.GG2164@kernel.org>
-In-Reply-To: <20240821191133.GG2164@kernel.org>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Wed, 21 Aug 2024 22:44:30 +0100
-Message-ID: <CAJwJo6Yj_Zqwg9Z7sJvj8UZE6z7gAq+Y0p0K5Oz8s+CYMwzFow@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 4/8] selftests/net: Open /proc/thread-self in open_netns()
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Mohammad Nassiri <mnassiri@ciena.com>, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <f29f64e29c08427b95e3df30a5770056@honor.com> <ZsXho27uAbQ5rEgS@tiehlicka>
+In-Reply-To: <ZsXho27uAbQ5rEgS@tiehlicka>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 22 Aug 2024 05:47:34 +0800
+Message-ID: <CAGsJ_4zgQ0MBV-yucc0-7BcDgjMMdCUDWK330mrd7SS4ej6Q8Q@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
+To: Michal Hocko <mhocko@suse.com>
+Cc: gaoxu <gaoxu2@honor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Shaohua Li <shli@fb.com>, yipengxiang <yipengxiang@honor.com>, fengbaopeng <fengbaopeng@honor.com>, 
+	Kalesh Singh <kaleshsingh@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 Aug 2024 at 20:11, Simon Horman <horms@kernel.org> wrote:
+On Wed, Aug 21, 2024 at 8:46=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrot=
+e:
 >
-> On Thu, Aug 15, 2024 at 10:32:29PM +0100, Dmitry Safonov via B4 Relay wrote:
-> > From: Dmitry Safonov <0x7f454c46@gmail.com>
-> >
-> > It turns to be that open_netns() is called rarely from the child-thread
-> > and more often from parent-thread. Yet, on initialization of kconfig
-> > checks, either of threads may reach kconfig_lock mutex first.
-> > VRF-related checks do create a temprary ksft-check VRF in
+> On Fri 16-08-24 07:48:01, gaoxu wrote:
+> > Replace lruvec_add_folio with lruvec_add_folio_tail in the lru_lazyfree=
+_fn:
+> > 1. The lazy-free folio is added to the LRU_INACTIVE_FILE list. If it's
+> >    moved to the LRU tail, it allows for faster release lazy-free folio =
+and
+> >    reduces the impact on file refault.
 >
-> nit: temporary
+> This has been discussed when MADV_FREE was introduced. The question was
+> whether this memory has a lower priority than other inactive memory that
+> has been marked that way longer ago. Also consider several MADV_FREE
+> users should they be LIFO from the reclaim POV?
+
+The priority of this memory compared to other inactive memory that has been
+marked for a longer time likely depends on the user's expectations - How so=
+on
+do users expect MADV_FREE to be reclaimed compared with old file folios.
+
+art guys moved to MADV_FREE from MADV_DONTNEED without any
+useful performance data and reason in the changelog:
+https://android-review.googlesource.com/c/platform/art/+/2633132
+
+Since art is the Android Java heap, it can be quite large. This increases t=
+he
+likelihood of packing the file LRU and reduces the chances of reclaiming
+anonymous memory, which could result in more file re-faults while helping
+anonymous folio persist longer in memory.
+
+I am really curious why art guys have moved to MADV_FREE if we have
+an approach to reach them.
+
 >
->      Flagged by checkpatch.pl --codespell
+> --
+> Michal Hocko
+> SUSE Labs
+>
 
-A-ha, b4 has this b4.prep-perpatch-check-cmd git setting:
-https://github.com/mricon/b4/blob/37811c93f50e70f325e45107a9a20ffc69f2f6dc/src/b4/ez.py#L1667C20-L1667C43
-
-Going to set it and hopefully, it will help avoid spellings/typos in
-future, thanks!
-
--- 
-             Dmitry
+Thanks
+Barry
 
