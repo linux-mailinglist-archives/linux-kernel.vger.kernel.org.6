@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-294971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB41F9594ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:43:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E9F9594E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607611F21D0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:43:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648CA1F24C6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25D41C9DCB;
-	Wed, 21 Aug 2024 06:43:47 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CDB16DEA3;
+	Wed, 21 Aug 2024 06:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="luaT87Gq"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBF41C8FC6;
-	Wed, 21 Aug 2024 06:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877101607A1
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724222627; cv=none; b=EAzBAR/Nr9sPqq4aulK513llPphTwRAi7h9FeFAYn1IKD0L8+NiqXp4nGq5151k1GH2Knx2AUZvR0Kz5YjqI1QbGY+g340AD0bV2S2OitkNevSEUE0mRZv28dJcfWyzrhE0iYL6Dpkc33U4Snsu9YPFUmZVQF5wT49tggl/jZ6Q=
+	t=1724222519; cv=none; b=rYfvfHzmz659XWsJDkrUbn3TAlU3gr90x68S2zWFZWmOB6DfFNCcpnvtB7IpDOj26kmC0K8HWP6MnJIL844Ch4qfe8UUamQXt+n3VZKf3RN7Dy3+NnqPOG8QzK9kWdUeew9PwZPSYJnASLFuddzO3BuMW4y2jlyErVkiCIY2jOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724222627; c=relaxed/simple;
-	bh=blDMBT/ZDzXhVOBCRW9BnF9p6bNMznlQt4wycFrEMR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RO4IDwUxA6m+uI3Kla1CNLmDmm6Utw8ncldp84GmaiyId7+uDiHZ6zXr9dIfn/AeAxeaJU7e1DjpvUlE8zFe+G515VSgijm5YpV2i1G2+kzTgrt+DafXiryzhv3FzmA7axcL0t9fupmMsFuw6Ys7/vy/0+OClQVQzAIGHuaa2ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wpc9x0Hj3z20mCX;
-	Wed, 21 Aug 2024 14:39:01 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7EDDD1401E9;
-	Wed, 21 Aug 2024 14:43:42 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 21 Aug 2024 14:43:41 +0800
-Message-ID: <232f5fe4-661a-501c-4a54-d3d45822b5fc@huawei.com>
-Date: Wed, 21 Aug 2024 14:43:40 +0800
+	s=arc-20240116; t=1724222519; c=relaxed/simple;
+	bh=s3kW2g5CpnSLlQ/g62tIvzKvDFkcVRz9w4azflRx7vk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=O24xn9HE38Y/rxYzkR5YZ+/L84OzfTcN0qiytfRhiGEFcgHznshNGblGkh+ARuXVnvCXmCU8Lzg6CN7HkNSbyApn7sd+MY/t/rmy9lsbSNTBaaGZSnfNcWBGf/3iCpc1I9zuzp0OdyvcSSUBiSfBIgmU+I2HpPxPpm+k2dj6vyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=luaT87Gq; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240821064154epoutp022bbd9792b3198913d73e3fee282b302d~tqz3dwoW10383803838epoutp02e
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:41:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240821064154epoutp022bbd9792b3198913d73e3fee282b302d~tqz3dwoW10383803838epoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724222514;
+	bh=wk4A2m6/YO4XwSwfN0YTK/iK/dDOpMfyEpzTBLdoRFo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=luaT87GqzR5ePhsS5EykiehrcrsqmSej0Sam0yL0tF3/D8E5bF/nbumi4D8SMDUVG
+	 FCnXIWMhiCPvOUq1B9ivQOnhs7OkOmR0/3T9L5EIMbTzn06TxQoDZILBKzzVpQAe7g
+	 qxlK2aWb1UVMe3/m5JOtWvtCdsYVIYhVk/mj/FL8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20240821064154epcas2p22934083a26a0cc105aa4f0ec3e416f79~tqz3H9TQq0790407904epcas2p2y;
+	Wed, 21 Aug 2024 06:41:54 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WpcFF2KGRz4x9Pv; Wed, 21 Aug
+	2024 06:41:53 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EC.FD.08901.13C85C66; Wed, 21 Aug 2024 15:41:53 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240821064152epcas2p2552e92767564272fb7e172fecd7ade3e~tqz15McSU0917309173epcas2p2N;
+	Wed, 21 Aug 2024 06:41:52 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240821064152epsmtrp10aa9432d6b3a6c7c4108d80163323233~tqz14G4rv1068010680epsmtrp1Z;
+	Wed, 21 Aug 2024 06:41:52 +0000 (GMT)
+X-AuditID: b6c32a43-2a4dfa80000022c5-2e-66c58c311094
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	23.1C.08964.03C85C66; Wed, 21 Aug 2024 15:41:52 +0900 (KST)
+Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240821064152epsmtip2ddeae3c16fc62d806d04c706220c69b0~tqz1p5L4F1962519625epsmtip23;
+	Wed, 21 Aug 2024 06:41:52 +0000 (GMT)
+From: Kiwoong Kim <kwmad.kim@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, beanhuo@micron.com,
+	adrian.hunter@intel.com, h10.kim@samsung.com, hy50.seo@samsung.com,
+	sh425.lee@samsung.com, kwangwon.min@samsung.com, junwoo80.lee@samsung.com,
+	wkon.kim@samsung.com
+Cc: Kiwoong Kim <kwmad.kim@samsung.com>
+Subject: [PATCH v1 0/2] scsi: ufs: introduce a callback to override OCS
+ value
+Date: Wed, 21 Aug 2024 15:44:34 +0900
+Message-Id: <cover.1724222619.git.kwmad.kim@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdljTXNew52iawZ6zPBYnn6xhs3gwbxub
+	xcufV9ksDj7sZLGY9uEns8Xf2xdZLVYvfsBisejGNiaLXX+bmSy23tjJYnFzy1EWi8u75rBZ
+	dF/fwWax/Pg/Joul/96yWGy+9I3FQcDj8hVvj8V7XjJ5TFh0gNHj+/oONo+PT2+xePRtWcXo
+	8XmTnEf7gW6mAI6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUX
+	nwBdt8wcoA+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQXmBXrFibnFpXnpenmp
+	JVaGBgZGpkCFCdkZ7WdnsBVsZqm4u+waYwPjbuYuRk4OCQETiU0PX7F1MXJxCAnsYJT4/Osd
+	O4TziVFi0+ZWZgjnG6PE3VOf2WBaGpsaGUFsIYG9jBIz/zpBFP1glPg9/z8TSIJNQFPi6c2p
+	TCAJEYGPTBKb529jB0kwC6hL7JpwAqxIWMBfYuGR16wgNouAqsS8ze1gG3gFLCTmTvjBCLFN
+	TuLmuU6wMyQEGjkk7p39zQKRcJG48vwFK4QtLPHq+BZ2CFtK4mV/G5RdLLF2x1UmiOYGRonV
+	r05DJYwlZj1rB9rAAXSRpsT6XfogpoSAssSRWywQd/JJdBz+yw4R5pXoaBOCaFSW+DVpMtRp
+	khIzb96BGughMWvLNyaQciGBWImGZZoTGGVnIYxfwMi4ilEstaA4Nz012ajAEB5Jyfm5mxjB
+	iVLLeQfjlfn/9A4xMnEwHmKU4GBWEuHtfnkwTYg3JbGyKrUoP76oNCe1+BCjKTC4JjJLiSbn
+	A1N1Xkm8oYmlgYmZmaG5kamBuZI4773WuSlCAumJJanZqakFqUUwfUwcnFINTPvW/1L5oZny
+	doVBb2pWuZ7G6sQNN3dcsZ3X+edp8Kydl+b6vwt/8Wbq1qtNWa0vmszOLZrD/7xRtvnwm2OV
+	uauMV265yMosnPJ9bVoaSxD7tQdFAd8Nv2ybGjfvq9B+p4i6T0UL3SOuP77/zGjZqc/uwk5f
+	cvJig/Uy7mRtu9i9Jef0s8+xa1V5fV5lhrvLRLBselEfpRMjt/BiT4jvhpTErhdqDy84sFc5
+	r4ly3Z/n807j1ZFWeant++av9T/HpPD3+jRBLdX6+XwHmx9Htm5XWJrJ2b564cP35qsnfggz
+	b9Xf7pjjdENH95juYtO6qV+Vnt47O5Ph4IvpKm3TZxXpu/YpiHQtPVXkcCLmmbgSS3FGoqEW
+	c1FxIgCFARQ6HQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSvK5Bz9E0g9bX+hYnn6xhs3gwbxub
+	xcufV9ksDj7sZLGY9uEns8Xf2xdZLVYvfsBisejGNiaLXX+bmSy23tjJYnFzy1EWi8u75rBZ
+	dF/fwWax/Pg/Joul/96yWGy+9I3FQcDj8hVvj8V7XjJ5TFh0gNHj+/oONo+PT2+xePRtWcXo
+	8XmTnEf7gW6mAI4oLpuU1JzMstQifbsEroz2szPYCjazVNxddo2xgXE3cxcjJ4eEgIlEY1Mj
+	YxcjF4eQwG5Gicm7l7BCJCQlTux8zghhC0vcbznCClH0jVHi/8qfYEVsApoST29OZQKxRQSa
+	mSX6muxBbGYBdYldE06AxYUFfCUuNk8Gq2cRUJWYt7mdDcTmFbCQmDvhB9QCOYmb5zqZJzDy
+	LGBkWMUomVpQnJueW2xYYJiXWq5XnJhbXJqXrpecn7uJERy8Wpo7GLev+qB3iJGJg/EQowQH
+	s5IIb/fLg2lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEecVf9KYICaQnlqRmp6YWpBbBZJk4OKUa
+	mFa3WUppSOXuYd/2+97cXOvoqPwZ0/SWZGxUmvxzs2CM8KVe9bkitzbudN9iI/prdn5s86n7
+	qbO7WVVfvUjd38dw47yLIdf1wvsSfXXpSbvi/R6LvtCfb6Bym+/0RKeWn03qi+uZkrx3KYmG
+	Bjb/ClE/qiJ1Nrb8R3qk6+KkOO1ME9emOd3XhL63HymPtAhmmXtp4f6vbFmPkqINSp+Yqi86
+	dHGd+a7JOswTZhT0xB//5dGzNWid7EIJCa6LqZm2dvwlwdNdF9kmzX7LepL5n7XugvjfRYvu
+	VnCKZalvkbzJNm1/6x/TOkXDI3G/NF7tnRljs6SmTe3gxRNvxLO+fwqXyPrXvbt82SdRtdN2
+	SizFGYmGWsxFxYkAeOPZps0CAAA=
+X-CMS-MailID: 20240821064152epcas2p2552e92767564272fb7e172fecd7ade3e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240821064152epcas2p2552e92767564272fb7e172fecd7ade3e
+References: <CGME20240821064152epcas2p2552e92767564272fb7e172fecd7ade3e@epcas2p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next] wifi: mac80211: Use kvmemdup to simplify the code
-Content-Language: en-US
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>, <kvalo@kernel.org>,
-	<johannes.berg@intel.com>, <emmanuel.grumbach@intel.com>,
-	<erick.archer@outlook.com>, <linux-wireless@vger.kernel.org>,
-	<brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240821023325.2077399-1-ruanjinjie@huawei.com>
- <191737a8900.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <191737a8900.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
+UFSHCI defines OCS values but doesn't specify what exact
+conditions raise them. So I think it needs another callback
+to replace the original OCS value with the value that works
+the way you want.
 
+Kiwoong Kim (2):
+  scsi: ufs: core: introduce override_cqe_ocs
+  scsi: ufs: ufs-exynos: implement override_cqe_ocs
 
-On 2024/8/21 13:48, Arend Van Spriel wrote:
-> On August 21, 2024 4:26:17 AM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-> 
->> Use kvmemdup instead of kvmalloc() + memcpy() to simplify the code.
->>
->> No functional change.
-> 
-> Comment below...
-> 
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->> drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c | 3 +--
->> 1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git
->> a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
->> b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
->> index d86f28b8bc60..7717d7764d2d 100644
->> --- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
->> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
->> @@ -1611,10 +1611,9 @@ int brcms_ucode_init_buf(struct brcms_info *wl,
->> void **pbuf, u32 idx)
->>  if (le32_to_cpu(hdr->idx) == idx) {
->>  pdata = wl->fw.fw_bin[i]->data +
->>  le32_to_cpu(hdr->offset);
->> - *pbuf = kvmalloc(len, GFP_KERNEL);
->> + *pbuf = kvmemdup(pdata, len, GFP_KERNEL);
->>  if (*pbuf == NULL)
->>  goto fail;
-> 
-> This is the only jump to fail: so instead simply return here with
-> -ENOMEM and remove the fail: label.
+ drivers/ufs/core/ufshcd-priv.h | 9 +++++++++
+ drivers/ufs/core/ufshcd.c      | 4 +++-
+ drivers/ufs/host/ufs-exynos.c  | 9 +++++++++
+ include/ufs/ufshcd.h           | 1 +
+ 4 files changed, 22 insertions(+), 1 deletion(-)
 
-Right. Thank you!
+-- 
+2.7.4
 
-> 
-> Regards,
-> Arend
-> 
->> - memcpy(*pbuf, pdata, len);
->>  return 0;
->>  }
->>  }
->> -- 
->> 2.34.1
-> 
-> 
-> 
 
