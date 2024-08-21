@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-294849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA1E959355
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:28:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22D2959357
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4F7EB21B06
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:28:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BA8BB21A20
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF1E15746A;
-	Wed, 21 Aug 2024 03:28:03 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA261581FB;
+	Wed, 21 Aug 2024 03:29:53 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4763FD4;
-	Wed, 21 Aug 2024 03:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E833FD4;
+	Wed, 21 Aug 2024 03:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724210883; cv=none; b=bMZyVmEpH+c1KaoDW5ufiNf6ymzCQ3cVEhBrjIlKdQTm3J+wYeVJT50CRQFDMuFMW13tEQW/h9ppW/f3OElN0tLISzj7TlwIuLexbM2wxbulpopoy7uYrYhIH8b8GgUFW6xIfgx/kksqA1dEgyxiywfa0yRjAuvZ24vgUlx7VlA=
+	t=1724210993; cv=none; b=Zv6gAjGdcQSllhpUG+UKibC+V7zgOd+/lOMsePP27qQcrLY5HlSbbelkXai09D/Zu9G5t/oJoOEyvt2I1qhzc2NOJUF0S33nzat5HuKVdXx4C25KrEphdUhw5F5oQsuwY465xIWpBoC6zZtro10xyZ4u6FF6HXXEYFTgfVqHGFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724210883; c=relaxed/simple;
-	bh=mPbh7uvNfwYVv80IHNN+Lu4uMCiJTIi/Nbx9mSwKh44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bFg6CpWOAzg+tURYx9AN2Ct7aACqxij0+ZZoxOM0ipPYs+8k8nwDZP6qF1HCiLftdXtaKV3Tx6I/j0RP6b/LA0Weg3Rvyq7MSLBzoxTNuVMVWCvF8Qpr+RCjOdbfe4gO7nnhv1oRk0MfCAvaB3gKFAYnBLQ5Yyba2g0mnNPiWHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpWqy01wRz20l3K;
-	Wed, 21 Aug 2024 11:23:10 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 519781A016C;
-	Wed, 21 Aug 2024 11:27:51 +0800 (CST)
-Received: from [10.67.109.211] (10.67.109.211) by
- kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 21 Aug 2024 11:27:50 +0800
-Message-ID: <368ca167-5f57-4fb4-9208-0016e7e7a6d5@huawei.com>
-Date: Wed, 21 Aug 2024 11:27:50 +0800
+	s=arc-20240116; t=1724210993; c=relaxed/simple;
+	bh=bB1tgVHL9dz6HtETc7dg/OafhvVCwU5eK/JfNA2WYBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gm8saug1V2zGFwWWJjf67i7Sdr89kB/zLm13EXNs50VAPX985z6FE0l9IV7ntcgrvcQEoBQHrlws/0i4KV6rPupzwb95/BIzFIzguu1sy40uNhhsdklRGfODWPfakeV0HelJ9dC3K0PUEAMKpmRQnNU56zTprNxco524IJ9AREs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WpWzJ2fwzz4f3jY4;
+	Wed, 21 Aug 2024 11:29:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 82AAF1A058E;
+	Wed, 21 Aug 2024 11:29:46 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgBHboQmX8Vmgo4bCQ--.64800S3;
+	Wed, 21 Aug 2024 11:29:46 +0800 (CST)
+Message-ID: <1a2936db-3829-4c9d-8680-eced8b9bc059@huaweicloud.com>
+Date: Wed, 21 Aug 2024 11:29:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,48 +46,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the arm tree
+Subject: Re: [PATCH 12/20] ext4: get rid of ppath in ext4_split_extent_at()
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+ adilger.kernel@dilger.ca, ritesh.list@gmail.com,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ Baokun Li <libaokun1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-13-libaokun@huaweicloud.com>
+ <20240725110756.fuyjfdvgbprma5ml@quack3>
+ <84d1cae3-1939-463c-b1f9-344e02f87a9c@huaweicloud.com>
+ <20240821031938.GA277453@mit.edu>
 Content-Language: en-US
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King
-	<linux@armlinux.org.uk>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-References: <20240821093623.5928f361@canb.auug.org.au>
-From: "liuyuntao (F)" <liuyuntao12@huawei.com>
-In-Reply-To: <20240821093623.5928f361@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240821031938.GA277453@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+X-CM-TRANSID:gCh0CgBHboQmX8Vmgo4bCQ--.64800S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYk7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r
+	1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQACBWbEU35FkQABsc
 
-After removing the '(' and  ')', kernel builds well.
-The website(https://www.armlinux.org.uk/) is currently inaccessible,
-i will submit new patch to Russell's patch tracker when it is ok.
+On 2024/8/21 11:19, Theodore Ts'o wrote:
+> On Sat, Jul 27, 2024 at 02:42:50PM +0800, Baokun Li wrote:
+>   > 								Honza
+>> Ok, I'll put this in a separate patch in the next version.
+>>
+>> Thank you very much for your review!
+>>
+> Hi Baokun,
+>
+> Did you send out a newer version of this patch series?  I can't seem
+> to find it in patchwork.
+>
+> Thanks,
+>
+> 					- Ted
 
-> +#ifdef CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-> +#define RELOC_TEXT_NONE (.reloc  .text, R_ARM_NONE, .)
-> +#else
-> +#define RELOC_TEXT_NONE
-> +#endif
-> +
+Hi Ted.
 
+I'm very sorry for the slow update, it's been very busy for a while now.
 
+Last week I started preparing the new version and performing some tests.
+Now that the tests are almost complete, I'll send the new version out 
+tomorrow at the latest.
 
-On 2024/8/21 7:36, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the arm tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> arch/arm/kernel/entry-armv.S: Assembler messages:
-> arch/arm/kernel/entry-armv.S:1074: Error: junk at end of line, first unrecognized character is `('
-> arch/arm/kernel/entry-armv.S:1088: Error: junk at end of line, first unrecognized character is `('
-> arch/arm/kernel/entry-armv.S:1101: Error: junk at end of line, first unrecognized character is `('
-> 
-> Caused by commit
-> 
->    471fc0d32ab5 ("ARM: 9413/1: Fix build issue with LD_DEAD_CODE_DATA_ELIMINATION")
-> 
-> I have used the arm tree from next-20240820 for today.
-> 
+-- 
+With Best Regards,
+Baokun Li
+
 
