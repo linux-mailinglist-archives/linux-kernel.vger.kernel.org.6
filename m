@@ -1,148 +1,93 @@
-Return-Path: <linux-kernel+bounces-295567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71362959E5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:15:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE3C959E70
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC42AB261D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09BE81C20C53
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AB919ABB1;
-	Wed, 21 Aug 2024 13:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE0319ABA6;
+	Wed, 21 Aug 2024 13:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmyuntaq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="j1IHER+Y"
+Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0119994B;
-	Wed, 21 Aug 2024 13:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73644199934;
+	Wed, 21 Aug 2024 13:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724246048; cv=none; b=fjFBI0QpJNUd0kpy6EOoc+laSc2YrH+SV3JZh0bAqEtf65UsBHkqeIN8KcKoesSrcW6O7l4E0VnGAnt2iLecxmBAtQZY1vErHou722o88Qn0L0DH0wttoVmgYpSV1Ckh+PyNsxCtVYDKdh48fi/WTTdRl+de1RPl1Wdw1JbU8ZI=
+	t=1724246137; cv=none; b=GWfZrkoAOKPDbuFcysOXVow7/S6uZ7IxkGBEC285+yGL5GTpnF0IRNW7skFQutDrafdVlke99YIVYbI4useZqNn1fcTxW2z/1/LURwydfCycucsDmBRqhGMaI1rjt2RoIkOzmn2GeX58XdjPnmFlFjziMbiCKhbMqbZHKCxzK94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724246048; c=relaxed/simple;
-	bh=MuP5Cq46nVjdRD00fJkyIdDWf1YqCyxnb9KmrwxPUec=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iKRO7hpbzM7J/jKW2TLm5i3oa25IUHUjJgIN1oliNrrOI77CmPJQ1EVuYpqiTffPwwZolL4PFX+tnyGGusGZ96yv0e0+ymaxow93DzMfbPWEhXpjzMiVDboK0tmsC1SJfUYhzMgnLDx/jXCI8XK2LqnJCJGAlAL8FLQrgif/H2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmyuntaq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 750E9C4AF09;
-	Wed, 21 Aug 2024 13:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724246048;
-	bh=MuP5Cq46nVjdRD00fJkyIdDWf1YqCyxnb9KmrwxPUec=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qmyuntaqQ5VbPdNVZl1IPKluOumiawAgga4Vj1MLoX/WmeAp5vqK7+Rdgl0g9Tm6g
-	 nujptz48lbK19X4dOwlWKkhppQ41UOnzODAOzr0DyYhMIfVaIAvpG1/e7y7oIl4ljU
-	 n7UMwY6ZwbysBxkG4pJz4ZyHWMjgzba1lVooWT5M5rRQkVhOpj+5t3BNlaud7xejs2
-	 Q2mZE6xIfWU+AT4zSBsfaxKztra0BDLeNaya0wsebwiz5diSXHLMzXTmNCZjsB3oHt
-	 ++WbQAt2o9WwEINigA7uQn20yqrEBAXfyEpvnE7UDN5VKyEDgV3RT6A91Yu5u57O8w
-	 u4TMFvZdklE8A==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 21 Aug 2024 14:07:16 +0100
-Subject: [PATCH 2/2] KVM: arm64: Hide S1PIE registers from userspace when
- disabled for guests
+	s=arc-20240116; t=1724246137; c=relaxed/simple;
+	bh=O7V8KYMSajSUNX3b9Z/edT5CV5vX89JyG+dhDML59hk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zoy+H6FaTwDYhV8AsMuKw8cYoYdKhXjWAN2fia217m4S+yvbUfuUWTP/xiQ3YUjZuiLR32Y9reKHBjB/80R+FHuxh/ZC0WaP+3sS6BLqTF+513tzza+dARBpqhDevtDS/8+QiPi1mVb5G6J4Ef/jh6OEw2PdPEP6Mv7kcpskCEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=j1IHER+Y; arc=none smtp.client-ip=168.119.48.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
+	s=2023072701; t=1724245682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=neAFZ5sIt4iGJauRibFWk0r0ZsYy9vNajk9gseizc6s=;
+	b=j1IHER+YCvWISW1QbkccVAUsrDwQqXNv5ZT8H6OMcryGXSFvczTiFgQhwZnY6uv8c0Bjdr
+	n+vIBWC/Wqlo3aZPEvSjgWk5JsDLvnLvX0f3AyaxsylYXwvGmcZLleHG0DgVHjKQ+snX4o
+	iy9lC5F5jw5WO0aAaUjY1zELBKvDwcJr2Sxgib4NI5vcPUAOwK7PrCZDMB60IIYluSUUw+
+	2c/PzY34I4xspV39XpgFSNt9Rt2RVADB65hddE9tESMVWkN+6bw1VFMiGkD22nPr7v0Ym8
+	TcKhbLzNn0RTveTuV2dCUF1XqrXMCN0epWY6dVMlG03s8xGh4vIrlO4WR1FHgA==
+To: selinux@vger.kernel.org
+Cc: cgzones@googlemail.com,
+	jsatterfield.linux@gmail.com,
+	linux-kernel@vger.kernel.org,
+	omosnace@redhat.com,
+	paul@paul-moore.com,
+	stephen.smalley.work@gmail.com,
+	xiujianfeng@huaweicloud.com,
+	tweek@google.com,
+	brambonne@google.com
+Subject: Re: [PATCH 2/2] selinux: add support for xperms in conditional policies
+Date: Wed, 21 Aug 2024 15:07:52 +0200
+Message-ID: <20240821130755.25031-1-cgoettsche@seltendoof.de>
+In-Reply-To: <20240405161042.260113-1-cgoettsche@seltendoof.de>
+References: <20240405161042.260113-1-cgoettsche@seltendoof.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240821-kvm-arm64-hide-pie-regs-v1-2-08cb3c79cb57@kernel.org>
-References: <20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org>
-In-Reply-To: <20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2579; i=broonie@kernel.org;
- h=from:subject:message-id; bh=MuP5Cq46nVjdRD00fJkyIdDWf1YqCyxnb9KmrwxPUec=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxegTt/16CUX8uktq5Mws9/y16UtY/d/Sra3QZeOV
- uWTrYYGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsXoEwAKCRAk1otyXVSH0BEMB/
- 477h1LbMjJFCyWMayEQuxLp9WrscihPQv91dEogOzcG5/ah1bBLr2yUiwz1sXaUNwMmIDJFzMITGrL
- 5rrVG/tu9JHy4L6iEUucBZ07AIX5x7aTHHcIDR2zog/A28TMsMES1zLM3lj2M+iISqPp1u1HABaUJE
- ngVgnnUmgIdZDNJAZvl4+Q7LGVAXgdTFFTwMo7DTB/72c9IJQBVujtXaTahfM5hvpy+mHK7SvRv1ic
- 2I4EkR25rKPyKajXGpHTnUlgUpn/ITq2C28XNWB6yDwNQMuH7jYo3Ha8CRAXegO8ZSI8eOkDBNRWUZ
- ZAL1ffEiefDV/3IG4i/0y9F7mKtLlN
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When the guest does not support S1PIE we should not allow any access
-to the system registers it adds in order to ensure that we do not create
-spurious issues with guest migration. Add a visibility operation for these
-registers.
+> From: Christian Göttsche <cgzones@googlemail.com>
+>
+> Add support for extended permission rules in conditional policies.
+> Currently the kernel accepts such rules already, but evaluating a
+> security decision will hit a BUG() in
+> services_compute_xperms_decision().  Thus reject extended permission
+> rules in conditional policies for current policy versions.
+>
+> Add a new policy version for this feature.
+>
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+> Userspace patches are available at:
+> https://github.com/SELinuxProject/selinux/pull/432
+>
+> Maybe the policy version 34 can be reused for the prefix/suffix filetrans
+> feature to avoid two new versions?
 
-Fixes: 86f9de9db178 ("KVM: arm64: Save/restore PIE registers")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/include/asm/kvm_host.h |  3 +++
- arch/arm64/kvm/sys_regs.c         | 17 ++++++++++++++---
- 2 files changed, 17 insertions(+), 3 deletions(-)
+Kindly ping.
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 47675ef13676..38bfa6e10ba5 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -1476,4 +1476,7 @@ void kvm_set_vm_id_reg(struct kvm *kvm, u32 reg, u64 val);
- #define kvm_has_tcr2(k)				\
- 	(kvm_has_feat((k), ID_AA64MMFR3_EL1, TCRX, IMP))
- 
-+#define kvm_has_s1pie(k)				\
-+	(kvm_has_feat((k), ID_AA64MMFR3_EL1, S1PIE, IMP))
-+
- #endif /* __ARM64_KVM_HOST_H__ */
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index aab689ea8992..73daa33a43b4 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -2264,6 +2264,15 @@ static unsigned int tcr2_visibility(const struct kvm_vcpu *vcpu,
- 	return REG_HIDDEN;
- }
- 
-+static unsigned int s1pie_visibility(const struct kvm_vcpu *vcpu,
-+				     const struct sys_reg_desc *rd)
-+{
-+	if (kvm_has_s1pie(vcpu->kvm))
-+		return 0;
-+
-+	return REG_HIDDEN;
-+}
-+
- /*
-  * Architected system registers.
-  * Important: Must be sorted ascending by Op0, Op1, CRn, CRm, Op2
-@@ -2500,8 +2509,10 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	{ SYS_DESC(SYS_PMMIR_EL1), trap_raz_wi },
- 
- 	{ SYS_DESC(SYS_MAIR_EL1), access_vm_reg, reset_unknown, MAIR_EL1 },
--	{ SYS_DESC(SYS_PIRE0_EL1), NULL, reset_unknown, PIRE0_EL1 },
--	{ SYS_DESC(SYS_PIR_EL1), NULL, reset_unknown, PIR_EL1 },
-+	{ SYS_DESC(SYS_PIRE0_EL1), NULL, reset_unknown, PIRE0_EL1,
-+	  .visibility = s1pie_visibility },
-+	{ SYS_DESC(SYS_PIR_EL1), NULL, reset_unknown, PIR_EL1,
-+	  .visibility = s1pie_visibility },
- 	{ SYS_DESC(SYS_AMAIR_EL1), access_vm_reg, reset_amair_el1, AMAIR_EL1 },
- 
- 	{ SYS_DESC(SYS_LORSA_EL1), trap_loregion },
-@@ -4610,7 +4621,7 @@ void kvm_calculate_traps(struct kvm_vcpu *vcpu)
- 						HFGITR_EL2_TLBIRVAAE1OS	|
- 						HFGITR_EL2_TLBIRVAE1OS);
- 
--	if (!kvm_has_feat(kvm, ID_AA64MMFR3_EL1, S1PIE, IMP))
-+	if (!kvm_has_s1pie(kvm))
- 		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPIRE0_EL1 |
- 						HFGxTR_EL2_nPIR_EL1);
- 
+Any comments?
 
--- 
-2.39.2
-
+This affects (improves?) also the netlink xperm proposal.
 
