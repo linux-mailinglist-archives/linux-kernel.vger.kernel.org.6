@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-296043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A597595A4C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:39:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAF795A4E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C30AB21216
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0ED81F238F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4553D1B3B38;
-	Wed, 21 Aug 2024 18:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6F81B3B0E;
+	Wed, 21 Aug 2024 18:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJSTpJTR"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTorQswO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECE71D131A;
-	Wed, 21 Aug 2024 18:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DADEAC0;
+	Wed, 21 Aug 2024 18:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724265570; cv=none; b=ZTYiIYtakewy+u24DmwC2jMq54irqA2L7hhIJOKzTcuYFI1TEqTfKI7NUGKP0I3LrzN/05MGYviT3WVFeyJ2leKnCDoyi72Ttb6TP7jgaCit+wJi8H2IUSUiNFg7+XM3yEBT0Ws2aPoeCH1Ro668XQty56jgjIxqbcafMCBKnpk=
+	t=1724265958; cv=none; b=Guwc2WuLSAHs7tqiWR3YKxx4/HwZAdVC9pOEygSZdjcyWHLFPP8ensHxf/zE0D/frXTbeei6B4peVUMYEz/azfixpn+sD7DUF/wALQ7od+d394w/I+7HsBQTitJ5wH7DoVgrcM2ZvUPs1+7PYaqLg9TQxfUCT04HzOVQbLTcB/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724265570; c=relaxed/simple;
-	bh=WkTiCzpD7T3jDzTals5ZYh4omA4Pa4AjPRfQRvjhdtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mu9B5DQRa+ktVejVjjn2CxJ1OpuNz6Qnqe4PnwE85nr6+x2kXhWX4rjsNTc5R5o9SMqDFzIA1MvJS/90JGiaCHGvfpNUxOudORHhYN9UivKSxaE558gBuLyh1qpkuGRPkVZCtcPpWkjaDq8wnlbsByOpsKEH0LyLaBQcv9HhnH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJSTpJTR; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367990aaef3so4412217f8f.0;
-        Wed, 21 Aug 2024 11:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724265567; x=1724870367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WkTiCzpD7T3jDzTals5ZYh4omA4Pa4AjPRfQRvjhdtw=;
-        b=kJSTpJTRk9PIIkuo/2n0SbZY6yi3egKWaQGeMimftueL37Gf4Am73fHSxYV8+ynMHp
-         XwcnwbHlE1KQEXa+TLaZhCfssysaNIRntwh90kF1XX9WDvRv569cB5dcQdDDAAfRKeSf
-         0bzj5ke126RGXaVqC8UPVkpsNSNV+9RsnCeR01zXokx0z1S5V+7P9sOoBznTHDb/LYaL
-         p7QqZrBopBiHZ6HVYDxCCAP3mPzdG8VG7I/LsWTqztMpbeNr8DCoa7jui3zXBbN36e26
-         W2szto8xw5kwSS5eGgHqzX0obGmdyV2Lp4IuZJQoCzbovbffZhmNAa5paGICvZTeURXm
-         FuFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724265567; x=1724870367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WkTiCzpD7T3jDzTals5ZYh4omA4Pa4AjPRfQRvjhdtw=;
-        b=S42gCIYIZf3epY15kSSHTvUsNokSIyC5+6Ab5sP+8Vv156X512ArwKjv4QLHRr/ry9
-         lPL6L69NZ3dbiZHi/st1pii2JdcXGL5OHL7Hd8nGl7BAjptMuBaszKaTVE1otmCObApS
-         DChEq2TnqeOBttFmDAh2mbwi8x6FR9EdzVhveXGrWWYvCLac7MsHmMXDIBM6LDLsUJAT
-         pvWpK/huy7GhbPBRyDY1Ao1t99oVKyBmGi6YukWRG1z/2M4TfxMpuGXMNdcYUgAsBV56
-         YEz7skzeRIRlGKpqo13i+cFQOlYV32C8A3Cl95DvOSnx0zLtP/mqOrA4W3KiBJGJrHef
-         5jBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLws0Estw4ieHBZpi7cny07W9mW//8tT5xrUj/Z8fo+mqUH3b9vRfK63TsvS1eNPMJmon7C2f83XXa55Nn@vger.kernel.org, AJvYcCX72zo42VmGt3z8XFBsV74t63o5HbDzFueKBGhqFBwGng+8ksCumZQN/OFKZYGABSX5nRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm0EWC11QjGwXaGteZJAlOxduEuJrNIe9kuaLTXRdnuhTicIR7
-	9p53wN0t82iIm8para2A2E8JUVnRzy09Z3aUYrZwnfKBmb7s14Esj6sjtaE9aD6NwuDVEgXqHLA
-	cvQAftJohZ3oI5/vi+bRUPKj4EwE=
-X-Google-Smtp-Source: AGHT+IH1MEr39viVsp5qQiJ7JhazANmumy3JOlEUDyr/ik87ch5umBMqTxXSXkxy9BsIwGomj/jY9hJ6DlFUGT4OgEk=
-X-Received: by 2002:a05:6000:1a8e:b0:371:8ea0:e63b with SMTP id
- ffacd0b85a97d-372fd731d8cmr2752661f8f.52.1724265566934; Wed, 21 Aug 2024
- 11:39:26 -0700 (PDT)
+	s=arc-20240116; t=1724265958; c=relaxed/simple;
+	bh=cxfQ2TYC2Pf6uL7YdGRSYCNPIqLLJJDtptw+GPbJzh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JOQkRYgsYBuxwb0Azt2q2bVDvggSoMuk1rJZb/sMUU5PvAOwOM30AKoclsKrJS8nDmWszC63nw/InK5Vy6A/0wK7rlEXOrHhJ6Z91Gk1p+fiMVUOSl40xiEu6JCoT72OPE4vD364UwtQcS8BH9r6RMP+omMt/2Xfc8zdzYQe/sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTorQswO; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724265956; x=1755801956;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cxfQ2TYC2Pf6uL7YdGRSYCNPIqLLJJDtptw+GPbJzh4=;
+  b=KTorQswOFLqkxyfzjh/I/R+DKUQXS0NdS57y3LK39uQk6oL9W8F9tmTL
+   aUajGqqlAb4yRGKFBzCJ0SUyH8v9CWiTQOLklLDT3nwcYfL0YcH8cV5GJ
+   PqrrLKcRC2t21usPynoUeOg5itQdSp0T//g0nqw5rFypVPPsKXoz/HYDR
+   9s5BxguT9Pj5xtmOSRIA3jTA5Qij+7Pz1vBXKT+sxzz9Ywse1XFzFIuLh
+   t/iI+TWNtX06yRHpTRjCcTbRQW4rFl9VG6R/oLl4m3Ng5FT+rYwT3Ouvu
+   zwbf++gdCpCHcIGCgyqJwDPLv8bbrDpH+j91BgOqW3GEwzM9mEUr0TiXn
+   w==;
+X-CSE-ConnectionGUID: BCQTxFUCQca01oCLJKTfQQ==
+X-CSE-MsgGUID: v75+344TRTik71i18E4VEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33215854"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="33215854"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 11:45:55 -0700
+X-CSE-ConnectionGUID: akN04QTuQHG/dG/XKj4ihw==
+X-CSE-MsgGUID: r3tdL/DlQuyLfSp7tQpiMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="60898531"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 21 Aug 2024 11:45:53 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 5AD97268; Wed, 21 Aug 2024 21:45:52 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Daniel Scally <djrscally@gmail.com>
+Subject: [PATCH v1 1/1] platform/x86: int3472: discrete: Remap "reset" to "enable" for OV7251
+Date: Wed, 21 Aug 2024 21:40:07 +0300
+Message-ID: <20240821184546.627456-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819160758.296567-1-aha310510@gmail.com>
-In-Reply-To: <20240819160758.296567-1-aha310510@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 21 Aug 2024 11:39:15 -0700
-Message-ID: <CAADnVQLpC3-j1g4On95FnHOsfKYaQpeMp4dx4P-ZQqC56tQ5Lg@mail.gmail.com>
-Subject: Re: [PATCH bpf] bpf: Refactoring btf_name_valid_identifier() and btf_name_valid_section()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 9:08=E2=80=AFAM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
-> Currently, btf_name_valid_identifier() and btf_name_valid_section() are
-> written in a while loop and use pointer operations, so it takes a long
-> time to understand the operation of the code. Therefore, I suggest
-> refactoring the code to make it easier to maintain.
+The driver of OV7251 expects "enable" pin instead of "reset".
+Remap "reset" to "enable" and update polarity.
 
-imo it's harder to read after refactoring. Pls avoid.
+In particular, the Microsoft Surface Book can't load the camera sensor
+driver without this change:
 
-> In addition, btf_name_valid_section() does not check for the case where
-> src[0] is a NULL value, resulting in an out-of-bounds vuln. Therefore, a
-> check for this should be added.
+ ov7251 i2c-INT347E:00: supply vdddo not found, using dummy regulator
+ ov7251 i2c-INT347E:00: supply vddd not found, using dummy regulator
+ ov7251 i2c-INT347E:00: supply vdda not found, using dummy regulator
+ ov7251 i2c-INT347E:00: cannot get enable gpio
+ ov7251 i2c-INT347E:00: probe with driver ov7251 failed with error -2
 
-Hmm. Not sure about it. Pls add a selftest that demonstrates the issue
-and produce a patch to fix just that.
-Do not mix it with questionable refactoring.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-pw-bot: cr
+Hmm... I have spent some time to achieve this, and then I realised that
+linux-surface GitHub project already has something similar [1].
+
+The advantage of [1] is that it applies the quirk to all OV7251 sensors
+on the platform (don't know how useful it IRL).
+
+However, it seems the [1] has two issues:
+1) it missed terminator entry in the ACPI ID table;
+2) it forces polarity to be active high, while I think the XOR approach
+is better as it's possible (but quite unlikely I believe) that reset pin
+might be inverted on the PCB level.
+
+All in all, I'm fine with any of these patches to be applied with the
+above mentioned improvements / caveats.
+
+Link: https://github.com/linux-surface/kernel/commit/d0f2c2d5a449c2bf69432f90d164183143d8af8d [1]
+
+ drivers/platform/x86/intel/int3472/discrete.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
+index b5f6f71bb1dd..0559295dfb27 100644
+--- a/drivers/platform/x86/intel/int3472/discrete.c
++++ b/drivers/platform/x86/intel/int3472/discrete.c
+@@ -86,6 +86,16 @@ static int skl_int3472_map_gpio_to_sensor(struct int3472_discrete_device *int347
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * The driver of OV7251 expects "enable" pin instead of "reset".
++	 * Remap "reset" to "enable" and update polarity.
++	 */
++	if (!strcmp(int3472->sensor_name, "i2c-INT347E:00") &&
++	    !strcmp(func, "reset")) {
++		func = "enable";
++		polarity ^= GPIO_ACTIVE_LOW;
++	}
++
+ 	ret = skl_int3472_fill_gpiod_lookup(&int3472->gpios.table[int3472->n_sensor_gpios],
+ 					    agpio, func, polarity);
+ 	if (ret)
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
