@@ -1,181 +1,122 @@
-Return-Path: <linux-kernel+bounces-295915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32CCE95A2EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B9F95A2EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571161C21D56
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 165C028250A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2751547F6;
-	Wed, 21 Aug 2024 16:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD115383E;
+	Wed, 21 Aug 2024 16:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fipWv643"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CDa0JJJp"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8360C14EC5C;
-	Wed, 21 Aug 2024 16:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D883C14EC5C
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258107; cv=none; b=s+L3YhLrdWU5m+OC91LiYXJf1KfzIRyqtnIcWbdUn9ShPG5k42hnFi8vlI1m1PGXZR9zIlxeLoXAWsrAarP5uQ16PpzUrMukQxr4wYPgGWQVvslV/0CPdYKF/zN3B2sbRBnFXXvsmtsRoTWWJ0v7Btn7dhLwiUeW72XjFLj4dFI=
+	t=1724258117; cv=none; b=c0+gD2b47637XSzuYphhDhkHDgkEYv8N3NYcNdsn2vh9Na/dmH4Ig5+Ifgfnq0vdQy4nIbSgkufGG/UeXoWnrywxh/su92n/5KVfVhBf79vIENnR0lOOaXvVeVdNk7FXZXCwzeedAezzgKXKVwCQfAB5w1zm8i3wnW1Dw84z4sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258107; c=relaxed/simple;
-	bh=ad1bF+QoX7LfB7L18ZTC8ZXQ0Prmmw9IfCG18E2tuYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cbfb7565YlJPg6mBzvmzYWT6VRVsRgYij5xW1rbBSnAI2qvgOS9EIoWBUPzSKdnkUXz/p6LoLkTz9lsmVM9EWAbUzY5s+RrOpeQyKaEZ9e8hL/Yp6WbLAxP2GNDfC5x3Oewt4qwxJzx7ER7SCBZ8h7kUQF7IMGzR58oAV1WRjTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fipWv643; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LFZ7I9019748;
-	Wed, 21 Aug 2024 16:34:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rcc0ZxWhHGUMUB4Hv0nltf1scT7ot8uWMC3hsil2LNA=; b=fipWv643/aI7xHDq
-	JKTo2yBAvlETk1pX5sTw+v4BTP5wZOy2x7yKhoY43I6zEdblN9G7arEfmFFYYH7F
-	VJ3+YBjGhkjyj1TrX06oxTwq7QMaoPJiyLwotfkGsNrY4ZT7UBEbEqkeDodtGoWG
-	3OmuU/ThzWJ09jDPNBUrkN/BJzbZ2saTTeJf3Zc6yrqlZy7qthnmJ91xSl18DQO8
-	QfGqQmSEBS2VLf3z9WPMPgRBpwmQJJTM0l/dtoYW6Z81aJqezqyBPJLLJmINWft+
-	Z3SDIjriA5pmY4HG5HcvciZzHq8Ysa2Csge/V7Tid32fLjHInbtpLAep+Kf0VCYO
-	qpfgMw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkw9wf6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 16:34:56 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LGYtmN030180
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 16:34:55 GMT
-Received: from [10.216.59.247] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
- 2024 09:34:49 -0700
-Message-ID: <c8b7c2f0-9de1-1787-2f1b-2aa0102f347c@quicinc.com>
-Date: Wed, 21 Aug 2024 22:04:46 +0530
+	s=arc-20240116; t=1724258117; c=relaxed/simple;
+	bh=7RRSQUF/jWGiZ0j43cyHJL9hMT+ZUZY9A7jG7PxHBzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dowwLrgPCGmjjVkszJLhxSHfBGoHNiSsXO2nT4vG2yCyDGzg1VcI+ZbMl8XZTCdcEYJbLcpotgjJ1FI9sVzSuXXuqPkJ0yGGzC3zvMHY2SZ7Ol5V8ppW2xPnVNHevpPiU4d0kcJj5NSQ8v7z0yQIy+UqHqjOmM8c1tuWXP5rhYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CDa0JJJp; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff443so6451502a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724258114; x=1724862914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mVNHONdIYUDlcb4HKJkyazbBTeiFuRtXuYOCfk7pptg=;
+        b=CDa0JJJpn4B3HQJaTVGXN2FaTO+4PWUnRh7KhZumdAaA3viZxm7h+v3qQhiaLEeTKf
+         r07QOW+38zyev2XR6aEFyvTflerkAB9kSUyTCrdPMpZAP3ZIppZ1cNyXDOWNV23LeDJ6
+         nthr6Kdo1g2kZlvE9m37rZKqFb9dcyrjDkeTUh8kXTZCOWDfJliRLNU/G8dhWdtGh+eP
+         SkDxuktqp7pzs22ZWvp+tIu78zECOqmTwz5ZUCwtblSNQksZpTMlm3Kugo8+ecB0kddm
+         w1cdvgF1/PNxV2oOLHRT91/ZpHEFJyYvo7thtzENHd5gNlrVJl92CStKUK8h80MpQyM1
+         Z7fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724258114; x=1724862914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mVNHONdIYUDlcb4HKJkyazbBTeiFuRtXuYOCfk7pptg=;
+        b=KbblxsW2ecRgrsxdwhmayOhkfmxYFqOiX8YnPz5tYDmXpe2hYNpQu242iz23z6MFOz
+         DH0dC0llx4rT46alM2Xp5fN+e7LYnAUlGqdt01O7XGWsvNHW8AVzEbzy/BRhqMA0ucCG
+         ol2XQrtEvmWMA5DcM8hyaeHsVGNOH1pMmz/7q/TsVPqzz/JJ6ITn2r716f3D3zo+gS37
+         Tw5IAKnWXPoZKap32xwNK5I0EZcALqnYanTbYLSgmqCojN6lA2qpbojhInmMj7MOf/5Y
+         GUdils3nOOPIy9pUWTThZ4kULubcFmZvu+nZNJ01I2NtjTZlHQarcpbCG3y4FrxGHPRX
+         cHjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3w7pfchp694O8EA49/6++KdzgW2k3sCRvWFkK3ae489GInveG5VQcONJyY8P3A6cBpXclm0lM5uUizQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXlcYLj+1/qrS94iBmpvmiNJR3LN/e3t7AqAO5VrL4ojM4fjOF
+	sKIlVBfXHFV+Mc6JXhbPO+Z599rEGkMcH5pJLDcePBKNwe/4WIloot8knSW7h8oxSLgLHIncjaY
+	l
+X-Google-Smtp-Source: AGHT+IHFTiJo6jdkcWP6Ht7XAiB3ovuBe/ll8VqcDXEYzKPHdyBYXewj3953s9653M4Dc3FJWJQbwQ==
+X-Received: by 2002:a17:906:f597:b0:a86:8166:1b0a with SMTP id a640c23a62f3a-a8681661d71mr128857966b.56.1724258114086;
+        Wed, 21 Aug 2024 09:35:14 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8687b6f7e9sm21557866b.145.2024.08.21.09.35.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 09:35:12 -0700 (PDT)
+Date: Wed, 21 Aug 2024 18:35:11 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	longman@redhat.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 -next] cgroup: update some statememt about delegation
+Message-ID: <2zbgupbyebbzrs62ssl2z7vx5lfkuoxrqems2m5ktvf2lezcb7@jlvcvjsyzsci>
+References: <20240815131408.3151804-1-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 01/16] dt-bindings: dma: qcom,bam: Add bam pipe lock
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <gustavoars@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_utiwari@quicinc.com>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-2-quic_mdalam@quicinc.com>
- <0a2b884b-bd28-428e-be12-8fef4fdfd278@kernel.org>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <0a2b884b-bd28-428e-be12-8fef4fdfd278@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XWDAf-meecaWekiXSolcCXQUbK7qd4Fc
-X-Proofpoint-GUID: XWDAf-meecaWekiXSolcCXQUbK7qd4Fc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408210121
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7zagrrzjj3gbxhcu"
+Content-Disposition: inline
+In-Reply-To: <20240815131408.3151804-1-chenridong@huawei.com>
 
 
+--7zagrrzjj3gbxhcu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 8/17/2024 2:38 PM, Krzysztof Kozlowski wrote:
-> On 15/08/2024 10:57, Md Sadre Alam wrote:
->> BAM having pipe locking mechanism. The Lock and Un-Lock bit
->> should be set on CMD descriptor only. Upon encountering a
->> descriptor with Lock bit set, the BAM will lock all other
->> pipes not related to the current pipe group, and keep
->> handling the current pipe only until it sees the Un-Lock
->> set.
-> 
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-   Ok , will update in next patch.
-> 
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
->>
->> Change in [v2]
->>
->> * Added initial support for dt-binding
->>
->> Change in [v1]
->>
->> * This patch was not included in [v1]
->>
->>   Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->> index 3ad0d9b1fbc5..91cc2942aa62 100644
->> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->> @@ -77,6 +77,12 @@ properties:
->>         Indicates that the bam is powered up by a remote processor but must be
->>         initialized by the local processor.
->>   
->> +  qcom,bam_pipe_lock:
-> 
-> Please follow DTS coding style.
-   Ok
-> 
->> +    type: boolean
->> +    description:
->> +      Indicates that the bam pipe needs locking or not based on client driver
->> +      sending the LOCK or UNLOK bit set on command descriptor.
-> 
-> You described the desired Linux feature or behavior, not the actual
-> hardware. The bindings are about the latter, so instead you need to
-> rephrase the property and its description to match actual hardware
-> capabilities/features/configuration etc.
-   Ok, will update in next patch.
-> 
->> +
->>     reg:
->>       maxItems: 1
->>   
->> @@ -92,6 +98,8 @@ anyOf:
->>         - qcom,powered-remotely
->>     - required:
->>         - qcom,controlled-remotely
->> +  - required:
->> +      - qcom,bam_pipe_lock
-> 
-> Why is it here? What do you want to achieve?
-   This property added to achieve locking/unlocking
-   of BAM pipe groups for mutual exclusion of resources
-   that can be used across multiple EE's
-> 
->>     - required:
->>         - clocks
->>         - clock-names
-> 
-> Best regards,
-> Krzysztof
-> 
+On Thu, Aug 15, 2024 at 01:14:08PM GMT, Chen Ridong <chenridong@huawei.com>=
+ wrote:
+> The comment in cgroup_file_write is missing some interfaces, such as
+> 'cgroup.threads'. All delegatable files are listed in
+> '/sys/kernel/cgroup/delegate', so update the comment in cgroup_file_write.
+> Besides, add a statement that files outside the namespace shouldn't be
+> visible from inside the delegated namespace.
+>=20
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>  Documentation/admin-guide/cgroup-v2.rst | 10 ++++++----
+>  kernel/cgroup/cgroup.c                  |  2 +-
+>  2 files changed, 7 insertions(+), 5 deletions(-)
+
+Acked-by: Michal Koutn=FD <mkoutny@suse.com>
+
+--7zagrrzjj3gbxhcu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZsYXPQAKCRAt3Wney77B
+SfaFAP4qJ6MkZEudFO2/btfJkawZ7mPoC7NkXNuqd8vye85VtAD/UqX92jnGAHjj
+qL/JoGfeZWBhvVV+xNclB7Zz2GhRHwk=
+=QRw3
+-----END PGP SIGNATURE-----
+
+--7zagrrzjj3gbxhcu--
 
