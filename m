@@ -1,147 +1,203 @@
-Return-Path: <linux-kernel+bounces-295788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCDC95A18E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:39:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CB695A1F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE1D8B20F36
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:39:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E891EB26277
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACC614EC7C;
-	Wed, 21 Aug 2024 15:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10011B5ECE;
+	Wed, 21 Aug 2024 15:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zsu73gX6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jYTBmT7B"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D00136342
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB1C52F6F;
+	Wed, 21 Aug 2024 15:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724254751; cv=none; b=RdeJYnyO04jffy5LQKKS4OtH7/BCxf7G2lcVy7V9Ddw5sjMvY4xsMKQWLc+HCuO30I37APMf9Ss2uDOBpkaYqhQk9345iLOyVyT48pzEmqP0QrA09Kk9HhVGRROn3e+Md5mHlWdFCJElMBDsA47sHAK78rZq0wPi9XE45xQ9UKQ=
+	t=1724255158; cv=none; b=ahj/Ysgkxd8+Hu1iVjlV8t2bD19ZzqkAEYOernqd2W+G3IsnhGGACIDJdbX242XXDMm+X/P1xgplNWyMN+cnMqGVJ38tacna0UH3oojSnLhcb04H5Mw/yrXgsvw/30iZWObOp/Hd/DVVsIVB84vlk4Z6blxXOk+8CoU2rBBp1vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724254751; c=relaxed/simple;
-	bh=5HDlGsmUc/rInp0PWhpsW+zXPX4wPe0+sZYPNbXRbNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8j9wNlGPuRrFZ7+6AcOA+rLLrvkN7z2Swyiz2jS3TpYa3VPulSSiYULr8qXI3CZ8OoTc3bPC+tbe2FjEPyX+pfIGIE8inJI4SDhFnYQ2VJi3OetI5TngYyO64oRNljc1R5wKecvE+dDxWpVrxeOHadxvCsqvhpy6X9OVJ52p1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zsu73gX6; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724254749; x=1755790749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5HDlGsmUc/rInp0PWhpsW+zXPX4wPe0+sZYPNbXRbNo=;
-  b=Zsu73gX6zIz7JNapC5+5fXQqLFSg2PnZvCZO0xwZx2nxigIF76MO76ca
-   WURZUEQy1mv+QL1A+G984Vft0aotouMR+i3OxIzK/qkw8hmCKFCATOuw9
-   DUtHD7EKLRyCFHzZO+SmvutlLQ8Ah0K4fUBOvvlt55qr1OoXS7muGrFFT
-   scnIKbDTQuXGeADH1rzTDWoGtjFcbKwzOl1Y0i0AtzBJHD2SiR1aZ6+3c
-   0abfzrUCoTbAcpuXaVbxR4CrnRJT8t3W8NCGcSwqliUQF9OYcfuwE9mzD
-   Ouf50FnWmxjvR3GFc7/F2AXShQhUIy/QhmEEXWevqeflB2Z4BUE3hDz9e
-   Q==;
-X-CSE-ConnectionGUID: 3ZyqoNFGQEavRyMNrqsmVQ==
-X-CSE-MsgGUID: pxqyWtWCRwanbnciPxANpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="13134605"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="13134605"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 08:39:08 -0700
-X-CSE-ConnectionGUID: JSjHD66qTvC/7iLE9OIA3A==
-X-CSE-MsgGUID: E+ItOtA9ThCIO0RP0Zbdug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="61152631"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 08:39:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sgnQO-0000000087U-1T15;
-	Wed, 21 Aug 2024 18:39:04 +0300
-Date: Wed, 21 Aug 2024 18:39:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
-	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] i3c: mipi-i3c-hci: Add AMDI5017 ACPI ID to the
- I3C Support List
-Message-ID: <ZsYKGOLN3_2VU6Ld@smile.fi.intel.com>
-References: <20240821133554.391937-1-Shyam-sundar.S-k@amd.com>
- <20240821133554.391937-2-Shyam-sundar.S-k@amd.com>
- <9584ddb0-6e39-4d04-9242-a68eb4b86eba@amd.com>
- <ZsXyHfLJ8SJOW0RF@smile.fi.intel.com>
- <236aa6d9-bb5d-4854-86e3-5473f5ea6337@amd.com>
+	s=arc-20240116; t=1724255158; c=relaxed/simple;
+	bh=6xj/zioSJEpftwgsyPSVSuFpldC5b11lex7vr0onqm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pVvWzilgM56PfRAyvF5AcLbS0zhRZX4zQAypTxPYtuCVr0/2PaUAPSOLIN9zTVVwOr8lw3NEklNh8YWVsSEsdGYN8NzEUETxTAjysiEaZ5w6j0g/jqMAS9SmEutmA7+kPRPPEe6x0IUfuwiczKv/Qy53HCWefeYFMc1LpWTxu0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jYTBmT7B; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LFT46h011379;
+	Wed, 21 Aug 2024 15:45:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
+	H+21QL3gx86UBIxyLiP7A7YvG3rJ+T8UqdwWDM4MofA=; b=jYTBmT7BTUrZuseW
+	mI/VeyiDrcUdpOxVjvNcO1xNIGVA3agOyee3o6IdXAgibTEOQ2eAGJxBhiznUWHY
+	Zm0p3rC/zSA7ktvZcx1Y/I6qaN+wgRTX9zaKJdiL86TabY8Lg7yRgCk7sNfR+P2T
+	CAWGut0a9iIWWueV0XE2Q7mBMhrbN54FwVrzSHS8mNzV142RZgxKUYZkhnQJir7q
+	VhE85+w5nc0Ls+oTReMktIgks2vQhY2BkvRvCksyw1Pour2qBLoR19Ma6Bam27ox
+	L9vMpTh14qKQ7TrwLmN1epxHia/v45bNVZkusrXHU339I6U0DYL5cHISkQBWUFtg
+	gq2euQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc4twcg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 15:45:39 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47LFjdEu025484;
+	Wed, 21 Aug 2024 15:45:39 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc4twcd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 15:45:39 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47LEPXV2017706;
+	Wed, 21 Aug 2024 15:45:38 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4138w383r5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 15:45:38 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47LFjX0p16253428
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 Aug 2024 15:45:35 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2152320071;
+	Wed, 21 Aug 2024 15:45:33 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E4F7E2006C;
+	Wed, 21 Aug 2024 15:45:32 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 21 Aug 2024 15:45:32 +0000 (GMT)
+Date: Wed, 21 Aug 2024 17:40:22 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Hariharan Mari <hari55@linux.ibm.com>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, shuah@kernel.org, frankja@linux.ibm.com,
+        borntraeger@linux.ibm.com, david@redhat.com, pbonzini@redhat.com,
+        schlameuss@linux.ibm.com
+Subject: Re: [PATCH v2 5/5] KVM: s390: selftests: Add regression tests for
+ PLO subfunctions
+Message-ID: <20240821174022.63ca2c6a@p-imbrenda.boeblingen.de.ibm.com>
+In-Reply-To: <20240820065623.1140399-6-hari55@linux.ibm.com>
+References: <20240820065623.1140399-1-hari55@linux.ibm.com>
+	<20240820065623.1140399-6-hari55@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <236aa6d9-bb5d-4854-86e3-5473f5ea6337@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: G3IgFnvVhSkhTvRxPDEeD5VqQ5VC8wOT
+X-Proofpoint-GUID: 5VRrrnsmmnPpRU8furV9cDh03dL-fpcN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 adultscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408210113
 
-On Wed, Aug 21, 2024 at 08:42:12PM +0530, Shyam Sundar S K wrote:
-> On 8/21/2024 19:26, Andy Shevchenko wrote:
-> > On Wed, Aug 21, 2024 at 07:07:45PM +0530, Shyam Sundar S K wrote:
-> >> On 8/21/2024 19:05, Shyam Sundar S K wrote:
+On Tue, 20 Aug 2024 08:48:37 +0200
+Hariharan Mari <hari55@linux.ibm.com> wrote:
 
-...
-
-> >>> This update adds the AMDI5017 ACPI ID to the list of supported IDs.
-
-s/This update adds/Add/
-
-> > Please, provide a DSDT excerpt to show how it will look like in the ACPI
-> > tables.
+> Extend the existing regression test framework for s390x CPU subfunctions
+> to include tests for the Perform Locked Operation (PLO) subfunction
+> functions.
 > 
->     Scope (_SB)
->     {
-> 	...
+> PLO was introduced in the very first 64-bit machine generation.
+> Hence it is assumed PLO is always installed in the Z Arch.
+> The test procedure follows the established pattern.
 > 
->         Name (HCID, "AMDI5017")
->         Device (I3CA)
->         {
->             Method (_HID, 0, Serialized)  // _HID: Hardware ID
->             {
->                 If ((I30M == Zero))
->                 {
->                     If (CondRefOf (HCIB))
->                     {
->                         Return (HCID) /* \_SB_.HCID */
->                     }
->                     Else
->                     {
->                         Return (I3ID) /* \_SB_.I3ID */
+> Suggested-by: Janosch Frank <frankja@linux.ibm.com>
+> Signed-off-by: Hariharan Mari <hari55@linux.ibm.com>
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> ---
+>  .../kvm/s390x/cpumodel_subfuncs_test.c        | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> index c31f445c6f03..255984a52365 100644
+> --- a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> +++ b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> @@ -20,6 +20,8 @@
+>  
+>  #include "kvm_util.h"
+>  
+> +#define U8_MAX  ((u8)~0U)
 
-Do I understand correctly that I3ID is the old one (as per another path I have
-seen last week or so), i.o.w. *not* a MIPI allocated one?
+a more descriptive macro name would be better, maybe something like:
 
-If it's the case, feel free to add
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-from ACPI ID perspective.
+#define PLO_MAX_PARAMETER 255
 
->                     }
->                 }
->                 Else
->                 {
->                     Return (I2ID) /* \_SB_.I2ID */
->                 }
->             }
-> 	
-> 	...
->     }
+the current macro is not much better than having just a magic number :)
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +
+>  /**
+>   * Query available CPU subfunctions
+>   */
+> @@ -37,6 +39,33 @@ static void get_cpu_machine_subfuntions(struct kvm_vm *vm,
+>  	TEST_ASSERT(!r, "Get cpu subfunctions failed r=%d errno=%d", r, errno);
+>  }
+>  
+> +static inline int plo_test_bit(unsigned char nr)
+> +{
+> +	unsigned long function = (unsigned long)nr | 0x100;
 
+I think the (unsigned long) cast is not needed
+
+> +	int cc;
+> +
+> +	asm volatile("	lgr	0,%[function]\n"
+> +			/* Parameter registers are ignored for "test bit" */
+> +			"	plo	0,0,0,0(0)\n"
+> +			"	ipm	%0\n"
+> +			"	srl	%0,28\n"
+> +			: "=d" (cc)
+> +			: [function] "d" (function)
+> +			: "cc", "0");
+> +	return cc == 0;
+> +}
+> +
+> +/*
+> + * Testing Perform Locked Operation (PLO) CPU subfunction's ASM block
+> + */
+> +static void test_plo_asm_block(u8 (*query)[32])
+> +{
+> +	for (int i = 0; i <= U8_MAX; ++i) {
+> +		if (plo_test_bit(i))
+> +			(*query)[i >> 3] |= 0x80 >> (i & 7);
+> +	}
+> +}
+> +
+>  /*
+>   * Testing Crypto Compute Message Authentication Code (KMAC) CPU subfunction's
+>   * ASM block
+> @@ -237,6 +266,11 @@ struct testdef {
+>  	testfunc_t test;
+>  	int facility_bit;
+>  } testlist[] = {
+> +	/*  PLO was introduced in the very first 64-bit machine generation.
+
+multi-line comments should not have text in the opening line 
+
+> +	 *  Hence it is assumed PLO is always installed in Z Arch .
+> +	 */
+> +	{ "PLO", cpu_subfunc.plo, sizeof(cpu_subfunc.plo),
+> +		test_plo_asm_block, 1 },
+>  	/* MSA - Facility bit 17 */
+>  	{ "KMAC", cpu_subfunc.kmac, sizeof(cpu_subfunc.kmac),
+>  		test_kmac_asm_block, 17 },
 
 
