@@ -1,89 +1,130 @@
-Return-Path: <linux-kernel+bounces-295408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D215959AD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A944A959AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAB73B29149
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:47:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B795CB20519
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02941B5EBD;
-	Wed, 21 Aug 2024 11:27:44 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6731C1757;
+	Wed, 21 Aug 2024 11:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4u2/6oM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8577614C5BD;
-	Wed, 21 Aug 2024 11:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CABA14C5BD;
+	Wed, 21 Aug 2024 11:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239664; cv=none; b=AP36e24IVHa6ZoxxzpX+BZpm9McGrxiFsuSCtTP7iIzm7RprgEVGBgfyXk3PAcybs1Htq7FFATAnYUVuppCBEFhIk6haVgACXYGrr7aiMXj938hXxoQIX1SfMxPxme6tY7ByvS/Cq9nN7coY6X8sOn3fr+b4oNWY78gzQOLG2IA=
+	t=1724239674; cv=none; b=dN9CL56kEzslSENt9xZ4elb7fHrGqGFtx3ajIY9FkOBHsz+zfBwLbXH7x3k1EQKp0ELwtBFYcpX6zCDmFHE+UTgp021Qn3Z2QrUxJn9G0G4lK3Ak0UTcBbnYZMFJySFzEQeELt4Mc1LgLHkoRQG/zSW3WNjKVCJTFfRMJb8FW1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239664; c=relaxed/simple;
-	bh=k+wI27GqsGnBaCjuAIHqFhYnhQ6n7mgQgpX76GKua1I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hjFxKeM9vT0ubsI50V65nPOMTTD7LraHCy9koU8Y26zUVNucbJsU0FdpOCbXbVQQrflVa0xNTIiyzSuib5uWTa7c3Q1E3Bnwnxl8Gu8m4Aqiq/raciVMcHPxEgJnYCCj+A2aECTPIHDxKhfQJ0MQrdHkSNjkmolnhFBeZFSpQRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpkTX6VHpz20lPs;
-	Wed, 21 Aug 2024 19:22:56 +0800 (CST)
-Received: from dggpeml500005.china.huawei.com (unknown [7.185.36.59])
-	by mail.maildlp.com (Postfix) with ESMTPS id 976381401F3;
-	Wed, 21 Aug 2024 19:27:38 +0800 (CST)
-Received: from huawei.com (10.175.112.125) by dggpeml500005.china.huawei.com
- (7.185.36.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
- 2024 19:27:37 +0800
-From: Yongqiang Liu <liuyongqiang13@huawei.com>
-To: <kvm@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <zhangxiaoxu5@huawei.com>,
-	<hpa@zytor.com>, <x86@kernel.org>, <dave.hansen@linux.intel.com>,
-	<bp@alien8.de>, <mingo@redhat.com>, <tglx@linutronix.de>,
-	<pbonzini@redhat.com>, <seanjc@google.com>, <liuyongqiang13@huawei.com>
-Subject: [PATCH -next] KVM: SVM: Remove unnecessary GFP_KERNEL_ACCOUNT in svm_set_nested_state()
-Date: Wed, 21 Aug 2024 19:27:37 +0800
-Message-ID: <20240821112737.3649937-1-liuyongqiang13@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724239674; c=relaxed/simple;
+	bh=B/Yqf661OpefJ+5m/Zlzn8b5CARyVavHgTOFURnqlf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ko2o8kCf7H2x6iGgqj1wZjfh0eiZZpttXJONX0tFqWoURuFA5DhUHocJoSdCnjqmkuoxAUL+CVL8FhgXe7yfG/sgenqAAT3saVcprLvQCB6ogsnosfkA4EztY2vtAWWBZYPHAdg0jPTyWWfZmNBU+OXZxShlu/i9W5t+DjYl4nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4u2/6oM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF965C4AF0C;
+	Wed, 21 Aug 2024 11:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724239673;
+	bh=B/Yqf661OpefJ+5m/Zlzn8b5CARyVavHgTOFURnqlf0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N4u2/6oMQoydd77g5/Es/i0CE9m6gPHXQ/9/ue9t8JGAygO/2xf6BKfYdqU0LaYeF
+	 3zkKMs87AGj4fsmMnl4KrmNW1K5PNU2GAw8TDICo+z9rDe2wOUPrZ67w3Bvfv1JW5y
+	 xfjwERohP1WtJXl/9udHigQGWJTetw9xkM9wijeiC5MlbolI+62MRAroSU7yJ3KA74
+	 hEdFlylfVYflcsB2vIY0rr7W0T2IbsG7cI6dNFTt+YPnyZo2KAWbKfQ2g0za5DjYlu
+	 wVH4dHWv+VhmhR4AjkwcGWxmOtUnJx5Axwh2yXifGvUF929Kg5+HZIALcFNkLnrb0Q
+	 0ryA4eVqUDxHA==
+Message-ID: <aee5b633-31ce-4db0-9014-90f877a33cf4@kernel.org>
+Date: Wed, 21 Aug 2024 14:27:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500005.china.huawei.com (7.185.36.59)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/7] net: ti: icssg-prueth: Enable IEP1
+To: MD Danish Anwar <danishanwar@ti.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Andrew Lunn <andrew@lunn.ch>,
+ Jan Kiszka <jan.kiszka@siemens.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Jacob Keller <jacob.e.keller@intel.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Simon Horman <horms@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com
+References: <20240813074233.2473876-1-danishanwar@ti.com>
+ <20240813074233.2473876-2-danishanwar@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240813074233.2473876-2-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The fixed size temporary variables vmcb_control_area and vmcb_save_area
-allocated in svm_set_nested_state() are released when the function exits.
-Meanwhile, svm_set_nested_state() also have vcpu mutex held to avoid
-massive concurrency allocation, so we don't need to set GFP_KERNEL_ACCOUNT.
+Hi,
 
-Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
----
- arch/x86/kvm/svm/nested.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 13/08/2024 10:42, MD Danish Anwar wrote:
+> IEP1 is needed by firmware to enable FDB learning and FDB ageing.
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index 6f704c1037e5..d5314cb7dff4 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -1693,8 +1693,8 @@ static int svm_set_nested_state(struct kvm_vcpu *vcpu,
- 		return -EINVAL;
- 
- 	ret  = -ENOMEM;
--	ctl  = kzalloc(sizeof(*ctl),  GFP_KERNEL_ACCOUNT);
--	save = kzalloc(sizeof(*save), GFP_KERNEL_ACCOUNT);
-+	ctl  = kzalloc(sizeof(*ctl),  GFP_KERNEL);
-+	save = kzalloc(sizeof(*save), GFP_KERNEL);
- 	if (!ctl || !save)
- 		goto out_free;
- 
+Required by which firmware?
+
+Does dual-emac firmware need this?
+
+> Always enable IEP1
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> index 53a3e44b99a2..613bd8de6eb8 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> @@ -1256,12 +1256,8 @@ static int prueth_probe(struct platform_device *pdev)
+>  		goto put_iep0;
+>  	}
+>  
+> -	if (prueth->pdata.quirk_10m_link_issue) {
+> -		/* Enable IEP1 for FW in 64bit mode as W/A for 10M FD link detect issue under TX
+> -		 * traffic.
+> -		 */
+> -		icss_iep_init_fw(prueth->iep1);
+> -	}
+> +	/* Enable IEP1 for FW as it's needed by FW for FDB Learning and FDB ageing */
+> +	icss_iep_init_fw(prueth->iep1);
+>  
+>  	/* setup netdev interfaces */
+>  	if (eth0_node) {
+> @@ -1366,8 +1362,7 @@ static int prueth_probe(struct platform_device *pdev)
+>  	}
+>  
+>  exit_iep:
+> -	if (prueth->pdata.quirk_10m_link_issue)
+> -		icss_iep_exit_fw(prueth->iep1);
+> +	icss_iep_exit_fw(prueth->iep1);
+>  	icss_iep_put(prueth->iep1);
+>  
+>  put_iep0:
+> @@ -1424,8 +1419,7 @@ static void prueth_remove(struct platform_device *pdev)
+>  		prueth_netdev_exit(prueth, eth_node);
+>  	}
+>  
+> -	if (prueth->pdata.quirk_10m_link_issue)
+> -		icss_iep_exit_fw(prueth->iep1);
+> +	icss_iep_exit_fw(prueth->iep1);
+>  
+>  	icss_iep_put(prueth->iep1);
+>  	icss_iep_put(prueth->iep0);
+
 -- 
-2.25.1
-
+cheers,
+-roger
 
