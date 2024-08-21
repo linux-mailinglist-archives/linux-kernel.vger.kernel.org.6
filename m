@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-296107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B6395A5BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:16:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF52595A5BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D0D1C227FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AAE28462F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6839416FF2A;
-	Wed, 21 Aug 2024 20:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED3816FF26;
+	Wed, 21 Aug 2024 20:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRVO8IqT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u2dX3f2s"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB43F28DCB;
-	Wed, 21 Aug 2024 20:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B068628DCB;
+	Wed, 21 Aug 2024 20:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724271384; cv=none; b=ZTQghS2uFeRWa2CvfU/alv6DUBq3sSxCYVb5hyTWssX/0ToY1rexl9nchXc83W6CWvGUfSOq0/32RTXR1w3jDZvvn4H4Hs286NncEp51UoT06pyZFr6UQpLQTLYR06NVExiNpLfMgVpXytk+sNkuz1IN5nzHWz1NOKm808alQOU=
+	t=1724271594; cv=none; b=KZ3cF113GnwIJHksLMeuvoX5lUQQSTycM8yNbtuu0vq5AUQGXjMv4BqypODsTjfQ0Z+vfJWLANXnDMko8218GwFrgr8nqYf+XwSTBMs5QqFuDWAhrjMZczDtgxHx88c5GokRLG6O8OV9QBOchvcA29kk58Z87T1bnajxID5vzmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724271384; c=relaxed/simple;
-	bh=u4IEyRI7AbwbX+N5Tu/Kt1Y5We5BuarQCzy6U7tDZlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hhfhJuPl28lxHld6ZlwSTFRIZjk5sTcpu6iP4CsHjfZD8I4i6az4w0Zv/5OpikYk1w4JdyLDqG7HJVi1vAvsVMtjimNi0t19F1J+fqZq+W1d2ZIRMulo11h7vGfeQl5Rmsyw0fU9orH5uXSrsdl5SWXQg7Qgx23VE9C86AyguBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRVO8IqT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62604C32781;
-	Wed, 21 Aug 2024 20:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724271384;
-	bh=u4IEyRI7AbwbX+N5Tu/Kt1Y5We5BuarQCzy6U7tDZlU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qRVO8IqTr732AA7WyRGGblJ8wkdCOHVdBDiamiZsqxPYHiqfcqRqC4lSbsiuvGB72
-	 8YdcipZn9BnJV5bOuQkCLbIaKsWV7YeeFgiIv3Nha9eQDfEjY7JHalhyCTHw8y5C3m
-	 ByBR1zqAQLyrQ7H5OvQjyV7shw4X7xHfIP3NxxlsOTJgSQcxQgn2PjA2rJFhyi5YIA
-	 Nesg4bxsqMJN4BUJDpVdyhIj+NbDHsjHb4BsYCWOnhk7POsYzEuM4PiL1DO7pCSXDr
-	 DPLBMrRtTLeJtclKCDccYEDCDcG3y1azWRlfpOF3lub3yda2EntJZfwGhd4cB40Ek+
-	 veCze51ImXt3w==
-Date: Wed, 21 Aug 2024 14:16:21 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <ZsZLFS1CsHkKjw+C@elsanto>
+	s=arc-20240116; t=1724271594; c=relaxed/simple;
+	bh=SP3rHwr1ywvF46shdk8T6gY/GsdqCuNVCznFqyobXo8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M5kAlmgxRkGgcIFvmVhYlXOlFuoX7eC4x8P7kiwnQGdzL/FszhoGNg8QTBXeAXmXYwFYYFsL5b9/lrrAjM3jn/EEhSxnqz2M+V1npXCe16BunCBcMdqEAtsWt3OqWrKhEUNaIC5gHKA/QqEsxLqAfuju9NWp0cG+D5UAtW9SCss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u2dX3f2s; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LKJcNr061306;
+	Wed, 21 Aug 2024 15:19:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724271578;
+	bh=JIMmagbu6rerDTIou13smHpQv0gTsnJDw5Ximb62oGI=;
+	h=From:To:CC:Subject:Date;
+	b=u2dX3f2srZf5JpIp1EZSf+TIM2v15csghHE2//VJdws2mjzPFvkIwcbUVX5aa8xh4
+	 ya38W/gTgHin/lLgNNOI32OYcnI1YCW+o9B3gRamxDfiQVO6YlsryPz9tlbsF2firS
+	 WTQaPliwmsX+1JUFMe29HRvYUioTQ8QWaY3cs4JI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LKJcba013199
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 21 Aug 2024 15:19:38 -0500
+Received: from flwvowa01.ent.ti.com (10.64.41.90) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ Aug 2024 15:19:38 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by flwvowa01.ent.ti.com
+ (10.64.41.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Wed, 21 Aug
+ 2024 15:19:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 21 Aug 2024 15:19:35 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LKJZ62119523;
+	Wed, 21 Aug 2024 15:19:35 -0500
+From: Judith Mendez <jm@ti.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+	<linux@roeck-us.net>
+CC: <linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] watchdog: rti_wdt: Allow timeout config with timeout-sec
+Date: Wed, 21 Aug 2024 15:19:35 -0500
+Message-ID: <20240821201935.1698146-1-jm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
+Currently rti_wdt does not allow timeout to be configured
+via DT property timeout-sec, so fix watchdog_init_timeout
+to be able to use timeout-sec.
 
-So, with this, fix the following warning:
-
-drivers/gpu/drm/nouveau/dispnv50/disp.c:779:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Signed-off-by: Judith Mendez <jm@ti.com>
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ drivers/watchdog/rti_wdt.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index eed579a6c858..ddddc69640be 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -774,11 +774,9 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
- 	struct drm_hdmi_info *hdmi = &nv_connector->base.display_info.hdmi;
- 	union hdmi_infoframe infoframe = { 0 };
- 	const u8 rekey = 56; /* binary driver, and tegra, constant */
-+	DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, 17);
-+	const u8 data_len = 17; /* same length as in DEFINE_RAW_FLEX above. */
- 	u32 max_ac_packet;
--	struct {
--		struct nvif_outp_infoframe_v0 infoframe;
--		u8 data[17];
--	} args = { 0 };
- 	int ret, size;
- 
- 	max_ac_packet  = mode->htotal - mode->hdisplay;
-@@ -815,29 +813,29 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
- 		return;
- 
- 	/* AVI InfoFrame. */
--	args.infoframe.version = 0;
--	args.infoframe.head = nv_crtc->index;
-+	args->version = 0;
-+	args->head = nv_crtc->index;
- 
- 	if (!drm_hdmi_avi_infoframe_from_display_mode(&infoframe.avi, &nv_connector->base, mode)) {
- 		drm_hdmi_avi_infoframe_quant_range(&infoframe.avi, &nv_connector->base, mode,
- 						   HDMI_QUANTIZATION_RANGE_FULL);
- 
--		size = hdmi_infoframe_pack(&infoframe, args.data, ARRAY_SIZE(args.data));
-+		size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
- 	} else {
- 		size = 0;
+diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
+index 8e1be7ba01039..7260c67e60a25 100644
+--- a/drivers/watchdog/rti_wdt.c
++++ b/drivers/watchdog/rti_wdt.c
+@@ -332,7 +332,8 @@ static int rti_wdt_probe(struct platform_device *pdev)
+ 		memunmap(vaddr);
  	}
  
--	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, &args.infoframe, size);
-+	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, args, size);
+-	watchdog_init_timeout(wdd, heartbeat, dev);
++	wdd->timeout = heartbeat;
++	watchdog_init_timeout(wdd, 0, dev);
  
- 	/* Vendor InfoFrame. */
--	memset(&args.data, 0, sizeof(args.data));
-+	memset(args->data, 0, data_len);
- 	if (!drm_hdmi_vendor_infoframe_from_display_mode(&infoframe.vendor.hdmi,
- 							 &nv_connector->base, mode))
--		size = hdmi_infoframe_pack(&infoframe, args.data, ARRAY_SIZE(args.data));
-+		size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
- 	else
- 		size = 0;
- 
--	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, &args.infoframe, size);
-+	nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, args, size);
- 
- 	nv_encoder->hdmi.enabled = true;
- }
+ 	ret = watchdog_register_device(wdd);
+ 	if (ret) {
+
+base-commit: 860bbe8e618fd62446309e286ab4a83d38201c0a
 -- 
-2.34.1
+2.46.0
 
 
