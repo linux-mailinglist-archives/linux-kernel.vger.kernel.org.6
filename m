@@ -1,53 +1,47 @@
-Return-Path: <linux-kernel+bounces-295333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF9F9599C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:27:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739239599B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F6B2602D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:27:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BE7C1F21B71
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17091C93A2;
-	Wed, 21 Aug 2024 10:17:40 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BAE199FB4;
-	Wed, 21 Aug 2024 10:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3B8210972;
+	Wed, 21 Aug 2024 10:11:59 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BA0210970;
+	Wed, 21 Aug 2024 10:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724235460; cv=none; b=h1Qm4D3d+HGwDjBGH+HzS14Wy2nI4mfJnhTw0O+6hPlbs/suqc8vLTlOhI3ye4CXlSSqhpTUaVd78gNIQMHneJw0BKSSZz9gsNs6FmhaU2udX2Ni4e4FRG5y+xxk3Ma3umTJOp4smT/dg+w8QEKZL4RlpcQsHccJaVmMLTqvJgM=
+	t=1724235119; cv=none; b=cApvMvYFihvpWk36XnzrAmen70iJKDPc+uamy+RtSY2W3qgdduwqezudtzIkjeZgWToijea5M75CmLB9q9DvKU6PBULWCqONrbR6+tyoQshCzCo7CzNVtUejcZj4iJaiBHXpK+k4DeRMAri3TRWKEjbIKFkF2+a6+7HRoTIwtoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724235460; c=relaxed/simple;
-	bh=0RhVFhYoPwHMcp9xML/40dBV4iPibyeBgl8/kuvVXYc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TV/flQGb1U5HVubeRCxq9nPzNw0WWCtPFineHOzuP08g3tkMymTS7Lzj9LzAiVBwGZp+dL70u490TD1r3J1gBoQ4UEMFE3KpK2e7eKGydZE8vmhMY9LT2F3DtbUcIp85NOSIaSOlurkbV/CxG6Yw+ChAjD6c7Mi6zdnrkJyRf9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:ac20::1])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id CEC937E01BD;
-	Wed, 21 Aug 2024 18:10:55 +0800 (CST)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+	s=arc-20240116; t=1724235119; c=relaxed/simple;
+	bh=/bFmMeiy0T5fSe7EuWC53jhXfJ/0O37Sn4G03HWLoBQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uj77kMWEb4J3apnABXTNOUrRbqPkVygQqR/UgtjrXf6iA9AMWoJmOmSS4evCOOu25+i1ml5kECZOxYekJZ1iy8F6VNVbDKj/W0TcFmC7o78h+n0xg/AW0Yy7NItU8+CS8Ftivlra0f5ZC5ZaPxF9WnJMX6yeCmT7tFhyiVRZlcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8BxnptqvcVm3RAbAA--.32745S3;
+	Wed, 21 Aug 2024 18:11:54 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMAxouFqvcVm_oIcAA--.60915S2;
+	Wed, 21 Aug 2024 18:11:54 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Robert Marko <robimarko@gmail.com>
-Subject: [PATCH v3 4/4] arm64: dts: qcom: ipq6018: add LDOA2 regulator for rdp
-Date: Wed, 21 Aug 2024 18:10:25 +0800
-Message-Id: <20240821101025.858961-5-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240821101025.858961-1-amadeus@jmu.edu.cn>
-References: <20240821101025.858961-1-amadeus@jmu.edu.cn>
+	linux-mips@vger.kernel.org
+Subject: [RFC 0/2] irqchip/loongson-eiointc: Add multiple interrupt pin routing support
+Date: Wed, 21 Aug 2024 18:11:51 +0800
+Message-Id: <20240821101153.2262290-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,47 +49,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTUgZVh5PH09KH00aQ0hCQlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQRoYSUtBQUpZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
-X-HM-Tid: 0a91746b03d103a2kunmcec937e01bd
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PSI6IRw4DDIwLCoRDjgTIi9I
-	DT9PCi9VSlVKTElPSUhOS05NQ01LVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBGhhJS0FBSllXWQgBWUFJSUNMNwY+
+X-CM-TRANSID:qMiowMAxouFqvcVm_oIcAA--.60915S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Add LDOA2 regulator of MP5496 to support SDCC voltage scaling on RDP.
+There are four times about EIOINTC_REG_ISR register group access in
+eiointc irq handler, in order to get all irq status about 256 interrupt
+vectors. It causes four times VM-exits since eiointc register are
+software emulated, here multiple interrupt pin routing is introduced
+and each 64 interrupt vector is routed to one interrupt pin.
 
-Suggested-by: Robert Marko <robimarko@gmail.com>
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+With this method, there will be only on one EIOINTC_REG_ISR register
+group acces in irq handler, it will reduce VM-exits.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi b/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi
-index bb56c1245f92..4aa17ed8235c 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi
-@@ -12,9 +12,18 @@ ipq6018_s2: s2 {
- 			regulator-max-microvolt = <1062500>;
- 			regulator-always-on;
- 		};
-+
-+		ipq6018_l2: l2 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
- 	};
- };
- 
-+&sdhc {
-+	vqmmc-supply = <&ipq6018_l2>;
-+};
-+
- &CPU0 {
- 	cpu-supply = <&ipq6018_s2>;
- };
+Bibo Mao (2):
+  irqchip/loongson-eiointc: Route interrupt parsed from acpi table
+  irqchip/loongson-eiointc: Add multiple interrupt pin routing support
+
+ arch/loongarch/kernel/irq.c            |  3 +-
+ arch/loongarch/kernel/smp.c            |  2 +-
+ drivers/irqchip/irq-loongson-eiointc.c | 66 +++++++++++++++++++++++---
+ 3 files changed, 62 insertions(+), 9 deletions(-)
+
+
+base-commit: 1fb918967b56df3262ee984175816f0acb310501
 -- 
-2.25.1
+2.39.3
 
 
