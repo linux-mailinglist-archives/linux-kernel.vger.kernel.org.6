@@ -1,45 +1,72 @@
-Return-Path: <linux-kernel+bounces-295087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE2C959679
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D18695968A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5F4B238FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:29:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60AC51C20C84
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B000F1B5EC0;
-	Wed, 21 Aug 2024 07:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A762F166F29;
+	Wed, 21 Aug 2024 07:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gNcbPSH5"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jk+g1Oug"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CE31B5EB7
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C25F1B5ED8
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724227129; cv=none; b=UnT/0Rh0jTsH0TMtp4p1oaINq/z5ww4mMRSju+0xM41Tp9gSDl/NhiJhBMPekIW8dJySEQg2WfNp9lRtV/yNYDwiIVk0pEaGMLkLzBuKN6XURf9ZKPqDQGyG+t4B82DlGtYGBLB70Sdpkp55Qhxo01GhYQCH5hbBXNqZYGGrEVM=
+	t=1724227160; cv=none; b=tAX+h41EWGSxt8YhQi3Pj9WuAa8i3+6y149SqIGhmkoFle1VkbSW+Oc6qbSFSFMxBK4iIWq3htRaJ3pxoholcQYyWA4g/d9K6PMmbCT2L0bTZ4ObWv2lo8U868PjmDItyVfu8AgoP4cIQ7amdgOOrcKtHl7/3Hf2KipK1Rl0MDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724227129; c=relaxed/simple;
-	bh=8osB/wcFehwq1pA0msz9b7FFVSe5bxbfn1XCWsoKrs8=;
+	s=arc-20240116; t=1724227160; c=relaxed/simple;
+	bh=vmZoQ1uV1Pp2U5AwGUjIKnclRbitDC4/b0S9tawjIZ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JWaARW/04B34WvViIPmPVy7p/rRd7wvgecR0HFsaK+9VDVYcYmgO+uigX5Sjczp8pC9p8pIF/RaagI91dwnZT+PUFJ8K1T94lfcU+HBF0KiS5vzVF99r/8bYohgx+3y0Iu01AFm81LHKiLMe+DnQ8HZkp62Oa+DYFOeqpQ+XLAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gNcbPSH5; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724227118; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=LEqqDi/krVo1lceJDkIrISzHv6al/xT2SjSgavb2vck=;
-	b=gNcbPSH5Z9Jxsj/R7tB/z5LtzewOb/3uwA3GBahVdz5s+IiAOYGOuOq3S4Gf0u1l1Gxr3zaHQu9rEWXVBLbXkwfQYI4cmC0ecty1XDP2ieYVIUZ7IKYVcK/vi8tTo7NldfnWD9CjylIBZ9s3qFE0oQKycRKu+nA0sa5QarYmavI=
-Received: from 30.221.129.221(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDLAvpM_1724227116)
-          by smtp.aliyun-inc.com;
-          Wed, 21 Aug 2024 15:58:37 +0800
-Message-ID: <1a063827-5cf3-42df-a690-f3c644c10996@linux.alibaba.com>
-Date: Wed, 21 Aug 2024 15:58:36 +0800
+	 In-Reply-To:Content-Type; b=PQvAT/JE1jUCVwz1vOtNO7+iJO3PpvJPJj+SZZzuOKIq2RywBPs6StYWeppmbHDhyjt8F4TwLh/YP+nsp8QbrEeiZkXqKqjMI0MNhclvqEeONRUf+RX/bAge7LJtznIUUVEGQdizdCHKxroNY6WDYxoy1uNBF6lWN/NCaZIF3Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jk+g1Oug; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-371a13c7c80so268212f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 00:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724227157; x=1724831957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pSadfNXEdeNozhNQXiSBtdB01rrKvu5hoPMu5VmvLQA=;
+        b=jk+g1OugDVmRmGNO2pV75ZELJTjAb/1aalyUrINmhEwRw3q0ekcslrsgOZFtBD7+l0
+         pisJ4dTseAmnri0y2ucmxj7847GOrtdPYZo1oYrTi3ykP4ityNbE7Upg9q/gPnoV4Gft
+         uEhhrdJ4oxwc2X/UZC0CiIdYBhThXstQu/SMy/AcZc2f1fgROjI7mSzVzw7FX0VPetGd
+         +vDM/N0HkRwyLFjeEsO+zPWCd59RreR8F+Ifhf2zyNJCDRy2ZU8BrDEW6SNs6boJEw/A
+         TFf0dWb0PDaYJ9P6A5+YV8BslhsIIZ3by6ceEq+D8Wz/NrAdQBCm5uLG0GXoYlyDzXwQ
+         3iNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724227157; x=1724831957;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pSadfNXEdeNozhNQXiSBtdB01rrKvu5hoPMu5VmvLQA=;
+        b=cMav/fgj+bVX0V7vbrz/AWa+YEb0RfJwNNYFClINbXZF8YQvl5xwc8IDkNLJzW8BqD
+         73JkHurmfijpHzbAqMui6onekBoFm6PMZnfT7OIjRvEsRWueY4uhaWjQFjBmxy2uI3TW
+         BVYhRbQJEfBaQdjIIOsZsC6C+QyP4V+2WtsT1MIpO4LDgJQg5IYjFXBWDbCES4TxcFu+
+         oco6CdoAs+mdkTL8X6ryXMJyRE0NbstKZ20/snVRNphPbSrN7WtvX0HYix4O5wCRPibk
+         wbXLGuLx2Xhu/2DJDACoE+lZ2sKUT0dg0oZxrpPgY0sqxLyJ9VhOolmAG/Wun37Svdew
+         3UbA==
+X-Gm-Message-State: AOJu0Yy7ZcfiUhn27ZbtzYN1oWtqVjMYaA9zqZCNGZm5IT/RzgFtu5+s
+	qPbyzjjItKVHJGTfdBFWgZsMhq14RXu6O6yJdBoMZS8HmXyhwNYp0aR1MT1hAEI=
+X-Google-Smtp-Source: AGHT+IFM8X6ScfzQNt29Q3dK9ZN0yu11nlgXNiQcyfIignJgbUypEk/hFTrj4+VprEYUb2eAB3gEew==
+X-Received: by 2002:a5d:538b:0:b0:367:9049:da2e with SMTP id ffacd0b85a97d-372fdd6d646mr785696f8f.8.1724227156030;
+        Wed, 21 Aug 2024 00:59:16 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-371898abf2csm14887449f8f.107.2024.08.21.00.59.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 00:59:15 -0700 (PDT)
+Message-ID: <699f1bb5-c3f1-48f7-83bf-184bf6a04402@linaro.org>
+Date: Wed, 21 Aug 2024 09:59:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,54 +74,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/2] ocfs2: Fix possible null-ptr-deref in
- ocfs2_set_buffer_uptodate
-To: "heming.zhao@suse.com" <heming.zhao@suse.com>,
- Lizhi Xu <lizhi.xu@windriver.com>
-Cc: jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
- ocfs2-devel@lists.linux.dev,
- syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <0dd1d1b4-5e83-449e-af48-3811abd2e6a4@suse.com>
- <20240821065517.3844044-1-lizhi.xu@windriver.com>
- <9e4daf9b-a8f6-4d95-8e4b-125ef7b03911@suse.com>
+Subject: Re: [PATCH v3 02/14] thermal: core: Rearrange checks in
+ thermal_bind_cdev_to_trip()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Zhang Rui <rui.zhang@intel.com>
+References: <2205737.irdbgypaU6@rjwysocki.net>
+ <3324214.44csPzL39Z@rjwysocki.net>
 Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <9e4daf9b-a8f6-4d95-8e4b-125ef7b03911@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <3324214.44csPzL39Z@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 19/08/2024 17:51, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> It is not necessary to look up the thermal zone and the cooling device
+> in the respective global lists to check whether or not they are
+> registered.  It is sufficient to check whether or not their respective
+> list nodes are empty for this purpose.
+> 
+> Use the above observation to simplify thermal_bind_cdev_to_trip().  In
+> addition, eliminate an unnecessary ternary operator from it.
+> 
+> Moreover, add lockdep_assert_held() for thermal_list_lock to it because
+> that lock must be held by its callers when it is running.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Good catch
+
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-On 8/21/24 3:37 PM, heming.zhao@suse.com wrote:
-> Hi,
-> 
-> On 8/21/24 14:55, Lizhi Xu wrote:
->> On Wed, 21 Aug 2024 14:23:08 +0800, Heming Zhao wrote:
->>> Where is my "Reviewed-by" tag, and where is [patch 1/2]?
->> Sorry about your "Reviewed-by" tag, I remove it, if you don't mind, you can
->> add it by yourself.
-> 
-> Good answer!
-> 
-> This patch issue was found by me, and I also pointed out how to fix it, then take the time
-> to review your code. But in the end, you removed my "Reviewed-by" tag.
-> 
-
-Seems a misunderstanding, take it easy:) 
-Lizhi may think since this is a new version, it needs a new round review.
-
->>
->> In my previous email, I explicitly stated that only this patch should
->> be sent separately, as the first patch has already been reviewed by two
->> reviewers. If the second patch is updated with the first patch, I
->> personally think it is unnecessary.
->>
->> [patch 1/2]: https://lore.kernel.org/all/20240820094512.2228159-1-lizhi.xu@windriver.com/
->>
->> Lizhi
-> 
-> It looks like you don't have basis knowledge of how to send patches.
-> 
-> I will never reply to or review any of your mails/patches.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
