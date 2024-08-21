@@ -1,127 +1,89 @@
-Return-Path: <linux-kernel+bounces-295407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3D2959A93
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:47:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D215959AD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF5A1C20964
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:47:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAB73B29149
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4681CE707;
-	Wed, 21 Aug 2024 11:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HE0Nznir"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02941B5EBD;
+	Wed, 21 Aug 2024 11:27:44 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0296E1B5EDF;
-	Wed, 21 Aug 2024 11:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8577614C5BD;
+	Wed, 21 Aug 2024 11:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239635; cv=none; b=m8AwEIw5ZL/4vzzPEshXjay4MT/hlQ604yNpnaeRUuD2Ru7zbXlH0jjw0p0tWmUJWBxfDMO0xeaHhbyl5ylUs6Xk3nfCy7Z5DGRbYXlfMDhX2s26Y8i+c21OZfmqxirHmimnS7yiDKbWIfXy1EAtCRJAMCCCs1xNkQ63Zm+0dlA=
+	t=1724239664; cv=none; b=AP36e24IVHa6ZoxxzpX+BZpm9McGrxiFsuSCtTP7iIzm7RprgEVGBgfyXk3PAcybs1Htq7FFATAnYUVuppCBEFhIk6haVgACXYGrr7aiMXj938hXxoQIX1SfMxPxme6tY7ByvS/Cq9nN7coY6X8sOn3fr+b4oNWY78gzQOLG2IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239635; c=relaxed/simple;
-	bh=RIgj+fxLvUgks5CiRU4J+CoV6zVmwErlvHsS5aOLdoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DN0CFYXzGCZYyBcmgkseAv7+WaCcoe92PrE9avNRqf3WYaqYc9n7xC9WfCBElx2jCckG0BfaQPTgl3CSgBMz8j5XTYbiPgGxAAmIGy1AFCWk5/NGg/7eMFaoxVHbmR1s/qcbXSHYIxAia/Xe6mot/tkOEtlU3BfLjRQNc3a0pzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HE0Nznir; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gjUdsanWW80YWgjUdsjbK7; Wed, 21 Aug 2024 13:27:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724239632;
-	bh=Z7iKeS1dBxPOkTQrH4RWH+c56keCzZSNCP2umVxwGxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=HE0NznirUpAPo5Cb3JtQI3R/ABvSFij5udG0mmok5Xz+HwJ0iDP7WYzWF5cefYdNs
-	 i23lZgyO67bRFCBRzfzrasZyVq7XAsdmSMfTncNzHliRW+tCw1hNzDzpUqF9wFrEKZ
-	 zX9xWctxhreAkV8sLUR4Ax5jQQEXFYKc1rrJDOtECnYwU4VsmA+kLx4JT5rDem37Yc
-	 QredvfStAffhL5MLGzFt9rURtuwnr4B4v8vZOnj7vEFvbgPJrQUn9URlCoV+k8q6ZP
-	 Wnia02adXUEhmY0zCEjc/zfDZeNIAIcTit5+EsPmaJucLVjGGP264Cyx5OXm3vYvau
-	 DIDw7EwR16uTg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 21 Aug 2024 13:27:12 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <303d0b93-f6b7-44f0-a61a-fc8e558b1173@wanadoo.fr>
-Date: Wed, 21 Aug 2024 13:27:11 +0200
+	s=arc-20240116; t=1724239664; c=relaxed/simple;
+	bh=k+wI27GqsGnBaCjuAIHqFhYnhQ6n7mgQgpX76GKua1I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hjFxKeM9vT0ubsI50V65nPOMTTD7LraHCy9koU8Y26zUVNucbJsU0FdpOCbXbVQQrflVa0xNTIiyzSuib5uWTa7c3Q1E3Bnwnxl8Gu8m4Aqiq/raciVMcHPxEgJnYCCj+A2aECTPIHDxKhfQJ0MQrdHkSNjkmolnhFBeZFSpQRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpkTX6VHpz20lPs;
+	Wed, 21 Aug 2024 19:22:56 +0800 (CST)
+Received: from dggpeml500005.china.huawei.com (unknown [7.185.36.59])
+	by mail.maildlp.com (Postfix) with ESMTPS id 976381401F3;
+	Wed, 21 Aug 2024 19:27:38 +0800 (CST)
+Received: from huawei.com (10.175.112.125) by dggpeml500005.china.huawei.com
+ (7.185.36.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
+ 2024 19:27:37 +0800
+From: Yongqiang Liu <liuyongqiang13@huawei.com>
+To: <kvm@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <zhangxiaoxu5@huawei.com>,
+	<hpa@zytor.com>, <x86@kernel.org>, <dave.hansen@linux.intel.com>,
+	<bp@alien8.de>, <mingo@redhat.com>, <tglx@linutronix.de>,
+	<pbonzini@redhat.com>, <seanjc@google.com>, <liuyongqiang13@huawei.com>
+Subject: [PATCH -next] KVM: SVM: Remove unnecessary GFP_KERNEL_ACCOUNT in svm_set_nested_state()
+Date: Wed, 21 Aug 2024 19:27:37 +0800
+Message-ID: <20240821112737.3649937-1-liuyongqiang13@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] rtc:rtc-sa1100:Use devm_clk_get_enabled() helpers
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, alexandre.belloni@bootlin.com,
- linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240821092846.20138-1-liaoyuanhong@vivo.com>
- <20240821092846.20138-6-liaoyuanhong@vivo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240821092846.20138-6-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500005.china.huawei.com (7.185.36.59)
 
-Le 21/08/2024 à 11:28, Liao Yuanhong a écrit :
-> Use devm_clk_get_enabled() instead of clk functions in rtc-sa1100.
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->   drivers/rtc/rtc-sa1100.c | 10 ++--------
->   1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-sa1100.c b/drivers/rtc/rtc-sa1100.c
-> index 0b2cfa8ca05b..2e72daa6a152 100644
-> --- a/drivers/rtc/rtc-sa1100.c
-> +++ b/drivers/rtc/rtc-sa1100.c
-> @@ -177,15 +177,12 @@ int sa1100_rtc_init(struct platform_device *pdev, struct sa1100_rtc *info)
->   
->   	spin_lock_init(&info->lock);
->   
-> -	info->clk = devm_clk_get(&pdev->dev, NULL);
-> +	info->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+The fixed size temporary variables vmcb_control_area and vmcb_save_area
+allocated in svm_set_nested_state() are released when the function exits.
+Meanwhile, svm_set_nested_state() also have vcpu mutex held to avoid
+massive concurrency allocation, so we don't need to set GFP_KERNEL_ACCOUNT.
 
-Hi,
+Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
+---
+ arch/x86/kvm/svm/nested.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-the clk field in struct sa1100_rtc could also be easily removed now.
-
-CJ
-
->   	if (IS_ERR(info->clk)) {
->   		dev_err(&pdev->dev, "failed to find rtc clock source\n");
->   		return PTR_ERR(info->clk);
->   	}
->   
-> -	ret = clk_prepare_enable(info->clk);
-> -	if (ret)
-> -		return ret;
->   	/*
->   	 * According to the manual we should be able to let RTTR be zero
->   	 * and then a default diviser for a 32.768KHz clock is used.
-> @@ -206,10 +203,8 @@ int sa1100_rtc_init(struct platform_device *pdev, struct sa1100_rtc *info)
->   	info->rtc->range_max = U32_MAX;
->   
->   	ret = devm_rtc_register_device(info->rtc);
-> -	if (ret) {
-> -		clk_disable_unprepare(info->clk);
-> +	if (ret)
->   		return ret;
-> -	}
->   
->   	/* Fix for a nasty initialization problem the in SA11xx RTSR register.
->   	 * See also the comments in sa1100_rtc_interrupt().
-> @@ -305,7 +300,6 @@ static void sa1100_rtc_remove(struct platform_device *pdev)
->   		spin_lock_irq(&info->lock);
->   		writel_relaxed(0, info->rtsr);
->   		spin_unlock_irq(&info->lock);
-> -		clk_disable_unprepare(info->clk);
->   	}
->   }
->   
+diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+index 6f704c1037e5..d5314cb7dff4 100644
+--- a/arch/x86/kvm/svm/nested.c
++++ b/arch/x86/kvm/svm/nested.c
+@@ -1693,8 +1693,8 @@ static int svm_set_nested_state(struct kvm_vcpu *vcpu,
+ 		return -EINVAL;
+ 
+ 	ret  = -ENOMEM;
+-	ctl  = kzalloc(sizeof(*ctl),  GFP_KERNEL_ACCOUNT);
+-	save = kzalloc(sizeof(*save), GFP_KERNEL_ACCOUNT);
++	ctl  = kzalloc(sizeof(*ctl),  GFP_KERNEL);
++	save = kzalloc(sizeof(*save), GFP_KERNEL);
+ 	if (!ctl || !save)
+ 		goto out_free;
+ 
+-- 
+2.25.1
 
 
