@@ -1,95 +1,104 @@
-Return-Path: <linux-kernel+bounces-294743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC12A9591EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:40:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF5A9591F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A69C284F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D841F23B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF801C6A3;
-	Wed, 21 Aug 2024 00:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE3B19BBA;
+	Wed, 21 Aug 2024 00:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krJzJmzF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGDaaMoB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99637482;
-	Wed, 21 Aug 2024 00:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDD95227;
+	Wed, 21 Aug 2024 00:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724200832; cv=none; b=ntwX+xm3uzVBkJWa7T268Xx4vg2+oBTb3fCkfFCIKHFGIqZFZuiz6K3NrahlGwP2r3hKoy+1el20vR4J3zpwu6/65he9dxNDo3kAbaT/udSmorJTlhht6kBaK7U6JyqyKHNgUlvFH1nxZWR/qjsAQjlsMTqBELcXkfklzcnFkMk=
+	t=1724201460; cv=none; b=tCLMGcHvHHefItIhjqTbAFTRov/LJ7Ear/GuGpNT7PBH+YfBJlylgpOkzRy0hYEUZrgiJkGwvJ40V8pH4SSZ0hU/+TXbEoxuvNiW7WclhvZVxKFsRp5NTSqjkv6SHXmQD4VzI0j4MKv6jELlD9HGBg23HzOHDZtbiK6kZGYjtB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724200832; c=relaxed/simple;
-	bh=Gjz1hlAA+B/3AVszMI2pyR5RCXsyw2opJkBuoUJlKSs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Y2idfSMIW1xC5h2QX8wsIkXhqStBBMYsxJbCJv5lc5eRFHtJnPlBBysGBqf+/A+LJA4HrN+Y5IsaE4tUeCtDFDR+7uMunsYiAQ8KO0+HG4w61d8rh/Es7e/Z3y1N39jfEg/2R+qiyxmXlcKZhewPfkeWm4cRKLCWuvbLrknAoCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krJzJmzF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38BB6C4AF0B;
-	Wed, 21 Aug 2024 00:40:32 +0000 (UTC)
+	s=arc-20240116; t=1724201460; c=relaxed/simple;
+	bh=MMIPR++xC4Kxl0qx3QpEQFYibLJHZ0WBuJz0u9FG8Ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=s0hGOUrRI5M0cE4ITdcc+Q/CRgAKdDgw2DAPfdBhebBpCwFNbK3SkZVcxMtZpDK0fNt103aWLTs3BcS7bGYiRbJByunL2nI6WdKLVAcd1Dj5VUg0IRCEMlHxJJQVi0ek5dKtYVYfMh2fHvZHyjo3gHI2BHPVelRJgT5uytIRR/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGDaaMoB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72621C4AF12;
+	Wed, 21 Aug 2024 00:50:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724200832;
-	bh=Gjz1hlAA+B/3AVszMI2pyR5RCXsyw2opJkBuoUJlKSs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=krJzJmzFo2UrOxhMP8hu22I3Wu1UXWZMpfs+GHQU63l67hXZznIWJwQhKGfuGP9UD
-	 bwl1KpRr8ft8K8TIG3ngS9LhDG0P60kdRn1OQHyQ00yerfYHk5XqMdnkOYy6Y1b5G/
-	 2xa8aKlg9St8KIL6Vjll1aXFJdibWUiz4j3KIroGmZwLlfcimN1Rp8jhS7EPC3YGyM
-	 ouCvFJ5DX73CSlb4WlEnqAgq4kW8JiMse92DzXuvIZ6ZqVHOwJf7Z30z5ns+hesSn+
-	 C2NQvEx2ZzR3s28YOXmbATBsqmw5qxlFLFxUFMMczz4LLhoB90yZRAPqBAIXWigZLR
-	 65SmTZegqW5ww==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFB33804CB5;
-	Wed, 21 Aug 2024 00:40:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1724201460;
+	bh=MMIPR++xC4Kxl0qx3QpEQFYibLJHZ0WBuJz0u9FG8Ls=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YGDaaMoBOcm195MUxo0J1sIHd3EI71AAyN4+WATK/dt4PTYWPWfVin3mMWBBp2dOf
+	 vs/EMEUcopSmQQa2zLhzHID4prfpVvaR4QX5UyyiUQsU8pGvEv3tXXUw76dp+lQbj0
+	 Q4fgMBqaFgD910RPClrfYLxCdBlTwyO/uwNb/aWWywPpimUQ6EGqeF4WGynK15UXUu
+	 D4lSfQc+TVvfq4/YtNCSmha97fuWqE48x+LhvDYxMVHnDekjiDx2MC85kdCu52RIPm
+	 RRBhVJO9X8R6MyFy6Q5oD6Zn1PGJX1Y4ARijGhafpemw57SG0/mOSHnysYCC7vc2wb
+	 aEbX0FZ3RiIoQ==
+Date: Tue, 20 Aug 2024 18:50:56 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] xen/pci: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <ZsU58MvoYEEqBHZl@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] netem: fix return value if duplicate enqueue fails
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172420083178.1283142.17547445579493801272.git-patchwork-notify@kernel.org>
-Date: Wed, 21 Aug 2024 00:40:31 +0000
-References: <20240819175753.5151-1-stephen@networkplumber.org>
-In-Reply-To: <20240819175753.5151-1-stephen@networkplumber.org>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: netdev@vger.kernel.org, markovicbudimir@gmail.com, jhs@mojatatu.com,
- xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, lansheng@huawei.com,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello:
+Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+a flexible structure where the size of the flexible-array member
+is known at compile-time, and refactor the rest of the code,
+accordingly.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+So, with this, fix the following warning:
 
-On Mon, 19 Aug 2024 10:56:45 -0700 you wrote:
-> There is a bug in netem_enqueue() introduced by
-> commit 5845f706388a ("net: netem: fix skb length BUG_ON in __skb_to_sgvec")
-> that can lead to a use-after-free.
-> 
-> This commit made netem_enqueue() always return NET_XMIT_SUCCESS
-> when a packet is duplicated, which can cause the parent qdisc's q.qlen to be
-> mistakenly incremented. When this happens qlen_notify() may be skipped on the
-> parent during destruction, leaving a dangling pointer for some classful qdiscs
-> like DRR.
-> 
-> [...]
+drivers/xen/pci.c:48:55: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-Here is the summary with links:
-  - netem: fix return value if duplicate enqueue fails
-    https://git.kernel.org/netdev/net/c/c07ff8592d57
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/xen/pci.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/xen/pci.c b/drivers/xen/pci.c
+index 72d4e3f193af..a2facd8f7e51 100644
+--- a/drivers/xen/pci.c
++++ b/drivers/xen/pci.c
+@@ -44,15 +44,11 @@ static int xen_add_device(struct device *dev)
+ 	}
+ #endif
+ 	if (pci_seg_supported) {
+-		struct {
+-			struct physdev_pci_device_add add;
+-			uint32_t pxm;
+-		} add_ext = {
+-			.add.seg = pci_domain_nr(pci_dev->bus),
+-			.add.bus = pci_dev->bus->number,
+-			.add.devfn = pci_dev->devfn
+-		};
+-		struct physdev_pci_device_add *add = &add_ext.add;
++		DEFINE_RAW_FLEX(struct physdev_pci_device_add, add, optarr, 1);
++
++		add->seg = pci_domain_nr(pci_dev->bus);
++		add->bus = pci_dev->bus->number;
++		add->devfn = pci_dev->devfn;
+ 
+ #ifdef CONFIG_ACPI
+ 		acpi_handle handle;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
