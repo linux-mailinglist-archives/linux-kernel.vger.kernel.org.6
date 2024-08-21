@@ -1,77 +1,72 @@
-Return-Path: <linux-kernel+bounces-295385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD34C959A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:41:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B34959A58
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2FE01C20C92
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:41:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A0A1C20D92
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9A91B3B11;
-	Wed, 21 Aug 2024 11:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0036A1B7910;
+	Wed, 21 Aug 2024 11:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WezmwKM4"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jTn8Fevd"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7928E1AD5E6
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965F01B1D61;
+	Wed, 21 Aug 2024 11:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724238599; cv=none; b=sBcuZ1+aKrkIbLrhzHnZ92rAyQ/nU6ClU7OH7oav+YOi7f1MloTEJmpj79xkokjiW15H3sIV8+dSwq5osYQB40vAZU+ug1x+J2bZP+2vXZT3q0mltr8D+bffBcBWQqLRuxDjRCaNEaIRa1nBqh9WB1cNNhqMAwR3+/+u+fWcWxk=
+	t=1724238636; cv=none; b=JHxS6EUK9W/m7iSd9ki9lqPu4FGYUJxnG8cfnoPnKWq7mlF91lxnxtOVpKqeuiESNaiebN5i7aueyYZXlgwunp4Goo7nhOPww2Y/ULgOo/IG2RH6Wqz2IKNi3GiBrqTylXLjrYoKubxLVPFkQetWCTU2fWg0azSosZ05UOkJMVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724238599; c=relaxed/simple;
-	bh=UkWxvbAnrPzYLMQmhv+P/jtpnRCKsUjkkAwTRYhGUg8=;
+	s=arc-20240116; t=1724238636; c=relaxed/simple;
+	bh=wtyVza7pPG7HwH8Ffygep8fUL40eT3JGcHBxzpvlNwk=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InhwvnQtKcakdGp642DlRvOsyuyyOu7+clnv5GaciUka9SNIXztvtnE2V3B4QcKx2iPn68Wh8+RbzGIHM13JUvqhlKwhrToGbmQBq0Y05s6ifVBu4PlZMqW1hbHF5RtRtZuCW3oHlYNJhqsEsqVWV/XFwqRMqkagz3Gx+o52v8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WezmwKM4; arc=none smtp.client-ip=198.47.19.142
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqxC2Osr+A1og4jv5CuCOKmEiL3duuAgRH5He6kEaFKvhgVem0KVVz5MAslehQegAxDVEFlGCeBpBFYW0+W+bOo8YK0+gXWZ80TglI5c6a7Atc1N12/kORkaWpg+/oEpH+fkZhnd6Zz25TER1C2kEOHzHXtZi2w5R2a5YJk2NXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jTn8Fevd; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LB9fcc098519;
-	Wed, 21 Aug 2024 06:09:41 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LBASoh097212;
+	Wed, 21 Aug 2024 06:10:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724238581;
-	bh=m5dSbMkXiUKXyGMq2DZiV57p5tXBDfaI3mEs22KkMGo=;
+	s=ti-com-17Q1; t=1724238628;
+	bh=T3FjfbTMeOH7tN5HUO7GXQ7+Mttu5fF++DxNH+J9BRc=;
 	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=WezmwKM4nsVbUm7X4ezUgsXvYcKfj8FhOuc6cwx3toFAJEHCMTotf9ecEpaYvvglB
-	 8h71OIhBTVWXLWqewQiY2KcZH6mez1h/bg+nALupEF2DTxLfsKvl4ZZh+U+ctBIMaX
-	 68ZgbTZMTfqFrlUyyathZtf522XcXkHjQn8bm2P0=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LB9fNx070162
+	b=jTn8FevdHtDr+cEBXFR/Q0jWd3HbF6ZYQv3tAj8MX9cU9oPD1PJrJZ1Fb7/4TlP/p
+	 /dLpH/b+LhpoZAvPI+UxNYEgYtB0965s2jCPNJJgmYpEjPaPNMzhm1xy7yiFss1m7S
+	 b3wdxD7SktGoHrvscjlGRRrFqonVUkOpE7FLDDYQ=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LBASMw081609
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 06:09:41 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 21 Aug 2024 06:10:28 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 06:09:40 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 06:10:27 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 06:09:40 -0500
+ Frontend Transport; Wed, 21 Aug 2024 06:10:27 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LB9ecf000669;
-	Wed, 21 Aug 2024 06:09:40 -0500
-Date: Wed, 21 Aug 2024 06:09:40 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LBARSL001818;
+	Wed, 21 Aug 2024 06:10:27 -0500
+Date: Wed, 21 Aug 2024 06:10:27 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: Judith Mendez <jm@ti.com>, Catalin Marinas <catalin.marinas@arm.com>,
-        Will
- Deacon <will@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Bryan Brattlof <bb@ti.com>
-Subject: Re: [RFC PATCH] arm64: defconfig: Set MFD_TPS6594_I2C as built-in
-Message-ID: <20240821110940.s5ubbcozk2bouklh@chaps>
-References: <20240819204352.1423727-1-jm@ti.com>
- <ZsTHj/Fyffi2LxIu@hu-bjorande-lv.qualcomm.com>
+To: Andrew Davis <afd@ti.com>
+CC: Hari Nagalla <hnagalla@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <bb@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 3/4] arm64: dts: k3-am62a-wakeup: Add R5F device node
+Message-ID: <20240821111027.6kx57jftp67ksx52@boxcar>
+References: <20240820104034.15607-1-hnagalla@ti.com>
+ <20240820104034.15607-4-hnagalla@ti.com>
+ <b6b341a7-5ee2-4a89-82c6-e863a9556654@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,90 +75,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <ZsTHj/Fyffi2LxIu@hu-bjorande-lv.qualcomm.com>
+In-Reply-To: <b6b341a7-5ee2-4a89-82c6-e863a9556654@ti.com>
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 09:42-20240820, Bjorn Andersson wrote:
-> On Mon, Aug 19, 2024 at 03:43:52PM -0500, Judith Mendez wrote:
-> > SK-AM62A-LP is a device targeting automotive front-camera applications
-> > among other use-cases. It utilizes the TPS6593x PMIC (interfaced over I2C)
-> > to power the SoC and various other peripherals on the board [1].
+On 10:13-20240820, Andrew Davis wrote:
+> On 8/20/24 5:40 AM, Hari Nagalla wrote:
+> > From: Devarsh Thakkar <devarsht@ti.com>
 > > 
-> > MMCSD requires the PMIC to be setup correctly before setting the bus
-> > pins to 1.8V using the TPS6594 driver interfaced over i2c.
+> > AM62A SoCs have a single R5F core in waekup domain. This core is also
+> > used as a device manager for the SoC.
 > > 
-> > Currently, the following could be seen when booting the am62ax platform:
-> > 
-> > "platform fa00000.mmc: deferred probe pending: platform: supplier regulator-5 not ready"
-> > "vdd_mmc1: disabling"
-> 
-> Is this the regulator framework disabling the "unused" vdd_mmc1 while
-> you still have a probe deferred client?
-> 
-> That's not right.
-
-I think context of the full log might be missing, hence misleading - but
-if this is correct, regulator framework might have a problem as well -
-it does not change the fact that we will need regulator driver to
-support switch from 3.3v to 1.8v to enable UHS (which is another
-topic as well - do not trust the bootloader either for the default
-voltage enabled in the system).
-
-Judith: This is why providing links to previous versions of patches AND
-providing links to the full before and after logs in the diffstat
-section helps reviewers - please do that in the next revision.
-
-> 
-> > 
-> > and a failure to boot the SK-AM62A-LP.
-> > 
-> > One solution is to use initramfs [2], but using initramfs increases the
-> > boot time for this automotive solution which requires faster boot time
-> > parameters.
-> > 
-> > Another solution is to change MFD_TPS6594_I2C to built-in, that way the
-> > PMIC is setup and the regulators are ready before MMCSD switches to UHS
-> > mode, this is the preferred solution since it does not increase boot time
-> > like the initramfs solution does.
-
-What is the adder in cost? bloat-o-meter report summary should have
-been part of commits that increase vmlinux
-
-> > 
-> > [1] https://www.ti.com/lit/zip/sprr459
-> > [2] https://lore.kernel.org/linux-devicetree/5f03207b-c29b-4d16-92b0-d14eef77bf17@linaro.org/
-> > Fixes: f9010eb938be ("arm64: defconfig: Enable TPS6593 PMIC for SK-AM62A")
-> > 
-> > Signed-off-by: Judith Mendez <jm@ti.com>
+> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> > Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 > > ---
-> >  arch/arm64/configs/defconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >   arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi | 23 +++++++++++++++++++++
+> >   1 file changed, 23 insertions(+)
 > > 
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > index 7d32fca649965..61f767246d3a5 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -756,7 +756,7 @@ CONFIG_RZ_MTU3=y
-> >  CONFIG_MFD_TI_AM335X_TSCADC=m
-> >  CONFIG_MFD_TI_LP873X=m
-> >  CONFIG_MFD_TPS65219=y
-> > -CONFIG_MFD_TPS6594_I2C=m
-> > +CONFIG_MFD_TPS6594_I2C=y
+> > diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> > index f5ac101a04df..c4319986e660 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> > +++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> > @@ -76,6 +76,29 @@ wkup_rti0: watchdog@2b000000 {
+> >   		status = "reserved";
+> >   	};
+> > +	wkup_r5fss0: r5fss@78000000 {
+> > +		compatible = "ti,am62-r5fss";
+> > +		#address-cells = <1>;
+> > +		#size-cells = <1>;
+> > +		ranges = <0x78000000 0x00 0x78000000 0x8000>,
+> > +			 <0x78100000 0x00 0x78100000 0x8000>;
+> > +		power-domains = <&k3_pds 119 TI_SCI_PD_EXCLUSIVE>;
 > 
-> These things should work with =m, and then you can make them =y in your
-> product config to avoid the probe deferral.
+> Need newline here.
+> 
+> > +		wkup_r5fss0_core0: r5f@78000000 {
+> > +			compatible = "ti,am62-r5f";
+> > +			reg = <0x78000000 0x00008000>,
+> > +				<0x78100000 0x00008000>;
+> > +			reg-names = "atcm", "btcm";
+> > +			ti,sci = <&dmsc>;
+> > +			ti,sci-dev-id = <121>;
+> > +			ti,sci-proc-ids = <0x01 0xff>;
+> > +			resets = <&k3_reset 121 1>;
+> > +			firmware-name = "am62-wkup-r5f0_0-fw";
+> 
+> resets and firmware-name should go before vendor specific properties.
 
-I think this is inline with the discussion with Krystoff on the topic as
-well
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
 
-
-Judith: you just need the regulator, for sd/mmc to work. Why is there
-half a dozen unrelated stuff coming with it [1] report from
-bloat-o-meter? Please fix the driver dependencies before adding
-un-necessary stuff to the kernel Image file.
-
-[1] https://gist.github.com/nmenon/0caff032a430bbf649ad1107e6f12f9a
-
+> 
+> > +			ti,atcm-enable = <1>;
+> > +			ti,btcm-enable = <1>;
+> > +			ti,loczrama = <1>;
 -- 
 Regards,
 Nishanth Menon
