@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-296060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C315095A507
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5030995A50B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128CC283DF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30C41F22A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A48216EBEA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3B916F282;
 	Wed, 21 Aug 2024 19:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="tqX4I7UD"
+	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="p1jb1+ti"
 Received: from terefe.re (terefe.re [5.255.96.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1F316E873;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1A916E86F;
 	Wed, 21 Aug 2024 19:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.255.96.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724267186; cv=none; b=hOlPISgysyego6H811ptQGNJFIDXFEGzZtQhDqwjpYy3XaSch0W7yDd4PddPTnYWTVRI1FLCJSLifh+dXevHvvcPFdauHhMjBmjsZh2yl4GFJ3j686mD5vWMoK2uY4pL4q5ZNHq1OcJyHGnKrVPJ4nEGzV4m+e8D55wsgkDdhSo=
+	t=1724267187; cv=none; b=VwtSRTkdzbFzu6rr7+4uhUUQ7RmlIq1lhJbs4VpBKDdEvIiwHDwamWtRh1ouC5nuvS5yRXOBulqTE5bNDvnfS7WR1HyuFo20Hl3IlUKWhnrDRdOC9D8Wl3tYRF+Tg2RhLdJWchAy3vB34MSAuKZ+oeQvmoxi1+D814X/6x0b978=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724267186; c=relaxed/simple;
-	bh=34MFcCZ3blJSkVZnKx7zZ191kBMyF8eFb6URIOqpTvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GYjHaAXKXw9k/qKO1vHqrjmGIgcYHyci17DQppoHZGbqncsQWG+tLYk6cY2gydgxPe4ftjW0wXnX8qWpoPse1nTtWav+rEBXlZ1NCY4wtDr2WqmJe3ZB2bMVeMJJVfNonFq+0GrVU8doutI1niObeCEk1Zhy8lB/DDcBJaGP/W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=tqX4I7UD; arc=none smtp.client-ip=5.255.96.200
+	s=arc-20240116; t=1724267187; c=relaxed/simple;
+	bh=c7tSgeaLvoQaC7WKtAwIRpIwIKeaEobr9xJ0nf2lvfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fWi3uSHocea9dHf6ybzbBkAgsIc6SYBCWkEUbXw5FhTgqmpQfh84FPQ4fJevszxrus1iw26qsqRJtCxXR0RG6B1ElQXzKrVk2Cf/OmGXqxCBmHFoG8fOW0t50LfSa0ebCgSzQH1Zygb/2SX2xJqaioAVtZFyqNZK8uS/5uR49e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=p1jb1+ti; arc=none smtp.client-ip=5.255.96.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=terefe.re
 Received: from localhost.localdomain (unknown [212.106.161.95])
-	by terefe.re (Postfix) with ESMTPSA id E31A21FFBF;
-	Wed, 21 Aug 2024 20:58:35 +0200 (CEST)
+	by terefe.re (Postfix) with ESMTPSA id 7C9B3202CA;
+	Wed, 21 Aug 2024 20:58:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=terefe.re; s=default;
-	t=1724266716; bh=34MFcCZ3blJSkVZnKx7zZ191kBMyF8eFb6URIOqpTvI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tqX4I7UDT/+q++aOKXL0BRkePHjqDJuF1jp2amnlhbQGMAVIXJmdUSeLhh7xAGRaG
-	 QW00egiAsYkoS5HPlAcjx/uTLMv5OVLl79i2J5I386Y+K+MT3sPdAZmxdwhhKxSF/Y
-	 vZj3AdwPehNgRXqmm7y5Qp1Yxkqa9qxXIShhHH3P1UpoPqQPhUIyOjfXUv6YvSBr0C
-	 tNzpKGaqqOPyxEl1G6iE6cu8oejeFTxavQjSs5Y9azbRAeGjH80UzUH8y3XL0q1Jak
-	 GAUaDZZlMMlVjc4Da3pMsuRmwXBpKQWqJw6yW7iNC6CEesayZ0zWTqcxuZ3GmKCQZQ
-	 SpzaBTtruF4jg==
+	t=1724266716; bh=c7tSgeaLvoQaC7WKtAwIRpIwIKeaEobr9xJ0nf2lvfQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=p1jb1+tiXCqgPP4fE37+Q8THQIBiYBm4i11mh5KdZ3uhtIWCmyvAfcNhdPOBeQw59
+	 vV4vcybsuw9aIipI8olKywyTkAQgDf7JDvgeQaP+8M3NhphxWmi97fn6dBQLKZh7BG
+	 73+Mu8cxWbkk2BJxIKpcVlIdqDvQCWf2FMjkAa2y/j461Ufq52tRRuk1Ag8WBUcYDv
+	 SMOMNhB7Hh5j/c413aI7AZ1/j0lisUnxF25bh80bjkMBJy9dQkmhfBsT2yzEGrRTJH
+	 7rV0koPg+PwewebADh478vTIVgObeTphRP7EHzBPTX5EMjun0o65HoxVGi2OnxO4Rn
+	 u3V2mNSvo3SYg==
 From: Tomasz Maciej Nowak <tmn505@terefe.re>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -53,10 +54,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Tomasz Maciej Nowak <tmn505@gmail.com>
-Subject: [PATCH 0/3] arm64: tegra: add power sensors and BT+WiFi to TX1
-Date: Wed, 21 Aug 2024 20:58:02 +0200
-Message-ID: <20240821185829.20997-1-tmn505@terefe.re>
+Subject: [PATCH 1/3] arm64: tegra: wire up power sensors on Jetson TX1 DevKit
+Date: Wed, 21 Aug 2024 20:58:03 +0200
+Message-ID: <20240821185829.20997-2-tmn505@terefe.re>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240821185829.20997-1-tmn505@terefe.re>
+References: <20240821185829.20997-1-tmn505@terefe.re>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,18 +70,116 @@ Content-Transfer-Encoding: 8bit
 
 From: Tomasz Maciej Nowak <tmn505@gmail.com>
 
-Jetson TX1 DevKit features bunch of peripherals that we have now drivers
-for, so wire them up.
+One INA3221 sensor is located on P2180 module and the other two are on
+P2597 base board.
 
-Tomasz Maciej Nowak (3):
-  arm64: tegra: wire up power sensors on Jetson TX1 DevKit
-  arm64: tegra: wire up Bluetooth on Jetson TX1 module
-  arm64: tegra: wire up WiFi on Jetson TX1 module
+Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
+---
+ .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 29 +++++++++++
+ .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 50 +++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
- .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 64 +++++++++++++++++++
- .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 50 +++++++++++++++
- 2 files changed, 114 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 0ae5a44f7d07..f8b20af1fd3d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -33,6 +33,35 @@ serial@70006000 {
+ 		status = "okay";
+ 	};
+ 
++	i2c@7000c400 {
++		status = "okay";
++
++		power-sensor@40 {
++			compatible = "ti,ina3221";
++			reg = <0x40>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			input@0 {
++				reg = <0x0>;
++				label = "VDD_IN";
++				shunt-resistor-micro-ohms = <20000>;
++			};
++
++			input@1 {
++				reg = <0x1>;
++				label = "VDD_GPU";
++				shunt-resistor-micro-ohms = <10000>;
++			};
++
++			input@2 {
++				reg = <0x2>;
++				label = "VDD_CPU";
++				shunt-resistor-micro-ohms = <10000>;
++			};
++		};
++	};
++
+ 	i2c@7000c500 {
+ 		status = "okay";
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index b4a1108c2dd7..e97f31c1f625 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1319,6 +1319,56 @@ i2c@7000c400 {
+ 		status = "okay";
+ 		clock-frequency = <100000>;
+ 
++		power-sensor@42 {
++			compatible = "ti,ina3221";
++			reg = <0x42>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			input@0 {
++				reg = <0x0>;
++				label = "VDD_MUX";
++				shunt-resistor-micro-ohms = <20000>;
++			};
++
++			input@1 {
++				reg = <0x1>;
++				label = "VDD_5V_IO_SYS";
++				shunt-resistor-micro-ohms = <5000>;
++			};
++
++			input@2 {
++				reg = <0x2>;
++				label = "VDD_3V3_SYS";
++				shunt-resistor-micro-ohms = <10000>;
++			};
++		};
++
++		power-sensor@43 {
++			compatible = "ti,ina3221";
++			reg = <0x43>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			input@0 {
++				reg = <0x0>;
++				label = "VDD_3V3_IO";
++				shunt-resistor-micro-ohms = <10000>;
++			};
++
++			input@1 {
++				reg = <0x1>;
++				label = "VDD_1V8_IO";
++				shunt-resistor-micro-ohms = <10000>;
++			};
++
++			input@2 {
++				reg = <0x2>;
++				label = "VDD_M2_IN";
++				shunt-resistor-micro-ohms = <10000>;
++			};
++		};
++
+ 		exp1: gpio@74 {
+ 			compatible = "ti,tca9539";
+ 			reg = <0x74>;
 -- 
 2.46.0
 
