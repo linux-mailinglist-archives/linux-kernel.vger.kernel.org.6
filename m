@@ -1,136 +1,95 @@
-Return-Path: <linux-kernel+bounces-295634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EF7959F5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:11:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1AE8959F47
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7631C21829
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B71F22D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175061B1D4B;
-	Wed, 21 Aug 2024 14:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3251B1D4B;
+	Wed, 21 Aug 2024 14:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="dBC4bobw";
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="dBC4bobw"
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KdGfy99k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BAD18C348;
-	Wed, 21 Aug 2024 14:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127711AF4D3;
+	Wed, 21 Aug 2024 14:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249450; cv=none; b=jUKg7bbOIDeF89PWwHzz1HRJ1Sgj+oiwaV8JMhHQxHB4xIWPWCbfEle5hX9a7ZpRBZtz7jJxDZ0b6JxPLKGzVNgfWOyxOlSgnEP0aR7hk05Sb8ffz/nw/51RAvhx9PUWB+ESMyvye52edJS8ZZWSfHmhR8yJyWMn7p1YfpCNcug=
+	t=1724249164; cv=none; b=dRA1LVpQh7P8LFndfIh7iKGetzMP79JO19BDQy1VNMA/NqWk8LVJtztN333u1++EKYEe2HSO5eqYmuamb3YgZ5u5ZyMYYkKJt26rR/o6UEgibeI+OUgc4e0LFOVZGge6Z1mH5v3pIE97Wd1evNr8P/71yR+roWeJsSzID9Ow2Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249450; c=relaxed/simple;
-	bh=FJvSAZoa/G9daqhBWPSRYjXQ41A4i+OJsroAB+kaINA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KRyuSm13KASoOeEVxHh/mxqn7y6dSNheej3nnbxaFzN1ZU837DeYDCJ+RNHgKaMy9pm31wev3HEJUkn9zkNMwHKzWcUtid6ytSaN2Vy8MdpIYi9sz1YVlHQgJ1RzUf/7WVJOZRbRIRshD0xNaVafwvxJrut7JndKF+N1KeFiHjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=dBC4bobw; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=dBC4bobw; arc=none smtp.client-ip=178.79.152.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1724249125; bh=FJvSAZoa/G9daqhBWPSRYjXQ41A4i+OJsroAB+kaINA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dBC4bobwA+qZKrll3S+Foao5aav1o8u3vSL+TmA0saWM9k2Jm8MgVdWsfFoc0pHuE
-	 EH3RQmK4RqvMtZtaKKGFvaUFc6BWDKeIgTIQDBK2hnU6szSNcISr1sv0VI8AEzJ77l
-	 +pFZ2/47G5L/3UyYLjVegaq7feETY+gZU1irbVRfx6cigzK+Zr1XrWyjBvL0d0+aad
-	 Ai1XM3YUQwcLeLRcY/WqDShimec+flDL2f3dew/mK1CmpczJ6I37mzLLUrI19DsWxy
-	 LbnGghBeP9Yf1ODcf06q0SLRkeRFGLcsZc9jLDqx6ef8nDe7LKUpAOGeSyVd0it58o
-	 htabwRF0rQnHQ==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-	by mail.mleia.com (Postfix) with ESMTP id 70E7D1192;
-	Wed, 21 Aug 2024 14:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1724249125; bh=FJvSAZoa/G9daqhBWPSRYjXQ41A4i+OJsroAB+kaINA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dBC4bobwA+qZKrll3S+Foao5aav1o8u3vSL+TmA0saWM9k2Jm8MgVdWsfFoc0pHuE
-	 EH3RQmK4RqvMtZtaKKGFvaUFc6BWDKeIgTIQDBK2hnU6szSNcISr1sv0VI8AEzJ77l
-	 +pFZ2/47G5L/3UyYLjVegaq7feETY+gZU1irbVRfx6cigzK+Zr1XrWyjBvL0d0+aad
-	 Ai1XM3YUQwcLeLRcY/WqDShimec+flDL2f3dew/mK1CmpczJ6I37mzLLUrI19DsWxy
-	 LbnGghBeP9Yf1ODcf06q0SLRkeRFGLcsZc9jLDqx6ef8nDe7LKUpAOGeSyVd0it58o
-	 htabwRF0rQnHQ==
-Message-ID: <87d5904b-2211-4c12-8057-bc251ca34e89@mleia.com>
-Date: Wed, 21 Aug 2024 17:05:23 +0300
+	s=arc-20240116; t=1724249164; c=relaxed/simple;
+	bh=OupUKgDix1Aqr3zi3FS/NJ/qh5GuwXL1qcjGy7ucROc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PPb5j7Gx6IH4hN862wrBt8uxiX6u9Ct2wVNXc7Sy04/8p37P0fvyoS84v/oejfnhmoUKW4NFLR0Oon+RuRnF1pVXVY452PlwyACvpx8l1q8BkkBmZ0/r9OVxJAEIjU3KTK6MCH+yousqcOCZVXQL0veIyWkyf0Ln+rt8K12Fb/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KdGfy99k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19848C32781;
+	Wed, 21 Aug 2024 14:06:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724249163;
+	bh=OupUKgDix1Aqr3zi3FS/NJ/qh5GuwXL1qcjGy7ucROc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KdGfy99kVEc5kLY88y0BjKR7uoOnoihZLogWULGzyhcMjrDxUKN6MUJ3HltR9/9af
+	 IGVFQxQ+zXp9SRQihUjVKPpHubWm6zEo6e1tX0hsmVo7X53u/wjrn/O5i9uAcyV5/i
+	 k+kJP3OityZyhIGgFqUnyFFn4YF9NceoMub0eWWo=
+Date: Wed, 21 Aug 2024 22:06:00 +0800
+From: Greg KH <gregkh@linuxfoundation.org>
+To: color Ice <wirelessdonghack@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, kvalo@kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org, mark.esler@canonical.com,
+	stf_xl@wp.pl, tytso@mit.edu
+Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
+ Dereference&Use-After-Free Vulnerability
+Message-ID: <2024082106-flagman-plausible-cb40@gregkh>
+References: <2024080359-getaway-concave-623e@gregkh>
+ <20240814055816.2786467-1-wirelessdonghack@gmail.com>
+ <91e19cf3-216b-48ac-a93d-f920dd2a7668@rowland.harvard.edu>
+ <CAOV16XEsgkLWz3rOQsAdve-qKsPEDw-QxJNoo4hJfXdLnowHfw@mail.gmail.com>
+ <2024081946-designate-dioxide-c59d@gregkh>
+ <CAOV16XFYeWdT4tSpLWoE+pCVsNERXKJQCJvJovrfsgMn1PMzbA@mail.gmail.com>
+ <2024081904-encircle-crayon-8d16@gregkh>
+ <CAOV16XEjJT6Oe7PX7HjqEaT5tpX0MqTOZy6=akEKFhtk0emOzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: core: Remove struct mmc_context_info
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <232106a8a6a374dee25feea9b94498361568c10b.1724246389.git.christophe.jaillet@wanadoo.fr>
-From: Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <232106a8a6a374dee25feea9b94498361568c10b.1724246389.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20240821_140525_490964_D94D5BA1 
-X-CRM114-Status: GOOD (  14.29  )
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOV16XEjJT6Oe7PX7HjqEaT5tpX0MqTOZy6=akEKFhtk0emOzg@mail.gmail.com>
 
-On 8/21/24 16:24, Christophe JAILLET wrote:
-> The 'mmc_context_info' structure is unused.
-> 
-> It has been introduced in:
-> 
->    - commit 2220eedfd7ae ("mmc: fix async request mechanism for sequential
->      read scenarios")
-> 
-> in 2013-02 and its usages have been removed in:
-> 
->    - commit 126b62700386 ("mmc: core: Remove code no longer needed after the
->      switch to blk-mq")
->    - commit 0fbfd1251830 ("mmc: block: Remove code no longer needed after
->      the switch to blk-mq")
-> 
-> in 2017-12.
-> 
-> Now remove this unused structure.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested in drivers/mmc/ only
-> ---
->   include/linux/mmc/host.h | 14 --------------
->   1 file changed, 14 deletions(-)
-> 
-> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index 49470188fca7..545bddfd7e1f 100644
-> --- a/include/linux/mmc/host.h
-> +++ b/include/linux/mmc/host.h
-> @@ -292,20 +292,6 @@ struct mmc_slot {
->   	void *handler_priv;
->   };
->   
-> -/**
-> - * mmc_context_info - synchronization details for mmc context
-> - * @is_done_rcv		wake up reason was done request
-> - * @is_new_req		wake up reason was new request
-> - * @is_waiting_last_req	mmc context waiting for single running request
-> - * @wait		wait queue
-> - */
-> -struct mmc_context_info {
-> -	bool			is_done_rcv;
-> -	bool			is_new_req;
-> -	bool			is_waiting_last_req;
-> -	wait_queue_head_t	wait;
-> -};
-> -
->   struct regulator;
->   struct mmc_pwrseq;
->   
+On Wed, Aug 21, 2024 at 04:25:36PM +0800, color Ice wrote:
+> Dear Ubuntu Team,
 
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+We are not affiliated with Ubuntu at all, sorry.  Please be kind.
 
---
-Best wishes,
-Vladimir
+> I have encountered a race condition issue in the RT2X00 driver,
+> specifically related to the function rt2x00usb_work_rxdone. The issue
+> manifests as a kernel NULL pointer dereference, which causes the
+> system to crash. Below is the detailed analysis and my suggestions for
+> addressing the issue.
+> 
+> Problem Analysis
+
+<snip>
+
+This mostly looks like it was created with chatgpt or something like
+that, please do not send us things like that.
+
+Again, work with your professor at school who has assigned you this task
+to complete it, don't force us to do the work for you :)
+
+If we get a chance, we'll look at it, but note it's way down the
+priority list for most of us.
+
+thanks,
+
+greg k-h
 
