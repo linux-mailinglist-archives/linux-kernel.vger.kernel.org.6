@@ -1,147 +1,265 @@
-Return-Path: <linux-kernel+bounces-295977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276DC95A3DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B7B95A3E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2031C229E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25CA72818F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7560B1B2ED3;
-	Wed, 21 Aug 2024 17:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F3D1494D1;
+	Wed, 21 Aug 2024 17:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMbW9WWI"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKg1iK94"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FE41494D1;
-	Wed, 21 Aug 2024 17:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4ED5FEED;
+	Wed, 21 Aug 2024 17:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724261261; cv=none; b=i9MW3LS/ojwaseGVtakGf041VJXPw2xzASfN1hjSwP5cMxP49Knruv9/gGMU8U361AA/0VSgWOMG0xFnZc0e1Gxclj1nFIj38RLOiPOlejxtldI40ElNOVXZn5sbPzc0R1MlUU7yGMlCepE4ZOSvX3O4Ygrph8WyrHFe2zfdchU=
+	t=1724261332; cv=none; b=U6e+kAtakpyQSh011A2hlD47rUKNHSYTIFovy77wuObK/Z9+y5s5AwwnClRfQxpuA8TedFTsDU0z2cvGzGnBa+lBWjlS0p9sX5TcFsoVj79cPPTUnvzJuN9lylcKfFjZlNYL7NpmrBMCj+Rtr1gTTF9L+PvOsbcOaXrvKLoW5oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724261261; c=relaxed/simple;
-	bh=mNHz43GzhbUV7+nP8MRrUdaSSv7kYhYoglvOFPs/adY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rOY9UOE3BtsqhjQLz6QCgOjhyRCai1XFvHw3hr7Xy15tbx8o4jf65zbPERN+e5BlG7RgGtNUGcTiCQXMxI7ZCNKQMY2CT7W85VBNt9KkP0ZUAGj6BCS2+FULsRM5e4kjESjHI3//ZiRIBemdvKcCO0xT6igT94JDaI2NZAYxOVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMbW9WWI; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1724261332; c=relaxed/simple;
+	bh=kPEdUejV3MfKELbnswgmZg1Cvw7fd1rB5I3KMDrhl9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s3Hzl4CCv/N7mOLf3o+CpwHPy61kLejt8miIWLlbCHy3F4S6OyU3afl/trQ+HBWfNH+CfDeYjoZ8xx01YXeBAmakoUOE8JK6xI5DPmqKqx2a4IQmK6WnNg7oLD7j1Ga0BbHW07Mas7tI5dWSc2tZ2IwYyMj2fjDYbkDInBtHR9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FKg1iK94; arc=none smtp.client-ip=209.85.221.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5befd2f35bfso4158620a12.2;
-        Wed, 21 Aug 2024 10:27:39 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4fcf9102c8bso273002e0c.2;
+        Wed, 21 Aug 2024 10:28:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724261258; x=1724866058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1dPSQ1Ctn0ONc5mVCuDSOyxGFQiaGt2sW1S9dwj7ApU=;
-        b=eMbW9WWIXcj7kJVJKxEKsaHNsQ+zuPr+cXBte8lS2/OjQzP1hYrFIOPjieXf717okV
-         9zVYFcIHLYTRJznS5YSGJ31e7TlwZoeYuKQKC+ngnGiCnYAE1qOLtyHMbzh8UG+kCI+I
-         aCh/yFp6gw66uXBu4nz9LKS478PP/5EHFsXZ9FrPT+tVZCF9HJhV920Et+Fq+Fcv+AvR
-         zCwviYZnfbcMUPvS0+Oj5wOWlDEVhaVuEMdCC5Hxq6+eFK6FYajgcrUdK1nuXuzXVA8j
-         UtUI1R/T6dwLJ2abaeGqYvy+tBDcoc/BigcMGzb6Ahkc29J6FL9AHpTPZam2Pr6ucFxC
-         SRUQ==
+        d=gmail.com; s=20230601; t=1724261330; x=1724866130; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TJUfXZNp1ibF0u5btatjwqh4T7on3PeFlzU17jC4Trs=;
+        b=FKg1iK94/tXq+IrOCah5eX1y75+N5tXoG9mO8zWzw9Bt/ZUC1M5PuQEL+tLJMNFreJ
+         x9TEyRrGvV31CObZ/YjclwOfR2BxHuT1LbtRgUXJoN1rw1ALEDArpSVbKZzmdNsnT1+T
+         Im463A1Wktrda7+NujYqUeVjj72xN7XIWVErm493wy3cQsdSivwjPJARHdBBT5e1Ruzx
+         r4hG1nxY2RDgrIaCjp92PgshFw99y8Xo+6+7WlTuCMCpUd7+CzTtXB6SkLi1/ahCRUUU
+         KEBmeINFz5q1MZ378xr10MgBDZoe69U6Z3iW536mXD/oudq3kah8EuhIrjYriaL1Si6o
+         iScQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724261258; x=1724866058;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1dPSQ1Ctn0ONc5mVCuDSOyxGFQiaGt2sW1S9dwj7ApU=;
-        b=MIVmr/+2WN3iKjph/HhOpe0rOSIstRcbNEjHVIpyoGE1Ecvfuf3AIW4cXVp3luaXzp
-         4jy+p5pSjbQC8dBvbmaw3I6rvKIZ0VVUt7FHNdZb3r9kMsHFTNfb31wqkn7eGBiPCzZ4
-         45gjZIddvwqMg4D4jWeI5epKd2IIbh+18PCCd85IZ/XV5Cw2BZ4NbMxHYqcS57Gh0cmv
-         IG8SYqDBAXBylIbDPi3aoao9XvibG5drMUz8qtxqffSla+UN366qKPos+yzscoYnpng+
-         maepSYIzGmEV6ar58FBicbFPBSST2zgoZrQ/sKroZxTnJOsPfzwZK5B7wRrNC0BQiIF7
-         eEYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdirUxQWIj2uvsf2TAZa93t7LaBgl6P3n88EIRcz/dBvUtmAnYQBAbpkB7tNNiOHRwGa2zyFe5NiVRQJp9Rw==@vger.kernel.org, AJvYcCWeJvRy2zMMhMkz6vu1OnbGXJDyXjgmngN749pA06zGYtQnWGbbnYMkeUZUqRkgnjXHzKaVMSEeySdA+fbM@vger.kernel.org, AJvYcCWiIBE45j99MyD+XGyTOIZLhOnp9DBfKOYpXzK/4tf2U3v1DHhEJUwqKiWZSB+EUV7p9Wx/I+cW4YKg@vger.kernel.org, AJvYcCXeTfl483hEf9RVBUp/wImEPh1+3POMFtX65UP6IS3ycqsY8vJPUMSqrJpq39VdmLT95xtZLNez/BUR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG/8qtlLo3GMBR52PR3i2RASlr/EboB+Ka8SkO8MjGU7XdyPM2
-	8Rn+x8qpjzHHTi3ty63r3+9IQvN1Qqp+XV/ltUVFbmKkee0jOtnD
-X-Google-Smtp-Source: AGHT+IH1MyQnN6IARu/32WOCDaqpIPYnpciX4OVIvGwDWyAzT4SMXIaa+LeEoNRSz7jqkX7pyElO2A==
-X-Received: by 2002:a17:907:6094:b0:a7a:bcbc:f7e1 with SMTP id a640c23a62f3a-a866f27a24amr235125566b.15.1724261257465;
-        Wed, 21 Aug 2024 10:27:37 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383964976sm924952966b.188.2024.08.21.10.27.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 10:27:36 -0700 (PDT)
-Message-ID: <1300f2ff-7aa3-4003-8be7-c87f671d22aa@gmail.com>
-Date: Wed, 21 Aug 2024 19:27:33 +0200
+        d=1e100.net; s=20230601; t=1724261330; x=1724866130;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TJUfXZNp1ibF0u5btatjwqh4T7on3PeFlzU17jC4Trs=;
+        b=TpFIKhZ9LzTuI0UhCBLUB15nN+sRf2cOZDBU/NoURz0MBNFo1tGmHk31ZjdtkO9tEY
+         XrQzD4VtB3QBCnh8u6/2HvcxbAf9bhu9HvT0SxZEzMLllnIg3kaqn9MCWAbfe1rCfxpd
+         TM2V0qfeRtGBgI8xWqAkMaQx+pdh0JH0LiXu/uy0jzcMGKKYvmk0tuqwT2pug/Bmjr18
+         IoxqMBRmg1HzZ0Ep5spuq2i3WURRoEuYypbT2hEyXXdB2h0t2fdgfanUA2bDwMEW9Gr2
+         mrZqWenaJMCoCid0Ew8QEqbnFl20Up34FKt4b6KvpbO2hn39Uyez9PgDis3zqZ2p1CGe
+         jI0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8H3kh4DdWeyBp6rHTRYopmrMPE7LjVG/REcSdRAHTlONkP/FzaVYn32H1XIRNS59jCux/Nuhoua8DhXk=@vger.kernel.org, AJvYcCVee2wt1YqdGW3HUYiE3Ln9/bmP5faCCY88/6I8CKMamy1LCOSay5o1D1X/+vHBqSJ2DOei3DUh4L97R4KhxHrY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxniNyVILoQFVuPhe8zdu0BqSVBzYzLLEgvpjRu7U7TVS/JJdGV
+	6Vyx+FAXo1gT7/3R3xPYEmPRhYzwRIwmm8o34uV9Co7FEsEr6A+XArn/rgGBcAplGuYEDDm6VPT
+	dGRu/x7/pt2jyV1ceC/S2pu6W7Po=
+X-Google-Smtp-Source: AGHT+IGyAeC7+IBJ6/fu09d9M/b2IU20lDn/RAHi2m82VXURQN4bEA0s+Lc6bSExM1DhEAEm43xMBpByuyIwQ6yjZb4=
+X-Received: by 2002:a05:6122:35c4:b0:4f2:a973:8ae with SMTP id
+ 71dfb90a1353d-4fcf1b53051mr3654908e0c.5.1724261329747; Wed, 21 Aug 2024
+ 10:28:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
- strings for eud
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Melody Olvera <quic_molvera@quicinc.com>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
- Elson Serrao <quic_eserrao@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-2-quic_molvera@quicinc.com>
- <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
- <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
- <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
- <2b118a49-2229-4346-ab21-0aa5377d7a4e@kernel.org>
- <8bb412f8-4fe1-40ca-8414-bb77c66899ae@quicinc.com>
- <0eca6755-a2ec-404f-b98c-ee6c9f6fb55f@gmail.com>
- <f8caa9aa-7fc4-4d42-9011-21ca40eb106d@quicinc.com>
- <81ec34a6-8627-4a59-8fc7-87eee4625b2d@quicinc.com>
- <e663d19a-0ad1-4dfc-903b-ff2012796d84@kernel.org>
- <11ca366c-7788-41d0-bf47-4f31c1ee2626@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <11ca366c-7788-41d0-bf47-4f31c1ee2626@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com>
+ <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com> <CABi2SkWPiGJTv3FEPxD1OJYUAoePab8jG+CSd58UHqEsBeOYbA@mail.gmail.com>
+ <CAKbZUD3Siwq4GZdOy-2n_txG2BMQ=m7PypB53sQxeLcBE4xYGA@mail.gmail.com> <CABi2SkXaBv85JF6gTd1w-f_i700YSj5JoK8z605bzd6gbPjKkw@mail.gmail.com>
+In-Reply-To: <CABi2SkXaBv85JF6gTd1w-f_i700YSj5JoK8z605bzd6gbPjKkw@mail.gmail.com>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Wed, 21 Aug 2024 18:28:38 +0100
+Message-ID: <CAKbZUD2ae80KNzqjK5RuB569+ZTv9YoCDgXmrC46P9a5gcxzWg@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] selftests/mm: add more mseal traversal tests
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21.08.2024 8:48 AM, Krzysztof Kozlowski wrote:
-> On 20/08/2024 21:19, Konrad Dybcio wrote:
->> On 20.08.2024 8:21 PM, Melody Olvera wrote:
->>>
->>>
->>> On 8/14/2024 3:09 PM, Trilok Soni wrote:
->>>> On 8/14/2024 1:25 PM, Konrad Dybcio wrote:
->>>>>> Unfortunately, no. We considered several options, but none guarantee that we will avoid
->>>>>> a crash if we try non-securely. The secure call also won't give a specific error if it fails either
->>>>>> (for security reasons) so we can't know if a secure access failed because it's supposed to be
->>>>>> accessed non-securely or for another reason; hence this approach. If there's
->>>>>> another way to achieve this functionality that might be better, I'm all ears.
->>>>> Can we read some fuse values and decide based on that?
->>>> In most of the cases, these fuse values are not allowed to be read
->>>> from the Linux, so that will be another problem. Melody can check
->>>> if there is any fuse values around here and possible to read them
->>>> through Linux.
->>>>
->>>
->>> I double-checked, but there really isn't any kind of fuse or anything we can read to determine
->>> how we need to access these registers. I remembered checking before authoring these patches,
->>> but I wanted to just make sure before responding here.
->>
->> Well in that case I suppose a new compatible / property (please voice
->> your opinion Krzysztof) is necessary after all.. Thanks for making sure
-> 
-> You mean the "secure" part? Sure, I don't object that, although
-> (repeating as usual) I am not in favor of it in the first place, be
-> cause you should use only SoC compatibles.
-> 
-> The objection here was for dropping specific front compatible, without
-> any relevant explanation.
+On Wed, Aug 21, 2024 at 5:27=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wrote=
+:
+>
+> On Wed, Aug 21, 2024 at 9:20=E2=80=AFAM Pedro Falcato <pedro.falcato@gmai=
+l.com> wrote:
+> >
+> > On Wed, Aug 21, 2024 at 4:56=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> w=
+rote:
+> > >
+> > > Hi Pedro
+> > >
+> > > On Fri, Aug 16, 2024 at 5:18=E2=80=AFPM Pedro Falcato <pedro.falcato@=
+gmail.com> wrote:
+> > > >
+> > > > Add more mseal traversal tests across VMAs, where we could possibly
+> > > > screw up sealing checks. These test more across-vma traversal for
+> > > > mprotect, munmap and madvise. Particularly, we test for the case wh=
+ere a
+> > > > regular VMA is followed by a sealed VMA.
+> > > >
+> > > > Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
+> > > > ---
+> > > >  tools/testing/selftests/mm/mseal_test.c | 111 ++++++++++++++++++++=
++++++++++++-
+> > > >  1 file changed, 110 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testin=
+g/selftests/mm/mseal_test.c
+> > > > index 259bef4945e9..0d4d40fb0f88 100644
+> > > > --- a/tools/testing/selftests/mm/mseal_test.c
+> > > > +++ b/tools/testing/selftests/mm/mseal_test.c
+> > > > @@ -766,6 +766,42 @@ static void test_seal_mprotect_partial_mprotec=
+t(bool seal)
+> > > >         REPORT_TEST_PASS();
+> > > >  }
+> > > >
+> > > > +static void test_seal_mprotect_partial_mprotect_tail(bool seal)
+> > > > +{
+> > > > +       void *ptr;
+> > > > +       unsigned long page_size =3D getpagesize();
+> > > > +       unsigned long size =3D 2 * page_size;
+> > > > +       int ret;
+> > > > +       int prot;
+> > > > +
+> > > > +       /*
+> > > > +        * Check if a partial mseal (that results in two vmas) work=
+s correctly.
+> > > > +        * It might mprotect the first, but it'll never touch the s=
+econd (msealed) vma.
+> > > > +        */
+> > > > +
+> > > > +       setup_single_address(size, &ptr);
+> > > > +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > > > +
+> > > > +       if (seal) {
+> > > > +               ret =3D sys_mseal(ptr + page_size, size);
+> > > you are allocating 2 pages , and I assume you are sealing the second
+> > > page, so the size should be page_size.
+> > > ret =3D sys_mseal(ptr + page_size, page_size);
+> >
+> > Yes, good catch, it appears to be harmless but ofc down to straight luc=
+k.
+> > I'll send a fixup for this and the other mistake down there.
+> >
+> > >
+> > > > +               FAIL_TEST_IF_FALSE(!ret);
+> > > > +       }
+> > > > +
+> > > > +       ret =3D sys_mprotect(ptr, size, PROT_EXEC);
+> > > > +       if (seal)
+> > > > +               FAIL_TEST_IF_FALSE(ret < 0);
+> > > > +       else
+> > > > +               FAIL_TEST_IF_FALSE(!ret);
+> > > > +
+> > > > +       if (seal) {
+> > > > +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &p=
+rot) > 0);
+> > > > +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > > To test partial mprotect, the test needs to add the check for the
+> > > first page to be changed, Also to avoid the merge,  a PROT_NONE page
+> > > can to be added in front.
+> >
+> > No, I'm leaving partial mprotect to be undefined. It doesn't make
+> > sense to constraint ourselves, since POSIX wording is already loose.
+> >
+> > >
+> > > > +       }
+> > > > +
+> > > > +       REPORT_TEST_PASS();
+> > > > +}
+> > > > +
+> > > > +
+> > > >  static void test_seal_mprotect_two_vma_with_gap(bool seal)
+> > > >  {
+> > > >         void *ptr;
+> > > > @@ -983,6 +1019,41 @@ static void test_seal_munmap_vma_with_gap(boo=
+l seal)
+> > > >         REPORT_TEST_PASS();
+> > > >  }
+> > > >
+> > > > +static void test_seal_munmap_partial_across_vmas(bool seal)
+> > > > +{
+> > > > +       void *ptr;
+> > > > +       unsigned long page_size =3D getpagesize();
+> > > > +       unsigned long size =3D 2 * page_size;
+> > > > +       int ret;
+> > > > +       int prot;
+> > > > +
+> > > > +       /*
+> > > > +        * Check if a partial mseal (that results in two vmas) work=
+s correctly.
+> > > > +        * It might unmap the first, but it'll never unmap the seco=
+nd (msealed) vma.
+> > > > +        */
+> > > > +
+> > > > +       setup_single_address(size, &ptr);
+> > > > +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > > > +
+> > > > +       if (seal) {
+> > > > +               ret =3D sys_mseal(ptr + page_size, size);
+> > > ret =3D sys_mseal(ptr + page_size, page_size);
+> > >
+> > > > +               FAIL_TEST_IF_FALSE(!ret);
+> > > > +       }
+> > > > +
+> > > > +       ret =3D sys_munmap(ptr, size);
+> > > > +       if (seal)
+> > > > +               FAIL_TEST_IF_FALSE(ret < 0);
+> > > > +       else
+> > > > +               FAIL_TEST_IF_FALSE(!ret);
+> > > > +
+> > > > +       if (seal) {
+> > > > +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &p=
+rot) > 0);
+> > > > +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > > To test partial unmap, the test needs to add the check for the first
+> > > page to be freed, Also to avoid the merge,  a PROT_NONE page needs to
+> > > be in front.
+> >
+> > I'm not testing partial unmap. Partial unmap does not happen. I have
+> > told you this before.
+> >
+> ok.  Then this test should be as below ? (need to add PROT_NONE page
+> before and after)
+>   size =3D get_vma_size(ptr, &prot);
+>   FAIL_TEST_IF_FALSE(size =3D=3D 2 * page_size);
+>   FAIL_TEST_IF_FALSE(prot=3D=3D0x4)
 
-Is EUD-non-secure in use on both Chrome and LA firmwares on 7280?
+That doesn't work because this region spans two vmas. I'll write
+something similar for the fixup.
 
-Konrad
+>
+>
+> > >
+> > > The test_seal_munmap_partial_across_vmas  shows the behavior
+> > > difference with in-loop approach and out-loop approach. Previously,
+> > > both VMAs will not be freed, now the first VMA will be freed, and the
+> > > second VMA (sealed) won't.
+> > >
+> > > This brings to the line you previously mentioned: [1] and I quote:
+> > > "munmap is atomic and always has been. It's required by POSIX."
+> >
+> > This is still true, the comment was a copy-and-paste mindslip. Please
+> > read the email thread. It has been fixed up by Andrew.
+> >
+> Which thread/patch by Andrew ? Could you please send it to me ? (I
+> might missed that)
+
+This thread and this patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/patche=
+s/selftests-mm-add-more-mseal-traversal-tests-fix.patch
+
+--=20
+Pedro
 
