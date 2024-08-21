@@ -1,120 +1,94 @@
-Return-Path: <linux-kernel+bounces-295095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622B39596B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:41:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46079596BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3B8FB21E2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8017A283145
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593A51531E9;
-	Wed, 21 Aug 2024 08:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6AF18BC36;
+	Wed, 21 Aug 2024 08:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yCf8tmn2"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FlxWS6sp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657DE1531D7;
-	Wed, 21 Aug 2024 08:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914F31531D7;
+	Wed, 21 Aug 2024 08:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724227883; cv=none; b=JHabnIcbduFqdkIN/yYsqpE/5ZvXqfO/Of0fMGrfxLRS2wF+kn6RYZoOznhbgqxtOAXVraO5lp+2n9nazd2xpeVv6s7EbHbKKTJIb5ga45GZISqXapRgpM8vB/qkxGOp5rCbs0KfayN6peM9cthAGdcnhV+4FMzouafp+zDUbsE=
+	t=1724227984; cv=none; b=P0759f/6S9GoSGBIM+pPRyZ6aHhOQHPEBFkMc4gLSDeUKOZwcR76lSn9mqgt99RuRxsqu5n2sxWs80OvV/UVSQKdKSOcyBC6ga6mn2al3Xk8wEQkUjcPvOT+zltWORaLsqAkFuuBmSwHK1mye8EnluzqVO+1HW4SmvbcOqOVjwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724227883; c=relaxed/simple;
-	bh=9hxNZK6v5CInN11tdPzCzlgTtj89NPU5MEoY7XUW4GA=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=htjZmxt1Yn24lNaqhU+xc39F6ahNVCE3fP3RxnvUou0M/cqpVBQmOieNhHF6kVJNFstugg0x117O8gAT7XNQNzZxKwg6ENJEIbY7NBpReLOpF0K7ry04yeo6+TwbvbWPRrUFNBQfb9ybKP1U7FxuMOwICQ3OzOs6mlTnPuVBR/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yCf8tmn2; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47L8Aqei059189;
-	Wed, 21 Aug 2024 03:10:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724227852;
-	bh=Eaj7AVq33zet2jnoyBjCj2r6G6q687zl0HhGbgeZ8pE=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=yCf8tmn2KGAxsC0xX6RVubMmeaMPAwQViZG39VwvuKvPZBR7ju/1YaBMh7W7zHA/8
-	 C7FxqzdCr8uqk/Pra6VK96YsSlqwzJe1I/mlQMiEO95vV5g6Bxp2ooSjcfwg6lp+eN
-	 O6hFB9jFVBiG9JfsN9IHe+repkVp6FJx6ek2zIAA=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47L8AqRK104835
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 03:10:52 -0500
-Received: from lewvowa02.ent.ti.com (10.180.75.80) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 03:10:52 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by lewvowa02.ent.ti.com
- (10.180.75.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Wed, 21 Aug
- 2024 03:10:51 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 03:10:51 -0500
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47L8ApVH087519;
-	Wed, 21 Aug 2024 03:10:51 -0500
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>
-CC: Waiman Long <longman@redhat.com>, <steffen.klassert@secunet.com>,
-        <akpm@linux-foundation.org>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH] padata: Fix possible divide-by-0 panic
- in padata_mt_helper()
-In-Reply-To: <3kexyvcrc5pxp4cqlgt7tvdbo3hbt225w76kczjdlzwitpeuto@addhycc4evbe>
-References: <e752f094-adb4-4448-8bc8-e2460330eaec@redhat.com>
- <ZrgXtLI1R5zJ9GFG@gondor.apana.org.au>
- <91d29649-ca88-4f6c-bf1d-19e49c9555df@redhat.com>
- <ZrgsU-1PdxvUVMOW@gondor.apana.org.au>
- <88c188dc-3664-45db-b54a-11feca59d7d2@redhat.com>
- <Zrgy1TDikPSkzaYP@gondor.apana.org.au>
- <c5cc5ea9-1135-4ac6-a38f-652ed07dae17@redhat.com>
- <ZsBNZXfVZbtZnb2Y@gondor.apana.org.au>
- <dgtppozpgkm2gtv7nnvranbkjudr7bwuvfe7hjbznipozcxyzd@3qcag7izn4fj>
- <ZsQWV_j5zMuYWqvH@gondor.apana.org.au>
- <3kexyvcrc5pxp4cqlgt7tvdbo3hbt225w76kczjdlzwitpeuto@addhycc4evbe>
-Date: Wed, 21 Aug 2024 13:40:50 +0530
-Message-ID: <87bk1mnvn9.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	s=arc-20240116; t=1724227984; c=relaxed/simple;
+	bh=OKRSLZg7P9zOd0NxN52EI30tXAwi2KRvt/ZPHX2qB8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uQ1bDSD2qer2TVa5zLkX2U9TcIi/vyAQ8LiSFA3Ec7ackA+elx5kHMC0EO/JWGI43/mdSmcr8nbdgxrVCEpy60f7nJL62QmXAnBdYqJnDpcX9WUEHDJvVRJEpnTl21GACUhgMuos07YCkkFjfH1ocq5d6m9MvXrlXWB3Uve15PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FlxWS6sp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98055C32782;
+	Wed, 21 Aug 2024 08:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724227984;
+	bh=OKRSLZg7P9zOd0NxN52EI30tXAwi2KRvt/ZPHX2qB8o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FlxWS6sp8wEgcl/LayFmvliQREEx21Yx5r8ug+Ea7xOi/KbzBz4yWL+Kvsu1554vR
+	 l7/80faymfhUkCyDgWb6dSvrwa7Jr9q8mREEk8WZ2Gb8hJ6c2eOenzvQxkucOJIHoR
+	 Kt/qYNmN6+2ZoTjMrv4RdaMfsdFfa4ZpgysmD5/RZae0ucqWfv0OVgkfYn6pi26b4G
+	 68RRHV4MuB5sOkl/0AJOB1QpL4NeRwBBshcpEKGT6P9I/iALsJ+suodG2sQJuHnZFH
+	 wor/dT4G5nnIcdD5KN6iIy7zdMQExDRtZ1zdTlaaGJYyy8pPkseudRYgVZ81KopD5D
+	 2eLK64mYnLcsA==
+From: Christian Brauner <brauner@kernel.org>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/4] Squashfs: Ensure all readahead pages have been used
+Date: Wed, 21 Aug 2024 10:12:32 +0200
+Message-ID: <20240821-erfinden-gegeben-be787ce7eb3b@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240820232622.19271-1-phillip@squashfs.org.uk>
+References: <20240820232622.19271-1-phillip@squashfs.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1184; i=brauner@kernel.org; h=from:subject:message-id; bh=OKRSLZg7P9zOd0NxN52EI30tXAwi2KRvt/ZPHX2qB8o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQdXdjp+Ek16ld4euaZ2QwmIQ2XTlnJbvx72KnzgJAX7 7mplvs2d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkEz8jw5/G+ZMPSjYc1lt6 vuzh/ugyz4Mi689sk7lUtDFvSvuJiikMv9k7TDb5/Dls0eaer3nP12GHcU35ekfFPnPLrtXuPWV l7AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+On Wed, 21 Aug 2024 00:26:22 +0100, Phillip Lougher wrote:
+> In the recent work to remove page->index, a sanity check
+> that ensured all the readhead pages were covered by the
+> Squashfs data block was removed [1].
+> 
+> To avoid any regression, this commit adds the sanity check
+> back in an equivalent way.  Namely the page actor will now
+> return error if any pages are unused after completion.
+> 
+> [...]
 
-> On Tue, Aug 20, 2024 at 12:06:47PM GMT, Herbert Xu wrote:
->> On Mon, Aug 19, 2024 at 06:29:52PM -0400, Daniel Jordan wrote:
->> >
->> > The DIV_ROUND_UP approach reads a bit nicer to me, but I can imagine
->> > oddball cases where rounding up is undesirable (say, near-zero values
->> > for size, min_chunk, and align; padata_work_alloc_mt returns many fewer
->> > works than requested; and a single unit of work is very expensive) so
->> > that rounding up makes a bigger difference.  So, the way it now is seems
->> > ok.
->> 
->> In that case let's do the max ahead of the align check:
->> 
->> 	ps.chunk_size = max(ps.chunk_size, 1ul);
->> 	ps.chunk_size = roundup(ps.chunk_size, job->align);
->> 
->> If we do it after then it may come out unaligned (e.g., job->align = 8
->> and ps.chunk_size = 1).
->
-> Sure, I think Kamlesh was the first to suggest max, so maybe Kamlesh
-> would like to make the change.  I'll send a patch otherwise.
-Thanks for consideration, Daniel. I'll send a patch.
+Applied to the vfs.folio branch of the vfs/vfs.git tree.
+Patches in the vfs.folio branch should appear in linux-next soon.
 
-cheers,
-Kamlesh
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.folio
+
+[5/5] Squashfs: Ensure all readahead pages have been used
+      https://git.kernel.org/vfs/vfs/c/5d85f9c952d8
 
