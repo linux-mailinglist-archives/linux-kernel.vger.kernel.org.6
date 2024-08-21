@@ -1,108 +1,127 @@
-Return-Path: <linux-kernel+bounces-295578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E6E959E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:20:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5949B959E89
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7D11F225D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:20:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCFB7B22D9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9C3199FC0;
-	Wed, 21 Aug 2024 13:20:22 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7953D199955;
+	Wed, 21 Aug 2024 13:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="cxKl84oD"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F9218991D;
-	Wed, 21 Aug 2024 13:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD4918991D
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724246422; cv=none; b=nsTg2sOUzJv7Sx8NiJXtEmQGMGroioBPqTe8FEAG6ykwiUuX2b/IDDdfPXo+NxKJIxEJVzdc/gOOIp1ttBTk1kHpy5GgEhA3KBbB0OzyK/s0BoLHfbv+yO7sJAPOMULL/2Y0gYfAdoTA2NPRIgGv/maasdsDwaX8bZYgwF+/JAg=
+	t=1724246429; cv=none; b=CD51id7UVSWdL1/U4/Ee6xM9x+png4tbGZdOrfk8nx4d2tF18aSPYQuJ3IeeO7Gn98J1adq++UF6nrSVAapHS3ABbgVl3ygpU7pa2Q3F90P3h3h8PGlYBA9WbbYLqDXC99hN97TT4es7ncCVdcansO5eD5cvqatUFcSJaoxWh9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724246422; c=relaxed/simple;
-	bh=q7qLJeQFM8AN8cjONf6OYwdIl/+88D+A22GU5a/5Uvk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LCmEnoDPPS2TnVKwB7K1dSvxOKkb6brZzkCmxlt1wLOBe6QQyAPrLIjieJMzjs3xVZMr60Vr0isOB0v0SG32hJyySJ6TYBcyESrUDMu47LmSfFhfnIiDu5xCkmo2NqKY9jLK/08tOPgjJv/B0hsbyjqxSA/G5B7l9yKS4hM6nrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAA3Hzp26cVmrW63CA--.48365S2;
-	Wed, 21 Aug 2024 21:20:00 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: vkoul@kernel.org,
-	alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	niklas.cassel@linaro.org
-Cc: netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] net: stmmac: Check NULL ptr on lvts_data in qcom_ethqos_probe()
-Date: Wed, 21 Aug 2024 21:19:49 +0800
-Message-Id: <20240821131949.1465949-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724246429; c=relaxed/simple;
+	bh=hJZo6AyuOJCLupMjpQE1kczHrqcx8NFu543znMu+X8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgyrpfWOWqG+rhatXE8gDUnMeEYGTnJVqyD/BachprfoELkmBKdbF3myFrCKEP2iygqei/xDsmfFj3L26SPCt6k1fbh/6RW9Khp3bX3gCdPKI5FBURxZXeJVtjmUR3AElYJTxTh5kfzjQkdurYluV/0CAZ6a/TxjNVZEf4UZdBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=cxKl84oD; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D3534148346C;
+	Wed, 21 Aug 2024 15:20:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724246423; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=/6SAo6PVLWJClsfzyHrkHAJBVOy5N9kixDFuGn0CPGk=;
+	b=cxKl84oDc8cT8pEQQDsgrozKSItB2ILu/jt0c2SHQi+SwwmhJ1Z35VnI6jHI99ZsltSM+o
+	yDO/L8ok/4ZwRMGOIfx3uFK9fwH9u5ywGxu+/1gB8ATgSMQ3pT8spAQ9mC+GLyfG5lE2v/
+	WwMjYUFBZTNilPD14KuKtRPd69L1oqrI2cAV/AQ8S3wZnMqVhkVyYq52Bn/V07pMmQDkfi
+	gLCxrqILoyWW/lKXjd1DRzUCrfNPs/pUUMX0zGTCH0WSl7MXxj+mxw8GthgfhQD5qmiCBh
+	zz4NPPbanwtTpEqA+HEcU8PqvG8OCNyUUU4TKHYRWkCgyoAg3q5WD/6MHR/kOg==
+Date: Wed, 21 Aug 2024 15:20:19 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Alexander Dahl <ada@thorsis.com>, linux-mtd@lists.infradead.org,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: nand: raw: atmel: Add message on DMA usage
+Message-ID: <20240821-ouch-tanned-fed30ba26700@thorsis.com>
+Mail-Followup-To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240821120517.330868-1-ada@thorsis.com>
+ <20240821151701.6bde9aba@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAA3Hzp26cVmrW63CA--.48365S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZr13try3AFW8ZFWxGFy8Zrb_yoWkCrg_uF
-	1jvFWfXF1DKrW0yr47J3y3ZrySv3WqqFWxJF4ktayfCaykWrn0grZ5uw4kJFZrur4IyFnr
-	Jw1xt3ySv3W7tjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+In-Reply-To: <20240821151701.6bde9aba@xps-13>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-of_device_get_match_data() can return NULL if of_match_device failed, and
-the pointer 'data' was dereferenced without checking against NULL. Add
-checking of pointer 'data' in qcom_ethqos_probe().
+Hi Miquel,
 
-Cc: stable@vger.kernel.org
-Fixes: a7c30e62d4b8 ("net: stmmac: Add driver for Qualcomm ethqos")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 3 +++
- 1 file changed, 3 insertions(+)
+Am Wed, Aug 21, 2024 at 03:17:01PM +0200 schrieb Miquel Raynal:
+> Hi Alexander,
+> 
+> ada@thorsis.com wrote on Wed, 21 Aug 2024 14:05:16 +0200:
+> 
+> > Like for other atmel drivers (serial, crypto, mmc, …), too.
+> > 
+> > Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> > ---
+> >  drivers/mtd/nand/raw/atmel/nand-controller.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> > index dc75d50d52e8..9e6dea2cf140 100644
+> > --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+> > +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> > @@ -2051,6 +2051,8 @@ static int atmel_nand_controller_init(struct atmel_nand_controller *nc,
+> >  		nc->dmac = dma_request_channel(mask, NULL, NULL);
+> >  		if (!nc->dmac)
+> >  			dev_err(nc->dev, "Failed to request DMA channel\n");
+> > +		dev_info(nc->dev, "using %s for DMA transfers\n",
+> > +			 dma_chan_name(nc->dmac));
+> 
+> 
+> The message here would be misleading if !nc->dmac.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index 901a3c1959fa..f18393fe58a4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -838,6 +838,9 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	ethqos->mac_base = stmmac_res.addr;
- 
- 	data = of_device_get_match_data(dev);
-+	if (!data)
-+		return -ENODEV;
-+
- 	ethqos->por = data->por;
- 	ethqos->num_por = data->num_por;
- 	ethqos->rgmii_config_loopback_en = data->rgmii_config_loopback_en;
--- 
-2.25.1
+Of course you're right, this is somewhat embarassing.  I'll send a v2.
 
+Thanks for reviewing.
+Alex
+
+> 
+> >  	}
+> >  
+> >  	/* We do not retrieve the SMC syscon when parsing old DTs. */
+> > 
+> > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+> 
+> 
+> Thanks,
+> Miquèl
 
