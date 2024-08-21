@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-294828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A18E95932B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0095395932F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9BDB1F23F47
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B326D284A5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B513157A61;
-	Wed, 21 Aug 2024 03:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F457161306;
+	Wed, 21 Aug 2024 03:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="YH1pD20E"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="PsXBqacK"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288D414D2A4
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349CF1547C2
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724209743; cv=none; b=jEiqpRX9wMzUlgkR8XnlRCDvxsVRjaBupbkCUFfqx78JIPght4Qg7dvuhOD+BIRaWqHXNJCINzpBOpvOBjKkF1f4qtzGgtLggk+cieho7P1gAHlD+y/YjRq7IYY7qsxAdyDiH3/UHmxGD5FYFr8vb6JkRAFrSHhWATROPKGcURw=
+	t=1724209745; cv=none; b=Da0B3eyI9TDZqMlHvy9l6tWgdonnx9yaBMGx0fyV7TXbIDmZqGOfbxLvVEfP08E2/UYcSACqCfd6QK4kJlxuuZrjskmIe90TpkNA0wTn4lmSYKESsV9WqhVC51+Hy/vtYKzargdcP1mAteCEb70Mj64pvpvssOw6Dm/UL667Ss0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724209743; c=relaxed/simple;
-	bh=MSSrYs+Ev3I5I+MKzaEegdg+eZUUUuBSp+4MOEQm+7Q=;
+	s=arc-20240116; t=1724209745; c=relaxed/simple;
+	bh=Y1Isi5tZMdBTmr44yIuWdZLDGGs1zRS8Rk3k3dRwLN8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DesdQQVT9VAZliigs7U5OWGxy+lcncSf4mWZdIt7BBcVEXjj/oiXDF/YV6cqaBGhge4DgaI/g0gL+LwHeY36DRgbtCAUpxO6m5oOl9M9Pri1Q+n4oXQorzwfRn7+xXY2L82Tp7ffe8plkz1cjY/ewn0xB5SntlFEUkDIsAMq9s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=YH1pD20E; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=u99ZFcuRrLjFHcv1iUZPxQ3HmRlEyU0RkKVwG7dqodQ4n5+mX4OrNULXEcMBLH+D15oLyOyMZ9dfqpsSMsdTq5cZkzr99WKucztuOhnC+Rsmf8M2LOT2WPxV/tFWsGpMU3h0435+yzFtOgTdSINtCRK779wnUlg3z8+FFB6Bq3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=PsXBqacK; arc=none smtp.client-ip=209.85.161.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-714261089c1so93035b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 20:09:01 -0700 (PDT)
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5daa4f8f1c4so2810915eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 20:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkphysics.net; s=google; t=1724209741; x=1724814541; darn=vger.kernel.org;
+        d=darkphysics.net; s=google; t=1724209742; x=1724814542; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cyVBtoPNvS38G5BU2iCTo12jZw/thaVDEc7UQjxqHpE=;
-        b=YH1pD20EZsOTyQMaAw+BAq7khylu848yQ96TxatrrXMfbPxE9zCGUslZWdUO99Fkev
-         D8+dTU53dPbxfAtZZPuy1kiBUj7JLceKyTj7x3sC2Yu0QsoGAg5GBMlA1eLO88QYE+q4
-         y5o6oShiG0sRlA0ToY78zLwQuI+J7v5mFs5UI2KUABYKEF5QBl1KGB9G3Xu3JUHbbTXD
-         1h4kpBriIvqEH81bQx7BqoRrXYzRL8fENUsAeD6VsCoaRdq2a6+rRkYWgPvxZekX8HRx
-         KG9tdriMMPcGUJPwMlHwfEQF0PI1iJCtT6TBmiHBsFeOoDtHYFGR4+4vxZlBadAU4ucB
-         nv9g==
+        bh=YUBD+hB9uTLEnGM3jp7igQB/VUtJFKRV9rFHokEeKCQ=;
+        b=PsXBqacK18owneg7cP6F1c1+8Rews5bUJJcJqZbQAAfPuNCpattQgruKmK+6W3Hbod
+         Ob5Q68TEceTcC1oNpnzxiNGr5/VEA+IUNVICOklJUOmsROfoomvWI74G8jcsNnqAWcM9
+         nCGhbmHgDtaJnDDML6ijAXd7xQkBCI2PlDj4HVLPG7spkc9oaJRzfk22lmNyIYxAUNqD
+         tEuid9n4x1SDOB82sFh/gdrH3zE90auFI45kw8lhtubFkjFkp5CjXPdN75kbd2lIH763
+         R/bmEhhFzeDzZKUdM1wsvjRmweTGcbRO6y5PmHbTnilxf6yyy34P1gdTPIS40LhVnXW/
+         wMow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724209741; x=1724814541;
+        d=1e100.net; s=20230601; t=1724209742; x=1724814542;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cyVBtoPNvS38G5BU2iCTo12jZw/thaVDEc7UQjxqHpE=;
-        b=KCdrLCTdpiaC6N6v9yH8tdK+4zl35lCAltSVclALF1loz52Cw8K6rNlgVhOBUCsLWg
-         JhzWpX8Basgs9u42gCcpMCQJWoPtdyFeWe/oPkw3A42+e4p7yCz2K1YIF3aJMWUAF1qY
-         1gy5KgEYKxQ8Tqzz1q00wFXUqhAy1UkL5MN5lGo8tKHW6U0BzAfzdgGB5HwgKPoMY/DI
-         nk9AQJQQGwo2DXK0/o0z2WvR+JCP8ESzGNHwg1dCyFsTVymDHkSv4n5ipIMNKIItvJ/n
-         TfjtKX5pLE2A5Bg1wjt/XX429r5gejRE8cUwGXbusnQkw+UcNXFQD1n/JxgGcWm+MHB6
-         kFOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXdx7KZEx+LvRTZHq3a13cB42vKGupv4vdHR2Yo0c8OSzQR71Q0Kaeh/7MKdpbdnxfdb4mbct/gW34tfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7qefoxAHynQBcwdD8KWwt+iVS7REmaaTDcjD6mPQjGHYbczHC
-	qUuWuWdnJcKKKcgtxegje6BNrK6S514TixBmUzefNGHhxfj9fjeVJdHb64cvcS0=
-X-Google-Smtp-Source: AGHT+IFXo6FslBQ2+uvZNqOcRyAaIm9YgVPXCABNnsQ0OPz6uv9XsD/eDGnKAf7ddbq/A+ggvYHmsw==
-X-Received: by 2002:a05:6a00:2ea8:b0:70e:aa7f:2cb3 with SMTP id d2e1a72fcca58-71423e6822dmr2273465b3a.2.1724209741272;
-        Tue, 20 Aug 2024 20:09:01 -0700 (PDT)
+        bh=YUBD+hB9uTLEnGM3jp7igQB/VUtJFKRV9rFHokEeKCQ=;
+        b=Aeapwj9PPXyvnhm3WQuXXRBR2sSnD38qYxG7ncuBlzXCsaQKBenFjrDKxIH26MpiNI
+         UyK/vGmnToP0ghZ0lxzjVspz7Mk4FFD5gyvul49WqGIYTPEGIVsZ88g9wdsd7xW85Sae
+         dlJP+EycqG+vYX6DeZeV0MY6K1MJgViOe9he1GRSpHDIvTuHro9DeyVhMIiXA9XYUBdL
+         BASDCWNNBGYnWrwobbjaBgRxsPnvnmv05poxrZCO3/Ql70dJr3oF4BOBubFu+gZjbmcs
+         J5twBoDmRGfAO60QDGh4PIMxX1oDr0csRUfnh3Hn5tLB1bxpPxex3vPLrCZqOCLlcSU7
+         BSUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQVsfj42t6cuPdqArGVpWfCBigTkCE9t3z2QkehbOWzj5nxJ8e/h8S9v7aHqZHZ/nKPR1MaQX/9emMxjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY2MzvRvKGkH9tnkoFJyXRwQYExcIVgNdBenzbLtqjhRMJs4t3
+	QOgvb8vKyKkTXfzaTIOi88uYRilKhMDRAwZ7zS4+tKtZePPhC6kSz8gfjis/Aks=
+X-Google-Smtp-Source: AGHT+IHMiFDWJHrUgwGHz1wp4yDgVI3OB2OBVcxAd3/LLlGuAdbgM3uU80ycc23R0d6mutCZQTfbtw==
+X-Received: by 2002:a05:6358:3b96:b0:1b5:a139:a24a with SMTP id e5c5f4694b2df-1b5a139b5e2mr131259555d.18.1724209742132;
+        Tue, 20 Aug 2024 20:09:02 -0700 (PDT)
 Received: from lunchbox.darkphysics (c-73-83-183-190.hsd1.wa.comcast.net. [73.83.183.190])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add75dbsm8934404b3a.44.2024.08.20.20.09.00
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add75dbsm8934404b3a.44.2024.08.20.20.09.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 20:09:00 -0700 (PDT)
+        Tue, 20 Aug 2024 20:09:01 -0700 (PDT)
 From: Tree Davies <tdavies@darkphysics.net>
 To: gregkh@linuxfoundation.org,
 	philipp.g.hortmann@gmail.com,
@@ -73,9 +73,9 @@ To: gregkh@linuxfoundation.org,
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Tree Davies <tdavies@darkphysics.net>
-Subject: [PATCH 1/6] Staging: rtl8192e: Rename variable CmdID_End
-Date: Tue, 20 Aug 2024 20:08:51 -0700
-Message-Id: <20240821030856.57423-2-tdavies@darkphysics.net>
+Subject: [PATCH 2/6] Staging: rtl8192e: Rename variable CmdID_SetTxPowerLevel
+Date: Tue, 20 Aug 2024 20:08:52 -0700
+Message-Id: <20240821030856.57423-3-tdavies@darkphysics.net>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240821030856.57423-1-tdavies@darkphysics.net>
 References: <20240821030856.57423-1-tdavies@darkphysics.net>
@@ -87,67 +87,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename variable CmdID_End to cmd_id_end
-to fix checkpatch warning Avoid CamelCase.
+Rename variable CmdID_SetTxPowerLevel to
+cmd_id_set_tx_power_level to fix checkpatch warning Avoid
+CamelCase.
 
 Signed-off-by: Tree Davies <tdavies@darkphysics.net>
 ---
- drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c | 8 ++++----
+ drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c | 4 ++--
  drivers/staging/rtl8192e/rtllib.h              | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
-index 18b948d4d86d..e844f1b4913b 100644
+index e844f1b4913b..e82e992dd139 100644
 --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
 +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
-@@ -556,14 +556,14 @@ static u8 _rtl92e_phy_switch_channel_step(struct net_device *dev, u8 channel,
+@@ -552,7 +552,7 @@ static u8 _rtl92e_phy_switch_channel_step(struct net_device *dev, u8 channel,
+ 		_rtl92e_phy_set_sw_chnl_cmd_array(dev, ieee->PreCommonCmd,
+ 						  PreCommonCmdCnt++,
+ 						  MAX_PRECMD_CNT,
+-						  CmdID_SetTxPowerLevel,
++						  cmd_id_set_tx_power_level,
  						  0, 0, 0);
  		_rtl92e_phy_set_sw_chnl_cmd_array(dev, ieee->PreCommonCmd,
  						  PreCommonCmdCnt++,
--						  MAX_PRECMD_CNT, CmdID_End,
-+						  MAX_PRECMD_CNT, cmd_id_end,
- 						  0, 0, 0);
- 
- 		PostCommonCmdCnt = 0;
- 
- 		_rtl92e_phy_set_sw_chnl_cmd_array(dev, ieee->PostCommonCmd,
- 						  PostCommonCmdCnt++,
--						  MAX_POSTCMD_CNT, CmdID_End,
-+						  MAX_POSTCMD_CNT, cmd_id_end,
- 						  0, 0, 0);
- 
- 		RfDependCmdCnt = 0;
-@@ -585,7 +585,7 @@ static u8 _rtl92e_phy_switch_channel_step(struct net_device *dev, u8 channel,
- 						  ieee->RfDependCmd,
- 						  RfDependCmdCnt++,
- 						  MAX_RFDEPENDCMD_CNT,
--						  CmdID_End, 0, 0, 0);
-+						  cmd_id_end, 0, 0, 0);
- 
- 		do {
- 			switch (*stage) {
-@@ -600,7 +600,7 @@ static u8 _rtl92e_phy_switch_channel_step(struct net_device *dev, u8 channel,
- 				break;
- 			}
- 
--			if (CurrentCmd && CurrentCmd->CmdID == CmdID_End) {
-+			if (CurrentCmd && CurrentCmd->CmdID == cmd_id_end) {
- 				if ((*stage) == 2)
- 					return true;
- 				(*stage)++;
+@@ -611,7 +611,7 @@ static u8 _rtl92e_phy_switch_channel_step(struct net_device *dev, u8 channel,
+ 			if (!CurrentCmd)
+ 				continue;
+ 			switch (CurrentCmd->CmdID) {
+-			case CmdID_SetTxPowerLevel:
++			case cmd_id_set_tx_power_level:
+ 				if (priv->ic_cut > VERSION_8190_BD)
+ 					_rtl92e_set_tx_power_level(dev,
+ 								   channel);
 diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
-index cf4d48c4d4ed..11408fadd1e7 100644
+index 11408fadd1e7..19afb056520e 100644
 --- a/drivers/staging/rtl8192e/rtllib.h
 +++ b/drivers/staging/rtl8192e/rtllib.h
-@@ -153,7 +153,7 @@ struct cb_desc {
- };
+@@ -154,7 +154,7 @@ struct cb_desc {
  
  enum sw_chnl_cmd_id {
--	CmdID_End,
-+	cmd_id_end,
- 	CmdID_SetTxPowerLevel,
+ 	cmd_id_end,
+-	CmdID_SetTxPowerLevel,
++	cmd_id_set_tx_power_level,
  	CmdID_BBRegWrite10,
  	CmdID_WritePortUlong,
+ 	CmdID_WritePortUshort,
 -- 
 2.30.2
 
