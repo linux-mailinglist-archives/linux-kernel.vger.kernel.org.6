@@ -1,151 +1,182 @@
-Return-Path: <linux-kernel+bounces-294870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7147795939B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:16:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DD295939F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B843284FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:16:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B78631C21241
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDDE15C139;
-	Wed, 21 Aug 2024 04:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0F115C159;
+	Wed, 21 Aug 2024 04:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YVoNi6ur"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nIUbpKmE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594782599;
-	Wed, 21 Aug 2024 04:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526D97602D;
+	Wed, 21 Aug 2024 04:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724213777; cv=none; b=bS33WzBVpBgI63YtGJfg0RRIn135C2cJhp2cPnVMqLgUmDhX9RWwlrebo1ifaOuzrwMxPyyQud8uygdqL4+hfG/G9vLvtfwbXpCIP2iWjS+BsIym+0WUYNUBIJFrjk4A7pdsC3Bi63INT4J4DRLY+Uqthrnqq7wVn0SkVOQ/En4=
+	t=1724214131; cv=none; b=j2ILLQyIZopo8PzlBJedCObCurwwywzFxamcL9Tq60LmT/Nfq3sVb8x3+0CQXo4z8W0shMo3acH6mq58BEgO6ieP0HTzOUjn5zDt6mbtzjtJ6NBTpnT9R6jDOAXmeXQ1iBVC5DsfSMZtcpCPnXJJr/8LOYbQGsMuy6w+/L+Y3eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724213777; c=relaxed/simple;
-	bh=fcb8W/36ubfc+gGKRsB7vY+KskPeQNEaLuIcW7TjOE8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Wy2Wp6ZmBqjgyv8hIVMUFlt5u93eLJgpzmrgZYm4yQpyLe94XfROzu0a7HJjBIwZ8O0jLsemb5bmgnjGOe3BulTUlD5zrYMCZc60VBBIkIXpTdRR4qs+Yy+MskJh64pIGFKZMo6t+IDuD70s5V++UsTW6ygmy2zNfIh5IJBxSe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YVoNi6ur; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KEqX9Y019502;
-	Wed, 21 Aug 2024 04:16:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S5PGvNFc85jqmrGlrsScyVAG4hF8skxfLF6Oja0FmRw=; b=YVoNi6ur+bgkbDM0
-	UZy+R2WssJtEitWBlju6pDWk0N7zkjr5LFK6MzyCzmjzTV7E5G9pgI2mH7idPna6
-	U8H/J57/RB0bH8dXTxF1udljiOzY5NnwNufdhC9NHwcAlqYbNspxR7nsy/5NhLiB
-	aeps4w/h8g35dqB/wRHwdYmlGjkaSX4Rx1KEaHTDFx+WjJaMZzq75xJU5guXnPIu
-	IRNIG7fzlEg2+v/nBm3VHxQ+cO/PLNO9q7UGn3Y5LK9TPyekhbJ/P2wwk2OkB8PZ
-	Z+UiLSM3gWQGEI++JDB2VJOOjX/IKx5EjyLTwk8L3xrm1h8/6EqZE3s0O8CVdNgl
-	oHl2Vg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414phvax1m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 04:16:09 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L4G8kG017154
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 04:16:08 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
- 2024 21:16:07 -0700
-Message-ID: <15472cea-904c-4d79-9195-3063ce7f1e2e@quicinc.com>
-Date: Wed, 21 Aug 2024 12:16:04 +0800
+	s=arc-20240116; t=1724214131; c=relaxed/simple;
+	bh=RLteaZvx78Nb1TJ71MHu/HAeSd6WAnVBBwl8ZzlxdTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u01zM6qwxzxyIHDNDnvTabiXVb/6sPhJPSSNsq7hoVZbTwwq0M1q+7kmKl7goWhQrripAihPHQjHKdpecOH9bDi4nMTFp/Qyj7YXCPHbkNdjcymrdhF9oDuDt3oT+apSUrzhi4OzcX1Nf3aLcRbBAdmf8RuLqii7+eP+NQAmeb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nIUbpKmE; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724214129; x=1755750129;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RLteaZvx78Nb1TJ71MHu/HAeSd6WAnVBBwl8ZzlxdTc=;
+  b=nIUbpKmEpf5QaT8YWfg9/FrEWmyPQIacY+ThdDyceXaQdvCDpwsW98i9
+   8CgvXMvL5hoe8cSE90KCZKQ+LhadavbeEhVCI41kQCbOg1l8V6dPMBlSd
+   Yr6MP030GFwfDwv6x1JAfpfKvccnlXt3NlYSXi7uS1qoAkOT5q0svHbtO
+   k4mffrHymCoV2dHWn0e5D0ABMZiuobKoi4F+FSAsCuP1lxoT9Gx1OPt09
+   Sx2IkIhNq2JL1Xg3ZQ7ZlA9ywA/yR9W3BS1gHcdIxHPtVto1T5B9j8+l1
+   uu2w7y5cNFB2A0D5pbcqaeGD0MFzEPXd8hjrqZ/sDEVSLL6Q9mPV1+/Ki
+   g==;
+X-CSE-ConnectionGUID: 5uQu//3kTtiDIEqPSHlcqQ==
+X-CSE-MsgGUID: rBVXw6wZQD6Jigyg50nilA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="26307852"
+X-IronPort-AV: E=Sophos;i="6.10,163,1719903600"; 
+   d="scan'208";a="26307852"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 21:22:09 -0700
+X-CSE-ConnectionGUID: 2ZMCorPEQJKUtvK2cp51Kw==
+X-CSE-MsgGUID: ERd4brl8QOqPqedHfLL83Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,163,1719903600"; 
+   d="scan'208";a="65164031"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 20 Aug 2024 21:22:06 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgcrE-000At4-1F;
+	Wed, 21 Aug 2024 04:22:04 +0000
+Date: Wed, 21 Aug 2024 12:21:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 2/4] iio: adc: ad4695: implement calibration support
+Message-ID: <202408211207.fmYTjQDK-lkp@intel.com>
+References: <20240820-ad4695-gain-offset-v1-2-c8f6e3b47551@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: hci_qca: Drop unused event during BT on
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8NZs7Fgp_wy1GYWQyzpqlBQj4wWIPwYA
-X-Proofpoint-GUID: 8NZs7Fgp_wy1GYWQyzpqlBQj4wWIPwYA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_04,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1011 adultscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408210028
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820-ad4695-gain-offset-v1-2-c8f6e3b47551@baylibre.com>
 
-Dear receivers,
+Hi David,
 
-Is there any comment for the changes? Thanks! 
+kernel test robot noticed the following build warnings:
 
-On 7/26/2024 5:58 PM, Cheng Jiang wrote:
-> For the WCN6750/WCN6855/WCN7850, the vendor command for a baudrate
-> change is not sent as synchronous HCI command, controller sends the
-> corresponding vendor event with the new baudrate. It needs to be
-> dropped, otherwise it may be misinterpreted as response to a later
-> command.
-> 
-> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
-> ---
->  drivers/bluetooth/hci_qca.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index ca6466676902..f497d601e035 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -1206,7 +1206,15 @@ static int qca_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
->  		 * vendor command).
->  		 */
->  
-> -		if (hdr->evt == HCI_EV_VENDOR)
-> +		/* For the WCN6750/WCN6855/WCN7850, like the WCN3990, the
-> +		 * vendor command for a baudrate change command isn't sent as
-> +		 * synchronous HCI command, the controller sends the corresponding
-> +		 * command complete event with the new baudrate. The event is
-> +		 * received and properly decoded after changing the baudrate of
-> +		 * the host port. It needs to be dropped.
-> +		 */
-> +
-> +		if (hdr->evt == HCI_EV_VENDOR || hdr->evt == HCI_EV_CMD_COMPLETE)
->  			complete(&qca->drop_ev_comp);
->  
->  		kfree_skb(skb);
-> @@ -1497,6 +1505,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->  
->  		switch (soc_type) {
->  		case QCA_WCN3990:
-> +		case QCA_WCN6750:
-> +		case QCA_WCN6855:
-> +		case QCA_WCN7850:
->  			reinit_completion(&qca->drop_ev_comp);
->  			set_bit(QCA_DROP_VENDOR_EVENT, &qca->flags);
->  			break;
-> @@ -1531,6 +1542,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->  
->  		switch (soc_type) {
->  		case QCA_WCN3990:
-> +		case QCA_WCN6750:
-> +		case QCA_WCN6855:
-> +		case QCA_WCN7850:
->  			/* Wait for the controller to send the vendor event
->  			 * for the baudrate change command.
->  			 */
+[auto build test WARNING on 0f718e10da81446df0909c9939dff2b77e3b4e95]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad4695-add-2nd-regmap-for-16-bit-registers/20240821-000102
+base:   0f718e10da81446df0909c9939dff2b77e3b4e95
+patch link:    https://lore.kernel.org/r/20240820-ad4695-gain-offset-v1-2-c8f6e3b47551%40baylibre.com
+patch subject: [PATCH 2/4] iio: adc: ad4695: implement calibration support
+config: i386-buildonly-randconfig-002-20240821 (https://download.01.org/0day-ci/archive/20240821/202408211207.fmYTjQDK-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240821/202408211207.fmYTjQDK-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408211207.fmYTjQDK-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/adc/ad4695.c:735:6: warning: unused variable 'ret' [-Wunused-variable]
+     735 |         int ret;
+         |             ^~~
+   1 warning generated.
+
+
+vim +/ret +735 drivers/iio/adc/ad4695.c
+
+   728	
+   729	static int ad4695_write_raw(struct iio_dev *indio_dev,
+   730				    struct iio_chan_spec const *chan,
+   731				    int val, int val2, long mask)
+   732	{
+   733		struct ad4695_state *st = iio_priv(indio_dev);
+   734		unsigned int reg_val;
+ > 735		int ret;
+   736	
+   737		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+   738			switch (mask) {
+   739			case IIO_CHAN_INFO_CALIBSCALE:
+   740				switch (chan->type) {
+   741				case IIO_VOLTAGE:
+   742					if (val < 0 || val2 < 0)
+   743						reg_val = 0;
+   744					else if (val > 1)
+   745						reg_val = U16_MAX;
+   746					else
+   747						reg_val = (val * (1 << 16) +
+   748							   mul_u64_u32_div(val2, 1 << 16,
+   749									   MICRO)) / 2;
+   750	
+   751					return regmap_write(st->regmap16,
+   752						AD4695_REG_GAIN_IN(chan->scan_index),
+   753						reg_val);
+   754				default:
+   755					return -EINVAL;
+   756				}
+   757			case IIO_CHAN_INFO_CALIBBIAS:
+   758				switch (chan->type) {
+   759				case IIO_VOLTAGE:
+   760					if (val2 >= 0 && val > S16_MAX / 4)
+   761						reg_val = S16_MAX;
+   762					else if ((val2 < 0 ? -val : val) < S16_MIN / 4)
+   763						reg_val = S16_MIN;
+   764					else if (val2 < 0)
+   765						reg_val = clamp_t(int,
+   766							-(val * 4 + -val2 * 4 / MICRO),
+   767							S16_MIN, S16_MAX);
+   768					else if (val < 0)
+   769						reg_val = clamp_t(int,
+   770							val * 4 - val2 * 4 / MICRO,
+   771							S16_MIN, S16_MAX);
+   772					else
+   773						reg_val = clamp_t(int,
+   774							val * 4 + val2 * 4 / MICRO,
+   775							S16_MIN, S16_MAX);
+   776	
+   777					return regmap_write(st->regmap16,
+   778						AD4695_REG_OFFSET_IN(chan->scan_index),
+   779						reg_val);
+   780				default:
+   781					return -EINVAL;
+   782				}
+   783			default:
+   784				return -EINVAL;
+   785			}
+   786		}
+   787		unreachable();
+   788	}
+   789	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
