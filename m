@@ -1,126 +1,151 @@
-Return-Path: <linux-kernel+bounces-294865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A070B95938D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:10:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7147795939B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F36D0284FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B843284FF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AC315B134;
-	Wed, 21 Aug 2024 04:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDDE15C139;
+	Wed, 21 Aug 2024 04:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J890K5W/"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YVoNi6ur"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A9C157A61
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 04:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594782599;
+	Wed, 21 Aug 2024 04:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724213415; cv=none; b=n1krwxjXxQrptzN9/PUFhA571Vfg4K8b0j7okcyhOHO0EzGFxNETtknrbfT9WaJyQ+HgTCYngP8qEDYwfr1phN/Zx+lkW34sKv/4wsBKa6DvMHYDg3w/3NcN4Uvbj+4oIy+9SbOkYCmszREyxbGRMG/oBGESgxWmFURQZ63MaQs=
+	t=1724213777; cv=none; b=bS33WzBVpBgI63YtGJfg0RRIn135C2cJhp2cPnVMqLgUmDhX9RWwlrebo1ifaOuzrwMxPyyQud8uygdqL4+hfG/G9vLvtfwbXpCIP2iWjS+BsIym+0WUYNUBIJFrjk4A7pdsC3Bi63INT4J4DRLY+Uqthrnqq7wVn0SkVOQ/En4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724213415; c=relaxed/simple;
-	bh=YDZNohKQqqPz/N5k8VbYl6Ec4oUtf7QY0sCd+uA3m+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Od7yHRgelhSXziM/HH3Vena2RE1QgEulCUxUvr6nR0j5keF3cF6Xl8pYUN1QLRqFkNTtadzlgB232jm32DkZ5kItonKo6dq1CPKeXvV21Z5H7Jrkcex/X/pW21VbhiNoZasNEHWcXJXrRwABFlkKq46xtff5QgJiAPsXMsd+ECo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J890K5W/; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6bce380eb96so3729976a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 21:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724213413; x=1724818213; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wb1BGggEIWmx1mLu9FEBtdmThLhgoJDxQRxO9C0cpI0=;
-        b=J890K5W/1eE4tUTIksh3O5kIVFZTTLCezKNNgeEMUtSClU7KwA6C1b0VXB/YaULqda
-         S1Yfeq1tTduU4F4wwlgB8Q5TKrGVFNpQ+tm182HrCV+6rMOb+aY7Fgh9tbllx5UZbABV
-         R8fV1I3gVhepyiBQ+Et93igxokshNLjlrj604=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724213413; x=1724818213;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wb1BGggEIWmx1mLu9FEBtdmThLhgoJDxQRxO9C0cpI0=;
-        b=HnAYDEPM62YCkpcKDKpZF4KR3vE2C3QI1+gENuz/B1cko4i8lTRkN6Z7NCADRcIRcS
-         MdN2lNsgSYRZMWY/9G293J808MJTw8QyFGvgf0zTP1uq46LH1j5cs76fhfPUcskxoLx7
-         8Mx5BWd7g1bGIDSei7XggNY3a8LPlnNzUQaScJBQtG31CDva8YF2pGdKEwEPwCnKo8IG
-         5rZJnUzorBU0ZNYVW1ENs7Ggz2DNuhFPhO0mFpQE1QEVOmnB7sUG61Hp6j6TxbHolbGs
-         UnNMiDcqir/ozxHW0CdI2LkuXtYq5iD6IrrZXzj3VGb7H77b3J4106CGwbzULO+Ed1sM
-         kGtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWj48ZqvzlHVd5WN+dIkk9CiZ1PZen6f5vHAEEX6oslBNn9Wha4/LW7egFSRLRnAJ+bmdSBZFjaP/xwwms=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzr1fZywIkjK4ZfFU2Gss4ZLoXb+OXQZ0XVFrUl0+CYtF2Kxb8
-	AqKWNaIzlXv0E4wIh1VNGhYarkKIXxQ/TOJpZ4++S9bp6li0+YslYHlS8Lkpeg==
-X-Google-Smtp-Source: AGHT+IGWCbre/KihO4WkHAHUcn8wEfYtDqXND56kswB/kXv6XyR8aIjMOshLV3AAsKFu3aOdvWQZ4Q==
-X-Received: by 2002:a05:6a21:3183:b0:1c3:f4b6:6c0d with SMTP id adf61e73a8af0-1cad81a74c9mr1628745637.52.1724213413292;
-        Tue, 20 Aug 2024 21:10:13 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:8d56:286b:9a9c:b7d0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb917006sm527395a91.12.2024.08.20.21.10.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 21:10:12 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoc: SOF: topology: Clear SOF link platform name upon unload
-Date: Wed, 21 Aug 2024 12:10:04 +0800
-Message-ID: <20240821041006.2618855-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
+	s=arc-20240116; t=1724213777; c=relaxed/simple;
+	bh=fcb8W/36ubfc+gGKRsB7vY+KskPeQNEaLuIcW7TjOE8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Wy2Wp6ZmBqjgyv8hIVMUFlt5u93eLJgpzmrgZYm4yQpyLe94XfROzu0a7HJjBIwZ8O0jLsemb5bmgnjGOe3BulTUlD5zrYMCZc60VBBIkIXpTdRR4qs+Yy+MskJh64pIGFKZMo6t+IDuD70s5V++UsTW6ygmy2zNfIh5IJBxSe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YVoNi6ur; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KEqX9Y019502;
+	Wed, 21 Aug 2024 04:16:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S5PGvNFc85jqmrGlrsScyVAG4hF8skxfLF6Oja0FmRw=; b=YVoNi6ur+bgkbDM0
+	UZy+R2WssJtEitWBlju6pDWk0N7zkjr5LFK6MzyCzmjzTV7E5G9pgI2mH7idPna6
+	U8H/J57/RB0bH8dXTxF1udljiOzY5NnwNufdhC9NHwcAlqYbNspxR7nsy/5NhLiB
+	aeps4w/h8g35dqB/wRHwdYmlGjkaSX4Rx1KEaHTDFx+WjJaMZzq75xJU5guXnPIu
+	IRNIG7fzlEg2+v/nBm3VHxQ+cO/PLNO9q7UGn3Y5LK9TPyekhbJ/P2wwk2OkB8PZ
+	Z+UiLSM3gWQGEI++JDB2VJOOjX/IKx5EjyLTwk8L3xrm1h8/6EqZE3s0O8CVdNgl
+	oHl2Vg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414phvax1m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 04:16:09 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L4G8kG017154
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 04:16:08 GMT
+Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
+ 2024 21:16:07 -0700
+Message-ID: <15472cea-904c-4d79-9195-3063ce7f1e2e@quicinc.com>
+Date: Wed, 21 Aug 2024 12:16:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Drop unused event during BT on
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>
+CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8NZs7Fgp_wy1GYWQyzpqlBQj4wWIPwYA
+X-Proofpoint-GUID: 8NZs7Fgp_wy1GYWQyzpqlBQj4wWIPwYA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_04,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1011 adultscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408210028
 
-The SOF topology loading function sets the device name for the platform
-component link. This should be unset when unloading the topology,
-otherwise a machine driver unbind/bind or reprobe would complain about
-an invalid component as having both its component name and of_node set:
+Dear receivers,
 
-    mt8186_mt6366 sound: ASoC: Both Component name/of_node are set for AFE_SOF_DL1
-    mt8186_mt6366 sound: error -EINVAL: Cannot register card
-    mt8186_mt6366 sound: probe with driver mt8186_mt6366 failed with error -22
+Is there any comment for the changes? Thanks! 
 
-This happens with machine drivers that set the of_node separately.
-
-Clear the SOF link platform name in the topology unload callback.
-
-Fixes: 311ce4fe7637 ("ASoC: SOF: Add support for loading topologies")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- sound/soc/sof/topology.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index b54382131991..496162df5270 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -2050,6 +2050,8 @@ static int sof_link_unload(struct snd_soc_component *scomp, struct snd_soc_dobj
- 	if (!slink)
- 		return 0;
- 
-+	slink->link->platforms->name = NULL;
-+
- 	kfree(slink->tuples);
- 	list_del(&slink->list);
- 	kfree(slink->hw_configs);
--- 
-2.46.0.184.g6999bdac58-goog
+On 7/26/2024 5:58 PM, Cheng Jiang wrote:
+> For the WCN6750/WCN6855/WCN7850, the vendor command for a baudrate
+> change is not sent as synchronous HCI command, controller sends the
+> corresponding vendor event with the new baudrate. It needs to be
+> dropped, otherwise it may be misinterpreted as response to a later
+> command.
+> 
+> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> ---
+>  drivers/bluetooth/hci_qca.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index ca6466676902..f497d601e035 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1206,7 +1206,15 @@ static int qca_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+>  		 * vendor command).
+>  		 */
+>  
+> -		if (hdr->evt == HCI_EV_VENDOR)
+> +		/* For the WCN6750/WCN6855/WCN7850, like the WCN3990, the
+> +		 * vendor command for a baudrate change command isn't sent as
+> +		 * synchronous HCI command, the controller sends the corresponding
+> +		 * command complete event with the new baudrate. The event is
+> +		 * received and properly decoded after changing the baudrate of
+> +		 * the host port. It needs to be dropped.
+> +		 */
+> +
+> +		if (hdr->evt == HCI_EV_VENDOR || hdr->evt == HCI_EV_CMD_COMPLETE)
+>  			complete(&qca->drop_ev_comp);
+>  
+>  		kfree_skb(skb);
+> @@ -1497,6 +1505,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  
+>  		switch (soc_type) {
+>  		case QCA_WCN3990:
+> +		case QCA_WCN6750:
+> +		case QCA_WCN6855:
+> +		case QCA_WCN7850:
+>  			reinit_completion(&qca->drop_ev_comp);
+>  			set_bit(QCA_DROP_VENDOR_EVENT, &qca->flags);
+>  			break;
+> @@ -1531,6 +1542,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  
+>  		switch (soc_type) {
+>  		case QCA_WCN3990:
+> +		case QCA_WCN6750:
+> +		case QCA_WCN6855:
+> +		case QCA_WCN7850:
+>  			/* Wait for the controller to send the vendor event
+>  			 * for the baudrate change command.
+>  			 */
 
 
