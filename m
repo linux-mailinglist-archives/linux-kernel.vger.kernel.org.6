@@ -1,135 +1,78 @@
-Return-Path: <linux-kernel+bounces-294882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366409593D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:03:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070DE9593D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DD61F23301
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988CC1F232EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CBD1547C2;
-	Wed, 21 Aug 2024 05:03:00 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFD9155C80;
+	Wed, 21 Aug 2024 05:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BKAGViLS"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E823D8E
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED83D175A6
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724216579; cv=none; b=Bsr6H6K/cw/irqje5GrjIz+32RQFtd9Uk4RzPSOhsYM7Gj2BbsH+Q5ikIM1C5aA/HHx/rNuAVYt7Y+cauvAHdVlunKHQcrLm38g9iZ2axu9xNw/C7JrOUmdDXiqL0EfJbG8XTVc9Ub9XEJS5HlpfOWewXHbj+FaRy6taH/VAkUQ=
+	t=1724216815; cv=none; b=mA+OoaICWqDbFkywHO1q8SqXtt3UR5guAdbMMLMc/XbOnLjNBFwPlT7o/5kuJxk6wAaZAYd31dK6vx7XFov8TXM1TQj6Mq1CoMpH5UIfSWb/2RnwZBhKTcRbHi0q5+RVS1BC4pIYsv3iXS42XwAyUq1gR7HC9LiOlxOjykYXHik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724216579; c=relaxed/simple;
-	bh=MMMv5fn7e9/vn0AAAGI0YipjnkStoftksdOYVPzOmlM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l+iBw4um7R0KI1KEXYTBX7JonHq+Kq+XQN4zK/aiZ1q2X7unJad9vgIqPUEMUGnYbPV5RvtMuVBcuAUkEwiGhiEh4amNh2FqKwS3BWBVTfS2yN9ID1QbV1h+Y5RC3+mCBrY+308ba1HifR9Yr/RaZaNyC8vlihaEX+xP3Awn2bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id 67E24A9EAB;
-	Wed, 21 Aug 2024 14:02:55 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id nSvaXdf4W4wl; Wed, 21 Aug 2024 14:02:55 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id 3FC8FA8F07;
-	Wed, 21 Aug 2024 14:02:55 +0900 (JST)
-From: takakura@valinux.co.jp
-To: pmladek@suse.com,
-	john.ogness@linutronix.de
-Cc: akpm@linux-foundation.org,
-	bhe@redhat.com,
-	feng.tang@intel.com,
-	j.granados@samsung.com,
-	linux-kernel@vger.kernel.org,
-	lukas@wunner.de,
-	nishimura@valinux.co.jp,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	stephen.s.brennan@oracle.com,
-	taka@valinux.co.jp,
-	takakura@valinux.co.jp,
-	ubizjak@gmail.com,
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v3 2/2] Handle flushing of CPU backtraces during panic
-Date: Wed, 21 Aug 2024 14:02:54 +0900
-Message-Id: <20240821050254.69853-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <87y14sjp0d.fsf@jogness.linutronix.de>
-References: <87y14sjp0d.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1724216815; c=relaxed/simple;
+	bh=2DshrC2wPT+HqiB+wk4KnOX9Ljc4ztK2HKSMQXVrYLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tBiLf9Q5RoRjHRj/vHmzbm2VIj82SeV0NwE38L90BmHyXp/xM1IVxmMeV6+zY7LUir3Vmahh7kbO76uDKka4QumxCkFRDTJyLK+KYTl+QDNqRVrkQPpai4jaxqwGMi04iLxdPQdYKPbyMK+Xp7u8BO7sSiV1TTJXeDgQOoRBz/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BKAGViLS; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2DshrC2wPT+HqiB+wk4KnOX9Ljc4ztK2HKSMQXVrYLc=; b=BKAGViLSWfMEJV0625RQ5Nq6YW
+	fi6KD8w33W2oBpV8nDnmQn4n5XZhE7NWCdJX1vR92gC/C2Rc/JN/5GH7No5gIXKb+IhkCWF6U/w1+
+	FKtxs9AzgguhFbmbvIj7Y9A3Kkc766zncuPmer7xuHjTrSI1QgHyq2i/qCT6IyZDZb3U5h8UVDt33
+	jEKf9BtzBh5XnDGEfKlzqzgVL27hQ8tf8zhK3vndQelIRwIqNXWU7fmnNCqR5zo+rJPWiiC2UT6Um
+	1EtOAkYu2IXLmDvJMhEwE7q3WdZ92UoHDS0flRqw92bUZNVn7SqMdetD3FdKyd5TowJSmXaw06umI
+	evK8eohA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sgdYa-00000007XQL-47dr;
+	Wed, 21 Aug 2024 05:06:52 +0000
+Date: Tue, 20 Aug 2024 22:06:52 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Cindy Lu <lulu@redhat.com>
+Cc: jasowang@redhat.com, mst@redhat.com, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+Subject: Re: [RFC 7/7] vhost: Add new UAPI to support changing Kthread mode
+Message-ID: <ZsV17ACIEelIQuKx@infradead.org>
+References: <20240819092851.441670-1-lulu@redhat.com>
+ <20240819092851.441670-8-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819092851.441670-8-lulu@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Petr and John,
+On Mon, Aug 19, 2024 at 05:27:33PM +0800, Cindy Lu wrote:
+> Add a new UAPI to support setting the vhost device to
+> use kthread mode. The user space application needs to use
+> VHOST_SET_USE_KTHREAD to set the mode. This setting must
+> be set before VHOST_SET_OWNER is set.
 
-On 2024-08-19, John Ogness wrote:
->On 2024-08-13, Petr Mladek <pmladek@suse.com> wrote:
->> I would do something like:
->>
->> /**
->>  * console_try_or_trigger_flush - try to flush consoles directly when
->>  *   safe or the trigger deferred flush.
->>  *
->>  * Context: Any
->>  */
->> void console_try_or_trigger_flush(void)
->> {
->>      if (!is_printk_legacy_deferred() && console_trylock())
->>              console_unlock();
->>      else
->>              defer_console_output();
->> }
->>
->> and use it instead of printk_trigger_flush() in
->> nmi_trigger_cpumask_backtrace().
->
->Just to be clear, you are talking about removing printk_trigger_flush()
->entirely and instead provide the new console_try_or_trigger_flush()?
->Which then also involves updating the call sites:
->
->lib/nmi_backtrace.c:nmi_trigger_cpumask_backtrace()
->arch/powerpc/kernel/watchdog.c:watchdog_timer_interrupt()
->
+Usage of an API is a complete kernel internal detail that has absolutely
+no business being exposed to applications.
 
-Taking a look at [0], in addition to the mentioned call sites, 
-nbcon_device_release() will also be calling printk_trigger_flush()?
-For nbcon_device_release(), I thought its better not to be replaced as 
-it calles for @legacy_off, in which case printk_trigger_flush() seems 
-more suitable as it always defers printing.
+What is the application visible behavior that the API use is the proxy
+for?
 
-Also taking a look at the [1], for nmi_trigger_cpumask_backtrace(), 
-I thought that it will not comply with the syncing of 
-legacy_allow_panic_sync. I believe it will allow flushing of legacy consoles 
-before printk_legacy_allow_panic_sync() which is out of sync.
-
->> Well, I would postpone this patch after we finalize the patchset
->> adding con->write_atomic() callback. This patch depends on it anyway
->> via is_printk_legacy_deferred(). The patchset might also add
->> other wrappers for flushing consoles and we have to choose some
->> reasonable names.
->
->I agree. Let's finish up the atomic series and then we can worry about
->this.
->
-
-Ok! I see that it can be better discussed after the atomic series.
-
->John
-
-Sincerely,
-Ryo Takakura
-
-[0] https://lore.kernel.org/all/20240820063001.36405-31-john.ogness@linutronix.de/
-[1] https://lore.kernel.org/all/20240820063001.36405-30-john.ogness@linutronix.de/
 
