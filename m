@@ -1,140 +1,95 @@
-Return-Path: <linux-kernel+bounces-296271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56CB95A866
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:37:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 897F395A86F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B461C220B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:37:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA362814BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327CC17D35B;
-	Wed, 21 Aug 2024 23:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA9B17D35B;
+	Wed, 21 Aug 2024 23:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d25XIGov"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/jVneDI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5F616A94F;
-	Wed, 21 Aug 2024 23:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D23316C685;
+	Wed, 21 Aug 2024 23:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724283463; cv=none; b=dtKwbdpS4qwn/gXrPRYd5etMNHxsIZayW7NQ+88ueTanwKERL+HkgXk5YU2gGThOJ8uNPtEzyizBQbbfrfIuVoz/bPtKdwLIG9lVidE+DvWkjonMoWzGtTarUfaYQLYsSEwoKlWWmWUCNIuFwP1Elyc48RK/u4SLbh8JkIrZAg4=
+	t=1724283652; cv=none; b=sSKL+ZdTuIpzTmLsfpUpeXM6nObu444e2kUW7saobr9mOwZBnP01rKtkFEAmTkavetzbfFUASN9qhRhmp1IsxjB8gFECqwE0GJOehWOlPb2JwwkuSF2x3CBWJhQA6+r0RzRYy5OHDUZjGTndKqZfP5gZE3CmtFarntWFGMAFm4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724283463; c=relaxed/simple;
-	bh=tyZb0O93zOtM/1WNDk4/z7mxHnvixg7b+S63+1z37ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vj2C2C089vSQwe0zjbwIMKvfRrsCtFs0sZvRsKpl3x0Qq8I9UQArKpEPIZj/WyGgnnCE+gDwehBI7gMoR0OtmDb7qauWNTXjDUFNukuunlpaOvmLZSb+ESj3VlhBDyiV1PBf0gadxLYOVap4CdGYDZEmbIHF4PAFcXVydCri6k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d25XIGov; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3718ca50fd7so67486f8f.1;
-        Wed, 21 Aug 2024 16:37:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724283460; x=1724888260; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oB5w7fxcaYwmfIUWiN1fWC2Q932KuuOxyBRyR9Q44aM=;
-        b=d25XIGov9Rzcr+gW3C4mV333qPhw8Oh1ZNJ/nsT2V4JjJkEp44lPTMV9/yMPzhTaQ3
-         m+qJRj1ouHKNBDeaFmOsunw8vSiy/K84GOn6wA9a6Sn+ZG8AaplTpA8rKKzBJ6rOpkDC
-         gVbqTvmj/00WGSoPK4qRDxghUPrEtiroV9n9/ah/E/bmRepdfEKtuOzawaCzRBAphji+
-         IYX4wQawioLS6aDSMoXwflosug2A31vTMjrze/Lrzrn/lEkP9uAvABdurp4YAGm0hhYP
-         xwkOE67KOtsQ+HxKJRT1Tw/tIV3OTPhKlNRBSWLiTmIeGb2yMe9/Xi3LutRqH6IwlOtS
-         QJdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724283460; x=1724888260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oB5w7fxcaYwmfIUWiN1fWC2Q932KuuOxyBRyR9Q44aM=;
-        b=o8hzjakJv2jStJ+m5c6TLjsH69vsSllM6iMNhBSiUC+6VgXZee6uKxF3tpWxaieKw8
-         I17XwDNi0dQsyPDYmnqlttx7OtjNFFPuv3r96rRsY7o1ZWAOW79EDS8c64rtFtM+74J6
-         WACFr6Y7xG9thw2iDSEQ4nMbLP2CNGx0caBPL1Kb0jFQ1W5cFFV6cPd9FKlI2goti5f4
-         YBuLRaV1cBES6eXdSSll1MwHBXQb92OO8qHFD4IOfrLLnenGQWx01XVFgiwP3IcMB1DG
-         HPzPgKRxKuKT9AnxoNSBDNjLZT+9+0FlSLh2IP8El3M4savMx0OoA2zKXat6E9QoglJd
-         AZBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh06qqKEBZLFH/ahFsVwT3YL/3IWt0Gsws6jQrk0jJM6K+PnUMCF8qI39wJJeNZ72sgYc0FKmXZW+Gtpo=@vger.kernel.org, AJvYcCW+S+l4oIvTvTjAe6OMaWrJOQjlkJ6Vz1PQ2Rge/B7uSQspOz3KqlWZFiLmbP3rE8cvCvevz4yVryTjEu+F6+uk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtZAehj0q9w204oBdgIwCSYZvdxEbNcpM24NkZ6bcx8aiMWFIH
-	ErGBxJ6K4tkkQWyUebbhfa/zXjbX0XZxQW0f0t/wv6mBiZwtN53f
-X-Google-Smtp-Source: AGHT+IH+O7XxV5K69cEPSO5P5QE+aYeT/WJm7JzD/L1TBAlnJ7EuqWVvc5svqtwC7BmEqbC9U7tIKw==
-X-Received: by 2002:a5d:4282:0:b0:368:584f:9e08 with SMTP id ffacd0b85a97d-372fd590e5bmr2387727f8f.22.1724283459421;
-        Wed, 21 Aug 2024 16:37:39 -0700 (PDT)
-Received: from PC-PEDRO-ARCH ([2001:818:e92f:6400:96b:aa92:afc0:2d3d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813cde5sm191184f8f.40.2024.08.21.16.37.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 16:37:38 -0700 (PDT)
-Date: Thu, 22 Aug 2024 00:37:36 +0100
-From: Pedro Falcato <pedro.falcato@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, jeffxu@chromium.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v3 7/7] selftests/mm: add more mseal traversal tests
-Message-ID: <vc4czyuemmu3kylqb4ctaga6y5yvondlyabimx6jvljlw2fkea@djawlllf45xa>
-References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com>
- <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com>
+	s=arc-20240116; t=1724283652; c=relaxed/simple;
+	bh=xfOu1APNQvpg4pWUI6tcCCbT79a5zsaUUrty1laMGdE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NrPu8vnYagWVUr52dtoBLGJ74lbtxokJd+xUfIZw0TrrjOZ2q6MAhwyo7ylG2q93L74LZmAlnOs2XgTcblfbVNkPM51M69F8bOpeUq379rtEOiOw7L/2PqQLumoC0dasEoEp+9XcxnR06OLxtEw6/suVPbwMbL4ol6yZZnJfFWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/jVneDI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D2CC4AF12;
+	Wed, 21 Aug 2024 23:40:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724283652;
+	bh=xfOu1APNQvpg4pWUI6tcCCbT79a5zsaUUrty1laMGdE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F/jVneDIPhuM+1bI5RLUHR9ZARaFJoPl/6IZq/i/GYJ5ftvrWZfyo6YsN/n9wZKQi
+	 iy7eOBazta0o/BW1lxqWbei8Fo2W/agbBzs/npFZdflMfoAX80FZYiLSAXYC/6HXAF
+	 qkuOwAxlkXgrhWOre+y0girkDjlZ4Kk4PzIHaRwrvLqAWjvdW52g/ocNlZeOCDcJ6A
+	 hd3M+Og6FGfmC+rEPCS+F/Ea6K8YZasseYwMgQvAATGus6UkXV+z3eru3+djLrwTCx
+	 npQnOybR4JLZm5HY2N6qYqNzPehKGlcx9lXiPVrftj3XqiGcU6wuvw/rZvqpxSQ67Z
+	 DBJwGuXqr8Udg==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2700d796019so126125fac.2;
+        Wed, 21 Aug 2024 16:40:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVaXm0OHSF1qspk3cr9ADdhnx9trPTu1DfxKNzqBOEPNScuuWzR8RtVrrkGnq7ANK0XnlLCeH0Su7dDTaI@vger.kernel.org, AJvYcCUvdUkAqNBSdcHKElrqELe8lRc0lWnCCAmXIVOh2fzq52bfiUpcPB6W44lc4DStx3sRyghFMLW9Ghnh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxztw9foNNFhRrI6OImzUJkem09/2qFJvk1/SCOTqceOGHJ9Caw
+	dJnyEfSrdRes2AMsIL/hHzXnYeQ8IVfe5liypRtVjCdubrEXbDZ96dy25bW3OCY+5SdCggkBucx
+	Z9+A/JHjYzbW10R1lypG9vKMAuus=
+X-Google-Smtp-Source: AGHT+IEq5ojOSmud30JUGoLSL72Hb5cP1FvPYiuW9TxXSafGQu4tpiF9A8jKd4Hil+2NHsYZeG0VLB/D/rpDNhgzXZw=
+X-Received: by 2002:a05:6870:b488:b0:270:2e19:7734 with SMTP id
+ 586e51a60fabf-273cfc390d4mr258890fac.12.1724283651458; Wed, 21 Aug 2024
+ 16:40:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com>
+References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com> <20240820143319.274033-9-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20240820143319.274033-9-chenxiaosong@chenxiaosong.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 22 Aug 2024 08:40:40 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8-J+ZjnmQbaX4FLuKxwLMtYF_dj0G+7sv7nRo2knN=fQ@mail.gmail.com>
+Message-ID: <CAKYAXd8-J+ZjnmQbaX4FLuKxwLMtYF_dj0G+7sv7nRo2knN=fQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] smb: move SMB2 Status code to common header file
+To: chenxiaosong@chenxiaosong.com
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
+	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
+	liuyun01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Andrew, please squash this small patch with this one. It directly addresses
-a problem found in review.
+On Tue, Aug 20, 2024 at 11:35=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wr=
+ote:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> There are only 4 different definitions between the client and server:
+>
+>   - STATUS_SERVER_UNAVAILABLE: from client/smb2status.h
+>   - STATUS_FILE_NOT_AVAILABLE: from client/smb2status.h
+>   - STATUS_NO_PREAUTH_INTEGRITY_HASH_OVERLAP: from server/smbstatus.h
+>   - STATUS_INVALID_LOCK_RANGE: from server/smbstatus.h
+>
+> Rename client/smb2status.h to common/smb2status.h, and merge the
+> 2 different definitions of server to common header file.
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+Looks good to me:)
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-(I was told this is the preferred way to send small fixups, and I don't
-think anyone wants a v4 over this trivial issue)
-
-Thank you!
-
-----8<----
-From 614e5dc27073c39579c863ebdff4396948e28e03 Mon Sep 17 00:00:00 2001
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Thu, 22 Aug 2024 00:20:19 +0100
-Subject: [PATCH] selftests/mm: Fix mseal's length
-
-We accidentally msealed too much, which could overrun and try to mseal
-other regions. This seems to be harmless (at least on top-down
-architectures) due to various reasons all aligning, but may very well
-cause spurious test failures to e.g bottom-up mmap architectures.
-
-Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
----
- tools/testing/selftests/mm/mseal_test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
-index 0d4d40fb0f88..0c41513219ae 100644
---- a/tools/testing/selftests/mm/mseal_test.c
-+++ b/tools/testing/selftests/mm/mseal_test.c
-@@ -783,7 +783,7 @@ static void test_seal_mprotect_partial_mprotect_tail(bool seal)
-        FAIL_TEST_IF_FALSE(ptr != (void *)-1);
- 
-        if (seal) {
--               ret = sys_mseal(ptr + page_size, size);
-+               ret = sys_mseal(ptr + page_size, page_size);
-                FAIL_TEST_IF_FALSE(!ret);
-        }
- 
-@@ -1036,7 +1036,7 @@ static void test_seal_munmap_partial_across_vmas(bool seal)
-        FAIL_TEST_IF_FALSE(ptr != (void *)-1);
- 
-        if (seal) {
--               ret = sys_mseal(ptr + page_size, size);
-+               ret = sys_mseal(ptr + page_size, page_size);
-                FAIL_TEST_IF_FALSE(!ret);
-        }
- 
--- 
-2.46.0
-
+Thanks!
 
