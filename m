@@ -1,171 +1,167 @@
-Return-Path: <linux-kernel+bounces-296273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D893895A872
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C3B95A876
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20EB5B214BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4BC91F22E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82FC17D8BF;
-	Wed, 21 Aug 2024 23:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F7317DFED;
+	Wed, 21 Aug 2024 23:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D4WbdCQ5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2x69kS2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651911422A8;
-	Wed, 21 Aug 2024 23:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EF915749E;
+	Wed, 21 Aug 2024 23:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724283703; cv=none; b=qVq//uTxnfV1nn3UPUwz/VX1XjwBlXw1zTniLmXzz5X85axnvgm9hdoGtQQUTuHJojHAIXHOrlb7QCDjozkFnumdiBz2xycWZ0hLu/21fUvMN9JZs/ua/lBd6avkEHA/2Z9yBPLwxTtVrwlhiuu2vmYiY3610IVbVEu3g7BFI6U=
+	t=1724283800; cv=none; b=gAnyBwkEb+aKOrB+pdVFNFTmm++bPT5u+SX7/opYMrUc8uVTZfsYrjWpt18OdEO8wTbegurqYOXg67GIl/xLErcnxqCjmEtZbI65sNtTPZFXvW4e9XLWcTjfjyr1oMZkWmUi/x6qViMSZvMFgrKFjzN/e8JYBd/EPtxpU+hPsXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724283703; c=relaxed/simple;
-	bh=x8Bg94Z2zsdxajcw3hSHGhloSoauODJGqMwgx8Ukg8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n+wgL+LE2RLob60hIy3GDmKqErdnfq2OZJz6yTwedvnOMCs1zcxdk04LTL8b9aJMpc2oMeu5BgrCTnN7EytseqUFMOFwWV7glfMnU96FQvtGqw2NXV+ysMSTaCStTexeWiE14VbKbydhyVdvJ5POzy4ozwfoNBbkdzmBZpv7wWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D4WbdCQ5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LFZ7cl019748;
-	Wed, 21 Aug 2024 23:41:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0f+/dlZFqwe0oaeG97dCTtX57gT5/oAkzmFEAXls3zA=; b=D4WbdCQ520izKdyA
-	2vgmNaz5BryAXT06IChx3qN2tSeGkJJim//ATBvyEW0l6R2CLrwLYL3HHcOFK5Df
-	ZZATyZKDy0J0DiRvonwUKA6XBpWiD4dqUtss+b05v2exKbTdHME+4nbLS9W7MSWt
-	G/O2E+yfVrCxmOrE+LE+TanAZxYVZsdozML6JYSJpq/xxv3CBWpnrr1suxtK+h7W
-	ixeyVHkwjWlxbLkSv+UmTu3ElQ9FsT6Rfvsc52+mUrm2y7Hc+cM+9954i+oUz75Z
-	r4VYIbnqVl/twhwREXGTgU1NnoBiG927yANNS2zoDUMAfvxSEGZRN5WzMEK8HJPZ
-	tu/YTQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkwaqmm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 23:41:20 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LNfJCB021976
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 23:41:19 GMT
-Received: from [10.71.109.148] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
- 2024 16:41:16 -0700
-Message-ID: <3e6e8921-6d52-40e2-9124-7ab550566716@quicinc.com>
-Date: Wed, 21 Aug 2024 16:41:10 -0700
+	s=arc-20240116; t=1724283800; c=relaxed/simple;
+	bh=m4sJakXKR7i34caDwdfXKtNpcT/9LPPf3xAs96SSFOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R9DqbyfknDsj9IcSUT8oxsAeNo5Pcnr2sNtgCJTwK4UbLiidtB9I8xwb/1pkJgECYUMGL8p9eN7vB6a5yl0lKIg9HwAbU6EZdXQVwjKWs4dT0neVd2XHqbPZhh5Hx9807eCEzryemaYaRL7XIz2a1zhbrtHC4HOnKmv0dU1j0VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2x69kS2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEE0C32781;
+	Wed, 21 Aug 2024 23:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724283800;
+	bh=m4sJakXKR7i34caDwdfXKtNpcT/9LPPf3xAs96SSFOc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u2x69kS2TS85WEU7ECNb7u54g1FrG/FXprwIBUHrRfXgFK7YRc7anptiotY3zuI8v
+	 xg+ePWOUr95igHnV2dmDpWIVUfBZpPELo91QkAIfIF1hoZlF83y1bFyOrdKafvro+8
+	 NLgjY8hdfUlaNB5W9+hdOsRl1bRh27UHxGDAdJDMdLG8aegEodwBm9YC8WszcjcJpx
+	 5gDDWEOS2zdo5evmkhxEMXcfLwWxmF7IMK5GxLs2CbQ9rX1gjodqGgWT6F+VIecc5O
+	 4jTB1a0xXMJNs+/lrD2PQRVeADM4bJlGsZjFQ2ilH3vNk/up281podDbgmjRVgxSo+
+	 agKZuJ2kMOusA==
+Date: Wed, 21 Aug 2024 16:43:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>, Hangbin Liu
+ <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, bpf@vger.kernel.org, Jay Vosburgh
+ <jv@jvosburgh.net>, Andy Gospodarek <andy@greyhouse.net>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang
+ <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, "=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=" <bjorn@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>
+Subject: Re: [PATCH net-next v21] net: refactor ->ndo_bpf calls into
+ dev_xdp_propagate
+Message-ID: <20240821164318.34503e64@kernel.org>
+In-Reply-To: <20240821045629.2856641-1-almasrymina@google.com>
+References: <20240821045629.2856641-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] of: reserved_mem: Restruture how the reserved
- memory regions are processed
-To: Rob Herring <robh@kernel.org>
-CC: <saravanak@google.com>, <klarasmodin@gmail.com>, <aisheng.dong@nxp.com>,
-        <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <will@kernel.org>, <catalin.marinas@arm.com>,
-        <kernel@quicinc.com>
-References: <20240809184814.2703050-1-quic_obabatun@quicinc.com>
- <20240809184814.2703050-2-quic_obabatun@quicinc.com>
- <CAL_JsqL=Pc7FJJevMskvYYOoYZYCKF+db9C2Y7_cm7DZNyTYPw@mail.gmail.com>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <CAL_JsqL=Pc7FJJevMskvYYOoYZYCKF+db9C2Y7_cm7DZNyTYPw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8tpH6n_CHjapxUDiO4aPLEaL2b9qXJqd
-X-Proofpoint-GUID: 8tpH6n_CHjapxUDiO4aPLEaL2b9qXJqd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_15,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408210171
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 21 Aug 2024 04:56:29 +0000 Mina Almasry wrote:
+> When net devices propagate xdp configurations to slave devices, or when
+> core propagates xdp configuration to a device, we will need to perform
+> a memory provider check to ensure we're not binding xdp to a device
+> using unreadable netmem.
+> 
+> Currently ->ndo_bpf calls are all over the place. Adding checks to all
+> these places would not be ideal.
+> 
+> Refactor all the ->ndo_bpf calls into one place where we can add this
+> check in the future.
+> 
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
 
-On 8/19/2024 3:04 PM, Rob Herring wrote:
-> On Fri, Aug 9, 2024 at 1:48 PM Oreoluwa Babatunde
-> <quic_obabatun@quicinc.com> wrote:
->> Reserved memory regions defined in the devicetree can be broken up into
->> two groups:
->> i) Statically-placed reserved memory regions
->> i.e. regions defined with a static start address and size using the
->>      "reg" property.
->> ii) Dynamically-placed reserved memory regions.
->> i.e. regions defined by specifying an address range where they can be
->>      placed in memory using the "alloc_ranges" and "size" properties.
->>
->> [...]
->>
->> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
->> ---
->>  drivers/of/fdt.c             |   5 +-
->>  drivers/of/of_private.h      |   3 +-
->>  drivers/of/of_reserved_mem.c | 172 +++++++++++++++++++++++++----------
->>  3 files changed, 131 insertions(+), 49 deletions(-)
->>
->> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
->> index 68103ad230ee..d4b7aaa70e31 100644
->> --- a/drivers/of/fdt.c
->> +++ b/drivers/of/fdt.c
->> @@ -511,8 +511,6 @@ void __init early_init_fdt_scan_reserved_mem(void)
->>                         break;
->>                 memblock_reserve(base, size);
->>         }
->> -
->> -       fdt_init_reserved_mem();
->>  }
->>
->>  /**
->> @@ -1239,6 +1237,9 @@ void __init unflatten_device_tree(void)
->>         of_alias_scan(early_init_dt_alloc_memory_arch);
->>
->>         unittest_unflatten_overlay_base();
->> +
->> +       /* Save the statically-placed regions in the reserved_mem array */
->> +       fdt_scan_reserved_mem_reg_nodes();
-Hi Rob,
-> I'm still not understanding why the unflatttened API doesn't work
-> here? It was just used in of_alias_scan() above here.
-The main reason why the unflatten_devicetree APIs does not work here is
-because a reference to fdt_node needs to be stored for the reserved
-regions, and it can only be gotten by using the fdt APIs.
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index f9633a6f8571..73f9416c6c1b 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -2258,7 +2258,7 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
+>  			goto err_sysfs_del;
+>  		}
+>  
+> -		res = slave_dev->netdev_ops->ndo_bpf(slave_dev, &xdp);
+> +		res = dev_xdp_propagate(slave_dev, &xdp);
 
-The fdt_node is needed by rmem_dma_setup(), rmem_cma_setup(), and
-rmem_swiotlb_setup(). All of which are used to configure the reserved
-memory regions during early bootup.
+I was hoping we can fold the "is there any program present already"
+but I'm not sure if that check itself isn't buggy... so let's leave
+that part to someone else.
 
-In my previous versions, I replaced fdt_node with device_node in struct
-reserved_mem in order to leverage the unflatten_devicetree APIs, and the
-above functions were being called after the page tables were setup.
+Hangbin, would you be willing to take a look at testing (and fixing)
+the XDP program propagation? I did a naive test of adding a bond
+and veth under it, I attached an XDP prog to bond, and nothing happened
+on the veth. Maybe I'm misreading but I expected the XDP prog to show
+up on the veth.
 
-As we found out later, those functions need to be called before the page
-tables are setup in order for the reserved regions to be configured
-correctly[1]. But since the unflatten_devicetree APIs are not available
-before the page tables are setup, I had to switch back to using the
-fdt_node which can only be gotten by using the fdt APIs.
+> diff --git a/drivers/net/hyperv/netvsc_bpf.c b/drivers/net/hyperv/netvsc_bpf.c
+> index 4a9522689fa4..e01c5997a551 100644
+> --- a/drivers/net/hyperv/netvsc_bpf.c
+> +++ b/drivers/net/hyperv/netvsc_bpf.c
+> @@ -183,7 +183,7 @@ int netvsc_vf_setxdp(struct net_device *vf_netdev, struct bpf_prog *prog)
+>  	xdp.command = XDP_SETUP_PROG;
+>  	xdp.prog = prog;
+>  
+> -	ret = vf_netdev->netdev_ops->ndo_bpf(vf_netdev, &xdp);
+> +	ret = dev_xdp_propagate(vf_netdev, &xdp);
 
-[1] https://lore.kernel.org/all/002b6176-41b3-4888-abb1-978399d108b8@arm.com/
+Again, the driver itself appears rather questionable but we can leave
+it be :)
 
-The only way I see that we can avoid using the fdt APIs here is if
-we just don't store an fdt_node reference for the reserved regions
-in resvered_mem.  But I'm not sure if we want to do that.
-> The problem reported is this function uses initial_boot_params, but
-> that's NULL for x86.
-ack
-Thank you,
-Oreoluwa.
+> @@ -130,7 +130,7 @@ static int bpf_map_offload_ndo(struct bpf_offloaded_map *offmap,
+>  	/* Caller must make sure netdev is valid */
+>  	netdev = offmap->netdev;
+>  
+> -	return netdev->netdev_ops->ndo_bpf(netdev, &data);
+> +	return dev_xdp_propagate(netdev, &data);
+
+This is not propagation, it's an offload call, let's not convert it
+
+> diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
+> index c0e0204b9630..f44d68c8d75d 100644
+> --- a/net/xdp/xsk_buff_pool.c
+> +++ b/net/xdp/xsk_buff_pool.c
+> @@ -149,7 +149,7 @@ static void xp_disable_drv_zc(struct xsk_buff_pool *pool)
+>  		bpf.xsk.pool = NULL;
+>  		bpf.xsk.queue_id = pool->queue_id;
+>  
+> -		err = pool->netdev->netdev_ops->ndo_bpf(pool->netdev, &bpf);
+> +		err = dev_xdp_propagate(pool->netdev, &bpf);
+>  
+>  		if (err)
+>  			WARN(1, "Failed to disable zero-copy!\n");
+> @@ -215,7 +215,7 @@ int xp_assign_dev(struct xsk_buff_pool *pool,
+>  	bpf.xsk.pool = pool;
+>  	bpf.xsk.queue_id = queue_id;
+>  
+> -	err = netdev->netdev_ops->ndo_bpf(netdev, &bpf);
+> +	err = dev_xdp_propagate(netdev, &bpf);
+>  	if (err)
+>  		goto err_unreg_pool;
+>  
+
+That's also not xdp propagation. If you're not doing so already in your
+series - you should look at queue state here directly and check if it
+has MP installed. Conversely you should look at rxq->pool when binding
+MP. But as I said, that's not part of the XDP refactor, just as part of
+your series.
+
+So in case my ramblings were confusing - code LG, but ditch the
+net/xdp/xsk_buff_pool.c and kernel/bpf/offload.c changes.
 
