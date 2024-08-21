@@ -1,199 +1,103 @@
-Return-Path: <linux-kernel+bounces-295642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4FD959F75
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6794B959F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2189B237D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:14:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 027B1B214F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8043B1B1D4C;
-	Wed, 21 Aug 2024 14:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB8C1B1D5E;
+	Wed, 21 Aug 2024 14:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DiQGDurf"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mAEGwQ17"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D3F18C348;
-	Wed, 21 Aug 2024 14:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6705199FC0;
+	Wed, 21 Aug 2024 14:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249680; cv=none; b=Lwokt5nO5dCGkFzt3W3+q/r88Ze4YnDKR9ih5bvjladSZaM9HDFmLrhJODpD1wkrTQqx8SVYSLtEJsV+bQOc4+DtZg0J/RbOWfEdHEIu/XH6BN2xjqCHUEp8Y1dSURziF08oNhylQZmgHXDJaTdFDdOaTvwROw8QE37g5hosbv8=
+	t=1724249743; cv=none; b=VjmCpgks2FTTFq1ENivifXvGH7Fx5YIDY9logWjoR7TUg3NsuF8AZQk49cd51NkZSNTfFFpfthlGE9V3m76UBfKUgsMiIKMAXF8JK2g6qFP63QDzjE1usZGYPs+SVzmFJLSxh3qXhnKkzvxpVL38DB7gucDtr0ErzRhaGEMqLyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249680; c=relaxed/simple;
-	bh=CRhd0mZzqY7HKRLH5Jk+ftSAjgB0NenBAW5LauDTmm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kZEWcg0LsINoL6wrhfFRTtMo8MS+cfsnzawRZX/m3Bu7AYoZAhl0vnMWcT1P1mzpM0BgTxNcMn84gXp4NEwrvfTXjn5LVh3ZxflQAuh7quvRBQWtZjWNqHfbqV0ex8Ein1axT4nx1cFUSkfEBtlz9UrTDQGNg1ZrRD4yxO+1cSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DiQGDurf; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LEEZ9W020865;
-	Wed, 21 Aug 2024 09:14:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724249675;
-	bh=B82OHOANyKNc/1if4fUQEqjOHPPZcLk9ZrOvgcGUHMQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=DiQGDurfQrurxhAuSd2LeoakN16FBh9IUXcWb5u3+wDIhQu5T03BHn3PnhsyJWI2n
-	 yEC8U65fFmyOBv5dLYg1HzcnnhNVJrh4WNu2OHW1X+a+8Ud/L9wSqkpZIr4V5E9irC
-	 ssskRiqcuXZZuMuanULllF2U+uOxxy/PJ9NFBCL4=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LEEZpC029849
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 09:14:35 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 09:14:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 09:14:34 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LEEYGs071283;
-	Wed, 21 Aug 2024 09:14:34 -0500
-Message-ID: <f27dba79-02cf-4549-87b0-464126abbe1d@ti.com>
-Date: Wed, 21 Aug 2024 09:14:34 -0500
+	s=arc-20240116; t=1724249743; c=relaxed/simple;
+	bh=16KV62VvRRJIHyF+WzE9AQXMD8TnqdfN1f11bQbI2aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ER74+yDUm7ITexj0ZytF/yy34773OOauoN7rTBNpiIt3hEepJgwSsvfJmawjTZppPDR2CwB97z/lGaYzHlHpdeYmkGna8/sDATGnv4dIwD8rek03vaZPsDKGXD4xFV+M5MuKsRLPK5/5I/0n3RHL8GkVzSCf1pH/L8hcQa8UoNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mAEGwQ17; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724249742; x=1755785742;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=16KV62VvRRJIHyF+WzE9AQXMD8TnqdfN1f11bQbI2aI=;
+  b=mAEGwQ17YYR1/qqSdAurkt+ePSGYQKE3Y17+kEqGF4GNtZ6kceQ03ozB
+   hk+y9f2S6ZfRwy0dfw1mo/m9bzyyNZXdeBzuHRjijo39Gla0OEi6SfhMp
+   cPOl90QvRNAhSewyLMDAyVSoBET0VyWzD9roRBlGNRneLz2G0ERioOZ4N
+   LCFT1/BeZFzrAQzE7BYQy50mAsLc2tYmqLcUKrtpYccixCG0LNZNMHVqT
+   fEs6bGv3K0iBbYzWN03iIQ833Cu8haJG2XiEcSXHqMi7Ap48NdIr4BtX2
+   0ftc0nKSR2TXDB69/CSFNNrSiv8i+894xRcrTd6J8jcc4puWp7iTwoEId
+   A==;
+X-CSE-ConnectionGUID: k7w9yq6BSP2w4YDdaAOFAQ==
+X-CSE-MsgGUID: kQyq+MONTq6wnFkyhiS+Tw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33996069"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="33996069"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 07:15:41 -0700
+X-CSE-ConnectionGUID: /qxavnx2Qr2YCgjzAmpyUw==
+X-CSE-MsgGUID: S8Dzb3dVSWij41yLE3hrLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="84281725"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 07:15:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sgm7a-000000006Yr-30Qb;
+	Wed, 21 Aug 2024 17:15:34 +0300
+Date: Wed, 21 Aug 2024 17:15:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
+	Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>,
+	grom@black.fi.intel.com,
+	84c04d074b1778886a1af1062a4ca9d9afd72306@black.fi.intel.com,
+	Mon@black.fi.intel.com, Sep@black.fi.intel.com,
+	17@black.fi.intel.com, 2001@black.fi.intel.com
+Subject: Re: From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Message-ID: <ZsX2hiF5QJZZH8Z1@smile.fi.intel.com>
+References: <20240819184600.2256658-1-andriy.shevchenko@linux.intel.com>
+ <kwan4cnf4dkwdirddkcixs265jisegjn6drkpv3ydlz4zpiswe@ih4x3h4c3ghs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mmc: sdhci_am654: Add retry tuning
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240815201542.421653-1-jm@ti.com>
- <20240815201542.421653-2-jm@ti.com>
- <4a563aad-e9b3-43af-8ce5-5d30dace2dd8@intel.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <4a563aad-e9b3-43af-8ce5-5d30dace2dd8@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kwan4cnf4dkwdirddkcixs265jisegjn6drkpv3ydlz4zpiswe@ih4x3h4c3ghs>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Adrian,
-
-On 8/21/24 12:37 AM, Adrian Hunter wrote:
-> On 15/08/24 23:15, Judith Mendez wrote:
->> Add retry tuning up to 10 times if we fail to find
->> a failing region or no passing itapdly. This is
->> necessary since some eMMC's have been observed to never
->> find a failing itapdly on the first couple of tuning
->> iterations, but eventually do. It been observed that the
->> tuning algorithm does not need to loop more than 10 times
->> before finding a failing itapdly.
->>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->>   drivers/mmc/host/sdhci_am654.c | 30 +++++++++++++++++++++++-------
->>   1 file changed, 23 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
->> index 64e10f7c9faa3..c3d485bd4d553 100644
->> --- a/drivers/mmc/host/sdhci_am654.c
->> +++ b/drivers/mmc/host/sdhci_am654.c
->> @@ -86,6 +86,7 @@
->>   
->>   #define CLOCK_TOO_SLOW_HZ	50000000
->>   #define SDHCI_AM654_AUTOSUSPEND_DELAY	-1
->> +#define RETRY_TUNING_MAX	10
->>   
->>   /* Command Queue Host Controller Interface Base address */
->>   #define SDHCI_AM654_CQE_BASE_ADDR 0x200
->> @@ -151,6 +152,7 @@ struct sdhci_am654_data {
->>   	u32 flags;
->>   	u32 quirks;
->>   	bool dll_enable;
->> +	u32 tuning_loop;
->>   
->>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
->>   };
->> @@ -453,12 +455,14 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
->>   	int prev_fail_end = -1;
->>   	u8 i;
->>   
->> -	if (!num_fails)
->> -		return ITAPDLY_LAST_INDEX >> 1;
->> +	if (!num_fails) {
->> +		/* Retry tuning */
->> +		return -1;
->> +	}
->>   
->>   	if (fail_window->length == ITAPDLY_LENGTH) {
->> -		dev_err(dev, "No passing ITAPDLY, return 0\n");
->> -		return 0;
->> +		/* Retry tuning */
->> +		return -1;
->>   	}
->>   
->>   	first_fail_start = fail_window->start;
->> @@ -504,6 +508,7 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
->>   	u8 curr_pass, itap;
->>   	u8 fail_index = 0;
->>   	u8 prev_pass = 1;
->> +	int ret;
->>   
->>   	memset(fail_window, 0, sizeof(fail_window));
->>   
->> @@ -532,10 +537,20 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
->>   	if (fail_window[fail_index].length != 0)
->>   		fail_index++;
->>   
->> -	itap = sdhci_am654_calculate_itap(host, fail_window, fail_index,
->> -					  sdhci_am654->dll_enable);
->> +	ret = sdhci_am654_calculate_itap(host, fail_window, fail_index,
->> +					 sdhci_am654->dll_enable);
->>   
->> -	sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
->> +	if (ret >= 0) {
->> +		itap = ret;
->> +		sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
->> +	} else {
->> +		if (sdhci_am654->tuning_loop < RETRY_TUNING_MAX) {
->> +			sdhci_am654->tuning_loop++;
->> +			sdhci_am654_platform_execute_tuning(host, opcode);
+On Wed, Aug 21, 2024 at 04:11:44PM +0200, Andi Shyti wrote:
+> Hi Andy,
 > 
-> The kernel uses very small stack size, so recursive function calls
-> should not be used.  It would be better to put the loop in a separate
-> function, or add a retry: label and goto retry.
+> All merged to i2c/i2c-host.
 
-Ok, can change to this method, I was not sure of recursive function
-call but had opted for that since the code was to be simpler.
+Thank you!
 
-> 
->> +		} else {
->> +			return -1;
->> +		}
->> +	}
->>   
->>   	/* Save ITAPDLY */
->>   	sdhci_am654->itap_del_sel[timing] = itap;
->> @@ -908,6 +923,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->>   		goto err_pltfm_free;
->>   	}
->>   
->> +	sdhci_am654->tuning_loop = 0;
-> 
-> So this is 10 retries ever, since sdhci_am654->tuning_loop is never
-> set back to 0.  Is that the intention?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Yes, maximum of 10 re-tries. So far we have only seen issues during
-boot.
-
-~ Judith
-
-> 
->>   	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->>   
->>   	pm_runtime_get_noresume(dev);
-> 
 
 
