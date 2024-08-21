@@ -1,97 +1,81 @@
-Return-Path: <linux-kernel+bounces-295519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E555959C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:42:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032DD959C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90271F21B8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:42:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 363391C21CFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936AF192D93;
-	Wed, 21 Aug 2024 12:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B02918DF7B;
+	Wed, 21 Aug 2024 12:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Pnjkthhk"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C1YXmyZq"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B1E166F04;
-	Wed, 21 Aug 2024 12:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC52818E757;
+	Wed, 21 Aug 2024 12:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244105; cv=none; b=VpRDpCVAvz46MkSZvhm1uU95XHgl/kczxjiotm5AyrjXmzICdzTihi2QPzR53zNoXDOaTe5BB5FMreuFNiQ942bKsy0d47cvFMZaeJRk1VI6/Z8PcJ0XGPWmO5NmC6L5xTtqTZImcFEdY+Wnzjn23w9tbrlr1pyh4pFgwCuaotI=
+	t=1724244150; cv=none; b=lFGlVhlu6haouNYu6bHYhat/nie8Va8Dta7dH300f5rRHjudVTjbTLvXEFDRuE9jhNi7DLWjmBkjgPIXmtY3JcXizQX8cLMOnZpGm7ruyG6u6ZfSeEKNdIlnmPfwPBL3mRtnvasHXHa9OyLo2NlBNVr6hhIyuWF6W69jIcEKpW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244105; c=relaxed/simple;
-	bh=EsMQAnljqLYk2mg+9BgJGe0kw7IlSVVj24D6Cx+uNhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A7Pzq4oLqYqY1fvIG7uuHTfp+7S/CIC2FV07xo3wfFrOvGBSHhz47Sf2Mq/Qd9h5EZ3XLOcBKKt+S4hF3lZPbSPYgpjwLzqVg6gSpjNGpkQbc+pOpBKv4SrGYLKqp545Q68JgCInuwueDIhGGSPpqO8nPSgC8Qz5sD0NtEWwcuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Pnjkthhk; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gkeesb6mZOcVzgkeesvUMF; Wed, 21 Aug 2024 14:41:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724244101;
-	bh=38otxe0rShpu9V3hspfMhWjYBCrw6aZylL6ZPFg4CXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=PnjkthhkeaiC56ISU4uKqMxDwwRj+xU9NgrcGaPz74Y7NhGoY/Pmi7CMD/hAcEBTb
-	 AMm9lUohxobH+9XLApb7Jowc1NlpG7YFKOWOqU/gRAtIqMCXz4jzOv82XGR8ZcmAxt
-	 raTliPob5jIwUFek3wpY3KdmOcoxhd+EkRalC+VQTzs8G/Mps0LLTlnGhYsk4UynE2
-	 kRCTb8GVj6S/TIafxYcDfPJCVo85EEjMqOsHojsq3jTFGElGQfJSSCd6DtvF8xude3
-	 mhk4otKwKWJWGubrn6MD89/0b8GJ7w6iibe5zUHwZNXpViRZTzrbnb94jiRF4hBu0+
-	 GE3qnQLYCKcww==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 21 Aug 2024 14:41:41 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <7818c69d-8821-46bd-8f70-fc3cc6fc06dd@wanadoo.fr>
-Date: Wed, 21 Aug 2024 14:41:36 +0200
+	s=arc-20240116; t=1724244150; c=relaxed/simple;
+	bh=IVJmgagFpPOYr27K1OM7lZ/14ItyaxWKQcaApEP3X6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFdztuu1icyGhdEV1IhpWVmKK+imOf4TJ85xV/FNw+KAeRg1m32sHb+WfjoYKrMAHZrn3WuKOHBEZ7+S19+tI7ubeA8PfV5M2ZWk0wNR+YqaleBeRcfFvY/oGFkxwbdGJUa3y80bvnzS/JPn8RYGHuZMWoFWhkCUjmEbbqObAtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=C1YXmyZq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CZrYL4SBWV1LwtsSeryiwRK7gzIRzBt/InjKvG5ljeU=; b=C1YXmyZq4fzpY+0OFIri1feSzm
+	m7hxxpBEZWI3H/nkkTQ3x9JOVzPxn+iEaInCCuQZs15LoZWklfXk4etPZosSnXHyojRlKwqTRLAcF
+	TFGB7wn3EokIjs2BQzCrsWl8P0BKQNm9jybEQBCYvlOt8ZjFHnoKCLSJzTbsCaZHsqF0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sgkfK-005K7f-KZ; Wed, 21 Aug 2024 14:42:18 +0200
+Date: Wed, 21 Aug 2024 14:42:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH net-next] net: mdio-gpio: remove support for platform data
+Message-ID: <bd793119-3a0f-40c8-8c78-201e2fcf9664@lunn.ch>
+References: <20240821122530.20529-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] platform/x86: int3472: Simplify dev_err_probe()
- usage
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org, "Rafael J. Wysocki"
- <rafael@kernel.org>, Daniel Scally <djrscally@gmail.com>
-References: <20240821122233.3761645-1-andriy.shevchenko@linux.intel.com>
- <20240821122233.3761645-3-andriy.shevchenko@linux.intel.com>
- <a096554e-fdfe-4deb-b19b-500c86beec98@wanadoo.fr>
- <b9504b3e-5657-5c0f-7ded-69474a9e5647@linux.intel.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b9504b3e-5657-5c0f-7ded-69474a9e5647@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821122530.20529-1-brgl@bgdev.pl>
 
-Le 21/08/2024 à 14:39, Ilpo Järvinen a écrit :
-> On Wed, 21 Aug 2024, Christophe JAILLET wrote:
+On Wed, Aug 21, 2024 at 02:25:29PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
->> Le 21/08/2024 à 14:20, Andy Shevchenko a écrit :
->>> Since dev_err_probe() ignores success,
->>
->> Hi,
->>
->> Does it really?
->> It does not seem to be the case (at least on linux-next). Or I miss something
->> obvious?
-> 
-> Yes, you're missing the first patch of the series. :-)
-> 
+> There are no more board files defining platform data for this driver so
+> remove the header and drop the support.
 
-Lol.
+There are a number of out of tree x86 boards which use this, flying in
+various aircraft, so have a long life, and do get kernel updates.
 
-Sorry for the noise. (* blushing *)
+I'm happy to support this code, and as a PHYLIB Maintainer, it adds
+little overhead to my maintenance works. If you really insist, i can
+try to get code added to drivers/platform/x86/ which use this.
 
-CJ
+	Andrew
 
