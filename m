@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-294931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE84959464
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC65E95945E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7658D1F24328
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDFF1F24257
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD7E16D4FC;
-	Wed, 21 Aug 2024 06:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KuSCY8zD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB2E16BE16;
+	Wed, 21 Aug 2024 06:06:57 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4235216D31C;
-	Wed, 21 Aug 2024 06:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F38166305
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724220821; cv=none; b=fFlGDsj40DWigXzifZgeP//dPnfAevLv1gtxeKHdKlj5zc9R6yXwNC9hhPt7hBdE2xpNuTOIrZIGwWDJiwuOK8fa9JkxY23wj7B/haDI/1ZGzeeHM6X4pL6QBNW69QcRCOILhi2ETj6ixmnMU9ZiiMa4eIx0T+OYYNqgPSTQ040=
+	t=1724220417; cv=none; b=ELKOdDi/AHtgpLb2kgBod9LzWSjP/14MS93XiUkNpy7QMDrAfE7B4Pj0zVsa16YFTDlLdTws7D6nPlydirxzvL9eL2e4HUdsi50771ofv7suY+nzgfKTiFAv1t2uEZDfXvfbgTuISS+qTzLmrUYaGDrfVbAJslmExLes9kjHtSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724220821; c=relaxed/simple;
-	bh=AyoaCIrZcZi52TPUfGTOUI23PSvvOHEbTjEngSKmPbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVpNRORyEa1IKmVed2apv7eK5YlBb6Nqmc8NGhsHxPpV17FQoiXO7TBnpdAeJVwW5vJ393RC3HHTu0ZrNidB0MjVexoKRz4pcm9WguK1gerUfTNBREfs4f1iW/jIqudKBWeC11SZNaQTDO/jdxSxYuT1h1z2P2ZpWG1f21tITjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KuSCY8zD; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724220819; x=1755756819;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AyoaCIrZcZi52TPUfGTOUI23PSvvOHEbTjEngSKmPbE=;
-  b=KuSCY8zDnxXs+Q4eLpHqdRMqI9UicaElWMr05qcEA/LnVkC8x8BfTEhr
-   BcYK46CrM4q35ZWdFCnK+CWYFFv64LgRGJS/jOkr+OLPUszHHQtaOc6xF
-   p0nS4TlcWZPp1rTzolumE+grAhjYGBzy0ZkjevYjpy3aoArTakHEoB6Du
-   MLBqljtnPctzaMDGPJbu32rAhxYi5LuLRtCZLP1i033idok5DyFrwN29k
-   WkVQPIjDpFksquzg6aoIGwGh1r6VZV0WjZczfTPD83AM5ik0ucsd0hCue
-   FR4RKLk+EQVKtXoKzGOYWgffbUoxN+ai5+IVLHbjlHq2yiE1IsnLNQE64
-   g==;
-X-CSE-ConnectionGUID: mwBlvkjRTgqMc7+s3YMAZA==
-X-CSE-MsgGUID: LEOjAmC6TyuHbomI2o4Ihw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="40018112"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="40018112"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 23:13:38 -0700
-X-CSE-ConnectionGUID: FQLKngBlSguLqrZGpQG31g==
-X-CSE-MsgGUID: bTJ6Aco9Syy5IU9vHQkVbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="65826075"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.248])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 23:13:34 -0700
-Date: Wed, 21 Aug 2024 09:13:29 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Yuan Yao <yuan.yao@linux.intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Sean Christopherson <sean.j.christopherson@intel.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
-Message-ID: <ZsWFiSAwKP8BfOUK@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-14-rick.p.edgecombe@intel.com>
- <20240814030849.7yqx3db4oojsoh5k@yy-desk-7060>
+	s=arc-20240116; t=1724220417; c=relaxed/simple;
+	bh=HGSNb0LKppQRtPUDUk01BKEa0Hxhd7eMveXAcC7KveI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lmaLjxrvTonaEZ71nB5oI1hrnYi7qmWEZmAl3GW6ql5Bpr/7lOeVtip92J8aE0IskMWsiQCzoiecEd3wh3IryPZzrFMoQTX3B5A97mPBYDDSa3+HMQScd+L+NsjCw6YOARQPnW7ZNFlBu/Xech3y2DNLVrfnPl3tPZ2O78Ge/Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WpbQf0wYWz1xvWl;
+	Wed, 21 Aug 2024 14:04:58 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 909A71401E9;
+	Wed, 21 Aug 2024 14:06:52 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
+ 2024 14:06:52 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <brauner@kernel.org>, <bodonnel@redhat.com>
+CC: <jlayton@kernel.org>, <chuck.lever@oracle.com>, <amir73il@gmail.com>,
+	<lihongbo22@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] efs: rename the fs context operations
+Date: Wed, 21 Aug 2024 14:14:22 +0800
+Message-ID: <20240821061422.2273380-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814030849.7yqx3db4oojsoh5k@yy-desk-7060>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Wed, Aug 14, 2024 at 11:08:49AM +0800, Yuan Yao wrote:
-> On Mon, Aug 12, 2024 at 03:48:08PM -0700, Rick Edgecombe wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > +static int __tdx_td_init(struct kvm *kvm)
-> > +{
-...
-> > +	/*
-> > +	 * TDH.MNG.CREATE tries to grab the global TDX module and fails
-> > +	 * with TDX_OPERAND_BUSY when it fails to grab.  Take the global
-> > +	 * lock to prevent it from failure.
-> > +	 */
-> > +	mutex_lock(&tdx_lock);
-> > +	kvm_tdx->tdr_pa = tdr_pa;
-> > +	err = tdh_mng_create(kvm_tdx, kvm_tdx->hkid);
-> > +	mutex_unlock(&tdx_lock);
-> > +
-> > +	if (err == TDX_RND_NO_ENTROPY) {
-> > +		kvm_tdx->tdr_pa = 0;
-> 
-> code path after 'free_packages' set it to 0, so this can be removed.
-> 
-> > +		ret = -EAGAIN;
-> > +		goto free_packages;
-> > +	}
-> > +
-> > +	if (WARN_ON_ONCE(err)) {
-> > +		kvm_tdx->tdr_pa = 0;
-> 
-> Ditto.
+Just rename efs_context_opts to efs_context_ops for better
+understanding.
 
-Yes those seem unnecessary.
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ fs/efs/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > +	kvm_tdx->tdcs_pa = tdcs_pa;
-> > +	for (i = 0; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
-> > +		err = tdh_mng_addcx(kvm_tdx, tdcs_pa[i]);
-> > +		if (err == TDX_RND_NO_ENTROPY) {
-> > +			/* Here it's hard to allow userspace to retry. */
-> > +			ret = -EBUSY;
-> > +			goto teardown;
-> > +		}
-> > +		if (WARN_ON_ONCE(err)) {
-> > +			pr_tdx_error(TDH_MNG_ADDCX, err);
-> > +			ret = -EIO;
-> > +			goto teardown;
-> 
-> This and above 'goto teardown' under same for() free the
-> partially added TDCX pages w/o take ownership back, may
-> 'goto teardown_reclaim' (or any better name) below can
-> handle this, see next comment for this patch.
-...
-> > +teardown:
-> > +	for (; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
-> > +		if (tdcs_pa[i]) {
-> > +			free_page((unsigned long)__va(tdcs_pa[i]));
-> > +			tdcs_pa[i] = 0;
-> > +		}
-> > +	}
-> > +	if (!kvm_tdx->tdcs_pa)
-> > +		kfree(tdcs_pa);
-> 
-> Add 'teardown_reclaim:' Here, pair with my last comment.
+diff --git a/fs/efs/super.c b/fs/efs/super.c
+index e4421c10caeb..57c373bbc190 100644
+--- a/fs/efs/super.c
++++ b/fs/efs/super.c
+@@ -359,7 +359,7 @@ struct efs_context {
+ 	unsigned long s_mount_opts;
+ };
+ 
+-static const struct fs_context_operations efs_context_opts = {
++static const struct fs_context_operations efs_context_ops = {
+ 	.parse_param	= efs_parse_param,
+ 	.get_tree	= efs_get_tree,
+ 	.reconfigure	= efs_reconfigure,
+@@ -377,7 +377,7 @@ static int efs_init_fs_context(struct fs_context *fc)
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 	fc->fs_private = ctx;
+-	fc->ops = &efs_context_opts;
++	fc->ops = &efs_context_ops;
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
 
-Makes sense, I'll do patch.
-
-Regards,
-
-Tony
 
