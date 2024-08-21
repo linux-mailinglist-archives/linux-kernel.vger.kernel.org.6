@@ -1,112 +1,177 @@
-Return-Path: <linux-kernel+bounces-295066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB8595963E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:01:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75FD959642
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6A91F21B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:01:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 525C8B22E4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE831A7AC0;
-	Wed, 21 Aug 2024 07:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DCF1A287B;
+	Wed, 21 Aug 2024 07:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qm5bTLt3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ptK8mW9U"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4845919ABB6;
-	Wed, 21 Aug 2024 07:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D5C1B81BF;
+	Wed, 21 Aug 2024 07:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724226082; cv=none; b=EBRh7FZECcQEVOv7kinS+HWvAMA+tbwlHqLe/gRXBT7BZOn7ZAPnXXggXz9bS/jtDGcV8b9cTxVa/lkSoYjUcuLr/C57Q/OL9HmoTS5I/41mj3d6tvj+h6132F5JjA2rO9ZPV7aZR4wZMhfIKkgkdHsSOyChqYrCOdLQOPYtzOc=
+	t=1724226119; cv=none; b=qA/JYTJGEBrNsbblh8jwG5dKWmM6FhLPmhLCm7SSwD/IVWADbfp8xEgua46c24/mde44C3IvKf7oxioNFT/Diftl4r3TFvytEDPQHyrYTlASHEo4Xty0pzZW8SlrSCUozFpoE3IrkI7m4wZyt6vP5ZiXnmtvy8YvTWTJJNxKl+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724226082; c=relaxed/simple;
-	bh=K/ApD1F3tsKQY8042HX6Tpo2Vz6Dxwj8yUyTzC0eo3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/zoKapvwGW9qJys8tZ+TBi7zEQzcOAEuQHL0ee+AfokCxf3cPPbS11QHEMEkARjHnMeWABky6oe7evhDVGZv7arsCuv024c6u9Ipp+A4URryPhtkUHzBqQj8Rmdf81O7OwBaydoRWlA1YfESL1Dtmq9WR4icBB7puFHLv5pWiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qm5bTLt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E55BC4AF09;
-	Wed, 21 Aug 2024 07:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724226082;
-	bh=K/ApD1F3tsKQY8042HX6Tpo2Vz6Dxwj8yUyTzC0eo3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qm5bTLt3MnJ7HwVo7BPmfXpaDg0DCAXe29RcUxt0CYNrPCwm19vIF+TuKI8rs2nNT
-	 BTrhDoUU3vLrz++kgc6i+Nr3TLc7UYUSp2MemGBjlNAHuPRcyVbrvZIQs5cPDWEG9+
-	 wlA5ztINphokCAio/P2wbXvlYUOkPUHht36X+tnUYSpb+KSIsaPY8fPAbDnCMGW30f
-	 TAtTH1tsBi+6v4QqVVOFAzJzhRdcE64wqmifUnJtTnqk3vgxRi6bP/i/JrjtysWK/j
-	 yo4K9t3hBZcUiD9OtxsgaFqicjcqqN8OIP67oCuE+gD3okDIdwa0eV+79ZyKl4UNH2
-	 T46XjVN9vcJWg==
-Date: Wed, 21 Aug 2024 09:41:17 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Tycho Andersen <tandersen@netflix.com>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Tejun Heo <tj@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
-Message-ID: <20240821-weitverbreitet-ambulant-46d7bfbc111e@brauner>
-References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
- <20240818035818.GA1929@sol.localdomain>
- <20240819-staudamm-rederei-cb7092f54e76@brauner>
- <20240820193414.GA1178@sol.localdomain>
+	s=arc-20240116; t=1724226119; c=relaxed/simple;
+	bh=aBgDAZ4ze0w4LhExDuXGPmQBmtP78IvFLVDICKsRhxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mqPobWF3lY7gmB66airMdGdoGt0WNKrQ1cI7MNrRhnPgwDLhTHyFfh7qNkf7Y9kbD5mrzDTvzk0SpoXXrRmHC1KF+x1gOmDAHospQMNxTqrUcN3qhOPbN7euWeuTWYrhPFBUtEeROXmfHmDI2j8Hi/gX4gGWQ5l8/Tsh9BQQT70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ptK8mW9U; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6544F1BF203;
+	Wed, 21 Aug 2024 07:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724226114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cNVE1Euex1vHgd16nkcpKWq4uCJnI5txc/wed22g5ng=;
+	b=ptK8mW9UZGOaggQGmNwz0GVW3ar1qMYjrhdzLxxeT0cZmtOUj+Yfann9zwjzSeYDpICP4a
+	wkqW6yljlgDLZcm+YmfuYK8oFEa/uWDIdgPkrqJw1CBCbdJN5h/y+FWiy7YM1wBv+6/5kJ
+	qPtCIUCjzaZI760eRAQHhH5qJqcR6DHTcWSuMvAvWd3rYETUkR3izusP5EHYmW9HyZkNAM
+	MT3AoU9azucVdMJA9a7ZqtFl0WTW2ruP0EiftemmT7B3syAOpDpaCTsDkaWPejC0Y+fVQc
+	u35aozbT8wXo8FJqb8E1oPgteuMyxcjIM+TD702CPRB9aivYSHNMPr1MZZO3eQ==
+Date: Wed, 21 Aug 2024 09:41:50 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
+ <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc:
+ sophgo,cv18xx-saradc.yaml: Add Sophgo CV18XX SARADC binding
+Message-ID: <20240821094150.5787905b@xps-13>
+In-Reply-To: <20240820-borough-latch-17d785301aef@spud>
+References: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
+	<20240812-sg2002-adc-v4-1-599bdb67592f@bootlin.com>
+	<20240812-unwary-mongrel-9f6758bf624c@spud>
+	<89aabfbe-79bf-4da7-be44-b6cbd92b72a9@bootlin.com>
+	<20240820-borough-latch-17d785301aef@spud>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240820193414.GA1178@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, Aug 20, 2024 at 12:34:14PM GMT, Eric Biggers wrote:
-> On Mon, Aug 19, 2024 at 10:41:15AM +0200, Christian Brauner wrote:
-> > On Sat, Aug 17, 2024 at 08:58:18PM GMT, Eric Biggers wrote:
-> > > Hi Christian,
-> > > 
-> > > On Wed, Jul 31, 2024 at 12:01:12PM +0200, Christian Brauner wrote:
-> > > > It's currently possible to create pidfds for kthreads but it is unclear
-> > > > what that is supposed to mean. Until we have use-cases for it and we
-> > > > figured out what behavior we want block the creation of pidfds for
-> > > > kthreads.
-> > > > 
-> > > > Fixes: 32fcb426ec00 ("pid: add pidfd_open()")
-> > > > Cc: stable@vger.kernel.org
-> > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > ---
-> > > >  kernel/fork.c | 25 ++++++++++++++++++++++---
-> > > >  1 file changed, 22 insertions(+), 3 deletions(-)
-> > > 
-> > > Unfortunately this commit broke systemd-shutdown's ability to kill processes,
-> > > which makes some filesystems no longer get unmounted at shutdown.
-> > > 
-> > > It looks like systemd-shutdown relies on being able to create a pidfd for any
-> > > process listed in /proc (even a kthread), and if it gets EINVAL it treats it a
-> > > fatal error and stops looking for more processes...
-> > 
-> > Thanks for the report!
-> > I talked to Daan De Meyer who made that change and he said that this
-> > must a systemd version that hasn't gotten his fixes yet. In any case, if
-> > this causes regression then I'll revert it right now. See the appended
-> > revert.
-> 
-> Thanks for queueing up a revert.
-> 
-> This was on systemd 256.4 which was released less than a month ago.
-> 
-> I'm not sure what systemd fix you are talking about.  Looking at killall() in
-> src/shared/killall.c on the latest "main" branch of systemd, it calls
-> proc_dir_read_pidref() => pidref_set_pid() => pidfd_open(), and EINVAL gets
-> passed back up to killall() and treated as a fatal error.  ignore_proc() skips
-> kernel threads but is executed too late.  I didn't test it, so I could be wrong,
-> but based on the code it does not appear to be fixed.
+Hello,
 
-Yeah, I think you're right. What they fixed is
-ead48ec35c86 ("cgroup-util: Don't try to open pidfd for kernel threads")
-when reading pids from cgroup.procs. Daan is currently prepping a fix
-for reading pids from /proc as well.
+> > > > +      Represents the channels of the ADC.
+> > > > +
+> > > > +    properties:
+> > > > +      reg:
+> > > > +        description: |
+> > > > +          The channel number. It can have up to 3 channels numbere=
+d from 0 to 2.
+> > > > +        items:
+> > > > +          - minimum: 0
+> > > > +            maximum: 2 =20
+> > >=20
+> > > Is this sufficient to limit the number of channels to 3? Aren't you r=
+elying
+> > > on the unique unit addresses warning in dtc to limit it, rather than
+> > > actually limiting with min/maxItems?
+> > >  =20
+> > It seems like I can't use min/maxItems on this property. I think that i=
+t is
+> > using size-cells + address-cells to deduce that the number of items sho=
+uld
+> > be equal to 1. =20
+
+Looking at dt-schema, I couldn't personally understand from where did
+the error messages reported by Thomas came from. There are clear
+constraints over minItems/maxItems regarding the use of {#address-cells,
+#sizez-cells} being {1, 1}, {2, 2} and {2, 1} (in reg.yaml), but nothing
+explicit regarding the other situations, namely {1, 0} in this case
+which enforces maxItems to 1 is not clearly stated in any of the core
+yaml files. Any idea where to look at? Although, I'm convinced there is
+something defined because renaming the property from 'reg' to 'foo'
+silences these warnings.
+
+> I think I was mistaken in talking about mix/max items here. I had the
+> right idea, but mentioned an incorrect solution - sorry about that. I
+> wasn't talking about the number of elements in the reg property, what I
+> meant was limiting the number of channel nodes in the first place -
+> something which min/maxItems cannot do. As examples of the problem I was
+> thinking of, see the below two examples:
+>=20
+>     adc@30f0000 {
+>         compatible =3D "sophgo,cv1800b-saradc";
+>         reg =3D <0x030f0000 0x1000>;
+>         clocks =3D <&clk CLK_SARADC>;
+>         interrupts =3D <100 IRQ_TYPE_LEVEL_HIGH>;
+>         #address-cells =3D <1>;
+>         #size-cells =3D <0>;
+>=20
+>         channel@0 {
+>             reg =3D <0>;
+>         };
+>         channel@2 {
+>             reg =3D <2>;
+>         };
+>         channel@22 {
+>             reg =3D <2>;
+>         };
+>     };
+>=20
+>     adc@30f0000 {
+>         compatible =3D "sophgo,cv1800b-saradc";
+>         reg =3D <0x030f0000 0x1000>;
+>         clocks =3D <&clk CLK_SARADC>;
+>         interrupts =3D <100 IRQ_TYPE_LEVEL_HIGH>;
+>         #address-cells =3D <1>;
+>         #size-cells =3D <0>;
+>=20
+>         channel@0 {
+>             reg =3D <0>;
+>         };
+>         channel@2 {
+>             reg =3D <2>;
+>         };
+>         channel@22 {
+>             reg =3D <2>;
+>         };
+>     };
+>=20
+> The solution is simple, remove the + from the regex. Sorry for sending
+> you on the wrong track Thomas.
+
+Ah! Thanks Conor for the details, now it makes full sense :-) BTW Thomas
+the regex is
+
+	^channel@[0-3]+$
+
+and I guess it should instead be
+
+	^channel@[0-2]$
+                    ^
+
+in order to fully match the real indexing constraints you're enforcing
+with minimum/maximum.
+
+Thanks,
+Miqu=C3=A8l
 
