@@ -1,141 +1,262 @@
-Return-Path: <linux-kernel+bounces-294923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784FF959451
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:01:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC414959454
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0980EB22AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:01:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9511F2411E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8278416BE16;
-	Wed, 21 Aug 2024 06:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBDB16BE3B;
+	Wed, 21 Aug 2024 06:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UXT+VfQ4"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="AVNNPCmM";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="zZkC4I2O"
+Received: from mx0a-0014ca01.pphosted.com (mx0a-0014ca01.pphosted.com [208.84.65.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E346168487
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724220079; cv=none; b=n+bDHpuqqZ3tf1hjSZyRUwtqYdVWe1ht0ZA4dRFhxT2hVJEKHNSF++ON5jNFXfbvnio5i3TlcMK2XC7hQBv7mZN6uyODcu6hH41sdRm0gjfLs5J/hIplYzeMeEOrlQ5kfZSguCZrWojIO5V9pWwVfYvZAt0QBQUoqAQFFMBYgUw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724220079; c=relaxed/simple;
-	bh=irOyT/hJhdlweiymfosrNsuEHfg6Fy5diBIBgYoVbXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PSAtr0mTtCoa08aW9tmIJNiIOeccWYhi4CGTdDOdRoJlaZ6iH6gH4+aB+PVv4JdUCcUYY/0ujtaS7lxMtIdM16rdZaDpgDeS5rCj7eqGEayHno4IzL3J/mb8Yj08yFT8qOCX9ApUdTULoUT4+6JCtxdsztSwwlFo1otBkthxp10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UXT+VfQ4; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44fe58fcf29so35153721cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724220077; x=1724824877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nVpwwTneVXAqz7BYaGRl3oriMB37pJVMzaqxHAQHEgc=;
-        b=UXT+VfQ4q5cUH9gh5pG64nGaXYuwMKlJnXWeAmw7HLUB4jTEcbroilMLI28P5G4kfU
-         QkBuOwy6L/i/oX/0MdY2V+wSB7l/oVJHAuSEUvuA9tr6JcukixFJRANJyjfwnQseo5uQ
-         prpz1uWbAYtbevMARk71FQ079h3n0HNs9n/3pPAuY9zGbPdzMwhalCITGkP+LYbUMNbx
-         7cgHuRG+iaDyYW0hyA0+Migb9I3U3/jzF6TgqDj+fEPwX3mqXfiZ/FMV1HzaJ5bKO0A/
-         6LWr206ircLsOg7er55rcAxbmGAA4C4b8TRr20vvJVo7bU0Sx/DV4HxXGXqUFGB9A+JS
-         UNeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724220077; x=1724824877;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nVpwwTneVXAqz7BYaGRl3oriMB37pJVMzaqxHAQHEgc=;
-        b=Q6NXes16OCwzu3vHEX8CPtuyMCMf3Fg2hzhYTAmyyJ79NCd4xOvqa6lDa4WBs/QBp5
-         lYQWV3IqsWa3qopzCItHYEN+Vdca5kMp2uo6uOg03X8mPE+4yo/j4ArRb5MUKWxe/RS/
-         cPi5qTPAgK9F/ey/zLx1P+kAdQXWT1BiZGrjXyux049mCfsJWk9oD1HySTk5wjehMe3s
-         Nzb81rKTrNvb7arSkZfhQw8Jxm5s6+hA6ATL6PR4FgMvMYhzeuPsCv8ODJF6Pwd3P+w+
-         LrShc8hsT+epa9S+EHJHhDo2kMQhI8NeFP/IwcZ42Nz78n/F1G4dEP3mk1biif+ZXaCt
-         tgZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWtO8hg14Wol5YZ1N+y2njgi5W3eBU2qMi/NLZeUvtSW/5d6sr4TT4AfCZUowG6MculfaSKgz+H08+PJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTle+iYria5DZnF6KnMLC2bv5y+lGcwHw7SOtFeXeGLo8GqQRG
-	MLge5YdI9yqjzKo4EOb//fOVGlxInF+SXVPS9Qc2HRABattheLVLa8oq/Aojd1vY60zTrL6rK2r
-	46isOywAc8Qu8CMrEA3TL80mtoRyVepSoUWxG
-X-Google-Smtp-Source: AGHT+IFX3t5IPuvAF0MPCsrJwMQrt5HvH13DUI4O25PHyUj+5uNvmgVipSNk9q33J/RiUaJde/7P97x+Xek8lOrlS+I=
-X-Received: by 2002:a05:622a:99a:b0:446:4968:45 with SMTP id
- d75a77b69052e-454f256459cmr13778241cf.42.1724220077096; Tue, 20 Aug 2024
- 23:01:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61EE168492;
+	Wed, 21 Aug 2024 06:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=208.84.65.235
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724220104; cv=fail; b=CpwJ19HymBeqN538EGOIh9tRoay8Gy+c81FnqVjsoExQNL+x2pcSC8uHqlRwM5p1+MVRNqYereU108qLVqp+mzPvaDTC4syErBZrNH6MybycLNVqqVatZei6mtMFWRu5pRwggB3EGDhagCR+exFtrwhSYi3IsYJ31qXhd/1pw8k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724220104; c=relaxed/simple;
+	bh=H6t3YybaQxw633hRSBI5R6iOFqhOhEkox/SO/q3wwY8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nnJ/nn2yGyN8jGmukKpOIH9qI1YEzrCnyq5FEMU2x7sIaI2gCP+j5ytggp/6c3Ono4y5ECcntOrz3ekVKNi3LoRPpJbQixaQQyhYKBoOkLynP/ZMGsY6OdFN/8rg3OeELpkoq0JUnARlvMaBDg0WDWNsCXUEmI+TnS8AvVohG30=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cadence.com; spf=pass smtp.mailfrom=cadence.com; dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b=AVNNPCmM; dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b=zZkC4I2O; arc=fail smtp.client-ip=208.84.65.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cadence.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cadence.com
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+	by mx0a-0014ca01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L5LYdc016350;
+	Tue, 20 Aug 2024 23:01:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=proofpoint;
+	 bh=1KTh+qTVg/byREeaOSc7bi/gBSOjazmXhrxbGq9K8rY=; b=AVNNPCmMwmq+
+	8jtd15OpJausIGhW6uIKniklGqD+MqbjjVwJqN4S++RgMybcZsz0CFjmz3tNc9Na
+	FFVVk7djwlixEeCilYozZ11M+I/UPYGj3IAVOnWF4CDxCf+GavLMuahqwgkd6Ayk
+	qK18pHJtA2meuUbsN53q2dhVvT7eg0RV2bDBiljT67xl0MCunfx2hDIgsDxmE1ag
+	oN9hj575G9uAlfbtJODaOtuMu2JJOjgBriP8FVEIhFsBpFD2eFJIxY8vfFGdCIZ+
+	E+b1nimygcmsKeJLirVluxRNib/mpX98LkUxh0rXmAEyxDceTfANPW44Uj3vcQn9
+	YWbT0zPvTA==
+Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazlp17010001.outbound.protection.outlook.com [40.93.11.1])
+	by mx0a-0014ca01.pphosted.com (PPS) with ESMTPS id 412rdtxwrd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 23:01:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PJ3sTKIaPV6JalQw5bfJEUP2J80/cw/j1/Nueq+E61a8x+tvhDxEMllZXf+9xF+aMmDU1khPGkY3LtTAN3Og06IYURXiVgEdY2sg41dwT3piQEQ1KoqlL2p2ZuqmhHZKQNPRHo8hP3Awut/+ou1EUeq/ronyJ+3zePet97cTnbnQk8HvKQRjFIBgAMILJHCmYUGCOwh+5UEPTnAbvjaaeqvmjm03dtVJfxRJMIhaBkZu9VUVxXmrxXO/X35/znKx/FVb0rBB9boXgjn+gph7foGXWbDnjI8yBHpnkNH6fmcnW9X/bnCeY5lWGFxhfHaTacjf0qn2IIJo6h1yoUX3YQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1KTh+qTVg/byREeaOSc7bi/gBSOjazmXhrxbGq9K8rY=;
+ b=MZNiXn9gGNocTmYStAfNxJlTyXKUBnX6tpJZFZ/1VNPeJj0aAUqg/1DxcyN0OulFC57CO1qSGuzL+0Uh5sdoouvWxPuRacBREZ7fQ1FjpGiKa8clZL/EIQ9I4tJUdRnA+E22NAkor77Kro+sifLOaEtJJYZLOF1s1ZIYSIQTHJVxqQTQHXGIPBf/XzgTLwhjNbSnQK0k6HgyW7u2n+j42VTRZQiZDdzhQif9+B0npehF79oksw4vzP+U3vA2ra7dzbgGA88LH3bDIPQQaIiESSf2cIlE4zXZuTX4/Z1j2lqAtgurE9coTKGj/CxUYWS+NTEYltzqx1aWxIrSSjTrmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
+ dkim=pass header.d=cadence.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1KTh+qTVg/byREeaOSc7bi/gBSOjazmXhrxbGq9K8rY=;
+ b=zZkC4I2O2LQnl/bO7X8Fmgcuuvp02AvbbFDpjji20kSDSHwfFrdBOTe82f6nzzZ2XBi0tBXA/V9FWFm1UNlVtj0koevi6MZTLxnE4tDmMTYkoOQZd1NqN+XygaZyIT0gil+91vwqg+qbs6i6Al/NOPtfsi5MO71qWbBRerBTkxk=
+Received: from PH7PR07MB9538.namprd07.prod.outlook.com (2603:10b6:510:203::19)
+ by CH3PR07MB9957.namprd07.prod.outlook.com (2603:10b6:610:1bc::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Wed, 21 Aug
+ 2024 06:01:21 +0000
+Received: from PH7PR07MB9538.namprd07.prod.outlook.com
+ ([fe80::5dbd:49e3:4dc:ccc7]) by PH7PR07MB9538.namprd07.prod.outlook.com
+ ([fe80::5dbd:49e3:4dc:ccc7%4]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 06:01:20 +0000
+From: Pawel Laszczak <pawell@cadence.com>
+To: "mathias.nyman@intel.com" <mathias.nyman@intel.com>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "peter.chen@kernel.org" <peter.chen@kernel.org>,
+        "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Pawel Laszczak <pawell@cadence.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH v2] usb: xhci: fixes lost of data for xHCI Cadence Controllers
+Thread-Topic: [PATCH v2] usb: xhci: fixes lost of data for xHCI Cadence
+ Controllers
+Thread-Index: AQHa849EgXZwkCvzRkGEckvtaOr0EbIxN50g
+Date: Wed, 21 Aug 2024 06:01:20 +0000
+Message-ID:
+ <PH7PR07MB95388A2D2A3EB3C26E83710FDD8E2@PH7PR07MB9538.namprd07.prod.outlook.com>
+References: <20240821055828.78589-1-pawell@cadence.com>
+In-Reply-To: <20240821055828.78589-1-pawell@cadence.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-dg-ref:
+ PG1ldGE+PGF0IGFpPSIwIiBubT0iYm9keS50eHQiIHA9ImM6XHVzZXJzXHBhd2VsbFxhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLWM3ZDNhODkxLTVmODItMTFlZi1hOGIzLTYwYTVlMjViOTZhM1xhbWUtdGVzdFxjN2QzYTg5My01ZjgyLTExZWYtYThiMy02MGE1ZTI1Yjk2YTNib2R5LnR4dCIgc3o9IjU4NzAiIHQ9IjEzMzY4NjkzNjc4NDg1NjI5OSIgaD0iWDdEamtFVnh5UG5oZWQ4YzNsSS9hUTdiZ2hZPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+x-dg-rorf: true
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR07MB9538:EE_|CH3PR07MB9957:EE_
+x-ms-office365-filtering-correlation-id: 490491ac-22b9-4772-2447-08dcc1a6adcd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?laO7LfdXAShNMHnkN7qQ/o5Og7WPXEmCaKUI207xTqdLG6TuEmfJvDRULM4f?=
+ =?us-ascii?Q?17rJ4DIzdwE6EuVyBXbakfLV0vo344lEHgWkFWQ/h1tfITI4n9hoSypDreyN?=
+ =?us-ascii?Q?UMybiB7hgv14bdmIGr83Q2TaORNCZUnWUu3oIv6M7Ljg/GGveZ4Ul1y+9psi?=
+ =?us-ascii?Q?HVT3VfY4r5pX1oEMpRzvNsHxQPkS4+POh3gzH48tc4azSRe/FlNnaKZaEjbe?=
+ =?us-ascii?Q?/fiR1jCaWe/QZX3RVO4N1eAxitr1jXR/0Jl3n/mtiwC95UMDTQzN1lTb/khd?=
+ =?us-ascii?Q?0isi+iR1RTwyh0EJ2Z5j6YsHV/V5i6aYMW9GkP/e/feR/EVoxbYUcqgMlEHe?=
+ =?us-ascii?Q?hoUDPJ0YWJmBofYY1PKrL8LexaJvU28dlB9JuVyA/ZGZI+iuiGO7gxK0gu9M?=
+ =?us-ascii?Q?eIE9Yyq1ePkv41SrkuvNrDYlu7z6sf3+5ZnemwicrthFlSpH8lpR87X1o4An?=
+ =?us-ascii?Q?YqibPIalP8oek1HdnkGOpT2wEjIRKoN4/W4H9PLxAnHGYqj9dRncx3QDpIHx?=
+ =?us-ascii?Q?uwZlV92IT2Rximp+wI7F9Hr11gqniC3aQhUAhDfLklBYeUZE1VZJ1hxjkTMW?=
+ =?us-ascii?Q?//+t8nHuFXTsnno+sycseUQzmGpEZzv2q5353QUl4swfwEFknrikqw/77MN1?=
+ =?us-ascii?Q?kzPWukeHQGg1i6hAGJxmu7oPioSe4RUyzejD3N1lqLvR8pAALKk7Ga8ZM1G1?=
+ =?us-ascii?Q?LmSeYRv9k9yYen1BPWPBRXRCdQAegWOFHpJzF2QdMDyuskT7GXWbSLG+Tyej?=
+ =?us-ascii?Q?jVPRV7b6CzUwZKEsf0x4FUETxrlo0kGJhPE7pGpqZGJ69Gh0JsExCynKBkXy?=
+ =?us-ascii?Q?X2BFrZ8G5x+o9xVBiOmGJvqNFZ8X8KV4bB6og/3ZMVW38ziYYjVi7UyoZEbD?=
+ =?us-ascii?Q?fJIlzNUIGk4eVGK8xWuZOcgTgUR6d2sofETV6uVwkxkKU5sfpo5KvsCah6vH?=
+ =?us-ascii?Q?R8u1MdAETRrGp+9w4EGg/5TnV3JbmI6UW/nUhxaxK8I4d6wnjIYBEuUpXhOx?=
+ =?us-ascii?Q?NgtzaMpAs0KGKeiclTV0m9G85lY85Du8wLO84ovF0zTz2ByyXIhjvji5la+L?=
+ =?us-ascii?Q?u2XGMHHfoUgNi6mLsGwq7fnjfzltVVBC3y8joKjZvqR66jKLukxA0waPD+bH?=
+ =?us-ascii?Q?FdWfwCnwSGlnnAo91/AnqG55QH39ceFVhVoCT3bFi+A0CQxRy7pWEG3dvJrY?=
+ =?us-ascii?Q?czhe7k39IJFAmxb28k3TidHHK+CdvRF9HWRkhpkGWoS0LpKreEcX1eZeFr+U?=
+ =?us-ascii?Q?zNUQNTJpmF/cXYYaG0eDWjlznhLA38NuQcjWDOdFlZevcHE6didAxZnizjhf?=
+ =?us-ascii?Q?RzgqJI0Uibmm2/VqlHGNFVmesd3jAUaXVvFnRNZQgREcHTtbwYSbbpIpdVfQ?=
+ =?us-ascii?Q?p0DPLplW2KphVqugo248BauhNMsY7kOss/EkhnowWZo+3/FBgg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR07MB9538.namprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?5pyreB716XgwjPUdJAjR8eG+sb220vcsV0mifJdvw8JQ/pmsMDNnvHrHWWun?=
+ =?us-ascii?Q?hInOPbtVbnRP84CAxfMEqOS6HxGYjZ8NdshtbnmaZA6c4LuX17IP7r+2MCL3?=
+ =?us-ascii?Q?RDppkK5jrJ7bQto5kCoewj9P4Q67Q5Bkc+/zpnuq32cvmaf9Fe3s+tSn5paQ?=
+ =?us-ascii?Q?SvB8c3BBfzl/nuqFpgU7bmc8+vIIpHwjRjvKQ61wcGSpgvBcuemBCHOEDd8l?=
+ =?us-ascii?Q?yjGWeTNpjyWJXEuksKyybvY/go7qnyUZKCdR3xzENkHcw1Tu8kT4UxyKLi/F?=
+ =?us-ascii?Q?6jL7sznCuZvCSKzXZO1EaUka0aGUx7oQaaZjHxXa2srjWp4GFGHlnGxt0qDG?=
+ =?us-ascii?Q?JvGHSXP2QmEU/0e/0/bdTObtvi6otYiWCBLS2rZJ2utIZBOQOIAlPfEQABCX?=
+ =?us-ascii?Q?AcfC+4D4iICO69ICL6SGl3HEhhUMLlC1moU+kGXeAFw+7zQPsn3Dqd5oM8DJ?=
+ =?us-ascii?Q?jZMAEbiWTF8jUKqVvJQ1UTPRC3uHBd+Ex8U3ze57iV1TmHoFf83XJ0vQtLhK?=
+ =?us-ascii?Q?4h/P0VSzIwbuirhXJs8yZoTiRmY2TkEj0AR18ix0m5Q2STolPzAcpMxhBILE?=
+ =?us-ascii?Q?P97IbWZ6pM+8ge9cVU2Xa3PeYn0loAzrHwfzagOM/FadCbPKSSQPwD6TaGMe?=
+ =?us-ascii?Q?tgq3/q7oPFjnPfhwSH5VRKXp8ojkaohRmkbi4gkfNciWcuxpSWCkhkOtElsU?=
+ =?us-ascii?Q?iGv1F9h95mnq7pgTAczNRPnfDVeUU8+kdMalu3rBpPweZpEfn22uwJi8VZVz?=
+ =?us-ascii?Q?J3eImM4bJQ6xvgxD3hFYqBJlBcYTIyqyyRg2Kk7h91GUI8F5YHJP1WELvT1G?=
+ =?us-ascii?Q?cDraaKn8BeHIAF4d3u5NHzXt2Gex8Zlu0awW0Y3erAe+7jOPIue2jjq1ItBT?=
+ =?us-ascii?Q?n0xJRA/36akBznsAkn66LicMmtqtsdP8Am/+dP9+tf1q5RGsHWVjJFkQZ0pH?=
+ =?us-ascii?Q?qFPg3MTpKyhWF+vx3SwIIyUoXT16SLZnWcV3gRvmcXf023kEVd75t2atDQ8D?=
+ =?us-ascii?Q?ZaGUhDJ3vuwXHn9XFb+BQ40/ll2v6wlpLRG2rA/n/KAkOFa2Hjf+jjOnSVRN?=
+ =?us-ascii?Q?sXnLQfAGGsLGlnhFpzuNqN/D4Y+cqJl/2AAZRMWRfd0865fERHaTQLm8sY2W?=
+ =?us-ascii?Q?pCMfA36BMnE4Ar5CehYowwh8//psX3amXeybkJ4kPzTK6JzTiRFKtwo1+A99?=
+ =?us-ascii?Q?MOm/t6r55MmZrvIpOwZjJCTpO2wI+OcKU4JxOhoVr4uDJglVL1H3sGUtSymv?=
+ =?us-ascii?Q?G/uAbPqXQsn7Fu/Az3UCPsoKbh8IWRWzcjy+I3NMhF9Ee/pZAKRDpRBBNFVO?=
+ =?us-ascii?Q?gKhQXfGBb+sD7TsIJnVjLPqQMhgy4QXdTkm2iGWO9zVflluCjTwHmsaacKVz?=
+ =?us-ascii?Q?TvW3CPymZRRYno3tOhoP5seKvrV2Lz3Ms5IOejAnzQEqbUKptN47wfeMNFK5?=
+ =?us-ascii?Q?/PO5LEYslywK+LkFs/J8oARSAB3ZBYwSuV2BJcKy7ylngK3NfQcpZbb5E/LK?=
+ =?us-ascii?Q?mvI6H8FsYe12Q71RVZg1VSaMplV6N+dthi+UvaE4X43OHmljPezOCONnUN+e?=
+ =?us-ascii?Q?AXrMBPnXjYc13FNw/kKokAjEyHIdqoq5KAXlK3tO?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820043543.837914-1-suleiman@google.com> <20240820043543.837914-2-suleiman@google.com>
- <ZsV9wDXDoUMSNWgm@intel.com>
-In-Reply-To: <ZsV9wDXDoUMSNWgm@intel.com>
-From: Suleiman Souhlal <suleiman@google.com>
-Date: Wed, 21 Aug 2024 15:01:05 +0900
-Message-ID: <CABCjUKD__KOtOPH4amue2O4MkBbaQ-5O2v=55kyqVp_X53cqzQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] KVM: Introduce kvm_total_suspend_ns().
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ssouhlal@freebsd.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR07MB9538.namprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 490491ac-22b9-4772-2447-08dcc1a6adcd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2024 06:01:20.4212
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TqMIK2dB0zHqgk8uq9B+7gXqVtZ2fnSPO1Au70Tk92HYhAfJfTBh4hwd2fMmLJwZ/hypR0bH84TLef74HsvtAXj1OIj3428Kj1M7m2Ad9Xs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR07MB9957
+X-Proofpoint-GUID: _4f93AR6sEbtrYd4joMnFoEJVZ7Ps8Zu
+X-Proofpoint-ORIG-GUID: _4f93AR6sEbtrYd4joMnFoEJVZ7Ps8Zu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_06,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 adultscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 phishscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=999 bulkscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408210042
 
-On Wed, Aug 21, 2024 at 2:40=E2=80=AFPM Chao Gao <chao.gao@intel.com> wrote=
-:
->
-> On Tue, Aug 20, 2024 at 01:35:41PM +0900, Suleiman Souhlal wrote:
-> >It returns the cumulative nanoseconds that the host has been suspended.
-> >It is intended to be used for reporting host suspend time to the guest.
-> >
-> >Signed-off-by: Suleiman Souhlal <suleiman@google.com>
->
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
->
-> one nit below
->
-> >---
-> > include/linux/kvm_host.h |  2 ++
-> > virt/kvm/kvm_main.c      | 13 +++++++++++++
-> > 2 files changed, 15 insertions(+)
-> >
-> >diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> >index b23c6d48392f7c..8fec37b372d8c0 100644
-> >--- a/include/linux/kvm_host.h
-> >+++ b/include/linux/kvm_host.h
-> >@@ -2494,4 +2494,6 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcp=
-u *vcpu,
-> >                                   struct kvm_pre_fault_memory *range);
-> > #endif
-> >
-> >+u64 kvm_total_suspend_ns(void);
-> >+
-> > #endif
-> >diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> >index cb2b78e92910fb..2235933d9247bc 100644
-> >--- a/virt/kvm/kvm_main.c
-> >+++ b/virt/kvm/kvm_main.c
-> >@@ -5720,6 +5720,15 @@ static void kvm_shutdown(void)
-> >       on_each_cpu(hardware_disable_nolock, NULL, 1);
-> > }
-> >
-> >+static u64 last_suspend;
-> >+static u64 total_suspend_ns;
-> >+
-> >+u64
-> >+kvm_total_suspend_ns(void)
->
-> nit: don't wrap before the function name.
+Stream endpoint can skip part of TD during next transfer initialization
+after beginning stopped during active stream data transfer.
+The Set TR Dequeue Pointer command does not clear all internal
+transfer-related variables that position stream endpoint on transfer ring.
 
-Sorry, I completely missed that, even after Sean told me.
-Force of habit (FreeBSD style(9) says you have to do it).
+USB Controller stores all endpoint state information within RsvdO fields
+inside endpoint context structure. For stream endpoints, all relevant
+information regarding particular StreamID is stored within corresponding
+Stream Endpoint context.
+Whenever driver wants to stop stream endpoint traffic, it invokes
+Stop Endpoint command which forces the controller to dump all endpoint
+state-related variables into RsvdO spaces into endpoint context and stream
+endpoint context. Whenever driver wants to reinitialize endpoint starting
+point on Transfer Ring, it uses the Set TR Dequeue Pointer command
+to update dequeue pointer for particular stream in Stream Endpoint
+Context. When stream endpoint is forced to stop active transfer in the
+middle of TD, it dumps an information about TRB bytes left in RsvdO fields
+in Stream Endpoint Context which will be used in next transfer
+initialization to designate starting point for XDMA. This field is not
+cleared during Set TR Dequeue Pointer command which causes XDMA to skip
+over transfer ring and leads to data loss on stream pipe.
 
-If I send another version I will fix that.
+Patch fixes this by clearing out all RsvdO fields before initializing new
+transfer via that StreamID.
 
--- Suleiman
+Field Rsvd0 is reserved field, so patch should not have impact for other
+xHCI controllers.
+
+Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD=
+ Driver")
+cc: <stable@vger.kernel.org>
+Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+
+---
+Changelog:
+v2:
+- removed restoring of EDTLA field=20
+
+ drivers/usb/host/xhci-ring.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 1dde53f6eb31..e5e1d665adab 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1386,6 +1386,16 @@ static void xhci_handle_cmd_set_deq(struct xhci_hcd =
+*xhci, int slot_id,
+ 			struct xhci_stream_ctx *ctx =3D
+ 				&ep->stream_info->stream_ctx_array[stream_id];
+ 			deq =3D le64_to_cpu(ctx->stream_ring) & SCTX_DEQ_MASK;
++
++			/*
++			 * Existing Cadence xHCI controllers store some endpoint state informat=
+ion
++			 * within Rsvd0 fields of Stream Endpoint context. This field is not
++			 * cleared during Set TR Dequeue Pointer command which causes XDMA to s=
+kip
++			 * over transfer ring and leads to data loss on stream pipe.
++			 * To fix this issue driver must clear Rsvd0 field.
++			 */
++			ctx->reserved[0] =3D 0;
++			ctx->reserved[1] =3D 0;
+ 		} else {
+ 			deq =3D le64_to_cpu(ep_ctx->deq) & ~EP_CTX_CYCLE_MASK;
+ 		}
+--=20
+2.43.0
+
 
