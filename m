@@ -1,189 +1,266 @@
-Return-Path: <linux-kernel+bounces-295159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80659597E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:42:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB1B9597EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 050D7B21712
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9849F1F22AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8E81D4619;
-	Wed, 21 Aug 2024 08:45:11 +0000 (UTC)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119C31531E9;
+	Wed, 21 Aug 2024 08:46:57 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A1E1A7AD3;
-	Wed, 21 Aug 2024 08:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3BE1BA283;
+	Wed, 21 Aug 2024 08:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724229910; cv=none; b=AFN8xyMi1gAK6iTED0ys3iYCL5VwOT//AUFVJM8m1AYGLjpjpL1BvVjaUqiFdDV7yvkgiSR33VokpIXXmK+bFlfeXqECm2vZLpttjyyILErpL4bUqVcK67af6Wr21x9HlJSoHcZiUDrAAG+b3uwJNTB14ykcFLhpbzpBdSTXP2k=
+	t=1724230016; cv=none; b=CJ4wkb95MVhVaTEurqVtYjbDawzwoLNCIcOvuYzwN/k9OhCCiV5PzKYt5kwaAW/kTimBV+ldCyU1pBA1BA2HQdjhgNWaJVCviJcEXLKDcj0xKApZ+5HPg8zPWWfmmoxciTbCaUTT3D9bzhdHqNIz3CEzOvo6ikP2o4XBh+NEy/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724229910; c=relaxed/simple;
-	bh=qRHRsbmRDvbIyXABIKEaaMk2OJDVFBz9OKDrgIfMiu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3biBuTbnIJ9HOTWy7PEz/7zZyMc3AEluwi87dIMqj8dFkUUHy0cxYTjCLMju+Gcp8DIStXjRm511xtNX+uz2Bm6j9CjHs/gaa0DCby15R2hBPoRBA2ZaDHrmM89O9AnbOdQgDZEJXpHPMsNplRSpK+UaKCl/MtpkCeBlupFrZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371b015572cso3204713f8f.1;
-        Wed, 21 Aug 2024 01:45:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724229907; x=1724834707;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vebzIfVKrkPnVYzJ3Le9GL91uwlzLYfp0d5U/T68YJ8=;
-        b=J9CA4uoE/YT9/AZxTlnI+pmt2zYPS3W1dhDlINf+KxB0RBWgNFInfHqHkX1ZS2BLSS
-         9ztY65Fr7S4lydew2zKtcnQvdTEka7VuPEfzNGnVLHb3+1FrjzsiRFasa2cxKSDFt4/6
-         YCPrw0SmDNTc6nhTcxmaMZqKzDBQYQ/E3eczAz7brbw85tWTvMroswFpVy7fTaBtR8Fg
-         6QL8LJpMqXPhV4AlGSMM4eztCDGFz9M3YlxiH7YGtyWUvfJQa7srZu8gFNH4PMEfUw0V
-         K3Ylz2BQO7XxoIYddwB9vNpD5rVF+odfPJg7cecmCRYSOrH63eVBFjy7q3WpZ1/3+DNZ
-         eRSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAI3BFNf3uGHGFfqJ9EmO64X33kUghtBRHFvgjbA+AkdR95tW53cZ3nFWKzR2iEJCNcT33VEufYF5crw==@vger.kernel.org, AJvYcCUxsGkNP/TuaEITT3adrnMw/cXHyp22dQRNiSyf1HHVnMLg+GEhEYuCQ/l8AeoQ5APDNsedTo22yE+o8g==@vger.kernel.org, AJvYcCVHydiGf0JifPRQ9kpawhDbuHskil+7wCnlKlFcVbVspIpXOhCXm9ML3xBTKPCEEx9ezG0AQOcJ5HRx@vger.kernel.org, AJvYcCXM9huIo4KQInkJg9ZyxY/xIUz3Z2tt070ns8NEABsaEcw5hfn3oFa2+o5dP70bE2oLuSy81ImpkyCV@vger.kernel.org, AJvYcCXQa4Hgr8T84YFM4vfN3i6UT+Pc5flDCrczSstt7qsNsPQd+SqNOx5cXXf1t2GebNvK/5NcVpGFnfv2@vger.kernel.org, AJvYcCXQx8tBiI/UHvMoD5BkvK8H/P+R9o0t0y/x+kiFhyCtNkLM9IUGlX/Ht8ZApt6mC8IrlkIVfCEjbX2m5lWn@vger.kernel.org, AJvYcCXeXBZbI//vmDntaBBKLMDlROIJWdGZyTvJGye+1AdHJGrBkVD2xOhbOUE3M0ESTUdG1/lWWedZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqlnZbctpPZM9cbIg1GIaMH4xRdQEGenNc7Zb4J6QGlZj6atwT
-	LDDrl/OsGF6ruIxwOiDIvuAeMnkYpapiX60VnCI6XEbizEjFHCNj
-X-Google-Smtp-Source: AGHT+IHKaaVpmQDW4zkcKLIQEKPER5kx2Q85aw0jAdWSxY/jqDtMu5zXmXnjno2J10fTqpaZgDn8NQ==
-X-Received: by 2002:a5d:5f56:0:b0:368:3f6a:1dea with SMTP id ffacd0b85a97d-372fd57f1eamr1516016f8f.6.1724229907231;
-        Wed, 21 Aug 2024 01:45:07 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abed90ef7sm17385485e9.9.2024.08.21.01.45.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:45:06 -0700 (PDT)
-Date: Wed, 21 Aug 2024 10:45:03 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-Message-ID: <l4xijmtxz5i5kkkd5tt25ls33drnnhxp26r42lab5ev343e4zh@ctknkjzbpwqz>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1724230016; c=relaxed/simple;
+	bh=xJOGXw3Q/tZfv4AKomM1StwNLPbbup+1TCxoN5+4x0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y7t8Ya9i3hkDdCnvM5Nyw41vYuQVpJ2CWO6NYmgxe64A/rq1R1X7OdGL61THdJRHNwc7Z/hR2Yg0Be4kf7XnJ8okf0CjIdVOhbS3kS28JLDJAO/ZJKNnCF1FzkBO+diFldmX9sMoKpJlORscQ9Jrm4ssuQCb/n65D8cL5scDIU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wpfvz03Wxz69Gl;
+	Wed, 21 Aug 2024 16:42:07 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 024081401F2;
+	Wed, 21 Aug 2024 16:46:49 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 21 Aug 2024 16:46:48 +0800
+Message-ID: <b7f26d4b-1676-2fea-e390-b903271160da@huawei.com>
+Date: Wed, 21 Aug 2024 16:46:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] uprobes: Optimize the allocation of insn_slot for
+ performance
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	"oleg@redhat.com >> Oleg Nesterov" <oleg@redhat.com>, Andrii Nakryiko
+	<andrii@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
+	<rostedt@goodmis.org>, <paulmck@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>
+References: <20240727094405.1362496-1-liaochang1@huawei.com>
+ <7eefae59-8cd1-14a5-ef62-fc0e62b26831@huawei.com>
+ <CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com>
+ <85991ce3-674d-b46e-b4f9-88a50f7f5122@huawei.com>
+ <CAEf4BzYvpgfFGckcKdzkC_g1J1SFi7xBe=_cjdVy4KEMikvGMw@mail.gmail.com>
+ <2c23e9cc-5593-84d0-9157-1e946df941d9@huawei.com>
+ <CAEf4BzZkXWcE7=2FNm-DrSFOR-Pd9LqrQJvV0ShXfPnXzSzYjg@mail.gmail.com>
+ <9044640f-727a-f4ec-cb70-35eeeb28111e@huawei.com>
+ <CAEf4BzaQi8mUW+1DJZvO+D5SXHTj5q7J6WmnP8FvLWXuiFHPvQ@mail.gmail.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <CAEf4BzaQi8mUW+1DJZvO+D5SXHTj5q7J6WmnP8FvLWXuiFHPvQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Tue, Aug 20, 2024 at 04:36:09PM +0200, Andrea della Porta wrote:
-> The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
-> Add minimum support for the gpio only portion. The driver is in
-> pinctrl folder since upcoming patches will add the pinmux/pinctrl
-> support where the gpio part can be seen as an addition.
+
+
+在 2024/8/16 0:53, Andrii Nakryiko 写道:
+> On Wed, Aug 14, 2024 at 7:58 PM Liao, Chang <liaochang1@huawei.com> wrote:
+>>
+>>
+>>
+>> 在 2024/8/15 2:42, Andrii Nakryiko 写道:
+>>> On Tue, Aug 13, 2024 at 9:17 PM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> 在 2024/8/13 1:49, Andrii Nakryiko 写道:
+>>>>> On Mon, Aug 12, 2024 at 4:11 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> 在 2024/8/9 2:26, Andrii Nakryiko 写道:
+>>>>>>> On Thu, Aug 8, 2024 at 1:45 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>>>>>
+>>>>>>>> Hi Andrii and Oleg.
+>>>>>>>>
+>>>>>>>> This patch sent by me two weeks ago also aim to optimize the performance of uprobe
+>>>>>>>> on arm64. I notice recent discussions on the performance and scalability of uprobes
+>>>>>>>> within the mailing list. Considering this interest, I've added you and other relevant
+>>>>>>>> maintainers to the CC list for broader visibility and potential collaboration.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Hi Liao,
+>>>>>>>
+>>>>>>> As you can see there is an active work to improve uprobes, that
+>>>>>>> changes lifetime management of uprobes, removes a bunch of locks taken
+>>>>>>> in the uprobe/uretprobe hot path, etc. It would be nice if you can
+>>>>>>> hold off a bit with your changes until all that lands. And then
+>>>>>>> re-benchmark, as costs might shift.
+>>>>>>>
+>>>>>>> But also see some remarks below.
+>>>>>>>
+>>>>>>>> Thanks.
+>>>>>>>>
+>>>>>>>> 在 2024/7/27 17:44, Liao Chang 写道:
+>>>>>>>>> The profiling result of single-thread model of selftests bench reveals
+>>>>>>>>> performance bottlenecks in find_uprobe() and caches_clean_inval_pou() on
+>>>>>>>>> ARM64. On my local testing machine, 5% of CPU time is consumed by
+>>>>>>>>> find_uprobe() for trig-uprobe-ret, while caches_clean_inval_pou() take
+>>>>>>>>> about 34% of CPU time for trig-uprobe-nop and trig-uprobe-push.
+>>>>>>>>>
+>>>>>>>>> This patch introduce struct uprobe_breakpoint to track previously
+>>>>>>>>> allocated insn_slot for frequently hit uprobe. it effectively reduce the
+>>>>>>>>> need for redundant insn_slot writes and subsequent expensive cache
+>>>>>>>>> flush, especially on architecture like ARM64. This patch has been tested
+>>>>>>>>> on Kunpeng916 (Hi1616), 4 NUMA nodes, 64 cores@ 2.4GHz. The selftest
+>>>>>>>>> bench and Redis GET/SET benchmark result below reveal obivious
+>>>>>>>>> performance gain.
+>>>>>>>>>
+>>>>>>>>> before-opt
+>>>>>>>>> ----------
+>>>>>>>>> trig-uprobe-nop:  0.371 ± 0.001M/s (0.371M/prod)
+>>>>>>>>> trig-uprobe-push: 0.370 ± 0.001M/s (0.370M/prod)
+>>>>>>>>> trig-uprobe-ret:  1.637 ± 0.001M/s (1.647M/prod)
+>>>>>>>
+>>>>>>> I'm surprised that nop and push variants are much slower than ret
+>>>>>>> variant. This is exactly opposite on x86-64. Do you have an
+>>>>>>> explanation why this might be happening? I see you are trying to
+>>>>>>> optimize xol_get_insn_slot(), but that is (at least for x86) a slow
+>>>>>>> variant of uprobe that normally shouldn't be used. Typically uprobe is
+>>>>>>> installed on nop (for USDT) and on function entry (which would be push
+>>>>>>> variant, `push %rbp` instruction).
+>>>>>>>
+>>>>>>> ret variant, for x86-64, causes one extra step to go back to user
+>>>>>>> space to execute original instruction out-of-line, and then trapping
+>>>>>>> back to kernel for running uprobe. Which is what you normally want to
+>>>>>>> avoid.
+>>>>>>>
+>>>>>>> What I'm getting at here. It seems like maybe arm arch is missing fast
+>>>>>>> emulated implementations for nops/push or whatever equivalents for
+>>>>>>> ARM64 that is. Please take a look at that and see why those are slow
+>>>>>>> and whether you can make those into fast uprobe cases?
+>>>>>>
+>>>>>> Hi Andrii,
+>>>>>>
+>>>>>> As you correctly pointed out, the benchmark result on Arm64 is counterintuitive
+>>>>>> compared to X86 behavior. My investigation revealed that the root cause lies in
+>>>>>> the arch_uprobe_analyse_insn(), which excludes the Arm64 equvialents instructions
+>>>>>> of 'nop' and 'push' from the emulatable instruction list. This forces the kernel
+>>>>>> to handle these instructions out-of-line in userspace upon breakpoint exception
+>>>>>> is handled, leading to a significant performance overhead compared to 'ret' variant,
+>>>>>> which is already emulated.
+>>>>>>
+>>>>>> To address this issue, I've developed a patch supports  the emulation of 'nop' and
+>>>>>> 'push' variants. The benchmark results below indicates the performance gain of
+>>>>>> emulation is obivious.
+>>>>>>
+>>>>>> xol (1 cpus)
+>>>>>> ------------
+>>>>>> uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
+>>>>>> uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
+>>>>>> uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
+>>>>>> uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
+>>>>>> uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
+>>>>>> uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+>>>>>>
+>>>>>> emulation (1 cpus)
+>>>>>> -------------------
+>>>>>> uprobe-nop:  1.862 ± 0.002M/s  (1.862M/s/cpu)
+>>>>>> uprobe-push: 1.743 ± 0.006M/s  (1.743M/s/cpu)
+>>>>>> uprobe-ret:  1.840 ± 0.001M/s  (1.840M/s/cpu)
+>>>>>> uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/s/cpu)
+>>>>>> uretprobe-push: 0.936 ± 0.004M/s  (0.936M/s/cpu)
+>>>>>> uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/s/cpu)
+>>>>>>
+>>>>>> As you can see, the performance gap between nop/push and ret variants has been significantly
+>>>>>> reduced. Due to the emulation of 'push' instruction need to access userspace memory, it spent
+>>>>>> more cycles than the other.
+>>>>>
+>>>>> Great, it's an obvious improvement. Are you going to send patches
+>>>>> upstream? Please cc bpf@vger.kernel.org as well.
+>>>>
+>>>> I'll need more time to thoroughly test this patch. The emulation o push/nop
+>>>> instructions also impacts the kprobe/kretprobe paths on Arm64, As as result,
+>>>> I'm working on enhancements to trig-kprobe/kretprobe to prevent performance
+>>>> regression.
+>>>
+>>> Why would the *benchmarks* have to be modified? The typical
+>>> kprobe/kretprobe attachment should be fast, and those benchmarks
+>>> simulate typical fast path kprobe/kretprobe. Is there some simulation
+>>> logic that is shared between uprobes and kprobes or something?
+>>
+>> Yes, kprobe and uprobe share many things for Arm64, but there are curical
+>> difference. Let me explain further. Simulating a 'push' instruction on
+>> arm64 will modify the stack pointer at *probe breakpoint. However, kprobe
+>> and uprobe use different way to restore the stack pointer upon returning
+>> from the breakpoint exception. Consequently.sharing the same simulation
+>> logic for both would result in kernel panic for kprobe.
+>>
+>> To avoid complicating the exception return logic, I've opted to simuate
+>> 'push' only for uprobe and maintain the single-stepping for kprobe [0].
+>> This trade-off avoid the impacts to kprobe/kretprobe, and no need to
+>> change the kprobe/kretprobe related benchmark.
+>>
 > 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->  MAINTAINERS                   |   1 +
->  drivers/pinctrl/Kconfig       |  10 +
->  drivers/pinctrl/Makefile      |   1 +
->  drivers/pinctrl/pinctrl-rp1.c | 719 ++++++++++++++++++++++++++++++++++
->  4 files changed, 731 insertions(+)
->  create mode 100644 drivers/pinctrl/pinctrl-rp1.c
+> I see, thanks for explaining. I noticed the "bool kernel" flag you
+> added, it makes sense.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4ce7b049d67e..67f460c36ea1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19122,6 +19122,7 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
->  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
->  F:	drivers/clk/clk-rp1.c
-> +F:	drivers/pinctrl/pinctrl-rp1.c
->  F:	include/dt-bindings/clock/rp1.h
->  F:	include/dt-bindings/misc/rp1.h
->  
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index 7e4f93a3bc7a..18bb1a8bd102 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -565,6 +565,16 @@ config PINCTRL_MLXBF3
->  	  each pin. This driver can also be built as a module called
->  	  pinctrl-mlxbf3.
->  
-> +config PINCTRL_RP1
-> +	bool "Pinctrl driver for RP1"
-> +	select PINMUX
-> +	select PINCONF
-> +	select GENERIC_PINCONF
-> +	select GPIOLIB_IRQCHIP
-> +	help
-> +	  Enable the gpio and pinctrl/mux  driver for RaspberryPi RP1
-> +	  multi function device. 
-> +
->  source "drivers/pinctrl/actions/Kconfig"
->  source "drivers/pinctrl/aspeed/Kconfig"
->  source "drivers/pinctrl/bcm/Kconfig"
-> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-> index cc809669405a..f1ca23b563f6 100644
-> --- a/drivers/pinctrl/Makefile
-> +++ b/drivers/pinctrl/Makefile
-> @@ -45,6 +45,7 @@ obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
->  obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
->  obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
->  obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
-> +obj-$(CONFIG_PINCTRL_RP1)       += pinctrl-rp1.o
->  obj-$(CONFIG_PINCTRL_SCMI)	+= pinctrl-scmi.o
->  obj-$(CONFIG_PINCTRL_SINGLE)	+= pinctrl-single.o
->  obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
-> diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
-> new file mode 100644
-> index 000000000000..c035d2014505
-> --- /dev/null
-> +++ b/drivers/pinctrl/pinctrl-rp1.c
-> @@ -0,0 +1,719 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Driver for Raspberry Pi RP1 GPIO unit
-> + *
-> + * Copyright (C) 2023 Raspberry Pi Ltd.
-> + *
-> + * This driver is inspired by:
-> + * pinctrl-bcm2835.c, please see original file for copyright information
-> + */
-> +
-> +#include <linux/bitmap.h>
-> +#include <linux/bitops.h>
-> +#include <linux/bug.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/io.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdesc.h>
-> +#include <linux/init.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/seq_file.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
+> I still don't understand why you'd need to modify kprobe/kretprobe
+> benchmarks, as they are testing attaching kprobe at the kernel
+> function entry, which for kernels should be an optimized case not
+> requiring any emulation.
 
-Half of these headers are not used. Drop them.
+Sorry about the confusion. I've revised the implementation of nop/push
+emulation to avoid the impacts the kprobe/kretprobe on Arm64, see the
+change to arm_probe_decode_insn() in the patch [0]. As a result, no
+changes to the kprobe/kretprobe benchmarks.
 
-Best regards,
-Krzysztof
+[0] https://lore.kernel.org/all/20240814080356.2639544-1-liaochang1@huawei.com/
 
+Thanks.
+
+> 
+>> [0] https://lore.kernel.org/all/20240814080356.2639544-1-liaochang1@huawei.com/
+>>
+>>>
+>>>>
+>>>>>
+>>>>>
+>>>>> I'm also thinking we should update uprobe/uretprobe benchmarks to be
+>>>>> less x86-specific. Right now "-nop" is the happy fastest case, "-push"
+>>>>> is still happy, slightly slower case (due to the need to emulate stack
+>>>>> operation) and "-ret" is meant to be the slow single-step case. We
+>>>>> should adjust the naming and make sure that on ARM64 we hit similar
+>>>>> code paths. Given you seem to know arm64 pretty well, can you please
+>>>>> take a look at updating bench tool for ARM64 (we can also rename
+>>>>> benchmarks to something a bit more generic, rather than using
+>>>>> instruction names)?
+>>>>
+>>>
+>>> [...]
+>>
+>> --
+>> BR
+>> Liao, Chang
+> 
+> 
+
+-- 
+BR
+Liao, Chang
 
