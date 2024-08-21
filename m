@@ -1,99 +1,126 @@
-Return-Path: <linux-kernel+bounces-295614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04AA959F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDF3959F1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DF7EB2339F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CC0282102
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA4E1AF4F0;
-	Wed, 21 Aug 2024 13:51:01 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2AD1AF4F8;
+	Wed, 21 Aug 2024 13:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/vlvRAR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E412C1AD5DE;
-	Wed, 21 Aug 2024 13:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E021AF4E0
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724248260; cv=none; b=NVri2DO3p6b80twHh+GKnfLs+mTMSKpYacAu2pZo3pT1yGrH20UIJ8NTTj4yUQNRF7BbKJPBEpn1bnvOsqDt0Ig7BvQTd+mnUQMQC3e9oH8+kKuHEB0S/EsccdU0P1lJH0HamIyItRMpE8cy64XWHdR0aoAr9lo+3b3MHxPDun4=
+	t=1724248613; cv=none; b=KDQZf2gUg4qtSkbcIeFYVak3SUvb68qcVru84DuJEWJXNeyBS9FADpRGUaYnTqOzb0tZ5+5MYCcuRb2kJ/XwQm8Xx/E1wcoJ0f4RSm6XAiyRnZ+ixeuPraUBGuRlstPjhdDQBqQPXNXjqdJcg/kLCnPvvMu5jAQk2OXrTvp7toE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724248260; c=relaxed/simple;
-	bh=lV6MYYkfu9QBMSbX9W44qSZXxu5DA+lxxbr2M68NmRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GNa4Rqjqe+7tiAAGUUjjRgtM5ZoVrDGp5DgbCbezt6TyepqLCzIJ/fwzEG1VHoMWo9W3ftClEr63eeYU/jLMau4V+YAzstGZ5IV+mCDmgcvhWUzD9FWyf9NFL7MdYNsYF4nT5gFDiTZY8Wtpr6awqJf1KN1NrD2lpf1s2k7drIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F381C32781;
-	Wed, 21 Aug 2024 13:50:58 +0000 (UTC)
-Date: Wed, 21 Aug 2024 09:51:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: kvm@vger.kernel.org, Sean Christopherson <seanjc@google.com>, Paolo
- Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- "x86@kernel.org" <x86@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Suleiman Souhlal <ssouhlal@freebsd.org>, "Vineeth Pillai"
- <vineeth@bitbyteword.org>, Borislav Petkov <bp@alien8.de>, Anna-Maria
- Behnsen <anna-maria@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Frederic Weisbecker
- <fweisbec@gmail.com>
-Subject: [RFC][PATCH] KVM: Remove HIGH_RES_TIMERS dependency
-Message-ID: <20240821095127.45d17b19@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724248613; c=relaxed/simple;
+	bh=tu0TnCrkCWoRLS38XXnu3gUicmftHm/PcZVfj4gnrrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jLyRdh9wMyJ2x6fg70EkazVwfwagtFpK3sqbjIcoZukqPC3vsLA3ezCA0NCQ2Q84YAVw+zLHfBZn/AHumxHyY39KDa5sy1MyyMvDft0CSlCdbeEDSqumJceCNsI262mmEEhRd/B7aIHAX0drKLR1FQtfIYQ9YJoudY40hGlJTlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/vlvRAR; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724248612; x=1755784612;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tu0TnCrkCWoRLS38XXnu3gUicmftHm/PcZVfj4gnrrg=;
+  b=f/vlvRARIINAdu5DGf4+gZ2II6hoaUaqbpcWP4K/JsRJWreiT2vLGDi6
+   UxizZXr3fsNa6jagsEGKtamfpoo8FUBc6QNk7h9yugWzmiivB/QeV2cOQ
+   4X7rzv0zpGYttNP1uZ1o+O/ZTmdNcaw4WIcct4T4MNGdRMdk0YSnwVkJJ
+   8iOw5ED+crfis/2lvTX7RPb0uLsfIB2bwfY4qg7NDhWkqrqz/fkpQ0emD
+   uhoUbyqpedhVkCJAC1TDLi0i4WaWVEBn5o/4qZBLK6vehkdp3o4BG7zNt
+   n40ga9RY5nCYJr+D/3grxYc5wosuh4RWGsXvBR+tCBqs+H6lXbvGpMprY
+   g==;
+X-CSE-ConnectionGUID: gdQ/2rSvSUWJ1+w7RX45PA==
+X-CSE-MsgGUID: 2BnbR8nqRueGy7bdT6GPgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22221400"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="22221400"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:56:51 -0700
+X-CSE-ConnectionGUID: zJ0Wy885SOym5WxJCCGkzw==
+X-CSE-MsgGUID: JVA/9GUdRv6pSxjVrKSL0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="61077347"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:56:49 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sglpO-0000000066B-1674;
+	Wed, 21 Aug 2024 16:56:46 +0300
+Date: Wed, 21 Aug 2024 16:56:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] i3c: mipi-i3c-hci: Add AMDI5017 ACPI ID to the
+ I3C Support List
+Message-ID: <ZsXyHfLJ8SJOW0RF@smile.fi.intel.com>
+References: <20240821133554.391937-1-Shyam-sundar.S-k@amd.com>
+ <20240821133554.391937-2-Shyam-sundar.S-k@amd.com>
+ <9584ddb0-6e39-4d04-9242-a68eb4b86eba@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9584ddb0-6e39-4d04-9242-a68eb4b86eba@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Aug 21, 2024 at 07:07:45PM +0530, Shyam Sundar S K wrote:
+> + Andy
 
-Commit 92b5265d38f6a ("KVM: Depend on HIGH_RES_TIMERS") added a dependency
-to high resolution timers with the comment:
+Thank you!
 
-    KVM lapic timer and tsc deadline timer based on hrtimer,
-    setting a leftmost node to rb tree and then do hrtimer reprogram.
-    If hrtimer not configured as high resolution, hrtimer_enqueue_reprogram
-    do nothing and then make kvm lapic timer and tsc deadline timer fail.
+> On 8/21/2024 19:05, Shyam Sundar S K wrote:
+> > The current driver code lacks the necessary plumbing for ACPI IDs,
+> > preventing the mipi-i3c-hci driver from being loaded on x86
+> > platforms that advertise I3C ACPI support.
+> > 
+> > This update adds the AMDI5017 ACPI ID to the list of supported IDs.
 
-That was back in 2012, where hrtimer_start_range_ns() would do the
-reprogramming with hrtimer_enqueue_reprogram(). But as that was a nop with
-high resolution timers disabled, this did not work. But a lot has changed
-in the last 12 years.
+Please, provide a DSDT excerpt to show how it will look like in the ACPI
+tables.
 
-For example, commit 49a2a07514a3a ("hrtimer: Kick lowres dynticks targets on
-timer enqueue") modifies __hrtimer_start_range_ns() to work with low res
-timers. There's been lots of other changes that make low res work.
+...
 
-I added this change to my main server that runs all my VMs (my mail
-server, my web server, my ssh server) and disabled HIGH_RES_TIMERS and the
-system has been running just fine for over a month.
+> > +static const struct acpi_device_id i3c_hci_acpi_match[] = {
+> > +	{"AMDI5017"},
 
-ChromeOS has tested this before as well, and it hasn't seen any issues with
-running KVM with high res timers disabled.
+Spaces are missing
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/x86/kvm/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+	{ "AMDI5017" },
 
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 472a1537b7a9..c65127e796a9 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -19,7 +19,6 @@ if VIRTUALIZATION
- 
- config KVM
- 	tristate "Kernel-based Virtual Machine (KVM) support"
--	depends on HIGH_RES_TIMERS
- 	depends on X86_LOCAL_APIC
- 	select KVM_COMMON
- 	select KVM_GENERIC_MMU_NOTIFIER
+> > +	{}
+> > +};
+> > +MODULE_DEVICE_TABLE(acpi, i3c_hci_acpi_match);
+
+...
+
+Otherwise LGTM, thanks!
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
