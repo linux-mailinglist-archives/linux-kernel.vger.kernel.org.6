@@ -1,116 +1,251 @@
-Return-Path: <linux-kernel+bounces-295676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A812959FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:33:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2A1959FF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 953F3B21075
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:32:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38306B22E2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1955919ABAF;
-	Wed, 21 Aug 2024 14:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46D91607B0;
+	Wed, 21 Aug 2024 14:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="FB2+wOS3"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BpxYlXLQ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CAF136328
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D652188010
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724250770; cv=none; b=RT76jmPiaHdEn2ar46+mQSzXSdjP/88NzcYts6JAZlqKNUfV+6L3ilKOu9qMgM8B44poAdrFyUcgMYMn4OiN+t0piuJm0CioZQBUDJh3oddJFjZ+bR1VukDrW+saSYHsgR1Mz57hSzHZbVnOseWiLkRjgXS9p/JRzlcmuQM7Bnw=
+	t=1724250791; cv=none; b=X5/9KpyAfwLqnaI+vs34C5wTdjT7RA3Z2PDGuSE0dQxtoiJgatdzL+iGggwq6UXepUABpQhOTeP2PA1yI2uKu7yZ1lxVVLDtZF0CuvXcLiejv6JHbprFzSgZS3mg2U4ESRFtRseuEwTRG6Q1dpEYd4UzSWR0jg2UshMyNsVJlCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724250770; c=relaxed/simple;
-	bh=adHmya+qZ0f7dKCPtfUCV+Zzi7NsBk9BKZjxCyAllf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZO81744SHrJAOngwU4hSv4PTCOJdJ+P+lDxKcnsAf52RqqYA0iOl6SKOvxTIJUfbJb6FMXUPBL8summ4eai0lBYPGuObV3FjSGeo71IblNVGjp2tokxan7yxzSw0SKLxYsh0LocXfB8stFb92BFpGNLlYVN8Ne1sbXk+fo8S+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=FB2+wOS3; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso56090965e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:32:48 -0700 (PDT)
+	s=arc-20240116; t=1724250791; c=relaxed/simple;
+	bh=rZ93B1FaIO/daPFbG923nolBsUuA6bD+bLBSYtW6f6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qjsnu54kPXrMzYTjgy614OkRGCTJY/LiwxlEu61RnFv7FtildBLHfOZjW1hJEswQRbqi4hsSEP/Wg051Hnm7DiUsHRojSinpCMEGGcNS2Dxp+1qb0BK+sLJNso9xRmgMRTmMEFCLmJN76hEEEaIzepXWlAidY3TOFJ34w4Y4fc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=BpxYlXLQ; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so9529854e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:33:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1724250767; x=1724855567; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BzH0Ti5/cSa4VdiVvC7Ftff2LpcTCcyPmlVuI+QhSpA=;
-        b=FB2+wOS3bCVVLxvwT2kJfqtsdBPNbl6cuA0Dfb2aNHqlr5lBUbJbddIZhjQhofeHUW
-         kO1ARGbAv6ak6P71WcoEiWMPfSoff6ZBu3bqPW36URNflxae/osgax6kuFqh+lkwI6zl
-         lERzKdrR63PWzRCBwWarFSX8BRQ1YFRvMU717xaHBmiuqGfO3SsU9fRt14tjTiHxqFP2
-         o9dg3kbGmeZiTpQtp6uSKvtqRlsz1Zh1hrQOF7LCsKYT8P53JyJuIrUFtFqEwhy5QC79
-         C4qxj3UMjSonngsIAI5gJt3o4f3PxcwmwFDp3+YJoU87/wjvbj5vbLXm93CjndgWu8Mk
-         XLqg==
+        d=broadcom.com; s=google; t=1724250788; x=1724855588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=13hO+MwcQxxIhiBwJswPHa/0hsKj79ENSc7oIw3Wwfg=;
+        b=BpxYlXLQfa70x0dQKkcZCl2N1XvqmDuT4lb3MauRgD0j1qt4MUQtZHSeXd5bmDJuY7
+         rQ9NFl3Rlab8e5JREcw38Avw6rEOvbofZzpZqpP+aAkFoGWKUWOqjYO+YVsT7M1IKkjF
+         ERscrC0OJOA5n9rbaY6iyHTFCBYFg5tuuAbM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724250767; x=1724855567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BzH0Ti5/cSa4VdiVvC7Ftff2LpcTCcyPmlVuI+QhSpA=;
-        b=K1BjcvKnoqGRRrl6+LDKmGhOcKQm3O6aiVilGf4S6CwDnzdZAg5B9ODkUjflifnmJ3
-         4gkNhIHs8V24ntcsm6CqymnjmOr4n+ueiEM4/TDzzkDWfeYv80QmKCqT6YrAuxlwffb7
-         Q6/E7EZKidFT43J+DKYDHHw1IGfCzR8dN7zzusfRoDnIr2n+UZgzCtzNS+Kp8nvdZ+ND
-         KH7WL0i9yJ0XTICCmKzjRBP4+MB0/NnD7BroBl36zAmi9clNQLRmtOZIhbGCDjQF1LdZ
-         CQ++l44DYxDOT6ehsrL6UZBWKLvfmen3sw5sDmdUWnjVhh5Ey3hOvbclU5xynZijezIt
-         fg4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVHZK1kE7FzQDSG8Y63E7mjP4JBeef/Vv8Cyh0Hn8JEwlTK0eihITMqoupSw2TMdVMFpDr6GH4Mp/m2yys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU2A9sgALsGdPugWBHRBHjvyuzMTpItP1BPk3K29VqvCNRiQIQ
-	VvCUZK4or4AxEcg44Ar+lWBRd+dcUU11g7f55W7TDe8mHtBoOCdf6k/dF6pXaYI=
-X-Google-Smtp-Source: AGHT+IG9h6I3OGfk/BYjIhaBWJg+eWFf3tj96tXLfu1MoIVwYfpY3HO/tLKYhUHQR2BfZETfuvcMOA==
-X-Received: by 2002:a5d:5184:0:b0:368:65ad:529 with SMTP id ffacd0b85a97d-372fd5929f0mr1701638f8f.17.1724250766402;
-        Wed, 21 Aug 2024 07:32:46 -0700 (PDT)
-Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abefcb674sm27234295e9.32.2024.08.21.07.32.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 07:32:46 -0700 (PDT)
-Date: Wed, 21 Aug 2024 16:32:45 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org, Guo Ren <guoren@linux.alibaba.com>
-Subject: Re: [PATCH v5 10/13] asm-generic: ticket-lock: Add separate
- ticket-lock.h
-Message-ID: <20240821-8dc1f3151679f2e35255683b@orel>
-References: <20240818063538.6651-1-alexghiti@rivosinc.com>
- <20240818063538.6651-11-alexghiti@rivosinc.com>
+        d=1e100.net; s=20230601; t=1724250788; x=1724855588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=13hO+MwcQxxIhiBwJswPHa/0hsKj79ENSc7oIw3Wwfg=;
+        b=X2cwN61ZysRiLHzYZ0W7PigcTJ4qbZvF2aR76tyjbers/qwg/nBNbGbkS6uEWbMhNH
+         cjxEDv+zyKGgFwvKUfwcyLYHkrkJIeojaJgZoARae5QOSnY0VMet1jx1rSN/OlBgHepA
+         lGvWJuP6MNRvIZ/N3vl6oWHoGk7hPcDkApbH8gvC++DAnK2Fk4Z+z93MMUyyK93UfrnD
+         adJVHBSYA/AgpDgLLzACRpLVBD6e8lu+w9d6e8KtpUNW125/l5ClZwf/+FeAV2N/mvHT
+         rAYos3j+wqfSyp2NplHcAzL0oINefElQoZSVGi5to0Rp+zSJxwnBTJ2JkZvVzi/oHomZ
+         1jzg==
+X-Forwarded-Encrypted: i=1; AJvYcCX81qV66AP/S+9blJuA7gGnSBIEhbAOmpWKTcFZar8vEWKib9TUtSlW7VLQ/dFuUJLwLlk/3DywKeYhSrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2MIo+3tUh+xmwWAiWdMCf520W0HRMHQU9oz6DkR7K/gpzA6An
+	XGStBZP5IXauJib2SMNhEIGRjgRosN73nLN3mMy27PT3J//yuwjzthXI2CnHkPuzDy3hKh2XD1Z
+	RgmYWPe7i+TxxnJox+X45IZHjdco7FozZ4Czj
+X-Google-Smtp-Source: AGHT+IF4ViaT9SDgYMT6c87n/ULlma8hp8hJkiUY7HZkSV/BLlfVWhsKb0VJg+KIu78dk9fw8Sp9FMgzhE9q5wfhXVc=
+X-Received: by 2002:a05:6512:234a:b0:533:4620:ebfb with SMTP id
+ 2adb3069b0e04-5334855e001mr1710052e87.21.1724250787663; Wed, 21 Aug 2024
+ 07:33:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240818063538.6651-11-alexghiti@rivosinc.com>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-6-james.quinlan@broadcom.com> <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
+ <2fb74b23-a862-4b1c-b1e1-a3e3abc4571b@broadcom.com> <51eff793-2b72-4e1c-a86e-149f17d08279@suse.de>
+In-Reply-To: <51eff793-2b72-4e1c-a86e-149f17d08279@suse.de>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Wed, 21 Aug 2024 10:32:55 -0400
+Message-ID: <CA+-6iNw0fa5_FApPX5r_4K69ZMLyUKz4fT+5kDL4FcfTv=OUvA@mail.gmail.com>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, linux-pci@vger.kernel.org, 
+	Nicolas Saenz Julienne <nsaenz@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Cyril Brulebois <kibi@debian.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000c215130620326b18"
 
-On Sun, Aug 18, 2024 at 08:35:35AM GMT, Alexandre Ghiti wrote:
-> From: Guo Ren <guoren@linux.alibaba.com>
-> 
-> Add a separate ticket-lock.h to include multiple spinlock versions and
-> select one at compile time or runtime.
-> 
-> Reviewed-by: Leonardo Bras <leobras@redhat.com>
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Link: https://lore.kernel.org/linux-riscv/CAK8P3a2rnz9mQqhN6-e0CGUUv9rntRELFdxt_weiD7FxH7fkfQ@mail.gmail.com/
-> Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-> Signed-off-by: Guo Ren <guoren@kernel.org>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  include/asm-generic/spinlock.h        |  87 +---------------------
->  include/asm-generic/ticket_spinlock.h | 103 ++++++++++++++++++++++++++
->  2 files changed, 104 insertions(+), 86 deletions(-)
->  create mode 100644 include/asm-generic/ticket_spinlock.h
+--000000000000c215130620326b18
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 20, 2024 at 7:38=E2=80=AFPM Stanimir Varbanov <svarbanov@suse.d=
+e> wrote:
 >
+> Hi Florian,
+>
+> On 8/19/24 22:07, Florian Fainelli wrote:
+> > On 8/17/24 10:41, Stanimir Varbanov wrote:
+> >> Hi Jim,
+> >>
+> >> On 8/16/24 01:57, Jim Quinlan wrote:
+> >>> The 7712 SOC has a bridge reset which can be described in the device
+> >>> tree.
+> >>> Use it if present.  Otherwise, continue to use the legacy method to
+> >>> reset
+> >>> the bridge.
+> >>>
+> >>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> >>> ---
+> >>>   drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
+> >>>   1 file changed, 19 insertions(+), 5 deletions(-)
+> >>
+> >> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+> >>
+> >> One problem though on RPi5 (bcm2712).
+> >>
+> >> With this series applied + my WIP patches for enablement of PCIe on
+> >> bcm2712 when enable the pcie1 and pcie2 root ports in dts, I see kerne=
+l
+> >> boot stuck on pcie2 enumeration and I have to add this [1] to make it
+> >> work again.
+> >>
+> >> Some more info about resets used:
+> >>
+> >> pcie0 @ 100000:
+> >>     resets =3D <&bcm_reset 5>, <&bcm_reset 42>, <&pcie_rescal>;
+> >>     reset-names =3D "swinit", "bridge", "rescal";
+> >>
+> >> pcie1 @ 110000:
+> >>     resets =3D <&bcm_reset 7>, <&bcm_reset 43>, <&pcie_rescal>;
+> >>     reset-names =3D "swinit", "bridge", "rescal";
+> >>
+> >> pcie2 @ 120000:
+> >>     resets =3D <&bcm_reset 9>, <&bcm_reset 44>, <&pcie_rescal>;
+> >>     reset-names =3D "swinit", "bridge", "rescal"; >
+> >>
+> >> I changed "swinit" reset for pcie2 to <&bcm_reset 9> (it is 32 in
+> >> downstream rpi kernel) because otherwise I'm unable to enumerate RP1
+> >> south bridge at all.
+> >
+> > The value 9 is unused, so I suppose it does not really hurt to use it,
+> > but it is also unlikely to achieve what you desire. 32 is the correct
+> > value since pcie2_sw_init is bit 0 within SW_INIT_1 (second bank of
+> > resets).
+>
+> Good to know that 9 is not the proper reset line, thank you.
+>
+> Unfortunately, I'm unable to make it work with the proper reset line (32)=
+.
+>
+> >
+> > The file link you provided appears to be lacking support for the
+> > "swinit" reset line, is that intentional? I don't think you can assume
+>
+> No idea why downstream RPi kernel does not use swinit reset.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+I found out accidentally that one does not need this (swinit) to
+properly function.
+>
+> > this will work without.
+>
+> If I do not populate swinit in PCIe DT node it works i.e. PCI
+> enumeration is working and RP1 south-bridge is functional.
+>
+> ~Stan
+
+--000000000000c215130620326b18
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBsN9hmCpKPCe+FG31U9YLWdEdVHLWV
+HPdIf8pUMxB+NTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MjExNDMzMDhaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAPccYSj1XdwviRgZnnBIhWtdGGoVKpZtCnfINY7y7kNp2H9pu
+uhkVphE4Rha6qBwYSDt+7np1DRI7utwBL8tk/VRL+0T3+TRZk1cWxRqk8lKzPhmp2zf9tluysOr1
+hmBuwZKIZpfZzRki8D5F54N8lV5TnpFPrj+KQ2JbnuZWWnr2Uiewu0OyA+aNP2KVwVjw5dz1oEUd
+rGjalq6BHHF2dajEmvDd3WjKBw2PnMts952A2nWZg+tv/w9Ij5aWI6krn3aC6zOSsrsYtcn6bFAn
+OwoMnfn782VaLJ1TeaO10f7MeclE3Kjd4efS3Dsa1+nPFCo4MrDD7mQLnHRQTxMnIA==
+--000000000000c215130620326b18--
 
