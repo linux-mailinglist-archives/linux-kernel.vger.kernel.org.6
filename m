@@ -1,275 +1,539 @@
-Return-Path: <linux-kernel+bounces-295949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578FE95A380
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:04:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6985695A386
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AA22284F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EECB21F22DDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89511B2ED7;
-	Wed, 21 Aug 2024 17:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDCC1B253C;
+	Wed, 21 Aug 2024 17:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZC5BghUB"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLSK+wUk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B609D13E022;
-	Wed, 21 Aug 2024 17:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B72313E022;
+	Wed, 21 Aug 2024 17:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724259873; cv=none; b=kn3c1Wpuy26NeDA+VHkhD0yxAEugOX0Wvvcq3vPrExnO+ShZPZ3biwJw2bofm9GYocdqkgOvuzcuFEYWRiLaxNGcDxvHwUvkne3LEhIVgZDjbxpO5S9GbKkqCJumRzBMLSMYsW71sfqRcuXhVMo2HvqdK9HjM6pWWxoFXJKOlqQ=
+	t=1724260055; cv=none; b=b5lS+/lHrjqsgHx1v3hqcvQiVnW4iOiokGDh5xYvAGXQ23BFFhMPIoc9hxTk07qVNPpyMEd4zlj11FEywL85bMol4Usr9KbQH79QV8CHnG4n0YE5xFsGsW+SumGKERRa2qlYf0DG4CuIjwULMejQELukP2ejaYBtb0xOHfGce3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724259873; c=relaxed/simple;
-	bh=15WLqFfb3kOd25SGvlFnNvjfMM7hn7Ze6cddrnJFpig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0srRoin7jjiI+9EWDtj6gzcYWdA933cQysz9LHgWedHDwGx3DFz+naT1CxegyHLvMDWPZlh5dwdTuii2sY7oAIy/rMVa8mMC9U6mP5paFECqVbK2bIBtJOKML1LGmhaDd2tniLq0sarBfF1PBNgoR1mXCmOdPevW5zzFu8QYtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZC5BghUB; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f16767830dso72046021fa.0;
-        Wed, 21 Aug 2024 10:04:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724259870; x=1724864670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5piVzblVPFAtLFSe16jLGKIEUz2rAIQiJS543JMertA=;
-        b=ZC5BghUBbQynTPgyePh7Wu7W0C+KS9g39wYujox+pTXAgIb/etBs1923gDsNvu6KcT
-         /QoN/D+RDXzu3NP9Gs9u3N/xCTEJlLoUoX2Bgjeyz3j7zxemzDximihKGPi3tkrDoBhv
-         X+9gKlTRnrbLsiHeGmlV5ySeqzbX0Jsmu4bNksh6k1ZM0g2I6Rnu+CR0VB6b4hbqAP3x
-         r8s+TGrxkNmY0qWX8cMdykCPsD1aIj+TuAbbjFngCXrDPbe0qqxobJqJ5HYDdXt6kkBN
-         EJTUYGmQ6Qnkn1adG7iMvKIhVzi03p3fghPofDXp88b8LEuBQ/tHbbk6bxGmsBirbwR4
-         acZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724259870; x=1724864670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5piVzblVPFAtLFSe16jLGKIEUz2rAIQiJS543JMertA=;
-        b=VTgSNwSXP3O0m8cyYJzrtQoMEd32xSpR7o+zj6MJtZWIzcC7tMVpN3/obY7sMviQUL
-         qNo92iZWMixOt5qqcnJR87FNmwv6KSMm8UDo6Lnn/aThRG9+xOjPzQMnmpIh2jD+edbj
-         IJ46sQiwy38YWiWGr4V/TnKGuMrojjrgmAUXD0pGgMvNKiys0ZkUju4OeUe28tNx/emj
-         afVjTpx7UBf0osMzRKQfs6cPPyngVwrubu8X1Bv6gfnt47ZElTJpoW3QGvbjl5LgerAz
-         0wmTOi3z7p3RcfmHmvU31j5LXbtIz+05XW678+47Up9aN/oVZHjueoHoJBlbKFBiMSdm
-         MJZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/eVsx8Ckw2czDewohiQZZU0aA2MlGdWqEeDONbB+6/8BUENMTkHYbSE1pUTTViwYNYQybDbnNjdj9K7Q=@vger.kernel.org, AJvYcCU1jTuKWK3b10IffiyzVsA77pMO2tR6wZjMgvCXZlmau3nG+gxgwRl6mvByx48CzG+GahU7hw2sQbB1O7A=@vger.kernel.org, AJvYcCUkQpUGtyUXuOm/gaq+ZjqDAErjfpJo4pdCalhtrYyae+/KZ0j2xKqQXCGbfZKuuZciugL/48FGOa3XmA==@vger.kernel.org, AJvYcCVnH1GL7Mukvnttlotv2KBdtzPsOV02uEZYi2HXCs3D31PotwB2cTXikujlGEp8eFStmGwB8YNJ+thKk7VaKtmA@vger.kernel.org, AJvYcCVwi7dtDx/c5a14NlB2/l1oL9IM7Q6ZFWV0d99uqhw5xBGbvQr2PqnZEpKSdqvYp+tz6rVcLfl5js8d@vger.kernel.org, AJvYcCWAt/10SJIzVNsiqppld6U5QHKQMhyclXQ5lJymseJGJjUXJyXHRCboY8TrzETrIVjDD0G9Y/UaE0Hkdbcfa7YIj1+Z@vger.kernel.org, AJvYcCWT0NWIKsx8XTETiIS0gg4XxVDD5DhP9gQKUecumR0h1swIg2EocbWEZLWv9vDax9HvpiaxzDEIc5evmE4m@vger.kernel.org, AJvYcCWWqO7Cl3Q+H84MC9pcyf99vTWE6HclsDyVciWK5ytFynEDeUtezk3b3Py2tyVIWVLOxKfVd2BtML55WA==@vger.kernel.org, AJvYcCWnre+fSgPZdDkHf5ZVdmzqhSTsy2OuvCqTxEXFkmnoVaVnJBouOgCRB7tZ12BBKBF+bNTVPm4B@vger.kernel.org, AJvYcCXQ8eARy7c1
- /9Kl5OsaVa0DuuXI1g3Zt2Aq9+V4S3suMz7hunERGGzAnDBRO2Zm6aUIYYj4N0pGCvIkpZ8u@vger.kernel.org, AJvYcCXggVRhhSLCrZaRoSLLT/3l/oNKnmlBOXwHXsHCb+sw/P39QxiTznERtIff0AoBxLc9TyA=@vger.kernel.org, AJvYcCXiZkMpv++9PvWTjgELsWkpQiyZJvT35uUiUucXtcjLXwbeJ/rBCtdMnGba/23xKcKSnBpvgWe33A201Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQir4tx8NFCj3nodErOJTTy/MMbSaCuQjKGU1Yi5kVPiOJeVNA
-	OApr2S5QDWNSKs0hxMvAt00IEQxTRpCZbdS0hzTJwjAiY1UG/ynCy+RPKSQX7TLub1W/7YjMuYD
-	PYV0zBWCOCYlkqq/vTd/wI/+5XUE=
-X-Google-Smtp-Source: AGHT+IHzZV/giO/I7s4NBO6ZU6CfBA9bjDK+AvrOdBFxdHqFSIdNI5DYOQkBjzPeLU83ZjPWGkkffh5DTbBtO3XhBTA=
-X-Received: by 2002:a05:651c:1549:b0:2ef:2a2a:aaa1 with SMTP id
- 38308e7fff4ca-2f3f890e224mr17047021fa.29.1724259869189; Wed, 21 Aug 2024
- 10:04:29 -0700 (PDT)
+	s=arc-20240116; t=1724260055; c=relaxed/simple;
+	bh=X/FMGS6nNVkr3M3pYfKLWM17aTsCYXsmDksgz5f3XuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQeGBQGah5tyxAVnv3AH4OzbeaVSsi8Ie/sAJr8wIK6nBgLqUQKp/hKNbma518X88xY9nAZw9y5U+Rvezm4X5ShNaosclT56GjH75Zo+EQKEQkbkX8Hs98s2YBgFRHOOluXM5Znz7xYdNT4mDIPoRZv1ZvPeTdDmzA2qFLfjjVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLSK+wUk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD1BDC32781;
+	Wed, 21 Aug 2024 17:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724260055;
+	bh=X/FMGS6nNVkr3M3pYfKLWM17aTsCYXsmDksgz5f3XuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NLSK+wUkm5n616pqcCxUSGMp6A66Ggsm8ifOOu+lqqg/MeclUTge25abqieRl1vHu
+	 4AdGLQX5YBjCKBC3jGD2viFU0AugnN1JPxMYw4P1I1HimjYRejYLL1aosAQkDUhfVf
+	 C6c/JQVnoWsjpZISFnnWwpS8P6P7Elrk6KI7w9kYS/1Xn9tnOHekAsq2zNYl7PH8Sr
+	 jA4BNe84b0vNFOvjpSWG1BmgEwyTXW2n8A4kylHKG2nf4NaV3rGusUu0qB6itKNCQV
+	 QxpGIU+uf62zz/TiNuenEnChl3P3aRt9x4Q56P5I04KEmZJ1bGVX65vwbmbLk9NqRo
+	 2UKl4ejchMqHw==
+Date: Wed, 21 Aug 2024 10:07:34 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
+	hch@lst.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	kbusch@kernel.org
+Subject: Re: [PATCH v5 4/7] xfs: Support FS_XFLAG_ATOMICWRITES for forcealign
+Message-ID: <20240821170734.GJ865349@frogsfrogsfrogs>
+References: <20240817094800.776408-1-john.g.garry@oracle.com>
+ <20240817094800.776408-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813211317.3381180-4-almasrymina@google.com>
- <CAMArcTWWxjsg_zwS6waWkLpyHhwdXDm_NJeVGm_dr+eT5QDZiA@mail.gmail.com>
- <20240819155257.1148e869@kernel.org> <CAHS8izPL4YdqFjkTpYavdxQn816=kkUv0xravQJF4Uno7Bn3ZQ@mail.gmail.com>
- <CAMArcTXvccYBPZTEuW-z=uTK7W67utd9-xjPzfxEOvUWhPS7bg@mail.gmail.com> <CAHS8izPZ9Jiu9Gj+Kk3cQ_+t22M4n4-mbPLhx+fti_HiWzL57Q@mail.gmail.com>
-In-Reply-To: <CAHS8izPZ9Jiu9Gj+Kk3cQ_+t22M4n4-mbPLhx+fti_HiWzL57Q@mail.gmail.com>
-From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu, 22 Aug 2024 02:04:17 +0900
-Message-ID: <CAMArcTX=TZ+nQkvDyOkiM5Mmh0V3L7bna7FjiUS7d6KermJwdA@mail.gmail.com>
-Subject: Re: [PATCH net-next v19 03/13] netdev: support binding dma-buf to netdevice
-To: Mina Almasry <almasrymina@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817094800.776408-5-john.g.garry@oracle.com>
 
-On Thu, Aug 22, 2024 at 12:36=E2=80=AFAM Mina Almasry <almasrymina@google.c=
-om> wrote:
->
-> On Wed, Aug 21, 2024 at 5:15=E2=80=AFAM Taehee Yoo <ap420073@gmail.com> w=
-rote:
-> >
-> > On Tue, Aug 20, 2024 at 1:01=E2=80=AFPM Mina Almasry <almasrymina@googl=
-e.com> wrote:
-> > >
-> > > On Mon, Aug 19, 2024 at 6:53=E2=80=AFPM Jakub Kicinski <kuba@kernel.o=
-rg> wrote:
-> > > >
-> > > > On Mon, 19 Aug 2024 00:44:27 +0900 Taehee Yoo wrote:
-> > > > > > @@ -9537,6 +9540,10 @@ static int dev_xdp_attach(struct net_dev=
-ice *dev, struct netlink_ext_ack *extack
-> > > > > >                         NL_SET_ERR_MSG(extack, "Native and gene=
-ric XDP can't be active at the same time");
-> > > > > >                         return -EEXIST;
-> > > > > >                 }
-> > > > > > +               if (dev_get_max_mp_channel(dev) !=3D -1) {
-> > > > > > +                       NL_SET_ERR_MSG(extack, "XDP can't be in=
-stalled on a netdev using memory providers");
-> > > > > > +                       return -EINVAL;
-> > > > > > +               }
-> > > > >
-> > > > > Should we consider virtual interfaces like bonding, bridge, etc?
-> > > > > Virtual interfaces as an upper interface of physical interfaces c=
-an
-> > > > > still install XDP prog.
-> > > > >
-> > > > > # ip link add bond0 type bond
-> > > > > # ip link set eth0 master bond0
-> > > > > # ip link set bond0 xdp pin /sys/fs/bpf/x/y
-> > > > > and
-> > > > > # ip link set bond0 xdpgeneric pin /sys/fs/bpf/x/y
-> > > > >
-> > > > > All virtual interfaces can install generic XDP prog.
-> > > > > The bonding interface can install native XDP prog.
-> > > >
-> > > > Good point. We may need some common helpers to place the checks for=
- XDP.
-> > > > They are spread all over the place now.
-> > >
-> > > Took a bit of a look here. Forgive me, I'm not that familiar with XDP
-> > > and virtual interfaces, so I'm a bit unsure what to do here.
-> > >
-> > > For veth, it seems, the device behind the veth is stored in
-> > > veth_priv->peer, so it seems maybe a dev_get_max_mp_channel() check o=
-n
-> > > veth_priv->peer is the way to go to disable this for veth? I think we
-> > > need to do this check on creation of the veth and on the ndo_bpf of
-> > > veth.
-> > >
-> > > For bonding, it seems we need to add mp channel check in bond_xdp_set=
-,
-> > > and bond_enslave?
-> > >
-> > > There are a few other drivers that define ndo_add_slave, seems a chec=
-k
-> > > in br_add_slave is needed as well.
-> > >
-> > > This seems like a potentially deep rabbit hole with a few checks to
-> > > add all of the place. Is this blocking the series? AFAICT if XDP fail=
-s
-> > > with mp-bound queues with a benign error, that seems fine to me; I
-> > > don't have a use case for memory providers + xdp yet. This should onl=
-y
-> > > be blocking if someone can repro a very serious error (kernel crash)
-> > > or something with this combination.
-> > >
-> > > I can try to add these checks locally and propose as a follow up
-> > > series. Let me know if I'm on the right track with figuring out how t=
-o
-> > > implement this, and, if you feel like it's blocking.
-> > >
-> > > --
-> > > Thanks,
-> > > Mina
-> >
-> > I agree with the current approach, which uses the
-> > dev_get_min_mp_channel_count() in the dev_xdp_attach().
-> > The only problem that I am concerned about is the
-> > dev_get_min_mp_channel_count() can't check lower interfaces.
-> > So, how about just making the current code to be able to check lower
-> > interfaces?
->
-> Thank you for the code snippet! It's very useful! I have been
-> wondering how to walk lower/upper devices!
->
-> To be honest, I think maybe Jakub's suggestion to refactor all the
-> ->ndo_bpf calls needs to happen anyway. The reason is that there are
-> ->ndo_bpf calls in the core net stack, like net/xdp/xsk_buff_pool.c
-> and kernel/bpf/offload.c. AFAICT we need to add checks in these places
-> as well, so refactoring them into one place is nice?
->
-> Note I sent the refactor for review. Sorry, I forgot to CC Taehee:
-> https://patchwork.kernel.org/project/netdevbpf/patch/20240821045629.28566=
-41-1-almasrymina@google.com/
->
+On Sat, Aug 17, 2024 at 09:47:57AM +0000, John Garry wrote:
+> Add initial support for new flag FS_XFLAG_ATOMICWRITES for forcealign
+> enabled.
+> 
+> This flag is a file attribute that mirrors an ondisk inode flag.  Actual
+> support for untorn file writes (for now) depends on both the iflag and the
+> underlying storage devices, which we can only really check at statx and
+> pwritev2() time.  This is the same story as FS_XFLAG_DAX, which signals to
+> the fs that we should try to enable the fsdax IO path on the file (instead
+> of the regular page cache), but applications have to query STAT_ATTR_DAX to
+> find out if they really got that IO path.
+> 
+> Current kernel support for atomic writes is based on HW support (for atomic
+> writes). As such, it is required to ensure extent alignment with
+> atomic_write_unit_max so that an atomic write can result in a single
+> HW-compliant IO operation.
+> 
+> rtvol also guarantees extent alignment, but we are basing support initially
+> on forcealign, which is not supported for rtvol yet.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/libxfs/xfs_format.h     | 11 +++++--
+>  fs/xfs/libxfs/xfs_inode_buf.c  | 52 ++++++++++++++++++++++++++++++++++
+>  fs/xfs/libxfs/xfs_inode_util.c |  4 +++
+>  fs/xfs/libxfs/xfs_sb.c         |  2 ++
+>  fs/xfs/xfs_buf.c               | 15 +++++++++-
+>  fs/xfs/xfs_buf.h               |  4 ++-
+>  fs/xfs/xfs_buf_mem.c           |  2 +-
+>  fs/xfs/xfs_inode.h             |  5 ++++
+>  fs/xfs/xfs_ioctl.c             | 52 ++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_mount.h             |  2 ++
+>  fs/xfs/xfs_super.c             | 12 ++++++++
+>  include/uapi/linux/fs.h        |  1 +
+>  12 files changed, 157 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+> index 04c6cbc943c2..a9f3389438a6 100644
+> --- a/fs/xfs/libxfs/xfs_format.h
+> +++ b/fs/xfs/libxfs/xfs_format.h
+> @@ -353,12 +353,16 @@ xfs_sb_has_compat_feature(
+>  #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
+>  #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
+>  #define XFS_SB_FEAT_RO_COMPAT_FORCEALIGN (1 << 30)	/* aligned file data extents */
+> +#define XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES (1 << 31)	/* atomicwrites enabled */
 
-I agree that it requires refactoring.
-The dev_xdp_propagate() will be useful.
+Do you ever see test failures in xfs/270?
 
-> Additionally I'm wondering if we should disable adding mp-bound
-> devices as slaves completely, regardless of xdp. My concern is that if
-> the lower device is using unreadable memory, then the upper device may
-> see unreadable memory in its code paths, and will not be expecting
-> that, so it may break. From the look at the code, it looks like
-> net/batman-adv calls ndo_add_slave, and a bunch of code that touches
-> skb_frags:
->
-> $ ackc -i ndo_add_slave
-> soft-interface.c
-> 889:    .ndo_add_slave =3D batadv_softif_slave_add,
->
-> $ ackc -i skb_frag
-> fragmentation.c
-> 403:    struct sk_buff *skb_fragment;
-> 407:    skb_fragment =3D dev_alloc_skb(ll_reserved + mtu + tailroom);
-> 408:    if (!skb_fragment)
-> 411:    skb_fragment->priority =3D skb->priority;
-> 414:    skb_reserve(skb_fragment, ll_reserved + header_size);
-> 415:    skb_split(skb, skb_fragment, skb->len - fragment_size);
-> 418:    skb_push(skb_fragment, header_size);
-> 419:    memcpy(skb_fragment->data, frag_head, header_size);
-> 422:    return skb_fragment;
-> 441:    struct sk_buff *skb_fragment;
-> 513:            skb_fragment =3D batadv_frag_create(net_dev, skb, &frag_h=
-eader,
-> 515:            if (!skb_fragment) {
-> 522:                               skb_fragment->len + ETH_HLEN);
-> 523:            ret =3D batadv_send_unicast_skb(skb_fragment, neigh_node)=
-;
->
-> If we disable ndo_add_slave on mp devices, then we don't need to walk
-> lower or upper devices. What do you think? If we don't disable mp
-> lower devices entirely, then yes, we can make
-> dev_get_min_mp_channel_count() do a recursive check.
->
-> Note that we can add support for mp bound devices as slaves in the
-> future if we have a use case for it, and it's well tested to be safe
-> with selftests added.
->
-> If we disable adding mp devices as lower devices, then during the mp
-> binding we should also check if the device has upper devices.
+> +
+>  #define XFS_SB_FEAT_RO_COMPAT_ALL \
+>  		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
+>  		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
+>  		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
+>  		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT | \
+> -		 XFS_SB_FEAT_RO_COMPAT_FORCEALIGN)
+> +		 XFS_SB_FEAT_RO_COMPAT_FORCEALIGN | \
+> +		 XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES)
+> +
+>  #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
+>  static inline bool
+>  xfs_sb_has_ro_compat_feature(
+> @@ -1097,6 +1101,7 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
+>  #define XFS_DIFLAG2_NREXT64_BIT 4	/* large extent counters */
+>  /* data extent mappings for regular files must be aligned to extent size hint */
+>  #define XFS_DIFLAG2_FORCEALIGN_BIT 5
+> +#define XFS_DIFLAG2_ATOMICWRITES_BIT 6
+>  
+>  #define XFS_DIFLAG2_DAX		(1 << XFS_DIFLAG2_DAX_BIT)
+>  #define XFS_DIFLAG2_REFLINK     (1 << XFS_DIFLAG2_REFLINK_BIT)
+> @@ -1104,10 +1109,12 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
+>  #define XFS_DIFLAG2_BIGTIME	(1 << XFS_DIFLAG2_BIGTIME_BIT)
+>  #define XFS_DIFLAG2_NREXT64	(1 << XFS_DIFLAG2_NREXT64_BIT)
+>  #define XFS_DIFLAG2_FORCEALIGN	(1 << XFS_DIFLAG2_FORCEALIGN_BIT)
+> +#define XFS_DIFLAG2_ATOMICWRITES	(1 << XFS_DIFLAG2_ATOMICWRITES_BIT)
+>  
+>  #define XFS_DIFLAG2_ANY \
+>  	(XFS_DIFLAG2_DAX | XFS_DIFLAG2_REFLINK | XFS_DIFLAG2_COWEXTSIZE | \
+> -	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | XFS_DIFLAG2_FORCEALIGN)
+> +	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | XFS_DIFLAG2_FORCEALIGN | \
+> +	 XFS_DIFLAG2_ATOMICWRITES)
+>  
+>  static inline bool xfs_dinode_has_bigtime(const struct xfs_dinode *dip)
+>  {
+> diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
+> index 1c59891fa9e2..59933c7df56d 100644
+> --- a/fs/xfs/libxfs/xfs_inode_buf.c
+> +++ b/fs/xfs/libxfs/xfs_inode_buf.c
+> @@ -178,7 +178,10 @@ xfs_inode_from_disk(
+>  	struct xfs_inode	*ip,
+>  	struct xfs_dinode	*from)
+>  {
+> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+>  	struct inode		*inode = VFS_I(ip);
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +	struct xfs_sb		*sbp = &mp->m_sb;
+>  	int			error;
+>  	xfs_failaddr_t		fa;
+>  
+> @@ -261,6 +264,13 @@ xfs_inode_from_disk(
+>  	}
+>  	if (xfs_is_reflink_inode(ip))
+>  		xfs_ifork_init_cow(ip);
+> +
+> +	if (xfs_inode_has_atomicwrites(ip)) {
+> +		if (sbp->sb_blocksize < target->bt_bdev_awu_min ||
+> +		    sbp->sb_blocksize * ip->i_extsize > target->bt_bdev_awu_max)
 
-I truly agree with this idea!
-Almost all virtual interfaces as an upper interface of mp_bound devices
-especially tunneling interfaces will not work.
-As you already know there are several reasons.
-1. HDS wouldn't work due to tunneling header.
-2. RSS wouldn't work due to tunneling header.
-So, I agree that we disable setting up virtual interfaces as an
-upper interface of mp_bound devices.
-Then as you said, we can allow only confirmed interface types
-in the future.
+Can this multiplication trigger integer overflows?
 
-The IPsec is also not working with mp_bound devices due to the same
-reason. It would be a more complex issue, unfortunately, I don't know
-how to deal with it.
+> +			ip->i_diflags2 &= ~XFS_DIFLAG2_ATOMICWRITES;
+
+Ondisk iflag updates must use transactions.
+
+Or you can fail IOCB_ATOMIC writes if XFS_DIFLAG2_ATOMICWRITES is set
+but the forcealign blocksize doesn't fit with awu_min/max.
+
+> +	}
+> +
+>  	return 0;
+>  
+>  out_destroy_data_fork:
+> @@ -483,6 +493,40 @@ xfs_dinode_verify_nrext64(
+>  	return NULL;
+>  }
+>  
+> +static xfs_failaddr_t
+> +xfs_inode_validate_atomicwrites(
+> +	struct xfs_mount	*mp,
+> +	uint32_t		extsize,
+> +	uint64_t		flags2)
+> +{
+> +	/* superblock rocompat feature flag */
+> +	if (!xfs_has_atomicwrites(mp))
+> +		return __this_address;
+> +
+> +	/*
+> +	 * forcealign is required, so rely on sanity checks in
+> +	 * xfs_inode_validate_forcealign()
+> +	 */
+> +	if (!(flags2 & XFS_DIFLAG2_FORCEALIGN))
+> +		return __this_address;
+> +
+> +	if (!is_power_of_2(extsize))
+> +		return __this_address;
+> +
+> +	/* Required to guarantee data block alignment */
+> +	if (mp->m_sb.sb_agblocks % extsize)
+> +		return __this_address;
+> +
+> +	/* Requires stripe unit+width be a multiple of extsize */
+> +	if (mp->m_dalign && (mp->m_dalign % extsize))
+> +		return __this_address;
+> +
+> +	if (mp->m_swidth && (mp->m_swidth % extsize))
+
+IIRC m_dalign and m_swidth can be set at mount time, which can result in
+inode verifiers logging corruption errors if those parameters change.  I
+think we should validate these two congruencies when setting
+FMODE_CAN_ATOMIC_WRITE.
+
+> +		return __this_address;
+> +
+> +	return NULL;
+> +}
+> +
+>  xfs_failaddr_t
+>  xfs_dinode_verify(
+>  	struct xfs_mount	*mp,
+> @@ -666,6 +710,14 @@ xfs_dinode_verify(
+>  			return fa;
+>  	}
+>  
+> +	if (flags2 & XFS_DIFLAG2_ATOMICWRITES) {
+> +		fa = xfs_inode_validate_atomicwrites(mp,
+> +				be32_to_cpu(dip->di_extsize),
+> +				flags2);
+> +		if (fa)
+> +			return fa;
+> +	}
+> +
+>  	return NULL;
+>  }
+>  
+> diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
+> index b264939d8855..dbd5b16e1844 100644
+> --- a/fs/xfs/libxfs/xfs_inode_util.c
+> +++ b/fs/xfs/libxfs/xfs_inode_util.c
+> @@ -82,6 +82,8 @@ xfs_flags2diflags2(
+>  		di_flags2 |= XFS_DIFLAG2_COWEXTSIZE;
+>  	if (xflags & FS_XFLAG_FORCEALIGN)
+>  		di_flags2 |= XFS_DIFLAG2_FORCEALIGN;
+> +	if (xflags & FS_XFLAG_ATOMICWRITES)
+> +		di_flags2 |= XFS_DIFLAG2_ATOMICWRITES;
+>  
+>  	return di_flags2;
+>  }
+> @@ -130,6 +132,8 @@ xfs_ip2xflags(
+>  			flags |= FS_XFLAG_COWEXTSIZE;
+>  		if (ip->i_diflags2 & XFS_DIFLAG2_FORCEALIGN)
+>  			flags |= FS_XFLAG_FORCEALIGN;
+> +		if (ip->i_diflags2 & XFS_DIFLAG2_ATOMICWRITES)
+> +			flags |= FS_XFLAG_ATOMICWRITES;
+>  	}
+>  
+>  	if (xfs_inode_has_attr_fork(ip))
+> diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
+> index e56911553edd..5de8725bf93a 100644
+> --- a/fs/xfs/libxfs/xfs_sb.c
+> +++ b/fs/xfs/libxfs/xfs_sb.c
+> @@ -166,6 +166,8 @@ xfs_sb_version_to_features(
+>  		features |= XFS_FEAT_INOBTCNT;
+>  	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_FORCEALIGN)
+>  		features |= XFS_FEAT_FORCEALIGN;
+> +	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES)
+> +		features |= XFS_FEAT_ATOMICWRITES;
+>  	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_FTYPE)
+>  		features |= XFS_FEAT_FTYPE;
+>  	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_SPINODES)
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index aa4dbda7b536..44bee3e2b2bb 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -2060,6 +2060,8 @@ int
+>  xfs_init_buftarg(
+>  	struct xfs_buftarg		*btp,
+>  	size_t				logical_sectorsize,
+> +	unsigned int			awu_min,
+> +	unsigned int			awu_max,
+>  	const char			*descr)
+>  {
+>  	/* Set up device logical sector size mask */
+> @@ -2086,6 +2088,9 @@ xfs_init_buftarg(
+>  	btp->bt_shrinker->scan_objects = xfs_buftarg_shrink_scan;
+>  	btp->bt_shrinker->private_data = btp;
+>  	shrinker_register(btp->bt_shrinker);
+> +
+> +	btp->bt_bdev_awu_min = awu_min;
+> +	btp->bt_bdev_awu_max = awu_max;
+>  	return 0;
+>  
+>  out_destroy_io_count:
+> @@ -2102,6 +2107,7 @@ xfs_alloc_buftarg(
+>  {
+>  	struct xfs_buftarg	*btp;
+>  	const struct dax_holder_operations *ops = NULL;
+> +	unsigned int awu_min = 0, awu_max = 0;
+>  
+>  #if defined(CONFIG_FS_DAX) && defined(CONFIG_MEMORY_FAILURE)
+>  	ops = &xfs_dax_holder_operations;
+> @@ -2115,6 +2121,13 @@ xfs_alloc_buftarg(
+>  	btp->bt_daxdev = fs_dax_get_by_bdev(btp->bt_bdev, &btp->bt_dax_part_off,
+>  					    mp, ops);
+>  
+> +	if (bdev_can_atomic_write(btp->bt_bdev)) {
+> +		struct request_queue *q = bdev_get_queue(btp->bt_bdev);
+> +
+> +		awu_min = queue_atomic_write_unit_min_bytes(q);
+> +		awu_max = queue_atomic_write_unit_max_bytes(q);
+> +	}
+> +
+>  	/*
+>  	 * When allocating the buftargs we have not yet read the super block and
+>  	 * thus don't know the file system sector size yet.
+> @@ -2122,7 +2135,7 @@ xfs_alloc_buftarg(
+>  	if (xfs_setsize_buftarg(btp, bdev_logical_block_size(btp->bt_bdev)))
+>  		goto error_free;
+>  	if (xfs_init_buftarg(btp, bdev_logical_block_size(btp->bt_bdev),
+> -			mp->m_super->s_id))
+> +			awu_min, awu_max, mp->m_super->s_id))
+>  		goto error_free;
+>  
+>  	return btp;
+> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
+> index b1580644501f..3bcd8137d739 100644
+> --- a/fs/xfs/xfs_buf.h
+> +++ b/fs/xfs/xfs_buf.h
+> @@ -124,6 +124,8 @@ struct xfs_buftarg {
+>  	struct percpu_counter	bt_io_count;
+>  	struct ratelimit_state	bt_ioerror_rl;
+>  
+> +	unsigned int		bt_bdev_awu_min, bt_bdev_awu_max;
+
+Please add a comment here about what these mean.  Not everyone is going
+to know what "awu" abbreviates.
+
+> +
+>  	/* built-in cache, if we're not using the perag one */
+>  	struct xfs_buf_cache	bt_cache[];
+>  };
+> @@ -393,7 +395,7 @@ bool xfs_verify_magic16(struct xfs_buf *bp, __be16 dmagic);
+>  
+>  /* for xfs_buf_mem.c only: */
+>  int xfs_init_buftarg(struct xfs_buftarg *btp, size_t logical_sectorsize,
+> -		const char *descr);
+> +		unsigned int awu_min, unsigned int awu_max, const char *descr);
+>  void xfs_destroy_buftarg(struct xfs_buftarg *btp);
+>  
+>  #endif	/* __XFS_BUF_H__ */
+> diff --git a/fs/xfs/xfs_buf_mem.c b/fs/xfs/xfs_buf_mem.c
+> index 9bb2d24de709..af48a8da2f0f 100644
+> --- a/fs/xfs/xfs_buf_mem.c
+> +++ b/fs/xfs/xfs_buf_mem.c
+> @@ -93,7 +93,7 @@ xmbuf_alloc(
+>  	btp->bt_meta_sectorsize = XMBUF_BLOCKSIZE;
+>  	btp->bt_meta_sectormask = XMBUF_BLOCKSIZE - 1;
+>  
+> -	error = xfs_init_buftarg(btp, XMBUF_BLOCKSIZE, descr);
+> +	error = xfs_init_buftarg(btp, XMBUF_BLOCKSIZE, 0, 0, descr);
+>  	if (error)
+>  		goto out_bcache;
+>  
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index 336124105c47..cfcb67da12cb 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -321,6 +321,11 @@ static inline bool xfs_inode_has_forcealign(struct xfs_inode *ip)
+>  	return ip->i_diflags2 & XFS_DIFLAG2_FORCEALIGN;
+>  }
+>  
+> +static inline bool xfs_inode_has_atomicwrites(struct xfs_inode *ip)
+> +{
+> +	return ip->i_diflags2 & XFS_DIFLAG2_ATOMICWRITES;
+> +}
+> +
+>  /*
+>   * Decide if this file is a realtime file whose data allocation unit is larger
+>   * than a single filesystem block.
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index a68ec68e5b92..7af2837779e8 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -502,6 +502,49 @@ xfs_ioctl_setattr_forcealign(
+>  	return 0;
+>  }
+>  
+> +
+> +/*
+> + * Forcealign requires a power-of-2 extent size hint.
+> + */
+> +static int
+> +xfs_ioctl_setattr_atomicwrites(
+> +	struct xfs_inode	*ip,
+> +	struct fileattr		*fa)
+> +{
+> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +	uint32_t		extsize = XFS_B_TO_FSB(mp, fa->fsx_extsize);
+> +	struct xfs_sb		*sbp = &mp->m_sb;
+> +
+> +	if (!xfs_has_atomicwrites(mp))
+> +		return -EINVAL;
+> +
+> +	if (!(fa->fsx_xflags & FS_XFLAG_FORCEALIGN))
+> +		return -EINVAL;
+> +
+> +	if (!is_power_of_2(extsize))
+> +		return -EINVAL;
+> +
+> +	/* Required to guarantee data block alignment */
+> +	if (mp->m_sb.sb_agblocks % extsize)
+> +		return -EINVAL;
+> +
+> +	/* Requires stripe unit+width be a multiple of extsize */
+> +	if (mp->m_dalign && (mp->m_dalign % extsize))
+> +		return -EINVAL;
+> +
+> +	if (mp->m_swidth && (mp->m_swidth % extsize))
+> +		return -EINVAL;
+> +
+> +	if (target->bt_bdev_awu_min > sbp->sb_blocksize)
+> +		return -EINVAL;
+> +
+> +	if (target->bt_bdev_awu_max < fa->fsx_extsize)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+>  static int
+>  xfs_ioctl_setattr_xflags(
+>  	struct xfs_trans	*tp,
+> @@ -511,9 +554,12 @@ xfs_ioctl_setattr_xflags(
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	bool			rtflag = (fa->fsx_xflags & FS_XFLAG_REALTIME);
+>  	bool			forcealign = fa->fsx_xflags & FS_XFLAG_FORCEALIGN;
+> +	bool			atomic_writes;
+>  	uint64_t		i_flags2;
+>  	int			error;
+>  
+> +	atomic_writes = fa->fsx_xflags & FS_XFLAG_ATOMICWRITES;
+> +
+>  	/* Can't change RT or forcealign flags if any extents are allocated. */
+>  	if (rtflag != XFS_IS_REALTIME_INODE(ip) ||
+>  	    forcealign != xfs_inode_has_forcealign(ip)) {
+> @@ -554,6 +600,12 @@ xfs_ioctl_setattr_xflags(
+>  			return error;
+>  	}
+>  
+> +	if (atomic_writes) {
+> +		error = xfs_ioctl_setattr_atomicwrites(ip, fa);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+>  	ip->i_diflags = xfs_flags2diflags(ip, fa->fsx_xflags);
+>  	ip->i_diflags2 = i_flags2;
+>  
+> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+> index 30228fea908d..0c5a3ae3cdaf 100644
+> --- a/fs/xfs/xfs_mount.h
+> +++ b/fs/xfs/xfs_mount.h
+> @@ -300,6 +300,7 @@ typedef struct xfs_mount {
+>  #define XFS_FEAT_NREXT64	(1ULL << 26)	/* large extent counters */
+>  #define XFS_FEAT_EXCHANGE_RANGE	(1ULL << 27)	/* exchange range */
+>  #define XFS_FEAT_FORCEALIGN	(1ULL << 28)	/* aligned file data extents */
+> +#define XFS_FEAT_ATOMICWRITES	(1ULL << 29)	/* atomic writes support */
+>  
+>  /* Mount features */
+>  #define XFS_FEAT_NOATTR2	(1ULL << 48)	/* disable attr2 creation */
+> @@ -387,6 +388,7 @@ __XFS_HAS_V4_FEAT(v3inodes, V3INODES)
+>  __XFS_HAS_V4_FEAT(crc, CRC)
+>  __XFS_HAS_V4_FEAT(pquotino, PQUOTINO)
+>  __XFS_HAS_FEAT(forcealign, FORCEALIGN)
+> +__XFS_HAS_FEAT(atomicwrites, ATOMICWRITES)
+>  
+>  /*
+>   * Mount features
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index b52a01b50387..5352b90b2bb6 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1721,6 +1721,18 @@ xfs_fs_fill_super(
+>  		mp->m_features &= ~XFS_FEAT_DISCARD;
+>  	}
+>  
+> +	if (xfs_has_atomicwrites(mp)) {
+> +		if (!xfs_has_forcealign(mp)) {
+> +			xfs_alert(mp,
+> +	"forcealign required for atomicwrites!");
+
+This (atomicwrites && !forcealign) ought to be checked in the superblock
+verifier.
+
+--D
+
+> +			error = -EINVAL;
+> +			goto out_filestream_unmount;
+> +		}
+> +
+> +		xfs_warn(mp,
+> +"EXPERIMENTAL atomicwrites feature in use. Use at your own risk!");
+> +	}
+> +
+>  	if (xfs_has_reflink(mp)) {
+>  		if (mp->m_sb.sb_rblocks) {
+>  			xfs_alert(mp,
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index f55d650f904a..c416f549e94d 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -160,6 +160,7 @@ struct fsxattr {
+>  #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
+>  /* data extent mappings for regular files must be aligned to extent size hint */
+>  #define FS_XFLAG_FORCEALIGN	0x00020000
+> +#define FS_XFLAG_ATOMICWRITES	0x00040000	/* atomic writes enabled */
+>  #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+>  
+>  /* the read-only stuff doesn't really belong here, but any other place is
+> -- 
+> 2.31.1
+> 
+> 
 
