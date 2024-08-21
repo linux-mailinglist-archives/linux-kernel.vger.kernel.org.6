@@ -1,250 +1,158 @@
-Return-Path: <linux-kernel+bounces-295905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC86595A2C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6F095A2C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5EE22822FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:27:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E97281E20
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACD51534E6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2665615099B;
 	Wed, 21 Aug 2024 16:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MES+8Yrr"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6E314F9C5
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A8D14F13A
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724257648; cv=none; b=gC3/fCK1Ct5Lp+PjqGfvbYOXenNXnGyWjHMx8wgdPfDBpoVfNRTV+qWqr7psHTopjkrJVU7e7j9RQNBK0LHcAAnf59yjH4GNPN1umsww2XW/cHwjPZUgiVDCa00nyJFke/LUSeL+NzvOcvnE3T4oQTyFjcx/IWo7n6tML6Gg5GA=
+	t=1724257647; cv=none; b=RYe6FIsjLcEiCTW1xZ4QXRqf9iLnGi4FPIrkfZiIL2kUEfB7M0YJqfX2w3rZ9ZXXPwRHwspD2RRNyUNq4Qfe4wIP0lholaGNBVLO5u6Axfr8PJnfp35YR73muam/92quqaUET+rXv48ZKCB9cNSOsVK4M4GFOdJzEem/7s3kp+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724257648; c=relaxed/simple;
-	bh=CBjKOFlBu9QKNKkKLlOxMEg3XFG07+9FIyd5ELFEvhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DX5ZHpFXWo4wt0LL0p9r82CbpmQMWsIZL2R1NWlNjItIELQdvWGgURFd7CViSkb4Es99DTi096ZU0tDuPzAPz9Be6PdM7cbM01mQYrAZFADkGi9knAdJHLkKKzVnebn8McI/IbE0ZwVc5wDAUKTHJqR5fMqoNEaAof2ArDnMN60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MES+8Yrr; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2611dcc3941so792213fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724257645; x=1724862445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Si3f0cgXJ9GhZQgrHEXWJqwMRCLXgXh7BKkzSMYJXtE=;
-        b=MES+8YrrGkJZb+DkXH8ujElW5vx8j7GpxyQTlIduhmCkPVWxfuYVrBeVPkSS6hrcYF
-         v91LOmktf0bwzFlhstzueb9xm/LH+WnblElXwwv/4TdIFyJ1HUzgc693y84PEjPmKj9Z
-         aHJV/4M5XfbHHDF4iLiUOxDntfafDu/j9Ukyw=
+	s=arc-20240116; t=1724257647; c=relaxed/simple;
+	bh=e33U+rTmnfQStgJSVto0c+JH3L8slpYhP0UMBv7T57k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=usxNz4/WeGeG42EtoTj6fgrOX/5VEbfczFu0LHb6sOITLsixcO2sUeJWKK68Ap3NZCG3Z0pWe0a4gVZ/hI/aGZfeEGS66UhI1IlQ3h1CMcQPgIKiB3nPZ/Nf9qVO2WkmbXD3MgrOEhhZrPmyg+eOyzlED9stGtddw4y6sjODvWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d27488930so53223075ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:27:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724257645; x=1724862445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Si3f0cgXJ9GhZQgrHEXWJqwMRCLXgXh7BKkzSMYJXtE=;
-        b=nwEPOXQijbfothT8xiu2c6YcSqowWdiQXuuv6vrMU0WN03QQQaJm6ht4viONCqe6zr
-         hJ5a6S9MELezSTKcMeWhyiHWoT9pG2MVgXa6+nyb/sDh9P7ovSxNvd8l7pqPhPHm0O/+
-         FTesU6aa94u0OfvRdQ2K1wbHW0+Wk8wjn8K9ZziU7RqQVktrO2wZQnRMQlhCPQr1hL8Z
-         w0/rrPY5WeMzmPDZtgjBfN2DgXHyzkxTq9ZuaX8nVgHkIF/XoU6iLDrxrFGPeXG5OF3l
-         cnJJlhSCE5Z1Lzyq5hRfFZO/CZSPg3k0IvK9suPOjuTmTeAzcrn5G0TNgKJLP65UBYX8
-         kSBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcet80+CRvgXRSn9rt573XjNBMRE1yriNZbjTFhEL3024OBnTZI3+dL3tNNrMbW6K1Hz8lVdEszlMWbAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpGXc8+dRS10XgGe1/0YybQUjXm7MeSLLe2v3Tl7e+DySWczZP
-	LfEJoA+RxSao2a69gFGOslrDJOgIH8ZIJMh8uWOpDBi0SPPOQiS2r3pd6g3PXvmrA6GS6PRx146
-	xjuoJBQtT/MB7c6loFmi+E/0TLaglfnI7iJMT
-X-Google-Smtp-Source: AGHT+IF9LYNubb8DZ72K7h88tUTIb0v91ADOGuhtngf8RP61y4Nf6wvMOrvvCOwowYLDE697/Ka6vKadkTLmkDYLRA0=
-X-Received: by 2002:a05:6870:818f:b0:26f:df8d:fc13 with SMTP id
- 586e51a60fabf-2737eeb7326mr1734080fac.2.1724257645346; Wed, 21 Aug 2024
- 09:27:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724257644; x=1724862444;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2SWRppTTBX+ENTNwMwjikX5Z9iEvhX8AMGK5nhA6V+w=;
+        b=Zs2PUSwfpEkefWQmFaPye1vKmVIJJiONkIOToMhpc9F0HcPGl9mkYop/yzN0L2E6Sl
+         qEsa91G84+47uMkP48+aGAwlgUahox+g1s9/0AyefVkNy0mYoxvtd1SJ0FMcB2NHnDTX
+         kJ5DMGN/l1KO0M2oe2uTwaohs7lDI6McoAcr43ajuDDyY/ea75/oWhC6y1dEG4ciJpkm
+         ypGMovL7aeoOkj7qdwUZ5ajizulU9KIsyzZKIUG6KAjaeYSpFl74ZUZVwhZc9bkiKwqk
+         dJXlnQ+t1UAGNLaIDsELYo6Ar//vVoL6W6q+wJTvIc77IK/GVEh+WG0ThbcYlJ1VSRyE
+         APuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwsvar9G7ixBQm8+voQeJPhIjZGucP8bdyg0JmHRPmesP9kds6lpSgKJ4xBBTkN8kGzL8D9WFPjshjBz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9oQqlBcciJeASt59rF0RvL6s60kUetTZhHcE5/ZIiXyRlR2/w
+	xYandmg4W2TFCGm2PXb2TrySxE0Nzwvakrk2hW9BvBcMyDcCJOutAZIvtR3NWtHtPDWwTIqAkI7
+	2+Z21mAgIsWt2PuJz4JPzaGVZtfBNTcW+Z3V5uyXke5hJPLhPAmeF+hA=
+X-Google-Smtp-Source: AGHT+IF3kXSAYlVlqrzntQiUBF1JUHVaveVjloMQ2anYrNvJ3gTOgHd6kHaQR/HAHADgUj8zH90rYitr+pqoW8CXiqrrgUI1kmYq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com>
- <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com> <CABi2SkWPiGJTv3FEPxD1OJYUAoePab8jG+CSd58UHqEsBeOYbA@mail.gmail.com>
- <CAKbZUD3Siwq4GZdOy-2n_txG2BMQ=m7PypB53sQxeLcBE4xYGA@mail.gmail.com>
-In-Reply-To: <CAKbZUD3Siwq4GZdOy-2n_txG2BMQ=m7PypB53sQxeLcBE4xYGA@mail.gmail.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Wed, 21 Aug 2024 09:27:12 -0700
-Message-ID: <CABi2SkXaBv85JF6gTd1w-f_i700YSj5JoK8z605bzd6gbPjKkw@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] selftests/mm: add more mseal traversal tests
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Kees Cook <kees@kernel.org>
+X-Received: by 2002:a05:6e02:1d16:b0:39d:1ca5:3903 with SMTP id
+ e9e14a558f8ab-39d6c353c38mr2207425ab.1.1724257644102; Wed, 21 Aug 2024
+ 09:27:24 -0700 (PDT)
+Date: Wed, 21 Aug 2024 09:27:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000060d4fa06203404a1@google.com>
+Subject: [syzbot] [kernel?] WARNING in update_curr_dl_se
+From: syzbot <syzbot+cdf91ee2261629ee3c6b@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 9:20=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail.=
-com> wrote:
->
-> On Wed, Aug 21, 2024 at 4:56=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wro=
-te:
-> >
-> > Hi Pedro
-> >
-> > On Fri, Aug 16, 2024 at 5:18=E2=80=AFPM Pedro Falcato <pedro.falcato@gm=
-ail.com> wrote:
-> > >
-> > > Add more mseal traversal tests across VMAs, where we could possibly
-> > > screw up sealing checks. These test more across-vma traversal for
-> > > mprotect, munmap and madvise. Particularly, we test for the case wher=
-e a
-> > > regular VMA is followed by a sealed VMA.
-> > >
-> > > Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
-> > > ---
-> > >  tools/testing/selftests/mm/mseal_test.c | 111 ++++++++++++++++++++++=
-+++++++++-
-> > >  1 file changed, 110 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/=
-selftests/mm/mseal_test.c
-> > > index 259bef4945e9..0d4d40fb0f88 100644
-> > > --- a/tools/testing/selftests/mm/mseal_test.c
-> > > +++ b/tools/testing/selftests/mm/mseal_test.c
-> > > @@ -766,6 +766,42 @@ static void test_seal_mprotect_partial_mprotect(=
-bool seal)
-> > >         REPORT_TEST_PASS();
-> > >  }
-> > >
-> > > +static void test_seal_mprotect_partial_mprotect_tail(bool seal)
-> > > +{
-> > > +       void *ptr;
-> > > +       unsigned long page_size =3D getpagesize();
-> > > +       unsigned long size =3D 2 * page_size;
-> > > +       int ret;
-> > > +       int prot;
-> > > +
-> > > +       /*
-> > > +        * Check if a partial mseal (that results in two vmas) works =
-correctly.
-> > > +        * It might mprotect the first, but it'll never touch the sec=
-ond (msealed) vma.
-> > > +        */
-> > > +
-> > > +       setup_single_address(size, &ptr);
-> > > +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
-> > > +
-> > > +       if (seal) {
-> > > +               ret =3D sys_mseal(ptr + page_size, size);
-> > you are allocating 2 pages , and I assume you are sealing the second
-> > page, so the size should be page_size.
-> > ret =3D sys_mseal(ptr + page_size, page_size);
->
-> Yes, good catch, it appears to be harmless but ofc down to straight luck.
-> I'll send a fixup for this and the other mistake down there.
->
-> >
-> > > +               FAIL_TEST_IF_FALSE(!ret);
-> > > +       }
-> > > +
-> > > +       ret =3D sys_mprotect(ptr, size, PROT_EXEC);
-> > > +       if (seal)
-> > > +               FAIL_TEST_IF_FALSE(ret < 0);
-> > > +       else
-> > > +               FAIL_TEST_IF_FALSE(!ret);
-> > > +
-> > > +       if (seal) {
-> > > +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &pro=
-t) > 0);
-> > > +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
-> > To test partial mprotect, the test needs to add the check for the
-> > first page to be changed, Also to avoid the merge,  a PROT_NONE page
-> > can to be added in front.
->
-> No, I'm leaving partial mprotect to be undefined. It doesn't make
-> sense to constraint ourselves, since POSIX wording is already loose.
->
-> >
-> > > +       }
-> > > +
-> > > +       REPORT_TEST_PASS();
-> > > +}
-> > > +
-> > > +
-> > >  static void test_seal_mprotect_two_vma_with_gap(bool seal)
-> > >  {
-> > >         void *ptr;
-> > > @@ -983,6 +1019,41 @@ static void test_seal_munmap_vma_with_gap(bool =
-seal)
-> > >         REPORT_TEST_PASS();
-> > >  }
-> > >
-> > > +static void test_seal_munmap_partial_across_vmas(bool seal)
-> > > +{
-> > > +       void *ptr;
-> > > +       unsigned long page_size =3D getpagesize();
-> > > +       unsigned long size =3D 2 * page_size;
-> > > +       int ret;
-> > > +       int prot;
-> > > +
-> > > +       /*
-> > > +        * Check if a partial mseal (that results in two vmas) works =
-correctly.
-> > > +        * It might unmap the first, but it'll never unmap the second=
- (msealed) vma.
-> > > +        */
-> > > +
-> > > +       setup_single_address(size, &ptr);
-> > > +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
-> > > +
-> > > +       if (seal) {
-> > > +               ret =3D sys_mseal(ptr + page_size, size);
-> > ret =3D sys_mseal(ptr + page_size, page_size);
-> >
-> > > +               FAIL_TEST_IF_FALSE(!ret);
-> > > +       }
-> > > +
-> > > +       ret =3D sys_munmap(ptr, size);
-> > > +       if (seal)
-> > > +               FAIL_TEST_IF_FALSE(ret < 0);
-> > > +       else
-> > > +               FAIL_TEST_IF_FALSE(!ret);
-> > > +
-> > > +       if (seal) {
-> > > +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &pro=
-t) > 0);
-> > > +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
-> > To test partial unmap, the test needs to add the check for the first
-> > page to be freed, Also to avoid the merge,  a PROT_NONE page needs to
-> > be in front.
->
-> I'm not testing partial unmap. Partial unmap does not happen. I have
-> told you this before.
->
-ok.  Then this test should be as below ? (need to add PROT_NONE page
-before and after)
-  size =3D get_vma_size(ptr, &prot);
-  FAIL_TEST_IF_FALSE(size =3D=3D 2 * page_size);
-  FAIL_TEST_IF_FALSE(prot=3D=3D0x4)
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    367b5c3d53e5 Add linux-next specific files for 20240816
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e213c5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+dashboard link: https://syzkaller.appspot.com/bug?extid=cdf91ee2261629ee3c6b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0b1b4e3cad3c/disk-367b5c3d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5bb090f7813c/vmlinux-367b5c3d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6674cb0709b1/bzImage-367b5c3d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cdf91ee2261629ee3c6b@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5401 at kernel/sched/sched.h:1476 lockdep_assert_rq_held kernel/sched/sched.h:1476 [inline]
+WARNING: CPU: 1 PID: 5401 at kernel/sched/sched.h:1476 rq_clock kernel/sched/sched.h:1624 [inline]
+WARNING: CPU: 1 PID: 5401 at kernel/sched/sched.h:1476 replenish_dl_new_period kernel/sched/deadline.c:777 [inline]
+WARNING: CPU: 1 PID: 5401 at kernel/sched/sched.h:1476 update_curr_dl_se+0x66f/0x920 kernel/sched/deadline.c:1511
+Modules linked in:
+CPU: 1 UID: 0 PID: 5401 Comm: kworker/u8:10 Not tainted 6.11.0-rc3-next-20240816-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:lockdep_assert_rq_held kernel/sched/sched.h:1476 [inline]
+RIP: 0010:rq_clock kernel/sched/sched.h:1624 [inline]
+RIP: 0010:replenish_dl_new_period kernel/sched/deadline.c:777 [inline]
+RIP: 0010:update_curr_dl_se+0x66f/0x920 kernel/sched/deadline.c:1511
+Code: b5 50 fe ff ff 4c 89 ff ba 20 00 00 00 e8 e9 4f 00 00 e9 58 fe ff ff 4c 89 ef be 20 00 00 00 e8 b7 13 00 00 e9 46 fe ff ff 90 <0f> 0b 90 e9 be fb ff ff 89 f1 80 e1 07 38 c1 0f 8c b5 f9 ff ff 48
+RSP: 0018:ffffc900047bf6c8 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffff8880b903ea40 RCX: 0000000000000003
+RDX: dffffc0000000000 RSI: ffffffff8c0adfc0 RDI: ffffffff8c60a8c0
+RBP: 0000000000000031 R08: ffff8880b902c883 R09: 1ffff11017205910
+R10: dffffc0000000000 R11: ffffed1017205911 R12: ffff8880b903f468
+R13: ffff8880b903f428 R14: 1ffff11017207e8f R15: ffff8880b903f858
+FS:  0000000000000000(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000203f6030 CR3: 000000001f046000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ update_curr+0x575/0xb20 kernel/sched/fair.c:1176
+ put_prev_entity+0x3d/0x210 kernel/sched/fair.c:5505
+ put_prev_task_fair+0x4d/0x80 kernel/sched/fair.c:8686
+ put_prev_task kernel/sched/sched.h:2423 [inline]
+ put_prev_task_balance+0x11d/0x190 kernel/sched/core.c:5886
+ __pick_next_task+0xc6/0x2f0 kernel/sched/core.c:5946
+ pick_next_task kernel/sched/core.c:6012 [inline]
+ __schedule+0x725/0x4ad0 kernel/sched/core.c:6594
+ preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6818
+ preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6842
+ preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+ _raw_spin_unlock_irqrestore+0x130/0x140 kernel/locking/spinlock.c:194
+ task_rq_unlock kernel/sched/sched.h:1759 [inline]
+ __sched_setscheduler+0xf35/0x1ba0 kernel/sched/syscalls.c:858
+ _sched_setscheduler kernel/sched/syscalls.c:880 [inline]
+ sched_setscheduler_nocheck+0x190/0x2e0 kernel/sched/syscalls.c:927
+ kthread+0x1aa/0x390 kernel/kthread.c:370
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
-> >
-> > The test_seal_munmap_partial_across_vmas  shows the behavior
-> > difference with in-loop approach and out-loop approach. Previously,
-> > both VMAs will not be freed, now the first VMA will be freed, and the
-> > second VMA (sealed) won't.
-> >
-> > This brings to the line you previously mentioned: [1] and I quote:
-> > "munmap is atomic and always has been. It's required by POSIX."
->
-> This is still true, the comment was a copy-and-paste mindslip. Please
-> read the email thread. It has been fixed up by Andrew.
->
-Which thread/patch by Andrew ? Could you please send it to me ? (I
-might missed that)
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> --
-> Pedro
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
