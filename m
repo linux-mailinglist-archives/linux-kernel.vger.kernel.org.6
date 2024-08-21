@@ -1,130 +1,152 @@
-Return-Path: <linux-kernel+bounces-294930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88000959463
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE84959464
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304631F22585
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7658D1F24328
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FCB16BE36;
-	Wed, 21 Aug 2024 06:08:27 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD7E16D4FC;
+	Wed, 21 Aug 2024 06:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KuSCY8zD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7FF16BE02;
-	Wed, 21 Aug 2024 06:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4235216D31C;
+	Wed, 21 Aug 2024 06:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724220507; cv=none; b=a2Mf2Ze1Sy7QzW4gJN5RK90C+vJbIL8yBFMVbOqruSYovONoLSo+T9SlZcHbwoZtvFIC04vZ1l6MMcLHELHlcpYsbB7kgnGufN+Jhd3z4vN0gOGfdPyP7JFOMAZeZjohzy6Sw+Fb+sW8fNXiDhgYVW9EETMuQvxn7iR8fIFUxuw=
+	t=1724220821; cv=none; b=fFlGDsj40DWigXzifZgeP//dPnfAevLv1gtxeKHdKlj5zc9R6yXwNC9hhPt7hBdE2xpNuTOIrZIGwWDJiwuOK8fa9JkxY23wj7B/haDI/1ZGzeeHM6X4pL6QBNW69QcRCOILhi2ETj6ixmnMU9ZiiMa4eIx0T+OYYNqgPSTQ040=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724220507; c=relaxed/simple;
-	bh=/vzNSx2ypxi3xgAYKn8rIq9lq8XfB2VFLuEfQJjzb9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eZEgeVW3fcQ7vG89osM5s2eWf9r35QHo99x3A6vpn2eGUHrscrlIAI8Y0Z6B0Zg/m0Hp1NZq4FjlUfHu2eDAdI5cLfpkkNvm5wdh9ZzepcH/qaJW0ZdmjgL17HYrWr9HpNWqdhlDMoofljPsPHr+tYiof8MpUtdS7D7HzXoaY/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAD3oEBBhMVm8_qfCA--.36323S2;
-	Wed, 21 Aug 2024 14:08:09 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: giometti@enneenne.com,
-	make24@iscas.ac.cn,
-	sudipm.mukherjee@gmail.com,
-	christophe.jaillet@wanadoo.fr,
-	akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org,
-	linux@treblig.org
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3 RESEND] pps: add an error check in parport_attach
-Date: Wed, 21 Aug 2024 14:07:59 +0800
-Message-Id: <20240821060759.1405272-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724220821; c=relaxed/simple;
+	bh=AyoaCIrZcZi52TPUfGTOUI23PSvvOHEbTjEngSKmPbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SVpNRORyEa1IKmVed2apv7eK5YlBb6Nqmc8NGhsHxPpV17FQoiXO7TBnpdAeJVwW5vJ393RC3HHTu0ZrNidB0MjVexoKRz4pcm9WguK1gerUfTNBREfs4f1iW/jIqudKBWeC11SZNaQTDO/jdxSxYuT1h1z2P2ZpWG1f21tITjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KuSCY8zD; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724220819; x=1755756819;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AyoaCIrZcZi52TPUfGTOUI23PSvvOHEbTjEngSKmPbE=;
+  b=KuSCY8zDnxXs+Q4eLpHqdRMqI9UicaElWMr05qcEA/LnVkC8x8BfTEhr
+   BcYK46CrM4q35ZWdFCnK+CWYFFv64LgRGJS/jOkr+OLPUszHHQtaOc6xF
+   p0nS4TlcWZPp1rTzolumE+grAhjYGBzy0ZkjevYjpy3aoArTakHEoB6Du
+   MLBqljtnPctzaMDGPJbu32rAhxYi5LuLRtCZLP1i033idok5DyFrwN29k
+   WkVQPIjDpFksquzg6aoIGwGh1r6VZV0WjZczfTPD83AM5ik0ucsd0hCue
+   FR4RKLk+EQVKtXoKzGOYWgffbUoxN+ai5+IVLHbjlHq2yiE1IsnLNQE64
+   g==;
+X-CSE-ConnectionGUID: mwBlvkjRTgqMc7+s3YMAZA==
+X-CSE-MsgGUID: LEOjAmC6TyuHbomI2o4Ihw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="40018112"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="40018112"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 23:13:38 -0700
+X-CSE-ConnectionGUID: FQLKngBlSguLqrZGpQG31g==
+X-CSE-MsgGUID: bTJ6Aco9Syy5IU9vHQkVbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="65826075"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.248])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 23:13:34 -0700
+Date: Wed, 21 Aug 2024 09:13:29 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Yuan Yao <yuan.yao@linux.intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
+	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
+	linux-kernel@vger.kernel.org,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Sean Christopherson <sean.j.christopherson@intel.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
+Message-ID: <ZsWFiSAwKP8BfOUK@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-14-rick.p.edgecombe@intel.com>
+ <20240814030849.7yqx3db4oojsoh5k@yy-desk-7060>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAD3oEBBhMVm8_qfCA--.36323S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fZw4xArykCr47Kr4rXwb_yoW8Aryxpa
-	ykuFyjgrWrXa9Fka1xZ3W5WF1rGa1xtay8uFWUK34aka43KryFyFy2k340kF18Jr4DAa4r
-	CFnxKay0yF1UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814030849.7yqx3db4oojsoh5k@yy-desk-7060>
 
-In parport_attach, the return value of ida_alloc is unchecked, witch leads
-to the use of an invalid index value.
+On Wed, Aug 14, 2024 at 11:08:49AM +0800, Yuan Yao wrote:
+> On Mon, Aug 12, 2024 at 03:48:08PM -0700, Rick Edgecombe wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> > +static int __tdx_td_init(struct kvm *kvm)
+> > +{
+...
+> > +	/*
+> > +	 * TDH.MNG.CREATE tries to grab the global TDX module and fails
+> > +	 * with TDX_OPERAND_BUSY when it fails to grab.  Take the global
+> > +	 * lock to prevent it from failure.
+> > +	 */
+> > +	mutex_lock(&tdx_lock);
+> > +	kvm_tdx->tdr_pa = tdr_pa;
+> > +	err = tdh_mng_create(kvm_tdx, kvm_tdx->hkid);
+> > +	mutex_unlock(&tdx_lock);
+> > +
+> > +	if (err == TDX_RND_NO_ENTROPY) {
+> > +		kvm_tdx->tdr_pa = 0;
+> 
+> code path after 'free_packages' set it to 0, so this can be removed.
+> 
+> > +		ret = -EAGAIN;
+> > +		goto free_packages;
+> > +	}
+> > +
+> > +	if (WARN_ON_ONCE(err)) {
+> > +		kvm_tdx->tdr_pa = 0;
+> 
+> Ditto.
 
-To address this issue, index should be checked. When the index value is
-abnormal, the device should be freed.
+Yes those seem unnecessary.
 
-Found by code review, compile tested only.
+> > +	kvm_tdx->tdcs_pa = tdcs_pa;
+> > +	for (i = 0; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
+> > +		err = tdh_mng_addcx(kvm_tdx, tdcs_pa[i]);
+> > +		if (err == TDX_RND_NO_ENTROPY) {
+> > +			/* Here it's hard to allow userspace to retry. */
+> > +			ret = -EBUSY;
+> > +			goto teardown;
+> > +		}
+> > +		if (WARN_ON_ONCE(err)) {
+> > +			pr_tdx_error(TDH_MNG_ADDCX, err);
+> > +			ret = -EIO;
+> > +			goto teardown;
+> 
+> This and above 'goto teardown' under same for() free the
+> partially added TDCX pages w/o take ownership back, may
+> 'goto teardown_reclaim' (or any better name) below can
+> handle this, see next comment for this patch.
+...
+> > +teardown:
+> > +	for (; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
+> > +		if (tdcs_pa[i]) {
+> > +			free_page((unsigned long)__va(tdcs_pa[i]));
+> > +			tdcs_pa[i] = 0;
+> > +		}
+> > +	}
+> > +	if (!kvm_tdx->tdcs_pa)
+> > +		kfree(tdcs_pa);
+> 
+> Add 'teardown_reclaim:' Here, pair with my last comment.
 
-Cc: stable@vger.kernel.org
-Fixes: fb56d97df70e ("pps: client: use new parport device model")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v3:
-- modified Fixes tag as suggestions.
-Changes in v2:
-- removed error output as suggestions.
----
- drivers/pps/clients/pps_parport.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Makes sense, I'll do patch.
 
-diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
-index 63d03a0df5cc..abaffb4e1c1c 100644
---- a/drivers/pps/clients/pps_parport.c
-+++ b/drivers/pps/clients/pps_parport.c
-@@ -149,6 +149,9 @@ static void parport_attach(struct parport *port)
- 	}
- 
- 	index = ida_alloc(&pps_client_index, GFP_KERNEL);
-+	if (index < 0)
-+		goto err_free_device;
-+
- 	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
- 	pps_client_cb.private = device;
- 	pps_client_cb.irq_func = parport_irq;
-@@ -159,7 +162,7 @@ static void parport_attach(struct parport *port)
- 						    index);
- 	if (!device->pardev) {
- 		pr_err("couldn't register with %s\n", port->name);
--		goto err_free;
-+		goto err_free_ida;
- 	}
- 
- 	if (parport_claim_or_block(device->pardev) < 0) {
-@@ -187,8 +190,9 @@ static void parport_attach(struct parport *port)
- 	parport_release(device->pardev);
- err_unregister_dev:
- 	parport_unregister_device(device->pardev);
--err_free:
-+err_free_ida:
- 	ida_free(&pps_client_index, index);
-+err_free_device:
- 	kfree(device);
- }
- 
--- 
-2.25.1
+Regards,
 
+Tony
 
