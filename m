@@ -1,278 +1,129 @@
-Return-Path: <linux-kernel+bounces-295930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580D495A31E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:46:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA72795A326
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF21B1F23274
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:46:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C631F24A1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A7D1AF4E0;
-	Wed, 21 Aug 2024 16:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3A21AF4DF;
+	Wed, 21 Aug 2024 16:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OI5nBATW"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niDm80TQ"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7331613635E;
-	Wed, 21 Aug 2024 16:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57831494AD;
+	Wed, 21 Aug 2024 16:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258803; cv=none; b=Zh4JfbICRib7lMupYwzOQLcg/VYUEg+N8U2Ba1kBfv1eT7VyxDvIiW17NHxTVwJeC0NQpS4hTLNyxn+ZYGXgngMI/cI/agX+Uv5LKaNMIohBNgK6miyzSUo9fi0/QaaWocMs/tJDAfmr93QPPP7DrSc5t//vj7WI2Qj16vjiatY=
+	t=1724258897; cv=none; b=DeL+6Y/WnoqvOt1udHpDIREL4LgVPXOGACYNSOVb+vrtRx81gqjwSoV2RFMrhzWtbH8dNjyCAX9CVqZVRuDmwopv6vKKHD3+1t1GVEup1wWDE2LMq9Nr9LtxzEvdgWYtUDdK7lI8WVhkEAzdeJq3qZKwU5M+jgoWNJj+UraXpvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258803; c=relaxed/simple;
-	bh=iMZObZERm4fJJ8crxvfeNEVv8zkTt+E2Sabqsr00by8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m7mjvJpFavxkqdInBedkbBWANT1C0FmPsDOUdmo3B6N0jYxf4yoRNKpb53yzuDGzgIrzkaTEV3J3y8BA9wcgy2hnEP316ABSyjGG067UwPxVuteRofm5E+y9lQHvozokEipXPyxroziP3GUHLEcJsBHypyox+1d5+Z/OCrf3Ml8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OI5nBATW; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id goTksgXNgS3tRgoTlsOuWT; Wed, 21 Aug 2024 18:46:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724258797;
-	bh=VF5cX0senQLhld6HFUuwDuqB5R9U72LTGbLDKI77h1g=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=OI5nBATW1v1jnqi+ktVbRB12xo0MTD2GhllHXDWyLFIKAqeSArMoZ4OgeosnA2Mm3
-	 H/a0JTA+6xxLhgYN6RACPNCx9l9U18mw7wKg9d4vS01nFEN94sELtvO1iz7k4XIB7M
-	 pcuFoJqi2oFaEQmMlWnN6gPeyoTsGWUAHQH4sdaiHEnhTdsPZbOLRsZCUNllXWp+Gg
-	 L8UGYWKQN6Wdq3MNgxpssNlO6oat9132SIQQtySxRYkLsBMxfT2nH5aM5BdWqpVBIS
-	 qijCOf907gOmUxvad33VtvM4L0cYeH+H17KSP/nbLyswqaw9yhang9zcfolJWjyC9d
-	 GaWieot2Aj8QQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 21 Aug 2024 18:46:37 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dmaengine@vger.kernel.org
-Subject: [PATCH] dma: ipu: Remove include/linux/dma/ipu-dma.h
-Date: Wed, 21 Aug 2024 18:46:33 +0200
-Message-ID: <532e7e2816ccf226f3ab1fa76ec7873bc09299d0.1724258714.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724258897; c=relaxed/simple;
+	bh=hu3U2lqHW8XjE3f88Fa6kpBBfcjZdPKg5+0VG4VCd9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BCAPLwFWkQ6fIpwUKL2RzAeqbQZhkmUx1ofZb0e8xHUr+JTBnWzTMK2XnhZbgueNUiklJeHwDpQ6x9mbBL9TpRNQPAwpNa5KY+zlvF1J3PcsNRjecdrn8jUUyhadlatvcwGL8Cq/qwNo0rRa/UBmEGP6GsZftcDDt9Nw/Do4IYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niDm80TQ; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d3d662631aso4809798a91.1;
+        Wed, 21 Aug 2024 09:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724258895; x=1724863695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gccrhG20IPbWQhUWAz+PibihnKQhtgYlc3WP4wSpGCU=;
+        b=niDm80TQj3Bcwb0Bp48u/KJEdOx2dyHJzVeUV4kamrlSGxSevnAMx0gVrVRqFvXTYs
+         f5wj/rLeP3880Y1hFsR9kpUdfqrFBb5HBg3SjdKUut9DGQ5sO4THj+ti578JsoXm+cRE
+         YmG/Ojitpgt+5tz+s64SXCiBY9JX/rpCNfEW31G/SAnblBuGzHOxXndYee4YM8SxHpKm
+         yJGUDU1n3cgiQZV4Rr/EK/l5ZeKrzdBLjdmBmNzQ0/OnXEZKCIq/485rvDaELfTUsT1t
+         6fUebcqaq0WAwLtDrCSoVg9ky4PANxFOvCkER+iewqd9ItSty/2P2L8GOImV/AtvOhym
+         glHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724258895; x=1724863695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gccrhG20IPbWQhUWAz+PibihnKQhtgYlc3WP4wSpGCU=;
+        b=jpX4eO7TFR5e6RoYSqRLlEpz643PxzSNx6iFFNK1shhSf+/YpZ5+DSJQqfHuZexFra
+         bfT1KaBbYWwUvn3Ebl3m1YPFpdudkXhie6geqHfC4I0CR+JiY5waXIXZEhoVFrIoRzHe
+         O/MJKxD0MRvEuPAUgf2uy+00EW8FSt5sHPPqjFHApn9XDbcOskUrEaMvMkkRbq0jzCjW
+         JJWIZirudTZoGbZmHwtTF9UyebHURdBVLQ0inUxJVc2rek9sPBG5LY8Xr2KHKc4F2MHx
+         Mn23u9osIS3cGj4mcoI8WeLbIPEPTV5QljejIl/2UGA6MwipqoZe3Bn4LvqNRZ7SIhGO
+         EBJA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8vhzGnZkyV4+LGoMWTkc3W66bj5bI43p/SmkhnAAefJOA4l60/7lYmtutCVFJRXaxgK40IVPmQHwHwUIJ@vger.kernel.org, AJvYcCWcC5CfeJv9VkjMrdBjMFMtpCEhOofkbTeW8sRcyj+fK9Y//cBi4BuD67Z9PpO0MGk9k2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCLQ5jxcUlRCEuRniQxnpJTYvcadQLmJ+H7SO+lGo61Z9mxeI9
+	wPwaGJup1i6uVTlOeKtVQPeKOYiWQXQQBh2WpZZpo1ZpijAUF9senUo+fYv9G5YXa+BfjD42OSI
+	CpeH82p8LZTHzCeqffOPLk+UDPKo=
+X-Google-Smtp-Source: AGHT+IF6UzOE8u9e/cjaL1j7QVP1dy0v/BLuScWV8YkCpWVl1ix2tr+F5X99AfcWd0F+2chEq1eXkpwju2+D4olFcSg=
+X-Received: by 2002:a17:90a:9ae:b0:2d3:c0ea:72b3 with SMTP id
+ 98e67ed59e1d1-2d5eaa9d24bmr3469171a91.34.1724258894943; Wed, 21 Aug 2024
+ 09:48:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240821064632.38716-3-soma.nakata01@gmail.com>
+In-Reply-To: <20240821064632.38716-3-soma.nakata01@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 21 Aug 2024 09:48:02 -0700
+Message-ID: <CAEf4BzaDWU4EEOU+s2tGhNHfqjSZjdyZCU-b=Ws7Lz7NOo7p1A@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Initialize st_ops->tname with strdup()
+To: Soma Nakata <soma.nakata01@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When this file was renamed in commit b8a6d9980f75 ("dma: ipu: rename
-mach/ipu.h to include/linux/dma/ipu-dma.h"), 4 .c files have been modified
-accordingly:
+On Tue, Aug 20, 2024 at 11:48=E2=80=AFPM Soma Nakata <soma.nakata01@gmail.c=
+om> wrote:
+>
+> `tname` is returned by `btf__name_by_offset()` as well as `var_name`,
+> and these addresses point to strings in the btf. Since their locations
+> may change while loading the bpf program, using `strdup()` ensures
+> `tname` is safely stored.
+>
+> Signed-off-by: Soma Nakata <soma.nakata01@gmail.com>
+> ---
+>  tools/lib/bpf/libbpf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index a3be6f8fac09..ece1f1af2cd4 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -1423,7 +1423,7 @@ static int init_struct_ops_maps(struct bpf_object *=
+obj, const char *sec_name,
+>                 memcpy(st_ops->data,
+>                        data->d_buf + vsi->offset,
+>                        type->size);
+> -               st_ops->tname =3D tname;
+> +               st_ops->tname =3D strdup(tname);
+>                 st_ops->type =3D type;
+>                 st_ops->type_id =3D type_id;
+>
 
-  drivers/dma/ipu/ipu_idmac.c
-  drivers/dma/ipu/ipu_irq.c
-  --> removed in commit f1de55ff7c70 ("dmaengine: ipu: Remove the driver")
-      in 2023-08
+Thanks for the fix, but this has been fixed already ([0]). Please make
+sure that you always reproduce the issue on bpf-next/master and send a
+fix against that branch.
 
-  drivers/media/platform/soc_camera/mx3_camera.c
-  --> removed in commit c93cc61475eb ("[media] staging/media: remove
-      deprecated mx3 driver") in 2016-06
+  [0] https://lore.kernel.org/bpf/20240724171459.281234-1-void@manifault.co=
+m/
 
-  drivers/video/mx3fb.c
-  --> removed in commit bfac19e239a7 ("fbdev: mx3fb: Remove the driver")
-      in 2023-08
+pw-bot: cr
 
-Now include/linux/dma/ipu-dma.h is unused and can be removed as-well.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-$ git grep ipu-dma
-returns nothing
----
- include/linux/dma/ipu-dma.h | 174 ------------------------------------
- 1 file changed, 174 deletions(-)
- delete mode 100644 include/linux/dma/ipu-dma.h
-
-diff --git a/include/linux/dma/ipu-dma.h b/include/linux/dma/ipu-dma.h
-deleted file mode 100644
-index 6969391580d2..000000000000
---- a/include/linux/dma/ipu-dma.h
-+++ /dev/null
-@@ -1,174 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (C) 2008
-- * Guennadi Liakhovetski, DENX Software Engineering, <lg@denx.de>
-- *
-- * Copyright (C) 2005-2007 Freescale Semiconductor, Inc.
-- */
--
--#ifndef __LINUX_DMA_IPU_DMA_H
--#define __LINUX_DMA_IPU_DMA_H
--
--#include <linux/types.h>
--#include <linux/dmaengine.h>
--
--/* IPU DMA Controller channel definitions. */
--enum ipu_channel {
--	IDMAC_IC_0 = 0,		/* IC (encoding task) to memory */
--	IDMAC_IC_1 = 1,		/* IC (viewfinder task) to memory */
--	IDMAC_ADC_0 = 1,
--	IDMAC_IC_2 = 2,
--	IDMAC_ADC_1 = 2,
--	IDMAC_IC_3 = 3,
--	IDMAC_IC_4 = 4,
--	IDMAC_IC_5 = 5,
--	IDMAC_IC_6 = 6,
--	IDMAC_IC_7 = 7,		/* IC (sensor data) to memory */
--	IDMAC_IC_8 = 8,
--	IDMAC_IC_9 = 9,
--	IDMAC_IC_10 = 10,
--	IDMAC_IC_11 = 11,
--	IDMAC_IC_12 = 12,
--	IDMAC_IC_13 = 13,
--	IDMAC_SDC_0 = 14,	/* Background synchronous display data */
--	IDMAC_SDC_1 = 15,	/* Foreground data (overlay) */
--	IDMAC_SDC_2 = 16,
--	IDMAC_SDC_3 = 17,
--	IDMAC_ADC_2 = 18,
--	IDMAC_ADC_3 = 19,
--	IDMAC_ADC_4 = 20,
--	IDMAC_ADC_5 = 21,
--	IDMAC_ADC_6 = 22,
--	IDMAC_ADC_7 = 23,
--	IDMAC_PF_0 = 24,
--	IDMAC_PF_1 = 25,
--	IDMAC_PF_2 = 26,
--	IDMAC_PF_3 = 27,
--	IDMAC_PF_4 = 28,
--	IDMAC_PF_5 = 29,
--	IDMAC_PF_6 = 30,
--	IDMAC_PF_7 = 31,
--};
--
--/* Order significant! */
--enum ipu_channel_status {
--	IPU_CHANNEL_FREE,
--	IPU_CHANNEL_INITIALIZED,
--	IPU_CHANNEL_READY,
--	IPU_CHANNEL_ENABLED,
--};
--
--#define IPU_CHANNELS_NUM 32
--
--enum pixel_fmt {
--	/* 1 byte */
--	IPU_PIX_FMT_GENERIC,
--	IPU_PIX_FMT_RGB332,
--	IPU_PIX_FMT_YUV420P,
--	IPU_PIX_FMT_YUV422P,
--	IPU_PIX_FMT_YUV420P2,
--	IPU_PIX_FMT_YVU422P,
--	/* 2 bytes */
--	IPU_PIX_FMT_RGB565,
--	IPU_PIX_FMT_RGB666,
--	IPU_PIX_FMT_BGR666,
--	IPU_PIX_FMT_YUYV,
--	IPU_PIX_FMT_UYVY,
--	/* 3 bytes */
--	IPU_PIX_FMT_RGB24,
--	IPU_PIX_FMT_BGR24,
--	/* 4 bytes */
--	IPU_PIX_FMT_GENERIC_32,
--	IPU_PIX_FMT_RGB32,
--	IPU_PIX_FMT_BGR32,
--	IPU_PIX_FMT_ABGR32,
--	IPU_PIX_FMT_BGRA32,
--	IPU_PIX_FMT_RGBA32,
--};
--
--enum ipu_color_space {
--	IPU_COLORSPACE_RGB,
--	IPU_COLORSPACE_YCBCR,
--	IPU_COLORSPACE_YUV
--};
--
--/*
-- * Enumeration of IPU rotation modes
-- */
--enum ipu_rotate_mode {
--	/* Note the enum values correspond to BAM value */
--	IPU_ROTATE_NONE = 0,
--	IPU_ROTATE_VERT_FLIP = 1,
--	IPU_ROTATE_HORIZ_FLIP = 2,
--	IPU_ROTATE_180 = 3,
--	IPU_ROTATE_90_RIGHT = 4,
--	IPU_ROTATE_90_RIGHT_VFLIP = 5,
--	IPU_ROTATE_90_RIGHT_HFLIP = 6,
--	IPU_ROTATE_90_LEFT = 7,
--};
--
--/*
-- * Enumeration of DI ports for ADC.
-- */
--enum display_port {
--	DISP0,
--	DISP1,
--	DISP2,
--	DISP3
--};
--
--struct idmac_video_param {
--	unsigned short		in_width;
--	unsigned short		in_height;
--	uint32_t		in_pixel_fmt;
--	unsigned short		out_width;
--	unsigned short		out_height;
--	uint32_t		out_pixel_fmt;
--	unsigned short		out_stride;
--	bool			graphics_combine_en;
--	bool			global_alpha_en;
--	bool			key_color_en;
--	enum display_port	disp;
--	unsigned short		out_left;
--	unsigned short		out_top;
--};
--
--/*
-- * Union of initialization parameters for a logical channel. So far only video
-- * parameters are used.
-- */
--union ipu_channel_param {
--	struct idmac_video_param video;
--};
--
--struct idmac_tx_desc {
--	struct dma_async_tx_descriptor	txd;
--	struct scatterlist		*sg;	/* scatterlist for this */
--	unsigned int			sg_len;	/* tx-descriptor. */
--	struct list_head		list;
--};
--
--struct idmac_channel {
--	struct dma_chan		dma_chan;
--	dma_cookie_t		completed;	/* last completed cookie	   */
--	union ipu_channel_param	params;
--	enum ipu_channel	link;	/* input channel, linked to the output	   */
--	enum ipu_channel_status	status;
--	void			*client;	/* Only one client per channel	   */
--	unsigned int		n_tx_desc;
--	struct idmac_tx_desc	*desc;		/* allocated tx-descriptors	   */
--	struct scatterlist	*sg[2];	/* scatterlist elements in buffer-0 and -1 */
--	struct list_head	free_list;	/* free tx-descriptors		   */
--	struct list_head	queue;		/* queued tx-descriptors	   */
--	spinlock_t		lock;		/* protects sg[0,1], queue	   */
--	struct mutex		chan_mutex; /* protects status, cookie, free_list  */
--	bool			sec_chan_en;
--	int			active_buffer;
--	unsigned int		eof_irq;
--	char			eof_name[16];	/* EOF IRQ name for request_irq()  */
--};
--
--#define to_tx_desc(tx) container_of(tx, struct idmac_tx_desc, txd)
--#define to_idmac_chan(c) container_of(c, struct idmac_channel, dma_chan)
--
--#endif /* __LINUX_DMA_IPU_DMA_H */
--- 
-2.46.0
-
+> --
+> 2.46.0
+>
 
