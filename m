@@ -1,126 +1,152 @@
-Return-Path: <linux-kernel+bounces-295617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDF3959F1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A43959F1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CC0282102
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174EB283A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2AD1AF4F8;
-	Wed, 21 Aug 2024 13:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B111AF4F0;
+	Wed, 21 Aug 2024 13:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/vlvRAR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hO69yYzn"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E021AF4E0
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B4A1AF4DE
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724248613; cv=none; b=KDQZf2gUg4qtSkbcIeFYVak3SUvb68qcVru84DuJEWJXNeyBS9FADpRGUaYnTqOzb0tZ5+5MYCcuRb2kJ/XwQm8Xx/E1wcoJ0f4RSm6XAiyRnZ+ixeuPraUBGuRlstPjhdDQBqQPXNXjqdJcg/kLCnPvvMu5jAQk2OXrTvp7toE=
+	t=1724248612; cv=none; b=GkTrNg2vQ71pkNr1ChQAYGJ1Bh4E1NhHzf+4bzH7zrk9TS0XETs1jKDgp0VGI/7Al3jBXHpOCcotiZFp1W7Y54zIGuh+HzWYQqJhvdDxF2WELv8C+SUxuI/DkNxjPNQMdMV/wgPX1xgRsu4EC9/W7fEqM9hLkcbM/SKLxWWnGbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724248613; c=relaxed/simple;
-	bh=tu0TnCrkCWoRLS38XXnu3gUicmftHm/PcZVfj4gnrrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLyRdh9wMyJ2x6fg70EkazVwfwagtFpK3sqbjIcoZukqPC3vsLA3ezCA0NCQ2Q84YAVw+zLHfBZn/AHumxHyY39KDa5sy1MyyMvDft0CSlCdbeEDSqumJceCNsI262mmEEhRd/B7aIHAX0drKLR1FQtfIYQ9YJoudY40hGlJTlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/vlvRAR; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724248612; x=1755784612;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tu0TnCrkCWoRLS38XXnu3gUicmftHm/PcZVfj4gnrrg=;
-  b=f/vlvRARIINAdu5DGf4+gZ2II6hoaUaqbpcWP4K/JsRJWreiT2vLGDi6
-   UxizZXr3fsNa6jagsEGKtamfpoo8FUBc6QNk7h9yugWzmiivB/QeV2cOQ
-   4X7rzv0zpGYttNP1uZ1o+O/ZTmdNcaw4WIcct4T4MNGdRMdk0YSnwVkJJ
-   8iOw5ED+crfis/2lvTX7RPb0uLsfIB2bwfY4qg7NDhWkqrqz/fkpQ0emD
-   uhoUbyqpedhVkCJAC1TDLi0i4WaWVEBn5o/4qZBLK6vehkdp3o4BG7zNt
-   n40ga9RY5nCYJr+D/3grxYc5wosuh4RWGsXvBR+tCBqs+H6lXbvGpMprY
-   g==;
-X-CSE-ConnectionGUID: gdQ/2rSvSUWJ1+w7RX45PA==
-X-CSE-MsgGUID: 2BnbR8nqRueGy7bdT6GPgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22221400"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="22221400"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:56:51 -0700
-X-CSE-ConnectionGUID: zJ0Wy885SOym5WxJCCGkzw==
-X-CSE-MsgGUID: JVA/9GUdRv6pSxjVrKSL0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="61077347"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:56:49 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sglpO-0000000066B-1674;
-	Wed, 21 Aug 2024 16:56:46 +0300
-Date: Wed, 21 Aug 2024 16:56:45 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
-	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] i3c: mipi-i3c-hci: Add AMDI5017 ACPI ID to the
- I3C Support List
-Message-ID: <ZsXyHfLJ8SJOW0RF@smile.fi.intel.com>
-References: <20240821133554.391937-1-Shyam-sundar.S-k@amd.com>
- <20240821133554.391937-2-Shyam-sundar.S-k@amd.com>
- <9584ddb0-6e39-4d04-9242-a68eb4b86eba@amd.com>
+	s=arc-20240116; t=1724248612; c=relaxed/simple;
+	bh=GXPXKykwPABiuAnfK3d7eSUnxqwZCesoixLXier58IE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=XkIOTAl55uzrK7a8zlD0hywq0G+pDJpUmMdJVbl3K/QU7XWJTTXGAXGA4qeb0ieAzl7J/LcIOi64V+fVQT9ykmTRhxbIVECroYtwsofXwv8mS/EEJn6AuTvw3wG22ubqRN2vtbHxYVNr0wd7JDj0/AbU5Vw2gAsDSo3zp8NFaec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hO69yYzn; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bef259a71fso118866a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724248609; x=1724853409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:cc:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G0SUgrAj1P9jl38Ec9SiZC4ikEI//LLt/sY7olQPFBs=;
+        b=hO69yYznemiFhvjn9zz6nbqygLpUo2obruMmsTKg9M3nKRFgwicgq4z5pbYxflUSG8
+         J0wD5ZKcQL1pSNXYavuhhTXqfEp7Svhcra8lJzEO9coaqSWDfBtKGC6BXU4gf1VJyis9
+         GhGYd7S0x17Usz1y3SRMyRlkFpdnF0IltbV47pIUMTGv9QEtcbje7WC74c8GkO5j+W9g
+         KPA5WocVjjrv/28sP3uezH75ciDr4hjxZDuqfBiJ4drCKeiTgXOzCs3ZuzaAKQJ3A8fU
+         N75hvRkcaO0pm0ETfueHuzlWrO9G2ndcRIfvyR8mCXjxTDTykBiTGhxILPt83217eqKy
+         u+qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724248609; x=1724853409;
+        h=content-transfer-encoding:in-reply-to:autocrypt:cc:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G0SUgrAj1P9jl38Ec9SiZC4ikEI//LLt/sY7olQPFBs=;
+        b=WlHBH6LSQF0aFstWZCXSQZvuMRMpk7rHTlwp9TrPuwqSsZhFQWrDTxdq5mPKNMrn05
+         +xuoyjVZGi0IFmQrQw8lS4AFMDO9cyqGIqEZwZhXndl9nVIyTFTAmfJS1NMccjPppy8S
+         VoZSXUq+9usB9Hr9DQyWTRDJvftOQCFbcLMK6EKjh6G8fnpauuJ+inQnXt5Jlw5GoVBb
+         76JrXLRLIh2j4LMjVf3scSNiaMOyF71BrJWCIPAemSAaiJJKXgntEYk/mBZl9IC99voo
+         PU7SEOzcv1I8AiUuZ2/+CyvBJzyV4fy686AnygTRlGyID+oVNFBMCGa0IpYsDyar+1pO
+         VfWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYUfs4LGBRLI40PfZ2aM+TCwq16F26IrpFj3X6GnhIBN3aCWtWu1fRx3kU2LSMx9ipDuCqimLmtZs9CVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxmsyjKQ6qV9o9Oo4cmJ+k4dAFFd3MjN7vxX1rQwbKErs0o3uM
+	HnA2qkXJLUCBiE+ZdoQ/u2tqcbz1/UJ7S48SrMds4oucFuwk5S4PD5AEvQxN0L8=
+X-Google-Smtp-Source: AGHT+IFGBS4+c0s+HJirz+NbgXK7PLtkffoszdufHpAU43Ooy1eYIgPyUOO5RS0mHJe4xoboOvWalA==
+X-Received: by 2002:a17:906:c151:b0:a83:a86a:549a with SMTP id a640c23a62f3a-a866f11bfd3mr95655566b.1.1724248609274;
+        Wed, 21 Aug 2024 06:56:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838eef05sm903593466b.96.2024.08.21.06.56.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 06:56:48 -0700 (PDT)
+Message-ID: <7807531d-e35a-4973-810e-ca4c3f96250c@linaro.org>
+Date: Wed, 21 Aug 2024 15:56:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9584ddb0-6e39-4d04-9242-a68eb4b86eba@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] power: supply: core: simplify with cleanup.h
+To: Sebastian Reichel <sre@kernel.org>
+References: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Bill Wendling <morbo@google.com>, Nathan Chancellor <nathan@kernel.org>,
+ linux-pm@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+ Justin Stitt <justinstitt@google.com>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 21, 2024 at 07:07:45PM +0530, Shyam Sundar S K wrote:
-> + Andy
+On 05/07/2024 13:31, Krzysztof Kozlowski wrote:
+> Allocate the memory with scoped/cleanup.h to reduce error handling and
+> make the code a bit simpler.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/power/supply/power_supply_core.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
 
-Thank you!
+Sebastian,
 
-> On 8/21/2024 19:05, Shyam Sundar S K wrote:
-> > The current driver code lacks the necessary plumbing for ACPI IDs,
-> > preventing the mipi-i3c-hci driver from being loaded on x86
-> > platforms that advertise I3C ACPI support.
-> > 
-> > This update adds the AMDI5017 ACPI ID to the list of supported IDs.
+Any comments on these patches?
 
-Please, provide a DSDT excerpt to show how it will look like in the ACPI
-tables.
-
-...
-
-> > +static const struct acpi_device_id i3c_hci_acpi_match[] = {
-> > +	{"AMDI5017"},
-
-Spaces are missing
-
-	{ "AMDI5017" },
-
-> > +	{}
-> > +};
-> > +MODULE_DEVICE_TABLE(acpi, i3c_hci_acpi_match);
-
-...
-
-Otherwise LGTM, thanks!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Best regards,
+Krzysztof
 
 
