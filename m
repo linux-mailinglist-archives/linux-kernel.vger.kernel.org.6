@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-295195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDFD959869
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:52:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251EB959874
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1418F1F22671
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54AA71C20CB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A611B81A6;
-	Wed, 21 Aug 2024 09:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="a0rF/+1L"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5898D1E3018;
+	Wed, 21 Aug 2024 09:10:05 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC751A7AC6
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E1B1E3004;
+	Wed, 21 Aug 2024 09:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724231347; cv=none; b=mqJ96YEQlCoj5KZicWhOgVqkeqLYX8fB5of/UAqZfw3AzB10eWF5I38RYt4keXzqG/PAqiT7r++zPgeg/KJmqk9rvcQrHsJUZlPA2aqieY0lNZIfaWnvPGX/3ne/8sSuyQgM8bQiqIkfwu/3jsbVh4Ix2pvkmCiKURG3FfkElKw=
+	t=1724231404; cv=none; b=sp8+xYf0eECR4pncaOUUCiY2FrWDl/CfFdCPY//72e89oYCMNVz+brvK7xF/mWeL/sMK+FeC3r6ZCs2ZAs9cPQu8zufSf/8Q+aMswht6bCK0d/gfuSFtfR4KlPcD7tgbU4bcBK6bn/V5vPq3dLkyTuqsIVEapeBxeyuPptJ/YSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724231347; c=relaxed/simple;
-	bh=oFxy/VN1c8AMT36K2t0v+MeAN8tlImoON0YlFZqR9eQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=WC1r0dIU8j6R5MwPGicnvZNuLxfRDZcHGm24HGVa/8msgP6uebDWA9rVC+JCibFC05VHA97GBWSc8xu7YI2Hq41cn2mdMfRbzPwPCtx6TJm1dBPG1RATm/AKQ7bmg1svlvD+fPPYVyb3t8Oa61rnBySoZXytcmsxQftKugUzlB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=a0rF/+1L; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1724231404; c=relaxed/simple;
+	bh=tMdWpVrBjVPtmk60JzPtlhHBQAasHU5Jbcb1VMuYEDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EaPORkdS5gTmfJM0Yc01I/HkZiXsFcD9RvFwQ+W5O1Zlb/ddvEaHIHKuJblSB4Z94RA1AGUhrVI2dM0oMHIz/Atnhro2blxZY5wqcjg0ikn7xvgQxc9pja36E+FuOYMbNdQ7Id88qDqUIz3xACZYrbb0JBvg4umj9J5ggAwYGrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpgX432V4z2Cllw;
+	Wed, 21 Aug 2024 17:09:56 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9F3121400CA;
+	Wed, 21 Aug 2024 17:09:58 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
+ 2024 17:09:58 +0800
+Message-ID: <916f784f-e6e2-c742-6948-5f2db688ba44@huawei.com>
+Date: Wed, 21 Aug 2024 17:09:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1724231343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KnuXtuSFEhMmZPIHCVemmAS+lD9TQ4aP2hCr8AgCkXc=;
-	b=a0rF/+1LfI97JuyVlhGIwDzyth9/l0OMMZUt81srp2rWt4dkkM6bd0ZaWWTYfGrJc5A1tv
-	pUfu43vT6KSTOexVuMJLUaGKuoUQ1Q9eqgjcYEZazt2HeiiGsbE+K8aUJvnn4m3xIl2+oi
-	KI1ZS+5sPyt6+fCGBjHyZNmFZ5tiUSHBQ95UHBEl/Hl1rR/LbgPP8kRNBCyDmGcuA5ehkX
-	oUarZQQCxjfAZ/bOSUW1sjEmlprH0DPmERR9xcyLMLloiw5BYzaKLqH1evyeJNtUB09YLT
-	ydNkBfQH8JW+upU5iAAuO6o8rxXuJQwx4S1uTATV8yPltOWvH95thM5+UpdGFg==
-Date: Wed, 21 Aug 2024 11:09:03 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org, linux-phy@lists.infradead.org,
- vkoul@kernel.org, kishon@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] phy: phy-rockchip-inno-usb2: Improve error
- handling while probing
-In-Reply-To: <12869965.VsHLxoZxqI@diego>
-References: <cover.1724225528.git.dsimic@manjaro.org>
- <866445027a4f41165c872f494b04c218b6e67b09.1724225528.git.dsimic@manjaro.org>
- <12869965.VsHLxoZxqI@diego>
-Message-ID: <486bddb6aad14d05a3fb2d876d0d9d0d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v3 06/14] thermal: core: Introduce .should_bind() thermal
+ zone callback
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+	<linux-pm@vger.kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui
+	<rui.zhang@intel.com>
+References: <2205737.irdbgypaU6@rjwysocki.net>
+ <9334403.CDJkKcVGEf@rjwysocki.net>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <9334403.CDJkKcVGEf@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
 
-On 2024-08-21 10:44, Heiko Stübner wrote:
-> Am Mittwoch, 21. August 2024, 09:37:55 CEST schrieb Dragan Simic:
->> Improve error handling in the probe path by using function 
->> dev_err_probe()
->> where appropriate, and by no longer using it rather pointlessly in one 
->> place
->> that actually produces a single, hardcoded error code.
->> 
->> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> 
->> @@ -1375,8 +1372,10 @@ static int rockchip_usb2phy_probe(struct 
->> platform_device *pdev)
->>  	rphy->irq = platform_get_irq_optional(pdev, 0);
->>  	platform_set_drvdata(pdev, rphy);
->> 
->> -	if (!phy_cfgs)
->> -		return dev_err_probe(dev, -EINVAL, "phy configs are not 
->> assigned!\n");
->> +	if (!phy_cfgs) {
->> +		dev_err(dev, "phy configs are not assigned\n");
->> +		return -EINVAL;
->> +	}
->> 
->>  	ret = rockchip_usb2phy_extcon_register(rphy);
->>  	if (ret)
-> 
-> I really don't understand the rationale here. Using dev_err_probe here
-> is just fine and with that change you just introduce more lines of code
-> for exactly the same functionality?
 
-As we know, dev_err_probe() decides how to log the received error 
-message
-based on the error code it receives, but in this case the error code is
-hardcoded as -EINVAL.  Thus, in this case it isn't about keeping the LoC
-count a bit lower, but about using dev_err() where the resulting outcome
-of error logging is aleady known, and where logging the error code 
-actually
-isn't helpful, because it's hardcoded and the logged error message 
-already
-tells everything about the error condition.
-
-In other words, it's about being as precise as possible when deciding 
-between
-dev_err() and dev_err_probe(), in both directions.  I hope it makes 
-sense.
+在 2024/8/20 0:00, Rafael J. Wysocki 写道:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> The current design of the code binding cooling devices to trip points in
+> thermal zones is convoluted and hard to follow.
+>
+> Namely, a driver that registers a thermal zone can provide .bind()
+> and .unbind() operations for it, which are required to call either
+> thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip(),
+> respectively, or thermal_zone_bind_cooling_device() and
+> thermal_zone_unbind_cooling_device(), respectively, for every relevant
+> trip point and the given cooling device.  Moreover, if .bind() is
+> provided and .unbind() is not, the cleanup necessary during the removal
+> of a thermal zone or a cooling device may not be carried out.
+>
+> In other words, the core relies on the thermal zone owners to do the
+> right thing, which is error prone and far from obvious, even though all
+> of that is not really necessary.  Specifically, if the core could ask
+> the thermal zone owner, through a special thermal zone callback, whether
+> or not a given cooling device should be bound to a given trip point in
+> the given thermal zone, it might as well carry out all of the binding
+> and unbinding by itself.  In particular, the unbinding can be done
+> automatically without involving the thermal zone owner at all because
+> all of the thermal instances associated with a thermal zone or cooling
+> device going away must be deleted regardless.
+>
+> Accordingly, introduce a new thermal zone operation, .should_bind(),
+> that can be invoked by the thermal core for a given thermal zone,
+> trip point and cooling device combination in order to check whether
+> or not the cooling device should be bound to the trip point at hand.
+> It takes an additional cooling_spec argument allowing the thermal
+> zone owner to specify the highest and lowest cooling states of the
+> cooling device and its weight for the given trip point binding.
+>
+> Make the thermal core use this operation, if present, in the absence of
+> .bind() and .unbind().  Note that .should_bind() will be called under
+> the thermal zone lock.
+>
+> No intentional functional impact.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+all thermal zone is linked to thermal_tz_list and cooling devices is 
+linked to thermal_cdev_list.
+But if one cooling device should bind to a trip in thermal zone is 
+determined by thermal driver.
+Introducing should_bind() looks good to me.
+Acked-by: Huisong Li <lihuisong@huawei.com>
+>
+>
+>
+>
+> .
 
