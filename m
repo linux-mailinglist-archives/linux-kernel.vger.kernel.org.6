@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-296112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD41595A5CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B85F95A5D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5611C21401
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3DB2849D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA19B170853;
-	Wed, 21 Aug 2024 20:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4E4170A1A;
+	Wed, 21 Aug 2024 20:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmvOeEnw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjT/tSGA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E728DCB;
-	Wed, 21 Aug 2024 20:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A362F16FF2A;
+	Wed, 21 Aug 2024 20:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724271976; cv=none; b=Hq+M8kNivQjbnux3uYfXwcE4WMjvNio4OZ2C9dhtOMLvxjI/HaQ4trvBNSagPfRfix3yBpjgqDZrJ5cu2nEnNfxEN4EAz194VPRtAB3d3BQ7duv3jh/goZdwnlxL260yWTE2fQ7ddE4K8YGVbHzO0buFbKr3Dx+vsl2x9TBbsS4=
+	t=1724272008; cv=none; b=ihtWxdNXEdQpoQWxfnTHNi7WUtNzROIm8SLZPWW7oaHjbV9UVvSvrWGhtuL1sH/S/jn6BFg9+I/nP0sfOX0zi6ghIsnb3wf+qgyyK+QscOEjtdplLGoD3nqY5Hka32zHXv+JEnEJp66AWkrGJHZmRhmfML/A/+JEOqECHiLviRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724271976; c=relaxed/simple;
-	bh=KZFoIuBUAwRsEE9EPLeC3SQ7BG3/6K63CDdgv2nlwKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OYZz6hNei3iyO126Zf6lmKAiMWg9R59QIiKt68g2yezzLu7HS9gASQnFwPKkMF/ckrgGsWTSh7Mnfz01xodf68bWPUZ1V8YvsZLiF8+YsIf2AVGT52wgDka2Pt6C698J4Sw4aSDYaxXhbhBjBT8ReBySB22KMGkFvHeeob+E+uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmvOeEnw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 929CFC32781;
-	Wed, 21 Aug 2024 20:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724271975;
-	bh=KZFoIuBUAwRsEE9EPLeC3SQ7BG3/6K63CDdgv2nlwKw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gmvOeEnwljbsiucDHUL3T8XfEaD4nQRYqXD0IGMR8ZluLJ//VEfCh8yYji8neYl+f
-	 sNWa3hYpgjMbw/32lHAYUNm3WYrQYvoHgE2BNRquloZ2UXrQq/lnmAc7NBvNYqxsn7
-	 o7LlXRzC2GrMulmX8mpk1TA0qQiMRmyyhD2W8v/eKP5EhUMdzYQo8fvMrQQTi5ld5R
-	 Zz5GggXs9CzlNlkfUONfzRO7kFjh5ia8p2tQtPZYVczhQ6Wf+9c1ltWe77Pg5X5TqN
-	 EGcVPrnrxsBM7YlxiJtIMPCod12GdjqTWnXe7yDkllrQ5vCOlDOL0ZTFk+2+2PXtWw
-	 K+10uYCUzdFeg==
-Date: Wed, 21 Aug 2024 21:26:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
- michael.hennerich@analog.com, gstols@baylibre.com
-Subject: Re: [PATCH 6/7] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
- compatible strings
-Message-ID: <20240821212606.6981eae1@jic23-huawei>
-In-Reply-To: <CA+GgBR_V8r0Vz1PeKxwD6ovwHXxGM6=Z6XVd03ehokT5C3zjnQ@mail.gmail.com>
-References: <20240819064721.91494-1-aardelean@baylibre.com>
-	<20240819064721.91494-7-aardelean@baylibre.com>
-	<zuvwoy5wtdel7qgkz6wa6valwjwajpwoqnizyoooiawghrxvc3@cuoswu32h4fl>
-	<CA+GgBR_V8r0Vz1PeKxwD6ovwHXxGM6=Z6XVd03ehokT5C3zjnQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724272008; c=relaxed/simple;
+	bh=hC7MVxEnpBSlpjnRjxHCdY9iSHf7+aorJoyKXmBQUak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A//KWPa/SOV8geSNsr0jXTleQ+Q7oc0FUqCIu1CY9cOArPTZRhYgWCY+Lwwq6/iBO5gOwyNIUVRHIOb/lkIMWiqTN9IDtwVBeHBWbSvT1YKHZbHjiRCET8bXL7wZoyuQ4VK+oY9dp0rrewaztLyE/3icPN+44z5jDrhWBOXL+AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjT/tSGA; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724272007; x=1755808007;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hC7MVxEnpBSlpjnRjxHCdY9iSHf7+aorJoyKXmBQUak=;
+  b=gjT/tSGAPoZ74cj+ONfoIrLTCfzvPAXqkfPQIFlRpJtBSDXN0wh1ahFN
+   At/BvGYgYRg0ixSMjGI7jfWXp/g5rEpJxvpSSFA4HUMdNp30TRNgQn+Bw
+   vcf5IFEuP3bnb9zLiECc19TBKynjIxBlnmEBL3GgPP1FKu+VlN9SWKQLO
+   WJopRVDZRudfZb2Yrx3QZmHv+KzAmJjcDPTPnwQMUa/9jHQaAqMd+gV92
+   tw3sDM2ky8tv1Y72Cc6hM+RPLaCmjmS63jddOA+NnFFfe/b9g4dN9CAGT
+   r7pLBfIjUQuy2snntcO23xm50e3R6OQir5s3i2Khm+/Y69MREuexSKBzx
+   g==;
+X-CSE-ConnectionGUID: +EmeEAOEStCXXWQZa+emmA==
+X-CSE-MsgGUID: O0HDUySHROuTH8lSdG5piw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33808684"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="33808684"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 13:26:46 -0700
+X-CSE-ConnectionGUID: WXVrbJFzRtaMfynGWH7Fjw==
+X-CSE-MsgGUID: t0RvxcXrS1m+eWCAQ8CTtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="84379320"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 21 Aug 2024 13:26:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 97766268; Wed, 21 Aug 2024 23:26:41 +0300 (EEST)
+Date: Wed, 21 Aug 2024 23:26:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>,
+	Ganapathi Bhat <ganapathi017@gmail.com>,
+	Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+	Xinming Hu <huxinming820@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] wifi: mwifiex: Replace one-element arrays with
+ flexible-array members
+Message-ID: <ZsZNgfnEwOcPdCly@black.fi.intel.com>
+References: <Y9xkECG3uTZ6T1dN@work>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y9xkECG3uTZ6T1dN@work>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-> > > +    type: object
-> > > +    $ref: adc.yaml
-> > > +    unevaluatedProperties: false
-> > > +
-> > > +    properties:
-> > > +      reg:
-> > > +        description: The channel number.
-> > > +        minimum: 0
-> > > +        maximum: 7
-> > > +
-> > > +      diff-channel:
-> > > +        description: Channel is bipolar differential.  
-> >
-> > There is diff-channels property, why do we need one more?  
+On Thu, Feb 02, 2023 at 07:32:00PM -0600, Gustavo A. R. Silva wrote:
+> One-element arrays are deprecated, and we are replacing them with flexible
+> array members instead. So, replace one-element arrays with flexible-array
+> members in multiple structures.
 > 
-> Yeah, I wanted to use that.
-> Maybe I will try another spin at that.
-> The thing with "diff-channels" is that it requires 2 ints.
-> So,  diff-channels = <0 0>.
-> To use it here, a rule would need to be put in place where  "reg ==
-> diff-channels[0] && reg == diff-channels[1]".
-> That also works from my side.
-> Part of the reason for this patchset, was to also get some feedback
-> (if this is the correct direction).
+> This helps with the ongoing efforts to tighten the FORTIFY_SOURCE
+> routines on memcpy() and help us make progress towards globally
+> enabling -fstrict-flex-arrays=3 [1].
 > 
-So I 'think' this is a datasheet matching thing.
-In many cases, even for strictly differential devices, the pin
-naming allows for a clear A - B channel description. Here
-in the non differential modes, the negative pins are effectively
-not used (from a really quick look at the datasheet)
+> This results in no differences in binary output.
 
-So we 'could' introduce magic channels (give them high numbers) for
-the negative ends. I think we may want to do that for the
-userspace ABI (0-0 on the few times it has come up has been a
-calibration / self check mode not what you have here - it
-wires the actual inputs together).  Alternative is just present
-them as a simple voltage and don't worry about the differential aspect
-as it's not hugely different to bipolar (where the zero level is
-effectively the negative input of a differential ADC.
+Sorry for blast from the past, but I have a question here.
 
-For the binding I'm fine with the binding using A, A as you suggest
-with an update to adc.yaml to cover this corner.
+This change seems converts many of the flexible arrays in this driver.
+But what's behind this one?
 
-We never (I think) have bindings for the self check case where the input
-is wired to both sides. It's just a mode that is applied to
-any inputs that are wired. 
+struct host_cmd_ds_802_11_scan_ext {
+        u32   reserved;
+        u8    tlv_buffer[1];
+} __packed;
 
-> >  
-> > > +        type: boolean
-> > > +
-> > > +      bipolar:
-> > > +        description: |
-> > > +          Channel is bipolar single-ended. If 'diff-channel' is set, then
-> > > +          the value of this property will be ignored.  
-> >
-> > Then provide here allOf:if:then which makes it false if diff-channel(s)
-> > is present. And then drop entire property, because you duplicate what's
-> > in adc.yaml.  
-> 
-> Ack.
+
+AFAIU this needs also some care. On the real machine I have got this
+
+elo 16 17:51:58 surfacebook kernel: ------------[ cut here ]------------
+elo 16 17:51:58 surfacebook kernel: memcpy: detected field-spanning write (size 243) of single field "ext_scan->tlv_buffer" at drivers/net/wireless/marvell/mwifiex/scan.c:2239 (size 1)
+elo 16 17:51:58 surfacebook kernel: WARNING: CPU: 0 PID: 498 at drivers/net/wireless/marvell/mwifiex/scan.c:2239 mwifiex_cmd_802_11_scan_ext+0x83/0x90 [mwifiex]
+
+which leads to
+
+        memcpy(ext_scan->tlv_buffer, scan_cfg->tlv_buf, scan_cfg->tlv_buf_len);
+
+but the code allocates 2k or more for the command buffer, so this seems
+quite enough for 243 bytes.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
