@@ -1,148 +1,180 @@
-Return-Path: <linux-kernel+bounces-295125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DFA95972D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E308B959731
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D31283D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5D828218F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E271B3B25;
-	Wed, 21 Aug 2024 08:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5F1A7AD1;
+	Wed, 21 Aug 2024 08:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lfR9yU0y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ty7KSoNg"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2067.outbound.protection.outlook.com [40.107.117.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889C41B3B14;
-	Wed, 21 Aug 2024 08:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724228594; cv=none; b=QQlJsHWyswQ+qwXdGTpaoVaFScq3rrlYig0/E7cREu/cJKngi7h8LTWtNFHz/jRZD6ucrHxMAF6149E5z5oOYURgJivp+c9KQYCWQWd+Oc0tRGShwBHg81+v1t3UozgiJLCEswIFi45sybmfEXatsnFcrG0RX881d8BAmPQO30Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724228594; c=relaxed/simple;
-	bh=jOrsVYLPT/LX5XGTID+z3HT4EhZdLtHiW4ckoAw/Cm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oQ/XZIeAWGSnEAs97uJSOPjqtdlMFdx4Oohmnye5rEZ6R2jJs7PiTNEjQimufeNqvMFSOM1C8AdD1UWTmf1syngyf0kG7hej60Fyvh2KBUlsfknS8SYblbzStV2E7imXtQSYwvPLwc6boV4ZBBITBJi7fg3pYen4peXYdVC8Yv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lfR9yU0y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KNTcNh032576;
-	Wed, 21 Aug 2024 08:22:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UXKkrJTTHGs8ypri51Y39362lh3BomOsU7Gl/1XJ1AE=; b=lfR9yU0yBK5izwOU
-	LihKaPJWuuAodsxBhCyRauQchMh+tEmct875IO6a4s8vNQq99U+tqwZnfofhJSbV
-	FiRy4RS1yp9eAI3PJWxcqgVv5NChi35iEX67Axzvem6cnjmFHJla0LK4bN0l2lZu
-	aWcUjBsrScHgQ1OtsHcn4AwyGPOsq2uYn/Y11TPhzHngBYOn9Jl0mLyOX4YDWlgS
-	t3traIedM87Wpwil+oRpV0lUUA5O/Zs6r2Z4NONtaTcshXe6kP9LkzYziGLPxeHb
-	bDuR1X9hF0hm6pIlxkeP77hAzzbji5VUs3cVza69KqeFuWyU59tG9bSgEnkc+Zhz
-	iKp3PA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4145ywe6an-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 08:22:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L8MjSF028476
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 08:22:45 GMT
-Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
- 2024 01:22:42 -0700
-Message-ID: <0b4c9c9f-02c9-45b5-b289-046ce4785325@quicinc.com>
-Date: Wed, 21 Aug 2024 16:22:40 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91821B3B3A;
+	Wed, 21 Aug 2024 08:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724228646; cv=fail; b=q4KhUMoVL6myp/XVd6OQjJMPpTV242ERfXtkMMoUTHfppwULFHjr7OpDkBP5/h2WSC3I9grwlFS5CFd2P9kI1v2rAon8HNlsKhwhxP8tebEpQ9CPJhaO9Yu0tPtqC6gpsber5/W+bbDCTQi5/I0UjYAUZ79Nm12UcplKSTu3s7g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724228646; c=relaxed/simple;
+	bh=+pz7RFZ/INiP9v/4TXwcslRGm9cRrM8iVILgCFC1RTE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dp57dm4Vrg8DIzRqOBJsQNPqsNBMVmwTRN9QeWJojMfTr0Dj5wsxPyzpUd0YVHOR0Oa+eeJ2uWtQ5IJeUCm/jyz1PakhhpMSX40aGg3QmazZHkQEzNfsRJdw3GBJYgcYq/EefHfvf5WTBn2RMrxhTood3E2g8I4/0apgQXwthQM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ty7KSoNg; arc=fail smtp.client-ip=40.107.117.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U61lyE9Rp7tunEbC5ne3iOehi5RvuP8hqPA9+l05ksXDE7CCnkUsfdScO8MagKw+5DXhXYZNZFA2Z4HQIPvSavuJmH15Gy/DWt7vSNE1/ne8zFl6y/hxkOwtJAqgLGFab4v/ShlvChC+We7UjcQ/ZofRuDQByT0zo5DdfwdUx8uG4+wg0X2NxeIszrxLWMFllbj17MZGq89nsBV/5spA2VqfvZtf0jnSYe7uY+pBG823vyHEFdL3kA76TXhVQUvBUIUTPpXXD86nggxYkmDkKE1U23gbfniyaAVfOpLmmZa4E6PaqG9s0QW5a+brTj5vlysYxUn0AtI25NwgffTD/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0p6QXMM1OYggoSlXDzctKQAD8JfdqbCwORdkZrGlzwA=;
+ b=Qphw/9eqNEwSxVJydto9dWO6VSRBycA/SSmEfBWBfz/IHOIsHy1kZeuWGtQiE9jT+0O6WDrh0PjQDe9rp0QG7c5gPzU4cmX3ghzp3tsnNwYwRNL+3T7bcbk9eLQCQ+JKoHkyivvkPAtzKeIaJ1dWRrANOtynQBCsJRutn0m+LZR8vID76lBvCHgrik0PFn4ajChrEx1DbtFWR72zBWxx3N14UUq6zwAUameJi1GgXnKw8HfGMcNHii0asm+p8HovX4VwOiy11ujxxdLQL1AkoByd/uDDlwEJ4EOtut/i6urPMuUSrVLBZ7nwzQA4IwM3nHMN3ghNwa7j/kC32hwY3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0p6QXMM1OYggoSlXDzctKQAD8JfdqbCwORdkZrGlzwA=;
+ b=Ty7KSoNgK2t1hC3iwNPwZKTXmC2Pi5MoU+o60xSFaHHfKXgk2fiSt+EFVbkeE4tTuLVeUXGyU2wBbSNd6xzhgH8r/PZ1FCsxGNhkPebA3sv/IhkElz0Z4Lp4UhvqYwwH+a387cJnPQxUyMavPSfTZxAP9NPXDUtxiy9b8PfNiXkgNBZ3tTQGE9cYqz5DBaipapbHfEb7xj+7nyB9BXpKF3eOl+3PMwhBsaCqkhioj8UEbycHD4OT+Qm2y9dCc5ZO3dTg0XjlxiWXbnV9BZQyr8yCDAha80WEDL/6WFwwRciDQm63FWNfwP3P8TREPXIxBzq1ctLbvwCfSgDU+yR/Uw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by TYSPR06MB6315.apcprd06.prod.outlook.com (2603:1096:400:40f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.27; Wed, 21 Aug
+ 2024 08:23:59 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 08:23:59 +0000
+From: Yang Ruibin <11162571@vivo.com>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Yang Ruibin <11162571@vivo.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v1] drivers:mei:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
+Date: Wed, 21 Aug 2024 04:23:42 -0400
+Message-Id: <20240821082348.13026-1-11162571@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0163.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b1::8) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] coresight: Add static trace id support
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20240729071414.5410-1-quic_jinlmao@quicinc.com>
-Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <20240729071414.5410-1-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MujMsXaiAXuekwuw2bIW6eEl6Kjilxe5
-X-Proofpoint-GUID: MujMsXaiAXuekwuw2bIW6eEl6Kjilxe5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_07,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- bulkscore=0 phishscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408210060
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TYSPR06MB6315:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f88b682-f18b-495c-2313-08dcc1ba9aff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ueWL30EoLazCznBNqYbcTDYH6IP4NnXGBC6vOc3WCqoBwaLsJR9TyMODXCcr?=
+ =?us-ascii?Q?yILeDoa4HIrWdFcIMCafPM3IUSV8SKYSif70EAaJnonnYOviFOtpRpBKBGqn?=
+ =?us-ascii?Q?TAkYnQc1Eb5S06rwdCJeeAJTIa46d/fR0PljfuIOwrFuYSEDa03X9K+wvIHg?=
+ =?us-ascii?Q?bPvvxiRhvr8Wj/w+tkSE9oxEyiIZP28EnR/q1BTudXTF/BISd7pmKlOPF6NU?=
+ =?us-ascii?Q?JQ/AGl/7p2mhqJGbDvXYGMFFTwuoIGprjQTjIrzkO7/LiQLtqsODMblYD3nR?=
+ =?us-ascii?Q?12Kw1eeMeJocjP+FrADC6FvN52AIpAltwUQM+vZXzH6+qA9YhiHDgNU2Qv0u?=
+ =?us-ascii?Q?frx0qklErU+/VUAriVtfvthbqGN3kwnjWPMv0pJkSo1ZVidhdN+7MZeDEuyF?=
+ =?us-ascii?Q?vU7RsPc8TGs5IdoHoteDCqVLsbIBsTxphfvrWl/gTrtkb2KhvZijqi2c5iaf?=
+ =?us-ascii?Q?bumhjf+gi6j5CqoaJa0/7gB6EHCEuFpD6ds5ag77BI2t/BZhbBkGmM4uyzW0?=
+ =?us-ascii?Q?YqFnW01MVCpPhYdirrZo9gciW64xgiF+TfAZgcptEEAcp/7pthtO8ZBfZax6?=
+ =?us-ascii?Q?vxF8N4LikkNok6gKmFxNJxvBYdLCLK/egNAA4R50hsIpMDOZIls8CJ3pSxbu?=
+ =?us-ascii?Q?3t9r2h/PPb+PN3k0LLTlWoFOia59r+ICtP5OgvB2AWDY/fL2/z2aDNE+ssNO?=
+ =?us-ascii?Q?FppYrJpG1NSA0agSqMMxXYpkRDk6kxbkSnsUetC1LQnPISrLHmJqNhpQccDg?=
+ =?us-ascii?Q?I85gKR8sLav8xCteOhXey5Ia0hb3GRsPBi/5dv9tnsEQI1zM6iW4rymbUd51?=
+ =?us-ascii?Q?p3SBl229qfpjFQwX/DhOVHH5LlGXxePxdSuyaGRpQUzgOa6TMDYWeoYqkX72?=
+ =?us-ascii?Q?4iEm4VTklgYYS0eFtfVltPwdBKxW3j0k8oWb9JNSVftE3VsQmsIKuLd1V1Fy?=
+ =?us-ascii?Q?+PaR7VYAoFtPZd/euEGeeDQQNCglUAL4aLh3LalTVCrIGuczx5QQWBVg8Y0D?=
+ =?us-ascii?Q?gLeqLS4QJWSidJ+tufBnnHqiTNcBmt18+g4o6f+3VQBn18KlsaRqTIUB34gI?=
+ =?us-ascii?Q?VFA0WozcgB5cpKaYjHXZQmduZsuPgSRsXZhXo77qlWHfjMtYCnDYYGpF5wcc?=
+ =?us-ascii?Q?TKxgEDEu1legR4/6WmYfullCXiO3TlV8njEQpn6rKBl1Sw62MVnnuIDGbufL?=
+ =?us-ascii?Q?dOmCEOpUokHkAmeBSNzt988MBLNxZkvHSo6+QEgBDt0BsKHiUtQWK/aVT/7f?=
+ =?us-ascii?Q?gVNYUVeOkGMjSvf9Evy6znjYsjWMkdVOGXFCdIZt9uem0lTEf11iBEfRCP18?=
+ =?us-ascii?Q?Wl5hw5zDr5WUKG1isp5jLwj7DheCMNx5n2SZOCMuWBwjc6WhvdVg0xDZ6H5M?=
+ =?us-ascii?Q?yTaqPFy17CJOV6Ix8GLijTONaJuefMHg2BN9HctQAajAO+Jjg7wM6OHSJUyO?=
+ =?us-ascii?Q?2aBHpiPW7ps=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NpLDW6Wg+mV770iqP/XDHjABxlqXY6nLytJjaIn65lGD8QC3uX/lHawXdvbT?=
+ =?us-ascii?Q?8qgBruNj8eV2MiTMhF5J/d3hA73FnMnOdPgxThgPrxATlSO6W4GXG2wMHUXK?=
+ =?us-ascii?Q?CAbF2dgkPBXJeMhICoEqh+TK9zVpBxo3eBPYP74SbWK+ZZ0+PVO9yRcs4Ury?=
+ =?us-ascii?Q?o/W7zZlp7aPLeiH5w0GLDmapx7O/rv/Ie1y4emsDbDIuZu92N56RwXtEcumE?=
+ =?us-ascii?Q?6euFEbA9cKSDgb/IDkLRRgpEqHMFr3SRab35ExlpKuCvT59dCwi2TrcfDLFN?=
+ =?us-ascii?Q?Le86iaI48S7PMw2opIxJ4kU/RVW9EdvptbjDp0K9HstS/GgUu3wid2CS2ktv?=
+ =?us-ascii?Q?K3ovwtsRmZd26QTTtOUe96TvQlHWxBJ45iJ3eOPwgBpJ9Vtm24nnFKnOpCai?=
+ =?us-ascii?Q?Dp82ZKesJgV4qAHja7RxNWQrQkZipVhqzhxU2qB/0xE6i/ZwO/4seSkBT7fN?=
+ =?us-ascii?Q?JwoebuEIfeGDINs+WdwSllkkoBnYXIruIN/1vu5nfPFImx/EWOs0P91GHBua?=
+ =?us-ascii?Q?Taatodwjqw3dizFi61hm6Zqjdr9Qp47Qd96b1AAeM8oL/1yQiiJfhPHGZbwf?=
+ =?us-ascii?Q?RB/pfVw4Ry1MP2JlG1McyU8C2v9KaFl2kG/vSyAGGhPQsLHU3d6CMNhK0E5P?=
+ =?us-ascii?Q?3n8EC3Jch7lfsbtWK1NB1XY2BkXPNea6Uu9FR/u6lHvCeoindFa6CpffYMIV?=
+ =?us-ascii?Q?IawYPzERA3ePDXkv90i6xT+YxlXuAANPxoCXEkC8fMmr75JITqem1AwPgAo4?=
+ =?us-ascii?Q?bh50WRqWZe0gJpADBVQdQy5IG+ftqZyYA0zWYbQo9cENYeHE1Ta+z03oAST3?=
+ =?us-ascii?Q?EwxP1r3E6boqO6Z5TIxiqDPyJe4RCi2pD1w8r6P0YjMdGau1hCOjY3NvZTzv?=
+ =?us-ascii?Q?QZLsxxXpIeXHrZ7KxYX0MoZiLakGHzXUC/vlVklHJy0DjnRee/QcItVq4jJR?=
+ =?us-ascii?Q?QjXPSwbAS5zQo4zbSB/7as9YLET2v7uYkmtG8i+4SGbCI4cTwClJfM/NXAZH?=
+ =?us-ascii?Q?r0ECKWvCjMEdVQWIsoacyORpjbOoxadK0VsIZmSwX97BzlHXcCzaeY1mADyh?=
+ =?us-ascii?Q?hsjzMJ9VUCCuqsZEmBdxWTHdXH18hNXQLpjEIeK5X62X4HPhvIi491JP+gi8?=
+ =?us-ascii?Q?lGUfqw1gbxeFY4pZ2XW9v2z2+VKpF8jjP+KxtiVUpRX9e1vZzcMB6I7reJIw?=
+ =?us-ascii?Q?9Zk1UMLf/aXiDoKPS+TOzsMlRUQzkaAdMNsQxTliZkoV59HogIuJkLjKzjdG?=
+ =?us-ascii?Q?3NiKeK8VVRIuPoZwJQ9JzbfHUKi4BjW6hdIhKviHaOZVmANnPlowytpLnUaZ?=
+ =?us-ascii?Q?+Lt8GWu5O+ep5Gg3S0a4IHUHUbzrOEesTiJ/4TJ0AzXgsoyCEgB4j0o+7YTH?=
+ =?us-ascii?Q?t5M2/JAeflvk5RlFcpm8agj0ecWex1stVzwjZsf4gawmtMckgIulH4oXHTDb?=
+ =?us-ascii?Q?LoGUI8JL7b1eD4XmZf5N6qFsHokSlsI7RC3DXrQegGhwP5s/lpxYyG2cAOGX?=
+ =?us-ascii?Q?ymnfcbLZCFwXh4FHJT6vLvVaPIQQCFPQfNgBmvJSkzQnIJy+ES8qJxy6WqUK?=
+ =?us-ascii?Q?TlPfgeoqIafR0kGC33iJYD68NKf+L+/OrK+3M34K?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f88b682-f18b-495c-2313-08dcc1ba9aff
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 08:23:59.0182
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wtbWC9ZRgB1darc+rXEAizHFHmWIQ007uST5fAlGWxWp51lP7KzlThr77FbCqokeyr4+GjBZwTgmZoteMbbvWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6315
 
-On 2024/7/29 15:14, Mao Jinlong wrote:
-> Some HW has static trace id which cannot be changed via
-> software programming. For this case, configure the trace id
-> in device tree with "arm,static-trace-id = <xxx>", and
-> call coresight_trace_id_get_static_system_id with the trace id value
-> in device probe function. The id will be reserved for the HW
-> all the time if the device is probed.
-> 
-> Changes since V3:
-> 1. Adda new API function
-> int coresight_trace_id_get_system_static_id(int trace_id).
-> 2. Use the term "static trace id" for these devices where
-> the hardware sets a non-programmable trace ID.
-> 
-> Changes since V2:
-> 1. Change "trace-id" to "arm,trace-id".
-> 2. Add trace id flag for getting preferred id or ODD id.
-> 
-> Changes since V1:
-> 1. Add argument to coresight_trace_id_get_system_id for preferred id
-> instead of adding new function coresight_trace_id_reserve_system_id.
-> 2. Add constraint to trace-id in dt-binding file.
-> 
-> Mao Jinlong (3):
->    dt-bindings: arm: Add arm,trace-id for coresight dummy source
->    coresight: Add support to get static id for system trace sources
->    coresight: dummy: Add static trace id support for dummy source
-> 
->   .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
->   .../arm/arm,coresight-dummy-source.yaml       |  6 ++
->   drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
->   .../hwtracing/coresight/coresight-platform.c  | 26 ++++++++
->   .../hwtracing/coresight/coresight-trace-id.c  | 38 ++++++++----
->   .../hwtracing/coresight/coresight-trace-id.h  |  9 +++
->   include/linux/coresight.h                     |  1 +
->   7 files changed, 140 insertions(+), 14 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+The debugfs_create_dir() function returns error pointers.
+It never returns NULL. So use IS_ERR() to check it.
 
-Hi Reviewers,
+Signed-off-by: Yang Ruibin <11162571@vivo.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mei/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gentle remainder for the review.
+diff --git a/drivers/net/wireless/intel/iwlwifi/mei/main.c b/drivers/net/wireless/intel/iwlwifi/mei/main.c
+index 1dd9106c6513..d0438f9a9ab8 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mei/main.c
++++ b/drivers/net/wireless/intel/iwlwifi/mei/main.c
+@@ -1894,7 +1894,7 @@ static void iwl_mei_dbgfs_register(struct iwl_mei *mei)
+ {
+ 	mei->dbgfs_dir = debugfs_create_dir(KBUILD_MODNAME, NULL);
+ 
+-	if (!mei->dbgfs_dir)
++	if (IS_ERR(mei->dbgfs_dir))
+ 		return;
+ 
+ 	debugfs_create_ulong("status", S_IRUSR,
+-- 
+2.34.1
 
-Thanks
-Jinlong Mao
-
-> 
 
