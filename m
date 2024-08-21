@@ -1,78 +1,162 @@
-Return-Path: <linux-kernel+bounces-294797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFB295929A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:07:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EAB95929F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19BE285FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:07:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762D71F251A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520946A357;
-	Wed, 21 Aug 2024 02:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjtLVDNu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E752476036;
+	Wed, 21 Aug 2024 02:12:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939E426281;
-	Wed, 21 Aug 2024 02:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753A41E504;
+	Wed, 21 Aug 2024 02:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724206044; cv=none; b=ZSGkcGya6ot0ryg/b7zFyNZykc4nxnpum3IGw3Cn/1lQjrJe3Ve3hTeryguOionp/mM6LEmq0UNlCy7DBgzj5JQ87h2/YuMR4YXBOOZgLMMqN3Ws7gQhnoWs0PloBgvZmo00QZUKCmyCi4OslUZZUhW3TGQBPU88D1lmdtom12E=
+	t=1724206359; cv=none; b=qBcAXAjmTYaGNViFGjbL5tM4G2pL+lWWPaUZZDCRkYTaCcdmIgPac/VzYomPI4Xm+E1JIu3fj+cAzV6jJZoNo55UfYyilhqUcG5uiKx4HQKV+xhYL7/NeQ3WocVI/VbMHsEUn38xEtMV+biOcSs6ST3fy5Odi46qOa2c+0X8TGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724206044; c=relaxed/simple;
-	bh=PmeA4K00ekSbxX1pdT4CNBbAUbRmUUnTezkqaBXaGDM=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=L7YlrG6SA034iwEzOZk1CmFIfv9OWH0n1uTQ3PSj3kjCZng81lYfL88nGmQcTUxnzQJCoUPRHazaPDADkD/ouwrbPsZSE0tFN0ZkZgQx+kmpUYGmDdCZVeGitzpmPNb49dOHAfJVQ5r7QQ5ESo5K7SWO9UpXUuAVm/udgZ0ewV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjtLVDNu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4FFC4AF12;
-	Wed, 21 Aug 2024 02:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724206044;
-	bh=PmeA4K00ekSbxX1pdT4CNBbAUbRmUUnTezkqaBXaGDM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AjtLVDNuUzUxXd6NCeeQaPigyO5wo59UNKj8G80Z3mJQH/LXnPsSUClmoxyAymZVB
-	 kZ6NeItcjcXAZMyHBx6h0ITUS17xgQu51p3o+2nq5CT46ZgzY+RRGS3YWWxjtnBUJ6
-	 aCE+Gqc0EKljemG9FZwfr7nF26cFlAD8+0uXPgStRWWExCK2s4lTXIJR3IZrr13pDn
-	 CWadODHl5fkOicWawhzZEn9XQ6AII7A2lu7TrItZW/CrJVrh5XiENmiF4NI+PYtWGN
-	 Gk7rlRRKQZKjCiX5mR/uzLgvFGab3zIILmHX+PbGMVS+JFXYlDHjCZXVGvwXxII+MD
-	 rH11fLLZ1x5qA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F643804CB6;
-	Wed, 21 Aug 2024 02:07:25 +0000 (UTC)
-Subject: Re: [GIT PULL] ksmbd server fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5muR=S_6jx7KtLofSSY9T3depX6yXNqK7PX3LDiNvZW0hw@mail.gmail.com>
-References: <CAH2r5muR=S_6jx7KtLofSSY9T3depX6yXNqK7PX3LDiNvZW0hw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5muR=S_6jx7KtLofSSY9T3depX6yXNqK7PX3LDiNvZW0hw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/6.11-rc4-server-fixes
-X-PR-Tracked-Commit-Id: 7c525dddbee71880e654ad44f3917787a4f6042c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b311c1b497e51a628aa89e7cb954481e5f9dced2
-Message-Id: <172420604366.1297481.17479959976409498902.pr-tracker-bot@kernel.org>
-Date: Wed, 21 Aug 2024 02:07:23 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+	s=arc-20240116; t=1724206359; c=relaxed/simple;
+	bh=MjpTp1ZODTdGKNSpjCNCTSun6lOzgM7szJ2wdA4i85s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NwQmoA3W3kTNBjjM1GCQp+2IKkict2kV2acf9ytIUOLf5NNFywZeN3q/pt+FdpI6feb9dVpDZ8JJLe9N0klHJfCTuKpinsMz940/YCF8TnC03YJ+U62Nw8SsZI8A3Jevi12Pz/3mL34tpmecdpx1fPj5QLDTxuIAfdUmfWD6qw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WpVGC05dJz4f3jMX;
+	Wed, 21 Aug 2024 10:12:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2B2F11A198F;
+	Wed, 21 Aug 2024 10:12:33 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCHr4UPTcVmjacWCQ--.62842S4;
+	Wed, 21 Aug 2024 10:12:32 +0800 (CST)
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+To: tj@kernel.org,
+	josef@toxicpanda.com,
+	hch@lst.de,
+	axboe@kernel.dk,
+	longman@redhat.com,
+	ming.lei@redhat.com
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	houtao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	yukuai3@huawei.com,
+	lilingfeng@huaweicloud.com,
+	lilingfeng3@huawei.com
+Subject: [PATCH v2] blk-cgroup: don't clear stat in blkcg_reset_stats()
+Date: Wed, 21 Aug 2024 10:07:56 +0800
+Message-Id: <20240821020756.786000-1-lilingfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHr4UPTcVmjacWCQ--.62842S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWxZr4DGr17try7uF17KFg_yoW5JFW7pr
+	WYkwnIk3yDKF4kZF1Ygay2qryF9w4vyry5JrWDW3yrKF1jyrySvF1qy395AFW5CFyIvr45
+	Xr4YvrWDGw4jk3JanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
+	M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRiNtx3UU
+	UUU==
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-The pull request you sent on Tue, 20 Aug 2024 18:53:57 -0500:
+From: Li Lingfeng <lilingfeng3@huawei.com>
 
-> git://git.samba.org/ksmbd.git tags/6.11-rc4-server-fixes
+The list corruption described in commit 6da668063279 ("blk-cgroup: fix
+list corruption from resetting io stat") has no effect. It's unnecessary
+to fix it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b311c1b497e51a628aa89e7cb954481e5f9dced2
+As for cgroup v1, it does not use iostat any more after commit
+ad7c3b41e86b("blk-throttle: Fix io statistics for cgroup v1"), so using
+memset to clear iostat has no real effect.
+As for cgroup v2, it will not call blkcg_reset_stats() to corrupt the
+list.
 
-Thank you!
+The list of root cgroup can be used by both cgroup v1 and v2 while
+non-root cgroup can't since it must be removed before switch between
+cgroup v1 and v2.
+So it may has effect if the list of root used by cgroup v2 was corrupted
+after switching to cgroup v1, and switch back to cgroup v2 to use the
+corrupted list again.
+However, the root cgroup will not use the list any more after commit
+ef45fe470e1e("blk-cgroup: show global disk stats in root cgroup io.stat").
 
+Although this has no negative effect, it is not necessary. Remove the
+related code for cleanup. No function change.
+
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+  v1->v2: remove the fix tag and mark this as cleanup.
+ block/blk-cgroup.c | 24 ------------------------
+ 1 file changed, 24 deletions(-)
+
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 69e70964398c..6d091fa55b8c 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -629,29 +629,6 @@ static void blkg_iostat_set(struct blkg_iostat *dst, struct blkg_iostat *src)
+ 	}
+ }
+ 
+-static void __blkg_clear_stat(struct blkg_iostat_set *bis)
+-{
+-	struct blkg_iostat cur = {0};
+-	unsigned long flags;
+-
+-	flags = u64_stats_update_begin_irqsave(&bis->sync);
+-	blkg_iostat_set(&bis->cur, &cur);
+-	blkg_iostat_set(&bis->last, &cur);
+-	u64_stats_update_end_irqrestore(&bis->sync, flags);
+-}
+-
+-static void blkg_clear_stat(struct blkcg_gq *blkg)
+-{
+-	int cpu;
+-
+-	for_each_possible_cpu(cpu) {
+-		struct blkg_iostat_set *s = per_cpu_ptr(blkg->iostat_cpu, cpu);
+-
+-		__blkg_clear_stat(s);
+-	}
+-	__blkg_clear_stat(&blkg->iostat);
+-}
+-
+ static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+ 			     struct cftype *cftype, u64 val)
+ {
+@@ -668,7 +645,6 @@ static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+ 	 * anyway.  If you get hit by a race, retry.
+ 	 */
+ 	hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
+-		blkg_clear_stat(blkg);
+ 		for (i = 0; i < BLKCG_MAX_POLS; i++) {
+ 			struct blkcg_policy *pol = blkcg_policy[i];
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.39.2
+
 
