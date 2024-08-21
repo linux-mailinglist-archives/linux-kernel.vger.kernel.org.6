@@ -1,116 +1,181 @@
-Return-Path: <linux-kernel+bounces-294746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497369591F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C139591FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42E31F2398B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06AB828384F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB91620322;
-	Wed, 21 Aug 2024 00:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B721DA22;
+	Wed, 21 Aug 2024 01:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbMVYLQl"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W8JaGEDw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6AB2599;
-	Wed, 21 Aug 2024 00:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EB05672;
+	Wed, 21 Aug 2024 01:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724201563; cv=none; b=RpxxpmH80QYyRh9BYcP+ZMcYcPDYJd5Tn0aXBkX5fxRaRfBbaUuJugUQlyuPvkniB2ysG66NhNScuQPo4tzVlMWp8kvG9U2o9y1aecUd7FJdgdTgd3n99UoXbEbHcz06DykAV4dKmP2IvVcMW/8F1S2PQUyFtA3/xuvu5tC47dU=
+	t=1724202014; cv=none; b=HlHvBflw1UnMOfHjkhUDKzHDsiQ5Mmiz+bLdrPNbHBVJrMYvoEh2OnNteVwhydWTBpQA0OKvX5EctmZ1Xb1/Vc1MrS18XSGbzNt3y+xchLW1Cj88dCnqCUgyAP5NrFl4qKY9nx9dFb5JMjCzs9jST4omymQwZlVJEkIAhkyp6gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724201563; c=relaxed/simple;
-	bh=uh1TQaj1Jq3LRiBgl+QrcrdJaxmJ4N2KqBz2SU7o970=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QqeiovcMJ06TaUHpKFp3t+Z9cPN36XDR8xJ1n/3JUYV3SQSq/7nmEw7YJsT8P6MankYjB61kHucCSKkMq0tDQmpXE6RLkRxjw/hHiysY/Cqrr5P+xEkbIbBvdmU+mdbkS5zlp8vLjTGyUkbZfIXYKBCD29dkny+CiTUf9gm9w6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbMVYLQl; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37196786139so3067283f8f.2;
-        Tue, 20 Aug 2024 17:52:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724201560; x=1724806360; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uh1TQaj1Jq3LRiBgl+QrcrdJaxmJ4N2KqBz2SU7o970=;
-        b=jbMVYLQlgtcVI/2/zLDfchk65JV7/K35M5r355HVc/MUhta+cBbEJggvCuEeUgVVPR
-         dsFQQ8U19J0IbBS9DPbGo4wuvzyl7Qfu7YcDGGtgtJP1/gR0097Nd4XILPu9i8Pfd9HO
-         ZFQsgtcsRpJCknf5dwTvfteHwRohAMn1Fi2ItciSOyQAWhtTz0l2KY+PpDAxKBXAo8bD
-         mrMMpsNMjrdY61QtpERbSFlD7Fuopkb6lI9RR9HQJi2Qdg3X4k3fPyRRV1ahJfpjfPAS
-         hhsGBKqTOPprcQIIMGx2r7awh4+ekn87ZLynbpa96U1qdnrN3JrLPpFVp+9mnUfiBzaF
-         k5Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724201560; x=1724806360;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uh1TQaj1Jq3LRiBgl+QrcrdJaxmJ4N2KqBz2SU7o970=;
-        b=H6SXdfxLreNo/hbsAvaMSbIFNQxKU2iNR30aFYrSQbBYvSkGpHNYF9DX5YTLJB/qZ9
-         x2FeFpZhj7RXMMus/ZMdHNhAXJcWHZnAYy7g+1oWEXdQlGXsbd/jUCkjqLfLMTFNWMgY
-         8XoiGrWEMW3hiVTmVgX5mZW2qUbnmBFT57fLD8pNxUg/QGsAsS8sDAz7Ty3f3SxHy/2/
-         GRsjXNnsYurNSXfvoGztY7JCT156E1pCsWZwdCKRzeSq/BmkzvTg2vMqGVN1+rFf0ZbJ
-         jrEFRNY51xIJzEk/QR2T9y/wOI9t2fEj9EE57DKIHx6LOh/eaP4R+eKr1xJaJWDgjgTQ
-         Gz9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJi/p818MGqVsfpFcno2Ar5nTOLcaDmNyjobMkCSXvDgCSfKVSgXOjUxlofHEkxO4eueXHfAtL5ZnGLJjU@vger.kernel.org, AJvYcCXVhiXxtaeZKWm5CCrpnPO93h4im1xARcYn28Kftt3vNB1XHje1fUVh//fC3Q21dnokssZBVu2UzY2XAHzAg6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1JMkL2Ontu7FvGJSU3d1MscGsccOKZiE7JxYy1DP+ZO25hLSN
-	83Bb2TtKhGpy7dHYomglkND1qpt5YchTnLUUWISH4x+6k/olw0LHSzIHuUpPk5ExmtOvUSxgmIj
-	oOKnh7x13Fig5X+YZlYjmxYhNKS+5Ssn3qJI=
-X-Google-Smtp-Source: AGHT+IGYxXeO+iqS77FNlbT1rGlBh+YFfmDUvGGhx72BalywZd/UFxp0zqRD99UIhKfxVDzaLHz1o3LuHVXx43l1Go0=
-X-Received: by 2002:a05:6000:402a:b0:367:8a00:fac3 with SMTP id
- ffacd0b85a97d-372fd5c9989mr395304f8f.30.1724201559168; Tue, 20 Aug 2024
- 17:52:39 -0700 (PDT)
+	s=arc-20240116; t=1724202014; c=relaxed/simple;
+	bh=BwnFs+ky9dP3dSEkc3Oxo2bJr4RqkZJE05LBXfWzL0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=N8h3WaX+urx0IdL7y3oAXKNXflUzYO9y151aQn3nnpLUC8tJgfk/t7ZHzHN6yDzAj3pCrPqh1RmKfhbS3zOfy2Y/eXwNsPUhrcvj2XW/wTpCTcA9ZKK/QH1gKABBRwXxXWSPnHRELLs5L15JgXasmBOP4xu7nhPEsvSDDNjoiIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W8JaGEDw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KMBmjT011352;
+	Wed, 21 Aug 2024 01:00:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZhOeF01KrVEz6V+Vra3QRgsNEqktXvI30DN9G5l2idQ=; b=W8JaGEDwOO1TfQlf
+	e4XOC3VLjlT5yRv3d9ppvqfCd4ZkrW74thjA/cEmc9nrqZiauD6zZtkuFCBoZH2c
+	3Rx8QoSuK7rVjHAa06pfk5cA2Qhc0VTKlerfO0ULkwgLSMr3t9gFg7YVdRKlDtXp
+	9cNPLxVGREhnYDgHSbbSsGNsNlQGkLJU3a+J5U/j6jvzllCwGdXYhqCJjf4ZpefJ
+	XijaolbtV/G+G7ZHTI2sZDrmn3mhqDDWRfZAeowxYoI35hArL5g7R5Mzr06i4Xw/
+	dv1igFm9qfhUo8Y+eXZE3d7ZSr8Jk2rVqn1CDsKDArNHE8AuCkBNMHq9eDDnKjaa
+	SqI7Ag==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414j573a48-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 01:00:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L104H9032708
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 01:00:04 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
+ 2024 18:00:04 -0700
+Message-ID: <ef1347e4-64e3-4068-89cb-cb6038972b9e@quicinc.com>
+Date: Tue, 20 Aug 2024 18:00:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
- <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de> <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com>
- <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
-In-Reply-To: <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
-From: Stuart <stuart.a.hayhurst@gmail.com>
-Date: Wed, 21 Aug 2024 01:52:28 +0100
-Message-ID: <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
-Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] darray: lift from bcachefs
+To: Kent Overstreet <kent.overstreet@linux.dev>, <rcu@vger.kernel.org>
+CC: <paulmck@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240819165939.745801-1-kent.overstreet@linux.dev>
+ <20240819165939.745801-4-kent.overstreet@linux.dev>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240819165939.745801-4-kent.overstreet@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1KUvgS38UYLGuCyQvOjnZwsRt1BEk888
+X-Proofpoint-GUID: 1KUvgS38UYLGuCyQvOjnZwsRt1BEk888
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-20_19,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 clxscore=1011 bulkscore=0 phishscore=0 impostorscore=0
+ adultscore=0 suspectscore=0 mlxscore=0 spamscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408210005
 
-> This was the case for a while.
->
-> Increasing applications of scope-based resource management provide
-> further opportunities for smaller scopes according to some local variables,
-> don't they?
+On 8/19/24 09:59, Kent Overstreet wrote:
+> dynamic arrays - inspired from CCAN darrays, basically c++ stl vectors.
+> 
+> Used by thread_with_stdio, which is also being lifted from bcachefs for
+> xfs.
+> 
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  MAINTAINERS                             |  7 +++
+>  fs/bcachefs/Makefile                    |  1 -
+>  fs/bcachefs/btree_node_scan_types.h     |  2 +-
+>  fs/bcachefs/btree_types.h               |  2 +-
+>  fs/bcachefs/btree_update.c              |  2 +
+>  fs/bcachefs/btree_write_buffer_types.h  |  2 +-
+>  fs/bcachefs/disk_accounting_types.h     |  2 +-
+>  fs/bcachefs/fsck.c                      |  2 +-
+>  fs/bcachefs/journal_io.h                |  2 +-
+>  fs/bcachefs/journal_sb.c                |  2 +-
+>  fs/bcachefs/sb-downgrade.c              |  3 +-
+>  fs/bcachefs/sb-errors_types.h           |  2 +-
+>  fs/bcachefs/sb-members.h                |  2 +-
+>  fs/bcachefs/subvolume.h                 |  1 -
+>  fs/bcachefs/subvolume_types.h           |  2 +-
+>  fs/bcachefs/thread_with_file_types.h    |  2 +-
+>  fs/bcachefs/util.h                      | 29 +-----------
+>  {fs/bcachefs => include/linux}/darray.h | 59 ++++++++++++++++---------
+>  include/linux/darray_types.h            | 22 +++++++++
+>  lib/Makefile                            |  2 +-
+>  {fs/bcachefs => lib}/darray.c           | 12 ++++-
+>  21 files changed, 96 insertions(+), 64 deletions(-)
+>  rename {fs/bcachefs => include/linux}/darray.h (66%)
+>  create mode 100644 include/linux/darray_types.h
+>  rename {fs/bcachefs => lib}/darray.c (57%)
 
-Personally I'd rather it just fits in with the rest of the kernel,
-but if the general consensus is that new drivers should use tighter
-scopes, I can do that instead.
+...
 
-> How do you think about to collaborate with other data structures
-> than character arrays?
->
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.11-rc4#n953
+> diff --git a/fs/bcachefs/darray.c b/lib/darray.c
+> similarity index 57%
+> rename from fs/bcachefs/darray.c
+> rename to lib/darray.c
+> index b7d223f85873..b6868db7f956 100644
+> --- a/fs/bcachefs/darray.c
+> +++ b/lib/darray.c
+> @@ -1,10 +1,14 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * (C) 2022-2024 Kent Overstreet <kent.overstreet@linux.dev>
+> + */
+>  
+> +#include <linux/darray.h>
+>  #include <linux/log2.h>
+> +#include <linux/module.h>
+>  #include <linux/slab.h>
+> -#include "darray.h"
+>  
+> -int __bch2_darray_resize(darray_char *d, size_t element_size, size_t new_size, gfp_t gfp)
+> +int __darray_resize_slowpath(darray_char *d, size_t element_size, size_t new_size, gfp_t gfp)
+>  {
+>  	if (new_size > d->size) {
+>  		new_size = roundup_pow_of_two(new_size);
+> @@ -23,3 +27,7 @@ int __bch2_darray_resize(darray_char *d, size_t element_size, size_t new_size, g
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(__darray_resize_slowpath);
+> +
+> +MODULE_AUTHOR("Kent Overstreet");
+> +MODULE_LICENSE("GPL");
 
-Hm, I picked a character array since all it's doing is sending a
-buffer to the device.
-There's no published specification to follow, only "Well the Windows
-driver sends these bytes and this happens".
-So there isn't really a structure that really comes naturally,
-especially with all the magic numbers.
+Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+description is missing"), a module without a MODULE_DESCRIPTION() will
+result in a warning when built with make W=1. Recently, multiple
+developers, including myself, have been eradicating these warnings
+treewide, and to prevent new instances from being introduced I scan lore
+for patches which contain a MODULE_LICENSE but do not contain a
+MODULE_DESCRIPTION(). This patch was flagged.
 
-Unless you're suggesting I just do `unsigned char send_buf[3] = {...}`?
-I checked the docs, apparently I misread somewhere that
-`hid_hw_raw_request` couldn't use stack allocated memory safely,
-whoops.
+Normally I just ask that a MODULE_DESCRIPTION() be added. But in this
+case I don't see how this can ever be built as a module since it is part
+of an obj-y rule, and hence, unless I'm missing something, will always
+be built-in. So in this case I would suggest removing the MODULE_AUTHOR
+and MODULE_LICENSE.
 
-Thanks for the review,
-Stuart
+However, if you do anticipate this could be built as a module in the
+future, please just add the MODULE_DESCRIPTION().
+
+/jeff
+
+
 
