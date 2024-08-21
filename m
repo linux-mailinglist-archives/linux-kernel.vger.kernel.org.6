@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-295121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C42E959700
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:06:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7709596FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA021C20DE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FC3281265
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B6E1CBEA2;
-	Wed, 21 Aug 2024 08:21:05 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BC01C2DB6;
+	Wed, 21 Aug 2024 08:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2XCsGxT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C8B1CB14D;
-	Wed, 21 Aug 2024 08:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA601C2DA1;
+	Wed, 21 Aug 2024 08:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724228465; cv=none; b=YA0aaZyqnE0kw5jmfxuxfJniLGDPIsMFp9Xir0taAy23UA2tcB7w21PT+5OrZ4WcqKAp2K89QRD6cEDXS++inXftaz6JaXLKg0IlujXWPcNS38L4NgCdy8LGHFcWH27ihBg60SZac72YT9JjBD/nkrrQRndKCdUQmvhdXMvOGLI=
+	t=1724228437; cv=none; b=jCOBsqbGtwiNG4xsVbEaN8GeMvWXJgjKfSTBVDuN1oWej4R+4Ho4NNMn8RsnBFZNieeqgX94h1KkOgcHc7pDoU1BwmKgHaiblKo/8AkkUG0HUXgQjiLyCAqgvEn/CF1eATUwVJXaB2RUa6EJsn3iyfOzfZjLwfZs9Mn0YATkxdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724228465; c=relaxed/simple;
-	bh=DyeQTiVLIwnKP7nDbihUPIy5GAmQ7YvIMEcNM/HThdc=;
+	s=arc-20240116; t=1724228437; c=relaxed/simple;
+	bh=/KCb8OFN5/cjiyWJC8kvNgVUz8FhC5UXGxnpcTHn0FQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qjEyE/Tx/nH3rV5I5gH0s6/N/Ouk92p1lj+gY7aSLveoQLE7o7X+Zm2oBbbE36m9HXuZF3QIZwJtztfscECjXvegxoq6hRkamZWc9NcPrcS8uh/EYByHsu+TTe95d4rIFfOWY3IAoUPakF/MbAUQ1w4ogIamRohT2CZRUd/NrRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af269.dynamic.kabel-deutschland.de [95.90.242.105])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id A93C661E5FE05;
-	Wed, 21 Aug 2024 10:20:13 +0200 (CEST)
-Message-ID: <1cf78f6f-af21-48bc-a9d8-755dd7bf8503@molgen.mpg.de>
-Date: Wed, 21 Aug 2024 10:20:13 +0200
+	 In-Reply-To:Content-Type; b=THQd+5bIM49zXJXiBHlyZTOyX74PZboDACbTDxD3LOHjsTWdSOqRlFc2wMYRcmOfM1t/RyoSqHlhGXs+W8zxRTwO6mElHzWlTar7Qo65hkosJQ9wu5elwZeaxT5g/j+XfoeANTMG73xd8M14HJA+6NhmZtFjWF75QD8BK7UVtMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2XCsGxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71FD6C4AF0C;
+	Wed, 21 Aug 2024 08:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724228437;
+	bh=/KCb8OFN5/cjiyWJC8kvNgVUz8FhC5UXGxnpcTHn0FQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h2XCsGxT55KYSo1bkmTdKOEbNyG4E8s98/EkXmTSrWBjltNkcaW0N80l9JwJK432f
+	 sg4lKXwVlb37mcQMjbQtPC19TTWtIghZ3U40MEljfDEEdg6pi03kt0arBlZ7QFvtzZ
+	 RWVRLji4xnROXhJtPT/2ELldp5itCkkY4RWfppdsskMaUOdyIT6ihqatNGtGHvzk11
+	 Fxj61fc7qiNzzl9fJ1EL9oFw2AybwgvQxDzcZxXenqoOwtguUyxhQOFfKUgXNXZMsJ
+	 HNUPnZc+SDGC4Wx5P97OGdNkGsVqelxVxYq0kbSnurB5Gew+Ff6uhjcF2lD05DNIPo
+	 pmGU7RWNpfKsQ==
+Message-ID: <de5ffcd8-0f2a-4cca-a7a0-0c4fc0158392@kernel.org>
+Date: Wed, 21 Aug 2024 10:20:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,185 +49,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: NOHZ tick-stop error: local softirq work is pending, handler
- #08!!! on Dell XPS 13 9360
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar
- <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de>
- <87o7ak411y.fsf@somnus> <256fdb2e-9b83-4837-bd31-0c34e4267c31@molgen.mpg.de>
- <87sezv7ytw.fsf@somnus>
+Subject: Re: [PATCH v1 2/2] dt-bindings: EDAC for loongson memory controller
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>, chenhuacai@kernel.org,
+ kernel@xen0n.name, bp@alien8.de, tony.luck@intel.com, james.morse@arm.com,
+ mchehab@kernel.org, rric@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240821064728.8642-1-zhaoqunqin@loongson.cn>
+ <20240821064728.8642-3-zhaoqunqin@loongson.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <87sezv7ytw.fsf@somnus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240821064728.8642-3-zhaoqunqin@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dear Anna-Maria,
-
-
-Thank you very much for the support. I was finally able to collect the 
-data you asked for.
-
-Am 09.04.24 um 09:57 schrieb Anna-Maria Behnsen:
-> Paul Menzel writes:
-
-[…]
-
->> Am 08.04.24 um 12:10 schrieb Anna-Maria Behnsen:
->>
->>> Paul Menzel writes:
->>
->>>> On Dell XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022, with Linux 6.9-rc2+
->>>> built from commit b1e6ec0a0fd0 (Merge tag 'docs-6.9-fixes' of
->>>> git://git.lwn.net/linux) the external USB-C adapter Dell DA300 stopped
->>>> working (only the Ethernet port was used). Linux logged:
->>>
->>> thanks for the report. Can you please provide a trace beside the dmesg
->>> output? The following trace events should be enabled (via kernel command
->>> line):
->>>
->>> trace_event=timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit
->> Unfortunately I haven’t been able to reproduce it until now. Should it
->> happen again, I am going to try your suggestion.
+On 21/08/2024 08:47, Zhao Qunqin wrote:
+> From: zhaoqunqin <zhaoqunqin@loongson.cn>
 > 
-> Thanks for letting me know.
+> Add: drivers/edac/loongson_edac.c
+> 
+> Signed-off-by: zhaoqunqin <zhaoqunqin@loongson.cn>
 
-I wanted to configure that in the running system, but wasn’t able to set 
-all of these at once with `set_event`:
+Please use full name, not login.
 
-     echo 
-'timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit' 
-| sudo tee /sys/kernel/tracing/set_event
+> ---
+>  .../bindings/edac/loongson,ls-mc-edac.yaml    | 35 +++++++++++++++++++
 
-For some reason setting them individually also did *not* work:
+Bindings are before users.
 
-     for e in timer:* timer_migration:* sched:sched_switch 
-sched:sched_wakeup sched:sched_process_hang irq:softirq_entry 
-irq:softirq_raise irq:softirq_exit'; do echo "$e" | sudo tee -a 
-/sys/kernel/tracing/set_event; done
+>  MAINTAINERS                                   |  7 ++++
+>  2 files changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/edac/loongson,ls-mc-edac.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/edac/loongson,ls-mc-edac.yaml b/Documentation/devicetree/bindings/edac/loongson,ls-mc-edac.yaml
+> new file mode 100644
+> index 000000000..29e5b8381
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/edac/loongson,ls-mc-edac.yaml
+> @@ -0,0 +1,35 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/edac/loongson,ls-mc-edac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Loongson Memory Controller EDAC
+> +
+> +maintainers:
+> +  - Zhao Qunqin <zhaoqunqin@loongson.cn>
+> +
+> +description: |
+> +  EDAC node is defined to describe on-chip error detection and correction for
+> +  Loongson Memory Controller.
+> +
+> +properties:
+> +
+> +  compatible:
+> +    const: loongson,ls-mc-edac
 
-I then used
+Missing soc part. And then adjust filename to match proper (new) compatible.
 
-     echo 1 | sudo tee /sys/kernel/tracing/events/timer/enable
-     echo 1 | sudo tee /sys/kernel/tracing/events/timer_migration/enable
-     echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_switch/enable
-     echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_wakeup/enable
-     echo 1 | sudo tee 
-/sys/kernel/tracing/events/sched/sched_process_hang/enable
-     echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_entry/enable
-     echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_raise/enable
-     echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_exit/enable
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    edac: mc0@1fe00600 {
 
-and also had to increase the buffer to bridge the gap between the event 
-and me noticing it:
+memory-controller@
 
-     echo 96000 | sudo tee /sys/kernel/tracing/buffer_size_kb
-
-Then, with Linux v6.11-rc4-11-g521b1e7f4cf0b, I was able to get the 
-trace for the event below:
-
-     [ 7542.706299] NOHZ tick-stop error: local softirq work is pending, 
-handler #08!!!
-
-$ sudo cat /sys/kernel/tracing/trace
-[…]
-  MediaPD~der #28-14000   [000] d..1.  7542.703768: hrtimer_cancel: 
-hrtimer=000000008d2c9f3f
-  MediaPD~der #28-14000   [000] .....  7542.703810: hrtimer_init: 
-hrtimer=00000000c6f259e7 clockid=CLOCK_MONOTONIC mode=ABS
-  MediaPD~der #28-14000   [000] d..1.  7542.703812: hrtimer_start: 
-hrtimer=00000000c6f259e7 function=hrtimer_wakeup expires=7602581538204 
-softexpires=7602581488204 mode=ABS
-  MediaPD~der #28-14000   [000] d..2.  7542.703821: sched_switch: 
-prev_comm=MediaPD~der #28 prev_pid=14000 prev_prio=120 prev_state=S ==> 
-next_comm=swapper/0 next_pid=0 next_prio=120
-           <idle>-0       [000] dN.2.  7542.703931: sched_wakeup: 
-comm=ImageBridgeChld pid=6041 prio=120 target_cpu=000
-           <idle>-0       [000] d..2.  7542.703937: sched_switch: 
-prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
-next_comm=ImageBridgeChld next_pid=6041 next_prio=120
-  ImageBridgeChld-6041    [000] d..2.  7542.704041: sched_switch: 
-prev_comm=ImageBridgeChld prev_pid=6041 prev_prio=120 prev_state=S ==> 
-next_comm=swapper/0 next_pid=0 next_prio=120
-           <idle>-0       [000] dN.2.  7542.704174: sched_wakeup: 
-comm=Renderer pid=4113 prio=120 target_cpu=000
-           <idle>-0       [000] d..2.  7542.704179: sched_switch: 
-prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
-next_comm=Renderer next_pid=4113 next_prio=120
-         Renderer-4113    [000] d..2.  7542.704245: sched_switch: 
-prev_comm=Renderer prev_pid=4113 prev_prio=120 prev_state=S ==> 
-next_comm=swapper/0 next_pid=0 next_prio=120
-           <idle>-0       [000] dNh2.  7542.704260: sched_wakeup: 
-comm=IPC I/O Child pid=6029 prio=120 target_cpu=000
-           <idle>-0       [000] d..2.  7542.704267: sched_switch: 
-prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
-next_comm=IPC I/O Child next_pid=6029 next_prio=120
-    IPC I/O Child-6029    [000] d..2.  7542.704340: sched_switch: 
-prev_comm=IPC I/O Child prev_pid=6029 prev_prio=120 prev_state=S ==> 
-next_comm=swapper/0 next_pid=0 next_prio=120
-           <idle>-0       [000] dN.2.  7542.704786: sched_wakeup: 
-comm=Compositor pid=4123 prio=120 target_cpu=000
-           <idle>-0       [000] d..2.  7542.704791: sched_switch: 
-prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
-next_comm=Compositor next_pid=4123 next_prio=120
-       Compositor-4123    [000] d..2.  7542.704944: sched_switch: 
-prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> 
-next_comm=swapper/0 next_pid=0 next_prio=120
-           <idle>-0       [000] dN.2.  7542.705943: sched_wakeup: 
-comm=Compositor pid=4123 prio=120 target_cpu=000
-           <idle>-0       [000] d..2.  7542.705950: sched_switch: 
-prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
-next_comm=Compositor next_pid=4123 next_prio=120
-       Compositor-4123    [000] d..2.  7542.706105: sched_switch: 
-prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> 
-next_comm=swapper/0 next_pid=0 next_prio=120
-           <idle>-0       [000] d.h2.  7542.706328: hrtimer_cancel: 
-hrtimer=000000009bbda66a
-           <idle>-0       [000] d.h1.  7542.706329: 
-hrtimer_expire_entry: hrtimer=000000009bbda66a 
-function=tick_nohz_handler now=7542584007490
-           <idle>-0       [000] d.h1.  7542.706333: softirq_raise: vec=9 
-[action=RCU]
-           <idle>-0       [000] d.h1.  7542.706338: softirq_raise: vec=7 
-[action=SCHED]
-           <idle>-0       [000] d.h1.  7542.706339: hrtimer_expire_exit: 
-hrtimer=000000009bbda66a
-           <idle>-0       [000] d.h2.  7542.706340: hrtimer_start: 
-hrtimer=000000009bbda66a function=tick_nohz_handler 
-expires=7542588000000 softexpires=7542588000000 mode=ABS
-           <idle>-0       [000] ..s1.  7542.706345: softirq_entry: vec=7 
-[action=SCHED]
-           <idle>-0       [000] ..s1.  7542.706359: softirq_exit: vec=7 
-[action=SCHED]
-           <idle>-0       [000] ..s1.  7542.706360: softirq_entry: vec=9 
-[action=RCU]
-           <idle>-0       [000] ..s1.  7542.706362: softirq_exit: vec=9 
-[action=RCU]
-           <idle>-0       [000] dNh4.  7542.707672: sched_wakeup: 
-comm=irq/51-DLL075B: pid=194 prio=49 target_cpu=000
-           <idle>-0       [000] d..2.  7542.707685: sched_switch: 
-prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
-next_comm=irq/51-DLL075B: next_pid=194 next_prio=49
-  irq/51-DLL075B:-194     [000] .....  7542.707708: timer_init: 
-timer=00000000630ae178
-  irq/51-DLL075B:-194     [000] d..1.  7542.707710: timer_start: 
-timer=00000000630ae178 function=process_timeout expires=4296778179 
-[timeout=250] bucket_expiry=4296778184 cpu=0 idx=121 flags=
-  irq/51-DLL075B:-194     [000] d..2.  7542.707718: sched_switch: 
-prev_comm=irq/51-DLL075B: prev_pid=194 prev_prio=49 prev_state=D ==> 
-next_comm=swapper/0 next_pid=0 next_prio=120
-           <idle>-0       [000] dN.2.  7542.709072: sched_wakeup: 
-comm=AudioIP~ent RPC pid=6671 prio=120 target_cpu=000
-[…]
-
-The trace file is 320 MB big. If you need the full trace and log, please 
-tell me, and I’ll upload it somewhere.
+and drop unused label.
 
 
-Kind regards,
+> +        compatible = "loongson,ls-mc-edac";
+> +        reg = <0x0 0x1fe00600 0x0 0x50>;
+> +    };
 
-Paul
+Best regards,
+Krzysztof
+
 
