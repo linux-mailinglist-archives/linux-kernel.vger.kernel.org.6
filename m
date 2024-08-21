@@ -1,103 +1,173 @@
-Return-Path: <linux-kernel+bounces-296034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B445F95A4A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:23:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D882D95A4A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5851C229D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81D271F23624
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8065D1B3B0D;
-	Wed, 21 Aug 2024 18:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rdznu1Ui"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423141B3B0C;
+	Wed, 21 Aug 2024 18:23:49 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F14E14C5AE
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 18:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444A51B3B10
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 18:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724264588; cv=none; b=MX5GXytP83H9EJNznChznVDBOlfAg+WtjPuYoRwepYwkTDCKBn1L89m2g3md/B5JlVeFuRPvq31ciKyJlQGfdq5md7gMnGPiCO8ldYC8I6t6bPfFTtK9DE0dy50LU0S4WtLR3ehk2v8QT4c7ST5JwpWIueABJDyRt2szkPs5uDE=
+	t=1724264628; cv=none; b=CuvzJqbVT9AqFPi6dJ/JUR5AOdkwPUBFC6EJu2+BZFMs71r8QZ7crrFhc3mjTrHoUWqSh1FRDsnBOJU7Xs+VjCBrN6tdJgQkqsANTAcqrsVlzECM8nThPZ8/iEiRysverouQH0Y8VWbPjDKPDYT4XPR5ir8qsyTeG/jljZpLayE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724264588; c=relaxed/simple;
-	bh=QUKGxRkk8/mkSrwuSlLsSbgUgk5OGBB2HN54PKBTREc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MymgiE7ankMpqbfqstCoWRJqJ79gwarfG/xIQceuCC7SpY7M1j3qDtBvkkapgPfWgJRJRPDoIfoU1zaBbQ+9/eQj3Fxqw1ByikGNkS4NEs5Q6XBTjjsTNIDrdmVC9J02sl/UUnE60JGsME09xHHj/299HtpiMn/9EUB8NeAx9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rdznu1Ui; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5beb6ea9ed6so4724a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724264586; x=1724869386; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0MhXaKx6yN6hoftmycyXZ+ElE9Hp5n6s8cfDPZOoBHM=;
-        b=Rdznu1UiWBQXHII0d9VtNiEQTs0b55FaFqdDeQV7brfPBvlpXTRWMn7DnK3DrfxpRi
-         +UYMvv4us+Bf1qMynRnjXzOta1Xv3Hzl2BvLTt0OXuNkyqyFLBKN6l2CPlP1tDinAz89
-         N4JjbniCC351dDfieDjscF82G8/QbH6qe8ZOTnAHrnbaDi5Kci6VjTkS898ZWDkZyFeO
-         /1KO6LW7SeuDyKMbjSN6tVUKsUPCRBelGaTzzVho90ZDQzCnZw+7VmiHD4snk3UdbA1D
-         dj0t0WF8oBv7t3KfTYq7hwplHoQC1trD54Dobi1bAkFkv8pRrdrWscf8rZ1DQtOizuJZ
-         0nsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724264586; x=1724869386;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0MhXaKx6yN6hoftmycyXZ+ElE9Hp5n6s8cfDPZOoBHM=;
-        b=Lw1GO7VkroFgUorHBTwBqTJAAZ2Ha/INBPve5+/G20D/RMm2QBkCdPF6ecT84bdoag
-         PuDkuKfA6WwjN7Jt72LRNgm1WSVDyWglhb6xGvZ3NVOvyGBYNP35hoB6e/+gwsuokhrf
-         6DXMbfaD0njQkSvhghm3LV06aQRWHZqiLxqc7jU7MasOGMI4r6/oD04szGQwe5+E63lo
-         ZgstYYq7EN3+xrYRe59xIzlcmeG70akD5z6T7f9CCdhXZ9VcdTgdl2jdU0Jbd4dl+Gab
-         kiNnHUDbSTMWIwFB/6mWlbTdXBqeDxLavoKM2/cGOxyY/d5KEVN3kUTHlxj66Trh90ar
-         rtEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoZah0uXmAXnfgV5QPXD2MlbA2ZuWhuH3yvFGHDEeX2HKOzgbTpIZ9uRL/rlH6e9e1XpMs1uUCplbIgdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj0eIDku7OScVh21wVodQjnWf0eXO+KD3HwyC9DpztxdNM6MrH
-	bnASJayUCNI+07bw8UapI/NPvM5+fzYKSt56WMmBnWBOjiZI33/gIDr5YJNARn8=
-X-Google-Smtp-Source: AGHT+IFU6t+Mu6hID3xlC+1CO1fUMB8oA7lQ5D7nMlujTXX6yhTp0eJws1S2crYlDzU/oWrgudCx+Q==
-X-Received: by 2002:a17:907:ea1:b0:a7a:a3db:c7b3 with SMTP id a640c23a62f3a-a866f2d7aaamr178974666b.19.1724264585535;
-        Wed, 21 Aug 2024 11:23:05 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838394716esm942312166b.146.2024.08.21.11.23.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 11:23:05 -0700 (PDT)
-Date: Wed, 21 Aug 2024 21:23:01 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Abhishek Tamboli <abhishektamboli9@gmail.com>,
-	gregkh@linuxfoundation.org, tdavies@darkphysics.net,
-	philipp.g.hortmann@gmail.com, garyrookard@fastmail.org,
-	linux-staging@lists.linux.dev, skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8192e: Replace strcpy with strscpy in
- rtl819x_translate_scan
-Message-ID: <510b12b8-91d5-43ce-a191-9ee0a6c91460@stanley.mountain>
-References: <20240820184216.45390-1-abhishektamboli9@gmail.com>
- <2348e646-e1da-4deb-ab55-c438a42e25b3@wanadoo.fr>
+	s=arc-20240116; t=1724264628; c=relaxed/simple;
+	bh=CrEj/Mm0l0HK3myb0E/qBhnRWruG+WlfNx8WdX2N9Ks=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Y+hJ6DW4JJdn0ris+NOhNBIW+FTquzJoV88RYSzuyoj4ugs+3Kszd62C/pYY4vjm5W9QYvk6mdxq8wKKhdcTYi2R8pUACwqQCOgfHXE+/5DVnNxqTF2p5f45E1SD4Mn+JO1YdIOomfSWeUkppVJ1tLUPNRvNHXNezlGN7naUayY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WpvpH6w2jzpVXZ;
+	Thu, 22 Aug 2024 02:23:03 +0800 (CST)
+Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
+	by mail.maildlp.com (Postfix) with ESMTPS id 989E518009B;
+	Thu, 22 Aug 2024 02:23:43 +0800 (CST)
+Received: from [10.174.176.125] (10.174.176.125) by
+ kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 22 Aug 2024 02:23:42 +0800
+Subject: Re: [bug report] GICv4.1: multiple vpus execute vgic_v4_load at the
+ same time will greatly increase the time consumption
+To: Marc Zyngier <maz@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Oliver Upton
+	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K Poulose
+	<suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, "open list:IRQ
+ SUBSYSTEM" <linux-kernel@vger.kernel.org>, "moderated list:ARM SMMU DRIVERS"
+	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
+	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
+	<nizhiqiang1@huawei.com>, "tangnianyao@huawei.com" <tangnianyao@huawei.com>,
+	<wangzhou1@hisilicon.com>
+References: <a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com>
+ <86msl6xhu2.wl-maz@kernel.org>
+From: Kunkun Jiang <jiangkunkun@huawei.com>
+Message-ID: <f1574274-efd8-eb56-436b-5a1dd7620f2c@huawei.com>
+Date: Thu, 22 Aug 2024 02:23:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2348e646-e1da-4deb-ab55-c438a42e25b3@wanadoo.fr>
+In-Reply-To: <86msl6xhu2.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600007.china.huawei.com (7.193.23.208)
 
-On Tue, Aug 20, 2024 at 09:38:22PM +0200, Christophe JAILLET wrote:
->    - if a "mode" matches, do we need to iterate the whole rtllib_modes
-> array? (have a look at wireless_mode)
+Hi Marc,
+
+On 2024/8/21 18:59, Marc Zyngier wrote:
+> On Wed, 21 Aug 2024 10:51:27 +0100,
+> Kunkun Jiang <jiangkunkun@huawei.com> wrote:
+>>
+>> Hi all,
+>>
+>> Recently I discovered a problem about GICv4.1, the scenario is as follows:
+>> 1. Enable GICv4.1
+>> 2. Create multiple VMs.For example, 50 VMs(4U8G)
+
+s/4U8G/8U16G/, sorry..
+
+> I don't know what 4U8G means. On how many physical CPUs are you
+> running 50 VMs? Direct injection of interrupts and over-subscription
+> are fundamentally incompatible.
+
+Each VM is configured with 8 vcpus and 16G memory. The number of
+physical CPUs is 320.
+
 > 
+>> 3. The business running in VMs has a frequent mmio access and need to exit
+>>    to qemu for processing.
+>> 4. Or modify the kvm code so that wfi must trap to kvm
+>> 5. Then the utilization of pcpu where the vcpu is located will be 100%,and
+>>    basically all in sys.
+> 
+> What did you expect? If you trap all the time, your performance will
+> suck.  Don't do that.
+> 
+>> 6. This problem does not exist in GICv3.
+> 
+> Because GICv3 doesn't have the same constraints.
+> 
+>>
+>> According to analysis, this problem is due to the execution of vgic_v4_load.
+>> vcpu_load or kvm_sched_in
+>>      kvm_arch_vcpu_load
+>>      ...
+>>          vgic_v4_load
+>>              irq_set_affinity
+>>              ...
+>>                  irq_do_set_affinity
+>>                      raw_spin_lock(&tmp_mask_lock)
+>>                      chip->irq_set_affinity
+>>                      ...
+>>                        its_vpe_set_affinity
+>>
+>> The tmp_mask_lock is the key. This is a global lock. I don't quite
+>> understand
+>> why tmp_mask_lock is needed here. I think there are two possible
+>> solutions here:
+>> 1. Remove this tmp_mask_lock
+> 
+> Maybe you could have a look at 33de0aa4bae98 (and 11ea68f553e24)? It
+> would allow you to understand the nature of the problem.
+> 
+> This can probably be replaced with a per-CPU cpumask, which would
+> avoid the locking, but potentially result in a larger memory usage.
 
-Can only one mode be set at a time?
+Thanks, I will try it.
 
-regards,
-dan carpenter
+>> 2. Modify the gicv4 driver,do not perfrom VMOVP via
+>> irq_set_affinity.
+> 
+> Sure. You could also not use KVM at all if don't care about interrupts
+> being delivered to your VM. We do not send a VMOVP just for fun. We
+> send it because your vcpu has moved to a different CPU, and the ITS
+> needs to know about that.
 
+When a vcpu is moved to a different CPU, of course VMOVP has to be sent.
+I mean is it possible to call its_vpe_set_affinity() to send VMOVP by
+other means (instead of by calling the irq_set_affinity() API). So we
+can bypass this tmp_mask_lock.
+
+> 
+> You seem to be misunderstanding the use case for GICv4: a partitioned
+> system, without any over-subscription, no vcpu migration between CPUs.
+> If that's not your setup, then GICv4 will always be a net loss
+> compared to SW injection with GICv3 (additional HW interaction,
+> doorbell interrupts).
+
+Thanks for the explanation. The key to the problem is not vcpu migration
+between CPUs. The key point is that many vcpus execute vgic_v4_load() at
+the same time. Even if it is not migrated to another CPU, there may be a
+large number of vcpus executing vgic_v4_load() at the same time. For
+example, the service running in VMs has a large number of MMIO accesses
+and need to return to userspace for emulation. Due to the competition of
+tmp_mask_lock, performance will deteriorate.
+
+When the target CPU is the same CPU as the last run, there seems to be
+no need to call irq_set_affinity() in this case. I did a test and it was
+indeed able to alleviate the problem described above.
+
+I feel it might be better to remove tmp_mask_lock or call
+its_vpe_set_affinity() in another way. So I mentioned these two ideas
+above.
+
+Thanks,
+Kunkun Jiang
 
