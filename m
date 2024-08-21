@@ -1,114 +1,343 @@
-Return-Path: <linux-kernel+bounces-296016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CC595A45D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBD495A45A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F482836CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:05:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B226A1C224BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410931B3B09;
-	Wed, 21 Aug 2024 18:05:17 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7257C1B253C;
+	Wed, 21 Aug 2024 18:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jKJafOFc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5FOA5WbW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R0BXNZcg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MmVqWpam"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45481B2ED6;
-	Wed, 21 Aug 2024 18:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3327E1B2ED6;
+	Wed, 21 Aug 2024 18:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724263516; cv=none; b=JoaKLqgo8i1uY7zpY0qp43HOVPVFCLUE8Pcuvz1cEIcUE9CK0BygziLaDMypOzZr2qis88A+xPM8p6CYxAPtZGnLf4QUTW/GPv8DeiSbUO5SUlYc1x7WyN1zFtiS/bUWWX7TYPYyYdAd2KyjSVeOGG7usi/E8K+9rp6zgrTHAPE=
+	t=1724263454; cv=none; b=gpimcBRO7QZNe4xl/Jgroq+tQw2VNGDRSKfedxbTQh3EiGjKOH3YugRScGMMgZ3vbfeBEOrYuO1uPppn4h+wDXPf35PKPAoEfUvZ1lkY4FXxq74gCqJBxEm1HiGRNvOyZ/tmc57bSdvulcK06Y7koW9WX76jtJ5yf8XLiG0U1Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724263516; c=relaxed/simple;
-	bh=BL3FxBjXqdUlgS2BCFaDe/fd09UFnxS+0qX9Ww02TCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPNVZht/WditcPuVNAUfaG6r5IjAL7LL4rUzfWtgnInvI0A1enDefbobF3BlZAf07jDvj5wZL6DCiM1SrN7b8U9WFbb5eYwc52w1nDh4IsKF1aFPxc8EXfX8zKJ5MxMx5NaiO4ZG/gftldTt1DgG9Ah9ZHQa/vIj0eE3AYF7tRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335FAC32781;
-	Wed, 21 Aug 2024 18:05:11 +0000 (UTC)
-Date: Wed, 21 Aug 2024 19:05:08 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH RFT v9 4/8] fork: Add shadow stack support to clone3()
-Message-ID: <ZsYsVJZ2iFVyqA3M@arm.com>
-References: <20240819-clone3-shadow-stack-v9-0-962d74f99464@kernel.org>
- <20240819-clone3-shadow-stack-v9-4-962d74f99464@kernel.org>
- <dc8328dbaa01ca7443eeb75024752c673904e3a4.camel@intel.com>
- <cc2e7d86-c890-4cb1-8cad-1cfaa9f53dc8@sirena.org.uk>
- <82be9ec6e43a018add8d9bbc6ba67feee676f32e.camel@intel.com>
- <5643761f-cc38-4e41-9ddd-f0a1934f8724@sirena.org.uk>
- <9f022aa4cd3e2dc82d0c963e9d2bf5c7ddd5b92a.camel@intel.com>
- <77bc051d-b2c9-4e3a-b956-be8879048e20@sirena.org.uk>
- <5464b915b52bf3b91ec70201736479a5347838af.camel@intel.com>
- <158190d9-a4a6-4647-84e8-f4ae036d984b@sirena.org.uk>
+	s=arc-20240116; t=1724263454; c=relaxed/simple;
+	bh=qHS98yZK7pOa9HMPDhX8404fTMZFYKpPmf0nKxyOas4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NM7N6nY4YWJFRdXIKLdfqw3Mshq/k9QkS/jm/VE632jlSEJv+4Tl/L+zDM/T55K+cDlWvT5dZAnlfw2b87Bv5ayXz32qfg6dHYZg5aZ3tgC5vtWnloNi4Op39AkJDLIPi+AZRugfQphSq/Y9NIf2UiYHDhSiELgxUhEn6Mz9/40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jKJafOFc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5FOA5WbW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R0BXNZcg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MmVqWpam; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 06286200BB;
+	Wed, 21 Aug 2024 18:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724263450; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rtYw6DaP9betKmzEf9g6mISWKsVME29y3aCfMqgdfFM=;
+	b=jKJafOFcTLdxl6AaXOhu50+kshzfGtgBxSumvKx3A9oYuuL8dSOx864Po2+pstl3QrJWBN
+	uBLLAYQB1QWQ/2ES8X2GWSpQ2tfJ05cMHeWb2m9qAdLNQiT1P+jxfsCAKz4jDtIuhEz5uZ
+	7AFW285hzSC5CRMZLOG4YgNPdsueSKo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724263450;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rtYw6DaP9betKmzEf9g6mISWKsVME29y3aCfMqgdfFM=;
+	b=5FOA5WbWfdqXLzfVVVgqR3N0Gizl15elZtQPLWdxuK6TWjl8nC452UBtF4ML/npiI2W0r+
+	dcPk1dl9+O6iPfAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=R0BXNZcg;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=MmVqWpam
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724263449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rtYw6DaP9betKmzEf9g6mISWKsVME29y3aCfMqgdfFM=;
+	b=R0BXNZcgqwOMxErWhpRrRazNwXpaMZpspzjC2zOKnsLIsIQeIBJx3cCgt8T60OYBZIyb/+
+	6etWJxa+k3pxvQoLzPg1LTvbu8lq9WzEG/6f58S3032fp4jJUvbLtUkJJRGYtBK2zuPCgP
+	fqWu0V0zALS99n+VmWoRcftFbjluarM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724263449;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rtYw6DaP9betKmzEf9g6mISWKsVME29y3aCfMqgdfFM=;
+	b=MmVqWpam5eeb/IXRTV2pcgZa/GE/cEsfep1+IkWWeqXm0Kkw8YOLiBJkKeFEm7VZAijuV+
+	5y7f9xXIlLhb9YDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ABF59139C2;
+	Wed, 21 Aug 2024 18:04:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NQb5JxgsxmaYeAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 21 Aug 2024 18:04:08 +0000
+Message-ID: <1cc13276-43fe-4c2d-8055-0a1a8a7ee156@suse.cz>
+Date: Wed, 21 Aug 2024 20:06:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <158190d9-a4a6-4647-84e8-f4ae036d984b@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ "Paul E . McKenney" <paulmck@kernel.org>
+Cc: RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Neeraj upadhyay <Neeraj.Upadhyay@amd.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+References: <20240820155935.1167988-1-urezki@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-US
+In-Reply-To: <20240820155935.1167988-1-urezki@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 06286200BB
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.org];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,amd.com,gmail.com,joelfernandes.org,kernel.org,sony.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,monitor_work.work:url,suse.cz:dkim,suse.cz:mid,suse.cz:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Aug 21, 2024 at 06:23:18PM +0100, Mark Brown wrote:
-> On Wed, Aug 21, 2024 at 03:54:49PM +0000, Edgecombe, Rick P wrote:
-> > On Wed, 2024-08-21 at 13:45 +0100, Mark Brown wrote:
-> > > > Sorry for that. I looked through all the old threads expecting to find
-> > > > discussion, but couldn't find an answer. Is clone3 support a dependency for
-> > > > arm shadow stacks?
+On 8/20/24 5:59 PM, Uladzislau Rezki (Sony) wrote:
+> Add a kvfree_rcu_barrier() function. It waits until all
+> in-flight pointers are freed over RCU machinery. It does
+> not wait any GP completion and it is within its right to
+> return immediately if there are no outstanding pointers.
 > 
-> > > Catalin didn't want to merge the arm64 support without clone3(), and
-> > > there's code dependencies as a result.  I could unpick it and reverse
-> > > the ordering so long as the arm64 maintainers are OK with that since the
-> > > overlap is in the implementation of copy_thread() and some of the
-> > > dependency patches.
+> This function is useful when there is a need to guarantee
+> that a memory is fully freed before destroying memory caches.
+> For example, during unloading a kernel module.
 > 
-> Actually in an off-list discussion today Catalin indicated that he's
-> fine with relaxing that a little so I'm in the process of picking the
-> dependency apart.
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Just to confirm, I'd rather get the clone3() ABI choices properly
-debated than rushing it. It seems that our libc support does not rely on
-clone3() yet, so let's continue with the arm64 series independently of
-this one (only clone() with default shadow stack allocation). We'll
-follow up with the clone3() support that covers both architectures.
+Thanks Ulad, replaced the patch in slab/for-next
 
-Thanks and sorry for the confusion. I did not realise the complications
-of adding clone3() support.
-
--- 
-Catalin
+> ---
+>  include/linux/rcutiny.h |   5 ++
+>  include/linux/rcutree.h |   1 +
+>  kernel/rcu/tree.c       | 109 +++++++++++++++++++++++++++++++++++++---
+>  3 files changed, 107 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
+> index d9ac7b136aea..522123050ff8 100644
+> --- a/include/linux/rcutiny.h
+> +++ b/include/linux/rcutiny.h
+> @@ -111,6 +111,11 @@ static inline void __kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  	kvfree(ptr);
+>  }
+>  
+> +static inline void kvfree_rcu_barrier(void)
+> +{
+> +	rcu_barrier();
+> +}
+> +
+>  #ifdef CONFIG_KASAN_GENERIC
+>  void kvfree_call_rcu(struct rcu_head *head, void *ptr);
+>  #else
+> diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+> index 254244202ea9..58e7db80f3a8 100644
+> --- a/include/linux/rcutree.h
+> +++ b/include/linux/rcutree.h
+> @@ -35,6 +35,7 @@ static inline void rcu_virt_note_context_switch(void)
+>  
+>  void synchronize_rcu_expedited(void);
+>  void kvfree_call_rcu(struct rcu_head *head, void *ptr);
+> +void kvfree_rcu_barrier(void);
+>  
+>  void rcu_barrier(void);
+>  void rcu_momentary_dyntick_idle(void);
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index e641cc681901..be00aac5f4e7 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3584,18 +3584,15 @@ kvfree_rcu_drain_ready(struct kfree_rcu_cpu *krcp)
+>  }
+>  
+>  /*
+> - * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
+> + * Return: %true if a work is queued, %false otherwise.
+>   */
+> -static void kfree_rcu_monitor(struct work_struct *work)
+> +static bool
+> +kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
+>  {
+> -	struct kfree_rcu_cpu *krcp = container_of(work,
+> -		struct kfree_rcu_cpu, monitor_work.work);
+>  	unsigned long flags;
+> +	bool queued = false;
+>  	int i, j;
+>  
+> -	// Drain ready for reclaim.
+> -	kvfree_rcu_drain_ready(krcp);
+> -
+>  	raw_spin_lock_irqsave(&krcp->lock, flags);
+>  
+>  	// Attempt to start a new batch.
+> @@ -3634,11 +3631,27 @@ static void kfree_rcu_monitor(struct work_struct *work)
+>  			// be that the work is in the pending state when
+>  			// channels have been detached following by each
+>  			// other.
+> -			queue_rcu_work(system_wq, &krwp->rcu_work);
+> +			queued = queue_rcu_work(system_wq, &krwp->rcu_work);
+>  		}
+>  	}
+>  
+>  	raw_spin_unlock_irqrestore(&krcp->lock, flags);
+> +	return queued;
+> +}
+> +
+> +/*
+> + * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
+> + */
+> +static void kfree_rcu_monitor(struct work_struct *work)
+> +{
+> +	struct kfree_rcu_cpu *krcp = container_of(work,
+> +		struct kfree_rcu_cpu, monitor_work.work);
+> +
+> +	// Drain ready for reclaim.
+> +	kvfree_rcu_drain_ready(krcp);
+> +
+> +	// Queue a batch for a rest.
+> +	kvfree_rcu_queue_batch(krcp);
+>  
+>  	// If there is nothing to detach, it means that our job is
+>  	// successfully done here. In case of having at least one
+> @@ -3859,6 +3872,86 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  }
+>  EXPORT_SYMBOL_GPL(kvfree_call_rcu);
+>  
+> +/**
+> + * kvfree_rcu_barrier - Wait until all in-flight kvfree_rcu() complete.
+> + *
+> + * Note that a single argument of kvfree_rcu() call has a slow path that
+> + * triggers synchronize_rcu() following by freeing a pointer. It is done
+> + * before the return from the function. Therefore for any single-argument
+> + * call that will result in a kfree() to a cache that is to be destroyed
+> + * during module exit, it is developer's responsibility to ensure that all
+> + * such calls have returned before the call to kmem_cache_destroy().
+> + */
+> +void kvfree_rcu_barrier(void)
+> +{
+> +	struct kfree_rcu_cpu_work *krwp;
+> +	struct kfree_rcu_cpu *krcp;
+> +	bool queued;
+> +	int i, cpu;
+> +
+> +	/*
+> +	 * Firstly we detach objects and queue them over an RCU-batch
+> +	 * for all CPUs. Finally queued works are flushed for each CPU.
+> +	 *
+> +	 * Please note. If there are outstanding batches for a particular
+> +	 * CPU, those have to be finished first following by queuing a new.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		krcp = per_cpu_ptr(&krc, cpu);
+> +
+> +		/*
+> +		 * Check if this CPU has any objects which have been queued for a
+> +		 * new GP completion. If not(means nothing to detach), we are done
+> +		 * with it. If any batch is pending/running for this "krcp", below
+> +		 * per-cpu flush_rcu_work() waits its completion(see last step).
+> +		 */
+> +		if (!need_offload_krc(krcp))
+> +			continue;
+> +
+> +		while (1) {
+> +			/*
+> +			 * If we are not able to queue a new RCU work it means:
+> +			 * - batches for this CPU are still in flight which should
+> +			 *   be flushed first and then repeat;
+> +			 * - no objects to detach, because of concurrency.
+> +			 */
+> +			queued = kvfree_rcu_queue_batch(krcp);
+> +
+> +			/*
+> +			 * Bail out, if there is no need to offload this "krcp"
+> +			 * anymore. As noted earlier it can run concurrently.
+> +			 */
+> +			if (queued || !need_offload_krc(krcp))
+> +				break;
+> +
+> +			/* There are ongoing batches. */
+> +			for (i = 0; i < KFREE_N_BATCHES; i++) {
+> +				krwp = &(krcp->krw_arr[i]);
+> +				flush_rcu_work(&krwp->rcu_work);
+> +			}
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Now we guarantee that all objects are flushed.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		krcp = per_cpu_ptr(&krc, cpu);
+> +
+> +		/*
+> +		 * A monitor work can drain ready to reclaim objects
+> +		 * directly. Wait its completion if running or pending.
+> +		 */
+> +		cancel_delayed_work_sync(&krcp->monitor_work);
+> +
+> +		for (i = 0; i < KFREE_N_BATCHES; i++) {
+> +			krwp = &(krcp->krw_arr[i]);
+> +			flush_rcu_work(&krwp->rcu_work);
+> +		}
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(kvfree_rcu_barrier);
+> +
+>  static unsigned long
+>  kfree_rcu_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+>  {
 
