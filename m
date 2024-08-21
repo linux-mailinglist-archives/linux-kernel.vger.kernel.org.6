@@ -1,125 +1,157 @@
-Return-Path: <linux-kernel+bounces-295558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCE5959E4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:13:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF970959E4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C88A2816CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF321C222F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFA11A2840;
-	Wed, 21 Aug 2024 13:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0997199FBF;
+	Wed, 21 Aug 2024 13:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ePaW8LpA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YkbjEK4R"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78F519ABD0;
-	Wed, 21 Aug 2024 13:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2092F199937;
+	Wed, 21 Aug 2024 13:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724245950; cv=none; b=HgbGzzLU4NypG/E65ir566DKQdrFc2VaHJ/Z0vIZ8QMFZ4XkjslFoEACvYB2XghChdCVI2K008+N4vKjK3qXZNmQQWdS4SBAkKo0k1F3UcJnfE5XBh9u/wgsuEa9yijbtTqZWwzQqu/MOP24kCy8u9sILZGLAqTet8cpgz1iMZA=
+	t=1724245977; cv=none; b=MiLzhrQmqDY8NOM+oFZucJHeeBDCH+JB+W+kSyuB/Yv4I4gz0Tgv2CmSlneH02XF6OQGuA8VPIRipTOam1e9z8OB5kMtXUwJ+KELL29UR0HEJpe4KRwnnLyrteu1wqcQdrraomNZCNM5CYq7GsTKgie5qd4VjWAZZvGGv/1zY48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724245950; c=relaxed/simple;
-	bh=h14BmJbpo6ksiyNRHk1esFbG+6FjgxhMeO5buuYByyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODT4v/OVCztYKBofNKhKnK88IZNKhNreZ6cROcI8380xqoqnTZB4ALNEBHnZpsKBw6zsWPbT/8OF0P85BWYnhTMuhZHgb4C7dDKseSvJx52HQ2fq1zv0zpbsST4J42EWywbI4wWLFH8NYZTP8fMOoWYdZ5xjaUlXQeEn7cdFvGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ePaW8LpA; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724245949; x=1755781949;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=h14BmJbpo6ksiyNRHk1esFbG+6FjgxhMeO5buuYByyY=;
-  b=ePaW8LpAJpxL4xt2hbfRz2PWf579TGruDboU5alq9pqtLvhr5tBxuTZM
-   OBDwEXxX/AlWx4CloLBh57GFVzmoxK7ToFfnKztW8L0mlsMojwmE3LfLh
-   +s5BZkwfFQI3fhuZnTMm4D2YyCcrKpGKiHHY5KQFp+ZubJj7k3A0Uzw53
-   CHdlns/MrvqAdXZmnz2hubt1vAGc/shL1mjoIQo3KCdNoDg25bE67jg7/
-   z/2Pq+/u92Q9BFW2Yqb2cVkjsXIi5E/udncdGDEPJIsktR4ImEEmTWrW9
-   3c2vUhAREh5H1PGPcRaoub4W7UOXvb/PqTNCUDBIZSKibVoCI3N+Wmmxu
-   A==;
-X-CSE-ConnectionGUID: dzBTQCFhQQ2/zaCprYR6ew==
-X-CSE-MsgGUID: dw5hYSEpQhqKx3CcSbJ8hQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="40116368"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="40116368"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:12:28 -0700
-X-CSE-ConnectionGUID: SF45a6ecRHmJWgcDf5kKKQ==
-X-CSE-MsgGUID: Vn6M/RcNTSieM6vMGiYziw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="61226122"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:12:26 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sgl8R-0000000053z-0ypY;
-	Wed, 21 Aug 2024 16:12:23 +0300
-Date: Wed, 21 Aug 2024 16:12:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v1 1/4] driver core: Ignore 0 in dev_err_probe()
-Message-ID: <ZsXntvP6eBB_092w@smile.fi.intel.com>
-References: <20240821122233.3761645-1-andriy.shevchenko@linux.intel.com>
- <20240821122233.3761645-2-andriy.shevchenko@linux.intel.com>
- <1dde296b-045e-d56a-1734-a1333a84060b@linux.intel.com>
+	s=arc-20240116; t=1724245977; c=relaxed/simple;
+	bh=4PwNpNrWKymPc5QaBOvPMVW4d2n5Wm04+ng5Sh9nNiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aobAR627cISB5+YOg7nG93aEt4cAK5uAGFl8GzwZOVMNs7UxMW/WWjQn0FMmgItyW4o1ubQlnVB/AyinHgu4JVM4zOFN5R+dWe+9HiqecmYLbzLiuoGF+1vXtsqEjKCk0d5O4+d87qm6lHyEYq8AEn91oyp9LJtcllPFTbIbGZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YkbjEK4R; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C24C61C0003;
+	Wed, 21 Aug 2024 13:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724245972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vs7divW60kguKgDMWWHovgfstUgnqjKRitONyQjoVng=;
+	b=YkbjEK4R82sHBIvsdW/oWF2IuNoZgjx5jHlgkzzHPJd9bsH0QqJDzjARZg5eJ5QkdGWfwD
+	9JDpbpJbXvM5P2Qwyni0G5qt1moiqFbRqgAn1YUNt+T6vspiSd35YcKzwKJHWccsuaBFwn
+	l3zfDYdK1q7AnCDoI8qUYr2yjeOBbgsA7F95lKWmDBj2M1MPB0jNN3qU/lgLU2BfxL9xL2
+	q1A/zo4JUmj1lxpB06dFwHWfbQU7cAVItFkKyIjYlAEJNl3u1PyfUyfXOL01Z8F6z8OU8J
+	wvGqeTQu3Yzm5cn1YjRNBYseglMsRRlTYm/22I8Ly3wBv8Q/P5U8yunZ5JXH8g==
+Date: Wed, 21 Aug 2024 15:12:49 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Joern Engel <joern@lazybastard.org>, Keith
+ Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
+ <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Saravana Kannan
+ <saravanak@google.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, Florian Fainelli
+ <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions
+ node in mmc-card node
+Message-ID: <20240821151249.294590ec@xps-13>
+In-Reply-To: <66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
+References: <20240809172106.25892-1-ansuelsmth@gmail.com>
+	<20240809172106.25892-4-ansuelsmth@gmail.com>
+	<20240813200734.GA1659224-robh@kernel.org>
+	<66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1dde296b-045e-d56a-1734-a1333a84060b@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, Aug 21, 2024 at 03:38:15PM +0300, Ilpo Järvinen wrote:
-> On Wed, 21 Aug 2024, Andy Shevchenko wrote:
-> 
-> > In the similar way, ignore 0 error code (AKA "success") in
-> > dev_err_probe(). This helps to simplify a code such as
-> > 
-> >   if (ret < 0)
-> >     return dev_err_probe(int3472->dev, ret, err_msg);
-> > 
-> >   return ret;
-> > 
-> > to
-> > 
-> >   return dev_err_probe(int3472->dev, ret, err_msg);
+Hi Christian,
 
-...
+ansuelsmth@gmail.com wrote on Tue, 20 Aug 2024 22:20:59 +0200:
 
-> This seems generally useful,
-> 
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> On Tue, Aug 13, 2024 at 02:07:34PM -0600, Rob Herring wrote:
+> > On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote: =20
+> > > Add property for defining partitions node in mmc-card node to define
+> > > partitions in DT by the use of the block2mtd module to use block
+> > > devices as MTD. =20
+> >=20
+> > You justified patch 1 saying eMMC already supported this, but then here=
+=20
+> > you add support.
+> >=20
+> > Both are a NAK for me as both already have a way to describe partitions=
+=20
+> > with GPT.
+> > =20
+>=20
+> I think this got a bit confused and hope we can find a way to add
+> support for this.
+>=20
+> What is "already supported" is assigning an OF node so driver can
+> reference it. This patch was just adding the nodes in the schema to say
+> that partitions can be defined.
+>=20
+> I think what is not clear is that block devices might be used as raw
+> devices without a partition table defined in the device. In such case
+> it's the kernel that define a fixed partition table.
+>=20
+> One example is [1] where the partition table is provided by cmdline.
+> Similar to cmdlinepart MTD parser.
+>=20
+> The use of block2mtd is just to make use of the MTD parser system.
+>=20
+> Considering
+> - eMMC is soldered to the device (no dynamic scan)
+> - cmdline might be not tunable and hardcoding it might also be
+>   problematic (as some cmdline needs to be used)
+> - concept of fixed partition for block device is already a thing and
+>   used a lot (android AFAIK)
+>=20
+> I think it should be acceptable to introduce in DT support for defining
+> fixed partition for block devices and some kind of parser system similar
+> to MTD. What do you think? Would this be more acceptable? Idea is to
+> just have a DT schema that makes use of the values that can be set in
+> [1].
+>=20
+> Hope we can find a solution to this, I'm totally OK for dropping NVMe as
+> I understand it's PCIe stuff and very dynamic but OEM are making lots of
+> use of eMMC and are starting to use these strange way (block2mtd) as we
+> currently don't give a proper and easy solution for the task.
 
-Thanks!
+Thanks for the summary. I believe I now have a better understanding of
+what you want to do, but I am still convinced you should not abuse the
+mtd layer for that. If blocks can be partitioned based on the cmdline
+(or from the DT) then the partitioning logic should be specific to
+the block layer. However, the parsing logic is probably very similar
+and could be extracted into a lib/, provided that the mtd bits are
+moved away cleverly. You only need the fixed parser anyway, and you
+probably don't want all the weird corner cases we keep supporting for
+backward compatibility reasons.
 
-> A nit, the code sequence that dev_err_probe() is documented to replace is 
-> no longer matches with the behavior (the else would need if (err < 0) 
-> added).
+> [1] https://github.com/torvalds/linux/blob/master/Documentation/block/cmd=
+line-partition.rst
+>=20
+> > >=20
+> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > ---
+> > >  .../devicetree/bindings/mmc/mmc-card.yaml     | 40 +++++++++++++++++=
+++
+> > >  1 file changed, 40 insertions(+) =20
+>=20
 
-Okay, let's wait what Greg says about it, if he is okay with the proposal,
-I'll amend documentation as well in v2.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Miqu=C3=A8l
 
