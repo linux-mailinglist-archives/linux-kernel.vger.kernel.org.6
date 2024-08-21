@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-295717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816BE95A080
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:56:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5A795A0BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B7D1F22B0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB4A71C20BF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1151B2526;
-	Wed, 21 Aug 2024 14:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044451B251F;
+	Wed, 21 Aug 2024 14:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAmP7+2T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoM0PeR/"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F7F1D12EB;
-	Wed, 21 Aug 2024 14:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F279F1B1D4E;
+	Wed, 21 Aug 2024 14:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724252163; cv=none; b=o7PTw1sLj4iiI/uLfBomICwznRfBzEJ9JL8wnYBByRP7Shsv4aIeq8o9PpbeUQA7UQhgrN8KoXMr213dtnURieYfVuOU4QSHTwvQFefsfOu8u3xHidq2h6fy0xHrLr29AyN8uEP6pTEhgcGMjN4LS7g4U+DX0Tx3ZpScRLplVKk=
+	t=1724252256; cv=none; b=qpgdMUr5IIU96TqwEFB0389NZh68Xt921G/vlcVP8rH6ilVtIss146Dj9uZ88fEip5ZeC/nMKxlAUpgbuqh/sVn3BOfScgTJyDMQQJT7v7vQlFq1u1ZBn21Gv+B9i271DrPBcwwK1mGTeWYH3YbqsRFg3lgRi2AGfQrTWvE+gBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724252163; c=relaxed/simple;
-	bh=Y052opyD6L5wdxXdHKcCFMjjqWMg/ewI0fExlR8qZWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QjvlzEMeqQMkvSzJhZbKuO0+2uRRLk/p3Gy4KYOyXG08W4hB9S1RYUrxE5g3v3V4OBO6B5Olood0r0f8MOAcpd6+T4qZEnnmXsZsWAhVv3hwJS+I5WKID5VvCduwr2cvZheecy8LppI6yT0RzpwOQOYnjNXrhr0NuJGu0OCFBWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAmP7+2T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A26C32786;
-	Wed, 21 Aug 2024 14:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724252163;
-	bh=Y052opyD6L5wdxXdHKcCFMjjqWMg/ewI0fExlR8qZWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TAmP7+2TrnIkeytkb3/lP+k5d8T8YkDXZAy/8fPCdrNOG+JPT8EGH3yZ4TH+oaJ1Y
-	 tiO1dR/pTGXoGTTQ1Rhl90HuA70Emdsx5lf7rnvsJqfs4ScQ7sNOIdLvNCuFDZesPz
-	 Cj9McGxNhtRD3n4NhBJAj/M+g/rOM4sxu4ALQ9gu0ib0TQNIxU0j9bqRxu366ARZCR
-	 2UKXlBRUU5qWK9y2aOxdOmFzt3e/woj9K3KJm82RH/j/o0mK3wT+CFGPSmzYcGpSt+
-	 UZD2HxvuAIwvyO7OfddAtYf+coF5QVcFYYoMdMQRLfdJSGRqZbij/xqVFhp0/pHPbH
-	 QsNZ6dpSapCOQ==
-Date: Wed, 21 Aug 2024 15:55:59 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Christian Melki <christian.melki@t2data.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"moderated list:MICROCHIP OTPC DRIVER" <linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 03/12] dt-bindings: nvmem: microchip-otpc: Add
- compatible for SAM9X60
-Message-ID: <20240821-undertake-recovery-bc05779e60e2@spud>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-4-ada@thorsis.com>
+	s=arc-20240116; t=1724252256; c=relaxed/simple;
+	bh=g3ei/xSv/c2CowALX58K1wHRGvHqz2KHG/3SeY2ty5M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A0BPfg0BmPiaeiHglNKo4xx5lui6BQu990T5pC1KhEfsVyMxx5dxKBcx8glTyErPfMLwOiDavNGK32fNSY2xjrzJjkmfdGkyfbIXgrY6I7T5+4oQtaG4GKNOgh9lGVFFPJduIVDo6hbNbt91xI0mAjrthH66NlKnMoE177XjLWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CoM0PeR/; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c3d9a5e050so4370274a12.2;
+        Wed, 21 Aug 2024 07:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724252254; x=1724857054; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KMiwYatD/47tzYeAjhrq/9tCSM6j/K7/bPprC637qdA=;
+        b=CoM0PeR/V6TTRiGYXgI3pRsGbci3IUa4FsnkVARdMv4dv/XY2ED/k86BFfH2zfc9FL
+         rL8rxDQVY0NRkUG08srx/h68ynCXxEiaUZ1tLlLMgatYhR7Ne/uIL3mpyK2tfzwXoZRB
+         JjISZgV8jWR8HhUOYMjBO7egsGQ2yTMQreBJYE3r401xIxtb3JRNX2W81qlrS0rkF8Xf
+         rIWx+Q69d5LzvG9w9/b6hZ0KDIQX+Gx/nb1R50VUlkevX45HnK+yqGPUGvUXjFmwMvvC
+         rkxF1GDUpMjbVbXk6s+4R/e0SeK14I32FVyIOsM6Tqsd75NriTIFl2k02WGfKXB638dg
+         PGKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724252254; x=1724857054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KMiwYatD/47tzYeAjhrq/9tCSM6j/K7/bPprC637qdA=;
+        b=W+PNB6nJIpXRHssuJJ+RIqKqIKOADKLMJ5+jzSSS6MtpzJ1rYy8xkR/PBcj8Rp/lwf
+         LfkARG6C2rr9KaV68DweYSRuJqUVNbt+2afMSHldDu6wtO/7PGacT1loml10m7s7le7I
+         BtbX1/S5p5Q1c3t4l4p95JgpDAm7Lv+oJN2E1xU6fdmYGoDM8HL0LoDyauWI1hXPayxz
+         2APDrhjiPpw2uFSr7/YoAunr4McbC4FKiEl5CvA6Cmk0OzmkzM4yFzB2OngEqRjQQmae
+         oZzUYP318hajVy3V4+J+xMUHReROHAmACArWJ9SWEB1x1uPTU2sTYjbf3E4dVYiEpwr0
+         9l3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXDrF3pcPRYROgSb/AIMfrlOK5/qOdIPrysG2R5satEGGqSU/TOkFohHSfEfrYI/sKgG1ishIP7qPywFns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDMc8Jfct2HgExLG0lLbYzqJsS/7PyJhg+bsQ8etySeIw/577b
+	VKzPh8loXQyFoQvOwK0cntwBUvFfxTz5dOT1cFby22gyBLgRIfd6xvSihxAQ1mRwoX1faloD+R8
+	gziIMQF0gmn/owBdSTm6dIvsWiAA=
+X-Google-Smtp-Source: AGHT+IGJ/4WrIEpPTIiFl2XKjb/TC4GZfqjrHUeVgUNSS1CjM1VQ1xcz/c791z0LvWYH3MGSLiIZL2/A2rerMmtK0AM=
+X-Received: by 2002:a05:6300:41:b0:1c6:fc79:f9b7 with SMTP id
+ adf61e73a8af0-1cada1a88a2mr2439936637.48.1724252253905; Wed, 21 Aug 2024
+ 07:57:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Zztae3tCmolu/aRS"
-Content-Disposition: inline
-In-Reply-To: <20240821105943.230281-4-ada@thorsis.com>
-
-
---Zztae3tCmolu/aRS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240405161042.260113-1-cgoettsche@seltendoof.de> <20240821130755.25031-1-cgoettsche@seltendoof.de>
+In-Reply-To: <20240821130755.25031-1-cgoettsche@seltendoof.de>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Wed, 21 Aug 2024 10:57:22 -0400
+Message-ID: <CAEjxPJ5C+e3WKeQumo0KO8+Ge4iFR8gKUyfnJPxX84_EKGjh9w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] selinux: add support for xperms in conditional policies
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+Cc: selinux@vger.kernel.org, cgzones@googlemail.com, 
+	jsatterfield.linux@gmail.com, linux-kernel@vger.kernel.org, 
+	omosnace@redhat.com, paul@paul-moore.com, xiujianfeng@huaweicloud.com, 
+	tweek@google.com, brambonne@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 12:59:34PM +0200, Alexander Dahl wrote:
-> The SAM9X60 SoC family has a similar OTPC to the SAMA7G5 family.
->=20
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
->  .../devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml        | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-ot=
-pc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.ya=
-ml
-> index cc25f2927682..d98b6711bdfd 100644
-> --- a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> +++ b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> @@ -21,6 +21,7 @@ allOf:
->  properties:
->    compatible:
->      items:
-> +      - const: microchip,sam9x60-otpc
->        - const: microchip,sama7g5-otpc
->        - const: syscon
+On Wed, Aug 21, 2024 at 9:08=E2=80=AFAM Christian G=C3=B6ttsche
+<cgoettsche@seltendoof.de> wrote:
+>
+> > From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> >
+> > Add support for extended permission rules in conditional policies.
+> > Currently the kernel accepts such rules already, but evaluating a
+> > security decision will hit a BUG() in
+> > services_compute_xperms_decision().  Thus reject extended permission
+> > rules in conditional policies for current policy versions.
+> >
+> > Add a new policy version for this feature.
+> >
+> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> > ---
+> > Userspace patches are available at:
+> > https://github.com/SELinuxProject/selinux/pull/432
+> >
+> > Maybe the policy version 34 can be reused for the prefix/suffix filetra=
+ns
+> > feature to avoid two new versions?
+>
+> Kindly ping.
+>
+> Any comments?
+>
+> This affects (improves?) also the netlink xperm proposal.
 
-As Rob's bot pointed out, this breaks the existing devicetrees. If you
-want a fallback to the sama7g5, then you will need to add a new items
-list here, alongside the existing one.
-
-Cheers,
-Conor.
-
-> =20
-> --=20
-> 2.39.2
->=20
-
---Zztae3tCmolu/aRS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsX//wAKCRB4tDGHoIJi
-0sB+AP9xRa6mUx3ab/CdDEKKF3lgCLmeq0kaIYV/ciVX2Fr0mwEAiWhYuDt0IltF
-WI54qwF+iWElCDgJhiwDk6xc5mDAzwg=
-=tRm/
------END PGP SIGNATURE-----
-
---Zztae3tCmolu/aRS--
+Do you know of anyone who plans to use this feature? Android does not
+use conditional policies and it is the primary user of the current
+extended permissions feature. I haven't seen any usage in refpolicy to
+date.
 
