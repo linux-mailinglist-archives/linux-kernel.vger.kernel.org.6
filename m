@@ -1,66 +1,62 @@
-Return-Path: <linux-kernel+bounces-295705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2162295A04C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:47:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3099E95A050
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C378A1F22E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2571285703
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D84A1B1D4E;
-	Wed, 21 Aug 2024 14:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030071B2EC4;
+	Wed, 21 Aug 2024 14:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9QFPefq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9zfONKc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F3C79B84;
-	Wed, 21 Aug 2024 14:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EC51B252F;
+	Wed, 21 Aug 2024 14:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724251610; cv=none; b=WPzMCuI52mCxKXemZglUV5bkYxGWPCfyw+XkEM3ngb7+nmEpDJUIsL/iBjS6zxiBduKOLMwS3OyW3VMtWgLaAe3/yOSefgUl7XG2ND9VwThF4Ryqg9MJ8kkMckD+3WwpRMaqM2eFF8C+BHaNIIqREbCoLCyKMg2PIPa+J9SA/jc=
+	t=1724251612; cv=none; b=Fi1bohrtV1+RzXKdS82Hlyt4Zoa5OXIixpDXAgat8cA5fOrlAqWavY/GDrLCr5vKPFdyeRdLwASY0Hp14siotfa+Ts338KRx7IDCR0IUT7edIqyRuaD8Dd9oht0cDl0pt4nUKAnQyQw2j2N6GT7Zt0G27H/eFwtnh6VKBIcQ0Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724251610; c=relaxed/simple;
-	bh=D1CyKhPSDb+3GkMmc1F5R+gPmvS8mx6cLnaeWXzRAZM=;
+	s=arc-20240116; t=1724251612; c=relaxed/simple;
+	bh=JLqeMdkcUluS9z+EoNmZiXjnAya/MNbuLdmQCL1Q8A4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JXirJe6DOG5FJDq7b4bwV+/L3W/M2z4Rh1Wp6RKoS4AEpGPsa1HvJU12qEq4t8jEciz+gIPBkPd4T7DIIgR4EYGbjuiHvAGXKZI7U62NvwhUIpJiGfZWDSqw5Fi/QxudqsWtGifeZs4AYLvb6sl+FgAlTZDXR8JItxsQMQH4ix8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9QFPefq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8795C32781;
-	Wed, 21 Aug 2024 14:46:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=j4svImjceJpZfA+dBvUN8dITzD6nFBUgSu56XpqfXG5D6wuE9FE6o/PiEFPwv8Vq0sDnLKT86Ah8z2pME3cNoyYFjaQD8TLYTP+HvH8EvQwBYmcOQ5f6zSrhVSFfrZAsCm0yGtwL9SurhGCfkn1DFK/qGBow6u/DWmZ1yajtvPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9zfONKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEAB3C4AF18;
+	Wed, 21 Aug 2024 14:46:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724251609;
-	bh=D1CyKhPSDb+3GkMmc1F5R+gPmvS8mx6cLnaeWXzRAZM=;
+	s=k20201202; t=1724251611;
+	bh=JLqeMdkcUluS9z+EoNmZiXjnAya/MNbuLdmQCL1Q8A4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f9QFPefqDWFtEV19xKfxuojezAXiG0dp4+MXqY8Oy50zoOfefXzsBsAiG/qFo/eOp
-	 Y+EDMiV/w1S/HxNv8rG6WNZdpt2qf0wO5VllY9/tO9H4AQvF75w5wWuc20MKxKG0mh
-	 xWQNz2ULjgMhcT/fxpvZdru4nMQ9m9/ZtYE6fAbKh4Jf9gVgQu3k6HhmmB2uu+kyl9
-	 G94xwDfJiW+KWEsEUOCb81xKyYezqtOHhwshq6ZQvO3Hfmple3j43i4zrLBlBl2LS0
-	 OcV2kD4xJHwOMYT5JRoYce0xB/geAnAaiN9L72EHKAzYFt9dgtNE5jY9ty7+Mu0MWi
-	 lzs9fUYZ8TJqA==
+	b=O9zfONKcmf7EqGA1w88J10iXTJqFgK7P3vJaWA0HNpv/qdkzXjgK/nPKq+MkDC4o2
+	 qIg1Lo8Qdu6wN7JahWCRj/8HYxRQxO2OPY2gKTg6OFrm5wtFs88o/eu8WXQrFFG3PH
+	 OnI57P7huL9OVKn45h6HGGrtd+9ErcY88jb5OQFw2bqwZUUWqtKZEaJvHgii/V17eN
+	 4WJon4WPPzheKwLsiYkt0Gt9rR5VaPRaubltoQLHCdo4qadcyId2CaGishXlD+UXHs
+	 HMpwdL3DQTbarqTHMpTz+z21CEF6INdKUsK8B4w5uo9GdrmAn2ueexNG0gT0uws3y8
+	 xeByK4j2Aj9bg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Ling Xu <quic_lxu5@quicinc.com>
+Cc: quic_kuiw@quicinc.com,
+	quic_ekangupt@quicinc.com,
 	linux-arm-msm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krishna Kurapati <quic_kriskura@quicinc.com>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v2 0/2] X1E80100 multiport USB controller
-Date: Wed, 21 Aug 2024 09:46:41 -0500
-Message-ID: <172425160166.1359444.7745038976494752965.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: qcom: sa8775p: Add ADSP and CDSP0 fastrpc nodes
+Date: Wed, 21 Aug 2024 09:46:43 -0500
+Message-ID: <172425160167.1359444.11172735158933522137.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240820-topic-h_mp-v2-0-d88518066372@quicinc.com>
-References: <20240820-topic-h_mp-v2-0-d88518066372@quicinc.com>
+In-Reply-To: <20240819045052.2405511-1-quic_lxu5@quicinc.com>
+References: <20240819045052.2405511-1-quic_lxu5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,16 +67,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 20 Aug 2024 13:34:21 +0200, Konrad Dybcio wrote:
-> This series configures the multiport USB controller on X Elite. No
-> driver changes seem necessary, tested on the Surface Laptop 7.
+On Mon, 19 Aug 2024 10:20:52 +0530, Ling Xu wrote:
+> Add ADSP and CDSP0 fastrpc nodes.
 > 
 > 
 
 Applied, thanks!
 
-[2/2] arm64: dts: qcom: x1e80100: Add USB Multiport controller
-      commit: 5c5edbf46177e6335f2faaa3b68456755bcb9006
+[1/1] arm64: qcom: sa8775p: Add ADSP and CDSP0 fastrpc nodes
+      commit: f7b01bfb4b476ce87a35a35c671f37114344268a
 
 Best regards,
 -- 
