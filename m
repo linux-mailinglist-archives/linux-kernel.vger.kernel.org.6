@@ -1,221 +1,157 @@
-Return-Path: <linux-kernel+bounces-296047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A61195A4DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:45:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6191495A4E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F5621C22BF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:45:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7D22849B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6BF1B2ED8;
-	Wed, 21 Aug 2024 18:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAB31B5317;
+	Wed, 21 Aug 2024 18:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fWi6u5Oi"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRXiXOve"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F100E16D4FB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 18:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C861B3B1D;
+	Wed, 21 Aug 2024 18:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724265908; cv=none; b=BWUT/wjwTbpu/CYbs/3KO+r58lyeFkZ3BsIQqSiJrxPJGDnOJbOkhjbgmiZ96iKqdq96EkrNwOT+alJkFI3pCO3I78/QUUUHngwcVZNcBZ3QRvtit8xx8IiVF/Z+OZigbAnftgCtF6MJdu7kaNPSWGx7DoFA7urPguKV/RD5Kkg=
+	t=1724265977; cv=none; b=VsKBajWp5HRMoMGjD+4fIti3VaCsft4NUB79p6L/o2H7Hzz/9aVcmgUdtw8eWYPwTXuIWp0Df+aCs9KMirMJ8wr+tUkkquhzZY2CZVSGWZPfIfU5xWAPXh74R4Te5g/IpBAdi99sCHtgC4JcoLZhagMBbX3cfqC5bJx/3pils10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724265908; c=relaxed/simple;
-	bh=TX5s92+TVhuZMU9AZQyjIAcTZ2oRFVtucS+9h5RV9cM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VyNs8YjL/7hV+BA7u6qzof1MXgqT9I9rzfvGTLyC5J9NTLjpR801pwSQ9omejJhI5Wa82g+U90G/IK/uRDlQclvL9dHGzPEu9glws8rIHezTEgx/5uDad68N/VhcjgQse+PhjUK3/0FNk6jCy+xUCSahIzYqSmqzEItVm4riSNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fWi6u5Oi; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b007ee0b-ff90-43ff-91a1-44882bf0e799@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724265904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6xYdDGp9cZcugtgHBeqcbLyntEez0XWBUyxTHat7Hc8=;
-	b=fWi6u5OiQ+Kqss7H6N0eyuu56xh6u+34e0xCWYECGBCxuRkTqNm+D7wcD0AhTWM8jiEXx0
-	v5s81aW8FcrLngLXE3thncpOMYUMc6YyayVg7hUBwm1v3id4LZJCTlbLfbm63i2KI7lWCd
-	4Kz9UHTNkxvcMBkewyXBCm1+XPX6Iiw=
-Date: Wed, 21 Aug 2024 11:44:52 -0700
+	s=arc-20240116; t=1724265977; c=relaxed/simple;
+	bh=cqQ+efIJ7BbTVi8BZHPCeDnba7cGvozIJaWcOMkL4Bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZrNvo1s8GECmDdQOsspNPxgJQcRfpJSVXSf5EJCvecGhJg+FdqN87qL0B8FiYfwV+QDO8xoFqPQbeEn/mEnA4zVuCr8Ejg+6aD8FBuHHIJxohGbmJ829jDv9Pgeyftuy/DtNwVPtM2xhnPIGWAmHTk6jPtG7+Xo2gCNv6csSsTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRXiXOve; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00449C32781;
+	Wed, 21 Aug 2024 18:46:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724265977;
+	bh=cqQ+efIJ7BbTVi8BZHPCeDnba7cGvozIJaWcOMkL4Bs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qRXiXOveQ14RLiahwyTqoh0cx2pVLkxXvMpA09lX0Dh3EUM8hpIfFmTIM6onqfJY5
+	 rOHFMpWtoIgdPtwWB1lqI/xEnxaZ/3DlRaM9c1PblTV/8x+vwUUpo/z740OEXFUXz2
+	 W5k1NgvBpMa2fD7jvpL2dqLvPFBu016cf+exjZ+kjEcnLER4o0j8k3LQg7AEShtY5/
+	 wonnPLL6cmGJ5a3akVX9qBf0zuvbgCyalBw6Ms3d9rnVrFb1ZMGCgXx2PUusdF48Xa
+	 JQXEL2JhAtKkpmJ3QFS0DmNEjYa1Jru6U3C4fHKPJr9SoaqY5Qf5A8BLx63alXCGnc
+	 U1Vzcft7T6ePw==
+Date: Wed, 21 Aug 2024 13:46:15 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+Message-ID: <20240821184615.GA262749@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v4] bpf, net: Check cgroup_bpf_enabled() only once in
- do_sock_getsockopt()
-Content-Language: en-GB
-To: Tze-nan Wu <Tze-nan.Wu@mediatek.com>, netdev@vger.kernel.org,
- bpf@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Stanislav Fomichev <sdf@fomichev.me>
-Cc: bobule.chang@mediatek.com, wsd_upstream@mediatek.com,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Yanghui Li <yanghui.li@mediatek.com>,
- Cheng-Jui Wang <cheng-jui.wang@mediatek.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-References: <20240821093016.2533-1-Tze-nan.Wu@mediatek.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20240821093016.2533-1-Tze-nan.Wu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819023413.1109779-1-ying.huang@intel.com>
 
+On Mon, Aug 19, 2024 at 10:34:13AM +0800, Huang Ying wrote:
+> On a system with CXL memory installed, the resource tree (/proc/iomem)
+> related to CXL memory looks like something as follows.
+> 
+> 490000000-50fffffff : CXL Window 0
+>   490000000-50fffffff : region0
+>     490000000-50fffffff : dax0.0
+>       490000000-50fffffff : System RAM (kmem)
 
-On 8/21/24 2:30 AM, Tze-nan Wu wrote:
-> The return value from `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` can change
-> between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
-> `BPF_CGROUP_RUN_PROG_GETSOCKOPT`.
->
-> If `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` changes from "false" to
-> "true" between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
-> `BPF_CGROUP_RUN_PROG_GETSOCKOPT`, `BPF_CGROUP_RUN_PROG_GETSOCKOPT` will
-> receive an -EFAULT from `__cgroup_bpf_run_filter_getsockopt(max_optlen=0)`
-> due to `get_user()` was not reached in `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN`.
->
-> Scenario shown as below:
->
->             `process A`                      `process B`
->             -----------                      ------------
->    BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
->                                              enable CGROUP_GETSOCKOPT
->    BPF_CGROUP_RUN_PROG_GETSOCKOPT (-EFAULT)
->
-> To prevent this, invoke `cgroup_bpf_enabled()` only once and cache the
-> result in a newly added local variable `enabled`.
-> Both `BPF_CGROUP_*` macros in `do_sock_getsockopt` will then check their
-> condition using the same `enabled` variable as the condition variable,
-> instead of using the return values from `cgroup_bpf_enabled` called by
-> themselves as the condition variable(which could yield different results).
-> This ensures that either both `BPF_CGROUP_*` macros pass the condition
-> or neither does.
->
-> Fixes: 0d01da6afc54 ("bpf: implement getsockopt and setsockopt hooks")
-> Co-developed-by: Yanghui Li <yanghui.li@mediatek.com>
-> Signed-off-by: Yanghui Li <yanghui.li@mediatek.com>
-> Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-> Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-> Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
-> ---
->
-> Chagnes from v1 to v2: https://lore.kernel.org/all/20240819082513.27176-1-Tze-nan.Wu@mediatek.com/
->    Instead of using cgroup_lock in the fastpath, invoke cgroup_bpf_enabled
->    only once and cache the value in the newly added variable `enabled`.
->    `BPF_CGROUP_*` macros in do_sock_getsockopt can then both check their
->    condition with the new variable `enable`, ensuring that either they both
->    passing the condition or both do not.
->
-> Chagnes from v2 to v3: https://lore.kernel.org/all/20240819155627.1367-1-Tze-nan.Wu@mediatek.com/
->    Hide cgroup_bpf_enabled in the macro, and some modifications to adapt
->    the coding style.
->
-> Chagnes from v3 to v4: https://lore.kernel.org/all/20240820092942.16654-1-Tze-nan.Wu@mediatek.com/
->    Add bpf tag to subject, and Fixes tag in body.
->
-> ---
->   include/linux/bpf-cgroup.h | 15 ++++++++-------
->   net/socket.c               |  5 +++--
->   2 files changed, 11 insertions(+), 9 deletions(-)
->
-> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-> index fb3c3e7181e6..5afa2ac76aae 100644
-> --- a/include/linux/bpf-cgroup.h
-> +++ b/include/linux/bpf-cgroup.h
-> @@ -390,20 +390,20 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
->   	__ret;								       \
->   })
->   
-> -#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen)			       \
-> +#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled)		       \
->   ({									       \
->   	int __ret = 0;							       \
-> -	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))			       \
-> +	enabled = cgroup_bpf_enabled(CGROUP_GETSOCKOPT);		       \
-> +	if (enabled)							       \
->   		copy_from_sockptr(&__ret, optlen, sizeof(int));		       \
->   	__ret;								       \
->   })
->   
->   #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname, optval, optlen,   \
-> -				       max_optlen, retval)		       \
-> +				       max_optlen, retval, enabled)	       \
->   ({									       \
->   	int __ret = retval;						       \
-> -	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT) &&			       \
-> -	    cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))		       \
-> +	if (enabled && cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))       \
->   		if (!(sock)->sk_prot->bpf_bypass_getsockopt ||		       \
->   		    !INDIRECT_CALL_INET_1((sock)->sk_prot->bpf_bypass_getsockopt, \
->   					tcp_bpf_bypass_getsockopt,	       \
-> @@ -518,9 +518,10 @@ static inline int bpf_percpu_cgroup_storage_update(struct bpf_map *map,
->   #define BPF_CGROUP_RUN_PROG_SOCK_OPS(sock_ops) ({ 0; })
->   #define BPF_CGROUP_RUN_PROG_DEVICE_CGROUP(atype, major, minor, access) ({ 0; })
->   #define BPF_CGROUP_RUN_PROG_SYSCTL(head,table,write,buf,count,pos) ({ 0; })
-> -#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen) ({ 0; })
-> +#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled) ({ 0; })
->   #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname, optval, \
-> -				       optlen, max_optlen, retval) ({ retval; })
-> +				       optlen, max_optlen, retval, \
-> +				       enabled) ({ retval; })
->   #define BPF_CGROUP_RUN_PROG_GETSOCKOPT_KERN(sock, level, optname, optval, \
->   					    optlen, retval) ({ retval; })
->   #define BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock, level, optname, optval, optlen, \
-> diff --git a/net/socket.c b/net/socket.c
-> index fcbdd5bc47ac..0b465dc8a789 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -2363,6 +2363,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
->   		       int optname, sockptr_t optval, sockptr_t optlen)
->   {
->   	int max_optlen __maybe_unused;
-> +	bool enabled __maybe_unused;
->   	const struct proto_ops *ops;
->   	int err;
->   
-> @@ -2371,7 +2372,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
->   		return err;
->   
->   	if (!compat)
-> -		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
-> +		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled);
+I think the subject is too specific (the problem is something to do
+with the tree topology, not the fact that it's "CXL memory") and at
+the same time not specific enough ("fix" doesn't say anything about
+what was wrong or how it is fixed).
 
-Here, 'enabled' is actually assigned with a value in the macro. I am not sure
-whether this is a common practice or not. At least from macro, it is not clear
-about this.
+IMO it could be improved by saying something about what is different
+about CXL, e.g., maybe it could mention checking children in addition
+to top-level resources.
 
-Maybe we can do
-	max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, &enabled);
+> When the following command line is run to try writing some memory in
+> CXL memory range,
+> 
+>  $ dd if=data of=/dev/mem bs=1k seek=19136512 count=1
+>  dd: error writing '/dev/mem': Bad address
+>  1+0 records in
+>  0+0 records out
+>  0 bytes copied, 0.0283507 s, 0.0 kB/s
 
-The &enabled signals that its value could change. And indeed
-the macro will store the proper value to &enabled properly.
+Took me a minute, but I guess the connection is that
+19136512 * 1k = 0x490000000, which is the beginning of the CXL Window.
 
-Just my 2 cents.
+> the command fails as expected.  However, the error code is wrong.  It
+> should be "Operation not permitted" instead of "Bad address".  And,
+> the following warning is reported in kernel log.
 
->   
->   	ops = READ_ONCE(sock->ops);
->   	if (level == SOL_SOCKET) {
-> @@ -2390,7 +2391,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
->   	if (!compat)
->   		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
->   						     optval, optlen, max_optlen,
-> -						     err);
-> +						     err, enabled);
->   
->   	return err;
->   }
+This intro makes it sound like the problem being solved is the error
+code being wrong.  But it seems like a more serious problem than that.
+
+>  ioremap on RAM at 0x0000000490000000 - 0x0000000490000fff
+
+Incidental: it seems a little weird that this warning only exists on
+x86 and mips (and powerpc32 has a similar warning with different
+wording), but I assume we don't want to ioremap RAM on *any*
+architecture?
+
+>  WARNING: CPU: 2 PID: 416 at arch/x86/mm/ioremap.c:216 __ioremap_caller.constprop.0+0x131/0x35d
+>  Modules linked in: cxl_pmem libnvdimm cbc encrypted_keys cxl_pmu
+>  CPU: 2 UID: 0 PID: 416 Comm: dd Not tainted 6.11.0-rc3-kvm #40
+>  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>  RIP: 0010:__ioremap_caller.constprop.0+0x131/0x35d
+> ...
+
+> In the above resource tree, "System RAM" is a descendant of "CXL
+> Window 0" instead of a top level resource.  So, region_intersects()
+> will report no System RAM resources in the CXL memory region
+> incorrectly, because it only checks the top level resources.
+> Consequently, devmem_is_allowed() will return 1 (allow access via
+> /dev/mem) for CXL memory region incorrectly.  Fortunately, ioremap()
+> doesn't allow to map System RAM and reject the access.
+> 
+> However, region_intersects() needs to be fixed to work correctly with
+> the resources tree with CXL Window as above.  To fix it, if we found a
+> unmatched resource in the top level, we will continue to search
+> matched resources in its descendant resources.  So, we will not miss
+> any matched resources in resource tree anymore.  In the new
+> implementation,
+> 
+> |------------- "CXL Window 0" ------------|
+> |-- "System RAM" --|
+> 
+> will look as if
+> 
+> |-- "System RAM" --||-- "CXL Window 0a" --|
+
+Where did "0a" come from?  The /proc/iomem above mentioned
+"CXL Window 0"; is the "a" spurious?  Same question applies to the
+code comment below.
+
+> in effect.
+> +		 * |------------- "CXL Window 0" ------------|
+> +		 * |-- "System RAM" --|
+> +		 *
+> +		 * looks as if
+> +		 *
+> +		 * |-- "System RAM" --||-- "CXL Window 0a" --|
+> +		 *
+> +		 * in effect.
 
