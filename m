@@ -1,199 +1,214 @@
-Return-Path: <linux-kernel+bounces-294910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938D5959434
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED4F959437
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 237331F23C99
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0676D284455
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5C316A92C;
-	Wed, 21 Aug 2024 05:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1EF16849A;
+	Wed, 21 Aug 2024 05:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="saJD4FMy"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aE6v5/IL"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2061.outbound.protection.outlook.com [40.107.94.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F32168481;
-	Wed, 21 Aug 2024 05:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724218895; cv=none; b=jAkmy0swwSNVxCbLUewEhOD+sSjot55JtXIyqMKljvT3njyFWGj3JYKT3V1Yfv5XzQQgN8AcpPJln7N2XLMu+auoZAKs/4FG4CffY+BK5UzyxHL16jUaW5JmBrnkcOcloeG+l+hcASZ3SaKV57D5TMQqAOnUdwWQvF53+TQLjdo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724218895; c=relaxed/simple;
-	bh=NZBHryVxFojpU5sCj/uVc2of6RuYZqHTsEnPR6vIIfA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bEed+IIHP1OcZntdZeBhhFT71qfWnpOItJNAqTpI1QhL6fx5V0x0sQ4FwEGHr+N3SmnQ2m++4pF4N/c5y714hT13o1SvMrd+GYr663Hl9jGWnK/fnIlrABmlsrrT/C22rvmSmuUWxCVvwc/xDMmveqo+hHXx9adMm1K6xfVeoC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=saJD4FMy; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L40kuc016940;
-	Wed, 21 Aug 2024 05:41:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	ibIwXlc6fzBzPDKDeQmnnLo8tqZKeLqZR84SDET8VlU=; b=saJD4FMygwWcVv1d
-	uC7nCJ4DfT8xHHO0iNEAkgBIIq1xXWJi8lTm8btBrIq7yaVKsb8OYXwhCgy4hQF/
-	uhX64kdupz+Hoz5Iu92bwRzBh0VXbZG+pQdKn2bf21OIT/vIHCTAlqrofn3xM3k4
-	qZoJ3YsehnENh3M4omz+Rlvsu9Je3WAuLiskA3H2aBcKwK2ZYbGRbi5STgJuJeZu
-	9Nw61TyTqKF0pJOLHejV1sZt7gf+l2Yvfp7+K4QCbOj1bWLME86THLOunIOm1+Pf
-	px/YVXeBuzE989I9IBRKEftqZjATwlRBWUJajHwOFQZQrkFtTgJJB/TkLtgehFpU
-	HhdRrQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412ma096ka-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 05:41:27 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47L5fQRB021689;
-	Wed, 21 Aug 2024 05:41:27 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412ma096k5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 05:41:26 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47L5ES96029443;
-	Wed, 21 Aug 2024 05:41:25 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4138dme2gh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 05:41:25 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47L5fKts54722902
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 21 Aug 2024 05:41:22 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 39C7820043;
-	Wed, 21 Aug 2024 05:41:20 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 68B3420040;
-	Wed, 21 Aug 2024 05:41:19 +0000 (GMT)
-Received: from [9.179.3.132] (unknown [9.179.3.132])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 21 Aug 2024 05:41:19 +0000 (GMT)
-Message-ID: <42f2d707-cf7e-4cb7-a10b-8bd2e851879e@linux.ibm.com>
-Date: Wed, 21 Aug 2024 07:41:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net,v5,2/2] net/smc: modify smc_sock structure
-To: Paolo Abeni <pabeni@redhat.com>, Jeongjun Park <aha310510@gmail.com>,
-        wenjia@linux.ibm.com, alibuda@linux.alibaba.com,
-        tonylu@linux.alibaba.com, guwen@linux.alibaba.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        dust.li@linux.alibaba.com, ubraun@linux.vnet.ibm.com,
-        utz.bacher@de.ibm.com, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240815043714.38772-1-aha310510@gmail.com>
- <20240815043904.38959-1-aha310510@gmail.com>
- <e0f35083-7604-4766-990a-f77554e0202f@redhat.com>
-From: Jan Karcher <jaka@linux.ibm.com>
-Organization: IBM - Network Linux on Z
-In-Reply-To: <e0f35083-7604-4766-990a-f77554e0202f@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: aph8l7bIcRkfknxgwDDbdykuK_34DILh
-X-Proofpoint-ORIG-GUID: wU-ztOuHpx7xYQ6S_9d1tUNwr6gWLN-W
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD061547CB;
+	Wed, 21 Aug 2024 05:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724218908; cv=fail; b=tdBncG7igumOQMceB3EU1SYGDN6zH8cADQHgyMyFjH9G9Tjf0xnZLehguDl0dSCg3a2fboXmwxNNRiC5SSRmwTORMS+8ErSHj59vLba6pTn36JMfMR/YE81g0z3JeNEyu6wbCwSswUPkGZ52JjvnOWn0cgeTnHUGjPoZ7MRF//M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724218908; c=relaxed/simple;
+	bh=jvMSAMAdSheznXb/K4X8oWIQK09olZFngUgSf8DmmGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eeTawC/GvnYU4sAfpkqOV9VovqPZ6WHpMt6Xu6N1q1cS/4WY97ZgKdJML5QJHo2xagQDAjUfy4bgnl0gQKj0wir2ZpglimSkVfu3eBVlUV3F3wNZnhxL13zFicRFQT7pdjBgYsdUhPHAL3rsAkswq9OmSLwWMuO1JNrPP7Oxhzc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aE6v5/IL; arc=fail smtp.client-ip=40.107.94.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TVFnhhShWxetlX9sLl9+j45x5Y0ErgY+pO9/C3+6zBBjKzyvdRzHnR4CPXlIJZXKa/bYtk/GUj9Yh5+2ZmhI1AOFmjVJNDuRc7y0oYq73YzE8OTHlrbnjD/WzkLSNZIq/eAjap9LeNeF+2wc5+kyft8VNi2ymS4pkfz+clGkZ8cFfeyqRM+I/TKccpLvz7hS9C+9hArtvVN9lgJ4pF/2rhR0xmqIfWq8ilzCsu/cmub66avchd5k6+nxSbPO6msDV7pwIVeDX9aCDzxOAZZlFtxHIG8eKLDTZ7OSgLr7fMQAMkbLS50zr/JO4aEnBJe/jzKPEAYuOwTV5x0jVLfaZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wpu1jWovat4uHhYEUOB2DtoraGMnVgqBJAwB4v4OUnE=;
+ b=FCU1eWnmry/LlfXcnwD3kEL0lCE/9y2r6GGQ02ko//WR9JedtJwCSpXO0rh6NncEbDxxiomgNG5cWaDERbwq2V+uZiQRihhKvFkrIuYgF3a4HgaWnOkDpiU3EOFD6ZPaNcEtBUFcWKN2rQwYKrxJaX6pmwNlH5EnNkHrvZ0Bj+7mvaFIZx1BGde6wDGLVjDWBbGd6MfHvvlOjg/7Dni1vn6gbf0vT3svXyOKnpuEC+9VmS3Z0zloxVgj6XmZ2YKvtMCVEQ0Jo0bVWezh83b9B1S50oNu+RStPNz6EJqiKkR74uxKrf7TdNkMO5GNThg7IMwRZgwI3q3lJPY6HQhj3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wpu1jWovat4uHhYEUOB2DtoraGMnVgqBJAwB4v4OUnE=;
+ b=aE6v5/IL+jEHdNoEamENgLuclqCLfCpZYdUP6P3NxWMfjp4tthdcRJStYZIs8iRMRmvQLkE0OXcWD0T+X33oGtLpjTUiJcVGSnvW8od2t4qwAjIw3lyOnOyC2Ffuh3K1GI7bggEYBSYNVb0oxlFnYXvnA5vk85qummzSGWNY3xw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ MN0PR12MB6080.namprd12.prod.outlook.com (2603:10b6:208:3c8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 05:41:44 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%4]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 05:41:44 +0000
+Date: Wed, 21 Aug 2024 11:11:32 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Xiaojian Du <xiaojidu@amd.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Huang Rui <ray.huang@amd.com>, Perry Yuan <perry.yuan@amd.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	David Wang <00107082@163.com>
+Subject: Re: [PATCH 3/3] cpufreq/amd-pstate: Remove warning for
+ X86_FEATURE_CPPC on Zen1 and Zen2
+Message-ID: <ZsV+DI4IxQCSTWGY@BLRRASHENOY1.amd.com>
+References: <20240813095115.2078-3-gautham.shenoy@amd.com>
+ <20240813095459.2122-1-gautham.shenoy@amd.com>
+ <9ca4054e-a130-b65b-d2f3-3ef84c997dfd@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ca4054e-a130-b65b-d2f3-3ef84c997dfd@amd.com>
+X-ClientProxiedBy: PN2PR01CA0207.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:e9::18) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_05,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- mlxlogscore=881 lowpriorityscore=0 phishscore=0 spamscore=0 malwarescore=0
- bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408210038
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|MN0PR12MB6080:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4434dfa2-fee5-42be-3170-08dcc1a3f0a0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vC81a88PIW5463Vz0vhNRCJd4TejqpAty2j1LooORRy1cumD+zO2MJDFiOZr?=
+ =?us-ascii?Q?1lAC8SvrCDQ7pXnDdwuCfH14CbdVonWl2ZlqfZhuxOrNwE0CfzznliCzNJeb?=
+ =?us-ascii?Q?4KMJ1BMfNL+wI1lhLgqBN/1iWFdsO8rueeNvWKKFwdQ/0hhPH2FLJuPWy5Ub?=
+ =?us-ascii?Q?nFRn1GH/d27rUXIEuxfKkfxFKbgn+ddq468BWIe5onHU8bA7zMvrJaQRl1Ay?=
+ =?us-ascii?Q?S+sXJjdHbNFzjevECEI+IAOBBM384VB2k63WBcMygD2da1luiCqEDyf8c+sn?=
+ =?us-ascii?Q?yZFzaGXSOjL6bx9ubGxqC4vvS3mfARkFKWBQ4KTRgqgqLrDhyinglVVGYHRI?=
+ =?us-ascii?Q?zJ8FysIMUD6JbFSIqPc6bB5HXhx+/QKQP6tGI0gsGEwa1OmTEQR625o6Jz7G?=
+ =?us-ascii?Q?gtFwa+33mnHw7Oo25JiEhigyWevGHX0N+9ZoTAm181VMTSxLb9zl/o0Iy60E?=
+ =?us-ascii?Q?76XcJ/I5DL7XJXNWIT0spsvBpYRRV3tSeb17mOHDepHrRP6xi+ZX8QLD6h4e?=
+ =?us-ascii?Q?ZG9BccRQZ1I1Q4tQ3VsSbHpLuK/hCufcoNeLeRsHIOu3Q7phoUPyRNyECYnu?=
+ =?us-ascii?Q?O0cguubFWcdZAkN4W3SiLDTQSlw6S2/uVcxLXPayp6ekYUQ+9K0MrfvzvX2v?=
+ =?us-ascii?Q?Dxn0Oo6NFJ/JykJ9LQVsoOS7HEiUyGTxEjPXJuWDblk2CBEXwpeeio42orJY?=
+ =?us-ascii?Q?Y7CA6s9ddRhn8SEvehCZhYZ4R8f7RkCfSVVvTZZRYD6I71xn1n2mWZRB/CZ5?=
+ =?us-ascii?Q?9xg7x41i4ktCvTxcgyf6CIWPgG/wYM8n/XXaT5AtML7juylhA8O7mdzm0DoI?=
+ =?us-ascii?Q?FNiGwrRwDlGg4cOzgZYC8ZujRTKzRjyO7LjEoLubsIj/sEVewlDXlshqM44C?=
+ =?us-ascii?Q?ktUR8hCCmAUDqGu5NPqXGqnx9O1sHRvw4zxlmZbnc8akAY1Q/3F90arilAQT?=
+ =?us-ascii?Q?e3MnTVxpLUYT7Ebj87m/fV6NllvwIVIeZ91mKIAxC4CTkOU15QhqLftowGwW?=
+ =?us-ascii?Q?kucXJRZtwZ8rySeFHO7vw8SZaXeVfF819lcTfA+Vjf7/oiOUKMK3Kq6jnN/y?=
+ =?us-ascii?Q?y+PGirkzA/ks3mRcqFxBQn+Hxjdc7Tu7iHz45NuHqWxyJQlgppW/A7JpYcUd?=
+ =?us-ascii?Q?5YnfZHuh2zBol9hE89pNv4+C34PhfNJvULgznEOJqVSSEYpGAloKLB+VYPly?=
+ =?us-ascii?Q?yShti0xYeSBRYcB9/q1NdHuk3J5SkSvDE7kAv9kPgm6zbFvXySceqAUdOfCt?=
+ =?us-ascii?Q?1YP+Zv0Dt4+xqFCydPqqlJEpKQpVlepqPTw1GZiEMLbKgWkiKiACUfRZxS8r?=
+ =?us-ascii?Q?KZ2AdR/uySpxCab3KyPWSms9?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6sfgG0+NtNhsyuoV3Cgr3wXhPMuMvphcUA81sk8/DL1lmCmLEC3sNDwY6Ufj?=
+ =?us-ascii?Q?yOBoY95pMtm3XjvYbyaWEf/dWhXcXfDTxHlTRbYDw2y07FDmSGaz/AKRu9Bv?=
+ =?us-ascii?Q?Rtnr/X4Zv6Ybb2oRUXIh1n90ZvOuL4HiYrn60/oo8MSqTvSFZy6T1mzbtL+g?=
+ =?us-ascii?Q?E/TsfPJoBEhGE6V7CxE5m9qXttGP3DSVqxL/5adMyMQC6kmOv3kzFRPmEth1?=
+ =?us-ascii?Q?xxNKcCdWU5s23l30lyDeBk7UhXG0v3mqJcmWU4nM60aZInBW504l+SO3sgia?=
+ =?us-ascii?Q?qSS/aeTG9Jeb6JK6JZxcFkmMEJehak0CDyIKNOWggYUg8xd7akQiU5HsrBTG?=
+ =?us-ascii?Q?kE9Nj4qVn//Exw1SmZ2ibwlJv6EIQv0DsLzMlLwstZhxpXuQUmCu5yMdHnMm?=
+ =?us-ascii?Q?UeP+vYB3Rdhs3ZVUCKVppFz/BN6mFny0E3DANidd8WRyueIrJfWNd1iVELLB?=
+ =?us-ascii?Q?Azv/g9VMuHkN67dFfY9qf4xUd6HxfBPFrPQAA4BQBgVQlAPQ5IKAenN12Arx?=
+ =?us-ascii?Q?VRgEKhXkB9vkOyspDo7zmB5lzhdEDFWHepKVL/vrwMY8OfSYk+xG4Qc03DDq?=
+ =?us-ascii?Q?1tqGHOQVkI/gmop4JYxlNNEjLg3dZc9P3T2DY7g90ynQQt0AInmem1KWJA0Q?=
+ =?us-ascii?Q?YTLvr+A80kDD6n69joZlAklIZQpV0Nt59pOpwbRjIPdAXP//oim+1gKgpEZI?=
+ =?us-ascii?Q?g17vgkuZKPXnYmZb1DKAMPuJFlS/iUHtIIlBj8EXQm2Yo9b7+EVB9r+OZUlQ?=
+ =?us-ascii?Q?oGqsJH/gzQR2ZCQyVdTronWbnVuKFNdAT7iJPzKd9U5PdBUoruqhloBvS6Xq?=
+ =?us-ascii?Q?Dq+o/j4HllTD+1jSjuTTutLsBozxKpslxXzDvsx7Bh8SESlidGv7UmJelb6s?=
+ =?us-ascii?Q?a048ozbftSHLD5DK0FkGaxJnFNnT74jE+cpyLz9urf0q01jc3w/uV7/g++o/?=
+ =?us-ascii?Q?ujaLE+8Mn8WFTNnYcsR98cgolY5JuyZ6IFGTXt+grpqyMcnaYPhU7qw0QfoF?=
+ =?us-ascii?Q?MiJuSgUsMqsXHqL4Xsa+x+Nfrjgj2OLkYeZ7irtMhVhoKZyld19nQvKMwDTd?=
+ =?us-ascii?Q?y22k+bpZUL1C9jpUe7G3u4ZLi3miV4vBhzfeb1suD/RSS8Xni+twZe7pqjI/?=
+ =?us-ascii?Q?kh3BYx1695i/moO6m1C5hboHYVUr1HpVonelvxrtHWKfzTJkwpGALo1oF002?=
+ =?us-ascii?Q?Y03Rc3WlUhj8jmCY3Q8tSxKcmdDYZWVa3duqIfnCT6HMMJrZZsWdY2y83dBq?=
+ =?us-ascii?Q?SKQdY5YF3OU+oiA2AJkPyRw9tuMTFD+CBWe9F8ztOTZ+Am0s6K/VTTnGq0Ws?=
+ =?us-ascii?Q?5hY2wjWi01t6HoEAsE/azXpty3S1wOFUo6k092rNQ2kIEX6ODOFijL1P3/bP?=
+ =?us-ascii?Q?xtitRPLxLnnxffqlvEj6MarHAAL8XBAea59b84tFEezodiPLsOiwLYm8Yjh8?=
+ =?us-ascii?Q?C8KUdZy1drNr2j29kTij3ZMWOMLYfV3fsQZxA0SsjwrMl7L29EHJ//4Fr8/H?=
+ =?us-ascii?Q?02ePgLhNZG8KTnZaqXFHvo1mOWspNwZyZ9SsFHDL7Hm92BWm0nmLE8D8r0K3?=
+ =?us-ascii?Q?BjKP4php5EWIpvBKy3556aDChn23eK9to8eUxm1F?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4434dfa2-fee5-42be-3170-08dcc1a3f0a0
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 05:41:44.4689
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sl0RC3qTB1jKiL0ck/BlodWKRm6NinoH1LNJxWNLZoKXxFbzHp68ixF+LYoOOWIscZdWlYYls3TNyTxFRsrWEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6080
 
+Hello Xiaojian,
 
-
-On 20/08/2024 12:45, Paolo Abeni wrote:
+On Wed, Aug 14, 2024 at 05:29:04PM +0800, Xiaojian Du wrote:
+> Hi Gautham,
 > 
+> On 2024/8/13 17:54, Gautham R. Shenoy wrote:
+> > ...
+> > 
+> > This feature bit corresponds to CPUID 0x80000008.ebx[27] which is a
+> > reserved bit on the Zen1 and Zen2 platforms, and is expected to be
+> > cleared on these platforms. Thus printing the warning message for Zen1
+> > and Zen2 models when X86_FEATURE_CPPC is incorrect. Fix this.
+> > 
+> > ...
+> >   	if (!cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> > -		if (cpu_feature_enabled(X86_FEATURE_ZEN1) || cpu_feature_enabled(X86_FEATURE_ZEN2)) {
+> > -			if (c->x86_model > 0x60 && c->x86_model < 0xaf)
+> > -				warn = true;
 > 
-> On 8/15/24 06:39, Jeongjun Park wrote:
->> Since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
->> point to the same address, when smc_create_clcsk() stores the newly
->> created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
->> into clcsock. This causes NULL pointer dereference and various other
->> memory corruptions.
->>
->> To solve this, we need to modify the smc_sock structure.
->>
->> Fixes: ac7138746e14 ("smc: establish new socket family")
->> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->> ---
->>   net/smc/smc.h | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/net/smc/smc.h b/net/smc/smc.h
->> index 34b781e463c4..0d67a02a6ab1 100644
->> --- a/net/smc/smc.h
->> +++ b/net/smc/smc.h
->> @@ -283,7 +283,10 @@ struct smc_connection {
->>   };
->>   struct smc_sock {                /* smc sock container */
->> -    struct sock        sk;
->> +    union {
->> +        struct sock        sk;
->> +        struct inet_sock    inet;
->> +    };
->>       struct socket        *clcsock;    /* internal tcp socket */
->>       void            (*clcsk_state_change)(struct sock *sk);
->>                           /* original stat_change fct. */
+> Some models of ZEN2 APU/CPU require this warning info, like Renoir (Ryzen 7
+> 4800H mobile APU/4750G desktop APU,
+> Ryzen 5 4600 desktop CPU), Lucienne (Ryzen 5 5500U mobile APU) and Aerith
+> (APU of Steam Deck console).
 > 
-> As per the running discussion here:
+> So it has to use model ID to narrow down the coverage.
 > 
-> https://lore.kernel.org/all/5ad4de6f-48d4-4d1b-b062-e1cd2e8b3600@linux.ibm.com/#t
-> 
-> you should include at least a add a comment to the union, describing 
-> which one is used in which case.
-> 
-> My personal preference would be directly replacing 'struct sk' with
-> 'struct inet_sock inet;' and adjust all the smc->sk access accordingly, 
-> likely via a new helper.
-> 
-> I understand that would be much more invasive, but would align with 
-> other AF.
 
-Hi all,
+I checked the publicly available PPRs of the Family 17h models 0x60
+(Renoir) [1] and Family 17h model 0x71 (Matisse) [2]. In both these
+PPRs, CPUID 0x80000008 EBX[27] is a reserved bit.
 
-thanks for looking into this patch and providing your view on this topic.
+In fact, David reported this issue on Matisse system.
 
-My personal prefernce is clean. I want to have a clean SMC protocol, in 
-order to get it on a good path for future improvements.
-The union, IMO, is not clean. It makes the problem less implicit but the 
-problem is still there.
+I am happy to retain the warnings for specific models which are known
+to have support for the CPPC MSRs (which is what CPUID 0x80000008
+EBX[27] advertises). Could you please share the model numbers of those
+that you are aware of?
 
-Jeongjun, do i understand correct that you've tested the change proposed 
-by Alexandra with more changes required?
 
-"""
-Although this fix would require more code changes, we tested the bug and
-confirmed that it was not triggered and the functionality was working
-normally.
-"""
-https://lore.kernel.org/all/20240814150558.46178-1-aha310510@gmail.com/
+[1] PPR Family 17h Model 0x60 : https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/55922-A1-PUB.zip
+[2] PPR Family 17h Model 0x71 : https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/56176_ppr_Family_17h_Model_71h_B0_pub_Rev_3_06.zip
 
-If so would you mind adding a helper for this check as Paolo suggested 
-and send it?
-This way we see which change is better for the future.
+> For ZEN1 APU/CPU, this warning can be removed completely, because ZEN1
+> doesn't support CPPC.
 
-The statement that SMC would be more aligned with other AFs is already a 
-  big win in my book.
-
-Thanks
-- Jan
+Agreed.
 
 > 
 > Thanks,
-> 
-> Paolo
-> 
+> Xiaojian
+
+--
+Thanks and Regards
+gautham.
 
