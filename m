@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-295917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09AB95A2F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5BD95A2F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38AA1C22164
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60E41F21BB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7148152199;
-	Wed, 21 Aug 2024 16:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7460816190B;
+	Wed, 21 Aug 2024 16:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OnqKf2k9"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdj3a8/N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC50D14F138
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E2D1531D8;
+	Wed, 21 Aug 2024 16:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258137; cv=none; b=lc3URUqoOLYuNBGG5XyU/vk2HFnu+HEptUpEdQGxXnItC0+UyNUkcW7WvWfbMPnCYbHUIfgRMCRW8k3MsB+iiQ6lbXjYTiqbiSacVY4G1wVKPSKIEZk+827XpxC9j48tUa8WU0Wcf8Ce6sPp9ImORzDe8XQgLfnLWXsl/SlYwbM=
+	t=1724258142; cv=none; b=D/KFXKcs0wkZgfBtH9l6qmuYjVWpz2j49Jkch3e0yp+wSWoKqlnfAu49YL8docgZEmLmMuQYD2y6g3X3eVweokrtPwAsP7t/29HSHsl/vCKF8MFG6JGK3oN6Zc+wQNKZ8ume9bukgZQ24Ta7cD7Gu1uHlQxJeznoxUwALZyqKxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258137; c=relaxed/simple;
-	bh=hzBeSbaTtIAToh/GaX5rZx/f1VGFsqzxE8W9F/KKb4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i0fNSnO7AGdPmiEenM88vqhMSixWOHt5A2dl3R79LLXmnLZjDC8w+KE02KmhLIf7UW/r022kNNYPXEK1XE9gqSjHu5jSAXrEgakxLmyK/cJ6k029fEX26huhzkgWF9nEL5CUTiMjMTCIkCKxDj6O8vYcm424NzIMQJIXAWtSsFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OnqKf2k9; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6aab656687cso8557867b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724258135; x=1724862935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ssKb6qw6aeMO+6QGtyvALnPcAvbpew5UWcwhrzSGCa4=;
-        b=OnqKf2k9Xk9j0A1QhT3q6q+kCA+r5CfBKLYyE30T03DnlCFqtjnw1XubPKW/pIhZK6
-         03cdqrbj/gjk8RWP0YXvi4+29gtyGY3IdQRmbbkI5cyyw6Tg9Ohqxy4ujjU9tUImxWia
-         VriTqRDNgnXSVMWo7YzQdPdtNIQY5nLbRw0R2aHSpcy6afCgY5k/4toAZVb4CWuOA9+t
-         ShXO6Cd3RYlEtYHaqRNdYWDC/HBnE3BSZLrZDDjwwqLp5ScpdbCil6V7eG67k/1q3OyU
-         LNB1U5PGuBmcOG+jusLNSStc9iPRIzp2s+1WXUdWj79dK1qQaGV3sg36ZuzQKDzbOvFT
-         /NqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724258135; x=1724862935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ssKb6qw6aeMO+6QGtyvALnPcAvbpew5UWcwhrzSGCa4=;
-        b=OvRt8odRCQ1BbgzLk4o3fTBza9xU5TdDnug1ksjFbvAU23EskGFvTS7Ma/0DfV3tZW
-         G1628Ze33QmKPbdYuE7QUtBod7VY7YRA1HdT1vFbVl/5UCjMMltHaOoR/N1nWIxQ+UNb
-         CP/xOUGvdVuACsaveZKfA8ZmxUiI11PEI2xfST2eXcL7IqiOe/e9InZykph1FPKYGTOz
-         wZP82S4IFUOeNRMHEwwmY8gk1FqoSYFOUCl32sh0AtqlLY/UW/baRSsk1prEfnQAlb/9
-         SVmeRVrxGQwZrksH58URnTFEyh789XGoJutMdNwieaOtttf5aNYIy82ClJlCCGNYSCaa
-         lOHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVd+PzZzr3yfh0PPzI+5Bmcl49IXIwQzIkrJKRc4mbtUV8xN+Stt2ffWK7cc5MhbdL4EGjhlpH2veufkDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf47vLdRkMKaaSf2O1HzdOyEKnlHVmzyNKArM7W/IFwfdD1EVu
-	nXQH/lmOsX/ZHYKTXgo7s+d9DWrQ3ED6OQIaAYzI/SZ/kPjc+//0G8kovwTMsBy0dvnqtpD74xM
-	/DSRdgGfuF4MqVRdI77sTmOqsfqRvEOJDS5Hm
-X-Google-Smtp-Source: AGHT+IFFJJaltNCA/IDKVau9jaELlCUOp8789S+uuTRwgIUoSv9E6HoUzHZ0yFPljmsWOYHtvETnEbDBnlf6C3JyEkw=
-X-Received: by 2002:a05:690c:63c6:b0:630:8515:f076 with SMTP id
- 00721157ae682-6c303cf67bcmr2591717b3.7.1724258134800; Wed, 21 Aug 2024
- 09:35:34 -0700 (PDT)
+	s=arc-20240116; t=1724258142; c=relaxed/simple;
+	bh=mVVQt8vfen6cLdftC8wh2TeYkqCsp9PRkdY9AUiKv+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bbMiC8k3aWfI5yfmGbN2JTo3vjs4vGORjOAYYF993rnt98iLNe9gg4lsCEA5RFT9JYPgikZ1NccdIL6tOHEkB5SN2od51Lbv9cBeTJKpol+wHzxJOheysROp5XFPXoJiYpiZzgoNie6jLxQbM+DspoPXSdtxUXm2sf50849vPrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdj3a8/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E89C32781;
+	Wed, 21 Aug 2024 16:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724258142;
+	bh=mVVQt8vfen6cLdftC8wh2TeYkqCsp9PRkdY9AUiKv+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hdj3a8/Ngq72vKelenxI9RXYEwvVPWQa2MzfK/fAE4fQDL42Gnzzt76QeRtCUMq39
+	 QGihwbTO8LtbAI2L/zQwcj3/RSXQxa237A9ZpkJNdbnHaa9VAQ/fpvumStiBb7ZoLZ
+	 GLa8kw4EPrMyhbf+5mAbMg7Z2p8mvTMoxHf41a6jPv0/rqKbi9nnBwMcvFAvsd7c6i
+	 hhfcWjbZMxmL/tEOdRvp7K3DYMigfyrpMj1WeBtLS/oXC3g3TFvYZL7lQkELGxcEPM
+	 tJK4nOAieCocPbIV+4kgw2xsk2zMUempnTZ+qRcg32wOsrBm1s0ZTPQq+XHdVnZsub
+	 cOkIuBNzuBPsg==
+Date: Wed, 21 Aug 2024 06:35:41 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: matthew.brost@intel.com, jiangshanlai@gmail.com, sfr@canb.auug.org.au,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: [BUG bisected] sysfs: cannot create duplicate filename
+ '/devices/virtual/workqueue/scsi_tmf_1073822488'
+Message-ID: <ZsYXXd6tQAlFwkg8@slm.duckdns.org>
+References: <8d443293-2020-42d9-b5b1-1348f551648f@paulmck-laptop>
+ <ZsYTZTEbtMuVyp1o@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820235730.2852400-1-Liam.Howlett@oracle.com> <20240820235730.2852400-18-Liam.Howlett@oracle.com>
-In-Reply-To: <20240820235730.2852400-18-Liam.Howlett@oracle.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Aug 2024 12:35:24 -0400
-Message-ID: <CAHC9VhTWRMKZiximDFAuhY0PwvHt8rk913LLKLQu20tjrnN7cQ@mail.gmail.com>
-Subject: Re: [PATCH v6 17/20] mm/mmap: Use vms accounted pages in mmap_region()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, sidhartha.kumar@oracle.com, 
-	Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsYTZTEbtMuVyp1o@slm.duckdns.org>
 
-On Tue, Aug 20, 2024 at 8:02=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
->
-> Change from nr_pages variable to vms.nr_accounted for the charged pages
-> calculation.  This is necessary for a future patch.
->
-> This also avoids checking security_vm_enough_memory_mm() if the amount
-> of memory won't change.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: linux-security-module@vger.kernel.org
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  mm/mmap.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+On Wed, Aug 21, 2024 at 06:18:45AM -1000, Tejun Heo wrote:
+...
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
+...
+> Hmmm... I have a hard time imagining that change causing that error. My bet
+> is unreliable reproducer. I'll try the repro.
 
-I'm pretty sure I already ACK'd this, but I don't see it above so here
-it is again:
+I'm probably doing something wrong but all the tests say that init
+segfaulted in the log file:
 
-Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
+  [    5.505986] init[1]: segfault at 28 ip 000000000040101f sp 00007fff1bbf6fc0 error 4 in init[101f,401000+1000] likely on CPU 12 (core 12, socket 0)
+  [    5.509949] Code: Unable to access opcode bytes at 0x400ff5.
+  [    5.512314] coredump: 1(init): over coredump resource limit, skipping core dump
+  [    5.514976] coredump: 1(init): coredump has not been created, error -7
+  [    5.516911] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 19dac138f913..2a4f1df96f94 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1413,9 +1413,10 @@ unsigned long mmap_region(struct file *file, unsig=
-ned long addr,
->          */
->         if (accountable_mapping(file, vm_flags)) {
->                 charged =3D pglen;
-> -               charged -=3D nr_accounted;
-> -               if (security_vm_enough_memory_mm(mm, charged))
-> +               charged -=3D vms.nr_accounted;
-> +               if (charged && security_vm_enough_memory_mm(mm, charged))
->                         goto abort_munmap;
-> +
->                 vms.nr_accounted =3D 0;
->                 vm_flags |=3D VM_ACCOUNT;
->         }
-> --
-> 2.43.0
+Pasting the command output:
 
---=20
-paul-moore.com
+  $ tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
+  tools/testing/selftests/rcutorture/initrd/init already exists, no need to create it
+  Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
+  tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
+  ----Start batch 1: Wed Aug 21 06:31:03 AM HST 2024
+  TREE01 8: Starting build. Wed Aug 21 06:31:03 AM HST 2024
+  TREE01 8: Waiting for build to complete. Wed Aug 21 06:31:03 AM HST 2024
+  TREE01 8: Build complete. Wed Aug 21 06:31:30 AM HST 2024
+  TREE01.2 8: Starting build. Wed Aug 21 06:31:30 AM HST 2024
+  TREE01.2 8: Waiting for build to complete. Wed Aug 21 06:31:30 AM HST 2024
+  TREE01.2 8: Build complete. Wed Aug 21 06:31:31 AM HST 2024
+  ---- TREE01 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
+  ---- TREE01.2 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
+  ---- Starting kernels. Wed Aug 21 06:31:31 AM HST 2024
+  ---- All kernel runs complete. Wed Aug 21 06:31:42 AM HST 2024
+  ---- TREE01 8: Build/run results:
+   --- Wed Aug 21 06:31:03 AM HST 2024: Starting build, PID 456070
+   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
+  CPU-hotplug kernel, adding rcutorture onoff.
+   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483593
+  Monitoring qemu job at pid 483623 Wed Aug 21 06:31:41 AM HST 2024
+  TREE01 no success message, 0 successful version messages
+  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
+  WARNING: Summary: Call Traces: 1
+  ---- TREE01.2 8: Build/run results:
+   --- Wed Aug 21 06:31:30 AM HST 2024: Starting build, PID 482122
+   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
+  CPU-hotplug kernel, adding rcutorture onoff.
+   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483619
+  Monitoring qemu job at pid 483648 Wed Aug 21 06:31:41 AM HST 2024
+  TREE01 no success message, 0 successful version messages
+  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01
+  WARNING: Summary: Call Traces: 1
+
+
+   --- Wed Aug 21 06:31:42 AM HST 2024 Test summary:
+  Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
+  tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
+  TREE01 ------- 
+  TREE01 no success message, 0 successful version messages
+  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
+  WARNING: Summary: Call Traces: 1
+  Completed in 10 vs. 60
+  TREE01.2 ------- 
+  TREE01.2 no success message, 0 successful version messages
+  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01.2
+  WARNING: Summary: Call Traces: 1
+  Completed in 10 vs. 60
+  2 runs with build errors.
+  2 runs with runtime errors.
+   --- Done at Wed Aug 21 06:31:42 AM HST 2024 (39 seconds) exitcode 3
+
+--
+tejun
 
