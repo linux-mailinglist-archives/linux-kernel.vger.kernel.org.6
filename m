@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-295029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADF29595B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:20:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110B59595C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0FE2813E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E9C1C223B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4881A7AE0;
-	Wed, 21 Aug 2024 07:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455751ACDE8;
+	Wed, 21 Aug 2024 07:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XkSy2Bnz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AEJGcVCM"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F5B1A7AC2
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F31188A3E
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724224760; cv=none; b=f7gO6jR2MbP1Fr77fDmScC0vjPQGb7qdF4fObBNGkEGOW1OCenVN1tuFv+1ixG+Z1qgaZob6LYBpnmrbIlquufHvsRqoF5IBG5EY9VJtySIKf/BC/Qs8izwROhS4IgepuxOrrkZieci00AbSxQSjwGmLFtJCe1vO3RgTF3Kjes8=
+	t=1724224765; cv=none; b=Tnc8e7exWD+H2DXaexxb5FhPpBqac8fvNmvnheKepL6WpQWuAN2UXr0GijGOgI/+oUlVhEatosM+iBtiRLlKcEazSH+u1A9WDJ7SBjt7DvhnVkzMoPCNKPrNmg1NIwR1pCoOOGiyN8g5V5PsQBnuBIuCOgoclX/9bKqHw+OrWeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724224760; c=relaxed/simple;
-	bh=X1zz/TunuR2PG93iDywgu0fR0ZIioix5D5qvFJsuS9M=;
+	s=arc-20240116; t=1724224765; c=relaxed/simple;
+	bh=Fc7LqA4dsnee2e9i3xlXjC/frSEy4rrwVedoLFfxfmw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HfXmDZ7z6QRuY8oV/Mr7a5J7YzwkU5kInhhUOFPY7ipzi9b7im//AReS01CkD9Pqv0Vp8Zs3AHR+5Cp6OWHZYgUmIYx7Yk12eirI/mphYIDrSGK0NDl8cu7U3NKuia/PkbbL08vBa3xpspZktz2IXB7J9+KLEkabreDTgYBN4ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XkSy2Bnz; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=qghXgPlqFrilB9tUlHTuWaWroEX2DsDD0DNgusja0RQKc/QEkJVG1DI7KClQ/AEy0AToeX8dNO/+nHrvZtmKWQ+9XC6cjZHNUbrI/9KKvNp9GH+gdE6yNO8qH/krn/TcyzwIlld8Jxx1srukX4eGnehHxrmg7ixSZuqkGm+oRfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AEJGcVCM; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724224757;
+	s=mimecast20190719; t=1724224763;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CLI8bZjR6OdWE6SPmBhjzuWJVjW15O9K3MBwEhWkwDY=;
-	b=XkSy2BnziZJXpVkMxTN9FO94Ab7wAE3C+LYUdlXuYrcziRRk2765K1tHNy7SsK0MJFmTtT
-	IRx1FGi18hPKPLmnX+kNMqVlk3BKoM49d6P6QWvRb/x0LwtVYWbCv6qB3uirzP8san+Mcf
-	GUM3Qrc2wyW+XVl0CIHCKozS31SIL2U=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=/H9qQSvRoJEHuC9fzeIRZ7nyD5NIc+bT7koxtRIZd8A=;
+	b=AEJGcVCMunEm6XkvToz3Z3NmLuKVS/WwJ4Dk307s5BcErTAKQlbEaXAkZWAtEAnoKqjck6
+	pEnrBzqUgHnhj1j66/oBPlg7M7HbMreZGhHdSPBraiNW8e9+cJsaXzn2dLbz3z1h6St4fD
+	3kd12gnv7S61TGZVxuW6z3wOD4/AjOI=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-G8RmAbFhP0-5dIv6Z93IYw-1; Wed, 21 Aug 2024 03:19:16 -0400
-X-MC-Unique: G8RmAbFhP0-5dIv6Z93IYw-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a1e9a383d1so613065785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 00:19:16 -0700 (PDT)
+ us-mta-414-NcUv56cnMRie8Fcc2N5Hng-1; Wed, 21 Aug 2024 03:19:21 -0400
+X-MC-Unique: NcUv56cnMRie8Fcc2N5Hng-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7a1dbbe6d6fso715109185a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 00:19:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724224755; x=1724829555;
+        d=1e100.net; s=20230601; t=1724224761; x=1724829561;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CLI8bZjR6OdWE6SPmBhjzuWJVjW15O9K3MBwEhWkwDY=;
-        b=lHZUaNdg1LN8vF30gIF29hFexfUDFV4nHnHRk0SjognirkI8rznwuuAI/K2a5tcC15
-         ekCzE36fEKsGjDZZ6jXv96PND5XgZhWIDpsSjKgp0ZWyAwPfBvJveB+l3q12Ve4ErSxj
-         v8TjFzgvYRQwJE/POBWtGa/wRyYCmnCkTfrSaWDxCDyjQbAt/B+agB7/skTEScWCg8H5
-         bsZsZicio8acUMTMGN3JZztX2hNgqLGmaP+uPUB85Fvhi7blXrdDNfYsQ6/8100WCPa6
-         34XjHJPZB1XFazvGu6187VaCMUOZ/Y3gLznKMHHymvoM8QGOKpDR6Vs9XZptH/rQrRWc
-         uhOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXa7ltMFskSWf5iOie2zr52wKUtDzjuKU+XaomDkpRVf+As5akv2Tlzap4YeQNkdJ0G91py0+pwVB8dwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ05Oqx9qUhYhzj5CA3T1BlTx7Q1dTisRNj1P4bX/Syh3Yl0ga
-	ZyPVETwn03YTpZ9wsURH3aAESCVa+9queN2m7aQm5/nalWAjO+3RGd3B8adY9wZ73j65r4DnENL
-	6OX57PyVyBOMjOM958ey853YRusUfnj5btLiZK9l1Pgfuawj6te4cmeKJibenLA==
-X-Received: by 2002:a05:620a:1906:b0:79e:f8b7:5c73 with SMTP id af79cd13be357-7a6740c5e31mr226526485a.55.1724224755552;
-        Wed, 21 Aug 2024 00:19:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtpkoHy3cS2PdzwF01k905nXUdsELS2xvQjiGeTjNuWZ60d5TFnGqma74hup77Ia1MJryw5Q==
-X-Received: by 2002:a05:620a:1906:b0:79e:f8b7:5c73 with SMTP id af79cd13be357-7a6740c5e31mr226522685a.55.1724224755041;
-        Wed, 21 Aug 2024 00:19:15 -0700 (PDT)
+        bh=/H9qQSvRoJEHuC9fzeIRZ7nyD5NIc+bT7koxtRIZd8A=;
+        b=Qcr/9U7h0I5QqI+zLE4oEowzr/cdSQcz+1Tg9gd9uTAN13kwThzkiN4vj+AhQ8K2sk
+         Hjc2gNzeMAvl+o8ZTSmvJPF+8DQykKWG2I0sWWM8zpEbgZZ5FeCWq/gqlX7QbUSkSa9v
+         ogGqU7y70Jx55cc6DSe+PVwiDRQCfeN+VXlCfulD/ZNV1rWd9+RRqDGxKdZ0IZluSC90
+         Nl+8Z9q4gYjE9Qw+5eZYZZf5IA53CdcIvYG/KdJZF8qtSJUmk0DUrxKFJjZiYwX3uHUH
+         BNCEZdMzYCzd2epkOZxU1AiyJgAvvILpo26pHfRD33+h+8+G+h9pJI29YRa3e53Sj4Ff
+         o2cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzvvuAz6aGNgehBTYvb0p62TMYFHfDYOtSKvUByg6g5mYfXWA3Vm7eKfd5jb3HuL6WsETTjX0lScssvXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNDyMY9HkzOXSKdtJVdMKCQ/7+KZgZu4KKNYl+ooJhX9YAxKqb
+	iXIdF0IluL0QbdKE1V05OK8fdu3xHYNHcYt+vF7VjFBpO3ULa52Aqw5/ZNUfqFkMAUjm5/W2wWv
+	y1YrzHY3KWsAcTMarxrMQfrzmwEhpOd8h6peXwzRcsqJB/Fc2mYQnY5xMPH5Y0Q==
+X-Received: by 2002:a05:620a:1a23:b0:79c:130:452b with SMTP id af79cd13be357-7a6740bf833mr201728885a.47.1724224760975;
+        Wed, 21 Aug 2024 00:19:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHlHEduRbx+7oLWq2FWdoqLifqFviA1Dz0/eZWADNmQ+nKTULVnIfuczZLElQLlBGhubXgMag==
+X-Received: by 2002:a05:620a:1a23:b0:79c:130:452b with SMTP id af79cd13be357-7a6740bf833mr201726085a.47.1724224760509;
+        Wed, 21 Aug 2024 00:19:20 -0700 (PDT)
 Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff013ef2sm596207885a.11.2024.08.21.00.19.09
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff013ef2sm596207885a.11.2024.08.21.00.19.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 00:19:14 -0700 (PDT)
+        Wed, 21 Aug 2024 00:19:20 -0700 (PDT)
 From: Philipp Stanner <pstanner@redhat.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Jens Axboe <axboe@kernel.dk>,
@@ -112,10 +112,11 @@ Cc: linux-doc@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: [PATCH v2 3/9] block: mtip32xx: Replace deprecated PCI functions
-Date: Wed, 21 Aug 2024 09:18:36 +0200
-Message-ID: <20240821071842.8591-5-pstanner@redhat.com>
+	virtualization@lists.linux.dev,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2 4/9] gpio: Replace deprecated PCI functions
+Date: Wed, 21 Aug 2024 09:18:37 +0200
+Message-ID: <20240821071842.8591-6-pstanner@redhat.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240821071842.8591-2-pstanner@redhat.com>
 References: <20240821071842.8591-2-pstanner@redhat.com>
@@ -131,65 +132,51 @@ pcim_iomap_regions() and pcim_iomap_table() have been deprecated by the
 PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
 pcim_iomap_table(), pcim_iomap_regions_request_all()").
 
-In mtip32xx, these functions can easily be replaced by their respective
-successors, pcim_request_region() and pcim_iomap(). Moreover, the
-driver's calls to pcim_iounmap_regions() in probe()'s error path and in
-remove() are not necessary. Cleanup can be performed by PCI devres
-automatically.
-
-Replace pcim_iomap_regions() and pcim_iomap_table().
-
-Remove the calls to pcim_iounmap_regions().
+Replace those functions with calls to pcim_iomap_region().
 
 Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/block/mtip32xx/mtip32xx.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-merrifield.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index c6ef0546ffc9..fcd5806621c7 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -2716,7 +2716,9 @@ static int mtip_hw_init(struct driver_data *dd)
- 	int rv;
- 	unsigned long timeout, timetaken;
+diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+index 421d7e3a6c66..274afcba31e6 100644
+--- a/drivers/gpio/gpio-merrifield.c
++++ b/drivers/gpio/gpio-merrifield.c
+@@ -78,24 +78,24 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	if (retval)
+ 		return retval;
  
--	dd->mmio = pcim_iomap_table(dd->pdev)[MTIP_ABAR];
-+	dd->mmio = pcim_iomap(dd->pdev, MTIP_ABAR, 0);
-+	if (!dd->mmio)
-+		return -ENOMEM;
- 
- 	mtip_detect_product(dd);
- 	if (dd->product_type == MTIP_PRODUCT_UNKNOWN) {
-@@ -3726,9 +3728,9 @@ static int mtip_pci_probe(struct pci_dev *pdev,
- 	}
- 
- 	/* Map BAR5 to memory. */
--	rv = pcim_iomap_regions(pdev, 1 << MTIP_ABAR, MTIP_DRV_NAME);
-+	rv = pcim_request_region(pdev, MTIP_ABAR, MTIP_DRV_NAME);
- 	if (rv < 0) {
--		dev_err(&pdev->dev, "Unable to map regions\n");
-+		dev_err(&pdev->dev, "Unable to request regions\n");
- 		goto iomap_err;
- 	}
- 
-@@ -3849,8 +3851,6 @@ static int mtip_pci_probe(struct pci_dev *pdev,
- 		drop_cpu(dd->work[2].cpu_binding);
- 	}
- setmask_err:
--	pcim_iounmap_regions(pdev, 1 << MTIP_ABAR);
+-	retval = pcim_iomap_regions(pdev, BIT(1) | BIT(0), pci_name(pdev));
+-	if (retval)
+-		return dev_err_probe(dev, retval, "I/O memory mapping error\n");
 -
- iomap_err:
- 	kfree(dd);
- 	pci_set_drvdata(pdev, NULL);
-@@ -3925,7 +3925,6 @@ static void mtip_pci_remove(struct pci_dev *pdev)
+-	base = pcim_iomap_table(pdev)[1];
++	base = pcim_iomap_region(pdev, 1, pci_name(pdev));
++	if (IS_ERR(base))
++		return dev_err_probe(dev, PTR_ERR(base), "I/O memory mapping error\n");
  
- 	pci_disable_msi(pdev);
+ 	irq_base = readl(base + 0 * sizeof(u32));
+ 	gpio_base = readl(base + 1 * sizeof(u32));
  
--	pcim_iounmap_regions(pdev, 1 << MTIP_ABAR);
- 	pci_set_drvdata(pdev, NULL);
+ 	/* Release the IO mapping, since we already get the info from BAR1 */
+-	pcim_iounmap_regions(pdev, BIT(1));
++	pcim_iounmap_region(pdev, 1);
  
- 	put_disk(dd->disk);
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+ 	priv->dev = dev;
+-	priv->reg_base = pcim_iomap_table(pdev)[0];
++	priv->reg_base = pcim_iomap_region(pdev, 0, pci_name(pdev));
++	if (IS_ERR(priv->reg_base))
++		return dev_err_probe(dev, PTR_ERR(base), "I/O memory mapping error\n");
+ 
+ 	priv->pin_info.pin_ranges = mrfld_gpio_ranges;
+ 	priv->pin_info.nranges = ARRAY_SIZE(mrfld_gpio_ranges);
 -- 
 2.46.0
 
