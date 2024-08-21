@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-295600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAE7959ED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:38:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C2959EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27A01C21913
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F68282E30
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EEA1AD5F6;
-	Wed, 21 Aug 2024 13:37:20 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C6F1ACE17;
+	Wed, 21 Aug 2024 13:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LvhdlmKD"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E2D1AD5E1;
-	Wed, 21 Aug 2024 13:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7640E1ACE1B
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724247440; cv=none; b=lkZOSVrkhWx+4GW8BlHJHwtb/9YgY6p+jhbYc/HwHbGGkHXcm0/YsX2usJzSgi6Jw5I3LT/gN4pVyhgQrxNsayeeEfnwt6cyUQzx1AgQFbTBwlzErOTCumrml9KDMCyEtfoa6rt28ghjTfIn5vtTUT4r4OeZk/byNvlmv2kzrqM=
+	t=1724247759; cv=none; b=ltCS1dQe9SJxyp8wcxXFO1hetgGbCNRPkb2jO8pPpXHyYQs47C4ASnucfX2InTGnhQjy7mZsLTX6BSz8W9Sbhgoq5ovIe7lTu3AWB2LCLX9+8N0358qggDdt+GNp6moOp+AGNniYb14bJikEyc2jzfuLcyidDbweCnf8vz2NuVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724247440; c=relaxed/simple;
-	bh=z31QW6kvH2wyeyMWTQnXNuZskSb2afeJSupgdV0PHQk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V/J20QnVx3Ib09QeeWCLryAY2hG7q4A8Ns8RJk4hgmj03Cih4ZZ9frlxdCRtVLwb2WoKMOILU7qUbzPKKDnxSQnhNGHB5ZqVBrv86gcvdlq9zX1dX3mNCdO5D/g8PRqoyOfXzNCSVzTDgtUxTDxLfwvPU1KlZJikcyHAai+yzEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WpnS62jszz4f3jrs;
-	Wed, 21 Aug 2024 21:36:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8E0B01A1568;
-	Wed, 21 Aug 2024 21:37:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4V97cVmXa5CCQ--.15501S6;
-	Wed, 21 Aug 2024 21:37:08 +0800 (CST)
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luogengkun@huaweicloud.com
-Subject: [PATCH v4 2/2] perf/core: Fix incorrect time diff in tick adjust period
-Date: Wed, 21 Aug 2024 13:42:27 +0000
-Message-Id: <20240821134227.577544-3-luogengkun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240821134227.577544-1-luogengkun@huaweicloud.com>
-References: <20240821134227.577544-1-luogengkun@huaweicloud.com>
+	s=arc-20240116; t=1724247759; c=relaxed/simple;
+	bh=QONK94iRvdLCkFzKX0e/7PlO/nG9joY+JgRsY16DFNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H0PTX7mFo0s1Kg/4iC4vQL6q9xefeMWROWW5xz7pU1zL9M7lHX54U9JqhcbMU8NXOA+pKcx48H1DD/IpBZuQlpj9P9jibK1ncuRPXhXKBkHNB8MtHlXsXUmfj29+5h8uWRY3DffuP2BjK+fqMud/Dyx1KaiZlDu/Gn1I5rfL1gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LvhdlmKD; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso55502645e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724247756; x=1724852556; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VJsppgPirLly3GD0IN/t04cO41JiGSW1iAo56M7EyD8=;
+        b=LvhdlmKDFG5xKXdQXlVcZ6sBjFW+T5OF+qP5fw30CCCJJMOu+Vw3Kg1C8K6F/+ymor
+         IdTDxR5Tth2Q8GUKcTKLH0ga1ipJ+hmQm6NqCO8Y8dPa3eeDKl4jb7MKrT0rNBqHleqq
+         prxLgTDAqjMWMLNotOmT+5AYE2xI5EZLobCVrbgIHT6AGfMTWE6yvMKDHn3R7Yk9zRDN
+         hudONAX/NJlCigbk6U508Mt59P+aUBpJlLQ9XILD1DUSkXdVWsNMudMqAFZVF/eTOOWW
+         eazNQkDR9v9iB9WIoVJleQzqMuPDDIvYMDrUCsTw6N/ovvcViZN4kZxZGdTuoWdtAX6J
+         SJ2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724247756; x=1724852556;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VJsppgPirLly3GD0IN/t04cO41JiGSW1iAo56M7EyD8=;
+        b=sT5vzU68XWuZk4oWWSrxTgOwno50QR7UflpBd7UVk38A71Mzm7J4hwXqGYccGV2jgr
+         yh9fjW7hZZX1rkxxoUoUPqn8SC3eAD+aLL1nEkLU06uHQK2GBt3uRGCntbmGed1GOulg
+         V2LIAvGoE1Zq6gd7x6Y0GFV1ncazQb7If58KTY0Hw5T29nc9pMCbNw7gJuLdC+w2htKy
+         erATHo1QeHDt06jZZwnw1emhKuTHuK5E521zAVfIe6Zgeknc9PhVZLza+ygrG9PPm27I
+         SqhV5vHW3Y1HBGP/OqCRirSsYB6Sq7GUsnolkB9enk+95nPS00gDm/IP4yQ5M+Pyzo+I
+         bU7g==
+X-Gm-Message-State: AOJu0YwVRSpgtAn8pJDGN+t6vFdnn84J84AWJ/DkVKxUteCuo5OqDdPa
+	4dzQhcCyvBpMqOCZRqPTAhYur2f//kZjD2B5pnrwM3pqR6t9fkWBoOB4lZBQFN75soqnYBM7jCP
+	J
+X-Google-Smtp-Source: AGHT+IFVPMQaCNHXE33yxUqjZrAbeBWCgU3RtQoYGtUEjlamY69VErH1gKWoM3Hgdn3POZ4E1/1oog==
+X-Received: by 2002:a05:600c:1f85:b0:427:ff7a:79e with SMTP id 5b1f17b1804b1-42abd21323fmr17223155e9.16.1724247755140;
+        Wed, 21 Aug 2024 06:42:35 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abefc63c4sm25847905e9.29.2024.08.21.06.42.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 06:42:34 -0700 (PDT)
+Message-ID: <6c60c236-c0c2-49a6-a2f1-9d588a81681c@linaro.org>
+Date: Wed, 21 Aug 2024 15:42:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/14] thermal: imx: Use the .should_bind() thermal
+ zone callback
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Zhang Rui <rui.zhang@intel.com>
+References: <2205737.irdbgypaU6@rjwysocki.net>
+ <2485070.jE0xQCEvom@rjwysocki.net>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <2485070.jE0xQCEvom@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4V97cVmXa5CCQ--.15501S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF4rXryDtF4kAr13XrW3GFg_yoW5XFy5pF
-	Z8AF1aqFWkXw1F9345C3Z2gw15X3WkArsIga45KrWfAw47trZ3XFsrWF15Xr15AFZ7Za4a
-	v3ZFgryUC3yjqFJanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUHa14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAa
-	w2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-	C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-	7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxc
-	IEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4c8E
-	cI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYTmhDU
-	UUU
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-Perf events has the notion of sampling frequency which is implemented in
-software by dynamically adjusting the counter period so that samples occur
-at approximately the target frequency.  Period adjustment is done in 2
-places:
- - when the counter overflows (and a sample is recorded)
- - each timer tick, when the event is active
-The later case is slightly flawed because it assumes that the time since
-the last timer-tick period adjustment is 1 tick, whereas the event may not
-have been active (e.g. for a task that is sleeping).
+On 19/08/2024 18:26, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Make the imx_thermal driver use the .should_bind() thermal zone callback
+> to provide the thermal core with the information on whether or not to
+> bind the given cooling device to the given trip point in the given
+> thermal zone.  If it returns 'true', the thermal core will bind the
+> cooling device to the trip and the corresponding unbinding will be
+> taken care of automatically by the core on the removal of the involved
+> thermal zone or cooling device.
+> 
+> In the imx_thermal case, it only needs to return 'true' for the passive
+> trip point and it will match any cooling device passed to it, in
+> analogy with the old-style imx_bind() callback function.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Fix by using jiffies to determine the elapsed time in that case.
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
----
- include/linux/perf_event.h |  1 +
- kernel/events/core.c       | 11 ++++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1a8942277dda..d29b7cf971a1 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -265,6 +265,7 @@ struct hw_perf_event {
- 	 * State for freq target events, see __perf_event_overflow() and
- 	 * perf_adjust_freq_unthr_context().
- 	 */
-+	u64				freq_tick_stamp;
- 	u64				freq_time_stamp;
- 	u64				freq_count_stamp;
- #endif
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index a9395bbfd4aa..86e80e3ef6ac 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -55,6 +55,7 @@
- #include <linux/pgtable.h>
- #include <linux/buildid.h>
- #include <linux/task_work.h>
-+#include <linux/jiffies.h>
- 
- #include "internal.h"
- 
-@@ -4120,7 +4121,7 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
- {
- 	struct perf_event *event;
- 	struct hw_perf_event *hwc;
--	u64 now, period = TICK_NSEC;
-+	u64 now, period, tick_stamp;
- 	s64 delta;
- 
- 	list_for_each_entry(event, event_list, active_list) {
-@@ -4148,6 +4149,10 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
- 		 */
- 		event->pmu->stop(event, PERF_EF_UPDATE);
- 
-+		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
-+		period = tick_stamp - hwc->freq_tick_stamp;
-+		hwc->freq_tick_stamp = tick_stamp;
-+
- 		now = local64_read(&event->count);
- 		delta = now - hwc->freq_count_stamp;
- 		hwc->freq_count_stamp = now;
-@@ -4157,9 +4162,9 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
- 		 * reload only if value has changed
- 		 * we have stopped the event so tell that
- 		 * to perf_adjust_period() to avoid stopping it
--		 * twice.
-+		 * twice. And skip if it is the first tick adjust period.
- 		 */
--		if (delta > 0)
-+		if (delta > 0 && likely(period != tick_stamp))
- 			perf_adjust_period(event, period, delta, false);
- 
- 		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
 -- 
-2.34.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
