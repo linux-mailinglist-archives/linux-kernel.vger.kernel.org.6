@@ -1,137 +1,104 @@
-Return-Path: <linux-kernel+bounces-295164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938F0959807
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB0495980D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6A691C21B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192EF1F231A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF2E179206;
-	Wed, 21 Aug 2024 08:50:01 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CB51BF805;
+	Wed, 21 Aug 2024 08:50:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7241607B0;
-	Wed, 21 Aug 2024 08:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C865F1547C2;
+	Wed, 21 Aug 2024 08:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724230200; cv=none; b=bHefmoBFn5BNaaLoxezJ5KQ1YE1RlnK0PnJGvEfH51dyZjl38q1k0V53s1Y6i/qkBAXWp6ZqT93Xzu7oR58B+zHtPgR5TI/S87Rpqz6Bf11I54P0igi9qdah8YjbR4R01LlfO8vXLL2mwRRoHbAKiAJLsEV+68i1PcCLkuWWRKU=
+	t=1724230231; cv=none; b=bfSLzsptzWHGrM04ob6zKSGHjJ1vrmJ/sBJVRspq7rPczM9h2NyCZgPB5Qg7yDTwNLMb33H7yw40oWMMnLApB7QBBz7b6pcR14meOmqDCBSz9s2p6b/DmCC9DhlJ1lzyOwYFu6zwWbd3YDQXEqocdfQfZ9Vxc2NS9Itq1jSxHQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724230200; c=relaxed/simple;
-	bh=LirYJXZb09EV7XOmz4Iw6ZLeN4E3SQFaNblmlIT1gXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g07/CBsFkr005PhUnlakjoeYB+TLmHdYI/w0DwEbDaXz6EJHZsffshc7eZD8sGqQ1EogEeW9/KNzOtSvNgqDirTg0p84TbVPrL35ogtv/t0WNZuX3EGBllQwAXMAfoi34bQSoI4oDWomZtnK7/uN6BZtAqX+ipjJy1TBAOPvCY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpfzX0fBTz20ltp;
-	Wed, 21 Aug 2024 16:45:12 +0800 (CST)
-Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F796180019;
-	Wed, 21 Aug 2024 16:49:53 +0800 (CST)
-Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
- (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
- 2024 16:49:53 +0800
-Message-ID: <68ed6185-a602-c0fc-721e-b5d68fea83f8@huawei.com>
-Date: Wed, 21 Aug 2024 16:49:52 +0800
+	s=arc-20240116; t=1724230231; c=relaxed/simple;
+	bh=tnrxtob0yb9eMmfLRERGvYJGOSdmCt6YF/gYnTDfJ+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIgOSgd1AuLpSXERShrgmYznd3wAfPk6UQk4cgtiAaPTScbsEMh7q75xpZqYV83RrEJLhTSJOm2cG/eETjcDdEWH7ghQxrsluvVRxpuce4XVkFofMNxlSVmsr2WoPIQTrV+1d7Cf7D7HRDeXGz42jm9YysL5ZA+JQyPtktGfwqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F403AC32782;
+	Wed, 21 Aug 2024 08:50:24 +0000 (UTC)
+Date: Wed, 21 Aug 2024 09:50:22 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 19/40] arm64/gcs: Context switch GCS state for EL0
+Message-ID: <ZsWqTtCq1mNJH1vz@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-19-699e2bd2190b@kernel.org>
+ <ZsMwhdmE_Ai9BbM9@arm.com>
+ <0f6fd3ec-2481-4507-af0e-3cbbb7406b54@sirena.org.uk>
+ <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v3 02/14] thermal: core: Rearrange checks in
- thermal_bind_cdev_to_trip()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
-	<linux-pm@vger.kernel.org>
-CC: LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui
-	<rui.zhang@intel.com>
-References: <2205737.irdbgypaU6@rjwysocki.net>
- <3324214.44csPzL39Z@rjwysocki.net>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <3324214.44csPzL39Z@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600004.china.huawei.com (7.193.23.242)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
 
+On Tue, Aug 20, 2024 at 06:56:19PM +0100, Mark Brown wrote:
+> On Mon, Aug 19, 2024 at 04:44:52PM +0100, Mark Brown wrote:
+> > On Mon, Aug 19, 2024 at 12:46:13PM +0100, Catalin Marinas wrote:
+> > > On Thu, Aug 01, 2024 at 01:06:46PM +0100, Mark Brown wrote:
+> 
+> > > > +	/*
+> > > > +	 * Ensure that GCS changes are observable by/from other PEs in
+> > > > +	 * case of migration.
+> > > > +	 */
+> > > > +	if (task_gcs_el0_enabled(current) || task_gcs_el0_enabled(next))
+> > > > +		gcsb_dsync();
+> 
+> > > Could we do the sysreg writing under this 'if' block? If no app is using
+> > > GCS (which would be the case for a while), it looks like unnecessary
+> > > sysreg accesses.
+> 
+> > Yes, that should be fine I think.
+> 
+> I forgot when writing the above that we always allow reads from
+> GCSPR_EL0 in order to avoid corner cases for unwinders in the case of
+> asynchronous disable.  I'd expect that to be cheap to access though.
 
-在 2024/8/19 23:51, Rafael J. Wysocki 写道:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> It is not necessary to look up the thermal zone and the cooling device
-> in the respective global lists to check whether or not they are
-> registered.  It is sufficient to check whether or not their respective
-> list nodes are empty for this purpose.
->
-> Use the above observation to simplify thermal_bind_cdev_to_trip().  In
-> addition, eliminate an unnecessary ternary operator from it.
->
-> Moreover, add lockdep_assert_held() for thermal_list_lock to it because
-> that lock must be held by its callers when it is running.
->
-> No intentional functional impact.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->
-> v1 -> v3: No changes
->
-> ---
->   drivers/thermal/thermal_core.c |   16 ++++------------
->   1 file changed, 4 insertions(+), 12 deletions(-)
->
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -781,25 +781,17 @@ int thermal_bind_cdev_to_trip(struct the
->   {
->   	struct thermal_instance *dev;
->   	struct thermal_instance *pos;
-> -	struct thermal_zone_device *pos1;
-> -	struct thermal_cooling_device *pos2;
->   	bool upper_no_limit;
->   	int result;
->   
-> -	list_for_each_entry(pos1, &thermal_tz_list, node) {
-> -		if (pos1 == tz)
-> -			break;
-> -	}
-> -	list_for_each_entry(pos2, &thermal_cdev_list, node) {
-> -		if (pos2 == cdev)
-> -			break;
-> -	}
-> +	lockdep_assert_held(&thermal_list_lock);
->   
-> -	if (tz != pos1 || cdev != pos2)
-> +	if (list_empty(&tz->node) || list_empty(&cdev->node))
-The old verification is ensure that tz and cdev already add to 
-thermal_tz_list and thermal_cdev_list，respectively.
-Namely, tz and cdev are definitely registered and intialized.
-The check is ok for all untizalized thermal_zone_device and cooling device.
-But the new verification doesn't seem to do that.
->   		return -EINVAL;
->   
->   	/* lower default 0, upper default max_state */
-> -	lower = lower == THERMAL_NO_LIMIT ? 0 : lower;
-> +	if (lower == THERMAL_NO_LIMIT)
-> +		lower = 0;
->   
->   	if (upper == THERMAL_NO_LIMIT) {
->   		upper = cdev->max_state;
->
->
->
->
-> .
+But then gcs_preserve_current_state() doesn't save the GCSPR_EL0 value
+if the shadow stack was disabled. At the subsequent switch to this task,
+we write some stale value.
+
+-- 
+Catalin
 
