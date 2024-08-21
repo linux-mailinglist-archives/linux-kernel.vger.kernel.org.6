@@ -1,146 +1,95 @@
-Return-Path: <linux-kernel+bounces-296149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A37095A64B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0429E95A64C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B6E1C21F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5721F22B1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E906170A37;
-	Wed, 21 Aug 2024 21:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6AA170A3E;
+	Wed, 21 Aug 2024 21:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TuoiVM5x"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o8r9CJvk"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B840B7405A;
-	Wed, 21 Aug 2024 21:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D0916EB57
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724274188; cv=none; b=iMVDD7XDF8kKjZl1Wk9vVlpD+xMFy2pxtNJSkcXTwJfWRZhHSfak6B9w/1ntGiuW/kcwb8HIviOW7GpvQJ5ZQehrEatDz6vK8/eTH8lSjrqGuA2vfYt5WmYjx6uxecnr/cIGd50HeaxZLYrwjUN1hRsVZTjlDz7nHvHy8yHrz5Y=
+	t=1724274208; cv=none; b=hyOWTNn0WLapF0iqGxlvb3aEvEUlH2oOvPtSzhv2cNEhLoE11GjIk7T+wfZmlkaMBNyAXzngHc8sJJPVdfWSuhwx3NixEhNSDGk2IPkRYDpIoYe9k5QxcBonKIVuYJa/WyTXqUQ5z7v1SwFrT0832Ye1Z9934yolTNumbzU6OnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724274188; c=relaxed/simple;
-	bh=/GMFIGWeHHhEWXOIb0ZzB+KN4MeNBoHs3oVGJ4/DFNc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=mtMKldua08a9yG3bzXvka4HzOzj3ZL/d30Vo2Pf27beMP1rAwgHpxOuBcUP+LHB5WOzudezyhqDnjO2dhXr9UaqRPPCBvZk0QDLmE389njKbbOIbUmKZlcgZEktTw8mkI8ckkH52BQru+D3NwT5YmVdzubpp40yoCYWZS9APz2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TuoiVM5x; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LL2tqI126792;
-	Wed, 21 Aug 2024 16:02:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724274175;
-	bh=5hiCgT+v1rhcN8zv0z+6t3xtFJcR5frTWIea1HBXQ+8=;
-	h=From:Date:Subject:To:CC;
-	b=TuoiVM5xRb9qRYPqTAgWgi7TIoAnO10YxpRNqaMCikU8CWneSrPAer9zfdJE913RG
-	 HfZFsG7lN2KdHnUm4a3a4IHJeJ6aRWsrTPZebpL/+VRhljvcqWf5ogPOE+DGkBvDTg
-	 ERphAvXJo5DsN2ZaWBHvoNGlj6sKc7Y7lyFxdm9w=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LL2tAj036486
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 16:02:55 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 16:02:55 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 16:02:55 -0500
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LL2sPw049542;
-	Wed, 21 Aug 2024 16:02:55 -0500
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-Date: Thu, 22 Aug 2024 02:32:52 +0530
-Subject: [PATCH] padata: Honor the caller's alignment in case of chunk_size
- 0
+	s=arc-20240116; t=1724274208; c=relaxed/simple;
+	bh=cDiCTjyGyZe6FUSam0Z4JCrWJlpk3SZafhYt0vOYGWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T1gLa1OSvG/6XNUZak8ZVAwLJ2Ex/9uDRYx996qDq+OPYOJ0s+EJ48IYF4m4G738wg8pn3C0l+8Rs0MMi4l2uAx9XyfR0MAqSUqAs3djqKTORctZ+VaW9M3LlQgBRLTTwJ9H2e5LC4kd7j7c1oMntO0y1TutIJCJz32wDQ4qTg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o8r9CJvk; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <02dd26b5-16a0-4732-80e4-c7bf183e965a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724274204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GE5cPhg4MLsyr29aiCjr4pC6mToQl9x3/vD2EHyeviM=;
+	b=o8r9CJvkVR0wt00ZhDkU/BBJJRa9InBPX1/l4AHbdachzNoGXhrD28SzAjoOX3wLsyyaub
+	Y0JSnUH2RYXcn7FsC8/BTtc5B3aDkvCTq3psY3JlNlztgjAsgqqJ7hFWw3lYXmX/QKVxEn
+	UutD4qJnaXdWkQf02/p/Y6QrNFQ9mw4=
+Date: Wed, 21 Aug 2024 14:03:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH] selftests/bpf: Fix incorrect parameters in NULL pointer
+ checking
+Content-Language: en-GB
+To: Hao Ge <hao.ge@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240820023447.29002-1-hao.ge@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20240820023447.29002-1-hao.ge@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
-X-B4-Tracking: v=1; b=H4sIAPtVxmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCyMj3dzECl1L42RD88SUZDMTU3MloMqCotS0zAqwKdGxtbUAbEwYElU
- AAAA=
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-        Daniel Jordan
-	<daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kamlesh
- Gurudasani <kamlesh@ti.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724274174; l=1962;
- i=kamlesh@ti.com; s=20230614; h=from:subject:message-id;
- bh=/GMFIGWeHHhEWXOIb0ZzB+KN4MeNBoHs3oVGJ4/DFNc=;
- b=rjnYyhhy2lFhS5+5NyncaigHAjEnjQd07yOWlI/TUsBF0rxsi1GNJJV3DZOtQvJRVsW97Ig23
- HDt9JfSDgweCdNVbZYFXk4NsBMyJb3HklbjS1CxNOEfuHVfyhpsGLfG
-X-Developer-Key: i=kamlesh@ti.com; a=ed25519;
- pk=db9XKPVWDGJVqj2jDqgnPQd6uQf3GZ3oaQa4bq1odGo=
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Migadu-Flow: FLOW_OUT
 
-In the case where we are forcing the ps.chunk_size to be at least 1,
-we are ignoring the caller's alignment.
 
-Move the forcing of ps.chunk_size to be at least 1 before rounding it
-up to caller's alignment, so that caller's alignment is honored.
+On 8/19/24 7:34 PM, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
+>
+> Smatch reported the following warning:
+>      ./tools/testing/selftests/bpf/testing_helpers.c:455 get_xlated_program()
+>      warn: variable dereferenced before check 'buf' (see line 454)
+>
+> It seems correct,so let's modify it based on it's suggestion.
+>
+> Actually,commit b23ed4d74c4d ("selftests/bpf: Fix invalid pointer
+> check in get_xlated_program()") fixed an issue in the test_verifier.c
+> once,but it was reverted this time.
+>
+> Let's solve this issue with the minimal changes possible.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/1eb3732f-605a-479d-ba64-cd14250cbf91@stanley.mountain/
+> Fixes: b4b7a4099b8c ("selftests/bpf: Factor out get_xlated_program() helper")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
 
-While at it, use max() to force the ps.chunk_size to be at least 1 to
-improve readability.
+In the future, please change subject '[PATCH] ...' to '[PATCH bpf-next] ...'
+so CI can properly test it.
 
-Fixes: 6d45e1c948a8 ("padata: Fix possible divide-by-0 panic in padata_mt_helper()")
-Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
----
- kernel/padata.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 0fa6c2895460..d8a51eff1581 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -509,21 +509,17 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
- 
- 	/*
- 	 * Chunk size is the amount of work a helper does per call to the
--	 * thread function.  Load balance large jobs between threads by
-+	 * thread function. Load balance large jobs between threads by
- 	 * increasing the number of chunks, guarantee at least the minimum
- 	 * chunk size from the caller, and honor the caller's alignment.
-+	 * Ensure chunk_size is at least 1 to prevent divide-by-0
-+	 * panic in padata_mt_helper().
- 	 */
- 	ps.chunk_size = job->size / (ps.nworks * load_balance_factor);
- 	ps.chunk_size = max(ps.chunk_size, job->min_chunk);
-+	ps.chunk_size = max(ps.chunk_size, 1ul);
- 	ps.chunk_size = roundup(ps.chunk_size, job->align);
- 
--	/*
--	 * chunk_size can be 0 if the caller sets min_chunk to 0. So force it
--	 * to at least 1 to prevent divide-by-0 panic in padata_mt_helper().`
--	 */
--	if (!ps.chunk_size)
--		ps.chunk_size = 1U;
--
- 	list_for_each_entry(pw, &works, pw_list)
- 		if (job->numa_aware) {
- 			int old_node = atomic_read(&last_used_nid);
-
----
-base-commit: b311c1b497e51a628aa89e7cb954481e5f9dced2
-change-id: 20240822-max-93c17adc6457
-
-Best regards,
--- 
-Kamlesh Gurudasani <kamlesh@ti.com>
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
 
