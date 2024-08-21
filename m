@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-295409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A944A959AB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E091E959AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B795CB20519
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:48:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B81D1B28F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6731C1757;
-	Wed, 21 Aug 2024 11:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB78D1CEAA6;
+	Wed, 21 Aug 2024 11:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4u2/6oM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqJ9SUBb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CABA14C5BD;
-	Wed, 21 Aug 2024 11:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07411CE711;
+	Wed, 21 Aug 2024 11:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239674; cv=none; b=dN9CL56kEzslSENt9xZ4elb7fHrGqGFtx3ajIY9FkOBHsz+zfBwLbXH7x3k1EQKp0ELwtBFYcpX6zCDmFHE+UTgp021Qn3Z2QrUxJn9G0G4lK3Ak0UTcBbnYZMFJySFzEQeELt4Mc1LgLHkoRQG/zSW3WNjKVCJTFfRMJb8FW1M=
+	t=1724239691; cv=none; b=Db3UE99te7XN8EZB4sOiAIT9k26nOn9m3yVGCZK7OaXESfPa1V9HZmwZK/ExWfnkuY2uzqduN0u9oZNI0mR6bmfwOd1Gk7JsFnU5JdvU6APzeVmnRchkrxuBFOZiR+iQruT+1NfUdMKV3uhBZhiJJmG6aTmOLBi+BaNuW5peiTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239674; c=relaxed/simple;
-	bh=B/Yqf661OpefJ+5m/Zlzn8b5CARyVavHgTOFURnqlf0=;
+	s=arc-20240116; t=1724239691; c=relaxed/simple;
+	bh=rsOjgXzxWSfZgIhZgFMdl8mYki910cdB11l6UklY/tQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ko2o8kCf7H2x6iGgqj1wZjfh0eiZZpttXJONX0tFqWoURuFA5DhUHocJoSdCnjqmkuoxAUL+CVL8FhgXe7yfG/sgenqAAT3saVcprLvQCB6ogsnosfkA4EztY2vtAWWBZYPHAdg0jPTyWWfZmNBU+OXZxShlu/i9W5t+DjYl4nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4u2/6oM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF965C4AF0C;
-	Wed, 21 Aug 2024 11:27:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ghx3HtoylBO8t5rDt8nbGnwOcpB3+CRQins1yy/6UVVwGTu85kAgnxmXp+UG5BmOpbR01DpQ1/pN4wKSPvD1FZFSvYJW4GRyjTH2hEkJgSq/5bPg0zXIne9vELWWhJ42UJX5t3Tg/8uyypU+uANinraYcuj1eXGqUZzUKbueiYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqJ9SUBb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D998EC32782;
+	Wed, 21 Aug 2024 11:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724239673;
-	bh=B/Yqf661OpefJ+5m/Zlzn8b5CARyVavHgTOFURnqlf0=;
+	s=k20201202; t=1724239690;
+	bh=rsOjgXzxWSfZgIhZgFMdl8mYki910cdB11l6UklY/tQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N4u2/6oMQoydd77g5/Es/i0CE9m6gPHXQ/9/ue9t8JGAygO/2xf6BKfYdqU0LaYeF
-	 3zkKMs87AGj4fsmMnl4KrmNW1K5PNU2GAw8TDICo+z9rDe2wOUPrZ67w3Bvfv1JW5y
-	 xfjwERohP1WtJXl/9udHigQGWJTetw9xkM9wijeiC5MlbolI+62MRAroSU7yJ3KA74
-	 hEdFlylfVYflcsB2vIY0rr7W0T2IbsG7cI6dNFTt+YPnyZo2KAWbKfQ2g0za5DjYlu
-	 wVH4dHWv+VhmhR4AjkwcGWxmOtUnJx5Axwh2yXifGvUF929Kg5+HZIALcFNkLnrb0Q
-	 0ryA4eVqUDxHA==
-Message-ID: <aee5b633-31ce-4db0-9014-90f877a33cf4@kernel.org>
-Date: Wed, 21 Aug 2024 14:27:46 +0300
+	b=YqJ9SUBbd46lH+o7RhQyt70u3FnSb9uDe/g3Atz67Yd5mzD6fTxO0pCYoNYxkeO/X
+	 25Ajb0ZY7vcMv2/6EAhhgbZ0gRyacl1O1Nv0223C3Xe1feL21kByuBmKedzVXoppVW
+	 b3lbxd9J9sDBxxp/lcfQ51X4oaadSYK31UwmzufcZWf9VVa47SHf4JlH/2E1N0vXgG
+	 vPsWaL5TNlo5lyzOExjLdDVURbNOG2Nv0+/Ec72xOwtf/ec598FSTVLGIbTQ8D8d7o
+	 lWACxUnvzOQy5MGT3pngjmWg0KmQWTiBNnN5y1HkdqXLGzaf7kFjV4gFdNt52n0CBK
+	 I0CVYZIw4aSXQ==
+Message-ID: <2971669b-48d7-4627-bca2-4e09b9ce3b3a@kernel.org>
+Date: Wed, 21 Aug 2024 13:28:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +49,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/7] net: ti: icssg-prueth: Enable IEP1
-To: MD Danish Anwar <danishanwar@ti.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Andrew Lunn <andrew@lunn.ch>,
- Jan Kiszka <jan.kiszka@siemens.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Jacob Keller <jacob.e.keller@intel.com>, Diogo Ivo <diogo.ivo@siemens.com>,
- Simon Horman <horms@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com
-References: <20240813074233.2473876-1-danishanwar@ti.com>
- <20240813074233.2473876-2-danishanwar@ti.com>
+Subject: Re: [PATCH] arm64: dts: exynosautov9: Add dpum SysMMU
+To: Kwanghoon Son <k.son@samsung.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e@epcas1p3.samsung.com>
+ <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240813074233.2473876-2-danishanwar@ti.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 13/08/2024 10:42, MD Danish Anwar wrote:
-> IEP1 is needed by firmware to enable FDB learning and FDB ageing.
-
-Required by which firmware?
-
-Does dual-emac firmware need this?
-
-> Always enable IEP1
+On 19/08/2024 09:55, Kwanghoon Son wrote:
+> Add System Memory Management Unit(SysMMU) for dpum also called iommu.
 > 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
->  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
+> This sysmmu is version 7.4, which has same functionality as exynos850.
 > 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> index 53a3e44b99a2..613bd8de6eb8 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> @@ -1256,12 +1256,8 @@ static int prueth_probe(struct platform_device *pdev)
->  		goto put_iep0;
->  	}
->  
-> -	if (prueth->pdata.quirk_10m_link_issue) {
-> -		/* Enable IEP1 for FW in 64bit mode as W/A for 10M FD link detect issue under TX
-> -		 * traffic.
-> -		 */
-> -		icss_iep_init_fw(prueth->iep1);
-> -	}
-> +	/* Enable IEP1 for FW as it's needed by FW for FDB Learning and FDB ageing */
-> +	icss_iep_init_fw(prueth->iep1);
->  
->  	/* setup netdev interfaces */
->  	if (eth0_node) {
-> @@ -1366,8 +1362,7 @@ static int prueth_probe(struct platform_device *pdev)
->  	}
->  
->  exit_iep:
-> -	if (prueth->pdata.quirk_10m_link_issue)
-> -		icss_iep_exit_fw(prueth->iep1);
-> +	icss_iep_exit_fw(prueth->iep1);
->  	icss_iep_put(prueth->iep1);
->  
->  put_iep0:
-> @@ -1424,8 +1419,7 @@ static void prueth_remove(struct platform_device *pdev)
->  		prueth_netdev_exit(prueth, eth_node);
->  	}
->  
-> -	if (prueth->pdata.quirk_10m_link_issue)
-> -		icss_iep_exit_fw(prueth->iep1);
-> +	icss_iep_exit_fw(prueth->iep1);
->  
->  	icss_iep_put(prueth->iep1);
->  	icss_iep_put(prueth->iep0);
+> DPUM has 4 dma channel, each channel is mapped to one iommu.
+> 
+> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 
--- 
-cheers,
--roger
+And droppped, this does not build.
+
+Best regards,
+Krzysztof
+
 
