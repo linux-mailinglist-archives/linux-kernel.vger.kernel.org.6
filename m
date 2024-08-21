@@ -1,112 +1,172 @@
-Return-Path: <linux-kernel+bounces-295237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160379598EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:03:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C079598F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DE9DB2354D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520B72816B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DDE1B6535;
-	Wed, 21 Aug 2024 09:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A57B1F2FE8;
+	Wed, 21 Aug 2024 09:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzDHNb2C"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h5uF79hu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ADF1A4ADE
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD611F2FDF
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724232979; cv=none; b=R1lLSYxsaDUgYthXL9jX0miWNAjboBqN+mh20fIxK/thYSNdfWjhdgH5qq5kSFUtZLYyCONSFb+MkRG6uoT9SAIoTStCFy1kJcfdfaYFQgmuKI23qeOLTckDrXTfNrJNpGZLSAabhLE9ePZ7W96P6jC8kWrQRZ/SnqiJLzLpwNU=
+	t=1724233008; cv=none; b=BWZ6UniQw6fxra2Qhhl7CAjh6ZZu3y959QOaCZnriCLuWA+ZJdD9XmkCkrD0xr/QRITVQoNAgBETtcx9mOTrmOzGvK5lXmFEI/E5Rj0NyN4vI8a7+KNQwd+zL5wA0qa8P/rrZlS8JMpqLpijavsAqu2N25Brj8lyKClBFuqDuCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724232979; c=relaxed/simple;
-	bh=XfBqF97hk+NE8MlrUeFeI+aPBB3RDjCVXfkdAil0/YY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z4HyRBBqqK344Qpfiv+F3MIm4JiNNwgVgxVV5hMlpcDFtlVl+jjQoGDYsfFCchQCCrdCIOxQ4UyttorusHvD+gELFJ2zqvot+bL0muzoP5leD3OzGU5tYDSv7WfqIgSXxlnsHyUgkKfj5yfQBHXXkM5fTOKW7szcVXhXA+Ov+M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LzDHNb2C; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42816ca797fso53310275e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724232976; x=1724837776; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B20IfwvlnxYHs42JVivrktmNyeiEI5FdhY91AGiu/FQ=;
-        b=LzDHNb2Ctnl1mtFI2PdyUub65+qj4kb2Nkh07BhvAg3KhAA/+oBcVRekXytDcn/a5G
-         9sW71KLUCGDjekQ4IpEdsA1+1TZxEnHGTusdb9G8C7dpN4FtwIQViVlvgX9b82b2oWzw
-         XdveYXoODno9vqXDDcitoDRpM70fTsqre4I5g5AIn4xqglXdNNoGYfGmVUYHuLuzijrY
-         fS8kX0MT8LNdQGmitGlkE31wpMowNKJdAa9RrXmlhjsA5uNH4rtoJNw+oE/METdsy2BP
-         uO2KVKILu8VoyXP3t7PsnY0o8mRfQ8sSsVX5sGiTQczm8nWW/T71K2VVWpowxZVuW4Cq
-         MH8g==
+	s=arc-20240116; t=1724233008; c=relaxed/simple;
+	bh=Jj5eIkUkWg3KtRXn0z2L0PWnJAu5W4Pyl+E7wKNe/xw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V8iwwkjtSqOPvFdkC0Bi1ggxtL3Z7GVF7mnJFydm8IsNNe3uC9lex+LbJbw2Uc7UJ9pJIOPCqbJABPLxLAQkM2ufvLjz6Cj9M2MyR9FcjwuBIFAZMWDk8vHoc/X9snBYHeFVzvXgRqgLxZrK6JPzBH8uml8+zameIvuTGLY2Jec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h5uF79hu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724233006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jj5eIkUkWg3KtRXn0z2L0PWnJAu5W4Pyl+E7wKNe/xw=;
+	b=h5uF79hulT6GOGjN7OdkdYvMby8uCkMN7yxlbw1IY1Y83jARnLUO+wZc2PzvuADDotb+XN
+	sqttFcuuY28la8/FIlYbgrzQ56F17OrTY5E/J7Wm4wQUcZ8dMaCovFjyW+lKOtz3UBpt3S
+	vbnMsIiKiPyoIwRGII+CZluVxroF9dY=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-280-rCq49jgnNCWRm1rhDiP_Qg-1; Wed, 21 Aug 2024 05:36:40 -0400
+X-MC-Unique: rCq49jgnNCWRm1rhDiP_Qg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4281f8994adso56222825e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:36:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724232976; x=1724837776;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B20IfwvlnxYHs42JVivrktmNyeiEI5FdhY91AGiu/FQ=;
-        b=UbDinYre3YAlPIrJt38iOO4vD7Q0mKwHE3Sm49N7oF+6oCZVD05Mag3TBDehffmEUj
-         hOCR/oWwZkkLdFVafEKHgcTcXQqEy/yN681vr/ZATDJtN/pKPPHrdLsvnKDcSl3Ixslw
-         j3AQqAYVy+xIIacN1ke8UKIweLv2Eb4dAoSadUmhEHsp5DlYOvOkXci5hz02uFASRM5a
-         gvuchI+nCsmfeutCnf5WjID/3TgV4cxh0CenCZ/R7kx/YOCp3Opp16ZZMjkDO+brXqwJ
-         nybsmxWnRS2pALdBiFH9N65z7fbInDPPJ5Bs3MNhBEh+o65di3nCcCoazXqzTc4tI4Sh
-         quUg==
-X-Gm-Message-State: AOJu0Yzhv/SbTbjvhcuAn0IxYXCZugdXrV8K5swKmOb4fk0F98mtpDux
-	VSBalDJ0OxX835gCcFupbWCUOeUWNFfQQmz60l7oTsVor+GH8UHM2hCRVeVEyzs=
-X-Google-Smtp-Source: AGHT+IFSGTPeEF9IjqLXI/2eR4OqFuA2MPcjqCJifpSA3FPqCwbfX0IFv/OuM12jqC2JUcagUtMguw==
-X-Received: by 2002:a05:600c:5106:b0:426:5416:67de with SMTP id 5b1f17b1804b1-42abd24582cmr12344535e9.30.1724232975338;
-        Wed, 21 Aug 2024 02:36:15 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abefa2362sm18645685e9.34.2024.08.21.02.36.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 02:36:15 -0700 (PDT)
-Message-ID: <d7b76680-bb53-4424-9ada-300ba76848b7@linaro.org>
-Date: Wed, 21 Aug 2024 11:36:14 +0200
+        d=1e100.net; s=20230601; t=1724232999; x=1724837799;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jj5eIkUkWg3KtRXn0z2L0PWnJAu5W4Pyl+E7wKNe/xw=;
+        b=h2dla0p8FhMxdNm4xAyOUbWktAbRCqWEvoHzyLmVKVkwZXJsgncZ0KmaqTx+qoWr/r
+         JZSe/tHL/PHRMSMTONGT16on/n5hAbmvkLUclQOWe0+tG/a0fqB/slceOxcOvLf3CfVC
+         FBsTU89nQr94Mw+BC90uzJsKtn35H2Trb3LGG7EhzYeSY1keI+rqPP9iH8r4AOH5kIRD
+         jyy5mDwoWSIpCXoTLybcXImXLBoiYmnqmVF03wZw6A240je+/BOeiTGePmwhdbliRTqn
+         WHrIYFO96pnbv605TKeS7vSREtZtJrvGRwKbr8IBtNW69ZD3GZwBV7kiCuYmU7ceGv5G
+         xEdA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6iFmvhb2IfoLwbo3MZH/ZTt124jGHbYrh2z6o/aSiL15q8m5B+XRCGAdJxKWdz8yNyXbuGzxryAJbKhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk1cdi9i1DcAY8diK1GPGXjwqBtMVHn9ZapPQnby+SjCgX2L4/
+	QFly3ITzi2QP5+4u8L+FEwne6PFf5dyzzNzGRZ15rIcua7cA8qzBD1xFtJ2fEuDXcHpMfbE/+db
+	IpmmB2UWwGDpy0uN6NwrW08cavrZ4Xnck3BxKXfK3+obZXVbma6upWPpzy6bc4Q==
+X-Received: by 2002:a05:600c:3ba2:b0:426:6ed5:fd5 with SMTP id 5b1f17b1804b1-42abd112115mr13371835e9.6.1724232999146;
+        Wed, 21 Aug 2024 02:36:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5uFdtqh3Nnxq7uvkwhVWuYvEqJNhXSjOOFCdMvyLVN5q9k/xJob4MdVvdN0iwQqkOmix49g==
+X-Received: by 2002:a05:600c:3ba2:b0:426:6ed5:fd5 with SMTP id 5b1f17b1804b1-42abd112115mr13371545e9.6.1724232998634;
+        Wed, 21 Aug 2024 02:36:38 -0700 (PDT)
+Received: from dhcp-64-164.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abee8bcecsm19203885e9.17.2024.08.21.02.36.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 02:36:38 -0700 (PDT)
+Message-ID: <be1c2f6fb63542ccdcb599956145575293625c37.camel@redhat.com>
+Subject: Re: [PATCH v2 6/9] ethernet: stmicro: Simplify PCI devres usage
+From: Philipp Stanner <pstanner@redhat.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>, Wu Hao
+ <hao.wu@intel.com>, Tom Rix <trix@redhat.com>, Moritz Fischer
+ <mdf@kernel.org>,  Xu Yilun <yilun.xu@intel.com>, Andy Shevchenko
+ <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Alvaro
+ Karsz <alvaro.karsz@solid-run.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Eugenio =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>, Richard Cochran
+ <richardcochran@gmail.com>, Mark Brown <broonie@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>, Damien Le Moal <dlemoal@kernel.org>, 
+ Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>,
+ linux-doc@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org,  linux-fpga@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,  linux-pci@vger.kernel.org,
+ virtualization@lists.linux.dev
+Date: Wed, 21 Aug 2024 11:36:36 +0200
+In-Reply-To: <CAHp75VduuT=VLtXS+zha4ZNe3ZvBV-jgZpn2oP4WkzDdt6Pnog@mail.gmail.com>
+References: <20240821071842.8591-2-pstanner@redhat.com>
+	 <20240821071842.8591-8-pstanner@redhat.com>
+	 <CAHp75VduuT=VLtXS+zha4ZNe3ZvBV-jgZpn2oP4WkzDdt6Pnog@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/14] thermal: sysfs: Use the dev argument in
- instance-related show/store
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Zhang Rui <rui.zhang@intel.com>
-References: <2205737.irdbgypaU6@rjwysocki.net>
- <1987669.PYKUYFuaPT@rjwysocki.net>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <1987669.PYKUYFuaPT@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 19/08/2024 17:56, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Two sysfs show/store functions for attributes representing thermal
-> instances, trip_point_show() and weight_store(), retrieve the thermal
-> zone pointer from the instance object at hand, but they may also get
-> it from their dev argument, which is more consistent with what the
-> other thermal sysfs functions do, so make them do so.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, 2024-08-21 at 11:14 +0300, Andy Shevchenko wrote:
+> On Wed, Aug 21, 2024 at 10:19=E2=80=AFAM Philipp Stanner
+> <pstanner@redhat.com> wrote:
+> >=20
+> > stmicro uses PCI devres in the wrong way. Resources requested
+> > through pcim_* functions don't need to be cleaned up manually in
+> > the
+> > remove() callback or in the error unwind path of a probe()
+> > function.
+>=20
+> > Moreover, there is an unnecessary loop which only requests and
+> > ioremaps
+> > BAR 0, but iterates over all BARs nevertheless.
+>=20
+> Seems like loongson was cargo-culted a lot without a clear
+> understanding of this code in the main driver...
+>=20
+> > Furthermore, pcim_iomap_regions() and pcim_iomap_table() have been
+> > deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI:
+> > Deprecate
+> > pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> >=20
+> > Replace these functions with pcim_iomap_region().
+> >=20
+> > Remove the unnecessary manual pcim_* cleanup calls.
+> >=20
+> > Remove the unnecessary loop over all BARs.
+>=20
+> ...
+>=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < PCI_STD_NUM_BAR=
+S; i++) {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 if (pci_resource_len(pdev, i) =3D=3D 0)
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 pcim_iounmap_regions(pdev, BIT(i));
+>=20
+> Here is the BARx, which contradicts the probe :-)
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+I'm not sure what should be done about it. The only interesting
+question is whether the other code with pcim_iomap_regions(... BIT(i)
+does also only grap BAR 0.
+In that case the driver wouldn't even be knowing what its own hardware
+is / does, though.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+P.
+
+>=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 break;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+
 
