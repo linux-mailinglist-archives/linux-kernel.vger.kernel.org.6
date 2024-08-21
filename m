@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-295086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B61959676
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:28:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE2C959679
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C291C21604
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:28:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5F4B238FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435B21B2515;
-	Wed, 21 Aug 2024 07:58:30 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B000F1B5EC0;
+	Wed, 21 Aug 2024 07:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gNcbPSH5"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4531B2EFA;
-	Wed, 21 Aug 2024 07:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CE31B5EB7
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724227109; cv=none; b=sR4xrPCFSvZCktEsyFGPBEw3OfOSmIUXKokEMBr0baGPEJDzBVIyWqLxID/92mg3+jHaeHodt8Dok7eUeRMGp3GR2iPJi5Whd1nSAgJ/MCk+zgx6bNOYAT1Gz/upzSFg8EZf9Psy3pgG6xqA7QCY3Tm7pklNmSXJ05B8rBjAnbQ=
+	t=1724227129; cv=none; b=UnT/0Rh0jTsH0TMtp4p1oaINq/z5ww4mMRSju+0xM41Tp9gSDl/NhiJhBMPekIW8dJySEQg2WfNp9lRtV/yNYDwiIVk0pEaGMLkLzBuKN6XURf9ZKPqDQGyG+t4B82DlGtYGBLB70Sdpkp55Qhxo01GhYQCH5hbBXNqZYGGrEVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724227109; c=relaxed/simple;
-	bh=qaA9LDkVTpB6zKpbqjfKDnd8fD/vtH6o5U2dLJdQN/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJppM4zUAgXkaCzrLZc3woEgK5UhiBS56/yE6fO+L2HVFlGOdUDRbKUbN4N0WswC8yQqBYxnpIjv0xl7CY7pA4+sTDossTeguW3EwBsp0BKOQqANcgm0MbZ+7aVjgT5+OxAYXQl9n7cPxo/Y2HbJ8t1ZlcrYCgLdDiwy1rdj8Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so8351252a12.0;
-        Wed, 21 Aug 2024 00:58:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724227106; x=1724831906;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RShFbEYNFQY48yjAx+ODktdIfsmubJvW1HlIJEvRsKE=;
-        b=eNuITiKBBFYFcoPvPpi44colkCLvb+YQPH1uttXEEpOB1cSCVueX0+983NdzuxkM8U
-         SDJYi+0S2NSPN5r1BcI86GtwSXlgri7OzyTNVqZBUf3bB0iLokCY+8CyZJcWkW534701
-         hMadzP279gxJhX4ErWtbTA6NT2RbRnOwd1rHur/TEi89sRV+9MiNo7PGigIUNi+dz0G8
-         ZoVbL3qy+sH/brBe7PGAmPs/mxxY7CrVfAJNA6oJqQIr3ivNclgvNJfqJnfZY4hKMcHG
-         RClY9dbeeHDQF1S+QoeB22o5NnH0eZhYe3xshjhPAxnYlNpapJhYZOdVQ2iwBQ83jP/V
-         2ogg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdcex1b2gwCyn4p5c3i490p9o/WA5t9WpKv5hkh4yJZUV5lEI14rj4+ydcyBGWeq68nXhXwlhEAXpXbYk=@vger.kernel.org, AJvYcCVuOmO4sQ+OvEFxuT5Q6VwXsMsjD1dhKJTBdMogUZb7M3Twn9rtZZTLi804U4uoEFsyr09jmt71@vger.kernel.org, AJvYcCWO4Y1XoGQG0f9sYzJhdtfK3GD07J/Hz/0FrlByIt4Sh4boJcR2QpBtORGt1y/syLPDbn0/yV37ewXy5cNXCOZ8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuwdh9+Mx1iD4jlrmTvA3DCjNq+PJmVk+okhg3RLES6QUCJVWh
-	Nwo/V/s4u3QqLpKMGkiObXhSUQlHZm6R+nT1k62QG8gjy2FeK6H9
-X-Google-Smtp-Source: AGHT+IEOwwXqRkw5vduGkGD5RzcvHrVwCj+rozd9kUquJeMaeB4vKvbG2/Ll62EIMJLTX3Ps+7Vg1w==
-X-Received: by 2002:a05:6402:2186:b0:5a2:7f47:c729 with SMTP id 4fb4d7f45d1cf-5bf1f0d9350mr950881a12.9.1724227105914;
-        Wed, 21 Aug 2024 00:58:25 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbdfa3d4sm7729308a12.44.2024.08.21.00.58.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 00:58:25 -0700 (PDT)
-Date: Wed, 21 Aug 2024 00:58:22 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	liuhangbin@gmail.com, petrm@nvidia.com, matttbe@kernel.org,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	Willem de Bruijn <willemb@google.com>, David Wei <dw@davidwei.uk>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH net-next v5] net: netconsole: selftests: Create a new
- netconsole selftest
-Message-ID: <ZsWeHpPZxUh3I1Op@gmail.com>
-References: <20240819090406.1441297-1-leitao@debian.org>
- <20240820160636.7bfc4d5a@kernel.org>
+	s=arc-20240116; t=1724227129; c=relaxed/simple;
+	bh=8osB/wcFehwq1pA0msz9b7FFVSe5bxbfn1XCWsoKrs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JWaARW/04B34WvViIPmPVy7p/rRd7wvgecR0HFsaK+9VDVYcYmgO+uigX5Sjczp8pC9p8pIF/RaagI91dwnZT+PUFJ8K1T94lfcU+HBF0KiS5vzVF99r/8bYohgx+3y0Iu01AFm81LHKiLMe+DnQ8HZkp62Oa+DYFOeqpQ+XLAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gNcbPSH5; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724227118; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=LEqqDi/krVo1lceJDkIrISzHv6al/xT2SjSgavb2vck=;
+	b=gNcbPSH5Z9Jxsj/R7tB/z5LtzewOb/3uwA3GBahVdz5s+IiAOYGOuOq3S4Gf0u1l1Gxr3zaHQu9rEWXVBLbXkwfQYI4cmC0ecty1XDP2ieYVIUZ7IKYVcK/vi8tTo7NldfnWD9CjylIBZ9s3qFE0oQKycRKu+nA0sa5QarYmavI=
+Received: from 30.221.129.221(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDLAvpM_1724227116)
+          by smtp.aliyun-inc.com;
+          Wed, 21 Aug 2024 15:58:37 +0800
+Message-ID: <1a063827-5cf3-42df-a690-f3c644c10996@linux.alibaba.com>
+Date: Wed, 21 Aug 2024 15:58:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820160636.7bfc4d5a@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 2/2] ocfs2: Fix possible null-ptr-deref in
+ ocfs2_set_buffer_uptodate
+To: "heming.zhao@suse.com" <heming.zhao@suse.com>,
+ Lizhi Xu <lizhi.xu@windriver.com>
+Cc: jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
+ ocfs2-devel@lists.linux.dev,
+ syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <0dd1d1b4-5e83-449e-af48-3811abd2e6a4@suse.com>
+ <20240821065517.3844044-1-lizhi.xu@windriver.com>
+ <9e4daf9b-a8f6-4d95-8e4b-125ef7b03911@suse.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <9e4daf9b-a8f6-4d95-8e4b-125ef7b03911@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Jakub,
 
-On Tue, Aug 20, 2024 at 04:06:36PM -0700, Jakub Kicinski wrote:
-> > +# ========== #
-> > +# Start here #
-> > +# ========== #
-> > +modprobe netdevsim 2> /dev/null || true
-> > +modprobe netconsole 2 > /dev/null || true
 
-> Main reason Im complaining, I see:
+On 8/21/24 3:37 PM, heming.zhao@suse.com wrote:
+> Hi,
 > 
-> [    6.686720] netconsole: unknown parameter '2' ignored
+> On 8/21/24 14:55, Lizhi Xu wrote:
+>> On Wed, 21 Aug 2024 14:23:08 +0800, Heming Zhao wrote:
+>>> Where is my "Reviewed-by" tag, and where is [patch 1/2]?
+>> Sorry about your "Reviewed-by" tag, I remove it, if you don't mind, you can
+>> add it by yourself.
 > 
-> in the kernel logs when the test runs.
+> Good answer!
 > 
-> Is it expected?
+> This patch issue was found by me, and I also pointed out how to fix it, then take the time
+> to review your code. But in the end, you removed my "Reviewed-by" tag.
+> 
 
-It is not, the reason is the space above in `modprobe netconsole 2` 
+Seems a misunderstanding, take it easy:) 
+Lizhi may think since this is a new version, it needs a new round review.
 
-Let me update it. Thanks
---breno
+>>
+>> In my previous email, I explicitly stated that only this patch should
+>> be sent separately, as the first patch has already been reviewed by two
+>> reviewers. If the second patch is updated with the first patch, I
+>> personally think it is unnecessary.
+>>
+>> [patch 1/2]: https://lore.kernel.org/all/20240820094512.2228159-1-lizhi.xu@windriver.com/
+>>
+>> Lizhi
+> 
+> It looks like you don't have basis knowledge of how to send patches.
+> 
+> I will never reply to or review any of your mails/patches.
 
