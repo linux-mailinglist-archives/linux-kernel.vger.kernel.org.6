@@ -1,228 +1,451 @@
-Return-Path: <linux-kernel+bounces-296198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B8B95A72C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A420E95A72D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913E41F22D04
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E9AD28322E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AD417B4E0;
-	Wed, 21 Aug 2024 21:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2E017AE0B;
+	Wed, 21 Aug 2024 21:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TVe3qpBh"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FEP//O5G"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6CE17A5B2
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00625179957
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724277274; cv=none; b=IxI9P+ooRcEAiVh7Raile8GrWZtQFJdFa8bYjpI/noiFggRW54t9mhJApFiDdDxvlFnoz2c79LJolpLeCdjNMoJsMtIRst2SSxcXxP8Davs7HQj/mxn4k2O5EEVHAM//YurK5QijIQRjqs/ZPyUR5qpcdtHHC+0wAKVunP+tRdc=
+	t=1724277285; cv=none; b=CFypl5va4nmI9Z6EHT5KTmK+oa9NCNGgeqbEZ/rp+Q9kNdiQY+YHkI3MATD7/hP/hqOMBrI9W2pHPDuf+7pfU6lG6GGXHQVuPsHrrFOiQTyURt9GSOnmtskxYbCBz0vTjQzLKBTewR91k4mecx7I8gPjYklYpayLPU6VBTFcdeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724277274; c=relaxed/simple;
-	bh=OWEY/Oe8ge2ZZVlPSGKPWDKhRL3cgLiz+mCQB5vlko8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J73AS+PWiK+sidXe8nFSSn50zvrWbi8vr+TCLjAin4UZInx+eecJp2Y3TEkXAzfbkXTRdowMgONxEDVVaxGoTQ5vlpoxxWdwV39kXOsjrTHRU7J8tnnIyhHGf9eBTk8Jj6L9scLcO2f2Rk6OBEZDy5JKp2AtHIRFblWne4lfRwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TVe3qpBh; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e1633202008so203155276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:54:32 -0700 (PDT)
+	s=arc-20240116; t=1724277285; c=relaxed/simple;
+	bh=lpYobYV+EPvplIsVlp9K0sXPmPwbCczja66tND3rD8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pU5q3E2qAyKbGsUle4gkpUkIhhXOTxsKdep+X0Z+u4L9t9+NiiWSjoXV7d8hazEHWHCTG8Gq7UWHcTrco8mBl2NkDziEYboGrUREH89+X/PeeClNUH2Y5H/T0l2//0KKfUNK2sQ2obywpiPTiO1K2knqO70GZLI1E9XGtr0AlKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FEP//O5G; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39d21fdc11bso531405ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:54:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724277271; x=1724882071; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkHIbzE1O2+lqb74KEvCCR6BaqXgelXIBZ+AgizTxyA=;
-        b=TVe3qpBhHS5f8rwa3OT/pfJg7+6r7LxqcP20m1BEnV6S13fb73IoPyFZjvtbpkSEy6
-         /rLRCR3KsMJ9xHBLzhQjSfyFbh2L1ro/x20b8LYD+NsiWy5NJEJQIK+MzfTrWR4BJ2Qj
-         iPx4WfGBKADbQflgjSYYjKYeXup1Tb+4+cHZr/iDB2CxGyewdYK65e+cpskK0Xd0zG6o
-         +lUVn0iKhFELOLbPKcSUyh7DixmgbGmPk6UacI5nyWVvprVgj/I1uIU0BCmWax4AYVX/
-         OZKu05vxjdYiwVPAwl7lsSteoBiO0ftnKti6XqERbP1AB7bmRWl0ecHBI3BGGqz3Ma4R
-         888Q==
+        d=chromium.org; s=google; t=1724277283; x=1724882083; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZAXSIdsJdlH1zAZMMu2gmF5Q96+XpHdPAtLFei8FT9Y=;
+        b=FEP//O5GVn86Lr+SEnwK2MSr4z6b1GQJEwEFk7BJbvYcT/lUoeEUKOGZ6EyRb/ILe4
+         rQJ7+T0RnVzVFG/RtSoZ2Z17Z63eFqEQDJAtMrkvBmMM3g8cd7+kOAneMyFm8UzeE0MO
+         ta/vWWJw3TOY02z8Ned4CGYrNXB9kv+P5vsWk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724277271; x=1724882071;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724277283; x=1724882083;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qkHIbzE1O2+lqb74KEvCCR6BaqXgelXIBZ+AgizTxyA=;
-        b=iyF4zhPIvGhJLvINbAeAWfOjcFlhUCuWG3qYAGqhS0QPeSnUpyPyY1tAeGUUH/z/BG
-         91ojFyW9mXQ7OZyUTZID/MtUeHq10ZU2kgpiQy3LA5gRRMWz76PotQDdObGbnynb22zv
-         4cArvR0D0nR544WTR0TJnb7Dp6MZAHRnfZJFeS4vowms2ZWNgfdNVJer9Iz9U4bBC25X
-         vbm7AdfqJc+yueW4+ek871BOwInMNyKMof9PVZicdZWl60dfj/Ye1kKMr+o+FBPz3VSa
-         d4HuiDluIPMKYGc9opTpt+EIP37GoHtQmhsheLEdgCIU+7YQb8ThwpaqPv6uJlPnRwZh
-         W2Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUvtfsDXC40uziDLv8Sa7VOBfeMgXJ4oph0dItjOK4QxMNSu087znfkI6jfDOofv2DDQRZZMcQZMOygzCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuDziBQSOQGRmK8QvWG8lxEQ0lXYTuFSrqVtDXaBsBfVkgZKnN
-	DcR1u+5i77fdFG8gu6nnt9xy3vFKeVpF4Xtp6iBfhsT60o/BMDgO9hblTSI9PN9MttRz27sjRgV
-	3BuK2HuqX2bS7ksssNHWXMWCPPTGpDfGlMKSF+w==
-X-Google-Smtp-Source: AGHT+IEbLEfHwFyYNcri3t1w7o7tWbS6oBaWx4DQWVSFv0w407zJOJ7W0eTL+KNzshnbYP+06yOh2I/iVUNvpj/p1kQ=
-X-Received: by 2002:a05:6902:1444:b0:e0b:28ce:6156 with SMTP id
- 3f1490d57ef6-e166556617cmr4277142276.55.1724277271228; Wed, 21 Aug 2024
- 14:54:31 -0700 (PDT)
+        bh=ZAXSIdsJdlH1zAZMMu2gmF5Q96+XpHdPAtLFei8FT9Y=;
+        b=YJAPVBeUpJhdPHaO9ILh/MtG9LIbRkIZtW9rDO0QvoiImO+XnI2Em9dipHXOcmEYsB
+         DW7YjQuuTUYB1hn7pDNdrbbinmQOiQVwef90c179qkG3KY0a1MojDzEQyi5jUFVPWiLj
+         G4ITjJnhDu1b143Jm5//lXIcxWcSfJ3g+Nihj7RonNdcODRfnBMfB+ozsIQqzv8nmx7Q
+         Idsv3DevU+GAtb2F1XH14ewxB3cClhz+tDoIcr/pT7WANmWobsjk8VTvfwwCwIvtNzpm
+         uRTe5fpoGm5ur+p1rf9H738hE4kX6TY4YC3nT9K7ZdV3GHiG0sj8hGuESvLHXltiJfZj
+         387w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ8UMO48cgKVh4r/MukexuHqYn6Bi/Tclhtk0lBd+8qCUzneWSgliXudu4vV/Lnl3fPjX9Ksym+PfTGws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjR1JNqjNR7Wy4z8FXWw4gd8Mhnbipv5c7jPpbOcCPY24kgsWY
+	gjmcIT8MCMpwVmEapsnZN6rLK6ZZJ61K5dr/lO2rpg4hJoiqY/lj21vVmhEJxA==
+X-Google-Smtp-Source: AGHT+IHF/j+RTuHRPNqCRr8JPtO+qBGbzT3vZqCcAHdQyxkKKPjZZmAL3RN5hxTXaOMAHqrO4MiMeA==
+X-Received: by 2002:a05:6e02:1e01:b0:375:e93b:7c8c with SMTP id e9e14a558f8ab-39d74b6f7a7mr637375ab.12.1724277283008;
+        Wed, 21 Aug 2024 14:54:43 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:8b27:65e9:2bb6:ed40])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad7d076sm92066a12.88.2024.08.21.14.54.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 14:54:42 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Yu Zhao <yuzhao@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Misono Tomohiro <misono.tomohiro@fujitsu.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Kees Cook <kees@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] arm64: smp: smp_send_stop() and crash_smp_send_stop() should try non-NMI first
+Date: Wed, 21 Aug 2024 14:53:57 -0700
+Message-ID: <20240821145353.v3.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809172106.25892-1-ansuelsmth@gmail.com> <20240809172106.25892-4-ansuelsmth@gmail.com>
- <20240813200734.GA1659224-robh@kernel.org> <66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
- <CAPDyKFq0cR10d1jUc5gnoUR5P=cbDEZy2iA-HOq9oNcWZevbDg@mail.gmail.com> <66c62d4f.df0a0220.3305f1.f86c@mx.google.com>
-In-Reply-To: <66c62d4f.df0a0220.3305f1.f86c@mx.google.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 21 Aug 2024 23:53:54 +0200
-Message-ID: <CAPDyKFpHaWar9Mbdg74CGgrwqkoLwt5HjvVOtUDU+z+sg9aT3g@mail.gmail.com>
-Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions node
- in mmc-card node
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Joern Engel <joern@lazybastard.org>, 
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Saravana Kannan <saravanak@google.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 21 Aug 2024 at 20:09, Christian Marangi <ansuelsmth@gmail.com> wrote:
->
-> On Wed, Aug 21, 2024 at 03:14:29PM +0200, Ulf Hansson wrote:
-> > On Wed, 21 Aug 2024 at 11:52, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> > >
-> > > On Tue, Aug 13, 2024 at 02:07:34PM -0600, Rob Herring wrote:
-> > > > On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote:
-> > > > > Add property for defining partitions node in mmc-card node to define
-> > > > > partitions in DT by the use of the block2mtd module to use block
-> > > > > devices as MTD.
-> > > >
-> > > > You justified patch 1 saying eMMC already supported this, but then here
-> > > > you add support.
-> > > >
-> > > > Both are a NAK for me as both already have a way to describe partitions
-> > > > with GPT.
-> > > >
-> > >
-> > > I think this got a bit confused and hope we can find a way to add
-> > > support for this.
-> > >
-> > > What is "already supported" is assigning an OF node so driver can
-> > > reference it. This patch was just adding the nodes in the schema to say
-> > > that partitions can be defined.
-> > >
-> > > I think what is not clear is that block devices might be used as raw
-> > > devices without a partition table defined in the device. In such case
-> > > it's the kernel that define a fixed partition table.
-> > >
-> > > One example is [1] where the partition table is provided by cmdline.
-> > > Similar to cmdlinepart MTD parser.
-> > >
-> > > The use of block2mtd is just to make use of the MTD parser system.
-> > >
-> > > Considering
-> > > - eMMC is soldered to the device (no dynamic scan)
-> > > - cmdline might be not tunable and hardcoding it might also be
-> > >   problematic (as some cmdline needs to be used)
-> > > - concept of fixed partition for block device is already a thing and
-> > >   used a lot (android AFAIK)
-> >
-> > Sorry for sidestepping your discussion, but I just wanted to add a few comments.
-> >
-> > It's not clear to me why we need something different than what we
-> > already have today.
->
-> It's really adding a missing feature. We have cmdline but we don't have
-> DT. And in emebedded many times cmdline can't be changed.
->
-> >
-> > If it's a partuuid/uuid/label or a fixed block-partition from the
-> > command line, we still need to know what partition we shall use for
-> > what. So why is this problem different from how we manage filesystem
-> > mounts, for example?
->
-> In the context of eMMC there isn't any partition table and the cmdline
-> is hardcoded by the bootloader. The cmdline might provide the root
-> partition to use but doesn't declare the partition table (with cmdline)
->
-> And the bootloader with the hardcoded cmdline might provide a different
-> root partition in dual-boot-partition implementation on switching the
-> boot partition. (this is used a lot with bootloader using a env variable
-> and a different cmdline passed based on the variable to signal what
-> partition to use for root)
->
-> >
-> > >
-> > > I think it should be acceptable to introduce in DT support for defining
-> > > fixed partition for block devices and some kind of parser system similar
-> > > to MTD. What do you think? Would this be more acceptable? Idea is to
-> > > just have a DT schema that makes use of the values that can be set in
-> > > [1].
-> >
-> > In DT we can describe that there is an eMMC card soldered to the
-> > board, because it's a description of the HW. But describing what
-> > stored inside the eMMC-flash doesn't belong in DT.
-> >
->
-> Why? This conflicts with how it's done on MTD. Also consider the fact
-> that eMMC might contain calibration partition used for NVMEM.
+When testing hard lockup handling on my sc7180-trogdor-lazor device
+with pseudo-NMI enabled, with serial console enabled and with kgdb
+disabled, I found that the stack crawls printed to the serial console
+ended up as a jumbled mess. After rebooting, the pstore-based console
+looked fine though. Also, enabling kgdb to trap the panic made the
+console look fine and avoided the mess.
 
-Because what is stored in the flash (eMMC) can be dynamically updated.
-It's not a description of the HW as such, but I guess it depends on
-how you see it. No matter what, you need to convince the DT
-maintainers that this is the way to do it.
+After a bit of tracking down, I came to the conclusion that this was
+what was happening:
+1. The panic path was stopping all other CPUs with
+   panic_other_cpus_shutdown().
+2. At least one of those other CPUs was in the middle of printing to
+   the serial console and holding the console port's lock, which is
+   grabbed with "irqsave". ...but since we were stopping with an NMI
+   we didn't care about the "irqsave" and interrupted anyway.
+3. Since we stopped the CPU while it was holding the lock it would
+   never release it.
+4. All future calls to output to the console would end up failing to
+   get the lock in qcom_geni_serial_console_write(). This isn't
+   _totally_ unexpected at panic time but it's a code path that's not
+   well tested, hard to get right, and apparently doesn't work
+   terribly well on the Qualcomm geni serial driver.
 
-In my opinion, I think it would be better to invest our time to try a
-different path.
+The Qualcomm geni serial driver was fixed to be a bit better in commit
+9e957a155005 ("serial: qcom-geni: Don't cancel/abort if we can't get
+the port lock") but it's nice not to get into this situation in the
+first place.
 
->
-> Describing fixed partition on a soldered eMMC that the bootloader
-> expects at a fixed offset and won't ever change (or it will result in a
-> brick) sounds like describing the HW to me. (it's the same principle of
-> MTD just applied to block devices)
+Taking a page from what x86 appears to do in native_stop_other_cpus(),
+do this:
+1. First, try to stop other CPUs with a normal IPI and wait a second.
+   This gives them a chance to leave critical sections.
+2. If CPUs fail to stop then retry with an NMI, but give a much lower
+   timeout since there's no good reason for a CPU not to react quickly
+   to a NMI.
 
-I guess it's somewhat a greyzone in this kind of case, assuming you
-are referring to a bootloader that is stored in some ROM code that
-can't be updated.
+This works well and avoids the corrupted console and (presumably)
+could help avoid other similar issues.
 
->
-> (I know it sound strange as block devices are expected to have a
-> partition table in MBR or GPT but reality is that it's not always the
-> case)
+In order to do this, we need to do a little re-organization of our
+IPIs since we don't have any more free IDs. Do what was suggested in
+previous conversations and combine "stop" and "crash stop". That frees
+up an IPI so now we can have a "stop" and "stop NMI".
 
-I fully understand that but there are different ways to deal with that
-too. Maybe enforce to write an MBR/GPT when flashing, assuming it
-doesn't overwrite some data that is needed.
+In order to do this we also need a slight change in the way we keep
+track of which CPUs still need to be stopped. We need to know
+specifically which CPUs haven't stopped yet when we fall back to NMI
+but in the "crash stop" case the "cpu_online_mask" isn't updated as
+CPUs go down. This is why that code path had an atomic of the number
+of CPUs left. Solve this by also updating the "cpu_online_mask" for
+crash stops.
 
-Another option is to let the bootloader parse some platform specific
-data in the flash (unless it's hard coded in there too) and then make
-it update the block-devparts for the kernel command line, for example.
+All of the above lets us combine the logic for "stop" and "crash stop"
+code, which appeared to have a bunch of arbitrary implementation
+differences.
 
->
-> > >
-> > > Hope we can find a solution to this, I'm totally OK for dropping NVMe as
-> > > I understand it's PCIe stuff and very dynamic but OEM are making lots of
-> > > use of eMMC and are starting to use these strange way (block2mtd) as we
-> > > currently don't give a proper and easy solution for the task.
-> >
-> > I certainly appreciate that you are trying to solve the fragmentation
-> > issue around this, but it looks like we need a different approach than
-> > using DT to describe partitions.
-> >
->
-> Well it's either DT that can be tweaked and is part of the image or
-> cmdline that have tons of limitation due to bootloader having fun
-> hardcoding it or also actually requiring the bootloader cmdline and
-> adding overlay on it. Honestly as I said adding DT support is really
-> compleating the feature of the cmdline implementation.
+Aside from the above change where we try a normal IPI and then an NMI,
+the combined function has a few subtle differences:
+* In the normal smp_send_stop(), if we fail to stop one or more CPUs
+  then we won't include the current CPU (the one running
+  smp_send_stop()) in the error message.
+* In crash_smp_send_stop(), if we fail to stop some CPUs we'll print
+  the CPUs that we failed to stop instead of printing all _but_ the
+  current running CPU.
+* In crash_smp_send_stop(), we will now only print "SMP: stopping
+  secondary CPUs" if (system_state <= SYSTEM_RUNNING).
 
-Another option is also to parse the platform specific data in some way
-and create partitions by using initramfs.
+Fixes: d7402513c935 ("arm64: smp: IPI_CPU_STOP and IPI_CPU_CRASH_STOP should try for NMI")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+I'm not setup to test the crash_smp_send_stop(). I made sure it
+compiled and hacked the panic() method to call it, but I haven't
+actually run kexec. Hopefully others can confirm that it's working for
+them.
 
-Kind regards
-Uffe
+v1: https://lore.kernel.org/r/20231207170251.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid
+v2: https://lore.kernel.org/r/20240625160718.v2.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid
+
+Changes in v3:
+- Add a comment summarizing the v2 discussion.
+- Re-snapshot cpu_online_mask when CPUs still online.
+
+Changes in v2:
+- Update commit message to point to Qualcomm serial driver fix.
+- Use a test-and-set to prevent stop code from running twice.
+- Move mask clearing until after crash_save_cpu().
+- Use local_daif_mask() in ipi_cpu_crash_stop().
+- Don't use a new mask, just have crash case update online CPUs.
+
+ arch/arm64/kernel/smp.c | 158 ++++++++++++++++++++++++----------------
+ 1 file changed, 95 insertions(+), 63 deletions(-)
+
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index f01f0fd7b7fe..7bd28abb0acf 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -68,7 +68,7 @@ enum ipi_msg_type {
+ 	IPI_RESCHEDULE,
+ 	IPI_CALL_FUNC,
+ 	IPI_CPU_STOP,
+-	IPI_CPU_CRASH_STOP,
++	IPI_CPU_STOP_NMI,
+ 	IPI_TIMER,
+ 	IPI_IRQ_WORK,
+ 	NR_IPI,
+@@ -85,6 +85,8 @@ static int ipi_irq_base __ro_after_init;
+ static int nr_ipi __ro_after_init = NR_IPI;
+ static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+ 
++static bool crash_stop;
++
+ static void ipi_setup(int cpu);
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+@@ -823,7 +825,7 @@ static const char *ipi_types[MAX_IPI] __tracepoint_string = {
+ 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
+ 	[IPI_CALL_FUNC]		= "Function call interrupts",
+ 	[IPI_CPU_STOP]		= "CPU stop interrupts",
+-	[IPI_CPU_CRASH_STOP]	= "CPU stop (for crash dump) interrupts",
++	[IPI_CPU_STOP_NMI]	= "CPU stop NMIs",
+ 	[IPI_TIMER]		= "Timer broadcast interrupts",
+ 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
+ 	[IPI_CPU_BACKTRACE]	= "CPU backtrace interrupts",
+@@ -867,9 +869,9 @@ void arch_irq_work_raise(void)
+ }
+ #endif
+ 
+-static void __noreturn local_cpu_stop(void)
++static void __noreturn local_cpu_stop(unsigned int cpu)
+ {
+-	set_cpu_online(smp_processor_id(), false);
++	set_cpu_online(cpu, false);
+ 
+ 	local_daif_mask();
+ 	sdei_mask_local_cpu();
+@@ -883,21 +885,26 @@ static void __noreturn local_cpu_stop(void)
+  */
+ void __noreturn panic_smp_self_stop(void)
+ {
+-	local_cpu_stop();
++	local_cpu_stop(smp_processor_id());
+ }
+ 
+-#ifdef CONFIG_KEXEC_CORE
+-static atomic_t waiting_for_crash_ipi = ATOMIC_INIT(0);
+-#endif
+-
+ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
+ {
+ #ifdef CONFIG_KEXEC_CORE
++	/*
++	 * Use local_daif_mask() instead of local_irq_disable() to make sure
++	 * that pseudo-NMIs are disabled. The "crash stop" code starts with
++	 * an IRQ and falls back to NMI (which might be pseudo). If the IRQ
++	 * finally goes through right as we're timing out then the NMI could
++	 * interrupt us. It's better to prevent the NMI and let the IRQ
++	 * finish since the pt_regs will be better.
++	 */
++	local_daif_mask();
++
+ 	crash_save_cpu(regs, cpu);
+ 
+-	atomic_dec(&waiting_for_crash_ipi);
++	set_cpu_online(cpu, false);
+ 
+-	local_irq_disable();
+ 	sdei_mask_local_cpu();
+ 
+ 	if (IS_ENABLED(CONFIG_HOTPLUG_CPU))
+@@ -962,14 +969,12 @@ static void do_handle_IPI(int ipinr)
+ 		break;
+ 
+ 	case IPI_CPU_STOP:
+-		local_cpu_stop();
+-		break;
+-
+-	case IPI_CPU_CRASH_STOP:
+-		if (IS_ENABLED(CONFIG_KEXEC_CORE)) {
++	case IPI_CPU_STOP_NMI:
++		if (IS_ENABLED(CONFIG_KEXEC_CORE) && crash_stop) {
+ 			ipi_cpu_crash_stop(cpu, get_irq_regs());
+-
+ 			unreachable();
++		} else {
++			local_cpu_stop(cpu);
+ 		}
+ 		break;
+ 
+@@ -1024,8 +1029,7 @@ static bool ipi_should_be_nmi(enum ipi_msg_type ipi)
+ 		return false;
+ 
+ 	switch (ipi) {
+-	case IPI_CPU_STOP:
+-	case IPI_CPU_CRASH_STOP:
++	case IPI_CPU_STOP_NMI:
+ 	case IPI_CPU_BACKTRACE:
+ 	case IPI_KGDB_ROUNDUP:
+ 		return true;
+@@ -1138,79 +1142,107 @@ static inline unsigned int num_other_online_cpus(void)
+ 
+ void smp_send_stop(void)
+ {
++	static unsigned long stop_in_progress;
++	cpumask_t mask;
+ 	unsigned long timeout;
+ 
+-	if (num_other_online_cpus()) {
+-		cpumask_t mask;
++	/*
++	 * If this cpu is the only one alive at this point in time, online or
++	 * not, there are no stop messages to be sent around, so just back out.
++	 */
++	if (num_other_online_cpus() == 0)
++		goto skip_ipi;
+ 
+-		cpumask_copy(&mask, cpu_online_mask);
+-		cpumask_clear_cpu(smp_processor_id(), &mask);
++	/* Only proceed if this is the first CPU to reach this code */
++	if (test_and_set_bit(0, &stop_in_progress))
++		return;
+ 
+-		if (system_state <= SYSTEM_RUNNING)
+-			pr_crit("SMP: stopping secondary CPUs\n");
+-		smp_cross_call(&mask, IPI_CPU_STOP);
+-	}
++	/*
++	 * Send an IPI to all currently online CPUs except the CPU running
++	 * this code.
++	 *
++	 * NOTE: we don't do anything here to prevent other CPUs from coming
++	 * online after we snapshot `cpu_online_mask`. Ideally, the calling code
++	 * should do something to prevent other CPUs from coming up. This code
++	 * can be called in the panic path and thus it doesn't seem wise to
++	 * grab the CPU hotplug mutex ourselves. Worst case:
++	 * - If a CPU comes online as we're running, we'll likely notice it
++	 *   during the 1 second wait below and then we'll catch it when we try
++	 *   with an NMI (assuming NMIs are enabled) since we re-snapshot the
++	 *   mask before sending an NMI.
++	 * - If we leave the function and see that CPUs are still online we'll
++	 *   at least print a warning. Especially without NMIs this function
++	 *   isn't foolproof anyway so calling code will just have to accept
++	 *   the fact that there could be cases where a CPU can't be stopped.
++	 */
++	cpumask_copy(&mask, cpu_online_mask);
++	cpumask_clear_cpu(smp_processor_id(), &mask);
+ 
+-	/* Wait up to one second for other CPUs to stop */
++	if (system_state <= SYSTEM_RUNNING)
++		pr_crit("SMP: stopping secondary CPUs\n");
++
++	/*
++	 * Start with a normal IPI and wait up to one second for other CPUs to
++	 * stop. We do this first because it gives other processors a chance
++	 * to exit critical sections / drop locks and makes the rest of the
++	 * stop process (especially console flush) more robust.
++	 */
++	smp_cross_call(&mask, IPI_CPU_STOP);
+ 	timeout = USEC_PER_SEC;
+ 	while (num_other_online_cpus() && timeout--)
+ 		udelay(1);
+ 
+-	if (num_other_online_cpus())
++	/*
++	 * If CPUs are still online, try an NMI. There's no excuse for this to
++	 * be slow, so we only give them an extra 10 ms to respond.
++	 */
++	if (num_other_online_cpus() && ipi_should_be_nmi(IPI_CPU_STOP_NMI)) {
++		cpumask_copy(&mask, cpu_online_mask);
++		cpumask_clear_cpu(smp_processor_id(), &mask);
++
++		pr_info("SMP: retry stop with NMI for CPUs %*pbl\n",
++			cpumask_pr_args(&mask));
++
++		smp_cross_call(&mask, IPI_CPU_STOP_NMI);
++		timeout = USEC_PER_MSEC * 10;
++		while (num_other_online_cpus() && timeout--)
++			udelay(1);
++	}
++
++	if (num_other_online_cpus()) {
++		cpumask_copy(&mask, cpu_online_mask);
++		cpumask_clear_cpu(smp_processor_id(), &mask);
++
+ 		pr_warn("SMP: failed to stop secondary CPUs %*pbl\n",
+-			cpumask_pr_args(cpu_online_mask));
++			cpumask_pr_args(&mask));
++	}
+ 
++skip_ipi:
+ 	sdei_mask_local_cpu();
+ }
+ 
+ #ifdef CONFIG_KEXEC_CORE
+ void crash_smp_send_stop(void)
+ {
+-	static int cpus_stopped;
+-	cpumask_t mask;
+-	unsigned long timeout;
+-
+ 	/*
+ 	 * This function can be called twice in panic path, but obviously
+ 	 * we execute this only once.
++	 *
++	 * We use this same boolean to tell whether the IPI we send was a
++	 * stop or a "crash stop".
+ 	 */
+-	if (cpus_stopped)
++	if (crash_stop)
+ 		return;
++	crash_stop = 1;
+ 
+-	cpus_stopped = 1;
++	smp_send_stop();
+ 
+-	/*
+-	 * If this cpu is the only one alive at this point in time, online or
+-	 * not, there are no stop messages to be sent around, so just back out.
+-	 */
+-	if (num_other_online_cpus() == 0)
+-		goto skip_ipi;
+-
+-	cpumask_copy(&mask, cpu_online_mask);
+-	cpumask_clear_cpu(smp_processor_id(), &mask);
+-
+-	atomic_set(&waiting_for_crash_ipi, num_other_online_cpus());
+-
+-	pr_crit("SMP: stopping secondary CPUs\n");
+-	smp_cross_call(&mask, IPI_CPU_CRASH_STOP);
+-
+-	/* Wait up to one second for other CPUs to stop */
+-	timeout = USEC_PER_SEC;
+-	while ((atomic_read(&waiting_for_crash_ipi) > 0) && timeout--)
+-		udelay(1);
+-
+-	if (atomic_read(&waiting_for_crash_ipi) > 0)
+-		pr_warn("SMP: failed to stop secondary CPUs %*pbl\n",
+-			cpumask_pr_args(&mask));
+-
+-skip_ipi:
+-	sdei_mask_local_cpu();
+ 	sdei_handler_abort();
+ }
+ 
+ bool smp_crash_stop_failed(void)
+ {
+-	return (atomic_read(&waiting_for_crash_ipi) > 0);
++	return num_other_online_cpus() != 0;
+ }
+ #endif
+ 
+-- 
+2.46.0.184.g6999bdac58-goog
+
 
