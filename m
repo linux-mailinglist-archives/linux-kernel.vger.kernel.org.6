@@ -1,62 +1,60 @@
-Return-Path: <linux-kernel+bounces-294993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B911959527
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:54:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F82695952A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C0ABB2695F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:54:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23B91C224BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F91A193407;
-	Wed, 21 Aug 2024 06:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGd1rCp2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B31193432;
+	Wed, 21 Aug 2024 06:55:48 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F088185B6C;
-	Wed, 21 Aug 2024 06:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D338C193415
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724223251; cv=none; b=DVNZcguEKEotTwdraqztspEIYgoXfqjLG+0oo7DU5zrc4alJ1Fdz5ltzudKC1la81nFnoPpoxwqfK758dFWtARtUC5CcgF+QkpP2dEWvFfP6zQbN5RHo96AVypVfiZo+63FIx/5w2tJuNEgG3qWGvJZ/U8rast+NXiMQFnh1LB4=
+	t=1724223348; cv=none; b=c8S/7SYJhpZO+FKtwbyicccB3njVZbXGI9GOpvcQ9q2NtQlEbmRYJwflbr+1iJJW5zjPjmw7IPeZE6hTrU5kMRDWCTOAX1Nog7H6/BtJs9DuT6BYkSweAeHGsHikc4AU5q3FHlSgOKg5fowk5l6iez92/P7tKjyjwkr/OpL1wx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724223251; c=relaxed/simple;
-	bh=eNR/SL4p1SX1iQ5FKWOfRQ8xWIgNGM1hXywpTQs86hk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JL+zQZZ9naJLkotrnJurQw98Zj4mNhFELF89uwroRs7zkPSgQKDwCF5wJT8NCovTOHU4HTTp3ITDbIp+OB+6BjtZFz93AvmecjLzpW6keBXXVNH4+I3y3gLe97woaOcp5rWP76UJoPkG9Tv7rpcjnWssPsqL6ENf/nl52GOP/G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGd1rCp2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2EBC32786;
-	Wed, 21 Aug 2024 06:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724223250;
-	bh=eNR/SL4p1SX1iQ5FKWOfRQ8xWIgNGM1hXywpTQs86hk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YGd1rCp2NuZ1vhR2F7Ni0trLiVBMuKWYkGdUM1Y13ILjhskjsA8RCCbjfG5rj572W
-	 MyOR2WWcU3aPcePDn5h9+e3SRnnJsTXfi3th089Nblxfg7PGS+x6WMcQh/s2UGdGxO
-	 7UCihATWrvYBRtCWMDUX3J5Xk/+m3XeD9wwriS+xuObnB5H0cMlXlm6A4zp5KWis11
-	 7/P8Apup+iDQ8vvprFAJHGcDwrmKIW/XkSca7ZUGsVw+w3yj7PyRjAjoT0JnIk05S5
-	 Pd+4N9jGDGNm7DEnG4ceKZehZML1IRFJcbtbCJAToQpe9q+ryJ+16O9zUBaXxdDt9T
-	 /q6sl9Aij7K2A==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: [PATCH 3/3] perf annotate-data: Fix percpu pointer check
-Date: Tue, 20 Aug 2024 23:54:08 -0700
-Message-ID: <20240821065408.285548-3-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240821065408.285548-1-namhyung@kernel.org>
-References: <20240821065408.285548-1-namhyung@kernel.org>
+	s=arc-20240116; t=1724223348; c=relaxed/simple;
+	bh=DRsyjL07w6v2g4NFSwNfou54Af18/pM08M9a2CC3nfg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m3yKirND6swYpYbCQ41NXY1Usz05sSZGu2LJ1wDVHBVZi7GdeWtD+ioOffSQ9iOWftK0b1DtL404Pim+ZBrJb47zYM9zNDhASMhqCKd2RKsJ5hlFCkPuMV5DdD9mDLPTUlSvEEvUPULGgj6b7IjXyQ1NdSdpW6aGMegyLctkmnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L4OTKb001709;
+	Wed, 21 Aug 2024 06:55:22 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412ju6utg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 21 Aug 2024 06:55:21 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 20 Aug 2024 23:55:20 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 23:55:18 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <heming.zhao@suse.com>
+CC: <jlbec@evilplan.org>, <joseph.qi@linux.alibaba.com>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <mark@fasheh.com>, <ocfs2-devel@lists.linux.dev>,
+        <syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH V4 2/2] ocfs2: Fix possible null-ptr-deref in ocfs2_set_buffer_uptodate
+Date: Wed, 21 Aug 2024 14:55:17 +0800
+Message-ID: <20240821065517.3844044-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0dd1d1b4-5e83-449e-af48-3811abd2e6a4@suse.com>
+References: <0dd1d1b4-5e83-449e-af48-3811abd2e6a4@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,217 +62,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 6epE-8XzP66Y1CPRTuUZRVXcCA_PPSn4
+X-Authority-Analysis: v=2.4 cv=VdWlP0p9 c=1 sm=1 tr=0 ts=66c58f59 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=Kczxqsgznl8jAPX-KdsA:9 a=AjGcO6oz07-iQ99wixmX:22
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: 6epE-8XzP66Y1CPRTuUZRVXcCA_PPSn4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_07,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=761 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408210049
 
-In check_matching_type(), it checks the type state of the register in a
-wrong order.  When it's the percpu pointer, it should check the type for
-the pointer, but it checks the CFA bit first and thought it has no type
-in the stack slot.  This resulted in no type info.
+On Wed, 21 Aug 2024 14:23:08 +0800, Heming Zhao wrote:
+> Where is my "Reviewed-by" tag, and where is [patch 1/2]?
+Sorry about your "Reviewed-by" tag, I remove it, if you don't mind, you can
+add it by yourself.
 
-  -----------------------------------------------------------
-  find data type for 0x28(reg1) at hrtimer_reprogram+0x88
-  CU for kernel/time/hrtimer.c (die:0x18f219f)
-  frame base: cfa=1 fbreg=7
-  ...
-  add [72] percpu 0x24500 -> reg1 pointer type='struct hrtimer_cpu_base' size=0x240 (die:0x18f6d46)
-  bb: [7a - 7e]
-  bb: [80 - 86]                        (here)
-  bb: [88 - 88]                         vvv
-  chk [88] reg1 offset=0x28 ok=1 kind=4 cfa : no type information
-  no type information
+In my previous email, I explicitly stated that only this patch should
+be sent separately, as the first patch has already been reviewed by two
+reviewers. If the second patch is updated with the first patch, I
+personally think it is unnecessary.
 
-Here, instruction at 0x72 found reg1 has a (percpu) pointer and got the
-correct type.  But when it checks the final result, it wrongly thought
-it was stack variable because it checks the cfa bit first.
+[patch 1/2]: https://lore.kernel.org/all/20240820094512.2228159-1-lizhi.xu@windriver.com/ 
 
-After changing the order of state check:
-  -----------------------------------------------------------
-  find data type for 0x28(reg1) at hrtimer_reprogram+0x88
-  CU for kernel/time/hrtimer.c (die:0x18f219f)
-  frame base: cfa=1 fbreg=7
-  ...                                     (here)
-                                        vvvvvvvvvv
-  chk [88] reg1 offset=0x28 ok=1 kind=4 percpu ptr : Good!
-  found by insn track: 0x28(reg1) type-offset=0x28
-  final type: type='struct hrtimer_cpu_base' size=0x240 (die:0x18f6d46)
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/arch/x86/annotate/instructions.c |   3 +
- tools/perf/util/annotate-data.c             | 122 ++++++++++----------
- 2 files changed, 66 insertions(+), 59 deletions(-)
-
-diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
-index 88b5bcf2116f..15dfc2988e24 100644
---- a/tools/perf/arch/x86/annotate/instructions.c
-+++ b/tools/perf/arch/x86/annotate/instructions.c
-@@ -282,6 +282,7 @@ static void update_insn_state_x86(struct type_state *state,
- 			    !strcmp(var_name, "this_cpu_off") &&
- 			    tsr->kind == TSR_KIND_CONST) {
- 				tsr->kind = TSR_KIND_PERCPU_BASE;
-+				tsr->ok = true;
- 				imm_value = tsr->imm_value;
- 			}
- 		}
-@@ -533,9 +534,11 @@ static void update_insn_state_x86(struct type_state *state,
- 							&var_name, &offset) &&
- 				    !strcmp(var_name, "__per_cpu_offset")) {
- 					tsr->kind = TSR_KIND_PERCPU_BASE;
-+					tsr->ok = true;
- 
- 					pr_debug_dtp("mov [%x] percpu base reg%d\n",
- 						     insn_offset, dst->reg1);
-+					return;
- 				}
- 			}
- 
-diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-index d3db945afac9..3670251e03b3 100644
---- a/tools/perf/util/annotate-data.c
-+++ b/tools/perf/util/annotate-data.c
-@@ -943,7 +943,10 @@ static enum type_match_result check_matching_type(struct type_state *state,
- 		     insn_offset, reg, dloc->op->offset,
- 		     state->regs[reg].ok, state->regs[reg].kind);
- 
--	if (state->regs[reg].ok && state->regs[reg].kind == TSR_KIND_TYPE) {
-+	if (!state->regs[reg].ok)
-+		goto check_non_register;
-+
-+	if (state->regs[reg].kind == TSR_KIND_TYPE) {
- 		Dwarf_Die sized_type;
- 
- 		/*
-@@ -976,6 +979,65 @@ static enum type_match_result check_matching_type(struct type_state *state,
- 		return PERF_TMR_OK;
- 	}
- 
-+	if (state->regs[reg].kind == TSR_KIND_POINTER) {
-+		pr_debug_dtp("percpu ptr");
-+
-+		/*
-+		 * It's actaully pointer but the address was calculated using
-+		 * some arithmetic.  So it points to the actual type already.
-+		 */
-+		*type_die = state->regs[reg].type;
-+
-+		dloc->type_offset = dloc->op->offset;
-+
-+		/* Get the size of the actual type */
-+		if (dwarf_aggregate_size(type_die, &size) < 0 ||
-+		    (unsigned)dloc->type_offset >= size)
-+			return PERF_TMR_BAIL_OUT;
-+
-+		return PERF_TMR_OK;
-+	}
-+
-+	if (state->regs[reg].kind == TSR_KIND_CANARY) {
-+		pr_debug_dtp("stack canary");
-+
-+		/*
-+		 * This is a saved value of the stack canary which will be handled
-+		 * in the outer logic when it returns failure here.  Pretend it's
-+		 * from the stack canary directly.
-+		 */
-+		setup_stack_canary(dloc);
-+
-+		return PERF_TMR_BAIL_OUT;
-+	}
-+
-+	if (state->regs[reg].kind == TSR_KIND_PERCPU_BASE) {
-+		u64 var_addr = dloc->op->offset;
-+		int var_offset;
-+
-+		pr_debug_dtp("percpu var");
-+
-+		if (dloc->op->multi_regs) {
-+			int reg2 = dloc->op->reg2;
-+
-+			if (dloc->op->reg2 == reg)
-+				reg2 = dloc->op->reg1;
-+
-+			if (has_reg_type(state, reg2) && state->regs[reg2].ok &&
-+			    state->regs[reg2].kind == TSR_KIND_CONST)
-+				var_addr += state->regs[reg2].imm_value;
-+		}
-+
-+		if (get_global_var_type(cu_die, dloc, dloc->ip, var_addr,
-+					&var_offset, type_die)) {
-+			dloc->type_offset = var_offset;
-+			return PERF_TMR_OK;
-+		}
-+		/* No need to retry per-cpu (global) variables */
-+		return PERF_TMR_BAIL_OUT;
-+	}
-+
-+check_non_register:
- 	if (reg == dloc->fbreg) {
- 		struct type_state_stack *stack;
- 
-@@ -1032,64 +1094,6 @@ static enum type_match_result check_matching_type(struct type_state *state,
- 		return PERF_TMR_OK;
- 	}
- 
--	if (state->regs[reg].kind == TSR_KIND_PERCPU_BASE) {
--		u64 var_addr = dloc->op->offset;
--		int var_offset;
--
--		pr_debug_dtp("percpu var");
--
--		if (dloc->op->multi_regs) {
--			int reg2 = dloc->op->reg2;
--
--			if (dloc->op->reg2 == reg)
--				reg2 = dloc->op->reg1;
--
--			if (has_reg_type(state, reg2) && state->regs[reg2].ok &&
--			    state->regs[reg2].kind == TSR_KIND_CONST)
--				var_addr += state->regs[reg2].imm_value;
--		}
--
--		if (get_global_var_type(cu_die, dloc, dloc->ip, var_addr,
--					&var_offset, type_die)) {
--			dloc->type_offset = var_offset;
--			return PERF_TMR_OK;
--		}
--		/* No need to retry per-cpu (global) variables */
--		return PERF_TMR_BAIL_OUT;
--	}
--
--	if (state->regs[reg].ok && state->regs[reg].kind == TSR_KIND_POINTER) {
--		pr_debug_dtp("percpu ptr");
--
--		/*
--		 * It's actaully pointer but the address was calculated using
--		 * some arithmetic.  So it points to the actual type already.
--		 */
--		*type_die = state->regs[reg].type;
--
--		dloc->type_offset = dloc->op->offset;
--
--		/* Get the size of the actual type */
--		if (dwarf_aggregate_size(type_die, &size) < 0 ||
--		    (unsigned)dloc->type_offset >= size)
--			return PERF_TMR_BAIL_OUT;
--
--		return PERF_TMR_OK;
--	}
--
--	if (state->regs[reg].ok && state->regs[reg].kind == TSR_KIND_CANARY) {
--		pr_debug_dtp("stack canary");
--
--		/*
--		 * This is a saved value of the stack canary which will be handled
--		 * in the outer logic when it returns failure here.  Pretend it's
--		 * from the stack canary directly.
--		 */
--		setup_stack_canary(dloc);
--
--		return PERF_TMR_BAIL_OUT;
--	}
--
- check_kernel:
- 	if (dso__kernel(map__dso(dloc->ms->map))) {
- 		u64 addr;
--- 
-2.46.0.184.g6999bdac58-goog
-
+Lizhi
 
