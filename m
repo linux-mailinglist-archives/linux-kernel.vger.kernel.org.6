@@ -1,200 +1,258 @@
-Return-Path: <linux-kernel+bounces-296140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD7095A631
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8D795A62F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887751F21EE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B939E1F22A35
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA38170A36;
-	Wed, 21 Aug 2024 20:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E76170A29;
+	Wed, 21 Aug 2024 20:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bsnyCgnA"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="udxbQnKC"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2082.outbound.protection.outlook.com [40.107.102.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9D115855F;
-	Wed, 21 Aug 2024 20:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724273667; cv=none; b=u1F7DwIvub+hB3qcK3+zPbpgX1TwpwNd2hoZ4kdEQfdqXgoOKnr1ozxd3/52UKsk/SHolh4A5xnjvFcg3ZI+H4JH4vDTNDLe2Up2s9TzDE54FERRwNgxjPUVLnLlSomaf6nb+biVM7/pGJwRdN5txMNEhP6ZcPkYF1GGKHScqEw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724273667; c=relaxed/simple;
-	bh=+hz68gCFum9pH9O4GF+vE7wUKSLCsqqcmMXG/G/sL/Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oE5rjn30aYhNZpu4SCuoFZIXPiUBMnwGwzXLb8F4RuGjSwk+TifCEshazMIiqSBNBs2kxTtvoJc3qSBglH3mOTasDTHKu17t8Iuix1db+yZ7t1XMRiT++kcllYCRyiAEAiktbEmK7ljMvmod5wVMFlFxN2qEMmGttBSQePOir88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bsnyCgnA; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LKsFCc069800;
-	Wed, 21 Aug 2024 15:54:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724273655;
-	bh=7B2jhEn6OZOj1Zf84lIkc16TAgWV4o5XRYnMGYbcNsM=;
-	h=From:To:CC:Subject:Date;
-	b=bsnyCgnA3eYlEEqiPo7trAbzueMEKkzJCteQrRve9qlc1lvBur326v1JyOVoui8DS
-	 lRenWDJxGCrw0xqVp4AbPRf54Sgq8e9H3Ww6/gFJtbFG18ubz3r+pJZ1+gNKkpRNQh
-	 YeQRBZUqf9LEF0+eUvXkLjb6oGTS0k2og9VF+/fE=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LKsFlw040085
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 15:54:15 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 15:54:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 15:54:14 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LKsEvP023937;
-	Wed, 21 Aug 2024 15:54:14 -0500
-From: Judith Mendez <jm@ti.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jan Kiszka
-	<jan.kiszka@siemens.com>,
-        Bhavya Kapoor <b-kapoor@ti.com>
-Subject: [PATCH v2] arm64: dts: ti: k3-am654-idk: Add Support for MCAN
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AE4170A1B;
+	Wed, 21 Aug 2024 20:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724273654; cv=fail; b=W4V8B3S9TgTkpHdsbQtg13osTYD+xwyA6wida9B08q8e/dc+6rVCsaLubZWvAiknQUJjy1Z/zXOTmxOJLutHXYReL/LBn4+O1NMvhBbFQXxFjXN2iwPxtqTVZw1jj2jYxMZkOK8QkZ5Qd19MOwiboSNOBpVUjfmRZyq5y8Tz5jk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724273654; c=relaxed/simple;
+	bh=/iPGir/a8oalZxI6CTZOZ+NP3bxBJ06o7RNqozy7xQ4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=on97kZQGdDzHvmgzJqIBWuhMU2D6w1605rD3LCh1LZPlPWn6qFwC6dwTFOh9CqGkWg4zaNBBVoogWGhA9v9AMFicj4gi6H0seranjKhlQOKiZUo3ieiXLN0AYJAIroWFbMiXpZR9w3wh6iFo+umYnzFC8hqBp8wEJJE4dQG5f60=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=udxbQnKC; arc=fail smtp.client-ip=40.107.102.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=abh/IwH8agruMzLbNmajckiaS+wrJ4H8E7HTGpWtXWIr5Zu1ZxTu2XibVjTmhJlOwFcpnrw1ksqVVJsnPvAqtIw8QjTM8XGR8zUnx+vQZW8O+Tj8COcxche9VUkZbXT0qBR/LWMDO0o6DaUx1qXFVkWKNsiHcE2FvXLmgp7twwWSA0IZ8qw8ZolesEXdSAJb5pq/D0+Onx+HdU+EpUm8FHVfTVYYbYNOv6M5TAG/VeDwf9E3oHSBQXZpjX7Mc3U1VcynaIfMOb/TWBG0YkUHyjBThNMJ48Lomkx7uigmh15P8GgZIVnaLAsc1B6eD19Yq7gzoVLhK6QDVb8skMigmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q311TkYJa4SFFh8IpaLJS6ToBf8V1m3vRxNYOYRB6UI=;
+ b=stC2dTgdvr+JWNVWq72zicRVAU6YqQJ12rVRASLh/bbrkSW7+mqZmfDY521XKQKoIHeotY4mpJFYICZjsl5nCY00CPUeDoltpPnatwirpvcAX9OQRJcApYewqr1Dq3Ocd3/3kuTu7c8dPQEVmMhjZN/aFzheHk91B+MHI2uNFg9Tkz3o1RqK+PAt0GzCEwvB0RABsQJbbfhI6v/VVFieGmP+wUCoQnWUI+yFVzVZ2VqZfU2D8IQzfDmjRR/7LoZSJQC9VIbrQr/kWwMl2EdMmP8yfUKbG6vGQyOW7UoJeRMNZ0IL49jZBfXFvfJO3vMZfoRKN8hG92y7o5l7Yn7Ugg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q311TkYJa4SFFh8IpaLJS6ToBf8V1m3vRxNYOYRB6UI=;
+ b=udxbQnKCEaDSnwSFZ50GFSNNxjyfhGxzSCrRcCbbi6/caq8bNMv9koo1RGb839liWlmfFXeGyeKEzbYuypMFq8Tx73ey35MnafT1p8oBzdKo0ncHFbl1ZX3FxQbCXKU3oVUol6/FM/U3b2bLdJFGPzAQcN7tiA0DMcMdM3j4Kt8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by MW6PR12MB8707.namprd12.prod.outlook.com (2603:10b6:303:241::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 20:54:08 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Wed, 21 Aug 2024
+ 20:54:07 +0000
+Message-ID: <269b2e72-2f93-4415-a56e-77536f373b22@amd.com>
 Date: Wed, 21 Aug 2024 15:54:14 -0500
-Message-ID: <20240821205414.1706661-1-jm@ti.com>
-X-Mailer: git-send-email 2.46.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] drm/amd/display: Add support for minimum backlight
+ quirk
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
+ linux-doc@vger.kernel.org
+References: <20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net>
+ <20240818-amdgpu-min-backlight-quirk-v5-2-b6c0ead0c73d@weissschuh.net>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240818-amdgpu-min-backlight-quirk-v5-2-b6c0ead0c73d@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN1PR12CA0093.namprd12.prod.outlook.com
+ (2603:10b6:802:21::28) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MW6PR12MB8707:EE_
+X-MS-Office365-Filtering-Correlation-Id: acc68d30-cd61-4533-5b9c-08dcc22365f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aGFqUyt5Q3BtbUlDemtGbFNNb1NyOHBtUmtjMXlFcW5ZcHhTVXVXVmpYTU5F?=
+ =?utf-8?B?WTlueTl1ZmN2SmlaV2U3cVF6T3RvaHZpakxEWDBoc0ZKYk9XbkV0bE51Zmdt?=
+ =?utf-8?B?TTM3dnBRVDFYZlZRZWd1d0ZLQnpwT1RqMmxSYjJlMlIvMlczQjIzRkQ0MCtz?=
+ =?utf-8?B?R1lldG5oOFZyRndCVzR1alJkNTBzREZZWVdqT2xIZ0ZWZ2dVbld1bWxVU1lL?=
+ =?utf-8?B?ZDBabUJ1NlhBTXVpYmtFRTg4UWhlcDJEK0k2RjNwL1NDUk50bXo5Vnkrd2o1?=
+ =?utf-8?B?bzR4cHRnWHM5RE81Nm1YS3hGcUlXRlc1Y1QrelpjWDc4S1dldGNGSzhTQkhK?=
+ =?utf-8?B?aTVNeVM2V0kzSlNsb0NxQWJROXp3WWViSzErdEptZUNTeEdPZWdqeVMzZnJ6?=
+ =?utf-8?B?Q1RPRGNCRDl3enhudmVnNEh2UWRLdlM5QThDRnVpNEg0VGRBeG5oS1dZWmtn?=
+ =?utf-8?B?MVdpSGQyb3gvbmpYU2o5OXJReG9TeG9GSUM1cUpxd0lHakFvUlJleGdZQk5O?=
+ =?utf-8?B?S1hmWURkbUtTWEJKKy9lb2pQTlVqcGhRTU9MSHpHM1dkaUYvWXFPQkJjbVdE?=
+ =?utf-8?B?bGVaM2Z1bWZZV2ZJZEZKUHNJSGRRUEVBUEpXZlROeUNWNlZuNm8vT1FHMEtq?=
+ =?utf-8?B?RE8vUzRoYkJMQ3doby9OSEFVTW1FWXF4dWR0NW5haEZvRWwweUxxcGVWTkNW?=
+ =?utf-8?B?eEJVeUp0ZDJnVHF0UmQwOWprNThHQUdXYWlZSVQvK09zNUxmdnNKekhGb05q?=
+ =?utf-8?B?cXJvb1RlSlpTdCtyS1NVT3d1UVNUaW5DYi93cmtCOHIxaEMzeUpxTjZ1MHlv?=
+ =?utf-8?B?QnQrMlZTQkpyeWxFZnpIMlIxNG1xL2xNZHRTK05kbW5RSEpFQXNmanA1TUh0?=
+ =?utf-8?B?SFIxNWVLZDVXSHV6cnpsbEFXNHZnOHpkeWhUK0NDQ3k2KzBsSjMzM0xQRFRp?=
+ =?utf-8?B?SU9XbXRRaFZkTGJjYlpTN2Zyenl0WDZFMk11azVXbEVKSXlzUEpTaUFqaWlG?=
+ =?utf-8?B?c0xuaVBBTTFNNTFYVkRSUmRXRkdHOGtsV2J1U2hvR0tNSU9jMFlXdkdiZGRv?=
+ =?utf-8?B?MkE0dFhhc0ZxTUNMMVpPTW9hQmFPM21xT3JLTVJXMG13bnFnMTVFTlRSQzFs?=
+ =?utf-8?B?UTBCMzVhNVoxRk9UNHpkVTBuYjZSMG40RXJMbHg3R044NVYrZlQ0bUVMdDdk?=
+ =?utf-8?B?ZXJzNFdXSU4zL0tVQmRZUWsySllSSjg3T2dyY1ZreWZXcEFJZzRiV29HS0Zp?=
+ =?utf-8?B?WnVWQjR5T3gwbjVCRFRMbnFtUE91OHo1SE12eDdSb2ROd2JkUDFQVHZRL2sz?=
+ =?utf-8?B?b0UvU1dhMjFPbm1ndVFIM25LTEVtaEJJYlR0SDFwK01ZYU9PUVVSSmVOZTBy?=
+ =?utf-8?B?N0daVlF5SUtTVithUnJZKzhBMHBrMVhtbEtCRHpXZmgxcDh4bWpRT1NWZHg0?=
+ =?utf-8?B?MXQxcXFBd2pyU2wveEFQVU9kQmh2aVZJbzJpOUxpZEc5RVRpVkRxREFXUm5k?=
+ =?utf-8?B?UjZPRThnaEpjUlc3TEp0aWZ2anFiUWx2TkNza1BDaEp0Rk5BUjdMY3VGZG8v?=
+ =?utf-8?B?N2hHYWwxZHN0STlYQUhJN1JIQnFWa2hqcnNWV0M4emZkMzRuRVNURFI5VUM0?=
+ =?utf-8?B?Zzl3eTJuUk03R1c4ZUNFeFVvV21rTWd6eExNc0lJMGtZMXljdndqUHUyanZ2?=
+ =?utf-8?B?SFRGdnBCWENRbWthaUdWQld1b1JzTTFYRFhhcUx1OTBJTDR0WE9hY2ZoWjBr?=
+ =?utf-8?B?R3RYb1U2Q1pPYWgvN0ZRVHFsNXByc3JGcVZHSkF4NUJ2aVNtb3l6N1VaNVll?=
+ =?utf-8?B?ZFJaQUkrOC94OUJEdS8vUmZWRFE3Q0xvd2tyckk4U2dBYUVIT0RpUzA5ZHpP?=
+ =?utf-8?Q?lOKsmVH+MLddQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MTE5VTltU1B5aHlVSllSR3Nabm5nOGUvQUllbmtncytWRW4xVzA3bzAzZzFw?=
+ =?utf-8?B?bVRZWmkrSGY0RVRYVUduOXVjSC9ZWDNjU0lGYzhGNlM3NHZPMDRjUEpPQlN5?=
+ =?utf-8?B?cHFwVytva05ZdVNCL1drYldGUTY5M0Z3UU9JR2NReHZZQTM5MUJrMW1Qa3ZF?=
+ =?utf-8?B?MHpnZEl6eS9XUzc3YVlEVkx5ZnVJMjRDQ1Y0d012VmYyZGllN090bitjLy9S?=
+ =?utf-8?B?bXhaQmJ3VXV5M0t1TTg2eTNhUGc4b0NHODdabmRlbjIwNlpETXJNY05SbVJO?=
+ =?utf-8?B?SUNpZ0JqNUZjZHFJOS9pYWVvUGR5NUlIeVlzRzRicXV4UVNrZFBYOHpSUTc1?=
+ =?utf-8?B?Ni82Q2ZuanIvNGZTODRiQ0VmV3hLYmU0TmpjQXdPWVZrTWxOa3QzY0pqMGFI?=
+ =?utf-8?B?UmNobW42RGE0Q3YzaThTZHFiWUVaN2dnSU40K0hPUitlR0s0cmhEWis3bWk4?=
+ =?utf-8?B?UkhHYWFQeDY2TDRzU1BOTTRoc2FLVExrUkt1dm5XU1JpWUtoVWJjRG95Tmph?=
+ =?utf-8?B?NGF3Q2xjc3QvcHhoOTBKVk5ZYWNkSVVhaW1SRk9xZFAzKzZ3RHNPNHloRVY4?=
+ =?utf-8?B?Rkt6bWhpZ1krRG5zOEF0YXVXNndCWVVLRDE0Y0VYbWNQSlEzcWtDM25lMWF2?=
+ =?utf-8?B?ejUvOXpJc0ZsU0YrbGFhc0xSK3VFbElFdVA1bHVrUkxRTE43cXIxYk5NUFo4?=
+ =?utf-8?B?Zy85RndETVRXSGliMlEwU3FoN1ZKakQ0ekhkbWZiS2ZlYVpmQnJxWEFYS2k3?=
+ =?utf-8?B?Q2VzdGhpR213VE9wODBKWUVNRWZVcWxDRkxOREowcnFpUUphRTVpWG9BcXdk?=
+ =?utf-8?B?QklPaUkvRmZQeGNQRzEvYWhUb2JLcDUwL291SUlMdFhuc3p0LzBYdTBiQUdG?=
+ =?utf-8?B?R1hDN0l1R01TRTRsTlRta1JmOXBydDBMZU1QRnJxUlc0TFdxYm1iNklUb2Z1?=
+ =?utf-8?B?MW51aHl3M0ppWDZlOER5K21peXZNdUlOMzFYbEw1NUxhUWJoeUlvY1BPYWE5?=
+ =?utf-8?B?M1AxcmduWWp2a2dkaTQ5RmxVNFh2b1dCR2lRdVVkWHUvYUxGalJYMVNvQzR4?=
+ =?utf-8?B?MUNYNVNkRGw3Snpra3NZeXltVmtCVHJtdDRTK2pGMGtrSGx6aUpPUW4vcFVN?=
+ =?utf-8?B?S0pRWGhGMHhqeXRycFJCcmJTYytYTVZtT3d6SGVyN3BPQ3Q1bDRoMHNQWlR5?=
+ =?utf-8?B?YmhOdjQ1Q1dXd2o1NnJYWU4vNGhyS3RlSm9LeDVTUmVsTGovUmpVQ2Vob2tG?=
+ =?utf-8?B?QytDa2U3QlYvVnZ6bU5rVDdJMjd3MDMwaU1YdXBGOVE2QnlXZ0FhOFYrRlAx?=
+ =?utf-8?B?YkZLb2xxSGZ5KzdCaWoweW51aWRFWkl0dTVUT3lEWnBiTm1pWEhFOTNhcFEv?=
+ =?utf-8?B?REc0VVh6Q3dUQzVPRlNsUkVIK0dQTkhqNnpiL3hqUFROS1phTHBKVkpacHZH?=
+ =?utf-8?B?bHFvVnJTbjZhbkF6ZWVLK2NaYTlrdUxXTUtEN1lBZUJjOUk1Z1EvcHNMWWRY?=
+ =?utf-8?B?WEZnc2xCWWVaY1NQYmhtYTNiRThrclRRb3FlV2JSZnJBZ1I1eGdnL2JBMGh0?=
+ =?utf-8?B?QkdQRVZjaTU2bFBWd29LM0lsa1pBR00vS0NkQnU1RlVkV0ZkNGtKcTRycFNU?=
+ =?utf-8?B?V0RoM09XdVdXcWRuUnJyTHlMbVc1TkhyWldFQVEzZFNMd3V0QzF3eWtuNE1G?=
+ =?utf-8?B?R3Y1ZXZEQVN3dk96Y3ZkNEtHYjExb0R4Zi83R1NybWorTHhvSXNMK3pLWlky?=
+ =?utf-8?B?Q0xUV0hXYXZsU0RCRjI1cXZBcmQvK2xaTXV5WUIrSHVnZEVJaGxFNEkrWmhG?=
+ =?utf-8?B?SjlESU5zYnNSNmJINVBBQzgwUVRKTWg2S0pIYkx3b2hxZmtpZjZQUldmMk56?=
+ =?utf-8?B?MFNsbjdseCtURTQxR21aUFFYVE0wbTdWbndVc0VDTG56UHZkSXFhZnFvYjJv?=
+ =?utf-8?B?YzY0TkJCN1Nacy9sRUl4bFNtWEI0em9rL2lmM1Z0SUQ3eDBZY25jKy9SVXdz?=
+ =?utf-8?B?ck15d0p1UkhzSmlpVFlGVFJiNm85Sng4R29Pa0xSZy9Rd0F4dTFOTllkbWw5?=
+ =?utf-8?B?R0EwT3NDU29FUlkzeCt4cC83V2kweHROZmJOenBYMmxiYTkvUVFLOHg0eWFT?=
+ =?utf-8?Q?VBOGXUK1i/wjHP2jB9fWsE7Fq?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acc68d30-cd61-4533-5b9c-08dcc22365f0
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 20:54:07.1355
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bK+w8LV6gdps6LQos9q0wmc13nzscNQCMMFKCk+Fsix0yuNPScU6uZqui5GMnVZzrP9Xx2ExrjO456qt0dUHDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8707
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+On 8/18/2024 01:56, Thomas Weißschuh wrote:
+> Not all platforms provide correct PWM backlight capabilities through ATIF.
 
-There are two MCAN instances present on the am65x SoC [0].
-Since there are two CAN transceivers on the IDK application
-board for AM654 EVM [1], enable m_can0 and m_can1, add the
-two corresponding CAN transceiver nodes, and set a maximum
-data rate of 5 Mbps.
+I don't think correct is an accurate term here.  How about 'optimial'?
 
-[0] https://www.ti.com/lit/ds/symlink/am6548.pdf
-[1] https://www.ti.com/lit/zip/sprr382
+> Use the generic drm panel minimum backlight quirk infrastructure to
+> override the capabilities where necessary.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Tested-by: Dustin L. Howett <dustin@howett.net>
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Signed-off-by: Judith Mendez <jm@ti.com>
----
-Changes since v1:
-- Move status DT property to end of m_can nodes according to
-  dts-coding-style
+The code looks fine to me but please wait for an ack from someone on the 
+AMD display team.
 
-Link to v1:
-https://lore.kernel.org/linux-devicetree/20240820193420.29184-1-jm@ti.com/
----
- arch/arm64/boot/dts/ti/k3-am654-idk.dtso | 61 ++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+Also, I would like to see comments about the testing with panel power 
+savings enabled to avoid a conflict.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-idk.dtso b/arch/arm64/boot/dts/ti/k3-am654-idk.dtso
-index 8bdb87fcbde00..97f7eb34b99a6 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-idk.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am654-idk.dtso
-@@ -8,6 +8,7 @@
- /dts-v1/;
- /plugin/;
- 
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/net/ti-dp83867.h>
- #include "k3-pinctrl.h"
- 
-@@ -154,6 +155,24 @@ icssg1_emac1: port@1 {
- 			};
- 		};
- 	};
-+
-+	transceiver1: can-phy0 {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <5000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&mcan0_gpio_pins_default>;
-+		standby-gpios = <&main_gpio1 47 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	transceiver2: can-phy1 {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <5000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&mcan1_gpio_pins_default>;
-+		standby-gpios = <&main_gpio1 67 GPIO_ACTIVE_LOW>;
-+	};
- };
- 
- &main_pmx0 {
-@@ -243,6 +262,34 @@ icssg1_iep0_pins_default: icssg1-iep0-default-pins {
- 			AM65X_IOPAD(0x012c, PIN_INPUT, 2) /* (AG26) PRG1_PRU0_GPO19.PRG1_IEP0_EDC_SYNC_OUT0 */
- 		>;
- 	};
-+
-+	mcan0_gpio_pins_default: mcan0-gpio-default-pins {
-+		pinctrl-single,pins = <
-+			AM65X_IOPAD(0x023c, PIN_INPUT, 7) /* (V25) PRG0_PRU0_GPIO18:GPIO1_47 */
-+		>;
-+	};
-+
-+	mcan1_gpio_pins_default: mcan1-gpio-default-pins {
-+		pinctrl-single,pins = <
-+			AM65X_IOPAD(0x028c, PIN_INPUT, 7) /* (Y26) PRG0_PRU1_GPIO18.GPIO1_67 */
-+		>;
-+	};
-+};
-+
-+&wkup_pmx0 {
-+	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
-+		pinctrl-single,pins = <
-+			AM65X_WKUP_IOPAD(0x00ac, PIN_INPUT_PULLUP, 0) /* (W2) MCU_MCAN0_RX */
-+			AM65X_WKUP_IOPAD(0x00a8, PIN_OUTPUT_PULLUP, 0) /* (W1) MCU_MCAN0_TX */
-+		>;
-+	};
-+
-+	mcu_mcan1_pins_default: mcu-mcan1-default-pins {
-+		pinctrl-single,pins = <
-+			AM65X_WKUP_IOPAD(0x00c4, PIN_INPUT_PULLUP, 1) /* (AD3) WKUP_GPIO0_5.MCU_MCAN1_RX */
-+			AM65X_WKUP_IOPAD(0x00c0, PIN_OUTPUT_PULLUP, 1) /* (AC3) WKUP_GPIO0_4.MCU_MCAN1_TX */
-+		>;
-+	};
- };
- 
- &icssg0_mdio {
-@@ -294,3 +341,17 @@ &icssg1_iep0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&icssg1_iep0_pins_default>;
- };
-+
-+&m_can0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_mcan0_pins_default>;
-+	phys = <&transceiver1>;
-+	status = "okay";
-+};
-+
-+&m_can1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_mcan1_pins_default>;
-+	phys = <&transceiver2>;
-+	status = "okay";
-+};
-
-base-commit: e3cce1229c34b5c28f103361c4d6b3ef17302d5d
--- 
-2.46.0
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 ++++++++++
+>   2 files changed, 11 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
+> index 0051fb1b437f..655c10aef2e3 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig
+> +++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
+> @@ -23,6 +23,7 @@ config DRM_AMDGPU
+>   	select DRM_BUDDY
+>   	select DRM_SUBALLOC_HELPER
+>   	select DRM_EXEC
+> +	select DRM_PANEL_BACKLIGHT_QUIRKS
+>   	# amdgpu depends on ACPI_VIDEO when ACPI is enabled, for select to work
+>   	# ACPI_VIDEO's dependencies must also be selected.
+>   	select INPUT if ACPI
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 983a977632ff..056960ea335c 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -93,6 +93,7 @@
+>   #include <drm/drm_fourcc.h>
+>   #include <drm/drm_edid.h>
+>   #include <drm/drm_eld.h>
+> +#include <drm/drm_utils.h>
+>   #include <drm/drm_vblank.h>
+>   #include <drm/drm_audio_component.h>
+>   #include <drm/drm_gem_atomic_helper.h>
+> @@ -3333,6 +3334,8 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
+>   	struct drm_connector *conn_base;
+>   	struct amdgpu_device *adev;
+>   	struct drm_luminance_range_info *luminance_range;
+> +	const struct drm_edid *drm_edid;
+> +	int min_input_signal_override;
+>   
+>   	if (aconnector->bl_idx == -1 ||
+>   	    aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
+> @@ -3367,6 +3370,13 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
+>   		caps->aux_min_input_signal = 0;
+>   		caps->aux_max_input_signal = 512;
+>   	}
+> +
+> +	drm_edid = drm_edid_alloc(aconnector->edid,
+> +				  EDID_LENGTH * (aconnector->edid->extensions + 1));
+> +	min_input_signal_override = drm_get_panel_min_brightness_quirk(drm_edid);
+> +	drm_edid_free(drm_edid);
+> +	if (min_input_signal_override >= 0)
+> +		caps->min_input_signal = min_input_signal_override;
+>   }
+>   
+>   void amdgpu_dm_update_connector_after_detect(
+> 
 
 
