@@ -1,70 +1,45 @@
-Return-Path: <linux-kernel+bounces-294997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0088E95952F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55797959532
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 753C2B23456
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:58:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85523B247B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1C193435;
-	Wed, 21 Aug 2024 06:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZfcvXzTF"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642FB193435;
+	Wed, 21 Aug 2024 06:58:31 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E131185B5C
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DF2193429
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724223500; cv=none; b=u5jb27NOe89l+P/BldP7RQNw/WaLClg6f58vhyjGCPbmqivU/qMiE54snUgQGBPlV67Z5EgGb2jgr6Z9w86xuE7Uz2UPBK+8vSHEKaRSyde86tUAumCf3L39hLPhrZsYcxgiT3pfOAkb5imkRNZT1D6eyDzOfQkNraM7+6AhtiA=
+	t=1724223510; cv=none; b=oUcWri2C7Pn6SSu6K3GCeOppyx0pQithYwbplzE+IIM5itXVsalTeFqoUJ/DfKbXZ125Y3TgSO9pGtpLVdA3ZtCQr9OvfGC8+Vd4z5b9ggFlLaNL7LN5ovdYWbsuSTf8fGARClaKa3VJMAnY0uOeHBBv/UGvF4MSaV3Atqk07u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724223500; c=relaxed/simple;
-	bh=nGwwZKR0gRYMSEgmiBVAnzD1Pp9OdshUmU94NyLhtDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OjTXJfNE12Ga2q99CRPRCf/AyuXO+Z+mErLp5jx2yUcDcUKq/kSPtu6O2ibY4Q+A3ZW0qQnxGpQ0eKMaC9pcrkPRDsTb0VPFNTHm1eTJjXhD+ZEdOp5Fv2hiFg8JA1JRRmX+ZBYKIl6DzCPaoZKpdK81KYf7jDH48ALEy7V02b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZfcvXzTF; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5d5b1e33fa8so3901973eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1724223498; x=1724828298; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lcwV5E+ok4Ru342pseyjnU3pRtPhY0hqDhnMEPHRasQ=;
-        b=ZfcvXzTFGkfCFK3z9dez8lyTGhgj6gz23qAH/MPvW9twfEeLazeZR/rm0TzqV5X0Qw
-         RLLVI8jpT0R/bzVz8ozILE3h5ImiAnJqnJhX45SkU6t6/Mnmp4LIIbkU2ToY6/wD0E6h
-         vZAeLf37xClvrzr7RfF1GkofdnvaOl1eoU/zU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724223498; x=1724828298;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lcwV5E+ok4Ru342pseyjnU3pRtPhY0hqDhnMEPHRasQ=;
-        b=upyuqdVD5R6RWhTiCv9xoqDHTRrG5yOEtO9+tz05XTamtej+w9WycQTrM8X9rb8Z0u
-         iZumjocdO3U7YHCnUQCukqHFDESMUF1LBknPoaTdXmMBugGkJm9N0RsBRAHnfLAnENBq
-         qkR7zMSFtrSu/7NjcwTneXlMQ8O76yjobNGvE6XJWUa1+yrMWXsx4/qzIKRMbbppbf3G
-         VXKkZOHtYQwHukAlXhDNYqWpfEP/OJE1NuVchak0HWExi65RqQrBeRN+rIXl9xYZ89wJ
-         lGB+KvVPedMUuYf3+HQ+/5l6ZTAsY2EtU755f2oVfKQXSs4uWAFDlWVJXyL8zYY1mrut
-         c1Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8pdco7f9KHevkbByzxTplv1AO2Y1CWONQdF5cKfTng/AnWr1hQkl4Yi7HaEaWvPtGHDy9Q3MRI574mGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfMDX2vyZNdVydor3O+fqcE7wy/P7oQrqpPjrkOojY0HSXl8h/
-	vTT0ynTTQgvmXqlo3pb26+Q0Q0nwmcFAvlDIdXvURcvfTzu1hqZ7D6JdTJGJm7U=
-X-Google-Smtp-Source: AGHT+IGW3lZ+wVRaP439HYZTg2+EKRY2iSpAqSNAreo/hH4Ej36HDf8GGY057zCw2mgnCuU1Pw4OyQ==
-X-Received: by 2002:a05:6358:531f:b0:1ad:95db:b6f2 with SMTP id e5c5f4694b2df-1b59f97b0e5mr218971355d.17.1724223497985;
-        Tue, 20 Aug 2024 23:58:17 -0700 (PDT)
-Received: from [172.20.0.208] ([218.188.70.188])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b6365afcsm10384733a12.87.2024.08.20.23.58.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 23:58:17 -0700 (PDT)
-Message-ID: <f377d9c2-9bad-418e-b02a-9ef4f45d7b06@linuxfoundation.org>
-Date: Wed, 21 Aug 2024 00:58:14 -0600
+	s=arc-20240116; t=1724223510; c=relaxed/simple;
+	bh=OYAUaBvmmhEbKDrF+5PsGJuiRJQ975zqwyOhxBg0G8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NkT3N7Lz4Vxga91SXTckKWgoghbHf4+QHrs+y5wt0nQVcUm06rcze64LewlsNMMPPgE1Re5fOwcrVV51uHMSpFaG1TfCE80LO46T/YfC4BHjTD8e8atMFcaISCR3H7bpQNsy7siwewWjckxSC3u7y8WA5MHqJcvlSK8ZP/h90y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpccG4nNBz2Cn71;
+	Wed, 21 Aug 2024 14:58:22 +0800 (CST)
+Received: from dggpeml500005.china.huawei.com (unknown [7.185.36.59])
+	by mail.maildlp.com (Postfix) with ESMTPS id C21251400CA;
+	Wed, 21 Aug 2024 14:58:24 +0800 (CST)
+Received: from [10.174.178.155] (10.174.178.155) by
+ dggpeml500005.china.huawei.com (7.185.36.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 21 Aug 2024 14:58:24 +0800
+Message-ID: <6e744d2b-bbb3-4e1f-bd61-e0e971f974db@huawei.com>
+Date: Wed, 21 Aug 2024 14:58:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,64 +47,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/ftrace: Fix test to handle both old and new
- kernels
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@kernel.org>, Shuah Khan <shuahkhan@gmail.com>,
- Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240515013620.098cb37a@rorschach.local.home>
- <20240614124322.36ad7652@rorschach.local.home>
- <20240819152002.3ecc8100@gandalf.local.home>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240819152002.3ecc8100@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 8/19/24 13:20, Steven Rostedt wrote:
-> On Fri, 14 Jun 2024 12:43:22 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
->> Shuah,
->>
->> Can you take this through your tree?
-> 
-> Ping.
-> 
-> -- Steve
-> 
->>
->> Thanks,
->>
->> -- Steve
->>
->>
->> On Wed, 15 May 2024 01:36:20 -0400
->> Steven Rostedt <rostedt@goodmis.org> wrote:
->>
->>> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
->>>
->>> The function "scheduler_tick" was renamed to "sched_tick" and a selftest
->>> that used that function for testing function trace filtering used that
->>> function as part of the test.
->>>
->>> But the change causes it to fail when run on older kernels. As tests
->>> should not fail on older kernels, add a check to see which name is
->>> available before testing.
->>>
->>> Fixes: 86dd6c04ef9f2 ("sched/balancing: Rename scheduler_tick() => sched_tick()")
->>> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Subject: Re: [PATCH] mm, slub: prefetch freelist in ___slab_alloc()
+To: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<zhangxiaoxu5@huawei.com>, <cl@linux.com>, <wangkefeng.wang@huawei.com>,
+	<penberg@kernel.org>, <rientjes@google.com>, <iamjoonsoo.kim@lge.com>,
+	<akpm@linux-foundation.org>, <vbabka@suse.cz>, <roman.gushchin@linux.dev>
+References: <20240819070204.753179-1-liuyongqiang13@huawei.com>
+ <CAB=+i9TxYRcr+ZRMD31SDay+899RXOwTvQevC=8sv7b27ZO1Vg@mail.gmail.com>
+From: Yongqiang Liu <liuyongqiang13@huawei.com>
+In-Reply-To: <CAB=+i9TxYRcr+ZRMD31SDay+899RXOwTvQevC=8sv7b27ZO1Vg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500005.china.huawei.com (7.185.36.59)
 
 
-Sorry about the delay.
+在 2024/8/19 17:33, Hyeonggon Yoo 写道:
+> On Mon, Aug 19, 2024 at 4:02 PM Yongqiang Liu <liuyongqiang13@huawei.com> wrote:
+>> commit 0ad9500e16fe ("slub: prefetch next freelist pointer in
+>> slab_alloc()") introduced prefetch_freepointer() for fastpath
+>> allocation. Use it at the freelist firt load could have a bit
+>> improvement in some workloads. Here is hackbench results at
+>> arm64 machine(about 3.8%):
+>>
+>> Before:
+>>    average time cost of 'hackbench -g 100 -l 1000': 17.068
+>>
+>> Afther:
+>>    average time cost of 'hackbench -g 100 -l 1000': 16.416
+>>
+>> There is also having about 5% improvement at x86_64 machine
+>> for hackbench.
+> I think adding more prefetch might not be a good idea unless we have
+> more real-world data supporting it because prefetch might help when slab
+> is frequently used, but it will end up unnecessarily using more cache
+> lines when slab is not frequently used.
 
-It is now applied to liniux-kselftest next for Linux 6.12-rc1.
+Yes, prefetching unnecessary objects is a bad idea. But I think the slab 
+entered
 
-thanks,
--- Shuah
+in slowpath that means it will more likely need more objects. I've 
+tested the
+
+cases from commit 0ad9500e16fe ("slub: prefetch next freelist pointer in
+slab_alloc()"). Here is the result:
+
+Before:
+
+Performance counter stats for './hackbench 50 process 4000' (32 runs):
+
+                 2545.28 msec task-clock                #    6.938 CPUs 
+utilized        ( +-  1.75% )
+                      6166     context-switches          #    0.002 
+M/sec                    ( +-  1.58% )
+                     1129      cpu-migrations            #    0.444 
+K/sec                     ( +-  2.16% )
+                   13298      page-faults                  # 0.005 
+M/sec                    ( +-  0.38% )
+         4435113150      cycles                           # 1.742 
+GHz                         ( +-  1.22% )
+         2259717630      instructions                 #    0.51 insn per 
+cycle           ( +-  0.05% )
+           385847392      branches                     #  151.593 
+M/sec                    ( +-  0.06% )
+              6205369       branch-misses            #    1.61% of all 
+branches       ( +-  0.56% )
+
+            0.36688 +- 0.00595 seconds time elapsed  ( +-  1.62% )
+After:
+
+  Performance counter stats for './hackbench 50 process 4000' (32 runs):
+
+                2277.61 msec task-clock                #    6.855 CPUs 
+utilized            ( +-  0.98% )
+                     5653      context-switches         #    0.002 
+M/sec                       ( +-  1.62% )
+                     1081      cpu-migrations           #    0.475 
+K/sec                        ( +-  1.89% )
+                   13217      page-faults                 # 0.006 
+M/sec                       ( +-  0.48% )
+         3751509945      cycles                          #    1.647 
+GHz                          ( +-  1.14% )
+         2253177626      instructions                #    0.60 insn per 
+cycle             ( +-  0.06% )
+           384509166      branches                    #    168.821 
+M/sec                    ( +-  0.07% )
+               6045031      branch-misses           #    1.57% of all 
+branches          ( +-  0.58% )
+
+            0.33225 +- 0.00321 seconds time elapsed  ( +-  0.97% )
+
+>
+> Also I don't understand how adding prefetch in slowpath affects the performance
+> because most allocs/frees should be done in the fastpath. Could you
+> please explain?
+
+By adding some debug info to count the slowpath for the hackbench:
+
+'hackbench -g 100 -l 1000' slab alloc total: 80416886, and the slowpath: 
+7184236.
+
+About 9% slowpath in total allocation. The perf stats in arm64 as follow：
+
+Before:
+  Performance counter stats for './hackbench -g 100 -l 1000' (32 runs):
+
+        34766611220 branches                      ( +-  0.01% )
+            382593804      branch-misses                  # 1.10% of all 
+branches          ( +-  0.14% )
+          1120091414 cache-misses                 ( +-  0.08% )
+        76810485402 L1-dcache-loads               ( +-  0.03% )
+          1120091414      L1-dcache-load-misses     #    1.46% of all 
+L1-dcache hits    ( +-  0.08% )
+
+            23.8854 +- 0.0804 seconds time elapsed  ( +-  0.34% )
+
+After:
+  Performance counter stats for './hackbench -g 100 -l 1000' (32 runs):
+
+        34812735277 branches                  ( +-  0.01% )
+            393449644      branch-misses             #    1.13% of all 
+branches           ( +-  0.15% )
+          1095185949 cache-misses             ( +-  0.15% )
+        76995789602 L1-dcache-loads             ( +-  0.03% )
+          1095185949      L1-dcache-load-misses     #    1.42% of all 
+L1-dcache hits    ( +-  0.15% )
+
+             23.341 +- 0.104 seconds time elapsed  ( +-  0.45% )
+
+It seems having less L1-dcache-load-misses.
+
+>
+>> Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
+>> ---
+>>   mm/slub.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index c9d8a2497fd6..f9daaff10c6a 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -3630,6 +3630,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
+>>          VM_BUG_ON(!c->slab->frozen);
+>>          c->freelist = get_freepointer(s, freelist);
+>>          c->tid = next_tid(c->tid);
+>> +       prefetch_freepointer(s, c->freelist);
+>>          local_unlock_irqrestore(&s->cpu_slab->lock, flags);
+>>          return freelist;
+>>
+>> --
+>> 2.25.1
+>>
 
