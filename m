@@ -1,136 +1,239 @@
-Return-Path: <linux-kernel+bounces-295891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046A995A2A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:19:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDB795A2AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEA81F21F0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BFD2838B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D725B14F9CA;
-	Wed, 21 Aug 2024 16:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D385014F9E1;
+	Wed, 21 Aug 2024 16:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaXEs3GN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkuPitu4"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C80F139597;
-	Wed, 21 Aug 2024 16:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60675139597;
+	Wed, 21 Aug 2024 16:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724257180; cv=none; b=UJzZvLW/QPJoq4JDUDGy70USzUOZo75Jl4sPkE+SFfL05fUOXB+H8YmSfZhTI3vzoIl0D8CR0VGvcqNmXAtQ+dZFk/UVOwz+pqLcOeFNJZGg60n02/XkhjT9CWG7iYeBwixt0ZEr8b5xGbS86Iz9ytuY10KjN/QRGSUS1gSVa5c=
+	t=1724257219; cv=none; b=clxvVe6MwQjCfCcJrFLc4yeo70lBZUqPWTuwNTS5WgOkCD/7UqgcKuhz6WvEJzyiX8Q7jhW+mDAeI2IY3pu+5FF7JtLqTeukwENLZNky9hJZxuWHYAmFcCmhyizAKeUUolILxnntqNZ1jKc/sTFd3FMJIkh+6+V/s2FidQdZXUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724257180; c=relaxed/simple;
-	bh=OClUNMuUaEsOuuemntmYvckMZOeB5Md+vVB+ePxIrOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iGFC+tU+EbUZhy7MwJ2d93GKckEbNKptFVUyOR/VxooFge2qlstFH0a05tZFXwfo+ZwGzBaIzNCXyQCud6yGjL76NFd5tCy58QCE4KhOSQegFwqR5pQXbvQeBajZ6IyM08FgQVKnkzu3ESPZcwoXForUBHdy61zXGfnxlQuanbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NaXEs3GN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89719C32781;
-	Wed, 21 Aug 2024 16:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724257179;
-	bh=OClUNMuUaEsOuuemntmYvckMZOeB5Md+vVB+ePxIrOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NaXEs3GN1UurP62B20P8bKtWE4Nzo4ejsW/gP7sbpABzvPPueF/W+Sp4yNY7mcLk6
-	 uhuRDlnKJ5ilzoAVLsrudYnmqmoGGg/pOtohvShOgrg11ouvl/eHlVoCh42UEgoC59
-	 Xz2z+5q1g5ZUeIvFHHnDwFFLRFBHuVEHfhIQy3CnDkq61YQGkZ0HQzxzI7gQ1nzAS/
-	 RFEEfTg5DC+5az0h/lJTZhA3OaHW1bvsnb2N+cUf71KxdCOa7XjHKqB1yUEnHdimqZ
-	 LO8dVA57VhYuaKeW/usRLCpi+U4P6PIHTMe2SK0DoAdbpvqYTYr4AkaBOpuEFH21//
-	 MCGelnwlnew9Q==
-Date: Wed, 21 Aug 2024 09:19:39 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/5] xfs: use kfree_rcu_mightsleep to free the perag
- structures
-Message-ID: <20240821161939.GC865349@frogsfrogsfrogs>
-References: <20240821063901.650776-1-hch@lst.de>
- <20240821063901.650776-2-hch@lst.de>
+	s=arc-20240116; t=1724257219; c=relaxed/simple;
+	bh=0RN3TRX3yBTaoG3qk4ozEmB+r/7a76UlQuZG8EBldyg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SPCcHdvIjoPZZ9TqiQ4zx00b5q0bQE+n5z9rQrFVsXdcdW86JquVMvapf2H3OsqXfR/gP7TW8qmjuw4oZ6S+uHf40n6FefTlG5LnpH2TdtdYNQwsBUFOVdmumq/tPUyfzRT6HrW7RXtkOIc7OI81pGwN+T4C2YKgYTblLH/qAtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkuPitu4; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5d5c7f23f22so4181337eaf.0;
+        Wed, 21 Aug 2024 09:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724257216; x=1724862016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vhsRhHHgA460KmlvgmMOROdQkEYqdVaGy9dpXTwKETQ=;
+        b=QkuPitu4bZ0hE1UXJ8Sx7uT0/cpoWnI9fhRAOF1IZDAumnJ9sGkNqzHzh6khvYzOT8
+         5U/J7LK/EUBhzpBpi+RzGNSlLrzhuOEyAb0KtFuA6iJyeRpOylu0QE0E0R1MFQQic6Qi
+         IDwgG12VXUd5ieAMByjieZlqcnn5to8zuu5vMYKH1AUM7HLBs7M6ZUjau83nwRJmFYY8
+         88X5QscXzTCA7e5xaIHoI2/Xfvdh+fURcarClsT7ROYeB7h5B1CTIuL/3hqP1GDdBwpu
+         I4SlaV+7NHCuVKYlQ6RgR/PwDnpDwo1PvdVo9t7VZA2iFSxsnSRTDkuI5Wz//2J9qt2P
+         FgAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724257216; x=1724862016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vhsRhHHgA460KmlvgmMOROdQkEYqdVaGy9dpXTwKETQ=;
+        b=BOldYwPeDThH6Kz6londHHueFfQuqsJxsx+ITOae/FOb4FMg5tJWTg201QRzBQbbf7
+         PBgMA0bBGAo8hRYpunMcsxh5HJd7jickMIH+LC2DMM9eKYIRRkFGPH/Yh/wKBtOTa6p3
+         3ve5sg5bAPAIIGbBBqsICqkC2aM1Nes4jXHrupHe3Dg/JK+XoMCI2DemqjVcvUUUz93k
+         /nsqeUrm1yOJIeHtTYvBpl1zpzTyVl3aA/FDXhbGC1/gXvbDB2PzfR2vr8GlOWsSG5Ht
+         AGikBJnzdqNrOx4WzXQ7PIarExnVpulPRhOgkwE7VqV+PTL02XhlX/pOI6eDxhTfzn6/
+         7z7g==
+X-Forwarded-Encrypted: i=1; AJvYcCV4EyhPzZVVyP+Fr4V6eiNSwrjGw9zeTxLjauicMzKz/jf4/1f1O/epk0n6Wd6KVBdDQ1iTMEwabG767NY=@vger.kernel.org, AJvYcCVJZQkCevu+ipQXQ3tndSm5pEjRfmwYJEpYdMcByuRAnYFHaAZBlm+ERV3Qer6L0lo0+w5dT7CC3UIlUqRvgujR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9GfR8TEz1GJAAGOYoTZQMXD1khCDSw14fk14Wiy8TaOxtoioH
+	TJtqSy06Vts1yGOnPFnJy3SAXnTjZgkOgV1x+H2EHIBeNOYr0Xk8tqIbCHYfx9Bwi3Gi4lnXs/l
+	68vyu5ft4GJgd9kQc2iWIcumGfPM=
+X-Google-Smtp-Source: AGHT+IHxLwEOn+yLKvWv3YQVmoIjzuASNvJuOZVGLBWsX/53u/E9LE77DnAjl+3NmlWimETKSzNaaXnlGkRMLdtn3M4=
+X-Received: by 2002:a05:6358:6184:b0:1b1:aca9:9627 with SMTP id
+ e5c5f4694b2df-1b59f969251mr390945155d.7.1724257216157; Wed, 21 Aug 2024
+ 09:20:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821063901.650776-2-hch@lst.de>
+References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com>
+ <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com> <CABi2SkWPiGJTv3FEPxD1OJYUAoePab8jG+CSd58UHqEsBeOYbA@mail.gmail.com>
+In-Reply-To: <CABi2SkWPiGJTv3FEPxD1OJYUAoePab8jG+CSd58UHqEsBeOYbA@mail.gmail.com>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Wed, 21 Aug 2024 17:20:04 +0100
+Message-ID: <CAKbZUD3Siwq4GZdOy-2n_txG2BMQ=m7PypB53sQxeLcBE4xYGA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] selftests/mm: add more mseal traversal tests
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 08:38:28AM +0200, Christoph Hellwig wrote:
-> Using the kfree_rcu_mightsleep is simpler and removes the need for a
-> rcu_head in the perag structure.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/libxfs/xfs_ag.c | 12 +-----------
->  fs/xfs/libxfs/xfs_ag.h |  3 ---
->  2 files changed, 1 insertion(+), 14 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_ag.c b/fs/xfs/libxfs/xfs_ag.c
-> index 7e80732cb54708..4b5a39a83f7aed 100644
-> --- a/fs/xfs/libxfs/xfs_ag.c
-> +++ b/fs/xfs/libxfs/xfs_ag.c
-> @@ -235,16 +235,6 @@ xfs_initialize_perag_data(
->  	return error;
->  }
->  
-> -STATIC void
-> -__xfs_free_perag(
-> -	struct rcu_head	*head)
-> -{
-> -	struct xfs_perag *pag = container_of(head, struct xfs_perag, rcu_head);
-> -
-> -	ASSERT(!delayed_work_pending(&pag->pag_blockgc_work));
-> -	kfree(pag);
-> -}
-> -
->  /*
->   * Free up the per-ag resources associated with the mount structure.
->   */
-> @@ -270,7 +260,7 @@ xfs_free_perag(
->  		xfs_perag_rele(pag);
->  		XFS_IS_CORRUPT(pag->pag_mount,
->  				atomic_read(&pag->pag_active_ref) != 0);
-> -		call_rcu(&pag->rcu_head, __xfs_free_perag);
-> +		kfree_rcu_mightsleep(pag);
+On Wed, Aug 21, 2024 at 4:56=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wrote=
+:
+>
+> Hi Pedro
+>
+> On Fri, Aug 16, 2024 at 5:18=E2=80=AFPM Pedro Falcato <pedro.falcato@gmai=
+l.com> wrote:
+> >
+> > Add more mseal traversal tests across VMAs, where we could possibly
+> > screw up sealing checks. These test more across-vma traversal for
+> > mprotect, munmap and madvise. Particularly, we test for the case where =
+a
+> > regular VMA is followed by a sealed VMA.
+> >
+> > Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
+> > ---
+> >  tools/testing/selftests/mm/mseal_test.c | 111 ++++++++++++++++++++++++=
++++++++-
+> >  1 file changed, 110 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/se=
+lftests/mm/mseal_test.c
+> > index 259bef4945e9..0d4d40fb0f88 100644
+> > --- a/tools/testing/selftests/mm/mseal_test.c
+> > +++ b/tools/testing/selftests/mm/mseal_test.c
+> > @@ -766,6 +766,42 @@ static void test_seal_mprotect_partial_mprotect(bo=
+ol seal)
+> >         REPORT_TEST_PASS();
+> >  }
+> >
+> > +static void test_seal_mprotect_partial_mprotect_tail(bool seal)
+> > +{
+> > +       void *ptr;
+> > +       unsigned long page_size =3D getpagesize();
+> > +       unsigned long size =3D 2 * page_size;
+> > +       int ret;
+> > +       int prot;
+> > +
+> > +       /*
+> > +        * Check if a partial mseal (that results in two vmas) works co=
+rrectly.
+> > +        * It might mprotect the first, but it'll never touch the secon=
+d (msealed) vma.
+> > +        */
+> > +
+> > +       setup_single_address(size, &ptr);
+> > +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > +
+> > +       if (seal) {
+> > +               ret =3D sys_mseal(ptr + page_size, size);
+> you are allocating 2 pages , and I assume you are sealing the second
+> page, so the size should be page_size.
+> ret =3D sys_mseal(ptr + page_size, page_size);
 
-I started wondering, have you seen any complaints from might_sleep when
-freeing pags after a failed growfs?  Then I wondered if growfs_data
-could actually take any locks that would prevent sleeping, which led me
-to another question: why do growfs_{data,log} hold m_growlock but
-growfs_rt doesn't?  Is that actually safe?
+Yes, good catch, it appears to be harmless but ofc down to straight luck.
+I'll send a fixup for this and the other mistake down there.
 
-I think the kfree_rcu_mightsleep conversion is ok, but I want to see if
-anything blows up with the rtgroups variant.
+>
+> > +               FAIL_TEST_IF_FALSE(!ret);
+> > +       }
+> > +
+> > +       ret =3D sys_mprotect(ptr, size, PROT_EXEC);
+> > +       if (seal)
+> > +               FAIL_TEST_IF_FALSE(ret < 0);
+> > +       else
+> > +               FAIL_TEST_IF_FALSE(!ret);
+> > +
+> > +       if (seal) {
+> > +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &prot)=
+ > 0);
+> > +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> To test partial mprotect, the test needs to add the check for the
+> first page to be changed, Also to avoid the merge,  a PROT_NONE page
+> can to be added in front.
 
---D
+No, I'm leaving partial mprotect to be undefined. It doesn't make
+sense to constraint ourselves, since POSIX wording is already loose.
 
->  	}
->  }
->  
-> diff --git a/fs/xfs/libxfs/xfs_ag.h b/fs/xfs/libxfs/xfs_ag.h
-> index 35de09a2516c70..d62c266c0b44d5 100644
-> --- a/fs/xfs/libxfs/xfs_ag.h
-> +++ b/fs/xfs/libxfs/xfs_ag.h
-> @@ -63,9 +63,6 @@ struct xfs_perag {
->  	/* Blocks reserved for the reverse mapping btree. */
->  	struct xfs_ag_resv	pag_rmapbt_resv;
->  
-> -	/* for rcu-safe freeing */
-> -	struct rcu_head	rcu_head;
-> -
->  	/* Precalculated geometry info */
->  	xfs_agblock_t		block_count;
->  	xfs_agblock_t		min_block;
-> -- 
-> 2.43.0
-> 
-> 
+>
+> > +       }
+> > +
+> > +       REPORT_TEST_PASS();
+> > +}
+> > +
+> > +
+> >  static void test_seal_mprotect_two_vma_with_gap(bool seal)
+> >  {
+> >         void *ptr;
+> > @@ -983,6 +1019,41 @@ static void test_seal_munmap_vma_with_gap(bool se=
+al)
+> >         REPORT_TEST_PASS();
+> >  }
+> >
+> > +static void test_seal_munmap_partial_across_vmas(bool seal)
+> > +{
+> > +       void *ptr;
+> > +       unsigned long page_size =3D getpagesize();
+> > +       unsigned long size =3D 2 * page_size;
+> > +       int ret;
+> > +       int prot;
+> > +
+> > +       /*
+> > +        * Check if a partial mseal (that results in two vmas) works co=
+rrectly.
+> > +        * It might unmap the first, but it'll never unmap the second (=
+msealed) vma.
+> > +        */
+> > +
+> > +       setup_single_address(size, &ptr);
+> > +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > +
+> > +       if (seal) {
+> > +               ret =3D sys_mseal(ptr + page_size, size);
+> ret =3D sys_mseal(ptr + page_size, page_size);
+>
+> > +               FAIL_TEST_IF_FALSE(!ret);
+> > +       }
+> > +
+> > +       ret =3D sys_munmap(ptr, size);
+> > +       if (seal)
+> > +               FAIL_TEST_IF_FALSE(ret < 0);
+> > +       else
+> > +               FAIL_TEST_IF_FALSE(!ret);
+> > +
+> > +       if (seal) {
+> > +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &prot)=
+ > 0);
+> > +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> To test partial unmap, the test needs to add the check for the first
+> page to be freed, Also to avoid the merge,  a PROT_NONE page needs to
+> be in front.
+
+I'm not testing partial unmap. Partial unmap does not happen. I have
+told you this before.
+
+>
+> The test_seal_munmap_partial_across_vmas  shows the behavior
+> difference with in-loop approach and out-loop approach. Previously,
+> both VMAs will not be freed, now the first VMA will be freed, and the
+> second VMA (sealed) won't.
+>
+> This brings to the line you previously mentioned: [1] and I quote:
+> "munmap is atomic and always has been. It's required by POSIX."
+
+This is still true, the comment was a copy-and-paste mindslip. Please
+read the email thread. It has been fixed up by Andrew.
+
+--=20
+Pedro
 
