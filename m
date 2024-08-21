@@ -1,143 +1,234 @@
-Return-Path: <linux-kernel+bounces-295633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5AC959F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFA4959F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2541F2340E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC601C21C1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0591B1D40;
-	Wed, 21 Aug 2024 14:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2891D1AF4F6;
+	Wed, 21 Aug 2024 14:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gMztRNNj"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kgkIx0U8"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C94A1AF4DB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701461AF4F4
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249406; cv=none; b=CvrsggBC9NowpTYhtTxkislcSg5OyozPGlJ9oesKHRjaeiVnTwCQ47roD8GLZlt3sk3X00YeQoE863kFMpEVK9h0gd9CAMy4Eb3uRwXbNgSezcDL9e2QAiv/b7HJxnOw434blpjiNcLBrPS1z6wAOYzeB5zmTjTlAZEiLsSqfFA=
+	t=1724249468; cv=none; b=HI8RM2RX/0mjogG7BtPzmnOTbqW+P3srCQMBA7NQtvAnIKitu5avhkatCtyB6ENEVYEdufUdGy8MZAqzaeI7Y0IiIiHFqN16RPyw/+nJso5bH1CvYcEJzjz3x2MJc76o4KcMGdSzWRGwzeasnOOZpT6sSZ6Ky1xkDn3WSfxGVnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249406; c=relaxed/simple;
-	bh=riyVaot7yE9KKpq7VxW53IsUodHZOfqZV1CJ4X02tHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H5TeT92qYEndh0TwX/57s1b6seFW5M1WVj4H7eVFZ2otAYW2jbSGGjkBZ+1CF1lQoDz7ZBK/m/SbqabUyTM74n14V9yPIFSJ1T1D69IG1DzaVbQVU87/j+NYUkVMtjvqYRO6OTd8Qa8pw07q3VqHKhRh0X8jdM5NKwbBiUuZvCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gMztRNNj; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so6247184a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:10:04 -0700 (PDT)
+	s=arc-20240116; t=1724249468; c=relaxed/simple;
+	bh=7LN1VPua/GREWYA77ysD6GCYYUF0iwvig9V4vs6/EnE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mCUyxl127KQtkjGxs1ZBelLyT1BjX4z9eIy9ay3AgcuVg3yBla7kjMz6exewgtC7cwDYXw2UJrjqMfgws8f52u9ewRFV/HUG8C//7X0mKqgeBYbH1WnBeduzB3GkeIMYtZR98E+SyJWyStxOol99V7Ff/4wbmvW1gHDEX7niUIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kgkIx0U8; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e165825ebfdso1802840276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:11:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724249403; x=1724854203; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pyVej4wWk7sZ6oPDSS5+W5HYICTGvMDbDpyFC/8qrHY=;
-        b=gMztRNNjdM7c/Zywdf6bFEcUM4PxVlv9HCZBuNCFhKrkSs3DasmEmNTy94zIeKkY6K
-         xNzNFqnsSzg8Zc2Sn3P/Z0FQt/fBgHC0Kai81QM7bFrFNrBZaCnv8erG6u1rqdkqXlkP
-         kECjK4ZV0D3L9BJIYWPXEBHEZvmgROqTK2JqwP2uUhyj5vfu+itrKd8UXAn1xPBJ9FOz
-         CN5T2rCMtjvUjDleIZIIdkuEt3BDcb94F1mpNEbn+YogMP73s2I/YMh2g3x3ZpLPhglu
-         XQ5nepxxXEhQ0Ri0lxW0qX1tK2yRPEyb05aW6LSTZEejJ5lH75zCPOnmynSKz5oiBKvX
-         1RFQ==
+        d=linaro.org; s=google; t=1724249465; x=1724854265; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wt6DNfGyFCmulHbPUqbeiwc6HHUuVhB/uxCzt67oVF4=;
+        b=kgkIx0U8DFjeMLSpQs20fFXKpNWVAJUb5YpVYD2L4cLOy0kSrUMjPS0tiDMj2Bavfk
+         d/HLYDWh7EVtNqYYGh2+C7JZJ4PBMDOye+cdcPQx4i3SReE1cjgOoLGCoc/Q+ciQ86bc
+         QzEqxGHGXkeKo0osn4h3hdiyRo5Xvh0BKg4B92Ai9CCEY/P5RYFFRIc0BZaRPLpe7CuQ
+         qAdqq5LXMqXB9x/K+RxOZhD4UzmIxvpx6Ujo7bZPP3UAgieggH9PQ0mRS5BqbkJQhMrR
+         2JZi0tNbD26LFh16ALBmIsqd1Ck0OnvSyLEDWF2q4/myKSOU6ChkpB2S0Ml3WxKmf75G
+         m+YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724249403; x=1724854203;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pyVej4wWk7sZ6oPDSS5+W5HYICTGvMDbDpyFC/8qrHY=;
-        b=HzjfxLK3aEgm/mSLZ5iKVI7Tb+sBFF9CQUt1//IHZhSJcWc6i0giZZ5IO5Z++M2rEi
-         fVdcnzpw8WdOfOHTKhNO1Ox82SFAVLB5kgMGVNM2j8EQxGmsUVApPg8XYOSannT24HDp
-         WM+AtaDNgGMhXFW3K2bppGS1UYpQsASd5iooNaNuESj1JCxf6+tT92XBkYQBHw8bGzut
-         +wLgnMaCDfJLQhz5oFn5wuM1oIcYI9FjjaKtzGmgHGFKBz0LHFRuNWerMuzAMyxlCCZo
-         rUIK73cOHdrZhGDz8MhVCf+bcB3KuNA/pRL3H0KITsF95aKtJxt183+l8KfdnzCikKKL
-         j3vg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9rZcEWsy6ZGmYwhZPqVk/jStPhlF3BWrHaxR/uUoHNlr0PaKkh+HbZIPqB2t/V5BIS3vogdYQw2p4xpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs9QIlk4qEFnWNbQa/F3MyPO8n3drll2QwHuR6RWevgounHGlp
-	VQomgu8Aw8kTldn0sodEl4wBAnlYrCK+THpEm3v/G35w2nbMNXesko/YItxBA8Y=
-X-Google-Smtp-Source: AGHT+IFaJ95fVS3WarToMUvEwzPOidzKcDkwSwhOd87o/almjcB695xARxQZyqh4KrES3XHrEtGu9Q==
-X-Received: by 2002:a17:907:d3e1:b0:a7d:e84c:a9e7 with SMTP id a640c23a62f3a-a866f8a99a9mr191794366b.53.1724249402461;
-        Wed, 21 Aug 2024 07:10:02 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a867acc87ffsm79881466b.28.2024.08.21.07.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 07:10:01 -0700 (PDT)
-Date: Wed, 21 Aug 2024 16:09:59 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Tony Lindgren <tony@atomide.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Ryo Takakura <takakura@valinux.co.jp>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Joel Granados <j.granados@samsung.com>,
-	Lukas Wunner <lukas@wunner.de>, Feng Tang <feng.tang@intel.com>,
-	Baoquan He <bhe@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH printk v8 00/35] wire up write_atomic() printing
-Message-ID: <ZsX1NztislIJuYsy@pathway.suse.cz>
-References: <20240820063001.36405-1-john.ogness@linutronix.de>
- <ZsWxpVG8uZ9Nq26h@pathway.suse.cz>
- <20240821092841.j42XmBAk@linutronix.de>
+        d=1e100.net; s=20230601; t=1724249465; x=1724854265;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wt6DNfGyFCmulHbPUqbeiwc6HHUuVhB/uxCzt67oVF4=;
+        b=NzpzxLuAcyeD33/rNXxmvNqoY4pcJAyHWUm7DnvVNlVUCOu2+odZkIbJC+BHlNNrxg
+         C+tb3Ge+BlALZOikRPCQ1LUrMyvoWnISpR7w52IYgIPWDkm1lmdLPfKBwaGbPG80wJoT
+         oJET34Y4JR0Rw7Tmt5N1uclth67j64mhZzQ81jmuWaW0UVS8MPRyeEDjD0wKjc3oCs9V
+         asvJDIKSoXhCkc5VQWjq/JshcHH4yWFciPDwsbErH4ei0cimuqgADihH7YNfTm9voy10
+         yV9CAoSaqmC7zEE4cyIeKEc4XyESEbpnj8YbOBkxkSjuEZhJnb9z087FqTmubq+Kj3BC
+         z1eQ==
+X-Gm-Message-State: AOJu0YxRS+5uWFZINhs5nMpoKWZRiE98BTwFw8mrKDW7V/hQBrnZxZ6B
+	Jnm2rpBa5ccej/lJy3eh2zFZVMQ8QvI/A0exTBALq88umwQ5w03XXtnVP6FL6hSxzKblYuvo2CI
+	yy2yGY1pdTUJcYGTkSuQF/yueQal4ePanMp6uNw==
+X-Google-Smtp-Source: AGHT+IGVaY+XOzSCMMKYo0vk2NKxuiTvl/6LeynA4FnIc/ol95c2Kjx2OzRWhoDXoulGihOVWJhIbgtU2EjMVYvn7Rk=
+X-Received: by 2002:a25:aa4d:0:b0:e16:6aae:e68 with SMTP id
+ 3f1490d57ef6-e166aae1097mr1635095276.20.1724249465228; Wed, 21 Aug 2024
+ 07:11:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821092841.j42XmBAk@linutronix.de>
+References: <20240814153558.708365-1-jens.wiklander@linaro.org>
+ <20240814153558.708365-3-jens.wiklander@linaro.org> <CAPDyKFprUeK2UiqAmLvMvZMhtOZa0zmCZ-Gbh_2n1kKF0iOXSA@mail.gmail.com>
+In-Reply-To: <CAPDyKFprUeK2UiqAmLvMvZMhtOZa0zmCZ-Gbh_2n1kKF0iOXSA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 Aug 2024 16:10:28 +0200
+Message-ID: <CAPDyKFpX7=DGE8ERpt4ATM2XkgfZ2Tmi+QP-ozMJ6nVmgUeMEQ@mail.gmail.com>
+Subject: Re: [PATCH v9 2/4] mmc: block: register RPMB partition with the RPMB subsystem
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shyam Saini <shyamsaini@linux.microsoft.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
+	Sumit Garg <sumit.garg@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Manuel Traut <manut@mecka.net>, 
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Tomas Winkler <tomas.winkler@intel.com>, 
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 2024-08-21 11:28:41, Sebastian Andrzej Siewior wrote:
-> On 2024-08-21 11:21:41 [+0200], Petr Mladek wrote:
-> > The series seems to be ready for linux-next from my POV.
-> > 
-> > I am going to push it there once I get approval from John about
-> > the proposed update of the commit message for the 30th patch,
-> > see https://lore.kernel.org/r/ZsWvRETyuh1Yq80j@pathway.suse.cz
-> 
-> If it is just the commit message, couldn't you push it now to next now
-> and then simply rebase it with an updated commit message?
+On Tue, 20 Aug 2024 at 16:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Wed, 14 Aug 2024 at 17:36, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+> >
+> > Register eMMC RPMB partition with the RPMB subsystem and provide
+> > an implementation for the RPMB access operations abstracting
+> > the actual multi step process.
+> >
+> > Add a callback to extract the needed device information at registration
+> > to avoid accessing the struct mmc_card at a later stage as we're not
+> > holding a reference counter for this struct.
+> >
+> > Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part()
+> > instead of in mmc_rpmb_chrdev_open(). This is needed by the
+> > route_frames() function pointer in struct rpmb_ops.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > Tested-by: Manuel Traut <manut@mecka.net>
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> First of all, sorry for the long delay! Besides only one comment, see
+> more below, this looks good to me.
+>
+> > ---
+> >  drivers/mmc/core/block.c | 242 ++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 240 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> > index 2c9963248fcb..cc7318089cf2 100644
+> > --- a/drivers/mmc/core/block.c
+> > +++ b/drivers/mmc/core/block.c
+> > @@ -33,6 +33,7 @@
+> >  #include <linux/cdev.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/scatterlist.h>
+> > +#include <linux/string.h>
+> >  #include <linux/string_helpers.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/capability.h>
+> > @@ -40,6 +41,7 @@
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/idr.h>
+> >  #include <linux/debugfs.h>
+> > +#include <linux/rpmb.h>
+> >
+> >  #include <linux/mmc/ioctl.h>
+> >  #include <linux/mmc/card.h>
+> > @@ -76,6 +78,48 @@ MODULE_ALIAS("mmc:block");
+> >  #define MMC_EXTRACT_INDEX_FROM_ARG(x) ((x & 0x00FF0000) >> 16)
+> >  #define MMC_EXTRACT_VALUE_FROM_ARG(x) ((x & 0x0000FF00) >> 8)
+> >
+> > +/**
+> > + * struct rpmb_frame - rpmb frame as defined by eMMC 5.1 (JESD84-B51)
+> > + *
+> > + * @stuff        : stuff bytes
+> > + * @key_mac      : The authentication key or the message authentication
+> > + *                 code (MAC) depending on the request/response type.
+> > + *                 The MAC will be delivered in the last (or the only)
+> > + *                 block of data.
+> > + * @data         : Data to be written or read by signed access.
+> > + * @nonce        : Random number generated by the host for the requests
+> > + *                 and copied to the response by the RPMB engine.
+> > + * @write_counter: Counter value for the total amount of the successful
+> > + *                 authenticated data write requests made by the host.
+> > + * @addr         : Address of the data to be programmed to or read
+> > + *                 from the RPMB. Address is the serial number of
+> > + *                 the accessed block (half sector 256B).
+> > + * @block_count  : Number of blocks (half sectors, 256B) requested to be
+> > + *                 read/programmed.
+> > + * @result       : Includes information about the status of the write counter
+> > + *                 (valid, expired) and result of the access made to the RPMB.
+> > + * @req_resp     : Defines the type of request and response to/from the memory.
+> > + *
+> > + * The stuff bytes and big-endian properties are modeled to fit to the spec.
+> > + */
+> > +struct rpmb_frame {
+> > +       u8     stuff[196];
+> > +       u8     key_mac[32];
+> > +       u8     data[256];
+> > +       u8     nonce[16];
+> > +       __be32 write_counter;
+> > +       __be16 addr;
+> > +       __be16 block_count;
+> > +       __be16 result;
+> > +       __be16 req_resp;
+> > +} __packed;
+> > +
+> > +#define RPMB_PROGRAM_KEY       0x1    /* Program RPMB Authentication Key */
+> > +#define RPMB_GET_WRITE_COUNTER 0x2    /* Read RPMB write counter */
+> > +#define RPMB_WRITE_DATA        0x3    /* Write data to RPMB partition */
+> > +#define RPMB_READ_DATA         0x4    /* Read data from RPMB partition */
+> > +#define RPMB_RESULT_READ       0x5    /* Read result request  (Internal) */
+> > +
+> >  static DEFINE_MUTEX(block_mutex);
+> >
+> >  /*
+> > @@ -155,6 +199,7 @@ static const struct bus_type mmc_rpmb_bus_type = {
+> >   * @id: unique device ID number
+> >   * @part_index: partition index (0 on first)
+> >   * @md: parent MMC block device
+> > + * @rdev: registered RPMB device
+> >   * @node: list item, so we can put this device on a list
+> >   */
+> >  struct mmc_rpmb_data {
+> > @@ -163,6 +208,7 @@ struct mmc_rpmb_data {
+> >         int id;
+> >         unsigned int part_index;
+> >         struct mmc_blk_data *md;
+> > +       struct rpmb_dev *rdev;
+> >         struct list_head node;
+> >  };
+> >
+> > @@ -2670,7 +2716,6 @@ static int mmc_rpmb_chrdev_open(struct inode *inode, struct file *filp)
+> >
+> >         get_device(&rpmb->dev);
+> >         filp->private_data = rpmb;
+> > -       mmc_blk_get(rpmb->md->disk);
+>
+> If I understand correctly, the call to mmc_blk_get() is here to
+> reference count the usage of the md->disk. So when a user decides to
+> open the chrdev, we are keeping a reference to the corresponding data
+> around, until the corresponding file descriptor is closed and
+> mmc_rpmb_chrdev_release() is called. We do the similar thing if the
+> regular mmc block device is opened.
+>
+> If we change to increase/decrease the reference count from
+> mmc_blk_alloc_rpmb_part()/mmc_blk_rpmb_device_release() instead - are
+> you certain that we are still taking care of the above scenario
+> correctly?
+>
+> I guess a test that opens the chrdev and then unbinding the mmc host
+> driver should tell us. :-)
 
-I see. It seems that John has vacation and can't respond quickly.
+From your nice little debugging session conveyed to me offlist, you
+have convinced me that this is perfectly okay.
 
-OK, I have pushed the patchset into printk/linux.git,
-branch rework/write_atomic. It should appear in
-the next rebase of linux-next.
+Therefore, please add:
 
-Best Regards,
-Petr
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
 
