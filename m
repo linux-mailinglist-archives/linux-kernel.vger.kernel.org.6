@@ -1,218 +1,227 @@
-Return-Path: <linux-kernel+bounces-295250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4961D959909
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:07:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F796959925
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8861F237EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:06:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77C32820E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D951FA76A;
-	Wed, 21 Aug 2024 09:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD27A1FEECE;
+	Wed, 21 Aug 2024 09:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JYc4Welv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQQUGmVR"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74DD1FA763
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880B11FEEC1;
+	Wed, 21 Aug 2024 09:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233326; cv=none; b=hdnh7tTUrUpLcEQemjmMyYSmLjD6GBJ3lifqkO2I3t6/8eCJeuF/pW3Bc+UZBdCPpRUu1wgUnZ+aVhPfHgS6HtGhDV/OyMvA/IzLFaPC1+kxtVPSEIcphUzqJGKV3Agohm6d5C0IOtP/b291e9lQlhjVdihjo44QmMxWSoDSlQU=
+	t=1724233387; cv=none; b=oExQ24TBFs9Q6cpaffyQfKCeBfdbS1pa9jBbFUAYMAsZcnR5nFovM7TNAaIyBXNdfcUDgkiQbtJDfVBcDAbk0gEd8oCHl5lHOL1BvlQCE7xqi7Pfuf8m6UQL3BCtlrdzoRxSp3/c6XAketakWMHw26WFBNIqXi+bb0Zpz7i35BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233326; c=relaxed/simple;
-	bh=x6w69FOfN0JDJ9r41oVIBmQJZeB5SIDcfQlLkOsTjbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XbKu9+1ifGlmuUtvfQSipgjjQlIzUKWgthtkLeuxK1elXQ/Hw1wpP5V44BsiOzInaw/+fi9DjesNsWsE6Lm4z+/yGExmRiuCJpJUK7jPBjHBYUmxn9WUd+LKY6v7MGkfxDcBClCsCoC8XpVUCN+xOf3o0abfack/pwZ13L/w78I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JYc4Welv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724233323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZbsVHgO39wK2YFFRzsnUaNf+VhwFz28zLa/5pXOkFvM=;
-	b=JYc4WelvxJEyZpbflA563gT3tT1PTkde1FnCow1Iy9ZYxHxCs0THWIpqZ362DI584MExHv
-	yjAB0CALRMW2vk7uWWeO9ywJPETq2mQ4HkQP8gbaxEBxyr6HwdL8ODeYPNklEDMVv0E0Et
-	unF9RwdrQYk/MgZ/DlvCSlgAK0ESrOw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-450-Yjo5ObswNcS5onoPeHW3Tg-1; Wed, 21 Aug 2024 05:42:01 -0400
-X-MC-Unique: Yjo5ObswNcS5onoPeHW3Tg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so56094095e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:42:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724233320; x=1724838120;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+	s=arc-20240116; t=1724233387; c=relaxed/simple;
+	bh=TEgv3aQCM6TxEga1xHs5RFGVl+GDTXhCc2etwGZklwU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=e+OrHNxDcHcvFiDxAyaq+CWIOsjQPi6qntVhsjpwrUVo6/ctMp0lXJSUknrmzYWGKur5VSjV4oOGQAbIuDjV9eWQuRVi4NNK/6gLsVXweFvcxdJlOoTg93XagQFuVXNrzKS4nKs4WDCmzW5L/73y0Pz9ha//j+Gnd+4pWzM81UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQQUGmVR; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7141e20e31cso918684b3a.3;
+        Wed, 21 Aug 2024 02:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724233385; x=1724838185; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ZbsVHgO39wK2YFFRzsnUaNf+VhwFz28zLa/5pXOkFvM=;
-        b=tbn2pQeXCdkaHC6qtFZN7GuhjiNB6n49IIOKkz29LmCwloIeEhyY2alBy5phkTevrV
-         wjZudTPI2A0tHyr7mDyNmtE18OHqD50qf9/j7oD7kv7Qcb16tepoauo5ob1NTqLx+GVb
-         TvRgYn9Q4oz5FhIMY8rgui14V6lvlRISqzBmC44BlPnWO82z8o9thbKa/mtUoCtb19uc
-         K+cyxVjeDAZDEjxtjjoaeEC17G4Ge/AyvxWsoPqqF5EdSLS7uy3Xg2EKq76+fNY788qn
-         Iiz8ZeBi/Dgd2TYdlJf8hD6CM/FZOwpOPR9iWERA5qn/M6+CTY9tWiLGvEbXJWa9AZUt
-         77qw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3SdBfhARczB5GypnDNHkTVLXXbWn2fae/v+ncnnv3RX+vWGFGE3keefMEZpBi25OXiTf05UgILhf7jYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWOYjL7ogLP51FxzeReAdQ7yqt4bbpGvBC5kD6Fv2D2dshnNUN
-	xGqH3pnm/zkqvu5CiHuoxSFaeIojHPyVN2LW27cBOmsl2+Jk/pjgUsHq8DtjXTazYsl7EiCFBWb
-	o340Fzp1Kqa/hKKdyZMcYKZdgst21CYdrg1M8cSQhBDCWVcL3XH1qlhqbPsr4Ew==
-X-Received: by 2002:a05:600c:4f16:b0:426:627e:37af with SMTP id 5b1f17b1804b1-42abd111fa6mr13200735e9.3.1724233320410;
-        Wed, 21 Aug 2024 02:42:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+J/R+dRqKSLP4LEuzopvwm1A0w8OV/3YEoYoiuxHeCmipgshfH6pdw8qb77/tYGODfu/XIw==
-X-Received: by 2002:a05:600c:4f16:b0:426:627e:37af with SMTP id 5b1f17b1804b1-42abd111fa6mr13200405e9.3.1724233319564;
-        Wed, 21 Aug 2024 02:41:59 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:4300:16d5:c5b:8388:a734? (p200300cbc705430016d50c5b8388a734.dip0.t-ipconnect.de. [2003:cb:c705:4300:16d5:c5b:8388:a734])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189897008sm15168268f8f.84.2024.08.21.02.41.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 02:41:59 -0700 (PDT)
-Message-ID: <4b867535-8481-4fa1-bed1-ad25a76682f0@redhat.com>
-Date: Wed, 21 Aug 2024 11:41:57 +0200
+        bh=V5AWHlaVd3ZyOv2zICiGmU6+h+8jTEdnVcyzs1nYn74=;
+        b=QQQUGmVRi8ZO0TKfTU8V1oIZTeJt0sEiEg9jh0GLIqQ8jyyFPttz6mh4Ohng9izs+q
+         rBl9hjA4GCoth9gLCm71UO5W6dFQ9gNJwHRUH4fSJrrPW9AAFTY5bMWYqZjJA6EX+Hpr
+         L0O5xZKr1CG4qtYupeTD9Pc5/EjS9HnZbR7jBUjYSQhFodeiWJyo7AM/vAlO08cR78qE
+         uM+9hUiOQnVBfSr3CvsAiNDww/gfG7+UbPSmp9NBYMCt+TxHiWj+K3fV477SXAVm9Ycv
+         u8f/b+As75pgGvVABna1ju5ojED+Uw533p1PvjQpKTPI3S1IrcGAV2ulkqZcDxA2UzoO
+         zfbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724233385; x=1724838185;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V5AWHlaVd3ZyOv2zICiGmU6+h+8jTEdnVcyzs1nYn74=;
+        b=V6yqKihEyeXISYkoN1umnZFsfE2Xd7SobcBCm64cuGeIN+TpLierocDo8drltBTz9t
+         jR4f83ERWxC+0vt9FPUA4D6gjNx5PHpRS/zYvS/YVD4lmyuxyvZr4sJ/7u7tXqyJ6VVD
+         kLQ0KAn4VhkBrc2PCZrAbAU7R1jedg53eg4ahNWX99i5JcvCdyHlmbxtGrB6KPJbEs8S
+         ldVrvROR5zXgun8462SoNaurQaayr5YKRU7lhmmP7PcKWcY4V8PnhDvHl6HOvD5Nicus
+         4MNhWQfjzNkoXLTFgl7xBcjAXEl4UFXY5E3Fe8Z8JgVkf6tKkOgZTDC3eDR/2M4G6f+T
+         tf6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU8UhvgE4G8zeQXTv1OOeB2Qm/c7NTWMbGE8GCTxpsvXFX4ph0f1c9RwwOE8MtUKlcGATADAh42TpNR3w==@vger.kernel.org, AJvYcCWtGTnIFAWr9wLbOyDObJ4jNoMHbq2cPgeM2is5YEb7o9ypQHRFN9uraaPQvdh3l3rGx7h8raiLbrBtYBp5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfMdo0nuw1LyHmIQ2PsIppx8HDJmdM5ak6mVdtoFgQM9QIeAk9
+	x4dKaAM2g14QpRMi1dUFdxYsuDwWnqUYiugYYI3DdxXR6lkEARcF
+X-Google-Smtp-Source: AGHT+IHYadh9Hp8zSziz/4oZMVO20DM64FroX5gWJMm+4hlieWT3ktQntqkJAxmt4+6LVgDi/kryYA==
+X-Received: by 2002:a05:6a00:188d:b0:706:a87e:ff1b with SMTP id d2e1a72fcca58-7142351e471mr2373149b3a.23.1724233384560;
+        Wed, 21 Aug 2024 02:43:04 -0700 (PDT)
+Received: from [127.0.0.1] ([174.139.202.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add721dsm9571457b3a.42.2024.08.21.02.43.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 02:43:04 -0700 (PDT)
+Message-ID: <9343ba32a457acc4f536120e904a3d7fa9ed0adb.camel@gmail.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Date: Wed, 21 Aug 2024 17:42:59 +0800
+In-Reply-To: <00000000000097e583061a45bfcf@google.com>
+References: <00000000000097e583061a45bfcf@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/14] mm: handle_pte_fault() use
- pte_offset_map_maywrite_nolock()
-To: Qi Zheng <zhengqi.arch@bytedance.com>,
- LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Cc: "hughd@google.com" <hughd@google.com>,
- "willy@infradead.org" <willy@infradead.org>,
- "muchun.song@linux.dev" <muchun.song@linux.dev>,
- "vbabka@kernel.org" <vbabka@kernel.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "rppt@kernel.org" <rppt@kernel.org>,
- "vishal.moola@gmail.com" <vishal.moola@gmail.com>,
- "peterx@redhat.com" <peterx@redhat.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <cover.1724226076.git.zhengqi.arch@bytedance.com>
- <239432a0bc56464e58a6baf3622fdc72526c8d57.1724226076.git.zhengqi.arch@bytedance.com>
- <6a586524-5116-4eaf-b4f3-c1aea290d7c1@cs-soprasteria.com>
- <b4bf605a-d31a-40ad-8cee-fe505e45dc64@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b4bf605a-d31a-40ad-8cee-fe505e45dc64@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 21.08.24 11:24, Qi Zheng wrote:
-> 
-> 
-> On 2024/8/21 17:17, LEROY Christophe wrote:
->>
->>
->> Le 21/08/2024 à 10:18, Qi Zheng a écrit :
->>> In handle_pte_fault(), we may modify the vmf->pte after acquiring the
->>> vmf->ptl, so convert it to using pte_offset_map_maywrite_nolock(). But
->>> since we already do the pte_same() check, so there is no need to get
->>> pmdval to do pmd_same() check, just pass NULL to pmdvalp parameter.
->>>
->>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->>> ---
->>>     mm/memory.c | 9 +++++++--
->>>     1 file changed, 7 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index 93c0c25433d02..d3378e98faf13 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -5504,9 +5504,14 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
->>>     		 * pmd by anon khugepaged, since that takes mmap_lock in write
->>>     		 * mode; but shmem or file collapse to THP could still morph
->>>     		 * it into a huge pmd: just retry later if so.
->>> +		 *
->>> +		 * Use the maywrite version to indicate that vmf->pte will be
->>> +		 * modified, but since we will use pte_same() to detect the
->>> +		 * change of the pte entry, there is no need to get pmdval.
->>>     		 */
->>> -		vmf->pte = pte_offset_map_nolock(vmf->vma->vm_mm, vmf->pmd,
->>> -						 vmf->address, &vmf->ptl);
->>> +		vmf->pte = pte_offset_map_maywrite_nolock(vmf->vma->vm_mm,
->>> +							  vmf->pmd, vmf->address,
->>> +							  NULL, &vmf->ptl);
+On Thu, 2024-06-06 at 22:05 -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+>=20
+> HEAD commit:=C2=A0=C2=A0=C2=A0 d30d0e49da71 Merge tag 'net-6.10-rc3' of
+> git://git.kernel...
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
+> console output:
+> https://syzkaller.appspot.com/x/log.txt?x=3D1736820a980000
+> kernel config:=C2=A0
+> https://syzkaller.appspot.com/x/.config?x=3D399230c250e8119c
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D67ba3c42bcbb4665d3ad
+> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gcc (Debian 12.2.0-14) 12.2=
+.0, GNU ld (GNU Binutils
+> for Debian) 2.40
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.syz?x=3D11a9aa22980000
+> C reproducer:=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.c?x=3D14c57f16980000
+>=20
+> Downloadable assets:
+> disk image (non-bootable):
+> https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_di=
+sk-d30d0e49.raw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/f1276023ed77/vmlinux-d30d0e4=
+9.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/a33f372d4fb8/bzImage-d30d0e4=
+9.xz
+> mounted in repro:
+> https://storage.googleapis.com/syzbot-assets/7fc863ff127d/mount_0.gz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
+>=20
+> ------------[ cut here ]------------
+> kernel BUG at fs/inode.c:626!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> CPU: 1 PID: 5273 Comm: syz-executor331 Not tainted 6.10.0-rc2-
+> syzkaller-00222-gd30d0e49da71 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-
+> debian-1.16.2-1 04/01/2014
+> RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
+> Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8
+> 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f>
+> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
+> RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
+> RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
+> RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
+> R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
+> R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
+> FS:=C2=A0 000055556268d380(0000) GS:ffff88806b100000(0000)
+> knlGS:0000000000000000
+> CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> =C2=A0<TASK>
+> =C2=A0btrfs_evict_inode+0x529/0xe80 fs/btrfs/inode.c:5262
+> =C2=A0evict+0x2ed/0x6c0 fs/inode.c:667
+> =C2=A0dispose_list+0x117/0x1e0 fs/inode.c:700
+> =C2=A0evict_inodes+0x34e/0x450 fs/inode.c:750
+> =C2=A0generic_shutdown_super+0xb5/0x3d0 fs/super.c:627
+> =C2=A0kill_anon_super+0x3a/0x60 fs/super.c:1226
+> =C2=A0btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
+> =C2=A0deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+> =C2=A0deactivate_super+0xde/0x100 fs/super.c:506
+> =C2=A0cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+> =C2=A0task_work_run+0x14e/0x250 kernel/task_work.c:180
+> =C2=A0resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+> =C2=A0exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+> =C2=A0exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+> =C2=A0__syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+> =C2=A0syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+> =C2=A0do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f2ba3059777
+> Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66
+> 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48>
+> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
+> RSP: 002b:00007fff42f9ee78 EFLAGS: 00000206 ORIG_RAX:
+> 00000000000000a6
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f2ba3059777
+> RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fff42f9ef30
+> RBP: 00007fff42f9ef30 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000ffffffff R11: 0000000000000206 R12: 00007fff42f9ffa0
+> R13: 000055556268f6d0 R14: 431bde82d7b634db R15: 00007fff42f9ffc0
+> =C2=A0</TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
+> Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 5e c1 8c ff 90 0f 0b e8
+> 56 c1 8c ff 90 0f 0b e8 4e c1 8c ff 90 0f 0b e8 46 c1 8c ff 90 <0f>
+> 0b e8 3e c1 8c ff 90 0f 0b e8 e6 92 e8 ff e9 d2 fe ff ff e8 dc
+> RSP: 0018:ffffc900036f7ac0 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff888030369e90 RCX: ffffffff82012340
+> RDX: ffff888024190000 RSI: ffffffff820123aa RDI: 0000000000000007
+> RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
+> R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
+> R13: ffff88802f942000 R14: 0000000000000000 R15: ffff888030369e90
+> FS:=C2=A0 000055556268d380(0000) GS:ffff88806b100000(0000)
+> knlGS:0000000000000000
+> CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000555562697708 CR3: 000000001e888000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>=20
+>=20
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before
+> testing.
 
-I think we discussed that passing NULL should be forbidden for that 
-function.
+Set the BTRFS_FS_CLOSING_START flag before kill_anon_super()
+to prevent the race conditions between generic_shutdown_super()=20
+and __btrfs_run_defrag_inode()
 
->>
->> This might be the demonstration that the function name is becoming too long.
->>
->> Can you find shorter names ?
-> 
-> Maybe use abbreviations?
-> 
-> pte_offset_map_ro_nolock()
-> pte_offset_map_rw_nolock()
+#syz test: upstream d30d0e49da71
 
-At least the "ro" is better, but "rw" does not express the "maywrite" -- 
-because without taking the lock we are not allowed to write. But maybe 
-"rw" is good enough for that if we document it properly.
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index f05cce7c8b8d..f7e87fe583ab 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2093,6 +2093,7 @@ static int btrfs_get_tree(struct fs_context *fc)
+ static void btrfs_kill_super(struct super_block *sb)
+ {
+ 	struct btrfs_fs_info *fs_info =3D btrfs_sb(sb);
++	set_bit(BTRFS_FS_CLOSING_START, &fs_info->flags);
+ 	kill_anon_super(sb);
+ 	btrfs_free_fs_info(fs_info);
+ }
 
-And you can use up to 100 characters, if it helps readability.
-
--- 
-Cheers,
-
-David / dhildenb
 
 
