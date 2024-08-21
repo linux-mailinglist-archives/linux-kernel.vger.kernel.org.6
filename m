@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-295916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B9F95A2EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:35:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09AB95A2F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 165C028250A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38AA1C22164
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD115383E;
-	Wed, 21 Aug 2024 16:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7148152199;
+	Wed, 21 Aug 2024 16:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CDa0JJJp"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OnqKf2k9"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D883C14EC5C
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC50D14F138
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258117; cv=none; b=c0+gD2b47637XSzuYphhDhkHDgkEYv8N3NYcNdsn2vh9Na/dmH4Ig5+Ifgfnq0vdQy4nIbSgkufGG/UeXoWnrywxh/su92n/5KVfVhBf79vIENnR0lOOaXvVeVdNk7FXZXCwzeedAezzgKXKVwCQfAB5w1zm8i3wnW1Dw84z4sY=
+	t=1724258137; cv=none; b=lc3URUqoOLYuNBGG5XyU/vk2HFnu+HEptUpEdQGxXnItC0+UyNUkcW7WvWfbMPnCYbHUIfgRMCRW8k3MsB+iiQ6lbXjYTiqbiSacVY4G1wVKPSKIEZk+827XpxC9j48tUa8WU0Wcf8Ce6sPp9ImORzDe8XQgLfnLWXsl/SlYwbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258117; c=relaxed/simple;
-	bh=7RRSQUF/jWGiZ0j43cyHJL9hMT+ZUZY9A7jG7PxHBzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dowwLrgPCGmjjVkszJLhxSHfBGoHNiSsXO2nT4vG2yCyDGzg1VcI+ZbMl8XZTCdcEYJbLcpotgjJ1FI9sVzSuXXuqPkJ0yGGzC3zvMHY2SZ7Ol5V8ppW2xPnVNHevpPiU4d0kcJj5NSQ8v7z0yQIy+UqHqjOmM8c1tuWXP5rhYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CDa0JJJp; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff443so6451502a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:35:15 -0700 (PDT)
+	s=arc-20240116; t=1724258137; c=relaxed/simple;
+	bh=hzBeSbaTtIAToh/GaX5rZx/f1VGFsqzxE8W9F/KKb4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i0fNSnO7AGdPmiEenM88vqhMSixWOHt5A2dl3R79LLXmnLZjDC8w+KE02KmhLIf7UW/r022kNNYPXEK1XE9gqSjHu5jSAXrEgakxLmyK/cJ6k029fEX26huhzkgWF9nEL5CUTiMjMTCIkCKxDj6O8vYcm424NzIMQJIXAWtSsFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OnqKf2k9; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6aab656687cso8557867b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724258114; x=1724862914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mVNHONdIYUDlcb4HKJkyazbBTeiFuRtXuYOCfk7pptg=;
-        b=CDa0JJJpn4B3HQJaTVGXN2FaTO+4PWUnRh7KhZumdAaA3viZxm7h+v3qQhiaLEeTKf
-         r07QOW+38zyev2XR6aEFyvTflerkAB9kSUyTCrdPMpZAP3ZIppZ1cNyXDOWNV23LeDJ6
-         nthr6Kdo1g2kZlvE9m37rZKqFb9dcyrjDkeTUh8kXTZCOWDfJliRLNU/G8dhWdtGh+eP
-         SkDxuktqp7pzs22ZWvp+tIu78zECOqmTwz5ZUCwtblSNQksZpTMlm3Kugo8+ecB0kddm
-         w1cdvgF1/PNxV2oOLHRT91/ZpHEFJyYvo7thtzENHd5gNlrVJl92CStKUK8h80MpQyM1
-         Z7fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724258114; x=1724862914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1724258135; x=1724862935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mVNHONdIYUDlcb4HKJkyazbBTeiFuRtXuYOCfk7pptg=;
-        b=KbblxsW2ecRgrsxdwhmayOhkfmxYFqOiX8YnPz5tYDmXpe2hYNpQu242iz23z6MFOz
-         DH0dC0llx4rT46alM2Xp5fN+e7LYnAUlGqdt01O7XGWsvNHW8AVzEbzy/BRhqMA0ucCG
-         ol2XQrtEvmWMA5DcM8hyaeHsVGNOH1pMmz/7q/TsVPqzz/JJ6ITn2r716f3D3zo+gS37
-         Tw5IAKnWXPoZKap32xwNK5I0EZcALqnYanTbYLSgmqCojN6lA2qpbojhInmMj7MOf/5Y
-         GUdils3nOOPIy9pUWTThZ4kULubcFmZvu+nZNJ01I2NtjTZlHQarcpbCG3y4FrxGHPRX
-         cHjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3w7pfchp694O8EA49/6++KdzgW2k3sCRvWFkK3ae489GInveG5VQcONJyY8P3A6cBpXclm0lM5uUizQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXlcYLj+1/qrS94iBmpvmiNJR3LN/e3t7AqAO5VrL4ojM4fjOF
-	sKIlVBfXHFV+Mc6JXhbPO+Z599rEGkMcH5pJLDcePBKNwe/4WIloot8knSW7h8oxSLgLHIncjaY
-	l
-X-Google-Smtp-Source: AGHT+IHFTiJo6jdkcWP6Ht7XAiB3ovuBe/ll8VqcDXEYzKPHdyBYXewj3953s9653M4Dc3FJWJQbwQ==
-X-Received: by 2002:a17:906:f597:b0:a86:8166:1b0a with SMTP id a640c23a62f3a-a8681661d71mr128857966b.56.1724258114086;
-        Wed, 21 Aug 2024 09:35:14 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8687b6f7e9sm21557866b.145.2024.08.21.09.35.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 09:35:12 -0700 (PDT)
-Date: Wed, 21 Aug 2024 18:35:11 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
-	longman@redhat.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 -next] cgroup: update some statememt about delegation
-Message-ID: <2zbgupbyebbzrs62ssl2z7vx5lfkuoxrqems2m5ktvf2lezcb7@jlvcvjsyzsci>
-References: <20240815131408.3151804-1-chenridong@huawei.com>
+        bh=ssKb6qw6aeMO+6QGtyvALnPcAvbpew5UWcwhrzSGCa4=;
+        b=OnqKf2k9Xk9j0A1QhT3q6q+kCA+r5CfBKLYyE30T03DnlCFqtjnw1XubPKW/pIhZK6
+         03cdqrbj/gjk8RWP0YXvi4+29gtyGY3IdQRmbbkI5cyyw6Tg9Ohqxy4ujjU9tUImxWia
+         VriTqRDNgnXSVMWo7YzQdPdtNIQY5nLbRw0R2aHSpcy6afCgY5k/4toAZVb4CWuOA9+t
+         ShXO6Cd3RYlEtYHaqRNdYWDC/HBnE3BSZLrZDDjwwqLp5ScpdbCil6V7eG67k/1q3OyU
+         LNB1U5PGuBmcOG+jusLNSStc9iPRIzp2s+1WXUdWj79dK1qQaGV3sg36ZuzQKDzbOvFT
+         /NqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724258135; x=1724862935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ssKb6qw6aeMO+6QGtyvALnPcAvbpew5UWcwhrzSGCa4=;
+        b=OvRt8odRCQ1BbgzLk4o3fTBza9xU5TdDnug1ksjFbvAU23EskGFvTS7Ma/0DfV3tZW
+         G1628Ze33QmKPbdYuE7QUtBod7VY7YRA1HdT1vFbVl/5UCjMMltHaOoR/N1nWIxQ+UNb
+         CP/xOUGvdVuACsaveZKfA8ZmxUiI11PEI2xfST2eXcL7IqiOe/e9InZykph1FPKYGTOz
+         wZP82S4IFUOeNRMHEwwmY8gk1FqoSYFOUCl32sh0AtqlLY/UW/baRSsk1prEfnQAlb/9
+         SVmeRVrxGQwZrksH58URnTFEyh789XGoJutMdNwieaOtttf5aNYIy82ClJlCCGNYSCaa
+         lOHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVd+PzZzr3yfh0PPzI+5Bmcl49IXIwQzIkrJKRc4mbtUV8xN+Stt2ffWK7cc5MhbdL4EGjhlpH2veufkDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf47vLdRkMKaaSf2O1HzdOyEKnlHVmzyNKArM7W/IFwfdD1EVu
+	nXQH/lmOsX/ZHYKTXgo7s+d9DWrQ3ED6OQIaAYzI/SZ/kPjc+//0G8kovwTMsBy0dvnqtpD74xM
+	/DSRdgGfuF4MqVRdI77sTmOqsfqRvEOJDS5Hm
+X-Google-Smtp-Source: AGHT+IFFJJaltNCA/IDKVau9jaELlCUOp8789S+uuTRwgIUoSv9E6HoUzHZ0yFPljmsWOYHtvETnEbDBnlf6C3JyEkw=
+X-Received: by 2002:a05:690c:63c6:b0:630:8515:f076 with SMTP id
+ 00721157ae682-6c303cf67bcmr2591717b3.7.1724258134800; Wed, 21 Aug 2024
+ 09:35:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7zagrrzjj3gbxhcu"
-Content-Disposition: inline
-In-Reply-To: <20240815131408.3151804-1-chenridong@huawei.com>
-
-
---7zagrrzjj3gbxhcu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20240820235730.2852400-1-Liam.Howlett@oracle.com> <20240820235730.2852400-18-Liam.Howlett@oracle.com>
+In-Reply-To: <20240820235730.2852400-18-Liam.Howlett@oracle.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 Aug 2024 12:35:24 -0400
+Message-ID: <CAHC9VhTWRMKZiximDFAuhY0PwvHt8rk913LLKLQu20tjrnN7cQ@mail.gmail.com>
+Subject: Re: [PATCH v6 17/20] mm/mmap: Use vms accounted pages in mmap_region()
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, sidhartha.kumar@oracle.com, 
+	Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 01:14:08PM GMT, Chen Ridong <chenridong@huawei.com>=
- wrote:
-> The comment in cgroup_file_write is missing some interfaces, such as
-> 'cgroup.threads'. All delegatable files are listed in
-> '/sys/kernel/cgroup/delegate', so update the comment in cgroup_file_write.
-> Besides, add a statement that files outside the namespace shouldn't be
-> visible from inside the delegated namespace.
->=20
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+On Tue, Aug 20, 2024 at 8:02=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+>
+> Change from nr_pages variable to vms.nr_accounted for the charged pages
+> calculation.  This is necessary for a future patch.
+>
+> This also avoids checking security_vm_enough_memory_mm() if the amount
+> of memory won't change.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> Cc: Kees Cook <kees@kernel.org>
+> Cc: linux-security-module@vger.kernel.org
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 > ---
->  Documentation/admin-guide/cgroup-v2.rst | 10 ++++++----
->  kernel/cgroup/cgroup.c                  |  2 +-
->  2 files changed, 7 insertions(+), 5 deletions(-)
+>  mm/mmap.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Acked-by: Michal Koutn=FD <mkoutny@suse.com>
+I'm pretty sure I already ACK'd this, but I don't see it above so here
+it is again:
 
---7zagrrzjj3gbxhcu
-Content-Type: application/pgp-signature; name="signature.asc"
+Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
 
------BEGIN PGP SIGNATURE-----
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 19dac138f913..2a4f1df96f94 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1413,9 +1413,10 @@ unsigned long mmap_region(struct file *file, unsig=
+ned long addr,
+>          */
+>         if (accountable_mapping(file, vm_flags)) {
+>                 charged =3D pglen;
+> -               charged -=3D nr_accounted;
+> -               if (security_vm_enough_memory_mm(mm, charged))
+> +               charged -=3D vms.nr_accounted;
+> +               if (charged && security_vm_enough_memory_mm(mm, charged))
+>                         goto abort_munmap;
+> +
+>                 vms.nr_accounted =3D 0;
+>                 vm_flags |=3D VM_ACCOUNT;
+>         }
+> --
+> 2.43.0
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZsYXPQAKCRAt3Wney77B
-SfaFAP4qJ6MkZEudFO2/btfJkawZ7mPoC7NkXNuqd8vye85VtAD/UqX92jnGAHjj
-qL/JoGfeZWBhvVV+xNclB7Zz2GhRHwk=
-=QRw3
------END PGP SIGNATURE-----
-
---7zagrrzjj3gbxhcu--
+--=20
+paul-moore.com
 
