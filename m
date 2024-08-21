@@ -1,94 +1,133 @@
-Return-Path: <linux-kernel+bounces-296125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8853795A5F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516E795A5F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46577283917
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:33:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7C81F23E7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C71C16FF4E;
-	Wed, 21 Aug 2024 20:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPDwwUZZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0146170A15;
+	Wed, 21 Aug 2024 20:37:39 +0000 (UTC)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF311D1300;
-	Wed, 21 Aug 2024 20:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48641531DA;
+	Wed, 21 Aug 2024 20:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724272400; cv=none; b=JTGgMKSRE7jzrP0zI5Oj2Id+MLhgm2T8mpcOv8eVk5H0loQ+3D6S+6BfULk3co+RXdLDkrQ21kTFOnes7wjXtOZCuPqhEQhP7KMpJX/Esi6rOrNq3AbwQ/fhsSOx2OcZhq84j0Lovex5ZL0pWmNB3BhzLqqsDM3fIqx/AdzFIx8=
+	t=1724272659; cv=none; b=EqSr8nj+w8AIr2+BUu9UPS+JnYv+w2Ojjx0NjYatzAgFewO4qLVw+qvbYePBZFkfaoV36YVIrTS5bjWjsCufsokpvu6tK0QxFcbWP50ZR3avDroqNQ8nXkmVpD+Yg0F1c1B4N2/jqCKjbCruvWl6uYTC0dHwz4DrRwrmg9OoP5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724272400; c=relaxed/simple;
-	bh=6FgnecSR8VhM53DQzNcFPbHy9j3pLUxYx6mq7I3vquw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qaVwuF3FDc7TocdKrKDPGwMGSWzvBpAPIVKz7ZLcKFYELgs2wL5gc1aM4AH12vkqZucBNa7D9vtWATzF2LD1WVtcYvX/oao6EA8HqGzMbzqOs8RN39fnEd8wPWWd95F3CKDwOCRP8gRjDrg9lhQfoO3lKfeqaJIWCA7SGU1YrRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPDwwUZZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E2EC32781;
-	Wed, 21 Aug 2024 20:33:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724272399;
-	bh=6FgnecSR8VhM53DQzNcFPbHy9j3pLUxYx6mq7I3vquw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uPDwwUZZVvAMR6p4goIKY15q+KQ1a9f+5km3vKJUsF+q46LBE1uJ9LXAT3/TqoKKp
-	 38bBkx9InsecHrFGQ+64RF2f0YEOeweJ1dFiwhwyoKvXqPuY3NxAIhYioVYpCLkJ1q
-	 Jpvy47xuNGI8VO4N22WttrKmQIEOZ2rlFK4Wl4UR48o5lhhpbojEFYgkrx1gVkwkDC
-	 kfUT4WutAH7kphlsKDKw+1BcpfCi8dbj07cbF3Q8rvIOIPLCbB7XQqtqayRNzerf/R
-	 15WrMPWzmo/0+Izw4ZJbKugXhvxLC4nGLOCrbL+RMLwwFqaky/1IAPh9Fhe2lj/uTw
-	 98xWjhaum9wpw==
-Date: Wed, 21 Aug 2024 21:33:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yang Ruibin <11162571@vivo.com>
-Cc: Nuno Sa <nuno.sa@analog.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] drivers:iio:Fix the NULL vs IS_ERR() bug for
- debugfs_create_dir()
-Message-ID: <20240821213312.7ec499c6@jic23-huawei>
-In-Reply-To: <20240821083911.3411-1-11162571@vivo.com>
-References: <20240821083911.3411-1-11162571@vivo.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724272659; c=relaxed/simple;
+	bh=iLsC/eF+DOw5vX5ljvpg6Wmzc3Ft81yZPapZQ36JtLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=loB2n8PfLzvglbtd/S85cNj0PB7fCp6cXtIRbKUigpRl+qlGD9etS4fo03gPVlE9NgPxDxVKOvQxh+YIed0Yiht+5N3KQzDl8ny9FECGo/IRFtijkLEbi45BgQTiy39WiPTknYEw5Gar8qMOIi4vjw58b8/ZsSmcpummRt3R/Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso112030a12.2;
+        Wed, 21 Aug 2024 13:37:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724272657; x=1724877457;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R+eHk07shA5b75z7CTASXv5Brt93+G8BFCbapf1kXRU=;
+        b=w0GlQm1M4PUtu4jQXNJGBEl8zdP25zrhgNFDsruH4HCnbIbw24F3ZwbLyQuSXXFPza
+         pmoLTovu2JGoEYHBkPfumRwBlI9SgLT65dcsCCecyGPS7NvCyHR71LOILLnzSpA4pPmU
+         gIcmDG4s7AYUqzxtZY0R5kTUMBP2lp488rciQM9w46kX2DkDcSxnC6wTEUDZ+LTRB3vf
+         VYlZPINYWTHB8cRwA8GWbl8PRI9/xwDdZu/Pv3ywUmnNAMZaW83Vq6oqyBhAEwO2Mo4B
+         64pSpJ/uy1GsEGDmKLcLszidPV04F8vJMN6xsFb4BZxjshNxXck/yR8v96TQlK0XzT5g
+         u4wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsOuWCKl/B1SBs7/hWXqffdDJ9D0E3Tu/fC3UTbNbyQDUwd2Gr0gtlHrKP4Jox7Easb3xNn6QDvbnMrMw=@vger.kernel.org, AJvYcCXOOWf8hJzXRShQL2v0Eol9tv1uTDdrnPMQFyUAsFulrwWC+CdAKIbDzD7rRbXUH/9Bq4QQDu87dpxyegGVpDUdwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YydFYwXDrIakE9S566ZwwPRZ+S+LOYdSbZ2/LgsaXdLtSMwxkOa
+	BJL98xugSyP9ExobBTQW+mBgUiraxaeB0pXs5fzFlIa+Cwb+5Ypm+cdCpULlhrjm7O+ZbKzPoaS
+	oCQ5hyMZNEGhUjnKYkkIPVr1hPAg=
+X-Google-Smtp-Source: AGHT+IF8rfYNJ+1ofwGlvKrvXqPvDfoN2aZCRh7B1rnxmvhE0JsYcW85L1IMyxX7oJ/Gk/ht69rbTEQ4Yg9pgD616cM=
+X-Received: by 2002:a17:90b:3c8b:b0:2d3:c5f1:d0d9 with SMTP id
+ 98e67ed59e1d1-2d5e9b84c87mr4051812a91.25.1724272656827; Wed, 21 Aug 2024
+ 13:37:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+ <CA+icZUXpB4KMiRek3MkgCapwoW5TC31L4-TffrV=jdhM1k8=Sg@mail.gmail.com>
+In-Reply-To: <CA+icZUXpB4KMiRek3MkgCapwoW5TC31L4-TffrV=jdhM1k8=Sg@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 21 Aug 2024 13:37:25 -0700
+Message-ID: <CAM9d7cgHCJgJb10zaNt7b1Dy=4raiv+a1C1GwrVptNz5Uh+SNg@mail.gmail.com>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+To: sedat.dilek@gmail.com
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 Aug 2024 04:39:08 -0400
-Yang Ruibin <11162571@vivo.com> wrote:
+Hello,
 
-> The debugfs_create_dir() function returns error pointers.
-> It never returns NULL. So use IS_ERR() to check it.
-> 
-Applied.  Thanks,
+On Wed, Aug 21, 2024 at 12:37=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com=
+> wrote:
+>
+> As a workaround:
+>
+> dileks@iniza:~/src/linux/git$ git diff
+> diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+> index 142e9d447ce7..db45e6fe7a21 100644
+> --- a/tools/perf/util/setup.py
+> +++ b/tools/perf/util/setup.py
+> @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
+> cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings',
+> '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+> if cc_is_clang:
+>     cflags +=3D ["-Wno-unused-command-line-argument" ]
+> +    cflags +=3D ["-Wno-cast-function-type-mismatch" ]
+> +
+> else:
+>     cflags +=3D ['-Wno-cast-function-type' ]
+>
 
-Jonathan
+Thanks for the fix.  I wasn't aware of the issue and the fix
+looks good to me.  I'll add it to perf-tools if nobody objects.
 
-> Signed-off-by: Yang Ruibin <11162571@vivo.com>
-> ---
->  drivers/iio/industrialio-backend.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-> index a52a6b61c8b5..20b3b5212da7 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -219,7 +219,7 @@ void iio_backend_debugfs_add(struct iio_backend *back,
->  	snprintf(name, sizeof(name), "backend%d", back->idx);
->  
->  	back_d = debugfs_create_dir(name, d);
-> -	if (!back_d)
-> +	if (IS_ERR(back_d))
->  		return;
->  
->  	if (back->ops->debugfs_reg_access)
+Thanks,
+Namhyung
 
+
+> dileks@iniza:~/src/linux/git$ ~/bin/perf -vv
+> perf version 6.11.0-rc4
+>                 dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+>    dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+>         syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+>                libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
+>            debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
+>                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+>               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+> numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+>               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+>             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+>              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+>             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+>             libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+>    libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+>           libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
+>                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+>                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+>             get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+>                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+>                   aio: [ on  ]  # HAVE_AIO_SUPPORT
+>                  zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+>               libpfm4: [ on  ]  # HAVE_LIBPFM
+>         libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+>         bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
+>  dwarf-unwind-support: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
+>            libopencsd: [ OFF ]  # HAVE_CSTRACE_SUPPORT
+>
+> -Sedat-
 
