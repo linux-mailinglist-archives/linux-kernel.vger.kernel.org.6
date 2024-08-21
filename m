@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-295922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E4195A300
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:39:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F224595A301
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973051C21D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC2C32829A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059C61547D0;
-	Wed, 21 Aug 2024 16:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5CC1547EA;
+	Wed, 21 Aug 2024 16:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BecZtf5G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTPlLGzf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF3914F138;
-	Wed, 21 Aug 2024 16:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D8C14D711;
+	Wed, 21 Aug 2024 16:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258376; cv=none; b=RDq1qp+5rjeToReoNk145Eh2mt9DupnmlklLIzrOEi8vgTN29LARcoXBy54wDh+7HU73GnvvuPWNSE+GkgDTKKCu7Dxgm9wjbNUHtQn5C5OoaldLmOzLvzlxMCeWQY4YPdaAFSfxnLhoed/htwcvdfuBVShQrO17Qa6EkB3i6ps=
+	t=1724258409; cv=none; b=WpuFYcpIBiyw7x1YkYYhKJvLZATBV4f6PVVXsL6zta4lrI7ZKvwFJxxs4vjGmT6oFzNaTI2Uzi6VysGmPJWcWs3VOZhCL5hIIIpzkLZ6c3Og9LTx3ogxK1A9fIluWaFY7DDA+GAC1q6P+x+SOO2HHgoipAwl6tLP4YAxgfsdfhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258376; c=relaxed/simple;
-	bh=4IxCpBBcSL1rILicr6UJlxNz94zMMsQynUCP/kwtyHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9IXBJDt1d6qulliTnP6xvsPEA42IdhfWl59mRWY8MJZFjqLUwyJRoUMlyvHi3EuE02JbbBl9JzRlQQ7yMIAFQPDu47MYcqfA1M3rDovlVJvmbke5pJ3Q84XrGgiYFyMtPBaM/+6gI11nQ78rip18IT3C2Rl+W5TMc7dR5HJAXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BecZtf5G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFBF2C32781;
-	Wed, 21 Aug 2024 16:39:35 +0000 (UTC)
+	s=arc-20240116; t=1724258409; c=relaxed/simple;
+	bh=i/mb4Rdm8eNfaYVfTxUHpcRDCFr7vBDdRywXy1aBhUs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ELl2gVEtBR75bp/ARMT9PLwbR8UviAP2L5/yVbo1ka/UrQr5dF3D/vsmM4z+xdyo/Mf0mSOdSF68+zvDn0MNn2kAqlLjSFojOH09lMIeydvT4hkjWQdKpTWpVrhtacHh0Wiy214ZFrkcQXplNnb1hwtKZm3ybGr3CVUXv88YoQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTPlLGzf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F387C32781;
+	Wed, 21 Aug 2024 16:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724258375;
-	bh=4IxCpBBcSL1rILicr6UJlxNz94zMMsQynUCP/kwtyHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BecZtf5GmxwB2tNmhhWMCb02x4NdhBwyFYndFJ7DONsKh0FCUF5yqNIkk3Ebt3Wog
-	 IYp0nl7VED9KDDMtdOAN4UD35BZ+vxWgb9mb5kotwsWRNXVkfws7Ut4VIrj9V4uj7E
-	 HjIg7GpxO+PG+5wxj9LrLPmFw90NCG7RQfHO7tPzPdlFqVAd4wwol5oHHNtnFc7b39
-	 6nkROA1LiP2k4Wuzr1kTREEjvjXc4i/5yzUQblXdSrGzLQWaPYweQm5ZM2PLK8Fat+
-	 zJcZb+FIsMKdGNUezaOrV4Icw3iBMgg/dCA9d1nzvgct4MKpZgQbsQrQLDJnDPzXXJ
-	 oBpYtt7b7iJGA==
-Date: Wed, 21 Aug 2024 06:39:34 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Matthew Brost <matthew.brost@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH wq/for-6.12] workqueue: Fix another htmldocs build warning
-Message-ID: <ZsYYRtpi3l50_Jzy@slm.duckdns.org>
-References: <20240821134531.1da04ae7@canb.auug.org.au>
+	s=k20201202; t=1724258409;
+	bh=i/mb4Rdm8eNfaYVfTxUHpcRDCFr7vBDdRywXy1aBhUs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BTPlLGzf/rOkRoEuCyFLMupInG7QL2OgmLGETnQ58eRmBS4n98NCXkUelAv6kDSRj
+	 /dDmsjnsGzfVULXN1LHRIVMGsAyCfF04ZPrEB8LeonXypLtVOMAJr6holszVqYSBxK
+	 O3uJmezyDePmzqiqs7xV1ng8uacA/ZQ9BHsP1+ls8kvpBJJK7sHYmU9S0FoyHYWzmK
+	 +qkYW4cSQOT+XQypkaXVB1+Wa2uzYOpo5s6sW4cr37YID+xaDxqgufo+Hw30LRkZyI
+	 fQnMMAcX/w7NXAgsdIkCkbmEPzj9sFnlSWE3N2vT1zqQBNlASp+/kfXesNvGrv2Qrd
+	 UlJZOe3rLuBEg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sgoNT-005fap-2M;
+	Wed, 21 Aug 2024 17:40:07 +0100
+Date: Wed, 21 Aug 2024 17:40:06 +0100
+Message-ID: <86bk1lygm1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] KVM: arm64: Control visibility of S1PIE related sysregs to userspace
+In-Reply-To: <5304749b-04c8-44f4-b4de-b2d0cef61169@sirena.org.uk>
+References: <20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org>
+	<86ed6ixa32.wl-maz@kernel.org>
+	<e123ee24-2a0c-4ab3-8dc3-2906bf96f38d@sirena.org.uk>
+	<86cym2x7cv.wl-maz@kernel.org>
+	<5304749b-04c8-44f4-b4de-b2d0cef61169@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821134531.1da04ae7@canb.auug.org.au>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From d156263e247c334a8872578118e0709ed63c4806 Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Wed, 21 Aug 2024 06:37:39 -1000
+On Wed, 21 Aug 2024 16:19:59 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> On Wed, Aug 21, 2024 at 03:45:20PM +0100, Marc Zyngier wrote:
+> 
+> > Ultimately, we need to revisit the way we deal with visibility, as
+> > adding a myriad of helpers checking a combination of features doesn't
+> > scale. That information should exist as a static table, just like the
+> > trap bits.
+> 
+> Indeed, I was wondering about just adding a description of the relevant
+> ID register field to the sys_regs table.
 
-Fix htmldocs build warning introduced by 9b59a85a84dc ("workqueue: Don't
-call va_start / va_end twice").
+You'd need more than that.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Matthew Brost <matthew.brost@intel.com>
----
- include/linux/workqueue.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+How would you express the visibility of TCR2_EL2? It depends on both
+ID_AA64PFR0_EL1.EL2==1 *and* ID_AA64MMFR3_EL1.TCRX==1. So it cannot be
+just a single tuple { idreg, field, value }. It needs to be an
+arbitrary conjunction of those.
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index f3cc15940b4d..59c2695e12e7 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -534,7 +534,7 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
-  * @fmt: printf format for the name of the workqueue
-  * @flags: WQ_* flags (only WQ_FREEZABLE and WQ_MEM_RECLAIM are meaningful)
-  * @lockdep_map: user-defined lockdep_map
-- * @...: args for @fmt
-+ * @args: args for @fmt
-  *
-  * Same as alloc_ordered_workqueue but with the a user-define lockdep_map.
-  * Useful for workqueues created with the same purpose and to avoid leaking a
-@@ -544,7 +544,8 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
-  * Pointer to the allocated workqueue on success, %NULL on failure.
-  */
- #define alloc_ordered_workqueue_lockdep_map(fmt, flags, lockdep_map, args...)	\
--	alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags), 1, lockdep_map, ##args)
-+	alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags),	\
-+				    1, lockdep_map, ##args)
- #endif
- 
- /**
+The good news is that it is a much smaller table than the monster trap
+routing table: it is "enum vcpu_sysreg" plus things that are
+synthesised (anything with a .get_user callback).
+
+	M.
+
 -- 
-2.46.0
-
+Without deviation from the norm, progress is not possible.
 
