@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-296225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321CF95A7EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D23295A7EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC06B1F22E09
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F891F23568
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B366117BB0D;
-	Wed, 21 Aug 2024 22:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5212517C7BB;
+	Wed, 21 Aug 2024 22:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPAstqMW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/whd823"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D991509A2;
-	Wed, 21 Aug 2024 22:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE54170A2A;
+	Wed, 21 Aug 2024 22:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724280500; cv=none; b=Ov85gw4215Vtrssdwe7iorMIF7e81kWQwUEqSyPojyODwfGx1g7fhY76Wx2Of/698IarRBz9MOMj/7HKt1gn36kahxH4Dc2wczgZpYPKqNXAI9dRV1nRwzsqOVjOwJCnf2EpgAKYjLFcSw9U231YaEjT7l2LHHM3m2gCGv/JjnU=
+	t=1724280567; cv=none; b=g9Zu7WsUS+yh+6e2YTANE0VRUqs9ryae/1aBYxG4t2PLpA76eGtBDF21qP/5K1DDE4zR4Babk263xSEiViDgGOi+Zab33bzunbhMkBIw6SmuDeKXX+2yq3ZKCreKbZ6v8jh+2D7PSimkBpr4469B5sVGE/AbolDBSz+oliASJks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724280500; c=relaxed/simple;
-	bh=ICmh4sxHrMdjzmhj2Pr2GmQ/mqvOCutxhG/7aRnmvCk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eTOKFVA7K1pthFESxOKe1nx/0U7kPxS0l7MMtgB+RfVPdjlmiTBji+3yB26Isb7yRkZr4BpMRRj54YNls3OQ9G63UJgU0BcVGX+M0DiBaXJ5kx1wB4vJUTmfJeRZTCR5rHfPrfMXw6UsDSSakFtZ9otsuce1+GxKWbwRvRYQ4E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPAstqMW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43069C32781;
-	Wed, 21 Aug 2024 22:48:19 +0000 (UTC)
+	s=arc-20240116; t=1724280567; c=relaxed/simple;
+	bh=2MskA3zbNh+3ybAqK5Hk+d7ziHwmFQWue6q/gFbKUJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mbp4oKDCYzuWfP5SuOoAWQpg84CsM3U7yoKYDHHJJ9KoT/pJfMaDvLi0mnAhH8x3oH3OU4NdbNr30bt4sAFQSdUh1vpLdGjzcaqdfOdfYieudWHwV5cpKKCqqKzHo0uDeV6+MsN48mc/mKIrmWrtaRCXWwM9Kb7SIVf5vL0sS1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/whd823; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C3DC32781;
+	Wed, 21 Aug 2024 22:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724280499;
-	bh=ICmh4sxHrMdjzmhj2Pr2GmQ/mqvOCutxhG/7aRnmvCk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=XPAstqMWot9/meBTnGuTqER4ec4Q3lisf5iH0lSTcmyGUceSJMuko/xT1Bka4iPqK
-	 9vSRG/nIYIMnjY8OOeMWzMEm4v3PF+1hiGknh53cEjdFCm7quE9ErmEDvOX+XHv71W
-	 yQOlCDcj6cyUnKoKkLBh+g4DKg/qPOo4TezKgjph2OcYI/Z2hQNOHnYDjaonjlg3xP
-	 h6xfIveR94QcL89K6PFBPemCXTtJyG9CxSpS6Bb7D9oiiR+tFDFeHvwpWkXRGj4pHK
-	 5494ZeT74588oTEjhvF3UtFbbZB4sIjQKDP55U2EJY258dGhrEDWpV+7bC3hDGBQ4s
-	 wMj32saF9+vYw==
-Date: Thu, 22 Aug 2024 00:48:17 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the hid tree
-In-Reply-To: <20240822084119.5b2e1962@canb.auug.org.au>
-Message-ID: <nycvar.YFH.7.76.2408220047260.12664@cbobk.fhfr.pm>
-References: <20240822084119.5b2e1962@canb.auug.org.au>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1724280567;
+	bh=2MskA3zbNh+3ybAqK5Hk+d7ziHwmFQWue6q/gFbKUJw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s/whd8230jgyJbA5L00dL3RxM/q0j2QwqBo6aKHSuCYZ2+Guf0ZzuHUQPRyU6I/ZO
+	 bdm8gpQYuF+mWSwcNfbb8+Fzk1tMjkRf2hxoMNCvcA1lJDZWyGujz7rIYcweiZCaOR
+	 AYADYlLV4SqkWhVZyb8ZRExwT6jiw9y2fPPl8yZgz+91Itle4L/oqs0ZNBpBcXNtfH
+	 OY5MBJVgY+NTpQcYsFlxFSAdBeQ16zgxREsB+E4bsxQH4G/XPXiukDllCFd0RgHxgh
+	 izzp/+rme448zn9ilO59g3iKLB8eeOmtP2YnXaneG3/8GCOCvb+4fiG8ljR8eYVM86
+	 ie4NCq0XsxKEA==
+Date: Wed, 21 Aug 2024 15:49:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Aijay Adams
+ <aijay@meta.com>
+Subject: Re: [PATCH net-next v2 3/3] netconsole: Populate dynamic entry even
+ if netpoll fails
+Message-ID: <20240821154926.14785d66@kernel.org>
+In-Reply-To: <ZsWjpuoszvApM1I0@gmail.com>
+References: <20240819103616.2260006-1-leitao@debian.org>
+	<20240819103616.2260006-4-leitao@debian.org>
+	<20240820162725.6b9064f8@kernel.org>
+	<ZsWjpuoszvApM1I0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,25 +61,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 22 Aug 2024, Stephen Rothwell wrote:
-
-> Hi all,
+On Wed, 21 Aug 2024 01:21:58 -0700 Breno Leitao wrote:
+> Another way to write this is:
 > 
-> Commit
+>         err = netpoll_setup(&nt->np);
+>         if (err) {
+>                 pr_err("Not enabling netconsole. Netpoll setup failed\n");
+>                 if (!IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC))
+>                         goto fail
+>         } else {
+>                 nt->enabled = true;
+>         }
 > 
->   ec4989dea73e ("Revert "HID: hidraw: add HIDIOCREVOKE ioctl"")
+> is it better? Or, Is there a even better way to write this?
+
+Yes, I think this is better! Or at least I wouldn't have made the same
+mistake reading it if it was written this way :)
+
+> > As for the message would it be more helpful to indicate target will be
+> > disabled? Move the print after the check for dynamic and say "Netpoll
+> > setup failed, netconsole target will be disabled" ?  
 > 
-> is missing a Signed-off-by from its author and committer.
-> 
-> Reverts are commits as well ...
+> In both cases the target will be disabled, right? In one case, it will
+> populate the cmdline0 configfs (if CONFIG_NETCONSOLE_DYNAMIC is set),
+> otherwise it will fail completely. Either way, netconsole will be
+> disabled.
 
-That's for-next-specific revert. I'll probably go ahead and rebase 
-for-next branch of hid.git for the first time in history eventually, a lot 
-of useless reverts and merge commits accumulated there.
-
--- 
-Jiri Kosina
-SUSE Labs
-
+No strong feelings. I was trying to highlight that it's a single target
+that ends up being disabled "netconsole disabled" sounds like the whole
+netconsole module is completely out of commission.
 
