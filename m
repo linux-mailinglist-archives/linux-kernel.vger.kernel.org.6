@@ -1,260 +1,228 @@
-Return-Path: <linux-kernel+bounces-296197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2EE95A721
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B8B95A72C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED3B1F236E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913E41F22D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F78B17BB30;
-	Wed, 21 Aug 2024 21:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AD417B4E0;
+	Wed, 21 Aug 2024 21:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WWBaYgE1"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011034.outbound.protection.outlook.com [52.101.65.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TVe3qpBh"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05ECF17A931;
-	Wed, 21 Aug 2024 21:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724277161; cv=fail; b=R6n8xQYIq0rpKU+ptGevl2QVkwCLRSn0znKsvG2wBIk3mRsIA+2RMQFOtkmJywonY2BLveGUryZnipNEeaBb+YizibmbAhHHJzlhobzpzDXSfdzwUoFZevupaBWT4qs0CmyFSUByhOqORGricYtTnactovfQ7vpccH/CxOt0V08=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724277161; c=relaxed/simple;
-	bh=sm7QczQ2W/6xnGsFT+uW1xtcXM6w96d8+x+qfqf6VWo=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=Ej+gHOVigmKkRmdH0ulwdcSKKp9Lt1VyfTuQqKJwJmMPpNKfg0o80Mag0thvP5JCI1S8lva9KC2qvMtB/24EONh19g51XKu93OEWD8dBDVwo1cHNxGVTdK9m7yejO2hTOA5IH3rGVqx9DO4HEMVrJhW49cWfsG2UNvLh6wVidj0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WWBaYgE1; arc=fail smtp.client-ip=52.101.65.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cqIIajOygrfM11wuNK7Nm7h6HJ05BMLhW/60gHFXytZCS2NA+13msHsN1FpSH+yUFdlE+cFA/UOGqf9HT/sOgR7T+E35JKK9rHBoDzqdg7hjAdUKo1PMopoJYa0IX/gheeehYyCQJ6cGkyxiwQ0PtGi0WpfEjvfh7NDOgsG7ASes9J8zZqUUP/jhQfH9vlMgM4aCx50W8tzaA43asoS3+74mEnUq3NM1iqllMEbXaiJXp70Tcn3S2g9d6JQpdNlXUAyOtFlveBpjCRZEReS96pN2LI5KG5XGGylYpjNrQFxK7g/VjvqYzmEOO+26jTu3U2fbiefbHIxyD9TVoajNSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iqPBA/0UC8hgauW8SlEyUHAs3+DkqvYG/BpxNM94zvQ=;
- b=aKNn+fOXL4bAG1bjCOavTPKFalKzokjxN3izwy+tz6BM6ghiZXELXzIqwHdNvw/7MxTCaVjuHxIXqe1KfIm5qjLqoXST0iksD2Q0asYTCDQ56SR2F5QKhbzQMo+aAw6fr5/JJj985zX/JEkW/h6MPecAEzY3C/crCqX2nQsiTX9xBfKBTbVEVTIR7lZTORKmlxzvZOMCBk3GH6raxij3jTwqgpjRzCjcbztMCctSiWh4UXR04OgtP1kYwpfmg1sYjm8kTL8Hl5DEv1vUSr4O0V5aKc/2u6EBuhvlUZp9HsquMdZX1AqmU+UNcxmgLnidtneA5vWih1wHiuc5g7iRaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iqPBA/0UC8hgauW8SlEyUHAs3+DkqvYG/BpxNM94zvQ=;
- b=WWBaYgE1t0gxkxegXBN9pvMDzQ41vUqKCE2KHnasWuDYsVJYTtkLXcfADtglezc3IxUZdLmRcWRk9MhUC58HqkC9VuNI5BzreMX+EwkFNCVmDBeji2P+4HHNLFiet+85nQiCwtRntl6VtGioV3pF++IBaa+uvQ06ncEL3e+seoy3/As7g3RJY3SxG9Dx53e9l0bf/QaGxMMfNSYPKzBUR2xWgEZod0GyX5UwT9c/MVr6OgBcX4LUe19T16+x8Ht0jAbboo9UUkhfBYKwyU3OXeeIt9rZ0I+wgydUMRQwLHs/nRXeXPo5v2gV4dRjOaK0Jfh1E2wxzbnDTCIC+dmT2A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI0PR04MB10566.eurprd04.prod.outlook.com (2603:10a6:800:268::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
- 2024 21:52:36 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
- 21:52:36 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Wed, 21 Aug 2024 17:52:12 -0400
-Subject: [PATCH 2/2] drm/panel: simple: Add support for JDI TX26D202VM0BWA
- panel
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240821-jdi-v1-2-6e3ce584072a@nxp.com>
-References: <20240821-jdi-v1-0-6e3ce584072a@nxp.com>
-In-Reply-To: <20240821-jdi-v1-0-6e3ce584072a@nxp.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liu Ying <victor.liu@nxp.com>, 
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- Frank Li <Frank.Li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724277142; l=2187;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=GuJ89DU1Af2gXckvRsJT0KI9BvHs7/0RqeoKZOagbCI=;
- b=dcgXqX0Uz3vU0WJYTVMHNUPCVrll+9kTb4p0UtUsSeg/kA8kRwTf89OgXOMLmIXQMbQoD5AMk
- LXfsko4k8fsBsTK73z1s9qaQ+RM6anRmeALovUDaLWXsbhCdSzKAo3u
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: SJ0PR03CA0080.namprd03.prod.outlook.com
- (2603:10b6:a03:331::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6CE17A5B2
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724277274; cv=none; b=IxI9P+ooRcEAiVh7Raile8GrWZtQFJdFa8bYjpI/noiFggRW54t9mhJApFiDdDxvlFnoz2c79LJolpLeCdjNMoJsMtIRst2SSxcXxP8Davs7HQj/mxn4k2O5EEVHAM//YurK5QijIQRjqs/ZPyUR5qpcdtHHC+0wAKVunP+tRdc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724277274; c=relaxed/simple;
+	bh=OWEY/Oe8ge2ZZVlPSGKPWDKhRL3cgLiz+mCQB5vlko8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J73AS+PWiK+sidXe8nFSSn50zvrWbi8vr+TCLjAin4UZInx+eecJp2Y3TEkXAzfbkXTRdowMgONxEDVVaxGoTQ5vlpoxxWdwV39kXOsjrTHRU7J8tnnIyhHGf9eBTk8Jj6L9scLcO2f2Rk6OBEZDy5JKp2AtHIRFblWne4lfRwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TVe3qpBh; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e1633202008so203155276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:54:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724277271; x=1724882071; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qkHIbzE1O2+lqb74KEvCCR6BaqXgelXIBZ+AgizTxyA=;
+        b=TVe3qpBhHS5f8rwa3OT/pfJg7+6r7LxqcP20m1BEnV6S13fb73IoPyFZjvtbpkSEy6
+         /rLRCR3KsMJ9xHBLzhQjSfyFbh2L1ro/x20b8LYD+NsiWy5NJEJQIK+MzfTrWR4BJ2Qj
+         iPx4WfGBKADbQflgjSYYjKYeXup1Tb+4+cHZr/iDB2CxGyewdYK65e+cpskK0Xd0zG6o
+         +lUVn0iKhFELOLbPKcSUyh7DixmgbGmPk6UacI5nyWVvprVgj/I1uIU0BCmWax4AYVX/
+         OZKu05vxjdYiwVPAwl7lsSteoBiO0ftnKti6XqERbP1AB7bmRWl0ecHBI3BGGqz3Ma4R
+         888Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724277271; x=1724882071;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qkHIbzE1O2+lqb74KEvCCR6BaqXgelXIBZ+AgizTxyA=;
+        b=iyF4zhPIvGhJLvINbAeAWfOjcFlhUCuWG3qYAGqhS0QPeSnUpyPyY1tAeGUUH/z/BG
+         91ojFyW9mXQ7OZyUTZID/MtUeHq10ZU2kgpiQy3LA5gRRMWz76PotQDdObGbnynb22zv
+         4cArvR0D0nR544WTR0TJnb7Dp6MZAHRnfZJFeS4vowms2ZWNgfdNVJer9Iz9U4bBC25X
+         vbm7AdfqJc+yueW4+ek871BOwInMNyKMof9PVZicdZWl60dfj/Ye1kKMr+o+FBPz3VSa
+         d4HuiDluIPMKYGc9opTpt+EIP37GoHtQmhsheLEdgCIU+7YQb8ThwpaqPv6uJlPnRwZh
+         W2Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUvtfsDXC40uziDLv8Sa7VOBfeMgXJ4oph0dItjOK4QxMNSu087znfkI6jfDOofv2DDQRZZMcQZMOygzCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuDziBQSOQGRmK8QvWG8lxEQ0lXYTuFSrqVtDXaBsBfVkgZKnN
+	DcR1u+5i77fdFG8gu6nnt9xy3vFKeVpF4Xtp6iBfhsT60o/BMDgO9hblTSI9PN9MttRz27sjRgV
+	3BuK2HuqX2bS7ksssNHWXMWCPPTGpDfGlMKSF+w==
+X-Google-Smtp-Source: AGHT+IEbLEfHwFyYNcri3t1w7o7tWbS6oBaWx4DQWVSFv0w407zJOJ7W0eTL+KNzshnbYP+06yOh2I/iVUNvpj/p1kQ=
+X-Received: by 2002:a05:6902:1444:b0:e0b:28ce:6156 with SMTP id
+ 3f1490d57ef6-e166556617cmr4277142276.55.1724277271228; Wed, 21 Aug 2024
+ 14:54:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10566:EE_
-X-MS-Office365-Filtering-Correlation-Id: 050bcb11-649b-4be6-490e-08dcc22b91a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SzFsc0sreUE3ZVJVVFNZOGoydUtqT2VXRGh0ZlY1TUZzNmI4N1hRZHFsL0hK?=
- =?utf-8?B?dWFVdTFjV2JzNVBqNCtaNmk5YUtLV05Va0RSUHZDQVFxQ3V2Z0wrNHFUMHkv?=
- =?utf-8?B?WndCbHRvR2VsTThWZFlkQmtSYy9FYVdhTWFaYWY1Y0hHdi9td2tGUE01L0FP?=
- =?utf-8?B?Z2Z3R2c3L0doeVhpUVNkR2NFMDJ0Um5KTGhqYnFFaFpMZVJORlIxUTRYZXZo?=
- =?utf-8?B?Sk9KNWxKM3djZW80c09uTDNEd3I1eXU5N1I5anFvWkIyRGtSNW9JcTQxcEQv?=
- =?utf-8?B?Q25kWGlGaXhNVXhMSEpBOEFZOVZoeHpCOUx0WTdRaTRmSThvdFlSdmZGRUZC?=
- =?utf-8?B?MlNTNnlVMVlEUTV6bC84d1kxNlRvK2FiMHFmcFRyMUp2RzIwVGQ5Z1RRTHdQ?=
- =?utf-8?B?OG5BOERJemtFTUpFOUhjZFpzZ2xDL1oyVWJlQzJnS3EzcFF4eDUwc1prVUhP?=
- =?utf-8?B?ZjVSN2V0VnB3RlJHS1hQRXZhVkFsSENQMis0ZWRNRFp2bG5Fa0lOTVoyZW5y?=
- =?utf-8?B?ZnhOcEwySzU0ejBhMDBuVFB5d2lqbE1LZU5YZmxCU1VuSEJLcENTcEUxTzBJ?=
- =?utf-8?B?K3JEZlpqTGNpQlJhUU56bEt6UUhDTGtDMmVpanBhVnJqbitlVDBOUmk4V0R6?=
- =?utf-8?B?YWZGM2FxNG0xeFplZ2NkNjdLTjdCWGc0RmRPMUt4SVNvdThJOGExNEQxeDI2?=
- =?utf-8?B?OXJ4ZjhQQXg2WlE5YnQzTGdGWWdKSTR3aEoxR0hwaFlhM0U4enRYVEFYWTZi?=
- =?utf-8?B?VVJ0cjVERWtsRlNUS0lIcTVzd3BVTjRUcjFQRTA2UWdPUTVoQW8ydmlhWVlh?=
- =?utf-8?B?ZTg1NWppMzg2bGFseHVpKytOai9JckM2VHFmMmxhY1dtd1Q3dE9ablJHR3NG?=
- =?utf-8?B?SUxwS0U1MnpuVlgzazJHdVJuaURvUjRCSDUzRjFhamdYMytDR1Vibi9aREsz?=
- =?utf-8?B?dzVCRzNDcGcraS9ZVGt6cFh5ZGJMd0tnbDhkWXk3L3hiUGtsMWRjT1UzNGNC?=
- =?utf-8?B?cXYwclZ1WGJ4cEJoelV0QnMrZEVUZytGWDhRQjBjbGxQSTlBcWZqNDQrUFI4?=
- =?utf-8?B?SmxWeG1ZRWhjNkdPQTl6VG5zbmxkL3VrWU1KOUI4WDZXTE4vRHY1SlcyUGs0?=
- =?utf-8?B?aWZzc3FaSHhzczF4MXNrelAyOWNQanVZaWZUVHZMaENTWXNLSWRNOG5BU1l2?=
- =?utf-8?B?RmRXQXpVMzRzNlhERFMwOUlTbnp0UXA3dFBhb1k1dzlhQW0wUEEzQzNFamZ4?=
- =?utf-8?B?dEV2bHlOaFFLTXB4S29sZmFaeHhndEx3TlRxbWZZSWxnZDVQTEVQNWk4LzA1?=
- =?utf-8?B?TzUvUFlQN3FEUjIxNWo0RjUxNHl6dFYzTlUza2djR25DY3YzLzh4aGlETlh5?=
- =?utf-8?B?MnZwaFkxc3NxWFpHZ0ZkNVpLOGtXQUY1NXFDSjZtMm0vMTFaODJWbVVMZ096?=
- =?utf-8?B?RVlpajliWGNVOUlsZ1VUWjBJbGlFRjY2SDgrMHc3d3dyY1p4RG9YazVxOFN5?=
- =?utf-8?B?ZlkxY0lFWmNPL05jSUJhT3lxNW1tOENNUkJHd2hJNUxpSU9ZYVlNVlhTbDU3?=
- =?utf-8?B?cTJiZHJHTWF1VVhUeXBWS0JkVEVJN09WUnFXczNyVkJEdVdON2VMaytPc2Rs?=
- =?utf-8?B?WVBFcE5GNTcxdjZDQnpreWpkOEdsaFkzYjVjUnVxRGIybG05a2MwaGpiY3RZ?=
- =?utf-8?B?NTZId0RSazI0bkdtWUgzR1JnUFNoWWJYWXcvaU1kQ3lhOHB1eGg4c0VJdnVF?=
- =?utf-8?B?NHZGT1BjTTExNlJVQmdBZmhBeDNaZHJkTzNuZGN5RUljVmZaZ0tSbWJQc2Ez?=
- =?utf-8?B?RENwU1FGMjRLL3kzS085cDJLUk5jK3AzeThXcmJXcktYRHJqMXFBMTVBSGZn?=
- =?utf-8?B?S1hEbVNKQ1RxMUVFWktxcXY5dWh6Vm5vS2FMT3RuMGdDTHp3MGFVQWNLdjA3?=
- =?utf-8?Q?RMbgL3H3Hyg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Nkh3YlgyZTBPQTdlTmJUUnJKUEpZc0hCMGt1WmJKY1BUSVNjSXI0RnhDUGIw?=
- =?utf-8?B?UnlEbTRoN0ZMUGVwcmdCSDBJWWZ3by9MTzllc2IraWczb21zZ2tVblpQbWpQ?=
- =?utf-8?B?U3RWc2tZcEpibHF1MmxBdlhtY2dQa1IrODN2RHdrSjArOXRHU1FnbWRKSnBT?=
- =?utf-8?B?OVMzTndMWkNMTE5BVGxVaEdBcjV6SlU1dzc0a0FMYXJ5SS81SjBXY0ZoWDRW?=
- =?utf-8?B?dVpoWlFQc0p1SHMxUFFFUzFCRVQvMVBJaGlETVliU0dMbDVJM2tYZkxQWDBH?=
- =?utf-8?B?N2tRVVc2djRkL1FWU1BhV2U5bE9tbmoxTitmMkJnL2VicmZNYjRFQkVVWXMx?=
- =?utf-8?B?MnhOOVliSXcyRXFtamNFckRoODVHRzJ6OWgwcEY3NUhHdXRMK2hwcW5rMStk?=
- =?utf-8?B?bFFuU3FCRFhoZFVrMnNFUnAybmxBZ2tVdkUzYVpsY0owVWlnbTIwOWVTdHlC?=
- =?utf-8?B?ZFpKQmVFeXpScndnZkluZmJ2c2o3MnNqU1pKSmhRaTY5UGRIM3pCYmhEaWMy?=
- =?utf-8?B?aHdqeENobHJlU1hjU05EN1Y0ZGpocnFwSDFkd1kxUjUrbmNQQldyaGE0VEtz?=
- =?utf-8?B?eFdiQ3lXN0Z5WHM0dURtUTFkNHNnT3BMZ0FTN2ZTQlFtck1IbHR4UDhRVHFI?=
- =?utf-8?B?NzZ0M2FhRUwwalE1cUVPOTVncEdES3ZIdExaMGkzVDVqbTErU3NIRmhCVWJV?=
- =?utf-8?B?TXZsc3phQlBNTzhJeFNuSU9RSWh3MDJuQm40bHhScDgySnJwUHlFVmV3azNC?=
- =?utf-8?B?dXNkTUh3SlhIazRPbzJ5Q25tZ05wMHBnVTFrdEE3aGNTVGFvR2RZOGFkVHFZ?=
- =?utf-8?B?RmpFSTdBd1lvSGVkY0NHS05GVElyL3VjUDIzekxyVEU1MFpRQzVnYzJHTzha?=
- =?utf-8?B?WHJ2bnNhcnZJL0thSDBqSlVOM1RPTUdsQUxyN2p1ZTl4TmNDdS9YVEJVMFVC?=
- =?utf-8?B?TTQvbmprNHR3OStVZ1g3N3BRdHg2elVrQ3c0T1o3N0prb3BEaENNSUhnQ3FN?=
- =?utf-8?B?WDlvemxJbGR3c0ppVzd3WHVFMEhvcnpweXhYTkFPVTROcERFMVZqVStGSFJZ?=
- =?utf-8?B?TVlrOEwrSllOSWFrMTdoV0JwMlJjelVYc3ZkdG5ZN1ZtdklHUHBQSUZhVUJB?=
- =?utf-8?B?S0kyRkVUdTdla0FFd2dYcVkxQ3lmdWFoNjlPelB4czR3M3RxUXZuenFieDJR?=
- =?utf-8?B?bFE1Zzhwa1NHekpxUDZ2SnVXQVZHWFQ1enErTUhSY3hiT01mWjJPQ3hwNmRt?=
- =?utf-8?B?LzFEZ1c2cTdRVndUTGxTaVhNeTZ0alZqYTdQdjNLblhQVFZzT3Zvd05Bc01w?=
- =?utf-8?B?OVJmYWdocEY3U29xTk55dFIvMm1zL2d1SjFjbUs2RVMwbmNrSFhRVDAxY1Bp?=
- =?utf-8?B?YXNiVUdLZE45QzlRMTVEN3ZUelFRYkYrMXQvby9JSUNoRklIcWwyZ0VQWk9U?=
- =?utf-8?B?NWFHTlIrMXdndXZhaW1EWjR1ejBuaDh6TWlEeDJrUUVDZEw1WEpHdXh3Mm5t?=
- =?utf-8?B?VFMwZ1lsM0xtQWI1Y21KL3BZV0tMRjB4ejIyOXRkMXFWamliUHVzS2gyRFRx?=
- =?utf-8?B?dXFmTStPaWwrY3Z2ZUNnRUJ1TXRUOXoxZ0JCanFDZFBmcFIyWmZLMXlGZ3kx?=
- =?utf-8?B?aERldDJyVW5wa1hSTFpPbXZYampQVlRSOEYxTnNPUHNQSFlqUDJRN1FIM2pJ?=
- =?utf-8?B?bnorMytJVUNwUkxYeUNPWmwvcVhaODFRTGErejdDR1dzRURZQjlEK0krR1lw?=
- =?utf-8?B?WVJ5OUU0ZGgvWGhPZmJiVEpNSC92ZzBDQTBOaHp1aWZZUGIwdm9BbVBmU1V1?=
- =?utf-8?B?d3Q2T29HdjdpY0dVbXZ3WU9YUGhQWEdhY05WdUliUDhEU0F2dnpuald3SzBD?=
- =?utf-8?B?RHg0Z2E5djByNjB3ckhnVzY5VjM3dFZFWXVadmk3U0pjdEVjZkd3M2dnS2t5?=
- =?utf-8?B?Q0YrTTI4MS80V3k3b2xvc3BJQjZsRG1Vayt3TDVJWUVYYUR6eGdiL2hBbHVy?=
- =?utf-8?B?bXZZYVpnUGwwUXJsRVFvY2tnTEY2b0FTMmVuNkNwd3VmL2xIVHBxYjY0VGJz?=
- =?utf-8?B?dXhycHBDdlBIUWZFTkdTTUFPV21maklxUllubGJHLytQVXd4T0d1aU5DNVZm?=
- =?utf-8?Q?v/0b1E/JFVpBb97vsoFmbqqgf?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 050bcb11-649b-4be6-490e-08dcc22b91a5
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 21:52:36.3417
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lpqLz+6zrCzitHmv2+jTstrPU7NN1Huc2PBIRHUEQbNrewbQ/+3eTophc836UNkc1IaKlRt2uUdo0c3mr0x4pQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10566
+References: <20240809172106.25892-1-ansuelsmth@gmail.com> <20240809172106.25892-4-ansuelsmth@gmail.com>
+ <20240813200734.GA1659224-robh@kernel.org> <66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
+ <CAPDyKFq0cR10d1jUc5gnoUR5P=cbDEZy2iA-HOq9oNcWZevbDg@mail.gmail.com> <66c62d4f.df0a0220.3305f1.f86c@mx.google.com>
+In-Reply-To: <66c62d4f.df0a0220.3305f1.f86c@mx.google.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 Aug 2024 23:53:54 +0200
+Message-ID: <CAPDyKFpHaWar9Mbdg74CGgrwqkoLwt5HjvVOtUDU+z+sg9aT3g@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions node
+ in mmc-card node
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Joern Engel <joern@lazybastard.org>, 
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Saravana Kannan <saravanak@google.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Liu Ying <victor.liu@nxp.com>
+On Wed, 21 Aug 2024 at 20:09, Christian Marangi <ansuelsmth@gmail.com> wrote:
+>
+> On Wed, Aug 21, 2024 at 03:14:29PM +0200, Ulf Hansson wrote:
+> > On Wed, 21 Aug 2024 at 11:52, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > >
+> > > On Tue, Aug 13, 2024 at 02:07:34PM -0600, Rob Herring wrote:
+> > > > On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote:
+> > > > > Add property for defining partitions node in mmc-card node to define
+> > > > > partitions in DT by the use of the block2mtd module to use block
+> > > > > devices as MTD.
+> > > >
+> > > > You justified patch 1 saying eMMC already supported this, but then here
+> > > > you add support.
+> > > >
+> > > > Both are a NAK for me as both already have a way to describe partitions
+> > > > with GPT.
+> > > >
+> > >
+> > > I think this got a bit confused and hope we can find a way to add
+> > > support for this.
+> > >
+> > > What is "already supported" is assigning an OF node so driver can
+> > > reference it. This patch was just adding the nodes in the schema to say
+> > > that partitions can be defined.
+> > >
+> > > I think what is not clear is that block devices might be used as raw
+> > > devices without a partition table defined in the device. In such case
+> > > it's the kernel that define a fixed partition table.
+> > >
+> > > One example is [1] where the partition table is provided by cmdline.
+> > > Similar to cmdlinepart MTD parser.
+> > >
+> > > The use of block2mtd is just to make use of the MTD parser system.
+> > >
+> > > Considering
+> > > - eMMC is soldered to the device (no dynamic scan)
+> > > - cmdline might be not tunable and hardcoding it might also be
+> > >   problematic (as some cmdline needs to be used)
+> > > - concept of fixed partition for block device is already a thing and
+> > >   used a lot (android AFAIK)
+> >
+> > Sorry for sidestepping your discussion, but I just wanted to add a few comments.
+> >
+> > It's not clear to me why we need something different than what we
+> > already have today.
+>
+> It's really adding a missing feature. We have cmdline but we don't have
+> DT. And in emebedded many times cmdline can't be changed.
+>
+> >
+> > If it's a partuuid/uuid/label or a fixed block-partition from the
+> > command line, we still need to know what partition we shall use for
+> > what. So why is this problem different from how we manage filesystem
+> > mounts, for example?
+>
+> In the context of eMMC there isn't any partition table and the cmdline
+> is hardcoded by the bootloader. The cmdline might provide the root
+> partition to use but doesn't declare the partition table (with cmdline)
+>
+> And the bootloader with the hardcoded cmdline might provide a different
+> root partition in dual-boot-partition implementation on switching the
+> boot partition. (this is used a lot with bootloader using a env variable
+> and a different cmdline passed based on the variable to signal what
+> partition to use for root)
+>
+> >
+> > >
+> > > I think it should be acceptable to introduce in DT support for defining
+> > > fixed partition for block devices and some kind of parser system similar
+> > > to MTD. What do you think? Would this be more acceptable? Idea is to
+> > > just have a DT schema that makes use of the values that can be set in
+> > > [1].
+> >
+> > In DT we can describe that there is an eMMC card soldered to the
+> > board, because it's a description of the HW. But describing what
+> > stored inside the eMMC-flash doesn't belong in DT.
+> >
+>
+> Why? This conflicts with how it's done on MTD. Also consider the fact
+> that eMMC might contain calibration partition used for NVMEM.
 
-Add support for Japan Display Inc. 10.1" TX26D202VM0BWA WUXGA(1920x1200)
-TFT LCD panel with LVDS interface. The panel has dual LVDS channels.
+Because what is stored in the flash (eMMC) can be dynamically updated.
+It's not a description of the HW as such, but I guess it depends on
+how you see it. No matter what, you need to convince the DT
+maintainers that this is the way to do it.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 38 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+In my opinion, I think it would be better to invest our time to try a
+different path.
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 86735430462fa..7d975749d84b4 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2769,6 +2769,41 @@ static const struct panel_desc innolux_zj070na_01p = {
- 	},
- };
- 
-+static const struct display_timing jdi_tx26d202vm0bwa_timing = {
-+	.pixelclock = { 151820000, 156720000, 159780000 },
-+	.hactive = { 1920, 1920, 1920 },
-+	.hfront_porch = { 76, 100, 112 },
-+	.hback_porch = { 74, 100, 112 },
-+	.hsync_len = { 30, 30, 30 },
-+	.vactive = { 1200, 1200, 1200},
-+	.vfront_porch = { 3, 5, 10 },
-+	.vback_porch = { 2, 5, 10 },
-+	.vsync_len = { 5, 5, 5 },
-+	.flags = DISPLAY_FLAGS_DE_HIGH,
-+};
-+
-+static const struct panel_desc jdi_tx26d202vm0bwa = {
-+	.timings = &jdi_tx26d202vm0bwa_timing,
-+	.num_timings = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 217,
-+		.height = 136,
-+	},
-+	.delay = {
-+		/*
-+		 * The panel spec recommends one second delay to the below
-+		 * items. However, it's a bit too long in pratice.  Based on
-+		 * tests, it turns out 100 milliseconds is fine.
-+		 */
-+		.prepare = 100,
-+		.enable = 100,
-+		.unprepare = 100,
-+		.disable = 100,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-+};
-+
- static const struct display_timing koe_tx14d24vm1bpa_timing = {
- 	.pixelclock = { 5580000, 5850000, 6200000 },
- 	.hactive = { 320, 320, 320 },
-@@ -4829,6 +4864,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "innolux,zj070na-01p",
- 		.data = &innolux_zj070na_01p,
-+	}, {
-+		.compatible = "jdi,tx26d202vm0bwa",
-+		.data = &jdi_tx26d202vm0bwa,
- 	}, {
- 		.compatible = "koe,tx14d24vm1bpa",
- 		.data = &koe_tx14d24vm1bpa,
+>
+> Describing fixed partition on a soldered eMMC that the bootloader
+> expects at a fixed offset and won't ever change (or it will result in a
+> brick) sounds like describing the HW to me. (it's the same principle of
+> MTD just applied to block devices)
 
--- 
-2.34.1
+I guess it's somewhat a greyzone in this kind of case, assuming you
+are referring to a bootloader that is stored in some ROM code that
+can't be updated.
 
+>
+> (I know it sound strange as block devices are expected to have a
+> partition table in MBR or GPT but reality is that it's not always the
+> case)
+
+I fully understand that but there are different ways to deal with that
+too. Maybe enforce to write an MBR/GPT when flashing, assuming it
+doesn't overwrite some data that is needed.
+
+Another option is to let the bootloader parse some platform specific
+data in the flash (unless it's hard coded in there too) and then make
+it update the block-devparts for the kernel command line, for example.
+
+>
+> > >
+> > > Hope we can find a solution to this, I'm totally OK for dropping NVMe as
+> > > I understand it's PCIe stuff and very dynamic but OEM are making lots of
+> > > use of eMMC and are starting to use these strange way (block2mtd) as we
+> > > currently don't give a proper and easy solution for the task.
+> >
+> > I certainly appreciate that you are trying to solve the fragmentation
+> > issue around this, but it looks like we need a different approach than
+> > using DT to describe partitions.
+> >
+>
+> Well it's either DT that can be tweaked and is part of the image or
+> cmdline that have tons of limitation due to bootloader having fun
+> hardcoding it or also actually requiring the bootloader cmdline and
+> adding overlay on it. Honestly as I said adding DT support is really
+> compleating the feature of the cmdline implementation.
+
+Another option is also to parse the platform specific data in some way
+and create partitions by using initramfs.
+
+Kind regards
+Uffe
 
