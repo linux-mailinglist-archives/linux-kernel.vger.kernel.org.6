@@ -1,219 +1,225 @@
-Return-Path: <linux-kernel+bounces-296194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5915995A70E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073A795A716
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F3B1F23398
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BCE61F235F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D7217AE19;
-	Wed, 21 Aug 2024 21:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2860117B418;
+	Wed, 21 Aug 2024 21:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACdG9lpm"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kPHwYW99"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012010.outbound.protection.outlook.com [52.101.66.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4FC7405A;
-	Wed, 21 Aug 2024 21:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724277117; cv=none; b=XaXZVy0EyxB16ADCtbwqSEv7guuxH4Lpr9dl5WUXM4DZOJr3H/YClB38hWKLeOy+w040qOG9zr2EJWAGCVN6cp6lKM2A6Arzf3BgugSWWwySYM0pv6oS6p6f9PfSnevRHi1wlgrPTeAxsLZVG1IFJlGM4ayOiyuVSQcWh4x0zg8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724277117; c=relaxed/simple;
-	bh=Kt6JI5NWSv6ZkyWAqw9jTVzFCxQpU5lwLImQB0lx8b8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbC9kY+G6QgrF9hOUOWXbaiGWRJiGgiZvdddHFrcIsW7lXWTUHCKulRhOxYynwzbtWDayQ2/sotEBmLixwRov6I5ngX83AJvZjF5ktA8sYCE8fYfshHZ7SLJ1qweyN3u9HnuIlq+Audn2pZbTdJQ78zVZR1I7taKoP2GfTEjuoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACdG9lpm; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8666734767so17806366b.1;
-        Wed, 21 Aug 2024 14:51:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724277114; x=1724881914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mshofXHEuKk3AfsjHmTdYTQY1OTdO7/xqWQ3iRWqk6I=;
-        b=ACdG9lpmJL1VkXRzq9o4g5V1BxJxHKhP6/ildyrSnwkIWPYEXokO0NdUepp4G9rIEt
-         6h/TXNGxmNIUESLzyBe43DCAIDNCoeUx6cFf34O4Sym5ARkkCvISh9+TaiODVjBCWHRx
-         CPIDzfO62OYjaUerwqCM3ZQF/FuUn3QXTyE3i7AwweidDM6xbgVZvHUirNR2GbWUIF48
-         DC/uBoR/R88w+LjRHhWNP9VtWnJQqzScGNzv99ptBzITpLwwGumRaNsGU0SbddLvPOQj
-         1lPBLHT10qA6Dy2/HzrB5H87DESRx/Jyml0PA2BxiISffJiHFNLqtQyTpl/nHQKEI1tZ
-         azdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724277114; x=1724881914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mshofXHEuKk3AfsjHmTdYTQY1OTdO7/xqWQ3iRWqk6I=;
-        b=qwZCqnbXseh5HHNIycZswa7qz+OqtjgCV7B74e2uj1JJay8bNAineKJlJV+gXBjoob
-         XNUddhk5l/6KotM7GS2BYSejEguN59RUB95OIHd1Ddxwa8sDsHI8YJvg5XeplsUjKa3w
-         oopQXLNOPuJ9I7dJsP6pVArnZrPm5odgSiyZxvKMlPN5bqU15ZzZAqRiWyegOV8k3ccG
-         Qf8p883rjYEYsKz6pxuRWB8M8dZCznihr3ztn6bVzTgTBJFGRvw4bNPkjEVhmuMEH6PK
-         tCK7j7l0CPS9BlP82SxBHjqa4jDuL6G6KgFNxyq8xHzkQgRgNxZDFtceuU0FmOMlNAa2
-         um1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUaQZkvJnNLuWq/NBOgWWmlxOdTwxYz7gkMI965TfrdxkvEbBA2mwdilIoHwhlK+SRmJKij3nMfq4dN@vger.kernel.org, AJvYcCVf6sLk7e/iF18nbzFw3YVrdCXkrXt9tCoL9GDjP7y3LcDX+3GiHTW45CstWBuUEDsuZaJoV/wvA2t2@vger.kernel.org, AJvYcCWygx8Pc+SIPDUuCuOZ0rhJNue3I1xRqNpacwM4ibeHlAEj/p4nIyHEQRmvrmmLSPk7WW/poI7rK0szLFYn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK5Pfe7HXd622fphMP+z70mNBYfWCiXpQdPl/Ke0slLA1qEE/S
-	jUFJ4ndUOx251RVjtGwZLZ4ynbt2lXNxof4uYh4Vjtq10jiDYImr
-X-Google-Smtp-Source: AGHT+IHizZ5FHVMP1eNGW0+XQx8jDz5+OtFB9DZr3dfKFvQ2X2R5CGRJv3oN+hMFH3GrQTY2FiNuBg==
-X-Received: by 2002:a17:907:2ce3:b0:a80:aefa:14d3 with SMTP id a640c23a62f3a-a866f8b679emr282840966b.63.1724277113186;
-        Wed, 21 Aug 2024 14:51:53 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:1594:887e:30dd:c59e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f48a5d0sm14982466b.159.2024.08.21.14.51.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 14:51:52 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 21 Aug 2024 23:51:50 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] iio: pressure: bmp280: Use sleep and forced mode
- for oneshot captures
-Message-ID: <20240821215150.GA478039@vamoiridPC>
-References: <20240725231039.614536-1-vassilisamir@gmail.com>
- <20240725231039.614536-5-vassilisamir@gmail.com>
- <20240728165724.75153d08@jic23-huawei>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6967405A;
+	Wed, 21 Aug 2024 21:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724277154; cv=fail; b=OLmKE6IHzlJgmla/V1tfw//kljW8npy76E0bgox7xRmlUMZWE6dJs3DhqtSXTo1hKjK/fyuIBYB1P3fo5VfDZbk5Xal0aZWE/6ZXWofhcFisJRAXpwlusafRHPye1y22zKZQYcbAbivsAx3YxAYKohNIq8dQukdS6C/ckKnXf5U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724277154; c=relaxed/simple;
+	bh=4PxzKG5lvJRAkCjYgUJuczo94QC1XNCKpPKLjoa4hHw=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=dYJMzVKZRgB8VqUCtNdMujjef4k3cLjejwto3/Mkne0Tk5B1YKKQNy4dNVROfYep7OMddKhaKIxopULcl/C50LzpDBt0TwBz7QYOJch/W4x4YsDMV9FDPwLEYQxBzdxAapWl2lmdejCZ4qktSgjD96AS6gQ8IzwfklFQsTlwFNA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kPHwYW99; arc=fail smtp.client-ip=52.101.66.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=APRJMeo5zUkuT7HIN5CpgGPYAFfPY6O1I5VyTM5M6Idmtb+Cr0juELIedEEODeOMRy2rOJJTb4Y4sgY5C2CPGCdRQSgtXqaVJ8I9ymWcm7vUERdT/gJVtiRIjK3A86y/104/wsluMDrJU+6sEbPw/Kr+34bSAzFL84k+WUYF2nudKESBb0yG4MUqXhQffvze89LvRf7EUPKb1/V9oyQOTIHO54YqdbIIdmZnR5IT3gClFc8zHPVv3jH8H4xHdLTojYWUvanA1EysC6g88L+M+5OSRKjRjPXwy6rVOFf2HwwB1bAACqEDpM2TGUVohaA0XY7ZNtb9qyzCkfupg+kiuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JtZQf+ArabNBcIrRh5yxDtysG8/fNEyAOER30PyPZVo=;
+ b=xwHQICurkoUQK2Kqp+JOu2PJA7yOANgkq+371HwhsnLA2VYCyjhqvx4he2GCoOwANZiFuUGbgd3PkVdPNCnBnNGKziG/MDUEqjB7FocLDtvBeESy9r4rwROA7dWamPh/zdWAnqt08MSHOjGZ00IJIm3BHEzCoDdUgOXKPRAE75wjJ+wNFgobHMrzKZW/nvGKKBr8Pc0mWUPO393m+Kv5IGHUIKX+LHP8c1y/a09js7pfBsj3J9qWT5ocbpCCHPHDPjdo64v2W9Ocd4vyzKP5swfukyQQ72YZjJthS3QT1M5HfKouxwMH9q7wgFRKSiV7S8e8cwjfXrFFTymK6aeG8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JtZQf+ArabNBcIrRh5yxDtysG8/fNEyAOER30PyPZVo=;
+ b=kPHwYW99sf4nDWPavuPoZ/e3orT8+g7BdZmMG4HGw2wcEhTDWTvGWtWaXz98pGMMKsBfQ0rVhTEf76V69pYN/mN/c/odO8kU7TeCD7YjaSE64uYWoHC76rlIC5lJT0ON/LIx/zB7QPQQnUgByy98IPQ09u8y5riMhWoMFd9JChtZHBfouCu57FvjsOJwSd+MgyvfjX8IlFKaXr52MLRTpe1Ubyzwf9tDau9rLuaOxfBGFpautCPoxnhzz06CgEnBj9J+TUFLsjw/vtgcGY05LdK/8ksrLLSYxgpRJZJbF5lU63y9N7KP2PGkQ2yQWi4//e90puwDWf66l+6UlRiy7w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB10566.eurprd04.prod.outlook.com (2603:10a6:800:268::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 21:52:27 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 21:52:27 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH 0/2] drm/panel: simple: Add support for JDI TX26D202VM0BWA
+ panel
+Date: Wed, 21 Aug 2024 17:52:10 -0400
+Message-Id: <20240821-jdi-v1-0-6e3ce584072a@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIphxmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyND3ayUTN1E01QDQzNzA4PktFQloMqCotS0zAqwKdGxtbUA1bVgcFU
+ AAAA=
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liu Ying <victor.liu@nxp.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ Frank Li <Frank.Li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724277142; l=1243;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=4PxzKG5lvJRAkCjYgUJuczo94QC1XNCKpPKLjoa4hHw=;
+ b=z9KUqbmPD6ocyI3WUs9KRBSaB1dyemPLvUYVSuPVvoh9KxNAPW/qV3MfHSK9kvC/31sfrmtpd
+ t7YtE9XKVSECwywYI33fbzzkPriW+AWt7gZo/yonpCVBBq/AMky4ZAm
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SJ0PR03CA0080.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240728165724.75153d08@jic23-huawei>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10566:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5d889cad-7a7b-47fe-69c0-08dcc22b8c3f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TEo0aWRjYlRwN0pDaFhrcXJhQjYwWkdSckFadllOdTFnazRuQXRwZUpLQ3Va?=
+ =?utf-8?B?MGxKZTcrdU42VzBwZjBRZGVheW50TGd6dm9rV2NwM0YwaVFMdUxLN2xvUThG?=
+ =?utf-8?B?Sko3cFI0UXRINVJHbVBsWkZwMTRmWXJDVDhtTmU1WWFmNDZiZ0hSRTlva3dQ?=
+ =?utf-8?B?ZW1mUEkrSWtZMVZpZk5DZVY5SmVKUFVVT1B6RWV2NzFsQmpVQmVWSU9ydXBo?=
+ =?utf-8?B?enJwSjBCSU5hdmVnalV4ZGJVRllzaWcrMlc5Mm1EQW9HbXVzM2tGUCtGOTUv?=
+ =?utf-8?B?UU55Ym51THZJVzhRR3pTblFQK1hzZU52N0NqbllKdG1ESnIxWVpJQlFNN01M?=
+ =?utf-8?B?aDFreDAvZEZvVzhuMVFWcm1rcG1QVUt4YmpGNzRMYUgvaDlLY2NDaWFkTnNL?=
+ =?utf-8?B?TE5KTWVnQ2NzK1BJcW91Zk8rd1FrK0libWg4eVlUNXFqZ1N0M1lwaytqOVF1?=
+ =?utf-8?B?eDFmWVBHdXN5MTY1UzlOY0k3YnFNV3Ixd1ZjYmI2QnlXcVMwa2FFLzZxMldF?=
+ =?utf-8?B?ZVJ1RitWN0Z4aVN4Tk4vSXltZGpJVlEvUjF6bWFOZzFpWkJrNlpFSUR5K2FO?=
+ =?utf-8?B?ZWp0czIyK01FVW1MMkhySXRNeDJVeUNXKzkvbW9BdjRHZVR2Q3FyR2htVzlr?=
+ =?utf-8?B?UEsxdWt2Z3MxMkl6UnNoajhrbGY5RzVOWFY4QWFUZDdCMW4yZnQrMUVQY1JW?=
+ =?utf-8?B?RW00LzRlNmxJUWx2YVFydEhFNmh1WXpYOEFKd3Z2Zkt3NEJFQVpkREVtZTVH?=
+ =?utf-8?B?cG55TXhzdk1tcFI2eVUxaHlPWlFFVzRzK2Q1cTJlalhxK2pNTXZWd3pVelRK?=
+ =?utf-8?B?b0FkdEM1OWRoTC9jTnd4M2I2SEtIVmpUMTVSOExHeXZ2YzJWS205ZDhUZFdj?=
+ =?utf-8?B?a05HWjBya0Nka1J0bkhKSmQ4MmcrRHJ3S1R1czJMa1ArVDd3ajkzNjlDcUJp?=
+ =?utf-8?B?aTZpa1JOaCtFUFpQdCs0c1FBVVlJSkRRTDBad0hjamlMV082RTJKOU9XUVY1?=
+ =?utf-8?B?ZzZndTMzUFJobHdVTUFxNC9ZOVBGR2N6UFVZdVd4SWsyRWxJTHBaQ1EzSnhM?=
+ =?utf-8?B?elg4cS84bDZKZ1E0RlFZbHJET2ExMDdzRFVweE1TMzlCQithVXFvUEpHRjA5?=
+ =?utf-8?B?Ukg4SWxvdW9oMlpMQXMxOVFSbk91TkY3RmRqZDJZRkE5ZEsxVThSOVJhMzh3?=
+ =?utf-8?B?NnJPcGtGOGhvK28rK0dOaCtmTkNaeXRGU0xjVUdCcyt0b1pmaXRBWENRT1h3?=
+ =?utf-8?B?dll6blI4c2JacnhkYnl6M0ozcDRvL25oeTkvSWhZZ0gyZjcyY1FIVG9wU3hQ?=
+ =?utf-8?B?dU9hTkltZS9GZ0dXMkhyZW9YL0NsSUx6MExRcDVZSHVKQ3B1VGpKT2s5djZi?=
+ =?utf-8?B?YkMvZitNbUw4ZkJEQXY4RkhMSU1CTlJvemdQTkwwS2trd0Y5MEpmRmJHais4?=
+ =?utf-8?B?RVdHV2s5UlcrNitCbmRuK2NtMjVEWGRRMklyOEJRdC82RXg3QVV2M0t6d1ZI?=
+ =?utf-8?B?Vzl5R28vOWozbUFHT0tFQmhYV2lmbzdROFVkUURHWk5WZjZHLzZob21peTdG?=
+ =?utf-8?B?dUZzTUdsamxsNXBSMnZUVG1nQXZRUGY0VE90bWEvbmpBWjd4QnRyL3hqelVz?=
+ =?utf-8?B?ZStoalVtOU9jWXNsWmQ0bUNINGgweUFlYWlBYjQrYWFWLzVOdDJTamRmZ1hM?=
+ =?utf-8?B?YWQ3T0xvL0JtNnoxalJpY2ZxQWVzMnJ2NFkwZ2pxVnUrRHQ2NWpvNTc3K0pz?=
+ =?utf-8?B?Q3lNUm5halVSQ1VGSTdzZmVYMmt4ekg3dGVUdThPK3dUaWhNSVNwN0c0MzBi?=
+ =?utf-8?B?a3JRdlZ0RFVlV3RVKzEzT0JVbjZESzhjRC9zaFV4SjZ6UWNKcXpwY1NDckNn?=
+ =?utf-8?B?QmVzY3BGTjNrTWhIazRjRjlhTkl6VmJBOVNuR1pmWTJBMGxNNHRUVkE1WjI4?=
+ =?utf-8?Q?syOW36Yfais=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V094ajl1RmdlUVNKblN0UXA4R1VvNmhVWUdYZGdmVkU5QVVBNnNnSXFETTRv?=
+ =?utf-8?B?ZWNTcjZueDUzRGNIRDQwcFd0S1JLZURJV3FQaldiaHo3dW4vZE9ET0V2Y25X?=
+ =?utf-8?B?RDRlWG5hTWxMV3QrbnFMdUpzejNvYXBWY0RCSEdDNmh3eVJTbUxsZ3J5bFQv?=
+ =?utf-8?B?SkIzWkJjSUZraDBVc3JaU3h6c2FwcGhFOERXR3FkMWZxSGpQUjA3Yzc1SVBG?=
+ =?utf-8?B?QmdtY2NmemdkTmVJNTdpNldNYkVkdVdPOUQzQmdLS1M5Uk9nMzArSXk2TWt0?=
+ =?utf-8?B?QzZoU1ZhcmU2akNnM1RJMnJwb1FUUjlKVDZZazFoanM3NFpqODI3TEdIeTR2?=
+ =?utf-8?B?L3JDTEtIWHJsL3BWTWlsSUI4MjltMkVYbXN4UGJYME5yTU5MSTE5TjJ2WlNv?=
+ =?utf-8?B?N0RYKzMzYWNzbWh2c2VDVVhsUmlKalNRUVFKbG1iSXdINS9VTVNYKzMwSU9S?=
+ =?utf-8?B?Z0JWd2o0M1JQaTRWTDRVMnFaNGRmcGhiWW1NaW9LeERDQ2VRVDBuQmFQNytG?=
+ =?utf-8?B?ZFp0bmtmai9PT1BON0ZWUHRVK0Q1WVk2RHRlYkZ5L0dGajlNRjZnTlYyc01q?=
+ =?utf-8?B?TUlxWUJPbU82aUFLTjhISWl5aFpTY3EwTklxRjBic3pHRFNnOVhudXJ3L0dF?=
+ =?utf-8?B?SFh4N056STBRRExpM1p5VXVjWkplNHVxKythN2xObG5OUFZNVVNxdktJblZY?=
+ =?utf-8?B?VjhiREMveHlycVh3L1h3eTlTc0NrOEd3WnVOQnVzS1Z5dTd4WjF6N04vWENq?=
+ =?utf-8?B?MFdIekRVeGd3d1dsVlg1WnRtemNJc3N6L2RaOHQwWnBvV3JyeEtXa0hGbThG?=
+ =?utf-8?B?b251bXB2d0pmVXN1VlpqaHNud2thWW5TTTkvRVhSeEJ3RWx2N3Npbis1N0di?=
+ =?utf-8?B?NU5xVjZtQnZUcUx3Tll2SjhsVlZzU3VLTWg5Nitsbm1TRTMxb01ocG9TODNJ?=
+ =?utf-8?B?SGo1TzRsTFFzeFZYUWFyTzlSRGYyeUtidzlCL1lSM0VkNFBKR3BIWEh0VXo5?=
+ =?utf-8?B?aXp5dStRalBHNk82MXkyb0xKQjFlcEF3UFhDWkh3dXFzSEhMTmRqdmFnUm00?=
+ =?utf-8?B?NHpYaW15b3FnblNXUS8zLzVOM1h5MkdEK0oxMjRTN1I0WU9BOGdHdnIzOVRP?=
+ =?utf-8?B?aDc5NnRHVG9YTXExMlN1bFVlTzJEZ3RHTThKUVYrc1hXbFpmMkFXRkxSS05N?=
+ =?utf-8?B?bkhxUWE3MSs0b1BsWnFGTWRFYWpBdUhsNDlDQkNNZTlmVUxSNWZHeUdwTnY2?=
+ =?utf-8?B?VlpPbDllRWFrYzVYYXFMVUY4VnBMK093eW5rOG1RMzg1RHRSU2dISUN4dDQ2?=
+ =?utf-8?B?cWRVRGE0aFJyM3QwUTdPYVB6SE1wTFV6Z09ZbVJzbGtDb2ZhQXNobGJGVlBU?=
+ =?utf-8?B?NFpoYzIzMThMTGZkSW9xV2I0ajBYazhYZlNqSUJueklLd0g4b0ZTd0M1Z2Mw?=
+ =?utf-8?B?WExMZVJHeHc4K3J3NUdjNEg5MUM5WHFveUlnWmJDRDFxbVNTckhqd1h4Q0l6?=
+ =?utf-8?B?UEd6QVh5clduOHVjNVJMVXhIdVVURzRIemkwWVJkeU5oS2RtNnA3Yi9BNEVr?=
+ =?utf-8?B?L1hJajhVU3h1MnhHVjRwcGNrRmo0VmQzZDVPZ1N5MmVGNXM5RER4ZjFWSVE0?=
+ =?utf-8?B?dDFXN2hBY01LMllFL3hWODI5amtDTjJ0aWt0clFtZkJUQmFyQk84MWo3MTJh?=
+ =?utf-8?B?bG5GMGtCbDV6d014dHZFeUNCNzBlaXZEbWJmODRMLzh0dm15OXVyV1UrR2RT?=
+ =?utf-8?B?Yi9GbzM2ZFFBeW1ra0taWG9DeXkrWjVPcjlHV291dmh5VThiRWI1bmJacmI3?=
+ =?utf-8?B?NDNvZ1VmTGRzRTVJc0RPNGp4V2lCTktuaHUwSDBpdUJMZkNvait6Q0tqK2lm?=
+ =?utf-8?B?OGg3QzFZaUJ6ZnF4ZTY3YkNkOEVja1JEUjRyeUsraGZwQXphL3I3RUZlZGhQ?=
+ =?utf-8?B?b3F4OVdybjQzbisyS2NGVkovZmNpNVd0VWlXVitqTXl3cXArRFpKYXd4NmVR?=
+ =?utf-8?B?Z3g1bVd6QzhjU3NINS9kQVU0Z25UdVJQeEJyUk8yNnhrR0E3S1dYUFdVUkNl?=
+ =?utf-8?B?aXJWMCtWbHp2U1Z0MWUveXlta2ZnMlEzNE1EdTdTNlBsblVoMHVKMGw5bTRX?=
+ =?utf-8?Q?xSGc=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d889cad-7a7b-47fe-69c0-08dcc22b8c3f
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 21:52:27.2991
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EfMPqAq6+eUttKM1KY4VV71l0VEQFhBbqVv6oJiXuVX/GyJjUfZw9ewUtj0CAxWHTT/e1IGbFxddWMNWUhzqDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10566
 
-On Sun, Jul 28, 2024 at 04:57:24PM +0100, Jonathan Cameron wrote:
-> On Fri, 26 Jul 2024 01:10:36 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > This commit adds forced mode support in sensors BMP28x, BME28x, BMP3xx
-> > and BMP58x. Sensors BMP18x and BMP085 are old and do not support this
-> > feature so their operation is not affected at all.
-> > 
-> > Essentially, up to now, the rest of the sensors were used in normal mode
-> > all the time. This means that they are continuously doing measurements
-> > even though these measurements are not used. Even though the sensor does
-> > provide PM support, to cover all the possible use cases, the sensor needs
-> > to go into sleep mode and wake up whenever necessary.
-> > 
-> > This commit, adds sleep and forced mode support. Essentially, the sensor
-> > sleeps all the time except for when a measurement is requested. When there
-> > is a request for a measurement, the sensor is put into forced mode, starts
-> > the measurement and after it is done we read the output and we put it again
-> > in sleep mode.
-> > 
-> > For really fast and more deterministic measurements, the triggered buffer
-> > interface can be used, since the sensor is still used in normal mode for
-> > that use case.
-> > 
-> > This commit does not add though support for DEEP STANDBY, Low Power NORMAL
-> > and CONTINUOUS modes, supported only by the BMP58x version.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> One question inline about the corner case of buffered capture in progress
-> when the machine is suspended.  We'd like the device to carry on feeding
-> us data on resume. Does that happen?
-> 
-> Jonathan
-> 
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: imx@lists.linux.dev
 
-Hi Jonathan,
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Frank Li (1):
+      dt-bindings: display: panel-simple-lvds-dual-ports: add jdi,tx26d202vm0bwa
 
-This is actually a corner case that I couldn't think of. I will have to think
-it a bit more and come back on that.
+Liu Ying (1):
+      drm/panel: simple: Add support for JDI TX26D202VM0BWA panel
 
-> 
-> >  	.trigger_handler = bmp380_trigger_handler,
-> > @@ -2085,6 +2239,64 @@ static int bmp580_preinit(struct bmp280_data *data)
-> >  	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
-> >  }
-> >  
-> > +static const u8 bmp580_operation_mode[] = { BMP580_MODE_SLEEP,
-> > +					    BMP580_MODE_FORCED,
-> > +					    BMP580_MODE_NORMAL };
-> > +
-> 
-> 
-> > +
-> > +static int bmp580_wait_conv(struct bmp280_data *data)
-> > +{
-> > +	/*
-> > +	 * Taken from datasheet, Section 2 "Specification, Table 3 "Electrical
-> > +	 * characteristics
-> > +	 */
-> > +	const int time_conv_press[] = { 0, 1050, 1785, 3045, 5670, 10920, 21420,
-> > +					42420, 84420};
-> > +	const int time_conv_temp[] = { 0, 1050, 1105, 1575, 2205, 3465, 6090,
-> > +				       11340, 21840};
-> space before }
-> 
-> Also stick a static in front of them or Colin will ;)
-> Aim being to makes sure they aren't pointlessly allocated on the stack
-> if the compiler doesn't do something clever with them.
-> 
+ .../panel/panel-simple-lvds-dual-ports.yaml        |  2 ++
+ drivers/gpu/drm/panel/panel-simple.c               | 38 ++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+---
+base-commit: eb8c5ca373cbb018a84eb4db25c863302c9b6314
+change-id: 20240821-jdi-a5e016700cfe
 
-Ack.
+Best regards,
+---
+Frank Li <Frank.Li@nxp.com>
 
-> > +	int meas_time;
-> > +
-> > +	meas_time = 4000 + time_conv_temp[data->oversampling_temp] +
-> > +			   time_conv_press[data->oversampling_press];
-> > +
-> > +	usleep_range(meas_time, meas_time * 12 / 10);
-> > +
-> > +	return 0;
-> > +}
-> >
-> >  
-> > +/* Keep compatibility with future generations of the sensor */
-> > +static int bmp180_set_mode(struct bmp280_data *data, enum bmp280_op_mode mode)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +/* Keep compatibility with future generations of the sensor */
-> > +static int bmp180_wait_conv(struct bmp280_data *data)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +/* Keep compatibility with future generations of the sensor */
-> 
-> What does this comment mean?  I'm in favour of course, but don't understand
-> why it is here and above the stub calls.
-> 
-> 
-
-This is for the bm(p/e)(2/3/5)80 devices which actually use those functions.
-Maybe instead of "future" I should have put "newer".
-
-> > @@ -2825,6 +3048,9 @@ static int bmp280_runtime_suspend(struct device *dev)
-> >  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> >  	struct bmp280_data *data = iio_priv(indio_dev);
-> >  
-> > +	data->chip_info->set_mode(data, BMP280_SLEEP);
-> 
-> What happens if the device is in buffered mode and you suspend?
-> I'd expect to see the power mode stashed somewhere and restored in resume.
-> 
-
-As said before, I will investigate it and come back with more info.
-
-Cheers,
-Vasilis
-> > +
-> > +	usleep_range(2500, 3000);
-> >  	return regulator_bulk_disable(BMP280_NUM_SUPPLIES, data->supplies);
-> >  }
-> >  
 
