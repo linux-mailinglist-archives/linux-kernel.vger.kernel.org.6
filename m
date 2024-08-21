@@ -1,89 +1,169 @@
-Return-Path: <linux-kernel+bounces-296276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACF495A87F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:48:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC31F95A885
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771C71F213A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:48:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE374B21D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C4F17DFE1;
-	Wed, 21 Aug 2024 23:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0C717DFE9;
+	Wed, 21 Aug 2024 23:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIsrpYOt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VbtvZFJi"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E3B1422A8;
-	Wed, 21 Aug 2024 23:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581B616F0DE;
+	Wed, 21 Aug 2024 23:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724284115; cv=none; b=tLJr3FR4jOUR4sXUgVgwEI/o95KSKYrw3OEtJ+P0norPFatNO3hgQ2FC7/UBKb2wGHPD/BT0Rk6tHorFayoMpyZl4iIaj+gmQh2ZcWrB1jPByeJU43aHrd7Db+2/Q/8WB51tXLpGPdV0q0aJXfwxXjgGZmZXNZRX9bnYu1ElFXo=
+	t=1724284331; cv=none; b=aSpbNINeDysLQ2fZlPZtxgWey6ndsR1VCVZD18mfUQXBxLoI7Lovzrnu4JJHua1i/r2+bFStgI+EXVyhat4ev5swObHlHzk4drAOEq6tGD1YxF5BdV+o50wutN6BuxaldvwcdttCcPYvH8djURkzyQ2l/sCJVkKCr8LH4mVDQn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724284115; c=relaxed/simple;
-	bh=hXSJ4Mmd9gPQrlu3YE7bd5xMU96bAR9vgU4B86SF1FA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c+S1I2PUxQoDrAgTBgNotJMpxRG7PGSFcW1e5PClPOPim8KH5xjLSW5KCZBjR+daonDPG4W2GsHM4rxcxxu/AkK8RAsIU5zoJr4bXaZbjihZt4VJOagcYvex8qXmhL+63C1p9eBQ3MJ6qYlCw3I9gjlGrFheJkJRKd0d5WZeAcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIsrpYOt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF0C9C32781;
-	Wed, 21 Aug 2024 23:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724284115;
-	bh=hXSJ4Mmd9gPQrlu3YE7bd5xMU96bAR9vgU4B86SF1FA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GIsrpYOtDeCU1G7jUVZrTXaeZ25v3Vf+4IAV15NPYnUAZJSFK2BdBZbMKt/0wyAjO
-	 nhGIyIGqEfMKGKn00zuhtLPwj1627ifCz4ITQDVSKDrKt3UcQtElLoWQwxEIYEjS38
-	 vxQiCbQi3xBkmQKCxI3X7z2a7BhV7qX2JeW2prwhpxP7Ykt4jhyqqPp1rZVcsCVFsT
-	 bHZ3RejFRglQdQc+ehUlKfozBpgTP3RH4dtLELOth0Vwf2/ysbgqUMijyTS8Zs7+nP
-	 3gmNIL23HpueWx8miV7s9n8Rj1uid71Rl+F5VpK+mc8RSpMl8J+sZKbjfan9akDPnw
-	 r4uaoUA7/y6Dw==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-270298a3b6eso86610fac.3;
-        Wed, 21 Aug 2024 16:48:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuuM8jOy3EXxfh8ViLaPeZWqzkXDSyeiaLmxQCd3L82A26ozBjyfgrHDeYWEMSNDNFdEXOIil4q+Zf@vger.kernel.org, AJvYcCVuwwnjc+hz4RFnHHhEPIK+s2s24XfancSp1HNg+/KD0f44AaTE4YPhUW8RzH+E/GWxET9JgMSOmog4bIwX@vger.kernel.org
-X-Gm-Message-State: AOJu0YynJcNeaEJUxtSzY7QNVfK7OvhZ8ooJ37fHdu0gSJyt2K4/RQne
-	wXkIc386ilSodxy1KfeO70Mr9ApfN910QcS+IZgKhpHK9ItXX8KTPanKX0uAcTkf4/RR2mkUwSm
-	UumMsWfQ1MmGqgdGTLVX4cLmnECc=
-X-Google-Smtp-Source: AGHT+IGkO0u6+FCMiR6QA14j6GO/MRJsNyrOSex6RyFNb/McI8uR3YJ5IM/x4P8mfsK9ypmuwDrW0vBm6nMnmE8AW6I=
-X-Received: by 2002:a05:6870:2248:b0:261:877:7459 with SMTP id
- 586e51a60fabf-2738be38e6dmr4145472fac.38.1724284114333; Wed, 21 Aug 2024
- 16:48:34 -0700 (PDT)
+	s=arc-20240116; t=1724284331; c=relaxed/simple;
+	bh=/Z/HwBcsCtywniW/ZzCfaEcLcBT+4xgCHYU82J8sQv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQOD+8bbX7VA3Zw7d4aJr/z2K2NRLTS26USXMvfAL/VM1zub/2absl40yciVkv+9Ls8ra1OSPfCJ03ARp1Euy4faz4XslfN4RhBy6EqcqPeTm9qze6SPzTBybhRv6j0HKhryiwXlgTiVWqigpDLL4ErT6v3k2PNB62oQR9gHK4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VbtvZFJi; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E59640002;
+	Wed, 21 Aug 2024 23:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724284326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0HU6Ta0HRhn2z2jojEOSX+U5lajLvD863lfH93hnjsU=;
+	b=VbtvZFJi3StZk7TiRQXTxa1wm4MmfPKHL0/WmMfUgnd49Fp7FopIMAlK2UXxlv/eUEAZx6
+	G6gk53COFJWmQNJRJAHgZ61Fus17tem6M23NMRwLJQt8i+ALVUNqgBlU6F7EYaYZMsHP8E
+	zjdJTCvcqovkCYhr9Q3LDATQrlOIPETV9/3txL9CQ5+Ugg5Anus1/MAOx/yFieYDBvYGea
+	SH9tSE0HZ7ZpETMcv/q0yOoBqxmveYFxZRKKGOdFjDNOY35AD9MtfW6nNvgrdj3OrglYQU
+	32cvapPFuyT+WMBAv/cEm8FAe23ezIoWg9g0SiViWtszE01NzAjvrQE63GfeHw==
+Date: Thu, 22 Aug 2024 01:52:05 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Alexander Dahl <ada@thorsis.com>
+Cc: linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: microchip: sam9x60: Fix rtc/rtt clocks
+Message-ID: <20240821235205b302068b@mail.local>
+References: <20240820132730.357347-1-ada@thorsis.com>
+ <20240821055136.6858-1-ada@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com> <20240820143319.274033-7-chenxiaosong@chenxiaosong.com>
-In-Reply-To: <20240820143319.274033-7-chenxiaosong@chenxiaosong.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 22 Aug 2024 08:48:22 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8mX+2gRuPyEuamg-nCTdyLb7G6bYKw0YiUrGb2GGTaaQ@mail.gmail.com>
-Message-ID: <CAKYAXd8mX+2gRuPyEuamg-nCTdyLb7G6bYKw0YiUrGb2GGTaaQ@mail.gmail.com>
-Subject: Re: [PATCH 6/8] smb: move some duplicate definitions to common/smbacl.h
-To: chenxiaosong@chenxiaosong.com
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
-	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
-	liuyun01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240821055136.6858-1-ada@thorsis.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Aug 20, 2024 at 11:35=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wr=
-ote:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> In order to maintain the code more easily, move duplicate acl
-> definitions to new common header file.
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-If you rename the prefix of cifs_ntsd, cifs_sid, cifs_acl struct, we
-can move more ones to /common/smbacl.h.
-Looking forward to the next patch.
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
-Thanks!
+On 21/08/2024 07:51:36+0200, Alexander Dahl wrote:
+> The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
+> sourced from the 32.768 kHz crystal oscillator.
+> 
+> (The previously used Monitoring domain slow clock (MD_SLCK) is sourced
+> from an internal RC oscillator which is most probably not precise enough
+> for real time clock purposes.)
+> 
+> Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
+> Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> ---
+> 
+> Notes:
+>     Picked the wrong patch in the first try.  This v2 one has a slightly
+>     adapted commit message and more context below.
+>     
+>     This obviously requires a 32.768 kHz crystal oscillator to be present,
+>     but the sam9x60.dtsi does contain that, and the clock-controllers
+>     reference that, so I assume it's always present.
+
+The crystal is optional so this is going to break the boards that don't
+have one. I don't really mind but this should probably be part of the
+commit message.
+
+This makes me realise that we always assumed the RC oscillator was
+running at 32768 while the sam9x60 datasheet refers to it has a 32kHz
+oscillator. However the RTC only has a 32768 divider...
+
+>     
+>     /sys/kernel/debug/clk/clk_summary content excerpt before:
+>     
+>          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
+>             md_slck                          4       4        0        32768       0          0     50000      Y      fffffea8.rtc                    no_connection_id
+>                                                                                                                       fffffe20.rtc                    no_connection_id
+>                                                                                                                       fffffe10.poweroff               no_connection_id
+>                                                                                                                       fffffe00.reset-controller       no_connection_id
+>                                                                                                                       timer@f8008000                  slow_clk
+>                                                                                                                       deviceless                      no_connection_id
+>     …
+>          slow_xtal                           0       0        0        32768       0          0     50000      Y   deviceless                      no_connection_id
+>             slow_osc                         0       0        0        32768       0          0     50000      Y      deviceless                      no_connection_id
+>                td_slck                       0       0        0        32768       0          0     50000      Y         deviceless                      no_connection_id
+>     
+>     And after:
+>     
+>          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
+>             md_slck                          2       2        0        32768       0          0     50000      Y      fffffe10.poweroff               no_connection_id
+>                                                                                                                       fffffe00.reset-controller       no_connection_id
+>                                                                                                                       timer@f8008000                  slow_clk
+>                                                                                                                       deviceless                      no_connection_id
+>     …
+>          slow_xtal                           1       1        0        32768       0          0     50000      Y   deviceless                      no_connection_id
+>             slow_osc                         1       1        0        32768       0          0     50000      Y      deviceless                      no_connection_id
+>                td_slck                       2       2        0        32768       0          0     50000      Y         fffffea8.rtc                    no_connection_id
+>                                                                                                                          fffffe20.rtc                    no_connection_id
+>                                                                                                                          deviceless                      no_connection_id
+> 
+>  arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> index 291540e5d81e..d077afd5024d 100644
+> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> @@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
+>  				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
+>  				reg = <0xfffffe20 0x20>;
+>  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+> -				clocks = <&clk32k 0>;
+> +				clocks = <&clk32k 1>;
+>  			};
+>  
+>  			pit: timer@fffffe40 {
+> @@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
+>  				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
+>  				reg = <0xfffffea8 0x100>;
+>  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+> -				clocks = <&clk32k 0>;
+> +				clocks = <&clk32k 1>;
+>  			};
+>  
+>  			watchdog: watchdog@ffffff80 {
+> 
+> base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+> -- 
+> 2.39.2
+> 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
