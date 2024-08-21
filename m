@@ -1,167 +1,249 @@
-Return-Path: <linux-kernel+bounces-294752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA97959211
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:12:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD32E959214
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836BE2830E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AFA11F24316
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E051E504;
-	Wed, 21 Aug 2024 01:12:50 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805881803E
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 01:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724202769; cv=none; b=QW8j4PGJn8JZXxpqKKWNLSbiaAx1AQOaj9zUiORx7o5AhKaEobkvp3AQ+/TOlh16zHOlM2tUDO8gKtRrWKvYXg3rtPtvP4PWASe+6M8XHK96lqCd7F3rDjJY2DyfKDDv+2Uvx0Q+Pf0MZqe6HS0A1MhuXSYwoyDi0Ua2+qvkv10=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724202769; c=relaxed/simple;
-	bh=93ucYNzm6rjFAJLlmlDLDdpg7flXKMWTpnKPf5+hKCg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=jyCHS9d3HhV2h4c2t1gMmHVaHXPJjKM1uqGfDUPJVHx5KYZVV64RYhr9sW6GUefsb6GqDar0JGrx2xvrGR/P1zBjyyJylkkTEa6UUWWqm2r6hZ57F3tbKtkCz7rRL4b3RuRR7wztorfBImhwUo7k/vlSVrRw2PYOkbUSC1/RrHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8AxGuoGP8VmzLsaAA--.58021S3;
-	Wed, 21 Aug 2024 09:12:38 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMAxVOAEP8VmLB8cAA--.59112S3;
-	Wed, 21 Aug 2024 09:12:36 +0800 (CST)
-Subject: Re: [PATCH v1 2/2] LoongArch: Add ifdefs to fix LSX and LASX related
- issues
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev,
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCFD1E504;
+	Wed, 21 Aug 2024 01:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="BSTjy3+W"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2064.outbound.protection.outlook.com [40.107.215.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7E081E
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 01:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724202928; cv=fail; b=bk1lQFm2z4ceQqpQbJmYDArQPutt1uXPzU+cO+8738aUEUmOYUdlMqlgStiowDFtimYJtBz8H7MWVoL+WiHGPN4SN59Avll/IdIi3f57DBBrO6Y/Bxab/7gm7VX8QnYIEsBrHpED+CUrHb/64ZAHRUFuUqeJjZvnj/gi+oPixDg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724202928; c=relaxed/simple;
+	bh=Azy7/7ftbr3uxGA2+M94Nt5rdy1V9UYK97v5lazeZnU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HiVSNFqZKt9xdEwv+KUsA9uwbHS2GofU8P4WAJLp9SSyQ1M/L0S1YellU+jSdOBduA8ubxtKPUA0ToUQSyvU7KBmBaUnIkKF2yKK6ycACcw9zBTRDOqPLUec+iofbo3ZtOQGDRTiJhbLL1cudQjxzdObfg9E39EvjDhshajlJVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=BSTjy3+W; arc=fail smtp.client-ip=40.107.215.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uTBkdNPF077XWHpKi6oFelFlKA35d61YlhEcRkT0rSkszFcqWKbQFN6UY5Bi/KmIcc4WQOq2VlvZ4VoNuoSt905YI0tP6XajxigfzXhi1JlzEUXKLkuHl8IkLq2kGvyt7R46QiZPTWmHTtlgKjxEXntn0nJXTK+OG42OqtbredxHdfNnACaDBwYOn4jC91pEsrrQsY0Q8KieogFXn6cAZwNWV/st7AIf5YfWH+C5TAXEtj1HAaoNpNCOq76tPnsqCXmFXbJLO5G+SXvj1REBaiM8hdrUbLTUAlegq4FZsepTDzhh54Vb0sFxHHrVqG0udWhWb2ID+bKU7kOaW6gQxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D+wtAMgLzOBFC9FkzeFrV4FO3VOGF8Fd+uezp8RUg5A=;
+ b=TNdJBu7Oue5/IBhx0MG5QovEGMA+Rekj0oZ+7QCazqE2yfJS8D7XWbF7s6SukKD8mWPeMyrUpKmOHp02cfcE2qZRdNdDI+5W70SyUfhWwAKGWzW7uPOMqyjfIBOp1Dc49Gt6E0LqcFAwU6i0Hn0WJ5kz+cKM76nPHyOHaenyUxk3DfD6VPMLV6OFFxmIrwgLg5fIFuTU0xJefXCo31XZVgK7p/U7+w6/1R3KTjvGh8hPaMEliJxyP53vVBG4lR8RxJg+j3pNUwMdSMs1Yl6+MEWUpJil2e8RfCZOar9Ki5D8w7CjbgFPd2UBZQgBqX9utbva+J7IUHYYfzlBRYoDJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D+wtAMgLzOBFC9FkzeFrV4FO3VOGF8Fd+uezp8RUg5A=;
+ b=BSTjy3+WJ+BliuiTm/c6kbRqgXCV/x8A3piiowxlKMOTiKNS6+3jh1y9ahioOy1DKkObG8xXHPFd4Eu1kaAI5C/oQe3C1K+OuON7CrM+2fWFuxYbFa2jujneY7ihqOIueQiZPSjrilnZqtf4MlVCXUcStHqQdCa5M4tl4wo0sR+YkJcpYSZEH+GfpIFs/KLrpJOr2z72/U5FukO8hxNuJ3YhCRKoJ20ww9rTw8Dh7Hbe3YMna0xJzW/jmPBSX86O+wGJmQJqmXeRNg7DFXfq7x5zjKBjIMaDfuQGislhA6B/4Ab5Kka6FDwLuQmDt1taGGsHE6MSC7E8YCjI/z3bYw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by TYZPR06MB7170.apcprd06.prod.outlook.com (2603:1096:405:b4::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 01:15:21 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%5]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 01:15:21 +0000
+Message-ID: <dfe8d6e9-97f8-46e9-bbd5-ebe9d11ca625@vivo.com>
+Date: Wed, 21 Aug 2024 09:15:16 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvmem: jz4780-efuse: Use devm_clk_get_enabled() helpers
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
  linux-kernel@vger.kernel.org
-References: <20240820123731.31568-1-yangtiezhu@loongson.cn>
- <20240820123731.31568-3-yangtiezhu@loongson.cn>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <1d23bbfe-dd36-b2ff-c4b3-cf69396ea53f@loongson.cn>
-Date: Wed, 21 Aug 2024 09:12:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+Cc: opensource.kernel@vivo.com
+References: <20240820102333.133503-1-link@vivo.com>
+ <7b31732e-00ca-4792-a16b-156689862c5b@wanadoo.fr>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <7b31732e-00ca-4792-a16b-156689862c5b@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR02CA0017.apcprd02.prod.outlook.com
+ (2603:1096:4:194::17) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240820123731.31568-3-yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxVOAEP8VmLB8cAA--.59112S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXr4kKrWkAw17Xr48CF47WrX_yoW5Kw1kpr
-	9rArs5tr4ruFnFy3ykAw1kWFZ09397Gr4agF4DtryrCr4qgrnxJr18tF1DXFyjga1xJa1F
-	gFZ5Wr4YqayUtwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
-	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UU
-	UUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TYZPR06MB7170:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fb3333f-1db5-49d2-31dd-08dcc17eb9ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wkl3Kzh6NTdNK0Q4aWtGRW00WFpidE1NejRJQTRiUjV2OGNVYysvMFl2alRO?=
+ =?utf-8?B?UUYwblQvbGZrZ0ZraGVrVVM4cVJiRDh6WlE1eDlGWnduM2N2UzhvblNEVmdU?=
+ =?utf-8?B?VXpsSG9pcmJwV2tSM09JeDIxM0hUcjFRWVIraEwycXVIaWhDcVBtUGdEa3BW?=
+ =?utf-8?B?TWdJTGgvVHFWZnRwcWxCUXVaTitKcTVHTmdzRUlWUzZoZmkyWHpDd3VyQTlP?=
+ =?utf-8?B?a0NiL2E4MDNBMlY1bXNiZFJ0c1ZjMzAyWFVkNDUyNTF0dWdrdE1DVGdMU2dz?=
+ =?utf-8?B?OVQ1cm8zTEJESnRJS3l6NlJDdmJ3bVhtY213MXlRNkFVZzRsL0ZOdW40YlAv?=
+ =?utf-8?B?RTQ3Wk1yNUE4czd3SWwwRDJ0cHlMK2NocWhvSVc2Y2lPd2ZWTm9RaU5ZQlk5?=
+ =?utf-8?B?eDNNeVlzOWF5RXZFTFJlSXZuSVpreUh6Y0VncTE4WmhHMHlRYkU5ZFdVd1B5?=
+ =?utf-8?B?TjhQWmdmTnIzYVduUy83TStJaW1rRW5iVFNvQnVZL2ZMT1l1TW42Zk9QQWJp?=
+ =?utf-8?B?ZGpWYXdlV0RwakdRM2xRVjZPNDU5RDFVdnhqa20rOUNtRmlFckZDVVNhc3Fv?=
+ =?utf-8?B?QTgyYmNub0VuMjJHK05XTnpmZ2o3Ym5laGRJOVdJK2VjUXJYSUJXUm9PMkpX?=
+ =?utf-8?B?dngyOXd3bFl2N2p4cGlFYjhCeEFUTFBmYmpyTTB0UFRyeVQrMDV1V3lXMzlZ?=
+ =?utf-8?B?WmY5RzNvZnBrTkpOT1o0bG5QeCtHS25hWGlVM0VSeWpyREZqM292cHk5NjZ2?=
+ =?utf-8?B?QjdEU3QwUmk1OVNVUzJJVFZRdkptbVhZaExsOXRFWjRlcmcwbXV1N01yVnZY?=
+ =?utf-8?B?V25NS3FPYTZ5RnhWTkVUZ0pVN2kyczkzeHI3ZkpHNEhaWG5TUEYzNiszazNU?=
+ =?utf-8?B?TFNZN2YzbUtNTUptTGNDS2VnQlpLTUluYUZyTmhWcVR0Z2x6UnhlMGhiQ1dM?=
+ =?utf-8?B?d3RiUkZJTkdneGlPb2lEVFQ5T2xTQm1SckFIeEtGZFZXNERDdktDaEtSekhp?=
+ =?utf-8?B?ZEhOMnQ5eHg4clBjQ1VsME1nSjB3VDJKeEZmb1ZpdzBackNIYVB1eWRJbzhJ?=
+ =?utf-8?B?clNYYkNaeGVmM1NqdUVlb1lVdHhRemZ5TzdlMnNuVFFXaVIzRUp4VGkxbCtP?=
+ =?utf-8?B?NGFSZmVCWGNGZEhELzUydW5HcEJzUzhrUHJrZHA3ZWJpQXVabnlSY3UxWksr?=
+ =?utf-8?B?aWdjKzYzdTlmSFV1YlNBSHFjVzMvV2FIQlBEb1BtTzZMME1UWGV4Q0lmb2ds?=
+ =?utf-8?B?YmxmVXJYb1IyZzRZeXh4S2d0elF4MU9nVTc2VXUyWlh6WGVyR3NiQmJ4eTQ0?=
+ =?utf-8?B?YVV2U09yTDEzeDRzUG9rMy9rR1dRUUFsU1g2cnNKNnJ2a0tob2c1SzhMcXJt?=
+ =?utf-8?B?bWNYSHlwUWlrYjRtaTVjaDlDWldURXhibW5NNVRJRUlhM1dNK2JRWEgrR2hs?=
+ =?utf-8?B?NWt4S3llMXRNa2JVU3VLOGFvRWNMeGtTSEpiTGRTeEEvNHVFSlQ1WXlJOUFq?=
+ =?utf-8?B?RmVtUTdPKzdwY1AyRU9jZXlzMndDb3dDTzNHQmN5OU9oZWxEcWJSTzVLbDFF?=
+ =?utf-8?B?QnhlU1JJcHA0NUJQZUVCZFpXY3VRQTZPaGhBOUVZYmo4K1JIYVRweFBnNWk0?=
+ =?utf-8?B?SG51VHNCL3ZxWTNrVDI4M2ViNHpWUE0yMGZTZnM2VnBzS1dnQ01rbHB2dCtE?=
+ =?utf-8?B?WE93d1Z4aHlvZVJIc1dZUGdTbzhmREgrcVhmcTFoZU4ybERwRlZzcjU5R2c3?=
+ =?utf-8?B?RldPeTNpUWRXb09PZWN4YjBzMUNORXN2YnR5YXlaamVsTnJoSFkzeHhCb3Vx?=
+ =?utf-8?B?aWJMNFNYMlI5enVGRjRPT00veDV6TC9IdytuOGVkak5WcEEyQnhDL1Z6S0Na?=
+ =?utf-8?B?NHFsUFpQamRUc3lHbEdTWjkxR3A0RDFjS2RPdUo3akNTNVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R3VhUDZQRm1EVmRPM0YvcnRIajgxbjcvaWxwZGZPblpHSkE2VGZWQ0RtcHhG?=
+ =?utf-8?B?bmMrS1JRUHp2T2NWS2ZRamxORTNoL1l4RG83OHVSd1UzN0dwQVkyREh1eUFR?=
+ =?utf-8?B?cnAvc2Joa09MSTNzUWpESHpzMnhOWnBZNFZMZkRRQXpqMlE4QjY3UXNMbWEr?=
+ =?utf-8?B?UCtheTQxY2hYTEJoRHp6RW5BbXpXYkd2eWRyNU1iZ0podWY2SEgydXlSR3o0?=
+ =?utf-8?B?TTZwUWFKQVRZT1lGY1pmUjV1QW1KUFY1UzJwL0xlVXQ0R2JkM0xXaEtMYWNF?=
+ =?utf-8?B?YmJjam5XU04rNXdPNkxuV0tMYnhwN254TVJJSlhOYTNoVGd4ZEV2eHBzcVF1?=
+ =?utf-8?B?UXVIbElLRXdWNVp5UFNrVWxBMk0vS0xLL2ZNQzlZNktrelg3cXpBYld4MXdG?=
+ =?utf-8?B?K0Z3Y2VJZy9wOGIrVzB3YnJoTjhBcjJtS1hadTN2ZWlWakxkTVRNS0RWOE1t?=
+ =?utf-8?B?VFVZbFNLaitJVmErMmpoSmVoenNpUXdkY2tSN1BBOGg2OEUrQjBacGlqVi8r?=
+ =?utf-8?B?cHlNWjRzMkhTdGFVai9KUlZOaTBXMUVrVTlDK1RjOWZJU05mZHFUVE1KM0hs?=
+ =?utf-8?B?TExHQXVveFg4MzQzK2k1cXFOMlBFMzZVckI4Mm9DWVpLNHRISytwMEY3bjRY?=
+ =?utf-8?B?R3Q5Zk9nYW4wYVlkWnlzZkJRTzc1c1ZDVjEzcHhtZVFkSE9VakdVZmRGbXdv?=
+ =?utf-8?B?eGNDdzRhZDdTa01vdkJoaFRWVktLTjhiaWpQUUJTVkFrdDFvSHg1U0lldmdv?=
+ =?utf-8?B?RzM3UHhOWWFqbzc5RzJ6TFAzQkR5T2RIK0JMME51NEdwSUxlYTRmWU9XaGFX?=
+ =?utf-8?B?aGM2c2g1QUlaNkk4ZC82NHlEZUtxVW1qYnBZZCtjWGlJbnlFS3dPa0xDd21E?=
+ =?utf-8?B?OW9wQkdqcHpucnBCa3NsSFpsYkdRaWtDSWFORXFhbGl5Q3dCaWc1MWplU28w?=
+ =?utf-8?B?T0h0MjJid1lIOXhtamxlNkVnN0NoUGVibWxMdkM3OFJwYUVRTjNRZWZOazV6?=
+ =?utf-8?B?RVdHNHpCZGNwTEpjVFdkTzliMnVSbDVxZ2xBRmxoeUdvd1VXbnBOZmRSMTBH?=
+ =?utf-8?B?RjNFQk1zVUVLZWVoVHBPZlZ1QUlKRzhoa3Zzakt5bWg3dEl6dnIwZE5POU9u?=
+ =?utf-8?B?UStlaHFTcGVhYzJObkI3V1dYdjVMc0lmdUIxWngwY3FVOEVla3QwMSsyM2Nx?=
+ =?utf-8?B?Z1NXQUJxejZOTDlaQTZXNDR0cnFzYVpPT1plQitUVVR0OWtRaVlQMis2RDZS?=
+ =?utf-8?B?WWNVOWsrN3ZPVHVCZFFMRkFXQjN4S1R2VmdRVGN6alNCdU5RL0JCMVNGMWdm?=
+ =?utf-8?B?emE5NGgrTmZ6VmZWWWphb2xPTk0xUnBZaTRSMExzbUgvdG82L2tEUHlDbVBs?=
+ =?utf-8?B?aWQ1OHBQcTlSS1hOSExkcGhtY0dNRXJCYjkwOUFBM1I5OFNVUXFaaDZuaEZS?=
+ =?utf-8?B?SG9GWnpjdUpDMG5EWTBpV2NITTk4OW9jeXF2N051Sm9vMnB6WDlMTHJMOEQ0?=
+ =?utf-8?B?MU5oVE5hOFI5NFM5SGdNeVVTUWtrMDZDYlRDNDg0cktDdXliOGVaVW4yaklT?=
+ =?utf-8?B?cE5adVRWandpSFFVRU1lbFRzS3pjWFFtZlZwNlgrNnZWMGhVUHdRUmE5cGVI?=
+ =?utf-8?B?N2dXR0NNNmZhTFJnK2Z1SC8zV1greVJaV04zOHo1NE9uRjhoZmJBTDFYZWFs?=
+ =?utf-8?B?WU9MQWM3U0tWQ2oxcTdzM0RsSXNBMDNydTNUVmF3ZC80QnUvNGhKOXd4M1BJ?=
+ =?utf-8?B?VnZTN0xyeGR2ckI1QitlcUhYeGcyYjJDNXIycmlTSGZ3UzVxWHVmdk1SZ0J0?=
+ =?utf-8?B?Q1BUcllLY0hwWDJZUTkvTjJ4YTNzQTlWRjN2VXVkaG54L3ZJZlN0S1hGRkNF?=
+ =?utf-8?B?WUlkT1NLSjg1SlREQ2lwbmRjV2tpeEtpVTJacHBZTHFwZVA5SVM2SXoxTTlH?=
+ =?utf-8?B?WUV6aFVlUCtuSWZhU1pMSy8wcVFVS1VzSkdsSVBkNnFIUW9yb0k5Vlh3Y2d1?=
+ =?utf-8?B?Q2l0YU5IM0tQNFc5bkZXUGljNWt4RlJRN0xaMzU3dGNkTEErb1BRdTlrd3hs?=
+ =?utf-8?B?TDRqVkN3cU5reUUvUnJnVjI1REQyZjM1QnprRllVTHVKZ1dPbWhZczZSU2l5?=
+ =?utf-8?Q?Nzkx409GCDS1XlUuuPnc87tYX?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb3333f-1db5-49d2-31dd-08dcc17eb9ca
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 01:15:20.9660
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9PSYCFXqp7YcmiEbV9ehQlkqBIj2RMzVt5yMupy/KSYUtqhEeD9e4I6OgTKjHKS3qh8dthyZql3LmbZekcvTyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7170
 
 
+在 2024/8/20 21:21, Christophe JAILLET 写道:
+> Le 20/08/2024 à 12:23, Huan Yang a écrit :
+>> The devm_clk_get_enabled() helpers:
+>>      - call devm_clk_get()
+>>      - call clk_prepare_enable() and register what is needed in order to
+>>       call clk_disable_unprepare() when needed, as a managed resource.
+>>
+>> This simplifies the code and avoids the calls to 
+>> clk_disable_unprepare().
+>>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> ---
+>
+> Hi,
+>
+> if you want to go 1 step further, I think that 'clk' can now also be 
+> removed from struct jz4780_efuse.
 
-On 2024/8/20 下午8:37, Tiezhu Yang wrote:
-> There exist some issues when building kernel if CONFIG_CPU_HAS_LBT is set
-> but CONFIG_CPU_HAS_LSX and CONFIG_CPU_HAS_LASX are not set. In this case,
-> there are no definitions of _restore_lsx and _restore_lasx and there are
-> also no definitions of kvm_restore_lsx and kvm_restore_lasx in fpu.S and
-> switch.S respectively, just add some ifdefs to fix the issues.
-> 
->    AS      arch/loongarch/kernel/fpu.o
-> arch/loongarch/kernel/fpu.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
-> arch/loongarch/kernel/fpu.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
-> 
->    AS [M]  arch/loongarch/kvm/switch.o
-> arch/loongarch/kvm/switch.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
-> arch/loongarch/kvm/switch.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
-> 
->    MODPOST Module.symvers
-> ERROR: modpost: "kvm_restore_lsx" [arch/loongarch/kvm/kvm.ko] undefined!
-> ERROR: modpost: "kvm_restore_lasx" [arch/loongarch/kvm/kvm.ko] undefined!
-> 
-> Cc: stable@vger.kernel.org # 6.9+
-> Fixes: cb8a2ef0848c ("LoongArch: Add ORC stack unwinder support")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202408120955.qls5oNQY-lkp@intel.com/
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->   arch/loongarch/kernel/fpu.S | 4 ++++
->   arch/loongarch/kvm/switch.S | 4 ++++
->   2 files changed, 8 insertions(+)
-> 
-> diff --git a/arch/loongarch/kernel/fpu.S b/arch/loongarch/kernel/fpu.S
-> index 69a85f2479fb..6ab640101457 100644
-> --- a/arch/loongarch/kernel/fpu.S
-> +++ b/arch/loongarch/kernel/fpu.S
-> @@ -530,6 +530,10 @@ SYM_FUNC_END(_restore_lasx_context)
->   
->   #ifdef CONFIG_CPU_HAS_LBT
->   STACK_FRAME_NON_STANDARD _restore_fp
-> +#ifdef CONFIG_CPU_HAS_LSX
->   STACK_FRAME_NON_STANDARD _restore_lsx
-> +#endif
-> +#ifdef CONFIG_CPU_HAS_LASX
->   STACK_FRAME_NON_STANDARD _restore_lasx
->   #endif
-> +#endif
-> diff --git a/arch/loongarch/kvm/switch.S b/arch/loongarch/kvm/switch.S
-> index 80e988985a6a..0c292f818492 100644
-> --- a/arch/loongarch/kvm/switch.S
-> +++ b/arch/loongarch/kvm/switch.S
-> @@ -277,6 +277,10 @@ SYM_DATA(kvm_enter_guest_size, .quad kvm_enter_guest_end - kvm_enter_guest)
->   
->   #ifdef CONFIG_CPU_HAS_LBT
->   STACK_FRAME_NON_STANDARD kvm_restore_fpu
-> +#ifdef CONFIG_CPU_HAS_LSX
->   STACK_FRAME_NON_STANDARD kvm_restore_lsx
-> +#endif
-> +#ifdef CONFIG_CPU_HAS_LASX
->   STACK_FRAME_NON_STANDARD kvm_restore_lasx
->   #endif
-> +#endif
-> 
-It is hard to understand to put CONFIG_CPU_HAS_LASX inside 
-CONFIG_CPU_HAS_LBT, in general option CONFIG_CPU_HAS_LBT has nothing 
-with CONFIG_CPU_HAS_LASX.
+Sensible, I'll update it
 
-Would you like to add parameter func in macro fpu_restore_csr like this?
+Thanks
 
---- a/arch/loongarch/include/asm/asmmacro.h
-+++ b/arch/loongarch/include/asm/asmmacro.h
-@@ -55,10 +55,11 @@
-  #endif
-         .endm
-
--       .macro fpu_restore_csr thread tmp0 tmp1
-+       .macro fpu_restore_csr thread tmp0 tmp1 func
-         ldptr.w         \tmp0, \thread, THREAD_FCSR
-         movgr2fcsr      fcsr0, \tmp0
-  #ifdef CONFIG_CPU_HAS_LBT
-+       STACK_FRAME_NON_STANDARD        \func
-         /* TM bit is always 0 if LBT not supported */
-         andi            \tmp0, \tmp0, FPU_CSR_TM
-         beqz            \tmp0, 2f
-@@ -282,10 +283,10 @@
-         lsx_save_data           \thread, \tmp0
-         .endm
-
-Regards
-Bibo Mao
-
+>
+> Just my 2c.
+>
+> CJ
+>
+>>   drivers/nvmem/jz4780-efuse.c | 18 +-----------------
+>>   1 file changed, 1 insertion(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/nvmem/jz4780-efuse.c b/drivers/nvmem/jz4780-efuse.c
+>> index 0b01b840edd9..2b5badfbf22f 100644
+>> --- a/drivers/nvmem/jz4780-efuse.c
+>> +++ b/drivers/nvmem/jz4780-efuse.c
+>> @@ -131,11 +131,6 @@ static const struct regmap_config 
+>> jz4780_efuse_regmap_config = {
+>>       .max_register = JZ_EFUDATA(7),
+>>   };
+>>   -static void clk_disable_unprepare_helper(void *clock)
+>> -{
+>> -    clk_disable_unprepare(clock);
+>> -}
+>> -
+>>   static int jz4780_efuse_probe(struct platform_device *pdev)
+>>   {
+>>       struct nvmem_device *nvmem;
+>> @@ -146,7 +141,6 @@ static int jz4780_efuse_probe(struct 
+>> platform_device *pdev)
+>>       unsigned long rd_strobe;
+>>       struct device *dev = &pdev->dev;
+>>       void __iomem *regs;
+>> -    int ret;
+>>         efuse = devm_kzalloc(dev, sizeof(*efuse), GFP_KERNEL);
+>>       if (!efuse)
+>> @@ -161,20 +155,10 @@ static int jz4780_efuse_probe(struct 
+>> platform_device *pdev)
+>>       if (IS_ERR(efuse->map))
+>>           return PTR_ERR(efuse->map);
+>>   -    efuse->clk = devm_clk_get(&pdev->dev, NULL);
+>> +    efuse->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>>       if (IS_ERR(efuse->clk))
+>>           return PTR_ERR(efuse->clk);
+>>   -    ret = clk_prepare_enable(efuse->clk);
+>> -    if (ret < 0)
+>> -        return ret;
+>> -
+>> -    ret = devm_add_action_or_reset(&pdev->dev,
+>> -                       clk_disable_unprepare_helper,
+>> -                       efuse->clk);
+>> -    if (ret < 0)
+>> -        return ret;
+>> -
+>>       clk_rate = clk_get_rate(efuse->clk);
+>>         efuse->dev = dev;
+>
 
