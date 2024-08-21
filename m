@@ -1,159 +1,312 @@
-Return-Path: <linux-kernel+bounces-295859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D855C95A227
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:59:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C393195A22B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640FEB280DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:59:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E9F1F2522C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4F11547F6;
-	Wed, 21 Aug 2024 15:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1C914E2D4;
+	Wed, 21 Aug 2024 15:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWEuEzW2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RB20WyUJ"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D0E1537C1;
-	Wed, 21 Aug 2024 15:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5033014D2B4
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724255734; cv=none; b=WJzBbl0zLcyFYVsAxTDKdOhUazN2pgFamY/PZzgnG5yB9lgFOf17+61FT0vbgdWGMFtvTWiwO4QYmt2oolR2oR/hZ7sfHkHiTKiFME5kG+pdyBMmZJkmol6s76VDto9flQP4ApzMNbit8YnXGCYFSaFOT66/hZkf/RttcazJQpU=
+	t=1724255804; cv=none; b=X7l0Jb9TDZINOnTN54+ulSvxPKQ8vFsJvDIVwtub7YoZftyRKvhlYQxwhmdyJakIlIjgaQHmM7jWO+v83DI5E+l+U9YPKctgErDVu/T5MktNO+dyqwTeuJ4Q+TIaT3KqjEw0Wndsn74UpGQFSiml8T4nswqApXh8irNyXtZHTP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724255734; c=relaxed/simple;
-	bh=oO+0Tv2uU9zbU6edOpbgsXoLNpUE9+d8dxygISVgGuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7WI9cSXK3KnuQTU3cOmPAoos1/FtWTTX93ajk/tn6vf49Tid4xeEZsGDWczoddg8+l9gfrFzcGay7Zw6YPjGpglLdpcHRr7GVF8FFv4eFS4p1AyKRz81AXZBhnA8yylw6kh+vkyZHA4ZIKbqYqqsKtB4iZ135RJAoZtSVDIhWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWEuEzW2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D346C32781;
-	Wed, 21 Aug 2024 15:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724255733;
-	bh=oO+0Tv2uU9zbU6edOpbgsXoLNpUE9+d8dxygISVgGuA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IWEuEzW2eAOAzTIBdvnMKwDqxONi5bvAss+1DyQAZgggcO9o17lUl0wRyfbgeBAm7
-	 qjeqktvAqgbnvq2/RbeWaHqPs92nlJHf8Y7dZH9FJOognOMFEmsDWGl5Bjqx0tw4LH
-	 Sr2tvh1enoQxBtEg9pob6hyWyoX7538CrU33rEVev+x5ebtevlffQY0nlHiydMCx37
-	 mYiyE6Q9QUC80lO/It8vpxu5ShyRyZ50X6+D1hew4wUDDt5/HLAi2en3uV4UIfQS+B
-	 /d/EoAKCYH5sfHBk28GaMBvhhYA6oPslp6IVhx/1fJxSzV9OYCsqZltmNmVET92dQz
-	 pvXC3Cq49g01Q==
-Date: Wed, 21 Aug 2024 16:55:29 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Christian Melki <christian.melki@t2data.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
- through DT
-Message-ID: <20240821-gnat-pushcart-882aa3a3f252@spud>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-10-ada@thorsis.com>
+	s=arc-20240116; t=1724255804; c=relaxed/simple;
+	bh=xXqcbvTLnTkMm9IT388qxhkQek5JB4712AQnCSjCPOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QLuLg4NoTcan4eVFhfB4UWhFPiuHMuDViSbVlAaQ8XWrWH0SOOSE96Zffjc/i7gC2dEZSxMmL9THOZ2zPlLJYcNDFlZ3nChgKHFHUr5/kVvI3l9UGQONkeJlzPdpq5ydCLCQioO2KUG1qXtWehTpnB3hb+D1M8MNh+wUkYdfLLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RB20WyUJ; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-27080f38697so87709fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724255801; x=1724860601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K4R0EpO3n6kf/aoNBWtHJ6eqC3Vmvm7kimMhDLs6BFo=;
+        b=RB20WyUJsqOMFY+lI3X8y9jI103KCL1ta8pUfB2W97kQ+fvHob6a91brWublIisbK5
+         pn4u2EwHLcdEVFpFqjbL8LKscBKG8xXpHEsjodR1e+/UIQvkTUkvY6Vih/husvkncd63
+         zWVf1ijEZvWvjBrRFpxVHzWa0v8qYYtZEyAi8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724255801; x=1724860601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K4R0EpO3n6kf/aoNBWtHJ6eqC3Vmvm7kimMhDLs6BFo=;
+        b=MtNoG2rQ/gcG+MVW4GMU6+y6KQjJLJytoqR7hFjfQwsLRper9ki9VdXHPHOq9pGiNP
+         OU/YvuWjf3a+LgY2BOhn7BmUBCwmYua58O9muGEzeXHYTEmYWS8zVeg/8vFV9OOcNlBL
+         oDq+JUq/xduvtRa3y2VAof5BcBtTdwqWZvBbpFcS/8E+UN8Gw+gAPFT18AZEPV7HM13C
+         PCX4yH2jhFWVbwachgbNUOoj1GwnBJ39DIS/08TcWSzkUdcVJC7fTs6H6RSV5+/LK5Nh
+         tEvMI/6AFE7HwKdz3GIQ4GstM5LmasWMxMacLmUYdnXmPE8e1ZpbnzwbsAHZbfoCK3M/
+         /fYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHTv5TpQ3PV1RE98BPbkGyTMWvt3TnjNUEpqppcIlF196F9LeOHwAA38szoyJWW7IIdP8oHDkwcY1ge1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ4JpKxHJkCBTyH4bM7oOoPnuHhRAdI/m/IaX5ysBXs1mKz0zx
+	GJL//nZiKFVeAGbWnmaqA2iJXhG54V/ZaBQova++7d3ZNSKeIi7KxgLJ1tC2fvFJRfPuvxh53F0
+	u0MlLrRyA1HASkQ/XxU94VVGJ6nVjhMLL22qg
+X-Google-Smtp-Source: AGHT+IHQrNsaqsPrV0SsczE2097vU/k5NSjxN5oNDCms/3WeUiXNWcDhOSFOSGYJUmNzaJQxram2qpwb0saZ4t1xuko=
+X-Received: by 2002:a05:6870:5491:b0:260:e907:4646 with SMTP id
+ 586e51a60fabf-2737ef08cfamr1786607fac.4.1724255801237; Wed, 21 Aug 2024
+ 08:56:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CijNXcpqoUP9GEdm"
-Content-Disposition: inline
-In-Reply-To: <20240821105943.230281-10-ada@thorsis.com>
-
-
---CijNXcpqoUP9GEdm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com> <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com>
+In-Reply-To: <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Wed, 21 Aug 2024 08:56:28 -0700
+Message-ID: <CABi2SkWPiGJTv3FEPxD1OJYUAoePab8jG+CSd58UHqEsBeOYbA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] selftests/mm: add more mseal traversal tests
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 12:59:40PM +0200, Alexander Dahl wrote:
-> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
-> says:
->=20
->     "The OTPC is clocked through the Power Management Controller (PMC).
->     The user must power on the main RC oscillator and enable the
->     peripheral clock of the OTPC prior to reading or writing the OTP
->     memory."
->=20
-> The code for enabling/disabling that clock is already present, it was
-> just not possible to hook into DT anymore, after at91 clk devicetree
-> binding rework back in 2018 for kernel v4.19.
->=20
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+Hi Pedro
+
+On Fri, Aug 16, 2024 at 5:18=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail.=
+com> wrote:
+>
+> Add more mseal traversal tests across VMAs, where we could possibly
+> screw up sealing checks. These test more across-vma traversal for
+> mprotect, munmap and madvise. Particularly, we test for the case where a
+> regular VMA is followed by a sealed VMA.
+>
+> Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
 > ---
->  drivers/clk/at91/sam9x60.c       | 3 ++-
->  include/dt-bindings/clock/at91.h | 1 +
+>  tools/testing/selftests/mm/mseal_test.c | 111 ++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 110 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/self=
+tests/mm/mseal_test.c
+> index 259bef4945e9..0d4d40fb0f88 100644
+> --- a/tools/testing/selftests/mm/mseal_test.c
+> +++ b/tools/testing/selftests/mm/mseal_test.c
+> @@ -766,6 +766,42 @@ static void test_seal_mprotect_partial_mprotect(bool=
+ seal)
+>         REPORT_TEST_PASS();
+>  }
+>
+> +static void test_seal_mprotect_partial_mprotect_tail(bool seal)
+> +{
+> +       void *ptr;
+> +       unsigned long page_size =3D getpagesize();
+> +       unsigned long size =3D 2 * page_size;
+> +       int ret;
+> +       int prot;
+> +
+> +       /*
+> +        * Check if a partial mseal (that results in two vmas) works corr=
+ectly.
+> +        * It might mprotect the first, but it'll never touch the second =
+(msealed) vma.
+> +        */
+> +
+> +       setup_single_address(size, &ptr);
+> +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> +
+> +       if (seal) {
+> +               ret =3D sys_mseal(ptr + page_size, size);
+you are allocating 2 pages , and I assume you are sealing the second
+page, so the size should be page_size.
+ret =3D sys_mseal(ptr + page_size, page_size);
 
-Generally we don't want binding changes in the same patch as a driver
-change. If your fix was determined to be faulty down the line and
-reverted, the binding change would remain valid, for example. Can you
-split it into two patches please, for the next version please?
+> +               FAIL_TEST_IF_FALSE(!ret);
+> +       }
+> +
+> +       ret =3D sys_mprotect(ptr, size, PROT_EXEC);
+> +       if (seal)
+> +               FAIL_TEST_IF_FALSE(ret < 0);
+> +       else
+> +               FAIL_TEST_IF_FALSE(!ret);
+> +
+> +       if (seal) {
+> +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &prot) >=
+ 0);
+> +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+To test partial mprotect, the test needs to add the check for the
+first page to be changed, Also to avoid the merge,  a PROT_NONE page
+can to be added in front.
 
->  2 files changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> index e309cbf3cb9a..4d5ee20b8fc4 100644
-> --- a/drivers/clk/at91/sam9x60.c
-> +++ b/drivers/clk/at91/sam9x60.c
-> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_no=
-de *np)
->  	if (IS_ERR(regmap))
->  		return;
-> =20
-> -	sam9x60_pmc =3D pmc_data_allocate(PMC_PLLACK + 1,
-> +	sam9x60_pmc =3D pmc_data_allocate(PMC_MAIN_RC + 1,
->  					nck(sam9x60_systemck),
->  					nck(sam9x60_periphck),
->  					nck(sam9x60_gck), 8);
-> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_no=
-de *np)
->  					   50000000);
->  	if (IS_ERR(hw))
->  		goto err_free;
-> +	sam9x60_pmc->chws[PMC_MAIN_RC] =3D hw;
-> =20
->  	hw =3D at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NU=
-LL, 0);
->  	if (IS_ERR(hw))
-> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock=
-/at91.h
-> index 3e3972a814c1..f957625cb3ac 100644
-> --- a/include/dt-bindings/clock/at91.h
-> +++ b/include/dt-bindings/clock/at91.h
-> @@ -25,6 +25,7 @@
->  #define PMC_PLLBCK		8
->  #define PMC_AUDIOPLLCK		9
->  #define PMC_AUDIOPINCK		10
-> +#define PMC_MAIN_RC		11
-> =20
->  /* SAMA7G5 */
->  #define PMC_CPUPLL		(PMC_MAIN + 1)
-> --=20
-> 2.39.2
->=20
+> +       }
+> +
+> +       REPORT_TEST_PASS();
+> +}
+> +
+> +
+>  static void test_seal_mprotect_two_vma_with_gap(bool seal)
+>  {
+>         void *ptr;
+> @@ -983,6 +1019,41 @@ static void test_seal_munmap_vma_with_gap(bool seal=
+)
+>         REPORT_TEST_PASS();
+>  }
+>
+> +static void test_seal_munmap_partial_across_vmas(bool seal)
+> +{
+> +       void *ptr;
+> +       unsigned long page_size =3D getpagesize();
+> +       unsigned long size =3D 2 * page_size;
+> +       int ret;
+> +       int prot;
+> +
+> +       /*
+> +        * Check if a partial mseal (that results in two vmas) works corr=
+ectly.
+> +        * It might unmap the first, but it'll never unmap the second (ms=
+ealed) vma.
+> +        */
+> +
+> +       setup_single_address(size, &ptr);
+> +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> +
+> +       if (seal) {
+> +               ret =3D sys_mseal(ptr + page_size, size);
+ret =3D sys_mseal(ptr + page_size, page_size);
 
---CijNXcpqoUP9GEdm
-Content-Type: application/pgp-signature; name="signature.asc"
+> +               FAIL_TEST_IF_FALSE(!ret);
+> +       }
+> +
+> +       ret =3D sys_munmap(ptr, size);
+> +       if (seal)
+> +               FAIL_TEST_IF_FALSE(ret < 0);
+> +       else
+> +               FAIL_TEST_IF_FALSE(!ret);
+> +
+> +       if (seal) {
+> +               FAIL_TEST_IF_FALSE(get_vma_size(ptr + page_size, &prot) >=
+ 0);
+> +               FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+To test partial unmap, the test needs to add the check for the first
+page to be freed, Also to avoid the merge,  a PROT_NONE page needs to
+be in front.
 
------BEGIN PGP SIGNATURE-----
+The test_seal_munmap_partial_across_vmas  shows the behavior
+difference with in-loop approach and out-loop approach. Previously,
+both VMAs will not be freed, now the first VMA will be freed, and the
+second VMA (sealed) won't.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsYN8AAKCRB4tDGHoIJi
-0oRoAQDqtnDTQk6fJ7GbAum6paH3b3FjF1bhS3Aw7qSeJrWA5AD/W3STyVNEqGq6
-acYI6UGYoGZTPnCaJg5CdZ2hifHbjQI=
-=esFu
------END PGP SIGNATURE-----
+This brings to the line you previously mentioned: [1] and I quote:
+"munmap is atomic and always has been. It's required by POSIX."
 
---CijNXcpqoUP9GEdm--
+So this is no longer true for the current series.  Linux doesn't need
+to be POSIX compliant, from previous conversation on this topic with
+Linus [2], so I'm open to that. If this is accepted by Linus, it would
+be better to add comments on munmap code or tests, for future readers
+(in case they are curious about reasoning. )
+
+[1] https://lore.kernel.org/linux-mm/CAKbZUD3_3KN4fAyQsD+=3Dp3PV8svAvVyS278=
+umX40Ehsa+zkz3w@mail.gmail.com/
+[2] https://lore.kernel.org/linux-mm/CAHk-=3DwgDv5vPx2xoxNQh+kbvLsskWubGGGK=
+69cqF_i4FkM-GCw@mail.gmail.com/
+
+> +       }
+> +
+> +       REPORT_TEST_PASS();
+> +}
+> +
+>  static void test_munmap_start_freed(bool seal)
+>  {
+>         void *ptr;
+> @@ -1735,6 +1806,37 @@ static void test_seal_discard_ro_anon(bool seal)
+>         REPORT_TEST_PASS();
+>  }
+>
+> +static void test_seal_discard_across_vmas(bool seal)
+> +{
+> +       void *ptr;
+> +       unsigned long page_size =3D getpagesize();
+> +       unsigned long size =3D 2 * page_size;
+> +       int ret;
+> +
+> +       setup_single_address(size, &ptr);
+> +       FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> +
+> +       if (seal) {
+> +               ret =3D seal_single_address(ptr + page_size, page_size);
+> +               FAIL_TEST_IF_FALSE(!ret);
+> +       }
+> +
+> +       ret =3D sys_madvise(ptr, size, MADV_DONTNEED);
+> +       if (seal)
+> +               FAIL_TEST_IF_FALSE(ret < 0);
+> +       else
+> +               FAIL_TEST_IF_FALSE(!ret);
+> +
+> +       ret =3D sys_munmap(ptr, size);
+> +       if (seal)
+> +               FAIL_TEST_IF_FALSE(ret < 0);
+> +       else
+> +               FAIL_TEST_IF_FALSE(!ret);
+> +
+> +       REPORT_TEST_PASS();
+> +}
+> +
+> +
+>  static void test_seal_madvise_nodiscard(bool seal)
+>  {
+>         void *ptr;
+> @@ -1779,7 +1881,7 @@ int main(int argc, char **argv)
+>         if (!pkey_supported())
+>                 ksft_print_msg("PKEY not supported\n");
+>
+> -       ksft_set_plan(82);
+> +       ksft_set_plan(88);
+>
+>         test_seal_addseal();
+>         test_seal_unmapped_start();
+> @@ -1825,12 +1927,17 @@ int main(int argc, char **argv)
+>         test_seal_mprotect_split(false);
+>         test_seal_mprotect_split(true);
+>
+> +       test_seal_mprotect_partial_mprotect_tail(false);
+> +       test_seal_mprotect_partial_mprotect_tail(true);
+> +
+>         test_seal_munmap(false);
+>         test_seal_munmap(true);
+>         test_seal_munmap_two_vma(false);
+>         test_seal_munmap_two_vma(true);
+>         test_seal_munmap_vma_with_gap(false);
+>         test_seal_munmap_vma_with_gap(true);
+> +       test_seal_munmap_partial_across_vmas(false);
+> +       test_seal_munmap_partial_across_vmas(true);
+>
+>         test_munmap_start_freed(false);
+>         test_munmap_start_freed(true);
+> @@ -1862,6 +1969,8 @@ int main(int argc, char **argv)
+>         test_seal_madvise_nodiscard(true);
+>         test_seal_discard_ro_anon(false);
+>         test_seal_discard_ro_anon(true);
+> +       test_seal_discard_across_vmas(false);
+> +       test_seal_discard_across_vmas(true);
+>         test_seal_discard_ro_anon_on_rw(false);
+>         test_seal_discard_ro_anon_on_rw(true);
+>         test_seal_discard_ro_anon_on_shared(false);
+>
+> --
+> 2.46.0
+>
+>
 
