@@ -1,72 +1,82 @@
-Return-Path: <linux-kernel+bounces-296108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF52595A5BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B33195A5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AAE28462F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC59284643
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED3816FF26;
-	Wed, 21 Aug 2024 20:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47C716FF41;
+	Wed, 21 Aug 2024 20:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u2dX3f2s"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYUOqFaP"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B068628DCB;
-	Wed, 21 Aug 2024 20:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF97728DCB
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 20:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724271594; cv=none; b=KZ3cF113GnwIJHksLMeuvoX5lUQQSTycM8yNbtuu0vq5AUQGXjMv4BqypODsTjfQ0Z+vfJWLANXnDMko8218GwFrgr8nqYf+XwSTBMs5QqFuDWAhrjMZczDtgxHx88c5GokRLG6O8OV9QBOchvcA29kk58Z87T1bnajxID5vzmY=
+	t=1724271714; cv=none; b=EgZ19tuCeWb7EAjbreSEGem1FZynC7VQ7xFnUcMHtFzrX+j68DWaHJAAO1wGVmpHU2wRQmyOm98i/+6CgNx2rCjOCCEWB3InsH1sYPllBa7/Vm96+sE/u4IwbmPAa1ZAljA8WAXgd6PT0xFbsEYSNu4WKBb+vNn+D5ZpQLhrNms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724271594; c=relaxed/simple;
-	bh=SP3rHwr1ywvF46shdk8T6gY/GsdqCuNVCznFqyobXo8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M5kAlmgxRkGgcIFvmVhYlXOlFuoX7eC4x8P7kiwnQGdzL/FszhoGNg8QTBXeAXmXYwFYYFsL5b9/lrrAjM3jn/EEhSxnqz2M+V1npXCe16BunCBcMdqEAtsWt3OqWrKhEUNaIC5gHKA/QqEsxLqAfuju9NWp0cG+D5UAtW9SCss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u2dX3f2s; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LKJcNr061306;
-	Wed, 21 Aug 2024 15:19:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724271578;
-	bh=JIMmagbu6rerDTIou13smHpQv0gTsnJDw5Ximb62oGI=;
-	h=From:To:CC:Subject:Date;
-	b=u2dX3f2srZf5JpIp1EZSf+TIM2v15csghHE2//VJdws2mjzPFvkIwcbUVX5aa8xh4
-	 ya38W/gTgHin/lLgNNOI32OYcnI1YCW+o9B3gRamxDfiQVO6YlsryPz9tlbsF2firS
-	 WTQaPliwmsX+1JUFMe29HRvYUioTQ8QWaY3cs4JI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LKJcba013199
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 15:19:38 -0500
-Received: from flwvowa01.ent.ti.com (10.64.41.90) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 15:19:38 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by flwvowa01.ent.ti.com
- (10.64.41.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Wed, 21 Aug
- 2024 15:19:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 15:19:35 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LKJZ62119523;
-	Wed, 21 Aug 2024 15:19:35 -0500
-From: Judith Mendez <jm@ti.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck
-	<linux@roeck-us.net>
-CC: <linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] watchdog: rti_wdt: Allow timeout config with timeout-sec
-Date: Wed, 21 Aug 2024 15:19:35 -0500
-Message-ID: <20240821201935.1698146-1-jm@ti.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724271714; c=relaxed/simple;
+	bh=FrN4JvW6EYNJCVvzAp2Q3uBulRZKiB0RUfIT53d+hyY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c7HVNFZuRdbyXafRxiWpHHeX07+qa8mqgIedWMegRRyiW3EfHPjyriTTVKIDJJPj6YRzrl3NM0FYAArTxUC0gVgz3VRnTBS7G6aDMTP5wXLvZABqdR4hYIGeTOncfrMFeAoPWE7hW3d2knEJNjXWFOJm1OvogLRT2GQjyE7ocJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYUOqFaP; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d42c59df79so6722a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:21:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724271712; x=1724876512; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pdEtI3O/iGeWeBxm8urkX5KxXtMLJvXUlzR+ZSGfwBE=;
+        b=YYUOqFaPTZweC1fH4kQBOKbsTd9rNnNssHXJjY5KYSuDMShaN0Nv1SmAfV0RZ0sLQJ
+         TSX9mplscVCJa0mybG1vN9IjXvdBjWTqf0UfyFVtbck3mtokWM9TLEeLFtIZjZh8UENL
+         eQiK3HCuHNLisSMCw0gHzCZDXbklJ9bMu4HzmoTLeb3Tjjp5xssUZjNq/RCMWZv3M7Ow
+         r0gfR5m+ybgNLtxNc5bJyAoa2iKCTNnLVah/tSC+k1sX+x5PYk9zBSsi/MslaW+EvJ45
+         wJIBPmp860rXPs68clcrBVZnlZqA99Vb8E3BIz92BdUUd6zV//JMmy+4yQ2leKFAHm/z
+         0+TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724271712; x=1724876512;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pdEtI3O/iGeWeBxm8urkX5KxXtMLJvXUlzR+ZSGfwBE=;
+        b=UAyR8t/N/aHbfO94rn7FZgBum97NWoB71e0T79vhv07OEtEyB7FG2vicMq4gKWKe+a
+         rSjaxxHq1CKYH4Xyga4OW0DXob0zuyjZxcRzWp2SxtJUJFBqMGRselKPRq1V9KSmDfsJ
+         om6ROtvyUA4xwVi+EM+z502YDE9+geMLrj2KIDr/SP+o7Ihu3q7VJlumWfHXgjZnb8Kz
+         LjKtw9YAzXMpdh5lsl8HgFK2LAlzkzaBmxmwoUg49+aIQXUugGGtm8MO0PrZbtCaGklt
+         AMGzXo2EhiomXhldOemYBpXbdg00i8fumb4HQXrfnxhWKIKMEIUS3ePu64mI9sG1Uak4
+         tEzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyI487mui6jIO7QELywRc2yMfNbGyO93aS2S+LTnfOjA8+ehYqErdE2QUN2+naF7amRrfwCFid/oNWh1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBaUkP0ils5siH5f31IKkbtubGJkbpzYpRjVdzgcpD6BzdahZN
+	M3YKzNgorm4yWTQxOMci+/KJjg5IP+XTt/eOf8/Z+sW0p6E7KD9h
+X-Google-Smtp-Source: AGHT+IGGgNc2ZGslMC/kIvseelSPc6tnyKCegD1knqA0y2M+DqC1rV3TUQh/vwMStjuMVjBFtb3hIw==
+X-Received: by 2002:a05:6a21:7884:b0:1c6:89d3:5a59 with SMTP id adf61e73a8af0-1cad9ccf6abmr2400052637.0.1724271711902;
+        Wed, 21 Aug 2024 13:21:51 -0700 (PDT)
+Received: from iac.. ([171.76.82.52])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eba239f9sm2341503a91.28.2024.08.21.13.21.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 13:21:51 -0700 (PDT)
+From: Nihar Chaithanya <niharchaithanya@gmail.com>
+To: maarten.lankhorst@linux.intel.com
+Cc: Nihar Chaithanya <niharchaithanya@gmail.com>,
+	skhan@linuxfoundation.org,
+	tzimmermann@suse.de,
+	linux-kernel@vger.kernel.org,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] include: uapi: drm: drm_mode: fix documentation and coding style issue
+Date: Thu, 22 Aug 2024 01:50:40 +0530
+Message-Id: <20240821202039.63516-1-niharchaithanya@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,35 +84,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Currently rti_wdt does not allow timeout to be configured
-via DT property timeout-sec, so fix watchdog_init_timeout
-to be able to use timeout-sec.
+Fix documentation and coding style issue in include/uapi/drm/drm_mode.h.
+Changes include:
+- Adding description of function parameter.
+- Correcting block comment style.
 
-Signed-off-by: Judith Mendez <jm@ti.com>
+Fix documentation warnings in include/uapi/drm/drm_mode.h encountered
+from make htmldocs:
+./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'width' not described in 'drm_plane_size_hint'
+./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'height' not described in 'drm_plane_size_hint'
+
+Fix coding style warning in include/uapi/drm/drm_mode.h reported
+by checkpatch.pl:
+WARNING: Block comments use a trailing */ on a separate line
+
+Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
 ---
- drivers/watchdog/rti_wdt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/uapi/drm/drm_mode.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
-index 8e1be7ba01039..7260c67e60a25 100644
---- a/drivers/watchdog/rti_wdt.c
-+++ b/drivers/watchdog/rti_wdt.c
-@@ -332,7 +332,8 @@ static int rti_wdt_probe(struct platform_device *pdev)
- 		memunmap(vaddr);
- 	}
+diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+index d390011b89b4..bbdba76a5d25 100644
+--- a/include/uapi/drm/drm_mode.h
++++ b/include/uapi/drm/drm_mode.h
+@@ -147,7 +147,8 @@ extern "C" {
  
--	watchdog_init_timeout(wdd, heartbeat, dev);
-+	wdd->timeout = heartbeat;
-+	watchdog_init_timeout(wdd, 0, dev);
+ /* Scaling mode options */
+ #define DRM_MODE_SCALE_NONE		0 /* Unmodified timing (display or
+-					     software can still scale) */
++					   * software can still scale)
++					   */
+ #define DRM_MODE_SCALE_FULLSCREEN	1 /* Full screen, ignore aspect */
+ #define DRM_MODE_SCALE_CENTER		2 /* Centered, no scaling */
+ #define DRM_MODE_SCALE_ASPECT		3 /* Full screen, preserve aspect */
+@@ -864,7 +865,9 @@ struct drm_color_lut {
+  * array of struct drm_plane_size_hint.
+  */
+ struct drm_plane_size_hint {
++	/** @width: Width of the plane in pixels. */
+ 	__u16 width;
++	/** @height: Height of the plane in pixels. */
+ 	__u16 height;
+ };
  
- 	ret = watchdog_register_device(wdd);
- 	if (ret) {
-
-base-commit: 860bbe8e618fd62446309e286ab4a83d38201c0a
 -- 
-2.46.0
+2.34.1
 
 
