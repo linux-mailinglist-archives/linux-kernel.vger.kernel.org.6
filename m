@@ -1,158 +1,204 @@
-Return-Path: <linux-kernel+bounces-295342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A129599DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:30:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616C39599E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF66F1F212A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:30:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF991B2662C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F2A1C6F5C;
-	Wed, 21 Aug 2024 10:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkOiizMr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AC7535DC;
-	Wed, 21 Aug 2024 10:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD001D049F;
+	Wed, 21 Aug 2024 10:32:38 +0000 (UTC)
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2AE1A4AC6;
+	Wed, 21 Aug 2024 10:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724236231; cv=none; b=nESuOByVcODGhA61MP26rXr+NbOux1s/rWb0yi188745JhkbsKKTejjl94kx4Aoqdv2gYJ1PCBSB5ZA9LrXwBRwppJuXVcZQg9q9a6tqyRxe0KKlKs0M2vcIbT3GwG8db9KURuHw6wvZ3LLZ0JDyjytNQCFpbGaMZGD3adnXMVY=
+	t=1724236358; cv=none; b=YLGmvHQr/O7svSLuLyx74gY2dxSmq29VYR77WvxCNGgwwPgiJ1JABPJwNR/tDgwpTibvbrIxOFCI5itUhiZOJE/mQOftdbQ4rSKrI5kXSB6QG7zT2kjuthF+TFtaWldqN6AzLVmsG4XbbTV/L4xjA2fft/i3HCvUXIYqcOY+Rmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724236231; c=relaxed/simple;
-	bh=aL0Eh20Xzp2QPe0IEwgA0/CCHweLpWex7gFVHvzwQO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aE9ANjVop2q1Xf+z34eMkcM+mH62tdnFpfRDfcZJ7UUaXEJRO4HrPWL8jnS9o8M5vU8Azz+ZJVRwIVp9xCGMW90unD7XHP8WDuEEqLITPAMGJtu1B4dhhS4wE5Jel8uVBOl9yg0dysSm4AcQp7mpXxhRcR4UcbfUpzpxYoIIKjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkOiizMr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3CADC4AF09;
-	Wed, 21 Aug 2024 10:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724236229;
-	bh=aL0Eh20Xzp2QPe0IEwgA0/CCHweLpWex7gFVHvzwQO8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QkOiizMrpwzBVKekRYr7Ef0xozT9PuhiXjiLIjFec1k5mU2ap1q44u9CZuh/gK56b
-	 He3Uc2NX6yw59vb7g/PNiT5I9XDMpnAMPNQa9xltQSp3lElR6kUDXxgiOQv8VunqIN
-	 +ldmRpe/MM8ZbEQHTufiLLkeK5MfDfXd0XUj9vopbywyW8CNrI6GOe8Lk+m0GzBtui
-	 yc8mnXAZnQwC2/HxqzUz/xLaBy0gDyiNxBPZ79RmgsE52ZtUB7aw0gdnnP0ggbetD3
-	 0OXR6mJy0Mjv7Acb5ccShCbm5nO2Pmf7jYcORU69EDnoqle8nwtgYmARd8CvhRvAHh
-	 P3H7B0DYg2Lnw==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2705d31a35cso2112673fac.0;
-        Wed, 21 Aug 2024 03:30:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWNGjrLh9yUljy5guhrNNOv8P1xFfHZNi70A4cvrTUMlfLKxKnCeBqYXx+x9nL+L32dLtu8R33WHHbjEK0=@vger.kernel.org, AJvYcCXYxkHWPzu1WUorLgZlMieDy+XFSBZ2mrjA0reOfQK64Pk3GxuWkOkUdWVGiQFED58drXgZuzuEVy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg+lCDgRHFgWjWT6gan4MoBmlFcQJVhnDw8C3t5LJxeFtispsS
-	Dma0pWQKGBCDzN990Wuh/jbUh5uyp/Ec+fZtveWNIGT5IUr0wqwFyOZ6Pz7TowhciGM1mIJuspf
-	f9MR2JsSaAoOS6OspfB7PuwD9AN4=
-X-Google-Smtp-Source: AGHT+IHpxOkGB6dF/CC7IbZmNrRcs63/sVfqx6uESXYOsPs7jyyBFx6RdsLcVv5dedNwcWx84i+QFkVdVDlxTsGnBqc=
-X-Received: by 2002:a05:6870:9a14:b0:261:ab8:3de4 with SMTP id
- 586e51a60fabf-2737ef23c97mr1790106fac.15.1724236228974; Wed, 21 Aug 2024
- 03:30:28 -0700 (PDT)
+	s=arc-20240116; t=1724236358; c=relaxed/simple;
+	bh=vVB65DUIC12pESNVfMS1trP8SGpZ7shpdtvG5rB2WAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=sVJTwl6FiXdovxOVcz8alB4YfcHCBYCymfnKXbR0CoCmFL0dqMqmBcSLJVjuLJmT9c7zcXAYeKT5KWF1q7YkFDCxCG8XRJeIinp9cNcJEhMvwm62fLk6VcTFpIk/wA+Qu1+l4hEMVWKo3MN5CPVy46yg+TwGZLxWfwD2iFkGQ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
+Received: from unknown (HELO iyokan2-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 21 Aug 2024 19:31:26 +0900
+Received: from mail.mfilter.local (mail-arc01.css.socionext.com [10.213.46.36])
+	by iyokan2-ex.css.socionext.com (Postfix) with ESMTP id 4D5F02009079;
+	Wed, 21 Aug 2024 19:31:26 +0900 (JST)
+Received: from kinkan2.css.socionext.com ([172.31.9.51]) by m-FILTER with ESMTP; Wed, 21 Aug 2024 19:31:26 +0900
+Received: from [10.212.247.18] (unknown [10.212.247.18])
+	by kinkan2.css.socionext.com (Postfix) with ESMTP id 671B4AB187;
+	Wed, 21 Aug 2024 19:31:25 +0900 (JST)
+Message-ID: <fa07f751-06ae-44c0-8994-9634c5aa9824@socionext.com>
+Date: Wed, 21 Aug 2024 19:31:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2205737.irdbgypaU6@rjwysocki.net> <3837835.kQq0lBPeGt@rjwysocki.net>
- <6bf771b0-d57d-5a8c-ec36-6f8a041695d9@huawei.com> <CAJZ5v0i_Z43bLWsa9gg_SZFBURi1XrZn4Cnxurm8KCawAWqtUA@mail.gmail.com>
- <93639d68-e396-a782-410c-f7827dbd54f5@huawei.com>
-In-Reply-To: <93639d68-e396-a782-410c-f7827dbd54f5@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 21 Aug 2024 12:30:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gci_a23e=siMWRQGHAUiiHDUtPgZtWWfNW066ENdv5tw@mail.gmail.com>
-Message-ID: <CAJZ5v0gci_a23e=siMWRQGHAUiiHDUtPgZtWWfNW066ENdv5tw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/14] thermal: core: Move thermal zone locking out of
- bind/unbind functions
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: phy: socionext,uniphier: add top-level
+ constraints
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240818172835.121757-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+In-Reply-To: <20240818172835.121757-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 21, 2024 at 11:02=E2=80=AFAM lihuisong (C) <lihuisong@huawei.co=
-m> wrote:
->
->
-> =E5=9C=A8 2024/8/20 18:27, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > On Tue, Aug 20, 2024 at 10:27=E2=80=AFAM lihuisong (C) <lihuisong@huawe=
-i.com> wrote:
-> >>
-> >> =E5=9C=A8 2024/8/19 23:58, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>
-> >>> Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
-> >>> acquire the thermal zone lock, the locking rules for their callers ge=
-t
-> >>> complicated.  In particular, the thermal zone lock cannot be acquired
-> >>> in any code path leading to one of these functions even though it mig=
-ht
-> >>> be useful to do so.
-> >>>
-> >>> To address this, remove the thermal zone locking from both these
-> >>> functions, add lockdep assertions for the thermal zone lock to both
-> >>> of them and make their callers acquire the thermal zone lock instead.
-> >>>
-> >>> No intentional functional impact.
-> >>>
-> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>> ---
-> >>>
-> >>> v2 -> v3: Rebase after dropping patches [04-05/17] from the series
-> >>>
-> >>> v1 -> v2: No changes
-> >>>
-> >>> ---
-> >>>    drivers/acpi/thermal.c         |    2 +-
-> >>>    drivers/thermal/thermal_core.c |   30 ++++++++++++++++++++++------=
---
-> >>>    2 files changed, 23 insertions(+), 9 deletions(-)
-> >>>
-> >>> Index: linux-pm/drivers/thermal/thermal_core.c
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> >>> +++ linux-pm/drivers/thermal/thermal_core.c
-> >>> @@ -785,6 +785,7 @@ int thermal_bind_cdev_to_trip(struct the
-> >>>        int result;
-> >>>
-> >> <snip>
-> >>> Index: linux-pm/drivers/acpi/thermal.c
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>> --- linux-pm.orig/drivers/acpi/thermal.c
-> >>> +++ linux-pm/drivers/acpi/thermal.c
-> >>> @@ -609,7 +609,7 @@ static int acpi_thermal_bind_unbind_cdev
-> >>>                .thermal =3D thermal, .cdev =3D cdev, .bind =3D bind
-> >>>        };
-> >>>
-> >>> -     return for_each_thermal_trip(thermal, bind_unbind_cdev_cb, &bd)=
-;
-> >>> +     return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb,=
- &bd);
-> >> If so, it seems that the for_each_thermal_trip() can be removed or no
-> >> need to export.
-> > I beg to differ:
-> >
-> > $ git grep for_each_thermal_trip | head -1
-> > drivers/net/wireless/intel/iwlwifi/mvm/tt.c:
-> > for_each_thermal_trip(mvm->tz_device.tzone, iwl_trip_temp_cb, &twd);
-> Can we modify it for tt.c?
+Hi Krzysztof,
 
-Not really.
+I have one comment.
 
-tt.c invokes this under the thermal zone lock, so it cannot use the
-"locked" variant.
+On 2024/08/19 2:28, Krzysztof Kozlowski wrote:
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for clock-names and reset-names.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   .../bindings/phy/socionext,uniphier-ahci-phy.yaml         | 8 ++++++--
+>   .../bindings/phy/socionext,uniphier-pcie-phy.yaml         | 8 ++++++--
+>   .../bindings/phy/socionext,uniphier-usb3hs-phy.yaml       | 7 +++++--
+>   .../bindings/phy/socionext,uniphier-usb3ss-phy.yaml       | 7 +++++--
+>   4 files changed, 22 insertions(+), 8 deletions(-)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
+> b/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
+> index de3cffc850bc..e34b875a1bb8 100644
+> ---
+> a/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
+> +++
+> b/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
+> @@ -30,13 +30,17 @@ properties:
+>       minItems: 1
+>       maxItems: 2
+>   
+> -  clock-names: true
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 6
 
-> It doesn't seem to keep two interfaces. I'm a little confused for that.
+The maxItems of clocks is 2, so it should be 2.
 
-The difference between for_each_thermal_trip() and
-thermal_zone_for_each_trip() is "unlocked" vs "locked", respectively.
-It may just be a question of naming ...
+>   
+>     resets:
+>       minItems: 2
+>       maxItems: 6
+>   
+> -  reset-names: true
+> +  reset-names:
+> +    minItems: 2
+> +    maxItems: 6
+>   
+>   allOf:
+>     - if:
+> diff --git
+> a/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
+> b/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
+> index b3ed2f74a414..9fc0e87c508e 100644
+> ---
+> a/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
+> +++
+> b/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
+> @@ -31,13 +31,17 @@ properties:
+>       minItems: 1
+>       maxItems: 2
+>   
+> -  clock-names: true
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 2
+>   
+>     resets:
+>       minItems: 1
+>       maxItems: 2
+>   
+> -  reset-names: true
+> +  reset-names:
+> +    minItems: 1
+> +    maxItems: 2
+>   
+>     socionext,syscon:
+>       $ref: /schemas/types.yaml#/definitions/phandle
+> diff --git
+> a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
+> b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
+> index 2107d98ace15..25c4159f86e4 100644
+> --- a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.
+> yaml
+> +++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.
+> yaml
+> @@ -34,12 +34,15 @@ properties:
+>       minItems: 2
+>       maxItems: 3
+>   
+> -  clock-names: true
+> +  clock-names:
+> +    minItems: 2
+> +    maxItems: 3
+>   
+>     resets:
+>       maxItems: 2
+>   
+> -  reset-names: true
+> +  reset-names:
+> +    maxItems: 2
+>   
+>     vbus-supply:
+>       description: A phandle to the regulator for USB VBUS
+> diff --git
+> a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
+> b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
+> index 8f5aa6238bf3..1f663e9901da 100644
+> --- a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.
+> yaml
+> +++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.
+> yaml
+> @@ -35,12 +35,15 @@ properties:
+>       minItems: 2
+>       maxItems: 3
+>   
+> -  clock-names: true
+> +  clock-names:
+> +    minItems: 2
+> +    maxItems: 3
+>   
+>     resets:
+>       maxItems: 2
+>   
+> -  reset-names: true
+> +  reset-names:
+> +    maxItems: 2
+>   
+>     vbus-supply:
+>       description: A phandle to the regulator for USB VBUS, only for USB
+> host
+
+Other than that:
+Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+
+I'd appreciate if it could be applied in devicetree or phy.
+
+Thank you,
+
+---
+Best Regards
+Kunihiko Hayashi
 
