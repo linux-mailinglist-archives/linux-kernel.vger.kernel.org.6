@@ -1,362 +1,195 @@
-Return-Path: <linux-kernel+bounces-295698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278DB95A031
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:43:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1B495A03A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9B71C2254B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB039283F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156A619995B;
-	Wed, 21 Aug 2024 14:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CBE1B2518;
+	Wed, 21 Aug 2024 14:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTlKjLfP"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="cyeDB6m+"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B60160796
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684B21B1D54
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724251392; cv=none; b=mlXvGODkoy4+PRcH4t1zyG8wYxrJgIInh4MC3Oekp4ex9LNwuXQJd7tM86S4uuicwVfSfv5grOfIljdIyVzzCYW2/pUAdp+Pz3hiMcd3vHcd16qivwNLbSg/IZxw9vtjvlGan/7+ru65SpZdHhg6HYhBOJhZVqN9A4vquSfAehM=
+	t=1724251415; cv=none; b=PC5cw7/FU7Lp/UI3Bc907Ehj3hG2dcahPl1d69JOXCAdvpJSCWgIxiTXgYMepz6y5ycCHzHr5txtBMzopv/6fTrKC/f3y/AccvQ4EWlxW1HYcSS5iqeKh+2oClIz6vB9Ry9CeuuxYcsOxZKOVxRguywQcScQk400H4zbQ9zWKeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724251392; c=relaxed/simple;
-	bh=SmW4T5gIGEqQpUN8h/IywqyKznb0R9hv3kztb56kgqQ=;
+	s=arc-20240116; t=1724251415; c=relaxed/simple;
+	bh=A8p0t91hvXka+g/psRaquRixFWGMAD2W6eWokcSl1dA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iWae+Y1pU5hnMizUj+Rn7pYX1iQKtG8bCxkacOZuZeSCgyraTHN2UiH1woSU0lBuPvV9ak00WABG4DeP6EO19EYVjLt1wSyIMZiDB/446OvfzTqS7DVpAO73Fa+C/FEbv1BW7hxAPI3UXwJQDkaWor/MsRH3KV9ZpidXI+6XmiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTlKjLfP; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1d42da3e9so438187385a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:43:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=cbJKOPU39h0zkT6PMLZkk9afbiB2gNgxqJ3xjMQX2PmRwLZy1mby5dyP7HMcbMpZbzQXhHsHw6tmIQlugfHhWPIocRoS3bkZQkRZY499bFoxaj878wlijQI9hPXJPSWJ43VsMlVHpOdnspukGrfHgGqt9wbOeeqLgK2xnSrkaAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=cyeDB6m+; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39d3b31e577so18746765ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:43:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724251389; x=1724856189; darn=vger.kernel.org;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1724251411; x=1724856211; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3hTkgzcR3AnSxa314EMmlKAfjbthoWMYj15N6KUnLXU=;
-        b=kTlKjLfPzjX+L8jL/QbRyp1TaFML6Dm7efLwo2QdRjVp4YN99otWUFwrwru+eVrXv9
-         L3C7GvvlN47M89q7cdpX6DnR7Knqw2P9fx/c+hoNx2IB3mx835s8DMXU7IXs6xWzyoxD
-         cYEATVpxQFDBAj6IZ8pfukGcwQAZllrvai2iWl1vzzDZi2jpKS3MX89geKJqWsv2Y/e3
-         A4XRDOjti1R2LKE5ntVcvjzJkM/n5ofZlHrs5opZo0lpnyx9bFGCtXHAw/xXOPntkb+E
-         bTvG0aLE/Mq9BWpYcRsSyB01JesVbVcQ8wuOdAw+x6k/n3McAAztRzQyAV/ZBnwxTG80
-         6Xng==
+        bh=YnANlyns677MLgmX5D+5HDeCYuvU+7Zvhaak3tUYSFM=;
+        b=cyeDB6m+tupMQK/jzHwvb7XU2a+bNU2raAb0Rmkz9Ipxui1lb8GRer32p3I9JTjsXn
+         XlYAXD7xQzBO72hMSsICEYiBThvXWTf3QywF6AONbzreGrPD1I6OhfdrYy8qvz7R9luk
+         niBzFIVDNvdg4/6d4fEz/ByhhNnDUce6nF0+r/ywHgNKkSq1ZFBBdFnQzmuGdKuhr6+6
+         4ofiKBEEUZHcvQxJaEBOGBOBFhUTq1XDyzji+lXpSkueCDI7j4hoJFffHyDErMGeywc7
+         08otJ/PADPAW56Tovd36LWbpup0HhECzOFUjq7tJbhQ52f58s/B+DjqQa5X1NKsbG1tk
+         UYJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724251389; x=1724856189;
+        d=1e100.net; s=20230601; t=1724251411; x=1724856211;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3hTkgzcR3AnSxa314EMmlKAfjbthoWMYj15N6KUnLXU=;
-        b=wM0EpyHw2BsV+8oGgyc3cN9PDSsMfITrBLSvZJ3Iqn6w3ZmPSb35q+p8QEe34Rydpj
-         c3qY09OcoyyYUJ2FgsA/IDjiNwEr+OeODk6eyf+XuV8JGjTprB+6IONngo4kxWcPTc4m
-         Me/R8Hbhrjz667CgzQwy+ngmopZF7Ql+oU9F3YuBmXy1CY8q6g2XdfuLqmGwXNXBwdbI
-         8rBNVap+NPR0d86+LCG4sEAVkenzNxAx0ePM2mlV0HU3dVjcpPPpukehWSlzt7wS08Vh
-         G2H5civw4YQ7/f0oe7MxZbnfXksjnFbK6iKAFO3s4IZ4vI3DJ6TyEg/kCnRruqmufYoQ
-         l2ZQ==
-X-Gm-Message-State: AOJu0YxGIaE/5pr2maGcH7vCvJgGR/zUPR9uH4v+fuKpbnRo9efmG71B
-	aCxRVXNBZEWiOkAlL1lqU9xr440ZEmURpIW59SzGgKhxSugk6DBEOwlOFriWSG6W/0USezhKTbV
-	GDIn7akSOtu3bPZOWFQU16CuFxNs=
-X-Google-Smtp-Source: AGHT+IFb4eaLx4KxBuCDTnWqFPKFmaBCDDtJS88BDxxBHN7+mARkycK57RU2F+b2XSz8kDdnMm9pCDcFZiASEe5Q3XA=
-X-Received: by 2002:a05:6214:578a:b0:6bf:7fc1:64c7 with SMTP id
- 6a1803df08f44-6c155d71e5bmr33636526d6.15.1724251388880; Wed, 21 Aug 2024
- 07:43:08 -0700 (PDT)
+        bh=YnANlyns677MLgmX5D+5HDeCYuvU+7Zvhaak3tUYSFM=;
+        b=kOESRuh90Ono4D4o5/3XtmL8tC5dPXl89Fn39dimdeLwqsm+O50Fx5gg+awsXKIisJ
+         Xd9ujd9IRITxFXiyzB8opHiyUYXBOYYRigVQG79Ky0DeNWpomFVQEqOqu1HFM8r9fYkN
+         TM/mRwkdyiJN1aMJtcvyP1Y2zk86QIDhNlfi7MBsl2YfPlG/cItNFMQuVQP53/DI+6Uu
+         2i+aFeacg7SCMbgaYgzSv01i5tCBBLFc1oN60fY2HW7FnzkbYRhfhy9UQnvJFtHNWhyr
+         XxgBorn2Wt85GF32wY8AA0gRaWwMnSxerI1WU3LGgdYn5eGZusLlyigeoHqaltA5YIzF
+         mJAA==
+X-Gm-Message-State: AOJu0Yx5dVRPx8kFDykysePrDCgejWU/SDt0GZQNnoG+VQ2ZhQJ7TqV3
+	An+OFr5zVVozf8qMWjEzSnbcsFPGAhv/L+CCDI3lz7bTiagkCl6oMGLc8Es3TqFV3hu545VxxZh
+	SGvOOl8AdTDt7zJlJHop6iT26lEzFppXEjLfFlLsUeeAAyv6/
+X-Google-Smtp-Source: AGHT+IHJtDUtxCawhOpqM1OVmpuYr/77dmq70s53HK4PjVrBx/OVg/mV1LIwscPOhsReGVgKzxXiUVwufmTAZkEqd5E=
+X-Received: by 2002:a05:6e02:1a6a:b0:375:9dd4:d693 with SMTP id
+ e9e14a558f8ab-39d6c344cc6mr29305795ab.3.1724251411230; Wed, 21 Aug 2024
+ 07:43:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 21 Aug 2024 10:42:57 -0400
-Message-ID: <CAKEwX=OO6frFa+S3xjtoabB2dY1Y5RN5qjMsVUsgKDK_QuOFzg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, ryan.roberts@arm.com, ying.huang@intel.com, 
-	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+References: <20240726084931.28924-1-yongxuan.wang@sifive.com>
+In-Reply-To: <20240726084931.28924-1-yongxuan.wang@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 21 Aug 2024 20:13:20 +0530
+Message-ID: <CAAhSdy05BXUZu6BNUoDWoEVd_YiM0Dpqg=t5WYUX7+cacnO2Hg@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] Add Svade and Svadu Extensions Support
+To: Palmer Dabbelt <palmer@dabbelt.com>, Palmer Dabbelt <palmer@rivosinc.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
+	vincent.chen@sifive.com, Yong-Xuan Wang <yongxuan.wang@sifive.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 18, 2024 at 10:16=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
+Hi Palmer,
+
+On Fri, Jul 26, 2024 at 2:19=E2=80=AFPM Yong-Xuan Wang <yongxuan.wang@sifiv=
+e.com> wrote:
 >
-> Hi All,
->
-> This patch-series enables zswap_store() to accept and store mTHP
-> folios. The most significant contribution in this series is from the
-> earlier RFC submitted by Ryan Roberts [1]. Ryan's original RFC has been
-> migrated to v6.11-rc3 in patch 2/4 of this series.
->
-> [1]: [RFC PATCH v1] mm: zswap: Store large folios without splitting
->      https://lore.kernel.org/linux-mm/20231019110543.3284654-1-ryan.rober=
-ts@arm.com/T/#u
->
-> Additionally, there is an attempt to modularize some of the functionality
-> in zswap_store(), to make it more amenable to supporting any-order
-> mTHPs.
->
-> For instance, the determination of whether a folio is same-filled is
-> based on mapping an index into the folio to derive the page. Likewise,
-> there is a function "zswap_store_entry" added to store a zswap_entry in
-> the xarray.
->
-> For accounting purposes, the patch-series adds per-order mTHP sysfs
-> "zswpout" counters that get incremented upon successful zswap_store of
-> an mTHP folio:
->
-> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
->
-> This patch-series is a precursor to ZSWAP compress batching of mTHP
-> swap-out and decompress batching of swap-ins based on swapin_readahead(),
-> using Intel IAA hardware acceleration, which we would like to submit in
-> subsequent RFC patch-series, with performance improvement data.
->
-> Thanks to Ying Huang for pre-posting review feedback and suggestions!
->
-> Changes since v3:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1) Rebased to mm-unstable commit 8c0b4f7b65fd1ca7af01267f491e815a40d77444=
-.
->    Thanks to Barry for suggesting aligning with Ryan Roberts' latest
->    changes to count_mthp_stat() so that it's always defined, even when TH=
-P
->    is disabled. Barry, I have also made one other change in page_io.c
->    where count_mthp_stat() is called by count_swpout_vm_event(). I would
->    appreciate it if you can review this. Thanks!
->    Hopefully this should resolve the kernel robot build errors.
->
-> Changes since v2:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1) Gathered usemem data using SSD as the backing swap device for zswap,
->    as suggested by Ying Huang. Ying, I would appreciate it if you can
->    review the latest data. Thanks!
-> 2) Generated the base commit info in the patches to attempt to address
->    the kernel test robot build errors.
-> 3) No code changes to the individual patches themselves.
->
-> Changes since RFC v1:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> 1) Use sysfs for zswpout mTHP stats, as per Barry Song's suggestion.
->    Thanks Barry!
-> 2) Addressed some of the code review comments that Nhat Pham provided in
->    Ryan's initial RFC [1]:
->    - Added a comment about the cgroup zswap limit checks occuring once pe=
-r
->      folio at the beginning of zswap_store().
->      Nhat, Ryan, please do let me know if the comments convey the summary
->      from the RFC discussion. Thanks!
->    - Posted data on running the cgroup suite's zswap kselftest.
-> 3) Rebased to v6.11-rc3.
-> 4) Gathered performance data with usemem and the rebased patch-series.
->
-> Performance Testing:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Testing of this patch-series was done with the v6.11-rc3 mainline, withou=
+> Svade and Svadu extensions represent two schemes for managing the PTE A/D
+> bit. When the PTE A/D bits need to be set, Svade extension intdicates tha=
 t
-> and with this patch-series, on an Intel Sapphire Rapids server,
-> dual-socket 56 cores per socket, 4 IAA devices per socket.
+> a related page fault will be raised. In contrast, the Svadu extension
+> supports hardware updating of PTE A/D bits. This series enables Svade and
+> Svadu extensions for both host and guest OS.
 >
-> The system has 503 GiB RAM, with a 4G SSD as the backing swap device for
-> ZSWAP. Core frequency was fixed at 2500MHz.
+> Regrading the mailing thread[1], we have 4 possible combinations of
+> these extensions in the device tree, the default hardware behavior for
+> these possibilities are:
+> 1) Neither Svade nor Svadu present in DT =3D> It is technically
+>    unknown whether the platform uses Svade or Svadu. Supervisor
+>    software should be prepared to handle either hardware updating
+>    of the PTE A/D bits or page faults when they need updated.
+> 2) Only Svade present in DT =3D> Supervisor must assume Svade to be
+>    always enabled.
+> 3) Only Svadu present in DT =3D> Supervisor must assume Svadu to be
+>    always enabled.
+> 4) Both Svade and Svadu present in DT =3D> Supervisor must assume
+>    Svadu turned-off at boot time. To use Svadu, supervisor must
+>    explicitly enable it using the SBI FWFT extension.
 >
-> The vm-scalability "usemem" test was run in a cgroup whose memory.high
-> was fixed. Following a similar methodology as in Ryan Roberts'
-> "Swap-out mTHP without splitting" series [2], 70 usemem processes were
-> run, each allocating and writing 1G of memory:
+> The Svade extension is mandatory and the Svadu extension is optional in
+> RVA23 profile. Platforms want to take the advantage of Svadu can choose
+> 3. Those are aware of the profile can choose 4, and Linux won't get the
+> benefit of svadu until the SBI FWFT extension is available.
 >
->     usemem --init-time -w -O -n 70 1g
+> [1] https://lore.kernel.org/linux-kernel/20240527-e9845c06619bca5cd285098=
+c@orel/T/#m29644eb88e241ec282df4ccd5199514e913b06ee
 >
-> Since I was constrained to get the 70 usemem processes to generate
-> swapout activity with the 4G SSD, I ended up using different cgroup
-> memory.high fixed limits for the experiments with 64K mTHP and 2M THP:
+> ---
+> v8:
+> - fix typo in PATCH1 (Samuel)
+> - use the new extension validating API in PATCH1 (Cl=C3=A9ment)
+> - update the dtbinding in PATCH2 (Samuel, Conor)
+> - add PATCH4 to fix compile error in get-reg-list test.
 >
-> 64K mTHP experiments: cgroup memory fixed at 60G
-> 2M THP experiments  : cgroup memory fixed at 55G
+> v7:
+> - fix alignment in PATCH1
+> - update the dtbinding in PATCH2 (Conor, Jessica)
 >
-> The vm/sysfs stats included after the performance data provide details
-> on the swapout activity to SSD/ZSWAP.
+> v6:
+> - reflect the platform's behavior by riscv_isa_extension_available() and
+>   update the the arch_has_hw_pte_young() in PATCH1 (Conor, Andrew)
+> - update the dtbinding in PATCH2 (Alexandre, Andrew, Anup, Conor)
+> - update the henvcfg condition in PATCH3 (Andrew)
+> - check if Svade is allowed to disabled based on arch_has_hw_pte_young()
+>   in PATCH3
 >
-> Other kernel configuration parameters:
+> v5:
+> - remove all Acked-by and Reviewed-by (Conor, Andrew)
+> - add Svade support
+> - update the arch_has_hw_pte_young() in PATCH1
+> - update the dtbinding in PATCH2 (Alexandre, Andrew)
+> - check the availibility of Svadu for Guest/VM based on
+>   arch_has_hw_pte_young() in PATCH3
 >
->     ZSWAP Compressor  : LZ4, DEFLATE-IAA
->     ZSWAP Allocator   : ZSMALLOC
->     SWAP page-cluster : 2
+> v4:
+> - fix 32bit kernel build error in PATCH1 (Conor)
+> - update the status of Svadu extension to ratified in PATCH2
+> - add the PATCH4 to suporrt SBI_FWFT_PTE_AD_HW_UPDATING for guest OS
+> - update the PATCH1 and PATCH3 to integrate with FWFT extension
+> - rebase PATCH5 on the lastest get-reg-list test (Andrew)
 >
-> In the experiments where "deflate-iaa" is used as the ZSWAP compressor,
-> IAA "compression verification" is enabled. Hence each IAA compression
-> will be decompressed internally by the "iaa_crypto" driver, the crc-s
-> returned by the hardware will be compared and errors reported in case of
-> mismatches. Thus "deflate-iaa" helps ensure better data integrity as
-> compared to the software compressors.
+> v3:
+> - fix the control bit name to ADUE in PATCH1 and PATCH3
+> - update get-reg-list in PATCH4
 >
-> Throughput reported by usemem and perf sys time for running the test
-> are as follows, averaged across 3 runs:
+> v2:
+> - add Co-developed-by: in PATCH1
+> - use riscv_has_extension_unlikely() to runtime patch the branch in PATCH=
+1
+> - update dt-binding
 >
->  64KB mTHP (cgroup memory.high set to 60G):
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   ------------------------------------------------------------------
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     | Throughput | Improvement|
->  |                    |                   |       KB/s |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | SSD               |    335,346 |   Baseline |
->  |zswap-mTHP-Store    | ZSWAP lz4         |    271,558 |       -19% |
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |    388,154 |        16% |
->  |------------------------------------------------------------------|
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     |   Sys time | Improvement|
->  |                    |                   |        sec |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | SSD               |      91.37 |   Baseline |
->  |zswap-mTHP=3DStore    | ZSWAP lz4         |     265.43 |      -191% |
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |     235.60 |      -158% |
->   ------------------------------------------------------------------
-
-Yeah no, this is not good. That throughput regression is concerning...
-
-Is this tied to lz4 only, or do you observe similar trends in other
-compressors that are not deflate-iaa?
-
-
+> Yong-Xuan Wang (5):
+>   RISC-V: Add Svade and Svadu Extensions Support
+>   dt-bindings: riscv: Add Svade and Svadu Entries
+>   RISC-V: KVM: Add Svade and Svadu Extensions Support for Guest/VM
+>   KVM: riscv: selftests: Fix compile error
+>   KVM: riscv: selftests: Add Svade and Svadu Extension to get-reg-list
+>     test
 >
->   -----------------------------------------------------------------------
->  | VMSTATS, mTHP ZSWAP/SSD stats|  v6.11-rc3 |  zswap-mTHP |  zswap-mTHP =
-|
->  |                              |   mainline |       Store |       Store =
-|
->  |                              |            |         lz4 | deflate-iaa =
-|
->  |-----------------------------------------------------------------------=
-|
->  | pswpin                       |          0 |           0 |           0 =
-|
->  | pswpout                      |    174,432 |           0 |           0 =
-|
->  | zswpin                       |        703 |         534 |         721 =
-|
->  | zswpout                      |      1,501 |   1,491,654 |   1,398,805 =
-|
->  |-----------------------------------------------------------------------=
-|
->  | thp_swpout                   |          0 |           0 |           0 =
-|
->  | thp_swpout_fallback          |          0 |           0 |           0 =
-|
->  | pgmajfault                   |      3,364 |       3,650 |       3,431 =
-|
->  |-----------------------------------------------------------------------=
-|
->  | hugepages-64kB/stats/zswpout |            |      63,200 |      63,244 =
-|
->  |-----------------------------------------------------------------------=
-|
->  | hugepages-64kB/stats/swpout  |     10,902 |           0 |           0 =
-|
->   -----------------------------------------------------------------------
+>  .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++++++
+>  arch/riscv/Kconfig                            |  1 +
+>  arch/riscv/include/asm/csr.h                  |  1 +
+>  arch/riscv/include/asm/hwcap.h                |  2 ++
+>  arch/riscv/include/asm/pgtable.h              | 13 ++++++++-
+>  arch/riscv/include/uapi/asm/kvm.h             |  2 ++
+>  arch/riscv/kernel/cpufeature.c                | 12 ++++++++
+>  arch/riscv/kvm/vcpu.c                         |  4 +++
+>  arch/riscv/kvm/vcpu_onereg.c                  | 15 ++++++++++
+>  .../selftests/kvm/riscv/get-reg-list.c        | 16 ++++++++---
+>  10 files changed, 89 insertions(+), 5 deletions(-)
+>
+> --
+> 2.17.1
+>
 >
 
-Yeah this is not good. Something fishy is going on, if we see this
-ginormous jump from 175000 (z)swpout pages to almost 1.5 million
-pages. That's a massive jump.
+Let me know if this series can be taken through the KVM RISC-V tree.
+I can provide you with a shared tag as well.
 
-Either it's:
-
-1.Your theory - zswap store keeps banging on the limit (which suggests
-incompatibility between the way zswap currently behaves and our
-reclaim logic)
-
-2. The data here is ridiculously incompressible. We're needing to
-zswpout roughly 8.5 times the number of pages, so the saving is 8.5
-less =3D> we only save 11.76% of memory for each page??? That's not
-right...
-
-3. There's an outright bug somewhere.
-
-Very suspicious.
-
->
->  2MB PMD-THP/2048K mTHP (cgroup memory.high set to 55G):
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->   ------------------------------------------------------------------
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     | Throughput | Improvement|
->  |                    |                   |       KB/s |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | SSD               |    190,827 |   Baseline |
->  |zswap-mTHP-Store    | ZSWAP lz4         |     32,026 |       -83% |
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |    203,772 |         7% |
->  |------------------------------------------------------------------|
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     |   Sys time | Improvement|
->  |                    |                   |        sec |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | SSD               |      27.23 |   Baseline |
->  |zswap-mTHP-Store    | ZSWAP lz4         |     156.52 |      -475% |
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |     171.45 |      -530% |
->   ------------------------------------------------------------------
-
-I'm confused. This is a *regression* right? A massive one that is -
-sys time is *more* than 5 times the old value?
-
->
->   -----------------------------------------------------------------------=
---
->  | VMSTATS, mTHP ZSWAP/SSD stats  |  v6.11-rc3 |  zswap-mTHP |  zswap-mTH=
-P |
->  |                                |   mainline |       Store |       Stor=
-e |
->  |                                |            |         lz4 | deflate-ia=
-a |
->  |-----------------------------------------------------------------------=
---|
->  | pswpin                         |          0 |           0 |           =
-0 |
->  | pswpout                        |    797,184 |           0 |           =
-0 |
->  | zswpin                         |        690 |         649 |         66=
-9 |
->  | zswpout                        |      1,465 |   1,596,382 |   1,540,76=
-6 |
->  |-----------------------------------------------------------------------=
---|
->  | thp_swpout                     |      1,557 |           0 |           =
-0 |
->  | thp_swpout_fallback            |          0 |       3,248 |       3,75=
-2 |
-
-This is also increased, but I supposed we're just doing more
-(z)swapping out in general...
-
->  | pgmajfault                     |      3,726 |       6,470 |       5,69=
-1 |
->  |-----------------------------------------------------------------------=
---|
->  | hugepages-2048kB/stats/zswpout |            |       2,416 |       2,26=
-1 |
->  |-----------------------------------------------------------------------=
---|
->  | hugepages-2048kB/stats/swpout  |      1,557 |           0 |           =
-0 |
->   -----------------------------------------------------------------------=
---
->
-
-I'm not trying to delay this patch - I fully believe in supporting
-zswap for larger pages (both mTHP and THP - whatever the memory
-reclaim subsystem throws at us).
-
-But we need to get to the bottom of this :) These are very suspicious
-and concerning data. If this is something urgent, I can live with a
-gate to enable/disable this, but I'd much prefer we understand what's
-going on here.
+Regards,
+Anup
 
