@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-294893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6EC9593FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:24:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C362C959400
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78AF51C212F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:24:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCFA1F22DD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA39167DA8;
-	Wed, 21 Aug 2024 05:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937EA168492;
+	Wed, 21 Aug 2024 05:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MKjRBo+S"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fclwXrrC"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB3A166F02;
-	Wed, 21 Aug 2024 05:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DBA161936
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724217853; cv=none; b=gKR8Hn+Lze7JqsMNVXr94dGD0/s17zyGgsG7A3mdrXFsoLEt/TaBex9Z+SKNPPg4gaIGPOgrR9fB3l0jM/hIElHj2RJxb4QluUNjMMRWpWOXbnEsc32jYvX6TuZ+HQ2WGbZvK7tYQdOfsIPAz7gmv4ioUOszLsONRK0eb3KXvj8=
+	t=1724217866; cv=none; b=kB5i72xZbhwwLfz66ZX5qNAvCcCfL15//2spUA6t5BpYXpI9Lu16hTaYkKAPYF7uuEFPw6t73jw2/v9bzfgySI34Lv5IyflfQ5hAcnbDbfyCZJ3ac0f3zmbmZiRTeIEc8BJvdkfm2mKJZvEAK9gLejylEFh2enzWY+aUXIGg2zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724217853; c=relaxed/simple;
-	bh=8mRjRdfIeFDUtIGxoYx7QuE4yCRMP+FLEnYMkkl93uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNgdo4WyNKOeJaZulz3zQiATC1BEZMw3BEkNAD65PDLK0f1DwXdI8uvdJgLyNlkM/zCLvZUGijEZeVGiD9tdv3De+aZ5/5WDTZec0OsvJVL5Mug/B7istVZBkf/JDKnV6+fDXn4fHTUk0XUoz+c3V/PXnPImlp1yWhv6+HMhalQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MKjRBo+S; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724217850; x=1755753850;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8mRjRdfIeFDUtIGxoYx7QuE4yCRMP+FLEnYMkkl93uA=;
-  b=MKjRBo+SajVoWFtV5E3RhrvsBDOlntjQ4yesTHIef+tkAaidwOZ75zFB
-   tSQqETiX+Sxydd2G3+r17rMCRTZQFZ+P7GSzNYnAauB3RB6PcwhhAuET/
-   75trpDYJxI07U8CTZQ5eqjjAdNO5GmLrvQVNcQBNhOMFSknWvQVU53fgU
-   KaLQN67H/rmiKfLwFhkEC62199MHQKfN/iAiP1DLP4CeEh92R2sXUiCXT
-   ecILNjbkdppvLbp0Hdnf091XqjfANmLVeasuynzWw2ccBhp0iT+FdcLfQ
-   0DvaY1z3bOYpDc1cwr6xILfk+MVFFi9FEpmbJT/8Uc4L1UvNzOJQWtDlr
-   Q==;
-X-CSE-ConnectionGUID: SCGlEedzTk2lqHA3FNzk3Q==
-X-CSE-MsgGUID: UNxlab9QQdyogq4i6joc1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22689751"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="22689751"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 22:24:10 -0700
-X-CSE-ConnectionGUID: zKL4QYSSSlGrbCexMeYsaA==
-X-CSE-MsgGUID: 9Se6h219R/+zc4EOJ04Mvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="60686551"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 20 Aug 2024 22:24:09 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sgdpF-000Ava-2t;
-	Wed, 21 Aug 2024 05:24:05 +0000
-Date: Wed, 21 Aug 2024 13:23:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: NeilBrown <neilb@suse.de>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/9] Introduce atomic_dec_and_wake_up_var().
-Message-ID: <202408211354.SHlpNZbs-lkp@intel.com>
-References: <20240819053605.11706-3-neilb@suse.de>
+	s=arc-20240116; t=1724217866; c=relaxed/simple;
+	bh=+c9ry0gIKwo4UXh5zsTLVRtv/dS4wCh2ZSvVpVlgmGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R/3wmstQMmtF67tg5DCV1O2kNNij9owXuNcyimNcncVeqzZY/RMwTsTJHAZ+7CPjOSMPmK5eRlhYZjOtEjl5K7Psf+6CG2bqFfsSkwlUzYWUG7CuWtJ9aWZ2U2QLDZ4wpSmCrteME7IKz9K9K3f+IRdzeiDTT8gdTArqO0DCHs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fclwXrrC; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4518d9fa2f4so198321cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 22:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724217864; x=1724822664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+c9ry0gIKwo4UXh5zsTLVRtv/dS4wCh2ZSvVpVlgmGA=;
+        b=fclwXrrCUbNostfgCMd1La3shPRVOZWX7NBGQo4UHZzjMXPcrSpNKULQ9MImg5XYFZ
+         CUegKrg1Fyl7CyJRn/1/tvPw1wlrt+bGmLJHhcMcUUJsGIa8Zb0jsdfkPrzBVQU8OHQm
+         8dIMv+2iaxJeeFcP+n2mDKiRM3dkeyalcHar9RC9H8LQ0bWAw/onpJFqpKriGZ01a/1t
+         M9b5rA96B74LZiM2zdhf5YwWort6xA2xcpXOx0Bi82d5wU2qSbpIsuQN21WeeNkEXlH4
+         LxpudhD6SeYCDorLcudcwf16ua7KSTQhRL/9f9SCln4QOAenhivCtyYt5MlCr6MqTKM3
+         F+uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724217864; x=1724822664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+c9ry0gIKwo4UXh5zsTLVRtv/dS4wCh2ZSvVpVlgmGA=;
+        b=Y5hRUCDwTylAQ/etMTygS69G3wqSWzanpwmSM7Gsgth9bPNl2MdVfRWPvDCeX4Wvjy
+         ON7XT4Y2hGEFyyvqDE12YCpQcGvIeLPIh5KEQ8dViR/fpbUTKiBT/T3dZ5DAUmK3BzmN
+         oGIn2OQ1UXfWDGGH+g48Shy2C2tPJ3Wrqn3ekVt6cQdmwjhSetQTlQehzwn48Sop+FcC
+         LB/gON/gg0gB/1nga5FJ0AS+rTXUhT00bNTMSjHtE9iijOTrvLsjtccswnNwZvLSJhqV
+         GO2IyK2oczzhZeV9vjongg1bQRy5iz+pemRrG42P94Pclbin1aSSxLGcOHUC9ezA6TVR
+         L2sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqNEvFNgxZ5yNHOvVmP4IB5QjrfKiKV2/ojbCSfRfFR/aDcgGoERzjcdNHCANT2TgCI+7JY9bfJeLSZ/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz35qkma3zAGRTpPGCOIZbvyC2zLY9yKZZKP4lepIIZhkmnxm0p
+	QpXrvYuTAPsNgC5kLmqsC4W5qt8TiA3S/9d0FkQKxaRhVN3QHinmhwA8Kso8J30hpCyeNlifMPI
+	VNUDa0LTpLjkwbPcmMoIptM/T2Hs02drfGXhp8h7/dkGXPoF/grZ4
+X-Google-Smtp-Source: AGHT+IF73BCpn5UEcqFM/BhSSvMcfe9RO5QJr6iMJ/RDZUzv06kFzVkx6JeX8ZkAINLWgUfT5JTOhJyg6PRKU3OeCEQ=
+X-Received: by 2002:a05:622a:452:b0:444:dc9a:8e95 with SMTP id
+ d75a77b69052e-454e86dd4c8mr4839811cf.15.1724217863923; Tue, 20 Aug 2024
+ 22:24:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819053605.11706-3-neilb@suse.de>
+References: <20240821045629.2856641-1-almasrymina@google.com>
+In-Reply-To: <20240821045629.2856641-1-almasrymina@google.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 21 Aug 2024 01:24:12 -0400
+Message-ID: <CAHS8izMyAxw8DyG11b6h17ghU6Xa-be-C7tDOvGCjkCJ1bZDKw@mail.gmail.com>
+Subject: Re: [PATCH net-next v21] net: refactor ->ndo_bpf calls into dev_xdp_propagate
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, bpf@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek <andy@greyhouse.net>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi NeilBrown,
+On Wed, Aug 21, 2024 at 12:56=E2=80=AFAM Mina Almasry <almasrymina@google.c=
+om> wrote:
+>
+> When net devices propagate xdp configurations to slave devices, or when
+> core propagates xdp configuration to a device, we will need to perform
+> a memory provider check to ensure we're not binding xdp to a device
+> using unreadable netmem.
+>
+> Currently ->ndo_bpf calls are all over the place. Adding checks to all
+> these places would not be ideal.
+>
+> Refactor all the ->ndo_bpf calls into one place where we can add this
+> check in the future.
+>
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
 
-kernel test robot noticed the following build errors:
+Sorry the patch title should just be:
 
-[auto build test ERROR on trondmy-nfs/linux-next]
-[also build test ERROR on gfs2/for-next device-mapper-dm/for-next linus/master v6.11-rc4 next-20240820]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[PATCH net-next v1] net: refactor ->ndo_bpf calls into dev_xdp_propagate
 
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/i915-remove-wake_up-on-I915_RESET_MODESET/20240819-134414
-base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
-patch link:    https://lore.kernel.org/r/20240819053605.11706-3-neilb%40suse.de
-patch subject: [PATCH 2/9] Introduce atomic_dec_and_wake_up_var().
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240821/202408211354.SHlpNZbs-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240821/202408211354.SHlpNZbs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408211354.SHlpNZbs-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/i915/i915_request.c:2277:
->> drivers/gpu/drm/i915/selftests/i915_request.c:1533:9: error: call to undeclared function 'atomic_dec_and_wakeup_var'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1533 |         return atomic_dec_and_wakeup_var(&i915->selftest.counter);
-         |                ^
-   drivers/gpu/drm/i915/selftests/i915_request.c:1533:9: note: did you mean 'atomic_dec_and_wake_up_var'?
-   include/linux/wait_bit.h:338:20: note: 'atomic_dec_and_wake_up_var' declared here
-     338 | static inline bool atomic_dec_and_wake_up_var(atomic_t *var)
-         |                    ^
-   1 error generated.
-
-
-vim +/atomic_dec_and_wakeup_var +1533 drivers/gpu/drm/i915/selftests/i915_request.c
-
-  1530	
-  1531	static bool wake_all(struct drm_i915_private *i915)
-  1532	{
-> 1533		return atomic_dec_and_wakeup_var(&i915->selftest.counter);
-  1534	}
-  1535	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+v1, not v21.
 
