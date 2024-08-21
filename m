@@ -1,73 +1,69 @@
-Return-Path: <linux-kernel+bounces-294943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFF9959483
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:23:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A609495948B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B3A1F247C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61ABF283713
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D371D16D9AE;
-	Wed, 21 Aug 2024 06:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0FA16DC20;
+	Wed, 21 Aug 2024 06:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aLbZqafE"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aml5LfgC"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10D415FA92
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B49D79CD
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724221399; cv=none; b=eUtHkpL0DxTVkdg9gMYcbYsgM6dfHdmA6AzHYmX6x7WUbeWY3fw7JOEv/kqC1wD+JBRV21tShNfoSsXXtc0HVaUjKO0zRn3WOpi+UH0PuSdU9ndsdebko1+4jIZ+ygzVh3RgVUR6qqP9XGH8IuBBd+qrzNU/Q0GvgK8o+8TtI5s=
+	t=1724221860; cv=none; b=ryEx5rLseVEKi5ANyirgOuLEZSv3DkGMCYpTIvHu/u1gqWlA7TrkyfLUs2M6Zwz5I2J3GurFOOuQTd7jMKa8vnf9AsGF908jcfkA8b1aZlJQg3Xrvv1+hs3Cll/IUOd/hD86b1c1PwdJlD/aSZOv5mKEsZBStWUl8/XL8v0VMBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724221399; c=relaxed/simple;
-	bh=xv0AJvJdUF0KnKGoGQ8i9Sum+9GGB9bH1fNVehw1E1w=;
+	s=arc-20240116; t=1724221860; c=relaxed/simple;
+	bh=mZ7cSxfoQmQCj3saPrfeUJA2a4NYfq6piA/iUeVZ7WU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XyZZFywcxvowRKXNILCa9r0ArrYLi6jRcCV0y+7q46hh/9cjG7ozT3HeMEW6G0Olw12bJk+EBH44mfIYFVpOzDIbcHDQBUgNFnsuHYY2bwQea/WbvVI+W1yVOOaxlEkYMwHiWdQyTwdpgv7aptbTPNzKJT7LwF/rhxTFluayk6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aLbZqafE; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4281da2cdaeso807095e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:23:16 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=iJ3njGKHao/pcqg0Y/3W6jEARtJpJgS38yjBnmU0vfVGHVQjo76JLECY2x2UCOENYB256ecXhSW4Szx2FiBINLdisNvJzoyAwon/tzAzrccYbZd/DE2XqXGny9WlKKmo5LR7Dcrqttyx2EV+8JZJoSYaFXN2aEsufXDaKjEv1NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aml5LfgC; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201ed196debso52518665ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:30:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724221395; x=1724826195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linuxfoundation.org; s=google; t=1724221857; x=1724826657; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0qG4SWY2Kohg76lS5TYD26kdocNak1OXtrtTBUr3UoU=;
-        b=aLbZqafELPINrw/U9J/UvX75TEb0S87EgytO/qUOPV2OgqZK/0+hElqbNXa4IXPLsE
-         KxW81NqaJOHeVQ6tpYKSFZCa67tm3ngzkDyEjhPPCZX91YoGOMPl2gSyzdfL1UXRIRNN
-         +KePFrJaXY+tf/u8HrcVwIrX26uEQ29Mix196YFaFzts/V/MGph+4vqGgn4Qocs9xOpj
-         xc/mDRzcTTctltvvDJTrgsHYhoWHmQLO7softTsNBGhT2ToXTPhtmMBWyKQ2fcf1EswW
-         I9WVzvfC3bkGBnRrBDlCqef/UwiImUSgwRbjfAC+fHbQPK9CPmHc+FWbnPYCutnN+jJ/
-         03DQ==
+        bh=YzcqzHSqNE9yip5ED7tWvIVzWmQ91EinUBi740+qVHE=;
+        b=aml5LfgCRrzx7LuSFL/wQgM/293b8BAadEgDoHrhj4siR8FAurdqZe8GZabFiRdTKg
+         dn6aZZz2tTJxuxD87lbXheGVLBSTwUxI2EuuYZZyOBFk5t9aAQmR1kh7tRzQd9fdKp7A
+         3BnNeuTG4zBehbeiyb3BxUCfflV117eoExDdg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724221395; x=1724826195;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724221857; x=1724826657;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qG4SWY2Kohg76lS5TYD26kdocNak1OXtrtTBUr3UoU=;
-        b=v2yyLMWqSxb/X1xnDQIwLr4A1SQhq8HnB6zhXXAVuq5u51f6qTUCFeH2fCclxHeNLd
-         VLYpmKrIXY2bw94ehtag5LvfnKUwc1GYYVoN3GZ/72ZqaXMfZ1XJgpoWRuIOWvePdW62
-         QjCJIpF5hZqOo188FDkY65ZmUGiSHgziguNlca3CKtjdKVigoRFBs8O3+6nhFndGf6vo
-         B2DbyZvhon8qJJGt+8gF19NFk6g2VIMyNcVzkak4ngcHfbIgoe0H+lSg+r2ptTKd3nEG
-         mBdEXt20Mfzazma2nEPC+fECH7g6PF8rR9W/efIAGGebglxAJ+qPZ8fH0NGAnEETV3H4
-         u3Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHW0uBNPlvyyNHatvUOjD8znV8i3GTWuDBfUSy9SnkMVchfvYZHk4HOrthybQR2Oexy6ZSoxcjKspAxFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8FgpjFjyKD/IHVk7k/vwAatbra4Y9qPRwGH6aSuD1gQG2Xcre
-	txlfODy+tl8Ec67vPNnigBaC3GLr65XSLgZqdGl+cd7Zp5YXnzVVWpBcR7uxjKE=
-X-Google-Smtp-Source: AGHT+IEerjdUpSf5oD4V1rld+yGYKxBwJIf7ozzrycC1U+AOqIYaXn8DI2ScMBFAZEqXXKgOQJdq/Q==
-X-Received: by 2002:a5d:5f89:0:b0:371:733c:7882 with SMTP id ffacd0b85a97d-372fd929895mr414959f8f.10.1724221394582;
-        Tue, 20 Aug 2024 23:23:14 -0700 (PDT)
-Received: from [10.202.32.28] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eba263f0sm811398a91.33.2024.08.20.23.23.11
+        bh=YzcqzHSqNE9yip5ED7tWvIVzWmQ91EinUBi740+qVHE=;
+        b=tP2pmU/7DSUhs3nvgpFbKz0wRYFoSOfang/ux7dZ3hO0SKHx7S842Yh77chdxSg7Z/
+         zxE2yo1/Mw4pqLjnNu8Iuk/qc+/vkqpxL+gfFIAyaOSrVNjkPIW6aG/EmCEJJRoT3nJF
+         LiYUERySm6HGZ80oZ0asnJoGP6qtMQAzWpMna/yaIURTfWJWvVTO6U14fUgu+edDCwY/
+         E5J8XgGTWr7TEAJa8AiOCXwte5dL8GNaOgwuK/Y9yetcEYe/phX/Nnpe6Yvdvd/ADmva
+         Biyq5euaKFnmMQpVIg9O0kvZJxSeGIGLT1hPk3Pkn6j70lVdnNLvAbfiJEwT7uiae+78
+         gPPw==
+X-Gm-Message-State: AOJu0Yxx0mjWcGpCnDAxczsUovmrmJuSxl4Hr3EgUIGHz5Sd48Q8ccur
+	FxZCScp7cUvoQCZlVCSwT28J9I/5uZGWrsxZowOgFgAQJ5/QculSx7jHDurDDlI=
+X-Google-Smtp-Source: AGHT+IEnOoIZoPGx6TQyxJmMjyll5R6KO1MT+r2PvrLNAVJhrjTw3Spm91pOn5tWFC5QIEziQ7p6wA==
+X-Received: by 2002:a17:902:c40b:b0:201:db9f:cdde with SMTP id d9443c01a7336-20367d56b58mr15815015ad.34.1724221856606;
+        Tue, 20 Aug 2024 23:30:56 -0700 (PDT)
+Received: from [172.20.0.208] ([218.188.70.188])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0300522sm87065175ad.6.2024.08.20.23.30.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 23:23:14 -0700 (PDT)
-Message-ID: <0dd1d1b4-5e83-449e-af48-3811abd2e6a4@suse.com>
-Date: Wed, 21 Aug 2024 14:23:08 +0800
+        Tue, 20 Aug 2024 23:30:56 -0700 (PDT)
+Message-ID: <88575c79-b6be-42d2-b863-d57f83f8c99c@linuxfoundation.org>
+Date: Wed, 21 Aug 2024 00:30:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,49 +71,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/2] ocfs2: Fix possible null-ptr-deref in
- ocfs2_set_buffer_uptodate
+Subject: Re: [PATCH 0/3] selftests: Fix cpuid / vendor checking build issues
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>,
+ linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
+ Fenghua Yu <fenghua.yu@intel.com>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240813104515.19152-1-ilpo.jarvinen@linux.intel.com>
 Content-Language: en-US
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
- linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev,
- syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20240821055546.3254888-1-lizhi.xu@windriver.com>
- <20240821061450.3478602-1-lizhi.xu@windriver.com>
-From: "heming.zhao@suse.com" <heming.zhao@suse.com>
-In-Reply-To: <20240821061450.3478602-1-lizhi.xu@windriver.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240813104515.19152-1-ilpo.jarvinen@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
-
-Where is my "Reviewed-by" tag, and where is [patch 1/2]?
-
-On 8/21/24 14:14, Lizhi Xu wrote:
-> When doing cleanup, if flags without OCFS2_BH_READAHEAD, it may trigger
-> NULL pointer dereference in the following ocfs2_set_buffer_uptodate() if
-> bh is NULL.
+On 8/13/24 04:45, Ilpo Järvinen wrote:
+> First, generalize resctrl selftest non-contiguous CAT check to not
+> assume non-AMD vendor implies Intel. Second, improve kselftest common
+> parts and resctrl selftest such that the use of __cpuid_count() does
+> not lead into a build failure (happens at least on ARM).
 > 
-> Reported-and-suggested-by: Heming Zhao <heming.zhao@suse.com>
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
-> V3 -> V4: Update comments and subject> 
->   fs/ocfs2/buffer_head_io.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> The last patch might still require some work on which symbol the
+> conditional in kselftest.h is implemented. I could not find any
+> pre-existing one that could be used. Perhaps somebody who's more
+> familiar with the kselftest build system has a better suggestion on
+> which symbol the logic should be based at?
 > 
-> diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-> index e62c7e1de4eb..8f714406528d 100644
-> --- a/fs/ocfs2/buffer_head_io.c
-> +++ b/fs/ocfs2/buffer_head_io.c
-> @@ -388,7 +388,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
->   		/* Always set the buffer in the cache, even if it was
->   		 * a forced read, or read-ahead which hasn't yet
->   		 * completed. */
-> -		ocfs2_set_buffer_uptodate(ci, bh);
-> +		if (bh)
-> +			ocfs2_set_buffer_uptodate(ci, bh);
->   	}
->   	ocfs2_metadata_cache_io_unlock(ci);
->   
+> Ilpo Järvinen (3):
+>    selftests/resctrl: Generalize non-contiguous CAT check
+>    selftests/resctrl: Always initialize ecx to avoid build warnings
+>    [RFC] kselftest: Provide __cpuid_count() stub on non-x86 archs
+> 
+>   tools/testing/selftests/kselftest.h        |  6 +++++
+>   tools/testing/selftests/lib.mk             |  4 ++++
+>   tools/testing/selftests/resctrl/cat_test.c | 28 +++++++++++++---------
+>   3 files changed, 27 insertions(+), 11 deletions(-)
+> 
+
+These changes look good to me. Can you send the RFC patch without the RFC tag
+for me to pull in? I don't apply RFC patches.
+
+Usama, does this fix the problem you are seeing?
+
+Hi Reinette - do these look okay to you? Can you give me an ack if they do?
+
+thanks,
+-- Shuah
 
