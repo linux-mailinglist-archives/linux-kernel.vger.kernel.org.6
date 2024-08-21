@@ -1,233 +1,114 @@
-Return-Path: <linux-kernel+bounces-295760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D965E95A12C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:15:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0415E95A136
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27990B2284A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA14B283D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907151494B4;
-	Wed, 21 Aug 2024 15:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C173A14A615;
+	Wed, 21 Aug 2024 15:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXSlTZpz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="FJv7/2Jk"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4311C687;
-	Wed, 21 Aug 2024 15:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724253339; cv=none; b=Z+RczSoDBdNVHH0HwK90RczuqVFJi+fKCZLat78msGdj1bJkFwTdZanaS9nqBkg4KEYgbT29SKr9CPp1zLLYPBkbTmMPY2ommhVqI4IS/d90ODOUplIAGxoNT3krTcKfA8cRCuhZha6aG2V9ellG+1lfChSJ+CBmnY0flozk6qQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724253339; c=relaxed/simple;
-	bh=FJYPsdYawKYl01qsiVlAOjDtCqHpfz4B9K70zZhnR24=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7783C136E3B;
+	Wed, 21 Aug 2024 15:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724253533; cv=fail; b=CR2C19BLUX3TwZMfyRv2d6jfQOVXzaIiCeXpic80t49VNYbw8+qC8n27GROe9yxpXTupWRsF2xc+kV4pbrltNdsRwdzW4hpCdwnMZLyh4QZ7cv39p/+7ioCrFC4ghXKX7tJqRZq3PueimAzsr+624LbyeywWTrD8sSvI3BsjZtw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724253533; c=relaxed/simple;
+	bh=CXjpyINpxRH6Z7MOmFIfH7fCLD4Jr3usdd/h11T9ixk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avKwmNsqKD5yn1DVqqIepymhXnwC0i4gmUkbfKEQLdimx4+ttKFPUa+N9PjJ2kOjLcYi+2/EKcnqdtJpU6Iia2+IY7lpDESSfiq7jshb1DeJI9GAtk0mt7agn287cojN0DmPmoP+tR4Lqu7AG3eVtdcJSmzlZqpfPH3s6pmOuJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXSlTZpz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B64C32781;
-	Wed, 21 Aug 2024 15:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724253339;
-	bh=FJYPsdYawKYl01qsiVlAOjDtCqHpfz4B9K70zZhnR24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bXSlTZpzz5AWfUGjWVY0A7g2zIrMyzt9QIQa8BxSjCFpZdsqdTuPruzkOjGkrB2t7
-	 KdCpUPxuXAS+6kVebsMO4UJnDV/KlATthmpvFotU2e1Os4GMkCNVoTOZDaub+AkRNe
-	 GVQw4g4+fKuaepB1uBIK2f7j79ejCt/GUd0K/LOuAws+e1N8d0M+jEIgIyN0PGS7r1
-	 /ARW0VdScYaA5XS1fsUb0wmkwu5b73WL8WCrFsjcI/9gCZnzi91UIw781Tl/ZvsuXy
-	 Yx5y0VO/pfvjaYjRxNdKYVevxQGSpUlSF0mZV5IQ7dPE1gPtlOZ8QhH5Dv4I9JoY24
-	 HwKgyBmbQaTIA==
-Date: Wed, 21 Aug 2024 16:15:34 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Dan Murphy <dmurphy@ti.com>,
-	"open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: leds: convert leds-lm3692x to yaml
- format
-Message-ID: <20240821-sizable-jumbo-1a114a8cc53a@spud>
-References: <20240820183544.496419-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQx3AKawwzILe67TaeTxQP5jonu1KVBIdPqB0GErSXpolRrb0fG8jX7QBs21brRcXXKZr710oApDRLWoqtCIdDgE5XY1YAzzIgSbKB9moDKoO1YVoxE0QlgY/UpjEtV714Z7KiEY4XtQvoAvBUirCyFnnZsNl8RgwgFsyMPoRg0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=fail (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=FJv7/2Jk reason="signature verification failed"; arc=fail smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724253515; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Lh8vnPytgHq2o5OOeZo6XtCYvapq6Qen4J5DGgNJrzRSfw2sMwxxL11C5NoibU09QhdyQvd3llqZGMeqFTU47uPDx5pwBmtULNnJNrwU45RL0dtsWDTUkGm801Wxo+OUdQ0jI1GPvWNvr9eWbFPVvesh28wAqjrqsPk+zE6dDIk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724253515; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1Fb5atcA7ATnuJjYnZhVOGtdn6H2wHhzoyLNJvImPGQ=; 
+	b=QRX4++rYTobm07j+mdrhVOPWcjsobff9gY/ozMGogavGJgEVzgPk1llPP1KjPzSYVABF9pmBWwsKJFFudfIlZzdOfKyIVZab2p0QnkeNx2yx5SggLwq066GGZjBxSuJ4SlmH0VxQFlAKKaKJLC4Goipna/5mUkTskx3oymPfdDw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724253515;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=1Fb5atcA7ATnuJjYnZhVOGtdn6H2wHhzoyLNJvImPGQ=;
+	b=FJv7/2JkDtO9f3vkWKHVxB/VBQhvUC9/VIOCAKagJcRwU9lATF3gNOCCFkUwN0Fg
+	/LmXovimuGp84hGqbk/byc0wu2d0mNisCz+u3FLRlzuAsC9DefG7DGrLBNlgXETEBMC
+	Bf4Xz4UU0xVGa5x9o2rI6/C4aPxhfjooZo7ZXq+U=
+Received: by mx.zohomail.com with SMTPS id 1724253512751927.2733355263264;
+	Wed, 21 Aug 2024 08:18:32 -0700 (PDT)
+Date: Wed, 21 Aug 2024 11:18:30 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kselftest: dt: Ignore nodes that have ancestors
+ disabled
+Message-ID: <996ff9dd-65f6-4db3-9119-3e1c479e6e2c@notapiano>
+References: <20240729-dt-kselftest-parent-disabled-v2-1-d7a001c4930d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wepu50H+RhG8Sfqs"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240820183544.496419-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240729-dt-kselftest-parent-disabled-v2-1-d7a001c4930d@collabora.com>
+X-ZohoMailClient: External
 
+On Mon, Jul 29, 2024 at 04:56:02PM -0400, Nícolas F. R. A. Prado wrote:
+> Filter out nodes that have one of its ancestors disabled as they aren't
+> expected to probe.
+> 
+> This removes the following false-positive failures on the
+> sc7180-trogdor-lazor-limozeen-nots-r5 platform:
+> 
+> /soc@0/geniqup@8c0000/i2c@894000/proximity@28
+> /soc@0/geniqup@ac0000/spi@a90000/ec@0
+> /soc@0/remoteproc@62400000/glink-edge/apr
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@3
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@4
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@4/clock-controller
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@4/dais
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@7
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@7/dais
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@8
+> /soc@0/remoteproc@62400000/glink-edge/apr/service@8/routing
+> /soc@0/remoteproc@62400000/glink-edge/fastrpc
+> /soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@3
+> /soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@4
+> /soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@5
+> /soc@0/spmi@c440000/pmic@0/pon@800/pwrkey
+> 
+> Fixes: 14571ab1ad21 ("kselftest: Add new test for detecting unprobed Devicetree devices")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+> Changes in v2:
+> - Rebased on v6.11-rc1
+> - Link to v1: https://lore.kernel.org/r/20240619-dt-kselftest-parent-disabled-v1-1-b8f7a8778906@collabora.com
 
---wepu50H+RhG8Sfqs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Rob,
 
-On Tue, Aug 20, 2024 at 02:35:43PM -0400, Frank Li wrote:
-> Convert binding doc leds-lm3592x to yaml format.
-> Additional change
-> - Add ref to common.yaml for child node
-> - Add i2c node at example
->=20
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mq-librem5-r2.dtb: /soc@0/bus@30800000/=
-i2c@30a40000/backlight@36:
-> 	failed to match any schema with compatible: ['ti,lm36922']
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> diff --git a/Documentation/devicetree/bindings/leds/ti.lm36922.yaml b/Doc=
-umentation/devicetree/bindings/leds/ti.lm36922.yaml
-> new file mode 100644
-> index 0000000000000..ac98547b78bd2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/ti.lm36922.yaml
-> @@ -0,0 +1,100 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/ti.lm36922.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments - LM3692x Highly Efficient White LED Driver
-> +
-> +maintainers:
-> +  - Dan Murphy <dmurphy@ti.com>
-> +
-> +description: |
-> +  The LM3692x is an ultra-compact, highly efficient,
-> +  white-LED driver designed for LCD display backlighting.
-> +
-> +  The main difference between the LM36922 and LM36923 is the number of
-> +  LED strings it supports. The LM36922 supports two strings while the LM=
-36923
-> +  supports three strings.
-> +
-> +  For more product information please see the link below:
-> +  https://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,lm36922
-> +      - ti,lm36923
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  enable-gpios:
-> +    description: gpio pin to enable/disable the device.
-
-I think the description could be replaced with just marking the property
-as "true", both here and for the supply. The descriptions are statements
-of the obvious.
-
-> +
-> +  vled-supply:
-> +    description: LED supply
-> +
-> +  ti,ovp-microvolt:
-> +    description: Overvoltage protection.
-> +    default: 29000000
-> +    enum: [17000000, 21000000, 25000000, 29000000]
-> +
-> +patternProperties:
-> +  '^led@[0-9a-f]+$':
-
-There's no need for such a permissive pattern here, since reg is limited
-to the range 0-3. Additionally, I would add an
-allOf:
-  - if:
-      properties:
-        compatible:
-          contains:
-            const: ti,lm36922
-    then:
-      properties:
-        led@3: false
-
-or similar to restrict the third entry instead of doing so in prose.
+gentle ping on this patch. It's a fix and has been around for a while.
 
 Thanks,
-Conor.
-
-> +    type: object
-> +    $ref: common.yaml
-> +    properties:
-> +      reg:
-> +        enum: [0, 1, 2, 3]
-> +        description: |
-> +          0 - Will enable all LED sync paths
-> +          1 - Will enable the LED1 sync
-> +          2 - Will enable the LED2 sync
-> +          3 - Will enable the LED3 sync (LM36923 only)
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        led-controller@36 {
-> +            compatible =3D "ti,lm36922";
-> +            reg =3D <0x36>;
-> +            #address-cells =3D <1>;
-> +            #size-cells =3D <0>;
-> +
-> +            enable-gpios =3D <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +            vled-supply =3D <&vbatt>;
-> +            ti,ovp-microvolt =3D <29000000>;
-> +
-> +            led@0 {
-> +                reg =3D <0>;
-> +                function =3D LED_FUNCTION_BACKLIGHT;
-> +                color =3D <LED_COLOR_ID_WHITE>;
-> +                linux,default-trigger =3D "backlight";
-> +                led-max-microamp =3D <20000>;
-> +            };
-> +        };
-> +    };
-> +
-> --=20
-> 2.34.1
->=20
-
---wepu50H+RhG8Sfqs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsYElgAKCRB4tDGHoIJi
-0pVnAQCBzlnN6Oj9cpu1Vc1Z155wOMcAInD7qD/43g5LVo5cSQD/bTnklp11Wul3
-m+HsdG0lL/WiFsELtKYBuyql4FUuhAs=
-=p8pu
------END PGP SIGNATURE-----
-
---wepu50H+RhG8Sfqs--
+Nícolas
 
