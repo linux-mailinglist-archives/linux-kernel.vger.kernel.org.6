@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-295540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC72959CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:57:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02663959CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CBE281146
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:57:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B5D6B23040
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E3B19993D;
-	Wed, 21 Aug 2024 12:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520F7199FC7;
+	Wed, 21 Aug 2024 12:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boyooSjB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UjNQ3iti"
+Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79338192D7E;
-	Wed, 21 Aug 2024 12:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FA6192D85;
+	Wed, 21 Aug 2024 12:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244993; cv=none; b=V7GAUmE5t5I3Vj9uU/MdutagPCnTGLyyp+FX8h7KnZg7UlA7BVt8g30RjgWISmf5vhfieBTLZY11QFAnPwK3c3ON0FXHnnQM0vlyYritevntNzRNtRitKwF480kbo/KHFn593HziZFqAJJLHrqQKw9uyn84rk0Fth/c3DC3rYM0=
+	t=1724245028; cv=none; b=lPgRMHyQ91HcOWzpIyRk4AT/ND4Y61gRB8+Aklc0ihhs4RSSOXfLAWJ9t1GkkOISt5yzoUaIAdk+oLM0ccDMB7Mn7QIdy2uYOXYz7fAS+pk3sxdHoy5dJEMDwgeeN2hztpRkRrRf3syv/tyBQ0I0Eh0eD8R/yQ0I+B1jWm2YErY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244993; c=relaxed/simple;
-	bh=ypfaOaBLZUMjAJ1CWK0w2rd0JWS3swLCqOotou5s5+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQcFs9lm8+VQihAOedKQfAFGGDmH3IWDelDc1M3qz2i3drBU4IcNjxZGuRqpV5zrfYIn90oEsKolT1IKpu5vguA4Yx3rJ4dr+9OBN4vO0TNcTR47SJ9w25rp8a7d47q9FuZcuUKn7/EBFnRWY3dlmbAxLEKJfB2BrbpFuVzaiuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boyooSjB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6779C32782;
-	Wed, 21 Aug 2024 12:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724244991;
-	bh=ypfaOaBLZUMjAJ1CWK0w2rd0JWS3swLCqOotou5s5+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=boyooSjBdT3C71LRr/6rjW2PRqnnNgBO45F2oCvHBrtJJ76OiWJ0DJN++zptZDwMZ
-	 kOivnp0sbHCGX3X3POoV4KYFs+WpGoJh3uCxS8j6wklR4Ve5f9m87rfgAMAtqhWn/Y
-	 89ezK/KJFQxmwDjj0sWNfVPS4CDemJFkQYECl2ZQdxdaPmcM6pPXtupdyzzLSXn9dO
-	 MaTm7ftKXqvPTvuJWX5LARJxEli7gW9kLaAinr0pIQqivrgth9P16332VgIos1r+Vk
-	 bDHjLYVMwWCoExbXYiXRax7iMed4eVQDkz+A69bj5F+oxaqRAmAkEosjd0djwVw7cj
-	 lxhEvM7eVsRAA==
-Date: Wed, 21 Aug 2024 13:56:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] ASoC: dapm-graph: add component on/off and route
- names to graph
-Message-ID: <f7c03710-161e-465c-b480-7b599c78a51d@sirena.org.uk>
-References: <20240607-dapm-graph-v1-0-bb302970d055@bootlin.com>
- <20240820184406.6ff2654e@booty>
- <c4e2580f-1675-48b0-b59f-a076eced7675@sirena.org.uk>
- <20240821101748.41799c5a@booty>
+	s=arc-20240116; t=1724245028; c=relaxed/simple;
+	bh=RQtgQ/txpDPP8Ez+z7evF97Nbo5S0TR59sICJ6vNqdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jA7kDE3cioNi1a75u5Oi90e9Z+82bbUQn/hq0QYwbPX4sZV7Vmp0dVGtsYKAa93HDq4BYuskVBqCKIHDH+28PiaNFA8LLqvVUCc4muxzwH94m9BA4dcjrFrYghhbIQU8bABFWbARdwMYly6SaUOBzjcJd/4T39nHlohbaOfOo7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UjNQ3iti; arc=none smtp.client-ip=209.85.219.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e1205de17aaso5516506276.2;
+        Wed, 21 Aug 2024 05:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724245026; x=1724849826; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6u8vdwNxQLv7IxTwuMvTHz7QysezAb/GHoNkx/3NosY=;
+        b=UjNQ3iti1ShbKnktPgRITmyDgnMkX6oWsKg8FYrig9yZ2G365vZnRdgZPFk/sAnq0z
+         Ig50tt8H188tS4rackUN2qem8nRewbw01hP8UAQ0NYa9/0f+QkpGfKPo7V/IXojkZOR+
+         MZlHUi7G4B64QzAYWnI3QE2+F7Rmjr5RVXoCjzPf3xpox9LVNkJB8KzIrIYYDrYVcJIe
+         j2r2rRbMq4+WrSD00zgiBs80T5kGLQPSVKhuhGx2Y3jmNiebZTxoB2jYNGtW7FNV4XRI
+         exqp4WRZquAq9btNyJhxZ+mU/DRNa8oLxI+ViLb+IF2RxKqh3nD0kEMtQTCEmu8x2Hhc
+         k05A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724245026; x=1724849826;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6u8vdwNxQLv7IxTwuMvTHz7QysezAb/GHoNkx/3NosY=;
+        b=G1SuRaR8osbCFYQ8BISmkc5Okgjpr4zBP2eZ2beNe4bbNpSmjSgl78YqQ4MIjkQKrV
+         mHoUVHGmfk7TtNrAVutnYHPfbVbi98g2oenUsRyFqP3rjJc6aKI5wDVI794mPPIrSvdb
+         89ocUXLk0knwqlsp9FMCfBgcf1+nFO+mXb6A1KH16HIwI5bBFxDm/QWWnAZn+zxCuJFj
+         e8q79BOuUiTYcryZ2vQviWWlrBpWe1dR3taxUXx4lR0Jyla/mNQNMQboyFw93+EP14/P
+         CIAbNEUkSTte0qR3y9MjmDlkrkgACX+kzTUGP75u0KoRB8Ia1pDRZepLENvNcvHyZUGr
+         YCYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUulnMNT9a96KvFEg/mTot6/nb+hbadxLIYmMDEmOPz4b7Ndxtk6eTCIBc2loqOdf/5lg64FlQq@vger.kernel.org, AJvYcCWiTD/R9jQvwCd6do+8Xsu8D0t1G83THDd8viVnLExHXPUxsugtai5xndywFm0EQUBvlWjAX+nkL0lxWvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytLrU1GzjYeOGGVkaAVaP0Q0eCBeKndZ2EHb1nwixUBRZD18aK
+	H6pjK8kI6w2d6Izj7J2GLZa/92kslETVdjn56d09TnnM9HOQc6HJQsdMhKApwjA/u9IeYwd7tTL
+	xj+SZnqLfwML1kSRzzQq3AYEXSn8=
+X-Google-Smtp-Source: AGHT+IEh/mYS+KRWIT5WP9qwgrcLHUh4T4aoMR/zY1Vx76QQPIFgyRtUmP5Qo8mbqQJlpiL+h2vKscu91k11vATP9us=
+X-Received: by 2002:a05:6902:12c9:b0:e0b:5d76:c22c with SMTP id
+ 3f1490d57ef6-e166540ec3fmr2687598276.5.1724245025888; Wed, 21 Aug 2024
+ 05:57:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pC3SrSxH0gEvAY1w"
-Content-Disposition: inline
-In-Reply-To: <20240821101748.41799c5a@booty>
-X-Cookie: You are false data.
-
-
---pC3SrSxH0gEvAY1w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240815124302.982711-1-dongml2@chinatelecom.cn>
+ <20240815124302.982711-8-dongml2@chinatelecom.cn> <ZsSL_QJfZqp6zqtc@shredder.mtl.com>
+In-Reply-To: <ZsSL_QJfZqp6zqtc@shredder.mtl.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 21 Aug 2024 20:57:02 +0800
+Message-ID: <CADxym3ZW5DxyKvRhU89JQG5uBEgRzgwhUYTcYDKQ16z8STKLuQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 07/10] net: vxlan: use vxlan_kfree_skb() in vxlan_xmit()
+To: Ido Schimmel <idosch@nvidia.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, dsahern@kernel.org, dongml2@chinatelecom.cn, 
+	amcohen@nvidia.com, gnault@redhat.com, bpoirier@nvidia.com, 
+	b.galvani@gmail.com, razor@blackwall.org, petrm@nvidia.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 10:17:48AM +0200, Luca Ceresoli wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+On Tue, Aug 20, 2024 at 8:29=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> wr=
+ote:
+>
+> On Thu, Aug 15, 2024 at 08:42:59PM +0800, Menglong Dong wrote:
+> > diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_c=
+ore.c
+> > index 9a61f04bb95d..22e2bf532ac3 100644
+> > --- a/drivers/net/vxlan/vxlan_core.c
+> > +++ b/drivers/net/vxlan/vxlan_core.c
+> > @@ -2729,7 +2729,7 @@ static netdev_tx_t vxlan_xmit(struct sk_buff *skb=
+, struct net_device *dev)
+> >                       if (info && info->mode & IP_TUNNEL_INFO_TX)
+> >                               vxlan_xmit_one(skb, dev, vni, NULL, false=
+);
+> >                       else
+> > -                             kfree_skb(skb);
+> > +                             vxlan_kfree_skb(skb, VXLAN_DROP_TXINFO);
+>
+> This one probably belongs in include/net/dropreason-core.h as there are
+> other devices that support tunnel info with similar checks.
+>
 
-> > Please don't send content free pings and please allow a reasonable time
-> > for review.  People get busy, go on holiday, attend conferences and so=
-=20
-> > on so unless there is some reason for urgency (like critical bug fixes)
-> > please allow at least a couple of weeks for review.  If there have been
-> > review comments then people may be waiting for those to be addressed.
+OK, I'll add it to the drop reason core as SKB_DROP_REASON_TUNNEL_TXINFO.
 
-> I'm sorry about the noise. I thought it was worth in this case because:
+> >                       return NETDEV_TX_OK;
+> >               }
+> >       }
+> > @@ -2792,7 +2792,7 @@ static netdev_tx_t vxlan_xmit(struct sk_buff *skb=
+, struct net_device *dev)
+> >                       dev_core_stats_tx_dropped_inc(dev);
+> >                       vxlan_vnifilter_count(vxlan, vni, NULL,
+> >                                             VXLAN_VNI_STATS_TX_DROPS, 0=
+);
+> > -                     kfree_skb(skb);
+> > +                     vxlan_kfree_skb(skb, VXLAN_DROP_REMOTE);
+> >                       return NETDEV_TX_OK;
+> >               }
+> >       }
+> > @@ -2815,7 +2815,7 @@ static netdev_tx_t vxlan_xmit(struct sk_buff *skb=
+, struct net_device *dev)
+> >               if (fdst)
+> >                       vxlan_xmit_one(skb, dev, vni, fdst, did_rsc);
+> >               else
+> > -                     kfree_skb(skb);
+> > +                     vxlan_kfree_skb(skb, VXLAN_DROP_REMOTE);
+>
+> Maybe VXLAN_DROP_NO_REMOTE? Please add it to vxlan_mdb_xmit() as well
+>
 
->  * this series has been sent 2.5 months ago
->  * there was no reply at all
->  * AFAIK and according to MAINTAINERS there is no patchwork catching
->    tools/sound/
+Okay!
 
-> So it was looking much more like something gone into oblivion than
-> being on someone's TODO list.
-
-That would be the resend part of the mail - content free pings can't be
-directly acted on, they're just noise.  Note also that you should
-generally rebase and resend things after the merge window.
-
-> After doing so now however, I must say that while counting the resends
-> is easy, counting the pings in a somewhat reliable way is very time
-> consuming. It would be nice to have this info in a more reachable way
-> (MAINTAINERS?).
-
-Feel free to take that up with the MAINTAINERS people.  It's hard to
-specify things in a snappy one liner kind of way.
-
---pC3SrSxH0gEvAY1w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbF4/oACgkQJNaLcl1U
-h9DjTQf+P9yJmRD8OMMrumB1nl0Tywv0Owh1/m1wrvD1w5fhBx/gYMdlHydsk2Zb
-5OFeG1AWDBhM2zH6QXWCKFrmJIu+pyfik4x6Bb3WtbGRhn3VYkzfvTuoei4khb+W
-MJSSKtjYjWfBPIZK3F7Wxykayi7ASfctgNI18PJWCWRL6RLszUfIjdxBsLBEAb/t
-7I1xk042hgKFhbYbDYwTucazewhhdYylH3c/qE61suzNeC2HwOofsXq0jjrt3/wS
-cziKXzK29ths731OxT5zemnkSqH5puSdZo6ejsgL81/H48yeOL7hQJuElpe+UG0L
-/tDCbCxaSlsDCQ9V6ikuzZTpzsZ0Xg==
-=xOm6
------END PGP SIGNATURE-----
-
---pC3SrSxH0gEvAY1w--
+> >       }
+> >
+> >       return NETDEV_TX_OK;
+> > --
+> > 2.39.2
+> >
 
