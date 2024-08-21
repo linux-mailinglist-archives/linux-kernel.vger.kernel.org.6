@@ -1,125 +1,217 @@
-Return-Path: <linux-kernel+bounces-295418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B494C959AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:50:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6A2959AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697812812E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:50:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91D611F22742
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB001D1307;
-	Wed, 21 Aug 2024 11:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F181531C0;
+	Wed, 21 Aug 2024 11:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eypalCqS"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PATGGonF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335EE1D12E4;
-	Wed, 21 Aug 2024 11:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708CA1D12F9;
+	Wed, 21 Aug 2024 11:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239902; cv=none; b=RPENzLZNDx+k/c/SQSbL/sgznDkUuM5O189tCwweRZTrrkAG06KKk3WWMmEbz9r4DiNfDhR0apRPrEuwTpJVvGI18I+MpBEzH7Q9y7g3JzXlxD82JDYRmrhcfTEdDp5lFpT9kUNnSMkA0zRNdzlNKw/BJbgHSfc/HjysQL/ryXE=
+	t=1724239970; cv=none; b=YCCrXRT//TS9FpNmhNsB9oj0uFzpnGhRNalkzwsoeLqhWRK7erl7hwBiCEzQaBoCE3cMjXIrr6s/nuSxhE8WNzQM/aY5/AawkBiQQpqk0qnVyxhSn2jb6Gc/fCYNG4tvtRULEgVCraTOJxMi8qZyIoESWca8uTMGJ//McQ6cYwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239902; c=relaxed/simple;
-	bh=RzmfVrWUhBr3jHRQaWjPRIQ5gWenH0/n2KaMEw1Uu7I=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UWmuLsEmbE2bP68cEwZ5yD3gCr5RLgNFV34AhaTRgNUFMWbEFW4KJXlJgFUzhebXRYKX6Mj5FnK6m54ZBjhcqlHDDZCzy2Ph1F8ljyAPxZw3kmf07CQASPrSEanvw3rV4Qkz3kJ/ldE2xBIav0lECg3RrzL8jKHY1R+rRGGKtPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eypalCqS; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=b5zllgnbznfshfdmc3hqiefzqa.protonmail; t=1724239892; x=1724499092;
-	bh=6e+KrV8eK1jYjXKD3gCoNRPU6HnobC3E51PBNfGSs0M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=eypalCqS/3lcRKIK7Itf6QjrE8EkvGixvbUpDqFJK6fAlt8FJgW+ITFZMWlthTOz6
-	 xSroeFZZ7GsNugNqDWeOQnWPyBkTvZZkl4is5J5KPDeNuqjhCmHVrb0emAlYQgmCfB
-	 vWnCUuhW7d507QFUztq5qX4AvzRXLfzn/CQdaAW8L7Bo5r3/tfi3lKGrq6l6S7bLbx
-	 5hq6vUKYxBctn+CTihezafbFoo/6L+2gm2CKmTYrLaJ/mhg5U7CXFXecS6UHWBOzLD
-	 N19zht4joffrjgFFsNoVvdW/caih+kcyqxj4pxwRnz/h4HZbe38aANWZLFoxmDtreM
-	 PrBiEq1ZKPflQ==
-Date: Wed, 21 Aug 2024 11:31:25 +0000
-To: Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure fields
-Message-ID: <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me>
-In-Reply-To: <CAGSQo01kCUd64nB7C7Ssy1N=UBpOP3bORsRDcHJ1k2CqkbKsfQ@mail.gmail.com>
-References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-37-samitolvanen@google.com> <2024081600-grub-deskwork-4bae@gregkh> <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com> <2024081705-overarch-deceptive-6689@gregkh> <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me> <20240819193851.GA4809@google.com> <a76f9422-4001-416a-a31b-37ab7dcb17f4@proton.me> <CABCJKudAF0=29js8SDcYY5r6kM7RBveTrZH9RyECNGqkcqy=nw@mail.gmail.com> <CAGSQo01kCUd64nB7C7Ssy1N=UBpOP3bORsRDcHJ1k2CqkbKsfQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 6a5a4130b8ba58dcb7d4dbdbde33889b843fe919
+	s=arc-20240116; t=1724239970; c=relaxed/simple;
+	bh=GAYO2SzL67TGDwj3OAWiFes7R4j2AvIw/Z/lL7qAvqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KofpiraT543cuDhSnikeiwZN0CK5orqg7ESCuexiWCpZuvMr/Bi9nXgf3VB6AVg8FqpjDBAZb/Y/IN9f7f6kdCTJd+/ew1RlzXS4d6Ha1/suwZHyNg+v1qPb3cOvJzlNOEzclXH3P4iJA5uz6tTYbrePyBMTugy/A2ECv2Ns0nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PATGGonF; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724239968; x=1755775968;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GAYO2SzL67TGDwj3OAWiFes7R4j2AvIw/Z/lL7qAvqg=;
+  b=PATGGonF0ArQO7iLctt28+bty2FUUI2yevX69n6IhhwDdu4EIha6xAG+
+   chg+pNQ/P/+7BX4uSwEMBW6icuntHmnGoCHJ3k37tUoi+Q3TzAKRhRQPy
+   +UJfYxXa2fnDKyI00aFPnjG0zSRxvTlhnPggT8WxC7sepfxffqPbAe7o4
+   GO9RlCOkr5+nCRSI9QllHobm2RZHF5fHAUbZzdDoIgWr3tdW0+SUNynvM
+   p/qqn0ZRgjMjqtqYSmgsOqtaAIA8OVfX01XjNuhqif4xst2DFgREsVhg+
+   bzV6XwdIWXbvgtCi6eLSQ9SOPIhpKDxf5udlxyTkLnLb5b0JHOgFfgDLY
+   Q==;
+X-CSE-ConnectionGUID: SZ+/anhTRZu6S/Xnf4LDTQ==
+X-CSE-MsgGUID: 5/mmafvxS/Opa3HPdy+XRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22779421"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="22779421"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 04:32:48 -0700
+X-CSE-ConnectionGUID: exVbdZs0TJe5XcNoG+Sk2Q==
+X-CSE-MsgGUID: Og1arBsVQmKlr+HNU1f3Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="60918344"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 04:32:44 -0700
+Message-ID: <f9442d81-d92d-4b91-87cf-4beb4a41de22@intel.com>
+Date: Wed, 21 Aug 2024 14:32:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] perf/core: Fix incorrected time diff in tick
+ adjust period
+To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org,
+ irogers@google.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240810102406.1190402-1-luogengkun@huaweicloud.com>
+ <20240810102406.1190402-3-luogengkun@huaweicloud.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240810102406.1190402-3-luogengkun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 20.08.24 22:03, Matthew Maurer wrote:
->>> The way `KAbiReserved` is implemented is via a `union` (maybe a bit
->>> ironic, considering what I said in my other replies, but in this case,
->>> we would provide a safe abstraction over this `union`, thus avoiding
->>> exposing users of this type to `unsafe`):
->>>
->>>     #[repr(C)]
->>>     pub union KAbiReserved<T, R> {
->>>         value: T,
->>>         _reserved: R,
->>>     }
->>
->> I like this approach even better, assuming any remaining issues with
->> ownership etc. can be sorted out. This would also look identical to
->> the C version in DWARF if you rename _reserved in the union to
->> __kabi_reserved. Of course, we can always change gendwarfksyms to
->> support a different scheme for Rust code if a better solution comes
->> along later.
+On 10/08/24 13:24, Luo Gengkun wrote:
+> Adrian found that there is a probability that the number of samples
+> is small, which is caused by the unreasonable large sampling period.
 
-Yeah sure, that should also then work directly with this patch, right?
+Subject: incorrected -> incorrect
 
->> Sami
->=20
-> Agreement here - this seems like a good approach to representing
-> reserved in Rust code. A few minor adjustments we discussed off-list
-> which aren't required for gendwarfksyms to know about:
-> 1. Types being added to reserved fields have to be `Copy`, e.g. they
-> must be `!Drop`.
-> 2. Types being added to reserved fields must be legal to be
-> represented by all zeroes.
-> 3. Reserved fields need to be initialized to zero before having their
-> union set to the provided value when constructing them.
-> 4. It may be helpful to have delegating trait implementations to avoid
-> the couple places where autoderef won't handle the conversion.
->=20
-> While I think this is the right solution, esp. since it can share a
-> representation with C, I wanted to call out one minor shortfall - a
-> reserved field can only be replaced by one type. We could still
-> indicate a replacement by two fields the same as in C, by using a
-> tuple which will look like an anonymous struct. The limitation will be
-> that if two or more new fields were introduced, we'd need to edit the
-> patches accessing them to do foo.x.y and foo.x.z for their accesses
-> instead of simply foo.y and foo.z - the autoref trick only works for a
-> single type.
+Note, the patch now needs to be re-based.
 
-We will have to see how often multiple fields are added to a struct. If
-they are infrequent and it's fine for those patches to then touch the
-field accesses, then I think we can just stick with this approach.
-If there are problems with that, we can also try the following:
-all fields of kABI structs must be private and must only be accessed
-through setters/getters. We can then modify the body the setters/getters
-to handle the additional indirection.
+Also maybe tidy up the commit message e.g.
 
-If that also sounds too much work compared to the C side, then we can
-get in touch with the Rust language folks and see if they can provide us
-with a better solution.
+perf events has the notion of sampling frequency which is implemented in
+software by dynamically adjusting the counter period so that samples occur
+at approximately the target frequency.  Period adjustment is done in 2
+places:
+ - when the counter overflows (and a sample is recorded)
+ - each timer tick, when the event is active
+The later case is slightly flawed because it assumes that the time since
+the last timer-tick period adjustment is 1 tick, whereas the event may not
+have been active (e.g. for a task that is sleeping).
 
----
-Cheers,
-Benno
+Fix by using jiffies to determine the elapsed time in that case.
+
+> 
+>  # taskset --cpu 0 perf record -F 1000 -e cs -- taskset --cpu 1 ./test
+>  [ perf record: Woken up 1 times to write data ]
+>  [ perf record: Captured and wrote 0.010 MB perf.data (204 samples) ]
+>  # perf script
+>  ...
+>  test   865   265.377846:         16 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.378900:         15 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.379845:         14 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.380770:         14 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.381647:         15 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.382638:         16 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.383647:         16 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.384704:         15 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.385649:         14 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.386578:        152 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.396383:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.406183:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.415839:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.425445:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.435052:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.444708:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.454314:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.463970:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.473577:        154 cs:  ffffffff832e927b schedule+0x2b
+>  ...
+> 
+> And the reason is perf_adjust_freq_unthr_events() calculates a value that is too
+> big because it incorrectly assumes the count has accumulated only since the last
+> tick, whereas it can have been much longer. To fix this problem, perf can calculate
+> the tick interval by itself. For perf_adjust_freq_unthr_events we can use jiffies
+> to calculate the tick interval more efficiently, as sugguested by Adrian.
+> 
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> ---
+>  include/linux/perf_event.h |  1 +
+>  kernel/events/core.c       | 16 +++++++++++++---
+>  2 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index afb028c54f33..2708f1d0692c 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -265,6 +265,7 @@ struct hw_perf_event {
+>  	 * State for freq target events, see __perf_event_overflow() and
+>  	 * perf_adjust_freq_unthr_context().
+>  	 */
+> +	u64				freq_tick_stamp;
+>  	u64				freq_time_stamp;
+>  	u64				freq_count_stamp;
+>  #endif
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index cad50d3439f1..309af5520f52 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -55,6 +55,7 @@
+>  #include <linux/pgtable.h>
+>  #include <linux/buildid.h>
+>  #include <linux/task_work.h>
+> +#include <linux/jiffies.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -4112,7 +4113,7 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
+>  {
+>  	struct perf_event *event;
+>  	struct hw_perf_event *hwc;
+> -	u64 now, period = TICK_NSEC;
+> +	u64 now, period, tick_stamp;
+>  	s64 delta;
+>  
+>  	/*
+> @@ -4151,6 +4152,10 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
+>  		 */
+>  		event->pmu->stop(event, PERF_EF_UPDATE);
+>  
+> +		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
+> +		period = tick_stamp - hwc->freq_tick_stamp;
+> +		hwc->freq_tick_stamp = tick_stamp;
+> +
+>  		now = local64_read(&event->count);
+>  		delta = now - hwc->freq_count_stamp;
+>  		hwc->freq_count_stamp = now;
+> @@ -4162,8 +4167,13 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
+>  		 * to perf_adjust_period() to avoid stopping it
+>  		 * twice.
+>  		 */
+> -		if (delta > 0)
+> -			perf_adjust_period(event, period, delta, false);
+> +		if (delta > 0) {
+> +			/*
+> +			 * we skip first tick adjust period
+> +			 */
+
+Could be a single line comment.
+
+> +			if (likely(period != tick_stamp))
+
+Kernel style is to combine if-statements if possible i.e.
+
+		/* Skip if no delta or it is the first tick adjust period */
+		if (delta > 0 && likely(period != tick_stamp))
+
+> +				perf_adjust_period(event, period, delta, false);
+> +		}
+>  
+>  		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
+>  	next:
 
 
