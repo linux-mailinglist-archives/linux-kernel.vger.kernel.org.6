@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-295354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AD9959A01
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:32:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE365959A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989E31C20B1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:32:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C29BB24518
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B647317836E;
-	Wed, 21 Aug 2024 10:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F713199929;
+	Wed, 21 Aug 2024 10:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GzesTNyE"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsO1ABO5"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D8C1D12FB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BB41649C6;
+	Wed, 21 Aug 2024 10:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724237375; cv=none; b=GqvQTCEqcoimBUPp+GqNz7InfhFrLmWylIFogry70jKx1s2c3eNpKINWnvkIYXUnVL3nBfjP0T0jSOhMCRAGxCq3im4WHM/uriM33ZTX6oJZNrV/m0sntpw5DYhan+b5vvzCVJoOFovmIl4O6JOt04KJfVDVEro/cNsgUc4NTVE=
+	t=1724237420; cv=none; b=dIkNnYQ0GkVk/fOuCC99gIHI1Iyiw4TF8nS9L75T2ly/gognMHPMzYNXDSgsJtkt9fcrfGa0n7jiwREbE+W1fJ+cARsqYn5uW67Zt/llsFdKePC6cptDF2006a3nYAsy3+fan2P2t1yRG59LIg04064GG1mQOC5+X/CdzCS8p3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724237375; c=relaxed/simple;
-	bh=JGcsFgMn4lz0OieBaCWqjR5hwIEe8I2gm2ZLbKFWnZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=patnVQrnxZYMMAJp3Gd3YfRQYgUZLrhQ6anwFuBnPXNr/OfXfftu/TArqiLP7WrpKCFu6Yvj6JOlPEFpYU1O+gQXKgiT54P8dTioLeHvyL1blpQQyoEB4dV5slYae6b+HqJZNfW6cnCz30pYlX1N3JO+Acw6jCiuEn41pqly0N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GzesTNyE; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-371941bbfb0so3340774f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:49:33 -0700 (PDT)
+	s=arc-20240116; t=1724237420; c=relaxed/simple;
+	bh=JXDxYM3WmdtyuoT6cF8661y7zZfPtQ9LFgGpjPO8Te4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QeF/CDiEULZHKqSsy6XW6FBio94H/Zi2SMuW2yOnQZvgAsI8YA1Uon07T4Oy6ssQbkDykz1yDxNRQy86dS9dPv4s4Q2gn7em8N2tFMF354AqEjiwzIwo0GZxtA/ZtYz3wSpa3shBpldyzq26PI+1c2G466qsY5h0zkD3ANwF60Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QsO1ABO5; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d42c59df79so115367a91.1;
+        Wed, 21 Aug 2024 03:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724237372; x=1724842172; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cMxDjVcwkjUuVPfc9ioRrttIgIfpp7/8vIch9gBk8E0=;
-        b=GzesTNyEW2kh4QIPur0B8caNKvvW6e8TbvLtk4gUTlDzNvGEBYPFeGGkUw2O1p3rTd
-         B44HFEObWl5No15vszyt8tiTsyTRbLv4W1odytjjUcA+3cdgYjcMPURVGD34qc7P4JzZ
-         UJ/1zP3hwyMQ3Etourl/p7j4T6xYxPYC2jEPp/7Zhn2YtBkwwxCdZkckwc6hEWKAVEA1
-         JTu/ieSsbjyzpPo2tznxvka6FjgZ92ImOa/QmqsOkkVCK8slyZI+tTLpNsRGYqZT5tDH
-         s0nuwgw3kbs1bO1nhfSAdMUGedlvOI9v/kvEXKkIHHHvBrAxKF5T7YYzWn9WqNsbif+p
-         S7cg==
+        d=gmail.com; s=20230601; t=1724237415; x=1724842215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qmF4fnNQO06v6glKq1+P4ngcb0gtyYmsdANRi5vGz5E=;
+        b=QsO1ABO5pnd9Sb+Kez7FE89ozgGDRxr1nJ1mRQeuqS+r0GHc1pRVZ0CGf/GG8a1b6l
+         Ng9pYC/i35JFRAJflbKRo/B2RZq+NiPbQSibsgYU/BQ/jegk8sLki3bJU7ahqt+sGM4+
+         1Zu+c+Q6Jn8Bj11Hec8eKAk9QoKlc5JppKqKjfDy1sWfhE6CgLf4qRtzmfyPh3eHzcAC
+         f3t5ICbEFuL7IR4RPiAKwBIwtzwZRvTfUS0uoiFM4woDmbgHKq8dEjRHSFDhZnYk8Vmd
+         aFR4GDk9xZjdLOixvzt5Pkd7MOMOVQy/6RyZ03ENB3uU0qcusanvvPjwkAXs1rCNtJVE
+         v0GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724237372; x=1724842172;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMxDjVcwkjUuVPfc9ioRrttIgIfpp7/8vIch9gBk8E0=;
-        b=A34AFJo9Rx2ah84gyeUeSpUeQkdHb9KaMtqlCFzI3Z95kycRJhhLvNg/jqHumaTEIM
-         UFWupyO9g1YBMruX7Pt7QcfWkFPHFo95ZtvcfGgCVD9SF5leIUg2AQ4lKj9S4km2V06r
-         ZElhmdRe2o52jSPLN0qf+41xuoQkYJQGg/icKa3zX86pdGWyUrRLfNVwlLiGWMx3BhbQ
-         FPm4KKm7B4F9FokjTMZwHVRQsJISxR/AeDG6tfM14MRzt7ypQlqCrldmEWzKlWXuQLaI
-         887EBIIVE1SUoOmgi6dkXet3XFHzK11wyxfpm4BKi8yhFamXpdyOMga3F2ZS6sq+qGJj
-         Yupw==
-X-Gm-Message-State: AOJu0YyZ+mzEofbcFrgO3p31YKflx03V+YACzeqYfBYKgNb/CoBe0g8C
-	lDfc6SMLbpofI54ef52dS84UeWgYR7FZZcMzbkPDzrJ0kQ5UsbQdl2rT2cwbjqY=
-X-Google-Smtp-Source: AGHT+IHJjURLl7FCkfGSD2GQLFx/hg3HZNlZMuaJrKYN1Y4optKGaIH8UMdaODup5IN1vB0pCFIx5Q==
-X-Received: by 2002:adf:f511:0:b0:371:8e68:a6dd with SMTP id ffacd0b85a97d-372fd592f27mr1284640f8f.23.1724237371952;
-        Wed, 21 Aug 2024 03:49:31 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718983a397sm15355626f8f.24.2024.08.21.03.49.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 03:49:31 -0700 (PDT)
-Message-ID: <c90b53af-1641-4c8a-97d9-27feed7b2a7d@linaro.org>
-Date: Wed, 21 Aug 2024 12:49:30 +0200
+        d=1e100.net; s=20230601; t=1724237415; x=1724842215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qmF4fnNQO06v6glKq1+P4ngcb0gtyYmsdANRi5vGz5E=;
+        b=cnZD7TJ+zzJNgXosxb5vcjkuFcmOTdWZA+4mBkFkFfJc34WgkDvBH9Uk1eLOHly1vJ
+         wBVkilEsPQLUEMVamb3ry/KlM/khzSPhDqOHrM69tPsSjnWNQp3UtIyw37RlT30asMN2
+         OALEjYqWVHrX+nj1jbqwU+meq5PftPLVxy4d4hW69mHTX2seYwLDuYEiOYmJHQEh/YKG
+         3dV/DdjxS5J8Y0aAIy0+vv4OlzNZJlAZdtXD8oMF8QN9BKPfP62uKHMhY2A1RKULKlv2
+         yhXVTPhEv/pb/KYMLx7CLdW5cKX1ioMkyySVtqeSSYM/fm/CMwXqtje0hw/fMLga8C6T
+         bhIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIjbVOrA79i4BAefa6SaT8zbTO2ikxNLwLXchh/8SgFdW/gL+W/l/nkE6uHhVaLh5CQwius1lDI80FWhZ3@vger.kernel.org, AJvYcCUbdLHOcLYT9UNzyKrC1duNE5R9KfGSEiKUPOpA6ePC3vADrvFul/lO9dk9W6DPczCiKigc7E2OXmYPKUB+C3o=@vger.kernel.org, AJvYcCVoziu6ojXe14gwoOmEgPuHEwoi18FuT1X9/uWgkK3RbrmJIGl45VvkUAp3m6nZU4XFtPW0FzJMzVXOIA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YysnmVmdPkpj16Mgqyzu8Vz8pLUFLdjRw4y3yCAejwxFsSrQtHP
+	c+1OattqxoLKgOScXIGvHb6mYuWFQjp4fanKN0FoZN3hijf5e/1PTg9912HD3vBZFvUiF9iBR9e
+	/vx4i1nodeOZ0HACKABKpDEHL4F0n0A==
+X-Google-Smtp-Source: AGHT+IFREzv1+qeMvAZLqHsdIGcPJkHZSWdtoUsO7gZARHtF1qJ77Zpp82brKZTWwq1l1xUs2ssU13KhcBvDg5Ho+fM=
+X-Received: by 2002:a17:90b:4c04:b0:2c2:f501:20f8 with SMTP id
+ 98e67ed59e1d1-2d5e98bd64fmr1170817a91.0.1724237415444; Wed, 21 Aug 2024
+ 03:50:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/14] thermal: core: Rearrange checks in
- thermal_bind_cdev_to_trip()
-To: "lihuisong (C)" <lihuisong@huawei.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Zhang Rui <rui.zhang@intel.com>, Linux PM <linux-pm@vger.kernel.org>
-References: <2205737.irdbgypaU6@rjwysocki.net>
- <3324214.44csPzL39Z@rjwysocki.net>
- <68ed6185-a602-c0fc-721e-b5d68fea83f8@huawei.com>
- <66bb19a0-00ba-40a5-91ef-73368659b30a@linaro.org>
- <8744a789-0424-0cc6-7cb1-b7c9b17f56cc@huawei.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <8744a789-0424-0cc6-7cb1-b7c9b17f56cc@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240815074519.2684107-2-nmi@metaspace.dk>
+In-Reply-To: <20240815074519.2684107-2-nmi@metaspace.dk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 21 Aug 2024 12:50:03 +0200
+Message-ID: <CANiq72ncqgRU-DNYqGEZezkNQ-VGU4pYP7XZzKAHkLye_YWbUQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: fix export of bss symbols
+To: Andreas Hindborg <nmi@metaspace.dk>
+Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	"Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/08/2024 11:44, lihuisong (C) wrote:
-> 
-> 在 2024/8/21 17:28, Daniel Lezcano 写道:
->> On 21/08/2024 10:49, lihuisong (C) wrote:
->>
->> [ ... ]
->>
->>>> -    list_for_each_entry(pos2, &thermal_cdev_list, node) {
->>>> -        if (pos2 == cdev)
->>>> -            break;
->>>> -    }
->>>> +    lockdep_assert_held(&thermal_list_lock);
->>>> -    if (tz != pos1 || cdev != pos2)
->>>> +    if (list_empty(&tz->node) || list_empty(&cdev->node))
->>> The old verification is ensure that tz and cdev already add to 
->>> thermal_tz_list and thermal_cdev_list，respectively.
->>> Namely, tz and cdev are definitely registered and intialized.
->>> The check is ok for all untizalized thermal_zone_device and cooling 
->>> device.
->>> But the new verification doesn't seem to do that.
->>
->> If the tz or the cdev are registered then their "->node" is not empty 
->> because they are linked with the thermal_list and cdev_list
->>
->> So either way is browsing the lists to find the tz/cdev or just check 
->> "->node" is not empty. The latter the faster.
-> Assume that tz/cdev isn't intiazlized and registered to thermal_tz_list 
-> or thermal_cdev_list. And then directly call this interface.
+On Thu, Aug 15, 2024 at 9:49=E2=80=AFAM Andreas Hindborg <nmi@metaspace.dk>=
+ wrote:
+>
+> From: Andreas Hindborg <a.hindborg@samsung.com>
+>
+> Symbols in the bss segment are not currently exported. This is a problem
+> for rust modules that link against statics, that are resident in the kern=
+el
+> image. This patch enables export of symbols in the bss segment.
+>
+> Fixes: 2f7ab1267dc9 ("Kbuild: add Rust support")
+> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
 
-Then there is a bug in the internal code because the 
-thermal_zone_device_register*() and cooling_device_device_register() 
-allocate and initialize those structures.
+Applied to `rust-fixes` -- thanks everyone!
 
-The caller of the function is supposed to use the API provided by the 
-thermal framework. It is not possible to plan every stupid things a 
-driver can do. In this particular case, very likely the kernel will 
-crash immediately which is a sufficient test for me and coercive enough 
-to have the API user to put its code in question ;)
+(I am sending the notice twice for this series, since somehow the
+email threads got split into two in Lore, which also broke `b4`)
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+    [ Reworded slightly. - Miguel ]
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Cheers,
+Miguel
 
