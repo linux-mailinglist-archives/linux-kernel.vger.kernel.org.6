@@ -1,252 +1,123 @@
-Return-Path: <linux-kernel+bounces-296170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1873C95A69B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:30:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C3B95A6A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FB61F22A19
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:30:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FAC9B218CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976E117839D;
-	Wed, 21 Aug 2024 21:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6BA170A22;
+	Wed, 21 Aug 2024 21:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kms0sWoH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmbqE8qv"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB11A16FF3B;
-	Wed, 21 Aug 2024 21:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD816FF3B
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724275834; cv=none; b=Taa6rklcHSfr62uCGPWa526EbaFijOM9nGM9Q4UhbHD26pX8dF/0qprXwBeNUV3zWFQwTO/AQYtCmxHqr5Z562xGpU1HLjSkEpJTRvDzOR1qECEyCDex1D/EvNtFCtHfT6eKN+dXJEH0iIVh0Fp4YuFPx52aZ/cmB2yoMi8Ibuk=
+	t=1724275890; cv=none; b=euW8v3jq9LjTV/ShlH7SI0/dySL0xFmTyQ9ujdHX5tUyUb+yZZpDFpljqCUWSEYISbT/waPk1YI0x37JUsOKaib+vZtgI+3VKQtJoT4H5kU21m0N+Rb7lHzqlB0LBLJPBuK3tTUllRwgrxI61Yuko0yqmsE/TEgK7u9LexGjAt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724275834; c=relaxed/simple;
-	bh=lUkRjpbqR8oHtn/IJBgQ1mJvqc51sR87H/MyJIO5T8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/4JUjlDTAdFMNy8wunRys5AVPd3T/csUynjeCOiolvHk6dH9pU1z7N1J5PHhwFHfowWgR60uRxJk/Y9785zqNmlZmS5RLUFE1UKJFLUPul1D0oqL5DFlGWtJCcglvTcBw8NwTDWJ4AgI4wRCbuNQwymJGdEJSBp5WMkwgOnerA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kms0sWoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E5BC4AF0E;
-	Wed, 21 Aug 2024 21:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724275834;
-	bh=lUkRjpbqR8oHtn/IJBgQ1mJvqc51sR87H/MyJIO5T8s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kms0sWoHZPdLTBcsJS10PFW5gDcxmEJ1bcTGBZH2sETUWazZBKKjFYmsrhBD4Eprb
-	 LkYg1VVuxUth28L7a4eTZ7RzU0zrVq2MtqImfB9JMfuF3m0VYRl/vtIXjbumho7eRZ
-	 Wi1YzV8AfJBN+SnUDPXqiY7kixvTVGfCWzo/0T5hxzwWJXG4tjZcivNe+MiDpHMRFM
-	 x4xxSlnjX2bth0kMupUU6iTjeII4Uvnp/k6EdgBA+aA85tMCI8E7qUkXrqkwd5uDEV
-	 /9Q9tlYKcEmiG2qZvilqUpHQlbbNKB3AsaDMNA5w8uZGhBp/F0qX142V4U2+Si6I+X
-	 BpuFq3ueUNYNQ==
-Date: Wed, 21 Aug 2024 22:30:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Dan Murphy <dmurphy@ti.com>,
-	"open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: leds: convert leds-lm3692x to yaml
- format
-Message-ID: <20240821-harmful-reflex-2a4c612519d8@spud>
-References: <20240820183544.496419-1-Frank.Li@nxp.com>
- <20240821-sizable-jumbo-1a114a8cc53a@spud>
- <ZsYXvvhNxmXQAIVo@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1724275890; c=relaxed/simple;
+	bh=13Gb/RMl6q3swlRFNwPCffDQHdXZXtufKiZG1cadPNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fb9L8GqOzYsdpAMB6Dhy1K6sgNx7hlkX6KCmmlGKEvDsaVe2NAsHRy+yvhTcWICAkxNXLLIu7M+g2FLvjyVZ3DObvtcUOmz6PkiV4xRGu1v2xl5Vo6Qm8SsECZzEOE9oSlsfT8YCNwRxG3GHrkO116yxNx+Yy7rk/xuGO45gO50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmbqE8qv; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a94478a4eso227713566b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724275888; x=1724880688; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cyaVmd0NKFFDt4jDA5xpNFtWFHhwLK4nU/+8+CzA/xg=;
+        b=mmbqE8qvPqkZ13xfSoGu/fD4FKpD7OLQdqeQxv67/APDO09wYJk80HS92uWE8ZgSBk
+         1A/0ajciJMUjJ4264LoiF5kzXpcFRS5RseGUDg4AwlCfbPySmOuWI7O5AEHXnVS6U+vc
+         oy0ZWJ9xWJUH0hE3LzIRee92cxNV2v1zW26eWKC/tvy6T0lnLiPH4Geo+B0YpWCzRhZn
+         9BANXtZHy0Je6mOu7Mdz4h9RQwCctU7DFPcKdLfU3Xyx9B2q8I0gdFnl2FU7uw/tLqRP
+         N9UWjOXoI/jIbMK5M1ynjIVNv1MbQD+NanCnXmkhMVIq6bY5Gl24tq1IsSVvM81nA7q6
+         SXCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724275888; x=1724880688;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cyaVmd0NKFFDt4jDA5xpNFtWFHhwLK4nU/+8+CzA/xg=;
+        b=pdteCkhnmhTzYZWXzPXyZ54krvvsTuyZIA1EqDMLmMyf5iPY/LX4/7tFMqkv4Cop/V
+         9u+bSnrXEQLL7QaEPP5fo9LlLRSqxuAfYgkSQWOVrWDSc4pr49efcKY5l8owFXvqQxzx
+         bLF7aOMWd/t7ogYR4frCqLHwdw8JaRWtwpkk8TewMRC57ZlvBF/lcjHP+amcBPJHw8zs
+         S8QJ40r9wx0wBQH/op0gdTBXVQoiDGPi1TL2sZsKhh14jiCLcjidT7IlXrHjuX6/ujiD
+         DZw72Fn/cGjWxIWiV54AOr/1jkEBIt4GJL3oEe80f1IL8rOakNdTlNt9cuEg/7/tUVKz
+         5eeg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2xjSv7CzOi742EeBwXeOG+52qEmI0hcYQGcRobZ/DecxMbMgEVBb9kkhzlYu3YX8xkRyZuwBZxJPPXIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqseLs8uwwiyIpsEtPsSgY3zwbbdMqGR1a6UC5L6/nIboQHY0v
+	uIKpCaxulpjSP70oMwxmXGFKTx+i0Thxmk2h0KWLd8pxuOrasq22
+X-Google-Smtp-Source: AGHT+IFLKTY9hGauEHRaP/JAEHEXViE3iNpe4vmfGq6Pa/xlFaqwEsIPBdIvpVqlkTOmzokW2Gkpgw==
+X-Received: by 2002:a17:906:5d5:b0:a86:8b5f:65e5 with SMTP id a640c23a62f3a-a868b5f6870mr64815466b.12.1724275887356;
+        Wed, 21 Aug 2024 14:31:27 -0700 (PDT)
+Received: from luk-pc.lan (093105062173.zamosc.vectranet.pl. [93.105.62.173])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a868f21fe5esm13755866b.8.2024.08.21.14.31.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 14:31:26 -0700 (PDT)
+From: =?UTF-8?q?=C5=81ukasz=20Patron?= <priv.luk@gmail.com>
+To: priv.luk@gmail.com
+Cc: Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dm: Implement set_read_only
+Date: Wed, 21 Aug 2024 23:30:41 +0200
+Message-ID: <20240821213048.726082-1-priv.luk@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pH+X0yQAg/LfW/1N"
-Content-Disposition: inline
-In-Reply-To: <ZsYXvvhNxmXQAIVo@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+This lets us change the read-only flag for device mapper block devices
+via the BLKROSET ioctl.
 
---pH+X0yQAg/LfW/1N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Łukasz Patron <priv.luk@gmail.com>
+---
+ drivers/md/dm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On Wed, Aug 21, 2024 at 12:37:18PM -0400, Frank Li wrote:
-> On Wed, Aug 21, 2024 at 04:15:34PM +0100, Conor Dooley wrote:
-> > On Tue, Aug 20, 2024 at 02:35:43PM -0400, Frank Li wrote:
-> > > Convert binding doc leds-lm3592x to yaml format.
-> > > Additional change
-> > > - Add ref to common.yaml for child node
-> > > - Add i2c node at example
-> > >
-> > > Fix below warning:
-> > > arch/arm64/boot/dts/freescale/imx8mq-librem5-r2.dtb: /soc@0/bus@30800=
-000/i2c@30a40000/backlight@36:
-> > > 	failed to match any schema with compatible: ['ti,lm36922']
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > diff --git a/Documentation/devicetree/bindings/leds/ti.lm36922.yaml b=
-/Documentation/devicetree/bindings/leds/ti.lm36922.yaml
-> > > new file mode 100644
-> > > index 0000000000000..ac98547b78bd2
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/leds/ti.lm36922.yaml
-> > > @@ -0,0 +1,100 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/leds/ti.lm36922.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Texas Instruments - LM3692x Highly Efficient White LED Driver
-> > > +
-> > > +maintainers:
-> > > +  - Dan Murphy <dmurphy@ti.com>
-> > > +
-> > > +description: |
-> > > +  The LM3692x is an ultra-compact, highly efficient,
-> > > +  white-LED driver designed for LCD display backlighting.
-> > > +
-> > > +  The main difference between the LM36922 and LM36923 is the number =
-of
-> > > +  LED strings it supports. The LM36922 supports two strings while th=
-e LM36923
-> > > +  supports three strings.
-> > > +
-> > > +  For more product information please see the link below:
-> > > +  https://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - ti,lm36922
-> > > +      - ti,lm36923
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  "#address-cells":
-> > > +    const: 1
-> > > +
-> > > +  "#size-cells":
-> > > +    const: 0
-> > > +
-> > > +  enable-gpios:
-> > > +    description: gpio pin to enable/disable the device.
-> >
-> > I think the description could be replaced with just marking the property
-> > as "true", both here and for the supply. The descriptions are statements
-> > of the obvious.
-> >
-> > > +
-> > > +  vled-supply:
-> > > +    description: LED supply
-> > > +
-> > > +  ti,ovp-microvolt:
-> > > +    description: Overvoltage protection.
-> > > +    default: 29000000
-> > > +    enum: [17000000, 21000000, 25000000, 29000000]
-> > > +
-> > > +patternProperties:
-> > > +  '^led@[0-9a-f]+$':
-> >
-> > There's no need for such a permissive pattern here, since reg is limited
->=20
-> I am confused about it.  I think it at least need led@X pattern. Do
-> you means
->    '^led@[0-3]+$'
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 87bb90303435..538a93e596d7 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -410,6 +410,12 @@ static int dm_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+ 	return dm_get_geometry(md, geo);
+ }
+ 
++static int dm_blk_set_read_only(struct block_device *bdev, bool ro)
++{
++	set_disk_ro(bdev->bd_disk, ro);
++	return 0;
++}
++
+ static int dm_prepare_ioctl(struct mapped_device *md, int *srcu_idx,
+ 			    struct block_device **bdev)
+ {
+@@ -3666,6 +3672,7 @@ static const struct block_device_operations dm_blk_dops = {
+ 	.release = dm_blk_close,
+ 	.ioctl = dm_blk_ioctl,
+ 	.getgeo = dm_blk_getgeo,
++	.set_read_only = dm_blk_set_read_only,
+ 	.report_zones = dm_blk_report_zones,
+ 	.pr_ops = &dm_pr_ops,
+ 	.owner = THIS_MODULE
+-- 
+2.46.0
 
-Yeah, that is what I meant - not that the pattern should be removed.
-The + I don't think you should have though, only a single digit is
-possible.
-
->=20
-> Frank
->=20
-> > to the range 0-3. Additionally, I would add an
-> > allOf:
-> >   - if:
-> >       properties:
-> >         compatible:
-> >           contains:
-> >             const: ti,lm36922
-> >     then:
-> >       properties:
-> >         led@3: false
-> >
-> > or similar to restrict the third entry instead of doing so in prose.
-> >
-> > Thanks,
-> > Conor.
-> >
-> > > +    type: object
-> > > +    $ref: common.yaml
-> > > +    properties:
-> > > +      reg:
-> > > +        enum: [0, 1, 2, 3]
-> > > +        description: |
-> > > +          0 - Will enable all LED sync paths
-> > > +          1 - Will enable the LED1 sync
-> > > +          2 - Will enable the LED2 sync
-> > > +          3 - Will enable the LED3 sync (LM36923 only)
-> > > +
-> > > +    unevaluatedProperties: false
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - "#address-cells"
-> > > +  - "#size-cells"
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/gpio/gpio.h>
-> > > +    #include <dt-bindings/leds/common.h>
-> > > +
-> > > +    i2c {
-> > > +        #address-cells =3D <1>;
-> > > +        #size-cells =3D <0>;
-> > > +
-> > > +        led-controller@36 {
-> > > +            compatible =3D "ti,lm36922";
-> > > +            reg =3D <0x36>;
-> > > +            #address-cells =3D <1>;
-> > > +            #size-cells =3D <0>;
-> > > +
-> > > +            enable-gpios =3D <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> > > +            vled-supply =3D <&vbatt>;
-> > > +            ti,ovp-microvolt =3D <29000000>;
-> > > +
-> > > +            led@0 {
-> > > +                reg =3D <0>;
-> > > +                function =3D LED_FUNCTION_BACKLIGHT;
-> > > +                color =3D <LED_COLOR_ID_WHITE>;
-> > > +                linux,default-trigger =3D "backlight";
-> > > +                led-max-microamp =3D <20000>;
-> > > +            };
-> > > +        };
-> > > +    };
-> > > +
-> > > --
-> > > 2.34.1
-> > >
->=20
->=20
-
---pH+X0yQAg/LfW/1N
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsZcdQAKCRB4tDGHoIJi
-0slOAQCEyosjU/qY/WEXY3QPaqrwuIst2ZpPRFa+3AY0IYMkCQD/cQAGpmf0eFtG
-V0Y/QKEj2ilkf3C/yT38/co0i+Z/mgw=
-=RHBa
------END PGP SIGNATURE-----
-
---pH+X0yQAg/LfW/1N--
 
