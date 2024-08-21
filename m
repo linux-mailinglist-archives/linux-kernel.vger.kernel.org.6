@@ -1,72 +1,102 @@
-Return-Path: <linux-kernel+bounces-294847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6E7959352
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:25:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E46E95936A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FE6FB22E5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8DC1F23E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7388215572C;
-	Wed, 21 Aug 2024 03:25:20 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968A61586CB;
+	Wed, 21 Aug 2024 03:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="szMUpwLA"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07563FD4
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE4418E34F;
+	Wed, 21 Aug 2024 03:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724210720; cv=none; b=By3vVmFB0jmc21htaok+7yr/D8iMpncYCEcEJY01r8dwqdUSwJdz5w9LrEsgSZs7S9HXfIdkncHMQjPm7Fo2vdot4M831i1ven/ED/RORVxWRsxdfOM3pGKIFtUsa1xP57NHKAg96ExqzCL722Hc98rZrslSPUfQ6dA5C5CzxA0=
+	t=1724212008; cv=none; b=SmXDwGkKiBCNRd0Ji5q43qRyavoHfF3XG9fireYN1eiqLY4DvVTBUPbB+Pn+jFgWitGm01RctboH5L3nT2k7bBwiqztc1cXOIIfucUH5fyWAuT0uMJRHNApyJJYNnpACdpRIL32SLPLszuHW19bvULl+zGPUSFc6WhtSWQxgh0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724210720; c=relaxed/simple;
-	bh=n5cR9lJCZsSx5Y5+GeaitWM3H54zHzB6RHVB6Oxv1Io=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pn+HLjf6959LTZB/beq00ITt6hAC7zOjnJWQGPZbPsZnWj1vbnZlkkyhhPtQT92Ef02vxB0ikOFyRp49V1IvIme+4CqHomjZ2TP8Xb8oODeN7NWaOkfH5TRpOSAU9kQtF8RF/6dXV2sAN5Y5cJaWk1eNiAZbPNkJ9MExO5Vww3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WpWrV4MmSzpSwQ;
-	Wed, 21 Aug 2024 11:23:38 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7BAF3140138;
-	Wed, 21 Aug 2024 11:25:09 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
- (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
- 2024 11:25:09 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <akpm@linux-foundation.org>, <sunjunchao2870@gmail.com>
-CC: <lihongbo22@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] scripts: make macro_checker.py executable
-Date: Wed, 21 Aug 2024 11:32:39 +0800
-Message-ID: <20240821033239.2233508-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724212008; c=relaxed/simple;
+	bh=R3jVslqYcebjFefTUBHMZ9itwtoJ/PWvlbJZcxu13D8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=K8MU/OIfPhlYmzPf6v0NJytCItC4lsKjHqRTzFn+6DYP3zgt20FvionHOiq8HZJ7nIMw8ziHOgaEXH3SNRNk+vyUJoEMDUsSkhidGFRaebnwFYnkQaOxyLpTDxV7wqNhNg0un0mpCK/9OlxU3i0kGhSCEMN84fcVyVBBkNhhCgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=szMUpwLA; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47L3grRP32250940, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1724211773; bh=R3jVslqYcebjFefTUBHMZ9itwtoJ/PWvlbJZcxu13D8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=szMUpwLAzUOkxHlVrGYbu47MyInj4zZzLOFmI7XMMr69r0TUCVlbkSYbkcD0rejzj
+	 523hmkS9QoHQCuKXUpvEjKnaAEW5P7RxMah3Mxk03+GWJ2lj1TeV/S0dNOKEIkqO1u
+	 Ut6TBMKilR/hXBR9uPQLf6ZrNTM9Ij/c0gzOCi6hjuGGM2QZeNy3XSTASbjnrqjlmZ
+	 m+f6cWhxh+Ri9EpPG/WKET66XxoR1b2YjuNcMXiH9cZRevcsbdD/tfKHJUZ7tr+RVh
+	 KUZKZEVR3nsm1HGFgQEEwy9Mcw4hI/UpvED1OmOHe1JiKxw8GDk2xf4LHCWDZUkNK9
+	 LyA958pXkeH4A==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47L3grRP32250940
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 Aug 2024 11:42:53 +0800
+Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 21 Aug 2024 11:42:54 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 21 Aug 2024 11:42:53 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Wed, 21 Aug 2024 11:42:53 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>,
+        "arend.vanspriel@broadcom.com"
+	<arend.vanspriel@broadcom.com>,
+        "kvalo@kernel.org" <kvalo@kernel.org>,
+        "johannes.berg@intel.com" <johannes.berg@intel.com>,
+        "emmanuel.grumbach@intel.com" <emmanuel.grumbach@intel.com>,
+        "erick.archer@outlook.com" <erick.archer@outlook.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
+        "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH -next] wifi: mac80211: Use kvmemdup to simplify the code
+Thread-Topic: [PATCH -next] wifi: mac80211: Use kvmemdup to simplify the code
+Thread-Index: AQHa83GEvlUD1o2kZE2cQXXHd/yI9rIxEPdA
+Date: Wed, 21 Aug 2024 03:42:53 +0000
+Message-ID: <af2157863e684ab3b4a9d345e26b3408@realtek.com>
+References: <20240821023325.2077399-1-ruanjinjie@huawei.com>
+In-Reply-To: <20240821023325.2077399-1-ruanjinjie@huawei.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500022.china.huawei.com (7.185.36.66)
 
-Set 755 for script macro_checker.py as other scripts.
+Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+>=20
+> Use kvmemdup instead of kvmalloc() + memcpy() to simplify the code.
+>=20
+> No functional change.
+>=20
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c | 3 +--
 
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
- scripts/macro_checker.py | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- mode change 100644 => 100755 scripts/macro_checker.py
+Subject prefix should be "wifi: brcmsmac:".
 
-diff --git a/scripts/macro_checker.py b/scripts/macro_checker.py
-old mode 100644
-new mode 100755
--- 
-2.34.1
 
 
