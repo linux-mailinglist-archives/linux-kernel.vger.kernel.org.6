@@ -1,145 +1,127 @@
-Return-Path: <linux-kernel+bounces-295500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FB9959BE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:33:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE8B959BE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6122851A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAB21F22A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A697B188A3E;
-	Wed, 21 Aug 2024 12:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842B6175D5F;
+	Wed, 21 Aug 2024 12:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQyAf9pV"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F6mOy0Iz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A391531C1;
-	Wed, 21 Aug 2024 12:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773C81531C1;
+	Wed, 21 Aug 2024 12:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724243607; cv=none; b=ngeZoyZVn46qneihGPjBq66eHF3Ub+diprlCkCJxvbaGJAk4hwk/goq9b/WXnRQfITAlElH57GHtXQmBKQAzqAGs0GD0HTm5IENX3QlwhhmclWe+1NJD1/nIL3kdRLC/OnvG/leA6a6nCM4YWdy4osiyNGsk2w6viSpFmA8PYeA=
+	t=1724243611; cv=none; b=d5vF8WETzjh9b6Sgr+Sl8q95PpPvWywC3DZLIg2GiuiRC//Wsx3fGxITxNRt82cMJDEaaC7mdy4vKV7zQftNeneQ8/xeBsgOBHoDHtmzpJlUfgOh8/kg/JFuhVQJlsmaRTgkckBN/ChYVI4PPUym+GmJjHFvDXHY3d9QxirDnxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724243607; c=relaxed/simple;
-	bh=OymAE/ZZBR4mv0HhBIalO0BOicWD78n6nDWqYyMqynA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ehmmvrM9jyxfIq9A/10WbADM4xRHLlUkAU8b2/vRt6mGQTNFqtHvqN2JNjF+1oEuoU+JjlupCgSrfQafie0SKAnVH1i7EmqBW8R673q/nQRMDzNp1NbhXra7CEE8DFd4k2aQxSTaRqzb0xdfQeNVDMxzcE7pRtoaSuE+pJYX2Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQyAf9pV; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-201fba05363so46063705ad.3;
-        Wed, 21 Aug 2024 05:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724243604; x=1724848404; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=38LzfASOFmg17IvE+tEedmZUU9vVFKl4gZEqe47LcGA=;
-        b=HQyAf9pVjfNcfKn3cOL0X3eWQmltQG70t5Mnq1AB9BYmAorUz1cS8+ajdtWJWFuJhS
-         yrv94/hoWucVgXDW+ODS/0/VlglveV005FE+acUxpDjHZq0+XwlQUGtbDmP0XRmOdsml
-         hFvAbzdEX3SwNdlNv6HbX+HgEW7uUHIkWwThjIV3O6NqQhvrxGWMqz7oqQtI3xIR+zpj
-         BjSuV6Dvt05yp346t2yovBiFhvV++v/D3zjy5FS4yrGJg6P34b6Cq2eGy3httssDrb5J
-         xNAcqTbcGbx8sCDuc3g/hT6UGq20RlVJndJJo3ZT4S3p8ni27JdVh4kx/PW7742ATOlv
-         g8XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724243604; x=1724848404;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=38LzfASOFmg17IvE+tEedmZUU9vVFKl4gZEqe47LcGA=;
-        b=jsoVNIofyXzlYt2U8iNQp4DUcOuYO1uVdD8cMvQIco2gvuJZ/iN/8dqWOnpK+vSKpT
-         ERofg2gOsSmFlgy92TV+tqE6VRQCWM11i6ucEfFvUU8XRID9y0gbTziLCnxDlqhcDuEg
-         EgTBSukLKc+RFD4dYDcN5TqNKJhTUfuRaPHQFtoipg9fDCVcKIrUDdg8FV9G60krDZK5
-         ME5z5maOFyOfgOpU8/BBxBetl/VexY7hVBnPH6LfdRGzHu20SffYPxoNINzABIuv0m+0
-         8/ev7We9wdyfeIiOeO1svWbmod+CI62cb7pgIBrsSKdUME7vIAtuKQIhSCUiSV0Rg8ok
-         ZT5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU62T4nGH0LHVPjeCh0hr10rMotYbjIUmHdcxNDTm4wAZ9mhf9UCzpIRWhRdIMfgU5ccRwKeo1rW5iFMMM=@vger.kernel.org, AJvYcCWrzvLelLz9RUe0NX6vQQ+lBVl3Dj/Zep+zSpT2q6lgAyBkyHxly+SZ6qY7ywDfTyx11nBZj8rN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmKaRYJT4XGaKBaBRiDGkaMsm7h0gZuetyXS+z6O8fTI9Bo4B5
-	zq5xnnND4lMv85fv+wn+npUzKaAGXPQKkUEVVPiwj5Tm9gn87TFc
-X-Google-Smtp-Source: AGHT+IFOmUSISQmx1QZwKATxecp9bbNULKQetnFCCRoqRL+BE/zW5AmnieetnrrBmOwR66LzoJOLNg==
-X-Received: by 2002:a17:902:ec92:b0:1fd:93d2:fba4 with SMTP id d9443c01a7336-2036819f4bfmr20217855ad.48.1724243603576;
-        Wed, 21 Aug 2024 05:33:23 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0375631sm92534605ad.154.2024.08.21.05.33.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 05:33:23 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: kuba@kernel.org
-Cc: pshelar@ovn.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	amorenoz@redhat.com,
-	netdev@vger.kernel.org,
-	dev@openvswitch.org,
-	linux-kernel@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>
-Subject: [PATCH net] net: ovs: fix ovs_drop_reasons error
-Date: Wed, 21 Aug 2024 20:32:52 +0800
-Message-Id: <20240821123252.186305-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724243611; c=relaxed/simple;
+	bh=hMAfE4Mvtcd5ET79hcKgW6u+1u5ZmeBbuFtoZqUj0dM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=I8fwxOsf8wxb97mHwHRzDOJ4l2hTVuKlbq0ftnNVb6c0YPqbNuPXPGGauit62+F2IC70WuxLlq2sCdl3qhwx0BJKEGcbV4wNW7jJmrQEBfznN3DAgrVwSpKgtbp+uva+OXys6wG39yGKpNzN1QkvUntpUx7jBmFhHWuZ6yi0BUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F6mOy0Iz; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724243611; x=1755779611;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=hMAfE4Mvtcd5ET79hcKgW6u+1u5ZmeBbuFtoZqUj0dM=;
+  b=F6mOy0IzjaK7WDCh6ZKS/UHRGItqdgCvwFdrtcUwromXhFwGP8A2Cvhp
+   x2MH2M4JIyY3X4r9I8PBjYK3x3maDcuXYtykE4m5eqKMJrHeb2YTq0SSk
+   hiqe7aUBmuvXaBH8BndqyKx9vGU5wU1bPvRucS+FaThvvsCcrZ/Rz7WCy
+   hZbhPchoA657blzqQYCJh12o+V/KbWELPN7KM1yoYvoSXMF+ffg8zBde7
+   NAj0BVe8R+VzTJMd3LkQhkEx3IRh1J0xWGdwKgfyJRKajXggwQfZYSd7b
+   c81jXv44JMzttoGXkyeCf5QdWOLZwxL9MR1aMJ3xzAQ9U71ZhKsOSkja1
+   g==;
+X-CSE-ConnectionGUID: Xhjaz9rYRgifbYXkuFv0UA==
+X-CSE-MsgGUID: kqe68YzLROmPKIak/tQy7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="40058595"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="40058595"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 05:33:30 -0700
+X-CSE-ConnectionGUID: VyMruX/VQHO/0dlqvnfAYw==
+X-CSE-MsgGUID: uWgx089eQ6qN6IlCox75Lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="61050388"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.181])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 05:33:27 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 21 Aug 2024 15:33:23 +0300 (EEST)
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org, 
+    "Rafael J. Wysocki" <rafael@kernel.org>, 
+    Daniel Scally <djrscally@gmail.com>
+Subject: Re: [PATCH v1 4/4] platform/x86: int3472: Use str_high_low()
+In-Reply-To: <20240821122233.3761645-5-andriy.shevchenko@linux.intel.com>
+Message-ID: <5b38a2d2-4cad-e34a-899a-6dad4e26346a@linux.intel.com>
+References: <20240821122233.3761645-1-andriy.shevchenko@linux.intel.com> <20240821122233.3761645-5-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1771321182-1724243603=:5260"
 
-There is something wrong with ovs_drop_reasons. ovs_drop_reasons[0] is
-"OVS_DROP_LAST_ACTION", but OVS_DROP_LAST_ACTION == __OVS_DROP_REASON + 1,
-which means that ovs_drop_reasons[1] should be "OVS_DROP_LAST_ACTION".
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-And as Adrian tested, without the patch, adding flow to drop packets
-results in:
+--8323328-1771321182-1724243603=:5260
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-drop at: do_execute_actions+0x197/0xb20 [openvsw (0xffffffffc0db6f97)
-origin: software
-input port ifindex: 8
-timestamp: Tue Aug 20 10:19:17 2024 859853461 nsec
-protocol: 0x800
-length: 98
-original length: 98
-drop reason: OVS_DROP_ACTION_ERROR
+On Wed, 21 Aug 2024, Andy Shevchenko wrote:
 
-With the patch, the same results in:
+> Use str_high_low() rather than open coding.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel/int3472/discrete.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/plat=
+form/x86/intel/int3472/discrete.c
+> index 96a9673a0165..b5f6f71bb1dd 100644
+> --- a/drivers/platform/x86/intel/int3472/discrete.c
+> +++ b/drivers/platform/x86/intel/int3472/discrete.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/module.h>
+>  #include <linux/overflow.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/string_choices.h>
+>  #include <linux/uuid.h>
+> =20
+>  #include "common.h"
+> @@ -230,7 +231,7 @@ static int skl_int3472_handle_gpio_resources(struct a=
+cpi_resource *ares,
+> =20
+>  =09dev_dbg(int3472->dev, "%s %s pin %d active-%s\n", func,
+>  =09=09agpio->resource_source.string_ptr, agpio->pin_table[0],
+> -=09=09(polarity =3D=3D GPIO_ACTIVE_HIGH) ? "high" : "low");
+> +=09=09str_high_low(polarity =3D=3D GPIO_ACTIVE_HIGH));
+> =20
+>  =09switch (type) {
+>  =09case INT3472_GPIO_TYPE_RESET:
+>=20
 
-drop at: do_execute_actions+0x197/0xb20 [openvsw (0xffffffffc0db6f97)
-origin: software
-input port ifindex: 8
-timestamp: Tue Aug 20 10:16:13 2024 475856608 nsec
-protocol: 0x800
-length: 98
-original length: 98
-drop reason: OVS_DROP_LAST_ACTION
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Fix this by initializing ovs_drop_reasons with index.
+--=20
+ i.
 
-Fixes: 9d802da40b7c ("net: openvswitch: add last-action drop reason")
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-Tested-by: Adrian Moreno <amorenoz@redhat.com>
-Reviewed-by: Adrian Moreno <amorenoz@redhat.com>
----
- net/openvswitch/datapath.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
-index 99d72543abd3..78d9961fcd44 100644
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -2706,7 +2706,7 @@ static struct pernet_operations ovs_net_ops = {
- };
- 
- static const char * const ovs_drop_reasons[] = {
--#define S(x)	(#x),
-+#define S(x) [(x) & ~SKB_DROP_REASON_SUBSYS_MASK] = (#x),
- 	OVS_DROP_REASONS(S)
- #undef S
- };
--- 
-2.39.2
-
+--8323328-1771321182-1724243603=:5260--
 
