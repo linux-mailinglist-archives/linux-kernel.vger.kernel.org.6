@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-295628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D59959F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446B2959F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F043285BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:03:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1B3E1F2160D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE611B1D40;
-	Wed, 21 Aug 2024 14:03:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11951AF4FA;
+	Wed, 21 Aug 2024 14:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iwLn4bcY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D00A196D90
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D46199FC6;
+	Wed, 21 Aug 2024 14:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249019; cv=none; b=L8RSvxM+vgz6zhtfAOaXznv+R5gD0oW5E/xTtNiuU1e/w7AV3XJ07EoqhQXiM0dP4ej6Pn7LeJ02+na9+0B7DXS55+O4rNclzNiUafoHaSOeplo+5biEEnhSdU0AUPH4NHFQ7ghHnBW1ji4Vj5iRNbJdex5ITwDFtTrhHnqALu4=
+	t=1724249111; cv=none; b=ONScMIL+a1+nuUCiOiWd6gKxhB1mPIN/zMHJI9a/miJlaBYGK1m5wKBBoPT2M+Hm3q3XS3djMQwSV+kbKMox8PP0cADGDrzULHbNUKOiXRl1XQ8IVHM1f6i8mkDyIv4Mmdw+Kq2SmAppUpGwWcRJKM1EHgFVSJFO9yUUR4WMLDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249019; c=relaxed/simple;
-	bh=nX34tveEkLIAY8t2BIyCqfHjXEOyJEpYGc7XKL8RS34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1qmv1ft6B2h+rw5JmBRv/PqExGB0RE+fmiqaoePlTjlvrOsiSafkJL0h2zqkiYjmCx8qC//i8ES5b0kuS6KGdl07HsGeXT8u5KgxEsJvVjugma0ehKn7h4hOGKbwUVpSOQ7rnmw84UefuAMLHm3JhaH1OsN6DrxLwlo5HmfKhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1sglvq-00064b-Mg; Wed, 21 Aug 2024 16:03:26 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1sglvp-0021gA-Jl; Wed, 21 Aug 2024 16:03:25 +0200
-Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1sglvp-00FXHo-1a;
-	Wed, 21 Aug 2024 16:03:25 +0200
-Date: Wed, 21 Aug 2024 16:03:25 +0200
-From: Michael Tretter <m.tretter@pengutronix.de>
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: linux-media@vger.kernel.org, Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH] media: platform: rga: fix 32-bit DMA limitation
-Message-ID: <ZsXzrV2vC4aB8GMq@pengutronix.de>
-Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
-	John Keeping <jkeeping@inmusicbrands.com>,
-	linux-media@vger.kernel.org, Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-References: <20240812143555.530279-1-jkeeping@inmusicbrands.com>
+	s=arc-20240116; t=1724249111; c=relaxed/simple;
+	bh=L8fub+mYsQhj+lVmbRK8xHTNCb+gtWl6pWQHrECpObQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qa+82DGhCi1adQzgOL4G++s17XDw5IoBi9qb3oowU/LIXI7/j+YRPN8e1iU+q3yNwn1sROY9EzJvJEynTETsWY0lGCZapOhMUUs/RenNjM6jHPeqayLO2grx9WzZE0ZJaHtnn7oZtjTeBhWIjNrE31Zgc/cxbXHgF/OY/+jlVvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iwLn4bcY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LBkdKv024590;
+	Wed, 21 Aug 2024 14:05:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1xlMv2ynVfIv2mD8mK6DVP/T6SS2H5LuAkFF6cS5f5A=; b=iwLn4bcYnrfU5iXL
+	qvmc/Yc4MevrjfnYY95q70nKy1KTTMsMV2gmwXb32ZpOTmvRHJeGmccwFyVcQH7l
+	+O1H3/oubjkfM+Lj2aG94j0ZAHj/3bI4BiffT3kyBxJWuL+jOJcNgCsdwb2YFtCp
+	FgOdkaRLj9R0lBCugDlNwN2qsmCyIZyeGg6YF3ts03bpcXDwBJc7eKOHbEypgc0l
+	6k0FCeo5aEWkvzDDNXrpOn9HuT9IyZHttcTrHhFCFSpVpV5bETBw6VedCbVJt61s
+	xUH18iuSUm6an+S+3ZnpGP55s6DR8Au7xrYGDHOwdz7Vu0S34sHhq9s1cyDvQdoA
+	p9m1/w==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pdmw0jp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 14:05:00 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LE4wAN017946
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 14:04:58 GMT
+Received: from [10.239.133.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
+ 2024 07:04:57 -0700
+Message-ID: <2b38828b-ebb0-4602-9320-9adc5deb76f6@quicinc.com>
+Date: Wed, 21 Aug 2024 22:04:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240812143555.530279-1-jkeeping@inmusicbrands.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] usb: xhci: ext-caps: Use cpu_relax() when polling
+ registers
+To: Mathias Nyman <mathias.nyman@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
+        <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Zhongqiu Han
+	<quic_zhonhan@quicinc.com>
+References: <20240820121501.3593245-1-quic_zhonhan@quicinc.com>
+ <20240820121501.3593245-3-quic_zhonhan@quicinc.com>
+ <cd0cc5d1-0776-4d5f-9f3f-8261deb0e3bb@linux.intel.com>
+Content-Language: en-US
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+In-Reply-To: <cd0cc5d1-0776-4d5f-9f3f-8261deb0e3bb@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bm-M6hf3pvMDddTFHzxovYc5eyt6lswa
+X-Proofpoint-GUID: bm-M6hf3pvMDddTFHzxovYc5eyt6lswa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 mlxlogscore=414 bulkscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408210102
 
-On Mon, 12 Aug 2024 15:35:55 +0100, John Keeping wrote:
-> The destination buffer flags are assigned twice but source is not set in
-> what looks like a copy+paste mistake.  Assign the source queue flags so
-> the 32-bit DMA limitation is handled consistently.
+On 8/21/2024 5:40 PM, Mathias Nyman wrote:
+> On 20.8.2024 15.15, Zhongqiu Han wrote:
+>> It is considered good practice to call cpu_relax() in busy loops, see
+>> Documentation/process/volatile-considered-harmful.rst. This can lower
+>> CPU power consumption or yield to a hyperthreaded twin processor and
+>> also serve as a compiler barrier. In addition, if something goes wrong
+>> in the busy loop at least it can prevent things from getting worse.
+>>
+>> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+>> ---
+>>   drivers/usb/host/xhci-ext-caps.h | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/usb/host/xhci-ext-caps.h b/drivers/usb/host/xhci- 
+>> ext-caps.h
+>> index 96eb36a58738..25d148d60ab0 100644
+>> --- a/drivers/usb/host/xhci-ext-caps.h
+>> +++ b/drivers/usb/host/xhci-ext-caps.h
+>> @@ -144,6 +144,8 @@ static inline int xhci_find_next_ext_cap(void 
+>> __iomem *base, u32 start, int id)
+>>           if (offset != start && (id == 0 || XHCI_EXT_CAPS_ID(val) == 
+>> id))
+>>               return offset;
+>> +        cpu_relax();
+>> +
+>>           next = XHCI_EXT_CAPS_NEXT(val);
+>>           offset += next << 2;
+>>       } while (next);
 > 
-> Fixes: ec9ef8dda2a24 ("media: rockchip: rga: set dma mask to 32 bits")
-> Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+> Similar case as with PATCH 1/2
+> 
+> This isn't a busy loop polling for some value.
+> We traverse xhci extended capabilities until the one we are looking for 
+> is found.
+> 
+> Thanks
+> Mathias
+> 
+Hi Mathias,
+Thanks a lot for the review, yes, it is similar case as with PATCH 1/2
+there is not a busy loop polling, sorry for this and i will careful for
+similar case next time, and thanks for the discussion as well.
 
-Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
-
-> ---
->  drivers/media/platform/rockchip/rga/rga.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
-> index 0e768f3e9edab..de532b7ecd74c 100644
-> --- a/drivers/media/platform/rockchip/rga/rga.c
-> +++ b/drivers/media/platform/rockchip/rga/rga.c
-> @@ -102,7 +102,7 @@ queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
->  	src_vq->drv_priv = ctx;
->  	src_vq->ops = &rga_qops;
->  	src_vq->mem_ops = &vb2_dma_sg_memops;
-> -	dst_vq->gfp_flags = __GFP_DMA32;
-> +	src_vq->gfp_flags = __GFP_DMA32;
->  	src_vq->buf_struct_size = sizeof(struct rga_vb_buffer);
->  	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
->  	src_vq->lock = &ctx->rga->mutex;
-> -- 
-> 2.46.0
-> 
-> 
+-- 
+Thx and BRs,
+Zhongqiu Han
 
