@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-294998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF87959531
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0088E95952F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25B3FB24637
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:58:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 753C2B23456
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FE7185B75;
-	Wed, 21 Aug 2024 06:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1C193435;
+	Wed, 21 Aug 2024 06:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WelqQAg+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZfcvXzTF"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFEA31;
-	Wed, 21 Aug 2024 06:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E131185B5C
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724223502; cv=none; b=gK/2XCNZ1FGj6c2qJRp10XkjlLx0siWZ90Hy7U/mxaBcmpghRMGnj1xSEqB5Dq9cF5cI0VvhVZI5iL7fMfwxexv85ZiK9/zXYpIKNa6f9IsxbQpj9lJ6Q7NFsRnlKjjFBQzRm004YaB2Fb8GWZgWIkafrhxZcifDRbB52r+NNLQ=
+	t=1724223500; cv=none; b=u5jb27NOe89l+P/BldP7RQNw/WaLClg6f58vhyjGCPbmqivU/qMiE54snUgQGBPlV67Z5EgGb2jgr6Z9w86xuE7Uz2UPBK+8vSHEKaRSyde86tUAumCf3L39hLPhrZsYcxgiT3pfOAkb5imkRNZT1D6eyDzOfQkNraM7+6AhtiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724223502; c=relaxed/simple;
-	bh=Cop5p7boT2EE+AxgDMbqrgdM0XlEYff5/dt9xq2skhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DkbIMLw0LXYmoKl4WnQWWZiXEN6D3H+u7OvSDr6//EnW7OUF6JyHiBgJthH5dAFEZI4jd81bz1mB+sNm4iwuxr8jEt2Do/zWqpuPkUpYy4xtHObMCprn/68F9l168mxfabE4/eJwf8IDYaFB2lheNBoCw9X1XZxl9GtEMuDuJVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WelqQAg+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L5I4oK029023;
-	Wed, 21 Aug 2024 06:58:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NBhRVgyCiBQiJkjdRk9oouBxqES1gSxUghHSCnA/ZlI=; b=WelqQAg+Pdw8YyyI
-	PJKjPcNBOALUY3AmGrY2E5LMyYz+xjsOj06c/7/FloPiN3aDW4eHnAzaTvrumJHG
-	R9HJuYohY5BEib10z8C05K9c+ksRsEGmXZX2Erun4GXhzqzcjAQothsbRRs49c/Y
-	fLXrShGHgqP7QOGB/PRmOrAn49uMfNZBMwVaAzdtod35GbevnYhtKIF+ZhlqKNQS
-	STnQhAapgRLa/Rl1FRrtTLKRqrCuMK9oUd/o2trKbiq3nxNSrnYTYlw2gfu6m2Ul
-	KbsMSKpA2ibAgLP1FoPMfvIv0vWK3ZtH8U2e47SMC/XE/6MvQKFhzz3bsJ6GhCNA
-	jjNhdg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4159yj8ark-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 06:58:06 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L6w5jF015667
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 06:58:05 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
- 2024 23:58:03 -0700
-Message-ID: <c3ed299e-709e-4fae-9ef6-c5ad2f6a1c55@quicinc.com>
-Date: Wed, 21 Aug 2024 14:58:01 +0800
+	s=arc-20240116; t=1724223500; c=relaxed/simple;
+	bh=nGwwZKR0gRYMSEgmiBVAnzD1Pp9OdshUmU94NyLhtDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OjTXJfNE12Ga2q99CRPRCf/AyuXO+Z+mErLp5jx2yUcDcUKq/kSPtu6O2ibY4Q+A3ZW0qQnxGpQ0eKMaC9pcrkPRDsTb0VPFNTHm1eTJjXhD+ZEdOp5Fv2hiFg8JA1JRRmX+ZBYKIl6DzCPaoZKpdK81KYf7jDH48ALEy7V02b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZfcvXzTF; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5d5b1e33fa8so3901973eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:58:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1724223498; x=1724828298; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lcwV5E+ok4Ru342pseyjnU3pRtPhY0hqDhnMEPHRasQ=;
+        b=ZfcvXzTFGkfCFK3z9dez8lyTGhgj6gz23qAH/MPvW9twfEeLazeZR/rm0TzqV5X0Qw
+         RLLVI8jpT0R/bzVz8ozILE3h5ImiAnJqnJhX45SkU6t6/Mnmp4LIIbkU2ToY6/wD0E6h
+         vZAeLf37xClvrzr7RfF1GkofdnvaOl1eoU/zU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724223498; x=1724828298;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lcwV5E+ok4Ru342pseyjnU3pRtPhY0hqDhnMEPHRasQ=;
+        b=upyuqdVD5R6RWhTiCv9xoqDHTRrG5yOEtO9+tz05XTamtej+w9WycQTrM8X9rb8Z0u
+         iZumjocdO3U7YHCnUQCukqHFDESMUF1LBknPoaTdXmMBugGkJm9N0RsBRAHnfLAnENBq
+         qkR7zMSFtrSu/7NjcwTneXlMQ8O76yjobNGvE6XJWUa1+yrMWXsx4/qzIKRMbbppbf3G
+         VXKkZOHtYQwHukAlXhDNYqWpfEP/OJE1NuVchak0HWExi65RqQrBeRN+rIXl9xYZ89wJ
+         lGB+KvVPedMUuYf3+HQ+/5l6ZTAsY2EtU755f2oVfKQXSs4uWAFDlWVJXyL8zYY1mrut
+         c1Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8pdco7f9KHevkbByzxTplv1AO2Y1CWONQdF5cKfTng/AnWr1hQkl4Yi7HaEaWvPtGHDy9Q3MRI574mGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfMDX2vyZNdVydor3O+fqcE7wy/P7oQrqpPjrkOojY0HSXl8h/
+	vTT0ynTTQgvmXqlo3pb26+Q0Q0nwmcFAvlDIdXvURcvfTzu1hqZ7D6JdTJGJm7U=
+X-Google-Smtp-Source: AGHT+IGW3lZ+wVRaP439HYZTg2+EKRY2iSpAqSNAreo/hH4Ej36HDf8GGY057zCw2mgnCuU1Pw4OyQ==
+X-Received: by 2002:a05:6358:531f:b0:1ad:95db:b6f2 with SMTP id e5c5f4694b2df-1b59f97b0e5mr218971355d.17.1724223497985;
+        Tue, 20 Aug 2024 23:58:17 -0700 (PDT)
+Received: from [172.20.0.208] ([218.188.70.188])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b6365afcsm10384733a12.87.2024.08.20.23.58.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 23:58:17 -0700 (PDT)
+Message-ID: <f377d9c2-9bad-418e-b02a-9ef4f45d7b06@linuxfoundation.org>
+Date: Wed, 21 Aug 2024 00:58:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,130 +72,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: hci_qca: Drop unused event during BT on
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
- <15472cea-904c-4d79-9195-3063ce7f1e2e@quicinc.com>
- <2be3922d-8899-4e58-aa23-57a0b5cfc111@molgen.mpg.de>
+Subject: Re: [PATCH] selftests/ftrace: Fix test to handle both old and new
+ kernels
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,
+ Linux trace kernel <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@kernel.org>, Shuah Khan <shuahkhan@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240515013620.098cb37a@rorschach.local.home>
+ <20240614124322.36ad7652@rorschach.local.home>
+ <20240819152002.3ecc8100@gandalf.local.home>
 Content-Language: en-US
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-In-Reply-To: <2be3922d-8899-4e58-aa23-57a0b5cfc111@molgen.mpg.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zwTOqGtz_aqLg2ux2UVl0IweSP5wpuJX
-X-Proofpoint-GUID: zwTOqGtz_aqLg2ux2UVl0IweSP5wpuJX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_07,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 phishscore=0 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 adultscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408210049
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240819152002.3ecc8100@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Paul, 
-
-Thank you for the comment. 
-
-On 8/21/2024 12:49 PM, Paul Menzel wrote:
-> Dear Cheng,
+On 8/19/24 13:20, Steven Rostedt wrote:
+> On Fri, 14 Jun 2024 12:43:22 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> 
-> Thank you for your patch.
-> 
-> Am 21.08.24 um 06:16 schrieb Cheng Jiang:
-> 
->> Is there any comment for the changes? Thanks!
+>> Shuah,
 >>
->> On 7/26/2024 5:58 PM, Cheng Jiang wrote:
->>> For the WCN6750/WCN6855/WCN7850, the vendor command for a baudrate
->>> change is not sent as synchronous HCI command, controller sends the
->>> corresponding vendor event with the new baudrate. It needs to be
->>> dropped, otherwise it may be misinterpreted as response to a later
->>> command.
+>> Can you take this through your tree?
 > 
-> Is that documented in some datasheet?
-It's defined in 80-WL520-14_REV_F_Bluetooth_HCI_Vendor_Specific_Commands_Application_Note.pdf. 
+> Ping.
 > 
-> How can this behavior be tested, and your change be verified? How did you test it?
-From the dmegs log, we can find the "Bluetooth: hci0: unexpected event for opcode 0xfc48" in dmesg. The change
-is verified on QCOM's platform. Check the log is disappeared in dmesg when boot up the system.  
+> -- Steve
 > 
->>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->>> ---
->>>   drivers/bluetooth/hci_qca.c | 16 +++++++++++++++-
->>>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>
+>> Thanks,
+>>
+>> -- Steve
+>>
+>>
+>> On Wed, 15 May 2024 01:36:20 -0400
+>> Steven Rostedt <rostedt@goodmis.org> wrote:
+>>
+>>> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 >>>
->>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->>> index ca6466676902..f497d601e035 100644
->>> --- a/drivers/bluetooth/hci_qca.c
->>> +++ b/drivers/bluetooth/hci_qca.c
->>> @@ -1206,7 +1206,15 @@ static int qca_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
->>>            * vendor command).
->>>            */
->>>   -        if (hdr->evt == HCI_EV_VENDOR)
->>> +        /* For the WCN6750/WCN6855/WCN7850, like the WCN3990, the
-> 
-> Does “like the” mean “and” in this situation? WCN3990 is not mentioned in the commit message.
-WCN3990 is already handled in the exist code. WCN3990 uses HCI_EV_VENDOR (0xff) as event code while
-WCN6750/WCN6855/WCN7850 use HCI_EV_CMD_COMPLETE(0x0e). The logic of handling this event is almost the
-same.
-> 
->>> +         * vendor command for a baudrate change command isn't sent as
->>> +         * synchronous HCI command, the controller sends the corresponding
->>> +         * command complete event with the new baudrate. The event is
->>> +         * received and properly decoded after changing the baudrate of
->>> +         * the host port. It needs to be dropped.
->>> +         */
->>> +
-> 
-> It’d remove the blank line.
-Will remove in next patch. 
-> 
->>> +        if (hdr->evt == HCI_EV_VENDOR || hdr->evt == HCI_EV_CMD_COMPLETE)
->>>               complete(&qca->drop_ev_comp);
-> 
-> Excuse my ignorance. Is `HCI_EV_CMD_COMPLETE` only sent in case of a baudrate change?
-HCI_EV_CMD_COMPLETE is also sent for other HCI command. This section is called only if QCA_DROP_VENDOR_EVENT is
-set. QCA_DROP_VENDOR_EVENT is set before sending the baudrate change HCI command, and cleared after received 
-the event or timeout happens. So only the event for baudrate change HCI command is dropped here. 
-> 
->>>           kfree_skb(skb);
->>> @@ -1497,6 +1505,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->>>             switch (soc_type) {
->>>           case QCA_WCN3990:
->>> +        case QCA_WCN6750:
->>> +        case QCA_WCN6855:
->>> +        case QCA_WCN7850:
-> 
-> So setting the speed wasn’t working before?
-It works before, but the event of baudrate change HCI command is not handled properly. Here is used to set
-the QCA_DROP_VENDOR_EVENT flags and reinit completion. They will be used when handling event from controller.
-> 
->>>               reinit_completion(&qca->drop_ev_comp);
->>>               set_bit(QCA_DROP_VENDOR_EVENT, &qca->flags);
->>>               break;
->>> @@ -1531,6 +1542,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->>>             switch (soc_type) {
->>>           case QCA_WCN3990:
->>> +        case QCA_WCN6750:
->>> +        case QCA_WCN6855:
->>> +        case QCA_WCN7850:
->>>               /* Wait for the controller to send the vendor event
->>>                * for the baudrate change command.
->>>                */
-> 
-> 
-> Kind regards,
-> 
-> Paul
+>>> The function "scheduler_tick" was renamed to "sched_tick" and a selftest
+>>> that used that function for testing function trace filtering used that
+>>> function as part of the test.
+>>>
+>>> But the change causes it to fail when run on older kernels. As tests
+>>> should not fail on older kernels, add a check to see which name is
+>>> available before testing.
+>>>
+>>> Fixes: 86dd6c04ef9f2 ("sched/balancing: Rename scheduler_tick() => sched_tick()")
+>>> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
+
+Sorry about the delay.
+
+It is now applied to liniux-kselftest next for Linux 6.12-rc1.
+
+thanks,
+-- Shuah
 
