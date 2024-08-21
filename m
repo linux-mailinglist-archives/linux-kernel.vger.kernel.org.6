@@ -1,104 +1,161 @@
-Return-Path: <linux-kernel+bounces-295165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB0495980D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:44:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2625E959810
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192EF1F231A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5571C21945
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CB51BF805;
-	Wed, 21 Aug 2024 08:50:32 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B298B18991D;
+	Wed, 21 Aug 2024 08:51:25 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C865F1547C2;
-	Wed, 21 Aug 2024 08:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AE6165EE8;
+	Wed, 21 Aug 2024 08:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724230231; cv=none; b=bfSLzsptzWHGrM04ob6zKSGHjJ1vrmJ/sBJVRspq7rPczM9h2NyCZgPB5Qg7yDTwNLMb33H7yw40oWMMnLApB7QBBz7b6pcR14meOmqDCBSz9s2p6b/DmCC9DhlJ1lzyOwYFu6zwWbd3YDQXEqocdfQfZ9Vxc2NS9Itq1jSxHQ8=
+	t=1724230285; cv=none; b=mEqHf6oZr3E34kSxAduHB4TA9QjLd+jwvxvYpegVWFr0Ri8dJdvKXf9SA0fnwtzx/Rq/Plf8QHWDVfARE8UWRCrPFHSvE0ufdB2+cmnjvb+Pb01Yu5iSsNzQnOt4YqD6cD38jJGp2298LRM3aLNxJm+lDWMUN9h4uxbU4Plc7kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724230231; c=relaxed/simple;
-	bh=tnrxtob0yb9eMmfLRERGvYJGOSdmCt6YF/gYnTDfJ+Y=;
+	s=arc-20240116; t=1724230285; c=relaxed/simple;
+	bh=bGA/b8UDri/Zj5EdsIsP8nNFv4JTmBmBHcQu+n4ERJM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIgOSgd1AuLpSXERShrgmYznd3wAfPk6UQk4cgtiAaPTScbsEMh7q75xpZqYV83RrEJLhTSJOm2cG/eETjcDdEWH7ghQxrsluvVRxpuce4XVkFofMNxlSVmsr2WoPIQTrV+1d7Cf7D7HRDeXGz42jm9YysL5ZA+JQyPtktGfwqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F403AC32782;
-	Wed, 21 Aug 2024 08:50:24 +0000 (UTC)
-Date: Wed, 21 Aug 2024 09:50:22 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 19/40] arm64/gcs: Context switch GCS state for EL0
-Message-ID: <ZsWqTtCq1mNJH1vz@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-19-699e2bd2190b@kernel.org>
- <ZsMwhdmE_Ai9BbM9@arm.com>
- <0f6fd3ec-2481-4507-af0e-3cbbb7406b54@sirena.org.uk>
- <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=biioP0EbONXsXQp3cwVvq3XDQBpFp4r5NeMdjKKCwf2SHUELwyoYkcAgpS4eB/EwbcagonptZLt+pk4kOuOQW1dCYsvqPLTLWGCbjxQ5l6DClVtrLqLlOyH53e+iKFOeq6WcrfCJnkBJs6ENgD8zHbdD9Z6hZW5CuaaYqxYn6cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-428243f928fso70277835e9.0;
+        Wed, 21 Aug 2024 01:51:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724230282; x=1724835082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1grTtpsOD7QxOvlav66VEj13IRTNdzSA+6cdUBz9z7c=;
+        b=n2WlvywSkXTVQugA2L2gT17h2rgLR/OxR/roqmAyGfU86wUITQtASpsN7fpscL/ejY
+         B4a7vM/SnjKPXUreuBEBijKONv2zSfbZZcMJciOgO7GiVHvmPrJ0jlK2Jph+ICMikScn
+         44GNBv2EtGEr+hQEB/Eyn2I3JR41S35Kfj13kAVW4eYAv0VJwFcR/h2zrWhGH473Jjhp
+         FdJnLqjc57m/dDrJmIOl50NBdYo+sHsuzv3CgfGBH9uo3zwZMwwMaAe2i5Nz4APEwdfg
+         0P8Slpm7pP993FRuxzKO5yHyzgoeGp5qj/fdyDvg65eijs2S9bsLauYpyw3uGOrwON/a
+         EFYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVysfEXwrcxNFd5JVwiRZiIDta/ScsyzoeeSS+7+5doBgCtJXD6wiGLgW8dIu/GoxgtEwOeRs/JP82C@vger.kernel.org, AJvYcCXB0Me2Py68JarqC6CWiCWt/9aRm/U53tAawDs0Fy61pP3TFVE0iOsbW3zvdLYNzq/Z1TXrDMD7r1KW1PBx@vger.kernel.org, AJvYcCXwQ3XpygJZpuS5A2JQMJLnVv95TnZ0XY3LbES/H6f8DJzZF55WUX35HBM4EPOl4KDfkXLxWRTXOKwATA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpEa3J3XzCWvL/VrElIT5Mdn9MH3I2zLbCBijYDx6lezW7ahor
+	2103/qttBuM8QwH9SsOJ5UAa/trX9/9iZWMAO2NhvSCGHFWVXMBx
+X-Google-Smtp-Source: AGHT+IFSv9dRDxRxssoEwFJ9zMxpMyAVM3DX9QE+lXjk5ISrbFMnahGU4oGJcJr3eIQD0eScUDcIrQ==
+X-Received: by 2002:a05:600c:a01:b0:426:5b44:2be7 with SMTP id 5b1f17b1804b1-42abd2149d0mr17554295e9.10.1724230281780;
+        Wed, 21 Aug 2024 01:51:21 -0700 (PDT)
+Received: from krzk-bin ([178.197.215.209])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718984980dsm15121871f8f.40.2024.08.21.01.51.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 01:51:21 -0700 (PDT)
+Date: Wed, 21 Aug 2024 10:51:18 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v1 1/2] dt-bindings: gpio: aspeed,ast2400-gpio: Support
+ ast2700
+Message-ID: <rdbnhk6hsgusamxn3c6vol47xoliad57gwy4i7tbitb6n2dkhe@hnd7vgbstpvw>
+References: <20240821070740.2378602-1-billy_tsai@aspeedtech.com>
+ <20240821070740.2378602-2-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
+In-Reply-To: <20240821070740.2378602-2-billy_tsai@aspeedtech.com>
 
-On Tue, Aug 20, 2024 at 06:56:19PM +0100, Mark Brown wrote:
-> On Mon, Aug 19, 2024 at 04:44:52PM +0100, Mark Brown wrote:
-> > On Mon, Aug 19, 2024 at 12:46:13PM +0100, Catalin Marinas wrote:
-> > > On Thu, Aug 01, 2024 at 01:06:46PM +0100, Mark Brown wrote:
+On Wed, Aug 21, 2024 at 03:07:39PM +0800, Billy Tsai wrote:
+> The AST2700 is the 7th generation SoC from Aspeed, featuring two GPIO
+> controllers: one with 12 GPIO pins and another with 216 GPIO pins.
 > 
-> > > > +	/*
-> > > > +	 * Ensure that GCS changes are observable by/from other PEs in
-> > > > +	 * case of migration.
-> > > > +	 */
-> > > > +	if (task_gcs_el0_enabled(current) || task_gcs_el0_enabled(next))
-> > > > +		gcsb_dsync();
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> ---
+>  .../bindings/gpio/aspeed,ast2400-gpio.yaml    | 46 ++++++++++++++++++-
+>  1 file changed, 45 insertions(+), 1 deletion(-)
 > 
-> > > Could we do the sysreg writing under this 'if' block? If no app is using
-> > > GCS (which would be the case for a while), it looks like unnecessary
-> > > sysreg accesses.
-> 
-> > Yes, that should be fine I think.
-> 
-> I forgot when writing the above that we always allow reads from
-> GCSPR_EL0 in order to avoid corner cases for unwinders in the case of
-> asynchronous disable.  I'd expect that to be cheap to access though.
+> diff --git a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml b/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
+> index cf11aa7ec8c7..4d439972c14b 100644
+> --- a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
+> @@ -15,6 +15,7 @@ properties:
+>        - aspeed,ast2400-gpio
+>        - aspeed,ast2500-gpio
+>        - aspeed,ast2600-gpio
+> +      - aspeed,ast2700-gpio
+>  
+>    reg:
+>      maxItems: 1
+> @@ -42,7 +43,7 @@ properties:
+>      const: 2
+>  
+>    ngpios:
+> -    minimum: 36
+> +    minimum: 12
+>      maximum: 232
+>  
+>  required:
+> @@ -93,6 +94,20 @@ allOf:
+>            enum: [ 36, 208 ]
+>        required:
+>          - ngpios
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: aspeed,ast2700-gpio
+> +    then:
+> +      properties:
+> +        gpio-line-names:
+> +          minItems: 12
+> +          maxItems: 216
+> +        ngpios:
+> +          enum: [ 12, 216 ]
+> +      required:
+> +        - ngpios
+>  
+>  additionalProperties: false
+>  
+> @@ -146,3 +161,32 @@ examples:
+>          gpio-ranges = <&pinctrl 0 208 36>;
+>          ngpios = <36>;
+>      };
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +        gpio2: gpio@14c0b000 {
+> +            compatible = "aspeed,ast2700-gpio";
 
-But then gcs_preserve_current_state() doesn't save the GCSPR_EL0 value
-if the shadow stack was disabled. At the subsequent switch to this task,
-we write some stale value.
+No need for new example, no relavant/important differences here.
 
--- 
-Catalin
+
+> +            reg = <0x0 0x14c0b000 0x0 0x1000>;
+> +            interrupts-extended = <&soc1_intc2 18>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +            #gpio-cells = <2>;
+> +            gpio-controller;
+> +            gpio-ranges = <&pinctrl1 0 0 216>;
+> +            ngpios = <216>;
+> +        };
+> +
+> +        gpio3: gpio@12c11000 {
+> +            compatible = "aspeed,ast2700-gpio";
+
+Especially for two the same examples...
+
+Best regards,
+Krzysztof
+
 
