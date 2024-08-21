@@ -1,119 +1,184 @@
-Return-Path: <linux-kernel+bounces-295015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FB2959563
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 929DA95959A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E3EF1C22259
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B72FC1C22337
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702821A2851;
-	Wed, 21 Aug 2024 07:10:31 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFD218BC36;
+	Wed, 21 Aug 2024 07:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvtPzbLt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A591A2840;
-	Wed, 21 Aug 2024 07:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4A015749E
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724224231; cv=none; b=K/pVKMNb3q867CtFCMcUixmo77OzsCaUiVZ6ioFfXvOCqOGA4pBbOMBZQTErrtghDLhOJZUL4ugxUwoo82FdlBcqSJrDEVhm5NTXhSVArfb6lV7fw/boEbHhQ92QTdlPevG+NFjU1TQvaMSZF88G5TWWxcTWMgrCL41jsj/pXA4=
+	t=1724224744; cv=none; b=DQuQ9wMVrZ22ImBQ+BkQQMK6jomg/RYsunQ0OrcbBWU2kXYhY238a2yWl8blyLLmeJDnfEBbOEXuLkZHSKU/I+y6GuAxtUkoaz5N0tGObqVOabFQmsbUz7ZdTgq+Yp58SEWj/SvynGfssIZQpWVp7yDRY2jfahWsvq13+pMbka0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724224231; c=relaxed/simple;
-	bh=cb2jBBQr+hQBucll/2Ogw0WC3vLVQWyTkSUrMv80Twg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YcbjC8vkt58Y82VHZbWK3WILZkEjk8WFdoL+ilgTrXu1/pTL/nEOxgVoTD3VLjL6D1Jsv6ohRkLO/GCd6TVDmV/cq4Ye3D5y54/0PbrVKdR8H5z84sD+k9DnsDDBiHJ9RjVxOs5wZAWROcq3qwXB8eXePp43MCeVGeiEQ00GsoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WpcpS45Q9z1HGvX;
-	Wed, 21 Aug 2024 15:07:12 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 73CD71400C9;
-	Wed, 21 Aug 2024 15:10:24 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 21 Aug
- 2024 15:10:23 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>,
-	<krzk@kernel.org>, <alim.akhtar@samsung.com>, <linux-usb@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next v2] usb: ohci-exynos: Simplify with scoped for each OF child loop
-Date: Wed, 21 Aug 2024 15:17:52 +0800
-Message-ID: <20240821071752.2335406-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724224744; c=relaxed/simple;
+	bh=o84DFjXdopf1GEHjki3SjwRSP/8hSIcIsUWtHhz+AAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CByxjBzSH7lYbky/V/5LPqjN6c41aXhl6Hmtf1B2RzxDIANDJXRHPHeh7E5BlXHaDD4aj9WtKs4XvPYlsX6ItvtohfrP+ghN//dDZV+VPZZ83O+9gFcn0YJI3fUNADELwA6xV3BYwhV27n5+F1MuULcZuYEskKiDRuzcUC0FT7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvtPzbLt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724224741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=knoOMJx067NkrODyMR3q3Y02Ir50QCnNCyZ9+YE+nPg=;
+	b=DvtPzbLtoNl6SYOJgxHz4XAAIsfEz2/7cssLoY2nykM2IjZp80TtQMCHBPNb4fgDDJcq8Z
+	KHxjj/fv3RYoMgflZ4JaRHm8J/b6m/sOnk6Gc1aU1envkx+pj1LYT8JIE2IyYxo9p+dnLV
+	CKr4/JOrg8+Yy2wnfsfbOZaV5lQEpGk=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-cZbh6H0MMkS9aUrWuBUjKg-1; Wed, 21 Aug 2024 03:19:00 -0400
+X-MC-Unique: cZbh6H0MMkS9aUrWuBUjKg-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a1d06f8e78so627474685a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 00:19:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724224740; x=1724829540;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=knoOMJx067NkrODyMR3q3Y02Ir50QCnNCyZ9+YE+nPg=;
+        b=k8hJMVjDfXLMObsFm5dx45CGymzwqQFMxn8n37RMatzZnEZA81metacAjuQKP3hTvK
+         n55ysTnM6rhYU8ShDltnjfbyPaC2eeIr9QmFCmTLkfT2AGglAk0Pr1MJRZBvD2MWKD/j
+         utDoQFYfTBSMQ9m4iB7gr5hFMdMvH+0ywnluiCWaiQdF+WJ+Cgf7+wih8eaB9sSX4elH
+         eCkPL8rs6ArYa6WXlz5lJFs/qM6nDu28GcpTfQkjRC7heQeL2lem8ZvVhau/V4Nwj9AN
+         QO06BbHi8eCbzZ96o594oowCaQvB8iJ+ZuZ49hiyYIFio2qE9PM8RjUtDEIINHfPQQQF
+         96gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWzZ4mhfmH3xsAUIydhcbBQA879uMV+ADruWIJL811BwaEKPCxgaM3e3S7LvHNE455CwNF982Nl8Gz7tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrEh5uSZeXayey3KbOwAyzQfCLXGBKGSruBqkseB4SFzLSdwAQ
+	9n9MYoQazxykZF5mx/JByeeth4R2ICripH1fI3h8TIv242G9JJpqkRgFs9SwN9HRpF/J9W6cxaM
+	0PKTCw2haZfgm37MoOh/usui/n60OXHgH4U6vGEkm0333221iNrV29PFCGFHGaA==
+X-Received: by 2002:a05:620a:462c:b0:79d:759d:4016 with SMTP id af79cd13be357-7a673ffb26bmr218725085a.11.1724224739689;
+        Wed, 21 Aug 2024 00:18:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFw1qO6+vz/sJKGh5yA34l/Px9L622Vwet6ke86rxp1KDhRugQHSlyN6hevOfH4OkiWcMWOug==
+X-Received: by 2002:a05:620a:462c:b0:79d:759d:4016 with SMTP id af79cd13be357-7a673ffb26bmr218721785a.11.1724224739226;
+        Wed, 21 Aug 2024 00:18:59 -0700 (PDT)
+Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff013ef2sm596207885a.11.2024.08.21.00.18.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 00:18:58 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Jens Axboe <axboe@kernel.dk>,
+	Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Keith Busch <kbusch@kernel.org>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH v2 0/9] PCI: Remove pcim_iounmap_regions()
+Date: Wed, 21 Aug 2024 09:18:33 +0200
+Message-ID: <20240821071842.8591-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+Changes in v2:
+  - Add a fix for the UB stack usage bug in vdap/solidrun. Separate
+    patch, put stable kernel on CC. (Christophe, Andy).
+  - Drop unnecessary pcim_release_region() in mtip32xx (Andy)
+  - Consequently, drop patch "PCI: Make pcim_release_region() a public
+    function", since there's no user anymore. (obsoletes the squash
+    requested by Damien).
+  - Fix bug in patch "block: mtip32xx ..." where accidentally BAR 1
+    instead of MTIP_ABAR was requested.
+  - vdap/solidrun:
+    • make 'i' an 'unsigned short' (Andy, me)
+    • Use 'continue' to simplify loop (Andy)
+    • Remove leftover blank line
+  - Apply given Reviewed- / acked-bys (Andy, Damien, Bartosz)
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
-v2:
-- Update the commit subject.
-- Spilit into 2 patches.
-- Add Reviewed-by.
----
- drivers/usb/host/ohci-exynos.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index bfa2eba4e3a7..1379e03644b2 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -37,7 +37,6 @@ struct exynos_ohci_hcd {
- static int exynos_ohci_get_phy(struct device *dev,
- 				struct exynos_ohci_hcd *exynos_ohci)
- {
--	struct device_node *child;
- 	struct phy *phy;
- 	int phy_number, num_phys;
- 	int ret;
-@@ -55,26 +54,22 @@ static int exynos_ohci_get_phy(struct device *dev,
- 		return 0;
- 
- 	/* Get PHYs using legacy bindings */
--	for_each_available_child_of_node(dev->of_node, child) {
-+	for_each_available_child_of_node_scoped(dev->of_node, child) {
- 		ret = of_property_read_u32(child, "reg", &phy_number);
- 		if (ret) {
- 			dev_err(dev, "Failed to parse device tree\n");
--			of_node_put(child);
- 			return ret;
- 		}
- 
- 		if (phy_number >= PHY_NUMBER) {
- 			dev_err(dev, "Invalid number of PHYs\n");
--			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
- 		phy = devm_of_phy_optional_get(dev, child, NULL);
- 		exynos_ohci->phy[phy_number] = phy;
--		if (IS_ERR(phy)) {
--			of_node_put(child);
-+		if (IS_ERR(phy))
- 			return PTR_ERR(phy);
--		}
- 	}
- 
- 	exynos_ohci->legacy_phy = true;
+Important things first:
+This series is based on [1] and [2] which Bjorn Helgaas has currently
+queued for v6.12 in the PCI tree.
+
+This series shall remove pcim_iounmap_regions() in order to make way to
+remove its brother, pcim_iomap_regions().
+
+@Bjorn: Feel free to squash the PCI commits.
+
+Regards,
+P.
+
+[1] https://lore.kernel.org/all/20240729093625.17561-4-pstanner@redhat.com/
+[2] https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
+
+Philipp Stanner (9):
+  PCI: Make pcim_iounmap_region() a public function
+  fpga/dfl-pci.c: Replace deprecated PCI functions
+  block: mtip32xx: Replace deprecated PCI functions
+  gpio: Replace deprecated PCI functions
+  ethernet: cavium: Replace deprecated PCI functions
+  ethernet: stmicro: Simplify PCI devres usage
+  vdpa: solidrun: Fix potential UB bug with devres
+  vdap: solidrun: Replace deprecated PCI functions
+  PCI: Remove pcim_iounmap_regions()
+
+ .../driver-api/driver-model/devres.rst        |  1 -
+ drivers/block/mtip32xx/mtip32xx.c             | 11 ++--
+ drivers/fpga/dfl-pci.c                        |  9 ++--
+ drivers/gpio/gpio-merrifield.c                | 14 ++---
+ .../net/ethernet/cavium/common/cavium_ptp.c   | 10 ++--
+ .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 25 +++------
+ .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 18 +++----
+ drivers/pci/devres.c                          | 24 +--------
+ drivers/vdpa/solidrun/snet_main.c             | 52 +++++++------------
+ include/linux/pci.h                           |  2 +-
+ 10 files changed, 57 insertions(+), 109 deletions(-)
+
 -- 
-2.34.1
+2.46.0
 
 
