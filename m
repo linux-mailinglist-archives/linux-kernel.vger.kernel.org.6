@@ -1,82 +1,87 @@
-Return-Path: <linux-kernel+bounces-295309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6571F95998F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:22:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E28B959990
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18EA71F21C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:22:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF892812AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9B820B33A;
-	Wed, 21 Aug 2024 10:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pF5kJcJY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112E31C4EF0;
+	Wed, 21 Aug 2024 10:07:07 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE0620B326;
-	Wed, 21 Aug 2024 10:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490A620B326
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724234728; cv=none; b=ZyaTL43/kNa+IIrPw+bxWZygIT3+pym11jFaDn9VRJDtC+i5d/2oa8X+FhusypjFU9tbHehuPFwmGkPcvZZNtkNjOcenzfPl8ZvTV2ISLA16VmHpJ2rIYHfwlRK7dO5GgJD+VgVoLG/7iZVeMpRWF7IHhPmzOTFA4jOSAWSli+U=
+	t=1724234826; cv=none; b=YTlvwT7ILNLtCdmg1TZsoToUzpQMfUEF4zr/t8RvFsBcwrO6o/8gQRpOzaoCoqvtOx3KlTtznX0tVL87DeidmZT43683n0sLG7AOBnnOlAC0CvZpL3jhBzapkDNfXU4O/l6Nv17sbvmOfAPhN6M1qGVEST3ULpbBFapCQEZGaCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724234728; c=relaxed/simple;
-	bh=Hqr8Mm8YpR3FTexCXxW6pfgLn7A4XKa4y4ZPd83+qXQ=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=dBdGirLKpxi1+7wvLz0eRQnsBU3CpOpqmwJKipVsiCyFJVdOXUag73j5iwE1eOFAz7Y3F3zK7qb2GewnVeUfkPhxg+dIP8QQf04zeiqbQJNeeNAIp+MAb7c5yUqhrfHI+YZoQuw0akJ5yvFWdbpfAevNToLwK1y90CSRRommpAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pF5kJcJY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5C8C32782;
-	Wed, 21 Aug 2024 10:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724234727;
-	bh=Hqr8Mm8YpR3FTexCXxW6pfgLn7A4XKa4y4ZPd83+qXQ=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=pF5kJcJYqTsm/4MCgcdJqMGcuFcS1vZx7xdLXTevJW1h/dpDATmSmSuuIdDZEWdVH
-	 8H4wsmwGcFJgHr9meB907n3WPsbb/kxah+ipnAVMzaVv498PYXhW/gRRsUrPWbVAxi
-	 u7mb63tiwFLV72ea5Ak01cEFxzy+ltlrW+LXEAYEtQpRirY6fNE8OnrTghAlv2vLSE
-	 t5STre/3L0FapyGqrL8YkI2RaMTHM7UVAWocziPzAVJkIHWJDlUKchbV57nxObdJRl
-	 n5VxgSXOdXtYE/CDJMTRf4F8SOCeGyR5bk9ox+zbzolZq/pxXB05Z8jKKTNevk7s5O
-	 TOvncUlNeAA0A==
-From: Kalle Valo <kvalo@kernel.org>
-To: Yu Jiaoliang <yujiaoliang@vivo.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
-  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] net: wireless: Use kmemdup_array instead of kmemdup
- for multiple allocation
-References: <20240821072410.4065645-1-yujiaoliang@vivo.com>
-Date: Wed, 21 Aug 2024 13:05:23 +0300
-In-Reply-To: <20240821072410.4065645-1-yujiaoliang@vivo.com> (Yu Jiaoliang's
-	message of "Wed, 21 Aug 2024 15:24:10 +0800")
-Message-ID: <87ed6igpi4.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1724234826; c=relaxed/simple;
+	bh=WVD+a5t4JKnRd0bd2ZHtirYT5BsuFkW8yH4Nfegncwg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=vCvp2YvC6dbmYTWbHSo7j0ZUAwEGJxlvsdTxophwyHe2WNQTr9bcHdd3IQLYAN6fp/OdZV2EdKyQ2aQhIxeqxfdN2hesMGp9nHisd3nm8eDZ4gAvfqt791Kj6yzl3DylOPggTMLSP0pG/hgEs9cTz1eYXq9RU7i80T9Gd+S9D2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d4c0fc036so36108035ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:07:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724234824; x=1724839624;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZ6TWlDbtMhTAjbnhH670EKsjBLH8OsCUfg8Uw0BwxI=;
+        b=p5pey1h3QT9blAJ9erpDyoPOCcOmYaw7cHdwS9DoN4P6hx/DnBSQYCI11VC4GeeoGS
+         bEOkB2uf7EKDprOoQGfmsxhr9SlbjDAYQVXgcSmMrhiztvNM6J5hV0F5uQUwJTO66dsb
+         16EAtUWndvHyRRYUEkJG7EE1FKpIULgelW39pBJ0wkDpDmpT/wKZ9yZ5wehTFrWmlBEz
+         NQzUbqUFRs+Nxc4zhaBA0lhZUH66hQbStzXq2vK2FY3zSMVY0EOuhy6O/AjqluMpQhHc
+         fs7d3pPC8kqIpsgvPOCuISpjmdU9gs+q5Wzc4htgS1pD68/FJ9sffBI8qORs5YuYrcZE
+         cjTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+N+1Yz02T8vdsbl64SlJPpwsW2la/FD9TyyNBhxsNGUBaYkNVkKH6YEYssGYgx5sab8DZfgUZwYNGpYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu95KFFAaoIzWNKNeineK1gjgZPnVVEShD/n2GxSIYMhLQG/ga
+	tOrltWymhVvxZltCttaugYmlg23PQ2bt9qfgO/g5Qe3SLEWBtOqXsA+m0lB+uQmpgLYbflpJm4E
+	2Af4L3U+FwMeYQtNsleXpZ4jVYbvk8toWahFHa+J+LV2xrvT/BN/I60g=
+X-Google-Smtp-Source: AGHT+IELMAzFxyRYHJ8oL+wi+H/ddHKO+SeHrKQMpVy4z+spNap8RXM8maC/UN4CNL38h16vv+0UzLZZLVR+7hURhE2iqvCCndZw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1fce:b0:39a:eb81:ffa8 with SMTP id
+ e9e14a558f8ab-39d6c5d63c8mr1699405ab.6.1724234824491; Wed, 21 Aug 2024
+ 03:07:04 -0700 (PDT)
+Date: Wed, 21 Aug 2024 03:07:04 -0700
+In-Reply-To: <tencent_51A2970236A44ACA743376A9662E3C833609@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000039389806202eb46a@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_setattr
+From: syzbot <syzbot+d78497256d53041ee229@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Yu Jiaoliang <yujiaoliang@vivo.com> writes:
+Hello,
 
-> Let the kememdup_array() take care about multiplication and possible
-> overflows.
->
-> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
-> ---
->  net/wireless/util.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-The title prefix should be "wifi: cfg80211:".
+Reported-by: syzbot+d78497256d53041ee229@syzkaller.appspotmail.com
+Tested-by: syzbot+d78497256d53041ee229@syzkaller.appspotmail.com
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Tested on:
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+commit:         521b1e7f Merge tag 'cxl-fixes-6.11-rc5' of git://git.k..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=143dc36b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=d78497256d53041ee229
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=103a87e5980000
+
+Note: testing is done by a robot and is best-effort only.
 
