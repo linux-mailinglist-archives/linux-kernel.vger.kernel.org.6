@@ -1,180 +1,413 @@
-Return-Path: <linux-kernel+bounces-295126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E308B959731
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:38:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962C9959732
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5D828218F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E931E283D6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5F1A7AD1;
-	Wed, 21 Aug 2024 08:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF121C4EC7;
+	Wed, 21 Aug 2024 08:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ty7KSoNg"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2067.outbound.protection.outlook.com [40.107.117.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOmYCkbe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91821B3B3A;
-	Wed, 21 Aug 2024 08:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724228646; cv=fail; b=q4KhUMoVL6myp/XVd6OQjJMPpTV242ERfXtkMMoUTHfppwULFHjr7OpDkBP5/h2WSC3I9grwlFS5CFd2P9kI1v2rAon8HNlsKhwhxP8tebEpQ9CPJhaO9Yu0tPtqC6gpsber5/W+bbDCTQi5/I0UjYAUZ79Nm12UcplKSTu3s7g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724228646; c=relaxed/simple;
-	bh=+pz7RFZ/INiP9v/4TXwcslRGm9cRrM8iVILgCFC1RTE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dp57dm4Vrg8DIzRqOBJsQNPqsNBMVmwTRN9QeWJojMfTr0Dj5wsxPyzpUd0YVHOR0Oa+eeJ2uWtQ5IJeUCm/jyz1PakhhpMSX40aGg3QmazZHkQEzNfsRJdw3GBJYgcYq/EefHfvf5WTBn2RMrxhTood3E2g8I4/0apgQXwthQM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ty7KSoNg; arc=fail smtp.client-ip=40.107.117.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U61lyE9Rp7tunEbC5ne3iOehi5RvuP8hqPA9+l05ksXDE7CCnkUsfdScO8MagKw+5DXhXYZNZFA2Z4HQIPvSavuJmH15Gy/DWt7vSNE1/ne8zFl6y/hxkOwtJAqgLGFab4v/ShlvChC+We7UjcQ/ZofRuDQByT0zo5DdfwdUx8uG4+wg0X2NxeIszrxLWMFllbj17MZGq89nsBV/5spA2VqfvZtf0jnSYe7uY+pBG823vyHEFdL3kA76TXhVQUvBUIUTPpXXD86nggxYkmDkKE1U23gbfniyaAVfOpLmmZa4E6PaqG9s0QW5a+brTj5vlysYxUn0AtI25NwgffTD/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0p6QXMM1OYggoSlXDzctKQAD8JfdqbCwORdkZrGlzwA=;
- b=Qphw/9eqNEwSxVJydto9dWO6VSRBycA/SSmEfBWBfz/IHOIsHy1kZeuWGtQiE9jT+0O6WDrh0PjQDe9rp0QG7c5gPzU4cmX3ghzp3tsnNwYwRNL+3T7bcbk9eLQCQ+JKoHkyivvkPAtzKeIaJ1dWRrANOtynQBCsJRutn0m+LZR8vID76lBvCHgrik0PFn4ajChrEx1DbtFWR72zBWxx3N14UUq6zwAUameJi1GgXnKw8HfGMcNHii0asm+p8HovX4VwOiy11ujxxdLQL1AkoByd/uDDlwEJ4EOtut/i6urPMuUSrVLBZ7nwzQA4IwM3nHMN3ghNwa7j/kC32hwY3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0p6QXMM1OYggoSlXDzctKQAD8JfdqbCwORdkZrGlzwA=;
- b=Ty7KSoNgK2t1hC3iwNPwZKTXmC2Pi5MoU+o60xSFaHHfKXgk2fiSt+EFVbkeE4tTuLVeUXGyU2wBbSNd6xzhgH8r/PZ1FCsxGNhkPebA3sv/IhkElz0Z4Lp4UhvqYwwH+a387cJnPQxUyMavPSfTZxAP9NPXDUtxiy9b8PfNiXkgNBZ3tTQGE9cYqz5DBaipapbHfEb7xj+7nyB9BXpKF3eOl+3PMwhBsaCqkhioj8UEbycHD4OT+Qm2y9dCc5ZO3dTg0XjlxiWXbnV9BZQyr8yCDAha80WEDL/6WFwwRciDQm63FWNfwP3P8TREPXIxBzq1ctLbvwCfSgDU+yR/Uw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by TYSPR06MB6315.apcprd06.prod.outlook.com (2603:1096:400:40f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.27; Wed, 21 Aug
- 2024 08:23:59 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
- 08:23:59 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Yang Ruibin <11162571@vivo.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1] drivers:mei:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
-Date: Wed, 21 Aug 2024 04:23:42 -0400
-Message-Id: <20240821082348.13026-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCPR01CA0163.jpnprd01.prod.outlook.com
- (2603:1096:400:2b1::8) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBFC1B3B14;
+	Wed, 21 Aug 2024 08:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724228658; cv=none; b=QYBNRHDVI8bN/rLo6Lq5clQfGPTDj+HYxmK/pyNBnQpIN495Ls81HvQ7X8hWC7WettrbvG9yLXiD/GcbERZxD3z6zp7HV+iXszRJFf47o2trTPJqHsCKL+WANkOasm4qv7032eNzVhDPoCXQEfiXBfRd90U6kd+NkjyyRQ+MowQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724228658; c=relaxed/simple;
+	bh=193S5yUTNX6z575L8AiMh2Frj7BOFYNe0j58eTMe0ns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lvXDtGglTCMuJRC9vqeZh9lm022BKqxU7TCx3D8cLrb9grycWSs//NWZCMwsIUEwKskMT/BEYjxRtOeUlbODAdJroftHRnO6tpc8E4Csdo5TIjsg1UJcczGXJjg95QO32P2xMj+ljoD7vVh0asKHNedhAaC2COaOk+7SDb6kBBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOmYCkbe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24EA2C32782;
+	Wed, 21 Aug 2024 08:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724228657;
+	bh=193S5yUTNX6z575L8AiMh2Frj7BOFYNe0j58eTMe0ns=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eOmYCkbekE8TDnXY7tJ63g8hozNAivgXyv8Qg+XW9917iPkq4X+DiZtH0sGJvJ1rH
+	 Oi0WeMxs7gg0GbCcf68A3InCa7kqXjJ7wKDBaYF9I2iM5tecdrMcgS2kBRHVvgnatU
+	 spvPbhzOgvr6YDFkiqd9k2/WjJ+i9zFX3KgpHMWKR0YO5wbcoa69+R7dbhhiOZ2Roa
+	 Z9BpGb6wj+rWuXqAX+sjsuzPDEd01x3ywe9NUiTGuCfJderp8ezzWgSEMP60TRNujQ
+	 uvFyBKj43CmnF5Dz/OBaIdFWwgkAwdUhZ8fQ2qVpg7Kg3cCTmsQtz0HTcyyHLsYyVx
+	 dCNCFRa5yHDXA==
+Message-ID: <2e7daf48-b09d-4336-af3a-af5233eab769@kernel.org>
+Date: Wed, 21 Aug 2024 10:24:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TYSPR06MB6315:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f88b682-f18b-495c-2313-08dcc1ba9aff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ueWL30EoLazCznBNqYbcTDYH6IP4NnXGBC6vOc3WCqoBwaLsJR9TyMODXCcr?=
- =?us-ascii?Q?yILeDoa4HIrWdFcIMCafPM3IUSV8SKYSif70EAaJnonnYOviFOtpRpBKBGqn?=
- =?us-ascii?Q?TAkYnQc1Eb5S06rwdCJeeAJTIa46d/fR0PljfuIOwrFuYSEDa03X9K+wvIHg?=
- =?us-ascii?Q?bPvvxiRhvr8Wj/w+tkSE9oxEyiIZP28EnR/q1BTudXTF/BISd7pmKlOPF6NU?=
- =?us-ascii?Q?JQ/AGl/7p2mhqJGbDvXYGMFFTwuoIGprjQTjIrzkO7/LiQLtqsODMblYD3nR?=
- =?us-ascii?Q?12Kw1eeMeJocjP+FrADC6FvN52AIpAltwUQM+vZXzH6+qA9YhiHDgNU2Qv0u?=
- =?us-ascii?Q?frx0qklErU+/VUAriVtfvthbqGN3kwnjWPMv0pJkSo1ZVidhdN+7MZeDEuyF?=
- =?us-ascii?Q?vU7RsPc8TGs5IdoHoteDCqVLsbIBsTxphfvrWl/gTrtkb2KhvZijqi2c5iaf?=
- =?us-ascii?Q?bumhjf+gi6j5CqoaJa0/7gB6EHCEuFpD6ds5ag77BI2t/BZhbBkGmM4uyzW0?=
- =?us-ascii?Q?YqFnW01MVCpPhYdirrZo9gciW64xgiF+TfAZgcptEEAcp/7pthtO8ZBfZax6?=
- =?us-ascii?Q?vxF8N4LikkNok6gKmFxNJxvBYdLCLK/egNAA4R50hsIpMDOZIls8CJ3pSxbu?=
- =?us-ascii?Q?3t9r2h/PPb+PN3k0LLTlWoFOia59r+ICtP5OgvB2AWDY/fL2/z2aDNE+ssNO?=
- =?us-ascii?Q?FppYrJpG1NSA0agSqMMxXYpkRDk6kxbkSnsUetC1LQnPISrLHmJqNhpQccDg?=
- =?us-ascii?Q?I85gKR8sLav8xCteOhXey5Ia0hb3GRsPBi/5dv9tnsEQI1zM6iW4rymbUd51?=
- =?us-ascii?Q?p3SBl229qfpjFQwX/DhOVHH5LlGXxePxdSuyaGRpQUzgOa6TMDYWeoYqkX72?=
- =?us-ascii?Q?4iEm4VTklgYYS0eFtfVltPwdBKxW3j0k8oWb9JNSVftE3VsQmsIKuLd1V1Fy?=
- =?us-ascii?Q?+PaR7VYAoFtPZd/euEGeeDQQNCglUAL4aLh3LalTVCrIGuczx5QQWBVg8Y0D?=
- =?us-ascii?Q?gLeqLS4QJWSidJ+tufBnnHqiTNcBmt18+g4o6f+3VQBn18KlsaRqTIUB34gI?=
- =?us-ascii?Q?VFA0WozcgB5cpKaYjHXZQmduZsuPgSRsXZhXo77qlWHfjMtYCnDYYGpF5wcc?=
- =?us-ascii?Q?TKxgEDEu1legR4/6WmYfullCXiO3TlV8njEQpn6rKBl1Sw62MVnnuIDGbufL?=
- =?us-ascii?Q?dOmCEOpUokHkAmeBSNzt988MBLNxZkvHSo6+QEgBDt0BsKHiUtQWK/aVT/7f?=
- =?us-ascii?Q?gVNYUVeOkGMjSvf9Evy6znjYsjWMkdVOGXFCdIZt9uem0lTEf11iBEfRCP18?=
- =?us-ascii?Q?Wl5hw5zDr5WUKG1isp5jLwj7DheCMNx5n2SZOCMuWBwjc6WhvdVg0xDZ6H5M?=
- =?us-ascii?Q?yTaqPFy17CJOV6Ix8GLijTONaJuefMHg2BN9HctQAajAO+Jjg7wM6OHSJUyO?=
- =?us-ascii?Q?2aBHpiPW7ps=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NpLDW6Wg+mV770iqP/XDHjABxlqXY6nLytJjaIn65lGD8QC3uX/lHawXdvbT?=
- =?us-ascii?Q?8qgBruNj8eV2MiTMhF5J/d3hA73FnMnOdPgxThgPrxATlSO6W4GXG2wMHUXK?=
- =?us-ascii?Q?CAbF2dgkPBXJeMhICoEqh+TK9zVpBxo3eBPYP74SbWK+ZZ0+PVO9yRcs4Ury?=
- =?us-ascii?Q?o/W7zZlp7aPLeiH5w0GLDmapx7O/rv/Ie1y4emsDbDIuZu92N56RwXtEcumE?=
- =?us-ascii?Q?6euFEbA9cKSDgb/IDkLRRgpEqHMFr3SRab35ExlpKuCvT59dCwi2TrcfDLFN?=
- =?us-ascii?Q?Le86iaI48S7PMw2opIxJ4kU/RVW9EdvptbjDp0K9HstS/GgUu3wid2CS2ktv?=
- =?us-ascii?Q?K3ovwtsRmZd26QTTtOUe96TvQlHWxBJ45iJ3eOPwgBpJ9Vtm24nnFKnOpCai?=
- =?us-ascii?Q?Dp82ZKesJgV4qAHja7RxNWQrQkZipVhqzhxU2qB/0xE6i/ZwO/4seSkBT7fN?=
- =?us-ascii?Q?JwoebuEIfeGDINs+WdwSllkkoBnYXIruIN/1vu5nfPFImx/EWOs0P91GHBua?=
- =?us-ascii?Q?Taatodwjqw3dizFi61hm6Zqjdr9Qp47Qd96b1AAeM8oL/1yQiiJfhPHGZbwf?=
- =?us-ascii?Q?RB/pfVw4Ry1MP2JlG1McyU8C2v9KaFl2kG/vSyAGGhPQsLHU3d6CMNhK0E5P?=
- =?us-ascii?Q?3n8EC3Jch7lfsbtWK1NB1XY2BkXPNea6Uu9FR/u6lHvCeoindFa6CpffYMIV?=
- =?us-ascii?Q?IawYPzERA3ePDXkv90i6xT+YxlXuAANPxoCXEkC8fMmr75JITqem1AwPgAo4?=
- =?us-ascii?Q?bh50WRqWZe0gJpADBVQdQy5IG+ftqZyYA0zWYbQo9cENYeHE1Ta+z03oAST3?=
- =?us-ascii?Q?EwxP1r3E6boqO6Z5TIxiqDPyJe4RCi2pD1w8r6P0YjMdGau1hCOjY3NvZTzv?=
- =?us-ascii?Q?QZLsxxXpIeXHrZ7KxYX0MoZiLakGHzXUC/vlVklHJy0DjnRee/QcItVq4jJR?=
- =?us-ascii?Q?QjXPSwbAS5zQo4zbSB/7as9YLET2v7uYkmtG8i+4SGbCI4cTwClJfM/NXAZH?=
- =?us-ascii?Q?r0ECKWvCjMEdVQWIsoacyORpjbOoxadK0VsIZmSwX97BzlHXcCzaeY1mADyh?=
- =?us-ascii?Q?hsjzMJ9VUCCuqsZEmBdxWTHdXH18hNXQLpjEIeK5X62X4HPhvIi491JP+gi8?=
- =?us-ascii?Q?lGUfqw1gbxeFY4pZ2XW9v2z2+VKpF8jjP+KxtiVUpRX9e1vZzcMB6I7reJIw?=
- =?us-ascii?Q?9Zk1UMLf/aXiDoKPS+TOzsMlRUQzkaAdMNsQxTliZkoV59HogIuJkLjKzjdG?=
- =?us-ascii?Q?3NiKeK8VVRIuPoZwJQ9JzbfHUKi4BjW6hdIhKviHaOZVmANnPlowytpLnUaZ?=
- =?us-ascii?Q?+Lt8GWu5O+ep5Gg3S0a4IHUHUbzrOEesTiJ/4TJ0AzXgsoyCEgB4j0o+7YTH?=
- =?us-ascii?Q?t5M2/JAeflvk5RlFcpm8agj0ecWex1stVzwjZsf4gawmtMckgIulH4oXHTDb?=
- =?us-ascii?Q?LoGUI8JL7b1eD4XmZf5N6qFsHokSlsI7RC3DXrQegGhwP5s/lpxYyG2cAOGX?=
- =?us-ascii?Q?ymnfcbLZCFwXh4FHJT6vLvVaPIQQCFPQfNgBmvJSkzQnIJy+ES8qJxy6WqUK?=
- =?us-ascii?Q?TlPfgeoqIafR0kGC33iJYD68NKf+L+/OrK+3M34K?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f88b682-f18b-495c-2313-08dcc1ba9aff
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 08:23:59.0182
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wtbWC9ZRgB1darc+rXEAizHFHmWIQ007uST5fAlGWxWp51lP7KzlThr77FbCqokeyr4+GjBZwTgmZoteMbbvWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6315
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] Loongarch: EDAC driver for loongson memory
+ controller
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>, chenhuacai@kernel.org,
+ kernel@xen0n.name, bp@alien8.de, tony.luck@intel.com, james.morse@arm.com,
+ mchehab@kernel.org, rric@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240821064728.8642-1-zhaoqunqin@loongson.cn>
+ <20240821064728.8642-2-zhaoqunqin@loongson.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240821064728.8642-2-zhaoqunqin@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The debugfs_create_dir() function returns error pointers.
-It never returns NULL. So use IS_ERR() to check it.
+On 21/08/2024 08:47, Zhao Qunqin wrote:
+> From: zhaoqunqin <zhaoqunqin@loongson.cn>
+> 
+> Report single bit errors (CE) only
+> 
+> Signed-off-by: zhaoqunqin <zhaoqunqin@loongson.cn>
+> ---
+>  arch/loongarch/Kconfig       |   2 +
+>  drivers/edac/Kconfig         |  10 ++
+>  drivers/edac/Makefile        |   1 +
+>  drivers/edac/loongson_edac.c | 208 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 221 insertions(+)
+>  create mode 100644 drivers/edac/loongson_edac.c
+> 
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index ddc042895..59d47053f 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -179,6 +179,8 @@ config LOONGARCH
+>  	select PCI_QUIRKS
+>  	select PERF_USE_VMALLOC
+>  	select RTC_LIB
+> +	select EDAC_SUPPORT
+> +	select EDAC
 
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
----
- drivers/net/wireless/intel/iwlwifi/mei/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nope, you should not select user-visible sumbols.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mei/main.c b/drivers/net/wireless/intel/iwlwifi/mei/main.c
-index 1dd9106c6513..d0438f9a9ab8 100644
---- a/drivers/net/wireless/intel/iwlwifi/mei/main.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mei/main.c
-@@ -1894,7 +1894,7 @@ static void iwl_mei_dbgfs_register(struct iwl_mei *mei)
- {
- 	mei->dbgfs_dir = debugfs_create_dir(KBUILD_MODNAME, NULL);
- 
--	if (!mei->dbgfs_dir)
-+	if (IS_ERR(mei->dbgfs_dir))
- 		return;
- 
- 	debugfs_create_ulong("status", S_IRUSR,
--- 
-2.34.1
+>  	select SPARSE_IRQ
+>  	select SYSCTL_ARCH_UNALIGN_ALLOW
+>  	select SYSCTL_ARCH_UNALIGN_NO_WARN
+> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+> index 16c8de505..60b1997f0 100644
+> --- a/drivers/edac/Kconfig
+> +++ b/drivers/edac/Kconfig
+> @@ -573,5 +573,15 @@ config EDAC_VERSAL
+>  	  Support injecting both correctable and uncorrectable errors
+>  	  for debugging purposes.
+>  
+> +config EDAC_LOONGSON
+> +	tristate "Loongson EDAC"
+> +	depends on LOONGARCH
+
+Missing compile test
+
+> +	default m
+> +	help
+> +	  Support for error detection and correction on the loongson memory
+> +	  controller.
+> +
+> +	  Report single bit errors (CE) only.
+> +
+
+Why double line? Drop
+
+>  
+>  endif # EDAC
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index 4edfb83ff..d6f2cfe7e 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -89,3 +89,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
+>  obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
+>  obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
+>  obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
+> +obj-$(CONFIG_EDAC_LOONGSON)		+= loongson_edac.o
+> diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
+> new file mode 100644
+> index 000000000..c639c11ed
+> --- /dev/null
+> +++ b/drivers/edac/loongson_edac.c
+> @@ -0,0 +1,208 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Loongson Technology Corporation Limited.
+> + */
+> +
+> +#include <linux/edac.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "edac_module.h"
+> +
+> +enum ecc_index {
+> +	ECC_SET = 0,
+> +	ECC_RESERVED,
+> +	ECC_COUNT,
+> +	ECC_CS_COUNT,
+> +	ECC_CODE,
+> +	ECC_ADDR,
+> +	ECC_DATA0,
+> +	ECC_DATA1,
+> +	ECC_DATA2,
+> +	ECC_DATA3,
+> +};
+> +
+> +static long idx;
+
+Drop, racy and useless. If you need ID, then use IDR but first explain
+what purpose does it serve.
+
+> +
+> +struct loongson_edac_pvt {
+> +	volatile u64 *ecc_base;
+> +	int last_ce_count;
+> +};
+> +
+> +static void loongson_update_ce_count(struct mem_ctl_info *mci,
+> +					int chan,
+> +					int new)
+> +{
+> +	int add;
+> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
+> +
+> +	add = new - pvt->last_ce_count;
+> +
+> +	/* Store the new values */
+> +	pvt->last_ce_count = new;
+> +
+> +	/* device resume or any other exceptions*/
+> +	if (add < 0)
+> +		return;
+> +
+> +	/*updated the edac core */
+> +	if (add != 0) {
+> +		edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
+> +					0, 0, 0,
+> +					chan, 0, -1, "error", "");
+> +		edac_mc_printk(mci, KERN_INFO, "add: %d", add);
+> +	}
+> +}
+> +
+> +static int loongson_read_ecc(struct mem_ctl_info *mci)
+> +{
+> +	u64 ecc;
+> +	int cs = 0;
+> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
+> +
+> +	if (!pvt->ecc_base)
+> +		return pvt->last_ce_count;
+> +
+> +	ecc = pvt->ecc_base[ECC_CS_COUNT];
+> +	cs += ecc & 0xff;		// cs0
+> +	cs += (ecc >> 8) & 0xff;	// cs1
+> +	cs += (ecc >> 16) & 0xff;	// cs2
+> +	cs += (ecc >> 24) & 0xff;	// cs3
+> +
+> +	return cs;
+> +}
+> +
+> +static void loongson_edac_check(struct mem_ctl_info *mci)
+> +{
+> +	loongson_update_ce_count(mci, 0, loongson_read_ecc(mci));
+> +}
+> +
+> +static int get_dimm_config(struct mem_ctl_info *mci)
+> +{
+> +	u32 size, npages;
+> +	struct dimm_info *dimm;
+> +
+> +	/* size not used */
+> +	size = -1;
+> +	npages = MiB_TO_PAGES(size);
+> +
+> +	dimm = EDAC_DIMM_PTR(mci->layers, mci->dimms, mci->n_layers,
+> +			0, 0, 0);
+> +	dimm->nr_pages = npages;
+> +	snprintf(dimm->label, sizeof(dimm->label),
+> +			"MC#%uChannel#%u_DIMM#%u",
+> +			mci->mc_idx, 0, 0);
+> +	dimm->grain = 8;
+> +
+> +	return 0;
+> +}
+> +
+> +static void loongson_pvt_init(struct mem_ctl_info *mci, u64 *vbase)
+> +{
+> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
+> +
+> +	pvt->ecc_base = vbase;
+> +	pvt->last_ce_count = loongson_read_ecc(mci);
+> +}
+> +
+> +static int loongson_edac_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *rs;
+> +	struct mem_ctl_info *mci;
+> +	struct edac_mc_layer layers[2];
+> +	struct loongson_edac_pvt *pvt;
+> +	u64 *vbase = NULL;
+> +
+> +	rs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!rs)
+> +		return -EINVAL;
+> +	if (rs->start) {
+> +		vbase = devm_ioremap(&pdev->dev, rs->start, resource_size(rs));
+
+Why you cannot use wrapper over these two calls - devm_ioremap_resource?
+
+> +		if (!vbase)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	/* allocate a new MC control structure */
+> +	layers[0].type = EDAC_MC_LAYER_CHANNEL;
+> +	layers[0].size = 1;
+> +	layers[0].is_virt_csrow = false;
+> +	layers[1].type = EDAC_MC_LAYER_SLOT;
+> +	layers[1].size = 1;
+> +	layers[1].is_virt_csrow = true;
+> +	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
+> +	if (mci == NULL)
+> +		return -ENOMEM;
+> +
+> +	edac_dbg(0, "MC: mci = %p\n", mci);
+> +
+> +	mci->mc_idx = idx++;
+> +	mci->mtype_cap = MEM_FLAG_RDDR4;
+> +	mci->edac_ctl_cap = EDAC_FLAG_NONE;
+> +	mci->edac_cap = EDAC_FLAG_NONE;
+> +	mci->mod_name = "loongson_edac.c";
+> +	mci->ctl_name = "loongson_edac_ctl";
+> +	mci->dev_name = "loongson_edac_dev";
+> +	mci->ctl_page_to_phys = NULL;
+> +	mci->pdev = &pdev->dev;
+> +	mci->error_desc.grain = 8;
+> +	/* Set the function pointer to an actual operation function */
+> +	mci->edac_check = loongson_edac_check;
+> +
+> +	loongson_pvt_init(mci, vbase);
+> +	get_dimm_config(mci);
+> +
+> +	if (edac_mc_add_mc(mci)) {
+> +		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
+> +		edac_mc_free(mci);
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int loongson_edac_remove(struct platform_device *pdev)
+> +{
+> +	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
+> +
+> +	if (mci) {
+> +		edac_mc_free(mci);
+> +		return 0;
+> +	}
+> +	return -ENODEV;
+> +}
+> +
+> +static const struct of_device_id loongson_edac_of_match[] = {
+> +	{ .compatible = "loongson,ls-mc-edac", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, loongson_edac_of_match);
+> +
+> +static struct platform_driver loongson_edac_driver = {
+> +	.probe		= loongson_edac_probe,
+> +	.remove		= loongson_edac_remove,
+> +	.driver		= {
+> +		.name	= "ls-mc-edac",
+> +		.owner = THIS_MODULE,
+
+Drop... that's ancient code.
+
+> +		.of_match_table = loongson_edac_of_match,
+> +	},
+> +};
+> +
+> +static int __init loongson_edac_init(void)
+> +{
+> +	/* poll only */
+> +	edac_op_state = EDAC_OPSTATE_POLL;
+
+Drop, unused. Clean your driver before posting it.
+
+> +
+> +	return platform_driver_register(&loongson_edac_driver);
+> +}
+> +
+> +static void __exit loongson_edac_exit(void)
+> +{
+> +	platform_driver_unregister(&loongson_edac_driver);
+> +}
+> +
+> +module_init(loongson_edac_init);
+> +module_exit(loongson_edac_exit);
+
+module_platform_driver
+
+> +module_param(edac_op_state, int, 0444);
+
+Drop
+
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>\n");
+> +MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
+
+Best regards,
+Krzysztof
 
 
