@@ -1,122 +1,128 @@
-Return-Path: <linux-kernel+bounces-295189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95988959859
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C72495985F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000BCB21AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D00E2836BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B062F1B7919;
-	Wed, 21 Aug 2024 09:02:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8ED3DABFB;
+	Wed, 21 Aug 2024 09:02:39 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98CF1B2521
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A89D1A7AEE;
+	Wed, 21 Aug 2024 09:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724230934; cv=none; b=rInFMkMc7ynAzrbBcXfCd+MCelu8ZVNzzM86wmmBrwO5fjhEJ0pQ67EkwqLVD8ertAiRCYXh6G2orK9Qs8abo1x3maRT/uDcw9lRm8gJFwoN/pXDrOGqjketbPWoOFmJpQ0R2StttgQ+pgf/17V10LjcRUjy2EmoEWfhmpusRms=
+	t=1724230958; cv=none; b=pi12j2if3fofGLxFm4IacKnTnh431ma70ISubipiak4CRYsyojgn1/ZTLn2Vz1RPaLwII3jTD5pBu+HaPLTVTYnvzWnQjEhBiLEEjFaGfH2qxqN2yf/ArL/l/r2g/BaYIKj6+JxjqmCkavIY3tVq6t+YIEyoKaW1JwfMA/q78bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724230934; c=relaxed/simple;
-	bh=U5HwwMjqfGtuk58O3Rrtok5IsvBrZgvKvLcBo0uJmzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fMJS4jKfz84RdBgRM+A0g0JfeZdfzJJwH/L/pqaES3RePj5g+JBR5UcdeXsJSres4jkdGVR3vP0NdAlIiCk8ueWswdAJoT+1C1CCRgPDbgmcW7yK40GDeA+LFVAuhiSQc64zR01e6qxok4vdjSvCBQ7dqFwoLCgebJd3W1Q3Hog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sghE1-00051f-0M; Wed, 21 Aug 2024 11:01:53 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sghDy-001yKm-B8; Wed, 21 Aug 2024 11:01:50 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sghDy-00FTBt-0j;
-	Wed, 21 Aug 2024 11:01:50 +0200
-Date: Wed, 21 Aug 2024 11:01:50 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 3/3] phy: dp83tg720: Add statistics support
-Message-ID: <ZsWs_qM-Y6GGLRwA@pengutronix.de>
-References: <20240820122914.1958664-1-o.rempel@pengutronix.de>
- <20240820122914.1958664-4-o.rempel@pengutronix.de>
- <20240821101622.3ef23d29@fedora-3.home>
+	s=arc-20240116; t=1724230958; c=relaxed/simple;
+	bh=FrYcorIHvoa4md3aogbTMt4d91LhPHFeYqxcGHX59iI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mYe25FRweTy3UoXO24f0S741ursRPKzSftveBJSUC8+EMV9MktpYAciMgxYqdH87wqxl15I6zJ9OARknsnmve/6R1hkNfDuSoGan0U5FkjtEsSSovcXceyYPumz2U7huqsIOZ9Vz+6gNrKmHnsP+ZBegSZcGhm8cIZaVXDqrQAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpgG74ldhz20lxd;
+	Wed, 21 Aug 2024 16:57:51 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3CC151400CA;
+	Wed, 21 Aug 2024 17:02:33 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
+ 2024 17:02:32 +0800
+Message-ID: <93639d68-e396-a782-410c-f7827dbd54f5@huawei.com>
+Date: Wed, 21 Aug 2024 17:02:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240821101622.3ef23d29@fedora-3.home>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v3 05/14] thermal: core: Move thermal zone locking out of
+ bind/unbind functions
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+	<linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, Zhang
+ Rui <rui.zhang@intel.com>
+References: <2205737.irdbgypaU6@rjwysocki.net>
+ <3837835.kQq0lBPeGt@rjwysocki.net>
+ <6bf771b0-d57d-5a8c-ec36-6f8a041695d9@huawei.com>
+ <CAJZ5v0i_Z43bLWsa9gg_SZFBURi1XrZn4Cnxurm8KCawAWqtUA@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0i_Z43bLWsa9gg_SZFBURi1XrZn4Cnxurm8KCawAWqtUA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
 
-Hi Maxime,
 
-On Wed, Aug 21, 2024 at 10:16:22AM +0200, Maxime Chevallier wrote:
-> Hello Oleksij,
-> 
-> On Tue, 20 Aug 2024 14:29:14 +0200
-> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> 
-> > Introduce statistics support for the DP83TG720 PHY driver, enabling
-> > detailed monitoring and reporting of link quality and packet-related
-> > metrics.
-> > 
-> > To avoid double reading of certain registers, the implementation caches
-> > all relevant register values in a single operation. This approach
-> > ensures accurate and consistent data retrieval, particularly for
-> > registers that clear upon reading or require special handling.
-> > 
-> > Some of the statistics, such as link training times, do not increment
-> > and therefore require special handling during the extraction process.
-> 
-> This all looks good to me, I do have one small nit bellow :
-> 
-> > +/**
-> > + * dp83tg720_get_stats - Get the statistics values.
-> > + * @phydev: Pointer to the phy_device structure.
-> > + * @stats: Pointer to the ethtool_stats structure.
-> > + * @data: Pointer to the buffer where the statistics values will be stored.
-> > + *
-> > + * Fills the buffer with the statistics values, filtering out those that are
-> > + * not applicable based on the PHY's operating mode (e.g., RGMII).
-> 
-> I don't see how this filtering is actually implemented, is this comment
-> correct ?
-
-You are right, it is outdated. My previous implementation had rgmii-fail
-status flags.
-
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+在 2024/8/20 18:27, Rafael J. Wysocki 写道:
+> On Tue, Aug 20, 2024 at 10:27 AM lihuisong (C) <lihuisong@huawei.com> wrote:
+>>
+>> 在 2024/8/19 23:58, Rafael J. Wysocki 写道:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
+>>> acquire the thermal zone lock, the locking rules for their callers get
+>>> complicated.  In particular, the thermal zone lock cannot be acquired
+>>> in any code path leading to one of these functions even though it might
+>>> be useful to do so.
+>>>
+>>> To address this, remove the thermal zone locking from both these
+>>> functions, add lockdep assertions for the thermal zone lock to both
+>>> of them and make their callers acquire the thermal zone lock instead.
+>>>
+>>> No intentional functional impact.
+>>>
+>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>> ---
+>>>
+>>> v2 -> v3: Rebase after dropping patches [04-05/17] from the series
+>>>
+>>> v1 -> v2: No changes
+>>>
+>>> ---
+>>>    drivers/acpi/thermal.c         |    2 +-
+>>>    drivers/thermal/thermal_core.c |   30 ++++++++++++++++++++++--------
+>>>    2 files changed, 23 insertions(+), 9 deletions(-)
+>>>
+>>> Index: linux-pm/drivers/thermal/thermal_core.c
+>>> ===================================================================
+>>> --- linux-pm.orig/drivers/thermal/thermal_core.c
+>>> +++ linux-pm/drivers/thermal/thermal_core.c
+>>> @@ -785,6 +785,7 @@ int thermal_bind_cdev_to_trip(struct the
+>>>        int result;
+>>>
+>> <snip>
+>>> Index: linux-pm/drivers/acpi/thermal.c
+>>> ===================================================================
+>>> --- linux-pm.orig/drivers/acpi/thermal.c
+>>> +++ linux-pm/drivers/acpi/thermal.c
+>>> @@ -609,7 +609,7 @@ static int acpi_thermal_bind_unbind_cdev
+>>>                .thermal = thermal, .cdev = cdev, .bind = bind
+>>>        };
+>>>
+>>> -     return for_each_thermal_trip(thermal, bind_unbind_cdev_cb, &bd);
+>>> +     return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb, &bd);
+>> If so, it seems that the for_each_thermal_trip() can be removed or no
+>> need to export.
+> I beg to differ:
+>
+> $ git grep for_each_thermal_trip | head -1
+> drivers/net/wireless/intel/iwlwifi/mvm/tt.c:
+> for_each_thermal_trip(mvm->tz_device.tzone, iwl_trip_temp_cb, &twd);
+Can we modify it for tt.c?
+It doesn't seem to keep two interfaces. I'm a little confused for that.
+> .
 
