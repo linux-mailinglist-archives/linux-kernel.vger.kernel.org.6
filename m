@@ -1,202 +1,175 @@
-Return-Path: <linux-kernel+bounces-294912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2557E959439
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9048B959410
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496901C21488
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E4F281D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A311684AB;
-	Wed, 21 Aug 2024 05:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401DE167DB7;
+	Wed, 21 Aug 2024 05:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BVx0UbgQ"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="MdscqpLD"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D59C1547CB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AB41799D;
+	Wed, 21 Aug 2024 05:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724218957; cv=none; b=jd3G0ugExs/D6Hyt6oy6cHAeUpXjYbtMfDgSMcFOpzgDy57tN1828Tp8vJtfce2RUDT/AEPVTlf6TJfIYRYzOevmpmmqMQ30YxUjLpf9MS5/P+cttqbbGdNZ1WoTf0tHYzeC4zaEnDzzzQrOmNN6s2VGO8jjEkky1EBX+PGPmvQ=
+	t=1724218218; cv=none; b=ud8kQTKfZd5lRlXFzSzYVb5wrsX04AqS9BprBHLMIgWQShB/i/rq8MEd90xfhZdavuBio2geGtEmVzlicnSH4NZAqpT6cPWzkYBZKOkcv3T1zIQFb3hrim1Z9yOrU987m/rBXQhL7MDs++qwNpNHEjencu9Ny3rVKH3yGceSKwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724218957; c=relaxed/simple;
-	bh=24nKDa2HoDT3211Np8XRUv0LTMaNqoDReSyYeOmRIkI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type:References; b=At3S7HuFTrM+wAzLXwWkpcEFaYmtczzFqJGNcZG8yM4GKup1JdbUbea/Bfk+Lc+fh/Mb1xKnK4/yd4wAf1+FAwwGcYwiD8RIjGRB4SWWJtiE/0aPzjkbIS5ni/kr1gqDyezD6STV54ffrtOfAcGi30DVwXV9ibOLyaRT0ybwSsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BVx0UbgQ; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240821054233epoutp01b09c0cd301763f83c3181a589c45b3cc~tqACmTciu1027610276epoutp01d
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:42:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240821054233epoutp01b09c0cd301763f83c3181a589c45b3cc~tqACmTciu1027610276epoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724218953;
-	bh=VHnNMvIcdgjE/R1tIeGb8sDSSqEjSXXpwIjbYZHbxFg=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=BVx0UbgQ6wHuCtz7rWWC5dWsHepcdQzCHJYeX6jt4JNgAxTD1uWnDfHIrMHwiNXV1
-	 budcwwGhcP1bs+NoFP0FRF0iqbpAVDXUm07z45XbCop1kTZdv7ZHjDJY52d+hVnAze
-	 eUypUo2Kr644jpTBFvmvxISXCeLhh0iUADXeu/wI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240821054232epcas5p28262726dde43d01dcc22944e9a68b69d~tqACBMZ4d2238122381epcas5p2z;
-	Wed, 21 Aug 2024 05:42:32 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WpZwl04Thz4x9Py; Wed, 21 Aug
-	2024 05:42:31 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DC.B4.19863.64E75C66; Wed, 21 Aug 2024 14:42:30 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240821052925epcas5p28f55bc6fed2ce4689c4d52f45601ab7f~tp0k4tO7a2051120511epcas5p2I;
-	Wed, 21 Aug 2024 05:29:25 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240821052925epsmtrp1c967157b9a26a352b2e18ae79284a4b3~tp0k1TkSq0077500775epsmtrp1k;
-	Wed, 21 Aug 2024 05:29:25 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-9e-66c57e46299e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EA.74.07567.43B75C66; Wed, 21 Aug 2024 14:29:25 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240821052922epsmtip1298c35023b69cce3f07e3caf14c16159~tp0ivpEOt2498524985epsmtip1X;
-	Wed, 21 Aug 2024 05:29:22 +0000 (GMT)
-Message-ID: <4a0ada8a-5247-4c1c-b938-a6ae034b04d9@samsung.com>
-Date: Wed, 21 Aug 2024 10:59:21 +0530
+	s=arc-20240116; t=1724218218; c=relaxed/simple;
+	bh=+hY+QvjNHcUaXmFIYgfl8JfiNk5GJ48nq6gt5nfRKh0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=qw4ySbha+do2CZkpymIZ0R6lHvcTnVghGw7SMf2rVgXZuZEVC0fU+gigsyNyYMkXDjJqgTyzGQJUIQkXK++vxoOFdJzvK4BmN64chpUgdOiaWKeiJQLlwjof0N/1H+0uwwbg5ajG4IZlkq/JaY8pqk4ADi5xgLcsS6vqDa4cQbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=MdscqpLD; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
- buffer address access
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
-	rc93.raju@samsung.com, taehyun.cho@samsung.com, hongpooh.kim@samsung.com,
-	eomji.oh@samsung.com, shijie.cai@samsung.com, stable@vger.kernel.org
-Content-Language: en-US
-In-Reply-To: <c477fdb2-a92a-4551-b6c8-38ada06914c6@samsung.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1724218213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qBPROWVCNA4kqd3RClKZ9ReWU1kkOK9WhAfFVNb34EU=;
+	b=MdscqpLD3jMUizYkxQz0m9LfFNo4CqMjeTm20byi8pcdgPea6XlyR7Z41YA6kVUoFQ1N4E
+	/xRc2wBgwzlMewFEEcHmaq/jQmdVEuxCACj8DjGXOrT9jZTOGDhkvzcK/CFzI9aokTf8uL
+	oJA9LnhUTVOaHTNWKDFG7nINiyj6BZrwW3tPgjWN9tIKOlhNNFLiRvOQIffoLl+JSa09st
+	YCz2PWLoRF8pU37NimdLgVUEVExqTieICl7EYvxkm2i3yH4XgBZ3yD+rUPdjkIRSna7hog
+	w+NR6z7y92nrXilJOBIcuT+DCMSZwMmVVKAAYfAmLNDu+GhQZew4WNSb43h+cQ==
+Date: Wed, 21 Aug 2024 07:30:12 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Keita Aihara <keita.aihara@sony.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Tim.Bird@sony.com, Shingo.Takeuchi@sony.com,
+ Masaya.Takahashi@sony.com, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mmc: core: apply SD quirks earlier during probe
+In-Reply-To: <14df2287d76a66927bd74d4c4dcb5c6d@manjaro.org>
+References: <20240820230631.GA436523@sony.com>
+ <14df2287d76a66927bd74d4c4dcb5c6d@manjaro.org>
+Message-ID: <e2a523f474ea1a4e800c8a19a185ff5e@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmpq5b3dE0g8lzLC3eXF3FanFnwTQm
-	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pwDFPu+k9liwcZHjBaT
-	DoparFpwgN2Bz2P/3DXsHn1bVjF6bNn/mdHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/g
-	eOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoBuVFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnF
-	JbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZPxb8YS5YKlyxoF+lgfELXxcjB4eE
-	gInEu40BXYxcHEICexgl3m5/zwThfGKUOH3lJzuE841R4su+jcxdjJxgHeda5zJCJPYySnS8
-	b2GBcN4yShyfe4wJpIpXwE5iwpG3YDaLgKrEgvbP7BBxQYmTM5+wgNiiAvIS92/NAIsLC8RL
-	HLm9lBXkJjYBQ4lnJ2xAwiICGhIvj94Cm88scJJJ4urSZWAzmQXEJW49mQ9mcwrYS8w7CdIL
-	EpeX2P52DjNIg4TADg6J/W27WSHOdpF4equJBcIWlnh1fAs7hC0l8bK/Dcqullh95yMbRHML
-	o8ThJ9+gEvYSj48+Yga5jllAU2L9Ln2IsKzE1FProA7ik+j9/YQJIs4rsWMejK0qcarxMhuE
-	LS1xb8k1qHs8JCa/2MI8gVFxFlK4zELy2ywk/8xC2LyAkWUVo1RqQXFuemqyaYGhbl5qOTzG
-	k/NzNzGC07BWwA7G1Rv+6h1iZOJgPMQowcGsJMLb/fJgmhBvSmJlVWpRfnxRaU5q8SFGU2AM
-	TWSWEk3OB2aCvJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamGbt
-	e2Jz72vqyc/r5vKYvHJNieJKVLge+/3t07O8Gjm/XtclJLRJful1WbQ7YH4l526NZJUH58yD
-	jW32vb59oi82OTHBddev+ODLOiu4nsxP5H2pU1L99/mP1MqJmyquVy/i/zRHpjrgX9m7gEOz
-	JKIZgv+/qeq8KeD7qKGz5zhT1OlF699W732rKn1+2gm9Cr/u0En3977/fEFzBt+cgBRBNePF
-	lhN7Ln1v+TktNrbK/OMSAzt94a3vlkrLq7wTvrBJIuQ6N8PS//0C5nNiGkIV5eoyr1/gML75
-	/90C56VbT0YuX6pwV1SudV6Fv435Pd6a0JTLyS3GARsuX8uVEg2UbnlUxZ3oy2uSorglSoml
-	OCPRUIu5qDgRADW3Y5RMBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSnK5p9dE0g/nTmS3eXF3FanFnwTQm
-	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pwDFPu+k9liwcZHjBaT
-	DoparFpwgN2Bz2P/3DXsHn1bVjF6bNn/mdHj8ya5AJYoLpuU1JzMstQifbsErowfC/4wFywV
-	rljQr9LA+IWvi5GTQ0LAROJc61zGLkYuDiGB3YwSk9sOMEMkpCVez+pihLCFJVb+e84OYgsJ
-	vGaUWLjKFsTmFbCTmHDkLROIzSKgKrGg/TM7RFxQ4uTMJywgtqiAvMT9WzPA4sIC8RLNk/cD
-	1XNwsAkYSjw7YQMSFhHQkHh59BYLyA3MAieZJPZd6WOGOOg8k8TUu7vABjELiEvcejIfbBmn
-	gL3EvJNLWSHiZhJdWyEOZQZatv3tHOYJjEKzkNwxC0n7LCQts5C0LGBkWcUomVpQnJuem2xY
-	YJiXWq5XnJhbXJqXrpecn7uJERxvWho7GO/N/6d3iJGJg/EQowQHs5IIb/fLg2lCvCmJlVWp
-	RfnxRaU5qcWHGKU5WJTEeQ1nzE4REkhPLEnNTk0tSC2CyTJxcEo1MJV5rVBf7WtROfvC9gNc
-	j2O05gvo1PAFlWY9um53ZMaZg6KzuFWTfgjOeiNzmmNzpv+fFZtiTRm7/ZjZ9WbMNxZ/dlJ2
-	gaNjQ1OAZuW57+VHhYpvGEpwmvDJn9nw68ahAw3NBoruU6f/0BMreOIrZ2i87NoexsfBR9Xl
-	rBuYXP4/UAlg5pl1f96O08tnbDxRvuHruweGB/Yb2h/oK+4p3db3pDNWqOZT8t9m0bT999hu
-	CXo//niEfcMSE/sPeh/mtxsEsn56tqlEhFW9fbsX06MnWzPOn9nV1bopQY+j7UOaw/7QtngP
-	6fh4rzrTSsYjYfI8WVOTpkp3NCxlc7hza8rRwK0bOM2ZTMR0db0PKbEUZyQaajEXFScCAAhL
-	WlsmAwAA
-X-CMS-MailID: 20240821052925epcas5p28f55bc6fed2ce4689c4d52f45601ab7f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe
-References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
-	<20240815064836.1491-1-selvarasu.g@samsung.com>
-	<2024081618-singing-marlin-2b05@gregkh>
-	<4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
-	<2024081700-skittle-lethargy-9567@gregkh>
-	<c477fdb2-a92a-4551-b6c8-38ada06914c6@samsung.com>
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
+On 2024-08-21 07:17, Dragan Simic wrote:
+> Hello Keita,
+> 
+> On 2024-08-21 01:06, Keita Aihara wrote:
+>> From: Jonathan Bell <jonathan@raspberrypi.com>
+>> 
+>> Applying MMC_QUIRK_BROKEN_SD_CACHE is broken, as the card's SD quirks
+>> are referenced in sd_parse_ext_reg_perf() prior to the quirks being
+>> initialized in mmc_blk_probe().
+>> 
+>> Split this out into a SD-specific list of quirks and apply in
+>> mmc_sd_init_card() instead.
+>> 
+>> Fixes: c467c8f08185 ("mmc: Add MMC_QUIRK_BROKEN_SD_CACHE for Kingston
+>> Canvas Go Plus from 11/2019")
+>> Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+>> Co-developed-by: Keita Aihara <keita.aihara@sony.com>
+>> Signed-off-by: Keita Aihara <keita.aihara@sony.com>
+> 
+> Looking good to me.  This fix allows sd_read_ext_regs() to have the
+> available information for not assigning the SD_EXT_PERF_CACHE as one
+> of the (un)supported features, which in turn allows mmc_sd_init_card()
+> to properly skip execution of sd_enable_cache().
+> 
+> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
-On 8/17/2024 7:13 PM, Selvarasu Ganesan wrote:
-> On 8/17/2024 10:47 AM, Greg KH wrote:
->> On Fri, Aug 16, 2024 at 09:13:09PM +0530, Selvarasu Ganesan wrote:
->>> On 8/16/2024 3:25 PM, Greg KH wrote:
->>>> On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
->>>>> This commit addresses an issue where the USB core could access an
->>>>> invalid event buffer address during runtime suspend, potentially causing
->>>>> SMMU faults and other memory issues in Exynos platforms. The problem
->>>>> arises from the following sequence.
->>>>>            1. In dwc3_gadget_suspend, there is a chance of a timeout when
->>>>>            moving the USB core to the halt state after clearing the
->>>>>            run/stop bit by software.
->>>>>            2. In dwc3_core_exit, the event buffer is cleared regardless of
->>>>>            the USB core's status, which may lead to an SMMU faults and
->>>>>            other memory issues. if the USB core tries to access the event
->>>>>            buffer address.
->>>>>
->>>>> To prevent this hardware quirk on Exynos platforms, this commit ensures
->>>>> that the event buffer address is not cleared by software  when the USB
->>>>> core is active during runtime suspend by checking its status before
->>>>> clearing the buffer address.
->>>>>
->>>>> Cc: stable@vger.kernel.org # v6.1+
->>>> Any hint as to what commit id this fixes?
->>>>
->>>> thanks,
->>>>
->>>> greg k-h
->>> Hi Greg,
->>>
->>> This issue is not related to any particular commit. The given fix is
->>> address a hardware quirk on the Exynos platform. And we require it to be
->>> backported on stable kernel 6.1 and above all stable kernel.
->> If it's a hardware quirk issue, why are you restricting it to a specific
->> kernel release and not a specific kernel commit?  Why not 5.15?  5.4?
-> Hi Greg,
->
-> I mentioned a specific kernel because our platform is set to be tested
-> and functioning with kernels 6.1 and above, and the issue was reported
-> with these kernel versions. However, we would be fine if all stable
-> kernels, such as 5.4 and 5.15, were backported. In this case, if you
-> need a new patch version to update the Cc tag for all stable kernels,
-> please suggest the Cc tag to avoid confusion in next version.
->
-> Thanks,
-> Selva
+Sorry, forgot to mention that this patch should, in my opinion, be also
+submitted for inclusion into stable kernels.
 
-
-Hi Greg,
-
-Would you like to provide any feedback or suggestions regarding the my 
-last comments mentioned above?
-
-Thanks,
-Selva
->> thanks,
->>
->> greg k-h
->>
->>
->
+>> ---
+>>  drivers/mmc/core/quirks.h | 22 +++++++++++++---------
+>>  drivers/mmc/core/sd.c     |  4 ++++
+>>  2 files changed, 17 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
+>> index cca71867bc4a..92905fc46436 100644
+>> --- a/drivers/mmc/core/quirks.h
+>> +++ b/drivers/mmc/core/quirks.h
+>> @@ -15,6 +15,19 @@
+>> 
+>>  #include "card.h"
+>> 
+>> +static const struct mmc_fixup __maybe_unused mmc_sd_fixups[] = {
+>> +	/*
+>> +	 * Kingston Canvas Go! Plus microSD cards never finish SD cache 
+>> flush.
+>> +	 * This has so far only been observed on cards from 11/2019, while 
+>> new
+>> +	 * cards from 2023/05 do not exhibit this behavior.
+>> +	 */
+>> +	_FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
+>> +		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
+>> +		   MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
+>> +
+>> +	END_FIXUP
+>> +};
+>> +
+>>  static const struct mmc_fixup __maybe_unused mmc_blk_fixups[] = {
+>>  #define INAND_CMD38_ARG_EXT_CSD  113
+>>  #define INAND_CMD38_ARG_ERASE    0x00
+>> @@ -53,15 +66,6 @@ static const struct mmc_fixup __maybe_unused
+>> mmc_blk_fixups[] = {
+>>  	MMC_FIXUP("MMC32G", CID_MANFID_TOSHIBA, CID_OEMID_ANY, 
+>> add_quirk_mmc,
+>>  		  MMC_QUIRK_BLK_NO_CMD23),
+>> 
+>> -	/*
+>> -	 * Kingston Canvas Go! Plus microSD cards never finish SD cache 
+>> flush.
+>> -	 * This has so far only been observed on cards from 11/2019, while 
+>> new
+>> -	 * cards from 2023/05 do not exhibit this behavior.
+>> -	 */
+>> -	_FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
+>> -		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
+>> -		   MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
+>> -
+>>  	/*
+>>  	 * Some SD cards lockup while using CMD23 multiblock transfers.
+>>  	 */
+>> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+>> index 1c8148cdda50..ee37ad14e79e 100644
+>> --- a/drivers/mmc/core/sd.c
+>> +++ b/drivers/mmc/core/sd.c
+>> @@ -26,6 +26,7 @@
+>>  #include "host.h"
+>>  #include "bus.h"
+>>  #include "mmc_ops.h"
+>> +#include "quirks.h"
+>>  #include "sd.h"
+>>  #include "sd_ops.h"
+>> 
+>> @@ -1475,6 +1476,9 @@ static int mmc_sd_init_card(struct mmc_host
+>> *host, u32 ocr,
+>>  			goto free_card;
+>>  	}
+>> 
+>> +	/* Apply quirks prior to card setup */
+>> +	mmc_fixup_device(card, mmc_sd_fixups);
+>> +
+>>  	err = mmc_sd_setup_card(host, card, oldcard != NULL);
+>>  	if (err)
+>>  		goto free_card;
+>> --
+>> 2.43.2
 
