@@ -1,236 +1,188 @@
-Return-Path: <linux-kernel+bounces-294887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E541F9593EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:14:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D0B9593F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D721B2262B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159B11C20E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EF7168481;
-	Wed, 21 Aug 2024 05:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160EA166F02;
+	Wed, 21 Aug 2024 05:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZbTF4V7o"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uqVFw0Z0"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2069.outbound.protection.outlook.com [40.107.93.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2021A1607A0;
-	Wed, 21 Aug 2024 05:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724217264; cv=none; b=ooXsZonXUgHHfxSPqQiBeza/arhxo3kUzujUWJ/3Lp8rzZpyVu1UMlSftmj7pSta1Cb67d2fVAM/HZPu3VzlpgA+aXeWyq1Hcx04h+C+OxwcOOsw7EbcRGFRGNtu6cchiPO8DQYidyQROS24AKIPX9O7xZVxELZjWwPYfRQV5OM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724217264; c=relaxed/simple;
-	bh=uWcBu2cP4fEBP+7/wX2l8aPoJbJZm4OVBRLLMRvp7q0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OYz6507tNJEOnqh+L2gLWpriN8Ds0J2qJ5lZ3A7AZAKGFxRGZpREUP56TAuCFTSD2QTKav3NP+vRwrOUg9WaBRB1BeovgP47MiRx61WI3QA6OtLdhiWNmomYHIRecRI1wdauTfpBiJ0sSwvpcG8fLConm6FI/s1Oyz22STAZzlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZbTF4V7o; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KElsE3019527;
-	Wed, 21 Aug 2024 05:14:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	92WtQ/8ikNRavgYPHOIrSZVPAxTW/OryDHZASa8WH10=; b=ZbTF4V7oHhMs3pDn
-	Rnbj36VwJXV2dAJ+o6GUsOdI6aoa8ekFB38J3bz8Hs6psWNgw7+CAXrO9RUQ9Nyq
-	sh6QBeUKVivGk2GDW7kxD8wjr/2ZG251CbDCDC0eCYOQbVX8pZHkyKakoYXQob9q
-	x7G/WSqrRIVwdGGDJZ9RFv3eaTEoE+gqDlDYZyavU5W24Z8UQ9wnSaRn8pX54Qmj
-	ZUwOfkMDdVKLe4neXMk284zXfyxfDNFeZe86iVJ9HCaMeLTK7eCdZ6Nex/y3WFDX
-	+2vdwZbXv9EfKdCnDTs+ay5sylM4oP+bjHm8/2RqsJXPJmyPoGhgKmHbj/YaXz+K
-	UlUKuQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414phvb1pm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 05:14:12 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L5EBwT010419
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 05:14:11 GMT
-Received: from [10.151.37.94] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
- 2024 22:14:05 -0700
-Message-ID: <9a40cce6-03cb-eea3-7621-7a89d0478a07@quicinc.com>
-Date: Wed, 21 Aug 2024 10:44:02 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EEB1537D1;
+	Wed, 21 Aug 2024 05:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724217315; cv=fail; b=DTq/ABX486dd6jBvD9quhnYRPceS4ZhOT0to/Qt4Ds8iWEC4deVP8/ehOePpiaP3FGchoxilMgjjTiwGfB1z1ahaW4lxrXPmX2hsDMCZEVuZ7OhMCZ9/iy1uxlejIlyMI1jNMyEIseO3F0rvEOKfqX/lxsqxN3jM4e/dT4txQSc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724217315; c=relaxed/simple;
+	bh=uYW2gcdVyYdIQn7P5ynkEb9L+OilIEU4FM3QBo+4aeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hbldGNWKM5gBkNdwj7yiML5KV07t059jy0woHuQ8FF5Jak1AR4N3nhSs1/FIpAPSpUPOZjET5VOse4xq3tHtBlMk5aL0mr3f8bRC6f+AI2UagRGqrp8AZsHAC1z62rsWh6Q73gKDebOHUf5OZ7rb91+DtpwCqBaAbW7CChTeSGY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uqVFw0Z0; arc=fail smtp.client-ip=40.107.93.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=caDgBGOgKWAjr3HY3iq4BYBd+B6U20akHmYBrIPKoiKxuo7Ser5lbzM+c0Y4bt1ch7CMVBVkUZoPns9+kZXU0P7YMqf/OP8xIJ4TpcEzUknVGxyyrIrd537yPNOXU3wUEawXd+/TVQd4Aq+dsmTavVcNpWyHGJndh6HlYXzg8piIU4jOMfagldJXL51eaCDcogJzfJmiWb5rBWS+z3q2BCWf9MHf2zHg9oyP8XUlOFD4631yRck+YJ/ruVVbD90tafeVZLV/SHOJXcy0Un4tA8Hi8WEm9K+uzSTu2vAbE5iGGmdsVyKHJd+SwLZTZRr8FotCqJTpEfn2VFQcVG6mpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L/029JKWXHwyGh3AWeRuPIpA3ZGxzzs9QkiPCNJrdP8=;
+ b=X611O6M6CUJHFMYG9f0KhhKSgPz/MDLgVSS+h2wJadxoAjZKxl0/g4+2xJfx2of6atfSRwZOtdDGYbzIaVAUntQEqVtp/WwsXcOtjwRt8L/FGXHF9ZX7N/tc2usIBBURLMMjQ0cwHvyzMgqTRRetLdAUDaPPQqeNtxGYywCBRWwMtUpHfpKo6jNmuuodVMMZRU+tEBZUBmrBqlYCV9Zy9rnD50K+9v1FkO1uwbHCj+yY+EiGzuQJqLzS2z7yfuMo1IDQyXhBnAMzk1OvBGt/6b98uSlw2Mc5weT/UblxTxX0irvWtc3rZalHDIXV1swYpu4dPLj5BEci6D3pNl5f1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L/029JKWXHwyGh3AWeRuPIpA3ZGxzzs9QkiPCNJrdP8=;
+ b=uqVFw0Z0vym48baiDDSycuHPqXLLyclBHHd6RW0pvqjJ1ND5dT41XFKQSr+IMCvscJgKq+tIg5xpNAK/YCslZi5DYD0GSmFyG5T10EAqvMPPnUHBL1iJFUH4bBWGYGJ9i7eLkFusvO3TKkpXHLY4/z3thBhyIQDZmgB0SEII7Jw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ DM6PR12MB4298.namprd12.prod.outlook.com (2603:10b6:5:21e::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.18; Wed, 21 Aug 2024 05:15:11 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%4]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 05:15:11 +0000
+Date: Wed, 21 Aug 2024 10:45:02 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, rafael@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powercap/intel_rapl: Add support for AMD family 1Ah
+Message-ID: <ZsV31mN9AIJBfCey@BLRRASHENOY1.amd.com>
+References: <20240719101234.50827-1-Dhananjay.Ugwekar@amd.com>
+ <877cd4vijs.fsf@BLR-5CG11610CF.amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cd4vijs.fsf@BLR-5CG11610CF.amd.com>
+X-ClientProxiedBy: PN3PR01CA0132.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:bf::16) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 10/16] crypto: qce - Add support for lock aquire,lock
- release api.
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <konradybcio@kernel.org>,
-        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <gustavoars@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_utiwari@quicinc.com>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-11-quic_mdalam@quicinc.com>
- <n625hyjcbiidnlskzlubrmrflguwyurq5rp4l2hsnqf2g2wzik@ftz4wvvifft5>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <n625hyjcbiidnlskzlubrmrflguwyurq5rp4l2hsnqf2g2wzik@ftz4wvvifft5>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TjIWyXe1PR617NdOa37k6HptcXx6-eUO
-X-Proofpoint-GUID: TjIWyXe1PR617NdOa37k6HptcXx6-eUO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_05,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408210035
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|DM6PR12MB4298:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05a10384-bf65-425d-c200-08dcc1a03b24
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fnKKNHJyAobJfC0buo96bM0HrsH0+/T/Nm41MwNg5lEVPAktuQFftrUTM9UZ?=
+ =?us-ascii?Q?pvmedZ1tZEXz0VdFBDDaMNtBa3pa2E7tJgCgD/qrD45PWPfB+nxPjeQMJht8?=
+ =?us-ascii?Q?W5dSzVm8IKTzprfZF+JddK+rEYfsJHNDJClecHmwNM/cTWG7bQ1baJbSjbdM?=
+ =?us-ascii?Q?++F8jO1l+a0nKG1S8bQdIhob475FoFTrJFdn9MMKO98v673XlXUqsQ7rAdLC?=
+ =?us-ascii?Q?lSSfh0BW1FqJEp73bfmfP7UWPYlUx6wE+rmN293Yz64wX03knXvzbf5roSuI?=
+ =?us-ascii?Q?keOnYbMSf7xCHmku4tK7aZvQzyaYUGspcG1rOp7IdVSp745qMu4393V1V9DG?=
+ =?us-ascii?Q?56KVUR1tFb/Y3+tGYgHvt7rFWaoRWJ24NvGCVyMbdztkDB1xxvFp0jGBEfov?=
+ =?us-ascii?Q?K/ttk4eOjTY3AgRAJp1xBKpV4Icg5y1x1mcM7SidgVD+0ujESbnm9OBzJPgX?=
+ =?us-ascii?Q?NwllajRDTFrA4bRG2lmj4QebAjAg6ROzin+kBX+CFU7Sy4T4pcjZz1QnLqkt?=
+ =?us-ascii?Q?FCylEBSKnIGzFGfnqh5rB3DgOVg1kgCZ6Shm58FZpul0PGicdhBC+MUwVRyE?=
+ =?us-ascii?Q?N41/qAZV04LAzfR0NeKW07P2PeEvHJXl20mtD4wCjLE0l8QmeN4rkkUGfM8t?=
+ =?us-ascii?Q?XmI5A2aw003dQccYKKr4gYyi49CVORVovNctIJQA3lc/01J49mqMwGmEVb+O?=
+ =?us-ascii?Q?8lsIzTfewp5PyBL0gWBTT1+tLKsfgJR/LDkNcVS0PWRiB1BPpIQpIcICG97F?=
+ =?us-ascii?Q?rdvFDgKgw+JPIamZIARr4L2pujNByK+frJrIliEYAkRD2wiN7ASuTtgOmCSY?=
+ =?us-ascii?Q?0XeLBUn7onCN7pgLW8eX25MOt76OaQYO/ew1qbZ2GJOvzkYovOrl7ZwnlLPp?=
+ =?us-ascii?Q?0+TuBCcR7lrZvbVuM3u5Dm5NVbJnP+EKXq/feD7pGp91tAYRz2H9oDVrpF6r?=
+ =?us-ascii?Q?LaTo3ZiT60jLtvOqvXjMCx0s5nh5fXaIwhpxiNUpFDEycIQ1SKQvi1/hk0WY?=
+ =?us-ascii?Q?7q1Q5/WNH9BghyfzHvoL2N2HS+2vDtTuJ92dBzdZG0ISQUb06p5YDT2lZr/g?=
+ =?us-ascii?Q?I39zIptGtXUOl+x9rq5M4OvrkpEyzNAqQI5SW+5qzEPr5V6lrQXzucSSfbMS?=
+ =?us-ascii?Q?zMZPUiIL5J7+08jg1NvKCLZ7y8MfSToGnGruXv2WRogVvmNo9DM7buXNeC5Q?=
+ =?us-ascii?Q?KoUwWn/IVmlRGeQB+ky0Uc7/QXM64yRIBnyEeXx0v86l7YN6It4/A6v+BK+V?=
+ =?us-ascii?Q?blGYpIEYlxa4zPcGwlEBXQsQke59liZBEirWl9Bk+x3w8wcVt5DJa7cQ6OEU?=
+ =?us-ascii?Q?8V9iNuTj6UZSI8Qr3QkBt/b84gVQ8l8CYXO5tpTQ7a3k3A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NmWiBmhSdd10M8z6mmaPVfPsnlNStg3mr+rmYWtYEzkzSO8fy2l8sLLa0fEp?=
+ =?us-ascii?Q?jBPSrOL9Fqi+icWNtpqpzuWn3OZHTbbOPa+gkKhVnkf1raAYVqhxbp16hSe/?=
+ =?us-ascii?Q?1VArTEydApR8ZRqH27X3kDeP3DMow0b/VZwdM2ZMWsaje7yG+DHYwlyfBqlP?=
+ =?us-ascii?Q?SiDogJzDWAwQcHkQfQDEoDnTv9Cc6pOgnT4npoXr2T9bwcAYWGZXkjGOEFtR?=
+ =?us-ascii?Q?txDfeJdHhWYMtrrXWNonlRi9rgS0Ns13eC2sD5MHvw/WBuf5GPxxrZJnpp8o?=
+ =?us-ascii?Q?1PmGOrO+uXmuzkneZYCrhVThHXrrqKuy1t1o0ZRJsoxTiIAvanzRB/TMkkXE?=
+ =?us-ascii?Q?3399uZqxz8hFgfyOk4ilnyw/g7fuz34nzT4AnVECope91rpSFqUqARqPK2le?=
+ =?us-ascii?Q?EApiWtP/kwQX6VTfM5Wg3CJUR3BykgBz3l4ddgXEmOIhCtUEjtNmaHAGDo6N?=
+ =?us-ascii?Q?r3uVjbYhkjcDADlgkVqQEMzh5Y0VFJKEs8Ra83uG8ihQljgM8zbm6R1V//Rq?=
+ =?us-ascii?Q?NX/+Kur/v+rNow3HHzuLiECnJsbKXRTi1EXWgi2J3Ht0q7mrwGHkKhCRHy1F?=
+ =?us-ascii?Q?FOBCjU7NYkxcbqF3uEMw9KyhEH+aa69lDYYoiWGPit4QGpyXj6ax2cBhv34a?=
+ =?us-ascii?Q?dclMwp/KO1nRZ8X3ONWKcOMtNaih2wRs+5rPwzA/SG2k/C12AUKn6RJZwRi3?=
+ =?us-ascii?Q?qEGxfwafko3HXNMB/r+jdCPdjWPk8GYM4xgS97tm48AjZLgsT2HN++JJuU6h?=
+ =?us-ascii?Q?lIqLwipL7uvx7JVFZyPxPoQ+N7ZE/EuUPSxb+PBHQNb4oOqFrqtDJvCPZDpe?=
+ =?us-ascii?Q?nV4pkdqp87nh1yD+b6cm2+KBhiciqG0LPIu+OfA0NEzbNAIRAH0D65OUx9/0?=
+ =?us-ascii?Q?iUvN0LCJhrLieuxaW7CmasaOqHqSn1rUA7Q06tNdm+gY5ipxzjLTPsyh6ryC?=
+ =?us-ascii?Q?Auxh/ogv/Joritg5VQXVQkEk5QzZaDFSliPx7Ywgx6lPdxQOXRZ817wc+Rlq?=
+ =?us-ascii?Q?mTwYHOlgQCpQ0t+DYf+5tVRFMJDW1h4gWxg8lkmeY5MzvexpBV8bYYjim3DC?=
+ =?us-ascii?Q?nBvToBEeokAWjkukMtD4zSY2YhVhvJyhwUO/GhZqZ/b6hyTDQhAOSUGpt1C2?=
+ =?us-ascii?Q?68p1sA2w1oWpjHffpaLjn5sVx6r9tt5ODWBf/+DhrU78JEujWPPCJ22ZE4RG?=
+ =?us-ascii?Q?CH0LZ0eVgNmtMFd6+pMaBnvlBI6xoOfyUUOQ/6X+EnAKO2B75ASMTihI19Mp?=
+ =?us-ascii?Q?FyHFXMzeKIyNO5xW/ai4p+Q6OEemR4YsZMUIV9SfHXr9V96D7MRsj0+8t28f?=
+ =?us-ascii?Q?jdZV+NCw2+g/mM2IHxif8TmI+aGZXvxiJu7Mdt4ZF2vc+p8IAH5fmMVLmMzY?=
+ =?us-ascii?Q?D7e2SVQ8t3plsucW6hVbyadAN49KONqmiosb5P4HWiQj4a/OVVQVituR8c1X?=
+ =?us-ascii?Q?BcW6gchB8kq7pMuskQ9T2qAo0FdDeGYdB/Brp0LLUPXzUZ4icr/pL1m0wMQ4?=
+ =?us-ascii?Q?uTPK2bbe15gqegXwVP+hOxfw9kQUjutUooXWZeXsP1daX82QwI4JfL8606qV?=
+ =?us-ascii?Q?WegEwQ5yi1GivFkqHPba0z5IUGEAQgtjTxBTp/OS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05a10384-bf65-425d-c200-08dcc1a03b24
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 05:15:11.2300
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Joyty0decz/7ThApH2sqZTg+eyy1LQHyqWrFS74Z5FqtdsSvpWDGCzWzUR/XJcPAvR8y4SyaKOC3ue3DQorDCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4298
+
+Hello Rafael,
+
+On Mon, Jul 29, 2024 at 11:36:15AM +0530, Gautham R.Shenoy wrote:
+> Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com> writes:
+> 
+> > AMD Family 1Ah's RAPL MSRs are identical to Family 19h's,
+> > extend Family 19h's support to Family 1Ah.
+> >
+> > Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+> 
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+Could you please consider this for 6.11 ?
+
+--
+Thanks and Regards
+gautham.
 
 
-
-On 8/16/2024 10:08 PM, Bjorn Andersson wrote:
-> On Thu, Aug 15, 2024 at 02:27:19PM GMT, Md Sadre Alam wrote:
->> Add support for lock acquire and lock release api.
->> When multiple EE's(Execution Environment) want to access
->> CE5 then there will be race condition b/w multiple EE's.
->>
->> Since each EE's having their dedicated BAM pipe, BAM allows
->> Locking and Unlocking on BAM pipe. So if one EE's requesting
->> for CE5 access then that EE's first has to LOCK the BAM pipe
->> while setting LOCK bit on command descriptor and then access
->> it. After finishing the request EE's has to UNLOCK the BAM pipe
->> so in this way we race condition will not happen.
 > 
-> Does the lock/unlock need to happen on a dummy access before and after
-> the actual sequence? Is it not sufficient to lock/unlock on the first
-> and last operation?
-   The locking/unlocking has to happen on command descriptor only, If we
-   need locking/unlocking on data descriptor then we have to use dummy
-   command descriptor only as per Hardware Programming Guide.
-
-   Hardware Programming Guide state as below:
-   Pipe Locking and Unlocking should appear ONLY in Command-Descriptor.
-   In case a Lock is required on a Data Descriptor this can be implemented
-   by a dummy Command-Descriptor with Lock/Unlock bit asserted preceding/
-   following the Data Descriptor.
-> 
-> Please squash this with the previous commit, if kept as explicit
-> operations, please squash it with the previous patch that introduces the
-> flags.
-   Ok
-> 
->>
->> Added these two API qce_bam_acquire_lock() and qce_bam_release_lock()
->> for the same.
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
->>
->> Change in [v2]
->>
->> * No chnage
->>
->> Change in [v1]
->>
->> * Added initial support for lock_acquire and lock_release
->>    api.
->>
->>   drivers/crypto/qce/common.c | 36 ++++++++++++++++++++++++++++++++++++
->>   drivers/crypto/qce/core.h   |  2 ++
->>   2 files changed, 38 insertions(+)
->>
->> diff --git a/drivers/crypto/qce/common.c b/drivers/crypto/qce/common.c
->> index ff96f6ba1fc5..a8eaffe41101 100644
->> --- a/drivers/crypto/qce/common.c
->> +++ b/drivers/crypto/qce/common.c
->> @@ -617,3 +617,39 @@ void qce_get_version(struct qce_device *qce, u32 *major, u32 *minor, u32 *step)
->>   	*minor = (val & CORE_MINOR_REV_MASK) >> CORE_MINOR_REV_SHIFT;
->>   	*step = (val & CORE_STEP_REV_MASK) >> CORE_STEP_REV_SHIFT;
->>   }
->> +
->> +int qce_bam_acquire_lock(struct qce_device *qce)
->> +{
->> +	int ret;
->> +
->> +	qce_clear_bam_transaction(qce);
-> 
-> It's not entirely obvious that a "lock" operation will invalidate any
-> pending operations.
-   qce_clear_bam_transaction() api is not going to invalidate any pending
-   thransaction. This is just an internal api which will set bam_transaction
-   structure to 0 before starting new bam transaction.
-> 
->> +
->> +	/* This is just a dummy write to acquire lock on bam pipe */
->> +	qce_write_reg_dma(qce, REG_AUTH_SEG_CFG, 0, 1);
->> +
->> +	ret = qce_submit_cmd_desc(qce, QCE_DMA_DESC_FLAG_LOCK);
->> +	if (ret) {
->> +		dev_err(qce->dev, "Error in Locking cmd descriptor\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +int qce_bam_release_lock(struct qce_device *qce)
-> 
-> What would be a reasonable response from the caller if this release
-> operation returns a failure? How do you expect it to recover?
-   If unlocking bam pipe failed means its a bam failure and we can abort
-   the current transaction.
-> 
->> +{
->> +	int ret;
->> +
->> +	qce_clear_bam_transaction(qce);
->> +
-> 
-> In particularly not on "unlock".
-   qce_clear_bam_transaction() this is just to initialize with 0
-   for bam transaction structure before any new transaction start.
-> 
-> Regards,
-> Bjorn
-> 
->> +	/* This just dummy write to release lock on bam pipe*/
->> +	qce_write_reg_dma(qce, REG_AUTH_SEG_CFG, 0, 1);
->> +
->> +	ret = qce_submit_cmd_desc(qce, QCE_DMA_DESC_FLAG_UNLOCK);
->> +	if (ret) {
->> +		dev_err(qce->dev, "Error in Un-Locking cmd descriptor\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> diff --git a/drivers/crypto/qce/core.h b/drivers/crypto/qce/core.h
->> index bf28dedd1509..d01d810b60ad 100644
->> --- a/drivers/crypto/qce/core.h
->> +++ b/drivers/crypto/qce/core.h
->> @@ -68,4 +68,6 @@ int qce_read_reg_dma(struct qce_device *qce, unsigned int offset, void *buff,
->>   void qce_clear_bam_transaction(struct qce_device *qce);
->>   int qce_submit_cmd_desc(struct qce_device *qce, unsigned long flags);
->>   struct qce_bam_transaction *qce_alloc_bam_txn(struct qce_dma_data *dma);
->> +int qce_bam_acquire_lock(struct qce_device *qce);
->> +int qce_bam_release_lock(struct qce_device *qce);
->>   #endif /* _CORE_H_ */
->> -- 
->> 2.34.1
->>
+> > ---
+> >  drivers/powercap/intel_rapl_common.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
+> > index 2f24ca764408..1622f1d6aed0 100644
+> > --- a/drivers/powercap/intel_rapl_common.c
+> > +++ b/drivers/powercap/intel_rapl_common.c
+> > @@ -1285,6 +1285,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
+> >  
+> >  	X86_MATCH_VENDOR_FAM(AMD, 0x17, &rapl_defaults_amd),
+> >  	X86_MATCH_VENDOR_FAM(AMD, 0x19, &rapl_defaults_amd),
+> > +	X86_MATCH_VENDOR_FAM(AMD, 0x1A, &rapl_defaults_amd),
+> >  	X86_MATCH_VENDOR_FAM(HYGON, 0x18, &rapl_defaults_amd),
+> >  	{}
+> >  };
+> > -- 
+> > 2.34.1
 
