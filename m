@@ -1,52 +1,59 @@
-Return-Path: <linux-kernel+bounces-294805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C27E9592B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:26:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED479592EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F5E1F2422F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:26:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE83FB22C30
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24065136328;
-	Wed, 21 Aug 2024 02:26:14 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF4612B17C;
+	Wed, 21 Aug 2024 02:34:05 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D391CAB8;
-	Wed, 21 Aug 2024 02:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C79A79F4;
+	Wed, 21 Aug 2024 02:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724207173; cv=none; b=GkmMFTClOkOT5JLkOEBFPmvCeDJmYFxX+dhSMDI3DaXM+ixSHP+YGSgCuQix4JeT/9gtTvt8wcDdPLExfDVHUe9SpNHSQEZs8+fH1SNp2YpY4hqBsbcNvkHOjATX3RfnZDieDZaGOvEOjuGOjbHLn9/SvR+GSPPpMNXSwgmT99Y=
+	t=1724207645; cv=none; b=EejM6RWYJjNyV4P5RuICSRAlBBR4do+3AjjEv1VsE9iFWN4WY2iw0xWSrLbdwuPL8Ann+uRULfRUF3J/5WwgZWQ7WhOtXdGIONAXjcLG+34yEbKEdnz4xYbnMZzbHm43/5VopH7WasyjWSASa4nlafQBPQGQwnJ0ix+z2S9UwK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724207173; c=relaxed/simple;
-	bh=yQMJjuO/BJYdld1tuMGXVh9vgQ8x/bEM2wmjjr8ymoA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pnM3DZ4CGF/gLkh/8dAyScHpVq5mRUpqTzkUoVyAJh15npmfjQbT/i/avUHzyQ7KaKJgs382owW/dI+wdY3CHn294cAFTPdrQM4ET61m4B17AR0UgrU8+NExuzFX1C4bVo8QVwYFo1iXb15DqsWptvTz4UT3K6SzN7KFu8+1S5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WpVWp4BDmz1xtrJ;
-	Wed, 21 Aug 2024 10:24:06 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id EAC50140154;
-	Wed, 21 Aug 2024 10:26:00 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 21 Aug
- 2024 10:26:00 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <arend.vanspriel@broadcom.com>, <kvalo@kernel.org>,
-	<johannes.berg@intel.com>, <emmanuel.grumbach@intel.com>,
-	<ruanjinjie@huawei.com>, <erick.archer@outlook.com>,
-	<linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>,
-	<brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] wifi: mac80211: Use kvmemdup to simplify the code
-Date: Wed, 21 Aug 2024 10:33:25 +0800
-Message-ID: <20240821023325.2077399-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724207645; c=relaxed/simple;
+	bh=OX9yCF8RGGtCUjG3EyIIWF87Au3IRhM/+D2JdgUTXgg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pal4UNkiKqlrkZ0aRNxCZxQahxzG9r25LxlZJO+2QwMn6d1j7KOUdX/GHFerxp9w8yiXajU9TUbKRrPOEkaVSNJtmD0DY7LYLkylE2pYZVkWluX4oPlbVL62WuXrZO8V56Y5B4DtKJBFzvD7bNxM9L1sFplacXUmU1olaCDQ5TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L0o3rQ029073;
+	Tue, 20 Aug 2024 19:33:58 -0700
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412uck3au0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 20 Aug 2024 19:33:58 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 20 Aug 2024 19:33:57 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 19:33:56 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <kent.overstreet@linux.dev>
+CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lizhi.xu@windriver.com>,
+        <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH V2] bcachefs: Add journal v2 entry nr value check
+Date: Wed, 21 Aug 2024 10:33:55 +0800
+Message-ID: <20240821023355.1619187-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <rtuy45ppvbi7yoighz2uvxwauotsyt5jr6kwfp4bsp2g43f342@k4hnm3xmqotz>
+References: <rtuy45ppvbi7yoighz2uvxwauotsyt5jr6kwfp4bsp2g43f342@k4hnm3xmqotz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,35 +62,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+X-Authority-Analysis: v=2.4 cv=SIcQV/vH c=1 sm=1 tr=0 ts=66c55216 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=f1XBeclc1n_UNk118noA:9 a=cQPPKAXgyycSBL8etih5:22
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: hlPzlC02xgZ_cl0IZ58Q8YgXguFpNByO
+X-Proofpoint-GUID: hlPzlC02xgZ_cl0IZ58Q8YgXguFpNByO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_02,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1015 impostorscore=0 adultscore=0 malwarescore=0
+ spamscore=0 bulkscore=0 suspectscore=0 phishscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408210018
 
-Use kvmemdup instead of kvmalloc() + memcpy() to simplify the code.
+On Tue, 20 Aug 2024 19:34:18 -0400, Kent Overstreet wrote:
+> > When journal v2 entry nr overflow, it will cause the value of ja->nr to
+> > be incorrect, this will result in the allocated memory to ja->buckets
+> > being too small, leading to out of bounds access in bch2_dev_journal_init.
+> >
+> > Reported-by: syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
+> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > ---
+> >  fs/bcachefs/journal_sb.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/fs/bcachefs/journal_sb.c b/fs/bcachefs/journal_sb.c
+> > index db80e506e3ab..db2b2100e4e5 100644
+> > --- a/fs/bcachefs/journal_sb.c
+> > +++ b/fs/bcachefs/journal_sb.c
+> > @@ -119,6 +119,11 @@ static int bch2_sb_journal_v2_validate(struct bch_sb *sb, struct bch_sb_field *f
+> >  	for (i = 0; i < nr; i++) {
+> >  		b[i].start = le64_to_cpu(journal->d[i].start);
+> >  		b[i].end = b[i].start + le64_to_cpu(journal->d[i].nr);
+> > +		if (le64_to_cpu(journal->d[i].nr) > UINT_MAX) {
+> > +			prt_printf(err, "journal v2 entry d[%u].nr %llu overflow\n",
+> > +				i, le64_to_cpu(journal->d[i].nr));
+> > +			goto err;
+> > +		}
+> 
+> no, you need to sum up _all_ the entries and verify the total doesn't
+> overflow UINT_MAX
+The overflow value of le64_to_cpu(journal->d[i].nr) is 18446744073709551615(for u64),
+or in other words, it is -1 for s64.
 
-No functional change.
+Therefore, the existing check for single entry is retained, and an overflow
+check for the total value of all entry is will added.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-index d86f28b8bc60..7717d7764d2d 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-@@ -1611,10 +1611,9 @@ int brcms_ucode_init_buf(struct brcms_info *wl, void **pbuf, u32 idx)
- 			if (le32_to_cpu(hdr->idx) == idx) {
- 				pdata = wl->fw.fw_bin[i]->data +
- 					le32_to_cpu(hdr->offset);
--				*pbuf = kvmalloc(len, GFP_KERNEL);
-+				*pbuf = kvmemdup(pdata, len, GFP_KERNEL);
- 				if (*pbuf == NULL)
- 					goto fail;
--				memcpy(*pbuf, pdata, len);
- 				return 0;
- 			}
- 		}
--- 
-2.34.1
-
+BR,
+Lizhi
 
