@@ -1,134 +1,96 @@
-Return-Path: <linux-kernel+bounces-295386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B34959A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C57959A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A0A1C20D92
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6261C21EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0036A1B7910;
-	Wed, 21 Aug 2024 11:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5731C3312;
+	Wed, 21 Aug 2024 11:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jTn8Fevd"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyLYUkKw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965F01B1D61;
-	Wed, 21 Aug 2024 11:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB901B1D61;
+	Wed, 21 Aug 2024 11:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724238636; cv=none; b=JHxS6EUK9W/m7iSd9ki9lqPu4FGYUJxnG8cfnoPnKWq7mlF91lxnxtOVpKqeuiESNaiebN5i7aueyYZXlgwunp4Goo7nhOPww2Y/ULgOo/IG2RH6Wqz2IKNi3GiBrqTylXLjrYoKubxLVPFkQetWCTU2fWg0azSosZ05UOkJMVo=
+	t=1724238677; cv=none; b=GKDHfsHqLqGRAVS48Ge80u9OD/t88NIFS+8ePHnSkAx85MFzMdA0JiXSxPdPeEY43SG5pRmgfcqn9e34ezdqKzBFTvoTCBlfh0TRUGF+TPJVPwtGKMHIa2a9408AIQ4gjZzhhx689pXWZADYIMqLkmZeLPwi30x5+5LYhVdGhak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724238636; c=relaxed/simple;
-	bh=wtyVza7pPG7HwH8Ffygep8fUL40eT3JGcHBxzpvlNwk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QqxC2Osr+A1og4jv5CuCOKmEiL3duuAgRH5He6kEaFKvhgVem0KVVz5MAslehQegAxDVEFlGCeBpBFYW0+W+bOo8YK0+gXWZ80TglI5c6a7Atc1N12/kORkaWpg+/oEpH+fkZhnd6Zz25TER1C2kEOHzHXtZi2w5R2a5YJk2NXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jTn8Fevd; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LBASoh097212;
-	Wed, 21 Aug 2024 06:10:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724238628;
-	bh=T3FjfbTMeOH7tN5HUO7GXQ7+Mttu5fF++DxNH+J9BRc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=jTn8FevdHtDr+cEBXFR/Q0jWd3HbF6ZYQv3tAj8MX9cU9oPD1PJrJZ1Fb7/4TlP/p
-	 /dLpH/b+LhpoZAvPI+UxNYEgYtB0965s2jCPNJJgmYpEjPaPNMzhm1xy7yiFss1m7S
-	 b3wdxD7SktGoHrvscjlGRRrFqonVUkOpE7FLDDYQ=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LBASMw081609
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 06:10:28 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 06:10:27 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 06:10:27 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LBARSL001818;
-	Wed, 21 Aug 2024 06:10:27 -0500
-Date: Wed, 21 Aug 2024 06:10:27 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Andrew Davis <afd@ti.com>
-CC: Hari Nagalla <hnagalla@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <bb@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 3/4] arm64: dts: k3-am62a-wakeup: Add R5F device node
-Message-ID: <20240821111027.6kx57jftp67ksx52@boxcar>
-References: <20240820104034.15607-1-hnagalla@ti.com>
- <20240820104034.15607-4-hnagalla@ti.com>
- <b6b341a7-5ee2-4a89-82c6-e863a9556654@ti.com>
+	s=arc-20240116; t=1724238677; c=relaxed/simple;
+	bh=NP2vT5XV0h7oRJk4j4u7B5zSDwT0M9sYHrdts5GFKCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fwpz4r6c8mDyDYGvFAhSN3aIK9sqPE3RzWbcyxFsMMNjyzwSPi9OmPxIUo8J6HjqfFjomOIpFcUDkTF+sZYi4Me5X9cDbBkHGkuylA/6UMQ3RzmNrNuVWAjo7xBZ6azO3TkoZ797jT88kXwGNLLwuRug52wjnTVHAi4wOg1PEUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyLYUkKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1845AC4AF09;
+	Wed, 21 Aug 2024 11:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724238677;
+	bh=NP2vT5XV0h7oRJk4j4u7B5zSDwT0M9sYHrdts5GFKCc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PyLYUkKwrm0Zss1jyDFZumT0v4dq5VaSIwPQ24LDfKxqmpvjcgFYOLffxAKdTevd6
+	 zRviQ7qGlntPKjFWVQ4URzW2Mm0o6iUmzgK8J7DdMKYcuEcHeLilgsVn2mAB1KI1XD
+	 2X36KgMkch+r+z1XhBesUxksl+0U3ILwebfMgMfYvbUwpFd21PiIhn0VjKEzH/8su1
+	 XrM9zvbiZ/x4ldW6APvMtZBAaTqIXzH8b0Gbj+15uDGpggiWeALsuRxg6vEGoQJHto
+	 zpw47XcpfqWxBVNzev3Rtv7GoHGrMUAoWZS8nkkqH0u0xmP52kIWNKBb4KA7y/WeFF
+	 pMjenISyFlNWw==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-27032e6dbf2so2426942fac.1;
+        Wed, 21 Aug 2024 04:11:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWMvHZZkZYUgwKVctcRwxJPTvBzH6I5sHj5fbvC3aGFU2zhojmABWz4ydgZRQHaKrEDw3CE7tVBvcwbIi4=@vger.kernel.org, AJvYcCWUVHhpucx8Et/NOAu0PgJwtpC2/kwhaoX7Ih7OWZZNY7C1/tmkxXoO9R2h6p0jr7M0lg80LD69H/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjqjcuq8UZa03jFY4NSD59G5DaH56lajcgf4jQNmL9VVK36wIQ
+	7NJ4PNFEL2zouqDLvwoSMd7iiminvhogeuWhS4YvadAL6sndD4Q3ItC5wPhy8NZm+JjC2sN8GEL
+	aoZV2IZyvFyJfDmUKL2qbBMphkOk=
+X-Google-Smtp-Source: AGHT+IHTmYRIBJiKwg+iQ4yRJlRdPKZl8el3PfalFXSkxxA2kOksoEND2zF0c5bTykdRb0/+jUBusQO/xky7rlj3CI4=
+X-Received: by 2002:a05:6870:b289:b0:25d:ff1b:3793 with SMTP id
+ 586e51a60fabf-2738be316damr1918813fac.35.1724238676438; Wed, 21 Aug 2024
+ 04:11:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b6b341a7-5ee2-4a89-82c6-e863a9556654@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <2205737.irdbgypaU6@rjwysocki.net> <10527734.nUPlyArG6x@rjwysocki.net>
+ <c01ed2d7-964d-4b75-9a8e-8325d4cc9269@linaro.org>
+In-Reply-To: <c01ed2d7-964d-4b75-9a8e-8325d4cc9269@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 21 Aug 2024 13:11:05 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gQvSouUcEH7CtxZptKHbRyy4=Nes_SjqAW0S7jOJXHqA@mail.gmail.com>
+Message-ID: <CAJZ5v0gQvSouUcEH7CtxZptKHbRyy4=Nes_SjqAW0S7jOJXHqA@mail.gmail.com>
+Subject: Re: [PATCH v3 03/14] thermal: core: Drop redundant thermal instance checks
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10:13-20240820, Andrew Davis wrote:
-> On 8/20/24 5:40 AM, Hari Nagalla wrote:
-> > From: Devarsh Thakkar <devarsht@ti.com>
-> > 
-> > AM62A SoCs have a single R5F core in waekup domain. This core is also
-> > used as a device manager for the SoC.
-> > 
-> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> > Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> > ---
-> >   arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi | 23 +++++++++++++++++++++
-> >   1 file changed, 23 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-> > index f5ac101a04df..c4319986e660 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-> > @@ -76,6 +76,29 @@ wkup_rti0: watchdog@2b000000 {
-> >   		status = "reserved";
-> >   	};
-> > +	wkup_r5fss0: r5fss@78000000 {
-> > +		compatible = "ti,am62-r5fss";
-> > +		#address-cells = <1>;
-> > +		#size-cells = <1>;
-> > +		ranges = <0x78000000 0x00 0x78000000 0x8000>,
-> > +			 <0x78100000 0x00 0x78100000 0x8000>;
-> > +		power-domains = <&k3_pds 119 TI_SCI_PD_EXCLUSIVE>;
-> 
-> Need newline here.
-> 
-> > +		wkup_r5fss0_core0: r5f@78000000 {
-> > +			compatible = "ti,am62-r5f";
-> > +			reg = <0x78000000 0x00008000>,
-> > +				<0x78100000 0x00008000>;
-> > +			reg-names = "atcm", "btcm";
-> > +			ti,sci = <&dmsc>;
-> > +			ti,sci-dev-id = <121>;
-> > +			ti,sci-proc-ids = <0x01 0xff>;
-> > +			resets = <&k3_reset 121 1>;
-> > +			firmware-name = "am62-wkup-r5f0_0-fw";
-> 
-> resets and firmware-name should go before vendor specific properties.
+On Wed, Aug 21, 2024 at 1:01=E2=80=AFPM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 19/08/2024 17:52, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Because the trip and cdev pointers are sufficient to identify a thermal
+> > instance holding them unambiguously, drop the additional thermal zone
+> > checks from two loops walking the list of thermal instances in a
+> > thermal zone.
+> >
+> > No intentional functional impact.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>
+> I'm wondering if the thermal_instance 'tz' field could be removed too ?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
-
-> 
-> > +			ti,atcm-enable = <1>;
-> > +			ti,btcm-enable = <1>;
-> > +			ti,loczrama = <1>;
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+It is used in a debug printk in __thermal_cdev_update().  If that
+message can be dropped, then yes, but that would be a separate patch
+anyway.
 
