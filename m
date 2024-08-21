@@ -1,185 +1,199 @@
-Return-Path: <linux-kernel+bounces-296096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654A295A58C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:54:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DF495A590
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149FE281571
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:54:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF4D1F2220C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF52416F0F0;
-	Wed, 21 Aug 2024 19:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6E016F27E;
+	Wed, 21 Aug 2024 19:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z8TzT3kq"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2059.outbound.protection.outlook.com [40.107.105.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DLgv/kM/"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0975A137745;
-	Wed, 21 Aug 2024 19:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724270081; cv=fail; b=ddW4QulwYeIA7EOucqMjLZUlhU/EMsjqNKGDRYOGwFU2drIHzsu338hpHvNrZdhOUPM9w89mzRLN9BEOmjcONgsLXH1Q/6al2UVwRcexEGVMlbSqV8KKoiqfefbXcgjUr25Qz5kJ5aU6S7GAu24EP8RyLy+9Q8R7Wx4MTHpQJWo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724270081; c=relaxed/simple;
-	bh=YNWUNbEqQP/+d1xIm+T7JYlhMpkMyZKGlYjFFsOW6nI=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=XZn4gydTwBS4qHnKnoHH+QcIEUCdQGwA2yWA3rrHnPaYIfXa3JrfLF1i59O2X2qx+JtVu1bgxmkU8JNWJYGAOlglgkQ8Ekuu1tp5ikVIyM34/Jz21tf4CRTlHYo6vZRL3hsur28uHnyEF53MkjFrFQCQbJO0iDTNhC+n0QQCXVE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Z8TzT3kq; arc=fail smtp.client-ip=40.107.105.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HUwCBdx+7jTq4VkpOOxTFmfueT7YuXJ0wUS1J8WrsElj4hJWT86javvI3aTM8/F5O9oBPBkcmyimpNXOJyqxMJx7e6i0AtoFF3qOqImGI58TKMkV9Bn74wAA1g0clKk73D6x61i79ITupLGkSR9XLiMZoNHQDGsSsBl5yY1UcpLMukW2Mgs+uuuKkmpXashyOxEHlTgg171vUCC6ht7BsPf/L9/3mKVojFDH2to1eAja+B4U477JPKsuTB+U1Sk0cDyTWRznV16CLi1Mcd+qdENFeMPZOYiT1beDCJRzMaX+kbtuMeubFkXXbZ2kUgNP8fI+k0Zd5aKPfPIgSAk3Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sXPu4iuoyvubmSQ0rIDKVrEZR5ROy2M4fK6tAy8BsiA=;
- b=tZWSG0fMO8ERNEJORwMSC+nXLX067Gqi9lrki047qfM2EKuoFdli3FEsDlquAneY4MvXz42ktuYqRiqvPCqydYWB8qBMfMSJBGcbsoSInmPDz1slvMMCsYXnxKdKhYTnrmvmGxqcbVCdtfKTxIIS6wSoTFGkVxuZb19TezQT2o0+OzH/8AlMZ5/70yFFxsJsQjR1tEY9u8B8NqUSpwBgI5E9O2g5ftxsEbjmZB/j8QkkX2zYhsoMxwWxcvs6GA0opkVr/DyHaveS1CpEvydQBiubk6c/uimehLFzuQMU3tn2z6uj49s4HDap7+Rmv25gVtxyQuhtd+icAEAM37Ftew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sXPu4iuoyvubmSQ0rIDKVrEZR5ROy2M4fK6tAy8BsiA=;
- b=Z8TzT3kqWzYcwCHlnB03UVxtYSqCBeMiZmqaTHZ6XplLbc5WGCOpAOVdW/o21nnUxSlC1lpLL42Nn6W2f+wDvkxqyjTU8AQHe6WA0CMosi+/QFEylZEJXBovMyQuEcxgpcYg7Qso3tfPslq90QAv4SpSavq2IUcpbj/GIFoQ7Jt6/GI9wv+DsCV9uywwkg+834ISCMxvZ8A1XEanzoUtKoaPSMG/P2AQSWxe4A2ymr4TN8dYapC6Pf+s3lF+UItWEsU/AU4EyZNyalD9ZdOjS/APeLfRRZePLYJYFJJRIcEUg0h3K/ktGuG8uYg9k5a0U2z6ICawPJE3Qa+JnYeTCg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI0PR04MB10320.eurprd04.prod.outlook.com (2603:10a6:800:21a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
- 2024 19:54:35 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
- 19:54:35 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Walle <michael@walle.cc>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v2 1/1] dt-bindings: nvmem: sfp: add ref to nvmem-deprecated-cells.yaml
-Date: Wed, 21 Aug 2024 15:54:19 -0400
-Message-Id: <20240821195419.581889-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR03CA0010.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A64137745
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 19:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724270366; cv=none; b=byPxNVIMDLUY8yZO0nbl4F2ZIzhWBKBbUqb6HX2GJW4KZ9S/Q+C1/HpTmyCyx1LQPCjqx2uBgmZugBmlOoVtEnttaHRsT1+SkOdfvJDn+GIdsagj3J39bMtHQpoVW2U7VPPNJsH9aK5V2REmSJRBAfSe1QRohwfn6M4GUG3nwKE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724270366; c=relaxed/simple;
+	bh=rRUyQp6SqgqIrIH5sHd1N/M+82q6xEb5aLXq05EJ7zE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HOu42fjNDVsnNaSeT80EbqcKlBtiiSpmI/JXEAnGSPu+gLdfeWaUyT/Gw15KQ3LosaP0EcyjEus5Q9xRekaotF31WkzEovXqO7anBwBuFtLgqVU/EEBxl420iNa7nqO2UyoT53KailZIalKqLvPVbRw4kLxAMOsNAW2gDAfQUVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DLgv/kM/; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-371a2dcd8c2so2843f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:59:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724270363; x=1724875163; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=y8RoeL6EWUdnN80iwzlSkgz19tRYLmIcf4aR/4JykoU=;
+        b=DLgv/kM/JqlvrlmQPE/+dTcU6IzvhPlD1GLWNZk5WZzWIlC9XJn22xRaBvKuvXi2H2
+         WKQ7HHJCID3jsIN9XiPix84Z3u4owiGWUG+DYfwjiM5aAwIuG5sXaCEWKE/UZkUwrgqD
+         48D2ddSwfJnRNZ4DWkv+HFLU7s49p8ON9Nf03cY3NLATQe9/MlUNYyod5Lw0qPPYTnpe
+         P/KPDj3C9gyggZRI8NUptLarInCI9XuCkhvnwl3fKSyExcVbbJByUzzxwM3Axbje60M5
+         5O1WwtP+g371vwk/JRQO/fen5xRE9XQvMXUrti4Efcpvq3133lFEf3pUDiFL9ZWvzA45
+         PqwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724270363; x=1724875163;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y8RoeL6EWUdnN80iwzlSkgz19tRYLmIcf4aR/4JykoU=;
+        b=MNTu+itlJZrLv1NgKGo9cP2Uytx0VbjdaYmZLyP66LxU+eB2JsikKcWLIbXgpDMwRb
+         acdBjkAYjagJzFzJe4FGEgYfHgG/R+wQxKZ5st+PAYuanP1ks3OAY6Q1amTfGjsLUuGV
+         N7Ev7rANjbLnlhaLbDcoCu9zfQg5L7yccq4GCgN1Jcs0T/H3A0niPJHV+8PCvIIuoqNI
+         4NVAxbLuZYVu5/BYozc5ruDKrI7h5jX/Y8Y2VJdKm1gSp8zEEq5rDop3zOWcE7v0AjsA
+         ltv2tI8yNvKv73/R2LlUTIXyLFgsodsRj3bG2XJXmMnY+nPVqlPelFkpQ0AZ1yF4v8C4
+         AMSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWD2MEVEvet4h2QLQYHGtwlpeh7PY+O8mJNWIOyLThK0/M8/TJoGq+Lh4yYjf+nTRxFnC2+1/OECkCd1FI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeRnX9ydWsfiTlsJpL92Y/4796JvzGGYOFgwNfJ8u6/V91l4d3
+	gFfgv3ni4kujx7waFPwl6BCxmrXvZLi64KVylbwWdPHq8ANyjnrjSZRjTw4EYgS7GJ4yuNGdlrK
+	tNjPE5g5W5Q7TwQ==
+X-Google-Smtp-Source: AGHT+IEX5eMdWfY9gqOP+M4R1WGx7QFLY/tYPbvDUuQwEBazA1DezJ8YUv4UA61HCArmMDXTkcWeIlZkwvGgG5M=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:adf:e650:0:b0:368:4615:76e0 with SMTP id
+ ffacd0b85a97d-372fd585bf4mr4885f8f.4.1724270362491; Wed, 21 Aug 2024 12:59:22
+ -0700 (PDT)
+Date: Wed, 21 Aug 2024 19:58:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10320:EE_
-X-MS-Office365-Filtering-Correlation-Id: 24b049ff-6de7-4c7c-c6ca-08dcc21b14f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?74nXzdE8tIqFic9iSyvMWvmTig78wdNF537C1QfZojbQn7gxGr54BhPv6OSs?=
- =?us-ascii?Q?NDi4cogm+GaMbrfOW6OQJhMOoVlKt7sd6mH4nn2LdOvLne5lgLqR8knnbBZh?=
- =?us-ascii?Q?5XPk4mttDxc+XggA+U4DSartakA8YhA5oHD7RqmsC7Ljnz52WMXqbrZUwV7c?=
- =?us-ascii?Q?7nfIc5r8zNscvKJn3TFsoMEk0CuXRoCvDizyExQQ1jdXUxxiyFwQdfbMPYpd?=
- =?us-ascii?Q?hLXwdoPToLIbX0RTsTs7rZAX0W3oMSAmoeGa0ryLbX5fzvHVy1g7us6s4ojF?=
- =?us-ascii?Q?UAZJdFqeCFVz7LNkS48ayRy24R1YLCU3jjQmQpoF0+PjcQHLQOFH10hbz565?=
- =?us-ascii?Q?Xe+p0GPYoMqzpp8lktHstC+C5G0mFcpFMv6omAw/za8levQ1fyY+ETi9dk2t?=
- =?us-ascii?Q?/la3gFqYqSSKmsDTg8OBZMNp1y9Ta9KSBKSA+/kEErxScRZmV03/4tSfS5yW?=
- =?us-ascii?Q?qUaF45w2oltTqn6UInB60VXIr4w3cE6HpBl3OQoaaysE04Xnt7KxYkNYHoGe?=
- =?us-ascii?Q?LM2sfPgLOtzGV62BlEyPbmzbdIkZqzdKOMemTWEgxkoa+14o9D4hUJ5u0vJY?=
- =?us-ascii?Q?DI1Spwllreq9TopiFlIXHOJbPYLH7RBRSm/8KDDwAsK3AmbidXRF6ImDfM/P?=
- =?us-ascii?Q?kpM4Ysy/88Ksws7DdDPRQVHXXnw+1BK3cGA/KxwHRFdZPw5b5+uZNN2daf2e?=
- =?us-ascii?Q?m/1R3nch1TI4VU52ZVuJTjJExj/StqWDsAmc6hkGXnfmhraha1wn9bu37EHe?=
- =?us-ascii?Q?DdiuOzOtVisd2ieWnrtMU+a4iQmJ3R+S1KTi2Vj1EPeSPWByAcnySWe4nZOe?=
- =?us-ascii?Q?TST/0ken0QjbWikFzHL2LwiYnbK0Is0IYP0/FfqyaCzV3K/UjaZlpcTD0Dpv?=
- =?us-ascii?Q?ywrjePBFgTPo64ECZUsuo8f1dZig+zgMkO3460fAO1xIBf4s/Wi9q2CyWZtb?=
- =?us-ascii?Q?qzHHNHaW+VP036/tXM8uoPJdstLJPExbuV/XCGG9Y97rh5Wu7H4EmAZaN6vm?=
- =?us-ascii?Q?lh3xSiR2UKr8Mcg4WU1j4Cx5x8K+TSZo87F8YIgmbqAr8IzK54y5WGtRyXvf?=
- =?us-ascii?Q?ICnQ4da5DTFjy2JQyT6pyqGFEsllao+NOkDNFOqMM3lZJfIu5MqTxy8pm84E?=
- =?us-ascii?Q?4+3ZGf8Ve23cj1wfdM5h3O+a15rwNtHE2K8csmyYRXfHSWac024mT6DmmVaU?=
- =?us-ascii?Q?IARIPp0TirE3bmt4bJNZJxSkgk4PNoHkV2DNmpgN2+ZlfCyq03GLE5+Fj+5u?=
- =?us-ascii?Q?lAdoJ0nMAzHrydFAao1/FH/mMZJGLcnKqsC8gHNhDpai+DIxkucFlO1JBt5G?=
- =?us-ascii?Q?JTVA0xbMbOUkWy+lGjM+Z93+RpmnT9m8M5LxICRtTitKqDwo8amW5pOMPQ7t?=
- =?us-ascii?Q?GA7JMvtKjPzFmHdLqKQWm5Nrzz7/pxcCfNACH/7lcrRJhUAqPg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tiEyiUvfW3tKqG/DSui1j8nmZpiV5LOU7HaspzN0Y+GkiDsAuLrKlbRoMznj?=
- =?us-ascii?Q?4pdodDTCe5ydpVQUuSpMthhU40GaX/+2zUvfxsi7D+0k8z4BqdIRRwxJjBzP?=
- =?us-ascii?Q?YFghmH6NBKFO0BYiFKwFlWqlYWxbH1P7sPyriw503hW1Oa5KRebz47bmYqBz?=
- =?us-ascii?Q?yuG1oKejtbqFyCJTRpRs/9FRKathyM+dnq4g/aprUREGhb4yy2XVBW++cITv?=
- =?us-ascii?Q?dpfHMmohMbBxivUZPeD4PtvNukd+pKbCeS/GmV+SicaXOU7DuP0BjnCA0EeR?=
- =?us-ascii?Q?LwFwFbwlq70TBHLeBi2BEdVn6BTrCJZ8rMBp+7YXCkQfa8BbUhXcFT/27yee?=
- =?us-ascii?Q?wjYpc+3NakdEqW1QIHlUATVnDVo5Bd01lq+KHysjgEn359dBWl20w0ylTxOD?=
- =?us-ascii?Q?krdMlphocrV84IACtz3pwWYgE7FHgDvT9usm0iRe2BRooNi0ffxvfdxT4/rU?=
- =?us-ascii?Q?UofDTCecbbjgT631S/clUi6Gz1+Ef+3+KK+MyIVI8XGR1uidQ+Y2pkg6uiq1?=
- =?us-ascii?Q?WALAQlGSp6VKOUPlmYRxX3zyD/+bigrkHJU0QARSvhSsrd5B4DiTyIteTlSS?=
- =?us-ascii?Q?9zej79uiMEgXXaLYWL79HuWmPPn6zviehszYLoNIz4BE7BJ4nCMio6uLXcGP?=
- =?us-ascii?Q?IWLx1XLqbFgqX3DzjCYmSUhX1iEvZUHhCjPfA/KpHaTuoG3g12l860br3dOg?=
- =?us-ascii?Q?U4X2oi7o82mpVPmeTCTW8YG1BTSQ/sRXRIFNKwJleVpe9zDpxW+RDw5cxc/Y?=
- =?us-ascii?Q?QNeuAwJPLXmFqaV7bw0Y8rNKiTcBQJlNjBhcnq/HIY6C1cSepUNrpUMcZRPM?=
- =?us-ascii?Q?xCVEutqFCXb6854bM5dx8aMOYgKEexDEDVGqULZ9mdkzozFPXZ1gmBYiHR4H?=
- =?us-ascii?Q?6DwmpKdBc8LPF7c+1jxC2tPOV2VLkh8M40FrnVb1KFKgKwgUOEqE813GIYgH?=
- =?us-ascii?Q?k/n1cY6OOjO9Gi4nflLfGxS6h2K4/K6YIzBrCAmSJo3jW96BRRmzr+yF2C36?=
- =?us-ascii?Q?Bg710z6iJ89MTXGuT1sPPBK9oGhyQ/XahFJam/o1eLz+hK1IP1+NsOvuum6y?=
- =?us-ascii?Q?kl6H0M76Rs6lom6CAeYeXMdiujDVIXavhDlrAFjTgiJ1SzNW3BdXNxmkB7LI?=
- =?us-ascii?Q?NREIcC1Io8UjpK78sJPHmqbbsWnEEBTFdzUvGw1dft4IAVN89GRe69mhQ+d4?=
- =?us-ascii?Q?9thv1mwihc7x2p8yr8uzJs+r387rHkkc3jvK9gpvxS5CR4HTFut3OcLsKHma?=
- =?us-ascii?Q?BhvkBQTFomztzuz1Iu4CZ0LOvIOjvT1ShVX584KEaJV95rkXWwCqVZYYXz/b?=
- =?us-ascii?Q?obKmoHcT/+EIi2P9bnf3urOZRCehzYDlhsPH4UyNJ9oQ3TXL+VS4gRhggmDa?=
- =?us-ascii?Q?6SVOcKpSGdLASgI0vZ8duHsZyMmms8+N6SwWbFFf9k3hsneIRT0xgI2U4TeP?=
- =?us-ascii?Q?y2ypmvgrgsuMT0nTWq+I9jFa4Y1wNf2KO71X/j9p17/rGwW8msw9ThO5ayxM?=
- =?us-ascii?Q?4L/gbkhs3fRcA2DEwwp8NuJZHZC8cEXP3bmDzDGOjCXB2H0t0oqTpS1e8/ib?=
- =?us-ascii?Q?zLC/fPAmuIVWIlcE3fvCOKG2q0Zeysuw8jRhAlXb?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24b049ff-6de7-4c7c-c6ca-08dcc21b14f6
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 19:54:35.4036
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Xa0u1eUNMhjezTTEr9GTq0xN5AiZb79/FGvuxu8rFgOfUgTbeq4qQvJnPvldc6yVj170XQmN++os0TOYpfQig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10320
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAAFHxmYC/3WMQQ7CIBBFr9LM2jEMYNK48h6mC8ShnUSLgYZqG
+ u4udu/y/Z/3NsichDOcuw0SF8kS5wb60IGf3Dwyyr0xaKWt6hWhSxxQ5iViciuyOlFPhqzVAZr zaq+89951aDxJXmL67PlCv/VfqRASGmMVsQ435/vLGOP44KOPTxhqrV96NdilqwAAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3495; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=BDlfYKs73irWpae6tJQ/1w+umICBRvbzPQLTelJNbgk=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmxkcNWkTW2im3pV5vFid66zftiPLd5oim5CExs
+ v72yYkewniJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZsZHDQAKCRAEWL7uWMY5
+ Rjy8D/912wvmVyQONKG/gYoIm76EBjvd/N2DWngHCnHlxF3eTlMIhP32xJJ4S/fyhTimYGw7Pjr
+ VcujlCBAhvSUPTEXqFJF7jv3j4UUW3Jr+8zCbp/jpPlFI10zao+qSWPknRseHw2BOVuNnvt5wn1
+ iwGQdiZAXsrKi0B4SJ1zIHROgYUW3sczY1OH/uYYtuC5B+NDA6Ow6IPENk6KpvETwDUEWlAg/JT
+ OnmrPyO1+N4dz+QgypG+lzC0EAx/btP8xSoNdES+SaIbqZgErKGz7tWM2ElZEigRdTOuM+RjTWU
+ U7/onknhQPqdbHGim3oyYpcNrusCetfFlTJpOuqp2WV6wecNR8xayTzD4+bcl8kh41BO6WnKIfA
+ lwyfyhkia6orP44s02ZFq2/QT+DBLj66/Gdh8R3q+RzP7bZfH87RZ8qe936hrd5D3JzXc2Q/n9m
+ kQ0WsXAVajpcijfDW7O/U8ZNOpcnQ/+R5wFEI6ENNdjYHv5NNWbwUQW3+FJZVCmgY0WUykRF+Ce
+ pPjjnd9E/j8RGut9UM18hZVzHj1afw3pz6fI2exgiEd5HLD49wE98qKa48mVKBydXs67LlG1tWX
+ /CI4qGS8UtwhyD/Z4qLudai22vMOwzNARTYIYFcwEEF+q9iXNXh+yXShCptJeRI8Ug86aemCRbb VDhkQ2Fz0oiWk4Q==
+X-Mailer: b4 0.13.0
+Message-ID: <20240821-aref-into-raw-v2-1-9215bbca5720@google.com>
+Subject: [PATCH v2] rust: add `ARef::into_raw`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kartik Prajapati <kartikprajapati987@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Add ref nvmem-deprecated-cells.yaml to support old style binding.
+From: Kartik Prajapati <kartikprajapati987@gmail.com>
 
-Fix below CHECK_DTBS warning.
-efuse@1e80000: Unevaluated properties are not allowed ('unique-id@1c' was unexpected)
+Add a method for `ARef` that is analogous to `Arc::into_raw`. It is the
+inverse operation of `ARef::from_raw`, and allows you to convert the
+`ARef` back into a raw pointer while retaining ownership of the
+refcount.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+This new function will be used by [1] for converting the type in an
+`ARef` using `ARef::from_raw(ARef::into_raw(me).cast())`. The author has
+also needed the same function for other use-cases in the past, but [1]
+is the first to go upstream.
+
+This was implemented independently by Kartik and Alice. The two versions
+were merged by Alice, so all mistakes are Alice's.
+
+Link: https://lore.kernel.org/r/20240801-vma-v3-1-db6c1c0afda9@google.com [1]
+Closes: https://github.com/Rust-for-Linux/linux/issues/1044
+Signed-off-by: Kartik Prajapati <kartikprajapati987@gmail.com>
+Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-change from v1 to v2
-- ref to nvmem-deprecated-cells.yaml
-v1: https://lore.kernel.org/imx/20240621165637.2283864-1-Frank.Li@nxp.com/
----
- Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Sending a v2 that is merged with [1]. I didn't realize that I was
+duplicating work, sorry! I'll update the author information to list
+Kartik as the primary author. I kept my function body so that it returns
+NonNull to mirror the type used by `ARef::from_raw`.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml b/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml
-index 70fb2ad251037..1b20b49eee792 100644
---- a/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml
-@@ -15,6 +15,7 @@ description: |
+This change was previously included in
+https://lore.kernel.org/all/20240801-vma-v3-1-db6c1c0afda9@google.com/
+but is being split out in its own commit at Danilo's suggestion.
+
+Link: https://github.com/Rust-for-Linux/linux/pull/1056 [1]
+---
+Changes in v2:
+- Add example from [1], and fix the imports in the example so it compiles.
+- Update author information to reflect merge with [1].
+- Link to v1: https://lore.kernel.org/r/20240801-aref-into-raw-v1-1-33401e2fbac8@google.com
+---
+ rust/kernel/types.rs | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index ee7dd1f963ef..9e7ca066355c 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -7,7 +7,7 @@
+ use core::{
+     cell::UnsafeCell,
+     marker::{PhantomData, PhantomPinned},
+-    mem::MaybeUninit,
++    mem::{ManuallyDrop, MaybeUninit},
+     ops::{Deref, DerefMut},
+     pin::Pin,
+     ptr::NonNull,
+@@ -396,6 +396,35 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+             _p: PhantomData,
+         }
+     }
++
++    /// Consumes the `ARef`, returning a raw pointer.
++    ///
++    /// This function does not change the refcount. After calling this function, the caller is
++    /// responsible for the refcount previously managed by the `ARef`.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// use core::ptr::NonNull;
++    /// use kernel::types::{ARef, AlwaysRefCounted};
++    ///
++    /// struct Empty {}
++    ///
++    /// unsafe impl AlwaysRefCounted for Empty {
++    ///     fn inc_ref(&self) {}
++    ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
++    /// }
++    ///
++    /// let mut data = Empty {};
++    /// let ptr = NonNull::<Empty>::new(&mut data as *mut _).unwrap();
++    /// let data_ref: ARef<Empty> = unsafe { ARef::from_raw(ptr) };
++    /// let raw_ptr: NonNull<Empty> = ARef::into_raw(data_ref);
++    ///
++    /// assert_eq!(ptr, raw_ptr);
++    /// ```
++    pub fn into_raw(me: Self) -> NonNull<T> {
++        ManuallyDrop::new(me).ptr
++    }
+ }
  
- allOf:
-   - $ref: nvmem.yaml#
-+  - $ref: nvmem-deprecated-cells.yaml
- 
- properties:
-   compatible:
+ impl<T: AlwaysRefCounted> Clone for ARef<T> {
+
+---
+base-commit: e26fa546042add70944d018b930530d16b3cf626
+change-id: 20240801-aref-into-raw-e0518131442f
+
+Best regards,
 -- 
-2.34.1
+Alice Ryhl <aliceryhl@google.com>
 
 
