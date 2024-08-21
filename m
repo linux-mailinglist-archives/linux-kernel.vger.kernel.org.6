@@ -1,202 +1,146 @@
-Return-Path: <linux-kernel+bounces-294999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55797959532
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:59:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8BC959535
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85523B247B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:58:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65E831C2255C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642FB193435;
-	Wed, 21 Aug 2024 06:58:31 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D3E193435;
+	Wed, 21 Aug 2024 06:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="0OzslZWD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qBqJ6wW1"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DF2193429
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5E0193417;
+	Wed, 21 Aug 2024 06:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724223510; cv=none; b=oUcWri2C7Pn6SSu6K3GCeOppyx0pQithYwbplzE+IIM5itXVsalTeFqoUJ/DfKbXZ125Y3TgSO9pGtpLVdA3ZtCQr9OvfGC8+Vd4z5b9ggFlLaNL7LN5ovdYWbsuSTf8fGARClaKa3VJMAnY0uOeHBBv/UGvF4MSaV3Atqk07u8=
+	t=1724223590; cv=none; b=QRy0YcieoTANu29sbiUKI2WsUGkdV4TgQFcd6K8v/mRBW2skMSyH5CRe4WzpcdCNyM30UKky/I+ukiP5Wsp9jrqTwmeS7672BZV6cXTOnuoV8rgsQuHLH8WD7c2+V9Is8Fc+aeUF72s0oHwOLi+qFCRjjpcl9dag0Sv5VFj/LJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724223510; c=relaxed/simple;
-	bh=OYAUaBvmmhEbKDrF+5PsGJuiRJQ975zqwyOhxBg0G8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NkT3N7Lz4Vxga91SXTckKWgoghbHf4+QHrs+y5wt0nQVcUm06rcze64LewlsNMMPPgE1Re5fOwcrVV51uHMSpFaG1TfCE80LO46T/YfC4BHjTD8e8atMFcaISCR3H7bpQNsy7siwewWjckxSC3u7y8WA5MHqJcvlSK8ZP/h90y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WpccG4nNBz2Cn71;
-	Wed, 21 Aug 2024 14:58:22 +0800 (CST)
-Received: from dggpeml500005.china.huawei.com (unknown [7.185.36.59])
-	by mail.maildlp.com (Postfix) with ESMTPS id C21251400CA;
-	Wed, 21 Aug 2024 14:58:24 +0800 (CST)
-Received: from [10.174.178.155] (10.174.178.155) by
- dggpeml500005.china.huawei.com (7.185.36.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 21 Aug 2024 14:58:24 +0800
-Message-ID: <6e744d2b-bbb3-4e1f-bd61-e0e971f974db@huawei.com>
-Date: Wed, 21 Aug 2024 14:58:23 +0800
+	s=arc-20240116; t=1724223590; c=relaxed/simple;
+	bh=RJZGVmbSm9dTUqRx+uATMSqYind8iYZaDoVC12M/+Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLI3+1ndYoulJ3xxoWfMMX9kxGdZjRq8EgBGG6hABfTup2suJhyZsEJy1pJUBf2GxqOAInh1siF9A6S8oQMJLnBiCJHEiUR0blqbtdkSXScBK0F+Z11u34dcdjwovMjpZyKLOjnxS/8g9ZRkET5MStI4/f6TFkuxjh5SMNMfaE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=0OzslZWD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qBqJ6wW1; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
+Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 4D959138FF3C;
+	Wed, 21 Aug 2024 02:59:47 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 21 Aug 2024 02:59:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1724223587; x=1724309987; bh=HUYGoPtkPX
+	SIcq5G75OesE2wTzGU8YCmJtPfixrqDfQ=; b=0OzslZWDCI/Fq2nmcDplF86+2v
+	Wd0ETYi/m7nqxgxM7D1LnTrFRh1rU2rKYrtCiYSvP12W4HhvGSse0oVF7Hqhh9zU
+	qOGbT0LhTNFWoQ5jowpwFtFUxD/FiojkdnloqjxLjkj2pb+dgh47GKnjMl6uaXr4
+	S5w+bhjHRvMaWAYnGQvOHvCznIXu5umkbFXOXZ3k4K0jp4h8wu2Sj8hG1pQfohKS
+	wRMjJpkAUTblY0MLNEfLcDb0NV7+oO7LELPBnuQbJJZDedVBUE77znds3t/KjFFQ
+	fkcCx+yLpgj3gVYRPJkW9UH9viRSiNJv5ipcTTJCudn2PtTS/pQL03GsPV/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1724223587; x=1724309987; bh=HUYGoPtkPXSIcq5G75OesE2wTzGU
+	8YCmJtPfixrqDfQ=; b=qBqJ6wW1iX2SwIKg/YR4i3Nb/RNRc+gbyAXnHnNjdwNM
+	APu54gNJV+nOxWKCxVXh6juHPP5QceExlHK2CyT4bYjGp/Pd9fNzHaXaFSyfeXK8
+	sUsKQ0iqTSOY2eoX4wpOca0RQKz30jKFkDLStp5kUKs5Mpm565ndi24TZP/shWTA
+	8f+6/gHPZKWFohvV3AYUeJLXrCxQbB4cX7COtZsxfmMPNHFp1qCn7Dg6EhRnXjxz
+	Amfd7pUlZ72ef+0RcdKTKQTs8jkExRAKEwuJURNb8gTJGOGrEtF+RUnYVtTB9NaQ
+	K2Tx/AItVPfbE0rdZ9Z5088kBrEp8dSdB/oUXQ4b3w==
+X-ME-Sender: <xms:Y5DFZvPIkkbAjOJOW3EdmqXun2KFr4597ciB1XDgwo3C54tH8ieEhw>
+    <xme:Y5DFZp_9Ay-f0QVV8hEUzfNQlFs1cEpNWDzWfRG4vHazU11yDQkUu3_s6IeB9HF3g
+    Ygn6Xidvo_RcKxl33k>
+X-ME-Received: <xmr:Y5DFZuQuhEKdbUUmKGeyxuf2OD2zitwvWzMmeBc4N_7He8yUzZ2GJIix_ggrLk_NUWI7bi8iB9wu7v5E9eAl-amoTYsluxBRBtCe>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddujedguddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrh
+    gvrhesfihhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepjeefffdvfffggeeiheet
+    vefgtefhvdegieelffekfeeuiedvtdefgeeftdekveetnecuffhomhgrihhnpehgihhthh
+    husgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvthdpnhgspghrtghpth
+    htohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhikhhosheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepsggvnhhjrghmihhnrdhtihhsshhoihhrvghssehrvg
+    guhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Y5DFZjs7fEvn7gIZ5JMGQo1qom6L7EfBuKNV30kSQ8-2aLXQpzru1A>
+    <xmx:Y5DFZnf-w8HWLaY3VJUz-SJMgdxrvjEHJ4mgx0Y9IIY8HUaAgyWPbQ>
+    <xmx:Y5DFZv3erN9jCe-wtW7wBRW55HrkDECAFP4n66vcfUGWoP8ncQgjgA>
+    <xmx:Y5DFZj_Ry_Y25bxf7aejnq2IkCyGqn7llFUsG3nKXp31jZ6byrhDGw>
+    <xmx:Y5DFZu6oSBtUrJOEbozNPihxwKggX51w4hhP9j9Nq4Jwh9Ggi4simi2y>
+Feedback-ID: i7ce144cd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 Aug 2024 02:59:45 -0400 (EDT)
+Date: Wed, 21 Aug 2024 16:59:36 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] HID: hidraw - add HIDIOCREVOKE ioctl
+Message-ID: <20240821065936.GA635104@quokka>
+References: <20240812052753.GA478917@quokka>
+ <nycvar.YFH.7.76.2408210231050.12664@cbobk.fhfr.pm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm, slub: prefetch freelist in ___slab_alloc()
-To: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<zhangxiaoxu5@huawei.com>, <cl@linux.com>, <wangkefeng.wang@huawei.com>,
-	<penberg@kernel.org>, <rientjes@google.com>, <iamjoonsoo.kim@lge.com>,
-	<akpm@linux-foundation.org>, <vbabka@suse.cz>, <roman.gushchin@linux.dev>
-References: <20240819070204.753179-1-liuyongqiang13@huawei.com>
- <CAB=+i9TxYRcr+ZRMD31SDay+899RXOwTvQevC=8sv7b27ZO1Vg@mail.gmail.com>
-From: Yongqiang Liu <liuyongqiang13@huawei.com>
-In-Reply-To: <CAB=+i9TxYRcr+ZRMD31SDay+899RXOwTvQevC=8sv7b27ZO1Vg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500005.china.huawei.com (7.185.36.59)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.2408210231050.12664@cbobk.fhfr.pm>
 
+Hi Jiri,
 
-在 2024/8/19 17:33, Hyeonggon Yoo 写道:
-> On Mon, Aug 19, 2024 at 4:02 PM Yongqiang Liu <liuyongqiang13@huawei.com> wrote:
->> commit 0ad9500e16fe ("slub: prefetch next freelist pointer in
->> slab_alloc()") introduced prefetch_freepointer() for fastpath
->> allocation. Use it at the freelist firt load could have a bit
->> improvement in some workloads. Here is hackbench results at
->> arm64 machine(about 3.8%):
->>
->> Before:
->>    average time cost of 'hackbench -g 100 -l 1000': 17.068
->>
->> Afther:
->>    average time cost of 'hackbench -g 100 -l 1000': 16.416
->>
->> There is also having about 5% improvement at x86_64 machine
->> for hackbench.
-> I think adding more prefetch might not be a good idea unless we have
-> more real-world data supporting it because prefetch might help when slab
-> is frequently used, but it will end up unnecessarily using more cache
-> lines when slab is not frequently used.
+On Wed, Aug 21, 2024 at 02:31:32AM +0200, Jiri Kosina wrote:
+> On Mon, 12 Aug 2024, Peter Hutterer wrote:
+> 
+> > There is a need for userspace applications to open HID devices directly.
+> > Use-cases include configuration of gaming mice or direct access to
+> > joystick devices. The latter is currently handled by the uaccess tag in
+> > systemd, other devices include more custom/local configurations or just
+> > sudo.
+> > 
+> > A better approach is what we already have for evdev devices: give the
+> > application a file descriptor and revoke it when it may no longer access
+> > that device.
+> > 
+> > This patch is the hidraw equivalent to the EVIOCREVOKE ioctl, see
+> > commit c7dc65737c9a607d3e6f8478659876074ad129b8 for full details.
+> > 
+> > An MR for systemd-logind has been filed here:
+> > https://github.com/systemd/systemd/pull/33970
+> > 
+> > hidraw_is_revoked() and hidraw_open_errno() are both defined as weak
+> > functions to allow for a BPF program to deny access to a /dev/hidraw
+> > device. The function returns 0 on success or a negative errno
+> > otherwise that is returned to the caller.
+> > 
+> > As a use-case example, a gamepad-managing process could attach a BPF
+> > program that defaults to -EACCESS for all hidraw devices except those
+> > with ID_INPUT_JOYSTICK set by udev.
+> > 
+> > Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+> 
+> Thanks Peter. Now queued in hid.git#for-6.12/hidraw.
 
-Yes, prefetching unnecessary objects is a bad idea. But I think the slab 
-entered
+Benjamin just messaged me about a HID CI pipeline failure caused by this
+patch, looks like it's buggy. Can you please revert it again?  I'll send
+out a fixed version ASAP, thanks.
 
-in slowpath that means it will more likely need more objects. I've 
-tested the
-
-cases from commit 0ad9500e16fe ("slub: prefetch next freelist pointer in
-slab_alloc()"). Here is the result:
-
-Before:
-
-Performance counter stats for './hackbench 50 process 4000' (32 runs):
-
-                 2545.28 msec task-clock                #    6.938 CPUs 
-utilized        ( +-  1.75% )
-                      6166     context-switches          #    0.002 
-M/sec                    ( +-  1.58% )
-                     1129      cpu-migrations            #    0.444 
-K/sec                     ( +-  2.16% )
-                   13298      page-faults                  # 0.005 
-M/sec                    ( +-  0.38% )
-         4435113150      cycles                           # 1.742 
-GHz                         ( +-  1.22% )
-         2259717630      instructions                 #    0.51 insn per 
-cycle           ( +-  0.05% )
-           385847392      branches                     #  151.593 
-M/sec                    ( +-  0.06% )
-              6205369       branch-misses            #    1.61% of all 
-branches       ( +-  0.56% )
-
-            0.36688 +- 0.00595 seconds time elapsed  ( +-  1.62% )
-After:
-
-  Performance counter stats for './hackbench 50 process 4000' (32 runs):
-
-                2277.61 msec task-clock                #    6.855 CPUs 
-utilized            ( +-  0.98% )
-                     5653      context-switches         #    0.002 
-M/sec                       ( +-  1.62% )
-                     1081      cpu-migrations           #    0.475 
-K/sec                        ( +-  1.89% )
-                   13217      page-faults                 # 0.006 
-M/sec                       ( +-  0.48% )
-         3751509945      cycles                          #    1.647 
-GHz                          ( +-  1.14% )
-         2253177626      instructions                #    0.60 insn per 
-cycle             ( +-  0.06% )
-           384509166      branches                    #    168.821 
-M/sec                    ( +-  0.07% )
-               6045031      branch-misses           #    1.57% of all 
-branches          ( +-  0.58% )
-
-            0.33225 +- 0.00321 seconds time elapsed  ( +-  0.97% )
-
->
-> Also I don't understand how adding prefetch in slowpath affects the performance
-> because most allocs/frees should be done in the fastpath. Could you
-> please explain?
-
-By adding some debug info to count the slowpath for the hackbench:
-
-'hackbench -g 100 -l 1000' slab alloc total: 80416886, and the slowpath: 
-7184236.
-
-About 9% slowpath in total allocation. The perf stats in arm64 as follow：
-
-Before:
-  Performance counter stats for './hackbench -g 100 -l 1000' (32 runs):
-
-        34766611220 branches                      ( +-  0.01% )
-            382593804      branch-misses                  # 1.10% of all 
-branches          ( +-  0.14% )
-          1120091414 cache-misses                 ( +-  0.08% )
-        76810485402 L1-dcache-loads               ( +-  0.03% )
-          1120091414      L1-dcache-load-misses     #    1.46% of all 
-L1-dcache hits    ( +-  0.08% )
-
-            23.8854 +- 0.0804 seconds time elapsed  ( +-  0.34% )
-
-After:
-  Performance counter stats for './hackbench -g 100 -l 1000' (32 runs):
-
-        34812735277 branches                  ( +-  0.01% )
-            393449644      branch-misses             #    1.13% of all 
-branches           ( +-  0.15% )
-          1095185949 cache-misses             ( +-  0.15% )
-        76995789602 L1-dcache-loads             ( +-  0.03% )
-          1095185949      L1-dcache-load-misses     #    1.42% of all 
-L1-dcache hits    ( +-  0.15% )
-
-             23.341 +- 0.104 seconds time elapsed  ( +-  0.45% )
-
-It seems having less L1-dcache-load-misses.
-
->
->> Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
->> ---
->>   mm/slub.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/mm/slub.c b/mm/slub.c
->> index c9d8a2497fd6..f9daaff10c6a 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -3630,6 +3630,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->>          VM_BUG_ON(!c->slab->frozen);
->>          c->freelist = get_freepointer(s, freelist);
->>          c->tid = next_tid(c->tid);
->> +       prefetch_freepointer(s, c->freelist);
->>          local_unlock_irqrestore(&s->cpu_slab->lock, flags);
->>          return freelist;
->>
->> --
->> 2.25.1
->>
+Cheeres,
+  Peter
 
