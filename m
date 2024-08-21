@@ -1,100 +1,79 @@
-Return-Path: <linux-kernel+bounces-296222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6169B95A7E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:41:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8F395A7E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189B82847B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772F62841CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0012A17C7C3;
-	Wed, 21 Aug 2024 22:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DED17C7C6;
+	Wed, 21 Aug 2024 22:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PrEG9tt7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="URb/BoIa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB3017BB07;
-	Wed, 21 Aug 2024 22:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B75176FAC;
+	Wed, 21 Aug 2024 22:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724280088; cv=none; b=a7kY5Ss0p4lgqrua0jOWxRkXXsEobtXrJOpXJafpBgTWiSjjfnJQtuo1mtnACH1RYKqFFBt21pcxXcBF9Jt4k8r+Jsp6tyOx1DafAwZgDnOG/zUorIHKV4AiI2r1X5ZUPJDawUErDo7vOKv0n+kEfUo8CO382XNzQtI98T1QY44=
+	t=1724280097; cv=none; b=Avg5EI3WTmrvzjPLvn4dC1rqPsaBiwLCbh0iuF914ygk4Eef5NClw+1UbwHh+S47D3RvD+dh327k/fE68q7oikp/Ey1rgl+aMOtqBPRqW2C982fjC3jguCR91mtjFf94pwC8toP0mH4A8Zvl6kn0J4yt3yCB/dQdsZjJ0ivqCaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724280088; c=relaxed/simple;
-	bh=dpScO8StZyLl2n3uhDg+2zAxSGgvkwDoBO064zBpX/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RZUETJnVOS8G+PzjUdCI1rnR420XOSjLxx1hcPSPpXIEV6psTgjU2Tx+aExKt79fHmFo5y9dG44dRDzIe/rAD01L0WUPLWPLsL07aj1Gw53AQ/DXr1F7BfSCI9p6vho2yY9UYN73XoMSHyOabFUJj5A1S4QtEBq2KRl5dWiSo+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PrEG9tt7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724280080;
-	bh=RDv5CvG9iedAsNtlr+mHPYxgxNBCmvoNwkPe5zP1Nes=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PrEG9tt7g2vX/mUi1FA9Aatlo0bC3aiwdXtM391sdcDeFzwL/+Of3barEI/TbIpbV
-	 iUyU+vyMantlqlhk/sv+9ivPjJXtG/QjUr9gdktv+vorJcOKfTD8pf3A0WM7Syg0Zo
-	 zUt29xeLIurghdQeyN/nGpBfBCxRnUDwm63o9my3mAZxLQyHvXr93kwuG4nicORuRX
-	 //AYu28sVlsthFEupMMhQ3fHAyv7OVjf63gl34aZzB7V6ZlQMAD9gcL1rH5rmxUv5D
-	 ca3F1mHh3BE/uNOyy2rpwWcOdim14UjOsFNHBYg692PkJJVd6V/nhZknOTAadfTKvN
-	 1VBdR1c1Umw8A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wq1XJ0zCNz4wj1;
-	Thu, 22 Aug 2024 08:41:20 +1000 (AEST)
-Date: Thu, 22 Aug 2024 08:41:19 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
- <benjamin.tissoires@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the hid tree
-Message-ID: <20240822084119.5b2e1962@canb.auug.org.au>
+	s=arc-20240116; t=1724280097; c=relaxed/simple;
+	bh=MU5eX2ZknS+WS6wreHZexZd69rODrhjryDKYvVR0OQ0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=LZ8M/0CD4iat6Yur580jdiBOFMwh6atxQhgTcomMSQb7N4KUnF4xD5Nla76we3+H2ksT/UjzyLmeW1DHFZoBTfaBogCaBiW9//asF9i84TbNMu0rWPIUBhqH4NxHFavCS0AiwPpRDEzXzfxxJYs46tFbXAj9YggLvmop/3fHT5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=URb/BoIa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E2EC32781;
+	Wed, 21 Aug 2024 22:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1724280097;
+	bh=MU5eX2ZknS+WS6wreHZexZd69rODrhjryDKYvVR0OQ0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=URb/BoIaWRMpk4YpCvjH6goKjrz9oJD+taUF/8zSjzkMVEFIZ1k5RQGe1qLUb6YHN
+	 aT/7rFWa2sA/xXFFV/da/lvlFiAkJpDg4AWM2qtRRn/P55/TRXKDhsLWS552xqXNni
+	 Tbj5xzqnL8rBXmt2qykcvLRbL1f/upaZl8A9z5hM=
+Date: Wed, 21 Aug 2024 15:41:36 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kamlesh Gurudasani <kamlesh@ti.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>, Daniel Jordan
+ <daniel.m.jordan@oracle.com>, Waiman Long <longman@redhat.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, <linux-crypto@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] padata: Honor the caller's alignment in case of
+ chunk_size 0
+Message-Id: <20240821154136.a09fa0e80903aa9ae17d43bd@linux-foundation.org>
+In-Reply-To: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
+References: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6/EGhvV+h//U8qMAJu13OAv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/6/EGhvV+h//U8qMAJu13OAv
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Thu, 22 Aug 2024 02:32:52 +0530 Kamlesh Gurudasani <kamlesh@ti.com> wrote:
 
-Commit
+> In the case where we are forcing the ps.chunk_size to be at least 1,
+> we are ignoring the caller's alignment.
+> 
+> Move the forcing of ps.chunk_size to be at least 1 before rounding it
+> up to caller's alignment, so that caller's alignment is honored.
+> 
+> While at it, use max() to force the ps.chunk_size to be at least 1 to
+> improve readability.
 
-  ec4989dea73e ("Revert "HID: hidraw: add HIDIOCREVOKE ioctl"")
+Please (as always) describe the userspace-visible runtime effects of
+this change.  This helps others to determine which kernel(s) should be
+patched.  And it helps others decide whether this fix might address an
+issue which they are encountering.
 
-is missing a Signed-off-by from its author and committer.
 
-Reverts are commits as well ...
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6/EGhvV+h//U8qMAJu13OAv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbGbQ8ACgkQAVBC80lX
-0GyQegf9HLX6K065ZIXmfR6OTqmnEC5G464fY0o+4uW14AMreVXMSRhl4Z+0BVuL
-zwKma9VVpt/p8Psa1Deka2xlpOybQzWVAVhE7uz/p8QlUD36YjkSWmoF02n88LAY
-/XQFSjwnptwboqLHOKDG9GnJF99+zZARmR72ylw6RZ804EgqMZBN7yBMzPnRnJ17
-Pwoneh3G5r+2UrnUNq1R4QpP0wxnnyBBiXM1RQ+SRNdA4fAYHIIGPZJu4+gcuvaG
-6swNCie3iGyKKYqqWixdCHgC8OzmyBwfWGl1pm7LCVGHlVYaQnVyiPu7GrTBE8t4
-+5x/tY76eE5bXntAFWmQdfBRh2H1Kg==
-=grMO
------END PGP SIGNATURE-----
-
---Sig_/6/EGhvV+h//U8qMAJu13OAv--
 
