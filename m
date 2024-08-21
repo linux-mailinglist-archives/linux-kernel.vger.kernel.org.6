@@ -1,182 +1,142 @@
-Return-Path: <linux-kernel+bounces-296005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F58195A434
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CF095A42B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ADD41F2249C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44461F22365
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EE91B3B03;
-	Wed, 21 Aug 2024 17:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3E11B2EF3;
+	Wed, 21 Aug 2024 17:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OL4lhw/O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUn05KqG"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2536913E40F;
-	Wed, 21 Aug 2024 17:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701E91B2516;
+	Wed, 21 Aug 2024 17:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724262970; cv=none; b=YH8qRPrKW33IjSEOZNYK/3rpHKDuoDkd3QhXPK355oltYERXvh0zxLF+2o8Wd0xjiG+AmVN1s0WmrgBc8PiuE/bnWaRWMXMI7l2RjcgDMMyWZIsJxFZWnugS6awqDJtq1ukNqGvWjLjKV2V8slgWi2PN2/ZjJYwwyE2/ngdNp8Q=
+	t=1724262843; cv=none; b=NRIKosvJOa5H/3SwVsnA7oPZsMbGDUx0ZSY1fdIKSzSMAG9JyAtBS1HJCH0UcCf5FVVoI8GB/3In3ACL88oQeKAFCiWQ9ZHiUQ7t6hg9Z2LPY1kT6wbxyQYSadEoRtoerRVCwk/lWTkqYdQ2RiDqFoy9+46jrBjrtq21D/p5cM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724262970; c=relaxed/simple;
-	bh=5rjtecgTLe61TDiP1Qutb2BjskSqEw4NOTWaKKSmqGM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FZD/LmgcOJuqa3mpRGqsvwKe/FwFtOO2urcOY5NO05rpMDx2VImnRnEAC6UXZJTIbqhtyOF/XuN3BIh7FPtDQFuhGHxRW+kbcnP5xG0ylwMg8luyakf4xONvWqEc7O41qs5iGhNjCX3jWrRxMHyUEjjQmfAAtNXzhhtcuPNVpZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OL4lhw/O; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724262969; x=1755798969;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=5rjtecgTLe61TDiP1Qutb2BjskSqEw4NOTWaKKSmqGM=;
-  b=OL4lhw/OnISWTZlinPzoIeCPfiywumClGGBgQNNTeZM1ko0YwHRRfzpA
-   9jsDZKy3gnWa+9Zq+56WObMUIMnX2Iu51AbUd+OuBLNuBGRGYQHa/hoUL
-   Z/i/6dVt+NFYsVwqqV5ZxM6JI2v8VixtlpzxKRVG28k6Rf9k+A75j5zGB
-   4fJ6IPehSV3kXyFQIs7S2KPHvB0JutTqsm2I7BDCGqk+ycBr68Uu2A8BN
-   Gz92kjUHzFv3Xv9ym/5zyVuVxXcwm74xoN3arm0jBdq8KU1KPUYJRVKaU
-   fEeYX7kxIy3xxeXGnxIgoyeAo4cOqHoYLiMdHK6jtEyV6P88J0UZfJor6
-   A==;
-X-CSE-ConnectionGUID: XdMFfh6hTpuCWxqamMZLEQ==
-X-CSE-MsgGUID: 4SpYaQTNRGinUYpB5aB8lQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="48035548"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="48035548"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 10:52:20 -0700
-X-CSE-ConnectionGUID: ojB2pnmJT526RXpL0G9esA==
-X-CSE-MsgGUID: vzwY+38oRJ6Z3u7wngf2QA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="65369743"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.181])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 10:52:16 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 21 Aug 2024 20:52:13 +0300 (EEST)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: daire.mcnamara@microchip.com, linux-pci@vger.kernel.org, 
-    devicetree@vger.kernel.org, conor.dooley@microchip.com, 
-    lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, 
-    LKML <linux-kernel@vger.kernel.org>, linux-riscv@lists.infradead.org, 
-    krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v8 1/3] PCI: microchip: Fix outbound address translation
- tables
-In-Reply-To: <20240821170330.GA256147@bhelgaas>
-Message-ID: <62e20d95-1ab8-dbc2-41c6-21ca48d56c6f@linux.intel.com>
-References: <20240821170330.GA256147@bhelgaas>
+	s=arc-20240116; t=1724262843; c=relaxed/simple;
+	bh=gqzFeewnT/4SkWL7qbqbqUiqOnUI7YBTulM9X9YebVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LtnBjr/JZlaflxvc/6hJSlgayF4er0UPGGc4uUUd7Y5b5n32wMoBJJWHfW47kAGn7S0DNs+3E9gyxhmiMiCOYMRxOor9bnROiIE3Sv1KyzV/Tc08BKUF5UhAurJDa1oRomsy1fl+6zKQuFiHbeelTMvYnzEHFvNXM7bfdqhWz2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUn05KqG; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-533463f6b16so2034427e87.1;
+        Wed, 21 Aug 2024 10:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724262839; x=1724867639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XeboYcfWTTgzgC9R/V8HkigBdb65HMv0vbDDvFHgRIU=;
+        b=EUn05KqGslPuOfa53eKrqgnp2s1K0oWL/Z41ukoDHHdFx75+2HtBej76NveCX+nDCR
+         e7htqJYpoPr9oqfnUuWzOeZ4NRiKOGd+OLlE7SaTp0W+IacRfKU5rknFvGEL1cYb2J0+
+         9Xu9Y6xq86ncmCWHmuMDlQkWX2ZKk4bmNZ+JFSsnBzsuCBm6UNqa5C0qqR8oO0wfm2wW
+         6qwYzwmUUZ7gBAUCsrMZo393vrbi1WNxCvaXyJwuHGomXDKLTfK11EmXut1HGlpPHDvf
+         15Wp4eJE7cI7cu63HGe/COadam1CNfP8BzCfRHlZpjfbaxz2XCViJayBdlAzD1HmUz3j
+         VOSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724262839; x=1724867639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XeboYcfWTTgzgC9R/V8HkigBdb65HMv0vbDDvFHgRIU=;
+        b=LnpR6GhGfECXdW8+eLJ74bf9Vcbk5sRh3/0b4fj5JtNxSxS4PhWZlZf9JCug3MoaZY
+         CbH/55PLqrq7dIQjIIR5sYFGNtx5gfP1sZUuDleMFi+L8Et1OEP8eoGlVagdwm1DgiUN
+         +AbANUydL3yINPjGbW5EmfotieGPRdoC9//iUnBZi4BfY73axcZx0Zv4na9P1GJqazco
+         kLCrJVTzFYfQYE/aJnJR9BnszEvrEklhLzFql0XvHLlBoFBkX5MOAgIUzV+rHoUzhzyZ
+         nBRaTotRfFB7Gri08yrqlH2phGRVaz6+AzADjDv8GQAEyeFUQrw44RqJiYY8GGgjG2Pt
+         7Jtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUga8B7N4R+OgzmCrtsp5DuPtN3OfZjQ+OGFB5PJ/dJOOmrSKkW80CXYCGF7KrImyNrWP0dzLQC6cKo@vger.kernel.org, AJvYcCVWUyG81jvMLiviKAD/NAq6MU41Wm/4ZdCeGcVjgBi5d7CoyWd44u2JkMA/SvVEMTGFgbTLodrc4SEN+HOA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJmtuSsT+CtXDpm4ij31cKxyMGMLdvkJ1PtTPbVq0T6QHZh309
+	+iX+jTy5V3F7EBKXdGN+RdHJ4TaWJ/8d0UmTvefnUPJyJelpNFLfezJ1DAzaQ5bHheqtqIfwOr6
+	42wSS8/IKS4wBO2udBFXm5RHFock=
+X-Google-Smtp-Source: AGHT+IENB8z7U4LhzbCB9S5yEp3QWpYpbi2CLtomom1sOWJ/ScHSp/Zd0Wu6SeMyCJ7S5YBoTVJDwpFKcz9Z7pJfGl8=
+X-Received: by 2002:a05:6512:b99:b0:530:ac7d:58b0 with SMTP id
+ 2adb3069b0e04-53348549bacmr2047328e87.5.1724262839238; Wed, 21 Aug 2024
+ 10:53:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com> <20240820143319.274033-8-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20240820143319.274033-8-chenxiaosong@chenxiaosong.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 21 Aug 2024 12:53:48 -0500
+Message-ID: <CAH2r5mseDtpxgjyW1HbeDpuidrGWHqBzAyvaweiQS+0tC9i5Dw@mail.gmail.com>
+Subject: Re: [PATCH 7/8] smb/client: fix typo: STATUS_MCA_OCCURED -> STATUS_MCA_OCCURRED
+To: chenxiaosong@chenxiaosong.com
+Cc: linkinjeon@kernel.org, sfrench@samba.org, senozhatsky@chromium.org, 
+	tom@talpey.com, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
+	bharathsm@microsoft.com, chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, 
+	huhai@kylinos.cn, liuyun01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 Aug 2024, Bjorn Helgaas wrote:
+merged into cifs-2.6.git for-next (but fixed Signed-off-by email
+address to match Author email address)
 
-> On Wed, Aug 21, 2024 at 02:02:15PM +0100, daire.mcnamara@microchip.com wrote:
-> > From: Daire McNamara <daire.mcnamara@microchip.com>
-> > 
-> > On Microchip PolarFire SoC (MPFS) the PCIe Root Port can be behind one of
-> > three general-purpose Fabric Interface Controller (FIC) buses that
-> > encapsulate an AXI-M interface. That FIC is responsible for managing
-> > the translations of the upper 32-bits of the AXI-M address. On MPFS,
-> > the Root Port driver needs to take account of that outbound address
-> > translation done by the parent FIC bus before setting up its own
-> > outbound address translation tables.  In all cases on MPFS,
-> > the remaining outbound address translation tables are 32-bit only.
-> > 
-> > Limit the outbound address translation tables to 32-bit only.
-> > 
-> > This necessitates changing a size_t in mc_pcie_setup_window
-> > to a u64 to avoid a compile error on 32-bit platforms.
-> 
-> I don't see this size_t change in this patch.  Add "()" after function
-> name if there's a relevant function here.
+On Tue, Aug 20, 2024 at 10:13=E2=80=AFAM <chenxiaosong@chenxiaosong.com> wr=
+ote:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> Preparation for moving the SMB2 Status code definitions to a common
+> header file.
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+> ---
+>  fs/smb/client/smb2maperror.c | 2 +-
+>  fs/smb/client/smb2status.h   | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/smb/client/smb2maperror.c b/fs/smb/client/smb2maperror.c
+> index ac1895358908..3ac17d43bb7d 100644
+> --- a/fs/smb/client/smb2maperror.c
+> +++ b/fs/smb/client/smb2maperror.c
+> @@ -1096,7 +1096,7 @@ static const struct status_to_posix_error smb2_erro=
+r_map_table[] =3D {
+>         "STATUS_MOUNT_POINT_NOT_RESOLVED"},
+>         {STATUS_INVALID_DEVICE_OBJECT_PARAMETER, -EIO,
+>         "STATUS_INVALID_DEVICE_OBJECT_PARAMETER"},
+> -       {STATUS_MCA_OCCURED, -EIO, "STATUS_MCA_OCCURED"},
+> +       {STATUS_MCA_OCCURRED, -EIO, "STATUS_MCA_OCCURRED"},
+>         {STATUS_DRIVER_BLOCKED_CRITICAL, -EIO,
+>         "STATUS_DRIVER_BLOCKED_CRITICAL"},
+>         {STATUS_DRIVER_BLOCKED, -EIO, "STATUS_DRIVER_BLOCKED"},
+> diff --git a/fs/smb/client/smb2status.h b/fs/smb/client/smb2status.h
+> index 9c6d79b0bd49..15364c4328ec 100644
+> --- a/fs/smb/client/smb2status.h
+> +++ b/fs/smb/client/smb2status.h
+> @@ -901,7 +901,7 @@ struct ntstatus {
+>  #define STATUS_DEVICE_ENUMERATION_ERROR cpu_to_le32(0xC0000366)
+>  #define STATUS_MOUNT_POINT_NOT_RESOLVED cpu_to_le32(0xC0000368)
+>  #define STATUS_INVALID_DEVICE_OBJECT_PARAMETER cpu_to_le32(0xC0000369)
+> -#define STATUS_MCA_OCCURED cpu_to_le32(0xC000036A)
+> +#define STATUS_MCA_OCCURRED cpu_to_le32(0xC000036A)
+>  #define STATUS_DRIVER_BLOCKED_CRITICAL cpu_to_le32(0xC000036B)
+>  #define STATUS_DRIVER_BLOCKED cpu_to_le32(0xC000036C)
+>  #define STATUS_DRIVER_DATABASE_ERROR cpu_to_le32(0xC000036D)
+> --
+> 2.34.1
+>
+>
 
-It looks that change was still present in v7 but also "u64" is not correct 
-either because it was changed to resource_size_t.
 
-> > Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe controller driver")
-> > Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Reviewed-by: Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-> > ---
-> >  .../pci/controller/plda/pcie-microchip-host.c | 30 ++++++++++++++++---
-> >  1 file changed, 26 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/plda/pcie-microchip-host.c b/drivers/pci/controller/plda/pcie-microchip-host.c
-> > index 48f60a04b740..da766de347bd 100644
-> > --- a/drivers/pci/controller/plda/pcie-microchip-host.c
-> > +++ b/drivers/pci/controller/plda/pcie-microchip-host.c
-> > @@ -21,6 +21,8 @@
-> >  #include "../../pci.h"
-> >  #include "pcie-plda.h"
-> >  
-> > +#define MC_OUTBOUND_TRANS_TBL_MASK		GENMASK(31, 0)
-> > +
-> >  /* PCIe Bridge Phy and Controller Phy offsets */
-> >  #define MC_PCIE1_BRIDGE_ADDR			0x00008000u
-> >  #define MC_PCIE1_CTRL_ADDR			0x0000a000u
-> > @@ -612,6 +614,27 @@ static void mc_disable_interrupts(struct mc_pcie *port)
-> >  	writel_relaxed(GENMASK(31, 0), bridge_base_addr + ISTATUS_HOST);
-> >  }
-> >  
-> > +int mc_pcie_setup_iomems(struct pci_host_bridge *bridge,
-> > +			   struct plda_pcie_rp *port)
-> > +{
-> > +	void __iomem *bridge_base_addr = port->bridge_addr;
-> > +	struct resource_entry *entry;
-> > +	u64 pci_addr;
-> > +	u32 index = 1;
-> > +
-> > +	resource_list_for_each_entry(entry, &bridge->windows) {
-> > +		if (resource_type(entry->res) == IORESOURCE_MEM) {
-> > +			pci_addr = entry->res->start - entry->offset;
-> > +			plda_pcie_setup_window(bridge_base_addr, index,
-> > +					       entry->res->start & MC_OUTBOUND_TRANS_TBL_MASK,
-> > +					       pci_addr, resource_size(entry->res));
-> > +			index++;
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int mc_platform_init(struct pci_config_window *cfg)
-> >  {
-> >  	struct device *dev = cfg->parent;
-> > @@ -622,15 +645,14 @@ static int mc_platform_init(struct pci_config_window *cfg)
-> >  	int ret;
-> >  
-> >  	/* Configure address translation table 0 for PCIe config space */
-> > -	plda_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
-> > -			       cfg->res.start,
-> > -			       resource_size(&cfg->res));
-> > +	plda_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & MC_OUTBOUND_TRANS_TBL_MASK,
-> > +			       0, resource_size(&cfg->res));
-> >  
-> >  	/* Need some fixups in config space */
-> >  	mc_pcie_enable_msi(port, cfg->win);
-> >  
-> >  	/* Configure non-config space outbound ranges */
-> > -	ret = plda_pcie_setup_iomems(bridge, &port->plda);
-> > +	ret = mc_pcie_setup_iomems(bridge, &port->plda);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -- 
-> > 2.34.1
-> > 
-> 
+--=20
+Thanks,
 
--- 
- i.
-
+Steve
 
