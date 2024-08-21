@@ -1,134 +1,82 @@
-Return-Path: <linux-kernel+bounces-296009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A3695A443
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:58:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301F495A441
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DC9AB2341E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF381F22953
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1561B3B30;
-	Wed, 21 Aug 2024 17:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nilsfuhler.de header.i=@nilsfuhler.de header.b="ljuD3SAV"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AEE1B3B12;
+	Wed, 21 Aug 2024 17:58:11 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D1813E40F;
-	Wed, 21 Aug 2024 17:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B399314E2F9;
+	Wed, 21 Aug 2024 17:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724263093; cv=none; b=MJ/YZ6BJ3D6da8WPix5l3ffWS6a4gYcU1IuVE3JlMjiE1yAWEhOyoxyh8saUHZkRctyhLabHjS4AEAen8OyAEaJxwAVOPBpqjBoj3wuA0doU+uDVW1s5dAxnx9JBvRf9QXHEAQfwLBgPMFnVVQ5r532imargVGXOpXbPuuabcpU=
+	t=1724263090; cv=none; b=qHmDe5p4eUOqyU3UeOVmSX+ytmh7s2TLlvANxazsM5Nq5z5/5SZ/YcoOWn6UDQzp4OwfTJZH1T14hfhJq+8LtKAoNC5Ir7aeJWJ+pkK9IPSe11FYy1wHgEtka0bq86MHOP47ufFeuGq/r+7kCvPOUIG81WcCkDDjmGH1m3ydqbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724263093; c=relaxed/simple;
-	bh=Z9H1ZOw1PDu4npyWo4XjX8LokfU06nz18XJk55zwSi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kg/ByBxxnPmuFyQe3kCy1gG582haThDkV3fT+xn4nKhaZuWXchP6ZWqtto2jJUnHSdW5mLoTBVrx2qlM0mJG0myY0BUVuazX7A1fau7ZWj2nlX/jwh+YwJvGDFEQzsJ2eOPuJpfJjCVORO8Tj9Q2sBPSMvXS0003c1Kyb5pxhT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nilsfuhler.de; spf=pass smtp.mailfrom=nilsfuhler.de; dkim=pass (2048-bit key) header.d=nilsfuhler.de header.i=@nilsfuhler.de header.b=ljuD3SAV; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nilsfuhler.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nilsfuhler.de
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WpvFN3s4Jz9tSc;
-	Wed, 21 Aug 2024 19:58:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nilsfuhler.de;
-	s=202311; t=1724263078;
-	bh=Z9H1ZOw1PDu4npyWo4XjX8LokfU06nz18XJk55zwSi4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ljuD3SAVAYG2RjIyRV+eCL+93gzML3HIP/VITlS7qgOvxHxmewQWnkwREamdif4h+
-	 HdUOUrpDUOeSdjft94OXTG7nITRr7u0rjgQCwZohqf4BWl6TqyLd3eGqTTmR8BNWp7
-	 vyiuCHwaC/gknjX784nJihkpUst19RsuG91qR4HzDtJ205Cnf3F43v2VK55rhLnhmx
-	 Zopi9ZEF4xroeR1lDrvG6LUDiY5lvet3gJFaGAg+FLDPxWgOFSFmYokUY3MLCb2564
-	 yr8VF/SB5SChqbmE1ucPxOonSWvznPTYq0Va2m9pUDoJQCG7X2l/Edxz4CTDAK/RJ5
-	 QvAjoIS9VwlRw==
-Message-ID: <fcb4b7d9-08e1-4a8b-8218-a7301e6930f5@nilsfuhler.de>
-Date: Wed, 21 Aug 2024 19:57:55 +0200
+	s=arc-20240116; t=1724263090; c=relaxed/simple;
+	bh=0bKrlLXgdzyxd0D1aCLYNiyGZ8pJY9tNP+YcWVliLF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjxrewliz6DSf1iX4OYV6qa51UUTEbg8/Hsf6SewhKQsOR7xVNqXaf5DtxMyujKlUWMAvCcqoy73jHKj7Lgb5IC6ILSW12xLw7hS+YsW72+oAWt7TY7BVErBXjoegNw585zXkBJ+hAg0VysqBoZsKb753v0ubP6ZFrdB6/GVucw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBDCAC32781;
+	Wed, 21 Aug 2024 17:58:04 +0000 (UTC)
+Date: Wed, 21 Aug 2024 18:58:02 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 26/40] arm64: Add Kconfig for Guarded Control Stack
+ (GCS)
+Message-ID: <ZsYqqlE4KnB3RxKi@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-26-699e2bd2190b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] net: ip6: ndisc: fix incorrect forwarding of proxied
- ns packets
-To: Paolo Abeni <pabeni@redhat.com>, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, kuba@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, nils@nilsfuhler.de
-References: <20240815151809.16820-2-nils@nilsfuhler.de>
- <a95f1211-0f1b-4957-8e31-1b53af888cb5@redhat.com>
-Content-Language: en-US
-From: Nils Fuhler <nils@nilsfuhler.de>
-In-Reply-To: <a95f1211-0f1b-4957-8e31-1b53af888cb5@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4WpvFN3s4Jz9tSc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801-arm64-gcs-v10-26-699e2bd2190b@kernel.org>
 
-
-
-On 20/08/2024 15:13, Paolo Abeni wrote:
+On Thu, Aug 01, 2024 at 01:06:53PM +0100, Mark Brown wrote:
+> Provide a Kconfig option allowing the user to select if GCS support is
+> built into the kernel.
 > 
-> 
-> On 8/15/24 17:18, Nils Fuhler wrote:
->> When enabling proxy_ndp per interface instead of globally, neighbor
->> solicitation packets sent to proxied global unicast addresses are
->> forwarded instead of generating a neighbor advertisement. When
->> proxy_ndp is enabled globally, these packets generate na responses as
->> expected.
->>
->> This patch fixes this behaviour. When an ns packet is sent to a
->> proxied unicast address, it generates an na response regardless
->> whether proxy_ndp is enabled per interface or globally.
->>
->> Signed-off-by: Nils Fuhler <nils@nilsfuhler.de>
-> 
-> I have mixed feeling WRT this patch. It looks like a fix, but it's changing an established behaviour that is there since a lot of time.
-> 
-> I think it could go via the net-next tree, without fixes
-> tag to avoid stable backports. As such I guess it deserves a self-test script validating the new behavior.
-> 
-That is probably the best option.
-Although I'm not sure whether it would really break something. The
-forwarded packets have a hoplimit of 254 and are therefore not valid
-ndisc packets anymore.
+> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-
->> ---
->> v1 -> v2: ensure that idev is not NULL
->>
->>   net/ipv6/ip6_output.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
->> index ab504d31f0cd..0356c8189e21 100644
->> --- a/net/ipv6/ip6_output.c
->> +++ b/net/ipv6/ip6_output.c
->> @@ -551,8 +551,8 @@ int ip6_forward(struct sk_buff *skb)
->>           return -ETIMEDOUT;
->>       }
->>   -    /* XXX: idev->cnf.proxy_ndp? */
->> -    if (READ_ONCE(net->ipv6.devconf_all->proxy_ndp) &&
->> +    if ((READ_ONCE(net->ipv6.devconf_all->proxy_ndp) ||
->> +         (idev && READ_ONCE(idev->cnf.proxy_ndp))) &&
->>           pneigh_lookup(&nd_tbl, net, &hdr->daddr, skb->dev, 0)) {
->>           int proxied = ip6_forward_proxy_check(skb);
->>           if (proxied > 0) {
-> 
-> Note that there is similar chunk in ndisc_recv_na() that also ignores idev->cnf.proxy_ndp, why don't you need to such function, too?
-
-I have noticed the chunk in ndisc_recv_na() and did some quick testing
-but I was not able to get an obviously wrong behavior out of it.
-I have to admit, though, that I am not sure if I understand the
-condition correctly. At the start, it checks that the lladdr of the
-received na packet is equal to the lladdr of the reciving interface.
-That can only happen, when the interface receives its own packet, right?
-Is there a valid case where that can happen? Or am I missing something?
-
-Greetings,
-Nils
-
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
