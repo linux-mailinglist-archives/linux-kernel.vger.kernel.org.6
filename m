@@ -1,95 +1,148 @@
-Return-Path: <linux-kernel+bounces-295239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13479598F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:04:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7009598E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED971F223C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35FEF284155
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D7F1F2FFF;
-	Wed, 21 Aug 2024 09:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973DB1F3774;
+	Wed, 21 Aug 2024 09:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MW4QyXvI"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X/MFktln"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EED1F2FF7
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ED01F3742
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233057; cv=none; b=FM6N0YjxRblTAN1HJrFAT1mGiFrHI9DbXfLvtLSoRl5PKP5d6n8r1M9ZyGI6xSOqoWrxgoFn1uv0gYMWtuyJ1nUREdPg9XdMHDeofN+p1bGma3X9ZhK429hSzeEj5tfDvmFe40fm/Ym3Ij8XjfGZH21PqYiX1ZyrOzQ/eR8fb+U=
+	t=1724232758; cv=none; b=f+7qzT5qCqSmCX4QrCdB6MBkO+GhYwX+zhNKiZC00hgRRujNzhnG4uL7bfjFt740GivqhyBzaxIFh4PK+Ztz8sS6xrykzBRSyi40h2muZ5ZNQ6cT3BjMbvLFkJs1ywS0XRTL32NVKVdly8xxyfZs8504d+yFWjYpmFtaX2z3h4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233057; c=relaxed/simple;
-	bh=2ZZgOLJgDqZekim7e05jVP9S+hgUN2EcuqldTQjPrDY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=KpG/fRSYf3gxc2IsiybqzOKNGDQMx31m4LebdK8YKRthKheulFTVqpxtyPBE7oAluDHpzn4lOCoKJPm0DIkTEzIbTY13RtZ/Oo6RQwQ6QwHHPaEOM7mfTFSkArtUkW2mdCrQN45qhEDWw37HHkEE9v1C5mip4FAZFhRTRC0VXmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MW4QyXvI; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724232738; bh=EGzNTf7mYT7EcPJXLX4yrtisRC7op8gi44E0kTb7W8s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=MW4QyXvI+yEA75VUZMY75lM7TO/qO2xwvoadyPnmoChHuUPdG0O0li320mLCnIJLo
-	 4zT+xD5RGbMUE+kcOUQrDrqkAI1aPQ88WS2jg39Y6X+J9mpD2WVWfQvsAOvpPeimOX
-	 DIu/V4KcjF0mgGEZFmvfUvHETHFGFvUDIREs89P8=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 80F9020F; Wed, 21 Aug 2024 17:32:15 +0800
-X-QQ-mid: xmsmtpt1724232735tl7br2q7f
-Message-ID: <tencent_3BC9CCA2E7ED86CB52D9C66449BE2EC72E06@qq.com>
-X-QQ-XMAILINFO: OKKHiI6c9SH3Hd9Afrt5jqCFIVaVWzeRp+HEDbS3U/PhPLtCb/ZMq6NH5DhNXJ
-	 pUo1amIYO6xtt8V0cpXCagZrMAZBrsFUnWa9Rio88fq6Z5Ja8/NDQABoA3G9TlvlS20u5XrNwyRA
-	 Xeds8k5mxZwZKh/TlwkFH/Hlr/oXbNPUheaGI3SymZclvWQeBZzJS9k+dr4FKEs0uIIl08DjqSzB
-	 jOYhSN9y+WkWgS2VCJfT1f2NR62Ms50MO2mk7lCbJszPeSQoqcYJxhRWxwNoyp8N3rL3tq9LHzXz
-	 vtMfn8zvmHdZnHCjF/eFTOHnzQoCUqFpOHBesvZD3GButo/UnRBiVpH3bVVYH0IYJ7VmxoiWjsS6
-	 JgsSFNKyqQ8Ewa3uLcdRq5bQVWdD4HFbzJLihbbIkwGjF6jA4fbxLjIYFi7fgh+YzOl4aFBJ8+Vz
-	 u4KMDrSvYCqpqwtQ71PrRED7dhB7PhuWMhN6CYnU+sqNpZa7nKIUY4cxUPJCQEDM5xbLqVGI+EVR
-	 VV3cVx6FhiS/KCq2GiO47ejNHOL2cn9NiWdcsI0rj8b384P29SQJGyfEhEvZfHj1YV9lmX9YuMR/
-	 4Vy9Fp8jowLJGjr9dKq0F9gkH+n0A3d49tx6PwuqE2En1c/ZuWTCZaIDE0WRjKl4JEc8qecdO59m
-	 6A+mooDMUVL7UagjmZrJUJc54K/4iIeathc0VItWsh+9EKBSWPgCTUP4TjZYdFchmcUHHHRy594G
-	 SZyNs4gdS2HXFENlfrO9ecTxb/0xxT6HKBKdsMEQ4UN2STss6lX6hbfYsu0TIBLvgo1tXMRm1MEb
-	 ZZVbt0k2YT0mnviRniAP55LP6Y786dYQgtUXkG/FcineoWgotQp/XP0u/xr8+YDTPYkikbcdvMLg
-	 AmiQWcnd6r09cOWnokoHKv6HzVJSb8zMZfd26szihNlJsy2hJpyOX+A+0leospFjQ73YRyjk6y
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_try_remove_refcount_tree
-Date: Wed, 21 Aug 2024 17:32:16 +0800
-X-OQ-MSGID: <20240821093215.463409-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <00000000000032dd730620055fde@google.com>
-References: <00000000000032dd730620055fde@google.com>
+	s=arc-20240116; t=1724232758; c=relaxed/simple;
+	bh=m4FbkAx7v5EUwGK5Pg47fSnJDHHw9WPN5bt92a1OXbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FKMyqaC8P3FlBUGaE9WPgUnyTrTGVMnu4Z6sDF/8wJvcZu9MUkOFqm5fn5kWDC69Q+E9p3WmbKhMTbop4QwfMa6JVp2fAygm7/SXojGl5+yK0tcTWq2dLVCc1tr3sH+o+Y+IibFpdPJQ/jwBYrLrdj1fLjHd0hTesfY0LQblgnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X/MFktln; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37186c2278bso317730f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724232755; x=1724837555; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UtW0leC2Dw32/lkesLtRzDO2WQQOzasED8SlJGa2yWo=;
+        b=X/MFktlnPU530vpkW+DKmYtxZnB1NN8O83cn82uJ4PVAf7kc4OD4m3lHsvYd8Nbsis
+         jNFjExt8aCDJ/xw3LulSl9fyb3bnwCsxq8aTjNNZSyBvf00sVCrXbgNBePDupAL0INQB
+         T/9ZeMUHxIdNnh4UcFMQ2L2/qlgBdchXCQK11hGx0JRLCx7h93FmclJVLD83WHQqWxbu
+         6GqsqromsYCF9lL//HW7hXk2FlfXyT97Pu4LHyI8bAGdprlRhVZPygpptLb9/LltKqOE
+         Fl1/Sn808nhJu2TcY5KagXUO62C1NW7HenvTutjcRkR2s7epcamGGR7YYa6pcBe4/Lxa
+         AKJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724232755; x=1724837555;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UtW0leC2Dw32/lkesLtRzDO2WQQOzasED8SlJGa2yWo=;
+        b=FXDTiLPLHH+M9qd2GUU+J345CDvfgwYPVLPqqLTVCnV8h1+3d65zFRpn3ao8FOsYJM
+         lVTaMK/oG9H3CS0bQxgqOzOUzp4iEVF6dSlLJH4pctOH7cf1iIjC8XK/jAG/IPouC9IE
+         rfdOlR64btBhMmQURsMbIF0KAItgd22rLZpRNg++ztKc7VuQvzuvR/JPy22Zenw6KEy9
+         rtEErMfiGjVA/A4tNdNaKzrOhWA9WqWCnKkPFfS8PETDjgvuKCuKqZ0SJWCgIMRhjMxI
+         ZumaIdyS3BVLAhOFjZ22+4IX70RwP6dIHaKmU0DLIX0XQhIySfuYtkEHFQgyupZwH8Ma
+         kQ+A==
+X-Gm-Message-State: AOJu0Yxg2scE88P6TCPItKuW9YBWZm1RyswqeXrdUFtJLiG9BOymzFeF
+	r+wfOXARIHiZD4MlnOG/PLM0ypva+3wDtONi0gZStbVCzXm0fFQ5atZ+r1stLNo=
+X-Google-Smtp-Source: AGHT+IHRIrFfky0Sc1rurltGhfdewiFAC0lajLizHyBq/KheWqYA21VK4dur3rH3z+H8eRRkUFoaeg==
+X-Received: by 2002:adf:a344:0:b0:366:ea4a:17ec with SMTP id ffacd0b85a97d-372fdd840demr823919f8f.2.1724232755022;
+        Wed, 21 Aug 2024 02:32:35 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abef97f7asm18744355e9.22.2024.08.21.02.32.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 02:32:34 -0700 (PDT)
+Message-ID: <c01ed2d7-964d-4b75-9a8e-8325d4cc9269@linaro.org>
+Date: Wed, 21 Aug 2024 11:32:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/14] thermal: core: Drop redundant thermal instance
+ checks
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Zhang Rui <rui.zhang@intel.com>
+References: <2205737.irdbgypaU6@rjwysocki.net>
+ <10527734.nUPlyArG6x@rjwysocki.net>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <10527734.nUPlyArG6x@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-use trylock to replace
+On 19/08/2024 17:52, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Because the trip and cdev pointers are sufficient to identify a thermal
+> instance holding them unambiguously, drop the additional thermal zone
+> checks from two loops walking the list of thermal instances in a
+> thermal zone.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-#syz test: upstream 1fb918967b56
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-diff --git a/fs/ocfs2/acl.c b/fs/ocfs2/acl.c
-index 62464d194da3..f60e3178fe74 100644
---- a/fs/ocfs2/acl.c
-+++ b/fs/ocfs2/acl.c
-@@ -363,7 +363,8 @@ int ocfs2_init_acl(handle_t *handle,
- 
- 	if (!S_ISLNK(inode->i_mode)) {
- 		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
--			down_read(&OCFS2_I(dir)->ip_xattr_sem);
-+			if (!down_read_trylock(&OCFS2_I(dir)->ip_xattr_sem))
-+				return -EBUSY;
- 			acl = ocfs2_get_acl_nolock(dir, ACL_TYPE_DEFAULT,
- 						   dir_bh);
- 			up_read(&OCFS2_I(dir)->ip_xattr_sem);
+I'm wondering if the thermal_instance 'tz' field could be removed too ?
 
+> ---
+> 
+> v1 -> v3: No changes
+> 
+> ---
+>   drivers/thermal/thermal_core.c |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -850,7 +850,7 @@ int thermal_bind_cdev_to_trip(struct the
+>   	mutex_lock(&tz->lock);
+>   	mutex_lock(&cdev->lock);
+>   	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
+> -		if (pos->tz == tz && pos->trip == trip && pos->cdev == cdev) {
+> +		if (pos->trip == trip && pos->cdev == cdev) {
+>   			result = -EEXIST;
+>   			break;
+>   		}
+> @@ -915,7 +915,7 @@ int thermal_unbind_cdev_from_trip(struct
+>   	mutex_lock(&tz->lock);
+>   	mutex_lock(&cdev->lock);
+>   	list_for_each_entry_safe(pos, next, &tz->thermal_instances, tz_node) {
+> -		if (pos->tz == tz && pos->trip == trip && pos->cdev == cdev) {
+> +		if (pos->trip == trip && pos->cdev == cdev) {
+>   			list_del(&pos->tz_node);
+>   			list_del(&pos->cdev_node);
+>   
+> 
+> 
+> 
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
