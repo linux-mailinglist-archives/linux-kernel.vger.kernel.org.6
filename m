@@ -1,236 +1,139 @@
-Return-Path: <linux-kernel+bounces-295644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0AE959F7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:16:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25A7959F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8BFB23E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2902B1F25F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7161B1D4C;
-	Wed, 21 Aug 2024 14:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D16E1B1D60;
+	Wed, 21 Aug 2024 14:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PkDGuclh"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Tsz5XWcb"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74DA199FC0
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099161AF4ED
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249779; cv=none; b=R9l8+/N/hHlJcBjS8akC7Rt6NSwQPtGxxEaOXjEZqNN/uwEmZHZdhPx8RmlEBtR2e5LJdDk2aSAldZ7P8r2HbZgR00aEPklruv4WT8N5ooaNRN1JFWrJ7Z6JSPIfvpKUwHQe11MIfDNHV/qjnuHGl0uZwXHk/ErzlIcheOGsHlA=
+	t=1724249800; cv=none; b=aiYdzbC9LdfWTZmH7fXGmZX6Wtoo/RW8gESXBMy5mgRkc2BrFqwm0BBcwI6k0cZF3B6PKpWzGJVbWZiKVXrZbO11tZHS7+QlLNpbmwPWoZh9O9bN6f/di4xtBJJdntNE8nOdE0WSFX5Ry/g4E7QAuCBs6O+277/DVPSIXbw1fo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249779; c=relaxed/simple;
-	bh=yCpg8BpOwa/jCwR3LkBxKWRWK+9VGoy6jnZROBl4YTM=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=k9b3VAO3vGt1w3k9hfDBvjok/P2/IMQtrr4591ZOeAvx/MuqxcDmA/8ATVwiTDqRAbpsxorHknzvqJWBG00+Kv2i7s/1of6cY/o4FO76Z+0w3j2DPgkmrafMR1eRULLo2WiL8LUG4ZQTP6JBN+z9eEFE9HVA79UAwEbDPT1x3UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PkDGuclh; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1724249800; c=relaxed/simple;
+	bh=m7X/1nlXFnx6K0tldZgYVRy28K5m8NEXV6Gf8fcZUY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DjV7hB3I/7fgAmYH4YWlEZhjljWRuNWhQpi5xX+BPYXAIVulI/cwYUVnG0ntUQ5j+I2q4UfPXwvMTEQbXMbbmhw2K30sNjUwQ88B8T8MmdgReqG+L06TkOlVzcwhTQz/LkBcRJGPVoqMfv6kuUnM3NkNStjSwqTQnV555/8XOLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Tsz5XWcb; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a867a564911so81847066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1724249796; x=1724854596; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1HTAcUTpqyzByMJpquHWMYu3B5Ynm1G8WC9iJphytM0=;
+        b=Tsz5XWcb8kgJD1Ws3tSxzX6hvOqRgnl0Luq6pCR1RPHYgN69yatPpGv8p9etiTsvMA
+         GiNsdmm6cS1NBaK0dSgbfZLGAyvnuoBaY/RNWHfspXBByG0z5cFJHEafk0SopjUh6BYk
+         icyt/geF9FtpJuqjUvkiS93lUwb4WuS7MTvDZgGVERaUDApLy9Qk4kLAEGj/u3vjN+7E
+         HP/mEUf50F/kmkpW5EAbxsqZTCS/w+lhhoEb0HPOBk94nWk6BDg0Nn9YHSOJFmZ0XLzF
+         unPBY6Mm8gMzsAbxZ6MsVaWw3inLyCC0ZFVmEabQBPRYrgpuMWQl4xrZHEKbiy2bTsMo
+         7fKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724249796; x=1724854596;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1HTAcUTpqyzByMJpquHWMYu3B5Ynm1G8WC9iJphytM0=;
+        b=sSio/Glt4S9TIH7J48D4e/6eP7TMgJw64ljxE2Nw5zFabdCu0yU37ScoQE23ropD+H
+         8Q5BWEH6uSw6HZqtpeurZYCgnZRGxsNOkRL+fciFdsWpHzFNGO18PU+6GVwSYGYNl6Ft
+         f4LRhqtpHkEAE1z0vXZN6OBBWoOo/F03B6KywZvY9rvcNKtzq35qPXKxfKiQX9AAuzp3
+         /z3oIN+VMsY9UXNLXzPBoBeQEBvmfCWEG/Tk40FhP1ovFJxLUIQlMdBDYUEHWznMneXk
+         51UpIy7Q3lNxQkHO4dpchybgkg/N1H4/fmaW/v08ijSB+VQ1UUaaNyMOjmfoZ1T83NyH
+         xJ2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXGqAFCWZmr3pZFCGI/DdoSW5AnVWhcdJT2HNDqWG9Gh74IxcLLBin7uSUe1m9Cetti4GkiEKDlbJizzSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK3qtps2NXXAD616iyQ2RuGMTJMtrlnPvN/xcbJiZ0xiJR6C/W
+	YJuIUqF4okPD9eikT2vW1rUvODZ2mUBGSLRmfHWBu2lB26asKz7Zh/w+dyPrkIs=
+X-Google-Smtp-Source: AGHT+IE8bwm0dEjF7VBywYff/AafpoSdjerliMDujGbpLZiuwqH+igjndWkqozC0Ufc6S5g43YyWNA==
+X-Received: by 2002:a17:907:9803:b0:a80:f79a:eb6f with SMTP id a640c23a62f3a-a866f11b8ecmr177010066b.8.1724249795649;
+        Wed, 21 Aug 2024 07:16:35 -0700 (PDT)
+Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86680ed15fsm136535866b.224.2024.08.21.07.16.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 07:16:35 -0700 (PDT)
+Date: Wed, 21 Aug 2024 16:16:34 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 04/13] dt-bindings: riscv: Add Zabha ISA extension
+ description
+Message-ID: <20240821-5c19951bb4f35f7ed90fc10a@orel>
+References: <20240818063538.6651-1-alexghiti@rivosinc.com>
+ <20240818063538.6651-5-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724249774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H8CajDEUelu2H+xKX1V61lrtD26SNXje96Ahzio0DC0=;
-	b=PkDGuclhnc58W/gfudUwFlCU7pv+9K73cikbVHmNYrYOeWRjQFc/HCbX5a0WsYhZY5NF6u
-	sCVnD9+oG8+/N9b4CCSgsXD1ub0ub3avtxG0swngHEUR8QKQVltIIdBfhbf4JFZunf+K82
-	pC+1GWSzSTjBHvCfZPUtL8W6eFjG4O4=
-Date: Wed, 21 Aug 2024 14:16:12 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: jeff.xie@linux.dev
-Message-ID: <ef273629d92e108ad166faf1f4abccac6cda461a@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] ftrace: Get the true parent ip for function tracer
-To: "Steven Rostedt" <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiehuan09@gmail.com
-In-Reply-To: <20240821095910.1888d7fa@gandalf.local.home>
-References: <20240821132755.2766674-1-jeff.xie@linux.dev>
- <20240821095910.1888d7fa@gandalf.local.home>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240818063538.6651-5-alexghiti@rivosinc.com>
 
-August 21, 2024 at 9:59 PM, "Steven Rostedt" <rostedt@goodmis.org> wrote:
+On Sun, Aug 18, 2024 at 08:35:29AM GMT, Alexandre Ghiti wrote:
+> Add description for the Zabha ISA extension which was ratified in April
+> 2024.
+> 
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Reviewed-by: Guo Ren <guoren@kernel.org>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> index a06dbc6b4928..a63578b95c4a 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -171,6 +171,12 @@ properties:
+>              memory types as ratified in the 20191213 version of the privileged
+>              ISA specification.
+>  
+> +        - const: zabha
+> +          description: |
+> +            The Zabha extension for Byte and Halfword Atomic Memory Operations
+> +            as ratified at commit 49f49c842ff9 ("Update to Rafified state") of
 
+The typo is verbatim from the commit, so
 
-Hi Steven,
+"Reviewfified-by:", err...
 
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
->=20
->=20On Wed, 21 Aug 2024 21:27:55 +0800
->=20
->=20Jeff Xie <jeff.xie@linux.dev> wrote:
->=20
->=20Hi Jeff,
->=20
->=20Thanks for the patch.
->=20
->=20>=20
->=20> Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
-> >=20
->=20>  ---
-> >=20
->=20>  kernel/trace/trace_functions.c | 18 ++++++++++++++++++
-> >=20
->=20>  1 file changed, 18 insertions(+)
-> >=20
->=20>=20=20
->=20>=20
->=20>  diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_f=
-unctions.c
-> >=20
->=20>  index 3b0cea37e029..273b8c7eeb2d 100644
-> >=20
->=20>  --- a/kernel/trace/trace_functions.c
-> >=20
->=20>  +++ b/kernel/trace/trace_functions.c
-> >=20
->=20>  @@ -176,6 +176,19 @@ static void function_trace_start(struct trace=
-_array *tr)
-> >=20
->=20>  tracing_reset_online_cpus(&tr->array_buffer);
-> >=20
->=20>  }
-> >=20
->=20>=20=20
->=20>=20
->=20>  +static unsigned long
-> >=20
->=20>  +function_get_true_parent_ip(unsigned long parent_ip, struct ftrac=
-e_regs *fregs)
-> >=20
->=20
-> I wonder if we should make this inline, or even __always_inline, as thi=
-s
->=20
->=20will be called in a very hot path, and I want to make sure that the
->=20
->=20compiler always inlines it. It likely should, but we should also give=
- the
->=20
->=20compiler a hint that it should.
-
-
-Yes, Thank you for your suggestion. It is indeed a very hot path,=20
-and=20I will add __always_inline in the next version.
-
-
->=20
->=20-- Steve
->=20
->=20>=20
->=20> +{
-> >=20
->=20>  + unsigned long true_parent_ip;
-> >=20
->=20>  + int idx =3D 0;
-> >=20
->=20>  +
-> >=20
->=20>  + true_parent_ip =3D parent_ip;
-> >=20
->=20>  + if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler)=
-)
-> >=20
->=20>  + true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_i=
-p,
-> >=20
->=20>  + (unsigned long *)fregs->regs.sp);
-> >=20
->=20>  + return true_parent_ip;
-> >=20
->=20>  +}
-> >=20
->=20>  +
-> >=20
->=20>  static void
-> >=20
->=20>  function_trace_call(unsigned long ip, unsigned long parent_ip,
-> >=20
->=20>  struct ftrace_ops *op, struct ftrace_regs *fregs)
-> >=20
->=20>  @@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned=
- long parent_ip,
-> >=20
->=20>  if (bit < 0)
-> >=20
->=20>  return;
-> >=20
->=20>=20=20
->=20>=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  +
-> >=20
->=20>  trace_ctx =3D tracing_gen_ctx();
-> >=20
->=20>=20=20
->=20>=20
->=20>  cpu =3D smp_processor_id();
-> >=20
->=20>  @@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, un=
-signed long parent_ip,
-> >=20
->=20>  * recursive protection is performed.
-> >=20
->=20>  */
-> >=20
->=20>  local_irq_save(flags);
-> >=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  cpu =3D raw_smp_processor_id();
-> >=20
->=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
-> >=20
->=20>  disabled =3D atomic_inc_return(&data->disabled);
-> >=20
->=20>  @@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long i=
-p, unsigned long parent_ip,
-> >=20
->=20>  if (bit < 0)
-> >=20
->=20>  return;
-> >=20
->=20>=20=20
->=20>=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  cpu =3D smp_processor_id();
-> >=20
->=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
-> >=20
->=20>  if (atomic_read(&data->disabled))
-> >=20
->=20>  @@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned =
-long ip, unsigned long parent_ip,
-> >=20
->=20>  * recursive protection is performed.
-> >=20
->=20>  */
-> >=20
->=20>  local_irq_save(flags);
-> >=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  cpu =3D raw_smp_processor_id();
-> >=20
->=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
-> >=20
->=20>  disabled =3D atomic_inc_return(&data->disabled);
-> >
->
+> +            riscv-zabha.
+> +
+>          - const: zacas
+>            description: |
+>              The Zacas extension for Atomic Compare-and-Swap (CAS) instructions
+> -- 
+> 2.39.2
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
