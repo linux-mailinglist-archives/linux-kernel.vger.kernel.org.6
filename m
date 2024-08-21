@@ -1,114 +1,144 @@
-Return-Path: <linux-kernel+bounces-296152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EBB95A651
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAAE895A654
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0ABF1F22818
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:04:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0E11F21A4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E32170A3E;
-	Wed, 21 Aug 2024 21:04:43 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335BF174EE4;
+	Wed, 21 Aug 2024 21:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BP6njGY2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DEB1531EF
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDBD7405A;
+	Wed, 21 Aug 2024 21:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724274283; cv=none; b=ho0kP3HWS4QtVPYCrP7rsxVuSp8yAXJLhYOrnFSAi2+H6N/5P/aE+6b5dafMaMK/JQayL519tm0J/3gTBCRUFiZsP2aQGQoBaF5h3apDpkDV6ma469LNZYspVdQZKRcV6HnysrL5bi27aSgLNPKADGRjvaFU0ZoKCZoCXojGo/s=
+	t=1724274411; cv=none; b=aLmteEqmGTykBWWR+9sEIT+5X2SlfF9tidnBQQ7uuh3rZbPVVPIPU0RGGjdYkWFaLVliM/cxB5kx9ekZrO7bmEvCBkNGpzkihp0MfnjNOLwic836kz7wYXxIqJB5v+/swVDEgQoo1seJJoq7BVwx5AhCf5lGGi6joOXPOnpRhOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724274283; c=relaxed/simple;
-	bh=9Ks9JJr5vlqRuh5rwFlXvRo4NycJ4UBvYITxZHobzfU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UbCGR4rO4+lv7yz6Rs59SCUyPLbxJCQhLgb1A/SjBUzpBSrtBeI089YrMJF2TiB2pPPn6f68W3+m87kkrWymx45yye+JsJvByKf3yhHe+8H3lEz6xOfQWCX/NaACLtqLN35srhVgaGr7/1NVofDk1sfSrEmMARirHfZBPBwhXhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81fa58fbeceso9070339f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:04:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724274280; x=1724879080;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0xUun2BLURPI6ICBEEORNjTm30/dEXQk8G4FVa1+mg=;
-        b=Y1/SV1psjUWcF8mvjv9vdAmG8F7C+juFWCu0BVCBcuP6HD+yTlo4IjrC6k0eL/zced
-         M17MLtnnoYFZlcnb009s8btaX91oIAtyRa5T4IzQXhNrGj8FTHeduBK0+pY24EhmHFOS
-         wLSkJIl0clMP9mbn/aogkYAcPoqdIhAXDe0gARQGu3pOCwZkIfjU9wgb+/UH6dpTTml1
-         iLANR1D76KGRbqYff98QJlnTozcpJ70TmUPuuJCBWZVb1C2lDJ+ohH0tAOitrVfer38z
-         Yw7g7jWWrT7hTY7aZ9RAuRt+oE/FCwwiq51o6NApPrc7ni/yx3jjFA31CdqpPZ/2885j
-         Y51Q==
-X-Gm-Message-State: AOJu0YwQABDGrszzVWkcvs3MINFIGe/IWU0TiSK/JnXr1O9ZYTH2lypE
-	psmCYhpQHCANWnB/BUgcXeAvhlDoym50+H3TamwPRRd3qUqLypkrnINGb/Dsq/6UCuCHL8Ar3kd
-	YQLe7BxGx0kUdXGJ6Ui7YLufU2XpZ2xUdXmvssdhK/vglFzryaPu1w0Y=
-X-Google-Smtp-Source: AGHT+IFSABL1AzamIVm+9J9djhtn7vC4UcmqNWDbTrqzCgRMZ7ry9my72bxdxx7IDmcQDDnUrkJKBwn+890bbL/5KNjIo7RNrGPN
+	s=arc-20240116; t=1724274411; c=relaxed/simple;
+	bh=SOwHPJJRqFYK0tUXJ5zHDMl8r8w+xSOxczRgPHBQ+0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mnso3HPseOKi2V9HFfb++mw1yQeNXNQvCKvbvCjLjFSa6xQMpWCZGP5pmCBqk8jQRpyLMX8EBmnPi05DyaU5VSFTi3mWPD5t1R+WhyEQIm/vjmmR287/Cz85c71LIPbGzYELSf5BfSVKkdg9cxkyxp3TK0ZVo9TRX7ZvclCz3LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BP6njGY2; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724274410; x=1755810410;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SOwHPJJRqFYK0tUXJ5zHDMl8r8w+xSOxczRgPHBQ+0I=;
+  b=BP6njGY2k8N9ZwujbgSsTKky49GZkWLHjkiouEpi4iknXDv9XrXAN2Mx
+   j9G1IxSSyybcOvD1wGqkf7WJlRcfZKS72AkhrzWia+Om3/cy8LjRiTVUD
+   1aDWh+KxFOWrdc5dLNzL9ojOPX3R5xB8evRPO66x4VwI9E2ABUx5329Ej
+   THvZokW9N8aiFaPpQM4ppxMA6PbNvC3H49HZKctn34Og736KxFkDBsf2w
+   9dJXJXzV91LE/a4ypGXwRum3EDR8k/mNKi8p49Gwk7LqBT7OLoBK9mkMs
+   moyLA8HG9eoERTI1I7fhQHsVZ3d4uSX+3Zg4iBU6FwXnfKbKXzkw1MRqS
+   Q==;
+X-CSE-ConnectionGUID: M2FuLOhlQ3yMHUwJItRJ4Q==
+X-CSE-MsgGUID: NI2jNDoKQS2cTo6jcasXyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="13142368"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="13142368"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 14:06:49 -0700
+X-CSE-ConnectionGUID: LvVA9yNYRPOpDxGkiG6EGg==
+X-CSE-MsgGUID: m2M1DmySQaarIwYzAWexAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="66041794"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 14:06:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sgsX0-00000000Ejk-1GtH;
+	Thu, 22 Aug 2024 00:06:14 +0300
+Date: Thu, 22 Aug 2024 00:06:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Amitkumar Karwar <amitkarwar@gmail.com>,
+	Ganapathi Bhat <ganapathi017@gmail.com>,
+	Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+	Xinming Hu <huxinming820@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] wifi: mwifiex: Replace one-element arrays with
+ flexible-array members
+Message-ID: <ZsZWxnfy21CpOLoR@smile.fi.intel.com>
+References: <Y9xkECG3uTZ6T1dN@work>
+ <ZsZNgfnEwOcPdCly@black.fi.intel.com>
+ <93b3f91a-baa4-48e1-b3eb-01f738fa8fc1@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:6297:b0:4b9:ad20:51f7 with SMTP id
- 8926c6da1cb9f-4ce62dc0de4mr68798173.1.1724274280639; Wed, 21 Aug 2024
- 14:04:40 -0700 (PDT)
-Date: Wed, 21 Aug 2024 14:04:40 -0700
-In-Reply-To: <00000000000032dd730620055fde@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fe6097062037e361@google.com>
-Subject: Re: [syzbot] possible deadlock in ocfs2_try_remove_refcount_tree
-From: syzbot <syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93b3f91a-baa4-48e1-b3eb-01f738fa8fc1@embeddedor.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Wed, Aug 21, 2024 at 02:59:34PM -0600, Gustavo A. R. Silva wrote:
+> On 21/08/24 14:26, Andy Shevchenko wrote:
+> > On Thu, Feb 02, 2023 at 07:32:00PM -0600, Gustavo A. R. Silva wrote:
+> > > One-element arrays are deprecated, and we are replacing them with flexible
+> > > array members instead. So, replace one-element arrays with flexible-array
+> > > members in multiple structures.
+> > > 
+> > > This helps with the ongoing efforts to tighten the FORTIFY_SOURCE
+> > > routines on memcpy() and help us make progress towards globally
+> > > enabling -fstrict-flex-arrays=3 [1].
+> > > 
+> > > This results in no differences in binary output.
+> > 
+> > Sorry for blast from the past, but I have a question here.
+> > 
+> > This change seems converts many of the flexible arrays in this driver.
+> > But what's behind this one?
+> > 
+> > struct host_cmd_ds_802_11_scan_ext {
+> >          u32   reserved;
+> >          u8    tlv_buffer[1];
+> > } __packed;
+> > 
+> > 
+> > AFAIU this needs also some care. On the real machine I have got this
+> > 
+> > elo 16 17:51:58 surfacebook kernel: ------------[ cut here ]------------
+> > elo 16 17:51:58 surfacebook kernel: memcpy: detected field-spanning write (size 243) of single field "ext_scan->tlv_buffer" at drivers/net/wireless/marvell/mwifiex/scan.c:2239 (size 1)
+> > elo 16 17:51:58 surfacebook kernel: WARNING: CPU: 0 PID: 498 at drivers/net/wireless/marvell/mwifiex/scan.c:2239 mwifiex_cmd_802_11_scan_ext+0x83/0x90 [mwifiex]
+> > 
+> > which leads to
+> > 
+> >          memcpy(ext_scan->tlv_buffer, scan_cfg->tlv_buf, scan_cfg->tlv_buf_len);
+> > 
+> > but the code allocates 2k or more for the command buffer, so this seems
+> > quite enough for 243 bytes.
+> > 
+> 
+> I think this would do it:
 
-***
+Thank you for the prompt respond! Can you send it as a formal patch?
+Or do you want me to test it first? (If the second one, it might take
+weeks as this is my home laptop that I don't reboot too often. I think
+it's can be sent anyway.)
 
-Subject: possible deadlock in ocfs2_try_remove_refcount_tree
-Author: djahchankoike@gmail.com
-
-#syz test
-
-Acquiring the locks in refcounttree should follow
-the ip_alloc --> ip_xattr ordering, as done by multiple
-code paths in ocfs2; otherwise, we risk an ABBA deadlock
-(i.e in the start transaction path).
-
-Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
----
- fs/ocfs2/refcounttree.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-index 1f303b1adf1a..32c0249ff253 100644
---- a/fs/ocfs2/refcounttree.c
-+++ b/fs/ocfs2/refcounttree.c
-@@ -927,8 +927,8 @@ int ocfs2_try_remove_refcount_tree(struct inode *inode,
- 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
- 	struct ocfs2_dinode *di = (struct ocfs2_dinode *)di_bh->b_data;
- 
--	down_write(&oi->ip_xattr_sem);
- 	down_write(&oi->ip_alloc_sem);
-+	down_write(&oi->ip_xattr_sem);
- 
- 	if (oi->ip_clusters)
- 		goto out;
-@@ -944,8 +944,8 @@ int ocfs2_try_remove_refcount_tree(struct inode *inode,
- 	if (ret)
- 		mlog_errno(ret);
- out:
--	up_write(&oi->ip_alloc_sem);
- 	up_write(&oi->ip_xattr_sem);
-+	up_write(&oi->ip_alloc_sem);
- 	return 0;
- }
- 
 -- 
-2.39.2
+With Best Regards,
+Andy Shevchenko
+
 
 
