@@ -1,148 +1,228 @@
-Return-Path: <linux-kernel+bounces-295110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E9D9596EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:57:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C42E959700
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6651F256D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA021C20DE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694611B81B1;
-	Wed, 21 Aug 2024 08:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLBy9yPb"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B6E1CBEA2;
+	Wed, 21 Aug 2024 08:21:05 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C4D199FA3;
-	Wed, 21 Aug 2024 08:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C8B1CB14D;
+	Wed, 21 Aug 2024 08:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724228409; cv=none; b=BJT/jD4k75GpUn9EuYwuZREJJBFkAZaslZnoQAbGupxTjJBfu4Hz2a0WyYsXInsNId27awssQdKbBh8gtMrOJd+6kFKFjUn4CncgCw8K7MAIAKxRPzYe3Kahh8U3SrGgZAvhJArMmEuFjO0sxn5nD1FWWgtQPn6U2NVf9ihg9QE=
+	t=1724228465; cv=none; b=YA0aaZyqnE0kw5jmfxuxfJniLGDPIsMFp9Xir0taAy23UA2tcB7w21PT+5OrZ4WcqKAp2K89QRD6cEDXS++inXftaz6JaXLKg0IlujXWPcNS38L4NgCdy8LGHFcWH27ihBg60SZac72YT9JjBD/nkrrQRndKCdUQmvhdXMvOGLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724228409; c=relaxed/simple;
-	bh=LMgYW2l8J8PfBaP56tNWVU26fU07THjrd9Mbd01ueEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dwfh82gt4iqSfD/KGtTZ1kPlthu74hMCja5Z0aZEUuTE8ZJflnQFwcSt0yRsp+/FCFbBg/9yV+bJC0opXKqZysVsCDasEBsfrtCyxQVYXr7DKaFmVRuahvkopMpncRNMchJpAApG8DOMmDX4uwRz17ZEWvfhN/qdbW6ZZpiW8/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLBy9yPb; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f3bfcc2727so43517241fa.0;
-        Wed, 21 Aug 2024 01:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724228406; x=1724833206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WdhYZISuTETd5XZ8LEV8qzxmVjQjEonrE8b5iyMQ2ws=;
-        b=kLBy9yPbN4zBARKMAOub9r/1YACP5fWkzY43Z9jbDb4AJTInQcEewVZaxq5F0Pb/GK
-         XkWJwwjAxaH/r3b9hJ6GkdqtcveblrwxlMHYyeOKBzAoV5kNPhgeQ3QjLNPt4chE/t8u
-         JhDp7Ymk9yYRVNm809MPiaHnjBkRdl0CgYLlH14X/lilrHVk2R7w13D8OPkigO5Xoy/Q
-         35UOaBCW0grFpsJOc0Pw+WND2sWY5uXpF63IfaqQvXSmduBWB7hMTgN4PJ5jNNwRlSsw
-         yijQUEQJqqtIKmstooeJIJmcxUV+MBg/hJrVk+vg+LxBdw8yGx3a0ybptMao/3ESmHfu
-         meww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724228406; x=1724833206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WdhYZISuTETd5XZ8LEV8qzxmVjQjEonrE8b5iyMQ2ws=;
-        b=qpbCWPe+ahdXkfzZAsDkpgAGf+SHBvUPQpW1Q7wpYBXAkLtWkb/BUbuaZWuMDdBfYC
-         UCXizXHVNPCRYN4S9Unk7ydG6BzYzFQwZ6nh+nmZk3grKzYdQO18qZruDONCSMzsoWy2
-         o9C6fAKAQ5C6xG/3Rluyi2vez5+/J3C6PPA3Mto154CIo3ctXPyUBX64Rh9Or5aM9lCT
-         PniPMZrDTOZq1L99TVcatRDevjXcElOcrIf8P5YSZmErCJeJUhujnZKa6Al5SYxgSMpp
-         1LRwMiyFHkiV0DmVibtcFb6By+K6Mmoe26IqORabmX/JgVNxyV4IQlVWI6Ywru24D9/5
-         vTZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2NsDhUk8gXdUpOSchaSutZ2ucqYRi0NNTNMY3Z9fAY7QLquc3k9pthwyeRF8PD+8uMgXLgEIfO9wO@vger.kernel.org, AJvYcCUARzWYIeHM6oyai33hyqxgxupvcHqczCBXeZhoIO+ef2Tdx7dhiOES4sR40zOS80Hk/UDbz5LS6gpe@vger.kernel.org, AJvYcCVC9Kx0PXaAYyzf47q/nIFZAldcIOiX+xgF6l74w9gaCRQpdtJiRGsUqGO/snKUm/HWVrQ2DFVm@vger.kernel.org, AJvYcCWCI85u2twV2WAIxiLruo3CZkiRbfke56ugXK3Af68a7IFDqTKM5XUCgLCmZVK2SsR8CxzK5vg1fBfbtg==@vger.kernel.org, AJvYcCWc1bx5nvyYn11pCaMVNfpLoynxjBTJURP8iH3Uvk3Cv5ICnPyO5iBpL++W4NL0p61tZxoOJ4h1+lfRDg==@vger.kernel.org, AJvYcCWojgsaXjfmqbGsHtOshH4niLEdSVMPHFvUQjGRl/rNHW+pub1f3DOyVymSj1C/jt8SSX8s3t3gDDSG1KWn@vger.kernel.org, AJvYcCXmyOU1Faeg3GVVHL2vmUE0botNGOWzDXjucBkqPkea0lb/XfpTU8uKoUL6UoEX7OpcqO0INz0HY7b6mQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YylEWLS6m/llhzqRAwDMvcxdVEPTkMUNu4OqHwFB83cVzrozCL7
-	TiIdpPTdYZgLsQjOC/8RsVCPywV0PzGSkBBx+kvzw1TCu0TSmWIGENBmwxqdMyJXJ9uTfSm1dVA
-	NuTh9yuzbTztaHV/o/mJFKfx3qxo=
-X-Google-Smtp-Source: AGHT+IGy365Pc9TKJF5GAK0armKU9Hpgj1dovYSvRFuHJ1yV+fMbVBAOtQzki539dYAOujtFA/EPC2D0nPczB6xkNv0=
-X-Received: by 2002:a2e:854f:0:b0:2f1:67de:b536 with SMTP id
- 38308e7fff4ca-2f3f8890618mr10493191fa.24.1724228406003; Wed, 21 Aug 2024
- 01:20:06 -0700 (PDT)
+	s=arc-20240116; t=1724228465; c=relaxed/simple;
+	bh=DyeQTiVLIwnKP7nDbihUPIy5GAmQ7YvIMEcNM/HThdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qjEyE/Tx/nH3rV5I5gH0s6/N/Ouk92p1lj+gY7aSLveoQLE7o7X+Zm2oBbbE36m9HXuZF3QIZwJtztfscECjXvegxoq6hRkamZWc9NcPrcS8uh/EYByHsu+TTe95d4rIFfOWY3IAoUPakF/MbAUQ1w4ogIamRohT2CZRUd/NrRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af269.dynamic.kabel-deutschland.de [95.90.242.105])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id A93C661E5FE05;
+	Wed, 21 Aug 2024 10:20:13 +0200 (CEST)
+Message-ID: <1cf78f6f-af21-48bc-a9d8-755dd7bf8503@molgen.mpg.de>
+Date: Wed, 21 Aug 2024 10:20:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821071842.8591-2-pstanner@redhat.com> <20240821071842.8591-10-pstanner@redhat.com>
-In-Reply-To: <20240821071842.8591-10-pstanner@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 21 Aug 2024 11:19:30 +0300
-Message-ID: <CAHp75Ve13TpA+OdUbiehZORjbNEi9qjJK3bg=C5CscoC=G=f4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 8/9] vdap: solidrun: Replace deprecated PCI functions
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>, 
-	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, 
-	Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Alvaro Karsz <alvaro.karsz@solid-run.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-fpga@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: NOHZ tick-stop error: local softirq work is pending, handler
+ #08!!! on Dell XPS 13 9360
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar
+ <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de>
+ <87o7ak411y.fsf@somnus> <256fdb2e-9b83-4837-bd31-0c34e4267c31@molgen.mpg.de>
+ <87sezv7ytw.fsf@somnus>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <87sezv7ytw.fsf@somnus>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 21, 2024 at 10:19=E2=80=AFAM Philipp Stanner <pstanner@redhat.c=
-om> wrote:
->
-> solidrun utilizes pcim_iomap_regions(), which has been deprecated by the
-> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()"), among other
-> things because it forces usage of quite a complicated bitmask mechanism.
-> The bitmask handling code can entirely be removed by replacing
-> pcim_iomap_regions() and pcim_iomap_table().
->
-> Replace pcim_iomap_regions() and pcim_iomap_table() with
-> pci_iomap_region().
+Dear Anna-Maria,
 
-...
 
->  static int snet_open_vf_bar(struct pci_dev *pdev, struct snet *snet)
->  {
->         char name[50];
-> -       int ret;
->
->         snprintf(name, sizeof(name), "snet[%s]-bar", pci_name(pdev));
+Thank you very much for the support. I was finally able to collect the 
+data you asked for.
 
-Shouldn't this be also devm_kasprintf()?
+Am 09.04.24 um 09:57 schrieb Anna-Maria Behnsen:
+> Paul Menzel writes:
 
->         /* Request and map BAR */
-> -       ret =3D pcim_iomap_regions(pdev, BIT(snet->psnet->cfg.vf_bar), na=
-me);
-> -       if (ret) {
-> +       snet->bar =3D pcim_iomap_region(pdev, snet->psnet->cfg.vf_bar, na=
-me);
-> +       if (IS_ERR(snet->bar)) {
->                 SNET_ERR(pdev, "Failed to request and map PCI BAR for a V=
-F\n");
-> -               return ret;
-> +               return PTR_ERR(snet->bar);
->         }
->
-> -       snet->bar =3D pcim_iomap_table(pdev)[snet->psnet->cfg.vf_bar];
-> -
->         return 0;
->  }
+[…]
 
---=20
-With Best Regards,
-Andy Shevchenko
+>> Am 08.04.24 um 12:10 schrieb Anna-Maria Behnsen:
+>>
+>>> Paul Menzel writes:
+>>
+>>>> On Dell XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022, with Linux 6.9-rc2+
+>>>> built from commit b1e6ec0a0fd0 (Merge tag 'docs-6.9-fixes' of
+>>>> git://git.lwn.net/linux) the external USB-C adapter Dell DA300 stopped
+>>>> working (only the Ethernet port was used). Linux logged:
+>>>
+>>> thanks for the report. Can you please provide a trace beside the dmesg
+>>> output? The following trace events should be enabled (via kernel command
+>>> line):
+>>>
+>>> trace_event=timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit
+>> Unfortunately I haven’t been able to reproduce it until now. Should it
+>> happen again, I am going to try your suggestion.
+> 
+> Thanks for letting me know.
+
+I wanted to configure that in the running system, but wasn’t able to set 
+all of these at once with `set_event`:
+
+     echo 
+'timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit' 
+| sudo tee /sys/kernel/tracing/set_event
+
+For some reason setting them individually also did *not* work:
+
+     for e in timer:* timer_migration:* sched:sched_switch 
+sched:sched_wakeup sched:sched_process_hang irq:softirq_entry 
+irq:softirq_raise irq:softirq_exit'; do echo "$e" | sudo tee -a 
+/sys/kernel/tracing/set_event; done
+
+I then used
+
+     echo 1 | sudo tee /sys/kernel/tracing/events/timer/enable
+     echo 1 | sudo tee /sys/kernel/tracing/events/timer_migration/enable
+     echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_switch/enable
+     echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_wakeup/enable
+     echo 1 | sudo tee 
+/sys/kernel/tracing/events/sched/sched_process_hang/enable
+     echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_entry/enable
+     echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_raise/enable
+     echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_exit/enable
+
+and also had to increase the buffer to bridge the gap between the event 
+and me noticing it:
+
+     echo 96000 | sudo tee /sys/kernel/tracing/buffer_size_kb
+
+Then, with Linux v6.11-rc4-11-g521b1e7f4cf0b, I was able to get the 
+trace for the event below:
+
+     [ 7542.706299] NOHZ tick-stop error: local softirq work is pending, 
+handler #08!!!
+
+$ sudo cat /sys/kernel/tracing/trace
+[…]
+  MediaPD~der #28-14000   [000] d..1.  7542.703768: hrtimer_cancel: 
+hrtimer=000000008d2c9f3f
+  MediaPD~der #28-14000   [000] .....  7542.703810: hrtimer_init: 
+hrtimer=00000000c6f259e7 clockid=CLOCK_MONOTONIC mode=ABS
+  MediaPD~der #28-14000   [000] d..1.  7542.703812: hrtimer_start: 
+hrtimer=00000000c6f259e7 function=hrtimer_wakeup expires=7602581538204 
+softexpires=7602581488204 mode=ABS
+  MediaPD~der #28-14000   [000] d..2.  7542.703821: sched_switch: 
+prev_comm=MediaPD~der #28 prev_pid=14000 prev_prio=120 prev_state=S ==> 
+next_comm=swapper/0 next_pid=0 next_prio=120
+           <idle>-0       [000] dN.2.  7542.703931: sched_wakeup: 
+comm=ImageBridgeChld pid=6041 prio=120 target_cpu=000
+           <idle>-0       [000] d..2.  7542.703937: sched_switch: 
+prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
+next_comm=ImageBridgeChld next_pid=6041 next_prio=120
+  ImageBridgeChld-6041    [000] d..2.  7542.704041: sched_switch: 
+prev_comm=ImageBridgeChld prev_pid=6041 prev_prio=120 prev_state=S ==> 
+next_comm=swapper/0 next_pid=0 next_prio=120
+           <idle>-0       [000] dN.2.  7542.704174: sched_wakeup: 
+comm=Renderer pid=4113 prio=120 target_cpu=000
+           <idle>-0       [000] d..2.  7542.704179: sched_switch: 
+prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
+next_comm=Renderer next_pid=4113 next_prio=120
+         Renderer-4113    [000] d..2.  7542.704245: sched_switch: 
+prev_comm=Renderer prev_pid=4113 prev_prio=120 prev_state=S ==> 
+next_comm=swapper/0 next_pid=0 next_prio=120
+           <idle>-0       [000] dNh2.  7542.704260: sched_wakeup: 
+comm=IPC I/O Child pid=6029 prio=120 target_cpu=000
+           <idle>-0       [000] d..2.  7542.704267: sched_switch: 
+prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
+next_comm=IPC I/O Child next_pid=6029 next_prio=120
+    IPC I/O Child-6029    [000] d..2.  7542.704340: sched_switch: 
+prev_comm=IPC I/O Child prev_pid=6029 prev_prio=120 prev_state=S ==> 
+next_comm=swapper/0 next_pid=0 next_prio=120
+           <idle>-0       [000] dN.2.  7542.704786: sched_wakeup: 
+comm=Compositor pid=4123 prio=120 target_cpu=000
+           <idle>-0       [000] d..2.  7542.704791: sched_switch: 
+prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
+next_comm=Compositor next_pid=4123 next_prio=120
+       Compositor-4123    [000] d..2.  7542.704944: sched_switch: 
+prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> 
+next_comm=swapper/0 next_pid=0 next_prio=120
+           <idle>-0       [000] dN.2.  7542.705943: sched_wakeup: 
+comm=Compositor pid=4123 prio=120 target_cpu=000
+           <idle>-0       [000] d..2.  7542.705950: sched_switch: 
+prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
+next_comm=Compositor next_pid=4123 next_prio=120
+       Compositor-4123    [000] d..2.  7542.706105: sched_switch: 
+prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> 
+next_comm=swapper/0 next_pid=0 next_prio=120
+           <idle>-0       [000] d.h2.  7542.706328: hrtimer_cancel: 
+hrtimer=000000009bbda66a
+           <idle>-0       [000] d.h1.  7542.706329: 
+hrtimer_expire_entry: hrtimer=000000009bbda66a 
+function=tick_nohz_handler now=7542584007490
+           <idle>-0       [000] d.h1.  7542.706333: softirq_raise: vec=9 
+[action=RCU]
+           <idle>-0       [000] d.h1.  7542.706338: softirq_raise: vec=7 
+[action=SCHED]
+           <idle>-0       [000] d.h1.  7542.706339: hrtimer_expire_exit: 
+hrtimer=000000009bbda66a
+           <idle>-0       [000] d.h2.  7542.706340: hrtimer_start: 
+hrtimer=000000009bbda66a function=tick_nohz_handler 
+expires=7542588000000 softexpires=7542588000000 mode=ABS
+           <idle>-0       [000] ..s1.  7542.706345: softirq_entry: vec=7 
+[action=SCHED]
+           <idle>-0       [000] ..s1.  7542.706359: softirq_exit: vec=7 
+[action=SCHED]
+           <idle>-0       [000] ..s1.  7542.706360: softirq_entry: vec=9 
+[action=RCU]
+           <idle>-0       [000] ..s1.  7542.706362: softirq_exit: vec=9 
+[action=RCU]
+           <idle>-0       [000] dNh4.  7542.707672: sched_wakeup: 
+comm=irq/51-DLL075B: pid=194 prio=49 target_cpu=000
+           <idle>-0       [000] d..2.  7542.707685: sched_switch: 
+prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> 
+next_comm=irq/51-DLL075B: next_pid=194 next_prio=49
+  irq/51-DLL075B:-194     [000] .....  7542.707708: timer_init: 
+timer=00000000630ae178
+  irq/51-DLL075B:-194     [000] d..1.  7542.707710: timer_start: 
+timer=00000000630ae178 function=process_timeout expires=4296778179 
+[timeout=250] bucket_expiry=4296778184 cpu=0 idx=121 flags=
+  irq/51-DLL075B:-194     [000] d..2.  7542.707718: sched_switch: 
+prev_comm=irq/51-DLL075B: prev_pid=194 prev_prio=49 prev_state=D ==> 
+next_comm=swapper/0 next_pid=0 next_prio=120
+           <idle>-0       [000] dN.2.  7542.709072: sched_wakeup: 
+comm=AudioIP~ent RPC pid=6671 prio=120 target_cpu=000
+[…]
+
+The trace file is 320 MB big. If you need the full trace and log, please 
+tell me, and I’ll upload it somewhere.
+
+
+Kind regards,
+
+Paul
 
