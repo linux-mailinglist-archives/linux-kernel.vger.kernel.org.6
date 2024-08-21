@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-295387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C57959A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4A2959A5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6261C21EB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:42:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6B71C20DA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5731C3312;
-	Wed, 21 Aug 2024 11:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyLYUkKw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8491CB136;
+	Wed, 21 Aug 2024 11:11:42 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB901B1D61;
-	Wed, 21 Aug 2024 11:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D521CB127
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724238677; cv=none; b=GKDHfsHqLqGRAVS48Ge80u9OD/t88NIFS+8ePHnSkAx85MFzMdA0JiXSxPdPeEY43SG5pRmgfcqn9e34ezdqKzBFTvoTCBlfh0TRUGF+TPJVPwtGKMHIa2a9408AIQ4gjZzhhx689pXWZADYIMqLkmZeLPwi30x5+5LYhVdGhak=
+	t=1724238702; cv=none; b=jLlCJe3eLSBBsIu9Tt5qwF0pVzAqjHdivCZmbI9gZ2YWw55L0WStBsUFm6VGedhwznp+8cSMkDNyQ2LBRUsIFKD9N1+V7pPWwmUcH5a6CALSFAQ9mzCvwgJi97iCjX/PstBVJpTiheRQS1yrlEccJ5kFgiIX+ki/7ozaZWMGOgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724238677; c=relaxed/simple;
-	bh=NP2vT5XV0h7oRJk4j4u7B5zSDwT0M9sYHrdts5GFKCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fwpz4r6c8mDyDYGvFAhSN3aIK9sqPE3RzWbcyxFsMMNjyzwSPi9OmPxIUo8J6HjqfFjomOIpFcUDkTF+sZYi4Me5X9cDbBkHGkuylA/6UMQ3RzmNrNuVWAjo7xBZ6azO3TkoZ797jT88kXwGNLLwuRug52wjnTVHAi4wOg1PEUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyLYUkKw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1845AC4AF09;
-	Wed, 21 Aug 2024 11:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724238677;
-	bh=NP2vT5XV0h7oRJk4j4u7B5zSDwT0M9sYHrdts5GFKCc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PyLYUkKwrm0Zss1jyDFZumT0v4dq5VaSIwPQ24LDfKxqmpvjcgFYOLffxAKdTevd6
-	 zRviQ7qGlntPKjFWVQ4URzW2Mm0o6iUmzgK8J7DdMKYcuEcHeLilgsVn2mAB1KI1XD
-	 2X36KgMkch+r+z1XhBesUxksl+0U3ILwebfMgMfYvbUwpFd21PiIhn0VjKEzH/8su1
-	 XrM9zvbiZ/x4ldW6APvMtZBAaTqIXzH8b0Gbj+15uDGpggiWeALsuRxg6vEGoQJHto
-	 zpw47XcpfqWxBVNzev3Rtv7GoHGrMUAoWZS8nkkqH0u0xmP52kIWNKBb4KA7y/WeFF
-	 pMjenISyFlNWw==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-27032e6dbf2so2426942fac.1;
-        Wed, 21 Aug 2024 04:11:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWMvHZZkZYUgwKVctcRwxJPTvBzH6I5sHj5fbvC3aGFU2zhojmABWz4ydgZRQHaKrEDw3CE7tVBvcwbIi4=@vger.kernel.org, AJvYcCWUVHhpucx8Et/NOAu0PgJwtpC2/kwhaoX7Ih7OWZZNY7C1/tmkxXoO9R2h6p0jr7M0lg80LD69H/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjqjcuq8UZa03jFY4NSD59G5DaH56lajcgf4jQNmL9VVK36wIQ
-	7NJ4PNFEL2zouqDLvwoSMd7iiminvhogeuWhS4YvadAL6sndD4Q3ItC5wPhy8NZm+JjC2sN8GEL
-	aoZV2IZyvFyJfDmUKL2qbBMphkOk=
-X-Google-Smtp-Source: AGHT+IHTmYRIBJiKwg+iQ4yRJlRdPKZl8el3PfalFXSkxxA2kOksoEND2zF0c5bTykdRb0/+jUBusQO/xky7rlj3CI4=
-X-Received: by 2002:a05:6870:b289:b0:25d:ff1b:3793 with SMTP id
- 586e51a60fabf-2738be316damr1918813fac.35.1724238676438; Wed, 21 Aug 2024
- 04:11:16 -0700 (PDT)
+	s=arc-20240116; t=1724238702; c=relaxed/simple;
+	bh=hFw47CKql1898Jz7qJoeobQSUqyubuobzVRlBMYF/r0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqOxlA6iPMB7gvuD0gg+Y3iOUWsRjxV2UQezKEQaX86CLdp3s7PP05cc76borpcM/5agNPVkNl70ieNOHE7YG5T5hFK9q4shF+ehYHu7KxLo5c+1uq/cFY56RG31tIn6hAF6yLqybDjv9qNw19xnVi416Wc8EDXbby0UY73s+ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sgjFT-0003wZ-9e; Wed, 21 Aug 2024 13:11:31 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sgjFS-001zqB-GS; Wed, 21 Aug 2024 13:11:30 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sgjFS-00FVKX-1I;
+	Wed, 21 Aug 2024 13:11:30 +0200
+Date: Wed, 21 Aug 2024 13:11:30 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH 00/31] wifi: mwifiex: cleanup driver
+Message-ID: <ZsXLYgLfZ8nIns5z@pengutronix.de>
+References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+ <1B5E3131-0595-47A8-BB8E-14B7B6C3FA7F@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2205737.irdbgypaU6@rjwysocki.net> <10527734.nUPlyArG6x@rjwysocki.net>
- <c01ed2d7-964d-4b75-9a8e-8325d4cc9269@linaro.org>
-In-Reply-To: <c01ed2d7-964d-4b75-9a8e-8325d4cc9269@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 21 Aug 2024 13:11:05 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gQvSouUcEH7CtxZptKHbRyy4=Nes_SjqAW0S7jOJXHqA@mail.gmail.com>
-Message-ID: <CAJZ5v0gQvSouUcEH7CtxZptKHbRyy4=Nes_SjqAW0S7jOJXHqA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/14] thermal: core: Drop redundant thermal instance checks
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1B5E3131-0595-47A8-BB8E-14B7B6C3FA7F@dolcini.it>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2024 at 1:01=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 19/08/2024 17:52, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Because the trip and cdev pointers are sufficient to identify a thermal
-> > instance holding them unambiguously, drop the additional thermal zone
-> > checks from two loops walking the list of thermal instances in a
-> > thermal zone.
-> >
-> > No intentional functional impact.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->
-> I'm wondering if the thermal_instance 'tz' field could be removed too ?
+On Tue, Aug 20, 2024 at 03:34:12PM +0200, Francesco Dolcini wrote:
+> Hello Sasha,
+> thanks for the patches.
+> 
+> Il 20 agosto 2024 13:55:25 CEST, Sascha Hauer <s.hauer@pengutronix.de> ha scritto:
+> >This series has a bunch of cleanup and bugfix patches for the mwifiex
+> >driver
+> 
+> Would it make sense to sort the patch series in such a way that bug
+> fixes can be backported to stable/long-term versions?
 
-It is used in a debug printk in __thermal_cdev_update().  If that
-message can be dropped, then yes, but that would be a separate patch
-anyway.
+I anticipated this question, but I was too lazy this time. Given that
+Kalle asked to split up this series I'll reorder this series and send
+the bug fixes first.
+
+> Are those bug
+> you could reproduce or just something you noticed while looking into
+> the driver?
+
+There are bugs I noticed because the driver didn't work as expected
+which made me dive into this code. There are others that I only noticed
+by looking at the code.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
