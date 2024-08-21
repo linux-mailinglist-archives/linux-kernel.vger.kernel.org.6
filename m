@@ -1,109 +1,109 @@
-Return-Path: <linux-kernel+bounces-295609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D9E959EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B608959EFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F751F22AAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49E91F23221
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715311AD5FC;
-	Wed, 21 Aug 2024 13:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1531D1AF4E8;
+	Wed, 21 Aug 2024 13:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lGB4OOyO"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlnlOxR8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357461D12F3
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6591AF4DD;
+	Wed, 21 Aug 2024 13:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724247802; cv=none; b=CEJ5UAEnvrEgjMPQxfUwBpqjZq4Hh154HCKEasDPKC7YGU3iW2xz/x0EPKBHzuVqP2xJhRu0XLxCftkvOhEtMN+UFqs/YNPLRRHaPz5kFZHOZ2rIo/oca2WkUXe2NYeWlxBAh+Knn/pSvlNzRU5mzRYJxP2xOMo52kQwS69UDiA=
+	t=1724247988; cv=none; b=gArLTg0Bx59+FlS3tjtWT9/W8sRvZAIIHCaVqh9kzqIEUaLIK0yXIta2NhFA/oDbDj7pMzORWwh81exhN28+isZk2P9Zvrqy//qyy9nk6jzggvFErN9wNfE2/kfHP9/iFxIHRF6i+6KgvXgwEhr2JClt+KRmxNifGzO6amYhGqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724247802; c=relaxed/simple;
-	bh=c93I54raOSbs0VRQIoGu5KAoP5RS/AuhuCp4Xi1YKXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0Rfv6FgCIXQYJ+re9MBW3cwHIoPiyNB/NvJjrjqVQOF/NIebB5zDYD/lDahD8xZNwQjtovhsI39eLZekvlzgdJEZq/SiPBpsjYp8sTK5SBK5p6c4WCqAt2gRxCbVNTYWEuX0s28uJyebsBFDQGy0SVNvp7JDynmtyVtW1Qm+KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lGB4OOyO; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso41788971fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724247799; x=1724852599; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vq7tOAAcz6ewTIYXkiPmAfOTq4iDQRtjoPIe2wulO0E=;
-        b=lGB4OOyOmhZ1K3q65RHndOFz3e0v/jvqCnC37nxznC9uhZB6uA+HygmyDywRITsKXk
-         FctXHtEAOCb2IQVVTr3b23lMp8iLRNxqI7aQeFZjkL5qoDOHf0N3k3EUd5dMx6N+zlv/
-         5ykdxYzAn33h7ihsr3TGv+kv+1SSjMAqTzV2d/EVZtkffpLBvQCFrplp+pXEoTQg/DV2
-         +2qelBQ4Ewx37p0HTPEBwIJDZH0LyLWRNFnyg5/uuTSur5mu/n8O0wyGNa1fxHFCekbz
-         lYX4ULvNl4SYhyFAnlbXSau9GC2iGc4RQ2QP/VUyli464C+7PPmQgC57iXnR7n5Jwm//
-         yNxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724247799; x=1724852599;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vq7tOAAcz6ewTIYXkiPmAfOTq4iDQRtjoPIe2wulO0E=;
-        b=UXPe7JUCCSsS47Jv7lIvQZHT04xrlDXTzOni7v7+4H2MnrBPMv6i1R4phhrGwGvArf
-         khR4EpP2udj4oa5W0Ymqqlpz8NG3RRuNPRQHvpWc97m0kif5uCv87D7bbZu9R6XYTAjz
-         NA5LnCffXGgL8F3uY5doQj4hR8SV6yFXd14ulu3fpIKnoCBTe+ox8G/GvPaPidLy7amw
-         M+zIJcxjAUIegpRi9jn1sUlgJdMsiWVlPQpnHJTotVXO8CzJVVxneT0oFmbLloBjaig1
-         jyBCrG64+8EWX6uwh7FMol6pVJ4fhEWTZoneF43voUP5NS+/NEipQ1pT5tJQn4EZa2Wa
-         LILg==
-X-Gm-Message-State: AOJu0Yy4C9mJFd1npWWWFYWYRXAbsN2inNKrdLUCQco8KUdpNS/fQOJq
-	OJfan9MUfdgAStfxNZZOHoJMy2JCHjx0cYNxLPpAy64kZmRVIpovv6YURtJBU0s=
-X-Google-Smtp-Source: AGHT+IHQbdHH8LzMKMml3FZkZHmsIF0qxWUa69l3XY4StmtQ7T+OKiiLyZ1IaFB9tC0TLHlDr4Jl1Q==
-X-Received: by 2002:a2e:b8cb:0:b0:2ef:1b1b:7f42 with SMTP id 38308e7fff4ca-2f3f89489a5mr23557941fa.36.1724247799207;
-        Wed, 21 Aug 2024 06:43:19 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7f17bsm8234877a12.59.2024.08.21.06.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 06:43:18 -0700 (PDT)
-Date: Wed, 21 Aug 2024 16:43:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Matthew Brost <matthew.brost@intel.com>, Tejun Heo <tj@kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	linux-block <linux-block@vger.kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: next: x86_64: ahci 0000:00:1f.2: probe with driver ahci failed
- with error -12
-Message-ID: <af7dea7d-446c-4b25-a1e9-bd1f3753f589@stanley.mountain>
-References: <CA+G9fYuD4-qKAX9nDS-3cy+HwGbyJ6WoD7bZ_QL0J__A++P9aA@mail.gmail.com>
- <CA+G9fYuYfNA7NZDHpq2K24CsUn21LAb8vn38=JTz=54bsdSd9g@mail.gmail.com>
- <43be498f-5a25-4ee2-8c5d-1ef75c4d1ff3@stanley.mountain>
- <eb78af03-b407-49d9-b605-af9632eda08e@stanley.mountain>
+	s=arc-20240116; t=1724247988; c=relaxed/simple;
+	bh=K0I2LmOVKPqYuEGAfHzeGjhEUY2uSjqj5ZyhfoHUFYc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uQLcwIgGNbXJPGsQmpsYKPqOOz9d7a5cBxU08lGzUUo0UfUhK61IKQKRaSGNtwZrHW5+e3L7GdaOf3o3kEjzYt8LtKIibYBvcT4DozRi1vSAjD2rNrqckVJlXy6h9dnS3ZL6eybhsV7BIMqhySG8XQ9Ka8uf/uTgaRBE8EZNEJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlnlOxR8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5DFC32782;
+	Wed, 21 Aug 2024 13:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724247987;
+	bh=K0I2LmOVKPqYuEGAfHzeGjhEUY2uSjqj5ZyhfoHUFYc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MlnlOxR8cd8v8rtNwSSX3AYvxy6PwEZqIDw4TmYOm/qy1zenQIrymaXakByyNnNiJ
+	 KZsCScFhXklkoCu2lSbhsl37lWRwH7Q9pPI53Ll55vQK99v0jvetw6VE55jMDBcXRW
+	 s3Bgek9TO4ffKlANwN+rpfRdY5s1mxUKNOta3q5J0gI/o5uGB4Z1+qFBP+8/Tnx92O
+	 nNhR378CYR03uBOXcwzqPhVGK7V4C2KooqZJbyzINHijyN2gr9KWX/U8tjQz493u3X
+	 yR/ToXSNWI8adG1SPXpeOV5glEnwMVQb/La0rxZrk1LGSQ+JiXKqVAwfcF+tw03kIT
+	 ghVoaloQPXOgQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sglfN-005bo9-TJ;
+	Wed, 21 Aug 2024 14:46:25 +0100
+Date: Wed, 21 Aug 2024 14:46:25 +0100
+Message-ID: <86ed6ixa32.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] KVM: arm64: Control visibility of S1PIE related sysregs to userspace
+In-Reply-To: <20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org>
+References: <20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb78af03-b407-49d9-b605-af9632eda08e@stanley.mountain>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Aug 21, 2024 at 02:54:28PM +0300, Dan Carpenter wrote:
-> Give this patch a shot and I'll resend if it fixes the bug.
+On Wed, 21 Aug 2024 14:07:14 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> Fixes: b188c57af2b5 ("workqueue: Split alloc_workqueue into internal function and lockdep init")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> While looking at the KVM system register code I noticed that we do not
+> have visibility operations for TCR2 or the S1PIE registers, I may be
+> missing some reason why they are not required but in case I'm not I
+> figured the most direct way to ask was to propose adding the operations.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+> Mark Brown (2):
+>       KVM: arm64: Hide TCR2_EL1 from userspace when disabled for guests
+>       KVM: arm64: Hide S1PIE registers from userspace when disabled for guests
+> 
+>  arch/arm64/include/asm/kvm_host.h |  6 ++++++
+>  arch/arm64/kvm/sys_regs.c         | 31 ++++++++++++++++++++++++++-----
+>  2 files changed, 32 insertions(+), 5 deletions(-)
 
-Actually never mind.  Matthew sent this same patch today so this bug is fixed
-on today's linux-next.
+If you are going to do this, please add it on top of [1], and handle
+the corresponding EL2 registers.
 
-regards,
-dan carpenter
+Thanks,
 
+	M.
+
+[1] https://lore.kernel.org/20240813144738.2048302-1-maz@kernel.org
+
+-- 
+Without deviation from the norm, progress is not possible.
 
