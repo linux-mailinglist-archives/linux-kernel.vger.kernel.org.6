@@ -1,95 +1,127 @@
-Return-Path: <linux-kernel+bounces-294951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62149594B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:34:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B887959537
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82CF8281972
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:34:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED161C22551
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA1F16EBF7;
-	Wed, 21 Aug 2024 06:33:34 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1F4185B73;
+	Wed, 21 Aug 2024 06:59:56 +0000 (UTC)
+Received: from akranes.kaiser.cx (akranes.kaiser.cx [152.53.16.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99EE16DECC
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0450185B67;
+	Wed, 21 Aug 2024 06:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.53.16.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724222013; cv=none; b=eaSFfkJEiWss0a9EhxSCdGRRePID8JTwPUHcuVoYtzYmQxP7CW19uLlRGIo6c+/od4FlWEDJSInRvB82Um3YCo6bv8zG9mE3BWKvS8UVIzguw9pn8ItbRcU0kDS5Xpgfk8MquLxjI8HCNo1G73DlT8i37aV+TilXW9MzS+5tnYs=
+	t=1724223596; cv=none; b=TIXcexpN8h58o5EWzkkZrvL/2ba9Am+wr+3VsTOHGbPhOjXA/WZicRYnh9tlHErt7VN7aN3xXBPylcHitSzvTYIGvH/vwDD1TgftRK4wlzh+gr8bAr97vVHxRDleOGBMtBYsWw1EkBBaEUKfFPTptO9MaosleCvRHT639KqwgKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724222013; c=relaxed/simple;
-	bh=n4qTaEnJmRR1a/IaWznZZyPTdSqc5a8nM77EVdf7WXw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eNoHXTSJr7FQw9vab+Farye6azSETxS7gCX3gUeXM+9z6FgEsm0MEVAxZYzOVwayG4y4Piw469mc3Cjg9+qmsDedyF3WMGyRDeOkbKFKGZk2+gHpj2uO7DvMdQBQzXP8nzj/uou71FCczRrR060JKIrsWoir0SbH0hyLYe+z8MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wpc1C56JXzhY0P;
-	Wed, 21 Aug 2024 14:31:27 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E4961401F2;
-	Wed, 21 Aug 2024 14:33:28 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 21 Aug
- 2024 14:33:27 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <chaitanya.dhere@amd.com>, <jun.lei@amd.com>, <harry.wentland@amd.com>,
-	<sunpeng.li@amd.com>, <Rodrigo.Siqueira@amd.com>,
-	<alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-	<Xinhui.Pan@amd.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<alex.hung@amd.com>, <aurabindo.pillai@amd.com>, <colin.i.king@gmail.com>,
-	<dillon.varone@amd.com>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next 5/5] drm/amd/display: Make dcn35_fpga_funcs static
-Date: Wed, 21 Aug 2024 14:40:40 +0800
-Message-ID: <20240821064040.2292969-6-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240821064040.2292969-1-ruanjinjie@huawei.com>
-References: <20240821064040.2292969-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724223596; c=relaxed/simple;
+	bh=8cjkmKFsxDX/YLWmGFYfoAyPJVWnGwygJdAeY5YFv3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGNqBLUC6E6sZl3eFs5Xe5YUVsHuKPZyoURFpsew2tEnThMEGBeEeR3oOQUcVTnr7sZT0TtDqfEicLgfVLt0FYllyLpdYa4eStW3pXBMbzVBZ57mKIuHIpkRRTNX9XiBFe5aGqsRhiR3L/HUbjXoTSvqxlE0PxKuwEs9m1Ooqn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx; spf=pass smtp.mailfrom=kaiser.cx; arc=none smtp.client-ip=152.53.16.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaiser.cx
+Received: from martin by akranes.kaiser.cx with local (Exim 4.96)
+	(envelope-from <martin@akranes.kaiser.cx>)
+	id 1sgf2s-001zDD-1p;
+	Wed, 21 Aug 2024 08:42:14 +0200
+Date: Wed, 21 Aug 2024 08:42:14 +0200
+From: Martin Kaiser <martin@kaiser.cx>
+To: Huan Yang <link@vivo.com>
+Cc: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH] char: mxc-rnga: Use devm_clk_get_enabled() helpers
+Message-ID: <ZsWMRn1gPNnrdaRy@akranes.kaiser.cx>
+References: <20240820094715.104998-1-link@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820094715.104998-1-link@vivo.com>
+Sender: "Martin Kaiser,,," <martin@akranes.kaiser.cx>
 
-The sparse tool complains as follows:
+Thus wrote Huan Yang (link@vivo.com):
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c:1071:22: warning:
-	symbol 'dcn35_fpga_funcs' was not declared. Should it be static?
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
 
-This symbol is not used outside of dcn35_clk_mgr.c, so marks it static.
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Huan Yang <link@vivo.com>
+> ---
+>  drivers/char/hw_random/mxc-rnga.c | 16 +++-------------
+>  1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-index e2d906327e2e..818a9b0933a5 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-@@ -1068,7 +1068,7 @@ static struct clk_mgr_funcs dcn35_funcs = {
- 	.is_ips_supported = dcn35_is_ips_supported,
- };
- 
--struct clk_mgr_funcs dcn35_fpga_funcs = {
-+static struct clk_mgr_funcs dcn35_fpga_funcs = {
- 	.get_dp_ref_clk_frequency = dce12_get_dp_ref_freq_khz,
- 	.update_clocks = dcn35_update_clocks_fpga,
- 	.init_clocks = dcn35_init_clocks_fpga,
--- 
-2.34.1
+> diff --git a/drivers/char/hw_random/mxc-rnga.c b/drivers/char/hw_random/mxc-rnga.c
+> index 94ee18a1120a..f01eb95bee31 100644
+> --- a/drivers/char/hw_random/mxc-rnga.c
+> +++ b/drivers/char/hw_random/mxc-rnga.c
+> @@ -147,33 +147,25 @@ static int mxc_rnga_probe(struct platform_device *pdev)
+>  	mxc_rng->rng.data_present = mxc_rnga_data_present;
+>  	mxc_rng->rng.data_read = mxc_rnga_data_read;
 
+> -	mxc_rng->clk = devm_clk_get(&pdev->dev, NULL);
+> +	mxc_rng->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>  	if (IS_ERR(mxc_rng->clk)) {
+>  		dev_err(&pdev->dev, "Could not get rng_clk!\n");
+>  		return PTR_ERR(mxc_rng->clk);
+>  	}
+
+> -	err = clk_prepare_enable(mxc_rng->clk);
+> -	if (err)
+> -		return err;
+> -
+>  	mxc_rng->mem = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(mxc_rng->mem)) {
+>  		err = PTR_ERR(mxc_rng->mem);
+> -		goto err_ioremap;
+> +		return err;
+>  	}
+
+>  	err = hwrng_register(&mxc_rng->rng);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "MXC RNGA registering failed (%d)\n", err);
+> -		goto err_ioremap;
+> +		return err;
+>  	}
+
+>  	return 0;
+> -
+> -err_ioremap:
+> -	clk_disable_unprepare(mxc_rng->clk);
+> -	return err;
+>  }
+
+>  static void mxc_rnga_remove(struct platform_device *pdev)
+> @@ -181,8 +173,6 @@ static void mxc_rnga_remove(struct platform_device *pdev)
+>  	struct mxc_rng *mxc_rng = platform_get_drvdata(pdev);
+
+>  	hwrng_unregister(&mxc_rng->rng);
+> -
+> -	clk_disable_unprepare(mxc_rng->clk);
+>  }
+
+>  static const struct of_device_id mxc_rnga_of_match[] = {
+> -- 
+> 2.45.2
+
+looks good to me
+
+Reviewed-by: Martin Kaiser <martin@kaiser.cx>
 
