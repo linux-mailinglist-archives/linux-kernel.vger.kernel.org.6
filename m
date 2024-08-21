@@ -1,154 +1,167 @@
-Return-Path: <linux-kernel+bounces-294751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83ED6959210
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:10:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA97959211
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28260282DB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836BE2830E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36D61E504;
-	Wed, 21 Aug 2024 01:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Su3KwTWi"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA1A2B9AF;
-	Wed, 21 Aug 2024 01:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E051E504;
+	Wed, 21 Aug 2024 01:12:50 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805881803E
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 01:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724202620; cv=none; b=WyYp8rIqO/ct9qRm41RUFISYxtKcB7ELQAykY2xwkNu5QkN+Vk2iBJMt5PaCJ6qO0+fw5lgyVbI2OlvgjDNMwFeKGcaWi/d1rZDgOFzmNRwlCFI3HibKuU0svKMQfSsBOtrK0bZZOT63R57UlSkcqSyAChlI3NgDOMrocFWu3Qw=
+	t=1724202769; cv=none; b=QW8j4PGJn8JZXxpqKKWNLSbiaAx1AQOaj9zUiORx7o5AhKaEobkvp3AQ+/TOlh16zHOlM2tUDO8gKtRrWKvYXg3rtPtvP4PWASe+6M8XHK96lqCd7F3rDjJY2DyfKDDv+2Uvx0Q+Pf0MZqe6HS0A1MhuXSYwoyDi0Ua2+qvkv10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724202620; c=relaxed/simple;
-	bh=5FFAFoi/w1JxY7gzZZ3F2zSRsQZSDvg5tC+q9ck2FWU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=toCBeB/bof1tN+VjjpKAbMIk//HX1SH6W2uMcd07Jm1NPOg77/TRTk6zTV9SSjJU8FBWMI/sR4H2+UEuX70LsfFTWT6khFSVmvbDhZjgaLTuTRoStF1ewu8ZaZurvqBjWMQ4zA0YXy9KCA4V6kuUhmDz/wEkBymFtfR7QW3/t94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Su3KwTWi; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1724202609;
-	bh=k2UhMuq9AgfXwSrjsV/wSrCsHwkjK+ktJnm72iPp9Z0=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=Su3KwTWi9rBdTnvNA9jisdV652D3jy5sfW+7SNmyrK8jcvNPV8YpQoBreCgwp6dBC
-	 swJxgLOk3iYgsNoWJN5hjIKVtKxuj+Nv6/r5MsSGJDpplTVrzMJ0tu7NiSs+ABWQY+
-	 H0qmi7Q2wSrOxa9bIIQFeaoCiXr0DSm1Zg77OgZ1lQRMSLO3cqwiNGxRrDVswejPxx
-	 uZPhvjPK2fMOilxvfPc4KerkVGdU4HyhazgcgiELkGRUvrFMHmsyX5999q21RTxdbF
-	 E8QdrDStMFKCN/m4sZpipNOr99ICNltocyyuUGcQ/2uxRQDrkZPEwFe7lFuZuGzhEm
-	 kjXlamWEyY78Q==
-Received: from [192.168.68.112] (ppp118-210-185-99.adl-adc-lon-bras34.tpg.internode.on.net [118.210.185.99])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 2837864B84;
-	Wed, 21 Aug 2024 09:10:07 +0800 (AWST)
-Message-ID: <4e49f0c3a0ec4f1e508cae289f82ddbd02f9c0a6.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v1 2/2] ARM: dts: aspeed: Harma: update sgpio line name
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Peter Yin <peteryin.openbmc@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
-	 <joel@jms.id.au>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 21 Aug 2024 10:40:06 +0930
-In-Reply-To: <20240820102904.1756785-3-peteryin.openbmc@gmail.com>
-References: <20240820102904.1756785-1-peteryin.openbmc@gmail.com>
-	 <20240820102904.1756785-3-peteryin.openbmc@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1724202769; c=relaxed/simple;
+	bh=93ucYNzm6rjFAJLlmlDLDdpg7flXKMWTpnKPf5+hKCg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=jyCHS9d3HhV2h4c2t1gMmHVaHXPJjKM1uqGfDUPJVHx5KYZVV64RYhr9sW6GUefsb6GqDar0JGrx2xvrGR/P1zBjyyJylkkTEa6UUWWqm2r6hZ57F3tbKtkCz7rRL4b3RuRR7wztorfBImhwUo7k/vlSVrRw2PYOkbUSC1/RrHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxGuoGP8VmzLsaAA--.58021S3;
+	Wed, 21 Aug 2024 09:12:38 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMAxVOAEP8VmLB8cAA--.59112S3;
+	Wed, 21 Aug 2024 09:12:36 +0800 (CST)
+Subject: Re: [PATCH v1 2/2] LoongArch: Add ifdefs to fix LSX and LASX related
+ issues
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240820123731.31568-1-yangtiezhu@loongson.cn>
+ <20240820123731.31568-3-yangtiezhu@loongson.cn>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <1d23bbfe-dd36-b2ff-c4b3-cf69396ea53f@loongson.cn>
+Date: Wed, 21 Aug 2024 09:12:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240820123731.31568-3-yangtiezhu@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxVOAEP8VmLB8cAA--.59112S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxXr4kKrWkAw17Xr48CF47WrX_yoW5Kw1kpr
+	9rArs5tr4ruFnFy3ykAw1kWFZ09397Gr4agF4DtryrCr4qgrnxJr18tF1DXFyjga1xJa1F
+	gFZ5Wr4YqayUtwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UU
+	UUU==
 
-Hi Peter,
 
-On Tue, 2024-08-20 at 18:29 +0800, Peter Yin wrote:
-> From: Peter Yin <peter.yin@quantatw.com>
->=20
-> power-card-enable
-> uart-switch-button
-> power-fault-n
-> asic0-card-type-detection0-n
-> asic0-card-type-detection1-n
-> asic0-card-type-detection2-n
-> uart-switch-lsb
-> uart-switch-msb
->=20
-> Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
 
-Can you please your author email consistent with your Signed-off-by
-email? Currently this generates a checkpatch warning:
-
-   Executing: ./scripts/checkpatch.pl --strict -g HEAD
-   WARNING: From:/Signed-off-by: email address mismatch: 'From: Peter Yin <=
-peter.yin@quantatw.com>' !=3D 'Signed-off-by: Peter Yin <peteryin.openbmc@g=
-mail.com>'
-  =20
-Thanks,
-
-Andrew
-
+On 2024/8/20 下午8:37, Tiezhu Yang wrote:
+> There exist some issues when building kernel if CONFIG_CPU_HAS_LBT is set
+> but CONFIG_CPU_HAS_LSX and CONFIG_CPU_HAS_LASX are not set. In this case,
+> there are no definitions of _restore_lsx and _restore_lasx and there are
+> also no definitions of kvm_restore_lsx and kvm_restore_lasx in fpu.S and
+> switch.S respectively, just add some ifdefs to fix the issues.
+> 
+>    AS      arch/loongarch/kernel/fpu.o
+> arch/loongarch/kernel/fpu.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
+> arch/loongarch/kernel/fpu.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
+> 
+>    AS [M]  arch/loongarch/kvm/switch.o
+> arch/loongarch/kvm/switch.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
+> arch/loongarch/kvm/switch.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
+> 
+>    MODPOST Module.symvers
+> ERROR: modpost: "kvm_restore_lsx" [arch/loongarch/kvm/kvm.ko] undefined!
+> ERROR: modpost: "kvm_restore_lasx" [arch/loongarch/kvm/kvm.ko] undefined!
+> 
+> Cc: stable@vger.kernel.org # 6.9+
+> Fixes: cb8a2ef0848c ("LoongArch: Add ORC stack unwinder support")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202408120955.qls5oNQY-lkp@intel.com/
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 > ---
->  .../dts/aspeed/aspeed-bmc-facebook-harma.dts   | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arc=
-h/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-> index 92068c65eae4..9db95a791128 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-> @@ -566,7 +566,7 @@ &gpio0 {
->  	/*B0-B7*/	"","","","",
->  			"bmc-spi-mux-select-0","led-identify","","",
->  	/*C0-C7*/	"reset-cause-platrst","","","","",
-> -			"cpu0-err-alert","","",
-> +			"cpu0-err-alert","power-card-enable","",
->  	/*D0-D7*/	"","","sol-uart-select","","","","","",
->  	/*E0-E7*/	"","","","","","","","",
->  	/*F0-F7*/	"","","","","","","","",
-> @@ -585,7 +585,9 @@ &gpio0 {
->  	/*O0-O7*/	"","","","","","","","",
->  	/*P0-P7*/	"power-button","power-host-control",
->  			"reset-button","","led-power","","","",
-> -	/*Q0-Q7*/	"","","","","","power-chassis-control","","",
-> +	/*Q0-Q7*/
-> +			"","","","",
-> +			"","power-chassis-control","","uart-switch-button",
->  	/*R0-R7*/	"","","","","","","","",
->  	/*S0-S7*/	"","","","","","","","",
->  	/*T0-T7*/	"","","","","","","","",
-> @@ -685,7 +687,7 @@ &sgpiom0 {
->  	"FM_BOARD_REV_ID2","",
->  	"FM_BOARD_REV_ID1","",
->  	/*H0-H3 line 112-119*/
-> -	"FM_BOARD_REV_ID0","",
-> +	"FM_BOARD_REV_ID0","reset-control-cmos-clear",
->  	"","","","","","",
->  	/*H4-H7 line 120-127*/
->  	"","",
-> @@ -716,9 +718,15 @@ &sgpiom0 {
->  	"cpu0-thermtrip-alert","",
->  	"reset-cause-pcie","",
->  	/*L4-L7 line 184-191*/
-> -	"pvdd11-ocp-alert","","","","","","","",
-> +	"pvdd11-ocp-alert","",
-> +	"power-fault-n","",
-> +	"asic0-card-type-detection0-n","",
-> +	"asic0-card-type-detection1-n","",
->  	/*M0-M3 line 192-199*/
-> -	"","","","","","","","",
-> +	"asic0-card-type-detection2-n","",
-> +	"uart-switch-lsb","",
-> +	"uart-switch-msb","",
-> +	"","",
->  	/*M4-M7 line 200-207*/
->  	"","","","","","","","",
->  	/*N0-N3 line 208-215*/
+>   arch/loongarch/kernel/fpu.S | 4 ++++
+>   arch/loongarch/kvm/switch.S | 4 ++++
+>   2 files changed, 8 insertions(+)
+> 
+> diff --git a/arch/loongarch/kernel/fpu.S b/arch/loongarch/kernel/fpu.S
+> index 69a85f2479fb..6ab640101457 100644
+> --- a/arch/loongarch/kernel/fpu.S
+> +++ b/arch/loongarch/kernel/fpu.S
+> @@ -530,6 +530,10 @@ SYM_FUNC_END(_restore_lasx_context)
+>   
+>   #ifdef CONFIG_CPU_HAS_LBT
+>   STACK_FRAME_NON_STANDARD _restore_fp
+> +#ifdef CONFIG_CPU_HAS_LSX
+>   STACK_FRAME_NON_STANDARD _restore_lsx
+> +#endif
+> +#ifdef CONFIG_CPU_HAS_LASX
+>   STACK_FRAME_NON_STANDARD _restore_lasx
+>   #endif
+> +#endif
+> diff --git a/arch/loongarch/kvm/switch.S b/arch/loongarch/kvm/switch.S
+> index 80e988985a6a..0c292f818492 100644
+> --- a/arch/loongarch/kvm/switch.S
+> +++ b/arch/loongarch/kvm/switch.S
+> @@ -277,6 +277,10 @@ SYM_DATA(kvm_enter_guest_size, .quad kvm_enter_guest_end - kvm_enter_guest)
+>   
+>   #ifdef CONFIG_CPU_HAS_LBT
+>   STACK_FRAME_NON_STANDARD kvm_restore_fpu
+> +#ifdef CONFIG_CPU_HAS_LSX
+>   STACK_FRAME_NON_STANDARD kvm_restore_lsx
+> +#endif
+> +#ifdef CONFIG_CPU_HAS_LASX
+>   STACK_FRAME_NON_STANDARD kvm_restore_lasx
+>   #endif
+> +#endif
+> 
+It is hard to understand to put CONFIG_CPU_HAS_LASX inside 
+CONFIG_CPU_HAS_LBT, in general option CONFIG_CPU_HAS_LBT has nothing 
+with CONFIG_CPU_HAS_LASX.
+
+Would you like to add parameter func in macro fpu_restore_csr like this?
+
+--- a/arch/loongarch/include/asm/asmmacro.h
++++ b/arch/loongarch/include/asm/asmmacro.h
+@@ -55,10 +55,11 @@
+  #endif
+         .endm
+
+-       .macro fpu_restore_csr thread tmp0 tmp1
++       .macro fpu_restore_csr thread tmp0 tmp1 func
+         ldptr.w         \tmp0, \thread, THREAD_FCSR
+         movgr2fcsr      fcsr0, \tmp0
+  #ifdef CONFIG_CPU_HAS_LBT
++       STACK_FRAME_NON_STANDARD        \func
+         /* TM bit is always 0 if LBT not supported */
+         andi            \tmp0, \tmp0, FPU_CSR_TM
+         beqz            \tmp0, 2f
+@@ -282,10 +283,10 @@
+         lsx_save_data           \thread, \tmp0
+         .endm
+
+Regards
+Bibo Mao
 
 
