@@ -1,111 +1,127 @@
-Return-Path: <linux-kernel+bounces-295424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73ABA959ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:52:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE05F959AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2271F2377A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:52:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4661B2A341
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB3819993A;
-	Wed, 21 Aug 2024 11:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A806119995D;
+	Wed, 21 Aug 2024 11:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z59kUrZg"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FCVhYHq1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7637BB14;
-	Wed, 21 Aug 2024 11:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780F71741D1;
+	Wed, 21 Aug 2024 11:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724240221; cv=none; b=F4hZFR3cTR0DzqbfeSARMyeNy0w9fYljU3DLpmdYHgi92eX3GbNjDQnrpPzgs+2SxJqBU+9efeQvAMTR4fbN/RczDlCDadjO3NGbcWunZIvcZtk+HVb4ix0A/QVt3DSY3bK7pFpS3YMsMDM/Q/nz03iXwW3K0ji0K4ZLaorb6KE=
+	t=1724240295; cv=none; b=haBKJ3QRDknBZ2ba3tFUIvsxleDHnwTdaNQkrE7pnS9+K0rH1JgWUzO3E2eW+KxLqPcgarVtwEVGn5ACkKf9EUMOJZvSVHcur++WNcu28kENAR2eeyLu6CfPvuzTL+nzFk6fKwWL0NrJ4oaACxXjQKzJzWl7I6QGJVdcrrdpiyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724240221; c=relaxed/simple;
-	bh=qz/41yb84IS/NQmP5e9j31YI+HYD1At47sZcVsuSfMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LNI/4u0GjnCRHyFeB0+n2RSjR6zv5MtdBfpYqIj9yuViOAn3+Mr+PyQVHfyJC/C0DElhSIDfW1YwXQcFxpns8RVegS6+8eXeZbcCDVWAgWTqPv0UN8S9xi6yfa+BqfxhMrOA84K5LJTYDxCi5ZT+8cCi9HE37TGRggG89ALwdbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z59kUrZg; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d3f39e7155so849430a91.0;
-        Wed, 21 Aug 2024 04:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724240220; x=1724845020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yxUwp1iKVSClM93G0xcaURGAG6siOme4n3w9Tmgm8BQ=;
-        b=Z59kUrZgZRBJ9UrQT4t+JrfzfR+anfuTZ3T1B1P4PuS8+Wju3DGk3rTK5zegZj37ny
-         9bt3R/7Ju4YnRz1N0Etmqoxm5XuTlLym3Z61k72h5ccE208twKdJogxV+gXYUWRaUj8t
-         I2SgG1/5xT4lYMtMiLi4+vsCjOMg9vkBg4LjAYHFxfl2RB6+t5aAMQE2YM2xSSeHjtFJ
-         ITW5RzTO0DWJjgF6UiU7Zo3xeAvj1KIsCGu65ybg06VwygiRGwkwHb70nwlX2hqh1RPb
-         4ENh4Qu81f4BMnKu1lrvVDaU/6ZH3V/JXlyN+KbaWkq2ZekA3hsL3NanA50snWqDytMz
-         lUTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724240220; x=1724845020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yxUwp1iKVSClM93G0xcaURGAG6siOme4n3w9Tmgm8BQ=;
-        b=KcxdCjesOqK0/T5PIv5sd/rPBG6ihM4faOkmrZVyrCPYf0eOUBt/Rwcct4RghGDQ6H
-         OXNaC1MZNLVh2iQv7kiMPo5HTt7I4aF/fLQF3rjfgVCZYEKA+F2pxV+nZtjbVaEYezsj
-         GtyPCoQywFsoJ+jGvRI1lZd9EXhlQ4No5ePZOrY274kVutpPutbHRff7j+dBifva90KV
-         p5Ok6fg2kwxTmiArhFoOqwogvptzUWZcBQrVVZmb812ISobK/ZxX+QZsxIS+M+RzBflG
-         Ohp6mLE3mi3LyHpCFHjC0Cwx7xlUKhau/XaXkS6dRwyuFbAzxLc5mYMS/gEfFv/O7qpf
-         xwng==
-X-Forwarded-Encrypted: i=1; AJvYcCURRtBr89GULxXCF4uwFJJieDkQvoaanToiGzfR2zofE72GirGQmJKM/cF8yL0TvmifyJ07nPt0pk9gXA==@vger.kernel.org, AJvYcCVctDcx5tSJoMZt90oUuKEsnYVuREbHaXntHtiKgt6qOwgdvxOWMnHbwOLVl4eaPHyhoSf5LVGplSzuN5tL@vger.kernel.org, AJvYcCXwPvyLCDd15txIkCIjOdAkpwOp+X15mAYd0vnk56/GvmKuYyQfSyNWfLNUY9mcv17i/ClVLpfqZiQLxscdjXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzwVeiVquAD2ZZxToExJySfNoCX7wiSdRK05pdIEJ+x+sNva8C
-	kgu4MzC7H+Fla6jqwdfRJolq4d2+X/EoDTGf1055FYrsy/ftCr6SJvJ9hO2FQsgyNHcxicSXzwq
-	6AGzK9uv5yTBerxPjODW8ZUboYIE=
-X-Google-Smtp-Source: AGHT+IHUvMZPMuS0dwTCPpV1fb4vk103aZV7zFoBUaL2JHMvrqUOUd2VWnTQR2iaAbvoynvg4bHauO1y420NjlcMJ5I=
-X-Received: by 2002:a17:90b:3ccd:b0:2cb:4382:99f1 with SMTP id
- 98e67ed59e1d1-2d5eacea29amr1221233a91.6.1724240219567; Wed, 21 Aug 2024
- 04:36:59 -0700 (PDT)
+	s=arc-20240116; t=1724240295; c=relaxed/simple;
+	bh=JpurAUr1LDKDx2rZWfsDPTgLW4zoj1oUuLLEA/+ACuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JK8l2YNT0uNPYm2zfjy0HA0Yhda0pout0TRxMB0rkXfax8M4VelVN7JgKxjWOUvWogbgIX0CXui0DkzH3sM4GXf9RqDhK7IUbmkeVBK4qftncfVB0FnYs8LZkDZ8n8lhY5WIZObd3IccqkVZ0hIgJCcQxPx1MFjDlNq2IAvjsvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FCVhYHq1; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724240293; x=1755776293;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JpurAUr1LDKDx2rZWfsDPTgLW4zoj1oUuLLEA/+ACuo=;
+  b=FCVhYHq136UAyOol8Lyc+3FVflC6rRYpa7t1JHDcbvAtHiOO9f2qXrYQ
+   A0a4rLvK/SsTLjnUAaycJ6zQBG2eOYVv9p2ZSHEFPkR7Kuyr/AwULqiWC
+   5faRUTBlbjSNyNB0h30pLMXNpu7Sdl31xGa9YnEJRJ10B3plouM4KYNzH
+   0XLto37v8xwq4mmy+3u6S840ckWkMj9wrU/mW6QF9Rp61Y9qE1MBXRk5m
+   13T1weephY0GkjXVjO+hhKV2biqJF9mgdTK/oYrH+eH08W6Qrw7/SR7qk
+   nZYLWrC/mTc/3EDouMP2kdMW6Corl7M8ykB4GYOM9BuUWBJlhuCph3Mt5
+   w==;
+X-CSE-ConnectionGUID: SuyuceKxSwGhUsk122y71g==
+X-CSE-MsgGUID: eEgBthfdQpa+X59f+Yhtow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22400922"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="22400922"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 04:38:12 -0700
+X-CSE-ConnectionGUID: GXtSLt26RMuFXeV1MTV5/Q==
+X-CSE-MsgGUID: aw9hglVlQfKBbixBDU4Hfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="65755584"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 04:38:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sgjfB-0000000035T-3vo6;
+	Wed, 21 Aug 2024 14:38:05 +0300
+Date: Wed, 21 Aug 2024 14:38:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Raag Jadav <raag.jadav@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	tursulin@ursulin.net, airlied@gmail.com, daniel@ffwll.ch,
+	linux@roeck-us.net, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, anshuman.gupta@intel.com,
+	badal.nilawar@intel.com, riana.tauro@intel.com,
+	ashutosh.dixit@intel.com, karthik.poosa@intel.com
+Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
+Message-ID: <ZsXRndpkKKVWPj4B@smile.fi.intel.com>
+References: <20240809061525.1368153-1-raag.jadav@intel.com>
+ <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
+ <ZrYEQqs0IwDHWkGx@ashyti-mobl2.lan>
+ <ZsRbK8TEk5GZDl0C@black.fi.intel.com>
+ <ZsUPY4zJwEGAf_t_@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815074519.2684107-1-nmi@metaspace.dk> <CANiq72mCsBO01FHbf4D0h0yvTV=TbpgO-jeTHLL39ae-JpMLZg@mail.gmail.com>
-In-Reply-To: <CANiq72mCsBO01FHbf4D0h0yvTV=TbpgO-jeTHLL39ae-JpMLZg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 21 Aug 2024 13:36:47 +0200
-Message-ID: <CANiq72mrwBs_YTcBvge4ME5bwSLKbNaoFU+KZw3EfCTyGjiJ9w@mail.gmail.com>
-Subject: Re: [PATCH 0/2] rust: fix erranous use of lock class key in rust
- block device bindings
-To: Andreas Hindborg <nmi@metaspace.dk>
-Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	"Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, 
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsUPY4zJwEGAf_t_@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Aug 21, 2024 at 12:50=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
->     [ Applied `rustfmt` and reworded slightly. - Miguel ]
+On Tue, Aug 20, 2024 at 05:49:23PM -0400, Rodrigo Vivi wrote:
+> On Tue, Aug 20, 2024 at 12:00:27PM +0300, Raag Jadav wrote:
+> > On Fri, Aug 09, 2024 at 12:57:54PM +0100, Andi Shyti wrote:
+> > > On Fri, Aug 09, 2024 at 02:48:08PM +0300, Andy Shevchenko wrote:
 
-Dirk noticed the Zulip link was broken due to a rename of the topic.
-Normally I try to remember to convert them into message links (which
-are permalinks) and to shorten them when they are too long too -- done
-now.
+...
 
-For context, Zulip is gaining the ability to get topic permalinks (see
-https://github.com/zulip/zulip/issues/21505 -- we gave them feedback a
-year ago that it would be useful for kernel commits), though I think
-it is not exposed through the UI yet.
+> > > I don't understand what interest might have someone in a couple
+> > > of years, reading this commit, knowing an unintellegible list of
+> > > differences between v2 and v3.
+> > > 
+> > > I consider it a random pollution of the commit log.
+> 
+> I agree it is ugly. But I don't agree it is just a 'random polution'.
 
-Thanks Dirk!
+Since lore is in place and under the control of LF, this _becomes_
+a random pollution. Somebody needs to change some scripts and too
+conservative workflows :-)
 
-Cheers,
-Miguel
+> I consider a valid and very useful information of the patch history.
+
+So, we have a Link: tag. As long as the changelog was published there it's
+being archived.
+
+> Very useful for a later cross check to know what exactly version
+> of that patch got merged.
+> Useful for distros on backports as well.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
