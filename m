@@ -1,62 +1,42 @@
-Return-Path: <linux-kernel+bounces-294874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E10F9593AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32449593B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308EE285268
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11DEA1C213A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A697C163A9B;
-	Wed, 21 Aug 2024 04:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SFlLuMoI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4001607BB;
+	Wed, 21 Aug 2024 04:49:29 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395352595;
-	Wed, 21 Aug 2024 04:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477DC2595;
+	Wed, 21 Aug 2024 04:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724215186; cv=none; b=fRXEwcrTGhL/ycm6n0pVb1CCZnrYOcoh1deq2+QJ7XYMcuRxC6kecc3ypMshLUwLMKbyAiYuLdxw++ZKyb+wOagpcxDlUYBGmxOWCReeWJO0USyq/QvUc6PXGSpkLon7pMtMZeo08tKsiqJIqVWqfZQra32s6afxDN4Z2sFJHZU=
+	t=1724215769; cv=none; b=VLUmoNp6EJBfD6qs6RCG47iHObagp75Y/37ZwkYXvGfE9jqwMmSlbNKvw9vOWEds0z7A9mpYEJGtByTegmyaorOZtWhU7zA4zCnCtIwzAoRqmGnPGdlYA4hFM5O619hr+PA4J7htp52tZXnBL4nm1/iv9YVusfNlUNbB0aN5wgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724215186; c=relaxed/simple;
-	bh=iblUkJxanWGILUKaRtQu5idozKXjAqVYHifOo13K5MQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gn783G+XGo+L7z5e3OIwY14AVzVOlNn9P0gBzV74IbT7b6tYhpLPAHJOfSvzl6e0bvcTzWpNcPaUtDR321ZeQClA/go3I8pAy3I9dfFO+eC/GmPF+2zQBz4lS1a2YxqQqYqgy1T0/DJdkzWG3voNBRWQQBn/pVO9JpQ9brdPNIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SFlLuMoI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KCq6FM012303;
-	Wed, 21 Aug 2024 04:39:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XhTx2fIZlXWfUT9RtsgapcfXkgnD78yN9Y4uwLvc6LY=; b=SFlLuMoIcMrN0B3+
-	akbPCFU0vYc2TbEl69ZYJtoneCjrEWMM4IJkKZ2Ypcy3Mgw77JW0fG6elmpI22aa
-	rF21luPBpps+ywo9mUeweJv7eKCG6ceOqIaFWywBUyqOrBMPviR5iq15+OMEIeld
-	gw90UbCcX+gTNziAZ7ON8N5MqDY06JDIBOpelEw9tHwaR2Vl7/QrIk1VqRaNczsg
-	GTrDpy4Mrvxd4sDmYJYFps+qQhBIfd6tR/5S8IgkWmH3bNW6o14A0W/FeMXCXfr0
-	O97dV1QSI8od/+07aefqEDnw7K/upr4JTGvhii+NW8nzqfj5MxgjHz3hcqMTqjqF
-	byoOvg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414uh8svm7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 04:39:39 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L4dcQo022094
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 04:39:38 GMT
-Received: from [10.216.8.12] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
- 2024 21:39:33 -0700
-Message-ID: <7ca8aec5-b330-4ece-a0b3-895f3a1f6ba2@quicinc.com>
-Date: Wed, 21 Aug 2024 10:09:30 +0530
+	s=arc-20240116; t=1724215769; c=relaxed/simple;
+	bh=5TzSpBhkHJgJIltrTatdurkNQNLcrphViEYYqPuagxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ebmOFfU1Tj+EkutDv7dZoFQ4ex64AGJWdePrcLWRfOSn3XFZpSDp1VT73PqLt7v80pMyc7Qd8cLg4xYvjp95kVAILtVObW2Id71fQdRd0OQ5jdY4K7y4KGteSf8e5PM/XviLGNNSEhtW3bykHEaYNR0SU7XDurvUhIL4PVSHN0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af2a8.dynamic.kabel-deutschland.de [95.90.242.168])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id EBD4361E5FE05;
+	Wed, 21 Aug 2024 06:49:05 +0200 (CEST)
+Message-ID: <2be3922d-8899-4e58-aa23-57a0b5cfc111@molgen.mpg.de>
+Date: Wed, 21 Aug 2024 06:49:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,86 +44,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] clk: qcom: Add support for GCC on QCS8300
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "Ajit
- Pandey" <quic_ajipan@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-References: <20240820-qcs8300-gcc-v1-0-d81720517a82@quicinc.com>
- <c1dd239f-7b07-4a98-a346-2b6b525dafc4@kernel.org>
- <5011eeb2-61e3-495a-85b3-e7c608340a82@quicinc.com>
- <c6t35o5pnqw25x6gho725qvpgyr6bl2xkpsurq4jtjgii2v5mq@mvdl64azwpz4>
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Drop unused event during BT on
+To: Cheng Jiang <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
+ <15472cea-904c-4d79-9195-3063ce7f1e2e@quicinc.com>
 Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <c6t35o5pnqw25x6gho725qvpgyr6bl2xkpsurq4jtjgii2v5mq@mvdl64azwpz4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oyLPIS4XooWMu4DNQKunDuYvxqga7tQC
-X-Proofpoint-ORIG-GUID: oyLPIS4XooWMu4DNQKunDuYvxqga7tQC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_04,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408210031
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <15472cea-904c-4d79-9195-3063ce7f1e2e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Dear Cheng,
 
 
+Thank you for your patch.
 
-On 8/20/2024 4:32 PM, Krzysztof Kozlowski wrote:
-> On Tue, Aug 20, 2024 at 03:38:39PM +0530, Imran Shaik wrote:
->>
->>
->> On 8/20/2024 3:27 PM, Krzysztof Kozlowski wrote:
->>> On 20/08/2024 11:36, Imran Shaik wrote:
->>>> This series adds the dt-bindings and driver support for GCC on QCS8300 platform.
->>>>
->>>> Please note that this series is dependent on [1] which adds support
->>>> for QCS8275/QCS8300 SoC ID.
->>>>
->>>> [1] https://lore.kernel.org/all/20240814072806.4107079-1-quic_jingyw@quicinc.com/
->>>
->>> How do the depend? What is exactly the dependency?
->>>
->>> If so this cannot be merged...
->>>
->>
->> They are not functionally dependent, but we want to ensure the base QCS8300
->> changes to merge first and then our GCC changes. Hence added the dependency.
+Am 21.08.24 um 06:16 schrieb Cheng Jiang:
+
+> Is there any comment for the changes? Thanks!
 > 
-> This does not work like that, these are different trees, even if they go
-> via Bjorn.
-> 
-> Why do you insist on some specific workflow, different than every
-> upstreaming process? What is so special here?
-> 
-> If you keep insisting, I will keep disagreeing, because it is not
-> justified and just complicates things unnecessarily.
+> On 7/26/2024 5:58 PM, Cheng Jiang wrote:
+>> For the WCN6750/WCN6855/WCN7850, the vendor command for a baudrate
+>> change is not sent as synchronous HCI command, controller sends the
+>> corresponding vendor event with the new baudrate. It needs to be
+>> dropped, otherwise it may be misinterpreted as response to a later
+>> command.
 
-My bad, there is no dependency for clock tree actually, just wanted to 
-provide the info that these GCC changes are for the newly defined SoC in 
-the given series link. I will drop the dependency tag in the next series.
+Is that documented in some datasheet?
 
-Thanks,
-Imran
+How can this behavior be tested, and your change be verified? How did 
+you test it?
+
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>>   drivers/bluetooth/hci_qca.c | 16 +++++++++++++++-
+>>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index ca6466676902..f497d601e035 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -1206,7 +1206,15 @@ static int qca_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+>>   		 * vendor command).
+>>   		 */
+>>   
+>> -		if (hdr->evt == HCI_EV_VENDOR)
+>> +		/* For the WCN6750/WCN6855/WCN7850, like the WCN3990, the
+
+Does “like the” mean “and” in this situation? WCN3990 is not mentioned 
+in the commit message.
+
+>> +		 * vendor command for a baudrate change command isn't sent as
+>> +		 * synchronous HCI command, the controller sends the corresponding
+>> +		 * command complete event with the new baudrate. The event is
+>> +		 * received and properly decoded after changing the baudrate of
+>> +		 * the host port. It needs to be dropped.
+>> +		 */
+>> +
+
+It’d remove the blank line.
+
+>> +		if (hdr->evt == HCI_EV_VENDOR || hdr->evt == HCI_EV_CMD_COMPLETE)
+>>   			complete(&qca->drop_ev_comp);
+
+Excuse my ignorance. Is `HCI_EV_CMD_COMPLETE` only sent in case of a 
+baudrate change?
+
+>>   		kfree_skb(skb);
+>> @@ -1497,6 +1505,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>>   
+>>   		switch (soc_type) {
+>>   		case QCA_WCN3990:
+>> +		case QCA_WCN6750:
+>> +		case QCA_WCN6855:
+>> +		case QCA_WCN7850:
+
+So setting the speed wasn’t working before?
+
+>>   			reinit_completion(&qca->drop_ev_comp);
+>>   			set_bit(QCA_DROP_VENDOR_EVENT, &qca->flags);
+>>   			break;
+>> @@ -1531,6 +1542,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>>   
+>>   		switch (soc_type) {
+>>   		case QCA_WCN3990:
+>> +		case QCA_WCN6750:
+>> +		case QCA_WCN6855:
+>> +		case QCA_WCN7850:
+>>   			/* Wait for the controller to send the vendor event
+>>   			 * for the baudrate change command.
+>>   			 */
+
+
+Kind regards,
+
+Paul
 
