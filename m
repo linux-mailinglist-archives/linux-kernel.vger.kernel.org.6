@@ -1,129 +1,198 @@
-Return-Path: <linux-kernel+bounces-296113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B85F95A5D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:27:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5311095A5D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3DB2849D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:26:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7E45B233C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4E4170A1A;
-	Wed, 21 Aug 2024 20:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FCE173346;
+	Wed, 21 Aug 2024 20:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjT/tSGA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eXX/uEbu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A362F16FF2A;
-	Wed, 21 Aug 2024 20:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE8F170A2C;
+	Wed, 21 Aug 2024 20:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724272008; cv=none; b=ihtWxdNXEdQpoQWxfnTHNi7WUtNzROIm8SLZPWW7oaHjbV9UVvSvrWGhtuL1sH/S/jn6BFg9+I/nP0sfOX0zi6ghIsnb3wf+qgyyK+QscOEjtdplLGoD3nqY5Hka32zHXv+JEnEJp66AWkrGJHZmRhmfML/A/+JEOqECHiLviRk=
+	t=1724272107; cv=none; b=hh7PQzO6Ww/r8fnRPsERvwuHZMRD7e6GQztqVKuKbvsfe54Amak6eYdneAltdn7CmHuWsFP+Me4I5NZGmIWV3qi+VFFO7tYPV33Dh+vQSS9Tb8BiteGp/EYnCEEqmy5dqxZaHOr3qflEN4aPsSRscQX/8nvE7jrAHdm/w5dzKYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724272008; c=relaxed/simple;
-	bh=hC7MVxEnpBSlpjnRjxHCdY9iSHf7+aorJoyKXmBQUak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A//KWPa/SOV8geSNsr0jXTleQ+Q7oc0FUqCIu1CY9cOArPTZRhYgWCY+Lwwq6/iBO5gOwyNIUVRHIOb/lkIMWiqTN9IDtwVBeHBWbSvT1YKHZbHjiRCET8bXL7wZoyuQ4VK+oY9dp0rrewaztLyE/3icPN+44z5jDrhWBOXL+AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjT/tSGA; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724272007; x=1755808007;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hC7MVxEnpBSlpjnRjxHCdY9iSHf7+aorJoyKXmBQUak=;
-  b=gjT/tSGAPoZ74cj+ONfoIrLTCfzvPAXqkfPQIFlRpJtBSDXN0wh1ahFN
-   At/BvGYgYRg0ixSMjGI7jfWXp/g5rEpJxvpSSFA4HUMdNp30TRNgQn+Bw
-   vcf5IFEuP3bnb9zLiECc19TBKynjIxBlnmEBL3GgPP1FKu+VlN9SWKQLO
-   WJopRVDZRudfZb2Yrx3QZmHv+KzAmJjcDPTPnwQMUa/9jHQaAqMd+gV92
-   tw3sDM2ky8tv1Y72Cc6hM+RPLaCmjmS63jddOA+NnFFfe/b9g4dN9CAGT
-   r7pLBfIjUQuy2snntcO23xm50e3R6OQir5s3i2Khm+/Y69MREuexSKBzx
-   g==;
-X-CSE-ConnectionGUID: +EmeEAOEStCXXWQZa+emmA==
-X-CSE-MsgGUID: O0HDUySHROuTH8lSdG5piw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33808684"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="33808684"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 13:26:46 -0700
-X-CSE-ConnectionGUID: WXVrbJFzRtaMfynGWH7Fjw==
-X-CSE-MsgGUID: t0RvxcXrS1m+eWCAQ8CTtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="84379320"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 21 Aug 2024 13:26:42 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 97766268; Wed, 21 Aug 2024 23:26:41 +0300 (EEST)
-Date: Wed, 21 Aug 2024 23:26:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>,
-	Ganapathi Bhat <ganapathi017@gmail.com>,
-	Sharvari Harisangam <sharvari.harisangam@nxp.com>,
-	Xinming Hu <huxinming820@gmail.com>, Kalle Valo <kvalo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] wifi: mwifiex: Replace one-element arrays with
- flexible-array members
-Message-ID: <ZsZNgfnEwOcPdCly@black.fi.intel.com>
-References: <Y9xkECG3uTZ6T1dN@work>
+	s=arc-20240116; t=1724272107; c=relaxed/simple;
+	bh=SXtWlXXJvfMzOc3hdKl16HGzmbsTfSjUfArfRvLm3Qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pfoNtRy28v6eiVUxYn1b3XEiYYPYnKWkNn72KujNCzDKqa9CSNujXAinItcWWZXa0jbZ/yL9ak0zEJl81nN97MUXOHWTDsbox6Yz84WxV+TBVabqdwQyB7vCBqX4NhEyUTialyQ3wr/t/fW7wIGLl385iMAErczf5O+Ehqg/vkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eXX/uEbu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=kj3JEAu7EiqwY4Qhm6ZqPD9191IkjGRIRHW3y1xsTyg=; b=eXX/uEbuUPtEKsR1cEsF4mJNW1
+	UJEqGGmOQMAdHhp0sCbN5tT9iGGGO+YoKzGRg3EtBz3blON0n4yS+dtxRPqyKMcXpLxv4MaWWGG2M
+	3Z+7C/2DXo+5qsvl7I7W7TxbdXUTHuZUX3pQl5CySYmR9AnHBVmeHM9A0y0Id7MtWjag4xTgeMe06
+	SYGVK3+/eGHw22tNNRzo+JFXS+9q3EwN3sLeEhyN9VbJ7Xk30uFC3SyhZZqj+XY21NlMfa+qyerzG
+	IdPd7mUqmXY2tjjclU4lsStH6xBjAFKuRV0TKmac0PgoeebGOKCL9bAS2Wnbv1lQBPUL1MtvW3i9Y
+	01SSfeVw==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sgrwF-00000009fuS-0vJO;
+	Wed, 21 Aug 2024 20:28:15 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sgrwE-00000002z8p-0LiG;
+	Wed, 21 Aug 2024 21:28:14 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"Hussain, Mushahid" <hmushi@amazon.co.uk>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Jim Mattson <jmattson@google.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mingwei Zhang <mizhang@google.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH v3 1/5] KVM: pfncache: Add needs_invalidation flag to gfn_to_pfn_cache
+Date: Wed, 21 Aug 2024 21:28:09 +0100
+Message-ID: <20240821202814.711673-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y9xkECG3uTZ6T1dN@work>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Feb 02, 2023 at 07:32:00PM -0600, Gustavo A. R. Silva wrote:
-> One-element arrays are deprecated, and we are replacing them with flexible
-> array members instead. So, replace one-element arrays with flexible-array
-> members in multiple structures.
-> 
-> This helps with the ongoing efforts to tighten the FORTIFY_SOURCE
-> routines on memcpy() and help us make progress towards globally
-> enabling -fstrict-flex-arrays=3 [1].
-> 
-> This results in no differences in binary output.
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-Sorry for blast from the past, but I have a question here.
+This will be used to allow hva_to_pfn_retry() to be more selective about
+its retry loop, which is currently extremely pessimistic.
 
-This change seems converts many of the flexible arrays in this driver.
-But what's behind this one?
+It allows for invalidations to occur even while the PFN is being mapped
+(which happens with the lock dropped), before the GPC is fully valid.
 
-struct host_cmd_ds_802_11_scan_ext {
-        u32   reserved;
-        u8    tlv_buffer[1];
-} __packed;
+No functional change yet, as the existing mmu_notifier_retry_cache()
+function will still return true in all cases where the invalidation
+may have triggered.
 
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ include/linux/kvm_types.h |  1 +
+ virt/kvm/pfncache.c       | 29 ++++++++++++++++++++++++-----
+ 2 files changed, 25 insertions(+), 5 deletions(-)
 
-AFAIU this needs also some care. On the real machine I have got this
-
-elo 16 17:51:58 surfacebook kernel: ------------[ cut here ]------------
-elo 16 17:51:58 surfacebook kernel: memcpy: detected field-spanning write (size 243) of single field "ext_scan->tlv_buffer" at drivers/net/wireless/marvell/mwifiex/scan.c:2239 (size 1)
-elo 16 17:51:58 surfacebook kernel: WARNING: CPU: 0 PID: 498 at drivers/net/wireless/marvell/mwifiex/scan.c:2239 mwifiex_cmd_802_11_scan_ext+0x83/0x90 [mwifiex]
-
-which leads to
-
-        memcpy(ext_scan->tlv_buffer, scan_cfg->tlv_buf, scan_cfg->tlv_buf_len);
-
-but the code allocates 2k or more for the command buffer, so this seems
-quite enough for 243 bytes.
-
+diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
+index 827ecc0b7e10..4d8fbd87c320 100644
+--- a/include/linux/kvm_types.h
++++ b/include/linux/kvm_types.h
+@@ -69,6 +69,7 @@ struct gfn_to_pfn_cache {
+ 	void *khva;
+ 	kvm_pfn_t pfn;
+ 	bool active;
++	bool needs_invalidation;
+ 	bool valid;
+ };
+ 
+diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
+index f0039efb9e1e..7007d32d197a 100644
+--- a/virt/kvm/pfncache.c
++++ b/virt/kvm/pfncache.c
+@@ -32,7 +32,7 @@ void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm, unsigned long start,
+ 		read_lock_irq(&gpc->lock);
+ 
+ 		/* Only a single page so no need to care about length */
+-		if (gpc->valid && !is_error_noslot_pfn(gpc->pfn) &&
++		if (gpc->needs_invalidation && !is_error_noslot_pfn(gpc->pfn) &&
+ 		    gpc->uhva >= start && gpc->uhva < end) {
+ 			read_unlock_irq(&gpc->lock);
+ 
+@@ -45,9 +45,11 @@ void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm, unsigned long start,
+ 			 */
+ 
+ 			write_lock_irq(&gpc->lock);
+-			if (gpc->valid && !is_error_noslot_pfn(gpc->pfn) &&
+-			    gpc->uhva >= start && gpc->uhva < end)
++			if (gpc->needs_invalidation && !is_error_noslot_pfn(gpc->pfn) &&
++			    gpc->uhva >= start && gpc->uhva < end) {
++				gpc->needs_invalidation = false;
+ 				gpc->valid = false;
++			}
+ 			write_unlock_irq(&gpc->lock);
+ 			continue;
+ 		}
+@@ -93,6 +95,9 @@ bool kvm_gpc_check(struct gfn_to_pfn_cache *gpc, unsigned long len)
+ 	if (!gpc->valid)
+ 		return false;
+ 
++	/* If it's valid, it needs invalidation! */
++	WARN_ON_ONCE(!gpc->needs_invalidation);
++
+ 	return true;
+ }
+ 
+@@ -175,6 +180,17 @@ static kvm_pfn_t hva_to_pfn_retry(struct gfn_to_pfn_cache *gpc)
+ 		mmu_seq = gpc->kvm->mmu_invalidate_seq;
+ 		smp_rmb();
+ 
++		/*
++		 * The translation made by hva_to_pfn() below could be made
++		 * invalid as soon as it's mapped. But the uhva is already
++		 * known and that's all that gfn_to_pfn_cache_invalidate()
++		 * looks at. So set the 'needs_invalidation' flag to allow
++		 * the GPC to be marked invalid from the moment the lock is
++		 * dropped, before the corresponding PFN is even found (and,
++		 * more to the point, immediately afterwards).
++		 */
++		gpc->needs_invalidation = true;
++
+ 		write_unlock_irq(&gpc->lock);
+ 
+ 		/*
+@@ -224,7 +240,8 @@ static kvm_pfn_t hva_to_pfn_retry(struct gfn_to_pfn_cache *gpc)
+ 		 * attempting to refresh.
+ 		 */
+ 		WARN_ON_ONCE(gpc->valid);
+-	} while (mmu_notifier_retry_cache(gpc->kvm, mmu_seq));
++	} while (!gpc->needs_invalidation ||
++		 mmu_notifier_retry_cache(gpc->kvm, mmu_seq));
+ 
+ 	gpc->valid = true;
+ 	gpc->pfn = new_pfn;
+@@ -339,6 +356,7 @@ static int __kvm_gpc_refresh(struct gfn_to_pfn_cache *gpc, gpa_t gpa, unsigned l
+ 	 */
+ 	if (ret) {
+ 		gpc->valid = false;
++		gpc->needs_invalidation = false;
+ 		gpc->pfn = KVM_PFN_ERR_FAULT;
+ 		gpc->khva = NULL;
+ 	}
+@@ -383,7 +401,7 @@ void kvm_gpc_init(struct gfn_to_pfn_cache *gpc, struct kvm *kvm)
+ 	gpc->pfn = KVM_PFN_ERR_FAULT;
+ 	gpc->gpa = INVALID_GPA;
+ 	gpc->uhva = KVM_HVA_ERR_BAD;
+-	gpc->active = gpc->valid = false;
++	gpc->active = gpc->valid = gpc->needs_invalidation = false;
+ }
+ 
+ static int __kvm_gpc_activate(struct gfn_to_pfn_cache *gpc, gpa_t gpa, unsigned long uhva,
+@@ -453,6 +471,7 @@ void kvm_gpc_deactivate(struct gfn_to_pfn_cache *gpc)
+ 		write_lock_irq(&gpc->lock);
+ 		gpc->active = false;
+ 		gpc->valid = false;
++		gpc->needs_invalidation = false;
+ 
+ 		/*
+ 		 * Leave the GPA => uHVA cache intact, it's protected by the
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.44.0
 
 
