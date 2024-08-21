@@ -1,166 +1,155 @@
-Return-Path: <linux-kernel+bounces-296203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2048195A786
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:01:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A7A95A79D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD02E281624
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:01:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9201F22648
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A28176FAC;
-	Wed, 21 Aug 2024 22:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A8917BB11;
+	Wed, 21 Aug 2024 22:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7b4frfv"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0Ai9K+q"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FFB2B9AF
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 22:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DBD170A2E;
+	Wed, 21 Aug 2024 22:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724277693; cv=none; b=VpCl/zEFrKjeewYzmgt1N5ZVgO21r1XmPSX4fPtWlryScKS/cXfqX3eYdCKXRSg/HDhpaXWTx/LkaIjkeHJsYtUcVdY9/YYT/fDGi85DNUuZrSU8dFdgNjunQlFFKDNbRioM2qYMpat83c5cx3i//OVM4Hv8JhB4jMOpflqsLNY=
+	t=1724278062; cv=none; b=AIM1R0k/PJaU/hVnLW9QUQtDqK3bapzui8AiZFzLH7j6+JPR/dmEp73U7rYirXwiUFkvvjd8wdWwtiqNCr4kwc87cL9GstWG1/LTklR9Ufb0P/JuA6vIKaf/zy9ZZUBit0aHyY8peKKo8egCgphrnQbVA0cIAIdvWiNyViB1NaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724277693; c=relaxed/simple;
-	bh=bXm/m9iOBvNenEQp2YgLjG2WHpwSnrGrk3UlJYlTHQQ=;
+	s=arc-20240116; t=1724278062; c=relaxed/simple;
+	bh=oKy04C+dcngOFBUyhRcRl2GEyUv5QIXqzGF1zfvynOo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Aj2f9eTV7ZHfsj2bjzfGnkPWIb/fTqsrZQM47z4X49E/wh027j3xL9ZRYS3lzDKMipDJXIDVoRmqGAkuT59WOhqBs+ondT61DVHWthPLgTGB6bsPxUC5diZt6Ww7NiEfIWKFv9QxYMLfj0wHA9M1Sr+Rd8Udn602Jtdjbs3Vgr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7b4frfv; arc=none smtp.client-ip=209.85.222.53
+	 To:Cc:Content-Type; b=jqX0xZsryeVUTwUFK1wkVgCakWtsU9KVIqtIYg8FCa5Pn7akmLNI1AahSqr7yTLLt3QTV3UMXGQ5WnuyivFSPd403Ai5mI9FBUA/q3v6PzKVcKx3LQluCa6sadbc693vC6BPXw26F3ooqYVjZOkJP8H5c4AdfU9WxVxyKzbVCFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0Ai9K+q; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-842f95b73daso65414241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:01:31 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-429ec9f2155so827635e9.2;
+        Wed, 21 Aug 2024 15:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724277690; x=1724882490; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724278059; x=1724882859; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5xiDXoQEA5WD8m2OrzH2w9aiIuJAwD4Zi8v/UbhlaFY=;
-        b=c7b4frfv4IAb1N39Db0H7MDa+GFcEnhgkH+R1OGi4+8bChRjT3MNa+rUsYJ5T6zDJs
-         xK8U1OzUDGZpn70VkO99AkyEb41Ntd1Uc7+awnxWJEXpm8ZNusBJ3Sb3cVn2IfxZZkLR
-         59ccXhJJyaYGlyqPuIoR9j4kZ+8xigx/pMxqqbdXCji036e/LwQ/7itqEpzRpqhWG9Zm
-         NhVmrElgsjqrleMf9FsLTfpQOfgh0u/ECYlCCehyZtn//K7+f47DILPXJDvxd/zRgK9G
-         GJLUDmY6ZG2+vKoJT7t93BPLTIrRoyPgTTUP5fQFaLPzpnEjbCxlz8+7DkwpWODn0d6K
-         7q6Q==
+        bh=TNNeTQGZqzDUNm3UJkRrDHxPTwVrMNbOn6wlIJHXkiA=;
+        b=l0Ai9K+q4/WmWj/TJNSCZjqWIwP50S/PKOvOcV2K6l2MGFuHgvWJJkhYwsb2uUD7Pc
+         3JbP6usDN27muMy00DklRxC/QRZ76z/x5mJ9vNV8UwxIOSlwVZ2tROFOJdKRLgBym/8b
+         2fl//LqbKL3fXCDmZmj8FeMUgeJhbWXlXqNmRt9nYCOKI7JQidMCVnWnoVx9c9SRSof9
+         5Yf7Zf4ibLphbr6M7RNBM2pnaps+q/qBij5JZchD7ExaZPrJoMkcoC2lHXjjPnqGVKTP
+         Mv3x0opPevLHmPOOGYFlTdxsxnH//Vo7xmJTso9mo3VgneE+wFHI9Nbbkxq9VI9uRycB
+         k/JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724277690; x=1724882490;
+        d=1e100.net; s=20230601; t=1724278059; x=1724882859;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5xiDXoQEA5WD8m2OrzH2w9aiIuJAwD4Zi8v/UbhlaFY=;
-        b=FXL1lCKkVOt1XEDELboPHsQxMVrEUmvgCvUvYDJb3fhMUv+jUGvW9AHi01mZTrOL9Z
-         Nim8e6UpmCKaOf4QkMFd4sDAo42adHS3voWX6CBM17891NXPUwgU4MEB+azfhjSswx2b
-         +4CAiNkY8KkZSxK4aGU7wsZo3hCZsHSsbE0XBlEMEsn6MnrfetOmAhSdvswflIUaGiNM
-         057Jm1mMD2FRBGOkc/xIfwtS/PPBWVUB7pfkxL13xmiPFunWgyLwIsZ4r2oqSzFEV9RI
-         b50W1bnbn/RhXSRMXMvcDJhLe5p2SQqIfEkZW+pkLd46OwYtGtW//Dc+px1qvUOecTBP
-         6Y0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVjgcYrrMGR63zm1PJi2CFYmGmwyqFxMBsV5i06+r0vlx0KYXeF2o2ml952mOMln+TZ5nYCXalAFlTKNJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxTasofiXMjh4XIow/hsqhA8ZstQBdsH62bohPgWvrUNDQuInv
-	EHOYiGwkrW4agZwZkQ8wHGwSGpn6SQAF8C/A9FuvMr5Na6fDG1NvM0FPmhtl+0epxKsHOakPxLX
-	HRKTqti5e9rXXNV6w3kob7tst/s0E/GpY
-X-Google-Smtp-Source: AGHT+IFl8/Nb4/OFNkFzwnNqwpdgtU6aBk7AbiBON0n9ZJpFmcLJSZBOlkh2SIwm32Xg/4M/9Vjj7Hd1sF1x64Fe0GU=
-X-Received: by 2002:a05:6122:1806:b0:4f5:12d3:799a with SMTP id
- 71dfb90a1353d-4fcf359a7b0mr5076941e0c.2.1724277690161; Wed, 21 Aug 2024
- 15:01:30 -0700 (PDT)
+        bh=TNNeTQGZqzDUNm3UJkRrDHxPTwVrMNbOn6wlIJHXkiA=;
+        b=C5MVpk33J2dOi1Il2mGTnNQ+OHTN5I9zQqNcivppIrzrPmbLXJvk8r/4lGyZsAWKhv
+         ioaS5gktucJfSTdrhWQKENASJqXwsuIML5qNWG/tNSuxF2b6BFKTOkmBo5xDncqsjCFW
+         GB91BOoRFjEwRcfrn/lXEV2eM1etAfFTAj9lt3HC5rfXI4fbzQ9E+WpVwF2lwRCxHJnq
+         E0TnCxU4x66MA3TGQm56XCbDtiBGGXrPlTV1QVjyFGP0GCcYjWxuPJL1dlPFVKw4h9eI
+         hK1CH7prayvekGHE/x/WoRdtFEt34gj6eggZalad3ZXxeFmboo20z4WyjaEVDfcX+jHv
+         NViA==
+X-Forwarded-Encrypted: i=1; AJvYcCVISmbgNK175PyySSR6SCvCsw7hS4y2KRSvJQyspdUJb3vXOIxhmuM0//Sa0IoPiAGoWsn2vkZk5j/PzIRM@vger.kernel.org, AJvYcCXA+piV7PuZRd4IEOX5DXkjD8RnCNA+ImSxL6KpQjGtu8TU94S6PPXV7tASeFXF4SxJCA8wi74KaJ5bIeraDd90@vger.kernel.org, AJvYcCXMeUpInEi6unga13PEFaC/BjDh6IOP4XXvvt8mAEuASEjEN88i+hKJkklqpGPkzy8G3Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym0sQl5C9OcsBA6vZUlgdzMjiP7GXEA3OEoibsdY2lywHVD5uL
+	n7vYGmY5qQj1j5nixfR0Xazhz6Q56OXICuX+jpuokhYlLAgBe639NvoQwKV2IybcrXkfb2HmeYg
+	l03+3CbrKpcJ0Sx5pXzEd2t0shYQ=
+X-Google-Smtp-Source: AGHT+IEUWEpPcfSUb0wNVH9crhyXPTop8DvlSYSWpMyhqYlhL6VCVZxNCkPpVQaubr9ZyyCaf0n2QTQG6JOZa0AmSoI=
+X-Received: by 2002:a05:600c:4f50:b0:427:abed:3608 with SMTP id
+ 5b1f17b1804b1-42abf04881fmr25278935e9.5.1724278058840; Wed, 21 Aug 2024
+ 15:07:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811224940.39876-1-21cnbao@gmail.com> <20240811224940.39876-3-21cnbao@gmail.com>
- <6c01b794-7c51-4d90-a215-210ac21401d2@redhat.com>
-In-Reply-To: <6c01b794-7c51-4d90-a215-210ac21401d2@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 22 Aug 2024 06:01:17 +0800
-Message-ID: <CAGsJ_4x4ngLS4kW-e7_DTykZSAmk3DeQ6CuZ4zGEiGBd99fbrw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: collect the number of anon large folios on
- split_deferred list
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
-	ioworker0@gmail.com, kaleshsingh@google.com, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com, 
-	ziy@nvidia.com, yuanshuai@oppo.com, Usama Arif <usamaarif642@gmail.com>
+References: <20240820023447.29002-1-hao.ge@linux.dev> <02dd26b5-16a0-4732-80e4-c7bf183e965a@linux.dev>
+ <58f57d70-a787-4012-8763-cc6eb642ef8a@stanley.mountain>
+In-Reply-To: <58f57d70-a787-4012-8763-cc6eb642ef8a@stanley.mountain>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 21 Aug 2024 15:07:27 -0700
+Message-ID: <CAADnVQ+iTrTmbMcjt7fR7uTS=1tFcjv=z2CY6fO-4=kkM4YSMw@mail.gmail.com>
+Subject: Re: [PATCH] selftests/bpf: Fix incorrect parameters in NULL pointer checking
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yonghong Song <yonghong.song@linux.dev>, Hao Ge <hao.ge@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Hao Ge <gehao@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 5:39=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
+On Wed, Aug 21, 2024 at 2:50=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 >
-> On 12.08.24 00:49, Barry Song wrote:
-> > From: Barry Song <v-songbaohua@oppo.com>
+> On Wed, Aug 21, 2024 at 02:03:17PM -0700, Yonghong Song wrote:
 > >
-> > When an mTHP is added to the deferred_list, its partial pages
-> > are unused, leading to wasted memory and potentially increasing
-> > memory reclamation pressure.
+> > On 8/19/24 7:34 PM, Hao Ge wrote:
+> > > From: Hao Ge <gehao@kylinos.cn>
+> > >
+> > > Smatch reported the following warning:
+> > >      ./tools/testing/selftests/bpf/testing_helpers.c:455 get_xlated_p=
+rogram()
+> > >      warn: variable dereferenced before check 'buf' (see line 454)
+> > >
+> > > It seems correct,so let's modify it based on it's suggestion.
+> > >
+> > > Actually,commit b23ed4d74c4d ("selftests/bpf: Fix invalid pointer
+> > > check in get_xlated_program()") fixed an issue in the test_verifier.c
+> > > once,but it was reverted this time.
+> > >
+> > > Let's solve this issue with the minimal changes possible.
+> > >
+> > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > Closes: https://lore.kernel.org/all/1eb3732f-605a-479d-ba64-cd14250cb=
+f91@stanley.mountain/
+> > > Fixes: b4b7a4099b8c ("selftests/bpf: Factor out get_xlated_program() =
+helper")
+> > > Signed-off-by: Hao Ge <gehao@kylinos.cn>
 > >
-> > Detailing the specifics of how unmapping occurs is quite difficult
-> > and not that useful, so we adopt a simple approach: each time an
-> > mTHP enters the deferred_list, we increment the count by 1; whenever
-> > it leaves for any reason, we decrement the count by 1.
-> >
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >   Documentation/admin-guide/mm/transhuge.rst | 5 +++++
-> >   include/linux/huge_mm.h                    | 1 +
-> >   mm/huge_memory.c                           | 6 ++++++
-> >   3 files changed, 12 insertions(+)
-> >
-> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
-/admin-guide/mm/transhuge.rst
-> > index 9fdfb46e4560..7072469de8a8 100644
-> > --- a/Documentation/admin-guide/mm/transhuge.rst
-> > +++ b/Documentation/admin-guide/mm/transhuge.rst
-> > @@ -532,6 +532,11 @@ nr_anon
-> >          These huge pages could be entirely mapped or have partially
-> >          unmapped/unused subpages.
-> >
-> > +nr_split_deferred
-> > +       the number of anon huge pages which have been partially unmappe=
-d
-> > +       and put onto split queue. Those unmapped subpages are also unus=
-ed
-> > +       and temporarily wasting memory.
+> > In the future, please change subject '[PATCH] ...' to '[PATCH bpf-next]=
+ ...'
+> > so CI can properly test it.
 >
-> The name suggests something else ... like a counter of how many have
-> been deferred split :)
+> It feels like there should be a technical solution to this.  The CI syste=
+m is
+> something on AWS and it's too expensive to just check every patch that's =
+sent to
+> the bpf list?  My understanding is that there are only two bpf trees.
 >
-> Would "nr_anon_partially_mapped" "nr_anon_split_pending" (or something
-> less mouthful) be clearer?
+>         if [ "$FIXES_HASH" =3D=3D "" ] ; then
+>                 TREE=3Dnext
+>         elif git merge-base --is-ancestor $FIXES_HASH origin/master ; the=
+n
+>                 TREE=3Dlinus
+>         else
+>                 TREE=3Dnext
+>         fi
 >
-> (likely "anon" really should be part of the name in any case)
->
-> The name we chose (and the implied semantics) will likely have
-> implications on the handling of Usamas series.
->
+> These days the zero day bot people are checking around a thousand git tre=
+es.
+> They pull emails off the various lists and apply them to the right places=
+.  It's
+> a doable thing.
 
-Hi David,
+Dan,
 
-Your point is quite similar to my V1, though not exactly the same. I aimed =
-to
-make the name more meaningful for users.
-https://lore.kernel.org/all/20240808010457.228753-3-21cnbao@gmail.com/
-
-Ryan felt that the name should be consistent with the existing split_deferr=
-ed.
-https://lore.kernel.org/all/36e8f1be-868d-4bce-8f32-e2d96b8b7af3@arm.com/#t
-
-It seems that the existing split_deferred may now be less optimal with
-Usama's series, as entirely_mapped folios might also be on the list.
-
-Ryan is out right now, but I suppose he will be convinced that
-"nr_anon_partially_mapped" is probably a better name once
-he returns and reviews Usama's series. :-)
-
-> --
-> Cheers,
->
-> David / dhildenb
->
-
-Thanks
-Barry
+Various people pointed out that you need to use the proper subject in
+the patches.
+You clearly knew that rule and yet you ignored it,
+and worse still you keep coming up with these excuses.
+Don't be surprised that people who are supposed to review your patches
+will take a long time to reply or "forget" about them as you "forget"
+about patch submission rules.
 
