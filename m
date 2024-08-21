@@ -1,239 +1,193 @@
-Return-Path: <linux-kernel+bounces-295909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BCE95A2D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:32:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4A695A2DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126D41C21C89
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:32:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00894282E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93F11537BF;
-	Wed, 21 Aug 2024 16:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BAF1534E6;
+	Wed, 21 Aug 2024 16:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SM6nODZP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fBcubZHl"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E9F5D8F0;
-	Wed, 21 Aug 2024 16:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB93814D296
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724257936; cv=none; b=mluTmibCt3G8BlsKpgUBPRMzgk4d/J30V2eIwpGrHT+M2WBWS0CnhVS3yH60iFHM0SPdsPGn/77GVo/xYga9NcCqsrKLvXghQ2erIIDvKnoBoONTniwd+DM0F/c8o7JJKTJkEvh+nBQ4+8JNxAFhZjT07od9tDkAvqFYALVbzm4=
+	t=1724257948; cv=none; b=jvY704ME5ZSprCtTKnIdFoOE47c97tlQ54ncl+5WOlGTuYNx88VWT962AXpSwYKzzopydGYlK8E+uO92Tqfwlgqmotm6EXbo20T38tXPelAnZpzOsg4f+5v04O7DeKoCGuR7pxK02UF0WmsB8U89UcsX3Q0B9TXJvp2Umgjb98g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724257936; c=relaxed/simple;
-	bh=ydiATV2XuDjT4P4uEWGX77NmnCuMdVJf/U8IfiMU7MQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A+zZbejwSyIpDdyvjw7g9C9Ahfq5rynO1jjm6DKVLgT6c7sWBgeCTBtLhiObofLGQVpukMA7ztjjVxCyirORrAfMMC3Iuh7G9UuTvCfSQOeq4ml7m8HdNiZ0FlI/Hi35Tt/8dvZ/uiUGnsz6rlsWfFPAsDju47MolaoQuxszcL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SM6nODZP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LCIJ13022390;
-	Wed, 21 Aug 2024 16:32:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	C3Kgh+kP9eI1LhPm7yyGDpHjNiyatM6aYOhcljr30h8=; b=SM6nODZP7/zcbk6j
-	yFZ/+jzMikfhtjXrW1NmTNE27frmV9KJS50iyCo62pCHfH0LA9IVrcEZxsGZOs+N
-	b/Q7pc58YVPya+1yEsXbafQOvuGnmXnFqy0eb1Zex4MeWRGXWgTbE0fAh/RKrdK4
-	+ZMMtc5yx5gAeCaG4TBgfC3qWg8PfZCPzzuMVGyaYTvPRD3Hs3snbyhqb0+8kazO
-	STEO26TpCkPYGXAfsue4o7fJ0gAOZdjuHDIArWDdv7dntsrl1dOPgI+RKLhlf1h9
-	v2CVPca8w6EI5cXvspRX8nkODev+mAzkb3L5Oa5xRwDEDhLPON9GK4IiA1td7XSw
-	70Nk4Q==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pdmdda1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 16:32:02 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LGW1a9025563
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 16:32:01 GMT
-Received: from [10.216.59.247] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
- 2024 09:31:54 -0700
-Message-ID: <24909c0b-ad83-e33b-e11f-22d0fb2ec979@quicinc.com>
-Date: Wed, 21 Aug 2024 22:01:51 +0530
+	s=arc-20240116; t=1724257948; c=relaxed/simple;
+	bh=y0LywhCmh47VypaLFq+kEyR/qD8qT8iwJl5GVT+ZjgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L0GzbAXAvpQBbTZq6ASk08yCEIHQ8ebUjS4UrkJqWPm0hfVGDZEVdByyhczLaag9E33vnSaEI+eMHGG8hO+F1daVF0B4HvTq5Hm5AcmsXcNYJG28v9GJh/JkIDAvRM7e9uDoXMg58r3jQHbfp3MSAawwWzgvxYpV6GgoH5vEySY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fBcubZHl; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e116d2f5f7fso795579276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724257945; x=1724862745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FKjQ6emtyPrVDj7dWj9Yt0Rk11OdLkP0YY5ZqjmKqLI=;
+        b=fBcubZHlN2QMKZFq5CpzyjFAB2tiH9uV96sIzPZKB98i4e/2bsr5SN9faq9iEbK5pN
+         4qMwjofgBWfDXHK5pbQm0fuhyFnjfhXvy0d+gs4gPcgkToAFtju/sKhZcQnaOyP5wCNN
+         SpiFKG6nZbcyoHFXl04TT9MuKXb8F5gueWYid0M4SrfBV2rmCz0PaVBgn/JTZ2mnlC91
+         N5rMEkRLdDSAJ1zSwczEV/KoL5YawJj8Wm+sT80loWm4w6DeueosadS582iMaVci5CCV
+         IGKB7458UsdDqrbD2A1+YdOXMAhx0lmOKb09Kfcan9KofMy3afq5zRu5dTnr7eQEYMhE
+         stKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724257945; x=1724862745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FKjQ6emtyPrVDj7dWj9Yt0Rk11OdLkP0YY5ZqjmKqLI=;
+        b=ePfnHdpxsqIS5oKCAgv2IdOBn2aND8NEEHf7OmJbQlJMs3lTyQtPDgIDGfuyemRBoU
+         WxePTGc4Tg4vw6kTQtFoB0clhqMu6T4o3CflzLnIqHSFfBzwMvefrOd8eAj4R9QscyPD
+         8Hn0py23+tAoJmqbJbpPlxTD/9Gb7NIiOX9bt1BsbLcIcU+PeLR9w22d0ZU8isw3v8xr
+         s+lM6sUGUKIhxYmIuyUUk3LHvLCSN3Zts+FoOmnQlG2nsDlsc6YuJX704eqGDRpJNJ1Y
+         If3uFfnCMgB6Qggy2PBwmxEEdDptvMMUhUr5BsCyGC8t5GnWqq/7lBfBMJ5e3Tph0Hix
+         1uGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJf+Z2NHBSRiTLVEPbCJW2l2TsqF8rzzalW7EcBcprS1UuzYqVKBnyOBch3w3zt0kaChs5AW0o7/AtEeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1NUW+Yc7OWSL6H38irrfF1PjcfISrTiofh3P9nAP81+n9ITpV
+	jrw1eX1BNi80RYnoaGkYdDOHxKQptPsghgofzK2CUEpAF8PnKJgVZOzIMYnr7PRxiEIl1WOsFoX
+	+0OUIcohX2cU6pGEd9h7/ffv71uAkjCfVaXzG
+X-Google-Smtp-Source: AGHT+IHqtEaRs3bfyjoduUwqbGszfFJZ/MXDKylcokqkjlSrKLoHtDO/7RqpwJwZHHVzLv9J+rL+3ZDsUcQ+ap2YLkU=
+X-Received: by 2002:a05:690c:908:b0:627:7f2a:3b0d with SMTP id
+ 00721157ae682-6c304879b22mr2005647b3.14.1724257944842; Wed, 21 Aug 2024
+ 09:32:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 03/16] dmaengine: qcom: bam_dma: add LOCK & UNLOCK flag
- support
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <konradybcio@kernel.org>,
-        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <gustavoars@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_utiwari@quicinc.com>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-4-quic_mdalam@quicinc.com>
- <knhqbj2pyluwrvr2f4h6zgpfosa6o2qgnhtl4qltadpuyfexgu@kk5knurc4v7h>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <knhqbj2pyluwrvr2f4h6zgpfosa6o2qgnhtl4qltadpuyfexgu@kk5knurc4v7h>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tW-EWFCvrONGIKhLXnMMyZtjIn5U73n4
-X-Proofpoint-ORIG-GUID: tW-EWFCvrONGIKhLXnMMyZtjIn5U73n4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=859 spamscore=0
- suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408210121
+References: <20240821095609.365176-1-mic@digikod.net>
+In-Reply-To: <20240821095609.365176-1-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 Aug 2024 12:32:17 -0400
+Message-ID: <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 21, 2024 at 5:56=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> for the related file descriptor.  Before this change, the
+> file_set_fowner LSM hook was always called, ignoring the VFS logic which
+> may not actually change the process that handles SIGIO (e.g. TUN, TTY,
+> dnotify), nor update the related UID/EUID.
+>
+> Moreover, because security_file_set_fowner() was called without lock
+> (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
+> condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
+> to struct fown_struct's UID/EUID.
+>
+> This change makes sure the LSM states are always in sync with the VFS
+> state by moving the security_file_set_fowner() call close to the
+> UID/EUID updates and using the same f_owner.lock .
+>
+> Rename f_modown() to __f_setown() to simplify code.
+>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>
+> Changes since v2:
+> https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
+> - Only keep the LSM hook move.
+>
+> Changes since v1:
+> https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> - Add back the file_set_fowner hook (but without user) as
+>   requested by Paul, but move it for consistency.
+> ---
+>  fs/fcntl.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
 
+This looks reasonable to me, and fixes a potential problem with
+existing LSMs.  Unless I hear any strong objections I'll plan to merge
+this, and patch 2/2, into the LSM tree tomorrow.
 
-On 8/16/2024 9:52 PM, Bjorn Andersson wrote:
-> On Thu, Aug 15, 2024 at 02:27:12PM GMT, Md Sadre Alam wrote:
->> Add lock and unlock flag support on command descriptor.
->> Once lock set in requester pipe, then the bam controller
->> will lock all others pipe and process the request only
->> from requester pipe. Unlocking only can be performed from
->> the same pipe.
->>
-> 
-> Is the lock per channel, or for the whole BAM instance?
-   This lock is for whole BAM instance. Once LOCK bit will
-   set on initiator CMD descriptor BAM will lock all pipes
-   which belongs to other EE's and Pipes not in the current
-   group.
-> 
->> If DMA_PREP_LOCK flag passed in command descriptor then requester
->> of this transaction wanted to lock the BAM controller for this
->> transaction so BAM driver should set LOCK bit for the HW descriptor.
-> 
-> You use the expression "this transaction" here, but if I understand the
-> calling code the lock is going to be held over multiple DMA operations
-> and even across asynchronous operations in the crypto driver.
-   Yes its correct.
-> 
-> DMA_PREP_LOCK indicates that this is the beginning of a transaction,
-> consisting of multiple operations that needs to happen while other EEs
-> are being locked out, and DMA_PREP_UNLOCK marks the end of the
-> transaction.
-   Yes its correct.
-> 
-> That said, I'm not entirely fond of the fact that these flags are not
-> just used on first and last operation in one sequence, but spread out.
-   Yes its correct.
-> 
-> Locking is hard, when you spread the responsibility of locking and
-> unlocking across different entities it's made harder...
-   The locking/unlocking always synchronous because unlocking happening
-   in the dma callback.
-> 
->>
->> If DMA_PREP_UNLOCK flag passed in command descriptor then requester
->> of this transaction wanted to unlock the BAM controller.so BAM driver
->> should set UNLOCK bit for the HW descriptor.
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
->>
->> Change in [v2]
->>
->> * Added LOCK and UNLOCK flag in bam driver
->>
->> Change in [v1]
->>
->> * This patch was not included in [v1]
-> 
-> v1 can be found here:
-> https://lore.kernel.org/all/20231214114239.2635325-7-quic_mdalam@quicinc.com/
-> 
-> And it was also posted once before that:
-> https://lore.kernel.org/all/1608215842-15381-1-git-send-email-mdalam@codeaurora.org/
-> 
-> In particular during the latter (i.e. first post) we had a rather long
-> discussion about this feature, so that's certainly worth linking to.
-> 
-> Looks like this series provides some answers to the questions we had
-> back then.
-   Will add the link in next post
-> 
-> Regards,
-> Bjorn
-> 
->>
->>   drivers/dma/qcom/bam_dma.c | 10 +++++++++-
->>   include/linux/dmaengine.h  |  6 ++++++
->>   2 files changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
->> index 1ac7e250bdaa..ab3b5319aa68 100644
->> --- a/drivers/dma/qcom/bam_dma.c
->> +++ b/drivers/dma/qcom/bam_dma.c
->> @@ -58,6 +58,8 @@ struct bam_desc_hw {
->>   #define DESC_FLAG_EOB BIT(13)
->>   #define DESC_FLAG_NWD BIT(12)
->>   #define DESC_FLAG_CMD BIT(11)
->> +#define DESC_FLAG_LOCK BIT(10)
->> +#define DESC_FLAG_UNLOCK BIT(9)
->>   
->>   struct bam_async_desc {
->>   	struct virt_dma_desc vd;
->> @@ -692,9 +694,15 @@ static struct dma_async_tx_descriptor *bam_prep_slave_sg(struct dma_chan *chan,
->>   		unsigned int curr_offset = 0;
->>   
->>   		do {
->> -			if (flags & DMA_PREP_CMD)
->> +			if (flags & DMA_PREP_CMD) {
->>   				desc->flags |= cpu_to_le16(DESC_FLAG_CMD);
->>   
->> +				if (bdev->bam_pipe_lock && flags & DMA_PREP_LOCK)
->> +					desc->flags |= cpu_to_le16(DESC_FLAG_LOCK);
->> +				else if (bdev->bam_pipe_lock && flags & DMA_PREP_UNLOCK)
->> +					desc->flags |= cpu_to_le16(DESC_FLAG_UNLOCK);
->> +			}
->> +
->>   			desc->addr = cpu_to_le32(sg_dma_address(sg) +
->>   						 curr_offset);
->>   
->> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
->> index b137fdb56093..70f23068bfdc 100644
->> --- a/include/linux/dmaengine.h
->> +++ b/include/linux/dmaengine.h
->> @@ -200,6 +200,10 @@ struct dma_vec {
->>    *  transaction is marked with DMA_PREP_REPEAT will cause the new transaction
->>    *  to never be processed and stay in the issued queue forever. The flag is
->>    *  ignored if the previous transaction is not a repeated transaction.
->> + *  @DMA_PREP_LOCK: tell the driver that there is a lock bit set on command
->> + *  descriptor.
->> + *  @DMA_PREP_UNLOCK: tell the driver that there is a un-lock bit set on command
->> + *  descriptor.
->>    */
->>   enum dma_ctrl_flags {
->>   	DMA_PREP_INTERRUPT = (1 << 0),
->> @@ -212,6 +216,8 @@ enum dma_ctrl_flags {
->>   	DMA_PREP_CMD = (1 << 7),
->>   	DMA_PREP_REPEAT = (1 << 8),
->>   	DMA_PREP_LOAD_EOT = (1 << 9),
->> +	DMA_PREP_LOCK = (1 << 10),
->> +	DMA_PREP_UNLOCK = (1 << 11),
->>   };
->>   
->>   /**
->> -- 
->> 2.34.1
->>
+> diff --git a/fs/fcntl.c b/fs/fcntl.c
+> index 300e5d9ad913..c28dc6c005f1 100644
+> --- a/fs/fcntl.c
+> +++ b/fs/fcntl.c
+> @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned i=
+nt arg)
+>         return error;
+>  }
+>
+> -static void f_modown(struct file *filp, struct pid *pid, enum pid_type t=
+ype,
+> -                     int force)
+> +void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> +               int force)
+>  {
+>         write_lock_irq(&filp->f_owner.lock);
+>         if (force || !filp->f_owner.pid) {
+> @@ -98,19 +98,13 @@ static void f_modown(struct file *filp, struct pid *p=
+id, enum pid_type type,
+>
+>                 if (pid) {
+>                         const struct cred *cred =3D current_cred();
+> +                       security_file_set_fowner(filp);
+>                         filp->f_owner.uid =3D cred->uid;
+>                         filp->f_owner.euid =3D cred->euid;
+>                 }
+>         }
+>         write_unlock_irq(&filp->f_owner.lock);
+>  }
+> -
+> -void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> -               int force)
+> -{
+> -       security_file_set_fowner(filp);
+> -       f_modown(filp, pid, type, force);
+> -}
+>  EXPORT_SYMBOL(__f_setown);
+>
+>  int f_setown(struct file *filp, int who, int force)
+> @@ -146,7 +140,7 @@ EXPORT_SYMBOL(f_setown);
+>
+>  void f_delown(struct file *filp)
+>  {
+> -       f_modown(filp, NULL, PIDTYPE_TGID, 1);
+> +       __f_setown(filp, NULL, PIDTYPE_TGID, 1);
+>  }
+>
+>  pid_t f_getown(struct file *filp)
+> --
+> 2.46.0
+
+--=20
+paul-moore.com
 
