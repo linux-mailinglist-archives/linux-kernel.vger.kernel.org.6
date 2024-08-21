@@ -1,95 +1,171 @@
-Return-Path: <linux-kernel+bounces-296272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897F395A86F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:41:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D893895A872
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA362814BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:40:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20EB5B214BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA9B17D35B;
-	Wed, 21 Aug 2024 23:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82FC17D8BF;
+	Wed, 21 Aug 2024 23:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/jVneDI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D4WbdCQ5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D23316C685;
-	Wed, 21 Aug 2024 23:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651911422A8;
+	Wed, 21 Aug 2024 23:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724283652; cv=none; b=sSKL+ZdTuIpzTmLsfpUpeXM6nObu444e2kUW7saobr9mOwZBnP01rKtkFEAmTkavetzbfFUASN9qhRhmp1IsxjB8gFECqwE0GJOehWOlPb2JwwkuSF2x3CBWJhQA6+r0RzRYy5OHDUZjGTndKqZfP5gZE3CmtFarntWFGMAFm4Y=
+	t=1724283703; cv=none; b=qVq//uTxnfV1nn3UPUwz/VX1XjwBlXw1zTniLmXzz5X85axnvgm9hdoGtQQUTuHJojHAIXHOrlb7QCDjozkFnumdiBz2xycWZ0hLu/21fUvMN9JZs/ua/lBd6avkEHA/2Z9yBPLwxTtVrwlhiuu2vmYiY3610IVbVEu3g7BFI6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724283652; c=relaxed/simple;
-	bh=xfOu1APNQvpg4pWUI6tcCCbT79a5zsaUUrty1laMGdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NrPu8vnYagWVUr52dtoBLGJ74lbtxokJd+xUfIZw0TrrjOZ2q6MAhwyo7ylG2q93L74LZmAlnOs2XgTcblfbVNkPM51M69F8bOpeUq379rtEOiOw7L/2PqQLumoC0dasEoEp+9XcxnR06OLxtEw6/suVPbwMbL4ol6yZZnJfFWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/jVneDI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D2CC4AF12;
-	Wed, 21 Aug 2024 23:40:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724283652;
-	bh=xfOu1APNQvpg4pWUI6tcCCbT79a5zsaUUrty1laMGdE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F/jVneDIPhuM+1bI5RLUHR9ZARaFJoPl/6IZq/i/GYJ5ftvrWZfyo6YsN/n9wZKQi
-	 iy7eOBazta0o/BW1lxqWbei8Fo2W/agbBzs/npFZdflMfoAX80FZYiLSAXYC/6HXAF
-	 qkuOwAxlkXgrhWOre+y0girkDjlZ4Kk4PzIHaRwrvLqAWjvdW52g/ocNlZeOCDcJ6A
-	 hd3M+Og6FGfmC+rEPCS+F/Ea6K8YZasseYwMgQvAATGus6UkXV+z3eru3+djLrwTCx
-	 npQnOybR4JLZm5HY2N6qYqNzPehKGlcx9lXiPVrftj3XqiGcU6wuvw/rZvqpxSQ67Z
-	 DBJwGuXqr8Udg==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2700d796019so126125fac.2;
-        Wed, 21 Aug 2024 16:40:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVaXm0OHSF1qspk3cr9ADdhnx9trPTu1DfxKNzqBOEPNScuuWzR8RtVrrkGnq7ANK0XnlLCeH0Su7dDTaI@vger.kernel.org, AJvYcCUvdUkAqNBSdcHKElrqELe8lRc0lWnCCAmXIVOh2fzq52bfiUpcPB6W44lc4DStx3sRyghFMLW9Ghnh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxztw9foNNFhRrI6OImzUJkem09/2qFJvk1/SCOTqceOGHJ9Caw
-	dJnyEfSrdRes2AMsIL/hHzXnYeQ8IVfe5liypRtVjCdubrEXbDZ96dy25bW3OCY+5SdCggkBucx
-	Z9+A/JHjYzbW10R1lypG9vKMAuus=
-X-Google-Smtp-Source: AGHT+IEq5ojOSmud30JUGoLSL72Hb5cP1FvPYiuW9TxXSafGQu4tpiF9A8jKd4Hil+2NHsYZeG0VLB/D/rpDNhgzXZw=
-X-Received: by 2002:a05:6870:b488:b0:270:2e19:7734 with SMTP id
- 586e51a60fabf-273cfc390d4mr258890fac.12.1724283651458; Wed, 21 Aug 2024
- 16:40:51 -0700 (PDT)
+	s=arc-20240116; t=1724283703; c=relaxed/simple;
+	bh=x8Bg94Z2zsdxajcw3hSHGhloSoauODJGqMwgx8Ukg8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n+wgL+LE2RLob60hIy3GDmKqErdnfq2OZJz6yTwedvnOMCs1zcxdk04LTL8b9aJMpc2oMeu5BgrCTnN7EytseqUFMOFwWV7glfMnU96FQvtGqw2NXV+ysMSTaCStTexeWiE14VbKbydhyVdvJ5POzy4ozwfoNBbkdzmBZpv7wWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D4WbdCQ5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LFZ7cl019748;
+	Wed, 21 Aug 2024 23:41:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0f+/dlZFqwe0oaeG97dCTtX57gT5/oAkzmFEAXls3zA=; b=D4WbdCQ520izKdyA
+	2vgmNaz5BryAXT06IChx3qN2tSeGkJJim//ATBvyEW0l6R2CLrwLYL3HHcOFK5Df
+	ZZATyZKDy0J0DiRvonwUKA6XBpWiD4dqUtss+b05v2exKbTdHME+4nbLS9W7MSWt
+	G/O2E+yfVrCxmOrE+LE+TanAZxYVZsdozML6JYSJpq/xxv3CBWpnrr1suxtK+h7W
+	ixeyVHkwjWlxbLkSv+UmTu3ElQ9FsT6Rfvsc52+mUrm2y7Hc+cM+9954i+oUz75Z
+	r4VYIbnqVl/twhwREXGTgU1NnoBiG927yANNS2zoDUMAfvxSEGZRN5WzMEK8HJPZ
+	tu/YTQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkwaqmm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 23:41:20 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LNfJCB021976
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 23:41:19 GMT
+Received: from [10.71.109.148] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
+ 2024 16:41:16 -0700
+Message-ID: <3e6e8921-6d52-40e2-9124-7ab550566716@quicinc.com>
+Date: Wed, 21 Aug 2024 16:41:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com> <20240820143319.274033-9-chenxiaosong@chenxiaosong.com>
-In-Reply-To: <20240820143319.274033-9-chenxiaosong@chenxiaosong.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 22 Aug 2024 08:40:40 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8-J+ZjnmQbaX4FLuKxwLMtYF_dj0G+7sv7nRo2knN=fQ@mail.gmail.com>
-Message-ID: <CAKYAXd8-J+ZjnmQbaX4FLuKxwLMtYF_dj0G+7sv7nRo2knN=fQ@mail.gmail.com>
-Subject: Re: [PATCH 8/8] smb: move SMB2 Status code to common header file
-To: chenxiaosong@chenxiaosong.com
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
-	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
-	liuyun01@kylinos.cn
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/2] of: reserved_mem: Restruture how the reserved
+ memory regions are processed
+To: Rob Herring <robh@kernel.org>
+CC: <saravanak@google.com>, <klarasmodin@gmail.com>, <aisheng.dong@nxp.com>,
+        <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <will@kernel.org>, <catalin.marinas@arm.com>,
+        <kernel@quicinc.com>
+References: <20240809184814.2703050-1-quic_obabatun@quicinc.com>
+ <20240809184814.2703050-2-quic_obabatun@quicinc.com>
+ <CAL_JsqL=Pc7FJJevMskvYYOoYZYCKF+db9C2Y7_cm7DZNyTYPw@mail.gmail.com>
+Content-Language: en-US
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <CAL_JsqL=Pc7FJJevMskvYYOoYZYCKF+db9C2Y7_cm7DZNyTYPw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8tpH6n_CHjapxUDiO4aPLEaL2b9qXJqd
+X-Proofpoint-GUID: 8tpH6n_CHjapxUDiO4aPLEaL2b9qXJqd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_15,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408210171
 
-On Tue, Aug 20, 2024 at 11:35=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wr=
-ote:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> There are only 4 different definitions between the client and server:
->
->   - STATUS_SERVER_UNAVAILABLE: from client/smb2status.h
->   - STATUS_FILE_NOT_AVAILABLE: from client/smb2status.h
->   - STATUS_NO_PREAUTH_INTEGRITY_HASH_OVERLAP: from server/smbstatus.h
->   - STATUS_INVALID_LOCK_RANGE: from server/smbstatus.h
->
-> Rename client/smb2status.h to common/smb2status.h, and merge the
-> 2 different definitions of server to common header file.
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-Looks good to me:)
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Thanks!
+On 8/19/2024 3:04 PM, Rob Herring wrote:
+> On Fri, Aug 9, 2024 at 1:48 PM Oreoluwa Babatunde
+> <quic_obabatun@quicinc.com> wrote:
+>> Reserved memory regions defined in the devicetree can be broken up into
+>> two groups:
+>> i) Statically-placed reserved memory regions
+>> i.e. regions defined with a static start address and size using the
+>>      "reg" property.
+>> ii) Dynamically-placed reserved memory regions.
+>> i.e. regions defined by specifying an address range where they can be
+>>      placed in memory using the "alloc_ranges" and "size" properties.
+>>
+>> [...]
+>>
+>> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+>> ---
+>>  drivers/of/fdt.c             |   5 +-
+>>  drivers/of/of_private.h      |   3 +-
+>>  drivers/of/of_reserved_mem.c | 172 +++++++++++++++++++++++++----------
+>>  3 files changed, 131 insertions(+), 49 deletions(-)
+>>
+>> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+>> index 68103ad230ee..d4b7aaa70e31 100644
+>> --- a/drivers/of/fdt.c
+>> +++ b/drivers/of/fdt.c
+>> @@ -511,8 +511,6 @@ void __init early_init_fdt_scan_reserved_mem(void)
+>>                         break;
+>>                 memblock_reserve(base, size);
+>>         }
+>> -
+>> -       fdt_init_reserved_mem();
+>>  }
+>>
+>>  /**
+>> @@ -1239,6 +1237,9 @@ void __init unflatten_device_tree(void)
+>>         of_alias_scan(early_init_dt_alloc_memory_arch);
+>>
+>>         unittest_unflatten_overlay_base();
+>> +
+>> +       /* Save the statically-placed regions in the reserved_mem array */
+>> +       fdt_scan_reserved_mem_reg_nodes();
+Hi Rob,
+> I'm still not understanding why the unflatttened API doesn't work
+> here? It was just used in of_alias_scan() above here.
+The main reason why the unflatten_devicetree APIs does not work here is
+because a reference to fdt_node needs to be stored for the reserved
+regions, and it can only be gotten by using the fdt APIs.
+
+The fdt_node is needed by rmem_dma_setup(), rmem_cma_setup(), and
+rmem_swiotlb_setup(). All of which are used to configure the reserved
+memory regions during early bootup.
+
+In my previous versions, I replaced fdt_node with device_node in struct
+reserved_mem in order to leverage the unflatten_devicetree APIs, and the
+above functions were being called after the page tables were setup.
+
+As we found out later, those functions need to be called before the page
+tables are setup in order for the reserved regions to be configured
+correctly[1]. But since the unflatten_devicetree APIs are not available
+before the page tables are setup, I had to switch back to using the
+fdt_node which can only be gotten by using the fdt APIs.
+
+[1] https://lore.kernel.org/all/002b6176-41b3-4888-abb1-978399d108b8@arm.com/
+
+The only way I see that we can avoid using the fdt APIs here is if
+we just don't store an fdt_node reference for the reserved regions
+in resvered_mem.  But I'm not sure if we want to do that.
+> The problem reported is this function uses initial_boot_params, but
+> that's NULL for x86.
+ack
+Thank you,
+Oreoluwa.
 
