@@ -1,402 +1,195 @@
-Return-Path: <linux-kernel+bounces-296184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8340895A6C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8932395A6B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03A091F23589
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FA231F22A6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65DA17BB17;
-	Wed, 21 Aug 2024 21:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AC517A5B7;
+	Wed, 21 Aug 2024 21:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZTTsw+dQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhYEc+1Y"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5165178361;
-	Wed, 21 Aug 2024 21:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C6B178CEA;
+	Wed, 21 Aug 2024 21:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724276211; cv=none; b=ihILIp0tkzt9vDheOCFbUe4IoEk6aa629eMTvc73pZEe3ubmVzB+97U6bTU4qkMdfdF8F78mTtrqSyY2y8Af3pwbXOi2joqMCQ3zZLAf2yJ11266QAJf4Q/ytZQ8Q9/kVO/EMWCmtpSxGMQQT2kagnEcVgwNe71dzh+mBqRP6/E=
+	t=1724275958; cv=none; b=Yef0HnoQ0hfUoz+pe2X4Hacn+osXWKnKwfGs7zL1ZbbPLseX+FbEB7L03EXlc/0keh7DMpLLGHDBKQ2+xEd9kNvsDZA27cTma22Hqk/s/7m2oL9QhSWRIwnAuBYqOAXYJLcutgRrUYRmD+/4b+7ZUFV0wbfQUwwc9DGGUUMAgaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724276211; c=relaxed/simple;
-	bh=GuUGg7LnZOfJhh8E7ueHAphHX3K1J1UByxf37EL1ov8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lhOAFzuNTzvJ4xldFsNQwT8XfUqDswa/FoMZQAcu/KJlwOa0yINwBSROtHjef6iDvUqHl0L7dp5LJNSKMy0oxV7kl2k+qWm3ZjxULPrhWyIRnaxh+5mquf8Vh0HbMV+qRy7SZNuY5S717/0Gs3u1k7OjZZNBxdImMS1z5eXj24U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZTTsw+dQ; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724276210; x=1755812210;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GuUGg7LnZOfJhh8E7ueHAphHX3K1J1UByxf37EL1ov8=;
-  b=ZTTsw+dQjLOQrR9EIdP4lF/zq5xoeD89a5Uu1+nV7WUp8Qhanf4sI6dE
-   B74zrYyJU69F2MOng+Qj0Ga110f/UulB9V7DQZctkV3M1NT3oc9TjRjyE
-   o20+wr0YYmd6wJcX3mOHAUEN8XANFUjAQo4Il6/jjwbvV+3azQaew8pSd
-   EN2oVRE6s/DfPLuHU3kORNJTX7ARqjloLMJuF7r1il2mhHysXzhD6p1F/
-   gOc4CbD3LrPMp5oOon03WAjYf8TY/5rLm3khgTdLkYejvYExO7tcrtCst
-   6n8UgRwnbOgUHn/lVwvDQO7ZOqt+BIqIVeTxvkrDanSfo9YzHnQ5N0oLV
-   Q==;
-X-CSE-ConnectionGUID: lJ1Vf2DLTh2JUKdTpoEy1Q==
-X-CSE-MsgGUID: /kOhQDbnSsyqLrt/5ccNIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="34083839"
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="34083839"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 14:36:48 -0700
-X-CSE-ConnectionGUID: EV/R+ZVFR5Gbs9KgdSrEWQ==
-X-CSE-MsgGUID: g7RFJimOQqG2nT8D7BbUJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="98724643"
-Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
-  by orviesa001.jf.intel.com with ESMTP; 21 Aug 2024 14:36:43 -0700
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-To: netdev@vger.kernel.org
-Cc: vadim.fedorenko@linux.dev,
-	jiri@resnulli.us,
-	corbet@lwn.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	donald.hunter@gmail.com,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	intel-wired-lan@lists.osuosl.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Subject: [PATCH net-next v2 2/2] ice: add callbacks for Embedded SYNC enablement on dpll pins
-Date: Wed, 21 Aug 2024 23:32:18 +0200
-Message-Id: <20240821213218.232900-3-arkadiusz.kubalewski@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20240821213218.232900-1-arkadiusz.kubalewski@intel.com>
-References: <20240821213218.232900-1-arkadiusz.kubalewski@intel.com>
+	s=arc-20240116; t=1724275958; c=relaxed/simple;
+	bh=eQsXqUqvv/AS9vwZ0wx6LmssWGxBpB0S6sLmMTGijeQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2AADcGHV/n2xAP1q3OT4U8H9xOPie4lIhyeJ5iwMjzlBwWTV6kA7I9KvHymtoOUt4L4oEmwKEWOw1F5ubIUCrlwOIIXLGlvnxRkp1Gn9k+7/56A7/4uy9vVjbXX1bSUE/uCQenA9g0b+ojiPZZft1LJ6eAmMR756R6AuYxc38o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhYEc+1Y; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bef295a45bso193731a12.0;
+        Wed, 21 Aug 2024 14:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724275955; x=1724880755; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XF8MsCEZsep1OInRuAdGSnWQxPI5SfGO64Kx5cKxYFA=;
+        b=RhYEc+1YSzAYAX9LOG5BfPxsqZfOCNWKGTaGxTSF5bs4HtOsoY5Q+Q6kTiXFPGoEjr
+         aQ2O1ZGZ5uDXboObdSm+8fk9iS382DRbPpFEDwBWVVT2TK6wcdFluRAwvq1+WMXWzBCF
+         eo+PnpBuOdsJTXGG4aA8DrnXRoH1uAzJEXgOtsSJ6HPQWmB8AVYKCqa5xB4c5zC1XvoX
+         PoykdJ6teyoCemxuAJqCeDBxCmQQFLWVR2wdJMIP8lXMKjEK1QJxhNLtaCAYiWg77pea
+         hjCZJWn0qp0d7R+JdB7pKTwGh0TMzZTlWPcgGtswFr81C/MJQvcnbDZaNcV/loh4y34f
+         M/Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724275955; x=1724880755;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XF8MsCEZsep1OInRuAdGSnWQxPI5SfGO64Kx5cKxYFA=;
+        b=LraKs/y3f434bWygcnn1qp4g4/LjlpStKQzIJL665aGrVgnH8SBsT+EgCwU61tvzsV
+         7Y7EHC1tjf4WKK+FSGK70IXXieiukAffqUyLJNtrIbpa/BZ+OPz9wLhqzE94NvkpNhTO
+         890tufWzJr7PSuLW7PBh+t6lysnckCA227lKmiBR3YnfiWkgFyCJZitinmICFmx8k0LR
+         3irVaZOylapBaKhXGglPeLBSqvEbpwCIWiY2Mz6m8nbBdWn0Is9+gfwOO8lNbICn9mLX
+         uiDYg3+9K5VS+bn/XvbxP81QcwAUzRcoP4I3N4gd0fbRsdc5MtkulpMOjlxMLICxH0I9
+         sScg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA8fTwxoR+QUDFkbd81QDfVoleKX2cZi6C+UGHhpgR4F1rMM7iJfjh9GOCVG8W70oEc0FcpENfr5YBOoOD@vger.kernel.org, AJvYcCXa78Si866Q49qj49cYDcavscu+ezE2E0MGiqlMw3zJQp4ok6Tt2o9h61WNmve/tZ6UGUDrloGp5lyj@vger.kernel.org, AJvYcCXsXihabhnPrcYP0yX1W92XIXr+UmghTAji3/kgw5Sz7iIhKXJLOrFnM9vdmLov287iF9CLuSTIS631@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPwwevxzzGMs4t9EuIP9Wh4oTVRgb3bvF2UjOlIFRaATnIgozY
+	O/6XWw7RzXU9K01ccWjdYchWTR1CMg0gStxUF5Ck4h4D0b55zm9J
+X-Google-Smtp-Source: AGHT+IFQi1OMPl9AjNGyhXxGrFQpzHMY35H1Mc8XeSczOSR1KfuK4UqqEBc4AZoEi5V0sbGP4F4/gw==
+X-Received: by 2002:a05:6402:518d:b0:5bb:9ae0:4a49 with SMTP id 4fb4d7f45d1cf-5bf1f275c15mr3248024a12.30.1724275953935;
+        Wed, 21 Aug 2024 14:32:33 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:1594:887e:30dd:c59e])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c9064sm56295a12.73.2024.08.21.14.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 14:32:32 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Wed, 21 Aug 2024 23:32:30 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] iio: pressure: bmp280: Add support for bmp280
+ soft reset
+Message-ID: <20240821213230.GB473841@vamoiridPC>
+References: <20240725231039.614536-1-vassilisamir@gmail.com>
+ <20240725231039.614536-3-vassilisamir@gmail.com>
+ <20240728164901.1f325aa2@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240728164901.1f325aa2@jic23-huawei>
 
-Allow the user to get and set configuration of Embedded SYNC feature
-on the ice driver dpll pins.
+On Sun, Jul 28, 2024 at 04:49:01PM +0100, Jonathan Cameron wrote:
+> On Fri, 26 Jul 2024 01:10:34 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > The BM(P/E)28x devices have an option for soft reset which is also
+> > recommended by the Bosch Sensortech BME2 Sensor API to be used before the
+> > initial configuration of the device.
+> > 
+> > Link: https://github.com/boschsensortec/BME280_SensorAPI/blob/bme280_v3.5.1/bme280.c#L429
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> Trivial passing comment seeing as you are going do be doing a v3 anyway.
+> 
+> Jonathan
+> 
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 28 ++++++++++++++++++++++++++++
+> >  drivers/iio/pressure/bmp280.h      |  3 +++
+> >  2 files changed, 31 insertions(+)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index d5e5eb22667a..acbc33aacc09 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> > @@ -963,6 +963,32 @@ static const unsigned long bme280_avail_scan_masks[] = {
+> >  	0
+> >  };
+> >  
+> > +static int bmp280_preinit(struct bmp280_data *data)
+> > +{
+> > +	unsigned int reg;
+> > +	int ret;
+> > +
+> > +	ret = regmap_write(data->regmap, BMP280_REG_RESET, BMP280_RST_SOFT_CMD);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "Failed to reset device.\n");
+> > +		return ret;
+> Is this only ever called from probe?
+> 
+> If so, return dev_err_probe() which will save a few lines of code.
+> 
 
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
----
-v2:
-- align to v2 changes of "dpll: add Embedded SYNC feature for a pin"
+Hi Jonathan,
 
- drivers/net/ethernet/intel/ice/ice_dpll.c | 230 +++++++++++++++++++++-
- drivers/net/ethernet/intel/ice/ice_dpll.h |   1 +
- 2 files changed, 228 insertions(+), 3 deletions(-)
+Indeed, this is being called only from probe so I could change that as you
+proposed!
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.c b/drivers/net/ethernet/intel/ice/ice_dpll.c
-index e92be6f130a3..aa6b87281ea6 100644
---- a/drivers/net/ethernet/intel/ice/ice_dpll.c
-+++ b/drivers/net/ethernet/intel/ice/ice_dpll.c
-@@ -9,6 +9,7 @@
- #define ICE_CGU_STATE_ACQ_ERR_THRESHOLD		50
- #define ICE_DPLL_PIN_IDX_INVALID		0xff
- #define ICE_DPLL_RCLK_NUM_PER_PF		1
-+#define ICE_DPLL_PIN_ESYNC_PULSE_HIGH_PERCENT	25
- 
- /**
-  * enum ice_dpll_pin_type - enumerate ice pin types:
-@@ -30,6 +31,10 @@ static const char * const pin_type_name[] = {
- 	[ICE_DPLL_PIN_TYPE_RCLK_INPUT] = "rclk-input",
- };
- 
-+static const struct dpll_pin_frequency ice_esync_range[] = {
-+	DPLL_PIN_FREQUENCY_RANGE(0, DPLL_PIN_FREQUENCY_1_HZ),
-+};
-+
- /**
-  * ice_dpll_is_reset - check if reset is in progress
-  * @pf: private board structure
-@@ -394,8 +399,8 @@ ice_dpll_pin_state_update(struct ice_pf *pf, struct ice_dpll_pin *pin,
- 
- 	switch (pin_type) {
- 	case ICE_DPLL_PIN_TYPE_INPUT:
--		ret = ice_aq_get_input_pin_cfg(&pf->hw, pin->idx, NULL, NULL,
--					       NULL, &pin->flags[0],
-+		ret = ice_aq_get_input_pin_cfg(&pf->hw, pin->idx, &pin->status,
-+					       NULL, NULL, &pin->flags[0],
- 					       &pin->freq, &pin->phase_adjust);
- 		if (ret)
- 			goto err;
-@@ -430,7 +435,7 @@ ice_dpll_pin_state_update(struct ice_pf *pf, struct ice_dpll_pin *pin,
- 			goto err;
- 
- 		parent &= ICE_AQC_GET_CGU_OUT_CFG_DPLL_SRC_SEL;
--		if (ICE_AQC_SET_CGU_OUT_CFG_OUT_EN & pin->flags[0]) {
-+		if (ICE_AQC_GET_CGU_OUT_CFG_OUT_EN & pin->flags[0]) {
- 			pin->state[pf->dplls.eec.dpll_idx] =
- 				parent == pf->dplls.eec.dpll_idx ?
- 				DPLL_PIN_STATE_CONNECTED :
-@@ -1098,6 +1103,221 @@ ice_dpll_phase_offset_get(const struct dpll_pin *pin, void *pin_priv,
- 	return 0;
- }
- 
-+/**
-+ * ice_dpll_output_esync_set - callback for setting embedded sync
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @dpll: registered dpll pointer
-+ * @dpll_priv: private data pointer passed on dpll registration
-+ * @esync_freq: requested embedded sync frequency
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for setting embedded sync frequency value
-+ * on output pin.
-+ *
-+ * Context: Acquires pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_output_esync_set(const struct dpll_pin *pin, void *pin_priv,
-+			  const struct dpll_device *dpll, void *dpll_priv,
-+			  u64 esync_freq, struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_dpll *d = dpll_priv;
-+	struct ice_pf *pf = d->pf;
-+	u8 flags = 0;
-+	int ret;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+	if (p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_OUT_EN)
-+		flags = ICE_AQC_SET_CGU_OUT_CFG_OUT_EN;
-+	if (esync_freq == DPLL_PIN_FREQUENCY_1_HZ) {
-+		if (p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_EN) {
-+			ret = 0;
-+		} else {
-+			flags |= ICE_AQC_SET_CGU_OUT_CFG_ESYNC_EN;
-+			ret = ice_aq_set_output_pin_cfg(&pf->hw, p->idx, flags,
-+							0, 0, 0);
-+		}
-+	} else {
-+		if (!(p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_EN)) {
-+			ret = 0;
-+		} else {
-+			flags &= ~ICE_AQC_SET_CGU_OUT_CFG_ESYNC_EN;
-+			ret = ice_aq_set_output_pin_cfg(&pf->hw, p->idx, flags,
-+							0, 0, 0);
-+		}
-+	}
-+	mutex_unlock(&pf->dplls.lock);
-+	if (ret)
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "err:%d %s failed to set e-sync freq\n",
-+				   ret,
-+				   ice_aq_str(pf->hw.adminq.sq_last_status));
-+	return ret;
-+}
-+
-+/**
-+ * ice_dpll_output_esync_get - callback for getting embedded sync config
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @dpll: registered dpll pointer
-+ * @dpll_priv: private data pointer passed on dpll registration
-+ * @esync: on success holds embedded sync pin properties
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for getting embedded sync frequency value
-+ * and capabilities on output pin.
-+ *
-+ * Context: Acquires pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_output_esync_get(const struct dpll_pin *pin, void *pin_priv,
-+			  const struct dpll_device *dpll, void *dpll_priv,
-+			  struct dpll_pin_esync *esync,
-+			  struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_dpll *d = dpll_priv;
-+	struct ice_pf *pf = d->pf;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+	if (!(p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_ABILITY) ||
-+	    p->freq != DPLL_PIN_FREQUENCY_10_MHZ) {
-+		mutex_unlock(&pf->dplls.lock);
-+		return -EOPNOTSUPP;
-+	}
-+	esync->range = ice_esync_range;
-+	esync->range_num = ARRAY_SIZE(ice_esync_range);
-+	if (p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_EN) {
-+		esync->freq = DPLL_PIN_FREQUENCY_1_HZ;
-+		esync->pulse = ICE_DPLL_PIN_ESYNC_PULSE_HIGH_PERCENT;
-+	} else {
-+		esync->freq = 0;
-+		esync->pulse = 0;
-+	}
-+	mutex_unlock(&pf->dplls.lock);
-+	return 0;
-+}
-+
-+/**
-+ * ice_dpll_input_esync_set - callback for setting embedded sync
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @dpll: registered dpll pointer
-+ * @dpll_priv: private data pointer passed on dpll registration
-+ * @esync_freq: requested embedded sync frequency
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for setting embedded sync frequency value
-+ * on input pin.
-+ *
-+ * Context: Acquires pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_input_esync_set(const struct dpll_pin *pin, void *pin_priv,
-+			 const struct dpll_device *dpll, void *dpll_priv,
-+			 u64 esync_freq, struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_dpll *d = dpll_priv;
-+	struct ice_pf *pf = d->pf;
-+	u8 flags_en = 0;
-+	int ret;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+	if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_INPUT_EN)
-+		flags_en = ICE_AQC_SET_CGU_IN_CFG_FLG2_INPUT_EN;
-+	if (esync_freq == DPLL_PIN_FREQUENCY_1_HZ) {
-+		if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_ESYNC_EN) {
-+			ret = 0;
-+		} else {
-+			flags_en |= ICE_AQC_SET_CGU_IN_CFG_FLG2_ESYNC_EN;
-+			ret = ice_aq_set_input_pin_cfg(&pf->hw, p->idx, 0,
-+						       flags_en, 0, 0);
-+		}
-+	} else {
-+		if (!(p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_ESYNC_EN)) {
-+			ret = 0;
-+		} else {
-+			flags_en &= ~ICE_AQC_SET_CGU_IN_CFG_FLG2_ESYNC_EN;
-+			ret = ice_aq_set_input_pin_cfg(&pf->hw, p->idx, 0,
-+						       flags_en, 0, 0);
-+		}
-+	}
-+	mutex_unlock(&pf->dplls.lock);
-+	if (ret)
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "err:%d %s failed to set e-sync freq\n",
-+				   ret,
-+				   ice_aq_str(pf->hw.adminq.sq_last_status));
-+
-+	return ret;
-+}
-+
-+/**
-+ * ice_dpll_input_esync_get - callback for getting embedded sync config
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @dpll: registered dpll pointer
-+ * @dpll_priv: private data pointer passed on dpll registration
-+ * @esync: on success holds embedded sync pin properties
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for getting embedded sync frequency value
-+ * and capabilities on input pin.
-+ *
-+ * Context: Acquires pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_input_esync_get(const struct dpll_pin *pin, void *pin_priv,
-+			 const struct dpll_device *dpll, void *dpll_priv,
-+			 struct dpll_pin_esync *esync,
-+			 struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_dpll *d = dpll_priv;
-+	struct ice_pf *pf = d->pf;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+	if (!(p->status & ICE_AQC_GET_CGU_IN_CFG_STATUS_ESYNC_CAP) ||
-+	    p->freq != DPLL_PIN_FREQUENCY_10_MHZ) {
-+		mutex_unlock(&pf->dplls.lock);
-+		return -EOPNOTSUPP;
-+	}
-+	esync->range = ice_esync_range;
-+	esync->range_num = ARRAY_SIZE(ice_esync_range);
-+	if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_ESYNC_EN) {
-+		esync->freq = DPLL_PIN_FREQUENCY_1_HZ;
-+		esync->pulse = ICE_DPLL_PIN_ESYNC_PULSE_HIGH_PERCENT;
-+	} else {
-+		esync->freq = 0;
-+		esync->pulse = 0;
-+	}
-+	mutex_unlock(&pf->dplls.lock);
-+	return 0;
-+}
-+
- /**
-  * ice_dpll_rclk_state_on_pin_set - set a state on rclk pin
-  * @pin: pointer to a pin
-@@ -1222,6 +1442,8 @@ static const struct dpll_pin_ops ice_dpll_input_ops = {
- 	.phase_adjust_get = ice_dpll_pin_phase_adjust_get,
- 	.phase_adjust_set = ice_dpll_input_phase_adjust_set,
- 	.phase_offset_get = ice_dpll_phase_offset_get,
-+	.esync_set = ice_dpll_input_esync_set,
-+	.esync_get = ice_dpll_input_esync_get,
- };
- 
- static const struct dpll_pin_ops ice_dpll_output_ops = {
-@@ -1232,6 +1454,8 @@ static const struct dpll_pin_ops ice_dpll_output_ops = {
- 	.direction_get = ice_dpll_output_direction,
- 	.phase_adjust_get = ice_dpll_pin_phase_adjust_get,
- 	.phase_adjust_set = ice_dpll_output_phase_adjust_set,
-+	.esync_set = ice_dpll_output_esync_set,
-+	.esync_get = ice_dpll_output_esync_get,
- };
- 
- static const struct dpll_device_ops ice_dpll_ops = {
-diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.h b/drivers/net/ethernet/intel/ice/ice_dpll.h
-index 93172e93995b..c320f1bf7d6d 100644
---- a/drivers/net/ethernet/intel/ice/ice_dpll.h
-+++ b/drivers/net/ethernet/intel/ice/ice_dpll.h
-@@ -31,6 +31,7 @@ struct ice_dpll_pin {
- 	struct dpll_pin_properties prop;
- 	u32 freq;
- 	s32 phase_adjust;
-+	u8 status;
- };
- 
- /** ice_dpll - store info required for DPLL control
--- 
-2.38.1
+Cheers,
+Vasilis
 
+> > +	}
+> > +
+> > +	usleep_range(data->start_up_time, data->start_up_time + 500);
+> > +
+> > +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "Failed to read status register.\n");
+> > +		return ret;
+> > +	}
+> > +	if (reg & BMP280_REG_STATUS_IM_UPDATE) {
+> > +		dev_err(data->dev, "Failed to copy NVM contents.\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int bmp280_chip_config(struct bmp280_data *data)
+> >  {
+> >  	u8 osrs = FIELD_PREP(BMP280_OSRS_TEMP_MASK, data->oversampling_temp + 1) |
+> > @@ -1079,6 +1105,7 @@ const struct bmp280_chip_info bmp280_chip_info = {
+> >  	.read_temp = bmp280_read_temp,
+> >  	.read_press = bmp280_read_press,
+> >  	.read_calib = bmp280_read_calib,
+> > +	.preinit = bmp280_preinit,
+> >  
+> >  	.trigger_handler = bmp280_trigger_handler,
+> >  };
+> > @@ -1196,6 +1223,7 @@ const struct bmp280_chip_info bme280_chip_info = {
+> >  	.read_press = bmp280_read_press,
+> >  	.read_humid = bme280_read_humid,
+> >  	.read_calib = bme280_read_calib,
+> > +	.preinit = bmp280_preinit,
+> >  
+> >  	.trigger_handler = bme280_trigger_handler,
+> >  };
+> > diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+> > index 9bea0b84d2f4..a9f220c1f77a 100644
+> > --- a/drivers/iio/pressure/bmp280.h
+> > +++ b/drivers/iio/pressure/bmp280.h
+> > @@ -205,6 +205,9 @@
+> >  #define BMP280_REG_CONFIG		0xF5
+> >  #define BMP280_REG_CTRL_MEAS		0xF4
+> >  #define BMP280_REG_STATUS		0xF3
+> > +#define BMP280_REG_STATUS_IM_UPDATE	BIT(0)
+> > +#define BMP280_REG_RESET		0xE0
+> > +#define BMP280_RST_SOFT_CMD		0xB6
+> >  
+> >  #define BMP280_REG_COMP_TEMP_START	0x88
+> >  #define BMP280_COMP_TEMP_REG_COUNT	6
+> 
 
