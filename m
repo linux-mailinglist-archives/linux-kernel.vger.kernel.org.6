@@ -1,216 +1,301 @@
-Return-Path: <linux-kernel+bounces-295524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F0B959C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:46:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE425959C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6A2283075
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7AE51C21D68
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B67192D90;
-	Wed, 21 Aug 2024 12:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F0B192D9A;
+	Wed, 21 Aug 2024 12:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0KdwTK0"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="STA4wJbR"
+Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7339C195FD1
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639018E757
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244372; cv=none; b=O9Y06XZdN7ZqFm5lT96w8zawa12HvpQJO+blw2BlF+P/mO9lrv+fWab3dRSJ0ZmtZ0rdx1S04Hxr+HE6KOMOkRXIrgjgKCiQGFKbRS/1iHpmIpOnmGqkrF/jIlc81Y7oNNGf5Ij4fSW7Levct/4DyYyBFje/elu2nVUoKnSZDuY=
+	t=1724244386; cv=none; b=MhYcc7TxNBi09j80QrUMGycrKCDsM1ipRMn9Pq92dQU4cUQ88RfmWefKgVuunWubNOhK+JefmmHi4BSL/NgOSDZUU0a2UMXeuXNCQQwOvtzEYJvnJWaz7jKJhmM7n3gtWJdauV70Pp1QBxSBAI3lA8sPL8lSi8h4jMiN4LqHxZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244372; c=relaxed/simple;
-	bh=1VMHZbP4ivk20cCh90xnlB6VA8Klg4oaIg0UuXE8jRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UiHJfEQagcQN7JVXWf8OIBTM+lvRolLp/NjFGhPpP2NM/bz6YGnp0yDDBiBxBmpQv1+tduvJUXOWD4tsUOUkwmZnqBtJ6m0SU/CYDELVVCCiNBUJ9A0xTRPoZtLOh0pwNI86/IhyCbW8SuzMLKpFx3BDnjk1HJ/t6jiDhmqjc58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0KdwTK0; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7cd8c8b07fbso227487a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724244371; x=1724849171; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GrQlo1ZtzHZaU3Kc2gC/GsCtOWVGIzkRZAXPXF1JDAc=;
-        b=k0KdwTK0CfHdCH9dTN+NJNCyXOpXpDEYCf6m+dvuZ22mkFkoyZGETN8R9of4LnV3Yp
-         CmbL2BBln4dJCAX0w21CEh8yHsvQvvcGwAeGX0PHvMRG5J9mkRr4eNOHeMC35i/03SO+
-         P5mJalTdkEFdKOdB3sR//8l84eewmzgGJXPuIX0Wmn9XmKX5O/FfEyEkK7KEXgqiJ8Z0
-         YxEd2NVJ+d2DQhh3e38ENTDbw147KaY9c0QcvTSCz/RvyAmFoQa+tSofFdDXAgqSOfri
-         eeJT58yiQXRdw7G5P1o2aPt4vGZfiI328Q6457CJA3xDhbrPd3pFT9GDJU/DAdR5p4pG
-         +R4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724244371; x=1724849171;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GrQlo1ZtzHZaU3Kc2gC/GsCtOWVGIzkRZAXPXF1JDAc=;
-        b=aX+a7eg3qW2HiIRWCLazhHaSI/rl9vLwJm7s4Xw41Bfhv2WK8eFhuZ0Yg4JF9CD+qT
-         8vL4dJESmrTmkBk8BBBj2KoC6XInImkZYbjNzKuJ91mKcjJ9L0bTZluzQkl5B93P+GQz
-         4PL/7wM9Io+Ho2EqoVjw/xcfUHpo3JlJGSnQNohyiNKtj8mz+T30wiVcB80x1QGI5Z7c
-         IbfCOKeggiCovHEhvsPSG4OsitsIX0WvuBFXVSKitFBAGvvWHMtwcb4Y4Nk/O8fYVevP
-         Z9u6D6TxIlMoh8PitErAxmEyXoWJSQV8seZW2Ra3OWn1hGA/OUn0PDLQS0Qjc82w9VCN
-         e7Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW71hm9shRESviqaEdzOkW0uNJ0o70n1SO/ynH12EMIdqSR+YYDhu52Gp6HIHaUQI2MTe0pDQ6O2LP4PU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpvcThETuaaCZaZZcMIW3RJ3VW3eY4yaGs5ARBQV7RN5xam1TB
-	CmEpOV5b2oUvom1pi4sGNydc454wTFacxWPLFHX/0Zse87NwgYBmVMukMuPo1WouKJvv5JMcAC8
-	8PTq/PnhMoVBr09bwfJq4LEOBLeY=
-X-Google-Smtp-Source: AGHT+IHKfU539ztIPvH6FNOLr/tKtolhQJBELB1tBOi+TgcP0/C3jIsojq1Lyrzv/S9i+Tdl/qwVHeal4WeR8hByttU=
-X-Received: by 2002:a05:6a21:9214:b0:1c6:fa4b:3648 with SMTP id
- adf61e73a8af0-1cad7f962b8mr3248581637.22.1724244370398; Wed, 21 Aug 2024
- 05:46:10 -0700 (PDT)
+	s=arc-20240116; t=1724244386; c=relaxed/simple;
+	bh=B6WsG8Rck/unO8tXXResW+WijAzCkbEibhFVGOSzXsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FHVpAmpIXMQ0QdLZ2Y9r2Vbuj0aVAQApzER6rusihFgoHtsObUuer26sCfk75+vdVcF/oiQ0MoUL2swZzayOE1ftl8FGMBHHS6j5yohLLOrwjOMbtqCdmXwf/BCT8gkT8GXZFu0jpffHkIJr3Fp5UtDwiVGlOPBEQnk7EPHqRdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=STA4wJbR; arc=none smtp.client-ip=17.58.6.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724244384;
+	bh=T+wikT7QbRyFgwr7ixvpTx/a/TVVOL1Fh++smzpWiPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=STA4wJbR/OwBKc77aLOnPi2buIzVa46uixLFM64MFq2UsD6qDSxIZuNDtFni/X3gQ
+	 EPr5IlFyCZI4EIE6BOd9d8H9QESvfWRfAeAkjz0bkd0W6vrPT30TYcZzBM+9uTdU6A
+	 G/m775x4X+lkxsWgIkFEwRtonZf98ZHXp8dWMhSWeMuRoUHpLLunMDk5s6qFbnddkJ
+	 aYhmvOlMMIxGh1c9Acqiq+7T3A9ZJeLfC18VmfQSH5c5iUtaYONaBh+/pMKyqP0jH/
+	 WcqCX4pf7cbyuD77ZtmEtcaMjeo0G/73D7lJxMZ1MefTnqBk5jcfSE4mTHurtJkz3t
+	 ZCvF/rPXJa7+g==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id 1F41A68001F;
+	Wed, 21 Aug 2024 12:46:14 +0000 (UTC)
+Message-ID: <dec374a6-073d-4b7f-9e83-adcfcf672852@icloud.com>
+Date: Wed, 21 Aug 2024 20:46:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240203165307.7806-1-aford173@gmail.com> <20240203165307.7806-11-aford173@gmail.com>
- <Zm_UzO4Jmm7Aykcm@atmark-techno.com> <22a3f5266260dd3915269ae3eec7724f7537eb55.camel@pengutronix.de>
- <cd03ecb1-100e-4699-95ed-d837a2802dc7@kontron.de> <CAHCN7x+bh_ka250hOCenO3Et6re4EJ=5TG8=kpG1hs-PV0dQxQ@mail.gmail.com>
- <ZsVluV50NvuGGHFX@atmark-techno.com>
-In-Reply-To: <ZsVluV50NvuGGHFX@atmark-techno.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 21 Aug 2024 07:45:58 -0500
-Message-ID: <CAHCN7xJnjfjr7HfKF+4pwbENP+p2=vvMXWW1AQShNy87vfQ=-A@mail.gmail.com>
-Subject: Re: drm/bridge/imx8mp-hdmi-tx: Allow inexact pixel clock frequencies
- (Was: [PATCH V8 10/12] drm/bridge: imx: add bridge wrapper driver for i.MX8MP
- DWC HDMI)
-To: Dominique MARTINET <dominique.martinet@atmark-techno.com>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, Lucas Stach <l.stach@pengutronix.de>, 
-	linux-arm-kernel@lists.infradead.org, marex@denx.de, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	NXP Linux Team <linux-imx@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	Makoto Sato <makoto.sato@atmark-techno.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] cxl/region: Prevent device_find_child() from
+ modifying caller's match data
+To: Ira Weiny <ira.weiny@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
+ <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
+ <20240815-const_dfc_prepare-v2-2-8316b87b8ff9@quicinc.com>
+ <66c4a136d9764_2ddc2429435@iweiny-mobl.notmuch>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <66c4a136d9764_2ddc2429435@iweiny-mobl.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: PQBbxUEcQPLkhubnh9QdLdCW5twymTGa
+X-Proofpoint-ORIG-GUID: PQBbxUEcQPLkhubnh9QdLdCW5twymTGa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_09,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 malwarescore=0
+ suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408210093
 
-On Tue, Aug 20, 2024 at 10:58=E2=80=AFPM Dominique MARTINET
-<dominique.martinet@atmark-techno.com> wrote:
->
-> Adam Ford wrote on Tue, Aug 20, 2024 at 09:49:03PM -0500:
-> > > > However, this check is a bit overcautious in that it only allows ex=
-act
-> > > > rate matches. IIRC HDMI allows a rate mismatch of +- 0.5%, so this
-> > > > check could be relaxed quite a bit to allow for that.
-> > >
-> > > I checked with a 1080p display that reports 23 possible modes via EDI=
-D.
-> > > Out of these 15 are accepted by the driver with the strict check.
-> > >
-> > > Two more would be accepted with a relaxed check that allows a 0.5% ma=
-rgin.
-> > >
-> > > For the remaining six modes, the pixel clock would deviate up to ~5%
-> > > from what the display expects. Still, if I remove the check altogethe=
-r,
-> > > all 23 modes seem to work just fine.
->
-> I can confirm the displays I tested also seem pretty tolerant in
-> practice (up to ~3-4% at least), but I agree with Lucas that this isn't
-> something we can rely on for a general purpose driver as having examples
-> of things being tolerant doesn't mean all hardware will be as flexible..
->
-> > > I'd really like to be able to add more PHY PLL setpoints for displays
-> > > that use non-CEA-861 modes. Unfortunately I didn't manage to figure o=
-ut
-> > > the fractional-n PLL parameter calculation so far.
-> > >
-> > > The i.MX8MP Reference Manual provides formulas to calculate the
-> > > parameters based on the register values and I tried to make sense of =
-it
-> > > using the existing register values in the driver. But somehow it does=
-n't
-> > > add up for me.
-> > >
-> > > Lucas, did you already work with the PLL parameters? By any chance, d=
-o
-> > > you now how the math behind them works?
-> >
-> > I spent a little time trying to understand it a bit.  I created a PMS
-> > calculator similar to the one used on the DSI controller,
->
-> Great! I'll admit this also flies over my head and I don't have the
-> time to study this, so this is much appreciated.
->
-> > except that
-> > the M seems to be fixed at a value of 62 per the data sheet, so it's
-> > more of a PS calculator.
->
-> Hmm... PHY_REG2 in the datasheet only lists '0011_1110b - 62' as
-> example(?) values, but it doesn't say other values are reserved either,
-> I'm not sure what to make of it.
-> In the current driver PHY_REG_02 (driver macro) is assigned the first
-> field of .pll_div_regs, which goes anywhere from 0x4b to 0x7b -- pretty
-> far from 62(0x3e)...
+On 2024/8/20 21:59, Ira Weiny wrote:
+> Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> To prepare for constifying the following old driver core API:
+>>
+>> struct device *device_find_child(struct device *dev, void *data,
+>> 		int (*match)(struct device *dev, void *data));
+>> to new:
+>> struct device *device_find_child(struct device *dev, const void *data,
+>> 		int (*match)(struct device *dev, const void *data));
+>>
+>> The new API does not allow its match function (*match)() to modify
+>> caller's match data @*data, but match_free_decoder() as the old API's
+>> match function indeed modifies relevant match data, so it is not
+>> suitable for the new API any more, fixed by implementing a equivalent
+>> cxl_device_find_child() instead of the old API usage.
+> 
+> Generally it seems ok but I think some name changes will make this more
+> clear.  See below.
+> 
 
-OK.  I will experiment with increasing the range of M from being fixed
-at 3e to a range of 3b to 7b to see if my PMS integer calculator can
-get more accurate.
+okay.
 
->
-> Since other frequencies have been adjusting this main diviser ratio we
-> actually tried copying neighboring values and adjusting only that reg 2
-> (so the M if I get this right?), but the end result ended up not
-> synchronizing properly every time... We didn't have time to check with a
-> scope if the generated signal was ugly or if it just didn't lock
-> properly, but the display worked when we just re-used the neighboring
-> values without changing anything despite being ~3-4% off, so we took the
-> easy way out here and didn't dig much further.
->
-> > Anyway, When I run my P-S calculator to generate the 'best rate' I get
-> > a value that's usually 0.2% variance from nominal, but I only verified
-> > a handful of values:
-> >
-> > Several which were +0.2%
-> > 297600000 vs 297000000 (4k@30)
-> > 148800000 vs 148500000 (1080p60)
-> > 74400 vs 74200
-> >
-> > One value was -0.16%
-> > 24800000 vs 25200000
-> >
-> > If the M value was a bit more flexible, we might be able to reduce
-> > that variance more.
->
-> Yes, I think the M value could be more flexible, but that'd require
-> checking if it actually works, whereas having slightly off frequencies
-> will most likely be OK so I don't think it's worth the effort -- happy
-> to stick to what the datasheet describes.
->
-> > If / when I get some time, I might play with trying to disable the
-> > fractional mode and just use the PMS calculator for simplicity despite
-> > the inaccuracy.  Maybe we could fall back to using the PMS calculator
-> > if the desired frequency isn't in the look-up-table.
->
-> That'd be greatly appreciated, I don't have any strong opinion on
-> whether that should completely replace the table, or only be used if
-> there is no exact match in the table as these are values we know will
-> work; but we can definitely test any patch you can throw at us here.
+> Also for those working on CXL I'm questioning the use of ID here and the
+> dependence on the id's being added to the parent in order.  Is that a
+> guarantee?
+> 
+>>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  drivers/cxl/core/region.c | 36 +++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 35 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index 21ad5f242875..8d8f0637f7ac 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -134,6 +134,39 @@ static const struct attribute_group *get_cxl_region_access1_group(void)
+>>  	return &cxl_region_access1_coordinate_group;
+>>  }
+>>  
+>> +struct cxl_dfc_data {
+> 
+> struct cxld_match_data
+> 
+> 'cxld' == cxl decoder in our world.
+> 
 
-I can't promise it'll be quick.  I am not fully certain I understand
-how the whole thing works, but as a rule, I don't generally like look
-up tables if they can be calculated dynamically.
+make sense.
 
-adam
->
->
-> Cheers,
-> --
-> Dominique
->
->
+>> +	int (*match)(struct device *dev, void *data);
+>> +	void *data;
+>> +	struct device *target_device;
+>> +};
+>> +
+>> +static int cxl_dfc_match_modify(struct device *dev, void *data)
+> 
+> Why not just put this logic into match_free_decoder?
+> 
+
+Actually, i ever considered solution B as you suggested in the end.
+
+For this change, namely, solution A:
+1) this change is clearer and easier to understand.
+2) this change does not touch any existing cxld logic
+
+For solution B:
+it is more reasonable
+
+i finally select A since it can express my concern and relevant solution
+clearly.
+
+>> +{
+>> +	struct cxl_dfc_data *dfc_data = data;
+>> +	int res;
+>> +
+>> +	res = dfc_data->match(dev, dfc_data->data);
+>> +	if (res && get_device(dev)) {
+>> +		dfc_data->target_device = dev;
+>> +		return res;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * I have the same function as device_find_child() but allow to modify
+>> + * caller's match data @*data.
+>> + */
+> 
+> No need for this comment after the new API is established.
+> 
+
+i have given up the idea within v1 to introduce a new API which *should
+ONLY* be used by this patch series, so it is not worthy of a new API
+even if it can bring convenient for this patch series.
+
+>> +static struct device *cxl_device_find_child(struct device *parent, void *data,
+>> +					    int (*match)(struct device *dev, void *data))
+>> +{
+>> +	struct cxl_dfc_data dfc_data = {match, data, NULL};
+>> +
+>> +	device_for_each_child(parent, &dfc_data, cxl_dfc_match_modify);
+>> +	return dfc_data.target_device;
+>> +}
+>> +
+>>  static ssize_t uuid_show(struct device *dev, struct device_attribute *attr,
+>>  			 char *buf)
+>>  {
+>> @@ -849,7 +882,8 @@ cxl_region_find_decoder(struct cxl_port *port,
+>>  		dev = device_find_child(&port->dev, &cxlr->params,
+>>  					match_auto_decoder);
+>>  	else
+>> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
+>> +		dev = cxl_device_find_child(&port->dev, &id,
+>> +					    match_free_decoder);
+> 
+> This is too literal.  How about the following (passes basic cxl-tests).
+> 
+
+it is reasonable.
+
+do you need me to submit that you suggest in the end and add you as
+co-developer ?
+
+OR
+
+you submit it by yourself ?
+
+either is okay for me.
+
+> Ira
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c              
+> index 21ad5f242875..c1e46254efb8 100644                                         
+> --- a/drivers/cxl/core/region.c                                                 
+> +++ b/drivers/cxl/core/region.c                                                 
+> @@ -794,10 +794,15 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
+>         return rc;                                                              
+>  }                                                                              
+>                                                                                 
+> +struct cxld_match_data {                                                       
+> +       int id;                                                                 
+> +       struct device *target_device;                                           
+> +};                                                                             
+> +                                                                               
+>  static int match_free_decoder(struct device *dev, void *data)                  
+>  {                                                                              
+> +       struct cxld_match_data *match_data = data;                              
+>         struct cxl_decoder *cxld;                                               
+> -       int *id = data;                                                         
+>                                                                                 
+>         if (!is_switch_decoder(dev))                                            
+>                 return 0;                                                       
+> @@ -805,17 +810,30 @@ static int match_free_decoder(struct device *dev, void *data)
+>         cxld = to_cxl_decoder(dev);                                             
+>                                                                                 
+>         /* enforce ordered allocation */                                        
+> -       if (cxld->id != *id)                                                    
+> +       if (cxld->id != match_data->id)                                         
+>                 return 0;                                                       
+>                                                                                 
+> -       if (!cxld->region)                                                      
+> +       if (!cxld->region && get_device(dev)) {                                 
+
+get_device(dev) failure may cause different logic against existing
+but i think it should be impossible to happen normally.
+
+> +               match_data->target_device = dev;                                
+>                 return 1;                                                       
+> +       }                                                                       
+>                                                                                 
+> -       (*id)++;                                                                
+> +       match_data->id++;                                                       
+>                                                                                 
+>         return 0;                                                               
+>  }                                                                              
+>                                                                                 
+> +static struct device *find_free_decoder(struct device *parent)                 
+> +{                                                                              
+> +       struct cxld_match_data match_data = {                                   
+> +               .id = 0,                                                        
+> +               .target_device = NULL,                                          
+> +       };                                                                      
+> +                                                                               
+> +       device_for_each_child(parent, &match_data, match_free_decoder);         
+> +       return match_data.target_device;                                        
+> +}                                                                              
+> +                                                                               
+>  static int match_auto_decoder(struct device *dev, void *data)                  
+>  {                                                                              
+>         struct cxl_region_params *p = data;                                     
+> @@ -840,7 +858,6 @@ cxl_region_find_decoder(struct cxl_port *port,              
+>                         struct cxl_region *cxlr)                                
+>  {                                                                              
+>         struct device *dev;                                                     
+> -       int id = 0;                                                             
+>                                                                                 
+>         if (port == cxled_to_port(cxled))                                       
+>                 return &cxled->cxld;                                            
+> @@ -849,7 +866,8 @@ cxl_region_find_decoder(struct cxl_port *port,              
+>                 dev = device_find_child(&port->dev, &cxlr->params,              
+>                                         match_auto_decoder);                    
+>         else                                                                    
+> -               dev = device_find_child(&port->dev, &id, match_free_decoder);   
+> +               dev = find_free_decoder(&port->dev);                            
+> +                                                                               
+>         if (!dev)                                                               
+>                 return NULL;                                                    
+>         /*                                                                      
+
 
