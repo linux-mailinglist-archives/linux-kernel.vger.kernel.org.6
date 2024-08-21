@@ -1,124 +1,88 @@
-Return-Path: <linux-kernel+bounces-295311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C46959991
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA189959993
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8115F1F2196E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84CD2825FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B821CF29F;
-	Wed, 21 Aug 2024 10:07:35 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255321A284D
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D1C20527C;
+	Wed, 21 Aug 2024 10:08:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6235205252
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724234854; cv=none; b=EAzCrCH5ikOtq5/kw+O3HsFWfZjoQD0UBEGRWYzJUMnCpMVM4yrrAE4vT5mR4RTGN8PMKPtRN4RvDFwStjLZpOfkLi1HMY3/rnMAHeIQ4bKhoL6KEF9UGa+f2YAu5plva6oq2tiSZmBLZWx3IQqwZGn6lxvHc7suGA/5zDXSh9Y=
+	t=1724234886; cv=none; b=bNQrE2KjT4zDxl+pK7umW65e3dSbt62K/gd6LJONBALI7Xzr+XVVHevDgbmsJA0Cr4PhkNXphNzFeAtlDVlFI1sknoOlUzQU6gQWPYqLV8nAf84a4LCD/WzBGdzDXUlgD/6JiNQOOykCqJTXQOjdLEh9rKbEcjSaMHwwKT45Kkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724234854; c=relaxed/simple;
-	bh=srSdP1UYmOER5prpDdEW4RKHGToQ++nbTSVPyweYMws=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aB6wr7EqzpZy5VjXq2uTS6Z9jhQc59TAJgmVkmokK8RNO6J/aoiTiIOLDLoQwLo3dsBrLfIGYECEK7qH8EoI6ZxE6jnuRrXXca4Ev9D7S/4mUUoSd1GXF8nkteSHLCgw70bmG/hb1PgQNenDBsMGof3AhCq60sw89ir01xrBlS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxnOpivMVmQhAbAA--.58628S3;
-	Wed, 21 Aug 2024 18:07:30 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMDxkeFhvMVmEYIcAA--.60605S3;
-	Wed, 21 Aug 2024 18:07:29 +0800 (CST)
-Subject: Re: [PATCH v1 2/2] LoongArch: Add ifdefs to fix LSX and LASX related
- issues
-To: maobibo <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-References: <20240820123731.31568-1-yangtiezhu@loongson.cn>
- <20240820123731.31568-3-yangtiezhu@loongson.cn>
- <1d23bbfe-dd36-b2ff-c4b3-cf69396ea53f@loongson.cn>
-Cc: Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <882d3aa3-24cf-9866-7e00-161e94893811@loongson.cn>
-Date: Wed, 21 Aug 2024 18:07:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1724234886; c=relaxed/simple;
+	bh=bcZTltfrN96IpyEwZ5ov0EAIPhOEfYKK/v9DQ75hgls=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OfVWCcYXtqmPnYGHSIAnenVo+9CfBX08SC6JLD5TdbWdWU9B4eAIKe6/wBTfFlQHI3NjDvyPmenRvVYxwTpNAFJOihIqHo64yNPgTDBATJvIKJNaeAtfdBOqoGxQX97Yz+DJbnu+X2x6jrzkseeZfX0E0w1E7hzZv6heZx+asAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f9612b44fso653846539f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:08:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724234884; x=1724839684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ltq4NN1gtmsJ84XbCNBVAWHYj2I60jKYTteZrBL53oY=;
+        b=M98prxD4FZV9YU+ukBPDgb6zrL11L01f66e15YNW34kddWNa0IwwxDxfeVENiUPXwn
+         K2doSNpaLpqbIB4LGyHPekIi5IXFLD7SU55PGbS7ZERhwTmItXotpbMj4NWf7gQkqLVb
+         jzQPw+gCG9s4diT+WMR3lhO6OOZcAMqCPjraIGBWiW6E3aLaduAsGVJN0VQlEIBxlB9+
+         Ua6KdvAuvbJKERf4duAcjnr7QOaXhk7PxSsyUnIxqj+P2HFSE1U85cifI1t/Zicy86sA
+         qDf6eMgoM06vR37cO6ieQtjIQS2gj42fv6K+0BqfJzUWepDQsddfd/pa2qer5nilgMd9
+         7yuA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8F3ELOSqxzl3U92SYm6qkgAcFnU8+hPcWgh3k+bRTJss4xLsGz5AFLQV6pXjFV4ROaPmgN3nf1Tc+Y8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1UoeaX36L6youxIqtKZ9xN+k3+iTt6MtRH45e+xuAuvIypXZc
+	hE7GPwX6zec1ACW0Og+5evPQkrpPQqgqM9iVY3lGzMTZTTGty5PE9F4gfsCtZHhaIh07E2b3Jh6
+	DtNbc4ZvYVR1TwNWZ7sx7MyyYM5CSouMDcREebHNQMIfAoFg4jidnSNE=
+X-Google-Smtp-Source: AGHT+IEmB9UKevzYR0v8ZXvKnJsY7QyO14fBNAwZNyW12v4IM2oSwrprNKl2vkG2DtSDkY01BRFROBWdEcBatPLKYZqmXfKlaPwb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1d23bbfe-dd36-b2ff-c4b3-cf69396ea53f@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxkeFhvMVmEYIcAA--.60605S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ZryUJry3uw17CF4Utr1xCrX_yoW8Wr45pr
-	Z8C395tF4rWF1DZrn7Xw1kWF95tas3GF4YqFyDJryfArs8GwsagF4UK3Z8Xr9rWFn7W3WS
-	vFZ7W3Z8tFWqvabCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
-	Z7UUUUU==
+X-Received: by 2002:a05:6602:1603:b0:824:d658:396 with SMTP id
+ ca18e2360f4ac-8252f4bd9ffmr9836239f.3.1724234883914; Wed, 21 Aug 2024
+ 03:08:03 -0700 (PDT)
+Date: Wed, 21 Aug 2024 03:08:03 -0700
+In-Reply-To: <9343ba32a457acc4f536120e904a3d7fa9ed0adb.camel@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c3eba306202eb72d@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
+From: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/21/2024 09:12 AM, maobibo wrote:
->
->
-> On 2024/8/20 下午8:37, Tiezhu Yang wrote:
->> There exist some issues when building kernel if CONFIG_CPU_HAS_LBT is set
->> but CONFIG_CPU_HAS_LSX and CONFIG_CPU_HAS_LASX are not set. In this case,
->> there are no definitions of _restore_lsx and _restore_lasx and there are
->> also no definitions of kvm_restore_lsx and kvm_restore_lasx in fpu.S and
->> switch.S respectively, just add some ifdefs to fix the issues.
+Hello,
 
-...
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> It is hard to understand to put CONFIG_CPU_HAS_LASX inside
-> CONFIG_CPU_HAS_LBT, in general option CONFIG_CPU_HAS_LBT has nothing
-> with CONFIG_CPU_HAS_LASX.
->
-> Would you like to add parameter func in macro fpu_restore_csr like this?
->
-> --- a/arch/loongarch/include/asm/asmmacro.h
-> +++ b/arch/loongarch/include/asm/asmmacro.h
-> @@ -55,10 +55,11 @@
->  #endif
->         .endm
->
-> -       .macro fpu_restore_csr thread tmp0 tmp1
-> +       .macro fpu_restore_csr thread tmp0 tmp1 func
->         ldptr.w         \tmp0, \thread, THREAD_FCSR
->         movgr2fcsr      fcsr0, \tmp0
->  #ifdef CONFIG_CPU_HAS_LBT
-> +       STACK_FRAME_NON_STANDARD        \func
->         /* TM bit is always 0 if LBT not supported */
->         andi            \tmp0, \tmp0, FPU_CSR_TM
->         beqz            \tmp0, 2f
-> @@ -282,10 +283,10 @@
->         lsx_save_data           \thread, \tmp0
->         .endm
+Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
+Tested-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
 
-For the record, I modified the related code as you suggested and tested 
-with various configs, it works well.
+Tested on:
 
-But as we discussed offline, these current changes are small relatively
-and the STACK_FRAME_NON_STANDARD related code may be removed if there
-is a proper possible way, so just leave it as is in my opinion.
+commit:         d30d0e49 Merge tag 'net-6.10-rc3' of git://git.kernel...
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=14fbfe05980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=399230c250e8119c
+dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17b31fbb980000
 
-Thanks,
-Tiezhu
-
+Note: testing is done by a robot and is best-effort only.
 
