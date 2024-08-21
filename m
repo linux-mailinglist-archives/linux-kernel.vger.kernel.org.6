@@ -1,167 +1,108 @@
-Return-Path: <linux-kernel+bounces-295522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE112959C44
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:46:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1BD959C47
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A277B2645F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA13281357
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4991917E3;
-	Wed, 21 Aug 2024 12:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B03191F6A;
+	Wed, 21 Aug 2024 12:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8MLptxK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="q41EhNWt"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A87155307;
-	Wed, 21 Aug 2024 12:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F381155307
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244357; cv=none; b=SGkXojFTug5fEDffq/7T3cGBhP6uGsQzH8ctMt2wrQCIp3YYpXPtxIAJFQGjQ+dCsAzuonfA6f2WhKGiy0mjh3JnOQ5ybS8FgIh4En2hrEeDjn//AFj0mG9whRH/eVt3G8ek6GlCgoxyxNbyUKQxXBPb2BrG8zevHZUxP1trwhc=
+	t=1724244368; cv=none; b=IfbofDuiXluSOIePklS1BitWmOPYP/Z1isXaDOUllfbsu4Pn5JNn19W9Q6EJNPLg8ktLkxfr10nLEElOuL/1GocK40NJ4j/La4G45yCsfy5MPFzmNhMfGNQK+dxhp3F/8aKXtBaOm1DyK2Il8BD9mgn0GzMbtZs9hmCTMhf6LEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244357; c=relaxed/simple;
-	bh=r9eOQk8Wrbg0igQUr38Qd//QX7nCzOe2ZVOo1vsBV9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLhr8pAq6RHpheTsijafuFBQE4lO/vl53PTWmUr45qfhd+KgMrXPYFVOZLzSzkE7wyLqP84vcF8svnPFR5XGntO8Bj/xP9VAJK1ySF280mEnzQDlJ38D0FikFoeeVJdKScDhiqRSc9sgdUo4vyt43WhqnZBVtwnthBJE3TQXD2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8MLptxK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4989C32782;
-	Wed, 21 Aug 2024 12:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724244356;
-	bh=r9eOQk8Wrbg0igQUr38Qd//QX7nCzOe2ZVOo1vsBV9Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k8MLptxKacB0FKbin56oUdvqI3hOJi4p3+otTum5BMIEzOcvcMIP1GpW63IL7YWKG
-	 pvBVwnbcRCACjd0VG0oDWvD6/M8lbRgOO07AaKXQt4u4z7E4oAR5qfEHM+GIHXpGTM
-	 nOIsq/tIRyXY7cYZe7nTVGfm26y88ufCp/WPUoPynnIeE01s9nxmLHPBeP4HdkAKql
-	 saAil7czdzmlf00CuDcN/FqYuV/nk8MNKoxp0dG5yWQA/ZGlJ8XTkoriC6IqYipzoK
-	 SWOzXMdjcJrnfC2CjzGbLbd3HPzzKfvsQwblDu+nOt9G2MGLVddjvQhRd4oWvnMf1M
-	 +RRKk72P28p5g==
-Date: Wed, 21 Aug 2024 13:45:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH RFT v9 4/8] fork: Add shadow stack support to clone3()
-Message-ID: <77bc051d-b2c9-4e3a-b956-be8879048e20@sirena.org.uk>
-References: <20240819-clone3-shadow-stack-v9-0-962d74f99464@kernel.org>
- <20240819-clone3-shadow-stack-v9-4-962d74f99464@kernel.org>
- <dc8328dbaa01ca7443eeb75024752c673904e3a4.camel@intel.com>
- <cc2e7d86-c890-4cb1-8cad-1cfaa9f53dc8@sirena.org.uk>
- <82be9ec6e43a018add8d9bbc6ba67feee676f32e.camel@intel.com>
- <5643761f-cc38-4e41-9ddd-f0a1934f8724@sirena.org.uk>
- <9f022aa4cd3e2dc82d0c963e9d2bf5c7ddd5b92a.camel@intel.com>
+	s=arc-20240116; t=1724244368; c=relaxed/simple;
+	bh=hiR1Haq30NxfLMtsVDbu0nnLT6exfBNX71lnvpiNLFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E8F5M+2IMoDVzmvfdlg7u8aWacvOaHQAgqvkAzw6iHlG19zayfMdX92GKRKJj8BeajNE5xcjeVg3qCsJ0H7+VL1Gy8jlTbC2au2CLDCtkP5eruWDkKGQg0DMQXYeKgQiyX326CpB3gY5yu+2sXleWFktoiCw7qicAl2a3kImDHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=q41EhNWt; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3ea86377aso19389071fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724244364; x=1724849164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hiR1Haq30NxfLMtsVDbu0nnLT6exfBNX71lnvpiNLFY=;
+        b=q41EhNWtgX8WLc6zeVbeAUGL/bhDtQNP57p8MR9CIvV6qidK8MSNXaTR9jKmPbhexl
+         SxpalRgAYEJcNlNbkbw2L+gVhMu0QEc84TH88T89GrasXdxvHcrleezy3a4SpgZCuhzX
+         FwRUGTE4FTyoUxvPcuR7Rh4/3HEU/yz3yemSs9OJMqlcmYLZ6NtgZ4nN9eqUvTue1Tpp
+         hb01vAAluNrP5QwRFlmeuyq1c90bKNZ0KqC6sLAzCxvYsA9Ual9oZouklMMV+nvLhn8d
+         J8sNZisZUhMlmxZuHclBzeXBmZJ9ug6zsW5wEnQkiCLeCylQo2sYyG2JhyekCCQwiuH0
+         /c3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724244364; x=1724849164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hiR1Haq30NxfLMtsVDbu0nnLT6exfBNX71lnvpiNLFY=;
+        b=IwBLPGK+adNZUR+5L0ZX2vcLLmZyHfM80stz5NDqWHa9Hf3yepOgemfzdsqc6KscRp
+         z+B5VFn/sJNxGltf7OVJfDAuOpXR/fqA0mxfaNB9idCA/i/929bsMubmDVtQRElGocvG
+         LemkKS7n2Gv1R42DLMxeIk5lF0O7PP5L0bnqFRTDZt0oXRfh8if6OysGW/u6l3G4bNNp
+         j8q/fFOkyvUHgUHXNVLruAls+A/IT9CpTbJwxEfa0LafMqc8dxLI/og5cPGg7sr+PUXF
+         XptSk1D72cYiLUobUcxK5D2/dka1aUJWA7TsgmmU1x/k3v+ShgcVwi+pClictjxzrsEI
+         StuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoH1Cw38s8srjUHXXs5/9Ob10VlBqnacDccQJ6zb0H7l7W3pJiJgSLfdyLlLDmzGFX5OWbZXyHInUToGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzagKS+iiW3ORi4A3/p6abqnQcgei1/D4gMkNJo6wqZnfvsf3Hr
+	M1+X5meOuxFzC2T7RIprsm9xfN94QtNLiGxIgcLkbxi8MFrHOhkcDaNopzfUmQpzQKNU0O8z+SH
+	0FAy7VKolbLDADnY1E5vlaUi2b0u5K0I/9p6pcg==
+X-Google-Smtp-Source: AGHT+IEoyoaFzaTuBjS7UWRKkhT5wQ2XOqzoc1U9KRDb2oPtaGqMo9RjMJ/MuacPyZChbEXTgMD4LzxduCDtp+Rqrpc=
+X-Received: by 2002:a05:651c:1507:b0:2ef:1d8d:21fd with SMTP id
+ 38308e7fff4ca-2f3f87e0c7amr14835921fa.2.1724244363623; Wed, 21 Aug 2024
+ 05:46:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="R2s/DrK5IP5IlpI8"
-Content-Disposition: inline
-In-Reply-To: <9f022aa4cd3e2dc82d0c963e9d2bf5c7ddd5b92a.camel@intel.com>
-X-Cookie: You are false data.
-
-
---R2s/DrK5IP5IlpI8
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20240821122530.20529-1-brgl@bgdev.pl> <bd793119-3a0f-40c8-8c78-201e2fcf9664@lunn.ch>
+In-Reply-To: <bd793119-3a0f-40c8-8c78-201e2fcf9664@lunn.ch>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 21 Aug 2024 14:45:52 +0200
+Message-ID: <CAMRc=MeaVe=JcT9KF4YaP-2jsPH=ApRjfhomwuJ+L9GLhh-Dng@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: mdio-gpio: remove support for platform data
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 01:45:16AM +0000, Edgecombe, Rick P wrote:
-> On Wed, 2024-08-21 at 01:19 +0100, Mark Brown wrote:
+On Wed, Aug 21, 2024 at 2:42=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Wed, Aug 21, 2024 at 02:25:29PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > There are no more board files defining platform data for this driver so
+> > remove the header and drop the support.
+>
+> There are a number of out of tree x86 boards which use this, flying in
+> various aircraft, so have a long life, and do get kernel updates.
+>
+> I'm happy to support this code, and as a PHYLIB Maintainer, it adds
+> little overhead to my maintenance works. If you really insist, i can
+> try to get code added to drivers/platform/x86/ which use this.
+>
 
-> > I think it's going to be strange one way or another, either you specify
-> > a size that we don't currently really use or you have two things both
-> > called stacks which are described differently.
+We typically don't care about out-of-tree board files upstream. Having
+users for this struct in mainline would of course be great and a
+perfect reason to keep it.
 
-> I would guess users of raw clone3 calls would be able to handle that kind=
- of
-> variation.
-
-Oh, I'm sure people could cope either way - it's more a question of
-clarity and not causing people go do needless investigations to try to
-figure out what's going on than anything else.
-
-> I was just trying to figure out why there is both the pointer and size for
-> normal stacks. It seems that one usage is that you don't have to worry ab=
-out
-> whether your arch's stack grows up or down. But otherwise, the previous c=
-lone's
-> didn't need the size. Before clone3 the stack size users seem to be kernel
-> threads, so when they unified the infrastructure behind kernel_clone_args,
-> stack_size was needed for the struct. Could it be that it just leaked to
-> userspace for that reason? I don't know, but I would think a tweak to suc=
-h a
-> fundamental syscall should have some purposeful design behind it.
-
-It's entirely possible it just leaked.  My own attempts to dig through
-the archives haven't turned up anything on the subjecti either, it seems
-to have been there from the get go and just gone in without comment.
-Equally it could just be that people felt that this was a more tasteful
-way of specifying stacks, or that some future use was envisioned.
-
-> > =A0 I suppose we could call
-> > a single parameter shadow_stack_pointer?=A0 Though I do note that as you
-> > indicated we've been going for some time and this is the first time it
-> > came up...
-
-> Sorry for that. I looked through all the old threads expecting to find
-> discussion, but couldn't find an answer. Is clone3 support a dependency f=
-or arm
-> shadow stacks?
-
-Catalin didn't want to merge the arm64 support without clone3(), and
-there's code dependencies as a result.  I could unpick it and reverse
-the ordering so long as the arm64 maintainers are OK with that since the
-overlap is in the implementation of copy_thread() and some of the
-dependency patches.
-
---R2s/DrK5IP5IlpI8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbF4XoACgkQJNaLcl1U
-h9CDOAf8DpqQjrzuJ6yjpr8Urc8gQ8toLYGxub4euGdhl+eUhDDCPz3r+n1gEZkg
-OnsX7WQsgWAevH8wmcKRcskvfGU1m1r8bysHt0X5ggg45OYzjBOeX5I0LaBljOdv
-cv1H2HJsCvhsGe3pTMeidAFze47dya1C4DRR/RSuN+roGIgO3eF90HzQw7BT797H
-QqJmYmjBt/uHKWvaTDs46C/dJ+8bfki/QP3AWwGId0rrn+OKG/n3Ee2D77PU8ghm
-PFdR1maHwA53iOd9XZ1DEhkFDSk0qB6DnM27AMpeKTEE6jFRoJPEwIumCUQNoGZZ
-MTrIO1FQZZubZ1a74yIZ0keI9a1aZg==
-=Tde6
------END PGP SIGNATURE-----
-
---R2s/DrK5IP5IlpI8--
+Bart
 
