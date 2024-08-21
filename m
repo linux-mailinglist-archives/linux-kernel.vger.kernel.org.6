@@ -1,361 +1,900 @@
-Return-Path: <linux-kernel+bounces-294969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD0B29594E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466E09594EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F217FB2402B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC6D1C215F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73152198E89;
-	Wed, 21 Aug 2024 06:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5190C1C8FB7;
+	Wed, 21 Aug 2024 06:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFk9wpXz"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="SjSD0rs3"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2137.outbound.protection.outlook.com [40.107.215.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF14199E9C
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724222569; cv=none; b=PE19KB0o9J8BbU14BQ1+cu+TnUH9ivUQhAucTHSxg/YucP9OswOJApYlYrfaNrEKaiOuiR+gDx3C/n406Us60vQpVEhIfH8VGnQhpfOP9u0+kg3hv6/Ibx1ldCqvNeBoLBhnOQ7sWBRpvqrKNCKeFP47IUPQ1YD6KcWYSw+xQMQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724222569; c=relaxed/simple;
-	bh=u1la4C9VcmsoVNdKSLgxwCOz8FhZOQHhOXbL092qPxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KsdDAtmuQ2JTaowESMmzXthWBP68d/EI6WlgZoYjAeVU1NFB8OhZZIZ7lrpza8yoMiKtJj9Zi3JOWUo2ZRC1v7/Mfv58qBxCbeLrSPjja6eyuoMSctwSIUCYl6tMz2OBDVB7NAcpSc9CF37Rwvov3SUkKgnYyf/oSRtHHyO0zmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFk9wpXz; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d4so4563141fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724222565; x=1724827365; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+f1vNtVD+/xwkfjm/uBpP4PBDIwuVHjsD5EqWun6VIE=;
-        b=jFk9wpXzIPggh2xcDqtUbktWsQelI9CzXvWHtyfxJnlo+DI7w5zPZbd1rhGY2PeFtw
-         0pJ+oaSVbw9yl8M+y4eAyC6rftVpQ+Sx1cLmU3y4QAVsuEad/pbGYBs5tbFai5my+oq+
-         ekitq2E3DdMcfxouFfhbD+YSIi+zg7lJa1029FldWwA+g07YtwJSJ10w/0NE3meMkpBV
-         ybN/MhLBsrMok/2D3P7YuF55wEGRbgnqLycvqwKgzl8g63IFsy+dXEm0YMZG4tRBX4Vo
-         9ittH6ZOApNEE4sQ5en4VpkCcOT1qtXw4W6c0zhYSwe7Hwq4FQdpVBmqGXcmKvtwRAu7
-         5qNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724222565; x=1724827365;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+f1vNtVD+/xwkfjm/uBpP4PBDIwuVHjsD5EqWun6VIE=;
-        b=n3AjhZTbyyivKPD9MWiLP8jeCFR2YNVtZzeOUELKmhIfmQT/LKWLcrYoBu6cri8jFG
-         UTsqBzlLiwpyhIU42G5rDRQEfBYsZvp0RvNuBsa0FF+r8MWWlqZ72dRAyBx/mnpFj1ny
-         gDvvF0KkPKz9VhzVtWRaUmcK3+XmsymGrUFzf463p5hcF7acN+QMHgdksLN2VNVIDxZ4
-         YaNKEjIdC2v9Ez7VA2YOwUpuf2Izkz9TGlOqkEhyvqqaD4pMYFI+SUxsP95yFTzjZc+d
-         nzkpUb8Ww06ENDRymmZeteUfUM/LgsPbF4DrFXxyBiSgjmGA5XSyICu4mIH3YSp3Y0yN
-         cKqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbUh3bATUPzS8/xtlQjHSX978e/ZnSJyBX8mPw56PJNHWxhWcLnoL0f6RhoLWY3vCkWAC36GYP6bKoi1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOmWsWORUvIrHzVzbCGl0JUlOIPsdOty/+QnomLKPxiyvptYIy
-	6DNuk5EALy0iv4wNPp1Df4addPQ5DDxkn9JBpTzUa3Ad5Y5P2pR1+aLlVLUjqImbQ/wZ/lrBRmo
-	cR31mRfBym1xXcI0aJtgRws+Kyb4=
-X-Google-Smtp-Source: AGHT+IHk7yyKdXCUwBI2a1HOBydzyz1po8Lv0lerPr2EL5pLuYmtEMmg20/DIIbGdAdawYpBG9qWxj0RakclSQjMwoM=
-X-Received: by 2002:a05:651c:2106:b0:2ef:2c40:dd67 with SMTP id
- 38308e7fff4ca-2f3f8d27af2mr4356431fa.3.1724222564769; Tue, 20 Aug 2024
- 23:42:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4182E1B9B41;
+	Wed, 21 Aug 2024 06:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.137
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724222597; cv=fail; b=EgiT6yGDMSYz/TZIy5Vevh1wUlqJ/44bUkq+6/vSoXNjb0//MvABliMGKx2KzqVPMt3gaFHXPgJehgw9IhIlv7SH2Erus74SOxE9/6/m4wQ/XeQYjHkikTcVOFrrM5MLZKEf+vjWF/9TYZILKlE1N3l3IRCgQYzXbDHYYxB1VzE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724222597; c=relaxed/simple;
+	bh=iN2Va8jJMTWdHDIwPjGH/cBsvUqYpapHdpvjSlML9lA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mZIOj1j+/C/th62jrnW7qGdNI21VcOrfVllNj8nrn0xeLvNiUYLp5832ld/7kIr3nitlYe2wKrrujz8ybOC9ZJZeAdGZ19rZuURBUgHPP5gIZCcEFVLSrWn7E6EwIlnEsA9aWSvJIHdTAZUhwSs1Afm39nsArhZMXZNTQtsYjYk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=SjSD0rs3; arc=fail smtp.client-ip=40.107.215.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=foCj/OZwUYWwXROG9aNfrMCn6+U9s2yG1UhYynEatRd6t8ioG4TDayFa8mJAH0Dhb9TZKRI22oNvZdGiSKoquxjHcODWDhqp4cvkbYGvQdDJd0J8Nc3qYvT8URVvDBCcpV/17sYJbQVlz5RaMWBcDDsEF+GD/Oz6bOmgMIzrDZy/SHYJf5+V4qwaDydyAmNP91NMmPYTtFsfowAgQxhfxFXZYKLP/hwjcXEuD8q2YC1838yHGUx+rD3UPantauDtcZbkysJDYGdN9p8/Cx+SDFCpb7EZjBwcQS7jTDKKs46I/f5WmSMX4us/lAwEHSOPYOeRtf2QShR+PXmNwwb4Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2SPQ+3n18x7So4leCZ6YRnLDfjAm4p/Z9L0+cp9tJCs=;
+ b=TiRWUuuIX0kmkrU/uEnAoeZ+3TL4bdIzKH0+J6sLBGgraWWAEou6HfUwoT6gbyiRCSEc9FdarGwjTFam7abgQkg500+PObzA73bro5ShEmwtuIGImpuVqVj7L372ff7HRRpNCQq2oxME/pQsLuolvN79PzPv50RZkKAyR62Woi212Kc0MsZJH/TfghKCjzRkl9V3lKMiy8CBXPOQLf7I+NvLL7PS/NYnSDVk+xWSChuL2OgM2/BsVqU9nL4cy27g4I8LcZwN4FlbqIfP3Zuu2aD8WLSBAYps8zam7pvbxtcyQ2ONVhzKA8lbixc2Xa++348cWgH8UJ7TEsnp3h55Xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2SPQ+3n18x7So4leCZ6YRnLDfjAm4p/Z9L0+cp9tJCs=;
+ b=SjSD0rs3nOH7WpxwxCdKIWIvCcC91tbhL2QtOWnvAV5RDkXeNA2nloo7/f7m5hod55yYLdltuwq79dnSTWjXhC+z7SCSKLwb+Zei5m41Ml1mdWcegRIiFU1tTHzOTp1FnSUMrdmDEt1wxR4+RT+NtQd+/3GwS9HvP+AD85lNeGrboetIyx0tQHytEd0BB2w3Moxvz1W7Ut1Pypj5pl0UAXYbeEyTO+/dPVBg3u3cnoFkfXGyDpbn21xXLdk5pkt6AH29AE/rvUnknWWenWFRkoisKgdN24woTIyaYIu5+JKE0dJNHaqa1Gwg0mj6CUTdEaXydz0SOZ9Y6ONTRUZpXQ==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by SI2PR06MB5387.apcprd06.prod.outlook.com (2603:1096:4:1ee::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Wed, 21 Aug
+ 2024 06:43:02 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%5]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 06:43:01 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
+	"benh@kernel.crashing.org" <benh@kernel.crashing.org>, "joel@jms.id.au"
+	<joel@jms.id.au>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Thread-Topic: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Thread-Index: AQHa8ho4oLFWUX2yC0qHT9Kfp3UIaLIuoMcAgAJo7hA=
+Date: Wed, 21 Aug 2024 06:43:01 +0000
+Message-ID:
+ <OS8PR06MB7541EE5BA5B400445FE0295EF28E2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20240819092850.1590758-1-ryan_chen@aspeedtech.com>
+ <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
+ <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
+In-Reply-To: <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|SI2PR06MB5387:EE_
+x-ms-office365-filtering-correlation-id: f1c0e400-1cbe-4f25-814f-08dcc1ac8089
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ZMgWviHoI/jRflilPBCj6cxeNv8e3gwZZembe9Vy3OzeEPkiiRwUT8Pbo+y6?=
+ =?us-ascii?Q?Z920XZT60p6SazaEHNZL4V2bTjeSfl6o49WaYDUDB/jQiH6CtuzaV4VvNSVg?=
+ =?us-ascii?Q?7JaTT2psjCDTOIeFCR9J7dyKAWLkmG9yhJYCuVd8tIobxcievcl6PaLI7cx6?=
+ =?us-ascii?Q?Q3KypDdsf8ZPmvkldQHqXfyiKa194cF5L9eB9p129pzR8BPgk2pK6mVoEOzu?=
+ =?us-ascii?Q?cOSHg77NjGuiRZEJNlncUcosCem+sr5Ze7Rw2F1zgZK5Ia6geVOnmBn1IbDe?=
+ =?us-ascii?Q?fpnFwZlI6fuEPPK8oxXdNZh1SkS/0WSOzVVjAg1wNzc+Yw3JZq9eaSH2zyAX?=
+ =?us-ascii?Q?s0ZmeoKOxoax2hEJ/DER1KhmCSXJBn3r6oWhBKuzjDAtgnGH1qwSNuPlo+gU?=
+ =?us-ascii?Q?GQCeZ/QZgc8LzDF4AHeqBKBCuwn1I4AGcdayp6F1aRHq2TMhACna4fXVRUbk?=
+ =?us-ascii?Q?aY5pZVskW04f7Gkces+WVxuhNGwDU46GA5crcBREn++dO39tzaXbBaRyawFX?=
+ =?us-ascii?Q?/UBi0bxN/YEkDoNMLR8+R70TGyvYj4ypcBwt6eBsST4yaNxenwiwJ9EvZ5nP?=
+ =?us-ascii?Q?msSBc/pOfVTGrBPUScNlR/0Ymk71EfEiL1BMQJunF/L6vmI/eynqoyvvYMwo?=
+ =?us-ascii?Q?Xd94TTWfunAGqVULyUNeHnViqrpyykEcglni+blJe4L7CB/0iLUCHv1sbqVf?=
+ =?us-ascii?Q?zU3RjCwbrpmMy/3ZkkeDrTTInHOuQYr2RpPWEdVtjeBkwbqJq9aJRT9v2HSK?=
+ =?us-ascii?Q?oJmG+egoe+3OEPqQBVtU/3u1R5Ru64ZoCljZM7rRsvG0TQvtDxFvZWOJJwPU?=
+ =?us-ascii?Q?DOKso+FZbQvfuMIzOdlbkgQFS5C4atDgZopFT9KqW9cg7d6uPBv4ERHJkUKJ?=
+ =?us-ascii?Q?spB5Rnb7u0kGVaIbUtxhjfI3b08GAopSIDHwWmAVBMqr1HUE0nR5xHidd8tJ?=
+ =?us-ascii?Q?KrpFbNFFdZ4sw4xOfwYEQHJAjeUE7VeAKhNyIpoPp3jN1ax2NhugHGoAM0yA?=
+ =?us-ascii?Q?FSU+FWB4aRQEzcKHiiWOPEWRV/Igo3NdUv7xHRZ56BRkG/PizUfMOvC8Ckry?=
+ =?us-ascii?Q?GkZz/dTq8TV9kPuzafLTkdieMSav+xdmqXwFNxI/3y/Co47knrB+8S7MurtU?=
+ =?us-ascii?Q?xo8EviJH7xxjDTK5XniZzgfu5TbsrKL1hLXo+FV3R/E89sD+Q9tRK3sl+JaH?=
+ =?us-ascii?Q?A3amMDHXjjL5AucoJZ7MFIgXfBTdC8RiYdqf52uepl3YETLifIHT41VoGKqp?=
+ =?us-ascii?Q?xADYbjjrQNatx8SaJWL0z8oGfALFMPG9lK3Ns0DZgQn52MZ7d64uHpKqTS1/?=
+ =?us-ascii?Q?VPEtHfae/oZyLAJzspxwxA4lnZkTOMb8A75KtVdjkZ8WXycu1hfH3H+oYmJ2?=
+ =?us-ascii?Q?N5whKxkivHalSRo9aqa7GzuFAeg+hNt3kUJ2tEJyhp6sFg9Kjw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?rMipE9pxcMTKN7E1KbjHi1eSMl14V7ZHy4RGZyk3Xdfz223ay/gOR3xB3IIF?=
+ =?us-ascii?Q?cmnYIOkQdU+5takVY+D75NMoHEjEjvrCQA6JJ+OJ3s+l/LQ+LOMpPRz8IpNQ?=
+ =?us-ascii?Q?7W9mlr4rEEEeXpLMqIZcFmQ1LYxW9C/3qIYWD3Tvvxhtxs0wvWbCqPYhefHO?=
+ =?us-ascii?Q?bYckr5owI//ayP3WToKOKGMsX7IsY9HaKAh0UjuUV+rtUl1VJPF+FGk2fzN2?=
+ =?us-ascii?Q?1pKsuUnYLHyL6EoLNzPCk9SDmvJvJpYoBxIvnafMlgzfgPuXqT5rBAUWdNd8?=
+ =?us-ascii?Q?FRT977Z9U8K74IiZH11xd1RtxlmiOEFxVtSqJ5R1LNZLXRQgOCAXD6JVEvPE?=
+ =?us-ascii?Q?Pe4xQe5tlpLwpXxdT4j3McXZ4Ubq4Q+oJoWE/5720DIN58RC5gyhFY+HWuQO?=
+ =?us-ascii?Q?0Hs2xBWVXAEjo/CTd1WW0AQECXnDvqwf57Rhj7ZE79lott8Y7+DEnpH5i1rl?=
+ =?us-ascii?Q?V9rXuOZXGQF9qxe14Gev1jBHO86vLBHERfoW4kQxeJ00MLleAIT4HDSpZQJk?=
+ =?us-ascii?Q?K3HLpFdyvctpF44LAihfGvmUjvdykWwEWE8I38EQzAni6nWFvhGXR2Uwkj5F?=
+ =?us-ascii?Q?FsBqmIfqDBR/BZUTNxpZUNJnmaRxUoPvzjWWqaZIv4hEyFTvQt9rXsuUaZ01?=
+ =?us-ascii?Q?rFyfQxlTkOEngX1mcu8b3WHxdaLOGGIdZekqx3BuKFi1R4g0FL7YJp/2Pdgb?=
+ =?us-ascii?Q?OfdzR5UPB4d+ZfhuVP6ENmJYFnSFY0LrULt85KAlVIA2zmmoSfewOkU5JFfO?=
+ =?us-ascii?Q?qt7WXV990susGDIeNw7+xO4zcmdJdVuPN5QDrSeJbxh+XjVu2QbMAjh6qelA?=
+ =?us-ascii?Q?4qEuBFqrZWWbBz9EqOVdObyn3px5ATGAouVJSG9c/AWuipOhUK/DKS/3S7Ot?=
+ =?us-ascii?Q?nVx/IIWmGT0I9atbBWYttnlIMyv4NJtZxoWnzGwyqJJ4nePkFb3yAoqbUM1u?=
+ =?us-ascii?Q?7niuNjJ/5oVMq7g4bNAKfTEyiAaVLvYyBZbSsHANFr7Q2OGNYFowSSJqgUoe?=
+ =?us-ascii?Q?LfOT3ALFGVYK6B46VrwFM2TVZ48adQiScFJFsX5sca/Gr5Z20nuB4vQoemll?=
+ =?us-ascii?Q?4hNo4F/o4jniwuWq2NIOegPLckN9g71sxwc+NkQ/ksMP9+VhIxzG0IXn+k9b?=
+ =?us-ascii?Q?TrLT3TPNZcFwjKcH2HhfW4aWkxk9tO3QYuUQiMItcS7Tqh1oVXxDeWJP/mdf?=
+ =?us-ascii?Q?y38YpCTovlGi5jI3PeDFMLgvBNj6QQnk6P/M/un9HwjJgxbIi3na7KWKV7qN?=
+ =?us-ascii?Q?aU8+DYYeyDg7N7HINFyDyj4Xk8rihgokBBVB8krXsaiIJxQ+qKNwy+xhHVZU?=
+ =?us-ascii?Q?idzmXseeB3brD/n5En8IVved0kO/hfcYWisloKEBaWEkMWLoANHrllzdUPFF?=
+ =?us-ascii?Q?+SgvYSi4XT4xJksCmeXoiUQ01KFH6wifmAGI0Xp1sJcU6Jo+rmfTknJRxize?=
+ =?us-ascii?Q?faD1Sj3Bue1W3zTuCxLjtGZvuKocoLuH9CtXcxS6p/poKM4v5mz5K7fhji4D?=
+ =?us-ascii?Q?6mxrUIHSPObyZ0Le4St78TMbJA7an8VdAveHj1gUYVoSfcP4X2XaO/kNDRsG?=
+ =?us-ascii?Q?aZGAOyXKe9WQoR4uu87YffYdKXzRaddlzGTDT3P5?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMgjq7BhpCoPMEkSkCAqWcvTO93KQK4xzn2Av6M0ATkk8YZapg@mail.gmail.com>
- <20240821054921.43468-1-21cnbao@gmail.com>
-In-Reply-To: <20240821054921.43468-1-21cnbao@gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 21 Aug 2024 14:42:28 +0800
-Message-ID: <CAMgjq7Czvr+PXF7Q5eSChAdmiLH-uvd7HTred63T8JPCCYzTSQ@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] WARNING in zswap_swapoff
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, chengming.zhou@linux.dev, chrisl@kernel.org, 
-	hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	nphamcs@gmail.com, ryan.roberts@arm.com, 
-	syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com, ying.huang@intel.com, yosryahmed@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1c0e400-1cbe-4f25-814f-08dcc1ac8089
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2024 06:43:01.4374
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MaSxIdcgdYqGgkdI5WtMycgZsg1a8tKr+cjAWNBjQIB0CFeaHmovJUPLljialCTSRLNzEKUBGeZDZ/AyQYXElW9TVhBDZ88C/3csp1IH8ew=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5387
 
-On Wed, Aug 21, 2024 at 1:49=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Tue, Aug 20, 2024 at 9:02=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> >
-> > On Tue, Aug 20, 2024 at 4:47=E2=80=AFPM Kairui Song <ryncsn@gmail.com> =
-wrote:
-> > >
-> > > On Tue, Aug 20, 2024 at 4:13=E2=80=AFAM Yosry Ahmed <yosryahmed@googl=
-e.com> wrote:
-> > > > On Fri, Aug 16, 2024 at 12:52=E2=80=AFPM syzbot
-> > > > <syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com> wrote:
-> > > > >
-> > > > > Hello,
-> > > > >
-> > > > > syzbot found the following issue on:
-> > > > >
-> > > > > HEAD commit:    367b5c3d53e5 Add linux-next specific files for 20=
-240816
-> > >
-> > > I can't find this commit, seems this commit is not in linux-next any =
-more?
-> > >
-> > > > > git tree:       linux-next
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12489=
-105980000
-> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ba6=
-f3b22ee5467
-> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dce60292=
-50d7fd4d0476d
-> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils=
- for Debian) 2.40
-> > > > >
-> > > > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > > >
-> > > > > Downloadable assets:
-> > > > > disk image: https://storage.googleapis.com/syzbot-assets/0b1b4e3c=
-ad3c/disk-367b5c3d.raw.xz
-> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/5bb090f7813=
-c/vmlinux-367b5c3d.xz
-> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/6674cb=
-0709b1/bzImage-367b5c3d.xz
-> > > > >
-> > > > > IMPORTANT: if you fix the issue, please add the following tag to =
-the commit:
-> > > > > Reported-by: syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.co=
-m
-> > > > >
-> > > > > ------------[ cut here ]------------
-> > > > > WARNING: CPU: 0 PID: 11298 at mm/zswap.c:1700 zswap_swapoff+0x11b=
-/0x2b0 mm/zswap.c:1700
-> > > > > Modules linked in:
-> > > > > CPU: 0 UID: 0 PID: 11298 Comm: swapoff Not tainted 6.11.0-rc3-nex=
-t-20240816-syzkaller #0
-> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine=
-, BIOS Google 06/27/2024
-> > > > > RIP: 0010:zswap_swapoff+0x11b/0x2b0 mm/zswap.c:1700
-> > > > > Code: 74 05 e8 78 73 07 00 4b 83 7c 35 00 00 75 15 e8 1b bd 9e ff=
- 48 ff c5 49 83 c6 50 83 7c 24 0c 17 76 9b eb 24 e8 06 bd 9e ff 90 <0f> 0b =
-90 eb e5 48 8b 0c 24 80 e1 07 80 c1 03 38 c1 7c 90 48 8b 3c
-> > > > > RSP: 0018:ffffc9000302fa38 EFLAGS: 00010293
-> > > > > RAX: ffffffff81f4d66a RBX: dffffc0000000000 RCX: ffff88802c19bc00
-> > > > > RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888015986248
-> > > > > RBP: 0000000000000000 R08: ffffffff81f4d620 R09: 1ffffffff1d476ac
-> > > > > R10: dffffc0000000000 R11: fffffbfff1d476ad R12: dffffc0000000000
-> > > > > R13: ffff888015986200 R14: 0000000000000048 R15: 0000000000000002
-> > > > > FS:  00007f9e628a5380(0000) GS:ffff8880b9000000(0000) knlGS:00000=
-00000000000
-> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > CR2: 0000001b30f15ff8 CR3: 000000006c5f0000 CR4: 00000000003506f0
-> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > > Call Trace:
-> > > > >  <TASK>
-> > > > >  __do_sys_swapoff mm/swapfile.c:2837 [inline]
-> > > > >  __se_sys_swapoff+0x4653/0x4cf0 mm/swapfile.c:2706
-> > > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > > > RIP: 0033:0x7f9e629feb37
-> > > > > Code: 73 01 c3 48 8b 0d f1 52 0d 00 f7 d8 64 89 01 48 83 c8 ff c3=
- 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a8 00 00 00 0f 05 <48> 3d =
-01 f0 ff ff 73 01 c3 48 8b 0d c1 52 0d 00 f7 d8 64 89 01 48
-> > > > > RSP: 002b:00007fff17734f68 EFLAGS: 00000246 ORIG_RAX: 00000000000=
-000a8
-> > > > > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9e629feb37
-> > > > > RDX: 00007f9e62a9e7e8 RSI: 00007f9e62b9beed RDI: 0000563090942a20
-> > > > > RBP: 0000563090942a20 R08: 0000000000000000 R09: 77872e07ed164f94
-> > > > > R10: 000000000000001f R11: 0000000000000246 R12: 00007fff17735188
-> > > > > R13: 00005630909422a0 R14: 0000563073724169 R15: 00007f9e62bdda80
-> > > > >  </TASK>
-> > > >
-> > > > I am hoping syzbot would find a reproducer and bisect this for us.
-> > > > Meanwhile, from a high-level it looks to me like we are missing a
-> > > > zswap_invalidate() call in some paths.
-> > > >
-> > > > If I have to guess, I would say it's related to the latest mTHP swa=
-p
-> > > > changes, but I am not following closely. Perhaps one of the followi=
-ng
-> > > > things happened:
-> > > >
-> > > > (1) We are not calling zswap_invalidate() in some invalidation path=
-s.
-> > > > It used to not be called for the cluster freeing path, so maybe we =
-end
-> > > > up with some order-0 swap entries in a cluster? or maybe there is a=
-n
-> > > > entirely new invalidation path that does not go through
-> > > > free_swap_slot() for order-0 entries?
-> > > >
-> > > > (2) Some higher order swap entries (i.e. a cluster) end up in zswap
-> > > > somehow. zswap_store() has a warning to cover that though. Maybe
-> > > > somehow some swap entries are allocated as a cluster, but then page=
-s
-> > > > are swapped out one-by-one as order-0 (which can go to zswap), but
-> > > > then we still free the swap entries as a cluster?
-> > >
-> > > Hi Yosry, thanks for the report.
-> > >
-> > > There are many mTHP related optimizations recently, for this problem =
-I
-> > > can reproduce this locally. Can confirm the problem is gone for me
-> > > after reverting:
-> > >
-> > > "mm: attempt to batch free swap entries for zap_pte_range()"
-> > >
-> > > Hi Barry,
-> > >
-> > > If a set of continuous slots are having the same value, they are
-> > > considered a mTHP and freed, bypassing the slot cache, and causing
-> > > zswap leak.
-> > > This didn't happen in put_swap_folio because that function is
-> > > expecting an actual mTHP folio behind the slots but
-> > > free_swap_and_cache_nr is simply walking the slots.
-> > >
-> > > For the testing, I actually have to disable mTHP, because linux-next
-> > > will panic with mTHP due to lack of following fixes:
-> > > https://lore.kernel.org/linux-mm/a4b1b34f-0d8c-490d-ab00-eaedbf3fe780=
-@gmail.com/
-> > > https://lore.kernel.org/linux-mm/403b7f3c-6e5b-4030-ab1c-3198f36e3f73=
-@gmail.com/
-> > >
-> > > >
-> > > > I am not closely following the latest changes so I am not sure. CCi=
-ng
-> > > > folks who have done work in that area recently.
-> > > >
-> > > > I am starting to think maybe it would be more reliable to just call
-> > > > zswap_invalidate() for all freed swap entries anyway. Would that be
-> > > > too expensive? We used to do that before the zswap_invalidate() cal=
-l
-> > > > was moved by commit 0827a1fb143f ("mm/zswap: invalidate zswap entry
-> > > > when swap entry free"), and that was before we started using the
-> > > > xarray (so it was arguably worse than it would be now).
-> > > >
-> > >
-> > > That might be a good idea, I suggest moving zswap_invalidate to
-> > > swap_range_free and call it for every freed slot.
-> > >
-> > > Below patch can be squash into or put before "mm: attempt to batch
-> > > free swap entries for zap_pte_range()".
-> >
-> > Hmm, on second thought, the commit message in the attachment commit
-> > might be not suitable, current zswap_invalidate is also designed to
-> > only work for order 0 ZSWAP, so things are not clean even after this.
->
-> Kairui, what about the below? we don't touch the path of __try_to_reclaim=
-_swap() where
-> you have one folio backed?
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index c1638a009113..8ff58be40544 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1514,6 +1514,8 @@ static bool __swap_entries_free(struct swap_info_st=
-ruct *si,
->         unlock_cluster_or_swap_info(si, ci);
->
->         if (!has_cache) {
-> +               for (i =3D 0; i < nr; i++)
-> +                       zswap_invalidate(swp_entry(si->type, offset + i))=
+> Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new registe=
+r
+> mode driver
+>=20
+> On Mon, Aug 19, 2024 at 05:28:49PM +0800, Ryan Chen wrote:
+> > Add i2c new register mode driver to support AST2600 i2c new register
+> > mode. AST2600 i2c controller have legacy and new register mode. The
+> > new register mode have global register support 4 base clock for scl
+> > clock selection, and new clock divider mode. The new register mode
+> > have separate register set to control i2c master and slave. This patch
+> > is for i2c master mode driver.
+>=20
+> ...
+>=20
+> > +struct ast2600_i2c_bus {
+>=20
+> Have you run `pahole` to be sure the layout is optimal?
+
+It will replace by following.
+struct ast2600_i2c_bus {
+	struct i2c_adapter	adap;
+	struct device		*dev;
+	void __iomem		*reg_base;
+	struct regmap		*global_regs;
+	struct reset_control	*rst;
+	struct clk		*clk;
+	struct i2c_timings	timing_info;
+	struct completion	cmd_complete;
+	struct i2c_client	*ara;
+	struct i2c_msg		*msgs;
+	u8			*master_safe_buf;
+	dma_addr_t		master_dma_addr;
+	u32			apb_clk;
+	u32			timeout;
+	int			irq;
+	int			cmd_err;
+	int			msgs_index;
+	int			msgs_count;
+	int			master_xfer_cnt;
+	size_t			buf_index;
+	size_t			buf_size;
+	enum xfer_mode		mode;
+	bool			alert_enable;
+	bool			multi_master;
+	/* Buffer mode */
+	void __iomem		*buf_base;
+	struct i2c_smbus_alert_setup	alert_data;
+};
+
+>=20
+> > +	struct i2c_adapter		adap;
+> > +	struct device			*dev;
+> > +	void __iomem			*reg_base;
+> > +	struct regmap			*global_regs;
+> > +	struct reset_control		*rst;
+> > +	int				irq;
+> > +	enum xfer_mode			mode;
+> > +	struct clk			*clk;
+> > +	u32				apb_clk;
+> > +	struct i2c_timings		timing_info;
+> > +	u32				timeout;
+> > +	/* smbus alert */
+> > +	bool			alert_enable;
+> > +	struct i2c_smbus_alert_setup	alert_data;
+> > +	struct i2c_client		*ara;
+> > +	/* Multi-master */
+> > +	bool				multi_master;
+> > +	/* master structure */
+> > +	int				cmd_err;
+> > +	struct completion		cmd_complete;
+> > +	struct i2c_msg			*msgs;
+> > +	size_t				buf_index;
+> > +	/* cur xfer msgs index*/
+> > +	int				msgs_index;
+> > +	int				msgs_count;
+> > +	u8				*master_safe_buf;
+> > +	dma_addr_t			master_dma_addr;
+> > +	/*total xfer count */
+> > +	int				master_xfer_cnt;
+> > +	/* Buffer mode */
+> > +	void __iomem			*buf_base;
+> > +	size_t				buf_size;
+> > +};
+>=20
+> ...
+>=20
+> > +static u32 ast2600_select_i2c_clock(struct ast2600_i2c_bus *i2c_bus)
+> > +{
+> > +	unsigned long base_clk[16];
+> > +	int baseclk_idx;
+> > +	u32 clk_div_reg;
+> > +	u32 scl_low;
+> > +	u32 scl_high;
+> > +	int divisor;
+> > +	u32 data;
+> > +
+> > +	regmap_read(i2c_bus->global_regs, AST2600_I2CG_CLK_DIV_CTRL,
+> > +&clk_div_reg);
+> > +
+> > +	for (int i =3D 0; i < 16; i++) {
+>=20
+> unsigned int
+> ARRAY_SIZE(base_clk) // Will need array_size.h
+
+Will update to for (int i =3D 0; i < ARRAY_SIZE(base_clk); i++)
+And add include array_size.h
+>=20
+>=20
+> > +		if (i =3D=3D 0)
+> > +			base_clk[i] =3D i2c_bus->apb_clk;
+> > +		else if ((i > 0) || (i < 5))
+> > +			base_clk[i] =3D (i2c_bus->apb_clk * 2) /
+> > +				(((clk_div_reg >> ((i - 1) * 8)) & GENMASK(7, 0)) + 2);
+> > +		else
+> > +			base_clk[i] =3D base_clk[4] / (1 << (i - 5));
+>=20
+> This is the same as
+>=20
+> 		if (i =3D=3D 0)
+> 			base_clk[i] =3D i2c_bus->apb_clk;
+> 		else if (i < 5)
+> 			base_clk[i] =3D (i2c_bus->apb_clk * 2) /
+> 				      (((clk_div_reg / BIT((i - 1) * 8)) & GENMASK(7, 0)) +
+> 2);
+> 		else
+> 			base_clk[i] =3D base_clk[4] / BIT(i - 5);
+>=20
+> Alternatively
+>=20
+> 		if (i =3D=3D 0)
+> 			base_clk[i] =3D i2c_bus->apb_clk;
+> 		else if (i < 5)
+> 			base_clk[i] =3D (i2c_bus->apb_clk * 2) /
+> 				      (((clk_div_reg >> ((i - 1) * 8)) & GENMASK(7, 0)) + 2);
+> 		else
+> 			base_clk[i] =3D base_clk[4] >> (i - 5);
+>=20
+
+Will take the for better understand.
+	if (i =3D=3D 0)
+			base_clk[i] =3D i2c_bus->apb_clk;
+		else if (i < 5)
+			base_clk[i] =3D (i2c_bus->apb_clk * 2) /
+				      (((clk_div_reg >> ((i - 1) * 8)) & GENMASK(7, 0)) + 2);
+		else
+			base_clk[i] =3D base_clk[4] >> (i - 5);
+
+> > +
+> > +		if ((base_clk[i] / i2c_bus->timing_info.bus_freq_hz) <=3D 32) {
+> > +			baseclk_idx =3D i;
+> > +			divisor =3D DIV_ROUND_UP(base_clk[i],
+> i2c_bus->timing_info.bus_freq_hz);
+> > +			break;
+> > +		}
+> > +	}
+>=20
+> > +	baseclk_idx =3D min(baseclk_idx, 15);
+>=20
+> If the last conditional inside the loop is never true, you are going to u=
+se\ a
+> garbage here.
+
+I will give initial int baseclk_idx =3D 0; in function begin.
+>=20
+> > +	divisor =3D min(divisor, 32);
+>=20
+> Ditto.
+
+I will give u32 divisor =3D 32; in function begin.
+>=20
+> > +	scl_low =3D min(divisor * 9 / 16 - 1, 15);
+>=20
+> Missing minmax.h in the inclusion block.
+Will add.
+>=20
+> > +	scl_high =3D (divisor - scl_low - 2) & GENMASK(3, 0);
+> > +	data =3D (scl_high - 1) << 20 | scl_high << 16 | scl_low << 12 | base=
+clk_idx;
+> > +	if (i2c_bus->timeout) {
+> > +		data |=3D AST2600_I2CC_TOUTBASECLK(AST_I2C_TIMEOUT_CLK);
+> > +		data |=3D AST2600_I2CC_TTIMEOUT(i2c_bus->timeout);
+> > +	}
+> > +
+> > +	return data;
+> > +}
+>=20
+> ...
+>=20
+> > +static u8 ast2600_i2c_recover_bus(struct ast2600_i2c_bus *i2c_bus) {
+> > +	u32 state =3D readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+> > +	int ret =3D 0;
+> > +	u32 ctrl;
+> > +	int r;
+> > +
+> > +	dev_dbg(i2c_bus->dev, "%d-bus recovery bus [%x]\n",
+> > +i2c_bus->adap.nr, state);
+> > +
+> > +	ctrl =3D readl(i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+> > +
+> > +	/* Disable master/slave mode */
+> > +	writel(ctrl & ~(AST2600_I2CC_MASTER_EN | AST2600_I2CC_SLAVE_EN),
+> > +	       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+> > +
+> > +	/* Enable master mode only */
+> > +	writel(readl(i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL) |
+> AST2600_I2CC_MASTER_EN,
+> > +	       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+> > +
+> > +	reinit_completion(&i2c_bus->cmd_complete);
+> > +	i2c_bus->cmd_err =3D 0;
+> > +
+> > +	/* Check 0x14's SDA and SCL status */
+> > +	state =3D readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+> > +	if (!(state & AST2600_I2CC_SDA_LINE_STS) && (state &
+> AST2600_I2CC_SCL_LINE_STS)) {
+> > +		writel(AST2600_I2CM_RECOVER_CMD_EN, i2c_bus->reg_base +
+> AST2600_I2CM_CMD_STS);
+> > +		r =3D wait_for_completion_timeout(&i2c_bus->cmd_complete,
+> i2c_bus->adap.timeout);
+> > +		if (r =3D=3D 0) {
+> > +			dev_dbg(i2c_bus->dev, "recovery timed out\n");
+> > +			ret =3D -ETIMEDOUT;
+> > +		} else {
+> > +			if (i2c_bus->cmd_err) {
+> > +				dev_dbg(i2c_bus->dev, "recovery error\n");
+> > +				ret =3D -EPROTO;
+> > +			}
+> > +		}
+> > +	}
+>=20
+> ret is set but maybe overridden.
+>=20
+
+If will modify by following.
+		if (r =3D=3D 0) {
+			dev_dbg(i2c_bus->dev, "recovery timed out\n");
+			ret =3D -ETIMEDOUT;
+		} else if (i2c_bus->cmd_err) {
+			dev_dbg(i2c_bus->dev, "recovery error\n");
+			ret =3D -EPROTO;
+		}
+If no error keep ret =3D 0;
+
+> > +	/* Recovery done */
+>=20
+> Even if it fails above?
+
+This will keep check the bus status, if bus busy, will give ret =3D -EPROTO=
 ;
->                 spin_lock(&si->lock);
->                 swap_entry_range_free(si, entry, nr);
->                 spin_unlock(&si->lock);
->
 
-Hi Barry,
+>=20
+> > +	state =3D readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+> > +	if (state & AST2600_I2CC_BUS_BUSY_STS) {
+> > +		dev_dbg(i2c_bus->dev, "Can't recover bus [%x]\n", state);
+> > +		ret =3D -EPROTO;
+> > +	}
+> > +
+> > +	/* restore original master/slave setting */
+> > +	writel(ctrl, i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+> > +	return ret;
+> > +}
+>=20
+> ...
+>=20
+> > +static int ast2600_i2c_setup_dma_tx(u32 cmd, struct ast2600_i2c_bus
+> > +*i2c_bus) {
+> > +	struct i2c_msg *msg =3D &i2c_bus->msgs[i2c_bus->msgs_index];
+> > +	int xfer_len;
+> > +
+> > +	cmd |=3D AST2600_I2CM_PKT_EN;
+> > +	xfer_len =3D msg->len - i2c_bus->master_xfer_cnt;
+> > +	if (xfer_len > AST2600_I2C_DMA_SIZE) {
+> > +		xfer_len =3D AST2600_I2C_DMA_SIZE;
+>=20
+> > +	} else {
+> > +		if (i2c_bus->msgs_index + 1 =3D=3D i2c_bus->msgs_count)
+>=20
+> 	else if (...)
 
-Thanks for updating this thread, I'm thinking maybe something will
-better be done at the zswap side?
+Will update to else if(...).
+>=20
+> > +			cmd |=3D AST2600_I2CM_STOP_CMD;
+> > +	}
+> > +
+> > +	if (cmd & AST2600_I2CM_START_CMD) {
+> > +		cmd |=3D AST2600_I2CM_PKT_ADDR(msg->addr);
+> > +		i2c_bus->master_safe_buf =3D i2c_get_dma_safe_msg_buf(msg, 1);
+> > +		if (!i2c_bus->master_safe_buf)
+> > +			return -ENOMEM;
+> > +		i2c_bus->master_dma_addr =3D
+> > +			dma_map_single(i2c_bus->dev, i2c_bus->master_safe_buf,
+> > +				       msg->len, DMA_TO_DEVICE);
+>=20
+> > +		if (dma_mapping_error(i2c_bus->dev, i2c_bus->master_dma_addr))
+> {
+> > +			i2c_put_dma_safe_msg_buf(i2c_bus->master_safe_buf, msg,
+> false);
+> > +			i2c_bus->master_safe_buf =3D NULL;
+>=20
+> > +			return -ENOMEM;
+>=20
+> Why is the dma_mapping_error() returned error code shadowed?
 
-The concern of using zswap_invalidate is that it calls xa_erase which
-requires the xa spin lock. But if we are calling zswap_invalidate in
-swap_entry_range_free, and ensure the slot is HAS_CACHE pinned, doing
-a lockless read first with xa_load should be OK for checking if the
-slot needs a ZSWAP invalidation. The performance cost will be minimal
-and we only need to call zswap_invalidate in one place, something like
-this (haven't tested, comments are welcome). Also ZSWAP mthp will
-still store entried in order 0 so this should be OK for future.
+Sorry, please point me why you are think it is shadowed?
+As I know dma_mapping_error() will return 0 or -ENOMEM. So I check if it is=
+ !=3D0.
+Than return -ENOMEM.=20
+>=20
+> > +		}
+> > +	}
+> > +
+> > +	if (xfer_len) {
+> > +		cmd |=3D AST2600_I2CM_TX_DMA_EN | AST2600_I2CM_TX_CMD;
+> > +		writel(AST2600_I2CM_SET_TX_DMA_LEN(xfer_len - 1),
+> > +		       i2c_bus->reg_base + AST2600_I2CM_DMA_LEN);
+> > +		writel(i2c_bus->master_dma_addr + i2c_bus->master_xfer_cnt,
+> > +		       i2c_bus->reg_base + AST2600_I2CM_TX_DMA);
+> > +	}
+> > +
+> > +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int ast2600_i2c_setup_buff_tx(u32 cmd, struct ast2600_i2c_bus
+> > +*i2c_bus) {
+> > +	struct i2c_msg *msg =3D &i2c_bus->msgs[i2c_bus->msgs_index];
+> > +	u32 wbuf_dword;
+> > +	int xfer_len;
+> > +	u8 wbuf[4];
+>=20
+> > +	int i;
+>=20
+> Why signed?
 
-diff --git a/mm/swap_slots.c b/mm/swap_slots.c
-index 13ab3b771409..d7bb3caa9d4e 100644
---- a/mm/swap_slots.c
-+++ b/mm/swap_slots.c
-@@ -273,9 +273,6 @@ void free_swap_slot(swp_entry_t entry)
- {
-         struct swap_slots_cache *cache;
+Because it is for xfer len plus, also align with xfer_len and master_xfer_c=
+nt in struct i2c_bus struct.
 
--        /* Large folio swap slot is not covered. */
--        zswap_invalidate(entry);
--
-         cache =3D raw_cpu_ptr(&swp_slots);
-         if (likely(use_swap_slot_cache && cache->slots_ret)) {
-                 spin_lock_irq(&cache->free_lock);
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index f947f4dd31a9..fbc25d38a27e 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -242,9 +242,6 @@ static int __try_to_reclaim_swap(struct
-swap_info_struct *si,
-         folio_set_dirty(folio);
+>=20
+> > +	cmd |=3D AST2600_I2CM_PKT_EN;
+> > +	xfer_len =3D msg->len - i2c_bus->master_xfer_cnt;
+> > +	if (xfer_len > i2c_bus->buf_size) {
+> > +		xfer_len =3D i2c_bus->buf_size;
+>=20
+> > +	} else {
+> > +		if (i2c_bus->msgs_index + 1 =3D=3D i2c_bus->msgs_count)
+>=20
+> 	else if (...)
 
-         spin_lock(&si->lock);
--        /* Only sinple page folio can be backed by zswap */
--        if (nr_pages =3D=3D 1)
--                zswap_invalidate(entry);
-         swap_entry_range_free(si, entry, nr_pages);
-         spin_unlock(&si->lock);
-         ret =3D nr_pages;
-@@ -1545,6 +1542,10 @@ static void swap_entry_range_free(struct
-swap_info_struct *si, swp_entry_t entry
-         unsigned char *map_end =3D map + nr_pages;
-         struct swap_cluster_info *ci;
+Will update else if (...).
+>=20
+> > +			cmd |=3D AST2600_I2CM_STOP_CMD;
+> > +	}
+> > +
+> > +	if (cmd & AST2600_I2CM_START_CMD)
+> > +		cmd |=3D AST2600_I2CM_PKT_ADDR(msg->addr);
+> > +
+> > +	if (xfer_len) {
+> > +		cmd |=3D AST2600_I2CM_TX_BUFF_EN | AST2600_I2CM_TX_CMD;
+>=20
+> > +		/*
+> > +		 * The controller's buffer register supports dword writes only.
+> > +		 * Therefore, write dwords to the buffer register in a 4-byte aligne=
+d,
+> > +		 * and write the remaining unaligned data at the end.
+> > +		 */
+> > +		for (i =3D 0; i < xfer_len; i++) {
+> > +			wbuf[i % 4] =3D msg->buf[i2c_bus->master_xfer_cnt + i];
+> > +			if ((i % 4) =3D=3D 3 || i =3D=3D xfer_len - 1) {
+> > +				wbuf_dword =3D get_unaligned_le32(wbuf);
+> > +				writel(wbuf_dword, i2c_bus->buf_base + i - (i % 4));
+> > +			}
+> > +		}
+>=20
+> This is overcomplicated and can be simplified.
+> Why you can't perform
+>=20
+> 	get_unaligned_leXX(msg->buf[i2c_bus->master_xfer_cnt + i]);
+>=20
+> ?
+>=20
+> 		for (i =3D 0; i < xfer_len; i +=3D 4) {
+> 			switch (min(xfer_len - i, 4) % 4) {
+> 			case 1:
+> 				wbuf_dword =3D ...;
+> 				writel(wbuf_dword, i2c_bus->buf_base + i);
+> 				break;
+> 			case 2:
+> 				wbuf_dword =3D get_unaligned_le16(...);
+> 				writel(wbuf_dword, i2c_bus->buf_base + i);
+> 				break;
+> 			case 3:
+> 				wbuf_dword =3D get_unaligned_le24(...);
+> 				writel(wbuf_dword, i2c_bus->buf_base + i);
+> 				break;
+> 			default:
+> 				wbuf_dword =3D get_unaligned_le32(...);
+> 				writel(wbuf_dword, i2c_bus->buf_base + i);
+> 				break;
+> 			}
+> 		}
+>=20
+>=20
+> Now, with this it's can be a helper, with which
+>=20
+> 		for (i =3D 0; i < xfer_len; i +=3D 4) {
+> 			switch (min(xfer_len - i, 4) % 4) {
+> 			case 1:
+> 				ast2600_write_data(i2c_bus, i, ...);
+> 				break;
+> 			case 2:
+> 				ast2600_write_data(i2c_bus, i, get_unaligned_le16(...));
+> 				break;
+> 			case 3:
+> 				ast2600_write_data(i2c_bus, i, get_unaligned_le24(...));
+> 				break;
+> 			default:
+> 				ast2600_write_data(i2c_bus, i, get_unaligned_le32(...));
+> 				break;
+> 			}
+> 		}
+>=20
+OK, I will modify by this.
+		for (i =3D 0; i < xfer_len; i +=3D 4) {
+			switch (min(xfer_len - i, 4) % 4) {
+			case 1:
+				ast2600_write_data(i2c_bus, i, ...);
+				break;
+			case 2:
+				ast2600_write_data(i2c_bus, i, get_unaligned_le16(...));
+				break;
+			case 3:
+				ast2600_write_data(i2c_bus, i, get_unaligned_le24(...));
+				break;
+			default:
+				ast2600_write_data(i2c_bus, i, get_unaligned_le32(...));
+				break;
+			}
+		}
 
-+        /* Slots are pinned with SWAP_HAS_CACHE, safe to invalidate */
-+        for (int i =3D 0; i < nr_pages; ++i)
-+                zswap_invalidate(swp_entry(si->type, offset + i));
-+
-         ci =3D lock_cluster(si, offset);
-         do {
-                 VM_BUG_ON(*map !=3D SWAP_HAS_CACHE);
-diff --git a/mm/zswap.c b/mm/zswap.c
-index df66ab102d27..100ad04397fe 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1656,15 +1656,18 @@ bool zswap_load(struct folio *folio)
-         return true;
- }
+> > +		writel(AST2600_I2CC_SET_TX_BUF_LEN(xfer_len),
+> > +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> > +	}
+> > +
+> > +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+> > +
+> > +	return 0;
+> > +}
+>=20
+> ...
+>=20
+> > +static int ast2600_i2c_setup_dma_rx(struct ast2600_i2c_bus *i2c_bus)
+> > +{
+> > +	struct i2c_msg *msg =3D &i2c_bus->msgs[i2c_bus->msgs_index];
+> > +	int xfer_len;
+> > +	u32 cmd;
+> > +
+> > +	cmd =3D AST2600_I2CM_PKT_EN | AST2600_I2CM_PKT_ADDR(msg->addr)
+> |
+> > +	      AST2600_I2CM_START_CMD | AST2600_I2CM_RX_DMA_EN;
+> > +
+> > +	if (msg->flags & I2C_M_RECV_LEN) {
+> > +		xfer_len =3D 1;
+>=20
+> > +	} else {
+> > +		if (msg->len > AST2600_I2C_DMA_SIZE) {
+>=20
+> 	} else if (...) {
+>=20
+Will update to else if (...) {
+> > +			xfer_len =3D AST2600_I2C_DMA_SIZE;
+> > +		} else {
+> > +			xfer_len =3D msg->len;
+> > +			if (i2c_bus->msgs_index + 1 =3D=3D i2c_bus->msgs_count)
+> > +				cmd |=3D MASTER_TRIGGER_LAST_STOP;
+> > +		}
+> > +	}
+> > +	writel(AST2600_I2CM_SET_RX_DMA_LEN(xfer_len - 1),
+> i2c_bus->reg_base + AST2600_I2CM_DMA_LEN);
+> > +	i2c_bus->master_safe_buf =3D i2c_get_dma_safe_msg_buf(msg, 1);
+> > +	if (!i2c_bus->master_safe_buf)
+> > +		return -ENOMEM;
+> > +	i2c_bus->master_dma_addr =3D
+> > +		dma_map_single(i2c_bus->dev, i2c_bus->master_safe_buf, msg->len,
+> DMA_FROM_DEVICE);
+> > +	if (dma_mapping_error(i2c_bus->dev, i2c_bus->master_dma_addr)) {
+> > +		i2c_put_dma_safe_msg_buf(i2c_bus->master_safe_buf, msg, false);
+> > +		i2c_bus->master_safe_buf =3D NULL;
+> > +		return -ENOMEM;
+> > +	}
+> > +	writel(i2c_bus->master_dma_addr, i2c_bus->reg_base +
+> > +AST2600_I2CM_RX_DMA);
+> > +
+> > +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int ast2600_i2c_setup_buff_rx(struct ast2600_i2c_bus *i2c_bus)
+> > +{
+> > +	struct i2c_msg *msg =3D &i2c_bus->msgs[i2c_bus->msgs_index];
+> > +	int xfer_len;
+> > +	u32 cmd;
+> > +
+> > +	cmd =3D AST2600_I2CM_PKT_EN | AST2600_I2CM_PKT_ADDR(msg->addr)
+> |
+> > +	      AST2600_I2CM_START_CMD | AST2600_I2CM_RX_BUFF_EN;
+> > +
+> > +	if (msg->flags & I2C_M_RECV_LEN) {
+> > +		dev_dbg(i2c_bus->dev, "smbus read\n");
+> > +		xfer_len =3D 1;
+>=20
+> > +	} else {
+> > +		if (msg->len > i2c_bus->buf_size) {
+>=20
+> 	} else if (...) {
+Will update to else if (...) {
 
-+/* Caller need to pin the slot to prevent parallel store */
- void zswap_invalidate(swp_entry_t swp)
- {
-         pgoff_t offset =3D swp_offset(swp);
-         struct xarray *tree =3D swap_zswap_tree(swp);
-         struct zswap_entry *entry;
+>=20
+> > +			xfer_len =3D i2c_bus->buf_size;
+> > +		} else {
+> > +			xfer_len =3D msg->len;
+> > +			if (i2c_bus->msgs_index + 1 =3D=3D i2c_bus->msgs_count)
+> > +				cmd |=3D MASTER_TRIGGER_LAST_STOP;
+> > +		}
+> > +	}
+> > +	writel(AST2600_I2CC_SET_RX_BUF_LEN(xfer_len), i2c_bus->reg_base +
+> > +AST2600_I2CC_BUFF_CTRL);
+> > +
+> > +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int ast2600_i2c_setup_byte_rx(struct ast2600_i2c_bus *i2c_bus)
+> > +{
+> > +	struct i2c_msg *msg =3D &i2c_bus->msgs[i2c_bus->msgs_index];
+> > +	u32 cmd;
+> > +
+> > +	cmd =3D AST2600_I2CM_PKT_EN | AST2600_I2CM_PKT_ADDR(msg->addr)
+> |
+> > +	      AST2600_I2CM_START_CMD | AST2600_I2CM_RX_CMD;
+> > +
+> > +	if (msg->flags & I2C_M_RECV_LEN) {
+> > +		dev_dbg(i2c_bus->dev, "smbus read\n");
+>=20
+> > +	} else {
+> > +		if (i2c_bus->msgs_index + 1 =3D=3D i2c_bus->msgs_count) {
+>=20
+> 	} else if (...) {
+>=20
+Will update to else if (...) {
 
--        entry =3D xa_erase(tree, offset);
--        if (entry)
--                zswap_entry_free(entry);
-+        if (xa_load(tree, offset)) {
-+                entry =3D xa_erase(tree, offset);
-+                if (entry)
-+                        zswap_entry_free(entry);
-+        }
- }
+> > +			if (msg->len =3D=3D 1)
+> > +				cmd |=3D MASTER_TRIGGER_LAST_STOP;
+> > +		}
+> > +	}
+> > +
+> > +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+> > +
+> > +	return 0;
+> > +}
+>=20
+> ...
+>=20
+> > +static int ast2600_i2c_do_start(struct ast2600_i2c_bus *i2c_bus) {
+> > +	struct i2c_msg *msg =3D &i2c_bus->msgs[i2c_bus->msgs_index];
+> > +
+> > +	/* send start */
+> > +	dev_dbg(i2c_bus->dev, "[%d] %sing %d byte%s %s 0x%02x\n",
+>=20
+> Drop 'ing', no need to have this in the debug message.
+Will Drop 'ing'
+>=20
+> > +		i2c_bus->msgs_index, str_read_write(msg->flags & I2C_M_RD),
+> > +		msg->len, msg->len > 1 ? "s" : "",
+>=20
+> str_plural()
 
- int zswap_swapon(int type, unsigned long nr_pages)
---=20
-2.45.2
+Will replace by following.=20
+
+dev_dbg(i2c_bus->dev, "[%d] %s %d byte%s %s 0x%02x\n",
+        i2c_bus->msgs_index, str_read_write(msg->flags & I2C_M_RD),
+        msg->len, str_plural(msg->len),
+
+>=20
+> > +		msg->flags & I2C_M_RD ? "from" : "to", msg->addr);
+>=20
+> > +	i2c_bus->master_xfer_cnt =3D 0;
+> > +	i2c_bus->buf_index =3D 0;
+> > +
+> > +	if (msg->flags & I2C_M_RD) {
+> > +		if (i2c_bus->mode =3D=3D DMA_MODE)
+> > +			return ast2600_i2c_setup_dma_rx(i2c_bus);
+> > +		else if (i2c_bus->mode =3D=3D BUFF_MODE)
+> > +			return ast2600_i2c_setup_buff_rx(i2c_bus);
+> > +		else
+> > +			return ast2600_i2c_setup_byte_rx(i2c_bus);
+> > +	} else {
+> > +		if (i2c_bus->mode =3D=3D DMA_MODE)
+> > +			return
+> ast2600_i2c_setup_dma_tx(AST2600_I2CM_START_CMD, i2c_bus);
+> > +		else if (i2c_bus->mode =3D=3D BUFF_MODE)
+> > +			return ast2600_i2c_setup_buff_tx(AST2600_I2CM_START_CMD,
+> i2c_bus);
+> > +		else
+> > +			return
+> ast2600_i2c_setup_byte_tx(AST2600_I2CM_START_CMD, i2c_bus);
+> > +	}
+> > +}
+>=20
+> ...
+>=20
+> > +master_out:
+> > +	if (i2c_bus->mode =3D=3D DMA_MODE) {
+> > +		kfree(i2c_bus->master_safe_buf);
+> > +	    i2c_bus->master_safe_buf =3D NULL;
+> > +	}
+>=20
+> Indentation issues.
+
+Will update
+>=20
+> > +	return ret;
+>=20
+> ...
+>=20
+>=20
+> > +MODULE_DEVICE_TABLE(of, ast2600_i2c_bus_of_table);
+>=20
+> Why do you need this table before _probe()? Isn't the only user is below?
+
+It is for next generation table list. Do you suggest remove it?
+
+>=20
+> > +static int ast2600_i2c_probe(struct platform_device *pdev)
+>=20
+> ...
+>=20
+> > +	i2c_bus->global_regs =3D
+> syscon_regmap_lookup_by_phandle(dev->of_node,
+> > +"aspeed,global-regs");
+>=20
+> dev_of_node(dev)
+
+Will update i2c_bus->global_regs =3D syscon_regmap_lookup_by_phandle(dev_of=
+_node(dev), "aspeed,global-regs");
+>=20
+
+> > +	if (IS_ERR(i2c_bus->global_regs))
+> > +		return PTR_ERR(i2c_bus->global_regs);
+>=20
+> ...
+>=20
+> > +	if (device_property_read_bool(&pdev->dev, "aspeed,enable-dma"))
+>=20
+> You have 'dev' Why not use it?
+Will update
+	if (device_property_read_bool(dev, "aspeed,enable-dma"))
+>=20
+> > +		i2c_bus->mode =3D DMA_MODE;
+>=20
+> ...
+>=20
+> > +	if (i2c_bus->mode =3D=3D BUFF_MODE) {
+> > +		i2c_bus->buf_base =3D
+> devm_platform_get_and_ioremap_resource(pdev, 1, &res);
+> > +		if (!IS_ERR_OR_NULL(i2c_bus->buf_base))
+> > +			i2c_bus->buf_size =3D resource_size(res) / 2;
+> > +		else
+> > +			i2c_bus->mode =3D BYTE_MODE;
+>=20
+> What's wrong with positive conditional? And is it even possible to have N=
+ULL
+> here?
+>=20
+Yes, if dtsi fill not following yaml example have reg 1, that will failure =
+at buffer mode.
+And I can swith to byte mode.=20
+
+reg =3D <0x80 0x80>, <0xc00 0x20>;
+> > +	}
+>=20
+> ...
+>=20
+> > +	strscpy(i2c_bus->adap.name, pdev->name, sizeof(i2c_bus->adap.name));
+>=20
+> Use 2-argument strscpy().
+Do you mean strscpy(i2c_bus->adap.name, pdev->name); is acceptable?
+>=20
+> ...
+>=20
+> > +	i2c_bus->alert_enable =3D device_property_read_bool(dev, "smbus-alert=
+");
+> > +	if (i2c_bus->alert_enable) {
+> > +		i2c_bus->ara =3D i2c_new_smbus_alert_device(&i2c_bus->adap,
+> &i2c_bus->alert_data);
+> > +		if (!i2c_bus->ara)
+> > +			dev_warn(dev, "Failed to register ARA client\n");
+> > +
+> > +		writel(AST2600_I2CM_PKT_DONE | AST2600_I2CM_BUS_RECOVER
+> | AST2600_I2CM_SMBUS_ALT,
+> > +		       i2c_bus->reg_base + AST2600_I2CM_IER);
+> > +	} else {
+> > +		i2c_bus->alert_enable =3D false;
+> > +		/* Set interrupt generation of I2C master controller */
+> > +		writel(AST2600_I2CM_PKT_DONE | AST2600_I2CM_BUS_RECOVER,
+> > +		       i2c_bus->reg_base + AST2600_I2CM_IER);
+> > +	}
+>=20
+> I2C core calls i2c_setup_smbus_alert() when registering the adapter. Why =
+do
+> you need to have something special here?
+The ast2600 i2c support smbus alert, and according my reference.
+If enable alert, that will need i2c_new_smbus_alert_device for alert handle=
+r.
+When interrupt coming driver can use this hander to up use i2c_handle_smbus=
+_alert
+And update layer will handle alert.
+Does I mis-understand. If yes, I will remove this in next.
+>=20
+> --
+> With Best Regards,
+> Andy Shevchenko
+>=20
+
 
