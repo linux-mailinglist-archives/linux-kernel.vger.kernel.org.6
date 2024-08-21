@@ -1,225 +1,388 @@
-Return-Path: <linux-kernel+bounces-295082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 047FE95966B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:22:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E566795966E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38532B21A07
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEF01C20BBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A33E1C331E;
-	Wed, 21 Aug 2024 07:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KFZInWNd"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BC21C4EDD;
+	Wed, 21 Aug 2024 07:56:08 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC981A287D;
-	Wed, 21 Aug 2024 07:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724226963; cv=fail; b=ViPw+KRGfcclFqm4HdOD1L+pawNfgSwjQgdV/kCb+9jYmSxohLXX7FNEiC+N9oZ5QS8OP2/w9PSg3owd/0wQ70xqX5eNw2aSddiKccskQ4wViVZUvpNRW2PCqX1Dp7y7AMvBmm+D8TxzvDBXDkIZts/Kxlf8jCk6KERcCTeYSrU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724226963; c=relaxed/simple;
-	bh=0/y49xbgRYjx24gB/f79oG3jGsIlbzr/Yu+0XinsxyA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RVTySvv/AKTuYdUv2awnKW2U99PCRMVc1Pf/caUiY6ouRo0t1C19tPXlG1Cxqj0NrM9j7wNVruETrvVNZy2uAqHtwwX4vndgeDTxOOsCBrLrn06alrXV5LjTNAyqbclf6bHEZvZ9i6GRIuwEQ/QRSkyF+ehROiSm6NP6/OxOZc0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KFZInWNd; arc=fail smtp.client-ip=40.107.237.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I2v+Ptsb+n//DbQ2NYezllP15jGL4UojtKpZwNr3PARmxpSup/Iegh2nd5vRg/6n+lvuXYW9nItWgmkkt7zfo49bQbiVYILX7tvsbMn+tdEHAExSYFauJSjV96dfz3BLxg1/ZmJQ7ul8Awc2lQpxiIGsqzC86o+Cm00ooyCFiZpyQqHzDoHDSlSBZSNnLV7YHukBU43l02xvyyKEj6iH5Btubi5t5ayA+qd/RYhkYJgeqyZKMB4cybrj9LLji9XU5z6ei/G63HN4xNPoo/vPKDuB5ezJo79p/G5HOLE5NHKuefoPB6ADf/HzKua4xOvjfTXZmR45EZ0ed0LZUi/YGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0/y49xbgRYjx24gB/f79oG3jGsIlbzr/Yu+0XinsxyA=;
- b=zDK9OgBMfROg+pdXs5Ms5lr8oVqvQzr7/CxlrDlqFPFnI6LYTPK07Vi1m8bFVyhBgvx+R0sSrvdWYyFyH++mYOYn7VQ27kVyFI3luAmGJRXNPBG2LQE24ceRNqsI9uZkZH9bILz4EdPUehnZjihf/TFWFKwYEtDxZl827ErFMxQDd0hh9a/PfbEBXopK4LM3AItM+bc5QGUh60JEufMy4QLFkRKud8+Rtq7iNzINimgONCoO4RwmZ1yDYD0x/N0QFIxlSteyBUjoGGMr3C4klN2fYeuKR2ttrdkj+Umx6uSGrXFQfUpo0z550NomukWaA6PdGf/zeApdHkyQEn3rLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0/y49xbgRYjx24gB/f79oG3jGsIlbzr/Yu+0XinsxyA=;
- b=KFZInWNdlNXBxYQegPVr34cj0iBx8xzS/EFeMSPa2YNhotX+JQJhQ0IY/jwgTzdERDgm7fu69DpKWoNVTcJLE74ana7HfBe00BIY7N0LyeUyMaLNtVkNh5aH6QN5fZ40XomWiex/5uc1QrSv/ZRdu4ajYBojU6K3jA6MgExYv4xg2ORC2DFALPyaDrzgj2gHIKqn72mLZMSsIZHEuFahXHFDgoroChCv6yYDZNzIythuHs4TS2qLOKtmIb5R/RYc1JkmTeBWuVockl6ceSQwXT78PTzzBpg9kacG4k/paNgIjRrKWTR4daFGfnOWkShxGeTiXGFhdDhlBM9amlN1xg==
-Received: from LV8PR11MB8700.namprd11.prod.outlook.com (2603:10b6:408:201::22)
- by DM4PR11MB6525.namprd11.prod.outlook.com (2603:10b6:8:8c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Wed, 21 Aug
- 2024 07:55:56 +0000
-Received: from LV8PR11MB8700.namprd11.prod.outlook.com
- ([fe80::a624:b299:5062:5ab0]) by LV8PR11MB8700.namprd11.prod.outlook.com
- ([fe80::a624:b299:5062:5ab0%6]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
- 07:55:56 +0000
-From: <Raju.Lakkaraju@microchip.com>
-To: <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <davem@davemloft.net>, <linux@armlinux.org.uk>,
-	<kuba@kernel.org>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
-	<richardcochran@gmail.com>, <rdunlap@infradead.org>,
-	<Bryan.Whitehead@microchip.com>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>
-Subject: RE: [PATCH net-next] net: phylink: Add phylinksetfixed_link() to
- configure fixed link state in phylink
-Thread-Topic: [PATCH net-next] net: phylink: Add phylinksetfixed_link() to
- configure fixed link state in phylink
-Thread-Index: AQHa8fh4uC5D6kLwpk6HNkOhh85KxLIuxGuAgAKU2AA=
-Date: Wed, 21 Aug 2024 07:55:56 +0000
-Message-ID:
- <LV8PR11MB8700C786F5F1C274C73036CC9F8E2@LV8PR11MB8700.namprd11.prod.outlook.com>
-References: <20240819052335.346184-1-Raju.Lakkaraju@microchip.com>
- <20240819162353.GJ11472@kernel.org>
-In-Reply-To: <20240819162353.GJ11472@kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV8PR11MB8700:EE_|DM4PR11MB6525:EE_
-x-ms-office365-filtering-correlation-id: 1634ae7d-637b-49e9-184e-08dcc1b6b061
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR11MB8700.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?wQUasuaTAJf41COHfCXvxuIDrck1xs0sWh2n5VV+SUK5lAQ3V1MmmGXWLyrc?=
- =?us-ascii?Q?jfoGjLc0KDR6YwqnaUM12uaoWCvqM+nWsmmA9aaUaGypJx7H4mNt3kkGVbBm?=
- =?us-ascii?Q?uNdfDFkBHgNIWaz8oCzkUi7lGRl/m/43CH0TjNpXX0C7PXnjBzHnrHl42Gfh?=
- =?us-ascii?Q?BQaLb+FUiYs/TKTmrIaDhjVBeqC87XVkdvGIsvKjqLmTMrnMaebA05LDJ//k?=
- =?us-ascii?Q?QXArPwBVjZvx7eBQXtu25c00xb4yD5sBGiTsb2A/wVeee7ZUbPkX1/MIhT6y?=
- =?us-ascii?Q?OfdzjokiX74B1BdEsRsoXHS8DIYz6EY6URV1YAspi3hY/kUvsewCCuBwSq0K?=
- =?us-ascii?Q?DuYYrkxx0+YXGTDILJgGOWa2evw96rq47LY0Rufa++9mZfr/fQ8D/9wWx5z/?=
- =?us-ascii?Q?OfMlaUWG9kQXaxbZgBGOZaZRjgHajzkcZC5dCEYg6errLcfjnJQgye0zdFs0?=
- =?us-ascii?Q?MGg/fqCAbnD7/rj5OhOka22YH+6VKUcnI8mp4ZsKEQaHLUjyPcBk6SPi6Zb0?=
- =?us-ascii?Q?ELOH/3TjIMnwHql5TiXxfbQTaUcvGjPwJClixaXb9w7W9GCYii162FvCU+Y2?=
- =?us-ascii?Q?yYVfIAn/5Kz84GZ4zGzf/LHQ4l8IwIIYmorbnfJXSCTw7f9dQFoCEz+Z+8kh?=
- =?us-ascii?Q?ijczgVBhlp/AnscgFRgbr+scWDiTFGh5X9Ui+I+idVyxPjwORogoRWy+2jJx?=
- =?us-ascii?Q?44WsrTWzaNJQ0Z0kohQevNj2e3+Ugg+0X667ox9UYg+sKyRUzzReVFIW4qre?=
- =?us-ascii?Q?p10jWr7pJGHpv6TZoEuN5EWGLVQww2AMuG6eRg4I8Rhw/w+3ILoxqI5QekQZ?=
- =?us-ascii?Q?4MqHlT+rTZTLmyxIkugFJCY1yBtjLD6qlkUE68ssFTaq4FVsIptteBOUHZdY?=
- =?us-ascii?Q?qclIezAoE02sBDLo/UJ0xjgCEBHl5O1DpSz0GguBn2toRhzjOcBZgLXlG1nT?=
- =?us-ascii?Q?eO43gcBiFIFaMih1godP3OskURpkRq2DGRoy7TDgSOGhcBJrZwB7Lt6TW8+V?=
- =?us-ascii?Q?4Qf67Op6HjmEW5vAHPHj4fu897t1/TLBsHVmZQGmeunR57vDN4xyO3GaeacU?=
- =?us-ascii?Q?sJoEqG8G0DpOQVHz2c+sXTXpp38s1YIsqWF6+eFy8umZvEXlvuRgUc/tlp+X?=
- =?us-ascii?Q?LrR7BV7s20u21ea1Nu9GwymXlluNtNsdHE9PZNwApqdTRideeTdU+Y9Xn2rR?=
- =?us-ascii?Q?SfdYKERZm9HRkPaF+Du3vhdQt888GzC8o79rPqAfQyQ4C7WO1Bk1NA4o1L2y?=
- =?us-ascii?Q?a7Gce6CEZZppCiXz+7g97JEYdaXHpKCvXb7drshY65PErqGo4L48x7MYrlwh?=
- =?us-ascii?Q?ZANeFSrSrh6mEbjwq6lSD3lpZrSMETD4/fdWzUuko2BvMDvsXlcx7Gp68jrf?=
- =?us-ascii?Q?LGmTf7Y=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?qoCmC/jM3RRi5nB4BXAmya1fwvhTQLfWYg1+V4WBOWBjpV7ONx9Vy4hKwuRO?=
- =?us-ascii?Q?k4dsA2CBBIU+qNmYgqPDsJoBs3/6GYs3EpJfoTaUM1K2AEscj3V/D8Moh+9e?=
- =?us-ascii?Q?UUOD77RFx4hD2PZ8TW23Iigt1d50G/eV048Ujxku9GKdcz+qm0wYDcSOaqcE?=
- =?us-ascii?Q?xx6GN4BDbLrxi3xzcGlp0FiiLxc95QQILYEipYkG141KITfCJsnVLfUJeR+a?=
- =?us-ascii?Q?8ZhRImYOViALw6YynvUAIJ7+8fu7OIhstIOLBiwePcDJPMs/y0rYYKO3kw9T?=
- =?us-ascii?Q?s7E1wpPQW4sJUO6L5FbjoNXtVTXGVvXkIESnTT2JaIXNJbfMYDGdEsQFQyYK?=
- =?us-ascii?Q?7g97fPY64WdxgmrhuUg3BZuCBxtaROjMEKq1TJFQ/hKxSE7l0UfFvk1zbfmz?=
- =?us-ascii?Q?Ml3qElrn7fakzSlHpW4dXOvI7oZQtl8b+TLR6FD074BMhLKWhMQFSzT7g86z?=
- =?us-ascii?Q?85vNb6aNjuYlyremWMy80ReMVUoe7gisCY3CxmNY/DAodkrpLPKyDOaK0fZF?=
- =?us-ascii?Q?ZuMSA94pPqcXgLOwt5mfYfSEIw2P3WN+kDk5jNuAWfO2VLcBeoEC3GU98ip3?=
- =?us-ascii?Q?Gu84v0l8WUxvfMGdsI/AJVETg3BPcuGkjC5t0XwPE7KlTqPamNw5QXbqZzWz?=
- =?us-ascii?Q?7Ap58asAUQJ535rj0yabOdjHkKlXRF5eTzD0zgT+5A5HlbheZv2bM7uh6ar3?=
- =?us-ascii?Q?0swwMR+y32ldums9t45G/VNnzlQfBIWSzw0CHXnptHXtdkYBwdGCTCrUvK94?=
- =?us-ascii?Q?15ct0WKB2yY9dDPIyZZrgUT2pdcoGvckrmnwVyVsQWQktPENPbhFsG56c9G1?=
- =?us-ascii?Q?pV4HIzRTRS+CqXKHHCAEQ6ZmfjRJ5OKGq+qQBTY1P+bzjtr1dSfQRcloteK6?=
- =?us-ascii?Q?tIdiqLXn0v1i7vus2Y4KXuSONGC1I+1Up8lzhzN2EAHs0Z9+Rg0fcbmTt+Hr?=
- =?us-ascii?Q?fnrCSSwSiI7WFvvUWsMj1iTbrndkC/lVDACYGDAZ6k18GSbqxesXuhbn4pcw?=
- =?us-ascii?Q?EdcpCpsAA8z3vm4x7SjJr+pmaNTJ45EdzFSefr9krarCXXkYgkdsr1qjANDC?=
- =?us-ascii?Q?OEdKllYEl5EbOeoyMt1P2sK/lZc1AAYZNfX2q8esuxtk1lbJcxIjqu9+M3HG?=
- =?us-ascii?Q?pqkshGUqCRn8FsJd+sAovt2PGXX2jYAFhVDmfn1v8x9pv0o/uWCRTRcKjOvX?=
- =?us-ascii?Q?hSiO89R3r6xKSoFrNzh5eJoHddlw4l9axekGstmc//y5AuHNsfMZ+PTFmh8z?=
- =?us-ascii?Q?8eK67/uJY2WpNR92uQDy3WhcO63r+YOkC7EfZPRZxAEeRUNzrdPATjyZlTHT?=
- =?us-ascii?Q?rsVUk7rPHEnUWAnyKKNwCzxgSg/EOtu7gN6b9yQ7e2TGmexYr4MWDNaNTpHi?=
- =?us-ascii?Q?7TuxH9XvbPjruoFdPxxDqmwJvdK+VqM6ZAEhNHH0wNP5AIm0fCxuytvBYMvn?=
- =?us-ascii?Q?nkjQaUhoTOtHrQ8j5x+bavWjQDvc5iExQcGFlFn+GCntmmv57hk8m/ds7Xdi?=
- =?us-ascii?Q?s9sW7+zAO5NbsY9qHJhMEFQGOrClTemT17cWfTxkZAZsWbR9aarfOBk80eE4?=
- =?us-ascii?Q?kdWq7XNK5cN5/Je6UnVUjv+o583hdWfdXI2T25JE/k/c6LBaFbmSClkRDLUU?=
- =?us-ascii?Q?Hg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DC71ACDEC;
+	Wed, 21 Aug 2024 07:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724226967; cv=none; b=e7dVRmEr0g+5gXNmfx4t3Isv3a0/JbByt0QCuDnKBGCFzQX7FRbE/+Gf0bgrk8ggzgE9InpJBU5AvWQ0ZJaHRKBukmNiTrYL3llcuRdKHLM3BKFCu1bFU66UMmmyMQR6lEixAvcRsRj0HauMvVlNQsy8NFyhjgMydif+ci20Nx4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724226967; c=relaxed/simple;
+	bh=P/TjomqdaPbRuRz2SsCmKrPxYIziUGYb9V8462M0o2Y=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=dV1aVhe/7Jm1SR8+AQf0fP5jT1pwfLKRi3xoKOgJIxiJefdfRUo65i/ppQNovLqgQYtJrahrjjOHw8jEwNxFvimjww3bjEFKo0lOGq37HmYv+wix7CjPI12bWsMURECm4l8M236YvsqRXxfvu9SdOywCgtLon5rQx8t2OeiA1OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WpdnM1TFWz68JW;
+	Wed, 21 Aug 2024 15:51:19 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 28E621400D1;
+	Wed, 21 Aug 2024 15:56:01 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 21 Aug 2024 15:56:00 +0800
+Message-ID: <f95fc55b-2f17-7333-2eae-52caae46f8b2@huawei.com>
+Date: Wed, 21 Aug 2024 15:55:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR11MB8700.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1634ae7d-637b-49e9-184e-08dcc1b6b061
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2024 07:55:56.6771
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HkCXYmUfULs7y4H3rttj/CwLsgPQDQcOQzMndLZWcAlqva51Cw5DCQHDwCcPdjXPAM7Fkw7mJMAepmpsMMuL9rzQ68LPrcr/36ysY8qFuh0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6525
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+From: "Liao, Chang" <liaochang1@huawei.com>
+Subject: Re: [PATCH] arm64: insn: Simulate nop and push instruction for better
+ uprobe performance
+To: Mark Rutland <mark.rutland@arm.com>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <mhiramat@kernel.org>,
+	<oleg@redhat.com>, <peterz@infradead.org>, <puranjay@kernel.org>,
+	<ast@kernel.org>, <andrii@kernel.org>, <xukuohai@huawei.com>,
+	<revest@chromium.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>
+References: <20240814080356.2639544-1-liaochang1@huawei.com>
+ <Zr3RN4zxF5XPgjEB@J2N7QTR9R3>
+In-Reply-To: <Zr3RN4zxF5XPgjEB@J2N7QTR9R3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
+Hi, Mark
 
-Hi Simon,
+My bad for taking so long to rely, I generally agree with your suggestions to
+STP emulation.
 
-Thank you for review the patch.
+在 2024/8/15 17:58, Mark Rutland 写道:
+> On Wed, Aug 14, 2024 at 08:03:56AM +0000, Liao Chang wrote:
+>> As Andrii pointed out, the uprobe/uretprobe selftest bench run into a
+>> counterintuitive result that nop and push variants are much slower than
+>> ret variant [0]. The root cause lies in the arch_probe_analyse_insn(),
+>> which excludes 'nop' and 'stp' from the emulatable instructions list.
+>> This force the kernel returns to userspace and execute them out-of-line,
+>> then trapping back to kernel for running uprobe callback functions. This
+>> leads to a significant performance overhead compared to 'ret' variant,
+>> which is already emulated.
+> 
+> I appreciate this might be surprising, but does it actually matter
+> outside of a microbenchmark?
 
-> -----Original Message-----
-> From: Simon Horman <horms@kernel.org>
-> Sent: Monday, August 19, 2024 9:54 PM
-> To: Raju Lakkaraju - I30499 <Raju.Lakkaraju@microchip.com>
-> Cc: netdev@vger.kernel.org; davem@davemloft.net; linux@armlinux.org.uk;
-> kuba@kernel.org; andrew@lunn.ch; hkallweit1@gmail.com;
-> richardcochran@gmail.com; rdunlap@infradead.org; Bryan Whitehead -
-> C21958 <Bryan.Whitehead@microchip.com>; edumazet@google.com;
-> pabeni@redhat.com; linux-kernel@vger.kernel.org; UNGLinuxDriver
-> <UNGLinuxDriver@microchip.com>
-> Subject: Re: [PATCH net-next] net: phylink: Add phylinksetfixed_link() to
-> configure fixed link state in phylink
->=20
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e
-> content is safe
->=20
-> On Mon, Aug 19, 2024 at 10:53:35AM +0530, Raju Lakkaraju wrote:
-> > From: Russell King <linux@armlinux.org.uk>
-> >
-> > The function allows for the configuration of a fixed link state for a
-> > given phylink instance. This addition is particularly useful for
-> > network devices that operate with a fixed link configuration, where
-> > the link parameters do not change dynamically. By using
-> > `phylink_set_fixed_link()`, drivers can easily set up the fixed link st=
-ate during
-> initialization or configuration changes.
-> >
-> > Signed-off-by: Russell King <linux@armlinux.org.uk>
-> > Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-> > ---
-> > Note: This code was developed by Mr.Russell King.
->=20
-> Hi,
->=20
-> I am wondering if we need a user of this function in order for this patch=
- to be
-> accepted, as is often the practice for new features.
+I just do a simple comparsion the performance impact of single-stepped and
+emulated STP on my local machine. Three user cases were measured: Redis GET and
+SET throughput (Request Per Second, RPS), and the time taken to execute a grep
+command on the "arch_uprobe_copy_xol" string within the kernel source.
 
-This patch is Mr. Russell King's developed code which I'm submitting to Lin=
-ux community for review.
-just following Russell's request.=20
-i.e.
-https://lore.kernel.org/netdev/ZsCMtARGCOLsbF9h@shell.armlinux.org.uk/
+Redis GET (higher is better)
+----------------------------
+No uprobe: 49149.71 RPS
+Single-stepped STP: 46750.82 RPS
+Emulated STP: 48981.19 RPS
 
-if it is required, I can send both together in a single series. Please conf=
-irm=20
+Redis SET (larger is better)
+----------------------------
+No uprobe: 49761.14 RPS
+Single-stepped STP: 45255.01 RPS
+Emulated stp: 48619.21 RPS
 
-Hi Russell, Do you any concerns about Mr. Simon comments?
+Grep (lower is better)
+----------------------
+No uprobe: 2.165s
+Single-stepped STP: 15.314s
+Emualted STP: 2.216s
 
-Thanks,
-Raju
+The result reveals single-stepped STP instruction that used to push fp/lr into
+stack significantly impacts the Redis and grep performance, leading to a notable
+notable decrease RPS and increase time individually. So emulating STP on the
+function entry might be a more viable option for uprobe.
 
+> 
+>> Typicall uprobe is installed on 'nop' for USDT and on function entry
+>> which starts with the instrucion 'stp x29, x30, [sp, #imm]!' to push lr
+>> and fp into stack regardless kernel or userspace binary. 
+> 
+> Function entry doesn't always start with a STP; these days it's often a
+> BTI or PACIASP, and for non-leaf functions (or with shrink-wrapping in
+> the compiler), it could be any arbitrary instruction. This might happen
+> to be the common case today, but there are certain;y codebases where it
+> is not.
 
+Sure, if kernel, CPU and compiler support BTI and PAC, the entry instruction
+is definitly not STP. But for CPU and kernel lack of these supports, STP as
+the entry instruction is still the common case. And I profiled the entry
+instruction for all leaf and non-leaf function, the ratio of STP is 64.5%
+for redis, 76.1% for the BPF selftest bench. So I am thinking it is still
+useful to emulate the STP on the function entry. Perhaps, for CPU and kernel
+with BTI and PAC enabled, uprobe chooses the slower single-stepping to execute
+STP for pushing stack.
 
+> 
+> STP (or any instruction that accesses memory) is fairly painful to
+> emulate because you need to ensure that the correct atomicity and
+> ordering properties are provided (e.g. an aligned STP should be
+> single-copy-atomic, but copy_to_user() doesn't guarantee that except by
+> chance), and that the correct VMSA behaviour is provided (e.g. when
+> interacting with MTE, POE, etc, while the uaccess primitives don't try
+> to be 100% equivalent to instructions in userspace).
+Agreed, but I don't think it has to emulate strictly the single-copy-atomic
+feature of STP that is used to push fp/lr into stack. In most cases, only one
+CPU will push registers to the same position on stack. And I barely understand
+why other CPUs would depends on the ordering of pushing data into stack. So it
+means the atomicity and ordering is not so important for this scenario. Regarding
+MTE and POE, a similar stragety to BTI and PAC can be applied: for CPUs and kernel
+with MTE and POE enabled, uprobe chooses the slower single-stepping to execute
+STP for pushing stack.
+
+> 
+> For those reasons, in general I don't think we should be emulating any
+> instruction which accesses memory, and we should not try to emulate the
+> STP, but I think it's entirely reasonable to emulate NOP.
+> 
+>> In order to
+>> improve the performance of handling uprobe for common usecases. This
+>> patch supports the emulation of Arm64 equvialents instructions of 'nop'
+>> and 'push'. The benchmark results below indicates the performance gain
+>> of emulation is obvious.
+>>
+>> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
+>>
+>> xol (1 cpus)
+>> ------------
+>> uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
+>> uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
+>> uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
+>> uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
+>> uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
+>> uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+>>
+>> emulation (1 cpus)
+>> -------------------
+>> uprobe-nop:  1.862 ± 0.002M/s  (1.862M/prod)
+>> uprobe-push: 1.743 ± 0.006M/s  (1.743M/prod)
+>> uprobe-ret:  1.840 ± 0.001M/s  (1.840M/prod)
+>> uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/prod)
+>> uretprobe-push: 0.936 ± 0.004M/s  (0.936M/prod)
+>> uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/prod)
+>>
+>> As shown above, the performance gap between 'nop/push' and 'ret'
+>> variants has been significantly reduced. Due to the emulation of 'push'
+>> instruction needs to access userspace memory, it spent more cycles than
+>> the other.
+>>
+>> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
+>>
+>> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+>> ---
+>>  arch/arm64/include/asm/insn.h            | 21 ++++++++++++++++++
+>>  arch/arm64/kernel/probes/decode-insn.c   | 18 +++++++++++++--
+>>  arch/arm64/kernel/probes/decode-insn.h   |  3 ++-
+>>  arch/arm64/kernel/probes/simulate-insn.c | 28 ++++++++++++++++++++++++
+>>  arch/arm64/kernel/probes/simulate-insn.h |  2 ++
+>>  arch/arm64/kernel/probes/uprobes.c       |  2 +-
+>>  6 files changed, 70 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
+>> index 8c0a36f72d6f..a246e6e550ba 100644
+>> --- a/arch/arm64/include/asm/insn.h
+>> +++ b/arch/arm64/include/asm/insn.h
+>> @@ -549,6 +549,27 @@ static __always_inline bool aarch64_insn_uses_literal(u32 insn)
+>>  	       aarch64_insn_is_prfm_lit(insn);
+>>  }
+>>  
+>> +static __always_inline bool aarch64_insn_is_nop(u32 insn)
+>> +{
+>> +	/* nop */
+>> +	return aarch64_insn_is_hint(insn) &&
+>> +	       ((insn & 0xFE0) == AARCH64_INSN_HINT_NOP);
+>> +}
+> 
+> This looks fine, but the comment can go.
+
+Removed.
+
+> 
+>> +static __always_inline bool aarch64_insn_is_stp_fp_lr_sp_64b(u32 insn)
+>> +{
+>> +	/*
+>> +	 * The 1st instruction on function entry often follows the
+>> +	 * patten 'stp x29, x30, [sp, #imm]!' that pushing fp and lr
+>> +	 * into stack.
+>> +	 */
+>> +	return aarch64_insn_is_stp_pre(insn) &&
+>> +	       (((insn >> 30) & 0x03) ==  2) && /* opc == 10 */
+>> +	       (((insn >>  5) & 0x1F) == 31) && /* Rn  is sp */
+>> +	       (((insn >> 10) & 0x1F) == 30) && /* Rt2 is x29 */
+>> +	       (((insn >>  0) & 0x1F) == 29);	/* Rt  is x30 */
+>> +}
+> 
+> We have accessors for these fields. Please use them.
+
+Do you mean aarch64_insn_decode_register()?
+
+> 
+> Regardless, as above I do not think we should have a helper this
+> specific (with Rn, Rt, and Rt2 values hard-coded) inside <asm/insn.h>.
+
+If we left necessary of emulation of STP aside, where would the best file to
+place these hard-coded decoder helper?
+
+> 
+>>  enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
+>>  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
+>>  u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
+>> diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
+>> index 968d5fffe233..df7ca16fc763 100644
+>> --- a/arch/arm64/kernel/probes/decode-insn.c
+>> +++ b/arch/arm64/kernel/probes/decode-insn.c
+>> @@ -73,8 +73,22 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
+>>   *   INSN_GOOD_NO_SLOT If instruction is supported but doesn't use its slot.
+>>   */
+>>  enum probe_insn __kprobes
+>> -arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api)
+>> +arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api,
+>> +		      bool kernel)
+>>  {
+>> +	/*
+>> +	 * While 'nop' and 'stp x29, x30, [sp, #imm]! instructions can
+>> +	 * execute in the out-of-line slot, simulating them in breakpoint
+>> +	 * handling offers better performance.
+>> +	 */
+>> +	if (aarch64_insn_is_nop(insn)) {
+>> +		api->handler = simulate_nop;
+>> +		return INSN_GOOD_NO_SLOT;
+>> +	} else if (!kernel && aarch64_insn_is_stp_fp_lr_sp_64b(insn)) {
+>> +		api->handler = simulate_stp_fp_lr_sp_64b;
+>> +		return INSN_GOOD_NO_SLOT;
+>> +	}
+> 
+> With the STP emulation gone, you won't need the kernel parameter here.>
+>> +
+>>  	/*
+>>  	 * Instructions reading or modifying the PC won't work from the XOL
+>>  	 * slot.
+>> @@ -157,7 +171,7 @@ arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi)
+>>  		else
+>>  			scan_end = addr - MAX_ATOMIC_CONTEXT_SIZE;
+>>  	}
+>> -	decoded = arm_probe_decode_insn(insn, &asi->api);
+>> +	decoded = arm_probe_decode_insn(insn, &asi->api, true);
+>>  
+>>  	if (decoded != INSN_REJECTED && scan_end)
+>>  		if (is_probed_address_atomic(addr - 1, scan_end))
+>> diff --git a/arch/arm64/kernel/probes/decode-insn.h b/arch/arm64/kernel/probes/decode-insn.h
+>> index 8b758c5a2062..ec4607189933 100644
+>> --- a/arch/arm64/kernel/probes/decode-insn.h
+>> +++ b/arch/arm64/kernel/probes/decode-insn.h
+>> @@ -28,6 +28,7 @@ enum probe_insn __kprobes
+>>  arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi);
+>>  #endif
+>>  enum probe_insn __kprobes
+>> -arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *asi);
+>> +arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *asi,
+>> +		      bool kernel);
+>>  
+>>  #endif /* _ARM_KERNEL_KPROBES_ARM64_H */
+>> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
+>> index 22d0b3252476..0b1623fa7003 100644
+>> --- a/arch/arm64/kernel/probes/simulate-insn.c
+>> +++ b/arch/arm64/kernel/probes/simulate-insn.c
+>> @@ -200,3 +200,31 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
+>>  
+>>  	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
+>>  }
+>> +
+>> +void __kprobes
+>> +simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
+>> +{
+>> +	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
+>> +}
+> 
+> Hmm, this forgets to update the single-step state machine and PSTATE.BT,
+> and that's an extant bug in arch_uprobe_post_xol(). This can be:
+
+For emulated instruction, uprobe won't enable single-step mode of CPU,
+please check the handle_swbp() in kernel/events/uprobes.c:
+
+  if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+          goto out;
+
+  if (!pre_ssout(uprobe, regs, bp_vaddr))
+          return;
+
+For emualted instruction, It will skip entire single-stepping and associated
+exception, which typically begins with pre_ssout() and ends with
+arch_uprobe_post_xol(). Therefore, using instruction_pointer_set() to emulate
+NOP is generally not a bad idea.
+
+> 
+> | void __kprobes
+> | simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
+> | {
+> | 	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+> | }
+> 
+>> +
+>> +void __kprobes
+>> +simulate_stp_fp_lr_sp_64b(u32 opcode, long addr, struct pt_regs *regs)
+>> +{
+>> +	long imm7;
+>> +	u64 buf[2];
+>> +	long new_sp;
+>> +
+>> +	imm7 = sign_extend64((opcode >> 15) & 0x7f, 6);
+>> +	new_sp = regs->sp + (imm7 << 3);
+> 
+> We have accessors for these fields, please use them.
+
+Do you mean aarch64_insn_decode_immediate()?
+
+> 
+>> +
+>> +	buf[0] = regs->regs[29];
+>> +	buf[1] = regs->regs[30];
+>> +
+>> +	if (copy_to_user((void __user *)new_sp, buf, sizeof(buf))) {
+>> +		force_sig(SIGSEGV);
+>> +		return;
+>> +	}
+> 
+> As above, this won't interact with VMSA features (e.g. MTE, POE) in the
+> same way as an STP in userspace, and this will not have the same
+> atomicity properties as an STP>
+>> +
+>> +	regs->sp = new_sp;
+>> +	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
+> 
+> Likewise, this sould need ot use arm64_skip_faulting_instruction(),
+> though as above I think we should drop STP emulation entirely.
+
+I explain the reason why using instruction_pointer_set() under your comments
+for simulate_nop().
+
+Thanks.
+
+> 
+> Mark.
+> 
+
+-- 
+BR
+Liao, Chang
 
