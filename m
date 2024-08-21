@@ -1,132 +1,105 @@
-Return-Path: <linux-kernel+bounces-295241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDD39598F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:04:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C514959AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF732844C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8D71C2249E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7C01F4CD3;
-	Wed, 21 Aug 2024 09:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630671C4EFF;
+	Wed, 21 Aug 2024 11:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="itQq/E4U"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pIB7siZR"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA60E1F4CC7
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C974F168498;
+	Wed, 21 Aug 2024 11:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233119; cv=none; b=mYIyighbhFi7hqwXv0S4sKCsTijWiKJkt8bFIB527Z+S+LyNgAQq+qHJ4k0kuGX4yaloE21xZQD2zAj1PteS0Ca/chN9wWJ+YQoywavgVw1v5HahN7JOrBr2SiBhkUO1zp5xiYP341Wf1YeObTf2oZ/231QAFlVoUfUc/q8EP7A=
+	t=1724239835; cv=none; b=reNYk/CnYn2ygXWxw6BCE0dACZprHdBIOTKYjHDf+PSJtQQMMeK+1UCxxNJlKryQ++GPzRkGj0TJWE9I8CQ7Ij2IMQBL91ES57QvS4H/Auqa9Q2yvJVCiBzeFw6ioRylOLLzz3QlWJlWPJClW2vhtLb4ard5MXhst3f3RzMm0Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233119; c=relaxed/simple;
-	bh=UU07Kw8gcO5fnWpRA31V/Lceie/0yKG2W71V1LAET9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AkU2ahVqzzNeYZK3bmFtCF2O0bhv69kf2byM3ZxFqorjBlEzRpRSVeEPSNfa5WvQitr/Lfax9SYF73ao/XOgacfybasMG8xz91gytm+QasmaJTTiZ3m85HmZ4fkjuuEbCHYoSUE6fc7xNnAbWC6sRW9C8Wo7MYMrbAhNfihxM8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=itQq/E4U; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-454b1e08393so320421cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724233117; x=1724837917; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vejj5hA/irSR2xi3jAzlX65MbEhh5Bh0pgXtUUu80ZU=;
-        b=itQq/E4UYvaArBqkB//gHjd3uj88plqaosEu8QvTys2NtDGruuoa9wauhLP28rBY9z
-         6Aw4G02EJHU2h5wFUR4Y0eoiRx+AmjdkY7i0E3FRYMcKYWUeTgWU2rrERARCp6YNqngx
-         4EqXmIjCBMBrgOVxemu5TKlioe7pkIQ8N9Xau7Q+B+uMqlqH89MUXBn/ytelQSPu+DlZ
-         vOV/aFzhNvUsbQnM0ooPai6vmHIzeygcamcyT1297hFxujRPouy1UDLhdZyi0CcxR+RE
-         GLWXYnoIQgvUeFG2J/oRePEWX7ptfOgAAWFkodlxvGIBoCoRjpSidgEgGNDpW8sjkbz/
-         1apQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724233117; x=1724837917;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vejj5hA/irSR2xi3jAzlX65MbEhh5Bh0pgXtUUu80ZU=;
-        b=VpgABQOT2wowkb9ETHfuv915O4ub62/JvTP5/e+LZmcOkBDH3yR+C7jF1FaMIWSBsA
-         eDg8613LTCp7x8jZI5Yiyxgfv6p9zcdjTAk8Slfx5XkGze4MQ/0Xa56MiCvX00/DPPA7
-         wGMEnwN6yEIqgLqYnbNPoizSkCBGxPvtxw1Jquo6wuX5s+pxyg+hOAz3h2iX5JL8Zsmg
-         oOOh02sfQtwAfytsLmBeT/96y929ZOZNWNuHjFHbEgoc99ZNJ/PtWtEBRkhM2APtmHw5
-         RC1tArgdAgDh1vNdARCNYBui5sM2WNij574cBG3mSopw2bJvKTSgTQ1mChafm0sFn0vt
-         fjEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWs+WArNzkdGkg+ZB/+tvXxOty2SRasOge7UeuLYS45pAxlPK6Q18+ZBmFjnLQtRKZzBo8p1JFLaBdOnpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGVgdFr0wp0Mq4pNUYFajqBhQBI8KBNbzu0wPxA3VFCxbVYFVv
-	mIe4xhcvFoYwcF9Dg8tbi+qUjnMtzg6bDDANJNN52RxGWdcEpjui780iNpVtsN3ZzWzfwUqaECN
-	k9HtXoPtyF4duiVpSGAUAi49YU13Stt1Z0GOJ
-X-Google-Smtp-Source: AGHT+IEfmCQ3hZ8svgRwn+GckVGZCAfOe+elTox8PuWNhBqZ36SOmiZ6fR2RBEa7OdFZPfWIpgnGWRX6MIqrw1Ymg2U=
-X-Received: by 2002:a05:622a:2997:b0:447:dd54:2cd4 with SMTP id
- d75a77b69052e-454e65ddd5fmr5974661cf.22.1724233116288; Wed, 21 Aug 2024
- 02:38:36 -0700 (PDT)
+	s=arc-20240116; t=1724239835; c=relaxed/simple;
+	bh=NnNvsxyWcRj3O1A7fNzZ9XFqOT38NMcRo/mHN+7t0Xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PH8LYFIsb69z72YUvoe7hBwbfNAJivLW9Al/uQVw0aebk8ehPGKtemP2ima44oc0GpM249pMIeCO3rjiIN8bxb++XmSTwG7Dd+ac4tr/AWSPCfOIOTX7qyP4PhGxV69Ncpg2NDteTsb+zEgpd4xTBGCzqQSgnuy7lCE8S+InK6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pIB7siZR; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ghnVs26uaZ40aghnVsZF43; Wed, 21 Aug 2024 11:38:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724233115;
+	bh=Wdrcu38FW2G18isblm4VJFaWrtnjTfc4dm7+9ibbplw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=pIB7siZRuTxLQ3YemXleH3+QSe0QcFJa8iCeyoYuz+gHG+xu1DtMZgNV2CmSxEAMb
+	 KPbnJp9nzrm63csL8EGo7aCWke0PSFtJikOj8qTbOFFiJ41B0NpeKlMwL7YxyGBw9W
+	 3Li3wo0ugLC9FlU3OmqT1z/btCv5gb78ykKEC0EL7gb79hBU9lswaj8LIJ5dNpAfnk
+	 HGK4AWyKWYOah6TNgiP4VhRufVFNI79KIpbEIS44ZOsMf/DjKxvBzuyBrJA9oniq2L
+	 EDg66qzCzEvg3pA0+1ZqOLvuLH+PAbz5vOhoAQstUDW1Mo6A4Dr+ceanOge92jcpMu
+	 hxtPJXCaP+TMA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 21 Aug 2024 11:38:35 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <8316e533-241a-49ef-aac1-07ff01bf489f@wanadoo.fr>
+Date: Wed, 21 Aug 2024 11:38:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
- <20240712-asi-rfc-24-v1-26-144b319a40d8@google.com> <49849e0b-5ed6-44a4-94b3-1d5dd54b9a29@amd.com>
-In-Reply-To: <49849e0b-5ed6-44a4-94b3-1d5dd54b9a29@amd.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Wed, 21 Aug 2024 11:38:21 +0200
-Message-ID: <CA+i-1C1pdcdk0LYBJ=3mMqmP6x91Wpbo64ekV3uUirLpsJtjJQ@mail.gmail.com>
-Subject: Re: [PATCH 26/26] KVM: x86: asi: Add some mitigations on address
- space transitions
-To: Shivank Garg <shivankg@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Alexandre Chartre <alexandre.chartre@oracle.com>, Liran Alon <liran.alon@oracle.com>, 
-	Jan Setje-Eilers <jan.setjeeilers@oracle.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Michal Hocko <mhocko@kernel.org>, Khalid Aziz <khalid.aziz@oracle.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Paul Turner <pjt@google.com>, Reiji Watanabe <reijiw@google.com>, 
-	Junaid Shahid <junaids@google.com>, Ofir Weisse <oweisse@google.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, Patrick Bellasi <derkling@google.com>, 
-	KP Singh <kpsingh@google.com>, Alexandra Sandulescu <aesa@google.com>, 
-	Matteo Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] net: wireless: Use kmemdup_array instead of kmemdup
+ for multiple allocation
+To: Yu Jiaoliang <yujiaoliang@vivo.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240821072410.4065645-1-yujiaoliang@vivo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240821072410.4065645-1-yujiaoliang@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Shivank,
+Le 21/08/2024 à 09:24, Yu Jiaoliang a écrit :
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> ---
+>   net/wireless/util.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/wireless/util.c b/net/wireless/util.c
+> index 9a7c3adc8a3b..6cf19dda5d2a 100644
+> --- a/net/wireless/util.c
+> +++ b/net/wireless/util.c
+> @@ -2435,8 +2435,8 @@ int cfg80211_iter_combinations(struct wiphy *wiphy,
+>   		if (params->num_different_channels > c->num_different_channels)
+>   			continue;
+>   
+> -		limits = kmemdup(c->limits, sizeof(limits[0]) * c->n_limits,
+> -				 GFP_KERNEL);
+> +		limits = kmemdup_array(c->limits, c->n_limits, sizeof(limits[0]),
 
-On Tue, 20 Aug 2024 at 11:52, Shivank Garg <shivankg@amd.com> wrote:
->
->  .pushsection .noinstr.text, "ax"
->  SYM_CODE_START(fill_return_buffer)
-> +       UNWIND_HINT_FUNC
->         __FILL_RETURN_BUFFER(%_ASM_AX,RSB_CLEAR_LOOPS)
->         RET
->  SYM_CODE_END(fill_return_buffer)
-> +__EXPORT_THUNK(fill_return_buffer)
->  .popsection
+Maybe sizeof(*limits) would be a more usual pattern?
 
-Thanks a lot for the pointer! UNWIND_HINT_FUNC does indeed seem to be
-what I was missing with the objtool warning.
+CJ
 
-Regarding the build failure, could you share your config/toolchain
-info so I can try to reproduce? Would be handy for checking my next
-posting. Now I see your mail, it seems surprising that it compiles for
-me.
+> +				       GFP_KERNEL);
+>   		if (!limits)
+>   			return -ENOMEM;
+>   
 
-Also while I'm replying to this thread I'll note this:
-
-> +       if (!IS_ENABLED(CONFIG_RETPOLINE) ||
-> +           !cpu_feature_enabled(X86_FEATURE_RSB_VMEXIT))
-
-It's called CONFIG_MITIGATION_RETPOLINE now.
-
-And furthermore, kvm_get_running_vcpu needs to be noinstr, I'm getting
-an objtool warning about this that wasn't mentioned in my cover
-letter.
 
