@@ -1,149 +1,167 @@
-Return-Path: <linux-kernel+bounces-295560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE74C959E51
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:13:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4416959E6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6A32824DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050711C2178C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F32199FA3;
-	Wed, 21 Aug 2024 13:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9F8199FCB;
+	Wed, 21 Aug 2024 13:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DY9JGeAz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBzpeznu"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4D0199934
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B8B199FBF
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724246018; cv=none; b=OHQjWoRw5+f4gW+rsVWKAZ46kkdjYuZbOllMfidVw/WZKfCOdayYWDvIKX5bxtwepd6ExAxzcykHzVYzC7Bu+H7cRHBmxj9VZ3TB1oqJ6dJJhlaqaNxoFzsN0FF5s9Gji3VOLpHNTL0TIZ5wj4OAMNOGxUIaS60nMAxbJhV5FNM=
+	t=1724246109; cv=none; b=YCtHMYebToeRWoTIkjtpO5RpoVPUDeh2DS6exCLOTCobjQp+OeVigY5gdib3LLy/9WJnYEnRQL1JMjIY7tFC4QRqrEf0Dnj7Bwj81u0i4YOW7NUhrzZx5vY4ROSD5nuFTlxLa47ts/bGswN1ZE4WWGxKq5zV1Ng8BijAeJZo+Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724246018; c=relaxed/simple;
-	bh=VxdnQRQ9RoJiHroH7aL12ZENbeWU8OgMK4PjHewMYIM=;
+	s=arc-20240116; t=1724246109; c=relaxed/simple;
+	bh=IkVS+yXH5uK6Jq76r3978Yrciq8PclOcH40H0ePGu2Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F8k0m+QAnX6Oyx9iwyZ9oZB+6+8gJVQanVrmEgwzrPIlxn9DZ0UoNM4W6UzRioQ7XXX4J8EaHwYuJBRp6q822v7SeevyQCwjfuv0wqZyRv0znjPU70x/Zz+G5hDZSXQ/Gl+0Q2F6TY79UmZlt/9dSi4l7zsjTjPeJPxUk5P2LyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DY9JGeAz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724246016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VxdnQRQ9RoJiHroH7aL12ZENbeWU8OgMK4PjHewMYIM=;
-	b=DY9JGeAz9K87/d9DgzpkrWDycbq5Tn3K1G+LlQTmYiW0/xgOmirOYkM2lyq1fFRjLvo0Qt
-	ZpDIDiDlznwaeuS0FkbalVBVu9edYXl0uL+cD9GCcdDzsIf2bJyrBaLQ5f3UUNqfVyqFVZ
-	GsBzvMO/3zzRCLkjgzYQnAZXdYtlmx8=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-pNaEmIPYMaG_qz3CyOjJTA-1; Wed, 21 Aug 2024 09:13:34 -0400
-X-MC-Unique: pNaEmIPYMaG_qz3CyOjJTA-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f3f4dcbee9so7962471fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:13:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=IHwSlZgxJZMyLg9bKRNWjFsqH6yoj6JrtmTRbqes96AULc4qTDgR07sPKkYN0F3SD9EtQ9efOIylNdYFudJ7obiIeap4ADz+3pXRqHK/kPLi1YuYbr0L5s1gvi3+SR61N8Fgh79D/9WCGxbFERCLyX+aEGMMMMMgzJbIgvwGCSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBzpeznu; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e13c2ef0f6fso4990857276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724246107; x=1724850907; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ND82RYn7MaNSpzb7NAOhxgHIKl6E8lI43wkdqiWtnl8=;
+        b=WBzpeznuXKf/kt8GFDnyng4YUZxyo7nB/UTSrpi0K/KB7NbyjWYZmFuQqrbFEnbyoU
+         F1lr/6WO9rRjPM7r/bDU5Lw/a/bx6x6zFjsOvSMfD/uO1ZYNncmBKPqMlwZzEgdx9hsX
+         O3/VpzgIXPAhd+WjK+NqV+aG/22dHKTdDqf5fX8zpm+Qr9JvsHyIE2OYAPek547/iLhR
+         kJjLQP2bPc98NtFt31cVZWCMlEHASmK9qrvo3sVgDZ9TzP3Sk6uUypIE3/6CY0JFxb2z
+         mHH+zAT7xElNWWWuD1tGv/VRWUIwQfkkhjfxBFXEcm10hIwep+GtWlO9s0XbWLWztKAA
+         pnUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724246013; x=1724850813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VxdnQRQ9RoJiHroH7aL12ZENbeWU8OgMK4PjHewMYIM=;
-        b=lxjI0u1Bhy57P3o4WaujnyKUyDau8O2AM4HaiXB9l2r+de8WMWsiObVZhRJbqislE6
-         QnU17vMqIairQTOsUBWxIdfG8TYUtZSqDdCFst+CI4cQjGtzEddvO5hCXYDuYTLSw3yQ
-         C/zusfX4+TtSl/qMUWShR3Cg3or1rmUbVCONcIWZNQEp7o02CUwK9Wzel7r9QzstfXdk
-         vANfmvV9Xwpjj5p1WjPCAbgqe2MQR+eOrs7GmdRlpoZiXyoBNAoM/QLJ+njVenraGVhN
-         BFtMzMKn99NDObxa91eb7cQCU+M8sZPr5SUWoJYIxCTZWSXP1n4XAXhQ3ENC5q7XkzTv
-         ud2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNTdIXNDdDgxKIN7HyzpF+mu1nn3FVjFboPuNcJLUdWx95h6KL0FPbLpGVBn91gGjBACjAreXQt8s7cQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4vJtnSW/J91DRe8028UqBGAUfCUAJtpt6L9wWfnNEUGXpmdr/
-	xQvwTafOMsW3UvLd3tszdInKhyKg2dckyczO2XJquYCMj36avRIN3p0T2hx57xSNLJiYi/aUgQ9
-	6YZCMsOu0x8zI/lcVh6PCZXo1GgfRz5p44G/fFPEcB5DggxYVjEAJJyZ1EYYl2s2gwE/YDJmoUE
-	Nddf4yhE5a5mI01zLeBsgwJ9AJQxk+0e3sJ62X
-X-Received: by 2002:a2e:e09:0:b0:2ee:88d8:e807 with SMTP id 38308e7fff4ca-2f3f88a6e99mr13197291fa.16.1724246013013;
-        Wed, 21 Aug 2024 06:13:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGbXz/zZNLpgYy914DPQE0G3jUIMMtBg2FW5l+r7EiJf3/VyOVgUXkDaaMO4gGanew6Bd0Rh41sjKlfIR/KxZc=
-X-Received: by 2002:a2e:e09:0:b0:2ee:88d8:e807 with SMTP id
- 38308e7fff4ca-2f3f88a6e99mr13196981fa.16.1724246012310; Wed, 21 Aug 2024
- 06:13:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724246107; x=1724850907;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ND82RYn7MaNSpzb7NAOhxgHIKl6E8lI43wkdqiWtnl8=;
+        b=She720H54nxC+TIaEEZ8fKB0dHpvv6woDlQi41Yl7VesJzY6VC9Ts/LCr/pKKzXGZo
+         s1Yal1MyDgZ/O3rw0EOYdgoNxshaoCtQOZUS3TIPiLyFzNwAoOmL/7+B0PLvVl7v8/S5
+         zL4mtnjKFrHtMVLgs/I6UxCJnJWO0OpfyK+gHgjX89WgGm7vItyFxSWwgZyJr+STe4rN
+         49FPmpy0P7H30XPBbHUWLKXEEsal3vVoMErc+ZXL/HYgjEvUnk0udz/MTeAGMOXvEBa5
+         x/94XN6bvb+IPHe3v98HFXRiOiArYz7UkwXNMZYMSAojXcr+BKWK4J5BnNJbQ02oOIt6
+         tVng==
+X-Forwarded-Encrypted: i=1; AJvYcCUPrvxbsaWZjz1+GmCbaj7iu38c9MvkOPYQnNWgE77IjPO6I8qSktUEOh+7FNyvKWAeszW6KN3IodgnhQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBI8NralImGyOnPmdFc+LKXcu0dthlfx2niuqNVOOfo0SXB3G5
+	LfqG78VjQKow7SMWFSGAgI3f4QrrrNvumjqdZf+JtmGnKr3C36S9zCVP8JXts1dqDQlnJFgmdPM
+	m9NzgoZJU73sQd7tG/fHIePaxe0u9tZIwgk8rCA==
+X-Google-Smtp-Source: AGHT+IHMFrZYqcZ+YKGN6ef7K45igq5+avAhanl2GUzgRB1IEkFvh06daR52Rd2yBylT0BHej583UvwMIolio13isH8=
+X-Received: by 2002:a05:6902:1244:b0:e0e:8319:c6e4 with SMTP id
+ 3f1490d57ef6-e16663ec35cmr2880278276.8.1724246106550; Wed, 21 Aug 2024
+ 06:15:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819183742.2263895-1-aahringo@redhat.com> <20240819183742.2263895-12-aahringo@redhat.com>
- <20240819151227.4d7f9e99@kernel.org>
-In-Reply-To: <20240819151227.4d7f9e99@kernel.org>
-From: Alexander Aring <aahringo@redhat.com>
-Date: Wed, 21 Aug 2024 09:13:21 -0400
-Message-ID: <CAK-6q+hx8MNeZCc0T-sTPdMgXH=ZcpLVqc2-5+psMCoQ_W0FxA@mail.gmail.com>
-Subject: Re: [PATCH dlm/next 11/12] dlm: add nldlm net-namespace aware UAPI
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: teigland@redhat.com, gfs2@lists.linux.dev, song@kernel.org, 
-	yukuai3@huawei.com, agruenba@redhat.com, mark@fasheh.com, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
-	netdev@vger.kernel.org, vvidic@valentin-vidic.from.hr, heming.zhao@suse.com, 
-	lucien.xin@gmail.com
+References: <20240809172106.25892-1-ansuelsmth@gmail.com> <20240809172106.25892-4-ansuelsmth@gmail.com>
+ <20240813200734.GA1659224-robh@kernel.org> <66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
+In-Reply-To: <66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 Aug 2024 15:14:29 +0200
+Message-ID: <CAPDyKFq0cR10d1jUc5gnoUR5P=cbDEZy2iA-HOq9oNcWZevbDg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions node
+ in mmc-card node
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Joern Engel <joern@lazybastard.org>, 
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Saravana Kannan <saravanak@google.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jakob,
-
-On Mon, Aug 19, 2024 at 6:12=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
+On Wed, 21 Aug 2024 at 11:52, Christian Marangi <ansuelsmth@gmail.com> wrote:
 >
-> On Mon, 19 Aug 2024 14:37:41 -0400 Alexander Aring wrote:
-> > Recent patches introduced support to separate DLM lockspaces on a per
-> > net-namespace basis. Currently the file based configfs mechanism is use=
-d
-> > to configure parts of DLM. Due the lack of namespace awareness (and it'=
-s
-> > probably complicated to add support for this) in configfs we introduce =
-a
-> > socket based UAPI using "netlink". As the DLM subsystem offers now a
-> > config layer it can simultaneously being used with configfs, just that
-> > nldlm is net-namespace aware.
+> On Tue, Aug 13, 2024 at 02:07:34PM -0600, Rob Herring wrote:
+> > On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote:
+> > > Add property for defining partitions node in mmc-card node to define
+> > > partitions in DT by the use of the block2mtd module to use block
+> > > devices as MTD.
 > >
-> > Most of the current configfs functionality that is necessary to
-> > configure DLM is being adapted for now. The nldlm netlink interface
-> > offers also a multicast group for lockspace events NLDLM_MCGRP_EVENT.
-> > This event group can be used as alternative to the already existing ude=
-v
-> > event behaviour just it only contains DLM related subsystem events.
+> > You justified patch 1 saying eMMC already supported this, but then here
+> > you add support.
 > >
-> > Attributes e.g. nodeid, port, IP addresses are expected from the user
-> > space to fill those numbers as they appear on the wire. In case of DLM
-> > fields it is using little endian byte order.
+> > Both are a NAK for me as both already have a way to describe partitions
+> > with GPT.
 > >
-> > The dumps are being designed to scale in future with high numbers of
-> > members in a lockspace. E.g. dump members require an unique lockspace
-> > identifier (currently only the name) and nldlm is using a netlink dump
-> > behaviour to be prepared if all entries may not fit into one netlink
-> > message.
 >
-> Did you consider using the YAML spec stuff to code gen the policies
-> and make user space easier?
+> I think this got a bit confused and hope we can find a way to add
+> support for this.
+>
+> What is "already supported" is assigning an OF node so driver can
+> reference it. This patch was just adding the nodes in the schema to say
+> that partitions can be defined.
+>
+> I think what is not clear is that block devices might be used as raw
+> devices without a partition table defined in the device. In such case
+> it's the kernel that define a fixed partition table.
+>
+> One example is [1] where the partition table is provided by cmdline.
+> Similar to cmdlinepart MTD parser.
+>
+> The use of block2mtd is just to make use of the MTD parser system.
+>
+> Considering
+> - eMMC is soldered to the device (no dynamic scan)
+> - cmdline might be not tunable and hardcoding it might also be
+>   problematic (as some cmdline needs to be used)
+> - concept of fixed partition for block device is already a thing and
+>   used a lot (android AFAIK)
+
+Sorry for sidestepping your discussion, but I just wanted to add a few comments.
+
+It's not clear to me why we need something different than what we
+already have today.
+
+If it's a partuuid/uuid/label or a fixed block-partition from the
+command line, we still need to know what partition we shall use for
+what. So why is this problem different from how we manage filesystem
+mounts, for example?
+
+>
+> I think it should be acceptable to introduce in DT support for defining
+> fixed partition for block devices and some kind of parser system similar
+> to MTD. What do you think? Would this be more acceptable? Idea is to
+> just have a DT schema that makes use of the values that can be set in
+> [1].
+
+In DT we can describe that there is an eMMC card soldered to the
+board, because it's a description of the HW. But describing what
+stored inside the eMMC-flash doesn't belong in DT.
+
+>
+> Hope we can find a solution to this, I'm totally OK for dropping NVMe as
+> I understand it's PCIe stuff and very dynamic but OEM are making lots of
+> use of eMMC and are starting to use these strange way (block2mtd) as we
+> currently don't give a proper and easy solution for the task.
+
+I certainly appreciate that you are trying to solve the fragmentation
+issue around this, but it looks like we need a different approach than
+using DT to describe partitions.
+
+>
+> [1] https://github.com/torvalds/linux/blob/master/Documentation/block/cmdline-partition.rst
 >
 
-I will try to take a look into that and prepare a spec for PATCHv2. I
-saw that there is a documentation about it at [0].
-
-I did a kind of "prototype" libnldlm [1] to have easy access to the
-netlink api but if there are more common ways to generate code to
-easily access it, I am happy to give it a try.
-
-Thanks.
-
-- Alex
-
-[0] https://docs.kernel.org/userspace-api/netlink/specs.html
-[1] https://gitlab.com/netcoder/nldlm/
-
+Kind regards
+Uffe
 
