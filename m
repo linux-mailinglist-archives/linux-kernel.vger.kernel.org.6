@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-295139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAC9959783
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:11:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19755959788
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925F51F22085
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 483391C20473
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3221C1AA5;
-	Wed, 21 Aug 2024 08:34:19 +0000 (UTC)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A42D1A4AAE;
+	Wed, 21 Aug 2024 08:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiwwfGy3"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E8E19ABB7;
-	Wed, 21 Aug 2024 08:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CF0199FD6;
+	Wed, 21 Aug 2024 08:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724229259; cv=none; b=Jifxs6Ms33IsKmn0UzBFy+D+G0iGgAcBmnSYF1A2JMRmW7c39ZrYfmBas0gcLYVAmZMdUPhMfxORdRxG10r7ZXAlk0OQIlDGSQappIzSxdp9kRQCXZijdRqJKDmMciMz2y3UJ5N5v9ux47+ZXFVWhuHEHfDo88TTwVElwmU7vF0=
+	t=1724229356; cv=none; b=b2W0I9Diz0+CMOfFdK6fGFwlnwpYk5HllJM5rYsPDNLC+KeMHodVb/fBxfhK5ZP/4jRCEBV784ymge8SgYC3AvFJ168n6PKa8Us1hlcVDVuqZGn4nkZXM7TsfeWjdY8p5zle8OX8KGgW4jlIYBDK+vF45PbKn9bS8wi2o8ca4L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724229259; c=relaxed/simple;
-	bh=e1eh4RWTQXmzJpQzlpw97zHFzuNJIyDb2qWjvWQE76c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+fF5t5v2OyqrgVtZpp2fH9pD0EhKxgy/KoBcwRK30LZIUvBJ4E9gr+ZkxYCIXUizmZXyKnbxF/71UrE00KLbiJEZS72EoMpm6DKxhtmqgyefliLwSt1AiPlYGEl4gik2DneSsccvjrZbFXLAK5QV4k/VzVhEgLb5PbBCia+/f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1724229356; c=relaxed/simple;
+	bh=R+wRgSiVOb2gmh55nvSz3BLXVEWnplSPE0Nvb657Zok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CoDxnkxXsb7MLeAecfpdX8D3ajsPsN0gGrG+LBQtGVy8fos0Nfni6C+qH5hnEsG4IxaKCPkSeSG3eDrkeiRxS+bGBYSXFnOzbK8HCjEoIabA6i6yaacDcCOgZkSeM3Gl4c5HlQbw8xllDMUB393G95XBKmfvxXyvi0GJSV4fbQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiwwfGy3; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f3cd4ebf84so50949371fa.3;
-        Wed, 21 Aug 2024 01:34:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724229255; x=1724834055;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bec50de782so969394a12.1;
+        Wed, 21 Aug 2024 01:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724229353; x=1724834153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NmNWd07rYI+nm/RXslZ5XPGefcXNyvcX2gW017gK9eQ=;
-        b=pCKQURt1bMnCttXbFOjBFTODYLDVPdVg8wVU+aoR8wWbjveb5WAWvDD4H3GbXyFAQU
-         uFXAZUx5aEimMzXhUdrsOqlex+y1rdwW0E5jdJ8/HQgEM4xqTHHViFIdaybTYjL9YWld
-         thCux2t+YGhmjgOM5dfTlrV2gsITiBi5ArKJjw/N2wPPsEvrMlEKzLO7+Y1Vmn+9orGm
-         hox/J6vokhIFSTt4mbBYdNyEZdPaRmFMKiqpwIVoK75OzYNd8TXUa3FOwyNfFt3jcLr5
-         1CtICjl9EXwRVNoZcS7cGvAeGF4YYVbm20Me68Ay2WEdO0WdI3Y2ufHuaR5ljpjOs31l
-         f2Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Fuwo3WEDZbPHXxGb/uawFnIqYkajRoxyxt/tvtrQq7FCHs2wo+sRhoHOuKR2gna53DpoRRo+i4R+Aqiwcg==@vger.kernel.org, AJvYcCUWlOWQLtSBXjDpbi6BIZQ95Q+Fm5oamYDAUr8ycdqk2xp4KVULo7/TE4MIRKkKvD2QUOucvtW4abZhlw1+@vger.kernel.org, AJvYcCV+fzKwKNf0G338OJB2eOtXhVv4yKckJHC+1JXYVf5M6HjVEC1Yd91yCfcLtZlRV9HC4qyRusHSN6Tx@vger.kernel.org, AJvYcCVYPvBnuHUeb5Dpn8ymtzyjGzsocZr7nObRlGKj4FOO98H4OU7w3A95CyvYPOQdPrDDcq2Zr9dT6sTA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxQsoi7GSRJOF7iwa0i4tp/rsbGDvPd1Mdg2sHOU7MHbBsC3kj
-	Dsp2j/r9hbX2yfwDufppjuNLTMce7JhLt0GrWqIc8iK5+Ch+KjCW
-X-Google-Smtp-Source: AGHT+IEB5vvCSAUn2khAEv938RT0Do8b52SovI7z6QF3S25PSWYf3y6VhRQk+VaYeG+jIEoNf4aorQ==
-X-Received: by 2002:a2e:4609:0:b0:2f3:a06a:4c5 with SMTP id 38308e7fff4ca-2f3f88b7b14mr8737401fa.29.1724229255079;
-        Wed, 21 Aug 2024 01:34:15 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42ab6e7de7bsm42463875e9.0.2024.08.21.01.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:34:14 -0700 (PDT)
-Date: Wed, 21 Aug 2024 10:34:11 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v2 3/4] arm64: defconfig: Enable Qualcomm IPQ CMN PLL
- clock controller
-Message-ID: <idvuqeb3oqocvlzl5uylsqjg3b4kmrxmpe26bupq76rdffis4y@eq5yep4kgzjh>
-References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
- <20240820-qcom_ipq_cmnpll-v2-3-b000dd335280@quicinc.com>
+        bh=gE/zU+9gsfuazjju8L9T1wI4aS038iOn7Pia/ZlHSoU=;
+        b=OiwwfGy3zaxmVJDBOADKO+Ju+6uaRgtjQjVugBDc12IzeBtY2s5FCLayI8sfr2q/NT
+         0FZ3lCKYkktPhIi82Ax3M7BJo305hr5PIZyAmpIn7ezHvww0Wfo/jOFEYNcwVUqIWl/n
+         XY184Vo8abzAjxO2Nf55g3nnQzQ9HcUC+ORr7bzZmwgwyzZh4AL3hx7mTRWljSsQJ6Ac
+         3gKkayNQQ4Icdc8iGfjYOOw4cckyQ8mSDp95yK9KJrE6Cr851MdJnU7MSv7XMOaiuLwa
+         fnxu4nrzcftt0uJv8SFsn4PH632dsuMBVB06ROxliJ1VbW6nNRJFlooCcBYcYOXKwCs/
+         CX6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724229353; x=1724834153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gE/zU+9gsfuazjju8L9T1wI4aS038iOn7Pia/ZlHSoU=;
+        b=eMB7cu8ULIBgHHIc1mOrim3A15qizRvIQgZoea26fS4IgV3Xsu7+/ZBHryPXUeMsg+
+         VjCBBWXp56J3dfcvOqxIA9dvgcYTkGWuwVc7LSGOGTTN2hkZHwswhLOerknDPXxlT6Oj
+         MTltwmre3KT5RB3ge+YMvq36+eL3HUi1H6Wpmm0ZYoWNxqOXROFggV+Hu9yYeGgAOWex
+         9hylqjW9ZySAh0OjyigfnW+xHSBG7DCXUeHYIIRxscxVxU+pkp56fC39XfEx99NGyvpa
+         VrqDZNK9PPW39sthOKnEBuA/1sk0Sa88/biiqogGnzfMSLO4Bn6QchZrYsap74bJZqqp
+         d4iw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/UGWbjTn9Y5GFH686WBbDPImKfQgLMhqN8LEWek8EWgtBrYlWozj8Nj4SKSftAdhjcuGr6s1FTs9yLSqAPWDqLqE=@vger.kernel.org, AJvYcCXtn01vfU6zey3QaN43U73K6nI3nEnWPD5tufiL4OI8PvQyw43bR0hqXrmSgz9h/a6L0s8L4v+8WY9sfjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzomzW0mEWttKHNwaLMCZ0JoyQHF+mYIRkODMOy1QHV78s7LzP
+	nxTyl6pqNeCXECPop8s1WagVa0fhr+mIAC5WXzKpNpdnBFEYf7L+D+wetaZ14dgG4hH+kJgI7Qw
+	a+I5aComxgBLapSQUWcsX3hcbK9U=
+X-Google-Smtp-Source: AGHT+IGgB7zTNRoAijHXOcGbqbV4DdMicZx0YW1MFKctJyvNPLocYLupZdsC4/8+SmME++i/vr5EXBV1DK0rcSrDJPY=
+X-Received: by 2002:a05:6402:5205:b0:5a1:a82:1a38 with SMTP id
+ 4fb4d7f45d1cf-5bf1f0dd18cmr565156a12.2.1724229352861; Wed, 21 Aug 2024
+ 01:35:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240820-qcom_ipq_cmnpll-v2-3-b000dd335280@quicinc.com>
+References: <20240815205606.16051-2-max8rr8@gmail.com> <172380142877.2215.11720831620589167404.tip-bot2@tip-bot2>
+ <87a5h7j5l1.ffs@tglx>
+In-Reply-To: <87a5h7j5l1.ffs@tglx>
+From: Max R <max8rr8@gmail.com>
+Date: Wed, 21 Aug 2024 11:35:41 +0300
+Message-ID: <CAJrpu5n5ReFCWrtAYsWpneAb+g6hAs4E-NeFh40chJfArEsioQ@mail.gmail.com>
+Subject: Re: [tip: x86/urgent] x86/ioremap: Use is_ioremap_addr() in iounmap()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: tip-bot2 for Max Ramanouski <tip-bot2@linutronix.de>, linux-tip-commits@vger.kernel.org, 
+	Christoph Hellwig <hch@lst.de>, Alistair Popple <apopple@nvidia.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 10:02:44PM +0800, Luo Jie wrote:
-> The CMN PLL hardware block is available in the Qualcomm IPQ SoC such
-> as IPQ9574 and IPQ5332. It provides fixed rate output clocks to Ethernet
-> related hardware blocks such as external Ethernet PHY or switch. This
-> driver is initially being enabled for IPQ9574. All boards based on
-> IPQ9574 SoC will require to include this driver in the build.
-> 
-> This CMN PLL hardware block does not provide any other specific function
-> on the IPQ SoC other than enabling output clocks to Ethernet related
-> devices.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Apparently,  x86-32 doesn't provide VMALLOC_START in asm/pgtable.h,
+and after a quick glance it seems to be the only arch to do so...
+Probably the correct solution is to add include asm/vmalloc.h to
+include/linux/ioremap.h, considering it uses VMALLOC_START. Will
+resubmit the v4 version of patch later today.
 
 Best regards,
-Krzysztof
+Max
 
+
+On Tue, 20 Aug 2024 at 23:35, Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Fri, Aug 16 2024 at 09:43, tip-bot wrote:
+> > The following commit has been merged into the x86/urgent branch of tip:
+> >
+> > Commit-ID:     7b02ad32d83c16abd4961d79f3154b734d1d5d9c
+> > Gitweb:        https://git.kernel.org/tip/7b02ad32d83c16abd4961d79f3154=
+b734d1d5d9c
+> > Author:        Max Ramanouski <max8rr8@gmail.com>
+> > AuthorDate:    Thu, 15 Aug 2024 23:56:07 +03:00
+> > Committer:     Thomas Gleixner <tglx@linutronix.de>
+> > CommitterDate: Fri, 16 Aug 2024 11:33:33 +02:00
+> >
+> > x86/ioremap: Use is_ioremap_addr() in iounmap()
+>
+> This has been removed as it fails on a 32-bit defconfig:
+>
+> include/linux/ioremap.h: In function =E2=80=98is_ioremap_addr=E2=80=99:
+> include/linux/ioremap.h:14:25: error: =E2=80=98VMALLOC_START=E2=80=99 und=
+eclared (first use in this function); did you mean =E2=80=98KMALLOC_DMA=E2=
+=80=99?
+>    14 | #define IOREMAP_START   VMALLOC_START
+>
+> Can you please have a look?
+>
+> Thanks,
+>
+>         tglx
 
