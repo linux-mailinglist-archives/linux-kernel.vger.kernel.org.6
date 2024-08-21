@@ -1,304 +1,262 @@
-Return-Path: <linux-kernel+bounces-296129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B7095A602
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2772995A609
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D52E284A14
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0AC6283517
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71B1171092;
-	Wed, 21 Aug 2024 20:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1885116F27E;
+	Wed, 21 Aug 2024 20:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="fiAaY4Em"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020113.outbound.protection.outlook.com [52.101.61.113])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="00E5IX6v"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2044.outbound.protection.outlook.com [40.107.244.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A0B1531DA;
-	Wed, 21 Aug 2024 20:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE7C14D2A8;
+	Wed, 21 Aug 2024 20:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724272986; cv=fail; b=WvYfSOa3+on2vTZXId65l6OUdZK2FjVneaAwlvADK0uJLmQT50Q/tOVXsE4FjXIY2Kn4HFisKlj3WWim3WKkErvTTIF3EO9Xiyr9G1j/QUvyLPfv/i9kvGXB1FX3wf2JDRXWHajtspaK2I0Wik9FoXS4kjXJQ40VHQy5s7IoE78=
+	t=1724273146; cv=fail; b=hBjoTwkvpqftQ9QegrDsUDfJU9g5HYvUMrLjMD/sGciXfJClDvllEmnaEVusGJQufH2YvefNxVXSl2m2/48XEnAKH4YSME9+O0uBLNev5N07gttj6Tl3dFiKj6zsatglGulz8Fu7D8XCC71pSOGwzLpOxxHOsFztuK7ZakTj5Kg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724272986; c=relaxed/simple;
-	bh=ani77+uUH/oUOEqU+3n2PC0PL/9eUTfa7CeaGLj8AdE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=a/35EyUx8xqCPD1fIMYJ85tl6+SxkXkqd+JPUPb/faQkQbITwxnwht5QC/2CVCBmxGfWABY1yg3ttoVWmdx7teuLEkavINbz3GlUHH/usx9MXN6mkymeXP9D4WD4LjI6t9/FkIoXMb/GYympQSGclsjHLdFr3289nr+kPZ0VbYk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=fiAaY4Em; arc=fail smtp.client-ip=52.101.61.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+	s=arc-20240116; t=1724273146; c=relaxed/simple;
+	bh=GmXZbIcr9RZX1Bd7VU/GWwOmPahqq3RuMaK1gv6ZDqo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CReWn25Tu9nikVYaZwqJJ4xsWyqzWzkwe5H6YCaD2c2eBXGa2ad0fPOK45NjoDd9S0CJgdoI0Ci3BzzuT72HPjoEJlq9QBLory5tVzq+yIP0R4jDZbScH9kToQvg228aqq5wKq5wGvZjqwRrz+IcH7AIycIfSh/befHDZWcpFAY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=00E5IX6v; arc=fail smtp.client-ip=40.107.244.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FAYP5MsNC/S64snWqus5vWzoUNODebxNkl63yT6d5idxS8/aW55m5D6egKYLXJbegwnVFQKspV5gwg0M7Kg60UFb/bBIKqcpztLas04C+aY03rd0gx7qB8iNsQA4dh9xl8kxFOrSVCrCG44igl2c8Qz9WrXM1mrPI4YanStPgUzpqKHwaGzmWM7ebp4k4p8ft1H+PtllzdQpxt+XKrev+fFk5UHfyUWhyDfZoClBU5pPnwVIbrRVSL8oryj+k/aoBQz38rzu/y1i5HX8h3skcM87H28/lnJZCs4ScRL7c3qR5g1rSE0B1772V7Mhtg4M7Ns3u39Iy9ZElzueoM/IXQ==
+ b=UPEpY4Fha6N7FztoANMZ60UAfxUwgKEonrw67Y+THK74S11/LtB1keX/u9PpIKC5z7g78FhvSF/i0Zt0bTjB0je4NKgfXVBMvkI8jTx0hkPEeJJOT0CtYAlszNFRDfskVaV83080HoE6ufLrYKiHRszB6PXEoGkrk3c1oTC272xc7m5XrBX/t/d/tEo3RMLR9IK3rWbt0sYLx5fFSC12vMm5uq7IuSVzaBgLJpKc4hPbqiLR1tByTzS3uXjifG0nUpiKRVKPJYeHf2skfAeZijHzUmd3YMDTx9foIhjXdLT1buHXC4U5X2dRGrf2SYQoJAt4lUmvo7p3rqPotP1Pow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JSiF9QZJl8NPU2bS08M9AjgYrKrmGh3HecugF6V5SZA=;
- b=Ogqtonqe/k5t+bjzfmji8aaCLXdTSQTwo1s8j6c7ZTpSHt7YHQz6ak97rU/ZsRbbHUTkKnQ1RHeaUNn2pu2Q4HEWLrNzhpxmYgaO5CREG4899MaBpoqeNYUb/e3oz4n9Bq87OLOCjmeVu7TadmTxsr+7LiE8rHe4QWWFK1huuVkd/neNXwlxtXb0vOpBhCncgejhpD6P6n+h/4eyDaYJFxuZKh+maxgtTayftT2SCl+rHA2ywDRaxaR8mVzDx+f8Xuh+J8830vUYSp/RQqOrneoVnAOiQAoxeOBql8vBRlBP2wRkX2Ts2XOsaOqm86n/JTrVzftbXomdHmkfn9J3hA==
+ bh=WlLcNiokpbPEaxlBiHuwLLER6DCrVQWXwK0LKrOUOjI=;
+ b=BlQhwlronsU91iojib7RGZcv0M0iv/LGP4xDeiMY2ZdURAZrJetyEcXnVs9NAsl6x9Ps2CtJqeQ6lwGjnwSCNQadSTeD5lsboncXiTTWCaXNTULucW0/TUR5rd3+l8Xu3m4NfB1CIIxQtOFDbL8W497/PRyQwZpCSdm8zcCTMrE2CHy4Q0ZHQPBFHdtkLv0RPH39sMssg0kEokCR/OTW6xxKm7Gr0Kwlqbj4CTemC/3WCDMlBOdk61WT4tByG/2XCIseFj9XFcrSxpm3hNNvU9dAoC+Jqto7Uzgi9KmIvpmEO3BBumFT9sWO68kmCLliQ56/b2E0fPxKyAUWwOMKbw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JSiF9QZJl8NPU2bS08M9AjgYrKrmGh3HecugF6V5SZA=;
- b=fiAaY4EmqHsOx0HfJJz1JAV/H3r6bvyb2XuIkHY5V1z0b+HKOtn3NHTz0JTMIsAaqU8r0Ac+hMPeIaNqm6Rj6YZEGxI6LIXhlfVk1+rNKqZpyYyyfuOy7Yq1paQSiFxcSDo1LkhnkHb1ccX1j7Y+YeexNeJOTQQ5F7WxS59CaLA=
+ bh=WlLcNiokpbPEaxlBiHuwLLER6DCrVQWXwK0LKrOUOjI=;
+ b=00E5IX6vQRAg2hBTnob4N+8xz0CdSZqg/820RtiG5kAUTyo8FqByg6xVdJycTxJeGHspzOtvSGTYL4pwzhQCc4guwpEEN3zj5wknRtvntgadabX5jhUdXmngS9JiP4tLFuOHfYfng5Bn+GuFRzjKgbZKnl+bSH5HXLWH1EicQB4=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-Received: from BY5PR21MB1443.namprd21.prod.outlook.com (2603:10b6:a03:21f::18)
- by MN2PR21MB1407.namprd21.prod.outlook.com (2603:10b6:208:204::18) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by PH7PR12MB7188.namprd12.prod.outlook.com (2603:10b6:510:204::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.8; Wed, 21 Aug
- 2024 20:43:02 +0000
-Received: from BY5PR21MB1443.namprd21.prod.outlook.com
- ([fe80::2c5a:1a34:2c8d:48ef]) by BY5PR21MB1443.namprd21.prod.outlook.com
- ([fe80::2c5a:1a34:2c8d:48ef%4]) with mapi id 15.20.7918.006; Wed, 21 Aug 2024
- 20:43:00 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: haiyangz@microsoft.com,
-	decui@microsoft.com,
-	stephen@networkplumber.org,
-	kys@microsoft.com,
-	paulros@microsoft.com,
-	olaf@aepfle.de,
-	vkuznets@redhat.com,
-	davem@davemloft.net,
-	wei.liu@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	leon@kernel.org,
-	longli@microsoft.com,
-	ssengar@linux.microsoft.com,
-	linux-rdma@vger.kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	bpf@vger.kernel.org,
-	ast@kernel.org,
-	hawk@kernel.org,
-	tglx@linutronix.de,
-	shradhagupta@linux.microsoft.com,
-	jesse.brandeburg@intel.com,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH net] net: mana: Fix race of mana_hwc_post_rx_wqe and new hwc response
-Date: Wed, 21 Aug 2024 13:42:29 -0700
-Message-Id: <1724272949-2044-1-git-send-email-haiyangz@microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0094.namprd04.prod.outlook.com
- (2603:10b6:303:83::9) To BY5PR21MB1443.namprd21.prod.outlook.com
- (2603:10b6:a03:21f::18)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 20:45:39 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Wed, 21 Aug 2024
+ 20:45:39 +0000
+Message-ID: <4079b41e-9a5c-43be-9614-250b21d6e92d@amd.com>
+Date: Wed, 21 Aug 2024 15:45:46 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] drm: Minimum backlight overrides and
+ implementation for amdgpu
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
+ linux-doc@vger.kernel.org
+References: <20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA1P222CA0163.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:3c3::22) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: LKML haiyangz <lkmlhyz@microsoft.com>
-X-MS-Exchange-MessageSentRepresentingType: 2
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR21MB1443:EE_|MN2PR21MB1407:EE_
-X-MS-Office365-Filtering-Correlation-Id: 444c7948-088e-4e77-db11-08dcc221d88f
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB7188:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe922b05-53ba-43f7-fb11-08dcc2223757
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014;
+	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PQTAUBl/VIrKQBZAhqncQHfnHY3BTJlwWL9F0v0yLmoaJJeLtr0PaCD4Gqe7?=
- =?us-ascii?Q?BXG+VKeB34eJa7kh56uOtxyKZTu2Emu3EmIV1q0fHvSqDk+PpRJHRzNaMJDN?=
- =?us-ascii?Q?BuS/tPvdbHZUJwco8weYKIy+c6Tk+TF0Q479ewuQLWnvHRQuA2wI8rp+GFLz?=
- =?us-ascii?Q?GBXBp4HM5Igj4uumCj1cMPcNq008Vtszv4FJqAIAINiIVzwJ9m9N7OqvUu6g?=
- =?us-ascii?Q?WzvIseAJ0rCsIgRmcsJbHxbx10V3orFlDMx4fwqTtxZfmDSoWNkFOFBPDrEk?=
- =?us-ascii?Q?x3fsH1RGjOi6sxGLpPk5Z9fZ+Vzawmx2poxidauYIEnrjWCSQnf2uAnlxDba?=
- =?us-ascii?Q?lYTHphMLFtv3scgnZL+y5Q3fgjys3d71Ml4r8XyX4c2kKIsaQtfFMFXsFzDI?=
- =?us-ascii?Q?RK/kV6SEGqHP0IL3gh8lypOaaOEfgwB9LsNSSV+Foz1vxC2v4oef8cr1olu/?=
- =?us-ascii?Q?ZVkijJCSX8UuLYKeBR+b4RSPPaDu+DnVhAcrTW/pLXxcC0nRkqzL8ChvtxZp?=
- =?us-ascii?Q?Znoo2WdrlLxiVTA8TE5FsCw0vxDi+KrHoBJBSh9xbfVG/QKTrOO6xaKSITCp?=
- =?us-ascii?Q?vGNSPT3if6omxFQAcHGBdq9X+AX3eK9zuTsAiB0MBHKLWko3NQCeJXUU1mBB?=
- =?us-ascii?Q?+eoN0jFS0P1ooD25A3Bn6sej9KxufZAXIune1r8TBDJcTHnxLsoJraPGoBo+?=
- =?us-ascii?Q?anHOkL8lNzbwjWt15nJ5MIXtUskmVgGrKo3UK1CiHDp0+J7ImjkcDhjEBbhu?=
- =?us-ascii?Q?7BNGAykIF/StcpmKTI4OQ/jARFTj+VlZl2EXF3Cla208ksVVL4aPULT8oWPb?=
- =?us-ascii?Q?wMPXv54RpRxIPbJsuD7yImTcbhfE3Iw8c0dm7k14Z9gd83m3BENKFo12cAUh?=
- =?us-ascii?Q?TTJxCmcGXyZCOruVDA+lNrEDiP39gLv5HIVBSc5nwza1pTxeidaqh6a6CQbt?=
- =?us-ascii?Q?Hns946Syt7zF6VUIpm0ktKODiyxyeOkhM2ufF1RxGtyWw/Wv2x0duuThmaxL?=
- =?us-ascii?Q?V0qUJ40RW6jldcVYJrEo0esgewQ1BFpgypEHfmyqaYJ+siy1ZveQsu055kPv?=
- =?us-ascii?Q?SczjZUQ5K/C/rlZwawoJCPcik98TXFeJsTERWL4l1j5sOG5SufipNwEpjw77?=
- =?us-ascii?Q?TFoJiWzWclOTPacl0V50J7sFuXISY17FARYlxkRxvoJOX0eaXsRCRjqyJhD0?=
- =?us-ascii?Q?2QRYSDHdvQrwjDWDbEmt7uSvuaLiwBVzmY/NArkZERZk+KBLqBKRBKTxuzvx?=
- =?us-ascii?Q?ok6CsKhmzNMKRJNSoWhh35RglePWMUttjRAvg+8D272Uvl38FMOfpmTxjyxi?=
- =?us-ascii?Q?YYLOopogLZltVVkacXlyipFXrh7rzHCm30t4phRmu7shSGfYKzJonXfUgTHU?=
- =?us-ascii?Q?YcpVzdl1ewq2Z2iLpsDLFlX3Cre6yEwuf4LWkaJ6smolB/selA=3D=3D?=
+	=?utf-8?B?NEU4eHZDTHRwc3Y4dTJnY1czR1UxcFMxaEFYUmd6c2dzWGdSMUVNQk1qK3cr?=
+ =?utf-8?B?ci8zK0V1N1l6QUpSYldFRGtpWDhQK1NjV1lsZHg1eFdmREJXUUZrTUJvaEtU?=
+ =?utf-8?B?TGhad09ydm5GbGFHTjc5eklpQWhxN3JFY1VZZERkOFVpU2VKLzFVS3M5OEpW?=
+ =?utf-8?B?akpiYnJ6MHZDNVJ5aXRmeU9qdGdDK2p6SmE3YUtLbEdwZ05Icm05ZFdXV245?=
+ =?utf-8?B?OWNncW5Ca3E5MlMvZk0wUlJHZU9Za1Y4TGdnbml5T1ZxelZVMU5RTkszUkI0?=
+ =?utf-8?B?VTR6OUJCUTh3cXJ6a1c4bklOb2dua1NNaWdmeVdVNE9nZlo4bnFuRHptMXhW?=
+ =?utf-8?B?d01oN204V29rSkdOdVBuQW40NzlXbC9uMVlZZkdFV0I2cEpybW5XU2g4bElK?=
+ =?utf-8?B?M1NJdzY2a1lpQmhaWkF1YUJuSFdlNzNBWDlZbDF2QTBVU2tLRFVnRzM3bUlo?=
+ =?utf-8?B?KzJCQ1ZvQ1ZMT0NIMi95RG1sOVdpcmh0TlNQaG5DcDFrMXFCd2pVSC8xTi9v?=
+ =?utf-8?B?aWRGZmN6UjRDeUc2QU9xK1B3eUd2YnpCMnA4NkYrQlZFYzdRMzVWMFBhVnNx?=
+ =?utf-8?B?UGJFZks3dFdSTDJERmFVeUNITm5IcWdhRnRyRlVGT3VySFljTFZLT0JSdElZ?=
+ =?utf-8?B?L2pyTTVGejU0bTM5N0ZFeHB1ZVFEamFEclY5dlQ1M2RtbzkwRkpKYUh5akZY?=
+ =?utf-8?B?eHk1a3I5NHV5SUtPMGw4SHVvaXJYZzdqTkJQa1VwcUJBT2hLaEo0T3BERU45?=
+ =?utf-8?B?YktyTnFWcUtudUs0WnlqV3V6bUJiekEzN2NacHRkOUg4VGVUazFVQVFCRlJR?=
+ =?utf-8?B?Y3JlWXdQNXdic2RmOC9nRHFUWGNuTWJWdkJURlI5cFlUOEg4MXBRblRyd05B?=
+ =?utf-8?B?K1VvSk9tS2c1U2JkOVlYSEF4WUptK2xTT01icERTNU1XUHZsVEM2UTBrOEFB?=
+ =?utf-8?B?U0c1RFBjZzdzYzlEaCtZVURpRjRJN0JpN3pxUnp1OUsyQjVEelpUVHFISXdN?=
+ =?utf-8?B?WS9UbkZKQk9LQ0NVY3dVMklxeldFYWJ0Wlkxc0JZL2JNblNPT3hoUUJuejlE?=
+ =?utf-8?B?cDFQMFF4Yk9DazQ3Nk5sWFJwM1ovdzg2dnBCY0JJZzhTUEVBbWQzUzV3YW1q?=
+ =?utf-8?B?SFYyZmpGS2hidnZCb0RjYTAwNGZodWttVFRsbmRaK2xCSVp3VXNkR3huL09a?=
+ =?utf-8?B?dFIzK3BLUmhJWTJrS2tuU0lBYWV0Qy8yTXdoQlRYTlloRWNmZW94Q1BWaU85?=
+ =?utf-8?B?WWZGR0xBbDFKNjk3OW5mdmJRbUsrbVZMblYxTFd1ZldrYTJKQVFYV0NVNnUx?=
+ =?utf-8?B?YklWa29TbjVkM0s5SThTME9IWHlOZHllNEJNTFNLT0NseDQxOEJCZ0FSYzdB?=
+ =?utf-8?B?bFgxSEpvbnFmendId2wyWkgrV0JnSGRqUWhLWFozdEJqVlRTUFBZdnB0SlA0?=
+ =?utf-8?B?QjE0YWQxdElIdHp5aEJ4MzBqd0VlZEFqZWphdDNLdm5yR29tRnMwd1ZRV1Bj?=
+ =?utf-8?B?NDZHSTJhbGJDeWhSUUU2MzFmNHVrL1FQdkRzeExIemd0NUNFTU1NNElyNmpI?=
+ =?utf-8?B?YmdSUCtHM2RsUVhpTnFjSjNXYnRyMDVQVjd3d2xseWJZWFhPZThHc3pFNm1P?=
+ =?utf-8?B?SkNSMmFDd0JlbjJuQ3VNQ0NzS0o4UHpTME5mVG9wTno0SStDYW00TlhiRk8z?=
+ =?utf-8?B?VXZZZnlDcmJTckRQTWRJNXg3YjNYTEVPUndtd0tmRGJycldlSnA0MHhyU1B2?=
+ =?utf-8?B?b1lSQjBWM1RuR05UTFZtZVJuR1pIVUE4L2FEbzAvcDVaU0R1ZzRSSk1uUTFW?=
+ =?utf-8?B?RGhaaFIyd3lQeVVweXV1azFhaUxrbDFaenN6ZzBISmdLTTh0a3RLOGY1aW43?=
+ =?utf-8?B?ZGNRVjJrUzZWUFoyc3VmT0FSVW0yQzJCTmtzM2pRT1pjaVE9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR21MB1443.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6zFwys8W0UHKMTGHn6b7C4+o/iLvdOCAcBNYOGTO/RmiWeND4vy6FPWxEQAi?=
- =?us-ascii?Q?EE4uG05QlzI7GLvKuypEWA8NdoXdco1dIF6Cub6TvcpdmXRNYsWa0sDmDP4Q?=
- =?us-ascii?Q?+jRr07g1Gk2RebyQmI2pqjKMYEttT9zv3WGQEx80xEaVEClhV8t19cdcT/42?=
- =?us-ascii?Q?dtfjGPL7wrmEjeH3H5iSaV+ePMf8hH4VuF5e1Z2gFZ93w70yOJfJRZY5yHZ9?=
- =?us-ascii?Q?yo2QJGyetIBgZMSy/LoNiIl8gyfsw6FQ0rpYjwYfUhXBygnVOAii/VUea+zC?=
- =?us-ascii?Q?UWxICsv5hUi4DwXyIug7rPtqEf1qz5MqQcRP1b4zn52GLih8oyQlANJehClM?=
- =?us-ascii?Q?U6GuY3DvlyWdpYpLBDLdAeFMNSQ591SeSPjxKeMfgyR5PD9Ewc2DoTpbOM0h?=
- =?us-ascii?Q?SyXwGebGuM2s1kSQ/o4OXzGY3NgbqcRW2PoIwv3iVJaP2fZt/He1JEQzd1Zg?=
- =?us-ascii?Q?4ZIFrZQy53k/L9CAeKsgJcbI/PTay3UJ0zQIFl9e/HsVNEevFMZpl3zEBYpN?=
- =?us-ascii?Q?7wZZM4yf5aGQ6EAxGs6htKsWO5MT4QJ5iX0y5dBA9RyReD3RtSZDN3C2fwmu?=
- =?us-ascii?Q?Q9jvbmKMxOKEWDiYwxZpt2Cvb09MMsGK/OuB5NiRlidtYGrR0UdImc6Ems9B?=
- =?us-ascii?Q?xkJEW5zRZJe6kXAdtEnDJIXDXKPLnJlPKggez17TdMXbRfDM4QoBJrU65pFl?=
- =?us-ascii?Q?1RcaHoEIO9SdwkgHAc2gurTLeoQNKCoiWjh0ViYDxVdofjleSk2wIPkhg4U9?=
- =?us-ascii?Q?/sQFkQiPweFMP5ciOR7MmoDAr7rA+vva60TZEbxoNiQc7bdFa07iIq1pbLgf?=
- =?us-ascii?Q?owY4WyDXPC5vGgL/7h7leU14RDJZ5HPb1inPH5yvQfln17+1ncK8w+MTJMEV?=
- =?us-ascii?Q?/+2JBiVX468xNAZv5N8JLXP5HfJu4HXuwAQSDg/PCEwqCLKL/SPShPAqfU6d?=
- =?us-ascii?Q?O8t4lp72UCduugwnebO1Cb8DFIC5M9kg3l2+JdDfUOsKPatZlHtPbG77yTRS?=
- =?us-ascii?Q?f9UmTc2KsMNPnkF8biyrZSkX/1uEYup7RtuO+3vo+8bVSP4Cui6cCXZTcSEQ?=
- =?us-ascii?Q?r7biDheflXkH3FILTUPXHO5G4+leH8gd48wEronU1RWZRQINgIadO3SO7OCC?=
- =?us-ascii?Q?tPPBTkA7ixXystt0DFK7kW0a7zCmH8yefZ6dYaQJDQ5jUgI0eTxvkxcT9sRW?=
- =?us-ascii?Q?HckrXvmqgQp5lahOC4r5dtK8EYlp5PiXmJmT2X7uZWxTG2XjFntxuFg9wjJi?=
- =?us-ascii?Q?+04mv6En3RGGn3ZCOQzVrJwnEPH5/MxnIPtQCRg0v1qExeCJ5+hUUo2r5pR7?=
- =?us-ascii?Q?YKILCN9G3ABEIKc3WkJf54BUTNstDFQzG9aYm85MHuMFjmSartOywm37CWNP?=
- =?us-ascii?Q?h6NZWIRjFKnzcSfVInnGzAPtyqPGwWuEubOCrFXv4NDqtHT6b9M+xGDWdGvK?=
- =?us-ascii?Q?BE2sQefZuDjF4l5SBtdx0jfUQU4jRsyC+8AkWbszTKOlwlcz5dqxaY0aPrJl?=
- =?us-ascii?Q?9/bMOFTvwk7EmEy615zouYqsjYB+cwOEDqIkIr3M6vHPlhuVVhItcH1u7XRM?=
- =?us-ascii?Q?5MeML2yG4gTSsGhKhmNFtfZ1JYLSuKu7HgigrI6/?=
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 444c7948-088e-4e77-db11-08dcc221d88f
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR21MB1443.namprd21.prod.outlook.com
+	=?utf-8?B?YXlmVUNyd3llSm5MdmhGUDU1RE1vQThWZTV3aVJJUlJ2SG9acUl1ZFVqdTZY?=
+ =?utf-8?B?a004RFRKWEtackpmMXlnNnR0d1dLRXRGSTVqMkw5MHg3US9rWTN4UVEzZExn?=
+ =?utf-8?B?WFBWVk5NKzMwdDhWOWdtT21xYUNMQTloOTRpZXZxR3c1d0xBanhpRmtNQzJP?=
+ =?utf-8?B?dFNXWjR6a3JBYlJaU0w0WEtxbVE1T0x5R3psblpQZnVsZkRnbFpiRm1iS1l0?=
+ =?utf-8?B?UVp6MUZLZk1RdFc0bC9kL2JZMmFtMExjTFdOU0Y3VnUrVG9JQ2NsdjdCQ0ZC?=
+ =?utf-8?B?dVUraWZCb25RSzhXWHE4bTRJYWlLYUlmanhoUEhkWGVObVdMRXpOSlFGeHAx?=
+ =?utf-8?B?OHY3WjVoRHJ6cmNUOUNuZlJscHZvZU5keDNzLy9IOXUyNmU0d1RxdkxNd1Y2?=
+ =?utf-8?B?S3lHdWdmMzQybDkveDZNdWVGTmJzQ0RvUkxtSjFLZDhJd21qNTJya3hwOFhX?=
+ =?utf-8?B?WHhrbDdSWC9IcXEyV0c2N1FtZ0cvdmYyWWVRMVQwZkMzb2YveXVsSTlTSkNT?=
+ =?utf-8?B?UGFNNzhuemN6RkJNWW9UQkY2UUpseEhOOVQzcFhvSVAyUWoySGFzQ0NRYWVC?=
+ =?utf-8?B?VTZDSlVNMlNFdjVQNnhia1RoZWNpWjR4OWxLS2RJbm1yUkNlN2JxbWlJZVBo?=
+ =?utf-8?B?d09lOG9JZjdYY0FFZHU1YWJDNkttMTdJa3ZCaVdabE4xUU11UUJCSXMvd01M?=
+ =?utf-8?B?bUYyNWJaQ1k1dmo3U3ZLbFMrTUovVHZjQkYreUFhYk5jaVhPWHd2RVAxSStK?=
+ =?utf-8?B?Zld3RmJZZXBmb3dVKzJ0OUcweDR2VkU4azUrbVYwSGlTR0QvVXRPemNPRnpR?=
+ =?utf-8?B?RUZSbmJFWW1MQ2x6QUVsZEhydUVobGZrZ2pyajJibjdwK1lrOHoyMmNJdFow?=
+ =?utf-8?B?eFlKRis4U3hmWmFLVlB2YUxRbzRWbTU1dnpQNzRpbVZldE40QkNNalBldG0r?=
+ =?utf-8?B?RG5RaGNkOWxCV2plUXF0cjVFMUIzbVlVWVdibHc0QnBER0tydFQ1dkNHU3cr?=
+ =?utf-8?B?b3h5NVhSOSsraUFjRTJYUHY4bDVFKzNXY0Z4b2kyODBTY1FQZjltQ0lPNEp3?=
+ =?utf-8?B?Wm50RXkxazRRc3VKcDdCeG5lQyt2ODV5TkVURXpNblluTmkwUjFRMGp3UWdS?=
+ =?utf-8?B?N29ZRFlldDVPRFRRbFRSVkNGRXFDZFQxcDQ4bXZlSXVFbUE3TENnRjNTMFU3?=
+ =?utf-8?B?MEt1RWdVTWtlOFNUSHE5T3RScml3a1N3R0JoMisvZzNMN1Y1VURoMmloUEMz?=
+ =?utf-8?B?czJ1WFFVMlZkbWJIRlJNZGlURUpoWGhkMGJ6dEl0ZklzUFlhYVhCcCtMS1NT?=
+ =?utf-8?B?N0h2MFZtMnpnNDRFYlVTR0k1ZjBIRk10NTdNdnd6ZTdnb3dNMnpJUWpVSC9Y?=
+ =?utf-8?B?TkZuM3ovekV2b2c1S0dNVW9iRWYyQnpRL3ZoUGtoajhEZzVxYnQ4dlhRd0xn?=
+ =?utf-8?B?ZlcxR0VkRWJ0R2Y4NFlSTHJpVkFlakY2TC9JOVYzK1VMSU9vQkZ4anpSZ0g2?=
+ =?utf-8?B?eXZFVEIxeHMxTTlqdTN2RWN6R2t3VWxQQk1vKy91eG11MnFtTzhOaElxZmVs?=
+ =?utf-8?B?NFlyaXgwS3U3aGh2ODlYNVgrOUxKeVBkZVhTT1lqd1h4QjNGcDBrVUwrdHRw?=
+ =?utf-8?B?c05YdVM2WnpkY3BRN2xBOFd3d1c5R1cwWmtzSjVqclBIZHJnVXMvYzNEUGh1?=
+ =?utf-8?B?RFZ3emE4Y3M5dmJ1ODFkcHRGWDN4NnlPeHhpblpTZysxSG83OS9adkNhb0Qy?=
+ =?utf-8?B?Smc4M01xamV0UXpSZEdpbGJhV0J6QjlqVTgwK3ZDMWE2UUo5Q3Fna2VWQmhD?=
+ =?utf-8?B?RVhzZW85a1FyWktmVFl6TVR0aGRkTkZFdUlzdFVIM1JPL2Jld0N1WUU4dE1i?=
+ =?utf-8?B?RDErTk1tOGc3aHZVY1g2VXJ4NVU2bjZ1bmZ5RUkzWUcxd29JdDNkeDB6ZC9N?=
+ =?utf-8?B?N3hOVi9RcDNrWWhXMmFUc094T1gySGpoZGhZZUFYbGtlOWdQbjZleDRLNGph?=
+ =?utf-8?B?cUw2eXJYQmk5WFFhdmtkb1ExWXN3SGxJNlZFUHRZc1dPOGlaTm5OeUtxaGlZ?=
+ =?utf-8?B?STJScy9ZUExSeWplODJtVENydHFDRFNwUTFHK2FBaDNsUk5vcm5VRitxNXgx?=
+ =?utf-8?Q?xnbIPmreAb1f14rpI3Tt5/tBW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe922b05-53ba-43f7-fb11-08dcc2223757
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 20:43:00.6184
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 20:45:39.6418
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9OiL/NwO+ODF5ud9U9ooeMVDdKJBYrKINKSarSqTv602KolZKfXVi6pvvY1vysyPG0xvFVOdQ1WuUC47/mPXRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR21MB1407
+X-MS-Exchange-CrossTenant-UserPrincipalName: X1/CXcWGWy2ezPTu6MnX4z4/vmiVLXjHezV37RT4g5OID9SzwZltLvUqmr/Xd7gx+x1ahwy9kPHwqABaVyvYlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7188
 
-The mana_hwc_rx_event_handler() / mana_hwc_handle_resp() calls
-complete(&ctx->comp_event) before posting the wqe back. It's
-possible that other callers, like mana_create_txq(), start the
-next round of mana_hwc_send_request() before the posting of wqe.
-And if the HW is fast enough to respond, it can hit no_wqe error
-on the HW channel, then the response message is lost. The mana
-driver may fail to create queues and open, because of waiting for
-the HW response and timed out.
-Sample dmesg:
-[  528.610840] mana 39d4:00:02.0: HWC: Request timed out!
-[  528.614452] mana 39d4:00:02.0: Failed to send mana message: -110, 0x0
-[  528.618326] mana 39d4:00:02.0 enP14804s2: Failed to create WQ object: -110
+On 8/18/2024 01:56, Thomas Weißschuh wrote:
+> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+> is "12". This leads to a fairly bright minimum display backlight.
+> 
+> Introduce a quirk to override "min_input_signal" to "0" which leads to a
+> much lower minimum brightness, which is still readable even in daylight.
+> 
 
-To fix it, move posting of rx wqe before complete(&ctx->comp_event).
+Apologies for my delayed response, I've been OOO a while.
 
-Cc: stable@vger.kernel.org
-Fixes: ca9c54d2d6a5 ("net: mana: Add a driver for Microsoft Azure Network Adapter (MANA)")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- .../net/ethernet/microsoft/mana/hw_channel.c  | 62 ++++++++++---------
- 1 file changed, 34 insertions(+), 28 deletions(-)
+An earlier version of this series I had asked if this could be tested 
+specifically with panel_power_savings enabled to ensure we're not 
+causing a regression with such a low minimum and panel power savings 
+turned up to the maximum.  If such a dependency does exist, I believe 
+panel power savings will need to get an extra check introduced to 
+disable it when the brightness falls below the previous threshold that 
+was programmed by the firmware.
 
-diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-index cafded2f9382..a00f915c5188 100644
---- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
-+++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-@@ -52,9 +52,33 @@ static int mana_hwc_verify_resp_msg(const struct hwc_caller_ctx *caller_ctx,
- 	return 0;
- }
- 
-+static int mana_hwc_post_rx_wqe(const struct hwc_wq *hwc_rxq,
-+				struct hwc_work_request *req)
-+{
-+	struct device *dev = hwc_rxq->hwc->dev;
-+	struct gdma_sge *sge;
-+	int err;
-+
-+	sge = &req->sge;
-+	sge->address = (u64)req->buf_sge_addr;
-+	sge->mem_key = hwc_rxq->msg_buf->gpa_mkey;
-+	sge->size = req->buf_len;
-+
-+	memset(&req->wqe_req, 0, sizeof(struct gdma_wqe_request));
-+	req->wqe_req.sgl = sge;
-+	req->wqe_req.num_sge = 1;
-+	req->wqe_req.client_data_unit = 0;
-+
-+	err = mana_gd_post_and_ring(hwc_rxq->gdma_wq, &req->wqe_req, NULL);
-+	if (err)
-+		dev_err(dev, "Failed to post WQE on HWC RQ: %d\n", err);
-+	return err;
-+}
-+
- static void mana_hwc_handle_resp(struct hw_channel_context *hwc, u32 resp_len,
--				 const struct gdma_resp_hdr *resp_msg)
-+				 struct hwc_work_request *rx_req)
- {
-+	const struct gdma_resp_hdr *resp_msg = rx_req->buf_va;
- 	struct hwc_caller_ctx *ctx;
- 	int err;
- 
-@@ -62,6 +86,7 @@ static void mana_hwc_handle_resp(struct hw_channel_context *hwc, u32 resp_len,
- 		      hwc->inflight_msg_res.map)) {
- 		dev_err(hwc->dev, "hwc_rx: invalid msg_id = %u\n",
- 			resp_msg->response.hwc_msg_id);
-+		mana_hwc_post_rx_wqe(hwc->rxq, rx_req);
- 		return;
- 	}
- 
-@@ -75,30 +100,13 @@ static void mana_hwc_handle_resp(struct hw_channel_context *hwc, u32 resp_len,
- 	memcpy(ctx->output_buf, resp_msg, resp_len);
- out:
- 	ctx->error = err;
--	complete(&ctx->comp_event);
--}
--
--static int mana_hwc_post_rx_wqe(const struct hwc_wq *hwc_rxq,
--				struct hwc_work_request *req)
--{
--	struct device *dev = hwc_rxq->hwc->dev;
--	struct gdma_sge *sge;
--	int err;
--
--	sge = &req->sge;
--	sge->address = (u64)req->buf_sge_addr;
--	sge->mem_key = hwc_rxq->msg_buf->gpa_mkey;
--	sge->size = req->buf_len;
- 
--	memset(&req->wqe_req, 0, sizeof(struct gdma_wqe_request));
--	req->wqe_req.sgl = sge;
--	req->wqe_req.num_sge = 1;
--	req->wqe_req.client_data_unit = 0;
-+	/* Must post rx wqe before complete(), otherwise the next rx may
-+	 * hit no_wqe error.
-+	 */
-+	mana_hwc_post_rx_wqe(hwc->rxq, rx_req);
- 
--	err = mana_gd_post_and_ring(hwc_rxq->gdma_wq, &req->wqe_req, NULL);
--	if (err)
--		dev_err(dev, "Failed to post WQE on HWC RQ: %d\n", err);
--	return err;
-+	complete(&ctx->comp_event);
- }
- 
- static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
-@@ -235,14 +243,12 @@ static void mana_hwc_rx_event_handler(void *ctx, u32 gdma_rxq_id,
- 		return;
- 	}
- 
--	mana_hwc_handle_resp(hwc, rx_oob->tx_oob_data_size, resp);
-+	mana_hwc_handle_resp(hwc, rx_oob->tx_oob_data_size, rx_req);
- 
--	/* Do no longer use 'resp', because the buffer is posted to the HW
--	 * in the below mana_hwc_post_rx_wqe().
-+	/* Can no longer use 'resp', because the buffer is posted to the HW
-+	 * in mana_hwc_handle_resp() above.
- 	 */
- 	resp = NULL;
--
--	mana_hwc_post_rx_wqe(hwc_rxq, rx_req);
- }
- 
- static void mana_hwc_tx_event_handler(void *ctx, u32 gdma_txq_id,
--- 
-2.34.1
+Did that ever get checked?
+
+> Tested on a Framework AMD 13 BIOS 3.05 and Framework AMD 16.
+> 
+
+As far as I can tell this series doesn't apply any quirks to Framework 
+16.  So by testing, do you mean that you tested that it didn't cause 
+regressions (which it shouldn't; the panels don't match!).
+
+> One solution would be a fixed firmware version, which was announced but
+> has no timeline. >
+> ---
+> Changes in v5:
+> - Forward-declare struct drm_edid
+> - Reorder patches, quirk entries are last
+> - Add patch from Dustin for additional quirk entries
+> - Link to v4: https://lore.kernel.org/r/20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
+> 
+> Changes in v4:
+> - Switch back to v2 implementation
+> - Add MODULE_DESCRIPTION()
+> - Simplify quirk infrastructure to only handle min backlight quirks.
+>    It can be extended if necessary.
+> - Expand documentation.
+> - Link to v3: https://lore.kernel.org/r/20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net
+> 
+> Changes in v3:
+> - Switch to cmdline override parameter
+> - Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net
+> 
+> Changes in v2:
+> - Introduce proper drm backlight quirk infrastructure
+> - Quirk by EDID and DMI instead of only DMI
+> - Limit quirk to only single Framework 13 matte panel
+> - Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net
+> 
+> ---
+> Dustin L. Howett (1):
+>        drm: panel-backlight-quirks: Add Framework 13 glossy and 2.8k panels
+> 
+> Thomas Weißschuh (3):
+>        drm: Add panel backlight quirks
+>        drm/amd/display: Add support for minimum backlight quirk
+>        drm: panel-backlight-quirks: Add Framework 13 matte panel
+> 
+>   Documentation/gpu/drm-kms-helpers.rst             |  3 +
+>   drivers/gpu/drm/Kconfig                           |  4 +
+>   drivers/gpu/drm/Makefile                          |  1 +
+>   drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 +++
+>   drivers/gpu/drm/drm_panel_backlight_quirks.c      | 94 +++++++++++++++++++++++
+>   include/drm/drm_utils.h                           |  4 +
+>   7 files changed, 117 insertions(+)
+> ---
+> base-commit: c3f2d783a459980eafd24c5af94ccd56a615961f
+> change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
+> 
+> Best regards,
 
 
