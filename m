@@ -1,296 +1,137 @@
-Return-Path: <linux-kernel+bounces-295185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0AD95984D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:49:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2049959850
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3D862821A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 202491C21D0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5913C1E131E;
-	Wed, 21 Aug 2024 08:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76561B81B1;
+	Wed, 21 Aug 2024 08:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpS8PVvW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDBI58+B"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEBB1E12F9;
-	Wed, 21 Aug 2024 08:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630BC1E12F9
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724230701; cv=none; b=JJJkNjuV755yQkn5/nrY7AEJYqgUckSr8BxTF18vO3R6/4PCSrtm/urYn4RL28qTckv4UKn7+eF9Z8014lvydWSFU6LDYBUMNyJ/NztbmwD/HhXjUSlOJs458NjU9/14U47FxVxzWbCOJAnmjW5dxX9aa3hYLWS53ABxmHBcfFc=
+	t=1724230780; cv=none; b=N5E8HBRf2Bia227i1EwVT2l6WZbtdrP4CLDctnl5pqnIgzyDCv/YQoNLXyRqWF74UPLPk7GbryZ46VQU6vwp/NyA4kFJcMQnNMO8tbhXI4ORVt970YiRCZuoOowAmwIinNydog3MvFWrb75tE4PcVtGmjjMfyynKFjoO6C1BM34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724230701; c=relaxed/simple;
-	bh=MePTBArkjQEoN9WehrsOLHi51jHZYsDNYgt4wEoIRuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D8KHDNe9NI3LEn6diEz8mDIxxTqww6KXOUrwRlD2fvDW/jU4D06ThO5fQ5v2b7HP/8XR8NKAed8peStk5OQd7moSAjUaNQBr3Xa7NibYS4Cp6mzmqwTINnjdsYYJEpPBo+zRx4ftgr95uNd6vuKfcBfBaTp/scJVinO35pzGK3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpS8PVvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E48E2C32782;
-	Wed, 21 Aug 2024 08:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724230701;
-	bh=MePTBArkjQEoN9WehrsOLHi51jHZYsDNYgt4wEoIRuY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cpS8PVvWskHnpIayuz42InNni38b8wBoWuN5CGkBBjkZnv+5ZE8LMYqZWcUoSj0VP
-	 8SXQUasKhsnmZb8yriCOwh2wfaAMb6Cj/ulYDE63522Xm5so3ngx9wBQImJk1ZrxIx
-	 vVMEOJFwTz3OxTwqaEApW4RcmwIlgstjpI2hSxP1ZQBjbNutxnsaHKUosZ+NBcyhDK
-	 cl7vNPkKq+nTJZaiycaSvq5n+u0NYTz81rnZ5v9HNEFd2rSrt6ILdybc4felLxJHKd
-	 dW3lRC2fyL4eAl650HE5piDGmAtBpC3JlOnqdx2ovBSl1Zr1kwhUXGj7I4DTwbSkFU
-	 9Ly4GqHO2n+9A==
-Message-ID: <ce9a7ea1-67bc-42b8-836d-11932dcf3790@kernel.org>
-Date: Wed, 21 Aug 2024 10:58:13 +0200
+	s=arc-20240116; t=1724230780; c=relaxed/simple;
+	bh=s9ykuWWKcIzYSLhEcZ+7Y4Hgz3fhKuaaWdhkvIE3Vr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l2dh4VUA32ZOKaheLBvkksfL7mbglOWL4UjoOlHbnJyHX8z5SkMzSBibqBuFaDIj5pLcNrVXuHUy830nUDXnytb2CmE6F8RWWAvLfumdqhk2fi9ZjZq6Th0yUgh/T9qRlAvljwc16TVjSmdG5HnzEnJ7fvDAztKLedP8rEq6Pqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fDBI58+B; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e04196b7603so6994253276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 01:59:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724230777; x=1724835577; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DZLdwMEs9e97Ffbpr5sQWKeFKLgx/5QLihyfu1wCHdE=;
+        b=fDBI58+BHQuhvC7WpH8a6BCGrEs/cHEl1EU6xLeOda9YpanIuZi5MrcIysmii4liNF
+         hfV9YMwgU+4snAdT0nCHnwGm5X+am1i0p0jI0uHdZwwPf9XtvRxeqHN0MC0++wllnsQd
+         drnfhVUX8cNiLvo4e7GeaNy6XSyM0nF5Fvuylajrd+BR3EUg3HBFTrDzEKOeBzcLac7D
+         dvUTHkk+fX8rSPyzmOD+TOGKLm+AfLPzFRqHYfRElTEeFFHoFTFlUdmw5EOjZJ0OnYqB
+         YJz185qyp0cgo95SvlLuvIDLM5Oi+1QhJ6s4CLm/QZA83K+QO5tVmz9mJ7BDLUiweWe8
+         v8Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724230777; x=1724835577;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DZLdwMEs9e97Ffbpr5sQWKeFKLgx/5QLihyfu1wCHdE=;
+        b=Kip3RolzN4O28JYtZA+Pbzpy0b+bMuTpD6MN/EhvALWMELoNACfIUt58Yo2IqFg0Lu
+         YwG6yrK0k7n6pGBoV7rbVF4vsc2FIs7yr2gkuNV8KMkg7FsIaxvgnpAYHZteO+C9/5nS
+         M3zBm47wI9Zs8InZYg4EYbRyxR6KGFX5eEa4iBGJqxMavbZdRXmu8vYtRS9Mx1BkbLpw
+         FfpBsiRXSd85UCz9yTAed4XLQIHiXNzD9cMOQH1KFETQscTK1QsUwEUSd+PiBWsgImnm
+         HpMJ7BEiaK1qlCFL03Va0Z1U6IKmHmfCvT3Um+MKIyAp+0VGQAtLOOnOvqti4q1cG0Wc
+         fU6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWRjjQfdkE9k1oQTjTV9I+U2BUrto1g5Ozb7qH83Ak6B1pSfIQSmzd+w9FL8sLoUJUSevQti/mZJzRNDpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqObxa9PZ7tjRUQCLhZLg3KpDP5A4i//6MhuWAP2MNC10RydBN
+	9lfMTGLJfVwjrqeuZiaIRediW7Nu4cN8DwOYaxFkAr+ayPqy69Pui2Vqdmovyr4HJ9o8np0zGtS
+	R94uxHY8dnFJpMZRdOZWLtbq1OGnaYOQWTr9O+w==
+X-Google-Smtp-Source: AGHT+IHCal/De+SEUKvHz6W9y7R33FpC1amVSgjxjWHDOYJi7w75J2qZuI5FPiGbNGA5CdRLRwf6TZKiBh3F5efpwPY=
+X-Received: by 2002:a05:6902:e0f:b0:e11:7f99:f76a with SMTP id
+ 3f1490d57ef6-e16655627f8mr1731952276.50.1724230777443; Wed, 21 Aug 2024
+ 01:59:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] reset: mediatek: Add reset control driver for SMI
-To: "friday.yang" <friday.yang@mediatek.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Yong Wu <yong.wu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240821082845.11792-1-friday.yang@mediatek.com>
- <20240821082845.11792-5-friday.yang@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240821082845.11792-5-friday.yang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240723144610.564273-1-ulf.hansson@linaro.org>
+ <20240723144610.564273-3-ulf.hansson@linaro.org> <0af670ae-8c8f-4e78-b1e0-e9ccb4fba2c9@gmail.com>
+ <CAPDyKFr5xjE867rHRZxtKPr0iKh9B6_Ckyu=B4Jzn-ExDpQjVQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFr5xjE867rHRZxtKPr0iKh9B6_Ckyu=B4Jzn-ExDpQjVQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 Aug 2024 10:58:59 +0200
+Message-ID: <CAPDyKFrhFHn0Z4PV1hG7ZtthzqFzdekO0vd39KXAPiD_0jR4zw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] media: venus: Use dev_pm_domain_attach|detach_list()
+ for OPP PM domain
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/08/2024 10:26, friday.yang wrote:
-> Add a reset-controller driver for performing reset management of
-> SMI LARBs on MediaTek platform. This driver uses the regmap
-> frameworks to actually implement the various reset functions
-> needed when SMI LARBs apply clamp operations.
+On Wed, 21 Aug 2024 at 10:56, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Tue, 20 Aug 2024 at 22:48, Stanimir Varbanov
+> <stanimir.k.varbanov@gmail.com> wrote:
+> >
+> > Hi Ulf,
+> >
+> > Thank you for the patch!
+> >
+> > On 23.07.24 =D0=B3. 17:46 =D1=87., Ulf Hansson wrote:
+> > > Rather than hooking up the PM domains through devm_pm_opp_attach_genp=
+d()
+> > > and manage the device-link, let's avoid the boilerplate-code by conve=
+rting
+> > > into dev_pm_domain_attach|detach_list.
+> > >
+> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > ---
+> > >   drivers/media/platform/qcom/venus/core.c      |  8 ++---
+> > >   drivers/media/platform/qcom/venus/core.h      |  6 +---
+> > >   .../media/platform/qcom/venus/pm_helpers.c    | 31 ++++++----------=
+---
+> > >   3 files changed, 14 insertions(+), 31 deletions(-)
+> > >
+> >
+> > Acked-by: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+>
+> Thanks!
+>
+> >
+> > I'll pick it through linux-media.
+>
+> Please don't.
+>
+> I should have stated that this depends on another series [1] - and
+> they need either to go together or we need to defer $subject patch
+> until the next release cycle.
+>
+> Kind regards
+> Uffe
 
-How does this depend on memory controller patches? Why is this grouped
-in one patchset?
-
-> 
-> Signed-off-by: friday.yang <friday.yang@mediatek.com>
-> ---
->  drivers/reset/Kconfig              |   9 ++
->  drivers/reset/Makefile             |   1 +
->  drivers/reset/reset-mediatek-smi.c | 152 +++++++++++++++++++++++++++++
->  3 files changed, 162 insertions(+)
->  create mode 100644 drivers/reset/reset-mediatek-smi.c
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 67bce340a87e..e984a5a332f1 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -154,6 +154,15 @@ config RESET_MESON_AUDIO_ARB
->  	  This enables the reset driver for Audio Memory Arbiter of
->  	  Amlogic's A113 based SoCs
->  
-> +config RESET_MTK_SMI
-> +	bool "MediaTek SMI Reset Driver"
-> +	depends on MTK_SMI
-
-compile test
-
-> +	help
-> +	  This option enables the reset controller driver for MediaTek SMI.
-> +	  This reset driver is responsible for managing the reset signals
-> +	  for SMI larbs. Say Y if you want to control reset signals for
-> +	  MediaTek SMI larbs. Otherwise, say N.
-> +
->  config RESET_NPCM
->  	bool "NPCM BMC Reset Driver" if COMPILE_TEST
->  	default ARCH_NPCM
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 27b0bbdfcc04..241777485b40 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -22,6 +22,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
->  obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
->  obj-$(CONFIG_RESET_MESON) += reset-meson.o
->  obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
-> +obj-$(CONFIG_RESET_MTK_SMI) += reset-mediatek-smi.o
->  obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
->  obj-$(CONFIG_RESET_NUVOTON_MA35D1) += reset-ma35d1.o
->  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-> diff --git a/drivers/reset/reset-mediatek-smi.c b/drivers/reset/reset-mediatek-smi.c
-> new file mode 100644
-> index 000000000000..ead747e80ad5
-> --- /dev/null
-> +++ b/drivers/reset/reset-mediatek-smi.c
-> @@ -0,0 +1,152 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Reset driver for MediaTek SMI module
-> + *
-> + * Copyright (C) 2024 MediaTek Inc.
-> + */
-> +
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#include <dt-bindings/reset/mt8188-resets.h>
-> +
-> +#define to_mtk_smi_reset_data(_rcdev)	\
-> +	container_of(_rcdev, struct mtk_smi_reset_data, rcdev)
-> +
-> +struct mtk_smi_larb_reset {
-> +	unsigned int offset;
-> +	unsigned int value;
-> +};
-> +
-> +static const struct mtk_smi_larb_reset rst_signal_mt8188[] = {
-> +	[MT8188_SMI_RST_LARB10]		= { 0xC, BIT(0) }, /* larb10 */
-> +	[MT8188_SMI_RST_LARB11A]	= { 0xC, BIT(0) }, /* larb11a */
-> +	[MT8188_SMI_RST_LARB11C]	= { 0xC, BIT(0) }, /* larb11c */
-> +	[MT8188_SMI_RST_LARB12]		= { 0xC, BIT(8) }, /* larb12 */
-> +	[MT8188_SMI_RST_LARB11B]	= { 0xC, BIT(0) }, /* larb11b */
-> +	[MT8188_SMI_RST_LARB15]		= { 0xC, BIT(0) }, /* larb15 */
-> +	[MT8188_SMI_RST_LARB16B]	= { 0xA0, BIT(4) }, /* larb16b */
-> +	[MT8188_SMI_RST_LARB17B]	= { 0xA0, BIT(4) }, /* larb17b */
-> +	[MT8188_SMI_RST_LARB16A]	= { 0xA0, BIT(4) }, /* larb16a */
-> +	[MT8188_SMI_RST_LARB17A]	= { 0xA0, BIT(4) }, /* larb17a */
-> +};
-> +
-> +struct mtk_smi_larb_plat {
-> +	const struct mtk_smi_larb_reset		*reset_signal;
-> +	const unsigned int			larb_reset_nr;
-> +};
-> +
-> +struct mtk_smi_reset_data {
-> +	const struct mtk_smi_larb_plat *larb_plat;
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *regmap;
-> +};
-> +
-> +static const struct mtk_smi_larb_plat mtk_smi_larb_mt8188 = {
-> +	.reset_signal = rst_signal_mt8188,
-> +	.larb_reset_nr = ARRAY_SIZE(rst_signal_mt8188),
-> +};
-> +
-> +static int mtk_smi_larb_reset(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct mtk_smi_reset_data *data = to_mtk_smi_reset_data(rcdev);
-> +	const struct mtk_smi_larb_plat *larb_plat = data->larb_plat;
-> +	const struct mtk_smi_larb_reset *larb_rst = larb_plat->reset_signal + id;
-> +	int ret;
-> +
-> +	ret = regmap_set_bits(data->regmap, larb_rst->offset, larb_rst->value);
-> +	if (ret)
-> +		return ret;
-> +	ret = regmap_clear_bits(data->regmap, larb_rst->offset, larb_rst->value);
-> +
-> +	return ret;
-> +}
-> +
-> +static int mtk_smi_larb_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct mtk_smi_reset_data *data = to_mtk_smi_reset_data(rcdev);
-> +	const struct mtk_smi_larb_plat *larb_plat = data->larb_plat;
-> +	const struct mtk_smi_larb_reset *larb_rst = larb_plat->reset_signal + id;
-> +	int ret;
-> +
-> +	ret = regmap_set_bits(data->regmap, larb_rst->offset, larb_rst->value);
-> +	if (ret)
-> +		dev_err(rcdev->dev, "[%s] Failed to shutdown larb %d\n", __func__, ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int mtk_smi_larb_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct mtk_smi_reset_data *data = to_mtk_smi_reset_data(rcdev);
-> +	const struct mtk_smi_larb_plat *larb_plat = data->larb_plat;
-> +	const struct mtk_smi_larb_reset *larb_rst = larb_plat->reset_signal + id;
-> +	int ret;
-> +
-> +	ret = regmap_clear_bits(data->regmap, larb_rst->offset, larb_rst->value);
-> +	if (ret)
-> +		dev_err(rcdev->dev, "[%s] Failed to reopen larb %d\n", __func__, ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct reset_control_ops mtk_smi_reset_ops = {
-> +	.reset		= mtk_smi_larb_reset,
-> +	.assert		= mtk_smi_larb_reset_assert,
-> +	.deassert	= mtk_smi_larb_reset_deassert,
-> +};
-> +
-> +static int mtk_smi_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	const struct mtk_smi_larb_plat *larb_plat = of_device_get_match_data(dev);
-> +	struct device_node *np = dev->of_node, *reset_node;
-> +	struct mtk_smi_reset_data *data;
-> +	struct regmap *regmap;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	reset_node = of_parse_phandle(np, "mediatek,larb-rst-syscon", 0);
-> +	if (!reset_node)
-
-This looks just wrong. This looks like a child of whatever phandle
-points here.
-
-Why do you create MMIO-using node as not MMIO?
-
-Best regards,
-Krzysztof
-
+Forgot the link, here it is:
+[1]
+https://lore.kernel.org/all/20240718234319.356451-1-ulf.hansson@linaro.org/
 
