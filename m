@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-295412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC916959A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:48:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B7B959A9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE6C1C21897
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918EB1F219FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA9A19ABB8;
-	Wed, 21 Aug 2024 11:28:55 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4051B2509;
+	Wed, 21 Aug 2024 11:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ttied4kT"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F554436E
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3F41A4AC0
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239735; cv=none; b=BEL1kOfUuwZWPanhkopu3us6iDntAFA4z9gyMSdVh1cPVoIP/5+VYd3HAekm4X0QJZK33Nv3qH1FumNevNQq6hc8E+awn6O7u9uV1Fy7DMRSLxJNEfdlx6Gmk5mVnm7GQIIXFgLMaMpdIM0ms13QS8xgm4q3GvUX/O1K8X0on70=
+	t=1724239742; cv=none; b=U7zmQRK6gtuy087Hg0ajJ7j/ADrbNcg/p5IEjfPt9R2d4YBDAJn8XvT4rDrXUn0ZKAFMqKnkuFAWUBo1Y+dAfGUcECBDpskWytrLx3cU3SQrsK0Z3Qz9EBwI3pGCGr25upLcJV4XcSmPwaf5NEp6oQbVhPFvY/P+FnWuozpLX8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239735; c=relaxed/simple;
-	bh=G2tm53sT6ffsTgY2Zhx2stJBAQKFQezgTAAnuo9wB98=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aiSJ6/Ln8nRFe3SDG35jzfA1VN7nJK0zlT7jzcBJpJc9vR3e1cNI0keJIGv6IKyyRcamBdjCq5H2j2iVmRqYyTDC1aATJvEehvkS3zg6O9iS19YHA1e94XULmSZ09BjUdxM7tLTZyXj5knns0S/Xd2m7homsUMsdyFTKrujjehI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WpkXm5yH7z6D9Bh;
-	Wed, 21 Aug 2024 19:25:44 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id A576D140B18;
-	Wed, 21 Aug 2024 19:28:50 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
- 2024 12:28:49 +0100
-Date: Wed, 21 Aug 2024 12:28:48 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Tong Tiangen <tongtiangen@huawei.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, "Robin
- Murphy" <robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
-	<vincenzo.frascino@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-Subject: Re: [PATCH v12 4/6] arm64: support copy_mc_[user]_highpage()
-Message-ID: <20240821122848.00004047@Huawei.com>
-In-Reply-To: <8257d76b-c700-89a6-0e29-f194d2e1cd61@huawei.com>
-References: <20240528085915.1955987-1-tongtiangen@huawei.com>
-	<20240528085915.1955987-5-tongtiangen@huawei.com>
-	<20240819125601.0000687b@Huawei.com>
-	<8257d76b-c700-89a6-0e29-f194d2e1cd61@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724239742; c=relaxed/simple;
+	bh=M0Ooxo685v1POc7S1dTi/xgY7XnRXJDx1Ns73h4LP4A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fR5baWHtNL7xulnzNyb42ZZQPki6wvAo5p+/P1BaYdZu/2blqV5ar8rGSJBghb3FZ+HmNE2A34avzW/tSre485+Tb1In/nBWKd/4FhVBL19uYBHAJq1B5UZl/Q/vek4vQdu/U+9A96tdvACoCOZcrvqk+vMnCaBkPNY1uV8A26A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ttied4kT; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4281e715904so9134625e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 04:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724239738; x=1724844538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2U98PhHfsQe7q0eoibYZl509/CH1f8+DFvvWpqdj0Cg=;
+        b=Ttied4kT1+lfu/pbXW2WlALfx6LV1sZxy96Ei1ukPpSUXEaWyBAq/2oWLRBz4qj1rx
+         mBb9uUiQWMid7rTeCJljTvdNWzxmNasgQsZCaZCOcnfKdBm8R007hNSuacD1c2pt8XkS
+         q94dYBYrOHHQ82fSbvmvouUAMC2sBa1MkrYAyq1sRTdm5rPgXms2KsiG3D+Zd1vHKUjs
+         1YlcLlFIjYnOzZJIVhBF+SQBHEl/ESSpAidq/2cPPbK+rsrqhpGORhJoc/5VxU55Y1FZ
+         SKV78G5jueEci5fc8ExB4d6ECKnOwNNWRGhpfjwsH78cpk7P7uc7Bt/U5+rKQry/nK8d
+         9miA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724239738; x=1724844538;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2U98PhHfsQe7q0eoibYZl509/CH1f8+DFvvWpqdj0Cg=;
+        b=WlewvMyzlmyA7EKdP/5aJl+ACOdbnAjqAdetIobOrZN367/WWtjUMbnZ5jT1Sno4ph
+         kN8U7JvU2jzalnLV7Vf5kwdoVRFsceG5N77jUuxSkOPSTzqLhabsgh6pWn+gjLRX26CO
+         OspE+qvA/HGM01xNTZvw4VrXL8GawxDJWrcQe5/0UTvhcISdiMu1fisU/sAzkHUnZGyS
+         4zRdSpy5wCGymIFyfRVSAeVgZNU2TAdrvelDtwOkql5aUVybytFDXy1oYh24VLkidInF
+         /R5mbxdAz5wxRscHHtHRaM17FSsxC1mQ8Dq3GTRUVzw30xtbTpRsNL1ujt7/OeScfJBn
+         h8Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ4AlePcdJbNgTOKQB7OMadiEARO3+rMfzHAUY1OpJJENogle/9JFg19sABI+aZy+GRajUeMnNJf9Tnp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYnHsnu0O8G/lsj0d5o7ug4rNW8pzozxsxn4i8XzhlWp9BUp5
+	0kzNPT6Qm55GSgAH1v00khH6sxPIkTBLH5G4MuXTKhfKC9blzd0ggI0u9Ffuvpw=
+X-Google-Smtp-Source: AGHT+IEIuQbc89lIhEz/EoJLwbR+11BG8ia7GTtZCJ5M/PeGK9/JE2t6rDDT3qG5CyMk8VcRiLyGDg==
+X-Received: by 2002:a05:6000:154d:b0:362:4aac:8697 with SMTP id ffacd0b85a97d-372fd4d1195mr817938f8f.0.1724239738366;
+        Wed, 21 Aug 2024 04:28:58 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189897926sm15446926f8f.87.2024.08.21.04.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 04:28:57 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, David Virag <virag.david003@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240816175034.769628-1-virag.david003@gmail.com>
+References: <20240816175034.769628-1-virag.david003@gmail.com>
+Subject: Re: [PATCH v3 0/2] Add USB clocks to Exynos7885
+Message-Id: <172423973629.252925.10167794996873239462.b4-ty@linaro.org>
+Date: Wed, 21 Aug 2024 13:28:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-
-On Tue, 20 Aug 2024 11:02:05 +0800
-Tong Tiangen <tongtiangen@huawei.com> wrote:
-
-> =E5=9C=A8 2024/8/19 19:56, Jonathan Cameron =E5=86=99=E9=81=93:
-> > On Tue, 28 May 2024 16:59:13 +0800
-> > Tong Tiangen <tongtiangen@huawei.com> wrote:
-> >  =20
-> >> Currently, many scenarios that can tolerate memory errors when copying=
- page
-> >> have been supported in the kernel[1~5], all of which are implemented by
-> >> copy_mc_[user]_highpage(). arm64 should also support this mechanism.
-> >>
-> >> Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
-> >> architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
-> >> __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
-> >>
-> >> Add new helper copy_mc_page() which provide a page copy implementation=
- with
-> >> hardware memory error safe. The code logic of copy_mc_page() is the sa=
-me as
-> >> copy_page(), the main difference is that the ldp insn of copy_mc_page()
-> >> contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE, therefore, t=
-he
-> >> main logic is extracted to copy_page_template.S.
-> >>
-> >> [1] commit d302c2398ba2 ("mm, hwpoison: when copy-on-write hits poison=
-, take page offline")
-> >> [2] commit 1cb9dc4b475c ("mm: hwpoison: support recovery from HugePage=
- copy-on-write faults")
-> >> [3] commit 6b970599e807 ("mm: hwpoison: support recovery from ksm_migh=
-t_need_to_copy()")
-> >> [4] commit 98c76c9f1ef7 ("mm/khugepaged: recover from poisoned anonymo=
-us memory")
-> >> [5] commit 12904d953364 ("mm/khugepaged: recover from poisoned file-ba=
-cked memory")
-> >>
-> >> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com> =20
-> > Trivial stuff inline.
-> >=20
-> > Jonathan =20
->=20
-> I'm sorry, I may not have understood what you meant. Where is the better
-> place to do inline? :)
-Oops. All I meant was:
-
-My comments are inline - as in within the patch later in the email.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
 
+On Fri, 16 Aug 2024 19:50:30 +0200, David Virag wrote:
+> This set of patches adds the clocks necessary for USB on the Exynos7885
+> SoC.
+> 
+> Earlier versions of the set also contained some fixes for issues with
+> the existing driver/bindings, which have been applied now.
+> 
+> Changes in v2:
+> - Split from full patchset.
+> - Added Cc-stable tags and fixes tag to update CLKS_NR_FSYS patch
+> - Blank line fixes
+> 
+> [...]
+
+Applied, thanks!
+
+[1/2] clk: samsung: clk-pll: Add support for pll_1418x
+      https://git.kernel.org/krzk/linux/c/4e39e5b84361924006f4d7cf81e049a2793079a6
+[2/2] clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
+      https://git.kernel.org/krzk/linux/c/011a9de99793c3a2ee612ff3e0ce293dcbea6df0
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
