@@ -1,186 +1,155 @@
-Return-Path: <linux-kernel+bounces-295947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E39895A369
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:03:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC41A95A373
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8361F23BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:03:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3252CB2349D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762801B2ECB;
-	Wed, 21 Aug 2024 17:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0214B14F9E1;
+	Wed, 21 Aug 2024 17:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ggrxP9aL"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS3RBA2e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66A01B253B
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3711113E022;
+	Wed, 21 Aug 2024 17:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724259767; cv=none; b=GbCI4Zy8eZ3O3DHI+ejJkqFbQUhjGClMV0xIatGF4FmRdvV8iR385UCtmZBKkhGWS8/MkfE13yJIJOjxuIO17/KXRWQYGWO4si59DIqtNJ0xXZzrW2XS5M3x1jb2UTi7wF1eJQ/DoSMm/LMLqFE+mF6zSrJPqO9dnS1nk610uQo=
+	t=1724259813; cv=none; b=UP3U15i54M2I3Z8924DZSCrQTTUGJs88Qgz1O4urD4zAVKC1uJqNqTr6YbramVSqy7W6miEXOGSxd29nfH9hr6xzuNwrdZ2A72X2H39Hx/pLy+AMvJZBasSTwRPx/t9zyfKSMz8psRL4KY5Ibq4uB8aOXHjH94ThavUzq48l20o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724259767; c=relaxed/simple;
-	bh=cw9bJs+xqcXZNyScXsvQUU+pqCUtxyq+6IrvkmMyU6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GzB+GMXic4U9HF/72bWG1Q2Uat0VQGaF9TluOqWhfgG0pQBF1f5yLpLX2Oo2kzGKbI34rRrRp4tTbm/OSjdVyk8TXOHaMk0SxsiQ65MdpYPCGgGESv9tGYhX/Wvq2tRa599nKKuRONITZ0tIoF9l+bq4DC5SfM7p07pLq/Vg/MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ggrxP9aL; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6bf7707dbb6so8226076d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724259765; x=1724864565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sq94Qm6ZPacZgTXtsJjDDEhseS8HiVRXtfMMRotZvfU=;
-        b=ggrxP9aLya+MJwLZs6ACvxgNh1Gt01v+KxYZoLSOdFDHL3PBUJBVS0MH0PDdjG4pvF
-         Qh5Wg8Go0HIOznRXa8bwris+kjebvpwzuV8SxUkQS1iBRxrfgJ0Rz/j9buID+oPJstUT
-         Jcq2KYmxSQCsBWMhD/cbfqplZa5vfe4rRr84w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724259765; x=1724864565;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sq94Qm6ZPacZgTXtsJjDDEhseS8HiVRXtfMMRotZvfU=;
-        b=U4Irt4ZLMfm7ADljhRScFHu8Tjr6Czdx3wfDR2lnu8zcHXzFct0bf/ToRlQ2kkXeqw
-         qH8Qkl3yhyFXqeuf3xW2opUx2vaqjd1fOOyL+yeRKe0TktbmiKt+gcgyKQ58cxpb4aSe
-         SQLdFb9H7R0chUF9Kdo1t3VRsfA/xzdYE2gN+oQKzYvPX/LiLDxZmT7Tqng+xFP4AwUp
-         v6ChU+/8xi3dTfZHpb6GmKEda7d8hJxez18zgJpsJ1r9cCyF303ckuEOJBxse/pg3syY
-         CreULrzj6BAv+CKP3roqfd6Lgbmena4R6uzrU1g8xKmFKH6U4dfXx/xIhZlWZx4sEf1n
-         kd/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXH9rJKoXfnjKkFnfylC1AG6AJsBT7zETLlJLMfFAj+73EgUH4y9L5MMx5zlk29POescCsvIsVhI27IhAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyllH0ENIQkdZ5gNcNkuLT9CbFIUGD1mejuk30mfteGG0OevoDx
-	9aa4xgJY0OCWAXstrW8aBRUxPKrwfOuWNqC6jMcG7S1sEKKOU/73PsVdcJDkMQ==
-X-Google-Smtp-Source: AGHT+IEjxwxYxIEnylwCzeT1GUQ7/N5LveBGkYrCmL/PzJnTVxIVH/b8mImwCW+ynbJrXjzvA/Ti0Q==
-X-Received: by 2002:a05:6214:428e:b0:6b5:d95c:692d with SMTP id 6a1803df08f44-6c160c6de82mr5740656d6.13.1724259764561;
-        Wed, 21 Aug 2024 10:02:44 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fe4fc98sm63388126d6.71.2024.08.21.10.02.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 10:02:43 -0700 (PDT)
-Message-ID: <e442c254-6bd1-4724-83f7-e3690d756ac4@broadcom.com>
-Date: Wed, 21 Aug 2024 10:02:39 -0700
+	s=arc-20240116; t=1724259813; c=relaxed/simple;
+	bh=BvNszQGq5G9jdxQKhTqBAUqUetCwogf6wGt+WiFSgUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DxUMNwk5IDA8KOshX1EM8npeUD5Ek3cpGZjMtP0vP4TFARUtcD23Wjo96Vne8Ay5KQkpakcXQ7Osy7oDpZJqjrsaob6LHanmB7778e8XLEmcsbw2wccif2wWPBmrezp12mRNxZTt55UfiY1J87WoNvGvn63jzmXVvKqCSb7EIOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS3RBA2e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 557C0C32781;
+	Wed, 21 Aug 2024 17:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724259812;
+	bh=BvNszQGq5G9jdxQKhTqBAUqUetCwogf6wGt+WiFSgUA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=PS3RBA2eI/GwPkD3GbZL6gNIXuoNovk+sCjNbEtbVy5jmg8PQ7oWwLJ5BR2XKsk1C
+	 5ofhwvg6TlEfASU7ASnJ4H8t8i/JtYA+WUAuv6OctQY9J9nOxQR1z1/BWl1FiPoPvs
+	 aEZKw8XwIC6UefAlkAWUFn3m+IG5pOtvGjiSi7KVDJlyv57XYYFjqVSAm/pA3zEuEa
+	 /i3B2IQFGR/BahB+imHfnow+CFVC8+AqdO5eelkgfE+WU2Lzun9vBNTB7+7qq/xvfa
+	 o+d6RiwbfBrTlnjSraiAU9gStXI2ZbaHNvwED8UYr4MgA9egG2xjw2fN4CMokxuKT/
+	 SzW6jhxYfhyDQ==
+Date: Wed, 21 Aug 2024 12:03:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: daire.mcnamara@microchip.com
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	conor.dooley@microchip.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ilpo.jarvinen@linux.intel.com
+Subject: Re: [PATCH v8 1/3] PCI: microchip: Fix outbound address translation
+ tables
+Message-ID: <20240821170330.GA256147@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] arm64: dts: rp1: Add support for MACB contained in
- RP1
-To: Andrea della Porta <andrea.porta@suse.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <a3fde99c2e522ef1fbf4e4bb125bc1d97a715eaf.1724159867.git.andrea.porta@suse.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <a3fde99c2e522ef1fbf4e4bb125bc1d97a715eaf.1724159867.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821130217.957424-2-daire.mcnamara@microchip.com>
 
-On 8/20/24 07:36, Andrea della Porta wrote:
-> RaspberryPi RP1 is multi function PCI endpoint device that
-> exposes several subperipherals via PCI BAR.
-> Add an ethernet node for Cadence MACB to the RP1 dtso
+On Wed, Aug 21, 2024 at 02:02:15PM +0100, daire.mcnamara@microchip.com wrote:
+> From: Daire McNamara <daire.mcnamara@microchip.com>
 > 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> On Microchip PolarFire SoC (MPFS) the PCIe Root Port can be behind one of
+> three general-purpose Fabric Interface Controller (FIC) buses that
+> encapsulate an AXI-M interface. That FIC is responsible for managing
+> the translations of the upper 32-bits of the AXI-M address. On MPFS,
+> the Root Port driver needs to take account of that outbound address
+> translation done by the parent FIC bus before setting up its own
+> outbound address translation tables.  In all cases on MPFS,
+> the remaining outbound address translation tables are 32-bit only.
+> 
+> Limit the outbound address translation tables to 32-bit only.
+> 
+> This necessitates changing a size_t in mc_pcie_setup_window
+> to a u64 to avoid a compile error on 32-bit platforms.
+
+I don't see this size_t change in this patch.  Add "()" after function
+name if there's a relevant function here.
+
+> Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe controller driver")
+> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
 > ---
->   arch/arm64/boot/dts/broadcom/rp1.dtso | 23 +++++++++++++++++++++++
->   1 file changed, 23 insertions(+)
+>  .../pci/controller/plda/pcie-microchip-host.c | 30 ++++++++++++++++---
+>  1 file changed, 26 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> index d80178a278ee..b40e203c28d5 100644
-> --- a/arch/arm64/boot/dts/broadcom/rp1.dtso
-> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> @@ -78,6 +78,29 @@ rp1_clocks: clocks@c040018000 {
->   							       <50000000>;   // RP1_CLK_ETH_TSU
->   				};
->   
-> +				rp1_eth: ethernet@c040100000 {
-> +					reg = <0xc0 0x40100000  0x0 0x4000>;
-> +					compatible = "cdns,macb";
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					interrupts = <RP1_INT_ETH IRQ_TYPE_LEVEL_HIGH>;
-> +					clocks = <&macb_pclk &macb_hclk &rp1_clocks RP1_CLK_ETH_TSU>;
-> +					clock-names = "pclk", "hclk", "tsu_clk";
-> +					phy-mode = "rgmii-id";
-> +					cdns,aw2w-max-pipe = /bits/ 8 <8>;
-> +					cdns,ar2r-max-pipe = /bits/ 8 <8>;
-> +					cdns,use-aw2b-fill;
-> +					local-mac-address = [00 00 00 00 00 00];
-> +					phy-handle = <&phy1>;
-> +					phy-reset-gpios = <&rp1_gpio 32 GPIO_ACTIVE_LOW>;
-> +					phy-reset-duration = <5>;
+> diff --git a/drivers/pci/controller/plda/pcie-microchip-host.c b/drivers/pci/controller/plda/pcie-microchip-host.c
+> index 48f60a04b740..da766de347bd 100644
+> --- a/drivers/pci/controller/plda/pcie-microchip-host.c
+> +++ b/drivers/pci/controller/plda/pcie-microchip-host.c
+> @@ -21,6 +21,8 @@
+>  #include "../../pci.h"
+>  #include "pcie-plda.h"
+>  
+> +#define MC_OUTBOUND_TRANS_TBL_MASK		GENMASK(31, 0)
 > +
-> +					phy1: ethernet-phy@1 {
-> +						reg = <0x1>;
-> +						brcm,powerdown-enable;
-
-Undocumented property, and I would like to understand why this needs to 
-be specified in the Device Tree? What model of Broadcom Ethernet PHY is 
-being used here?
--- 
-Florian
-
+>  /* PCIe Bridge Phy and Controller Phy offsets */
+>  #define MC_PCIE1_BRIDGE_ADDR			0x00008000u
+>  #define MC_PCIE1_CTRL_ADDR			0x0000a000u
+> @@ -612,6 +614,27 @@ static void mc_disable_interrupts(struct mc_pcie *port)
+>  	writel_relaxed(GENMASK(31, 0), bridge_base_addr + ISTATUS_HOST);
+>  }
+>  
+> +int mc_pcie_setup_iomems(struct pci_host_bridge *bridge,
+> +			   struct plda_pcie_rp *port)
+> +{
+> +	void __iomem *bridge_base_addr = port->bridge_addr;
+> +	struct resource_entry *entry;
+> +	u64 pci_addr;
+> +	u32 index = 1;
+> +
+> +	resource_list_for_each_entry(entry, &bridge->windows) {
+> +		if (resource_type(entry->res) == IORESOURCE_MEM) {
+> +			pci_addr = entry->res->start - entry->offset;
+> +			plda_pcie_setup_window(bridge_base_addr, index,
+> +					       entry->res->start & MC_OUTBOUND_TRANS_TBL_MASK,
+> +					       pci_addr, resource_size(entry->res));
+> +			index++;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int mc_platform_init(struct pci_config_window *cfg)
+>  {
+>  	struct device *dev = cfg->parent;
+> @@ -622,15 +645,14 @@ static int mc_platform_init(struct pci_config_window *cfg)
+>  	int ret;
+>  
+>  	/* Configure address translation table 0 for PCIe config space */
+> -	plda_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
+> -			       cfg->res.start,
+> -			       resource_size(&cfg->res));
+> +	plda_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & MC_OUTBOUND_TRANS_TBL_MASK,
+> +			       0, resource_size(&cfg->res));
+>  
+>  	/* Need some fixups in config space */
+>  	mc_pcie_enable_msi(port, cfg->win);
+>  
+>  	/* Configure non-config space outbound ranges */
+> -	ret = plda_pcie_setup_iomems(bridge, &port->plda);
+> +	ret = mc_pcie_setup_iomems(bridge, &port->plda);
+>  	if (ret)
+>  		return ret;
+>  
+> -- 
+> 2.34.1
+> 
 
