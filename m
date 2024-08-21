@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-295581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FD5959E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:22:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469DC959E91
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3F57B2418D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C901C2260D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD238199955;
-	Wed, 21 Aug 2024 13:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97CD19995C;
+	Wed, 21 Aug 2024 13:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UfrDonly"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g7hqRFNR"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79FC15C147
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671641531F7
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724246556; cv=none; b=E3bnQlHCkSt6xig6OEjvPdsvmmYq8WO6zDhoZEEtk/+75oZQvMiGr0yKLgIgY+9dDSjhi/7h4M8DwntWHF7OnmthEaiQAz3Y9/ilDrLrOn7CCfygB+bbcNv1o854Sm7KeRvDohLNodhoC6KnkuUHBZ2QQe3EcySSmql7Mpdt4Sg=
+	t=1724246634; cv=none; b=RmhCIWx4NffPWa6qnJs5Dd7SD2yzSeUjJX99fxm5odR1UuEdJsPCcB4memLulhi11wuHSRddRVkkCKgspSmEXGAnlYWR70TI6Jn1DYQ+rw4zKOVCCmByw4JfBM4RAkIcVTXyCRTIHnLMUbyPbqOpBJZoKIeFgoVsEOojspszmZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724246556; c=relaxed/simple;
-	bh=TPIZRcu+1FDUv3Ul2N3eIPWOpU5oGmTbG9vbLHMbQqA=;
+	s=arc-20240116; t=1724246634; c=relaxed/simple;
+	bh=1pr66jIBS64x70arVwnLavlWAlzk36uz+N67v9T/qus=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUbeDca2Agcc5Cs3ckGvjtlMeYnw2PPzOdgkK55hc7s6RjPV5Vx9eDIK2r+Q1adwedq8H5fR0olY+PVlyr2F0jgyFrVA0N4ptgmNs91fhgbcGw/5p1mBFlfSDVPkiyD7rWs3wSVPgiuf5rrXRuK8fEnqFMWUj0F9AZqk6vDITbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UfrDonly; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:Content-Type; b=EDmKgRNg59msTX2c6YXEbJRrl3YdUci5exjoKMBtNT1FivBhRhhHeH1EFmInXWJCisUMe1ejUVBYvDq6v0fANVQf2mMs1VnJmA3ZlQPGYWKJ5MLfiDjNrTobkRUN01SfBFFjR2vItGel1HxpYICKxOczCBWZH/UHo0LdOVPw9jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g7hqRFNR; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37198a6da58so4170196f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:22:33 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3718706cf8aso4075095f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:23:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724246552; x=1724851352; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724246631; x=1724851431; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=49UiUbvVhlmPKCF9ngIeL/BHGCxk0mo/GSe6nh6O9fI=;
-        b=UfrDonlyk9pxMLMmamwNf6LwjcY9Dmv7pRr3A7wPM8pQ2W4TywLx6T4IWS7gis1T0E
-         E6Cw4uOCrMBDPm9zYsiH+3rh/FadoxKDFtI569SuH/n1ldVJaTIoUMOTJvmCqWe/X49i
-         qi35ONJnSuFPUsn0K7sQT1bRqPYOWLUqfIexO6IBrfy0UZo2eTtYlTvXHt6SWSIzbOyr
-         vsfPoRGF6QPRoBRy8m7U/iZB9W4Zj+p25F5QhR+aetsZRnqA5Zn/tbIBIPvfDP1TEwG5
-         vRgSPM4rO0UkHBy7ULJebEIoQyvWOXetUa8xj0uhstkBobOCcL15aPqFel0ZOPEzJIfo
-         s/zQ==
+        bh=VCciJi7JxhAf6KSqjag5dJ/2hYHxSDXbm3lJCm4J8IQ=;
+        b=g7hqRFNRd1AL9Sev+8ZwnH+uqlTSSDS85vIUDwUGA7hLQeaVRJnC9PII29LFZMQarq
+         iQ2oUBKGmplLUzJJ+0mVZk/HvL3il+gz67yLTwODdJJx/rj+h30Zr6vuQ29dMkClFWGx
+         bxBuZykdIKsDZ7k0AzQ1ftT4IPtQvKnFtQ+CoAUZIgm+caZSCTDM5ic+/M6IURr4/lOg
+         YvTqBOBamAN+nSKUEN/udGOkFy2tZWQdOQjezCqHC/LL81CcxZnE9Rmlxo5j6I4t0CYa
+         ybwj+HPqbuVC6KADV38djuOeBk0VpU138PKPWrrMvOULfZ5By8p39bbGMFUrFm9imoM3
+         q7AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724246552; x=1724851352;
+        d=1e100.net; s=20230601; t=1724246631; x=1724851431;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=49UiUbvVhlmPKCF9ngIeL/BHGCxk0mo/GSe6nh6O9fI=;
-        b=HOe/H3/qXTiYQgVQVZpY+eSojhrLXQrORcHZof45Qd7rth0+RwU+XgES+8KNzuAbtI
-         4Wbjd7I9O++9uhaddD679/NtiN+so+fL15PlASAYhHF1a7B4YL0wLfgsDtmXvmp5EZDG
-         HoK+23s6DC5+FGqRitCMRIq896GpPWm+zT6fHMKEQJyk2qmY6L5P9rECPq+42kw6MR72
-         wL/PZpXvLwX2F+j4RG43xZGkmXlahl5z83XQbuDjWX/AHsLHCQAKvDnk/dpuYil9xgzx
-         aCnh3pLnvpFHTEqksHZoi/EGS1HjXy1bVX/0TGWzD0BsiMCF+dVHaPfKuBZjXTeHYHil
-         xnEA==
-X-Gm-Message-State: AOJu0YzG+Z8SgdKS/jqxBXAYVPa7RX4ZCKx58wuAYjarQDVHRPHTODYK
-	uBP4A0NT13KFaYC7eGHYekzXJN3TAvN8BbJ5LwN1BpHzU3f8X87i1aDi+mpj/D4=
-X-Google-Smtp-Source: AGHT+IHG7+vM9Jjhm+SZ59KowPRMF+Lu0+jqEwVmKXC+1BaBKyuHAHW4qDwd2+EqRcY9Jrb4XySpHA==
-X-Received: by 2002:adf:e387:0:b0:368:6f64:307c with SMTP id ffacd0b85a97d-372fd590e6dmr1905547f8f.15.1724246551577;
-        Wed, 21 Aug 2024 06:22:31 -0700 (PDT)
+        bh=VCciJi7JxhAf6KSqjag5dJ/2hYHxSDXbm3lJCm4J8IQ=;
+        b=mH9VNEX0XpwYE2ji7JwexmYdp2BWowzwv3dTz/Md3RSbrQAYbx3aAK931yAFNk7Xrx
+         dABLoFmBE2ZvOIiq0yJxT8Ts55inAdnOCcFnKJ6ZUox1b7poATNx3MX5e9IoMB+pvoR1
+         EbPbTkGhX4jfUZP1L0gE0gysBooHIVhibOJhFl4Y6yFBt+0ffcB8a32yKjQHfvDuDhc6
+         ZwHjXlbM3KpLb9QFPMJVNAP2nQp+vJVZh9xKJIuLLcLPvbIBZVicbrCmUznly5JNI3Ls
+         Z4F1Vl1h9WTKtlTnmePJXdXWqJNDXQn86H2yvCkGyRTxKb27w5pBw2p+FCK+bZgbaHp+
+         r5tg==
+X-Gm-Message-State: AOJu0YzET2RlW+YpDi6UpXQe2iCoCPehs6Aw0KSAyxX9fkJaWPtxdgLA
+	e0urFoxpMJyfxyN9hyYWOf6FRoaZXThCKyTzcBIBKM1haTJkSowXIukZr2WX9IQ=
+X-Google-Smtp-Source: AGHT+IFGE/94UIJXOsrMVfuezmbmwIz0XQedE5AWhGbI7EeyHlwUXExDdcnc2vdbCQ3Aes/LvDehyg==
+X-Received: by 2002:adf:e6c4:0:b0:371:8db9:939e with SMTP id ffacd0b85a97d-372fd82f0f2mr1355829f8f.51.1724246630296;
+        Wed, 21 Aug 2024 06:23:50 -0700 (PDT)
 Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718985d9d6sm15682828f8f.64.2024.08.21.06.22.30
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37189856b07sm15710219f8f.50.2024.08.21.06.23.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 06:22:30 -0700 (PDT)
-Message-ID: <6e8b9166-c1bb-4adc-92f8-ecc06d838c72@linaro.org>
-Date: Wed, 21 Aug 2024 15:22:30 +0200
+        Wed, 21 Aug 2024 06:23:49 -0700 (PDT)
+Message-ID: <da3edca6-dc7a-4ec4-8cde-3bdc95cea48d@linaro.org>
+Date: Wed, 21 Aug 2024 15:23:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,41 +74,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/14] thermal: ACPI: Use the .should_bind() thermal
- zone callback
+Subject: Re: [PATCH v3 08/14] thermal: core: Unexport
+ thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
 To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
  Linux PM <linux-pm@vger.kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
  Zhang Rui <rui.zhang@intel.com>
 References: <2205737.irdbgypaU6@rjwysocki.net>
- <1812827.VLH7GnMWUR@rjwysocki.net>
+ <3512161.QJadu78ljV@rjwysocki.net>
 Content-Language: en-US
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <1812827.VLH7GnMWUR@rjwysocki.net>
+In-Reply-To: <3512161.QJadu78ljV@rjwysocki.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 19/08/2024 18:02, Rafael J. Wysocki wrote:
+On 19/08/2024 18:05, Rafael J. Wysocki wrote:
 > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Make the ACPI thermal zone driver use the .should_bind() thermal zone
-> callback to provide the thermal core with the information on whether or
-> not to bind the given cooling device to the given trip point in the
-> given thermal zone.  If it returns 'true', the thermal core will bind
-> the cooling device to the trip and the corresponding unbinding will be
-> taken care of automatically by the core on the removal of the involved
-> thermal zone or cooling device.
+> Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
+> are only called locally in the thermal core now, they can be static,
+> so change their definitions accordingly and drop their headers from
+> the global thermal header file.
 > 
-> This replaces the .bind() and .unbind() thermal zone callbacks which
-> allows the code to be simplified quite significantly while providing
-> the same functionality.
+> No intentional functional impact.
 > 
 > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-
-Nice !
 
 Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
 
 -- 
 <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
