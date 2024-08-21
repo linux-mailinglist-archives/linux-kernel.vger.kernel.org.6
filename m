@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-295444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F0C959AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:58:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2E0959AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67FB21C20F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4105E2826F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412DD1ACDEC;
-	Wed, 21 Aug 2024 11:48:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B800819ABD2;
+	Wed, 21 Aug 2024 11:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="On+GWy28"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743EB189907;
-	Wed, 21 Aug 2024 11:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6472019259A;
+	Wed, 21 Aug 2024 11:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724240888; cv=none; b=iTCscWvhDLnzYzqm392Se46DarUnIlGP7E+Cd5Uq02TME1BKvPhPDU8L5b3OKWQ45eHOhAvT4yiJL1acnuE/uclt75i48vTmC9YqTGLmXdYi9hJ5ziyUQF8y37UmyPxyyk/BfXs+0FIHPKxv7jh4+HCm4vuR/waDCUTaF/M11oI=
+	t=1724240973; cv=none; b=gNYpUCuq525ITb47KVVmTwPPlcOAI9NL2bKmJqM6nDYhe8n30dQrnxg26wKc0w43vIrD5elhF87YM8wmzsxF06GALLOLmFC8AqQ5sS0j1tJItJ4v99Uk2RGZk6hhWeUxVMY8FbcFdNBiGsM/f98NjfUoCPVoZQ0eR4z4wbPdFkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724240888; c=relaxed/simple;
-	bh=5UJza2ct5uFviMUue2skQT9c6gKWFscFOlvH1a6cUCo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KE5PSZPuV+sW3ddNKOPeNIalsjZY0J3dFrOM8NmT3ZbSMPQOWfUbV9qrT1gYZA4Xlk/hJIL/kL8r7+0fYwOMkP0539R39nZHkBLdhqP44UPb90waRW+sf6FSgQuJcFzrD08FOETXebpwLTpfpVjSUSwN7Q5mKgobycjVDI5es6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wpkyx6hvRz6J7nH;
-	Wed, 21 Aug 2024 19:44:57 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id C2AA1140119;
-	Wed, 21 Aug 2024 19:48:03 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
- 2024 12:48:03 +0100
-Date: Wed, 21 Aug 2024 12:48:02 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Anup Patel
-	<anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, "Palmer
- Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	<linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 2/4] cpuidle: riscv-sbi: Use scoped device node handling
- to simplify error paths
-Message-ID: <20240821124802.00000c35@Huawei.com>
-In-Reply-To: <e006aa3d-3ec1-415f-a8d2-8aee6847a698@linaro.org>
-References: <20240816150931.142208-1-krzysztof.kozlowski@linaro.org>
-	<20240816150931.142208-2-krzysztof.kozlowski@linaro.org>
-	<20240819171313.00004677@Huawei.com>
-	<20240819171954.0000600d@Huawei.com>
-	<e006aa3d-3ec1-415f-a8d2-8aee6847a698@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724240973; c=relaxed/simple;
+	bh=ZNOIiksq+oIvdQ6nChxSzgVj3WAtiicwlWk2MzXMfF8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ftiVi/HZszCEfxRnlvxP4rOJ02tgxbOd4gR7Lkbsrmkiv4Z7TiJfM9Wn2bpsqNW8k0ueq6uYYZB7zdUOkWS+ct3b88hgAJ6mZ8rKL2SYUvqP3SJ+uFxTFwnvH0ZpB+R2Ef/F6FYmva8v8yxs0w9YAhETcaOmZgZ5egrRXWYOT7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=On+GWy28; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533462b9428so2109285e87.3;
+        Wed, 21 Aug 2024 04:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724240969; x=1724845769; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MuMMiFy/GV/lo8qvjkEdntUASLQW+h7BP1y0eXqQ2Fk=;
+        b=On+GWy28spkefp1kxyhb8ci3UmCdA7uos/e34JEbPlNGvO3VibxHnV+QPRdeAlbD8j
+         ujuKRVZvwupv4RpaaI7W0TOaE6rFL6mX8FXWWcYYpAgvBAsEAFcKH1mZiJOxq8fRxd9I
+         +P/LsOvU0/Xhf6P1luQmum5VNsuI4RSY7INNllf72AYSEFaWma9H/ynbVWW3nnuO8X9o
+         bqEPsmIB0eVIvwATgUaGhf0EThrCEOKdek/8DUStVU0neXDbBB6ffIcacP2ZIdOoWw7w
+         kkgKYVPxanqLzoXctLYNrkpYk+BUfxFr9K9Gp2DKJTmBhSZg+0lK7pJiLRMS5e30lGte
+         Lk7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724240969; x=1724845769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MuMMiFy/GV/lo8qvjkEdntUASLQW+h7BP1y0eXqQ2Fk=;
+        b=nd+mDTOrn9m78YGvOOAswY69Tu1S5pxRlwgOldPDS2YpSWpD3+JrAXYkIqZHogzGk3
+         kXnj+mKBwhqAM3k9O+7jyOyyeQXq2WhEI2c+GE1MweFYoihVdlDQpgU4pObw6CPYuc1J
+         5kU7lVBde5zhMMqucWnd5RTVKDPL5r+DvoPT+XpTLTTwXvb3iNVDaqipGn5+nSXUNFmw
+         Bwr1JWT5bxE0Sdw37QHcnRl+P3ADpdckOOUxyLbQsLg7RzJ7vfT40BtDK0QjLgYncqhL
+         6OQ9gGHzadPfJOSmDrT5HuBCC4gfk+8Kw5dN9vQ2Vj7YMYmBLEOcB6yOHXjva5oTOkjP
+         Y/Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUgcabg/EhPBeDCUL/rAXl+7WcqBmGDckc2tj1KHOacjEbYCG0udaixAgyqS9SbVxw0ecsLlLO9E1ilGfcr@vger.kernel.org, AJvYcCXaeL4AWosMUnOld6EXa8NXyqv04RtoqGb+CgK2OC+D/ORo30mLA9BEun6WB+Orxik+rgc/GFg3xDwhBn4=@vger.kernel.org, AJvYcCXmdVyXlfBm4J0ctPZv8TCPMS/wDyfxOxiRj9daMym4DevyEF/u3/N8WhBpSnex0KpZ0NC19coB4hf1nPYw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxPRb+xVEZwhCMZecZSTsANDymhU5og8haLnEeC88sqekyi/mE
+	WkVShB6SOdvzLxElA6iBulzCURiEZO1/L2LEQAv/Ew+EA6zJTjsz
+X-Google-Smtp-Source: AGHT+IERUWWgK3HBz7H/4+znx84XAekugvyQB1GyHzWt3CJXUdgvULEOKqQjl6jNQIER3p0yxeZlVg==
+X-Received: by 2002:a05:6512:1256:b0:533:324a:9df6 with SMTP id 2adb3069b0e04-533485928cdmr2036535e87.29.1724240969163;
+        Wed, 21 Aug 2024 04:49:29 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86702ad43fsm89820966b.136.2024.08.21.04.49.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 04:49:28 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: wcd934x: make read-only array minCode_param static const
+Date: Wed, 21 Aug 2024 12:49:27 +0100
+Message-Id: <20240821114927.520193-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 20 Aug 2024 11:36:32 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Don't populate the read-only array minCode_param on the stack at
+run time, instead make it static const.
 
-> On 19/08/2024 18:19, Jonathan Cameron wrote:
-> > On Mon, 19 Aug 2024 17:13:13 +0100
-> > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> >   
-> >> On Fri, 16 Aug 2024 17:09:29 +0200
-> >> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> >>  
-> >>> Obtain the device node reference with scoped/cleanup.h to reduce error
-> >>> handling and make the code a bit simpler.
-> >>>
-> >>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>    
-> >> The original code looks suspect. See below.  
-> > 
-> > Whilst here...  Why not do similar for state_node to avoid
-> > the delayed return check.
-> > Existing code
-> > 	{
-> > 		state_node = of_get_cpu_state_node(cpu_node, i - 1);
-> > 		if (!state_node)
-> > 			break;  
-> 
-> I don't see how __free() helps here. You can return regardless of __free().
-> 
-> > 
-> > 		ret = sbi_dt_parse_state_node(state_node, &states[i]);
-> > 		of_node_put(state_node);  
-> 
-> ... and this code is quite easy to read: you get reference and
-> immediately release it.
-> 
-> > 
-> > 		if (ret)
-> > 			//another bug here on holding cpu_node btw.
-> > 			return ret;
-> > 		pr_debug("sbi-state %#x index %d\n", states[i], i);
-> > 	}
-> > //I think only path to this is is early break above.
-> > 	if (i != state_count) {
-> > 		ret = -ENODEV;
-> > 		goto fail;
-> > 	}
-> > Can be something like
-> > 
-> > 	{
-> > 		struct device_node *state_node __free(device_node) =
-> > 			= of_get-cpu_State_nod(cpu_node, i - 1);
-> > 	
-> > 		if (!state_node)
-> > 			return -ENODEV;
-> > 
-> > 		ret = sbi_dt_parse_state_node(state_node, &states[i]);
-> > 		if (ret)
-> > 			return ret;
-> > 
-> > 		pr_debug("sbi-state %#x index %d\n", states[i], i);
-> > 	}
-> > 		  
-> 
-> Maybe I miss something, but I do not see how the __free() simplifies
-> here anything.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/wcd934x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Personal preference.  To my eyes, it does, but indeed not a huge
-advantage.
-
-Jonathan
-
-> 
-> Best regards,
-> Krzysztof
-> 
+diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
+index 291d0c80a6fc..910852eb9698 100644
+--- a/sound/soc/codecs/wcd934x.c
++++ b/sound/soc/codecs/wcd934x.c
+@@ -2643,8 +2643,8 @@ static void wcd934x_mbhc_get_result_params(struct wcd934x_codec *wcd934x,
+ 	s16 c1;
+ 	s32 x1, d1;
+ 	int32_t denom;
+-	int minCode_param[] = {
+-			3277, 1639, 820, 410, 205, 103, 52, 26
++	static const int minCode_param[] = {
++		3277, 1639, 820, 410, 205, 103, 52, 26
+ 	};
+ 
+ 	regmap_update_bits(wcd934x->regmap, WCD934X_ANA_MBHC_ZDET, 0x20, 0x20);
+-- 
+2.39.2
 
 
