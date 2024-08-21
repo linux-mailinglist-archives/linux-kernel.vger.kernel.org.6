@@ -1,109 +1,100 @@
-Return-Path: <linux-kernel+bounces-295548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E825959CBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:03:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3345C959E5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF825B249B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 659191C222D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40861A285C;
-	Wed, 21 Aug 2024 13:03:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57E119ABC8
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60A1199FAE;
+	Wed, 21 Aug 2024 13:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8GbwIcA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AB9199943;
+	Wed, 21 Aug 2024 13:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724245382; cv=none; b=FiyyH1UhYa8PHxNQWnX5vfRm88/BPuXN8rOk0tELZF+Sy1q4jtQKYBc0myBb8K4Pcb6bG3p+YabcXP0l2VzEcZL5VUMMDitkt16X+4FHOuLVCLyCW72ikVnFypVZafFPG64t/rTbulXe4bdVdq+cwS+vPIOUmNmw4AoyRBUHToc=
+	t=1724246041; cv=none; b=AELbWQPikTw/B9yLOs/uwDLFivb5GQHIeq5lH7JGOrBMwoO3R2th66P29RRrnd1JplpAtlNGN67DQ+9aWi2FdTXNzE6PNrwOJIbywz7+EQkWysK35VNJeT01iU9FlzMnYxo6htCOECrxo8faosNU59c3KQDnmSW10eFEFC0XxDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724245382; c=relaxed/simple;
-	bh=xGxOHx7G4PRiGRZH3TXgjYgMgCLRh2eDsS1k6doL6DQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mH0JG3gnn70zol+/ME8InWRWpQDyMswBKp2FdIxMcxwqG3bnBUdp3OJX/Jb6nNLntWIfmoX9TrKeb6/ruUhwn/N2KSr+oHc2rIf/ggK4VRsjadPf4A32OsE4H493bgSdObcYse7hEQP1mvbVCggVDQPaZ9n1d+WaHQBmLzybebQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED415DA7;
-	Wed, 21 Aug 2024 06:03:24 -0700 (PDT)
-Received: from e130256.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F66C3F66E;
-	Wed, 21 Aug 2024 06:02:57 -0700 (PDT)
-From: Hongyan Xia <hongyan.xia2@arm.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/fair: Warn against unbalanced util_est during dequeue
-Date: Wed, 21 Aug 2024 14:02:52 +0100
-Message-Id: <752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724246041; c=relaxed/simple;
+	bh=Fp/kBiHhGW3ypUrMjF3hQ3gJlZW1Yk2OBO3LISE+nPA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VtaslAJXiv2RN4dg4ua3SSet9FlQjpHVpH2AW9FxC1F9PBbu7C6ZZNGw71B5l/ppp1pc8ko3wvvUCvxmBPxalJINMTKbdlyB8oVYp1g5QTQTBo2b3sPA8HFaiPjM8fEy9r3oW92Ye/kKOcGbeC7PCEvrcRSJMZ0F/6w7dR+lPOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8GbwIcA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445D1C4AF09;
+	Wed, 21 Aug 2024 13:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724246039;
+	bh=Fp/kBiHhGW3ypUrMjF3hQ3gJlZW1Yk2OBO3LISE+nPA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=m8GbwIcAnkvNooBUabiD42uIEi7h1gcYlSrqALGUzHKRpz4LHaCMVHXabZUeYVKt4
+	 LRhcEMYGDb3ok5ILZfRLFGI7mpUUmM6BtL5U3+C90wRwSU3/u9DAj+grqu53E2w381
+	 VQYPsW1J51anpvk9HfHwQwPxX0bVpLWY66pH6lvM9T70Pkai5mXWBEU+sPVx7XncgJ
+	 hNb0wk3laXHHanoFOCdKbDyTzeyN+5mHort1alyepGByJTTpBHF87LJI+3NCj24ewC
+	 tfrdwl7DboduahXiutL3uUMCfnozghKaV4b+k7h2uJKezsqU7DljumNz3n04ONVFOE
+	 NKIWkNEkwTnUQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/2] KVM: arm64: Control visibility of S1PIE related
+ sysregs to userspace
+Date: Wed, 21 Aug 2024 14:07:14 +0100
+Message-Id: <20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAILmxWYC/x3MSwqAMAwA0atI1gZilCpeRVxUjTWIH1IQQby7x
+ eVbzDwQxVQitNkDJpdGPfaEIs9gXPweBHVKBiauqGHC9drQ2+YqXHQSPFXQJERkLt1cU02lHyD
+ Vp8ms93/u+vf9AObAoa9pAAAA
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=858; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=Fp/kBiHhGW3ypUrMjF3hQ3gJlZW1Yk2OBO3LISE+nPA=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxegR90BAwaQnJTILyD4vHttQU9B/QKF3cFt5DPVl
+ 0tcmFXaJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsXoEQAKCRAk1otyXVSH0OJsB/
+ 0Xeckx36onhHACU75Xlrqk8Peem3AyN0vY2O/ewZ4ri8qEOuTKl2U6ZTelpfYIa8mW6cV2tWSTEM2Y
+ O+HxSWIb0M5kDMslZgiawHY5x+JtgoaxD5B8cIcjekFGcKbEOiyljQWShOV2AoVn9mf4WFlYtIlg2L
+ D2/yFA6eMkbjhh1olHFUniBaE/h+yf9lW1C/bnje38UCZzJLOjREcb17ozPjYWMl4CDu7CZTg0d7EM
+ QfXqg9D7htYXcwdtI72Z7KuKmJg0KfaAS+FLhCxdSwjUx5fosAvtBo8DlhFDAtqLzhJzop9ugjqpJp
+ XYgJ8DuSlY8guPF6jcXg0CkJicRuE7
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The latest tip/sched/core seems to have an unbalanced util_est issue. As
-I am debugging it, I found the logic util_est_dequeue() doesn't make
-much sense. It guards against util_est underflow like this:
+While looking at the KVM system register code I noticed that we do not
+have visibility operations for TCR2 or the S1PIE registers, I may be
+missing some reason why they are not required but in case I'm not I
+figured the most direct way to ask was to propose adding the operations.
 
-enqueued -= min_t(unsigned int, enqueued, _task_util_est(p));
-
-However, this is misleading because when the number of tasks drops to 0,
-util_est should be exactly 0, no more, no less, because
-util_est_update() is done after util_est_dequeue() and there is no
-change of util_est between util_est_enqueue() and dequeue(). Even if the
-current logic guards against underflow, it doesn't guard against
-overflow and may cause problems to go un-noticed.
-
-Do not guard against underflow and add a warning to check that util_est
-should be exactly 0 when queue is empty.
-
-Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- kernel/sched/fair.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Mark Brown (2):
+      KVM: arm64: Hide TCR2_EL1 from userspace when disabled for guests
+      KVM: arm64: Hide S1PIE registers from userspace when disabled for guests
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fea057b311f6..574ef19df64b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4950,7 +4950,7 @@ static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
- 
- 	/* Update root cfs_rq's estimated utilization */
- 	enqueued  = cfs_rq->avg.util_est;
--	enqueued -= min_t(unsigned int, enqueued, _task_util_est(p));
-+	enqueued -= _task_util_est(p);
- 	WRITE_ONCE(cfs_rq->avg.util_est, enqueued);
- 
- 	trace_sched_util_est_cfs_tp(cfs_rq);
-@@ -7176,10 +7176,14 @@ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	util_est_dequeue(&rq->cfs, p);
- 
- 	if (dequeue_entities(rq, &p->se, flags) < 0) {
-+		if (!rq->cfs.h_nr_running)
-+			SCHED_WARN_ON(rq->cfs.avg.util_est);
- 		util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
- 		return false;
- 	}
- 
-+	if (!rq->cfs.h_nr_running)
-+		SCHED_WARN_ON(rq->cfs.avg.util_est);
- 	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
- 	hrtick_update(rq);
- 	return true;
+ arch/arm64/include/asm/kvm_host.h |  6 ++++++
+ arch/arm64/kvm/sys_regs.c         | 31 ++++++++++++++++++++++++++-----
+ 2 files changed, 32 insertions(+), 5 deletions(-)
+---
+base-commit: 6e4436539ae182dc86d57d13849862bcafaa4709
+change-id: 20240820-kvm-arm64-hide-pie-regs-2236f70703ab
+
+Best regards,
 -- 
-2.34.1
+Mark Brown <broonie@kernel.org>
 
 
