@@ -1,108 +1,132 @@
-Return-Path: <linux-kernel+bounces-295480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBC6959B7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:16:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C9E6959B7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF9A1C20839
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ADE61F24618
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B923B189908;
-	Wed, 21 Aug 2024 12:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340DC166F28;
+	Wed, 21 Aug 2024 12:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oTTpGuqs"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FAFpyTk8"
+Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4151531F4;
-	Wed, 21 Aug 2024 12:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5588B1D131E;
+	Wed, 21 Aug 2024 12:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724242537; cv=none; b=IoLEvNy0Hmd74BxiOzkNNZcGUwYtStnHJM/U2+JRlVXXDAd3gRim45EeWPEShrs4+Rdo8VeyAV42U+ovzlVDLgBp7HvrlBh96ZCMuBtIxIq/MH52KgFtVEDO9WEbXkr/OehF4Yutk9yytEJUQp1lMgEJzef+7wW7m0nI4hV9Nmc=
+	t=1724242572; cv=none; b=hu/JQprJbEYpGHuYfiuQXfRCvTSAToKweCwwm7uE1K4O5M0LtQUE6Lna2ne8EBfKAysOIkSAvykmT6WtlM2ccgQF13Zaky40LHRJ5s6kFIGosbM9AX5kuVI2ctWIes6tASo/UFXElNSwmDMER3FlJtVile9P+/YnRl4JqMW/nXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724242537; c=relaxed/simple;
-	bh=2sChW3+DK5t7p3wxDHG1TSRao/RqE4vm0lBJV2eYQWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ojg3nMBYTtq6TKH2AJCN95cGnqjmJ83Bplo31n6KuMFT8sGEXvq61Lj1RvW2Py9Q/uNlrP7GPrZ1lIs0MqEWK6yG56bU31ja+WVR3Ac4kbF62A8kkPPzPEblnMsPUXktA3mMCnvf2wj/9LEeXujJc9OxLZixBB6i2xomlukF50g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oTTpGuqs; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=VIomhe+GLkxpf6EL31OQvrPn6TEbUxi3/KPcrGjbcB0=; b=oT
-	TpGuqsxE0Dbz5tTVuiBXR4Rt42K9HlzoDutND6d428/iPYI3bj5liXZ1YUgp1Xt9931jx0b6KjUFk
-	ii/Zi0QoD/PhufKFvDdPthReicMujLO2F1bfuVrCusKvlNVVUF7FksfPoRLf/r1Ya6sfSM4wPykzr
-	W2uhv4IS1+Sdo5U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sgkFD-005Jtf-Uw; Wed, 21 Aug 2024 14:15:19 +0200
-Date: Wed, 21 Aug 2024 14:15:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, shenjian15@huawei.com,
-	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com, jdamato@fastly.com,
-	horms@kernel.org, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 net-next 11/11] net: add is_valid_ether_addr check in
- dev_set_mac_address
-Message-ID: <5948f3f7-a43c-4238-82ff-2806a5ef5975@lunn.ch>
-References: <20240820140154.137876-1-shaojijie@huawei.com>
- <20240820140154.137876-12-shaojijie@huawei.com>
- <20240820185507.4ee83dcc@kernel.org>
- <7bc7a054-f180-444a-aac0-61997b43e5d6@huawei.com>
+	s=arc-20240116; t=1724242572; c=relaxed/simple;
+	bh=7lPuFfHMXp0hkrYlhavQSxS6hoTLy3WgWRovN3zc2DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Msv+3xJxLwH1GvhFWeE2FQIILFfIg/Zh6aRu6qkj9sVFdRdYsw5FdzetQXWO8nPu2Q2PwsEZCtwD8VG4fw9F9uP0QA/W53QXb/MychoLPLALwph2h7Sn/h/FQIX5HPbx0TYNZ74s5s/997fPOMWRisyj0BfrNpAi6xg6ktIHeVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FAFpyTk8; arc=none smtp.client-ip=80.12.242.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id gkFssFypPLYfJgkFssP5R2; Wed, 21 Aug 2024 14:16:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724242561;
+	bh=Idh38J2a1UCLTfNYHMg5bSYi31mRdS8Tw6sXGnh7NjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=FAFpyTk8vTTilpyz3n+4+3WUGFu0yzWmk+FXQ6jDcVNsIO4CFd6rBubil+EQ5h3Z0
+	 EwKsF6A46PqI8zHk4zEOJt2ArGyCaFuEHRkdg3+s6fr/varfdHtNCkrfXBew7LlDrm
+	 X5zZWY+snFS5GZkv2jgm6nOhhiuH+kpLUmp70hB8xMv5nmmh7mZOypYF2RW0ktcNTy
+	 LGChGvheu1HeWiob1+pxsI+MIDOFWiHc5/EDR4sGpR07g5MZRGTm67lcN8n3RGOsCt
+	 2MBCJADQmUmhfGTpzpFZC4yL+Fh0Euv7cEfpYPwKWmTWcJJO/X8iNlrRwnVuUOnZyE
+	 dr8t1OagmSARQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 21 Aug 2024 14:16:01 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <ecd1af32-8e6b-45d3-8434-0e981fd198ea@wanadoo.fr>
+Date: Wed, 21 Aug 2024 14:15:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] libbpf: Initialize st_ops->tname with strdup()
+To: Soma Nakata <soma.nakata01@gmail.com>, Andrii Nakryiko
+ <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240821112344.54299-3-soma.nakata01@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240821112344.54299-3-soma.nakata01@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7bc7a054-f180-444a-aac0-61997b43e5d6@huawei.com>
 
-On Wed, Aug 21, 2024 at 02:04:01PM +0800, Jijie Shao wrote:
+Le 21/08/2024 à 13:23, Soma Nakata a écrit :
+> `tname` is returned by `btf__name_by_offset()` as well as `var_name`,
+> and these addresses point to strings in the btf. Since their locations
+> may change while loading the bpf program, using `strdup()` ensures
+> `tname` is safely stored.
 > 
-> on 2024/8/21 9:55, Jakub Kicinski wrote:
-> > On Tue, 20 Aug 2024 22:01:54 +0800 Jijie Shao wrote:
-> > > core need test the mac_addr not every driver need to do.
-> > > 
-> > > Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> > > ---
-> > >   net/core/dev.c | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/net/core/dev.c b/net/core/dev.c
-> > > index e7260889d4cb..2e19712184bc 100644
-> > > --- a/net/core/dev.c
-> > > +++ b/net/core/dev.c
-> > > @@ -9087,6 +9087,8 @@ int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa,
-> > >   		return -EOPNOTSUPP;
-> > >   	if (sa->sa_family != dev->type)
-> > >   		return -EINVAL;
-> > > +	if (!is_valid_ether_addr(sa->sa_data))
-> > > +		return -EADDRNOTAVAIL;
-> > not every netdev is for an Ethernet device
+> Signed-off-by: Soma Nakata <soma.nakata01@gmail.com>
+> ---
+>   tools/lib/bpf/libbpf.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> ok， this patch will be removed in v3.
-> and the check will move to hibmcge driver.
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index a3be6f8fac09..f4ad1b993ec5 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -496,7 +496,7 @@ struct bpf_program {
+>   };
+>   
+>   struct bpf_struct_ops {
+> -	const char *tname;
+> +	char *tname;
+>   	const struct btf_type *type;
+>   	struct bpf_program **progs;
+>   	__u32 *kern_func_off;
+> @@ -1423,7 +1423,9 @@ static int init_struct_ops_maps(struct bpf_object *obj, const char *sec_name,
+>   		memcpy(st_ops->data,
+>   		       data->d_buf + vsi->offset,
+>   		       type->size);
+> -		st_ops->tname = tname;
+> +		st_ops->tname = strdup(tname);
+> +		if (!st_ops->tname)
+> +			return -ENOMEM;
 
-No, you just need to use the correct function to perform the check.
+Certainly a matter of taste, but I would personally move it just after 
+"st_ops->kern_func_off = malloc()" and add the NULL check with the 
+existing ones.
 
-__dev_open() does:
+BTW, there are some memory leaks if 1 or more allocations fail in this 
+function.
+Not sure if it is an issue or not, and what should be done in this case.
 
-        if (ops->ndo_validate_addr)
-                ret = ops->ndo_validate_addr(dev);
+CJ
 
-	Andrew
+
+>   		st_ops->type = type;
+>   		st_ops->type_id = type_id;
+>   
+> @@ -8984,6 +8986,7 @@ static void bpf_map__destroy(struct bpf_map *map)
+>   	map->mmaped = NULL;
+>   
+>   	if (map->st_ops) {
+> +		zfree(&map->st_ops->tname);
+>   		zfree(&map->st_ops->data);
+>   		zfree(&map->st_ops->progs);
+>   		zfree(&map->st_ops->kern_func_off);
+
 
