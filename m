@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-295989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA9E95A403
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:38:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB6E95A40D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166FC1F25B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CD3282052
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCC31B2EE0;
-	Wed, 21 Aug 2024 17:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="n8lCaxEh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eYsRP3qr"
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175381B2EFA;
+	Wed, 21 Aug 2024 17:40:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C50514E2CB;
-	Wed, 21 Aug 2024 17:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8015C1B2EDE;
+	Wed, 21 Aug 2024 17:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724261909; cv=none; b=ltlUAvzCeVD9ndWyVM0gp+MPwlIBYYN4TciPTG2J+dMQj/B2+IeEMal6mOZqmD4Lbp6L3q5Ki+uYqiGwdY4BDrLEm9ilKEcuJAt/lDy5pgz4D2Tu6+6coK72KGehhKum0drcV1mOeAPdes/Xfx/XPICEvIFCyYy2rR1lM5M350g=
+	t=1724262028; cv=none; b=U0Mrp16t8SNuVhKrHhAS057tCsNmBhWaRUjsvZixG9IjvbJfZ3vYT5cWjKxyx+bP3J33YoRlQ2W+6hiIN+1NJVoaivBggqrj7Sb9u0J/5+5O7OYjR+4ZpuMN9LP3vIH2xwBDC3UWsY1rqX6QFPCmrhIZTykAgwyUTXblXN1RlGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724261909; c=relaxed/simple;
-	bh=5IOi8iEyNGDv+oLdp1Oiux9zoLB00zn866uexTdEvv0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GBHhhd7nTqaQaHMv28lA+TEc+29VsGr77ICIgJ0Eg8z+E+l+kyd2EKZ+CKYaTnbXkOg3GEQSY6qNjsftF1BMB1O/yzS4/FhjyVndAweGJtlEhPwvtS7YSvYHPEl9nLc5QM+YN0vF9X6nW9VPbHy+3B721zUFz+lnx1n4GnrTycQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=n8lCaxEh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eYsRP3qr; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 6EFD0138FF6F;
-	Wed, 21 Aug 2024 13:38:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 21 Aug 2024 13:38:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1724261906;
-	 x=1724348306; bh=zgzTzsiJWv8g320HvGuSnIto4KTkXMdjjhfH6NawjJk=; b=
-	n8lCaxEh8Qyq7/K9q0bdMfPwripzUHAQ+ryVuMjXDSPaW8cJWH3zNSoqrhmsIyz/
-	asqSMH6rx6BXuPEiKQQ+UAyMvLcEgqkZfRk8LkZ/gqms+lLn5NLuBKZimARdber1
-	sgveNMRlIYGfWa5MsIQ+dPn0BMBhzJEUujz2Qu4MuTQHHAhKo+zGG8fDpRa2PPvK
-	t31T+9JNp9MIro4GNdZoHalf6XJ4w8c9yL/mAK5SBPHJpJf6sTHFfMjnUub3BPBh
-	/T+qSTFAlo9yTdcr9c8qAw1YvgiXOY6z6BWeHkDMJgpe18zAGPwuybv1cTVIwPxR
-	hH9L7r4umQjHDdTjf1BlhA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724261906; x=
-	1724348306; bh=zgzTzsiJWv8g320HvGuSnIto4KTkXMdjjhfH6NawjJk=; b=e
-	YsRP3qrm8YB1F6uGDKVJYJzMXuWv/nBtUaebUDjKYV7bct5tp7BaSovTLd9YZrHy
-	6ffUn77+uqC3uxTORdFh4+teV6LIpY+JQWJzUF3XXFMZWVmg8vdynqxCbgJVxLeI
-	iFI1NyVSQKf4l+QGLwxB9yFZChF7dzFh+CPkdxmQDyteB1uUz7043C2U1wkD6CJN
-	5QYm8zw1oU/YNLbhrUAc1V9rg15ZNgos3ZLoUmv8jPkiJEdU7eKT++hlgDwSCJ1q
-	tNZY5UytrJeOra3n3+tezP0bVBALnwvq0JNofqf3vy5pZ5j/ft1OMZUObKA5Zth6
-	JNuB+RMRVtClGndw1/1FA==
-X-ME-Sender: <xms:EibGZmeFR3G5jvZMy1ZqTPnvRkXSn7mqt4Pbx0_sG9JGZ1suqRCuTA>
-    <xme:EibGZgNzOBKlpv8XsFHuef-lv814-c_Lh8872bKf3NcU9v63S12kQufli5hEwVp8e
-    g_2bYaOCtvIIkpo>
-X-ME-Received: <xmr:EibGZngCghHA_ofn8QeC-oyOfnW5SAmnR8GdSmPpGWWnVVfxhNDZKpeH87wTQKztKZpaxuEAfq-dwPo0I76gWdbaYknFqR3bHHGUeONO8tHwghx-a7nhrjnM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddukedgudduiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
-    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeffjeevfeefjefg
-    hfefhfeiueffffetledtgffhhfdttdefueevledvleetfeevtdenucffohhmrghinhepkh
-    gvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsg
-    gprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrghifhgv
-    nhhgrdiguhesshhhohhpvggvrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
-    gvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:EibGZj9JFt6A6qeEHQAmv-8tZjNr-guwm-7Fsd_XcCTBAsxh90ivJQ>
-    <xmx:EibGZiuOo_l_aaLRENwQxAFt-xrGLB77iAlq-Ilh3Opgv7yEMXDYNw>
-    <xmx:EibGZqHG6BazPwawcGenVyB_s9ew15g4bNMxq9XuzbPQQqfN2gr1QQ>
-    <xmx:EibGZhPKmhBiwk-toX5B0YYGwJzTKnfHfuTQn92c01Hsyl-Z47rAUg>
-    <xmx:EibGZkJoJp7e8aFDHLyrWehJT20s8YCg2H-4c8GseC2MVviLrYD4UqAd>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 Aug 2024 13:38:25 -0400 (EDT)
-Message-ID: <92427273-edeb-42b2-8f3c-5256d5a4b056@fastmail.fm>
-Date: Wed, 21 Aug 2024 19:38:23 +0200
+	s=arc-20240116; t=1724262028; c=relaxed/simple;
+	bh=3jSo8xTV6g9gk/XnSONwS00e5gGR/ZZ3onU+FR9wQio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RyTxCN/8YGTCW4g6AdSboYlFeBlnO9ctQWrlWOORPeuh6AmruK8RCfO+WH0yOpz9N5J2tuCmyb+AinaSz8KhjygqasbZ8jfqf54Hn0yFLfuliFkfkKWRL5rEKaV+wXX5Eq0bSK/fkbprEXiInNlVA1j5ANUKlSKWk0Yf8d7TIys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67B2C32781;
+	Wed, 21 Aug 2024 17:40:22 +0000 (UTC)
+Date: Wed, 21 Aug 2024 18:40:20 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 24/40] arm64/signal: Expose GCS state in signal frames
+Message-ID: <ZsYmhHHmqSu7wWWW@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
-To: Haifeng Xu <haifeng.xu@shopee.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613040147.329220-1-haifeng.xu@shopee.com>
- <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
- <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
- <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
- <39f3f4ae-4875-4cd5-ac2e-9a704750eff6@shopee.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <39f3f4ae-4875-4cd5-ac2e-9a704750eff6@shopee.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
 
+On Thu, Aug 01, 2024 at 01:06:51PM +0100, Mark Brown wrote:
+> @@ -636,6 +639,81 @@ extern int restore_zt_context(struct user_ctxs *user);
+>  
+>  #endif /* ! CONFIG_ARM64_SME */
+>  
+> +#ifdef CONFIG_ARM64_GCS
+> +
+> +static int preserve_gcs_context(struct gcs_context __user *ctx)
+> +{
+> +	int err = 0;
+> +	u64 gcspr;
+> +
+> +	/*
+> +	 * We will add a cap token to the frame, include it in the
+> +	 * GCSPR_EL0 we report to support stack switching via
+> +	 * sigreturn.
+> +	 */
+> +	gcs_preserve_current_state();
+> +	gcspr = current->thread.gcspr_el0 - 8;
 
+We discussed briefly offline. Not a problem in this patch but
+gcs_preserve_current_state() only saves it conditionally on GCS being
+enabled for the task. However, you mentioned that the register is always
+available to the user, so I'd rather change the preserving function to
+save it unconditionally.
 
-On 6/15/24 14:19, Haifeng Xu wrote:
-> 
-> 
-> On 2024/6/14 18:01, Miklos Szeredi wrote:
->> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
->>
->>> So why the client doesn't get woken up?
->>
->> Need to find out what the server (lxcfs) is doing.  Can you do a
->> strace of lxcfs to see the communication on the fuse device?
-> 
-> ok, I use strace to track one of the server threads. The output
-> can be seen in attachment. 
-> 
-> FD: 6 DIR  /run/lxcfs/controllers/sys/fs/cgroup/
-> FD: 7 CHR  /dev/fuse
+> +
+> +	__put_user_error(GCS_MAGIC, &ctx->head.magic, err);
+> +	__put_user_error(sizeof(*ctx), &ctx->head.size, err);
+> +	__put_user_error(gcspr, &ctx->gcspr, err);
+> +	__put_user_error(0, &ctx->reserved, err);
+> +	__put_user_error(current->thread.gcs_el0_mode,
+> +			 &ctx->features_enabled, err);
+> +
+> +	return err;
+> +}
+> +
+> +static int restore_gcs_context(struct user_ctxs *user)
+> +{
+> +	u64 gcspr, enabled;
+> +	int err = 0;
+> +
+> +	if (user->gcs_size != sizeof(*user->gcs))
+> +		return -EINVAL;
+> +
+> +	__get_user_error(gcspr, &user->gcs->gcspr, err);
+> +	__get_user_error(enabled, &user->gcs->features_enabled, err);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Don't allow unknown modes */
+> +	if (enabled & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
+> +		return -EINVAL;
+> +
+> +	err = gcs_check_locked(current, enabled);
+> +	if (err != 0)
+> +		return err;
+> +
+> +	/* Don't allow enabling */
+> +	if (!task_gcs_el0_enabled(current) &&
+> +	    (enabled & PR_SHADOW_STACK_ENABLE))
+> +		return -EINVAL;
 
-I had missed that there is an strace output. 
-Would it be possible that you describe your issue with all 
-details you have? There is a timeout patch now and it would probably solve your issue
+We don't allow enabling and that's fine but we don't restore gcspr
+either with this early return.
 
-https://lore.kernel.org/all/20240813232241.2369855-1-joannelkoong@gmail.com/T/
+> +
+> +	/* If we are disabling disable everything */
+> +	if (!(enabled & PR_SHADOW_STACK_ENABLE))
+> +		enabled = 0;
+> +
+> +	current->thread.gcs_el0_mode = enabled;
+> +
+> +	/*
+> +	 * We let userspace set GCSPR_EL0 to anything here, we will
+> +	 * validate later in gcs_restore_signal().
+> +	 */
+> +	current->thread.gcspr_el0 = gcspr;
+> +	write_sysreg_s(current->thread.gcspr_el0, SYS_GCSPR_EL0);
 
+I think you should move this further up unconditionally.
 
-but Miklos is asking for a motivation. From point of view that fuse server could 
-abort requests itself Miklos is absolutely right (the product I'm actually working
-on has that...). And one could even add a timeout mechanism to libfuse.
-But question to understand your main issue and if there would be a request 
-timeout needed.
-
-In general, it would be helpful if you could provide everything you know, already
-with the initial patch.
-Later on you posted that you use LXCFS, but personally I don't know anything about
-it. So it would be good to describe where that actually runs and what you do to trigger
-the issue, etc. Details...
-
-Thanks,
-Bernd
+-- 
+Catalin
 
