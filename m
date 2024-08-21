@@ -1,202 +1,472 @@
-Return-Path: <linux-kernel+bounces-295728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0068595A0D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:04:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BF195A0DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79B5A1F231D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB396285561
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2A3130A73;
-	Wed, 21 Aug 2024 15:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD027405A;
+	Wed, 21 Aug 2024 15:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3HmBCXzK"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZGRlk63y"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646FB4D8CB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724252658; cv=none; b=TMqg3rW9pz/sfR8nxLYBCWz8iiGxoki2RdOIxgREq+NjLJPTsDV75M/RoLCJ3HyF/jkO1RnFE94M0hgxon7oonU02VrYDgkDk5gUF/GtIT5sie4H0OfzA/5h0UQEsWir6wTMSv8sKf0oMtd9Qlz67Obu6sQnqzhuekpy0R+cEFY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724252658; c=relaxed/simple;
-	bh=kQAhxxciXsK73k7t1K/XvfDm2xyETB4CeAAPGg56gvE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q5ko0pvBfy+kpwb7WMOk3q/IzUmalwBZwt5afQwOJB08M39YDYiABlv4/96DQQ7p+a0SXBut8l2lwpsPwxVXIDjzvhVGpOdG6j9i+AWZdFW/vVVEN037m6wqFkaIsfEHtPY8CPPs2T3TB0XJ582ldENmL9M2VoLZCXZQnaaLVLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3HmBCXzK; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d311d8091so20801115ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:04:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724252654; x=1724857454; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PrMKua0VqfdV1DUxMUuflf+WJjVJdBv6j+j/4+JbR1U=;
-        b=3HmBCXzKhllTQHTCPJt+XLrneXkiGH3NrIl6ooaWQ18D/z5fOQa83wCcl0FylsVzWM
-         OJh7cNu0uAIFDRQkiyfWlMaRDwKuMd2gMdyEFtGQsHHhPpC3HjEHqIHDo5qujbQCWHDU
-         gDRMTcRRJSs3t9BX8BUGvhj+gfa3dGJuS4lgaw1io5vtLc3i6fUvL06evuOOozA2NFHN
-         hTsJY/FvrKmuOIO3yp7Mt7/IUvcDcU/2E4skDULCiei3vSgaa211xxvg6EZCsaprPvPy
-         lkETXW4eNXoEJqCshjo7kpIRzbSY7U3GQLY8J8jOVPMb/UHIn/FUzfD6eHwZnLjOSMdq
-         iKzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724252654; x=1724857454;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PrMKua0VqfdV1DUxMUuflf+WJjVJdBv6j+j/4+JbR1U=;
-        b=US4u8rO5RItBKgg1SUG/1IexRJQ/J8zckQVFpYL6klKJ0CGk2NpOUh0xbdEBSGpO2l
-         dKmf9nEpnVwshP7EggTgFUaEk1J5LHYl1bWgcZ+K5ix80y5awu/K3wTT77VbX5eFFAyD
-         t5D11+V69SX/J3v62lTNPUZIiUIovqnenWyhLgqW3vS3RNjGDfwFxZUHqKFoslXNIv8c
-         JWbCpIMLnyFEf954HbjE6WzWcqytkQAsAq88iJmhcZvwLbK1qsTvw0XvJtOE5hRi1c06
-         km8KVU+Unpi15QTYHNUJouzMY31/5EWZcYEqKYgSFpaqP4X2RNoVpNrjeHPOV2FXL3IJ
-         mbIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQe2MQ1GkRvdEGgdvXIgCg3iV+dVHriJSJ2aq68fr/WsaWquR3CgfSbCI/wo8lbCTkf03skuX9KZ/bJlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHTadffO/2XweuTndGxCZJvdGf9uWb3AyMyZOl5zU6e6wPXPSX
-	ckL34LypmATnTidTlP8M5XXC6WtZmbedR+s+DhUUrr37bSfiMl+mdnPcUiZLxiY=
-X-Google-Smtp-Source: AGHT+IEeSJu9YGEKFWHZ9j3oHNxcL0ihhp4xqYgEwuf42nHsZyiOfOluIympR7UcqvwATLFSx9AY8w==
-X-Received: by 2002:a05:6e02:1d95:b0:375:c394:568b with SMTP id e9e14a558f8ab-39d6c3b0a06mr24212555ab.21.1724252654237;
-        Wed, 21 Aug 2024 08:04:14 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ccd6e7d97dsm4652309173.26.2024.08.21.08.04.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 08:04:13 -0700 (PDT)
-Message-ID: <9a0f2192-b897-4952-b4ea-7fe229f33001@kernel.dk>
-Date: Wed, 21 Aug 2024 09:04:12 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE47879F4;
+	Wed, 21 Aug 2024 15:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724252697; cv=fail; b=nQ+RVwc0vWcalFYOmzqSDoRn4TOwIp1f5APM5xGDYvGJBySX1pMhpeor2j9VLiOfdw/m+LawKligAwbgz0vrJbxl28SXtIsKvd0WxMvhlgbYMRLuc9EqWiPbLNeFc4LD5MWAuS0yk3DnysWbWshsvhy7k8hk4nIO5S+dENWfI/E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724252697; c=relaxed/simple;
+	bh=nGiLUexhFHhx4LKxo8DaZwmFSrypUvF58tjof+JPdiA=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ub6fAOonbcwaF+6LYb87v6tRgPM81kmEcKSQplmatNN+MtfKC3YjCLisemf4L06wmlf0B6FXtsBc6F5mBw0Oig9f25LQuu46vRXxSYZtIApXMmLE3/W2GDahktA+vogvSKNkum6t5nVgkOWE8zezgOUUz8CfNE84xctNktaBWhQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZGRlk63y; arc=fail smtp.client-ip=40.107.93.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jseBhFY6xyoZTelvvEVS/bxHdKolvdRFF47VPKruPUn2GCzq2KSJp0BMuhy8kjBKvNxUp5UZ0tOGGV7tL3VjvXUMTZuiuCQfTaPp0Rq1kI2IbZGkZV0/vIH6IlcpFdRsK8BuZNDDO0KAwbfYQpFS9Od43P/WofPfjaCv/1Q+Vx5iuyaWShxIyKokJuirQ5Khdo8x2UfRzTQ72QhCXeBDK7DrvKv0WD1vsAwbz1lpZivjoiesWurwWCwiBSwbKqpYPrr50NBlncQiXv792anQBK7Hgvb7q5mDaE7xves1rACSlw8tZI5GNbyGA6gCTGeMIPpeXFy5E9Ycxoso1OAaHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jXkzxZpv5HAXtxZzuKJLl90pkEgRpSK1srHas5VxKw0=;
+ b=u6lLSpK+0Xs0neHqQ3mblTDTopbSJONOsxuNMrY+uPcxfy9x7lCQuLV88HtRiyl3OOSLIOw1PwPKMGI6vug5AdJm+Zx/QuUA/a47Qjq3fcKcta8qpelA/Qr1zHwq0BQ225+MLjuvVqQIEh4qBrsl81PNJeQSz8rSW85FZwmPmZgJOc27/gHgIwo4lQFsOZgQa86RmlDO5X4XlpCMHAW1BrvwKABp/OjBvT1YwNxSa3bLTB3whSU8kqZQXiPWFUVVmBPdSxop27uYbOUPNgo4uJ9mmgSoHTQwq1wv4hq2lzrJ28M82pZmKv8dcA48wgck9e/5ike3LCwhvTYysWOzmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jXkzxZpv5HAXtxZzuKJLl90pkEgRpSK1srHas5VxKw0=;
+ b=ZGRlk63yB5DsI4I/Pv1fRyKAa9o3e2Es1HMxB9W8AzwAHEBBwxkOGSupPqOBDSpKFrdmtktDUF+ESUBtyHMDfvlpgsamMhDp+kNXVnYMPOvYPcxTWSdtFWUdqj3zsWC4AtD4Oq70gRVZ9LZh1cvurryNlUTqfiZ8hzp7XhMTE5Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by PH8PR12MB6964.namprd12.prod.outlook.com (2603:10b6:510:1bf::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Wed, 21 Aug
+ 2024 15:04:52 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%6]) with mapi id 15.20.7897.014; Wed, 21 Aug 2024
+ 15:04:52 +0000
+Message-ID: <04fe3163-3a7c-4eef-b267-4da6e178e427@amd.com>
+Date: Wed, 21 Aug 2024 10:04:48 -0500
+User-Agent: Mozilla Thunderbird
+From: "Moger, Babu" <bmoger@amd.com>
+Subject: Re: [PATCH v6 15/22] x86/resctrl: Add the interface to assign a
+ hardware counter
+Reply-To: babu.moger@amd.com
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, corbet@lwn.net, fenghua.yu@intel.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1722981659.git.babu.moger@amd.com>
+ <099ecbbe678dd44387a8962d0cb81e61500cd2fa.1722981659.git.babu.moger@amd.com>
+ <aa118320-72eb-4dd6-8826-0f3f7287becc@intel.com>
+Content-Language: en-US
+In-Reply-To: <aa118320-72eb-4dd6-8826-0f3f7287becc@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN6PR2101CA0024.namprd21.prod.outlook.com
+ (2603:10b6:805:106::34) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
-To: Christian Loehle <christian.loehle@arm.com>, linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, tglx@linutronix.de,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20240819154259.215504-1-axboe@kernel.dk>
- <c8cd6339-c168-4409-8cc4-e85e7ad92914@arm.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <c8cd6339-c168-4409-8cc4-e85e7ad92914@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|PH8PR12MB6964:EE_
+X-MS-Office365-Filtering-Correlation-Id: b172ad7d-ee60-46f5-9445-08dcc1f29bd3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NW5mRStOd1ljSk1VWjExdjJMMVhXTHZUOENMdmtPbS9NZEZOeWVnUjlaVUov?=
+ =?utf-8?B?MTVyMXlKV3c3WHd0bWdsa2dDa0pLRDcwNGdObngxeGJLK2R1OEtVQzlaYzBH?=
+ =?utf-8?B?UGRoa2wyNVREcUtJMUc1ckdxZjJVNUYvN1ArSVphblNsS1RmU29HQWlEeWhr?=
+ =?utf-8?B?N3F0TGRjcTVvRUtUckVtbEtDMmwxNU9vM1BQeFVadjQ5UEowcVdQTE5yRGo1?=
+ =?utf-8?B?d1U1cjJqN2tyRVlXWEIwdFJiSTJueTZiVE93STArUFRGU2ZQQzIxNHNiNnV6?=
+ =?utf-8?B?UlRId0g0YXVYQUQ3R3Z0NW0rVHRVTUJlbHNuendoSlNOY1ZESWhEZGFUU3R6?=
+ =?utf-8?B?L0pmNC8xSzcxcVBZN2x3Yldmb3hSTGFSdUJhTHVDekQ0ekdKWG9sbEtZNncz?=
+ =?utf-8?B?dXloMEpKQUZrQldhTVdRcTU2MVlaOU9oVXlEZUk3N1pZNW5TNHRMcE9QT3d0?=
+ =?utf-8?B?RkFHc1VyMnpiaXpORnpjM09id1BMODNPaDRTS2E4L2kzVE8vUVRZZWZXYXhL?=
+ =?utf-8?B?NE42eXhHOGlRbFpYR2R1RXd5ZVM4bzc3VXlGd2N6TTZlM29sQnVJQ2h5UXN3?=
+ =?utf-8?B?enhKRWJDKys0R0N3b09FSkdzSmhiY1p1N2dYNHFLbmt5Q05vS2FwYkFQWmlS?=
+ =?utf-8?B?dzFBNDdWQUo4dVIwUkV2Zk1KQ3VoQ1J2WUg1Ly9QQ21SSVpEZlNuK0tYWFZO?=
+ =?utf-8?B?Z1RvZnQ3aWxUbmU3bHErTmUxZ3R4NncyWnNXa2VwZzdSaFpyb2lBbE8rcmxI?=
+ =?utf-8?B?WUtwbklWdHJ2R0pWV3pPNEZZUWtqc2RjdnF3NWVtVzE2N0grbHdvZWpGK21E?=
+ =?utf-8?B?U0JCS0g4bFNoSW9RQ0ZwS3hna0p2Y2FFa3lScndVRVpvTG82bktkS2pDRjU3?=
+ =?utf-8?B?MFVOb0ZqWHF1aHIvMUV1RHo1V1NGZXNhN2tKc1JOek05THVKYzd1QXpkbzBx?=
+ =?utf-8?B?MFFaOFBha1Q1RERhYWYzWVZ3bmZjSnEvamtTSEg1M0pyUFYyS2pNWUlOZ3Rw?=
+ =?utf-8?B?aG8vR2wrZmJ0MTBlbW1BK2F4YjBSQTR1YzNrMXdJcHFtREpOdzMvODRsbkh0?=
+ =?utf-8?B?d0NXRldQVGE4M1R2WHdOMUliRSs5b255QWtIeGRoRkx6VVJ6bTMzV0FVbUh2?=
+ =?utf-8?B?cGJMQzkrVU9peFVGa0Y4cHB2d29rbG1rUDk0Vlh0KytOeW9HZkRlL1NhdEZp?=
+ =?utf-8?B?b0p0YnI0UjJYUThrcWJMakVTVks4N2JnTFNuWHFSdkhna09obEtoUU9zNVJP?=
+ =?utf-8?B?cjB2STJUTGFxeTJpWFVxU0NrOWJ3TEt3MnltaytqaUNVOEJUK29adUZZK3k3?=
+ =?utf-8?B?NDJ4U1NDTUhkTExBbFZaTWtJbXBKT1BOa0xrME52VzFPcVY3clg3d0g0aFhy?=
+ =?utf-8?B?UWNoWkxVWGF0L2lsL1IzM3hvd2FEUkIzY3ZZS2FWYVppTHlBU1VuTjZwUGxp?=
+ =?utf-8?B?citXTjlKUHlvNyt0cmlNRkVUNGxEMzFXUWNRL0E0ZnFWMExja3pQb092L0Va?=
+ =?utf-8?B?Yjd0RllndjJ2dUdZVzVlUFJ3TktuRDdha3ZFYWVQMTZ6ZEdkL2tlbVFzU1Zy?=
+ =?utf-8?B?Y29DaWRRdEJFR0NQUisvdVJkdXhPNFdmTlo2ekNkQUliNGxKZTdOdlNkVDFu?=
+ =?utf-8?B?dXg1eE1kS2lsUTY5ZnA4eVBsM0E0Wk9kM25kY0FMZHJDRStqVTlJSlY2VTkz?=
+ =?utf-8?B?YTJZZFNuNHJSM2NDcExvcGxUOE9BelljTytQN1NNUkRnZnQweWZTcXlJbXNZ?=
+ =?utf-8?B?akpYYkU3M29ydjNQeEd1UHUvazJiNTRmbTZuNW1LclArbFZvOG5WM1Q3azN3?=
+ =?utf-8?Q?xN5J8O9KeWNv9sXHSZPCqzOuZbX5s7hYvHPMI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NVowVkxUOXVaNlZmd2hTZnprL1NtUHJkSmJUYVB5RDhzZDdFMkpjdXlCeEdN?=
+ =?utf-8?B?MEJnUHZFaVlZbGlSVUdyVjR5dDMzaHE0TVg2MjZFa0VRc1JqYlU2b3dEN25W?=
+ =?utf-8?B?dkxyaTcwZE42QkNhdXVoWGI0aXlET3BFcVZTRkpONjBBdGg1ZGl2OFJXRVdR?=
+ =?utf-8?B?S3dKQ01naGMrRjdEQmRGUjdBcGJkUUQzTjVYSm9rSm5MTndTS2lHeW9DOGdZ?=
+ =?utf-8?B?dGhIY29PeVQzbDNyTXE4cmM3S1B1dzI0MmRJVXE4UDBiUWR6L1pMbUtJZDFz?=
+ =?utf-8?B?aENza1UydUtaVVlhb0dxQTRpallheURZY3c4MFRKZ0piRVpyZGlTUlorZURP?=
+ =?utf-8?B?N29yRnZCM1Vjc0djYjFqZmJJOFFXTUF2NGNGOFBoMFpoV2I0MmJiS2t6UW00?=
+ =?utf-8?B?N01RQnhsbkwzNXdjaHk2amd6WHd4Yk9yQ2pZL1pRRDlyZHJiaWtuNEZ4bWJy?=
+ =?utf-8?B?bFg1YUh2MkpzM3pNS0x1Rjg1L21vYk5vYlZPWEZqWCtZY0RiOExJdU1PMnln?=
+ =?utf-8?B?NDlFOUFtbE9EeHhzait4dE9GSklBbitTNE5CR3FocmZXTklhZHlIeFFzWGRX?=
+ =?utf-8?B?V3FvWTJMUGt3Sm1HRVhnMGVBbjBOeU9mZ0liRFZtbkc3NDFySXAvZG9lNytu?=
+ =?utf-8?B?djd2ZFRiVjVDTm9XUFFFMkMyRlQ1ckhZeEY3OGZSaW1zVmJkc0k2SlpKeU1H?=
+ =?utf-8?B?eklUTU1LL04zSGhodFVRaGN3eFc5YWNPN1dNS1NIOXhJSGFGaWNEakJEYThQ?=
+ =?utf-8?B?RjNHQVVJa1cyWGxXQXN2OFBpSFdiNGpxUitOSGhFMitzbEtKTlk4a1RYeEdk?=
+ =?utf-8?B?YURTTVk5cHVGOWIwR25mNVVodEw3MERyVjRra3BEWkd2OFlHUHk3UXd1Ujkv?=
+ =?utf-8?B?UHV5RHpjWW56V2t1MmVCb2dzT0VVdTE2dmJqSUtIMVcvYVk4R0pJNjg4TUs2?=
+ =?utf-8?B?R0wzQVNQNGxVNEdzWWp6OWJvbDdXVVlHMGE0MTJwa2hLTUFCb2IzczI3Um1l?=
+ =?utf-8?B?SEZGVTBzaFlaVXRsTFJwVDY5c3JxK01iYnpGenlNT29LVGdzZmRFMmVWL09t?=
+ =?utf-8?B?MENCSlBDL3VUaks1bW1SWVR3dXlydWlGcnRDeDdHK1RiZ2pEemt0c1RvLzJm?=
+ =?utf-8?B?NGZ6cEdqbXoxaVFkVVI3S2lWaDRQM3dqQVI0b2xkNHpaUEhtM2tGbGJvYW1W?=
+ =?utf-8?B?QitzUDNTRFRtb2d5TlJSVkJHMGViUU5wck16c09wamJxcW9SZkwvV3Q1ZlFx?=
+ =?utf-8?B?NHU3WmhHcm8xZ3h3dzZQVGkxeTJ1ZUsySVhjYVQyRU9zLzF2dEpMaWFGMHc4?=
+ =?utf-8?B?VTg4NE9CMHp0UGpicTNLbE9BMERNb1JLcE9MRmFWWDVBVktWZTR5L0t5bVVj?=
+ =?utf-8?B?azdoL3NzSUROejc3U3RQd0I4RGZYSWpvaGRDMWxhaitnN0pqUmlVcTlMUjVK?=
+ =?utf-8?B?MmxqTXJIdTN5Y20yeXF0ZnBaVmJMVVQ1MFozWThqeW5zaC9RQWFEMzIvYjJs?=
+ =?utf-8?B?OU90TUNtNHEwQjRGbUJ1Nk5DQ1phc0tISkg0aWNrME41WTJNcndxa1BTU0tF?=
+ =?utf-8?B?R2hTZThlNHpIWmpYVjZPdk41V3FpWHNSVlk0Y0ZCVnZ6UFRORXc3S1RDZThV?=
+ =?utf-8?B?d3UwOUFXZjJxTm5nL0xPSUNNc2QwLzU4WklUSTY3VENMMnlmdFBYOS9NTkZ5?=
+ =?utf-8?B?VFhCMTdydlU3T2J0MUcreDFNZTJjRmZXTk5WRGd4bmtWeEpXb0JycENXYTd2?=
+ =?utf-8?B?OEdFaGZXS0JPOFZnR2FNZzZUMkhzTUlMUGE2Umo1aldEY0ZjRmFKUU1FMmtp?=
+ =?utf-8?B?VWExSjkrTnlrcXRmTEZXODZ6c3lqaThSdGZyTlRpRXlRUGN6dHFVQnhCRzNq?=
+ =?utf-8?B?eXBtNDhBM3hGUzZPb3MwSEp5VzZ6NCs0cHBYTkZpalpUVy93V2lReFlXR1lj?=
+ =?utf-8?B?SjVWZHdUVHhjZ2t3QkJsSUNlZEJNazZxYThybUluMUlLTllvOER4NHFRcUhI?=
+ =?utf-8?B?a2xOVWFWSVpDSE5ER1JUdG92NDJYTVpzWHllSmxWcFhvZmRlb2c5bllMcVU0?=
+ =?utf-8?B?ZGtZUWszem94ckpGRTBUSVJzcVZOaWRNRElXRUpnMnpqRm5vQjROam4zcCto?=
+ =?utf-8?Q?3wPc=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b172ad7d-ee60-46f5-9445-08dcc1f29bd3
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 15:04:52.2240
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OcFhrjNv8A50rp2mqIpSLXzsFDCF2J29+uO5yYEHC9/STeAr+t0Wy3JSAQ8nnnzP
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6964
 
-On 8/21/24 8:54 AM, Christian Loehle wrote:
-> On 8/19/24 16:39, Jens Axboe wrote:
->> Hi,
+Hi Reinette,
+
+On 8/16/2024 4:41 PM, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 8/6/24 3:00 PM, Babu Moger wrote:
+>> The ABMC feature provides an option to the user to assign a hardware
+> 
+> This patch is a mix of resctrl fs and arch code, could each piece please
+> be desribed clearly?
+
+I will separate them. That is probably better.
+
+> 
+>> counter to an RMID and monitor the bandwidth as long as it is assigned.
+>> The assigned RMID will be tracked by the hardware until the user 
+>> unassigns
+>> it manually.
 >>
->> This is v6 of the patchset where the current in_iowait state is split
->> into two parts:
+>> Counters are configured by writing to L3_QOS_ABMC_CFG MSR and
+>> specifying the counter id, bandwidth source, and bandwidth types.
 >>
->> 1) The "task is sleeping waiting on IO", and would like cpufreq goodness
->>    in terms of sleep and wakeup latencies.
->> 2) The above, and also accounted as such in the iowait stats.
+>> Provide the interface to assign the counter ids to RMID.
 >>
->> The current ->in_iowait covers both, this series splits it into two types
->> of state so that each can be controlled seperately.
+>> The feature details are documented in the APM listed below [1].
+>> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+>>      Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable 
+>> Bandwidth
+>>      Monitoring (ABMC).
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+>> v6: Removed mbm_cntr_alloc() from this patch to keep fs and arch code
+>>      separate.
+>>      Added code to update the counter assignment at domain level.
+>>
+>> v5: Few name changes to match cntr_id.
+>>      Changed the function names to
+>>        rdtgroup_assign_cntr
+>>        resctr_arch_assign_cntr
+>>        More comments on commit log.
+>>        Added function summary.
+>>
+>> v4: Commit message update.
+>>        User bitmap APIs where applicable.
+>>        Changed the interfaces considering MPAM(arm).
+>>        Added domain specific assignment.
+>>
+>> v3: Removed the static from the prototype of rdtgroup_assign_abmc.
+>>        The function is not called directly from user anymore. These
+>>        changes are related to global assignment interface.
+>>
+>> v2: Minor text changes in commit message.
+>> ---
+>>   arch/x86/kernel/cpu/resctrl/internal.h |  4 ++
+>>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 97 ++++++++++++++++++++++++++
+>>   2 files changed, 101 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h 
+>> b/arch/x86/kernel/cpu/resctrl/internal.h
+>> index d93082b65d69..4e8109dee174 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+>> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+>> @@ -685,6 +685,10 @@ int mbm_cntr_alloc(struct rdt_resource *r);
+>>   void mbm_cntr_free(u32 cntr_id);
+>>   void resctrl_mbm_evt_config_init(struct rdt_hw_mon_domain *hw_dom);
+>>   unsigned int mon_event_config_index_get(u32 evtid);
+>> +int resctrl_arch_assign_cntr(struct rdt_mon_domain *d, enum 
+>> resctrl_event_id evtid,
+>> +                 u32 rmid, u32 cntr_id, u32 closid, bool assign);
+>> +int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum 
+>> resctrl_event_id evtid);
+>> +int rdtgroup_alloc_cntr(struct rdtgroup *rdtgrp, int index);
+>>   void rdt_staged_configs_clear(void);
+>>   bool closid_allocated(unsigned int closid);
+>>   int resctrl_find_cleanest_closid(void);
+>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c 
+>> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> index 60696b248b56..1ee91a7293a8 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> @@ -1864,6 +1864,103 @@ static ssize_t 
+>> mbm_local_bytes_config_write(struct kernfs_open_file *of,
+>>       return ret ?: nbytes;
+>>   }
+>> +static void rdtgroup_abmc_cfg(void *info)
 > 
-> Hi Jens,
-> I wanted to give a brief update on where I think we're at in terms
-> of iowait behavior regarding cpuidle and cpufreq.
-> I'm still working on getting both removed, given the discussions had
-> on the list [0] and at OSPM [1] this seems realistic and the best way
-> forward IMO.
-> That would then naturally make this series and the iowait workaround in
-> io_uring/io_uring.c unnecessary.
+> This has nothing to do with a resctrl group (arch code has no insight 
+> into the groups anyway).
+> Maybe an arch specific name like "resctrl_abmc_config_one_amd()" to 
+> match earlier
+> "resctrl_abmc_set_one_amd()"?
 > 
-> 1. For cpuidle:
-> Main issue with relying on nr_iowaiters is that there is no guarantee
-> whatsoever that these tasks will wakeup where they went to sleep so if
-> we can achieve the same throughput without nr_iowaiters it shouldn't
-> be relevant.
-> I spent quite some time in fixing teo [2], because untangling nr_iowaiters
-> from menu seems hard, essentially nobody has worked on menu seriously for
-> a while now. Thus the plan here is to replace menu by teo eventually.
-> For your io_uring workloads I see throughput on par for teo (doesn't rely
-> on iowait) and menu.
+
+Sure.
+
 > 
-> # echo teo > /sys/devices/system/cpu/cpuidle/current_governor
-> #  ./io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S 1 -R 0 /dev/nvme0n1 
-> submitter=0, tid=206, file=/dev/nvme0n1, node=-1
-> polled=0, fixedbufs=1/0, register_files=1, buffered=0, QD=1
-> Engine=preadv2
-> IOPS=22500, BW=87MiB/s, IOS/call=0/0
-> IOPS=21916, BW=85MiB/s, IOS/call=1/0
-> IOPS=21774, BW=85MiB/s, IOS/call=1/0
-> IOPS=22467, BW=87MiB/s, IOS/call=1/0
-> Exiting on timeout
-> Maximum IOPS=22500
-> # echo menu > /sys/devices/system/cpu/cpuidle/current_governor
-> [  178.754571] cpuidle: using governor menu
-> #  ./io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S 1 -R 0 /dev/nvme0n1 
-> submitter=0, tid=209, file=/dev/nvme0n1, node=-1
-> polled=0, fixedbufs=1/0, register_files=1, buffered=0, QD=1
-> Engine=preadv2
-> IOPS=21452, BW=83MiB/s, IOS/call=0/0
-> IOPS=21778, BW=85MiB/s, IOS/call=1/0
-> IOPS=21120, BW=82MiB/s, IOS/call=1/0
-> IOPS=20903, BW=81MiB/s, IOS/call=1/0
-> Exiting on timeout
-> Maximum IOPS=21778
+>> +{
+>> +    u64 *msrval = info;
+>> +
+>> +    wrmsrl(MSR_IA32_L3_QOS_ABMC_CFG, *msrval);
+>> +}
+>> +
+>> +/*
+>> + * Send an IPI to the domain to assign the counter id to RMID.
+>> + */
+>> +int resctrl_arch_assign_cntr(struct rdt_mon_domain *d, enum 
+>> resctrl_event_id evtid,
+>> +                 u32 rmid, u32 cntr_id, u32 closid, bool assign)
+>> +{
+>> +    struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+>> +    union l3_qos_abmc_cfg abmc_cfg = { 0 };
+>> +    struct arch_mbm_state *arch_mbm;
+>> +
+>> +    abmc_cfg.split.cfg_en = 1;
+>> +    abmc_cfg.split.cntr_en = assign ? 1 : 0;
+>> +    abmc_cfg.split.cntr_id = cntr_id;
+>> +    abmc_cfg.split.bw_src = rmid;
+>> +
+>> +    /* Update the event configuration from the domain */
+>> +    if (evtid == QOS_L3_MBM_TOTAL_EVENT_ID) {
+>> +        abmc_cfg.split.bw_type = hw_dom->mbm_total_cfg;
+>> +        arch_mbm = &hw_dom->arch_mbm_total[rmid];
+>> +    } else {
+>> +        abmc_cfg.split.bw_type = hw_dom->mbm_local_cfg;
+>> +        arch_mbm = &hw_dom->arch_mbm_local[rmid];
+>> +    }
+>> +
+>> +    smp_call_function_any(&d->hdr.cpu_mask, rdtgroup_abmc_cfg, 
+>> &abmc_cfg, 1);
+>> +
+>> +    /*
+>> +     * Reset the architectural state so that reading of hardware
+>> +     * counter is not considered as an overflow in next update.
+>> +     */
+>> +    if (arch_mbm)
+>> +        memset(arch_mbm, 0, sizeof(struct arch_mbm_state));
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +/* Allocate a new counter id if the event is unassigned */
+>> +int rdtgroup_alloc_cntr(struct rdtgroup *rdtgrp, int index)
+>> +{
+>> +    struct rdt_resource *r = 
+>> &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+>> +    int cntr_id;
+>> +
+>> +    /* Nothing to do if event has been assigned already */
+>> +    if (rdtgrp->mon.cntr_id[index] != MON_CNTR_UNSET) {
+>> +        rdt_last_cmd_puts("ABMC counter is assigned already\n");
 > 
-> Please do give it a try for yourself as well!
+> This is resctrl fs code. Please replace the arch specific messages
+> ("ABMC") with resctrl fs terms.
+
+Sure.
+
 > 
-> 2. For cpufreq:
-> Main issue for IO-bound workloads with iowait boosting is we're punishing
-> the 'good' workloads (that don't have iowait sleeps in their throughput-critical
-> part, which is already bad because of the scheduling overhead induced) by
-> making them energy-inefficient to make synthetic benchmarks happy.
-> A study of more realistic workloads show that they don't suffer from a problem
-> of building up utilization, not util_est anyway, so they don't actually benefit
-> from a cpufreq boost.
-> This leads me to the conclusion that cpufreq iowait boosting can be scrapped
-> altogether if we accept some degradation of benchmarks like
-> ./io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S 1 -R 0 /dev/nvme0n1
-> or
-> fio --name=fio --rw=randread --bs=4k --runtime=5 --time_based --filename=/dev/nvme0n1 --iodepth=1 --numjobs=1
-> (non-io_uring) for that matter.
+>> +        return 0;
+>> +    }
+>> +
+>> +    /*
+>> +     * Allocate a new counter id and update domains
+>> +     */
+>> +    cntr_id = mbm_cntr_alloc(r);
+>> +    if (cntr_id < 0) {
+>> +        rdt_last_cmd_puts("Out of ABMC counters\n");
+> 
+> here also.
 
-The original iowait addition came because a big regression was seen
-compared to not setting iowait, it was around 20% iirc. That's big, and
-not in the realm of "some degradation" that will be acceptable. And that
-will largely depend on the system being used. On some systems, it'll be
-less, and on some it'll be more.
+Sure.
 
-> For io_uring where the expected case is probably not single-threaded
-> sync IO (or iodepth=1) the cpufreq iowait boost is just hurting
-> use-cases by pushing it to less efficient frequencies that might not
-> be needed.
+> 
+>> +        return -ENOSPC;
+>> +    }
+>> +
+>> +    rdtgrp->mon.cntr_id[index] = cntr_id;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +/*
+>> + * Assign a hardware counter to the group and assign the counter
+>> + * all the domains in the group. It will try to allocate the mbm
+>> + * counter if the counter is available.
+>> + */
+>> +int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum 
+>> resctrl_event_id evtid)
+>> +{
+>> +    struct rdt_resource *r = 
+>> &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+>> +    struct rdt_mon_domain *d;
+>> +    int index;
+>> +
+>> +    index = mon_event_config_index_get(evtid);
+> 
+> After going through MPAM series this no longer looks correct. As the 
+> name of this
+> function implies this is an index unique to the monitor event 
+> configuration feature
+> and as the MPAM series highlights, it is unique to the architecture, not 
+> something
+> that is visible to resctrl fs. resctrl fs uses the event IDs and it is 
+> only when the
+> fs makes a request to the architecture that this translation comes into 
+> play.
+> 
+> With this change, what is the architecture specific "mon event config 
+> index" now
+> becomes part of resctrl fs used for something totally different from mon 
+> event
+> configuration.
+> 
+> I think we should separate this to make sure we distinguish between an 
+> architectural
+> translation and a resctrl fs translation, the array index is not the 
+> same as the architecture
+> specific "mov event config index".
+> 
+> How about we start with something simple that is defined by resctrl fs? 
+> for example:
+> #define MBM_EVENT_ARRAY_INDEX(_event) (_event  - 2)
 
-People do all sorts of things, and sync (or low queue depth) IO is
-certainly one of the use cases. In fact that's where the above report
-came from, on the postgres aio side.
+Yes. Good point. We can do that.
 
-> I know you want your problem (io_uring showing up as 100% busy even
-> though it's just sleeping) to be solved like yesterday and my opinion
-> on a future timeline might not be enough to convince you of much. I
-> wanted to share it anyway. I don't see an issue with the actual code
-> you're proposing, but it does feel like a step in the wrong direction
-> to me.
+> 
+> 
+>> +    if (index == INVALID_CONFIG_INDEX)
+>> +        return -EINVAL;
+>> +
+>> +    if (rdtgroup_alloc_cntr(rdtgrp, index))
+>> +        return -EINVAL;
+>> +
+> 
+> hmmm ... so rdtgroup_alloc_cntr() returns 0 if the counter is assigned 
+> already, and
+> in this case the configuration is done again even if counter was already 
+> assigned.
+> Is this intended?
 
-As mentioned in my original reply, I view this as entirely orthogonal,
-and while I appreciate your efforts in this area, I'm a little tired of
-this being brought up as a gatekeeping metric when it's not there.
+I didn't think thru this. Yea. It is not required as far as I can see.
+Will address it.
 
-If we can eliminate iowait for boosting down the line, then I'm all for
-it. But this has now been pending for > 6 months and I don't think it's
-far to keep stringing this along on a future promise. This isn't a lot
-of code and it solves the issue for now, if the code will get removed
-down the line as not needed, then that's certainly fine. For now, we
-need it.
+> 
+> rdtgroup_assign_cntr() seems to be almost identical to 
+> rdtgroup_assign_update()
+> that has protection against the above from happening. It looks like 
+> these two
+> functions can be merged into one?
 
--- 
-Jens Axboe
+Yes. We can do that.
 
+> 
+>> +    list_for_each_entry(d, &r->mon_domains, hdr.list) {
+>> +        resctrl_arch_assign_cntr(d, evtid, rdtgrp->mon.rmid,
+>> +                     rdtgrp->mon.cntr_id[index],
+> 
+> There currently seems to be a mismatch between functions needing to
+> access this ID directly as above in some cases while also needing to
+> use helpers like rdtgroup_alloc_cntr().
+
+I think I need to merge rdtgroup_assign_cntr(), rdtgroup_assign_update()
+and rdtgroup_alloc_cntr. It will probably make it clear.
+> 
+> Also, as James indicated, resctrl_arch_assign_cntr() may fail on Arm
+> so this needs error checking even though the x86 implementation always
+> returns success.
+
+Sure. Will do.
+
+> 
+>> +                     rdtgrp->closid, true);
+>> +        set_bit(rdtgrp->mon.cntr_id[index], d->mbm_cntr_map);
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   /* rdtgroup information files for one cache resource. */
+>>   static struct rftype res_common_files[] = {
+>>       {
+> 
+> Reinette
+> 
+Thanks
+- Babu Moger
 
