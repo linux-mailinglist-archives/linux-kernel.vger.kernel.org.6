@@ -1,178 +1,146 @@
-Return-Path: <linux-kernel+bounces-296148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE73C95A646
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:02:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A37095A64B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A722D1C217F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:02:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B6E1C21F03
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917B5171089;
-	Wed, 21 Aug 2024 21:01:59 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E906170A37;
+	Wed, 21 Aug 2024 21:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TuoiVM5x"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AAD7405A;
-	Wed, 21 Aug 2024 21:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B840B7405A;
+	Wed, 21 Aug 2024 21:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724274119; cv=none; b=bCRnpziRH2o4a39Geiu9blBWiSzbskYAwedHKlYEBNFcY96N24t4qNvm8XcoMCYrr0S2ycdb33y9WF3EexA7MtgOhwBAiAe+WlILWxQfLy6JGAwKwAUqVApZ7k/XbP8qN2RumHsDmDw8lIWCJIrNEK1o+SoIqJLOVnUU6o08jSs=
+	t=1724274188; cv=none; b=iMVDD7XDF8kKjZl1Wk9vVlpD+xMFy2pxtNJSkcXTwJfWRZhHSfak6B9w/1ntGiuW/kcwb8HIviOW7GpvQJ5ZQehrEatDz6vK8/eTH8lSjrqGuA2vfYt5WmYjx6uxecnr/cIGd50HeaxZLYrwjUN1hRsVZTjlDz7nHvHy8yHrz5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724274119; c=relaxed/simple;
-	bh=axJBu3CUhWokrQ9Xfcw1QiyMu4W37gK/cV9/3xY2h24=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r9mia5XSJRfGPkKnEYse/mnfG1dLE41XlsNmSyvNHc2D/mTA9NG1GQOLnqsCLtNPI1ZBCHU+zpjC26rBi0ICmO7lGigr6hQHch2gEX+lpKTY6TWb1yVaul60SRbnSIAfXvxA/oyFEwl5aXBvdeMWaZRp00O0kNaPRjHTqfDqheM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af4d2.dynamic.kabel-deutschland.de [95.90.244.210])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 68D1661E5FE05;
-	Wed, 21 Aug 2024 23:01:39 +0200 (CEST)
-Message-ID: <9de8ebd1-53fc-48d7-af11-b5c1ed828b3d@molgen.mpg.de>
-Date: Wed, 21 Aug 2024 23:01:38 +0200
+	s=arc-20240116; t=1724274188; c=relaxed/simple;
+	bh=/GMFIGWeHHhEWXOIb0ZzB+KN4MeNBoHs3oVGJ4/DFNc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=mtMKldua08a9yG3bzXvka4HzOzj3ZL/d30Vo2Pf27beMP1rAwgHpxOuBcUP+LHB5WOzudezyhqDnjO2dhXr9UaqRPPCBvZk0QDLmE389njKbbOIbUmKZlcgZEktTw8mkI8ckkH52BQru+D3NwT5YmVdzubpp40yoCYWZS9APz2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TuoiVM5x; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LL2tqI126792;
+	Wed, 21 Aug 2024 16:02:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724274175;
+	bh=5hiCgT+v1rhcN8zv0z+6t3xtFJcR5frTWIea1HBXQ+8=;
+	h=From:Date:Subject:To:CC;
+	b=TuoiVM5xRb9qRYPqTAgWgi7TIoAnO10YxpRNqaMCikU8CWneSrPAer9zfdJE913RG
+	 HfZFsG7lN2KdHnUm4a3a4IHJeJ6aRWsrTPZebpL/+VRhljvcqWf5ogPOE+DGkBvDTg
+	 ERphAvXJo5DsN2ZaWBHvoNGlj6sKc7Y7lyFxdm9w=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LL2tAj036486
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 21 Aug 2024 16:02:55 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ Aug 2024 16:02:55 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 21 Aug 2024 16:02:55 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LL2sPw049542;
+	Wed, 21 Aug 2024 16:02:55 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+Date: Thu, 22 Aug 2024 02:32:52 +0530
+Subject: [PATCH] padata: Honor the caller's alignment in case of chunk_size
+ 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: NOHZ tick-stop error: local softirq work is pending, handler
- #08!!! on Dell XPS 13 9360
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar
- <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de>
- <87o7ak411y.fsf@somnus> <256fdb2e-9b83-4837-bd31-0c34e4267c31@molgen.mpg.de>
- <87sezv7ytw.fsf@somnus> <1cf78f6f-af21-48bc-a9d8-755dd7bf8503@molgen.mpg.de>
-Content-Language: en-US
-In-Reply-To: <1cf78f6f-af21-48bc-a9d8-755dd7bf8503@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
+X-B4-Tracking: v=1; b=H4sIAPtVxmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyMj3dzECl1L42RD88SUZDMTU3MloMqCotS0zAqwKdGxtbUAbEwYElU
+ AAAA=
+To: Steffen Klassert <steffen.klassert@secunet.com>,
+        Daniel Jordan
+	<daniel.m.jordan@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kamlesh
+ Gurudasani <kamlesh@ti.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724274174; l=1962;
+ i=kamlesh@ti.com; s=20230614; h=from:subject:message-id;
+ bh=/GMFIGWeHHhEWXOIb0ZzB+KN4MeNBoHs3oVGJ4/DFNc=;
+ b=rjnYyhhy2lFhS5+5NyncaigHAjEnjQd07yOWlI/TUsBF0rxsi1GNJJV3DZOtQvJRVsW97Ig23
+ HDt9JfSDgweCdNVbZYFXk4NsBMyJb3HklbjS1CxNOEfuHVfyhpsGLfG
+X-Developer-Key: i=kamlesh@ti.com; a=ed25519;
+ pk=db9XKPVWDGJVqj2jDqgnPQd6uQf3GZ3oaQa4bq1odGo=
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-[Added URLs for files.]
+In the case where we are forcing the ps.chunk_size to be at least 1,
+we are ignoring the caller's alignment.
 
-Am 21.08.24 um 10:20 schrieb Paul Menzel:
-> Dear Anna-Maria,
-> 
-> 
-> Thank you very much for the support. I was finally able to collect the 
-> data you asked for.
-> 
-> Am 09.04.24 um 09:57 schrieb Anna-Maria Behnsen:
->> Paul Menzel writes:
-> 
-> […]
-> 
->>> Am 08.04.24 um 12:10 schrieb Anna-Maria Behnsen:
->>>
->>>> Paul Menzel writes:
->>>
->>>>> On Dell XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022, with Linux 6.9- 
->>>>> rc2+
->>>>> built from commit b1e6ec0a0fd0 (Merge tag 'docs-6.9-fixes' of
->>>>> git://git.lwn.net/linux) the external USB-C adapter Dell DA300 stopped
->>>>> working (only the Ethernet port was used). Linux logged:
->>>>
->>>> thanks for the report. Can you please provide a trace beside the dmesg
->>>> output? The following trace events should be enabled (via kernel 
->>>> command
->>>> line):
->>>>
->>>> trace_event=timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit
->>> Unfortunately I haven’t been able to reproduce it until now. Should it
->>> happen again, I am going to try your suggestion.
->>
->> Thanks for letting me know.
-> 
-> I wanted to configure that in the running system, but wasn’t able to set 
-> all of these at once with `set_event`:
-> 
->      echo 'timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit' | sudo tee /sys/kernel/tracing/set_event
-> 
-> For some reason setting them individually also did *not* work:
-> 
->      for e in timer:* timer_migration:* sched:sched_switch sched:sched_wakeup sched:sched_process_hang irq:softirq_entry irq:softirq_raise irq:softirq_exit'; do echo "$e" | sudo tee -a /sys/kernel/tracing/set_event; done
-> 
-> I then used
-> 
->      echo 1 | sudo tee /sys/kernel/tracing/events/timer/enable
->      echo 1 | sudo tee /sys/kernel/tracing/events/timer_migration/enable
->      echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_switch/enable
->      echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_wakeup/enable
->      echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_process_hang/enable
->      echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_entry/enable
->      echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_raise/enable
->      echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_exit/enable
-> 
-> and also had to increase the buffer to bridge the gap between the event 
-> and me noticing it:
-> 
->      echo 96000 | sudo tee /sys/kernel/tracing/buffer_size_kb
-> 
-> Then, with Linux v6.11-rc4-11-g521b1e7f4cf0b, I was able to get the 
-> trace for the event below:
-> 
->      [ 7542.706299] NOHZ tick-stop error: local softirq work is pending, handler #08!!!
-> 
-> $ sudo cat /sys/kernel/tracing/trace
-> […]
->   MediaPD~der #28-14000   [000] d..1.  7542.703768: hrtimer_cancel: hrtimer=000000008d2c9f3f
->   MediaPD~der #28-14000   [000] .....  7542.703810: hrtimer_init: hrtimer=00000000c6f259e7 clockid=CLOCK_MONOTONIC mode=ABS
->   MediaPD~der #28-14000   [000] d..1.  7542.703812: hrtimer_start: hrtimer=00000000c6f259e7 function=hrtimer_wakeup expires=7602581538204 softexpires=7602581488204 mode=ABS
->   MediaPD~der #28-14000   [000] d..2.  7542.703821: sched_switch: prev_comm=MediaPD~der #28 prev_pid=14000 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->            <idle>-0       [000] dN.2.  7542.703931: sched_wakeup: comm=ImageBridgeChld pid=6041 prio=120 target_cpu=000
->            <idle>-0       [000] d..2.  7542.703937: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=ImageBridgeChld next_pid=6041 next_prio=120
->   ImageBridgeChld-6041    [000] d..2.  7542.704041: sched_switch: prev_comm=ImageBridgeChld prev_pid=6041 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->            <idle>-0       [000] dN.2.  7542.704174: sched_wakeup: comm=Renderer pid=4113 prio=120 target_cpu=000
->            <idle>-0       [000] d..2.  7542.704179: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=Renderer next_pid=4113 next_prio=120
->          Renderer-4113    [000] d..2.  7542.704245: sched_switch: prev_comm=Renderer prev_pid=4113 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->            <idle>-0       [000] dNh2.  7542.704260: sched_wakeup: comm=IPC I/O Child pid=6029 prio=120 target_cpu=000
->            <idle>-0       [000] d..2.  7542.704267: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=IPC I/O Child next_pid=6029 next_prio=120
->     IPC I/O Child-6029    [000] d..2.  7542.704340: sched_switch: prev_comm=IPC I/O Child prev_pid=6029 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->            <idle>-0       [000] dN.2.  7542.704786: sched_wakeup: comm=Compositor pid=4123 prio=120 target_cpu=000
->            <idle>-0       [000] d..2.  7542.704791: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=Compositor next_pid=4123 next_prio=120
->        Compositor-4123    [000] d..2.  7542.704944: sched_switch: prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->            <idle>-0       [000] dN.2.  7542.705943: sched_wakeup: comm=Compositor pid=4123 prio=120 target_cpu=000
->            <idle>-0       [000] d..2.  7542.705950: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=Compositor next_pid=4123 next_prio=120
->        Compositor-4123    [000] d..2.  7542.706105: sched_switch: prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->            <idle>-0       [000] d.h2.  7542.706328: hrtimer_cancel: hrtimer=000000009bbda66a
->            <idle>-0       [000] d.h1.  7542.706329: hrtimer_expire_entry: hrtimer=000000009bbda66a function=tick_nohz_handler now=7542584007490
->            <idle>-0       [000] d.h1.  7542.706333: softirq_raise: vec=9 [action=RCU]
->            <idle>-0       [000] d.h1.  7542.706338: softirq_raise: vec=7 [action=SCHED]
->            <idle>-0       [000] d.h1.  7542.706339: hrtimer_expire_exit: hrtimer=000000009bbda66a
->            <idle>-0       [000] d.h2.  7542.706340: hrtimer_start: hrtimer=000000009bbda66a function=tick_nohz_handler expires=7542588000000 softexpires=7542588000000 mode=ABS
->            <idle>-0       [000] ..s1.  7542.706345: softirq_entry: vec=7 [action=SCHED]
->            <idle>-0       [000] ..s1.  7542.706359: softirq_exit: vec=7 [action=SCHED]
->            <idle>-0       [000] ..s1.  7542.706360: softirq_entry: vec=9 [action=RCU]
->            <idle>-0       [000] ..s1.  7542.706362: softirq_exit: vec=9 [action=RCU]
->            <idle>-0       [000] dNh4.  7542.707672: sched_wakeup: comm=irq/51-DLL075B: pid=194 prio=49 target_cpu=000
->            <idle>-0       [000] d..2.  7542.707685: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=irq/51-DLL075B: next_pid=194 next_prio=49
->   irq/51-DLL075B:-194     [000] .....  7542.707708: timer_init: timer=00000000630ae178
->   irq/51-DLL075B:-194     [000] d..1.  7542.707710: timer_start: timer=00000000630ae178 function=process_timeout expires=4296778179 [timeout=250] bucket_expiry=4296778184 cpu=0 idx=121 flags=
->   irq/51-DLL075B:-194     [000] d..2.  7542.707718: sched_switch: prev_comm=irq/51-DLL075B: prev_pid=194 prev_prio=49 prev_state=D ==> next_comm=swapper/0 next_pid=0 next_prio=120
->            <idle>-0       [000] dN.2.  7542.709072: sched_wakeup: comm=AudioIP~ent RPC pid=6671 prio=120 target_cpu=000
-> […]
-> 
-> The trace file is 320 MB big. If you need the full trace and log, please 
-> tell me, and I’ll upload it somewhere.
+Move the forcing of ps.chunk_size to be at least 1 before rounding it
+up to caller's alignment, so that caller's alignment is honored.
 
-https://owww.molgen.mpg.de/~pmenzel/20240821--linux-6.10-rc4+.txt
-https://owww.molgen.mpg.de/~pmenzel/20240821--soft-irq--trace.7z
+While at it, use max() to force the ps.chunk_size to be at least 1 to
+improve readability.
 
+Fixes: 6d45e1c948a8 ("padata: Fix possible divide-by-0 panic in padata_mt_helper()")
+Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
+---
+ kernel/padata.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-> Kind regards,
-> 
-> Paul
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 0fa6c2895460..d8a51eff1581 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -509,21 +509,17 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
+ 
+ 	/*
+ 	 * Chunk size is the amount of work a helper does per call to the
+-	 * thread function.  Load balance large jobs between threads by
++	 * thread function. Load balance large jobs between threads by
+ 	 * increasing the number of chunks, guarantee at least the minimum
+ 	 * chunk size from the caller, and honor the caller's alignment.
++	 * Ensure chunk_size is at least 1 to prevent divide-by-0
++	 * panic in padata_mt_helper().
+ 	 */
+ 	ps.chunk_size = job->size / (ps.nworks * load_balance_factor);
+ 	ps.chunk_size = max(ps.chunk_size, job->min_chunk);
++	ps.chunk_size = max(ps.chunk_size, 1ul);
+ 	ps.chunk_size = roundup(ps.chunk_size, job->align);
+ 
+-	/*
+-	 * chunk_size can be 0 if the caller sets min_chunk to 0. So force it
+-	 * to at least 1 to prevent divide-by-0 panic in padata_mt_helper().`
+-	 */
+-	if (!ps.chunk_size)
+-		ps.chunk_size = 1U;
+-
+ 	list_for_each_entry(pw, &works, pw_list)
+ 		if (job->numa_aware) {
+ 			int old_node = atomic_read(&last_used_nid);
+
+---
+base-commit: b311c1b497e51a628aa89e7cb954481e5f9dced2
+change-id: 20240822-max-93c17adc6457
+
+Best regards,
+-- 
+Kamlesh Gurudasani <kamlesh@ti.com>
 
 
