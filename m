@@ -1,60 +1,83 @@
-Return-Path: <linux-kernel+bounces-296027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F5A95A48F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D25C95A494
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28407B22854
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:14:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA96D1F22E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498E81B3B2C;
-	Wed, 21 Aug 2024 18:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30AD16B725;
+	Wed, 21 Aug 2024 18:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIqcwUnj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="koIJyjrA"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766DB1B3B1C;
-	Wed, 21 Aug 2024 18:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF4F4085D;
+	Wed, 21 Aug 2024 18:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724264066; cv=none; b=ruh+RuxoeHBfE1lJCYZOKf1llYsk97F3h2S7L1BX5tYgyg9qESySQjNfREbJafAqER4hMFl/HSiY7BvHByzO2RJVqUUCk75NX5Wo/bqhs7Wh2L2nfSKkL6NIj/XEU8djEu6cDE/2ePfVVDeljTfq0i5Ne2Gd59wPVsqDyOaQga8=
+	t=1724264150; cv=none; b=UOJ4Kt7IU4RaV36jG0FuRpppVL1plC50yz17x4XG7Ue1mJVESvCALpE+ZjksWyxXEYp4Vtn57LTQjkgTFPDkoATkh39/7yP/bPsgK52OnNuxbzcRRK9jsqXvEm4T0hC0WzRShahbxDKHRjkZGaD3BJnBqIXM4GlqsFFqc0B5ilk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724264066; c=relaxed/simple;
-	bh=C/OgPyS4vrzttU74RoN+rRiu9i2PGT5auAFadzV/eMo=;
+	s=arc-20240116; t=1724264150; c=relaxed/simple;
+	bh=WT4FqzDcBXI76PEhVbnCqBkwMzjeorAi2SdfHfNii7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOBvMcClAL/+ggEF7XTjsLeHKVEh0cpf9Mpkd0eqdUiSMpholBi030piZ3x84vR+1nLCWcI7eSl0e8algjlpRTaDtDFuWC+dqZ/6Y4Umsk5B/K7SnDxHjnI+yZ/9qBl0uLqf1H5v0GzkEdNj5WgXHJzeEXdxyHqTdKqetmfjcaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIqcwUnj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07489C32781;
-	Wed, 21 Aug 2024 18:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724264066;
-	bh=C/OgPyS4vrzttU74RoN+rRiu9i2PGT5auAFadzV/eMo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nIqcwUnjDE6c13tnsfACvLzgqnCMk628ANITdzphA1qLhAfzctNpkhgCjC0zljg+/
-	 j+UKYkIE91G+lBSB8SZ2WYAUUBaFgztVyzw8y2fp8yBIu7bE/AVBXoFQF7jFd86btT
-	 WEDlVAhFK4PD55YLE2QUDBqV3bnFK0b6lM1KMoHVKqZFXd+4ym1Yddn8pctUfcN3aQ
-	 8snUnj19nUUY8+jd/8XkzfTVh4ybbyMZL0iFXomAkBHY409zB3EE5Qz5CAQgOAMHR+
-	 W/1lG6yCK5qthChUwriay9KAwFX0uMNoweIYvKdM8LVzdZWG4/Ms4j3A4H+zVE1MuN
-	 O78MVa99AlFIg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9B27DCE160F; Wed, 21 Aug 2024 11:14:25 -0700 (PDT)
-Date: Wed, 21 Aug 2024 11:14:25 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: matthew.brost@intel.com, jiangshanlai@gmail.com, sfr@canb.auug.org.au,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: [BUG bisected] sysfs: cannot create duplicate filename
- '/devices/virtual/workqueue/scsi_tmf_1073822488'
-Message-ID: <8667d109-c1ca-4656-b965-14bde98da4d1@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <8d443293-2020-42d9-b5b1-1348f551648f@paulmck-laptop>
- <ZsYTZTEbtMuVyp1o@slm.duckdns.org>
- <ZsYXXd6tQAlFwkg8@slm.duckdns.org>
- <d5912536-ecc0-411e-b837-4822a9d00e8c@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnGFMTJIae2SMvZlmoh/F3ESYuPRqruoNZF8QkSryqjBumeW3yw2DlMUjR0L+fw/LsMz2M1lytK2ometYSO17wABt/UqxmQ4H5HASU+rMOaRwX1lOIWUu4PhfXUUf82hyB9IVsUjf2RBwZ8kWhVcGpQ50zTgItn51jyFeu6i8Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=koIJyjrA; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7142e002aceso464814b3a.2;
+        Wed, 21 Aug 2024 11:15:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724264148; x=1724868948; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1PNqGIZhhwKQlSK4vxc3HqYHLp2ABqUIqCgS8LnjfYs=;
+        b=koIJyjrAcHW6nm7/IHYYvbqfC6fMAQ6fHwRVugo0W8t7hTpL4kQmXL26gpwmk2OW9W
+         q46H0Ap3AeV9ssoiyE6W8xjVC5+WIt1vKaZUr/LYBhuKubcgXKBJrqe4nod2oigSufrg
+         EyA+zidVOm8QZHikHkUCCcjq6ZlYmHiYRMNEekFsmTqdfWDO0l5tGYMfqc4EcBxhSuT6
+         DLYXJOhEm9oTYiNvdKf9sQWRGB6TMdax26p/vKfVqRdSGrfWgsLsyKruL6SmqYqphWrM
+         rUn2SbpiCfZrwg+D8GDXeut5+BIyjNTtuI9RhqnTAAXtCg2FxdbDxNqWMkfib9E7sKAu
+         Q/OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724264148; x=1724868948;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1PNqGIZhhwKQlSK4vxc3HqYHLp2ABqUIqCgS8LnjfYs=;
+        b=cxaX6DuB9UVoF45NWMOfQu2elwxrTevhowzTHAdvU/2O1gybX43rRC/rh3efoKhMNK
+         D7og25RH1r6bFBKAvDX6JMiJ1GYNekAdxsUfRE7lOmQv6eiGtr3Ok2NHOzTnKIP3YJ9n
+         eaKse1xhlIPo9RfC9rgvvpE+S2A6RQmviW9s8IkhLCaB2adWfYWFs90MeGup4Vw79aB8
+         9QFC7o3fcTw7w/72T9w+JGAX6klZsIIzLkfVeZbKiqKI2EE7VPPGeTOiXz0fnPn+AhjL
+         dBiAWQQXWiZ+MTyi49HUtTi+005xpFcI76H5KRBTLVG43mkcpJfCADpzhiGD727OJ96K
+         nbJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqQJxMq+Nevpla61/W7P+kJlKwIaOV9Y7VyuFqZtaYqCGjNZXe9Gq5T+P++BmXDTtY8cXUtn3FvKxBo9Q=@vger.kernel.org, AJvYcCVKnwJlgruf8iz/7jJi9KrDiLuk0r4RyikRMd4ZHX08zsLznApdnNjcfTUjmHL/TPIDooMY3v4rU43FQFN6g8c57fRRww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP6id1p7UTPHttgP7KgiobWqnqRBucQnuO4H1YkfJArwFduv4t
+	SvZpT8iTtNrw+g6S+AoDk0vCvG0ia9MzvrBK5fNE/yI/6lWpFTMF
+X-Google-Smtp-Source: AGHT+IGraL5V6woCK5Q7KMxZmif7jaa8gcKMEHZ44ch0mqnHmfQeUu1DpHRaLklGb/2Q4SmJs6tp0w==
+X-Received: by 2002:a05:6a20:b598:b0:1c3:b2b3:442d with SMTP id adf61e73a8af0-1cad816341fmr3966281637.40.1724264147913;
+        Wed, 21 Aug 2024 11:15:47 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:9790:ce1c:7737:a819])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af1f2cesm10281565b3a.181.2024.08.21.11.15.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 11:15:47 -0700 (PDT)
+Date: Wed, 21 Aug 2024 11:15:45 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mark Gross <mgross@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Borislav Petkov <bp@alien8.de>, linux-geode@lists.infradead.org,
+	platform-driver-x86@vger.kernel.org, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/platform/geode: switch GPIO buttons and LEDs to
+ software properties
+Message-ID: <ZsYu0SEy8ZUKEJqP@google.com>
+References: <ZsV6MNS_tUPPSffJ@google.com>
+ <a2366dcc-908e-41e9-875e-529610682dc1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,108 +86,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d5912536-ecc0-411e-b837-4822a9d00e8c@paulmck-laptop>
+In-Reply-To: <a2366dcc-908e-41e9-875e-529610682dc1@redhat.com>
 
-On Wed, Aug 21, 2024 at 10:37:21AM -0700, Paul E. McKenney wrote:
-> On Wed, Aug 21, 2024 at 06:35:41AM -1000, Tejun Heo wrote:
-> > On Wed, Aug 21, 2024 at 06:18:45AM -1000, Tejun Heo wrote:
-> > ...
-> > > > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
-> > ...
-> > > Hmmm... I have a hard time imagining that change causing that error. My bet
-> > > is unreliable reproducer. I'll try the repro.
+On Wed, Aug 21, 2024 at 12:15:51PM +0200, Hans de Goede wrote:
+> Hi Dmitry,
 > 
-> I am glad that it was not just me being blind, then.  ;-)
-> 
-> And thank you for trying this out!
-> 
-> > I'm probably doing something wrong but all the tests say that init
-> > segfaulted in the log file:
+> On 8/21/24 7:25 AM, Dmitry Torokhov wrote:
+> > Convert GPIO-connected buttons and LEDs in Geode boards to software
+> > nodes/properties, so that support for platform data can be removed from
+> > gpio-keys driver (which will rely purely on generic device properties
+> > for configuration).
 > > 
-> >   [    5.505986] init[1]: segfault at 28 ip 000000000040101f sp 00007fff1bbf6fc0 error 4 in init[101f,401000+1000] likely on CPU 12 (core 12, socket 0)
-> >   [    5.509949] Code: Unable to access opcode bytes at 0x400ff5.
-> >   [    5.512314] coredump: 1(init): over coredump resource limit, skipping core dump
-> >   [    5.514976] coredump: 1(init): coredump has not been created, error -7
-> >   [    5.516911] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-> 
-> You are right, that is not the expected result.
-> 
-> > Pasting the command output:
+> > To avoid repeating the same data structures over and over and over
+> > factor them out into a new geode-common.c file.
 > > 
-> >   $ tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
-> >   tools/testing/selftests/rcutorture/initrd/init already exists, no need to create it
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > 
-> There was already an "init" program, so one thing to try is to remove it
-> and re-run.  The kvm.sh script will then rebuild it.
+> Thanks, patch looks good to me:
 > 
-> I just tried that in case some recent change made this fail to work, and
-> it "worked for me":
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 > 
-> Creating a statically linked C-language initrd
-> Done creating a statically linked C-language initrd
-> 
-> I will also be testing next-20240821 in case it magically got better.
-> Stranger things have happened...
+> Question has this been tested on at least 1 affected device ?
 
-And it magically got better.  Yay?
+No unfortunately it has not been as I do not have the hardware. I am
+hoping folks on geode list could give this patch a spin.
 
-Unfortunately not the case for the other bug I was chasing, but you
-cannot have everything...
+Thanks.
 
-Apologies for the noise!
-
-							Thanx, Paul
-
-> >   Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
-> >   tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
-> >   ----Start batch 1: Wed Aug 21 06:31:03 AM HST 2024
-> >   TREE01 8: Starting build. Wed Aug 21 06:31:03 AM HST 2024
-> >   TREE01 8: Waiting for build to complete. Wed Aug 21 06:31:03 AM HST 2024
-> >   TREE01 8: Build complete. Wed Aug 21 06:31:30 AM HST 2024
-> >   TREE01.2 8: Starting build. Wed Aug 21 06:31:30 AM HST 2024
-> >   TREE01.2 8: Waiting for build to complete. Wed Aug 21 06:31:30 AM HST 2024
-> >   TREE01.2 8: Build complete. Wed Aug 21 06:31:31 AM HST 2024
-> >   ---- TREE01 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
-> >   ---- TREE01.2 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
-> >   ---- Starting kernels. Wed Aug 21 06:31:31 AM HST 2024
-> >   ---- All kernel runs complete. Wed Aug 21 06:31:42 AM HST 2024
-> >   ---- TREE01 8: Build/run results:
-> >    --- Wed Aug 21 06:31:03 AM HST 2024: Starting build, PID 456070
-> >    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
-> >   CPU-hotplug kernel, adding rcutorture onoff.
-> >    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483593
-> >   Monitoring qemu job at pid 483623 Wed Aug 21 06:31:41 AM HST 2024
-> >   TREE01 no success message, 0 successful version messages
-> >   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
-> >   WARNING: Summary: Call Traces: 1
-> >   ---- TREE01.2 8: Build/run results:
-> >    --- Wed Aug 21 06:31:30 AM HST 2024: Starting build, PID 482122
-> >    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
-> >   CPU-hotplug kernel, adding rcutorture onoff.
-> >    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483619
-> >   Monitoring qemu job at pid 483648 Wed Aug 21 06:31:41 AM HST 2024
-> >   TREE01 no success message, 0 successful version messages
-> >   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01
-> >   WARNING: Summary: Call Traces: 1
-> > 
-> > 
-> >    --- Wed Aug 21 06:31:42 AM HST 2024 Test summary:
-> >   Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
-> >   tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
-> >   TREE01 ------- 
-> >   TREE01 no success message, 0 successful version messages
-> >   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
-> >   WARNING: Summary: Call Traces: 1
-> >   Completed in 10 vs. 60
-> >   TREE01.2 ------- 
-> >   TREE01.2 no success message, 0 successful version messages
-> >   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01.2
-> >   WARNING: Summary: Call Traces: 1
-> >   Completed in 10 vs. 60
-> >   2 runs with build errors.
-> >   2 runs with runtime errors.
-> >    --- Done at Wed Aug 21 06:31:42 AM HST 2024 (39 seconds) exitcode 3
-> > 
-> > --
-> > tejun
+-- 
+Dmitry
 
