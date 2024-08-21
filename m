@@ -1,188 +1,180 @@
-Return-Path: <linux-kernel+bounces-295145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB689597A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:25:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1FA9597A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7EF6281642
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1911F20FC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5961D1C6F48;
-	Wed, 21 Aug 2024 08:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78A61D0480;
+	Wed, 21 Aug 2024 08:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GSY821Bm"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="W61+EO9t"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2065.outbound.protection.outlook.com [40.107.117.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70F11C1AD3
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724229564; cv=none; b=fvXsv/bAh7j4hCUtlBIlQ/0ktKhFhTTNXOvbuE+S3wiTK0yMWKtU7itK7ZIpNkRPvbTCAozxZ+54PGbumcSvqSwP+7gDby6yyQLNbuTAvF7gYtRGr51/7KX6lluIN/3wylA2CrbteAwftkoxQ4OehQnDwyb2vbESMdtw7Rhp0Lc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724229564; c=relaxed/simple;
-	bh=3v8gxfNdl+YKSE/9d8RsBuAukGiIKb0idPoI4Z8hD7k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HUVesXj8fd4VGZYwJUbVnklIVYQz/aPScJnQiJc+vPRbFLC2SLFOjjMqKga5/RnPECcXPWBWDYUM44+BsLWfF1AL/XLveOvV++OBd4GAOo2qy2YmuR5x9jN1ae4TKOZWFdVTMwMSb3P5cQmWJSOf9Egcft222SJra4B4eCNjjss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GSY821Bm; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bede548f7cso4699888a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 01:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724229561; x=1724834361; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p5NS54GpNoW7E+gduPASxxnL5epTS+ziclEJzzy8LVw=;
-        b=GSY821BmFSg20JqWCXBoh/o1ug83PZqmai8Y8IUJv4BGB3YhtWVKs1hKQUzqIXtAVW
-         SaYpzCY2bgKEg1wD6TMUthKa6Ljr21AAXKrBcMXfds5WQiWbXfkHZxBHLUjYL77R+MhE
-         OQL2v3joN38PyDJ9yr7UP+Gt0ut0AisXbEWM+UNDgse1UuvIFa9S4JnJq5jaVhyo3TfW
-         8FmAZgQ2/nwrfLV6aXFv0eY+ki2sGtHHua2eiaevmObzfK4wSIRYlWa5JiW4hjiDT0Zj
-         dQJfsb8kiETQkL7r6wfmO9p26HttoUS2mX9KRTNMB37y+kGVx1654xhzRtiS06oYT//y
-         QQPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724229561; x=1724834361;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p5NS54GpNoW7E+gduPASxxnL5epTS+ziclEJzzy8LVw=;
-        b=Yy26I8x31QetCwpmNcxUqwsZJGnk59ebKwHwXQp5G/lZJXDkzNsx27Wn7NCQFuI/bK
-         ul8cC6XU2Ru77Dv+v8DZX16wKOx4fcz90Z0uBBLWTHyLsXgBWBhTVxf9O+hQnxxdzEV/
-         Ya9C5kXdrifVpTa3QMODjnb2YAAsZ+RFEyNZ6VWUNhcD7hKjXMCc+PSVOjd0Pmb7chTq
-         LQwk2uPtJSdTLuIVH8GD4TZ3Tf1DlsO0DhHRY0a05/vrSztkGCliUdVDpCppuPeGG9j4
-         uj4T2feSduJX105aDQBTiUu3dcJ9p5ZuCpCMSnHROafolvmKBP23LACWLRHDZQLb4eI7
-         7tBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVROfehAJ5Uqh8vCLm+Q2R7ACspzDH8MaTKsId0JoYV2MZpKkCRPP08Ch6byKNOtc1pdNJiXJmjeIJwL70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpvZE/7rbeSBGInmpPWqeC9PnsKgXU5Trqm4Au/ou6uIrE8UHA
-	eEDJV8xEpX6K/H0wZyqaJruiMiFgxItkCeZOzO2am/OO+KhVZQy7AHjrKIBgt+4=
-X-Google-Smtp-Source: AGHT+IFL+efdYaMIvFEAHa2ZOmBrT64EwH5p2io/4VksJFJhgzFnSEbnzG8lQxW0DKq98kbZ/xH+Zw==
-X-Received: by 2002:a05:6402:350d:b0:5a1:c43:82ca with SMTP id 4fb4d7f45d1cf-5bf1f239b24mr991270a12.26.1724229560915;
-        Wed, 21 Aug 2024 01:39:20 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebc0817a8sm7785019a12.84.2024.08.21.01.39.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:39:20 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Wed, 21 Aug 2024 11:39:01 +0300
-Subject: [PATCH v2 2/2] phy: qcom: qmp-pcie: Add Gen4 4-lanes mode for
- X1E80100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092BD1C6F5A;
+	Wed, 21 Aug 2024 08:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724229567; cv=fail; b=ZGPjCnCu8/VCHdOjPfHsGAWAora27QzRpyNP0g+NUFMpqoJq5IOsYdQFA7mu+tuwzrnSpgcP7S9EOFK/JxQmJKkDT/w0uOynV9ogAApNCRHw0d9U/lCwas4AqJ7pEyHG2gpSDYP6zKI11jdR1UYLv4gv/HtTHICxGgqdf7/Hzrk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724229567; c=relaxed/simple;
+	bh=fe134SqxAETYyN6MW3JvRCCw9LN4v4JHdlQnRPOb/uQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OT/3NDj3vkvLIh/kI/08k/UWyZqWZrEvIsKPJ+olvc0uiq0VabE//zdni++B3nbSPfhc2j8hxoQ00258cLuvUvBetaTrH+E/Hx85jjnZnJo6aRJ0jPXvbTjS4gsMfTkSwXJRlWyk5FXJwjGh7hl2aJ8XKZ+TAD3z3HLPf/HIdms=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=W61+EO9t; arc=fail smtp.client-ip=40.107.117.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f8PLf8ySSEvtDCLWbLU3a3P5GsRBM8ihB7uAcPbJss7xS4QOJSp1sC1Yxg7tbbSHkVq2O9LARQ58KZP2HYmkrWiP21bNuvroJYWzvo58RTiPQHUUwNSU8VLFXoP7ToHzrdENG3lHGztBbuEFeJ2XKgrLAVv2Yj0XKGD+LuTiLrReH3dNeWC79IajPa77aCryOaXqDBOodW/HtI14l4fhfOdvfCqdFf0+6Itcd6LI9m3XyPonmnm4f3EOnXLqR/cJ2LoQ0aHxnDEl0YpOzNRIGKvtyo4bXmOEX9I9myxUj9kSGp+grYeAWo6Jz66xUm4q4T3PNVJMXmIGWFTa+0PQEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eRkMdNOsWz0hqzSNzYpVNSMCsvxN/cJgAKLX1kDdsK8=;
+ b=IEQi6hhuWWAKQF6jqjdx6IbsZk734OasIRp/CJJJEaqHfemRouikkJMT6UP2Pqk7mlaTcODOFRReFbXCOhc+ImrAzy18joShl1UGjEiUFjzOTsSXD9qthgfGjQUoo3HmhbT1BTDw/Q9gmXoocfPbcX+ueg8uYWBRgPxjHe32NQA8YmQHMSx8kCNnEnag+QlwFcUNol7IwVMaaAj3STb/uvC7tzzKrpAmxkawzKDaR26j+Xb7qRM7U+jf/P5eWh6fzTu3yLRH9xhMXW3iqVc9IwRWyiPrkYRMDFGdpfr/R1cE5549Dp2dW1HMOQYU/VldSzJHUyiMPbtzfcFWa0ibTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eRkMdNOsWz0hqzSNzYpVNSMCsvxN/cJgAKLX1kDdsK8=;
+ b=W61+EO9tHTFZmI4cekmAAM/7W+vqcX6R+8paSDZF4B3Khd4+XNoxBPir2YdEPpIK8icoKh6j3mfLoTxIixMrElDTI6guMeTy+JR/xf1tdcnkBFbao5GZ43mV+b5h8xcM42Kn50G+TwxppYwp+RYyhGE+/ppqAq53rvyPfdPCfwxA50sBRQlc0yVD8ITlFOAg60A1eBtENkGDWxN0IDFQWO72lmSr/p0/RtCqRusFu3x+ofGFOzJRsqVKlKhxb4cZ+ZZiGyJ024Vx9LN7Z42Lgf1piHfpqXZHSWeIpjLBekzh6XK+0c36kiSiFrSrqR4qXA4rVbCN+RkmvdTlFkgBNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by SEZPR06MB5341.apcprd06.prod.outlook.com (2603:1096:101:7d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 08:39:22 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 08:39:22 +0000
+From: Yang Ruibin <11162571@vivo.com>
+To: Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Yang Ruibin <11162571@vivo.com>
+Subject: [PATCH v1] drivers:iio:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
+Date: Wed, 21 Aug 2024 04:39:08 -0400
+Message-Id: <20240821083911.3411-1-11162571@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0138.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:31b::13) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240821-x1e80100-phy-add-gen4x4-v2-2-c34db42230e9@linaro.org>
-References: <20240821-x1e80100-phy-add-gen4x4-v2-0-c34db42230e9@linaro.org>
-In-Reply-To: <20240821-x1e80100-phy-add-gen4x4-v2-0-c34db42230e9@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3149; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=3v8gxfNdl+YKSE/9d8RsBuAukGiIKb0idPoI4Z8hD7k=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmxae0SnrXkRtGRouTWjczroUzpA6suIULc1pqv
- DBSOK9OZTWJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZsWntAAKCRAbX0TJAJUV
- VkQCD/4utwhcNOhJjfQP0bFMjXshoUbeWfzfsuwR725n79Q/iwtu5HF8ojcyyL4Rv6aue77UHUd
- FG/Do9HLs4RFqFcgy53UhW6wzQTQMFY3a2hT+Oe/mnnBWE3lPo6buG+GaNegHUOuiz7Rp34eF41
- 0D8/izt4giweLa2A7zu0HiLQjh21oMBnm56BcG0Mo/qM1wqjN2xfX9yyO3qToGnngwuBXk+p5W1
- 5HKxzvUTKQHVE5Al3wzsEPlgHh6u1oc75TmV7uxDjm2GTW+78ezrxoHORmGkoYZm7tLysCQu11I
- MtZa4VR1u8/oT6HZfeHAEAKhOoZUn++sQwq/OY3j4dHdyV6SCNhEP/hc2iu0AOjIAjgIFs7bnvB
- xVuFhNGgFVbk/6IOb+d45PUIPtdNzhmjAkJAT9kvUrgduW5TUAOsRmVqc70vANDeOJ2H8WWtxgW
- KVUBdWE5hV6HXDot2Hzs3LCjQOX56IwT92Rv8Y4GO8dA5ppzaQ9aXRPnecdGJZ1YX1426DZTyWn
- xjx+Qx/YyDr1rbemSbEN9BJJ83c5Ib+USBOpG648AOlyAqcEY48JZ4e0zdsXpMT1PoY/tDWllPE
- WyvpibkwMDMVPAwETcMZJUTxr+91YkcA+BEVccMLmUikQ0qNoboUCTQa+TpMk+b5Z9jk3IvfKHx
- l2a/0h8dTKn446A==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|SEZPR06MB5341:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6ef8157-aa58-410c-4179-08dcc1bcc17a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NduPtHTIZBi3lo7BwI/YC4e5EPNEv45yGaZORBBKh5C5MTvRqi58KueamnYi?=
+ =?us-ascii?Q?ebUmz++n4uAYQyBc8VlAKyUKOtxmpmBblbG117wmHYLz77/MRJhHpOz7x2mN?=
+ =?us-ascii?Q?WBR9iYMlFfq3rKFB1lTbx+cFmYOckNdIIt3TlO+dzCyWgRGL5w263fxg7Z6T?=
+ =?us-ascii?Q?Ix9PlhWvKCyU4CR3uUzzL9hOof0UyXw/D9thKY5PKTsohpOni1UmrCJleN6O?=
+ =?us-ascii?Q?nu4ugzUIBPLLnrnIousKXNHAr3CBnwjanfLjsbsOol/0OrrXfQGuOOUATw3P?=
+ =?us-ascii?Q?+AsarLfvBFN6/z2+hsROp97iAzjyhEAgBxJI74MNnFWIxUiB3HP0LMPwN+mW?=
+ =?us-ascii?Q?T9S1I/vxlMKXUBxXbl5ZGwWIP1qJy9hguLbVpWDMEyAS8KizFJ63SC2+f8C6?=
+ =?us-ascii?Q?ajuWVbsK8ISs3mwIZfgls/xQzdqCTjo9BK2fWGrfxYPUIPK5ytt62M8xxH6r?=
+ =?us-ascii?Q?SJGKh6L7TK3iqEveP9g33WXGLx50x3KDksGulgF1m2Niog67+m9GzU5FCML5?=
+ =?us-ascii?Q?Pc9AMcPx5U7dvBtuNlADgyMDfDthjR7hH3PsnF5UuUqHWyzqqed/L6g+Pv6+?=
+ =?us-ascii?Q?jRK1938fUaNToPt1bOkgZCtVbLXBOP9thKi6Jj4DS/sgT0QLIp8aY8aPHsif?=
+ =?us-ascii?Q?+UB1LQu8CMsweQ+D9bTR2najROaN0I4fI+kXyhTHFMRT5S/gw8Adb8kyqX2g?=
+ =?us-ascii?Q?dlhEja+iyTtUdzkKVxgmoGXmKXNlBfNtATiAMHEStPQISW+iXQW7A2JqXaQ1?=
+ =?us-ascii?Q?O/CSlZYb2EXrb+35NO+50F7ykU9jVrh75L/nCdrvq3ly6VtSgJkClGKi3UDp?=
+ =?us-ascii?Q?e17Y6FfkWG8sieQc5ebtR1TRo/HxHrjOrZZ7fzDy5fTq/w1HaB2TcaWJXrFx?=
+ =?us-ascii?Q?aeST8Efph37MksmYVFKvku3jtOA20AsKYylc6XKBy6NiaOJSEExJpTPBHPe5?=
+ =?us-ascii?Q?6W5LT7pv80WZ3d+lofdUBOq5htHuGamqZPqwd5eA0+F/44jkav3siRtB6PHL?=
+ =?us-ascii?Q?3XrgPUCpPIeId+28+8bzouNnNwwiMcomcNkqqsXtHLs2PkK87nWUu94/TGPJ?=
+ =?us-ascii?Q?1u3P3oOVEGom4WGYQ+a5bNufJRw3c1FT8A6hJq3vqkrPbNJchCNCaa9RBfzZ?=
+ =?us-ascii?Q?ke+v84dwcAZYj008b3+GARjI35Q13LHpFTMvFQLlBvR5FU8lifUtN08hcSVQ?=
+ =?us-ascii?Q?V16JoKVHZo8MI57z6J2c2m/whjpyvt+/VcUhDuNtGISmkQqu1gf4ricDG6uk?=
+ =?us-ascii?Q?Gvd/9rGDmaSE+WBIvzQFKe7VLXymQufht1t4gnU7iKRgCwOXVNQOiVQumqCE?=
+ =?us-ascii?Q?HfKv4s97syh66ECKrNSzG2EHusIvDC71IWtKs8MxAycJ7KTJFAjJfwFaaMoY?=
+ =?us-ascii?Q?bXiCpBywdwCsUUfpxbuzp5vbmRkYqCGSA/dRdAqfNoGkCOrSSqQme4GVvsUt?=
+ =?us-ascii?Q?I4U63BiMaeY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7ZufEq5zPWvCPlXpGhnrYxfmD7YV8PyjGyL3AeGuppa96DoQRHkfzIP6/1rT?=
+ =?us-ascii?Q?/hS788rLVKz55LOSGjTREw/yKyMqyISip5qihImFqPCeG911d2MGtcnuZfSs?=
+ =?us-ascii?Q?icnz/NdIfFJaa9UWu91GtglvrhEcLknSxduTdaswYAzJbhWQLLhWOB5smAuz?=
+ =?us-ascii?Q?NId5+KGQbUWwsMYc/oknnbzXtiBVwTtQRNFhuNWcOKzKymLnFuCnZdbLAsB6?=
+ =?us-ascii?Q?mIM2z3QVC93Fcy7mvFns7CM6+qoUs3fKEzoEqEu9wKxIJdabFAfV2VDZMBMi?=
+ =?us-ascii?Q?twGXoQUH/wD/JltYAPlYMrb9wC6aiEXGkXBxDsgU225MyhSUljCPpcA8i/dL?=
+ =?us-ascii?Q?M8SWzH3HL09b7GN2pYUAP0yM+a9Oo43HBduVZApaTfitdlImREvlTfJqzj75?=
+ =?us-ascii?Q?gKKqRVMBbKh1zlMQ3TgYZiKUOtdq6GPBrAj43pibzqrl/YKd7HcJ42P1jA6W?=
+ =?us-ascii?Q?xiLkx+ZN23exdGGQOx5DFcyhJpYw2xkL2oq0oUraMIx9uiYG8hxk2Xn+TSRR?=
+ =?us-ascii?Q?Gqk9LxGybypv+XfsvalP0PUjjxWIg9MbGvJJJj2DiBJfNsbfJrjvzFvTi7GG?=
+ =?us-ascii?Q?HfjT6PPPBtNyxsCK8RiNnPNMJSw0Z4xCbg51khkjmGNJvpvp23vOkGTwex+E?=
+ =?us-ascii?Q?ioWYn56aF/yiuhvApqDZOl6Gn7vZ+XpEcyiv/BwyAOTpxKZDGrARDQ/gauo7?=
+ =?us-ascii?Q?V5nSs5JATXbbaKzLWEvyljEte1pm4Vy2+5qbSVEj70H+Xesjuf5rfeoz54Uu?=
+ =?us-ascii?Q?YXDMoDFed86PbmfLPYGlCdtPwkIy4FOwcxhbLciA1BYa3Y7GeMOZfYRmbal4?=
+ =?us-ascii?Q?zcFhK7TNPeSzdFbB3vj+/L1x3DxANzOVj0A8EaOtj6GdOwLCrhUt2uQsswCz?=
+ =?us-ascii?Q?teUSJjYsVlwnda2ob74Vc+sgcnL83nk7MttEAqGYjq/j/I3yNygr4iLi4FKI?=
+ =?us-ascii?Q?SJabP2LaOIRXqRh0euk2yN38NvbT1U+vyZrxWDgvuMkRgzzZ+68kVF2Mpg0W?=
+ =?us-ascii?Q?0XQxIAfbQG0A919ElONy997ZrYTP5WXPDUO6sKqdHINSmEVFzNrfGWWE+PJp?=
+ =?us-ascii?Q?uCS3gaGmQAnf5BjfaiGyt6QDKVoTnVeGX0GDgjmA1kp3eAos2DBFSKL+nhnC?=
+ =?us-ascii?Q?V4znAb/pM/x2Dhq7GuA9eQDK4A8+XPxi31ODJu7WZ0wVotAojEjtj4ZXFo88?=
+ =?us-ascii?Q?pEtdIBarDxR0lm4Zt58KK60DVWbVSFcSwfAh0r/ufkm+cbvyB4aiRgpPkAAe?=
+ =?us-ascii?Q?bYPhCkmmR1dSizoiiakvdSUB4lgznsACO1PegSgh7IQKSHyRWuCy/vlPAU2H?=
+ =?us-ascii?Q?Sd9BoCEf3Uhc3u0O146VMDUnXDJryNp7E12UfMNoeIq8sHXSeMIPvI//+df4?=
+ =?us-ascii?Q?OrZI1QtfMwvvam9R3nu1MbbdB+Yx/s2qa6oNx9R55D7DixlR9pwuCBLowOX1?=
+ =?us-ascii?Q?JCb6JueRHhQTbloHxE/c0iegjKEZZ709dpobY2Lojp5dPBGWyvea+inK7DWj?=
+ =?us-ascii?Q?THWeLI0XxiaMKZW1Ocb2+Zo9vjtkWL8HVn07Hqr7QdqgDaydWaU3HCT4ksAy?=
+ =?us-ascii?Q?+sM0QpDK0DzvPxlGHivBJGNV4lgCIYsxA8ZHYFsE?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6ef8157-aa58-410c-4179-08dcc1bcc17a
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 08:39:22.5754
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yXFDGFVMXefTLLY/XSztRGKtbynGaKKn4fzWHgvPds4S47GhOurmitYAuOjyB51sOJgqXoePhgDYz8D+pwj0Xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5341
 
-The sixth PCIe controller on X1E80100 can be used in either
-4-lanes mode or 2-lanes mode. Add the configuration and compatible
-for the 4-lane mode.
+The debugfs_create_dir() function returns error pointers.
+It never returns NULL. So use IS_ERR() to check it.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Yang Ruibin <11162571@vivo.com>
 ---
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/iio/industrialio-backend.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-index a7e2ce0c500d..df1ebc19c117 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-@@ -1266,6 +1266,10 @@ static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl[] = {
- 	QMP_PHY_INIT_CFG(QSERDES_V6_LN_SHRD_RX_SUMMER_CAL_SPD_MODE, 0x5b),
- };
+diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+index a52a6b61c8b5..20b3b5212da7 100644
+--- a/drivers/iio/industrialio-backend.c
++++ b/drivers/iio/industrialio-backend.c
+@@ -219,7 +219,7 @@ void iio_backend_debugfs_add(struct iio_backend *back,
+ 	snprintf(name, sizeof(name), "backend%d", back->idx);
  
-+static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x4_pcie_serdes_4ln_tbl[] = {
-+	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_BIAS_EN_CLK_BUFLR_EN, 0x1c),
-+};
-+
- static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x2_pcie_tx_tbl[] = {
- 	QMP_PHY_INIT_CFG(QSERDES_V6_20_TX_RES_CODE_LANE_OFFSET_TX, 0x1d),
- 	QMP_PHY_INIT_CFG(QSERDES_V6_20_TX_RES_CODE_LANE_OFFSET_RX, 0x03),
-@@ -3654,6 +3658,41 @@ static const struct qmp_phy_cfg x1e80100_qmp_gen4x2_pciephy_cfg = {
- 		.ln_shrd		= x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl,
- 		.ln_shrd_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl),
- 	},
-+
-+	.reset_list		= sdm845_pciephy_reset_l,
-+	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-+	.vreg_list		= sm8550_qmp_phy_vreg_l,
-+	.num_vregs		= ARRAY_SIZE(sm8550_qmp_phy_vreg_l),
-+	.regs			= pciephy_v6_regs_layout,
-+
-+	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
-+	.phy_status		= PHYSTATUS_4_20,
-+	.has_nocsr_reset	= true,
-+};
-+
-+static const struct qmp_phy_cfg x1e80100_qmp_gen4x4_pciephy_cfg = {
-+	.lanes = 4,
-+
-+	.offsets		= &qmp_pcie_offsets_v6_20,
-+
-+	.tbls = {
-+		.serdes			= x1e80100_qmp_gen4x2_pcie_serdes_tbl,
-+		.serdes_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_serdes_tbl),
-+		.tx			= x1e80100_qmp_gen4x2_pcie_tx_tbl,
-+		.tx_num			= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_tx_tbl),
-+		.rx			= x1e80100_qmp_gen4x2_pcie_rx_tbl,
-+		.rx_num			= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_rx_tbl),
-+		.pcs			= x1e80100_qmp_gen4x2_pcie_pcs_tbl,
-+		.pcs_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_pcs_tbl),
-+		.pcs_misc		= x1e80100_qmp_gen4x2_pcie_pcs_misc_tbl,
-+		.pcs_misc_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_pcs_misc_tbl),
-+		.ln_shrd		= x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl,
-+		.ln_shrd_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl),
-+	},
-+
-+	.serdes_4ln_tbl		= x1e80100_qmp_gen4x4_pcie_serdes_4ln_tbl,
-+	.serdes_4ln_num		= ARRAY_SIZE(x1e80100_qmp_gen4x4_pcie_serdes_4ln_tbl),
-+
- 	.reset_list		= sdm845_pciephy_reset_l,
- 	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
- 	.vreg_list		= sm8550_qmp_phy_vreg_l,
-@@ -4436,6 +4475,9 @@ static const struct of_device_id qmp_pcie_of_match_table[] = {
- 	}, {
- 		.compatible = "qcom,x1e80100-qmp-gen4x2-pcie-phy",
- 		.data = &x1e80100_qmp_gen4x2_pciephy_cfg,
-+	}, {
-+		.compatible = "qcom,x1e80100-qmp-gen4x4-pcie-phy",
-+		.data = &x1e80100_qmp_gen4x4_pciephy_cfg,
- 	},
- 	{ },
- };
-
+ 	back_d = debugfs_create_dir(name, d);
+-	if (!back_d)
++	if (IS_ERR(back_d))
+ 		return;
+ 
+ 	if (back->ops->debugfs_reg_access)
 -- 
 2.34.1
 
