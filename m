@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-295539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56AE959C8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:56:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC72959CA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8897B2826F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:56:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CBE281146
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C727919ABD6;
-	Wed, 21 Aug 2024 12:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E3B19993D;
+	Wed, 21 Aug 2024 12:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSZtHfRY"
-Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boyooSjB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9B6199945;
-	Wed, 21 Aug 2024 12:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79338192D7E;
+	Wed, 21 Aug 2024 12:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244942; cv=none; b=VhIBlseI/pufUtgiy0bHMqAM/6KXK9ENke7pn0f7evx2IKgHygICxQ5gSb6Y5Rv+sxkOO6MSMQh5KYG1vfqjugREXBGwAjkLEDsHXtTimBcSBWVh7yasYQJV5g/tb8ev09uL3yikeFPq0zwjPXwynGT8NxpmgWVgAVpbX1l3rTI=
+	t=1724244993; cv=none; b=V7GAUmE5t5I3Vj9uU/MdutagPCnTGLyyp+FX8h7KnZg7UlA7BVt8g30RjgWISmf5vhfieBTLZY11QFAnPwK3c3ON0FXHnnQM0vlyYritevntNzRNtRitKwF480kbo/KHFn593HziZFqAJJLHrqQKw9uyn84rk0Fth/c3DC3rYM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244942; c=relaxed/simple;
-	bh=JOKbt8xKR5Izj5ooNPCDHAGa5qvdb3wy3pAiSOqpSsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XAP9cEzxvWhMRv4HvPoCVe0lIT8Nc8gSYLP7W+1BCFrV1qI413VRBLhlhnRg7u52hx9e82Hd7BzeNlo7BjKO2/BX9tPfMgFXcn1SgrSIBJ3aV2xpddu1bF7K0mpWCQ2bAHodoKNVcBR9nHUC4RnJso38Fxl1f/xoaJuSgcU5RBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSZtHfRY; arc=none smtp.client-ip=209.85.219.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e13c2ef0f6fso4967591276.3;
-        Wed, 21 Aug 2024 05:55:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724244936; x=1724849736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xMXs6xVmn8sixvLxYUQEmixapt75ZvWc1eWKXQGmuWM=;
-        b=HSZtHfRYx+wKMORTMH88QuHL/6ot0ftL/BG73gG0khWSUJSzB2pEUgg+I7kduCwyS0
-         h+WeRcuObMpqGTGq1HTZhgVDh4HNtYWK2Aeld3fIvaBA4VutXzcryFOdj5wPUYw/3QWA
-         rx7UPftH/RelkS/f5Yqbd4lZ6zx5NG90of/0ICpeNYgHqhZPWs2sIK2s51+9GnNCpD0I
-         /+fdFE4Jb9JwQa7Ts/FmsQq8rIv+eGU46s2r0MDyhnEhY3MCKr/mPgJQPim6n+92K9Ts
-         tV9RfsaanKwOT1pA2XunaSaj/a2NTUyeoEL2fOnrVJrHufruAPjCB5lLXv74eTNdQpOX
-         /F5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724244936; x=1724849736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xMXs6xVmn8sixvLxYUQEmixapt75ZvWc1eWKXQGmuWM=;
-        b=Fi229ock66Gqwvcdq0ebO4dCFjwVFkOOOb9tPmER3xNnxH6Pbro6cUiJcVIsNR7zv9
-         0SuwEv+1W8QAS92PF//BjbIavNr8dRb2XxJYj5qcOOcuQ9OrjMX7oKH49JnFaNw9F5uf
-         fEvL3cHhkXUtxcOKF2hVkOw51FAuXkX6BJb1ykyew7ZaXoEhJ2jUSfDlSGYuq+sa3PFN
-         NmTiIFGb4+klYgqph9cnU5S+YNI2pIzYwByygg4DVwn5iU34jF91sJqN2djFBMq2TM5l
-         WgGLIc8bZ8+TImyrwbiowxs0Kwjv08oGmSC7mMuJKZDH/nAjXou+QjDWy8xaIvSFzflP
-         f7cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3AtiBZz1BEFUEO4mzEiROZx+Lx2c4Nc32UB3hoj7fg1InFZ17ofwUzCVkR+fEytGmoCP6hug4CTW1Rcw=@vger.kernel.org, AJvYcCXxpyV8ViiK/KFPJUpFJ2o0oXyKvsp2tgrAHNCdSKMca7lsIzWyqqVxRKjM6juDKXI4WJIqFpcr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJZX/0g+/je2rhR3dcJx9PC5rcNKR8MNWph828WUc9g1VKPNkw
-	7+5rUeOg4zZuSbWva80774osaphl/GbQ1FnuL1kNCVi6lG/nCKgB4hrlMWnQOc2L5nVOK5NPEue
-	shxshrM9ip1oi96mwyeYyFy+kiU4=
-X-Google-Smtp-Source: AGHT+IH3jeFbD6w5kk393jzgQ4ipfByENSz6uo1/HAt4AhKKSb8xj/8nULtdIaYchy0KPYrOkX+rgVzaZzvQnqSWKng=
-X-Received: by 2002:a05:6902:2191:b0:e13:c24f:5beb with SMTP id
- 3f1490d57ef6-e166642e842mr2116012276.26.1724244935977; Wed, 21 Aug 2024
- 05:55:35 -0700 (PDT)
+	s=arc-20240116; t=1724244993; c=relaxed/simple;
+	bh=ypfaOaBLZUMjAJ1CWK0w2rd0JWS3swLCqOotou5s5+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQcFs9lm8+VQihAOedKQfAFGGDmH3IWDelDc1M3qz2i3drBU4IcNjxZGuRqpV5zrfYIn90oEsKolT1IKpu5vguA4Yx3rJ4dr+9OBN4vO0TNcTR47SJ9w25rp8a7d47q9FuZcuUKn7/EBFnRWY3dlmbAxLEKJfB2BrbpFuVzaiuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boyooSjB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6779C32782;
+	Wed, 21 Aug 2024 12:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724244991;
+	bh=ypfaOaBLZUMjAJ1CWK0w2rd0JWS3swLCqOotou5s5+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=boyooSjBdT3C71LRr/6rjW2PRqnnNgBO45F2oCvHBrtJJ76OiWJ0DJN++zptZDwMZ
+	 kOivnp0sbHCGX3X3POoV4KYFs+WpGoJh3uCxS8j6wklR4Ve5f9m87rfgAMAtqhWn/Y
+	 89ezK/KJFQxmwDjj0sWNfVPS4CDemJFkQYECl2ZQdxdaPmcM6pPXtupdyzzLSXn9dO
+	 MaTm7ftKXqvPTvuJWX5LARJxEli7gW9kLaAinr0pIQqivrgth9P16332VgIos1r+Vk
+	 bDHjLYVMwWCoExbXYiXRax7iMed4eVQDkz+A69bj5F+oxaqRAmAkEosjd0djwVw7cj
+	 lxhEvM7eVsRAA==
+Date: Wed, 21 Aug 2024 13:56:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] ASoC: dapm-graph: add component on/off and route
+ names to graph
+Message-ID: <f7c03710-161e-465c-b480-7b599c78a51d@sirena.org.uk>
+References: <20240607-dapm-graph-v1-0-bb302970d055@bootlin.com>
+ <20240820184406.6ff2654e@booty>
+ <c4e2580f-1675-48b0-b59f-a076eced7675@sirena.org.uk>
+ <20240821101748.41799c5a@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815124302.982711-1-dongml2@chinatelecom.cn>
- <20240815124302.982711-3-dongml2@chinatelecom.cn> <ZsSLB8pJInb7xbEc@shredder.mtl.com>
-In-Reply-To: <ZsSLB8pJInb7xbEc@shredder.mtl.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 21 Aug 2024 20:55:32 +0800
-Message-ID: <CADxym3a4gSszZvJea-WikdquvCfVUMbMVsX_C+zdNqc2t=TGJA@mail.gmail.com>
-Subject: Re: [PATCH net-next 02/10] net: skb: add SKB_DR_RESET
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com, 
-	pabeni@redhat.com, dsahern@kernel.org, dongml2@chinatelecom.cn, 
-	amcohen@nvidia.com, gnault@redhat.com, bpoirier@nvidia.com, 
-	b.galvani@gmail.com, razor@blackwall.org, petrm@nvidia.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pC3SrSxH0gEvAY1w"
+Content-Disposition: inline
+In-Reply-To: <20240821101748.41799c5a@booty>
+X-Cookie: You are false data.
+
+
+--pC3SrSxH0gEvAY1w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 8:24=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> wr=
-ote:
->
-> On Thu, Aug 15, 2024 at 08:42:54PM +0800, Menglong Dong wrote:
-> > For now, the skb drop reason can be SKB_NOT_DROPPED_YET, which makes th=
-e
-> > kfree_skb_reason call consume_skb.
->
-> Maybe I'm missing something, but kfree_skb_reason() only calls
-> trace_consume_skb() if reason is SKB_CONSUMED. With SKB_NOT_DROPPED_YET
-> you will get a warning.
->
+On Wed, Aug 21, 2024 at 10:17:48AM +0200, Luca Ceresoli wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-Yeah, I use this macro to avoid such WARNING. And I'm not sure
-if we need this patch now :/
+> > Please don't send content free pings and please allow a reasonable time
+> > for review.  People get busy, go on holiday, attend conferences and so=
+=20
+> > on so unless there is some reason for urgency (like critical bug fixes)
+> > please allow at least a couple of weeks for review.  If there have been
+> > review comments then people may be waiting for those to be addressed.
 
-> > In some case, we need to make sure that
-> > kfree_skb is called, which means the reason can't be SKB_NOT_DROPPED_YE=
-T.
-> > Introduce SKB_DR_RESET() to reset the reason to NOT_SPECIFIED if it is
-> > SKB_NOT_DROPPED_YET.
-> >
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> >  include/net/dropreason-core.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/include/net/dropreason-core.h b/include/net/dropreason-cor=
-e.h
-> > index 9707ab54fdd5..8da0129d1ed6 100644
-> > --- a/include/net/dropreason-core.h
-> > +++ b/include/net/dropreason-core.h
-> > @@ -445,5 +445,6 @@ enum skb_drop_reason {
-> >                   name =3D=3D SKB_NOT_DROPPED_YET)                \
-> >                       SKB_DR_SET(name, reason);               \
-> >       } while (0)
-> > +#define SKB_DR_RESET(name) SKB_DR_OR(name, NOT_SPECIFIED)
-> >
-> >  #endif
-> > --
-> > 2.39.2
-> >
+> I'm sorry about the noise. I thought it was worth in this case because:
+
+>  * this series has been sent 2.5 months ago
+>  * there was no reply at all
+>  * AFAIK and according to MAINTAINERS there is no patchwork catching
+>    tools/sound/
+
+> So it was looking much more like something gone into oblivion than
+> being on someone's TODO list.
+
+That would be the resend part of the mail - content free pings can't be
+directly acted on, they're just noise.  Note also that you should
+generally rebase and resend things after the merge window.
+
+> After doing so now however, I must say that while counting the resends
+> is easy, counting the pings in a somewhat reliable way is very time
+> consuming. It would be nice to have this info in a more reachable way
+> (MAINTAINERS?).
+
+Feel free to take that up with the MAINTAINERS people.  It's hard to
+specify things in a snappy one liner kind of way.
+
+--pC3SrSxH0gEvAY1w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbF4/oACgkQJNaLcl1U
+h9DjTQf+P9yJmRD8OMMrumB1nl0Tywv0Owh1/m1wrvD1w5fhBx/gYMdlHydsk2Zb
+5OFeG1AWDBhM2zH6QXWCKFrmJIu+pyfik4x6Bb3WtbGRhn3VYkzfvTuoei4khb+W
+MJSSKtjYjWfBPIZK3F7Wxykayi7ASfctgNI18PJWCWRL6RLszUfIjdxBsLBEAb/t
+7I1xk042hgKFhbYbDYwTucazewhhdYylH3c/qE61suzNeC2HwOofsXq0jjrt3/wS
+cziKXzK29ths731OxT5zemnkSqH5puSdZo6ejsgL81/H48yeOL7hQJuElpe+UG0L
+/tDCbCxaSlsDCQ9V6ikuzZTpzsZ0Xg==
+=xOm6
+-----END PGP SIGNATURE-----
+
+--pC3SrSxH0gEvAY1w--
 
