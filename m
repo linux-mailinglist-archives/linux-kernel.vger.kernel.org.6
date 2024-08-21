@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-295495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63A4959BD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAC2959BD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486C81F2306E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04CB284AE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C00D186E2E;
-	Wed, 21 Aug 2024 12:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mx5CF9uK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46866192D66;
+	Wed, 21 Aug 2024 12:30:59 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9639D1531D2;
-	Wed, 21 Aug 2024 12:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C4169AE3;
+	Wed, 21 Aug 2024 12:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724243389; cv=none; b=LKnD9g+OUkRSr+/Angr4qtP39JtMAz1fyPrY6+jDiIDHiJC8TyMr12bVUwINP/z22kdDoBDl3SA+ElM62jGVQ/BNBJqijybJDEulr/D54KsF8gqzmksRbmS8plPawlH17dEgnLytfyht0cxg74diwLi//TTX5j8+zWsH7IDFqQA=
+	t=1724243458; cv=none; b=W849FdaBd8IraSHY0E/02EH7d0jdVhVC5SbuGHal5DoulbJ9bwPN8PTsBsH68zZiFBZoenEM2ua5OYB2geaDB9/MAhQ4e5bTjiqBQX6BXmNSWFwiud2bAoyIXGN8u5SR6xb+PXQo3/Lphw2h/jSnkaUDUFIZAqdl7mOKvb68imE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724243389; c=relaxed/simple;
-	bh=D/AGG2kt2yzqivGXnvaNJ9VicDMyuX0Bw8P0G94eFKY=;
+	s=arc-20240116; t=1724243458; c=relaxed/simple;
+	bh=oz/jfZaFSmvJqx6w/vsYoeXpQ5+JrJ81yoV9tPzH1xA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BAPCpNLJ0WOXChK7l3MzZB7m9DlcpF94NstODW7NQDhoqG4IM/FAdroAHn5fajcfuO49FbspQaWSfmpIeHdkZLgggD7Kf2Jf9ypXRms5AU6QV31h5ppqpiiF0N5056ru3xkgRoGLGXpzRJEVNl6thg6QtJAV+P59qKCbn/N9XBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mx5CF9uK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LCGTTg028888;
-	Wed, 21 Aug 2024 12:29:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GPaDfzzQ3JVIUlNdkkkRjL2d47hz3wFDbfKsX7Pz7KM=; b=mx5CF9uKURPTjVwA
-	hVJQIcpQ9e8fHmz9vd1Z1DeqypQvi6qY0Wp/gAHJwyI+RositSZP8LhyaIXhf3s+
-	22X+SU4Ha9dxcWha7/7PNKQzeQn0K4KCBXcoK6vBdjUilgxBhWqcqJtnCEU1DLqg
-	x0JIWNj+5nFFmrOserfA6s7q+UbzjlNWvxP0xxE76kApyZkV9yWrQ/soUasWTluY
-	vIwOyY4wLxj+J4OgpF2f2SRN6Wae1KH9aKvtUqc1ZMvDw+iVBaWDXioBK6Yjmjr2
-	l+yZfF9gaR5y52T8ZD0akCBH1ql55T0iMO9Q0+Gbe9p22LsXC71XGMgBdM04X108
-	TcKS0g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4159yj9m3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 12:29:18 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LCTHco013057
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 12:29:17 GMT
-Received: from [10.216.57.153] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
- 2024 05:29:10 -0700
-Message-ID: <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
-Date: Wed, 21 Aug 2024 17:59:06 +0530
+	 In-Reply-To:Content-Type; b=QrN7boDBHp/BhW6/RUA04MnGxoO/pI+mNuFdiCSEZ6B7RC7yHNkcbD96taNV7GsRtP9g20hXr0c6CnsqcgzPso/ahcGYGd75ZegX5/jECHXC0cTfQ8OCzBiEZcAkqio83hCYHQlKHzuGTc+AtcTIEu6CxMOQp4AaVpMYMgqZIV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wply83bHMzpTXZ;
+	Wed, 21 Aug 2024 20:29:20 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id EF9A9140138;
+	Wed, 21 Aug 2024 20:30:51 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 21 Aug 2024 20:30:51 +0800
+Message-ID: <ec27c801-db0a-4e57-b0bd-03a695e70e56@huawei.com>
+Date: Wed, 21 Aug 2024 20:30:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,169 +47,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
- capacities are different"
-To: Sandeep Dhavale <dhavale@google.com>,
-        Dietmar Eggemann
-	<dietmar.eggemann@arm.com>
-CC: Bart Van Assche <bvanassche@acm.org>, Qais Yousef <qyousef@layalina.io>,
-        Christian Loehle <christian.loehle@arm.com>, <axboe@kernel.dk>,
-        <mingo@kernel.org>, <peterz@infradead.org>,
-        <vincent.guittot@linaro.org>, <linux-block@vger.kernel.org>,
-        <sudeep.holla@arm.com>, Jaegeuk Kim
-	<jaegeuk@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, <kailash@google.com>,
-        <tkjos@google.com>, <bvanassche@google.com>,
-        <quic_nitirawa@quicinc.com>, <quic_cang@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_narepall@quicinc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
- <3feb5226-7872-432b-9781-29903979d34a@arm.com>
- <20240805020748.d2tvt7c757hi24na@airbuntu>
- <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
- <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
- <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
- <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
- <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
- <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
+Subject: Re: [PATCH net-next v13 04/14] mm: page_frag: add '_va' suffix to
+ page_frag API
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Subbaraya Sundeep
+	<sbhatta@marvell.com>, Chuck Lever <chuck.lever@oracle.com>, Sagi Grimberg
+	<sagi@grimberg.me>, Jeroen de Borst <jeroendb@google.com>, Praveen
+ Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>,
+	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sunil Goutham
+	<sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, hariprasad
+	<hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>, Sean Wang
+	<sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo
+ Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Keith
+ Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
+	<hch@lst.de>, Chaitanya Kulkarni <kch@nvidia.com>, "Michael S. Tsirkin"
+	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko
+	<andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
+ Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, Olga
+ Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
+	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+	<anna@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-nvme@lists.infradead.org>,
+	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-mm@kvack.org>, <bpf@vger.kernel.org>, <linux-afs@lists.infradead.org>,
+	<linux-nfs@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+References: <20240808123714.462740-1-linyunsheng@huawei.com>
+ <20240808123714.462740-5-linyunsheng@huawei.com>
+ <d1a23116d054e2ebb00067227f0cffecefe33e11.camel@gmail.com>
+ <676a2a15-d390-48a7-a8d7-6e491c89e200@huawei.com>
+ <CAKgT0Uct5ptfs9ZEoe-9u-fOVz4HLf+5MS-YidKV+xELCBHKNw@mail.gmail.com>
+ <3e069c81-a728-4d72-a5bb-3be00d182107@huawei.com>
+ <CAKgT0UcDDFeMqD_eRe1-2Og0GEEFyNP90E9SDxDjskdgtMe0Uw@mail.gmail.com>
+ <98ceade3-8d60-45bf-a419-ff3982a96101@huawei.com>
+ <CAKgT0Uc+e3MUb4CK1i7H7F=y-fHTxiGF8zddBFiqFRdbd6ofLg@mail.gmail.com>
 Content-Language: en-US
-From: MANISH PANDEY <quic_mapa@quicinc.com>
-In-Reply-To: <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: a-iliqz0atMkAHetXJiV3AQZhsufcLec
-X-Proofpoint-GUID: a-iliqz0atMkAHetXJiV3AQZhsufcLec
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_09,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 phishscore=0 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 adultscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408210091
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0Uc+e3MUb4CK1i7H7F=y-fHTxiGF8zddBFiqFRdbd6ofLg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi all,
+On 2024/8/21 0:02, Alexander Duyck wrote:
+> On Tue, Aug 20, 2024 at 6:07 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> On 2024/8/19 23:54, Alexander Duyck wrote:
+>>
+>> ...
+>>
+>>>>>>
+>>>>>> "There are three types of API as proposed in this patchset instead of
+>>>>>> two types of API:
+>>>>>> 1. page_frag_alloc_va() returns [va].
+>>>>>> 2. page_frag_alloc_pg() returns [page, offset].
+>>>>>> 3. page_frag_alloc() returns [va] & [page, offset].
+>>>>>>
+>>>>>> You seemed to miss that we need a third naming for the type 3 API.
+>>>>>> Do you see type 3 API as a valid API? if yes, what naming are you
+>>>>>> suggesting for it? if no, why it is not a valid API?"
+>>>>>
+>>>>> I didn't. I just don't see the point in pushing out the existing API
+>>>>> to support that. In reality 2 and 3 are redundant. You probably only
+>>>>> need 3. Like I mentioned earlier you can essentially just pass a
+>>>>
+>>>> If the caller just expect [page, offset], do you expect the caller also
+>>>> type 3 API, which return both [va] and [page, offset]?
+>>>>
+>>>> I am not sure if I understand why you think 2 and 3 are redundant here?
+>>>> If you think 2 and 3 are redundant here, aren't 1 and 3 also redundant
+>>>> as the similar agrument?
+>>>
+>>> The big difference is the need to return page and offset. Basically to
+>>> support returning page and offset you need to pass at least one value
+>>> as a pointer so you can store the return there.
+>>>
+>>> The reason why 3 is just a redundant form of 2 is that you will
+>>> normally just be converting from a va to a page and offset so the va
+>>> should already be easily accessible.
+>>
+>> I am assuming that by 'easily accessible', you meant the 'va' can be
+>> calculated as below, right?
+>>
+>> va = encoded_page_address(encoded_va) +
+>>                 (page_frag_cache_page_size(encoded_va) - remaining);
+>>
+>> I guess it is easily accessible, but it is not without some overhead
+>> to calculate the 'va' here.
+> 
+> It is just the encoded_page_address + offset that you have to
+> calculate anyway. So the only bit you actually have to do is 2
+> instructions, one to mask the encoded_va and then the addition of the
+> offset that you provided to the page. As it stands those instruction
+> can easily be slipped in while you are working on converting the va to
+> a page.
 
-We agree with the points like rq_affinity can vary from target to target.
+Well, with your suggestions against other optimizations like avoiding
+a checking in fast patch and avoid calling virt_to_page(), the overhead
+is kind of added up.
 
-But also please consider below use cases
+And I am really surprised by your above suggestion about deciding the
+API for users according to the internal implementation detail here. As
+the overhead of calculating 'va' is really depending on the layout of
+'struct page_frag_cache' here, what if we change the implementation and
+the overhead of calculating 'va' becomes bigger? Do we expect to change
+the API for the callers when we change the internal implementation of
+page_frag_cache?
 
-1. Storage devices with single hardware queue (like UFS 2.x/ 3.x)
-in a HMP system with shared LLC, not all the CPUs will be active and 
-online. Hence for large amount (say ~1GB) of random IO transactions , if 
-requester CPU is from
-smaller cpu group, then due to capacity based grouping, Large cluster 
-CPUs would be mostly unused /idle, as the completion would also happen 
-on same capacity CPU. Again due to this, the smaller / mid capacity CPUs 
-only would have to submit and complete the request. Actually we could 
-have completed the requested on large capacity CPUs and could have 
-better utilized the power of Large capacity CPUs.
+> 
+> 
+>>>
+>>>>> page_frag via pointer to the function. With that you could also look
+>>>>> at just returning a virtual address as well if you insist on having
+>>>>> something that returns all of the above. No point in having 2 and 3 be
+>>>>> seperate functions.
+>>>>
+>>>> Let's be more specific about what are your suggestion here: which way
+>>>> is the prefer way to return the virtual address. It seems there are two
+>>>> options:
+>>>>
+>>>> 1. Return the virtual address by function returning as below:
+>>>> void *page_frag_alloc_bio(struct page_frag_cache *nc, struct bio_vec *bio);
+>>>>
+>>>> 2. Return the virtual address by double pointer as below:
+>>>> int page_frag_alloc_bio(struct page_frag_cache *nc, struct bio_vec *bio,
+>>>>                         void **va);
+>>>
+>>> I was thinking more of option 1. Basically this is a superset of
+>>> page_frag_alloc_va that is also returning the page and offset via a
+>>> page frag. However instead of bio_vec I would be good with "struct
+>>> page_frag *" being the value passed to the function to play the role
+>>> of container. Basically the big difference between 1 and 2/3 if I am
+>>> not mistaken is the fact that for 1 you pass the size, whereas with
+>>> 2/3 you are peeling off the page frag from the larger page frag cache
+>>
+>> Let's be clear here: The callers just expecting [page, offset] also need
+>> to call type 3 API, which return both [va] and [page, offset]? and it
+>> is ok to ignore the overhead of calculating the 'va' for those kinds
+>> of callers just because we don't want to do the renaming for a existing
+>> API and can't come up with good naming for that?
+>>
+>>> after the fact via a commit type action.
+>>
+>> Just be clear here, there is no commit type action for some subtype of
+>> type 2/3 API.
+>>
+>> For example, for type 2 API in this patchset, it has below subtypes:
+>>
+>> subtype 1: it does not need a commit type action, it just return
+>>            [page, offset] instead of page_frag_alloc_va() returning [va],
+>>            and it does not return the allocated fragsz back to the caller
+>>            as page_frag_alloc_va() does not too:
+>> struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
+>>                                 unsigned int *offset, unsigned int fragsz,
+>>                                 gfp_t gfp)
+>>
+>> subtype 2: it does need a commit type action, and @fragsz is returned to
+>>            the caller and caller used that to commit how much fragsz to
+>>            commit.
+>> struct page *page_frag_alloc_pg_prepare(struct page_frag_cache *nc,
+>>                                         unsigned int *offset,
+>>                                         unsigned int *fragsz, gfp_t gfp)
+>>
+>> Do you see subtype 1 as valid API? If no, why?
+> 
+> Not really, it is just a wrapper for page_frag_alloc that is
+> converting the virtual address to a page and offset. They are the same
+> data and don't justify the need for two functions. It kind of explains
 
-But to move IO requests from S/M cluster CPUs to L cluster, scheduler 
-would need to wait until a threshold IO hits, and by that time 
-Performance application would spent some runtime and would report low 
-performance as overall results.
+I am supposing you meant something like below:
+struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
+				unsigned int *offset, unsigned int fragsz,
+				gfp_t gfp)
+{
+	struct page *page;
+	void *va;
 
+	va = page_frag_alloc_va(nc, fragsz, gfp);
+	if (!va)
+		return NULL;
 
-On 08/02/24 10:03, Christian Loehle wrote:
- > So I'm assuming you're seeing something like the following:
- > Some CPU(s) (call them S) are submitting IO, hardirq triggers on
- > S.
- > Before the patch the completion softirq could run on a !S CPU,
- > now it runs on S. Am I then correct in assuming your workload
- > is CPU-bound on S? Would you share some details about the
- > workload, too?
- >
- > What's the capacity of CPU(s) S then?
+	page = virt_to_head_page(va);
+	*offset = va - page_to_virt(page);
 
+	return page;
+}
 
-Yes.. for few SoCs we follow the same.
-Say an SoC with 3 clusters ( S/M/L), if M CPU(s) are submitting IO 
-requests ( which is a large data transfer), then in this case since LLC 
-is shared, we can allow L CPU(s) to complete the request via softirq / 
-hardirq. This will make sure to avoid contention in submission and 
-completion path.
+If yes, I really think you are caring about maintainability too much by
+trading off too much performance here by not only recalculating the offset
+here, but also sometimes calling virt_to_head_page() unnecessarily.
 
+If no, please share the pseudo code in your mind.
 
-Again consider an SoC with 2 clusters ( 4 cpus of small capacity  / 2 
-CPUs of Mid capacity).
-In such case, if M CPUs are used for IO submersion and completions, then 
-these CPU would face heavy work load and hence Performance will be 
-impacted.  Now if the new patch was not there, we could have moved few 
-IO completions to S cluster CPUs.
+> one of the complaints I had about this code. Supposedly it was
+> refactoring and combining several different callers into one, but what
+> it is actually doing is fracturing the code path into 3 different
+> variants based on little if any actual difference as it is doing
+> unnecessary optimization.
 
- > If no matching is required, it makes sense to set rq_affinity to 0.
+I am supposing the 3 different variants meant the below, right?
+1. page_frag_alloc_va() returns [va].
+2. page_frag_alloc_pg() returns [page, offset].
+3. page_frag_alloc() returns [va] & [page, offset].
 
- > I don't get why irq_affinity=1 is compatible with this case? Isn't
- > this custom
- >setup is a fully managed system by you and means you want 
- >rq_affinity=0? What
- >do you lose if you move to rq_affinity=0?
+And there is others 3 different variants for prepare API too:
+4. page_frag_alloc_va_prepare() returns [va].
+5. page_frag_alloc_pg_prepare() returns [page, offset].
+6. page_frag_alloc_prepare() returns [va] & [page, offset].
 
-actually rq_affinity=0 would help for few SoC's having MCQ like UFS 4.x, 
-but even this won't be generic solution for us. As this won't considers 
-an SoC which doesn't shares LLC, and thus would have significant 
-performance issue. Also since the change is picked up in all the kernel 
-branches, so it would be very difficult to experiment on older Socs and 
-get the best solution for each target.
+Side note: I just found the '4. page_frag_alloc_va_prepare()' API is
+not used/called currently and can be removed in next revision for this
+patchset.
 
-This won't work for many SoCs like above example of 2 clusters, as
-rq_affinity to 0 would then complete the request on hardIRQ context, 
-which may not be suited for all the SoCs.
-Also not all SoCs are arm based and shares LLC.
+It seems what you really want is 3 & 2 to be a wrapper for 1, and
+5 & 6 to be a wrapper for 4?
 
+If yes, too much performance is traded off here as my understanding.
+Does't the introducing of __page_frag_cache_reload() already enable the
+balance between performance and maintainability as much as possible in
+patch 8?
 
+> 
+>> If yes, do you also expect the caller to use "struct page_frag *" as the
+>> container? If yes, what is the caller expected to do with the size field in
+>> "struct page_frag *" from API perspective? Just ignore it?
+> 
+> It should be populated. You passed a fragsz, so you should populate
+> the output fragsz so you can get the truesize in the case of network
+> packets. The removal of the page_frag from the other callers is making
+> it much harder to review your code anyway. If we keep the page_frag
+> there it should reduce the amount of change needed when you replace
+> page_frag with the page_frag_cache.
 
-2. Storage devices with MCQ (Like UFS 4.x / NVME), usages ESI/MSI 
-interrupts, hence we would have opportunity to bind ESI IRQ associated 
-with an CQ.
+I am not starting to use page_frag as the container yet, but the above
+part is something that I am probably agreed with.
 
+> 
+> Honestly this is eating up too much of my time. As I said before this
+> patch set is too big and it is trying to squeeze in more than it
+> really should for a single patch set to be reviewable. Going forward
+> please split up the patch set as I had suggested before and address my
+> comments. Ideally you would have your first patch just be some
+> refactor and cleanup to get the "offset" pointer moving in the
+> direction you want. With that we can at least get half of this set
+> digested before we start chewing into all this refactor for the
+> replacement of page_frag with the page_frag_cache.
 
-On 08/05/24 10:17, Bart Van Assche wrote:
- > On 8/4/24 7:07 PM, Qais Yousef wrote:
- > > irqbalancers usually move the interrupts, and I'm not sure we can
- > > make an assumption about the reason an interrupt is triggering on
- > > different capacity CPU.
- > User space software can't modify the affinity of managed interrupts.
- > From include/linux/irq.h:
-
- > > >True. But this is special case and was introduced for isolated
- > > > CPUs. I don't think drivers can request this themselves
-
-There are drivers, which can manage the cpu affinty for IRQs
-using irq_set_affinity_hint() based on the use case.
-Since in the SoC's the LLC is shared ( M and L clusters). So if IO is 
-submitted from M capacity CPU(s), and request is completed on L capacity 
-cpu(s). Though the capacity of M and L is different, but since the LLC 
-is shared, so completion can be done on L cluster without the need of 
-IPI. With the new change, we may not get advantage of shared LLC.
-
-Proposed solution:
-We can have a solution which is backward compatible and a new control 
-flag (QUEUE_FLAG_SAME_CAPACITY_FORCE) could be provided for this new 
-change to maintain backward compatibly.
-
-How about introducing a new rq_affinity ( may be rq_affinity = 3) for 
-using cpus_equal_capacity() using new flag QUEUE_FLAG_SAME_CAPACITY.
-
-
-if (cpu == rq->mq_ctx->cpu ||
-	(!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
-	  cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
-+	  (test_bit(QUEUE_FLAG_CPU_CAPACITY, &rq->q->queue_flags))
-	   && cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
-		return false;
-
-
-
-Could you please consider raising similar change, if this seems fine for 
-all.
-
-
-Regards
-Manish
+I don't really think breaking this patchset into more patchsets without
+a newcase is helping to speed up the process here, it might slow down
+the process instead, as the different idea about the refactoring and
+new API naming is not going to disappear by breaking the patchset, and
+the breaking may make the discussion harder without a bigger picture
+and context.
 
