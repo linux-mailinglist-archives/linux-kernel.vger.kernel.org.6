@@ -1,141 +1,182 @@
-Return-Path: <linux-kernel+bounces-295207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F33F9598A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 421A19598A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE15B22F3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:56:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A53A4B2388B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472661E7939;
-	Wed, 21 Aug 2024 09:19:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBDF1E864C;
+	Wed, 21 Aug 2024 09:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="q8YE2e1P"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010070.outbound.protection.outlook.com [52.101.128.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84791E792A;
-	Wed, 21 Aug 2024 09:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724231954; cv=none; b=R9ct8Fy1g1tPN5aCrVI2rCiI4ENoSz1cabvp7d0fER2UO/SA/2HkSQRe6Y2pXJkXYJQMnOHfED6wb1omQSQnnpCBlGFzIuC7a8/dsns21eOFIMJ5t3Zk+aT0/2L/+cqzhITqbu9eWnlosKVAhovzHTrXZV7ts8wQ8rDr8Q+aVNQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724231954; c=relaxed/simple;
-	bh=STLh8cZrdthMOQTjFWVlASDYQEDa29kidX5MGa4Lpak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tTTnJ1N6nGavUT2MrbqSOhoPzwW4EgHLU9c2uDOIDqZGe1O8ejqVgacrNPVXmwZ7BxwFDabUeF4zLslcDrjE3RCpT/3GQksdfQ8GtHZYhsjXLHlV2T9Z0doB4pyd9FZdopEeBGUvnN3pgfvnlmtkmka4GZ8QOQgiasmRPS3qQs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wpgkc03tsz1j6mW;
-	Wed, 21 Aug 2024 17:19:04 +0800 (CST)
-Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0DF3F1402D0;
-	Wed, 21 Aug 2024 17:19:06 +0800 (CST)
-Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
- (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
- 2024 17:18:51 +0800
-Message-ID: <bab5dfa4-7b75-0f21-e20d-371230df7e8f@huawei.com>
-Date: Wed, 21 Aug 2024 17:18:50 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C52D1E8624
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724232128; cv=fail; b=MDtVXwmoH8RMldbUjrjmX8xaI59+fCMeMODI5hNEoNFizHx5qm58MzMp3h5TLaamf2uZPOHK3XOerMnswHyfrj316gYNAkRvTGx0YcI2k1hpQ/KorMn0NkUZm4dHwW841nCIwQkd6nZ1QzRsCSRXPcuJ6i6neOX2dJKTrnIo13Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724232128; c=relaxed/simple;
+	bh=wE5h82He0FDXWbIvnMc8JrVQ14bt/zlqKl8+Vl5/wzU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=R3VIkcy6hQCTO25L+5giKLLgfmVF2oyEPcaIkt4lQRhawtRmsz5PGy0+u0AN0wvPZl/6/VDMoCiuWaQUHqa81ITJDMJdYP4Tm6u9fXB6XOUmq+km3OOTrepqGMoj2kg2VJy4dT2KBnN8wiclaZZO1RNt1VTy82Ow/tfcC1N8Pio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=q8YE2e1P; arc=fail smtp.client-ip=52.101.128.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Uyu/MWnHWRDjDMFc8J6n6RG07WHNG0HJTgK69TB3+hJIyIjvM3vkFzUuISbf7woKB2oX9j6TNIll88cpoT76vFQzdE6O1vgHESVgzAkCicXm6nizUFr95cdQSeu3n7cIAxzW1l3lAEhKoXVCnNmlUedrAVoHvQHlgOmKDhmrVfPEU42i2uDo7ZVZAa5phcyMxFPJT/dIP4ca12BSCOswLvWko1v4GN6HEst27bTQADZWiDhGcm5Qh4ZgeHMSPtRd5BJvfVIiSNaQM/Ml++609xpd4jg1kbhEBsFk9PZocfThvVRWBZ01MBi7hDBjUb/Watt6qT1lsrpNFeQ+bkoTfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0g4669BmyGqyqgQa9ScTbOpLKeqiXpRs3AqWa3oVtIk=;
+ b=iyJtvvaFMAQB0j6xSeF8rcm094BZRQq7WWogWKauYAoj5GWp5ADOC+muW2Ynxx4Fp1PH7Rt/f0r6ue42dZAOlzaj+M2CIZbPX74WAo7nceJ0hjgnKNZ+rO5b5yJLCiacTdSO7lduM5SHdaXHCjOk1rfPxNTvmSvkeT86T7Cxpg5I/rEcwIAnzaS3omb4HKOw44Ye457HRBsyoC3YaQarhWwKyfc0rIJsOS4h8h3O/70B3vQjWyJVWsTRqtXWpplqd+/s6maHhppzo7VPKPqPIQqGQAQHAnaljEa01R9zC/f9kKp+/+AnnYulEZU9/jEjH5SnrAmlvJEkOOOn62yDbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0g4669BmyGqyqgQa9ScTbOpLKeqiXpRs3AqWa3oVtIk=;
+ b=q8YE2e1PtSlM1BrJDHCe0sRWNjNx3KPjwL2ccVxzyVAd5tQBgV75CDjkRVNwvTHRVrl+hOrTaGAr0jqGt9TMUgCUshwopPVuHcD9xK3ZrLumKyWFvTQ9h8eeLYpnP1lpvi5hX/j36NHOAWjKZ/HN4HuyQhbgGwoPRlZ0h1nNx64i0eLBzwY1/R2eIjZEuNGsnDaycwX41kM7+zZQxdZxo376FAlkv7bbjI49v3VAfGKvbTiM8KfNvlRzhkTWbVQec0rCs50hQzwwTJ3m1ZHDvWMQyms8lKRy2Jp4IZA6nPXnAh3jgFdbkxkdLY32/RDZ6+YSuz0hSRbT+6ymJTAXtA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14) by JH0PR06MB6414.apcprd06.prod.outlook.com
+ (2603:1096:990:10::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.22; Wed, 21 Aug
+ 2024 09:22:01 +0000
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f]) by KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f%7]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 09:22:01 +0000
+From: Chen Yufan <chenyufan@vivo.com>
+To: Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Chen Yufan <chenyufan@vivo.com>
+Subject: [PATCH v1] ImgTec powerVR DRM driver: Convert to use time_before macro
+Date: Wed, 21 Aug 2024 17:21:21 +0800
+Message-Id: <20240821092121.16447-1-chenyufan@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SL2P216CA0132.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:1::11) To KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v3 08/14] thermal: core: Unexport
- thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC: LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui
-	<rui.zhang@intel.com>, Linux PM <linux-pm@vger.kernel.org>
-References: <2205737.irdbgypaU6@rjwysocki.net>
- <3512161.QJadu78ljV@rjwysocki.net>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <3512161.QJadu78ljV@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600004.china.huawei.com (7.193.23.242)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5487:EE_|JH0PR06MB6414:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0adb52e8-c066-4322-4f9f-08dcc1c2b6a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YKcdsYyRjiRYVjemlvUxyHpCugiKJmXa3hLBBdq2hxeJx2BFGfTlxXY1FyUF?=
+ =?us-ascii?Q?Rro+xXXqOzW5CDJZ8u1B7tWep/OtThm5vv+8KFafi9bozBn+DszZClcyYug+?=
+ =?us-ascii?Q?qO9uuVxtq63Usy0B6JoiLXIwxKD1CpwoZxTE/kOWvm5+TS9kTK6fI2fpzqj/?=
+ =?us-ascii?Q?IaIxMeBZ3W+EDwaytEIAgBXk7KOXI5pMhsSGR6m5diC2UiJ3EBKn+7WGrzyK?=
+ =?us-ascii?Q?E5jxMA9csjXgnmz1GTKR+nP0gl7AzF7U9VYKiom+yv5CXG1QlM3vdbfj3EZ8?=
+ =?us-ascii?Q?h1uT6KMCrBKRqyBiqKYaOCfa0F6Fo8IpiBF5xh0R/iizItwYuO4UhZrjdfjN?=
+ =?us-ascii?Q?TfSf4ehBOfzy/j2/7krwnX7uaFmHFn2gbMsUD/YlRTTHZNf/vnk/YWZE/0p2?=
+ =?us-ascii?Q?gY0qR5Qur08rmmDokzolmkg1J5UaBxB/EUY8d6ooiw7RWk6eOccC/fVsGM4z?=
+ =?us-ascii?Q?DRprSiFyYWH79fHYp8RSuI5N2s10LI4pSnYG8maWeiEhOW92exRwCOYqR0B/?=
+ =?us-ascii?Q?/FqeyBxrJ5piDG0otedqEA+rYRRbPuKXfinFdMPoo68W+kGjPNZ1OpP1nR03?=
+ =?us-ascii?Q?f7WkgQOs/tOCvTZJSfruuJkcYzop4dEoTXrr0R7U7tmJQXEzXGMC7Bz+54j4?=
+ =?us-ascii?Q?F+mH08Y4jZbPcya9ue+9kqVPOyW+eFI5Cclowg3oUw3UVbQk3FZDtDWoBKxj?=
+ =?us-ascii?Q?C/ZmLe8rb9rBaN1nyg1hB8Jy4o8AB69IGQ5eaAVLcSnIGFb8NzZXotqo1fs2?=
+ =?us-ascii?Q?c9I0uw9Asjtci3WGSBO2oMaHw9w7HvLTjjUkEca/PI9q5UyYXOvfVMP6Tu44?=
+ =?us-ascii?Q?IQP5tOtf3XFIs/Ti34OceDZD4QspuSk5bEtcRaY+ipOlWikWfYBNtRZc0QH3?=
+ =?us-ascii?Q?TnrMwTzsx69NTwvhaiaM3GxZxpYE3Y87BvotLlOzitSfs+kUx2ubH44vafkT?=
+ =?us-ascii?Q?5SL58sgaph58+Svyz9IiAuuAwcEmbz4FkXStQFC1iS0/AOmXK/lrw08jjVsR?=
+ =?us-ascii?Q?UeiMgNlvIz9IH676l8k5tg2vwueKz+zaUqZPNDd2FRHeIoX6X5P3mcNVRgr3?=
+ =?us-ascii?Q?3P+7zmV5renPEMk7ctoyMGpC2dKZYP50VG6gqUh8uPULMLOaJhMGGol9kSMd?=
+ =?us-ascii?Q?OchJSfsByhTmcmMn4nkXBSNjes9Eeh1FJbHx/Ay9O4XzmszIQc3HtEhI+vi6?=
+ =?us-ascii?Q?5vCY0Ty1xX2GFe+lXsFNPjefmD+JDt0OPNHpnRWByIrEjejhWrq3KP8bxiix?=
+ =?us-ascii?Q?ZXiVvLYL00ReuzW5iow6NNd8iJbN3cN9StN1FFMJG8oRo+/9/PCHZvJGY/9Q?=
+ =?us-ascii?Q?wtMg3WVqO1HnATw/n7bgoiKSaOo//cItXZQOEqpqGuXs83oY9glQNxrkLLoJ?=
+ =?us-ascii?Q?mCaYxHWD4oerxO3ukR6YHrbHqoD7HxaSc0ge69Zdssc3cq9QsA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB5487.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7Zumcvm6hzvci91NN0Hp8jTF37RhwCjOyKTSi8l4wRNp/Z9PnLAxaeNSulD+?=
+ =?us-ascii?Q?vIMC1cFljctHgKFc2esjTqqHBgPouoDHAwAcley1MW+W3H2mDe8GVck5Ww8o?=
+ =?us-ascii?Q?FwNFPVl875LIC2ksgy01rzaVSVjopANW59vy5cxGPn4c0q/26Eot7c7q85gj?=
+ =?us-ascii?Q?mHEH0ue5V0ex4a3QyqrlGn8nsYm6EzYHUoxlU4uYEvvvCSiqu9Fz9ZFOI4Kc?=
+ =?us-ascii?Q?q0qOELF8YTUEjISAPgt86qnymnS9fjCti5AIkQ8ZN3D1oBMlKwgIf5Qx340x?=
+ =?us-ascii?Q?z/JcgXAA4owLiB9lY2IwAYdVq32XPAHS3l+t4PM7g0bLP5Ft8IVO0Mv1Pr9l?=
+ =?us-ascii?Q?i8l3O3VrH2fZC5TTzrbdR3vwVOmQlKkISu2AQ9M4Ot6Qt3zjkkvKASOmB0Nz?=
+ =?us-ascii?Q?bwdszC8eQgfd9GMdu2dWOppE0GGIRNXMnnPgUFzDDlp/Cfild2+2ecJFeQT/?=
+ =?us-ascii?Q?+N9d6I8ID48hDIlerVW6jCtKZ/TnNxIdsYwcV8NekJ3/eRYKfK0cpfEvaUOd?=
+ =?us-ascii?Q?PZbcQOcjpEEraTFFkzon9ESYK9WmE/ynPhdI/yKvQ0nEg3icggIK65MemLnc?=
+ =?us-ascii?Q?z5Lxv9ChYrao1aQRc6XVbb3Xqbd7XLDFL9eWYpRpMl3QVywfDwVvI8EHsxsz?=
+ =?us-ascii?Q?CrD3cRjJvdYNeZPaN/daBBlUUv33P+qa3RL6RMLpRr1iFE/wSRZY1UAj8/rQ?=
+ =?us-ascii?Q?J3YBOrUESFNE3dftW0LE19TMDUXWf3T3KjcSF8fC2Q6KkFboy4QKUg7G5Foh?=
+ =?us-ascii?Q?DSl5Nr9tGLH0nTLrmQq3kJpjy5u1mDWE6SlNxfwTybud2gvnrEzVcG/7G2Gp?=
+ =?us-ascii?Q?9T/QI681vinYl9OHUyfPqYLGf/aArvT017et8XfbIDzLOlFGXsAKvzPMCFcU?=
+ =?us-ascii?Q?4Wn1yWPDYuOpNoVr7my4AU3yxQnTiVBcbLj/MYO+yUi+Rj0StFBo6qUHNs56?=
+ =?us-ascii?Q?9QQqt9UVFLvvmZ3WbLsyGBh2S1hHcDKMx96FWixlpFRC4wMRRM0BuMCfZt8G?=
+ =?us-ascii?Q?P6UWxID1hPhE18QVSLaJideHyroRrAWZrX/2w+TZpMaHTRulNDrxcyJNw4Pz?=
+ =?us-ascii?Q?jIXmkpprz09+ZIsNyREAWeyAxqojovm1pz2RBAL07mylDpDnFy1rDpIWOPC/?=
+ =?us-ascii?Q?kBhUnWghlXLhrBZm39hAbZ6EFoGgHZvI7P7n0Wl7hY51dGYdlNGeibcJeXWw?=
+ =?us-ascii?Q?xZpZH2FNlI4RBG48/Qi23CXWjTo37+WE8y7lySgwaZoODlXBQfvNyQ847KH7?=
+ =?us-ascii?Q?uaCn5aX429DI5igBAnb/Ozp5NHnBcIjFQcPNmtbneEekEAQt+gV7SijaYgk1?=
+ =?us-ascii?Q?X0ycXhne+V7C0NS0UoWVwX5AIup6Po3gDIitQbpVORexpvGmfDzrK6KT5B2c?=
+ =?us-ascii?Q?2TASm9E6nGWV9ERDUV9WMtpFPSPsaAFmcKakz7V4j6x3bvrXttRw/zy8eYQk?=
+ =?us-ascii?Q?ofKZ6m0m9o749XVeAQqaChBFYSIPYV7ou+ZMfw4AjhY2a4FBGbEZM9nJXV/p?=
+ =?us-ascii?Q?cpW6OOagexH6jxQ0A9k9w3o11vGkG4zkWvUbEvkoBpqgNhs0KxMeOC0blFP7?=
+ =?us-ascii?Q?ZEX4Jqt3XwkqYIeTSiLgFzM4zdzfkjZjsiu5wofk?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0adb52e8-c066-4322-4f9f-08dcc1c2b6a1
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5487.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 09:22:01.4251
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CCXaSgRjadqy6t0kGEJzvEabD7+0XS4pL0w15hRkGwdvt3DXmzqPrI4TomMzWKJkEIFA7ys7Y+Yy+UhsNDFtMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6414
 
+Use time_before instead of direct subtraction for readability.
 
-在 2024/8/20 0:05, Rafael J. Wysocki 写道:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
-> are only called locally in the thermal core now, they can be static,
-> so change their definitions accordingly and drop their headers from
-> the global thermal header file.
-The thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip() are 
-used by acpi/thermal.c.
-I guess that the patch [07/14] I didn't receive must have done that.
-If so, I'd like add:
-Acked-by: Huisong Li <lihuisong@huawei.com>
->
-> No intentional functional impact.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->
-> v2 -> v3: Rebase after dropping patches [04-05/17] from the series
->
-> v1 -> v2: No changes
->
-> ---
->   drivers/thermal/thermal_core.c |   10 ++++------
->   include/linux/thermal.h        |    8 --------
->   2 files changed, 4 insertions(+), 14 deletions(-)
->
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -773,7 +773,7 @@ struct thermal_zone_device *thermal_zone
->    *
->    * Return: 0 on success, the proper error value otherwise.
->    */
-> -int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
-> +static int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
->   				     const struct thermal_trip *trip,
->   				     struct thermal_cooling_device *cdev,
->   				     unsigned long upper, unsigned long lower,
-> @@ -877,7 +877,6 @@ free_mem:
->   	kfree(dev);
->   	return result;
->   }
-> -EXPORT_SYMBOL_GPL(thermal_bind_cdev_to_trip);
->   
->   int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
->   				     int trip_index,
-> @@ -913,9 +912,9 @@ EXPORT_SYMBOL_GPL(thermal_zone_bind_cool
->    *
->    * Return: 0 on success, the proper error value otherwise.
->    */
-> -int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
-> -				  const struct thermal_trip *trip,
-> -				  struct thermal_cooling_device *cdev)
-> +static int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
-> +					 const struct thermal_trip *trip,
-> +					 struct thermal_cooling_device *cdev)
->   {
->   	struct thermal_instance *pos, *next;
->   
-> @@ -945,7 +944,6 @@ unbind:
->   	kfree(pos);
->   	return 0;
->   }
-> -EXPORT_SYMBOL_GPL(thermal_unbind_cdev_from_trip);
->   
->   int thermal_zone_unbind_cooling_device(struct thermal_zone_device *tz,
-<...>
->
->
->
->
-> .
+Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+---
+ drivers/gpu/drm/imagination/pvr_ccb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/imagination/pvr_ccb.c b/drivers/gpu/drm/imagination/pvr_ccb.c
+index 4deeac7ed..b7d5f9ca3 100644
+--- a/drivers/gpu/drm/imagination/pvr_ccb.c
++++ b/drivers/gpu/drm/imagination/pvr_ccb.c
+@@ -321,7 +321,7 @@ static int pvr_kccb_reserve_slot_sync(struct pvr_device *pvr_dev)
+ 	bool reserved = false;
+ 	u32 retries = 0;
+ 
+-	while ((jiffies - start_timestamp) < (u32)RESERVE_SLOT_TIMEOUT ||
++	while (time_before(jiffies, start_timestamp + (u32)RESERVE_SLOT_TIMEOUT) ||
+ 	       retries < RESERVE_SLOT_MIN_RETRIES) {
+ 		reserved = pvr_kccb_try_reserve_slot(pvr_dev);
+ 		if (reserved)
+-- 
+2.39.0
+
 
