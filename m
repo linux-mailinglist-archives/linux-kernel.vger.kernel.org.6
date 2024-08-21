@@ -1,105 +1,86 @@
-Return-Path: <linux-kernel+bounces-295975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5234595A3D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2057295A3D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE122854E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8431F224FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5FB1B253B;
-	Wed, 21 Aug 2024 17:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F931B2ECC;
+	Wed, 21 Aug 2024 17:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lLAMoL3w"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVltTT5r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E543E1494D1;
-	Wed, 21 Aug 2024 17:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331781494D1;
+	Wed, 21 Aug 2024 17:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724261076; cv=none; b=c0cXBOWsb2UXuKRX+GYfqXWu4QxUg4n+7k3CDAiJE4lmUc0JhzwSPPruXe2jwqjzqbPgRI32QUFxlla+ywMqF6apjtD9lqZd6lCIe/Ts9BPXKoLEcGVnHvH0VmuHwHjSIs6D72pWu2NA+2pd9Sa+pXLb8xLOgwtxiYYiUkL77D0=
+	t=1724261203; cv=none; b=Qx6EZ2LoKDQT0wcmvxdGhMbzrKeO83Rqnpi7+2C2j9onnNTsHdLAApwPxOsd7etPTd/caWGGOtPiT2U3juDiIvQgviHZadD/oFuNK0/4QwQbkD5X7KdJR5CYukIHJ0Ks4looX/HpkgJ2/fmeOwfUk/ia6kNF8Lw3DPYYIned7hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724261076; c=relaxed/simple;
-	bh=H7HWs2F0AUAuFfUx9gmUQwZMuy9PXh3K7F9aCWky72I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fyPfATymrlcmDwIITYx8cF4yw0GYzT8cFC1tZbu1CwlXnD1nCamHMWw1+l1YfMD7NyWZLSemxeSRhCgZ6hSUoiE2QsaDYGoEBoe70Q2QEXrwgDXvCIPasjUu7CkFGdjNuqcfjZSgfr/BjIf8BBfYU96X6YoxWrpyvcwxAbfYAJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lLAMoL3w; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LHONMN014431;
-	Wed, 21 Aug 2024 12:24:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724261063;
-	bh=oQGkPxqOsFa04DuZjGzKWhjD4u7KkH85pN8rbcge43Y=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lLAMoL3wrXTTaioWoKLJq5SihztW6QW63jh5oeGt+IhAZOuiZSfKvI5Jz1SXnbyil
-	 dm+CZp/NUhfSpWR0JQsmn8ZZp6o5BF913cAbjS7xQvshODTfs20rNDq4HqP6f2MuH8
-	 qdBGjV+TP0Vaqk8+QU1SSQqeDZqHSYxliovQJ6Mg=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LHON75001371
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 12:24:23 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 12:24:23 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 12:24:23 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LHONFG049791;
-	Wed, 21 Aug 2024 12:24:23 -0500
-Message-ID: <23ac28aa-cd6e-41e3-ba26-d0a4c02d12fa@ti.com>
-Date: Wed, 21 Aug 2024 12:24:23 -0500
+	s=arc-20240116; t=1724261203; c=relaxed/simple;
+	bh=DM8/2KFRUJTePMGmJN4jQx4medejbfrHu9JQdUL0RtQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=Hd7lWGoceAh9z3jhzM6hYzLegiRWcftBp4wNUOkv1wS35GM8rgMp3JC9B1o2furbc+/7Tuu71nOya4/wMaWG0MAvkfZCx1sZchZZmU8e+KDg1Okrr98wWV2ZS2rIJlp4kJX7nYARFNYkc20ARfZhzLLwdGI7LaaYv5ejs3A7lK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVltTT5r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E5CC32781;
+	Wed, 21 Aug 2024 17:26:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724261202;
+	bh=DM8/2KFRUJTePMGmJN4jQx4medejbfrHu9JQdUL0RtQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=gVltTT5rSL/gfwr+3AtiExA4fRwSWLVf9YuL1pwgCEJifq24xclEDNpz/filNrGVt
+	 1N4n5Ipw8nk+3vk3hFFKTMhT91/US58monOE0XKgASeSl6kpBp0HcleXzwbSfVmGk2
+	 7WVhCu5rxRsJAv68HVy1cD2is38HuuVlw9dpIskRbAv3jNjQYR0NJOJxszVKjSgOaV
+	 whughWqvifpvqvmpdzFGQnTlqZeYHGVyIQslLbYLYw9UOLmgDxkKxPtL9IkqhpeJWg
+	 9NAG+agYdA/IJeLNuFy1a77eQVTH4jRKZbeXmui+yiiOh+rHZ9YgPGQ6u70jDe0dyE
+	 ppv+R6tWhspcA==
+From: Kalle Valo <kvalo@kernel.org>
+To: Yu Jiaoliang <yujiaoliang@vivo.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
+  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  opensource.kernel@vivo.com
+Subject: Re: [PATCH v2] wifi: cfg80211: Use kmemdup_array instead of kmemdup
+ for multiple allocation
+References: <20240821111250.591558-1-yujiaoliang@vivo.com>
+Date: Wed, 21 Aug 2024 20:26:38 +0300
+In-Reply-To: <20240821111250.591558-1-yujiaoliang@vivo.com> (Yu Jiaoliang's
+	message of "Wed, 21 Aug 2024 19:12:50 +0800")
+Message-ID: <87a5h5hjn5.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: k3-am654-idk: Add Support for MCAN
-To: Nishanth Menon <nm@ti.com>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jan Kiszka
-	<jan.kiszka@siemens.com>,
-        Bhavya Kapoor <b-kapoor@ti.com>
-References: <20240820193420.29184-1-jm@ti.com>
- <20240821110149.yk3da663fek2a4sy@attitude>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20240821110149.yk3da663fek2a4sy@attitude>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 
-Hi Nishanth,
+Yu Jiaoliang <yujiaoliang@vivo.com> writes:
 
-On 8/21/24 6:01 AM, Nishanth Menon wrote:
-> On 14:34-20240820, Judith Mendez wrote:
-> [...]
-> 
->> +&m_can1 {
->> +	status = "okay";
-> 
-> NAK!
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+>
+> v2:
+> -Change sizeof(limits[0]) to sizeof(*limits)
+> -Fix title prefix
+>
+> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Kalle Valo <kvalo@kernel.org>
 
-Will fix in v2, thanks.
-~ Judith
+No, I did not review your patch. Do not add any tags (like Reviewed-by)
+unless a person gives you that in a reply.
 
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&mcu_mcan1_pins_default>;
->> +	phys = <&transceiver2>;
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
