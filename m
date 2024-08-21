@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-295352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7C89599FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:32:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1529599FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EF64B21E3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03841C21530
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8071A4B7D;
-	Wed, 21 Aug 2024 10:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QRlDTPMv"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839481B2527;
+	Wed, 21 Aug 2024 10:43:52 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E391531F3
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6BD1531F3
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724237029; cv=none; b=p5AwZR63wIgBi6rNSU8J7TUSulIaP+1F0P40g8xyjB2LnEa2YATTmb3Il51mbLYDYHxXE4PH2ylAdpa/oo+OiJ6TRADstURwyNWmqdrpXUXRmrKRqp0yzlg1bWirzA0QLHgXh9u0iVdwMCE4WT2SORqR5+8zOME/acWCp68UdjI=
+	t=1724237032; cv=none; b=PThSn0C1CtZT6c5hFyWuuyrANBhymdH+JAhIEE8y7hbe+EIMtlIXRdxKGSTEs1b/c4oP2/Uwgh8lBwSgDAjxfTg3JxWOW1H8VVASe5x045BoCE+ihrRcJZWKqEtWblsTnBx4FmXzbGUS3QElQ346M3YbyeCdPTKbw+tJDWnaruY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724237029; c=relaxed/simple;
-	bh=2YlTy32Jggt+3QyeP21/kjK+y7Jl+8flQ/6jnHAh+CA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pSA2qBOwJY/4KPZaGMZwUewDJPYFR4jhk/e3t847fnHsik4/W0vgsmZ7KumzCCvS5siBuKW52HW6QiMJ6oVimkJM2vUf2pWOaReXIgLa4rdmygwZ6uG5vpN3uFrIM2YCV/cwC29aIZDH5weP5w5fg4OMio0X71PJ/9gBHg0F8fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QRlDTPMv; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gioZsFShGLYfJgioZsOmo1; Wed, 21 Aug 2024 12:43:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724237024;
-	bh=l6ojaAh4MgmsY8RQ0iWUL80jY5qZrzUj8fi6obn1K9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=QRlDTPMv7xFGLMAFrhiGmHS7PQkCU9iNI2r9aY4MzWzejb0lClaM2HsQE4gWKD43D
-	 Q3RuzZu02IBPXlbDtWjY5LJfm7AjbiFwfERmF4tJilnYEA8sxCpRWe7OxR0JrGkU0C
-	 Ve9NWlh1g/3x7OGCMxIdevi+q7wE8FFiyUe7X9n1YBwdWsvy7/aEVs35xPqis0ZS1I
-	 ipy4TlzHx4fzOG70izQ2idWGQbUnJlYNQG4rzRddwjfkWarIy62q+ObVEalPuqj/VQ
-	 PCXxFCSm0aIeJrWuHBBkiYKi4cXQTzgp0/srKJwjnwP5UbKTv8C9l3Qfnbr0TUXkmr
-	 3KFkA0S7pw2uQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 21 Aug 2024 12:43:44 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <43c93550-941a-4a8b-9734-f7a9877ddf4d@wanadoo.fr>
-Date: Wed, 21 Aug 2024 12:43:43 +0200
+	s=arc-20240116; t=1724237032; c=relaxed/simple;
+	bh=LyaB+owgaWByCR46XNCEzrLlyYBnWR3RnEUCDqhzieM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDS8i3zYHvxxIQkIv0Asm+MpFCRPbn8j47dC0Fe8ghd8naZ4S4aMfIVsCXCWhvtOQP4Ombb2tsMQpQK/u9NJywK430PfXeHMqR8eV38mD1qZl6nd5xYgxtxYYzUKJtgCiBzoV8IT188KDC/cQxFo/z1p5L6Q9T0fIadPwYe5POU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 602D1C32782;
+	Wed, 21 Aug 2024 10:43:49 +0000 (UTC)
+Date: Wed, 21 Aug 2024 11:43:47 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Nishanth Menon <nm@ti.com>, Arnd Bergmann <arnd@kernel.org>,
+	Judith Mendez <jm@ti.com>, Will Deacon <will@kernel.org>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Vignesh Raghavendra <vigneshr@ti.com>, Bryan Brattlof <bb@ti.com>
+Subject: Re: [RFC PATCH] arm64: defconfig: Set MFD_TPS6594_I2C as built-in
+Message-ID: <ZsXE427Dh6w35wvz@arm.com>
+References: <20240819204352.1423727-1-jm@ti.com>
+ <1a7def3f-a19c-4f1c-845c-a3854c165995@linaro.org>
+ <20240820115331.myibtim7enhpg4cm@mortality>
+ <323cc7c0-8511-4d21-9925-97a6ba94280f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] platform/chrome: chromeos_laptop: Use kmemdup_array
- instead of kmemdup for multiple allocation
-To: Yu Jiaoliang <yujiaoliang@vivo.com>, Benson Leung <bleung@chromium.org>,
- Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240821084104.21095-1-yujiaoliang@vivo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240821084104.21095-1-yujiaoliang@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <323cc7c0-8511-4d21-9925-97a6ba94280f@linaro.org>
 
-Le 21/08/2024 à 10:41, Yu Jiaoliang a écrit :
-> Let the kememdup_array() take care about multiplication and possible
-> overflows.
+On Wed, Aug 21, 2024 at 08:33:49AM +0200, Krzysztof Kozlowski wrote:
+> On 20/08/2024 13:53, Nishanth Menon wrote:
+> > On 23:01-20240819, Krzysztof Kozlowski wrote:
+> >> On 19/08/2024 22:43, Judith Mendez wrote:
+> >>> SK-AM62A-LP is a device targeting automotive front-camera applications
+> >>> among other use-cases. It utilizes the TPS6593x PMIC (interfaced over I2C)
+> >>> to power the SoC and various other peripherals on the board [1].
+> >>>
+> >>> MMCSD requires the PMIC to be setup correctly before setting the bus
+> >>> pins to 1.8V using the TPS6594 driver interfaced over i2c.
+> >>>
+> >>> Currently, the following could be seen when booting the am62ax platform:
+> >>>
+> >>> "platform fa00000.mmc: deferred probe pending: platform: supplier regulator-5 not ready"
+> >>> "vdd_mmc1: disabling"
+> >>>
+> >>> and a failure to boot the SK-AM62A-LP.
+> >>>
+> >>> One solution is to use initramfs [2], but using initramfs increases the
+> >>> boot time for this automotive solution which requires faster boot time
+> >>> parameters.
+> >>
+> >> This is a defconfig, not a distro/product config, so your product
+> >> constraints are not really relevant. You are supposed to boot defconfig
+> >> with proper initramfs with necessary modules.
+[...]
+> > I understand that you have provided similar comments for other
+> > platforms[1] as well, but, I am now wondering if this is a new rule
+> > we are taking in aarch64 platforms to allow just initramfs and
+> > force all drivers to be modules (I understand that is the default
+[...]
+> There are different point of views. I am presenting here mine and I back
+> it with arguments, that such changes accumulate and have impact on
+> developers workflow.
 > 
-> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
-> ---
->   drivers/platform/chrome/chromeos_laptop.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platform/chrome/chromeos_laptop.c
-> index a2cdbfbaeae6..7bedd82dd3a5 100644
-> --- a/drivers/platform/chrome/chromeos_laptop.c
-> +++ b/drivers/platform/chrome/chromeos_laptop.c
-> @@ -749,10 +749,9 @@ chromeos_laptop_prepare_i2c_peripherals(struct chromeos_laptop *cros_laptop,
->   	if (!src->num_i2c_peripherals)
->   		return 0;
->   
-> -	i2c_peripherals = kmemdup(src->i2c_peripherals,
-> -					      src->num_i2c_peripherals *
-> -					  sizeof(*src->i2c_peripherals),
-> -					  GFP_KERNEL);
-> +	i2c_peripherals =
-> +		kmemdup_array(src->i2c_peripherals, src->num_i2c_peripherals,
-> +			      sizeof(*src->i2c_peripherals), GFP_KERNEL);
->   	if (!i2c_peripherals)
->   		return -ENOMEM;
->   
+> Defconfig is for developers and as starting point for distros or
+> products. Not as final product defconfig.
 
-Nitpick: sizeof(*i2c_peripherals) would also work and is slightly less 
-verbose.
+Drive-by comment here (defconfig is mostly an arm-soc thing): in general
+I agree with this position. Just because a product cannot (efficiently)
+use initramfs, we shouldn't pollute the default built-ins with random
+drivers. If you want something optimal for your product, just tweak the
+defconfig or take it up with the distros. I'm fine with built-ins,
+however, if they are required before reaching the initramfs stage (e.g.
+interrupt controllers) but that's not the case here.
 
-CJ
+-- 
+Catalin
 
