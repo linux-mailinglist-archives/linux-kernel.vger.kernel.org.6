@@ -1,277 +1,174 @@
-Return-Path: <linux-kernel+bounces-295307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB49295998A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA6995998C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E07A2814C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:21:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D44B28056F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9BD1BFDF6;
-	Wed, 21 Aug 2024 10:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9E41B2ED9;
+	Wed, 21 Aug 2024 10:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=s2b.tech header.i=@s2b.tech header.b="yiEsMJp6"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BCwFgMVT"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C571BFDE8;
-	Wed, 21 Aug 2024 10:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F371BFE18
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724234579; cv=none; b=Nt7jRciYXr2Zm0RB9qFQOetyAR9G/Hwe3zjIeuCol4xutxcqSxsiVI3V8T32aVPnJNzaVm6Qj498UytSpfObFCGWaNmB/zllzhboUT9rk+2dPG8reivsYestbIBANNbyBf7E+TnT15vWWszwD65Ch7Mvd26F5aDGR3WKFGbIKZc=
+	t=1724234619; cv=none; b=TupcKx6Lpkjkd/EeOcdsXkv343G2ZLo7qzW6bbN0taabHTK9g6T05ozASTHPLVeG+ZmwKrHfhMI4Zq0ei6UCK2rO6pRRfRYEmVVheX9uZ+qAn04o10sDd42m4cWRpK/Zvma5+AZV4SIjy3ySoPH8ws2BvZTy8Wa/kchFQvlGHrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724234579; c=relaxed/simple;
-	bh=LBx8b6fa46n9coj8rSupKMXrF5Jk2Vtbna8Hp+EkQqk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rZ7RwoOPdfDq++c36xZaTfmad51WH+TkoMeqKR6GoWSja5J5x+yb3mGJjxS7NKHPcreuwVaTNGNAdhN9Y6cuuU687QRvIHrcc0szKQ7eKXzGou/aF9SucDVmDr1eF/NJvDuisodebh6M+pf95K8EegK4087WC5DJ73oX+f82AKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=s2b.tech; spf=pass smtp.mailfrom=s2b.tech; dkim=fail (0-bit key) header.d=s2b.tech header.i=@s2b.tech header.b=yiEsMJp6 reason="key not found in DNS"; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=s2b.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=s2b.tech
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 6CF4D120009;
-	Wed, 21 Aug 2024 13:02:51 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 6CF4D120009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=s2b.tech;
-	s=s2b.tech; t=1724234571;
-	bh=COXiy57lY8dzSPNXsiiYnAyzRBL65uPiWZ3K75EEL8s=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
-	b=yiEsMJp6lq7tdEgPiHFXk1xdLN78EScAQP4xLlgVULgr/MBYJfTYTe3A7YkaYowy7
-	 ZgyOILRBQuL9HqtYh45ofGS+c5wpup2Kpcllz2toUlI3/67ESMvz4VmWdNV+xLrDEY
-	 BVp+9vWBR0gI/kNZ/zW4BAiKTp4eEZ/nzyJggz8qXj63OuxHdWxqYIiM2KiNi190Sp
-	 G0m8ZhLEhIvaI2chNCyuLlYHXn+H6gD5u+n5cJlEnco1ZIBfHW5GIOhTnbIvcbPz2c
-	 CLHIT3xW1EGujP7yytLg+B4txR5PqjzbAu8qlZ7Gt6V9kEgfh9E2Uetsj4ltrprvnX
-	 /rQXZaNI+iFGA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 21 Aug 2024 13:02:51 +0300 (MSK)
-From: Alexey Romanov <avromanov@s2b.tech>
-To: "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>
-CC: "clabbe@baylibre.com" <clabbe@baylibre.com>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "khilman@baylibre.com"
-	<khilman@baylibre.com>, "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-	"martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, kernel <kernel@sberdevices.ru>
-Subject: Re: [PATCH v9 00/23] Support more Amlogic SoC families in crypto
- driver
-Thread-Topic: [PATCH v9 00/23] Support more Amlogic SoC families in crypto
- driver
-Thread-Index: AQHa8xEu8HBRFAfkMUCcNq+0g+oZurIwEEOAgAE52YA=
-Date: Wed, 21 Aug 2024 10:02:50 +0000
-Message-ID: <20240821100245.q5uptswxmx4rk35n@cab-wsm-0029881>
-References: <20240820145623.3500864-1-avromanov@salutedevices.com>
- <6e535895-6a06-42f8-abf3-e3b7472c97e0@linaro.org>
-In-Reply-To: <6e535895-6a06-42f8-abf3-e3b7472c97e0@linaro.org>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7FC1B060E590BD478A7D229A9792E8A3@sberdevices.ru>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1724234619; c=relaxed/simple;
+	bh=6bZ7/iuSWrOCnTdKccC7MLCgsII3Qg3gHUVex/8ylqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHDu+C0VJSwoEkKs5eyzmNKKgqQuSAseTNWfPO+s0YSpNfeI20hOSoNSZM6+O5XWI+VmD6sC6NHNmZuvDXc7fJYiFHKf7WG7UH8YI4wU8sBFpC7TMjsvZl5icJVFuKTJYmBF6q6a86YEk9kusHlGXyyFHHesTbP+BlvmLKUbBZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BCwFgMVT; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7141e20e31cso930682b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724234617; x=1724839417; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hc9KXq9HiCmVA6sa8jp61udoxCJLWx+IYCHX8J3fcJQ=;
+        b=BCwFgMVTnabY0o31x+Vuu7f75hBN/vzbWQ+OYZl9VdsA4+5yhgBCNyYUNJECOgDWtI
+         yTWPXvL+li+853Ru5J2Um3qZigBNNjzC0LgicS6Uhr5TZYfqgyjSVtuDS7uTLLEbfKU+
+         0ONqmjs9sGUXVQfIYNBcPNwUyp6ekiR5V+68hufxqKtdJmPWQkbD7jmgx5uQ1BaCHzmC
+         Pl6+QPKGJUcBiQ1ifGFI6f2Bt+amfuc1Tz0zN3FWFFCBSf5D1WVkpy/t2ynhxGfIQ/GF
+         4s1UJnWIqb0K5btEOOP800PTI2lk6WtZ/PIvqGmoFln5VpmXJKUMzQZHvCM6RtKQ0zIK
+         QXSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724234617; x=1724839417;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hc9KXq9HiCmVA6sa8jp61udoxCJLWx+IYCHX8J3fcJQ=;
+        b=Db8n1WwEp/jRPaWQNLIP1i0A29mtx2UeiLicvKKMwqmeT+4nuADci7M5VrfTosJr2G
+         NxW0xKfhAKnxA+XAyVzBVQVlT5Bz+09l9/bNNzEIZIZDHY+m45WPQXfAGlFyx0l9bwYJ
+         B8IJqJk4j6FBUe8O4lKEkYqx3BioHoGHJ9alJT84CbKtu+BkuBDYeDSWSeUhyFqJenSI
+         ES0AWQ79YFasNcSkDnQ6Lv76cjjGI/EXlzRq8wWOqSBKIexgStKJocBuHt6zecuOV1th
+         eqdsVpZ1fZH8ijWc89PxwBBEfJwGYc/+3HHuLZueoLxXwjaRIKVY4BChrzKJph/wuOec
+         8xng==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Oag3x1YAf5FpcwuqXuBt9xDBd10ZmDyDevTe6HLr1n8szNXSiHTK+TFm7OEIL8Gbu2YTBBZEabs6Ekc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXqoeYMTtEYbxFnjW2emoHklEIkcCwtjhPh5b7TrDzHgpa+XL6
+	C8rQArs2gE7DtqQ5kBsV8wUU3hZZ1c46yJtM6wQRZxtLcCT2QWBekBXbG+Zzy4w=
+X-Google-Smtp-Source: AGHT+IHzEyIAn5BZKdsgEF+tkgsjaGhBmdzJxEgxGtA7eOAAo7NB0TYXIZ9VX90RiBa6VatggNPMRg==
+X-Received: by 2002:a05:6a20:9f4e:b0:1c4:a531:bafd with SMTP id adf61e73a8af0-1cad7f8b77dmr2391092637.18.1724234617078;
+        Wed, 21 Aug 2024 03:03:37 -0700 (PDT)
+Received: from [10.84.144.49] ([203.208.167.150])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127aef610esm9588632b3a.129.2024.08.21.03.03.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 03:03:36 -0700 (PDT)
+Message-ID: <83142dc8-edcf-4e47-8215-8b359a2b7156@bytedance.com>
+Date: Wed, 21 Aug 2024 18:03:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187202 [Aug 21 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: avromanov@s2b.tech
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 27 0.3.27 71302da218a62dcd84ac43314e19b5cc6b38e0b6, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;gist.github.com:7.1.1;127.0.0.199:7.1.2;s2b.tech:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/08/21 05:09:00
-X-KSMG-LinksScanning: Clean, bases: 2024/08/21 05:09:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/08/21 06:50:00 #26388227
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/14] mm: handle_pte_fault() use
+ pte_offset_map_maywrite_nolock()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
+ "hughd@google.com" <hughd@google.com>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "muchun.song@linux.dev" <muchun.song@linux.dev>,
+ "vbabka@kernel.org" <vbabka@kernel.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "rppt@kernel.org" <rppt@kernel.org>,
+ "vishal.moola@gmail.com" <vishal.moola@gmail.com>,
+ "peterx@redhat.com" <peterx@redhat.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <cover.1724226076.git.zhengqi.arch@bytedance.com>
+ <239432a0bc56464e58a6baf3622fdc72526c8d57.1724226076.git.zhengqi.arch@bytedance.com>
+ <6a586524-5116-4eaf-b4f3-c1aea290d7c1@cs-soprasteria.com>
+ <b4bf605a-d31a-40ad-8cee-fe505e45dc64@bytedance.com>
+ <4b867535-8481-4fa1-bed1-ad25a76682f0@redhat.com>
+ <ef40c2ef-e4a4-4b02-85b8-a930285a3d0e@bytedance.com>
+ <61c05197-0baa-4680-ad24-5965ba37dc35@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <61c05197-0baa-4680-ad24-5965ba37dc35@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Neil,
 
-On Tue, Aug 20, 2024 at 05:19:27PM +0200, neil.armstrong@linaro.org wrote:
-> Hi,
->=20
-> On 20/08/2024 16:56, Alexey Romanov wrote:
-> > Hello!
-> >=20
-> > This patchset expand the funcionality of the Amlogic
-> > crypto driver by adding support for more SoC families:
-> > AXG, G12A, G12B, SM1, A1, S4.
-> >=20
-> > Also specify and enable crypto node in device tree
-> > for reference Amlogic devices.
-> >=20
-> > Tested on GXL, AXG, G12A/B, SM1, A1 and S4 devices via
-> > custom tests [1] and tcrypt module.
->=20
-> On which tree did you base yourself ? It fails to apply patch 20 on next-=
-20240820 and 6.11-rc4
 
-Sorry, my tree is out of date (6.10.1).=20
+On 2024/8/21 17:53, David Hildenbrand wrote:
+> On 21.08.24 11:51, Qi Zheng wrote:
+>>
+>>
+>> On 2024/8/21 17:41, David Hildenbrand wrote:
+>>> On 21.08.24 11:24, Qi Zheng wrote:
+>>>>
+>>>>
+>>>> On 2024/8/21 17:17, LEROY Christophe wrote:
+>>>>>
+>>>>>
+>>>>> Le 21/08/2024 à 10:18, Qi Zheng a écrit :
+>>>>>> In handle_pte_fault(), we may modify the vmf->pte after acquiring the
+>>>>>> vmf->ptl, so convert it to using pte_offset_map_maywrite_nolock(). 
+>>>>>> But
+>>>>>> since we already do the pte_same() check, so there is no need to get
+>>>>>> pmdval to do pmd_same() check, just pass NULL to pmdvalp parameter.
+>>>>>>
+>>>>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>>>>>> ---
+>>>>>>      mm/memory.c | 9 +++++++--
+>>>>>>      1 file changed, 7 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>>>> index 93c0c25433d02..d3378e98faf13 100644
+>>>>>> --- a/mm/memory.c
+>>>>>> +++ b/mm/memory.c
+>>>>>> @@ -5504,9 +5504,14 @@ static vm_fault_t handle_pte_fault(struct
+>>>>>> vm_fault *vmf)
+>>>>>>               * pmd by anon khugepaged, since that takes mmap_lock in
+>>>>>> write
+>>>>>>               * mode; but shmem or file collapse to THP could still
+>>>>>> morph
+>>>>>>               * it into a huge pmd: just retry later if so.
+>>>>>> +         *
+>>>>>> +         * Use the maywrite version to indicate that vmf->pte 
+>>>>>> will be
+>>>>>> +         * modified, but since we will use pte_same() to detect the
+>>>>>> +         * change of the pte entry, there is no need to get pmdval.
+>>>>>>               */
+>>>>>> -        vmf->pte = pte_offset_map_nolock(vmf->vma->vm_mm, vmf->pmd,
+>>>>>> -                         vmf->address, &vmf->ptl);
+>>>>>> +        vmf->pte = pte_offset_map_maywrite_nolock(vmf->vma->vm_mm,
+>>>>>> +                              vmf->pmd, vmf->address,
+>>>>>> +                              NULL, &vmf->ptl);
+>>>
+>>> I think we discussed that passing NULL should be forbidden for that
+>>> function.
+>>
+>> Yes, but for some maywrite case, there is no need to get pmdval to
+>> do pmd_same() check. So I passed NULL and added a comment to
+>> explain this.
+> 
+> I wonder if it's better to pass a dummy variable instead. One has to 
+> think harder why that is required compared to blindly passing "NULL" :)
 
-I can rebase it to linux-next and resend patchset.
+You are afraid that subsequent caller will abuse this function, right?
+My initial concern was that this would add a useless local vaiable, but
+perhaps that is not a big deal.
 
->=20
-> Neil
->=20
-> >=20
-> > ---
-> >=20
-> > Changes V1 -> V2 [2]:
-> >=20
-> > - Rebased over linux-next.
-> > - Adjusted device tree bindings description.
-> > - A1 and S4 dts use their own compatible, which is a G12 fallback.
-> >=20
-> > Changes V2 -> V3 [3]:
-> >=20
-> > - Fix errors in dt-bindings and device tree.
-> > - Add new field in platform data, which determines
-> > whether clock controller should be used for crypto IP.
-> > - Place back MODULE_DEVICE_TABLE.
-> > - Correct commit messages.
-> >=20
-> > Changes V3 -> V4 [4]:
-> >=20
-> > - Update dt-bindings as per Krzysztof Kozlowski comments.
-> > - Fix bisection: get rid of compiler errors in some patches.
-> >=20
-> > Changes V4 -> V5 [5]:
-> >=20
-> > - Tested on GXL board:
-> >    1. Fix panic detected by Corentin Labbe [6].
-> >    2. Disable hasher backend for GXL: in its current realization
-> >       is doesn't work. And there are no examples or docs in the
-> >       vendor SDK.
-> > - Fix AES-CTR realization: legacy boards (gxl, g12, axg) requires
-> >    inversion of the keyiv at keys setup stage.
-> > - A1 now uses its own compatible string.
-> > - S4 uses A1 compatible as fallback.
-> > - Code fixes based on comments Neil Atrmstrong and Rob Herring.
-> > - Style fixes (set correct indentations)
-> >=20
-> > Changes V5 -> V6 [7]:
-> >=20
-> > - Fix DMA sync warning reported by Corentin Labbe [8].
-> > - Remove CLK input from driver. Remove clk definition
-> >    and second interrput line from crypto node inside GXL dtsi.
-> >=20
-> > Changes V6 -> V7 [9]:
-> >=20
-> > - Fix dt-schema: power domain now required only for A1.
-> > - Use crypto_skcipher_ctx_dma() helper for cipher instead of
-> >    ____cacheline_aligned.
-> > - Add import/export functions for hasher.
-> > - Fix commit message for patch 17, acorrding to discussion [10].
-> >=20
-> > Changes V7 -> V8 [11]:
-> >=20
-> > - Test patchset with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS: fix some bugs
-> >    in hasher logic.
-> > - Use crypto crypto_ahash_ctx_dma in hasher code.
-> > - Correct clock definition: clk81 is required for all SoC's.
-> > - Add fixed-clock (clk81) definition for A1/S4.
-> > - Add information (in commit messages) why different compatibles are us=
-ed.
-> >=20
-> > Changes V8 -> V9 [12]:
-> >=20
-> > - Remove required field clk-names from dt-schema according to Rob Herri=
-ng
-> > recommendation [13].
-> > - Fix commit order: all dt-bindings schema commits now located earlier
-> > than any changes in device tree.
-> > - Fix typos and add more clarifications in dt-schema patches.
-> >=20
-> > Links:
-> >    - [1] https://gist.github.com/mRrvz/3fb8943a7487ab7b943ec140706995e7
-> >    - [2] https://lore.kernel.org/all/20240110201216.18016-1-avromanov@s=
-alutedevices.com/
-> >    - [3] https://lore.kernel.org/all/20240123165831.970023-1-avromanov@=
-salutedevices.com/
-> >    - [4] https://lore.kernel.org/all/20240205155521.1795552-1-avromanov=
-@salutedevices.com/
-> >    - [5] https://lore.kernel.org/all/20240212135108.549755-1-avromanov@=
-salutedevices.com/
-> >    - [6] https://lore.kernel.org/all/ZcsYaPIUrBSg8iXu@Red/
-> >    - [7] https://lore.kernel.org/all/20240301132936.621238-1-avromanov@=
-salutedevices.com/
-> >    - [8] https://lore.kernel.org/all/Zf1BAlYtiwPOG-Os@Red/
-> >    - [9] https://lore.kernel.org/all/20240326153219.2915080-1-avromanov=
-@salutedevices.com/
-> >    - [10] https://lore.kernel.org/all/20240329-dotted-illusive-9f059380=
-5a05@wendy/
-> >    - [11] https://lore.kernel.org/all/20240411133832.2896463-1-avromano=
-v@salutedevices.com/
-> >    - [12] https://lore.kernel.org/all/20240607141242.2616580-1-avromano=
-v@salutedevices.com/
-> >    - [13] https://lore.kernel.org/all/20240610222827.GA3166929-robh@ker=
-nel.org/
-> >=20
-> > Alexey Romanov (23):
-> >    drivers: crypto: meson: don't hardcode IRQ count
-> >    drviers: crypto: meson: add platform data
-> >    drivers: crypto: meson: remove clock input
-> >    drivers: crypto: meson: add MMIO helpers
-> >    drivers: crypto: meson: move get_engine_number()
-> >    drivers: crypto: meson: drop status field from meson_flow
-> >    drivers: crypto: meson: move algs definition and cipher API to
-> >      cipher.c
-> >    drivers: crypto: meson: cleanup defines
-> >    drivers: crypto: meson: process more than MAXDESCS descriptors
-> >    drivers: crypto: meson: avoid kzalloc in engine thread
-> >    drivers: crypto: meson: introduce hasher
-> >    drivers: crypto: meson: add support for AES-CTR
-> >    drivers: crypto: meson: use fallback for 192-bit keys
-> >    drivers: crypto: meson: add support for G12-series
-> >    drivers: crypto: meson: add support for AXG-series
-> >    drivers: crypto: meson: add support for A1-series
-> >    dt-bindings: crypto: meson: correct clk and remove second interrupt
-> >      line
-> >    dt-bindings: crypto: meson: support new SoC's
-> >    arch: arm64: dts: meson: gxl: correct crypto node definition
-> >    arch: arm64: dts: meson: a1: add crypto node
-> >    arch: arm64: dts: meson: s4: add crypto node
-> >    arch: arm64: dts: meson: g12: add crypto node
-> >    arch: arm64: dts: meson: axg: add crypto node
-> >=20
-> >   .../bindings/crypto/amlogic,gxl-crypto.yaml   |  32 +-
-> >   arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  14 +
-> >   arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   7 +
-> >   .../boot/dts/amlogic/meson-g12-common.dtsi    |   7 +
-> >   arch/arm64/boot/dts/amlogic/meson-gxl.dtsi    |   6 +-
-> >   arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |  13 +
-> >   drivers/crypto/amlogic/Makefile               |   2 +-
-> >   drivers/crypto/amlogic/amlogic-gxl-cipher.c   | 632 ++++++++++++-----=
--
-> >   drivers/crypto/amlogic/amlogic-gxl-core.c     | 292 ++++----
-> >   drivers/crypto/amlogic/amlogic-gxl-hasher.c   | 507 ++++++++++++++
-> >   drivers/crypto/amlogic/amlogic-gxl.h          | 118 +++-
-> >   11 files changed, 1269 insertions(+), 361 deletions(-)
-> >   create mode 100644 drivers/crypto/amlogic/amlogic-gxl-hasher.c
-> >=20
->=20
+Both are fine for me. ;)
 
---=20
-Thank you,
-Alexey=
+> 
 
