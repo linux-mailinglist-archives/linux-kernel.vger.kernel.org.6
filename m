@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-294975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843CE9594FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:48:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAE695950B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06E9C1F22809
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:48:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12D4EB25997
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA8F21C172;
-	Wed, 21 Aug 2024 06:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D625917E01E;
+	Wed, 21 Aug 2024 06:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLtyZU3U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kv7Cd3JK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BE42139B6;
-	Wed, 21 Aug 2024 06:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F0217E004;
+	Wed, 21 Aug 2024 06:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724222889; cv=none; b=GCyVQEUQzhHvFocGb4ifpE2x8tskfYVmZU1CIpbmwxm7uxZThD0BsI/GRC85C9RpjYqGkjJofTpuhgF5tKxA9SdcvPEbzswCdH5NMtYm5gut03duzv+P7MXkR49PsrAkMcEuceNVP/Y3CDrgNJhGlzeMEwBiQuXOWxW7fKwb8vQ=
+	t=1724222932; cv=none; b=nFl/f+S5YZVXSsTG0YXHucyirzg5SdioRWLMdHcmKCJeivMP4QJvbMrsAVGHZ61C+T2qwPiORQD48Pl/0+O3Gaob9JT+qncCjwchpdc4Ukyc0oqTFREnDOVkyVC5m6Sj/NKPmgLSiAtjqQbUBa+CyIPsc4n0LaVIii9Cs98isSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724222889; c=relaxed/simple;
-	bh=KnyKptH5XM79KZ+C1EQSJLGrGtVSPFQ5nOZWireWwZM=;
+	s=arc-20240116; t=1724222932; c=relaxed/simple;
+	bh=0/KRyANKUF8eJpm9kpyavQgXgai9aYL+fCertJIqr7A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OoCQwZqcfaciFcmm4kbaqWseP8yWDMUQGf1Z3bJEafpjY4jmlFvzBR5WQl6xDS90kprUhh9fnRg/4Y1hm3hpLKqC5Qm5GG/DZoJfVDYwbb7QcbOqvsbHyL6o+R1hu7CsLGfAo7Jl+F+9Mscd4EkqE9/EpG5Kl41YfF1hnYDjjZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLtyZU3U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C706DC32782;
-	Wed, 21 Aug 2024 06:48:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=dUm0AqTNK8X6Zixs4F/S+yg1s328xRBxRO9YhAsiWafw59/xT544u6HHR4uGZLCmROougd8mrcY2DmhCvWABbiFRENc8TBbQmnHMg9V2UwbRIcNVSZBnU9hqDsgbuJCAmAteOwnBJ7kdMISm/GO5DvsQG2ZwkApa5uyf+nJ+7HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kv7Cd3JK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C5CEC4AF0C;
+	Wed, 21 Aug 2024 06:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724222888;
-	bh=KnyKptH5XM79KZ+C1EQSJLGrGtVSPFQ5nOZWireWwZM=;
+	s=k20201202; t=1724222931;
+	bh=0/KRyANKUF8eJpm9kpyavQgXgai9aYL+fCertJIqr7A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OLtyZU3UnOXLPgnRcroAuwGR1i4uYqC0wBm2yr/fBIbtThb7bhbFQp8uk1gPM8mcb
-	 hZqZ7sZSyJZSU3gFM0tI1SaMJh0aeU5EiHT0KOKdiGh5jzweOfjWt1spclCLdQ9tua
-	 es7sneCvw4vGSjckr2hGnAsezRbz3TFvcaPC3ssWO56zYWl2+aXbI+/iQ5BpdRuGry
-	 KYdV5EETL1MvHC0qPAwRbUhTyJjYENU8enUhnFqk0N15GN04BkaNswLe24Dp0xCzL/
-	 o3R/fWspusNYk/PtOUvY50SCCg+V3bXrJuIHAOzaR3BtJPVijCCn/wtTLQc+BUOMLo
-	 O2+Wmx+O5YjsA==
-Message-ID: <11ca366c-7788-41d0-bf47-4f31c1ee2626@kernel.org>
-Date: Wed, 21 Aug 2024 08:48:00 +0200
+	b=Kv7Cd3JKq6c1V2apdJ0WfzxUgnZumresEw8/aSUIg+xFI93gQXKxOZ9S+DJEq43N7
+	 jaVwPmoJRg8XfUCbPcJl92NCdBFQgqqKbPOEiL8d4MUJmT/XnNIs5urKXi6YHOgra9
+	 fXbjt7CsadCL/9eRHTNjp11lP36meTb6dqiker5J0QGuj+vg5vbdPVGbpTx2GiB1ed
+	 G4EU8GN/4/s3h9TF5AdUXSQaPUMHrAII3VFGmxpVhmHufegOsfue/c8uSsjq6wui4y
+	 f1t/KJ+j5SsaYmCROzj9rsSiGvXE8solwfXJkHhVKh3ZU6bth/vRh/jKfw5YjT6n2Y
+	 HQELQN2gc8bqA==
+Message-ID: <c8ed627e-42fd-4cd9-b9e4-a97177ef3ef0@kernel.org>
+Date: Wed, 21 Aug 2024 08:48:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,31 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
- strings for eud
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Melody Olvera <quic_molvera@quicinc.com>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
- Elson Serrao <quic_eserrao@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-2-quic_molvera@quicinc.com>
- <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
- <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
- <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
- <2b118a49-2229-4346-ab21-0aa5377d7a4e@kernel.org>
- <8bb412f8-4fe1-40ca-8414-bb77c66899ae@quicinc.com>
- <0eca6755-a2ec-404f-b98c-ee6c9f6fb55f@gmail.com>
- <f8caa9aa-7fc4-4d42-9011-21ca40eb106d@quicinc.com>
- <81ec34a6-8627-4a59-8fc7-87eee4625b2d@quicinc.com>
- <e663d19a-0ad1-4dfc-903b-ff2012796d84@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: display: mediatek: dpi: Add power
+ domains
+To: Rohit Agarwal <rohiagar@chromium.org>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, ck.hu@mediatek.com,
+ jitao.shi@mediatek.com, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240820080659.2136906-1-rohiagar@chromium.org>
+ <20240820080659.2136906-2-rohiagar@chromium.org>
+ <b5wtwpkwgg3tbwya6zllmymaaf2qvnyfbspkynr2ruzncej2ql@qloslxfinvos>
+ <1899ea6f-b734-4748-aa00-d7049d553994@chromium.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -119,41 +109,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <e663d19a-0ad1-4dfc-903b-ff2012796d84@kernel.org>
+In-Reply-To: <1899ea6f-b734-4748-aa00-d7049d553994@chromium.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/08/2024 21:19, Konrad Dybcio wrote:
-> On 20.08.2024 8:21 PM, Melody Olvera wrote:
->>
->>
->> On 8/14/2024 3:09 PM, Trilok Soni wrote:
->>> On 8/14/2024 1:25 PM, Konrad Dybcio wrote:
->>>>> Unfortunately, no. We considered several options, but none guarantee that we will avoid
->>>>> a crash if we try non-securely. The secure call also won't give a specific error if it fails either
->>>>> (for security reasons) so we can't know if a secure access failed because it's supposed to be
->>>>> accessed non-securely or for another reason; hence this approach. If there's
->>>>> another way to achieve this functionality that might be better, I'm all ears.
->>>> Can we read some fuse values and decide based on that?
->>> In most of the cases, these fuse values are not allowed to be read
->>> from the Linux, so that will be another problem. Melody can check
->>> if there is any fuse values around here and possible to read them
->>> through Linux.
->>>
->>
->> I double-checked, but there really isn't any kind of fuse or anything we can read to determine
->> how we need to access these registers. I remembered checking before authoring these patches,
->> but I wanted to just make sure before responding here.
+On 20/08/2024 14:18, Rohit Agarwal wrote:
 > 
-> Well in that case I suppose a new compatible / property (please voice
-> your opinion Krzysztof) is necessary after all.. Thanks for making sure
+> On 20/08/24 4:40 PM, Krzysztof Kozlowski wrote:
+>> On Tue, Aug 20, 2024 at 08:06:57AM +0000, Rohit Agarwal wrote:
+>>> Add power domain binding to the mediatek DPI controller.
+>> Why? Who needs it? Why all devices suddenly have it (IOW, why is it not
+>> constrained anyhow per variant)?
+>>
+> Ok, my intent was to introduce only for this particular variant.
+> Let me constrain it to this particular compatible.
 
-You mean the "secure" part? Sure, I don't object that, although
-(repeating as usual) I am not in favor of it in the first place, be
-cause you should use only SoC compatibles.
-
-The objection here was for dropping specific front compatible, without
-any relevant explanation.
+Then add property in top-level properties and in if:then: disallow it
+for older devices.
 
 Best regards,
 Krzysztof
