@@ -1,80 +1,59 @@
-Return-Path: <linux-kernel+bounces-295940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA7A95A34A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:58:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8C995A34E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A271F22F72
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:58:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8158C1C2229D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C56D1AF4E0;
-	Wed, 21 Aug 2024 16:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7422E1B251D;
+	Wed, 21 Aug 2024 16:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DhKKFw8q"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtHVJU0H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A001B252B
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BC919995D;
+	Wed, 21 Aug 2024 16:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724259457; cv=none; b=azWfFa6nRqT29ZuQTVWgk+zvwz2lp+uCjgnt80bSyeb8GvM9jVxZ095+d1HiI+TAedonABHqYvEKeINqQjHlqbJjsalW2yzapF2y687HZ7sjqUzYeJtkGHAfxuBH/H0gtEyWTLsujpnq+86kwsGh6ADBKdLyptLT5LRDyXGl700=
+	t=1724259485; cv=none; b=ehqPIcA10sdYvxJwvt20OqYahoV/DuBZAXJohxq4lvrUoRcKNWxDviMGtalVRi7OdbDeq8IVjzXjZIbFtaW9CO0wVyVTa5eDLquLpsICxiUq/S9Z9SA0qGtZoYgPeGO2TJMt72R3eCXwz+e7FPfsTGBJ3l03pu2zdEtFTQaCxIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724259457; c=relaxed/simple;
-	bh=8dxUiMbarxNSVN10VLkH2aAuHmJ9HwiMdn+T4yhOlRM=;
+	s=arc-20240116; t=1724259485; c=relaxed/simple;
+	bh=n+AxqqbskxJ534zPXzBpn7AEArHbo5EMD8JRMZ7PwWQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EU+e0HOVCFj45hdDv25oZbw6aOKlEO6D0txEjfdKAXmz7Pj+2XpcysU5soGvfeN9Xf9PMnnt/akwkN3sFG5QD85veoLiK77DZT7oMumS+bD9AmuLcSqNsIMSUU3F7ar0iU2Aqch2k7LWeGe6kzWY4iX3W14OXWAqgIUmKOF9jO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DhKKFw8q; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso10491586a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:57:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724259454; x=1724864254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8dxUiMbarxNSVN10VLkH2aAuHmJ9HwiMdn+T4yhOlRM=;
-        b=DhKKFw8qnTpe0bh+wNzz8+H4snJMVnRlKYJhpPPu0pMpkz8K4S3JlRm0ztgJ/gr5/X
-         NR9ODTD6HzO89tE7SVNI2D9DxxaClAPEA5LQ1a5IPwVit5xIDHEKDoUJqbbJxu/hOhBy
-         nyaHo1BePKC4l8DeYuel2T4R552PIWFGaB4YtapYD0l1R436cyM+dB6dxgqRth0BnXLY
-         enZnLubFCksWt0eEQyVM/HkYMDMezlj5ZKTjiwbYo2RIcx9QtiHWdbZOHSe9LUTlD1yO
-         0HQugxCMXXedtIskinzdYk5EAhrYUOvcbBt8ayRYYY6bqU0P6tvjTubvLJUAlOHUk9Av
-         0WFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724259454; x=1724864254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8dxUiMbarxNSVN10VLkH2aAuHmJ9HwiMdn+T4yhOlRM=;
-        b=FxOyJmHCqNFSJlWMgTm1ysT8GiLoZxFD3/rO6QCtEzJnQYPeoE8bb37omokUQgflMW
-         PLYMTbajmIMyV3hZVQpOHZ2n0OZBlMETgR6OAWasSZ2gwdghYm81xBkY4Bt1IRPg+v24
-         QuLVKILwzfS0L1kLBUPSoldhpb4AoUwyBrAUfqfde2gL+//dpnzWEC4yxjLVE73fds1o
-         YPWVh++c0YcFrwJTo/ce1I8xoW18dzs8mb4Dy8oJKb8BQaGVd3d2+zhlRL3WMD2efado
-         E/CT3dZ5cgJb7l+id5k4cpCM3V8PED9dRx/j4qNq9QPPVFStNB00wqAB2XQshVNyvqsA
-         1B/g==
-X-Forwarded-Encrypted: i=1; AJvYcCX4sBgBUCbvZMcUk67Rbmyfn4nptX/IJOG2HMr8BgrVNwhG4Pao9R84iCWDXmq53qeEps/eeeBROYeVDzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnfNS70la1GHlRhZJ66WZdynCc2dLDeWIEiFU2P3HrBAw1N2s0
-	YtNpFxYbnkXWHX/HjGNxcWFglXf3JdPC719Iu52SA0D65kzyxONdjZpm0hSYdFvbj1I+WPN42ni
-	t
-X-Google-Smtp-Source: AGHT+IEvEJ+EPt++NBzDRQ1STaWyB4ha5i5KFCyltbx7A+Qakg/N+wGXZU6wDYDHjsP0+lCshxd56g==
-X-Received: by 2002:a17:907:c7da:b0:a6f:1036:98cf with SMTP id a640c23a62f3a-a866f70379dmr227543066b.54.1724259454196;
-        Wed, 21 Aug 2024 09:57:34 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a867babbe22sm92810466b.183.2024.08.21.09.57.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 09:57:34 -0700 (PDT)
-Date: Wed, 21 Aug 2024 19:57:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sayyad Abid <sayyad.abid16@gmail.com>
-Cc: philipp.g.hortmann@gmail.com, gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH]The patch fixes the following warning generated by
- running the
-Message-ID: <df837873-f422-462b-8a88-25c02d4f8cf4@stanley.mountain>
-References: <20240821161539.541062-1-sayyad.abid16@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubzV3ytwTNyDbnaG08v6GLSN4lKTXAT1LyBiA/lE/mOlOC8nmvOiHizvQiGLcrs/L2ApfIGPyjoeNPurayf385zx5j01mvlTJEh8SDh0InkHFPMcREzuzPdM7F7vt4D2dkeRyUg2kxTXAzw0i2+H9sVol+zYil8qFXKYx7i1JR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VtHVJU0H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1168C32781;
+	Wed, 21 Aug 2024 16:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724259484;
+	bh=n+AxqqbskxJ534zPXzBpn7AEArHbo5EMD8JRMZ7PwWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VtHVJU0HB8FbQJF5vXuxlvJcU15vi1xoi0eCzDwJk4Pv4rq4jBAtmRnUOL7RTBb8A
+	 8mclzmfYSR/ZofYGHaQQmbRN37suKKxj5CFNuldjmPB8byFkHRLEOy5hllTDAI45GE
+	 qb4LucFK7xIoCXRsqJF4vmB/SToSsj/THuFRpvTvsdJTvfLf51K8kCq9maQUyTzmnZ
+	 1inmn1KVtmEhrkXEDpWdAzNLnVY57CruInPa+uDrTElD9KuuTKWcgEE4QbabUHTqhB
+	 N4MWk2KELJaVzB5luysOUKL/4/wrs+GFF6jekAmxWV/qbK977mTbfLHuMUNAlqf4qB
+	 T8nZN2HIerk8Q==
+Date: Wed, 21 Aug 2024 09:58:03 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
+	hch@lst.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	kbusch@kernel.org
+Subject: Re: [PATCH v5 3/7] fs: iomap: Atomic write support
+Message-ID: <20240821165803.GI865349@frogsfrogsfrogs>
+References: <20240817094800.776408-1-john.g.garry@oracle.com>
+ <20240817094800.776408-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,11 +62,326 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240821161539.541062-1-sayyad.abid16@gmail.com>
+In-Reply-To: <20240817094800.776408-4-john.g.garry@oracle.com>
 
-Also the subject is not in the correct format.
+On Sat, Aug 17, 2024 at 09:47:56AM +0000, John Garry wrote:
+> Support direct I/O atomic writes by producing a single bio with REQ_ATOMIC
+> flag set.
+> 
+> We rely on the FS to guarantee extent alignment, such that an atomic write
+> should never straddle two or more extents. The FS should also check for
+> validity of an atomic write length/alignment.
+> 
+> For each iter, data is appended to the single bio. That bio is allocated
+> on the first iter.
+> 
+> If that total bio data does not match the expected total, then error and
+> do not submit the bio as we cannot tolerate a partial write.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/iomap/direct-io.c  | 122 +++++++++++++++++++++++++++++++++++-------
+>  fs/iomap/trace.h      |   3 +-
+>  include/linux/iomap.h |   1 +
+>  3 files changed, 106 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f3b43d223a46..72f28d53ab03 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -37,6 +37,7 @@ struct iomap_dio {
+>  	int			error;
+>  	size_t			done_before;
+>  	bool			wait_for_completion;
+> +	struct bio		*atomic_bio;
+>  
+>  	union {
+>  		/* used during submission and for synchronous completion: */
+> @@ -61,6 +62,24 @@ static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
+>  	return bio_alloc(iter->iomap.bdev, nr_vecs, opf, GFP_KERNEL);
+>  }
+>  
+> +static struct bio *iomap_dio_alloc_bio_data(const struct iomap_iter *iter,
+> +		struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf,
+> +		loff_t pos)
+> +{
+> +	struct bio *bio = iomap_dio_alloc_bio(iter, dio, nr_vecs, opf);
+> +	struct inode *inode = iter->inode;
+> +
+> +	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+> +				  GFP_KERNEL);
+> +	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
+> +	bio->bi_write_hint = inode->i_write_hint;
+> +	bio->bi_ioprio = dio->iocb->ki_ioprio;
+> +	bio->bi_private = dio;
+> +	bio->bi_end_io = iomap_dio_bio_end_io;
+> +
+> +	return bio;
+> +}
+> +
+>  static void iomap_dio_submit_bio(const struct iomap_iter *iter,
+>  		struct iomap_dio *dio, struct bio *bio, loff_t pos)
+>  {
+> @@ -256,7 +275,7 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua)
+> +		const struct iomap *iomap, bool use_fua, bool atomic)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+>  
+> @@ -268,6 +287,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +	if (atomic)
+> +		opflags |= REQ_ATOMIC;
+>  
+>  	return opflags;
+>  }
+> @@ -275,21 +296,23 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		struct iomap_dio *dio)
+>  {
+> +	bool atomic = dio->iocb->ki_flags & IOCB_ATOMIC;
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> +	struct iov_iter *i = dio->submit.iter;
 
-regards,
-dan carpenter
+If you're going to pull this out into a convenience variable, please do
+that as a separate patch so that the actual untorn write additions don't
+get mixed in.
 
+>  	loff_t length = iomap_length(iter);
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+>  	bool need_zeroout = false;
+>  	bool use_fua = false;
+> -	int nr_pages, ret = 0;
+> +	int nr_pages, orig_nr_pages, ret = 0;
+>  	size_t copied = 0;
+>  	size_t orig_count;
+>  
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+> -	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+> +	    !bdev_iter_is_aligned(iomap->bdev, i))
+>  		return -EINVAL;
+>  
+>  	if (iomap->type == IOMAP_UNWRITTEN) {
+> @@ -322,15 +345,35 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  			dio->flags &= ~IOMAP_DIO_CALLER_COMP;
+>  	}
+>  
+> +	if (dio->atomic_bio) {
+> +		/*
+> +		 * These should not fail, but check just in case.
+> +		 * Caller takes care of freeing the bio.
+> +		 */
+> +		if (iter->iomap.bdev != dio->atomic_bio->bi_bdev) {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		if (dio->atomic_bio->bi_iter.bi_sector +
+> +		    (dio->atomic_bio->bi_iter.bi_size >> SECTOR_SHIFT) !=
+
+Hmm, so I guess you stash an untorn write bio in the iomap_dio so that
+multiple iomap_dio_bio_iter can try to combine a mixed mapping into a
+single contiguous untorn write that can be completed all at once?
+I suppose that works as long as the iomap->type is the same across all
+the _iter calls, but I think that needs explicit checking here.
+
+> +			iomap_sector(iomap, pos)) {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +	} else if (atomic) {
+> +		orig_nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
+> +	}
+> +
+>  	/*
+>  	 * Save the original count and trim the iter to just the extent we
+>  	 * are operating on right now.  The iter will be re-expanded once
+>  	 * we are done.
+>  	 */
+> -	orig_count = iov_iter_count(dio->submit.iter);
+> -	iov_iter_truncate(dio->submit.iter, length);
+> +	orig_count = iov_iter_count(i);
+> +	iov_iter_truncate(i, length);
+>  
+> -	if (!iov_iter_count(dio->submit.iter))
+> +	if (!iov_iter_count(i))
+>  		goto out;
+>  
+>  	/*
+> @@ -365,27 +408,46 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	 * can set up the page vector appropriately for a ZONE_APPEND
+>  	 * operation.
+>  	 */
+> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
+> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
+> +
+> +	if (atomic) {
+> +		size_t orig_atomic_size;
+> +
+> +		if (!dio->atomic_bio) {
+> +			dio->atomic_bio = iomap_dio_alloc_bio_data(iter,
+> +					dio, orig_nr_pages, bio_opf, pos);
+> +		}
+> +		orig_atomic_size = dio->atomic_bio->bi_iter.bi_size;
+> +
+> +		/*
+> +		 * In case of error, caller takes care of freeing the bio. The
+> +		 * smallest size of atomic write is i_node size, so no need for
+
+What is "i_node size"?  Are you referring to i_blocksize?
+
+> +		 * tail zeroing out.
+> +		 */
+> +		ret = bio_iov_iter_get_pages(dio->atomic_bio, i);
+> +		if (!ret) {
+> +			copied = dio->atomic_bio->bi_iter.bi_size -
+> +				orig_atomic_size;
+> +		}
+>  
+> -	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+> +		dio->size += copied;
+> +		goto out;
+> +	}
+> +
+> +	nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
+>  	do {
+>  		size_t n;
+>  		if (dio->error) {
+> -			iov_iter_revert(dio->submit.iter, copied);
+> +			iov_iter_revert(i, copied);
+>  			copied = ret = 0;
+>  			goto out;
+>  		}
+>  
+> -		bio = iomap_dio_alloc_bio(iter, dio, nr_pages, bio_opf);
+> +		bio = iomap_dio_alloc_bio_data(iter, dio, nr_pages, bio_opf, pos);
+>  		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+>  					  GFP_KERNEL);
+> -		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+> -		bio->bi_write_hint = inode->i_write_hint;
+> -		bio->bi_ioprio = dio->iocb->ki_ioprio;
+> -		bio->bi_private = dio;
+> -		bio->bi_end_io = iomap_dio_bio_end_io;
+
+I see two places (here and iomap_dio_zero) that allocate a bio and
+perform some initialization of it.  Can you move the common pieces to
+iomap_dio_alloc_bio instead of adding a iomap_dio_alloc_bio_data
+variant, and move all that to a separate cleanup patch?
+
+> -		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
+> +		ret = bio_iov_iter_get_pages(bio, i);
+>  		if (unlikely(ret)) {
+>  			/*
+>  			 * We have to stop part way through an IO. We must fall
+> @@ -408,8 +470,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		dio->size += n;
+>  		copied += n;
+>  
+> -		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
+> -						 BIO_MAX_VECS);
+> +		nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
+>  		/*
+>  		 * We can only poll for single bio I/Os.
+>  		 */
+> @@ -435,7 +496,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	}
+>  out:
+>  	/* Undo iter limitation to current extent */
+> -	iov_iter_reexpand(dio->submit.iter, orig_count - copied);
+> +	iov_iter_reexpand(i, orig_count - copied);
+>  	if (copied)
+>  		return copied;
+>  	return ret;
+> @@ -555,6 +616,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	struct blk_plug plug;
+>  	struct iomap_dio *dio;
+>  	loff_t ret = 0;
+> +	size_t orig_count = iov_iter_count(iter);
+>  
+>  	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
+>  
+> @@ -580,6 +642,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+>  
+> +	if (iocb->ki_flags & IOCB_ATOMIC) {
+> +		if (bio_iov_vecs_to_alloc(iter, INT_MAX) > BIO_MAX_VECS)
+> +			return ERR_PTR(-EINVAL);
+> +		iomi.flags |= IOMAP_ATOMIC;
+> +	}
+> +	dio->atomic_bio = NULL;
+> +
+>  	if (iov_iter_rw(iter) == READ) {
+>  		/* reads can always complete inline */
+>  		dio->flags |= IOMAP_DIO_INLINE_COMP;
+> @@ -665,6 +734,21 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		iocb->ki_flags &= ~IOCB_HIPRI;
+>  	}
+>  
+> +	if (iocb->ki_flags & IOCB_ATOMIC) {
+> +		if (ret >= 0) {
+> +			if (dio->size == orig_count) {
+> +				iomap_dio_submit_bio(&iomi, dio,
+> +					dio->atomic_bio, iocb->ki_pos);
+
+Does this need to do task_io_account_write like regular direct writes
+do?
+
+> +			} else {
+> +				if (dio->atomic_bio)
+> +					bio_put(dio->atomic_bio);
+> +				ret = -EINVAL;
+> +			}
+> +		} else if (dio->atomic_bio) {
+> +			bio_put(dio->atomic_bio);
+
+This ought to null out dio->atomic_bio to prevent accidental UAF.
+
+--D
+
+> +		}
+> +	}
+> +
+>  	blk_finish_plug(&plug);
+>  
+>  	/*
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 0a991c4ce87d..4118a42cdab0 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -98,7 +98,8 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_REPORT,		"REPORT" }, \
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+> -	{ IOMAP_NOWAIT,		"NOWAIT" }
+> +	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> +	{ IOMAP_ATOMIC,		"ATOMIC" }
+>  
+>  #define IOMAP_F_FLAGS_STRINGS \
+>  	{ IOMAP_F_NEW,		"NEW" }, \
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 6fc1c858013d..8fd949442262 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -178,6 +178,7 @@ struct iomap_folio_ops {
+>  #else
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+> +#define IOMAP_ATOMIC		(1 << 9)
+>  
+>  struct iomap_ops {
+>  	/*
+> -- 
+> 2.31.1
+> 
+> 
 
