@@ -1,163 +1,109 @@
-Return-Path: <linux-kernel+bounces-296155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E2895A657
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:13:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95AAF95A659
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E117D1C2232A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:13:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50927285244
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433C0170A37;
-	Wed, 21 Aug 2024 21:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919DF170A3F;
+	Wed, 21 Aug 2024 21:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2XeSoPW"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPBYXzu+"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081FF16EB5F
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E186213A3E8;
+	Wed, 21 Aug 2024 21:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724274800; cv=none; b=nRN77TGhloxU79069cgz5EqksERDdBQmbjs6X5SLDVbaC8XD1GFItHXG6CtHr1c+Fy29fawcEbDNXGdHO6gMnjLGTadumK2gfa+EQ4Ses9z6Y8fvyrDC8exv1cCVp5gvcl13hY5T8GOByk/2iy+eBDtHXG1RydWO+LrgVxPK1Wc=
+	t=1724274858; cv=none; b=g/izj0T37rbdQxyVETO0BUY/+N2cYTGGTCLlYkhIdGMOJxdDvmZaOAvGIIk6wqDNA1bwe1pfshpRKM6L+fI44td1WkaogrEcXKIc5pHUK9uq0RHpIEAqUW76TgzELV2+QnDA72egkKgTJ4bkPWGP7ajDZ8g2hpjFRVffZ+webvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724274800; c=relaxed/simple;
-	bh=hPE8e0nDJ3vjJizX1yPE9sPDn+EHd9HtNgoU+Ab90bc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lWyLjxoyfZgSiEWDoIz/qOyqauzzMO4aG9KKnCBG+TPVv7d7iYaloDpr53FFxGnEi8IPi2lNQPW3czb1knqIXhl/OldxS+bHYovoX61bTg/s+4UxtaeGF9sIHpuCLm9x7JabuKg6zszEorKUbpu1CfZah4wzKa/6RUD3GUny18c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2XeSoPW; arc=none smtp.client-ip=209.85.222.46
+	s=arc-20240116; t=1724274858; c=relaxed/simple;
+	bh=9wLXvgVnBYA3Mp0u0f4UphPj9kKKVg7PojsAsngy374=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=otLNQ62dY4I/rImE3oZWwTKtGlSkhymn+mjHXJSpCiv7Swfr1NnGOiR0AL0rSH5T2VmI8cwZ2dFCYUFGUHgxrTsbUW1Lqsn3CJd0zFq0SSf2xo/L0c02BxR3JAhIGGWP561kqPGd8xhhggRDrRXk8baJStCQevPO18eZzTlYqY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPBYXzu+; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-842fe7187b3so46183241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:13:18 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-533488ffaf7so203778e87.0;
+        Wed, 21 Aug 2024 14:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724274798; x=1724879598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m2O1JoDxU9kDe9y5+KIXDvq6QJWLz1iNgPtLbdhgykc=;
-        b=O2XeSoPW9Vmr4fSOkmPfp7WRtb3vztz5C3fk6tHbl09KoMvztTUcFayb8gPBjOlA6T
-         2cq9ZFlRtiWGprFzDdlgMj2Lnxn5VXLSa1J6kKG9bnkM0c9DV0OUO07cOnTCsLlHo/Ex
-         CNqQAbTaOUCHbFGcDJhfCeW8kfbz0QGz9GnG4MSUWvJz4mxvEAjKCGZ7K9w7Zf5uT6hr
-         Pyzi/zNFD/wrwdc4H32no0tb6VOFsxBzcSlVhWoPAFQgxY7VCqrmxTNwWEtm0yZq31Dj
-         hLL/opOEhnhHPVIFby9+6J+atiMT2lLhO93v0ZPYUwT+Kh4NSXZmfyBjOnbgPjlFF00Q
-         yczg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724274798; x=1724879598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=gmail.com; s=20230601; t=1724274855; x=1724879655; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m2O1JoDxU9kDe9y5+KIXDvq6QJWLz1iNgPtLbdhgykc=;
-        b=HsOLbI3n3E371copPISN0/tKwju+rmGjQ1NFnpRkBh8Ou1eS3yQMN28BK6xJ/mVNyM
-         d7tyQ9GdnkocLO5pDw6XHo4xxnubFKOyCBpP02LwHHUauC9s2TeP38EXZdWmWU15FjHf
-         xGcrkKNtMSottqrWEReGv3o9LLf2ILxRwNoplRrzNsjbUmbVh9WSdam96aWFWVWWYpqM
-         pxKVpK49II465XccbkjIbBhwPr92k13x0+G5joEOl6ydaKtHp9xAZiDBiT5LIlvsoqaZ
-         HXxrHsVSLGC8De7QyUV1sVUm72SWYkt0wF3VFNlN5U1NHQ6+IPiIPL78q3xacYbl/s+8
-         TyzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfDkl2/EDoZRRiECqowwJJOHv9CzvGFs3Hytsxqv0LAWSzHx7tHaUOr34lIy5NoO8IW38UpqN09VFK16Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJmdeZrkVC4ElXCuYgayFpqYJ+2RtiR8drleG2EkF1DCcuOrg4
-	qIu9GXPy8WxZjf3WlUkWpqphSxzr+2A4AaqYz3SRVFzHlJ4mXxj97/MbJPkIy1tHdi9XSpR/MDC
-	ZjFU645BtUSA3ueRvHBUsKPwVgvs=
-X-Google-Smtp-Source: AGHT+IH1ZeFh/1Y3kn9DHRZ43+4kdmu5+2f/xLgaBgzi5/jsg9ZnudHuJB5WU+nuIc6BsfXEGG56PqGfzMBkJR8ie7s=
-X-Received: by 2002:a05:6122:4698:b0:4fc:e713:6572 with SMTP id
- 71dfb90a1353d-4fcf1b98922mr5165569e0c.11.1724274797848; Wed, 21 Aug 2024
- 14:13:17 -0700 (PDT)
+        bh=QooDqJRC0GZshqLk0M/j0h7f/ulZAlj1gu5iEd0f5RI=;
+        b=OPBYXzu+23+PtgsXiX4+os9BTxzZCFkKcBaHch1EAwKYrrOoOY3MKFXnnhVF9oQxoX
+         P7DhFARAITrIEQOgoE0HV8qH5pby9CxsKCQGZXMuKrcRXks2s620ObFNZJ8q+lzs1cPZ
+         zOkACTxt5Wz1hOppopP/gJf9YOYtUkAQlIEY2oP1CjnvRElCCsVubTKozE9Rq6f1qQCs
+         DNw8SIBDot4GltdmB2u834/Q/wk3U/Uth5TWIS3awrO2Z4Y2gqVof1rdddUlPHXT5TGV
+         gBUcI1Mer7QMB2l7V4olm74nKHbP0ZXj8Ip0EkM724CP9u2XRu5IovG/ERh8IKqq/d8r
+         ilNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724274855; x=1724879655;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QooDqJRC0GZshqLk0M/j0h7f/ulZAlj1gu5iEd0f5RI=;
+        b=W+noxzUqglIWi0PlZSpRRvU0Fsa9TMAFZvHeb5HNivmMxXTfSve9ei3A8wvDIcMvqJ
+         yvg1h1HyQ0BQd+N/4b37gH9F+BX4AHww6Jwd9id+XdzG50+qSB1+xZSxXbIY7itgn5rJ
+         UGYwOx7NTgtJFPUm4OTh+1BYzBkpPIymya2uAYMN2snGmB0Ipkl4xgpynVAu6ZHixG0e
+         Yvju2obFxsdrOQp/vP4ZVfFCcwW1lbEEFE8aySpTZCrTg7o22R+yq4Q/sDLex7aS2B9k
+         lYtJNIkyScSWWH7u6PEcAcUwW54SZyOGkmGDxwQ0sS8KOqlml9LypSC536aepgk6CcuP
+         6U5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUsvJGbufIy46nryVdsA3BWvUjQQiz8zafkWH7Uc3kLYsAwyHzvXoNoI6oQ86PeUSVe+LB7lIdYtU8=@vger.kernel.org, AJvYcCVu14nlhs8JKTdAXWDXt0Tr8DBmD9EmmVnu990mv2pxpTZjg/ERkDh+pQodF+q5ejMj8DYbQ0nwyokbbI5g@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo9pyk4Na9jkTdZdB22eZV3NnNARZDVdHFCNgsGc0WibLFKZy0
+	10AX59Z0nY2FzoU37hexXhXD4/HwjwEJ9K51GkrfVJBUDCC2rT0+X/Ow8g==
+X-Google-Smtp-Source: AGHT+IH9hjfvv1bggZJwWg4QtFtjrRkHo+ftqZCKHTUhTarOgJz3RokmUaFChJ/IHjPxYMzkP4zsuw==
+X-Received: by 2002:a05:6512:1088:b0:52c:842b:c276 with SMTP id 2adb3069b0e04-533485fc7ebmr2423183e87.53.1724274854587;
+        Wed, 21 Aug 2024 14:14:14 -0700 (PDT)
+Received: from [192.168.1.105] ([31.173.81.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea88f27sm8048e87.256.2024.08.21.14.14.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 14:14:14 -0700 (PDT)
+Subject: Re: [PATCH v2] ata: pata_macio: Use WARN instead of BUG
+To: Michael Ellerman <mpe@ellerman.id.au>, cassel@kernel.org
+Cc: dlemoal@kernel.org, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, hch@lst.de,
+ linux-ppc@kolla.no, vidra@ufal.mff.cuni.cz
+References: <20240820030407.627785-1-mpe@ellerman.id.au>
+From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <6b2208d1-c18f-14d5-e6d0-acd5c82b4db1@gmail.com>
+Date: Thu, 22 Aug 2024 00:13:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
- <qim6ug5d3ibrn6mgrk7oybml7qatgw654y2t6wlc25pnpddr2i@yniwf64alx23>
-In-Reply-To: <qim6ug5d3ibrn6mgrk7oybml7qatgw654y2t6wlc25pnpddr2i@yniwf64alx23>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 22 Aug 2024 05:13:06 +0800
-Message-ID: <CAGsJ_4wgC+yaCYinv8FYm9RHJfT5wiFxHMn_WTGysdpiH0HS7g@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: hanchuanhua@oppo.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shy828301@gmail.com, surenb@google.com, 
-	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
-	ying.huang@intel.com, yosryahmed@google.com, hch@infradead.org, 
-	ryncsn@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240820030407.627785-1-mpe@ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 22, 2024 at 1:31=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Wed, Aug 21, 2024 at 03:45:40PM GMT, hanchuanhua@oppo.com wrote:
-> > From: Chuanhua Han <hanchuanhua@oppo.com>
-> >
-> >
-> > 3. With both mTHP swap-out and swap-in supported, we offer the option t=
-o enable
-> >    zsmalloc compression/decompression with larger granularity[2]. The u=
-pcoming
-> >    optimization in zsmalloc will significantly increase swap speed and =
-improve
-> >    compression efficiency. Tested by running 100 iterations of swapping=
- 100MiB
-> >    of anon memory, the swap speed improved dramatically:
-> >                 time consumption of swapin(ms)   time consumption of sw=
-apout(ms)
-> >      lz4 4k                  45274                    90540
-> >      lz4 64k                 22942                    55667
-> >      zstdn 4k                85035                    186585
-> >      zstdn 64k               46558                    118533
->
-> Are the above number with the patch series at [2] or without? Also can
-> you explain your experiment setup or how can someone reproduce these?
+On 8/20/24 6:04 AM, Michael Ellerman wrote:
 
-Hi Shakeel,
+> The overflow/underflow conditions in pata_macio_qc_prep() should never
+> happen. But if they do there's no need to kill the system entirely, a
+> WARN and failing the IO request should be sufficient and might allow the
+> system to keep running.
 
-The data was recorded after applying both this patch (swap-in mTHP) and
-patch [2] (compressing/decompressing mTHP instead of page). However,
-without the swap-in series, patch [2] becomes useless because:
+   WARN*() can kill your system with panic_on_warn -- Android is particularly
+fond of this kernel parameter but I guess it's not your case... :-)
+   Greg KH usually advices against using these macros. :-)
 
-If we have a large object, such as 16 pages in zsmalloc:
-do_swap_page will happen 16 times:
-1. decompress the whole large object and copy one page;
-2. decompress the whole large object and copy one page;
-3. decompress the whole large object and copy one page;
-....
-16.  decompress the whole large object and copy one page;
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[...]
 
-So, patchset [2] will actually degrade performance rather than
-enhance it if we don't have this swap-in series. This swap-in
-series is a prerequisite for the zsmalloc/zram series.
+   Please do CC me on the PATA driver patches! This one circumvented my review
+(again)... :-/
 
-We reproduced the data through the following simple steps:
-1. Collected anonymous pages from a running phone and saved them to a file.
-2. Used a small program to open and read the file into a mapped anonymous
-memory.
-3.  Do the belows in the small program:
-swapout_start_time
-madv_pageout()
-swapout_end_time
-
-swapin_start_time
-read_data()
-swapin_end_time
-
-We calculate the throughput of swapout and swapin using the difference betw=
-een
-end_time and start_time. Additionally, we record the memory usage of zram a=
-fter
-the swapout is complete.
-
->
-> > [2] https://lore.kernel.org/all/20240327214816.31191-1-21cnbao@gmail.co=
-m/
->
-
-Thanks
-Barry
+MBR, Sergey
 
