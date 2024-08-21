@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-295294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C0B959962
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:17:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3AE959968
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D1C283D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:17:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A6528453E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40AE208D3B;
-	Wed, 21 Aug 2024 09:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E648620975C;
+	Wed, 21 Aug 2024 09:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuOe9Ws+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MCrADFJy"
+Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0004E208D2F;
-	Wed, 21 Aug 2024 09:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1A8208D5E;
+	Wed, 21 Aug 2024 09:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233951; cv=none; b=QmcWMcVroCnioZhGj9RRYhzPldAnU5wFEr2I2HlJlroQbv5IwSm7OZvTeyns+YNEH0r7g2tYtSlvl7uEpkPppqDh8JWbx93z3NYyAiChUV4lEC2VRdCEuRgjKu/uk3tn/QespiFh5PGP/bfChahNWtPPpAwngGHxkZxTnwZ28gw=
+	t=1724233956; cv=none; b=H5Jwf98/JKxY23p2A1+NYr7TvS5NzpA7Jd4/XdMiVjMgXdeHSqihc0kDDpISQ58dPdQNxdq2fGLNnakYgXvR9Rc3mh+Rm96OkcrE5usQSeLAGxURMXTN8ThnuqqpAlvw0mzEV95bDJNqoQrGZ7KMa6U0qO0VkFqynD/BTyuyWrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233951; c=relaxed/simple;
-	bh=MDrfl3H9e1ODeZlqN50grJOC94gmFGIs9QCDQq2DFY4=;
+	s=arc-20240116; t=1724233956; c=relaxed/simple;
+	bh=efaMJisE1csBNHMgzNlrdBMW6I1j3sElVPdv8eM7GVU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lIV9mkTgAqIqmV8x2K9lok3xAdsBD3OuwVqbtClBbQunehvIqA3ejJrfAR5ZxDWotKFfF9NAKD1O/eHYMZSddt7v76EgT3W4ZX3Gtguo4Nuv3tIkoUBjTMQuEFm2LAUNlxV2ytsZ1ysAwGhf2CEB5aUZVNgwWEEqZuhLXalheBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuOe9Ws+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA9B0C4AF0C;
-	Wed, 21 Aug 2024 09:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724233949;
-	bh=MDrfl3H9e1ODeZlqN50grJOC94gmFGIs9QCDQq2DFY4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SuOe9Ws+WzLcc1ATuLmvJu8U7V7a/I4s1hY3+58L34p3kA3/7wc9w5JrG1CNTw0Yn
-	 EGmrTa8jrs8DA/0D7xrjoga1ftNhsKvVlLPwHEoemecx+WXxKH21+hyYPSe75+XdNx
-	 5Gb6lVs29dmlfXd8CgLCvLzX4KZJgLeQvxJIPNA+9R9/kcxA6cGCdBVVfDOnJG2IAB
-	 fkI+NoXo+M+8wt9rmIZ+AmaCKwwqPePC8e0q15eovPA/xeALxSKyPEYm+ZqjC5mkuG
-	 JbmCU+UbO5DmCgq+BFNktCPsFU51AUMEFA0qVLJ3Lt0FR4iJSdqucy/QtEEHT/s/BS
-	 xxz4lnLj6qL3Q==
-Message-ID: <76a5ce0c-f9e0-43de-9fbd-786217dd4cbc@kernel.org>
-Date: Wed, 21 Aug 2024 11:52:22 +0200
+	 In-Reply-To:Content-Type; b=f3uIoSV79C5riQ6Yr/dhzmXnC0SPtsEY6i6CYZEgFub4oqAzvFEA/B6tWIj6ah4pByt5T6qBOKYVxMWOptPltvC+OKR5maa0QAVQTPu2AOvlAUWp8JinMXoBrBCO3lNqv3wQBvOzwjbBJ4Y96Dlssq4CjO1m8oSFIjmROY9pLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MCrADFJy; arc=none smtp.client-ip=193.252.23.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id gi0usBwoUzHoQgi0vsJnJd; Wed, 21 Aug 2024 11:52:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724233945;
+	bh=9GZn7f7pGGsAOSSuARBG8S3X2+G0DybjoUxpTfZIbVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=MCrADFJyguIsaQaxMtM57PNk0PcldvYVgJ4NQrkqd0Dx+12Q49XcGpO/fRMXQCj6N
+	 4GRAAGC8/cAbwsbOMY0j4HTZHtWZosB2KHe2YEdnaBGeS0Mj+Vr9E9tmxBjfrMRssW
+	 yV2Mqw+smCnEvDgStJZ8kv57W4caR/IGK39G4oDEznN+AoOeRHCu6qN2f3xg/AM0c3
+	 /aCs5c+GSjlCkXI2Wc2G2yLJzBNtsgcsynnY1sPZdNIQqWn/C4Io5MQcvhk8ZfpJfb
+	 qC3h6UCmQu+lD1CLUFCEC/+BRfDFzFYTedbbp0Gjp2ZCbsmqAYTbgngOGo753IssRa
+	 ZZ8M5p+ZljgGg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 21 Aug 2024 11:52:25 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <78b667fa-8e54-4023-9187-4ecb999d3c01@wanadoo.fr>
+Date: Wed, 21 Aug 2024 11:52:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,75 +56,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 08/29] ARM: dts: aspeed: yosemite4: Remove space for
- adm1272 compatible
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20240821094043.4126132-1-Delphine_CC_Chiu@wiwynn.com>
- <20240821094043.4126132-9-Delphine_CC_Chiu@wiwynn.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240821094043.4126132-9-Delphine_CC_Chiu@wiwynn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Stuart Hayhurst <stuart.a.hayhurst@gmail.com>, linux-input@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
+ <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de>
+ <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com>
+ <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
+ <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
+ <f0aa2ca0-6256-48e4-8d2a-dfd5da072ad4@web.de>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f0aa2ca0-6256-48e4-8d2a-dfd5da072ad4@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 21/08/2024 11:40, Delphine CC Chiu wrote:
-> Remove space for adm1272 compatible
+Le 21/08/2024 à 09:26, Markus Elfring a écrit :
+>>> This was the case for a while.
+>>>
+>>> Increasing applications of scope-based resource management provide
+>>> further opportunities for smaller scopes according to some local variables,
+>>> don't they?
+>>
+>> Personally I'd rather it just fits in with the rest of the kernel,
+>> but if the general consensus is that new drivers should use tighter
+>> scopes, I can do that instead.
 > 
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-> ---
+> There are the usual communication challenges to consider also especially
+> with collateral evolution in such software areas.
+> 
+> 
+>>> How do you think about to collaborate with other data structures
+>>> than character arrays?
+>>>
+>>> See also:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.11-rc4#n953
+>>
+>> Hm, I picked a character array since all it's doing is sending a
+>> buffer to the device.
+>> There's no published specification to follow, only "Well the Windows
+>> driver sends these bytes and this happens".
+>> So there isn't really a structure that really comes naturally,
+>> especially with all the magic numbers.
+> 
+> I imagine that further development concerns can be adjusted accordingly.
+> 
+> 
+>> Unless you're suggesting I just do `unsigned char send_buf[3] = {...}`?
+> 
 
-This should be marked with Fixes tag and sent at beginning of patchset
-or even separate.
+Hi,
 
-Best regards,
-Krzysztof
+If I recollect correctly, there may be an alignment issue and just using 
+the stack is not enough to guaranty what is needed.
+
+
+CJ
+
+
+> Such a programming approach might also look promising.
+> 
+
 
 
