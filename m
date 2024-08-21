@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-294807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED479592EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:34:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BC29592ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE83FB22C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6BF1F23F67
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF4612B17C;
-	Wed, 21 Aug 2024 02:34:05 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8926C14BF8B;
+	Wed, 21 Aug 2024 02:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iVIqwJuh"
+Received: from out199-5.us.a.mail.aliyun.com (out199-5.us.a.mail.aliyun.com [47.90.199.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C79A79F4;
-	Wed, 21 Aug 2024 02:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05AD146D75
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724207645; cv=none; b=EejM6RWYJjNyV4P5RuICSRAlBBR4do+3AjjEv1VsE9iFWN4WY2iw0xWSrLbdwuPL8Ann+uRULfRUF3J/5WwgZWQ7WhOtXdGIONAXjcLG+34yEbKEdnz4xYbnMZzbHm43/5VopH7WasyjWSASa4nlafQBPQGQwnJ0ix+z2S9UwK0=
+	t=1724207699; cv=none; b=GcqqGUPAoVz+b1l/S0pkjR7oRpwKYAL9C93YAiE8dRU3LeGfNU/UFhE2eMh7GkuQlDVyVpJfqP6NKa7p0iwLxeynGRBgZJgg3CWz82sejBYdej5tg0ZuAbU8Ta4AhauC2fOCQKj1HJ9fyH3kY1y3SMGpOYuHgkFR+wI4bV633Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724207645; c=relaxed/simple;
-	bh=OX9yCF8RGGtCUjG3EyIIWF87Au3IRhM/+D2JdgUTXgg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pal4UNkiKqlrkZ0aRNxCZxQahxzG9r25LxlZJO+2QwMn6d1j7KOUdX/GHFerxp9w8yiXajU9TUbKRrPOEkaVSNJtmD0DY7LYLkylE2pYZVkWluX4oPlbVL62WuXrZO8V56Y5B4DtKJBFzvD7bNxM9L1sFplacXUmU1olaCDQ5TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L0o3rQ029073;
-	Tue, 20 Aug 2024 19:33:58 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412uck3au0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 20 Aug 2024 19:33:58 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 19:33:57 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 19:33:56 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <kent.overstreet@linux.dev>
-CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lizhi.xu@windriver.com>,
-        <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH V2] bcachefs: Add journal v2 entry nr value check
-Date: Wed, 21 Aug 2024 10:33:55 +0800
-Message-ID: <20240821023355.1619187-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <rtuy45ppvbi7yoighz2uvxwauotsyt5jr6kwfp4bsp2g43f342@k4hnm3xmqotz>
-References: <rtuy45ppvbi7yoighz2uvxwauotsyt5jr6kwfp4bsp2g43f342@k4hnm3xmqotz>
+	s=arc-20240116; t=1724207699; c=relaxed/simple;
+	bh=2vIZoAkI1Z9uABYuBIDeLBVi4Sea2hT1Cb7RdlLY72Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=P+7ELsEea9kbWCrWaBtxOuCsNQ+0pzoZA5gacp4ZMew1ELMpJtZMqOu1HDidEP8X9x3oS/q80a26AAm05+LcmFFVd0RS1fiXZvcziVdUmvuIRMeYhBx6sWI+E857wzsxs89YBrxi5as5LlcWLVM1nx925EkhR7zKn30aNHcaWQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iVIqwJuh; arc=none smtp.client-ip=47.90.199.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724207689; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=xh6r/ko5G9TK3mJe6TGl9rTenCN9wEzZQt+59fp/fb8=;
+	b=iVIqwJuhLO9OdmPgg1Ab2MdK5Bi84eN47rTZPJ1ocgUX6u/lS/35xoQ1NqSFgeCsWPyFFepTXypY56hRCh5Hv9HLq7w5qq20RdQlA2NQ2kVsou5tbq0MNly/p+fBWV7jruX6VDuIdEp6TRg9dWCdY9tBFdXkC024KwzEzBdSsDI=
+Received: from 30.221.129.221(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDKIOcs_1724207688)
+          by smtp.aliyun-inc.com;
+          Wed, 21 Aug 2024 10:34:49 +0800
+Message-ID: <416247e6-5da7-401c-815f-a4cf8ae37d51@linux.alibaba.com>
+Date: Wed, 21 Aug 2024 10:34:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=SIcQV/vH c=1 sm=1 tr=0 ts=66c55216 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=f1XBeclc1n_UNk118noA:9 a=cQPPKAXgyycSBL8etih5:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: hlPzlC02xgZ_cl0IZ58Q8YgXguFpNByO
-X-Proofpoint-GUID: hlPzlC02xgZ_cl0IZ58Q8YgXguFpNByO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_02,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 clxscore=1015 impostorscore=0 adultscore=0 malwarescore=0
- spamscore=0 bulkscore=0 suspectscore=0 phishscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408210018
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] ocfs2: Fix uaf in ocfs2_set_buffer_uptodate
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+To: Lizhi Xu <lizhi.xu@windriver.com>, heming.zhao@suse.com
+Cc: jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
+ ocfs2-devel@lists.linux.dev,
+ syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <980b3f4d-f265-4eb4-96a3-8f1a75588193@suse.com>
+ <20240820094512.2228159-1-lizhi.xu@windriver.com>
+ <20240820094512.2228159-2-lizhi.xu@windriver.com>
+ <7da687ce-ffb7-44e3-bddc-d5c2f4f48c95@linux.alibaba.com>
+Content-Language: en-US
+In-Reply-To: <7da687ce-ffb7-44e3-bddc-d5c2f4f48c95@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 20 Aug 2024 19:34:18 -0400, Kent Overstreet wrote:
-> > When journal v2 entry nr overflow, it will cause the value of ja->nr to
-> > be incorrect, this will result in the allocated memory to ja->buckets
-> > being too small, leading to out of bounds access in bch2_dev_journal_init.
-> >
-> > Reported-by: syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
-> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > ---
-> >  fs/bcachefs/journal_sb.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/fs/bcachefs/journal_sb.c b/fs/bcachefs/journal_sb.c
-> > index db80e506e3ab..db2b2100e4e5 100644
-> > --- a/fs/bcachefs/journal_sb.c
-> > +++ b/fs/bcachefs/journal_sb.c
-> > @@ -119,6 +119,11 @@ static int bch2_sb_journal_v2_validate(struct bch_sb *sb, struct bch_sb_field *f
-> >  	for (i = 0; i < nr; i++) {
-> >  		b[i].start = le64_to_cpu(journal->d[i].start);
-> >  		b[i].end = b[i].start + le64_to_cpu(journal->d[i].nr);
-> > +		if (le64_to_cpu(journal->d[i].nr) > UINT_MAX) {
-> > +			prt_printf(err, "journal v2 entry d[%u].nr %llu overflow\n",
-> > +				i, le64_to_cpu(journal->d[i].nr));
-> > +			goto err;
-> > +		}
+And this is not a UAF case, but NULL pointer dereference.
+So I suggest change the subject to:
+ocfs2: fix possible NULL pointer dereference in ocfs2_set_buffer_uptodate
+
+On 8/21/24 8:08 AM, Joseph Qi wrote:
 > 
-> no, you need to sum up _all_ the entries and verify the total doesn't
-> overflow UINT_MAX
-The overflow value of le64_to_cpu(journal->d[i].nr) is 18446744073709551615(for u64),
-or in other words, it is -1 for s64.
-
-Therefore, the existing check for single entry is retained, and an overflow
-check for the total value of all entry is will added.
-
-BR,
-Lizhi
+> 
+> On 8/20/24 5:45 PM, Lizhi Xu wrote:
+>> In the for-loop after the 'read_failure' label, the condition
+>> '(bh == NULL) && flags includes OCFS2_BH_READAHEAD' is missing.
+>> When this contidion is true, this for-loop will call ocfs2_set_buffer
+>> _uptodate(ci, bh), which then triggers a NULL pointer access error.
+>>
+> 
+> Or it may simplified as the following:
+> 
+> When doing cleanup, if flags without OCFS2_BH_READAHEAD, it may trigger
+> NULL pointer dereference in the following ocfs2_set_buffer_uptodate() if
+> bh is NULL.
+> 
+>> Changes from V2:
+>> * Make the code more concise
+>>
+> 
+> This is not the right place for changelog.
+> 
+> Thanks,
+> Joseph
+> 
+>> Reported-and-suggested-by: Heming Zhao <heming.zhao@suse.com>
+>> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+>> Reviewed-by: Heming Zhao <heming.zhao@suse.com>
+>> ---
+>>  fs/ocfs2/buffer_head_io.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+>> index e62c7e1de4eb..8f714406528d 100644
+>> --- a/fs/ocfs2/buffer_head_io.c
+>> +++ b/fs/ocfs2/buffer_head_io.c
+>> @@ -388,7 +388,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+>>  		/* Always set the buffer in the cache, even if it was
+>>  		 * a forced read, or read-ahead which hasn't yet
+>>  		 * completed. */
+>> -		ocfs2_set_buffer_uptodate(ci, bh);
+>> +		if (bh)
+>> +			ocfs2_set_buffer_uptodate(ci, bh);
+>>  	}
+>>  	ocfs2_metadata_cache_io_unlock(ci);
+>>  
 
