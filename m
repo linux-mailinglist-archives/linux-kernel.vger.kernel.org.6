@@ -1,82 +1,170 @@
-Return-Path: <linux-kernel+bounces-295879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8269A95A278
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:09:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A8595A276
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F99BB25749
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A4751F224FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2E214E2D7;
-	Wed, 21 Aug 2024 16:08:56 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EADF14E2D7;
+	Wed, 21 Aug 2024 16:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T8DWJv+e"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1983514A4DF;
-	Wed, 21 Aug 2024 16:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D161A13AA2F;
+	Wed, 21 Aug 2024 16:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724256535; cv=none; b=BoRvjjGLz2ipMiD6v/rSLZRNn1hfa58qZxRq4VvMUrzthd9PZ4fanFno7dHVdWK/XME57tl8fZ9secb55MkwdpLstKMAWwLISzI6q7WlUBU6lBTm6v1fF3l/DFw882KcR7DmeAfqyD4ZmXkNp4xH5kOFKolv/pMAD3C/4qHCaIs=
+	t=1724256547; cv=none; b=QvZ+c7ovHkKyfUnjrIr1Rny7goQHp0LtSA4VZFUnYrtHn2C5NEcgvwhoBsCshqAlg+7tJOZUzLYU3hAmCW5PgeM6s1+xceGhA+1V/K33nD6HTpTvMXoQ83G8zNUia13BLWLTDsE1WBZstTN7eH9ABY0OSEVlF9DFGEQNKh9CJXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724256535; c=relaxed/simple;
-	bh=1JzANl+3/IKE5ZxT3XsyYghLVULQ50mfZhGiLqib2aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftD25mtpg8Q9d8U3RakW5z8cJE2ombm2N8wOg/5/uwR0WMlktpIAXVLxM9tdis2wNWtZw/PNGPIDfikHCAHLOr8JrGO7WuqRKtLh+bnTR7JnX31f/Y5vcnk9UGmRcVV+Zu3NHqXY7q8FJL0CJULb+z2dxx/9iAlKNvyuP2BbPJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sgnt6-000000004oB-27Sw;
-	Wed, 21 Aug 2024 16:08:44 +0000
-Date: Wed, 21 Aug 2024 17:08:39 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Chad Monroe <chad.monroe@adtran.com>,
-	John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: marvell,aquantia: add
- properties to override MDI_CFG
-Message-ID: <ZsYRB54U5XPNZxiT@makrotopia.org>
-References: <5173302f9f1a52d7487e1fb54966673c448d6928.1724244281.git.daniel@makrotopia.org>
- <2c4e03e9-6965-4e81-a986-e169eaea9e4b@lunn.ch>
+	s=arc-20240116; t=1724256547; c=relaxed/simple;
+	bh=DoNWiefNwlabTvrMKvLcoTr9m81BJcqm9zmd/I1QTjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RExOeUT9pwfB+jBMNy0DuwlodS9rH9fqdnHIbabelFEFO3ro56PRcTIgpFOOUuWSC0LBhdATrybNKm+kvYX+hBnSTyG9VJGb+TqSgGXO3DQvWNnfR3x9RTR3WEMhHRyB1QnhHXAVyec9dDvnd8/Q9hMmhX/BAowg7kqCiOuFdCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T8DWJv+e; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LEQuNU018964;
+	Wed, 21 Aug 2024 16:08:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	070i+fXfB+k/jMoONG0/PCDJnuCkejFp1EIr7Bg8A78=; b=T8DWJv+e5NlgPupx
+	FhbrcB1sElckLLHYD6WO8F+CikbfYAmMVTyrH1tCVeoR9Sc2v0z9SlL6gPLy7ENX
+	IrCB9QSue9SMA9zKE+nW0RNM2u/m7VQzoqRKXg6D3nsASpUWSdDZWcvYr2x3x+ta
+	el6hh+4mnB+wM6K/0RxrNGBHz+VYXg0LYyem4Y6xG6sIWEhtMEpTWLNlVLVbztdm
+	jA5B5JdgeGvrA1vIvjFAunj5ZXuhggv4+p5QQYOA4cT2o9y8NAU4tVwKznOoxnev
+	4s5g6SRd5WDGCvSWOJAuMrPFx6cvFDE9P1mu9kvV6T2N1iZWfFeaTFZhdgFQkHGE
+	fulsRQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkw9udf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 16:08:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LG8rCx006912
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 16:08:53 GMT
+Received: from [10.253.73.208] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
+ 2024 09:08:48 -0700
+Message-ID: <51198961-2e09-4d0e-8bf3-907c81597724@quicinc.com>
+Date: Thu, 22 Aug 2024 00:08:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c4e03e9-6965-4e81-a986-e169eaea9e4b@lunn.ch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
+ controller for IPQ SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
+ <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+ <krbpzjccn6xvnpfsa7eeeowmtjuuw4yp72qqqbeq2icxrqvdo4@x6pawrcctyd3>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <krbpzjccn6xvnpfsa7eeeowmtjuuw4yp72qqqbeq2icxrqvdo4@x6pawrcctyd3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2iMXRdIuxfm8eaKS-xL521JlwKOQsPqB
+X-Proofpoint-GUID: 2iMXRdIuxfm8eaKS-xL521JlwKOQsPqB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408210118
 
-On Wed, Aug 21, 2024 at 06:00:36PM +0200, Andrew Lunn wrote:
-> On Wed, Aug 21, 2024 at 01:46:30PM +0100, Daniel Golle wrote:
-> > Usually the MDI pair order reversal configuration is defined by
-> > bootstrap pin MDI_CFG. Some designs, however, require overriding the MDI
-> > pair order and force either normal or reverse order.
+
+
+On 8/21/2024 4:33 PM, Krzysztof Kozlowski wrote:
+> On Tue, Aug 20, 2024 at 10:02:42PM +0800, Luo Jie wrote:
+>> The CMN PLL controller provides clocks to networking hardware blocks
+>> on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
+>> and produces output clocks at fixed rates. These output rates are
+>> predetermined, and are unrelated to the input clock rate. The output
+>> clocks are supplied to the Ethernet hardware such as PPE (packet
+>> process engine) and the externally connected switch or PHY device.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
+>>   2 files changed, 85 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+>> new file mode 100644
+>> index 000000000000..7ad04b58a698
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+>> @@ -0,0 +1,70 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm CMN PLL Clock Controller on IPQ SoC
+>> +
+>> +maintainers:
+>> +  - Bjorn Andersson <andersson@kernel.org>
+>> +  - Luo Jie <quic_luoj@quicinc.com>
+>> +
+>> +description:
+>> +  The CMN PLL clock controller expects a reference input clock.
 > 
-> Could you explain that in a bit more detail. Are you talking about
-> changing the order of the 4 pairs? Or reversing the polarity within
-> pairs?
+> You did not explain what is CMN. Is this some sort of acronym?
 
-It's about changing the order of the 4 pairs, either ABCD or DCBA.
-Polarity of each pair is not affected by this.
+CMN is short form for 'common'. Since it is referred to as 'CMN'
+PLL in the hardware programming guides, we wanted the driver name
+to include it as well. The description can be updated as below to
+clarify the name and purpose of this hardware block. Hope this is
+fine.
+
+"The CMN PLL clock controller expects a reference input clock
+from the on-board Wi-Fi, and supplies a number of fixed rate
+output clocks to the Ethernet devices including PPE (packet
+process engine) and the connected switch or PHY device. The
+CMN (or 'common') PLL's only function is to enable clocks to
+Ethernet hardware used with the IPQ SoC and does not include
+any other function."
+
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+
 
