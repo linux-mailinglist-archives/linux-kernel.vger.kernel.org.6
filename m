@@ -1,151 +1,160 @@
-Return-Path: <linux-kernel+bounces-294916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EEA8959443
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:52:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89434959445
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A012855BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1AA1F23180
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6623216B39E;
-	Wed, 21 Aug 2024 05:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0959D16B3B7;
+	Wed, 21 Aug 2024 05:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="K6vxd4Ok"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="YGjfdr0P"
+Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FDE1547D4;
-	Wed, 21 Aug 2024 05:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377A8166305;
+	Wed, 21 Aug 2024 05:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724219515; cv=none; b=d6iWdGYf/8tCD3EmLMy2uQmuTPu+7AD1jZ9rBd8Ai6MN0BiYBOF10REYFLDsmgh4mmR7giB7IG5PNo0bzARCYvcIaG3anxYqmMZW9bUNhoBdjxpnDIQz9L36Gdj6iUTMhkDw5X5YLXOyPn6biHDza01zesxj1RkBULr0ZODJD0k=
+	t=1724219763; cv=none; b=Jxf+ZLtvNORCE5+ixSaSOWtbEjxqxCeCDutYZW6o9tY29Ol7IWjD9+2h2MsuFPdPop6tg1SzcX/vp5w9nBI0ODa0TCW5njzw3X7O7WkQ9a7ktpX6wdaeLNuVivCxiqb7ceg+aMNesS7hrd/onnUZMMlseKNwL+hLxjcF0nWBPjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724219515; c=relaxed/simple;
-	bh=SGZVWHE/rNJaT6VTyLe9HtJE1mXikZC/TCYeZV5ZLVQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I1utZUKPfwP5ZR1KBNef1+Zhqu2ahC3eQzP8Cvs99GtKZ7rETPBMBbM7vUALYL2RXE1Wnw126/nwlglZ/lgo1iVJXoTBu7FMmjXgerC4cpvUjmd8MiaJT99nhiy4I0y5bMUhi9+lKhQDMAoVvjGC0GX8JxYs1wLCGnuNqcGZfnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=K6vxd4Ok; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C22361487F9C;
-	Wed, 21 Aug 2024 07:51:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724219503; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=DWzPwgcZoX1s68hJAPgZlTk8e2myy4m4ZaSsHQWStoM=;
-	b=K6vxd4Ok3tMNWRdNQsL/OfpE9z3SBSfxfmBUbEctkSqxaCp39DvAlvSPK7o3P09jwoux3e
-	Sw7z3NEbKhcAqIO6ATWO7LQOwWo01wVD3x3q5behGzOm4gC3CzjdlG0j9ugIJa3tfIVEGJ
-	7UiUxnkFI64HG4k3VLFld4wQtdeVOTHj+Mk533WgnOqzAy4zr0nheYMGDJ8aSU+3atsgVh
-	kIfQ26VZMcy/T7CxMtXPgjhkuH8s0hAgFtlveh4yme54AywSOLZ9AY2hG0shmQzwnU9rl9
-	OeBphabwmtxxRBzTQ0BzdiQXZB0wFFc4svv8v5s6fDhRkgldHI4tQCb5PVMeeQ==
-From: Alexander Dahl <ada@thorsis.com>
-To: linux-clk@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] ARM: dts: microchip: sam9x60: Fix rtc/rtt clocks
-Date: Wed, 21 Aug 2024 07:51:36 +0200
-Message-Id: <20240821055136.6858-1-ada@thorsis.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240820132730.357347-1-ada@thorsis.com>
-References: <20240820132730.357347-1-ada@thorsis.com>
+	s=arc-20240116; t=1724219763; c=relaxed/simple;
+	bh=019hknAFV3sGdIKFsRWq5MUfZidJB9BDlRe+Lih9n3k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iAO93ysoydb72IfLdOAVT7O8WF4yaLa/ISazhyYUM8+7AR7dQH2/uJv00vgnELD3KghFnE4oqvDA3DB5VGbytaDUACKQSyNsCEbEYaNBu8lBr1N4fxcr6fBXSkz9GaS2Ijjz1z/u1DziKouijlvZu93FdHnc10YzE8qkOwmtZJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=YGjfdr0P; arc=none smtp.client-ip=216.71.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1724219762; x=1755755762;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=019hknAFV3sGdIKFsRWq5MUfZidJB9BDlRe+Lih9n3k=;
+  b=YGjfdr0P5POQwkGRq7pVXQwZfnBsQpAlsPS0/1Lgx01s+93FpFtO5RrA
+   ieGEbH1ZSvaEp/HmUoSsBsG4vc+5mmdN4o9GEyGzzslHU8YiR9Qd2T4zE
+   VfhnTKJFyVoH4+dM3YbhyoGPnQES++HpDYDWx3pE2orniU0lSBjA12PEu
+   ZPDq7zU2ireCtngoyu3h7vrZ99O3bY+e5BSB+gm82ZxYg4llpb5kw3CxF
+   egfKGyxe0vWJ/S8vACoqvnptVYlcNaX37SIH6iG6wB4CK+lHn/Cr9DvcB
+   Ooq6/1bM2HivzrEheEmaXpoqimjlPioAlNv8HZC8LT4DP3poesSOBlx8+
+   A==;
+X-CSE-ConnectionGUID: mGiH7xoHQlisoKwyhwioTQ==
+X-CSE-MsgGUID: f4v5E3DGSpaITh2k0VrHNw==
+X-IronPort-AV: E=Sophos;i="6.10,164,1719849600"; 
+   d="scan'208";a="24777503"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2024 13:55:54 +0800
+IronPort-SDR: 66c5735e_LqAIJ74mxLJcy5kbfxt7QOH2WnFEg11GRcItA9xF+v7l1xo
+ Ysod9nRzLm+jcf6P3a0+AYKt6nr31qKvqUZz07w==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Aug 2024 21:55:58 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Aug 2024 22:55:52 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v2] scsi: ufs: Move UFS trace events to private header
+Date: Wed, 21 Aug 2024 08:54:11 +0300
+Message-Id: <20240821055411.3128159-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
-sourced from the 32.768 kHz crystal oscillator.
+ufs trace events are called exclusively from the ufs core drivers.  Make
+those events private to the core driver.
 
-(The previously used Monitoring domain slow clock (MD_SLCK) is sourced
-from an internal RC oscillator which is most probably not precise enough
-for real time clock purposes.)
+The MAINTAINERS file does not need updating as the maintainership
+remains the same and the relevant directory is already covered.
 
-Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
-Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
-Signed-off-by: Alexander Dahl <ada@thorsis.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
 ---
 
-Notes:
-    Picked the wrong patch in the first try.  This v2 one has a slightly
-    adapted commit message and more context below.
-    
-    This obviously requires a 32.768 kHz crystal oscillator to be present,
-    but the sam9x60.dtsi does contain that, and the clock-controllers
-    reference that, so I assume it's always present.
-    
-    /sys/kernel/debug/clk/clk_summary content excerpt before:
-    
-         slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-            md_slck                          4       4        0        32768       0          0     50000      Y      fffffea8.rtc                    no_connection_id
-                                                                                                                      fffffe20.rtc                    no_connection_id
-                                                                                                                      fffffe10.poweroff               no_connection_id
-                                                                                                                      fffffe00.reset-controller       no_connection_id
-                                                                                                                      timer@f8008000                  slow_clk
-                                                                                                                      deviceless                      no_connection_id
-    …
-         slow_xtal                           0       0        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-            slow_osc                         0       0        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-               td_slck                       0       0        0        32768       0          0     50000      Y         deviceless                      no_connection_id
-    
-    And after:
-    
-         slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-            md_slck                          2       2        0        32768       0          0     50000      Y      fffffe10.poweroff               no_connection_id
-                                                                                                                      fffffe00.reset-controller       no_connection_id
-                                                                                                                      timer@f8008000                  slow_clk
-                                                                                                                      deviceless                      no_connection_id
-    …
-         slow_xtal                           1       1        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-            slow_osc                         1       1        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-               td_slck                       2       2        0        32768       0          0     50000      Y         fffffea8.rtc                    no_connection_id
-                                                                                                                         fffffe20.rtc                    no_connection_id
-                                                                                                                         deviceless                      no_connection_id
+Changes in v2:
+ - Fix a spelling mistake
+---
+ include/trace/events/ufs.h => drivers/ufs/core/ufs_trace.h | 6 ++++++
+ drivers/ufs/core/ufshcd.c                                  | 2 +-
+ include/ufs/ufs.h                                          | 4 ++--
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+ rename include/trace/events/ufs.h => drivers/ufs/core/ufs_trace.h (98%)
 
- arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-index 291540e5d81e..d077afd5024d 100644
---- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-+++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-@@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
- 				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
- 				reg = <0xfffffe20 0x20>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&clk32k 0>;
-+				clocks = <&clk32k 1>;
- 			};
+diff --git a/include/trace/events/ufs.h b/drivers/ufs/core/ufs_trace.h
+similarity index 98%
+rename from include/trace/events/ufs.h
+rename to drivers/ufs/core/ufs_trace.h
+index c4e209fbdfbb..84deca2b841d 100644
+--- a/include/trace/events/ufs.h
++++ b/drivers/ufs/core/ufs_trace.h
+@@ -9,6 +9,7 @@
+ #if !defined(_TRACE_UFS_H) || defined(TRACE_HEADER_MULTI_READ)
+ #define _TRACE_UFS_H
  
- 			pit: timer@fffffe40 {
-@@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
- 				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
- 				reg = <0xfffffea8 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&clk32k 0>;
-+				clocks = <&clk32k 1>;
- 			};
++#include <ufs/ufs.h>
+ #include <linux/tracepoint.h>
  
- 			watchdog: watchdog@ffffff80 {
-
-base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+ #define str_opcode(opcode)						\
+@@ -395,5 +396,10 @@ TRACE_EVENT(ufshcd_exception_event,
+ 
+ #endif /* if !defined(_TRACE_UFS_H) || defined(TRACE_HEADER_MULTI_READ) */
+ 
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH ../../drivers/ufs/core
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE ufs_trace
++
+ /* This part must be outside protection */
+ #include <trace/define_trace.h>
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 0dd26059f5d7..db30d0c4d91e 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -39,7 +39,7 @@
+ #include <asm/unaligned.h>
+ 
+ #define CREATE_TRACE_POINTS
+-#include <trace/events/ufs.h>
++#include "ufs_trace.h"
+ 
+ #define UFSHCD_ENABLE_INTRS	(UTP_TRANSFER_REQ_COMPL |\
+ 				 UTP_TASK_REQ_COMPL |\
+diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h
+index 853e95957c31..e594abe5d05f 100644
+--- a/include/ufs/ufs.h
++++ b/include/ufs/ufs.h
+@@ -597,7 +597,7 @@ struct ufs_dev_info {
+ };
+ 
+ /*
+- * This enum is used in string mapping in include/trace/events/ufs.h.
++ * This enum is used in string mapping in ufs_trace.h.
+  */
+ enum ufs_trace_str_t {
+ 	UFS_CMD_SEND, UFS_CMD_COMP, UFS_DEV_COMP,
+@@ -607,7 +607,7 @@ enum ufs_trace_str_t {
+ 
+ /*
+  * Transaction Specific Fields (TSF) type in the UPIU package, this enum is
+- * used in include/trace/events/ufs.h for UFS command trace.
++ * used in ufs_trace.h for UFS command trace.
+  */
+ enum ufs_trace_tsf_t {
+ 	UFS_TSF_CDB, UFS_TSF_OSF, UFS_TSF_TM_INPUT, UFS_TSF_TM_OUTPUT
 -- 
-2.39.2
+2.25.1
 
 
