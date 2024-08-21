@@ -1,183 +1,173 @@
-Return-Path: <linux-kernel+bounces-295003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B01195953D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:02:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C1D959542
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B757283266
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D7A1C2237D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3C8192D81;
-	Wed, 21 Aug 2024 07:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F8B188909;
+	Wed, 21 Aug 2024 07:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="UFL5OKFr"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2048.outbound.protection.outlook.com [40.107.117.48])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YY1g8XpH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D14F192D66;
-	Wed, 21 Aug 2024 07:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724223757; cv=fail; b=GQ5NTLHZdXoIcxkkhdqVf5aYEugun4llRbFoZtP/chs5B2FJA6YFbRfpeHLbG/sHJbp/f6V7TKddxL6BOnV4G80bK6Em1gtuyeYCB7mOwgDrtDOO81QXvQweCwCQrmMCAG8bXEGHX9I8DolRWXuXTTbz8jlG9ynJNRhAE0jlTSg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724223757; c=relaxed/simple;
-	bh=3knthpcdY9b1UB2CuMfp69Fu4iw10obB/6x0xCvYCzM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mV56G1vqqvIeiJADBgDrrWe6pw7R632aeE7nUs7xNz79df3tXxtpjTT5QvsuYTW+UVGMgRuBhfue3DoCwP1IyBaCzvCzOM7wJ/DGYhY9Okj0AXRw30VqF4qks1Ac5w6uf8jX2ZbGmbQ+5RdoQWWSVuyj8TxeK173azk/Zdwsv10=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=UFL5OKFr; arc=fail smtp.client-ip=40.107.117.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dpxMmAqdsI/0z3Kn1wCyAlZQPi7+ZzjC/QOo4t0NmSts/uXoofurdUxP4XXa4hUySdw4QKJka1VHT0CjXzJNPO1S974GIGqLvw6PZnyALsg/C4Uk1hXpPhlqtQu2on+oeIgl1nyGIoSxx+CEbvBLPDHMwLOEbGxie89ej5UbfyNdjtY7awr58VUlQPlCZWhbPP6+Jjp2kR7jC583mBHkUrCvF9fv9BbABrM+MdJ2KDzFnhRoZYP4NJGEZuamrYr1bkgBuOUZH2RFbuOBd/QQtg0NQkPf2cW0T1rLRp/qI6fZhiHe+72Hd+rw8JL+bdyQ0/o6pDQdj3VcTTDvHhpfUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=joBuJgplqJ5ipDYuDuhn4NvKsGOaa84RDM3iCts7Uio=;
- b=ypU18DRoZ7kBWeRuwAIe2Ih6869Q22V03fUM9Dc2BnrLisqfN5bSZhqb7hEZhcnu7RNniJDaeTni2gAn2Lq9iGR6Q/v1/Advx3iR+vofMTOFXKCuYnhmj8KU81t1ZjfKRHkVeHT+qQeslOh9aA9W4y9jVoG62h35rQvGXm6S9b6NoabEui1GsOKMiOlNj3amO/jQFxsiRLBkIQomZZGnIk6HDdh6tTgvv/epzC57t6CepOF74D/lPZdNxFjgsw0nB0jkUwKFYGk/05Xaaqd87zbSjl/1GUgwQPk2/7raf72bHeDLoQy3M/Os1UPsSMnPsjCqJV9nD4kf+e0y4KxXjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=joBuJgplqJ5ipDYuDuhn4NvKsGOaa84RDM3iCts7Uio=;
- b=UFL5OKFrZFrfHE3RZFs1u2llidgeqxNs0A+pXygrZvrOdgpeJY4wyP4hsloU+2hbVFTUnOw8ZpXfCvkJU+22t1u6/XrlsBVuuZRGKU/K8b6j2fwC7BnUwlQxmAGo06wihWgYzdcJeMoz06nYHqgCdxGaO9s8fFM2PqRmoGK5jUY8VMy7q4z0GrCUGM8BGkrOBAx6NKGFcPdOLPzSrNcfcB7i5aA0nrnwRykZEsKRXLtc63itV8iltS0v9qIuwm7ytiNvUPSN0kFHhJO8yVRZ3arPNyFRBtGl+TKPTnVPISmqvGXz3Afl8MGCxBOX9+SWpy80BXBNJq0oY0+72Zx7ug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by TYZPR06MB5074.apcprd06.prod.outlook.com (2603:1096:400:1c6::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
- 2024 07:02:32 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
- 07:02:32 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Yang Ruibin <11162571@vivo.com>
-Subject: [PATCH v1] drivers:mpt3saa:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
-Date: Wed, 21 Aug 2024 03:02:20 -0400
-Message-Id: <20240821070221.7157-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0179.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::35) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06171192D6A;
+	Wed, 21 Aug 2024 07:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724223767; cv=none; b=qKDsCipmg2z7Hn7pCJRYxz0mA6fCwkglbpV7UWvRJamgNFxazpbRRbS1sMLdmXgs808SDePHDjS8/Zh4UK14R2TFU4qlPUZ+cRLAxiwyJxGGZc8VPD7rD+qLTVlxG+7JIohO6ipNxNrZzyNGcTusDkCIqpCFVId+feerN7KXmVU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724223767; c=relaxed/simple;
+	bh=8rUm72MnGLmHQNl/Pyxx0EYzyXtHSorMLOIHmsjfdMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HxwHumIdFonq2SoDL71KjbqDo4KV4j2brhRkBDHnS2kOLANbgSkGwvEtD2EVE+OFb0aX6X2GFibJjKt4v5gfJyxxTeNxQhI5uaO9+kxw2WgwW/FmsbFRAWZXb1EGonXsFv7QGuuBIgHSfK6KFS+vO48u/9p5TQVX6ufYC1BZ6Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YY1g8XpH; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724223766; x=1755759766;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8rUm72MnGLmHQNl/Pyxx0EYzyXtHSorMLOIHmsjfdMk=;
+  b=YY1g8XpHLdE595GK51tnrBrNO/HM5rr8j+FEc1APx3Ifcx+tH0VLnkr1
+   PWovQjs+6o5WGEgDTCnMkBUbIXUe+K4/x3cEdjntn+ibtEiW0AoyemxgU
+   kHtXkELsiWDlcD0aCUIz23Lht+MYyuVDjBdDOwfXqQYBnhSXrC94v9f0O
+   LANXScKrbZEnTtolgYBfj7vAL5PfbWR0ISOKVPA4BxzlOjoDbQ6dL6ArF
+   s8C+drAMjOY59JRwxRCvtmMFGsT2uDFpfJyD+eDX2eirm6xqmjXgVhsE0
+   +ZzYnIABT4XV7xVVbp1ejs+/k3cw8H3x5ZMvYV/gsk61a5h0XSLfmntfz
+   A==;
+X-CSE-ConnectionGUID: Hhs8JmD/QsW33kpH3E9nCw==
+X-CSE-MsgGUID: DGFSXacyTGqSOOjiLVDqZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22706002"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="22706002"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 00:02:46 -0700
+X-CSE-ConnectionGUID: r7X2J0LrR8ub329AoQ8R8g==
+X-CSE-MsgGUID: fYBNYWdMTGy2tKnZxPcjmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="65871786"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO [10.245.246.16]) ([10.245.246.16])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 00:02:39 -0700
+Message-ID: <7b3421f5-8d57-4138-9456-1bf0eb4662c0@linux.intel.com>
+Date: Wed, 21 Aug 2024 09:02:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TYZPR06MB5074:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca8b6394-348f-4c64-c237-08dcc1af3a2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ihiujB9/Cd6bVOosb4iIP4z390XFRc3l3+bsofIQz+mGoJMFFDm2vI6258EG?=
- =?us-ascii?Q?0zjImwmRKhCtgUktwb8zTZUxS60p4pYJahex8g5j7OcJzMKtmjWRiF9MZFMd?=
- =?us-ascii?Q?pKoLV9k4B0UFrO/8f1CR/RzxF5PCD3MKmkevXmzPUcKzfnaYj9/o3/q3WEvD?=
- =?us-ascii?Q?RP0it6E9i6m6+7ZUh6fFZvRXMcmQ3sujkh5u1xspZcizU3vOAmJDdSCE6pNA?=
- =?us-ascii?Q?j8EiAQLwJ3cdShG8dL4xKESMmfCKvnQA6sLk2+crE5VM2ls7NVQIpdmjggWW?=
- =?us-ascii?Q?8W0cp6a5nDLHAhMxKQKCjlQtTLD9mV8MzErTc5dUlJe89buiZBJwt1WlT6De?=
- =?us-ascii?Q?CUmKujK35tccvtLN1kghrAD74DQ8W+2Sb9yYfsfg9HdsMQ4gndy9mgKEs80l?=
- =?us-ascii?Q?HnZu7NOZUeBYu3sZ7vaL95Pr1RFLEUes7T/LU/VkK2wvDamObuRWt6M7SpPl?=
- =?us-ascii?Q?qNu5bVpYGoXNvhiTrXVYk710CdJ3LWKE0TKYmU1lV4RLmnUmXD5yoSBMElym?=
- =?us-ascii?Q?y/QDdGZqLYFBeynBj+kQaPQVV2fIOm/ZeNjifRCsm/9UIlQlNaWT+VKq7InE?=
- =?us-ascii?Q?1BTGDFq+qGJMz8VWmI7MOt+yI9g9G61qp1ncu/7LGW0Kwh2bSrpkck+QZHN9?=
- =?us-ascii?Q?aHj5k2J7y/PNbCntF2CvOz+N9ryPy4OZ+vrkRNe2TdfqSWRDnib+SQicCuJq?=
- =?us-ascii?Q?O2j4LPks9bBQyc5BbbUpk4d4KIFufgl3dyzgJn9IRse22Ugb1xHttmAz+Di2?=
- =?us-ascii?Q?0RdO7m38SM1vrD54BMPItDiDRRZ3Vatn5d1vQO9L6v8qogxzJOiLR4blvNON?=
- =?us-ascii?Q?TG410MvJ6U+3C+KEAWfPGfy/O3cPIZ6CofrwPmLFYqAInWdZTpsdZehH3CUU?=
- =?us-ascii?Q?wU8wlMCXF26Ykph2iS7vvOlfGqE6OhuyYhPASw6R2V9l2CuvWOIzuIipC74h?=
- =?us-ascii?Q?5ja1S4VoLjBLd4B83e7etRhq2xDC5rTZQn+U4XQh2Quuj5CDEmCOfkTXvDF4?=
- =?us-ascii?Q?CcfVgiILsh0+viddR8W44gyMioDOcanTvfXwjcafrCqkZWRlRPVyGqhNFARU?=
- =?us-ascii?Q?GTHi+Mlwlw2tRD/w4sLAseZt1p4ETUfWV0vqekOjv1srorW8CaT7BSwnhqbq?=
- =?us-ascii?Q?dxB5ViDv1hA40gIhGzL+yOXyct+BBB6H/O4svk/1nFhjbm7s3pUIvleA4wYY?=
- =?us-ascii?Q?ylEzsB4kO3q7pS64TNWzcPaWx820y1zejLlYYmH6Gv5JjfGKYVUZQEv0n0sL?=
- =?us-ascii?Q?r+Pso2FK23YZe7P7xVk12XCFesajJB+OpUD9RUSmboTOh2wi92Yj4KUZriO9?=
- =?us-ascii?Q?WBUKYkI6utJraMkVdIXg731mgsn4rZbl0PwR/EQB12FeuF58LGDcE1EQ6+Wq?=
- =?us-ascii?Q?LhpYXyuxxsDWmUPG2uZVdQl7YffLZi3QzcZOvXBraF+hSpOHioOv8Rrzz4GQ?=
- =?us-ascii?Q?7KGZRB9tZjw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?scbdyemFTR3UC59ydK4LtJyPyX3x/tugVUIYgMXunxk0g2fBttJg2/fMmd79?=
- =?us-ascii?Q?APuCBdXPjow7d6URZ1+1ig/xW0bFtrKhZLJ4F+SFTO6GQ5Qh6ozZ+RyUXaVX?=
- =?us-ascii?Q?MdzTOFdPt6UXQUZD4rpAawl+fNF2fe5iUPNvJFyNwvYPU8nwTrEYyQwklhbX?=
- =?us-ascii?Q?Hv0pQCAYHvMbVIbowPnYcvKdGrElQukuY4ezvIy/fenjQTykimL4D0S2ZjvS?=
- =?us-ascii?Q?hd0vOC5r7rnXBzI4qqSASxG7QMTfzmujRYZE3firbUrMsXs2LMvSrBB7v54I?=
- =?us-ascii?Q?q4GZ2gCkO9zceYn3NdDu//EM7Fi5/+C7BUIfavf54BR1+l0Wl7w+/9atHccJ?=
- =?us-ascii?Q?ASY05YSj8oguYAydI0boLuqbAEVN6A0bppzgYJ+gVzIvZSCMEsWGqExhnt32?=
- =?us-ascii?Q?uq3cjVDQP2P90+LO5OYyL5KxItb9a/lg3TO/Mj8akWWvg4dZ/con1ElPVMKW?=
- =?us-ascii?Q?zlkSKzbZwvSY4f9frbEXojYGWhAGfHBOEwAhRZ5ntS2wlYB7sEJW9qNUouKF?=
- =?us-ascii?Q?wns9iYmdBykYU9Pd9mec3wwqdikk6zcZD9msZ89m4cN5NI73mg62/9BdkAFf?=
- =?us-ascii?Q?e7BEPkLsBE1BWeZik589KoAow1Mg5kD126D+goBzotZt5kBG+9hglVcRiS5v?=
- =?us-ascii?Q?HDtIOfBsd+UbxHbml/wKAbreHdeV2/Q3lkOmIyjewPVoVcyGzmffn5MpMr8L?=
- =?us-ascii?Q?QW6jItHxDbDAWVceTYc++pkwiQy6OCEOYRNNIb4IPMwifFr8ZOS8SxOlJRgE?=
- =?us-ascii?Q?qCESpB8MqYVr/1rhg2f/hpPTLupHyx37CMrMcNdAbzg8oh7ohmJmVk8wqWmo?=
- =?us-ascii?Q?DokMTuoQWIlBWlrLo5tSASzezy9i5qDvrPKRDuJICsKQ6ZFVGKm+FanvM9/F?=
- =?us-ascii?Q?66GsTv+4D9y26fVSUFY7KnNFkn8dDPWjNgOByEtdRC/sNH9Vg4e4w7ce4eNI?=
- =?us-ascii?Q?d+SBakvlBUvFtAGyX39SQmhwPUqgxTPoeJKeILUBgtYSL1HggtL+iHtMsfFT?=
- =?us-ascii?Q?T6o5UHUF9LzGEGSHn4HlMwZGfyJKIQslswUTvTZ5zdf4lroVsljgZ8XIVMAX?=
- =?us-ascii?Q?RmfKBGvqwuUwrYbobmIfh3BwpcWExW5S2bJdCLkODiB7rmLAgKeO5t1v2s18?=
- =?us-ascii?Q?BUb8S5SfDjlHGbo+xrGt20GkkEk33Gjt1P9Uo8rjh7ejFRZszfqBCk3Dbs0B?=
- =?us-ascii?Q?yEP+sbJaliMqzhGFxliPZNQJoaiM846CKM6RE0diJ7GKCAjldjObr5TPgMud?=
- =?us-ascii?Q?9L2xYUpSVKM6OUXx+9azGSnTBFTQBXXw5zy4DxSqIBrHoLgdr9UedFlWLcxo?=
- =?us-ascii?Q?ivBBCsUVziZnf7RCPVDxiiwKMv4zth7UKr6mESM58xIzpcAzBS6Q2fiXDIWd?=
- =?us-ascii?Q?0+T7doFIJ/SLTK+y8KRiEkMefkPccY36Aku2D5mWJTu6VoLnBsO95qeRwP9w?=
- =?us-ascii?Q?lGHVnNJ2SJyVwLMa8klDvUKaFkYrP+37yydxkUN2wdQxJeEzXqKoZ+KxhjXd?=
- =?us-ascii?Q?4EVJ16WQsCu1t5+AsH2yCmH8CbZ9zeOwMMOXd3gteQCkmr1yx4L7hHsarfho?=
- =?us-ascii?Q?95+fQkHQva6+73MIcGY0MKYQIrK54DrmvLrH256c?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca8b6394-348f-4c64-c237-08dcc1af3a2d
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 07:02:32.1081
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1BWexCtIsLeky7sxygvv5DikuT2mhuTACLMkbxeXj60af/cyUkmsztviQtKmxzt79kG9haY7CTwpUPn93YFo3Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5074
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 29/34] ALSA: usb-audio: qcom: Add USB offload route
+ kcontrol
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-30-quic_wcheng@quicinc.com>
+ <4d5fe3f8-d7ba-4647-8dd7-22656ec2fde5@linux.intel.com>
+ <58043166-c494-42db-b7d3-575991e43e8b@quicinc.com>
+ <f507a228-4865-4df5-9215-bc59e330a82f@linux.intel.com>
+ <88d5ed6f-1429-4381-8014-d5824ec7866e@quicinc.com>
+ <56ebd11e-9522-406b-9ca4-5e284eaac409@quicinc.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <56ebd11e-9522-406b-9ca4-5e284eaac409@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The debugfs_create_dir() function returns error pointers.
-It never returns NULL. So use IS_ERR() to check it.
 
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
----
- drivers/scsi/mpt3sas/mpt3sas_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_debugfs.c b/drivers/scsi/mpt3sas/mpt3sas_debugfs.c
-index a6ab1db81167..306616bdea83 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_debugfs.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_debugfs.c
-@@ -99,7 +99,7 @@ static const struct file_operations mpt3sas_debugfs_iocdump_fops = {
- void mpt3sas_init_debugfs(void)
- {
- 	mpt3sas_debugfs_root = debugfs_create_dir("mpt3sas", NULL);
--	if (!mpt3sas_debugfs_root)
-+	if (IS_ERR(mpt3sas_debugfs_root))
- 		pr_info("mpt3sas: Cannot create debugfs root\n");
- }
- 
--- 
-2.34.1
 
+>>>>>> +/**
+>>>>>> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
+>>>>>> + * @chip - USB SND chip device
+>>>>>> + *
+>>>>>> + * Creates a sound control for a USB audio device, so that applications can
+>>>>>> + * query for if there is an available USB audio offload path, and which
+>>>>>> + * card is managing it.
+>>>>>> + */
+>>>>>> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
+>>>>>> +{
+>>>>>> +	struct usb_device *udev = chip->dev;
+>>>>>> +	struct snd_kcontrol_new *chip_kctl;
+>>>>>> +	struct snd_usb_stream *as;
+>>>>>> +	char ctl_name[37];
+>>>>>> +	int ret;
+>>>>>> +
+>>>>>> +	list_for_each_entry(as, &chip->pcm_list, list) {
+>>>>>> +		chip_kctl = &snd_usb_offload_mapped_ctl;
+>>>>>> +		chip_kctl->count = 1;
+>>>>>> +		/*
+>>>>>> +		 * Store the associated USB SND card number and PCM index for
+>>>>>> +		 * the kctl.
+>>>>>> +		 */
+>>>>>> +		chip_kctl->private_value = as->pcm_index |
+>>>>>> +					  chip->card->number << 16;
+>>>>>> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
+>>>>>> +			as->pcm_index);
+>>>>>> +		chip_kctl->name = ctl_name;
+>>>>>> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
+>>>>>> +				  udev->bus->sysdev));
+>>>>>> +		if (ret < 0)
+>>>>>> +			break;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	return ret;
+>>>> Hi Pierre,
+>>>>> None of this looks Qualcomm-specific, shouldn't this be part of the
+>>>>> soc_usb framework instead of being added in the qcom/ stuff?
+>>>> Started working on this particular comment, and there are some things that needs to be considered if we moved this into SOC USB:
+>>>>
+>>>> 1.  We do save the reference to the USB BE DAI link within the USB DT node, which can be fetched/referenced based on sysdev.  However, I'm not sure if everyone would potentially follow that way.
+>>>>
+>>>> 2.  I tried a few implementations of adding a new SOC USB API, and the argument list was a bit long, because I didn't want to directly reference the usb_chip.
+>>>>
+>>>> Sorry for the delay, but I wanted to give a good stab at implementing this before bringing up the implications.  It is possible, but definitely not as clean as how we have it now IMO.
+>>> My comment was only referring to the location of the code, it's now in
+>>> sound/usb/qcom/mixer_usb_offload.c but does not contain anything
+>>> specific to Qualcomm. I was not asking for any encapsulation inside of
+>>> soc-usb, I was only suggesting a move of the code to a shared helper
+>>> library so that this code can be reused as is and not duplicated if the
+>>> QCOM parts are not compiled in.
+>> Ah, great, thanks for the clarification.  Let me take a look with that perspective.
+>>
+> Going back on the history behind moving it into qcom/ was based off feedback that Takashi pointed out in v14[1].  It was mainly due to the fact that we would be adding another hard dependency between USB SND and the offloading components.  Hence the reason for moving it to within the QCOM offloading package. 
+> 
+> Thanks
+> 
+> Wesley Cheng
+> 
+> [1]: https://lore.kernel.org/linux-usb/87y1bt2acg.wl-tiwai@suse.de/
+
+I don't see anything wrong with the initial proposal
+
+
+ +config SND_USB_OFFLOAD_MIXER
+ +	bool
+ +
+  config SND_USB_AUDIO_QMI
+  	tristate "Qualcomm Audio Offload driver"
+  	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && USB_XHCI_SIDEBAND
+  	select SND_PCM
+ +	select SND_USB_OFFLOAD_MIXER
+
+
+That would allows the SND_USB_OFFLOAD_MIXER to be build as a module, and
+it would allow other non-QCON solutions to use the module.
+Maybe just make it a tristate?
 
