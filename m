@@ -1,180 +1,180 @@
-Return-Path: <linux-kernel+bounces-295289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFB8959957
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:16:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D3E959953
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F9D282FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61351C21289
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E39207EA1;
-	Wed, 21 Aug 2024 09:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EABE1CE6EA;
+	Wed, 21 Aug 2024 09:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e8hFzcFT"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jsHiom2a"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4501CEAA8;
-	Wed, 21 Aug 2024 09:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08341CE6E3
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233932; cv=none; b=lAax2HpvxzxdIYPtll1Xgx5WL54o9UAhMet2lFYdY1GNuq5TKVA1v9k8zpWARtgYQCCdGot3SawXB2Iqa9aVs2/cA/gBh+nJ3QyERn6OFJUvXgmkY2wkssezIxz4Zo6JCP7P7kDdlvkq/8sz/LiWdt+g/E6BclV/FK/E/nN2HOk=
+	t=1724233893; cv=none; b=m+rfZsdK1q0xWIjBtN9WecZYJRcoHzh/+8uV8bY8JpaxjzJQE83duG4Sh+Ym7WzSNT/3jDaCKrygXXC9L809V0X4hx28kxTtrUoFZgza7qr4zRcvrjh9yhIytQki+VfGFbZSK2q0QO1s2+ldZ88Lo7Tk2HRTsbxNUShoTa0CWpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233932; c=relaxed/simple;
-	bh=oX5Y70PeZSV3FnIe5Qe50n57CiaewuBdW2S9LxKusGU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOIYWXLVjpugg3hXlztQxhqogIxn4I+M5Su+Fiz378EI1u9bOZatQx72ygK5JsCDWO9/DlKNizlJIvvOKjMPR25QD5DleQGz1K0i7+zpNCG/+nnn0w/l4ZjTFvbQ65lY7k8UmLw2j9vt7jzCMDM9OmQzQNCcXjL9sDvdqcz+/zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e8hFzcFT; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47L9p7Tu016774;
-	Wed, 21 Aug 2024 04:51:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724233867;
-	bh=H7rReYITgrUtmdZwgpSvcFNTCUfWweG/KI6cfIfwQdA=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=e8hFzcFTgf0zsEftdMITEA0451Egc41z72EY29SJRk5GYYpue1gNlzoaIJGoexYQw
-	 pRSPZDfR5Eo5YcwcgZAqFbLgxoNfMtDIV+A/QZiTJH5+Q+S2RfdaMGmYccBIZU/hLR
-	 dcAmCDsz0KduaO3d59hz0YrVeQXNEYwaLouR0Fgg=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47L9p7HL027706
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 04:51:07 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 04:51:06 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 04:51:06 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47L9p6Vt065443;
-	Wed, 21 Aug 2024 04:51:06 -0500
-Date: Wed, 21 Aug 2024 15:21:05 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC: Preeti U Murthy <preeti@linux.vnet.ibm.com>, <peterz@infradead.org>,
-        <rlippert@google.com>, <daniel.lezcano@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <rafael.j.wysocki@intel.com>, <linux-kernel@vger.kernel.org>,
-        <mingo@redhat.com>, <sudeep.holla@arm.com>, <tglx@linutronix.de>,
-        <linuxppc-dev@lists.ozlabs.org>, <khilman@ti.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>
-Subject: Re: [PATCH 3/3] cpuidle: Select a different state on
- tick_broadcast_enter() failures
-Message-ID: <20240821095105.xuf2a5xe3yxqqewj@lcpd911>
-References: <20150508073418.28491.4150.stgit@preeti.in.ibm.com>
- <3161640.llJtBoKCBr@vostro.rjw.lan>
- <8965830.CMQzZzsqm0@vostro.rjw.lan>
- <4652506.tkuQIhnkdH@vostro.rjw.lan>
+	s=arc-20240116; t=1724233893; c=relaxed/simple;
+	bh=V0U2GEi4A8/FDq1UDPKeMvOAQxCi0vOENx3x79wwGOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a+6RfAgR3oHZ6vM0RQV78wSozDdY/4TVVgAZsYh/u4xAatVl/Rquz4H2jBKidU0rKvLL0oLEvVW4uPpKVbiAXX2AFEVQNXjWWjyXVC5zr4UsnIKRAa1PArU6xry+12jVdL1EqlsTRlq21qlicGfE/bUfnnwYQhNsLM3g7caxwB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jsHiom2a; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso428814a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724233890; x=1724838690; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QrfsoI7+/y7gPIc6zH2vT6eGjRus/vFY8lyFc42bTUs=;
+        b=jsHiom2aYDn5NbjX/MflO3IsU3TVg6QKCHkI2gH14LB+RMKm/LrzsvaW7/7oo7siWv
+         vsSom/5OfN9QBO6sI75v3vlRrHRu3cOFJQykBH8BJRNkst3pz4p5KFmcUmAeW6O2KGvs
+         B4Xa1Hj4+cAJIhWHP4Ba9TXgo0KdkE06RahQ2ZUMKbxq7kZ5UKnbboTxla6IHhGb98cg
+         BQX+q8LFgmw/sVx8rCOTVsnxV5z+pZllIB0tUYiO95Zb2W7VHg2o/Ikjq/p8shtiZecd
+         U7YpAvqxZAsttvC4LgOj0S9d2OZP+EPz2lGeTeOejMGAFifdRhZ2z49MBwZdgvvJND8/
+         FnPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724233890; x=1724838690;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QrfsoI7+/y7gPIc6zH2vT6eGjRus/vFY8lyFc42bTUs=;
+        b=SYQEhZgHHte4++495AgzY7qju9HC4bf7PprWU50DilrkcfBI46eowyWZBO5XMxcZcB
+         55B+yfG1QiSdXjmpBJbWPVF+aQyk1fFqw6mdAaHK3LIfHFkZmc8wjP75vEtaZYrVNmP8
+         b2hWtLnKwSVqHdRZn+d2uS75qgRtBBvEIWYiOIzJ+l8/2cIJMSgYXwkWWwueIY1eQYpJ
+         xsQ4CJj92glefI3bCfSB9Ajx2NZ+MQwiDhrz+fsQEzW/K6cSu2+uY6dKo2N+O+4/m0gP
+         QSMZXidvh+o/p9jujtQX4CKDyWV+jY1n0Yaxb67nOJst7tnX4Rfi9E0bp66tcGqkTEcg
+         XwAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqovsh0RvnTUi8nreBuKoUwX7E1xxbTkSJrGXuIrr/y2zNBA/dGFrALIFL/VNaCmROFi++LSZhbOhR/ow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxo2ppwV82VzmEvDP2wPm4O4wKTn6vz2yQkz6BvBnsle+Gf368
+	W8z9ST2xg0/PrNfyTzTUyewsFAgTWkqv4r5dHqr1ew8A+U31M7eY75IfwDrCk24=
+X-Google-Smtp-Source: AGHT+IH39FxZGyvulFfIBDs9fMR7pRrcFkJNeekEukWGwpJYqyx+HQvEFVfN+uyRXPCwbuMHV6p+iw==
+X-Received: by 2002:a17:90a:ca04:b0:2cb:56bd:5d7 with SMTP id 98e67ed59e1d1-2d5e995be3emr3063558a91.5.1724233890327;
+        Wed, 21 Aug 2024 02:51:30 -0700 (PDT)
+Received: from [10.84.144.49] ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbb0b27sm1297201a91.45.2024.08.21.02.51.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 02:51:29 -0700 (PDT)
+Message-ID: <ef40c2ef-e4a4-4b02-85b8-a930285a3d0e@bytedance.com>
+Date: Wed, 21 Aug 2024 17:51:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4652506.tkuQIhnkdH@vostro.rjw.lan>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/14] mm: handle_pte_fault() use
+ pte_offset_map_maywrite_nolock()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
+ "hughd@google.com" <hughd@google.com>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "muchun.song@linux.dev" <muchun.song@linux.dev>,
+ "vbabka@kernel.org" <vbabka@kernel.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "rppt@kernel.org" <rppt@kernel.org>,
+ "vishal.moola@gmail.com" <vishal.moola@gmail.com>,
+ "peterx@redhat.com" <peterx@redhat.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <cover.1724226076.git.zhengqi.arch@bytedance.com>
+ <239432a0bc56464e58a6baf3622fdc72526c8d57.1724226076.git.zhengqi.arch@bytedance.com>
+ <6a586524-5116-4eaf-b4f3-c1aea290d7c1@cs-soprasteria.com>
+ <b4bf605a-d31a-40ad-8cee-fe505e45dc64@bytedance.com>
+ <4b867535-8481-4fa1-bed1-ad25a76682f0@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <4b867535-8481-4fa1-bed1-ad25a76682f0@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On May 10, 2015 at 01:19:52 +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+On 2024/8/21 17:41, David Hildenbrand wrote:
+> On 21.08.24 11:24, Qi Zheng wrote:
+>>
+>>
+>> On 2024/8/21 17:17, LEROY Christophe wrote:
+>>>
+>>>
+>>> Le 21/08/2024 à 10:18, Qi Zheng a écrit :
+>>>> In handle_pte_fault(), we may modify the vmf->pte after acquiring the
+>>>> vmf->ptl, so convert it to using pte_offset_map_maywrite_nolock(). But
+>>>> since we already do the pte_same() check, so there is no need to get
+>>>> pmdval to do pmd_same() check, just pass NULL to pmdvalp parameter.
+>>>>
+>>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>>>> ---
+>>>>     mm/memory.c | 9 +++++++--
+>>>>     1 file changed, 7 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 93c0c25433d02..d3378e98faf13 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -5504,9 +5504,14 @@ static vm_fault_t handle_pte_fault(struct 
+>>>> vm_fault *vmf)
+>>>>              * pmd by anon khugepaged, since that takes mmap_lock in 
+>>>> write
+>>>>              * mode; but shmem or file collapse to THP could still 
+>>>> morph
+>>>>              * it into a huge pmd: just retry later if so.
+>>>> +         *
+>>>> +         * Use the maywrite version to indicate that vmf->pte will be
+>>>> +         * modified, but since we will use pte_same() to detect the
+>>>> +         * change of the pte entry, there is no need to get pmdval.
+>>>>              */
+>>>> -        vmf->pte = pte_offset_map_nolock(vmf->vma->vm_mm, vmf->pmd,
+>>>> -                         vmf->address, &vmf->ptl);
+>>>> +        vmf->pte = pte_offset_map_maywrite_nolock(vmf->vma->vm_mm,
+>>>> +                              vmf->pmd, vmf->address,
+>>>> +                              NULL, &vmf->ptl);
 > 
-> If tick_broadcast_enter() fails in cpuidle_enter_state(),
-> try to find another idle state to enter instead of invoking
-> default_idle_call() immediately and returning -EBUSY which
-> should increase the chances of saving some energy in those
-> cases.
+> I think we discussed that passing NULL should be forbidden for that 
+> function.
+
+Yes, but for some maywrite case, there is no need to get pmdval to
+do pmd_same() check. So I passed NULL and added a comment to
+explain this.
+
 > 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-
-Found this during code review, hence dug up this old thread again,
-
->  drivers/cpuidle/cpuidle.c |   20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
+>>>
+>>> This might be the demonstration that the function name is becoming 
+>>> too long.
+>>>
+>>> Can you find shorter names ?
+>>
+>> Maybe use abbreviations?
+>>
+>> pte_offset_map_ro_nolock()
+>> pte_offset_map_rw_nolock()
 > 
-> Index: linux-pm/drivers/cpuidle/cpuidle.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpuidle/cpuidle.c
-> +++ linux-pm/drivers/cpuidle/cpuidle.c
-> @@ -73,7 +73,10 @@ int cpuidle_play_dead(void)
->  }
->  
->  static int find_deepest_state(struct cpuidle_driver *drv,
-> -			      struct cpuidle_device *dev, bool freeze)
-> +			      struct cpuidle_device *dev,
-> +			      unsigned int max_latency,
-> +			      unsigned int forbidden_flags,
-> +			      bool freeze)
->  {
->  	unsigned int latency_req = 0;
->  	int i, ret = freeze ? -1 : CPUIDLE_DRIVER_STATE_START - 1;
-> @@ -83,6 +86,8 @@ static int find_deepest_state(struct cpu
->  		struct cpuidle_state_usage *su = &dev->states_usage[i];
->  
->  		if (s->disabled || su->disable || s->exit_latency <= latency_req
-> +		    || s->exit_latency > max_latency
-> +		    || (s->flags & forbidden_flags)
->  		    || (freeze && !s->enter_freeze))
->  			continue;
->  
-> @@ -100,7 +105,7 @@ static int find_deepest_state(struct cpu
->  int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
->  			       struct cpuidle_device *dev)
->  {
-> -	return find_deepest_state(drv, dev, false);
-> +	return find_deepest_state(drv, dev, UINT_MAX, 0, false);
->  }
->  
->  static void enter_freeze_proper(struct cpuidle_driver *drv,
-> @@ -139,7 +144,7 @@ int cpuidle_enter_freeze(struct cpuidle_
->  	 * that interrupts won't be enabled when it exits and allows the tick to
->  	 * be frozen safely.
->  	 */
-> -	index = find_deepest_state(drv, dev, true);
-> +	index = find_deepest_state(drv, dev, UINT_MAX, 0, true);
->  	if (index >= 0)
->  		enter_freeze_proper(drv, dev, index);
->  
-> @@ -168,8 +173,13 @@ int cpuidle_enter_state(struct cpuidle_d
->  	 * CPU as a broadcast timer, this call may fail if it is not available.
->  	 */
->  	if (broadcast && tick_broadcast_enter()) {
-> -		default_idle_call();
-> -		return -EBUSY;
-> +		index = find_deepest_state(drv, dev, target_state->exit_latency,
-> +					   CPUIDLE_FLAG_TIMER_STOP, false);
-> +		if (index < 0) {
+> At least the "ro" is better, but "rw" does not express the "maywrite" -- 
+> because without taking the lock we are not allowed to write. But maybe 
+> "rw" is good enough for that if we document it properly.
 
-Would this condition ever meet?
-If you see, the ret inside find_deepest_state is always starting with a 0 and
-then nobody is ever really making it negative again. So the func either
-returns a 0 or some positive value right?
+OK, will change to it in the next version.
 
-Since nobody has probably raised an issue about this in 9 years, is this
-basically dead code inside the if?
-Let me know what needs to be done here, I'd be happy to patch this up.
-
-> +			default_idle_call();
-> +			return -EBUSY;
-> +		}
-> +		target_state = &drv->states[index];
->  	}
->  
->  	/* Take note of the planned idle state. */
 > 
+> And you can use up to 100 characters, if it helps readability
 
--- 
-Best regards,
-Dhruva Gole <d-gole@ti.com>
+Got it.
+
+> 
 
