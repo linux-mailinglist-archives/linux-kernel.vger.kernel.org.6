@@ -1,95 +1,81 @@
-Return-Path: <linux-kernel+bounces-295961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4066195A3A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0680295A3A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 733A61C222E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A752852FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E8A1B252F;
-	Wed, 21 Aug 2024 17:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179551AF4E0;
+	Wed, 21 Aug 2024 17:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="upk5xP46"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="oKf/3zOm"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B514D1509A2
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918335FEED
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724260353; cv=none; b=Ortep14dX7VJ2NUrlwpOqiO+3GbHjcznLAgFzcDO+v5uo596fwJRzLAdqYQB1fbmp2nQv0UejZlwkgksYCJK5NOQBYdv2n2EQ9Gx2lvXyFpoal+Jq8mo7mEiL2utv7y/JHVC3szpZ/F3L7Zbce/bJiA0kLlBgNn4HaQYkQA8AXw=
+	t=1724260549; cv=none; b=bYkeIG/1MC7TUZcuQPeEarWDqCeR+p+Ye0tEkDF+5pR3BwhLHAL+VyGXVFtKhCx7liD6lEL6DYvHdV/gXNpwkVpDF6DcmO1n2GRogjz57pg3aqiy/AYat3Z79Y/R+kOMKDXYq2YNU8USE2wzgAlr0eM3A+2UTTpHO393uewgFyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724260353; c=relaxed/simple;
-	bh=8AMj1gQbdOy6mzRKOvisGTOPkhNd65sI4xgr/VwrPjo=;
+	s=arc-20240116; t=1724260549; c=relaxed/simple;
+	bh=CXUZMTfR+ctY64S4wLWT95QPyMLbTeVBl9F9I/RbGzE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQ0M43RkL0cBhnMw8PL9KHP7JxbvMQhLluV7meBhK/6o9sSxT5uLi0evYKTUCFQiUu8fGGo8Q2mQn+lPjGOATtM4UcWbOVv4nTLrGLeQVkiGyu+EWLmAbaC8eZz3s5+ABAEDS2RMrzDoI+pYQIrvu4+ct+nw74n4jHI47oR4348=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=upk5xP46; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7143185edf2so108830b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:12:31 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXEJYVu6gcmwJIqRA4ECFQPFplX86xJ08SkLJL98BWkL3hgfWwdhikChpt4qmnqySs29rpoW1FevzqFHVl3Pavn61gzaEBi7e5FAasQe729P5gVM9Yc6S1Rl4j405xHQCWTEvZRYCXWmfJoUUKsvYycZp5qIqsj0mp7UxH5z+as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=oKf/3zOm; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e16582cb9f9so838073276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:15:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724260351; x=1724865151; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724260546; x=1724865346; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2PGuIX73MOWMnEgrAGHe44EShZU2W6VwRhKHeC2K7JU=;
-        b=upk5xP46OfEFNNtH3SH5yhTKqD57K+7FyHr+IV0pyc6BZcvM+A17QmRF5ESdc8eZOy
-         urpf6pmCGrdNB3DtXMbKpl5nyIbmpCEZ5eeqxV60uXWr8SmH8Bkn5/SdbrwHG8v6ZW5U
-         rP8Rm2Z/arH6YmE6zk0+iKCq26QPe5flVcbPh1dmOB5mjK/VxnhSL88EYbdRCna+DMr2
-         G2vdCvMj9154bHR21mnFQAnVgSmSs4HawEpsbR8/4HUy8UOt8Yfks4nAhtAmgFhfB8fQ
-         PYNCCBemPFSc5jDp9mxYSIz0NoQ20p35Hw8CqecRUZG4rJc9tiwy+UfE8YFNrbs7V0Il
-         H7kA==
+        bh=nnz/9bRfV4eCE7Gj4szszeqMiVZN0a+HcNTY9eR9KK4=;
+        b=oKf/3zOmfbmjL28EvUdVtlIBWWa0T7hBI2wPbqeoCXt8d7SW+azEVy+zwq8r67P5D8
+         NP+ycpstC1ugfFMDVZFKxfGbDPsGz24jgMBI1E5Ik7PHcRPRVL74L9NWIQktPAniNIF/
+         1BpJ9P9tSYaMaZANul2tHW9Vy3o22NDJPW9f6wx+g/O05WcLE/c2YWFHiHD4i9sJzJaf
+         0x4tIGXx90lQlRVnnC91UxWeLUgFPYN8FjQBa4GGHThyhn+V6HlEqUtTgNoBhOtTgHhD
+         7+VzESlA1jMt25bmYdWULsVsam7X0pnk0qiya/WyTar02/n9cTvzt7Ll7SOPAExT24RZ
+         i0wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724260351; x=1724865151;
+        d=1e100.net; s=20230601; t=1724260546; x=1724865346;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2PGuIX73MOWMnEgrAGHe44EShZU2W6VwRhKHeC2K7JU=;
-        b=QSKGbR2KIIZzq246qbvCpQnbRUyC4Xt21PZimOgwBuB7RAWfgOAEgjrXRya7UGL+/c
-         SUTntxURLw9YFEmFppOn2DQIcSAteUF8p6W7j/GUVfc7Ux1I6zci2EqKDbxnNYhl5tYt
-         sGs+nQ8xTf2bE7HKpqfau8ZFKQ5UcNNjlhftVl3Cbb+OBzIsvFc1fEhmgARhwfQc6Liv
-         tR77hPDqq+CupPXff1IPyHTPSbEr8YGbq6GiBiE7kYiFU3upPYf+6Es7vGtYp69buya1
-         TOcEzlzFnz97dIVkWR2Au8so5hhL5qT83riS8T0oKm02Plb1h+RLh/w0DVc4K0I5YHU1
-         b32A==
-X-Forwarded-Encrypted: i=1; AJvYcCWnQySjvGjypQ/syF2SeD7cAe5bjLVZ53yo2aWOn3JrWHqTbvuhJsxY6v4sN1GKC9vfkwy8tPkZGSd7v5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNc7NmdGpM6fDfuzAJT6vNJ+65Lfc7r1aKCJC+w6c9PvaicxMQ
-	2KYk5HHRhjijm2FNHgN+VYW8VJBUyaMLKLWJCO+bfPei4f0cxuGQwR4wQQWHggM=
-X-Google-Smtp-Source: AGHT+IFahu5nhyR9APNX81eGWYDvWGW2BXzcpC6njxXplKlq16tD6UzEgdsOMomgPVvunvzQIx/1lw==
-X-Received: by 2002:a05:6a20:c916:b0:1c3:b61c:57cb with SMTP id adf61e73a8af0-1cad818adccmr3000160637.53.1724260350919;
-        Wed, 21 Aug 2024 10:12:30 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:167e:272c:2858:d319])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7142e28d8f9sm528460b3a.70.2024.08.21.10.12.29
+        bh=nnz/9bRfV4eCE7Gj4szszeqMiVZN0a+HcNTY9eR9KK4=;
+        b=F5gEVEI9HKoDfflBvUkaT8DgKH+b3bGmhEZwTTOSQFzkuRBAWmRlGY1LhL2oWZQpTa
+         d5fHo02RQUdVXY2DS44O6mAmghJMWaSkJTzC6/+G7TjrlVVx9klqJgrJvZ0ixuWUT9ye
+         sdRzrpkFpye0tCSy6yhIbr7JtUwLepTSFuoFoy8KyU6py4cLDZzW0oqcTzHL7HkTs55H
+         NFZwDqg+g3/K2PqZBQea1NNLIDbx04Z2gifw1C6nI3GU2fJR5r3fkDaNBcujXAU43bQ+
+         eFeQ5/A6s9kTCOETrTXDnN54thj+gZMmQFOovCXHnM+nHVlIR7u+fUSxJkWVhJRJ8RKG
+         BJTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeA92HyYhvzFrvCOxwxil58OclSkgMYTogWEpvL0hP+4WjSv/vFwKS+J5Z9aOCxL3Y3Vq/WSEjrvSCN1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/7aY6gh6VREclayRpdHgYPtLzJ40G/l8tO67dITIai6YrhFYI
+	pysfQHvD1F3B09pb7NDxV57n+wA/pOL5hePQLsO8oKgbbnyiMFgmoiapMpxk+w8=
+X-Google-Smtp-Source: AGHT+IH/k3XRCeN1yFBxEuJh7fGjWPwPN5ESb1A5WZiWw5eWEfWhdrnOx6PA8oM/9J1Kjpjv36J3lw==
+X-Received: by 2002:a05:6902:a90:b0:e11:446b:d43b with SMTP id 3f1490d57ef6-e17762890a5mr359370276.16.1724260546569;
+        Wed, 21 Aug 2024 10:15:46 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1172006e05sm2943867276.43.2024.08.21.10.15.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 10:12:30 -0700 (PDT)
-Date: Wed, 21 Aug 2024 11:12:27 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Hari Nagalla <hnagalla@ti.com>, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 3/9] remoteproc: k3-m4: Add a remoteproc driver for
- M4F subsystem
-Message-ID: <ZsYf+yR/SWfb97Ya@p14s>
-References: <20240802152109.137243-1-afd@ti.com>
- <20240802152109.137243-4-afd@ti.com>
- <Zr4w8Vj0mVo5sBsJ@p14s>
- <Zr9j5HBjRqqRIoaD@p14s>
- <e5140426-7e69-41b0-858f-16f83eed871a@ti.com>
- <ZsNlic5EbQP2BdFB@p14s>
- <f529c5ef-f61c-4c8b-a589-652aca162f07@kernel.org>
- <98d65c2e-f5a2-4894-b76d-6fa0fb8b6daf@ti.com>
+        Wed, 21 Aug 2024 10:15:46 -0700 (PDT)
+Date: Wed, 21 Aug 2024 13:15:45 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH] btrfs: stripe-tree: correctly truncate stripe extents on
+ delete
+Message-ID: <20240821171545.GA1998418@perftesting>
+References: <20240820143434.25332-1-jth@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,53 +84,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <98d65c2e-f5a2-4894-b76d-6fa0fb8b6daf@ti.com>
+In-Reply-To: <20240820143434.25332-1-jth@kernel.org>
 
-On Mon, Aug 19, 2024 at 10:54:11AM -0500, Andrew Davis wrote:
-> On 8/19/24 10:39 AM, Krzysztof Kozlowski wrote:
-> > On 19/08/2024 17:32, Mathieu Poirier wrote:
-> > 
-> > > > > > Please remove.
-> > > > > Forget this comment since it would cause an error in __rproc_detach().
-> > > > > 
-> > > > > > Other than the above I'm good with this driver.  That said I can't move forward
-> > > > > > without a nod from the DT crew.  I also noticed a fair amount of code
-> > > > > > duplication with the k3_r5 and k3_dsp drivers.  Dealing with that should not be
-> > > > > > part of the current work but will need to be done before another k3 driver can
-> > > > > > be merged.
-> > > > > > 
-> > > > 
-> > > > > The above still apply though.
-> > > > 
-> > > > Me or Nishanth will pick up the SoC DT patches via TI SoC tree, once the
-> > > > driver patches are merged. Feel free to ignore those but queue
-> > > > dt-bindings (already has DT maintainers ack) and driver patches via
-> > > > rproc tree.
-> > > > 
-> > > 
-> > > Can you provide a link where the DT maintainers have acknowledged the bindings?
-> > 
-> > The reviewed-by tag serves as acknowledgment as well and the binding
-> > patch has it. Conor gave it on some earlier version of the patchset. I
-> > did not check if there were any significant changes in the meantime, though.
-> > 
+On Tue, Aug 20, 2024 at 04:34:33PM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> Was reviewed in v8:
-> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240424190612.17349-2-afd@ti.com/#3302840
->
+> In our CI system, we're seeing the following ASSERT()ion to trigger when
+> running RAID stripe-tree tests on non-zoned devices:
+> 
+>  assertion failed: found_start >= start && found_end <= end, in fs/btrfs/raid-stripe-tree.c:64
+> 
+> This ASSERT()ion triggers, because for the initial design of RAID stripe-tree,
+> I had the "one ordered-extent equals one bio" rule of zoned btrfs in mind.
+> 
+> But for a RAID stripe-tree based system, that is not hosted on a zoned
+> storage device, but on a regular device this rule doesn't apply.
+> 
+> So in case the range we want to delete starts in the middle of the
+> previous item, grab the item and "truncate" it's length. That is, subtract
+> the deleted portion from the key's offset.
+> 
+> In case the range to delete ends in the middle of an item, we have to
+> adjust both the item's key as well as the stripe extents.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>  fs/btrfs/raid-stripe-tree.c | 50 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 49 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+> index 4c859b550f6c..c8365d14271f 100644
+> --- a/fs/btrfs/raid-stripe-tree.c
+> +++ b/fs/btrfs/raid-stripe-tree.c
+> @@ -61,7 +61,55 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handle *trans, u64 start, u64 le
+>  		trace_btrfs_raid_extent_delete(fs_info, start, end,
+>  					       found_start, found_end);
+>  
+> -		ASSERT(found_start >= start && found_end <= end);
+> +		if (found_start < start) {
+> +			struct btrfs_key prev;
+> +			u64 diff = start - found_start;
+> +
+> +			ret = btrfs_previous_item(stripe_root, path, start,
+> +						  BTRFS_RAID_STRIPE_KEY);
 
-I didn't notice Conor had joined the DT crew and as such was expecting something
-from either Rob or Krzysztof.  I am applying this set.
+This is only safe if we're not path->slots[0] == 0, otherwise we'll do
+btrfs_prev_leaf(), which doesn't modify anything, adn then we'll be in trouble.
+If this is safe then a comment indicating why we expect this to only back up one
+slot, and maybe an
 
+ASSERT(path->slots[0] > 0);
+
+before the btrfs_previous_item to make sure we don't screw this up later.
 Thanks,
-Mathieu
 
-> If there was any significant changes since I would have dropped the tag.
-> 
-> Andrew
-> 
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
+Josef
 
