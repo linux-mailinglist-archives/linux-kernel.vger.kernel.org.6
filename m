@@ -1,68 +1,83 @@
-Return-Path: <linux-kernel+bounces-296031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BB795A49C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:18:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DADC795A4A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04E01F232A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93D05283D5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2139F1B3B38;
-	Wed, 21 Aug 2024 18:18:15 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788681B3B2C;
+	Wed, 21 Aug 2024 18:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="To6gR4n0"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8731A16B725;
-	Wed, 21 Aug 2024 18:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759561B250D
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 18:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724264294; cv=none; b=GLRnxZ/DVl6natvV6rlWysiUMKLKDVwswN/NZLJoFF9aU0qjxR+JsjBH9QhtGiPjVEaulitwRChtX83kYIJRmfp3t6rz4vbonejFPKQei4wc7Wjhi30wA+UopF7b9GIvc5RQM0XuCICHZLZiKrZSr0K37Yu9vHRGlx3BwnS1ZPM=
+	t=1724264479; cv=none; b=C035e10oHQMODLI3DoNeUD9eeBf5PAuJuyFXagLK/o/4zyyIOPfPlmxgViA02YBHGcCyG2xcYrCUHoImiB1fMOYLkiv8WzC+slGOPd3aBQ2801yceyMgSw2BVokZ1khcNR5nOISkKfX8pPcMBvdabcoF+naX9zKL4Jvu2okp8hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724264294; c=relaxed/simple;
-	bh=HqXiHUM8OuS/yxYEycv5YsMMoXgklwoDD8UywEZmmnE=;
+	s=arc-20240116; t=1724264479; c=relaxed/simple;
+	bh=NSkAYr7bCmb3Whw3daQ77DB27/Rap81/w8JLe5qOJiU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsLFtkN40Oboc/ZIWpqgWTB3YZ2OjaC6L7ZdmHCq/ziMjWsO9Fg2x5C+4bCljOaGfw8/qfiRI26Ckra2nLRESflgDML82NCqdniez730YLjPZpO03B7Y7hIU0BoQpT4Ue8kOmGporT7vYJhgtijU1nV9JuOIlB4dSYzUSOlB2VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C128C32781;
-	Wed, 21 Aug 2024 18:18:08 +0000 (UTC)
-Date: Wed, 21 Aug 2024 19:18:06 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
- context for signal handlers
-Message-ID: <ZsYvXqYEMYvIar28@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
- <ZsYj0YYMuX1YRBZT@arm.com>
- <d5473c27-167f-46c3-9368-487ed4b657cf@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bxe9OW4isWfM4ZLmKu+S6rNa0Q8kC2MRoHijoKLrA9G85LUi6vySz76yt6se5fQRYVBXISVckgDEVD9+WewpFIvcFULuX1v5eSwxft5M7OgfObVuPONAZumasC0Tid3hULzvhbB7skdGAa0Q1O0n6ffBW2EPGCuX2VzjNqtH/Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=To6gR4n0; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7143165f23fso158134b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724264478; x=1724869278; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rLaHZXNQ7BrbOIHjJhTXeFkX6/m+9PAM08pS1uhnqTc=;
+        b=To6gR4n0/NxZgq5CmUwwHcgS5sxPFKjrEWc5zzTBAmfvBCS214HO62SX1zzS7fdMZh
+         8YtdnbKOYpx+rpdLFZR+eqdt5zZmgpF+tlZGhfFQZ/u4gmP9PIW/YvxBk5DF0a4BbKCC
+         TxhYUdFNkwitLmqkjBZZewx6xzrIR7kts8KrZKHg/wYLbB0Z9Xbmwad270kv2nxm/joE
+         Wzd8QCI0glUkQ9OPh9gRyarJJvsXdUXWpR9R188LBpqFebeZhKFwwooOnQM4/wt0vhQ5
+         MBcFNJoOAJBcRXgGBixs0HPuY7LkcGpbVS2NBs6pWbdlyz2eBzO8L9m8yWqZpo8EqvsG
+         3WRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724264478; x=1724869278;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rLaHZXNQ7BrbOIHjJhTXeFkX6/m+9PAM08pS1uhnqTc=;
+        b=i9CZAKljC+pzFIwUC/VRVrxHryv3Rsm6dwRxdLziw6RxcrmZnbhjMPEXZn/gtr1e5P
+         1ekoXnELnyZ4EUrU0X6Y2+rKRIi+w99Lb2SB+ZIOSWUf9Xpijb+GO+GdVi72tHIRMBer
+         S4c2JM8QumtQ3LO8hWQ2ZKKnT5Tz2/peUD8pM5Atl6uXlF/v9RZoTzU0TwTZCjSNrvNQ
+         m9wDK09Xh9hHIOm/9i35a2H01+coXaFCCv90UOJ2/IlOzck9gwmSisT5jRNUuRe8QD/P
+         tNS2D5LjVSi1G+In0NQAoTdwM/443NgwA8dstUzo7Bl88YgCdeJ3bNksCukMK1+v2V+4
+         gtIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVX7Xkm+pnrf163qGrzJWKNUGo8fsrW3e46igNH8G3yMzeM5v8wmjoi4bNeZVk/BVlzlVAcunCaJ3btB7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPxVWb1J2i/u0WiJhRGI1KMPdpXSra9zgUjZuFQM3MX35vWb7p
+	e/tnxn8atseZxC8DzYxzMnnJ3CNC9QFHsAqBJK/I7Pa9lA1uPSO5ZA0bACIxMg==
+X-Google-Smtp-Source: AGHT+IEm1ZehgvYO1cvgACbjrPTylob0tJBTNrg8E6mB8b6jByYU12rCK6TYepFT8mmhNG1+9jhoTw==
+X-Received: by 2002:a05:6a20:b598:b0:1c4:919f:3675 with SMTP id adf61e73a8af0-1cad81a731fmr3349633637.35.1724264477214;
+        Wed, 21 Aug 2024 11:21:17 -0700 (PDT)
+Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af3aeaasm10248967b3a.191.2024.08.21.11.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 11:21:16 -0700 (PDT)
+Date: Wed, 21 Aug 2024 18:21:11 +0000
+From: Mingwei Zhang <mizhang@google.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Jinrong Liang <ljr.kernel@gmail.com>,
+	Jim Mattson <jmattson@google.com>,
+	Aaron Lewis <aaronlewis@google.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] KVM: x86: selftests: Fix typos in macro variable use
+Message-ID: <ZsYwF5QJ8gqto8Mm@google.com>
+References: <20240813164244.751597-1-coltonlewis@google.com>
+ <20240813164244.751597-2-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,29 +86,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d5473c27-167f-46c3-9368-487ed4b657cf@sirena.org.uk>
+In-Reply-To: <20240813164244.751597-2-coltonlewis@google.com>
 
-On Wed, Aug 21, 2024 at 07:03:13PM +0100, Mark Brown wrote:
-> On Wed, Aug 21, 2024 at 06:28:49PM +0100, Catalin Marinas wrote:
-> > On Thu, Aug 01, 2024 at 01:06:50PM +0100, Mark Brown wrote:
-> > > +	/*
-> > > +	 * Push a cap and the GCS entry for the trampoline onto the GCS.
-> > > +	 */
-> > > +	put_user_gcs((unsigned long)sigtramp, gcspr_el0 - 2, &ret);
-> > > +	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 1), gcspr_el0 - 1, &ret);
-> > > +	if (ret != 0)
-> > > +		return ret;
+On Tue, Aug 13, 2024, Colton Lewis wrote:
+> Without the leading underscore, these variables are referencing a
+> variable in the calling scope. It only worked before by accident
+> because all calling scopes had a variable with the right name.
 > 
-> > Doesn't the second put_user_gcs() override the previous ret?
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+
+This might need a fixes tag, right?
+Fixes: cd34fd8c758e ("KVM: selftests: Test PMC virtualization with forced emulation")
+
+no need to cc stable tree though, since this is very minor.
+
+Reviewed-by: Mingwei Zhang <mizhang@google.com>
+> ---
+>  tools/testing/selftests/kvm/x86_64/pmu_counters_test.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> No, we only set ret on error - if the first one faults it'll set ret
-> then the second one will either leave it unchanged or write the same
-> error code depending on if it fails.  This idiom is used quite a lot in
-> the signal code.
-
-You are right, I missed that it's called 'err' in put_user_gcs(),
-thought it's overridden.
-
--- 
-Catalin
+> diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> index 698cb36989db..0e305e43a93b 100644
+> --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> @@ -174,7 +174,7 @@ do {										\
+>  
+>  #define GUEST_TEST_EVENT(_idx, _event, _pmc, _pmc_msr, _ctrl_msr, _value, FEP)	\
+>  do {										\
+> -	wrmsr(pmc_msr, 0);							\
+> +	wrmsr(_pmc_msr, 0);							\
+>  										\
+>  	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
+>  		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
+> @@ -331,9 +331,9 @@ __GUEST_ASSERT(expect_gp ? vector == GP_VECTOR : !vector,			\
+>  	       expect_gp ? "#GP" : "no fault", msr, vector)			\
+>  
+>  #define GUEST_ASSERT_PMC_VALUE(insn, msr, val, expected)			\
+> -	__GUEST_ASSERT(val == expected_val,					\
+> +	__GUEST_ASSERT(val == expected,					\
+>  		       "Expected " #insn "(0x%x) to yield 0x%lx, got 0x%lx",	\
+> -		       msr, expected_val, val);
+> +		       msr, expected, val);
+>  
+>  static void guest_test_rdpmc(uint32_t rdpmc_idx, bool expect_success,
+>  			     uint64_t expected_val)
+> -- 
+> 2.46.0.76.ge559c4bf1a-goog
+> 
 
