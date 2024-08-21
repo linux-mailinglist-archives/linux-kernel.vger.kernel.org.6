@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-295000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8BC959535
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:59:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6871D95953A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65E831C2255C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:59:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B50EB24176
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D3E193435;
-	Wed, 21 Aug 2024 06:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC551799D;
+	Wed, 21 Aug 2024 07:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="0OzslZWD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qBqJ6wW1"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="WYDxnEnU"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5E0193417;
-	Wed, 21 Aug 2024 06:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556AF192D66;
+	Wed, 21 Aug 2024 07:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724223590; cv=none; b=QRy0YcieoTANu29sbiUKI2WsUGkdV4TgQFcd6K8v/mRBW2skMSyH5CRe4WzpcdCNyM30UKky/I+ukiP5Wsp9jrqTwmeS7672BZV6cXTOnuoV8rgsQuHLH8WD7c2+V9Is8Fc+aeUF72s0oHwOLi+qFCRjjpcl9dag0Sv5VFj/LJ4=
+	t=1724223681; cv=none; b=MpLiHIykK6wqz8hVkRDXmRl7VzoZ9o0tvHaRQWaSuDUMgZoZk5IbAY0uCpPKG5sp8a5W+cT5yqAs45ayjQgd6PeyuTFDNK9vQ/knOsRxu0x5L6w/Uf6ME5ok27LvyYassb26QEdM0WXdJen0NQRFLNkO6kvgWGJV6fcxgXdhk8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724223590; c=relaxed/simple;
-	bh=RJZGVmbSm9dTUqRx+uATMSqYind8iYZaDoVC12M/+Do=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLI3+1ndYoulJ3xxoWfMMX9kxGdZjRq8EgBGG6hABfTup2suJhyZsEJy1pJUBf2GxqOAInh1siF9A6S8oQMJLnBiCJHEiUR0blqbtdkSXScBK0F+Z11u34dcdjwovMjpZyKLOjnxS/8g9ZRkET5MStI4/f6TFkuxjh5SMNMfaE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=0OzslZWD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qBqJ6wW1; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 4D959138FF3C;
-	Wed, 21 Aug 2024 02:59:47 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 21 Aug 2024 02:59:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1724223587; x=1724309987; bh=HUYGoPtkPX
-	SIcq5G75OesE2wTzGU8YCmJtPfixrqDfQ=; b=0OzslZWDCI/Fq2nmcDplF86+2v
-	Wd0ETYi/m7nqxgxM7D1LnTrFRh1rU2rKYrtCiYSvP12W4HhvGSse0oVF7Hqhh9zU
-	qOGbT0LhTNFWoQ5jowpwFtFUxD/FiojkdnloqjxLjkj2pb+dgh47GKnjMl6uaXr4
-	S5w+bhjHRvMaWAYnGQvOHvCznIXu5umkbFXOXZ3k4K0jp4h8wu2Sj8hG1pQfohKS
-	wRMjJpkAUTblY0MLNEfLcDb0NV7+oO7LELPBnuQbJJZDedVBUE77znds3t/KjFFQ
-	fkcCx+yLpgj3gVYRPJkW9UH9viRSiNJv5ipcTTJCudn2PtTS/pQL03GsPV/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1724223587; x=1724309987; bh=HUYGoPtkPXSIcq5G75OesE2wTzGU
-	8YCmJtPfixrqDfQ=; b=qBqJ6wW1iX2SwIKg/YR4i3Nb/RNRc+gbyAXnHnNjdwNM
-	APu54gNJV+nOxWKCxVXh6juHPP5QceExlHK2CyT4bYjGp/Pd9fNzHaXaFSyfeXK8
-	sUsKQ0iqTSOY2eoX4wpOca0RQKz30jKFkDLStp5kUKs5Mpm565ndi24TZP/shWTA
-	8f+6/gHPZKWFohvV3AYUeJLXrCxQbB4cX7COtZsxfmMPNHFp1qCn7Dg6EhRnXjxz
-	Amfd7pUlZ72ef+0RcdKTKQTs8jkExRAKEwuJURNb8gTJGOGrEtF+RUnYVtTB9NaQ
-	K2Tx/AItVPfbE0rdZ9Z5088kBrEp8dSdB/oUXQ4b3w==
-X-ME-Sender: <xms:Y5DFZvPIkkbAjOJOW3EdmqXun2KFr4597ciB1XDgwo3C54tH8ieEhw>
-    <xme:Y5DFZp_9Ay-f0QVV8hEUzfNQlFs1cEpNWDzWfRG4vHazU11yDQkUu3_s6IeB9HF3g
-    Ygn6Xidvo_RcKxl33k>
-X-ME-Received: <xmr:Y5DFZuQuhEKdbUUmKGeyxuf2OD2zitwvWzMmeBc4N_7He8yUzZ2GJIix_ggrLk_NUWI7bi8iB9wu7v5E9eAl-amoTYsluxBRBtCe>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddujedguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrh
-    gvrhesfihhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepjeefffdvfffggeeiheet
-    vefgtefhvdegieelffekfeeuiedvtdefgeeftdekveetnecuffhomhgrihhnpehgihhthh
-    husgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvthdpnhgspghrtghpth
-    htohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhikhhosheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepsggvnhhjrghmihhnrdhtihhsshhoihhrvghssehrvg
-    guhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Y5DFZjs7fEvn7gIZ5JMGQo1qom6L7EfBuKNV30kSQ8-2aLXQpzru1A>
-    <xmx:Y5DFZnf-w8HWLaY3VJUz-SJMgdxrvjEHJ4mgx0Y9IIY8HUaAgyWPbQ>
-    <xmx:Y5DFZv3erN9jCe-wtW7wBRW55HrkDECAFP4n66vcfUGWoP8ncQgjgA>
-    <xmx:Y5DFZj_Ry_Y25bxf7aejnq2IkCyGqn7llFUsG3nKXp31jZ6byrhDGw>
-    <xmx:Y5DFZu6oSBtUrJOEbozNPihxwKggX51w4hhP9j9Nq4Jwh9Ggi4simi2y>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 Aug 2024 02:59:45 -0400 (EDT)
-Date: Wed, 21 Aug 2024 16:59:36 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] HID: hidraw - add HIDIOCREVOKE ioctl
-Message-ID: <20240821065936.GA635104@quokka>
-References: <20240812052753.GA478917@quokka>
- <nycvar.YFH.7.76.2408210231050.12664@cbobk.fhfr.pm>
+	s=arc-20240116; t=1724223681; c=relaxed/simple;
+	bh=Ye6VOm/SOYsSXUcP5wpTHe357J8s03jXZ7rW3RPw5oI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=T5D68KWGiOUj6oEXwmGw05emL0xeAFI6/5EkiJrNUtM1YZO5WW7mtuNY2hp/Nzc9hpW3EaIiGCtwTjU9O6wlPNjCUnzmz1P1G9VR5rNjFkbjF3M8dlRBFJ0Fpm0xZ0EZsgtK1S1OqPxwCwjXEOzn7Zz6j+x5QlpuE1aeSwQAgw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=WYDxnEnU; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1724223677;
+	bh=Ye6VOm/SOYsSXUcP5wpTHe357J8s03jXZ7rW3RPw5oI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=WYDxnEnUBQ6Wrhxsr2D7zO+kCrWCWWVx7f/R6uVDGUAjgfG3W+lfhtZ252Bvqlest
+	 EfFPwJCyiBymz/+I8eNffRCBJ49yxeGH8ixoXyK43UMpIDe3XMI+0wt861pdruOkM8
+	 OBPz3vJHzvF2YjZAC4jdKGkqqtCwyjwRbtsbhXZc=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384))
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id A7F1266F26;
+	Wed, 21 Aug 2024 03:01:14 -0400 (EDT)
+Message-ID: <0c6da945b5539ddc4807c6efb7c25458382d44c1.camel@xry111.site>
+Subject: Re: [PATCH v1 0/2] Add EDAC driver for loongson memory controller
+From: Xi Ruoyao <xry111@xry111.site>
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>, chenhuacai@kernel.org, 
+	kernel@xen0n.name, bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, 
+	mchehab@kernel.org, rric@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-edac@vger.kernel.org, devicetree@vger.kernel.org
+Date: Wed, 21 Aug 2024 15:01:13 +0800
+In-Reply-To: <20240821064728.8642-1-zhaoqunqin@loongson.cn>
+References: <20240821064728.8642-1-zhaoqunqin@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.2408210231050.12664@cbobk.fhfr.pm>
 
-Hi Jiri,
+On Wed, 2024-08-21 at 14:47 +0800, Zhao Qunqin wrote:
+> These patchs are based on 6.10.4. Add a simple EDAC driver which
+> report
+> single bit errors (CE) only on loongson platform.
+>=20
+> zhaoqunqin (2):
+> =C2=A0 Loongarch: EDAC driver for loongson memory controller
+> =C2=A0 dt-bindings: EDAC for loongson memory controller
 
-On Wed, Aug 21, 2024 at 02:31:32AM +0200, Jiri Kosina wrote:
-> On Mon, 12 Aug 2024, Peter Hutterer wrote:
-> 
-> > There is a need for userspace applications to open HID devices directly.
-> > Use-cases include configuration of gaming mice or direct access to
-> > joystick devices. The latter is currently handled by the uaccess tag in
-> > systemd, other devices include more custom/local configurations or just
-> > sudo.
-> > 
-> > A better approach is what we already have for evdev devices: give the
-> > application a file descriptor and revoke it when it may no longer access
-> > that device.
-> > 
-> > This patch is the hidraw equivalent to the EVIOCREVOKE ioctl, see
-> > commit c7dc65737c9a607d3e6f8478659876074ad129b8 for full details.
-> > 
-> > An MR for systemd-logind has been filed here:
-> > https://github.com/systemd/systemd/pull/33970
-> > 
-> > hidraw_is_revoked() and hidraw_open_errno() are both defined as weak
-> > functions to allow for a BPF program to deny access to a /dev/hidraw
-> > device. The function returns 0 on success or a negative errno
-> > otherwise that is returned to the caller.
-> > 
-> > As a use-case example, a gamepad-managing process could attach a BPF
-> > program that defaults to -EACCESS for all hidraw devices except those
-> > with ID_INPUT_JOYSTICK set by udev.
-> > 
-> > Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
-> 
-> Thanks Peter. Now queued in hid.git#for-6.12/hidraw.
+Hmm so the EDAC driver only works on DT-based systems?  It feels strange
+to me.  AFAIK the ECC memory is mostly used in servers where the
+firmware passes ACPI system tables instead of DT.
 
-Benjamin just messaged me about a HID CI pipeline failure caused by this
-patch, looks like it's buggy. Can you please revert it again?  I'll send
-out a fixed version ASAP, thanks.
+And it makes the incorrect "select EDAC" (I've mentioned in another
+reply) worse: all desktop/server users are now building some code
+definitely useless on their systems.
 
-Cheeres,
-  Peter
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
