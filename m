@@ -1,207 +1,270 @@
-Return-Path: <linux-kernel+bounces-295874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44EB95A25D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:05:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543E595A25E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28CEA1F21399
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790671C208BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8828F14E2DE;
-	Wed, 21 Aug 2024 16:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE9C14EC5C;
+	Wed, 21 Aug 2024 16:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ii6U7QBD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OlD4prbM"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1667F14C59B
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935A914D45E;
+	Wed, 21 Aug 2024 16:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724256290; cv=none; b=oUWYJOYhXzvO167bpjpkQfj8KBEblwOA3dtsBrWUx3C4j/UfZUnB9E48pXX8k4usWbfSUr9S50lHdzZCqtIBfZJVweJIYdBjKduEo0f6If5vDOdjHsoO+5QilbCppTMhnlewCOsqkThHyKBdZI7qc7RfaUzmFIYw67okweq3qbI=
+	t=1724256292; cv=none; b=FAD0DTajxpydrxvI4UxXE+Qc3FtkalTJNHiZ1rGdBTRiCO6F9Rz8cPb8/je9n+c2JE3oOuqPFSL+5Ez01FLnystYqRAVb+rnqVeoTehXju441sDScJxYyDIHiOQVe4anGnwP6UzJTzAoK3od5ZDKHERiyWdfA9D3JHjLTifkaQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724256290; c=relaxed/simple;
-	bh=AlVWMujZb4KMNj53fGB/JwXcf8Z1PSC7AGNyq62/JsI=;
+	s=arc-20240116; t=1724256292; c=relaxed/simple;
+	bh=fcx0ayAD2468sDF3wyu2k6I/h9HoOGcWbZGKF58Pjl4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zz9J+8wp1TUyqGeFe79rQu61EpGlCZiYAuLpG/Swu73B7QsN9eq2h4R9naTzae2KddzSikZqeQq2todrEciEKnmSkKN6lT+Ur5UcJqIQ2nby1Rg9HOgY0aygmb7incxKs09FAUQLo0e/As/8d3/tDUAlx/bWKfWbvqAtdwxVT+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ii6U7QBD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724256288;
+	 In-Reply-To:Content-Type; b=IIYWZUIOASAcL+oFwSFZiuBolIq/GBify6flZY2tsOSvAP1e3cZMW2wwzUpEDJhg/KgSNM0gjX1KAiaRpIQnEzsLz7370XCKfBprfCHmpEfJ50B6hkObDoFA36ZhVskwWpONXDexCK9BhIcZBT/KFARwCL6WN2xpA+vbadzSexs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OlD4prbM; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Wprkj5p8jz9tFl;
+	Wed, 21 Aug 2024 18:04:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1724256285;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=S01eevrAEs0lxpxuE+gw3u09VxcLdZQUZHokHj/vHXU=;
-	b=Ii6U7QBDpUx20Ktu8f6RO0ViO5t4PEw5TwWi7XJh/4VpY8+YLvmM5KbywsJ39DCwyyZroD
-	Rm3wDuuyohWgP1uHsDG/2zO/v/yx2e+jQnLy9SfI0CH3RPWtDO3r89PUx3CwoZtB+pdTmP
-	WYplrBKP0cLk/knKpZC0ef2b/D40ZvQ=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-357-o0r7S2QoO8CNov_laY_I6g-1; Wed, 21 Aug 2024 12:04:44 -0400
-X-MC-Unique: o0r7S2QoO8CNov_laY_I6g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3719ee7c72eso3008807f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:04:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724256283; x=1724861083;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S01eevrAEs0lxpxuE+gw3u09VxcLdZQUZHokHj/vHXU=;
-        b=VhvFOln6yDuZ2PpQbpLHyaugRc8EGUNGecwtyFZqIG46g9JaRbFT3StkDVgOg6As+b
-         axpr7fR6sqqvvhIYHzcnvUrAntN3SlL3NlfdywTQR8S+wDebam/gm+ut8zGjr+Kw7f+q
-         wouuSh78yfdybcvyrjg183IzwtCXwN2dUP1Lmoa2hcs3MYUM/Ga7mabzPwGYNONElIFc
-         VlxRGjV7aHPGSKkvTZa8UpUse6a4tuNXwk1JrffwS4DcbXALVHxZaNsaCHHZGU9vX5Y6
-         JKsWwIZLGEywOXahjDMYuIWkPgyYnzxqedE0COflT1btmYJD9oz6eBNPg61r08adbpt+
-         mCJg==
-X-Gm-Message-State: AOJu0YxptuEb5DmVMc/41R/VjjgdCPzMvjbDKmzNkXXzjJXT7FnKcvjF
-	dSNhQUd9upyXfizrIgI2JzPbLWEpopeiwI7OcCp+30GoUyMC1RAnmm8io6jCXhxBzms2CwJ0evO
-	4hn4OUwYTV/E5ZCFqkfk/+OthT0KryFe1MI6UpetUvrLeraVoS7aTOQ3nklNI+w==
-X-Received: by 2002:a05:6000:196b:b0:371:87d4:8f1d with SMTP id ffacd0b85a97d-372fd6da3ebmr1851413f8f.28.1724256283430;
-        Wed, 21 Aug 2024 09:04:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBsdu1qj2IcJaBSV38+AQ+dl1u7gpj99iE4YKjYFE/TwtpOHQNKrY4gGw10COiV5E2nRnbfA==
-X-Received: by 2002:a05:6000:196b:b0:371:87d4:8f1d with SMTP id ffacd0b85a97d-372fd6da3ebmr1851369f8f.28.1724256282485;
-        Wed, 21 Aug 2024 09:04:42 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:4300:16d5:c5b:8388:a734? (p200300cbc705430016d50c5b8388a734.dip0.t-ipconnect.de. [2003:cb:c705:4300:16d5:c5b:8388:a734])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898bb588sm16022125f8f.115.2024.08.21.09.04.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 09:04:42 -0700 (PDT)
-Message-ID: <95a7dbfe-d88f-4d8b-898e-87c18e7d5813@redhat.com>
-Date: Wed, 21 Aug 2024 18:04:40 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gbw+0zHJguAp1I73P13erWrKTR0VunGFvCAtXoVd4wM=;
+	b=OlD4prbMbPu0/DKAXh5/wOJas38v7D2uRJ4fsNN9i6T1qjRBBUh+9m8H5QG4X+z5xjLurY
+	sH6ABAszJHiUVpz934fzYRGbEoUkOWDSKgN2N/1CTZAyNBWPtc8YzmE+pep1/W4KIxyRga
+	r/ZC/ohRtzN0+WrTGo6Htn367g2culiHDRO7fvuFwOxp00x6gyKZksF2a8rdx2C6bmKRk0
+	YlJYwQMRjF94X469/7MTDaOAUnNLNlgRRlv0WoE7ri8OezzXD1DcYRqqXHzAcRDCsJc4cM
+	VlNWnfL+MyynLROxTrO5mDtfgI2Y60EMWUwgJ/CldzaTwPlXlmnsILZ6FRUyYQ==
+Message-ID: <5588b900-6ea4-4002-bbf9-cb18264c90a3@mailbox.org>
+Date: Wed, 21 Aug 2024 18:04:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] selftests/mm: fix charge_reserved_hugetlb.sh test
-To: Mina Almasry <almasrymina@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, Mario Casquero <mcasquer@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Muchun Song <muchun.song@linux.dev>
-References: <20240821123115.2068812-1-david@redhat.com>
- <CAHS8izNyDymXoH94usJTGNHG45HB50m7SSkL6H1C+9pxBEDE+g@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] ALSA: core: Remove trigger_tstamp_latched
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAHS8izNyDymXoH94usJTGNHG45HB50m7SSkL6H1C+9pxBEDE+g@mail.gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Takashi Iwai <tiwai@suse.com>, Cezary Rojewski <cezary.rojewski@intel.com>,
+ Christian Brauner <brauner@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Pavel Hofman <pavel.hofman@ivitera.com>, David Howells
+ <dhowells@redhat.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>
+References: <20240812142029.46608-1-zeno.endemann@mailbox.org>
+ <dec71400-81f1-4ca6-9010-94b55ecdaafa@linux.intel.com>
+ <3e9cd14b-7355-4fde-b0c1-39d40467e63c@mailbox.org>
+ <8c71ea3d-5c97-423e-a270-3184c16e1603@linux.intel.com>
+ <c2a46079-b9fa-46fb-8d2d-e01e5d620ea7@mailbox.org>
+ <878qx0mtfe.wl-tiwai@suse.de>
+ <f41762a1-048c-4ab6-86ae-f364753210c7@mailbox.org>
+ <874j7omsap.wl-tiwai@suse.de>
+ <aa308e18-f9e0-4b1a-b548-fcc61e641c6f@mailbox.org>
+ <87frqyorzi.wl-tiwai@suse.de> <cea341dc-bcc2-49f2-a641-af365bfd213a@perex.cz>
+From: Zeno Endemann <zeno.endemann@mailbox.org>
+In-Reply-To: <cea341dc-bcc2-49f2-a641-af365bfd213a@perex.cz>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: f441f6196ed67f1bac8
+X-MBO-RS-META: mh87wug3qe737qespcpf8ck6bhy6ajjd
 
-On 21.08.24 17:59, Mina Almasry wrote:
-> On Wed, Aug 21, 2024 at 8:31 AM David Hildenbrand <david@redhat.com> wrote:
+Jaroslav Kysela wrote on 21.08.24 16:59:
+> On 21. 08. 24 16:44, Takashi Iwai wrote:
+>> On Wed, 21 Aug 2024 16:27:43 +0200,
+>> Zeno Endemann wrote:
+>>>
+>>> Takashi Iwai wrote on 13.08.24 16:05:
+>>>> On Tue, 13 Aug 2024 15:58:13 +0200,
+>>>> Zeno Endemann wrote:
+>>>>>
+>>>>> Takashi Iwai wrote on 13.08.24 15:41:
+>>>>>> On Tue, 13 Aug 2024 14:54:42 +0200,
+>>>>>> Zeno Endemann wrote:
+>>>>>>>
+>>>>>>> Pierre-Louis Bossart wrote on 13.08.24 10:04:
+>>>>>>>> by focusing on the trigger timestamp I think you're looking at the wrong
+>>>>>>>> side of the problem. The timestamping is improved by using the same
+>>>>>>>> hardware counter for the trigger AND regular timestamp during
+>>>>>>>> playback/capture. If you look at a hardware counter during
+>>>>>>>> playback/capture but the start position is recorded with another method,
+>>>>>>>> would you agree that there's a systematic non-reproducible offset at
+>>>>>>>> each run? You want the trigger and regular timestamps to be measured in
+>>>>>>>> the same way to avoid measurement differences.
+>>>>>>>
+>>>>>>> I am not sure what you are talking about. I have not seen any place in the
+>>>>>>> code where the trigger timestamp is taken in any other more sophisticated
+>>>>>>> way than what the default is doing, i.e. calling snd_pcm_gettime. So I do
+>>>>>>> not see how your custom *trigger* timestamps are done "with another method".
+>>>>>>>
+>>>>>>>> I will not disagree that most applications do not need precise
+>>>>>>>> timestamping, but if you want to try to enable time-of-flight
+>>>>>>>> measurements for presence or gesture detection you will need higher
+>>>>>>>> sampling rates and micro-second level accuracy.
+>>>>>>>
+>>>>>>> I don't know, this sounds very theoretical at best to me. However I do not
+>>>>>>> have the desire to try to further argue and convince you otherwise.
+>>>>>>>
+>>>>>>> Do you want to propose a different solution for the stop trigger timestamp
+>>>>>>> bug? That is my main goal after all.
+>>>>>>
+>>>>>> Ah, I guess that the discussion drifted because of misunderstanding.
+>>>>>>
+>>>>>> This isn't about the accuracy of the audio timestamp, but rather the
+>>>>>> timing of trigger tstamp.  The commit 2b79d7a6bf34 ("ALSA: pcm: allow
+>>>>>> for trigger_tstamp snapshot in .trigger") allowed the trigger_tstamp
+>>>>>> taken in the driver's trigger callback.  But, the effectiveness of
+>>>>>> this change is dubious, because the timestamp taken in the usual code
+>>>>>> path in PCM core is right after the trigger callback, hence the
+>>>>>> difference should be negligible -- that's the argument.
+>>>>>
+>>>>> Exactly. Sorry if my communication was not clear on that.
+>>>>>
+>>>>>>
+>>>>>> No matter how the fix will be, could you put the Fixes tag pointing to
+>>>>>> the culprit commit(s) at the next submission?
+>>>>>
+>>>>> Will do. I guess I'll have to look up which commit actually enabled the
+>>>>> trigger_tstamp_latched in hda, as 2b79d7a6bf34 has no driver using that
+>>>>> yet, so is not technically the culprit?
+>>>>
+>>>> You can take the HD-audio side, the commit ed610af86a71 ("ALSA: hda:
+>>>> read trigger_timestamp immediately after starting DMA") instead, too.
+>>>> Maybe it doesn't matter much which commit is chosen; both should
+>>>> appear in the same kernel version.
+>>>
+>>> Well, I think I've waited a decent amount of time now for more comments.
+>>> How do we proceed?
+>>>
+>>> I'm still of the opinion that the removal is the most sensible solution,
+>>> so if we agree I could prepare a V2 where I just improve the commit message
+>>> a bit further.
+>>>
+>>> But if we don't have a good enough consensus on this, I'd need some guidance
+>>> which alternate path should be taken to at least fix the bug of bad stop
+>>> trigger timestamps for hda devices (e.g. should I try to fix it also for
+>>> soc/intel/skylake without any testing? That seems to me the only other place
+>>> that should be affected, apart from the generic pci hda code).
 >>
->> Currently, running the charge_reserved_hugetlb.sh selftest we can
->> sometimes observe something like:
+>> IIUC, the achievement of the timestamp at the exact timing was the
+>> goal of that change (which caused a regression unfortunately), so
+>> keeping that feature may still make sense.  I'd rather try to fix in
+>> HD-audio side at first.
 >>
->>    $ ./charge_reserved_hugetlb.sh -cgroup-v2
->>    ...
->>    write_result is 0
->>    After write:
->>    hugetlb_usage=0
->>    reserved_usage=10485760
->>    killing write_to_hugetlbfs
->>    Received 2.
->>    Deleting the memory
->>    Detach failure: Invalid argument
->>    umount: /mnt/huge: target is busy.
->>
->> Both cases are issues in the test.
->>
->> While the unmount error seems to be racy, it will make the test fail:
->>          $ ./run_vmtests.sh -t hugetlb
->>          ...
->>          # [FAIL]
->>          not ok 10 charge_reserved_hugetlb.sh -cgroup-v2 # exit=32
->>
->> The issue is that we are not waiting for the write_to_hugetlbfs process
->> to quit. So it might still have a hugetlbfs file open, about which
->> umount is not happy. Fix that by making "killall" wait for the process
->> to quit.
->>
->> The other error ("Detach failure: Invalid argument") does not seem to
->> result in a test error, but is misleading. Turns out write_to_hugetlbfs.c
->> unconditionally tries to cleanup using shmdt(), even when we only
->> mmap()'ed a hugetlb file. Even worse, shmaddr is never even set for the
->> SHM case. Fix that as well.
->>
->> With this change it seems to work as expected.
->>
->> Fixes: 29750f71a9b4 ("hugetlb_cgroup: add hugetlb_cgroup reservation tests")
->> Reported-by: Mario Casquero <mcasquer@redhat.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Shuah Khan <shuah@kernel.org>
->> Cc: Muchun Song <muchun.song@linux.dev>
->> Cc: Mina Almasry <almasrymina@google.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> If Pierre agrees with the removal of the local timestamp call, we can
+>> revert to there afterwards, too.
 > 
-> Initially I thought it could be nice to split fixes for the 2 issues
-> in separate patches in case one of them ends up needing a revert or
-> something, but probably not worth a respin. Fixes look good to me.
-
-I was debating with myself as well if it should be separated, but 
-decided to go the simple route of a single patch :)
-
+> What about a patch bellow. I'll send it with proper formatting, when we decide to go with it. Perhaps, the 
+> latched flag may be reset when start is false, too.
 > 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
+>                      Jaroslav
+> 
+> diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
+> index 7e39d486374a..b098ceadbe74 100644
+> --- a/include/sound/hdaudio.h
+> +++ b/include/sound/hdaudio.h
+> @@ -590,7 +590,7 @@ void snd_hdac_stream_sync_trigger(struct hdac_stream *azx_dev, bool set,
+>   void snd_hdac_stream_sync(struct hdac_stream *azx_dev, bool start,
+>                 unsigned int streams);
+>   void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+> -                      unsigned int streams);
+> +                      unsigned int streams, bool start);
+>   int snd_hdac_get_stream_stripe_ctl(struct hdac_bus *bus,
+>                   struct snd_pcm_substream *substream);
+> 
+> diff --git a/sound/hda/hdac_stream.c b/sound/hda/hdac_stream.c
+> index b53de020309f..0411a8fe9d6f 100644
+> --- a/sound/hda/hdac_stream.c
+> +++ b/sound/hda/hdac_stream.c
+> @@ -664,7 +664,7 @@ static void azx_timecounter_init(struct hdac_stream *azx_dev,
+>    * updated accordingly, too.
+>    */
+>   void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+> -                      unsigned int streams)
+> +                      unsigned int streams, bool start)
+>   {
+>       struct hdac_bus *bus = azx_dev->bus;
+>       struct snd_pcm_runtime *runtime = azx_dev->substream->runtime;
+> @@ -672,6 +672,9 @@ void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+>       bool inited = false;
+>       u64 cycle_last = 0;
+> 
+> +    if (!start)
+> +        goto skip;
+> +
+>       list_for_each_entry(s, &bus->stream_list, list) {
+>           if ((streams & (1 << s->index))) {
+>               azx_timecounter_init(s, inited, cycle_last);
+> @@ -682,6 +685,7 @@ void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+>           }
+>       }
+> 
+> +skip:
+>       snd_pcm_gettime(runtime, &runtime->trigger_tstamp);
+>       runtime->trigger_tstamp_latched = true;
+>   }
+> diff --git a/sound/pci/hda/hda_controller.c b/sound/pci/hda/hda_controller.c
+> index 5d86e5a9c814..f3330b7e0fcf 100644
+> --- a/sound/pci/hda/hda_controller.c
+> +++ b/sound/pci/hda/hda_controller.c
+> @@ -275,8 +275,7 @@ static int azx_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+>       spin_lock(&bus->reg_lock);
+>       /* reset SYNC bits */
+>       snd_hdac_stream_sync_trigger(hstr, false, sbits, sync_reg);
+> -    if (start)
+> -        snd_hdac_stream_timecounter_init(hstr, sbits);
+> +    snd_hdac_stream_timecounter_init(hstr, sbits, start);
+>       spin_unlock(&bus->reg_lock);
+>       return 0;
+>   }
+> diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
+> index 613b27b8da13..7eec15a2c49e 100644
+> --- a/sound/soc/intel/skylake/skl-pcm.c
+> +++ b/sound/soc/intel/skylake/skl-pcm.c
+> @@ -446,10 +446,10 @@ static int skl_decoupled_trigger(struct snd_pcm_substream *substream,
+> 
+>       if (start) {
+>           snd_hdac_stream_start(hdac_stream(stream));
+> -        snd_hdac_stream_timecounter_init(hstr, 0);
+>       } else {
+>           snd_hdac_stream_stop(hdac_stream(stream));
+>       }
+> +    snd_hdac_stream_timecounter_init(hstr, 0, start);
+> 
+>       spin_unlock_irqrestore(&bus->reg_lock, cookie);
+> 
+> @@ -1145,8 +1145,7 @@ static int skl_coupled_trigger(struct snd_pcm_substream *substream,
+> 
+>       /* reset SYNC bits */
+>       snd_hdac_stream_sync_trigger(hstr, false, sbits, AZX_REG_SSYNC);
+> -    if (start)
+> -        snd_hdac_stream_timecounter_init(hstr, sbits);
+> +    snd_hdac_stream_timecounter_init(hstr, sbits, start);
+>       spin_unlock_irqrestore(&bus->reg_lock, cookie);
+> 
+>       return 0;
+> 
+> 
+>                      Jaroslav
+> 
 
-Thanks!
-
--- 
-Cheers,
-
-David / dhildenb
+Functionally it looks correct, so that would be acceptable to me.
 
 
