@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-295379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9501959A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:38:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2E1959A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C502280EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F3B82816BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950FD1C4EE9;
-	Wed, 21 Aug 2024 11:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B811C6F5B;
+	Wed, 21 Aug 2024 11:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTzF/4Hs"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EoOppzaX"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB561C32F6;
-	Wed, 21 Aug 2024 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2421C6F6A;
+	Wed, 21 Aug 2024 11:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724238097; cv=none; b=WqXcBFUqNrt0e0/y1gOEqZzXn5aOJI+XsVa/AEuo9NX07aE3bwnacBXhxvUvYj9FPzzQdSWg6TxpgXeayZJ0TWN6hTB/gySKesAJOzJVroz/akMEUb1ScfhrodOpRhfOPdcB9CMjfxQjbzOAu+mCsnHYYsXKxoVERQ0g7TNSaX0=
+	t=1724238120; cv=none; b=qUhdRV22TBUS8NPnLuJxgEnDVpl0tx5Rimdz0fRv7JnLXG/MJAzrnUAiOwuyI0YssZ1khOHQ4/498T4g+M3YlORyjz8lUfM4J5pbwNmyu6Z5dc4bkg0k7upIA8ElvJtBS+/bZ4VTyOuU9BHAk8nHFxIIAWwc0zVCRLwzR9fdjvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724238097; c=relaxed/simple;
-	bh=1ATWO0C6NeF9kO9VsONSRBSudFtrKwUszSwK/I+7QXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=egskFr/kL1MgaWZBxxt0ajg8y7gyxfhhy+MZ94n7ylZx/CjG+bDP9GY5pDFVMB71q6BxXlLGM7AwmRTdiAW/lCt3oJOPjWdiSU5OCIR4LeJ/AnlY98wkF1vXzpm7AlPAkQ7jBxJ7bPsH88WHHUTgnD4POVjvv4oIQjMOm7OuANE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTzF/4Hs; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ba0527a2e7so33535777b3.2;
-        Wed, 21 Aug 2024 04:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724238095; x=1724842895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XBwBSeUXzRzs+yYCt0wfdPJMoqP3GApebhtlrFr3gjQ=;
-        b=BTzF/4Hs/huwQYkXyFXLogHuUL6Zbz/iy41509/pmUVGQmsbGBrMcacd7Rrg+hMEMT
-         szoG0SmrYwruziPgYj5z5OFe4U7mREed4Ez91ehT5urKPSOql+9h/HduADYjOggZyAk6
-         a1otp2ajM+60/HZwpKXTXP/2VJnNh49e1LhNVgjwi6LWz1Pov+aerp0BMtcjJ3AJL3TQ
-         4Y1Vg67oUbP89RRVnqWZpYKGJeOa3aMVFuKMInKb/dd7lQaBvsOPKP1gIZnT7lLkHiCt
-         N54p1Zc4M4wnkciMSxfNQwM3wUIkELqbH13wl8nVrrpAqVio1nVzoujzJWebeuskM+5E
-         5G3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724238095; x=1724842895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XBwBSeUXzRzs+yYCt0wfdPJMoqP3GApebhtlrFr3gjQ=;
-        b=GsYJ4xx0xOVsdfHffWpkDqwOHYgPBCsmMo0LxKsEFti5ULtQJ2mMkOakmfged7LOzu
-         Rh1vD0T0iIn+q00XnkqKyrJ56g1oM9cCKLkwX5okz7sbG82Q9zfGjXoDPwE+54NIosk8
-         v25ZfN9aPPAEqtG0JzyTB0aD8ve+RJtvT4Im+KRQLGUJfD9sCsp6GVCZbKbj8ugJK3MF
-         U1Zoc9RAD5eHW6UwK8t4awOf4On41HzaGvHhAm3a4kv/7ANAtRp2YcAezVAV4uGWnaW7
-         QE+dryJHZI8S3ARYPpqWxwLGmjb5UIN5EGQ6OqcfCTWBCpcjbnTIQLveevUKf8wBWqzl
-         GIHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWwm/gZ35KrhxjABgVTpQ39lWrzlw6CPwgnDdo0gmOfN0VZ5NWFINWqXIGNflASIZpY2lJglNL1qLGg3ZF@vger.kernel.org, AJvYcCViZMR9l1ranOO1DuJGcvkj232lDMGLwNzDZ5E7X+K5IGW578x4YrcEqi7G6oL+xeTxyZRGjvf3jCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3FOXJQhEJDcMrhTYkguMvqP2Xv2rDsQp7wc/s6tytGKL6kePW
-	I0Ii2hLBmwUdTDTCHrN6vnLp9Af5JxOBq4VmUcmm0u5BebxVVCYb+AElfFBpmjubQxcw+Ena6WP
-	eQ/ZbQWrY934arCj0wlXRi2ZzTIQ=
-X-Google-Smtp-Source: AGHT+IFflDUPyRh/p1DW4PuCPtZ+YVQiKrj5ChifUTm7Rq3hEzBgJXAAr6Hid38Rs13o9exyvhRkgp1DGzTf+pLUgng=
-X-Received: by 2002:a05:690c:6d0e:b0:6b4:3caa:e842 with SMTP id
- 00721157ae682-6c09d8dc019mr27805677b3.18.1724238094553; Wed, 21 Aug 2024
- 04:01:34 -0700 (PDT)
+	s=arc-20240116; t=1724238120; c=relaxed/simple;
+	bh=HOHb8KCraPzrbCvJ+E0qTpch9IgPjx/67xFxG7KR/O0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X24lnL8GeHvt6MLrx6G4mv5V8A9DwUCW0rY+B2oUYSVNRjaIe4Y7erGm2E1wxkslUjPBLqSwPllTmuS7OdVui8AtlyFskyvvXsTHlQZSEjpkopibiBL/LTMQ33sIbUf0ykcIuYzRxSM04CicgZwQ4LmQ1/TtJpE5vH88vzQD02c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EoOppzaX; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LB1nr7095237;
+	Wed, 21 Aug 2024 06:01:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724238109;
+	bh=047nGRnfjolajDj8O6w/DlUNEueI6Mf8QH2J0scQPjA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=EoOppzaXD5174Uv37vGhVrmDsXZVPfpg8XCybRe3lP6AwyHb+Du523wwN2ezVAWkI
+	 gfPSdPFkfffJbNkKkFlgrW6bBVjD/9fQr6Py4S71rInkbhY2f3kyEE1BZDkosYIS95
+	 G1jLdhhgXMuAtPRBdylGiBC1eiUZj2N8lzBhkjuM=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LB1n62002340
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 21 Aug 2024 06:01:49 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ Aug 2024 06:01:49 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 21 Aug 2024 06:01:49 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LB1nY1007738;
+	Wed, 21 Aug 2024 06:01:49 -0500
+Date: Wed, 21 Aug 2024 06:01:49 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Judith Mendez <jm@ti.com>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jan Kiszka
+	<jan.kiszka@siemens.com>,
+        Bhavya Kapoor <b-kapoor@ti.com>
+Subject: Re: [PATCH] arm64: dts: k3-am654-idk: Add Support for MCAN
+Message-ID: <20240821110149.yk3da663fek2a4sy@attitude>
+References: <20240820193420.29184-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819072052.8722-1-eichest@gmail.com> <20240819072052.8722-2-eichest@gmail.com>
-In-Reply-To: <20240819072052.8722-2-eichest@gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 21 Aug 2024 08:01:20 -0300
-Message-ID: <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master mode
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, Frank.Li@nxp.com, 
-	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240820193420.29184-1-jm@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Stefan,
+On 14:34-20240820, Judith Mendez wrote:
+[...]
 
-On Mon, Aug 19, 2024 at 4:20=E2=80=AFAM Stefan Eichenberger <eichest@gmail.=
-com> wrote:
->
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
->
-> According to the i.MX8M Mini reference manual chapter "16.1.4.2
-> Generation of Start" it is only necessary to poll for bus busy and
-> arbitration lost in multi master mode. This helps to avoid rescheduling
-> while the i2c bus is busy and avoids SMBus devices to timeout.
->
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> +&m_can1 {
+> +	status = "okay";
 
-This fixes a pca953x probe error on an imx8mp board running linux-stable 6.=
-6:
-
-[    1.893260] pca953x 2-0020: failed writing register
-[    1.898258] pca953x 2-0020: probe with driver pca953x failed with error =
--11
-
-Could you please add a Fixes tag and Cc stable so that this can reach
-the stable kernels?
-
-Tested-by: Fabio Estevam <festevam@denx.de>
-
-Thanks a lot,
-
-Fabio Estevam
+NAK!
+	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mcu_mcan1_pins_default>;
+> +	phys = <&transceiver2>;
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
