@@ -1,152 +1,108 @@
-Return-Path: <linux-kernel+bounces-295527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6411F959C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:47:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0262959C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96B871C21E34
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:47:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BE13B274A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4AC192D92;
-	Wed, 21 Aug 2024 12:47:02 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2CA192D66;
+	Wed, 21 Aug 2024 12:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="gAvlw9BX"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BD4185E6E;
-	Wed, 21 Aug 2024 12:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743C5155307;
+	Wed, 21 Aug 2024 12:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244422; cv=none; b=Pc5Y0OLAQcza18j/Y1fV4hKdTi5YH7jKZDgbmFfy0xoNRAAwJz3MUVMWPxOt2GY7KP/qLgYtIObosLxQawihn29B2kTAk0CL4xPHpdLOe10DBQ8cR/PcZuw5CqjkFR0UavFhE0yLMNFHZ6ZPJgQRL8Wc6Efk4Co+HW5VDl+ojVI=
+	t=1724244568; cv=none; b=Ulw+KOsVsebNne1xHBNaEZzn1iLMwLCseh+S0sR4/NW6VU9RXfE/YO+CNUDmRVm6Qb2j7eFFIvsK8u67WDtSD0cSAWI2vg8lgbRtBDD97i5OcJwSkwJ7I5tzCMfJY+fOpaIELXlCVFHUSVOTRL6RKkvJe1hUVTQLeCnYFxBrM8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244422; c=relaxed/simple;
-	bh=8lB0f/AIws6nqX8d2Tf4G6sbvMI/o8S5byYYDUqtML4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0cxIboXaAOdlHAzNgPMBFHAI2bAwcWSS9ILxDk8BNtPdzk8IyuY056Mih6L1RoFVol5Pw45+M6SmoAvZuNHRS1UQBWjmet8BJt4ocMOd11fqy+2aYyFUu2wQyBAE11Y8CUAfcriYNk4C83Kq1RC7pLs/TK2ZYsFOuWnjhUtL5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sgkjl-000000003Wh-47Ay;
-	Wed, 21 Aug 2024 12:46:54 +0000
-Date: Wed, 21 Aug 2024 13:46:50 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Chad Monroe <chad.monroe@adtran.com>,
-	John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] net: phy: aquantia: allow forcing order of MDI
- pairs
-Message-ID: <ed46220cc4c52d630fc481c8148fc749242c368d.1724244281.git.daniel@makrotopia.org>
-References: <5173302f9f1a52d7487e1fb54966673c448d6928.1724244281.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1724244568; c=relaxed/simple;
+	bh=/g7wB6KJHKrqvckrQ+bphQKwSQ6oJSSLHnGBIiridyk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rr7ZXPxwd+ZKnw0aOkFuBSp/gegQwlkdStH+PLdUq1ZvclmpyJOMbzoJYnWKLWicfV55ckkCIScL5XWu3LgzbHEOWMFUSvwMggDZjilKUa+SjEaUi52+La+tiZZFGgJn3BihR16fEgRUCXfqj0rMwzWrBLRg3DETuJWVDnxGtFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=gAvlw9BX; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L4wSmw001676;
+	Wed, 21 Aug 2024 07:47:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=tSj3VTqPomVqX2Nm
+	MJZqv8H96KwFx707q/hr67byfZk=; b=gAvlw9BX2A5H5ATZ5svobENSGWmL8pAT
+	Q6nY7YDmdZn1r94yYLIXWRQr1XwPJGxAE5HA2ChHD002s6zHK7Mko4KVxCED3lHq
+	a803kvkbkMzWV2T0bD+7PEHy97guB1Gbp0lqM+MsInmhPQxsAPfh7XpkMiH9aNvK
+	VEQFecxPxDFvltez6nlPyj48MhCHsKtGYNea58lRaWKkc9o+HEoRhzmuIMFCtiyf
+	x6rRU0/CLaZyd2Oy2dfSnAtPt8sqqSvR04HNgfViBytuLwH5OdgZc24toQauAI97
+	sJxs6UyYrK0TpAICp1OEFRkrAYtELefffysjUO/zuF7RzO//AcEYcQ==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 412r9hva7f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 07:47:22 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
+ 2024 13:47:20 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 21 Aug 2024 13:47:20 +0100
+Received: from lonswws01.ad.cirrus.com (lonswws01.ad.cirrus.com [198.90.188.26])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 3AEB8820244;
+	Wed, 21 Aug 2024 12:47:20 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Simon
+ Trimmer" <simont@opensource.cirrus.com>
+Subject: [PATCH] ALSA: hda: cs35l56: Don't use the device index as a calibration index
+Date: Wed, 21 Aug 2024 12:47:11 +0000
+Message-ID: <20240821124711.44325-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5173302f9f1a52d7487e1fb54966673c448d6928.1724244281.git.daniel@makrotopia.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: XpTfHEsreoR-UM6zSziS3wbMqT7atTem
+X-Proofpoint-ORIG-GUID: XpTfHEsreoR-UM6zSziS3wbMqT7atTem
+X-Proofpoint-Spam-Reason: safe
 
-Normally, the MDI reversal configuration is taken from the MDI_CFG pin.
-However, some hardware designs require overriding the value configured
-by that bootstrap pin. The PHY allows doing that by setting a bit which
-allows ignoring the state of the MDI_CFG pin and configuring whether
-the order of MDI pairs should be normal (ABCD) or reverse (DCBA).
+The HDA driver cannot assume that the order that the devices are
+specified in the cirrus,dev-index matches the order of calibration
+entries.
 
-Introduce two boolean properties which allow forcing either normal or
-reverse order of the MDI pairs from DT.
+Only a calibration entry with a matching silicon id will be used.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Fixes: cfa43aaa7948 ("ALSA: hda: cs35l56: Apply amp calibration from EFI data")
+Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
 ---
- drivers/net/phy/aquantia/aquantia_main.c | 35 ++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ sound/pci/hda/cs35l56_hda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index e982e9ce44a59..33a6eb55d99d4 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/bitfield.h>
-+#include <linux/of.h>
- #include <linux/phy.h>
+diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
+index a9dfd62637cf..e3ac0e23ae32 100644
+--- a/sound/pci/hda/cs35l56_hda.c
++++ b/sound/pci/hda/cs35l56_hda.c
+@@ -1003,7 +1003,7 @@ int cs35l56_hda_common_probe(struct cs35l56_hda *cs35l56, int hid, int id)
+ 		goto err;
+ 	}
  
- #include "aquantia.h"
-@@ -71,6 +72,11 @@
- #define MDIO_AN_TX_VEND_INT_MASK2		0xd401
- #define MDIO_AN_TX_VEND_INT_MASK2_LINK		BIT(0)
+-	cs35l56->base.cal_index = cs35l56->index;
++	cs35l56->base.cal_index = -1;
  
-+#define PMAPMD_RSVD_VEND_PROV			0xe400
-+#define PMAPMD_RSVD_VEND_PROV_MDI_CONF		GENMASK(1, 0)
-+#define PMAPMD_RSVD_VEND_PROV_MDI_REVERSE	BIT(0)
-+#define PMAPMD_RSVD_VEND_PROV_MDI_FORCE		BIT(1)
-+
- #define MDIO_AN_RX_LP_STAT1			0xe820
- #define MDIO_AN_RX_LP_STAT1_1000BASET_FULL	BIT(15)
- #define MDIO_AN_RX_LP_STAT1_1000BASET_HALF	BIT(14)
-@@ -474,6 +480,31 @@ static void aqr107_chip_info(struct phy_device *phydev)
- 		   fw_major, fw_minor, build_id, prov_id);
- }
- 
-+int aqr107_config_mdi(struct phy_device *phydev)
-+{
-+	struct device_node *np = phydev->mdio.dev.of_node;
-+	bool force_normal, force_reverse;
-+
-+	force_normal = of_property_read_bool(np, "marvell,force-mdi-order-normal");
-+	force_reverse = of_property_read_bool(np, "marvell,force-mdi-order-reverse");
-+
-+	if (force_normal && force_reverse)
-+		return -EINVAL;
-+
-+	if (force_normal)
-+		return phy_modify_mmd(phydev, MDIO_MMD_PMAPMD, PMAPMD_RSVD_VEND_PROV,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_CONF,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_FORCE);
-+
-+	if (force_reverse)
-+		return phy_modify_mmd(phydev, MDIO_MMD_PMAPMD, PMAPMD_RSVD_VEND_PROV,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_CONF,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_REVERSE |
-+				      PMAPMD_RSVD_VEND_PROV_MDI_FORCE);
-+
-+	return 0;
-+}
-+
- static int aqr107_config_init(struct phy_device *phydev)
- {
- 	struct aqr107_priv *priv = phydev->priv;
-@@ -503,6 +534,10 @@ static int aqr107_config_init(struct phy_device *phydev)
- 	if (ret)
- 		return ret;
- 
-+	ret = aqr107_config_mdi(phydev);
-+	if (ret)
-+		return ret;
-+
- 	/* Restore LED polarity state after reset */
- 	for_each_set_bit(led_active_low, &priv->leds_active_low, AQR_MAX_LEDS) {
- 		ret = aqr_phy_led_active_low_set(phydev, index, led_active_low);
+ 	cs35l56_init_cs_dsp(&cs35l56->base, &cs35l56->cs_dsp);
+ 	cs35l56->cs_dsp.client_ops = &cs35l56_hda_client_ops;
 -- 
-2.46.0
+2.43.0
+
 
