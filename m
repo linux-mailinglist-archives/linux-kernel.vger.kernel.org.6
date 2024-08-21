@@ -1,162 +1,205 @@
-Return-Path: <linux-kernel+bounces-295766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C6E95A140
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:23:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7DD95A14F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2242D1C21917
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68002B2322B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFD614A616;
-	Wed, 21 Aug 2024 15:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B813B1AF4E3;
+	Wed, 21 Aug 2024 15:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euH6vnec"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="gN/+mpPD"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18E31C687;
-	Wed, 21 Aug 2024 15:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C81415381C;
+	Wed, 21 Aug 2024 15:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724253810; cv=none; b=en6k7DvmUw1EPKc2ZqpYxGnAXj3o/iOKEaicXx9U20QFAFtOuKnZoS4VW62/1iToPTyYQdDYdM+4Bds56DvHiT8vha+26DRmDCJW3mbgrkKqP0BJYORZV9TeNoJQGyX8zuNgXZZLYOIFFl+HeYvsdloJK4UJOIoz5fY3kKRIfgU=
+	t=1724253838; cv=none; b=gIRnjs6e3OOFyuNHnUl7OmQN+ic8O1Z/Y7Nj0huNW0E3Ucj/smrgB7ElyxViUGp/4DwnPsUQys8q+21zmX6mNgFmwqpvelbOETREc262Ta4lXXk+PNmZKaEqKhB16PN7AsHYJOXd1DwfYjx2tAc8EJD1TfbbePb4vnoyez8i/Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724253810; c=relaxed/simple;
-	bh=/ls9kAQ3NNeEjTNKhldR/IHMKF6SMXPYY3qSznxb/f8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rB1OqGyLgIEySPAcJwxxcrr/1vpNY09rlnVu35LJl+BT6lVsDV60jaEyrwmRunvrD9UvIhuMY2f8hGoe8W0OG6xLILYWB9lVnrlL2sk+2Edk7KhZEC7ecORcjWMUa4p73rCOTLt22UQSfby7ey0P2sQRP6kHzTZQX+09rxXjLzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=euH6vnec; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso74766025e9.2;
-        Wed, 21 Aug 2024 08:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724253807; x=1724858607; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=on58eBktu8//MnphFE6QbfO4BlqhK86yb9Y44C2uYzo=;
-        b=euH6vnecSE2/p67dplkJHU/YlyPVN8ENK+idYLG51hgUSjDyB50FgPN8K09/iO19vL
-         0FgkbF+zhm8Vi/pzRdlIE7iYRKPdRp4A1NeXgrNhASWr3tPaKFq5YAJlO9U8SgtZ66LZ
-         6CGMHPkev92dfW9MBOZOmzDBlqwv5b3jERrJZrLZxxvoRzD9bpKEMzmVuSXN5Vi0sR40
-         fktxn+uBlowztrqCWCXRD8aO1Z12VM0G/bguOrp9CVY07VbXcjkAD/gUemxzSmaP7xEF
-         zvejeRihNJOmGMVGiP752Zq7oIW51XxxsIggAGNa3FGj5Z5EhX31rmsvyHMS6zz5NjTA
-         7h7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724253807; x=1724858607;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=on58eBktu8//MnphFE6QbfO4BlqhK86yb9Y44C2uYzo=;
-        b=BJpgepP6DBPFm+IlGO31meg+SrsmdRjodlIpVlPX4FaUcyF9R/tlLKzy3W3bAzFKiY
-         Hr3cuYU/RqiUMCwdSD2ltkkAQhp8Rddxx7WseBfAQ3uFzcpznkl86f4zjTKWIzb3cjFe
-         0v7vZ70u2m0SxodIXHVZETOVz0y/9xtaqwZ/V0+Le/0IxdSbWrIwHekHFh3ICVoyVcjC
-         Jtt25RKPm6y3aBwwy5OayYnzE6mSI78BbEIfWnsev1+MZQDNEufjj2h53ol7zd1oBOfd
-         RHQUEWZ3+fYjGhlT3ISQ/VX5vjODpp8AMm4vlwhpJHSmq58ULbgbWbIl994GrSP6HlXk
-         dw4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV2anqWPr3ebca3iIOLqMwTWGfy6LQQmHmPgL6dHWVtgfZk88gBt8LWVs2AL5ywd7Qo5ZhqJejWC8g=@vger.kernel.org, AJvYcCX96tYvP2KI8D4m4PYMs+zYRxzWfjQNieBFsdmDLcwWCh9O6Q3HLXmx3ucsdCOsFJSRu32yPs9bcqilDnJw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUp5977dR0CtbCAHubCljE62Cwi7dkpUD6vvikmjm+HMaH+jGB
-	ggk6g1T/eKyinoc54HVW0pO1duYHIL+oi3Bpz4UXhD94IXuN+o5I
-X-Google-Smtp-Source: AGHT+IG1ZzxG35cV4xa41v9iY/LRo3Z2DG4I6ZnhNmHSYUOwELUQafq8+lrzs83TZ5LK5Kr+B1jzwg==
-X-Received: by 2002:a05:600c:4444:b0:428:f0a:3f92 with SMTP id 5b1f17b1804b1-42abd2265f5mr24916965e9.21.1724253806602;
-        Wed, 21 Aug 2024 08:23:26 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:ce3a:abb4:426f:fe4a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abef9f5b9sm29583395e9.29.2024.08.21.08.23.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 08:23:26 -0700 (PDT)
-Date: Wed, 21 Aug 2024 17:23:24 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>, kernel@pengutronix.de,
-	andi.shyti@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	Frank.Li@nxp.com, francesco.dolcini@toradex.com,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <ZsYGbN36jwxyMAvE@eichest-laptop>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
- <ZsX8KzkQw0wJUCbc@pengutronix.de>
+	s=arc-20240116; t=1724253838; c=relaxed/simple;
+	bh=5BsHw2kYHnsz/r6of4wdwt+9bFTxxskxWt0Tv6wYjbA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ecghUvoqp/lPoac6zW6x2DsBleh6H0hUqtxq+7T94OwRWoUnCB+Vld7NhfyRDYODmyZirhBGJ9/wBVhnlixyotQGos5/tCaxoC7eoAmiffP3KyEQkL/VhtxX+xad37bcXeF79MLfEFXFaZMW9iZ2n+NqkMuPbjpS7cMke5nul+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=gN/+mpPD; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=tnW4fUEYIqoKL4+ireuq+NgRn+HNA1V4t/qdy5l68Ns=; b=gN/+mpPD1uP3NN4dlsZMgU62/q
+	XeFzP80BStqiAXSz548tZTrdD8O76cNDGN8b7NtE20/RortV6pLDJmAN0bvqW9xjaiDoHBGlfzxGX
+	1XPmfiW4GSxCheZ/1qEGuK+90Ebcmfbcbt6dHv5s47r66jGYs2xx0+Zx5fffuo/Mbcomjh/0Ic5Yu
+	xPU1HVQ9sSvr8noC427hDwfBSlG+ytxifxekXRcHbtIYYF+MiZaxZ+o1nhS53KLm9daBCH9Do9ota
+	dk682/TyJLit3H1f1nDaA6MNOPTjw/LHtBmGHJkyPKHdx7lzo6nxqehglqmYUNWrjjCnwWETCJFRm
+	PKM8O10A==;
+Received: from 179-125-75-209-dinamico.pombonet.net.br ([179.125.75.209] helo=quatroqueijos.lan)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sgnBi-0034iV-DH; Wed, 21 Aug 2024 17:23:54 +0200
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>,
+	linux-kernel@vger.kernel.org,
+	Tao Ma <boyu.mt@taobao.com>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	kernel-dev@igalia.com,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	syzbot+0c2508114d912a54ee79@syzkaller.appspotmail.com
+Subject: [PATCH 4/4] ext4: avoid OOB when system.data xattr changes underneath the filesystem
+Date: Wed, 21 Aug 2024 12:23:24 -0300
+Message-Id: <20240821152324.3621860-5-cascardo@igalia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240821152324.3621860-1-cascardo@igalia.com>
+References: <20240821152324.3621860-1-cascardo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsX8KzkQw0wJUCbc@pengutronix.de>
 
-Hi Fabio, Oleksij,
+When looking up for an entry in an inlined directory, if e_value_offs is
+changed underneath the filesystem by some change in the block device, it
+will lead to an out-of-bounds access that KASAN detects as an UAF.
 
-On Wed, Aug 21, 2024 at 04:39:39PM +0200, Oleksij Rempel wrote:
-> Hi Fabio, Stefan,
-> 
-> On Wed, Aug 21, 2024 at 08:01:20AM -0300, Fabio Estevam wrote:
-> > Hi Stefan,
-> > 
-> > On Mon, Aug 19, 2024 at 4:20 AM Stefan Eichenberger <eichest@gmail.com> wrote:
-> > >
-> > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > >
-> > > According to the i.MX8M Mini reference manual chapter "16.1.4.2
-> > > Generation of Start" it is only necessary to poll for bus busy and
-> > > arbitration lost in multi master mode. This helps to avoid rescheduling
-> > > while the i2c bus is busy and avoids SMBus devices to timeout.
-> > >
-> > > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > 
-> > This fixes a pca953x probe error on an imx8mp board running linux-stable 6.6:
-> > 
-> > [    1.893260] pca953x 2-0020: failed writing register
-> > [    1.898258] pca953x 2-0020: probe with driver pca953x failed with error -11
-> > 
-> > Could you please add a Fixes tag and Cc stable so that this can reach
-> > the stable kernels?
-> > 
-> > Tested-by: Fabio Estevam <festevam@denx.de>
+EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
+loop0: detected capacity change from 2048 to 2047
+==================================================================
+BUG: KASAN: use-after-free in ext4_search_dir+0xf2/0x1c0 fs/ext4/namei.c:1500
+Read of size 1 at addr ffff88803e91130f by task syz-executor269/5103
 
-Thanks a lot for testing. Are the other patches required as well or did
-only introducing the master mode flag solve the issue?
+CPU: 0 UID: 0 PID: 5103 Comm: syz-executor269 Not tainted 6.11.0-rc4-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ ext4_search_dir+0xf2/0x1c0 fs/ext4/namei.c:1500
+ ext4_find_inline_entry+0x4be/0x5e0 fs/ext4/inline.c:1697
+ __ext4_find_entry+0x2b4/0x1b30 fs/ext4/namei.c:1573
+ ext4_lookup_entry fs/ext4/namei.c:1727 [inline]
+ ext4_lookup+0x15f/0x750 fs/ext4/namei.c:1795
+ lookup_one_qstr_excl+0x11f/0x260 fs/namei.c:1633
+ filename_create+0x297/0x540 fs/namei.c:3980
+ do_symlinkat+0xf9/0x3a0 fs/namei.c:4587
+ __do_sys_symlinkat fs/namei.c:4610 [inline]
+ __se_sys_symlinkat fs/namei.c:4607 [inline]
+ __x64_sys_symlinkat+0x95/0xb0 fs/namei.c:4607
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3e73ced469
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff4d40c258 EFLAGS: 00000246 ORIG_RAX: 000000000000010a
+RAX: ffffffffffffffda RBX: 0032656c69662f2e RCX: 00007f3e73ced469
+RDX: 0000000020000200 RSI: 00000000ffffff9c RDI: 00000000200001c0
+RBP: 0000000000000000 R08: 00007fff4d40c290 R09: 00007fff4d40c290
+R10: 0023706f6f6c2f76 R11: 0000000000000246 R12: 00007fff4d40c27c
+R13: 0000000000000003 R14: 431bde82d7b634db R15: 00007fff4d40c2b0
+ </TASK>
 
-> > 
-> > Thanks a lot,
-> 
-> It looks like with this patch, the I2SR_IAL interrupt is not cleared.
-> I would expect some kind of interrupt storm. Can you confirm it?
+Calling ext4_xattr_ibody_find right after reading the inode with
+ext4_get_inode_loc will lead to a check of the validity of the xattrs,
+avoiding this problem.
 
-This is a good question. i2c_imx_trx_complete was never called in the
-interrupt handler. So that would mean the storm would already be there
-before just for a shorter time. We only clear the IFF flag in the isr.
+Reported-by: syzbot+0c2508114d912a54ee79@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=0c2508114d912a54ee79
+Fixes: e8e948e7802a ("ext4: let ext4_find_entry handle inline data")
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+---
+ fs/ext4/inline.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-> This causes a processor interrupt request (if the interrupt enable is
-> asserted [IIEN = 1]). The interrupt is set when one of the following
-> occurs:
-> - One byte transfer is completed (the interrupt is set at the falling
->   edge of the ninth clock).
-> - An address is received that matches its own specific address in
->   Slave Receive mode.
-> - Arbitration is lost.
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 7b98b1bf1dc9..44a5f6df59ec 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1664,25 +1664,36 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
+ 					struct ext4_dir_entry_2 **res_dir,
+ 					int *has_inline_data)
+ {
++	struct ext4_xattr_ibody_find is = {
++		.s = { .not_found = -ENODATA, },
++	};
++	struct ext4_xattr_info i = {
++		.name_index = EXT4_XATTR_INDEX_SYSTEM,
++		.name = EXT4_XATTR_SYSTEM_DATA,
++	};
+ 	int ret;
+-	struct ext4_iloc iloc;
+ 	void *inline_start;
+ 	int inline_size;
+ 
+-	ret = ext4_get_inode_loc(dir, &iloc);
++	ret = ext4_get_inode_loc(dir, &is.iloc);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+ 	down_read(&EXT4_I(dir)->xattr_sem);
++
++	ret = ext4_xattr_ibody_find(dir, &i, &is);
++	if (ret)
++		goto out;
++
+ 	if (!ext4_has_inline_data(dir)) {
+ 		*has_inline_data = 0;
+ 		goto out;
+ 	}
+ 
+-	inline_start = (void *)ext4_raw_inode(&iloc)->i_block +
++	inline_start = (void *)ext4_raw_inode(&is.iloc)->i_block +
+ 						EXT4_INLINE_DOTDOT_SIZE;
+ 	inline_size = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DOTDOT_SIZE;
+-	ret = ext4_search_dir(iloc.bh, inline_start, inline_size,
++	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
+ 			      dir, fname, 0, res_dir);
+ 	if (ret == 1)
+ 		goto out_find;
+@@ -1692,23 +1703,23 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
+ 	if (ext4_get_inline_size(dir) == EXT4_MIN_INLINE_DATA_SIZE)
+ 		goto out;
+ 
+-	inline_start = ext4_get_inline_xattr_pos(dir, &iloc);
++	inline_start = ext4_get_inline_xattr_pos(dir, &is.iloc);
+ 	inline_size = ext4_get_inline_size(dir) - EXT4_MIN_INLINE_DATA_SIZE;
+ 
+-	ret = ext4_search_dir(iloc.bh, inline_start, inline_size,
++	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
+ 			      dir, fname, 0, res_dir);
+ 	if (ret == 1)
+ 		goto out_find;
+ 
+ out:
+-	brelse(iloc.bh);
++	brelse(is.iloc.bh);
+ 	if (ret < 0)
+-		iloc.bh = ERR_PTR(ret);
++		is.iloc.bh = ERR_PTR(ret);
+ 	else
+-		iloc.bh = NULL;
++		is.iloc.bh = NULL;
+ out_find:
+ 	up_read(&EXT4_I(dir)->xattr_sem);
+-	return iloc.bh;
++	return is.iloc.bh;
+ }
+ 
+ int ext4_delete_inline_entry(handle_t *handle,
+-- 
+2.34.1
 
-Unfortunately, I don't have a device that uses multi master mode and we
-would only see it on such a device. However, also from the reference
-manual:
-
-> IAL must be cleared by software by writing a "0" to it at the start of
-> the interrupt service routine
-
-So most likely it was wrong the whole the time we just didn't see it
-before, could that be? I think a fix would be relatively easy we have to
-clear it at the beginning of the isr but after we read the status. I
-could add this to the series if you agree.
-
-Regards,
-Stefan
 
