@@ -1,143 +1,164 @@
-Return-Path: <linux-kernel+bounces-295611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9344959F01
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:48:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB43959F0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F348B21A7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072791F22E09
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC90919993F;
-	Wed, 21 Aug 2024 13:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154031AD5DE;
+	Wed, 21 Aug 2024 13:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dolPsNWv"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NK9LP76a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8825116631C
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8297B1AD5CE;
+	Wed, 21 Aug 2024 13:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724248068; cv=none; b=izXaYg/zylRb2XMWSzrl5ES/BSS0OyrX+fmz57Xb8t7Udyb05ss7czSu3eytYaagH4Vfo40XMdymmT7/CUdrQVJ8Syj7ySBoRoc0SunwfXbjbOyxAlGqRFgtpM/0Up0LwcJS9+KfxuGxWXYOupSu41Tx5WFqqCEaCxzWJxskB5M=
+	t=1724248195; cv=none; b=ptPWooHwhAi2cx20NCrk3C2KNKkLX6lcMNSffN4T76RqyEmqWdbAMwqMVM5GuIckzfp9+UdF/s0r3SPgxPRk2Yzks//QODp/5btoI0fLr1Ol+SAGKqILRYMhQxX9qTAnTCHMVh4jbTG8EvGCi0eBWWyyEBdYnPFaA8EayTmXVvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724248068; c=relaxed/simple;
-	bh=gwLjHNTsXHMmlKgeIfCrG8pO4t2Y8x/pcVf6IX7HJS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oqdylxslY18JprkIL2OBuh/f+JkFykF6mDlZ+37V893NCE4LrSjf1CkGTprPfpoaU+WxkW9f0YVld4o1mG0irDq785OUKBsZ5qTxwkXKefZRhUOZQ3qy9eNKY/QcUVgDc/TfEZ85lphwpyEOVA+Ij7eymf/ec3FFXAWwpnbYUfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dolPsNWv; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428119da952so54501765e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724248064; x=1724852864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ZR2V02XpqNEW9fvu30UGOqjOdE3SQr9bcH8M/YKkZE=;
-        b=dolPsNWvrSeN1bjtX6ZyZ4JT8coc+48QIJvDg6MwxbHw4pe3mbqEbesmqh2lL+eRSt
-         ReiP3BYXHER5gTs/Jgp7JRX0IWMn6sHNnDz11HD7NaNDq9cJKYxk1YaAP+epj1nRgN9h
-         Sj7nO0Ht/2ie9fOWrMi51EH3Vy6GHn3Gk0K0fchKPqn9daRfq3eI4R9HalWAJ9asFj6h
-         GMAfKvdYGyPmjpsjCxvrZm+xtqrdrSYM4MTJ6uJQuR94rao+lhvsaPPrk/apjYCHkvpX
-         YFgneHgTgJYG89FU7AH00ltJjxOda2SnkXlEoYvjNcTsNKeQlI8Q1W/gIeDUqATCQfRg
-         3ckw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724248064; x=1724852864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+ZR2V02XpqNEW9fvu30UGOqjOdE3SQr9bcH8M/YKkZE=;
-        b=Oj9Xn1cUYvS6F1OO2ItWnX47TwU5BZ1Gu36uMt4LhGtizyNjVdvdKZ53wQO3hlaV7c
-         So0S67XcvH6NCG+enmiANIjVezqxVkDAfUXImePfTi2LBHKjJG6luWnjd+H3+SsD95zj
-         er3R9pPcVvT+12MJJgN+tD8RKh5oSs3pxWqchXbpB4cAR4FjORfybNcblcSyrIxssy7E
-         rPBc0WoFd+IQJKykcdr9pXmApK10YhS0mlEaB1XrnzoaaUw22nqBvO93RGEtVEtC1b7H
-         byLIDHviduXDPae307q2cNvZmJjr/vXyD6ej5Dffxuev9J8v20XzPIAC72x9EVr2oIqN
-         BnDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWY9fUQ67hxFlVtomtvKaKkky01t1mgjDdCMOTmwrTnxq1GyU/+Am3RlwoQKeGddmXhHinMw+69yWbDzjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAQ7l4cxcsJP3ComTOc03+4NgucYDPF8yYbVmeCmawC+SjSRuK
-	V1YFd5rP66pHMlTTS9M/Fej/Ig7/VzJfpjl084/WZTOCgkjWTEKm3VNJS7yKR4UbqBbwBJGHnQi
-	MD9hiFMESSjpdq1Y7amTOouOnCQRatfMb2/cW
-X-Google-Smtp-Source: AGHT+IE+WRPQ5cxJkts/8lQ1Pyrz4IDfgbmZOe9kRkxkJ6+Ctq49hnrFtuGR4cuPoH3txY4c4UXweZZ+1LQnmVHuF+A=
-X-Received: by 2002:a05:600c:4e91:b0:426:6f5f:9da6 with SMTP id
- 5b1f17b1804b1-42abf096794mr15321995e9.27.1724248063553; Wed, 21 Aug 2024
- 06:47:43 -0700 (PDT)
+	s=arc-20240116; t=1724248195; c=relaxed/simple;
+	bh=u4kuJipWD1vmaiNeXqgsS1lktVrwGmZ+cANuZ0l5L24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmPoaYPucd7PiU5uLgqtcIq2/arY78corhgXwfDhE9P+4rk/rdDfGb4X8K940Gl8VqVx1t2SuiScmlGJd70vVFy0n9mbJc1My7aBF4Bopv74aG27vdrnjXCFRLxTWy8cVDqjJETOF4TwSF3Axm9VvDnZKmoSeMQnGJPphcBj5RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NK9LP76a; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724248194; x=1755784194;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u4kuJipWD1vmaiNeXqgsS1lktVrwGmZ+cANuZ0l5L24=;
+  b=NK9LP76aoJeILk1Wsr88t/UBlph4vk8/SCNNFLzrjQuI/r3VUFZxeIXb
+   lvCe3XIe+iX6l3LWP4cb53tjDTNkV37qubJYKO+iEqcVk/ZZBIbsqrydl
+   1MbWPZSe9A9wOfuEg6nEbu+8fhm8u+0Pl5PnUHSeC10MwWTds49bNq3X0
+   HVwuLeR8/0uKFqgFtHrVZwQ9DzA3kNSbeZQGk+sPc3F3YUjE1rLuuNqlw
+   n/nS9/4hwlZNYc3fS6CKKnct81B1IXiqJmrjl30VzTytMFfDtsj4ow2BK
+   m1TeZD9R1n5xM9oo7QOIeNUBivuAXIbhMXtj7EnBhNzAxmf9AHmJY1nvv
+   Q==;
+X-CSE-ConnectionGUID: ehxEVG83SJSQk3SstFdWrA==
+X-CSE-MsgGUID: yBeT5vwARhy33QL9ZPIIeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="26476090"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="26476090"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:49:41 -0700
+X-CSE-ConnectionGUID: ElUHF5rxQaav52IEjQTp0Q==
+X-CSE-MsgGUID: 4rqoe0VZTu+IxQcD9Bzf8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="61406714"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 21 Aug 2024 06:49:34 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgliN-000BQI-1L;
+	Wed, 21 Aug 2024 13:49:31 +0000
+Date: Wed, 21 Aug 2024 21:49:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <helgaas@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <202408212114.i6MFeKR1-lkp@intel.com>
+References: <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819153656.28807-2-vadorovsky@protonmail.com> <CAH5fLghOFYxwCOGrk8NYX0V9rgrJJ70YOa+dY1O0pbNB-CoK=w@mail.gmail.com>
-In-Reply-To: <CAH5fLghOFYxwCOGrk8NYX0V9rgrJJ70YOa+dY1O0pbNB-CoK=w@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 21 Aug 2024 15:47:31 +0200
-Message-ID: <CAH5fLgiRPOVRsF5yz6d-fOciHg1EcwjD21eAgu4sSynSSsgf5A@mail.gmail.com>
-Subject: Re: [PATCH RESEND v5] rust: str: Use `core::CStr`, remove the custom
- `CStr` implementation
-To: Michal Rostecki <vadorovsky@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	Finn Behrens <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>, 
-	Valentin Obst <kernel@valentinobst.de>, Yutaro Ohno <yutaro.ono.418@gmail.com>, 
-	Asahi Lina <lina@asahilina.net>, Danilo Krummrich <dakr@redhat.com>, Tiago Lam <tiagolam@gmail.com>, 
-	Charalampos Mitrodimas <charmitro@posteo.net>, Tejun Heo <tj@kernel.org>, Roland Xu <mu001999@outlook.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	netdev@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
 
-On Wed, Aug 21, 2024 at 2:08=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Mon, Aug 19, 2024 at 5:39=E2=80=AFPM Michal Rostecki <vadorovsky@gmail=
-.com> wrote:
-> >
-> > From: Michal Rostecki <vadorovsky@gmail.com>
-> >
-> > `CStr` became a part of `core` library in Rust 1.75. This change replac=
-es
-> > the custom `CStr` implementation with the one from `core`.
-> >
-> > `core::CStr` behaves generally the same as the removed implementation,
-> > with the following differences:
-> >
-> > - It does not implement `Display`.
-> > - It does not provide `from_bytes_with_nul_unchecked_mut` method.
-> > - It has `as_ptr()` method instead of `as_char_ptr()`, which also retur=
-ns
-> >   `*const c_char`.
-> >
-> > The first two differences are handled by providing the `CStrExt` trait,
-> > with `display()` and `from_bytes_with_nul_unchecked_mut()` methods.
-> > `display()` returns a `CStrDisplay` wrapper, with a custom `Display`
-> > implementation.
-> >
-> > `DerefMut` implementation for `CString` is removed here, as it's not
-> > being used anywhere.
-> >
-> > Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
->
-> A few comments:
->
-> * I would probably add CStrExt to the kernel prelude.
-> * I would probably remove `from_bytes_with_nul_unchecked_mut` and keep
-> `DerefMut for CString` instead of the other way around.
-> * Perhaps we should remove the `c_str!` macro and use c"" instead?
+Hi Andrea,
 
-Ah, also, please add this tag:
+kernel test robot noticed the following build errors:
 
-Closes: https://github.com/Rust-for-Linux/linux/issues/1075
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Alice
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20240821-023901
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta%40suse.com
+patch subject: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+config: x86_64-randconfig-r133-20240821 (https://download.01.org/0day-ci/archive/20240821/202408212114.i6MFeKR1-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240821/202408212114.i6MFeKR1-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408212114.i6MFeKR1-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/misc/rp1/rp1-pci.c: In function 'rp1_mask_irq':
+>> drivers/misc/rp1/rp1-pci.c:98:9: error: implicit declaration of function 'pci_msi_mask_irq'; did you mean 'pci_msix_free_irq'? [-Werror=implicit-function-declaration]
+      98 |         pci_msi_mask_irq(pcie_irqd);
+         |         ^~~~~~~~~~~~~~~~
+         |         pci_msix_free_irq
+   drivers/misc/rp1/rp1-pci.c: In function 'rp1_unmask_irq':
+>> drivers/misc/rp1/rp1-pci.c:106:9: error: implicit declaration of function 'pci_msi_unmask_irq' [-Werror=implicit-function-declaration]
+     106 |         pci_msi_unmask_irq(pcie_irqd);
+         |         ^~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +98 drivers/misc/rp1/rp1-pci.c
+
+    92	
+    93	static void rp1_mask_irq(struct irq_data *irqd)
+    94	{
+    95		struct rp1_dev *rp1 = irqd->domain->host_data;
+    96		struct irq_data *pcie_irqd = rp1->pcie_irqds[irqd->hwirq];
+    97	
+  > 98		pci_msi_mask_irq(pcie_irqd);
+    99	}
+   100	
+   101	static void rp1_unmask_irq(struct irq_data *irqd)
+   102	{
+   103		struct rp1_dev *rp1 = irqd->domain->host_data;
+   104		struct irq_data *pcie_irqd = rp1->pcie_irqds[irqd->hwirq];
+   105	
+ > 106		pci_msi_unmask_irq(pcie_irqd);
+   107	}
+   108	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
