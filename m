@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-295287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD37959954
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:16:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71E295995F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7290D282C5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B891F23166
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A1B1CE706;
-	Wed, 21 Aug 2024 09:51:45 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4B3208625;
+	Wed, 21 Aug 2024 09:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rDmPKCfN"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839141CE700
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4524208601;
+	Wed, 21 Aug 2024 09:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233905; cv=none; b=e4JsDsfVhDDpHg3VUhBv/CrGQtsrs9Hzgo3VIZVANQrmYV1g2POFwCiIGZDzSNuLLQsIX5PAa+bZPoFrN1Ur8pf8HYxTTnSeHh7j/lHHwhYw5CvBWN72h8tgUYij6pRcE1Eo/mqG57OYvwZ67LDTx1ps5o4sn1Sc9V0iBv77P/A=
+	t=1724233945; cv=none; b=ZJsy4nDAYN76IJ2iKIFn5UF7OMv4UtK2GHXDmD7SuUwT8Bmo9pdrIingz7Bsx19wy+hWJ5kn592yFlNywTWMsYpfoKn3sp8gtibKzpu5UfchaRrdmBhS5XU/zA/SkposL8vyXpUk49T78OTQeif6lbofHq0rPU1yBtf4YAZuttA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233905; c=relaxed/simple;
-	bh=bmfvD/wKQE7hV1kUr3oVrQytakrPuOmhdrBTE/biIbI=;
-	h=From:Subject:To:CC:Message-ID:Date:MIME-Version:Content-Type; b=qLuzzW80JtOHrzU7SQkaNwv4PefPyeynqQzs0MlarDPotyisC96SMLBM9MLdIk5ujZO57zOAmJ2+0AXL++neqfWLHmPDQ8lMyUWMridEv+9cAF7D3iqkhjFmDpa4Uos2qyCELjUMwxWh4luHrGwN2UWRIxtgs+AU5FXxIw5b1iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WphLp5PhMz20l5l;
-	Wed, 21 Aug 2024 17:46:58 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D7DC1400CA;
-	Wed, 21 Aug 2024 17:51:40 +0800 (CST)
-Received: from [10.174.176.125] (10.174.176.125) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 21 Aug 2024 17:51:39 +0800
-From: Kunkun Jiang <jiangkunkun@huawei.com>
-Subject: [bug report] GICv4.1: multiple vpus execute vgic_v4_load at the same
- time will greatly increase the time consumption
-To: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>
-CC: "open list:IRQ SUBSYSTEM" <linux-kernel@vger.kernel.org>, "moderated
- list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	<kvmarm@lists.linux.dev>, "wanghaibin.wang@huawei.com"
-	<wanghaibin.wang@huawei.com>, <nizhiqiang1@huawei.com>,
-	"tangnianyao@huawei.com" <tangnianyao@huawei.com>, <wangzhou1@hisilicon.com>
-Message-ID: <a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com>
-Date: Wed, 21 Aug 2024 17:51:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+	s=arc-20240116; t=1724233945; c=relaxed/simple;
+	bh=aOJqVYjkCKjRN34E4uVrEGNLyEKvzWTf55aGKfxUUP0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=utGA2mlmsFDG57NaPyfBoODaD/pHEi7PKKIKRec1ijUKwWtBizf6qb00t1Q53J0GlIBUZcJDayN436LPyTnlfHPAzYXXLoHJZuJdpmKZy4LGoC8BEmzrnm5hBmYAV6M5zuOBocFc7ffrpZ3cM+bGrCDX3QUVZLaDsgfpSFI6bio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rDmPKCfN; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47L9q50m073168;
+	Wed, 21 Aug 2024 04:52:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724233925;
+	bh=+xz2gjid/ZvjoH/nwyiFc7wovd/k1oNrxXbVXPwqf4A=;
+	h=From:To:CC:Subject:Date;
+	b=rDmPKCfNWV95SgjAjRAtTBDRRELISdzkmTS5RH5A57x2v8WqBGYr4yjNgJQVNv2Vm
+	 8vXKkjkRg7zpOxBEA0UhEx1m0t4dIJxMWS8GNeuCwRjdOKBWDADF4ikdNhF9CFu6oT
+	 V5Bw2yVx92yfi2Jbsb/O8ppv66i8204UUylXput0=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47L9q5Af023453
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 21 Aug 2024 04:52:05 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ Aug 2024 04:52:04 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 21 Aug 2024 04:52:04 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47L9q1n1066254;
+	Wed, 21 Aug 2024 04:52:01 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <s-anna@ti.com>, <hnagalla@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/4] Switch MAIN R5F clusters to Split-mode for TI SoCs
+Date: Wed, 21 Aug 2024 15:21:56 +0530
+Message-ID: <20240821095200.3050878-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi all,
+TI SoCs (J7200, J721E, J721S2 & J784S4) have multiple R5F clusters in
+the MAIN domain. All of these clusters are configured for LockStep mode
+at the moment. Switch all of these R5F clusters to Split mode by default
+to maximize the number of R5F cores.
 
-Recently I discovered a problem about GICv4.1, the scenario is as follows:
-1. Enable GICv4.1
-2. Create multiple VMs.For example, 50 VMs(4U8G)
-3. The business running in VMs has a frequent mmio access and need to exit
-   to qemu for processing.
-4. Or modify the kvm code so that wfi must trap to kvm
-5. Then the utilization of pcpu where the vcpu is located will be 100%,and
-   basically all in sys.
-6. This problem does not exist in GICv3.
+v2: Changelog:
+1) Update commit messages to drop "Lockstep-mode" as default mode for early booted remoteprocs.
 
-According to analysis, this problem is due to the execution of vgic_v4_load.
-vcpu_load or kvm_sched_in
-     kvm_arch_vcpu_load
-     ...
-         vgic_v4_load
-             irq_set_affinity
-             ...
-                 irq_do_set_affinity
-                     raw_spin_lock(&tmp_mask_lock)
-                     chip->irq_set_affinity
-                     ...
-                       its_vpe_set_affinity
+Link to v1:
+https://lore.kernel.org/all/20240503062414.804209-1-b-padhi@ti.com/
 
-The tmp_mask_lock is the key. This is a global lock. I don't quite 
-understand
-why tmp_mask_lock is needed here. I think there are two possible 
-solutions here:
-1. Remove this tmp_mask_lock
-2. Modify the gicv4 driver,do not perfrom VMOVP via irq_set_affinity.
+Apurva Nandan (1):
+  arm64: dts: ti: k3-j784s4-main: Switch MAIN R5F clusters to Split-mode
 
-Everyone is welcome to discuss.
+Beleswar Padhi (1):
+  arm64: dts: ti: k3-j721s2-main: Switch MAIN R5F clusters to Split-mode
 
-Thanks,
-Kunkun Jiang
+Suman Anna (2):
+  arm64: dts: ti: k3-j7200-main: Switch MAIN R5F cluster to Split-mode
+  arm64: dts: ti: k3-j721e-main: Switch MAIN R5F clusters to Split-mode
+
+ arch/arm64/boot/dts/ti/k3-j7200-main.dtsi  | 2 +-
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi  | 4 ++--
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 4 ++--
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+-- 
+2.34.1
 
 
