@@ -1,116 +1,100 @@
-Return-Path: <linux-kernel+bounces-295154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A1C9597CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371A89597D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881F3283245
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D711C209C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BC81D31B5;
-	Wed, 21 Aug 2024 08:43:18 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAB41D45F5;
+	Wed, 21 Aug 2024 08:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QcoTYbVa"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5650A1D3198;
-	Wed, 21 Aug 2024 08:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1034B1D45F2
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724229797; cv=none; b=gEc1/8gsb3UR/n4ZACRZHtyKOQHbcySAmo5V/dq45t7vb69QT6W6Arg34IDjK32s8uI42Ts0tc0dwSxIcEpEmloNLUsaVVRjPskE8gfjflRBwuoEMh7hdOXx/3ycVWBcw1JQTku35/rCMb+Ysdf7PpNHoRS+JvEf1hQ5WmRQNKo=
+	t=1724229831; cv=none; b=plrdNgCUSZL1IFYwPq6LysbYNfKQjKlXFv4QNjFKXligvn/XbrNjwj/nzbeDfaW+UsMxex3yH+ly3+GZZK2RPY6sVT1+hD93ZOWJl0Fb4Gju5Tv5z/wRnLjwXC2IzGqRp4LltiTqn4ylwSudObPKcp2ivxdhMybCtcvUncmsSbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724229797; c=relaxed/simple;
-	bh=EFh3J6gSVnh0OIcnb7FDDNwMmB0QrDYqubDGp6rISSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuJQQsJDCPFlGKfPdtTiB7Gc4adGC/32J2wpCnBeXaVDTmuKz1uJ4BTS5gLV+zyxb2dbSnJjRBfmXOfVr39B+kQLvw0Dzb3OfHKVaUSVNc6r5CoPFOhUMlNeO2dm0DM7IZHZ3kFBxxbYzeMzAJebWRcazYmD4V+sRQwfADAuaJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso54262295e9.0;
-        Wed, 21 Aug 2024 01:43:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724229795; x=1724834595;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w1Rv5V3A8cW9MeG+rpAd1sSVBgalSm2FnHWC0fKkaAo=;
-        b=IiiWGlJA0Sloh6efbKr8kCQWjetaIyJddwoa/D9vCqrQiMt8Z/SC5r/BjQZO6qyiSg
-         rvmBIt6MaGdK/FIvxEs98lXtyZFnhYyFiUrvByIbDbY+UhRmW1C3BhCS3vBUX21IVC7q
-         C0jXN550gA3lU2ehdgkaDhHa75HHIeW6qI6lXD4bj0mMKOgMAjSUIJRNSGjlurQeiK9x
-         +aUUqp/e+Dw8ckpLb2BYlFoZRSEZEe/3OXTa3GlvHlTI7DthcJUjtmu2C/yBSp0qYGa1
-         SkIuqpDtYRAVf0mbV+GYzIxXpKgvazCWD+Q/DKfy48RclPgeAZr5zR4t1dIdycPUHXSg
-         RYtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcFhzbM+SnMtZ7EZwFgnr2vxHte5ksa+IKewAGbiL2l9Jk64M7Fbf7AuTQHSbUVsUZnoWA51v8eF83eg==@vger.kernel.org, AJvYcCV3c7P2R2XQgTJLY8ycPv/613eL4JfLt+eJrEri+LzQICGc8SK/vGBfQVSdXD5UWE7FjwFc/8Qn@vger.kernel.org, AJvYcCWYRcDlEpEpT+W/XzdiQc4kpAqXDmgHf688mgkYbBpdrQM/+dvPN/YZrJAQL1PQKgcq7wvsFhevw3jT@vger.kernel.org, AJvYcCWfNkSnjuYDPJleuK5tMSIO9DPg+q2Dw8nwf7oeucFK7YnuQKa58S7WHzBIqZdhcoBofbwVNflrAdggTfOu@vger.kernel.org, AJvYcCWsvGxsvB2alOjKmPakuOksDp6OBWoCNmnERBysM7hy/dD7Z8K32U1VdY+23aNBXuzhNzVG2EJHlM3N@vger.kernel.org, AJvYcCXGz/Y8qSKGPJrZQv6ctf8ygNXBPF3j3XnrMka/1Tez7aACJVILImif1nyOY/iEFIXV2Tc9E8Ba9/X2DA==@vger.kernel.org, AJvYcCXYaR3LIzDPczOlwJT5dGaU3HHy6k1po7XOljFDn7IYaXkkvLMW3I52h96SYLkTAUxc2pD/h7AXn/Lv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3brI71exCCGVsxUiYcKnzGLe8Vi3reH78vH3n3TNIxAUXcKkR
-	1s8t0l92jjL34FRul81kCeLk7kyY/zi8WPoYv2csd0EYLhjreh0v
-X-Google-Smtp-Source: AGHT+IGzXw6aX6SHbsnieU7vRNqZRg6rOYULTsDsFIvZftBwi+J0k6IBv7BXwURwraCoeVv8ToFQcw==
-X-Received: by 2002:adf:ce02:0:b0:368:4e28:47f7 with SMTP id ffacd0b85a97d-372fd57c923mr1019754f8f.6.1724229794443;
-        Wed, 21 Aug 2024 01:43:14 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abefa224esm17367135e9.32.2024.08.21.01.43.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:43:13 -0700 (PDT)
-Date: Wed, 21 Aug 2024 10:43:10 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 11/11] arm64: dts: rp1: Add support for MACB contained in
- RP1
-Message-ID: <c3cgkrwnwkrzr67viuvo66ckkxc4ehcye4zomcqdwy2h4dabol@wjp4cd4clm77>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <a3fde99c2e522ef1fbf4e4bb125bc1d97a715eaf.1724159867.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1724229831; c=relaxed/simple;
+	bh=18iOuPQ2oz3eJXc26U9q2i0XK//JIVBl/QmiREyK5bQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CY6XIoQldprLGLU7bpzWwipZiycMDqHZ299x8163nIWyAdITeuxi8MM1vH6qt5oRS0PxgsRt/cdbkZlLDydAE2kl/JneW5NoK2dSaIWUOtmkMiO0y0vUvrE5pER1uisUZC65ufnwX9q9g6YpWk5xjPTmTbyzKEsP7ZrykypN3JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QcoTYbVa; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=b+eB73GrPccCdLU6CWfc1pg5yiGEbiwTbUmoc3zvXNA=; b=QcoTYbVaABv8lmTWg5EUXU9zOc
+	fHDmF8VR5HyWsQh0p/qGZ+G/gQTSU181Vygyx0Wxen1cuH+j3E5rUPIu2PSLBFlABKu7TSi0OfDh1
+	zFXCUqXNkXlDhB10krdXIqltXmqyD4BmujaVN1nFDWalNBwSSkd/BMHxh3yR4fYdY5hIz3I5/O/xr
+	NIHN2kh5Fbbg1fZyACF+VHp1kEDdRNHwbsv6BPODxUFsz7KPOQRLwsRaLjF0YGahPeyRY49r6sqo2
+	ibZQIZTK4bLF49hr2KsKx27Iboatt212jDpMVj6UIneynrCsytrfD0IiRKaFoGPfhHPyvlgqXw8wa
+	otCc+P4g==;
+Received: from i53875aca.versanet.de ([83.135.90.202] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sggwG-0004yi-VV; Wed, 21 Aug 2024 10:43:33 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org, linux-phy@lists.infradead.org,
+ Dragan Simic <dsimic@manjaro.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 3/3] phy: phy-rockchip-inno-usb2: Improve error handling while
+ probing
+Date: Wed, 21 Aug 2024 10:44:00 +0200
+Message-ID: <12869965.VsHLxoZxqI@diego>
+In-Reply-To:
+ <866445027a4f41165c872f494b04c218b6e67b09.1724225528.git.dsimic@manjaro.org>
+References:
+ <cover.1724225528.git.dsimic@manjaro.org>
+ <866445027a4f41165c872f494b04c218b6e67b09.1724225528.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a3fde99c2e522ef1fbf4e4bb125bc1d97a715eaf.1724159867.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Aug 20, 2024 at 04:36:13PM +0200, Andrea della Porta wrote:
-> RaspberryPi RP1 is multi function PCI endpoint device that
-> exposes several subperipherals via PCI BAR.
-> Add an ethernet node for Cadence MACB to the RP1 dtso
+Am Mittwoch, 21. August 2024, 09:37:55 CEST schrieb Dragan Simic:
+> Improve error handling in the probe path by using function dev_err_probe()
+> where appropriate, and by no longer using it rather pointlessly in one place
+> that actually produces a single, hardcoded error code.
 > 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->  arch/arm64/boot/dts/broadcom/rp1.dtso | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> index d80178a278ee..b40e203c28d5 100644
-> --- a/arch/arm64/boot/dts/broadcom/rp1.dtso
-> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> @@ -78,6 +78,29 @@ rp1_clocks: clocks@c040018000 {
->  							       <50000000>;   // RP1_CLK_ETH_TSU
->  				};
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+
+> @@ -1375,8 +1372,10 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+>  	rphy->irq = platform_get_irq_optional(pdev, 0);
+>  	platform_set_drvdata(pdev, rphy);
 >  
-> +				rp1_eth: ethernet@c040100000 {
-> +					reg = <0xc0 0x40100000  0x0 0x4000>;
-> +					compatible = "cdns,macb";
+> -	if (!phy_cfgs)
+> -		return dev_err_probe(dev, -EINVAL, "phy configs are not assigned!\n");
+> +	if (!phy_cfgs) {
+> +		dev_err(dev, "phy configs are not assigned\n");
+> +		return -EINVAL;
+> +	}
+>  
+>  	ret = rockchip_usb2phy_extcon_register(rphy);
+>  	if (ret)
 
-Please start using DTS coding style...
+I really don't understand the rationale here. Using dev_err_probe here 
+is just fine and with that change you just introduce more lines of code
+for exactly the same functionality?
 
-Best regards,
-Krzysztof
 
 
