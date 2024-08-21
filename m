@@ -1,150 +1,240 @@
-Return-Path: <linux-kernel+bounces-295120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C849596FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:05:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9139596DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F49C284254
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:05:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B0E6B214A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C258A1CBE81;
-	Wed, 21 Aug 2024 08:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C69F18990F;
+	Wed, 21 Aug 2024 08:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FFtR0xWj"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gSCQtxnS"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A031B1D6E
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C8F1898F5
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724228463; cv=none; b=XvJV9SKqbkOZlgcFkk6Qwsq1shHNZcxhUE7B+lWh//ndKWNodUqNK4YVfaw97PwRp4b9oLt/WDdycnJaLvMb+I2un1Z1/ywFqEKX7wZMEoV/iy1Wl4+mVswoFwGjyf3FNNfKwB1A8j9+s5VonQTgDtjznofmLbbgZ3Hc6OlnLU8=
+	t=1724228342; cv=none; b=V1p+M/9KSm/uiVWtQqr7PZCsENbxkXrnS7kR7S4TuqW19wQGkVKAjEFefyKHZVh2pCzbNuugjGPWW8WmvRUD/5Ft2/Z0BZB62Sb4NhEiRAzjeLsspdFxvCz8xM2JlDKS1OvYk5nrTfA0SIUEKGV6etAHptW5eNtuCBUDe328s4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724228463; c=relaxed/simple;
-	bh=rHqDHFrF26/hCS+KcrGpklG8aSJcd2dafPbIgZSe4as=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lAmLVVbcVg3U1WPhXQ1x79LPRGk1SC2EJMNW6tr9NG8VijNAQCjXdMy7w8e6c+Ut7rB4HC9HrJkxyk5nBFvl5a7qzIrOUE8knbVfQMietLTq1s1dFvkKwgC/8cicHA/nSJ1ndBoZ7qzideCBHm0SGumDH4wo2WzPZyWJ+N5pcZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FFtR0xWj; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso4879454a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 01:21:01 -0700 (PDT)
+	s=arc-20240116; t=1724228342; c=relaxed/simple;
+	bh=vvDhsaCryXbtPrm4x2WVrkEnasWmvVZ55jHbWMa9Atw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eKJA3Xfcdx7PWDIVZvlwhqm7A+ytCVLSb7PLTwbvgXA7pqmSpU7MLBWa5MhhUtk3xOdsNfRBxb05MdunlqrMIePaYA0komSZSsal9ynTcB98gPjvYFuQhZv8L0ntKs27IsJli+niMDwQhphfd5lcP+SnBdaAJIYIDqlb1KQBDcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gSCQtxnS; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533496017f8so403006e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 01:18:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724228461; x=1724833261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9nMMKQBovMbpHaGn8Lvg/undANxxFw84odzUdkp5IAc=;
-        b=FFtR0xWjW0Ff9PeIQ1vFAx8Xjor5qGWkGdw8ur89bD5vRjYHB/jHnTHHWO8GPG5TLn
-         rX6X5Konib859FnurKYzsteqFM3hbkCJIXzq9ElNMzsCBMNhpXu/LDZcu9zCGOHsizT5
-         X//YL+mEs1patQZIz+/njGORUSLTe23tlqOzzLtFapYUqQ/hT2vJXnd6bydUPzpIDyTb
-         yb/XceEvIRRaXrrBTAumavxQ8PGROiwMUCqfOLa+S75G//fXR9h8U5xZl3pouJh6jeMg
-         jAFgDHNLxFwXe5NkwUc4W3B1/XRUDCHWmKPZ5ZwMJCzaXkBS2O9uDcV385WhoDVXxGvT
-         3dpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724228461; x=1724833261;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=suse.com; s=google; t=1724228337; x=1724833137; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9nMMKQBovMbpHaGn8Lvg/undANxxFw84odzUdkp5IAc=;
-        b=FUa8FN3en7r3LpHuRW8D27/e+NLTINNeZoVGt7Phl7FF1tcVq67jVO0nB02yUUqXlb
-         Le6Pfdnd/IcymXQnoS+w+G1QLWS8/yCsM7PGU49DAT2YsZ/kJkR6dhCxpKPprt36UGak
-         m87VPN887vcgZP8iWs2i13e6qwd224BQsFnpSVJRkMnpyExQqwV77OucIFiUO9vTo+l5
-         mEG776N7qyP58qb1bavozpacJnHDyo1GJg/OppdG3LD1vpYkQUNqB7Xqu+HueX5YzCEK
-         ZT0Tq0n4K/1SPhAfyeUtdOKfrRqA6MwJgBd6RZaEVW8f9ihUczenMlmDDRHKvUM1tep3
-         pw0A==
-X-Gm-Message-State: AOJu0YyhgNzd0u6YQnF1wLie1iVt/gYykz8Thu5tvf0URR/E9AbavzH7
-	6UjiIBosPgVEFjPayF2xznuwiMyyx/I+ld5AvgZ8PRQeOKicCq34YVQO8/TEBdYG9f2fVaLwO0o
-	W
-X-Google-Smtp-Source: AGHT+IGVCW7LuSOfGhGGSqonUfZfQEf1Y51LpMxCXHDPBrQX3ltYUdmnoycYhvy3ErzvacrcFVYd1w==
-X-Received: by 2002:a17:90b:3851:b0:2d3:d239:24c2 with SMTP id 98e67ed59e1d1-2d5e9b99f57mr1469884a91.19.1724228461120;
-        Wed, 21 Aug 2024 01:21:01 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.150])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb9049b0sm1091453a91.17.2024.08.21.01.20.55
+        bh=WArzVvvD78lqDslWIGWtUOH/nDlCZabytUDmTejWvRw=;
+        b=gSCQtxnSGHa0WQ1+ycKb7gQmJ2hTfUVEUhY8UxFm++8wjcHTwTqeXjx50NGsLCogWZ
+         tivg42vqMmi9P65NpH1Yi2ZlecHUYnbGwep0OQy73UjRCBGX7i83Xby3DJR0+xa6SUpe
+         Ow/ug67wqxCFq8Mx+jagvGl98PSzW01F5dhAsFAJy0/GRWWdkdOwdsvghUKMG+D60i5q
+         jzaUZcSpvLdfZefUPFX1pfMjTvbVvn3yPjYBkr7ODefpE3t9NxndeN1KzGBnt/UZZqK0
+         4XkkW0a4C6N0aAOKP7BfkSEomolkcA+FClPabzXH1EjSvOTu5pq4uQMDVbGJZm3cVu0O
+         46vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724228337; x=1724833137;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WArzVvvD78lqDslWIGWtUOH/nDlCZabytUDmTejWvRw=;
+        b=tpfZrzSJLEJmJILxxvXTxO1dPPDJDizqvM+vlpLereYj9i6UbQRNsYgAkpIl8ZMIKk
+         H+YrjyU8vPMoYYphGpQxlyMVEP6rVn/QMDRfsTCGWge2A0lnCpZYjgl14iTdxfLrS0Mz
+         8hqBO7zQJfD/jr71cNuLCsysll2WPe2Vv5z1cRP5dwQ/dQebGt+fstQ5UvpL+Z3xKR3Z
+         fIKYChUk3lxFDG8WBHRLOjrIsfKppl6CoxP3ydaab0oQr+aPER0Y9FK0spYP5bxaS5xB
+         XBFbquCWvguB1CWriinHbu0VZXtuFrmFo86pgyF4SOALWbC9uAyhgD5QNs6smKeVD8Z5
+         gyXA==
+X-Forwarded-Encrypted: i=1; AJvYcCURAd0n5rBJ44XY0EpJw4RwQbM1+7NQ/z3eZ9KLbQyauOe0gg7/zI2GpcU29NCFkgBkUNV+QOK94BDWQ00=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4OBy6zYNdxqKHX/I13Q2ZtF+nrWVtPknALyqU3Adx/ZWXI3Xh
+	L6Xa8+6vKsnGUxkLoyZ71ln8J9Mu2kU84tcAU/92OrY4JhQxnv8718WCnVIfcuE=
+X-Google-Smtp-Source: AGHT+IEL8Q9c8iW6LU5Zvu1ChEfBIQpUuvo6C3xns0qZKNHZdslM5QCPSgRla9iNvwZuRV2iyiygYA==
+X-Received: by 2002:a05:6512:3092:b0:52e:f4b4:6ec1 with SMTP id 2adb3069b0e04-533485994fcmr644542e87.46.1724228336862;
+        Wed, 21 Aug 2024 01:18:56 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dd33ef56adsm3210337b6e.50.2024.08.21.01.18.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:21:00 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: david@redhat.com,
-	hughd@google.com,
-	willy@infradead.org,
-	muchun.song@linux.dev,
-	vbabka@kernel.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org,
-	vishal.moola@gmail.com,
-	peterx@redhat.com,
-	ryan.roberts@arm.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH 14/14] mm: khugepaged: retract_page_tables() use pte_offset_map_maywrite_nolock()
-Date: Wed, 21 Aug 2024 16:18:57 +0800
-Message-Id: <c72aab4401c890a2b348eae119ec395e30a2f805.1724226076.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <cover.1724226076.git.zhengqi.arch@bytedance.com>
-References: <cover.1724226076.git.zhengqi.arch@bytedance.com>
+        Wed, 21 Aug 2024 01:18:56 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 21 Aug 2024 10:18:59 +0200
+To: Rob Herring <robh@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <ZsWi86I1KG91fteb@apocalypse>
+Mail-Followup-To: Rob Herring <robh@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
+ <20240821001618.GA2309328-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821001618.GA2309328-robh@kernel.org>
 
-In retract_page_tables(), we may modify the pmd entry after acquiring the
-pml and ptl, so we should also check whether the pmd entry is stable.
-Using pte_offset_map_maywrite_nolock() + pmd_same() to do it.
+Hi Rob,
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
----
- mm/khugepaged.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+On 19:16 Tue 20 Aug     , Rob Herring wrote:
+> On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
+> > A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
+> > translations. In this specific case, rhe current behaviour is to zero out
+> 
+> typo
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 8fcad0b368a08..821c840b5b593 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1721,6 +1721,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
- 		spinlock_t *pml;
- 		spinlock_t *ptl;
- 		bool skipped_uffd = false;
-+		pte_t *pte;
- 
- 		/*
- 		 * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
-@@ -1756,11 +1757,25 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
- 					addr, addr + HPAGE_PMD_SIZE);
- 		mmu_notifier_invalidate_range_start(&range);
- 
-+		pte = pte_offset_map_maywrite_nolock(mm, pmd, addr, &pgt_pmd, &ptl);
-+		if (!pte) {
-+			mmu_notifier_invalidate_range_end(&range);
-+			continue;
-+		}
-+
- 		pml = pmd_lock(mm, pmd);
--		ptl = pte_lockptr(mm, pmd);
- 		if (ptl != pml)
- 			spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
- 
-+		if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
-+			pte_unmap_unlock(pte, ptl);
-+			if (ptl != pml)
-+				spin_unlock(pml);
-+			mmu_notifier_invalidate_range_end(&range);
-+			continue;
-+		}
-+		pte_unmap(pte);
-+
- 		/*
- 		 * Huge page lock is still held, so normally the page table
- 		 * must remain empty; and we have already skipped anon_vma
--- 
-2.20.1
+Fixed, thanks!
 
+> 
+> > the entire specifier so that the translation could be carried on as an
+> > offset from zero.  This includes address specifier that has flags (e.g.
+> > PCI ranges).
+> > Once the flags portion has been zeroed, the translation chain is broken
+> > since the mapping functions will check the upcoming address specifier
+> 
+> What does "upcoming address" mean?
+
+Sorry for the confusion, this means "address specifier (with valid flags) fed
+to the translating functions and for which we are looking for a translation".
+While this address has some valid flags set, it will fail the translation step
+since the ranges it is matched against have flags zeroed out by the 1:1 mapping
+condition.
+
+> 
+> > against mismatching flags, always failing the 1:1 mapping and its entire
+> > purpose of always succeeding.
+> > Set to zero only the address portion while passing the flags through.
+> 
+> Can you point me to what the failing DT looks like. I'm puzzled how 
+> things would have worked for anyone.
+> 
+
+The following is a simplified and lightly edited) version of the resulting DT
+from RPi5:
+
+ pci@0,0 {
+	#address-cells = <0x03>;
+	#size-cells = <0x02>;
+	......
+	device_type = "pci";
+	compatible = "pci14e4,2712\0pciclass,060400\0pciclass,0604";
+	ranges = <0x82000000 0x00 0x00   0x82000000 0x00 0x00   0x00 0x600000>;
+	reg = <0x00 0x00 0x00   0x00 0x00>;
+
+	......
+
+	rp1@0 {
+		#address-cells = <0x02>;
+		#size-cells = <0x02>;
+		compatible = "simple-bus";
+		ranges = <0xc0 0x40000000   0x01 0x00 0x00   0x00 0x400000>;
+		dma-ranges = <0x10 0x00   0x43000000 0x10 0x00   0x10 0x00>;
+		......
+	};
+ };
+
+The pci@0,0 bridge node is automatically created by virtue of
+CONFIG_PCI_DYNAMIC_OF_NODES, and has no dma-ranges, hence it implies 1:1 dma
+mappings (flags for this mapping are set to zero).  The rp1@0 node has
+dma-ranges with flags set (0x43000000). Since 0x43000000 != 0x00 any translation
+will fail.
+Regarding why no one has really complained about that: AFAIK this could
+very well be an unusual scenario that is arising now that we have real use
+case for platform devices behind a PCI endpoint and devices populated
+dynamically from dtb overlay.
+
+Many thanks,
+Andrea
+
+> 
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  drivers/of/address.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/of/address.c b/drivers/of/address.c
+> > index d669ce25b5f9..5a6d55a67aa8 100644
+> > --- a/drivers/of/address.c
+> > +++ b/drivers/of/address.c
+> > @@ -443,7 +443,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+> >  	}
+> >  	if (ranges == NULL || rlen == 0) {
+> >  		offset = of_read_number(addr, na);
+> > -		memset(addr, 0, pna * 4);
+> > +		/* copy the address while preserving the flags */
+> > +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
+> >  		pr_debug("empty ranges; 1:1 translation\n");
+> >  		goto finish;
+> >  	}
+> > -- 
+> > 2.35.3
+> > 
 
