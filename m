@@ -1,182 +1,122 @@
-Return-Path: <linux-kernel+bounces-294729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6812D9591B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:22:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2419591BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1781B21A82
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC71283458
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFB279D1;
-	Wed, 21 Aug 2024 00:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956E46FA8;
+	Wed, 21 Aug 2024 00:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YV2ke3H0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uX9ffBcf"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57ED23B1;
-	Wed, 21 Aug 2024 00:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF17134AC
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 00:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724199711; cv=none; b=Cw0HtgHn9+/x4TCV19OHXB3M2uk5OK/JT/EQHWBzJ7L5j1o1nDaoQwl7DRnGNdITYwL+gvVRNayD5Ko9hYrdhbEUeSuzXWeOZu/NhPeZZKY6lgDQlEA2yVMeOGvW3SboyBRGlMavKLGylhx3KQhQn//9+RGrJX0bPAhOgxZjVS8=
+	t=1724199722; cv=none; b=TLENzgE32eQ/WdF9+QhNygyLyWgUhCod+SclwCelSpdQnM1ixDRjCpsC9S0qiUGep1X3PCzU5OT6XovDVevPRoAXlzgLDpRIOLXVmR7bpNbwJ3QIj/TdE1LcmmqePSXguckvSUCxgQgoPN3fslLua4CwrADv1oPLre1kmtTHlUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724199711; c=relaxed/simple;
-	bh=tO9lHjbgHTw7NCXp7c9FX69Zqx7Omwhqitb3z3Ge52M=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fQqQ1k5PH5JmL8NghO4gSJ8pEf0BE984acTfnvg5q1RFm9zaX9uPpSwMZE16wjDfVtGb8ytlrKLKFSSr2FuXZ7mfY5E/zqkCqWy2JDLrY8Y1TU8owrtTuizBY42UzjD1HJkXxyaRIGZnLtEzeQ97vJsy15oWysJahKBlsfC8/Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YV2ke3H0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 109C4C4AF0B;
-	Wed, 21 Aug 2024 00:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724199710;
-	bh=tO9lHjbgHTw7NCXp7c9FX69Zqx7Omwhqitb3z3Ge52M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YV2ke3H0jUy5+yks0gciA5hsVagnl3sM2CFk7mcbLuS1mHmo+tS543FBqpFXQToZZ
-	 Badgq3gGFJNaA3MQCMP+jpf3TRuLHscJEh8fpOh9bQAkIA3YIaY3SZvZmcLAbgfJTt
-	 N9ik+VFtOr4tvTMDK/O3fBWq1acfi/ZU5ruYj36ZSDxHUnMRx/CWZHX1h6t/Vw4RV+
-	 /a7CHCstsiw3qMjOObRkxTVWr6DAWQ8kQWtTsgaNSgaWrRf3nd6ZPXxSKi9bumZc7x
-	 sEpZHOXFYqqqdXl/fi+HZPGfcXuciRfmVQgilqV0zm2jIcCoqJTuSpfrsstH7n7pzX
-	 Jv4H1VDuVlNjA==
-Date: Wed, 21 Aug 2024 09:21:47 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Sami Tolvanen
- <samitolvanen@google.com>, Mark Rutland <mark.rutland@arm.com>, Linux Trace
- Kernel <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org,
- clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor
- <nathan@kernel.org>
-Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
-Message-Id: <20240821092147.ff26a09cb0a72b8621abe750@kernel.org>
-In-Reply-To: <20240821084351.4b1c9d4d52b5aa7e07681d69@kernel.org>
-References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
-	<20240819112902.11451fe8@gandalf.local.home>
-	<20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
-	<20240819120244.5657eb2f@gandalf.local.home>
-	<20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
-	<ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
-	<CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
-	<20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
-	<20240820181109.4203158d@gandalf.local.home>
-	<20240821084351.4b1c9d4d52b5aa7e07681d69@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724199722; c=relaxed/simple;
+	bh=UjpXQo6A7+0//4j7DndPfB95lyHaRH2TnLYP2u5D1Lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8bmeoXwYBQpcBYAWXFppQAv/MC2YYykO1fmMK7KG255Ii2njAgQjRDvGuA8Som9pJlZqfBIrQS03xNj4NyQwfcPGOqG6ySgf+0mpIat+Z8aJMksg1n03HTwo73AsCoJ6BAim+66r5x0Lbkzh+fl60XrfqTtDm6HMDRvzoWMB30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uX9ffBcf; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 20 Aug 2024 17:21:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724199717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sJxyQBBIYLkrS1prYD2jOPVLP+NyZepcQ3cKy2Gpp0g=;
+	b=uX9ffBcfjQNqLrlx8bV687YLnQF2Odqs3ehbHtx/rAM8QAFxODXSTWbPMypAR5zodv5V54
+	sfBExJxMFhHeaQ/l5/HmYWb3edlMpI/0GyAHSurKDx0yCKKmChruNLkYg3o37b7TCIl5hE
+	mbjCfZQ21Q9oeu5YiKxhZOgaQMNXhfg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Nhat Pham <nphamcs@gmail.com>, Michal Hocko <mhocko@suse.com>, 
+	Chengming Zhou <zhouchengming@bytedance.com>, Muchun Song <muchun.song@linux.dev>, 
+	Chris Li <chrisl@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/swap, workingset: make anon shadow nodes memcg aware
+Message-ID: <az5fhwmdwxpsgsxb7j3ruzbjevmxqrmx5xswwzuazh6zq5ytrs@bmgbu44mz3po>
+References: <20240820092359.97782-1-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820092359.97782-1-ryncsn@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 21 Aug 2024 08:43:51 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> On Tue, 20 Aug 2024 18:11:09 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Aug 20, 2024 at 05:23:59PM GMT, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 > 
-> > On Wed, 21 Aug 2024 07:05:39 +0900
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > 
-> > 
-> > > Does the noinline attribute prevent embedding callsite too? I mean
-> > > 
-> > > extern callee()
-> > > 
-> > > noinline callee()
-> > > {
-> > > ...
-> > > }
-> > > 
-> > > caller()
-> > > {
-> > > 	callee() // (*)
-> > > }
-> > > 
-> > > In this case, does noinline prevent LTO to embed the callee at the callsite(*)
-> > > or prevent LTO remove the callee() symbol?
-> > >
-> > 
-> > Even though we have it passed as a parameter, I think the compiler and
-> > linker is smart enough to see that and notice its use, and that the
-> > function passed in is a nop, which doesn't break the flow.
-> > 
-> > Can you add the __used and see if it fixes it?
+> Currently, the workingset (shadow) nodes of the swap cache are not
+> accounted to their corresponding memory cgroup, instead, they are
+> all accounted to the root cgroup. This leads to inaccurate accounting
+> and ineffective reclaiming. One cgroup could swap out a large amount
+> of memory, take up a large amount of memory with shadow nodes without
+> being accounted.
 > 
-> Adding __used to DYN_FTRACE_TEST_NAME() and DYN_FTRACE_TEST_NAME2() does
-> not change, the test still fails. Hmm, what about makes the caller
-> (trace_selftest_startup_dynamic_tracing()) called via a function pointer?
-> In that case, wouldn't it be subject to constant propagetion?
+> This issue is similar to commit 7b785645e8f1 ("mm: fix page cache
+> convergence regression"), where page cache shadow nodes were incorrectly
+> accounted. That was due to the accidental dropping of the accounting
+> flag during the XArray conversion in commit a28334862993
+> ("page cache: Finish XArray conversion").
 > 
-> Let me try.
+> However, this fix has a different cause. Swap cache shadow nodes were
+> never accounted even before the XArray conversion, since they did not
+> exist until commit 3852f6768ede ("mm/swapcache: support to handle the
+> shadow entries"), which was years after the XArray conversion.
+> 
+> It's worth noting that one anon shadow Xarray node may contain
+> different entries from different cgroup, and it gets accounted at reclaim
+> time, so it's arguable which cgroup it should be accounted to (as
+> Shakeal Butt pointed out [1]). File pages may suffer similar issue
+> but less common. Things like proactive memory reclaim could make thing
+> more complex.
+> 
+> So this commit still can't provide a 100% accurate accounting of anon
+> shadows, but it covers the cases when one memory cgroup uses significant
+> amount of swap, and in most cases memory pressure in one cgroup only
+> suppose to reclaim this cgroup and children. Besides, this fix is clean and
+> easy enough.
+> 
+> Link: https://lore.kernel.org/all/7gzevefivueqtebzvikzbucnrnpurmh3scmfuiuo2tnrs37xso@haj7gzepjur2/ [1]
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> 
 
-OK, it is succeeded! Calling `caller` via global function pointer makes
-it run as we expected. It passed the dynamic_ftrace test, but other tests
-still fails. Those need to be called via function pointer too.
-                             
-[    1.851324] Testing dynamic ftrace: PASSED                                     
-[    2.083329] Testing dynamic ftrace ops #1:                                     
-[    2.173751] (0 0 0 0 0) FAILED!                                                
-[    2.182337] ------------[ cut here ]------------                               
-[    2.183323] WARNING: CPU: 0 PID: 1 at kernel/trace/trace.c:2143 run_tracer_sel0
-[    2.184323] Modules linked in:                              
+Is this a real issue? Have you seen systems in the production with
+large amount of memory occupied by anon shadow entries? This is still
+limited to the amount of swap a cgroup is allowed to use.
 
-Anyway, here is what I did.
+The reason I am asking is that this solution is worse than the perceived
+problem at least to me. With this patch, the kernel will be charging
+unrelated cgroups for the memory of swap xarray nodes during global
+reclaim and proactive reclaim.
 
-diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
-index 97f1e4bc47dc..9663bc777888 100644
---- a/kernel/trace/trace_selftest.c
-+++ b/kernel/trace/trace_selftest.c
-@@ -353,9 +353,10 @@ static int trace_selftest_ops(struct trace_array *tr, int cnt)
- }
- 
- /* Test dynamic code modification and ftrace filters */
--static int trace_selftest_startup_dynamic_tracing(struct tracer *trace,
--						  struct trace_array *tr,
--						  int (*func)(void))
-+static int noinline
-+trace_selftest_startup_dynamic_tracing(struct tracer *trace,
-+					struct trace_array *tr,
-+					int (*func)(void))
- {
- 	int save_ftrace_enabled = ftrace_enabled;
- 	unsigned long count;
-@@ -569,10 +570,22 @@ trace_selftest_function_recursion(void)
- 	return ret;
- }
- #else
--# define trace_selftest_startup_dynamic_tracing(trace, tr, func) ({ 0; })
-+static int trace_selftest_startup_dynamic_tracing(struct tracer *trace,
-+					struct trace_array *tr,
-+					int (*func)(void))
-+{
-+	if (!trace || !tr || !func)
-+		return -EINVAL;
-+	return 0;
-+}
- # define trace_selftest_function_recursion() ({ 0; })
- #endif /* CONFIG_DYNAMIC_FTRACE */
- 
-+int (*global_trace_selftest_startup_dynamic_tracing)(struct tracer *trace,
-+					struct trace_array *tr,
-+					int (*func)(void))
-+	= trace_selftest_startup_dynamic_tracing;
-+
- static enum {
- 	TRACE_SELFTEST_REGS_START,
- 	TRACE_SELFTEST_REGS_FOUND,
-@@ -732,7 +745,7 @@ trace_selftest_startup_function(struct tracer *trace, struct trace_array *tr)
- 		goto out;
- 	}
- 
--	ret = trace_selftest_startup_dynamic_tracing(trace, tr,
-+	ret = global_trace_selftest_startup_dynamic_tracing(trace, tr,
- 						     DYN_FTRACE_TEST_NAME);
- 	if (ret)
- 		goto out;
+You can reduce this weirdness by using set_active_memcg() in
+add_to_swap_cache() using the given folio's memcg but still you have the
+case of multiple unrelated folios and shadow entries of different
+cgroups within the same node. For filesystem case, the userspace can
+control which files are shared between different cgroups and has more
+control on it. That is not the case for swap space.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+thanks,
+Shakeel
 
