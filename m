@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-295956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F5795A397
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:10:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C4B95A39D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 935BC1C22C18
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B567F1C22DA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F46A1B3B05;
-	Wed, 21 Aug 2024 17:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2445E1B2EEA;
+	Wed, 21 Aug 2024 17:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVSK6b3R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOWylYw7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC61B2EC0;
-	Wed, 21 Aug 2024 17:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525651B252B;
+	Wed, 21 Aug 2024 17:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724260219; cv=none; b=qP1NjtUHhMx8/D6e3V3LvMRgJeQoI5tIK3srRCBatBPSvLT/3uYElyN04CKvNjh/6UlAN46SqwyCKn8FbZjzZgGOz5tdYgQo/qTIHNalIpDrJq3agZkEZW04L7wB2vD585l7igpnNIkZCsRLcp+4nzFPxd26QmCW+/RDUQzNroc=
+	t=1724260232; cv=none; b=K6InvTAuDvPbv+DX1CYXwRvknPbT+Y2UKUNhpTvea9HDbsJBm5RPHoCFh8jATMhmKZzh4FftbqHwcxYeAUuywzlQVHCEr2rBys6Rkj0J5lcRoAhWt87qLqz8cAa2p+hf0WZiXWcdD+Cf/DM/EY+hhoOoOCeTv+nO8Bg6JKmH9Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724260219; c=relaxed/simple;
-	bh=2iYKg7B35VX4ROXuHTDfvp25GRt1pRM+50E69HvlLWo=;
+	s=arc-20240116; t=1724260232; c=relaxed/simple;
+	bh=6+hagwQZKzS5uTRWslKDye7xDTbQCXqNR+BuPmuN4MU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZnP1egHL5tu7WHqvu6zvknCDWkQNhdtaj6k297lryE/X1r7gnS8dP35PgUkvrAHI+csf0ef4wp4rGSuH6fGAMI8F+AaRjGha3G8zIPtcPZgL7ne4Vs7qloSgW08lgph+qEQIZanlKeBybnx+tDMEDEB/JUN4fqlX2sbqojfDME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVSK6b3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2EECC32781;
-	Wed, 21 Aug 2024 17:10:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gacz6U/WwqNJP3z4MUar5ZDL9Sg66CxYfTmi4hn0q+X0h7kNwkxDCy5mWaBFMTWn6ftugWIlNtaT4q/jHeS+isXqpMAyXzhLg7WlnTCmUDGnIKnYzw193/twcgHY/A+XstQkmo5O49aVNib7uussnU3UmQLPJyFhIfoMwcsmq+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOWylYw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2B4C32781;
+	Wed, 21 Aug 2024 17:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724260219;
-	bh=2iYKg7B35VX4ROXuHTDfvp25GRt1pRM+50E69HvlLWo=;
+	s=k20201202; t=1724260231;
+	bh=6+hagwQZKzS5uTRWslKDye7xDTbQCXqNR+BuPmuN4MU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EVSK6b3Ryb0vUQ0tFajKQhvx7Tjep1K0DIr6imjlW9elGILeO+dapTs2tYjCmK3yv
-	 u+igXovATVP9+0O9jlI6nDeaqg+4QYM1VHdejn3oxbn0UfNhQ2i5+vTIxb9AfOqXSj
-	 fEr+mgXxnC+VbPseGq0WxDENLRqOT/w9qkT+hCmnNbEgdoL0Eok4u2gwU0XxcAdWrv
-	 uVJA2v7g/Wq3KhX63ENesEhzsTgOiQfmhMLDezxXKsNSXqrZVqrvt34Gf/5CPpzM8r
-	 ZJSWega/Q80EyCrqHUj88E18ciE1P6NansCUgbSos4pPIjF1xr7SXPtcLCZr+64mlY
-	 TZnsOxo6cv9WA==
-Date: Wed, 21 Aug 2024 18:10:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH] ASoC: cs-amp-lib: Ignore empty UEFI calibration entries
-Message-ID: <9361e81c-eceb-4c78-ba76-925449ac7215@sirena.org.uk>
-References: <20240821100221.99699-1-rf@opensource.cirrus.com>
+	b=VOWylYw7VNEVeDhgWayz9fPffIMIlSoNLuyAd1XPunhvgin9J9JgpS5+N+7s4F3Ux
+	 6D6MW8l+TSRJMiE2z+gjaE8wCf537y5IGzJ5BrKE8X3/6Ldue7shgc9hv4nlS91mGi
+	 fmqyQgqqucbG/KaCXrXgoCP5V88/aos07MRqHCsj6UA/IcSi32Ai29ktoobuo2k1xx
+	 5myJoj8k63vNKCpNrrBCkdSi9C2EbAMDZa/4wuyzw06fp8RSUEwoWHDMJFpEVEjlK3
+	 CwPWMrObvnVLWuibYL0DEHK0pKvdVBXtEhWieMNNN6wTqTXj/InjbUZU7XQmaFAnG2
+	 nYtH5nkerRkJA==
+Date: Wed, 21 Aug 2024 10:10:31 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
+	hch@lst.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	kbusch@kernel.org
+Subject: Re: [PATCH v5 6/7] xfs: Validate atomic writes
+Message-ID: <20240821171031.GL865349@frogsfrogsfrogs>
+References: <20240817094800.776408-1-john.g.garry@oracle.com>
+ <20240817094800.776408-7-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gwfNk6g9kt846Tkb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240821100221.99699-1-rf@opensource.cirrus.com>
-X-Cookie: teamwork, n.:
+In-Reply-To: <20240817094800.776408-7-john.g.garry@oracle.com>
 
+On Sat, Aug 17, 2024 at 09:47:59AM +0000, John Garry wrote:
+> Validate that an atomic write adheres to length/offset rules. Since we
+> require extent alignment for atomic writes, this effectively also enforces
+> that the BIO which iomap produces is aligned.
+> 
+> For an IOCB with IOCB_ATOMIC set to get as far as xfs_file_dio_write(),
+> FMODE_CAN_ATOMIC_WRITE will need to be set for the file; for this,
+> FORCEALIGN and also ATOMICWRITES flags would also need to be set for the
+> inode.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_file.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 4cdc54dc9686..9b6530a4eb4a 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -684,9 +684,20 @@ xfs_file_dio_write(
+>  	struct kiocb		*iocb,
+>  	struct iov_iter		*from)
+>  {
+> -	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
+> +	struct inode		*inode = file_inode(iocb->ki_filp);
+> +	struct xfs_inode	*ip = XFS_I(inode);
+>  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
+>  	size_t			count = iov_iter_count(from);
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +
+> +	if (iocb->ki_flags & IOCB_ATOMIC) {
+> +		if (count < i_blocksize(inode))
+> +			return -EINVAL;
+> +		if (count > XFS_FSB_TO_B(mp, ip->i_extsize))
+> +			return -EINVAL;
 
---gwfNk6g9kt846Tkb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here's also the place to check the dynamic things like dalign/swidth
+alignment.  Other than that, this looks good.
 
-On Wed, Aug 21, 2024 at 11:02:21AM +0100, Richard Fitzgerald wrote:
-> If the timestamp of a calibration entry is 0 it is an unused entry and
-> must be ignored.
->=20
-> Some end-products reserve EFI space for calibration entries by shipping
-> with a zero-filled EFI file. When searching the file for calibration
-> data the driver must skip the empty entries. The timestamp of a valid
-> entry is always non-zero.
+--D
 
-This breaks the build if I apply it on either for-6.11 or for-6.12:
-
-In file included from /build/stage/linux/sound/soc/codecs/cs-amp-lib-test.c=
-:8:
-/build/stage/linux/sound/soc/codecs/cs-amp-lib-test.c: In function =E2=80=
-=98cs_amp_lib_test_get_efi_cal_by_uid_test=E2=80=99:
-/build/stage/linux/sound/soc/codecs/cs-amp-lib-test.c:224:50: error: subscr=
-ipted value is neither array nor pointer nor vector
-  224 |         KUNIT_EXPECT_EQ(test, result_data.calTime[0],
-      |                                                  ^
-/build/stage/linux/include/kunit/test.h:724:22: note: in definition of macr=
-o =E2=80=98KUNIT_BASE_BINARY_ASSERTION=E2=80=99
-  724 |         const typeof(left) __left =3D (left);                      =
-              \
-      |                      ^~~~
-
-(with lots more errors) - I'm guessins some missing dependency
-somewhere?
-
---gwfNk6g9kt846Tkb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbGH3cACgkQJNaLcl1U
-h9C6LQf8DvlrwOiWUQWzkeNrNV00322Fjkh0QgTnyofIHxANij9AkpIPTfuRUd6U
-wAKXwlDYknfxpksFOdh4eqg6fA43fzCIagCBjGx3Na0cB3vJPHGF+58O1RU6/y3y
-eum5ohFG7af5CdRP6nLQLwvB02Z/o145eiNR0Mdc1AR+AVd3Oa7cM7lvUy+PnVlQ
-SZyvkRnHaM9yd+QmqkxYpVmkXqW4TiDpmHB58mdWzQSR3M6Upmrcs5g6NTCJRGCw
-P6E9ZbPj7pug9O9j4l5Ru/7M2ZQSfSRrb1O3Ebd+Ixu0LkE+rSc2bjxlcIG1RdFM
-QGy4hCWNdprXm8aCmPxwv5j1iY8EkQ==
-=AwKK
------END PGP SIGNATURE-----
-
---gwfNk6g9kt846Tkb--
+> +		if (!generic_atomic_write_valid(iocb, from))
+> +			return -EINVAL;
+> +	}
+>  
+>  	/* direct I/O must be aligned to device logical sector size */
+>  	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
+> -- 
+> 2.31.1
+> 
+> 
 
