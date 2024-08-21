@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-296191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D05B95A6FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:47:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D6995A6FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2390281624
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5481F22CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA51179665;
-	Wed, 21 Aug 2024 21:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD2B17B402;
+	Wed, 21 Aug 2024 21:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvtH3MC/"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ujkZqTHG"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9BD1531C3
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA2B179957
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724276869; cv=none; b=NVCqAWH1toGoxyxh/mmMdOIWTMnX/rI2hJnVR+b8MHu3+Jl4M4JlkzEcY0zV5wNUXj4fsCTSFQmUk445FGMOZODx97rnvRXeRyrY9H0Cz98j7yQtXl6ROIZ+MeDjEt9NBfWYGGY6fO6vAylb7F0wgYHR0g27TXwZCUTUX40C30w=
+	t=1724277025; cv=none; b=ZD3bmjTZKkCzBzihVfULVlp7mtXKwi8zZ3PBRW83uJfajYhlD0JWsXQtsKv7Zk1FM5xfQShW1hlMigFftqllSCejPsbQIGih5QHu5grWBw+NrE8dFdFAsqN521XGNNfSMa6nsUBv6TGIQMYVu/E6jY6rF+Mz0LVZLzSS++JA0h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724276869; c=relaxed/simple;
-	bh=5xwsm4q+oEtOPgmW58wlQq10qR/Mga5nEPHHluceLUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=keBtN1yFxSgsLNGX+4r4YR4WdmoEriF6WRFlYvNoLUraHKH5VYQpuEuW80LaBfHwEcYFxxBL6Egk4cqZX5nRUBGzWsmQfGhtMYmedV/QSx9e3dwTSxrz0vDsxzaTyKjSc6LVxnJRpfnWjh1pr+HaHt2Z2QL6XVgzlT2heqsvI7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvtH3MC/; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4fc7bd8763cso49607e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:47:47 -0700 (PDT)
+	s=arc-20240116; t=1724277025; c=relaxed/simple;
+	bh=d5Q6gXFBR8sKEC5gdtO9JEEEC1rXqIpPuApXR+YdwVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQfIOJnGyr9ImMYe6SzGeqwYpM2mMIV61iBXAwDmCd7AUZ899SgN+LamTwuyoTe0L9suxQG5tFlYUyTJ6dO1amOMlvhhnZuH7tG2YX3F79LKrzPCxdd28VJy2BANoN1lKJCoekzDnTOx2/S/8dq1bfaIDtvxfd4NB0NeWVBUSu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ujkZqTHG; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4281c164408so801665e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724276867; x=1724881667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=98sniykhgHyIjDFEFBrJSB+NsoobwZCkbD/WwKcnXqA=;
-        b=gvtH3MC/O6vUEWUymuXHBuwoSDfM9A6aQhCoBWcLjWzticUIJwR2ePO9G0JZciJzqr
-         VdD2LAOIwcHevjlcGMNAwtWKnwF8XLeDgi3zqQmBiwcb1tgV0xWg2c1kNz6ZwP5ixC4L
-         UKQOiZ3CpI60aZbsdHLpsPlWB3zDY1A+WILvSy6PEi6ZNKXQ4rJNS8w24ep3ZAfCrlWb
-         GVdOz33pXWuIP82V8wx5hJ0KDg2YZHoT52pFkivC5td8aftWpt9DNurev/tbvXe3TQEp
-         XjvIlO0ECgaHyhvoot3BkNipmVLUjg9bzL957IoZovlgKL8xjwsfZBxHmhG/K80JNGE8
-         s2MQ==
+        d=linaro.org; s=google; t=1724277022; x=1724881822; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VYl61iRz9Vr4ihVH142T6N4W0V2TmSfU8VgFwSsCDRg=;
+        b=ujkZqTHGNxDiJNNPRkm4VjdMwpQ9G4gvv43r/TwRo5N9hOkFJe1GEPva6T+9dYkBvU
+         BsnvZCGLhjmHy1vmU6zdNcYl9qXBIo2T9FcP5+3qEsIHnkadkuGSlWMXgBT+oNQK8jtj
+         4IYtrTL0AXh9ZQCJlyIujXBvjPi+OgcEhpu4LIwGFgtavCtC1u98Lzi58o5+/Ip0hOrz
+         9338GY2OznVJ7MQNNektuEnkeJvlDzSjpqwJFmZpYZFW7SBZ1pyuvFQaNDt8kvUpH/rg
+         fuDQ1h4dO8P3j7oXCppAZOS06IObHzHHLyiDR28sVtxrN6pD8EulOma6l62PI7HHy1O6
+         d6ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724276867; x=1724881667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=98sniykhgHyIjDFEFBrJSB+NsoobwZCkbD/WwKcnXqA=;
-        b=s9JOAzzzbUUF3XUPCmR2IwULCfo/x3E16uw03ofbDv1wXR4qOm3227PyDb4A++9zuV
-         hSN3FKYZUfgkdLVarym0h8VsCGhzZZ2LeFm/K3i8g71eb+RupWm1GDE7BAcAj0p0knrx
-         cRbvp0gM50j4DraDn7IzbALdwQNowAXbGfN1PVG6DHar408xOaI/SeAd338qu0WKnDb4
-         ziYBcMyNpLLY4G9tBgHK0SbsqyidlxRz46HA6IJXl+Uc6KZUEclAMxFpu/fJmNbH//WH
-         STiB1I7g3YZT58r96jwQYAddHFJ70K3IiXswOJ5GRnamLevb5ykTXQOypLsIUvkRikZy
-         VvjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoYx5St29IJpy39JO07BDZwqpAorYElJ9hQfNBo9xoQrTUrgQMoV9IgHfGgm1wYya/4MRoVbDRfMFHiGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1iSXBnGG/ngehgjvZaW6/i/gNmOhM7kSjxc9SkoJWqX02vnLS
-	OqEzoi2u/vhls2SlRWnLeY0WH0TA+1gsupgFVZrjysGeyzh2aYHrhAJ6a3zM112lHngNd0TDEeX
-	AZfIrROtuwFtwdBK7yOwEYta4fZc=
-X-Google-Smtp-Source: AGHT+IE4i6KUS8cNvu8h5bdx1rDgorR2H6gZqTPtMis5YSVU9JCyrkwyPbPBpidyC+Iut0PWkgr1fkIqlTo/oWqOR34=
-X-Received: by 2002:a05:6122:31a3:b0:4fc:f1e3:d238 with SMTP id
- 71dfb90a1353d-4fcf1e3d3c8mr4395884e0c.1.1724276866613; Wed, 21 Aug 2024
- 14:47:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724277022; x=1724881822;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VYl61iRz9Vr4ihVH142T6N4W0V2TmSfU8VgFwSsCDRg=;
+        b=ikAappnFbq35eUQi2uzhGU4oYW5RyGdsybYXxoT7cgVKAkfsV68H+CJeYGXs7cDHZG
+         QFZYY4eqeAHAofIyhy3q1sU+GkQCAdrEKmrs3nBM0GxMCvJvVqeLXFzppLxbKc9SkQIT
+         Galhoy6J+8PxCQYmPn30TaeXHpP9iCPjebGa+oDbXBhxcuCpV6UI97XtgTIpvPIoB2Va
+         YlSMMiWlzE20iegzq4gtXFjTDWhVLjii3O2A+tD03SqxigfnT5qK2crhJP25Z7K5JavZ
+         tGKIlMn5xCBcqHpR7XJ9Z1cdQfKZ7mJLrqzwDYLlhAOejT568CdRN3WYj1wKl/IvRLYI
+         6nwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVj/SA9aFUxGVXmA84r09RuJvFexUxJxH4RNIp+UlwDHnMB5Mu86OjIne0c8CHDhvcFPpbQf9+gejcAFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrT6v408UQQHVTSsAaKlm+aju2My5jwEs4NS2nxRhU52EOzbK7
+	WMUFyYZDXs1Oqb1eVy4jxbK3Udt6xNcRZhBhOKyCcL6xXZFPRJsa9lJk5Z+HwVc=
+X-Google-Smtp-Source: AGHT+IEyN+6VsJZDMyvbLEE6jBtKwTDD/JXsQozPwMB2CXp/10iGXOBdFPW9w+TxCix0HR8241OqVQ==
+X-Received: by 2002:adf:f2c1:0:b0:371:9366:6d90 with SMTP id ffacd0b85a97d-372fd6d5622mr2445363f8f.18.1724277021546;
+        Wed, 21 Aug 2024 14:50:21 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730821ab1bsm39838f8f.99.2024.08.21.14.50.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 14:50:20 -0700 (PDT)
+Date: Thu, 22 Aug 2024 00:50:16 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: Hao Ge <hao.ge@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, john.fastabend@gmail.com, kpsingh@kernel.org,
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+	mykolal@fb.com, shuah@kernel.org, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: Re: [PATCH] selftests/bpf: Fix incorrect parameters in NULL pointer
+ checking
+Message-ID: <58f57d70-a787-4012-8763-cc6eb642ef8a@stanley.mountain>
+References: <20240820023447.29002-1-hao.ge@linux.dev>
+ <02dd26b5-16a0-4732-80e4-c7bf183e965a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f29f64e29c08427b95e3df30a5770056@honor.com> <ZsXho27uAbQ5rEgS@tiehlicka>
-In-Reply-To: <ZsXho27uAbQ5rEgS@tiehlicka>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 22 Aug 2024 05:47:34 +0800
-Message-ID: <CAGsJ_4zgQ0MBV-yucc0-7BcDgjMMdCUDWK330mrd7SS4ej6Q8Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
-To: Michal Hocko <mhocko@suse.com>
-Cc: gaoxu <gaoxu2@honor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Shaohua Li <shli@fb.com>, yipengxiang <yipengxiang@honor.com>, fengbaopeng <fengbaopeng@honor.com>, 
-	Kalesh Singh <kaleshsingh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02dd26b5-16a0-4732-80e4-c7bf183e965a@linux.dev>
 
-On Wed, Aug 21, 2024 at 8:46=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrot=
-e:
->
-> On Fri 16-08-24 07:48:01, gaoxu wrote:
-> > Replace lruvec_add_folio with lruvec_add_folio_tail in the lru_lazyfree=
-_fn:
-> > 1. The lazy-free folio is added to the LRU_INACTIVE_FILE list. If it's
-> >    moved to the LRU tail, it allows for faster release lazy-free folio =
-and
-> >    reduces the impact on file refault.
->
-> This has been discussed when MADV_FREE was introduced. The question was
-> whether this memory has a lower priority than other inactive memory that
-> has been marked that way longer ago. Also consider several MADV_FREE
-> users should they be LIFO from the reclaim POV?
+On Wed, Aug 21, 2024 at 02:03:17PM -0700, Yonghong Song wrote:
+> 
+> On 8/19/24 7:34 PM, Hao Ge wrote:
+> > From: Hao Ge <gehao@kylinos.cn>
+> > 
+> > Smatch reported the following warning:
+> >      ./tools/testing/selftests/bpf/testing_helpers.c:455 get_xlated_program()
+> >      warn: variable dereferenced before check 'buf' (see line 454)
+> > 
+> > It seems correct,so let's modify it based on it's suggestion.
+> > 
+> > Actually,commit b23ed4d74c4d ("selftests/bpf: Fix invalid pointer
+> > check in get_xlated_program()") fixed an issue in the test_verifier.c
+> > once,but it was reverted this time.
+> > 
+> > Let's solve this issue with the minimal changes possible.
+> > 
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/all/1eb3732f-605a-479d-ba64-cd14250cbf91@stanley.mountain/
+> > Fixes: b4b7a4099b8c ("selftests/bpf: Factor out get_xlated_program() helper")
+> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> 
+> In the future, please change subject '[PATCH] ...' to '[PATCH bpf-next] ...'
+> so CI can properly test it.
 
-The priority of this memory compared to other inactive memory that has been
-marked for a longer time likely depends on the user's expectations - How so=
-on
-do users expect MADV_FREE to be reclaimed compared with old file folios.
+It feels like there should be a technical solution to this.  The CI system is
+something on AWS and it's too expensive to just check every patch that's sent to
+the bpf list?  My understanding is that there are only two bpf trees.
 
-art guys moved to MADV_FREE from MADV_DONTNEED without any
-useful performance data and reason in the changelog:
-https://android-review.googlesource.com/c/platform/art/+/2633132
+	if [ "$FIXES_HASH" == "" ] ; then
+		TREE=next
+	elif git merge-base --is-ancestor $FIXES_HASH origin/master ; then
+		TREE=linus
+	else
+		TREE=next
+	fi
 
-Since art is the Android Java heap, it can be quite large. This increases t=
-he
-likelihood of packing the file LRU and reduces the chances of reclaiming
-anonymous memory, which could result in more file re-faults while helping
-anonymous folio persist longer in memory.
+These days the zero day bot people are checking around a thousand git trees.
+They pull emails off the various lists and apply them to the right places.  It's
+a doable thing.
 
-I am really curious why art guys have moved to MADV_FREE if we have
-an approach to reach them.
-
->
-> --
-> Michal Hocko
-> SUSE Labs
->
-
-Thanks
-Barry
+regards,
+dan carpenter
 
