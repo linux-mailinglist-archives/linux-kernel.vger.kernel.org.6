@@ -1,103 +1,236 @@
-Return-Path: <linux-kernel+bounces-295643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6794B959F78
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:15:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0AE959F7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 027B1B214F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:15:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8BFB23E1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB8C1B1D5E;
-	Wed, 21 Aug 2024 14:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7161B1D4C;
+	Wed, 21 Aug 2024 14:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mAEGwQ17"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PkDGuclh"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6705199FC0;
-	Wed, 21 Aug 2024 14:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74DA199FC0
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249743; cv=none; b=VjmCpgks2FTTFq1ENivifXvGH7Fx5YIDY9logWjoR7TUg3NsuF8AZQk49cd51NkZSNTfFFpfthlGE9V3m76UBfKUgsMiIKMAXF8JK2g6qFP63QDzjE1usZGYPs+SVzmFJLSxh3qXhnKkzvxpVL38DB7gucDtr0ErzRhaGEMqLyY=
+	t=1724249779; cv=none; b=R9l8+/N/hHlJcBjS8akC7Rt6NSwQPtGxxEaOXjEZqNN/uwEmZHZdhPx8RmlEBtR2e5LJdDk2aSAldZ7P8r2HbZgR00aEPklruv4WT8N5ooaNRN1JFWrJ7Z6JSPIfvpKUwHQe11MIfDNHV/qjnuHGl0uZwXHk/ErzlIcheOGsHlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249743; c=relaxed/simple;
-	bh=16KV62VvRRJIHyF+WzE9AQXMD8TnqdfN1f11bQbI2aI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ER74+yDUm7ITexj0ZytF/yy34773OOauoN7rTBNpiIt3hEepJgwSsvfJmawjTZppPDR2CwB97z/lGaYzHlHpdeYmkGna8/sDATGnv4dIwD8rek03vaZPsDKGXD4xFV+M5MuKsRLPK5/5I/0n3RHL8GkVzSCf1pH/L8hcQa8UoNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mAEGwQ17; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724249742; x=1755785742;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=16KV62VvRRJIHyF+WzE9AQXMD8TnqdfN1f11bQbI2aI=;
-  b=mAEGwQ17YYR1/qqSdAurkt+ePSGYQKE3Y17+kEqGF4GNtZ6kceQ03ozB
-   hk+y9f2S6ZfRwy0dfw1mo/m9bzyyNZXdeBzuHRjijo39Gla0OEi6SfhMp
-   cPOl90QvRNAhSewyLMDAyVSoBET0VyWzD9roRBlGNRneLz2G0ERioOZ4N
-   LCFT1/BeZFzrAQzE7BYQy50mAsLc2tYmqLcUKrtpYccixCG0LNZNMHVqT
-   fEs6bGv3K0iBbYzWN03iIQ833Cu8haJG2XiEcSXHqMi7Ap48NdIr4BtX2
-   0ftc0nKSR2TXDB69/CSFNNrSiv8i+894xRcrTd6J8jcc4puWp7iTwoEId
-   A==;
-X-CSE-ConnectionGUID: k7w9yq6BSP2w4YDdaAOFAQ==
-X-CSE-MsgGUID: kQyq+MONTq6wnFkyhiS+Tw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33996069"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="33996069"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 07:15:41 -0700
-X-CSE-ConnectionGUID: /qxavnx2Qr2YCgjzAmpyUw==
-X-CSE-MsgGUID: S8Dzb3dVSWij41yLE3hrLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="84281725"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 07:15:37 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sgm7a-000000006Yr-30Qb;
-	Wed, 21 Aug 2024 17:15:34 +0300
-Date: Wed, 21 Aug 2024 17:15:34 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
-	Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>,
-	grom@black.fi.intel.com,
-	84c04d074b1778886a1af1062a4ca9d9afd72306@black.fi.intel.com,
-	Mon@black.fi.intel.com, Sep@black.fi.intel.com,
-	17@black.fi.intel.com, 2001@black.fi.intel.com
-Subject: Re: From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Message-ID: <ZsX2hiF5QJZZH8Z1@smile.fi.intel.com>
-References: <20240819184600.2256658-1-andriy.shevchenko@linux.intel.com>
- <kwan4cnf4dkwdirddkcixs265jisegjn6drkpv3ydlz4zpiswe@ih4x3h4c3ghs>
+	s=arc-20240116; t=1724249779; c=relaxed/simple;
+	bh=yCpg8BpOwa/jCwR3LkBxKWRWK+9VGoy6jnZROBl4YTM=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=k9b3VAO3vGt1w3k9hfDBvjok/P2/IMQtrr4591ZOeAvx/MuqxcDmA/8ATVwiTDqRAbpsxorHknzvqJWBG00+Kv2i7s/1of6cY/o4FO76Z+0w3j2DPgkmrafMR1eRULLo2WiL8LUG4ZQTP6JBN+z9eEFE9HVA79UAwEbDPT1x3UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PkDGuclh; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kwan4cnf4dkwdirddkcixs265jisegjn6drkpv3ydlz4zpiswe@ih4x3h4c3ghs>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724249774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H8CajDEUelu2H+xKX1V61lrtD26SNXje96Ahzio0DC0=;
+	b=PkDGuclhnc58W/gfudUwFlCU7pv+9K73cikbVHmNYrYOeWRjQFc/HCbX5a0WsYhZY5NF6u
+	sCVnD9+oG8+/N9b4CCSgsXD1ub0ub3avtxG0swngHEUR8QKQVltIIdBfhbf4JFZunf+K82
+	pC+1GWSzSTjBHvCfZPUtL8W6eFjG4O4=
+Date: Wed, 21 Aug 2024 14:16:12 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: jeff.xie@linux.dev
+Message-ID: <ef273629d92e108ad166faf1f4abccac6cda461a@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH] ftrace: Get the true parent ip for function tracer
+To: "Steven Rostedt" <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiehuan09@gmail.com
+In-Reply-To: <20240821095910.1888d7fa@gandalf.local.home>
+References: <20240821132755.2766674-1-jeff.xie@linux.dev>
+ <20240821095910.1888d7fa@gandalf.local.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 21, 2024 at 04:11:44PM +0200, Andi Shyti wrote:
-> Hi Andy,
-> 
-> All merged to i2c/i2c-host.
-
-Thank you!
-
--- 
-With Best Regards,
-Andy Shevchenko
+August 21, 2024 at 9:59 PM, "Steven Rostedt" <rostedt@goodmis.org> wrote:
 
 
+Hi Steven,
+
+
+>=20
+>=20On Wed, 21 Aug 2024 21:27:55 +0800
+>=20
+>=20Jeff Xie <jeff.xie@linux.dev> wrote:
+>=20
+>=20Hi Jeff,
+>=20
+>=20Thanks for the patch.
+>=20
+>=20>=20
+>=20> Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+> >=20
+>=20>  ---
+> >=20
+>=20>  kernel/trace/trace_functions.c | 18 ++++++++++++++++++
+> >=20
+>=20>  1 file changed, 18 insertions(+)
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_f=
+unctions.c
+> >=20
+>=20>  index 3b0cea37e029..273b8c7eeb2d 100644
+> >=20
+>=20>  --- a/kernel/trace/trace_functions.c
+> >=20
+>=20>  +++ b/kernel/trace/trace_functions.c
+> >=20
+>=20>  @@ -176,6 +176,19 @@ static void function_trace_start(struct trace=
+_array *tr)
+> >=20
+>=20>  tracing_reset_online_cpus(&tr->array_buffer);
+> >=20
+>=20>  }
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  +static unsigned long
+> >=20
+>=20>  +function_get_true_parent_ip(unsigned long parent_ip, struct ftrac=
+e_regs *fregs)
+> >=20
+>=20
+> I wonder if we should make this inline, or even __always_inline, as thi=
+s
+>=20
+>=20will be called in a very hot path, and I want to make sure that the
+>=20
+>=20compiler always inlines it. It likely should, but we should also give=
+ the
+>=20
+>=20compiler a hint that it should.
+
+
+Yes, Thank you for your suggestion. It is indeed a very hot path,=20
+and=20I will add __always_inline in the next version.
+
+
+>=20
+>=20-- Steve
+>=20
+>=20>=20
+>=20> +{
+> >=20
+>=20>  + unsigned long true_parent_ip;
+> >=20
+>=20>  + int idx =3D 0;
+> >=20
+>=20>  +
+> >=20
+>=20>  + true_parent_ip =3D parent_ip;
+> >=20
+>=20>  + if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler)=
+)
+> >=20
+>=20>  + true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_i=
+p,
+> >=20
+>=20>  + (unsigned long *)fregs->regs.sp);
+> >=20
+>=20>  + return true_parent_ip;
+> >=20
+>=20>  +}
+> >=20
+>=20>  +
+> >=20
+>=20>  static void
+> >=20
+>=20>  function_trace_call(unsigned long ip, unsigned long parent_ip,
+> >=20
+>=20>  struct ftrace_ops *op, struct ftrace_regs *fregs)
+> >=20
+>=20>  @@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned=
+ long parent_ip,
+> >=20
+>=20>  if (bit < 0)
+> >=20
+>=20>  return;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  +
+> >=20
+>=20>  trace_ctx =3D tracing_gen_ctx();
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  cpu =3D smp_processor_id();
+> >=20
+>=20>  @@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, un=
+signed long parent_ip,
+> >=20
+>=20>  * recursive protection is performed.
+> >=20
+>=20>  */
+> >=20
+>=20>  local_irq_save(flags);
+> >=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  cpu =3D raw_smp_processor_id();
+> >=20
+>=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+> >=20
+>=20>  disabled =3D atomic_inc_return(&data->disabled);
+> >=20
+>=20>  @@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long i=
+p, unsigned long parent_ip,
+> >=20
+>=20>  if (bit < 0)
+> >=20
+>=20>  return;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  cpu =3D smp_processor_id();
+> >=20
+>=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+> >=20
+>=20>  if (atomic_read(&data->disabled))
+> >=20
+>=20>  @@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned =
+long ip, unsigned long parent_ip,
+> >=20
+>=20>  * recursive protection is performed.
+> >=20
+>=20>  */
+> >=20
+>=20>  local_irq_save(flags);
+> >=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  cpu =3D raw_smp_processor_id();
+> >=20
+>=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+> >=20
+>=20>  disabled =3D atomic_inc_return(&data->disabled);
+> >
+>
 
