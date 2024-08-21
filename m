@@ -1,179 +1,277 @@
-Return-Path: <linux-kernel+bounces-295306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411A7959987
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:21:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB49295998A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E630B281510
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:21:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E07A2814C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98C61C4EC8;
-	Wed, 21 Aug 2024 10:02:50 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B7520C006
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9BD1BFDF6;
+	Wed, 21 Aug 2024 10:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=s2b.tech header.i=@s2b.tech header.b="yiEsMJp6"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C571BFDE8;
+	Wed, 21 Aug 2024 10:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724234570; cv=none; b=Yus3EM/gKQHHq4kBF3elpXOT30/22QDgTkEkzDF0aB5VH68uSL3S4/DDAlBXWbnHCh8YdVpOXJ/ZaczEMqjehlOf3cCp375FnqaV3fUll9p/pBvHsGq1vdcNqsxR2IYPbYb5S0wQ5zT1nhnI2Ej0ZLXP5/DYRQteSs+JuL1bWtA=
+	t=1724234579; cv=none; b=Nt7jRciYXr2Zm0RB9qFQOetyAR9G/Hwe3zjIeuCol4xutxcqSxsiVI3V8T32aVPnJNzaVm6Qj498UytSpfObFCGWaNmB/zllzhboUT9rk+2dPG8reivsYestbIBANNbyBf7E+TnT15vWWszwD65Ch7Mvd26F5aDGR3WKFGbIKZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724234570; c=relaxed/simple;
-	bh=UcPIGUJVxX0AOWoPINDChDdlbo7L9cxJse2F6TmX6Ec=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=i3i9G+RXve462x4gF+gUjNklm9wTGXpUFwK0gDFHvIqkPkIIqXPlH86VXCBB4/1vuAjIdwwr5CqLWMzK4pCjDzp0+lqjUp3IkKrgGmyaG38l08ncNN7vGqL4MKzN0nBEhYdEYpUg37ON1uayzZqgx3ZMhiDqN8IqZAie/4mzSHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [111.9.175.10])
-	by gateway (Coremail) with SMTP id _____8BxHJtEu8VmYw8bAA--.21638S3;
-	Wed, 21 Aug 2024 18:02:44 +0800 (CST)
-Received: from [10.136.12.26] (unknown [111.9.175.10])
-	by front1 (Coremail) with SMTP id qMiowMDxkeFBu8Vm_IAcAA--.60587S3;
-	Wed, 21 Aug 2024 18:02:43 +0800 (CST)
-Subject: Re: [PATCH v1 1/2] LoongArch: Define barrier_before_unreachable() as
- empty
-To: Xi Ruoyao <xry111@xry111.site>, Huacai Chen <chenhuacai@kernel.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240820123731.31568-1-yangtiezhu@loongson.cn>
- <20240820123731.31568-2-yangtiezhu@loongson.cn>
- <CAAhV-H6Mh3didzHnKJiEsMP4yVgggnBBuDS1U6yDzEvdVEbGRg@mail.gmail.com>
- <dab9357bd21d257f66a9f6a145570d0de61c4595.camel@xry111.site>
-From: Jinyang He <hejinyang@loongson.cn>
-Message-ID: <53b0ed80-4bbe-490d-1e3b-f2dac1aaacc9@loongson.cn>
-Date: Wed, 21 Aug 2024 18:02:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1724234579; c=relaxed/simple;
+	bh=LBx8b6fa46n9coj8rSupKMXrF5Jk2Vtbna8Hp+EkQqk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rZ7RwoOPdfDq++c36xZaTfmad51WH+TkoMeqKR6GoWSja5J5x+yb3mGJjxS7NKHPcreuwVaTNGNAdhN9Y6cuuU687QRvIHrcc0szKQ7eKXzGou/aF9SucDVmDr1eF/NJvDuisodebh6M+pf95K8EegK4087WC5DJ73oX+f82AKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=s2b.tech; spf=pass smtp.mailfrom=s2b.tech; dkim=fail (0-bit key) header.d=s2b.tech header.i=@s2b.tech header.b=yiEsMJp6 reason="key not found in DNS"; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=s2b.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=s2b.tech
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 6CF4D120009;
+	Wed, 21 Aug 2024 13:02:51 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 6CF4D120009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=s2b.tech;
+	s=s2b.tech; t=1724234571;
+	bh=COXiy57lY8dzSPNXsiiYnAyzRBL65uPiWZ3K75EEL8s=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
+	b=yiEsMJp6lq7tdEgPiHFXk1xdLN78EScAQP4xLlgVULgr/MBYJfTYTe3A7YkaYowy7
+	 ZgyOILRBQuL9HqtYh45ofGS+c5wpup2Kpcllz2toUlI3/67ESMvz4VmWdNV+xLrDEY
+	 BVp+9vWBR0gI/kNZ/zW4BAiKTp4eEZ/nzyJggz8qXj63OuxHdWxqYIiM2KiNi190Sp
+	 G0m8ZhLEhIvaI2chNCyuLlYHXn+H6gD5u+n5cJlEnco1ZIBfHW5GIOhTnbIvcbPz2c
+	 CLHIT3xW1EGujP7yytLg+B4txR5PqjzbAu8qlZ7Gt6V9kEgfh9E2Uetsj4ltrprvnX
+	 /rQXZaNI+iFGA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 21 Aug 2024 13:02:51 +0300 (MSK)
+From: Alexey Romanov <avromanov@s2b.tech>
+To: "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>
+CC: "clabbe@baylibre.com" <clabbe@baylibre.com>, "herbert@gondor.apana.org.au"
+	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "khilman@baylibre.com"
+	<khilman@baylibre.com>, "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
+	"martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
+	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, kernel <kernel@sberdevices.ru>
+Subject: Re: [PATCH v9 00/23] Support more Amlogic SoC families in crypto
+ driver
+Thread-Topic: [PATCH v9 00/23] Support more Amlogic SoC families in crypto
+ driver
+Thread-Index: AQHa8xEu8HBRFAfkMUCcNq+0g+oZurIwEEOAgAE52YA=
+Date: Wed, 21 Aug 2024 10:02:50 +0000
+Message-ID: <20240821100245.q5uptswxmx4rk35n@cab-wsm-0029881>
+References: <20240820145623.3500864-1-avromanov@salutedevices.com>
+ <6e535895-6a06-42f8-abf3-e3b7472c97e0@linaro.org>
+In-Reply-To: <6e535895-6a06-42f8-abf3-e3b7472c97e0@linaro.org>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7FC1B060E590BD478A7D229A9792E8A3@sberdevices.ru>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <dab9357bd21d257f66a9f6a145570d0de61c4595.camel@xry111.site>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMDxkeFBu8Vm_IAcAA--.60587S3
-X-CM-SenderInfo: pkhmx0p1dqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXw4xCFyUur4xtFW3uF1fXwc_yoW5Ar18pF
-	W3JF1kKFWDXFn29r18Kw17CFnxAwn7GrWUKryIgw1qkrya9F9IqaykKry0vFy7Cws8uFWU
-	Za13tws29FWkXFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
-	Z7UUUUU==
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187202 [Aug 21 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: avromanov@s2b.tech
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 27 0.3.27 71302da218a62dcd84ac43314e19b5cc6b38e0b6, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;gist.github.com:7.1.1;127.0.0.199:7.1.2;s2b.tech:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/08/21 05:09:00
+X-KSMG-LinksScanning: Clean, bases: 2024/08/21 05:09:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/08/21 06:50:00 #26388227
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 2024-08-21 15:52, Xi Ruoyao wrote:
+Hi Neil,
 
-> On Wed, 2024-08-21 at 15:37 +0800, Huacai Chen wrote:
->>> I am not sure whether the GCC bug has been fixed, I can not find the
->>> fixup in the link https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82365
->>> and in the GCC repo. So I am not sure whether it is time and proper
->>> to remove this workaround in the common header totally, just remove
->>> it in the arch specified header when compiling kernel with a newer
->>> GCC version (for example GCC 12.1 or higher on LoongArch) at least.
->> What's your opinion? From my point of view, this GCC bug hasn't been
->> fixed. So there may still be potential problems.
-> I'm pretty sure it isn't fixed.  Using the test case from the bug
-> report:
->
-> struct i2c_board_info {
->          char type[20];
->          char pad[100];
-> };
->
-> #ifdef NONORETURN
-> void fortify_panic();
-> #else
-> void fortify_panic() __attribute__((noreturn));
-> #endif
->
->
-> int f(int a)
-> {
->    if (a)
->      fortify_panic();
-> }
->
->
-> void i2c_new_device(struct i2c_board_info *);
-> int em28xx_dvb_init(int model, int a, int b, int c, int d)
-> {
->          switch (model) {
->          case 1:{
->                          struct i2c_board_info info = {};
->                          f(a);
->                          i2c_new_device(&info);
->                          break;
->                  }
->          case 2:{
->                          struct i2c_board_info info = {};
->                          f(b);
->                          i2c_new_device(&info);
->                          break;
->                  }
->          case 3:{
->                          struct i2c_board_info info = { };
->                          f(c);
->                          i2c_new_device(&info);
->                          break;
->                  }
->          case 4:{
->                          struct i2c_board_info info = { };
->                          f(d);
->                          i2c_new_device(&info);
->                          break;
->                  }
->          }
->          return 0;
-> }
->
-> $ cc -v
-> Using built-in specs.
-> COLLECT_GCC=cc
-> COLLECT_LTO_WRAPPER=/usr/libexec/gcc/loongarch64-unknown-linux-gnu/14.2.0/lto-wrapper
-> Target: loongarch64-unknown-linux-gnu
-> Configured with: ../configure --prefix=/usr LD=ld --enable-languages=c,c++ --enable-default-pie --enable-default-ssp --disable-multilib --with-build-config=bootstrap-lto --disable-fixincludes --with-system-zlib --enable-host-pie
-> Thread model: posix
-> Supported LTO compression algorithms: zlib zstd
-> gcc version 14.2.0 (GCC)
-> $ cc t.c -S -Wframe-larger-than=1 -DNONORETURN -O2
-> t.c: In function 'em28xx_dvb_init':
-> t.c:50:1: warning: the frame size of 144 bytes is larger than 1 bytes [-Wframe-larger-than=]
->     50 | }
->        | ^
-> $ cc t.c -S -Wframe-larger-than=1 -O2
-> t.c: In function 'em28xx_dvb_init':
-> t.c:50:1: warning: the frame size of 512 bytes is larger than 1 bytes [-Wframe-larger-than=]
->     50 | }
->        | ^
->
-> And I'm puzzled why "unreachable instruction" is not a problem on x86?
->
-Hi, Ruoyao,
+On Tue, Aug 20, 2024 at 05:19:27PM +0200, neil.armstrong@linaro.org wrote:
+> Hi,
+>=20
+> On 20/08/2024 16:56, Alexey Romanov wrote:
+> > Hello!
+> >=20
+> > This patchset expand the funcionality of the Amlogic
+> > crypto driver by adding support for more SoC families:
+> > AXG, G12A, G12B, SM1, A1, S4.
+> >=20
+> > Also specify and enable crypto node in device tree
+> > for reference Amlogic devices.
+> >=20
+> > Tested on GXL, AXG, G12A/B, SM1, A1 and S4 devices via
+> > custom tests [1] and tcrypt module.
+>=20
+> On which tree did you base yourself ? It fails to apply patch 20 on next-=
+20240820 and 6.11-rc4
 
-I looked the gcc:machine_kexec.c:rtl:jump2+:kexec_reboot, it seems
-the gcc thought the block `asm volatile ("")` is same. So for -Os,
-if 2+ these blocks appears, it create "b" to the same block.
+Sorry, my tree is out of date (6.10.1).=20
 
-I tried "-fno-crossjumping" to disable the jump2 pass, it works.
-Could we change this block different to solve this? (e.g. by __COUNTER__).
-But it seems break the original trick. :-(
+I can rebase it to linux-next and resend patchset.
 
-Jinyang
+>=20
+> Neil
+>=20
+> >=20
+> > ---
+> >=20
+> > Changes V1 -> V2 [2]:
+> >=20
+> > - Rebased over linux-next.
+> > - Adjusted device tree bindings description.
+> > - A1 and S4 dts use their own compatible, which is a G12 fallback.
+> >=20
+> > Changes V2 -> V3 [3]:
+> >=20
+> > - Fix errors in dt-bindings and device tree.
+> > - Add new field in platform data, which determines
+> > whether clock controller should be used for crypto IP.
+> > - Place back MODULE_DEVICE_TABLE.
+> > - Correct commit messages.
+> >=20
+> > Changes V3 -> V4 [4]:
+> >=20
+> > - Update dt-bindings as per Krzysztof Kozlowski comments.
+> > - Fix bisection: get rid of compiler errors in some patches.
+> >=20
+> > Changes V4 -> V5 [5]:
+> >=20
+> > - Tested on GXL board:
+> >    1. Fix panic detected by Corentin Labbe [6].
+> >    2. Disable hasher backend for GXL: in its current realization
+> >       is doesn't work. And there are no examples or docs in the
+> >       vendor SDK.
+> > - Fix AES-CTR realization: legacy boards (gxl, g12, axg) requires
+> >    inversion of the keyiv at keys setup stage.
+> > - A1 now uses its own compatible string.
+> > - S4 uses A1 compatible as fallback.
+> > - Code fixes based on comments Neil Atrmstrong and Rob Herring.
+> > - Style fixes (set correct indentations)
+> >=20
+> > Changes V5 -> V6 [7]:
+> >=20
+> > - Fix DMA sync warning reported by Corentin Labbe [8].
+> > - Remove CLK input from driver. Remove clk definition
+> >    and second interrput line from crypto node inside GXL dtsi.
+> >=20
+> > Changes V6 -> V7 [9]:
+> >=20
+> > - Fix dt-schema: power domain now required only for A1.
+> > - Use crypto_skcipher_ctx_dma() helper for cipher instead of
+> >    ____cacheline_aligned.
+> > - Add import/export functions for hasher.
+> > - Fix commit message for patch 17, acorrding to discussion [10].
+> >=20
+> > Changes V7 -> V8 [11]:
+> >=20
+> > - Test patchset with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS: fix some bugs
+> >    in hasher logic.
+> > - Use crypto crypto_ahash_ctx_dma in hasher code.
+> > - Correct clock definition: clk81 is required for all SoC's.
+> > - Add fixed-clock (clk81) definition for A1/S4.
+> > - Add information (in commit messages) why different compatibles are us=
+ed.
+> >=20
+> > Changes V8 -> V9 [12]:
+> >=20
+> > - Remove required field clk-names from dt-schema according to Rob Herri=
+ng
+> > recommendation [13].
+> > - Fix commit order: all dt-bindings schema commits now located earlier
+> > than any changes in device tree.
+> > - Fix typos and add more clarifications in dt-schema patches.
+> >=20
+> > Links:
+> >    - [1] https://gist.github.com/mRrvz/3fb8943a7487ab7b943ec140706995e7
+> >    - [2] https://lore.kernel.org/all/20240110201216.18016-1-avromanov@s=
+alutedevices.com/
+> >    - [3] https://lore.kernel.org/all/20240123165831.970023-1-avromanov@=
+salutedevices.com/
+> >    - [4] https://lore.kernel.org/all/20240205155521.1795552-1-avromanov=
+@salutedevices.com/
+> >    - [5] https://lore.kernel.org/all/20240212135108.549755-1-avromanov@=
+salutedevices.com/
+> >    - [6] https://lore.kernel.org/all/ZcsYaPIUrBSg8iXu@Red/
+> >    - [7] https://lore.kernel.org/all/20240301132936.621238-1-avromanov@=
+salutedevices.com/
+> >    - [8] https://lore.kernel.org/all/Zf1BAlYtiwPOG-Os@Red/
+> >    - [9] https://lore.kernel.org/all/20240326153219.2915080-1-avromanov=
+@salutedevices.com/
+> >    - [10] https://lore.kernel.org/all/20240329-dotted-illusive-9f059380=
+5a05@wendy/
+> >    - [11] https://lore.kernel.org/all/20240411133832.2896463-1-avromano=
+v@salutedevices.com/
+> >    - [12] https://lore.kernel.org/all/20240607141242.2616580-1-avromano=
+v@salutedevices.com/
+> >    - [13] https://lore.kernel.org/all/20240610222827.GA3166929-robh@ker=
+nel.org/
+> >=20
+> > Alexey Romanov (23):
+> >    drivers: crypto: meson: don't hardcode IRQ count
+> >    drviers: crypto: meson: add platform data
+> >    drivers: crypto: meson: remove clock input
+> >    drivers: crypto: meson: add MMIO helpers
+> >    drivers: crypto: meson: move get_engine_number()
+> >    drivers: crypto: meson: drop status field from meson_flow
+> >    drivers: crypto: meson: move algs definition and cipher API to
+> >      cipher.c
+> >    drivers: crypto: meson: cleanup defines
+> >    drivers: crypto: meson: process more than MAXDESCS descriptors
+> >    drivers: crypto: meson: avoid kzalloc in engine thread
+> >    drivers: crypto: meson: introduce hasher
+> >    drivers: crypto: meson: add support for AES-CTR
+> >    drivers: crypto: meson: use fallback for 192-bit keys
+> >    drivers: crypto: meson: add support for G12-series
+> >    drivers: crypto: meson: add support for AXG-series
+> >    drivers: crypto: meson: add support for A1-series
+> >    dt-bindings: crypto: meson: correct clk and remove second interrupt
+> >      line
+> >    dt-bindings: crypto: meson: support new SoC's
+> >    arch: arm64: dts: meson: gxl: correct crypto node definition
+> >    arch: arm64: dts: meson: a1: add crypto node
+> >    arch: arm64: dts: meson: s4: add crypto node
+> >    arch: arm64: dts: meson: g12: add crypto node
+> >    arch: arm64: dts: meson: axg: add crypto node
+> >=20
+> >   .../bindings/crypto/amlogic,gxl-crypto.yaml   |  32 +-
+> >   arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  14 +
+> >   arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   7 +
+> >   .../boot/dts/amlogic/meson-g12-common.dtsi    |   7 +
+> >   arch/arm64/boot/dts/amlogic/meson-gxl.dtsi    |   6 +-
+> >   arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |  13 +
+> >   drivers/crypto/amlogic/Makefile               |   2 +-
+> >   drivers/crypto/amlogic/amlogic-gxl-cipher.c   | 632 ++++++++++++-----=
+-
+> >   drivers/crypto/amlogic/amlogic-gxl-core.c     | 292 ++++----
+> >   drivers/crypto/amlogic/amlogic-gxl-hasher.c   | 507 ++++++++++++++
+> >   drivers/crypto/amlogic/amlogic-gxl.h          | 118 +++-
+> >   11 files changed, 1269 insertions(+), 361 deletions(-)
+> >   create mode 100644 drivers/crypto/amlogic/amlogic-gxl-hasher.c
+> >=20
+>=20
 
+--=20
+Thank you,
+Alexey=
 
