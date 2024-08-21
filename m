@@ -1,103 +1,132 @@
-Return-Path: <linux-kernel+bounces-294726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABBB9591AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:15:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086A39591B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4810D282292
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:15:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863F11F22845
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E5B8F47;
-	Wed, 21 Aug 2024 00:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC282F510;
+	Wed, 21 Aug 2024 00:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouwIClGo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8KQlM1S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FF04A1D;
-	Wed, 21 Aug 2024 00:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011DC17F7;
+	Wed, 21 Aug 2024 00:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724199308; cv=none; b=LzmVnPzzfHfHjafvL2/nfzn/aaigeKE0UHzmt4UMdQFQhVOUn3Dg02aEZpdJJTU0/LNAXmfbddbHik+biHuQaGf3/1DXoS49pR93OFtGrKOK7TG32JIJ8Z37c03/9ao14cyMepCMglA0FdJb371JZJBVDjLKBXWWD4UtnDp5Nb8=
+	t=1724199381; cv=none; b=f2xfdj4Bg7SM9tPnbp37vApn7FkNxEr2DNQUPDmPNwBO7cqzkqEtTwf+nUdzrLvVtKAl8McdDe4rWsleqZPB7NOr6/moH5addWJ0HAvOm18KNwIEuks3gsTS4Dqbul19WEHtNCFxiwkRpaC6Mr1gg1SAnJbpg4gyfQ8LRMelhR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724199308; c=relaxed/simple;
-	bh=b7WM2dNKgQVg9iGjT3xGNxwb+Ar/RpDBdfMEFg1mGc4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=KV30oPfnou2aCGXpCdxqc5EyOzOhf3ktJU1y8NEiXaeKf9hRI+tdoKNmEA+Doq1xYf/I542ZHYawWKLsB/tlG7sOs78BwMidVvtSM8QtWbXnACs+ugnZsySdincJKn+NKNbOPNpZXpeTirw+Lt+Yzdmsc2B727soKH8sdhySCy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouwIClGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B32C4AF09;
-	Wed, 21 Aug 2024 00:15:05 +0000 (UTC)
+	s=arc-20240116; t=1724199381; c=relaxed/simple;
+	bh=//umJAjmzAHbb4srtnO6p7v3lXCw1BpKooPGruKj3YA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YyIRIbwqzI/yXN6NhJxL5k/K0yWWKNNfl1WFH7tuNBaLaa5t3q9z4tuz9hoI6sVKnWQvR6Tgd/Q0rl/R8a7p6FZZFv9uHstPLh/I1eSevg2BdtJkRSMqjklvPdsd0Rb9O0/Kv0Ve5VERxMA4QemL+ZCUtjok2ztOdQ3fWjuMPC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8KQlM1S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D40DC4AF0B;
+	Wed, 21 Aug 2024 00:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724199308;
-	bh=b7WM2dNKgQVg9iGjT3xGNxwb+Ar/RpDBdfMEFg1mGc4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ouwIClGoJbgqkLnhVYVU7ymNkHLz1qIS4w8C+nXoWGtVz2ReYHsK5nyafgDSVN8mV
-	 KyUpgvoqtfXZyB2k7s1kw5NNctFVvxOdPDSGj5+OlYGnTPi6ESMZ1Fv2N7MNNWme9e
-	 OW2RAZY9CIKdXTY5cjND31CtGgrgjTOdJrhbGySwfUX6lPA3vBqFERNzbhxiSJn4q6
-	 JUBp4lazOcdV759bk15UrS56qJ80aNueRwI3iF0O50AwWOFhqZvmvHNqgASQq/8s+s
-	 iQnFM8mEU6BJIotV7PYiqpisBD/E8Hg2+DrkBT7QB4P1lDe89OYpXpGS/piMu5Izg+
-	 LBbuy0sNdSP3g==
-Date: Wed, 21 Aug 2024 09:15:03 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Mark Rutland
- <mark.rutland@arm.com>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org,
- clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor
- <nathan@kernel.org>
-Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
-Message-Id: <20240821091503.097e729cecb8560f8f51a646@kernel.org>
-In-Reply-To: <20240820194914.2352a914@gandalf.local.home>
-References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
-	<20240819112902.11451fe8@gandalf.local.home>
-	<20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
-	<20240819120244.5657eb2f@gandalf.local.home>
-	<20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
-	<ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
-	<CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
-	<20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
-	<20240820181109.4203158d@gandalf.local.home>
-	<20240821084351.4b1c9d4d52b5aa7e07681d69@kernel.org>
-	<20240820194914.2352a914@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1724199380;
+	bh=//umJAjmzAHbb4srtnO6p7v3lXCw1BpKooPGruKj3YA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X8KQlM1SytAKYaLYGKjUz1REIaj2OSxhUitYLdZDhbSPUm+zX/n9d16vFT2QAuH+t
+	 gRVIKK+04YVkR6EPmSuh0C6nOhanaGhRH0wIWK4naUn2w1uZl8uwHWI3y2mssctyjl
+	 0frL43b32OAch2HL/8vT8AD+BpumetAHSJPiJ/WMT4RR9Qc2idkWKBT82xQcfgaPIm
+	 q/VC4vMsptGQhU0h7I2LgO61rK80P5F0B0tguEZC8SIfByjBsVZmPGPfkG3ZAn+S0S
+	 Y9hgUuLVMsBU/bK7a4OHKAWCAgtfwoB+yNoxm4PHjV43MFU/C3auVSDpM4VgrsFPnR
+	 su1kG3ad1mLCw==
+Date: Tue, 20 Aug 2024 19:16:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <20240821001618.GA2309328-robh@kernel.org>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
 
-On Tue, 20 Aug 2024 19:49:14 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
+> A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
+> translations. In this specific case, rhe current behaviour is to zero out
 
-> On Wed, 21 Aug 2024 08:43:51 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+typo
+
+> the entire specifier so that the translation could be carried on as an
+> offset from zero.  This includes address specifier that has flags (e.g.
+> PCI ranges).
+> Once the flags portion has been zeroed, the translation chain is broken
+> since the mapping functions will check the upcoming address specifier
+
+What does "upcoming address" mean?
+
+> against mismatching flags, always failing the 1:1 mapping and its entire
+> purpose of always succeeding.
+> Set to zero only the address portion while passing the flags through.
+
+Can you point me to what the failing DT looks like. I'm puzzled how 
+things would have worked for anyone.
+
+
 > 
-> > > Can you add the __used and see if it fixes it?  
-> > 
-> > Adding __used to DYN_FTRACE_TEST_NAME() and DYN_FTRACE_TEST_NAME2() does
-> > not change, the test still fails.
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  drivers/of/address.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> OK, now that sounds like a bug in LTO itself.
-
-Hmm, I think __used just preserve the function exists as a function. But the
-callsite can be optimized. This mean the __used function code is duplicated,
-and embedded one copy in the callsite, but keep another copy as a function
-which can be used from outside. But "noinline" attribute seems to be expected
-not embedded in the callsite (because that is what "inlined" mean), so it
-looks like a bug.
-
-Thank you,
-
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index d669ce25b5f9..5a6d55a67aa8 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -443,7 +443,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+>  	}
+>  	if (ranges == NULL || rlen == 0) {
+>  		offset = of_read_number(addr, na);
+> -		memset(addr, 0, pna * 4);
+> +		/* copy the address while preserving the flags */
+> +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
+>  		pr_debug("empty ranges; 1:1 translation\n");
+>  		goto finish;
+>  	}
+> -- 
+> 2.35.3
 > 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
