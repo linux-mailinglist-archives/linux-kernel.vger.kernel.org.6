@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-295210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788859598AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85159598AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9E91C21568
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:57:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8553B1F22E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E38F1E5786;
-	Wed, 21 Aug 2024 09:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421ED1E916B;
+	Wed, 21 Aug 2024 09:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FIq/czgs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jOcpAxBt"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF11F1CBEAD;
-	Wed, 21 Aug 2024 09:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6D81E9169
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724232214; cv=none; b=dWpgxjWZindRdIhOPcFq8CVnKbxAee62j6qRWUQ2PkMYRQ9u1EwmavQMBs0SC2HnTB/1oKT/N5PIYxd7NJkjvDlOMDrf8CLoJAgYZJ4liq5nu8NZ0Mmy/0HuhcxHs6hyhWQUoKX+ub2cTy3LsEczwdQpTRK9ihlEDtnCDm1zMgA=
+	t=1724232252; cv=none; b=l+g4Q5Oy6pjoj6WTEM//PVnJmRCke+926aT9Cru+RlUbwV14I99uOUb50OT8Hvdrgx+NjWa+7OCxoMRx/b6CR8RsDeP5NxaRiJTweQWIH4yTctHbBibRor3sAsjk8oEZqrTTGPPOukRtGEPAui9Z9POqsdluJnpY9tj/W4+MbXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724232214; c=relaxed/simple;
-	bh=t/CSQvrauuMm+CtOl+ntlCgIHDDtGtHS2ZDMZbNdyCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ml92B5lK6gDLOXFl2bzoipYEmJtB8STHLWk6l/vlBMpgO/MOFCrSvysmOI6RADnZdVkz2ybM3dRKJ8LHeWgmNo14q7J8j7cHkx6yEVLAnHArLX0Qc1hR1ZWjSLZWZ1xZBETjd4UisrqperLy+2hek6a22Z/kzDnA4K+IsAeMrHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FIq/czgs; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724232212; x=1755768212;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t/CSQvrauuMm+CtOl+ntlCgIHDDtGtHS2ZDMZbNdyCw=;
-  b=FIq/czgsZW0BAKYkCNwGas3HzgNxtkBD26c/TXqAp2CBvTf9lhrkHfeT
-   uBfigJjOMgLjoCriCoUxac3smtjLnT3FYN4oK4Jt/HhEg6U4D+zfQK32T
-   Ekxj+51f9YJL9OIsuzQ98ReQOEksgwfaLbcanrUqK8idfOnpYNGKBa3nS
-   R1t8L9dzY8FyDOXzeUmBHNclllwBJlIB+gHe5xnrhOHboeamJe+rTGUCa
-   Oq4O1Ja2QlBj9lRwaR/WRs6vDW0O+XNWIklbZOmQtdnHndRDcKy8CDwM6
-   zs/NLnL1F/ki5vguA43HbXdixFiaAD+8NvK4q0yHWP+MeFldDNc70iA3U
-   g==;
-X-CSE-ConnectionGUID: Ex2hzCZ5QYG8zzERjAjZeQ==
-X-CSE-MsgGUID: U7AWMTtUSCKngkaRPvSGpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="40037663"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="40037663"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 02:23:31 -0700
-X-CSE-ConnectionGUID: siL8DPxaQxKhLChs3QZt+g==
-X-CSE-MsgGUID: RbN4J6lASDiEeCMso/RH+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="61570021"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 21 Aug 2024 02:23:25 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sghYm-000B9u-35;
-	Wed, 21 Aug 2024 09:23:20 +0000
-Date: Wed, 21 Aug 2024 17:22:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <helgaas@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-Message-ID: <202408211702.1WVqlgTb-lkp@intel.com>
-References: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1724232252; c=relaxed/simple;
+	bh=uMDT/NhfPMJAlUSvSaPPm70ztRHPdvb4X+134BfpULk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TIaJtgSSvFbf/fYONBIhwJ8fAjnbUEkW5jR2n0mzoRBMWSOO3RUp+xPoHp6EjRVZycN8PXgTDeB9GYd0LB9VcT840+eVZ+LG5kmdOX1UczARbKXu5fWvRIA1lHn+rlXxJjrZXvgFfQtBqD2wlCzL65rDd/IYLJtyC0Nn4CiVDLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jOcpAxBt; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-202376301e6so25402495ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724232249; x=1724837049; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wSX2UW/W8B7Ffz8kkQMnXKOYBxRf7RK7/SpflK+Hcb8=;
+        b=jOcpAxBtkLKBfthbeKny1ArP5q8XtmfmlllEXizwFxMRK1Co+15zlaWDae0pehrTWo
+         GrfftKZxWYszY8Dqw5P5Wgnesb10TQU1krB0agojIw1P74boBBp10RVtGFHNt02W9a5g
+         weWPjPBenq4AJKitAu2PDerfIrUjrVzZmtWPAFbVUgSxKm1/DlWwgwVR7XGhXcKdoZaL
+         5w6BZ6FuyWeStoVH1MoRzOx3rFSZOsvHGu715UMleSPGnc7jgaLiEJsjQQYILFuowYGi
+         qTjzYJwyQxkAuVpynBmharl4VVNaa2X+wfQmLik7m+avpZhtIpg18wr4wLFX9cpF0t8g
+         gQqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724232249; x=1724837049;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wSX2UW/W8B7Ffz8kkQMnXKOYBxRf7RK7/SpflK+Hcb8=;
+        b=pZI5NkFJkAqvTTAJaCvQdAb/PChu9JP0nFKowsoedQi+643n1aL4744gtRLZ40YjX1
+         enV89Qod8MynGY2tuBjSU2Nlw8k9+JbyAyVKxdPbLtPhaa/wfUAYu4tL87PLQvgsLT1J
+         +iDpkkmNdmVvR81FXUk8BDM0qG+65oMZ+5ZebgZm5+UVQPOa1MDq3oCe+20GEkCVCgy9
+         GBvUcdjyHwlJOrw8KR61/LZKO0iAwZUdycEkPyahQwqG8IPvZs3Uvfx22Jo505TTrwbs
+         yHHKSbAHRn90QKan/4KL8HgFRgDCbvNFwIVs8ZGUprgRSxFAE7r57vFF/HoZUy8uKTpv
+         Z2Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKaNM9NBTzT350raoLG+E2oXNA2zPFNAKoiTog6zqDTH6e1BA7v8ZQ02XsV4Sku0zEuKMCYOnQ9J14/5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+jVAv/pziYJFt7Qp8RxoTPs1ae0v/5nVsCl3NCRCSbG0A+C2+
+	5ZAQ6hlTUr1WAxkXXy9Rs/mIsB2EFn07SfcUwwmvYVHjVy8088UwYSpsGRyji+A=
+X-Google-Smtp-Source: AGHT+IEgVXX8+VxDvZcoW1SKZwBL11MhagLS8dAsfWdFenURBSvzCDIeLTwfbkrSYGW7mFvGjU6V4w==
+X-Received: by 2002:a17:90a:7893:b0:2c9:635b:7271 with SMTP id 98e67ed59e1d1-2d5e9a24ea2mr1735850a91.21.1724232249566;
+        Wed, 21 Aug 2024 02:24:09 -0700 (PDT)
+Received: from [10.84.144.49] ([203.208.167.150])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebb69487sm1232288a91.45.2024.08.21.02.24.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 02:24:09 -0700 (PDT)
+Message-ID: <b4bf605a-d31a-40ad-8cee-fe505e45dc64@bytedance.com>
+Date: Wed, 21 Aug 2024 17:24:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/14] mm: handle_pte_fault() use
+ pte_offset_map_maywrite_nolock()
+Content-Language: en-US
+To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Cc: "david@redhat.com" <david@redhat.com>, "hughd@google.com"
+ <hughd@google.com>, "willy@infradead.org" <willy@infradead.org>,
+ "muchun.song@linux.dev" <muchun.song@linux.dev>,
+ "vbabka@kernel.org" <vbabka@kernel.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "rppt@kernel.org" <rppt@kernel.org>,
+ "vishal.moola@gmail.com" <vishal.moola@gmail.com>,
+ "peterx@redhat.com" <peterx@redhat.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <cover.1724226076.git.zhengqi.arch@bytedance.com>
+ <239432a0bc56464e58a6baf3622fdc72526c8d57.1724226076.git.zhengqi.arch@bytedance.com>
+ <6a586524-5116-4eaf-b4f3-c1aea290d7c1@cs-soprasteria.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <6a586524-5116-4eaf-b4f3-c1aea290d7c1@cs-soprasteria.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Andrea,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on robh/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.11-rc4 next-20240821]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 2024/8/21 17:17, LEROY Christophe wrote:
+> 
+> 
+> Le 21/08/2024 à 10:18, Qi Zheng a écrit :
+>> In handle_pte_fault(), we may modify the vmf->pte after acquiring the
+>> vmf->ptl, so convert it to using pte_offset_map_maywrite_nolock(). But
+>> since we already do the pte_same() check, so there is no need to get
+>> pmdval to do pmd_same() check, just pass NULL to pmdvalp parameter.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>    mm/memory.c | 9 +++++++--
+>>    1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 93c0c25433d02..d3378e98faf13 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -5504,9 +5504,14 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+>>    		 * pmd by anon khugepaged, since that takes mmap_lock in write
+>>    		 * mode; but shmem or file collapse to THP could still morph
+>>    		 * it into a huge pmd: just retry later if so.
+>> +		 *
+>> +		 * Use the maywrite version to indicate that vmf->pte will be
+>> +		 * modified, but since we will use pte_same() to detect the
+>> +		 * change of the pte entry, there is no need to get pmdval.
+>>    		 */
+>> -		vmf->pte = pte_offset_map_nolock(vmf->vma->vm_mm, vmf->pmd,
+>> -						 vmf->address, &vmf->ptl);
+>> +		vmf->pte = pte_offset_map_maywrite_nolock(vmf->vma->vm_mm,
+>> +							  vmf->pmd, vmf->address,
+>> +							  NULL, &vmf->ptl);
+> 
+> This might be the demonstration that the function name is becoming too long.
+> 
+> Can you find shorter names ?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20240821-023901
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta%40suse.com
-patch subject: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio support
-config: nios2-kismet-CONFIG_GPIOLIB_IRQCHIP-CONFIG_PINCTRL_RP1-0-0 (https://download.01.org/0day-ci/archive/20240821/202408211702.1WVqlgTb-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20240821/202408211702.1WVqlgTb-lkp@intel.com/reproduce)
+Maybe use abbreviations?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408211702.1WVqlgTb-lkp@intel.com/
+pte_offset_map_ro_nolock()
+pte_offset_map_rw_nolock()
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for GPIOLIB_IRQCHIP when selected by PINCTRL_RP1
-   WARNING: unmet direct dependencies detected for GPIOLIB_IRQCHIP
-     Depends on [n]: GPIOLIB [=n]
-     Selected by [y]:
-     - PINCTRL_RP1 [=y] && PINCTRL [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+>>    		if (unlikely(!vmf->pte))
+>>    			return 0;
+>>    		vmf->orig_pte = ptep_get_lockless(vmf->pte);
 
