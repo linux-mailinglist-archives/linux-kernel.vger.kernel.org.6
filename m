@@ -1,108 +1,216 @@
-Return-Path: <linux-kernel+bounces-295523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1BD959C47
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F0B959C48
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA13281357
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6A2283075
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B03191F6A;
-	Wed, 21 Aug 2024 12:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B67192D90;
+	Wed, 21 Aug 2024 12:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="q41EhNWt"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0KdwTK0"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F381155307
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7339C195FD1
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244368; cv=none; b=IfbofDuiXluSOIePklS1BitWmOPYP/Z1isXaDOUllfbsu4Pn5JNn19W9Q6EJNPLg8ktLkxfr10nLEElOuL/1GocK40NJ4j/La4G45yCsfy5MPFzmNhMfGNQK+dxhp3F/8aKXtBaOm1DyK2Il8BD9mgn0GzMbtZs9hmCTMhf6LEI=
+	t=1724244372; cv=none; b=O9Y06XZdN7ZqFm5lT96w8zawa12HvpQJO+blw2BlF+P/mO9lrv+fWab3dRSJ0ZmtZ0rdx1S04Hxr+HE6KOMOkRXIrgjgKCiQGFKbRS/1iHpmIpOnmGqkrF/jIlc81Y7oNNGf5Ij4fSW7Levct/4DyYyBFje/elu2nVUoKnSZDuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244368; c=relaxed/simple;
-	bh=hiR1Haq30NxfLMtsVDbu0nnLT6exfBNX71lnvpiNLFY=;
+	s=arc-20240116; t=1724244372; c=relaxed/simple;
+	bh=1VMHZbP4ivk20cCh90xnlB6VA8Klg4oaIg0UuXE8jRE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E8F5M+2IMoDVzmvfdlg7u8aWacvOaHQAgqvkAzw6iHlG19zayfMdX92GKRKJj8BeajNE5xcjeVg3qCsJ0H7+VL1Gy8jlTbC2au2CLDCtkP5eruWDkKGQg0DMQXYeKgQiyX326CpB3gY5yu+2sXleWFktoiCw7qicAl2a3kImDHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=q41EhNWt; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3ea86377aso19389071fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:46:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=UiHJfEQagcQN7JVXWf8OIBTM+lvRolLp/NjFGhPpP2NM/bz6YGnp0yDDBiBxBmpQv1+tduvJUXOWD4tsUOUkwmZnqBtJ6m0SU/CYDELVVCCiNBUJ9A0xTRPoZtLOh0pwNI86/IhyCbW8SuzMLKpFx3BDnjk1HJ/t6jiDhmqjc58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0KdwTK0; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7cd8c8b07fbso227487a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:46:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724244364; x=1724849164; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724244371; x=1724849171; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hiR1Haq30NxfLMtsVDbu0nnLT6exfBNX71lnvpiNLFY=;
-        b=q41EhNWtgX8WLc6zeVbeAUGL/bhDtQNP57p8MR9CIvV6qidK8MSNXaTR9jKmPbhexl
-         SxpalRgAYEJcNlNbkbw2L+gVhMu0QEc84TH88T89GrasXdxvHcrleezy3a4SpgZCuhzX
-         FwRUGTE4FTyoUxvPcuR7Rh4/3HEU/yz3yemSs9OJMqlcmYLZ6NtgZ4nN9eqUvTue1Tpp
-         hb01vAAluNrP5QwRFlmeuyq1c90bKNZ0KqC6sLAzCxvYsA9Ual9oZouklMMV+nvLhn8d
-         J8sNZisZUhMlmxZuHclBzeXBmZJ9ug6zsW5wEnQkiCLeCylQo2sYyG2JhyekCCQwiuH0
-         /c3A==
+        bh=GrQlo1ZtzHZaU3Kc2gC/GsCtOWVGIzkRZAXPXF1JDAc=;
+        b=k0KdwTK0CfHdCH9dTN+NJNCyXOpXpDEYCf6m+dvuZ22mkFkoyZGETN8R9of4LnV3Yp
+         CmbL2BBln4dJCAX0w21CEh8yHsvQvvcGwAeGX0PHvMRG5J9mkRr4eNOHeMC35i/03SO+
+         P5mJalTdkEFdKOdB3sR//8l84eewmzgGJXPuIX0Wmn9XmKX5O/FfEyEkK7KEXgqiJ8Z0
+         YxEd2NVJ+d2DQhh3e38ENTDbw147KaY9c0QcvTSCz/RvyAmFoQa+tSofFdDXAgqSOfri
+         eeJT58yiQXRdw7G5P1o2aPt4vGZfiI328Q6457CJA3xDhbrPd3pFT9GDJU/DAdR5p4pG
+         +R4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724244364; x=1724849164;
+        d=1e100.net; s=20230601; t=1724244371; x=1724849171;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hiR1Haq30NxfLMtsVDbu0nnLT6exfBNX71lnvpiNLFY=;
-        b=IwBLPGK+adNZUR+5L0ZX2vcLLmZyHfM80stz5NDqWHa9Hf3yepOgemfzdsqc6KscRp
-         z+B5VFn/sJNxGltf7OVJfDAuOpXR/fqA0mxfaNB9idCA/i/929bsMubmDVtQRElGocvG
-         LemkKS7n2Gv1R42DLMxeIk5lF0O7PP5L0bnqFRTDZt0oXRfh8if6OysGW/u6l3G4bNNp
-         j8q/fFOkyvUHgUHXNVLruAls+A/IT9CpTbJwxEfa0LafMqc8dxLI/og5cPGg7sr+PUXF
-         XptSk1D72cYiLUobUcxK5D2/dka1aUJWA7TsgmmU1x/k3v+ShgcVwi+pClictjxzrsEI
-         StuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoH1Cw38s8srjUHXXs5/9Ob10VlBqnacDccQJ6zb0H7l7W3pJiJgSLfdyLlLDmzGFX5OWbZXyHInUToGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzagKS+iiW3ORi4A3/p6abqnQcgei1/D4gMkNJo6wqZnfvsf3Hr
-	M1+X5meOuxFzC2T7RIprsm9xfN94QtNLiGxIgcLkbxi8MFrHOhkcDaNopzfUmQpzQKNU0O8z+SH
-	0FAy7VKolbLDADnY1E5vlaUi2b0u5K0I/9p6pcg==
-X-Google-Smtp-Source: AGHT+IEoyoaFzaTuBjS7UWRKkhT5wQ2XOqzoc1U9KRDb2oPtaGqMo9RjMJ/MuacPyZChbEXTgMD4LzxduCDtp+Rqrpc=
-X-Received: by 2002:a05:651c:1507:b0:2ef:1d8d:21fd with SMTP id
- 38308e7fff4ca-2f3f87e0c7amr14835921fa.2.1724244363623; Wed, 21 Aug 2024
- 05:46:03 -0700 (PDT)
+        bh=GrQlo1ZtzHZaU3Kc2gC/GsCtOWVGIzkRZAXPXF1JDAc=;
+        b=aX+a7eg3qW2HiIRWCLazhHaSI/rl9vLwJm7s4Xw41Bfhv2WK8eFhuZ0Yg4JF9CD+qT
+         8vL4dJESmrTmkBk8BBBj2KoC6XInImkZYbjNzKuJ91mKcjJ9L0bTZluzQkl5B93P+GQz
+         4PL/7wM9Io+Ho2EqoVjw/xcfUHpo3JlJGSnQNohyiNKtj8mz+T30wiVcB80x1QGI5Z7c
+         IbfCOKeggiCovHEhvsPSG4OsitsIX0WvuBFXVSKitFBAGvvWHMtwcb4Y4Nk/O8fYVevP
+         Z9u6D6TxIlMoh8PitErAxmEyXoWJSQV8seZW2Ra3OWn1hGA/OUn0PDLQS0Qjc82w9VCN
+         e7Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW71hm9shRESviqaEdzOkW0uNJ0o70n1SO/ynH12EMIdqSR+YYDhu52Gp6HIHaUQI2MTe0pDQ6O2LP4PU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpvcThETuaaCZaZZcMIW3RJ3VW3eY4yaGs5ARBQV7RN5xam1TB
+	CmEpOV5b2oUvom1pi4sGNydc454wTFacxWPLFHX/0Zse87NwgYBmVMukMuPo1WouKJvv5JMcAC8
+	8PTq/PnhMoVBr09bwfJq4LEOBLeY=
+X-Google-Smtp-Source: AGHT+IHKfU539ztIPvH6FNOLr/tKtolhQJBELB1tBOi+TgcP0/C3jIsojq1Lyrzv/S9i+Tdl/qwVHeal4WeR8hByttU=
+X-Received: by 2002:a05:6a21:9214:b0:1c6:fa4b:3648 with SMTP id
+ adf61e73a8af0-1cad7f962b8mr3248581637.22.1724244370398; Wed, 21 Aug 2024
+ 05:46:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821122530.20529-1-brgl@bgdev.pl> <bd793119-3a0f-40c8-8c78-201e2fcf9664@lunn.ch>
-In-Reply-To: <bd793119-3a0f-40c8-8c78-201e2fcf9664@lunn.ch>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 21 Aug 2024 14:45:52 +0200
-Message-ID: <CAMRc=MeaVe=JcT9KF4YaP-2jsPH=ApRjfhomwuJ+L9GLhh-Dng@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: mdio-gpio: remove support for platform data
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240203165307.7806-1-aford173@gmail.com> <20240203165307.7806-11-aford173@gmail.com>
+ <Zm_UzO4Jmm7Aykcm@atmark-techno.com> <22a3f5266260dd3915269ae3eec7724f7537eb55.camel@pengutronix.de>
+ <cd03ecb1-100e-4699-95ed-d837a2802dc7@kontron.de> <CAHCN7x+bh_ka250hOCenO3Et6re4EJ=5TG8=kpG1hs-PV0dQxQ@mail.gmail.com>
+ <ZsVluV50NvuGGHFX@atmark-techno.com>
+In-Reply-To: <ZsVluV50NvuGGHFX@atmark-techno.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 21 Aug 2024 07:45:58 -0500
+Message-ID: <CAHCN7xJnjfjr7HfKF+4pwbENP+p2=vvMXWW1AQShNy87vfQ=-A@mail.gmail.com>
+Subject: Re: drm/bridge/imx8mp-hdmi-tx: Allow inexact pixel clock frequencies
+ (Was: [PATCH V8 10/12] drm/bridge: imx: add bridge wrapper driver for i.MX8MP
+ DWC HDMI)
+To: Dominique MARTINET <dominique.martinet@atmark-techno.com>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, Lucas Stach <l.stach@pengutronix.de>, 
+	linux-arm-kernel@lists.infradead.org, marex@denx.de, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	NXP Linux Team <linux-imx@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	Makoto Sato <makoto.sato@atmark-techno.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 2:42=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+On Tue, Aug 20, 2024 at 10:58=E2=80=AFPM Dominique MARTINET
+<dominique.martinet@atmark-techno.com> wrote:
 >
-> On Wed, Aug 21, 2024 at 02:25:29PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Adam Ford wrote on Tue, Aug 20, 2024 at 09:49:03PM -0500:
+> > > > However, this check is a bit overcautious in that it only allows ex=
+act
+> > > > rate matches. IIRC HDMI allows a rate mismatch of +- 0.5%, so this
+> > > > check could be relaxed quite a bit to allow for that.
+> > >
+> > > I checked with a 1080p display that reports 23 possible modes via EDI=
+D.
+> > > Out of these 15 are accepted by the driver with the strict check.
+> > >
+> > > Two more would be accepted with a relaxed check that allows a 0.5% ma=
+rgin.
+> > >
+> > > For the remaining six modes, the pixel clock would deviate up to ~5%
+> > > from what the display expects. Still, if I remove the check altogethe=
+r,
+> > > all 23 modes seem to work just fine.
+>
+> I can confirm the displays I tested also seem pretty tolerant in
+> practice (up to ~3-4% at least), but I agree with Lucas that this isn't
+> something we can rely on for a general purpose driver as having examples
+> of things being tolerant doesn't mean all hardware will be as flexible..
+>
+> > > I'd really like to be able to add more PHY PLL setpoints for displays
+> > > that use non-CEA-861 modes. Unfortunately I didn't manage to figure o=
+ut
+> > > the fractional-n PLL parameter calculation so far.
+> > >
+> > > The i.MX8MP Reference Manual provides formulas to calculate the
+> > > parameters based on the register values and I tried to make sense of =
+it
+> > > using the existing register values in the driver. But somehow it does=
+n't
+> > > add up for me.
+> > >
+> > > Lucas, did you already work with the PLL parameters? By any chance, d=
+o
+> > > you now how the math behind them works?
 > >
-> > There are no more board files defining platform data for this driver so
-> > remove the header and drop the support.
+> > I spent a little time trying to understand it a bit.  I created a PMS
+> > calculator similar to the one used on the DSI controller,
 >
-> There are a number of out of tree x86 boards which use this, flying in
-> various aircraft, so have a long life, and do get kernel updates.
+> Great! I'll admit this also flies over my head and I don't have the
+> time to study this, so this is much appreciated.
 >
-> I'm happy to support this code, and as a PHYLIB Maintainer, it adds
-> little overhead to my maintenance works. If you really insist, i can
-> try to get code added to drivers/platform/x86/ which use this.
+> > except that
+> > the M seems to be fixed at a value of 62 per the data sheet, so it's
+> > more of a PS calculator.
 >
+> Hmm... PHY_REG2 in the datasheet only lists '0011_1110b - 62' as
+> example(?) values, but it doesn't say other values are reserved either,
+> I'm not sure what to make of it.
+> In the current driver PHY_REG_02 (driver macro) is assigned the first
+> field of .pll_div_regs, which goes anywhere from 0x4b to 0x7b -- pretty
+> far from 62(0x3e)...
 
-We typically don't care about out-of-tree board files upstream. Having
-users for this struct in mainline would of course be great and a
-perfect reason to keep it.
+OK.  I will experiment with increasing the range of M from being fixed
+at 3e to a range of 3b to 7b to see if my PMS integer calculator can
+get more accurate.
 
-Bart
+>
+> Since other frequencies have been adjusting this main diviser ratio we
+> actually tried copying neighboring values and adjusting only that reg 2
+> (so the M if I get this right?), but the end result ended up not
+> synchronizing properly every time... We didn't have time to check with a
+> scope if the generated signal was ugly or if it just didn't lock
+> properly, but the display worked when we just re-used the neighboring
+> values without changing anything despite being ~3-4% off, so we took the
+> easy way out here and didn't dig much further.
+>
+> > Anyway, When I run my P-S calculator to generate the 'best rate' I get
+> > a value that's usually 0.2% variance from nominal, but I only verified
+> > a handful of values:
+> >
+> > Several which were +0.2%
+> > 297600000 vs 297000000 (4k@30)
+> > 148800000 vs 148500000 (1080p60)
+> > 74400 vs 74200
+> >
+> > One value was -0.16%
+> > 24800000 vs 25200000
+> >
+> > If the M value was a bit more flexible, we might be able to reduce
+> > that variance more.
+>
+> Yes, I think the M value could be more flexible, but that'd require
+> checking if it actually works, whereas having slightly off frequencies
+> will most likely be OK so I don't think it's worth the effort -- happy
+> to stick to what the datasheet describes.
+>
+> > If / when I get some time, I might play with trying to disable the
+> > fractional mode and just use the PMS calculator for simplicity despite
+> > the inaccuracy.  Maybe we could fall back to using the PMS calculator
+> > if the desired frequency isn't in the look-up-table.
+>
+> That'd be greatly appreciated, I don't have any strong opinion on
+> whether that should completely replace the table, or only be used if
+> there is no exact match in the table as these are values we know will
+> work; but we can definitely test any patch you can throw at us here.
+
+I can't promise it'll be quick.  I am not fully certain I understand
+how the whole thing works, but as a rule, I don't generally like look
+up tables if they can be calculated dynamically.
+
+adam
+>
+>
+> Cheers,
+> --
+> Dominique
+>
+>
 
