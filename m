@@ -1,164 +1,100 @@
-Return-Path: <linux-kernel+bounces-296226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0569C95A7EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6169B95A7E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51235B218AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189B82847B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E715917B500;
-	Wed, 21 Aug 2024 22:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0012A17C7C3;
+	Wed, 21 Aug 2024 22:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uni-stuttgart.de header.i=@isd.uni-stuttgart.de header.b="xjrjKFy2"
-Received: from mxex2.tik.uni-stuttgart.de (mxex2.tik.uni-stuttgart.de [129.69.192.21])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PrEG9tt7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3028A1509A2
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 22:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.69.192.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB3017BB07;
+	Wed, 21 Aug 2024 22:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724280541; cv=none; b=n34qJBs5n/DkGB+Viyx5HjccZ7eevt5SseScHV/CJHM7Se/Maw/As5q1KBOrG8tKqw9HQkJ3sNegGFeOequYIsMV2HOEcEecBsZzDNRbvwmDA6dTf7XX8i96qwNqHBUL9my9sEENIN/QqIn25D0M1MDKCb+dAN70OuTVM8mIdH8=
+	t=1724280088; cv=none; b=a7kY5Ss0p4lgqrua0jOWxRkXXsEobtXrJOpXJafpBgTWiSjjfnJQtuo1mtnACH1RYKqFFBt21pcxXcBF9Jt4k8r+Jsp6tyOx1DafAwZgDnOG/zUorIHKV4AiI2r1X5ZUPJDawUErDo7vOKv0n+kEfUo8CO382XNzQtI98T1QY44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724280541; c=relaxed/simple;
-	bh=xvpm5tK7Hbzpx8Ccqp+FMRyvOeIZxInDJfgeWPRoVvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulEDrrV2lxRQlbF9le7dKtmhrSig1e7X0ZSW8GqkMYuAJyImC+qsT3oGXTCyEQSPi8E5I8Y5YUTyTvstV7c8VkWENz528yZ6izQhQzZG7X0P+1aIlyMHEX/rFofly40X97/wwQs/oTzPH1IHHczeUYri/AD6PzBQEYgZGSKWkQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isd.uni-stuttgart.de; spf=none smtp.mailfrom=isd.uni-stuttgart.de; dkim=pass (2048-bit key) header.d=uni-stuttgart.de header.i=@isd.uni-stuttgart.de header.b=xjrjKFy2; arc=none smtp.client-ip=129.69.192.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isd.uni-stuttgart.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=isd.uni-stuttgart.de
-Received: from localhost (localhost [127.0.0.1])
-	by mxex2.tik.uni-stuttgart.de (Postfix) with ESMTP id 0FCB860ABE;
-	Thu, 22 Aug 2024 00:39:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=uni-stuttgart.de;
-	 h=content-transfer-encoding:content-type:content-type
-	:in-reply-to:organization:from:from:content-language:references
-	:subject:subject:user-agent:mime-version:date:date:message-id;
-	 s=dkim; i=@isd.uni-stuttgart.de; t=1724279967; x=1726018768;
-	 bh=xvpm5tK7Hbzpx8Ccqp+FMRyvOeIZxInDJfgeWPRoVvM=; b=xjrjKFy2/B/S
-	4Ew9o8lpsFz3m0I2eW2wqdUIK1YMbzCA09hQxJjNRdqUvT3KPWXJg0ZRMz3NtDRf
-	/f0HYWjq/vfm/lpH8hvid7XieDxeqaFDOHbzy4cflDdRJnXj0BkR22Jv5V+4t+pU
-	AHU/cj9P50egdNf5HdrkY5/1A6fQJa6PT/hw4shqY8UDAkTwyJCSBz6POKuySq1q
-	fphhV5UXKav38pE/CjXo70SpYaNxeB5wJIoPb5m/ssjtlIZCTjrL+oPOI0YIc0Mr
-	KuLmVHFFxpA+FdvRP30kLEchEMkTxpxU/YoovlAC+XoM+u8ld8MG1tllz6Dqc/pr
-	m6qQhCad9g==
-X-Virus-Scanned: USTUTT mailrelay AV services at mxex2.tik.uni-stuttgart.de
-Received: from mxex2.tik.uni-stuttgart.de ([127.0.0.1])
- by localhost (mxex2.tik.uni-stuttgart.de [127.0.0.1]) (amavis, port 10031)
- with ESMTP id ZbqlQzcPLs53; Thu, 22 Aug 2024 00:39:27 +0200 (CEST)
-Received: from authenticated client
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxex2.tik.uni-stuttgart.de (Postfix) with ESMTPSA
-Message-ID: <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de>
-Date: Thu, 22 Aug 2024 00:39:24 +0200
+	s=arc-20240116; t=1724280088; c=relaxed/simple;
+	bh=dpScO8StZyLl2n3uhDg+2zAxSGgvkwDoBO064zBpX/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RZUETJnVOS8G+PzjUdCI1rnR420XOSjLxx1hcPSPpXIEV6psTgjU2Tx+aExKt79fHmFo5y9dG44dRDzIe/rAD01L0WUPLWPLsL07aj1Gw53AQ/DXr1F7BfSCI9p6vho2yY9UYN73XoMSHyOabFUJj5A1S4QtEBq2KRl5dWiSo+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PrEG9tt7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724280080;
+	bh=RDv5CvG9iedAsNtlr+mHPYxgxNBCmvoNwkPe5zP1Nes=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PrEG9tt7g2vX/mUi1FA9Aatlo0bC3aiwdXtM391sdcDeFzwL/+Of3barEI/TbIpbV
+	 iUyU+vyMantlqlhk/sv+9ivPjJXtG/QjUr9gdktv+vorJcOKfTD8pf3A0WM7Syg0Zo
+	 zUt29xeLIurghdQeyN/nGpBfBCxRnUDwm63o9my3mAZxLQyHvXr93kwuG4nicORuRX
+	 //AYu28sVlsthFEupMMhQ3fHAyv7OVjf63gl34aZzB7V6ZlQMAD9gcL1rH5rmxUv5D
+	 ca3F1mHh3BE/uNOyy2rpwWcOdim14UjOsFNHBYg692PkJJVd6V/nhZknOTAadfTKvN
+	 1VBdR1c1Umw8A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wq1XJ0zCNz4wj1;
+	Thu, 22 Aug 2024 08:41:20 +1000 (AEST)
+Date: Thu, 22 Aug 2024 08:41:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
+ <benjamin.tissoires@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the hid tree
+Message-ID: <20240822084119.5b2e1962@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in
- kernel mode
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Stan Johnson <userm57@yahoo.com>, Finn Thain <fthain@linux-m68k.org>
-References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu>
-Content-Language: en-US
-From: Christian Lamparter <christian.lamparter@isd.uni-stuttgart.de>
-Organization: Universitaet Stuttgart - ISD
-In-Reply-To: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/6/EGhvV+h//U8qMAJu13OAv";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Sorry to write a reply to this old mail. But after years, I finally
-decided to tackle an "old" problem that has come up...
-And unfortunately it is related to this patch. But let me explain.
+--Sig_/6/EGhvV+h//U8qMAJu13OAv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 9/16/21 4:52 PM, Christophe Leroy wrote:
-> dcbz instruction shouldn't be used on non-cached memory. Using
-> it on non-cached memory can result in alignment exception and
-> implies a heavy handling.
->
-> Instead of silentely emulating the instruction and resulting in high
-> performance degradation, warn whenever an alignment exception is
-> taken in kernel mode due to dcbz, so that the user is made aware that
-> dcbz instruction has been used unexpectedly by the kernel.
+Hi all,
 
+Commit
 
+  ec4989dea73e ("Revert "HID: hidraw: add HIDIOCREVOKE ioctl"")
 
-The devices that are affected are APM821xx: MyBook Live, Meraki MX60, Netgear WNDR4700, ...
-All these have this "splat" during boot:
+is missing a Signed-off-by from its author and committer.
 
-|[ 8.777686] PPC 4xx OCP EMAC driver, version 3.54 [ 8.782961] ------------[ cut here ]------------ [ 8.787565] WARNING: CPU: 0 PID: 1 at fix_alignment+0x144/0x16c [ 8.793474] Modules linked in: [ 8.796527] CPU: 0 PID: 1 Comm: swapper Not tainted 6.6.47 #0 [ 8.802253] Hardware name: Meraki MX60/MX60W Security Appliance APM821XX 0x12c41c83 PowerPC 44x Platform [ 8.811688] NIP: c0003158 LR: c0003070 CTR: c001471c [ 8.816725] REGS: c10319d0 TRAP: 0700 Not tainted (6.6.47) [ 8.822453] MSR: 00029000 <CE,EE,ME> CR: 24000442 XER: 20000000 [ 8.828630] [ 8.828630] GPR00: c000855c c1031ac0 c1051c00 00000000 3e039bf6 00000018 01f01cdf 00000004 [ 8.828630] GPR08: 0000000f 00000000 00000510 c1031b30 c0013a94 00000000 c0002518 00000000 [ 8.828630] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 [ 8.828630] GPR24: 00000000 dfb953ac c00790c8 c104e120 c10f5610 00001000 
-c0d30000 c1031b40 [ 8.863432] NIP [c0003158] fix_alignment+0x144/0x16c [ 8.868384] LR [c0003070] fix_alignment+0x5c/0x16c [ 8.873162] Call Trace: [ 8.875598] [c1031ac0] [c0186efc] get_page_from_freelist+0x208/0xdac (unreliable) [ 8.883063] [c1031b10] [c000855c] alignment_exception+0xf0/0x164 [ 8.889058] [c1031b30] [c0000a30] Alignment+0x130/0x180 [ 8.894269] --- interrupt: 600 at memset+0x60/0xc0 [ 8.899063] NIP: c0013a94 LR: c007a1ac CTR: 0000007f [ 8.904092] REGS: c1031b40 TRAP: 0600 Not tainted (6.6.47) [ 8.909812] MSR: 00029000 <CE,EE,ME> CR: 44000442 XER: 20000000 [ 8.915989] DEAR: e1168020 ESR: 00000000 [ 8.915989] GPR00: 00000007 c1031c30 c1051c00 e1168000 00000000 00001000 e116801c 00000004 [ 8.915989] GPR08: 00001000 0000007f 00000a3a 00000000 24000848 00000000 c0002518 00000000 [ 8.915989] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 [ 
-8.915989] GPR24: 00000000 dfb953ac c00790c8 c104e120 c10f5610 00001000 c0d30000 e1168000 [ 8.953306] NIP [c0013a94] memset+0x60/0xc0 [ 8.957478] LR [c007a1ac] dma_direct_alloc+0x1e4/0x290 [ 8.962620] --- interrupt: 600 [ 8.965661] [c1031c30] [c007a130] dma_direct_alloc+0x168/0x290 (unreliable) [ 8.972608] [c1031c70] [c00790c8] dma_alloc_attrs+0xa8/0xf8 [ 8.978163] [c1031cb0] [c04d419c] mal_probe+0x26c/0x664 [ 8.983390] [c1031ce0] [c04326d8] platform_probe+0x60/0xb0 [ 8.988867] [c1031d00] [c042f6f0] really_probe+0xd8/0x3b4 [ 8.994251] [c1031d30] [c042fbdc] driver_probe_device+0x48/0x104 [ 9.000238] [c1031d60] [c042fe7c] __driver_attach+0xb4/0x1a4 [ 9.005880] [c1031d80] [c042cdc8] bus_for_each_dev+0x7c/0xc8 [ 9.011548] [c1031db0] [c042e708] bus_add_driver+0x170/0x25c [ 9.017199] [c1031de0] [c0430cec] driver_register+0x8c/0x164 [ 9.022840] [c1031e00] [c0902de0] emac_init+0x17c/0x1ec [ 
-9.028067] [c1031e40] [c0002680] do_one_initcall+0x50/0x2ac [ 9.033709] [c1031eb0] [c08e60f8] kernel_init_freeable+0x1b0/0x230 [ 9.039870] [c1031ee0] [c0002538] kernel_init+0x20/0x118 [ 9.045166] [c1031f00] [c000d1f8] ret_from_kernel_user_thread+0x10/0x18 [ 9.051758] --- interrupt: 0 at 0x0 [ 9.055241] Code: 39400000 7d500ba6 4c00012c 2c090000 41a2fefc 83e1004c 3860fff2 38210050 4e800020 38a00000 3920fff2 4bffffd4 <0fe00000> 4bffff8c 80010054 7c0803a6 [ 9.069929] ---[ end trace 0000000000000000 ]---|
+Reverts are commits as well ...
 
-what happens is that the EMAC (ethernet driver) uses a dma_alloc_coherent here:
-<https://elixir.bootlin.com/linux/v6.6.47/source/drivers/net/ethernet/ibm/emac/mal.c#L636>
+--=20
+Cheers,
+Stephen Rothwell
 
-| bd_size <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_size>=sizeof(structmal_descriptor <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal_descriptor>)*
-| (NUM_TX_BUFF <https://elixir.bootlin.com/linux/v6.6.47/C/ident/NUM_TX_BUFF>*mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->num_tx_chans <https://elixir.bootlin.com/linux/v6.6.47/C/ident/num_tx_chans>+
-| NUM_RX_BUFF <https://elixir.bootlin.com/linux/v6.6.47/C/ident/NUM_RX_BUFF>*mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->num_rx_chans <https://elixir.bootlin.com/linux/v6.6.47/C/ident/num_rx_chans>);
-| mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->bd_virt <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_virt>=dma_alloc_coherent <https://elixir.bootlin.com/linux/v6.6.47/C/ident/dma_alloc_coherent>(&ofdev <https://elixir.bootlin.com/linux/v6.6.47/C/ident/ofdev>->dev,bd_size <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_size>,&mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->bd_dma <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_dma>,
-| GFP_KERNEL <https://elixir.bootlin.com/linux/v6.6.47/C/ident/GFP_KERNEL>);
-|
+--Sig_/6/EGhvV+h//U8qMAJu13OAv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-(bd_size is 2x1024 = 2048)
-and this results in a call to dma_direct_allocation(), which has one
-innocent looking memset():
-<https://elixir.bootlin.com/linux/v6.6.47/source/kernel/dma/direct.c#L301>
-which zeros out the area before returning it back...
+-----BEGIN PGP SIGNATURE-----
 
-And of course, this triggers the WARNING above. As for why memset uses
-that dcbz... this is explained in:
-<https://elixir.bootlin.com/linux/v6.6.47/source/arch/powerpc/lib/copy_32.S#L86>
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbGbQ8ACgkQAVBC80lX
+0GyQegf9HLX6K065ZIXmfR6OTqmnEC5G464fY0o+4uW14AMreVXMSRhl4Z+0BVuL
+zwKma9VVpt/p8Psa1Deka2xlpOybQzWVAVhE7uz/p8QlUD36YjkSWmoF02n88LAY
+/XQFSjwnptwboqLHOKDG9GnJF99+zZARmR72ylw6RZ804EgqMZBN7yBMzPnRnJ17
+Pwoneh3G5r+2UrnUNq1R4QpP0wxnnyBBiXM1RQ+SRNdA4fAYHIIGPZJu4+gcuvaG
+6swNCie3iGyKKYqqWixdCHgC8OzmyBwfWGl1pm7LCVGHlVYaQnVyiPu7GrTBE8t4
++5x/tY76eE5bXntAFWmQdfBRh2H1Kg==
+=grMO
+-----END PGP SIGNATURE-----
 
-| * Use dcbz on the complete cache lines in the destination
-| * to set them to zero. This requires that the destination
-| * area is cacheable. -- paulus
-| *
-| * During early init, cache might not be active yet, so dcbz cannot be used.
-| * We therefore skip the optimised bloc that uses dcbz. This jump is
-| * replaced by a nop once cache is active. This is done in machine_init()
-
-could this WARN_ON_ONCE maybe be downgraded to a single pr_info_once?
-I don't see how to tackle this "neatly" in a better way.
-
-BugLink: <https://github.com/openwrt/openwrt/pull/14037#issuecomment-2302485414>
-
-Best Regards,
-Christian
-
->
-> Reported-by: Stan Johnson <userm57@yahoo.com>
-> Cc: Finn Thain <fthain@linux-m68k.org>
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
-> v2: Warn only when emulating kernel mode
-> ---
->   arch/powerpc/kernel/align.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/arch/powerpc/kernel/align.c b/arch/powerpc/kernel/align.c
-> index bbb4181621dd..bf96b954a4eb 100644
-> --- a/arch/powerpc/kernel/align.c
-> +++ b/arch/powerpc/kernel/align.c
-> @@ -349,6 +349,7 @@ int fix_alignment(struct pt_regs *regs)
->   		if (op.type != CACHEOP + DCBZ)
->   			return -EINVAL;
->   		PPC_WARN_ALIGNMENT(dcbz, regs);
-> +		WARN_ON_ONCE(!user_mode(regs));
->   		r = emulate_dcbz(op.ea, regs);
->   	} else {
->   		if (type == LARX || type == STCX)
-
+--Sig_/6/EGhvV+h//U8qMAJu13OAv--
 
