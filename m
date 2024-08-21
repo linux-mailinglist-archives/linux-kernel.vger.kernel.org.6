@@ -1,73 +1,77 @@
-Return-Path: <linux-kernel+bounces-295010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD6E959557
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:08:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF947959555
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682D82832DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4D61C213CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6B5199FCD;
-	Wed, 21 Aug 2024 07:07:53 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E285199FB9;
+	Wed, 21 Aug 2024 07:07:52 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6532134AC;
-	Wed, 21 Aug 2024 07:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7D7199FA5;
+	Wed, 21 Aug 2024 07:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724224072; cv=none; b=OCsZng11jm7Sy/VRINw9LYUANwg4JsMRn1WLGQajkJv+bq6Vv2yW6T3LnY2QxcVINpNLWLm9vxGFy7uhl+Z06YALnwCG6e/gFOqMfuvnVLGU0iodQoohjyY8OudBOhdMn1+DdWKZdFkIcuMD/7NymBzEUff2CQ4huf6kro1K7aI=
+	t=1724224072; cv=none; b=VFO4M19V2pfuPp2QziiMf2aeZFYHJKoutCjYbHBK0NmOauyba4WWnimzyNDyOB2lcvvIZWb84vtbNtC+hq/rN95JzZUL2c1Kj4+eiSeLrbblQQdqS6e2wcOCDJsS0PjPGWwIUWr6Fiz/VbTrzwC7m60NbnF9Ig6OoW4plGi0PdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724224072; c=relaxed/simple;
-	bh=fd6unP1QhS4+ucE1qQebvB100H88E5pJUIgjbGoO8Ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ApDNwZ6w3uV3cpZ2qD2W0hJ7Nu/RC+FOKjEi4vVWv6Gc9qFm1xn1BhPPr7w0aPmkETKgIwf6cXhfQ9cgxvfHMhwNiZZ7kU0/5YlbCAigOrnwKAs0UCZCXAn41i/XyHGGGF6qE2n5rrAYgYi5kRaPfeRzPr5VqI1n6y64xkzKYG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af269.dynamic.kabel-deutschland.de [95.90.242.105])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id CAE8D61E5FE05;
-	Wed, 21 Aug 2024 09:07:37 +0200 (CEST)
-Message-ID: <2041f798-a44c-4f38-98ad-025fa1186972@molgen.mpg.de>
-Date: Wed, 21 Aug 2024 09:07:37 +0200
+	bh=RvROPVM7Xl2qGFjbnE9crojK+g7Ierc/gzvk1ju4+24=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eRRvxjwT/ecU9PWKoVrXyQPdAFLNLKcv8LsxhUlDWOGqq6Xs7dfR/AbH/3/SfkR5YlePMkZ6bVnxFU/dvLhA9yPrtS3JcDgIGxi3Pqp99qsk04SXUsZG4063H+pidQBNkuafACS0xVBxM/hNqSTKpcTwCoDhcSbDmNlTbp+p1wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 21 Aug
+ 2024 15:07:39 +0800
+Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Wed, 21 Aug 2024 15:07:39 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<BMC-SW@aspeedtech.com>
+Subject: [PATCH v1 0/2] Add Aspeed G7 gpio support 
+Date: Wed, 21 Aug 2024 15:07:38 +0800
+Message-ID: <20240821070740.2378602-1-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: hci_qca: Drop unused event during BT on
-To: Cheng Jiang <quic_chejiang@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
- <15472cea-904c-4d79-9195-3063ce7f1e2e@quicinc.com>
- <2be3922d-8899-4e58-aa23-57a0b5cfc111@molgen.mpg.de>
- <c3ed299e-709e-4fae-9ef6-c5ad2f6a1c55@quicinc.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <c3ed299e-709e-4fae-9ef6-c5ad2f6a1c55@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Dear Cheng,
+The Aspeed 7th generation SoC features two GPIO controllers: one with 12
+GPIO pins and another with 216 GPIO pins. The main difference from the
+previous generation is that the control logic has been updated to support
+per-pin control, allowing each pin to have its own 32-bit register for
+configuring value, direction, interrupt type, and more.
 
+Billy Tsai (2):
+  dt-bindings: gpio: aspeed,ast2400-gpio: Support ast2700
+  gpio: Add G7 Aspeed gpio controller driver
 
-Thank you for the detailed response and explanation. It’d be great if 
-you integrated some of the answers into the commit message and resent. 
-Thank you again.
+ .../bindings/gpio/aspeed,ast2400-gpio.yaml    |  46 +-
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-aspeed-g7.c                 | 831 ++++++++++++++++++
+ 4 files changed, 884 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-aspeed-g7.c
 
+-- 
+2.25.1
 
-Kind regards,
-
-Paul
 
