@@ -1,114 +1,184 @@
-Return-Path: <linux-kernel+bounces-295585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E663959EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:28:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD566959EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0980828385B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:28:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C49FC1C21DE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAF019ABA1;
-	Wed, 21 Aug 2024 13:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7F1199FC0;
+	Wed, 21 Aug 2024 13:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8y/D6aj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EvV7XxW1"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4FC19994C;
-	Wed, 21 Aug 2024 13:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6305192D90
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724246884; cv=none; b=kr04tKg/lcnmdCmy8hzVpDWA+x4ZrgTyg3+WItg0mUl1mydGDQB38TS8rwPnT4ajL9mG5Ib06AQa3wUo4ceKSS6UfjkMlPmdfseFWvScHrfp1DD1V2lD1JmRI+sGks+K+gIAFENGkiBaPqZ8WV5mR8Va3SFu+Rj045olP+rLGOY=
+	t=1724246905; cv=none; b=fW4094hPbhofSr0Bvd6cv/xj27GqSYHxxYF9/gCEqG181BBmi9IkyhDfhcP4+zf7n6pn4iGhjNXT7jZo45JL/oGFzVoLFEM3grflrPDWZqHk3znEOj1IFIY7ou5nzNfI2IheTOGomkfiCIyfwW+PIshxop3v+yiTbSPsSYnq644=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724246884; c=relaxed/simple;
-	bh=EfwypYdM33lZ/G4fq92xQyPXwP/Q8lFk9UP+Y3zqev8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETz4WqG+fhH3JTRrxLtLlammYzJ25doooN5qMPRErnyF0reEIRsX54sBAYRDCn7o56lSf1eWfGbNOcKi4HKMylzvoU6V1Kqjq1R4CAHx5zv9oykr6fTF7L3maCy7TomWsQgmurFg3B0jj965hb19wxDf+nRdVS7kaVX79rRADpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8y/D6aj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 913DFC4AF0C;
-	Wed, 21 Aug 2024 13:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724246882;
-	bh=EfwypYdM33lZ/G4fq92xQyPXwP/Q8lFk9UP+Y3zqev8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N8y/D6ajVEV0BAph5QjS9IHl8V1bvulMD2qXUH9Q329DJmK+yb2x2l0ySSjgh0jM7
-	 7/Q0QvG+wLcf6PqhaFlxQqY1ELM375gZZzB/4FykmIP405NOoDF+1h+mrRwcMBuG/0
-	 2s3YycJls0/7SB/Fbw6aGK1kbi2sSueaGCscT8OYR7I5faFBfDcygYB6qH9qeaqY08
-	 qnDenq4c3K3Mi00VqH1ClQy5fvXOIkQVAceypb2DEXf5bD2nNYSTfTPGRfGGs1QkWS
-	 denv1ouRjB1LTDk4dt3OYgly9vkwtPm1XYK8fqNcvosizMDRoo+uTa70uTUAfXRg98
-	 qI9Wpn51OmS2Q==
-Date: Wed, 21 Aug 2024 14:27:54 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-Message-ID: <20240821132754.GC6387@kernel.org>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1724246905; c=relaxed/simple;
+	bh=fSpoUOJjTQB5ZDB5cQn1y/+Ul7d+TOCVAD+4W2KUbsM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nx9PpKUETI6xg8i/kJUmtjF+vb5qxKyekTFPhziyTPuPjx0tZlVbseVonOrGVkKrZ3F1OJs1Lim6HZNrL/GCPfX/qIHu7K9DOKbT/Qh5hM8a1cRbH0HAWwGgatifj847gJOSibNX6OlUh/syUaQXCgGtPi9XxNIh1tbzr9HjvLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EvV7XxW1; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724246899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eQUk5BmPvnlUH/liWbXAjE9cWgM4lXW3TSxeiUPl4o4=;
+	b=EvV7XxW1f0Io08jJ8gLxvsK1rS4TrcsfLI9xCSrrIBXdroM4ubLRLRvxUtJFv5oh0hjchv
+	/93Vbyr8dY4QwgExqze6qhdPRxwi4F4EQAtcICGATur/+W+Y17cJskPm764QK3pI7+y9O7
+	/JmyO9wmJw8rZtnKgueB4G1eF8AL5Gw=
+From: Jeff Xie <jeff.xie@linux.dev>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: mathieu.desnoyers@efficios.com,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiehuan09@gmail.com,
+	Jeff Xie <jeff.xie@linux.dev>
+Subject: [PATCH] ftrace: Get the true parent ip for function tracer
+Date: Wed, 21 Aug 2024 21:27:55 +0800
+Message-Id: <20240821132755.2766674-1-jeff.xie@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 20, 2024 at 04:36:09PM +0200, Andrea della Porta wrote:
-> The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
-> Add minimum support for the gpio only portion. The driver is in
-> pinctrl folder since upcoming patches will add the pinmux/pinctrl
-> support where the gpio part can be seen as an addition.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Currently, when using both function tracer and function graph simultaneously,
+it is found that function tracer sometimes captures a fake parent ip(return_to_handler)
+instead of the true parent ip.
 
-...
+This issue is easy to reproduce. Below are my reproduction steps:
 
-> diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
+jeff-labs:~/bin # ./trace-net.sh
 
-...
+jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
+    trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
+    [...]
 
-> +const struct rp1_iobank_desc rp1_iobanks[RP1_NUM_BANKS] = {
-> +	/*         gpio   inte    ints     rio    pads */
-> +	{  0, 28, 0x0000, 0x011c, 0x0124, 0x0000, 0x0004 },
-> +	{ 28,  6, 0x4000, 0x411c, 0x4124, 0x4000, 0x4004 },
-> +	{ 34, 20, 0x8000, 0x811c, 0x8124, 0x8000, 0x8004 },
-> +};
+The following is my simple trace script:
 
-rp1_iobanks seems to only be used in this file.
-If so, it should be static.
+<snip>
+jeff-labs:~/bin # cat ./trace-net.sh
+TRACE_PATH="/sys/kernel/debug/tracing"
 
-Flagged by Sparse.
+set_events() {
+        echo 1 > $1/events/net/enable
+        echo 1 > $1/events/tcp/enable
+        echo 1 > $1/events/sock/enable
+        echo 1 > $1/events/napi/enable
+        echo 1 > $1/events/fib/enable
+        echo 1 > $1/events/neigh/enable
+}
 
-...
+set_events ${TRACE_PATH}
+echo 1 > ${TRACE_PATH}/options/sym-offset
+echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
+
+
+echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+echo function_graph > ${TRACE_PATH}/current_tracer
+
+INSTANCE_FOO=${TRACE_PATH}/instances/foo
+if [ ! -e $INSTANCE_FOO ]; then
+        mkdir ${INSTANCE_FOO}
+fi
+set_events ${INSTANCE_FOO}
+echo 1 > ${INSTANCE_FOO}/options/sym-offset
+echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+echo function > ${INSTANCE_FOO}/current_tracer
+
+echo 1 > ${TRACE_PATH}/tracing_on
+echo 1 > ${INSTANCE_FOO}/tracing_on
+
+echo > ${TRACE_PATH}/trace
+echo > ${INSTANCE_FOO}/trace
+</snip>
+
+Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+---
+ kernel/trace/trace_functions.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 3b0cea37e029..273b8c7eeb2d 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -176,6 +176,19 @@ static void function_trace_start(struct trace_array *tr)
+ 	tracing_reset_online_cpus(&tr->array_buffer);
+ }
+ 
++static unsigned long
++function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
++{
++	unsigned long true_parent_ip;
++	int idx = 0;
++
++	true_parent_ip = parent_ip;
++	if (unlikely(parent_ip == (unsigned long)&return_to_handler))
++		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
++				(unsigned long *)fregs->regs.sp);
++	return true_parent_ip;
++}
++
+ static void
+ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
+@@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
++
+ 	trace_ctx = tracing_gen_ctx();
+ 
+ 	cpu = smp_processor_id();
+@@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+@@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	if (atomic_read(&data->disabled))
+@@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+-- 
+2.34.1
+
 
