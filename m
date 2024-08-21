@@ -1,123 +1,189 @@
-Return-Path: <linux-kernel+bounces-295340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66ABA9599D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:29:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A629599D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13FB328193D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A001F224C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3394199FCA;
-	Wed, 21 Aug 2024 10:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6091C4EF8;
+	Wed, 21 Aug 2024 10:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIk3tXMR"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n8XwSPua"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3A32140EE;
-	Wed, 21 Aug 2024 10:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E225315B0E2;
+	Wed, 21 Aug 2024 10:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724236054; cv=none; b=f+TXgAPwx5VwubVKbZDuuz1eZlHt2lK+2KHHJFcNdA/BUsS07A8qeJQWAuvD3/VmYOhUFVWJRgaQGGl3ew/w4Yv0Et8Kgi45NUE/XnHKctn+eiBXsCzeMxdZa+mpo9zCaRF3siiAgz38DF+rKSr/iRsEYGfpCPvhm1y70BFWl0o=
+	t=1724236133; cv=none; b=epgSWZuZN0fRJNUD4NdvMYVDa2e85Gw0fXUHTX3+FKT+Z3goWyNsLPKd/OKX4oQVhUsSghiG+xeSzQB/DiHubvl6Lx+IFZcM92TA88DtZZej4ND+F2H+/c+fF/mGK+J9R6NIBHp7pBwtvL1k7zWQ/u18/yJt4u2ushheFLydZ/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724236054; c=relaxed/simple;
-	bh=odhZtY02YeKG9xvTFI65wMHKCgpIIqqGB/nyrn3p83c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtFgKm8v4Kxc7mlM/u50nT+LIgiZJX1GTyaCjmI4SBXJ2R3JP+SEECCqLkT8Ml0wNnFCBR+Kxb8NhbrJAPVz+cuiW8M9DdjQXBtrbve1eVZU8NjTtSrqU9AjDfFhXD7trYw/G0oY3aApXbPjDOQQ0ZKu61MnmjXQF4wnACZ3suU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIk3tXMR; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bec4c3ace4so101678a12.3;
-        Wed, 21 Aug 2024 03:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724236051; x=1724840851; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fb/RuJkeM3aFjdMF0c0Xwmg+kLLocjFSamrIW7BWhs=;
-        b=hIk3tXMR/sIUEqCXd7cmjDAIvU1EP2mkHvw+Nwp3rS9cgEYR5b3L62FQk4Nj/kf8K3
-         HSviDm6RY8BHhczdHCNfloXLBI3zI421sWJ3X1ERwSpeP/kn29gWQj303g81Dv/LgF09
-         svHAASSWAnzGyy47ZnT16OwwYy8W/yBhmgRE1lD/ZkoaOKPK3vvEBAReVMTvOxymKt5X
-         M5WzGtbhgPh1t6WkVQGZz9EIeAhbMANlEWpXY6Zjept7BVsp2/UvhVbT9uyYOsdnFvh7
-         6K4Lb9zCLekC1VIPT35XNJkDACX2c0ePmxKzR+ql5OWflPNWGpHKVCVI7dJFj0cOGtLv
-         R/Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724236051; x=1724840851;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/fb/RuJkeM3aFjdMF0c0Xwmg+kLLocjFSamrIW7BWhs=;
-        b=spbYZ3CN9eSSUkXqGn0PqH0snIgb7Z2lF5uhecnzGiX3uPwcVO/dULmz9no9lmXw6j
-         EviWomqMRrDszBVad1JOrZQAApu3oAj23pu3Fx3zfSL20giv+AEuVDczKiBe0wMwWAiR
-         tPmNY7vYFbrUyEhgrhzr9L0UaxuVeq4kOlKzOqJrMgisk3/Vz82J/sNbmrdN1TFPR5rp
-         kcLgoRAGz7iTNnGB60QgkqjCQp1uYcaiovgu4iyaMraBrAPNBef6JKq5hNob+o6S8Vuo
-         r6driccR7cz//I4z0DUDVYJuBBnTaG94P9M3jB1MIRCIzEVQouaf3RM4syGwxJrS/1UD
-         F3ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVd6pNMKIyJiO4Wuigv7J2Ecnpe8ZD5pRuXZwELhgWIsr3Rfktu2eYJDxUqm4vzIWF/UufPfG8Z@vger.kernel.org, AJvYcCXNDeVHcwgYfNJPRj8wbgTd1QzZzwl/SIWDvEDz7zNLoWEtiPupj4NfG4VcKW8lACFH3nHmTX9SP7zIU5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDxDx+uJ8+YktYRjS7Fi8KlMhLfWSFe/YU5rhLLLmd4O999Khs
-	Mn2SHTvdKgZVCZewC8g9JaD1QUVbvs/vmbNlPVewfaMtiIXwEThkvoxbuP0Z
-X-Google-Smtp-Source: AGHT+IF6e53jlF1aQdWI+jcMWFq1gf/ZzPGVpqcc9Wop3GOkHdEj2yHM0jbnNyjDTQ4O5WbTWDngZg==
-X-Received: by 2002:a05:6402:13c8:b0:5a0:d706:c1fe with SMTP id 4fb4d7f45d1cf-5bf1f2abe3amr645381a12.6.1724236050235;
-        Wed, 21 Aug 2024 03:27:30 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5becf1f3442sm6465107a12.31.2024.08.21.03.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 03:27:29 -0700 (PDT)
-Date: Wed, 21 Aug 2024 13:27:27 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com
-Subject: Re: [PATCH net-next v4 3/7] net: stmmac: refactor FPE verification
- process
-Message-ID: <20240821102727.qitmm2zxnpva4cqd@skbuf>
-References: <cover.1724145786.git.0x1207@gmail.com>
- <bc4940c244c7e261bb00c2f93e216e9d7a925ba6.1724145786.git.0x1207@gmail.com>
- <20240820123456.qbt4emjdjg5pouym@skbuf>
- <20240821125833.000010f7@gmail.com>
+	s=arc-20240116; t=1724236133; c=relaxed/simple;
+	bh=psQJ368lmoItRD+OtUCpNjg6+VZdCyakyvcPbwCNjLE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=UkmVvRTCeLPKTJKich9O9JRHjRKVeFh9Wp2q83t7R8iYESrn+fHLaixL0BiQ9/s96A1N5sox5q9SZXyRMvnwoy58Ywc8uhyAICmX9yDojH3bYP1Mz1X0i4yNo1ifhgZmrlUOmhN+byvEI+/7phcCqCkVC7AgnTWfv9LqSfyOdk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n8XwSPua; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L5l8xr014037;
+	Wed, 21 Aug 2024 10:28:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:subject; s=pp1; bh=0kn/L
+	8tmX35lwBBzOfEhIW6RlLv7NUHX8o7GQujLtL0=; b=n8XwSPuaneejFZwTprkGw
+	GYG2P0AYDZj6805xpIiDXLe1dy1XSdzAvBNrGqKrrt1+LKKJ49CDdHNkDzMWVcqv
+	tWgocJUaWtApVZam9v3EzyPBIbWbmAP+ETr/pxiSnanjkVVvGIdkVWDkPo+gAbCS
+	s8UFshkBI2mG/MlY3ZJDhs4vvbHmCE+eZO4Mv4ueyDZf9/pJeuUfG+BMzYObTcDU
+	o/wXwEpnrYJTuRRmjovPX0nsVI3dAFDokAGIz5dvgwSuyYkKqaUYvRQMcnrnaOzx
+	lXpgGIs/o4vd5Ev49VVq/E4xKpHpsLiDQyG1hFd99n8kpysOZ/dFF8BbGq7p2UjS
+	Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcyhk1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 10:28:28 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47LASSdJ027593;
+	Wed, 21 Aug 2024 10:28:28 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcyhk1q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 10:28:28 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47L81mD4013098;
+	Wed, 21 Aug 2024 10:28:27 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41366u7g9x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 10:28:27 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47LASOYp30147110
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 Aug 2024 10:28:27 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DF95A58060;
+	Wed, 21 Aug 2024 10:28:24 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84DD258068;
+	Wed, 21 Aug 2024 10:28:17 +0000 (GMT)
+Received: from [9.43.53.186] (unknown [9.43.53.186])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 21 Aug 2024 10:28:17 +0000 (GMT)
+Message-ID: <ab337b83-ac74-43ce-83f0-25885c136574@linux.ibm.com>
+Date: Wed, 21 Aug 2024 15:58:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821125833.000010f7@gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: yangjihong <yangjihong@bytedance.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        james.clark@arm.com, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240819024720.2405244-1-yangjihong@bytedance.com>
+ <05cd1773-d0c9-4c89-a6f3-f4daa4371b21@linux.ibm.com>
+ <CAPePreJCahzH0LwfXN_X+UdxU54_UMRPZgDgGqt7+PC+ky997Q@mail.gmail.com>
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <CAPePreJCahzH0LwfXN_X+UdxU54_UMRPZgDgGqt7+PC+ky997Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: EtkNfrq9WshBDv2Zc73isDz38OlcQm0U
+X-Proofpoint-GUID: H1EumoHcvITDUWAFquR9hdigT6l95Wi7
+Subject: RE: [PATCH v2] perf sched timehist: Fixed timestamp error when unable to
+ confirm event sched_in time
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_07,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 clxscore=1015
+ suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408210073
 
-On Wed, Aug 21, 2024 at 12:58:33PM +0800, Furong Xu wrote:
-> 
-> Hi Vladimir
-> 
-> On Tue, 20 Aug 2024 15:34:56 +0300, Vladimir Oltean <olteanv@gmail.com> wrote:
-> > I took the liberty of rewriting the fpe_task to a timer, and delete the
-> > workqueue. Here is a completely untested patch, which at least is less
-> > complex, has less code and is easier to understand. What do you think?
-> > 
-> 
-> Your patch is much better than my ugly implementation ;)
+Hi Yang Jihong,
 
-Well, to be fair, it took us a number of iterations to properly see how
-much it could be simplified.
-
-> Some small fixes are required to make kselftest-ethtool_mm pass.
+On 21/08/24 11:46, yangjihong wrote:
+> Hello,
 > 
-> Would you mind if I rebase you patch, fix some small issues, make sure all
-> test cases pass, split it into two patches and include them in my patchset,
-> then send to review as a Co-developer and a tester?
+> On 2024/8/21 2:00, Madadi Vineeth Reddy wrote:
+>> Hi Yang Jihong,
+>>
+>> On 19/08/24 08:17, Yang Jihong wrote:
+>>> If sched_in event for current task is not recorded, sched_in timestamp
+>>> will be set to end_time of time window interest, causing an error in
+>>> timestamp show. In this case, we choose to ignore this event.
+>>>
+>>
+>> Why sched-in is not happening for the perf task continuously
+>>
+>> perf sched record -a sleep 5
+>>
+>> perf sched script
+>> perf 19593 [000] 42668.450179: sched:sched_stat_runtime: comm=perf
+> pid=19593 runtime=69449 [ns] vruntime=7303687 [ns]
+>> perf 19593 [000] 42668.450190: sched:sched_stat_runtime: comm=perf
+> pid=19593 runtime=6039 [ns] vruntime=7309726 [ns]
+>> perf 19593 [000] 42668.450191: sched:sched_waking: comm=migration/0
+> pid=19 prio=0 target_cpu=000
+>> perf 19593 [000] 42668.450192: sched:sched_stat_runtime: comm=perf
+> pid=19593 runtime=2397 [ns] vruntime=7312123 [ns]
+>> perf 19593 [000] 42668.450193: sched:sched_switch: perf:19593 [120] R ==>
+> migration/0:19 [0]
+>> migration/0 19 [000] 42668.450195: sched:sched_migrate_task: comm=perf
+> pid=19593 prio=120 orig_cpu=0 dest_cpu=1
+>> migration/0 19 [000] 42668.450200: sched:sched_switch: migration/0:19 [0]
+> S ==> swapper/0:0 [120]
+>> perf 19593 [001] 42668.450308: sched:sched_stat_runtime: comm=perf
+> pid=19593 runtime=112515 [ns] vruntime=9972397 [ns]
+>> perf 19593 [001] 42668.450311: sched:sched_waking: comm=migration/1
+> pid=24 prio=0 target_cpu=001
+>> perf 19593 [001] 42668.450313: sched:sched_stat_runtime: comm=perf
+> pid=19593 runtime=4690 [ns] vruntime=9977087 [ns]
+>> perf 19593 [001] 42668.450314: sched:sched_switch: perf:19593 [120] R ==>
+> migration/1:24 [0]
+>> migration/1 24 [001] 42668.450316: sched:sched_migrate_task: comm=perf
+> pid=19593 prio=120 orig_cpu=1 dest_cpu=2
+>> migration/1 24 [001] 42668.450322: sched:sched_switch: migration/1:24 [0]
+> S ==> swapper/1:0 [120]
+>> perf 19593 [002] 42668.450385: sched:sched_stat_runtime: comm=perf
+> pid=19593 runtime=67379 [ns] vruntime=2885994 [ns]
+>> perf 19593 [002] 42668.450389: sched:sched_waking: comm=migration/2
+> pid=30 prio=0 target_cpu=002
+>> perf 19593 [002] 42668.450391: sched:sched_stat_runtime: comm=perf
+> pid=19593 runtime=5526 [ns] vruntime=2891520 [ns]
+>> perf 19593 [002] 42668.450392: sched:sched_switch: perf:19593 [120] R ==>
+> migration/2:30 [0]
+>>
+>> The perf task (PID 19593) is being switched out without being switched in
+> after CPU migration. The task migrates to a different CPU,
+>> and then immediately switches out without a sched_in event in between.
+>>
+> Because the perf tool sets CPU affinity first (which causes perf process
+> to migrate to the target core) and then enables events, by the time
+> starts recording, task is likely to have migrated to the target core and
+> started running. In this case, the sched_in event is not recorded.
+> 
 
-Please feel free to split up that patch and squash it into your patches,
-keeping your Author: field and just a Co-developed-by: + Signed-off-by:
-for me, where parts of that patch helped you.
+Got it. Thanks for the explanation!
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+> Thanks,
+> Yang
+> 
+
 
