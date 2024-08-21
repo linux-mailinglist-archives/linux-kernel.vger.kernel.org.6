@@ -1,106 +1,165 @@
-Return-Path: <linux-kernel+bounces-295422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC6F959AB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:51:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 581AF959AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E4C1C20B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:51:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704F51C2258A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DA1192587;
-	Wed, 21 Aug 2024 11:33:27 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A646192D6A;
+	Wed, 21 Aug 2024 11:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="S2TUaoPY"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3F5155307
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700251531DB;
+	Wed, 21 Aug 2024 11:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724240006; cv=none; b=f6f7UnUG353BB/dj8yXWN+qK9cjFTa225ptEyWcb4UVJUNFVr8oFPOk6KdY8mSIJk6M//+baEJ+3SngWEqkBN4LOHIRP68fAWvUW5V+kWk4FaEAQ+ni651rt7P3c9/gwNZ+EY3DoBn8BT35ChWHLhvY4bDgbfrCZsWD3bNoU3p4=
+	t=1724240054; cv=none; b=kS+9WJbO48Uvh+oDUDKNo1X/RFcyCPR3JgUFfRN14x6rqScDhNy00fWUjW4aRTr6oe9CRJX6CHW2Jjy503/6rZktxI8ACzaMjVgQfS3maQzWoDG2LOcaT3S9Q0E3gJpTEUeGAEFriAOyNWpkS6pI808Tx1h7ZUYuT7/dvpyyMtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724240006; c=relaxed/simple;
-	bh=HhmDhHLFWbrm9gNwj7yxa11vICPIvCxKsV9cs46JC9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuDvHvCMJDEd58q9xxT8boanVf2skNIEpsre5V6nZ/GBZEgZeuhOPvHyYDxFJhO6vavGeZCPm5NN5HHVBtUD9JMDVZYh4IcXsWy7MS/8qsZ8NOXqjVAKylVDFzuSNd3/mQt9ofHof47XWFqLSyDb8lV0UlRz7io58qCAvwtPetQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sgjaY-0006LO-EH; Wed, 21 Aug 2024 13:33:18 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sgjaY-001zwn-0m; Wed, 21 Aug 2024 13:33:18 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sgjaX-00FVWO-2y;
-	Wed, 21 Aug 2024 13:33:17 +0200
-Date: Wed, 21 Aug 2024 13:33:17 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 00/31] wifi: mwifiex: cleanup driver
-Message-ID: <ZsXQfQQkdVk3HKjG@pengutronix.de>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <1B5E3131-0595-47A8-BB8E-14B7B6C3FA7F@dolcini.it>
+	s=arc-20240116; t=1724240054; c=relaxed/simple;
+	bh=Pp1LZ3tImd9xlZ6eeyUteihn1b2SVzIzXjOOlIH8eNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Tm/AIjzLV9EcIcQIIMgGHk9ZFBHS8M6uMoCdOu5gqX9EohFIE5PbZwyG0jJVBBpOcTNpI3m9ddHiMfRYgqV46Pf8zpR6KIbBusvYa+OSmnRwm3bSfkcjGQZNyuLpOyI/nVjAmJ1W9PQWNSUhct78ICmYGen+7e5GUuG6Rr64gIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=S2TUaoPY; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LBXq6g105163;
+	Wed, 21 Aug 2024 06:33:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724240033;
+	bh=s5YJ2+cOlNuKYaNlDixXfNUEYuWd3904OImKzjMXfTU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=S2TUaoPYcHX3zmHMcu3B6vscrbiaynqvJuw6t9YsZKjoyTgImNx4N+lLrdOOnUHC4
+	 qSn0NhW8FNPadt43tf/NEHR+1V/nWVuoQy/A81nn5rqnzU5Xn9O14qYQzsFKi+pFyQ
+	 86jMWrjuTyUNkgKB44F/jZQ9QCMfWNGfJFijnRBs=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LBXqE2094050
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 21 Aug 2024 06:33:52 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ Aug 2024 06:33:52 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 21 Aug 2024 06:33:52 -0500
+Received: from [10.249.135.225] ([10.249.135.225])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LBXlRf025573;
+	Wed, 21 Aug 2024 06:33:47 -0500
+Message-ID: <9766c4f6-b687-49d6-8476-8414928a3a0e@ti.com>
+Date: Wed, 21 Aug 2024 17:03:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1B5E3131-0595-47A8-BB8E-14B7B6C3FA7F@dolcini.it>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/7] net: ti: icssg-prueth: Enable IEP1
+To: Roger Quadros <rogerq@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>, Andrew Lunn <andrew@lunn.ch>,
+        Jan
+ Kiszka <jan.kiszka@siemens.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
+	<horms@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+References: <20240813074233.2473876-1-danishanwar@ti.com>
+ <20240813074233.2473876-2-danishanwar@ti.com>
+ <aee5b633-31ce-4db0-9014-90f877a33cf4@kernel.org>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <aee5b633-31ce-4db0-9014-90f877a33cf4@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Aug 20, 2024 at 03:34:12PM +0200, Francesco Dolcini wrote:
-> Hello Sasha,
-> thanks for the patches.
+Hi Roger,
+
+On 8/21/2024 4:57 PM, Roger Quadros wrote:
+> Hi,
 > 
-> Il 20 agosto 2024 13:55:25 CEST, Sascha Hauer <s.hauer@pengutronix.de> ha scritto:
-> >This series has a bunch of cleanup and bugfix patches for the mwifiex
-> >driver
+> On 13/08/2024 10:42, MD Danish Anwar wrote:
+>> IEP1 is needed by firmware to enable FDB learning and FDB ageing.
 > 
+> Required by which firmware?
 > 
-> > 24 files changed, 365 insertions(+), 729 deletions(-)
+
+IEP1 is needed by all ICSSG firmwares (Dual EMAC / Switch / HSR)
+
+> Does dual-emac firmware need this?
 > 
-> I had a quick look at the series, and it looks fine to me, I'll try to
-> have a proper look in the next couple of weeks. What I wonder is
-> what's the risk of introducing some subtle bugs because of firmware
-> differences, what device/firmware combination were you able to test?
 
-I tested this on a SD8978 aka iw416 SDIO card.
+Yes, Dual EMAC firmware needs IEP1 to enabled.
 
-I just tested this on a IW61x SDIO card (mainline support for this one
-still in my queue) and it didn't work, I'll investigate.
-
-Other than that I also have a PCIe card I'll test this on next time.
-
-I don't know there firmware versions currently, but I used the latest
-ones available in linux-firmware.
-
-Sascha
+>> Always enable IEP1
+>>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 14 ++++----------
+>>  1 file changed, 4 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> index 53a3e44b99a2..613bd8de6eb8 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> @@ -1256,12 +1256,8 @@ static int prueth_probe(struct platform_device *pdev)
+>>  		goto put_iep0;
+>>  	}
+>>  
+>> -	if (prueth->pdata.quirk_10m_link_issue) {
+>> -		/* Enable IEP1 for FW in 64bit mode as W/A for 10M FD link detect issue under TX
+>> -		 * traffic.
+>> -		 */
+>> -		icss_iep_init_fw(prueth->iep1);
+>> -	}
+>> +	/* Enable IEP1 for FW as it's needed by FW for FDB Learning and FDB ageing */
+>> +	icss_iep_init_fw(prueth->iep1);
+>>  
+>>  	/* setup netdev interfaces */
+>>  	if (eth0_node) {
+>> @@ -1366,8 +1362,7 @@ static int prueth_probe(struct platform_device *pdev)
+>>  	}
+>>  
+>>  exit_iep:
+>> -	if (prueth->pdata.quirk_10m_link_issue)
+>> -		icss_iep_exit_fw(prueth->iep1);
+>> +	icss_iep_exit_fw(prueth->iep1);
+>>  	icss_iep_put(prueth->iep1);
+>>  
+>>  put_iep0:
+>> @@ -1424,8 +1419,7 @@ static void prueth_remove(struct platform_device *pdev)
+>>  		prueth_netdev_exit(prueth, eth_node);
+>>  	}
+>>  
+>> -	if (prueth->pdata.quirk_10m_link_issue)
+>> -		icss_iep_exit_fw(prueth->iep1);
+>> +	icss_iep_exit_fw(prueth->iep1);
+>>  
+>>  	icss_iep_put(prueth->iep1);
+>>  	icss_iep_put(prueth->iep0);
+> 
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks and Regards,
+Md Danish Anwar
 
