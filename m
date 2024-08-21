@@ -1,451 +1,383 @@
-Return-Path: <linux-kernel+bounces-296199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A420E95A72D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:54:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498A395A731
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E9AD28322E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:54:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F61E1C22713
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2E017AE0B;
-	Wed, 21 Aug 2024 21:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6BD17B4FF;
+	Wed, 21 Aug 2024 21:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FEP//O5G"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QadsvmsW"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00625179957
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5753C179957;
+	Wed, 21 Aug 2024 21:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724277285; cv=none; b=CFypl5va4nmI9Z6EHT5KTmK+oa9NCNGgeqbEZ/rp+Q9kNdiQY+YHkI3MATD7/hP/hqOMBrI9W2pHPDuf+7pfU6lG6GGXHQVuPsHrrFOiQTyURt9GSOnmtskxYbCBz0vTjQzLKBTewR91k4mecx7I8gPjYklYpayLPU6VBTFcdeA=
+	t=1724277389; cv=none; b=mzGsZVf2pTs91QsWEHfdlVXG7Hmq/iDoL8zgJphMjeDqePr4ldaZp79opocKbxlqTcH9bWIeYs60m7LJISfdMlCFRm3oih1bY+js1AJRhyXJByNBoxNHRRHv2J6e0C5nPLz+MI4woVsawKu+WKEQ4AuH/Misk5I6JtsoKjEXlEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724277285; c=relaxed/simple;
-	bh=lpYobYV+EPvplIsVlp9K0sXPmPwbCczja66tND3rD8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pU5q3E2qAyKbGsUle4gkpUkIhhXOTxsKdep+X0Z+u4L9t9+NiiWSjoXV7d8hazEHWHCTG8Gq7UWHcTrco8mBl2NkDziEYboGrUREH89+X/PeeClNUH2Y5H/T0l2//0KKfUNK2sQ2obywpiPTiO1K2knqO70GZLI1E9XGtr0AlKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FEP//O5G; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39d21fdc11bso531405ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:54:43 -0700 (PDT)
+	s=arc-20240116; t=1724277389; c=relaxed/simple;
+	bh=LpwV+wCXV9VUNCXIJWwpdFq8kMMQkK1UndLAiyq50dQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pd8WUESDdrm+wSk8eP3Zsh4j/siuDHQXliSkShbrVkTNTBzTlkQ5PcJ0dfjkYnwhjfxJhUdtu3CQ/iLWOPw1WZHntq8HudYCSnCb2TCYr2sgPhcQA91DmQ3qiwbcXzZSyAc0zc7Ti6X7wZeBepgWZObQs563CyQ/KAOHTeLiMXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QadsvmsW; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a83597ce5beso21981066b.1;
+        Wed, 21 Aug 2024 14:56:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724277283; x=1724882083; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZAXSIdsJdlH1zAZMMu2gmF5Q96+XpHdPAtLFei8FT9Y=;
-        b=FEP//O5GVn86Lr+SEnwK2MSr4z6b1GQJEwEFk7BJbvYcT/lUoeEUKOGZ6EyRb/ILe4
-         rQJ7+T0RnVzVFG/RtSoZ2Z17Z63eFqEQDJAtMrkvBmMM3g8cd7+kOAneMyFm8UzeE0MO
-         ta/vWWJw3TOY02z8Ned4CGYrNXB9kv+P5vsWk=
+        d=gmail.com; s=20230601; t=1724277386; x=1724882186; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bhJPrmFRdKDUykod1xQwmOhwV8MFti4H7go02tXSqUU=;
+        b=QadsvmsWWHX22b2f8JPg+t8En3kfCDQdsLm6cV60AVqaPMQbawC3dLQe5vLnXEBi+1
+         G4D8xTNJR1jbnCJ0moIUKNJtms7Fk3n0ynoKkBix7e+KhGO4hg1p6Ad6kv4KVEo1/RG9
+         Q6LVp4HIJHGNtFnEcEvi796K3Tw1fQUWD94AZacVHvO77kWeRqOJf2cdyjP/TNBc8/D+
+         WezMTUzcEnzPiRsuBxOgnwwwjdeb+9MzUF/2AayhkI22IXuDUn4dfC/vWjL5inLyj3ab
+         t6Oz7QBKCczZfxiI6DMBNJp5a/Jo0qonIxl27vLKFWYDo4gNAgjiDzH4xgDACxejR8z4
+         Az0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724277283; x=1724882083;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZAXSIdsJdlH1zAZMMu2gmF5Q96+XpHdPAtLFei8FT9Y=;
-        b=YJAPVBeUpJhdPHaO9ILh/MtG9LIbRkIZtW9rDO0QvoiImO+XnI2Em9dipHXOcmEYsB
-         DW7YjQuuTUYB1hn7pDNdrbbinmQOiQVwef90c179qkG3KY0a1MojDzEQyi5jUFVPWiLj
-         G4ITjJnhDu1b143Jm5//lXIcxWcSfJ3g+Nihj7RonNdcODRfnBMfB+ozsIQqzv8nmx7Q
-         Idsv3DevU+GAtb2F1XH14ewxB3cClhz+tDoIcr/pT7WANmWobsjk8VTvfwwCwIvtNzpm
-         uRTe5fpoGm5ur+p1rf9H738hE4kX6TY4YC3nT9K7ZdV3GHiG0sj8hGuESvLHXltiJfZj
-         387w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ8UMO48cgKVh4r/MukexuHqYn6Bi/Tclhtk0lBd+8qCUzneWSgliXudu4vV/Lnl3fPjX9Ksym+PfTGws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjR1JNqjNR7Wy4z8FXWw4gd8Mhnbipv5c7jPpbOcCPY24kgsWY
-	gjmcIT8MCMpwVmEapsnZN6rLK6ZZJ61K5dr/lO2rpg4hJoiqY/lj21vVmhEJxA==
-X-Google-Smtp-Source: AGHT+IHF/j+RTuHRPNqCRr8JPtO+qBGbzT3vZqCcAHdQyxkKKPjZZmAL3RN5hxTXaOMAHqrO4MiMeA==
-X-Received: by 2002:a05:6e02:1e01:b0:375:e93b:7c8c with SMTP id e9e14a558f8ab-39d74b6f7a7mr637375ab.12.1724277283008;
-        Wed, 21 Aug 2024 14:54:43 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:8b27:65e9:2bb6:ed40])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad7d076sm92066a12.88.2024.08.21.14.54.40
+        d=1e100.net; s=20230601; t=1724277386; x=1724882186;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bhJPrmFRdKDUykod1xQwmOhwV8MFti4H7go02tXSqUU=;
+        b=YvEV2KK4ZuNW5ehHptgxDg3oBmzF6pSMPuhAkNIFtLQ7B/vw2IO+zllxJUrkHHusg6
+         LkzbmCqp241jF8z/qKTNImOLpg5vnTHW8PTFDMLVBAJ0dAlNe9x+nFZTh4qFmpNRu7eb
+         deKLtBDXPpPsJEi+TFR4HfSiJ8NpBl7Q3NJbeJn1XChfXWSlmgt7XV1Qb9qwxMGLyVQz
+         7DxKmdfKZf7fxYAJ76RASFS7b90t2OPlBc4dBvaLAI0/YCePOXdh+BRhTsnO23HQJKaW
+         p3y2tHo4JVc4slCpMYunQyEhoLtoY+OIUNEizxUte7Ai/egvUVxJDfdFVKObjEgreLQ3
+         1rCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUO1UGMtiIFA3fvCT9qboW386G15Sx87Dm6YXH0kaxGffJl8f0F2Eb6HMDgC1KlncqQYSMglXcnBy2i@vger.kernel.org, AJvYcCUdHI+vlKnpyx7A0y9riWxRYQaq08RbXutydPrIxftxwDWn5mxJoomms7QVPukG7F0f2WA/QNT6DoRJ@vger.kernel.org, AJvYcCWtKHxCC+gAZCMw1qaq47cLCdHnULXv7az+bkkdgc5EBhNydLi6ZeYf3cTs2v87xCKew1jp0alsj4LB9bcc@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyuw1oIaUJXShgwj4FkomQlqQCV4e5a8TVzVh6xOLjII4dGuMz
+	9APWAuWTNVZUdYzZacgzLVPjlbYbdFsLUiscETLXXalPj/QyluPb
+X-Google-Smtp-Source: AGHT+IFnBa8+USclyYF6ggOmc27EGbPBSkDewOuK9iHWFHjiNclSIGgbIXw/WTF7JcL4dkISzZO/eg==
+X-Received: by 2002:a17:907:6d17:b0:a72:4207:479b with SMTP id a640c23a62f3a-a868a5ac64bmr76019466b.5.1724277384807;
+        Wed, 21 Aug 2024 14:56:24 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:1594:887e:30dd:c59e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f62f1sm15479866b.218.2024.08.21.14.56.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 14:54:42 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Yu Zhao <yuzhao@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Misono Tomohiro <misono.tomohiro@fujitsu.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Sumit Garg <sumit.garg@linaro.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	James Morse <james.morse@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Kees Cook <kees@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] arm64: smp: smp_send_stop() and crash_smp_send_stop() should try non-NMI first
-Date: Wed, 21 Aug 2024 14:53:57 -0700
-Message-ID: <20240821145353.v3.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
+        Wed, 21 Aug 2024 14:56:24 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Wed, 21 Aug 2024 23:56:22 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] iio: pressure: bmp280: Add data ready trigger
+ support
+Message-ID: <20240821215622.GA478206@vamoiridPC>
+References: <20240725231039.614536-1-vassilisamir@gmail.com>
+ <20240725231039.614536-7-vassilisamir@gmail.com>
+ <20240728170650.649839e7@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240728170650.649839e7@jic23-huawei>
 
-When testing hard lockup handling on my sc7180-trogdor-lazor device
-with pseudo-NMI enabled, with serial console enabled and with kgdb
-disabled, I found that the stack crawls printed to the serial console
-ended up as a jumbled mess. After rebooting, the pstore-based console
-looked fine though. Also, enabling kgdb to trap the panic made the
-console look fine and avoided the mess.
+On Sun, Jul 28, 2024 at 05:06:50PM +0100, Jonathan Cameron wrote:
+> On Fri, 26 Jul 2024 01:10:38 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
+> > a trigger for when there are data ready in the sensor for pick up.
+> > 
+> > This use case is used along with NORMAL_MODE in the sensor, which allows
+> > the sensor to do consecutive measurements depending on the ODR rate value.
+> > 
+> > The trigger pin can be configured to be open-drain or push-pull and either
+> > rising or falling edge.
+> > 
+> > No support is added yet for interrupts for FIFO, WATERMARK and out of range
+> > values.
+> > 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> Hi Vasileios,
+> 
+> A few minor things inline, including a suggestion that perhaps the trigger_probe()
+> functions can be combined to reduce duplication. That would use a
+> __bmp280_trigger_probe(struct iio_dev *, struct iio_trigger_ops *,
+>                        + some function pointers).
+> 
+> Perhaps it's not worth it - I didn't try writing the actual code!
+> 
+> Jonathan
+> 
 
-After a bit of tracking down, I came to the conclusion that this was
-what was happening:
-1. The panic path was stopping all other CPUs with
-   panic_other_cpus_shutdown().
-2. At least one of those other CPUs was in the middle of printing to
-   the serial console and holding the console port's lock, which is
-   grabbed with "irqsave". ...but since we were stopping with an NMI
-   we didn't care about the "irqsave" and interrupted anyway.
-3. Since we stopped the CPU while it was holding the lock it would
-   never release it.
-4. All future calls to output to the console would end up failing to
-   get the lock in qcom_geni_serial_console_write(). This isn't
-   _totally_ unexpected at panic time but it's a code path that's not
-   well tested, hard to get right, and apparently doesn't work
-   terribly well on the Qualcomm geni serial driver.
+Hi Jonathan,
 
-The Qualcomm geni serial driver was fixed to be a bit better in commit
-9e957a155005 ("serial: qcom-geni: Don't cancel/abort if we can't get
-the port lock") but it's nice not to get into this situation in the
-first place.
+Initially, in the v1 of the series, I had designed differently the handling of the
+interrupts, and having split functions was making more sense in case you had
+sensors with extra interrupts.
 
-Taking a page from what x86 appears to do in native_stop_other_cpus(),
-do this:
-1. First, try to stop other CPUs with a normal IPI and wait a second.
-   This gives them a chance to leave critical sections.
-2. If CPUs fail to stop then retry with an NMI, but give a much lower
-   timeout since there's no good reason for a CPU not to react quickly
-   to a NMI.
+Since you explained to me how to do it properly, I think that now, what you are
+proposing makes sense.
 
-This works well and avoids the corrupted console and (presumably)
-could help avoid other similar issues.
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c   | 309 ++++++++++++++++++++++++++-
+> >  drivers/iio/pressure/bmp280-regmap.c |   2 +-
+> >  drivers/iio/pressure/bmp280.h        |  23 +-
+> >  3 files changed, 328 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index 4a8d2ed4a9c4..4238f37b7805 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> > @@ -37,12 +37,14 @@
+> 
+> 
+> 
+> > +static irqreturn_t bmp380_irq_thread_handler(int irq, void *p)
+> > +{
+> > +	struct iio_dev *indio_dev = p;
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > +	unsigned int int_ctrl;
+> > +	int ret;
+> > +
+> > +	scoped_guard(mutex, &data->lock) {
+> > +		ret = regmap_read(data->regmap, BMP380_REG_INT_STATUS, &int_ctrl);
+> > +		if (ret)
+> > +			return IRQ_NONE;
+> > +	}
+> > +
+> > +	if (FIELD_GET(BMP380_INT_STATUS_DRDY, int_ctrl))
+> > +		iio_trigger_poll_nested(data->trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int bmp380_trigger_probe(struct iio_dev *indio_dev)
+> 
+> Two of these functions are very similar.  Perhaps define a common
+> function that takes a function call for int config, the ops, and
+> interrupt handler as arguments then add device specific
+> calls that use that.
+> 
 
-In order to do this, we need to do a little re-organization of our
-IPIs since we don't have any more free IDs. Do what was suggested in
-previous conversations and combine "stop" and "crash stop". That frees
-up an IPI so now we can have a "stop" and "stop NMI".
+True, I will think if it could generate any issues in the future with newer
+sensors adding more interrupts or with the current ones (bmp580 supports much
+more interrupts than the bmp380) and I will act accordingly.
 
-In order to do this we also need a slight change in the way we keep
-track of which CPUs still need to be stopped. We need to know
-specifically which CPUs haven't stopped yet when we fall back to NMI
-but in the "crash stop" case the "cpu_online_mask" isn't updated as
-CPUs go down. This is why that code path had an atomic of the number
-of CPUs left. Solve this by also updating the "cpu_online_mask" for
-crash stops.
+> 
+> 
+> > +{
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > +	struct fwnode_handle *fwnode;
+> > +	int ret, irq, irq_type;
+> > +	struct irq_data *desc;
+> > +
+> > +	fwnode = dev_fwnode(data->dev);
+> > +	if (!fwnode)
+> > +		return -ENODEV;
+> > +
+> > +	irq = fwnode_irq_get(fwnode, 0);
+> > +	if (!irq) {
+> > +		dev_err(data->dev, "No interrupt found\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	desc = irq_get_irq_data(irq);
+> > +	if (!desc)
+> > +		return -EINVAL;
+> > +
+> > +	irq_type = irqd_get_trigger_type(desc);
+> > +	switch (irq_type) {
+> > +	case IRQF_TRIGGER_RISING:
+> > +		data->trig_active_high = true;
+> > +		break;
+> > +	case IRQF_TRIGGER_FALLING:
+> > +		data->trig_active_high = false;
+> > +		break;
+> > +	default:
+> > +		dev_err(data->dev, "Invalid interrupt type specified\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	data->trig_open_drain = fwnode_property_read_bool(fwnode,
+> > +							  "int-open-drain");
+> > +
+> > +	ret = bmp380_int_config(data);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
+> > +					    indio_dev->name,
+> > +					    iio_device_id(indio_dev));
+> > +	if (!data->trig)
+> > +		return -ENOMEM;
+> > +
+> > +	data->trig->ops = &bmp380_trigger_ops;
+> > +	iio_trigger_set_drvdata(data->trig, data);
+> > +
+> > +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
+> > +					bmp380_irq_thread_handler, IRQF_ONESHOT,
+> > +					indio_dev->name, indio_dev);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "request irq failed\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = devm_iio_trigger_register(data->dev, data->trig);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "iio trigger register failed\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	indio_dev->trig = iio_trigger_get(data->trig);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +
+> 
+> one blank line only.
+> 
 
-All of the above lets us combine the logic for "stop" and "crash stop"
-code, which appeared to have a bunch of arbitrary implementation
-differences.
+Ack.
 
-Aside from the above change where we try a normal IPI and then an NMI,
-the combined function has a few subtle differences:
-* In the normal smp_send_stop(), if we fail to stop one or more CPUs
-  then we won't include the current CPU (the one running
-  smp_send_stop()) in the error message.
-* In crash_smp_send_stop(), if we fail to stop some CPUs we'll print
-  the CPUs that we failed to stop instead of printing all _but_ the
-  current running CPU.
-* In crash_smp_send_stop(), we will now only print "SMP: stopping
-  secondary CPUs" if (system_state <= SYSTEM_RUNNING).
+> >  static irqreturn_t bmp380_trigger_handler(int irq, void *p)
+> >  {
+> >  	struct iio_poll_func *pf = p;
+> > @@ -1854,6 +1998,7 @@ const struct bmp280_chip_info bmp380_chip_info = {
+> >  	.wait_conv = bmp380_wait_conv,
+> >  	.preinit = bmp380_preinit,
+> >  
+> > +	.trigger_probe = bmp380_trigger_probe,
+> >  	.trigger_handler = bmp380_trigger_handler,
+> >  };
+> >  EXPORT_SYMBOL_NS(bmp380_chip_info, IIO_BMP280);
+> > @@ -2390,6 +2535,154 @@ static int bmp580_chip_config(struct bmp280_data *data)
+> >  	return 0;
+> >  }
+> >
+> 
+> ...
+> 
+> > +static irqreturn_t bmp580_irq_thread_handler(int irq, void *p)
+> > +{
+> > +	struct iio_dev *indio_dev = p;
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > +	unsigned int int_ctrl;
+> > +	int ret;
+> > +
+> > +	scoped_guard(mutex, &data->lock) {
+> 
+> Indent wrong.
+> 
 
-Fixes: d7402513c935 ("arm64: smp: IPI_CPU_STOP and IPI_CPU_CRASH_STOP should try for NMI")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-I'm not setup to test the crash_smp_send_stop(). I made sure it
-compiled and hacked the panic() method to call it, but I haven't
-actually run kexec. Hopefully others can confirm that it's working for
-them.
+Ack.
 
-v1: https://lore.kernel.org/r/20231207170251.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid
-v2: https://lore.kernel.org/r/20240625160718.v2.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid
+> > +	ret = regmap_read(data->regmap, BMP580_REG_INT_STATUS, &int_ctrl);
+> > +	if (ret)
+> > +		return IRQ_NONE;
+> > +	}
+> > +
+> > +	if (FIELD_GET(BMP580_INT_STATUS_DRDY_MASK, int_ctrl))
+> > +		iio_trigger_poll_nested(data->trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int bmp580_trigger_probe(struct iio_dev *indio_dev)
+> > +{
+> ...
+> 
+> > +
+> > +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
+> > +					    indio_dev->name,
+> > +					    iio_device_id(indio_dev));
+> > +	if (!data->trig)
+> > +		return -ENOMEM;
+> > +
+> > +	data->trig->ops = &bmp580_trigger_ops;
+> > +	iio_trigger_set_drvdata(data->trig, data);
+> > +
+> > +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
+> > +					bmp580_irq_thread_handler, IRQF_ONESHOT,
+> > +					indio_dev->name, indio_dev);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "request irq failed\n");
+> 
+> Only in probe paths I think, so return dev_err_probe() thoughout these
+> trigger setup callbacks.
+> 
 
-Changes in v3:
-- Add a comment summarizing the v2 discussion.
-- Re-snapshot cpu_online_mask when CPUs still online.
+Ack.
 
-Changes in v2:
-- Update commit message to point to Qualcomm serial driver fix.
-- Use a test-and-set to prevent stop code from running twice.
-- Move mask clearing until after crash_save_cpu().
-- Use local_daif_mask() in ipi_cpu_crash_stop().
-- Don't use a new mask, just have crash case update online CPUs.
+> 
+> 
+> > +}
+> 
+> > diff --git a/drivers/iio/pressure/bmp280-regmap.c b/drivers/iio/pressure/bmp280-regmap.c
+> > index d27d68edd906..cccdf8fc6c09 100644
+> > --- a/drivers/iio/pressure/bmp280-regmap.c
+> > +++ b/drivers/iio/pressure/bmp280-regmap.c
+> > @@ -109,7 +109,7 @@ static bool bmp380_is_writeable_reg(struct device *dev, unsigned int reg)
+> >  	case BMP380_REG_FIFO_WATERMARK_LSB:
+> >  	case BMP380_REG_FIFO_WATERMARK_MSB:
+> >  	case BMP380_REG_POWER_CONTROL:
+> > -	case BMP380_REG_INT_CONTROL:
+> > +	case BMP380_REG_INT_CTRL:
+> 
+> Unrelated change.  I'm also not sure it's worth making.
+> 
 
- arch/arm64/kernel/smp.c | 158 ++++++++++++++++++++++++----------------
- 1 file changed, 95 insertions(+), 63 deletions(-)
+I did it because this is tha name in the datasheet and it was also helping
+with the 80 char limit. But I can leave it as it is, there is no problem.
 
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index f01f0fd7b7fe..7bd28abb0acf 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -68,7 +68,7 @@ enum ipi_msg_type {
- 	IPI_RESCHEDULE,
- 	IPI_CALL_FUNC,
- 	IPI_CPU_STOP,
--	IPI_CPU_CRASH_STOP,
-+	IPI_CPU_STOP_NMI,
- 	IPI_TIMER,
- 	IPI_IRQ_WORK,
- 	NR_IPI,
-@@ -85,6 +85,8 @@ static int ipi_irq_base __ro_after_init;
- static int nr_ipi __ro_after_init = NR_IPI;
- static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
- 
-+static bool crash_stop;
-+
- static void ipi_setup(int cpu);
- 
- #ifdef CONFIG_HOTPLUG_CPU
-@@ -823,7 +825,7 @@ static const char *ipi_types[MAX_IPI] __tracepoint_string = {
- 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
- 	[IPI_CALL_FUNC]		= "Function call interrupts",
- 	[IPI_CPU_STOP]		= "CPU stop interrupts",
--	[IPI_CPU_CRASH_STOP]	= "CPU stop (for crash dump) interrupts",
-+	[IPI_CPU_STOP_NMI]	= "CPU stop NMIs",
- 	[IPI_TIMER]		= "Timer broadcast interrupts",
- 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
- 	[IPI_CPU_BACKTRACE]	= "CPU backtrace interrupts",
-@@ -867,9 +869,9 @@ void arch_irq_work_raise(void)
- }
- #endif
- 
--static void __noreturn local_cpu_stop(void)
-+static void __noreturn local_cpu_stop(unsigned int cpu)
- {
--	set_cpu_online(smp_processor_id(), false);
-+	set_cpu_online(cpu, false);
- 
- 	local_daif_mask();
- 	sdei_mask_local_cpu();
-@@ -883,21 +885,26 @@ static void __noreturn local_cpu_stop(void)
-  */
- void __noreturn panic_smp_self_stop(void)
- {
--	local_cpu_stop();
-+	local_cpu_stop(smp_processor_id());
- }
- 
--#ifdef CONFIG_KEXEC_CORE
--static atomic_t waiting_for_crash_ipi = ATOMIC_INIT(0);
--#endif
--
- static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
- {
- #ifdef CONFIG_KEXEC_CORE
-+	/*
-+	 * Use local_daif_mask() instead of local_irq_disable() to make sure
-+	 * that pseudo-NMIs are disabled. The "crash stop" code starts with
-+	 * an IRQ and falls back to NMI (which might be pseudo). If the IRQ
-+	 * finally goes through right as we're timing out then the NMI could
-+	 * interrupt us. It's better to prevent the NMI and let the IRQ
-+	 * finish since the pt_regs will be better.
-+	 */
-+	local_daif_mask();
-+
- 	crash_save_cpu(regs, cpu);
- 
--	atomic_dec(&waiting_for_crash_ipi);
-+	set_cpu_online(cpu, false);
- 
--	local_irq_disable();
- 	sdei_mask_local_cpu();
- 
- 	if (IS_ENABLED(CONFIG_HOTPLUG_CPU))
-@@ -962,14 +969,12 @@ static void do_handle_IPI(int ipinr)
- 		break;
- 
- 	case IPI_CPU_STOP:
--		local_cpu_stop();
--		break;
--
--	case IPI_CPU_CRASH_STOP:
--		if (IS_ENABLED(CONFIG_KEXEC_CORE)) {
-+	case IPI_CPU_STOP_NMI:
-+		if (IS_ENABLED(CONFIG_KEXEC_CORE) && crash_stop) {
- 			ipi_cpu_crash_stop(cpu, get_irq_regs());
--
- 			unreachable();
-+		} else {
-+			local_cpu_stop(cpu);
- 		}
- 		break;
- 
-@@ -1024,8 +1029,7 @@ static bool ipi_should_be_nmi(enum ipi_msg_type ipi)
- 		return false;
- 
- 	switch (ipi) {
--	case IPI_CPU_STOP:
--	case IPI_CPU_CRASH_STOP:
-+	case IPI_CPU_STOP_NMI:
- 	case IPI_CPU_BACKTRACE:
- 	case IPI_KGDB_ROUNDUP:
- 		return true;
-@@ -1138,79 +1142,107 @@ static inline unsigned int num_other_online_cpus(void)
- 
- void smp_send_stop(void)
- {
-+	static unsigned long stop_in_progress;
-+	cpumask_t mask;
- 	unsigned long timeout;
- 
--	if (num_other_online_cpus()) {
--		cpumask_t mask;
-+	/*
-+	 * If this cpu is the only one alive at this point in time, online or
-+	 * not, there are no stop messages to be sent around, so just back out.
-+	 */
-+	if (num_other_online_cpus() == 0)
-+		goto skip_ipi;
- 
--		cpumask_copy(&mask, cpu_online_mask);
--		cpumask_clear_cpu(smp_processor_id(), &mask);
-+	/* Only proceed if this is the first CPU to reach this code */
-+	if (test_and_set_bit(0, &stop_in_progress))
-+		return;
- 
--		if (system_state <= SYSTEM_RUNNING)
--			pr_crit("SMP: stopping secondary CPUs\n");
--		smp_cross_call(&mask, IPI_CPU_STOP);
--	}
-+	/*
-+	 * Send an IPI to all currently online CPUs except the CPU running
-+	 * this code.
-+	 *
-+	 * NOTE: we don't do anything here to prevent other CPUs from coming
-+	 * online after we snapshot `cpu_online_mask`. Ideally, the calling code
-+	 * should do something to prevent other CPUs from coming up. This code
-+	 * can be called in the panic path and thus it doesn't seem wise to
-+	 * grab the CPU hotplug mutex ourselves. Worst case:
-+	 * - If a CPU comes online as we're running, we'll likely notice it
-+	 *   during the 1 second wait below and then we'll catch it when we try
-+	 *   with an NMI (assuming NMIs are enabled) since we re-snapshot the
-+	 *   mask before sending an NMI.
-+	 * - If we leave the function and see that CPUs are still online we'll
-+	 *   at least print a warning. Especially without NMIs this function
-+	 *   isn't foolproof anyway so calling code will just have to accept
-+	 *   the fact that there could be cases where a CPU can't be stopped.
-+	 */
-+	cpumask_copy(&mask, cpu_online_mask);
-+	cpumask_clear_cpu(smp_processor_id(), &mask);
- 
--	/* Wait up to one second for other CPUs to stop */
-+	if (system_state <= SYSTEM_RUNNING)
-+		pr_crit("SMP: stopping secondary CPUs\n");
-+
-+	/*
-+	 * Start with a normal IPI and wait up to one second for other CPUs to
-+	 * stop. We do this first because it gives other processors a chance
-+	 * to exit critical sections / drop locks and makes the rest of the
-+	 * stop process (especially console flush) more robust.
-+	 */
-+	smp_cross_call(&mask, IPI_CPU_STOP);
- 	timeout = USEC_PER_SEC;
- 	while (num_other_online_cpus() && timeout--)
- 		udelay(1);
- 
--	if (num_other_online_cpus())
-+	/*
-+	 * If CPUs are still online, try an NMI. There's no excuse for this to
-+	 * be slow, so we only give them an extra 10 ms to respond.
-+	 */
-+	if (num_other_online_cpus() && ipi_should_be_nmi(IPI_CPU_STOP_NMI)) {
-+		cpumask_copy(&mask, cpu_online_mask);
-+		cpumask_clear_cpu(smp_processor_id(), &mask);
-+
-+		pr_info("SMP: retry stop with NMI for CPUs %*pbl\n",
-+			cpumask_pr_args(&mask));
-+
-+		smp_cross_call(&mask, IPI_CPU_STOP_NMI);
-+		timeout = USEC_PER_MSEC * 10;
-+		while (num_other_online_cpus() && timeout--)
-+			udelay(1);
-+	}
-+
-+	if (num_other_online_cpus()) {
-+		cpumask_copy(&mask, cpu_online_mask);
-+		cpumask_clear_cpu(smp_processor_id(), &mask);
-+
- 		pr_warn("SMP: failed to stop secondary CPUs %*pbl\n",
--			cpumask_pr_args(cpu_online_mask));
-+			cpumask_pr_args(&mask));
-+	}
- 
-+skip_ipi:
- 	sdei_mask_local_cpu();
- }
- 
- #ifdef CONFIG_KEXEC_CORE
- void crash_smp_send_stop(void)
- {
--	static int cpus_stopped;
--	cpumask_t mask;
--	unsigned long timeout;
--
- 	/*
- 	 * This function can be called twice in panic path, but obviously
- 	 * we execute this only once.
-+	 *
-+	 * We use this same boolean to tell whether the IPI we send was a
-+	 * stop or a "crash stop".
- 	 */
--	if (cpus_stopped)
-+	if (crash_stop)
- 		return;
-+	crash_stop = 1;
- 
--	cpus_stopped = 1;
-+	smp_send_stop();
- 
--	/*
--	 * If this cpu is the only one alive at this point in time, online or
--	 * not, there are no stop messages to be sent around, so just back out.
--	 */
--	if (num_other_online_cpus() == 0)
--		goto skip_ipi;
--
--	cpumask_copy(&mask, cpu_online_mask);
--	cpumask_clear_cpu(smp_processor_id(), &mask);
--
--	atomic_set(&waiting_for_crash_ipi, num_other_online_cpus());
--
--	pr_crit("SMP: stopping secondary CPUs\n");
--	smp_cross_call(&mask, IPI_CPU_CRASH_STOP);
--
--	/* Wait up to one second for other CPUs to stop */
--	timeout = USEC_PER_SEC;
--	while ((atomic_read(&waiting_for_crash_ipi) > 0) && timeout--)
--		udelay(1);
--
--	if (atomic_read(&waiting_for_crash_ipi) > 0)
--		pr_warn("SMP: failed to stop secondary CPUs %*pbl\n",
--			cpumask_pr_args(&mask));
--
--skip_ipi:
--	sdei_mask_local_cpu();
- 	sdei_handler_abort();
- }
- 
- bool smp_crash_stop_failed(void)
- {
--	return (atomic_read(&waiting_for_crash_ipi) > 0);
-+	return num_other_online_cpus() != 0;
- }
- #endif
- 
--- 
-2.46.0.184.g6999bdac58-goog
+> >  	case BMP380_REG_IF_CONFIG:
+> >  	case BMP380_REG_ODR:
+> >  	case BMP380_REG_OSR:
+> > diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+> > index f5d192509d61..754eda367941 100644
+> > --- a/drivers/iio/pressure/bmp280.h
+> > +++ b/drivers/iio/pressure/bmp280.h
+> > @@ -55,8 +55,17 @@
+> >  #define BMP580_CMD_NVM_WRITE_SEQ_1	0xA0
+> >  #define BMP580_CMD_SOFT_RESET		0xB6
+> >  
+> > +#define BMP580_INT_STATUS_DRDY_MASK	BIT(0)
+> >  #define BMP580_INT_STATUS_POR_MASK	BIT(4)
+> >  
+> > +#define BMP580_INT_SOURCE_DRDY		BIT(0)
+> > +
+> > +#define BMP580_INT_CONFIG_MASK		GENMASK(3, 0)
+> > +#define BMP580_INT_CONFIG_LATCH		BIT(0)
+> > +#define BMP580_INT_CONFIG_LEVEL		BIT(1)
+> > +#define BMP580_INT_CONFIG_OPEN_DRAIN	BIT(2)
+> > +#define BMP580_INT_CONFIG_INT_EN	BIT(3)
+> > +
+> >  #define BMP580_STATUS_CORE_RDY_MASK	BIT(0)
+> >  #define BMP580_STATUS_NVM_RDY_MASK	BIT(1)
+> >  #define BMP580_STATUS_NVM_ERR_MASK	BIT(2)
+> > @@ -117,7 +126,7 @@
+> >  #define BMP380_REG_OSR			0x1C
+> >  #define BMP380_REG_POWER_CONTROL	0x1B
+> >  #define BMP380_REG_IF_CONFIG		0x1A
+> > -#define BMP380_REG_INT_CONTROL		0x19
+> > +#define BMP380_REG_INT_CTRL		0x19
+> As above.
+> 
+> Jonathan
+> 
 
+Cheers,
+Vasilis
 
