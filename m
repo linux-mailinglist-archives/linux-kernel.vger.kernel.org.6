@@ -1,385 +1,207 @@
-Return-Path: <linux-kernel+bounces-295873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737BA95A260
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44EB95A25D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF93CB23133
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:05:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28CEA1F21399
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A78150989;
-	Wed, 21 Aug 2024 16:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8828F14E2DE;
+	Wed, 21 Aug 2024 16:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sf82RkzM"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ii6U7QBD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134ED1369AE
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1667F14C59B
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724256279; cv=none; b=Y7ZmkBIMajp/Ga7juaEoFdpWdES+18jqW96I+08UINhhLpurM5MP9YrUDlcg7c6+jIt26Ha4XK9r+m45se6hGG+iaoWpPg3n5gt/TztOR0JwgPhUnYJHtWqu+tJjj3XOnuXr72tgJNAsG1DqcST4kOsPzhF6s1P7ZbzsnjgtXAc=
+	t=1724256290; cv=none; b=oUWYJOYhXzvO167bpjpkQfj8KBEblwOA3dtsBrWUx3C4j/UfZUnB9E48pXX8k4usWbfSUr9S50lHdzZCqtIBfZJVweJIYdBjKduEo0f6If5vDOdjHsoO+5QilbCppTMhnlewCOsqkThHyKBdZI7qc7RfaUzmFIYw67okweq3qbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724256279; c=relaxed/simple;
-	bh=7l31PYljpMiUjDG7WoxzgPTDCdWuNg7HbPdeHlbWEZc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aEfV5/KSVTlXKPHGEL/1qEgE33booQodrRY+x7uLb3SRR7TgHXt0HKVdjcNXtCt0jJ8E2MlqluR6p8kZJJVuWYIogtNAe09P/Pr3tGJUrwbYECXRDS3JJ5ZJ0nGJ2VK5LZ91lTDtIM/BEaCtzA34CkFTqLrGeI3Nb84bblUQn28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sf82RkzM; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70eab26e146so5715645b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724256277; x=1724861077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AZweo51xHH5eMoQkU3hP1R6v8p8ciqpJ9NUUWtcbf/g=;
-        b=Sf82RkzMYvIsnvAPt0YEwOLoSVyOqSS1M9AVpegvm662m9BD1tmetCaW3If+i4QwHC
-         hrmH0iyB99IlzqNgCAXkc0yvPCMDsgSDYywm45Kk0gzUVGqd7tBU3gJH7syRM+9HmY/o
-         tLE6e2lJRa4kan/pTWBfjL+VdRY36oPMGidtJlVcDZs/kVAkTA+Y1VVRUpeJyszJh9e0
-         w6bDZ1o7nJOmp999FArYxad0p78X0wlAK/luZUjD8o5qZrN+vBzD47uk5nmW8Mhwap75
-         XyxPAn2DCi98jAuWzsIC3GL6ZDHB3JbvNANQXBxjD9lAil7Kqnr6+n/g7wKhtENZs9wG
-         dQ8A==
+	s=arc-20240116; t=1724256290; c=relaxed/simple;
+	bh=AlVWMujZb4KMNj53fGB/JwXcf8Z1PSC7AGNyq62/JsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zz9J+8wp1TUyqGeFe79rQu61EpGlCZiYAuLpG/Swu73B7QsN9eq2h4R9naTzae2KddzSikZqeQq2todrEciEKnmSkKN6lT+Ur5UcJqIQ2nby1Rg9HOgY0aygmb7incxKs09FAUQLo0e/As/8d3/tDUAlx/bWKfWbvqAtdwxVT+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ii6U7QBD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724256288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=S01eevrAEs0lxpxuE+gw3u09VxcLdZQUZHokHj/vHXU=;
+	b=Ii6U7QBDpUx20Ktu8f6RO0ViO5t4PEw5TwWi7XJh/4VpY8+YLvmM5KbywsJ39DCwyyZroD
+	Rm3wDuuyohWgP1uHsDG/2zO/v/yx2e+jQnLy9SfI0CH3RPWtDO3r89PUx3CwoZtB+pdTmP
+	WYplrBKP0cLk/knKpZC0ef2b/D40ZvQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-357-o0r7S2QoO8CNov_laY_I6g-1; Wed, 21 Aug 2024 12:04:44 -0400
+X-MC-Unique: o0r7S2QoO8CNov_laY_I6g-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3719ee7c72eso3008807f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:04:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724256277; x=1724861077;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=1e100.net; s=20230601; t=1724256283; x=1724861083;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=AZweo51xHH5eMoQkU3hP1R6v8p8ciqpJ9NUUWtcbf/g=;
-        b=mv1DqMWSwdswSogMHHrnobKhPEEMEDkdKnil1jsHuzRexo8EW/DE6b7evf7ry1rzim
-         FWsVgWZARnvP55rrZTXOGU+5dHr67DgEpK0gf74y5czAC/VxNzGZkuWcPg7OFEUml7Hq
-         rVTyTbzg/IjjJzekugmMlnZb4QktFVX3HkwVe4ZOUjN2wFqEc6xZtp9A+7KWFzsijAVi
-         jV4ZqcJASXvrKHlFICWWvauu5DCirU6uOYm3BX7pw7foTZe+xvA5qKRV5WQ4vBNNzI45
-         6pTQy7oE8TdvmlEd1JUfhJ9uReZ1X8kT52ifrCoOmuUkXdYTxt3N2QvOMY/s76uc6Bzy
-         ZVTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9iQuyJxg7da2V2XYhm2BedrYM8a1KhvCfyxxEIksa89YcXUegBZi/KmqLIu5CQGWqc+ztaawFRhtI0fo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx22HiTasAv/5wfhklh3DcWPqqq0xGVNMq46I82lQ3X1hhKTar
-	zHe5phowZ265J6nf8Y2bAyU+fjxX6Sbi4BLEg7JOO83t5jwtsMJr7C7LgYIarXcT+AmyPjOpqCP
-	GUA==
-X-Google-Smtp-Source: AGHT+IH6t5O4htIbaytL3GKHuhFX8d7u0Z4mDbKDKxiDftznLCincOQdd6grHbdENmxutCctT45WJo3jT98=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:87d0:0:b0:710:9d5e:268 with SMTP id
- d2e1a72fcca58-71423573f2bmr37705b3a.4.1724256277023; Wed, 21 Aug 2024
- 09:04:37 -0700 (PDT)
-Date: Wed, 21 Aug 2024 09:04:35 -0700
-In-Reply-To: <0d41afa70bd97d399f71cf8be80854f13fe7286c.camel@redhat.com>
+        bh=S01eevrAEs0lxpxuE+gw3u09VxcLdZQUZHokHj/vHXU=;
+        b=VhvFOln6yDuZ2PpQbpLHyaugRc8EGUNGecwtyFZqIG46g9JaRbFT3StkDVgOg6As+b
+         axpr7fR6sqqvvhIYHzcnvUrAntN3SlL3NlfdywTQR8S+wDebam/gm+ut8zGjr+Kw7f+q
+         wouuSh78yfdybcvyrjg183IzwtCXwN2dUP1Lmoa2hcs3MYUM/Ga7mabzPwGYNONElIFc
+         VlxRGjV7aHPGSKkvTZa8UpUse6a4tuNXwk1JrffwS4DcbXALVHxZaNsaCHHZGU9vX5Y6
+         JKsWwIZLGEywOXahjDMYuIWkPgyYnzxqedE0COflT1btmYJD9oz6eBNPg61r08adbpt+
+         mCJg==
+X-Gm-Message-State: AOJu0YxptuEb5DmVMc/41R/VjjgdCPzMvjbDKmzNkXXzjJXT7FnKcvjF
+	dSNhQUd9upyXfizrIgI2JzPbLWEpopeiwI7OcCp+30GoUyMC1RAnmm8io6jCXhxBzms2CwJ0evO
+	4hn4OUwYTV/E5ZCFqkfk/+OthT0KryFe1MI6UpetUvrLeraVoS7aTOQ3nklNI+w==
+X-Received: by 2002:a05:6000:196b:b0:371:87d4:8f1d with SMTP id ffacd0b85a97d-372fd6da3ebmr1851413f8f.28.1724256283430;
+        Wed, 21 Aug 2024 09:04:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBsdu1qj2IcJaBSV38+AQ+dl1u7gpj99iE4YKjYFE/TwtpOHQNKrY4gGw10COiV5E2nRnbfA==
+X-Received: by 2002:a05:6000:196b:b0:371:87d4:8f1d with SMTP id ffacd0b85a97d-372fd6da3ebmr1851369f8f.28.1724256282485;
+        Wed, 21 Aug 2024 09:04:42 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:4300:16d5:c5b:8388:a734? (p200300cbc705430016d50c5b8388a734.dip0.t-ipconnect.de. [2003:cb:c705:4300:16d5:c5b:8388:a734])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898bb588sm16022125f8f.115.2024.08.21.09.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 09:04:42 -0700 (PDT)
+Message-ID: <95a7dbfe-d88f-4d8b-898e-87c18e7d5813@redhat.com>
+Date: Wed, 21 Aug 2024 18:04:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240815123349.729017-1-mlevitsk@redhat.com> <20240815123349.729017-2-mlevitsk@redhat.com>
- <Zr_JX1z8xWNAxHmz@google.com> <fa69866979cdb8ad445d0dffe98d6158288af339.camel@redhat.com>
- <0d41afa70bd97d399f71cf8be80854f13fe7286c.camel@redhat.com>
-Message-ID: <ZsYQE3GsvcvoeJ0B@google.com>
-Subject: Re: [PATCH v3 1/4] KVM: x86: relax canonical check for some x86
- architectural msrs
-From: Sean Christopherson <seanjc@google.com>
-To: mlevitsk@redhat.com
-Cc: kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] selftests/mm: fix charge_reserved_hugetlb.sh test
+To: Mina Almasry <almasrymina@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, Mario Casquero <mcasquer@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>
+References: <20240821123115.2068812-1-david@redhat.com>
+ <CAHS8izNyDymXoH94usJTGNHG45HB50m7SSkL6H1C+9pxBEDE+g@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAHS8izNyDymXoH94usJTGNHG45HB50m7SSkL6H1C+9pxBEDE+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 21, 2024, mlevitsk@redhat.com wrote:
-> =D0=A3 =D0=B2=D1=82, 2024-08-20 =D1=83 15:13 +0300, mlevitsk@redhat.com =
-=D0=BF=D0=B8=D1=88=D0=B5:
-> > =D0=A3 =D0=BF=D1=82, 2024-08-16 =D1=83 14:49 -0700, Sean Christopherson=
- =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > > On Thu, Aug 15, 2024, Maxim Levitsky wrote:
-> > > > > > > > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > > > > > > > > index ce7c00894f32..2e83f7d74591 100644
-> > > > > > > > > > --- a/arch/x86/kvm/x86.c
-> > > > > > > > > > +++ b/arch/x86/kvm/x86.c
-> > > > > > > > > > @@ -302,6 +302,31 @@ const struct kvm_stats_header kvm_=
-vcpu_stats_header =3D {
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 sizeof(kvm_vcpu_stats_desc),
-> > > > > > > > > > =C2=A0};
-> > > > > > > > > > =C2=A0
-> > > > > > > > > > +
-> > > > > > > > > > +/*
-> > > > > > > > > > + * Most x86 arch MSR values which contain linear addre=
-sses like
-> > > > > >=20
-> > > > > > Is it most, or all?=C2=A0 I'm guessing all?
-> >=20
-> > I can't be sure that all of them are like that - there could be some
-> > outliers that behave differently.
-> >=20
-> > One of the things my work at Intel taught me is that there is nothing
-> > consistent in x86 spec, anything is possible and nothing can be assumed=
-.
-> >=20
-> > I dealt only with those msrs, that KVM checks for canonicality, therefo=
-re I
-> > use the word=C2=A0 'most'. There could be other msrs that are not known=
- to me
-> > and/or to KVM.
-> >=20
-> > I can write 'some' if you prefer.
->=20
-> Hi,
->=20
->=20
-> So I did some more reverse engineering and indeed, 'some' is the right wo=
-rd:
+On 21.08.24 17:59, Mina Almasry wrote:
+> On Wed, Aug 21, 2024 at 8:31 AM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> Currently, running the charge_reserved_hugetlb.sh selftest we can
+>> sometimes observe something like:
+>>
+>>    $ ./charge_reserved_hugetlb.sh -cgroup-v2
+>>    ...
+>>    write_result is 0
+>>    After write:
+>>    hugetlb_usage=0
+>>    reserved_usage=10485760
+>>    killing write_to_hugetlbfs
+>>    Received 2.
+>>    Deleting the memory
+>>    Detach failure: Invalid argument
+>>    umount: /mnt/huge: target is busy.
+>>
+>> Both cases are issues in the test.
+>>
+>> While the unmount error seems to be racy, it will make the test fail:
+>>          $ ./run_vmtests.sh -t hugetlb
+>>          ...
+>>          # [FAIL]
+>>          not ok 10 charge_reserved_hugetlb.sh -cgroup-v2 # exit=32
+>>
+>> The issue is that we are not waiting for the write_to_hugetlbfs process
+>> to quit. So it might still have a hugetlbfs file open, about which
+>> umount is not happy. Fix that by making "killall" wait for the process
+>> to quit.
+>>
+>> The other error ("Detach failure: Invalid argument") does not seem to
+>> result in a test error, but is misleading. Turns out write_to_hugetlbfs.c
+>> unconditionally tries to cleanup using shmdt(), even when we only
+>> mmap()'ed a hugetlb file. Even worse, shmaddr is never even set for the
+>> SHM case. Fix that as well.
+>>
+>> With this change it seems to work as expected.
+>>
+>> Fixes: 29750f71a9b4 ("hugetlb_cgroup: add hugetlb_cgroup reservation tests")
+>> Reported-by: Mario Casquero <mcasquer@redhat.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Shuah Khan <shuah@kernel.org>
+>> Cc: Muchun Song <muchun.song@linux.dev>
+>> Cc: Mina Almasry <almasrymina@google.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> Initially I thought it could be nice to split fixes for the 2 issues
+> in separate patches in case one of them ends up needing a revert or
+> something, but probably not worth a respin. Fixes look good to me.
 
-Is it?  IIUC, we have yet to find an MSR that honors, CR4.LA57, i.e. it rea=
-lly
-is "all", so far as we know.
+I was debating with myself as well if it should be separated, but 
+decided to go the simple route of a single patch :)
 
-> I audited all places in KVM which check an linear address for being canon=
-ical
-> and this is what I found:
->=20
-> - MSR_IA32_BNDCFGS - since it is not supported on CPUs with 5 level pagin=
-g,
->   its not possible to know what the hardware does.
+> 
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-Heh, yeah, but I would be very surprised if MSR_IA32_BNDCFGS didn't follow =
-all
-other system-ish MSRs.
+Thanks!
 
-> - MSR_IA32_DS_AREA: - Ignores CR4.LA57 as expected. Tested by booting int=
-o kernel
->   with 5 level paging disabled and then using userspace 'wrmsr' program t=
-o
->   set this msr.  I attached the bash script that I used
->=20
-> - MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B: - Exactly the same sto=
-ry,
->   but for some reason the host doesn't suport (not even read) from
->   MSR_IA32_RTIT_ADDR2_*, MSR_IA32_RTIT_ADDR3_*.  Probably the system is n=
-ot new
->   enough for these.
->
-> - invpcid instruction. It is exposed to the guest without interception
->   (unless !npt or !ept), and yes, it works just fine on 57-canonical addr=
-ess
->   without CR4.LA57 set....
+-- 
+Cheers,
 
-Did you verify the behavior for the desciptor, the target, or both?  I assu=
-me
-the memory operand, i.e. the address of the _descriptor_, honors CR4.LA57, =
-but
-the target within the descriptor does not.
+David / dhildenb
 
-If that assumption is correct, then this code in vm_mmu_invalidate_addr() i=
-s broken,
-as KVM actually needs to do a TLB flush if the address is canonical for the=
- vCPU
-model, even if it's non-canonical for the current vCPU state.
-
-	/* It's actually a GPA for vcpu->arch.guest_mmu.  */
-	if (mmu !=3D &vcpu->arch.guest_mmu) {
-		/* INVLPG on a non-canonical address is a NOP according to the SDM.  */
-		if (is_noncanonical_address(addr, vcpu))
-			return;
-
-		kvm_x86_call(flush_tlb_gva)(vcpu, addr);
-	}
-
-Assuming INVPCID is indicative of how INVLPG and INVVPID behave (they are n=
-ops if
-the _target_ is non-canonical), then the code is broken for INVLPG and INVV=
-PID.
-
-And I think it's probably a safe assumption that a TLB flush is needed.  E.=
-g. the
-primary (possible only?) use case for INVVPID with a linear address is to f=
-lush
-TLB entries for a specific GVA=3D>HPA mapping, and honoring CR4.LA57 would =
-prevent
-shadowing 5-level paging with a hypervisor that is using 4-level paging for=
- itself.
-
-> - invvpid - this one belongs to VMX set, so technically its for nesting
->   although it is run by L1, it is always emulated by KVM, but still execu=
-ted on
->   the host just with different vpid, so I booted the host without 5 level
->   paging, and patched KVM to avoid canonical check.
->=20
->   Also 57-canonical adddress worked just fine, and fully non canonical
->   address failed.  and gave a warning in 'invvpid_error'
->
-> Should I fix all of these too?
-
-Yeah, though I believe we're at the point where we need to figure out a bet=
-ter
-naming scheme, because usage of what is currently is_noncanonical_address()=
- will
-be, by far, in the minority.
-
-Hmm, actually, what if we extend the X86EMUL_F_* flags that were added for =
-LAM
-(and eventually for LASS) to handle the non-canonical checks?  That's essen=
-tially
-what LAM does already, there are just a few more flavors we now need to han=
-dle.
-
-E.g. I think we just need flags for MSRs and segment/DT bases.  The only (o=
-r at
-least, most) confusing thing is that LAM/LASS do NOT apply to INVPLG access=
-es,
-but are exempt from LA57.  But that's an arch oddity, not a problem KVM can=
- solve.
-
-diff --git a/arch/x86/kvm/kvm_emulate.h b/arch/x86/kvm/kvm_emulate.h
-index 55a18e2f2dcd..6da03a37bdd5 100644
---- a/arch/x86/kvm/kvm_emulate.h
-+++ b/arch/x86/kvm/kvm_emulate.h
-@@ -94,6 +94,8 @@ struct x86_instruction_info {
- #define X86EMUL_F_FETCH                BIT(1)
- #define X86EMUL_F_IMPLICIT             BIT(2)
- #define X86EMUL_F_INVLPG               BIT(3)
-+#define X86EMUL_F_MSR                  BIT(4)
-+#define X86EMUL_F_BASE                 BIT(5)
-=20
- struct x86_emulate_ops {
-        void (*vm_bugged)(struct x86_emulate_ctxt *ctxt);
----
-
-And then with that, we can do the below, and have emul_is_noncanonical_addr=
-ess()
-redirect to is_noncanonical_address() instead of being an open coded equiva=
-lent.
-
----
-static inline u8 vcpu_virt_addr_bits(struct kvm_vcpu *vcpu)
-{
-	return kvm_is_cr4_bit_set(vcpu, X86_CR4_LA57) ? 57 : 48;
-}
-
-static inline u8 max_host_virt_addr_bits(void)
-{
-	return kvm_cpu_cap_has(X86_FEATURE_LA57) ? 57 : 48;
-}
-
-static inline bool is_noncanonical_address(u64 la, struct kvm_vcpu *vcpu,
-					   unsigned int flags)
-{
-	if (flags & (X86EMUL_F_INVLPG | X86EMUL_F_MSR | X86EMUL_F_DT_LOAD))
-		return !__is_canonical_address(la, max_host_virt_addr_bits());
-	else
-		return !__is_canonical_address(la, vcpu_virt_addr_bits(vcpu));
-}
----
-
-That will make it _much_ harder to incorrectly use is_noncanonical_address(=
-),
-as all callers will be forced to specify the emulation type, i.e. there is =
-no
-automatic, implied default type.
-
-Line lengths could get annoying, but with per-type flags, we could do selec=
-tively
-add a few wrappers, e.g.
-
----
-static inline bool is_noncanonical_msr_address(u64 la, struct kvm_vcpu *vcp=
-u)
-{
-	return is_noncanonical_address(la, vcpu, X86EMUL_F_MSR);
-}
-
-static inline bool is_noncanonical_base_address(u64 la, struct kvm_vcpu *vc=
-pu)
-{
-	return is_noncanonical_address(la, vcpu, X86EMUL_F_BASE);
-}
-
-static inline bool is_noncanonical_invlpg_address(u64 la, struct kvm_vcpu *=
-vcpu)
-{
-	return is_noncanonical_address(la, vcpu, X86EMUL_F_INVLPG);
-}
----
-
-We wouldn't want wrapper for everything, e.g. to minimize the risk of creat=
-ing a
-de factor implicit default, but I think those three, and maybe a code/fetch
-variant, will cover all but a few users.
-
-> About fixing the emulator this is what see:
->=20
-> 	emul_is_noncanonical_address
-> 		__load_segment_descriptor
-> 			load_segment_descriptor
-> 				em_lldt
-> 				em_ltr
->=20
-> 		em_lgdt_lidt
->=20
->=20
->=20
-> While em_lgdt_lidt should be easy to fix because it calls
-> emul_is_noncanonical_address directly,
-
-Those don't need to be fixed, they are validating the memory operand, not t=
-he
-base of the descriptor, i.e. aren't exempt from CR4.LA57.
-
-> the em_lldt, em_ltr will be harder
-> because these use load_segment_descriptor which calls
-> __load_segment_descriptor which in turn is also used for emulating of far
-> jumps/calls/rets, for which I do believe that canonical check does respec=
-t
-> CR4.LA57, but can't be sure either.
-
-I'm fairly certain this is a non-issue.  CS, DS, ES, and SS have a fixed ba=
-se of
-'0' in 64-bit mode, i.e. are completely exempt from canonical checks becaus=
-e the
-base address is always ignored.  And while FS and GS do have base addresses=
-, the
-segment descriptors themselves can only load 32-bit bases, i.e. _can't_ gen=
-erate
-non-canonical addresses.
-
-There _is_ an indirect canonical check on the _descriptor_ (the actual desc=
-riptor
-pointed at by the selector, not the memory operand).  The SDM is calls this=
- case
-out in the LFS/LDS docs:
-
-  If the FS, or GS register is being loaded with a non-NULL segment selecto=
-r and
-  any of the following is true: the segment selector index is not within de=
-scriptor
-  table limits, the memory address of the descriptor is non-canonical
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-and similarly, when using a CALL GATE, the far transfer docs say:
-
-  If the segment descriptor from a 64-bit call gate is in non-canonical spa=
-ce.
-
-And given that those implicit accesses are not subjected to LAM/LASS, I str=
-ongly
-suspect they honor CR4.LA57.  So the explicit emul_is_noncanonical_address(=
-)
-check in __load_segment_descriptor() needs to be tagged X86EMUL_F_BASE, but
-otherwise it all should Just Work (knock wood).
-
-> It is possible that far jumps/calls/rets also ignore CR4.LA57, and instea=
-d
-> set RIP to non canonical instruction, and then on first fetch, #GP happen=
-s.
-
-I doubt this is the case for the final RIP check, especially since ucode do=
-es
-check vmcs.HOST_RIP against vmcs.HOST_CR4.LA57, but it's worth testing to c=
-onfirm.
-
-> I'll setup another unit test for this. RIP of the #GP will determine if t=
-he
-> instruction failed or the next fetch.
 
