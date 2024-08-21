@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-295607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C2959EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:42:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CA9959EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F68282E30
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC96728538C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C6F1ACE17;
-	Wed, 21 Aug 2024 13:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1FB1AD5FB;
+	Wed, 21 Aug 2024 13:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LvhdlmKD"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdWjgVWs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7640E1ACE1B
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B971A4ADA;
+	Wed, 21 Aug 2024 13:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724247759; cv=none; b=ltCS1dQe9SJxyp8wcxXFO1hetgGbCNRPkb2jO8pPpXHyYQs47C4ASnucfX2InTGnhQjy7mZsLTX6BSz8W9Sbhgoq5ovIe7lTu3AWB2LCLX9+8N0358qggDdt+GNp6moOp+AGNniYb14bJikEyc2jzfuLcyidDbweCnf8vz2NuVk=
+	t=1724247778; cv=none; b=lhy3vidZWX6XEEHHhVZ1aJXYNwMeHsiB8YSf49LAAgAfkt7BS2oE0fo7H78IYKR8HPjDSH025qwasDj4dBmYCVHAO+v9Vf8Gi9dSoUHceCbHMecxNJA64K77buYl6rOiFWn1P4a4MVBKNmUE8We4tXOrIfm3kmmTzEZd2r1HIFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724247759; c=relaxed/simple;
-	bh=QONK94iRvdLCkFzKX0e/7PlO/nG9joY+JgRsY16DFNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H0PTX7mFo0s1Kg/4iC4vQL6q9xefeMWROWW5xz7pU1zL9M7lHX54U9JqhcbMU8NXOA+pKcx48H1DD/IpBZuQlpj9P9jibK1ncuRPXhXKBkHNB8MtHlXsXUmfj29+5h8uWRY3DffuP2BjK+fqMud/Dyx1KaiZlDu/Gn1I5rfL1gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LvhdlmKD; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso55502645e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 06:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724247756; x=1724852556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VJsppgPirLly3GD0IN/t04cO41JiGSW1iAo56M7EyD8=;
-        b=LvhdlmKDFG5xKXdQXlVcZ6sBjFW+T5OF+qP5fw30CCCJJMOu+Vw3Kg1C8K6F/+ymor
-         IdTDxR5Tth2Q8GUKcTKLH0ga1ipJ+hmQm6NqCO8Y8dPa3eeDKl4jb7MKrT0rNBqHleqq
-         prxLgTDAqjMWMLNotOmT+5AYE2xI5EZLobCVrbgIHT6AGfMTWE6yvMKDHn3R7Yk9zRDN
-         hudONAX/NJlCigbk6U508Mt59P+aUBpJlLQ9XILD1DUSkXdVWsNMudMqAFZVF/eTOOWW
-         eazNQkDR9v9iB9WIoVJleQzqMuPDDIvYMDrUCsTw6N/ovvcViZN4kZxZGdTuoWdtAX6J
-         SJ2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724247756; x=1724852556;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VJsppgPirLly3GD0IN/t04cO41JiGSW1iAo56M7EyD8=;
-        b=sT5vzU68XWuZk4oWWSrxTgOwno50QR7UflpBd7UVk38A71Mzm7J4hwXqGYccGV2jgr
-         yh9fjW7hZZX1rkxxoUoUPqn8SC3eAD+aLL1nEkLU06uHQK2GBt3uRGCntbmGed1GOulg
-         V2LIAvGoE1Zq6gd7x6Y0GFV1ncazQb7If58KTY0Hw5T29nc9pMCbNw7gJuLdC+w2htKy
-         erATHo1QeHDt06jZZwnw1emhKuTHuK5E521zAVfIe6Zgeknc9PhVZLza+ygrG9PPm27I
-         SqhV5vHW3Y1HBGP/OqCRirSsYB6Sq7GUsnolkB9enk+95nPS00gDm/IP4yQ5M+Pyzo+I
-         bU7g==
-X-Gm-Message-State: AOJu0YwVRSpgtAn8pJDGN+t6vFdnn84J84AWJ/DkVKxUteCuo5OqDdPa
-	4dzQhcCyvBpMqOCZRqPTAhYur2f//kZjD2B5pnrwM3pqR6t9fkWBoOB4lZBQFN75soqnYBM7jCP
-	J
-X-Google-Smtp-Source: AGHT+IFVPMQaCNHXE33yxUqjZrAbeBWCgU3RtQoYGtUEjlamY69VErH1gKWoM3Hgdn3POZ4E1/1oog==
-X-Received: by 2002:a05:600c:1f85:b0:427:ff7a:79e with SMTP id 5b1f17b1804b1-42abd21323fmr17223155e9.16.1724247755140;
-        Wed, 21 Aug 2024 06:42:35 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abefc63c4sm25847905e9.29.2024.08.21.06.42.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 06:42:34 -0700 (PDT)
-Message-ID: <6c60c236-c0c2-49a6-a2f1-9d588a81681c@linaro.org>
-Date: Wed, 21 Aug 2024 15:42:34 +0200
+	s=arc-20240116; t=1724247778; c=relaxed/simple;
+	bh=THhE5eMnjlNKxQ/R+oGQK3EpvB9KEoAA4Y/el7UyCgc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=qHZbKCM+iW36IWepI1qV4IK3O7qU8eVZ3fNiMC1Z8/DiV4epcNPfn0HkHZZVBU3rgYZoQjmEv6fUd/2Zl3X0iLY1oqyhaBIv30HOslxTN8wsJNvDl9JZ/uTimXRZDeP1LlRFwWfpDKWygoBC8x0tHB9Kziv23BkHsJYKrJuyz8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdWjgVWs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C26C32782;
+	Wed, 21 Aug 2024 13:42:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724247777;
+	bh=THhE5eMnjlNKxQ/R+oGQK3EpvB9KEoAA4Y/el7UyCgc=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
+	b=gdWjgVWsHis3krlbmQZ3X58rj8MsjRM1ldVftrS82nR67XO9gkDMSWmV4mjNersqt
+	 Cm/vJl3tAEb+1jV3iL7kICq6Vd30uPtwc/LgrqOvo/0p39YdXB+JY4//E1Uxqu9dFH
+	 GaF06vqkKCkP7I15FnBE/WwLLlgtUeqjdL+pxtJ8Rrc98zmECQrrcWugU98PlHr0xv
+	 EEmpRrbkzfvpLlS6WH0ojzR5c/B71UbhFdHQYz0kXhwT0LyQgbAxNfWd2FsMyVCzPi
+	 HC1vpoU5nDkNpbkqF8T8cISPeCyIlcevgZ3C3Et+mpWH0JJElDQB8funuTwZaBnVWJ
+	 ki8IS+/1FqBuA==
+Message-ID: <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
+Date: Wed, 21 Aug 2024 15:42:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,44 +49,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/14] thermal: imx: Use the .should_bind() thermal
- zone callback
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Zhang Rui <rui.zhang@intel.com>
-References: <2205737.irdbgypaU6@rjwysocki.net>
- <2485070.jE0xQCEvom@rjwysocki.net>
+Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
+ DT overlay
+To: Andrea della Porta <andrea.porta@suse.com>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <2485070.jE0xQCEvom@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <cover.1724159867.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 19/08/2024 18:26, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 20/08/2024 16:36, Andrea della Porta wrote:
+> RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+> a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM, 
+> etc.) whose registers are all reachable starting from an offset from the
+> BAR address.  The main point here is that while the RP1 as an endpoint
+> itself is discoverable via usual PCI enumeraiton, the devices it contains
+> are not discoverable and must be declared e.g. via the devicetree.
 > 
-> Make the imx_thermal driver use the .should_bind() thermal zone callback
-> to provide the thermal core with the information on whether or not to
-> bind the given cooling device to the given trip point in the given
-> thermal zone.  If it returns 'true', the thermal core will bind the
-> cooling device to the trip and the corresponding unbinding will be
-> taken care of automatically by the core on the removal of the involved
-> thermal zone or cooling device.
+> This patchset is an attempt to provide a minimum infrastructure to allow
+> the RP1 chipset to be discovered and perpherals it contains to be added
+> from a devictree overlay loaded during RP1 PCI endpoint enumeration.
+> Followup patches should add support for the several peripherals contained
+> in RP1.
 > 
-> In the imx_thermal case, it only needs to return 'true' for the passive
-> trip point and it will match any cooling device passed to it, in
-> analogy with the old-style imx_bind() callback function.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> This work is based upon dowstream drivers code and the proposal from RH
+> et al. (see [1] and [2]). A similar approach is also pursued in [3].
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Looking briefly at findings it seems this was not really tested by
+automation and you expect reviewers to find issues which are pointed out
+by tools. That's not nice approach. Reviewer's time is limited, while
+tools do it for free. And the tools are free - you can use them without
+any effort.
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+Please run standard kernel tools for static analysis, like coccinelle,
+smatch and sparse, and fix reported warnings. Also please check for
+warnings when building with W=1. Most of these commands (checks or W=1
+build) can build specific targets, like some directory, to narrow the
+scope to only your code. The code here looks like it needs a fix. Feel
+free to get in touch if the warning is not clear.
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Best regards,
+Krzysztof
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
