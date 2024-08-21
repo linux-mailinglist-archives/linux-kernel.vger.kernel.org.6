@@ -1,160 +1,160 @@
-Return-Path: <linux-kernel+bounces-295297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C4E95996B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1011B959811
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E621F21D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4521C21C92
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51AB20977D;
-	Wed, 21 Aug 2024 09:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C660C1AF4D8;
+	Wed, 21 Aug 2024 08:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+9K4F2q"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eXtOxnJs"
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BED209746;
-	Wed, 21 Aug 2024 09:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B836B1AF4CF
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233969; cv=none; b=Bj6RKmudI2XGkVJ0913n/zNiS18tV65dPlqqaA0Einp4Lw6jkwXStNVItGqA9M85rL0ejCvMis96grXa3xWGBOgbjYZrjKVbG+uJC2pPRtoClPoZPfCbX24VO6tfltkanDSm4bN70ec/nfc2na/YHlsMsflpJTM6sd9K7stbCTM=
+	t=1724230383; cv=none; b=n7XLbgzrYAgjV8V6J98alNp9Ajy3w5y3giwIt3rYOBE1nuRKDViWMKlWQrHUOfelXirRKpniidqbXqWjJl2zQPL6zvlPudQbjeZXwSmFPJzd+iS+5N+UwbI8EsBiTPKIQtVPO4+/RvVtdz7eh7JKIfAC7Gf2OkSIzGGGh3je6Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233969; c=relaxed/simple;
-	bh=JdEMT7lY6TmTa1wl8ZbqGL7+iY0+jlLlU77IumvbwgM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlV4usLk+GRQH+QtAGo8ek4xbhHw88KfF+oyQxX87WSSZRRiATJY7KJb0L4BHxvkzch0gionH3Yj8fiiz7tlavYqdQ45LSHvugzj52FJu78RlRVo6m+TXscTsuOvZntO5z/a/ZJvbaBzaBVV/9hH3IGBedAo+3chASfCLA365Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e+9K4F2q; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42808071810so52464425e9.1;
-        Wed, 21 Aug 2024 02:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724233966; x=1724838766; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NnOrzKMcyDUoMSvS/S7wX/qCak1X+CvKtxdgt9KzAEE=;
-        b=e+9K4F2q6LKyMYOOIPNv/E8YGLIWdCI3BNp2vtRTJP/TCWAfoZkE2dX65cZ+V66drq
-         bXt7Sh/q1Xt8O5PuFnbeagMRVvuCjJxtgC7bGiLtHtRBKVl58Snf+qiR/lm+3oII9oFh
-         WbnqRA3lDNcUQwIf4Jf1mpsqyUtt9/czkLlmNBu3l02PoD7KDn/eLaUoskchQjprrVVf
-         o54UbO+I473+nUlaAkM5qsHDoMRQc8KbrVCuUUTyBz7wT1ynPl1dnfU47mezWla4U0xL
-         g256pgyg7zU8sHTVVW0Gf7xPwj1PwX+yEopN1yz3HHuDLGlwViCiqF1DvPm74pjnECQJ
-         1qUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724233966; x=1724838766;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NnOrzKMcyDUoMSvS/S7wX/qCak1X+CvKtxdgt9KzAEE=;
-        b=JnvXhNk4Yb7jEkV5j9fP+ePI/PXe7cegcoPUURc/REXSz75FUMXqXnwz5Xrwd26j+/
-         giHx8kUyB+8VVAWwzv3ZIUltBp4TIMsjm7Jky5QaoMyGiLvfmv8ieDTjDLRpon611wsH
-         x9KCvF4VGr6SmUqSQ8OKhVvSBsTqVTb0yQ9oTDQGzz6a1CSioP4Ivzoa0ryCaVjUuLj3
-         99vh/hSQ67HWP/iOEUfnheYGHIazuUODA4tZgEEWsBUEMKi2JcDFqNxT5O03PQKBfhkR
-         0Apnw3pri/NOajl0MCOKsgJAiSso7J0CtEZTxgw0LuvnDNUDvql1F36/kGn0ls3C/kry
-         eaqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZvTDyNSBR5hx/e5I+J4//DKKyTxy9hqKLjmrxaCZoUfgHIUVkbSyJuMtdu9tDHzl6vUPpwZ850Zjb@vger.kernel.org, AJvYcCXVIgNn0YfAOW3e1mB5z3jsov7Z9GPxQdDhEO7+KRlJwPRIakkfqqpmSrkoTkoS6wuzdx1gk8swHsQOVNoU@vger.kernel.org, AJvYcCXXWAIRqFFes7s+rNvZBgtrk6j2EszRfxIWN4CBhFUiLfHKrW8X20Bbo/TKGDU86G8UQFfvQkEsa5e8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX1cAcWCGYvswjXXEXNiYf61RkGUYY0DHHR3pvw3dx3mTddtu/
-	88GNOWfcZ1wuxVIRFIdTKriSUTGHokJKbWvfIhWni/H6oKJk4MuL
-X-Google-Smtp-Source: AGHT+IF+o52couZdaHJEJsihSkCGmNimy0lgypKHwcww3KpUeXlqaH0DcS+QnsEyqQhvoHcsbtMK6A==
-X-Received: by 2002:a5d:4e91:0:b0:371:8d9d:d824 with SMTP id ffacd0b85a97d-372fd4d0932mr1175077f8f.0.1724233965429;
-        Wed, 21 Aug 2024 02:52:45 -0700 (PDT)
-Received: from Ansuel-XPS. ([109.52.145.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a2e2sm15236412f8f.16.2024.08.21.02.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 02:52:44 -0700 (PDT)
-Message-ID: <66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
-X-Google-Original-Message-ID: <ZsT6q4_ULOc5aPv8@Ansuel-XPS.>
-Date: Tue, 20 Aug 2024 22:20:59 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Saravana Kannan <saravanak@google.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions
- node in mmc-card node
-References: <20240809172106.25892-1-ansuelsmth@gmail.com>
- <20240809172106.25892-4-ansuelsmth@gmail.com>
- <20240813200734.GA1659224-robh@kernel.org>
+	s=arc-20240116; t=1724230383; c=relaxed/simple;
+	bh=eQ0lRGmxhBKrmsCrYIZnXk1EPkKYAJq+d1QdFzwIHSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t9LH77fr/yKZCQh0nCajS7VRsSnG3dGku1aHORCzBh5RsC/Kt3StSTTk4Zd7SEil/B2r4j96uH0y2XIKe4TiBbMT+VrrYakC48mG7b0yL/FxHChScQojpXhgWp3YJcu/XuZcSE4I0UCtmzFTy18yGHl8KbJh0WUMZj6wkWFLuFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eXtOxnJs; arc=none smtp.client-ip=80.12.242.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id gfK9so4gXJokxgfK9sTirb; Wed, 21 Aug 2024 09:00:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724223607;
+	bh=MBvRzI7GXsEtw0mfN/60SlpupZEWydInYQb9ZLdmiBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=eXtOxnJsqgRJOJEFbTiw62RbgtPG7xp5y1ELk8NQPZuAWwTAZs8Myg9DKmsGrdG3K
+	 UC4RBjEp0EMRDIJyrRF9KOIIO5PXDw3ZME2qsW6pFiMDoTzzOPfePhmNsfhYxEEQ7Q
+	 oRVPnf4BDBa8dUSjhGlaULqYWAcWqXW/2BAA/D0oFy8X1fYnAQIYJxxmcFlquTb8lG
+	 o4iHDPF2qht2ICBBfriuhPJ82v8ccgujJy/GpoOdmHhHWvsHiW3P8Z9P1SPdF1QnuU
+	 DixooiYw6A4g/ncSTYwzYTNH6fxpc7LwDRlyE6SgfvLLvxG2OzgkoYSQNeZ2dGlIvV
+	 cVvUio0zWXJTg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 21 Aug 2024 09:00:07 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <8f577565-69b7-4da0-a7fe-2e94bf37948c@wanadoo.fr>
+Date: Wed, 21 Aug 2024 09:00:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813200734.GA1659224-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mailbox: sprd: Use devm_clk_get_enabled() helpers
+To: Huan Yang <link@vivo.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240821013901.787555-1-link@vivo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240821013901.787555-1-link@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 02:07:34PM -0600, Rob Herring wrote:
-> On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote:
-> > Add property for defining partitions node in mmc-card node to define
-> > partitions in DT by the use of the block2mtd module to use block
-> > devices as MTD.
+Le 21/08/2024 à 03:39, Huan Yang a écrit :
+> The devm_clk_get_enabled() helpers:
+>       - call devm_clk_get()
+>       - call clk_prepare_enable() and register what is needed in order to
+>        call clk_disable_unprepare() when needed, as a managed resource.
 > 
-> You justified patch 1 saying eMMC already supported this, but then here 
-> you add support.
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
 > 
-> Both are a NAK for me as both already have a way to describe partitions 
-> with GPT.
->
+> Due to clk only used in probe, not in suspend\resume, this pointer can
+> remove from sprd_mbox_priv to save a little memory.
+> 
+> Signed-off-by: Huan Yang <link@vivo.com>
+> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I think this got a bit confused and hope we can find a way to add
-support for this.
 
-What is "already supported" is assigning an OF node so driver can
-reference it. This patch was just adding the nodes in the schema to say
-that partitions can be defined.
+Nitpick: no need to add this S-b. I just made a comment when looking at 
+your patch in order to improve it. I'm not the one that suggested the 
+initial change. All merit is yours.
 
-I think what is not clear is that block devices might be used as raw
-devices without a partition table defined in the device. In such case
-it's the kernel that define a fixed partition table.
+Also, I think that, if used, it should be above your Signed-off.
 
-One example is [1] where the partition table is provided by cmdline.
-Similar to cmdlinepart MTD parser.
 
-The use of block2mtd is just to make use of the MTD parser system.
+Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Considering
-- eMMC is soldered to the device (no dynamic scan)
-- cmdline might be not tunable and hardcoding it might also be
-  problematic (as some cmdline needs to be used)
-- concept of fixed partition for block device is already a thing and
-  used a lot (android AFAIK)
+> ---
+> v1 -> v2: remove clk pointer from sprd_mbox_priv
+> 
+>   drivers/mailbox/sprd-mailbox.c | 25 ++++---------------------
+>   1 file changed, 4 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/mailbox/sprd-mailbox.c b/drivers/mailbox/sprd-mailbox.c
+> index 9ae57de77d4d..ee8539dfcef5 100644
+> --- a/drivers/mailbox/sprd-mailbox.c
+> +++ b/drivers/mailbox/sprd-mailbox.c
+> @@ -62,7 +62,6 @@ struct sprd_mbox_priv {
+>   	void __iomem		*outbox_base;
+>   	/*  Base register address for supplementary outbox */
+>   	void __iomem		*supp_base;
+> -	struct clk		*clk;
+>   	u32			outbox_fifo_depth;
+>   
+>   	struct mutex		lock;
+> @@ -291,19 +290,13 @@ static const struct mbox_chan_ops sprd_mbox_ops = {
+>   	.shutdown	= sprd_mbox_shutdown,
+>   };
+>   
+> -static void sprd_mbox_disable(void *data)
+> -{
+> -	struct sprd_mbox_priv *priv = data;
+> -
+> -	clk_disable_unprepare(priv->clk);
+> -}
+> -
+>   static int sprd_mbox_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+>   	struct sprd_mbox_priv *priv;
+>   	int ret, inbox_irq, outbox_irq, supp_irq;
+>   	unsigned long id, supp;
+> +	struct clk *clk;
+>   
+>   	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>   	if (!priv)
+> @@ -331,20 +324,10 @@ static int sprd_mbox_probe(struct platform_device *pdev)
+>   	if (IS_ERR(priv->outbox_base))
+>   		return PTR_ERR(priv->outbox_base);
+>   
+> -	priv->clk = devm_clk_get(dev, "enable");
+> -	if (IS_ERR(priv->clk)) {
+> +	clk = devm_clk_get_enabled(dev, "enable");
+> +	if (IS_ERR(clk)) {
+>   		dev_err(dev, "failed to get mailbox clock\n");
+> -		return PTR_ERR(priv->clk);
+> -	}
+> -
+> -	ret = clk_prepare_enable(priv->clk);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = devm_add_action_or_reset(dev, sprd_mbox_disable, priv);
+> -	if (ret) {
+> -		dev_err(dev, "failed to add mailbox disable action\n");
+> -		return ret;
+> +		return PTR_ERR(clk);
+>   	}
+>   
+>   	inbox_irq = platform_get_irq_byname(pdev, "inbox");
 
-I think it should be acceptable to introduce in DT support for defining
-fixed partition for block devices and some kind of parser system similar
-to MTD. What do you think? Would this be more acceptable? Idea is to
-just have a DT schema that makes use of the values that can be set in
-[1].
-
-Hope we can find a solution to this, I'm totally OK for dropping NVMe as
-I understand it's PCIe stuff and very dynamic but OEM are making lots of
-use of eMMC and are starting to use these strange way (block2mtd) as we
-currently don't give a proper and easy solution for the task.
-
-[1] https://github.com/torvalds/linux/blob/master/Documentation/block/cmdline-partition.rst
-
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  .../devicetree/bindings/mmc/mmc-card.yaml     | 40 +++++++++++++++++++
-> >  1 file changed, 40 insertions(+)
-
--- 
-	Ansuel
 
