@@ -1,173 +1,186 @@
-Return-Path: <linux-kernel+bounces-295396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258F0959A6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:44:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75758959A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A0DB1C21784
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:44:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5F3AB25615
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C151CDA0E;
-	Wed, 21 Aug 2024 11:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56D31B6551;
+	Wed, 21 Aug 2024 11:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="A1G7qmxG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rrej/QeG"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ld2cezoL"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2069.outbound.protection.outlook.com [40.107.255.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3861CDA04
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239098; cv=none; b=bDt1EyhyXRS4y4CwPPIoZTeHab46rO48HCzGJbWmF4GJsoLF2BsBqynRuLc0ZIB6A+v8vOmKUUaV8HjwFx4h4ytU1ntEBRupl5LFdvqhCE1DH+tOEMeaQ7xp4dnCK26eXec1gwE8TjFXCHaIG9IFCn5G0p/JIiYyPI6Ck8ORdBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239098; c=relaxed/simple;
-	bh=1OW1DdjERVqL3qpm1YnlUe1ul3PntEOzq1r6zXOhOcM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=EwV2ZFS42KbFmJZOlDMAMbOIqx/Zi/CoOer0kPCrvnozjutQD8AaxOLqwMFdi8Lbq29F0E8qVoZDJNBAKR1u0VujWg4o3GhcSjr2icjr+uYoyFkmaUyMOHetpdPp214gzhuTwvz44lEC1joTc8VWAWbd8smXiSHbpHQX4VTSObY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=A1G7qmxG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rrej/QeG; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 7E912138FFBE;
-	Wed, 21 Aug 2024 07:18:15 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Wed, 21 Aug 2024 07:18:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724239095;
-	 x=1724325495; bh=Qy9R3mrH4Qsrhc+am9tt1N7hPihxmtlFQ6Ivr0UbX6c=; b=
-	A1G7qmxGLuFU4AtQgzB5RjZ4jeCwqLe/8Pp9HEUSKsmvtauD5/ftu9DsNxJdzecx
-	fPt2X2udrcd1cRKksPrDzk5gZoLqzkkmcnm6WI2jMAVoBFt6uta8ZwMXSyJYqCxf
-	aFjvwIuWhYqq2A1incfgXcYv0Q0Efqc2zvapcbeXXe+2jPDnLt/O8Bun4mCz6lid
-	HLMeYDj+W9DndMyqPe1z9+hqVvnb+IIs6l89EdiPrLoj+EY4b/ednEMenKMT0f5s
-	s/356EbU+hZpOYDVyX8Y2NLL6Zb4Chvno8e611GgtpRKqpye2/IPiQg8il3w2lPz
-	bnPPPMLn8qQqnDRj+9Ly+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724239095; x=
-	1724325495; bh=Qy9R3mrH4Qsrhc+am9tt1N7hPihxmtlFQ6Ivr0UbX6c=; b=r
-	rej/QeG1jWALqAJurcMAqt5UqWjPpuWS89g3MG5AVCkv6PQYmuRXOg0dc7rRdm9N
-	eFyncgn1AD7lPfjJ1pZVUQ8YBhHSxSkhS1WQeHnF4h+iKTqo+/QllZO4nQcUjRjB
-	Zpzvi0+WIfVqA1M16K5acJxEqyrusnoOPdcUJi17tNwa9SjZn3U4a7yt2MW6wz+D
-	N2MnWpROVNXq2TwR9YM1JgBX34AWm1ucIvxp8J1ZDtiXJeyv3AGHFQsbuE/aYxUu
-	/1uS+8x24fLWNn/AVofghM/UmqnzAQ/PX/HI9l1iHLoBYlMVhuSFVzbRLro+IqKD
-	P9sNg+7K49iafGwU3gnhw==
-X-ME-Sender: <xms:98zFZlIacQygLGnh0zLG-QHxTYQnRD-oixg5EfZyRIMe8Qn8h6mNDg>
-    <xme:98zFZhL9W5GRX8CplQnWHPSZS3L8WjlL_9BWQuggF6fagNxR7B2DQ99C2idfLM6V_
-    kD4um0OEYqHC3-1Xx8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddukedgfeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephedtleehjeeuvdeuleeikeetveeuvdeiffehvedu
-    jeduvefgfeffhedvueejteehnecuffhomhgrihhnpehgohhoghhlvghsohhurhgtvgdrtg
-    homhdpvhgrrghpihgpfihrrghpphgvrhdrtggtpdhkvghrnhgvlhdrohhrghenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnh
-    gusgdruggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehrohhhihgrghgrrhestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepthhomh
-    grshdrfihinhhklhgvrhesihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhhes
-    lhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:98zFZttEgWkIYZBqMgMMoPUFb4eKZMvrEjtxp1j9iHHKlcWme6QzcQ>
-    <xmx:98zFZmZ_rrgt8NfL3sDG4kFlheT76Chx0QH7CBoGG1r7OyPBapOCQg>
-    <xmx:98zFZsamDYvKV7buifplfuuggHe0xqKP_m-CaGZ0tOluBqCMVx4w3g>
-    <xmx:98zFZqCCFGyLTZv1bORVLL_Py7AVqz5QnhWvZwJz9YzU2XPvYqokPA>
-    <xmx:98zFZkGcjtLGum_uFGO2FF7B8aMzoSZy652JSOApe8GhU_PSu4N-mbbh>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2D39516005E; Wed, 21 Aug 2024 07:18:15 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A23345008
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724239337; cv=fail; b=DdXyy63cdvkmeII+1pvzwl1zgtSRP5pQVfLJf0MyNfEpC5EBvJj9CKK6kbeH95SClgi6grz0i4lvtordgt3nbkbF1AbzfOOC4I82nGxXOaMu0cqvD0yLjbtHLZflF3CExfFOspyl6G1rTzkgKHn8KNwyziZswT8WQFaAbJUHgjs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724239337; c=relaxed/simple;
+	bh=Fv62/SMZU0vbzNe9i0DRC2PkGadgFBdzx+B3RjJoDgI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=l/xLEThuP+oEyW4fDOMgWwV66auuG0dXSBlx/CJWrPTckWBxcoHV0TWM12aXDy3e9iftPaZq6YpolGwo69XxQl/gl1ZH6v8Un3jjGF34pJHzgTRSqqcz8eQ2hzeIf21zOVaNWKIefYZcDbW76NoijyYQTVaFiuyk0mdelUfZJLs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ld2cezoL; arc=fail smtp.client-ip=40.107.255.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QS2TFDQpbLNCyReYtqPSDn6cY9Gdr0PKhO1lJlrCXW/Nv2I53bC9/6gLjLf+jMmTbVikViMLnIAuB3NxL6TcjNCSy7D615h86Pm6cD4uRx1UmXuzYVG/tysvB+ZYuIsnvIz+b3fb9n9vR5RdWtR8+JIxUMEur+z3sOjrdwORapjy9oNkGv9Uz7E6gDNxm1wQfw9335Dzsiq0K1WdFi0yjdv3ZJlDVE4hEg8JT0JaayUopl5/mOG836S4PvdNohyxx0wd1n79zb1TObCQwdaS09NA9m1JTZ7J7H5RNZj/DVx9oj1vznPbWHO+FhBQBVxGwYTtKrXoZebzZAlO/hcU4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aTMcIlgrXQk6v4nx3zXQZnQhyZVBHQ0XSHnnKB6A4pc=;
+ b=ZeATNiPcaH6g+fu8VFfWpjLvIm+Kdnravk3iyAnV2ioAOz0pyzeViyPEXV4Z9w08bGxPjlLNIBZCGAy1XId7AVvWPZxaZzI5WIzRYgCde5/7r2XbaD2Xyn36dQZt3ZR2j9nQmo6o4wCsrF5M3egiuKgFnZBkZz7jnJ4BaZgPFxjf/+9NbANoUKJbQgGw/jOw5oLY6xye2+HQlR8Cqx8NU9piyVw6cvU0LeuwkIC5KlqbSlWydevcqI3ET1qUyzoGTz+ssrsCc99mRc2i4xNxESuzmlxNi3SBFSomXWmG+K9FkJaP9Q3XK6DILInvaodNj5wMu5ZVq6IqS15DkVK1sQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aTMcIlgrXQk6v4nx3zXQZnQhyZVBHQ0XSHnnKB6A4pc=;
+ b=ld2cezoL0zo09MamKyPaf6ix0zJUdmn5kodeX9MKEHJ4jp385w1b39pETBCePhb30w0NZIMr7Jw88/RiIYDeTVy3JRB20vfJILYvYom6OzNlMGqYabF4fWDWb0VCaaGk/fe6uPSGDhXjr5gAuFT/RHyT2DAR8Mqh9fJz1psKR/sey7NQwbcDlGcnkGbFWnIFRQi77kyY9j6TrYnrKq2uPuI3i0gvXKfzFV9dZMsqIoQi8YVScxEGzqlo3kLCI4mdFyhM76nVR56xfV2IPH3LlcXmMn3deDuGExNs2YITXQq3bvt1z7l0CO8AAuPaiNQqoWVmKVkqMc1qkL6ahjbThQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by JH0PR06MB7030.apcprd06.prod.outlook.com (2603:1096:990:6d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.22; Wed, 21 Aug
+ 2024 11:22:11 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 11:22:11 +0000
+From: Yang Ruibin <11162571@vivo.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Yang Ruibin <11162571@vivo.com>
+Subject: [PATCH v1] drivers:bus:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
+Date: Wed, 21 Aug 2024 07:21:30 -0400
+Message-Id: <20240821112131.6004-1-11162571@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0080.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::10) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 21 Aug 2024 11:17:54 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Rohit Agarwal" <rohiagar@chromium.org>,
- "Tomas Winkler" <tomas.winkler@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org
-Message-Id: <25e56199-7af1-4235-8973-cbc351325b8c@app.fastmail.com>
-In-Reply-To: <4d6f3331-5a9c-46f2-8e27-3484ba6f6eab@chromium.org>
-References: <20240813084542.2921300-1-rohiagar@chromium.org>
- <75f758e5-a26f-4f41-8009-288ca2a4d182@app.fastmail.com>
- <4d6f3331-5a9c-46f2-8e27-3484ba6f6eab@chromium.org>
-Subject: Re: [RFC] Order 4 allocation failures in the MEI client driver
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|JH0PR06MB7030:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7e1c5cb-6906-42dd-1f2d-08dcc1d36e26
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?baKanrzAMipKLFAQoVzC497FG0DKP3VyOK6UY4FtIWOaXie9v+yIgdaMaZyS?=
+ =?us-ascii?Q?9ykvO8Red1FTpdZSB4SAaZwnYyPjddhVUS6lbCfO/T8+rr4pnRrkaHTSr9CL?=
+ =?us-ascii?Q?NXwcvGUMjFUHQeLh/05tLJyWD+p6Kq1leH4dfmnPx9mRL+N2tTIZer/uB5kz?=
+ =?us-ascii?Q?sAHFagd7rB0ycu3rBOywqd/XQtSCkmZQYFDxdUJ9f3wPnCu/41ss3O1ep685?=
+ =?us-ascii?Q?drP/3R9kTncFZzXVtpKRsm2SsNbP9jcF630cF6r+ytG03Px0Of2rXJGk5TLZ?=
+ =?us-ascii?Q?tWGNs/Nep9PVh8HDpcm4XXMz8c6EZs5408CcDRVsem/ztQTc+xP59KvrVFYU?=
+ =?us-ascii?Q?MI1n+XphrnNv1iC1m6i80QbX5ssMSD/wmhBL2Zamffd0t9bOhGERIghtEk23?=
+ =?us-ascii?Q?zebHRQ01BbrhzcdktAISYnjjRysQxw+azmQwRLQALOPnwHmh2aPi+b0JA/+O?=
+ =?us-ascii?Q?gMjRxFZLlkqu8KQfiZlMh5eike9uNWoJoVsQU75mixzF+M3iCBuYmAVZu+oq?=
+ =?us-ascii?Q?EYZrXwTtVw0j5yzNPqFclG/9TAcwdnwX327arYafQqmoJtTRDCZZ1p8VsMsl?=
+ =?us-ascii?Q?VqZiWrG9r30h323z6PrrzM2VhXzJr2lgb7PK4qEoIr/vkKd7/kS6iBZMthNw?=
+ =?us-ascii?Q?Gse6g+S2jE6XN8X34bPPYALp+ePEKOC8nnEJi2KFkICKEc8LxPE5Accy/AVd?=
+ =?us-ascii?Q?WBpvskCkBuRSw9FQVhMn8LdaCSVuKd+yNhfa1pwy5fe6I0y4Qet6pF7Et4j4?=
+ =?us-ascii?Q?sM5FwxD0bT+99UrOcPzXBXOnO9JN8xYh3PuYIstTaX/S/3Z39ujYZsatBtPN?=
+ =?us-ascii?Q?3r2DoRSEf+SPkY+qWP1idnvsZDAwQeqGCz6g7b4dJovwTOlbRpLrLBBhmEoY?=
+ =?us-ascii?Q?MLX4pT7dBKsUm3fDbzpAlVxehW+nom2KNizGGKWtUk4HkXKYNW3E1WcSr+ro?=
+ =?us-ascii?Q?uOVLDWKeCjtSyyyxtACAA8m1VBEljMiNvpZ2TKfCixFIHtXu6ojDJ3TUAB5k?=
+ =?us-ascii?Q?H8NevUDxEPYCalDeCDbB3yJE8NGwrj/W5EAIf10Pw8n8nAkFSZhzN+XD20sb?=
+ =?us-ascii?Q?GWWeOTBmnZ3hdQmsJynyBKjncyDLOg9X9pfIsHzguzKki2T7q3PxGYtsf4xP?=
+ =?us-ascii?Q?BExreEl4ZrNakYf0/jaEOzLOwFkdpr7RIp6mFxhTWDyVKmru+ebOxisx5Qqo?=
+ =?us-ascii?Q?5H3v+Nv3vEqol7JS+7o/qITr7TaFssv87RFIihu3fD3rPlidHgljcNzPlb6F?=
+ =?us-ascii?Q?ucklDVHZ9ykJ8d7je3ud8ieJruVQrwMvaFG/YrKfNhlhW1FMufdd1BlYjBLI?=
+ =?us-ascii?Q?ZnCgNYi7LKjYA+ls3YiUxIDUADbN0lnkjKT8ahWqq1VfunS0gKeEBeBeuD/q?=
+ =?us-ascii?Q?58odM7WISL4rHtnAGO3h/jTG9dTOP2eqs/kkPCe99ugjkaNnJtNPnd3Xwkax?=
+ =?us-ascii?Q?+ET/aoJPNaY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GPymSuVPehA53ZxO+FogjD/z2NLMEjLlcTpd8FraHK0PAJJJqdQm700mOCwp?=
+ =?us-ascii?Q?TZJgxDpCGXwVHryXeBbbtZgT5VNOaFlEJfR81kDii1nKKYFH53w3b6x7no65?=
+ =?us-ascii?Q?XHgbuDKYh5GcBJVPth6+hzGlzfCYwWo2rNr3UAzHDvMNac7YVNN/8ZYFx6pr?=
+ =?us-ascii?Q?0dDGJbvR5ZbPmA3Q6yJ4NSvumf9AZjzH45DGf64LkgFsYu7EgI6sqUJF264A?=
+ =?us-ascii?Q?fVl+idBukd54gEYexE0oiIcrkoWEmtpFK/nL7qXQteMICDjeOAI0FTcM96Yr?=
+ =?us-ascii?Q?prxEw9Xqz7c4ZOJ09AsiVEgT6b5OovWl3qt6s2OvwbcE1fLHccfnL3y/ehX/?=
+ =?us-ascii?Q?GsrkhMOvfKm3Kz3++FKSJfUK+97l2Sx6Kv7L7IHxRLW3T3h7z5NeYkuzZvZH?=
+ =?us-ascii?Q?KF5JHh4jbNFvKOsJO7H1kGyrPn9fVfn6/OucRBEZZDCjvIo3vMkn020mW3CP?=
+ =?us-ascii?Q?LEv9ED/Ty/y+1XG8Wy5BgcjI/L8Zq4xgHDr2LnMYmb+vfZiH24lHM08FCE50?=
+ =?us-ascii?Q?xp6HrneKc0eMpmw7YFqIFTZTeYAzLf/IPquaw/0HI2Wl+WT8Ot6ikvbLKdCq?=
+ =?us-ascii?Q?wpi1A2qEs0KRILCJFT/lHWatCMSh0snfrneIMDLGXNUFMLOpJETvlEVKS2GC?=
+ =?us-ascii?Q?lGskKRInmItETbOmFr73dAixS6LPFCLcpoWKNinbSEurrAICrCCE6Lpw1sql?=
+ =?us-ascii?Q?aIUr0hPzZXh1hWGUn+cJYcBvmVnxR6BQpMrw7M5em6siNvBizrPuoXt2aJcU?=
+ =?us-ascii?Q?rGsYuO172/zHf/LZsPDAaaH3w9W/+m7Mu3MSRHFlILbs/FxQRY3IFp+eMkfO?=
+ =?us-ascii?Q?kpUjVlj6/umoUpUGD2quWVMpeCLn7Ie0+nSM6s3YvExbTjnjAbMxwAWZfQZO?=
+ =?us-ascii?Q?LMPT/Q9aN3J8qjsrj6ztdVO3yfdJ7glseblqPNdZtc0agSKQigloH38o2GkX?=
+ =?us-ascii?Q?U4WUS2dWjOizB1c+/1QctFE9OxRqftaErhFWMFkhhBuM2qol7vAz/JRjnHqq?=
+ =?us-ascii?Q?KN71EK5DdR66h79wvWVaoVO/jH/XIMJjfNogR9/lHjtOrWymA2QH2DILSVcH?=
+ =?us-ascii?Q?YPzbE1QvSfWJCGyJ1KfYZQKeb69DHXEhX7E/OfTu7CW3g4RzKHTj4s3bBYOm?=
+ =?us-ascii?Q?2zAOeMftiTLYUrkoJ+zwPnRZ1HjtwWo/9IhAXzqp18EoYwqqWOW7RRDVpRv4?=
+ =?us-ascii?Q?08I+YcKCykKo5MiuuAhhuNw0QWHFApcKlPxAdNVqqnle6nuJO0q5vAfkRU4H?=
+ =?us-ascii?Q?zpQFbAyTKq2NDJRgrP0tFQsh/p38UG2qdxF1sbhYZugrOzZnWe+z8lpdOaJB?=
+ =?us-ascii?Q?APouaHN9zg9pxFaKsFnCCqm3OSi+JgPEd/Yprrr91P7KCmjAvQxG89RTlxk9?=
+ =?us-ascii?Q?FxcnVwrklwthkK7slC88x4AfHP78TYE1GqE6n4tc7Dj//WENrZQ5clXLD3fB?=
+ =?us-ascii?Q?EAyUKQrWt0Z4WNxGacuuvssxXaXNM/Lq0GXsNUfCeDfoShtORcJ/RU07qejZ?=
+ =?us-ascii?Q?AJ3JL6rIlw2XhvCRXuP0+ysRsKlBVYioO6npZl56byjPckyjXL32FQpqT99h?=
+ =?us-ascii?Q?+xf/qZOYmtDEEaQK9Z1TfA+CRJGBJ5QHGfA6BD18?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7e1c5cb-6906-42dd-1f2d-08dcc1d36e26
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 11:21:41.2937
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JSokrn1cmdZQvUtihylIC0orntsuv7jmSfZteVzH27kf4RxRGV6OBXUO0R5j4K29QwUHSkKk1Uh0RyriXWA0iw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7030
 
-On Wed, Aug 21, 2024, at 05:20, Rohit Agarwal wrote:
-> On 19/08/24 6:45 PM, Arnd Bergmann wrote:
->> On Tue, Aug 13, 2024, at 10:45, Rohit Agarwal wrote:
->> 
->> What is the call chain you see in the kernel messages? Is it
->> always the same?
-> Yes the call stack is same everytime. This is the call stack
->
-> <4>[ 2019.101352] dump_stack_lvl+0x69/0xa0
-> <4>[ 2019.101359] warn_alloc+0x10d/0x180
-> <4>[ 2019.101363] __alloc_pages_slowpath+0xe3d/0xe80
-> <4>[ 2019.101366] __alloc_pages+0x22f/0x2b0
-> <4>[ 2019.101369] __kmalloc_large_node+0x9d/0x120
-> <4>[ 2019.101373] ? mei_cl_alloc_cb+0x34/0xa0
-> <4>[ 2019.101377] ? mei_cl_alloc_cb+0x74/0xa0
-> <4>[ 2019.101379] __kmalloc+0x86/0x130
-> <4>[ 2019.101382] mei_cl_alloc_cb+0x74/0xa0
-> <4>[ 2019.101385] mei_cl_enqueue_ctrl_wr_cb+0x38/0x90
+The debugfs_create_dir() function returns error pointers.
+It never returns NULL. So use IS_ERR() to check it.
 
-Ok, so this might be a result of mei_cl_enqueue_ctrl_wr_cb()
-doing
+Signed-off-by: Yang Ruibin <11162571@vivo.com>
+---
+ drivers/bus/mvebu-mbus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-        /* for RX always allocate at least client's mtu */
-        if (length)
-                length = max_t(size_t, length, mei_cl_mtu(cl));
+diff --git a/drivers/bus/mvebu-mbus.c b/drivers/bus/mvebu-mbus.c
+index 3c99d72087eb..42621838ba75 100644
+--- a/drivers/bus/mvebu-mbus.c
++++ b/drivers/bus/mvebu-mbus.c
+@@ -995,13 +995,13 @@ static __init int mvebu_mbus_debugfs_init(void)
+ 	s->debugfs_root = debugfs_create_dir("mvebu-mbus", NULL);
+ 	if(IS_ERR(s->debugfs_root))
+ 		return PTR_ERR(s->debugfs_root);
++
+ 	s->debugfs_sdram = debugfs_create_file("sdram", S_IRUGO,
+ 							s->debugfs_root, NULL,
+ 							&mvebu_sdram_debug_fops);
+ 	s->debugfs_devs = debugfs_create_file("devices", S_IRUGO,
+ 							s->debugfs_root, NULL,
+ 							&mvebu_devs_debug_fops);
+-	}
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
 
-which was added in 3030dc056459 ("mei: add wrapper
-for queuing control commands."). All the callers seem
-to be passing a short "length" of just a few bytes,
-but this would always extend it to 
-cl->me_cl->props.max_msg_length in mei_cl_mtu().
-
-Not sure where that part is set.
-
-> <4>[ 2019.101388] mei_cl_read_start+0xb8/0x230
-> <4>[ 2019.101391] __mei_cl_recv+0xd3/0x400
-> <4>[ 2019.101396] ? __pfx_autoremove_wake_function+0x10/0x10
-> <4>[ 2019.101399] mei_pxp_receive_message+0x39/0x60
-> <4>[ 2019.101402] intel_pxp_tee_io_message+0x112/0x1e0
-> <4>[ 2019.101407] i915_pxp_ops_ioctl+0x536/0x6c0
-
-Curiously, I don't see any evidence of i915_pxp_ops_ioctl()
-ever making it into mainline kernels, though I see some
-discussion about it on the mailing lists [1]
-
-Do you see the same problem with a mainline kernel?
-
-The only reference I could find to the DRM_IOCTL_I915_PXP_OPS
-ioctl in userspace seems to be in
-https://chromium.googlesource.com/chromium/src/+/a4de986102a45e29c3ef596f22704bdca244c26c/media/gpu/vaapi/vaapi_wrapper.cc#2004
-
->> Allocating 64KB of consecutive pages repeatedly is clearly
->> a problem at runtime, but having a single allocation during
->> probe time is not as bad.
-> What if the length of the message is greater than 64KB, wouldn't that 
-> be an issue?
-
-That would make it an order-5 allocation. 
-
-     Arnd
-
-
-[1] https://patchwork.kernel.org/project/intel-gfx/patch/20201114014537.25495-5-sean.z.huang@intel.com/#23762967
 
