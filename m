@@ -1,189 +1,125 @@
-Return-Path: <linux-kernel+bounces-295925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9CD95A309
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:41:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A41BF95A310
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5605D1F22DA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:41:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1D01F22D8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A1B188010;
-	Wed, 21 Aug 2024 16:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64181154455;
+	Wed, 21 Aug 2024 16:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lKQinKob"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUgAtvKW"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB93152199;
-	Wed, 21 Aug 2024 16:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359E913BAFA;
+	Wed, 21 Aug 2024 16:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258463; cv=none; b=PJir2uYCsQJ6D6+7C57lwV44jP1CCEJTzfBWiwRV4H/AJbnmxrrQ3THXGUa1IkMLGO9+eS4Nd6q+beImIj8pUfeA7lNP+wM93PIqbE1kEZfvYJUtiS/RBzaE80gdruAOy46kbE3xywzIznReXq19ZlTQVIN3NQLC23TD4DgojdE=
+	t=1724258503; cv=none; b=HUFhApnePal+UpCJ53TRV2g2fihsajXPj8KGKeQzzQFpniRz7JEswSCwo2osSFd5M61/CqaTzYGtj4/GClbkSHmJPo6MWBh0UeGoWyf67YWWBHozHlH/ksBo8U/nXvqnu3/7DafkqP5xNU1t8yxeDWnldNC/OxIgEUyPTOwCVvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258463; c=relaxed/simple;
-	bh=gKoteVLKI8ai33j8oxVFeL6d5ggtKS/ReU8r+qC1D4U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nrOBhmMhZnvOBg5thtdKu0mxraDyUICihNjK1OIAfNFnBhTErIcHt/MQyWoQBr8gggrjGsGIHZmHFetmPtdZCTSykp1fJcEIIVcZw9hxmSHLgdSI0lpv2RasX0SGkV9Rn46FfFoE+6DjzjRK/t9VUTmPu/tmLcEItCH0s1D5AFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lKQinKob; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L80RVJ001800;
-	Wed, 21 Aug 2024 16:40:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t7yuid+f1cRo2jgQ7k++sxtPewWLQLpXVG8YsnFjlFE=; b=lKQinKob7XQHut4F
-	nLaCGClupoG3OuzxpNwr/7qb0oDQyweqJoDfIOjwUiS2AQQGayA1lpnxfK2LPwA+
-	WWd0SJOfyRxSU0vr3FTpHmMlTOudFzoBoSUOoWvGi2nLrx8KlniWmJUvJHhy9w4B
-	B95nV6Bd6zp+aaRR3Y+Q2LUxk/UiMW0y+K30qCuS8SKaj0d5yDPeXzM5WN9rz05V
-	ZzVNMo4AZvSVALR+Wj3jWPEQrOmpvFfWQIaHxq1HKdj07Fvj7AOsAAWyGwM481GM
-	GakK8NqsVY2dvKB0homNsKJ9okH3Vu+pcXdzSOXAm4gMkkbjMxraMlu8eNA+ZgnA
-	4EqGMA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414uh8v7qw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 16:40:52 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LGeqX8027390
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 16:40:52 GMT
-Received: from [10.216.59.247] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
- 2024 09:40:42 -0700
-Message-ID: <e4b2f28e-bc5c-ea93-c264-2b8608c4eab4@quicinc.com>
-Date: Wed, 21 Aug 2024 22:10:39 +0530
+	s=arc-20240116; t=1724258503; c=relaxed/simple;
+	bh=nB6cf0hGAnV1nonJ98lxvd3qYEbep8dtOAOkjNAHOIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S47XlW4zZ9jla9fGYEahHDU99jZHE1jjEO+UCRmRiy2pyucat9ykKQGpoovrYOuPlLP0eng5UEstFjBJBmg4UR/7a9ZEev+YKS4vq/e8EnE8mNBUw0GHmCrNoNtc1vkl7P70dtoD2MxVmUeLyVTPPR5o/8MGUtFTONnR7aVuBKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUgAtvKW; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d3c05ec278so4893835a91.0;
+        Wed, 21 Aug 2024 09:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724258501; x=1724863301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nB6cf0hGAnV1nonJ98lxvd3qYEbep8dtOAOkjNAHOIY=;
+        b=NUgAtvKWkX+NWXXqYAv1tiEA//12oLcFse9x4wZVWH4BbCSccvRZkF2K48eVcxcOsP
+         JfT4w0yGqumiqKaeChdTDqvIK6hI/MG76eOvZyjP4kFm2KTcp4qAIg0acdkm1IeSAnWc
+         Uj9QN1rM3xA5lZ+Z2Egs66VPAx2bXQnqEpj5jncvb6nSsiECjeI6Bf5i1TGA0wbKHHj8
+         rfzGxCPuyl0d8Yv1s/D1A6V0GrRANpxx66m73X9gOi0fBot6zAQE+OWny2PBNkOZJOHq
+         1sHdMZh1E3FWkcPeffOCjAjlo9YPQO2y4ae0ev2bfU8G1UAiV6TB8o96sxbO46YbG62B
+         3eJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724258501; x=1724863301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nB6cf0hGAnV1nonJ98lxvd3qYEbep8dtOAOkjNAHOIY=;
+        b=blkp2Zw8CIX6bwlqY5nt7TDEmQTBSZ5nZQwiibPZirDNvYZz/NiM0h0bodWjuJBZ70
+         1V1jxq7oOptV9LsihFG1611JZX3EJVTKOq8D3Cw8rc+pOhkm6vQpTeEgNGB/2GAqZdaE
+         A4uGDdIq3REk9w8Et55sOYqOHrmvA84TmAfLy7++eI4UGwnTE0VHrIYqc4PDsxbvBgrS
+         w3ZUK6UIe+lDGLZ0T1VFMbVkTtiesxCHkB4x9SXq1hpIsF9TRog+gPP8v1IBMH82SRfq
+         nLI76aOiHq2KCGTRxg5FSfdL16/vORWA+40gI76WxITAs98elqdvOjl1U1YcqCalKxlP
+         B1Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMwBbrsamSqJ/l6MB7M8LfVxxz6/5YGJyZ6Ave1kDXASw/QQ4z4sxwLQ49IzI6O46d1ojoMDF4/kBGbUkT+PvsBrvU@vger.kernel.org, AJvYcCVeZTsaD3Ltl2x957gh2dnCbn36GVbIdhBvnu9kuABxVRgv1yDfCnZHwIssR6s31IYgg78=@vger.kernel.org, AJvYcCX8DRWb0kd3F1GZBXbCF/5Nlgj6CrOUVDZ0miIHegOtBah1Dzr2G2oVAIGoK8Mrvvzriu0YWAoEn0wPvQ00@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOyP9CE1lNEq3Yi3muM6mImP/2aj8/oWQdaWhtO3s1UA8VdOYg
+	C1XVzHBXtrH/alJRaofYCzi9VaZEtiQ5aNyY587kWyVpcusDcb3rKDr1vrOK8JQg3Ti+wtzurBU
+	zWLKHULDpXD+1J8ADDsqpN5+SA0U=
+X-Google-Smtp-Source: AGHT+IEPusi6jNpTG5+GVt8xUA89NnFS0GpruNg/MdRii+4OtwWQWsbT86fkw/qpEFVb5KY0WAb5onVWWBLO10Ag5ek=
+X-Received: by 2002:a17:90b:8cf:b0:2c1:9892:8fb with SMTP id
+ 98e67ed59e1d1-2d5e99cb32bmr3118652a91.5.1724258501110; Wed, 21 Aug 2024
+ 09:41:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 04/16] crypto: qce - Add support for crypto address
- read
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <gustavoars@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_utiwari@quicinc.com>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-5-quic_mdalam@quicinc.com>
- <72cef34a-acb0-4278-984c-dadd53817b5d@kernel.org>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <72cef34a-acb0-4278-984c-dadd53817b5d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8tTv8B-W85oluN-RjR-db7q61EWWNiIN
-X-Proofpoint-ORIG-GUID: 8tTv8B-W85oluN-RjR-db7q61EWWNiIN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408210122
+References: <20240813042917.506057-1-andrii@kernel.org> <20240815132447.GA15970@redhat.com>
+ <CAEf4BzaL4v-tvD9pzcNdnA29SOZbaezjKRRr=ba7_7B=tNBhdg@mail.gmail.com>
+In-Reply-To: <CAEf4BzaL4v-tvD9pzcNdnA29SOZbaezjKRRr=ba7_7B=tNBhdg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 21 Aug 2024 09:41:29 -0700
+Message-ID: <CAEf4Bzb4YzQ00n9BdJF6VUOPkAj6NG0P5cPcT38ZbMX8HUnFsA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/13] uprobes: RCU-protected hot path optimizations
+To: peterz@infradead.org
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 15, 2024 at 9:49=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Thu, Aug 15, 2024 at 6:25=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> w=
+rote:
+> >
+> > On 08/12, Andrii Nakryiko wrote:
+> > >
+> > > ( In addition to previously posted first 8 patches, I'm sending 5 mor=
+e as an
+> > > RFC for people to get the general gist of where this work heading and=
+ what
+> > > uprobe performance is now achievable. I think first 8 patches are rea=
+dy to be
+> > > applied and I'd appreciate early feedback on the remaining 5 ones.
+> >
+> > I didn't read the "RFC" patches yet, will try to do on weekend.
+> >
+> > As for 1-8, I failed to find any problem:
+> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> >
+>
+> Great, thanks a lot for all the thorough reviews you've provided (and
+> hopefully will keep providing ;).
+>
+> Peter, if you don't see any problems with first 8 patches, could you
+> please apply them to tip/perf/core some time soon, so that subsequent
+> work (SRCU+timeout and, separately, lockless VMA->inode->uprobe
+> lookup) can be split into independent pieces and reviewed/landed
+> separately? Thanks!
 
-
-On 8/17/2024 2:40 PM, Krzysztof Kozlowski wrote:
-> On 15/08/2024 10:57, Md Sadre Alam wrote:
->> Get crypto base address from DT. This will use for
->> command descriptor support for crypto register r/w
->> via BAM/DMA
-> 
-> All your commit messages are oddly wrapped. This does not make reading
-> it easy...
-> 
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
->> Change in [v2]
->>
->> * Addressed all comments from v1
->>
->> Change in [v1]
->>
->> * Added support to read crypto base address from dt
->>
->>   drivers/crypto/qce/core.c | 13 ++++++++++++-
->>   drivers/crypto/qce/core.h |  1 +
->>   2 files changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
->> index 28b5fd823827..9b23a948078a 100644
->> --- a/drivers/crypto/qce/core.c
->> +++ b/drivers/crypto/qce/core.c
->> @@ -192,6 +192,7 @@ static int qce_crypto_probe(struct platform_device *pdev)
->>   {
->>   	struct device *dev = &pdev->dev;
->>   	struct qce_device *qce;
->> +	struct resource *res;
->>   	int ret;
->>   
->>   	qce = devm_kzalloc(dev, sizeof(*qce), GFP_KERNEL);
->> @@ -201,10 +202,16 @@ static int qce_crypto_probe(struct platform_device *pdev)
->>   	qce->dev = dev;
->>   	platform_set_drvdata(pdev, qce);
->>   
->> -	qce->base = devm_platform_ioremap_resource(pdev, 0);
->> +	qce->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
->>   	if (IS_ERR(qce->base))
->>   		return PTR_ERR(qce->base);
->>   
->> +	qce->base_dma = dma_map_resource(dev, res->start,
->> +					 resource_size(res),
->> +					 DMA_BIDIRECTIONAL, 0);
->> +	if (dma_mapping_error(dev, qce->base_dma))
->> +		return -ENXIO;
->> +
->>   	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
->>   	if (ret < 0)
->>   		return ret;
-> 
-> And how do you handle error paths?
-   Ok , will fix the error path to cleanup the resources.
-> 
-> 
->> @@ -280,6 +287,7 @@ static int qce_crypto_probe(struct platform_device *pdev)
->>   static void qce_crypto_remove(struct platform_device *pdev)
->>   {
->>   	struct qce_device *qce = platform_get_drvdata(pdev);
->> +	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>   
->>   	tasklet_kill(&qce->done_tasklet);
->>   	qce_unregister_algs(qce);
->> @@ -287,6 +295,9 @@ static void qce_crypto_remove(struct platform_device *pdev)
->>   	clk_disable_unprepare(qce->bus);
->>   	clk_disable_unprepare(qce->iface);
->>   	clk_disable_unprepare(qce->core);
->> +
->> +	dma_unmap_resource(&pdev->dev, qce->base_dma, resource_size(res),
->> +			   DMA_BIDIRECTIONAL, 0);
-> 
-> If you add code to the remove callback, not adding it to error paths is
-> suspicious by itself...
-   Ok , will fix the error path to cleanup the resources.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+If there are no concerns about the first 8 patches (and Oleg doesn't
+have any), it would be nice to apply them. The remaining two sets of
+changes are parallelizable in terms of discussion and landing them
+independently, so it would help to move the uprobe optimizations works
+along nicely. Thank you!
 
