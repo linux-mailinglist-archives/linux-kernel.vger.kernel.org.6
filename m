@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-296019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED79A95A46D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:09:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D1D95A46A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32B0FB2110D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2DBA28215F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC841B3B1E;
-	Wed, 21 Aug 2024 18:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5671B5301;
+	Wed, 21 Aug 2024 18:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nK9AoIy2"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJ2d4SFx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5B61494D1;
-	Wed, 21 Aug 2024 18:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49BB1494D1;
+	Wed, 21 Aug 2024 18:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724263763; cv=none; b=Uiozq5oOlAVljA3RbJd76gy375Ct8l72XXt26Qc8OT7lLPpPtOXGI8i9EaEpXTi+WRNGGkWwG8c4AazAzp4kKH7GN8YSPcFhKfAe+mZSgyvyzePIsaDhpqFujZJhAis52drJxu6w0yUDoN0XCb9oOwvAEK8CUMhZx0pH8MHOSWo=
+	t=1724263736; cv=none; b=dWkKMDNzHjVaGHt7DCObmUFdO0cWnEBWKv+8gMx+VTnhFVae6ap6jCY6NwugJ/GayysGuQN2Qc0yOraDZY/230bwNEbOr5LMTLhN0nHEP8c2/Q3Vb3x7oQEWjjzpQP5kh282PYTaQ5+3RvjAod3ABiFna52lUj/duvFhZem9o28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724263763; c=relaxed/simple;
-	bh=6RUWiLswkU4+N/s6gxHNbPztJbiSeibiIMt0ZhSB/II=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CcVuwvxnbB/YxM71hNp3SY9FVdKjrBeEyqjf3LDHXs4BNSyIT5AoRK/IYnvWUxFY/iNMMxOYw3OTYJFcH+IZVbn2YCl8KmHOI8v45nYAaWkA9VDYKFJhlUrnXeUO9iOLsd1TwVLlUyGM9UAkomVzh7a+8a6/If3xFz21/6CpYVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nK9AoIy2; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso59236905e9.0;
-        Wed, 21 Aug 2024 11:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724263760; x=1724868560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbJQfh8oH+/6H+RAIJN5JcyecchC2478JTd/lzRXn+8=;
-        b=nK9AoIy2VNoGXWiRZwKFxp9aPFHI2hYBv+cxO9xUXDNy7XvgISUa0JkUDILYzuAdpQ
-         2/Vyx5ZGm4dJk4AEWp2T7GbpcQl1PI0RCJERu6z05EhYcoqY/T16egJYWZ1mpMps7NOK
-         vq73xd/uV5ZslmtlPB6cRg9zuAbDEYi9mDz5e01lbnsDx4+IjU78kRCq3GbZ1eXDWXoa
-         2mCJaec7IdqleD2FCszihjPpfQGX0q0/qKja7RGnIjm/8siKdfMUQ9fOFTxqdiVHyTgg
-         Bdeoz+UUM01MoBRub7Z+oow2dosLd3AHzUbBe0ZE3xSew2wUaCj340arXm8H1OUVBi4s
-         Yy9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724263760; x=1724868560;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RbJQfh8oH+/6H+RAIJN5JcyecchC2478JTd/lzRXn+8=;
-        b=qs/BWoBz8Cf2znWf91IJwaUxrXhsy37HERg0VjHm9eQtgpyJQdqjXTqZ0BQhLj4t5x
-         lyuIPTnbcEFqzfa9iGzl2cs9XyzQTHfTt7u+lvVPUB3EsQc194I5v+RJnJhmFxLfITYv
-         XX+PNqC+hx8gSh/Fy72vAiEfks68oR8p70MANEGis9x7IL732AeQoEZk9vM75t1jnDRi
-         0u90e3taHDJ6HokW7dhC0epwAWN6l2HYA0tBV/lRB8Sjumge06Dv9Qy6S2Zy8NqSQrKF
-         ZOjBWdgCJwRkQp+ZlbiabjdsyHwVvhc/nWOf/u3F5jQT5CrTJk3iteaSp8CpEY39TAgM
-         MXUw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4uYQT/HA1JDhRO5YzGya1MeKpx4L/7RcV+zHjRNJ/ro/xhPJW2/N6sLXCjOpQ4fVbdzt2Dp8fjo6L@vger.kernel.org, AJvYcCWJXb6nuaWEfblhzuHuo0Dvzd6Utq0zkaRrCP6enSdBPgQ3tTaQ6cOY0ML55QPaks2VoO8gWKYzX457@vger.kernel.org, AJvYcCXQvq8gDUsrzZHB4QQHe3oY60MDnxkALK8J9QDSKHqOKN2E0sarGc3WCu4AmNFjpnObNSXBG9tMuU8nBoXL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygvgdve+LAVSR2ivG/fBXU5D/NxjizpbFzBf0MnvXCNH+1IB8+
-	RTD8E5ltCX/hVrpFVgQG5tQ9EZbpLfgAOQXfoL92lfGCesUHvGqj
-X-Google-Smtp-Source: AGHT+IHlmPMhYFA/1JwECTX9lRz4YGienXe2XSehw/xBGz/6Mtvd7mIdvA1vsaht0gA/54QHizdnxQ==
-X-Received: by 2002:a05:6000:c52:b0:36d:2941:d531 with SMTP id ffacd0b85a97d-372fd7013a0mr1846525f8f.44.1724263759586;
-        Wed, 21 Aug 2024 11:09:19 -0700 (PDT)
-Received: from Ansuel-XPS. (host-87-1-209-141.retail.telecomitalia.it. [87.1.209.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aab44sm16293072f8f.91.2024.08.21.11.09.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 11:09:19 -0700 (PDT)
-Message-ID: <66c62d4f.df0a0220.3305f1.f86c@mx.google.com>
-X-Google-Original-Message-ID: <ZsUTX0MBt07_EKPA@Ansuel-XPS.>
-Date: Wed, 21 Aug 2024 00:06:23 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	s=arc-20240116; t=1724263736; c=relaxed/simple;
+	bh=/Gi8iWabs4ywesTqUytFjU5VLWGq7rK1B8LWGnTuEeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q54ZCFrIDLiVc/ZIMmPh82yNEorq27Me6ZOvYcX+/reA9gfs1NaxnAe0M4JNxy0NFabuVZGDFnB7sBjSGSqOhcR9IbdfYiJfpVb10XyAWiotUGyAbU6EWLrDnAJvMyRdnlzh6ncyD1CV4CmgUR9wUj4li5VbT1WnckvMs5i94kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJ2d4SFx; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724263735; x=1755799735;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/Gi8iWabs4ywesTqUytFjU5VLWGq7rK1B8LWGnTuEeE=;
+  b=CJ2d4SFxUvZv6UiuX8c1MPogsEE6TDJMkyRwAqkI6LcCiN2b73mC/rC6
+   5k+X7N6pWyb/Yhy5EkrfYmQ0gB610SkGKx0WzENQZYVARlcCWBtppz7oI
+   z8/M4mCHE96rY24kZcYvVTWWpzN9AIvfgbCCZZKXqHL+oD6oFqv+VEN3s
+   fcj26NaMnsid97VbXNT1JRmzETxwT1xRBgoAlK2Z4Z147iG+ViI656S7h
+   VU85uMiKB6YSlb6e9TYbVAEH9Tj8KpDPli07QZ3TfNAU8rF+IQgmVFLFp
+   jaIa0KjbedwT6NgLKmNjj3gb4J5cFRg+v4fpXUQ415WEmohV3uEpNTafb
+   w==;
+X-CSE-ConnectionGUID: oo44aWvvQtC7/2wqxn6Gwg==
+X-CSE-MsgGUID: slyDIQfaTGiiyh2LZeK7OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="40155089"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="40155089"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 10:57:59 -0700
+X-CSE-ConnectionGUID: 6mXNKCatQ/SxV8fNv/rOyQ==
+X-CSE-MsgGUID: FJVZXk0iRJ2t2K1mrYqp9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="61027135"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 21 Aug 2024 10:57:52 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgpaf-000Bl6-2a;
+	Wed, 21 Aug 2024 17:57:49 +0000
+Date: Thu, 22 Aug 2024 01:56:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Saravana Kannan <saravanak@google.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions
- node in mmc-card node
-References: <20240809172106.25892-1-ansuelsmth@gmail.com>
- <20240809172106.25892-4-ansuelsmth@gmail.com>
- <20240813200734.GA1659224-robh@kernel.org>
- <66c5b8ec.5d0a0220.11ef1f.b572@mx.google.com>
- <CAPDyKFq0cR10d1jUc5gnoUR5P=cbDEZy2iA-HOq9oNcWZevbDg@mail.gmail.com>
+	Bjorn Helgaas <helgaas@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <202408220150.bmFMT5Bk-lkp@intel.com>
+References: <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,120 +99,162 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFq0cR10d1jUc5gnoUR5P=cbDEZy2iA-HOq9oNcWZevbDg@mail.gmail.com>
+In-Reply-To: <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
 
-On Wed, Aug 21, 2024 at 03:14:29PM +0200, Ulf Hansson wrote:
-> On Wed, 21 Aug 2024 at 11:52, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> >
-> > On Tue, Aug 13, 2024 at 02:07:34PM -0600, Rob Herring wrote:
-> > > On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote:
-> > > > Add property for defining partitions node in mmc-card node to define
-> > > > partitions in DT by the use of the block2mtd module to use block
-> > > > devices as MTD.
-> > >
-> > > You justified patch 1 saying eMMC already supported this, but then here
-> > > you add support.
-> > >
-> > > Both are a NAK for me as both already have a way to describe partitions
-> > > with GPT.
-> > >
-> >
-> > I think this got a bit confused and hope we can find a way to add
-> > support for this.
-> >
-> > What is "already supported" is assigning an OF node so driver can
-> > reference it. This patch was just adding the nodes in the schema to say
-> > that partitions can be defined.
-> >
-> > I think what is not clear is that block devices might be used as raw
-> > devices without a partition table defined in the device. In such case
-> > it's the kernel that define a fixed partition table.
-> >
-> > One example is [1] where the partition table is provided by cmdline.
-> > Similar to cmdlinepart MTD parser.
-> >
-> > The use of block2mtd is just to make use of the MTD parser system.
-> >
-> > Considering
-> > - eMMC is soldered to the device (no dynamic scan)
-> > - cmdline might be not tunable and hardcoding it might also be
-> >   problematic (as some cmdline needs to be used)
-> > - concept of fixed partition for block device is already a thing and
-> >   used a lot (android AFAIK)
-> 
-> Sorry for sidestepping your discussion, but I just wanted to add a few comments.
-> 
-> It's not clear to me why we need something different than what we
-> already have today.
+Hi Andrea,
 
-It's really adding a missing feature. We have cmdline but we don't have
-DT. And in emebedded many times cmdline can't be changed.
+kernel test robot noticed the following build warnings:
 
-> 
-> If it's a partuuid/uuid/label or a fixed block-partition from the
-> command line, we still need to know what partition we shall use for
-> what. So why is this problem different from how we manage filesystem
-> mounts, for example?
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on robh/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-In the context of eMMC there isn't any partition table and the cmdline
-is hardcoded by the bootloader. The cmdline might provide the root
-partition to use but doesn't declare the partition table (with cmdline)
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20240821-023901
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta%40suse.com
+patch subject: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+config: mips-allyesconfig (https://download.01.org/0day-ci/archive/20240822/202408220150.bmFMT5Bk-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408220150.bmFMT5Bk-lkp@intel.com/reproduce)
 
-And the bootloader with the hardcoded cmdline might provide a different
-root partition in dual-boot-partition implementation on switching the
-boot partition. (this is used a lot with bootloader using a env variable
-and a different cmdline passed based on the variable to signal what
-partition to use for root)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408220150.bmFMT5Bk-lkp@intel.com/
 
-> 
-> >
-> > I think it should be acceptable to introduce in DT support for defining
-> > fixed partition for block devices and some kind of parser system similar
-> > to MTD. What do you think? Would this be more acceptable? Idea is to
-> > just have a DT schema that makes use of the values that can be set in
-> > [1].
-> 
-> In DT we can describe that there is an eMMC card soldered to the
-> board, because it's a description of the HW. But describing what
-> stored inside the eMMC-flash doesn't belong in DT.
-> 
+All warnings (new ones prefixed by >>):
 
-Why? This conflicts with how it's done on MTD. Also consider the fact
-that eMMC might contain calibration partition used for NVMEM.
+   In file included from include/linux/device.h:15,
+                    from include/linux/pci.h:37,
+                    from drivers/misc/rp1/rp1-pci.c:18:
+   drivers/misc/rp1/rp1-pci.c: In function 'dump_bar':
+>> drivers/misc/rp1/rp1-pci.c:75:18: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
+      75 |                  "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                              ^~~
+   include/linux/dev_printk.h:160:58: note: in expansion of macro 'dev_fmt'
+     160 |         dev_printk_index_wrap(_dev_info, KERN_INFO, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                          ^~~~~~~
+   drivers/misc/rp1/rp1-pci.c:74:9: note: in expansion of macro 'dev_info'
+      74 |         dev_info(&pdev->dev,
+         |         ^~~~~~~~
+   drivers/misc/rp1/rp1-pci.c:75:34: note: format string is defined here
+      75 |                  "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+         |                               ~~~^
+         |                                  |
+         |                                  long long unsigned int
+         |                               %x
+   drivers/misc/rp1/rp1-pci.c:75:18: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 5 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
+      75 |                  "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                              ^~~
+   include/linux/dev_printk.h:160:58: note: in expansion of macro 'dev_fmt'
+     160 |         dev_printk_index_wrap(_dev_info, KERN_INFO, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                          ^~~~~~~
+   drivers/misc/rp1/rp1-pci.c:74:9: note: in expansion of macro 'dev_info'
+      74 |         dev_info(&pdev->dev,
+         |         ^~~~~~~~
+   drivers/misc/rp1/rp1-pci.c:75:48: note: format string is defined here
+      75 |                  "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+         |                                             ~~~^
+         |                                                |
+         |                                                long long unsigned int
+         |                                             %x
+   drivers/misc/rp1/rp1-pci.c:75:18: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 6 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
+      75 |                  "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                              ^~~
+   include/linux/dev_printk.h:160:58: note: in expansion of macro 'dev_fmt'
+     160 |         dev_printk_index_wrap(_dev_info, KERN_INFO, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                          ^~~~~~~
+   drivers/misc/rp1/rp1-pci.c:74:9: note: in expansion of macro 'dev_info'
+      74 |         dev_info(&pdev->dev,
+         |         ^~~~~~~~
+   drivers/misc/rp1/rp1-pci.c:75:60: note: format string is defined here
+      75 |                  "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+         |                                                         ~~~^
+         |                                                            |
+         |                                                            long long unsigned int
+         |                                                         %x
 
-Describing fixed partition on a soldered eMMC that the bootloader
-expects at a fixed offset and won't ever change (or it will result in a
-brick) sounds like describing the HW to me. (it's the same principle of
-MTD just applied to block devices)
 
-(I know it sound strange as block devices are expected to have a
-partition table in MBR or GPT but reality is that it's not always the
-case)
+vim +75 drivers/misc/rp1/rp1-pci.c
 
-> >
-> > Hope we can find a solution to this, I'm totally OK for dropping NVMe as
-> > I understand it's PCIe stuff and very dynamic but OEM are making lots of
-> > use of eMMC and are starting to use these strange way (block2mtd) as we
-> > currently don't give a proper and easy solution for the task.
-> 
-> I certainly appreciate that you are trying to solve the fragmentation
-> issue around this, but it looks like we need a different approach than
-> using DT to describe partitions.
-> 
-
-Well it's either DT that can be tweaked and is part of the image or
-cmdline that have tons of limitation due to bootloader having fun
-hardcoding it or also actually requiring the bootloader cmdline and
-adding overlay on it. Honestly as I said adding DT support is really
-compleating the feature of the cmdline implementation.
-
-> >
-> > [1] https://github.com/torvalds/linux/blob/master/Documentation/block/cmdline-partition.rst
-> >
-> 
-> Kind regards
-> Uffe
+  > 18	#include <linux/pci.h>
+    19	#include <linux/platform_device.h>
+    20	#include <linux/reset.h>
+    21	
+    22	#include <dt-bindings/misc/rp1.h>
+    23	
+    24	#define RP1_B0_CHIP_ID		0x10001927
+    25	#define RP1_C0_CHIP_ID		0x20001927
+    26	
+    27	#define RP1_PLATFORM_ASIC	BIT(1)
+    28	#define RP1_PLATFORM_FPGA	BIT(0)
+    29	
+    30	#define RP1_DRIVER_NAME		"rp1"
+    31	
+    32	#define RP1_ACTUAL_IRQS		RP1_INT_END
+    33	#define RP1_IRQS		RP1_ACTUAL_IRQS
+    34	#define RP1_HW_IRQ_MASK		GENMASK(5, 0)
+    35	
+    36	#define RP1_SYSCLK_RATE		200000000
+    37	#define RP1_SYSCLK_FPGA_RATE	60000000
+    38	
+    39	enum {
+    40		SYSINFO_CHIP_ID_OFFSET	= 0,
+    41		SYSINFO_PLATFORM_OFFSET	= 4,
+    42	};
+    43	
+    44	#define REG_SET			0x800
+    45	#define REG_CLR			0xc00
+    46	
+    47	/* MSIX CFG registers start at 0x8 */
+    48	#define MSIX_CFG(x) (0x8 + (4 * (x)))
+    49	
+    50	#define MSIX_CFG_IACK_EN        BIT(3)
+    51	#define MSIX_CFG_IACK           BIT(2)
+    52	#define MSIX_CFG_TEST           BIT(1)
+    53	#define MSIX_CFG_ENABLE         BIT(0)
+    54	
+    55	#define INTSTATL		0x108
+    56	#define INTSTATH		0x10c
+    57	
+    58	extern char __dtbo_rp1_pci_begin[];
+    59	extern char __dtbo_rp1_pci_end[];
+    60	
+    61	struct rp1_dev {
+    62		struct pci_dev *pdev;
+    63		struct device *dev;
+    64		struct clk *sys_clk;
+    65		struct irq_domain *domain;
+    66		struct irq_data *pcie_irqds[64];
+    67		void __iomem *bar1;
+    68		int ovcs_id;
+    69		bool level_triggered_irq[RP1_ACTUAL_IRQS];
+    70	};
+    71	
+    72	static void dump_bar(struct pci_dev *pdev, unsigned int bar)
+    73	{
+    74		dev_info(&pdev->dev,
+  > 75			 "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+    76			 bar,
+    77			 pci_resource_len(pdev, bar),
+    78			 pci_resource_start(pdev, bar),
+    79			 pci_resource_end(pdev, bar),
+    80			 pci_resource_flags(pdev, bar));
+    81	}
+    82	
 
 -- 
-	Ansuel
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
