@@ -1,227 +1,315 @@
-Return-Path: <linux-kernel+bounces-295779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4DF95A167
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:29:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15E395A17E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175A7283C49
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D9FD28349F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0918B14C5AE;
-	Wed, 21 Aug 2024 15:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B398C14B948;
+	Wed, 21 Aug 2024 15:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEp3HXma"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bv+rvVWa"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331BB364D6;
-	Wed, 21 Aug 2024 15:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC3914D44F
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724254188; cv=none; b=C69EolP9ZUEPwBhEz4KKJ5Rbimnr4aWi6FDhSXI9pE5eoabN89/gROnNLJf4N8/A0oj8IQfKl0GyeSBQZHXc+Jy9Bc1/kZNUCfcixvEjHUozkLpeed484a8BkxMK1mo+awTrOlVmMFsef//3Y/ot8eCV3wJ2XKx7Z/wAxCcyOu4=
+	t=1724254618; cv=none; b=Gfce9xcvI3rbbU7NB/utiYBcmn2wZ+U/b8/bQ6FwioD35EBOW29vyNlS2TufDo93r5fdxgX98D0SaWJFFani0J3iWuvubFXhxZUsHhQ+KXuILq6qOplcFWk+0+/PKAweI8eexzr4qROe6TihnR29ymmxmaByRV6V6G6xKiQNSjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724254188; c=relaxed/simple;
-	bh=kM9T4AHZ6ULY3dqDxLeHx/n7GocYC9a1Ufp84n6ZZaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVqPL6c6UzOuzw8SiA7N/6aueRO02IgNMJRPQQxxbAFAWYX2mM8JLG2pA9aK7q8aq+Qu671U7Eo6AqlIXZuiXaUSzfkMKHVqiPazFpYNareOLc6TrcBlhRcawoOIJVNoN0iYErrjo00e4MaoonOAJVQxElLZs4p9525v917hEao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEp3HXma; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC82AC32781;
-	Wed, 21 Aug 2024 15:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724254188;
-	bh=kM9T4AHZ6ULY3dqDxLeHx/n7GocYC9a1Ufp84n6ZZaw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YEp3HXmak6uLH3Lkeuss+9978yCSxp+iL8YP1A/WdsOpOnEJIsN8SyqO1zf4fmKr1
-	 lWJ3RhRbBWp9XHsaUlOvFLLCuGVN1b96sA/uPDsZgr1gj6VWa037dc3+X3GRRh/5xk
-	 181EvCpLAb2BL4PP3k79713Fe4r8i0aZIQKcg234XRRoRNmPqP4awDmS7QokTE4F9z
-	 IFzR7eb35H8mRSoVnu65UYtzBIWjIgWe7iFWFz2g/bn5Z/NGAIP27QLYjdXNciDRjn
-	 FkLgt2VlCOFJIrXYVAXVSu/UANkv2xDH+zej4mlQECPD75KHYNM7rG/VaD3rgqx7ud
-	 AIfgOcBvBOiFw==
-Date: Wed, 21 Aug 2024 16:29:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
- Add Sophgo CV18XX SARADC binding
-Message-ID: <20240821-unholy-statutory-7aa884ebf857@spud>
-References: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
- <20240812-sg2002-adc-v4-1-599bdb67592f@bootlin.com>
- <20240812-unwary-mongrel-9f6758bf624c@spud>
- <89aabfbe-79bf-4da7-be44-b6cbd92b72a9@bootlin.com>
- <20240820-borough-latch-17d785301aef@spud>
- <20240821094150.5787905b@xps-13>
+	s=arc-20240116; t=1724254618; c=relaxed/simple;
+	bh=TcnVT6P/MC9Mv2BlVzq0MLYaqgtjeuonuNX1FNmnEZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X4H4qOsJzpph8RwU2O9nJVd3hdMYwqxVJVEfzC3KgEcb9LuIIeHnWukPM3EkhdYXrVHsFc/C9HfoJxD+bKxUj/BViYJB7wmV+9EvauM8Bx6BegzpsnaZt3ammbbN74Oa+c6DBY6qz0WnMjfUg/1Jwedpp9LIBKt3a7FAnrA+tZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Bv+rvVWa; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3ce5bc7d2so48250441fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724254615; x=1724859415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=85MRSyYE3jZaKv49DdRtYAZEfrlaaHfH6W95IHNDbAI=;
+        b=Bv+rvVWaehR2nn1edCV7YIhlUxv7osTXstcz5RDqXP93tGfrt2XR2lRspYbWAFKxqf
+         6r4WGycWr46wrPsqFda2A4U1GuuY/2q0bLv0FS/PZR1CE6zPJ3z+FcD/KDZLxKSd+WBS
+         dT2B6+uwLrt4M+sk7OhEKEG6T52YIuc3dzeno=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724254615; x=1724859415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=85MRSyYE3jZaKv49DdRtYAZEfrlaaHfH6W95IHNDbAI=;
+        b=sv1R6bSzYWjYL8slKM0R0LWa/Hq+XSUN9QErmvT6Rk8zQ9lP0nCpRrRbg9xTVcXHTB
+         7xzP4E68O+7YFwIC6Yz9UJCvcipB+4FPMQ0YnKOHMR5D1t4lJ6+sx2JpMQ8Wz0QmInJh
+         l/KUei/yDf8pWWQEn3MtiBdU2G5Q6EqmNyrReKNsnXwNzuIlx7aPscKxT06UQZpmpGP4
+         Hd9kjM5EfOw0cZJe4+lXUnoWVIXB63LQWch893aphYT25fLdaEBUg5H4ZG09zegFjxch
+         PE4Y80IAF/VOHFjBKp19rlClFAkUNMiSZ631BA39o/ZGikCOOAq8++b4lfG75lsKq4ek
+         TF6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCViCVs+K8ipvVbdhXXQdf+wMRsx8ietuZC9XfifZmY88KQKre/iRnZWJxhbqUzBLxCHifgNAcF62dxcmC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxju8e2VtjXmpWa94aRmcFddham+ViCTAXwKbN1/sDIZa2t61dX
+	pBER/1EoCsZP8IKmD/0470W4Ck0QUttxTCTMZJ89Lfat0rIIQpQTxrXx9j4zPmzEpvfoCv3nmlX
+	NEQ==
+X-Google-Smtp-Source: AGHT+IFHf+IOTOCRXHIyBjIE8IlJjN/5iU1G6zKhrXInm10lqxoBW3EZm4lJaZKIgXFMTnaQkEwmDA==
+X-Received: by 2002:a2e:9949:0:b0:2f3:f501:f4e7 with SMTP id 38308e7fff4ca-2f3f881e227mr18258591fa.16.1724254614372;
+        Wed, 21 Aug 2024 08:36:54 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bf0c7f5b04sm2386343a12.39.2024.08.21.08.36.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 08:36:54 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8657900fc1so212522466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:36:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpmOZJzIn4jrH2NN0P4v5E7IQcHUzHODDJC9cD5HNmJ/J/EiMC8zdLmObNzbR3C/I367Ws5OBz/E1qnx8=@vger.kernel.org
+X-Received: by 2002:a17:907:e61c:b0:a7a:c083:8579 with SMTP id
+ a640c23a62f3a-a866f9b0ae1mr201603766b.62.1724254231664; Wed, 21 Aug 2024
+ 08:30:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Tue/8AFCKfIOWTNr"
-Content-Disposition: inline
-In-Reply-To: <20240821094150.5787905b@xps-13>
-
-
---Tue/8AFCKfIOWTNr
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <6101a3bb-30eb-97fc-3a8e-6d15afc4efb5@amd.com> <3de1ff24-3970-6e22-a73c-70446b8de4bd@infradead.org>
+ <CAHQZ30BLb13Mz5+3MCgV30eG-LiU-6-4F7AEinGQmsgiyzD-yA@mail.gmail.com>
+ <ZLF5_dJyQgzNnrnO@alley> <CAHQZ30DjZE6Mg-KUrLQOLHh+OxNHZXRDkuZopxJb3F7G29TsXA@mail.gmail.com>
+ <ZLGVYg1FAZN7VFxB@alley> <CAHQZ30Abpvm+__VK9oaU9eWwLKpiND+rmfjrPvF_R_09d2JqGQ@mail.gmail.com>
+ <ZLZgZvE35fYCkgOq@alley> <CAHQZ30DQw9n=uiuz3-nqnOKVbZdp-=DfeSn2feoPL08RjYzT=A@mail.gmail.com>
+ <CAHQZ30AEuwUzJs0bjsZ4eisJhmG8zkrXx4eKnfGsJ1jBt=jTUA@mail.gmail.com> <ZsX79M3RcertYHQZ@pathway.suse.cz>
+In-Reply-To: <ZsX79M3RcertYHQZ@pathway.suse.cz>
+From: Raul Rangel <rrangel@chromium.org>
+Date: Wed, 21 Aug 2024 09:30:17 -0600
+X-Gmail-Original-Message-ID: <CAHQZ30BwXeZNS1BZCQa5Nyb6S7akXvAqnhXR8w2Cj6LnMG6kGg@mail.gmail.com>
+Message-ID: <CAHQZ30BwXeZNS1BZCQa5Nyb6S7akXvAqnhXR8w2Cj6LnMG6kGg@mail.gmail.com>
+Subject: Re: [PATCH] init: Don't proxy console= to earlycon
+To: Petr Mladek <pmladek@suse.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Mario Limonciello <mario.limonciello@amd.com>, 
+	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	kramasub@chromium.org, Alexander Potapenko <glider@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Li Zhe <lizhe.67@bytedance.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Will Deacon <will@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Zhou jie <zhoujie@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 09:41:50AM +0200, Miquel Raynal wrote:
-> > > > > +      Represents the channels of the ADC.
-> > > > > +
-> > > > > +    properties:
-> > > > > +      reg:
-> > > > > +        description: |
-> > > > > +          The channel number. It can have up to 3 channels numbe=
-red from 0 to 2.
-> > > > > +        items:
-> > > > > +          - minimum: 0
-> > > > > +            maximum: 2 =20
-> > > >=20
-> > > > Is this sufficient to limit the number of channels to 3? Aren't you=
- relying
-> > > > on the unique unit addresses warning in dtc to limit it, rather than
-> > > > actually limiting with min/maxItems?
-> > > >  =20
-> > > It seems like I can't use min/maxItems on this property. I think that=
- it is
-> > > using size-cells + address-cells to deduce that the number of items s=
-hould
-> > > be equal to 1. =20
->=20
-> Looking at dt-schema, I couldn't personally understand from where did
-> the error messages reported by Thomas came from. There are clear
+On Wed, Aug 21, 2024 at 8:38=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
+e:
+>
+> On Thu 2024-08-08 11:30:53, Raul Rangel wrote:
+> > On Fri, Jul 28, 2023 at 11:57=E2=80=AFAM Raul Rangel <rrangel@chromium.=
+org> wrote:
+> > > > Your patch is good then. Well, would you mind to add a comment into
+> > > > the code and make the commit message more clear even for dummies li=
+ke
+> > > > me?
+> > > >
+> > > > Something like the patch below. It would be better to split it into
+> > > > two:
+> > > >
+> > > >    + 1st shuffling the check and adding the first part of the comme=
+nt
+> > > >    + 2nd fixing the case with empty console=3D options.
+> > > >
+> > > > I could prepare the patchset. I would keep your SOB for the 2nd pat=
+ch
+> > > > if you agreed.
+> > >
+> > > Yes, feel free. Thanks!
+> > >
+> >
+> > Hey Petr,
+> > I was just following up on this. Were you going to prepare the two patc=
+hes?
+>
+> I have been quite overloaded last two years. It would help me a lot if
+> you could prepare the two patches and send them for review.
+>
+> Thanks for re-opening this. It has already fallen through cracks on my
+> side /o\.
+>
+> Best Regards,
+> Petr
 
-I think the complaints are on a more meta level than that. He provided
-an items list
-     properties:
-       reg:
-         maxItems: 1
-         items:
-           - minimum: 0
-             maximum: 2
-but this list only has one entry as there's one -. The first complaint
-=66rom dt_binding_check is that having maxItems is not needed with an
-items list, because the items list contains the maximum number of
-elements.
+No worries, we were just going through our tech debt backlog and this
+patch came up.
 
-The second one comes from cell.yaml:
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/meta-schemas=
-/cell.yaml
+Thinking about this a little bit more, I'm wondering if we can clean
+up the hack. Would something like the following patch work? My thought
+is we declare an early handler for `console=3D`, so we can handle the
+`console=3DuartXXXX` case, and leave the non-early handler in place to
+handle the `console=3DttyXX` cases.
 
-It either allows a single item, with maxItems: 1 or multiple items, in
-which case maxitems must be greater than 1. That's where the "anyOf
-conditonal failed" and "1 is less than the minimum of 2" stuff comes
-=66rom.
+diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
+index a5f380584cdae7..7a48fe6fc0dffc 100644
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -241,6 +241,21 @@ static int __init param_setup_earlycon(char *buf)
+ }
+ early_param("earlycon", param_setup_earlycon);
 
-I hope that helps?
++static int __init param_setup_earlycon_console_alias(char *buf)
++{
++       /* We only want to handle `console=3DXXXX` in this handler. We leav=
+e
++          `console` and `console=3D` to be handled later by the non-early =
+printk
++          handler.
++       */
++       if (!buf || !buf[0]) {
++               return 0;
++       }
++
++       /* `console=3DuartXXXX` is actually an alias for `earlycon=3DuartXX=
+XX`. */
++       return param_setup_earlycon(buf);
++}
++early_param("console=3D", param_setup_earlycon_console_alias);
++
+ #ifdef CONFIG_OF_EARLY_FLATTREE
 
-> constraints over minItems/maxItems regarding the use of {#address-cells,
-> #sizez-cells} being {1, 1}, {2, 2} and {2, 1} (in reg.yaml), but nothing
-> explicit regarding the other situations, namely {1, 0} in this case
-> which enforces maxItems to 1 is not clearly stated in any of the core
-> yaml files. Any idea where to look at? Although, I'm convinced there is
-> something defined because renaming the property from 'reg' to 'foo'
-> silences these warnings.
->=20
-> > I think I was mistaken in talking about mix/max items here. I had the
-> > right idea, but mentioned an incorrect solution - sorry about that. I
-> > wasn't talking about the number of elements in the reg property, what I
-> > meant was limiting the number of channel nodes in the first place -
-> > something which min/maxItems cannot do. As examples of the problem I was
-> > thinking of, see the below two examples:
-> >=20
-> >     adc@30f0000 {
-> >         compatible =3D "sophgo,cv1800b-saradc";
-> >         reg =3D <0x030f0000 0x1000>;
-> >         clocks =3D <&clk CLK_SARADC>;
-> >         interrupts =3D <100 IRQ_TYPE_LEVEL_HIGH>;
-> >         #address-cells =3D <1>;
-> >         #size-cells =3D <0>;
-> >=20
-> >         channel@0 {
-> >             reg =3D <0>;
-> >         };
-> >         channel@2 {
-> >             reg =3D <2>;
-> >         };
-> >         channel@22 {
-> >             reg =3D <2>;
-> >         };
-> >     };
-> >=20
-> >     adc@30f0000 {
-> >         compatible =3D "sophgo,cv1800b-saradc";
-> >         reg =3D <0x030f0000 0x1000>;
-> >         clocks =3D <&clk CLK_SARADC>;
-> >         interrupts =3D <100 IRQ_TYPE_LEVEL_HIGH>;
-> >         #address-cells =3D <1>;
-> >         #size-cells =3D <0>;
-> >=20
-> >         channel@0 {
-> >             reg =3D <0>;
-> >         };
-> >         channel@2 {
-> >             reg =3D <2>;
-> >         };
-> >         channel@22 {
-> >             reg =3D <2>;
-> >         };
+ int __init of_setup_earlycon(const struct earlycon_id *match,
+diff --git a/init/main.c b/init/main.c
+index 8e1f6127e172c3..b6f0cb424176da 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -740,9 +740,7 @@ static int __init do_early_param(char *param, char *val=
+,
+        const struct obs_kernel_param *p;
 
-I noticed that I pasted two of the same example. I must have just
-yoinked the latter to a vim buffer rather than to my clipboard. At least
-it didn't matter in the end.
+        for (p =3D __setup_start; p < __setup_end; p++) {
+-               if ((p->early && parameq(param, p->str)) ||
+-                   (strcmp(param, "console") =3D=3D 0 &&
+-                    strcmp(p->str, "earlycon") =3D=3D 0 && val && val[0]))=
+ {
++               if ((p->early && parameq(param, p->str))) {
+                        if (p->setup_func(val) !=3D 0)
+                                pr_warn("Malformed early option '%s'\n", pa=
+ram);
+                }
 
-Cheers,
-Conor.
 
-> >     };
-> >=20
-> > The solution is simple, remove the + from the regex. Sorry for sending
-> > you on the wrong track Thomas.
->=20
-> Ah! Thanks Conor for the details, now it makes full sense :-) BTW Thomas
-> the regex is
->=20
-> 	^channel@[0-3]+$
->=20
-> and I guess it should instead be
->=20
-> 	^channel@[0-2]$
->                     ^
->=20
-> in order to fully match the real indexing constraints you're enforcing
-> with minimum/maximum.
->=20
-> Thanks,
-> Miqu=E8l
-
---Tue/8AFCKfIOWTNr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsYH5gAKCRB4tDGHoIJi
-0qwgAP9DK5VMEgFavpXECmhFBfncT7lIUlxJBxj6s5zdF7kQnQD/Sw2qGwYA2V9y
-v3kct0e0cmDF19Qfeha3fH3QXcYq6QQ=
-=9e4E
------END PGP SIGNATURE-----
-
---Tue/8AFCKfIOWTNr--
+>
+>
+> > > > Here is the proposal:
+> > > >
+> > > > From d2fb7c54bed4c67df229c56fcc1b0af83ada5227 Mon Sep 17 00:00:00 2=
+001
+> > > > From: Raul E Rangel <rrangel@chromium.org>
+> > > > Date: Fri, 7 Jul 2023 19:17:25 -0600
+> > > > Subject: [PATCH] init: Don't proxy the empty console=3D options to =
+earlycon
+> > > >
+> > > > Right now we are proxying the `console=3DXXX` command line args to =
+the
+> > > > param_setup_earlycon. This is done because the early consoles used =
+to
+> > > > be enabled via the `console` parameter.
+> > > >
+> > > > The `earlycon` parameter was added later by the commit 18a8bd949d6a=
+db311
+> > > > ("serial: convert early_uart to earlycon for 8250"). It allowed to
+> > > > setup the early consoles using another callback. And it was indeed
+> > > > more self-explanatory and cleaner approach.
+> > > >
+> > > > As a result, for example, the following parameters have the same ef=
+fect:
+> > > >
+> > > >     console=3Duart[8250],mmio,<addr>[,options]
+> > > >     earlycon=3Duart[8250],mmio,<addr>[,options]
+> > > >
+> > > > Nevertheless, `console` and `earlycon` parameters behave different =
+when
+> > > > the options do not match an early console. setup_earlycon() accepts=
+ only
+> > > > console names in __earlycon_table. Also the empty options are handl=
+ed
+> > > > differently:
+> > > >
+> > > >   + When `earlycon=3D` or just `earlycon` is specified on the comma=
+nd line,
+> > > >     param_setup_earlycon() tries to enable an early console via the=
+ SPCR
+> > > >     table or the device tree.
+> > > >
+> > > >   + When `console=3D` is specified on the command line, it's intent=
+ion is to
+> > > >     disable the console.
+> > > >
+> > > > Here comes the problem. The current code calls param_setup_earlycon=
+()
+> > > > even when `console=3D` is used with no options. As a result, it mig=
+ht
+> > > > enable the early console when it is defined in the SPCR table or
+> > > > a device tree. This is obviously not what users want.
+> > > >
+> > > > The early console should be enabled via SPCR or DT only when `early=
+con`
+> > > > is used explicitly with no options.
+> > > >
+> > > > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> > > > [pmladek@suse.com: Add comments and more details into the commit me=
+ssage]
+> > > > ---
+> > > >  init/main.c | 20 ++++++++++++++++----
+> > > >  1 file changed, 16 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/init/main.c b/init/main.c
+> > > > index ad920fac325c..3b059e316e62 100644
+> > > > --- a/init/main.c
+> > > > +++ b/init/main.c
+> > > > @@ -733,13 +733,25 @@ static int __init do_early_param(char *param,=
+ char *val,
+> > > >         const struct obs_kernel_param *p;
+> > > >
+> > > >         for (p =3D __setup_start; p < __setup_end; p++) {
+> > > > -               if ((p->early && parameq(param, p->str)) ||
+> > > > -                   (strcmp(param, "console") =3D=3D 0 &&
+> > > > -                    strcmp(p->str, "earlycon") =3D=3D 0)
+> > > > -               ) {
+> > > > +               if (p->early && parameq(param, p->str)) {
+> > > >                         if (p->setup_func(val) !=3D 0)
+> > > >                                 pr_warn("Malformed early option '%s=
+'\n", param);
+> > > >                 }
+> > > > +
+> > > > +               /*
+> > > > +                * Early consoles can be historically enabled also =
+when earlycon
+> > > > +                * specific options are passed via console=3D[early=
+con options]
+> > > > +                * parameter.
+> > > > +                *
+> > > > +                * Do not try it with an empty value. "console=3D" =
+is used to
+> > > > +                * disable real normal consoles. While "earlycon" i=
+s used to
+> > > > +                * enable an early console via SPCR or DT.
+> > > > +                */
+> > > > +               if (strcmp(param, "console") =3D=3D 0 && val && val=
+[0] &&
+> > > > +                   strcmp(p->str, "earlycon") =3D=3D 0) {
+> > > > +                       if (p->setup_func(val) !=3D 0)
+> > > > +                               pr_warn("Failed to setup earlycon v=
+ia console=3D%s\n", val);
+> > > > +               }
+> > > >         }
+> > > >         /* We accept everything at this stage. */
+> > > >         return 0;
+> > > > --
+> > > > 2.35.3
+> > > >
+> > >
+> > > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> >
+> > Thanks,
+> > Raul
 
