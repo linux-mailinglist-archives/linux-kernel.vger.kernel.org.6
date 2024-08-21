@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-295419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6A2959AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:50:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC7E959AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91D611F22742
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888E51C20AD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F181531C0;
-	Wed, 21 Aug 2024 11:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PATGGonF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708CA1D12F9;
-	Wed, 21 Aug 2024 11:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B421898E1;
+	Wed, 21 Aug 2024 11:33:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0371547D7
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239970; cv=none; b=YCCrXRT//TS9FpNmhNsB9oj0uFzpnGhRNalkzwsoeLqhWRK7erl7hwBiCEzQaBoCE3cMjXIrr6s/nuSxhE8WNzQM/aY5/AawkBiQQpqk0qnVyxhSn2jb6Gc/fCYNG4tvtRULEgVCraTOJxMi8qZyIoESWca8uTMGJ//McQ6cYwY=
+	t=1724239982; cv=none; b=kcGK7alfAeDyRY1VS4HnT0gfRrHX5YUAOeJwl9RjGYs3M3t2nX4E8KoE57p/ygCBlqqjRDsPx4kAHIOpZDxxW1Vx7wR5qTqZOrxEJvkbhskFm8noRyNofFH5xholhSX3qHjRtDlFyi0g8806U+O/hpQbCemV5yWxkK1u3Agb8ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239970; c=relaxed/simple;
-	bh=GAYO2SzL67TGDwj3OAWiFes7R4j2AvIw/Z/lL7qAvqg=;
+	s=arc-20240116; t=1724239982; c=relaxed/simple;
+	bh=A+d2IkqE/9lA8Osr70dM/EhXwjsM5X8bqhvEMbn2NBs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KofpiraT543cuDhSnikeiwZN0CK5orqg7ESCuexiWCpZuvMr/Bi9nXgf3VB6AVg8FqpjDBAZb/Y/IN9f7f6kdCTJd+/ew1RlzXS4d6Ha1/suwZHyNg+v1qPb3cOvJzlNOEzclXH3P4iJA5uz6tTYbrePyBMTugy/A2ECv2Ns0nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PATGGonF; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724239968; x=1755775968;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GAYO2SzL67TGDwj3OAWiFes7R4j2AvIw/Z/lL7qAvqg=;
-  b=PATGGonF0ArQO7iLctt28+bty2FUUI2yevX69n6IhhwDdu4EIha6xAG+
-   chg+pNQ/P/+7BX4uSwEMBW6icuntHmnGoCHJ3k37tUoi+Q3TzAKRhRQPy
-   +UJfYxXa2fnDKyI00aFPnjG0zSRxvTlhnPggT8WxC7sepfxffqPbAe7o4
-   GO9RlCOkr5+nCRSI9QllHobm2RZHF5fHAUbZzdDoIgWr3tdW0+SUNynvM
-   p/qqn0ZRgjMjqtqYSmgsOqtaAIA8OVfX01XjNuhqif4xst2DFgREsVhg+
-   bzV6XwdIWXbvgtCi6eLSQ9SOPIhpKDxf5udlxyTkLnLb5b0JHOgFfgDLY
-   Q==;
-X-CSE-ConnectionGUID: SZ+/anhTRZu6S/Xnf4LDTQ==
-X-CSE-MsgGUID: 5/mmafvxS/Opa3HPdy+XRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22779421"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="22779421"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 04:32:48 -0700
-X-CSE-ConnectionGUID: exVbdZs0TJe5XcNoG+Sk2Q==
-X-CSE-MsgGUID: Og1arBsVQmKlr+HNU1f3Pg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="60918344"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 04:32:44 -0700
-Message-ID: <f9442d81-d92d-4b91-87cf-4beb4a41de22@intel.com>
-Date: Wed, 21 Aug 2024 14:32:40 +0300
+	 In-Reply-To:Content-Type; b=fLfY5/OEt7y4ErYh0BAwXgJ7VqNiiFF8x9evdc+2XB0DNWjs+yHOSjxFEz+X5Mgf9CwA57MnXitVXrqzWHKIgicMqR3iOgIy/RN4HmTQc9jYWj/x7BVUi377kN4ww42cCSJp+tt+iS/BMpHKoajEc6aQns/nD/fW5NtII7SFsD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64A4EDA7;
+	Wed, 21 Aug 2024 04:33:25 -0700 (PDT)
+Received: from [10.163.88.35] (unknown [10.163.88.35])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B42283F73B;
+	Wed, 21 Aug 2024 04:32:55 -0700 (PDT)
+Message-ID: <e2e29986-59fe-447a-81a1-fd06308fe5dd@arm.com>
+Date: Wed, 21 Aug 2024 17:02:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,152 +41,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] perf/core: Fix incorrected time diff in tick
- adjust period
-To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
-Cc: mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org,
- irogers@google.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240810102406.1190402-1-luogengkun@huaweicloud.com>
- <20240810102406.1190402-3-luogengkun@huaweicloud.com>
+Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
+ instructions
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ Yang Shi <yang@os.amperecomputing.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, will@kernel.org,
+ anshuman.khandual@arm.com, david@redhat.com, scott@os.amperecomputing.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <ZoMG6n4hQp5XMhUN@arm.com>
+ <1689cd26-514a-4d72-a1bd-b67357aab3e0@os.amperecomputing.com>
+ <ZoZzhf9gGQxADLFM@arm.com>
+ <35f70ba6-5305-4268-b7ba-81545cacd83f@os.amperecomputing.com>
+ <Zo2C4eXr5_9kifyO@arm.com>
+ <cb0bd817-6948-4944-ab09-4ec2aba41cfa@os.amperecomputing.com>
+ <Zo5S1JE8B912SHya@arm.com>
+ <6167c4ce-fef0-4af4-a6a1-9fe7b2eb023d@os.amperecomputing.com>
+ <ZpAZ39VQhxfNepWT@arm.com>
+ <cf0777ce-52ed-46e4-b666-50a04d5025e0@os.amperecomputing.com>
+ <ZsW_AtR-X_CqCMOW@arm.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240810102406.1190402-3-luogengkun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <ZsW_AtR-X_CqCMOW@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/08/24 13:24, Luo Gengkun wrote:
-> Adrian found that there is a probability that the number of samples
-> is small, which is caused by the unreasonable large sampling period.
 
-Subject: incorrected -> incorrect
+On 8/21/24 15:48, Catalin Marinas wrote:
+> On Thu, Jul 11, 2024 at 11:17:51AM -0700, Yang Shi wrote:
+>> On 7/11/24 10:43 AM, Catalin Marinas wrote:
+>>> On Wed, Jul 10, 2024 at 11:43:18AM -0700, Yang Shi wrote:
+>>>> On 7/10/24 2:22 AM, Catalin Marinas wrote:
+>>>>>> diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
+>>>>>> index 642bdf908b22..d30265d424e4 100644
+>>>>>> --- a/arch/arm64/mm/mmap.c
+>>>>>> +++ b/arch/arm64/mm/mmap.c
+>>>>>> @@ -19,7 +19,7 @@ static pgprot_t protection_map[16] __ro_after_init = {
+>>>>>>    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [VM_WRITE]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ = PAGE_READONLY,
+>>>>>>    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [VM_WRITE | VM_READ]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ = PAGE_READONLY,
+>>>>>>    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ /* PAGE_EXECONLY if Enhanced PAN */
+>>>>>> - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [VM_EXEC]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ = PAGE_READONLY_EXEC,
+>>>>>> +ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ [VM_EXEC]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ = PAGE_EXECONLY,
+>>>>>>    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [VM_EXEC | VM_READ]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ = PAGE_READONLY_EXEC,
+>>>>>>    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [VM_EXEC | VM_WRITE]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ = PAGE_READONLY_EXEC,
+>>>>>>    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [VM_EXEC | VM_WRITE | VM_READ]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ = PAGE_READONLY_EXEC,
+>>>>> In theory you'd need to change the VM_SHARED | VM_EXEC entry as well.
+>>>>> Otherwise it looks fine.
+>>>> Thanks. I just ran the same benchmark. Ran the modified page_fault1_thread
+>>>> (trigger read fault) in 100 iterations with 160 threads on 160 cores. This
+>>>> should be the worst contention case and collected the max data (worst
+>>>> latency). It shows the patch may incur ~30% overhead for exec-only case. The
+>>>> overhead should just come from the permission fault.
+>>>>
+>>>>   ï¿½ï¿½ï¿½ Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Minï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Maxï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Medianï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Avg Stddev
+>>>> x 100ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 163840ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 219083ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 184471ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 183262 12593.229
+>>>> + 100ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 211198ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 285947ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 233608ï¿½ï¿½ï¿½ï¿½ 238819.98 15253.967
+>>>> Difference at 95.0% confidence
+>>>>   ï¿½ï¿½ ï¿½55558 +/- 3877
+>>>>   ï¿½ï¿½ ï¿½30.3161% +/- 2.11555%
+>>>>
+>>>> This is a very extreme benchmark, I don't think any real life workload will
+>>>> spend that much time (sys vs user) in page fault, particularly read fault.
+>>>>
+>>>> With my atomic fault benchmark (populate 1G memory with atomic instruction
+>>>> then manipulate the value stored in the memory in 100 iterations so the user
+>>>> time is much longer than sys time), I saw around 13% overhead on sys time
+>>>> due to the permission fault, but no noticeable change for user and real
+>>>> time.
+>>> Thanks for running these tests.
+>>>
+>>>> So the permission fault does incur noticeable overhead for read fault on
+>>>> exec-only, but it may be not that bad for real life workloads.
+>>> So you are saying 3 faults is not that bad for real life workloads but
+>>> the 2 faults behaviour we have currently is problematic for OpenJDK. For
+>>> the OpenJDK case, I don't think the faulting is the main issue affecting
+>>> run-time performance but, over a longer run (or with more iterations in
+>>> this benchmark after the faulting in), you'd notice the breaking up of
+>>> the initial THP pages.
+>> I meant the extra permission fault for exec-only should be ok since the
+>> current implementation can't force write fault for exec-only anyway. It does
+>> incur noticeable overhead for read fault, but I'm not aware of any real life
+>> workloads are sensitive to read fault. The benchmark is for a very extreme
+>> worst case.
+> I agree microbenchmarks like this are not realistic but I wouldn't be
+> surprised if we hear of some large file mmap() read or very sparse
+> arrays read being affected.
+>
+> Sorry, I forgot the details from the previous discussions. Are there any
+> benchmarks that show OpenJDK performing badly _and_ what the improvement
+> is with this patch? We should do similar comparison with the THP kernel
+> fix. If the THP fix gets us close to the same level of improvement, I
+> don't think we should bother with this patch.
 
-Note, the patch now needs to be re-based.
-
-Also maybe tidy up the commit message e.g.
-
-perf events has the notion of sampling frequency which is implemented in
-software by dynamically adjusting the counter period so that samples occur
-at approximately the target frequency.  Period adjustment is done in 2
-places:
- - when the counter overflows (and a sample is recorded)
- - each timer tick, when the event is active
-The later case is slightly flawed because it assumes that the time since
-the last timer-tick period adjustment is 1 tick, whereas the event may not
-have been active (e.g. for a task that is sleeping).
-
-Fix by using jiffies to determine the elapsed time in that case.
-
-> 
->  # taskset --cpu 0 perf record -F 1000 -e cs -- taskset --cpu 1 ./test
->  [ perf record: Woken up 1 times to write data ]
->  [ perf record: Captured and wrote 0.010 MB perf.data (204 samples) ]
->  # perf script
->  ...
->  test   865   265.377846:         16 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.378900:         15 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.379845:         14 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.380770:         14 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.381647:         15 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.382638:         16 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.383647:         16 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.384704:         15 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.385649:         14 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.386578:        152 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.396383:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.406183:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.415839:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.425445:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.435052:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.444708:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.454314:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.463970:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.473577:        154 cs:  ffffffff832e927b schedule+0x2b
->  ...
-> 
-> And the reason is perf_adjust_freq_unthr_events() calculates a value that is too
-> big because it incorrectly assumes the count has accumulated only since the last
-> tick, whereas it can have been much longer. To fix this problem, perf can calculate
-> the tick interval by itself. For perf_adjust_freq_unthr_events we can use jiffies
-> to calculate the tick interval more efficiently, as sugguested by Adrian.
-> 
-> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
-> ---
->  include/linux/perf_event.h |  1 +
->  kernel/events/core.c       | 16 +++++++++++++---
->  2 files changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index afb028c54f33..2708f1d0692c 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -265,6 +265,7 @@ struct hw_perf_event {
->  	 * State for freq target events, see __perf_event_overflow() and
->  	 * perf_adjust_freq_unthr_context().
->  	 */
-> +	u64				freq_tick_stamp;
->  	u64				freq_time_stamp;
->  	u64				freq_count_stamp;
->  #endif
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index cad50d3439f1..309af5520f52 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -55,6 +55,7 @@
->  #include <linux/pgtable.h>
->  #include <linux/buildid.h>
->  #include <linux/task_work.h>
-> +#include <linux/jiffies.h>
->  
->  #include "internal.h"
->  
-> @@ -4112,7 +4113,7 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
->  {
->  	struct perf_event *event;
->  	struct hw_perf_event *hwc;
-> -	u64 now, period = TICK_NSEC;
-> +	u64 now, period, tick_stamp;
->  	s64 delta;
->  
->  	/*
-> @@ -4151,6 +4152,10 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
->  		 */
->  		event->pmu->stop(event, PERF_EF_UPDATE);
->  
-> +		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
-> +		period = tick_stamp - hwc->freq_tick_stamp;
-> +		hwc->freq_tick_stamp = tick_stamp;
-> +
->  		now = local64_read(&event->count);
->  		delta = now - hwc->freq_count_stamp;
->  		hwc->freq_count_stamp = now;
-> @@ -4162,8 +4167,13 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
->  		 * to perf_adjust_period() to avoid stopping it
->  		 * twice.
->  		 */
-> -		if (delta > 0)
-> -			perf_adjust_period(event, period, delta, false);
-> +		if (delta > 0) {
-> +			/*
-> +			 * we skip first tick adjust period
-> +			 */
-
-Could be a single line comment.
-
-> +			if (likely(period != tick_stamp))
-
-Kernel style is to combine if-statements if possible i.e.
-
-		/* Skip if no delta or it is the first tick adjust period */
-		if (delta > 0 && likely(period != tick_stamp))
-
-> +				perf_adjust_period(event, period, delta, false);
-> +		}
->  
->  		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
->  	next:
+Just for the note, I am working on replacing the hugezeropage with a THP;
+I will be posting that out (after some testing) soon.
 
 
