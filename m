@@ -1,189 +1,158 @@
-Return-Path: <linux-kernel+bounces-295341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A629599D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A129599DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A001F224C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF66F1F212A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6091C4EF8;
-	Wed, 21 Aug 2024 10:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F2A1C6F5C;
+	Wed, 21 Aug 2024 10:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n8XwSPua"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkOiizMr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E225315B0E2;
-	Wed, 21 Aug 2024 10:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AC7535DC;
+	Wed, 21 Aug 2024 10:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724236133; cv=none; b=epgSWZuZN0fRJNUD4NdvMYVDa2e85Gw0fXUHTX3+FKT+Z3goWyNsLPKd/OKX4oQVhUsSghiG+xeSzQB/DiHubvl6Lx+IFZcM92TA88DtZZej4ND+F2H+/c+fF/mGK+J9R6NIBHp7pBwtvL1k7zWQ/u18/yJt4u2ushheFLydZ/o=
+	t=1724236231; cv=none; b=nESuOByVcODGhA61MP26rXr+NbOux1s/rWb0yi188745JhkbsKKTejjl94kx4Aoqdv2gYJ1PCBSB5ZA9LrXwBRwppJuXVcZQg9q9a6tqyRxe0KKlKs0M2vcIbT3GwG8db9KURuHw6wvZ3LLZ0JDyjytNQCFpbGaMZGD3adnXMVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724236133; c=relaxed/simple;
-	bh=psQJ368lmoItRD+OtUCpNjg6+VZdCyakyvcPbwCNjLE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Subject; b=UkmVvRTCeLPKTJKich9O9JRHjRKVeFh9Wp2q83t7R8iYESrn+fHLaixL0BiQ9/s96A1N5sox5q9SZXyRMvnwoy58Ywc8uhyAICmX9yDojH3bYP1Mz1X0i4yNo1ifhgZmrlUOmhN+byvEI+/7phcCqCkVC7AgnTWfv9LqSfyOdk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n8XwSPua; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L5l8xr014037;
-	Wed, 21 Aug 2024 10:28:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:subject; s=pp1; bh=0kn/L
-	8tmX35lwBBzOfEhIW6RlLv7NUHX8o7GQujLtL0=; b=n8XwSPuaneejFZwTprkGw
-	GYG2P0AYDZj6805xpIiDXLe1dy1XSdzAvBNrGqKrrt1+LKKJ49CDdHNkDzMWVcqv
-	tWgocJUaWtApVZam9v3EzyPBIbWbmAP+ETr/pxiSnanjkVVvGIdkVWDkPo+gAbCS
-	s8UFshkBI2mG/MlY3ZJDhs4vvbHmCE+eZO4Mv4ueyDZf9/pJeuUfG+BMzYObTcDU
-	o/wXwEpnrYJTuRRmjovPX0nsVI3dAFDokAGIz5dvgwSuyYkKqaUYvRQMcnrnaOzx
-	lXpgGIs/o4vd5Ev49VVq/E4xKpHpsLiDQyG1hFd99n8kpysOZ/dFF8BbGq7p2UjS
-	Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcyhk1u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 10:28:28 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47LASSdJ027593;
-	Wed, 21 Aug 2024 10:28:28 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcyhk1q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 10:28:28 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47L81mD4013098;
-	Wed, 21 Aug 2024 10:28:27 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41366u7g9x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 Aug 2024 10:28:27 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47LASOYp30147110
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 21 Aug 2024 10:28:27 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DF95A58060;
-	Wed, 21 Aug 2024 10:28:24 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 84DD258068;
-	Wed, 21 Aug 2024 10:28:17 +0000 (GMT)
-Received: from [9.43.53.186] (unknown [9.43.53.186])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 21 Aug 2024 10:28:17 +0000 (GMT)
-Message-ID: <ab337b83-ac74-43ce-83f0-25885c136574@linux.ibm.com>
-Date: Wed, 21 Aug 2024 15:58:15 +0530
+	s=arc-20240116; t=1724236231; c=relaxed/simple;
+	bh=aL0Eh20Xzp2QPe0IEwgA0/CCHweLpWex7gFVHvzwQO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aE9ANjVop2q1Xf+z34eMkcM+mH62tdnFpfRDfcZJ7UUaXEJRO4HrPWL8jnS9o8M5vU8Azz+ZJVRwIVp9xCGMW90unD7XHP8WDuEEqLITPAMGJtu1B4dhhS4wE5Jel8uVBOl9yg0dysSm4AcQp7mpXxhRcR4UcbfUpzpxYoIIKjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkOiizMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3CADC4AF09;
+	Wed, 21 Aug 2024 10:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724236229;
+	bh=aL0Eh20Xzp2QPe0IEwgA0/CCHweLpWex7gFVHvzwQO8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QkOiizMrpwzBVKekRYr7Ef0xozT9PuhiXjiLIjFec1k5mU2ap1q44u9CZuh/gK56b
+	 He3Uc2NX6yw59vb7g/PNiT5I9XDMpnAMPNQa9xltQSp3lElR6kUDXxgiOQv8VunqIN
+	 +ldmRpe/MM8ZbEQHTufiLLkeK5MfDfXd0XUj9vopbywyW8CNrI6GOe8Lk+m0GzBtui
+	 yc8mnXAZnQwC2/HxqzUz/xLaBy0gDyiNxBPZ79RmgsE52ZtUB7aw0gdnnP0ggbetD3
+	 0OXR6mJy0Mjv7Acb5ccShCbm5nO2Pmf7jYcORU69EDnoqle8nwtgYmARd8CvhRvAHh
+	 P3H7B0DYg2Lnw==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2705d31a35cso2112673fac.0;
+        Wed, 21 Aug 2024 03:30:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWNGjrLh9yUljy5guhrNNOv8P1xFfHZNi70A4cvrTUMlfLKxKnCeBqYXx+x9nL+L32dLtu8R33WHHbjEK0=@vger.kernel.org, AJvYcCXYxkHWPzu1WUorLgZlMieDy+XFSBZ2mrjA0reOfQK64Pk3GxuWkOkUdWVGiQFED58drXgZuzuEVy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg+lCDgRHFgWjWT6gan4MoBmlFcQJVhnDw8C3t5LJxeFtispsS
+	Dma0pWQKGBCDzN990Wuh/jbUh5uyp/Ec+fZtveWNIGT5IUr0wqwFyOZ6Pz7TowhciGM1mIJuspf
+	f9MR2JsSaAoOS6OspfB7PuwD9AN4=
+X-Google-Smtp-Source: AGHT+IHpxOkGB6dF/CC7IbZmNrRcs63/sVfqx6uESXYOsPs7jyyBFx6RdsLcVv5dedNwcWx84i+QFkVdVDlxTsGnBqc=
+X-Received: by 2002:a05:6870:9a14:b0:261:ab8:3de4 with SMTP id
+ 586e51a60fabf-2737ef23c97mr1790106fac.15.1724236228974; Wed, 21 Aug 2024
+ 03:30:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: yangjihong <yangjihong@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        james.clark@arm.com, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240819024720.2405244-1-yangjihong@bytedance.com>
- <05cd1773-d0c9-4c89-a6f3-f4daa4371b21@linux.ibm.com>
- <CAPePreJCahzH0LwfXN_X+UdxU54_UMRPZgDgGqt7+PC+ky997Q@mail.gmail.com>
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <CAPePreJCahzH0LwfXN_X+UdxU54_UMRPZgDgGqt7+PC+ky997Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: EtkNfrq9WshBDv2Zc73isDz38OlcQm0U
-X-Proofpoint-GUID: H1EumoHcvITDUWAFquR9hdigT6l95Wi7
-Subject: RE: [PATCH v2] perf sched timehist: Fixed timestamp error when unable to
- confirm event sched_in time
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-21_07,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 clxscore=1015
- suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408210073
+References: <2205737.irdbgypaU6@rjwysocki.net> <3837835.kQq0lBPeGt@rjwysocki.net>
+ <6bf771b0-d57d-5a8c-ec36-6f8a041695d9@huawei.com> <CAJZ5v0i_Z43bLWsa9gg_SZFBURi1XrZn4Cnxurm8KCawAWqtUA@mail.gmail.com>
+ <93639d68-e396-a782-410c-f7827dbd54f5@huawei.com>
+In-Reply-To: <93639d68-e396-a782-410c-f7827dbd54f5@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 21 Aug 2024 12:30:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gci_a23e=siMWRQGHAUiiHDUtPgZtWWfNW066ENdv5tw@mail.gmail.com>
+Message-ID: <CAJZ5v0gci_a23e=siMWRQGHAUiiHDUtPgZtWWfNW066ENdv5tw@mail.gmail.com>
+Subject: Re: [PATCH v3 05/14] thermal: core: Move thermal zone locking out of
+ bind/unbind functions
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yang Jihong,
+On Wed, Aug 21, 2024 at 11:02=E2=80=AFAM lihuisong (C) <lihuisong@huawei.co=
+m> wrote:
+>
+>
+> =E5=9C=A8 2024/8/20 18:27, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> > On Tue, Aug 20, 2024 at 10:27=E2=80=AFAM lihuisong (C) <lihuisong@huawe=
+i.com> wrote:
+> >>
+> >> =E5=9C=A8 2024/8/19 23:58, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>
+> >>> Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
+> >>> acquire the thermal zone lock, the locking rules for their callers ge=
+t
+> >>> complicated.  In particular, the thermal zone lock cannot be acquired
+> >>> in any code path leading to one of these functions even though it mig=
+ht
+> >>> be useful to do so.
+> >>>
+> >>> To address this, remove the thermal zone locking from both these
+> >>> functions, add lockdep assertions for the thermal zone lock to both
+> >>> of them and make their callers acquire the thermal zone lock instead.
+> >>>
+> >>> No intentional functional impact.
+> >>>
+> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>> ---
+> >>>
+> >>> v2 -> v3: Rebase after dropping patches [04-05/17] from the series
+> >>>
+> >>> v1 -> v2: No changes
+> >>>
+> >>> ---
+> >>>    drivers/acpi/thermal.c         |    2 +-
+> >>>    drivers/thermal/thermal_core.c |   30 ++++++++++++++++++++++------=
+--
+> >>>    2 files changed, 23 insertions(+), 9 deletions(-)
+> >>>
+> >>> Index: linux-pm/drivers/thermal/thermal_core.c
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> >>> +++ linux-pm/drivers/thermal/thermal_core.c
+> >>> @@ -785,6 +785,7 @@ int thermal_bind_cdev_to_trip(struct the
+> >>>        int result;
+> >>>
+> >> <snip>
+> >>> Index: linux-pm/drivers/acpi/thermal.c
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>> --- linux-pm.orig/drivers/acpi/thermal.c
+> >>> +++ linux-pm/drivers/acpi/thermal.c
+> >>> @@ -609,7 +609,7 @@ static int acpi_thermal_bind_unbind_cdev
+> >>>                .thermal =3D thermal, .cdev =3D cdev, .bind =3D bind
+> >>>        };
+> >>>
+> >>> -     return for_each_thermal_trip(thermal, bind_unbind_cdev_cb, &bd)=
+;
+> >>> +     return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb,=
+ &bd);
+> >> If so, it seems that the for_each_thermal_trip() can be removed or no
+> >> need to export.
+> > I beg to differ:
+> >
+> > $ git grep for_each_thermal_trip | head -1
+> > drivers/net/wireless/intel/iwlwifi/mvm/tt.c:
+> > for_each_thermal_trip(mvm->tz_device.tzone, iwl_trip_temp_cb, &twd);
+> Can we modify it for tt.c?
 
-On 21/08/24 11:46, yangjihong wrote:
-> Hello,
-> 
-> On 2024/8/21 2:00, Madadi Vineeth Reddy wrote:
->> Hi Yang Jihong,
->>
->> On 19/08/24 08:17, Yang Jihong wrote:
->>> If sched_in event for current task is not recorded, sched_in timestamp
->>> will be set to end_time of time window interest, causing an error in
->>> timestamp show. In this case, we choose to ignore this event.
->>>
->>
->> Why sched-in is not happening for the perf task continuously
->>
->> perf sched record -a sleep 5
->>
->> perf sched script
->> perf 19593 [000] 42668.450179: sched:sched_stat_runtime: comm=perf
-> pid=19593 runtime=69449 [ns] vruntime=7303687 [ns]
->> perf 19593 [000] 42668.450190: sched:sched_stat_runtime: comm=perf
-> pid=19593 runtime=6039 [ns] vruntime=7309726 [ns]
->> perf 19593 [000] 42668.450191: sched:sched_waking: comm=migration/0
-> pid=19 prio=0 target_cpu=000
->> perf 19593 [000] 42668.450192: sched:sched_stat_runtime: comm=perf
-> pid=19593 runtime=2397 [ns] vruntime=7312123 [ns]
->> perf 19593 [000] 42668.450193: sched:sched_switch: perf:19593 [120] R ==>
-> migration/0:19 [0]
->> migration/0 19 [000] 42668.450195: sched:sched_migrate_task: comm=perf
-> pid=19593 prio=120 orig_cpu=0 dest_cpu=1
->> migration/0 19 [000] 42668.450200: sched:sched_switch: migration/0:19 [0]
-> S ==> swapper/0:0 [120]
->> perf 19593 [001] 42668.450308: sched:sched_stat_runtime: comm=perf
-> pid=19593 runtime=112515 [ns] vruntime=9972397 [ns]
->> perf 19593 [001] 42668.450311: sched:sched_waking: comm=migration/1
-> pid=24 prio=0 target_cpu=001
->> perf 19593 [001] 42668.450313: sched:sched_stat_runtime: comm=perf
-> pid=19593 runtime=4690 [ns] vruntime=9977087 [ns]
->> perf 19593 [001] 42668.450314: sched:sched_switch: perf:19593 [120] R ==>
-> migration/1:24 [0]
->> migration/1 24 [001] 42668.450316: sched:sched_migrate_task: comm=perf
-> pid=19593 prio=120 orig_cpu=1 dest_cpu=2
->> migration/1 24 [001] 42668.450322: sched:sched_switch: migration/1:24 [0]
-> S ==> swapper/1:0 [120]
->> perf 19593 [002] 42668.450385: sched:sched_stat_runtime: comm=perf
-> pid=19593 runtime=67379 [ns] vruntime=2885994 [ns]
->> perf 19593 [002] 42668.450389: sched:sched_waking: comm=migration/2
-> pid=30 prio=0 target_cpu=002
->> perf 19593 [002] 42668.450391: sched:sched_stat_runtime: comm=perf
-> pid=19593 runtime=5526 [ns] vruntime=2891520 [ns]
->> perf 19593 [002] 42668.450392: sched:sched_switch: perf:19593 [120] R ==>
-> migration/2:30 [0]
->>
->> The perf task (PID 19593) is being switched out without being switched in
-> after CPU migration. The task migrates to a different CPU,
->> and then immediately switches out without a sched_in event in between.
->>
-> Because the perf tool sets CPU affinity first (which causes perf process
-> to migrate to the target core) and then enables events, by the time
-> starts recording, task is likely to have migrated to the target core and
-> started running. In this case, the sched_in event is not recorded.
-> 
+Not really.
 
-Got it. Thanks for the explanation!
+tt.c invokes this under the thermal zone lock, so it cannot use the
+"locked" variant.
 
-Thanks and Regards
-Madadi Vineeth Reddy
+> It doesn't seem to keep two interfaces. I'm a little confused for that.
 
-> Thanks,
-> Yang
-> 
-
+The difference between for_each_thermal_trip() and
+thermal_zone_for_each_trip() is "unlocked" vs "locked", respectively.
+It may just be a question of naming ...
 
