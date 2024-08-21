@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-296189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754D995A6F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:43:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4B895A6F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DBE31F23816
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1EF1C229B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E998417A924;
-	Wed, 21 Aug 2024 21:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A2417A931;
+	Wed, 21 Aug 2024 21:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhjPjrLs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I30YXryW"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F80F13A3E8;
-	Wed, 21 Aug 2024 21:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E733713A3E8;
+	Wed, 21 Aug 2024 21:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724276595; cv=none; b=lUKPW5yYsd7xGD5U/g+j6ZQ5jdpeJQ3c7ZGB6AOXl/6nt63mQ1fVRepcZgnsMnfjMeA2BN/TX67i5K1VFYkNhk2ndVPg10CyV/2koO8XwfXB6quF0nvA01DeWovrlx+OdL5edD0LadkYKaUbSU8V9jeDevIXwah2emqGYa6h0Ng=
+	t=1724276683; cv=none; b=KcjFy24bbvfKbOGCy9cb4Ie5ZY/v0sq6WIFdyw1+zvknpHCLhCsmh0V9jaAR8FL+xVmuwEgz6zh+TpY/VfhLBhrF08eyxSJhREZHey6GGSVcgKUSv7RFIYAcAis6AkMKu533T1qwYWIFtTUScVRKU8MEsqrsfhZCC+rNWRTCsXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724276595; c=relaxed/simple;
-	bh=0Yu32Y2Y97+J7V2U2AZCL0+qw3bl5E2OZ9XQy9g/wxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sSAKvsdY9OclugnwZkyDsrV6a+pz+59AWAPKsYXeT7zEqY+yPwfYvEe0CaIUmN6hxv2IxUTGqOOo3VxV1MsQSf0/y5uHz0gtph+4MxjmjwVRiSpDQ8LlrapCy2dyMDog9fPV5H9mXvjv6LCjppvm1guyB6TizODK0hZOizYN2Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhjPjrLs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66549C32781;
-	Wed, 21 Aug 2024 21:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724276594;
-	bh=0Yu32Y2Y97+J7V2U2AZCL0+qw3bl5E2OZ9XQy9g/wxI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OhjPjrLsmnbkOEwzQ9TSQaOGfhTR81foJZIrjn0jymdJ+DsxoJcgziNLu+BGWtDNN
-	 s8/2P9SG/UL0N0I4n/zenqFhKZy+RdEm288mPAHUHy7z+BJmrk+loKShjm/EU/3GcL
-	 iYjRgE/CEVnsy8cNEaMZBfT6eYkgsD3bydNA8R+jwhITiKi8KaMj1GVTjGHWhVWV11
-	 KzqtRREbV7A9NVOQ5sABE8OGsfW9ad8dJ2WxZqFWh2NSNeeLgFAGExDKKf6NQYiYXF
-	 slZHRazBltWpNdsA+eCG6oi1lYoowuOqOMyo39nRRvGrW9I+AWhRYBk5nJC1jkWAXn
-	 5YlrqUOysjyNA==
-Date: Wed, 21 Aug 2024 16:43:12 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: qcom-ep: Move controller cleanups to
- qcom_pcie_perst_deassert()
-Message-ID: <20240821214312.GA270533@bhelgaas>
+	s=arc-20240116; t=1724276683; c=relaxed/simple;
+	bh=c5Cc7xVRDAu0e78vBBLsWi4hEbQ6IL85wMQbkWCm6qU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PBbdT4QjjVGCSVdP9xcOo1uuRA7SDt52U8i7Vhu6+lDILaoC6VTj/Y62rkDlaIGY88JVC/LU2lr4DM5oTLNFjZDyParjKaj5kGBJhXW6pQ+VBAWMTeEqHckaNaPZtRkNiV+XswAYWqDtGLQN/WdmoU/AOWpdl6vKYSwMpUMOJ8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I30YXryW; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso93538a91.1;
+        Wed, 21 Aug 2024 14:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724276681; x=1724881481; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JUETRfax8sjt9qjrrTeS5cgr6hmWsh2u4gE8+Q0j9eE=;
+        b=I30YXryWfAJjuSCoQcNueqqUTl68VV1x/60W32OoKiXu/O4/nJ8IRqHchego6V1Urs
+         qCRmNIF5zefpfNOZ/Q4eznt9f5jupeJ2YDSI/BboeehI+IopNSX00V4GeYPACwj2GG+Y
+         Mf3vC62Ob4uV+qwSPSkKb3b8OeeYgYl61cfWqkAnvXoLZs5V9GmdZvY1fL6Y1Adh2Ei6
+         5OCnz5fF1H7EOB9/c4i8lQkMZRzDkBAhlLnmhCUBJEkH1Fl0bq8neHaq6SArlfp/KF74
+         hGsBCZxusgP0NkF1U7rnfsKzQ/qXRVcsFSAJDBax71s+ngzdZDicarkMa7oawMdlQ92P
+         3Khw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724276681; x=1724881481;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JUETRfax8sjt9qjrrTeS5cgr6hmWsh2u4gE8+Q0j9eE=;
+        b=Dp70z2UUcZjPFTATyf1ViOWKJtEeAxjgZz55umbUJJY6vkeCui7g8SM3SOlx1pjmYm
+         +V32Vck33ZaxjfCgkbFUvhdqIKLptKlkh9vpLvFts3u87kPC1DKg6V3tyEPGFhJrBQOX
+         gLK0Q8LQPb6LuuQntQk6kmJMCS9UurTS0geg5R8p9i51ZsQfgrgCwE/HOSvjdSBk7fcU
+         3mmEl0EWVbJRD2phMHnhlQQ2xRIQwGQBY7qcys8Lr2jJfcr7TdshPx/4TG5ALJI/HWRV
+         wMgXazE8yudg7O+1OpYquoJJx5nX5fCFcE5g0oBfGd0n5sSQ+a1PdfRYm/T7iiq22hh+
+         JFGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCbT36oA5Wo7i4s8qvbZ8YKaRtcCvE+K6ivu9xIqmfn/8jU3rq9lJRS+Q6ZZNOx5o2xqTb13C+@vger.kernel.org, AJvYcCVfH8WbLrNiU/zqRi8Nb8x9pCKmaFqK7ysVhr4L7hUOfx2uu3E+Wd3lPiIuKpDgqi8RP2VRayHObaB88Mo=@vger.kernel.org, AJvYcCWvlOPMrKf9541T+QE5dtK8QFkQzhkgqe4Q+1jwqG6fQqYBPorxiq5DKMcKccVkv3mLj6X+InuFEdaPZ10lYp2M@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkyewWUh5DhA3hUElz6YU+H6mAohOC1zVVIpQ8m28/V1TDneVo
+	PLIm6AgdClQDzNGGUJRePC78QVBwaxu0gFKpxBowaNWcRgDtr85QQ+wBHjGPrZOPVwYmqOJVWSL
+	bmYw3XHYvkFP67YvE9YMLMjyPHYqu5sji
+X-Google-Smtp-Source: AGHT+IFBeiMnAG1bzaXlNSAsbhQSBmunae+tWtpSL2/8ZuK0e+bId+IVwlqeuZpJWwaQ8h3hPdMGRKbG2yJFhGrroj4=
+X-Received: by 2002:a17:90a:55ca:b0:2cb:5829:a491 with SMTP id
+ 98e67ed59e1d1-2d60aa4a2a2mr1329320a91.20.1724276681225; Wed, 21 Aug 2024
+ 14:44:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240813202837.GE1922056@rocinante>
+References: <20240815-tcp-ao-selftests-upd-6-12-v3-0-7bd2e22bb81c@gmail.com>
+ <20240815-tcp-ao-selftests-upd-6-12-v3-4-7bd2e22bb81c@gmail.com> <20240821191133.GG2164@kernel.org>
+In-Reply-To: <20240821191133.GG2164@kernel.org>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Wed, 21 Aug 2024 22:44:30 +0100
+Message-ID: <CAJwJo6Yj_Zqwg9Z7sJvj8UZE6z7gAq+Y0p0K5Oz8s+CYMwzFow@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 4/8] selftests/net: Open /proc/thread-self in open_netns()
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Mohammad Nassiri <mnassiri@ciena.com>, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 14, 2024 at 05:28:37AM +0900, Krzysztof Wilczyński wrote:
-> > Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
-> > deinit notify function pci_epc_deinit_notify() are called during the
-> > execution of qcom_pcie_perst_assert() i.e., when the host has asserted
-> > PERST#. But quickly after this step, refclk will also be disabled by the
-> > host.
-> > 
-> > All of the Qcom endpoint SoCs supported as of now depend on the refclk from
-> > the host for keeping the controller operational. Due to this limitation,
-> > any access to the hardware registers in the absence of refclk will result
-> > in a whole endpoint crash. Unfortunately, most of the controller cleanups
-> > require accessing the hardware registers (like eDMA cleanup performed in
-> > dw_pcie_ep_cleanup(), powering down MHI EPF etc...). So these cleanup
-> > functions are currently causing the crash in the endpoint SoC once host
-> > asserts PERST#.
-> > 
-> > One way to address this issue is by generating the refclk in the endpoint
-> > itself and not depending on the host. But that is not always possible as
-> > some of the endpoint designs do require the endpoint to consume refclk from
-> > the host (as I was told by the Qcom engineers).
-> > 
-> > So let's fix this crash by moving the controller cleanups to the start of
-> > the qcom_pcie_perst_deassert() function. qcom_pcie_perst_deassert() is
-> > called whenever the host has deasserted PERST# and it is guaranteed that
-> > the refclk would be active at this point. So at the start of this function,
-> > the controller cleanup can be performed. Once finished, rest of the code
-> > execution for PERST# deassert can continue as usual.
-> 
-> Applied to controller/qcom, thank you!
-> 
-> [1/1] PCI: qcom-ep: Move controller cleanups to qcom_pcie_perst_deassert()
->       https://git.kernel.org/pci/pci/c/6960cdc1ef97
+On Wed, 21 Aug 2024 at 20:11, Simon Horman <horms@kernel.org> wrote:
+>
+> On Thu, Aug 15, 2024 at 10:32:29PM +0100, Dmitry Safonov via B4 Relay wrote:
+> > From: Dmitry Safonov <0x7f454c46@gmail.com>
+> >
+> > It turns to be that open_netns() is called rarely from the child-thread
+> > and more often from parent-thread. Yet, on initialization of kconfig
+> > checks, either of threads may reach kconfig_lock mutex first.
+> > VRF-related checks do create a temprary ksft-check VRF in
+>
+> nit: temporary
+>
+>      Flagged by checkpatch.pl --codespell
 
-I dropped this for now, looking for a new simpler version without
-"cleanup_pending" and a similar change for tegra194 (separate patch).
+A-ha, b4 has this b4.prep-perpatch-check-cmd git setting:
+https://github.com/mricon/b4/blob/37811c93f50e70f325e45107a9a20ffc69f2f6dc/src/b4/ez.py#L1667C20-L1667C43
 
-I think it's still an open question whether both
-pci_epc_deinit_notify() and pci_epc_init_notify() are needed, but that
-should be separate and I don't think that would fix a crash.
+Going to set it and hopefully, it will help avoid spellings/typos in
+future, thanks!
 
-You said this was not strictly v6.11 material, but it does fix a
-crash, and it only touches the endpoint driver, so ... it seems like a
-possible candidate, especially if we can identify a recent commit that
-caused the crash.
-
-Bjorn
+-- 
+             Dmitry
 
