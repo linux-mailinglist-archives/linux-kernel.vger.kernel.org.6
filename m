@@ -1,145 +1,188 @@
-Return-Path: <linux-kernel+bounces-295074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C8A959655
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:13:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30EF6959659
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F87D1F213B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830C01F20126
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EF71ACDFA;
-	Wed, 21 Aug 2024 07:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D9B1B1D54;
+	Wed, 21 Aug 2024 07:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkYzijg5"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="g3jnixOU"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2087.outbound.protection.outlook.com [40.107.255.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EA115749E;
-	Wed, 21 Aug 2024 07:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724226450; cv=none; b=GAeLULDjEJvlSvY1Id2velqEytwN4MYUG7EVBTNrY6Csy2eA/YMbEIqHcq7ELRbDUTabhDPcC3+pK1DsaZJyPMTL292mPDNQbBea4gl4tU/XWXMe5yK5o5U4SSDAjCE8w9H9L5xo6VZq9/3zmYO72ti/bIZYzi92Fz3Mb3WLh9E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724226450; c=relaxed/simple;
-	bh=KEiqrTa7V5LQvAxCRMo6VPBvHQqLLD9fgKPrlSjBAaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ApNSKkiTWyLezCf4k/lkAfo6saiGuV8PKZkD2KRXn2W0ytPXDCB7O0bnaw1o+Dpru9nTH9aKKKnXhAs0hX7YJcRHHgH7Hh58RFl2zly2nejcX0BWqg8zBenovrCCNspA/NnjAeD/aLvW7pb1Lfzh7hvOeiS3h7wkAgLCoHnwgaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkYzijg5; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7093472356dso3387924a34.0;
-        Wed, 21 Aug 2024 00:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724226448; x=1724831248; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DNTFuMLfoiAK/QybcwS+hE3dNAux564SKlwhapf4UlE=;
-        b=EkYzijg5CS5dKKzYB57m4zTA3kU+ykjNcXY7tp+3gAqFDJxxI82mVaSdka3aKIE+2Q
-         wE2nzRaxBt2KGy4GBfOscu3bFHPOb03xCnYAR+sTBLAxzG/RJS7Y1/yuZLytt466Me8+
-         TNaMpl3ktPw7VN/IMn7akGQRFKTasAZ/N8lNlcjr2aIkXYuKbFx8geTSD1qY5/xBr55/
-         Dpp3eD91JmlJ4QVe9ZqfP90RWiIxqpyNIDKamLma2A1PclhrQgRLiCPebm2PTYJOqnJh
-         kPk04+4kjbF7TarAnFxIWgQGHv/qZnNjwslOXLzFDDeD9SGlnEZRJZaNs7JChQ/mRRYA
-         +BPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724226448; x=1724831248;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DNTFuMLfoiAK/QybcwS+hE3dNAux564SKlwhapf4UlE=;
-        b=usUdoLhR68BTgRSiVzyLYUyBzRLmS99Ctlax/KQ0ULyxw8pWxjhoB9vC76xB7H5Rkz
-         vLYNA/Zf7CHAKbUjvwM0zbBCeTh1KZq9398H7CNAnpMoP6HDrsMCRHRuEDWvaC0PjNEj
-         J+Am5269IkAzzFI31W2a1yse+RmzRVFqepYNPOu4I9OHnsSEfUxiEbuxPiWCJZDFse60
-         snStr+UkXKXKZ4bup1M9D9teNcmghF94H5vE1rK4n9X+FKdGSp6G2L1bzLvIdY81k5+g
-         GIIRkErS8eijIgY1QJ5xYhkH45P7mLgFbdOAP/OUJjpxusAbLbT+7ZbTI0jRRHEYy0lc
-         CEVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkcEuTx/xU1nJuYUcol96FmZ8+BMYKIlbX/KRQY8rhgsfwewAtRW7w8Nwsoxd/7wSZdfzcsHYw@vger.kernel.org, AJvYcCVTDrYea6xk+G103bMzNlpzha5FsK25bTgQug58z04He09/OTt6QZEeSt74ZY7Lk5EeEFDfJ+QyAMSSHBQO@vger.kernel.org, AJvYcCVz7Xfrqk/AZrrfDdSwJGIM0RDjpBm/fL7/SJ9uab2gL86K44aiyodPfvKmxU2K4otQW8JHzmIumagVsZAw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVi6W2rg8l2QO5KDs/E0h3zaOmpyqwTJqwxcFTbk6C5jdOUU81
-	BJTR0c8l80JHMRJ+y+F+7TYHN0Od7XFECtIqlAjPCUJqH2hAPd2mSdM19Zy5UybdP0ylfZJYouj
-	sXp1a1ZljCOFWvmX6Q28bKwMHX0Y=
-X-Google-Smtp-Source: AGHT+IF0kxiN5PeGME/C0f5sNNmx2Q8USPOcg8M/l/rSyBKK3TPLmG1/uQER1xA1vSgsz9scqRXt0UnPF/x1wDhaJTc=
-X-Received: by 2002:a05:6870:7024:b0:270:138a:5e57 with SMTP id
- 586e51a60fabf-2738be81733mr1319401fac.44.1724226448173; Wed, 21 Aug 2024
- 00:47:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617671B1D47;
+	Wed, 21 Aug 2024 07:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724226526; cv=fail; b=r+v3gKF7StVpfyc9nZ1GoXnpU44eJglNehrhefquwN9Dw7yaWJe5JdSrKScLixu1WJ8p9jWmEtt6KeBTDGQvrtZkBfdA3Vw9SMARaq05APT7mKj3AEkALvwZh59QonYxceGFYo41PsjPuzr1OnkrzrsmJKlWKTxPpouiwmN5uvU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724226526; c=relaxed/simple;
+	bh=v5CrtpFTF69Vt2fQ3Ql65yO2L1Ge/ArgsNHrHmc9unw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TPgwQ+UEAFLpX9hmElhZC8tA8BK7Itv7L2wFw99AnRAp71X/+8YDrT0JMpn3b8t4mMXOPpUxpso1UGchj2aQnMVhTpPV2+HM9xsPC53Pult+4369AVxECyBV8FE02bFdQ1WBDWE4LwtsZuYMrhsVYwF6nZ/WCGX75ykNEbCOVMw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=g3jnixOU; arc=fail smtp.client-ip=40.107.255.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FqTpJqpoRBo8Sy9lvE29rxdIKvKYfQ4WcIlURPCC5B0NtAi/CmDdPK3/rUTo3QOSmq5cUgQUmKp5RWIPtZNF0153c8riJDueCm0f7ND3K8YgihsIZGpJxty4BblBwQFo4qtO81/DSx8UvmNr5i6JQ50lUy+vxXzEWPTTospcMPllmWHjon6/dpRZs5v3GETqHCdhDE+FQdl7Gtqk9ZB3/lKloQL1IDkIBx+gM14hYKaFSefwVdBWAwIyKQgAveYEPEILYZqG4apPeEHwyjWtQO7NSlw2zVlyGLE+GfQ4btpeErWJtEcrAUJiKZqicVCTUqLjHsmROAHkKsRWMgY+vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xcv46LbAtMXtLrGfMa4QG6Sf4EvGlsOq7eLg4KJy4mA=;
+ b=vAsONj3Zv1bQdTWE0++ZhyFctp7Sfl+wZI5T8JD1GZYGokf2+x+2OrV6BFXV1qSqyi2TwFN6HANdfgvMRMV2GwIP9CjCDRFQn1o1NGbcp6u1j5frEjJwhWdoXYpTP1HLg4LFbQsN/qd+USiIsmm555WAp8h5HQpmTpth3z2dDv3UWofQFyfv4PwWLbtKuhlL+C7LU6jAdDDoAGS1TeUonYWuTWC9MilofA0hDydCM+msoD2PcZTGMcm2lFxjjHp7ywLSaP6AZmOgSskzJRq0batu0cd9aaTdjrhKw/r04UymGueP9TEVe4NLeKVxQWx5A+D4nSXces482mah5rTeyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xcv46LbAtMXtLrGfMa4QG6Sf4EvGlsOq7eLg4KJy4mA=;
+ b=g3jnixOUEE/56zoSbDGlh+o3ptYtW9GfYJVxi/YJaCMlAdDRjyrT4lAPbLHMj5z6OwD4iZVdovsj+llL9NpOTRbxcvid5Q6ptCbRDAj5Wzw/cVyPAY518CYEjjrzWBBR1dH6sPESxU4By5IlWin0BUpzUlkCvluwrZq+Cg/3VjrxKAdqwl0nG22u/LgzVFAxZ7J3aWuNA8geVLoKLyP7md9DYclnZbywnvpqH92l/kOwLq8D5w6snU4n6qhIaDBh7Zr1nDZF/THbNAh/0B1KdyqyCfT94hJI4pWuSA3vk4JigL4KBJjasudqHI/i3YuqNdAcTkZTIP0f9Rf9dpuHTQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14) by SEZPR06MB7176.apcprd06.prod.outlook.com
+ (2603:1096:101:225::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.17; Wed, 21 Aug
+ 2024 07:48:38 +0000
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f]) by KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f%7]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
+ 07:48:38 +0000
+From: Chen Yufan <chenyufan@vivo.com>
+To: =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	xen-devel@lists.xenproject.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Chen Yufan <chenyufan@vivo.com>
+Subject: [PATCH v1] xen/blkback: Convert to use time_after_eq macro
+Date: Wed, 21 Aug 2024 15:47:29 +0800
+Message-Id: <20240821074730.13411-1-chenyufan@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0344.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38e::16) To KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
- <20240818035818.GA1929@sol.localdomain> <20240819-staudamm-rederei-cb7092f54e76@brauner>
- <20240820193414.GA1178@sol.localdomain> <20240821-weitverbreitet-ambulant-46d7bfbc111e@brauner>
-In-Reply-To: <20240821-weitverbreitet-ambulant-46d7bfbc111e@brauner>
-From: Daan De Meyer <daan.j.demeyer@gmail.com>
-Date: Wed, 21 Aug 2024 09:47:17 +0200
-Message-ID: <CAO8sHcmLS5F6CocZPgThF8_KEk_dP113sWQL5a1XcXkeRTv6Qw@mail.gmail.com>
-Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
-To: Christian Brauner <brauner@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Tycho Andersen <tandersen@netflix.com>, Tejun Heo <tj@kernel.org>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5487:EE_|SEZPR06MB7176:EE_
+X-MS-Office365-Filtering-Correlation-Id: bdb7f01b-a6b4-40c6-3e5e-08dcc1b5aad7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BpYS8GyY/WYZ50dMpfB6yjrZr63j1c1SK2Ep4ExC8V8GsMp4InmP/XLKQ5sB?=
+ =?us-ascii?Q?lqSVQFocNgABymcrrkSejnLHSqskNTsSoWCnMyKVnbUYNapBx0MJqA7dahcb?=
+ =?us-ascii?Q?cFX3+Qvt2lO9MX4OW/QK6/Oc/pM5YYnbOyBfhgvG+5lFhJCHWVKaiFMSWtM9?=
+ =?us-ascii?Q?tGs7FlXbDR9QsukmTl5WOrwC/VE0JpDckhFZFo7yo50tzuj9oQhK1Ci1/Pif?=
+ =?us-ascii?Q?96EMptSNJPp7DutHN179p3ClHw152V7ByqhnBNGhQaqrsDiNy2+09MRjOtjq?=
+ =?us-ascii?Q?OggGyrGBUWlP4FhjtCgTsr6q1HtW7oMiVU7KHYIBVAWOwQcwkXakc02wPhCd?=
+ =?us-ascii?Q?8aSlr4gz22/+IXhDCoqEWvEQt+xJlzDsLpTLMDuL9wA8utV76BpmFfy8wo7q?=
+ =?us-ascii?Q?Z9Z43c/FnTPdcBb17UTk6v0HfhjlzRFckjPE9TaZ1O3ixqMdN5Jv7LRGH7af?=
+ =?us-ascii?Q?ASXcfMmoy8NJ50H9zhdur6G6r2AhKTqoa8rR1AdYvg02tm3FQpY8qjyYyDtB?=
+ =?us-ascii?Q?xBbBe1ZmKvHDd1I1SlfBuzG36TTGL9x2KZZrKmVv7qQ3yqUQai61kGZHqEvS?=
+ =?us-ascii?Q?El5vVYnEpYI+vQH0H+OxBwwXsVHl2PCaF/hv8OjD1EOlEfPy37awJQp8ZBsj?=
+ =?us-ascii?Q?uKAVaNs/3qLf5aZRfkblRUVK1deYWNAbq+Mye3yslexdtVb1YTKiHPJabBYu?=
+ =?us-ascii?Q?7X8Knx0QpK1lq+DNgwfn0nrVy5EUmUzNCSErEEShlfSHCYQumV2fTrqM/T6d?=
+ =?us-ascii?Q?DTLzZNUDKhgfXjksubVEUhiSv4Y0xcvrDFHvCr3/Knxf7qI2Jwm7Rrynutea?=
+ =?us-ascii?Q?nEo/GQgfGKfZCZdt3ulYwSo5ukTsXMdcCVf/wYvmDrtGl4z439fONNnAzxTc?=
+ =?us-ascii?Q?RyCTDrkzEkNveSDklz5C1h4x/nRsaMmuQ6YjARKKGpROWwyJjUa7iZEha3uX?=
+ =?us-ascii?Q?J3n6TB0TLVWrjUkMvic2bYPAz01s2QuVDGqWSdIMUCT4jUDh52uFHcp+A/ck?=
+ =?us-ascii?Q?6taIwGfVuY8w2i6gsAscZr9R49MyuZPwo6uAy7/imDSzBg+HIckXMWNy3SAu?=
+ =?us-ascii?Q?YYjwixNMh8CWjvVKvLuqavoQlG0Xn/xt6m6RxoHZAw8BSj3HM/6CR91VAHKL?=
+ =?us-ascii?Q?qvSUWQE1DNkKIvpGqTXgMo+yjrlfcxXyjYesfxf6jCrqbjmQW4KtlMFsvPUU?=
+ =?us-ascii?Q?PGRpu2SzQhLwDXrKrFlnTXh+CloeJ33mVTMA3YQ7DVIjbPr1yVlJMgREv87o?=
+ =?us-ascii?Q?JLy8INhPsH3d+QPBJev6J/9XGBCG5zlqxk8BcsIzL2iwQB9GHwuJPNiKFT7O?=
+ =?us-ascii?Q?5YMfS8dP+HdUV2J6mjRe7jktMCMlC651fkeQ31FgJbDrGSkdPJDDGFx+XkZR?=
+ =?us-ascii?Q?qk2JrMGxhJ0i8mLEiokzns0x3u6W6n57JrOZ617hNjA/DhpGZQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB5487.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jNmyPD49RtN4YBauS5oCl6OcSRRb6bWAqB2Jz3FmEE4S+a1on13WOrj4XgTT?=
+ =?us-ascii?Q?9FanqsHUhvz/0ZEej08qI+rd8tLrMbC/BaeQYu+UmpFc2+/UCFjcxrtlMt2J?=
+ =?us-ascii?Q?nPFDPFK6oX/sLkfi9MHtU3fVNMmJC0M8qrQ2JpbJdbpOALcbU6uEL5uTu2jO?=
+ =?us-ascii?Q?Tbn+ue786bu7S+ZFM91IRX8a1d7H1ikYrvDo1Q5FBnjUUe6Zt+jA5ccdNhGm?=
+ =?us-ascii?Q?REY3+D48IpNeg+a2srYSwAOT8JZ9HcX4fl5TjdcP4xvp5Vg1z8efxMXnjLBj?=
+ =?us-ascii?Q?BCQSl7eDgbCuTPfk7AQSMCfngHa/7t34yzOepNMQeH4g8dGP94y2tUlaAvca?=
+ =?us-ascii?Q?zICqpV0a4rT83N1fD5sH1wzzCfwMC8t2YGHfb/LLvkj1bT7rkG2GIP3J5fcK?=
+ =?us-ascii?Q?iRo1pzYyi6FlPscCM7BaYO20gwbatYp+wLtdDOPRaCBXX6qsiHmdHf+3dHwe?=
+ =?us-ascii?Q?KiA3GqVnTY1EE2+BRz5D9XFrwU4YPoGdKKd80Ty84HNZaozW7miQCNiaX2+E?=
+ =?us-ascii?Q?lwVCbBQunn8lW2AUmLA/3W740JNDBRCiqqoSYZMPZU0VrnfoJ3iMmxaamHGR?=
+ =?us-ascii?Q?W+biwLTmtdd+5ZDN8PzDQfb0ApXpjp6NVdD79z4DHYGAlhpQpxgTFMu5jjpT?=
+ =?us-ascii?Q?dtgtWgt6cEkcw442Zou25QjWwdIE9PNJohP5RzFDK4hh5/PTN6yyCm1RF1FC?=
+ =?us-ascii?Q?uI3lRZImIhJBaozeDu0VdK/kdJH5MvoYrpcgkE9OZu2kVo9mf3f2ZmRHLPb5?=
+ =?us-ascii?Q?kWh/OuXg8CNj44sV/q+pVMoNs61H//6rvoRR9FPiWKMMZnC5t/Oie6gj2OTV?=
+ =?us-ascii?Q?JLQwSHv7kXZgMRGNpQjPLhxBAFPbEsrziaP2hnOs7RxZMELCjEueRoWRPDXH?=
+ =?us-ascii?Q?xKRekgbymMPGkZ0wj5uar/+XcBbyKFr2Tyz8UdTyunA580lYo8iLZV0YprFY?=
+ =?us-ascii?Q?Vk3U+mTmfL/GNUh2G0b5JibdGpA6fm4+UvVoJnZFxgtXJ3OnUmALni2udmgb?=
+ =?us-ascii?Q?/9IWaN5asKsipKElQrmc5iBDF542zZ3O4FSARuhEwP2VJOUg01Ral4a8WNFU?=
+ =?us-ascii?Q?LWHecJgYYcJyI5IwpApUzIog/ue39TaXjKrwBuOoTqgq0hnvCVFEP+J1W/3L?=
+ =?us-ascii?Q?IUOx4ihNY2r8uqnygozvVSw/OC6w/8OPCd1HFE5NEYkeplqYxZfjUDXlyRPi?=
+ =?us-ascii?Q?RTtXiSZeA7OFABRACuCl+ERBfaxT77buS+ETvh9Oqe22+tZCkwI9NmIBoLWJ?=
+ =?us-ascii?Q?jkawVQmbb0c5rzq00naz7ZHfTRt5Y1fxbQfzRV06B++FXGx9SVOYzWl1QH9b?=
+ =?us-ascii?Q?DorDymolXmLO8iaIMotaq879XFikO+yb98DkEQBdCONkBoh0JPFnXHa169iv?=
+ =?us-ascii?Q?Jzw9jZlanScFdraS5S6aIhf1QDjVrK5e2K1EcuKtm7qeMU2bUJT6RNEnhCHy?=
+ =?us-ascii?Q?ZrBK5vv75+yo63RW0V0z17FcKuzF1wqQo253kDl0MgRZHxIVJYskhIr2OLj+?=
+ =?us-ascii?Q?Kd4caEKSUELR2grjZIjw70bre1E/6STFSAjNzXk0LDubu+8+N11GFq9tyI2c?=
+ =?us-ascii?Q?5Tlulq2VKGtCzp5n/ceTRlxTBmajVBf5rMb5hq4e?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bdb7f01b-a6b4-40c6-3e5e-08dcc1b5aad7
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5487.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 07:48:38.1441
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lpBNEWl2af4bEn9VSCNY9JS1bbVy6s4Y+1Jc1HOXQmKanRsR+8zLObKb9r9eo6YWvL42tTsAWQ1pk2jCNvtBeQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7176
 
-Hi,
+Use time_after_eq macro instead of opening it for readability.
 
-I just prepped https://github.com/systemd/systemd/pull/34058 which
-will apply the same fix from ead48ec35c86 ("cgroup-util: Don't try to
-open pidfd for kernel threads") for pids read from /proc as well.
+Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+---
+ drivers/block/xen-blkback/blkback.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Cheers,
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index 838064593..f6da0b74d 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -42,6 +42,7 @@
+ #include <linux/delay.h>
+ #include <linux/freezer.h>
+ #include <linux/bitmap.h>
++#include <linux/jiffies.h>
+ 
+ #include <xen/events.h>
+ #include <xen/page.h>
+@@ -134,8 +135,8 @@ module_param(log_stats, int, 0644);
+ 
+ static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
+ {
+-	return pgrant_timeout && (jiffies - persistent_gnt->last_used >=
+-			HZ * pgrant_timeout);
++	return pgrant_timeout && (time_after_eq(jiffies,
++			persistent_gnt->last_used + HZ * pgrant_timeout));
+ }
+ 
+ #define vaddr(page) ((unsigned long)pfn_to_kaddr(page_to_pfn(page)))
+-- 
+2.39.0
 
-Daan
-
-On Wed, 21 Aug 2024 at 09:41, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Tue, Aug 20, 2024 at 12:34:14PM GMT, Eric Biggers wrote:
-> > On Mon, Aug 19, 2024 at 10:41:15AM +0200, Christian Brauner wrote:
-> > > On Sat, Aug 17, 2024 at 08:58:18PM GMT, Eric Biggers wrote:
-> > > > Hi Christian,
-> > > >
-> > > > On Wed, Jul 31, 2024 at 12:01:12PM +0200, Christian Brauner wrote:
-> > > > > It's currently possible to create pidfds for kthreads but it is unclear
-> > > > > what that is supposed to mean. Until we have use-cases for it and we
-> > > > > figured out what behavior we want block the creation of pidfds for
-> > > > > kthreads.
-> > > > >
-> > > > > Fixes: 32fcb426ec00 ("pid: add pidfd_open()")
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > > ---
-> > > > >  kernel/fork.c | 25 ++++++++++++++++++++++---
-> > > > >  1 file changed, 22 insertions(+), 3 deletions(-)
-> > > >
-> > > > Unfortunately this commit broke systemd-shutdown's ability to kill processes,
-> > > > which makes some filesystems no longer get unmounted at shutdown.
-> > > >
-> > > > It looks like systemd-shutdown relies on being able to create a pidfd for any
-> > > > process listed in /proc (even a kthread), and if it gets EINVAL it treats it a
-> > > > fatal error and stops looking for more processes...
-> > >
-> > > Thanks for the report!
-> > > I talked to Daan De Meyer who made that change and he said that this
-> > > must a systemd version that hasn't gotten his fixes yet. In any case, if
-> > > this causes regression then I'll revert it right now. See the appended
-> > > revert.
-> >
-> > Thanks for queueing up a revert.
-> >
-> > This was on systemd 256.4 which was released less than a month ago.
-> >
-> > I'm not sure what systemd fix you are talking about.  Looking at killall() in
-> > src/shared/killall.c on the latest "main" branch of systemd, it calls
-> > proc_dir_read_pidref() => pidref_set_pid() => pidfd_open(), and EINVAL gets
-> > passed back up to killall() and treated as a fatal error.  ignore_proc() skips
-> > kernel threads but is executed too late.  I didn't test it, so I could be wrong,
-> > but based on the code it does not appear to be fixed.
->
-> Yeah, I think you're right. What they fixed is
-> ead48ec35c86 ("cgroup-util: Don't try to open pidfd for kernel threads")
-> when reading pids from cgroup.procs. Daan is currently prepping a fix
-> for reading pids from /proc as well.
 
