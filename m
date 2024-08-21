@@ -1,132 +1,145 @@
-Return-Path: <linux-kernel+bounces-295499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E7D959BDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:32:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FB9959BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E971F22034
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6122851A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56DE16631D;
-	Wed, 21 Aug 2024 12:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A697B188A3E;
+	Wed, 21 Aug 2024 12:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kz2eLZ/W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQyAf9pV"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EC01D12E1;
-	Wed, 21 Aug 2024 12:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A391531C1;
+	Wed, 21 Aug 2024 12:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724243574; cv=none; b=L62EDcYIitDkX2sUFhYOrNcHCeGdpa23Lhcyp3QHVlkS2BKX+iDlBxzhjtkHzBvgMQRcQ6CwyV8ThOjdC4BVDt7sqlpYHCC/AduEVs03bt/k4erQbbSUhVWx+dw8Xgy1he/tWweniZKybosXAsHMAhrSIygZ06utEPGYi7tSpQg=
+	t=1724243607; cv=none; b=ngeZoyZVn46qneihGPjBq66eHF3Ub+diprlCkCJxvbaGJAk4hwk/goq9b/WXnRQfITAlElH57GHtXQmBKQAzqAGs0GD0HTm5IENX3QlwhhmclWe+1NJD1/nIL3kdRLC/OnvG/leA6a6nCM4YWdy4osiyNGsk2w6viSpFmA8PYeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724243574; c=relaxed/simple;
-	bh=g5ppXx3w3lCYbf79TpTzQ1tpU+x1e4MTDFfIBPeqJB0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Xj1YugfGdyKbMg8K2kK9Mr51StZrSRLhE2JcDL7kAVT7xESj4zemLZkpPdf+SK6LcNBjy8pB+deNepoHoYasuQGGPUVdlj5oreQ9s09mWGfVkfI3n5cU8l5Taq9PIjiZZyFpEfrqlZT5JXiGIXAudP6sVn9BcEkI/tqWW/jxUq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kz2eLZ/W; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724243573; x=1755779573;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=g5ppXx3w3lCYbf79TpTzQ1tpU+x1e4MTDFfIBPeqJB0=;
-  b=kz2eLZ/WjTV+bfmTplutY2/owjeSLTdxT4aPk01Mu13gV9Oytwdsrvro
-   I0CF9GgxCaXmk1BXSpmvRMi63j2+uhDqHD2C3cwrb4UvxGSFsy82xMylt
-   B0ltmsJ0sp/Pjusz09EXVPXFcp5lTeSqRJZaa+HzNZkXfYiYN10XqGi5A
-   HUkRLQkt+90bOYW8bFxczKTMg28RyE4JY98nULq4uKZH0oWW3NM99Ciyj
-   GwIcHZOgLvQZB9F5eD1nlS3uoeuVA62HUhs/EG5g1X2blVhxtHMA6/xNy
-   eu9baCcLQIO8kPTUFFOUjsdnHwTEjP2fyumJiQAMRWKQRCw2GwF5baIi0
-   g==;
-X-CSE-ConnectionGUID: 6MxuQSXxRkydzv6HdzJgCA==
-X-CSE-MsgGUID: YAcJtretQnCC0NKB5hZ44g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="40058544"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="40058544"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 05:32:52 -0700
-X-CSE-ConnectionGUID: jq473xsaR5yS2KaGpZyCyQ==
-X-CSE-MsgGUID: HSX5fmquQMmw0rzvv1CYBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="91820575"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.181])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 05:32:50 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 21 Aug 2024 15:32:46 +0300 (EEST)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, Alex Hung <alexhung@gmail.com>
-Subject: Re: [PATCH v1 1/1] platform/x86: intel-hid: Use string_choices API
- instead of ternary operator
-In-Reply-To: <20240821120458.3702655-1-andriy.shevchenko@linux.intel.com>
-Message-ID: <b4dd5422-092a-7f21-0e3e-834a1a77140a@linux.intel.com>
-References: <20240821120458.3702655-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1724243607; c=relaxed/simple;
+	bh=OymAE/ZZBR4mv0HhBIalO0BOicWD78n6nDWqYyMqynA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ehmmvrM9jyxfIq9A/10WbADM4xRHLlUkAU8b2/vRt6mGQTNFqtHvqN2JNjF+1oEuoU+JjlupCgSrfQafie0SKAnVH1i7EmqBW8R673q/nQRMDzNp1NbhXra7CEE8DFd4k2aQxSTaRqzb0xdfQeNVDMxzcE7pRtoaSuE+pJYX2Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQyAf9pV; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-201fba05363so46063705ad.3;
+        Wed, 21 Aug 2024 05:33:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724243604; x=1724848404; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=38LzfASOFmg17IvE+tEedmZUU9vVFKl4gZEqe47LcGA=;
+        b=HQyAf9pVjfNcfKn3cOL0X3eWQmltQG70t5Mnq1AB9BYmAorUz1cS8+ajdtWJWFuJhS
+         yrv94/hoWucVgXDW+ODS/0/VlglveV005FE+acUxpDjHZq0+XwlQUGtbDmP0XRmOdsml
+         hFvAbzdEX3SwNdlNv6HbX+HgEW7uUHIkWwThjIV3O6NqQhvrxGWMqz7oqQtI3xIR+zpj
+         BjSuV6Dvt05yp346t2yovBiFhvV++v/D3zjy5FS4yrGJg6P34b6Cq2eGy3httssDrb5J
+         xNAcqTbcGbx8sCDuc3g/hT6UGq20RlVJndJJo3ZT4S3p8ni27JdVh4kx/PW7742ATOlv
+         g8XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724243604; x=1724848404;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=38LzfASOFmg17IvE+tEedmZUU9vVFKl4gZEqe47LcGA=;
+        b=jsoVNIofyXzlYt2U8iNQp4DUcOuYO1uVdD8cMvQIco2gvuJZ/iN/8dqWOnpK+vSKpT
+         ERofg2gOsSmFlgy92TV+tqE6VRQCWM11i6ucEfFvUU8XRID9y0gbTziLCnxDlqhcDuEg
+         EgTBSukLKc+RFD4dYDcN5TqNKJhTUfuRaPHQFtoipg9fDCVcKIrUDdg8FV9G60krDZK5
+         ME5z5maOFyOfgOpU8/BBxBetl/VexY7hVBnPH6LfdRGzHu20SffYPxoNINzABIuv0m+0
+         8/ev7We9wdyfeIiOeO1svWbmod+CI62cb7pgIBrsSKdUME7vIAtuKQIhSCUiSV0Rg8ok
+         ZT5g==
+X-Forwarded-Encrypted: i=1; AJvYcCU62T4nGH0LHVPjeCh0hr10rMotYbjIUmHdcxNDTm4wAZ9mhf9UCzpIRWhRdIMfgU5ccRwKeo1rW5iFMMM=@vger.kernel.org, AJvYcCWrzvLelLz9RUe0NX6vQQ+lBVl3Dj/Zep+zSpT2q6lgAyBkyHxly+SZ6qY7ywDfTyx11nBZj8rN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmKaRYJT4XGaKBaBRiDGkaMsm7h0gZuetyXS+z6O8fTI9Bo4B5
+	zq5xnnND4lMv85fv+wn+npUzKaAGXPQKkUEVVPiwj5Tm9gn87TFc
+X-Google-Smtp-Source: AGHT+IFOmUSISQmx1QZwKATxecp9bbNULKQetnFCCRoqRL+BE/zW5AmnieetnrrBmOwR66LzoJOLNg==
+X-Received: by 2002:a17:902:ec92:b0:1fd:93d2:fba4 with SMTP id d9443c01a7336-2036819f4bfmr20217855ad.48.1724243603576;
+        Wed, 21 Aug 2024 05:33:23 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0375631sm92534605ad.154.2024.08.21.05.33.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 05:33:23 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: kuba@kernel.org
+Cc: pshelar@ovn.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	amorenoz@redhat.com,
+	netdev@vger.kernel.org,
+	dev@openvswitch.org,
+	linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: [PATCH net] net: ovs: fix ovs_drop_reasons error
+Date: Wed, 21 Aug 2024 20:32:52 +0800
+Message-Id: <20240821123252.186305-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1824163292-1724243566=:5260"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+There is something wrong with ovs_drop_reasons. ovs_drop_reasons[0] is
+"OVS_DROP_LAST_ACTION", but OVS_DROP_LAST_ACTION == __OVS_DROP_REASON + 1,
+which means that ovs_drop_reasons[1] should be "OVS_DROP_LAST_ACTION".
 
---8323328-1824163292-1724243566=:5260
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+And as Adrian tested, without the patch, adding flow to drop packets
+results in:
 
-On Wed, 21 Aug 2024, Andy Shevchenko wrote:
+drop at: do_execute_actions+0x197/0xb20 [openvsw (0xffffffffc0db6f97)
+origin: software
+input port ifindex: 8
+timestamp: Tue Aug 20 10:19:17 2024 859853461 nsec
+protocol: 0x800
+length: 98
+original length: 98
+drop reason: OVS_DROP_ACTION_ERROR
 
-> Use modern string_choices API instead of manually determining the
-> output using ternary operator.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/platform/x86/intel/hid.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/intel/hid.c b/drivers/platform/x86/inte=
-l/hid.c
-> index 10cd65497cc1..445e7a59beb4 100644
-> --- a/drivers/platform/x86/intel/hid.c
-> +++ b/drivers/platform/x86/intel/hid.c
-> @@ -13,6 +13,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/string_choices.h>
->  #include <linux/suspend.h>
->  #include "../dual_accel_detect.h"
-> =20
-> @@ -331,10 +332,8 @@ static int intel_hid_set_enable(struct device *devic=
-e, bool enable)
->  =09acpi_handle handle =3D ACPI_HANDLE(device);
-> =20
->  =09/* Enable|disable features - power button is always enabled */
-> -=09if (!intel_hid_execute_method(handle, INTEL_HID_DSM_HDSM_FN,
-> -=09=09=09=09      enable)) {
-> -=09=09dev_warn(device, "failed to %sable hotkeys\n",
-> -=09=09=09 enable ? "en" : "dis");
-> +=09if (!intel_hid_execute_method(handle, INTEL_HID_DSM_HDSM_FN, enable))=
- {
-> +=09=09dev_warn(device, "failed to %s hotkeys\n", str_enable_disable(enab=
-le));
->  =09=09return -EIO;
->  =09}
-> =20
->=20
+With the patch, the same results in:
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+drop at: do_execute_actions+0x197/0xb20 [openvsw (0xffffffffc0db6f97)
+origin: software
+input port ifindex: 8
+timestamp: Tue Aug 20 10:16:13 2024 475856608 nsec
+protocol: 0x800
+length: 98
+original length: 98
+drop reason: OVS_DROP_LAST_ACTION
 
---=20
- i.
+Fix this by initializing ovs_drop_reasons with index.
 
---8323328-1824163292-1724243566=:5260--
+Fixes: 9d802da40b7c ("net: openvswitch: add last-action drop reason")
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Tested-by: Adrian Moreno <amorenoz@redhat.com>
+Reviewed-by: Adrian Moreno <amorenoz@redhat.com>
+---
+ net/openvswitch/datapath.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
+index 99d72543abd3..78d9961fcd44 100644
+--- a/net/openvswitch/datapath.c
++++ b/net/openvswitch/datapath.c
+@@ -2706,7 +2706,7 @@ static struct pernet_operations ovs_net_ops = {
+ };
+ 
+ static const char * const ovs_drop_reasons[] = {
+-#define S(x)	(#x),
++#define S(x) [(x) & ~SKB_DROP_REASON_SUBSYS_MASK] = (#x),
+ 	OVS_DROP_REASONS(S)
+ #undef S
+ };
+-- 
+2.39.2
+
 
