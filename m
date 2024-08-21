@@ -1,123 +1,191 @@
-Return-Path: <linux-kernel+bounces-296172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C3B95A6A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:31:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61F395A69D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FAC9B218CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:31:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4618C1F22C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6BA170A22;
-	Wed, 21 Aug 2024 21:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9B4175D34;
+	Wed, 21 Aug 2024 21:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmbqE8qv"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JjRPNQsv"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD816FF3B
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2529D170826
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724275890; cv=none; b=euW8v3jq9LjTV/ShlH7SI0/dySL0xFmTyQ9ujdHX5tUyUb+yZZpDFpljqCUWSEYISbT/waPk1YI0x37JUsOKaib+vZtgI+3VKQtJoT4H5kU21m0N+Rb7lHzqlB0LBLJPBuK3tTUllRwgrxI61Yuko0yqmsE/TEgK7u9LexGjAt0=
+	t=1724275873; cv=none; b=gtzWjTo4w+yCNoN7nP73Pe61S2ID5UczqbZtckCReVLpeUTyCV/y4rK4uG0APCSFYKQl85NgBpufBjjbQMUYOG5W+SqI1l1miSxwx7fZbZ27JAHlcnqj3NeKIT50qMimOj/qqw+NJOrysZNHq4jek9b82NcK4ATNvvABf0Gt5is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724275890; c=relaxed/simple;
-	bh=13Gb/RMl6q3swlRFNwPCffDQHdXZXtufKiZG1cadPNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fb9L8GqOzYsdpAMB6Dhy1K6sgNx7hlkX6KCmmlGKEvDsaVe2NAsHRy+yvhTcWICAkxNXLLIu7M+g2FLvjyVZ3DObvtcUOmz6PkiV4xRGu1v2xl5Vo6Qm8SsECZzEOE9oSlsfT8YCNwRxG3GHrkO116yxNx+Yy7rk/xuGO45gO50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmbqE8qv; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a94478a4eso227713566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:31:29 -0700 (PDT)
+	s=arc-20240116; t=1724275873; c=relaxed/simple;
+	bh=1HPbXZu26ylIr+VTL5kVcyFAqWx6XVIzYfT9vJGT7f0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iPXybKbb24EaSd3CoVwjBc6Es6piiWJM/bxEH5wkGpWc9B0iR9FAqzFydDyv3sbKkEUPfhCOXAHxKAZEySjUdGJjuarTF7OT9pVhSpm1w5015srSHB/LXNZjb8qGsl1P4gzRKWJtsnUroilRh2rnNiKRYcrLTZMMe2Dh9pBD0/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JjRPNQsv; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6bf7f4a133aso369526d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724275888; x=1724880688; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cyaVmd0NKFFDt4jDA5xpNFtWFHhwLK4nU/+8+CzA/xg=;
-        b=mmbqE8qvPqkZ13xfSoGu/fD4FKpD7OLQdqeQxv67/APDO09wYJk80HS92uWE8ZgSBk
-         1A/0ajciJMUjJ4264LoiF5kzXpcFRS5RseGUDg4AwlCfbPySmOuWI7O5AEHXnVS6U+vc
-         oy0ZWJ9xWJUH0hE3LzIRee92cxNV2v1zW26eWKC/tvy6T0lnLiPH4Geo+B0YpWCzRhZn
-         9BANXtZHy0Je6mOu7Mdz4h9RQwCctU7DFPcKdLfU3Xyx9B2q8I0gdFnl2FU7uw/tLqRP
-         N9UWjOXoI/jIbMK5M1ynjIVNv1MbQD+NanCnXmkhMVIq6bY5Gl24tq1IsSVvM81nA7q6
-         SXCQ==
+        d=chromium.org; s=google; t=1724275871; x=1724880671; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwfXYtq5H/Bwl31FSzM7tg0skZKB1oDTQ8t4Qt6Xu7Q=;
+        b=JjRPNQsvOmHwUPp/S9APvXPiGY3dpBCW16lWa2ikP+PjWYj/Kzp/kqg2QEUoRlEIXS
+         YryJCejLVxsHMWIUfqrReBteANaas/r9OqW6MUhzc3wskxnkxA0dAhAvpvtF92q9u36+
+         bFmgk+tFx0WXaHvbiJtX6yc3u/1guw2TTXd/M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724275888; x=1724880688;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cyaVmd0NKFFDt4jDA5xpNFtWFHhwLK4nU/+8+CzA/xg=;
-        b=pdteCkhnmhTzYZWXzPXyZ54krvvsTuyZIA1EqDMLmMyf5iPY/LX4/7tFMqkv4Cop/V
-         9u+bSnrXEQLL7QaEPP5fo9LlLRSqxuAfYgkSQWOVrWDSc4pr49efcKY5l8owFXvqQxzx
-         bLF7aOMWd/t7ogYR4frCqLHwdw8JaRWtwpkk8TewMRC57ZlvBF/lcjHP+amcBPJHw8zs
-         S8QJ40r9wx0wBQH/op0gdTBXVQoiDGPi1TL2sZsKhh14jiCLcjidT7IlXrHjuX6/ujiD
-         DZw72Fn/cGjWxIWiV54AOr/1jkEBIt4GJL3oEe80f1IL8rOakNdTlNt9cuEg/7/tUVKz
-         5eeg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2xjSv7CzOi742EeBwXeOG+52qEmI0hcYQGcRobZ/DecxMbMgEVBb9kkhzlYu3YX8xkRyZuwBZxJPPXIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqseLs8uwwiyIpsEtPsSgY3zwbbdMqGR1a6UC5L6/nIboQHY0v
-	uIKpCaxulpjSP70oMwxmXGFKTx+i0Thxmk2h0KWLd8pxuOrasq22
-X-Google-Smtp-Source: AGHT+IFLKTY9hGauEHRaP/JAEHEXViE3iNpe4vmfGq6Pa/xlFaqwEsIPBdIvpVqlkTOmzokW2Gkpgw==
-X-Received: by 2002:a17:906:5d5:b0:a86:8b5f:65e5 with SMTP id a640c23a62f3a-a868b5f6870mr64815466b.12.1724275887356;
-        Wed, 21 Aug 2024 14:31:27 -0700 (PDT)
-Received: from luk-pc.lan (093105062173.zamosc.vectranet.pl. [93.105.62.173])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a868f21fe5esm13755866b.8.2024.08.21.14.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 14:31:26 -0700 (PDT)
-From: =?UTF-8?q?=C5=81ukasz=20Patron?= <priv.luk@gmail.com>
-To: priv.luk@gmail.com
-Cc: Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dm: Implement set_read_only
-Date: Wed, 21 Aug 2024 23:30:41 +0200
-Message-ID: <20240821213048.726082-1-priv.luk@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1724275871; x=1724880671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uwfXYtq5H/Bwl31FSzM7tg0skZKB1oDTQ8t4Qt6Xu7Q=;
+        b=Rkty6R0NzzNlonz3BJo8Q8/UtVNCofbpqMQw0rXQk2i3GWm6UNHQ7EDP+9bpUnuBFR
+         Aj+oJOZAVKiPqK0GvcJebVvfG3iIsdymnwcrCYDEAp4FKRdJnUGNfWBGpBOWQs8cMBuQ
+         hTmpJpYqYhUMKsAjlmsIevE7N9repqr7RLR9Rx04AMpo/Lo2zUwzx+j1xqyMOxEDWYUr
+         2pW0iG/gwxctvbs5JPduYPRmw6dW0VNlnbkeiazTZdOFyEbUnqlKtaR28YtTWaRjICRR
+         Cuj4Ktch4LIDQriCQxnzkMRVV/5E0t+CtrVyByQGeZmflgsnD4hJO3EcdBTUXIBxlaup
+         qBXw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ovQR31eIVB6ReSmN+D1Wk2Pjxr+8E40iGlzMVkI4YcPlKPll8u6byRGqFVHWuS3WCqN/3RkTpll01E0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRRLUAO6Y+jzvic9ciumbW+/3pL1wFu1WgWO6zbOlQbpgG71Ey
+	INvMComFP7NB/RZfDw4zpvvOWOMjKayrvUxugwAry54Iy/08qVlBtgpOTfC2WDw+n4G7ZLFV70n
+	CUuK9dn0XtoL0/6PEtduFbzZr+4uDy5CWsBJg
+X-Google-Smtp-Source: AGHT+IF/2t26ymLl1453TNbuqayvZbqevzagzBm58wCHeO+njmSvYDXpCN0QjxbJ2OFbF/nJXJO4NU7h/01hnI5dBhI=
+X-Received: by 2002:a05:6214:4185:b0:6b7:ab98:b8b4 with SMTP id
+ 6a1803df08f44-6c15688e06fmr41700066d6.48.1724275870748; Wed, 21 Aug 2024
+ 14:31:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240820172256.903251-1-philipchen@chromium.org>
+ <46eacc01-7b23-4f83-af3c-8c5897e44c90@intel.com> <CA+cxXhnrg8vipY37siXRudRiwLKFuyJXizH9EUczFFnB6iwQAg@mail.gmail.com>
+ <66c6501536e2e_1719d294b1@iweiny-mobl.notmuch>
+In-Reply-To: <66c6501536e2e_1719d294b1@iweiny-mobl.notmuch>
+From: Philip Chen <philipchen@chromium.org>
+Date: Wed, 21 Aug 2024 14:30:59 -0700
+Message-ID: <CA+cxXhnb2i5O7_BiOfKLth5Zwp5T62d6F6c39vnuT53cUkU_uw@mail.gmail.com>
+Subject: Re: [PATCH v2] virtio_pmem: Check device status before requesting flush
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, Pankaj Gupta <pankaj.gupta.linux@gmail.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	virtualization@lists.linux.dev, nvdimm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This lets us change the read-only flag for device mapper block devices
-via the BLKROSET ioctl.
+Hi
 
-Signed-off-by: Łukasz Patron <priv.luk@gmail.com>
----
- drivers/md/dm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Wed, Aug 21, 2024 at 1:37=E2=80=AFPM Ira Weiny <ira.weiny@intel.com> wro=
+te:
+>
+> Philip Chen wrote:
+> > Hi,
+> >
+> > On Tue, Aug 20, 2024 at 1:01=E2=80=AFPM Dave Jiang <dave.jiang@intel.co=
+m> wrote:
+> > >
+> > >
+> > >
+> > > On 8/20/24 10:22 AM, Philip Chen wrote:
+> > > > If a pmem device is in a bad status, the driver side could wait for
+> > > > host ack forever in virtio_pmem_flush(), causing the system to hang=
+.
+> > > >
+> > > > So add a status check in the beginning of virtio_pmem_flush() to re=
+turn
+> > > > early if the device is not activated.
+> > > >
+> > > > Signed-off-by: Philip Chen <philipchen@chromium.org>
+> > > > ---
+> > > >
+> > > > v2:
+> > > > - Remove change id from the patch description
+> > > > - Add more details to the patch description
+> > > >
+> > > >  drivers/nvdimm/nd_virtio.c | 9 +++++++++
+> > > >  1 file changed, 9 insertions(+)
+> > > >
+> > > > diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.=
+c
+> > > > index 35c8fbbba10e..97addba06539 100644
+> > > > --- a/drivers/nvdimm/nd_virtio.c
+> > > > +++ b/drivers/nvdimm/nd_virtio.c
+> > > > @@ -44,6 +44,15 @@ static int virtio_pmem_flush(struct nd_region *n=
+d_region)
+> > > >       unsigned long flags;
+> > > >       int err, err1;
+> > > >
+> > > > +     /*
+> > > > +      * Don't bother to submit the request to the device if the de=
+vice is
+> > > > +      * not acticated.
+> > >
+> > > s/acticated/activated/
+> >
+> > Thanks for the review.
+> > I'll fix this typo in v3.
+> >
+> > In addition to this typo, does anyone have any other concerns?
+>
+> I'm not super familiar with the virtio-pmem workings and the needs reset
+> flag is barely used.
+>
+> Did you actually experience this hang?  How was this found?  What is the
+> user visible issue and how critical is it?
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 87bb90303435..538a93e596d7 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -410,6 +410,12 @@ static int dm_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
- 	return dm_get_geometry(md, geo);
- }
- 
-+static int dm_blk_set_read_only(struct block_device *bdev, bool ro)
-+{
-+	set_disk_ro(bdev->bd_disk, ro);
-+	return 0;
-+}
-+
- static int dm_prepare_ioctl(struct mapped_device *md, int *srcu_idx,
- 			    struct block_device **bdev)
- {
-@@ -3666,6 +3672,7 @@ static const struct block_device_operations dm_blk_dops = {
- 	.release = dm_blk_close,
- 	.ioctl = dm_blk_ioctl,
- 	.getgeo = dm_blk_getgeo,
-+	.set_read_only = dm_blk_set_read_only,
- 	.report_zones = dm_blk_report_zones,
- 	.pr_ops = &dm_pr_ops,
- 	.owner = THIS_MODULE
--- 
-2.46.0
+Yes, I experienced the problem when trying to enable hibernation for a VM.
 
+In the typical hibernation flow, the kernel would try to:
+(1) freeze the processes
+(2) freeze the devices
+(3) take a snapshot of the memory
+(4) thaw the devices
+(5) write the snapshot to the storage
+(6) power off the system (or perform platform-specific action)
+
+In my case, I see VMM fail to re-activate the virtio_pmem device in (4).
+(And therefore the virtio_pmem device side sets VIRTIO_CONFIG_S_NEEDS_RESET=
+.)
+As a result, when the kernel tries to power off the virtio_pmem device
+in (6), the system would hang in virtio_pmem_flush() if this patch is
+not added.
+
+To fix the root cause of this issue, I sent another patch to add
+freeze/restore PM callbacks to the virtio_pmem driver:
+https://lore.kernel.org/lkml/20240815004617.2325269-1-philipchen@chromium.o=
+rg/
+(Please also help review that patch.)
+
+However, I think this patch is still helpful since the system
+shouldn't hang in virtio_pmem_flush() regardless of the device state.
+
+>
+> Thanks,
+> Ira
+>
+> >
+> > >
+> > > > +      */
+> > > > +     if (vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_NEEDS_RE=
+SET) {
+> > > > +             dev_info(&vdev->dev, "virtio pmem device needs a rese=
+t\n");
+> > > > +             return -EIO;
+> > > > +     }
+> > > > +
+> > > >       might_sleep();
+> > > >       req_data =3D kmalloc(sizeof(*req_data), GFP_KERNEL);
+> > > >       if (!req_data)
+>
+>
 
