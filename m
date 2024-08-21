@@ -1,88 +1,176 @@
-Return-Path: <linux-kernel+bounces-294844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2C195934D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6738959348
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81375285B70
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057DE1C22577
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 03:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F05C158528;
-	Wed, 21 Aug 2024 03:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="JhU4sxV9"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0C715747C;
+	Wed, 21 Aug 2024 03:19:59 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2277B157467
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE0C3FD4;
+	Wed, 21 Aug 2024 03:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724210421; cv=none; b=NS4SHyTnoIOC+ak0s/B5D+XTpimanbm2tJQcRW2wpqgy/pEskjOyJENNUibunAp9rB1W2Z1wKPz8RLUaHE2pIcfPYduRvWIx9/Q0fLWlD+yiHzzfkm7/YhpFVPohIrHD1xB49LEo3xR7aHeWZ7M0thwAM2+D/TlWVg6Cbbpw1Aw=
+	t=1724210398; cv=none; b=MEOZh/G5iobPh/ZX7dDH9mJajmaRemgCF2MWl/H1VRZ8Jqed0pjtbzzemd4E7iI9gXEgPwKyxdeqewGJHAkQTas5eEmnpz4xTE+6XVM7o+YkDZMQuuo/U/oe9yiWM8tG6cSK5dpK6bOyDSoR5u2AZAS1h6g00sGhtT+lY13DVuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724210421; c=relaxed/simple;
-	bh=VsXRTEDQwNH8m6AaQpm31ch4vkuZRGtFm/T6sL41ip4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcejkK7mCifW83XtUCJcQ0clAS0ATqtUuHZ3+goeFExkQq+EBUCQDzomqacy1h24o9ps+lhaJRtcHK9LxAtxBPmQJ6HpgP2XtSuJXSjRcn1rKOn7soJbj2Srg+06vM6/V4PIYYM/PmtN97bpVutqqfFTslXOH+4SGSCBABE8Pwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=JhU4sxV9; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-112-67.bstnma.fios.verizon.net [173.48.112.67])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47L3JcjU024064
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 23:19:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1724210382; bh=f4PakQ5bnKjiLKXKzLV7pR83jIv0eJHYGpCo+y8ltbI=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=JhU4sxV9ziSVg3D/3pDrj1UVqfvWAcdnUxnPpfeu+BJ2+8NGz80VxZbSYjYHz5Yz0
-	 xud4U0rddH3hDZMrMm2+SkPIRSCRxGe06w3EJzW0brocgl+ImAqN8/zg8+pC5r8iCs
-	 rbzHdPqEw2+LVNTMuP5L3roiEryQEpCUKV844OFKyUofBtNMvzfrfRVCkHp784uMYq
-	 Q+0lBOCcmwt5IHqk/zB6H9cVeZSfq+tWIS8aBF4C83coYZxGzol8gcJPXPC2aFXxGL
-	 4vEdTDOzENBphXeklhfy9L5klP5OJa4Yi1/s8BdrDNZjMB8ujMwogpd26wpLFTopnc
-	 B8ARU7Me6EIig==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 73AF015C02C0; Tue, 20 Aug 2024 23:19:38 -0400 (EDT)
-Date: Tue, 20 Aug 2024 23:19:38 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-        linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-        yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 12/20] ext4: get rid of ppath in ext4_split_extent_at()
-Message-ID: <20240821031938.GA277453@mit.edu>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-13-libaokun@huaweicloud.com>
- <20240725110756.fuyjfdvgbprma5ml@quack3>
- <84d1cae3-1939-463c-b1f9-344e02f87a9c@huaweicloud.com>
+	s=arc-20240116; t=1724210398; c=relaxed/simple;
+	bh=ekc4UKG/naBvDE7oIUAwIWugkmXwGjS/9YxfRmEW5/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n5w342UT1hPj3o+TOSqs1H8AJYB70NkKc804X3YxPWmf/T/SHi/v87mwjVGsiaTZyXk7+TcUc4m92iwarbzxYGF3uU7etxYHZ9Bp86V7yKK7e52CZD0G8n3ThF9yDH6a+rDCXGpPd4N36bsTFZ1FQ/Hh5YkxNehSrFPDT/7ZyRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WpWm618MCz1j6jw;
+	Wed, 21 Aug 2024 11:19:50 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id D75211400CA;
+	Wed, 21 Aug 2024 11:19:51 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 21 Aug 2024 11:19:51 +0800
+Message-ID: <83c57ee0-b1e4-7232-ac74-e910b5db12a5@huawei.com>
+Date: Wed, 21 Aug 2024 11:19:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84d1cae3-1939-463c-b1f9-344e02f87a9c@huaweicloud.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next RESEND] usb: xhci: Simplify with scoped for each OF
+ child loop
+Content-Language: en-US
+To: Alan Stern <stern@rowland.harvard.edu>
+CC: <gregkh@linuxfoundation.org>, <krzk@kernel.org>,
+	<alim.akhtar@samsung.com>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240820065635.560427-1-ruanjinjie@huawei.com>
+ <435bde54-aa08-47d1-8fe0-980bcc577803@rowland.harvard.edu>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <435bde54-aa08-47d1-8fe0-980bcc577803@rowland.harvard.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Sat, Jul 27, 2024 at 02:42:50PM +0800, Baokun Li wrote:
- > 								Honza
-> Ok, I'll put this in a separate patch in the next version.
+
+
+On 2024/8/20 21:46, Alan Stern wrote:
+> On Tue, Aug 20, 2024 at 02:56:35PM +0800, Jinjie Ruan wrote:
+>> Use scoped for_each_available_child_of_node_scoped() when iterating over
+>> device nodes to make code a bit simpler.
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  drivers/usb/host/ehci-exynos.c | 9 ++-------
+>>  drivers/usb/host/ohci-exynos.c | 9 ++-------
+>>  2 files changed, 4 insertions(+), 14 deletions(-)
 > 
-> Thank you very much for your review!
->
+> The patch changes ehci-exynos.c and ohci-exynos.c.  So then why does the 
+> Subject: line say "xhci"?
 
-Hi Baokun,
+git log --oneline drivers/usb/host/* shows this subject a lot, so adopt it.
 
-Did you send out a newer version of this patch series?  I can't seem
-to find it in patchwork.
-
-Thanks,
-
-					- Ted
+> 
+> The contents of the patch look okay.
+> 
+> Alan Stern
+> 
+>> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+>> index f40bc2a7a124..e3a961d3f5fc 100644
+>> --- a/drivers/usb/host/ehci-exynos.c
+>> +++ b/drivers/usb/host/ehci-exynos.c
+>> @@ -48,7 +48,6 @@ struct exynos_ehci_hcd {
+>>  static int exynos_ehci_get_phy(struct device *dev,
+>>  				struct exynos_ehci_hcd *exynos_ehci)
+>>  {
+>> -	struct device_node *child;
+>>  	struct phy *phy;
+>>  	int phy_number, num_phys;
+>>  	int ret;
+>> @@ -66,26 +65,22 @@ static int exynos_ehci_get_phy(struct device *dev,
+>>  		return 0;
+>>  
+>>  	/* Get PHYs using legacy bindings */
+>> -	for_each_available_child_of_node(dev->of_node, child) {
+>> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
+>>  		ret = of_property_read_u32(child, "reg", &phy_number);
+>>  		if (ret) {
+>>  			dev_err(dev, "Failed to parse device tree\n");
+>> -			of_node_put(child);
+>>  			return ret;
+>>  		}
+>>  
+>>  		if (phy_number >= PHY_NUMBER) {
+>>  			dev_err(dev, "Invalid number of PHYs\n");
+>> -			of_node_put(child);
+>>  			return -EINVAL;
+>>  		}
+>>  
+>>  		phy = devm_of_phy_optional_get(dev, child, NULL);
+>>  		exynos_ehci->phy[phy_number] = phy;
+>> -		if (IS_ERR(phy)) {
+>> -			of_node_put(child);
+>> +		if (IS_ERR(phy))
+>>  			return PTR_ERR(phy);
+>> -		}
+>>  	}
+>>  
+>>  	exynos_ehci->legacy_phy = true;
+>> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+>> index bfa2eba4e3a7..1379e03644b2 100644
+>> --- a/drivers/usb/host/ohci-exynos.c
+>> +++ b/drivers/usb/host/ohci-exynos.c
+>> @@ -37,7 +37,6 @@ struct exynos_ohci_hcd {
+>>  static int exynos_ohci_get_phy(struct device *dev,
+>>  				struct exynos_ohci_hcd *exynos_ohci)
+>>  {
+>> -	struct device_node *child;
+>>  	struct phy *phy;
+>>  	int phy_number, num_phys;
+>>  	int ret;
+>> @@ -55,26 +54,22 @@ static int exynos_ohci_get_phy(struct device *dev,
+>>  		return 0;
+>>  
+>>  	/* Get PHYs using legacy bindings */
+>> -	for_each_available_child_of_node(dev->of_node, child) {
+>> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
+>>  		ret = of_property_read_u32(child, "reg", &phy_number);
+>>  		if (ret) {
+>>  			dev_err(dev, "Failed to parse device tree\n");
+>> -			of_node_put(child);
+>>  			return ret;
+>>  		}
+>>  
+>>  		if (phy_number >= PHY_NUMBER) {
+>>  			dev_err(dev, "Invalid number of PHYs\n");
+>> -			of_node_put(child);
+>>  			return -EINVAL;
+>>  		}
+>>  
+>>  		phy = devm_of_phy_optional_get(dev, child, NULL);
+>>  		exynos_ohci->phy[phy_number] = phy;
+>> -		if (IS_ERR(phy)) {
+>> -			of_node_put(child);
+>> +		if (IS_ERR(phy))
+>>  			return PTR_ERR(phy);
+>> -		}
+>>  	}
+>>  
+>>  	exynos_ohci->legacy_phy = true;
+>> -- 
+>> 2.34.1
+>>
 
