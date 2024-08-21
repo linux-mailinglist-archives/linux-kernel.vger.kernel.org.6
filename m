@@ -1,70 +1,88 @@
-Return-Path: <linux-kernel+bounces-296078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C6795A546
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:24:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D1695A55C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D421C21548
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D371E1F22DA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8E316F8F5;
-	Wed, 21 Aug 2024 19:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2A16EB58;
+	Wed, 21 Aug 2024 19:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y7gqvTQk"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWexFVzF"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7866D79CD;
-	Wed, 21 Aug 2024 19:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D737A31
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 19:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724268281; cv=none; b=Uip7kekRpXpQLo2Md84/AUsf91+nzZK7sQTTv3ndJv7RZkqXEdo8AA4pL5UqLmpK418LLP2xa/9jAjGsW1PpDVUfg6NgN0aJiU5o9HT+bA9V5G7P1wfB8KnxLyN3JlZAhY/UcISz7jzJjx4aECrWhrlrg1sR568h9oh9gBWT9gM=
+	t=1724268955; cv=none; b=m7u2FfWq0jnVTJIqtGgjmeRuqBbx13LxHVnnFiY6U12B9M6Fwoonpb53NrBC4mNPvcGN1BLxhFH9jnmOGSN+iqk3ZifsM+EAExkG6ZJFhqEmyzadqRGvCsCISiY7OpeT3EDjD09pUKW7FsvVbQdRlblPE6DUxaHAUHdwYnqh68g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724268281; c=relaxed/simple;
-	bh=KEs3+0bFeoFgo4ngrnDTC9HBUMGQLYn4h0Wba1inEyg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M2LmfMujslcGIZVZ6tzkxxrwXHu/Ky3tC1I7BJTnX6VZy8HCZGeAXHZ9HvY+F8xsgOpeSlrmO0xfNWcfXqz6LeIFj8mA4hF//+hs2GSolpJTVUNOj6JAHSkyHXFqaSVd0WK/wkrnlY7hEtnC/rsOv8nVZxh3z6nOy/VctwNcnx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y7gqvTQk; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LJOZCJ047915;
-	Wed, 21 Aug 2024 14:24:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724268275;
-	bh=gPXE+AXFPDgn04Mc9jcQyDyqkHbMxJlaxavoM1Vlb9s=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=y7gqvTQkdgqkv/QddBLM1b6Q/nnaPX3V+OVxJRgyqWcLtKdI7ElfqwNPqoTQv6XNU
-	 tuTMl+nZbs0vg34j98g74P2vfmBLsZojz1H11pICCJPTPQRrSE1RjMjhnzWV36GUBM
-	 W8cydxnInTRXrYKQItfoyW6BswPlWGDWsER8gl/0=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LJOZk7112394
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 14:24:35 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 14:24:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 14:24:36 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LJOZqk057194;
-	Wed, 21 Aug 2024 14:24:35 -0500
-From: Judith Mendez <jm@ti.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Adrian Hunter <adrian.hunter@intel.com>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] mmc: sdhci_am654: Add prints to tuning algorithm
-Date: Wed, 21 Aug 2024 14:24:35 -0500
-Message-ID: <20240821192435.1619271-3-jm@ti.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240821192435.1619271-1-jm@ti.com>
-References: <20240821192435.1619271-1-jm@ti.com>
+	s=arc-20240116; t=1724268955; c=relaxed/simple;
+	bh=rXwFpnKz1CFuln/TKZw7P+Uk7tNaAbZUFoquGGJ1htw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TGdYgqRTLvwmZgQMnIvZ4+WBezrXZQfnuIP8jemifAp3ugNbIcyNREdB4ZGFZq6rqWVBpL7a7z+XHTNFFdS3CR30DlDnl/fsh4ZOrNg2y6JPm3wjt9NnxTEzw0oAZKNaVod5cpWrHBsrq+jp9T0QY1SYcIMcZExK6FUs7iQll7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AWexFVzF; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6bf999ac52bso20951846d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724268952; x=1724873752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAlsd1JHvdhK5Hz0/hi6Hu9e2FXd9VK6pKbxR5UtnGw=;
+        b=AWexFVzFRQN/Mh1PLTldpsdFBYFFLQANOByFW4JfuOURVmyAkqbO67K7iBF1KfZcPI
+         Kin3PgNENGEd7wIGz/jLAMWLgNSGUZjQT3JBpV1ZhamMHG7KDJqKtjhzW70PAp2jM3ad
+         NAbiqNZHxd2iJ+DRyYW4gxtGgb+G/6V3lBVmDnNt/UgQCjkMp7ObXSI+fJ6N7jQtgMLS
+         nZJc5akbVNw4g5n/6FC4S4Y4YUefEpknqJ/53RlYOBpMDIGbrFay6Lp4JPiU4l0sRzFF
+         cRZseNsqbi+PBLv45jhixSrWDWiW1WAXznhlmG2WS5Bjh7RssxfyRNTKmU/IPGJYLeA1
+         /kag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724268952; x=1724873752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aAlsd1JHvdhK5Hz0/hi6Hu9e2FXd9VK6pKbxR5UtnGw=;
+        b=OjBjtk+zz3R3RyLbLQGMcShi5v1CS94uMWrK4RxvgdKuBPmowK+vECiHC3Xp9UKuA5
+         LPeKaB6MPHuVy5+CA9kVOuirkaUINuxEDWgTrFAO9+lYTaTIN3avcsDlC0nkLmX5zOVp
+         nNBaYcpKFEubuKFrLDtiuoJAGzG2I7rWLHC2PtDkRZMkKb5yKru0Igg33tQ2ykExeXKp
+         0nbVSMifo62zYtDIrq63U/ryKLludw2Q0Umrs77zH71coMYuggmItE8JKMLOCtqNjRjs
+         il7VL5t67B/u2R2a/JpTvi57oxfjEsk2ExnvO08OJK3Q1uV0zsURCHDCkz3ide2QOiou
+         lYkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLSReX6b9357gHGd4YbkntSpcLdja0TU1SPgWXNW5n950t3d2Mt1lgJsAUU5CINRZhJD73qBBjY1WUGV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTZOPATDhQzVCTPtatqeCOGrWFpVfHypsFNc1RkSioToAmZetV
+	IINgBPY1Yb71P7TIYjdIFRMB3sMyMm1Wz7twHUXS/hR6jXRg2Tt+
+X-Google-Smtp-Source: AGHT+IFPZE+Jff2sgvSYZBsIe6gdmnstfGArL49uu6MQk4I8eTSFrt+0eYBlfcaYlOmfu7guMgEigA==
+X-Received: by 2002:a05:6214:578a:b0:6bf:7f5b:1d3 with SMTP id 6a1803df08f44-6c155d5de39mr43397716d6.16.1724268952272;
+        Wed, 21 Aug 2024 12:35:52 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-017.fbsv.net. [2a03:2880:20ff:11::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162db0b30sm111696d6.77.2024.08.21.12.35.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 12:35:51 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org,
+	riel@surriel.com,
+	zhaoyang.huang@unisoc.com,
+	yuzhao@google.com,
+	david@redhat.com,
+	leitao@debian.org,
+	huangzhaoyang@gmail.com,
+	bharata@amd.com,
+	willy@infradead.org,
+	vbabka@suse.cz,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH] Revert "mm: skip CMA pages when they are not available"
+Date: Wed, 21 Aug 2024 20:35:06 +0100
+Message-ID: <20240821193506.1525996-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,61 +90,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add debug prints to tuning algorithm for debugging.
-Also add error print if we fail tuning.
+This reverts commit 5da226dbfce3a2f44978c2c7cf88166e69a6788b.
 
-Signed-off-by: Judith Mendez <jm@ti.com>
+lruvec->lru_lock is highly contended and is held when calling
+isolate_lru_folios. If the lru has a large number of CMA folios
+consecutively, while the allocation type requested is not
+MIGRATE_MOVABLE, isolate_lru_folios can hold the lock for a very long
+time while it skips those. For FIO workload, ~150million order=0
+folios were skipped to isolate a few ZONE_DMA folios [1].
+This can cause lockups [1] and high memory pressure for extended periods
+of time [2].
+
+[1] https://lore.kernel.org/all/CAOUHufbkhMZYz20aM_3rHZ3OcK4m2puji2FGpUpn_-DevGk3Kg@mail.gmail.com/
+[2] https://lore.kernel.org/all/ZrssOrcJIDy8hacI@gmail.com/
+
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 ---
-Changes since v1:
-- Change prints to dev_dbg
-- Add print for failing itaps
----
- drivers/mmc/host/sdhci_am654.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ mm/vmscan.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index 612f29fd7dfef..9cac520d5c15c 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -457,11 +457,13 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 5dc96a843466..78ad4a141409 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1690,8 +1690,7 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+ 		nr_pages = folio_nr_pages(folio);
+ 		total_scan += nr_pages;
  
- 	if (!num_fails) {
- 		/* Retry tuning */
-+		dev_dbg(dev, "No failing region found, retry tuning\n");
- 		return -1;
- 	}
- 
- 	if (fail_window->length == ITAPDLY_LENGTH) {
- 		/* Retry tuning */
-+		dev_dbg(dev, "No passing itapdly, retry tuning\n");
- 		return -1;
- 	}
- 
-@@ -527,6 +529,7 @@ static int sdhci_am654_do_tuning(struct sdhci_host *host,
- 		if (!curr_pass) {
- 			fail_window[fail_index].end = itap;
- 			fail_window[fail_index].length++;
-+			dev_dbg(dev, "Failed itapdly=%d\n", itap);
- 		}
- 
- 		if (curr_pass && !prev_pass)
-@@ -562,10 +565,12 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
- 	}
- 
- 	if (itapdly >= 0) {
-+		dev_dbg(dev, "Passed tuning, final itapdly=%d\n", itapdly);
- 		sdhci_am654_write_itapdly(sdhci_am654, itapdly, sdhci_am654->itap_del_ena[timing]);
- 		/* Save ITAPDLY */
- 		sdhci_am654->itap_del_sel[timing] = itapdly;
- 	} else {
-+		dev_err(dev, "Failed to find itapdly, fail tuning\n");
- 		ret = -1;
- 	}
- 
+-		if (folio_zonenum(folio) > sc->reclaim_idx ||
+-				skip_cma(folio, sc)) {
++		if (folio_zonenum(folio) > sc->reclaim_idx) {
+ 			nr_skipped[folio_zonenum(folio)] += nr_pages;
+ 			move_to = &folios_skipped;
+ 			goto move;
 -- 
-2.46.0
+2.43.5
 
 
