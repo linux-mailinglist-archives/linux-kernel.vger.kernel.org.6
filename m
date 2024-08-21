@@ -1,146 +1,261 @@
-Return-Path: <linux-kernel+bounces-295913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F4695A2E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:34:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CBAA95A2E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CE991C21D31
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:34:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 955EAB227DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9E9158A23;
-	Wed, 21 Aug 2024 16:34:01 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CE71AF4FB;
+	Wed, 21 Aug 2024 16:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7/yZDf3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46275D8F0;
-	Wed, 21 Aug 2024 16:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0612214E2D4;
+	Wed, 21 Aug 2024 16:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258041; cv=none; b=XgQ32VsJYr1Xg/Gk96HhSNxCeSOiRsYFoYNI/vMSNAQ/chBWgx68EKaRyLeFYvABUR3yMlM4Y1rqs17b+E/gNMKg2yV1jMiFMGR0GGdbDk+VCUAe4fBMYkBIVsjTCiMBs+/+vEUMyMSsbD/NlScsobQBXkzXi+DQT5K1eMARZJ4=
+	t=1724258048; cv=none; b=gMNIpREf905oc9drW4ksrtsj3lCHeEBJ7X3e6UJ3c49ZQq3xbJFMpBb9Iy9IpJxunFWpf381ixH3+tRDuw2nDL4PcsJUtQZPJTR5446rn+waHmCywt915KqxWzlDL34eCgnXFnT+9AVcBlwdK4DDUvbsPfJOZemhOz9/m5D/ntU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258041; c=relaxed/simple;
-	bh=pVLVC7RFMjEJt7SU0a6Zj0TKVkL+KpleH3S4AM1LVtI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ELUMtmA3ubAgH0wSd0Gi1tPXjQXVt9+xayaGnpBZiKEj6sKXaaZYmsf8uUjs8KLB/XavxGBJE99nG8KNeR3NOJkE3s8ZoQKSE5tr4bpZjtIc2W0Zi0RJP7e9qtAfqorFosAqufb/gmZcQldmU4hvuj9unvAMIeI+FaW0EcMFREU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WpsJl6P0kz6J7sn;
-	Thu, 22 Aug 2024 00:30:47 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0F9DF140A36;
-	Thu, 22 Aug 2024 00:33:54 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
- 2024 17:33:53 +0100
-Date: Wed, 21 Aug 2024 17:33:52 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: David Lechner <dlechner@baylibre.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Michael Hennerich
-	<Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<nuno.sa@analog.com>, Jonathan Corbet <corbet@lwn.net>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>
-Subject: Re: [PATCH 2/4] iio: adc: ad4695: implement calibration support
-Message-ID: <20240821173352.000000b6@Huawei.com>
-In-Reply-To: <e2401290-5504-4a17-93bd-af8684a82a7a@baylibre.com>
-References: <20240820-ad4695-gain-offset-v1-0-c8f6e3b47551@baylibre.com>
-	<20240820-ad4695-gain-offset-v1-2-c8f6e3b47551@baylibre.com>
-	<20240821141615.00006ebe@Huawei.com>
-	<e2401290-5504-4a17-93bd-af8684a82a7a@baylibre.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724258048; c=relaxed/simple;
+	bh=+GRMHpiOSPDzrwAh3s0GXT01u191AcPXsvV3iIzbfXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8sGRhGB48IqIGSmn1Oocty/GKyQ3yyUHPWiJhraHdKrUGf+3unzdY8qJKlx0/oGmoUBwkY2cgh4QF/iybOV6apntQtrRrdrGvHQuHwcF/cz0YH78jevu6I2cP2HmT74JfY9r/fkZqBmaLZlzvIkXQITYhnOoostQ3Ea86oDPCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7/yZDf3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA34C32781;
+	Wed, 21 Aug 2024 16:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724258047;
+	bh=+GRMHpiOSPDzrwAh3s0GXT01u191AcPXsvV3iIzbfXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L7/yZDf3mcCp0vl1kiYml/Yjtc10BHf9Kh6OvTLb3sGtATNtZKKXI0J94nvrse0z1
+	 e5c1bW/hld9CzNttJzliqroIzO/QhF/wW/y0c3g839tCeeY5k3BCym6vk9okt88w8L
+	 qoghbiVkTZLvTGVQWgXMRtEzYXfdarKrqYiZKwpuujECEQagYZ7srUa16yQfua4M5j
+	 bEL6qoxH6mIIzMtRyDMETO1LhxitpmR6KnHeD2/efRlw621DJNDfodkjZLiuPParNe
+	 lxuMjpSYmxNUmGzfshXEnrJPwPSZ0ZMkmCeCRGutMO1dnGF4W1OegQ7V2hOABIjJ+A
+	 u/v0P4fv4IeXA==
+Date: Wed, 21 Aug 2024 09:34:07 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] xfs: move the tagged perag lookup helpers to
+ xfs_icache.c
+Message-ID: <20240821163407.GH865349@frogsfrogsfrogs>
+References: <20240821063901.650776-1-hch@lst.de>
+ <20240821063901.650776-3-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821063901.650776-3-hch@lst.de>
 
-On Wed, 21 Aug 2024 11:12:12 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Wed, Aug 21, 2024 at 08:38:29AM +0200, Christoph Hellwig wrote:
+> The tagged perag helpers are only used in xfs_icache.c in the kernel code
+> and not at all in xfsprogs.  Move them to xfs_icache.c in preparation for
+> switching to an xarray, for which I have no plan to implement the tagged
+> lookup functions for userspace.
 
-> On 8/21/24 8:16 AM, Jonathan Cameron wrote:
-> > On Tue, 20 Aug 2024 10:58:36 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >   
-> >> The AD4695 has a calibration feature that allows the user to compensate
-> >> for variations in the analog front end. This implements this feature in
-> >> the driver using the standard `calibgain` and `calibbias` attributes.
-> >>
-> >> Signed-off-by: David Lechner <dlechner@baylibre.com>  
-> > Hi David,
-> > 
-> > Whilst some of the messy value manipulation is unavoidable
-> > (oh for signed integer zero!), I wonder if we can at least
-> > move one case into the core.
-> > 
-> > See below.
-> >   
-> >> +
-> >> +static int ad4695_write_raw(struct iio_dev *indio_dev,
-> >> +			    struct iio_chan_spec const *chan,
-> >> +			    int val, int val2, long mask)
-> >> +{
-> >> +	struct ad4695_state *st = iio_priv(indio_dev);
-> >> +	unsigned int reg_val;
-> >> +	int ret;
-> >> +
-> >> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> >> +		switch (mask) {
-> >> +		case IIO_CHAN_INFO_CALIBSCALE:
-> >> +			switch (chan->type) {
-> >> +			case IIO_VOLTAGE:
-> >> +				if (val < 0 || val2 < 0)
-> >> +					reg_val = 0;
-> >> +				else if (val > 1)
-> >> +					reg_val = U16_MAX;
-> >> +				else
-> >> +					reg_val = (val * (1 << 16) +
-> >> +						   mul_u64_u32_div(val2, 1 << 16,
-> >> +								   MICRO)) / 2;  
-> > Maybe worth extending iio_write_channel_info() to handle
-> > IIO_VAL_FRACTIONAL_LOG2()?
-> > It'll look much like this and you'll need to provide write_raw_get_fmt()
-> > so the core know what to do with the value formatting.
-> > 
-> > I don't really like the mixture here between the read path being able
-> > to rely on the core code to deal with the /2^X and the write path not.  
+I don't particularly like moving these functions to another file, but I
+suppose the icache is the only user of these tags.  How hard is it to
+make userspace stubs that assert if anyone ever tries to use it?
+
+--D
+
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/libxfs/xfs_ag.c | 51 -------------------------------------
+>  fs/xfs/libxfs/xfs_ag.h | 11 --------
+>  fs/xfs/xfs_icache.c    | 58 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 58 insertions(+), 62 deletions(-)
 > 
-> Sounds like a good idea to me.
+> diff --git a/fs/xfs/libxfs/xfs_ag.c b/fs/xfs/libxfs/xfs_ag.c
+> index 4b5a39a83f7aed..87f00f0180846f 100644
+> --- a/fs/xfs/libxfs/xfs_ag.c
+> +++ b/fs/xfs/libxfs/xfs_ag.c
+> @@ -56,31 +56,6 @@ xfs_perag_get(
+>  	return pag;
+>  }
+>  
+> -/*
+> - * search from @first to find the next perag with the given tag set.
+> - */
+> -struct xfs_perag *
+> -xfs_perag_get_tag(
+> -	struct xfs_mount	*mp,
+> -	xfs_agnumber_t		first,
+> -	unsigned int		tag)
+> -{
+> -	struct xfs_perag	*pag;
+> -	int			found;
+> -
+> -	rcu_read_lock();
+> -	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
+> -					(void **)&pag, first, 1, tag);
+> -	if (found <= 0) {
+> -		rcu_read_unlock();
+> -		return NULL;
+> -	}
+> -	trace_xfs_perag_get_tag(pag, _RET_IP_);
+> -	atomic_inc(&pag->pag_ref);
+> -	rcu_read_unlock();
+> -	return pag;
+> -}
+> -
+>  /* Get a passive reference to the given perag. */
+>  struct xfs_perag *
+>  xfs_perag_hold(
+> @@ -127,32 +102,6 @@ xfs_perag_grab(
+>  	return pag;
+>  }
+>  
+> -/*
+> - * search from @first to find the next perag with the given tag set.
+> - */
+> -struct xfs_perag *
+> -xfs_perag_grab_tag(
+> -	struct xfs_mount	*mp,
+> -	xfs_agnumber_t		first,
+> -	int			tag)
+> -{
+> -	struct xfs_perag	*pag;
+> -	int			found;
+> -
+> -	rcu_read_lock();
+> -	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
+> -					(void **)&pag, first, 1, tag);
+> -	if (found <= 0) {
+> -		rcu_read_unlock();
+> -		return NULL;
+> -	}
+> -	trace_xfs_perag_grab_tag(pag, _RET_IP_);
+> -	if (!atomic_inc_not_zero(&pag->pag_active_ref))
+> -		pag = NULL;
+> -	rcu_read_unlock();
+> -	return pag;
+> -}
+> -
+>  void
+>  xfs_perag_rele(
+>  	struct xfs_perag	*pag)
+> diff --git a/fs/xfs/libxfs/xfs_ag.h b/fs/xfs/libxfs/xfs_ag.h
+> index d62c266c0b44d5..d9cccd093b60e0 100644
+> --- a/fs/xfs/libxfs/xfs_ag.h
+> +++ b/fs/xfs/libxfs/xfs_ag.h
+> @@ -153,15 +153,11 @@ void xfs_free_perag(struct xfs_mount *mp);
+>  
+>  /* Passive AG references */
+>  struct xfs_perag *xfs_perag_get(struct xfs_mount *mp, xfs_agnumber_t agno);
+> -struct xfs_perag *xfs_perag_get_tag(struct xfs_mount *mp, xfs_agnumber_t agno,
+> -		unsigned int tag);
+>  struct xfs_perag *xfs_perag_hold(struct xfs_perag *pag);
+>  void xfs_perag_put(struct xfs_perag *pag);
+>  
+>  /* Active AG references */
+>  struct xfs_perag *xfs_perag_grab(struct xfs_mount *, xfs_agnumber_t);
+> -struct xfs_perag *xfs_perag_grab_tag(struct xfs_mount *, xfs_agnumber_t,
+> -				   int tag);
+>  void xfs_perag_rele(struct xfs_perag *pag);
+>  
+>  /*
+> @@ -263,13 +259,6 @@ xfs_perag_next(
+>  	(agno) = 0; \
+>  	for_each_perag_from((mp), (agno), (pag))
+>  
+> -#define for_each_perag_tag(mp, agno, pag, tag) \
+> -	for ((agno) = 0, (pag) = xfs_perag_grab_tag((mp), 0, (tag)); \
+> -		(pag) != NULL; \
+> -		(agno) = (pag)->pag_agno + 1, \
+> -		xfs_perag_rele(pag), \
+> -		(pag) = xfs_perag_grab_tag((mp), (agno), (tag)))
+> -
+>  static inline struct xfs_perag *
+>  xfs_perag_next_wrap(
+>  	struct xfs_perag	*pag,
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index cf629302d48e74..ac604640d36229 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -292,6 +292,64 @@ xfs_perag_clear_inode_tag(
+>  	trace_xfs_perag_clear_inode_tag(pag, _RET_IP_);
+>  }
+>  
+> +/*
+> + * Search from @first to find the next perag with the given tag set.
+> + */
+> +static struct xfs_perag *
+> +xfs_perag_get_tag(
+> +	struct xfs_mount	*mp,
+> +	xfs_agnumber_t		first,
+> +	unsigned int		tag)
+> +{
+> +	struct xfs_perag	*pag;
+> +	int			found;
+> +
+> +	rcu_read_lock();
+> +	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
+> +					(void **)&pag, first, 1, tag);
+> +	if (found <= 0) {
+> +		rcu_read_unlock();
+> +		return NULL;
+> +	}
+> +	trace_xfs_perag_get_tag(pag, _RET_IP_);
+> +	atomic_inc(&pag->pag_ref);
+> +	rcu_read_unlock();
+> +	return pag;
+> +}
+> +
+> +/*
+> + * Search from @first to find the next perag with the given tag set.
+> + */
+> +static struct xfs_perag *
+> +xfs_perag_grab_tag(
+> +	struct xfs_mount	*mp,
+> +	xfs_agnumber_t		first,
+> +	int			tag)
+> +{
+> +	struct xfs_perag	*pag;
+> +	int			found;
+> +
+> +	rcu_read_lock();
+> +	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
+> +					(void **)&pag, first, 1, tag);
+> +	if (found <= 0) {
+> +		rcu_read_unlock();
+> +		return NULL;
+> +	}
+> +	trace_xfs_perag_grab_tag(pag, _RET_IP_);
+> +	if (!atomic_inc_not_zero(&pag->pag_active_ref))
+> +		pag = NULL;
+> +	rcu_read_unlock();
+> +	return pag;
+> +}
+> +
+> +#define for_each_perag_tag(mp, agno, pag, tag) \
+> +	for ((agno) = 0, (pag) = xfs_perag_grab_tag((mp), 0, (tag)); \
+> +		(pag) != NULL; \
+> +		(agno) = (pag)->pag_agno + 1, \
+> +		xfs_perag_rele(pag), \
+> +		(pag) = xfs_perag_grab_tag((mp), (agno), (tag)))
+> +
+>  /*
+>   * When we recycle a reclaimable inode, we need to re-initialise the VFS inode
+>   * part of the structure. This is made more complex by the fact we store
+> -- 
+> 2.43.0
 > 
-> It seems like we would need to add an extra out parameter to 
-> write_raw_get_fmt to say what we want the X in 2^X to be. For
-> example, we would want to make sure the val2 we get in write_raw
-> for this driver is 15.
-Yes.  (I tried to reply to say I'd neglected this but managed to
-just email myself. oops.)
-
-Maybe it's too complex to bother given that.  Definitely a job
-for another day rather than something to block this series on.
-
-
-Jonathan
-
 > 
-> >> +
-> >> +				return regmap_write(st->regmap16,
-> >> +					AD4695_REG_GAIN_IN(chan->scan_index),
-> >> +					reg_val);
-> >> +			default:
-> >> +				return -EINVAL;  
-> > 
-> > 
-> >   
-> 
-
 
