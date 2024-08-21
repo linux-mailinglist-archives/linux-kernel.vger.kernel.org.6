@@ -1,124 +1,199 @@
-Return-Path: <linux-kernel+bounces-295641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7FB959F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4FD959F75
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E5C9B2282B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:13:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2189B237D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19EA1B1D50;
-	Wed, 21 Aug 2024 14:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8043B1B1D4C;
+	Wed, 21 Aug 2024 14:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJ0x3lnF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DiQGDurf"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D4E18C348;
-	Wed, 21 Aug 2024 14:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D3F18C348;
+	Wed, 21 Aug 2024 14:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249605; cv=none; b=ivksj8XK6rCN4KvwCCbuxnJRkEeLHbgtiR669Wtfqqs4estH0okpMsjIB9ZHjp7Lhjbs4Yz1g2eLdXOs5JNCDLRMIuvZCqmcPKghdlNVFGMcQe5sT5HtkcTOzEsI5HueoR7/c0ZKprGm+3P25oCq61zzwssDyp37vlDy569HMZQ=
+	t=1724249680; cv=none; b=Lwokt5nO5dCGkFzt3W3+q/r88Ze4YnDKR9ih5bvjladSZaM9HDFmLrhJODpD1wkrTQqx8SVYSLtEJsV+bQOc4+DtZg0J/RbOWfEdHEIu/XH6BN2xjqCHUEp8Y1dSURziF08oNhylQZmgHXDJaTdFDdOaTvwROw8QE37g5hosbv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249605; c=relaxed/simple;
-	bh=wiS4vNnKd5VRD+ghCEcqt+Olqpk4BtfE4JPaEDvV8hs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Smg9nQTAWmXoiYP3glM/u2aEKnKT40+PFeooLkNuKI0eOVZXCmAvS+6KvXC7JDDOaOnlLNvq5lcPnwqs6aHPOftfeivLupN7czuPKOFIPP22+jKb4frID8uCZEvd9ZgcORky8XMHcA2yz3Ie10m9gyH/2WGTVsNF1dtZ75ClZOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJ0x3lnF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735D7C32781;
-	Wed, 21 Aug 2024 14:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724249604;
-	bh=wiS4vNnKd5VRD+ghCEcqt+Olqpk4BtfE4JPaEDvV8hs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YJ0x3lnFSs3c1odcRqgJ2hQU8sdbPbEN7qcafS/iqKB5iP463BWhctvlDDQPiK0se
-	 AWMAS06nVrr2yQ9M3sHrfdMotoONhGYAVnfUi6/sVA7B7INgNhnLI81rvkeuQ9Z80m
-	 Xo0d49msm8IiU2rwXmkcjhcuX+qfDPHuuxpys242hD3+Q/bHfpzZX0URLJPXQVrP28
-	 byKuheUNDMIhSPwleyO+kfsv2QT4bvL7B2MUb5VlzA/iqNkSpRBZUc0iPSd1nN2+dT
-	 N1jZlIZfYU4BDiZWo3Lw4Oxz10nOOY6uCN5dSnWJkWD+lo4JqMUIj0PBPKDNcqe3CG
-	 4yU6t54f21U1A==
-Date: Wed, 21 Aug 2024 15:13:20 +0100
-From: Simon Horman <horms@kernel.org>
-To: Joseph Huang <joseph.huang.2024@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Joseph Huang <Joseph.Huang@garmin.com>,
-	netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 1/1] net: dsa: mv88e6xxx: Fix out-of-bound access
-Message-ID: <20240821141320.GA1722@kernel.org>
-References: <20240819222641.1292308-1-Joseph.Huang@garmin.com>
- <72e02a72-ab98-4a64-99ac-769d28cfd758@lunn.ch>
- <20240820183202.GA2898@kernel.org>
- <5da4cc4d-2e68-424c-8d91-299d3ccb6dc8@gmail.com>
+	s=arc-20240116; t=1724249680; c=relaxed/simple;
+	bh=CRhd0mZzqY7HKRLH5Jk+ftSAjgB0NenBAW5LauDTmm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kZEWcg0LsINoL6wrhfFRTtMo8MS+cfsnzawRZX/m3Bu7AYoZAhl0vnMWcT1P1mzpM0BgTxNcMn84gXp4NEwrvfTXjn5LVh3ZxflQAuh7quvRBQWtZjWNqHfbqV0ex8Ein1axT4nx1cFUSkfEBtlz9UrTDQGNg1ZrRD4yxO+1cSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DiQGDurf; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LEEZ9W020865;
+	Wed, 21 Aug 2024 09:14:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724249675;
+	bh=B82OHOANyKNc/1if4fUQEqjOHPPZcLk9ZrOvgcGUHMQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=DiQGDurfQrurxhAuSd2LeoakN16FBh9IUXcWb5u3+wDIhQu5T03BHn3PnhsyJWI2n
+	 yEC8U65fFmyOBv5dLYg1HzcnnhNVJrh4WNu2OHW1X+a+8Ud/L9wSqkpZIr4V5E9irC
+	 ssskRiqcuXZZuMuanULllF2U+uOxxy/PJ9NFBCL4=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LEEZpC029849
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 21 Aug 2024 09:14:35 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ Aug 2024 09:14:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 21 Aug 2024 09:14:34 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LEEYGs071283;
+	Wed, 21 Aug 2024 09:14:34 -0500
+Message-ID: <f27dba79-02cf-4549-87b0-464126abbe1d@ti.com>
+Date: Wed, 21 Aug 2024 09:14:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5da4cc4d-2e68-424c-8d91-299d3ccb6dc8@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mmc: sdhci_am654: Add retry tuning
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240815201542.421653-1-jm@ti.com>
+ <20240815201542.421653-2-jm@ti.com>
+ <4a563aad-e9b3-43af-8ce5-5d30dace2dd8@intel.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <4a563aad-e9b3-43af-8ce5-5d30dace2dd8@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Aug 20, 2024 at 03:21:57PM -0400, Joseph Huang wrote:
-> On 8/20/2024 2:32 PM, Simon Horman wrote:
-> > On Tue, Aug 20, 2024 at 12:58:05AM +0200, Andrew Lunn wrote:
-> > > On Mon, Aug 19, 2024 at 06:26:40PM -0400, Joseph Huang wrote:
-> > > > If an ATU violation was caused by a CPU Load operation, the SPID is 0xf,
-> > > > which is larger than DSA_MAX_PORTS (the size of mv88e6xxx_chip.ports[]
-> > > > array).
-> > > 
-> > > The 6390X datasheet says "IF SPID = 0x1f the source of the violation
-> > > was the CPU's registers interface."
-> > > 
-> > > > +#define MV88E6XXX_G1_ATU_DATA_SPID_CPU				0x000f
-> > > 
-> > > So it seems to depend on the family.
-> > > 
-> > > >  >  /* Offset 0x0D: ATU MAC Address Register Bytes 0 & 1
-> > > >   * Offset 0x0E: ATU MAC Address Register Bytes 2 & 3
-> > > > diff --git a/drivers/net/dsa/mv88e6xxx/global1_atu.c b/drivers/net/dsa/mv88e6xxx/global1_atu.c
-> > > > index ce3b3690c3c0..b6f15ae22c20 100644
-> > > > --- a/drivers/net/dsa/mv88e6xxx/global1_atu.c
-> > > > +++ b/drivers/net/dsa/mv88e6xxx/global1_atu.c
-> > > > @@ -457,7 +457,8 @@ static irqreturn_t mv88e6xxx_g1_atu_prob_irq_thread_fn(int irq, void *dev_id)
-> > > >  		trace_mv88e6xxx_atu_full_violation(chip->dev, spid,
-> > > >  						   entry.portvec, entry.mac,
-> > > >  						   fid);
-> > > > -		chip->ports[spid].atu_full_violation++;
-> > > > +		if (spid != MV88E6XXX_G1_ATU_DATA_SPID_CPU)
-> > > > +			chip->ports[spid].atu_full_violation++;
-> > > 
-> > > So i think it would be better to do something like:
-> > > 
-> > > 		if (spid < ARRAY_SIZE(chip->ports))
-> > > 			chip->ports[spid].atu_full_violation++;
-> > 
-> > Hi Joseph,
-> > 
-> > I am curious to know if bounds checking should also
-> > be added to other accesses to chip->ports[spid] within this function.
-> > 
-> 
-> Hi Simon,
-> 
-> From the spec it is unclear to me whether the Load operation could actually
-> cause other exceptions. I was only able to reproduce and verify the full
-> violation, and that's why I only included that one in the patch.
-> 
-> I guess we could proactively include the fix for other exceptions as well,
-> but without a way to verify them, they could be just dead code and never be
-> exercised. Perhaps people who are more familiar with the chip than me could
-> chime in. I'm fine either way.
+Hi Adrian,
 
-Thanks Joseph,
+On 8/21/24 12:37 AM, Adrian Hunter wrote:
+> On 15/08/24 23:15, Judith Mendez wrote:
+>> Add retry tuning up to 10 times if we fail to find
+>> a failing region or no passing itapdly. This is
+>> necessary since some eMMC's have been observed to never
+>> find a failing itapdly on the first couple of tuning
+>> iterations, but eventually do. It been observed that the
+>> tuning algorithm does not need to loop more than 10 times
+>> before finding a failing itapdly.
+>>
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>>   drivers/mmc/host/sdhci_am654.c | 30 +++++++++++++++++++++++-------
+>>   1 file changed, 23 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+>> index 64e10f7c9faa3..c3d485bd4d553 100644
+>> --- a/drivers/mmc/host/sdhci_am654.c
+>> +++ b/drivers/mmc/host/sdhci_am654.c
+>> @@ -86,6 +86,7 @@
+>>   
+>>   #define CLOCK_TOO_SLOW_HZ	50000000
+>>   #define SDHCI_AM654_AUTOSUSPEND_DELAY	-1
+>> +#define RETRY_TUNING_MAX	10
+>>   
+>>   /* Command Queue Host Controller Interface Base address */
+>>   #define SDHCI_AM654_CQE_BASE_ADDR 0x200
+>> @@ -151,6 +152,7 @@ struct sdhci_am654_data {
+>>   	u32 flags;
+>>   	u32 quirks;
+>>   	bool dll_enable;
+>> +	u32 tuning_loop;
+>>   
+>>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>>   };
+>> @@ -453,12 +455,14 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
+>>   	int prev_fail_end = -1;
+>>   	u8 i;
+>>   
+>> -	if (!num_fails)
+>> -		return ITAPDLY_LAST_INDEX >> 1;
+>> +	if (!num_fails) {
+>> +		/* Retry tuning */
+>> +		return -1;
+>> +	}
+>>   
+>>   	if (fail_window->length == ITAPDLY_LENGTH) {
+>> -		dev_err(dev, "No passing ITAPDLY, return 0\n");
+>> -		return 0;
+>> +		/* Retry tuning */
+>> +		return -1;
+>>   	}
+>>   
+>>   	first_fail_start = fail_window->start;
+>> @@ -504,6 +508,7 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+>>   	u8 curr_pass, itap;
+>>   	u8 fail_index = 0;
+>>   	u8 prev_pass = 1;
+>> +	int ret;
+>>   
+>>   	memset(fail_window, 0, sizeof(fail_window));
+>>   
+>> @@ -532,10 +537,20 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+>>   	if (fail_window[fail_index].length != 0)
+>>   		fail_index++;
+>>   
+>> -	itap = sdhci_am654_calculate_itap(host, fail_window, fail_index,
+>> -					  sdhci_am654->dll_enable);
+>> +	ret = sdhci_am654_calculate_itap(host, fail_window, fail_index,
+>> +					 sdhci_am654->dll_enable);
+>>   
+>> -	sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
+>> +	if (ret >= 0) {
+>> +		itap = ret;
+>> +		sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
+>> +	} else {
+>> +		if (sdhci_am654->tuning_loop < RETRY_TUNING_MAX) {
+>> +			sdhci_am654->tuning_loop++;
+>> +			sdhci_am654_platform_execute_tuning(host, opcode);
+> 
+> The kernel uses very small stack size, so recursive function calls
+> should not be used.  It would be better to put the loop in a separate
+> function, or add a retry: label and goto retry.
 
-From my PoV it would be nice to add the checks unless we can be sure they
-are not needed. But I do not feel strongly about this.
+Ok, can change to this method, I was not sure of recursive function
+call but had opted for that since the code was to be simpler.
+
+> 
+>> +		} else {
+>> +			return -1;
+>> +		}
+>> +	}
+>>   
+>>   	/* Save ITAPDLY */
+>>   	sdhci_am654->itap_del_sel[timing] = itap;
+>> @@ -908,6 +923,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>>   		goto err_pltfm_free;
+>>   	}
+>>   
+>> +	sdhci_am654->tuning_loop = 0;
+> 
+> So this is 10 retries ever, since sdhci_am654->tuning_loop is never
+> set back to 0.  Is that the intention?
+
+Yes, maximum of 10 re-tries. So far we have only seen issues during
+boot.
+
+~ Judith
+
+> 
+>>   	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>>   
+>>   	pm_runtime_get_noresume(dev);
+> 
+
 
