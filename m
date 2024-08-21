@@ -1,242 +1,137 @@
-Return-Path: <linux-kernel+bounces-295666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E94959FC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:27:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD915959FBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A0A1F2461E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:27:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 329F8B23B35
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2201B3B35;
-	Wed, 21 Aug 2024 14:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7957E1B2518;
+	Wed, 21 Aug 2024 14:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rX+iGplY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISvJP+CZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEC31B3B2A;
-	Wed, 21 Aug 2024 14:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBDD1B1D50;
+	Wed, 21 Aug 2024 14:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724250372; cv=none; b=LaCiMXNjVk9S1BxGboM8qe29Ss+9bAC1ky2CFLq41HKedV2xmnnNRhMjHQPiwETL4v342cxTJRY0q5knPB89nI6rd961QZCl2MdmheUByEgTC7y2jHdU7X3nZUfvyILijLMrC3keFQf02G6PLn9sWkEeg/TNxNCFdORT1KhToBw=
+	t=1724250306; cv=none; b=trRcEnnZYQKv+/AdH8AYJCbKyoGzEywirXowU6hRkCNufagy1VcqxVjFUOFhMDj3GCsorSj2HlCeBQNI/BlKqmHbCxVNcFVSQTP6th+ffA7tSVvyRPk9S1/Dbff4ktBu2hCdX91AhTH7WKaYAHqVg1e/7Q39dlMZd+rIqT9qQPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724250372; c=relaxed/simple;
-	bh=sqVXi89tYI0s7IoD92jonGg926UqsYeyDX6OHzOQkVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gIC1diRywrRJSG0oIhzdot+N0QHEoZQT2D30zFSnqMScDq5OK9f6WNXFkGm1emxNjgi5zGpnfY8S+PqikeG3BlezhtNJn4YRvo+Qj/QdTtad9oS9x81h6O6GgJp7fuOgDrNYiFdN1GTGpqFOwTobHmPBCoHjkX1RNxbPHKX34Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rX+iGplY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7113EC32781;
-	Wed, 21 Aug 2024 14:26:08 +0000 (UTC)
+	s=arc-20240116; t=1724250306; c=relaxed/simple;
+	bh=S4/eBj+mzIywXGKLQko9eC3+DmjWrTyQuG/QbGP0dLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cuw4gSAv8nmx9/gpaC8WQ+BKSMeMceNtAvbZtNuFdsQe+Rdiua9A59wStvOe/d6a7Y6CvuewATSRXaI6Anmc8emAcs0/T+6K7LQQuKg64Zv6+0vmedXrInLVgDGG1++kRyqbco2JbUdiXFS+FtrAFc33RXzxmTUrnvqR46jW5fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISvJP+CZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEE7C32781;
+	Wed, 21 Aug 2024 14:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724250372;
-	bh=sqVXi89tYI0s7IoD92jonGg926UqsYeyDX6OHzOQkVo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rX+iGplYwaRwPZ3u5hFLSpySpuM7etMXZeMR0dg9CqRY4P3PkUlYmmomke28wJF5X
-	 TTDlR+7andARIC6sKyvg4yCFiXPL/IYsLTYRyKAogE/ewRFnFP8HxVnfWFapkyhbeG
-	 +gvc6VwEqlM3WjBncVN+Q/qOKlRpbdBjVoXWIjLm8eZ6COuTYS4djJ0uCXUBOxVuss
-	 5Q6eJkbuzvtNflfCPdAvNNPQnB3mCCurL5sccdoTeyZCMxJNb3O7J6v+lTN0ZfV7hh
-	 tgfyQUUWUaik0eJheuU3Wa+il8fKmT5JrLAzf85lDUswYWlhDt5LZeh2dg8XzfPxx/
-	 CXj0iaUX0nFnQ==
-From: Alexey Gladkov <legion@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Cc: "Alexey Gladkov (Intel)" <legion@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yuan Yao <yuan.yao@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Baoquan He <bhe@redhat.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	cho@microsoft.com,
-	decui@microsoft.com,
-	John.Starks@microsoft.com
-Subject: [PATCH v4 6/6] x86/tdx: Implement movs for MMIO
-Date: Wed, 21 Aug 2024 16:24:38 +0200
-Message-ID: <9320e721e609e55a020d3eb98f48fc856371c561.1724248680.git.legion@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1724248680.git.legion@kernel.org>
-References: <cover.1723807851.git.legion@kernel.org> <cover.1724248680.git.legion@kernel.org>
+	s=k20201202; t=1724250306;
+	bh=S4/eBj+mzIywXGKLQko9eC3+DmjWrTyQuG/QbGP0dLs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ISvJP+CZWa3dYbWqIUQRYo3LnhpP0RgaJYCTGPKTOVBhgtV0LoEL5FDJfiRoejQ/D
+	 yurBygFpoosx5HsNEVZ9wSabalWNRsaVv4v+DBb6wtYNWIDCFERFw2fGGx21gb2iqe
+	 u5boTSn66sqeldNArAwDaP2DzT55wLj0xW98r0dj9wR8hcHC5lckffILfyJ4nE3rp8
+	 BPS/8f4kgga8RnW0Yz0MKLYukjhkFFbfhbhJ5wIGVS6YUepk0op2cY8dbbUvN7fv+i
+	 e6p0fibYwc5E6qzfiMbCHHPovRx1JqtzIf7eGBPFAL1qFKX3YIUJSY1ATlRQjO1qYw
+	 MO9ufAn57yn7w==
+Message-ID: <773e7c5e-6b5c-4a18-a626-112a1e815b73@kernel.org>
+Date: Wed, 21 Aug 2024 16:24:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: mediatek: dpi: Add power
+ domains
+To: Rohit Agarwal <rohiagar@chromium.org>, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ ck.hu@mediatek.com, jitao.shi@mediatek.com
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240821092659.1226250-1-rohiagar@chromium.org>
+ <20240821092659.1226250-2-rohiagar@chromium.org>
+ <415a27c7-dfdf-4cc5-9aaa-1681dd32ddcb@kernel.org>
+ <abc3330a-58a2-4527-a101-81e2e6168abd@chromium.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <abc3330a-58a2-4527-a101-81e2e6168abd@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+On 21/08/2024 12:00, Rohit Agarwal wrote:
+>>> +    then:
+>>> +      properties:
+>>> +        power-domains:
+>>> +          maxItems: 1
+>> This part can be dropped. Just disallow it for other devices.
+> I was a bit confused here.
+> 
+> Can we add something like this?
+> if:
+>    not:
+>         (mt6795, mt8173, mt8186)
+> then:
+>      properties:
+>          power-domains: false
 
-Add emulation of the MOVS instruction on MMIO regions. MOVS emulation
-consists of dividing it into a series of read and write operations,
-which in turn will be validated separately.
+Yes. Look for examples (git grep).
 
-Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
----
- arch/x86/coco/tdx/tdx.c          | 84 +++++++++++++++++++++++++++++---
- arch/x86/include/asm/processor.h |  4 ++
- 2 files changed, 80 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index 65f65015238a..d4bec84de034 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -518,6 +518,62 @@ static int decode_insn_struct(struct insn *insn, struct pt_regs *regs)
- 	return 0;
- }
- 
-+static int handle_mmio_movs(struct insn *insn, struct pt_regs *regs, int size, struct ve_info *ve)
-+{
-+	unsigned long ds_base, es_base;
-+	unsigned char *src, *dst;
-+	unsigned char buffer[8];
-+	int off, ret;
-+	bool rep;
-+
-+	/*
-+	 * The in-kernel code must use a special API that does not use MOVS.
-+	 * If the MOVS instruction is received from in-kernel, then something
-+	 * is broken.
-+	 */
-+	if (WARN_ON_ONCE(!user_mode(regs)))
-+		return -EFAULT;
-+
-+	ds_base = insn_get_seg_base(regs, INAT_SEG_REG_DS);
-+	es_base = insn_get_seg_base(regs, INAT_SEG_REG_ES);
-+
-+	if (ds_base == -1L || es_base == -1L)
-+		return -EINVAL;
-+
-+	rep = insn_has_rep_prefix(insn);
-+
-+	do {
-+		src = ds_base + (unsigned char *) regs->si;
-+		dst = es_base + (unsigned char *) regs->di;
-+
-+		current->thread.mmio_emul = (unsigned long) src;
-+
-+		ret = __get_iomem(src, buffer, size);
-+		if (ret)
-+			goto out;
-+
-+		current->thread.mmio_emul = (unsigned long) dst;
-+
-+		ret = __put_iomem(dst, buffer, size);
-+		if (ret)
-+			goto out;
-+
-+		off = (regs->flags & X86_EFLAGS_DF) ? -size : size;
-+
-+		regs->si += off;
-+		regs->di += off;
-+
-+		if (rep)
-+			regs->cx -= 1;
-+	} while (rep || regs->cx > 0);
-+
-+	ret = insn->length;
-+out:
-+	current->thread.mmio_emul = 0;
-+
-+	return ret;
-+}
-+
- static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int size,
- 			     struct pt_regs *regs, struct ve_info *ve)
- {
-@@ -539,9 +595,8 @@ static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int si
- 		return insn->length;
- 	case INSN_MMIO_MOVS:
- 		/*
--		 * MMIO was accessed with an instruction that could not be
--		 * decoded or handled properly. It was likely not using io.h
--		 * helpers or accessed MMIO accidentally.
-+		 * MOVS is processed through higher level emulation which breaks
-+		 * this instruction into a sequence of reads and writes.
- 		 */
- 		return -EINVAL;
- 	default:
-@@ -600,6 +655,7 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- {
- 	enum insn_mmio_type mmio;
- 	struct insn insn = {};
-+	int need_validation;
- 	unsigned long vaddr;
- 	int size, ret;
- 
-@@ -611,14 +667,27 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	if (WARN_ON_ONCE(mmio == INSN_MMIO_DECODE_FAILED))
- 		return -EINVAL;
- 
-+	if (mmio == INSN_MMIO_MOVS)
-+		return handle_mmio_movs(&insn, regs, size, ve);
-+
-+	need_validation = user_mode(regs);
-+
- 	if (!user_mode(regs) && !is_kernel_addr(ve->gla)) {
--		WARN_ONCE(1, "Access to userspace address is not supported");
--		return -EINVAL;
-+		/*
-+		 * Access from kernel to userspace addresses is not allowed
-+		 * unless it is a nested exception during MOVS emulation.
-+		 */
-+		if (current->thread.mmio_emul != ve->gla || !current->mm) {
-+			WARN_ONCE(1, "Access to userspace address is not supported");
-+			return -EINVAL;
-+		}
-+
-+		need_validation = 1;
- 	}
- 
- 	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
- 
--	if (user_mode(regs)) {
-+	if (need_validation) {
- 		if (mmap_read_lock_killable(current->mm))
- 			return -EINTR;
- 
-@@ -644,7 +713,6 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	switch (mmio) {
- 	case INSN_MMIO_WRITE:
- 	case INSN_MMIO_WRITE_IMM:
--	case INSN_MMIO_MOVS:
- 		ret = handle_mmio_write(&insn, mmio, size, regs, ve);
- 		break;
- 	case INSN_MMIO_READ:
-@@ -665,7 +733,7 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 		ret = -EINVAL;
- 	}
- unlock:
--	if (user_mode(regs))
-+	if (need_validation)
- 		mmap_read_unlock(current->mm);
- 
- 	return ret;
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index a75a07f4931f..45136b1b02cc 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -503,6 +503,10 @@ struct thread_struct {
- 	struct thread_shstk	shstk;
- #endif
- 
-+#ifdef CONFIG_INTEL_TDX_GUEST
-+	unsigned long		mmio_emul;
-+#endif
-+
- 	/* Floating point and extended processor state */
- 	struct fpu		fpu;
- 	/*
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
