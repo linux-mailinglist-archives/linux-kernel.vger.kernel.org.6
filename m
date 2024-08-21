@@ -1,135 +1,154 @@
-Return-Path: <linux-kernel+bounces-295918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5BD95A2F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0802A95A30E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60E41F21BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7CC1C2110D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7460816190B;
-	Wed, 21 Aug 2024 16:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316EC1494AD;
+	Wed, 21 Aug 2024 16:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdj3a8/N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kGw11Kyp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E2D1531D8;
-	Wed, 21 Aug 2024 16:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28D613BAFA;
+	Wed, 21 Aug 2024 16:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258142; cv=none; b=D/KFXKcs0wkZgfBtH9l6qmuYjVWpz2j49Jkch3e0yp+wSWoKqlnfAu49YL8docgZEmLmMuQYD2y6g3X3eVweokrtPwAsP7t/29HSHsl/vCKF8MFG6JGK3oN6Zc+wQNKZ8ume9bukgZQ24Ta7cD7Gu1uHlQxJeznoxUwALZyqKxE=
+	t=1724258493; cv=none; b=u5mOX0Yr2qcSSSF07pVQitBW0vPKoK9Dihx7Qy3ewv5uxELIwPU942hWh/H3hAW9mrM9qAka1a+ExWsFbPZxxUVrOmFLIok9d3znNlXwdmL400hbVEcdtsQEvfoYn6PKD7cibD3WkB9fwCA9w4HwMZGhRjWDT5kRCMKLXy3fNQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258142; c=relaxed/simple;
-	bh=mVVQt8vfen6cLdftC8wh2TeYkqCsp9PRkdY9AUiKv+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbMiC8k3aWfI5yfmGbN2JTo3vjs4vGORjOAYYF993rnt98iLNe9gg4lsCEA5RFT9JYPgikZ1NccdIL6tOHEkB5SN2od51Lbv9cBeTJKpol+wHzxJOheysROp5XFPXoJiYpiZzgoNie6jLxQbM+DspoPXSdtxUXm2sf50849vPrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdj3a8/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E89C32781;
-	Wed, 21 Aug 2024 16:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724258142;
-	bh=mVVQt8vfen6cLdftC8wh2TeYkqCsp9PRkdY9AUiKv+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hdj3a8/Ngq72vKelenxI9RXYEwvVPWQa2MzfK/fAE4fQDL42Gnzzt76QeRtCUMq39
-	 QGihwbTO8LtbAI2L/zQwcj3/RSXQxa237A9ZpkJNdbnHaa9VAQ/fpvumStiBb7ZoLZ
-	 GLa8kw4EPrMyhbf+5mAbMg7Z2p8mvTMoxHf41a6jPv0/rqKbi9nnBwMcvFAvsd7c6i
-	 hhfcWjbZMxmL/tEOdRvp7K3DYMigfyrpMj1WeBtLS/oXC3g3TFvYZL7lQkELGxcEPM
-	 tJK4nOAieCocPbIV+4kgw2xsk2zMUempnTZ+qRcg32wOsrBm1s0ZTPQq+XHdVnZsub
-	 cOkIuBNzuBPsg==
-Date: Wed, 21 Aug 2024 06:35:41 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: matthew.brost@intel.com, jiangshanlai@gmail.com, sfr@canb.auug.org.au,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: [BUG bisected] sysfs: cannot create duplicate filename
- '/devices/virtual/workqueue/scsi_tmf_1073822488'
-Message-ID: <ZsYXXd6tQAlFwkg8@slm.duckdns.org>
-References: <8d443293-2020-42d9-b5b1-1348f551648f@paulmck-laptop>
- <ZsYTZTEbtMuVyp1o@slm.duckdns.org>
+	s=arc-20240116; t=1724258493; c=relaxed/simple;
+	bh=0hHky8qMTWuJRLcCktllpZMluDCZkZs5zXeSumskFgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JG2+EeYv2KM0knVYli84zJQ4foRWcqVSNmLh/Tc4Suht+S1jRrd+XjnGytghuv6YIPf9xz/w472eWSI87F58eShkh3grW+QXMTPIVIqARpva0nCBzaXufjtBTN82aipmMU15I5bleDdiM/k9tm+V9EGU1Z36Us1RqObrkn2b6VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kGw11Kyp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LBTZ6J004791;
+	Wed, 21 Aug 2024 16:36:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CAiWvhIjbUhEiP+KqUGopxxaGyl12jnPyqp6OSZsJdQ=; b=kGw11KypV+Fe2uOs
+	1JCrmGXo3BzUSX4pRdrgo7/T02IR9Inzj4K2+NdLy3cBknaLXecGgKBxswPhTnzt
+	i0SdtF2CbQ3ZZxzfLlX2v4rt0Wk9O8TDyfdixanUEzqPIIhJPriMBA1u68sWQoxR
+	ODSiLwVH0u8SzvglyhsbG9N1eEiNEM1VBBIEHX070scRLDwNWpOrYjIZGu8gvbyH
+	xQF9gkCdweDs0jhxjR3bmxt4eereTLusrmzxp8BYQJHDoYT2bP0mlL8/JGYdVnEW
+	UwrlKerK7x++3I8Dc0LXietotuDZ9lcqf2SMQOxbj5y/TcSGiFVsJByCPbGuo6iB
+	N9vZEQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414v5cc6b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 16:36:22 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LGaLTM030954
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 16:36:21 GMT
+Received: from [10.216.59.247] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
+ 2024 09:36:15 -0700
+Message-ID: <a37644d8-e97f-0c78-ea09-e1b258a0b614@quicinc.com>
+Date: Wed, 21 Aug 2024 22:06:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsYTZTEbtMuVyp1o@slm.duckdns.org>
-
-On Wed, Aug 21, 2024 at 06:18:45AM -1000, Tejun Heo wrote:
-...
-> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
-...
-> Hmmm... I have a hard time imagining that change causing that error. My bet
-> is unreliable reproducer. I'll try the repro.
-
-I'm probably doing something wrong but all the tests say that init
-segfaulted in the log file:
-
-  [    5.505986] init[1]: segfault at 28 ip 000000000040101f sp 00007fff1bbf6fc0 error 4 in init[101f,401000+1000] likely on CPU 12 (core 12, socket 0)
-  [    5.509949] Code: Unable to access opcode bytes at 0x400ff5.
-  [    5.512314] coredump: 1(init): over coredump resource limit, skipping core dump
-  [    5.514976] coredump: 1(init): coredump has not been created, error -7
-  [    5.516911] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-
-Pasting the command output:
-
-  $ tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
-  tools/testing/selftests/rcutorture/initrd/init already exists, no need to create it
-  Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
-  tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
-  ----Start batch 1: Wed Aug 21 06:31:03 AM HST 2024
-  TREE01 8: Starting build. Wed Aug 21 06:31:03 AM HST 2024
-  TREE01 8: Waiting for build to complete. Wed Aug 21 06:31:03 AM HST 2024
-  TREE01 8: Build complete. Wed Aug 21 06:31:30 AM HST 2024
-  TREE01.2 8: Starting build. Wed Aug 21 06:31:30 AM HST 2024
-  TREE01.2 8: Waiting for build to complete. Wed Aug 21 06:31:30 AM HST 2024
-  TREE01.2 8: Build complete. Wed Aug 21 06:31:31 AM HST 2024
-  ---- TREE01 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
-  ---- TREE01.2 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
-  ---- Starting kernels. Wed Aug 21 06:31:31 AM HST 2024
-  ---- All kernel runs complete. Wed Aug 21 06:31:42 AM HST 2024
-  ---- TREE01 8: Build/run results:
-   --- Wed Aug 21 06:31:03 AM HST 2024: Starting build, PID 456070
-   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
-  CPU-hotplug kernel, adding rcutorture onoff.
-   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483593
-  Monitoring qemu job at pid 483623 Wed Aug 21 06:31:41 AM HST 2024
-  TREE01 no success message, 0 successful version messages
-  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
-  WARNING: Summary: Call Traces: 1
-  ---- TREE01.2 8: Build/run results:
-   --- Wed Aug 21 06:31:30 AM HST 2024: Starting build, PID 482122
-   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
-  CPU-hotplug kernel, adding rcutorture onoff.
-   --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483619
-  Monitoring qemu job at pid 483648 Wed Aug 21 06:31:41 AM HST 2024
-  TREE01 no success message, 0 successful version messages
-  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01
-  WARNING: Summary: Call Traces: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v2 02/16] dmaengine: qcom: bam_dma: add bam_pipe_lock dt
+ property
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <gustavoars@kernel.org>,
+        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
+        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_utiwari@quicinc.com>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+ <20240815085725.2740390-3-quic_mdalam@quicinc.com>
+ <9271efb2-db9a-4f45-bdb1-724ce6dbcbf1@kernel.org>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <9271efb2-db9a-4f45-bdb1-724ce6dbcbf1@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yK7e_FfELiMS9oWhVEeaWDaoEk9m_KEh
+X-Proofpoint-ORIG-GUID: yK7e_FfELiMS9oWhVEeaWDaoEk9m_KEh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408210122
 
 
-   --- Wed Aug 21 06:31:42 AM HST 2024 Test summary:
-  Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
-  tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
-  TREE01 ------- 
-  TREE01 no success message, 0 successful version messages
-  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
-  WARNING: Summary: Call Traces: 1
-  Completed in 10 vs. 60
-  TREE01.2 ------- 
-  TREE01.2 no success message, 0 successful version messages
-  WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01.2
-  WARNING: Summary: Call Traces: 1
-  Completed in 10 vs. 60
-  2 runs with build errors.
-  2 runs with runtime errors.
-   --- Done at Wed Aug 21 06:31:42 AM HST 2024 (39 seconds) exitcode 3
 
---
-tejun
+On 8/17/2024 2:38 PM, Krzysztof Kozlowski wrote:
+> On 15/08/2024 10:57, Md Sadre Alam wrote:
+>> bam having locking and unlocking mechanism of bam pipes.
+>> Upon encountering a descriptor with Lock bit set, the
+>> BAM will lock all other pipes not related to the current
+>> pipe group, and keep handling the current pipe only until
+>> it sees the Un-Lock set , then it will release all locked
+>> pipes. The actual locking is done on the new descriptor
+>> fetching for publishing, i.e. locked pipe will not fetch
+>> new descriptors even if it got event/events adding more
+>> descriptors for this pipe.
+>>
+>> Adding the bam_pipe_lock flag in bam driver to handle
+>> Lock and Un-Lock bit set on command descriptor.
+>>
+>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>> ---
+>>
+>> Change in [v2]
+>>
+>> * Added bam_pipe_lock dt property
+>>
+>> Change in [v1]
+>>
+>> * This patch was not included in [v1]
+>>
+>>   drivers/dma/qcom/bam_dma.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+>> index 5e7d332731e0..1ac7e250bdaa 100644
+>> --- a/drivers/dma/qcom/bam_dma.c
+>> +++ b/drivers/dma/qcom/bam_dma.c
+>> @@ -389,6 +389,7 @@ struct bam_device {
+>>   	u32 ee;
+>>   	bool controlled_remotely;
+>>   	bool powered_remotely;
+>> +	bool bam_pipe_lock;
+> 
+> There is no user of this property. It's just no-op. Split your code into
+> logical chunks, but logical chunk is not "I add field to structure which
+> is not used".
+   Ok ,will squash this patch accordingly.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
