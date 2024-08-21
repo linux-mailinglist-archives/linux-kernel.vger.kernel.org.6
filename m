@@ -1,108 +1,100 @@
-Return-Path: <linux-kernel+bounces-295531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4C1959C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BA9959C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E355BB27497
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:49:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A4941C2218C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B042D193432;
-	Wed, 21 Aug 2024 12:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FE1192D9D;
+	Wed, 21 Aug 2024 12:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWG7ju8K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+9qBNNI"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F63155307;
-	Wed, 21 Aug 2024 12:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC618192D82;
+	Wed, 21 Aug 2024 12:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244575; cv=none; b=AK2VtgVWhHYshlYf8Kbs6dId2qApYk9i2cYWhuhTaRu/9xnP6PoihDE6er1NKzfwcfW7ioSBW7Jnkdf3iMkvfXvrsesZDAlouxNRp5SgEg73ZiIo6ZmATjx28EIwYDhCEIFpEH3pA6YNDhVW95gMUIG34ViX+n5M4XSOTnwivNM=
+	t=1724244584; cv=none; b=u7txUQdrlywPpONGd3OZcQo3wfZA2el8g+LRoGLaD3d0lOx6FZ8ar6Dw2k5UMZ+WIWLLFi1nWPL2z4gR+X2qKKdS06pTT+bgakxT/JRLJL1mIn71vpsZD+UreYhysqLL5Z5uGiRfpT3xDcHbsQVB692gn+ngTRAqbWifzBYExXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244575; c=relaxed/simple;
-	bh=AXxmUU4wdER3ZZjM11AkrS+24GgkSlMY6GankGo8It0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=PzJ5zDAu9xGjXs+f4pSiB5lSmzYhoaCOcCDclshfMK5rAwKxFQvF5Tx3HKmFre0T+GBXndAhNfW/HqYFsbtQEpE2JH5oFLfFE50AsGa6Gkbc+pSoaQJpl+t1s/c0hjYFGXdU0u30uZfWnO900mBXHWZIeCtMeq+HqrnYBXsF4mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWG7ju8K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A77EC32782;
-	Wed, 21 Aug 2024 12:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724244574;
-	bh=AXxmUU4wdER3ZZjM11AkrS+24GgkSlMY6GankGo8It0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=SWG7ju8KMMWojJ6QeXRG0k/6unfDyHUixpMtJbCdG/G6VRdJxRFD7EOqYrGA33Ja7
-	 g9N2EF9qklpYK1V4VsWaZTBcaEaBt2qxUFVQKNDCMF9mYgBNJdj01jLPvllZNpPSMl
-	 YzWmB1kR6IE38Eb9k9DTXjVsGSHJMzcqliQyDbgm+0+crd1S454A4or0O9FUVJcvb7
-	 UMqjjp+i3bxoIFRdSwu/RgvuVRNYg1pJPOLSL8wkmvOJbTGYLFHRU3ERrnhV21gWgl
-	 F2wwGwI8tiF9F2Bfr7s4vP1nQgS/ua5Ji3BNHlkorw6cHkK5rskQ/SIUtGrFKGBrKw
-	 hAQR+O/q8wjeg==
-Date: Wed, 21 Aug 2024 07:49:32 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1724244584; c=relaxed/simple;
+	bh=ivBLmAjrAdfXQCnNJnRfb3XazdZTgFVx5cfbyrli2GU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=We6Crb3h2vKitLVySaVgW1b2YPIOoT086N9aDzG1Pq6D1suC9EyMWLNvJECIhWmH8DmfkJn1AFBAtR1+VrC999i8vQCYoTA7eOpCU4UXul5JCacwphuejNadnEHr8XkIPUiQaulETSB5XhJJZAw23Dma7UZbjHU6Yl5u5I6JIUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e+9qBNNI; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so729188466b.1;
+        Wed, 21 Aug 2024 05:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724244581; x=1724849381; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ivBLmAjrAdfXQCnNJnRfb3XazdZTgFVx5cfbyrli2GU=;
+        b=e+9qBNNI/8S4YtHz50D4k0dim4wHZOwnSkjk/NVkx+x7/zjz0wzVjrjvcnnznw4/Ka
+         lscGPvGti6HAapIJ7LnSV6YIARBBNhhgZxazPHtvKxEL+R3OLUJNwz6rYcksDXVml4Ns
+         6SP6SSnMBD9MH+NH+9D81h5zXz7CuKwyN6XM1kEYiaPUelP7pQWWdWhBg5nEdn5d2Zc4
+         P5diKJ6gCu5cvPIkfWHusG6HlFkbhXac1GbSRqFfqd6G/M5c8fPruIKFZzVms18nupIh
+         XOXL18hyF4tcQdN0DBIuPggrho4NP4v/LsUvlxoLLHbCPTt3Cq9w5ViaYvdKPsHWqCd6
+         0j2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724244581; x=1724849381;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ivBLmAjrAdfXQCnNJnRfb3XazdZTgFVx5cfbyrli2GU=;
+        b=hJZwNvBZdoesdcdb9Lzm/p48veKhstoP+Wf+B07EA2WEZyKBclnFnYyMAjBP8jy3vX
+         NI70YJHWFBdSZ3+LOxQZrjVlnwTxnKirq+I5Qwxx4VYB4ZMsppkwSX+CrprPVj51yq4k
+         d4CFVyuDmGqDR2wa+u5MFknAfSr6EK34+fDC7RVJj+0/2Iqnq7nhbptDMl+AA8bgsduV
+         Ry2LFhnO3kgEDKavDG7kcEsoujLJAAxQFR03RdmXAdr9XlwxQ/mKtk+8NS+Z9KrBscxF
+         TohIsCmxgrrbQdxqIjd0VZnYEZvLgSmXWKZWoHEErjU8mkvGu+kvLFH3O/8WVThNafw7
+         pHag==
+X-Forwarded-Encrypted: i=1; AJvYcCUZpFCpRWdq7i9KGf5otbkDAFaAe3grzNs3wa35oiKG3841he4pYKj5tUYijxd2rCge9HawgXY4nkAzECI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCRgeq2Y1p6GZGUZjWRglre6HRkWqwTylTn6Jlk5mCxIQqjXIV
+	QUzOk0ar0q+44fdRiowv6KBkajGn1mmVWvg9iQ/LlGuGVL0rTq1q0QeerRBD
+X-Google-Smtp-Source: AGHT+IFuNF65BQB77WK5NFqDaCMrwDijcbzYxVS+HyalkmdLsChj9w/zp8rXB+PM8qihnngfuxkyKQ==
+X-Received: by 2002:a17:906:cae0:b0:a7d:2fb2:d852 with SMTP id a640c23a62f3a-a866f72e01dmr160152366b.52.1724244580426;
+        Wed, 21 Aug 2024 05:49:40 -0700 (PDT)
+Received: from [10.176.235.56] ([137.201.254.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383949e45sm904788566b.145.2024.08.21.05.49.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 05:49:40 -0700 (PDT)
+Message-ID: <40361ef4723db11ec484a7265627cd77276772bd.camel@gmail.com>
+Subject: Re: [PATCH v2] scsi: ufs: Move UFS trace events to private header
+From: Bean Huo <huobean@gmail.com>
+To: Avri Altman <avri.altman@wdc.com>, "Martin K . Petersen"
+	 <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Bart Van
+ Assche <bvanassche@acm.org>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Date: Wed, 21 Aug 2024 14:49:38 +0200
+In-Reply-To: <20240821055411.3128159-1-avri.altman@wdc.com>
+References: <20240821055411.3128159-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Christian Melki <christian.melki@t2data.com>
-In-Reply-To: <20240821105943.230281-4-ada@thorsis.com>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-4-ada@thorsis.com>
-Message-Id: <172424457261.3725889.15234571126892278786.robh@kernel.org>
-Subject: Re: [PATCH v1 03/12] dt-bindings: nvmem: microchip-otpc: Add
- compatible for SAM9X60
 
-
-On Wed, 21 Aug 2024 12:59:34 +0200, Alexander Dahl wrote:
-> The SAM9X60 SoC family has a similar OTPC to the SAMA7G5 family.
-> 
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
->  .../devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml        | 1 +
->  1 file changed, 1 insertion(+)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: compatible:0: 'microchip,sam9x60-otpc' was expected
-	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: compatible:1: 'microchip,sama7g5-otpc' was expected
-	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: compatible: ['microchip,sama7g5-otpc', 'syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240821105943.230281-4-ada@thorsis.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+On Wed, 2024-08-21 at 08:54 +0300, Avri Altman wrote:
+> ufs trace events are called exclusively from the ufs core drivers.=C2=A0
+> Make
+> those events private to the core driver.
+>=20
+> The MAINTAINERS file does not need updating as the maintainership
+> remains the same and the relevant directory is already covered.
+>=20
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+Acked-by: Bean Huo <beanhuo@micron.com>
 
