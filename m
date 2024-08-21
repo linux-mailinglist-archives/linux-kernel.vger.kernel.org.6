@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-295529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC32959C55
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:48:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4C1959C58
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7781C215D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:48:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E355BB27497
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF359192D89;
-	Wed, 21 Aug 2024 12:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B042D193432;
+	Wed, 21 Aug 2024 12:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2vqtqLz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWG7ju8K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEC31917C7;
-	Wed, 21 Aug 2024 12:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F63155307;
+	Wed, 21 Aug 2024 12:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244512; cv=none; b=JX+w2oJ6v0qH6V/y75HVAeCpv2Oj1hsOHzHlvrCFRRT5qwYtPkDXL3XQ+W+6buMGalPG7JaD8/QvMv9eTZtDAJroyNCJPAPobNb9cgG6K6gsSi8OkPNi4zMJvuM7xhwvY7Ifu+j2Z5wyp6jbjVEHirqbd7RbKHJjwNQk+9iMNmI=
+	t=1724244575; cv=none; b=AK2VtgVWhHYshlYf8Kbs6dId2qApYk9i2cYWhuhTaRu/9xnP6PoihDE6er1NKzfwcfW7ioSBW7Jnkdf3iMkvfXvrsesZDAlouxNRp5SgEg73ZiIo6ZmATjx28EIwYDhCEIFpEH3pA6YNDhVW95gMUIG34ViX+n5M4XSOTnwivNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244512; c=relaxed/simple;
-	bh=j9HZBA2/5Wb2g40y9Oti29HTzjGioJbne5mKkeX2ur8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A80GpX62+fOBxHDYX0Ou5X4S770j0ck6qEMMCqkm33ZcNdhNEIMoRG/fyJneckYGGD/ymO86b60gH2EmpUgDpqDBttkGSQKneRr+fFhw1TkTzwVpa+iVoJt0mSnAdM2j71tYg/NJzxwKk7pHyQ3ENC9KCc2u6eOYCcMU9KBjCDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2vqtqLz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34586C4AF0C;
-	Wed, 21 Aug 2024 12:48:24 +0000 (UTC)
+	s=arc-20240116; t=1724244575; c=relaxed/simple;
+	bh=AXxmUU4wdER3ZZjM11AkrS+24GgkSlMY6GankGo8It0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=PzJ5zDAu9xGjXs+f4pSiB5lSmzYhoaCOcCDclshfMK5rAwKxFQvF5Tx3HKmFre0T+GBXndAhNfW/HqYFsbtQEpE2JH5oFLfFE50AsGa6Gkbc+pSoaQJpl+t1s/c0hjYFGXdU0u30uZfWnO900mBXHWZIeCtMeq+HqrnYBXsF4mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWG7ju8K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A77EC32782;
+	Wed, 21 Aug 2024 12:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724244511;
-	bh=j9HZBA2/5Wb2g40y9Oti29HTzjGioJbne5mKkeX2ur8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c2vqtqLzx77yK+jri4pI05ZBvo2YloFCkoCVtCEjRuNnOxfTyJdeVqAID+oks/Got
-	 k/MOAywNrA9LkLm2vhxFrX8HojrmEpCpPMFZ8usZAOfEXdFUi9ZJwugyMFj8wDYOpP
-	 J1p1m7nAlRo1BJ53vsZ41xGztHqtr9cQpA/9TG6W3AYjgGVSZYvjFqKjCbFotL/+sN
-	 WOBnbQJNg1ix3kDwZLLHWgSh5TWlK3ROmZdRmEhC1vOJVT/Udnx4TyTf9FOU8SDCdC
-	 IYiUPSkNc7T8xR3pNt74QmD397GNbk0kklwH3BlYq4s8DCTEhzbg4+mFWP0qXvQSXc
-	 HGPkV5gyPIOuA==
-Date: Wed, 21 Aug 2024 13:48:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 19/40] arm64/gcs: Context switch GCS state for EL0
-Message-ID: <3bc63a7e-0cb7-483b-9054-b52727997b6d@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-19-699e2bd2190b@kernel.org>
- <ZsMwhdmE_Ai9BbM9@arm.com>
- <0f6fd3ec-2481-4507-af0e-3cbbb7406b54@sirena.org.uk>
- <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
- <ZsWqTtCq1mNJH1vz@arm.com>
+	s=k20201202; t=1724244574;
+	bh=AXxmUU4wdER3ZZjM11AkrS+24GgkSlMY6GankGo8It0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=SWG7ju8KMMWojJ6QeXRG0k/6unfDyHUixpMtJbCdG/G6VRdJxRFD7EOqYrGA33Ja7
+	 g9N2EF9qklpYK1V4VsWaZTBcaEaBt2qxUFVQKNDCMF9mYgBNJdj01jLPvllZNpPSMl
+	 YzWmB1kR6IE38Eb9k9DTXjVsGSHJMzcqliQyDbgm+0+crd1S454A4or0O9FUVJcvb7
+	 UMqjjp+i3bxoIFRdSwu/RgvuVRNYg1pJPOLSL8wkmvOJbTGYLFHRU3ERrnhV21gWgl
+	 F2wwGwI8tiF9F2Bfr7s4vP1nQgS/ua5Ji3BNHlkorw6cHkK5rskQ/SIUtGrFKGBrKw
+	 hAQR+O/q8wjeg==
+Date: Wed, 21 Aug 2024 07:49:32 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qtdMReCOgtjtAPvI"
-Content-Disposition: inline
-In-Reply-To: <ZsWqTtCq1mNJH1vz@arm.com>
-X-Cookie: You are false data.
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Alexander Dahl <ada@thorsis.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Christian Melki <christian.melki@t2data.com>
+In-Reply-To: <20240821105943.230281-4-ada@thorsis.com>
+References: <20240821105943.230281-1-ada@thorsis.com>
+ <20240821105943.230281-4-ada@thorsis.com>
+Message-Id: <172424457261.3725889.15234571126892278786.robh@kernel.org>
+Subject: Re: [PATCH v1 03/12] dt-bindings: nvmem: microchip-otpc: Add
+ compatible for SAM9X60
 
 
---qtdMReCOgtjtAPvI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, 21 Aug 2024 12:59:34 +0200, Alexander Dahl wrote:
+> The SAM9X60 SoC family has a similar OTPC to the SAMA7G5 family.
+> 
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> ---
+>  .../devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml        | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-On Wed, Aug 21, 2024 at 09:50:22AM +0100, Catalin Marinas wrote:
-> On Tue, Aug 20, 2024 at 06:56:19PM +0100, Mark Brown wrote:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> > I forgot when writing the above that we always allow reads from
-> > GCSPR_EL0 in order to avoid corner cases for unwinders in the case of
-> > asynchronous disable.  I'd expect that to be cheap to access though.
+yamllint warnings/errors:
 
-> But then gcs_preserve_current_state() doesn't save the GCSPR_EL0 value
-> if the shadow stack was disabled. At the subsequent switch to this task,
-> we write some stale value.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: compatible:0: 'microchip,sam9x60-otpc' was expected
+	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: compatible:1: 'microchip,sama7g5-otpc' was expected
+	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: compatible: ['microchip,sama7g5-otpc', 'syscon'] is too short
+	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb: efuse@e8c00000: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/nvmem/microchip,sama7g5-otpc.yaml#
 
-True, we should make the disable save the current value.
+doc reference errors (make refcheckdocs):
 
---qtdMReCOgtjtAPvI
-Content-Type: application/pgp-signature; name="signature.asc"
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240821105943.230281-4-ada@thorsis.com
 
------BEGIN PGP SIGNATURE-----
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbF4hUACgkQJNaLcl1U
-h9DrbQf/SQgnftiL0Tbvv1xffP9U4UoVPIul2GtdtgQHIDIzT1ukcsmQhdRliW8p
-YkPVH3S3HbTM+Qtdp/kLSqVJHoK9rDDUsUJYlLAIBhC0dxhz6vEeOekbUti1UKFB
-hdq/nUQDHb0LMufsGWvFir+5WNZkrUMFajAkS8FQ/0RFAA8IXmWgihu6T+Lf1wu2
-TVR7gLXkxw51w03S8rD5D4xGzNLF6xXKU50cftHNVPwu8zsPbXCbu1jIpaPVPCXM
-oWKLc3IOSmG0w3XNoWb7Ki07+H0OmcAbrXvIDK/8FLyyHrcehyy+teM/H/AJqJtt
-gDCFIXYlvUlLXHmodMUWCk2uNYAYXA==
-=msk7
------END PGP SIGNATURE-----
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---qtdMReCOgtjtAPvI--
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
