@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-296264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A523895A84F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:31:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3005B95A853
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61233283C52
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF2B72811DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2E41779BA;
-	Wed, 21 Aug 2024 23:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D3B17CA16;
+	Wed, 21 Aug 2024 23:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I2p8kBui"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UiBdbbfS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AC226ACB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B95726ACB;
+	Wed, 21 Aug 2024 23:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724283066; cv=none; b=ZhBdZR4TUTgnxFhtdgoEv/rfdqbrkePX/3wzeb01BYnQ6CdVNfx9JUeTwMS9KUxfP4eSx5h3dt+7VDda/96/OcKAilGjc3VZ6sNWHa6HiIkIx3+n/Amqi1hBXqdhoPmavkerTEnC5UnogA3/1ANooec1ksGqXsxwX5IzPPgx8N0=
+	t=1724283106; cv=none; b=eJAGM1HVg5ozfO/hXjPS2SofdqB64NV7qKAnffU9ZQciKYX05m06ZVYGlBnlcnoU/ClNuX++omyCnpA38KlBcVt4o95Q1FkcM23F7HfgFdtCr0nuzEQtiKNgHlNe28+qjvj4njQ2K15P6Y+KKsBYhSMsQKFisXEukvAmzLP0ltc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724283066; c=relaxed/simple;
-	bh=H/WjTVKGs1WNmSIrSX9h+WGgyyOoWjyCQE8NafmsymE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rp5S+M4V3AUutyjfHOkOIgbMSxClYPNrlQPUhEtTz1AH9cdbTmM0kn0gV7ucV7gVWmoVnHAhkSrNnruCEw63D3+WwtsOsXqqKjVjwmN6FU6dtzzOt18neIJwSyrflGwyP9BLau7H5SBaEkHdLT00Y892jLfJhU6ru5JV0X+JSUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I2p8kBui; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724283063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SbSxEKg8MuQVrDfzYQuUKL03LBbln9AntQ/LKMrB8Og=;
-	b=I2p8kBuiORQmFaZ8Qy/yLl+HAfM6EIADywqJABM3/2ZGDc7tzgkGHnmox9IWvKJEs0E6WF
-	+oC7MgtzkrCTaXo4ndHmGpJRPluOTzeOWTyeP7cQNVK7eH1MpZsorUDfoSpb85Y+ML78ok
-	wi429kGdSLlXXvNqlFo8XGZkf3unEYM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-9ieErY-HMPmegKwxQiR7zg-1; Wed,
- 21 Aug 2024 19:31:01 -0400
-X-MC-Unique: 9ieErY-HMPmegKwxQiR7zg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5EAB31955D4A;
-	Wed, 21 Aug 2024 23:30:59 +0000 (UTC)
-Received: from [10.2.16.124] (unknown [10.2.16.124])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 849D819560A3;
-	Wed, 21 Aug 2024 23:30:57 +0000 (UTC)
-Message-ID: <21df0502-3f16-4afc-9f3c-7825ded578c4@redhat.com>
-Date: Wed, 21 Aug 2024 19:30:56 -0400
+	s=arc-20240116; t=1724283106; c=relaxed/simple;
+	bh=/1ierzCrV2XHO5Z7bfegHIj87yjQormZfA1vFPqNJmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2ZfoQGT7CLrS2jFy24BwLiGXFcgQpL7SNvG4AXGVAMkZ3+VwUatGkj2rf0ZS7qDeo/KrKXfaL+PdkV2FDdtphwanLo9PnAVKiVIob+Ju6YXnT500xXEMMmn5PiLSddotTSQMm1GftnqRcOJ1Xssr10wUyg45UkXlHInShicFWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UiBdbbfS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7538CC32781;
+	Wed, 21 Aug 2024 23:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724283105;
+	bh=/1ierzCrV2XHO5Z7bfegHIj87yjQormZfA1vFPqNJmw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UiBdbbfSVhsZsX5dpZtj3qeu6sFXK+al5rhwWRYHfiVbP2Qn+/YxX5fPQ8bTQvsbr
+	 kwDe4vMTtRBJA8Tux5Nqz0XjTs622Ty/WiOewwgT2IQFff2cUwNJcW5HgUc5H9BeNl
+	 OEdgiiGlATgqW3xPugQVk9SIfhvslDZI2wel94N8=
+Date: Thu, 22 Aug 2024 07:31:43 +0800
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: linux-usb@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mathias Nyman <mathias.nyman@intel.com>
+Subject: Re: USB-C adapter like Dell DA300 using > 5 W
+Message-ID: <2024082207-foothill-swirl-0ad0@gregkh>
+References: <38b871f7-8583-4b9a-940b-ee33a1b6206d@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] padata: Honor the caller's alignment in case of
- chunk_size 0
-To: Kamlesh Gurudasani <kamlesh@ti.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Daniel Jordan <daniel.m.jordan@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <38b871f7-8583-4b9a-940b-ee33a1b6206d@molgen.mpg.de>
 
-On 8/21/24 17:02, Kamlesh Gurudasani wrote:
-> In the case where we are forcing the ps.chunk_size to be at least 1,
-> we are ignoring the caller's alignment.
->
-> Move the forcing of ps.chunk_size to be at least 1 before rounding it
-> up to caller's alignment, so that caller's alignment is honored.
->
-> While at it, use max() to force the ps.chunk_size to be at least 1 to
-> improve readability.
->
-> Fixes: 6d45e1c948a8 ("padata: Fix possible divide-by-0 panic in padata_mt_helper()")
-> Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
-> ---
->   kernel/padata.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/kernel/padata.c b/kernel/padata.c
-> index 0fa6c2895460..d8a51eff1581 100644
-> --- a/kernel/padata.c
-> +++ b/kernel/padata.c
-> @@ -509,21 +509,17 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
->   
->   	/*
->   	 * Chunk size is the amount of work a helper does per call to the
-> -	 * thread function.  Load balance large jobs between threads by
-> +	 * thread function. Load balance large jobs between threads by
->   	 * increasing the number of chunks, guarantee at least the minimum
->   	 * chunk size from the caller, and honor the caller's alignment.
-> +	 * Ensure chunk_size is at least 1 to prevent divide-by-0
-> +	 * panic in padata_mt_helper().
->   	 */
->   	ps.chunk_size = job->size / (ps.nworks * load_balance_factor);
->   	ps.chunk_size = max(ps.chunk_size, job->min_chunk);
-> +	ps.chunk_size = max(ps.chunk_size, 1ul);
->   	ps.chunk_size = roundup(ps.chunk_size, job->align);
->   
-> -	/*
-> -	 * chunk_size can be 0 if the caller sets min_chunk to 0. So force it
-> -	 * to at least 1 to prevent divide-by-0 panic in padata_mt_helper().`
-> -	 */
-> -	if (!ps.chunk_size)
-> -		ps.chunk_size = 1U;
-> -
->   	list_for_each_entry(pw, &works, pw_list)
->   		if (job->numa_aware) {
->   			int old_node = atomic_read(&last_used_nid);
->
-> ---
-> base-commit: b311c1b497e51a628aa89e7cb954481e5f9dced2
-> change-id: 20240822-max-93c17adc6457
+On Wed, Aug 21, 2024 at 11:32:04PM +0200, Paul Menzel wrote:
+> Dear Linux folks,
+> 
+> 
+> On the Intel Kaby Lake laptop Dell XPS 13 9360 with Debian sid/unstable and
+> *powertop* 2.15-3, connecting a USB-C adapter like Dell DA300 or LMP USB-C
+> mini Dock (P/N 15954) [1] and connecting only an Ethernet cable (module
+> r8152 is used), the adapter gets very hot, and according to PowerTOP it uses
+> over 5 Watts – almost more as the laptop idling.
+> 
+>     $ lsusb
+>     Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+>     Bus 001 Device 002: ID 0cf3:e300 Qualcomm Atheros Communications QCA61x4
+> Bluetooth 4.0
+>     Bus 001 Device 003: ID 04f3:2234 Elan Microelectronics Corp. Touchscreen
+>     Bus 001 Device 004: ID 0c45:670c Microdia Integrated Webcam HD
+>     Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+>     Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+>     Bus 003 Device 002: ID 2109:2820 VIA Labs, Inc. VL820 Hub
+>     Bus 003 Device 003: ID 06c4:c412 Bizlink International Corp. DELL DA300
+>     Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+>     Bus 004 Device 002: ID 2109:0820 VIA Labs, Inc. VL820 Hub
+>     Bus 004 Device 003: ID 0bda:8153 Realtek Semiconductor Corp. RTL8153
+> Gigabit Ethernet Adapter
+> 
+> With `LANG= sudo powertop --auto-tune` it stays high.
+> 
+> PowerTOP:
+> 
+> ```
+> The battery reports a discharge rate of 6.01 W
+> The energy consumed was 146 J
+> The estimated remaining time is 3 hours, 51 minutes
+> 
+> Summary: 384.6 wakeups/second,  0.0 GPU ops/seconds, 0.0 VFS ops/sec and
+> 8.5% CPU use
+> 
+> Power est.              Usage       Events/s    Category       Description
+>   5.94 W      0.0%                      Device         Display backlight
+>   5.23 W    100.0%                      Device         USB device: USB
+> Optical Mouse (Logitech)
+>   4.62 W     66.1%                      Device         USB device: USB
+> 10/100/1000 LAN (Realtek)
+>   205 mW    100.0%                      Device         USB device: Fujitsu
+> Keyboard (Fujitsu)
+>  14.1 mW     13.5 ms/s       0.9        kWork intel_atomic_commit_work
+> ```
+> 
+> At another time:
+> 
+> ```
+> The battery reports a discharge rate of 10.5 W
+> The energy consumed was 235 J
+> The estimated remaining time is 2 hours, 20 minutes
+> 
+> Summary: 395.8 wakeups/second,  0.0 GPU ops/seconds, 0.0 VFS ops/sec and
+> 23.8% CPU use
+> 
+> Power est.              Usage       Events/s    Category       Description
+>   7.13 W    100.0%                      Device         USB device: USB
+> 10/100/1000 LAN (Realtek)
+>   3.92 W     15.8%                      Device         Display backlight
+>   320 mW      0.0 us/s      0.00        Process        [PID 1349]
+> /usr/bin/pipewire
+>  63.6 mW     65.4 ms/s       0.5        Process        [PID 4982]
+> /usr/lib/thunderbird/thunderbird
+>  24.9 mW     25.6 ms/s       6.7        Process        [PID 37753]
+> /usr/lib/firefox-nightly/firefox-bin -contentproc -isForBrowser -prefsLen
+> 36793 -prefMapSize 265654 -jsInitLe
+>  14.7 mW     15.1 ms/s       0.5        kWork intel_atomic_commit_work
+> ```
+> 
+> The heat of the USB-C adapter might suggest, that it draws that much power.
+> What is your experience? Can you suggest something?
 
-LGTM, my only nit is the use of "1ul" which is less common and harder to 
-read than "1UL" as the former one may be misread as a "lul" variable.
+Buy a different adapter?  That seems like something is really wrong with
+it.  Does other devices also suck that much power from that port on the
+laptop?
 
-Acked-by:  Waiman Long <longman@redhat.com>
+thanks,
 
+greg k-h
 
