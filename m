@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-295375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02192959A31
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:37:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C8A959A32
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E04C1C2174C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDA42814FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B311C0DD2;
-	Wed, 21 Aug 2024 11:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EEF1C1AA5;
+	Wed, 21 Aug 2024 11:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="vBc/BFZP"
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="KVp4uR8R"
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8CE1BAEC5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF961BA29C
 	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724238003; cv=none; b=JHb+oXyh58POTsfF4mtLMoVn8sFiLYkqEmyEuhHqVSJ9MooKdlSbbUB3+uAM7B35V9GoLRkXL0wO3jdtHF/Ceux3E5l0r9KAIlIMpb9I9wF0/gmd/2/zyqUuVUKSgdCWXCHusuIiKnkxm7fDK64xRRKWvH6T6gw0YmQNYw9b1qg=
+	t=1724238003; cv=none; b=tg/kEl3DWc7NohCdsbYZRrhu9sTbjm2AGAX+XXJoimHPChdow5XLVlCF8VMPQxktjg3+p93RzMIwMJXmgIcZ+g54bVNYkEcdsGYCnmdnsoRS/Bq6C23ry4urni1UsuXMPbKR5VU1MKwZ0BlN0D5NUi3N2upPk7X55KohYnBHd0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724238003; c=relaxed/simple;
-	bh=1K56cFtxqRrqKL3dsbtsNJZdC6zpznB5RkaKOagcN9M=;
+	bh=FefeWmBE3XufmHRreHUqF2kiLEqYzrbKkLAjSc7pSZk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RKO7c6nYBNpHX/8yW3DwaxzmNul7dXMwxmz9XvnH4Xj72z+SmtDQILlWw+cVewkdEbf6EY1IUgpTuzXU/HUjEM+o5ZCu/8180Wo0c+2guwV2Lw5ACAfmBU9j2pC9GqBoXmQm+gh7p+hLu1CS4tW30V5P374pIgnZwp21oyOaMeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=vBc/BFZP; arc=none smtp.client-ip=217.92.40.78
+	 MIME-Version; b=LZgi7k/jQdTymDd0DAa1Tlh29GxHlMoNN6K+79V+uovTrHwX/VCwXogy3ln+uz42JpVtFfIqHOnEt4B8WFwvb7d9wIJjNc8Sl71F307i1f6lkMW580dDi6YWXsopD3V3CBcF1V7duvSPCAeGUnW/uNAwHYabAgwjhbAs13dTXZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=KVp4uR8R; arc=none smtp.client-ip=217.92.40.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1EFAA1483DF2;
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8F3A11483DF3;
 	Wed, 21 Aug 2024 12:59:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
 	t=1724237999; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=jovbb058QzzCeFDP4Da8Wb3JHly5Xy6YvCLwu8Ic6q4=;
-	b=vBc/BFZPkHoTOZP55cWp8jIcwt2YXJwPdq0Zk3/yQHb06gka0w8sOFpxXT3RYBpDw73D7f
-	IxKKLjFxrDTticjvnANOv6RIRKzqRqJpaDjZrL2Nq65z4K64/o5Q/azqfms4KPsCnSQECW
-	pR6Y4w6MlJKoacR6z9p7hEEhwJulCg+/wDcYCB2Ayg8fehf5DYPGWx0+7GrW6MsQJ6Aw4D
-	Zsan9FH9auUf3k/suXz2EDAoMI4G284/YeHGF9u4qiHunWMzDggWfJbCDNXqIIayEIGAoV
-	PbWg+pxA5tkvoKw075F2xMN5E35BP8ML+unevBlaleYvWD11N1Z6q+YKkY6qLg==
+	bh=7R+I3eWvRMVL77L44Gt897N18NavS4Wc92V6aQKadT8=;
+	b=KVp4uR8Ro7N7VsYnYCe7XQW9iovUZvzIxkjmraWg6QtT5tIdFvmg1TaDL2MdPL5cco68jN
+	nQWP5krf94zjpxKBG/OF5ZZkvbJ4mkLHaZebnUVJ1k4QIpc1jCnj3ERK0O4thIb2bJMHhq
+	j3HJBWWtGCGna5vefOmbNA/TMj6GlsJnBRDWRrrR0lU1l7z6pFRYusz/b++dYL4IJj08ay
+	0/YQmSPtbGij9AmB6NNTPT5pRZ1vXHBXwHh/hZc/PC3FvNTKThDGiOjedgeufu5lPbUJ0y
+	yjTDVY7XPPJYoDXOkECg5awvIbh02hRaqhAWPNbmDbS84fs6UndhWNDiwaNHYA==
 From: Alexander Dahl <ada@thorsis.com>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: Christian Melki <christian.melki@t2data.com>,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 	linux-arm-kernel@lists.infradead.org (moderated list:MICROCHIP OTPC DRIVER),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 11/12] nvmem: microchip-otpc: Enable main RC oscillator clock
-Date: Wed, 21 Aug 2024 12:59:42 +0200
-Message-Id: <20240821105943.230281-12-ada@thorsis.com>
+Subject: [PATCH v1 12/12] nvmem: microchip-otpc: Expose UID registers as 2nd nvmem device
+Date: Wed, 21 Aug 2024 12:59:43 +0200
+Message-Id: <20240821105943.230281-13-ada@thorsis.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240821105943.230281-1-ada@thorsis.com>
 References: <20240821105943.230281-1-ada@thorsis.com>
@@ -62,55 +62,89 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Without enabling that clock, initializing the packet list leads to a
-read timeout on the first packet.
-
-According to SAM9X60 datasheet (DS60001579G) section "23.4 Product
-Dependencies" the clock must be enabled for reading and writing.
-
-Tested on sam9x60-curiosity board.
+For SAM9X60 the Product UID x Register containing the Unique Product ID
+is part of the OTPC registers.  We have everything at hand here to just
+create a trivial nvmem device for those.
 
 Signed-off-by: Alexander Dahl <ada@thorsis.com>
 ---
- drivers/nvmem/microchip-otpc.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/nvmem/microchip-otpc.c | 41 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
-index a80535c3d162..047ca5ac6407 100644
+index 047ca5ac6407..52af4c137204 100644
 --- a/drivers/nvmem/microchip-otpc.c
 +++ b/drivers/nvmem/microchip-otpc.c
-@@ -8,6 +8,7 @@
-  */
+@@ -45,6 +45,9 @@
+ #define MCHP_OTPC_NAME			"mchp-otpc"
+ #define MCHP_OTPC_SIZE			(11 * 1024)
  
- #include <linux/bitfield.h>
-+#include <linux/clk.h>
- #include <linux/dev_printk.h>
- #include <linux/iopoll.h>
- #include <linux/module.h>
-@@ -54,6 +55,7 @@
- struct mchp_otpc {
- 	void __iomem *base;
- 	struct device *dev;
-+	struct clk *clk;
- 	struct list_head packets;
- 	u32 npackets;
++#define MCHP_OTPC_UID_NAME		"mchp-uid"
++#define MCHP_OTPC_UID_SIZE		16
++
+ /**
+  * struct mchp_otpc - OTPC private data structure
+  * @base: base address
+@@ -249,6 +252,16 @@ static int mchp_otpc_init_packets_list(struct mchp_otpc *otpc, u32 *size)
+ 	return 0;
+ }
+ 
++static int mchp_otpc_uid_read(void *priv, unsigned int offset,
++			      void *val, size_t bytes)
++{
++	struct mchp_otpc *otpc = priv;
++
++	memcpy_fromio(val, otpc->base + MCHP_OTPC_UID0R + offset, bytes);
++
++	return 0;
++}
++
+ static struct nvmem_config mchp_nvmem_config = {
+ 	.name = MCHP_OTPC_NAME,
+ 	.type = NVMEM_TYPE_OTP,
+@@ -258,6 +271,15 @@ static struct nvmem_config mchp_nvmem_config = {
+ 	.reg_read = mchp_otpc_read,
  };
-@@ -272,6 +274,15 @@ static int mchp_otpc_probe(struct platform_device *pdev)
- 	if (IS_ERR(otpc->base))
- 		return PTR_ERR(otpc->base);
  
-+	// NOTE: Maybe make this optional, especially if sama7g5 testing
-+	// shows the clock is not required there?
-+	otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
-+	if (IS_ERR(otpc->clk)) {
-+		dev_err(&pdev->dev, "Error (%ld) getting clock!\n",
-+			PTR_ERR(otpc->clk));
-+		return PTR_ERR(otpc->clk);
++static struct nvmem_config mchp_otpc_uid_nvmem_config = {
++	.name = MCHP_OTPC_UID_NAME,
++	.read_only = true,
++	.word_size = 4,
++	.stride = 4,
++	.size = MCHP_OTPC_UID_SIZE,
++	.reg_read = mchp_otpc_uid_read,
++};
++
+ static int mchp_otpc_probe(struct platform_device *pdev)
+ {
+ 	struct nvmem_device *nvmem;
+@@ -303,8 +325,25 @@ static int mchp_otpc_probe(struct platform_device *pdev)
+ 	mchp_nvmem_config.size = size;
+ 	mchp_nvmem_config.priv = otpc;
+ 	nvmem = devm_nvmem_register(&pdev->dev, &mchp_nvmem_config);
++	if (IS_ERR(nvmem)) {
++		dev_err(&pdev->dev,
++			"Error (%ld) registering OTP as nvmem device\n",
++			PTR_ERR(nvmem));
++		return PTR_ERR(nvmem);
++	}
+ 
+-	return PTR_ERR_OR_ZERO(nvmem);
++	mchp_otpc_uid_nvmem_config.dev = otpc->dev;
++	mchp_otpc_uid_nvmem_config.priv = otpc;
++
++	nvmem = devm_nvmem_register(&pdev->dev, &mchp_otpc_uid_nvmem_config);
++	if (IS_ERR(nvmem)) {
++		dev_err(&pdev->dev,
++			"Error (%ld) registering UIDxR as nvmem device\n",
++			PTR_ERR(nvmem));
++		return PTR_ERR(nvmem);
 +	}
 +
- 	reg = readl_relaxed(otpc->base + MCHP_OTPC_WPSR);
- 	if (reg)
- 		dev_warn(&pdev->dev,
++	return 0;
+ }
+ 
+ static const struct of_device_id __maybe_unused mchp_otpc_ids[] = {
 -- 
 2.39.2
 
