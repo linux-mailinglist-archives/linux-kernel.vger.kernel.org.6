@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-295334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B389599C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:27:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF9F9599C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54A71C21578
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:27:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F6B2602D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255A120ABE1;
-	Wed, 21 Aug 2024 10:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17091C93A2;
+	Wed, 21 Aug 2024 10:17:40 +0000 (UTC)
 Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B58192D78;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BAE199FB4;
 	Wed, 21 Aug 2024 10:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724235460; cv=none; b=LjAg8wy51VLmIYSnOFuELAXs1bn10qFdKVtmdjpSrt6TUQqwBxtt7Uk7kqqMA2CjAswNBsYcKTR8XxE/LOxxVMCUNy8cD4gfVnmLNAf3vkB5ELLh5cbTbz5Sx3FiW4RnVG6aZBYKnoc9H5oIH2xdoYGuRdegorRKyydy6fJ9cdc=
+	t=1724235460; cv=none; b=h1Qm4D3d+HGwDjBGH+HzS14Wy2nI4mfJnhTw0O+6hPlbs/suqc8vLTlOhI3ye4CXlSSqhpTUaVd78gNIQMHneJw0BKSSZz9gsNs6FmhaU2udX2Ni4e4FRG5y+xxk3Ma3umTJOp4smT/dg+w8QEKZL4RlpcQsHccJaVmMLTqvJgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724235460; c=relaxed/simple;
-	bh=WXpWpDj6u1kbFSTz0P97O4IsgFpnj592RVxhfybBcOw=;
+	bh=0RhVFhYoPwHMcp9xML/40dBV4iPibyeBgl8/kuvVXYc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bnwQUV9OlIA1RvY/gL1FxRqQ6f1NHtXmhruZBG1Hhm4mNwY7Av1VF6FWTyZ4l4D6+2Qf2JnrS/SiHl6friJF8qoaaYgIeIusam4VCALTXiCFleRlyitOvR9gDMV8/TaOxUectDXZB6CPz8UZcwkxmsJguNNvHnlPhTOTimD58oY=
+	 MIME-Version; b=TV/flQGb1U5HVubeRCxq9nPzNw0WWCtPFineHOzuP08g3tkMymTS7Lzj9LzAiVBwGZp+dL70u490TD1r3J1gBoQ4UEMFE3KpK2e7eKGydZE8vmhMY9LT2F3DtbUcIp85NOSIaSOlurkbV/CxG6Yw+ChAjD6c7Mi6zdnrkJyRf9E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
 Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:ac20::1])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id E8AC47E01D8;
-	Wed, 21 Aug 2024 18:10:50 +0800 (CST)
+	by smtp.qiye.163.com (Hmail) with ESMTPA id CEC937E01BD;
+	Wed, 21 Aug 2024 18:10:55 +0800 (CST)
 From: Chukun Pan <amadeus@jmu.edu.cn>
 To: Bjorn Andersson <andersson@kernel.org>
 Cc: Konrad Dybcio <konradybcio@kernel.org>,
@@ -40,10 +40,11 @@ Cc: Konrad Dybcio <konradybcio@kernel.org>,
 	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: [PATCH v3 3/4] arm64: dts: qcom: ipq6018: move mp5496 regulator out of soc dtsi
-Date: Wed, 21 Aug 2024 18:10:24 +0800
-Message-Id: <20240821101025.858961-4-amadeus@jmu.edu.cn>
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Robert Marko <robimarko@gmail.com>
+Subject: [PATCH v3 4/4] arm64: dts: qcom: ipq6018: add LDOA2 regulator for rdp
+Date: Wed, 21 Aug 2024 18:10:25 +0800
+Message-Id: <20240821101025.858961-5-amadeus@jmu.edu.cn>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240821101025.858961-1-amadeus@jmu.edu.cn>
 References: <20240821101025.858961-1-amadeus@jmu.edu.cn>
@@ -55,129 +56,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGEtKVktOQk1CSE4ZQ0tMTlYeHw5VEwETFhoSFy
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTUgZVh5PH09KH00aQ0hCQlYeHw5VEwETFhoSFy
 	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQRoYSUtBQUpZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
-X-HM-Tid: 0a91746af0a203a2kunme8ac47e01d8
+X-HM-Tid: 0a91746b03d103a2kunmcec937e01bd
 X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OlE6Azo4CzI4GioxNDgtIik9
-	GTQwC0hVSlVKTElPSUhOS05KQkNLVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBGhhJS0FBSllXWQgBWUFPTUhMNwY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PSI6IRw4DDIwLCoRDjgTIi9I
+	DT9PCi9VSlVKTElPSUhOS05NQ01LVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0tBGhhJS0FBSllXWQgBWUFJSUNMNwY+
 
-Some IPQ60xx SoCs don't come with the mp5496 pmic chip. The mp5496
-pmic was never part of the IPQ60xx SoC, it's optional, so we moved
-it out of the soc dtsi.
+Add LDOA2 regulator of MP5496 to support SDCC voltage scaling on RDP.
 
+Suggested-by: Robert Marko <robimarko@gmail.com>
 Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
 ---
- arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts |  1 +
- arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi    | 32 ++++++++++++++++++++
- arch/arm64/boot/dts/qcom/ipq6018.dtsi        | 14 ---------
- 3 files changed, 33 insertions(+), 14 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi
+ arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts b/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
-index f5f4827c0e17..e71e8c851246 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
-@@ -8,6 +8,7 @@
- /dts-v1/;
- 
- #include "ipq6018.dtsi"
-+#include "ipq6018-rdp.dtsi"
- 
- / {
- 	model = "Qualcomm Technologies, Inc. IPQ6018/AP-CP01-C1";
 diff --git a/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi b/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi
-new file mode 100644
-index 000000000000..bb56c1245f92
---- /dev/null
+index bb56c1245f92..4aa17ed8235c 100644
+--- a/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi
 +++ b/arch/arm64/boot/dts/qcom/ipq6018-rdp.dtsi
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * IPQ6018 RDP board common device tree source
-+ */
+@@ -12,9 +12,18 @@ ipq6018_s2: s2 {
+ 			regulator-max-microvolt = <1062500>;
+ 			regulator-always-on;
+ 		};
 +
-+&rpm_requests {
-+	regulators {
-+		compatible = "qcom,rpm-mp5496-regulators";
-+
-+		ipq6018_s2: s2 {
-+			regulator-min-microvolt = <725000>;
-+			regulator-max-microvolt = <1062500>;
-+			regulator-always-on;
++		ipq6018_l2: l2 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <3300000>;
 +		};
-+	};
-+};
-+
-+&CPU0 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-+
-+&CPU1 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-+
-+&CPU2 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-+
-+&CPU3 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-index 33062417781a..6f365705e2d8 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-@@ -43,7 +43,6 @@ CPU0: cpu@0 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -56,7 +55,6 @@ CPU1: cpu@1 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -69,7 +67,6 @@ CPU2: cpu@2 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -82,7 +79,6 @@ CPU3: cpu@3 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -184,16 +180,6 @@ glink-edge {
- 			rpm_requests: rpm-requests {
- 				compatible = "qcom,rpm-ipq6018", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
--
--				regulators {
--					compatible = "qcom,rpm-mp5496-regulators";
--
--					ipq6018_s2: s2 {
--						regulator-min-microvolt = <725000>;
--						regulator-max-microvolt = <1062500>;
--						regulator-always-on;
--					};
--				};
- 			};
- 		};
  	};
+ };
+ 
++&sdhc {
++	vqmmc-supply = <&ipq6018_l2>;
++};
++
+ &CPU0 {
+ 	cpu-supply = <&ipq6018_s2>;
+ };
 -- 
 2.25.1
 
