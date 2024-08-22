@@ -1,770 +1,183 @@
-Return-Path: <linux-kernel+bounces-296829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2B395AF90
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:45:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84CCE95AF94
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6751F215FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:45:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA091F219AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3B515A4B3;
-	Thu, 22 Aug 2024 07:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8190A16C451;
+	Thu, 22 Aug 2024 07:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MCDs0ZLj"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4571B33EA;
-	Thu, 22 Aug 2024 07:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724312705; cv=none; b=uO+lt8SyfEyUkH42PAjV/gaCqmE+2pU1vsOnKvwixdrZP0x7GYUGprCxGmimtNth1KOxdAyb3abpIFunz37w1kwXnAGxsfM9pM8c75ULxRMvwPH8O+87/Bnk2GjJf4u0GLlXOBlb/dPTn+7GCS/yzpsJ0JHP2CDwxDcRwd0SxJA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724312705; c=relaxed/simple;
-	bh=STIMiu5oDvJ1YurgMRrDaW+f7qCSUBEFBD5ZwouUW1o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aCApEIvDcajUg4EzABEpDTBsVbamGWhyZqNCFIA8b8LuEirfGGD19e1Jb9Q2Tl6QNsheYPqjjQHK+rVrwAK4mzNtsevt2hwfRMTwFnjnqFQnwD0l46+JpXTGwLw8KFKIb39OoVJL2RhnQzm1nxDVFd6dVm0YcFZqoIec21amDWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MCDs0ZLj; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=Ycg0WA2R4XEXGgKaTrPTq/9U/YQ76h3jO7+JIFKlqEk=;
-	b=MCDs0ZLjCZOFLEut0+2cNkAkh0yjd/wWLQPuJjRrtXeXJdlSTA3P2wJpnOHrWC
-	KGsy1zDWMtcCaiZE93fXZ7cHhRuNQLDZQdlL6CpFICCXUeQ6GbG7dBMz/pbce2/M
-	lnWt2m8yI/SXw1rOsm4ju90DOokEh8UPJ1/ZinFnB/dk0=
-Received: from 100ask.localdomain (unknown [36.23.122.219])
-	by gzga-smtp-mta-g3-4 (Coremail) with SMTP id _____wD3f8dc7MZm0tsaAA--.3738S2;
-	Thu, 22 Aug 2024 15:44:30 +0800 (CST)
-From: Wenliang <wenliang202407@163.com>
-To: linux@roeck-us.net
-Cc: jdelvare@suse.com,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wenliang <wenliang202407@163.com>
-Subject: [PATCH linux dev 6.11] hwmon:add new hwmon driver sq52205
-Date: Thu, 22 Aug 2024 03:44:26 -0400
-Message-Id: <20240822074426.7241-1-wenliang202407@163.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <935f564b-fa3e-4cdf-bf12-19b897369a07@roeck-us.net>
-References: <935f564b-fa3e-4cdf-bf12-19b897369a07@roeck-us.net>
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="dPdyGXr/"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2071.outbound.protection.outlook.com [40.107.215.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC979166F3D;
+	Thu, 22 Aug 2024 07:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724312764; cv=fail; b=qYhqRIizoRHsIfGtQs6V87xpQdbLi6bIjpirL7n/9YakorbeyoOwXHlQ28ghmcUyhcwogIkly1ttflEKwlulhKRzewQBhcTECv5gg20605j7z86A7kGtq9wOY+olSpPbpC3zAIYAiyyCh+J17Xikk3gxKxx+mgdMsYwe+mb4RaE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724312764; c=relaxed/simple;
+	bh=uMvtEmXebRwhAtNimt2Dh+jzXOvfEE9+6fgrBsufHY8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=toGT78J/0TSK2k4Eb+BiuZYnEX+U5oPDrIT8AbonsoPLbcSgf0ADq+7X4/jYvVv3eWgKaVfOVbOoD8bX3MEgBtFSa+ZolRLj9WWQrNzL98xLrdf0tBevYIEOMx82jQ1k7gpgCkXtspOJ0DpfB05zQxshBN3PQYcAMvMhaiBMIos=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=dPdyGXr/; arc=fail smtp.client-ip=40.107.215.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pESfIyur8iPLV5w3VeKw2x1tLTx1VrzNpBKvNDYkG9tn8K9u+KJ/2+3Bt4OytgGYRUsDOLdDhfu1mC2mrUBuHZKRrDPGSKInU6kRn+XdwaZ3w4F48eI39VqhUBwlwTjlVKSAq5jQolk0QnN0FOhcTutkmI74rFltF3tdQ14YS6e8WlXRNfsgvI+KJ62FnXT702HZrf8BLgClDk8NZLV5i5KWCX4qlY4L49aA1XJcxS8jUKicQn0ZtUF20oVevIOeAhXRT0JFOPKpXD9ShVPHs/Xy8FxAXX9+d7OvHkR3rcjfUtj8v6PYdcGMn+WelIv+5V8J1LxyWzkqOyVQ3MWLBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OmiKKt8tHHGJlM4tjABkx9wxhxJ/65PnMgNFmmYhqkI=;
+ b=NsW5v82FmhZDcjAEBQX15y2nxk2fZPglg4ojIzI8F5RH8803pd8KQ1Swafn0NlupdwcnmT1MK09/BtJJT2NL4O8GCKTYJoVIRnl1VgRfAbZmG59PZyHuc5quTLp40QJz51rFbknVdc05AA1w9kWsdPvK6sPXAgdbPIEEVbMyS/ZWJTl4XA93umST4OyEmqMtIwzXQWhaoJcReglW37OdJC1h6pRVmHDSR6/+PoQa4HGdAi211FFu022amrYbOIfWQ+2SOZEPpboM2rfetzu0XyJuuHfd0qT5bkmwp6yd9tTqoORq7Ykhd50br7TTsDvja0NXh6dxjD5p7iKoLfGLBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OmiKKt8tHHGJlM4tjABkx9wxhxJ/65PnMgNFmmYhqkI=;
+ b=dPdyGXr/WzxBfQsROMDtZJ+Fb1i4HRntmgNTxO8m18ZJLhh0iQ8f3SvKFhZdgp/gOBaNIx2NG31pN0E/yMxxNxGscnfIXVZGGbT87ViGdeUTc2a0kqqZNX5X8eW7e4Gh9D3m01o+GnsaUuaQmWrujOMxYix61u/Y21QaxiGCOHhuiRAeMg3EHo0XdaPso58B+pYnzJMzdU77HMRNUckngLdooX8kPh/aPa1GzwPMZYRL4RBrmBQEt+M9Bl7+KCZJooChynlHDYYHnYNxTo5Lo4mjIw3OAa33Y3WUikjei9IB+dpo7QhmZSLUcRZmiVNFk2S/FL5PsiP/n8faihvMQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by TY0PR06MB5777.apcprd06.prod.outlook.com (2603:1096:400:270::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Thu, 22 Aug
+ 2024 07:45:58 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
+ 07:45:58 +0000
+From: Yang Ruibin <11162571@vivo.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Yang Ruibin <11162571@vivo.com>
+Subject: [PATCH v1] drivers:cpufreq:Use max macro
+Date: Thu, 22 Aug 2024 15:45:48 +0800
+Message-Id: <20240822074548.1365390-1-11162571@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0163.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:383::10) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f8dc7MZm0tsaAA--.3738S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3Kr4xZw18KF47KFyUZr1kXwb_yoW8ZrykWo
-	WSgrs3uw18Xw1DArW8uwnrt3y7XFWDCr4rJ3WS9r4Dua47JF1Y9ayrtw1rJryava15XFWf
-	Aw4fK345Jay8tw1xn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU0F4RUUUUU
-X-CM-SenderInfo: xzhqzxhdqjjiisuqlqqrwthudrp/1tbiGQBD02XAkoTTjQAAsk
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TY0PR06MB5777:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1a56a65-1c97-45be-9c76-08dcc27e75d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?043rtx/v2KlnfYu2KNbl/YI+Z3pyLonQ8q5sSSVwcGmaYfMxi4fFEbsofdiF?=
+ =?us-ascii?Q?a8oxcJC/th+847GNcNjPWZCzDY/Dpa3f9J0VynmTKC8SH59SddGkAl30M4Y6?=
+ =?us-ascii?Q?/xHwkZCYNUfMgEePVI08SpWPAOMpQqaiBQCOtGhlFiXGTkxG5hkUVXamLHwP?=
+ =?us-ascii?Q?uPHlwAHgYmUFTphTCAqCAQmtEcUPK6KJvv/VBwevqO1PERHvExMnKLS6KqJR?=
+ =?us-ascii?Q?pFPMNaRxchN+e1fw/POyC9MNC5sXXslC9GlZKSHXowiRAo+XzdrclhhB1d7c?=
+ =?us-ascii?Q?ZEPEDuf5NRO9ou6vyIfEykbptmrMfytBDvEx9v7kJcNt/zC4ruMDz9MS0zNO?=
+ =?us-ascii?Q?6yHAJdqiNpMwsJUciuoJ7bzrHc4kwqLOxTbbfI157ZZZvRtppZUtxgvBD/Bv?=
+ =?us-ascii?Q?GMzi7ZMXKhjKPAmlzJqVp80vdgjsk4xeF6NWXZnMqPv0ezVjtYjUGMBywCBa?=
+ =?us-ascii?Q?CLaju0fWeaNm9cGtgvwMh77nQ4/oqDdkhI5j7Za3p8rqKd4q125P1APhlS7G?=
+ =?us-ascii?Q?v7okpH9lelFfx5QZNZXoNSs1ZsYOaATip5qSCoz9ASzCYhg+kyQdd5FZq7gh?=
+ =?us-ascii?Q?eeE9AQzopueLe5uTCO7gjlg/da039hPMcz4vuHorTpcQ7ENtkPchInAs8uU2?=
+ =?us-ascii?Q?/siaGFmVcv/GK/3r5wBRiWZVPCkK6MHI7yYnAMv+ukWgE6tcymHIGt7SGvmT?=
+ =?us-ascii?Q?agqZGD+DoFUJ6XEBqdNVsF0OzMg/1dS4p9zrAhGMpXqwRjVKOPixn5fOBr/b?=
+ =?us-ascii?Q?rBml0/21ylKhAmIkVkqO8KVIres0gS6ze6OMiobGoqFWAnBDYC4Fvm+cWWR4?=
+ =?us-ascii?Q?acSkzutgH7b3Sws/+qWpBIBQaaTnRUqsRCr0vLMoO5xuYPnPZmmwID3VGvzR?=
+ =?us-ascii?Q?xbUvGDmUUseCjPkfAjGRqkV95Vd6WgQhyP3YBF9fMdvLG2PP/1kHRpBcNPbH?=
+ =?us-ascii?Q?a4yI9FT8bDzA4kRKxweBKciG/8Mu+7iJNrWZoCGahsDtVX7MtXbbX8LD/wwC?=
+ =?us-ascii?Q?97Eg8atuVCvIXa14t/s+vEQNWHGa+2DZh7GOTyomm6V3f9+/lR+5r2ldPFzN?=
+ =?us-ascii?Q?kSv1MkOZxfuXiDo5/crYkTnVzfT0gYo/tncAP29HDb5+tEixlvBygjhpNaO/?=
+ =?us-ascii?Q?va5XD2cfYEg8LiFCzFgBKx3YBO4LFAAyY30+g35YP22Y5M9JuoffjMtGHEbq?=
+ =?us-ascii?Q?qToBqBtB+BCHA3cx27UV7qLQzK+iPZ5ioKK/ONri+//NfA00VaBeI4aqD5oj?=
+ =?us-ascii?Q?X6KhgWdR4o8j7Xzoh8yxZAn76CP326QJvR/UVU4Q6c8qPnIaEv4G0zD2iipa?=
+ =?us-ascii?Q?kZ77JZcNv5ycvHOfXMWjx/kax2JO25zOs4dDa+CkoOFhtH/aKcfa5EiXgpNg?=
+ =?us-ascii?Q?VeudwJ5m5Cer0k/j6rdogQ8Sop6fyIvRRrMAozmyBUB4bvny/Pvaqdj31rwq?=
+ =?us-ascii?Q?iFEybthvtVM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+SqMtAn0EapD8+zrAuDG7OrwynDsyT6ZwIJy8ln8xXVj8CxZrwZrxWyzsu0Y?=
+ =?us-ascii?Q?DjMEsS2cn+hAbESpQODK+TNfAkDFhULLZH+7Gmrx18vajvzzldActj4euKUD?=
+ =?us-ascii?Q?fSEdtAniUPpDlv+FFzG1wVVW7f6ioE4weFVdw1iYYxCybtqiUP513PWHt3V7?=
+ =?us-ascii?Q?T6mDvXQqbOvKmCnTdnnXk5y2rJH57139Qie4uAHU6XXSlRd9Cy3UGcVdb6z9?=
+ =?us-ascii?Q?BfFHy7J4fcsutiHOUazWUnCC5iEEYp8d/rD/GVXdXTon7WneH82qhXbeVQlh?=
+ =?us-ascii?Q?o7FLkMr1lutMtKeU7zOwwN/erTo6JrMbREsJatgDbVV0AImvfIrUsDBmS6KU?=
+ =?us-ascii?Q?Mpwwtj+9EScHZU+3Sup+n07rPHaVHnTC+hj2wKBDn9jJR6R2/j3n1SOZDjNS?=
+ =?us-ascii?Q?fEX4UKwaq4vKUkzNYahcX886uC0VFee7VndJxxbE74+5gU6TxFhnOGVVIy2c?=
+ =?us-ascii?Q?J/Vur22uzBR2LaaQZ9F6MptaNOhhDavyRmzQNN0yO/4QrYJurxMFvRUasDvg?=
+ =?us-ascii?Q?rR9FhB07C+sXmHvlbwfJrCej8wCALnZk5yY8boy/bm8lPK9hcT9Vi096Lpxe?=
+ =?us-ascii?Q?HMgfNXWJevNeHKi0FEieZyfxiwylWqv0dFpbx8ABRdarC09K5onFWGwsIky4?=
+ =?us-ascii?Q?R9Eo908csHqtl/ppq8sDRldKy6lRApPrz6G973yJYYR3Q2pgN9KXyaWfMqKJ?=
+ =?us-ascii?Q?KvmbE5AFJGIvImKoVNiPguUH9muH5qACgNNY1heWApW56bJF9PTAyifTS9Ju?=
+ =?us-ascii?Q?Uyq1ouzf6yROmBQjSt5GonT1xGQaiSg/E7pOwRo1xOIMbKm7P8pyIlj6o6fb?=
+ =?us-ascii?Q?yiKOZ1vk/Z6q9iijJvr0FGz+jbxpNyvcX4N9JVo/7Xt52j7cAfURmFtb95H7?=
+ =?us-ascii?Q?B+hw9C3Z4gEHp7M5BMPBsN/qJvim+QxGAzVVAVsK5Ww8CUtQ+OpjUnOqYeNt?=
+ =?us-ascii?Q?IC+aIXMEGjmuK3N8O1+QiJewG8NbSSZtw01M3MEn+M+aHZ7uYbV+EOkwpZmc?=
+ =?us-ascii?Q?Db42XsWKwXU33GwxJaR6nQg3Y492jsx4TgV4N1BW5mODgxmj0/8oZ5Dw2cHX?=
+ =?us-ascii?Q?VKe1jeOHHdt5OHN2yknjCackxbTKwJ6GzMKsl5Wo+1Mz7Cjkjr64bzYs2HRn?=
+ =?us-ascii?Q?7l4gXzWAfwCVgqIQd1if4A46mr1LQG7O5sGC/dveNZenuddAUzh1egAFtjIG?=
+ =?us-ascii?Q?SxB05l7ClLYwP/LaIL5wzbcFPSC+jqCeaGRY89/MB8UnpupnoZf5aLfdBS3/?=
+ =?us-ascii?Q?hsBCVlI78dBYkmk80zGaFvj6yuEPID/aNWq9S9IVVdBX5bmBAttvIH4jsviu?=
+ =?us-ascii?Q?90QZXb5nRkZ0dIToQiQ5OCzCZV7LG/tFbK146EanRp8i8Rq2ePpGk7QU8sKF?=
+ =?us-ascii?Q?awMA+0iLv1KApC68H9K9HtfSJWgerT8rJGOcc4u38n8OEUkpBqdoAlOtyBLa?=
+ =?us-ascii?Q?otAEBgGFTfq3gGeiInbA03HTSAKa7DXT9jxp3zur69wl0WuNBg0QYh7yL1Ik?=
+ =?us-ascii?Q?EmeHN6UI0/u2zTCiyoC8x5rRpzT/TVpGij2CzSNdOsGPWttnpIgzQ7m2cG99?=
+ =?us-ascii?Q?gusRIsO4Wj2Y/RrNWBOK8BY9J+Gcgi6ZAULUbD+G?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1a56a65-1c97-45be-9c76-08dcc27e75d5
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 07:45:58.0760
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vwaMeR0RXT26iH23zsYwSbBYY65vji92Qi9a/qNDSWwhDava3VGfte2+IfkwIVUxz24K24q62r9e+xCcYIS+vg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5777
 
-Thank you for bringing up your questions and suggestions.The SQ52205 is a
-part number specific to the Asian region, which is why you might not be
-able to find it through a search. I'll provide you the website
-(https://us1.silergy.com/zh/productsview/SQ52205FBP).
-Some registers of this chip are similar to those of the INA226, but it has
-additional registers such as integrators, which is the main reason why I'm
-offering a new driver.And I plan add drivers of the same series based on
-this. I commit the new patch and look forward to your reply.
+Instead of using the max() implementation of
+the ternary operator, use real macros.
 
-Signed-off-by: Wenliang <wenliang202407@163.com>
-
+Signed-off-by: Yang Ruibin <11162571@vivo.com>
 ---
- Documentation/hwmon/index.rst   |   1 +
- Documentation/hwmon/sq52205.rst |  44 +++
- MAINTAINERS                     |   5 +
- drivers/hwmon/Kconfig           |  13 +
- drivers/hwmon/Makefile          |   1 +
- drivers/hwmon/sq52205.c         | 558 ++++++++++++++++++++++++++++++++
- 6 files changed, 622 insertions(+)
- create mode 100644 Documentation/hwmon/sq52205.rst
- create mode 100644 drivers/hwmon/sq52205.c
+ drivers/cpufreq/armada-37xx-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index 913c11390a45..5130270c8efe 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -219,6 +219,7 @@ Hardware Monitoring Kernel Drivers
-    smsc47m1
-    sparx5-temp
-    spd5118
-+   sq52205
-    stpddc60
-    surface_fan
-    sy7636a-hwmon
-diff --git a/Documentation/hwmon/sq52205.rst b/Documentation/hwmon/sq52205.rst
-new file mode 100644
-index 000000000000..e66bf883b42b
---- /dev/null
-+++ b/Documentation/hwmon/sq52205.rst
-@@ -0,0 +1,44 @@
-+SPDX-License-Identifier: GPL-2.0-only
-+
-+Kernel driver sq52205
-+====================
-+
-+Supported chips:
-+
-+  * Silergy SQ52205
-+
-+
-+    Prefix: 'sq52205'
-+    Addresses: I2C 0x40 - 0x4f
-+
-+    Datasheet: Publicly available at the Silergy website
-+
-+	       https://us1.silergy.com/zh
-+
-+
-+Author: Wenliang Yan <wenliang202407@163.com>
-+
-+Description
-+-----------
-+
-+The SQ52205 is a high- and low-side current shunt and power monitor with an I2C
-+interface. The SQ52205 both shunt drop and supply voltage, with programmable
-+calibration value and conversion times. The SQ52205 can also calculate average
-+power for use in energy conversion.
-+
-+
-+
-+Sysfs entries
-+---------------------
-+
-+======================= ===============================
-+in0_input		Shunt voltage(mV) channel
-+in1_input		Bus voltage(mV) channel
-+curr1_input		Current(mA) measurement channel
-+power1_input		Power(uW) measurement channel
-+shunt_resistor		Shunt resistance(uOhm) channel
-+update_interval		data conversion time; affects number of samples used
-+			to average results for shunt and bus voltages.
-+calculate_avg_power	calculate average power from last reading to the present
-+======================= ===============================
-+
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8766f3e5e87e..4794c703da34 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20822,6 +20822,11 @@ S:	Maintained
- F:	drivers/input/touchscreen/silead.c
- F:	drivers/platform/x86/touchscreen_dmi.c
+diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
+index bea41ccab..f4aa3e84d 100644
+--- a/drivers/cpufreq/armada-37xx-cpufreq.c
++++ b/drivers/cpufreq/armada-37xx-cpufreq.c
+@@ -269,7 +269,7 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
+ 	 */
  
-+SILERGY HARDWARE MONITOR DRIVER
-+M:	Wenliang Yan <wenliang202407@163.com>
-+S:	Maintained
-+F:	drivers/hwmon/sq52205.c
-+
- SILICON LABS WIRELESS DRIVERS (for WFxxx series)
- M:	Jérôme Pouiller <jerome.pouiller@silabs.com>
- S:	Supported
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index b60fe2e58ad6..7a6c21c9eee9 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -2521,6 +2521,19 @@ config SENSORS_INTEL_M10_BMC_HWMON
- 	  sensors monitor various telemetry data of different components on the
- 	  card, e.g. board temperature, FPGA core temperature/voltage/current.
+ 	target_vm = avs_map[l0_vdd_min] - 100;
+-	target_vm = target_vm > MIN_VOLT_MV ? target_vm : MIN_VOLT_MV;
++	target_vm = max(target_vm, MIN_VOLT_MV);
+ 	dvfs->avs[1] = armada_37xx_avs_val_match(target_vm);
  
-+config SENSORS_SQ52205
-+	tristate "Silergy SQ52205 and compatibles"
-+	depends on I2C
-+	select REGMAP_I2C
-+	help
-+	  If you say yes here you get support for SQ52205 power monitor chips.
-+
-+	  The SQ52205 driver is configured for the default configuration of
-+	  the part as described in the datasheet.
-+	  Default value for Rshunt is 10 mOhms.
-+	  This driver can also be built as a module. If so, the module
-+	  will be called sq52205.
-+
- if ACPI
- 
- comment "ACPI drivers"
-diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-index b1c7056c37db..270f88e3c6e6 100644
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@ -207,6 +207,7 @@ obj-$(CONFIG_SENSORS_SMSC47M1)	+= smsc47m1.o
- obj-$(CONFIG_SENSORS_SMSC47M192)+= smsc47m192.o
- obj-$(CONFIG_SENSORS_SPARX5)	+= sparx5-temp.o
- obj-$(CONFIG_SENSORS_SPD5118)	+= spd5118.o
-+obj-$(CONFIG_SENSORS_SQ52205)	+= sq52205.o
- obj-$(CONFIG_SENSORS_STTS751)	+= stts751.o
- obj-$(CONFIG_SENSORS_SURFACE_FAN)+= surface_fan.o
- obj-$(CONFIG_SENSORS_SY7636A)	+= sy7636a-hwmon.o
-diff --git a/drivers/hwmon/sq52205.c b/drivers/hwmon/sq52205.c
-new file mode 100644
-index 000000000000..a7a674a50289
---- /dev/null
-+++ b/drivers/hwmon/sq52205.c
-@@ -0,0 +1,558 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Driver for SQ52205 power monitor chip
-+ *
-+ * Copyright (C) 2024 Wenliang Yan <wenliang202407@163.com>
-+ */
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+#include <linux/i2c.h>
-+#include <linux/hwmon.h>
-+#include <linux/hwmon-sysfs.h>
-+#include <linux/jiffies.h>
-+#include <linux/of.h>
-+#include <linux/delay.h>
-+#include <linux/util_macros.h>
-+#include <linux/regmap.h>
-+
-+
-+
-+/* common register definitions */
-+#define SQ522XX_CONFIG			0x00
-+#define SQ522XX_SHUNT_VOLTAGE	0x01 /* readonly */
-+#define SQ522XX_BUS_VOLTAGE		0x02 /* readonly */
-+#define SQ522XX_POWER			0x03 /* readonly */
-+#define SQ522XX_CURRENT			0x04 /* readonly */
-+#define SQ522XX_CALIBRATION		0x05
-+
-+/* SQ52205 register definitions */
-+#define SQ52205_MASK_ENABLE		0x06
-+#define SQ52205_ALERT_LIMIT		0x07
-+#define SQ52205_EIN				0x0A
-+#define SQ52205_ACCUM_CONFIG	0x0D
-+
-+/* register count */
-+#define SQ52205_REGISTERS		0x0D
-+#define SQ522XX_MAX_REGISTERS	0x0D
-+
-+/* settings - default */
-+#define SQ52205_CONFIG_DEFAULT		0x4527	/* averages=16 */
-+#define SQ52205_ACCUM_CONFIG_DEFAULT	0x044C
-+
-+/* worst case is 68.10 ms (~14.6Hz) */
-+#define SQ522XX_CONVERSION_RATE		15
-+#define SQ522XX_MAX_DELAY		69 /* worst case delay in ms */
-+
-+#define SQ522XX_RSHUNT_DEFAULT		10000	//10mOhms
-+#define SQ52205_BUS_VOLTAGE_LSB		1250	//1.25mV
-+
-+/* bit mask for reading the averaging setting in the configuration register */
-+#define SQ52205_AVG_RD_MASK		0x0E00
-+
-+#define SQ52205_READ_AVG(reg)		(((reg) & SQ52205_AVG_RD_MASK) >> 9)
-+#define SQ52205_SHIFT_AVG(val)		((val) << 9)
-+
-+/* common attrs, sq52205 attrs and NULL */
-+#define SQ522XX_MAX_ATTRIBUTE_GROUPS	3
-+
-+/*
-+ * Both bus voltage and shunt voltage conversion times for sq52205 are set
-+ * to 0b0100 on POR, which translates to 2200 microseconds in total.
-+ */
-+#define SQ52205_TOTAL_CONV_TIME_DEFAULT	2200
-+
-+static const struct regmap_config sq522xx_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+};
-+
-+enum sq522xx_ids { sq52205 };
-+
-+struct sq522xx_config {
-+	u16 config_default;
-+	int calibration_factor;
-+	int registers;
-+	int shunt_div;
-+	int bus_voltage_shift;
-+	int bus_voltage_lsb;	/* uV */
-+	int power_lsb;			/* uW */
-+};
-+
-+struct sq522xx_data {
-+	const struct sq522xx_config *config;
-+
-+	long rshunt;
-+
-+	struct mutex config_lock;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+
-+	const struct attribute_group *groups[SQ522XX_MAX_ATTRIBUTE_GROUPS];
-+};
-+
-+static const struct sq522xx_config sq522xx_config[] = {
-+	[sq52205] = {
-+		.config_default = SQ52205_CONFIG_DEFAULT,
-+		.calibration_factor = 5120000,
-+		.registers = SQ52205_REGISTERS,
-+		.shunt_div = 400,
-+		.bus_voltage_shift = 0,
-+		.bus_voltage_lsb = SQ52205_BUS_VOLTAGE_LSB,
-+		.power_lsb = 25000,
-+	},
-+};
-+
-+/*
-+ * Available averaging rates for sq52205. The indices correspond with
-+ * the bit values expected by the chip (according to the sq52205 datasheet)
-+ */
-+static const int sq52205_avg_tab[] = { 1, 4, 16, 64, 128, 256, 512, 1024 };
-+
-+static int sq52205_reg_to_interval(u16 config)
-+{
-+	int avg = sq52205_avg_tab[SQ52205_READ_AVG(config)];
-+
-+	/*
-+	 * Multiply the total conversion time by the number of averages.
-+	 * Return the result in milliseconds.
-+	 */
-+	return DIV_ROUND_CLOSEST(avg * SQ52205_TOTAL_CONV_TIME_DEFAULT, 1000);
-+}
-+
-+/*
-+ * Return the new, shifted AVG field value of CONFIG register,
-+ * to use with regmap_update_bits
-+ */
-+static u16 sq52205_interval_to_reg(int interval)
-+{
-+	int avg, avg_bits;
-+
-+	avg = DIV_ROUND_CLOSEST(interval * 1000,
-+				SQ52205_TOTAL_CONV_TIME_DEFAULT);
-+	avg_bits = find_closest(avg, sq52205_avg_tab,
-+				ARRAY_SIZE(sq52205_avg_tab));
-+
-+	return SQ52205_SHIFT_AVG(avg_bits);
-+}
-+
-+/*
-+ * Calibration register is set to the best value, which eliminates
-+ * truncation errors on calculating current register in hardware.
-+ * According to datasheet the best values are 2048 for
-+ * sq52205. They are hardcoded as calibration_value.
-+ */
-+static int sq522xx_calibrate(struct sq522xx_data *data)
-+{
-+	u16 val = DIV_ROUND_CLOSEST(data->config->calibration_factor,
-+					data->rshunt);
-+
-+	return regmap_write(data->regmap, SQ522XX_CALIBRATION,
-+				val);
-+}
-+
-+/*
-+ * Initialize the configuration and calibration registers.
-+ */
-+static int sq522xx_init(struct sq522xx_data *data)
-+{
-+	int ret = regmap_write(data->regmap, SQ522XX_CONFIG,
-+				data->config->config_default);
-+	if (ret < 0)
-+		return ret;
-+
-+	return sq522xx_calibrate(data);
-+}
-+static int sq52205_init(struct sq522xx_data *data)
-+{
-+	// configure ENABLE register
-+	int ret = regmap_write(data->regmap, SQ52205_ACCUM_CONFIG,
-+				SQ52205_ACCUM_CONFIG_DEFAULT);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int sq522xx_read_reg(struct device *dev, int reg, unsigned int *regval)
-+{
-+	struct sq522xx_data *data = dev_get_drvdata(dev);
-+	int ret, retry;
-+
-+	dev_dbg(dev, "Starting register %d read\n", reg);
-+
-+	for (retry = 5; retry; retry--) {
-+
-+		ret = regmap_read(data->regmap, reg, regval);
-+		if (ret < 0)
-+			return ret;
-+
-+		dev_dbg(dev, "read %d, val = 0x%04x\n", reg, *regval);
-+
-+		/*
-+		 * If the current value in the calibration register is 0, the
-+		 * power and current registers will also remain at 0. In case
-+		 * the chip has been reset let's check the calibration
-+		 * register and reinitialize if needed.
-+		 * We do that extra read of the calibration register if there
-+		 * is some hint of a chip reset.
-+		 */
-+		if (*regval == 0) {
-+			unsigned int cal;
-+
-+			ret = regmap_read(data->regmap, SQ522XX_CALIBRATION,
-+					  &cal);
-+			if (ret < 0)
-+				return ret;
-+
-+			if (cal == 0) {
-+				dev_warn(dev, "chip not calibrated, reinitializing\n");
-+
-+				ret = sq522xx_init(data);
-+				if (ret < 0)
-+					return ret;
-+				/*
-+				 * Let's make sure the power and current
-+				 * registers have been updated before trying
-+				 * again.
-+				 */
-+				msleep(SQ522XX_MAX_DELAY);
-+				continue;
-+			}
-+		}
-+		return 0;
-+	}
-+
-+	/*
-+	 * If we're here then although all write operations succeeded, the
-+	 * chip still returns 0 in the calibration register. Nothing more we
-+	 * can do here.
-+	 */
-+	dev_err(dev, "unable to reinitialize the chip\n");
-+	return -ENODEV;
-+}
-+
-+static int sq522xx_get_value(struct sq522xx_data *data, u8 reg,
-+				unsigned int regval)
-+{
-+	int val;
-+
-+	switch (reg) {
-+	case SQ522XX_SHUNT_VOLTAGE:
-+		/* signed register , value is in mV*/
-+		val = DIV_ROUND_CLOSEST((s16)regval, data->config->shunt_div);
-+		break;
-+	case SQ522XX_BUS_VOLTAGE:
-+		/* signed register , value is in mV*/
-+		val = (regval >> data->config->bus_voltage_shift)
-+		* data->config->bus_voltage_lsb;
-+		val = DIV_ROUND_CLOSEST(val, 1000);
-+		break;
-+	case SQ522XX_POWER:
-+		/* value is in uV*/
-+		val = regval * data->config->power_lsb;
-+		break;
-+	case SQ522XX_CURRENT:
-+		/* signed register, LSB=1mA (selected), in mA */
-+		val = (s16)regval;
-+		break;
-+	case SQ522XX_CALIBRATION:
-+		val = DIV_ROUND_CLOSEST(data->config->calibration_factor,
-+					regval);
-+		break;
-+	default:
-+		/* programmer goofed */
-+		WARN_ON_ONCE(1);
-+		val = 0;
-+		break;
-+	}
-+
-+	return val;
-+}
-+
-+static ssize_t sq522xx_value_show(struct device *dev,
-+				 struct device_attribute *da, char *buf)
-+{
-+	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
-+	struct sq522xx_data *data = dev_get_drvdata(dev);
-+	unsigned int regval;
-+
-+	int err = sq522xx_read_reg(dev, attr->index, &regval);
-+
-+	if (err < 0)
-+		return err;
-+
-+	return sysfs_emit(buf, "%d\n", sq522xx_get_value(data, attr->index, regval));
-+}
-+
-+
-+/*
-+ * In order to keep calibration register value fixed, the product
-+ * of current_lsb and shunt_resistor should also be fixed and equal
-+ * to shunt_voltage_lsb = 1 / shunt_div multiplied by 10^9 in order
-+ * to keep the scale.
-+ */
-+static ssize_t sq522xx_shunt_store(struct device *dev,
-+				  struct device_attribute *da,
-+				  const char *buf, size_t count)
-+{
-+	unsigned long val;
-+	int status;
-+	struct sq522xx_data *data = dev_get_drvdata(dev);
-+
-+	status = kstrtoul(buf, 10, &val);
-+	if (status < 0)
-+		return status;
-+	/* Values greater than the calibration factor make no sense. */
-+	if (val == 0 || val > data->config->calibration_factor)
-+		return -EINVAL;
-+
-+	mutex_lock(&data->config_lock);
-+	data->rshunt = val;
-+
-+	status = sq522xx_calibrate(data);
-+	mutex_unlock(&data->config_lock);
-+	if (status < 0)
-+		return status;
-+
-+	return count;
-+}
-+
-+static ssize_t sq522xx_shunt_show(struct device *dev,
-+				 struct device_attribute *da, char *buf)
-+{
-+	struct sq522xx_data *data = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%li\n", data->rshunt);
-+}
-+
-+
-+
-+static ssize_t sq52205_interval_store(struct device *dev,
-+					struct device_attribute *da,
-+					const char *buf, size_t count)
-+{
-+	struct sq522xx_data *data = dev_get_drvdata(dev);
-+	unsigned long val;
-+	int status;
-+
-+	status = kstrtoul(buf, 10, &val);
-+	if (status < 0)
-+		return status;
-+
-+	if (val > INT_MAX || val == 0)
-+		return -EINVAL;
-+
-+	status = regmap_update_bits(data->regmap, SQ522XX_CONFIG,
-+					SQ52205_AVG_RD_MASK,
-+					sq52205_interval_to_reg(val));
-+	if (status < 0)
-+		return status;
-+
-+	return count;
-+}
-+
-+static ssize_t sq52205_interval_show(struct device *dev,
-+					struct device_attribute *da, char *buf)
-+{
-+	struct sq522xx_data *data = dev_get_drvdata(dev);
-+	int status;
-+	unsigned int regval;
-+
-+	status = regmap_read(data->regmap, SQ522XX_CONFIG, &regval);
-+	if (status)
-+		return status;
-+
-+	return sysfs_emit(buf, "%d\n", sq52205_reg_to_interval(regval));
-+}
-+
-+static int sq52205_read_reg48(const struct i2c_client *client, u8 reg,
-+					long *accumulator_24, long *sample_count)
-+{
-+	u8 data[6];
-+	int err;
-+	*accumulator_24 = 0;
-+	*sample_count = 0;
-+
-+	/* 48-bit register read */
-+	err = i2c_smbus_read_i2c_block_data(client, reg, 6, data);
-+	if (err < 0)
-+		return err;
-+	if (err != 6)
-+		return -EIO;
-+	*accumulator_24 = ((data[3] << 16) |
-+				(data[4] << 8) |
-+				data[5]);
-+	*sample_count = ((data[0] << 16) |
-+				(data[1] << 8) |
-+				data[2]);
-+
-+	return 0;
-+}
-+
-+static ssize_t sq52205_avg_power_show(struct device *dev,
-+					struct device_attribute *da, char *buf)
-+{
-+	struct sq522xx_data *data = dev_get_drvdata(dev);
-+	long sample_count, accumulator_24, regval;
-+	int status;
-+
-+	status = sq52205_read_reg48(data->client, SQ52205_EIN,
-+						&accumulator_24, &sample_count);
-+	if (status)
-+		return status;
-+	regval = DIV_ROUND_CLOSEST(accumulator_24, sample_count);
-+	regval = regval * data->config->power_lsb;
-+
-+
-+	return sysfs_emit(buf, "%li\n", regval);
-+}
-+
-+/* shunt voltage */
-+static SENSOR_DEVICE_ATTR_RO(in0_input, sq522xx_value, SQ522XX_SHUNT_VOLTAGE);
-+
-+/* bus voltage */
-+static SENSOR_DEVICE_ATTR_RO(in1_input, sq522xx_value, SQ522XX_BUS_VOLTAGE);
-+
-+/* calculated current */
-+static SENSOR_DEVICE_ATTR_RO(curr1_input, sq522xx_value, SQ522XX_CURRENT);
-+
-+/* calculated power */
-+static SENSOR_DEVICE_ATTR_RO(power1_input, sq522xx_value, SQ522XX_POWER);
-+
-+/* shunt resistance */
-+static SENSOR_DEVICE_ATTR_RW(shunt_resistor, sq522xx_shunt, SQ522XX_CALIBRATION);
-+
-+/* update interval (sq52205 only) */
-+static SENSOR_DEVICE_ATTR_RW(update_interval, sq52205_interval, 0);
-+
-+/* calculate_avg_power (sq52205 only) */
-+static SENSOR_DEVICE_ATTR_RO(calculate_avg_power, sq52205_avg_power, 0);
-+
-+
-+/* pointers to created device attributes */
-+static struct attribute *sq522xx_attrs[] = {
-+	&sensor_dev_attr_in0_input.dev_attr.attr,
-+	&sensor_dev_attr_in1_input.dev_attr.attr,
-+	&sensor_dev_attr_curr1_input.dev_attr.attr,
-+	&sensor_dev_attr_power1_input.dev_attr.attr,
-+	&sensor_dev_attr_shunt_resistor.dev_attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group sq522xx_group = {
-+	.attrs = sq522xx_attrs,
-+};
-+
-+static struct attribute *sq52205_attrs[] = {
-+	&sensor_dev_attr_update_interval.dev_attr.attr,
-+	&sensor_dev_attr_calculate_avg_power.dev_attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group sq52205_group = {
-+	.attrs = sq52205_attrs,
-+};
-+
-+static const struct i2c_device_id sq522xx_id[];
-+
-+static int sq522xx_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct sq522xx_data *data;
-+	struct device *hwmon_dev;
-+	u32 val;
-+	int ret, group = 0;
-+	enum sq522xx_ids chip;
-+
-+	if (client->dev.of_node)
-+		chip = (uintptr_t)of_device_get_match_data(&client->dev);
-+	else
-+		chip = i2c_match_id(sq522xx_id, client)->driver_data;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	/* set the device type */
-+	data->client = client;
-+	data->config = &sq522xx_config[chip];
-+	mutex_init(&data->config_lock);
-+
-+	if (of_property_read_u32(dev->of_node, "shunt-resistor", &val) < 0)
-+		val = SQ522XX_RSHUNT_DEFAULT;
-+
-+
-+	if (val <= 0 || val > data->config->calibration_factor)
-+		return -ENODEV;
-+
-+	data->rshunt = val;
-+
-+	sq522xx_regmap_config.max_register = data->config->registers;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &sq522xx_regmap_config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(dev, "failed to allocate register map\n");
-+		return PTR_ERR(data->regmap);
-+	}
-+
-+
-+	ret = sq522xx_init(data);
-+	if (ret < 0) {
-+		dev_err(dev, "error configuring the device: %d\n", ret);
-+		return -ENODEV;
-+	}
-+	if (chip == sq52205) {
-+		ret = sq52205_init(data);
-+		if (ret < 0) {
-+			dev_err(dev, "error configuring the device cal: %d\n", ret);
-+			return -ENODEV;
-+		}
-+	}
-+
-+	data->groups[group++] = &sq522xx_group;
-+	if (chip == sq52205)
-+		data->groups[group++] = &sq52205_group;
-+
-+	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
-+								data, data->groups);
-+	if (IS_ERR(hwmon_dev))
-+		return PTR_ERR(hwmon_dev);
-+
-+	dev_info(dev, "power monitor %s (Rshunt = %li uOhm)\n",
-+		 client->name, data->rshunt);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id sq522xx_id[] = {
-+	{ "sq52205", sq52205 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, sq522xx_id);
-+
-+static const struct of_device_id __maybe_unused sq522xx_of_match[] = {
-+	{
-+		.compatible = "silergy,sq52205",
-+		.data = (void *)sq52205
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, sq522xx_of_match);
-+
-+static struct i2c_driver sq522xx_driver = {
-+	.driver = {
-+		.name	= "sq522xx",
-+		.of_match_table = of_match_ptr(sq522xx_of_match),
-+	},
-+	.probe		= sq522xx_probe,
-+	.id_table	= sq522xx_id,
-+};
-+
-+module_i2c_driver(sq522xx_driver);
-+
-+MODULE_AUTHOR(" <wenliang202407@163.com> ");
-+MODULE_DESCRIPTION("SQ522xx driver");
-+MODULE_LICENSE("GPL");
+ 	/*
 -- 
-2.17.1
+2.34.1
 
 
