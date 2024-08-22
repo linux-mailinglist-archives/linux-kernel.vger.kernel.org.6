@@ -1,126 +1,468 @@
-Return-Path: <linux-kernel+bounces-297912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8831F95BF0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE8595BF0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E52F284EAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1DE283A7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355731D04A5;
-	Thu, 22 Aug 2024 19:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEED13B586;
+	Thu, 22 Aug 2024 19:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o4YThaEU"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DnCAU3Kf"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19844199FC8
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C15199FC8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724355710; cv=none; b=JwG03/8xL6wKfNGrOlIadKtoroWpF8pdkGZmQ/rS2NLEpP5RniKyEgpsuBc/U+Mxt6jjF1aFLdXGWM4SVLM8SVxxhzX9qwd4Y3I0vrLdOLXLcqi03sd0ALowG3WykxxrRG+IvcubJnw2HHWsrNjkjWCQ6rc9Z2PtR2ZVmcH5SpU=
+	t=1724355803; cv=none; b=nvyUIAEAdRvvkx8amXmz3BMoR3i9WUk4q4HEiegKieDT+DPBkMqnJz+MlWtVYk1ldqn/RuDMIYn+3GMVGOujf47j0KRe+PWGF757UxzEC/sXLk+D3F7Fl6Lauf3WXHUbBNsbD5bQNpnmgDVg4zJM2VhGk7KQvfmTXMA3qXRQ9oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724355710; c=relaxed/simple;
-	bh=BxxeA09AkHi/Rmon5GlnfCCtQOP/lAeqUeXDmx+jjLk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rgt/JRDsw+efaMNlBcj4Pai59nbmdhxSd9fsciqiLSskxaccpmsROtWUaKHCRl8dPaWI7GvNMeinGgkzeaqRFB6fHvBeouWAo+o7rOxUlri1Tia4/mq1cr4msLMeUcbQQ9g+kXtro9U4igG1g+b+fr3CZtS5uulX1sFlO5vZrKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o4YThaEU; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1159fb161fso1849766276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:41:48 -0700 (PDT)
+	s=arc-20240116; t=1724355803; c=relaxed/simple;
+	bh=QT7aJlEY8Rv4tVUsadFB7WX2kBMAnPwke95aKAAGiGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lo3FA1MvX6MuJdAnBjM8mYFSlfVFegHGwAhZ5IGY2Xt1Zr5EL2oNa+mpH0TcvoI0GSsTF6WLDHrrOzEQMqULqY5rJ+beCRoCWjI1mP2wPDzRPegsPCJ1Km4pYeFL1e/guiHbKLeSHSLsZtImWL0rG0M6wYihVNpB2uyhy88yZ6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DnCAU3Kf; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70940c9657dso869839a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:43:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724355708; x=1724960508; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mz9wGeuXm6EpIBUb6YvKcCToAhANCut6lncmUTXot4A=;
-        b=o4YThaEUvyVKEizLA0VgXTByPoXooNrN+sCyhKoAReErCm1N/LZHdZTvHQtL9S2jjB
-         F2Pir4srYm3mKWXLZ47brFaKTW/lUuUTiRylNQJ9QNELogWDXdzdETbxaQjEUjjgQo/I
-         lINSXlBKgQ8NBqU1qpHIzk1OZkpmsazc3Py5x4WvFGh5uAs8Qo4LNg7cry/OZJIWPr1V
-         5QsoaqQW18jR1DheBxSRweMvdJlkuwC+Ly6MIrkXH8z5D+K2GtBg7iKlkTR6KWSDjixD
-         IgidVq/iE/rqUmNAXOsetttaDU41vtrbZNuQNorWagJaUFW/P/+AylRXAS3Fn1Gv5eH+
-         FMow==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724355800; x=1724960600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u0IEyTvUOt9NE+jKWzvSdPx4thYKWyDYS1DC+M4ZgJQ=;
+        b=DnCAU3KfSschA2J3hPcLgJ8fCBIZX3mYvGXQ6/e0WqHv2E9fk5xD2soDjR1iOoAuZb
+         gjigXmCZCldsByu6iRbUlQYpubWW74+tCj+dsk6yoE2aj839ECsgxyEiWpmPTb9tt4Sv
+         P2QIkVE+UuaO1FdPeeo+UgQ7/Nuz7L9hCyD+Pqtq5j/jPRP7PIxew2H/19LQmFE85U5v
+         TqHpQJIOKx7KOhE4cII4FtahTmyKXBQTBgBHm6KRYu+oxH4yWtayPJEIJUYmKaOBJdJE
+         Zh5F/N+MOQCG4D+ypM8zRtcQh+ZYqJyV4Sq3cytjW+NVAW3wHk+piqixWYNIJomjaBoI
+         SUHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724355708; x=1724960508;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mz9wGeuXm6EpIBUb6YvKcCToAhANCut6lncmUTXot4A=;
-        b=ctnoOdXaZ/dyyyDGXgPOxOjyR129KT6WwNQw3xzrmTQm4oiFLeNULyONOfZvpgepJX
-         JT8FTb1F5v2MPtdxGkW0vDOcTya0E6TICp7/Xj/kpEJcjaoN8mHdlFsAiemeVX10x4/0
-         HLwb/Wr64zrx3WozFHouDQus1y637j2jEGVnbs4TVeGDQjNqnuF+PVFMdb5yBz8MsVSv
-         XxqTwCDxKYQTsfzVzA70T6xWPChDDc2QA/flFXuWLdhqR+ZeH7a4IxOK0Pswourvj5xn
-         Nj54+1xDHlI3Qapka9tL3ZaZTqTtaJ/U11PWQtb2OpW+b2+9PfJEP2Ix/b+J6i66Ab36
-         HT+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWE0h1TFIoX97ZDtCHYW2lK+b+EIA26p40RLo4twOtgu96sgkq7h7Lbp/wiHrJ8oCZn6qZNuP0fqGvoMes=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9u3Eb1z7vIo/y8HiN7AeRGJ9J9RfCysXVm4aTNK4YgtNmWqHa
-	qN88nIACVF6ue/PCKcDtfHn0w6tbjjqe5oJH/byACRKDG9N70dLOZaHOuJpLSa5ekfH7kpsTmuZ
-	1OA==
-X-Google-Smtp-Source: AGHT+IGx7dO6lgld0wkmZJ1yV/WZ2OKuXb8FbYJBWkCzLsCwE15e3wBoWvQmGN0Der/RuQZx4fIWsMbQ3mM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1352:b0:e03:59e2:e82 with SMTP id
- 3f1490d57ef6-e17a8659c57mr11276.10.1724355707969; Thu, 22 Aug 2024 12:41:47
- -0700 (PDT)
-Date: Thu, 22 Aug 2024 12:41:46 -0700
-In-Reply-To: <2f712d90-a22c-42f0-54cc-797706953d2d@amd.com>
+        d=1e100.net; s=20230601; t=1724355800; x=1724960600;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0IEyTvUOt9NE+jKWzvSdPx4thYKWyDYS1DC+M4ZgJQ=;
+        b=Zr4f0Tua9fYK5sLC6svae0YWmpxid1+rVz+PjuzrulrMFIZOG/NFd82fLrbV2kGong
+         MSG2BOisEmkaj2Zhc02ML2F/lpJ6JFxkPlq36nlxleomVnTaFosxEkWBqZIpuGpJgBmE
+         oAg41II6bPZq0Xyo2nPo39Bn89mTa9CpGD2FWoB75EGtvrR+DhqSMxsHMGCKPLNInvL/
+         +WcfWcLst4YS7gqXZmdoMu7DQUGPdAhgbphtDnItaRQLGtzEPoVXc1oqiRYR8cmQ7/iP
+         jJAV2nUGf66kP+t5WGfvajetYvzKeYARmpPMvOkWuuyeg7YgVY5r1QSiB/DEbQZdoyuR
+         tzjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwMNRc5zIv+MngMPDREdU2IDK24QeZ+KboOGD8TXGTS0xO3+rCuMcGzTST+9iulW/qp2e5jdIgsY9KNyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVbN7aTPbp70mQyvWROgZpl4ttZR4D9q8ob9gykuGn6qKI1ttc
+	UpuzCmPwvRCiFbKYJwOQdYxeX7hglTeiA3sDBOAcEwkqd2orPBFmtHpB+LFPC9h52Qcav1r/OhN
+	k
+X-Google-Smtp-Source: AGHT+IHbSe5f9F2QWD6j7jhfMbrWsYlapf/V7JFmavdB7hkWybVFOzvMOkLk0BzckqinXTYLfqqhlw==
+X-Received: by 2002:a05:6808:4492:b0:3d6:2fe3:35ff with SMTP id 5614622812f47-3de19ca9aa4mr6998902b6e.14.1724355800403;
+        Thu, 22 Aug 2024 12:43:20 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3de225d71b8sm401581b6e.51.2024.08.22.12.43.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 12:43:19 -0700 (PDT)
+Message-ID: <48ad0f2b-e937-43f0-a620-164eeb45723e@baylibre.com>
+Date: Thu, 22 Aug 2024 14:43:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240719235107.3023592-1-seanjc@google.com> <20240719235107.3023592-4-seanjc@google.com>
- <ZseG8eQKADDBbat7@google.com> <2f712d90-a22c-42f0-54cc-797706953d2d@amd.com>
-Message-ID: <ZseUelAyEXQEoxG_@google.com>
-Subject: Re: [PATCH v2 03/10] KVM: x86: Re-split x2APIC ICR into ICR+ICR2 for
- AMD (x2AVIC)
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] iio: adc: ad4030: add support for ad4630-24 and
+ ad4630-16
+To: Esteban Blanc <eblanc@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
+ <20240822-eblanc-ad4630_v1-v1-4-5c68f3327fdd@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240822-eblanc-ad4630_v1-v1-4-5c68f3327fdd@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 22, 2024, Tom Lendacky wrote:
-> On 8/22/24 13:44, Sean Christopherson wrote:
-> > +Tom
-> > 
-> > Can someone from AMD confirm that this is indeed the behavior, and that for AMD
-> > CPUs, it's the architectural behavior?
+On 8/22/24 7:45 AM, Esteban Blanc wrote:
+> AD4630-24 and AD4630-16 are 2 channels ADCs. Both channels are
+> interleaved bit per bit on SDO line.
 > 
-> In section "16.11 Accessing x2APIC Register" of APM Vol 2, there is this
-> statement:
+> Signed-off-by: Esteban Blanc <eblanc@baylibre.com>
+> ---
+>  drivers/iio/adc/ad4030.c | 197 +++++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 173 insertions(+), 24 deletions(-)
 > 
-> "For 64-bit x2APIC registers, the high-order bits (bits 63:32) are
-> mapped to EDX[31:0]"
-> 
-> and in section "16.11.1 x2APIC Register Address Space" of APM Vol 2,
-> there is this statement:
-> 
-> "The two 32-bit Interrupt Command Registers in APIC mode (MMIO offsets
-> 300h and 310h) are merged into a single 64-bit x2APIC register at MSR
-> address 830h."
-> 
-> So I believe this isn't necessary. @Suravee, agree?
-> 
-> Are you seeing a bug related to this?
+> diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
+> index e1e1dbf0565c..dbba5287b630 100644
+> --- a/drivers/iio/adc/ad4030.c
+> +++ b/drivers/iio/adc/ad4030.c
+> @@ -32,6 +32,8 @@
+>  #define AD4030_REG_PRODUCT_ID_H				0x05
+>  #define AD4030_REG_CHIP_GRADE				0x06
+>  #define     AD4030_REG_CHIP_GRADE_AD4030_24_GRADE	0x10
+> +#define     AD4030_REG_CHIP_GRADE_AD4630_16_GRADE	0x03
+> +#define     AD4030_REG_CHIP_GRADE_AD4630_24_GRADE	0x00
+>  #define     AD4030_REG_CHIP_GRADE_MASK_CHIP_GRADE	GENMASK(7, 3)
+>  #define AD4030_REG_SCRATCH_PAD			0x0A
+>  #define AD4030_REG_SPI_REVISION			0x0B
+> @@ -159,10 +161,14 @@ struct ad4030_state {
+>  	struct {
+>  		union {
+>  			u8 raw[AD4030_MAXIMUM_RX_BUFFER_SIZE];
+> -			struct {
+> -				s32 val;
+> -				u32 common;
+> -			} __packed buffered[AD4030_MAX_HARDWARE_CHANNEL_NB];
+> +			union {
+> +				s32 diff[AD4030_MAX_HARDWARE_CHANNEL_NB];
+> +				struct {
+> +					s32 diff;
+> +					u32 common;
+> +				} __packed
+> +				buffered_common[AD4030_MAX_HARDWARE_CHANNEL_NB];
+> +			};
+>  		};
+>  	} rx_data __aligned(IIO_DMA_MINALIGN);
+>  };
+> @@ -171,7 +177,7 @@ struct ad4030_state {
+>  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
+>  	.type = IIO_VOLTAGE,						\
+>  	.indexed = 1,							\
+> -	.channel = _idx * 2 + 2,					\
+> +	.channel = _idx * 3 + 2,					\
 
-Yep.  With APICv and x2APIC enabled, Intel CPUs use a single 64-bit value at
-offset 300h for the backing storage.  This is what KVM currently implements,
-e.g. when pulling state out of the vAPIC page for migration, and when emulating
-a RDMSR(ICR).
+I'm guessing * 3 should have actually been in the first patch?
+Seems odd to change it now.
 
-With AVIC and x2APIC (a.k.a. x2AVIC enabled), Genoa uses the legacy MMIO offsets
-for storage, at least AFAICT.  I.e. the single MSR at 830h is split into separate
-32-bit values at 300h and 310h on WRMSR, and then reconstituted on RDMSR.
+>  	.scan_index = _idx * 2 + 1,					\
+>  	.extend_name = "Channel" #_idx " common byte part",		\
+>  	.scan_type = {							\
+> @@ -194,8 +200,8 @@ struct ad4030_state {
+>  		BIT(IIO_CHAN_INFO_CALIBSCALE),				\
+>  	.type = IIO_VOLTAGE,						\
+>  	.indexed = 1,							\
+> -	.channel = _idx * 2,						\
+> -	.channel2 = _idx * 2 + 1,					\
+> +	.channel = _idx * 3,						\
+> +	.channel2 = _idx * 3 + 1,					\
+>  	.scan_index = _idx * 2,						\
+>  	.extend_name = "Channel" #_idx " differential part",		\
+>  	.differential = true,						\
+> @@ -412,7 +418,7 @@ static int ad4030_set_avg_frame_len(struct iio_dev *dev, unsigned int avg_len)
+>  static bool ad4030_is_common_byte_asked(struct ad4030_state *st,
+>  					unsigned int mask)
+>  {
+> -	/* Common byte channel is after the "real" differential sample channel */
+> +	/* Common byte channels are after each differential channel */
+>  	return mask & AD4030_COMMON_BYTE_CHANNELS_FILTER;
+>  }
+>  
+> @@ -420,18 +426,69 @@ static int ad4030_set_mode(struct iio_dev *indio_dev, unsigned long mask)
+>  {
+>  	struct ad4030_state *st = iio_priv(indio_dev);
+>  
+> -	if (st->avg_len)
+> +	if (st->avg_len) {
+>  		st->mode = AD4030_OUT_DATA_MD_30_AVERAGED_DIFF;
+> -	else if (ad4030_is_common_byte_asked(st, mask))
+> -		st->mode = AD4030_OUT_DATA_MD_24_DIFF_8_COM;
+> -	else
+> +	} else if (ad4030_is_common_byte_asked(st, mask)) {
+> +		switch (st->chip->precision_bits) {
+> +		case 16:
+> +			st->mode = AD4030_OUT_DATA_MD_16_DIFF_8_COM;
+> +			break;
+> +
+> +		case 24:
+> +			st->mode = AD4030_OUT_DATA_MD_24_DIFF_8_COM;
+> +			break;
+> +
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	} else {
+>  		st->mode = AD4030_OUT_DATA_MD_24_DIFF;
 
-The APM doesn't actually clarify the layout of the backing storage, i.e. doesn't
-explicitly say that the full 64-bit value is stored at 300h.  IIRC, Intel's SDM
-doesn't say that either, i.e. KVM's behavior is fully based on throwing noodles
-and seeing what sticks.
+nit: maybe better to rename this one to AD4030_OUT_DATA_MD_DIFF
+or AD4030_OUT_DATA_MD_DIFF_ONLY since it can be 16 or 24 bits
+depending on the chip?
 
-FWIW, AMD's behavior actually makes sense, at it provides a consistent layout
-when switching between xAPIC and x2APIC.  Intel's does too, from the perspective
-of being able to emit single loads/stores.
+> +	}
+>  
+>  	return regmap_update_bits(st->regmap, AD4030_REG_MODES,
+>  				AD4030_REG_MODES_MASK_OUT_DATA_MODE,
+>  				st->mode);
+>  }
+>  
+> +/*
+> + * @brief Descramble 2 32bits numbers out of a 64bits. The bits are interleaved:
+> + * 1 bit for first number, 1 bit for the second, and so on...
+> + */
+> +static void ad4030_extract_interleaved(u8 *src, u32 *ch0, u32 *ch1)
+> +{
+> +	u8 h0, h1, l0, l1;
+> +	u32 out0, out1;
+> +	u8 *out0_raw = (u8 *)&out0;
+> +	u8 *out1_raw = (u8 *)&out1;
+> +
+> +	for (int i = 0; i < 4; i++) {
+> +		h0 = src[i * 2];
+> +		l1 = src[i * 2 + 1];
+> +		h1 = h0 << 1;
+> +		l0 = l1 >> 1;
+> +
+> +		h0 &= 0xAA;
+> +		l0 &= 0x55;
+> +		h1 &= 0xAA;
+> +		l1 &= 0x55;
+> +
+> +		h0 = (h0 | h0 << 001) & 0xCC;
+> +		h1 = (h1 | h1 << 001) & 0xCC;
+> +		l0 = (l0 | l0 >> 001) & 0x33;
+> +		l1 = (l1 | l1 >> 001) & 0x33;
+> +		h0 = (h0 | h0 << 002) & 0xF0;
+> +		h1 = (h1 | h1 << 002) & 0xF0;
+> +		l0 = (l0 | l0 >> 002) & 0x0F;
+> +		l1 = (l1 | l1 >> 002) & 0x0F;
+> +
+> +		out0_raw[i] = h0 | l0;
+> +		out1_raw[i] = h1 | l1;
+> +	}
+> +
+> +	*ch0 = out0;
+> +	*ch1 = out1;
+> +}
+> +
+>  static int ad4030_conversion(struct ad4030_state *st,
+>  			     const struct iio_chan_spec *chan)
+>  {
+> @@ -460,12 +517,21 @@ static int ad4030_conversion(struct ad4030_state *st,
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (st->mode != AD4030_OUT_DATA_MD_24_DIFF_8_COM)
+> +	if (st->chip->num_channels == 2)
+> +		ad4030_extract_interleaved(st->rx_data.raw,
+> +					   &st->rx_data.diff[0],
+> +					   &st->rx_data.diff[1]);
+> +
+> +	if (st->mode != AD4030_OUT_DATA_MD_16_DIFF_8_COM &&
+> +	    st->mode != AD4030_OUT_DATA_MD_24_DIFF_8_COM)
+>  		return 0;
+>  
+>  	byte_index = BITS_TO_BYTES(chan->scan_type.realbits);
+> -	for (i = 0; i < st->chip->num_channels; i++)
+> -		st->rx_data.buffered[i].common = ((u8 *)&st->rx_data.buffered[i].val)[byte_index];
+> +	/* Doing it backward to avoid overlap when reordering */
+> +	for (i = st->chip->num_channels - 1; i > 0; i--) {
+> +		st->rx_data.buffered_common[i].diff = st->rx_data.diff[i];
+> +		st->rx_data.buffered_common[i].common = ((u8 *)&st->rx_data.diff[i])[byte_index];
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -489,9 +555,9 @@ static int ad4030_single_conversion(struct iio_dev *indio_dev,
+>  		goto out_error;
+>  
+>  	if (chan->channel % 2)
+> -		*val = st->rx_data.buffered[chan->channel / 2].common;
+> +		*val = st->rx_data.buffered_common[chan->channel / 2].common;
+>  	else
+> -		*val = st->rx_data.buffered[chan->channel / 2].val;
+> +		*val = st->rx_data.diff[chan->channel / 2];
+
+Doesn't this need to change since `* 2` was changed to `* 3` for the channel
+value?
+
+Better would be to make use of chan->address to store the actual number we need
+and use that directly instead of reverse engineering the relation of chan->channel
+to input pin number.
+
+>  
+>  out_error:
+>  	ad4030_enter_config_mode(st);
+> @@ -582,14 +648,17 @@ static int ad4030_read_raw(struct iio_dev *indio_dev,
+>  			return IIO_VAL_FRACTIONAL_LOG2;
+>  
+>  		case IIO_CHAN_INFO_CALIBSCALE:
+> -			ret = ad4030_get_chan_gain(indio_dev, chan->channel,
+> -						   val, val2);
+> +			ret = ad4030_get_chan_gain(indio_dev,
+> +						   chan->scan_index / 2,
+> +						   val,
+> +						   val2);
+>  			if (ret)
+>  				return ret;
+>  			return IIO_VAL_INT_PLUS_MICRO;
+>  
+>  		case IIO_CHAN_INFO_CALIBBIAS:
+> -			ret = ad4030_get_chan_offset(indio_dev, chan->channel,
+> +			ret = ad4030_get_chan_offset(indio_dev,
+> +						     chan->scan_index / 2,
+
+Similar to above, we could use chan->address here instead of having to
+know the relationship between scan_index and input pin.
+
+>  						     val);
+>  			if (ret)
+>  				return ret;
+> @@ -614,11 +683,14 @@ static int ad4030_write_raw(struct iio_dev *indio_dev,
+>  	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+>  		switch (info) {
+>  		case IIO_CHAN_INFO_CALIBSCALE:
+> -			return ad4030_set_chan_gain(indio_dev, chan->channel,
+> -						    val, val2);
+> +			return ad4030_set_chan_gain(indio_dev,
+> +						    chan->scan_index / 2,
+> +						    val,
+> +						    val2);
+>  
+>  		case IIO_CHAN_INFO_CALIBBIAS:
+> -			return ad4030_set_chan_offset(indio_dev, chan->channel,
+> +			return ad4030_set_chan_offset(indio_dev,
+> +						      chan->scan_index / 2,
+>  						      val);
+>  
+>  		case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> @@ -801,10 +873,24 @@ static int ad4030_detect_chip_info(const struct ad4030_state *st)
+>  
+>  static int ad4030_config(struct ad4030_state *st)
+>  {
+> +	int ret;
+> +	u8 reg_modes;
+> +
+>  	st->offset_avail[0] = (int)BIT(st->chip->precision_bits - 1) * -1;
+>  	st->offset_avail[1] = 1;
+>  	st->offset_avail[2] = BIT(st->chip->precision_bits - 1) - 1;
+>  
+> +	if (st->chip->num_channels > 1)
+> +		reg_modes = FIELD_PREP(AD4030_REG_MODES_MASK_LANE_MODE,
+> +				       AD4030_LANE_MD_INTERLEAVED);
+> +	else
+> +		reg_modes = FIELD_PREP(AD4030_REG_MODES_MASK_LANE_MODE,
+> +				       AD4030_LANE_MD_1_PER_CH);
+> +
+> +	ret = regmap_write(st->regmap, AD4030_REG_MODES, reg_modes);
+> +	if (ret)
+> +		return ret;
+> +
+>  	if (st->vio_uv < AD4030_VIO_THRESHOLD_UV)
+>  		return regmap_write(st->regmap, AD4030_REG_IO,
+>  				AD4030_REG_IO_MASK_IO2X);
+> @@ -891,8 +977,16 @@ static const unsigned long ad4030_channel_masks[] = {
+>  	0,
+>  };
+>  
+> +static const unsigned long ad4630_channel_masks[] = {
+> +	/* Differential only */
+> +	BIT(0) | BIT(2),
+
+nit: for order consistency with GENMASK
+
+	BIT(2) | BIT(0),
+
+> +	/* Differential with common byte */
+> +	GENMASK(3, 0),
+> +	0,
+> +};
+> +
+>  static const struct iio_scan_type ad4030_24_scan_types[] = {
+> -	[AD4030_SCAN_TYPE_NORMAL] = {
+> +	[AD4030_OUT_DATA_MD_24_DIFF] = {
+
+Accidental replacement?
+
+>  		.sign = 's',
+>  		.storagebits = 32,
+>  		.realbits = 24,
+> @@ -908,6 +1002,23 @@ static const struct iio_scan_type ad4030_24_scan_types[] = {
+>  	},
+>  };
+>  
+> +static const struct iio_scan_type ad4030_16_scan_types[] = {
+> +	[AD4030_SCAN_TYPE_NORMAL] = {
+> +		.sign = 's',
+> +		.storagebits = 32,
+> +		.realbits = 16,
+> +		.shift = 16,
+> +		.endianness = IIO_BE,
+> +	},
+> +	[AD4030_SCAN_TYPE_AVG] = {
+> +		.sign = 's',
+> +		.storagebits = 32,
+> +		.realbits = 30,
+> +		.shift = 2,
+> +		.endianness = IIO_BE,
+> +	}
+> +};
+> +
+>  static const struct ad4030_chip_info ad4030_24_chip_info = {
+>  	.name = "ad4030-24",
+>  	.available_masks = ad4030_channel_masks,
+> @@ -923,14 +1034,52 @@ static const struct ad4030_chip_info ad4030_24_chip_info = {
+>  	.tcyc = AD4030_TCYC_ADJUSTED_NS,
+>  };
+>  
+> +static const struct ad4030_chip_info ad4630_16_chip_info = {
+> +	.name = "ad4630-16",
+> +	.available_masks = ad4630_channel_masks,
+> +	.available_masks_len = ARRAY_SIZE(ad4630_channel_masks),
+> +	.channels = {
+> +		AD4030_CHAN_IN(0, ad4030_16_scan_types),
+> +		AD4030_CHAN_CMO(0),
+> +		AD4030_CHAN_IN(1, ad4030_16_scan_types),
+> +		AD4030_CHAN_CMO(1),
+> +		IIO_CHAN_SOFT_TIMESTAMP(4),
+> +	},
+> +	.grade = AD4030_REG_CHIP_GRADE_AD4630_16_GRADE,
+> +	.precision_bits = 16,
+> +	.num_channels = 2,
+> +	.tcyc = AD4030_TCYC_ADJUSTED_NS,
+> +};
+> +
+> +static const struct ad4030_chip_info ad4630_24_chip_info = {
+> +	.name = "ad4630-24",
+> +	.available_masks = ad4630_channel_masks,
+> +	.available_masks_len = ARRAY_SIZE(ad4630_channel_masks),
+> +	.channels = {
+> +		AD4030_CHAN_IN(0, ad4030_24_scan_types),
+> +		AD4030_CHAN_CMO(0),
+> +		AD4030_CHAN_IN(1, ad4030_24_scan_types),
+> +		AD4030_CHAN_CMO(1),
+> +		IIO_CHAN_SOFT_TIMESTAMP(4),
+> +	},
+> +	.grade = AD4030_REG_CHIP_GRADE_AD4630_24_GRADE,
+> +	.precision_bits = 24,
+> +	.num_channels = 2,
+> +	.tcyc = AD4030_TCYC_ADJUSTED_NS,
+> +};
+> +
+>  static const struct spi_device_id ad4030_id_table[] = {
+>  	{ "ad4030-24", (kernel_ulong_t)&ad4030_24_chip_info },
+> +	{ "ad4630-16", (kernel_ulong_t)&ad4630_16_chip_info },
+> +	{ "ad4630-24", (kernel_ulong_t)&ad4630_24_chip_info },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(spi, ad4030_id_table);
+>  
+>  static const struct of_device_id ad4030_of_match[] = {
+>  	{ .compatible = "adi,ad4030-24", .data = &ad4030_24_chip_info },
+> +	{ .compatible = "adi,ad4630-16", .data = &ad4630_16_chip_info },
+> +	{ .compatible = "adi,ad4630-24", .data = &ad4630_24_chip_info },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, ad4030_of_match);
+> 
+
 
