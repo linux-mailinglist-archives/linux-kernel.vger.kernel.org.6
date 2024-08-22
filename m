@@ -1,129 +1,187 @@
-Return-Path: <linux-kernel+bounces-297752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928F595BD1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:26:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929F695BD1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12D8286B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106FB1F23AFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7F51CEACD;
-	Thu, 22 Aug 2024 17:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94121CEADA;
+	Thu, 22 Aug 2024 17:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xcYoVPa0"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t7bRC+77";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1vOjQtg2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ho8VzL9h";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TVNg7y82"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC321CEABB
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC8E1CEABB;
+	Thu, 22 Aug 2024 17:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724347575; cv=none; b=TPeZFs66ywyujHDQX32GGTHSrlmu1qpJVL/5iYlqgyacsDMEL1TY0hrtWO0tHpBOEI8f3rmVUL6YSpmYHvoxarZKu+2awWlW7FwJPzxCCfojZ5j5oSM4TLk4f5oV1/drA4erwf5V0qMXRK9WTUOQU+CVydc7roXDTq4/V7m4A0s=
+	t=1724347539; cv=none; b=kmW1KaVl2GLsX68YXLgN6ZionvKOZjxBIQglUTirplREuJMD5NdWDjYO5Zt2WTCiQGDXdo/KQ3W4ysoYoAjiQ8qQL/Iq144TztWpMvAICWb2+Jv93XRi9niLuppPYnshM+6dnnMmQc3/YoVVOQGzcP10/zmis/vv2V+3w8sFbQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724347575; c=relaxed/simple;
-	bh=hKMUPw6CH8HDs2xK6jGuQ6sxfGqOmsDNo9juK18wuQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=df8w9Oq9KT8ySP/+0KYpxthN7pUM1OjS1WE9GNOJIHwEpUDUDSiXcm3tNq8iQqUO5EGQqIflTDxuSZCv92Sz4n40CItdnc/HY2zsSJN1CumZO0V7k3Y9PrNYejOY3F0jrJ2Hqmmvwv1AlwnZ4OG1QxgBy7ITUMCfZU/eqOM8EwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xcYoVPa0; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3719398eafcso530066f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724347571; x=1724952371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O4DO9awebiGfQkb+GVLhK+nasDGzkupYiz7rKh68ig4=;
-        b=xcYoVPa0ojpCJ+9FaV4FA1myQC3JqBJ5OILH+oF0P1pyh1Kj/zXDzjr5ntq9PqJuOk
-         yBcigwuLC2MT8CyAOsKJ6rTfbiD8J2QFin5JrqJGDoOjafNnSsE2AWf7VWiy+fQT7Md6
-         S+wY9Pb+Dnuv5FzRHpQlFfha9mFnNLJl346aOpVAHrb/5sPEcRC7GgKS1xKeMxOxvsz+
-         Y8kZ3oq9+8uHG2zIxWtzRUTrF8FLyHnEIqpAGfNlj9objASaFnWvETyxsFshMbI4nQAg
-         iyUabYJT2pzfFQl+CMh4PoCOJXjnU5jAeeBVhVnyP80MbN90y/AtUMqB5WouiE4hpttC
-         QNgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724347571; x=1724952371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O4DO9awebiGfQkb+GVLhK+nasDGzkupYiz7rKh68ig4=;
-        b=ZF2rgt45AYq/WlvB57kQhTndAoK8Z8fYCuDFnTWE12BlKg7jJJA+hUaqNfRFclX+ce
-         +nwXHcNND4L2z1Mk8gy6SWgu+rOmABgo0vw/QOZGe8k8uXrakOqY2N1VuSF67gBFLbPG
-         bg9wZsBCa03b6QcwzKCWUUDLKZmBaVPm0MBPOtcv3K6VdgWOiYHts9oawj2oktnwJCFj
-         15/Hufeo6geSNTVHGR/xKd51tLAjLUmGhNV/jDlnnvRncD0bSjTq6OE+2uG7OXrcJSj6
-         oNitwOEvVMv0WWHQPqOpUF6yUrlXd4S9XwXBGjyD0Cj7de1qQrSL8iYxTj4i3gBOhSwz
-         C31A==
-X-Forwarded-Encrypted: i=1; AJvYcCVniUZIqP//GYD5EMGLDRVgpRLL4czhe0Z8bFmyXNjZwVOUKjASJJBTegBVU5Qaq05y27Dhy7R4Rh9puKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUIWRqdi/Q52MFfLS1NSdliYNKGfMH7KTHoLaiQ8H8J/c30KEX
-	3roNFZ3S4vTC40b1gxnx7am+TWiKO87YVqhg0SAAjybrAXzPACgBsY4b/BG7Xgn/lPiGv8D8YN3
-	HQi9uWN8Gir83+vacYYaBM+hNtu93N5FKUwLp
-X-Google-Smtp-Source: AGHT+IERlA2H+rBepAqpYpAQ1Uha6e+U4xtYh3TpUMHIKxU6JLuOdAROJj/68rX4BvAwcW5/HgRiMK34gzHJukAoUNo=
-X-Received: by 2002:adf:f509:0:b0:371:8d32:b5ed with SMTP id
- ffacd0b85a97d-37308d725b6mr1951352f8f.46.1724347570435; Thu, 22 Aug 2024
- 10:26:10 -0700 (PDT)
+	s=arc-20240116; t=1724347539; c=relaxed/simple;
+	bh=lZz2b+UIfcm76DYpcUn3AC660hwcw/loySTha54lQR4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pLRhqaPFs2t/gfMouMPpwwyk4fd9MngCZrvmUZah5LIcea1v+48T9Dl0bXhPAs0MxwdeVIozcRp2AZ/1eSKxx8itlupq0tlUTkuY26BYoGwvc8zJEl5AJF0U5cqCW8pc/7F31A2YsTBRGneRu57gtfJRn1PUCd4FDwtBVqyZw+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t7bRC+77; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1vOjQtg2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ho8VzL9h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TVNg7y82; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E82782020D;
+	Thu, 22 Aug 2024 17:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724347535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
+	b=t7bRC+77OR6/NWFx47bUZGgve7AI/XiZjiO1dppmXhr6x/cdGJvzxIjlftga0lsoPWxYbc
+	XrE2SLnexdMzA61Bya8KlA0rHmbxVengX6jtYmwUALgn2HhEKSmmho9RErcB/SWTaN+EK3
+	HePBOutOXfVOwCopgx9/h4OFk2Jx0ug=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724347535;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
+	b=1vOjQtg2+4yPFcrKWikFzyDAABw4sAJGqrPJhX13v+P+YE1RNnWBbDEng9jalzaEuwdjFc
+	1BZ6+dZG40KdIICw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ho8VzL9h;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=TVNg7y82
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724347534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
+	b=ho8VzL9haiPDdrXvqolJg/wNSKS0UVG9hXShBWklDjZ5/jm4fKz7wEDhxdxpj6jitIZ3W9
+	a0ZT2N5pgfgTTj9cUQ0Er2PtCK/jDzG4lAuUKzkmKYaNGaP/itfKLEa5yWHZ43AM++Bvaw
+	aECvA0erDCb55TJ0CQ8wN7xknDBPZK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724347534;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
+	b=TVNg7y82VmpzTXpW7vXGdIN0hR3jJVeb/JEGCLUiYt9qsSEM9Zsiqtk4mPm+ivC2YTl+ea
+	QkCCKCLXqItDm9Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC53113A1F;
+	Thu, 22 Aug 2024 17:25:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id B98pJI50x2bmFwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 22 Aug 2024 17:25:34 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Eugen Hristev <eugen.hristev@collabora.com>,  brauner@kernel.org,
+  tytso@mit.edu,  linux-ext4@vger.kernel.org,  jack@suse.cz,
+  adilger.kernel@dilger.ca,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel@collabora.com,
+  shreeya.patel@collabora.com
+Subject: Re: [PATCH 1/2] fs/dcache: introduce d_alloc_parallel_check_existing
+In-Reply-To: <20240822011345.GS504335@ZenIV> (Al Viro's message of "Thu, 22
+	Aug 2024 02:13:45 +0100")
+Organization: SUSE
+References: <20240705062621.630604-1-eugen.hristev@collabora.com>
+	<20240705062621.630604-2-eugen.hristev@collabora.com>
+	<87zfp7rltx.fsf@mailhost.krisman.be>
+	<2df894de-8fa9-40c2-ba2c-f9ae65520656@collabora.com>
+	<87jzg9wjeo.fsf@mailhost.krisman.be> <20240822011345.GS504335@ZenIV>
+Date: Thu, 22 Aug 2024 13:25:33 -0400
+Message-ID: <87frqwwjua.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814035451.773331-1-yuzhao@google.com> <20240814035451.773331-2-yuzhao@google.com>
- <2d418463-1458-5361-86c4-a07908fc114d@huawei.com>
-In-Reply-To: <2d418463-1458-5361-86c4-a07908fc114d@huawei.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Thu, 22 Aug 2024 11:25:31 -0600
-Message-ID: <CAOUHufbq2biYswAfH06_1d=kNfVNvM18jpM5udx=xc4-_KNREQ@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v2 1/3] mm/contig_alloc: support __GFP_COMP
-To: Yu Liao <liaoyu15@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Rspamd-Queue-Id: E82782020D
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Thu, Aug 22, 2024 at 2:21=E2=80=AFAM Yu Liao <liaoyu15@huawei.com> wrote=
-:
->
-> On 2024/8/14 11:54, Yu Zhao wrote:
-> > Support __GFP_COMP in alloc_contig_range(). When the flag is set, upon
-> > success the function returns a large folio prepared by
-> > prep_new_page(), rather than a range of order-0 pages prepared by
-> > split_free_pages() (which is renamed from split_map_pages()).
-> >
-> > alloc_contig_range() can be used to allocate folios larger than
-> > MAX_PAGE_ORDER, e.g., gigantic hugeTLB folios. So on the free path,
-> > free_one_page() needs to handle that by split_large_buddy().
-> >
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > ---
-> >  include/linux/gfp.h |  23 +++++++++
-> >  mm/compaction.c     |  41 ++--------------
-> >  mm/page_alloc.c     | 111 +++++++++++++++++++++++++++++++-------------
-> >  3 files changed, 108 insertions(+), 67 deletions(-)
-> >
-> > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> > index f53f76e0b17e..59266df56aeb 100644
-> > --- a/include/linux/gfp.h
-> > +++ b/include/linux/gfp.h
-> > @@ -446,4 +446,27 @@ extern struct page *alloc_contig_pages_noprof(unsi=
-gned long nr_pages, gfp_t gfp_
-> >  #endif
-> >  void free_contig_range(unsigned long pfn, unsigned long nr_pages);
-> >
-> > +#ifdef CONFIG_CONTIG_ALLOC
-> > +static inline struct folio *folio_alloc_gigantic_noprof(int order, gfp=
-_t gfp,
-> > +                                                     int nid, nodemask=
-_t *node)
-> > +{
-> > +     struct page *page;
-> > +
-> > +     if (WARN_ON(!order || !(gfp | __GFP_COMP)))
->
-> It doesn't seem right, it should be !(gfp & __GFP_COMP).
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-Thanks. I've asked Andrew to patch this up (and another place in mm/cma.c).
+> On Wed, Aug 21, 2024 at 07:22:39PM -0400, Gabriel Krisman Bertazi wrote:
+>
+>> Would it be acceptable to just change the dentry->d_name here in a new
+>> flavor of d_add_ci used only by these filesystems? We are inside the
+>> creation path, so the dentry has never been hashed.  Concurrent lookups
+>> will be stuck in d_wait_lookup() until we are done and will never become
+>> invalid after the change because the lookup was already done
+>> case-insensitively, so they all match the same dentry, per-definition,
+>> and we know there is no other matching dentries in the directory.  We'd
+>> only need to be careful not to expose partial names to concurrent
+>> parallel lookups.
+>
+> *Ow*
+>
+> ->d_name stability rules are already convoluted as hell; that would make
+> them even more painful.
+>
+> What locking are you going to use there?
+
+Since we are in the ->d_lookup() during the rename, and we use the
+dcache-insensitively for the filesystems that will do the rename, we
+know there is nothing in the dcache and the dentry is still in the
+parallel lookup table.  So we are not racing with a creation of the same
+name in the same directory.  A parallel lookup will either find that
+dentry (old or new name, doesn't matter) or not find anything, in case
+it sees a partial ->d_name.  Therefore, the only possible problem is a
+false negative/positive in parent->d_in_lookup_hash.
+
+Can we extend the rename_lock seqlock protection that already exists in
+d_alloc_parallel to include the d_in_lookup_hash walk?  d_add_ci then
+acquires the rename_lock before writing ->d_name and d_alloc_parallel
+will see it changed after iterating over d_in_lookup_hash, in case it
+didn't find anything, and retry the entire sequence.
+
+Case-inexact lookups are not supposed to be frequent. Most lookups
+should be done in a case-exact way, so the extra acquisition of
+rename_lock shouldn't create more contention on the rename_lock for the
+regular path or for non-case-insensitive filesystems.  The overhead in
+d_alloc_parallel is another read_seqretry() that is done only in the
+case where the dentry is not found anywhere and should be created.
+
+-- 
+Gabriel Krisman Bertazi
 
