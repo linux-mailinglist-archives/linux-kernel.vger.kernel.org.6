@@ -1,181 +1,121 @@
-Return-Path: <linux-kernel+bounces-297833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E3895BE40
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C0495BE45
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35991C21522
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3478C1C21F78
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F461D048C;
-	Thu, 22 Aug 2024 18:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61791CFEDD;
+	Thu, 22 Aug 2024 18:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="LWndbxnZ"
-Received: from sender3-of-o57.zoho.com (sender3-of-o57.zoho.com [136.143.184.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SY9aJ+u8"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86DFEC5;
-	Thu, 22 Aug 2024 18:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724351476; cv=pass; b=DjtlAO4jxEDjb5OCzhDa6aC9dqZcDzuWs2vbKD5M2zonlfxDgH7CBSrZ2B2ZfvzaZoai1+MVtCYKp3IGF3FGzlQZ/mxdx3eF5IpARPPC+7sKMSp3nYGByWTQqVC6cNJ5Yt2GqgY0gV5WH7F1Ex3LcFXcWBO50sokM5ViOFEfpfE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724351476; c=relaxed/simple;
-	bh=agHBdZkQ8BulJoORPycTlSOnOyfy9kfTwiKBhxMAjag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VkQwmhFYO7roLIV4f+GbFbuS4asXoazYfaCyLI0+rIiytKmygp1j8G6FNMayAE5LNaFeZA5YwleJvGdIt7b2409PvLPC7VzX/bJzh62zUo6KxPuxgfQwg6SqljzeEinSvV5q2cbyKEbJH1WzL5ydL4b0TY9iZpQd1giLUDHxsHw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=LWndbxnZ; arc=pass smtp.client-ip=136.143.184.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724351396; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ensxJanajnfNH4lrohozTfRp/kJ8ndAR/I5SeOCvPtvZpwA/RS3UKS9IzW5MnGlu3KwD9JZgR/559mn/GKEg7+II30GBHjPG+RHQQXv6qYJ8VO6d6q5godbIQcqq8y5Wsi0Giv6acyQMSSuozV5LPKeS57s5x4o9g8w+sokW13c=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724351396; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=MyQlkXBuBh5D5+ORO/Ajt6ntHefewg/FMRXibyLJvKQ=; 
-	b=fPGGbQa6PDJETfzD86dOnyy2nf1dhiCXht9Z7kAfpQDeTDuKfPlCsPgzwzvQy4C7qDUHI6mVeTa8+DiKlK4twHkkFW7Rmr4iNCsDZl/Ko9tv8Bi0jkphPJpIC2WLsxxLAEHGJm+ZQJ0UDZdtX2DQt0UJL9HnfiEXQoDXnto9fHQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=apertussolutions.com;
-	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
-	dmarc=pass header.from=<dpsmith@apertussolutions.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724351396;
-	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=MyQlkXBuBh5D5+ORO/Ajt6ntHefewg/FMRXibyLJvKQ=;
-	b=LWndbxnZqsXgRW0zxX0skSHrs/RICB+4zvHapAfsJIHhBjt1SzpRUZ8bMV2l5ynf
-	xRPob/zjMHRjYX8ykLglY1hM59kdZCqo6e2s59dYvXpsTBX6lSomKRhRHWTKfRE2XAz
-	FMGosfle+46Swp76HbPabYQUH+ZMH+FO0Ir/i62I=
-Received: by mx.zohomail.com with SMTPS id 1724351393878947.9797156192928;
-	Thu, 22 Aug 2024 11:29:53 -0700 (PDT)
-Message-ID: <281c3bb3-13f6-47a2-9a9a-134e397bf686@apertussolutions.com>
-Date: Thu, 22 Aug 2024 14:29:48 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E2D1CCB57
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 18:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724351655; cv=none; b=nOkEOOt/gAmsUc5WNEwU3hFMReEvKgYTaE3TiW80KpT5YFwJcLXx6sny1twFVig7KSGTlSKvMPjSSbPKCgeDvKSo5Qr3ssOC/MAUXurNSd+cj9aO/Qaq6xYmd+s0QUVAvDAI5bzNiT12uObh2Jy74uPVaONs/c/SSdpSWufxWvM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724351655; c=relaxed/simple;
+	bh=WMvTUa7qKk39u9nzqSvoy80bpq9bG/THrg+yziDWPLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GBqNP/j07BnylGHeKtz4g3sq8oZHoifgxK2RddQVENsemgpiNoy6U7y69Dqm+o+YFP4zzPC8bDJU10bZX051lUrWonQ8KM/AVTG4eLNbmtfNhc8YAIUzzsvr9KQ939KcTC9IOZklynXhooJMXSiDD6VUdFs6B1DXDN24ritqy+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SY9aJ+u8; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7c2595f5c35so117576a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724351653; x=1724956453; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EMxxaOtK8U0yo4hnUE3Sr+BVfCfehARBQJOIM+1YP0Q=;
+        b=SY9aJ+u8GR/5REDhk+rlGeo2PWHM8EAfTE5IqRzDI9+bvau+x+lUTmYGE2MX0BWWQX
+         UUsM3B8QL+rlNTGw7U5t2T6rVEznTOHmwyffWtqtGEZF9oi6EOzoIFHyL1zlA1CfuTM5
+         Wf9ra0P4PsNXhtegJFBk8i47YBXqtN0wn5XIYlzQRa8/boXSHzeG3tQus0mz55f0dZ1x
+         ATjzno8W7QlDl54dDPwDwOBQ2BwLdgSw7ei5bR1ichgVWqYDE1iLKAB/uRhn1cACe6P9
+         XYKoZmIj9EYV50ImEzDRtz1hbHrE/FxvBMtYo8oVmbyPXsCVi2Y9O4b3BSfr1xutg4Pq
+         fG2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724351653; x=1724956453;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EMxxaOtK8U0yo4hnUE3Sr+BVfCfehARBQJOIM+1YP0Q=;
+        b=MrdyF4JjI+mLqqA+H1iX2d6bw0qUWAxFijc0NwuJh0oV+HvPtVKVsb8MEB+VfYe4k1
+         jiIC7OUKUdhjVuYcUl8gMZUZBGJQgpDbHHLw6TMbg6kr9rqt5v6VBT7qunE+V4UY5sBc
+         yjHAJQqy3XqYAyZt6eQohhbEz4BSry4iIvm39F9lPFC/95veoZ4k4BdC773URpiN9RGI
+         qWRLnWAtp7n0trVH/yclId3K0GoTF1YyFZenH2iVno04GzwYssPXM8ciGj2+EoEh/ooQ
+         MrP66lF9s3reuG2l2Vo8KRY41FvT6O/ORK+UtfKJNWqV3b9DS51BlhMEJ9Z1RI7fWxS2
+         wzXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbh5hMJ+3GSATqWs5KpEFGo3yNByJW9O8SAjcx4hTd56xhG2mNlCNxs1Xy4Ckh65xP0QuKul1qChAJMA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0fYImhmxjDyKenxWBe+xhpNXvzpeRBOjsGQk1l2rMHieD6ZCC
+	VJpmLvIFb1AJkkhs5o9atmFJuKc/Iky9cSMgn+UzU744Ap8Eeit0E6rTx4Y6Lq3p9e06GgqhvUy
+	aUBc60BQPCdSpxia8AXl9wMwGdbo=
+X-Google-Smtp-Source: AGHT+IGPF1XUUudFvjGPHATL7UDa9u1dQKv5EqeuytdBdTms5BymTb5tqh+mLj1j4yketuXtjUee6wZ3btV4aNuNyKo=
+X-Received: by 2002:a05:6a20:7348:b0:1c4:f30e:97ff with SMTP id
+ adf61e73a8af0-1cada1f1452mr4450575637.9.1724351652819; Thu, 22 Aug 2024
+ 11:34:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-To: Thomas Gleixner <tglx@linutronix.de>,
- "Eric W. Biederman" <ebiederm@xmission.com>,
- Eric Biggers <ebiggers@kernel.org>
-Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
- mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
- ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com,
- kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
- trenchboot-devel@googlegroups.com
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com>
- <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org>
- <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx>
-Content-Language: en-US
-From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-In-Reply-To: <87ttflli09.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20240822065723.1336181-1-yujiaoliang@vivo.com>
+In-Reply-To: <20240822065723.1336181-1-yujiaoliang@vivo.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 22 Aug 2024 14:34:00 -0400
+Message-ID: <CADnq5_Pm0Vg-RNtnRoj1Dkc2Ke3paz1D6PeDkaKacGstBn7uVg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/6] drm/amd/display: Use max/min macro
+To: Yu Jiaoliang <yujiaoliang@vivo.com>
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Hamza Mahfooz <hamza.mahfooz@amd.com>, Alex Hung <alex.hung@amd.com>, 
+	Dillon Varone <dillon.varone@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/15/24 15:10, Thomas Gleixner wrote:
-> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
->> On 5/31/24 09:54, Eric W. Biederman wrote:
->>> Eric Biggers <ebiggers@kernel.org> writes:
->>>> That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
->>>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
->>>> that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
->>>> but why would you not at least *prefer* SHA-256?
->>>
->>> Yes.  Please prefer to use SHA-256.
->>>
->>> Have you considered implementing I think it is SHA1-DC (as git has) that
->>> is compatible with SHA1 but blocks the known class of attacks where
->>> sha1 is actively broken at this point?
->>
->> We are using the kernel's implementation, addressing what the kernel
->> provides is beyond our efforts. Perhaps someone who is interested in
->> improving the kernel's SHA1 could submit a patch implementing/replacing
->> it with SHA1-DC, as I am sure the maintainers would welcome the help.
-> 
-> Well, someone who is interested to get his "secure" code merged should
-> have a vested interested to have a non-broken SHA1 implementation if
-> there is a sensible requirement to use SHA1 in that new "secure" code,
-> no?
-> 
-> Just for the record. The related maintainers can rightfully decide to
-> reject known broken "secure" code on a purely technical argument.
-> 
-> Thanks,
-> 
->          tglx
-> 
+On Thu, Aug 22, 2024 at 2:57=E2=80=AFAM Yu Jiaoliang <yujiaoliang@vivo.com>=
+ wrote:
+>
+> *** BLURB HERE ***
+>
+> Yu Jiaoliang (6):
+>   drm/amd/display: Use max/min macro
+>   drm/amd/display: Use max/min macro
+>   drm/amd/display: Use max/min macro
+>   drm/amd/display: Use max/min macro
+>   drm/amd/display: Use max/min macro
+>   drm/amd/display: Use max/min macro
 
-There is one simple question, does allowing the Secure Launch code to 
-record SHA1 measurements make the system insecure, and the answer is 
-absolutely not.
+Is this the preferred kernel coding style for these type of
+comparisons?  Otherwise this just seems like a lot of churn for not
+much gain.
 
-The role of the Secure Launch code base in the context of the larger 
-launch process is to function as observer. Within this role, its only 
-responsibility is continuing the trust chain(s) that were started by the 
-CPU/Hardware. It does so by measuring the components and configuration 
-it is responsible for loading and applying, i.e. in TCG parlance, it is 
-continuing the construction of the transitive trust for the system. In 
-this aspect, the only degradation of security that can affect the 
-kernel's role is whether all the necessary entities are safely measured 
-and not what algorithms are used.
+Alex
 
-If the system integrator, whether that be the OEM, your employer, the 
-distro maintainer, the system administrator, or the end user, configures 
-the DL preamble to only use SHA1 or used older hardware that has a 
-TPM1.2, then they are accepting the risk it creates in their solution. 
-In fact, a greater threat to the security of the launch is the 
-misconfiguration of the IOMMU, which risks the kernel's ability to 
-safely make measurements, as compared to the use of SHA1. Yet it was 
-insisted in past reviews that we allow the user to specify an incorrect 
-IOMMU policy.
-
-In the end, the "security" of an RTM solution is how and what 
-measurements are used to assess the health of a system. Thus bringing it 
-back to the opening question, if SHA1 measurements are made but not 
-used, i.e. the attestation enforcement only uses SHA2, then it has zero 
-impact on the security of the system.
-
-Another fact to consider is that the current Intel's TXT MLE 
-specification dictates SHA1 as a valid configuration. Secure Launch's 
-use of SHA1 is therefore to comply with Intel's specification for TXT. 
-And like the IOMMU situation, having the option available allows the 
-user to determine how they ultimately want to integrate Secure Launch 
-into their integrity management. And because Secure Launch will only 
-attempt SHA1 if it was in the TXT configuration, when either Intel 
-removes SHA1 from the MLE specification or firmware manufactures begin 
-disabling the SHA1 banks, this will obviously mean that Secure Launch 
-will not produce SHA1 measurements.
-
-On a side note, with my remote attestation hat on, the SHA1 measurements 
-can in fact be extremely useful. If an attestation was made containing 
-both SHA1 and SHA2 chains, and the SHA1 of an event was correct but the 
-SHA2 was not, either a natural collision happened or someone maliciously 
-caused a collision. The former has an extremely low probability, while 
-the latter is highly probable.
-
-Thus, with this information alone, it is possible to make the reasonable 
-determination the device is compromised. Whereas if both hashes are 
-mismatched, without any additional information it is equally probable of 
-either misconfiguration or compromise. And to state the obvious, with 
-only SHA2, further information is needed to distinguish between 
-misconfiguration and compromise.
-
-V/r,
-Daniel P. Smith
+>
+>  drivers/gpu/drm/amd/display/dc/bios/bios_parser.c            | 4 ++--
+>  drivers/gpu/drm/amd/display/dc/clk_mgr/dcn20/dcn20_clk_mgr.c | 4 +++-
+>  drivers/gpu/drm/amd/display/dc/core/dc_resource.c            | 4 ++--
+>  drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c                 | 2 +-
+>  drivers/gpu/drm/amd/display/dc/spl/dc_spl.c                  | 4 ++--
+>  drivers/gpu/drm/amd/display/modules/freesync/freesync.c      | 4 ++--
+>  6 files changed, 12 insertions(+), 10 deletions(-)
+>
+> --
+> 2.34.1
+>
 
