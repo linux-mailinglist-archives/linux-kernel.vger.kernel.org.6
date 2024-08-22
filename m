@@ -1,107 +1,135 @@
-Return-Path: <linux-kernel+bounces-297451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5C495B86B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:31:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C32E95B8AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624882877F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:31:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE754B2B4C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEEF1CBEB4;
-	Thu, 22 Aug 2024 14:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="rUYWvbW+"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064961CBEA9;
+	Thu, 22 Aug 2024 14:31:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798591CBEA1
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912D41C93BC;
+	Thu, 22 Aug 2024 14:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337073; cv=none; b=h38/0THkbPO78r0ta9C/t0Nv41G1X1pLzYORox2vrCielF7vy7UYQDl+ijDBC7GgLQgZqeON9tN1Si1DtI4ww0cNTfXhobKmQuQFXPkfvFEdeB+Jet9oWWWvWZNGcwRPjkyxgkVYDSOWKeFwNJuashNpXm4O53j2sxosturtKRw=
+	t=1724337092; cv=none; b=MvURu6fYrS75znrQgp4EaiZNohCNw/REboYi0kobBP/nPB7BgIFql56uNxyewpYP+Wh8yPRtZc+xpHy2JpWKyP37VDhCXo/jRCWX2b6u5LEQBnx0mqcjH3gV56OyJU4VZKynb31nIRINSM9HXfVNcWLLkhOcU43y8EpaE34xIGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337073; c=relaxed/simple;
-	bh=3SGAXZaH/rE1WvEbCj6idIpnocFm5xheRuEI63yXlBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nubEXn3aP4cp4Gw7SwE+j4IiYGCW0L4mVDAHCXd7dW+MFwLSBROQ2uTJLx7QsiZD/8fuX8VkAj14p02J5cSJf8GC1cTCwuka0OHqKKtnC99893NhVF9PqN2XeFh3FWhdE3M65fcB0xgvixAfFMbcW7IDfQQ2I+K8vOykyU01U2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=rUYWvbW+; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a869332c2c2so107585566b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724337070; x=1724941870; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZKLbEyZ9gHbIbuvLacizSv9GBt5s4tjqSEPtMXh11E=;
-        b=rUYWvbW++de3NPDWxWFjabnqhgihrAxzIw8uwI2J9ocx6QZrZGjkGOBp/7PWvdpuyl
-         WU67rusazfLTlJCWOqdgObCj38B1Q2RjhSopkrcTyV95yXPicYBUKVTeeraELTTlH4Va
-         pREq9CAhyot7yhWxau4aJCyNgFCod9Y7MVPKcmU4tHcUxe0VyP7XH4mR0MbI+aQ8c2qs
-         1oDUuvqYP1huok5+xhITLXoI3l8GiYnJepbxXHnT0jB5gEPijSs+UNdDyGatYvfM64V+
-         eMaqa/3R0AxIpcLU5LZ4mhxtwwEa/KbHab+Ad3AgZgTzSzNlpjawL0x+VrrDWHg/A43A
-         SrKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724337070; x=1724941870;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0ZKLbEyZ9gHbIbuvLacizSv9GBt5s4tjqSEPtMXh11E=;
-        b=Kiy8aPKICYL0HQQosfcfNgqIUARGygsfJSfbLz3WUS0EN7GdydI7xQL8gP93DDUarl
-         hKgRV4+Sftu9uyLXntwrivoOEdw433ewFq3XNCHlX4MPjuYfCUuysZ8LLjcFqFvqBdNC
-         SH9nczBREUE4UiHL/iEE3XVFBVt/tosjJZSs+Snit8RH9RFcMjIMpBLB0bKAofZ4elPM
-         FPo0o41FuGHp+9Dlr+TSkrHrD5xn6Jsngw5HHRJEwh3h/YCSh3o3UrgO/Lte8TintqSz
-         23yXIMtBoA1Wkgahci2Xiwnk7tYYWW4S5ujm023gEGgqhvfz8xhTTOGiL3uoSzYVAhda
-         eKUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+zjTtMhVwlohPku8gREMVg2rQsnwghfM3Ceij/O/hgwANhWseZkN+O3xb+AHOHhxkNVynVfL75GAfLrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzvoHBFU2xNmzS5c4okb4nSBjnTWdD/M8G+9fipknkwqfeufmX
-	QWWJLKsNE05YKHMeV88Xb1opDwp8e6RHAjIf1GXlWejIQMQSe7Aq/+DjR1+ROkL9Be2Z8Mvlp2f
-	g
-X-Google-Smtp-Source: AGHT+IFiRRznE47uFTTwd5IXO+dQr605HlZFSoahRrX1Uz1DifG/1En1fFRusx7rla2thNoRU0twqg==
-X-Received: by 2002:a17:907:3f24:b0:a80:b016:2525 with SMTP id a640c23a62f3a-a868a802340mr310380366b.8.1724337069538;
-        Thu, 22 Aug 2024 07:31:09 -0700 (PDT)
-Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2e74bbsm128224966b.95.2024.08.22.07.31.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:31:09 -0700 (PDT)
-Date: Thu, 22 Aug 2024 16:31:07 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v11 01/11] octeontx2-pf: Refactoring RVU driver
-Message-ID: <ZsdLq8TdZhpNGnkG@nanopsycho.orion>
-References: <20240822132031.29494-1-gakula@marvell.com>
- <20240822132031.29494-2-gakula@marvell.com>
+	s=arc-20240116; t=1724337092; c=relaxed/simple;
+	bh=c/Cj9RrvqJul5t8m3NiqMO38iRJFNFSyGlqIQpBEd94=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QnB2xzXTj3PK0V7fHO3Dn8H6Y4OMrb2vBjBB1phUfPyLujofqLZZoF8rzZPhQWzr7R37BnT7TjIvTCrpZRPjNs2o5CDcAtGVGdSYeXt9g+UlVQP5YuXWL14926upcgb+k4LuLtnrUqTfPQazQgC7l4LkICxEf3Zs9bZtitqeYBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CC80C32782;
+	Thu, 22 Aug 2024 14:31:31 +0000 (UTC)
+Date: Thu, 22 Aug 2024 10:32:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <20240822103202.130cf0df@gandalf.local.home>
+In-Reply-To: <CAP4=nvRTH5VxSO3VSDCospWcZagawTMs0L9J_kcKdGSkn7xT_Q@mail.gmail.com>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+	<20240821160316.02c03c44@gandalf.local.home>
+	<CAP4=nvRTH5VxSO3VSDCospWcZagawTMs0L9J_kcKdGSkn7xT_Q@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822132031.29494-2-gakula@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Thu, Aug 22, 2024 at 03:20:21PM CEST, gakula@marvell.com wrote:
->Refactoring and export list of shared functions such that
->they can be used by both RVU NIC and representor driver.
->
->The changes include:
->1. Moves nix_stats_lf_tx/rx structure definition into header file
->   so that it can be reused by the AF driver while fetching representor
->   port stats.
->2. Representor PF shares same mbox design as of RVU PF and have same HW
->   resources(TX/RX queues). Hence, mbox and HW resources configuration
->   function APIs are exported so that it can be used by representor driver.
->3. Moving the link type checks and tx credit configuration into common API.
->4. TX/RX queue memory operations are combined under new API.
->5. Add extraction of queue and vlan id to common API so that it can be
->  used while matching mcam traffic rules.
+On Thu, 22 Aug 2024 11:32:07 +0200
+Tomas Glozar <tglozar@redhat.com> wrote:
 
-I see 5 patches at least then. Again, please have this as a separate
-patchset, one logical change per patch.
+> st 21. 8. 2024 v 22:02 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.or=
+g> napsal:
+> >
+> > I'm able to reproduce this with the above. Unfortunately, I can still
+> > reproduce it after applying this patch :-(
+> > =20
+>=20
+> Thank you for looking at this. I was at first not too sure about
+> whether this is the proper fix, but after some discussion with Luis
+> (in CC), we have come to the conclusion that the double-close of the
+> timerlat_fd might be a possible explanation, and this patch worked for
+> both of us. Are you reproducing the same bug (NULL pointer dereference
+> in hrtimer_active) with the patch? IIUC that should not happen anymore
+> since the patch explicitly checks for zero in the hrtimer structure.
+
+There isn't a double close. But there are two bugs and you did sorta fix
+one of them.
+
+>=20
+> I have caught however a different panic in addition to the one
+> reported above while testing "rtla: Support idle state disabling via
+> libcpupower in timerlat" on an EL9 RT kernel:
+>=20
+> BUG: kernel NULL pointer dereference, address: 0000000000000014
+> CPU: 6 PID: 1 Comm: systemd Kdump: loaded Tainted: G        W
+> -------  ---  5.14.0-452.el9.x86_64+rt #1
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-1.fc39
+> 04/01/2014
+> RIP: 0010:task_dump_owner+0x3d/0x100
+> RSP: 0018:ffffadd6c0013aa8 EFLAGS: 00010202
+> RAX: 0000000000000001 RBX: ffffa00c864f4580 RCX: ffffa00c87453e10
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffa00c864f4580
+> RBP: ffffa00c87453e10 R08: ffffa00c87418e80 R09: ffffa00c87418e80
+> R10: ffffa00c88236600 R11: ffffffffb73f1868 R12: ffffa00c87453e0c
+> R13: 0000000000000000 R14: ffffa00cb5e430c0 R15: ffffa00cb5e430c8
+> FS:  00007f9336b41b40(0000) GS:ffffa00cffd80000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000014 CR3: 00000000025ee002 CR4: 0000000000770ef0
+> PKRU: 55555554
+> Call Trace:
+> <TASK>
+> ? show_trace_log_lvl+0x1c4/0x2df
+> ? show_trace_log_lvl+0x1c4/0x2df
+> ? proc_pid_make_inode+0xa0/0x110
+> ? __die_body.cold+0x8/0xd
+> ? page_fault_oops+0x140/0x180
+> ? do_user_addr_fault+0x61/0x690
+> ? kvm_read_and_reset_apf_flags+0x45/0x60
+> ? exc_page_fault+0x65/0x180
+> ? asm_exc_page_fault+0x22/0x30
+> ? task_dump_owner+0x3d/0x100
+> ? task_dump_owner+0x36/0x100
+> proc_pid_make_inode+0xa0/0x110
+> proc_pid_instantiate+0x21/0xb0
+> proc_pid_lookup+0x95/0x170
+> proc_root_lookup+0x1d/0x50
+> __lookup_slow+0x9c/0x150
+> walk_component+0x158/0x1d0
+> link_path_walk.part.0.constprop.0+0x24e/0x3c0
+> ? path_init+0x326/0x4d0
+> path_openat+0xb1/0x280
+> do_filp_open+0xb2/0x160
+> ? migrate_enable+0xd5/0x150
+> ? rt_spin_unlock+0x13/0x40
+> do_sys_openat2+0x96/0xd0
+> __x64_sys_openat+0x53/0xa0
+> ...
+
+
+> Yeah, it seems there might be multiple bugs in the user workload
+> handling, the other NULL pointer dereference and refcount warning
+> above might be related (but I have yet to reproduce it on an upstream
+> kernel). I'm also going to look at the code and will post any findings
+> here.
+
+Yes that is the second bug and it is related to the that this addresses.
+
+-- Steve
 
