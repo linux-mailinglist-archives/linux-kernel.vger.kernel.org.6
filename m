@@ -1,406 +1,201 @@
-Return-Path: <linux-kernel+bounces-297296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3415295B5CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:59:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33DD95B56E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53FF71C234B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535DC1F2268D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B662B1C9DFA;
-	Thu, 22 Aug 2024 12:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F421C9DD9;
+	Thu, 22 Aug 2024 12:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="KdWdiHiF"
-Received: from sonic307-1.consmr.mail.bf2.yahoo.com (sonic307-1.consmr.mail.bf2.yahoo.com [74.6.134.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="rGZHFsh2"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2071.outbound.protection.outlook.com [40.107.117.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07BA1C9429
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.134.40
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724331565; cv=none; b=SLq+Wm64ce7YPO5aRTewiOMfBYycuFmywi/xdXR4ji/pF0mr9AKxHJ7BpDJLMtsol8XRQMk2F62Ghi7AtR4xOvQwLfk4IpsM9DHRvhz8aSoVM/ZWcwsz3KP0HXDx5l3XhBZXZd8wehr4H38Li954I76H6I7g1/D2tC6GUKDQq9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724331565; c=relaxed/simple;
-	bh=W1/gaaM1uh+vreW0GAAgGkJZj5pUhUXHFr97ujN+17Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ULTFtT0VRzQ8/XO80Vqbuq0kAZz1O1i9af7lVh5qBMLAyDdcyLlvCxmnXwfovJ8YDPob5fH5+1XPh39+dxO6Ny6KqZqiSKqlc0frPmODPmtRtGWiMiDde+TUx8kCW5ISRY8sF1WD/RMYTNwlrfamsN5I7K8mmeWC7jjvX5TM4Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=KdWdiHiF; arc=none smtp.client-ip=74.6.134.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1724331555; bh=J7NjTm1fKuthES4Z8xX1BOmbYk+dnNJpm3rQeI1xqQU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=KdWdiHiF49qF34s15vNh+39eyRrrfz2dc/LPuDRX3W+FH2iSSCa/98pnpZqav5O25BhvuvdaBI7eCkjX8/pT/BMPz8cr4H6E63c2q0xt00hta8/6202/gpYG6oZjF2WERWyR0HtFyMX4E8chc1aQeooZhYDiX9B7HEn39UEF3MqfA8iYGZ0sP/4ZBNH8JATe6uFYNTVlM67fcCg3Q3P/sHhtErbXGi79JzIncHBnRs4G7ywbd4izdbTm0ZsTrwVPDSrEvfHTKyNT8SNkqZET0gCcpdg04TodkCYA5fW3X3vecjJ65kYoWScNi75wtL3L0qNu/wk1EkBb6JAXbJZQ+A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724331555; bh=/DIevzRwUWutvDooKgWPizmPU7bYy8n4jlG79tqmk82=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=p4HgtHSYYQ6dC7Qys7RWJQYbc5d+KfRJCklZIJIkirWCgHE0YVIED1+8534aJH1feLJcmNg2mJZ7W/Q0NSUDjGxJ1nDZEHiY4EPesjYnRQjRpM30zMrScu36PNi4ROFlf+hck1oV4O/7SDOMV1Be7kZ1U2yO+dh2RS79jOcHSqr2bgv9/X8zFJTiMkMrE9Vp7AiBHAEnxbfQ/uCsZvcfQA935tR9D3HOKPPJXH/ZUOQZ/wUWElnCg3ItVfCszmYhRibtSjZ6oE+3ZctvFOq9TBvyyQvRzL/iRurJcdhy3GvFpvq+FLqFqS343irexPI9Vg0U1WuIgrlf4AKVmvVHQQ==
-X-YMail-OSG: Jhbe9JYVM1mPXa6iZ64iHFjGpvj0ET0VJBeuoGS0zT4qzOgPefliZdmj.loQOna
- IeStE2W32zpMvtS_4IH8CyhNdQS6UW4Gpwz7BjVldXs8P4ALQYbHCGX2AYZsElX1SoqbkPPOeJrw
- f_vKXkvhz7GZKSIkagNOH6lF6Ge.TPebyDYRYyijRFzNWYi0LthkFjsFDRr8BBGZI9oXZa8Mx3bs
- Qk4BrdE.BIKARsfZKtZcg7_dbi73MxwITCWpJWC_X8Bc6RV24h_R9UJdJZjcEzqNaE905n4IaDWb
- N50DVVkbQZ35VYSHaXPZoBZzhaCo8ZXnPpeM4eZ4LUqITqTpLDQZOq2j5lGC0bs.L.FUpYFCqBao
- RuNLMh_3ssDSlkOE2bI7E964lcS5kLzcggm.3JKCGv9z.hfQ1iPxgOq1KkC0TpbGpzUHuP5U4Gjy
- Gt7qzrsPXVAQmT4rGyLIrqd7hhPNQ73n0qiqdFQl7YtfB4fZdWAqLWxp2xFxCvIlvH.U47LbkU23
- CDfPHf6Rdz3Ehe4VAWrztRIVCmHbCoqT0LKmtZqpn9.0JPjcKP_wUoQFxVLLAUQnB8lxyNeeNnkQ
- acNVAesc8j6x4Ha3krMo.xe8i.j_0UQeCV8WfyHjSqBt6ZWKM2XqaursKSKzu3KxZ34fZv2DOpmI
- lEJyr7SHTQwKux22jf5x6eHY5H_PaQtv5IYGRhUwCyg1CBkbqRUi7PhFIgvnIYtVhnaBzao5xAeD
- sbWv4lsMVHh5obegQDkQnd.TJKgUaVwaP9yYxC0E02BDTFAuLs3LOK.NEPJbjWzBC2SErKBeAKX2
- cjkFQiCJnNmVWHLjIf4xA0VpynGP4hHl_EuL40pIeSG_y0zt6rcSbkl2F3E50mkGI3x4Sw7L_hb7
- ukAx9akJBRe7kj3_JEsK1L8BRJ1HUHCeVkdjyNU4.B.Fv091j5TGOj3uhu_FG_7gnQyYAsmqc1IO
- 3DBXbbYNGpPhpcovQQo6KePPloWWLrfLO.Og6o8F.l._YVTwhxTEYg8GfdzBNaBT1lR_VeEDtoKt
- Zh3GRbf6IlIbuaX2HQ8jkXttia1u3DWX7w6TRRBNbW4HUTmwBcGDChqqY8i93Ys.tnq_dES_a9NY
- grsi47BIrgT84EyC_qVBrMpCAc_20LKv08RRaZINFLLHPqYjjn61b2mGTdw6OBCjXs6fm3yNhUnM
- gXqz34b3lUg00F14.BGW2Osb6fZyzNpjHVilh7FaVDVREXpSAoKUQ6SeJZJbiAoBs6eINNxGXIuv
- 35.E_2bMHfRb3Xf8ZcWGtJGDS.81h_zNeqXs.xlKy7rBfoAnPVuUJJHzebG1C1pd2RflNCl_lv2a
- vPu8_E6vxtmt0cW1BxuGlf_4obr2ERUmOEQz_5fVAVIeEPxnep6aeH3TSyEm1xfv2cgOPwM3Ew2y
- jvQgQb2IH.5VW1iQDl60QoCHuw7e4pZRUHM..lsLYq3GCqQeHDRrjhWkijdbfhN9HPU62hKnLZ8T
- 457LypxtCp.goBKZY1pr9YpAByj7OdaMRDwcJvf2UpHZx2jAtkLpBn5omAtcUcHE_bH.wlOLj7J3
- E0JbMbAoZhokjqAQ15S27eGSrbxorMIhIR4pMaMGCN9xBySBD6juCdJVDEamI7XVW4KXoEQ6dS6u
- jLfdGl.wfQb0oUwsEtXaAzFxXZhUX9Ez1nE.iq6ScjJSydZd4aEvXgGUEH3FiUnVYJXdjPw5krKC
- c5p20_5NBR2G9nGksx1.faBFWbZc0eco750N8qd79ec_RxOG2lHoRyNWcc9n1emfn86LmcbU1StA
- 3H084jWhhO3MCz6EZkFZ2oh2N2OtLJOxa_fuge6caXZQwS1ms517JDIUJFhoNkGD5DRrm_kRCs1o
- LDSxaplViIg1sAbvgPZ4n43RRi54xGgAShNCewwEgmhVW79f6vG2KhvKst7ukZ.ZqxHw9OnfmHXw
- zzHpnPvl2WvewSISn8LRNBoDDPDN_t03Y9BezibZqSmzIk61IRWUx04ggc6z_U.CHpKZ95i2EX3z
- 0wGE49a41Zg4iurPoKpuAZZDaZyZNw8sVW7S8usCxTEom0ePpe5iZuE5NYA1xyyl1jEcxOu2RWqK
- u80cshchlNMcSaK5Go6HxcdbSzvs66I9ApNWzX3bVztbAvEt3kOCUKZzkTbv3DIbxzZ_QXyImSCe
- 74gVjr3uA2zCuxyBtGJB8CLrfBzYElGBqcMUoyLjAjjVL.NLlnlHceiThzFqfKDaR7JoShgbsB5T
- aldkAR4WYO.DE8LHsmBJpT9YgHy2bv3x3yb2cTJ1moI4totsVowlm3IllZfWZUy6P5x.MRdO_PIT
- dssZU
-X-Sonic-MF: <bluescreen_avenger@verizon.net>
-X-Sonic-ID: 7df2cf60-4876-418d-8617-7d7bab85020f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Thu, 22 Aug 2024 12:59:15 +0000
-Received: by hermes--production-bf1-774ddfff8-7v5k6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e9fb1b2638dabd063f9193fcd161555d;
-          Thu, 22 Aug 2024 12:49:06 +0000 (UTC)
-From: nerdopolis <bluescreen_avenger@verizon.net>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Greg KH <gregkh@linuxfoundation.org>, john.ogness@linutronix.de,
- senozhatsky@chromium.org, tglx@linutronix.de, tony@atomide.com,
- linux-kernel@vger.kernel.org
-Subject: Re: VT-less kernels, and /dev/console on x86
-Date: Thu, 22 Aug 2024 08:49:05 -0400
-Message-ID: <3085227.687JKscXgg@nerdopolis2>
-In-Reply-To: <ZscNX79dnXUjeTc4@pathway.suse.cz>
-References: <2669238.7s5MMGUR32.ref@nerdopolis2> <5322439.6fTUFtlzNn@nerdopolis2>
- <ZscNX79dnXUjeTc4@pathway.suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EEA17CA03;
+	Thu, 22 Aug 2024 12:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724331052; cv=fail; b=Jj217xNHvakRFQQu422E/VP5FG+SJowN/wzpTx6jJrC0f6APG4qwKqBr7WNOc3bwyYs/jUKxIcafAZ8SEwNyScJwZF+BYBv/PmppPOkdj8V6qVfmmPA7ajjwIvCW0zG07/etaiHfXCm13SIQbhfQ/xTkyZeeOc27WoTXBG6XsGg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724331052; c=relaxed/simple;
+	bh=ubjKZsd/Q3W8IxJp6Uy74nj5IUrcVQd32KJtLppG+MI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j273gqq1h5eqMQbQR/HEEZxS7DvfgbZKorxdHYk7+7pm6lcRyHWigPzgNl+Ua2YIMKyNYJrVG8HO4f/2iNvQqXOh4Nedn4TFbwOZQrOSMk0fmJaMUMjeRQLApDZszuQOJg9ZNKFzvzW6r/MwsqmMzpb7HVchTI+YdlDoleZPJ5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=rGZHFsh2; arc=fail smtp.client-ip=40.107.117.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jT+p92LTyTDDI6e5fkFgdgPEVuF9dovCeVGHZgt9icKrzaAxuuKHm6XCepZDTLBRfaNWhX8nKuHfRF8TNgoiJeDhxPhVMP2kJllizMJ+wJyY8chV/An0CLqZxRPyFS9m4rW/o7t4KOBj1lYyEO+LUlrmKSNNcTvUVSlRL75CITu1L0m/K2ySxfUtt8rUCOWeXZ9fUxxhL44XGRtmCNZeynrUiNa8Bg0P41wtaiTkvrwVbBUZ87K+xE6kuP4V7goL1FADSUMhYI9DEyd10C9cC0RG0I0OFO/Bpbhsk50DFQziZRwn+VJj6gsTByRvJATubPRwRgIXRbE77sSP6H1f9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8p0soeQT0W6X3+dwZkibv+3aDTOQA4u3h9Sa8P3UtAA=;
+ b=HswRNADJxbc28HfM1cGm3clrxOlCfFPBPe2/FTGc4YM9iqC7z+FtLeibJWl53N9Sm498uZyzE8F0u25Qh4n7Z5xri/pPG3wdzvTwF2Boy5CxvczvBLO0yrsumtPwtNimJ1sgNDfDq2SpqzwpTs6+Mb9IlosllYQcvbTMH8vFBmGBozKIS/SvXU43SMx7p2Rg+hCl40iBp8kUnekbxwsDqbw6ysBfemtVwLWIsiiQwxUgaRY7pgAp+ms0VVKI3Q3nNoXBGeOBCuQMzvXI9oO8tneUTNXzAiL9a9sScAIYibxkX1YKwZNKlHCnAfIUVMJMJ7QEXy3eZCEOAcse/H1+NA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8p0soeQT0W6X3+dwZkibv+3aDTOQA4u3h9Sa8P3UtAA=;
+ b=rGZHFsh2myNQp9NOHU0iUCOW+MF686Nu2sZb/ah2OuhgaK3UzCWpswcmoSQsKtGBNNwrDFAXj+1rxym0lCaMzO0OtbdnbkmLafdZs97xEjCcnCmlYzibsTmwg6M8fKKEax3DZveKFmduY35o9Ypt3LdJYEygwEb20tk/H0qhCSVCEZvEYFWwTiUKUQuAkYr72VSYOn6XYi6v4MOphMa8QNge6BC+cvVkMlCaf3ALOds4HKRHoFYPsPeh4Fyp56DwsYFWO8Sl+ACcUa8od546sZnQQxfnWv+ufaT4A2udC8gGEA9IO59pr178xm29i1TyJ7vBiIe2Hxo3XjKa41Q+pQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by SEYPR06MB5742.apcprd06.prod.outlook.com (2603:1096:101:ba::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Thu, 22 Aug
+ 2024 12:50:45 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
+ 12:50:45 +0000
+Message-ID: <b6d12fa0-5642-441f-8289-a794435b2f17@vivo.com>
+Date: Thu, 22 Aug 2024 20:50:42 +0800
+User-Agent: Mozilla Thunderbird
+Reply-To: 11162571@vivo.com
+Subject: Re: [PATCH v2] drivers:block:Use IS_ERR() to check
+ debugfs_create_dir() return value
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Borislav Petkov <bp@suse.de>,
+ Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240822124109.2259697-1-11162571@vivo.com>
+From: Yang Ruibin <11162571@vivo.com>
+In-Reply-To: <20240822124109.2259697-1-11162571@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYAPR01CA0151.jpnprd01.prod.outlook.com
+ (2603:1096:404:7e::19) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|SEYPR06MB5742:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3156723d-f72e-46ce-bb7f-08dcc2a909f8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?elBrMVJYRHZUeUJibklweVI0NmFQYUlJbXFLRmNJQ2lHSUNDS0sweEdobEdT?=
+ =?utf-8?B?VUs1SmVCRkpDakRNRFg0VFo4cEQrcXZ4SWN6WUpiNTg4TVN3RE5OTFpjOTV2?=
+ =?utf-8?B?Y3d6ek1RMWZSTlkvN20zaG85UnVCNndzc042SWJZSnhJcnBvQmRFM3ErOUN5?=
+ =?utf-8?B?blpNVkxWYUZqeU15bEhCeGdrSU9Wb1J4VnpuTWtCM2R6dlFNNlo5czZvQ2Fi?=
+ =?utf-8?B?a0pVYmZnc1loVVdQYUx1VWNoQ1g5SERac0xsV2w0ZCtTN0h5Z2Irbm1YOGR3?=
+ =?utf-8?B?UXZ0R1VPdXlTUWMzdE1GMUprM1dDNk43L1hXTWZITC9oVUk0d0p2YVNrTUYx?=
+ =?utf-8?B?YkhzVndIanJnNHo2Smk2YmU4S1R2aDBkaGpRR0plRWMxWWErT25WMDJVM21l?=
+ =?utf-8?B?T0J5Z1Q5enYxd29qSzYvWjQvM0RPRFd6TEpVZ3VjMXdLdWZ3d0RMM3l5c2ti?=
+ =?utf-8?B?b1BCaDVOUTJQdWJ0eFQ3T2VQMUl2NVJFRlJNbUw3VmMrQkF0V0FIY2MzQjQz?=
+ =?utf-8?B?aUxQMW43UE43UlJKSFgzVW1lOSt5aHhLNzNERU9VK1pTa2psMG1lZnhWaGNY?=
+ =?utf-8?B?Y3JiaDlpa24vamM5UWdmMDRrZXFtRXM4VENyQzUxTzhDRWlkNXBRU2tHd0ZT?=
+ =?utf-8?B?RU4yWjRiNHhEVi9hWllzN0hpQ2Ywa1ZTTEhlblI3NkV4ZjVCb0lSNkVqSHY3?=
+ =?utf-8?B?WlRyZTRDb2hZV1RzRjVkWG1nT1p4MzE4Mjl2RlFwekdTWS9CVFpRZmFlLzFV?=
+ =?utf-8?B?THNvWCtQQXIrdW95NEt1ZTJwVGhDZG9rdXdVZ3ROT2dnTFNZM3R0WWxVLy9h?=
+ =?utf-8?B?ekhlbkZtNFVkZDhtY0FHNUJaNlVzOFNjZnNUQjJ1TGN0Q09SMWlaVFN5eTMx?=
+ =?utf-8?B?NHJOYkEwVmRKY2JHZDltaFhIUEJEelJaTnN6TmVLTXJ6dE41TGVOWFZpS05s?=
+ =?utf-8?B?YlZDWEJyM2NsRkY1OU0xVHVPNXB2NmNDSkFMY2p0NDZHSW1qb0kyN0hiUUhI?=
+ =?utf-8?B?QzMybzNtbkx2V3F4TjVmZGZ5eTNObFVxektRWExUUkpHUTgrVlJFTEFWTFAr?=
+ =?utf-8?B?UnlmSTFLb015Qm9MKzYxU0hkYmJyQjNXdnVGM2dJeTdXYVkrc2NRS2RWSmNB?=
+ =?utf-8?B?TWYvbTBCYUM2MVZFQnR3UlpXQ1BseTQwVDVGa0p6Z09KMmN6cVBNSk1ib3V3?=
+ =?utf-8?B?THp2SWF0dzl3U25qMTVYaU9LNzhzbklVTm42d0JscXZUSUFGWUJZYlZjOEdO?=
+ =?utf-8?B?RitUOEZkWDB0blpkKytLRUxxNERyeEM4Q2l3THh4c1FnVDQ1NjNxQ1EveFZt?=
+ =?utf-8?B?VDRIWkJ4WnlBRXh5RjhYRDFFc3pWQXdtT2pjUEcwaUhTNWwwMlZGQW96UjRs?=
+ =?utf-8?B?d1ZUVnhXNnpxaXpxWEJaTWQ0WHd6eWREUDFQcGR2Z25KdjBIeEdnQnlKOHhR?=
+ =?utf-8?B?VEhJMFcwVDdSVnJqUXIzcTFLMUhDSGUvNmlYQ2FFTS91bENEaDUwdjQvNktL?=
+ =?utf-8?B?L045NFhzc0VMMzh0NDFla28zQk1rZG1wT25DTFFVSUt0ZjRWYi9BZzFPTjhC?=
+ =?utf-8?B?U04rZW4zV1QrWlFjUDN5SlpoOTR6dXBWOWdZV29TRCs3ckZSVU1EZTQ1a3k0?=
+ =?utf-8?B?MEt6K1NFbXR1Tjc5ckdnUVlmSkRsSmF0L3NqQitjVXhmd2NOSFVZNE1mdTdq?=
+ =?utf-8?B?VnpUMTNRdVB6c1lJWDlrTXluaE9zenVIL3BzMkEzM2owc3FoV3NqQ0xtSEg2?=
+ =?utf-8?B?ZDEvLzAzQ2JwRkU1RDNCSnlweFNvNHVTTUROaWZtSGZrMGx5RWlCREt1aUdt?=
+ =?utf-8?B?R3VTanhXVVRWMktCaVUrdG1aNzRFSkZISnN6MnNHYVRseVM3am53c0lmSTVD?=
+ =?utf-8?B?a1E3QkpaR3dHU3FiaTJZM2wyTXhHK3pPQVY4OExrd0F3OHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VFBteEYzcDVtZHRVbGwrb05SMitUWUoxUW8zT3dyaE9ZekFWdmNWTS9pZEFS?=
+ =?utf-8?B?akpXUDVUY3BDNGQ0Tkl2RmZhaSt4emxMZkZ6V2hvUHlSbFRxeHI3SHNsNkFn?=
+ =?utf-8?B?ZGd4SU5kRWlyeEY3WWtHY1BRSG5iWG1ZUlJKbVlVTlhocm40bE5QSG1GcGgz?=
+ =?utf-8?B?SVd5ZGM2UGZuM2JaUUJMSStRYU5adTlnb3N1Z3NzUHBQRm9tenMxRmluaFZY?=
+ =?utf-8?B?M3loNFZFZ1JFT0VkaUVoRzJzUHZWeEVuejlxQVNuSjFRV1ExWUZ0SEtydmpz?=
+ =?utf-8?B?UVpZTk1lRk1uR1VDNnk4a21WclJhay9LazYrNnBsYkhSMCt2U1JXRTViNWho?=
+ =?utf-8?B?dzNqTjR3VWlURzBxTGQ2U3BUTE9ET09VeUZIOTM1Um9EeTlIcHQ4LzVuSVlI?=
+ =?utf-8?B?clFvZGFlRFlVR0toVEZva1ZWcmN4YnNOd1pJaDE2cjNCSi9aeVJlakxpSXc4?=
+ =?utf-8?B?QkVDc3lSdFVSTjVhQTloV09JZlQzcVBReTlDZG1GU0JCL0wraUlCa3lsUHRt?=
+ =?utf-8?B?VVNyMFM2S1dIOTB3ZDVoZmNVNlFQSDdmdmhTZ01OSWxROUQ5OXFaa0dETzgr?=
+ =?utf-8?B?QS9oREM2TjlhNjNROUpWNWxZWGErWkFuRGM1ZWNiQXBJNk5EWnRaeXhhNHdM?=
+ =?utf-8?B?eHFSUDFYZ1c2b2g2V25VaExzZ1ZlWGtmaFM3Sy8rR2dhOUwxeUFyUEYvNHhJ?=
+ =?utf-8?B?eEtqajQvUXRkZ2UwQkZQV3FiTkJZYVlOSmIxSGM4elc5VHZTeWRtM2hRMVhZ?=
+ =?utf-8?B?ekxSdDA0MEpCVTYwdGtON0kraWNDNTRzbVlsRDhDQW9MTVRVRzg5eWJuS1dT?=
+ =?utf-8?B?dWhTVmREWnlJaXhHb1I4Z0lQd1dQcG9BWXJTZlY2a0VhekpZLzlFWkZCUDdn?=
+ =?utf-8?B?Nm56RVNCWG5KVWRxb3gzZXMrZ2hZNnpVQktTcTVLWU14VnVMN0tzM1lFbkVm?=
+ =?utf-8?B?UUhGTUNnRlQ5dFhqZlQzdGJ0bC9wcWd3TkhWd2c1Ty9OanYyWWVnNnMxcVgv?=
+ =?utf-8?B?TTlqQ253dUVFQStueEoxTG1YOGh2bXNiOVIwWjBZWXp0ZzZ2c2thTVVLQXVv?=
+ =?utf-8?B?SUhnRGRIRTB1RURLRUpDTTJwdER2cmM2blF2ZEdQdjROeHRaSHlERG42Y0c1?=
+ =?utf-8?B?b29sYUVZVWYzV1poWjBFRFNzcC9OWW9oWGVKNFZFNXJiZXVzWW1JenYxckRH?=
+ =?utf-8?B?TTFyNTZjZGEvQUFJUE9mZWRZZkY0Ri8wK0tFald5QzVwNk8zWldzR1NFRjVH?=
+ =?utf-8?B?ZnlDWjljTjMrUjVpcXByMnorSUx1NS9NMzhCZTJIVDkrd0Vkcng1YW5IT0Fq?=
+ =?utf-8?B?UXNxcWpQMW1UNUM0TWlKb3h5RWJLQTEwSG83TlRhZ0VmKzlnM1ZxLzI5MG0y?=
+ =?utf-8?B?U3B2V21pUE14dktuZml0cDJtZkdxRE1yYTByOXk2VkRUeStxSlFycVQ1SWRK?=
+ =?utf-8?B?bE1rTVJVQnlwMnlvMFNHZW5SSmdxU2xIM3ZmNHdEcGk3Vk9YSkFUVDNYdFU0?=
+ =?utf-8?B?TU5qNXg3M3JmWnNaRmxPcFA1aGdjaXd0N1ZmTGQ4SFBYYTJFRVNlc05Zc2Np?=
+ =?utf-8?B?T2hXSnJiOGdKNktndTIxdFFualVPRldQenJsVFJIU0hpMVFXWkRVQUNtRjc0?=
+ =?utf-8?B?NU9zVUIzVTB3TFI3Z1dJcVNRTmhwVFJaSVhoVmpCWXVCODN2YlloQ1p3bVFR?=
+ =?utf-8?B?YStmc1ZvSjgrbjhHNkllR21IbXJyamV6U0x2bGFxQW9BTndKcUU1TVZpT1J3?=
+ =?utf-8?B?U2plc1p3OGhqU1g2VjVPWmhoSWF6L2NiY3ByVFZZTVRKY0F2aWhPb1ZBbWRo?=
+ =?utf-8?B?ZTNKR0E5Nk0zU25aSy9HT2Nxb09TWkZES2w1UmM0ejdYNXZ3NXljT2Q2YmZm?=
+ =?utf-8?B?anMyNjJJVlNnQUhHdmo0TjI4OUlmdmowV3VKOVd0TC9KbzJPaFBFcmFBS1FH?=
+ =?utf-8?B?dVB3dnh6UStZMWtqMjB0WjVNaWM0elBnNnVNWUx5N3hwZmdtUVlCVTE4Rkp6?=
+ =?utf-8?B?N2dta09FNzJIZWNNeVppV0NjcGFpOHQ0T3RjOFJTbVlhRTgybFRrNlllSlVt?=
+ =?utf-8?B?bnVNQm41RkNlczdBRVJWZzhwQkNmTE81QVYxaklzRWhkc2RMWnFTck9rZWgz?=
+ =?utf-8?Q?wRmQ67NAjD03zNQmn45/K7GFK?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3156723d-f72e-46ce-bb7f-08dcc2a909f8
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 12:50:45.3113
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wkjZRjskZ6Mtq5Sf8TBhhX48pB3CPx4R8e5KJnt4u8gAiznFqss7L1uuNvyCe1WmlkQrYzifmJmbDiYEVZ0IQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5742
 
-On Thursday, August 22, 2024 6:05:19 AM EDT Petr Mladek wrote:
-> On Wed 2024-08-21 13:12:03, nerdopolis wrote:
-> > On Tuesday, August 20, 2024 9:29:36 AM EDT Petr Mladek wrote:
-> > > On Mon 2024-08-19 11:50:39, nerdopolis wrote:
-> > > > On Monday, August 19, 2024 11:09:35 AM EDT Steven Rostedt wrote:
-> > > > > On Sun, 18 Aug 2024 10:30:22 -0400
-> > > > > nerdopolis <bluescreen_avenger@verizon.net> wrote:
-> > > > > 
-> > > > > > On Sunday, August 18, 2024 8:33:25 AM EDT nerdopolis wrote:
-> > > > > > > On Sunday, August 18, 2024 1:12:14 AM EDT Greg KH wrote:  
-> > > > > > > > On Sat, Aug 17, 2024 at 08:09:20PM -0400, nerdopolis wrote:  
-> > > > > > > > > Hi
-> > > > > > > > > 
-> > > > > > > > > I originally brought this up on linux-serial, but I think it makes more sense
-> > > > > > > > > that it's part of how printk console device selection works. Without VTs, while
-> > > > > > > > > most software is able to handle the situation, some userspace programs expect
-> > > > > > > > > /dev/console to still be responsive. Namely systemd. It calls isatty() against
-> > > > > > > > > /dev/console, and since /dev/console on VT-less systems currently defaults to
-> > > > > > > > > /dev/ttyS0, and when /dev/ttyS0 is disconnected, the ioctl's fail, and it
-> > > > > > > > > refuses to write log messages to it.
-> > > > > > > > > 
-> > > > > > > > > There doesn't seem to be a mailing list for printk, so I had to use
-> > > > > > > > > get_maintainer.pl. Hopefully this is correct
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > After some grepping and guessing and testing, and playing around Something like
-> > > > > > > > > diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
-> > > > > > > > > index a45d423ad10f..f94a4632aab0 100644
-> > > > > > > > > --- a/drivers/tty/Kconfig
-> > > > > > > > > +++ b/drivers/tty/Kconfig
-> > > > > > > > > @@ -384,9 +384,12 @@ config NULL_TTY
-> > > > > > > > >  
-> > > > > > > > >           In order to use this driver, you should redirect the console to this
-> > > > > > > > >           TTY, or boot the kernel with console=ttynull.
-> > > > > > > > > -
-> > > > > > > > >           If unsure, say N.
-> > > > > > > > >  
-> > > > > > > > > +config NULL_TTY_CONSOLE
-> > > > > > > > > +        bool "Supports /dev/ttynull as a console automatically"
-> > > > > > > > > +        depends on NULL_TTY && !VT_CONSOLE
-> > > > > > > > > +
-> > > > > > > > >  config VCC
-> > > > > > > > >         tristate "Sun Virtual Console Concentrator"
-> > > > > > > > >         depends on SUN_LDOMS
-> > > > > > > > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > > > > > > > > index dddb15f48d59..c1554a789de8 100644
-> > > > > > > > > --- a/kernel/printk/printk.c
-> > > > > > > > > +++ b/kernel/printk/printk.c
-> > > > > > > > > @@ -3712,6 +3712,11 @@ void __init console_init(void)
-> > > > > > > > >         initcall_t call;
-> > > > > > > > >         initcall_entry_t *ce;
-> > > > > > > > >  
-> > > > > > > > > +#ifdef CONFIG_NULL_TTY_CONSOLE
-> > > > > > > > > +       if (!strstr(boot_command_line, "console="))
-> > > > > > > > > +               add_preferred_console("ttynull", 0, NULL);
-> > > > > > > > > +#endif
-> > > > > > > > > +
-> > > > > > > > >         /* Setup the default TTY line discipline. */
-> > > > > > > > >         n_tty_init();
-> > > > > > > > >  
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > seems to work, it conflicts with CONFIG_VT_CONSOLE since it is effectively
-> > > > > > > > > redundant, it is optional, so that it doesn't cause any changes to
-> > > > > > > > > configurations, that historically had CONFIG_VT_CONSOLE turned off in the past,
-> > > > > > > > > and for bootloader configs, it won't change any behavior if the kernel command
-> > > > > > > > > line has a console device specified  
-> > > > > > > > 
-> > > > > > > > What is wrong with just setting the kernel command line for this
-> > > > > > > > instead?
-> > > > > > > >   
-> > > > > > > When they eventually start shipping kernels without VTs, they will then have to
-> > > > > > > include a script in their upgrade process that runs
-> > > > > > > 
-> > > > > > > sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"nomodeset /g" /etc/default/grub  
-> > > > > > Ugh, I meant
-> > > > > > sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"console=ttynull /g" /etc/default/grub
-> > > > > > sorry
-> > > > > 
-> > > > > If you can modify the kernel .config for this, can you just update:
-> > > > > 
-> > > > >   CONFIG_CMDLINE_BOOL=y
-> > > > >   CONFIG_CMDLINE="console=ttynull"
-> > > > > 
-> > > > > ?
-> > > > > 
-> > > > That could work, I think. I'll have to see how that works when a different
-> > > > console= is specified on the command line from the bootloader though, I am
-> > > > thinking that if console=ttyS0 is then manually specified by a user, there will
-> > > > be two devices in /proc/consoles (ttyS0 on top of ttynull), but I admit I don't
-> > > > know if there are actual ramifications of that, or not...
-> > > 
-> > > I guess that it would register both consoles in this case.
-> > > 
-> > > > I am not sure if real distributions would want this to be the answer I guess I
-> > > > will have to see if any others are using CONFIG_CMDLINE_BOOL/CONFIG_CMDLINE,
-> > > > although this gives me an idea..
-> > > > 
-> > > > Would something like this below be more acceptable? I didn't test it yet, but
-> > > > just the theory. I am thinking that this could have more use to allow a
-> > > > preferred to be set...
-> > > > 
-> > > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > > > index dddb15f48d59..c1554a789de8 100644
-> > > > --- a/kernel/printk/printk.c
-> > > > +++ b/kernel/printk/printk.c
-> > > > @@ -3712,6 +3712,11 @@ void __init console_init(void)
-> > > >  	initcall_t call;
-> > > >  	initcall_entry_t *ce;
-> > > >  
-> > > > +#ifdef CONFIG_DEFAULT_CONSOLE_HINT_BOOL
-> > > > +       if (!strstr(boot_command_line, "console="))
-> > > > +               add_preferred_console(CONFIG_DEFAULT_CONSOLE_HINT, 0, NULL);
-> > > > +#endif
-> > > > +
-> > > >  	/* Setup the default TTY line discipline. */
-> > > >  	n_tty_init();
-> > > 
-> > > This is better. But it does not handle some situations. For example,
-> > > default console might also by defined by:
-> > > 
-> > >    + scpr, see acpi_parse_spcr()
-> > >    + device tree, see of_console_check()
-> > >    + netconsole=, it is hidden in init_netconsole()
-> > > 
-> > > I tried to handle this another way. The "ttynull" console was
-> > > added when /dev/console could not be opened in console_on_rootfs(),
-> > > see the commit 757055ae8dedf5333af17b ("init/console: Use ttynull
-> > > as a fallback when there is no console").
-> > > 
-> > > But it did not work well and we had to revert the change, see
-> > > the commit a91bd6223ecd46addc71ee6f ("Revert "init/console: Use
-> > > ttynull as a fallback when there is no console").
-> > > 
-> > > Another idea:
-> > > 
-> > > 1. We could use the same trick as netconsole. I mean to use:
-> > > 
-> > > 	ttynull_console.flags |= CON_ENABLED;
-> > > 
-> > >    to force register_console() to register the console even
-> > >    when it is not defined in the list of preferred consoles.
-> > > 
-> > >    It is a kind of hack. But it looks cleaner that adding
-> > >    ttynull console into the list of preferred consoles.
-> > > 
-> > > 
-> > > 2. We need to decide whether the fallback to ttynull console
-> > >    is needed as late as possible. It should be done after
-> > >    all other drivers call register_console().
-> > > 
-> > >    I would do it in late_initcall_sync().
-> > > 
-> > > 
-> > > 3. We need to detect when the fallback is needed. The check
-> > >    of /dev/console does not work, see
-> > >    the commit a91bd6223ecd46addc71ee6f ("Revert "init/console: Use
-> > >    ttynull as a fallback when there is no console").
-> > > 
-> > >    A solution might be to check if @console_list is empty.
-> > > 
-> > > 
-> > > Something like (not even compile tested):
-> > > 
-> > > diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
-> > > index 6b2f7208b564..7cd7ba2ec33c 100644
-> > > --- a/drivers/tty/ttynull.c
-> > > +++ b/drivers/tty/ttynull.c
-> > > @@ -59,6 +59,16 @@ static struct console ttynull_console = {
-> > >  	.device = ttynull_device,
-> > >  };
-> > >  
-> > > +void __init register_ttynull_console_force(void)
-> > > +{
-> > > +	if (!ttynull_driver)
-> > > +		return;
-> > > +
-> > > +	/* Force registration by setting the CON_ENABLED flag. */
-> > > +	ttynull_console.flags |= CON_ENABLED;
-> > > +	register_console(&ttynull_console);
-> > > +}
-> > > +
-> > >  static int __init ttynull_init(void)
-> > >  {
-> > >  	struct tty_driver *driver;
-> > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > > index 054c0e7784fd..004612e6fc7f 100644
-> > > --- a/kernel/printk/printk.c
-> > > +++ b/kernel/printk/printk.c
-> > > @@ -3857,6 +3857,25 @@ static int __init printk_late_init(void)
-> > >  }
-> > >  late_initcall(printk_late_init);
-> > >  
-> > > +static int __init console_fallback(void)
-> > > +{
-> > > +	bool need_fallback = false;
-> > > +
-> > > +	console_list_lock();
-> > > +	/*
-> > > +	 * Make sure that there is a console which can be associated
-> > > +	 * with /dev/console
-> > > +	 */
-> > > +	if (hlist_empty(&console_list))
-> > > +		need_fallback = true;
-> > > +
-> > > +	console_list_unlock();
-> > > +
-> > > +	if (need_fallback)
-> > > +		register_ttynull_console_force();
-> > > +}
-> > > +late_initcall_sync(console_fallback);
-> > > +
-> > >  #if defined CONFIG_PRINTK
-> > >  /* If @con is specified, only wait for that console. Otherwise wait for all. */
-> > >  static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progress)
-> > > 
-> > > 
-> > I got it to compile with
-> > 
-> > --- a/include/linux/console.h
-> > +++ b/include/linux/console.h
-> > @@ -513,9 +513,12 @@ extern int braille_register_console(struct console *, int index,
-> >  extern int braille_unregister_console(struct console *);
-> >  #ifdef CONFIG_TTY
-> >  extern void console_sysfs_notify(void);
-> > +extern void register_ttynull_console_force(void);
-> >  #else
-> >  static inline void console_sysfs_notify(void)
-> >  { }
-> > +static inline void register_ttynull_console_force(void)
-> > +{ }
-> >  #endif
-> >  extern bool console_suspend_enabled;
-> >  
-> > and throwing a "return 0;" in console_fallback()
-> > 
-> > Seems like at least on x86 though, when I tested (CONFIG_VT_CONSOLE disabled),
-> > the console is still ttyS0, even if I add "-serial none" to the QEMU VM.
-> > 
-> > 
-> > 
-> > I saw 757055ae8dedf5333af17b, but I feel like the intent is different, if I am
-> > understanding that correctly, which I very well could not be, to me it looks
-> > like it is using ttynull as a _last_ resort when all else fails, but x86 always
-> > seems to have /dev/ttyS0's, unless I make changes before the serial consoles
-> > are used.
-> > 
-> > My concerns are more about the distributions that have had /dev/console work
-> > no matter what because of CONFIG_VT_CONSOLE. isatty() always returns true 
-> > against /dev/console when enabled. When it is disabled, /dev/ttyS0 wins and now
-> > software like systemd that logs there is now at the mercy of how /dev/ttyS0 is
-> > physically connected or not for it to be able to log successfully.
-> 
-> I see. I have misunderstood the original problem.
-> 
-> Hmm, historically, the kernel tries to enable any available console by
-> default. It makes some sense. One would expect that when there is a
-> device than the user should be able to access it and see the messages there.
-> 
-> If I get it correctly, you suggest to do not register serial port
-> when it is not physically connected. It makes some sense.
-> 
-Hmm, now that might work, and is a good idea...
-> But I think that this should be implemented on the serial console layer.
-> It should not call register_console() when the port is not connected.
-> 
-> Plus, it would need the above patch which would register
-> ttynull_console driver as the final fallback. Otherwise, /dev/console
-> would not be backed by any device. Or we could update console_device()
-> to return the ttynull_driver as a fallback when there is no console
-> registered.
-> 
-> > One of my _other_ ideas was to in setup_arch() in arch/x86/kernel/setup.c add
-> > the "add_preferred_console("ttynull", 0, NULL);" when CONFIG_NULL_TTY_CONSOLE
-> > is enabled right above where it calls vgacon_register_screen() for this reason.
-> > 
-> > It worked, but it probably was not correct either...
-> 
-> IMHO, this is not acceptable for a generic kernel. The kernel should
-> try show the messages whenever possible. It should not ignore serial
-> consoles when they are available.
-> 
-Makes sense, on many desktop distros, the logging was not going to physical
-hardware because of CONFIG_VT_CONSOLE being enabled, but I understand there are
-many different types of embedded devices though.
+Sorry, please ignore this patch for now. The wrong Fixes were used. This 
+patch will be updated later.
 
-Which is why my first thought was a new CONFIG_NULL_TTY_CONSOLE option that
-would be disabled by default, but when _enabled_ (Trading CONFIG_VT_CONSOLE for
-it), the behaviour could be the same on the serial ports,at least on x86, when it adds ttynull as a preferred console...
-
-like:
-#if defined(CONFIG_NULL_TTY_CONSOLE)
-	if (!efi_enabled(EFI_BOOT) || (efi_mem_type(0xa0000) != EFI_CONVENTIONAL_MEMORY))
-		add_preferred_console("ttynull", 0, NULL);
-#endif
-
-in arch/x86/kernel/setup.c to mimic I _think_ about where the VT console would
-have been registered, and in the same conditions...
-
-(this would only work in x86 though...)
-> Also I am sure that the kernel is used on devices which only
-> have a serial console. Such a change would cause regression
-> there.
-> 
-> Best Regards,
-> Petr
-> 
-
-
-
-
+在 2024/8/22 20:41, Yang Ruibin 写道:
+> The debugfs_create_dir() function returns error pointers.It
+> never returns NULL. So use IS_ERR() to check its return value.
+>
+> Fixes: 011d82611172 ("RAS: Add a Corrected Errors Collector")
+> Signed-off-by: Yang Ruibin <11162571@vivo.com>
+> ---
+>   drivers/block/pktcdvd.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+> index 7cece5884b9c..030b7a063a0b 100644
+> --- a/drivers/block/pktcdvd.c
+> +++ b/drivers/block/pktcdvd.c
+> @@ -498,7 +498,7 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
+>   	if (!pkt_debugfs_root)
+>   		return;
+>   	pd->dfs_d_root = debugfs_create_dir(pd->disk->disk_name, pkt_debugfs_root);
+> -	if (!pd->dfs_d_root)
+> +	if (IS_ERR(pd->dfs_d_root))
+>   		return;
+>   
+>   	pd->dfs_f_info = debugfs_create_file("info", 0444, pd->dfs_d_root,
 
