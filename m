@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-297566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA45495BAF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5611995BAF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64A54B2B58D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002BA1F23A8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377B91CCED3;
-	Thu, 22 Aug 2024 15:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0384D1CCEF6;
+	Thu, 22 Aug 2024 15:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqu0Yazw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ok2rBrKj"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFF41CC892;
-	Thu, 22 Aug 2024 15:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CAB1CCB5E;
+	Thu, 22 Aug 2024 15:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341760; cv=none; b=QgqXh7/GdRFWVoMTQnEnvmprp3PPbFbjsEjB1FM41JdENBon8N549QGuxHMnlE1O1JglME56fa23Q6Bac0fjBILYTqqM3cV32nWjAWf4ZoW0sJZft3U6QmyUNJWIQimt0MVzT/XeYBbH+h6bZkGJRMWehElg7eSqKKwKyBawOyo=
+	t=1724341774; cv=none; b=GVCamRsjquG6OnQRuBDjo6PqG6INBcGpfBom+wfzsYTvlDC6EkZ6wXOsj1QyuOH7zNFEMNrEv3q+y+WyPttlFovHyRzZklAmA9IxC4iDh2sv4I4xSgzPqdmwj7oPhZa8/sNwrWI2OIeZ+8QMXaSAfxilQ5eClvJ86W+gxz+cZWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341760; c=relaxed/simple;
-	bh=r6e4+MB0BMi0nDYW7f+QbhtzlR69Tkrowry8L1Pk1Ic=;
+	s=arc-20240116; t=1724341774; c=relaxed/simple;
+	bh=XJsBXiTafS3oLLeKqpRuQE1ZszRn8hHrPyv8ICmmUR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdAy2BER3ZtvP29xXzJBAzFiAPrvGIhQ1sOLk2uN9HO4agG4R9A9SldVStZQeMc8nnYCqHOnCiovA2juwKSWh4CngwKkd/XvzZ+AyAmktDtNeh1OyHLL1rI7CQtoFSR3J78A8sjCAvaMKs86dhKcGSxsmqTzP/ar8i8Hq/I6wAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqu0Yazw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12870C32782;
-	Thu, 22 Aug 2024 15:49:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724341760;
-	bh=r6e4+MB0BMi0nDYW7f+QbhtzlR69Tkrowry8L1Pk1Ic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fqu0YazwB5Cz2DzboGWe6bJo/9nGQZGVCnpZ9Ol0YsF6syeCHsV5aaa2kmVtKioQZ
-	 GH/IUFYZhK6o09Mo/4IVmDyDgJqL+x594TQFT7tnL2t2xcRtH5oYWXaW+AQcDsyvG/
-	 GUWoJWUGa+BwGtAfJT2vWLOdycSKsZUI+sro5cF6wncEGdaebEyZJljuZsJxzN6Ani
-	 N2yv2E/J5RhwDG5nvXCbFCwDUWWPLzlSQ+5feXZY69YhwpHkW/l2xwamRbuyCNERwU
-	 nZOcWbX0pYWijMvjvvo0bzmENPZfP3Sn2BxG2D0/hjdiuC9wZ8mcc4b/OiJ4KcQp5I
-	 mnEkHJxJH/lgA==
-Date: Thu, 22 Aug 2024 17:49:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 14/14] ARM: s3c: crag6410 - convert GPIO lookup tables to
- property entries
-Message-ID: <3qfdoq7ycc54gqnvuesco7gtnabhgs5oanxx6dkdftmsjzxtw2@mprcx7qbhu5x>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-15-dmitry.torokhov@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbleEiYPY6w0EnfiWOf/cswv+HWdNPqxzKDTlIObFWjhwPGpofn+vROtK7j1IV/7tqDLzP4cu4lrfGjndZO/bJOD//VYCUsBRX56M6IQmwzRbp+TKlXuZlTQnK6RVP6yDeEhNf022FoiE3RukjnItKtkPdU7pyygnTlCmniPw28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ok2rBrKj; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=pHlkyzIWh4hwezalW5SguitFaW5UqUJzRSKfUy7wdko=; b=Ok2rBrKjVNH/cWCK6uRBE5EnkD
+	rH1NcI0D83t8YTcY+7S8+cO+Ge02bsdJczmXE4dR4PsgBAHZ7AymGctQnKCByGfqMimZeKpXICJUL
+	1R0/k27lpWl7WBoSb+JvovOFGaQtAhYNfuxkzDqdb3JwE9TSfkRLhY2r58Cx269dzz4E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1shA3u-005RZa-FD; Thu, 22 Aug 2024 17:49:22 +0200
+Date: Thu, 22 Aug 2024 17:49:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v3 2/3] phy: Add defines for standardized PHY
+ generic counters
+Message-ID: <5e21ea4b-aae1-40aa-9865-7e48b1971a13@lunn.ch>
+References: <20240822115939.1387015-1-o.rempel@pengutronix.de>
+ <20240822115939.1387015-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819045813.2154642-15-dmitry.torokhov@gmail.com>
+In-Reply-To: <20240822115939.1387015-3-o.rempel@pengutronix.de>
 
-On Sun, Aug 18, 2024 at 09:58:11PM -0700, Dmitry Torokhov wrote:
-> Static property entries support defining GPIOs and are more similar to
-> device tree properties and are not prone to losing link between device
-> and a lookup table because of changes in device name. Convert the board
-> to use them.
+On Thu, Aug 22, 2024 at 01:59:38PM +0200, Oleksij Rempel wrote:
+> Introduce a set of defines for generic PHY-specific counters.
+> These defines provide standardized names for commonly
+> tracked statistics across different PHY drivers, ensuring consistency in
+> how these metrics are reported:
 > 
-> This also fixes issue with recent conversion to GPIO descriptors
-> where GPIO lookup tables were specifying incorrect GPIO chip name
-> ("GPIO<N>" vs "GP<N>").
+> - `PHY_TX_PKT_COUNT`: Transmit packet count.
+> - `PHY_RX_PKT_COUNT`: Receive packet count.
+> - `PHY_TX_ERR_COUNT`: Transmit error count.
+> - `PHY_RX_ERR_COUNT`: Receive error count.
 > 
-> Fixes: 10a366f36e2a ("ASoC: wm1250-ev1: Convert to GPIO descriptors")
-> Fixes: a45cf3cc72dd ("spi: s3c64xx: Convert to use GPIO descriptors")
-> Fixes: 9a5ed0bac86e ("regulator: wm831x: Convert to use GPIO descriptors")
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  arch/arm/mach-s3c/devs.c          |  35 ----------
->  arch/arm/mach-s3c/devs.h          |   1 -
->  arch/arm/mach-s3c/mach-crag6410.c | 108 ++++++++++++++++++------------
->  3 files changed, 67 insertions(+), 77 deletions(-)
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Best regards,
-Krzysztof
-
+    Andrew
 
