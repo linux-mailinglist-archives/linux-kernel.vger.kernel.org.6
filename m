@@ -1,124 +1,77 @@
-Return-Path: <linux-kernel+bounces-297072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8068995B2A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:10:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB9595B2A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4191C20D34
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C31B2824C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC1717E8E2;
-	Thu, 22 Aug 2024 10:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A303D17E004;
+	Thu, 22 Aug 2024 10:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDi3xLFE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ceWcxheo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1EC18C31;
-	Thu, 22 Aug 2024 10:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EEF2033A;
+	Thu, 22 Aug 2024 10:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724321427; cv=none; b=Uf952mtv13WghLCLmISG7YCgHAdCyYY/i6059dKheakplNdvlAboLFV5Rj5OBybuhpOu33jyVByS5q4u2eORUlXuvDUetKne2zdSMI5fjwE6CRPuCtSoamUaM9pQCn/dsssN3erqx245rI2n5CItI7A4U5X2bV+RpboNRLy+LB8=
+	t=1724321497; cv=none; b=tn76WKTt1wjgM/DanelwzH5NABlpjyVvGsyQ8JOWFRmqp6R4AHIhxcrax1+ykWxee7Y2iy81jmMzRDQVss2VkIyxftDd6LHc+zGw8uW4PvHK2UNGNk6dnm2hdkQeIawZtG0xefYFm40bQ2VWUjYzN9BA1jX19wtuJN+Umo6c+VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724321427; c=relaxed/simple;
-	bh=0ApU82SZWq6n9EuyshuodUqSF2/9WM8FQ5lruXW/bCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blFJEXtjnijPwHGvxq4lMA0zMN/8aLA0W16V061VvY6+O1uHNs/5omTvzxDk3boN3WwgYvKQlRGZnp87EbbZTCv5aaIDn1kX9iGjLGfXbafMRzZ0Uagk0hYPmsBs9pxFGKKbHSOm38s/MyyW4APdr/abab6OUA7lBNdQYWxKPqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDi3xLFE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638D7C32782;
-	Thu, 22 Aug 2024 10:10:23 +0000 (UTC)
+	s=arc-20240116; t=1724321497; c=relaxed/simple;
+	bh=bgYDPzutrzDAr5YMb+PdbaWy4xjt/hdjmclU/iDKrUE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OAMfOHFfmMIhRaZ33cBFTeOSajHakvPSOY9vglKeWHKM0Uk0oXxnd87Ch4XOJOsDKuA9oBirrNVemLgwEIz2RVHtJM05u/ZtUNnCcBV7m3RL9/ggUM0sNzxFVIUm0PZZvPc50AZfJ6ElI3s9L9gzCPvam3D37ZrrOom8fJ8hEBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ceWcxheo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A11C4AF0B;
+	Thu, 22 Aug 2024 10:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724321426;
-	bh=0ApU82SZWq6n9EuyshuodUqSF2/9WM8FQ5lruXW/bCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lDi3xLFENzGU+hwTJNHpp2Tv9TkveDcGPJzLrErcnV2m3J+wIGxAVTL89EfAU7mC1
-	 qan8wL6poGR5P5BzvhGZVchExNIHO9fgZFABEWm2iRstQv8dMCCXg4gCY4+a9LTdfz
-	 2v4Txgn5TMg2THG96HTc3SOjFaoaKKHfVOKQ5SD2H023KnQIf+qu52AIsxL5sxQq+w
-	 d9HMp8JBexoZYP4T671NgsUdb0ocilmLUtCvoyR+Qo3TErQ942yqwbsRSC+R16ZCoB
-	 MJjmgY6yQJnlZTDVIKNi5gvTFFwkcObt0a9lGCuI+rF1aKYhw2aeYfy/IeG4wJDa+Q
-	 e0weELHrOI0Qg==
-Date: Thu, 22 Aug 2024 11:10:20 +0100
+	s=k20201202; t=1724321496;
+	bh=bgYDPzutrzDAr5YMb+PdbaWy4xjt/hdjmclU/iDKrUE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ceWcxheoWDtnYgg985x45KYHmTV5oTZOhKwraHXxGsy7HTP/LFIFjnC+DwVniTqn8
+	 H9NLuDZQpjh7YacHZqImBYeAZnE+rF0cfYudqz8zJqoSrpRhX8WmarquHOz2Py4QLj
+	 zQr5vl8E/qDbXcfIX9QO3tbOBRlEKYXcWIwNoOeXWow7xY7Y+qlnXCDUsAuTAYGU+p
+	 K7KyFiW9gpb8deb7VLWaLfyUA2HoCeihoZFeYgskdcVZZqgA7TSshA/cRJj6VdQxeo
+	 t5qcNJQ/64y2HlAwdHZdSXDcBv8VqXqZSHcPOs3JsJ+pj5mGYq7r19JxSqh43KsZWh
+	 ukcVCqbEnRwBA==
 From: Lee Jones <lee@kernel.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
-	pavel@ucw.cz, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ukleinek@debian.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-hwmon@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] mfd: add base driver for qnap-mcu devices
-Message-ID: <20240822101020.GG6858@google.com>
-References: <20240810184743.277248-1-heiko@sntech.de>
- <20240810184743.277248-3-heiko@sntech.de>
- <20240816171336.GF5853@google.com>
- <2875938.88bMQJbFj6@diego>
+To: lee@kernel.org, tzungbi@kernel.org
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+In-Reply-To: <20240819102326.5235-1-tzungbi@kernel.org>
+References: <20240819102326.5235-1-tzungbi@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: cros_ec: simplify cros_ec_dev_init()
+Message-Id: <172432149544.1248859.6275161639600844545.b4-ty@kernel.org>
+Date: Thu, 22 Aug 2024 11:11:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2875938.88bMQJbFj6@diego>
+X-Mailer: b4 0.13.0
 
-On Sun, 18 Aug 2024, Heiko Stübner wrote:
+On Mon, 19 Aug 2024 18:23:26 +0800, tzungbi@kernel.org wrote:
+> Simplify cros_ec_dev_init() by the following changes:
+> - Get rid of label `failed_devreg`.
+> - Remove a redundant space and comment.
+> - Use `if (ret)` instead of `if (ret < 0)`.
+> 
+> 
 
-> Hi Lee,
-> 
-> thanks a lot for your review,
-> 
-> Am Freitag, 16. August 2024, 19:13:36 CEST schrieb Lee Jones:
-> > On Sat, 10 Aug 2024, Heiko Stuebner wrote:
-> 
-> 
-> > > +/*
-> > > + * MFD core driver for the MCU in Qnap NAS devices that is connected
-> > 
-> > No such thing as an "MFD".  Please describe the device.
-> > 
-> > Is it QNAP or Qnap?  Please be consistent.
-> 
-> Looks like QNAP spells itself in all upper case on their website, so I did
-> go with that
+Applied, thanks!
 
-Super, thanks.
+[1/1] mfd: cros_ec: simplify cros_ec_dev_init()
+      commit: 70596c588adb5344e7002086d78ab5792d7d1069
 
-> > > +
-> > > +/*
-> > > + * The MCU controls power to the peripherals but not the CPU.
-> > > + *
-> > > + * So using the pmic to power off the system keeps the MCU and hard-drives
-> > > + * running. This also then prevents the system from turning back on until
-> > > + * the MCU is turned off by unplugging the power-cable.
-> > > + * Turning off the MCU alone on the other hand turns off the hard-drives,
-> > > + * LEDs, etc while the main SoC stays running - including its network ports.
-> > > + */
-> > > +static int qnap_mcu_power_off(struct sys_off_data *data)
-> > > +{
-> > > +	struct qnap_mcu *mcu = data->cb_data;
-> > > +	int ret;
-> > > +	u8 cmd[] = {
-> > > +		[0] = 0x40, /* @ */
-> > > +		[1] = 0x43, /* C */
-> > > +		[2] = 0x30  /* 0 */
-> > > +	};
-> > 
-> > u8 cmd [] = { '@', 'C', '0' };  ?
-> 
-> see above.
-> 
-> I guess this is a style choice, we could of course go with
-> 	u8 cmd[] = { 0x40, 0x43, 0x30 }
-> if you prefer that.
-
-Yes please.
-
--- 
+--
 Lee Jones [李琼斯]
+
 
