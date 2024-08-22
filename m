@@ -1,184 +1,199 @@
-Return-Path: <linux-kernel+bounces-297402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD6895B7BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:58:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D244595B7C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359E91F25B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:58:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4783B254D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41F01CBEAA;
-	Thu, 22 Aug 2024 13:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7198C1CC14F;
+	Thu, 22 Aug 2024 13:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GkyQov+W"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZuwuYWbe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BCF1CB336;
-	Thu, 22 Aug 2024 13:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF921CBE89;
+	Thu, 22 Aug 2024 13:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724334797; cv=none; b=PLnQ62Kz4cLXSxSDbOoD6DFL5OGm2GuohLzO/jL2y6PdGSFkxbUo24EfYsU3h6lBwkMMS5aHT4GBL5PhDxTNPX/OdHe+AseYOL1Sl2JZihvgxSySvQcaL/aOSstpryEuabHDRR+XcMlicEu1oAg5Mok82NQte6IHTBQkB2elVZU=
+	t=1724334862; cv=none; b=bHlyoq73AgF0ekofFu+qDmKxfpTX3OY/NES80wGif1rZru8Z2hLkXJAGLTtVEhrZKV/Ol/Cq9u2DSaLSO2vp+A3guxWzLjHATCpEMWYDttvDFjMXbAXYFIl8qMbJQjkkhGtYpHhJf5WivEivEeNSpyNGhO5mm8z3aKRMKcIXnnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724334797; c=relaxed/simple;
-	bh=b+4zkE+oHIiJn3+Zf87WDYtnXdB8KgyWtfesZC6Zh7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T/yIuiUigKyeyk+4RH+dHgZH1p+iOu8gcp20AOAC7kFUlO/bQpQz+JZ5nz9PgZa9QXCW4G9//xoxYfTz1E+l0cOAbyG6G/+N/GOVLR2zZhNcd8VMWHvbcgK4gpc7Ehvv4f2hp9Ztte+ikJuz2Zq2HEQiG0AZLk8jqbD0uifa96E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GkyQov+W; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MA6PAj006591;
-	Thu, 22 Aug 2024 13:53:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MBthUzIbc6aeQsygWdUFG+pmnVUpFeCt8aopJtX3ZBk=; b=GkyQov+W0cDGgzuk
-	FAjG5k7f1tll+mHu7OBNyu2oAoT7n1itdfWFKP52CNz1SUn7UQpzO04ETr/Tt3A2
-	eIHydPeciTZwFqCFNH+6EX8WLZsBu6S9Y7o6udSI36EHVJs8n8YuJjRz418Pa+0B
-	9wfKByrs7tFSZVE7sgHCYf3EJ0DO6OxisePULKH5RCLMw/dvCRoeWNJACrFO6g9P
-	cEXrTAuxqxITgWN4Bi5BpzYZBHChTHl7I0obHLhiROiNnCtPa543Zk5URXLsGSw7
-	C03Cvwd63QEk31xcAchGbZk9KtDXV0c6vl8nj7yClzeSg/Pz3Sppy2WjW7M7bLBl
-	gYS/QQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkwcq83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 13:53:05 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MDr42V025804
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 13:53:04 GMT
-Received: from [10.253.73.208] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
- 2024 06:52:52 -0700
-Message-ID: <285be0e5-0060-403c-a927-d69e31b163cd@quicinc.com>
-Date: Thu, 22 Aug 2024 21:52:47 +0800
+	s=arc-20240116; t=1724334862; c=relaxed/simple;
+	bh=9YUyCrtIOi7mWuFM6fXfJzgv/Fnrb9gWjYwYg0/W3NI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rb1r3h8IFDy6kbGxKQZokTbUTVr/nC+pO5XnhNRTYwBaXcVfSpQaGv2jd5QzqDZbQjR0KPeFc4lmJuHi5tW+lOWr2PZjLWmyLZsJdTCb8hS0eXLxEU6d/W5RUxQef4x57f9gEExjnI9tEVGzAQNp65g2rMk7C6SdQJbGT2OjSAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZuwuYWbe; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724334861; x=1755870861;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9YUyCrtIOi7mWuFM6fXfJzgv/Fnrb9gWjYwYg0/W3NI=;
+  b=ZuwuYWbeA51dc43qB++0vKjza0eba8LB/WP+P4jtExmmhSfade4Od3HU
+   Kms5qYQGBz0CQMS+8ZBskQZTcH8mFQA00ZWknLSySd7w86v7kWNYnt4j+
+   VBF8GEkMsux0w0JyPuWhY9ZrurjpfHA0N5oblfA1hX7XprJitvV5JM6Y6
+   jk4He8Kx2vTyMJRoOBSbd1ApRbosQY2msr7asM2mTh9UdR+Zj/+yss1pz
+   3L/Li+0WAOY31QjRrZyHQFaoMK9GlAgtFG2iMWr5sPa4twxMP45HheB/4
+   qkaFUboiirBFkcOuBd47ixrj7NUKkN/RJBMExKtY54Qu8u6CbZxeITBDW
+   w==;
+X-CSE-ConnectionGUID: dr2XSb1dTsu3I2ddccYnNQ==
+X-CSE-MsgGUID: wMjcN1H9TUSpPOpmws27Pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22561866"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="22561866"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:54:21 -0700
+X-CSE-ConnectionGUID: cAc/ohFRQYyDttAPJPxQxA==
+X-CSE-MsgGUID: CKDH6XyBQuSuoE3L1FfDGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="66273292"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:54:15 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sh8GP-00000000TFF-2VSn;
+	Thu, 22 Aug 2024 16:54:09 +0300
+Date: Thu, 22 Aug 2024 16:53:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v5 04/10] regulator: Do pure DT regulator lookup in
+ of_regulator_bulk_get_all()
+Message-ID: <ZsdC8wkgsdsMJuAL@smile.fi.intel.com>
+References: <20240822092006.3134096-1-wenst@chromium.org>
+ <20240822092006.3134096-5-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
- controller for IPQ SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
- <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
- <krbpzjccn6xvnpfsa7eeeowmtjuuw4yp72qqqbeq2icxrqvdo4@x6pawrcctyd3>
- <51198961-2e09-4d0e-8bf3-907c81597724@quicinc.com>
- <be2eae05-6deb-49fb-94ce-cb5e3a5bd1ba@kernel.org>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <be2eae05-6deb-49fb-94ce-cb5e3a5bd1ba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eYOahMDNrDzgVcazXItIgIP6muxkEHSy
-X-Proofpoint-GUID: eYOahMDNrDzgVcazXItIgIP6muxkEHSy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_07,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408220102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822092006.3134096-5-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-
-On 8/22/2024 2:29 PM, Krzysztof Kozlowski wrote:
-> On 21/08/2024 18:08, Jie Luo wrote:
->>
->>
->> On 8/21/2024 4:33 PM, Krzysztof Kozlowski wrote:
->>> On Tue, Aug 20, 2024 at 10:02:42PM +0800, Luo Jie wrote:
->>>> The CMN PLL controller provides clocks to networking hardware blocks
->>>> on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
->>>> and produces output clocks at fixed rates. These output rates are
->>>> predetermined, and are unrelated to the input clock rate. The output
->>>> clocks are supplied to the Ethernet hardware such as PPE (packet
->>>> process engine) and the externally connected switch or PHY device.
->>>>
->>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>>> ---
->>>>    .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
->>>>    include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
->>>>    2 files changed, 85 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
->>>> new file mode 100644
->>>> index 000000000000..7ad04b58a698
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
->>>> @@ -0,0 +1,70 @@
->>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Qualcomm CMN PLL Clock Controller on IPQ SoC
->>>> +
->>>> +maintainers:
->>>> +  - Bjorn Andersson <andersson@kernel.org>
->>>> +  - Luo Jie <quic_luoj@quicinc.com>
->>>> +
->>>> +description:
->>>> +  The CMN PLL clock controller expects a reference input clock.
->>>
->>> You did not explain what is CMN. Is this some sort of acronym?
->>
->> CMN is short form for 'common'. Since it is referred to as 'CMN'
->> PLL in the hardware programming guides, we wanted the driver name
->> to include it as well. The description can be updated as below to
->> clarify the name and purpose of this hardware block. Hope this is
->> fine.
->>
->> "The CMN PLL clock controller expects a reference input clock
->> from the on-board Wi-Fi, and supplies a number of fixed rate
->> output clocks to the Ethernet devices including PPE (packet
->> process engine) and the connected switch or PHY device. The
->> CMN (or 'common') PLL's only function is to enable clocks to
->> Ethernet hardware used with the IPQ SoC and does not include
->> any other function."
+On Thu, Aug 22, 2024 at 05:19:57PM +0800, Chen-Yu Tsai wrote:
+> The to-be-introduced I2C component prober needs to enable regulator
+> supplies (and toggle GPIO pins) for the various components it intends
+> to probe. To support this, a new "pure DT lookup" method for getting
+> regulator supplies is needed, since the device normally requesting
+> the supply won't get created until after the component is probed to
+> be available.
 > 
-> So the block is called "CMN" in hardware programming guide, without any
-> explanation of the acronym?
-
-Yes, I double checked again with our hardware team and the
-documentation. CMN is just a short form of "common" with no additional
-information in the guide.
-
-Thanks for review.
-
+> Convert the existing of_regulator_bulk_get_all() for this purpose.
+> This function has no in-tree users, as the original patch [1] that
+> used it was never landed. This patch changes the function ABI, but
+> it is straightforward to convert users.
 > 
-> Best regards,
-> Krzysztof
-> 
+> The underlying code that supports the existing regulator_get*()
+> functions has been reworked in previous patches to support this
+> specific case. An internal OF-specific version of regulator_get(),
+> of_regulator_get_optional(), is added for this.
+
+> [1] https://lore.kernel.org/all/20231220203537.83479-2-jernej.skrabec@gmail.com/
+
+Make it Link tag
+
+Link: https://lore.kernel.org/all/20231220203537.83479-2-jernej.skrabec@gmail.com/ [1]
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+
+...
+
+>  	/* first do a dt based lookup */
+>  	if (dev && dev->of_node) {
+
+	if (dev_of_node())
+
+
+> -		r = of_regulator_dev_lookup(dev, supply);
+> +		r = of_regulator_dev_lookup(dev, dev->of_node, supply);
+
+	dev_of_node()
+
+>  		if (!IS_ERR(r))
+>  			return r;
+>  		if (PTR_ERR(r) == -EPROBE_DEFER)
+
+...
+
+>  /**
+>   * of_get_regulator - get a regulator device node based on supply name
+> - * @dev: Device pointer for the consumer (of regulator) device
+> + * @dev: Device pointer for dev_printk messages
+
+dev_printk()
+
+> + * @node: Device node pointer for supply property lookup
+>   * @supply: regulator supply name
+>   *
+>   * Extract the regulator device node corresponding to the supply name.
+>   * returns the device node corresponding to the regulator if found, else
+>   * returns NULL.
+>   */
+
+...
+
+>  /** of_regulator_dev_lookup - lookup a regulator device with device tree only
+> - * @dev: Device pointer for regulator supply lookup.
+> + * @dev: Device pointer for dev_printk messages.
+
+Ditto.
+
+> + * @node: Device node pointer for regulator supply lookup.
+>   * @supply: Supply name or regulator ID.
+>   *
+>   * If successful, returns a struct regulator_dev that corresponds to the name
+> @@ -636,13 +639,13 @@ static struct regulator_dev *of_find_regulator_by_node(struct device_node *np)
+>   * -ENODEV if lookup fails permanently, -EPROBE_DEFER if lookup could succeed
+>   * in the future.
+>   */
+
+...
+
+> +/**
+> + * of_regulator_get_optional - get optional regulator via device tree lookup
+> + * @dev: device used for dev_printk messages
+
+Ditto.
+
+> + * @node: device node for regulator "consumer"
+> + * @id: Supply name
+> + *
+> + * Returns a struct regulator corresponding to the regulator producer,
+> + * or IS_ERR() condition containing errno.
+> + *
+> + * This is intended for use by consumers that want to get a regulator
+> + * supply directly from a device node, and can and want to deal with
+> + * absence of such supplies. This will _not_ consider supply aliases.
+> + * See regulator_dev_lookup().
+
+Fix kernel-doc warning.
+
+> + */
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
