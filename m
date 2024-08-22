@@ -1,109 +1,235 @@
-Return-Path: <linux-kernel+bounces-297424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A83595B81F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:16:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E290F95B820
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98261C23569
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:16:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996881F22322
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09231CB31B;
-	Thu, 22 Aug 2024 14:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A91E1CBE9A;
+	Thu, 22 Aug 2024 14:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VlsmIbPn"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIgbiW8F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE82745D
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50261CB333
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336169; cv=none; b=euBjSkpMjlWEW9KN5UCPyIbEZ/MQcqVUuWQ9o4y7jF96e2wV0WTxGUzLvfPYN2wcBfIAlyfMVUGdtnoUmyuyBcM/vmessJBFB2hwTFc8L2z5mkwqeILVxBw1y9p63SlSqotdPGJGMN/bb12YaEg/Ih/NqRyesXVjLppR4Y0Qvb8=
+	t=1724336169; cv=none; b=SyL66k6puFIBk1ucawgzL/7oZVa9UdQiw7jJhHaeQ1lzwY3T9d8Czjqg0lW3S4OvuvZ7RPZJ8T7nMccB+1Hvl2nFJzs9npVxFhtPrkLwVfCsktQFcM5obriFW8kofiO/QYlLxdxqBUYmOC6C1KBo99UiCOiaCsoAy9D2H7n2//0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724336169; c=relaxed/simple;
-	bh=pnlqb54BCgrU88we4AzcecXX9ELQqqJgryvKOTvHp80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pv+VDeAhVVLv28HHHHqGWvpDU3ew7e4VSONTvIGEN9lqV7ql8KNCh6i8so3LEMMFKcENLz2Iq2/G/3E4oew9fVZTj/vvERDZxfwnsdihbgSkNplmXupeAegOx9A7YjvK6AKd1ecXdSqFFK40RzOiNyJdtQO6vWchCcjaH9D/Tl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VlsmIbPn; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428243f928fso8694205e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724336165; x=1724940965; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N3m5wiBO0uoqTyLuk1zEtLyS3nxtuNvj0xsiED0Pv6Q=;
-        b=VlsmIbPnYc9w/tINWURMLu+6CPv+bNcklg7EY5OrhvFVgYd+PbZSz0ttCfSyK4LqIi
-         ikeEV7yzTu9fMnyr+2ET0F70HydC2xN+srMsPfG3+4iKsMzM+/WCNN3WYMlwWWQumOiX
-         eaaGVKGDSFTBayHaw3Xk0Pz3ggdf2Vu0zF+MFs50cBycn9ilucnNh9Knyg38z46j6VUG
-         RgzbXGmA5FsOwJciyJIhae4uD1rz3bK76IhTQm7KRInkBuw21OF9+ig/GIr98AJ4wSHF
-         KE1hJTXf0M3Za4wQYdptF0QBaH/p2xRkL9/7Wz4Ld0NIuRwxz73kbqyq5LuK+AUBOj/J
-         lzfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724336165; x=1724940965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N3m5wiBO0uoqTyLuk1zEtLyS3nxtuNvj0xsiED0Pv6Q=;
-        b=KDXRGSrss+zoTO34Gdn7F34CIi957rXtVBuHykgchuh4qtrrV7qXqsqqTanD9Oq68n
-         I+z1wPGc6tW8hfuqM9wJy8SpskL2Rm5uUaTSJP2AEaFIOJAyufggxHZSWSQJX8/Pwd50
-         7398W9MI5VI7xloBVA6uipL9OJZF8S/z9RYU80miJCvf47UUfPQXKM6aRaQjQEuiLFRd
-         NHIu+3UFmY1IDELY3QShj3+5sYAAn1Vhyx6eSy6FyosQ4elTcOImFFdN5uQCnpSj2rwW
-         Cya7M2pmjNpEq/fgSnNR5hG7Qt+PfZ4cx7+CU+SGUayRxCnBvGDn+nAn2sQsJ6XUjDOC
-         6Dhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLY2EnWCR/alUDO1s3cVH13c2BfAJ0pp4MrZCpxzSAVzVEzO2v2w7+t8uVAvGQhaTgl6+Z2jZd4f/9odU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3b85NXb88Np7ad6RmFS1OfuC3ohhk3kMz7e3Bt7NSIilHuWJ7
-	+XoHDmj1dFjf+cPNUmUdLGd1rCOivJ580WEY9SFZ9T22V746atEyWj/e5P49Cug=
-X-Google-Smtp-Source: AGHT+IEn/cSUzXrM2HZrrKfRXByXKxSQj8B3nbVnGKe3lrIdC9YL0mqMoF1BsVccck4SGVbq3LvpQA==
-X-Received: by 2002:a05:600c:4e8d:b0:426:63f1:9a1b with SMTP id 5b1f17b1804b1-42ac56371e6mr16898125e9.33.1724336165516;
-        Thu, 22 Aug 2024 07:16:05 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abeba89a5sm64073305e9.0.2024.08.22.07.16.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:16:04 -0700 (PDT)
-Date: Thu, 22 Aug 2024 17:15:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hans Buss <hansbh123@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH v2] staging: rtl8192e: Insert spaces around '|'
-Message-ID: <69883eeb-9c01-469e-b2cb-58e2ed1b1ff0@stanley.mountain>
-References: <20240822140022.11197-1-hansbh123@gmail.com>
+	bh=W5kwXF+wJz51bitQriLhe8Uli77pQxLNfl6KnfeRs/k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QNxwdvgJhN7Pm3pzc/yVdiAxDNzHt60lPkyFN/I9yQ9kPNIJvWYElr8p5tbbCdAW9esYdAaJ1KZ5lBG+bWYzAhUxM8R+W0kNaeFAARDph4KzG6WGIxzJGXAA97bGCLxp3pxCETej03JsuCbJBOjqmQ5Oy3g7conq6r2kI0XwFlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIgbiW8F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD04C4AF09
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724336169;
+	bh=W5kwXF+wJz51bitQriLhe8Uli77pQxLNfl6KnfeRs/k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XIgbiW8FQYxrDZR0nMP5Ve6yr+YP7T4Dg3ykcO3Ro7O0JixNowObn9fRCQGWk9WWD
+	 z3zm77AxqRUP+r+52AM2h8TY3CKWfdcnPfvyXgMbRAK87J0xhZC+mjH7SEkYxclXYc
+	 cP88L+blh8qdgCyuC5/1KBov+tyKMSDcljEoL2fDKAqJmp69Zy3/oUCIiqGfg+F1dh
+	 WoKoYm3Z74CQ/4Qp8fNbnxZ8iWyneN8Q+SMAttml/LvhXelKRrbm4/rhQhWYI/otoO
+	 yjh6djVUkKDRkyLN6ekbuLboaA42uyQsNKdZyQh33mNBSP6261LESQ0wPInfBpg6Hz
+	 ouyJu7Uh325vg==
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d3c5f769d6so614105a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:16:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWqE9+RNes7mtxGuK5/SKN51bZLlMuLLAI7wVXe1702vqn6majticMExjaNv6W8kVucTK8AxxYw2417MCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgY+YPFtOlPdQprUoMY1iuvWQzT9XWy1plPeStp65lbJg0XSl/
+	LR/YKQU8lUT0ue9MeoG3uPbtmHj5P1WmZsKNuti4NNjfCkSDuGrU3cm8A9WSj4B9vjf/fdgnxf2
+	WQk/AMgC7kEO376r5vPq7SzExOg==
+X-Google-Smtp-Source: AGHT+IHWa/d6YEshaBG7X/oWKaxeKpPhnMr3wygRupON5CVgJxcR8GfDfn3XtpvG+CdSumjZAvL45/if2dc9g07I6Lc=
+X-Received: by 2002:a17:90b:8c:b0:2d3:b748:96dd with SMTP id
+ 98e67ed59e1d1-2d616b56691mr2332303a91.25.1724336168860; Thu, 22 Aug 2024
+ 07:16:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822140022.11197-1-hansbh123@gmail.com>
+References: <20240819-drm-fixup-0819-v2-1-a03580ece3ec@mediatek.com>
+In-Reply-To: <20240819-drm-fixup-0819-v2-1-a03580ece3ec@mediatek.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Thu, 22 Aug 2024 22:16:22 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_-XUtAGz26KUiXyceY=2OiqEoGMerLt3BpUOKcD36xH+g@mail.gmail.com>
+Message-ID: <CAAOTY_-XUtAGz26KUiXyceY=2OiqEoGMerLt3BpUOKcD36xH+g@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/mediatek: Fix missing configuration flags in mtk_crtc_ddp_config()
+To: jason-jh.lin@mediatek.com
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Singo Chang <singo.chang@mediatek.com>, 
+	Nancy Lin <nancy.lin@mediatek.com>, Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 11:00:22AM -0300, Hans Buss wrote:
-> From: Hans Buss <hans.buss@mailfence.com>
-> 
-> Insert spaces around '|' to adhre to Linux kernel coding style.
-> 
-> CHECK: spaces preferred around that '|' (ctx:VxV)
-> 
-> Changes in v2:
->  - fixed typo in commit message
+Hi, Jason:
 
-Put this below the --- cut off
+Jason-JH.Lin via B4 Relay
+<devnull+jason-jh.lin.mediatek.com@kernel.org> =E6=96=BC 2024=E5=B9=B48=E6=
+=9C=8819=E6=97=A5 =E9=80=B1=E4=B8=80
+=E4=B8=8B=E5=8D=8811:26=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+>
+> In mtk_crtc_ddp_config(), mtk_crtc will use some configuration flags to
+> generate instructions to cmdq_handle, such as:
+>   state->pending_config
+>   mtk_crtc->pending_planes
+>   plane_state->pending.config
+>   mtk_crtc->pending_async_planes
+>   plane_state->pending.async_config
+>
+> These configuration flags may be set to false when a GCE IRQ comes callin=
+g
+> ddp_cmdq_cb(). This may result in missing prepare instructions,
+> especially if mtk_crtc_update_config() with the flase need_vblank (no nee=
+d
+> to wait for vblank) cases.
+>
+> Therefore, the mtk_crtc->config_updating flag is set at the beginning of
+> mtk_crtc_update_config() to ensure that these configuration flags won't b=
+e
+> changed when the mtk_crtc_ddp_config() is preparing instructions.
+> But somehow the ddp_cmdq_cb() didn't use the mtk_crtc->config_updating
+> flag to prevent those pending config flags from being cleared.
+>
+> To avoid missing the configuration when generating the config instruction=
+,
+> the config_updating flag should be added into ddp_cmdq_cb() and be
+> protected with spin_lock.
 
-> 
-> Signed-off-by: Hans Buss <hans.buss@mailfence.com>
+Applied to mediatek-drm-next [1], thanks.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-next
+
+Regards,
+Chun-Kuang.
+
+>
+> Fixes: 7f82d9c43879 ("drm/mediatek: Clear pending flag when cmdq packet i=
+s done")
+> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
 > ---
-  ^^^
-here.
-
-regards,
-dan carpenter
-
-
+> Change in v2:
+> Add spin_lock protection for config_updating flag.
+> ---
+>  drivers/gpu/drm/mediatek/mtk_crtc.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediat=
+ek/mtk_crtc.c
+> index 6f34f573e127..b752c0b46383 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
+> @@ -69,6 +69,8 @@ struct mtk_crtc {
+>         /* lock for display hardware access */
+>         struct mutex                    hw_lock;
+>         bool                            config_updating;
+> +       /* lock for config_updating to cmd buffer */
+> +       spinlock_t                      config_lock;
+>  };
+>
+>  struct mtk_crtc_state {
+> @@ -107,10 +109,13 @@ static void mtk_crtc_finish_page_flip(struct mtk_cr=
+tc *mtk_crtc)
+>  static void mtk_drm_finish_page_flip(struct mtk_crtc *mtk_crtc)
+>  {
+>         drm_crtc_handle_vblank(&mtk_crtc->base);
+> +
+> +       spin_lock(&mtk_crtc->config_lock);
+>         if (!mtk_crtc->config_updating && mtk_crtc->pending_needs_vblank)=
+ {
+>                 mtk_crtc_finish_page_flip(mtk_crtc);
+>                 mtk_crtc->pending_needs_vblank =3D false;
+>         }
+> +       spin_unlock(&mtk_crtc->config_lock);
+>  }
+>
+>  #if IS_REACHABLE(CONFIG_MTK_CMDQ)
+> @@ -314,6 +319,13 @@ static void ddp_cmdq_cb(struct mbox_client *cl, void=
+ *mssg)
+>
+>         state =3D to_mtk_crtc_state(mtk_crtc->base.state);
+>
+> +       spin_lock(&mtk_crtc->config_lock);
+> +
+> +       if (mtk_crtc->config_updating) {
+> +               spin_unlock(&mtk_crtc->config_lock);
+> +               goto ddp_cmdq_cb_out;
+> +       }
+> +
+>         state->pending_config =3D false;
+>
+>         if (mtk_crtc->pending_planes) {
+> @@ -340,6 +352,10 @@ static void ddp_cmdq_cb(struct mbox_client *cl, void=
+ *mssg)
+>                 mtk_crtc->pending_async_planes =3D false;
+>         }
+>
+> +       spin_unlock(&mtk_crtc->config_lock);
+> +
+> +ddp_cmdq_cb_out:
+> +
+>         mtk_crtc->cmdq_vblank_cnt =3D 0;
+>         wake_up(&mtk_crtc->cb_blocking_queue);
+>  }
+> @@ -571,7 +587,11 @@ static void mtk_crtc_update_config(struct mtk_crtc *=
+mtk_crtc, bool needs_vblank)
+>         int i;
+>
+>         mutex_lock(&mtk_crtc->hw_lock);
+> +
+> +       spin_lock(&mtk_crtc->config_lock);
+>         mtk_crtc->config_updating =3D true;
+> +       spin_unlock(&mtk_crtc->config_lock);
+> +
+>         if (needs_vblank)
+>                 mtk_crtc->pending_needs_vblank =3D true;
+>
+> @@ -625,7 +645,10 @@ static void mtk_crtc_update_config(struct mtk_crtc *=
+mtk_crtc, bool needs_vblank)
+>                 mbox_client_txdone(mtk_crtc->cmdq_client.chan, 0);
+>         }
+>  #endif
+> +       spin_lock(&mtk_crtc->config_lock);
+>         mtk_crtc->config_updating =3D false;
+> +       spin_unlock(&mtk_crtc->config_lock);
+> +
+>         mutex_unlock(&mtk_crtc->hw_lock);
+>  }
+>
+> @@ -1068,6 +1091,7 @@ int mtk_crtc_create(struct drm_device *drm_dev, con=
+st unsigned int *path,
+>                 drm_mode_crtc_set_gamma_size(&mtk_crtc->base, gamma_lut_s=
+ize);
+>         drm_crtc_enable_color_mgmt(&mtk_crtc->base, 0, has_ctm, gamma_lut=
+_size);
+>         mutex_init(&mtk_crtc->hw_lock);
+> +       spin_lock_init(&mtk_crtc->config_lock);
+>
+>  #if IS_REACHABLE(CONFIG_MTK_CMDQ)
+>         i =3D priv->mbox_index++;
+>
+> ---
+> base-commit: 469f1bad3c1c6e268059f78c0eec7e9552b3894c
+> change-id: 20240819-drm-fixup-0819-f51e2d37fcd7
+>
+> Best regards,
+> --
+> Jason-JH.Lin <jason-jh.lin@mediatek.com>
+>
+>
 
