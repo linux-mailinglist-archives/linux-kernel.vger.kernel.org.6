@@ -1,190 +1,126 @@
-Return-Path: <linux-kernel+bounces-296734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F17A95AE52
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE33B95AE46
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B0B285AEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A37D281DBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799FF16F271;
-	Thu, 22 Aug 2024 06:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="hKpzAvpK"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2046.outbound.protection.outlook.com [40.107.255.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B368F146D42;
+	Thu, 22 Aug 2024 06:57:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A87F14D42C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724309900; cv=fail; b=nTXho9cJyfb0SVXSjkGNsvVUwHpd0DtwyYqaIwGGqYhaET8YFjbIo96fUEHkY4SkfsjCmkFiM6B+9eY3i0bSTFRWywjUPFDuMBwbosJ6P+CpO/ReWfLjIm9cmhNQZnX3zBKVRSNKSOEILp2g0Rxo+lYp9LCXt1Z00AV+NcMp38Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724309900; c=relaxed/simple;
-	bh=h4Cl3b/c31t0v0WLutCjDxjfnnpeE40lYojRd4SGiRk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GRqYjNHkl14oGeur3Z2eYQbiaxlnPVxEFJHNntm4u8w5zNIPLj9ASQzNSaW8wvhzFfZSJ7UsBdSqw4hLwtIw5Ux95ELvEaxwmECJfGxljuGGAb+l5PpTLA7yTVEb8k+bNPAk3bnyWMSoXEQUUIaTXoiyl616WJyMKp2ps3RbatE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=hKpzAvpK; arc=fail smtp.client-ip=40.107.255.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HhtEj54PWCDu6gCNoSmC/r29nSYQLJR+1f10Ox36pRtAI09pm5y5/ZWt9PHH5tZuocCzMIwC5Pm/hITilZ1IYC4kpB5nMXJSLtd4u/bSzKoLdQfpE+KOvDj9RFkLsx38owQqoLP13E7OcPNLZAWSg0pmoLL8UeboBjoupWyrwTd7ZYjJQKTANWliFSXOZGwOC114KsbuTPd1N+Levql7REICYuj9i9vyXpq7li+JL1o7ZYgD1lVWaNovykkAhRUN6Beto6wMNn8D+JG5UC/rBwp//x7JE9oNj/KN+YrMlfkdG0TXnaPrOzW+sAMUTAQ/W9UEJ40udKbVF4JOcn4rUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6Nf4qHOg4Wy94B4bQcsuL4rSf5VRXrwo3ygBKI6+/bM=;
- b=uyoKHc6rXD8Mlt0tXkjVD6D5u2hCIy42dTesIONjPs2swb7jt4jpkQSGzNh4mxQQo04APYtDLdVx+K3ZhxrZzEjeQ9HU0By8QH9XTiW7f43TOt1LBGzud4IbHBWQkHGBauw2UEML701yqPPWOe7ZwvJPbfkfSZWCTD5HcxYHqA5lWEHZqNdRmaUDsHlehFzLg3Zet3kHkODmpONfD8kgYSQG6UrIqZaE4IsqpXm9T6yL8lIG94mMJwUGRg7IcL/RcvH64UATjPXPf8bGOb16JZdW1EJ35U53l3gazYH368R3adVFqqeNWw6BGLgusU6AyapqJ426RRbxQGWgJ4vuNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6Nf4qHOg4Wy94B4bQcsuL4rSf5VRXrwo3ygBKI6+/bM=;
- b=hKpzAvpKUklnX6KkayFKPQ1cKrWOUdiAXXyQfMZ07zXYPdNWOvDjNGpVtXQyj3VqFmv6e0yGtfSZ+HXrGdtNPjx1MLd8Sho05CB6m1Y6VZaqzAfp/1fNzCyWD1rpQTWD+Wy0q1Vy+yiTi4GHhbnvhvNgbHiuJ0kdUef4ooEF9NM8WjPRyqIcZDkuF1GC3NESDuyNAL7ptf+0NxZNNPBqtEkC14e+Q2jbf3f5o3tisHT87H76worQ6Y4C0C0Z9vSmUgozHl3/bGQj7Olm95kztA8y/oviuzTRmIimRxRPTQw3coHi02+eotD7XmprXTG5lUxmRA2KXyKdy/WJLZDgjQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by TYZPR06MB5417.apcprd06.prod.outlook.com (2603:1096:400:203::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
- 2024 06:58:16 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%7]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
- 06:58:16 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Hamza Mahfooz <hamza.mahfooz@amd.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Dillon Varone <dillon.varone@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BDB13C67A
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724309877; cv=none; b=Dn5s80EMWDB9Duokb/CR60ksxDvJMYaQkK7HlQM0l2RiGAJgdSXUvUfKeZNQV2gkicNm73ry2z5JbTeXIFHDNo0dpoJQycoTlgMdl0VdQNsK8yc3FLchTcLMl+NWCSFW+l0hfxo8bC6qm8kr4YN+el/eC5hzZ86oh7GBnd38v78=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724309877; c=relaxed/simple;
+	bh=rcwYFWBuVEqugIL3+TmhwsI6q5+w1RF8LMjxJ5ZtDDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=akxx/NXTZd2toKJB1kJfmketz++0+4rcFZ7Myccdv8SorymUw4BxWCUvcT7fIeO58sdIKa7ZOE8b0FnfOSynx+Gr/VEiLM0U+5vNbBVtP7bRp8c2LxSPXhz/RaeNXhMZoydEgDOps9JYiQObrkuuhlsLfHhuGqLFnHgunun7kvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sh1lO-0007Fz-3q; Thu, 22 Aug 2024 08:57:42 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sh1lM-002Bmu-8k; Thu, 22 Aug 2024 08:57:40 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id E1B40323555;
+	Thu, 22 Aug 2024 06:57:39 +0000 (UTC)
+Date: Thu, 22 Aug 2024 08:57:39 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: krzk+dt@kernel.org, festevam@gmail.com, shawnguo@kernel.org, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1 6/6] drm/amd/display: Use max/min macro
-Date: Thu, 22 Aug 2024 14:57:23 +0800
-Message-Id: <20240822065723.1336181-7-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822065723.1336181-1-yujiaoliang@vivo.com>
-References: <20240822065723.1336181-1-yujiaoliang@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0049.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::18) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+Subject: Re: [PATCH v2] arm64: dts: imx8mm-emtop-baseboard: Add Peripherals
+ Support
+Message-ID: <20240822-holistic-fearless-bloodhound-e9095e-mkl@pengutronix.de>
+References: <20240821135817.56393-1-tarang.raval@siliconsignals.io>
+ <20240821-cute-cougar-of-atheism-3a9121-mkl@pengutronix.de>
+ <PN3P287MB18298292CD27FD9D8365C9178B8F2@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|TYZPR06MB5417:EE_
-X-MS-Office365-Filtering-Correlation-Id: f96967af-50e7-48d2-baeb-08dcc277cc5d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|1800799024|366016|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ias8CSdYvciCapqx5JG5o1vQiaqTcF/sX4wIlJqNwW5sMCVqzjK6eX6jRrMe?=
- =?us-ascii?Q?6x0nWX6/ClSKDfd85u/iH48gw1ZYF0KYG9wnfwjyJn+gIb8cgpZlJwagWzdi?=
- =?us-ascii?Q?E1UnZshVsIUpt9jkjT8bJGO9ElZEMh1BooE1LvHp8AnpfpeZ3o0PDXK9/caB?=
- =?us-ascii?Q?b7rfBbtGwRZANxsJIuzzJS6UudMVsuMASquSSoP2GNgBOjvduNRIlepmJFMI?=
- =?us-ascii?Q?ep7DIC+8d8UeffsJSMdk6tT47P8c0rV8bofwST4YaESnXrsFWzCYSvypALFx?=
- =?us-ascii?Q?q7j78x72x9hHiE8j2WTOH6o8vNBsiRkSqP/78azXv9g871GxcgW0Mr+5IKuM?=
- =?us-ascii?Q?aeAW/M8/9hb2JZf+X60CrMew7/Re68uSZSQpGwd0bKjUn1MQxSpFU2BGG/OA?=
- =?us-ascii?Q?63egKnpiAv83Lb7Qb9ZIost9UYKoBo2jYAFazfiv6lSbgTtJshcTSA+/6/c5?=
- =?us-ascii?Q?W7z+YmKT3k4EFae+y+oevgN7cXBucPvEYYQWk3nf4uu9JUA9CS6/rfzR9RMV?=
- =?us-ascii?Q?23d1yXbnsengdiho83tSdYOsTAdjiDiF3gliNSk9Rxhp35pzc/MQb3rc5obx?=
- =?us-ascii?Q?3rVVKaoK7BDdwyzykI0wH2LcDD/2uRUaqAQON53ZYsODtQW6fZQniPLpRDKe?=
- =?us-ascii?Q?f+LmXwTvJJM53RioQ4jNqiE5cWNO5a+c9zKsLvm+VOUpTX9YynjG+IF/8wr/?=
- =?us-ascii?Q?sUUXe+qLrxgCr6ZFR9+kwFsl8BuJ3MTdMarg1/eDA4zKhD9BM64Dgmlsoijn?=
- =?us-ascii?Q?OM+kJqUkjZedYZMWkYejWl82XFsQl5TxJeleqFg605/i0tuJNtUKcl59mK7c?=
- =?us-ascii?Q?wDuq+nQTn/Nw/kojdhWvPv5+nW0AG4A0MWpvzF0M2sGtgkftID3EHxkmJnhg?=
- =?us-ascii?Q?l/DkUN+LDjniSxpOn8rRG32gRHWCzXpaebK6lL1sNjxjc88bYJELHLiwWbwZ?=
- =?us-ascii?Q?1Z/ZTkQUoDdxBV9vdDXMLRxpgFHgI5DFKpr9Y8sBttFVEVVemqPje/ujaP4l?=
- =?us-ascii?Q?YMrLQxLoa3V2bMcChpZC6pMo7WVRZnSL3zY/bHHNE7ALqvDgNPnaevRnQika?=
- =?us-ascii?Q?drr2UgFTdGsWXV4rRSnAuNDRmgbN/ysoyQ3KPY2ZgnLNn9/pLLNf9gX+5an9?=
- =?us-ascii?Q?2YdoB/ILlj5hf57lIPksOPnxqJ4qY/YXFlfBHo/7odbrVZBhdtS+W2f/HeN0?=
- =?us-ascii?Q?xtzy9nXszeANULU5466d/EIaK0rwfMIjMqXxJlmfPzwec0/okoH/t/g6bKGu?=
- =?us-ascii?Q?1J0ZA8fjML21xQcDCF3WE24F42qePUyQcJvk776KaGU9XjbyBSqv4gY3Ewot?=
- =?us-ascii?Q?B0sYFB+o9OKFhhgDihcKyJgEJSeByxnlhxdu1wvaNfiEBj2txE00Yw0SOKXT?=
- =?us-ascii?Q?zmRzcQdhzlCTBY7Y0oMq4Ww4pqH/hH2DAdwRxPNkp5kT3/QETooA/NQ4Ya+M?=
- =?us-ascii?Q?26vD6M0NBRk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(1800799024)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AH/8KZqTxOxczXXNwTM5rONDkYSkCUgupLr+cWHXt4LgtBIvlF2b5tyh8k/W?=
- =?us-ascii?Q?j4rrDpGlrOmm9hOmJIseuG6L9P1QG3iPRm42bZ4wli2A0BDe4Gui3R3Geryl?=
- =?us-ascii?Q?IisqDyfbcL67+ohwk9H8mrQ325aDzm5vEgyuGmi0x/sUvz4fjR/3VMefUcqp?=
- =?us-ascii?Q?Z2loA1HMocnJ2bzKXQbmnqWsgsqjCOXQ/ytapjdI+bdJV0Uo7UMf4In3zflm?=
- =?us-ascii?Q?OLwDnj6JyRVBXgwzOrxeY0a0lnUOISwIuIScLSsQEojETbHSBW1cN7+do9JQ?=
- =?us-ascii?Q?9gljFchByj1N1FAT45uGM7K50X5sOKd8ojdOBU8JSTHVroPQvQmaOmrkRa2P?=
- =?us-ascii?Q?NEHeUH9XUfyU7aWZOWYpc0KavSuj731nvQ4Hqa7VtXlD5CkYvCIh+jPXGTF9?=
- =?us-ascii?Q?vw7vyf2G/XayP08ih3Tk61L2UkT1hgCJUAQ3cXH8DrhBpcAa8XILRf+6k0gA?=
- =?us-ascii?Q?BM7sN1t6BuLQbuXCDCbENR+nD2RTeqnAvgS3XCWN2EgQ3yEv7nVpK1qZtn1w?=
- =?us-ascii?Q?lPYaQMBbBrSMgq+SMniVZgS3ViD1tbx3deU7iDtr3g5FEcr+l80PBYVr7Xs7?=
- =?us-ascii?Q?d3cXuSKvPx4Ol71u5KzV+eM4NUuUZ5JXV9I2oHc7D44Pvdmli3i62RjdbY5X?=
- =?us-ascii?Q?Uu5IDJGZlmYozObauFV05uERnbA/8ApFZSi8iElZjsy6Xm8F+PnEUli8ymb3?=
- =?us-ascii?Q?iL076KQvPitychy8ss/WELQhwwFfFH5KhBISM9/3y6uyFrbmszez5nY1rD2i?=
- =?us-ascii?Q?cLOTjnM0mNxLo9WmLO1vy07Fi/Qq8OdGhXdwLpOc4XVb+EFh8iQm93G0tr4A?=
- =?us-ascii?Q?qLzqqSvOeAhqqLWQnzaqfk4RhdRi70kppS7FT/8gfV0c5Yo4r7Md+GiyQGs+?=
- =?us-ascii?Q?5NfCigL9fDzBhiInAWiygpxrHeTFmOsJMzPRXzOAzXeYX4q04CyHfzYvWeU7?=
- =?us-ascii?Q?zo0EraabFD0BcHaHpGoJQp5xbG72gB83oZXWWVe5h40tnFLaBeXlrtkoVE8o?=
- =?us-ascii?Q?CJRg2+nW6J6yom6maItPnPp/X7ULXA0XntUUCS+qf2DQjktJc3ois++UUVk1?=
- =?us-ascii?Q?PutDYWKP5DGz6YiGTFIGrvd+m5xLmcHqt1Y4EKXmAnBrxONHFzc4TwSXiXPb?=
- =?us-ascii?Q?ww1H39sLFqoPb2Nd3N2NyThGzGkv/O5BtV38WzZ1uhchtJD6akTuMZerXjHf?=
- =?us-ascii?Q?cus5X3bLwJW2NZTXMlZqjYYObDDztjqaAYadguH8sHrdthgh6upfwFSwZja7?=
- =?us-ascii?Q?xIMveEmjtZj+L3rEywhlqFdlYdjUAZ1TVXUeAWk/2EjjL9xBQuCUDtYjVb+5?=
- =?us-ascii?Q?D7D9Hy6kKmU7/LL8EJPAyaswaphio9tBYY27S398bNVYlHjOkIto7EJG0gcZ?=
- =?us-ascii?Q?ztOV9Mir8vRS3B7cn8DOlj5FVhP+ozHUr6vcwaDXKJ3Kqi6Fh4iWhCrAil66?=
- =?us-ascii?Q?WOYifwJ8FzH0v++OYO2zQRoJPSLZGSsoddZyV3Up6BzvdJDQJ/nR2fZGEOsq?=
- =?us-ascii?Q?bi08VgiOxCgUHpXjXQPkyX97bHtvzqIInc4QQ6uCEpg3gMkfvW0xeluLVxqW?=
- =?us-ascii?Q?ZxjHTnyPCaUzV4Br5+gqJNWVsnSlJ9oIdi9Jml2N?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f96967af-50e7-48d2-baeb-08dcc277cc5d
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 06:58:16.7156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CXnLD0X50YKqGHmQ87KmKfu4jFqJMQr1VwxwSV5BzTkqrtpzBJYQuVLKn2QOu4GYRemt56CnZZKu8aAPTt3DHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5417
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="akk7pndg6oxvtlb3"
+Content-Disposition: inline
+In-Reply-To: <PN3P287MB18298292CD27FD9D8365C9178B8F2@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Use the macro instead of ternary operator.
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
----
- drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--akk7pndg6oxvtlb3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-index a40e6590215a..33b9b87d8d3a 100644
---- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-+++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-@@ -1005,8 +1005,8 @@ void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
- 			(stream->timing.h_total * (long long)stream->ctx->dc->caps.max_v_total));
- 	}
- 	/* Limit minimum refresh rate to what can be supported by hardware */
--	min_refresh_in_uhz = min_hardware_refresh_in_uhz > in_config->min_refresh_in_uhz ?
--		min_hardware_refresh_in_uhz : in_config->min_refresh_in_uhz;
-+	min_refresh_in_uhz =
-+		max(min_hardware_refresh_in_uhz, in_config->min_refresh_in_uhz);
- 	max_refresh_in_uhz = in_config->max_refresh_in_uhz;
- 
- 	/* Full range may be larger than current video timing, so cap at nominal */
--- 
-2.34.1
+Hey Tarang Raval,
 
+let's continue discussing things on the mailing list.
+
+On 22.08.2024 06:42:49, Tarang Raval wrote:
+> Thank you for the feedback. I noticed that some mainline DTS files,
+> including the current upstream DTS, use edge-triggered interrupts.
+
+I was talking about the mcp2515 CAN chip connected to SPI only. Can you
+point me to the upstream DTS?
+
+> Could you please help me understand the reasoning behind the
+> preference for level-triggered interrupts over edge-triggered ones
+
+If an edge interrupt occurs while the driver is in the ISR, it may
+lose this interrupt. The driver will not process the pending interrupt
+and CAN communication will get stuck.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--akk7pndg6oxvtlb3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbG4WAACgkQKDiiPnot
+vG8kGAf/YDP7MXRD+Qcq7trdKx0MDBUEx0ks63XIIn6Neu6whSQKPYb0myoqs9Wl
+6N6s5yeIAHaas6pAzvCnJuhuyhHBxqHTHJ+qu3bnS5zHlEqADZMCYV9JqiAZ+jgq
+yGZjBMt1vy+c9c/so+lEB/AtVWR6ai05coNXHKOQTdu+4qXPddbFcRHNFJnb442j
+J/FAdNZWGQYFwlgjW5besT7HfzX+huZc4v4P4UeaphZh8U9xAGV75okKlFyNft9U
+bn5PMGC84XibSpJmp6FxY5L6fMahIO//GobJmO88oGut+EjcXhFDUBG/4AOZCh79
+muiySXjvO4tsjFchpnX985mfkx3AWg==
+=jajG
+-----END PGP SIGNATURE-----
+
+--akk7pndg6oxvtlb3--
 
