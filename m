@@ -1,138 +1,153 @@
-Return-Path: <linux-kernel+bounces-297485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0C795B91C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138B495B922
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D5B28672C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF644286753
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A401CC178;
-	Thu, 22 Aug 2024 14:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5F91CC881;
+	Thu, 22 Aug 2024 14:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="TRUGfsK8"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vaq7bSKm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FE41CB329;
-	Thu, 22 Aug 2024 14:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AC21CB329;
+	Thu, 22 Aug 2024 14:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724338543; cv=none; b=tJRTinUyyzxNvzs+LIBfAj+QM2AbRdu/k6iifksYfIqF/OEES+qveGTP43OmuAQmXjxPEznJqJdrr+SOl5/DEt+fbme2mu5M9K1aEvzVuW6vaGSH1CaAntff5x6n6PHb+NhqlYsBECsP+3K3iP1wf/JQcCYfKkewqX6Kr5CSwSI=
+	t=1724338601; cv=none; b=ZfuTiujoeJ+jmjAlQlaRqP2TfIXThLmKCLq13AIvkIe7LeFYwPkQgL+6igtSG38BZZF72yeGtyTAOmqr3g3DKVoOph7flES78OOBFuNlAm1q7aNaukvaWi0/D/WPo0WaNW+SugFug/ofO9gi048QDhnBQkZ8Q4QBRRyYTKiADKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724338543; c=relaxed/simple;
-	bh=zH6rG0oJh5l6WZBwxmOV4UVRzizh6K6xQrAqQ2aysDY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eY7WYLF4HysQtAYKKTGhxu36jXP1ttHi381/FdJBlN30Iy5UFc2fSJgSc8rNcY2w0dm3cefipUZqHya8pKWZ5oEpGvq3SaOAhxwCnyMl1RVe/ntRIC6x3OtCQMdsr3JAvgOh3C2OwFXUIpD96ThOKTio1XGH2kzmfgosIxX+7K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=TRUGfsK8; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MEJ365019841;
-	Thu, 22 Aug 2024 09:55:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=4+Sz9yjJhiRIV11e
-	yx/ilwSbY3eKJY/WxVIPtCZbYpg=; b=TRUGfsK8l2U4Z1V6EIPnwFS/QUMi8fO+
-	Y5dgkkN5ybQPiFFEc2KSf7lsqeaX6V2lCQ9T6j9asX/Xu04DunyIdGbVebPFC4/S
-	SIydPge9CQxT0YtiJzN3txkvge/XOzmzaVnUBiYGTP8beg9dr64+Z89l8Qnv870G
-	kn7ZWh/XTeiKosNfO9IsqfdH2a+/5bdcwBQAdSEO01jbSXUVIvm/k9Tzuy74Yvfq
-	uEoN9yH5uPQ/qgjDzo98NgPKs3gbNfyaFL0weT94kdadOLNzSc/553qZ7Wt2cBPX
-	TsaCE976JDANJsGTUIfCqtTIGi0Dba07NZhfat9XnTnLiekGUFrz8A==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 412r9hwwcx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 09:55:37 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
- 2024 15:55:36 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Thu, 22 Aug 2024 15:55:35 +0100
-Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id DF524820244;
-	Thu, 22 Aug 2024 14:55:35 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH] ASoC: cs35l56: Make struct regmap_config const
-Date: Thu, 22 Aug 2024 15:55:35 +0100
-Message-ID: <20240822145535.336407-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724338601; c=relaxed/simple;
+	bh=87KazmTizy+D2FCRp2hvoGuNOtRKG5QCAnV7hmXvxyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLCKve21Mcc1FSoPHTxWrKYadMQuPvKh+dS2AvrxbLiWxFh/waQX1GAjFFLUCOYy5PCY/Ji/TtvEMnj07yEhhlseCRYuPQYtHcE4qcAnjmZBKOnZswN1+5rN0TRweO/MJkucQReiHnRcyK6mxpQ+QljHfiWNpVb4R43KJDm8iUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vaq7bSKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE213C32782;
+	Thu, 22 Aug 2024 14:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724338600;
+	bh=87KazmTizy+D2FCRp2hvoGuNOtRKG5QCAnV7hmXvxyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vaq7bSKmJavpaAg8Uq1GyXe5lufWVlKPiaiKefuOBgbCYjf0K2WBUEAjVF6iRo4fa
+	 PS+vdYEU8kfuBmiFna7kvL+/KWDkL9yBXR87nc5l1b12PUrRziMZPtR5lGEdV96Ue5
+	 PRVTjXxvdaPW2yoKftm7/Qpzwd7QIUNaK/jNiuLeWIn1nGsvsMizOrtG2Cawrp49/6
+	 nF1SGI1fD6JpqobgV6ZMB/u9vnlM0SHkSd/9PqCZWkEzg1frDTaec9/XgOAMwK50kC
+	 v/w4GUfoidW2yM0fUrb5zkAk1ltQqMKeyEpwEG6moAqBMouOVklGu776hEWeFv744I
+	 Hu4hUuUTWN4dA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sh9Ey-0000000015Y-3cRZ;
+	Thu, 22 Aug 2024 16:56:45 +0200
+Date: Thu, 22 Aug 2024 16:56:44 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: sc8280xp-crd: enable wifi
+Message-ID: <ZsdRrHK7kCYs7MJF@hovoldconsulting.com>
+References: <20240813190639.154983-1-brgl@bgdev.pl>
+ <20240813190639.154983-2-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 571aD0sItkqQmmXif9ZBrqs6H-E-lUC0
-X-Proofpoint-ORIG-GUID: 571aD0sItkqQmmXif9ZBrqs6H-E-lUC0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813190639.154983-2-brgl@bgdev.pl>
 
-It's now possible to declare instances of struct regmap_config as
-const data.
+On Tue, Aug 13, 2024 at 09:06:36PM +0200, Bartosz Golaszewski wrote:
+> From: Konrad Dybcio <konradybcio@kernel.org>
+> 
+> Add nodes for the WCN6855 PMU, the WLAN module and relevant regulators
+> and pin functions to enable wifi support on sc8280xp-crd.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- include/sound/cs35l56.h           | 6 +++---
- sound/soc/codecs/cs35l56-shared.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+What are you guys smoking? The Wi-Fi has been enabled on the CRD since
+6.2 and commit d907fe5acbf1 ("arm64: dts: qcom: sc8280xp-crd: enable
+WiFi controller").
 
-diff --git a/include/sound/cs35l56.h b/include/sound/cs35l56.h
-index a51acefa785f..94e8185c4795 100644
---- a/include/sound/cs35l56.h
-+++ b/include/sound/cs35l56.h
-@@ -282,9 +282,9 @@ static inline bool cs35l56_is_otp_register(unsigned int reg)
- 	return (reg >> 16) == 3;
- }
- 
--extern struct regmap_config cs35l56_regmap_i2c;
--extern struct regmap_config cs35l56_regmap_spi;
--extern struct regmap_config cs35l56_regmap_sdw;
-+extern const struct regmap_config cs35l56_regmap_i2c;
-+extern const struct regmap_config cs35l56_regmap_spi;
-+extern const struct regmap_config cs35l56_regmap_sdw;
- 
- extern const struct cirrus_amp_cal_controls cs35l56_calibration_controls;
- 
-diff --git a/sound/soc/codecs/cs35l56-shared.c b/sound/soc/codecs/cs35l56-shared.c
-index bd74fef33d49..ae286ba3be1d 100644
---- a/sound/soc/codecs/cs35l56-shared.c
-+++ b/sound/soc/codecs/cs35l56-shared.c
-@@ -925,7 +925,7 @@ const unsigned int cs35l56_tx_input_values[] = {
- };
- EXPORT_SYMBOL_NS_GPL(cs35l56_tx_input_values, SND_SOC_CS35L56_SHARED);
- 
--struct regmap_config cs35l56_regmap_i2c = {
-+const struct regmap_config cs35l56_regmap_i2c = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
-@@ -941,7 +941,7 @@ struct regmap_config cs35l56_regmap_i2c = {
- };
- EXPORT_SYMBOL_NS_GPL(cs35l56_regmap_i2c, SND_SOC_CS35L56_SHARED);
- 
--struct regmap_config cs35l56_regmap_spi = {
-+const struct regmap_config cs35l56_regmap_spi = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.pad_bits = 16,
-@@ -958,7 +958,7 @@ struct regmap_config cs35l56_regmap_spi = {
- };
- EXPORT_SYMBOL_NS_GPL(cs35l56_regmap_spi, SND_SOC_CS35L56_SHARED);
- 
--struct regmap_config cs35l56_regmap_sdw = {
-+const struct regmap_config cs35l56_regmap_sdw = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--- 
-2.39.2
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> [Bartosz:
+>   - write the commit message,
+>   - rebase Konrad's commit,
+>   - fix one of the supplies' name]
+> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc8280xp-crd.dts | 112 ++++++++++++++++++++++
+>  1 file changed, 112 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
+> index 6020582b0a59..57efeefbc89e 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
+> @@ -177,6 +177,17 @@ vreg_misc_3p3: regulator-misc-3p3 {
+>  		regulator-always-on;
+>  	};
+>  
+> +	vreg_s10b: regulator-s10b {
+> +		compatible = "regulator-fixed";
 
+I don't think this is a fixed regulator.
+
+> +
+> +		regulator-name = "VREG_S10B";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+> +
+>  	vreg_wlan: regulator-wlan {
+>  		compatible = "regulator-fixed";
+>  
+ 
+> +&pcie4_port0 {
+> +	wifi@0 {
+> +		compatible = "pci17cb,1103";
+> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> +
+> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
+> +		vddaon-supply = <&vreg_pmu_aon_0p8>;
+> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
+> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
+> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
+> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+> +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
+> +
+> +		qcom,ath11k-calibration-variant = "LE_X13S";
+
+This is not the right calibration variant either. In fact, Qualcomm has
+not yet released any calibration data for this CRD yet:
+
+	https://bugzilla.kernel.org/show_bug.cgi?id=216036
+
+I use a patch like this locally, but we shouldn't merge this upstream.
+ 
+> +	wlan_en: wlan-en-state {
+> +		pins = "gpio134";
+> +		function = "gpio";
+> +		drive-strength = <8>;
+
+Why increase the drive strength?
+
+> +		bias-pull-down;
+> +	};
+
+Johan
 
