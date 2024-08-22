@@ -1,90 +1,154 @@
-Return-Path: <linux-kernel+bounces-296420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF9895AACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:07:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C6F95AACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E1B283901
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:07:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E334A1C22248
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045DC15E81;
-	Thu, 22 Aug 2024 02:07:34 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B4214277;
+	Thu, 22 Aug 2024 02:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Glq6ktCX"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A961E848C;
-	Thu, 22 Aug 2024 02:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CB0111AA
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724292453; cv=none; b=lk4azt1QNf4CcAo0Qfgn+ZplTKU0vHNWUFLy5DVmwqKj3gLJuowlgVDtrK7WwV2giDNjlnLyqUcPewjmyTcvZge/MTSpTnjNRik6AzESQKGv9lBIUx0cCXKkpIJ3h5v9NUpZThDGh4McaDuQzjtwdcCKYnGjc0rAdB3GrkQlFVI=
+	t=1724292606; cv=none; b=l6mZVInIzzQATC44hWr/uuTW3zhLW5VrCjpsn128NNGjbNZHHb9C/u0wrclaGSKfGlwrz1OA2bXqJGHNwXEzEiPuPWRfrnsWpBQzv+/aKNmNemf6HdvoECrbsJUM6DgDByei8cKtL+CkeDvI80v6+oQlYvGmmpbzq3O4YP1L7lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724292453; c=relaxed/simple;
-	bh=K+NGOBxSv7laM1te1jg9i9jl5n8vrjzha6+KKvkwIW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T2WZ2bkD7VSs6TfNvVB5z11yFjcPmpelSZH5sxRT1Z9VGe0eNCfav8dvj7aFrSdwlZmNSETvDuDql8XZBYYG15g1+hXWBu1WzAQg0KyPN0lUTuO/okocsflqOJ7qi6geLE13pl6HFP5FsY5Y21R7F0ZGSBpuPcT0bPC2A8OFOT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wq64L61dDzpStN;
-	Thu, 22 Aug 2024 10:05:54 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 300BE1800D3;
-	Thu, 22 Aug 2024 10:07:27 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 22 Aug 2024 10:07:26 +0800
-Message-ID: <2d67e112-75a0-3111-3f3a-91e6a982652f@huawei.com>
-Date: Thu, 22 Aug 2024 10:07:25 +0800
+	s=arc-20240116; t=1724292606; c=relaxed/simple;
+	bh=n8tzgLbdZadXhsgdBFBB5vAD/yvwYfC+xHHc4qYcqG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=foeX62O5GTH2MLECVSu3kxKxCMAUJs6t5Ni+OgdQtdd3IcmNXeOHmsny89ewM4uOdpA/IxifIETchjZRpoTK2xWTi6lj9RgppN6uvzhDLPAcGD6S8s0+SpBmd0KFMcVqYA3Ys14D4JYFHQ9pSEV67g1zS1aNgXn0Elq3w4qPpyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Glq6ktCX; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201fae21398so2207585ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 19:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1724292604; x=1724897404; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9HELrqJhMnibtT6HZyWKYY6zlKin2aFYrriSo+U7oJo=;
+        b=Glq6ktCXm+0su30DfY3DTHUmaTU9OYa9/z3uVBye6ddnKVI89hhoMdcnNOXE9hnKNh
+         qzV7sfRUt+kpPC/v7WepJGNe+1uzt/1HC7jtwxsmrl646tuhysgExG8QuyTjHpBTH2mg
+         Nryzy1rDlx6GrQvNBECdYEv4DIA6JwZTEjRng=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724292604; x=1724897404;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9HELrqJhMnibtT6HZyWKYY6zlKin2aFYrriSo+U7oJo=;
+        b=a8+5FUmMUDbhcE7Nt2s/nBlgRcQToUQ+MPNb0q88oyVhHo/vF8LWdKxInph602ZtYy
+         1ROycqaVFfpqV3PpowHFGLYoDdY021lo169ma6E2ZBv46qBS8QegUga0U9cUaqIMl03n
+         6WbM0U+yVgeTWTGMX1sBOLSZ77SDH9WfELwRSos7u9b/Q6AEf7zNUv1cSlRZGLVhEBOz
+         X72idt7yJ9c2PmLBMERozzw6qfq4SPauDZnJdTeLnXvL19Th5AhbGhlZf6S/jFZd0Ouq
+         fEtiQpCEQHOCsNljKoC0bgEeK0BQMehr/zXSODLlC23ykRPzNJ1CXnhqe25YVvSeLmDm
+         GIrw==
+X-Gm-Message-State: AOJu0YwQA7ecITbdaQ5I6y5+PceUHIb8eNNu2U0L5ExcH/k4tt+kj/EO
+	HksSyIAw/Y+VaGT76zevWW07mc/aOyQY/4G6/cxYrULGxp8uVDyD2V165aYgn/s=
+X-Google-Smtp-Source: AGHT+IH7GzcImxBIXmnvLBukdrzzAUiPJZzCqm7EZlZK4odeYwTJpCnUUZ2DWg85WZCQ9W7o9ZzdSg==
+X-Received: by 2002:a17:902:da86:b0:202:3b7c:c3b0 with SMTP id d9443c01a7336-203680646b3mr45671525ad.38.1724292602427;
+        Wed, 21 Aug 2024 19:10:02 -0700 (PDT)
+Received: from [172.20.0.208] ([218.188.70.188])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385ae4e1asm2414365ad.254.2024.08.21.19.09.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 19:10:01 -0700 (PDT)
+Message-ID: <27495118-6152-411c-9d3c-c0176afc9492@linuxfoundation.org>
+Date: Wed, 21 Aug 2024 20:09:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next] net: dsa: Simplify with scoped for each OF child
- loop
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/5] sched: NUMA-aware concurrency IDs
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
+ Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <andrew@lunn.ch>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240820065804.560603-1-ruanjinjie@huawei.com>
- <20240821171817.3b935a9d@kernel.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240821171817.3b935a9d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-
-
-On 2024/8/22 8:18, Jakub Kicinski wrote:
-> On Tue, 20 Aug 2024 14:58:04 +0800 Jinjie Ruan wrote:
->> Use scoped for_each_available_child_of_node_scoped() when iterating over
->> device nodes to make code a bit simpler.
+On 8/19/24 08:24, Mathieu Desnoyers wrote:
+> The issue addressed by this series is the non-locality of NUMA accesses
+> to data structures indexed by concurrency IDs: for example, in a
+> scenario where a process has two threads, and they periodically run one
+> after the other on different NUMA nodes, each will be assigned mm_cid=0.
+> As a consequence, they will end up accessing the same pages, and thus at
+> least one of the threads will need to perform remote NUMA accesses,
+> which is inefficient.
 > 
-> Could you add more info here that confirms this works with gotos?
-> I don't recall the details but I thought sometimes the scoped
-> constructs don't do well with gotos. I checked 5 random uses
-> of this loop and 4 of them didn't have gotos.
+> Solve this by making the rseq concurrency ID (mm_cid) NUMA-aware. On
+> NUMA systems, when a NUMA-aware concurrency ID is observed by user-space
+> to be associated with a NUMA node, guarantee that it never changes NUMA
+> node unless either a kernel-level NUMA configuration change happens, or
+> scheduler migrations end up migrating tasks across NUMA nodes.
+> 
+> There is a tradeoff between NUMA locality and compactness of the
+> concurrency ID allocation. Favor compactness over NUMA locality when
+> the scheduler migrates tasks across NUMA nodes, as this does not cause
+> the frequent remote NUMA accesses behavior. This is done by limiting the
+> concurrency ID range to minimum between the number of threads belonging
+> to the process and the number of allowed CPUs.
+> 
+> This series applies on top of v6.10.3.
+> 
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Ben Segall <bsegall@google.com>
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Shuah Khan <skhan@linuxfoundation.org>
+> 
+> Mathieu Desnoyers (5):
+>    lib: Implement find_{first,next,nth}_notandnot_bit,
+>      find_first_andnot_bit
+>    cpumask: Implement cpumask_{first,next}_{not,}andnot
+>    sched: NUMA-aware per-memory-map concurrency IDs
+>    selftests/rseq: x86: Implement rseq_load_u32_u32
+>    selftests/rseq: Implement NUMA node id vs mm_cid invariant test
+> 
+>   include/linux/cpumask.h                       |  60 ++++++++
+>   include/linux/find.h                          | 122 ++++++++++++++-
+>   include/linux/mm_types.h                      |  57 ++++++-
+>   kernel/sched/core.c                           |  10 +-
+>   kernel/sched/sched.h                          | 139 +++++++++++++++--
+>   lib/find_bit.c                                |  42 +++++
+>   tools/testing/selftests/rseq/.gitignore       |   1 +
+>   tools/testing/selftests/rseq/Makefile         |   2 +-
+>   .../testing/selftests/rseq/basic_numa_test.c  | 144 ++++++++++++++++++
+>   tools/testing/selftests/rseq/rseq-x86-bits.h  |  43 ++++++
+>   tools/testing/selftests/rseq/rseq.h           |  14 ++
+>   11 files changed, 613 insertions(+), 21 deletions(-)
+>   create mode 100644 tools/testing/selftests/rseq/basic_numa_test.c
+> 
 
-Hi, Jakub
+Looks good to me - for selftests:
 
-From what I understand, for_each_available_child_of_node_scoped() is not
-related to gotos, it only let the iterating child node self-declared and
-automatic release, so the of_node_put(iterating_child_node) can be removed.
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
 
-For example, the following use case has goto and use this macro:
-
-Link:
-https://lore.kernel.org/all/20240813-b4-cleanup-h-of-node-put-other-v1-6-cfb67323a95c@linaro.org/
-
+thanks,
+-- Shuah
 
