@@ -1,173 +1,230 @@
-Return-Path: <linux-kernel+bounces-297135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B79B95B38F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:13:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE7A95B39A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FA591C22D88
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:13:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61498B21129
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7446184521;
-	Thu, 22 Aug 2024 11:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FE81B6548;
+	Thu, 22 Aug 2024 11:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kjzfj2GP"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZoClSd0Z"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8C4183063
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5121B6520
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724325176; cv=none; b=jsupYaequ58qB/bcXUdQD2SEWonbyPATjQ/MVuKZockclduQn3ZX8o87YfwqU8HGVPSx8iPxQN5RBkJYYfM5t162UBmNE7ciaT2+0MLVTsKpAeSBzehQEH5SiPzc6bzCshaHVez119QyVPzdM0CP1euo21CI+57CbbM4X3Sp/EM=
+	t=1724325402; cv=none; b=CTTaj8zEG6pFWqfGiW977t2e4q9Jg6adqt5fo257zTUS20OxTEM26c76mFDMoOapSk7BpxGSKfMuo6rwmNEPmR57pz4Z+1VTp+UjrKbTatwlu0V5/XxCBgJnTtCP2sGAXOeCLJW74sc1mvjCwLb30kblFlQjePxUvIa1A+EDemw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724325176; c=relaxed/simple;
-	bh=AGnKr1NzUWLrk4XMShjBVsJMRG/N+ThYgYQttEhm4Bs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:In-Reply-To:
-	 Content-Type:References; b=hmSC3/dp488mbLgJLm9sBjsf0MhldmJ8ZGcBM0fk+zGsYxao6bV7XIdRlc9LDpCZW+OFohoWcsmA9xJfgZ++fhhzct8VSo+bxCezFurDhftnaWbA5cHVShBWMghX4M8gLpmbWckp7K5CZS3O5H2eeY/5k8ZQ/m6J4wPJJwmNyK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kjzfj2GP; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240822111251epoutp042df005d7c04f7e1ff3b62d0708af6f64~uCJueXSWg0630606306epoutp04t
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:12:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240822111251epoutp042df005d7c04f7e1ff3b62d0708af6f64~uCJueXSWg0630606306epoutp04t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724325171;
-	bh=pUkKEpqsWn1vgiB80YuD9+I/Uj7IWzHftlh2WMqtSFw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:In-Reply-To:References:From;
-	b=kjzfj2GPztH32PICh+mARc2G5zXLFz8t9tIUXyLwuXKnxaGCoMl/a1kDvqsqnpTj2
-	 cXlPgG+vQTfCggfDD+L+ii2yYXMgTRtZzhPzk5B4pRUNFmou2QoFw7EO6tCRTSM0n3
-	 2Zd8hqvHFCdZhm2fyjeQe1qjMo37KOFS58kv3G0c=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20240822111251epcas2p4cd1e01de78cf14f0eb3f60dad7251215~uCJt4FUVC1130211302epcas2p46;
-	Thu, 22 Aug 2024 11:12:51 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.91]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WqLCQ2tK4z4x9Pw; Thu, 22 Aug
-	2024 11:12:50 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	74.57.10012.23D17C66; Thu, 22 Aug 2024 20:12:50 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240822111249epcas2p1201417c48df67afbc734ff38ea841cda~uCJss-6Cw0076400764epcas2p1J;
-	Thu, 22 Aug 2024 11:12:49 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240822111249epsmtrp107cd3bab302666b3d2702e57d8f8dddb~uCJssR2l_1127011270epsmtrp1y;
-	Thu, 22 Aug 2024 11:12:49 +0000 (GMT)
-X-AuditID: b6c32a47-ea1fa7000000271c-f1-66c71d32813f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9C.57.19367.13D17C66; Thu, 22 Aug 2024 20:12:49 +0900 (KST)
-Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240822111249epsmtip1e151548a962775c253deaaa15228b496~uCJsdOwDH0982509825epsmtip1V;
-	Thu, 22 Aug 2024 11:12:49 +0000 (GMT)
-From: Kiwoong Kim <kwmad.kim@samsung.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, beanhuo@micron.com,
-	adrian.hunter@intel.com, h10.kim@samsung.com, hy50.seo@samsung.com,
-	sh425.lee@samsung.com, kwangwon.min@samsung.com, junwoo80.lee@samsung.com,
-	wkon.kim@samsung.com
-Cc: Kiwoong Kim <kwmad.kim@samsung.com>
-Subject: [PATCH v2 2/2] scsi: ufs: ufs-exynos: implement override_cqe_ocs
-Date: Thu, 22 Aug 2024 20:15:35 +0900
-Message-Id: <763ab716ba0207ecdad6f55ce38edf2d1bc7d04b.1724325280.git.kwmad.kim@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1724325280.git.kwmad.kim@samsung.com>
-In-Reply-To: <cover.1724325280.git.kwmad.kim@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmma6R7PE0gx1/BC1OPlnDZvFg3jY2
-	i5c/r7JZHHzYyWIx7cNPZou/ty+yWqxe/IDFYtGNbUwWu/42M1lsvbGTxeLmlqMsFpd3zWGz
-	6L6+g81i+fF/TBZL/71lsdh86RuLg4DH5SveHov3vGTymLDoAKPH9/UdbB4fn95i8ejbsorR
-	4/MmOY/2A91MARxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkou
-	PgG6bpk5QB8oKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgrMC/SKE3OLS/PS9fJS
-	S6wMDQyMTIEKE7Izdu1dwlpwhKti9+Gt7A2MTzi6GDk5JARMJDbNecHexcjFISSwg1Hi/NxW
-	VgjnE6PE6/k/2OGcqa/escO0dN68zwyR2MkocaN/JStIQkjgB6PEqQkiIDabgKbE05tTmUCK
-	RAQ+Mklsnr8NrJtZQF1i14QTQAkODmEBT4mD0zNBwiwCqhIrfi9kAbF5BaIltl7sZ4FYJidx
-	81wnM4jNKWApce7gDCZUNhdQzVwOiR87vrNBNLhIbJv1EOpSYYlXx7dA2VISL/vboOxiibU7
-	rkI1NzBKrH51GiphLDHrWTsjyHHMQB+s36UPYkoIKEscucUCcT6fRMfhv+wQYV6JjjYhiEZl
-	iV+TJjNC2JISM2/egRroIXF04hEWSFj1MErs/N/PNoFRfhbCggWMjKsYxVILinPTU4uNCozh
-	sZecn7uJEZxatdx3MM54+0HvECMTB+MhRgkOZiUR3qR7R9OEeFMSK6tSi/Lji0pzUosPMZoC
-	A3Iis5Rocj4wueeVxBuaWBqYmJkZmhuZGpgrifPea52bIiSQnliSmp2aWpBaBNPHxMEp1cCU
-	Z5zP/Sp7z2+e2dx2mldYxLpnv5i1rM8wpuvk5PaAOYtjH8ibTm9JEo74yTY1ffnxLuel9urz
-	Zp/Lm6M2K2/OD8WShOYpV27k73qyYetRP8t4kYeJk76pO+sy/9VXWya0WVzu49JiEa/L2uol
-	xwLOf3PbZrbpT/yiK+US90tfCk5X0+e8rWQXrnpj/QJPpcv3f+30ZeH2+zXf7ffT1ITvHz1U
-	W9b5L5ZU6/D9X3Bs8v2rkYpecyta3Tt13jp6zJb/s+y19Zqs/WHyx+Yv/Z3puSxCvtPn/tX5
-	Dn/89iyZ2qWS+s/xU5aE483+5MjbvjdeL7+14+YdzdJHnWYewh5nEx5Lf6qTK4zYp3vnzHtJ
-	JZbijERDLeai4kQA++2u9jYEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsWy7bCSnK6h7PE0g7/PdC1OPlnDZvFg3jY2
-	i5c/r7JZHHzYyWIx7cNPZou/ty+yWqxe/IDFYtGNbUwWu/42M1lsvbGTxeLmlqMsFpd3zWGz
-	6L6+g81i+fF/TBZL/71lsdh86RuLg4DH5SveHov3vGTymLDoAKPH9/UdbB4fn95i8ejbsorR
-	4/MmOY/2A91MARxRXDYpqTmZZalF+nYJXBm79i5hLTjCVbH78Fb2BsYnHF2MnBwSAiYSnTfv
-	M3cxcnEICWxnlHg4o40dIiEpcWLnc0YIW1jifssRVoiib4wSlzZNAkuwCWhKPL05lQnEFhFo
-	Zpboa7IHsZkF1CV2TTgBFOfgEBbwlDg4PRMkzCKgKrHi90IWEJtXIFpi68V+Foj5chI3z3Uy
-	g9icApYS5w7OABspJGAhMXXNTTZc4hMYBRYwMqxiFE0tKM5Nz00uMNQrTswtLs1L10vOz93E
-	CI4JraAdjMvW/9U7xMjEwXiIUYKDWUmEN+ne0TQh3pTEyqrUovz4otKc1OJDjNIcLErivMo5
-	nSlCAumJJanZqakFqUUwWSYOTqkGprWV0pGLk85lV55rti1g//6+9WFFturC/rtLGTVdg51v
-	z3glFKy2tkONT3Njz+lM1YpPux54HHQ15lnkILNw7WSRmd883CRXvjG4aSXj8E4jdyHD8gTV
-	34159tybp21yXbnj3srWJVVRW96sK9z2uCis7Pyeo4+vHX3h7b/zQ7WI35vefUkVaWFb/qV0
-	vF1V177P5L5kkYzQRVnrgqiieRaLxZrtcoJ5YiVCCvRumXsseKl/q+3R99kyuY9KbnMvqb5S
-	rcJd/Up12vdV5/gkH/ek+5nOaW3K2f5di5N5pwBTzad9SZ/P/+z1qvm7tuL6RIaLZ9+XhgrG
-	tR5S2HrMOmBB1OFspak1d3/uv9XXr8RSnJFoqMVcVJwIAJA5Ojn4AgAA
-X-CMS-MailID: 20240822111249epcas2p1201417c48df67afbc734ff38ea841cda
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240822111249epcas2p1201417c48df67afbc734ff38ea841cda
-References: <cover.1724325280.git.kwmad.kim@samsung.com>
-	<CGME20240822111249epcas2p1201417c48df67afbc734ff38ea841cda@epcas2p1.samsung.com>
+	s=arc-20240116; t=1724325402; c=relaxed/simple;
+	bh=ZQM0jlM0i4BhaH2ycjENVN+O4L7lnffqa+y1DBRqTx8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dA+HDulO2xyhTGMeXlwPY7zeR8bzkTsSwUVkqp9A8tHT9gfDtRlB1ofTTN8cndx9X4mEX0CmvWAp9+pECNzX2WA7+V+REahLPg3o/THUHO/+HY8otI36QBmFlTdkoHT30VdmcRsUgjFnw7LwzQsiO3QKIqQogO+WT7YZyAAI1p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZoClSd0Z; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4fce9f16f83so260149e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724325399; x=1724930199; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nQGhp/3TTwCIHX+uin7PrRsXOTUFzwYBGtPV6IPYgn0=;
+        b=ZoClSd0ZQtpMkwCqWRvmpU4e128f3IU/XQ567jpdcqNg0BTmmj+0X9THDhZ+bQeRu1
+         cGa+UBYS62UfVymAwQ0l1GltrPGLE9iifLGol2Ce/xGBRB6IjWXYuDzGIbfSD9mFTj7P
+         tqRjV8mFZhrZiW50iskDaV5W3ZW+fblnTZZLhOmPDqewUpYK+1k+t7TeeIQMOMEgzGl/
+         0eRcUDjkfcrM/Ev6PS3DTbKHaBNjysTKpLH4EtiQ5NP8HHMg19T6WOAgrHJJZzlMpLt7
+         r+eEc9ZT1kWHRSL8tEzXL+MGwCRUrw4POZQSsugnrPpifIyxOkuACyDUk5ty8PbVF4yO
+         v7rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724325399; x=1724930199;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nQGhp/3TTwCIHX+uin7PrRsXOTUFzwYBGtPV6IPYgn0=;
+        b=lxG+YWGmaEOo9lWbM+YrOtvM0qkdW0hE5Sy7SEZH+FRQ1QUOwCXy7eoKklDDSYYhmb
+         iOcJAue11p+dz8MtN601AOLZi4lJyIc0audX38190gvxgV1ACL/XZ0sZ/HZhlx33nbiA
+         /5SuwcSOJbFa1TJwhRJc+5ZKzWO0KbgzviAF7/WCeq75aBlzeodxb3J30MDxOJRsNn11
+         eL47rs4F7A2o5JjZFIZzPALsMDcYHgiYaPiVjX1p+TT2j1i2zaxXdF9nuyeVaTxxaF57
+         Ss47ns4aMQYPZbLB/fR2LneHFI5jJaqVjcr8bf4VNkS2sNs1vOYpSpR+BfAD331oZitw
+         cS6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnM3KFNdB++TaVJu9yzOlf904RkQ9HQIixwdldZLLrMlwQqGMb2imqAZuoGOYa6d6qbYnnbNbHkpZZefM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkxDoldKkk7aYpoMxVgBBHEeqWMQKPczJkqFHdyScWKy7nxAmg
+	TF6oLIvbgvj/Aku6EG7+urmmMSreD0q+7pQm/t4b32V1E+dlu2KQMlHaLLJOAHPAqIF2dWmoZms
+	ILqOCIs5ol6sFMRWC5lo7lnKfJa/ZJE3+oEAE2g==
+X-Google-Smtp-Source: AGHT+IE/sfORkK+EpFxfIxWr2dv+G1BHkfaEQtCTObdoB+2cYQJlgUrzOdE/TYRmlB20bOqNUvTQ5IsnPD1twg0Eo14=
+X-Received: by 2002:a05:6122:a08:b0:4ef:53ad:97bd with SMTP id
+ 71dfb90a1353d-4fcf1aec603mr6710881e0c.3.1724325399347; Thu, 22 Aug 2024
+ 04:16:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 22 Aug 2024 16:46:27 +0530
+Message-ID: <CA+G9fYvZAUOKhf+Yg6J=OUxnJ0ckv4jxyDLGyKsqwUpAak84hw@mail.gmail.com>
+Subject: next-20240822: rcu: Unless rcu_preempt kthread gets sufficient CPU
+ time, OOM is now expected behavior.
+To: rcu <rcu@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Mark Brown <broonie@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Exynos host reports OCS_ABORT when a command is nullifed
-or cleaned up with MCQ enabled. I think the command in those
-situations should be issued again, rather than fail, because
-when some conditions that caused the nullification or cleaning up
-disppears after recovery, the command could be processed.
+The following kernel crash was noticed on arm64 Rock-pi 4b,
+Qcomm dragonboard 410c and 845c devices while booting / loading kernel modules
+on today's Linux next-20240822.
 
-Signed-off-by: Kiwoong Kim <kwmad.kim@samsung.com>
----
- drivers/ufs/host/ufs-exynos.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+First seen on next-20240822.
+  Good: next-20240821
+  BAD:  next-20240822
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 16ad352..7ff0e84 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1376,6 +1376,13 @@ static void exynos_ufs_fmp_resume(struct ufs_hba *hba)
- 
- #endif /* !CONFIG_SCSI_UFS_CRYPTO */
- 
-+static enum utp_ocs exynos_ufs_override_cqe_ocs(enum utp_ocs ocs)
-+{
-+	if (ocs == OCS_ABORTED)
-+		ocs = OCS_INVALID_COMMAND_STATUS;
-+	return ocs;
-+}
-+
- static int exynos_ufs_init(struct ufs_hba *hba)
- {
- 	struct device *dev = hba->dev;
-@@ -1926,6 +1933,7 @@ static const struct ufs_hba_variant_ops ufs_hba_exynos_ops = {
- 	.suspend			= exynos_ufs_suspend,
- 	.resume				= exynos_ufs_resume,
- 	.fill_crypto_prdt		= exynos_ufs_fmp_fill_prdt,
-+	.override_cqe_ocs		= exynos_ufs_override_cqe_ocs,
- };
- 
- static struct ufs_hba_variant_ops ufs_hba_exynosauto_vh_ops = {
--- 
-2.7.4
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+We are bisecting this problem.
+
+Crash log:
+--------
+[    0.000000] Linux version 6.11.0-rc4-next-20240822
+(tuxmake@tuxmake) (Debian clang version 18.1.8
+(++20240731024919+3b5b5c1ec4a3-1~exp1~20240731145017.142), Debian LLD
+18.1.8) #1 SMP PREEMPT @1724309008
+[    0.000000] KASLR disabled due to lack of seed
+[    0.000000] Machine model: Radxa ROCK Pi 4B
+...
+[   16.923808] coresight-cpu-debug fe430000.debug: Coresight
+debug-CPU0 initialized
+[   16.933919] coresight-cpu-debug fe432000.debug: Coresight
+debug-CPU1 initialized
+[   16.935653] coresight-cpu-debug fe434000.debug: Coresight
+debug-CPU2 initialized
+[   16.937846] coresight-cpu-debug fe436000.debug: Coresight
+debug-CPU3 initialized
+[   16.939744] coresight-cpu-debug fe610000.debug: Coresight
+debug-CPU4 initialized
+[   16.942132] coresight-cpu-debug fe710000.debug: Coresight
+debug-CPU5 initialized
+[   37.987966] rcu: INFO: rcu_preempt self-detected stall on CPU
+[   37.989037] rcu: 2-...!: (5248 ticks this GP)
+idle=d1f4/1/0x4000000000000000 softirq=1552/1553 fqs=0
+[   37.990715] rcu: (t=5250 jiffies g=1269 q=784 ncpus=6)
+[   37.991667] rcu: rcu_preempt kthread timer wakeup didn't happen for
+5249 jiffies! g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
+[   37.993718] rcu: Possible timer handling issue on cpu=4 timer-softirq=296
+[   37.994966] rcu: rcu_preempt kthread starved for 5250 jiffies!
+g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=4
+[   37.996844] rcu: Unless rcu_preempt kthread gets sufficient CPU
+time, OOM is now expected behavior.
+[   37.998499] rcu: RCU grace-period kthread stack dump:
+[   37.999419] task:rcu_preempt     state:I stack:0     pid:18
+tgid:18    ppid:2      flags:0x00000008
+[   38.001117] Call trace:
+[   38.001565]  __switch_to+0x15c/0x208
+[   38.002229]  __schedule+0x54c/0x9d0
+[   38.002870]  schedule+0x12c/0x1e0
+[   38.003479]  schedule_timeout+0x9c/0x1b0
+[   38.004202]  rcu_gp_fqs_loop+0x1e0/0x880
+[   38.004926]  rcu_gp_kthread+0x70/0x230
+[   38.005616]  kthread+0x104/0x198
+[   38.006209]  ret_from_fork+0x10/0x20
+[   38.006877] CPU: 2 UID: 0 PID: 237 Comm: (udev-worker) Not tainted
+6.11.0-rc4-next-20240822 #1
+[   38.008442] Hardware name: Radxa ROCK Pi 4B (DT)
+[   38.009284] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   38.010551] pc : smp_call_function_many_cond+0x468/0x6b8
+[   38.011521] lr : smp_call_function_many_cond+0x428/0x6b8
+[   38.012490] sp : ffff800083d1bb50
+[   38.013094] x29: ffff800083d1bb90 x28: 0000000000000006 x27: 0000000000000000
+[   38.014399] x26: ffff80008269e000 x25: 0000000000000000 x24: 0000000000000001
+[   38.015702] x23: ffff8000801bc470 x22: ffff800074e75000 x21: ffff0000f74d8c20
+[   38.017005] x20: ffff0000f746cb80 x19: ffff8000826a3470 x18: ffff80007afc2000
+[   38.018308] x17: 000000000909008e x16: 0000000000000000 x15: ffff8000816092a0
+[   38.019611] x14: 060a090000000000 x13: 0000000000000003 x12: 000000000000003f
+[   38.020914] x11: 0000000000000001 x10: 0000000000000000 x9 : 0000000000000011
+[   38.022218] x8 : ffff0000f74b6c28 x7 : 0000000000000000 x6 : 0000000000000080
+[   38.023520] x5 : 000000000000003f x4 : 0000000000000000 x3 : 0000000000000006
+[   38.024823] x2 : 0000000000000004 x1 : 0000000000000004 x0 : 0000000000000004
+[   38.026126] Call trace:
+[   38.026574]  smp_call_function_many_cond+0x468/0x6b8
+[   38.027481]  kick_all_cpus_sync+0x44/0x78
+[   38.028216]  flush_module_icache+0x38/0xe0
+[   38.028965]  load_module+0x1374/0x1778
+[   38.029654]  __arm64_sys_finit_module+0x238/0x348
+[   38.030516]  invoke_syscall+0x4c/0x110
+[   38.031207]  el0_svc_common+0x8c/0xf0
+[   38.031880]  do_el0_svc+0x28/0x40
+[   38.032490]  el0_svc+0x40/0x88
+[   38.033054]  el0t_64_sync_handler+0x90/0x100
+[   38.033837]  el0t_64_sync+0x190/0x198
+[   38.034509] Sending NMI from CPU 2 to CPUs 4:
+[   48.036555] Sending NMI from CPU 2 to CPUs 5:
+[   78.247966] sched: DL replenish lagged too much
+[  121.047963] rcu: INFO: rcu_preempt self-detected stall on CPU
+[  121.049009] rcu: 2-...!: (21002 ticks this GP)
+idle=d1f4/1/0x4000000000000000 softirq=1552/1553 fqs=0
+[  121.050702] rcu: (t=26015 jiffies g=1269 q=784 ncpus=6)
+[  121.051669] rcu: rcu_preempt kthread timer wakeup didn't happen for
+26014 jiffies! g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x200
+[  121.053735] rcu: Possible timer handling issue on cpu=4 timer-softirq=296
+[  121.054982] rcu: rcu_preempt kthread starved for 26015 jiffies!
+g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x200 ->cpu=4
+[  121.056876] rcu: Unless rcu_preempt kthread gets sufficient CPU
+time, OOM is now expected behavior.
+[  121.058530] rcu: RCU grace-period kthread stack dump:
+[  121.059447] task:rcu_preempt     state:R stack:0     pid:18
+tgid:18    ppid:2      flags:0x00000008
+[  121.061140] Call trace:
+[  121.061587]  __switch_to+0x15c/0x208
+[  121.062245]  __schedule+0x54c/0x9d0
+[  121.062885]  schedule+0x12c/0x1e0
+[  121.063494]  schedule_timeout+0x9c/0x1b0
+[  121.064214]  rcu_gp_fqs_loop+0x1e0/0x880
+[  121.064936]  rcu_gp_kthread+0x70/0x230
+[  121.065625]  kthread+0x104/0x198
+[  121.066217]  ret_from_fork+0x10/0x20
+[  121.066874] CPU: 2 UID: 0 PID: 237 Comm: (udev-worker) Not tainted
+6.11.0-rc4-next-20240822 #1
+...
+[  785.590550] Sending NMI from CPU 2 to CPUs 4:
+[  795.592594] Sending NMI from CPU 2 to CPUs 5:
+
+boot Log links,
+--------
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240822/testrun/24939658/suite/boot/test/clang-18-lkftconfig/log
+ - https://lkft.validation.linaro.org/scheduler/job/7816099#L523
+ - https://lkft.validation.linaro.org/scheduler/job/7815910#L2448
+
+Boot failed comparison:
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240822/testrun/24939658/suite/boot/test/clang-18-lkftconfig/history/
+
+metadata:
+----
+  git describe: next-20240822
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git sha: 6a7917c89f219f09b1d88d09f376000914a52763
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/config
+  kernel version: 6.11.0-rc4
+  artifact location:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/
+  toolchain: clang-18 and gcc-13
+
+Steps to reproduce:
+---------
+ - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2l0EbxmBUpGzF37iIJ51WvkJFt8/reproducer
+ - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2l0EbxmBUpGzF37iIJ51WvkJFt8/tux_plan
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
