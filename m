@@ -1,359 +1,293 @@
-Return-Path: <linux-kernel+bounces-297080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8284795B2C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:21:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6B595B2CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64721C223FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:20:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33781C221A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AC617DFE8;
-	Thu, 22 Aug 2024 10:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47C6364A4;
+	Thu, 22 Aug 2024 10:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YGHCTQo9"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="imXIvYFK"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2108.outbound.protection.outlook.com [40.107.223.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3217E14F9DA
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724322053; cv=none; b=Wy5nBEvGTnVJ4VfK9rXKhe+Q3J2iJFd6qicPxsTWLAwG8CGHHOOoTv0L9+b7baoUn5AhoN9117UEWOHhpTZnppHOpg2KyCT1ktbPOaf2JJRTPrkm8yT2xcJEf3LtaxVsD13RAN0dDxJiOTYL3XjOFhJq8DIdmzKnpJzZpkrJFh4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724322053; c=relaxed/simple;
-	bh=JtzGk3H57edkI/9E8hJvdaizt1qAa5AZwcZUjQ1gx3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NaiLbmKvQvYuoGoIe61kE4VWUiLvJG0c2k5HlM3nZ2OYnRZdRx7K7S4j6kFmTDJ0jZpawz6nSb2bNjviFrrDZYanoKIGjKERPOcmvHpiTek6b+DncF0QgMFBTJOd+sSkc0DVIEeBttB+enOJwW6RT5aiyzsnzQyt8lKQNrOLCTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YGHCTQo9; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d3d7a1e45fso439990a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:20:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19179171088;
+	Thu, 22 Aug 2024 10:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.108
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724322061; cv=fail; b=dETYfRQ5TrXmcl8wfRNupnQEgjPlcRL/OgO2I52AMKT/MlfXSM73geHO0En08RK82M2p1wc//vUw/N+0xSfXqHJam3l/6yaVy7lIxS+XzE05Wxl/Gqn5pm4b/691rRh7KqTAdNHsk+vvMWzYIJ2nrSfUZ4Hn5EqwIaNh0bL9BMQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724322061; c=relaxed/simple;
+	bh=Mo8+xM2VrNmAXjMc1NNKUGPeT5AIAdpTqM21qqPqvy8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lswfmQqS075AK6K6yFxIdZ4S7zyHMSd904p9/Tk3XtLJIan37H9tnYDCijSMvhPOFik9H6DB3d8Lib8Rx1MpWJ6FYOcheA0n23+TLuJzDs3yLg1O6ziV6k4yodUOw2M0YFncbyoSyF09plfATLw0UpPjpgQbmroDsmBNFRnhdZI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=imXIvYFK reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.223.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M4W9rhnyYW+DgcYyGWTzfGF2FYAy4jSskBVVbeEMno70SMe8KUTeejDkZ+0Su8jbbe4jhIJ7TZiF4Fnt17bAOYCkn7XcIQ2BC3A/Sj7B4jYNlHzSJiJ88UtKWFa0F7aGdCfJNwCu6/T3ldbH+6Xqta3m15p7+dXeLj8a3L2rLK7IRSTopezTeg+qhaeebJmvYslQ+/DJKxU7RD8Ptk9F7XDD4q1WxF/ouMwGzx8UaR+nqs7A31jlwR40mXAAQXqOZcl1g7G8sjRgFuqe9AYBodB6l6ci/yB5bPKdfpFNi5fZ/6tEPrjA8dpk3czH9vcT5A+7/65WOi4tfQaqt7uu2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2T9/WH5WwyRjEYVJPXsKbu/RW1ChtcUf5IDdZiLw3+c=;
+ b=fIFiwyJ7kPHoI0fDxSuJEyLtJ4Fa11SM48VVxxcGeS+q82OGnXrjVtJSV54/VAppux15enOYlwRna4pLmOZj6UGayyPc9A0Iaf1FYdVmkU4/Vy66eb9wLtBiS0bxPnAshVB59LNRHr4nntv2+rhOgKAChekm4EKr7OpK0xUUm6TuoQdoZQNhC5jodtk5dCp/huHv1tZY3XdkzL5RIN3t4E4755biT+PhRT6Fad2mVVh3WAOoBwEGT1O+c538tz/J5klA1HwnQkt5My088qOnanltfpCSKNBwEHvuP/xgp5ZW5rfRuo9Y2ZxX/EgLn6puJh6zWc/bzQclq6DMwX36LQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724322050; x=1724926850; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJ7q7waXaf+k/AiQ+6Cc7OPNeDe7hozpG3jklqkooJU=;
-        b=YGHCTQo9Aywkuof+vp08HWqLwHjT5wohlFEfxjlvmICqEJ8ua1C5jiE2huUnu16E6E
-         nfLWj7g/zpFNClSnaFDGd6oDWeJkUP6boGr5kz9+wgAFPxqlwrqdKxMTvbr2Dw7oO+fx
-         r+hJoW8H08Hy8g3bAuL2NvzaaubGFe1k1ApitGXsZLoAg+OI4ALdDTmvVrUL88LaWhWQ
-         p4k9YtmgORUTzK0gAUK6EcxdqLsdykGooXVLkO1U59yPkUr9W3+D7p+w1hI0FlFj3pRt
-         HqXdsQKfbHQAQcjS8wl89hwYjc+PE/HV159B8i6gb3I0WtDemjcPBC+3fh3T2HdYYOLJ
-         TqCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724322050; x=1724926850;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nJ7q7waXaf+k/AiQ+6Cc7OPNeDe7hozpG3jklqkooJU=;
-        b=VMFlP/sIRuAyExgiIK9/iQPRAkW8lqMtLmmekTSgSy4sN8UyKYduF9pwhGqTYHPBAI
-         FHvFa9PobOJ1ysSYrpQPePTQBJ+np+SPWVj/0bwM4dXjlUwmAOIQEKGERyXklhxSZYLL
-         dxowCoxsLYwkchbPjlj29KYHXpH8mB6rVB8JvSqQrGQjpRFaIaoAE00NArpJif6gnnEC
-         pEAm/PmJiUGzDQN2BcWEU18G/Dj4toWx32xbFm9ani8edRksJY02hhybkWrOG4T/OLbl
-         afaSePwYk7pLk6mJ5OXc1MZq0NTNPqcF7dw0/r9W+PrNzGj66RNZigv6mTeqL+/jtmdU
-         Wk9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVMJzTg6YfU1U7J/aSWzSe74Q8hRfeFmNv+p/abbaWQsvybrt7t/9SojtC8CniLrbMe9Mm4cPWADGv09RE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmuUjxqOI8DDpFe777Mwjaiweoo0yZ2ktMSMkskvuChlPwJ0C0
-	hApTknajpAWTw4Q4kxl3/F2U6eyMVsqjPkOxCHEWBJciWAdn7mmVtYka1kFTT3Un46PI66djP2O
-	tHod/U+d9uYzitIOMV8uchaujPW2Q9kKsLSjoIg==
-X-Google-Smtp-Source: AGHT+IFeQ8Po8Knshbme9VaKeDd3oioDSEqS41ot0uDx8rIT3XV+biLbXhs8fgVMgxRqwg41CvkJSGSfLuYK4zE5a/c=
-X-Received: by 2002:a17:90b:1292:b0:2cb:5112:740 with SMTP id
- 98e67ed59e1d1-2d5e9db84dcmr5504247a91.26.1724322050346; Thu, 22 Aug 2024
- 03:20:50 -0700 (PDT)
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2T9/WH5WwyRjEYVJPXsKbu/RW1ChtcUf5IDdZiLw3+c=;
+ b=imXIvYFKlAx93PgfALWawHUsxjvCEZebY+eR0NJUDzTTkyeqV+68wkIWzNzpBhD/dy0AUrHR9Hg5tHtmLuDxceBbcPq28v6R13E5PdJBmkbps0qajUGZFordmblm7KpPxVGDt9lmYRWxpiLndSMinIL8g0SPCEgDypQcSibfYo8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
+ DS1PR01MB8872.prod.exchangelabs.com (2603:10b6:8:21f::21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.17; Thu, 22 Aug 2024 10:20:54 +0000
+Received: from BL3PR01MB7057.prod.exchangelabs.com
+ ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
+ ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
+ 10:20:53 +0000
+Message-ID: <d1ee66fa-e504-409f-97de-a923123f3d44@amperemail.onmicrosoft.com>
+Date: Thu, 22 Aug 2024 17:20:43 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: hwmon: Add maxim max31790
+To: Chanh Nguyen <chanh@os.amperecomputing.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Justin Ledford
+ <justinledford@google.com>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>
+Cc: Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>,
+ Khanh Pham <khpham@amperecomputing.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240822084808.299884-1-chanh@os.amperecomputing.com>
+Content-Language: en-US
+From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
+In-Reply-To: <20240822084808.299884-1-chanh@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CYZPR14CA0045.namprd14.prod.outlook.com
+ (2603:10b6:930:a0::13) To BL3PR01MB7057.prod.exchangelabs.com
+ (2603:10b6:208:35c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727102732.960974693@infradead.org> <20240727105029.315205425@infradead.org>
- <6f39e567-fd9a-4157-949d-7a9ccd9c3592@arm.com> <CAKfTPtAS0eSqf5Qoq_rpQC7DbyyGX=GACsB7OPdhi8=HEciPUQ@mail.gmail.com>
- <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com> <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
-In-Reply-To: <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 22 Aug 2024 12:20:39 +0200
-Message-ID: <CAKfTPtCWLANnY1uSQk-NM06QeWW5-wE1uKCUa8Uw1V68O5Z55Q@mail.gmail.com>
-Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
-To: Luis Machado <luis.machado@arm.com>
-Cc: Hongyan Xia <hongyan.xia2@arm.com>, Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
-	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de, 
-	efault@gmx.de
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|DS1PR01MB8872:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa7f894b-3bc2-45cd-6705-08dcc2941a2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cExQMytjZVVZR0x4a1BmVHJQdTVzZTBTeGRZT2c5M3NGM3RoQTFjUlZDMWVJ?=
+ =?utf-8?B?OFZzTDZuaVVzaytpcnpmbWxCeGhEVnNUUzVILzBNanBubElrK0ZtcDhOUjYy?=
+ =?utf-8?B?NFBXSW1nNDV5bEtEcFFuUExhYmRRZG45NXJlOU44UVFnaXFlN04rNXFSTkpl?=
+ =?utf-8?B?NWhHRnVMdjBSNWxFN2xRcFN0SVl6YXlEaHJGdFFXbUZ3ZVNCNHJLOGVuS2dV?=
+ =?utf-8?B?TkR0MU5oVVQ3Z1B2bTR2OTBlOHJaMldFdHlnWDRGK2RoRm4rWUZaRi9hRHZX?=
+ =?utf-8?B?c1ZJMGpJNENFT01KUytNRGFCMGNRa1M2UnUrZVZyYWZYeXlSMWNVeGxRRVZz?=
+ =?utf-8?B?K0t4eU5IWVN3cDdKQXRYWEp0NThXNHNycWRMOXNrZ2YwcEFhek1nbGVDMmVO?=
+ =?utf-8?B?VS9scTNMdzErWEpvUUxkMk9CQUxFRjQzSlFUdHVCTXo4bkNYQTErRXpMMmFK?=
+ =?utf-8?B?Z2hlZCs5VUphaTlFeDZnWWJlRi9scTFpdG1LbDFKQ0sxVTRlbE41Vm5iREFq?=
+ =?utf-8?B?YXNUaWUxYmJ4U25wTXA2aGd3S3lMTzFSVUMyMWN4RzRLNnlqZGVCOE4xUkI5?=
+ =?utf-8?B?bkkwUVVzRjdWN2lEQUh4UE1wWit5aVB0RklONkc3UURZV3h1dVNHR1M1SW1s?=
+ =?utf-8?B?REdiOG81MGI1L09JZGtpRkZHTFVsYjUyaUlFME4xeTZrSmdhNzRlT0pSN1ov?=
+ =?utf-8?B?QjZOb29SS0UvV1JFd3lYWUNHT0xtakNqb1pyZGE4RWl0WXZ3M3FJWFlha0RS?=
+ =?utf-8?B?cEFwcGYzM3ZhMFZBUy95cjZRcWR1QUYyUGpJVXUwQWpBeHJlVENoRWIxTnZt?=
+ =?utf-8?B?MS9iWGNhU3FreENYNGlnMEY0V042a1lSdUpVU3d0aWo2citSSVp5ZURxazhJ?=
+ =?utf-8?B?RDZTMEdVTG1VWHlPRnRpVUVBM1pRMEpXckVubzNBRGhqellZelB4SXJ4VmYw?=
+ =?utf-8?B?dGJRVHVrWXFlSEcyQjliSkZtc3h6ZG5oNzlucFl0VUY0RmpNVjBncDBGSHEz?=
+ =?utf-8?B?YURpQVRDWVpvQUM4SWo2NGl5VHMzOTNpekpDMHBjd1d1OHREZlkraU1MczV1?=
+ =?utf-8?B?MWJIZ2t2T2ZiTmU2b0JsQXBCNzlNNlhVbGtsd3dJVUN5cXJucGF1OU5pNjZm?=
+ =?utf-8?B?L2ovU2xDa0JsWW9uU084V24weGRtSTlsR0NlU3RlUEk4dnBlS3lUeFRDN0Rt?=
+ =?utf-8?B?UnllbVBYMHJWZlF6MExkRHkyRVY5QXZLVU1yc1ZVZnR0UzZwazdxaEdqK1FG?=
+ =?utf-8?B?WnVFUFpMWkhxU0lzek90dDBjRXk3QlBKVHJZOXNDNDZ6ZVJGSzVjUkRkZVFG?=
+ =?utf-8?B?ZWVNWFZsNEF0Q0M1S2hjbWZ6NlJOai95NnpEOGh3dGRwcnh2amsvMDJFTWE5?=
+ =?utf-8?B?Wlh1NmxBRE9CbjduMzR5ZDhYYTBaR2Q3bHAxRmdQTmRydmtYYnRvTXg3Rk5U?=
+ =?utf-8?B?N3VvMy9FRmFJazhicW5INzhhZjNpTFpndUhteTk0WHUzQWdmV0VIa01EWUp4?=
+ =?utf-8?B?a0tETERzMElOb05uZnNBRWpXQzhXWGtEODFLS09NOVI2ZThjbkV0R2lDeE9t?=
+ =?utf-8?B?OGlVdlYrWVRURlRKdFFINnhVcmVBajJFbmlveUJYTTZMcGVxQ1RocmxsMFpk?=
+ =?utf-8?B?eVprQitYWjBPbzQxQXhvanlvVWxlUmNrOFNvUFF4SVY5RWk5MjJUT1FNQ1JR?=
+ =?utf-8?B?Qk1aWk0xbDFHa3B5THB5elFFTlJFWlJpaUhSVG9LQ1U5MTZRQnZ6OGpSNzE3?=
+ =?utf-8?B?TGtuQXN4UWEwVmsydjk2OFc2UDR2dFNlZTQ5SGo0Y3hsdVdZZG95M2lPY05B?=
+ =?utf-8?B?c0V2REZvam1ZYkFsengrdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b2UwWjMvT09HcVM2TW1vTkVocTJtOEFCWTU5ZHRGQ3F5N0RrS0NoWGwzdDNU?=
+ =?utf-8?B?eUpISjhFUVVyRG5KL09rUzZiU1B4OHRBbSs0UXJ4d1k5dHo4NkE0Sis1MHV5?=
+ =?utf-8?B?WHlNMTVsZFlYcFRmNGsrVGV0c3kvSm9SNWFiOWFtZ2QwNGZ4UGIxR2FDTWd6?=
+ =?utf-8?B?QitGamhtWVcrZUJ2NnpidG9sMnV2N25hQkprUmNESlhXNW1NS282WWhQb3lK?=
+ =?utf-8?B?aUhEZjdZeC9EY1Jib0VxNU9wMlJoZFJXMlk3d2VFd05aV1lDOGV2emxPZlpm?=
+ =?utf-8?B?RzZZOE1SeFM1SWExdmtvdWRlaDVuUUFVUkN3UllYZVF1VlZGYW84Q3lvWlRV?=
+ =?utf-8?B?L2t2WFZyVTZWT3d0MmRiSG9CTEpSWGtOM1kwOUFDYUxKU3dycU1oL0U3UDdx?=
+ =?utf-8?B?cDlFb2ErTWhKb3NVVkxZUG81TnNHMXdiVkxhSXcxM3VzRnJmVWttdHB5QWdG?=
+ =?utf-8?B?QnVXRnEvRmlBa2cxamIwUFkrUlZEYnllenJQZlA2Wkt5cTczZzFyZjVXVFUw?=
+ =?utf-8?B?SE90bzkrcW9hWFJyanROdHg2Rnc1ZDQxMlVRazdUQjR5NG9yN2NCM1pnL04z?=
+ =?utf-8?B?ZmovSlhDQ0hNVzdYS1RjSFpXQVlVSThiVVpRcUhtbG4wZTNzVVdNUmI0TnB4?=
+ =?utf-8?B?QlVWeXBRNklFZ21VSHNXNlBad0Z1VnRtMi9nLzBjYUFGcUxZMDIrQjI2azNh?=
+ =?utf-8?B?dWpGODJFRTY1YjBBMUFlMXlDWGFNVG9MQ1ZTNGhtbTBBTUFzZklNY1RVNXlu?=
+ =?utf-8?B?cGVlR01qc3JhNmNoSDk4NFNwa3lrdDVmbHNGMmRWa2dvVHQzSk0vem0yendN?=
+ =?utf-8?B?a3JEVkFXYjNzbmlHekNCcitUVG9HSUltM3VLRWZGa3RSa21WSloxVUtnaXpZ?=
+ =?utf-8?B?ZWJuRVMyZUZna1VoNDRNM0xiWU1rVnBIU3pTUEhLTEhyZnBYcmFOTlVZMnR2?=
+ =?utf-8?B?L0QzK0M0ZTl3T3p5cWIveDFlcERXcUdYQ0hWZUl6ZEJoQTlPT01FUjJ0MDVI?=
+ =?utf-8?B?cW5zdjByQkk4dE9nd2xRbU5nY2QzQ0p6V1JyMTRKc0RjdURHa3lyZGZQYmJW?=
+ =?utf-8?B?U3dTVCthYlg0eTFTYkJKNGZSRlJsVTA2bStZQ2RmQjQvM3pLZlM3cGJiajdP?=
+ =?utf-8?B?V1JGdlB4NXBOUjJrcEhCQVgycFl4RE4xTTh3UnNLbStjRTZsakNLSXFKUHlE?=
+ =?utf-8?B?SGhGeHo4Vlp4eUY2R2cxNHJJeXoyWEpMZFhHSXBOeGFsN3NEMS9TelNsNlBD?=
+ =?utf-8?B?Mk5BN0pzRVUySEw0VWVybHlQWkdzRTVjTkhNVXlPN1VJNG5NSllwdDY1Nk9a?=
+ =?utf-8?B?QWdMVmNOUkVidDhQUFJOc0dvcjRuVDdPRXdzZ3lHOUEvYWFwTmY4VzhrOTVz?=
+ =?utf-8?B?ZDJuKzhlajRuZ0M1cmhmc1d4MWliUEV3eWNSdnhRemtNd1VQV2pacVB3ekR3?=
+ =?utf-8?B?TTlBM0M3clhUWXJodld4azZOQmh3aXRpNFY2THpXOVdiSUI2NDVhSWtvWVhN?=
+ =?utf-8?B?ZXRudXJiNXUwdG1xZ3NJa0grZmxFSmZnTGFSK3U3blczOXhxNWdhaHhGbDNK?=
+ =?utf-8?B?QjZlMWhNQ3k4YkJSVmVZbXpnSVZ5WklOemJsZDFReitYTVZIQUsrd241YzJI?=
+ =?utf-8?B?akNQQ2c3NXYzL0ZyUGhEYUxIVDV5S1AwWGY0czFOb09xMUIwekFUcXB0bGU5?=
+ =?utf-8?B?NHlseEQyOFNzTzVyV1BvclhCYTNGaEltdnhRUGpSSXdFaGx1dEtWakRaYlFq?=
+ =?utf-8?B?TG1KK0ZUZHU0aVJWeHRaVzRrSE1aWXdEenN5dzBOUVBTS3ZRd2doNnVDSHYx?=
+ =?utf-8?B?cWhudHBUSCt0WGxTalUwQjIxUEg3bkQ5N2lmdzNsVks0QmlBNzRYOUpNVkJV?=
+ =?utf-8?B?NW5GTnFZUzNhTm5WNmRsbUltcUtJQUFyODNTa0ZPVVpBVUVuaHJYQmRTRm9i?=
+ =?utf-8?B?clFXeDRsUlliUWYrQk5QY1ZiOUtwRncvcXFuSnJ2US92QWtnWEpRYmU3VjRn?=
+ =?utf-8?B?SmNBYWVNcFBaV3YxNVdYR0VTVUV2V0xhS2RUbzIvcTRPK3FSdjZLTHdtZUp2?=
+ =?utf-8?B?aGJzVXB0T2h4aU5pV2F1eEFUWGNnTDhScHNvdG1HdjNTSXBLcnZ2YlRoM3RW?=
+ =?utf-8?B?TkEzS25tU2hQcWRTSmx0dHo1cXRoejZJd05LajVJRFFrUklLSG1MRjltN2l4?=
+ =?utf-8?Q?d/5bioS3/zLob8T7Y6pXrSg=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa7f894b-3bc2-45cd-6705-08dcc2941a2f
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 10:20:53.3244
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /CQ5HgnRwPLCMongE2LAb8U0w2yPdg/MUinEB9csWwYmS0SJx8NzbA+hqwR22DREn4teHNXnOk3FoZ6iNBc32yyr++DbmYiYQqy3CO/InAxE8ChtDOQ8y26ZMejPueW8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR01MB8872
 
-On Thu, 22 Aug 2024 at 11:53, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Thu, 22 Aug 2024 at 11:22, Luis Machado <luis.machado@arm.com> wrote:
-> >
-> > On 8/22/24 09:19, Vincent Guittot wrote:
-> > > Hi,
-> > >
-> > > On Wed, 21 Aug 2024 at 15:34, Hongyan Xia <hongyan.xia2@arm.com> wrote:
-> > >>
-> > >> Hi Peter,
-> > >>
-> > >> Sorry for bombarding this thread in the last couple of days. I'm seeing
-> > >> several issues in the latest tip/sched/core after these patches landed.
-> > >>
-> > >> What I'm now seeing seems to be an unbalanced call of util_est. First, I applied
-> > >
-> > > I also see a remaining util_est for idle rq because of an unbalance
-> > > call of util_est_enqueue|dequeue
-> > >
-> >
-> > I can confirm issues with the utilization values and frequencies being driven
-> > seemingly incorrectly, in particular for little cores.
-> >
-> > What I'm seeing with the stock series is high utilization values for some tasks
-> > and little cores having their frequencies maxed out for extended periods of
-> > time. Sometimes for 5+ or 10+ seconds, which is excessive as the cores are mostly
-> > idle. But whenever certain tasks get scheduled there, they have a very high util
-> > level and so the frequency is kept at max.
-> >
-> > As a consequence this drives up power usage.
-> >
-> > I gave Hongyan's draft fix a try and observed a much more reasonable behavior for
-> > the util numbers and frequencies being used for the little cores. With his fix,
-> > I can also see lower energy use for my specific benchmark.
->
-> The main problem is that the util_est of a delayed dequeued task
-> remains on the rq and keeps the rq utilization high and as a result
-> the frequency higher than needed.
->
-> The below seems to works for me and keep sync the enqueue/dequeue of
-> uti_test with the enqueue/dequeue of the task as if de dequeue was not
-> delayed
->
-> Another interest is that we will not try to migrate a delayed dequeue
-> sleeping task that doesn't actually impact the current load of the cpu
-> and as a result will not help in the load balance. I haven't yet fully
-> checked what would happen with hotplug
+Hi all,
 
-And there is the case of a delayed dequeue task that gets its affinity changed
+I only linked to patch v3: 
+https://lore.kernel.org/lkml/20240813084152.25002-1-chanh@os.amperecomputing.com/T/#mce666b8184682e4d463d418a294d95512d95c07a 
 
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index fea057b311f6..0970bcdc889a 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6944,11 +6944,6 @@ enqueue_task_fair(struct rq *rq, struct
-> task_struct *p, int flags)
->         int rq_h_nr_running = rq->cfs.h_nr_running;
->         u64 slice = 0;
->
-> -       if (flags & ENQUEUE_DELAYED) {
-> -               requeue_delayed_entity(se);
-> -               return;
-> -       }
-> -
->         /*
->          * The code below (indirectly) updates schedutil which looks at
->          * the cfs_rq utilization to select a frequency.
-> @@ -6957,6 +6952,11 @@ enqueue_task_fair(struct rq *rq, struct
-> task_struct *p, int flags)
->          */
->         util_est_enqueue(&rq->cfs, p);
->
-> +       if (flags & ENQUEUE_DELAYED) {
-> +               requeue_delayed_entity(se);
-> +               return;
-> +       }
+
+Thanks,
+Chanh
+
+On 22/08/2024 15:48, Chanh Nguyen wrote:
+> Add device tree bindings and an example for max31790 device.
+> 
+> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> Changes in v2:
+>   - Update filename of the maxim,max31790.yaml                        [Krzysztof]
+>   - Add the common fan schema to $ref                                 [Krzysztof]
+>   - Update the node name to "fan-controller" in maxim,max31790.yaml   [Krzysztof]
+>   - Drop "driver" in commit title                                     [Krzysztof]
+> Changes in v3:
+>   - Drop redundant "bindings" in commit title                         [Krzysztof]
+>   - Add the clocks and resets property in example                     [Krzysztof]
+>   - Add child node refer to fan-common.yaml                           [Krzysztof, Conor]
+> Changes in v4:
+>   - Add Chanh Nguyen to maintainers list                              [Chanh]
+>   - Drop incomplete example                                           [Krzysztof, Conor]
+>   - Drop the cover letter because only a patch existed                [Chanh]
+> ---
+>   .../bindings/hwmon/maxim,max31790.yaml        | 70 +++++++++++++++++++
+>   1 file changed, 70 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
+> new file mode 100644
+> index 000000000000..b1ff496f87f9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->         /*
->          * If in_iowait is set, the code below may not trigger any cpufreq
->          * utilization updates, so do it here explicitly with the IOWAIT flag
-> @@ -9276,6 +9276,8 @@ int can_migrate_task(struct task_struct *p,
-> struct lb_env *env)
->
->         lockdep_assert_rq_held(env->src_rq);
->
-> +       if (p->se.sched_delayed)
-> +               return 0;
->         /*
->          * We do not migrate tasks that are:
->          * 1) throttled_lb_pair, or
->
-> >
-> >
-> > >> the following diff to warn against util_est != 0 when no tasks are on
-> > >> the queue:
-> > >>
-> > >> https://lore.kernel.org/all/752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2@arm.com/
-> > >>
-> > >> Then, I'm reliably seeing warnings on my Juno board during boot in
-> > >> latest tip/sched/core.
-> > >>
-> > >> If I do the same thing to util_est just like what you did in this uclamp
-> > >> patch, like this:
-> > >
-> > > I think that the solution is simpler than your proposal and we just
-> > > need to always call util_est_enqueue() before the
-> > > requeue_delayed_entity
-> > >
-> > > @@ -6970,11 +6970,6 @@ enqueue_task_fair(struct rq *rq, struct
-> > > task_struct *p, int flags)
-> > >         int rq_h_nr_running = rq->cfs.h_nr_running;
-> > >         u64 slice = 0;
-> > >
-> > > -       if (flags & ENQUEUE_DELAYED) {
-> > > -               requeue_delayed_entity(se);
-> > > -               return;
-> > > -       }
-> > > -
-> > >         /*
-> > >          * The code below (indirectly) updates schedutil which looks at
-> > >          * the cfs_rq utilization to select a frequency.
-> > > @@ -6983,6 +6978,11 @@ enqueue_task_fair(struct rq *rq, struct
-> > > task_struct *p, int flags)
-> > >          */
-> > >         util_est_enqueue(&rq->cfs, p);
-> > >
-> > > +       if (flags & ENQUEUE_DELAYED) {
-> > > +               requeue_delayed_entity(se);
-> > > +               return;
-> > > +       }
-> > > +
-> > >         /*
-> > >          * If in_iowait is set, the code below may not trigger any cpufreq
-> > >          * utilization updates, so do it here explicitly with the IOWAIT flag
-> > >
-> > >
-> > >>
-> > >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > >> index 574ef19df64b..58aac42c99e5 100644
-> > >> --- a/kernel/sched/fair.c
-> > >> +++ b/kernel/sched/fair.c
-> > >> @@ -6946,7 +6946,7 @@ enqueue_task_fair(struct rq *rq, struct
-> > >> task_struct *p, int flags)
-> > >>
-> > >>         if (flags & ENQUEUE_DELAYED) {
-> > >>                 requeue_delayed_entity(se);
-> > >> -               return;
-> > >> +               goto util_est;
-> > >>         }
-> > >>
-> > >>         /*
-> > >> @@ -6955,7 +6955,6 @@ enqueue_task_fair(struct rq *rq, struct
-> > >> task_struct *p, int flags)
-> > >>          * Let's add the task's estimated utilization to the cfs_rq's
-> > >>          * estimated utilization, before we update schedutil.
-> > >>          */
-> > >> -       util_est_enqueue(&rq->cfs, p);
-> > >>
-> > >>         /*
-> > >>          * If in_iowait is set, the code below may not trigger any cpufreq
-> > >> @@ -7050,6 +7049,9 @@ enqueue_task_fair(struct rq *rq, struct
-> > >> task_struct *p, int flags)
-> > >>         assert_list_leaf_cfs_rq(rq);
-> > >>
-> > >>         hrtick_update(rq);
-> > >> +util_est:
-> > >> +       if (!p->se.sched_delayed)
-> > >> +               util_est_enqueue(&rq->cfs, p);
-> > >>   }
-> > >>
-> > >>   static void set_next_buddy(struct sched_entity *se);
-> > >> @@ -7173,7 +7175,8 @@ static int dequeue_entities(struct rq *rq, struct
-> > >> sched_entity *se, int flags)
-> > >>    */
-> > >>   static bool dequeue_task_fair(struct rq *rq, struct task_struct *p,
-> > >> int flags)
-> > >>   {
-> > >> -       util_est_dequeue(&rq->cfs, p);
-> > >> +       if (!p->se.sched_delayed)
-> > >> +               util_est_dequeue(&rq->cfs, p);
-> > >>
-> > >>         if (dequeue_entities(rq, &p->se, flags) < 0) {
-> > >>                 if (!rq->cfs.h_nr_running)
-> > >>
-> > >> which is basically enqueuing util_est after enqueue_task_fair(),
-> > >> dequeuing util_est before dequeue_task_fair() and double check
-> > >> p->se.delayed_dequeue, then the unbalanced issue seems to go away.
-> > >>
-> > >> Hopefully this helps you in finding where the problem could be.
-> > >>
-> > >> Hongyan
-> > >>
-> > >> On 27/07/2024 11:27, Peter Zijlstra wrote:
-> > >>> Delayed dequeue has tasks sit around on the runqueue that are not
-> > >>> actually runnable -- specifically, they will be dequeued the moment
-> > >>> they get picked.
-> > >>>
-> > >>> One side-effect is that such a task can get migrated, which leads to a
-> > >>> 'nested' dequeue_task() scenario that messes up uclamp if we don't
-> > >>> take care.
-> > >>>
-> > >>> Notably, dequeue_task(DEQUEUE_SLEEP) can 'fail' and keep the task on
-> > >>> the runqueue. This however will have removed the task from uclamp --
-> > >>> per uclamp_rq_dec() in dequeue_task(). So far so good.
-> > >>>
-> > >>> However, if at that point the task gets migrated -- or nice adjusted
-> > >>> or any of a myriad of operations that does a dequeue-enqueue cycle --
-> > >>> we'll pass through dequeue_task()/enqueue_task() again. Without
-> > >>> modification this will lead to a double decrement for uclamp, which is
-> > >>> wrong.
-> > >>>
-> > >>> Reported-by: Luis Machado <luis.machado@arm.com>
-> > >>> Reported-by: Hongyan Xia <hongyan.xia2@arm.com>
-> > >>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > >>> ---
-> > >>>   kernel/sched/core.c |   16 +++++++++++++++-
-> > >>>   1 file changed, 15 insertions(+), 1 deletion(-)
-> > >>>
-> > >>> --- a/kernel/sched/core.c
-> > >>> +++ b/kernel/sched/core.c
-> > >>> @@ -1676,6 +1676,9 @@ static inline void uclamp_rq_inc(struct
-> > >>>       if (unlikely(!p->sched_class->uclamp_enabled))
-> > >>>               return;
-> > >>>
-> > >>> +     if (p->se.sched_delayed)
-> > >>> +             return;
-> > >>> +
-> > >>>       for_each_clamp_id(clamp_id)
-> > >>>               uclamp_rq_inc_id(rq, p, clamp_id);
-> > >>>
-> > >>> @@ -1700,6 +1703,9 @@ static inline void uclamp_rq_dec(struct
-> > >>>       if (unlikely(!p->sched_class->uclamp_enabled))
-> > >>>               return;
-> > >>>
-> > >>> +     if (p->se.sched_delayed)
-> > >>> +             return;
-> > >>> +
-> > >>>       for_each_clamp_id(clamp_id)
-> > >>>               uclamp_rq_dec_id(rq, p, clamp_id);
-> > >>>   }
-> > >>> @@ -1979,8 +1985,12 @@ void enqueue_task(struct rq *rq, struct
-> > >>>               psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
-> > >>>       }
-> > >>>
-> > >>> -     uclamp_rq_inc(rq, p);
-> > >>>       p->sched_class->enqueue_task(rq, p, flags);
-> > >>> +     /*
-> > >>> +      * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
-> > >>> +      * ->sched_delayed.
-> > >>> +      */
-> > >>> +     uclamp_rq_inc(rq, p);
-> > >>>
-> > >>>       if (sched_core_enabled(rq))
-> > >>>               sched_core_enqueue(rq, p);
-> > >>> @@ -2002,6 +2012,10 @@ inline bool dequeue_task(struct rq *rq,
-> > >>>               psi_dequeue(p, flags & DEQUEUE_SLEEP);
-> > >>>       }
-> > >>>
-> > >>> +     /*
-> > >>> +      * Must be before ->dequeue_task() because ->dequeue_task() can 'fail'
-> > >>> +      * and mark the task ->sched_delayed.
-> > >>> +      */
-> > >>>       uclamp_rq_dec(rq, p);
-> > >>>       return p->sched_class->dequeue_task(rq, p, flags);
-> > >>>   }
-> > >>>
-> > >>>
-> >
+> +title: The Maxim MAX31790 Fan Controller
+> +
+> +maintainers:
+> +  - Guenter Roeck <linux@roeck-us.net>
+> +  - Chanh Nguyen <chanh@os.amperecomputing.com>
+> +
+> +description: >
+> +  The MAX31790 controls the speeds of up to six fans using six
+> +  independent PWM outputs. The desired fan speeds (or PWM duty cycles)
+> +  are written through the I2C interface.
+> +
+> +  Datasheets:
+> +    https://datasheets.maximintegrated.com/en/ds/MAX31790.pdf
+> +
+> +properties:
+> +  compatible:
+> +    const: maxim,max31790
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  "#pwm-cells":
+> +    const: 1
+> +
+> +patternProperties:
+> +  "^fan-[0-9]+$":
+> +    $ref: fan-common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      pwm_provider: fan-controller@20 {
+> +        compatible = "maxim,max31790";
+> +        reg = <0x20>;
+> +        clocks = <&sys_clk>;
+> +        resets = <&reset 0>;
+> +        #pwm-cells = <1>;
+> +
+> +        fan-0 {
+> +          pwms = <&pwm_provider 1>;
+> +        };
+> +
+> +        fan-1 {
+> +          pwms = <&pwm_provider 2>;
+> +        };
+> +      };
+> +    };
+> +
 
