@@ -1,195 +1,110 @@
-Return-Path: <linux-kernel+bounces-296665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E7E95AD71
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:28:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE98E95AD73
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9EF9B21F6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:28:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3161F22951
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8372B13AD09;
-	Thu, 22 Aug 2024 06:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239151369B6;
+	Thu, 22 Aug 2024 06:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Od+2+EEe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9daXHKy"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E38A137C2A;
-	Thu, 22 Aug 2024 06:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243A4137C2A
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724308075; cv=none; b=nkh2hqimWo/GynS8LHsLzjOISTZp2MJlxS1WvSfmkXRH0nhwdMkIcnJyBFgdONTSRvRUgc7Ey1fYMGzn+I1hIh0s3xvNc0bT2KGy4+PAwH3tOKvSVw6xWe6HkxCd+Qer5w2phNNy7ZdLcRlArsuyB2PIBAooUE28kFw6FmYp1aU=
+	t=1724308082; cv=none; b=KZhA4Kfaid4sksoTIJLJ/GPeoIzVGsxw9XE+uvidGbAX/7hQRQFD+7cVpFEtahrt+yQzi+zh/JVfIIGU422WQv2G4wm0tX4aVGAjPvqEdvz/eeKBIhFNILKYGs+k+rXWsxAtLe5ATpmt2bwQoc5ZQkreZTc4HQsSjnJvTuwm5rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724308075; c=relaxed/simple;
-	bh=Uj8lzzLoP45JzCD1zqt3qSj6l3BlWmsYEzoccHcMGQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6QAKGWvG4/7snZXC7l8hjOfMZ+qCfjU+0x4S30aRMQggdLUShXG+hukPTc76qc24ygGrxNzjIH/qRCW9JLl5CwhgJJXtqxHl7Guo6XbcyXj+pUYhODlV6gX+FkbSlIYyY5+4KBIlo5CT41G2rooOPCKubIUncBk9OWOl0wDbnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Od+2+EEe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98779C4AF0B;
-	Thu, 22 Aug 2024 06:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724308075;
-	bh=Uj8lzzLoP45JzCD1zqt3qSj6l3BlWmsYEzoccHcMGQE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Od+2+EEeUbpxYry9/eiIWxc0ef7yY3IGKtR1ni/yReYhO75eVN6oBW4E8vu1tRVVi
-	 HNc0f84X9y0Zqzm/+n8Vay5y+47jqgIZLH4PC9Ue4yLFjnYeCA+qB7nf9wHXacehL+
-	 8Dnktag0KbkCgfXYNNK0AKZ1tV339AphYmbpZQn5rIjdkl0noH++dkX2iLUxKjCOhz
-	 syPHquTZ6pnR1/G1viHy9QOYlytE0r3sKDRFmdjILMD00tBP4s4l7XLBGo5dvLl8Qn
-	 fUAQhlycGNR7l5T54Bt3PsM68nAuIov5PNS03GBB+yIxPyfhrf6YCnadTOr9eQ+NAR
-	 lkYdd9Tu27EkQ==
-Message-ID: <c2292ef2-e93e-4ca3-bcd3-542bd27526ad@kernel.org>
-Date: Thu, 22 Aug 2024 08:27:44 +0200
+	s=arc-20240116; t=1724308082; c=relaxed/simple;
+	bh=LJ4dyjvNwZaiwd/8aLWsHy+giYvGugJKxWY9tm5RjOk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BOi/rEejTY86MnE1Xz7yWf/pwTp9XzyZ77Ab0xM05erujeo8u6E7PR2j8Ys3ktmfcjD0Llp27O6pQHqUbiDXD3+b8zYMc/bY+1CLKptG9AQAVRq9Z5YnTMmrPNhJ1RSU/a2oOVq+Hrx4dRxuyd2YxwbUeBFn3V13Csp9yK161Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9daXHKy; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d3dacaccfaso317890a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:28:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724308080; x=1724912880; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tcegQ5LLDtxve0FpkI1VDAxYi55e9yjJyF3N9IONl9U=;
+        b=c9daXHKyJ5hjZZbuFozpBw8pkqTpKECJdySgFDu55OKN/qb0Jyka22AYFhmfaq46+U
+         W5q6GjxuDcq+SOzu0dF59vcjP1dZ3LpCQnkI3sV3ZUU2UAX9G/ssLSU6gEkWskUaIPTB
+         t8Rh8XjEN78h6WrrhBzSoEAXbS5FJbkxITOyjp1dE5LaVKniFCnZpZfi3wKdA3YwdvCe
+         U2X5NBUy3fmLIRkw7541o/ZCzMbkU66oDMJaQXTXADSyE8TFWJxY1PDr+m/kd6TCd3Ub
+         34RjiPgKzoCObXv33ki6+A0dNejcrqlO5zKE0/00AC7f4hJhUr1S14q9wQkz4X+f84go
+         4Big==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724308080; x=1724912880;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tcegQ5LLDtxve0FpkI1VDAxYi55e9yjJyF3N9IONl9U=;
+        b=suA7ALWc7pWRGjgQqtsDkGaSdzhTOTAKG5OPjqJQNldyaeHIl8BbwRLpmf7kbhO6ge
+         P9IATuSdj65vraw+hbQivILSm1wLvTy1XFWN6Y/9Fg97OeeXF21J/ijAyLxhliKXBjjV
+         vtD45UNHIC2iqFFSz98NPkz3bxfh6mHSNegnzTna2+8/COoSNjaIOz0OqVRXugYPltdA
+         1mf7LCil+UgbMJSHd3ZqvbZUiur0Blv356MUjNB1iBCUXJzYUhy0DDU5LdPGC9Nfs0Qz
+         tQR8pBAHzsMRnUH0xx4yQjbkDI8Tb5tQEDZJ1DXCNiaeYpGPHZq5/174yMTFoDeQ105g
+         NVSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpQMqJlJjXlfBiZ5IibmzWruLHzfTTd7CMTg2M3RQV+6e20GeBZnEcQOVsws86wKI1H8xy0I4eRwoP6fE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0aG2SuZalNTeIKK2X4Sgu49X2td4p21bIg5dnjGri/dCycFco
+	kVWr7z3jKC98p3yrkRfNjLZkwCSk/1ZB2UVYvpRRyms8dCoPGgLo
+X-Google-Smtp-Source: AGHT+IHCI5vCN/67al2Tnidlyb6v/FI5ftalotWYxeMsIJ9e48XVWNG8KMJ19aJgFvP2G+Hzr3o9CQ==
+X-Received: by 2002:a17:90a:8914:b0:2c9:e0d3:1100 with SMTP id 98e67ed59e1d1-2d616b284edmr913222a91.19.1724308080228;
+        Wed, 21 Aug 2024 23:28:00 -0700 (PDT)
+Received: from mi.mioffice.cn ([2408:8607:1b00:8:8eec:4bff:fe94:a95d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbb0598sm3114486a91.36.2024.08.21.23.27.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 23:27:59 -0700 (PDT)
+From: liujinbao1 <jinbaoliu365@gmail.com>
+To: xiang@kernel.org
+Cc: chao@kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	liujinbao1 <liujinbao1@xiaomi.com>
+Subject: [PATCH] Prevent entering an infinite loop when i is 0
+Date: Thu, 22 Aug 2024 14:27:49 +0800
+Message-Id: <20240822062749.4012080-1-jinbaoliu365@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/16] dt-bindings: dma: qcom,bam: Add bam pipe lock
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, vkoul@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com,
- herbert@gondor.apana.org.au, davem@davemloft.net, gustavoars@kernel.org,
- u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com,
- quic_utiwari@quicinc.com
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-2-quic_mdalam@quicinc.com>
- <0a2b884b-bd28-428e-be12-8fef4fdfd278@kernel.org>
- <c8b7c2f0-9de1-1787-2f1b-2aa0102f347c@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c8b7c2f0-9de1-1787-2f1b-2aa0102f347c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/08/2024 18:34, Md Sadre Alam wrote:
-> 
-> 
-> On 8/17/2024 2:38 PM, Krzysztof Kozlowski wrote:
->> On 15/08/2024 10:57, Md Sadre Alam wrote:
->>> BAM having pipe locking mechanism. The Lock and Un-Lock bit
->>> should be set on CMD descriptor only. Upon encountering a
->>> descriptor with Lock bit set, the BAM will lock all other
->>> pipes not related to the current pipe group, and keep
->>> handling the current pipe only until it sees the Un-Lock
->>> set.
->>
->> Please wrap commit message according to Linux coding style / submission
->> process (neither too early nor over the limit):
->> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
->    Ok , will update in next patch.
->>
->>>
->>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->>> ---
->>>
->>> Change in [v2]
->>>
->>> * Added initial support for dt-binding
->>>
->>> Change in [v1]
->>>
->>> * This patch was not included in [v1]
->>>
->>>   Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 8 ++++++++
->>>   1 file changed, 8 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>> index 3ad0d9b1fbc5..91cc2942aa62 100644
->>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>> @@ -77,6 +77,12 @@ properties:
->>>         Indicates that the bam is powered up by a remote processor but must be
->>>         initialized by the local processor.
->>>   
->>> +  qcom,bam_pipe_lock:
->>
->> Please follow DTS coding style.
->    Ok
->>
->>> +    type: boolean
->>> +    description:
->>> +      Indicates that the bam pipe needs locking or not based on client driver
->>> +      sending the LOCK or UNLOK bit set on command descriptor.
->>
->> You described the desired Linux feature or behavior, not the actual
->> hardware. The bindings are about the latter, so instead you need to
->> rephrase the property and its description to match actual hardware
->> capabilities/features/configuration etc.
->    Ok, will update in next patch.
->>
->>> +
->>>     reg:
->>>       maxItems: 1
->>>   
->>> @@ -92,6 +98,8 @@ anyOf:
->>>         - qcom,powered-remotely
->>>     - required:
->>>         - qcom,controlled-remotely
->>> +  - required:
->>> +      - qcom,bam_pipe_lock
->>
->> Why is it here? What do you want to achieve?
->    This property added to achieve locking/unlocking
->    of BAM pipe groups for mutual exclusion of resources
->    that can be used across multiple EE's
+From: liujinbao1 <liujinbao1@xiaomi.com>
 
-This explains me nothing. I am questioning the anyOf block. Why this is
-the fourth method of controlling BAM? Anyway, if it is, then explain
-this in commit msg.
+When i=0 and err is not equal to 0,
+the while(-1) loop will enter into an
+infinite loop. This patch avoids this issue.
+---
+ fs/erofs/decompressor.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+index c2253b6a5416..1b2b8cc7911c 100644
+--- a/fs/erofs/decompressor.c
++++ b/fs/erofs/decompressor.c
+@@ -539,6 +539,8 @@ int __init z_erofs_init_decompressor(void)
+ 	for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i) {
+ 		err = z_erofs_decomp[i] ? z_erofs_decomp[i]->init() : 0;
+ 		if (err) {
++			if (!i)
++				return err;
+ 			while (--i)
+ 				if (z_erofs_decomp[i])
+ 					z_erofs_decomp[i]->exit();
+-- 
+2.25.1
 
 
