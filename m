@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-298029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4963595C0F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:37:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B3795C0F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C7E6B21B98
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 148371C22BFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12411D1753;
-	Thu, 22 Aug 2024 22:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893B31D175A;
+	Thu, 22 Aug 2024 22:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJMnyF6E"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ano/wpe2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71D516C854
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558A333981;
+	Thu, 22 Aug 2024 22:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724366242; cv=none; b=oBC9pc+IAMy0TI6yFDoPkoM4WP6UJ3FufE+DhSPT9rqv1S44grZhxr3UdgSp66OExXazdeHQ458tbYwILjpyAWboGD2EwnHi4uZOQF6JkT6N1yCaNX3Om8ROBlXNEJ5APcQE1joBqpFHoux9LAPzLnbpS98maxb1d8WX4GYmrX8=
+	t=1724366291; cv=none; b=am50gGGmm4Ascbm+LtDylKuLQhS3kvk8OKYltPlBcY1qDi7MjIvm3IcynOicJL5s/6QXYxc1JYiHj1fYInwyy0a61KN1+8IrAs9EwxWGl9WqyvWy6iQEN65pr8mzOvqm15e4bg4gRXiY3Su8ZmRz1NuHDSrZU6onZLnAthPHHi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724366242; c=relaxed/simple;
-	bh=bV0Hv4F5M4WK/rHCUNMOXrwO9S6mM5cJEw7CqiA6rR0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EB6DaMzBH066QIAkPxlJi4SQeK/H7keHF2L9G6HSJOhB/YwgIbapTmvWk5bT4OKZxKkGwdOM2UsBf1qQHFsWBW9buGzKh8aSMQ9dQlg+eGeMtytF99WeB8WQv3e8Z/BhNLQRhmFRMCmlEDZKajkIEjVMiUXG4Jr5kOSaHQW6mN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJMnyF6E; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b0f068833bso36655017b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:37:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724366240; x=1724971040; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XWZ4Xz+lCe0RvJ+xWgJ0XVc3fOWwjYgwkNv7blQ8afQ=;
-        b=iJMnyF6ETBMRRO0EH02OS1Fbi46PEYaJyne8cSJzlwpqyIcevFpSRdCM4nzT8kjqHL
-         EvJcv/uHm9QIrgn2qcfiM89+vLgoqX6lwWNZjlncdQL9mtsVtIkcHAkmK1VOto2r+Bm4
-         +AoGCNwK/2MNBUwj2RzOp33dYTzQx5eIvDtJxHFVyJtR5A0YsBvt4fbpyP79/SBjcHdP
-         3sjbObxRBt3YfDBcMrIxA43w3qhdUianBE8Ff6SP6F6q9A0VLAtpjukDVQTPTW7aI4xp
-         kOkCydWieBlyVyOi5Tp87SinXDMsw1Ig9hxNsxeyjVXnGFDjJMRHh7G1q9ogNmG/2geh
-         6BFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724366240; x=1724971040;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XWZ4Xz+lCe0RvJ+xWgJ0XVc3fOWwjYgwkNv7blQ8afQ=;
-        b=RxMDaAbNEAkgl1QylX8sijdWv/LO4POr0JYtix3rSxEpK+Cv974cMpA107vvlOVCP8
-         VeCNiAhzI0XApq8+J9/YuanFJn5ktjF7AkREPh6gckrcoI+Jpgc+GjjwnwxoF15BcLqm
-         KkI6ok/9GKs4hj0bLiMusxxWLWLNT+/WEg3IoaBHcjy57+8anUSoYKgGfahv8pBs4zAT
-         UsYHFHKIgiBcALuh02m29LDe2rSRfo1zntWtaMAu2pwcvQjeKzrD+5BqHb86jfM95p/r
-         wAm6YKWz+vgMAsjEaRs7jjARmaQ8jx0up3BcsdUSrPiSWOYBNRCA0+ex/UYr71MXn5Yn
-         4Urw==
-X-Forwarded-Encrypted: i=1; AJvYcCVE1ZJzX+TjzkiAe6ijzXuBQIBVxVItxg8OUHOtJEd5J1Rh4IwQQ9b4JD8mq4tuXoPqcRZcQaoTPnr+FwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlGYh0mBadpW2+Akha4lqLguxJ24UkjbJKL8WU1ZDSGUZUIgZl
-	pQfOVeaYr6qb73lSxLZt74Ny0RQdMZ5R3Y1ZKRt1nHTLarWsR5QrbtmSRgLYAHAYbNwWtA+Ojiy
-	kuQ==
-X-Google-Smtp-Source: AGHT+IEh0feUnYKmvoGoanKbfZ3EUdFCfO1u8P1OY5a3VSAoj+0fu18DZjI2TT/irFJwTHZPiFBAr6SCExg=
-X-Received: from amitsd-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:827])
- (user=amitsd job=sendgmr) by 2002:a81:f911:0:b0:6b2:7bd8:d794 with SMTP id
- 00721157ae682-6c603e614a9mr253617b3.4.1724366239661; Thu, 22 Aug 2024
- 15:37:19 -0700 (PDT)
-Date: Thu, 22 Aug 2024 15:37:15 -0700
+	s=arc-20240116; t=1724366291; c=relaxed/simple;
+	bh=R5+tyKdhLqm7bUYRqH8VIN30gUI0eUJDNaHQgyQlJwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=imQsVsZQbAvvmRDrte+/5yYs1Ox6kh9Q9u5no+RLKIItkgvKBu6iTIuC55rXbhwY8Uo5KgHsdPpgpnIF2eJNUJouCbOIbT4Wdy9k58ibpnyC2NZgKcIKrlB8kZKIGlI7gtiNbWyzqVPvfgEC3ZS+ShMix8qGyX7peUGGiGDdY0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ano/wpe2; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724366290; x=1755902290;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=R5+tyKdhLqm7bUYRqH8VIN30gUI0eUJDNaHQgyQlJwk=;
+  b=ano/wpe2qrTwxbHj1kCsyQ1nn3VX8Flc6QHggtOetoOZufBF5kj7sq2b
+   IRxSR0/veLn4ue76xHOGqJ0qzV6FETtMKbmIWz9C7ocKxzDIi8TjDV3Js
+   Qi3IjG3Q0h1SycnN2qpU9nqKPphD6SaFUytDpfVn/CpZ4eXbDEcGzJqzI
+   skvapmwwIvUw3GkjLXjfS57ER4wk75001Uf2yypgBmcOmwUXbN/aSlcWE
+   JREkNCT9LxKXhs/YFCeTvvsi+o1P3R0zUrcU4f2dAYZgBOZZdltxXbFTa
+   vGRMIdo938ieB/HBneYqaocs2AQkuHQYl4QO6Yp/9IrhelPPtGCXEwLTu
+   w==;
+X-CSE-ConnectionGUID: mY1CTcCMSXuinaaTS3576A==
+X-CSE-MsgGUID: Ovxx6qf2TFeWfCCxABPYwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="40277857"
+X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
+   d="scan'208";a="40277857"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 15:38:09 -0700
+X-CSE-ConnectionGUID: 3UGFgZGARuWZkTU3DA5QOA==
+X-CSE-MsgGUID: 3CP1Z0QwRmeZPHvmWHc21w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
+   d="scan'208";a="66430604"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 22 Aug 2024 15:38:05 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1shGRP-000DFY-2a;
+	Thu, 22 Aug 2024 22:38:03 +0000
+Date: Fri, 23 Aug 2024 06:37:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>, robdclark@gmail.com,
+	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
+	dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Subject: Re: [PATCH v14 6/6] iommu/arm-smmu: add support for PRR bit setup
+Message-ID: <202408230612.1DU9cuSx-lkp@intel.com>
+References: <20240816174259.2056829-7-quic_bibekkum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240822223717.253433-1-amitsd@google.com>
-Subject: [PATCH v3] usb: roles: add lockdep class key to struct usb_role_switch
-From: Amit Sunil Dhamne <amitsd@google.com>
-To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc: badhri@google.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kyletso@google.com, rdbabiera@google.com, 
-	Amit Sunil Dhamne <amitsd@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816174259.2056829-7-quic_bibekkum@quicinc.com>
 
-There can be multiple role switch devices running on a platform. Given
-that lockdep is not capable of differentiating between locks of
-different instances, false positive warnings for circular locking are
-reported. To prevent this, register unique lockdep key for each of the
-individual instances.
+Hi Bibek,
 
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
----
-v1->v2
-- Avoid usage of ifdefs.
-v2->v3
-- Removed redundancies.
-- Completed peer review and added reviewer signature.
----
- drivers/usb/roles/class.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-index d7aa913ceb8a..7aca1ef7f44c 100644
---- a/drivers/usb/roles/class.c
-+++ b/drivers/usb/roles/class.c
-@@ -11,6 +11,7 @@
- #include <linux/usb/role.h>
- #include <linux/property.h>
- #include <linux/device.h>
-+#include <linux/lockdep.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
-@@ -33,6 +34,8 @@ struct usb_role_switch {
- 	usb_role_switch_set_t set;
- 	usb_role_switch_get_t get;
- 	bool allow_userspace_control;
-+
-+	struct lock_class_key key;
- };
- 
- #define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
-@@ -396,6 +399,9 @@ usb_role_switch_register(struct device *parent,
- 
- 	sw->registered = true;
- 
-+	lockdep_register_key(&sw->key);
-+	lockdep_set_class(&sw->lock, &sw->key);
-+
- 	/* TODO: Symlinks for the host port and the device controller. */
- 
- 	return sw;
-@@ -412,6 +418,9 @@ void usb_role_switch_unregister(struct usb_role_switch *sw)
- {
- 	if (IS_ERR_OR_NULL(sw))
- 		return;
-+
-+	lockdep_unregister_key(&sw->key);
-+
- 	sw->registered = false;
- 	if (dev_fwnode(&sw->dev))
- 		component_del(&sw->dev, &connector_ops);
+[auto build test WARNING on joro-iommu/next]
+[also build test WARNING on linus/master v6.11-rc4 next-20240822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-base-commit: ca7df2c7bb5f83fe46aa9ce998b7352c6b28f3a1
+url:    https://github.com/intel-lab-lkp/linux/commits/Bibek-Kumar-Patro/iommu-arm-smmu-re-enable-context-caching-in-smmu-reset-operation/20240817-014609
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
+patch link:    https://lore.kernel.org/r/20240816174259.2056829-7-quic_bibekkum%40quicinc.com
+patch subject: [PATCH v14 6/6] iommu/arm-smmu: add support for PRR bit setup
+config: arm-randconfig-r071-20240823 (https://download.01.org/0day-ci/archive/20240823/202408230612.1DU9cuSx-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408230612.1DU9cuSx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408230612.1DU9cuSx-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/scatterlist.h:9,
+                    from include/linux/iommu.h:10,
+                    from include/linux/io-pgtable.h:6,
+                    from include/linux/adreno-smmu-priv.h:9,
+                    from drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c:7:
+   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c: In function 'qcom_adreno_smmu_set_prr_addr':
+>> drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c:266:41: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     266 |                                         (void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_LADDR);
+         |                                         ^
+   arch/arm/include/asm/io.h:282:75: note: in definition of macro 'writel_relaxed'
+     282 | #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
+         |                                                                           ^
+   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c:269:41: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     269 |                                         (void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_UADDR);
+         |                                         ^
+   arch/arm/include/asm/io.h:282:75: note: in definition of macro 'writel_relaxed'
+     282 | #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
+         |                                                                           ^
+
+
+vim +266 drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+
+   256	
+   257	static void qcom_adreno_smmu_set_prr_addr(const void *cookie, phys_addr_t page_addr)
+   258	{
+   259		struct arm_smmu_domain *smmu_domain = (void *)cookie;
+   260		struct arm_smmu_device *smmu = smmu_domain->smmu;
+   261		const struct device_node *np = smmu->dev->of_node;
+   262	
+   263		if (of_device_is_compatible(np, "qcom,smmu-500") &&
+   264				of_device_is_compatible(np, "qcom,adreno-smmu")) {
+   265			writel_relaxed(lower_32_bits(page_addr),
+ > 266						(void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_LADDR);
+   267	
+   268			writel_relaxed(upper_32_bits(page_addr),
+   269						(void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_UADDR);
+   270		}
+   271	}
+   272	
+
 -- 
-2.46.0.184.g6999bdac58-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
