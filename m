@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-297499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D43595B94C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:07:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6630F95B955
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E0A1F22380
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948341C20EEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8151E1CCB3B;
-	Thu, 22 Aug 2024 15:06:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B506C1CC89B;
-	Thu, 22 Aug 2024 15:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAEB1CC173;
+	Thu, 22 Aug 2024 15:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KptFoEAJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA06C1C9EBB;
+	Thu, 22 Aug 2024 15:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339185; cv=none; b=lFVpbtUohBcPy+Tc5D9lsTuWkLn2eGwFSuNXowWi4jGtiyg7zGpGjJVBjjS6HxXrFEh2Ut/yrMMYlNBQHJhlo+dwg4wqFZVwP5n9FFSic7u0zpUNsBJu1pTaxbwk8y7EE91qiqy1hD5C9lfCzRr9uaL0y6pXNuIyvzW06ZD4k5U=
+	t=1724339404; cv=none; b=eK6YcmiWUT/15hefr2vAaDuLBVqRO96fk0QeXZJruXP4hjBIuF9zoLuei+707NosV2Mnl4zcQJL/RgpfmBNPaJXAfLWcaJIuhuhbnUuYBl0wg+jaiG3iFlQayloApdfAklJisKPeDkhq0/GaG99hfSLtszb8hX6uuP+Dt7p2uXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339185; c=relaxed/simple;
-	bh=QCgSudnWYAHAbhwqPzcmGR64pvLJdT3jGrGJ7AS7PPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BDe3WhN4OJw3dt0tDh2YRow0tXrHIW2yUfJ6XP47MHBrhrEYi2gNwckRpg95oS8bghGyumaGFBAF90Zwj5TN0d8SpUwoofgFcSCu9vp4fdEgvlKDJpFFeGGQ/tXy6JGOoGhjtdwPoZO4g4n+cWNNJh1E4ThqaekTrQJMvGcykDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51FF5DA7;
-	Thu, 22 Aug 2024 08:06:49 -0700 (PDT)
-Received: from [10.57.85.214] (unknown [10.57.85.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 608E83F58B;
-	Thu, 22 Aug 2024 08:06:18 -0700 (PDT)
-Message-ID: <282a765a-3b42-4175-8d9f-58456d13a37d@arm.com>
-Date: Thu, 22 Aug 2024 16:06:16 +0100
+	s=arc-20240116; t=1724339404; c=relaxed/simple;
+	bh=4mq66x7V1l4K3klSyWVW6E/KR/YVy3Enk8W/rOn2KOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLYGzKYlspzKL9O64kcj/PwzTsemdqtEa7SaTNFuodW1QTwho1lIo/Y8N88mOwCTRZ1N2Ub3GFsQ0NWz8fxRmgjttov1l2xWUobORzIzBegm+XEsNkU9OZWAcBgmWbQhwZoRlXZNrpVeyPNlwvhyFPjzw/7LK/ftYdQnuqPHZhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KptFoEAJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C8EC32782;
+	Thu, 22 Aug 2024 15:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724339403;
+	bh=4mq66x7V1l4K3klSyWVW6E/KR/YVy3Enk8W/rOn2KOo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KptFoEAJ9wo/kXdI+utem3eoTuJ9VS0iEfcEljRWz8SBPhQuF8wfe6g1xAcgK42F7
+	 /b4D6TyoKo57Au9GH46EHOvjqJTb8XVas3dct2SSnfKKEoi0kiMFWxIzPlZtv49H+m
+	 OyOVTtzcRm4mrlASdl7yuk3WKw9wM837khvG1KIpnwkscmSYh1ysZ5rjRoCZ8oNmCM
+	 d47vQmDrGHUXToGc0H0rHEJV3X9JskNuVb/meX9cMN3PBJg9VxtvhwlQuwRzK10ZfV
+	 KUgObxzbIsl4UJfC/fPZdCh93ymM3d3wizEEknxcL1iL/4nTehCtiGkwlwP/HPQmV+
+	 fIMZ+Fm4mNqug==
+Date: Thu, 22 Aug 2024 12:09:59 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+Message-ID: <ZsdUxxBrpbuYxtXN@x1>
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+ <ZsdKhLaPy-uzKsuH@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 18/43] arm64: RME: Handle realm enter/exit
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-19-steven.price@arm.com> <yq5a34mx2of7.fsf@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <yq5a34mx2of7.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZsdKhLaPy-uzKsuH@x1>
 
-On 22/08/2024 05:04, Aneesh Kumar K.V wrote:
-> Steven Price <steven.price@arm.com> writes:
-> 
-> ....
-> 
->> +static int rec_exit_ripas_change(struct kvm_vcpu *vcpu)
->> +{
->> +	struct kvm *kvm = vcpu->kvm;
->> +	struct realm *realm = &kvm->arch.realm;
->> +	struct realm_rec *rec = &vcpu->arch.rec;
->> +	unsigned long base = rec->run->exit.ripas_base;
->> +	unsigned long top = rec->run->exit.ripas_top;
->> +	unsigned long ripas = rec->run->exit.ripas_value & 1;
->> +	unsigned long top_ipa;
->> +	int ret = -EINVAL;
->> +
->> +	if (realm_is_addr_protected(realm, base) &&
->> +	    realm_is_addr_protected(realm, top - 1)) {
->> +		kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_page_cache,
->> +					   kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
->> +		write_lock(&kvm->mmu_lock);
->> +		ret = realm_set_ipa_state(vcpu, base, top, ripas, &top_ipa);
->> +		write_unlock(&kvm->mmu_lock);
->> +	}
->> +
->> +	WARN(ret && ret != -ENOMEM,
->> +	     "Unable to satisfy SET_IPAS for %#lx - %#lx, ripas: %#lx\n",
->> +	     base, top, ripas);
->> +
->> +	/* Exit to VMM to complete the change */
->> +	kvm_prepare_memory_fault_exit(vcpu, base, top_ipa - base, false, false,
->> +				      ripas == 1);
->> +
->> +	return 0;
->> +}
->> +
-> 
-> arch/arm64/kvm/rme-exit.c:100:6: warning: variable 'top_ipa' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->         if (realm_is_addr_protected(realm, base) &&
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> arch/arm64/kvm/rme-exit.c:114:44: note: uninitialized use occurs here
->         kvm_prepare_memory_fault_exit(vcpu, base, top_ipa - base, false, false,
->                                                   ^~~~~~~
+On Thu, Aug 22, 2024 at 11:26:16AM -0300, Arnaldo Carvalho de Melo wrote:
+> So the cast is ok, I think we should disable that
+> -Wcast-function-type-mismatch for util/python.o when building with
+> clang.
+ 
+> Lemme try to cook a patch for you to test...
 
-I'm not sure why I didn't notice this before, if the condition is false
-then we're hitting the WARN (i.e. this shouldn't happen), but I should
-fix that up to handle the situation better.
+Can you try the patch below? Notice that there was already a patch
+disabling that for !clang (gcc) for a similar reason:
 
-Steve
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b7a313d84e853049062011d78cb04b6decd12f5c
 
+------------------------------------------------------------------------------------------
+perf tools: Fix python extension build for gcc 8
+The gcc 8 compiler won't compile the python extension code with the
+following errors (one example):
+
+  python.c:830:15: error: cast between incompatible  function types from              \
+  ‘PyObject * (*)(struct pyrf_evsel *, PyObject *, PyObject *)’                       \
+  uct _object * (*)(struct pyrf_evsel *, struct _object *, struct _object *)’} to     \
+  ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _objeuct \
+  _object *)’} [-Werror=cast-function-type]
+     .ml_meth  = (PyCFunction)pyrf_evsel__open,
+
+The problem with the PyMethodDef::ml_meth callback is that its type is
+determined based on the PyMethodDef::ml_flags value, which we set as
+METH_VARARGS | METH_KEYWORDS.
+<SNIP>
+------------------------------------------------------------------------------------------
+
+Can you please check with both clang versions? I just checked with clang
+18 as available in in Fedora 40 and it failed in the first, naïve patch,
+that simply adds that -Wno- variant:
+
+  GEN     /tmp/build/perf-tools-next/python/perf.cpython-312-x86_64-linux-gnu.so
+error: unknown warning option '-Wno-cast-function-type-mismatch'; did you mean '-Wno-cast-function-type-strict'? [-Werror,-Wunknown-warning-option]
+error: command '/usr/bin/clang' failed with exit code 1
+cp: cannot stat '/tmp/build/perf-tools-next/python_ext_build/lib/perf*.so': No such file or directory
+
+we need to check if clang has that option, we have infra for that, the
+patch below works, please try it.
+
+If it works with clang 19 I'll add two patches, one enhancing
+clang_has_option and the other using it for this warning only present in
+clang 19.
+
+- Arnaldo
+
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 142e9d447ce721e3..649550e9b7aa8c8f 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -17,7 +17,7 @@ src_feature_tests  = getenv('srctree') + '/tools/build/feature'
+ 
+ def clang_has_option(option):
+     cc_output = Popen([cc, cc_options + option, path.join(src_feature_tests, "test-hello.c") ], stderr=PIPE).stderr.readlines()
+-    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o))] == [ ]
++    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o) or (b"unknown warning option" in o))] == [ ]
+ 
+ if cc_is_clang:
+     from sysconfig import get_config_vars
+@@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
+ cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+ if cc_is_clang:
+     cflags += ["-Wno-unused-command-line-argument" ]
++    if clang_has_option("-Wno-cast-function-type-mismatch"):
++        cflags += ["-Wno-cast-function-type-mismatch" ]
+ else:
+     cflags += ['-Wno-cast-function-type' ]
+ 
 
