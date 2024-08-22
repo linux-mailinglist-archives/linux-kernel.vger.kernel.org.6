@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-297181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F128B95B435
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:50:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C49895B438
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EFE6B22E8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:50:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0877EB2171E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529DD1C942F;
-	Thu, 22 Aug 2024 11:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E3A1C9435;
+	Thu, 22 Aug 2024 11:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOffhufb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgtsuKD8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE0E17A584;
-	Thu, 22 Aug 2024 11:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DC01C93DE;
+	Thu, 22 Aug 2024 11:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724327395; cv=none; b=NSEUyLf06HP6bGx7TY9tPAjfCsejnNx1YPOJ09d54o+WsTIYM8TH6hqpqKJaRCCZ36bKKTyEXApIplK/N7fjAOw8LXsWY4pPc/emclbVfADXMXitT4bCKFA4w01kRWnaB4CJgTYk16bRdOZ5tbT2txUIAKatjDSnHOGC2fr1t+w=
+	t=1724327406; cv=none; b=t9wrZIcUcfCrHkT2w9hyd3UM9mzW7F1zRG4dOzzdg3wob9A8uR8LcBQVcQ5GcUKz4jH6xA+SqCU2PuZ0b+FWKrGaJFmipx4/1M+uRBImjz/SYhwstYeZBVEf5hILBhjjtB2TKJUv7MQ1+NaUCWzRxSmzSnwLEhiUNrDs844YN9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724327395; c=relaxed/simple;
-	bh=Dt4LFrbNnXt5IZdzzmCGwGIQswW/M/ytO2I8SZAYO2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8tncesC7B1Ayf45GPyLFNBhgGOuSkgOwPgTecu3ogs/o4FbzG7gjuEO4jr/NGMm66uy0oTY1w0nlUDnCsVa1GZSjjDDVX1WwPrrGc77Lsx5HGJpU+CFQjgZI++8IfxV+JAraxYSGJ3EnsIW0Rp6/FP7/zVjPjGm0621kp1TroQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOffhufb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C597C32782;
-	Thu, 22 Aug 2024 11:49:50 +0000 (UTC)
+	s=arc-20240116; t=1724327406; c=relaxed/simple;
+	bh=BRR8cZw/2FBFfSKaA2Okh25hFuvzXlGXcTutxcjQ57g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QMVJ3dYKxVgZrkLP7720fuQKlsYVpKZ94x17LGXbXktVqLZ23PJeO4hxgi9r+6NZuX1ixOpotNRl38RnXJG4D4MKqHptjJwEMUbqrCpntmQ5rH8pYXSarYTHPCv50M7NypRYvkBnIabeSfcc5fXMI24hEKjioLFhQbdkbsLGynE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgtsuKD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 852C9C4AF14;
+	Thu, 22 Aug 2024 11:50:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724327395;
-	bh=Dt4LFrbNnXt5IZdzzmCGwGIQswW/M/ytO2I8SZAYO2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iOffhufbh+OB6mKyaAl/rLeZHOr1Z1boFD8T3qeWC6ZAHyUeZoJInBFPSHpnKDphg
-	 wHbxTpD1Py+lmvdiCRHhssuSYRZic5RSnq6IIY8u3fRxAu9emOdnV1q1HuT1cNeXZb
-	 vswlvoDOWx2TqKmcBQT0q0GNYdq5KlfQIcUE4s0ib5ZzJGuxK5sUAsciKHp52yuFqY
-	 WQxNRWKMTjleOk9KbFlmU444hnywblUsCrHBHuVTce0IMwkVvnH0FF4KO+MTnzSJCu
-	 B+Qr4TFYcZZl8GWr/Cmkw5WyeIUwQMOvIoMrVEHspAtORoIyqFlI82+0xfokZK3+dE
-	 N6rckoG/TIEmg==
-Date: Thu, 22 Aug 2024 12:49:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Chashper, David" <chashper@amazon.com>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
-	"Christopher S . Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	qemu-devel <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v4] ptp: Add vDSO-style vmclock support
-Message-ID: <20240822114948.GM2164@kernel.org>
-References: <410bbef9771ef8aa51704994a70d5965e367e2ce.camel@infradead.org>
+	s=k20201202; t=1724327405;
+	bh=BRR8cZw/2FBFfSKaA2Okh25hFuvzXlGXcTutxcjQ57g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PgtsuKD8bOMmbySilfmR0rrBYw3wR3F9twvWL+CFPsbg12d3pRufOVnnzFvIFRYWr
+	 tZILs9qj5G4/gne/a/pyRGqs4lgnekqt+YBAlgvLHii8tN3FhiSv0FwRUVzc6+ZZvJ
+	 inJWcJw4PbG71KiO5b9l5yPS7wh3g7vAftKQ+HfdqLS75CaAI6jYcm5YfACg3T+Pw+
+	 SHkfzlXyJUU029LdNKkw5XmeiUMZLLnTr8iJq3DSyfjrFVBvdTr4SfTaynAiV6bf14
+	 cuzL1ydaWTX0LjoKuuuRlMl1mdXagL6A6IJEmlA2ZENRkLRdTeDDOISC2TVz0Smnj1
+	 5VtrVyLhHb+Zw==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso854439e87.2;
+        Thu, 22 Aug 2024 04:50:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2ziUSyTx7Eki9VCA7lNx6ZB5VDJ4ZJYJaO7bmHVAqXh8FG2QvnxsnupfHgIToJuPS+G+Cw76TbXrcULjk@vger.kernel.org, AJvYcCW91AmAQ37vYP+74Q/8aOiFSSQQ59r86FPuH4Ql5fo7c4/DJxW02XviIjQm5YiSluixKTXg9TucumsT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4tKV+oYOPMMp57oyA7PJ6H2y+JdSZ8ij0c8eWBext5jJmzAkk
+	m9IMdoY4+3oaWWEQPA9U5rQNNw2gKK9GBOoBWXKEUT2quZcioU2BRQtDaHt4PC32U/Yw4UFj1mX
+	TZilzhxf1yD/55tXb0qeXKfBHAiU=
+X-Google-Smtp-Source: AGHT+IEqCkKqQOdlMH69y6J1zM2/Rghrx3kBXgfAEdcQWkpHj1VI5bPp8fyp876xka18ETcCIojilHnIzAlRNmls97Q=
+X-Received: by 2002:a05:6512:2811:b0:52c:d80e:55a5 with SMTP id
+ 2adb3069b0e04-5334fd2fd70mr984694e87.41.1724327403908; Thu, 22 Aug 2024
+ 04:50:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <410bbef9771ef8aa51704994a70d5965e367e2ce.camel@infradead.org>
+References: <20240822082101.391272-1-chenxiaosong@chenxiaosong.com> <20240822082101.391272-6-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20240822082101.391272-6-chenxiaosong@chenxiaosong.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 22 Aug 2024 20:49:50 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9hXJssgKK2ALkj7H162rAbSzwfydcMqRSC3c7R9bW0Ng@mail.gmail.com>
+Message-ID: <CAKYAXd9hXJssgKK2ALkj7H162rAbSzwfydcMqRSC3c7R9bW0Ng@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] smb/server: update misguided comment of smb2_allocate_rsp_buf()
+To: chenxiaosong@chenxiaosong.com
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
+	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
+	liuyun01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 10:50:47PM +0100, David Woodhouse wrote:
-
-...
-
-> diff --git a/drivers/ptp/ptp_vmclock.c b/drivers/ptp/ptp_vmclock.c
-
-...
-
-> +#define VMCLOCK_FIELD_PRESENT(_c, _f)			  \
-> +	(_c)->size >= (offsetof(struct vmclock_abi, _f) + \
-> +		       sizeof((_c)->_f))
-> +
-
-...
-
-> +static int vmclock_probe(struct platform_device *pdev)
-
-...
-
-> +	/* If there is valid clock information, register a PTP clock */
-> +	if (VMCLOCK_FIELD_PRESENT(st->clk, time_frac_sec)) {
-
-Hi David,
-
-Sorry to be always the one with the nit-pick.
-Sparse complains about the line above, I believe because the
-type of st->clk->size is __le32.
-
-.../ptp_vmclock.c:562:13: warning: restricted __le32 degrades to integer
-
-> +		/* Can return a silent NULL, or an error. */
-> +		st->ptp_clock = vmclock_ptp_register(dev, st);
-> +		if (IS_ERR(st->ptp_clock)) {
-> +			ret = PTR_ERR(st->ptp_clock);
-> +			st->ptp_clock = NULL;
-> +			vmclock_remove(pdev);
-> +			goto out;
-> +		}
-> +	}
-
-...
-
+On Thu, Aug 22, 2024 at 5:22=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wro=
+te:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> smb2_allocate_rsp_buf() will return other error code except -ENOMEM.
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+Applied it to #ksmbd-for-next-next.
+Thanks.
 
