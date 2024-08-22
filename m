@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-296651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19AE95AD3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:14:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6478695AD43
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4161F22796
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF842849F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1714D13667E;
-	Thu, 22 Aug 2024 06:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBD5137930;
+	Thu, 22 Aug 2024 06:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="sJ0dPAUG"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mJ20HHwm"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C88249F9;
-	Thu, 22 Aug 2024 06:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06455136354
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724307253; cv=none; b=sn/jAbGEqOEFMHvB32dURkRbMt0u0QOVrh1TfiBJmrcsSgce9rdC0GL6hPJ4xoe6VU14GmtQPf+gT9sc3x2u9Lfo63mY/p+g5YF3Nf5YRJlEJ0FWXKQv3Yn4uvoRsEQNLDJ9k2xGU4eDsCX8ENNEt8Jz4FUTVcf80PQXXtfndbw=
+	t=1724307270; cv=none; b=SsyY9IIMrqjesGl27nJ1LoItXXXh1aezbLrlqJ8Hz/SnJdua2/OxHEiCxlZV3+Ot8lBl6XibGHO2qLxO963XOANOg/cx9LbhdmF3C5iqMHbm630EIe3Pwnp1nVuJh7D+zglWQQ8MyGcFOMvsXK9NF+NgXG7yxQZPkOGi2bn7IRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724307253; c=relaxed/simple;
-	bh=0Y/ciKTzZkQ+UpszSzWZPWqXScC6SCCtpDjN+A3yG7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6eD/UB6ueBv8/Z8td3NkrmIIkaHcjTa3kNqtUkX9i7p04AOm+JZ6+9pgv2ylGd7tzbwaMN1O9gwBQHS4SIRAzfxPDjno+CoJK0unxzEcTriKJjK4SDxlKecLdzCAUnapFBbK2DMBXxINx2oQUeZtd/y9d9+HalG64B2frW7DyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=sJ0dPAUG; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724307249;
-	bh=0Y/ciKTzZkQ+UpszSzWZPWqXScC6SCCtpDjN+A3yG7E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sJ0dPAUGK6gypyetwVFxLQEA0DG3sSP4t+LzL/aFhJdAwsq7G0AS1Cwww6cFkkmhY
-	 yGbcNYsn5UfVrmjz6qY2xaYSgUAVHq4rXbqJAb9qmbeoYN4+lozQu5eN0RMXEBQu1q
-	 v0WKppaqldyXLShiYOvSWvmmKDLzx3gUXiFXB0mc=
-Date: Thu, 22 Aug 2024 08:14:08 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Matt Hartley <matt.hartley@gmail.com>, 
-	Kieran Levin <ktl@framework.net>, Hans de Goede <hdegoede@redhat.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
-	Jonathan Corbet <corbet@lwn.net>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] drm/amd/display: Add support for minimum
- backlight quirk
-Message-ID: <f516b4af-0dac-4607-bdab-e4c83395fe04@t-8ch.de>
-References: <20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net>
- <20240818-amdgpu-min-backlight-quirk-v5-2-b6c0ead0c73d@weissschuh.net>
- <269b2e72-2f93-4415-a56e-77536f373b22@amd.com>
+	s=arc-20240116; t=1724307270; c=relaxed/simple;
+	bh=X/AcZ0iF6xFu4GrGSjyIJXtGgZILgu9A7UJpP3PiaXI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P+twKY4W9F+l8fC6an+CP65tq2rpVIS2QsTK/Q452tcTthPo9fQXz5NUSny2tNg/oHVmfqFhKAblt/wCSDARcudNzQZy/YdOL/bPTb1Av10ZVoQ3+FGn+ZmphGW/aSOO2nNVXxPleoDco4O65rHJ3eFXTT5QD2Ojc0F4Pt/nyvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mJ20HHwm; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a864574429aso70963166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:14:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724307267; x=1724912067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gHVY5A23Y8dwzOpFT0v9pVJprbgTbddkPeBrxq5dkIA=;
+        b=mJ20HHwmH3Wi7ktyk38Vi4OG0lYhoMeZ0X1DGlQWCNbAVZa6fNeYPplen6RQ9LuCMT
+         WNk/pEZ+PZGU8m/LruwN2z6rlJOHfW1ZMcG2tjbN1AUqi9RQaZQYTG6FGsqBvhbR5iF6
+         CfZs8crGHgwgkoIb2EGCcWxk0O0kq9YH8dj7uqxQIrlDyGpWUNT7/UlH7XnzFr9e/RmZ
+         PisclOgYOTvc8ot8BVaHuZL430KgNuwX2Gv6M7/qcALfJI4eth8eq0mM6P7sVTOVfMlw
+         fgjIZji7RWTWspubB0QgTaTt5YKr2ZhOOvqwwL+IglOKESPSD2M0tcHlO8NSasQOi9Yt
+         gN3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724307267; x=1724912067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gHVY5A23Y8dwzOpFT0v9pVJprbgTbddkPeBrxq5dkIA=;
+        b=NKVNWAqzdfgOZnzqadd5c26FjcguDGCml+82uUkGzZvrJ7KWJVq8pDjtdDvGOq+yYc
+         anyzIqmTjQ1zdDM7Odafzz4Kt/cc6cNN0C39ODr+dnSMj9Lr/ErUvpb/yVe8MnTbe4U0
+         w/iRv7H3sAoevurOp4CEgD6M7le8bcyuvl7JAbsUDuntPFTZyZDzXy7SMOjgIlRfPC/m
+         sy0l0ieN++9ka5ZGLzVbokDaxnZBK4utXkzZ9Q62IRBEvJwxNwbEqJ1S2CCtiQaSvGx8
+         jNOdeCmrGPIyaJu8CYqHoqdYj2pMPKUVFMvOlioJ451A/2smogCSqFPgflsWs8Efwbr8
+         08pg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/gOKYC7kkRpDlSkQexEhCL/So7hJYnbMn+BSPjM1+4PjN3y0j+jQzVMKg12YeJMMO71yp/LDwsXdUtk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ5w7ZQ02DQJZ0UPaWypC3rLRPt4TYHPELtwQ+7dE/NDL6Ygun
+	crWoRDN5jjuRAOyX16ZW8eXS7BoFtkVrLmiFTiC9ZNMU53Zx/k+DJM+QLJw3cMM4IP+DL10GoQ4
+	FO8WUtsqqu8Uv8iUKWQJaOkXk6DkAnP1hshJI
+X-Google-Smtp-Source: AGHT+IGkLdWFXeWBo7YlNuCirWCunCos803uCba1zpN6dzXrFxr17xPZiWKxAd6Tc75MZT0p4qHJOxRwWMdf0abf0H8=
+X-Received: by 2002:a17:907:7d9f:b0:a72:9d25:8ad3 with SMTP id
+ a640c23a62f3a-a8691abaf76mr63888666b.9.1724307266605; Wed, 21 Aug 2024
+ 23:14:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <269b2e72-2f93-4415-a56e-77536f373b22@amd.com>
+References: <20240822033243.38443-1-xuiagnh@gmail.com>
+In-Reply-To: <20240822033243.38443-1-xuiagnh@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 22 Aug 2024 08:14:15 +0200
+Message-ID: <CANn89iLbLv0P_cw99MiXVjZ1N2xOqzTemPxFkhBgtoWHty7otQ@mail.gmail.com>
+Subject: Re: [PATCH] net: dpaa:reduce number of synchronize_net() calls
+To: Xi Huang <xuiagnh@gmail.com>
+Cc: madalin.bucur@nxp.com, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-21 15:54:14+0000, Mario Limonciello wrote:
-> On 8/18/2024 01:56, Thomas Weißschuh wrote:
-> > Not all platforms provide correct PWM backlight capabilities through ATIF.
-> 
-> I don't think correct is an accurate term here.  How about 'optimial'?
+On Thu, Aug 22, 2024 at 5:32=E2=80=AFAM Xi Huang <xuiagnh@gmail.com> wrote:
+>
+> In the function dpaa_napi_del(), we execute the netif_napi_del()
+> for each cpu, which is actually a high overhead operation
+> because each call to netif_napi_del() contains a synchronize_net(),
+> i.e. an RCU operation. In fact, it is only necessary to call
+>  __netif_napi_del and use synchronize_net() once outside of the loop.
+> like commit 2543a6000e,5198d545db.
 
-Looks typoed to me :-)
+Correct way of citing commits is to use 12+ chars of sha1 ("patch title") a=
+s in
+commit 2543a6000e59 ("gro_cells: reduce number of synchronize_net() calls")
 
-What about this?
+Quoting Documentation/dev-tools/checkpatch.rst :
 
-Not all platforms provide the full range of PWM backlight capabilities
-supported by the hardware through ATIF.
+  **GIT_COMMIT_ID**
+    The proper way to reference a commit id is:
+    commit <12+ chars of sha1> ("<title line>")
+
+    An example may be::
+
+      Commit e21d2170f36602ae2708 ("video: remove unnecessary
+      platform_set_drvdata()") removed the unnecessary
+      platform_set_drvdata(), but left the variable "dev" unused,
+      delete it.
+
+    See: https://www.kernel.org/doc/html/latest/process/submitting-patches.=
+html#describe-your-changes
 
 
-> > Use the generic drm panel minimum backlight quirk infrastructure to
-> > override the capabilities where necessary.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > Tested-by: Dustin L. Howett <dustin@howett.net>
-> 
-> The code looks fine to me but please wait for an ack from someone on the AMD
-> display team.
-> 
-> Also, I would like to see comments about the testing with panel power
-> savings enabled to avoid a conflict.
+> here is the function definition:
+>  static inline void netif_napi_del(struct napi_struct * napi)
+> {
+>         __netif_napi_del(napi).
+>         synchronize_net();
+> }
 
-Ack.
+You do not need to include netif_napi_del() in this changelog.
 
-> 
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
-> >   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 ++++++++++
-> >   2 files changed, 11 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
-> > index 0051fb1b437f..655c10aef2e3 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/Kconfig
-> > +++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
-> > @@ -23,6 +23,7 @@ config DRM_AMDGPU
-> >   	select DRM_BUDDY
-> >   	select DRM_SUBALLOC_HELPER
-> >   	select DRM_EXEC
-> > +	select DRM_PANEL_BACKLIGHT_QUIRKS
-> >   	# amdgpu depends on ACPI_VIDEO when ACPI is enabled, for select to work
-> >   	# ACPI_VIDEO's dependencies must also be selected.
-> >   	select INPUT if ACPI
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > index 983a977632ff..056960ea335c 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > @@ -93,6 +93,7 @@
-> >   #include <drm/drm_fourcc.h>
-> >   #include <drm/drm_edid.h>
-> >   #include <drm/drm_eld.h>
-> > +#include <drm/drm_utils.h>
-> >   #include <drm/drm_vblank.h>
-> >   #include <drm/drm_audio_component.h>
-> >   #include <drm/drm_gem_atomic_helper.h>
-> > @@ -3333,6 +3334,8 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
-> >   	struct drm_connector *conn_base;
-> >   	struct amdgpu_device *adev;
-> >   	struct drm_luminance_range_info *luminance_range;
-> > +	const struct drm_edid *drm_edid;
-> > +	int min_input_signal_override;
-> >   	if (aconnector->bl_idx == -1 ||
-> >   	    aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
-> > @@ -3367,6 +3370,13 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
-> >   		caps->aux_min_input_signal = 0;
-> >   		caps->aux_max_input_signal = 512;
-> >   	}
-> > +
-> > +	drm_edid = drm_edid_alloc(aconnector->edid,
-> > +				  EDID_LENGTH * (aconnector->edid->extensions + 1));
-> > +	min_input_signal_override = drm_get_panel_min_brightness_quirk(drm_edid);
-> > +	drm_edid_free(drm_edid);
-> > +	if (min_input_signal_override >= 0)
-> > +		caps->min_input_signal = min_input_signal_override;
-> >   }
-> >   void amdgpu_dm_update_connector_after_detect(
-> > 
-> 
+Please send a V2 in ~24 hours and add this :
+
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+
+Thank you.
 
