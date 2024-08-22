@@ -1,86 +1,71 @@
-Return-Path: <linux-kernel+bounces-296286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B776295A8AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B04995A8AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6C52826D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2CE1C21F76
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32B25684;
-	Thu, 22 Aug 2024 00:18:35 +0000 (UTC)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A865661;
+	Thu, 22 Aug 2024 00:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPzo+eSL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF56A3FC2;
-	Thu, 22 Aug 2024 00:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EBF2C9D;
+	Thu, 22 Aug 2024 00:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724285915; cv=none; b=e35xM28dDYHPZdjB/CsZMObduX5ImnqIL1fKt04+jh4rvFlunBQcJyeHuK4gPmvUtG5Scu4QKfD3G7L9fI+S+BXW1zz0ObEBpVSTwqt6huQrhkcaHqjn/H/CO3xGTTvMNwenLqLCyEHeOueFyRX9SxTuBXcZOFSpSDAIkOMY80M=
+	t=1724285899; cv=none; b=CwzVLvqar+rvNRp67QQ14ity0t05r5A7a7mOKgd6hpbTr5Veaon445STkjsnhw1cZPXBEeWa0n6thbWwTMry+r/ANEQC+ANhC8s5dpIkZ/7iGt6CmXfi7qUtK7bkvlZPw5z1ntuzJ+/IeeywNh2t1e3sTHEfDNOhfmq7GPXp0pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724285915; c=relaxed/simple;
-	bh=YCfGQLY4ta0TdR4ANpzxrEdExx8N15CmIRJOa2f/wCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ARbYfaZKa1QvMudlLrLomwTqBSSTWvHJomfqmD2oqwdhVdJtZqDINv3C1kWaeP8eJL2PkZnl2p2g0nsvE9Y4rCkMHOtpmMzclTdo5vi29yjlu7ZpKucYSPwTZWQL7Y9B9k23UxgbE4ITXMxqqpVZn5vNiwOUY6ggl0cAa4oIZyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: bizesmtp87t1724285812tq2bijg4
-X-QQ-Originating-IP: dixtll8uRqqTyNQAVc5mWvuoSSnfSCJoXmnJJVvx9YM=
-Received: from [192.168.3.223] ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 22 Aug 2024 08:16:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15102028674120964960
-Message-ID: <74BD461E3A54DB61+0e15d4dc-350e-4ece-b6a9-6abd51b0def9@chenxiaosong.com>
-Date: Thu, 22 Aug 2024 08:16:50 +0800
+	s=arc-20240116; t=1724285899; c=relaxed/simple;
+	bh=UCzzcz/7p6yhahLyZ3cfnaKtx+utRTP0yW4s5S9UUis=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LilYfyLtGNE/lc1uWXnqf+TsB6VaT5+r56puHa5VNQ2Lfe2FFQoxfF5rGFWScHHoNW1e4+RvqIi+79ZUliCvuyk4i4KYeXVYBSuEcf70Y6yhHqov7EiS3Vudd8kSmdPhWWkO72JwoLFTeMxc9vPtpA/knq2GLg4xaXVU0B+t0w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPzo+eSL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF400C32781;
+	Thu, 22 Aug 2024 00:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724285898;
+	bh=UCzzcz/7p6yhahLyZ3cfnaKtx+utRTP0yW4s5S9UUis=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KPzo+eSLrWXOtj4Zzygir32ZCgy8cBsSdmHEbAyHdnfMeefHSdJb3BjdxigqdOX4U
+	 l55WdtRz8snUNhz1Q5mJdsAAfGaDjQOxkg0R+6j/50V2HWh7kzAcFUdv8Vw3tdQrx/
+	 fTaAPDRO1KKU48gzbbH4cCe2izRO6Pt9gBb+wiseMoY0jGkD+GeIiYcpX2rxu4Njp4
+	 v7gineW6cltFXpVDCMtkU7WUwWJRztHk9Ek3mXZLYs32i+57dgcjO9pNYFAVqYUJoU
+	 /6bRmbhAhE1dOvphuHvRzWCmpLQs8KjNUfPb0sJHcmbt369YP6Wj7RKuyhxP1oIZSX
+	 UZa/R/FqC2Tig==
+Date: Wed, 21 Aug 2024 17:18:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: <andrew@lunn.ch>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
+ <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] net: dsa:  Simplify with scoped for each OF child
+ loop
+Message-ID: <20240821171817.3b935a9d@kernel.org>
+In-Reply-To: <20240820065804.560603-1-ruanjinjie@huawei.com>
+References: <20240820065804.560603-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] smb: move some duplicate definitions to
- common/smbacl.h
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
- linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com,
- ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com,
- chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn,
- liuyun01@kylinos.cn
-References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com>
- <20240820143319.274033-7-chenxiaosong@chenxiaosong.com>
- <CAKYAXd8mX+2gRuPyEuamg-nCTdyLb7G6bYKw0YiUrGb2GGTaaQ@mail.gmail.com>
-Content-Language: en-US
-From: chenxiaosong <chenxiaosong@chenxiaosong.com>
-In-Reply-To: <CAKYAXd8mX+2gRuPyEuamg-nCTdyLb7G6bYKw0YiUrGb2GGTaaQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thanks for your reply. I will try to rename the prefix of cifs_ntsd, 
-cifs_sid, cifs_acl struct, send v2 patchset soon.
+On Tue, 20 Aug 2024 14:58:04 +0800 Jinjie Ruan wrote:
+> Use scoped for_each_available_child_of_node_scoped() when iterating over
+> device nodes to make code a bit simpler.
 
-On 2024/8/22 07:48, Namjae Jeon wrote:
-> On Tue, Aug 20, 2024 at 11:35 PM <chenxiaosong@chenxiaosong.com> wrote:
->>
->> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->>
->> In order to maintain the code more easily, move duplicate acl
->> definitions to new common header file.
->>
->> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-> If you rename the prefix of cifs_ntsd, cifs_sid, cifs_acl struct, we
-> can move more ones to /common/smbacl.h.
-> Looking forward to the next patch.
-> Acked-by: Namjae Jeon <linkinjeon@kernel.org>
-> Thanks!
-> 
-
+Could you add more info here that confirms this works with gotos?
+I don't recall the details but I thought sometimes the scoped
+constructs don't do well with gotos. I checked 5 random uses
+of this loop and 4 of them didn't have gotos.
 
