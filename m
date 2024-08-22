@@ -1,275 +1,190 @@
-Return-Path: <linux-kernel+bounces-297375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7D695B70C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1296F95B72B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811411F220B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA757282CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0721CB332;
-	Thu, 22 Aug 2024 13:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E711CBEB6;
+	Thu, 22 Aug 2024 13:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nN3G4Z1l"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KRMmp4Tw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BCC1CB30A;
-	Thu, 22 Aug 2024 13:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A911CB339
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724334200; cv=none; b=nVVcxF6h7uC+cXJfsNlD+2HFMxU3dD+S27EYJh8ggZfw5RcVkdFFeY0/2831W7/LkWOs/lpPSCF84aQZFCeCnNWcqy+aaBG9D69Wvcd+eNpy1YGBC8wh7lbeeaucFlBMfbfGxsytJA8t/Sh185UK3AMOp0z2cunOwbI2/p0AK1g=
+	t=1724334485; cv=none; b=bM+rEBsXZZn70jeUcRLtawV3/eoR6jEnOOJ/J4uoyJqBSrZYwvRZ3xbiCQkpADPpWbkxu+d4z1flQ2dt3b9rPZVp4lQaUcxtq1VcoybMaKsKfLbJYa9GzSj76M4bcl3O6tyZRsbBapS5Y193sFBLEOxATQ94Ors8kAojyf9Y+bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724334200; c=relaxed/simple;
-	bh=sQvd+bwcFWTX/oc4OS7Btb+0j0aSoPqVXbUm0Nn6uig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgCjAgd797Zg371aOwN+GkkFdzg/Jcb+CcdvAvuE1ToBkQJuHNE4lEp0UKqKnjeW8BPmvyi3ImQRKAPbpEnlVJYQScG/EE2xuHDPYgspKAyt/7f+qd9zTt3VxlUw63u+py4oqopEZFt1SU+3+HoGw64B9MrTmbKEYf7gfOb3AOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nN3G4Z1l; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6bf7707dbb6so6016046d6.0;
-        Thu, 22 Aug 2024 06:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724334198; x=1724938998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zdl67ic8HgEb8M4S4PfeCh58b8P52iTtl7Cnr2VuH+w=;
-        b=nN3G4Z1l2MI2LwwgHLuNKrlrTpdsrqv1x5+JKLN9zOLnDoKlcFOaQXkmNgP1TAvC9Y
-         P+IKn4mSsF4tdwL2xmNCm2fuc2Y/wlLlgLFzjpTa23uxWqL4qyW4/X3G0A0KvJLYoM0Y
-         cugnvkj2IHGK/CPx1F5aewJoJybauZTi+092YuXLJIXVFscy9MWCdG7YVhjzWl/OF/Vg
-         VTwuK+VpspkYNU1RAz9rrQRqLjzgd3WcCfWxe7mudaSRFHb4VCgwT7/EU6Td15miBMSe
-         HG+Junl4a0efOdBSyxceURi5JjK+uRqxGATrPL0jaHTsE7e5BDvxUP9BQ7q9neS0IVxz
-         /9pw==
+	s=arc-20240116; t=1724334485; c=relaxed/simple;
+	bh=TveaYkEbx2doRY7IcRS2QWPC/9cfsUPF8paUrSreb6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JAN9QD2hdNDi0PC3/4QYCIdGSIkojQBTuE1otcXZ7ukH/7/29U6Yf2NT3kL/dA80poBqhKn3jGVy8Kv/iFmmyjlchgY4n6NnBDW6F9Tc7uP1LCGdle60ge37ulzivo3rB8SFo2sRkf1SphRAZ9zzv7yvmhQjhSxMaw1qKW7PwDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KRMmp4Tw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724334482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FjYBhspv7tRST0pSqSmRh821Mv70zB5zctMwrlaK9DI=;
+	b=KRMmp4TwaYeNmgMYe+OAC61MmEjeegfpkvS9vY3tIbqXkintCa+7Xmk53QqE5uTFNN9HRI
+	VLjjgy8oOrHR8bWReuZGcdYv4afXV5sOqLDYF+hFbinBn5NKh0K7Ir7NBSdbnl5u7wnA5a
+	mt0Gxp4hosf5gz/+8VAIuJyMn3yFoAA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-451-Vf9zHfb5MKuKlYilsKV9jA-1; Thu, 22 Aug 2024 09:47:59 -0400
+X-MC-Unique: Vf9zHfb5MKuKlYilsKV9jA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4281310bf7aso6288655e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:47:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724334198; x=1724938998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zdl67ic8HgEb8M4S4PfeCh58b8P52iTtl7Cnr2VuH+w=;
-        b=YHOKH/lwcaIbX7Eb+ZkTahGJS5FhNN/Bx1Lwa+xzLQcxTm5jRvs7Gt7uQjI14lYs12
-         oWIlz8bIYMgs6kVtTwthGSFXkjnMzQXatnCz4JnW8KmZDLnZwLj60+t5Yb3UkA37n7wd
-         0imLzObKUhdylxVVttP0hJMj9SkYViUBj1iiQQ9TfDGRhHZMCpoJqpocyxzHbI0uQOj+
-         YqSzxIeXWIoKGI15OotQwRfFFE+q0kS+iDte4wZ74uGgR3M2Jrgd2lzUYmJA9nGrVXEX
-         m1aekhr580wRjoJbIy4Re8s+KIZymjmH0GalXX4KYfMHki92HBWgHaM1jJKLAJfnHaWP
-         l9AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBSrGrvr/Dg+LSnm9HKoc87zW+DCxSRleEgFTzvn1RqtuK+88pEQkpGmG1c5aaDXUOfj2lE+mZHwcYZ6d9s3T3R3T8@vger.kernel.org, AJvYcCW0/oDfkY8CRAWwAZApHir4G8PTY2qyc/ruiLHiy51Bow6WzQkdffHAEAtlnYA+O8IavZd1Vkrz3QFi@vger.kernel.org, AJvYcCXwJXz67eQyKOO1sGKs+O4FBAlknGVZxtn5cH5yaQRke6AJ0KOL8ujF9z2GwNsnBBoXwdKRhwG9ddKV2vg/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrtwG2/44muVmEkNp0looG+j6WF/jsqTEs/x0A/G/BSGlElcgg
-	VulPxB8Mf5R/VLg+8GSIWgHbsxy/cx+GGOZXcyaPrjPgLMW8be6D
-X-Google-Smtp-Source: AGHT+IHPd/emMpe/HlyJz5A8zoG1MQ2R+I3aFfYWd3NjI3tG1Nm/rfs1sEJSU53wBMynWLouK7H2HQ==
-X-Received: by 2002:a05:6214:4613:b0:6bf:6b6e:95b3 with SMTP id 6a1803df08f44-6c160c44047mr68047206d6.1.1724334197887;
-        Thu, 22 Aug 2024 06:43:17 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d1d242sm7731876d6.16.2024.08.22.06.43.16
+        d=1e100.net; s=20230601; t=1724334478; x=1724939278;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FjYBhspv7tRST0pSqSmRh821Mv70zB5zctMwrlaK9DI=;
+        b=R3n7YzdxoA1qzNqNzkVzWv4UskPSQFe3GBw7nCtfczDN2gMr6/LWlgkUwYMkyKAr1o
+         BUZhs0Y5bVrzTWxTjCMSUVTQ3VmUf7231AvPwUYpuiVbwolKgotlMKYAV2q6KOTPPu2S
+         FAB6lNUKMnRiiRLZNTvpFKfK3FTWfEiiJUlb2x44u66NAp8P+ja7T09ljTQ50paYV6L4
+         aVadQa5VZ0ixzlER8F+aChqNfR4SvbR8ED8+DCru1BypBDtiuVaWwys4b7UpXmH93WMz
+         A9HraGE03AZRwzO/TWtMFNia0oSDdUVUq6aetDKqajC2i2YlYVEcmwsUTjns/KG4zPvE
+         taZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuldYSQPxa5PAmCEfydkoZmVSotHaQmNUNa1yCKRnTj3xbTXeQ9tbndwW3+HhKmfP0AfwoX8VLmihqA6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK7nPNoBHp/obM+8sBi1OfuqnaG8opp0o0RiKypB7Q7i3gSp6G
+	rIrJLs5UePVSXes5xGIxPWl6JFiCZFkJLcT/Oc/FpnzQmCYOXYDkAnmQ8y/4lxssqskzI/I14Ze
+	UB4hpW/gPsngYKNOW9tLjO5NGkk0PEt5vYZUKz5efex9QnIcV8sG+PhgA0yHwpA==
+X-Received: by 2002:a05:600c:5014:b0:426:6e95:78d6 with SMTP id 5b1f17b1804b1-42ac55babf8mr14882845e9.4.1724334478053;
+        Thu, 22 Aug 2024 06:47:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9pgATN30e2cGvgnx/4ylawVQ+wC24Vnwz41hd/vPVumxXeQFsraVN5ewZN1S7fwv2HF76Rg==
+X-Received: by 2002:a05:600c:5014:b0:426:6e95:78d6 with SMTP id 5b1f17b1804b1-42ac55babf8mr14882365e9.4.1724334477513;
+        Thu, 22 Aug 2024 06:47:57 -0700 (PDT)
+Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac5162322sm25057215e9.24.2024.08.22.06.47.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 06:43:17 -0700 (PDT)
-Received: from phl-compute-08.internal (phl-compute-08.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 16C45120006B;
-	Thu, 22 Aug 2024 09:43:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Thu, 22 Aug 2024 09:43:16 -0400
-X-ME-Sender: <xms:dEDHZs-Uu1QrKkiY-oVdLHzWtxqROV2farUj6grkkH4X-fGNWEAUxA>
-    <xme:dEDHZktyWpS3ITVw6h89oq81ca9j_3hKKZ_Vq14gZuz-jFubxeBlEOVXSn6gAJ8q3
-    ao4D5FFAR4YzSj7jw>
-X-ME-Received: <xmr:dEDHZiBktsutJsHa1EDcwS_U3aKQBNlH10nc5Qeqfbb17_kgryGFLlZxeRIwsw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvtddgieeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
-    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopeehfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    eprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprgdrhhhinhgu
-    sghorhhgsehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheprghjohhnvghssehvvghnth
-    grnhgrmhhitghrohdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhn
-    uggrthhiohhnrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilh
-    drtghomhdprhgtphhtthhopegrlhgvgihghhhithhisehrihhvohhsihhntgdrtghomhdp
-    rhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoh
-    eprghprghtvghlsehvvghnthgrnhgrmhhitghrohdrtghomhdprhgtphhtthhopegrrhgu
-    sgeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:dEDHZsfNAO2KfbEz1kaXZ_nbhnDePpyUV1gRLFjtHVlMaNflg6iZJg>
-    <xmx:dEDHZhMs8CPRen4V_NIyCqBFPKnZ4_sN9UCLAWbcQFrM1oVZaahJVg>
-    <xmx:dEDHZmlyRrHJ8PnL-3vgbYRcqbaNA4U5IsLMGLpi571JC6kYee4bJA>
-    <xmx:dEDHZjueMr_6ePqPIv3LdRePtsn5wEwdSWWYW5z6pFHU6oxEuMb_5g>
-    <xmx:dEDHZvsty_NFU9voKfT8TVM2to8A7PqU9JWozXcbc_HkfyMAjmPlXZ-3>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 22 Aug 2024 09:43:15 -0400 (EDT)
-Date: Thu, 22 Aug 2024 06:43:07 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: a.hindborg@samsung.com, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, alex.gaynor@gmail.com,	alexghiti@rivosinc.com,
- aou@eecs.berkeley.edu,	apatel@ventanamicro.com, ardb@kernel.org,
- arnd@arndb.de,	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
- bp@alien8.de,	catalin.marinas@arm.com, chenhuacai@kernel.org,
-	conor.dooley@microchip.com, dave.hansen@linux.intel.com,
-	gary@garyguo.net, hpa@zytor.com, jbaron@akamai.com,	jpoimboe@kernel.org,
- kernel@xen0n.name, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, maobibo@loongson.cn,	mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com,	maz@kernel.org, mhiramat@kernel.org,
- mingo@redhat.com,	ojeda@kernel.org, oliver.upton@linux.dev,
- palmer@dabbelt.com,	paul.walmsley@sifive.com, peterz@infradead.org,
- rostedt@goodmis.org,	rust-for-linux@vger.kernel.org,
- ryan.roberts@arm.com,	samuel.holland@sifive.com, seanjc@google.com,
- tabba@google.com,	tglx@linutronix.de, ubizjak@gmail.com,
- wedsonaf@gmail.com,	will@kernel.org, x86@kernel.org,
- yangtiezhu@loongson.cn,	zhaotianrui@loongson.cn
-Subject: Re: [PATCH v8 1/5 alt] rust: add generic static_key_false
-Message-ID: <ZsdAawBhPXojpDA1@boqun-archlinux>
-References: <20240822-tracepoint-v8-1-f0c5899e6fd3@google.com>
- <20240822-tracepoint-v8-1b-f0c5899e6fd3@google.com>
+        Thu, 22 Aug 2024 06:47:57 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Jens Axboe <axboe@kernel.dk>,
+	Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Chaitanya Kulkarni <kch@nvidia.com>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH v3 0/9] PCI: Remove pcim_iounmap_regions()
+Date: Thu, 22 Aug 2024 15:47:32 +0200
+Message-ID: <20240822134744.44919-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822-tracepoint-v8-1b-f0c5899e6fd3@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 12:08:07PM +0000, Alice Ryhl wrote:
-> Add just enough support for static key so that we can use it from
-> tracepoints. Tracepoints rely on `static_key_false` even though it is
-> deprecated, so we add the same functionality to Rust.
-> 
-> This patch only provides a generic implementation without code patching
-> (matching the one used when CONFIG_JUMP_LABEL is disabled). Later
-> patches add support for inline asm implementations that use runtime
-> patching.
-> 
-> When CONFIG_JUMP_LABEL is unset, `static_key_count` is a static inline
-> function, so a Rust helper is defined for `static_key_count` in this
-> case. If Rust is compiled with LTO, this call should get inlined. The
-> helper can be eliminated once we have the necessary inline asm to make
-> atomic operations from Rust.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Changes in v3:
+  - fpga/dfl-pci.c: remove now surplus wrapper around
+    pcim_iomap_region(). (Andy)
+  - block: mtip32xx: remove now surplus label. (Andy)
+  - vdpa: solidrun: Bugfix: Include forgotten place where stack UB
+    occurs. (Andy, Christophe)
+  - Some minor wording improvements in commit messages. (Me)
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Changes in v2:
+  - Add a fix for the UB stack usage bug in vdap/solidrun. Separate
+    patch, put stable kernel on CC. (Christophe, Andy).
+  - Drop unnecessary pcim_release_region() in mtip32xx (Andy)
+  - Consequently, drop patch "PCI: Make pcim_release_region() a public
+    function", since there's no user anymore. (obsoletes the squash
+    requested by Damien).
+  - vdap/solidrun:
+    • make 'i' an 'unsigned short' (Andy, me)
+    • Use 'continue' to simplify loop (Andy)
+    • Remove leftover blank line
+  - Apply given Reviewed- / acked-bys (Andy, Damien, Bartosz)
+
+
+Important things first:
+This series is based on [1] and [2] which Bjorn Helgaas has currently
+queued for v6.12 in the PCI tree.
+
+This series shall remove pcim_iounmap_regions() in order to make way to
+remove its brother, pcim_iomap_regions().
+
+@Bjorn: Feel free to squash the PCI commits.
 
 Regards,
-Boqun
+P.
 
-> ---
-> This is an alternate version of patch 1 that resolves the conflict with
-> https://lore.kernel.org/all/20240725183325.122827-7-ojeda@kernel.org/
-> 
->  rust/bindings/bindings_helper.h |  1 +
->  rust/helpers/helpers.c          |  1 +
->  rust/helpers/tracepoint.c       | 18 ++++++++++++++++++
->  rust/kernel/jump_label.rs       | 29 +++++++++++++++++++++++++++++
->  rust/kernel/lib.rs              |  1 +
->  5 files changed, 50 insertions(+)
->  create mode 100644 rust/helpers/tracepoint.c
->  create mode 100644 rust/kernel/jump_label.rs
-> 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index ae82e9c941af..e0846e7e93e6 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -14,6 +14,7 @@
->  #include <linux/ethtool.h>
->  #include <linux/firmware.h>
->  #include <linux/jiffies.h>
-> +#include <linux/jump_label.h>
->  #include <linux/mdio.h>
->  #include <linux/phy.h>
->  #include <linux/refcount.h>
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 173533616c91..5b17839de43a 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -20,6 +20,7 @@
->  #include "slab.c"
->  #include "spinlock.c"
->  #include "task.c"
-> +#include "tracepoint.c"
->  #include "uaccess.c"
->  #include "wait.c"
->  #include "workqueue.c"
-> diff --git a/rust/helpers/tracepoint.c b/rust/helpers/tracepoint.c
-> new file mode 100644
-> index 000000000000..02aafb2b226f
-> --- /dev/null
-> +++ b/rust/helpers/tracepoint.c
-> @@ -0,0 +1,18 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Helpers for tracepoints. At the moment, helpers are only needed when
-> + * CONFIG_JUMP_LABEL is disabled, as `static_key_count` is only marked inline
-> + * in that case.
-> + *
-> + * Copyright (C) 2024 Google LLC.
-> + */
-> +
-> +#include <linux/jump_label.h>
-> +
-> +#ifndef CONFIG_JUMP_LABEL
-> +int rust_helper_static_key_count(struct static_key *key)
-> +{
-> +	return static_key_count(key);
-> +}
-> +#endif
-> diff --git a/rust/kernel/jump_label.rs b/rust/kernel/jump_label.rs
-> new file mode 100644
-> index 000000000000..011e1fc1d19a
-> --- /dev/null
-> +++ b/rust/kernel/jump_label.rs
-> @@ -0,0 +1,29 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2024 Google LLC.
-> +
-> +//! Logic for static keys.
-> +//!
-> +//! C header: [`include/linux/jump_label.h`](srctree/include/linux/jump_label.h).
-> +
-> +/// Branch based on a static key.
-> +///
-> +/// Takes three arguments:
-> +///
-> +/// * `key` - the path to the static variable containing the `static_key`.
-> +/// * `keytyp` - the type of `key`.
-> +/// * `field` - the name of the field of `key` that contains the `static_key`.
-> +///
-> +/// # Safety
-> +///
-> +/// The macro must be used with a real static key defined by C.
-> +#[macro_export]
-> +macro_rules! static_key_false {
-> +    ($key:path, $keytyp:ty, $field:ident) => {{
-> +        let _key: *const $keytyp = ::core::ptr::addr_of!($key);
-> +        let _key: *const $crate::bindings::static_key = ::core::ptr::addr_of!((*_key).$field);
-> +
-> +        $crate::bindings::static_key_count(_key.cast_mut()) > 0
-> +    }};
-> +}
-> +pub use static_key_false;
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 274bdc1b0a82..91af9f75d121 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -36,6 +36,7 @@
->  pub mod firmware;
->  pub mod init;
->  pub mod ioctl;
-> +pub mod jump_label;
->  #[cfg(CONFIG_KUNIT)]
->  pub mod kunit;
->  #[cfg(CONFIG_NET)]
-> -- 
-> 2.46.0.184.g6999bdac58-goog
-> 
+[1] https://lore.kernel.org/all/20240729093625.17561-4-pstanner@redhat.com/
+[2] https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
+
+Philipp Stanner (9):
+  PCI: Make pcim_iounmap_region() a public function
+  fpga/dfl-pci.c: Replace deprecated PCI functions
+  block: mtip32xx: Replace deprecated PCI functions
+  gpio: Replace deprecated PCI functions
+  ethernet: cavium: Replace deprecated PCI functions
+  ethernet: stmicro: Simplify PCI devres usage
+  vdpa: solidrun: Fix UB bug with devres
+  vdap: solidrun: Replace deprecated PCI functions
+  PCI: Remove pcim_iounmap_regions()
+
+ .../driver-api/driver-model/devres.rst        |  1 -
+ drivers/block/mtip32xx/mtip32xx.c             | 16 +++---
+ drivers/fpga/dfl-pci.c                        | 16 ++----
+ drivers/gpio/gpio-merrifield.c                | 14 ++---
+ .../net/ethernet/cavium/common/cavium_ptp.c   | 10 ++--
+ .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 25 ++------
+ .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 18 ++----
+ drivers/pci/devres.c                          | 24 +-------
+ drivers/vdpa/solidrun/snet_main.c             | 57 ++++++++-----------
+ include/linux/pci.h                           |  2 +-
+ 10 files changed, 61 insertions(+), 122 deletions(-)
+
+-- 
+2.46.0
+
 
