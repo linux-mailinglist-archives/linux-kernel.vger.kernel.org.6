@@ -1,77 +1,55 @@
-Return-Path: <linux-kernel+bounces-296307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6575195A8E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:31:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D436F95A8E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8FE1C2208D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811481F22A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F50A933;
-	Thu, 22 Aug 2024 00:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1256EDF6C;
+	Thu, 22 Aug 2024 00:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRHf8WR5"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YtnlYIw0"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634D18BEF
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2395684;
+	Thu, 22 Aug 2024 00:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724286650; cv=none; b=Zhb/PfWKPXSLiE7vmMLMEJGV/oi0SeNWXPAViAkZUGHpes1xMocm2ntI/BKLbQSWwntO36QKjbvzUSSmSUONKjHiJyYCHy9LjVnaCpFeNj9jPJl8/HoV3m4c0sfpDoRSMiAqEpkOoGxd0ymZ7KvIkZl+5eiZmZUjQPtRQbrSIiI=
+	t=1724286691; cv=none; b=j0wKBWJafcKpNqwAHV33kBG2BKBb82C1GeMTWhD6pxwuwOZTMNbb0usjV7Pjc/gAUbzqXD6XmJ67pOJdFsMVWnIuKlcBS7KTfkYMFy8uLjKcOvNNlc6HzCOiWRX/m6vy0m699pjx228TBYVpUDq2jKYWVJ1inTGJA9wokI1JrUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724286650; c=relaxed/simple;
-	bh=J2aU8g4qe+Y8rcEvppQfTwSMn9pHuBRHOVLNGDgiMVY=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=XY7jXCKUPBnYl6Dki8O+/hRaaID+bqRQiN/E1bNeUrpmAQVeI12ivKeRibGGBtaXh5ngxLQyKlHsDZ4CbAtO1/njW62Kr/AL6HSwd6M/vubQrAsdQU/7oJilWnk1T63BTZefj89gi5kKbqqaJjTvsK1PlweH68tsPM0H192cF+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRHf8WR5; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-714261089c1so163822b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724286649; x=1724891449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/LT23mWzcaHjSiEDWUHOQC5zE07WXnQU2xjGHMC0HRU=;
-        b=PRHf8WR5cWpf4miZpJBaA2uWhfGjfmgorctxOHxIQcSXkLwWihHHgOmmIqma9J7UA7
-         DMYuCiN+ca/NHar9iXutcW4y+/m2KYm/PSRQKiOObWauYTSSqdv2Z/KGLIUoKt6KoIb+
-         47hX9tHXcMjxkvH4lmD8/7PC0/wMtn478q9MlwtL8VupKgNtTK+XDa9KkS4GxMOKkKum
-         +uji9UWBpv4123dBEay3KWwBODOooyYTNzPKyDyRaMFybMTNWQpVLCsvq94xpLkRdssC
-         o/2EPncXO2nkG0C9SEOghGBd0rczKVU+B7LF8aPba6BbKeRIMKmsw7Nis2HnADl+DK2r
-         oVaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724286649; x=1724891449;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/LT23mWzcaHjSiEDWUHOQC5zE07WXnQU2xjGHMC0HRU=;
-        b=W0iKY4GkxEq84oE+ETlmfOwbtGhA6HDTvOB4VgdijkjiMt8avhghhVDFqdswenV1pJ
-         EpP9lmpLIq7hnG/AWdio7Ru/EeQPtVKWmXbtBE5T+GDOeNjUqRq97L0kc5IfPmiTvrrs
-         K74RuGogidF6Cy34N7e4iY26v4gX+9mCZH3LT3uQYFPtTrB/GTPxmAgvgsS4pDwT797t
-         SZhz1JxFFYATHLxRCcf3jqpusPw8SRm5tR3M8IEQMkzuVi9+hK1SqcmdOaefveziBID5
-         jCsPvNBCki31n6x2qW4TgvLXMsyl04cFKNM58Jq38CYbDbXy55NF6EjFyjxlFsdwCYGW
-         57cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPtv4aQO64jubexSy/raeUjkebZkNPdvjAWLeN5w2lmGkWQWbSawfXfFjgYKXPrO+ExlIAvwH412t0PmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6ROQP4gXYcdlNbQC/eA0K+mQNSlhDVkjbvo0UCeMdtj8HP9xV
-	gzTRoILM/UMiO9DiWojf9or6Cgyk4lgUMSD1ZD9orSvGY3frmasLfWTLnhXF
-X-Google-Smtp-Source: AGHT+IEQ2Qasb8z2Lvx5Ov1q/Xl81hwXcRxGm9tO2DIEZqdxrFVhn38SOO+Vka+SA7ZbcTfKVuZ9qg==
-X-Received: by 2002:aa7:8244:0:b0:710:d294:a2b with SMTP id d2e1a72fcca58-7143176773amr1714120b3a.8.1724286648640;
-        Wed, 21 Aug 2024 17:30:48 -0700 (PDT)
-Received: from pop-os.. ([2804:14c:73:8181:6ea7:64ff:ab31:e15d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143424a05esm240318b3a.48.2024.08.21.17.30.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 17:30:48 -0700 (PDT)
-From: Ana Carolina Hernandes <anachan.01h@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
+	s=arc-20240116; t=1724286691; c=relaxed/simple;
+	bh=vX4bwbEZCM0DlDwN+mhfhGKNSGmnW50NPHU/sf0V17s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cv7UfvofQRVMgv9HHYuhP9kc6mkw2C3D01zUjHcQLjo9fmJ+aNpR1aQpJpV8J2/sIzWSKinH718JlXQ8pdbPMmUyeafspsFjAm9GMXyjpxXqKxLgGOe3btQCDPNBA0tvXEioKz8FIWDR3QoJ6JG2DAjL+KQm+IYYclrSwZjF87A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YtnlYIw0; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724286685; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=rPVByciwYoPsmWhb4UfB3nuMMi+gPyeSFgobV8z+KoE=;
+	b=YtnlYIw02ZrML2oVW/Kfi3UWErrMefWqCg1KQyjChQmYo4KBtbbpPH9EAlnC1E3zzWdb0BjejzKZaX7Wqn9X5V8g1/8PSbiLvTjSnjxTg6HbkTYdIWxFxnvb5Yw4R5CKLtisvjIx7mqUQIt9KXyn7FjmQ19qQ5IY2gsnxbnfvCU=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WDMyqn4_1724286684)
+          by smtp.aliyun-inc.com;
+          Thu, 22 Aug 2024 08:31:25 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: wufan@linux.microsoft.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH] Staging: rtl8192e: Fix arguments alignment
-Date: Wed, 21 Aug 2024 21:30:43 -0300
-Message-Id: <20240822003043.10865-1-anachan.01h@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] ipe: Remove duplicated include in ipe.c
+Date: Thu, 22 Aug 2024 08:31:23 +0800
+Message-Id: <20240822003123.118140-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,47 +58,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix the alignment of arguments in function _rtl92e_query_rxphystatus in
-order to silence the following checkpatch warning:
+The header files eval.h is included twice in ipe.c,
+so one inclusion of each can be removed.
 
-CHECK: Lines should not end with a '('
-
-Signed-off-by: Ana Carolina Hernandes <anachan.01h@gmail.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9796
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 ---
- .../staging/rtl8192e/rtl8192e/r8192E_dev.c    | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ security/ipe/ipe.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-index b3d4b3394284..bca6e4f57bf2 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-@@ -1145,16 +1145,15 @@ static long _rtl92e_signal_scale_mapping(struct r8192_priv *priv, long currsig)
- 			_pdrvinfo->RxRate == DESC90_RATE11M) &&\
- 			!_pdrvinfo->RxHT)
+diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+index e19a18078cf3..4317134cb0da 100644
+--- a/security/ipe/ipe.c
++++ b/security/ipe/ipe.c
+@@ -7,7 +7,6 @@
+ #include "ipe.h"
+ #include "eval.h"
+ #include "hooks.h"
+-#include "eval.h"
  
--static void _rtl92e_query_rxphystatus(
--	struct r8192_priv *priv,
--	struct rtllib_rx_stats *pstats,
--	struct rx_desc  *pdesc,
--	struct rx_fwinfo   *pdrvinfo,
--	struct rtllib_rx_stats *precord_stats,
--	bool bpacket_match_bssid,
--	bool bpacket_toself,
--	bool bPacketBeacon,
--	bool bToSelfBA
-+static void _rtl92e_query_rxphystatus(struct r8192_priv *priv,
-+				      struct rtllib_rx_stats *pstats,
-+				      struct rx_desc  *pdesc,
-+				      struct rx_fwinfo   *pdrvinfo,
-+				      struct rtllib_rx_stats *precord_stats,
-+				      bool bpacket_match_bssid,
-+				      bool bpacket_toself,
-+				      bool bPacketBeacon,
-+				      bool bToSelfBA
- 	)
- {
- 	struct phy_sts_ofdm_819xpci *pofdm_buf;
+ extern const char *const ipe_boot_policy;
+ bool ipe_enabled;
 -- 
-2.34.1
+2.32.0.3.g01195cf9f
 
 
