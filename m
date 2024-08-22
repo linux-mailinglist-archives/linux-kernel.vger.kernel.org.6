@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-296282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A6D95A896
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:12:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3D495A897
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BFD2832B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3117D1F225F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E00E138C;
-	Thu, 22 Aug 2024 00:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41E64A3C;
+	Thu, 22 Aug 2024 00:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8bUqlAW"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z4QppVcw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y5lOjtXC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A2A368;
-	Thu, 22 Aug 2024 00:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BC523B0
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724285522; cv=none; b=PvA/GDql4UbO/urWv7TTwSio23Jlw7o9YGKfrKVShxiSFv0cyR6fDkbqjRWw27s7V8+LmiXPV/ycSeG0uHhlA49/+4dj+KOWonR2DnlGaLfOeom1UvSA/HMy2uut+I7haAIhq9nxoQV+5xrX0MYmW74fi2U6VMw1gF9DVLtPLdc=
+	t=1724285526; cv=none; b=HDKtjvzCuv9nOfTytfe/AxT+AO7RCzccpgHqUCG1YehGyV6Hl5cxQvgZu88hF7oTrXuhtzbWhAAY2hyPQ8QvM5OOTg5mBJYrHhn1kkWBfUZqIECwZBjA7C4FMmWFFWVF89DzV6qNQlDjFoppZgyA+o9mup2yQ6vFNHG0I401EXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724285522; c=relaxed/simple;
-	bh=cOB+YiLmNayeW6bviExoaKiZs04FFiGdmrtliqQuWXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EVrgty0TD3JbsRs7FcISIfVbsM1FhhfrVk67qW3ZS5KAwQ0j6rCwuO2YZgJ3qT+hsg9vDshbctWBkbDtcI+JhEMv7Qc2TBvV7LyZup7auaFJHiiSsb3wImeLgnrZUWalLGewMRPdlGx3zprJeHKH70T+0nlEGnANSAsPzxytVy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8bUqlAW; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530e062217eso286424e87.1;
-        Wed, 21 Aug 2024 17:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724285519; x=1724890319; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ixcwWDPwJmqg6oOHPuUmOi09F3Uk9NfClTZxuEFkMi4=;
-        b=M8bUqlAWj2Z2EEj2G9snVCQnaJNuldiySIOaDfkU3Qv7lBCBJs/NXt5gqLbMsV0CJT
-         v1FPfF6YvdHv5Pa0h/UDvD4E4dDGCX7z0wGceUzyN4zGicpZkr4VUgUzQrwqGb9dzW7M
-         U9BKPpzdNG64iD8sZfZMhQlcSs3UK38r/XPigH2BFPc91LqmyljWRTc4Ej6ad375+avf
-         wKuLfs5lQzMkkWBk67ANeIWOFICh/Plor72Ifio+cU1nBSlpbXwK1wsa5yWN5hIoLwpz
-         1Q5tCuNPzd3gAr+cTbE1zAVKPMRg8/t4YEhC/isqbRrfQyyMOM/XigXxKZGMDKnmKUgh
-         3Gzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724285519; x=1724890319;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ixcwWDPwJmqg6oOHPuUmOi09F3Uk9NfClTZxuEFkMi4=;
-        b=KiPk7KOIE373att1iIDsbKlGmzfavGJQt5n8HOi+YRzMjkaCmd3xBjKo8w5mnLV3Os
-         ozvqQOeY3NLTReFS3FbSowIVi7qKL2/f7FqcSx5CRXko8NuBTe+2cIl/2k3Akb0gN+9Q
-         HslbUbKmcR30R7CI/22T1pA4/9qpTr3F7t6NOkIO8aj9oGJ6kqvq3HsxNaF71UZO7fdI
-         f2JTP5lV/4c+vIwyTDaU845q1WjQb51LojZBfaH2hrmGhlV/DDmSaBBfk8PZYjKY+75h
-         bUjR96ttaKL2+VO3vs/Yu421KTcJf/QUr8BwhuAJUYDEOvO3svL+wN9G/etuq4iGp7Vc
-         hDNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC4jOAvULYNo7DHh7hQj3Y3CjTCPNwRGnus2WXDdONDctu6avDoI83b/mhIZp2YYAIlYfcbSJnV0/m@vger.kernel.org, AJvYcCVyCPzev1MB/A9C7cED9U60f3xfjKM/80cNApM6q5ln06MY2wNm/gxQOEfL93cvlwHEL7CJzaqsSkJYhWvb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcDjwOT/bCEpSwLuymEDDPzUKPOOgvdy7plWiT5Btdi58JXng8
-	/wVbuAZkVCqtXPoTPPOA0XGe4K2jYglOeRRKhAgw7shVb4VUbJ2zzR2vAAbl5kbOYJnGA6vubQp
-	83K6hDHZxBCJzG3UQacPiTrtIYBU=
-X-Google-Smtp-Source: AGHT+IFOy8SQawRILFRXkqtw7mPwJHZkOXKB1VElMoyfPyqP4qEUIRGBU6t8gISxXvQF7NkibaPkNsSZV8lUD5nbRNE=
-X-Received: by 2002:a05:6512:15a9:b0:530:ad8b:de11 with SMTP id
- 2adb3069b0e04-533485650bbmr2147090e87.9.1724285518810; Wed, 21 Aug 2024
- 17:11:58 -0700 (PDT)
+	s=arc-20240116; t=1724285526; c=relaxed/simple;
+	bh=mbbco71KR1JqUR2zFBgwIJTeKuQC79CT62Gz5C6W2jc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ikiswyfg0cyYcllKbXEmzp+92QIqPqtEvdmRKPSYxhp16CT+TBleeWkaMeVYRKhUdvlt7++IsKfp7oCdl0WROrRhYDl5mEc01ae5oJyKjASVQNIIouK4zfXgf/v8FlMs/Gffev36scmYQ59nHLAHu7HBrgoQnvu6fq5vzIglRxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z4QppVcw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y5lOjtXC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724285517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nTUMdp4DLthcUGcY/irLYo8CFAJpz6GHRVfIL4XIkZ0=;
+	b=z4QppVcwMBRdbBQ072LinP71W1zOlor23cICLAjGQj73Hztt+7i8BtXwKDvdzsaVKWSEZn
+	+JIpfnc4OPbO6pbgR5nZrxdHyrJbJPabwlNQbXp5uK54wDbG7qO7erfzxxWc6+n6kXcEuz
+	yyifLQ4RLE2JwzpVGwoE1cuzypxQyP130KzK08UpOTDqzKqRN2jfXSm+G7rTLUlW6WlxhQ
+	Dpi+QkZ3X8gBg/UDIdm12kYUFydrgwuF8OZguOk5XgEQrUHvUV2C5DEsNWyZOqxuMSfhud
+	qKIz6CGeyM/Fy/ITUKIV55A2bMMiQTR67yveE5fWwL6gidCVFcyq7QWCpWiuXA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724285517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nTUMdp4DLthcUGcY/irLYo8CFAJpz6GHRVfIL4XIkZ0=;
+	b=Y5lOjtXCugRKhpF/1T9QZtwJ5jinBvbTtG5Zz1A8E9ahHe1fD3U+uhVde599TJtyHLup+v
+	k/fPXG2YiR6NhUCA==
+To: Woody Zhang <woodyzhang666@gmail.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Woody Zhang <woodyzhang666@gmail.com>
+Subject: Re: [PATCH 0/5] Minor memory size optimization in debugobjects
+In-Reply-To: <20240821230539.168107-1-woodyzhang666@gmail.com>
+References: <20240821230539.168107-1-woodyzhang666@gmail.com>
+Date: Thu, 22 Aug 2024 02:11:56 +0200
+Message-ID: <874j7difg3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com>
- <20240820143319.274033-8-chenxiaosong@chenxiaosong.com> <CAKYAXd_XWf33rCHMh8AjhXKZEdvcRS-xXew9FDeitExNaezW2g@mail.gmail.com>
-In-Reply-To: <CAKYAXd_XWf33rCHMh8AjhXKZEdvcRS-xXew9FDeitExNaezW2g@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 21 Aug 2024 19:11:47 -0500
-Message-ID: <CAH2r5mvqi0miAzd6FtJiK9Wfo6oBDVV8_vwV8Fi0bUnT+i1oyg@mail.gmail.com>
-Subject: Re: [PATCH 7/8] smb/client: fix typo: STATUS_MCA_OCCURED -> STATUS_MCA_OCCURRED
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: chenxiaosong@chenxiaosong.com, sfrench@samba.org, senozhatsky@chromium.org, 
-	tom@talpey.com, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
-	bharathsm@microsoft.com, chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, 
-	huhai@kylinos.cn, liuyun01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-aah - good catch.  See MS-ERREF section 2.3.1
-
-Will back this patch out of for-next (and backout patch 0008 from
-for-next-next).
-
-Chen,
-Can you update those two (and fix the Signed-off vs. Author line) and resen=
-d?
-
-
-On Wed, Aug 21, 2024 at 6:57=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
- wrote:
+On Thu, Aug 22 2024 at 07:05, Woody Zhang wrote:
+> As of now, debugobjects framework uses hlist_head and separate spinlock
+> as a hash table bucket. We have hlist_bl_head APIs which embeds a
+> bit_spinlock in head pointer and thus no separate spinlock is required.
 >
-> On Tue, Aug 20, 2024 at 11:35=E2=80=AFPM <chenxiaosong@chenxiaosong.com> =
-wrote:
-> >
-> > From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> >
-> > Preparation for moving the SMB2 Status code definitions to a common
-> > header file.
-> >
-> > Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-> STATUS_MCA_OCCURED is not a typo.
-> Please check microsoft's header definition :
-> https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/59=
-6a1078-e883-4972-9bbc-49e60bebca55
->
-> Thanks.
->
+> This patchset first wraps irq variant API for bit_spinlock as well as
+> hlist_bl_lock and several other APIs and macros. Lastly, It replaces
+> hlist APIs with hlist_bl counterparts.
 
+You are telling _what_ your changes are doing, but not _why_ and neither
+_what_ they are trying to achieve.
 
---=20
+Aside of that you are failing to explain how replacing a spinlock by a
+hlist bitlock is equivalent to a lockdep covered locking primitive.
+
+It is NOT.
+
+And you have to come up with a convincing argument why this makes sense
+aside of saving an unspecified amount of memory, which you haven't even
+bothered to document. Neither in the changelogs nor in the cover letter.
+
+You also completely fail to provide an analysis why converting the debug
+object locking from a fair and sensible locking implementation to a
+known to be unscalable locking implementation makes sense for a debug
+facility which is used in a lot of hotpaths.
+
+Any attempt to substitute a spinlock with a hlist_bl locking scheme
+needs to come with a proper analysis to demonstrate that:
+
+   1) this is a completely equivalent locking scheme
+
+   2) the resulting loss of lockdep coverage is justified
+
+   3) there is an actual performance benefit
+
+   4) the actual memory savings
+
+Just handwaving about an unspecified amount of memory savings (probably
+in the range of 2 bytes or such) without any of #1 -#3 above is not
+cutting it at all.
+
+Try again.
+
 Thanks,
 
-Steve
+        tglx
 
