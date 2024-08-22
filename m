@@ -1,112 +1,148 @@
-Return-Path: <linux-kernel+bounces-297831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0901F95BE36
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:25:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF6F95BE3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B5C1C231D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:25:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48593B277C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4411CFEDD;
-	Thu, 22 Aug 2024 18:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947BF1D0486;
+	Thu, 22 Aug 2024 18:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hp6PetVH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKcge+rG"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADABC2AE77;
-	Thu, 22 Aug 2024 18:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9052AE77;
+	Thu, 22 Aug 2024 18:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724351123; cv=none; b=MS28EHAuZdsJEaUscrmEvOqQcmeO3Ilu5BWDbu7wQLe7VfEYKXslrvmgvH56QFYEhHSVMmZF+wuTmu1hvNnYWEXzr1yu1A5H3OrQPhgVFTWMbdtlq3Vdh9Z+G6CDIM009TU18c83lbWOMIncqeMqyFiOM2WaQZaw2WyMZZ8V3ug=
+	t=1724351397; cv=none; b=SY0sdqrZZObhppL80NhXtY9lGKVBUu4WVXbn2ItfjZVzi7uHJI33/qea+MenTf6RKzM1PGdqOP/h2Ou8/0hhDkryFha9qKQ/1OMDJexzRwjCGIoyE1K0mMl3xZQsVn4Fjs03WQqlAR8xbyxO4qbf0en+uaZt9CHgMmCyYF/nBks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724351123; c=relaxed/simple;
-	bh=d5SxwQXp9IhK4Vqaj8bbSuKXGNiP1rcA5S9sV1iqwyM=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=jmG56IrgSeSIuJ1PfG+U+IXWN104CpjmliybWhl9og4jKGGSA8095Dzke60789vL+URsaai6ARBS/DbqszeHuZOILCeJMrrAZQU0odZvZklBX7zF5ZfJi0SmaXfmyygBYoeb1WElzjwQ80emQlxx5ymi+q5nhqUXZVsWJXxerkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hp6PetVH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEDC9C32782;
-	Thu, 22 Aug 2024 18:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724351123;
-	bh=d5SxwQXp9IhK4Vqaj8bbSuKXGNiP1rcA5S9sV1iqwyM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=hp6PetVHW09spfI6vqrH0HD/2lrD3vzayiGkJ4liiE6JmEOhI5KDDdt/w1Y7vUUeD
-	 TlqM+WZgoY+fw+9pX6RGLCAGL9MHBK1N2Nm/boHbeDc8X0FJ7KFxsAp9Ts8+87+lhr
-	 z9isTyFZ6fZoUGTyFWL+d/4mQq16nRNjJ7y6baIUe8OUIwpHB5v+T8PkwPtBJuUn1N
-	 A3fkAEMHIcitbnuvG5o4LXPf7TKbgTTDWqJpGz5LXiHTU8i44pL90oYXbtCuHRHDfl
-	 jE9fE3jPZMcz8lx+RxGpdhLx4oq+uJGdWSdb+zzrnVJFwB846kBF3BSFZeT6erIUE2
-	 Oz62C8couXaTQ==
-Date: Thu, 22 Aug 2024 13:25:21 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1724351397; c=relaxed/simple;
+	bh=4VQZ1nKAqmZY3C0LHWDH6tVHf0R2awT3hntj19h+MXY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=quHoGungpk2fFfZWMeJva34RkhVoHN6Jd7GXnVnYsivqypLY6IzJOvV6hGOk9839aYTOO8g7WFynHfTpTZZqN6i4tHCtsMgEhnQkOXV85u/zwYZ6xzREpkjdlVBCmNzswQxMRUYtGWNNfN58jzOQ0UzkZAYs8IPQTUz3zveO7GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKcge+rG; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f43de7ad5eso8689911fa.1;
+        Thu, 22 Aug 2024 11:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724351394; x=1724956194; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6eq0Zc6Vxfr46aaR2skl2I5AqjzF0NL14ez30VtrVd0=;
+        b=YKcge+rG87/SadC5/0l/r5rh4cHIEJVnlJ7ltRvAKyl6n7g3wBOktrRYA/x25E49qz
+         rs6/RrETf7YCXnK3N14xOID/vXKb2BuE0rsdEnp/otQQwIpi9STbm4rtd0F6TBWUTpB7
+         NlIVP7w8J7EvqHsLZo4i1+peWMKSpxMFWXjPuRIUplatmPGqUQ9KRsgCRtTOsUbzM+co
+         lDgbrUwrQGDkEvoU26V7uWgnMmB7Jl1f0n13sLDR8i+oV2Wam+fGkSApPjG52OgX9r04
+         JCzBrT0U0xyHkK+7h9/xMbHcQ3y8504zWX4kwqXDHUd+Mdr+b7XiVAyY7buNkgj2Gal+
+         lZkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724351394; x=1724956194;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6eq0Zc6Vxfr46aaR2skl2I5AqjzF0NL14ez30VtrVd0=;
+        b=mav1+utRifPuwj0/rKHABt2XRbuQ5qCXtBDpe0Fd7tQgPJ3RoqgUyAtV3xSOCN8tYd
+         w+3BxkZ8Z1Qq9vQa69kIQnhb8A5+Ul81srVdhY2hZn/bgRaMXO2Aal8IUZ4Gb6s1Hh6i
+         oOmDuEYPoaduM4JFRPfjeEuDCPz0OHjvnCjhTPC8Sbg3/+9WqFGbQTCzqsUbuwTg+owJ
+         B2ykvZbeRV2dE+KClkc/+nwqFqp1SurSEXAxqGKqCrcHAov3yyc+/1TO9Athmh/PN/NT
+         j1+oASOcr6Qi9A/0ItG52jzboJFuTmINWtWE3CDfp2sUK3MBgVPKyg8S+W5gMzKMHT1W
+         YpNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUocLOpVkk4P1Xv8oK4lKg/mky/1GcUyLosi3CGvZE8fwOp6nZYyHchRe5uYqn5AxjoPzDxkTzvtZSKezg=@vger.kernel.org, AJvYcCWwwonOi4dNG525iED4pcA3BUJ3b+8abGBW+mXAP0RoHaKV3jaJULvYLgBIpkBZJYoAMNvGJesTgviiPZQCv7dT9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9WfLiS4ZA5/XTgChlZN+kkfNgiXiUKXlQfNAYk84O1yhLrTjq
+	Bfg0dL1nWKg68Lm29zGvc3WtP6W5xlCie2OFdWvjNruh9UO2eA6Wim5MBqmeOwJd288zXaUta9B
+	aOhAczxfuI1GHTVK9bzWgdcGhyhEbvpQSrlo=
+X-Google-Smtp-Source: AGHT+IGkBeDjy0yQ9wegTiaoJJqWpW89C0016X6i0GMs1w+V/QuMO/F33Sjtzf7J8+eTEt0NcYsr2rRhSBJbyZMd2EQ=
+X-Received: by 2002:a05:651c:198a:b0:2f2:b1ed:4496 with SMTP id
+ 38308e7fff4ca-2f3f8b570famr46210591fa.42.1724351394252; Thu, 22 Aug 2024
+ 11:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: robin.murphy@arm.com, devicetree@vger.kernel.org, 
- Hugues.KambaMpiana@arm.com, linux-kernel@vger.kernel.org, 
- liviu.dudau@arm.com, Adam.Johnston@arm.com, mathieu.poirier@linaro.org, 
- sudeep.holla@arm.com, Drew.Reed@arm.com, linux-remoteproc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, lpieralisi@kernel.org, 
- andersson@kernel.org
-In-Reply-To: <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
-Message-Id: <172435112119.3486691.3093277909404901548.robh@kernel.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the
- External Systems remote processors
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+ <ZsdKhLaPy-uzKsuH@x1> <ZsdUxxBrpbuYxtXN@x1> <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
+ <ZsdxinrZP1kHINWT@x1> <ZsdzLmIFWRqsXeXD@x1> <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
+ <Zsd39zG9BuGpZ8aA@x1> <CA+icZUXGV9dMGcRwJiP7WLcYUaY5CRCcDw1HLFr+9Sn7CrRGDw@mail.gmail.com>
+ <CAM9d7cgSR4OroaX0FuBvC_bPPMeEr7ThXJwqgMfAnj-Lfk8wNw@mail.gmail.com> <ZseBZ1DIi4Y5zC2W@x1>
+In-Reply-To: <ZseBZ1DIi4Y5zC2W@x1>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Thu, 22 Aug 2024 20:29:17 +0200
+Message-ID: <CA+icZUWt88VFaRON5j6+MQNgndiopmdpiWu+sopHW6usrpBhiA@mail.gmail.com>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 22, 2024 at 8:20=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Thu, Aug 22, 2024 at 11:17:21AM -0700, Namhyung Kim wrote:
+> > > On Thu, Aug 22, 2024 at 7:40=E2=80=AFPM Arnaldo Carvalho de Melo
+> > > <acme@kernel.org> wrote:
+> > > > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2=
+001
+> > > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > > Date: Thu, 22 Aug 2024 14:13:49 -0300
+> > > > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-m=
+ismatch if
+> > > >  present on clang
+> > > >
+> > > > The -Wcast-function-type-mismatch option was introduced in clang 19=
+ and
+> > > > its enabled by default, since we use -Werror, and python bindings d=
+o
+> > > > casts that are valid but trips this warning, disable it if present.
+> > > >
+> > > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > > > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > > > Cc: Ian Rogers <irogers@google.com>
+> > > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > > Cc: Namhyung Kim <namhyung@kernel.org>
+> > > > Cc: Nathan Chancellor <nathan@kernel.org>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9=
+uy3r2MzKXwTA5THtL7w@mail.gmail.com
+> > > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> >
+> > Can we also add 'Fixes' tag to make this picked by stable kernels?
+>
+> Fixes what? This isn't a regression, clang 19 isn't available for Fedora
+> 40, the most recent.
+>
+> - Arnaldo
 
-On Thu, 22 Aug 2024 18:09:47 +0100, Abdellatif El Khlifi wrote:
-> Add devicetree binding schema for the External Systems remote processors
-> 
-> The External Systems remote processors are provided on the Corstone-1000
-> IoT Reference Design Platform via the SSE-710 subsystem.
-> 
-> For more details about the External Systems, please see Corstone SSE-710
-> subsystem features [1].
-> 
-> [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
-> 
-> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> ---
->  .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-> 
+From [1]:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+LLVM Release Schedule - 19.1.x:
 
-yamllint warnings/errors:
+Jul 23rd: release/19.x branch created
+Jul 26th: 19.1.0-rc1
+Aug  6th: 19.1.0-rc2
+Aug 20th: 19.1.0-rc3
+Sep  3rd: 19.1.0 <--- XXX
+Sep 17th: 19.1.1
+Oct  1st: 19.1.2
+Oct 15th: 19.1.3
+Oct 29th: 19.1.4
+Nov 12th: 19.1.5
+Nov 26th: 19.1.6 (if necessary)
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.example.dtb: /example-0/syscon@1a010000: failed to match any schema with compatible: ['arm,sse710-host-base-sysctrl', 'simple-mfd', 'syscon']
+-Sedat-
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240822170951.339492-2-abdellatif.elkhlifi@arm.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+[1] https://github.com/ClangBuiltLinux/linux/issues/2040
 
