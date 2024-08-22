@@ -1,534 +1,137 @@
-Return-Path: <linux-kernel+bounces-297549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B8CA95BAA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:40:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213C695BAAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBDEF1F245AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCFED1F23AC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D4C1CCB31;
-	Thu, 22 Aug 2024 15:40:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C531CB30F;
-	Thu, 22 Aug 2024 15:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F339D1CCB3E;
+	Thu, 22 Aug 2024 15:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cDKM1Ijh"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72A51CB30F
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341218; cv=none; b=DsaipOC4HCa774T5D/sIX5BoEPW8i7p4YBiBZi2qDu8vp8SABou38hP2Ak/q/mIwRkPuWNgIvNhhiJH3rLZn3Cfpx9Nf7m3g7jimYIT+ZaSvRA8BVQ3THGRSeYvJsCUKRFd/5PzLkgXkCvuUAFPOnZnYaboQgcq7RYQZkGSzOQM=
+	t=1724341235; cv=none; b=WUjsHEZGis6SuO3IphADp02XQ9jg3cF/BlyaYL8QFiJ4zGYLH632Xk/vaZqAgpagoQEPI/QUEdC4XpCvs3+YTYPzaM+UBOMOgK3rMBTrddaW/+a1Kjb04iRQwLpgqqSGjTQrGl8MRwbxGSq20MQxCy1g55/JEnBDMgJ8uLlmtAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341218; c=relaxed/simple;
-	bh=cOQQHuFBw4JmpRS6q3WYxEK4XugRuY5Deo6OKLW/wak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cw2VfH/rmoPpNhfCuKce4BaqcUHczYwnQXHZW7+hkUP4zmxv4hO5jnqUU0madGxKyS9zD0n6fg66xHGjuRTwHOOIQw20vjKD3BJ2Kjpl/gcNBJEfm5wGtGr/yPfxtxJWH8Ls/w6Kxp60h+n/JQnP47eE51/S6q038K+zlJognuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E326FDA7;
-	Thu, 22 Aug 2024 08:40:40 -0700 (PDT)
-Received: from [10.57.85.214] (unknown [10.57.85.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFA273F58B;
-	Thu, 22 Aug 2024 08:40:10 -0700 (PDT)
-Message-ID: <80e2dc67-9dca-4e90-8a42-21ddea329c53@arm.com>
-Date: Thu, 22 Aug 2024 16:40:08 +0100
+	s=arc-20240116; t=1724341235; c=relaxed/simple;
+	bh=gnMXHCyoDE9vbwim3cGbGNLNjI3qarrddxCiDj8YqDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ThuYAnJmrAkkyXceF3XtayOEYnv2C15dqCbLGi31vdNNuo2Z+SqGjlPihyv5gQCp614R/B9yiwJYxEO1M5rzg99NJN/gfqge5rTnc1KE4DOmsIE/gmITR5YtL8c7kVnODDYneNISME6AgdN+s4z8DJJpAAZoiuT9pRG5fvyGmhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cDKM1Ijh; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7141d7b270dso847756b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:40:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724341232; x=1724946032; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rcgKP848ia1sT1sKBh7wuDzcHKmUYL/7jg4d8zl6Hms=;
+        b=cDKM1IjhDVvHFpx6nEQNuaRTYt5xPn095zVhgkJ0UqEZqBLYMBymksDcQRqJ/UfLcx
+         SaqCqlZFYuH8jNJsdVuCYpVDwRpBDml6fJsRHRzT7JTc7Q/H0hTLGfmtJoupxGywepXo
+         dJT6IL0Mtx58ig2RBvxH74N7R8nrPKiD21+zbvt6naJIe53Ld8U5rLRVk7oyyozhjiI+
+         +uAG5jzTNrGQFbcUa8v3kNk+a39wfoO9M/jqDjHgcBT4YxsiJLOKi6ECuWUqEr+GgOL6
+         Up9g446TvQ4sIbqV7LeB2H0mHfw3a3y0DJp2LpZxVESUtdJHwo5hTJkdVI44bVquiZks
+         QF/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724341232; x=1724946032;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcgKP848ia1sT1sKBh7wuDzcHKmUYL/7jg4d8zl6Hms=;
+        b=VI1Xlil6lCLm9l+w+UVMkPT5Qufo9ipAcdlmvvNuUPEp7MaxOd9sMzgulM8ruReJWl
+         mIarbbAGBqNKC8NwN0dSeSUvknyFohFBa+ZBwwBjOq4rST1xAj1vuiQcBxbmwHIXXzwO
+         fzMCrrxGeF5qBmoqSJQogBjoTNtyAAU7IPZep4oF6P8vYl+HKKdWR3A13AdK7m/cu1FS
+         bRtDGG7QQsKSXuKyYegwyUy1fzNCuA5dVtcbODo/OompPbrWqdTjMIm7xE3WnqkNRxCh
+         SzkcR/7M6+wndLNBtBLMv71KlPSjlCIOjdx9xm2cZS8jQQUNKj6YQzb109yI2tnog0db
+         s3bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaZa8SZvrOhR1CQiFckNXSEq0tE1BVl57JnZacqaERjqXIXkVIVj6KCf2a5UlQkPaTpwOzPpWcf7QuLbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIue2IKuqUL7oKI9L+Sbvd0GVIkkEwEgB3+I9Nzv4NDUUcyaZo
+	3H4WMztJ77WwWeDYq6HcRI/t6/CoYNyL1vcgauJOD9GyfeF8s9ne6alzB7L+gg==
+X-Google-Smtp-Source: AGHT+IE2G3Hs7GA0300yVurm4pOpFE7mOVKX/CIwEm6VxYXzrdlmjeMZBBsFwSh2A1fDefS4FryaVw==
+X-Received: by 2002:a05:6a20:7f90:b0:1ca:da81:a3ef with SMTP id adf61e73a8af0-1caeb1808a9mr3093356637.3.1724341231993;
+        Thu, 22 Aug 2024 08:40:31 -0700 (PDT)
+Received: from thinkpad ([120.60.60.148])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434335fe1sm1522247b3a.200.2024.08.22.08.40.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 08:40:31 -0700 (PDT)
+Date: Thu, 22 Aug 2024 21:10:25 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
+Message-ID: <20240822154025.vfl6mippkz3duimg@thinkpad>
+References: <20240822064823.x26bjqev6ye32v5j@thinkpad>
+ <20240822151658.GA305162@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 21/43] arm64: RME: Runtime faulting of memory
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-22-steven.price@arm.com> <yq5acym12p3c.fsf@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <yq5acym12p3c.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240822151658.GA305162@bhelgaas>
 
-On 22/08/2024 04:50, Aneesh Kumar K.V wrote:
-> Steven Price <steven.price@arm.com> writes:
+On Thu, Aug 22, 2024 at 10:16:58AM -0500, Bjorn Helgaas wrote:
+> On Thu, Aug 22, 2024 at 12:18:23PM +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Aug 21, 2024 at 05:56:18PM -0500, Bjorn Helgaas wrote:
+> > ...
 > 
->> At runtime if the realm guest accesses memory which hasn't yet been
->> mapped then KVM needs to either populate the region or fault the guest.
->>
->> For memory in the lower (protected) region of IPA a fresh page is
->> provided to the RMM which will zero the contents. For memory in the
->> upper (shared) region of IPA, the memory from the memslot is mapped
->> into the realm VM non secure.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v2:
->>  * Avoid leaking memory if failing to map it in the realm.
->>  * Correctly mask RTT based on LPA2 flag (see rtt_get_phys()).
->>  * Adapt to changes in previous patches.
->> ---
->>  arch/arm64/include/asm/kvm_emulate.h |  10 ++
->>  arch/arm64/include/asm/kvm_rme.h     |  10 ++
->>  arch/arm64/kvm/mmu.c                 | 120 +++++++++++++++-
->>  arch/arm64/kvm/rme.c                 | 205 +++++++++++++++++++++++++--
->>  4 files changed, 325 insertions(+), 20 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
->> index 7430c77574e3..0b50572d3719 100644
->> --- a/arch/arm64/include/asm/kvm_emulate.h
->> +++ b/arch/arm64/include/asm/kvm_emulate.h
->> @@ -710,6 +710,16 @@ static inline bool kvm_realm_is_created(struct kvm *kvm)
->>  	return kvm_is_realm(kvm) && kvm_realm_state(kvm) != REALM_STATE_NONE;
->>  }
->>  
->> +static inline gpa_t kvm_gpa_stolen_bits(struct kvm *kvm)
->> +{
->> +	if (kvm_is_realm(kvm)) {
->> +		struct realm *realm = &kvm->arch.realm;
->> +
->> +		return BIT(realm->ia_bits - 1);
->> +	}
->> +	return 0;
->> +}
->> +
->>  static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
->>  {
->>  	if (static_branch_unlikely(&kvm_rme_is_available))
->> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
->> index 0e44b20cfa48..c50854f44674 100644
->> --- a/arch/arm64/include/asm/kvm_rme.h
->> +++ b/arch/arm64/include/asm/kvm_rme.h
->> @@ -103,6 +103,16 @@ void kvm_realm_unmap_range(struct kvm *kvm,
->>  			   unsigned long ipa,
->>  			   u64 size,
->>  			   bool unmap_private);
->> +int realm_map_protected(struct realm *realm,
->> +			unsigned long base_ipa,
->> +			struct page *dst_page,
->> +			unsigned long map_size,
->> +			struct kvm_mmu_memory_cache *memcache);
->> +int realm_map_non_secure(struct realm *realm,
->> +			 unsigned long ipa,
->> +			 struct page *page,
->> +			 unsigned long map_size,
->> +			 struct kvm_mmu_memory_cache *memcache);
->>  int realm_set_ipa_state(struct kvm_vcpu *vcpu,
->>  			unsigned long addr, unsigned long end,
->>  			unsigned long ripas,
->> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
->> index 620d26810019..eb8b8d013f3e 100644
->> --- a/arch/arm64/kvm/mmu.c
->> +++ b/arch/arm64/kvm/mmu.c
->> @@ -325,8 +325,13 @@ static void __unmap_stage2_range(struct kvm_s2_mmu *mmu, phys_addr_t start, u64
->>  
->>  	lockdep_assert_held_write(&kvm->mmu_lock);
->>  	WARN_ON(size & ~PAGE_MASK);
->> -	WARN_ON(stage2_apply_range(mmu, start, end, kvm_pgtable_stage2_unmap,
->> -				   may_block));
->> +
->> +	if (kvm_is_realm(kvm))
->> +		kvm_realm_unmap_range(kvm, start, size, !only_shared);
->> +	else
->> +		WARN_ON(stage2_apply_range(mmu, start, end,
->> +					   kvm_pgtable_stage2_unmap,
->> +					   may_block));
->>  }
->>  
->>  void kvm_stage2_unmap_range(struct kvm_s2_mmu *mmu, phys_addr_t start, u64 size)
->> @@ -345,7 +350,10 @@ static void stage2_flush_memslot(struct kvm *kvm,
->>  	phys_addr_t addr = memslot->base_gfn << PAGE_SHIFT;
->>  	phys_addr_t end = addr + PAGE_SIZE * memslot->npages;
->>  
->> -	kvm_stage2_flush_range(&kvm->arch.mmu, addr, end);
->> +	if (kvm_is_realm(kvm))
->> +		kvm_realm_unmap_range(kvm, addr, end - addr, false);
->> +	else
->> +		kvm_stage2_flush_range(&kvm->arch.mmu, addr, end);
->>  }
->>  
->>  /**
->> @@ -1037,6 +1045,10 @@ void stage2_unmap_vm(struct kvm *kvm)
->>  	struct kvm_memory_slot *memslot;
->>  	int idx, bkt;
->>  
->> +	/* For realms this is handled by the RMM so nothing to do here */
->> +	if (kvm_is_realm(kvm))
->> +		return;
->> +
->>  	idx = srcu_read_lock(&kvm->srcu);
->>  	mmap_read_lock(current->mm);
->>  	write_lock(&kvm->mmu_lock);
->> @@ -1062,6 +1074,7 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu)
->>  	if (kvm_is_realm(kvm) &&
->>  	    (kvm_realm_state(kvm) != REALM_STATE_DEAD &&
->>  	     kvm_realm_state(kvm) != REALM_STATE_NONE)) {
->> +		kvm_stage2_unmap_range(mmu, 0, (~0ULL) & PAGE_MASK);
->>  		write_unlock(&kvm->mmu_lock);
->>  		kvm_realm_destroy_rtts(kvm, pgt->ia_bits);
->>  		return;
->> @@ -1428,6 +1441,71 @@ static bool kvm_vma_mte_allowed(struct vm_area_struct *vma)
->>  	return vma->vm_flags & VM_MTE_ALLOWED;
->>  }
->>  
->> +static int realm_map_ipa(struct kvm *kvm, phys_addr_t ipa,
->> +			 kvm_pfn_t pfn, unsigned long map_size,
->> +			 enum kvm_pgtable_prot prot,
->> +			 struct kvm_mmu_memory_cache *memcache)
->> +{
->> +	struct realm *realm = &kvm->arch.realm;
->> +	struct page *page = pfn_to_page(pfn);
->> +
->> +	if (WARN_ON(!(prot & KVM_PGTABLE_PROT_W)))
->> +		return -EFAULT;
->> +
->> +	if (!realm_is_addr_protected(realm, ipa))
->> +		return realm_map_non_secure(realm, ipa, page, map_size,
->> +					    memcache);
->> +
->> +	return realm_map_protected(realm, ipa, page, map_size, memcache);
->> +}
->> +
->> +static int private_memslot_fault(struct kvm_vcpu *vcpu,
->> +				 phys_addr_t fault_ipa,
->> +				 struct kvm_memory_slot *memslot)
->> +{
->> +	struct kvm *kvm = vcpu->kvm;
->> +	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(kvm);
->> +	gfn_t gfn = (fault_ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
->> +	bool is_priv_gfn = !((fault_ipa & gpa_stolen_mask) == gpa_stolen_mask);
->> +	bool priv_exists = kvm_mem_is_private(kvm, gfn);
->> +	struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
->> +	kvm_pfn_t pfn;
->> +	int ret;
->> +
->> +	if (priv_exists != is_priv_gfn) {
->> +		kvm_prepare_memory_fault_exit(vcpu,
->> +					      fault_ipa & ~gpa_stolen_mask,
->> +					      PAGE_SIZE,
->> +					      kvm_is_write_fault(vcpu),
->> +					      false, is_priv_gfn);
->> +
->> +		return 0;
->> +	}
->> +
->> +	if (!is_priv_gfn) {
->> +		/* Not a private mapping, handling normally */
->> +		return -EAGAIN;
->> +	}
->>
+> > > Although I do have the question of what happens if the RC deasserts
+> > > PERST# before qcom-ep is loaded.  We probably don't execute
+> > > qcom_pcie_perst_deassert() in that case, so how does the init happen?
+> > 
+> > PERST# is a level trigger signal. So even if the host has asserted
+> > it before EP booted, the level will stay low and ep will detect it
+> > while booting.
 > 
-> Instead of that EAGAIN, it better to handle as below?
-
-I'm not finding the below easier to read.
-
->  arch/arm64/kvm/mmu.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
+> The PERST# signal itself is definitely level oriented.
 > 
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 1eddbc7d7156..33ef95b5c94a 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1480,11 +1480,6 @@ static int private_memslot_fault(struct kvm_vcpu *vcpu,
->  		return 0;
->  	}
->  
-> -	if (!is_priv_gfn) {
-> -		/* Not a private mapping, handling normally */
-> -		return -EAGAIN;
-> -	}
-> -
->  	ret = kvm_mmu_topup_memory_cache(memcache,
->  					 kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
->  	if (ret)
-> @@ -1925,12 +1920,25 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->  	gfn = kvm_gpa_from_fault(vcpu->kvm, ipa) >> PAGE_SHIFT;
->  	memslot = gfn_to_memslot(vcpu->kvm, gfn);
->  
-> -	if (kvm_slot_can_be_private(memslot)) {
-> -		ret = private_memslot_fault(vcpu, fault_ipa, memslot);
-> -		if (ret != -EAGAIN)
-> +	if (kvm_slot_can_be_private(memslot) &&
-> +	    kvm_is_private_gpa(vcpu->kvm, ipa)) {
-
-I presume kvm_is_private_gpa() is defined as something like:
-
-static bool kvm_is_private_gpa(kvm, phys_addr_t ipa)
-{
-	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(kvm);
-	return  !((ipa & gpa_stolen_mask) == gpa_stolen_mask);
-}
-
-> +		ret = private_memslot_fault(vcpu, ipa, memslot);
-
-So this handles the case in private_memslot_fault() where is_priv_gfn is 
-true. So there's a little bit of simplification in 
-private_memslot_fault().
-
->  			goto out;
->  	}
-> +	/* attribute msimatch. shared access fault on a mem with private attribute */
-> +	if (kvm_mem_is_private(vcpu->kvm, gfn)) {
-> +		/* let VMM fixup the memory attribute */
-> +		kvm_prepare_memory_fault_exit(vcpu,
-> +					      kvm_gpa_from_fault(vcpu->kvm, ipa),
-> +					      PAGE_SIZE,
-> +					      kvm_is_write_fault(vcpu),
-> +					      false, false);
-
-And then we have to duplicate the code here for calling 
-kvm_prepare_memory_fault_exit(). Which seems a bit ugly to me. Am I 
-missing something? Your patch doesn't seem complete.
-
-> +
-> +		ret =  0;
-> +		goto out;
-> +	}
->  
-> +	/* Slot can be be private, but fault addr is not, handle that as normal fault */
->  	hva = gfn_to_hva_memslot_prot(memslot, gfn, &writable);
->  	write_fault = kvm_is_write_fault(vcpu);
->  	if (kvm_is_error_hva(hva) || (write_fault && !writable)) {
-
-
-Note your email had a signature line "--" here which causes my email 
-client to remove the rest of your reply - it's worth dropping that from 
-the git output when sending diffs. I've attempted to include your
-second diff below manually.
-
-> Instead of referring this as stolen bits is it better to do
+> I'm still skeptical about the *interrupt* from the PCIe controller
+> being level-triggered, as I mentioned here:
+> https://lore.kernel.org/r/20240815224735.GA57931@bhelgaas
 > 
->  arch/arm64/include/asm/kvm_emulate.h | 20 +++++++++++++++++---
->  arch/arm64/kvm/mmu.c                 | 21 ++++++++-------------
->  2 files changed, 25 insertions(+), 16 deletions(-)
+
+Sorry, that comment got buried into my inbox. So didn't get a chance to respond.
+
+> tegra194 is also dwc-based and has a similar PERST# interrupt but it's
+> edge-triggered (tegra_pcie_ep_pex_rst_irq()), which I think is a
+> cleaner implementation.  Then you don't have to remember the current
+> state, switch between high and low trigger, worry about races and
+> missing a pulse, etc.
 > 
-> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> index 0b50572d3719..790412fd53b8 100644
-> --- a/arch/arm64/include/asm/kvm_emulate.h
-> +++ b/arch/arm64/include/asm/kvm_emulate.h
-> @@ -710,14 +710,28 @@ static inline bool kvm_realm_is_created(struct kvm *kvm)
->  	return kvm_is_realm(kvm) && kvm_realm_state(kvm) != REALM_STATE_NONE;
->  }
->  
-> -static inline gpa_t kvm_gpa_stolen_bits(struct kvm *kvm)
-> +static inline gpa_t kvm_gpa_from_fault(struct kvm *kvm, phys_addr_t fault_addr)
->  {
-> +	gpa_t addr_mask;
-> +
->  	if (kvm_is_realm(kvm)) {
->  		struct realm *realm = &kvm->arch.realm;
->  
-> -		return BIT(realm->ia_bits - 1);
-> +		addr_mask = BIT(realm->ia_bits - 1);
-> +		/* clear shared bit and return */
-> +		return fault_addr & ~addr_mask;
->  	}
-> -	return 0;
-> +	return fault_addr;
-> +}
-> +
-> +static inline bool kvm_is_private_gpa(struct kvm *kvm, phys_addr_t fault_addr)
-> +{
-> +	/*
-> +	 * For Realms, the shared address is an alias of the private GPA
-> +	 * with top bit set and we have a single address space. Thus if the
-> +	 * fault address matches the GPA, it is the private GPA
-> +	 */
-> +	return fault_addr == kvm_gpa_from_fault(kvm, fault_addr);
->  }
 
-Ah, so here's the missing function from above.
+I did try to mimic what tegra194 did when I wrote the qcom-ep driver, but it
+didn't work. If we use the level triggered interrupt as edge, the interrupt will
+be missed if we do not listen at the right time (when PERST# goes from high to
+low and vice versa).
 
->  
->  static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index eb8b8d013f3e..1eddbc7d7156 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1464,20 +1464,18 @@ static int private_memslot_fault(struct kvm_vcpu *vcpu,
->  				 struct kvm_memory_slot *memslot)
->  {
->  	struct kvm *kvm = vcpu->kvm;
-> -	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(kvm);
-> -	gfn_t gfn = (fault_ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
-> -	bool is_priv_gfn = !((fault_ipa & gpa_stolen_mask) == gpa_stolen_mask);
-> -	bool priv_exists = kvm_mem_is_private(kvm, gfn);
-> +	gfn_t gfn = kvm_gpa_from_fault(kvm, fault_ipa) >> PAGE_SHIFT;
->  	struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
->  	kvm_pfn_t pfn;
->  	int ret;
->  
-> -	if (priv_exists != is_priv_gfn) {
-> +	if (!kvm_mem_is_private(kvm, gfn)) {
-> +		/* let VMM fixup the memory attribute */
->  		kvm_prepare_memory_fault_exit(vcpu,
-> -					      fault_ipa & ~gpa_stolen_mask,
-> +					      kvm_gpa_from_fault(kvm, fault_ipa),
->  					      PAGE_SIZE,
->  					      kvm_is_write_fault(vcpu),
-> -					      false, is_priv_gfn);
-> +					      false, true);
->  
->  		return 0;
->  	}
-> @@ -1527,7 +1525,6 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	long vma_pagesize, fault_granule;
->  	enum kvm_pgtable_prot prot = KVM_PGTABLE_PROT_R;
->  	struct kvm_pgtable *pgt;
-> -	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(vcpu->kvm);
->  
->  	if (fault_is_perm)
->  		fault_granule = kvm_vcpu_trap_get_perm_fault_granule(vcpu);
-> @@ -1640,7 +1637,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	if (vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE)
->  		fault_ipa &= ~(vma_pagesize - 1);
->  
-> -	gfn = (ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
-> +	gfn = kvm_gpa_from_fault(kvm, ipa) >> PAGE_SHIFT;
->  	mte_allowed = kvm_vma_mte_allowed(vma);
->  
->  	vfio_allow_any_uc = vma->vm_flags & VM_ALLOW_ANY_UNCACHED;
-> @@ -1835,7 +1832,6 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->  	struct kvm_memory_slot *memslot;
->  	unsigned long hva;
->  	bool is_iabt, write_fault, writable;
-> -	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(vcpu->kvm);
->  	gfn_t gfn;
->  	int ret, idx;
->  
-> @@ -1926,7 +1922,7 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->  		nested = &nested_trans;
->  	}
->  
-> -	gfn = (ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
-> +	gfn = kvm_gpa_from_fault(vcpu->kvm, ipa) >> PAGE_SHIFT;
->  	memslot = gfn_to_memslot(vcpu->kvm, gfn);
->  
->  	if (kvm_slot_can_be_private(memslot)) {
-> @@ -1978,8 +1974,7 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->  		 * of the page size.
->  		 */
->  		ipa |= kvm_vcpu_get_hfar(vcpu) & GENMASK(11, 0);
-> -		ipa &= ~gpa_stolen_mask;
-> -		ret = io_mem_abort(vcpu, ipa);
-> +		ret = io_mem_abort(vcpu, kvm_gpa_from_fault(vcpu->kvm, ipa));
->  		goto out_unlock;
->  	}
+I don't know how tegra194 interrupt controller is wired up, but IIUC they will
+need to boot the endpoint first and then host to catch the PERST# interrupt.
+Otherwise, the endpoint will never see the interrupt until host toggles it
+again.
 
-I can see your point that kvm_gpa_from_fault() makes sense. I'm still
-not convinced about the duplication of the kvm_prepare_memory_fault_exit()
-call though.
+But there is no point in forcing this ordering and that was the reason why I
+went with the level triggered approach.
 
-How about the following (untested):
+- Mani
 
-diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-index 0b50572d3719..fa03520d7933 100644
---- a/arch/arm64/include/asm/kvm_emulate.h
-+++ b/arch/arm64/include/asm/kvm_emulate.h
-@@ -710,14 +710,14 @@ static inline bool kvm_realm_is_created(struct kvm *kvm)
- 	return kvm_is_realm(kvm) && kvm_realm_state(kvm) != REALM_STATE_NONE;
- }
- 
--static inline gpa_t kvm_gpa_stolen_bits(struct kvm *kvm)
-+static inline gpa_t kvm_gpa_from_fault(struct kvm *kvm, phys_addr_t fault_ipa)
- {
- 	if (kvm_is_realm(kvm)) {
- 		struct realm *realm = &kvm->arch.realm;
- 
--		return BIT(realm->ia_bits - 1);
-+		return fault_ipa & ~BIT(realm->ia_bits - 1);
- 	}
--	return 0;
-+	return fault_ipa;
- }
- 
- static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index d7e8b0c4f2a3..c0a3054201a9 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -1468,9 +1468,9 @@ static int private_memslot_fault(struct kvm_vcpu *vcpu,
- 				 struct kvm_memory_slot *memslot)
- {
- 	struct kvm *kvm = vcpu->kvm;
--	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(kvm);
--	gfn_t gfn = (fault_ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
--	bool is_priv_gfn = !((fault_ipa & gpa_stolen_mask) == gpa_stolen_mask);
-+	gpa_t gpa = kvm_gpa_from_fault(kvm, fault_ipa);
-+	gfn_t gfn = gpa >> PAGE_SHIFT;
-+	bool is_priv_gfn = (gpa == fault_ipa);
- 	bool priv_exists = kvm_mem_is_private(kvm, gfn);
- 	struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
- 	kvm_pfn_t pfn;
-@@ -1478,7 +1478,7 @@ static int private_memslot_fault(struct kvm_vcpu *vcpu,
- 
- 	if (priv_exists != is_priv_gfn) {
- 		kvm_prepare_memory_fault_exit(vcpu,
--					      fault_ipa & ~gpa_stolen_mask,
-+					      gpa,
- 					      PAGE_SIZE,
- 					      kvm_is_write_fault(vcpu),
- 					      false, is_priv_gfn);
-@@ -1531,7 +1531,6 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	long vma_pagesize, fault_granule;
- 	enum kvm_pgtable_prot prot = KVM_PGTABLE_PROT_R;
- 	struct kvm_pgtable *pgt;
--	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(vcpu->kvm);
- 
- 	if (fault_is_perm)
- 		fault_granule = kvm_vcpu_trap_get_perm_fault_granule(vcpu);
-@@ -1648,7 +1647,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	if (vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE)
- 		fault_ipa &= ~(vma_pagesize - 1);
- 
--	gfn = (ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
-+	gfn = kvm_gpa_from_fault(kvm, ipa) >> PAGE_SHIFT;
- 	mte_allowed = kvm_vma_mte_allowed(vma);
- 
- 	vfio_allow_any_uc = vma->vm_flags & VM_ALLOW_ANY_UNCACHED;
-@@ -1843,7 +1842,6 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
- 	struct kvm_memory_slot *memslot;
- 	unsigned long hva;
- 	bool is_iabt, write_fault, writable;
--	gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(vcpu->kvm);
- 	gfn_t gfn;
- 	int ret, idx;
- 
-@@ -1934,7 +1932,7 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
- 		nested = &nested_trans;
- 	}
- 
--	gfn = (ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
-+	gfn = kvm_gpa_from_fault(vcpu->kvm, ipa) >> PAGE_SHIFT;
- 	memslot = gfn_to_memslot(vcpu->kvm, gfn);
- 
- 	if (kvm_slot_can_be_private(memslot)) {
-@@ -1986,8 +1984,7 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
- 		 * of the page size.
- 		 */
- 		ipa |= kvm_vcpu_get_hfar(vcpu) & GENMASK(11, 0);
--		ipa &= ~gpa_stolen_mask;
--		ret = io_mem_abort(vcpu, ipa);
-+		ret = io_mem_abort(vcpu, kvm_gpa_from_fault(vcpu->kvm, ipa));
- 		goto out_unlock;
- 	}
- 
-
-Thanks,
-Steve
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
