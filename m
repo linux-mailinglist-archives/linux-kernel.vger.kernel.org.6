@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-296644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7586B95AD25
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277E395AD28
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86B91C22777
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D94E1F227A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2C0136350;
-	Thu, 22 Aug 2024 06:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FB112E1D1;
+	Thu, 22 Aug 2024 06:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rxQUoBxE"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bSME000o"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76E212D214;
-	Thu, 22 Aug 2024 06:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E155C8FC
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724306572; cv=none; b=T2NcgzC8RrQnl5BkcFCtCRgfnFKD/SzVo3I9RhmJsIXBoEw/akd64/AoGV7etqMDiOpGSc1VW9eKhl0M5DmrLTh77YSzOpyyKLGKO7lacZELqF9sJfEc5YLFXTgs8Qyhgn219x2C/8/iZXb+LRxkJxTFJ9nUXfdkCN1K3HMVc6c=
+	t=1724306638; cv=none; b=qu4IEHI2XG6qqXlw/ZqTtDePKKQVa1qZr8xZMU12LShWvAciI3xfFdta8wpWrv8TpW9D6pGqrR7d7FSLUuePenUyBAtrlQBxkSbqfX7ytEh9G/Hk2iYywjO+MCTwx5/PIy4z77OX1vqHuDJbWPBJHMdCzcwPM3BHMe4VKY8IXWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724306572; c=relaxed/simple;
-	bh=9hQq3Cggm+CLvBV/nj8HKe6LznylH6xfIF09n6ueqP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pZA4vbuUIm8VvGgEjNUpJOGUJDPE7rjMAvaPtc6a329hxNMzegXV3rwyFa2FuJwFMN5Ktdvc2jSZxr3od2x0SpfgoEX5BtaBGVYDZH+tNjFXo43puTInkd4XRy8VkOnr1iG0U5+iUvfgF1ABYZBHuhzI7x5BTXuXkg3C8v/sfdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rxQUoBxE; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id h0uFswYJ8Jokxh0uFsXpWb; Thu, 22 Aug 2024 08:02:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724306567;
-	bh=WypjVt1rMzUmmOHxryPtXP32L1+Fh9Dgn3lMlwanlvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=rxQUoBxEpJbK4ORPz14zJ7h2wu/SQbdDkUTSiQShojXn9qO6a1eDcgrrjgtStbOI9
-	 mUKEugvxIYCBCljWRzCJtCkbqwjMuMaLgrNSIXnLwPkPqe0hqc0sAl6cvSJRZ67BPb
-	 erhsH+Ikuwo95DErqQuE0ZOKiak1jaM+QgPIRPEyShvpDaiKxEYu6aqYAy4bk0r6x5
-	 r9FWhkPvlqLVv47Dt21kTPpIqb6YdhRPaoX3RmoFSaI66jo4C0cyRU9sS/lqj6TjaG
-	 NnFIIs8BLrO7D1U+m+O7dOmr6Y9fY4+Fu0wlc+UBfjcfi9KKgk5W3TIRbl1WL8szru
-	 wN/NCxxavapTA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 22 Aug 2024 08:02:47 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <171ecc6e-281e-4b43-8bab-c776faa89ccb@wanadoo.fr>
-Date: Thu, 22 Aug 2024 08:02:47 +0200
+	s=arc-20240116; t=1724306638; c=relaxed/simple;
+	bh=A6A4Fe632TYShLqfk32WrMMELcP3NWtAJYeFYitcR44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mIEgYNlhnIv/ZXBH1h+hgV7hh7O65Tf47TrTk+m/ebXhfNJglqQIrKcP2AQNg+j9GUnTA3sjbQedBmfGxMjTuwNpDZYspUxtZUS7X7Wixr7ZNlFR22oxk7FE+i37ff6IN7p789PMVtx4p8LATgI4lOH25Xoebm5+hoQntLIS4yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bSME000o; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86910caf9cso49754566b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724306635; x=1724911435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A6A4Fe632TYShLqfk32WrMMELcP3NWtAJYeFYitcR44=;
+        b=bSME000oWPMnQydZRZXV2mKwr+14BbHvtEPSKT/MUAj+SsCdZU5prvCgYxQlPste2n
+         EuaC9IX4cNALFcZ69hlYF+C8SWvqsVjVoxMILHCwOeoTPNn7qkrfSXpiOVq6Ysy1nD4S
+         g2jLz51eXptzSTRVlZu0qqZVVOk+VSI53neyKQtE7qm4eX2TZPBE+viMjykSY3TGkpd6
+         PFbMu3/gutoIpmeLfPP6uKEcTFjnCIiWSpE3shGZKs3xb7nainZ26NixUAfULzRTE0Z7
+         rQeV5iI+rCtcFDHkTIUtxTL9+zorLY2mNHya9LFNRDEvAINB8FI6AKufzdRaGdxei16u
+         2fVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724306635; x=1724911435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A6A4Fe632TYShLqfk32WrMMELcP3NWtAJYeFYitcR44=;
+        b=avy5X+wNGpjtiPgcbMv21Ly8E+UOtolhS6wqdEdyU5bJI1s94FaFyoS2o15FN5A1vC
+         +0aL69CisRsWeoGVBpHu6uFsK3eRlMSBMInRoboegb5eujb8nh542+O04JBTC9dvSzzU
+         1KHz3UB8BVZ1r9kEWKZFsNsaYywPKV+LN4TdKKK2LVDMHq2ejjb1GnZxt+NvLIt/Ss1C
+         TmKtsFXlt3psxGNJzBU+Q2ZrSVrBr7TA0EKVTGC3BaDCIo3GLPOFZlKGAa6vVarZSQs2
+         Ai04/uRuY5tQCCOunFqVfH2GZ9BQL1OWhHJvrMPXsWf41QAcqY1sOONnWrnB64qD2Rih
+         zDDg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2cdR90cTG2yfgaL2kanCtcrLzAKkGjVxtbiQdV78ty0aHx/jZXN/1RmNlckiCP6jGitHuvpc7vVOCoZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgMyfsWwLuGdOZ0lVjH0RaT/syfCyb86TCm+KXqkDxc9YKisaR
+	W7Wj2zKDGXX0117ntCFOKU+2NzUk2Q6bHpHPXRje17bdP8NjBA9v8LwoxQMj4Hy133BqB6iqGKB
+	DJ0DanxqIck4QZ+2eEJ/+nA/XcoDKVO/sJG9t
+X-Google-Smtp-Source: AGHT+IGNfFwTAmIsIllx9KcRV2vWMF9IIN4oRU2yH5xHn4rDW0RJpAFvaGgqE4eyO/Fg6KLLFZkJ9cN2Jikv3AYMafQ=
+X-Received: by 2002:a17:907:7f1f:b0:a7d:89ac:9539 with SMTP id
+ a640c23a62f3a-a868a5af23cmr176699566b.7.1724306634586; Wed, 21 Aug 2024
+ 23:03:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family
- driver
-To: Stuart <stuart.a.hayhurst@gmail.com>
-Cc: linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org,
- Markus Elfring <Markus.Elfring@web.de>
-References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com>
- <8a4c117b-7cab-4149-a9e7-c6214d6d92ad@wanadoo.fr>
- <CALTg27kBYb5+GOwBz4a1-xeM-21DrbUh7eQyNkW9K_m6TdSwNQ@mail.gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CALTg27kBYb5+GOwBz4a1-xeM-21DrbUh7eQyNkW9K_m6TdSwNQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240822043609.141992-1-takakura@valinux.co.jp>
+In-Reply-To: <20240822043609.141992-1-takakura@valinux.co.jp>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 22 Aug 2024 08:03:41 +0200
+Message-ID: <CANn89iJGUCp-4fRJWzwNzakyNZM=_mSNjX=_OUT8WJW-+isAfA@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: Don't track counter updates of do_add_counters()
+To: takakura@valinux.co.jp
+Cc: pablo@netfilter.org, kadlec@netfilter.org, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, fw@strlen.de, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 22/08/2024 à 03:03, Stuart a écrit :
->> Maybe is_wired could be close to other bools below, to improve avoid
->> holes in the structure?
-> 
-> Possibly, I put `name`, `is_wired` and `sidetone_max` together, since
-> they only depend on the device model and are set once.
-> 
->> Missing newline.
-> 
-> Done
-> 
->> I'm not familiar with the hid_hw_raw_request() API, but I think that a
->> kfree(send_buf) is missing here.
-> 
-> The `__free(kfree)` on the declaration should take care of that
+On Thu, Aug 22, 2024 at 6:36=E2=80=AFAM <takakura@valinux.co.jp> wrote:
+>
+> From: Ryo Takakura <takakura@valinux.co.jp>
+>
+> While adding counters in do_add_counters(), we call
+> xt_write_recseq_begin/end to indicate that counters are being updated.
+> Updates are being tracked so that the counters retrieved by get_counters(=
+)
+> will reflect concurrent updates.
+>
+> However, there is no need to track the updates done by do_add_counters() =
+as
+> both do_add_counters() and get_counters() acquire per ipv4,ipv6,arp mutex
+> beforehand which prevents concurrent update and retrieval between the two=
+.
+>
+> Moreover, as the xt_write_recseq_begin/end is shared among ipv4,ipv6,arp,
+> do_add_counters() called by one of ipv4,ipv6,arp can falsely delay the
+> synchronization of concurrent get_counters() or xt_replace_table() called
+> by any other than the one calling do_add_counters().
+>
+> So remove xt_write_recseq_begin/end from do_add_counters() for ipv4,ipv6,=
+arp.
 
-Sorry, I missed that.
-You are right.
+Completely wrong patch.
 
-> 
->> Nitpick: No need to init.
-> 
-> Thanks, but that `ret` won't be in the next revision anyway
-> 
->> You could save 2 lines if ret was initialized when declared.
-> 
-> Could I? Wouldn't it get overwritten by `hid_hw_raw_request`?
+There is no way we can update pairs of 64bit counters without any
+synchronization.
 
-No, you are obviously right.
+This is per cpu sequence, the 'shared among ipv4,ipv6,arp' part is moot.
 
-BTW, the return value of corsair_void_request_status() is not used.
-Does it make sense to change it into avoid function?
-
-> 
->> devm_kasprintf() would simplify this.
-> 
-> Well that's a lot simpler...
-> 
-> Thanks,
-> Stuart
-> 
-> 
-
+We could use cmpxchg128 on 64bit arches, but I suspect there will be
+no improvement.
 
