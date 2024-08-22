@@ -1,310 +1,212 @@
-Return-Path: <linux-kernel+bounces-297264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E5495B51E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:36:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02FD95B521
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C461C22F4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693B4281CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C25B1C9DDA;
-	Thu, 22 Aug 2024 12:36:39 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549441C9DCD;
+	Thu, 22 Aug 2024 12:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NqUz4sxc"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2049.outbound.protection.outlook.com [40.107.220.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611C21E4B0
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724330198; cv=none; b=gA2LXKVHRNSWo/g33uXqh60jIYe1rbCL+UFtgMoPNcLazEgCX86GrHNJ/cVU+H0hb9zHBgmpHBRcxhvnTZSyIxN4KAiIUYnBakxj7Lksjq4xDRZsV/8TNX0ijMhiVRRnA4VfioWPIFTnRmFbeUAhHVQsR4gEPG+ilDedE7PURhw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724330198; c=relaxed/simple;
-	bh=hoCilJreoZt/eVXqgEJWRg8nUXnlnJBdWFxRC3HjQj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X51xEIeEBcjS5h3cWGBYTbn2PSIjU1SkSbJ66jQoIOSuBH4Aufto8OfKrxO4BXwo4wQ5rGMamPRjdvmgakLkYtKtV0UeLE0/hNBK0tSRBV7uIQ1CuegMihz5RH6pK5oai9jL5WxVZQkpTkdbF3mGILBSkE8idXLW4l5UsHrJpFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WqN0F4pbnz1HGvm;
-	Thu, 22 Aug 2024 20:33:17 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id DE2B314013B;
-	Thu, 22 Aug 2024 20:36:30 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 22 Aug 2024 20:36:29 +0800
-Message-ID: <39117062-fa67-2154-3f3f-55c7a1a6a265@huawei.com>
-Date: Thu, 22 Aug 2024 20:36:28 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A920C1C945E;
+	Thu, 22 Aug 2024 12:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724330215; cv=fail; b=M3iTu1y7IOmZWV25Qt3xAjcyQt5OdcAr3k+urmmU3i2oBwtr0j20kUnXanVMv42uBIVKwzjLamMZTVn5KhzEF3MwZYfhYaK6RBbAceXUogX3MoNGneZ3iHXHoy+WqPCuNVs5/thyza61Uv82F3Pl2ZBPjJFv5Gb6ACH4aqTweg8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724330215; c=relaxed/simple;
+	bh=jEZrHcqexNbhIcvxAo6+B6wWjaKQ0uYqXuSgGaN58oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tCO38A+j9WFPX2jOsHX5Andj9rwjYfc2kyWu7pIMohFEebJHWcZCH8R8VbPJOQbPUwNLUUkp070Lp2SjONgEB0JDv4jj3Coc7I/KXI/ZdwG/qJUux+xqwq3KNrlMqI1uEvlLXoLVuzIbpqEXvB6fXBjb5Wmw7+e+5Khcsz7Nf8g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NqUz4sxc; arc=fail smtp.client-ip=40.107.220.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b1lXwS1hvZjwL1vMgVEZBsedehzKB3O1BuZKnezgZdPGgYeOIeMc8dHmews9JKqQAniaJUpoGe/fExgFqlHxoVMt6Qcnd7JNm4mSlpLUel4Ge5TCzkn/dUBWQFFLo0B+Z7EKur8/8VScP6QCdRjb4zT4pGggIOo0UiOpxnjmL0fd8gZf+y3aRSf4fMlUeNrxx1y5/daZR6NJ4TkxtaCUBX+LaEbs0St4TgiWz1sneLlabyObJmh9KRXtO7qfygZ90vD13L79Va/2mjp+Jvub1aAb1+X6ePndytffK1aaqNrfKs1Fa7rDV+EdZav8kJ+8sELRnNtKUOmoyIF1dTubkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4xKaS6eX98itlSay5mf3ueIXMI++AT3sNy0U3lg/2oo=;
+ b=fcngUYoycYkLCT9TgujBMTv0/aBuxI5v3N10VGDG38V3yoZ45T/T9MVxGre01FsUouMU/urN0oj6AW1tQvth3VC8ym0AjIFdfRc7/RqcaunNQERnTExN7AfnRsJ8VOtEQA4jWVSEl5poxCQ9t3K2LTvHsfaC1r2QvOtHvHOOcNMtNMvB3nfcrAEhczlTJC7cFepZZFrflKfHBpj0DSxo43vKXJQAZAXPfHI78fPna4pCoM51dyCvcqUCnV6UBdRtVT/lVX/Fl7AcALWu/UUnhSo+KUbYgbXNVCWSL2tXBJ3yRCGxsvw3SMDYyx4X+FmtdKdu/AvDrrP87RnrW4LAKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4xKaS6eX98itlSay5mf3ueIXMI++AT3sNy0U3lg/2oo=;
+ b=NqUz4sxc8rwpbPK8UH1HWvCZhqv7BW21Oi3OjIOZThFbf3lxof93WoS/rAosX65PNjIZ+wRVXUtj7lQvIgpIKXI+nMOLy2In157mHhXKN87ytXIeyUkqSuF1z9TcrtsN2dUKnDQ45VLg3kmlsn7TpQk8SNIC7RVWKkvgt1usUNw/7LamLi6EEvG7NIxUlX9ybYShW2lKEEcXT9sg+7vgkza6sUqnNGRqe2VhSUDK68aRWx3+zgJr93ZkZzPlQBQgfbyOPdCHgr9np/NXKugKUw30i8U03wQK5h8+1UF2SB8vMVfo+dSzU5OZPjoWmKWakpKRyRGmwyMcVcVI4EIx9w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by SJ0PR12MB6709.namprd12.prod.outlook.com (2603:10b6:a03:44a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.26; Thu, 22 Aug
+ 2024 12:36:50 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7875.023; Thu, 22 Aug 2024
+ 12:36:50 +0000
+Date: Thu, 22 Aug 2024 09:36:49 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Zhu Yanjun <yanjun.zhu@linux.dev>
+Cc: zhenwei pi <pizhenwei@bytedance.com>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zyjzyj2000@gmail.com,
+	leonro@nvidia.com
+Subject: Re: [PATCH 1/3] RDMA/rxe: Use sizeof instead of hard code number
+Message-ID: <20240822123649.GP3773488@nvidia.com>
+References: <20240822065223.1117056-1-pizhenwei@bytedance.com>
+ <20240822065223.1117056-2-pizhenwei@bytedance.com>
+ <d933e865-2b6b-41c1-a0f2-46f8fef3cc17@linux.dev>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d933e865-2b6b-41c1-a0f2-46f8fef3cc17@linux.dev>
+X-ClientProxiedBy: BL1P223CA0013.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c4::18) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 1/3] entry: Add some arch funcs to support arm64 to use
- generic entry
-Content-Language: en-US
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
-	<kees@kernel.org>, <wad@chromium.org>, <rostedt@goodmis.org>,
-	<arnd@arndb.de>, <ardb@kernel.org>, <broonie@kernel.org>,
-	<mark.rutland@arm.com>, <rick.p.edgecombe@intel.com>, <leobras@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240629085601.470241-1-ruanjinjie@huawei.com>
- <20240629085601.470241-2-ruanjinjie@huawei.com>
- <1ce09739-14a4-42a2-b5c9-66fdc72ae999@arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <1ce09739-14a4-42a2-b5c9-66fdc72ae999@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|SJ0PR12MB6709:EE_
+X-MS-Office365-Filtering-Correlation-Id: 675f9e53-5990-4112-d92b-08dcc2a7180e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?blMwLzhKWGJza2RwL1RGVG9hM3dtengvc0hZYlJNTG5TY0N2ZWtwdFZuRTRj?=
+ =?utf-8?B?WUJkclFMMFpnaFJIVlRFRm9BVFJTblRZTnlkRlhQMGxIRC9sSzdLa2cvTTR2?=
+ =?utf-8?B?cnQ2bUkyWEE1SmlibTRIbkt5UWFGWWtDWE5LYktRZjlkdWlyaEVYY05KRloy?=
+ =?utf-8?B?Q2VIWW9HT3VNY3EyL0FnMGprWWhYNXBiTC81amdMSUdMNFMxblNGdm5RZkRi?=
+ =?utf-8?B?RlVNc0M2SHZMNnNnbjNHMFhKdG9EVVJjL09HdGRzaGd4T2lTckw0MXVYUENy?=
+ =?utf-8?B?ZDUxSnY5OUJDNmM5bGNJaW9OZExMNUhONjdZeHp6ZE9iWHVnL1dISzVLbTY3?=
+ =?utf-8?B?U0NhYUViNHlHcXJZNGp3WnlBeTV1K29iNlRoRDhPS2FVOHpYUFlvR2g1N2xu?=
+ =?utf-8?B?R2hTb0RjVGRuaFd4UzdxTE8wUjMvcGJQTEU0QUJtd2hoamZkMEU4ZDVsSk9j?=
+ =?utf-8?B?bWs5NmlyNll3aSt5Z1JTTlppbFhoM3pFRVJTMWQ5T2ptQkFhdG5YRjhkUjVD?=
+ =?utf-8?B?V2xuL3ZEaXFrN2xPUXkyblJBUVFkUG03QUxFWjRjaWJtdUl2MmI3OVdIK1VC?=
+ =?utf-8?B?OE5ublZ5V1EyVTlPVmxRZnpEditnWHprQm1hN0plZmlwTTNWNHlvTG5wZlBp?=
+ =?utf-8?B?MWFvREJFajNvWnY1bzVBck9nRGgrODlEY1QwL1ZCd1o0RldEc1BBZ2FEVThl?=
+ =?utf-8?B?a3Rlbi9Zam1SRUdmNTM5dkljcm5IM2dxbWliSnJRWVFWMGQxanFzaHBIeWY5?=
+ =?utf-8?B?cldGT0FJaGhRUDlxMVFmU1BjZVVhNVk4Z0JHZDQwVkhHSU9xS3hSZmpJNU1Y?=
+ =?utf-8?B?VXRqMG4yNStKV2gwNkdNWExEVU1UaXl3eGxyQVN6OUI2dlRhYXlDTlhnTGV2?=
+ =?utf-8?B?anBZaWZBSFA1SEFEbm80clUyWE9zMWprblhGalJ5b2lySW9VMDBzbUlHMGoy?=
+ =?utf-8?B?OVFqbmVjNVh0QnhXSkJpMmhMMDNxaktoeHBBSTdzS2NmNmUrVnJEMXVkNnkz?=
+ =?utf-8?B?MCtPUjd1NGErVWs2Ylp3SGZaMHpVcnpNU24vMlBEbFZ4dWpFNnpaV0o0Vyta?=
+ =?utf-8?B?SHVBeXBiVUpHMUsyc1BVT3lpV0F4Wm5CZEU5UFhzYWhQMEhHMTJBaXpUVEp2?=
+ =?utf-8?B?OW4vemdCNkdvTXhoVHIwM0VlbC9wUXlsWk9jM003Z3diaVZqeWRiMUVWa1BZ?=
+ =?utf-8?B?VW5FSTlRVE5GREUzUTYzS05ucXREcjExOE5yaEhwNldiOUo3Vlo0YXVxOERy?=
+ =?utf-8?B?cHFFWm1OMExzQlVXT1psa2o2WlIvRnU3RDRUQmpmRFVLdWxxTiswZ3EvQlB5?=
+ =?utf-8?B?Q1lPTUc1blBtLzlHeHI1RDNhQTUxV0pNbGd3NlRVOHpXSEdlT0RKR1NLSkFY?=
+ =?utf-8?B?U1R1MGs4dGZoTkRwdU9vUEt4WU9kVTRnYjgwREE0SXlEUTVJOSt0OGhyeExk?=
+ =?utf-8?B?MUJNcG83cy8rekJuVWErcjY0VnlCUDV2eGI0cDlFNmgxcEJGZEU4TjlyRmls?=
+ =?utf-8?B?cE1EWmdlRzF1VnBUc0xPZC94NFpwWU10TWdxQmFrZEZWam9nUmtVaE83UExk?=
+ =?utf-8?B?a1A3V3VVZFlJR291cTZWb2FsRW1ZWXhsQ1J2UFdnQWFGQ3p4bmJVcTZkd2dV?=
+ =?utf-8?B?N1J6WEZoQ0xYRVlueWswQ1ZFc01WWDU3MFVkYURTeGo1S0ZlVVREV1lTUUc3?=
+ =?utf-8?B?UU9vYWJqNHZPZFdNcTllS3dYcnVHT1g1SWNFc214VTVJek1OendtM1ZiM1ly?=
+ =?utf-8?B?eEhnT0htbDFYa1dGekw0cHFZWU5KbU5uMkJ5M0pPVjc4Sk9kNE5VWHd2NnBD?=
+ =?utf-8?B?U2M1TkxCM0Q4dTFrby9nQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dVA3SkFqdHBOeHRTRHBJaFZmUGsvVzZ6MDVnNFN0OTBlVzRjSCtGZWpPM01i?=
+ =?utf-8?B?eng2UGhkL21MM2E1Ti9OcHFRUEdZSk4xWENyZjdEaG9wM0d1SjRaSXR5aFF0?=
+ =?utf-8?B?eWhvcXREZCtTamdSSzI1N1RFNGYvcFk3MjVRRTN0cjlqZkNHS2pWRFJHL01i?=
+ =?utf-8?B?TCtCSEEvY2F6cVJxdUFNdEdGRmhhWkFaMnlySzZ5eUxPelBuZU5CVmdaMHRE?=
+ =?utf-8?B?R2RkZjNITXkvUUpTN0xSeU5GTWJxOEhxVlJ4QXE3RnM0SlQvRGltYS8yZDhm?=
+ =?utf-8?B?eU4yT0xBcjh0Z0ZuMnlLV3p2d3ZQS1pIMFZIK3JLSnBsT1M2NU16ZXJ2Q21S?=
+ =?utf-8?B?OFVUNUFwYVFvandab0I4VFFUaktJRllXYXNMZmQvWktET3RpTE9jZjlwRlMv?=
+ =?utf-8?B?VDdxMnFCNzRPTEhTVFZKRDcva0RPK2tURUFZeEV6bXRiVFFmNUl5THZxaDNX?=
+ =?utf-8?B?WS80bDdRaHkvZ3NBRHpLNmhRUWlLckFsRk1NWHdLaXlmSEtuTzJ0bVBWZG9N?=
+ =?utf-8?B?N2NoL0wwdWdoajdBb1lESzIrNVhKWkJ3dGZjbDVuNzFwVE9uR3NZc1dIZ1Y2?=
+ =?utf-8?B?K1o5YzQyNjA5ZkFVNTVDZWVqcllZTVp1UFAraVAvSmpDTkdHZlE3KzhGTGx3?=
+ =?utf-8?B?cEQ3aXhsQVRGVTM2aUdEcmZCYXB0R3dhNGRpVVRzdGlzOWJWUmlwMnQ4ZTVw?=
+ =?utf-8?B?Z2cza2NlZnpIcHZIL2cvcUlSTXV4TzdVMGJ5NTk1RGtiWWh5ZkNuZktBNi8v?=
+ =?utf-8?B?QWJFaVhaUklVRVcvTUlUUGY3empnZzRpME5jWk4wc1N6S2w4OXB1UjIrejRD?=
+ =?utf-8?B?RTA0WTBZOWtUN0lNMFBDVEpGb3FweFBHeVJERnczY1VtQU9OcDk3OVMvNy8v?=
+ =?utf-8?B?TGJVelFOaW9Fai9meGt4MjdaR0w2T3JqTjR2VEpXa3VtM0ZQQVJzdGhKR3RM?=
+ =?utf-8?B?WXJ6dmo3RG1JckpTallBMDR3MW1XajMzMFhRSzJrNVV4c3F0K2JDekNvQmVo?=
+ =?utf-8?B?ejFmaXh6WVo3WFNHS29TbWV0ZU8wbUUrTCs1bDFhRDhrTXAybDFYaXlOZFJl?=
+ =?utf-8?B?WGJQNnJ3NGp0SS9zSHpvcElRWVFzTk9rcVZQM04zWEFjeGk2K1BGb3djUUlH?=
+ =?utf-8?B?bnNCMXJWQWRPM092Y3dQNUg5ZkMyOW15NGpMeGJ4dVp4ZlVjWFU3N2E5ODR6?=
+ =?utf-8?B?cHZOZCtVN1NoTTd5NkV4MTR0SlQyaGxMbTRQZFcybFNnT3hiVEZsMTJTMGNp?=
+ =?utf-8?B?emZuRHNKVGxPNmJvOWdDSVZQTG1QdlRVbXpMSW1TOFNkcnJiaE1HS0U4djJH?=
+ =?utf-8?B?eGN2VlgwQ3NEaWg1bkVYdjZHa3NJRmlxNnMyRVBMemRvRC9JdnJpSUtxRXpv?=
+ =?utf-8?B?NldtRVZqQ1BnSFUraTAxVE1zeDVmYXJKYnQ5NE9IOFE0aGlhUU1qYkhSOEhF?=
+ =?utf-8?B?NFJiTXVoK0I1THZJaTVhV0Y4RHRidjZZaU1NOHJmV0Q4NFFuTUpvUWpON3dq?=
+ =?utf-8?B?K00xa0l0V05iQkVsVG4xbFpjVmVkNlNCVnkyMWNIRnIxMExDNEJaTEZpMmZv?=
+ =?utf-8?B?L0tJSlNSclRSMFM5QUVLZlAwSkFUWjNsV2pJZTI2WFdHYk55WVhsYkE4N3FH?=
+ =?utf-8?B?T3RBdlpzbXM4SHhoeGp2T3k1NW5Lb2lkellyOUxlK3JDQVFwaW5zM01WVy9y?=
+ =?utf-8?B?ekM2OW0yOUVuL0xKdTRyY0tDeGdNUjRsdDNvUXk5VVlRNjArNDRJREJMdm9o?=
+ =?utf-8?B?Mmx6ZTdXMWJYbW9ld3pIQ01TYjE2WkRqUUNuVUZvSWpwNDVZZXpYVXBGYzdR?=
+ =?utf-8?B?elp5bXR5amVxTmVWZlZBS2xkRWIwSW44SGg0by80UEJJMW9BZllLTVd2d3Vt?=
+ =?utf-8?B?Zkw0UFdIbkdMeEkzamNoMmlZQ1F3ZUFPa2twYXY2ZW1CMVY4djFCSGRWQkQr?=
+ =?utf-8?B?NzJZL0ozbERreDFEMkpxUnVsK0ovMmYzR3IwNEhoR3FVWXpKZ3drOGx4VDRQ?=
+ =?utf-8?B?VnU3bWhmK0x4azVtVVM5V01FZ1IrRWdWSEFVS3hLa0JOVEdzYnpCRVA4YXdu?=
+ =?utf-8?B?ZzAvYXlPdm9BWFl4Y0MrbC9DZ1FZY3ZVQy9QNG1DcnlYTG9wWHl6dTlVYW1o?=
+ =?utf-8?Q?e+txSeolvS0iVu5BFBvlOBNMU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 675f9e53-5990-4112-d92b-08dcc2a7180e
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 12:36:50.5738
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IS//gPkEZLUe3Kmiqsg85mOgQ8Wjky3Zk5uZhdvjJ0BGjrDaCEooxytzJFWFOJEV
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6709
 
-
-
-On 2024/8/20 19:41, Kevin Brodsky wrote:
-> On 29/06/2024 10:55, Jinjie Ruan wrote:
->> Add some arch functions to support arm64 to use generic entry, which do not
->> affect existing architectures that use generic entry:
->>
->>  - arch_prepare/post_report_syscall_entry/exit().
->>
->>  - arch_enter_from_kernel_mode(), arch_exit_to_kernel_mode_prepare().
->>
->>  - arch_irqentry_exit_need_resched() to support architecture-related
->>    need_resched() check logic.
->>
->> Also make syscall_exit_work() not static and move report_single_step() to
->> thread_info.h, which can be used by arm64 later.
->>
->> x86 and Riscv compilation test ok after this patch.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
->> ---
->> v3:
->> - Make the arch funcs not use __weak as Thomas suggested.
->> - Make arch_forget_syscall() folded in arch_post_report_syscall_entry().
->> - __always_inline -> inline.
->> - Move report_single_step() to thread_info.h for arm64
->> - Add Suggested-by.
->> - Update the commit message.
->>
->> v2:
->> - Fix a bug that not call arch_post_report_syscall_entry() in
->>   syscall_trace_enter() if ptrace_report_syscall_entry() return not zero.
->> - Update the commit message.
->> ---
->>  include/linux/entry-common.h | 90 ++++++++++++++++++++++++++++++++++++
->>  include/linux/thread_info.h  | 13 ++++++
->>  kernel/entry/common.c        | 37 +++++++--------
->>  3 files changed, 122 insertions(+), 18 deletions(-)
->>
->> diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
->> index b0fb775a600d..2aea23ca9d66 100644
->> --- a/include/linux/entry-common.h
->> +++ b/include/linux/entry-common.h
->> @@ -290,6 +290,94 @@ static __always_inline void arch_exit_to_user_mode(void);
->>  static __always_inline void arch_exit_to_user_mode(void) { }
->>  #endif
->>  
->> +/**
->> + * arch_enter_from_kernel_mode - Architecture specific check work.
+On Thu, Aug 22, 2024 at 07:59:32PM +0800, Zhu Yanjun wrote:
+> 在 2024/8/22 14:52, zhenwei pi 写道:
+> > Use 'sizeof(union rdma_network_hdr)' instead of hard code GRH length
+> > for GSI and UD.
+> > 
+> > Signed-off-by: zhenwei pi <pizhenwei@bytedance.com>
+> > ---
+> >   drivers/infiniband/sw/rxe/rxe_resp.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+> > index 6596a85723c9..bf8f4bc8c5c8 100644
+> > --- a/drivers/infiniband/sw/rxe/rxe_resp.c
+> > +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+> > @@ -351,7 +351,7 @@ static enum resp_states rxe_resp_check_length(struct rxe_qp *qp,
+> >   		for (i = 0; i < qp->resp.wqe->dma.num_sge; i++)
+> >   			recv_buffer_len += qp->resp.wqe->dma.sge[i].length;
+> > -		if (payload + 40 > recv_buffer_len) {
+> > +		if (payload + sizeof(union rdma_network_hdr) > recv_buffer_len) {
 > 
-> Maybe those comments could be expanded to be closer to the existing
-> ones, like arch_enter_from_user_mode()? It would help if they were more
-> specific as to where they are called (especially the *report_syscall*
-> ones) and how they are expected to be used.
+> The definition of union rdma_network_hdr is as below
+> 
+>  797 union rdma_network_hdr {
+>  798         struct ib_grh ibgrh;
+>  799         struct {
+>  800                 /* The IB spec states that if it's IPv4, the header
+>  801                  * is located in the last 20 bytes of the header.
+>  802                  */
+>  803                 u8              reserved[20];
+>  804                 struct iphdr    roce4grh;
+>  805         };
+>  806 };
+> 
+> The length is 40 byte.
 
-You are right! It needed to be expanded.
+This looks like the right struct to me if this is talking about the
+special 40 byte blob that is placed in front of UD verbs completions.
 
-> 
->> + */
->> +static inline void arch_enter_from_kernel_mode(struct pt_regs *regs);
->> +
->> +#ifndef arch_enter_from_kernel_mode
->> +static inline void arch_enter_from_kernel_mode(struct pt_regs *regs) { }
->> +#endif
->> +
->> +/**
->> + * arch_exit_to_kernel_mode_prepare - Architecture specific final work before
->> + *				      exit to kernel mode.
->> + */
->> +static inline void arch_exit_to_kernel_mode_prepare(struct pt_regs *regs);
-> 
-> Any reason to suffix this function with "prepare"? Just
-> arch_exit_to_kernel_mode() seems appropriate (symmetric with
-> arch_enter_from_kernel_mode()).
-
-prepare means it is the first function before all other exit_to_kernel
-operation in irqentry_exit(), but as the order problem, it can be
-adjusted to the last to aligh with the older arm64 version.
-
-> 
->> +
->> +#ifndef arch_exit_to_kernel_mode_prepare
->> +static inline void arch_exit_to_kernel_mode_prepare(struct pt_regs *regs) { }
->> +#endif
->> +
->> +/**
->> + * arch_prepare_report_syscall_entry - Architecture specific work before
->> + *			               report_syscall_entry().
->> + */
->> +static inline unsigned long arch_prepare_report_syscall_entry(struct pt_regs *regs);
-> 
-> The most common naming patterns for such arch helper pairs seems to be
-> pre/post, so maybe arch_pre_report_syscall_entry()?
-
-Right!
-
-> 
->> +
->> +#ifndef arch_prepare_report_syscall_entry
->> +static inline unsigned long arch_prepare_report_syscall_entry(struct pt_regs *regs)
->> +{
->> +	return 0;
->> +}
->> +#endif
->> +
->> +/**
->> + * arch_post_report_syscall_entry - Architecture specific work after
->> + *			            report_syscall_entry().
->> + */
->> +static inline void arch_post_report_syscall_entry(struct pt_regs *regs,
->> +						  unsigned long saved_reg,
->> +						  long ret);
->> +
->> +#ifndef arch_post_report_syscall_entry
->> +static inline void arch_post_report_syscall_entry(struct pt_regs *regs,
->> +						  unsigned long saved_reg,
->> +						  long ret)
->> +{
->> +}
->> +#endif
->> +
->> +/**
->> + * arch_prepare_report_syscall_exit - Architecture specific work before
->> + *			              report_syscall_exit().
->> + */
->> +static inline unsigned long arch_prepare_report_syscall_exit(struct pt_regs *regs,
->> +							     unsigned long work);
->> +
->> +#ifndef arch_prepare_report_syscall_exit
->> +static inline unsigned long arch_prepare_report_syscall_exit(struct pt_regs *regs,
->> +							     unsigned long work)
->> +{
->> +	return 0;
->> +}
->> +#endif
->> +
->> +/**
->> + * arch_post_report_syscall_exit - Architecture specific work after
->> + *			           report_syscall_exit().
->> + */
->> +static inline void arch_post_report_syscall_exit(struct pt_regs *regs,
->> +						 unsigned long saved_reg,
->> +						 unsigned long work);
->> +
->> +#ifndef arch_post_report_syscall_exit
->> +static inline void arch_post_report_syscall_exit(struct pt_regs *regs,
->> +						 unsigned long saved_reg,
->> +						 unsigned long work)
->> +{
->> +}
->> +#endif
->> +
->> +/**
->> + * arch_irqentry_exit_need_resched - Architecture specific need resched function
->> + */
->> +static inline bool arch_irqentry_exit_need_resched(void);
->> +
->> +#ifndef arch_irqentry_exit_need_resched
->> +static inline bool arch_irqentry_exit_need_resched(void) { return true; }
->> +#endif
-> 
-> Nit: the existing arch_* hooks seem to be declared close to the function
-> they are called from (e.g. arch_enter_from_user_mode() just before
-> enter_from_user_mode()), maybe we could do the same with those new
-> hooks, where possible.
-
-Yes, do the same with those new hooks will be nice.
-
-> 
->> +
->>  /**
->>   * arch_do_signal_or_restart -  Architecture specific signal delivery function
->>   * @regs:	Pointer to currents pt_regs
->> @@ -552,4 +640,6 @@ irqentry_state_t noinstr irqentry_nmi_enter(struct pt_regs *regs);
->>   */
->>  void noinstr irqentry_nmi_exit(struct pt_regs *regs, irqentry_state_t irq_state);
->>  
->> +void syscall_exit_work(struct pt_regs *regs, unsigned long work);
->> +
->>  #endif
->> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
->> index 9ea0b28068f4..062de9666ef3 100644
->> --- a/include/linux/thread_info.h
->> +++ b/include/linux/thread_info.h
->> @@ -55,6 +55,19 @@ enum syscall_work_bit {
->>  #define SYSCALL_WORK_SYSCALL_AUDIT	BIT(SYSCALL_WORK_BIT_SYSCALL_AUDIT)
->>  #define SYSCALL_WORK_SYSCALL_USER_DISPATCH BIT(SYSCALL_WORK_BIT_SYSCALL_USER_DISPATCH)
->>  #define SYSCALL_WORK_SYSCALL_EXIT_TRAP	BIT(SYSCALL_WORK_BIT_SYSCALL_EXIT_TRAP)
->> +
->> +/*
->> + * If SYSCALL_EMU is set, then the only reason to report is when
->> + * SINGLESTEP is set (i.e. PTRACE_SYSEMU_SINGLESTEP).  This syscall
->> + * instruction has been already reported in syscall_enter_from_user_mode().
->> + */
->> +static inline bool report_single_step(unsigned long work)
->> +{
->> +	if (work & SYSCALL_WORK_SYSCALL_EMU)
->> +		return false;
->> +
->> +	return work & SYSCALL_WORK_SYSCALL_EXIT_TRAP;
->> +}
->>  #endif
->>  
->>  #include <asm/thread_info.h>
->> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
->> index 90843cc38588..cd76391ffcb9 100644
->> --- a/kernel/entry/common.c
->> +++ b/kernel/entry/common.c
->> @@ -28,6 +28,7 @@ static inline void syscall_enter_audit(struct pt_regs *regs, long syscall)
->>  long syscall_trace_enter(struct pt_regs *regs, long syscall,
->>  				unsigned long work)
->>  {
->> +	unsigned long saved_reg;
-> 
-> Nit: could be declared inside the if block.
-
-Right!
-
-> 
-> Kevin
-> 
->>  	long ret = 0;
->>  
->>  	/*
->> @@ -42,8 +43,10 @@ long syscall_trace_enter(struct pt_regs *regs, long syscall,
->>  
->>  	/* Handle ptrace */
->>  	if (work & (SYSCALL_WORK_SYSCALL_TRACE | SYSCALL_WORK_SYSCALL_EMU)) {
->> +		saved_reg = arch_prepare_report_syscall_entry(regs);
->>  		ret = ptrace_report_syscall_entry(regs);
->> -		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU))
->> +		arch_post_report_syscall_entry(regs, saved_reg, ret);
->> +		if (ret || work & SYSCALL_WORK_SYSCALL_EMU)
->>  			return -1L;
->>  	}
->>  
->> [...]
-> 
+Jason
 
