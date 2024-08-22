@@ -1,138 +1,110 @@
-Return-Path: <linux-kernel+bounces-297975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6928495BFE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:46:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD4795BFE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E03285BA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:46:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFC7EB25350
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A7B1D364D;
-	Thu, 22 Aug 2024 20:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B6716F907;
+	Thu, 22 Aug 2024 20:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnoZFWQN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWUKh0j4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F60A1D1728;
-	Thu, 22 Aug 2024 20:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB78D13AA2E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724359449; cv=none; b=H0cIgCiSleHjfl9FYBaXDrnu+6HXjZu8Pdq9bYxBJWSuz51P2CKiwitlY9+GXLJyGWUB6wZvMVzCfWaCyj0P+YnESxY6EzxFMXEfvKGnPu+pA+xqIO6r8BNhO9Oi3fskULrKiFVBdzhAo8IY1+N43pR6hQpHCJEfCjwsxRhhq3s=
+	t=1724359538; cv=none; b=jdw7I7faTiCDW13dRop26MflC5hoa0bjZlv3CkJKAzhArnSmzVNozafZ+pN3k9AAtzew+B9yXfq/TVSCKdkwWcPsj8Wwi6alN2A4wx6Xj/KX2SDFNG7S7t8Vi3tQUYEbfHJH36ssSZcH5HpTVtR0kuEj75HyPz3tQL5LQt3ugdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724359449; c=relaxed/simple;
-	bh=CWY8to166mK7WMYgXiUyeMviy3nbwLD4WUFLbxKhleM=;
+	s=arc-20240116; t=1724359538; c=relaxed/simple;
+	bh=XWJGcW0yVcEmLEupBHIYRHIv6dBL2UB76q3jGJxsu4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUwIiuldaxFiXPPOqazcW7Myzn9gpCjULqgI3Sq70FcVhoLsZ8FA3buA1Ml+MOD1f/D8wvoCPf1ZmF7bLBJ4XlR6r9RiXi/TElPkPyAWdUMU+2WT2RFVUgh4O+B89hD5beYwAb2+SXQBZ/simMOFI75WkauLcQlzCq58XoJBj78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnoZFWQN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDB7FC32782;
-	Thu, 22 Aug 2024 20:44:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OhcIZzGGEDnlSpWcgxIKll1gWI0fUTQbx8GK8eFlUot+deNABP5tWq71W940Y6KKNRgDYfFKerJqj19nwqouABnCwKqThXnl1g4LR2AlhWjhPvTW7WOjFqdM16kHceemd8QHrxsRbv3tiXzaSwjJ1wgdEpTfRFC1UzbYf3JemQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWUKh0j4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10DFC32782;
+	Thu, 22 Aug 2024 20:45:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724359448;
-	bh=CWY8to166mK7WMYgXiUyeMviy3nbwLD4WUFLbxKhleM=;
+	s=k20201202; t=1724359538;
+	bh=XWJGcW0yVcEmLEupBHIYRHIv6dBL2UB76q3jGJxsu4E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZnoZFWQN/17hHKS9tlzz6Tkey7xKbs5izv63sI6fXZGcznsH7PVVREZZ5Ca2kb+vD
-	 GF8L6UuaaUyFbeLAvQwrJa85KtmzjJ0nRQ+eMiZV832rEXz09x3mDComtYgI21oTih
-	 puSP1283+263x97O1wmFiMPuToAp+68AQd9Yid5CzVPmYaWLcVNVHuAK/IyMZno153
-	 5aUeQNEkS13q/TmVhN0zcvJ/3UvkHQmpaD6nzBZPsRwSr4cQP/qj5PsUB+XVNmOflR
-	 zfB4ovrloEIujf2mU10CECp3KnJfIPZVa4FLJGSlL1UTfoXhU2R3mh/TdWqI25/p1p
-	 1TjAVMz6fDcdw==
-Date: Thu, 22 Aug 2024 13:44:07 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
-	hch@lst.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, hare@suse.de,
-	martin.petersen@oracle.com, catherine.hoang@oracle.com,
-	kbusch@kernel.org
-Subject: Re: [PATCH v5 7/7] xfs: Support setting FMODE_CAN_ATOMIC_WRITE
-Message-ID: <20240822204407.GU865349@frogsfrogsfrogs>
-References: <20240817094800.776408-1-john.g.garry@oracle.com>
- <20240817094800.776408-8-john.g.garry@oracle.com>
- <20240821171142.GM865349@frogsfrogsfrogs>
- <7c5fdd14-5c59-4292-b4b5-b0d49ba1bce6@oracle.com>
+	b=HWUKh0j4Cnsa8UbbM0rYlW6UaYrDnlnMMy5ONE/G/1I8lZs6rqAJKAY7tGZGco2sn
+	 Zsfn+vxVAbYQky8PrH5ItBXkW84tn9atEv7OIT7jB6RziMjk+J1rS1+ZfsEhkZbq5K
+	 hhwdZVTah3kZnzUH9t6/QbR3C5HI184vmhXU9DPhLEaL2U+ofNy4PTX8n/5v3cT/mw
+	 10bPorKmYobSnJbbikHHdHrvr1xozjGqkFBvNFIraF9YaMvJJKupLu39L8SbB4p5aw
+	 Noy89LDpzhw6Cm2H/8heFfa6c+OPEwDtL0k0LOefHp+O40gxTKDiUIx2JuZYUP6s6u
+	 qy24raiK6Ak8Q==
+Date: Thu, 22 Aug 2024 21:45:35 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	maple-tree@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] maple_tree: Allow external locks to be configured
+ with their map
+Message-ID: <ZsebVzVVzcA4QBhG@finisterre.sirena.org.uk>
+References: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
+ <20240822-b4-regmap-maple-nolock-v1-1-d5e6dbae3396@kernel.org>
+ <ZsePxD2FtYcBIaD5@casper.infradead.org>
+ <ZseWKBCkxTrJfEot@finisterre.sirena.org.uk>
+ <ZseXqP6q7qyFeiCO@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eY41iKqCdtWMhFlH"
+Content-Disposition: inline
+In-Reply-To: <ZseXqP6q7qyFeiCO@casper.infradead.org>
+X-Cookie: Your love life will be... interesting.
+
+
+--eY41iKqCdtWMhFlH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c5fdd14-5c59-4292-b4b5-b0d49ba1bce6@oracle.com>
 
-On Thu, Aug 22, 2024 at 07:04:02PM +0100, John Garry wrote:
-> On 21/08/2024 18:11, Darrick J. Wong wrote:
-> > On Sat, Aug 17, 2024 at 09:48:00AM +0000, John Garry wrote:
-> > > For when an inode is enabled for atomic writes, set FMODE_CAN_ATOMIC_WRITE
-> > > flag. Only direct IO is currently supported, so check for that also.
-> > > 
-> > > We rely on the block layer to reject atomic writes which exceed the bdev
-> > > request_queue limits, so don't bother checking any such thing here.
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   fs/xfs/xfs_file.c | 14 ++++++++++++++
-> > >   1 file changed, 14 insertions(+)
-> > > 
-> > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > > index 9b6530a4eb4a..3489d478809e 100644
-> > > --- a/fs/xfs/xfs_file.c
-> > > +++ b/fs/xfs/xfs_file.c
-> > > @@ -1149,6 +1149,18 @@ xfs_file_remap_range(
-> > >   	return remapped > 0 ? remapped : ret;
-> > >   }
-> > > +static bool xfs_file_open_can_atomicwrite(
-> > > +	struct inode		*inode,
-> > > +	struct file		*file)
-> > > +{
-> > > +	struct xfs_inode	*ip = XFS_I(inode);
-> > > +
-> > > +	if (!(file->f_flags & O_DIRECT))
-> > > +		return false;
-> > > +
-> > > +	return xfs_inode_has_atomicwrites(ip);
-> > 
-> > ...and here too.  I do like the shift to having an incore flag that
-> > controls whether you get untorn write support or not.
-> 
-> Do you mean that add a new member to xfs_inode to record this? If yes, it
-> sounds ok, but we need to maintain consistency (of that member) whenever
-> anything which can affect it changes, which is always a bit painful.
+On Thu, Aug 22, 2024 at 08:55:20PM +0100, Matthew Wilcox wrote:
+> On Thu, Aug 22, 2024 at 08:48:56PM +0100, Mark Brown wrote:
 
-I actually meant something more like:
+> > I mean, we do use the internal lock here since otherwise lockdep moans
+> > but it's pure overhead which just complicates the code.  It's only ever
 
-static bool
-xfs_file_open_can_atomicwrite(
-	struct file		*file,
-	struct inode		*inode)
-{
-	struct xfs_inode	*ip = XFS_I(inode);
-	struct xfs_mount	*mp = ip->i_mount;
-	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> When it's an uncontended spinlock, there's really no overhead.  I wish I'd
+> been firmer on that point earlier and prohibited the external lock hack.
 
-	if (!(file->f_flags & O_DIRECT))
-		return false;
-	if (!xfs_inode_has_atomicwrites(ip))
-		return false;
-	if (mp->m_dalign && (mp->m_dalign % ip->i_extsize))
-		return false;
-	if (mp->m_swidth && (mp->m_swidth % ip->i_extsize))
-		return false;
-	if (mp->m_sb.sb_blocksize < target->bt_bdev_awu_min)
-		return false;
-	if (xfs_inode_alloc_unitsize(ip) > target->bt_bdev_awu_max)
-		return false;
-	return true;
-}
+> The point is that the lock protects the tree.  If we are ever going to
+> be able to defragment slabs (and I believe this is an ability that Linux
+> must gain), we must be able to go from the object (the maple node) to
+> a lock that will let us reallocate the node.  If there's some external
+> lock that protects the tree, we can't possibly do that.
 
---D
+If the external lock guarantees that nothing can possibly be contending
+access to the tree (including the read side) I don't see any issue
+there?
 
-> John
-> 
+--eY41iKqCdtWMhFlH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHo2UACgkQJNaLcl1U
+h9BYKQf/fju1QFL7eew4kcIkh7VOofjEAnrdmk+guHPAJJekLZH5oIqXpak7g+u+
+9evsL/NIqhR6tZQ7iJSUBnJf2hyriOAmHDzyD0X+ficeQhHGB7d+8ASkq53bUmWz
+PhVVxFYFJ5bk2DG9kpcHvOdh1wxEk8VHGv8EalkVapEbQuuYwH/ZnJ/x0GyuJ0EO
+SoE7mcgjkrxDl6QpJDTOAIu5UWgjfa/R77LgcT7jCaOXmsn8LR6Kx8VTC/6z1TDz
+61qmV+XcvHMSJ4O4hLm5fVFQkBP6fEPl7V8rVKmT5ebV8XmNyNg1NsjhbMYpjtki
+GfONtM47Oz++f4QHafeNdUxjtV+GBg==
+=ZFM8
+-----END PGP SIGNATURE-----
+
+--eY41iKqCdtWMhFlH--
 
