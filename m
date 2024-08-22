@@ -1,110 +1,116 @@
-Return-Path: <linux-kernel+bounces-297061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680C995B27C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 481FB95B283
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD544B2339D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:59:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF651B214B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC04017D354;
-	Thu, 22 Aug 2024 09:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehP8tu0q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231B917DFF9;
+	Thu, 22 Aug 2024 10:01:32 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2438F1CF8B;
-	Thu, 22 Aug 2024 09:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD9D1CF8B;
+	Thu, 22 Aug 2024 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724320786; cv=none; b=POBf1eSH/S2minw/thPOhIDqSNLVtebcq5RAeSAO5gNImZrcx/vwY4TKrrYME9cXDbeUGLBMTuMTK6bZyTSJlAU68vDOaHyOnjYNwRKS2fKSdTjm3rJFk3LgJa9t2MhkHSGUnsb8nD2HI15HYKLSvWVq1N24xjmHf3e52cTcSqM=
+	t=1724320891; cv=none; b=MxdZb5X8+suy3BkmIa6WhyFfYgPjXS3LEifw98v1lTwaVls3TCxBomDzbjpNRBMQuVhn0S9Dm0TUoFIQABsuBoZXUI68nDRaS/kCRfO3HySBTW52r2AE2EGeUx9BgcJ6EHkkseg1rY2bV43P8l1PMOAMDzkQzzdmQH7QaYNxH0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724320786; c=relaxed/simple;
-	bh=XPMNw3U+6wApPUyGdg6a+638oZGYyHMVxSjcK8CMYGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G0GSDWfW22oLZ7cZZZ26J28OyJdH3DrcdSqtGmDYFrEg3qIykJtBlT+4c/XPtWleqBENmvZ/2bgJnzYzgt3HCvulcrluJT34HF7PhPPK9A0gMZ7S1eBJkEB6vei1jUMhvhDE+p71l2Lkq0Gg+K4rw0nGHCes6NPfKBwwg8imWnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehP8tu0q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AD0C4AF0B;
-	Thu, 22 Aug 2024 09:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724320785;
-	bh=XPMNw3U+6wApPUyGdg6a+638oZGYyHMVxSjcK8CMYGE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ehP8tu0qTx3ycdTbkfgV1nQx2RUd+XBVWKY9jCPKwBNYyTIivmkvShOJqBpuYHt1f
-	 cGVA9WRCk99GKKNGWB3DYoCzqHuASxyi5BI+2kc77cGjiTWbHZQtxN34NRR1QoE/1S
-	 XRMSBlWv+X5LSqTI+WxdeL5WfzemupYoK3WIWrhOE2EO4EgmQviTk6yjONdL5C/LEQ
-	 UbFTmVJ2FAmNJtKsr6D1LT3u/zQfhzy3LHoZlR0rgyLm7qvLhQX6F0cyBGKMSvOQoV
-	 4xjcoF6M043EIqMLpXegMiZ1RoMOKpGpWCkqrE68avD9gzYIz9PeyYfzkXT4er28Xx
-	 oX6WAI6WkrksA==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-27020fca39aso402078fac.0;
-        Thu, 22 Aug 2024 02:59:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGw96+0/r7w44OoM+aJv5Q/Wul7ZLUOAgNqNPvVkzyljBID7r8bh4HYpwx+xqYSsIbC3x/2FiSXLMLQsM=@vger.kernel.org, AJvYcCXD/h8KNqOlnC3WtpuZ4exjPibIzEufGA5wg/btd7v8ZcMu6z85wGRnibT/MPrDyXmGkxBL8lts2qo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzfIebsWd22Yu+Gl5rFChx08yDR9/zcbN7Y6rLcpcGnuhQPgtv
-	OOvATIsAeuaEA2QvQOxmS7avz9EQ2mvZaouW09A7rSOQw3xIkLVKQ225ShjaSc833+hScvSiI0j
-	pelixT/do8h5J/+SWPFs0ohrlPZI=
-X-Google-Smtp-Source: AGHT+IFwBOLZWp2Ctcuruy/52HSq8Owqpqi3w4sqr08hPHh5byfuEFeKi2n1eTxr3CVp7KiAZtrNQ/F92vf83zlSqwA=
-X-Received: by 2002:a05:6870:649f:b0:254:b420:5ab with SMTP id
- 586e51a60fabf-273cfbaaf89mr1216464fac.8.1724320785061; Thu, 22 Aug 2024
- 02:59:45 -0700 (PDT)
+	s=arc-20240116; t=1724320891; c=relaxed/simple;
+	bh=7ZEa66fyURuV1fbnNHt5mKuuWKxBlIhyOPWTYv3E1xY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPpXpRpyFm/JcxzFzwUjEiKdocw2TRf1Q4Z5oJtKuq/0mLoVUXvBSzWWjPSToRyWrQIIGKtl2yhNkw0k+0VE/sacFdMhzcwv1awDNvak+NTjpYPqXOBvOHmxGAyrK461ekdMmPReB4oNFHpIv6pNOkihLgVgRaKATU2Oz7OQH+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a868d7f92feso88481966b.2;
+        Thu, 22 Aug 2024 03:01:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724320888; x=1724925688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o23hpveZ+o8bf108WnazpxlGoC+Tu+8Galxf6dwbYs4=;
+        b=LqLPnfPBAGhKgWhjI6oMd6R/03gdvGdWeNRYf5TfpNpYc6VN7vriQt/u2DboVdA80t
+         +638h8JimDZtjnzArWyoRQhBleZvahp3LgtLvsbt48z3DGjaBiB1wBjIx5FLSkc/Q+L8
+         49zRG9k+CFZ0NKOENZl2RiPcibKU/BQMNLxIvVHwLhEi5AOJEo5vioMk6hY+fWd7Bltm
+         q9fHBcswW4z5dtJKRk1/08/8W6nac8B1iSPc3NHhHew5q9tZqnSFWYXRZzBR2jaMGisF
+         BISy/6iTZ9i12iCk1tt6wXgsPLfkpV4nGUQSRxLCO8QfRrC5J7oyAfZ6RWHF6sP/KkaI
+         rX8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUo1t9JWdi4wd89Ef30bAlPxo5MjGEOAdAK+jdV4FUT/TVuEiQni8ZUqH/ipyWakAc3OIlOLklE@vger.kernel.org, AJvYcCWQp6EBB7OFJHC7fSfPrw0CnNFOZ1kKq8eet2pWQFcTZ5s5YX71KwCmFi/bNv/bCIlSVjfBIBB5qB6t5sM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZgjc6cygr7EnT1uBMMH3lqrVzc2R2MBf3tmv6epkdZUHz4Xjb
+	ig9L+KwEdWQi4ZbxELe92mlzorYGC3WvxqX8dhP26o+MtPbb8V1q8chs4A==
+X-Google-Smtp-Source: AGHT+IEAPkOprgDKnw1tUB0SdWgKACTGrgO6BJHQBoZZlaKbu/YVCFHPRJ2eSRSUB1TOiuTawXP70g==
+X-Received: by 2002:a17:907:1c90:b0:a86:7f6e:5fe4 with SMTP id a640c23a62f3a-a8691cba654mr137436266b.67.1724320887857;
+        Thu, 22 Aug 2024 03:01:27 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4862b6sm95776566b.170.2024.08.22.03.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 03:01:27 -0700 (PDT)
+Date: Thu, 22 Aug 2024 03:01:25 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/3] netconsole: pr_err() when netpoll_setup
+ fails
+Message-ID: <ZscMdc6wmUGlusM4@gmail.com>
+References: <20240819103616.2260006-1-leitao@debian.org>
+ <20240819103616.2260006-3-leitao@debian.org>
+ <20240820162409.62a222a8@kernel.org>
+ <ZsWoUzyK5du9Ffl+@gmail.com>
+ <20240821155404.5fc89ff6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822025931.3455-1-11162571@vivo.com> <CAJZ5v0jq_2RoH8qJjKn3UUxLgNn4o4RqB=cfnT_pEFqtcMDdsw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jq_2RoH8qJjKn3UUxLgNn4o4RqB=cfnT_pEFqtcMDdsw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 22 Aug 2024 11:59:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h8std0JijjjTskTP2p1jubYQvsCmm30OVmNuj_S8QrqQ@mail.gmail.com>
-Message-ID: <CAJZ5v0h8std0JijjjTskTP2p1jubYQvsCmm30OVmNuj_S8QrqQ@mail.gmail.com>
-Subject: Re: [PATCH v1] drivers:testing:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
-To: Yang Ruibin <11162571@vivo.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821155404.5fc89ff6@kernel.org>
 
-On Thu, Aug 22, 2024 at 11:43=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
->
-> On Thu, Aug 22, 2024 at 4:59=E2=80=AFAM Yang Ruibin <11162571@vivo.com> w=
-rote:
-> >
-> > The debugfs_create_dir() function returns error pointers.
-> > It never returns NULL. So use IS_ERR() to check it.
-> >
-> > Signed-off-by: Yang Ruibin <11162571@vivo.com>
-> > ---
-> >  drivers/thermal/testing/zone.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/thermal/testing/zone.c b/drivers/thermal/testing/z=
-one.c
-> > index fcee12b152da..26f0f80a6a5d 100644
-> > --- a/drivers/thermal/testing/zone.c
-> > +++ b/drivers/thermal/testing/zone.c
-> > @@ -167,7 +167,7 @@ static void tt_add_tz_work_fn(struct work_struct *w=
-ork)
-> >
-> >         snprintf(f_name, TT_MAX_FILE_NAME_LENGTH, "tz%d", tt_zone->id);
-> >         tt_zone->d_tt_zone =3D debugfs_create_dir(f_name, d_testing);
-> > -       if (!tt_zone->d_tt_zone) {
-> > +       if (IS_ERR(tt_zone->d_tt_zone)) {
-> >                 tt_zone_free(tt_zone);
-> >                 return;
-> >         }
-> > --
->
-> Thanks for catching this, but I'll just redo the patch while it is still =
-fresh.
+Hello Jakub,
 
-BTW, which tree is this patch against?
+On Wed, Aug 21, 2024 at 03:54:04PM -0700, Jakub Kicinski wrote:
+> On Wed, 21 Aug 2024 01:41:55 -0700 Breno Leitao wrote:
 
-This issue has been addressed in my linux-next branch already AFAICS.
+> > Do you think this is useless?
+> 
+> I think it's better to push up more precise message into the fail sites.
+
+Makese sense, I will remove it, and add the failing message once we
+refactor ndo_netpoll_setup() callbacks.
+
+> > Would it be better if the hot path just get one of the skbs from the
+> > pool, and refill it in a workqueue? If the skb_poll() is empty, then
+> > alloc_skb(len, GFP_ATOMIC) !?
+> 
+> Yeah, that seems a bit odd. If you can't find anything in the history
+> that would explain this design - refactoring SG.
+
+Thanks. I will add it to my todo list.
+
+> > 2) Report statistic back from netpoll_send_udp(). netpoll_send_skb()
+> > return values are being discarded, so, it is hard to know if the packet
+> > was transmitted or got something as NET_XMIT_DROP, NETDEV_TX_BUSY,
+> > NETDEV_TX_OK.
+> > 
+> > It is unclear where this should be reported two. Maybe a configfs entry?
+> 
+> Also sounds good. We don't use configfs much in networking so IDK if
+> it's okay to use it for stats. But no other obviously better place
+> comes to mind for me.
+
+Exactly, configfs seems a bit weird, but, at the same time, I don't have
+a better idea. Let me send a patch for this one, and we can continue the
+discussion over there.
+
+Thanks
+--breno
 
