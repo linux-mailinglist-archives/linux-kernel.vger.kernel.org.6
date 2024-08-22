@@ -1,117 +1,243 @@
-Return-Path: <linux-kernel+bounces-296740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1755F95AE66
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:04:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EFB95AE6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5094282CFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303EF282F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5DA1537D7;
-	Thu, 22 Aug 2024 07:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXg0flRu"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD6A14B968;
+	Thu, 22 Aug 2024 07:06:30 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F1C13A244;
-	Thu, 22 Aug 2024 07:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9AA13A3FD;
+	Thu, 22 Aug 2024 07:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310241; cv=none; b=fUxGEIS7FQVD3CcrWqf4K94FL0sb2QrttbBoQk6yz5KqxCe5o/GjovgN8flCJOEB2nm3JsiVaidfryej4qusCSN7Df4Oq1AtYwpFJKDahpLLEq7NMq4dmsFrTEZEht61Rx3PAGSogl4i4d5jT/0Cypr+fBdyjMklodO26N4N/XM=
+	t=1724310390; cv=none; b=jtryaIEF2nA6PmYtB26plqFqN1OcNAkrzLUzRe4P4lVRh4NAk6VCejxdnJBHQB9a/MQ3+5yhzSRFCoPN33cMVu0RBA7g7KUjwXezyqU5zItsw5AWHT+n9unlJgeyIhhnaieMUisW0N/dg8S3Nu6rB5VqW/fO1oyFFuwWDOU5bXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310241; c=relaxed/simple;
-	bh=nCCjJe0NO298qZPYGd28WFSkU7iQ94z0usdgpghLI1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcKvw/Lavd52ZcfeiSTiHPCRrt4+LjoS2yB0HYPDr/Z6d2hzPr+2XSuxmOhF2/S0jEkeYcAYD6SaFcBNsgpPiF6L2SgFr3aIBgjJDKI+yHbk03eGWFgr4tt1pCwVSuUTLuW+5Df7zykQPXTc/sdcLKWhbrTbLqVFXWgkTIh20rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXg0flRu; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a868b8bb0feso69091566b.0;
-        Thu, 22 Aug 2024 00:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724310238; x=1724915038; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ykeo+6OejcW3LfPIwBroCbu3h8SlZxm1Q6n/Z4Ckav4=;
-        b=EXg0flRuCf7Ylrc4X9gRdp0STK/r5/I3rHaUz2Me5NQH9gMsfV5JHi/xZOo6FAAV8r
-         +Ns3rf0OcomfAmuGE2aqxqpnqRKD0q9W883NXWGYPGA2pTWzt3ziGLoHWoLn5TRqg2gV
-         w4N9VxJZ7xYkebnQZG6P6tghRgvTQaoP2GpfFy+iMFsi+ykm7Mg87Wsvy1Nta12VJg9N
-         U4WSl7SNF6FZ5WNqQUdUW3ibvMIxQUb49l32zPoQ62CFOKRWrUa8tbUjNKc1kACGlCnK
-         uq/SuXynchfBq+rqy8XSi/CMVsegxbq1uzyclgZag8oBFs0p3sqaXKygX6NRwYPHlLkm
-         BfPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724310238; x=1724915038;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ykeo+6OejcW3LfPIwBroCbu3h8SlZxm1Q6n/Z4Ckav4=;
-        b=ale9MrjGI7X2T4+q2Qr6TqtqnzqRbMImulQ5J0UUTpbqf8/2Iay0n7/YHsOj2gS6iP
-         n7+Mc+ZlC7q6GR9cGsdBxoLsrzsPVQUhOjG7cu5rTt/xkPNO7Fs0qglmnV4oe2GUnYKa
-         3b1V9oFLPYTD8/K2pl1DJNgTp+SH2y6rGL+xg1kYiWu1T7WuFTEB5gflp9/1rHRa7qqY
-         MWdb49E2I2HNc5YWwHap6rgBbujXkcCxiCO1GRjTqze+3Mmp4PG4srSRxvcrNp/VLOvl
-         IkS+d0C1k2YBP7mickMjAvBI4iCr++E3RIAM0ys92HQyGG+IEb6BcrUXq/7CBa7CAJaS
-         /2zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbCf/XKpFbw23wD3APkCp7sHd10TX9ioQjLRsGBDrQMeN9Wk10BrIPtZ51Zj9bKv/svTQf0z8vtKw=@vger.kernel.org, AJvYcCXw6MQ4n3sv7MMysfmc7wnRq0Xay1fgpOOaEcx+nIibQarfA0MdDtgN4fqlQjyHLhtQ3iuB7QnwlTwk3Mev@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza/nC3ehQTubwwb9etw4B3CxH4wjHRY3nkP9uUIAEipdb0YS0W
-	OfdEipmllOCafgps6KlD1hS7hpiT1Hu/y5L3wjVGUk21Lv5aggD3
-X-Google-Smtp-Source: AGHT+IGSsNf36l7LH2UrwwyDGt/7XMjWeoEqpb8pclMdRI6cqXUAmy7bZ4Hd98389PIbKXU7Hl9JnQ==
-X-Received: by 2002:a17:907:968e:b0:a6f:4fc8:266b with SMTP id a640c23a62f3a-a866f135cccmr290948966b.3.1724310237810;
-        Thu, 22 Aug 2024 00:03:57 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:daa9:644d:3c2:44bb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436ccdsm72186166b.104.2024.08.22.00.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 00:03:57 -0700 (PDT)
-Date: Thu, 22 Aug 2024 09:03:55 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, Frank.Li@nxp.com,
-	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <Zsbi2xcxBGE7o9uE@eichest-laptop>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
+	s=arc-20240116; t=1724310390; c=relaxed/simple;
+	bh=FLilspV2tZ+qW+2d8uObAeKfCmFZIti9Wu0nFfRYwgs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KckoehFEaEb4eDzx0EHzLtH/N7EhNivSIl7W6fr2Q8uk5IzhVFtepCsKgHDo2MasQCABXbwulcwVqynGswg6UQrRvN3mO6HUeuqe0mxMbWvbzWP7lk4hkqLm5HPjmBnhiGSUzPJD9olkDbyHZnrG54bgTrHAuLz0CGKJlEDOcU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.3] (ip5f5af532.dynamic.kabel-deutschland.de [95.90.245.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D9E2E61E5FE05;
+	Thu, 22 Aug 2024 09:06:12 +0200 (CEST)
+Message-ID: <8092403e-cc8a-45ce-982a-c954e7428c32@molgen.mpg.de>
+Date: Thu, 22 Aug 2024 09:06:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
+User-Agent: Mozilla Thunderbird
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: USB-C adapter like Dell DA300 using > 5 W
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mathias Nyman <mathias.nyman@intel.com>
+References: <38b871f7-8583-4b9a-940b-ee33a1b6206d@molgen.mpg.de>
+ <2024082207-foothill-swirl-0ad0@gregkh>
+Content-Language: en-US
+In-Reply-To: <2024082207-foothill-swirl-0ad0@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Andi,
+Dear Greg,
 
-On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
-> Hi Stefan,
+
+Thank you for your quick response.
+
+Am 22.08.24 um 01:31 schrieb Greg KH:
+> On Wed, Aug 21, 2024 at 11:32:04PM +0200, Paul Menzel wrote:
+
+>> On the Intel Kaby Lake laptop Dell XPS 13 9360 with Debian sid/unstable and
+>> *powertop* 2.15-3, connecting a USB-C adapter like Dell DA300 or LMP USB-C
+>> mini Dock (P/N 15954) [1] and connecting only an Ethernet cable (module
+>> r8152 is used), the adapter gets very hot, and according to PowerTOP it uses
+>> over 5 Watts – almost more as the laptop idling.
+>>
+>>      $ lsusb # Dell DA300
+>>      Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+>>      Bus 001 Device 002: ID 0cf3:e300 Qualcomm Atheros Communications QCA61x4 Bluetooth 4.0
+>>      Bus 001 Device 003: ID 04f3:2234 Elan Microelectronics Corp. Touchscreen
+>>      Bus 001 Device 004: ID 0c45:670c Microdia Integrated Webcam HD
+>>      Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+>>      Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+>>      Bus 003 Device 002: ID 2109:2820 VIA Labs, Inc. VL820 Hub
+>>      Bus 003 Device 003: ID 06c4:c412 Bizlink International Corp. DELL DA300
+>>      Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+>>      Bus 004 Device 002: ID 2109:0820 VIA Labs, Inc. VL820 Hub
+>>      Bus 004 Device 003: ID 0bda:8153 Realtek Semiconductor Corp. RTL8153 Gigabit Ethernet Adapter
+>>
+>> With `LANG= sudo powertop --auto-tune` it stays high.
+>>
+>> PowerTOP:
+>>
+>> ```
+>> The battery reports a discharge rate of 6.01 W
+>> The energy consumed was 146 J
+>> The estimated remaining time is 3 hours, 51 minutes
+>>
+>> Summary: 384.6 wakeups/second,  0.0 GPU ops/seconds, 0.0 VFS ops/sec and
+>> 8.5% CPU use
+>>
+>> Power est.              Usage       Events/s    Category       Description
+>>    5.94 W      0.0%                      Device         Display backlight
+>>    5.23 W    100.0%                      Device         USB device: USB Optical Mouse (Logitech)
+>>    4.62 W     66.1%                      Device         USB device: USB 10/100/1000 LAN (Realtek)
+>>    205 mW    100.0%                      Device         USB device: Fujitsu Keyboard (Fujitsu)
+>>   14.1 mW     13.5 ms/s       0.9        kWork intel_atomic_commit_work
+>> ```
+>>
+>> At another time:
+>>
+>> ```
+>> The battery reports a discharge rate of 10.5 W
+>> The energy consumed was 235 J
+>> The estimated remaining time is 2 hours, 20 minutes
+>>
+>> Summary: 395.8 wakeups/second,  0.0 GPU ops/seconds, 0.0 VFS ops/sec and 23.8% CPU use
+>>
+>> Power est.              Usage       Events/s    Category       Description
+>>    7.13 W    100.0%                      Device         USB device: USB 10/100/1000 LAN (Realtek)
+>>    3.92 W     15.8%                      Device         Display backlight
+>>    320 mW      0.0 us/s      0.00        Process        [PID 1349] /usr/bin/pipewire
+>>   63.6 mW     65.4 ms/s       0.5        Process        [PID 4982] /usr/lib/thunderbird/thunderbird
+>>   24.9 mW     25.6 ms/s       6.7        Process        [PID 37753] /usr/lib/firefox-nightly/firefox-bin -contentproc -isForBrowser -prefsLen 36793 -prefMapSize 265654 -jsInitLe
+>>   14.7 mW     15.1 ms/s       0.5        kWork intel_atomic_commit_work
+>> ```
+>>
+>> The heat of the USB-C adapter might suggest, that it draws that much power.
+>> What is your experience? Can you suggest something?
 > 
-> > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
-> >  		goto rpm_disable;
-> >  	}
-> >  
-> > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
-> > +
-> 
-> you might also want to add the multi-master boolean property in
-> the binding.
+> Buy a different adapter?  That seems like something is really wrong with
+> it.  Does other devices also suck that much power from that port on the
+> laptop?
 
-We discussed this internally and weren't sure when it was required
-because e.g. i2c-rcar and i2c-tegra don't have it documented in their
-bindings. Is it still required if it is part of the dt-schema?
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
+It happens with two Dell DA300 adapters and two LMP USB-C mini Dock (P/N 
+15954, 12-22 Rev. 3):
 
-If so, I will add it in the next version.
+     $ lsusb # LMP USB-C
+     Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+     Bus 001 Device 002: ID 0cf3:e300 Qualcomm Atheros Communications 
+QCA61x4 Bluetooth 4.0
+     Bus 001 Device 003: ID 04f3:2234 Elan Microelectronics Corp. 
+Touchscreen
+     Bus 001 Device 004: ID 0c45:670c Microdia Integrated Webcam HD
+     Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+     Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+     Bus 003 Device 002: ID 2109:2817 VIA Labs, Inc. USB2.0 Hub
+     Bus 003 Device 003: ID 2109:2817 VIA Labs, Inc. USB2.0 Hub
+     Bus 003 Device 005: ID 2109:8817 VIA Labs, Inc. USB Billboard Device
+     Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+     Bus 004 Device 002: ID 2109:0817 VIA Labs, Inc. USB3.0 Hub
+     Bus 004 Device 003: ID 2109:0817 VIA Labs, Inc. USB3.0 Hub
+     Bus 004 Device 004: ID 058f:8468 Alcor Micro Corp. Mass Storage Device
+     Bus 004 Device 005: ID 0bda:8153 Realtek Semiconductor Corp. 
+RTL8153 Gigabit Ethernet Adapter
 
-Thanks,
-Stefan
+Both use a Realtek RTL8153 Ethernet adapter.
+
+### LMP device
+
+With *no* auto-tuning:
+
+```
+ >> Bad           VM writeback timeout 
+
+    Bad           NMI watchdog should be turned off
+    Bad           Autosuspend for USB device USB Billboard Device 
+[VIA Labs, Inc.         ]
+    Bad           Autosuspend for USB device Mass Storage Device [Generic]
+    Bad           Autosuspend for USB device Touchscreen [ELAN]
+    Bad           Autosuspend for USB device USB 10/100/1000 LAN [Realtek]
+    Bad           Runtime PM for PCI Device SK hynix PC300 NVMe Solid 
+State Drive 512GB
+    Bad           Runtime PM for disk sda
+    Bad           Runtime PM for disk sdb
+    Bad           Runtime PM for PCI Device Intel Corporation Sunrise 
+Point-LP PCI Express Root Port #1
+    Bad           Runtime PM for PCI Device Qualcomm Atheros QCA6174 
+802.11ac Wireless Network Adapter
+    Bad           Runtime PM for PCI Device Intel Corporation DSL6340 
+Thunderbolt 3 Bridge [Alpine Ridge 2C 2015]
+    Bad           Runtime PM for PCI Device Intel Corporation Sunrise 
+Point-LP LPC Controller
+    Bad           Runtime PM for PCI Device Intel Corporation DSL6340 
+Thunderbolt 3 Bridge [Alpine Ridge 2C 2015]
+```
+
+```
+The battery reports a discharge rate of 8.89 W
+The energy consumed was 243 J
+The estimated remaining time is 0 hours, 42 minutes
+
+Summary: 572.3 wakeups/second,  0.0 GPU ops/seconds, 0.0 VFS ops/sec and 
+54.8% CPU use
+
+Power est.              Usage       Events/s    Category       Description
+   6.00 W      5.9%                      Device         Display backlight
+   2.33 W    100.0%                      Device         USB device: USB 
+Billboard Device    (VIA Labs, Inc.         )
+```
+
+After `powertop --auto-tune`:
+
+```
+The battery reports a discharge rate of 8.58 W
+The energy consumed was 213 J
+The estimated remaining time is 0 hours, 39 minutes
+
+Summary: 509.3 wakeups/second,  0.0 GPU ops/seconds, 0.0 VFS ops/sec and 
+34.3% CPU use
+
+Power est.              Usage       Events/s    Category       Description
+   8.23 W      5.9%                      Device         Display backlight
+   6.21 W     7938 pkts/s                Device         Network 
+interface: enx00e04ceabb21 (r8152)
+```
+
+But it also shows:
+
+```
+The battery reports a discharge rate of 9.54 W
+The energy consumed was 189 J
+The estimated remaining time is 0 hours, 33 minutes
+
+Summary: 509.0 wakeups/second,  0.0 GPU ops/seconds, 0.0 VFS ops/sec and 
+44.0% CPU use
+
+Power est.              Usage       Events/s    Category       Description
+   7.39 W      5.9%                      Device         Display backlight
+   776 mW    12391 pkts/s                Device         Network 
+interface: enx00e04ceabb21 (r8152)
+   210 mW    357.9 ms/s       0.4        kWork 
+intel_atomic_commit_work
+```
+
+So measuring energy consumption, and attributing it to devices, also 
+seems to be hard and sometimes unreliable.
+
+Therefore, I’d be interested, it what numbers to expect, and also, if 
+the developers have other methods and tools for measuring this.
+
+
+
+Kind regards,
+
+Paul
 
