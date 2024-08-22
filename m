@@ -1,344 +1,100 @@
-Return-Path: <linux-kernel+bounces-296852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB0295AFCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D533F95AFCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C65284335
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F1E128432E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFC716D9AE;
-	Thu, 22 Aug 2024 08:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="h1uQbI/u"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F587165F11;
+	Thu, 22 Aug 2024 08:00:45 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2163F15C159;
-	Thu, 22 Aug 2024 08:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032AE19470
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724313617; cv=none; b=rlIAHh317o5sArmfbbYTytki/Apvfd//DmiWIMRlcIIuUIQTXrUF2/uVFLn0hi+ww6+NYyZupWHJtSjOCmpz6/sewmnA88H3u52tW5crb0ieB63p/kiCjjyToTXzi5KXPG5SEs2CWy2bZqIKytfYpBvaGLKxMeb2PsJn/rayTGc=
+	t=1724313644; cv=none; b=OR8/10+B6q6USW4KFrdkZZ4F+PNVxciiWRpOZJYufzPUdT/SaMT0DxG1E5ucM9GIsoSt1ATPBCea0sC7v78664jCiTv0zasmmLfSv3EEZEw/syuMW6yIw77+M3ncK/tmc0s1jY5EeJLtHATXmgNBwf9cBt4SpNYOBMFD44GS+dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724313617; c=relaxed/simple;
-	bh=eAEFDZnwrLH+0Qw4L8KOaN6u7/AVuiHkj71XYe2SFVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nd0QlCPz+TnYu9vTX3RtBxLxGA6B8MBQtRqzRiAh7wQowgnrZqiFh+NlYujQ/is0iA9GTpfwbFQr0msU6FXgAnQK1fQgB9f1KaZMwYj2rzQR5dIS2gPRh8QwAHRNt1aD0nyansKmd+Bw5/l7YWmJVx+qEOyoLtThPkqplfU9hFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=h1uQbI/u; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from mordecai (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id A35361ED3E8;
-	Thu, 22 Aug 2024 10:00:03 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1724313603; bh=iWR3IwUUEiJos2A8Rr2WRV9E+iAYR6jBpmURdOeik20=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h1uQbI/ufLZb4zqzvJBZST+oQNK7Io+YEGZv3NFQpU1A7MkFozlAPRJg1YCwbZ8ZA
-	 PVgTGuA3bgeWZNTpaAlDWeSh2xf+ynIPRaSL4rZJSbHS77VZO9u1eH3/pQ3QHBxUhk
-	 YJDkTpRF6HpZsZSmdSpa8NexxK1p9SOubO5cGw1NKEW9mUJFYFHOkHAR1nDohYw1Fp
-	 Z/OMKahMqmsBCsYi4MIowM8jSEbOk6tiZUDPg6sSe4c24SwINkYF11Y1omuyLzkxl1
-	 411/jwIVvndIDjRWZygyKBy7Dr0QMWfbSKpDZK2E2nuwiTgsBRwDSA9cv+OicCDDxg
-	 iIzqMuo8C3eqw==
-Date: Thu, 22 Aug 2024 09:59:58 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Jonathan Corbet <corbet@lwn.net>, regressions@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Bagas Sanjaya
- <bagasdotme@gmail.com>
-Subject: Re: [PATCH v3] docs: bug-bisect: rewrite to better match the other
- bisecting text
-Message-ID: <20240822095958.2028d883@mordecai>
-In-Reply-To: <74dc0137dcc3e2c05648e885a7bc31ffd39a0890.1724312119.git.linux@leemhuis.info>
-References: <74dc0137dcc3e2c05648e885a7bc31ffd39a0890.1724312119.git.linux@leemhuis.info>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1724313644; c=relaxed/simple;
+	bh=rrrUZCQkoW42KfO5zUMJhblysTPTkiUgjbqwdFHw7PA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWLClNhCBoGRQQqyzxAS4ikh0Plg2zNYKNW0EceaCE53NS5FKtajgDecPQhGecRb413EApBW6htGba2Vm0xUDXPPdaMQsQjodNg4PTsAtyIwUkVpGxBklwLeP9SAcd77aWRU14uA4sRiUY3jbhcq2UFlP1515sdzwiP4VRbczXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqFxh2mFHz9sSd;
+	Thu, 22 Aug 2024 10:00:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Bz4vllCOsi4r; Thu, 22 Aug 2024 10:00:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqFxh23Prz9sSV;
+	Thu, 22 Aug 2024 10:00:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 375878B77D;
+	Thu, 22 Aug 2024 10:00:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id CSZ3UMcFKhXU; Thu, 22 Aug 2024 10:00:40 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CE0998B763;
+	Thu, 22 Aug 2024 10:00:39 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/vdso: Inconditionally use CFUNC macro
+Date: Thu, 22 Aug 2024 10:00:29 +0200
+Message-ID: <0fa863f2f69b2ca4094ae066fcf1430fb31110c9.1724313540.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724313630; l=930; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=rrrUZCQkoW42KfO5zUMJhblysTPTkiUgjbqwdFHw7PA=; b=zFJhWtwIybjy7bcT0PiHyvg316u3A4EuZLO4kFT5bztoTDF9PRjy9tMvWdvggWo42+NLpRZrK oEa1ZjP9a0xBmvWvXktS6/TIhg7rBxHu87F8XmgW828BYxpxfmjdNH9
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Aug 2024 09:35:33 +0200
-Thorsten Leemhuis <linux@leemhuis.info> wrote:
+During merge of commit 4e991e3c16a3 ("powerpc: add CFUNC assembly
+label annotation") a fallback version of CFUNC macro was added at
+the last minute, so it can be used inconditionally.
 
-> Rewrite the short document on bisecting kernel bugs. The new text
-> improves .config handling, brings a mention of 'git bisect skip', and
-> explains what to do after the bisection finished -- including trying a
-> revert to verify the result. The rewrite at the same time removes the
-> unrelated and outdated section on 'Devices not appearing' and replaces
-> some sentences about bug reporting with a pointer to the document
-> covering that topic in detail.
-> 
-> This overall brings the approach close to the one in the recently added
-> text Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst.
-> As those two texts serve a similar purpose for different audiences,
-> mention that document in the head of this one and outline when the
-> other might be the better one to follow.
-> 
-> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+Fixes: 4e991e3c16a3 ("powerpc: add CFUNC assembly label annotation")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/kernel/vdso/gettimeofday.S | 4 ----
+ 1 file changed, 4 deletions(-)
 
-AFAICS it's flawless now.
-
-Reviewed-by: Petr Tesarik <petr@tesarici.cz>
-
-Petr T
-
-> ---
-> v3: (this version)
-> - incorporate a few minor changes after review feedback from Petr
-> 
-> v2: https://lore.kernel.org/all/fbeae4056ae8174f454c3865bc45633281bb1b31.1723997526.git.linux@leemhuis.info/
-> - incorporate review feedback from Jonathan
-> - rename to 'Bisecting a regression'
-> 
-> v1: https://lore.kernel.org/all/10a565e4ebca5e03a2e7abb7ffe1893136471bf9.1722846343.git.linux@leemhuis.info/
-> - initial version
-> ---
->  Documentation/admin-guide/bug-bisect.rst | 208 +++++++++++++++--------
->  MAINTAINERS                              |   1 +
->  2 files changed, 139 insertions(+), 70 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/admin-guide/bug-bisect.rst
-> index 325c5d0ed34a0a..585630d14581c7 100644
-> --- a/Documentation/admin-guide/bug-bisect.rst
-> +++ b/Documentation/admin-guide/bug-bisect.rst
-> @@ -1,76 +1,144 @@
-> -Bisecting a bug
-> -+++++++++++++++
-> +.. SPDX-License-Identifier: (GPL-2.0+ OR CC-BY-4.0)
-> +.. [see the bottom of this file for redistribution information]
->  
-> -Last updated: 28 October 2016
-> +======================
-> +Bisecting a regression
-> +======================
->  
-> -Introduction
-> -============
-> +This document describes how to use a ``git bisect`` to find the source code
-> +change that broke something -- for example when some functionality stopped
-> +working after upgrading from Linux 6.0 to 6.1.
->  
-> -Always try the latest kernel from kernel.org and build from source. If you are
-> -not confident in doing that please report the bug to your distribution vendor
-> -instead of to a kernel developer.
-> +The text focuses on the gist of the process. If you are new to bisecting the
-> +kernel, better follow Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
-> +instead: it depicts everything from start to finish while covering multiple
-> +aspects even kernel developers occasionally forget. This includes detecting
-> +situations early where a bisection would be a waste of time, as nobody would
-> +care about the result -- for example, because the problem happens after the
-> +kernel marked itself as 'tainted', occurs in an abandoned version, was already
-> +fixed, or is caused by a .config change you or your Linux distributor performed.
->  
-> -Finding bugs is not always easy. Have a go though. If you can't find it don't
-> -give up. Report as much as you have found to the relevant maintainer. See
-> -MAINTAINERS for who that is for the subsystem you have worked on.
-> +Finding the change causing a kernel issue using a bisection
-> +===========================================================
->  
-> -Before you submit a bug report read
-> -'Documentation/admin-guide/reporting-issues.rst'.
-> +*Note: the following process assumes you prepared everything for a bisection.
-> +This includes having a Git clone with the appropriate sources, installing the
-> +software required to build and install kernels, as well as a .config file stored
-> +in a safe place (the following example assumes '~/prepared_kernel_.config') to
-> +use as pristine base at each bisection step; ideally, you have also worked out
-> +a fully reliable and straight-forward way to reproduce the regression, too.*
->  
-> -Devices not appearing
-> -=====================
-> -
-> -Often this is caused by udev/systemd. Check that first before blaming it
-> -on the kernel.
-> -
-> -Finding patch that caused a bug
-> -===============================
-> -
-> -Using the provided tools with ``git`` makes finding bugs easy provided the bug
-> -is reproducible.
-> -
-> -Steps to do it:
-> -
-> -- build the Kernel from its git source
-> -- start bisect with [#f1]_::
-> -
-> -	$ git bisect start
-> -
-> -- mark the broken changeset with::
-> -
-> -	$ git bisect bad [commit]
-> -
-> -- mark a changeset where the code is known to work with::
-> -
-> -	$ git bisect good [commit]
-> -
-> -- rebuild the Kernel and test
-> -- interact with git bisect by using either::
-> -
-> -	$ git bisect good
-> -
-> -  or::
-> -
-> -	$ git bisect bad
-> -
-> -  depending if the bug happened on the changeset you're testing
-> -- After some interactions, git bisect will give you the changeset that
-> -  likely caused the bug.
-> -
-> -- For example, if you know that the current version is bad, and version
-> -  4.8 is good, you could do::
-> -
-> -           $ git bisect start
-> -           $ git bisect bad                 # Current version is bad
-> -           $ git bisect good v4.8
-> -
-> -
-> -.. [#f1] You can, optionally, provide both good and bad arguments at git
-> -	 start with ``git bisect start [BAD] [GOOD]``
-> -
-> -For further references, please read:
-> -
-> -- The man page for ``git-bisect``
-> -- `Fighting regressions with git bisect <https://www.kernel.org/pub/software/scm/git/docs/git-bisect-lk2009.html>`_
-> -- `Fully automated bisecting with "git bisect run" <https://lwn.net/Articles/317154>`_
-> -- `Using Git bisect to figure out when brokenness was introduced <http://webchick.net/node/99>`_
-> +* Preparation: start the bisection and tell Git about the points in the history
-> +  you consider to be working and broken, which Git calls 'good' and 'bad'::
-> +
-> +     git bisect start
-> +     git bisect good v6.0
-> +     git bisect bad v6.1
-> +
-> +  Instead of Git tags like 'v6.0' and 'v6.1' you can specify commit-ids, too.
-> +
-> +1. Copy your prepared .config into the build directory and adjust it to the
-> +   needs of the codebase Git checked out for testing::
-> +
-> +     cp ~/prepared_kernel_.config .config
-> +     make olddefconfig
-> +
-> +2. Now build, install, and boot a kernel. This might fail for unrelated reasons,
-> +   for example, when a compile error happens at the current stage of the
-> +   bisection a later change resolves. In such cases run ``git bisect skip`` and
-> +   go back to step 1.
-> +
-> +3. Check if the functionality that regressed works in the kernel you just built.
-> +
-> +   If it works, execute::
-> +
-> +     git bisect good
-> +
-> +   If it is broken, run::
-> +
-> +     git bisect bad
-> +
-> +   Note, getting this wrong just once will send the rest of the bisection
-> +   totally off course. To prevent having to start anew later you thus want to
-> +   ensure what you tell Git is correct; it is thus often wise to spend a few
-> +   minutes more on testing in case your reproducer is unreliable.
-> +
-> +   After issuing one of these two commands, Git will usually check out another
-> +   bisection point and print something like 'Bisecting: 675 revisions left to
-> +   test after this (roughly 10 steps)'. In that case go back to step 1.
-> +
-> +   If Git instead prints something like 'cafecaca0c0dacafecaca0c0dacafecaca0c0da
-> +   is the first bad commit', then you have finished the bisection. In that case
-> +   move to the next point below. Note, right after displaying that line Git will
-> +   show some details about the culprit including its patch description; this can
-> +   easily fill your terminal, so you might need to scroll up to see the message
-> +   mentioning the culprit's commit-id.
-> +
-> +   In case you missed Git's output, you can always run ``git bisect log`` to
-> +   print the status: it will show how many steps remain or mention the result of
-> +   the bisection.
-> +
-> +* Recommended complementary task: put the bisection log and the current .config
-> +  file aside for the bug report; furthermore tell Git to reset the sources to
-> +  the state before the bisection::
-> +
-> +     git bisect log > ~/bisection-log
-> +     cp .config ~/bisection-config-culprit
-> +     git bisect reset
-> +
-> +* Recommended optional task: try reverting the culprit on top of the latest
-> +  codebase and check if that fixes your bug; if that is the case, it validates
-> +  the bisection and enables developers to resolve the regression through a
-> +  revert.
-> +
-> +  To try this, update your clone and check out latest mainline. Then tell Git
-> +  to revert the change by specifying its commit-id::
-> +
-> +     git revert --no-edit cafec0cacaca0
-> +
-> +  Git might reject this, for example when the bisection landed on a merge
-> +  commit. In that case, abandon the attempt. Do the same, if Git fails to revert
-> +  the culprit on its own because later changes depend on it -- at least unless
-> +  you bisected a stable or longterm kernel series, in which case you want to
-> +  check out its latest codebase and try a revert there.
-> +
-> +  If a revert succeeds, build and test another kernel to check if reverting
-> +  resolved your regression.
-> +
-> +With that the process is complete. Now report the regression as described by
-> +Documentation/admin-guide/reporting-issues.rst.
-> +
-> +
-> +Additional reading material
-> +---------------------------
-> +
-> +* The `man page for 'git bisect' <https://git-scm.com/docs/git-bisect>`_ and
-> +  `fighting regressions with 'git bisect' <https://git-scm.com/docs/git-bisect-lk2009.html>`_
-> +  in the Git documentation.
-> +* `Working with git bisect <https://nathanchance.dev/posts/working-with-git-bisect/>`_
-> +  from kernel developer Nathan Chancellor.
-> +* `Using Git bisect to figure out when brokenness was introduced <http://webchick.net/node/99>`_.
-> +* `Fully automated bisecting with 'git bisect run' <https://lwn.net/Articles/317154>`_.
-> +
-> +..
-> +   end-of-content
-> +..
-> +   This document is maintained by Thorsten Leemhuis <linux@leemhuis.info>. If
-> +   you spot a typo or small mistake, feel free to let him know directly and
-> +   he'll fix it. You are free to do the same in a mostly informal way if you
-> +   want to contribute changes to the text -- but for copyright reasons please CC
-> +   linux-doc@vger.kernel.org and 'sign-off' your contribution as
-> +   Documentation/process/submitting-patches.rst explains in the section 'Sign
-> +   your work - the Developer's Certificate of Origin'.
-> +..
-> +   This text is available under GPL-2.0+ or CC-BY-4.0, as stated at the top
-> +   of the file. If you want to distribute this text under CC-BY-4.0 only,
-> +   please use 'The Linux kernel development community' for author attribution
-> +   and link this as source:
-> +   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/admin-guide/bug-bisect.rst
-> +
-> +..
-> +   Note: Only the content of this RST file as found in the Linux kernel sources
-> +   is available under CC-BY-4.0, as versions of this text that were processed
-> +   (for example by the kernel's build system) might contain content taken from
-> +   files which use a more restrictive license.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b34385f2e46d92..90c8681d4d311c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6719,6 +6719,7 @@ DOCUMENTATION REPORTING ISSUES
->  M:	Thorsten Leemhuis <linux@leemhuis.info>
->  L:	linux-doc@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/admin-guide/bug-bisect.rst
->  F:	Documentation/admin-guide/quickly-build-trimmed-linux.rst
->  F:	Documentation/admin-guide/reporting-issues.rst
->  F:	Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
-> 
-> base-commit: 8663dd38a7ba5b2bfd2c7b4271e6e63bc0ef1e42
+diff --git a/arch/powerpc/kernel/vdso/gettimeofday.S b/arch/powerpc/kernel/vdso/gettimeofday.S
+index 48fc6658053a..894cb939cd2b 100644
+--- a/arch/powerpc/kernel/vdso/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso/gettimeofday.S
+@@ -38,11 +38,7 @@
+ 	.else
+ 	addi		r4, r5, VDSO_DATA_OFFSET
+ 	.endif
+-#ifdef __powerpc64__
+ 	bl		CFUNC(DOTSYM(\funct))
+-#else
+-	bl		\funct
+-#endif
+ 	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
+ #ifdef __powerpc64__
+ 	PPC_LL		r2, PPC_MIN_STKFRM + STK_GOT(r1)
+-- 
+2.44.0
 
 
