@@ -1,174 +1,159 @@
-Return-Path: <linux-kernel+bounces-297670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203C095BC35
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:45:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB1395BC3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80925B29D1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A481F27863
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC141CDA37;
-	Thu, 22 Aug 2024 16:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDB41CDFBD;
+	Thu, 22 Aug 2024 16:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H9zM2Pwh"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4Mir6Jc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8241CCED2
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BC01CDFC5;
+	Thu, 22 Aug 2024 16:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724345093; cv=none; b=kdgSAGbu/tllzycpszBGFZphqoM+hzTp1c7aMbpxJo5+zrlmzMVlujj54QeImcQfDjPXo9A80cGmq2gB1m2mvLSEwuGaNXkP8XqHtymg+pjt9OFCwJBQV1FnrLGKMI1c7n/+nmvh4gMMLVjO85AOwmzhcM8RNO2NvQrm+gt27Sw=
+	t=1724345105; cv=none; b=hkn88pyYQ8mo2+d/vqTIihJjY8jDkJewxne/dqH451bn5FHsRdX2f+n6bWdkQKG5wutcQkevAqjfJUCD77kIflOdirPUKZj0lea9HlSJu6nWh/Yjuwu85ACSDzoywGouA0hRsMvS8OS5qcba0Z2HJQekLmwS982HXKUfLWgMuGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724345093; c=relaxed/simple;
-	bh=eetgk0xjeiZwykHbHzB49rFPe5JDRDuO3poVAEw45q0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rmzLJfxAt1Jhjc3ACF/5eAAcaG9UVMUr8Ib/GJ2a8PR9QdUKp7Xp9XEIwb3JvwofHl2wKjtY2DJWOLXpwofU1XT4eYyPKXoFfJkgQb/gGgSgPMqIREU0OiQ1rLW/pknbjHPFCVfCbT5yfLiW8eFNcBAdcnvubyhYVGOh6LdP3uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H9zM2Pwh; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86696b29d8so7724566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724345090; x=1724949890; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tVi2Mh/4egq1ay696jM8IMQlXhQ1UWi7W7AhMeHZVJ8=;
-        b=H9zM2PwhQyOJQITMlctKIIb1Wt16N4U+wVIakmL1bYBVcIvyo92SIZQd55uX6WJstJ
-         vwHTwgjGWWkBXdmFwTd/0EMsZEhUzHxNNs0TkiJj+egR428WsjuguDwdDmifTEagP5Yv
-         mOtoRlJb+xGRit01k+yIPIKG0UayuObyhSI80QSGLtF3BDgkJSNg07WhsmvRe4yLkrHv
-         8cEltZzYbOp1PortFo9rdbYjmVUOcSLZKCYnY46qgxlgOnDTi15ifsx90Vd4PLm3LV4O
-         e1znZVChvXbdvgAzWz+x14wWIoz8AAOC++1cWPPpKigpuebSs57Nk2xA0yE7lJQQCoIk
-         WDwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724345090; x=1724949890;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tVi2Mh/4egq1ay696jM8IMQlXhQ1UWi7W7AhMeHZVJ8=;
-        b=uYHhXkDlUwFPXlJSQF/GRqcaI9frcQ/qSzgsjACoPt7x+HyiRkC7EUbxsbqzouPY9y
-         FZbOiwoHWHLRPIQedSneypq+ot+VspQidiyj5GfWVMzaCHC1OKgoL2KbZYjWSPyf0tNT
-         29fvd1wtoMxGGKOSPghjJ7aWF3eWJ1LcfHqUNdaJq+bkjeIZbNiaK2sojisR4Mnl2MfF
-         URKU+B+0oX8LQLJ965MP2Y9Wq6ZY5JF7wNDXR8y750CeEMdJtzDe+Ceudvc7I50NMZAC
-         Fsg6/Z6d1kLJR8XpcoRwvH1VGn8SsFDPo32+7/vbHmZ9rlyv73EKQXWVQr8WslkMl6M3
-         GXlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXP6edZgVGMPrFhZI5XBdD6vrcF063/dc8Xjn3kosxQp4D5lrJHmpzHkluvtdtc7KmEYWReN3RMwx3uLcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqBA+UXBev3qt5Np6ubVH19K1bgRKjf6btUCqfUweu7bkvqTUK
-	cK7v5CyMwANerrqYBpnO9iK0lkBE1K1Hut4JdPKaFoQdQohgQiqeOhsiJtUyZiU=
-X-Google-Smtp-Source: AGHT+IGIqv7Nz6bY9CZnyOfYtb0TqWlTqflok9MaYqR8Jb1tYOgVpnVaF56xWOH7t7a+/6MlNXRZTg==
-X-Received: by 2002:a17:907:7252:b0:a80:a37f:c303 with SMTP id a640c23a62f3a-a866f303b0fmr312455566b.4.1724345090196;
-        Thu, 22 Aug 2024 09:44:50 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f437930sm140842066b.107.2024.08.22.09.44.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 09:44:49 -0700 (PDT)
-Message-ID: <dd1383fd-39d2-47e9-b559-21f20c995310@linaro.org>
-Date: Thu, 22 Aug 2024 18:44:48 +0200
+	s=arc-20240116; t=1724345105; c=relaxed/simple;
+	bh=WrlN+67fyl/9DMCWCvghwD06kAjbzcfn6dDe7h6wxn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IkS7Umyb8236Yx/k4jcwwiv02aYRYkIjsS0rZzAbh5KReem4srxgXOyOtoGk8isyoDlI/rIynU6anhKdozY6Oci8SKVQOiISzG1y5mDmtQA1WJyI93eXmOZrWiGSspvr7FdIbG2aYEor76l2zgaUpeS8FIZRraALpW1BGnLpyoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4Mir6Jc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B23FC32782;
+	Thu, 22 Aug 2024 16:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724345104;
+	bh=WrlN+67fyl/9DMCWCvghwD06kAjbzcfn6dDe7h6wxn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V4Mir6Jc65AVcAqoR1k1S8yF13+rBZctf7bvL/1PJOJZH1+tn/cUFuXSSIj3n6OLh
+	 h6Ce4waDtOd1SmjSD60mAYoIDQBWkGqUkG+SGPBgIphiOa2WzMRP+MorOfnhPCnRDT
+	 hWwdbbVFkcqYf7GTjDz7I66oPm1LHWs/YIXqTphXQ9224UBr2s1o9Fe5csRUA2Vbrd
+	 51O3KQGws+QdU31tzIICRFzBZCtcCKgVk9ew5yQdsmUxcRybXXQASNOvoR6W3Y5XDY
+	 sNVmKDWoJCXsdP9rXgrsfV4TCKl/7smifMGk+AszUjvCk0gCZGNxnuWGoMp8hfLDuA
+	 wlM0bISIJAmqg==
+Date: Thu, 22 Aug 2024 17:44:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	gregkh@linuxfoundation.org, mturquette@baylibre.com,
+	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
+ #reset-cells for RZ/G3S
+Message-ID: <20240822-mountain-hurdle-dd1f08b96f64@spud>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
+ <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] soc: qcom: pmic_glink: simplify locking with guard()
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240822163345.223787-1-krzysztof.kozlowski@linaro.org>
- <20240822163345.223787-2-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240822163345.223787-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZWzRvO3ns8+wP6rp"
+Content-Disposition: inline
+In-Reply-To: <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
 
-On 22/08/2024 18:33, Krzysztof Kozlowski wrote:
-> Simplify error handling over locks with guard().  In few places this
-> elimiates error gotos and local variables.  Switch to guard() everywhere
-> in the code for consistency, even if it does not bring benefit in such
-> places.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
 
-...
+--ZWzRvO3ns8+wP6rp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  
->  static void pmic_glink_rpmsg_remove(struct rpmsg_device *rpdev)
->  {
->  	struct pmic_glink *pg;
->  
-> -	mutex_lock(&__pmic_glink_lock);
-> +	guard(mutex)(&__pmic_glink_lock);
->  	pg = __pmic_glink;
->  	if (!pg)
-> -		goto out_unlock;
-> +		return;
->  
-> -	mutex_lock(&pg->state_lock);
-> +	guard(mutex)(&pg->state_lock);
->  	pg->ept = NULL;
->  	pmic_glink_state_notify_clients(pg);
-> -	mutex_unlock(&pg->state_lock);
-> -out_unlock:
-> -	mutex_unlock(&__pmic_glink_lock);
+On Thu, Aug 22, 2024 at 05:42:57PM +0100, Conor Dooley wrote:
+> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >=20
+> > The RZ/G3S System controller has registers to control signals that need
+> > to be de-asserted/asserted before/after different SoC areas are power
+> > on/off. This signals are implemented as reset signals. For this document
+> > the #reset-cells property.
+> >=20
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > ---
+> >  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2=
+l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-s=
+ysc.yaml
+> > index 4386b2c3fa4d..6b0bb34485d9 100644
+> > --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.=
+yaml
+> > +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.=
+yaml
+> > @@ -42,12 +42,28 @@ properties:
+> >        - const: cm33stbyr_int
+> >        - const: ca55_deny
+> > =20
+> > +  "#reset-cells":
+> > +    const: 1
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > =20
+> >  additionalProperties: false
+> > =20
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: renesas,r9a08g045-sysc
+> > +    then:
+> > +      required:
+> > +        - "#reset-cells"
+>=20
+> Given this is new required property on an existing platform, I'd expect
+> some mention of why it used to be okay to not have this but is now
+> required. Did firmware or a bootloader stage take things out of reset?
 
-I am really sorry, I thought I built it with W=1, but turns out I did
-not. Code needs a fix, I will send a v2.
+Reading a bit more into the series, the peripherals in question were
+just never used nor did a driver for the sysc exist, so there's neither
+explanation of prior behaviour nor concerns about compatibility?
 
-Best regards,
-Krzysztof
+>=20
+> > +    else:
+> > +      properties:
+> > +        "#reset-cells": false
+> > +
+> >  examples:
+> >    - |
+> >      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > --=20
+> > 2.39.2
+> >=20
 
+
+
+--ZWzRvO3ns8+wP6rp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsdrCgAKCRB4tDGHoIJi
+0uG8AP9KErhuqHGo0goHh4p9RoWQWSQLtxDDIaGI6XDc4GYpEAD/af+u+5EQKxfW
+u6mEr8fG1pmimijNTGtbSERV+00abgY=
+=TCjP
+-----END PGP SIGNATURE-----
+
+--ZWzRvO3ns8+wP6rp--
 
