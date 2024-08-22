@@ -1,121 +1,113 @@
-Return-Path: <linux-kernel+bounces-296328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6240F95A94D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:02:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCF395A94F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D72E3B21C5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD341F21B37
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4C210A3D;
-	Thu, 22 Aug 2024 01:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09646AD2C;
+	Thu, 22 Aug 2024 01:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzpPP7Vi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZxEyhtN"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E1101F2;
-	Thu, 22 Aug 2024 01:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9DF6FC7;
+	Thu, 22 Aug 2024 01:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724288524; cv=none; b=GETW1RvpTryscy9jfSDbNBU7JVLb1DSjvjwCnm/3K2PBo9FI4AAFjMR2kPZoev7e8kIbWkusXa2ixQRjjBHnpDwvV/WQ8xIkNBXsQ+eSuY3n2hT/uXkhGewxtiT6/fkPML5rCSztI1bY+vdvbKtij4YzI0mwm3QXBuFZ2DNcOiE=
+	t=1724288617; cv=none; b=fQhox9AewM7CToWlUBSd0GpVy53SnjP2ol9TVOojFypO1djXJRHZNqzIiCZfdw3CQBlV502L1wBXnC2MoxqgAKGiJINues54IoUmyO9RIyAEdk+sK77jZLwVyR+7xdRzYqC4xJ1JVGEqT8nC+ocmyxOMumCylEWIPwsl13s4UZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724288524; c=relaxed/simple;
-	bh=fho7yigoNJT7U1KQajZC0LtAUCpxXnxEcxYMwYgaq1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ICHFYLlQTy8zhRT03QQQdoHfh8/Z5dB7K5+JJY+4yA+XFTY6L+5kzQcU4BZVzBdf2pb7vDfZY/ldLvJuoIT9yJEzgQUNNdKt8KXfu9YziNOIsjRzysmnHMSF887iho/Of0DtOFX96mT+dbOeRaqwPZdvzS8bTh95QI4uCzTM/jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzpPP7Vi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19BA9C32781;
-	Thu, 22 Aug 2024 01:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724288523;
-	bh=fho7yigoNJT7U1KQajZC0LtAUCpxXnxEcxYMwYgaq1g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qzpPP7VirvMAvrOA8Zj2gUNpG7/QauO+WenfkO+EUuRKRaQITLogtQQ2I46au9rRn
-	 NvgKPQO0tNJzdFEpn5xchwRRr8bS8usX2x60NjLi6Zmu6GxSTQCM3QXoOxcrfIMzZC
-	 47Fo3yW9QVkxyi+sjPvC7k0p5mmmJ7yGnyG/NxS6JOz6S64SoV0akCILHZIESyxK4v
-	 a1s098AdD/bDDPSWu4NuUKa5HtuKr/0QcQbhFEAilbTJuZd8+39Zw0PoGH4Sx+k5YW
-	 rU9tFxtB6LFh3f+z9HtPnSIpwQGyMPkRfVFrfIV3iWZ/kvUi/TZgm2o06Gp6JYkQla
-	 B7xiKdFU088IQ==
-Date: Wed, 21 Aug 2024 18:02:02 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Hunter <david.hunter.linux@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH 1/1] Improve missing mods error message and make shell
- script executable
-Message-ID: <20240821180202.6da48f29@kernel.org>
-In-Reply-To: <20240820202116.6124-1-david.hunter.linux@gmail.com>
-References: <20240820202116.6124-1-david.hunter.linux@gmail.com>
+	s=arc-20240116; t=1724288617; c=relaxed/simple;
+	bh=r7R9se5rg7N5lEUpA8br65l66pmINbKJy+1PiA1DI34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k/YqMnHO1fQo3p0R95cZfoFhT2djcmoKNvvgHCOEkxjP28eYnl2APn+UcSyeOQMRurNomsqSdtx9MBO6fbSNyLKlXG+QeiofeZ/vMuH6As+tANMnAkjShjju7KaX4ti+uHcxo8Fz9nBuw8pMbVOG3H/jcbAhNeE+1iQCLS7uogY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZxEyhtN; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-429e29933aaso1285705e9.0;
+        Wed, 21 Aug 2024 18:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724288614; x=1724893414; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r7R9se5rg7N5lEUpA8br65l66pmINbKJy+1PiA1DI34=;
+        b=hZxEyhtNIeLYDW7e4UwOyO5F8/tl6uwoi4QzIjrhgfnH5r2eZ/8W77zyE81tO862ZZ
+         bvh8OsfanZWXl2zFTWsqBrHNt6kpepo0wXE5QOQjrlWHe1LcVb7RegNeZC22+OlLTihX
+         Za9yK37vyhYEo7CiTqVsOh52ys/r+dxVlGTsJUuhuyGJ749NQk7egSE2gWrvFXFrLC+T
+         G4+ssxQ17Kf/nUz4GJoXjUSl8D6T9EnLfDi9eCMiHhcYEf0nX4X2Sko0ZgTzqyTxCfpP
+         J35mn0z13kg1wT9yHRZf+u77Kv+GUOrYCbwZORfqII3KIeGgHljPsjYRqh8uH7SzAh9o
+         ivkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724288614; x=1724893414;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r7R9se5rg7N5lEUpA8br65l66pmINbKJy+1PiA1DI34=;
+        b=pq8/15fRUpNnLceA3pN0yTzD+K4LLKxwewRrOP9yqKs5EcTaGo4S3gbhuon7dPdhMk
+         p+VfyVyvFQorKWgeCr8/cx5HLg3nuctfi3/g3RU0LJIVQeEcM3ZhhB9rwhJoXrFNIgzG
+         gMH6QbyKGzct+WLCBSyxC2/foWbrFCrLzCWGwCZAKijKPlF4PR8chPqAaFBiQUgcRlUG
+         E4uNMcoBsuIIi+96D+gCY2D1RUk0cWNWWezA4er7jkHGIPvFvHIpIzvRDyDIToZHLlnk
+         sXgDy849QqNSZF+OCupzoTJ4Ywu2exwuSnVWJqwNpLlCQex5AEPaxO0K9+z9y9gbh+Fz
+         /WOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtDU7Ei39Bt4jEOGFPr5KiNcWPpvFtPZsl/68dSEWd7l1jOrO8ZIAjNYpnZnvUbz1jP05q1NIInU0Xa3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8QVH/vJ0+iDYmfxALyK3qLKL1kkO+rgjCqbo+5xPjoa1/weWF
+	HGSnalAJyNfO72WSlV5wBOfTh2DY86+yXJDfzjoFmAwVoo+4+YQqtumd7zMrCJNLj9dT7BFowaK
+	st9mCGZaIMvNZYjDPHnGXuAWKcy8=
+X-Google-Smtp-Source: AGHT+IH1fBTAXa00b57fsi2XRIpPb6JDnEyKgiEwWgWBIxbyUdvujpWQoO3He3Ae+dHnrFmksMRmeFlX3wCeCGgx6Kg=
+X-Received: by 2002:a05:600c:4ed2:b0:428:f650:6a4e with SMTP id
+ 5b1f17b1804b1-42ac5637557mr1666365e9.23.1724288613271; Wed, 21 Aug 2024
+ 18:03:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com> <8a4c117b-7cab-4149-a9e7-c6214d6d92ad@wanadoo.fr>
+In-Reply-To: <8a4c117b-7cab-4149-a9e7-c6214d6d92ad@wanadoo.fr>
+From: Stuart <stuart.a.hayhurst@gmail.com>
+Date: Thu, 22 Aug 2024 02:03:22 +0100
+Message-ID: <CALTg27kBYb5+GOwBz4a1-xeM-21DrbUh7eQyNkW9K_m6TdSwNQ@mail.gmail.com>
+Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family driver
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
+	Markus Elfring <Markus.Elfring@web.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 20 Aug 2024 16:21:16 -0400 David Hunter wrote:
-> Subject: [PATCH 1/1] Improve missing mods error message and make shell script executable
+> Maybe is_wired could be close to other bools below, to improve avoid
+> holes in the structure?
 
-Would be good to add a prefix to the subject:
+Possibly, I put `name`, `is_wired` and `sidetone_max` together, since
+they only depend on the device model and are set once.
 
-selftests: net:
+> Missing newline.
 
-> Make the test executable. Currently, tests in this shell script are not
-> executable, so the scipt file is skipped entirely.
+Done
 
-Could you clarify how it gets skipped? We use make [...] run_tests
-in our CI and it does seem to run.
+> I'm not familiar with the hid_hw_raw_request() API, but I think that a
+> kfree(send_buf) is missing here.
 
-> Also, 
+The `__free(kfree)` on the declaration should take care of that
 
-If you say "also" there's a good chance the commit should be split into
-two..
+> Nitpick: No need to init.
 
-> the error message descirbing the required modules is inaccurate.
-> Currently, only  "SKIP: Need act_mirred module" is shown. As a result,
-> users might only that module; however, three modules are actually
-> required and if any of them are missing, the build will fail with the
-> same message.
-> 
-> Fix the error message to show any/all modules needed for the script file
-> upon failure.
-> 
-> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
-> ---
->  .../testing/selftests/net/test_ingress_egress_chaining.sh | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->  mode change 100644 => 100755 tools/testing/selftests/net/test_ingress_egress_chaining.sh
-> 
-> diff --git a/tools/testing/selftests/net/test_ingress_egress_chaining.sh b/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-> old mode 100644
-> new mode 100755
-> index 08adff6bb3b6..b1a3d68e0ec2
-> --- a/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-> +++ b/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-> @@ -13,8 +13,14 @@ if [ "$(id -u)" -ne 0 ];then
->  fi
->  
->  needed_mods="act_mirred cls_flower sch_ingress"
-> +mods_missing=""
-> +
-> +for mod in $needed_mods; do 
-> +	modinfo $mod &>/dev/null || mods_missing="$mods_missing$mod "
-> +done
-> +
->  for mod in $needed_mods; do
+Thanks, but that `ret` won't be in the next revision anyway
 
-Do you have to loop again? Maybe just check if mods_missing is empty?
+> You could save 2 lines if ret was initialized when declared.
 
-> -	modinfo $mod &>/dev/null || { echo "SKIP: Need act_mirred module"; exit $ksft_skip; }
-> +	modinfo $mod &>/dev/null || { echo "SKIP: modules needed: $mods_missing"; exit $ksft_skip; }
->  done
--- 
-pw-bot: cr
+Could I? Wouldn't it get overwritten by `hid_hw_raw_request`?
+
+> devm_kasprintf() would simplify this.
+
+Well that's a lot simpler...
+
+Thanks,
+Stuart
 
