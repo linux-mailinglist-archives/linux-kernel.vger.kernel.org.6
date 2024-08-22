@@ -1,249 +1,286 @@
-Return-Path: <linux-kernel+bounces-298052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485E395C120
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAE895C122
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82741F24A43
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:50:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ECB128563F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EA71D1F4B;
-	Thu, 22 Aug 2024 22:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45641D0DE2;
+	Thu, 22 Aug 2024 22:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cuwZamvk"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="smME//4d"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B5518308A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3347F17E006
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724367008; cv=none; b=Ge5dd0sjZqrRzKbVQRdmvlDrQeCyIiY7Ej+7E839x+P0NBeNNurqRYhLn8i776vv8Qf58x6l4A6k/+EAp5aIYNW/VsuVJ0Vpyb/OgQPK4+WvIhveALyHqTzs0aZSFrjR0yTIx3VFUMdgxiIpfWcW0ujOVo2D0b1qSHis9pSP91c=
+	t=1724367044; cv=none; b=HSoV/HnZBHxV3doCMxJ0CKQXExwDD1z6/t3GVJVDebNI9qOuCrR09EgqbIw8w269BKwiFkAys50X8BCGOOMsy2mBBuS2CwqhibUUBSuUwiWMFoh1GZeAtcG2nLOQfySxeR1BDsRVB/YA/ki8HpiXc8eWGGHkNVcMdoZLWNDz6ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724367008; c=relaxed/simple;
-	bh=oYtS2rcf7OFCRH9CwmT4584HB1yPYflg6BijR7xb+2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+BoOlzkEZQvCmaMN2M0SKqCWJb76tbqAEYc6jDZIfDaAEfxhtSB8JfpCYtusUepmGLOvLoL7XYTuRpLGBTo78phf4sX8xdMPwp5927jiIh4fxw4aB4pMhI5/WpEIe5dU8EVOpiEBm30TciVe0fTVaeomwXad1TQ8+b7nRSxOsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cuwZamvk; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6e7b121be30so939465a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:50:06 -0700 (PDT)
+	s=arc-20240116; t=1724367044; c=relaxed/simple;
+	bh=z9/wvhRoi97cSHM4MP12pkPuMKHSYt96X8cl3tFDheY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=piry8VPcf7Ie+MIi86CqrgdiExRluo4AFFdjtMgD+M9WIHYu85cf76Et7JjIcMecx7J6kNJW8YEmMXFywJMdncKeIYOZZsgMN/HA+XqVw/00/wUg0/qEiHiljmAK34XD/FcNJpyu3ZLAixWbykwk4PvqIZvULOFY3CJR3o9DI5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=smME//4d; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso30705ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:50:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724367006; x=1724971806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RxNjKinkqwLfidKToMeOZNU0vXvDNGFrw9+p08YBIlM=;
-        b=cuwZamvkebwLfrU/tKq/C3ukTAjgecPYa6feaiiqen1Yr4BSERqLRjd8hWmtjleMTB
-         RPx8O3NduY3xojqjVcwkuDFqxEtrcFmlU3u3nwLxkCX2h+HfeNZ08yfNl80h8sODBdYS
-         Wy5TycbkH6ULOdbfIJODb3yVJyMT/BCJg2QOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724367006; x=1724971806;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1724367042; x=1724971842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RxNjKinkqwLfidKToMeOZNU0vXvDNGFrw9+p08YBIlM=;
-        b=dGnS3QYq12vYyhG+eUDwPaDqoeIiGC45wwZ2OiUaVwJgNzMt7ZYrzp31GiG/0TngNL
-         V7P4ZzQQSlHtVJ8dJyK1XqSDEx8yabSL+zHjeFH7Fv/QasNAeYF/GiT5+7VN7DOfaQWz
-         kntqx5cCHmnwobyVpbTtmJQ33mLVHqO7gtLcgMZeNEHT5nLC34bkGK03yAInr/Mddujc
-         Xyn7JvMYgPzDIdyZfiA7khFqt1+BNyZ/9sP6lc+CWZ55a2Kuy7kDZolvRDWLnAK89iRQ
-         bd7Mg+QC+E3jyrHIFp7qP7OKEB42cJQWSpbGMXKKZbuumWZxUoew9rwX/VJRWGSYuB1z
-         PIvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFICt+kdKiqcnPcMsDFuM9oZJXY++nmwXzi658UYabNz546lr9kwz9sx46val/OathLwtyF6DzlHiHvSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOUsC9UqFXR+go5686/UEfySclFSjJ7Ky4XlVqLExiIUnUXPMn
-	3GerBOBjc62Yc+vKApNWEycTReDrNNQmSX3A0VssjbuYPoxi+XOVmYwRLhRBsQ==
-X-Google-Smtp-Source: AGHT+IHOEF0hiQab41QuNo3MnvSCcDrKTChsVdcKNB3csU17laJnFOUwO4poC/pQI2sZfvxXohbIqA==
-X-Received: by 2002:a05:6a20:4394:b0:1c6:9fe9:c425 with SMTP id adf61e73a8af0-1cc8b61b4b7mr526163637.45.1724367005761;
-        Thu, 22 Aug 2024 15:50:05 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855664e2sm17414465ad.30.2024.08.22.15.50.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 15:50:04 -0700 (PDT)
-Message-ID: <078bc5ee-e591-427b-a9fe-9386738a847f@broadcom.com>
-Date: Thu, 22 Aug 2024 15:50:03 -0700
+        bh=kVK/m+zjrZ0YtuAg7Eis4R1tMSYhDO9AGDPJJIufTbw=;
+        b=smME//4dkXDW/4Y3SmyMepShvjWGMHvW3GQFBQa6N0RELS7sFdXNJItjW/5CQTo/9Y
+         JI/nc43H70JIJvapi1FNi8DcwpsWSqShvfIsIsH1xBN3jZMmqE6DyTosghsOmHQwyIx8
+         T8RqC1Z2IG9cAbLiQXuW6IIwz7iA2ccRsaWblOX0c9vl/hxdbGOShOiyU2kzZqoJXQ2F
+         4X+MMQG79yxZU3IlwITQgqQ89h/0T8f9utZcChRMD5teeOzyzOc8uJAanrUaEUBHgH0h
+         fFNRgzaaymfNktSRIFJq1Mamnkdq6QS/UdgjJ7AeiXLKzoWjdygHRzvPgXCDSLj96Bn7
+         Ydyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724367042; x=1724971842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kVK/m+zjrZ0YtuAg7Eis4R1tMSYhDO9AGDPJJIufTbw=;
+        b=nbaGJUrzgvFZYwcOqvuJGkeY3OaGg/0gnNkoHsKSYuIuvTZie3YoRj04bBOr/MAQ5r
+         w24WRuYlcKABXnUfR1nIOsOrQrH8vkv0tN0zZPyNpagcpCP72O4s1DPNu2hxeg67sg5U
+         d3IJRSXvyNYfXeYtWVLkYyzmvG8b2yI1IXKj5ED5hJtUEe5OrJdPeFcgQXM6UsMNqAFs
+         20peRYZ1mfbYvLjmc9ZmYyXMD1YwgL35GV0D42ltjbcZfNHAWdxP5xZjuS/yPXutt77w
+         0vxTlqvXkeJyzJt20dSTLey/JJDM99W7fAi9v6OcHlYzvAtIRveI8qXbiPGkWiZiaPOR
+         gcMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5OpiOA6GNG+93WSHRGfEF4tr09+ZrLr+oFVb5X7z4WwLxyNQiHMn7g0cJ2XOXK9rZUoyg+CRK36BVizk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/n4/ypNASvGOA9V1RR2tx1KHItpSogR1On+XT1R1FKsfM5pl/
+	bJBcArkf6BYH0FxbpuOsUOUn95jgPXLioToV4hMU3P63jf4DhLV0Wcwmd4nAF+XXPtoNvqncKwN
+	H6vcMGBpnXMdjNCfiC7pCWQErdXr9+5wpwOTX
+X-Google-Smtp-Source: AGHT+IE8BxeAz25Ii5Qg4jh25Kk5+AbxqIt2QTn6VZJn2z/0n+otTZzj8KkiLtz/fKgqTf0vC+SBGrX3x3N04kEnl1Q=
+X-Received: by 2002:a92:d203:0:b0:39d:2263:fb5b with SMTP id
+ e9e14a558f8ab-39e3b6e6b55mr1021605ab.24.1724367041879; Thu, 22 Aug 2024
+ 15:50:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] firmware: arm_scmi: Support 'reg-io-width'
- property for shared memory
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE"
- <arm-scmi@vger.kernel.org>, justin.chen@broadcom.com, opendmb@gmail.com,
- kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com
-References: <20240816224221.3256455-1-florian.fainelli@broadcom.com>
- <20240816224221.3256455-3-florian.fainelli@broadcom.com>
- <ZscW_E33YXF8Nx7r@bogus>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <ZscW_E33YXF8Nx7r@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240822025800.13380-1-hao.ge@linux.dev> <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
+ <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev>
+In-Reply-To: <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 22 Aug 2024 15:50:27 -0700
+Message-ID: <CAJuCfpHUZBkGtu8CL=5cxNMtJa4iNyJ8gBVu2Ho_WOXCRzzfTA@mail.gmail.com>
+Subject: Re: [PATCH] codetag: debug: mark codetags for pages which
+ transitioned from being poison to unpoison as empty
+To: Hao Ge <hao.ge@linux.dev>
+Cc: Miaohe Lin <linmiaohe@huawei.com>, kent.overstreet@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>, stable@vger.kernel.org, 
+	nao.horiguchi@gmail.com, akpm@linux-foundation.org, pasha.tatashin@soleen.com, 
+	david@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/22/24 03:46, Sudeep Holla wrote:
-> Hi Florian,
-> 
-> Sorry for getting late to this party, I wasn't able to review this before.
-> Overall changes look correct. But my main concern is that is SCMI the right
-> place to have such IO accessors. It is better to run it through Arnd if
-> he is happy with it before I send him the pull request containing these.
+On Thu, Aug 22, 2024 at 2:46=E2=80=AFAM Hao Ge <hao.ge@linux.dev> wrote:
+>
+> Hi Miaohe
+>
+>
+> Thank you for taking the time to review this patch.
+>
+>
+> On 8/22/24 16:04, Miaohe Lin wrote:
+> > On 2024/8/22 10:58, Hao Ge wrote:
+> >> From: Hao Ge <gehao@kylinos.cn>
+> >>
+> > Thanks for your patch.
+> >
+> >> The PG_hwpoison page will be caught and isolated on the entrance to
+> >> the free buddy page pool. so,when we clear this flag and return it
+> >> to the buddy system,mark codetags for pages as empty.
+> >>
+> > Is below scene cause the problem?
+> >
+> > 1. Pages are allocated. pgalloc_tag_add() will be called when prep_new_=
+page().
+> >
+> > 2. Pages are hwpoisoned. memory_failure() will set PG_hwpoison flag and=
+ pgalloc_tag_sub()
+> > will be called when pages are caught and isolated on the entrance to bu=
+ddy.
 
-Sure, would definitively want more eyes to review.
+Hi Folks,
+Thanks for reporting this! Could you please describe in more details
+how memory_failure() ends up calling pgalloc_tag_sub()? It's not
+obvious to me which path leads to pgalloc_tag_sub(), so I must be
+missing something.
+On a conceptual level I want to understand if the page isolated in
+this manner should be considered freed or not. If it shouldn't be
+considered free then I think the right fix would be to avoid
+pgalloc_tag_sub() when this isolation happens.
+Thanks,
+Suren.
 
-> 
-> On Fri, Aug 16, 2024 at 03:42:21PM -0700, Florian Fainelli wrote:
->> Some shared memory areas might only support a certain access width,
->> such as 32-bit, which memcpy_{from,to}_io() does not adhere to at least
->> on ARM64 by making both 8-bit and 64-bit accesses to such memory.
->>
-> 
-> Is this limitation on the hardware for both read and writes ?
-
-This applies to both reads and writes. We have to make accesses on a 4 
-byte boundary and of exactly 4 bytes in size.
-
-> The reason I ask is I see arm64 does have memcpy_toio_aligned() or
-> __iowrite32_copy_full() for 32 bit aligned writes.
-> 
-
-That appears to work nicely on ARM64 and ARM 32-bit, thanks for the 
-suggestion! One needs to be careful that __io{read,write}32_copy takes 
-32-bit units, not bytes!
-
-FWIW, here is my diff between v3 and v4:
-
-diff --git a/drivers/firmware/arm_scmi/common.h 
-b/drivers/firmware/arm_scmi/common.h
-index 73bb496fac01..a13f79b37c99 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -319,9 +319,9 @@ enum scmi_bad_msg {
-  /* Used for compactness and signature validation of the function 
-pointers being
-   * passed.
-   */
--typedef void (*shmem_copy_toio_t)(volatile void __iomem *to, const void 
-*from,
-+typedef void (*shmem_copy_toio_t)(void __iomem *to, const void *from,
-                                   size_t count);
--typedef void (*shmem_copy_fromio_t)(void *to, const volatile void 
-__iomem *from,
-+typedef void (*shmem_copy_fromio_t)(void *to, const void __iomem *from,
-                                     size_t count);
-
-  /**
-diff --git a/drivers/firmware/arm_scmi/shmem.c 
-b/drivers/firmware/arm_scmi/shmem.c
-index aded5f1cd49f..e9f30ab671a8 100644
---- a/drivers/firmware/arm_scmi/shmem.c
-+++ b/drivers/firmware/arm_scmi/shmem.c
-@@ -35,33 +35,25 @@ struct scmi_shared_mem {
-  };
-
-  static inline void shmem_memcpy_fromio32(void *to,
--                                        const volatile void __iomem *from,
-+                                        const void __iomem *from,
-                                          size_t count)
-  {
--       while (count) {
--               *(u32 *)to = __raw_readl(from);
--               from += 4;
--               to += 4;
--               count -= 4;
--       }
-+       WARN_ON(!IS_ALIGNED((unsigned long)from, 4) ||
-+               !IS_ALIGNED((unsigned long)to, 4) ||
-+               count % 4);
-
--       /* Ensure all reads from I/O have completed */
--       rmb();
-+       __ioread32_copy(to, from, count / 4);
-  }
-
--static inline void shmem_memcpy_toio32(volatile void __iomem *to,
-+static inline void shmem_memcpy_toio32(void __iomem *to,
-                                        const void *from,
-                                        size_t count)
-  {
--       while (count) {
--               __raw_writel(*(u32 *)from, to);
--               from += 4;
--               to += 4;
--               count -= 4;
--       }
-+       WARN_ON(!IS_ALIGNED((unsigned long)to, 4) ||
-+               !IS_ALIGNED((unsigned long)from, 4) ||
-+               count % 4);
-
--       /* Ensure all writes to I/O have completed */
--       wmb();
-+       __iowrite32_copy(to, from, count / 4);
-  }
-
-  static struct scmi_shmem_io_ops shmem_io_ops32 = {
-@@ -73,13 +65,13 @@ static struct scmi_shmem_io_ops shmem_io_ops32 = {
-   * pre-processor.
-   */
-  static inline void shmem_memcpy_fromio(void *to,
--                                      const volatile void __iomem *from,
-+                                      const void __iomem *from,
-                                        size_t count)
-  {
-         memcpy_fromio(to, from, count);
-  }
-
--static inline void shmem_memcpy_toio(volatile void __iomem *to,
-+static inline void shmem_memcpy_toio(void __iomem *to,
-                                      const void *from,
-                                      size_t count)
-  {
-
--- 
-Florian
-
+> >
+> > 3. unpoison_memory cleared flags and sent the pages to buddy. pgalloc_t=
+ag_sub() will be
+> > called again in free_pages_prepare().
+> >
+> > So there is a imbalance that pgalloc_tag_add() is called once and pgall=
+oc_tag_sub() is called twice?
+> As you said, that's exactly the case.
+> >
+> > If so, let's think about more complicated scene:
+> >
+> > 1. Same as above.
+> >
+> > 2. Pages are hwpoisoned. But memory_failure() fails to handle it. So PG=
+_hwpoison flag is set
+> > but pgalloc_tag_sub() is not called (pages are not sent to buddy).
+> >
+> > 3. unpoison_memory cleared flags and calls clear_page_tag_ref() without=
+ calling pgalloc_tag_sub()
+> > first. Will this cause problem?
+> >
+> > Though this should be really rare...
+> >
+> > Thanks.
+> > .
+>
+> Great, I didn't anticipate this scenario.
+>
+> When we call clear_page_tag_ref() without calling pgalloc_tag_sub(),
+>
+> It will cause exceptions in|tag->counters->bytes|and|tag->counters->calls=
+|.
+>
+> We can add a layer of protection to handle it
+>
+> The pseudocode is as follows:
+>
+> if (mem_alloc_profiling_enabled()) {
+>          union codetag_ref *ref =3D get_page_tag_ref(page);
+>
+>          if (ref) {
+>              if( ref->ct !=3D NULL && !is_codetag_empty(ref))
+>              {
+>                  tag =3D ct_to_alloc_tag(ref->ct);
+>                  this_cpu_sub(tag->counters->bytes, bytes);
+>                  this_cpu_dec(tag->counters->calls);
+>              }
+>              set_codetag_empty(ref);
+>              put_page_tag_ref(ref);
+>          }
+> }
+>
+> Hi Suren and Kent
+>
+> Do you have any suggestions for this? If it's okay, I'll add comments
+> and include this pseudocode in|clear_page_tag_ref|.
+>
+> >> It was detected by [1] and the following WARN occurred:
+> >>
+> >> [  113.930443][ T3282] ------------[ cut here ]------------
+> >> [  113.931105][ T3282] alloc_tag was not set
+> >> [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/al=
+loc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
+> >> [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rp=
+filter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack eb=
+table_nat ebtable_broute ip6table_nat ip6table_man4
+> >> [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: =
+loaded Tainted: G        W          6.11.0-rc4-dirty #18
+> >> [  113.943003][ T3282] Tainted: [W]=3DWARN
+> >> [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS u=
+nknown 2/2/2022
+> >> [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT=
+ -SSBS BTYPE=3D--)
+> >> [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
+> >> [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
+> >> [  113.946706][ T3282] sp : ffff800087093a10
+> >> [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27=
+: ffff80008249f0a0
+> >> [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24=
+: 0000000000000000
+> >> [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21=
+: 0000000000000000
+> >> [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18=
+: ffffffffffffffff
+> >> [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15=
+: ffff800081746210
+> >> [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12=
+: 5b5d353031313339
+> >> [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 =
+: 00000000ffffffd0
+> >> [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 =
+: c0000000ffff7fff
+> >> [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 =
+: 0000000000000001
+> >> [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 =
+: 0000000000000000
+> >> [  113.957962][ T3282] Call trace:
+> >> [  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
+> >> [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
+> >> [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
+> >> [  113.960096][ T3282]  __folio_put+0xd4/0x120
+> >> [  113.960614][ T3282]  folio_put+0x24/0x50
+> >> [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
+> >> [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
+> >> [  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
+> >> [  113.963183][ T3282]  simple_attr_write+0x38/0x48
+> >> [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
+> >> [  113.964330][ T3282]  full_proxy_write+0x68/0x98
+> >> [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
+> >> [  113.965372][ T3282]  ksys_write+0x78/0x100
+> >> [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
+> >> [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
+> >> [  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
+> >> [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
+> >> [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
+> >> [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
+> >> [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
+> >> [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
+> >>
+> >> Link [1]: https://github.com/linux-test-project/ltp/blob/master/testca=
+ses/kernel/syscalls/madvise/madvise11.c
+> >>
+> >> Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper=
+ function")
+> >> Cc: stable@vger.kernel.org # v6.10
+> >> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> >> ---
+> >>   mm/memory-failure.c | 6 ++++++
+> >>   1 file changed, 6 insertions(+)
+> >>
+> >> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> >> index 7066fc84f351..570388c41532 100644
+> >> --- a/mm/memory-failure.c
+> >> +++ b/mm/memory-failure.c
+> >> @@ -2623,6 +2623,12 @@ int unpoison_memory(unsigned long pfn)
+> >>
+> >>              folio_put(folio);
+> >>              if (TestClearPageHWPoison(p)) {
+> >> +                    /* the PG_hwpoison page will be caught and isolat=
+ed
+> >> +                     * on the entrance to the free buddy page pool.
+> >> +                     * so,when we clear this flag and return it to th=
+e buddy system,
+> >> +                     * clear it's codetag
+> >> +                     */
+> >> +                    clear_page_tag_ref(p);
+> >>                      folio_put(folio);
+> >>                      ret =3D 0;
+> >>              }
+> >>
+> >>
+> Thanks
+>
+> BR
+>
+> Hao
+>
 
