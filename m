@@ -1,140 +1,152 @@
-Return-Path: <linux-kernel+bounces-296774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96A495AF0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:21:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EF595AEF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96902287304
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F142B1F265A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35EA187FEE;
-	Thu, 22 Aug 2024 07:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Gay50H9m"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E300414A4CC;
+	Thu, 22 Aug 2024 07:14:39 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3A6187877
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046BC18755F;
+	Thu, 22 Aug 2024 07:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310882; cv=none; b=Jmcu2YxaMMvMKQhtOj8vsEJcV1CKhFYx+dMr2bdumCqLVi5+xyt02HedvhUr8R3snrVW/KnZPa1Bj2dqRhrVoHF5CHQWs21NV+eqVGjOZmGjwBFucfJhA8I9mY9qPtskGddG8tOBGe/0ZByIxV9erini48PCYTtvGksG7Y26aUU=
+	t=1724310879; cv=none; b=BHoR4ksUP2sXCcVyaGX/om+ZPrLHzH8vYlmygIrKxqzPK46NZI734xuB+3kGwZM1XVsTu7+dwYpm+rbVycLQWIPj1ItFnLv1beT/8zHL0OQvbYnJobbdx/XGnhyFXlmtkGx5qCzVbc8SfMqqxE+V+ZVd0IcOTsRS/e5V+0tLVVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310882; c=relaxed/simple;
-	bh=g7vfX863SYbCR0NBqllFlwtVsFEJGXyQFbet06hRe4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i+bDg40Yh+BYvlbo+xKeTs7OcDrAZPAKHj/AFS1taV2QOk3hm/yR5iW4gp2YNKfJzXbzgnTkHHa5+CrOIFgw8wpb7W1xy0bwj4Gw8nanNXa5NyUXGaUiwifc+88nefcgv8hCyw5ZP0VHUBxuj/mBdk9H4WAAxQy22gB6Y9MEtEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Gay50H9m; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3db1eb76702so323966b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724310879; x=1724915679; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kCwbwV/YmKb9rcRCZPyi2vEyGZwxl6QKnoBllHH347k=;
-        b=Gay50H9mT8GjjGyVsbWP8oRTPvazyrfrkHQNLggD4tWJAvcUx8EpIEHbIZi+lsqMly
-         uS2nxE0KEDluiuTMnycVI8DdwCcdSRT9UgKN/kr7lSOMldmvFlFMziR82qNIl6Z+3mV8
-         7jEkE/PG8OPuv9bmcmDvGsufFxPGO6R5WYUfLUglLyKPOpb8+X97KW+GiP5p9RYBqYJK
-         ipWWXyxJuRLvGuMMb2V2YY3xOH48bCSVnCIsistevtzzCYpfspf2ZW5LLy6conJu8dMU
-         k8p7SHIMbZpiYhYMiJ8QQtUPU70/Uyaf/Ui+qRkb3GPbkYLDfbndVGfYBBf1l/CgbMPV
-         yaQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724310879; x=1724915679;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kCwbwV/YmKb9rcRCZPyi2vEyGZwxl6QKnoBllHH347k=;
-        b=AM1loo33rEDHEebWwQXrChFx+PB9NaCHhME1rL8Ni9sxBWgMJ2IiUK6Yc3TD61pSd4
-         r0ExUvBxUOVY+NngBzKq/iy8eZ04ILnnU4FKg6OIjLk+LOetgYjcPAbVlaZ2XDl6BkGm
-         /gNx0n6GxYTKOFMrU/cL09QKv8scPUHkneRHR6v9RCDfifKzc0u+53toISGJ0bSjOO1L
-         yH9c/TMoYGxy+AMG24kLCNhLEre+HOFKjwGC3C54D5mGvViZxl/zmO2APrbpxoTMRb0X
-         ugvq47W1yIUAEofkdY2na4TZvvSHXbyWSdqQ/5eUHTKU7pOvJvkDDTi2kn4ryC49/CFR
-         HJaQ==
-X-Gm-Message-State: AOJu0Ywc/IJbda/u09DPgzPQ9/A01Esan0zih1bVHhKaTT0M2knBy5Cy
-	NDiZdQ2yhPjljCD2SA9TEa0AWSsYNs24aTGub3qw4xxLKiQuyhXssZTbfWkYPfL2ZUEwI/tWa4i
-	FQuk=
-X-Google-Smtp-Source: AGHT+IFsTn+Q5A1WOhbyPTAjHclYiOvt3nhLZV/Hi5KOu9NOtbxQa/3JykhMvHE3PrFxCVBhO2k7lw==
-X-Received: by 2002:a05:6871:149:b0:268:afc3:648e with SMTP id 586e51a60fabf-273cffcb557mr1073020fac.42.1724310879532;
-        Thu, 22 Aug 2024 00:14:39 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([240e:473:c90:f96:d029:ea8a:4e6d:d272])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac994a3sm695095a12.16.2024.08.22.00.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 00:14:39 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: david@redhat.com,
-	hughd@google.com,
-	willy@infradead.org,
-	muchun.song@linux.dev,
-	vbabka@kernel.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org,
-	vishal.moola@gmail.com,
-	peterx@redhat.com,
-	ryan.roberts@arm.com,
-	christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1724310879; c=relaxed/simple;
+	bh=Rn9d/ML2os7fiyWcUOGlavHd5OPzN/t1RfDUsN+0Qrg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VCL5B7+5ZNvwwBToioJE+HiAEv2oq2V+MUd2OqHIOQVd8e98iUu2Iam+NN4gadF/1JPKys+QsWGGugHH3sP3jCdRZbcHPXb9zySuNmK0oE4TaIOTLYiXD+pV9ili72jMeUzp0NxfH528we6mUIDyqBSg0Nmxk1LFrKdIKmN/xDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqDvR5CX1z9sT8;
+	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 21DgOl8Lk8Ri; Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDvR4LvYz9sSy;
+	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 83ED38B77E;
+	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id WGcMRiOmQSwe; Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F6158B763;
+	Thu, 22 Aug 2024 09:13:38 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2 09/14] mm: mremap: move_ptes() use pte_offset_map_rw_nolock()
-Date: Thu, 22 Aug 2024 15:13:24 +0800
-Message-Id: <12097a187fee5f21860d4f87e7aa103f822e298e.1724310149.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <cover.1724310149.git.zhengqi.arch@bytedance.com>
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 16/17] selftests: vdso: Make VDSO function call more generic
+Date: Thu, 22 Aug 2024 09:13:24 +0200
+Message-ID: <bd05c8faee64972a9e01f9497d1870dc267a55f4.1724309198.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310795; l=2025; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=Rn9d/ML2os7fiyWcUOGlavHd5OPzN/t1RfDUsN+0Qrg=; b=4ocv1Gynupmkdok/Yucd3J51RkIKkwAAgn+EGWRtuZhZI5J46ZOVIQ7c0ay2qC0zGA01fJtbr LHl2STYwXzSBtCp1j1FM7keZHQwVVi86v7ufMShJDfdkWwIamam+Wbi
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-In move_ptes(), we may modify the new_pte after acquiring the new_ptl, so
-convert it to using pte_offset_map_rw_nolock(). But since we already hold
-the exclusive mmap_lock, there is no need to get pmdval to do pmd_same()
-check, just pass a dummy variable to it.
+On powerpc, a call to a VDSO function is not a standard C function
+call. Unlike x86 that returns a negated error code in case of an
+error, powerpc sets CR[SO] and returns the error code as a
+positive value.
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+So use a macro called VDSO_CALL() which takes a pointer to the
+function to call, the number of arguments and the arguments.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- mm/mremap.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ tools/testing/selftests/vDSO/vdso_call.h           | 12 ++++++++++++
+ tools/testing/selftests/vDSO/vdso_test_getrandom.c |  3 ++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/vDSO/vdso_call.h
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 24712f8dbb6b5..f96b025c09079 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -143,6 +143,7 @@ static int move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
- 	spinlock_t *old_ptl, *new_ptl;
- 	bool force_flush = false;
- 	unsigned long len = old_end - old_addr;
-+	pmd_t dummy_pmdval;
- 	int err = 0;
+diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftests/vDSO/vdso_call.h
+new file mode 100644
+index 000000000000..ca5db2220925
+--- /dev/null
++++ b/tools/testing/selftests/vDSO/vdso_call.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Macro to call vDSO functions
++ *
++ * Copyright (C) 2024 Christophe Leroy <christophe.leroy@csgroup.eu>, CS GROUP France
++ */
++#ifndef __VDSO_CALL_H__
++#define __VDSO_CALL_H__
++
++#define VDSO_CALL(fn, nr, args...)	fn(args)
++
++#endif
+diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
+index 02bcffc23e0c..16ad400721c3 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_getrandom.c
++++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
+@@ -22,6 +22,7 @@
+ #include "../kselftest.h"
+ #include "parse_vdso.h"
+ #include "vdso_config.h"
++#include "vdso_call.h"
  
- 	/*
-@@ -175,7 +176,13 @@ static int move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
- 		err = -EAGAIN;
- 		goto out;
+ #ifndef timespecsub
+ #define	timespecsub(tsp, usp, vsp)					\
+@@ -147,7 +148,7 @@ static ssize_t vgetrandom(void *buf, size_t len, unsigned long flags)
+ 			exit(KSFT_FAIL);
+ 		}
  	}
--	new_pte = pte_offset_map_nolock(mm, new_pmd, new_addr, &new_ptl);
-+	/*
-+	 * Use the maywrite version to indicate that new_pte will be modified,
-+	 * but since we hold the exclusive mmap_lock, there is no need to
-+	 * recheck pmd_same() after acquiring the new_ptl.
-+	 */
-+	new_pte = pte_offset_map_rw_nolock(mm, new_pmd, new_addr, &dummy_pmdval,
-+					   &new_ptl);
- 	if (!new_pte) {
- 		pte_unmap_unlock(old_pte, old_ptl);
- 		err = -EAGAIN;
+-	return grnd_ctx.fn(buf, len, flags, state, grnd_ctx.params.size_of_opaque_state);
++	return VDSO_CALL(grnd_ctx.fn, 5, buf, len, flags, state, grnd_ctx.params.size_of_opaque_state);
+ }
+ 
+ enum { TRIALS = 25000000, THREADS = 256 };
 -- 
-2.20.1
+2.44.0
 
 
