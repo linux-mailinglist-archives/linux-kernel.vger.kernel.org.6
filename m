@@ -1,82 +1,85 @@
-Return-Path: <linux-kernel+bounces-297430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF9595B82F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D7695B834
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F0C286C41
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D3728711A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5DD1CBE96;
-	Thu, 22 Aug 2024 14:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368381CB31B;
+	Thu, 22 Aug 2024 14:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="rU6YTcWE"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FLb1bdj/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FE319DFA2
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99501C93DF;
+	Thu, 22 Aug 2024 14:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336425; cv=none; b=LLoY7EKly9OsQiyJKAG/1WV4iSNfL/9bayeqPnGJp6uqqJOgWavoOl4HS2evIQI2X9F1SzOGHSOxqnbYZcaQEQafIaUygSwvuSNIkv64pyeV/BH1dzGTdHmlI99gU/hxVNogM/frdRRB2HmN5fCgJLCzuOp5YoYaQpSZMu/TvGs=
+	t=1724336451; cv=none; b=a8+44wGuB9QZ6j3oOnfjxALJphuLAwHlGau1VvKW1rFF2prVsj0EMVl2gJ1wi8nlXLTYgiGMc8/ulaHGLH7kBCyDhmLCEruykVjgUAhr3eVYYuXYydcCYQjs8nhMPTsSE8CXQqMURjro1twAUTGugEttKMmrJPTsZy4JVUb49qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724336425; c=relaxed/simple;
-	bh=whjgBiyxi6MmtxaOjvj+SRLizXDZrlMD9otXWsU4zBs=;
+	s=arc-20240116; t=1724336451; c=relaxed/simple;
+	bh=DbkNI2FbaBywilWppugkB1Yz7W1BXd9eW/krIM7n1Lg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CVCVNFT/dyUMq1DX+1/bOwmdAC78DG6V0AM9f1Qs2PHRWV6V5orfdHDrahVXQcUV4d+0PDgWKGOntuuqcI7hvDWMISH+lNCg/C/3V3Gk6kZIJSHgMyGm7VgXYx1fKwspAok2scHZyWrs+ncWG3f6YyFAcscuPOxsi7Ztn2jfvLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=rU6YTcWE; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5becdf7d36aso1248271a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724336421; x=1724941221; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xjwzNkhWkLSrcaz0fPPI/Jh0hc+EeCBzFrJ7U1N2F6s=;
-        b=rU6YTcWEE+3BW04cW7LBmNpGgf7NhRf21qT5xQYxlUFh9dGZYNVGVi390hOKitfVdD
-         dzgQHmIrdgzu0+b2eGCUVf/CR1peurdwffp7ZVmJ2V7s4QQSDsmXdsF+xtGLv6u3z3SL
-         9xowRYsUw5p3ETCzVwA3F4g+jqpSOauhJp4pa+vooE/tzpMNcQAZ86+YGG77rJ89qvSs
-         DN5qWRHiLaunfJ8ltl91lhjyY78fRHbEyJG6SzCCVBYXB+uwFmwsmse0p2DEBRlByw2X
-         G12RDpz9xQ5rOApV8VNbwivtRpGxhoemdGsIPBz3krFIxBy/7/6yHeRnofdxWH+zUVUJ
-         0+Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724336421; x=1724941221;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xjwzNkhWkLSrcaz0fPPI/Jh0hc+EeCBzFrJ7U1N2F6s=;
-        b=uoVoc4+oK84BbM3el6c7x3QYXy+Aac3AtlEzIP8gHgMtJS2tOAznTQY/YmQE4/c6Xc
-         1kX+3J3yPp2A+lSOsec3nObXDIPkZSzg3oM1ARRzJy+cTzwxRQ46OVS4kLU8cgwbjxAB
-         yTU7FZ2eLUPaDEevjqbCfTFttbht9mtxdhtwmg+pf9+LMCmTCLfpONETxsg4GWxuYRub
-         Ev3ALQBKb4wWyJtoHrwouXI+6lX6K0wKXAayfadRyLPgZFhKacU0Zfu4ubGfcPj+AIkZ
-         rcjZdzLHOh6ohhCoDcNwFXJ2prrBB/TNjW0G1T3bRgVETYsG74o7P7uq6YphWQv+j4mn
-         0UOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSIWEZrYWHvuhvAzeYJTI2vVhgNan1GYB4/PWo0xLGeCn18ycCAlgU6RsyHNlnWyByTt1RN/x+JUHln4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykyGOqrj3ISS3yFOnmw4clRagXZTboq4OsmWCps9bXuJW/rPuf
-	IuqF2W9Bd+p8hTb5ocInKwSYOWL/KPbAp06bZPNv6/cPPne3Xw7GCWf9DLuFZ053j5SPrSf5Wyu
-	x
-X-Google-Smtp-Source: AGHT+IFIQM4hEmL0SGboolNLNcmWaUUp9r0kk1Hm1LtA02ZHsJHtYHEvJQ3Pmq1lQlDnPrIHE211pQ==
-X-Received: by 2002:a05:6402:40c7:b0:5be:dc90:d13f with SMTP id 4fb4d7f45d1cf-5bf1f0a34b4mr4222083a12.5.1724336421435;
-        Thu, 22 Aug 2024 07:20:21 -0700 (PDT)
-Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a91afsm966726a12.93.2024.08.22.07.20.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:20:20 -0700 (PDT)
-Date: Thu, 22 Aug 2024 16:20:19 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v11 03/11] octeontx2-pf: Create representor
- netdev
-Message-ID: <ZsdJI0nAj5QeVHoM@nanopsycho.orion>
-References: <20240822132031.29494-1-gakula@marvell.com>
- <20240822132031.29494-4-gakula@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtI6BAynISPIqVzi/qpVox1TipfOVeGXOQul4qnuDgbmmPcOfa1iVHJ5XZ+ZTfznSpkGLybC5+iT2c0KXHJKWTq1boMzuoXnOusk6Necy0gUzNj/eZawh0SKydvvdhpIJyT/l1kuyxH5wh3D3oLKLK/PBj29PzBKknJ0mF+lHjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FLb1bdj/; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724336450; x=1755872450;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DbkNI2FbaBywilWppugkB1Yz7W1BXd9eW/krIM7n1Lg=;
+  b=FLb1bdj/uyIRegGVz9DaoxdPm8jav5Rc5GgKJsOmAEyiPO7VC83R28sf
+   ZSbN5+OSyhA6urxwaBk/NLa4+PIpDQTy9ZkJELgJEVKN6rScnKOkjnkvS
+   3Q5vgjGUIueNA3Tavxpn4gxPHg1AuZs2GMauS3rLkXOvjiK1dkf08NTSw
+   4piTaqvAZpeY3aL1rw60a7qN6sLYaQgzxbGPu5ntMb48GecXwrPRmC0/D
+   pZYFE/c8HNfsAa4H/pQhvPBPhgJzYDR8GqNK9ffqCN/SID3S0zd19v76G
+   rB1V+DiW4iCK4mkPq3zRD6UowSR1BpOQZSrSLhNGgyNjcbHpy4F0h/W25
+   A==;
+X-CSE-ConnectionGUID: 2jNETJlQQH6VvK1gDQkVdw==
+X-CSE-MsgGUID: 4T3h9FnwRImNoduJLnsuuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="40264409"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="40264409"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 07:20:49 -0700
+X-CSE-ConnectionGUID: Xgwb6QXRS7q1FUsK/fMpdg==
+X-CSE-MsgGUID: DY2HQ1VIR2i4q8kjbVJB5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="61465764"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 07:20:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sh8g6-00000000TfG-10aA;
+	Thu, 22 Aug 2024 17:20:42 +0300
+Date: Thu, 22 Aug 2024 17:20:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v5 08/10] i2c: of-prober: Add GPIO support
+Message-ID: <ZsdJOUe44hiGur-s@smile.fi.intel.com>
+References: <20240822092006.3134096-1-wenst@chromium.org>
+ <20240822092006.3134096-9-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,61 +88,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822132031.29494-4-gakula@marvell.com>
+In-Reply-To: <20240822092006.3134096-9-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Thu, Aug 22, 2024 at 03:20:23PM CEST, gakula@marvell.com wrote:
->Adds initial devlink support to set/get the switchdev mode.
->Representor netdevs are created for each rvu devices when
->the switch mode is set to 'switchdev'. These netdevs are
->be used to control and configure VFs.
->
->Signed-off-by: Geetha sowjanya <gakula@marvell.com>
->Reviewed-by: Simon Horman <horms@kernel.org>
->---
-> .../ethernet/marvell/octeontx2.rst            |  53 ++++++
-> .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++++++
-> .../net/ethernet/marvell/octeontx2/nic/rep.c  | 165 ++++++++++++++++++
-> .../net/ethernet/marvell/octeontx2/nic/rep.h  |   3 +
-> 4 files changed, 270 insertions(+)
->
->diff --git a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst b/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
->index 1e196cb9ce25..1132ae2d007c 100644
->--- a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
->+++ b/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
->@@ -14,6 +14,7 @@ Contents
-> - `Basic packet flow`_
-> - `Devlink health reporters`_
-> - `Quality of service`_
->+- `RVU representors`_
+On Thu, Aug 22, 2024 at 05:20:01PM +0800, Chen-Yu Tsai wrote:
+> This adds GPIO management to the I2C OF component prober.
+> Components that the prober intends to probe likely require their
+> regulator supplies be enabled, and GPIOs be toggled to enable them or
+> bring them out of reset before they will respond to probe attempts.
+> regulator support was added in the previous patch.
 > 
-> Overview
-> ========
->@@ -340,3 +341,55 @@ Setup HTB offload
->         # tc class add dev <interface> parent 1: classid 1:2 htb rate 10Gbit prio 2 quantum 188416
+> Without specific knowledge of each component's resource names or
+> power sequencing requirements, the prober can only enable the
+> regulator supplies all at once, and toggle the GPIOs all at once.
+> Luckily, reset pins tend to be active low, while enable pins tend to
+> be active high, so setting the raw status of all GPIO pins to high
+> should work. The wait time before and after resources are enabled
+> are collected from existing drivers and device trees.
 > 
->         # tc class add dev <interface> parent 1: classid 1:3 htb rate 10Gbit prio 2 quantum 32768
->+
->+
->+RVU Representors
->+================
->+
->+RVU representor driver adds support for creation of representor devices for
->+RVU PFs' VFs in the system. Representor devices are created when user enables
->+the switchdev mode.
->+Switchdev mode can be enabled either before or after setting up SRIOV numVFs.
->+All representor devices share a single NIXLF but each has a dedicated queue
->+(ie RQ/SQ. RVU PF representor driver registers a separate netdev for each
->+RQ/SQ queue pair.
->+
->+HW doesn't have a in-built switch which can do L2 learning and forward pkts
->+between representee and representor. Hence packet path between representee
->+and it's representor is achieved by setting up appropriate NPC MCAM filters.
+> The prober collects resources from all possible components and enables
+> them together, instead of enabling resources and probing each component
+> one by one. The latter approach does not provide any boot time benefits
+> over simply enabling each component and letting each driver probe
+> sequentially.
+> 
+> The prober will also deduplicate the resources, since on a component
+> swap out or co-layout design, the resources are always the same.
+> While duplicate regulator supplies won't cause much issue, shared
+> GPIOs don't work reliably, especially with other drivers. For the
+> same reason, the prober will release the GPIOs before the successfully
+> probed component is actually enabled.
 
-Isn't this documentation part talking about bits added in patch
-"octeontx2-af: Add packet path between representor and VF"
-? If yes, move the docs to that patch. Please make sure you add code
-alongside with documentation. Or, alternativelly, just let the
-documentation be added by separate and last patch.
+...
 
-[..]
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(node);
+> +	struct gpio_descs *gpiods;
+> +	struct gpio_desc *gpiod;
+> +	char con[32]; /* 32 is max size of property name */
+
+Use 'propname' to be aligned with GPIO library usages.
+
+> +	char *con_id = NULL;
+> +	size_t new_size;
+> +	int len;
+
+...
+
+> +	if (len >= sizeof(con) - 1) {
+
+This can be transformed to check the returned value from strscpy().
+
+> +		pr_err("%pOF: length of GPIO name \"%s\" exceeds current limit\n",
+> +		       node, prop->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (len > 0) {
+> +		strscpy(con, prop->name, len + 1);
+
+The correct (robust) call is with destination size. Which means here that you
+may use 2-argument strscpy().
+
+> +		con_id = con;
+> +	}
+
+...
+
+> +	if (!data->gpiods)
+> +		return 0;
+
+If it comes a new code (something else besides GPIOs and regulators) this will be a (small) impediment. Better to have a helper for each case and do
+
+	ret = ..._gpiods();
+	if (ret)
+		...
+
+Same for regulators and anything else in the future, if any.
+
+> +		/*
+> +		 * reset GPIOs normally have opposite polarity compared to
+
+"reset"
+
+> +		 * enable GPIOs. Instead of parsing the flags again, simply
+
+"enable"
+
+> +		 * set the raw value to high.
+
+This is quite a fragile assumption. Yes, it would work in 98% cases, but will
+break if it's not true somewhere else.
+
+> +		 */
+
+...
+
+> +	/* largest post-reset-deassert delay seen in tree for Elan I2C HID */
+> +	msleep(300);
+
+Same Q, how do you monitor _all_ the drivers?
+
+...
+
+> +disable_gpios:
+> +	for (gpio_i--; gpio_i >= 0; gpio_i--)
+> +		gpiod_set_raw_value_cansleep(data->gpiods->desc[gpio_i], 0);
+
+Can't you call the _array() variant here?
+
+...
+
+> -	dev_dbg(dev, "Resources: # of regulator supplies = %d\n", probe_data.regulators_num);
+> +	dev_dbg(dev, "Resources: # of GPIOs = %d, # of regulator supplies = %d\n",
+> +		probe_data.gpiods ? probe_data.gpiods->ndescs : 0,
+> +		probe_data.regulators_num);
+
+I would issue one message per class of the devices (GPIOs, regulators, ...)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
