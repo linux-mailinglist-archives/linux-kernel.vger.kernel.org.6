@@ -1,114 +1,240 @@
-Return-Path: <linux-kernel+bounces-297212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E4295B48B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A96B895B48F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAEAB1C2307B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:04:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0FB1C22FF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86B21C945F;
-	Thu, 22 Aug 2024 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4A1C9456;
+	Thu, 22 Aug 2024 12:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqVAQt6I"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3Gq5eHgC"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88612183CB7;
-	Thu, 22 Aug 2024 12:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DCB1C93CF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328248; cv=none; b=RCLh4uDjC9iBLzdX7cvdnEFHVGgnfNSZYW9s0/RLEg+adlwwP9aEDn0wocZosUFMR2H+jpC/0JxQ7tMo8KRfxC8kfZmehl+pefguo5AnVKycSUW4ozDyQ01vNIeCdaVBDHffNp74zd7iwdqW89mdHTCr94/Ag27x+ZpkoBgVjZA=
+	t=1724328293; cv=none; b=oOsSJ5R9QlUVlcm48BJs7uDZkRKm1pQJwC36gdAbozhfA3KlcjK6S6OXW3cxSNqZkYxW2V9HBF8vZ/k3yvK+4038rADYLCqWayx4taFBAWirTEdAdQDaWXvxGMfqyJ7h54m58+MDeeVuLphYi3X1b0bJ3lhfFPSj1j61wmLTMLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328248; c=relaxed/simple;
-	bh=b2i1UyIA19HHknlm0wM6tx/e+HaRrcCa/2GwEuR9DrY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BReNIv7b0YyNOJq9+tULznkBaOrHADwvniN6AP8O9Mji7sqnMkv8dU3N2cheskIKgPDT3K3Vgjig2/koBNosGCYagZ5bQYRpyeHh8j67F9bO3wiOja0q1Dotf+2J0K0YqwIrAOlB/9Trl5D7YH22ICBThWILWnWA0Hv+7jU+opY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqVAQt6I; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533462b9428so1210573e87.3;
-        Thu, 22 Aug 2024 05:04:06 -0700 (PDT)
+	s=arc-20240116; t=1724328293; c=relaxed/simple;
+	bh=4wPruubT8llHHATxdqsGwe1CHDZt4aUPk/RJRbbIGjg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Plk01t1pnIvBuceQlPYrJzGAg1PIu8SOaQTswpmENVLxMGLVl+QdFCRubcq/lViHoa0fwf9WHK9GozAzhgnkbmPtRRYeLr4idMK8Mg6PkMd11uHlk73g7npYh7/sTTVS93wNkp7flh8avit5zSUcQFENwyVkX08YoQ6oEwYgzcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3Gq5eHgC; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0be1808a36so1162503276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724328245; x=1724933045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORE2H7Bi9/OqilhSDX+7ewEAaquD0x8jX2ZwC4dJsHU=;
-        b=mqVAQt6IriumDvXky5QgmZTZrQtR576ktfZuKf0jZ79n9/puzVOyDi93MdkQVBV5kB
-         C2TEIQikOQWQYyaY8XcBqIvtcW9g+rUaPl/D2Q0FgfsofpSmxqJ+yNFPCEaKKwEtJ8zI
-         49qrw+n8O/z9OE9c3XtfBInWzhk08Ze5Din9UpEG2TlldVOFaHpxTDowGD3OyBtlITk1
-         MEyYZY3R6hkxKN1tgBGT8rD+eURhjtfNUE7c46iml3i5SqeYkKaXvnm60CcKRrRQRRBp
-         3V3jwvlhMrRnN6Eb60i9VRjutYF9tLiHZHpqlXbGzmkEFpKApLgb5SARxRVbpCCTjMAz
-         6vew==
+        d=google.com; s=20230601; t=1724328290; x=1724933090; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qaeHNeC4U+gSuIpF/blhfiveOXLPImv9FOraCwj5ang=;
+        b=3Gq5eHgCeOeF0ZaGlhHaiBYgDEsS0WoYrr/E1tkekktwlqkY70vstk0j8AzJB2t/jr
+         zJvneFSrdh+kcC8uDrW6OuwN261bt5vQ+jD1zzoTBIReO/00bpQd98eyXJaMdZKmhqJo
+         ermlNdTySig54dMbqKuUTab8J/XZKTDapoIjZfSXB/oRuhPJu3Yv7hz17bBXFCha9wZy
+         eNSvRKLc7ffza1GP91Ckez7Eg72643Kg/E8QJZyhQiULD/i7YTTA2hvmce+bfyzI7oO5
+         ZiO3pRnWnU+Zj67y5eJ8s3JTES029KnDUqLcXXu5lU3Ze3z7qCaUG8KwANoEnVDSAmKl
+         ptFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724328245; x=1724933045;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ORE2H7Bi9/OqilhSDX+7ewEAaquD0x8jX2ZwC4dJsHU=;
-        b=OO3OFpc03uugPYg+2//LiHmcQo4MoPCneZh6wsOJcAkARuHGHqCYbQ+c/54s11nlRY
-         d62JNqo4D8ijVFdWmUygfYz/KUWkvJyoXysXrw4ci27bMImIFDb6AHKcHw2lv4tjXb+H
-         WF6fSvNjshjFTNheZ8/mWl0hFN2hB0li3pYxIMM6T4CVKiNK9qkb7U1K5B5jdI2DX76c
-         BSdhENtrHS3m9Yq1VEjmxRmlaGixsO8HohfZBAuRqxU3++8TMGQEbSk+ZSG58U31Ll/u
-         xft3ahYsAmikUT2uNm7dKcni3gAZYW/0aJtPSNoKqAkUYZPTQn4rNiqk6D4f77/DW1EA
-         j8QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUS93SMOzcXvoKeMHG+2hy7MYOWGOSEvJtarvT/e+vQbCBi8LvWXbvYi8nzt7WwR03N1hA5nzx+/he7HwI=@vger.kernel.org, AJvYcCVe77Q80NtOnouVI7GfbABrpwWIDiEWa6ERXmbPXU3t5yCDAYx7lUqxMaoo3GoTPL7O23wN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFaLlkozOlTKU0c5euiz384WH2KBimo9jI5w+/vMWuHizxKslH
-	VYaziwC2ow35XFcAE0jU4o6AjnYGb19zdlcA9n+aJfWPFdSnK70GWCAkjw==
-X-Google-Smtp-Source: AGHT+IEVu6F+vYWFapwOIsSBCZqfIGcTVjkndzoHwS5/90qXb1xwWOeD715zm01hBVFCmQxVkbQS5w==
-X-Received: by 2002:a05:6512:318f:b0:52c:8342:6699 with SMTP id 2adb3069b0e04-5334fd64850mr1536544e87.55.1724328243955;
-        Thu, 22 Aug 2024 05:04:03 -0700 (PDT)
-Received: from pc636 (host-90-233-193-131.mobileonline.telia.com. [90.233.193.131])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea296b0sm243565e87.31.2024.08.22.05.04.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 05:04:03 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 22 Aug 2024 14:04:01 +0200
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
-Message-ID: <ZscpMfiyoRE95ZiF@pc636>
-References: <20240820155935.1167988-1-urezki@gmail.com>
- <1cc13276-43fe-4c2d-8055-0a1a8a7ee156@suse.cz>
+        d=1e100.net; s=20230601; t=1724328290; x=1724933090;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qaeHNeC4U+gSuIpF/blhfiveOXLPImv9FOraCwj5ang=;
+        b=XUMAUV4jwlCQuN269M+FAL+HRxS8DxhITdXlfxpo+dBMwRhIwmbMvkMzpdz84gON7p
+         uXd+2QkFRI4gCATAO8wGNfUWawkxHsCKgX9hOIyXwGmKOoYyqgPUw4LdINGFoEmSKk7H
+         NU7z/49KOLbAgVMJU6GQLVE5cbJOppbKMSvt0mheCmr6jhFuyE0rahYCA8Xexq4dPklD
+         Yl7Ci/SuVExnx8HvEfZF8iRjKlyhnlTNP1+3b9ae1FcHUJnWtqsPLnPW2NG9btnChSpE
+         dcOvtG2iAAAgcHq4dL7gstp3m3V4JGMC6Gvf94ELTe6yk15NJrOP5fZe1LSyPcZr/W+2
+         dP2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqhtwX5V3mXhZTsejLOet+3eUjMbqwwozR8B+8vYDuMeEJ3Bar2u308J9/Ubehj+O6n+D2Fx3WeFXD10w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKoSN9MkIgMtCVq19ED+/XswQlclOrfbH3BeRTjbK16Gjt4Iql
+	wofeJ5scANiO3Zt+h+RgR1MavEDF62xMArfg0KHncE4NUTg7yyOLD78AVfOglHjuVq88QoYB34F
+	kzhFgu6Sf2II4Sw==
+X-Google-Smtp-Source: AGHT+IEIHScnmgqTJmuCdOdZdFrXk6gyAD2n2QTBVJYojsFAgQWMDhll0TNe5nx6xpeyVM/+JOGxXJdwv2SpyHk=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a25:aa84:0:b0:e0b:d729:ff8d with SMTP id
+ 3f1490d57ef6-e166543c856mr14145276.5.1724328289940; Thu, 22 Aug 2024 05:04:49
+ -0700 (PDT)
+Date: Thu, 22 Aug 2024 12:04:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1cc13276-43fe-4c2d-8055-0a1a8a7ee156@suse.cz>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIADwpx2YC/23Qy27DIBAF0F+JWNcVw8uQVf+j6oLH2EFqTYQtq
+ 1Xkfy/xpiC6vEjnMjMPsmKOuJLr5UEy7nGNaSlBv1yIv9llxiGGkgmjTFBF1bBl6/Ge4rINHBC
+ kMxTFCKSAe8Ypfp9l7x8l3+K6pfxzdu/wfP23ZoeBDkpKUGx0kwT3Nqc0f+KrT1/k2bOzygJtL
+ Ct2suhs0OC4lJ3llWXQWF6sQSEQ0TKneytqqxsriuWSB8m4NR56K/+spqyx8pzZghLCiOD7fVV t239VsZbxSVM6AWjT2bGy0N55LDYoapwB5TS09jiOX3jnaSYNAgAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5477; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=4wPruubT8llHHATxdqsGwe1CHDZt4aUPk/RJRbbIGjg=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmxylZCAp++W0g03p2207w/bZOFkFKkI+DjX+LP
+ TlaZhO497WJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZscpWQAKCRAEWL7uWMY5
+ Rhs+D/9wZyUjJN4r4koXI+//cd7ZcTKIuHeOxcDinqLwj7qF+USMJHsCAmLQ/cF08mTpuaios2X
+ 1rnPBggHshySYc+DfHxyw2p3+RCkwXEmx74TtThOZsAiNYQ5XQlIF/q0J7CWtLBBmi2uAT53OA7
+ 6yCfIuo1vqRBSMp66saDoRoQp7S8AL71UyvWD21+jZ/+hFy10wVML+Xu4ouG1/e/V9zK8vwTYk4
+ jKfhfjlG9EW8yVXGd+/quQopg5cSGOxvcyIpbN1amP01SLK1aMK1CKGQjuam/l3bwaaWTk5R8vo
+ xUgj4NR4iiSa0idNH82zVHgPrlNie9FYJqYnpImHcKcj4/Po5nMsJ6Xxmx6c0/t9rOCk9hJDwmh
+ IxHaI7jlU8sH90owV4Mv8AhFU+xbL9uyvsMSmK7svUMcqYCrHOjZw57RxMIV0Vsr35Tvu9CHJon
+ NO0S5ogSiOHwCFESn0RltVmLFC7gkLzgIHRReMaGOdcZ0qljSFuGXUCVPD0fsemcIiXLvF/f+Wi
+ uJTJ3zks7aA+LnhUAFsmDSe4Rws4EtUizV1kYwm6SfSORqZMqvNKVb9eksXvm3qkzAEu/lLUMA3
+ tWaCxOxms2Ns87v3MrKckIUkrNmH2BLHSjt7Ku3PctE/fIjy/d5FolEcgRM5q8PXLKASN9ceGS1 bPjj1UgxpInqEHA==
+X-Mailer: b4 0.13.0
+Message-ID: <20240822-tracepoint-v8-0-f0c5899e6fd3@google.com>
+Subject: [PATCH v8 0/5] Tracepoints and static branch in Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>
+Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
+	Alice Ryhl <aliceryhl@google.com>, Carlos Llamas <cmllamas@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Aug 21, 2024 at 08:06:08PM +0200, Vlastimil Babka wrote:
-> On 8/20/24 5:59 PM, Uladzislau Rezki (Sony) wrote:
-> > Add a kvfree_rcu_barrier() function. It waits until all
-> > in-flight pointers are freed over RCU machinery. It does
-> > not wait any GP completion and it is within its right to
-> > return immediately if there are no outstanding pointers.
-> > 
-> > This function is useful when there is a need to guarantee
-> > that a memory is fully freed before destroying memory caches.
-> > For example, during unloading a kernel module.
-> > 
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Thanks Ulad, replaced the patch in slab/for-next
-> 
-You are welcome :)
+An important part of a production ready Linux kernel driver is
+tracepoints. So to write production ready Linux kernel drivers in Rust,
+we must be able to call tracepoints from Rust code. This patch series
+adds support for calling tracepoints declared in C from Rust.
 
---
-Uladzislau Rezki
+This series includes a patch that adds a user of tracepoits to the
+rust_print sample. Please see that sample for details on what is needed
+to use this feature in Rust code.
+
+This is intended for use in the Rust Binder driver, which was originally
+sent as an RFC [1]. The RFC did not include tracepoint support, but you
+can see how it will be used in Rust Binder at [2]. The author has
+verified that the tracepoint support works on Android devices.
+
+This implementation implements support for static keys in Rust so that
+the actual static branch happens in the Rust object file. However, the
+__DO_TRACE body remains in C code. See v1 for an implementation where
+__DO_TRACE is also implemented in Rust.
+
+When compiling for x86, this patchset has a dependency on [3] as we need
+objtool to convert jmp instructions to nop instructions. This patchset
+is based on top of the series containing [3].
+
+There is also a conflict with splitting up the C helpers [4]. I've
+included an alternate version of the first patch that shows how to
+resolve the conflict. When using the alternate version of the first
+patch, this series applies cleanly on top of rust-next.
+
+Both [3] and [4] are already in rust-next.
+
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Link: https://r.android.com/3119993 [2]
+Link: https://lore.kernel.org/all/20240725183325.122827-7-ojeda@kernel.org/ [3]
+Link: https://lore.kernel.org/all/20240815103016.2771842-1-nmi@metaspace.dk/ [4]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v8:
+- Use OBJTREE instead of SRCTREE for temporary asm file.
+- Adjust comments on `asm!` wrapper to be less confusing.
+- Include resolution of conflict with helpers splitting.
+- Link to v7: https://lore.kernel.org/r/20240816-tracepoint-v7-0-d609b916b819@google.com
+
+Changes in v7:
+- Fix spurious file included in first patch.
+- Fix issue with riscv asm.
+- Fix tags on fourth patch to match fifth patch.
+- Add Reviewed-by/Acked-by tags where appropriate.
+- Link to v6: https://lore.kernel.org/r/20240808-tracepoint-v6-0-a23f800f1189@google.com
+
+Changes in v6:
+- Add support for !CONFIG_JUMP_LABEL.
+- Add tracepoint to rust_print sample.
+- Deduplicate inline asm.
+- Require unsafe inside `declare_trace!`.
+- Fix bug on x86 due to use of intel syntax.
+- Link to v5: https://lore.kernel.org/r/20240802-tracepoint-v5-0-faa164494dcb@google.com
+
+Changes in v5:
+- Update first patch regarding inline asm duplication.
+- Add __rust_do_trace helper to support conditions.
+- Rename DEFINE_RUST_DO_TRACE_REAL to __DEFINE_RUST_DO_TRACE.
+- Get rid of glob-import in tracepoint macro.
+- Address safety requirements on tracepoints in docs.
+- Link to v4: https://lore.kernel.org/rust-for-linux/20240628-tracepoint-v4-0-353d523a9c15@google.com
+
+Changes in v4:
+- Move arch-specific code into rust/kernel/arch.
+- Restore DEFINE_RUST_DO_TRACE at end of define_trace.h
+- Link to v3: https://lore.kernel.org/r/20240621-tracepoint-v3-0-9e44eeea2b85@google.com
+
+Changes in v3:
+- Support for Rust static_key on loongarch64 and riscv64.
+- Avoid failing compilation on architectures that are missing Rust
+  static_key support when the archtectures does not actually use it.
+- Link to v2: https://lore.kernel.org/r/20240610-tracepoint-v2-0-faebad81b355@google.com
+
+Changes in v2:
+- Call into C code for __DO_TRACE.
+- Drop static_call patch, as it is no longer needed.
+- Link to v1: https://lore.kernel.org/r/20240606-tracepoint-v1-0-6551627bf51b@google.com
+
+---
+Alice Ryhl (5):
+      rust: add generic static_key_false
+      rust: add tracepoint support
+      rust: samples: add tracepoint to Rust sample
+      jump_label: adjust inline asm to be consistent
+      rust: add arch_static_branch
+
+ MAINTAINERS                             |  1 +
+ arch/arm/include/asm/jump_label.h       | 14 +++--
+ arch/arm64/include/asm/jump_label.h     | 20 +++++---
+ arch/loongarch/include/asm/jump_label.h | 16 +++---
+ arch/riscv/include/asm/jump_label.h     | 50 ++++++++++--------
+ arch/x86/include/asm/jump_label.h       | 38 ++++++--------
+ include/linux/tracepoint.h              | 22 +++++++-
+ include/trace/define_trace.h            | 12 +++++
+ include/trace/events/rust_sample.h      | 31 +++++++++++
+ rust/Makefile                           |  5 +-
+ rust/bindings/bindings_helper.h         |  3 ++
+ rust/helpers.c                          |  9 ++++
+ rust/kernel/.gitignore                  |  3 ++
+ rust/kernel/arch_static_branch_asm.rs.S |  7 +++
+ rust/kernel/jump_label.rs               | 91 +++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs                      | 37 ++++++++++++++
+ rust/kernel/tracepoint.rs               | 49 ++++++++++++++++++
+ samples/rust/Makefile                   |  3 +-
+ samples/rust/rust_print.rs              | 18 +++++++
+ samples/rust/rust_print_events.c        |  8 +++
+ scripts/Makefile.build                  |  9 +++-
+ 21 files changed, 379 insertions(+), 67 deletions(-)
+---
+base-commit: 88359b25b950670432ef1da4352eb6cc62e0fa9f
+change-id: 20240606-tracepoint-31e15b90e471
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
