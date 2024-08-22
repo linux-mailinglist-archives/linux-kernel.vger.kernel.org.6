@@ -1,201 +1,139 @@
-Return-Path: <linux-kernel+bounces-296619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1894F95ACDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:29:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1B695ACE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6751F23359
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:28:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1664B1C228AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573D658222;
-	Thu, 22 Aug 2024 05:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fmv00iod"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6A46BFC0;
+	Thu, 22 Aug 2024 05:30:04 +0000 (UTC)
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5BB36B11;
-	Thu, 22 Aug 2024 05:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E24558BB;
+	Thu, 22 Aug 2024 05:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724304528; cv=none; b=qYc79y/BaYacXUUgtbDRxNd20vCi5mbhKpg6tptNhL/gSoq/B4oY00pxTCk5pII19sar3u3/ngJN2OdtkHJvojRd4h4nH7qoi2WluAGXF4uIoXAobl5vEVjp6LAJ8S2ebZ0jV42uwm5Ge/sIq2ReZKEEwzj9Bo0kBzKvOAyAR0A=
+	t=1724304604; cv=none; b=PT+I82wVJtxzOowFzqW67Gcc8w0ioYcp283frihwcnBUc4QAZQbxaRaOLk7L092QfOnrGNirAm2j4j+2/6dhT6zSKwVq7FXUp+RaQWXVy5R6nqzf6rWCKhDyR66gMvW/g4RewdV7xcKHE9MlXBwGHlfYlQaVRMo2rPcS1I4YTRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724304528; c=relaxed/simple;
-	bh=LjsVmZE/Ldhn8prY6yadpj5HWSrLvX4k/gMx1dazy48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jL6LlD9jQllPf2uXCWZROZgJdmM7lc823aSK1Y/gQuVZs5NqOEcV0wpwxGKN/mKJVuz5MYOqI0SgctuDV6jUjV1fTMtcsqR/pmDOxAlQmk+lGFurK8wjrtGqF7lr9+QvZEpXbvjTKEhcguxyeMQkAc1xP0e/1GOAAHzEzwcpV08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Fmv00iod; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47M5SOIk118943;
-	Thu, 22 Aug 2024 00:28:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724304504;
-	bh=UE4cJOuH5MHX8pNf1eCEqAASVsPMorLePVUImxNuZ2Q=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Fmv00iod0uKJGr5WzWMfNfMuCOwLT0b6Kx7If5RumNZWHxwc8zYN8+KW+Yw4nrkry
-	 o/Xkcp4Qwf+b7eM1MritgTPKJxXFWmSzNuF7krA8qx0qh0p352lO5AP/3au29jSuR4
-	 Pn2TWajJKWexTYHn400iOiYcEXAccnkIxfF2GpWk=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47M5SOs8063192
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 22 Aug 2024 00:28:24 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
- Aug 2024 00:28:24 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 22 Aug 2024 00:28:24 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47M5SHdj050759;
-	Thu, 22 Aug 2024 00:28:17 -0500
-Message-ID: <79dfc7d2-d738-4899-aadf-a6b4df338c23@ti.com>
-Date: Thu, 22 Aug 2024 10:58:16 +0530
+	s=arc-20240116; t=1724304604; c=relaxed/simple;
+	bh=epM428OpHUafAd7fsZTEdiCGGMpAeXQZsMfOjY6Y+G0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERW61wr1MMARQnGND9bMv5AFwZrOs28tFPY2spxMt7iMQoOJ0drG00vkaEnktpVW68zG6aUyMK+G8TbdiqdmaOclVxJGCx+VvN63TxHjv76HWiZIDbZ48y4DnxNc3Gzl2kIyUYRarouZ3pV+X7LsHl+niUj4G1tYdg5yf0iJDFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5d5c7f23f22so288100eaf.0;
+        Wed, 21 Aug 2024 22:30:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724304601; x=1724909401;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4DH+JK/58q2Wi7Mk1VPRdbq/7ID5n14zsspxYzBb8yc=;
+        b=HbSWaozB++rpjYYpcCZu4nRosBs7ZVJvr5ek9QbXGdASGAxBDceJnTcGMpm08dp7+4
+         a3brURTe7cj0RObjbriMjoVg5nxujIKC96GeTxBsGlsZ+O0zu9jmhqOsHWXhbbb47zln
+         UUxLJyAnSKAGPNmWqCQQvmzmsgkITHjVq/WRBHIyYbveRoaMt3S0EYa4IjkToB8LKAI4
+         EwYiTjs41YJqhspaqDM84TfNw9BKxs+s8ZCfYYja2MFWJYOsxHTOrskuUelruDsh144B
+         MxBvC8t7jO1GMSxGeW5JwbrMIhLlACFEVvC/Piaw7UlpM/yY2Nqut1Yap24MTwXCQ2Zy
+         rC4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVZ6RNnsdsAHGqwVFOZ2zX893W9X4tPBFtk8EBl9qbLYrRG903Rgg6PFWFbCM4AdFCQ6w0Go97qX0=@vger.kernel.org, AJvYcCVN+r6lI9KFx+DdTD0IYaGIocbDpZnVHDvV3rYKr9MMVRn1LKyJha83DZkAEasBqqavLK+DBDP+2wBuOaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4q4rY9mEmKmsg52/KCm8wlrl5okSrre37677JKZvOgnn10CkH
+	dWbNtKyMZ0yPvKW3A1miDZt0GElxjjYY4bbN03rPxvAOIb5ErQ10
+X-Google-Smtp-Source: AGHT+IFp3gLZOY6Z00/2GAYLazJDg0SK1tv4Lk28SnUSav9jUVjsEmRI9VY0iziPH+3uYH7aR2dC+w==
+X-Received: by 2002:a05:6820:82c:b0:5dc:9800:a443 with SMTP id 006d021491bc7-5dca03d01b0mr5516563eaf.1.1724304601302;
+        Wed, 21 Aug 2024 22:30:01 -0700 (PDT)
+Received: from sultan-box.localdomain ([142.147.89.224])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5dcb5de8220sm161386eaf.16.2024.08.21.22.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 22:30:00 -0700 (PDT)
+Date: Wed, 21 Aug 2024 22:29:56 -0700
+From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 14/16] sched/schedutil: Ignore dvfs headroom when
+ util is decaying
+Message-ID: <ZsbM1IiZyAuv7xz_@sultan-box.localdomain>
+References: <20240820163512.1096301-1-qyousef@layalina.io>
+ <20240820163512.1096301-15-qyousef@layalina.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 2/2] net: ti: icssg-prueth: Add support for PA
- Stats
-To: Roger Quadros <rogerq@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Sai Krishna
-	<saikrishnag@marvell.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Dan Carpenter
-	<dan.carpenter@linaro.org>,
-        Diogo Ivo <diogo.ivo@siemens.com>,
-        Kory Maincent
-	<kory.maincent@bootlin.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, Andrew
- Lunn <andrew@lunn.ch>,
-        Simon Horman <horms@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon
-	<nm@ti.com>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240820091657.4068304-1-danishanwar@ti.com>
- <20240820091657.4068304-3-danishanwar@ti.com>
- <03172556-8661-4804-8a3b-0252d91fdf46@kernel.org>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <03172556-8661-4804-8a3b-0252d91fdf46@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820163512.1096301-15-qyousef@layalina.io>
 
-
-
-On 21/08/24 6:05 pm, Roger Quadros wrote:
+On Tue, Aug 20, 2024 at 05:35:10PM +0100, Qais Yousef wrote:
+> It means we're being idling or doing less work and are already running
+> at a higher value. No need to apply any dvfs headroom in this case.
 > 
+> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 > 
-> On 20/08/2024 12:16, MD Danish Anwar wrote:
->> Add support for dumping PA stats registers via ethtool.
->> Firmware maintained stats are stored at PA Stats registers.
->> Also modify emac_get_strings() API to use ethtool_puts().
->>
->> This commit also renames the array icssg_all_stats to icssg_mii_g_rt_stats
->> and creates a new array named icssg_all_pa_stats for PA Stats.
->>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> ---
-
-[ ... ]
-
->> +
->>  #define ICSSG_STATS(field, stats_type)			\
->>  {							\
->>  	#field,						\
->> @@ -84,13 +98,24 @@ struct miig_stats_regs {
->>  	stats_type					\
->>  }
->>  
->> +#define ICSSG_PA_STATS(field)			\
->> +{						\
->> +	#field,					\
->> +	offsetof(struct pa_stats_regs, field),	\
->> +}
->> +
->>  struct icssg_stats {
-> 
-> icssg_mii_stats?
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index 318b09bc4ab1..4a1a8b353d51 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -9,6 +9,7 @@
+>  #define IOWAIT_BOOST_MIN	(SCHED_CAPACITY_SCALE / 8)
+>  
+>  DEFINE_PER_CPU_READ_MOSTLY(unsigned long, response_time_mult);
+> +DEFINE_PER_CPU(unsigned long, last_update_util);
+>  
+>  struct sugov_tunables {
+>  	struct gov_attr_set	attr_set;
+> @@ -262,15 +263,19 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+>   * Also take into accounting how long tasks have been waiting in runnable but
+>   * !running state. If it is high, it means we need higher DVFS headroom to
+>   * reduce it.
+> - *
+> - * XXX: Should we provide headroom when the util is decaying?
+>   */
+>  static inline unsigned long sugov_apply_dvfs_headroom(unsigned long util,  int cpu)
+>  {
+> -	unsigned long update_headroom, waiting_headroom;
+> +	unsigned long update_headroom, waiting_headroom, prev_util;
+>  	struct rq *rq = cpu_rq(cpu);
+>  	u64 delay;
+>  
+> +	prev_util = per_cpu(last_update_util, cpu);
+> +	per_cpu(last_update_util, cpu) = util;
+> +
+> +	if (util < prev_util)
+> +		return util;
+> +
+>  	/*
+>  	 * What is the possible worst case scenario for updating util_avg, ctx
+>  	 * switch or TICK?
+> -- 
+> 2.34.1
 > 
 
-Sure Roger. I will name it icssg_miig_stats to be consistent with
-'struct miig_stats_regs'
+Hmm, after the changes in "sched: cpufreq: Remove magic 1.25 headroom from
+sugov_apply_dvfs_headroom()", won't sugov_apply_dvfs_headroom() already decay
+the headroom gracefully in step with the decaying util? I suspect that abruptly
+killing the headroom entirely could be premature depending on the workload, and
+lead to util bouncing back up due to the time dilation effect you described in
+the cover letter.
 
->>  	char name[ETH_GSTRING_LEN];
->>  	u32 offset;
->>  	bool standard_stats;
->>  };
->>  
->> -static const struct icssg_stats icssg_all_stats[] = {
->> +struct icssg_pa_stats {
->> +	char name[ETH_GSTRING_LEN];
->> +	u32 offset;
->> +};
->> +
->> +static const struct icssg_stats icssg_mii_g_rt_stats[] = {
-> 
-> icssg_all_mii_stats? to be consistend with the newly added
-> icssg_pa_stats and icssg_all_pa_stats.
-> 
-> Could you please group all mii_stats data strucutres and arrays together
-> followed by pa_stats data structures and arrays?
-> 
-
-Sure Roger, I will group all mii stats related data structures and
-pa_stats related data structures together.
-
-The sequence and naming will be something like this,
-
-struct miig_stats_regs
-#define ICSSG_MIIG_STATS(field, stats_type)
-struct icssg_miig_stats
-static const struct icssg_miig_stats icssg_all_miig_stats[]
-
-struct pa_stats_regs
-#define ICSSG_PA_STATS(field)
-struct icssg_pa_stats
-static const struct icssg_pa_stats icssg_all_pa_stats[]
-
-Let me know if this looks ok to you.
-
->>  	/* Rx */
->>  	ICSSG_STATS(rx_packets, true),
->>  	ICSSG_STATS(rx_broadcast_frames, false),
->> @@ -155,4 +180,11 @@ static const struct icssg_stats icssg_all_stats[] = {
->>  	ICSSG_STATS(tx_bytes, true),t
->>  };
->>  
->> +static const struct icssg_pa_stats icssg_all_pa_stats[] = > +	ICSSG_PA_STATS(fw_rx_cnt),
->> +	ICSSG_PA_STATS(fw_tx_cnt),
->> +	ICSSG_PA_STATS(fw_tx_pre_overflow),
->> +	ICSSG_PA_STATS(fw_tx_exp_overflow),
->> +};
->> +
->>  #endif /* __NET_TI_ICSSG_STATS_H */
-> 
-
--- 
-Thanks and Regards,
-Danish
+Cheers,
+Sultan
 
