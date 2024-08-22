@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-296516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B51B95ABAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6078595ABB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2621C261C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0EB2816F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07D3136E37;
-	Thu, 22 Aug 2024 03:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9587146D7D;
+	Thu, 22 Aug 2024 03:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HFD74vOx"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/Zeejj0"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2D813AA46
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7741CD2F;
+	Thu, 22 Aug 2024 03:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724295689; cv=none; b=rULp0stHaVs45AZ/FhjV5eiiso2bGKwFHJBJW/gE9ZYBnkE7rQAf3grjVAlm2YxgkVRIuhjE1fWAsT1gatzguClsPCYcDK60972+oo3N0Qp3atscKaC325OhSDmbf/4O9UQ4rQu21JeUfTSZAhTj7HpzekqGWrwFeP6xYNJdI7s=
+	t=1724295727; cv=none; b=o/ThNcdywwDKzBzBKpp01+IZIJCErUse0yEGu7dQvBvmD/+AbPa+qlXqm9P78IXcVTpTKGd0JsD+pjEeATpo84Ho300SHrOKQdFLPvUPbRRiqyAZKF2fWy70EZBedfQEgG7eXpDzMP3LUux5jAxaMB+RB90ocXOfGgNV+IKH61M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724295689; c=relaxed/simple;
-	bh=yoDJJnZ+Xn/jAXpqLOY6g3dJGpq1zThA1sAqh5zgo30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nR5KAI2IfzIZdAeaY/PD+1qYo+OtSrn1yx6cNC4lB9uFmPUe0HLLEwL50/Ff5QQdcrSzhL0uoQTDr86StaUvxx4/ZN71P4S2s3wE6NPy4+wUr+Xl3BnX4w7t3sdFQg9NT37hpheDqkeOsYv3aAQzOmNU9cJRkgx8DdhnYQ8bIlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HFD74vOx; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 21 Aug 2024 23:01:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724295682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jiueZ9s/AO2OHEiYoojw4fXRPY2DnVwlCYFnpOkvQDk=;
-	b=HFD74vOxRiQFxLcOi1rCgMnkD8/MFrkHSuAf+qGOk0jQfxrdEHXQWzgbB5zjXl7ot9Sf1j
-	+6EwPqRvVGU0FYClmw+FrCOHhpbVQpSu7LFfgQvpNzB3fnEKJO6SulzvJHxygC2WKIHaJ2
-	ZePm8up+7V5QHGdRei0Gf6lXqbMzYuM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Chen Yufan <chenyufan@vivo.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] bcachefs: Convert to use jiffies macros
-Message-ID: <vthxausjk2h5dujrtef7odyxpl35l5bgak7ce5sbtietsh43ib@3njnr6xcfdtt>
-References: <20240822025731.5651-1-chenyufan@vivo.com>
+	s=arc-20240116; t=1724295727; c=relaxed/simple;
+	bh=Wtnn3zs7AeC53NtP/dNDE58k0VSDq93Qsf9ehzuh9pc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EME+mc4bikox8eIaD8HC25VxaLZ6OAyGB8o+mPOUPykIZFffKbMoTnkIEaO/xVbak35HiT1ctnvDuCNa/xUllCuinmyGinwV9juS1mbw6IbyO1TfwHTWfg12YLz7Owv+kxoEIDXQzL7Ak0GKFsRkQ4jizhSJEdeAgDLXrdXIPws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/Zeejj0; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fec34f94abso3180995ad.2;
+        Wed, 21 Aug 2024 20:02:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724295725; x=1724900525; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9lHz0GHFM9v5jdmN519R2QrSUIaCEmVgVq7mI6wU8Qo=;
+        b=O/Zeejj0kwlvh7EWKxS9w9IaKM/vJ3/BDvkNMFTZnKPY/obJDV4LR2w3q064XFajeJ
+         K7hIWMz8zUiYsJvd5AFwlVDXMze+2/AMc42CQC9bjs3NiUSSEDo6K889OjLsLKJ0BySa
+         sOHrTOmjgKqffzwK2QwakuTBKt1IUZovCOVV3G5UJEPXsCyGyr2xgdlRDORnvkg7+jpc
+         gb1PoGNME6ZN34XqTPQbltbqRUjKvzi/tVlRAbi4ef7xiK3J54m780zz+Tc97cr6U0Mh
+         Qu8EnCYku9OauX8x/hd7qeydH1KsVVu6CT22g2bHsDWHc0OwcrrWDP/3Diw6CZeZnx9q
+         lhgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724295725; x=1724900525;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9lHz0GHFM9v5jdmN519R2QrSUIaCEmVgVq7mI6wU8Qo=;
+        b=usQfHskUK8Ubp3/1XFFpMhNI/XgBitknozOsDMAe5Gp4bu3Ap928F5BKolYcLlL5Qv
+         X62GRy0qU8XwzvdtFX04+dxhBbw169cAd0uK6/ZY3Canon0fsRmnCX46ujNsuen3mAtD
+         eTcriF3Q34/8JFL8Fd8GRh3MM3YlikyEGs2dOT8JdC9AIIu8GXHcni/qkGTVdIHQy4po
+         88SOQRk09TN9so8njCXuBt7/b0qg+wqjJeCq6DqZM4dyhivDGeroHoQ8sIIBEKucHBo+
+         LfYdeL1XO3xEzGqSKOuMhpJLVxu2KLPwQp7zjPPw0c9ykcOE+7t73pASHhINtAZfSARB
+         QO8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWI/uXCFNa9TAa3yO/Mmb3qlrfVyE0WgPGyClwvPITaTa8O0IiwUnDOgquhJS+jcIDmCKAyoKveM1o+TOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsnijxi3c2jZWkVabVisvHOL1NA3LfWmR/dyJS8SSoY/qhF7J2
+	SRkL1Kkrq7o1iRyfrFGZ8DM+r1h0dYgW6KJ7R/AeHScNpPnzR/bK
+X-Google-Smtp-Source: AGHT+IHmvliNTurI44bt746VArYBUgUEbRQ0greUx2aDSzkS24zLnmxHpjhsa5fDTvEoPgytkvOrqQ==
+X-Received: by 2002:a17:902:ecc8:b0:1fd:6c5b:afbc with SMTP id d9443c01a7336-20388b9b305mr6802705ad.49.1724295724827;
+        Wed, 21 Aug 2024 20:02:04 -0700 (PDT)
+Received: from localhost.localdomain ([205.204.117.124])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038557f093sm2878835ad.63.2024.08.21.20.02.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 20:02:04 -0700 (PDT)
+From: Wardenjohn <zhangwarden@gmail.com>
+To: jpoimboe@kernel.org,
+	mbenes@suse.cz,
+	jikos@kernel.org,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] livepatch: Add using attribute to klp_func for using function
+Date: Thu, 22 Aug 2024 11:01:57 +0800
+Message-Id: <20240822030159.96035-1-zhangwarden@gmail.com>
+X-Mailer: git-send-email 2.37.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822025731.5651-1-chenyufan@vivo.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 10:57:31AM GMT, Chen Yufan wrote:
-> Use jiffies macros instead of using jiffies directly to handle wraparound.
-> 
-> Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+This patch introduce one sysfs attribute of "using" to klp_func.
+For example, if there are serval patches  make changes to function
+"meminfo_proc_show", the attribute "enabled" of all the patch is 1.
+With this attribute, we can easily know the version enabling belongs
+to which patch.
 
-Applied
+Changes v1 => v2:
+1. reset using type from bool to int
+2. the value of "using" contains 3 types, 0(not used),
+ 1(using), -1(unknown). (As suggested by Petr).
+3. add the process of transition state (-1 state). (suggested by Petr and Miroslav)
 
-> ---
->  fs/bcachefs/alloc_background.c | 3 ++-
->  fs/bcachefs/journal_io.c       | 3 ++-
->  fs/bcachefs/thread_with_file.c | 2 +-
->  3 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
-> index ac933142a..795539556 100644
-> --- a/fs/bcachefs/alloc_background.c
-> +++ b/fs/bcachefs/alloc_background.c
-> @@ -30,6 +30,7 @@
->  #include <linux/rcupdate.h>
->  #include <linux/sched/task.h>
->  #include <linux/sort.h>
-> +#include <linux/jiffies.h>
->  
->  static void bch2_discard_one_bucket_fast(struct bch_dev *, u64);
->  
-> @@ -2181,7 +2182,7 @@ int bch2_dev_freespace_init(struct bch_fs *c, struct bch_dev *ca,
->  	 * freespace/need_discard/need_gc_gens btrees as needed:
->  	 */
->  	while (1) {
-> -		if (last_updated + HZ * 10 < jiffies) {
-> +		if (time_after(jiffies, last_updated + HZ * 10)) {
->  			bch_info(ca, "%s: currently at %llu/%llu",
->  				 __func__, iter.pos.offset, ca->mi.nbuckets);
->  			last_updated = jiffies;
-> diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
-> index 7664b68e6..32b886feb 100644
-> --- a/fs/bcachefs/journal_io.c
-> +++ b/fs/bcachefs/journal_io.c
-> @@ -1950,7 +1950,8 @@ static int bch2_journal_write_pick_flush(struct journal *j, struct journal_buf *
->  	if (error ||
->  	    w->noflush ||
->  	    (!w->must_flush &&
-> -	     (jiffies - j->last_flush_write) < msecs_to_jiffies(c->opts.journal_flush_delay) &&
-> +	     time_before(jiffies, j->last_flush_write +
-> +		 msecs_to_jiffies(c->opts.journal_flush_delay)) &&
->  	     test_bit(JOURNAL_may_skip_flush, &j->flags))) {
->  		w->noflush = true;
->  		SET_JSET_NO_FLUSH(w->data, true);
-> diff --git a/fs/bcachefs/thread_with_file.c b/fs/bcachefs/thread_with_file.c
-> index 0807ce9b1..fb3442a7c 100644
-> --- a/fs/bcachefs/thread_with_file.c
-> +++ b/fs/bcachefs/thread_with_file.c
-> @@ -387,7 +387,7 @@ int bch2_stdio_redirect_readline_timeout(struct stdio_redirect *stdio,
->  	seen = buf->buf.nr;
->  	char *n = memchr(buf->buf.data, '\n', seen);
->  
-> -	if (!n && timeout != MAX_SCHEDULE_TIMEOUT && jiffies >= until) {
-> +	if (!n && timeout != MAX_SCHEDULE_TIMEOUT && time_after_eq(jiffies, until)) {
->  		spin_unlock(&buf->lock);
->  		return -ETIME;
->  	}
-> -- 
-> 2.39.0
-> 
+v1: https://lore.kernel.org/live-patching/1A0E6D0A-4245-4F44-8667-CDD86A925347@gmail.com/T/#t
+
+Changes v2 => v3:
+1. Move klp_ops defintion into linux/livepatch.h
+2. Move klp_ops pointer into klp_func (Suggested by Petr)
+3. Rewrite function of klp_find_ops
+4. Adjust the newer logic of "using" feature
+
+In klp_complete_transition, if patch state is KLP_TRANSITION_PATCHED, we can get the 
+function's next node. If the next node is itself, that means there is only one function.
+If next node is not equal to the current function node, the next node "using" state
+can be changed into "0".
+
+BTW, I remember to use ./script/checkpatch.pl to check my patches..Hah.. :)
 
