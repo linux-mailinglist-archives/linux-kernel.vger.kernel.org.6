@@ -1,159 +1,238 @@
-Return-Path: <linux-kernel+bounces-296682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CFAA95ADB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC88A95ADC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF421F23126
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F13AF1C22913
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94E913AA2D;
-	Thu, 22 Aug 2024 06:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9BF13B58B;
+	Thu, 22 Aug 2024 06:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="SqVD5XTz"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AAPn3ah3"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2089.outbound.protection.outlook.com [40.107.101.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62F0249F9
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724308803; cv=none; b=AdNOkjK40hhApXpDTiv7bHrK3ySv7wMwUgWuEWoee8hpeJ7QnARAG5JawSgM9JKXeJNBqwcjdpAd8tw0x33pkYNHRKVHIHroMnaCjXRnwtHH15uMq7JgMHeRm7KJQ9XIsqSlDJ9gGmoF2f8bwXjCvFz7cK6CR9zkCmzdTFwzU/E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724308803; c=relaxed/simple;
-	bh=tKfxE5U7DeTK3eywPBXzwKSzxiNZmqJnws5mhMNgBSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uwx9pDsmiv3SRCjGc8nvHbzhQeqsH8q+HMEfl9huaRvZdC/qr4zIj/HIq3Cx0Rhi36uiVOcQ5yBGVhr3rALuMa+i3DkhQ0YaooqJSCvCrDElDyb3PctlV+dAhIzDGD2Kw4Tr4aR7b3r71arGffI0KmvlSxiIJLwuxJghCjiHhdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=SqVD5XTz; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso598376e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724308800; x=1724913600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XCVQDVF7en/QRnK1xIM7N8O/LMZFliQ8B1T6Dzt8Q7M=;
-        b=SqVD5XTzuOiy3w3qaIAfL0BF7ECs/eplyWbo7+ORLcT94p7jlVZ+3fPv0kJpRfQ+Vs
-         gEeQAo4M8g71tJfbAd9Nj4z/7eiZ3F7rN3bwooGM14Y08tG4DH/tgnYwsooci9MmEKQs
-         EFXWQ8wbUli7vL57BRkvB06iwxWV+nT2ZiVI6ma6STugUwv27jDKQi/5QmasDXsaV/+k
-         39hm7UVKaTRy61UZ89sLnEEfLjtz0qdV7A7NU9zdSz9Umq3hy+LA6mg8WljhhTFOF9n9
-         r25egq86DMrO2LRacjLWJeihwGEOdeH8YevmVZl4Cb4xcZBnA7D8ROWP5EAwjigyI6Wi
-         9azw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724308800; x=1724913600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XCVQDVF7en/QRnK1xIM7N8O/LMZFliQ8B1T6Dzt8Q7M=;
-        b=pGZwXOmFoTmplIwzW7ZjrfKiRDx7Fx/BrEZeC6cN5CF/8YAmMeSjG/wPxxnDibz5Vo
-         DNI2/kPEdoUXzkmbb1mCX5y41leO25DXmNQY4fxsQj+nopSVqe/mwlvjb3tPuP64CZgQ
-         vFwDdoG12sbwnpHxI3o0xLUNQGJG5zcwTyFOcuZNCNigb3ZRKtw2gMSV9nuv+ZN4bVLi
-         P9WIJ2Dx/hXo+0UkVYR8sDG7hVnFaJOrqVdzZHw3n/T/qn9hG43swaVxitZL/mESmoWh
-         2buYeg2k1ZB5caEurUhar5beVecGE7FGYlt6vZ/Cs3AWaVR+AIasVY6rZu2VRxWaJ0X5
-         3JrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyGofHPPy919C9YkOUWWtZZUr9Dle2HW3DTud6GnRUOUBlR/qaAJKLJH1d+Kq85S5N+uyE0tNzwntSH3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr4JEdRsicRJOsXpLhdjnumEln6DHXqQVpR6/kECUiyehqlJ9l
-	RpI3SPxrqlYwn2myXqrM6Qr/Bpz4GUs86GkeRsZ4HdV74mQCJcpzENwABY6Vmsv1ETtYyY2dSeF
-	OIWzEgivsipvYNqX/NCt5htlsXtUNtjrEX9PBj2E1l9G9BlXC
-X-Google-Smtp-Source: AGHT+IFY36eHWfAP1XynkkC+LNEHHDuQ2xKBZLWRjR5by5IXkqnZjQHoJe+94UuXASK12H/Wxn6CnMh6K/TR6iCztAI=
-X-Received: by 2002:a05:6512:3baa:b0:52c:e1cd:39b7 with SMTP id
- 2adb3069b0e04-53348564ff3mr3085882e87.5.1724308799509; Wed, 21 Aug 2024
- 23:39:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F804A933;
+	Thu, 22 Aug 2024 06:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724308857; cv=fail; b=UPUU/NxZIJjJfETOotXOPVfgJfCyUEX2mz4w/F3MrAmdcnXUbw6gIUho0ryPH8d7czQR+ABoOkgS8/QvnalrMA5WGKk+jAruk/ZRIxyGcmhERTTMTi2XWcq9ltWyKjzTaizul0c/yGFGxznK3B0Qd9W8tSLJI43R/mksfPAIgLo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724308857; c=relaxed/simple;
+	bh=T9PbKa2AIDqLZUbSwyo4xXfcG9loyeAuNyf76H/zLsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r7p70CQdZK8PFk+JUQHz/V+ZhUsemL8+LYfFu+C/bgJrgbnHF/OF0U4Jh1HZwQYIGYwllw/65MWjHwBB+2eohTN/btQOYBQaEGXNpvgallca8GPmtiEIbVrWVn4GquqZy/JKo4SZTyMKG11Kcw3Wl7ORSQf8pucGkvKXmRW4rvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AAPn3ah3; arc=fail smtp.client-ip=40.107.101.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KJSxOFfkE/deJmWHtZHY52LPDm2TFmEYNYKjcOUa4MnpmHNpbu/mLOqhTgbfh4HPRxi1BemPI3nZ8jnyHzXmYfxyUs01mgYZJt5tBzldHh+o/2ULOK/cp9P4I/Ez1Mxokv4X8fnc+rePw7jQcVdMKbP2L/oR8Cmu8bhQ97Ft96B4o35+t2AEg4f5h7LlHzNWnw9Y9XerJhvA8IiNGdl7eRfCvzS00E29Dcp3wQu/Me0cQYjyBciCAYNJ1H9qKB/0XULiNcmEcVYxGKpkS8l3bwVJq4Q+PqvsgnU2lERZdUl5jHNRCUdFGeWBx7973HPCh/rv1KA0UFKJf2/pfNJGYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f6M4w6g+zsoxYg5IL0MvlqWLn8DtCCZLayDnQE7Z2vo=;
+ b=I7lg40x+hPnLnUTZenZ8PN17WK0ZXzywglcyPnuUGGAvYmTg5UoGVair1z94IE+mS45dH/m2nziGDeaE7vNQ70SoztKSCY/Wjc3rMeNjBhp6LW/EzNGuKLPXHNp9Uj0YVzFZgsLEt8roU+n4JXD3pG07aRJAYragqdks90c3fsBU9nUQkXjaSVuGxQ9aFrBel/S86phy5869hemArKki1w1sSt5pj6B3KZX+dn/QMiLQ7422Y7bs7Jldcpx0OG9ZlRpqMhzF21zNW5zBcLQS6Xf3koAExcWVAmZu1oXqigRgXgrfrBZ6UVn399FnUZf5mvSeYbYs/s2YbTEe2h6TYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=purestorage.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f6M4w6g+zsoxYg5IL0MvlqWLn8DtCCZLayDnQE7Z2vo=;
+ b=AAPn3ah3kphpRDVqIm+lm4+PF/Q04WS1qlkwCGoy/OQ/bo/eCxZJPUdjnKb1FxU9fLzTr6dqEs0Ye+cbUJ5toRJIjzB7PDSScnZCUxAHVhNFavHWdWS4v3j7KxnQ3x0x7H7U5uhl7Fp7DHNCMsQdPI9nS2/O1EnQgffKXofZVDyLavn5DXWxRcOLspAkTZHI2PWaLZSP/8BcGMaEWE81mA3EWdyGMoowkbd0K6dbu3FIR3FsMv3rx0pBE0xAAtzpxFvr6MZKFdb5As4aCufu7E8m/Wzc3aeDgPkukM4bPa5TtilAzLriTlnDGwL7rhChIHElxiQw5R9NH1rcUm8y2Q==
+Received: from BN9PR03CA0064.namprd03.prod.outlook.com (2603:10b6:408:fc::9)
+ by BY5PR12MB4257.namprd12.prod.outlook.com (2603:10b6:a03:20f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
+ 2024 06:40:51 +0000
+Received: from MN1PEPF0000F0DE.namprd04.prod.outlook.com
+ (2603:10b6:408:fc:cafe::3f) by BN9PR03CA0064.outlook.office365.com
+ (2603:10b6:408:fc::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.17 via Frontend
+ Transport; Thu, 22 Aug 2024 06:40:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0DE.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.11 via Frontend Transport; Thu, 22 Aug 2024 06:40:50 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 21 Aug
+ 2024 23:40:32 -0700
+Received: from [172.27.33.61] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 21 Aug
+ 2024 23:40:28 -0700
+Message-ID: <ea86913b-8fbd-4134-9ee1-c8754aac0218@nvidia.com>
+Date: Thu, 22 Aug 2024 09:40:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821135900.2199983-1-hezhongkun.hzk@bytedance.com>
- <ZsYBDGE-_8GPPEpE@tiehlicka> <CACSyD1OdKb4n1SrStdTfhwO0F1eBA5mNruxOeYKrhKP6+jTXAg@mail.gmail.com>
- <ZsbZsf2Z93_d9PQR@tiehlicka>
-In-Reply-To: <ZsbZsf2Z93_d9PQR@tiehlicka>
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Date: Thu, 22 Aug 2024 14:39:47 +0800
-Message-ID: <CACSyD1OjnPU_CLbu9QNkbN41cGFmdwuzT8Kg4340Fk0MuUk+0w@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] mm:page_alloc: fix the NULL ac->nodemask
- in __alloc_pages_slowpath()
-To: Michal Hocko <mhocko@suse.com>
-Cc: akpm@linux-foundation.org, mgorman@techsingularity.net, hannes@cmpxchg.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, lizefan.x@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/mlx5: Added cond_resched() to crdump collection
+To: Mohamed Khalfella <mkhalfella@purestorage.com>, Przemek Kitszel
+	<przemyslaw.kitszel@intel.com>
+CC: Yuanyuan Zhong <yzhong@purestorage.com>, Saeed Mahameed
+	<saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan
+	<tariqt@nvidia.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Shay Drori <shayd@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240819214259.38259-1-mkhalfella@purestorage.com>
+ <ea1c88ea-7583-4cfe-b0ef-a224806c96b1@intel.com>
+ <ZsUYRRaKLmM5S5K9@apollo.purestorage.com>
+Content-Language: en-US
+From: Moshe Shemesh <moshe@nvidia.com>
+In-Reply-To: <ZsUYRRaKLmM5S5K9@apollo.purestorage.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DE:EE_|BY5PR12MB4257:EE_
+X-MS-Office365-Filtering-Correlation-Id: feab166b-2cb4-4b8b-a213-08dcc2755d00
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b3Q0TmoyVkxPam5ENTVvVUwzc2U5OWEzNEtiejBTUGdKbE84RnNNeTkxbGFp?=
+ =?utf-8?B?WUl1Z0RnZTNuajJWQ2JBSWJxbzFqN3hMMThDKzZvRDV1aGxLdisreUs5Qmto?=
+ =?utf-8?B?Q3JBTEphU2MvYThlSklLVGVDeThFQVpiUlBMRlpMK3dKSXQzajFrWjdhZDJ2?=
+ =?utf-8?B?akpXNUtsNG1WZWxic0dObllObFJWWktnS1JLQytsRG1KbVhyZnJVRnMyYkho?=
+ =?utf-8?B?TVlVZStlUTBvbERnb1FxSVVMZy9OUmpEd3hPYkxRZzZBZlJNZmtHQVJjYVVZ?=
+ =?utf-8?B?a0JreXNmUWNQU1YyUFJNcmpuTnZab2VWME1KT0FQbWEyOXByZjNOcStuQVZD?=
+ =?utf-8?B?ZGxTaWxtMG4xWmFBT0FEYzdERVFpUGpSZkhXWFpHMENuTllGeW9FSXNjUkEz?=
+ =?utf-8?B?ajJqd0xZazA1QktZZlBvYUpEK01qem1uM3BtNDIwOFlpN0NXVmJ1cjJsTC9k?=
+ =?utf-8?B?VkhPRkpKMzZKUloySDg1YkRZNlkzUHFhczc4cENwYUxpMTlYN3JjYW1TN0Ev?=
+ =?utf-8?B?VHNWUHlTTjBEZVNvMWx4T0xRdjFJVVpEdmMzMkpGOWRMcUZWbVZrbk5DYnNV?=
+ =?utf-8?B?MDJMUXhOV2JKUWRuajFWRGMyMkxYSERhQU9XaTR5ai9QYlBUaTJ6NndsZlJz?=
+ =?utf-8?B?ZmRvVVlOOTA0Tnlxb3ZlZDFRQzJnN0RUd1AvenZhSFB5MktKZjkrSlU4VEtK?=
+ =?utf-8?B?WGdaTVVJRWk3d2tXZ1p0MnpwU3RxYWlGTndDMnhGWVdWTlJ1Q1FVM2hZTmY2?=
+ =?utf-8?B?UnV5QW9MbjRWL1BneVNpNHMrUWlDdTRidk1hS2Zya1FsVk5FQkpuenhrd2dv?=
+ =?utf-8?B?dU1XcThVU2oyMXRFLy9TZGRpSkQwdmFoQklGZS96cFJoVFR6SjB3UnZJUzA1?=
+ =?utf-8?B?UStjR0h0ZHh5MjdGckZheVpJanN6bkVvK0tNcHRLcHdBQittK29KNzhlQllw?=
+ =?utf-8?B?Q1ByY0JtcGFlbDJDSWhsckx4REovUFJlQWUrN0hJWlFRRllmeHVCTER5T0xN?=
+ =?utf-8?B?L00rSWR1LzZoV3dDT24rcnI0aXlJSUk5YUdGeTlqeG1wazNsdWpPejV6TVQz?=
+ =?utf-8?B?TzJneDJEYnBucVBUU1dJeGxvYS9MaGxNMXJVVzZTWXFYZDNEK24zeUlEbFNG?=
+ =?utf-8?B?amF5dnhuWlV6VE15aDdVUjZ6Yk5KN0FCZmY2MDduTmk3SE04V25vcWN6VnF6?=
+ =?utf-8?B?UGNma2pJVlNzbVBsWXpSNVBxYjdXckpVdHNYOVdyM3VuQnliMlkxbHdWZ29m?=
+ =?utf-8?B?aXRoaC9obmJwTmJhRGsyRTFBeUprU0NZOGpHdUtrVk9PSThqdlhwTElvcFNi?=
+ =?utf-8?B?UFlKWG1tNitacGoyaGU5ekFycnRtYkY4OG0rM0JhMlkrOFE3TmpXMDFtaWha?=
+ =?utf-8?B?MGEzWDcyenZjeU1jK3k4dmt1bEZlbmV4aFlaQUhHVzJLWkdWUmhZWndkeFIv?=
+ =?utf-8?B?Y29rZzYwKytMYllORTJ1b3hsM2lvZkpNdGhXMENUWEhpZnEvTFRIbXEydUEv?=
+ =?utf-8?B?aEhDbzdqOEZYOCtnb3ZEQ1pNWHVhUlB1VEZKRVUrTElsMjZMQzZ3aWdTS2Jz?=
+ =?utf-8?B?dUNaM2lXcHhtNXdFcmtOUldxVldiTER3UjNUWmZQYkZKRU4xUFpGRkNtYlZ5?=
+ =?utf-8?B?TitIaU9EUFBIenpyNVVvSG1wem1WSmJlbFZLeGxiVGwzWG5Mcmg4ZW9pWEtl?=
+ =?utf-8?B?NkxxbXdSUG5LZjlWYXYxc0grVzFMc2hTaDhvZ2cvMXQxVGhNcFhFWG8zWk1y?=
+ =?utf-8?B?RFk5Q1ByaFhZZDZJWVZoQVY0SUdsVmxHU3MwT3NuQnA5OXhTeHY1d1BRQ2Fi?=
+ =?utf-8?B?VG9RSGVwVzk5TTN3b2RyQmlJSWRTNWpVV09iSGV3QzQvWFJsdXNqVzBQcmdG?=
+ =?utf-8?B?VWo4b2tUVWFyNXpoU1MvK1g0UDEzT0NQa004bzJqNmFqZ3BOWEJZamp4SjVo?=
+ =?utf-8?Q?iIMGNCrcwEjVaJxbd/e1Ro+RxEGv3rlT?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 06:40:50.5021
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: feab166b-2cb4-4b8b-a213-08dcc2755d00
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0DE.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4257
 
-> > > Are you suggesting that the problem is that should_reclaim_retry is
-> > > iterating nodes which are not allowed by cpusets and that makes the
-> > > retry loop happening more than unnecessary?
-> >
-> > Yes, exactly.
-> >
-> > >
-> > > Is there any reason why you haven't done the same that the page
-> > > allocator does in this case?
-> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > > index 28f80daf5c04..cbf09c0e3b8a 100644
-> > > --- a/mm/page_alloc.c
-> > > +++ b/mm/page_alloc.c
-> > > @@ -4098,6 +4098,11 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned =
-order,
-> > >                 unsigned long min_wmark =3D min_wmark_pages(zone);
-> > >                 bool wmark;
-> > >
-> > > +               if (cpusets_enabled() &&
-> > > +                       (alloc_flags & ALLOC_CPUSET) &&
-> > > +                       !__cpuset_zone_allowed(zone, gfp_mask))
-> > > +                               continue;
-> > > +
-> > >                 available =3D reclaimable =3D zone_reclaimable_pages(=
-zone);
-> > >                 available +=3D zone_page_state_snapshot(zone, NR_FREE=
-_PAGES);
-> > >
-> >
-> > That was my original version,  but I found that the problem exists in
-> > other places.
-> > Please see the function flow below.
-> >
-> > __alloc_pages_slowpath:
-> >
-> >   get_page_from_freelist
-> >      __cpuset_zone_allowed /* check the node */
-> >
-> >   __alloc_pages_direct_reclaim
-> >      shrink_zones
-> >         cpuset_zone_allowed=EF=BC=88=EF=BC=89/* check the node */
-> >
-> >  __alloc_pages_direct_compact
-> >    try_to_compact_pages
-> >        /* do not check the cpuset_zone_allowed=EF=BC=88=EF=BC=89*/
-> >
-> >   should_reclaim_retry
-> >   /* do not check the cpuset_zone_allowed=EF=BC=88=EF=BC=89*/
-> >
-> >   should_compact_retry
-> >       compaction_zonelist_suitable
-> >           /* do not check the cpuset_zone_allowed=EF=BC=88=EF=BC=89*/
-> >
-> > Should we add __cpuset_zone_allowed() checks in the three functions
-> > listed above,
-> > or should we set the nodemask in __alloc_pages_slowpath()  if it is emp=
-ty
-> > and the request comes from user space?
->
-> cpuset integration into the page allocator is rather complex (check
-> ALLOC_CPUSET) use. Reviewing your change is not an easy task to make
-> sure all the subtlety is preserved. Therefore I would suggest addressing
-> the specific issue you have found.
->
 
-Got it=EF=BC=8Cthanks for your suggestion=EF=BC=8C i will send the next ver=
-sion soon.
 
-> --
-> Michal Hocko
-> SUSE Labs
+On 8/21/2024 1:27 AM, Mohamed Khalfella wrote:
+> 
+> On 2024-08-20 12:09:37 +0200, Przemek Kitszel wrote:
+>> On 8/19/24 23:42, Mohamed Khalfella wrote:
+>>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+>>> index d0b595ba6110..377cc39643b4 100644
+>>> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+>>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+>>> @@ -191,6 +191,7 @@ static int mlx5_vsc_wait_on_flag(struct mlx5_core_dev *dev, u8 expected_val)
+>>>              if ((retries & 0xf) == 0)
+>>>                      usleep_range(1000, 2000);
+>>>
+>>> +           cond_resched();
+>>
+>> the sleeping logic above (including what is out of git diff context) is
+>> a bit weird (tight loop with a sleep after each 16 attempts, with an
+>> upper bound of 2k attempts!)
+>>
+>> My understanding of usleep_range() is that it puts process to sleep
+>> (and even leads to sched() call).
+>> So cond_resched() looks redundant here.
+> 
+> This matches my understanding too. usleep_range() should put the thread
+> to sleep, effectively releasing the cpu to do other work. The reason I
+> put cond_resched() here is that pci_read_config_dword() might take long
+> time when that card sees fatal errors. I was not able to reproduce this
+> so I am okay with removing this cond_resched().
+> 
+>>
+>>>      } while (flag != expected_val);
+>>>
+>>>      return 0;
+>>> @@ -280,6 +281,7 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
+>>>                      return read_addr;
+>>>
+>>>              read_addr = next_read_addr;
+>>> +           cond_resched();
+>>
+>> Would be great to see how many registers there are/how long it takes to
+>> dump them in commit message.
+>> My guess is that a single mlx5_vsc_gw_read_fast() call is very short and
+>> there are many. With that cond_resched() should be rather under some
+> 
+> I did some testing on ConnectX-5 Ex MCX516A-CDAT and here is what I saw:
+> 
+> - mlx5_vsc_gw_read_block_fast() was called with length = 1310716
+> - mlx5_vsc_gw_read_fast() does 4 bytes at a time but the did not read
+>    full 1310716 bytes. Instead it was called 53813 times only. There are
+>    jumps in read_addr.
+> - On average mlx5_vsc_gw_read_fast() took 35284.4ns
+> - In total mlx5_vsc_wait_on_flag() called vsc_read() 54707 times with
+>    average runtime of 17548.3ns for each call. In some instances vsc_read()
+>    was called more than once until mlx5_vsc_wait_on_flag() returned. Mostly
+>    one time, but I saw 5, 8, and in one instance 16 times. As expected,
+>    the thread released the cpu after 16 iterations.
+> - Total time to read the dump was 35284.4ns * 53813 ~= 1.898s
+> 
+>> if (iterator % XXX == 0) condition.
+> 
+> Putting a cond_resched() every 16 register reads, similar to
+> mlx5_vsc_wait_on_flag(), should be okay. With the numbers above, this
+> will result in cond_resched() every ~0.56ms, which is okay IMO.
+
+Sorry for the late response, I just got back from vacation.
+All your measures looks right.
+crdump is the devlink health dump of mlx5 FW fatal health reporter.
+In the common case since auto-dump and auto-recover are default for this 
+health reporter, the crdump will be collected on fatal error of the mlx5 
+device and the recovery flow waits for it and run right after crdump 
+finished.
+I agree with adding cond_resched(), but I would reduce the frequency, 
+like once in 1024 iterations of register read.
+mlx5_vsc_wait_on_flag() is a bit different case as the usleep there is 
+after 16 retries waiting for the value to change.
+Thanks.
 
