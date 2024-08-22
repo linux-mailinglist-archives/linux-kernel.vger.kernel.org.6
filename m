@@ -1,246 +1,97 @@
-Return-Path: <linux-kernel+bounces-297039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC62F95B222
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:48:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27DC95B229
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590331F254A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:48:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30FD01C237F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F0518452B;
-	Thu, 22 Aug 2024 09:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C891865FB;
+	Thu, 22 Aug 2024 09:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RKcipQyr"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2083.outbound.protection.outlook.com [40.107.215.83])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="glrNT2RD"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF61417BB19
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319752; cv=fail; b=gtqzXc4hFjRw0YXvdI6R9kY8nuBYHtej52IH5AmUrDmX7D87FSKBXM6ZorIwUPWwbqLMlK0C+aesD0qO3vK9gOpQUu1gVNQMDsJXL0F1J8F4rMRXh35+l0vdBiyC091GA0+Sz6GNRYonAqOHuyRGs7x0hSm4QaHRVmUISVTp/Hk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319752; c=relaxed/simple;
-	bh=9bXqt1ZXrnOubxyjWUX69oCWqOOo+MQrnBkYOLOVIFY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=s9kJ3Q1nbM0gqTo1TJwaHjD2TMi2wYa6oBaESrdpHc2W+dsHPOswxg+kLwWw/0H41cTJuf23r4oCaG47pCaL2AswY2Mqt9AT4Jhp0E7aGMcmrbQCxFeCulSSD7wXlGo4lRkSfmj0Ie60tepemrR0aarW9m45B0i/QJStF8i14UE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RKcipQyr; arc=fail smtp.client-ip=40.107.215.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Db0+kPbY7o/B0j/oIEOjZZ9owKFta1vLKR2LsCkMFH+nUIFOlhlZplW59GD70rAicmIsZdThKvszeER6qrwiirOEzOnvmslbaYCSMk7u0uXVZZj/Lw+3KRBNGgO7f8lfJ/jFeZXH+bUmwrs6HKPISld5OzW2h3sXeNBNddnNw+InyGrHSvxkRPUAzeNOnINtaEcFy4KNgNQlrqhFafccqrqJ65KhqYCbBSazIgPDDr1eQbWyUFuVSV9fhLZPctj4R/PG0CtuxfTrVNXoIue1PH+QyCxop3tJMh45LmRByWisVx84Dxc28hPQvv5LCdoi4Y50VymFX7VNIIlqrBKNUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ol22zU7P6/Akq0tLOMf9aUhcdK9bNfAbArHSqEqHdrE=;
- b=tjKRvr2VzUFfC+djUAmzqsRTePygVTd9Jo4D1klUby2DvBVsxfDv5951MBErJNUg8jIKcwHGLGq7uQMr776sfuHJVsjPSntxx89WzFa2679wzTnMUvfNw293nivH8QSDEfDw5rscgJwQCLHssdz+T4puUe3ccjAkgGRXC83FCmP223WfgsEO3TQEJ2Z+b8rn0xlYDifkOKjiZ+pM5O+b31lm44JYliUC+Dcbn616mq/f63qErdkJFSUhx755FxkR9HVQNwy4Sni5uVAcRpxmOYCh4KrL+oGC+cDLTMGmNNi1hS+wa4eQW+SSkLyfJ7Ll/KRRbiNbHwQqLpyxyK6f4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ol22zU7P6/Akq0tLOMf9aUhcdK9bNfAbArHSqEqHdrE=;
- b=RKcipQyrT4fDXrb87KxoqPNp5HnWIgBWQF73NnJI2t0psGF8pGOHh2WSy2pWX5erx1WRWVitmQanDgTeqM+i1EYN0jbclVB7Xm3YgoXog75TOB1A9NyVLRpEX4B67HgZ6rs/ValE42FWtGSTKbRnN4pqsJa+tdpUbSB2OC8k0iI60JmHrU/BDJYF4XdA+V1ZMSD8aTZ9gM84sGjM1MauyZs2k0niQv18KTQW9sWrOOB2DgWNSIuWtJMo1xC+idAQabhrQ8HFMrBOKEhGfOQzj8LMsJqBamDXGi4d+CJwqJ5X69a0jvqO5ix7+be/AnhWDVUSk4XmmljAtZuz3jJM8w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by TYZPR06MB5122.apcprd06.prod.outlook.com (2603:1096:400:1c2::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
- 2024 09:42:25 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 09:42:25 +0000
-Message-ID: <cf308060-3098-4200-8e02-1ee725ae5ff8@vivo.com>
-Date: Thu, 22 Aug 2024 17:42:20 +0800
-User-Agent: Mozilla Thunderbird
-Reply-To: 11162571@vivo.com
-Subject: Re: [PATCH v1] drivers:smumgr:Use min macro
-To: Kenneth Feng <kenneth.feng@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Stephen Rothwell <sfr@canb.auug.org.au>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240822065746.1336545-1-11162571@vivo.com>
-From: Yang Ruibin <11162571@vivo.com>
-In-Reply-To: <20240822065746.1336545-1-11162571@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0031.apcprd02.prod.outlook.com
- (2603:1096:3:18::19) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160C8185B75;
+	Thu, 22 Aug 2024 09:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724319770; cv=none; b=a0zK3ExzoOuypiiIz6+AUPqpQ3/FxD03Y6EFH+YLhLuov+qEhsGKs9Uo0Bojw/R1cKU9E2Fndqz6paSrbDF1YfzskyCUSJ4J3YhV2oJUyX0cL/Lg84gtlNsujpEsayWxAv7/Kn8ndHeHauMGQgLf/0+OVjvLcKV46ELo6H7fT6Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724319770; c=relaxed/simple;
+	bh=OUiI5PGC3hJPJCqJB5CyRDDbUWF73ccfhFBxv46Cr5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ql5HdoTHYLnRwfNM1A7Q/lrKjMoMilL31RsP15BqKaN+NGvGSn+8ui5cH+j/TZWGsRq7lCLYkwjhbj9pxbfoueih3dIEGWFkAzIgmgKYvmB1CrpJXHO/PSeKmH8/bkY+dzVRsTB46GSAnGkHNKDnQGBKAKXkR9Xul0OuwU0Koig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=glrNT2RD; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 098C420005;
+	Thu, 22 Aug 2024 09:42:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724319766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oLYel8MERsORw87KG40ZczmgE+PRQ3IJYM7INT7rTyo=;
+	b=glrNT2RDuY8jBpkmsN+su8jt0vQ/IVHPXE8hnhq9Z5C7PM5Ni2gIFHr/M5ohGOyyeIDxk8
+	JQXb0f3r6eCJfD2Oz8o0+0D6Sw2dwlCVOzlVqbuyZ/W09foeRt9EEl0RtRts2t0ZXhe4Ib
+	wmowORp3s4ESDpsW74uwpQDDLsxRmHxcJED4hXNLdFyuuCr7mnk5ny9x2Wi3pjHO9Yd7B+
+	jwjkVM2k9i8QYoVOdS5iaEpERhXeExgi5fj4lonxkJoBiV9q0Bz5DdI0JhVXmCtv+UMaOn
+	+vXB0tts/wDyJjx/kys7vmDUtt60jtX3GzWThAJucbPdirjiGOtot9U/SyW1CQ==
+Date: Thu, 22 Aug 2024 11:42:42 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
+ linus.walleij@linaro.org, marcin.s.wojtas@gmail.com, linux@armlinux.org.uk,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+ mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, justinstitt@google.com,
+ kees@kernel.org, u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com,
+ horms@kernel.org, shannon.nelson@amd.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [Linux-stm32] [net-next 7/9] net: ethernet: marvell: mvneta:
+ Convert to devm_clk_get_enabled()
+Message-ID: <20240822114242.112dda9b@fedora-3.home>
+In-Reply-To: <20240822084733.1599295-8-frank.li@vivo.com>
+References: <20240822084733.1599295-1-frank.li@vivo.com>
+	<20240822084733.1599295-8-frank.li@vivo.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TYZPR06MB5122:EE_
-X-MS-Office365-Filtering-Correlation-Id: faa6d6b4-acde-4f60-532f-08dcc28eba65
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b3ljTDdsdkhUT28vRHk1U3IvZmY5K25LeWI4LzBscUNvTkdYZUdMZloxdk1O?=
- =?utf-8?B?bnFUWElwMmtsb1g3Wkp4WGljN0VRWWVPZjF0bnZYRzA1VXFNL2VWZmdhN2JF?=
- =?utf-8?B?SWNrajhMendZeEo2U3VJb3NyVUpaQ3VRNVQyOGtUekpsOEhUVEdwZVBXc2Fa?=
- =?utf-8?B?YlVYbkVtcTh3aEs4SmcrZWVCR3ppT0t3eHl0K3N1OHhva2dXKytPK1VLb2Mr?=
- =?utf-8?B?MUlGd2IrWUNQdWNtbkd3cW45NVZIN2puM0lTMzNIbDI1TURJdEtMTjYxcTJa?=
- =?utf-8?B?d2s4dEpwVVphQTNUYzN1Sy9PaTc4dGFrbHdMTktuUUd3Vys0SHVvL2g4enFJ?=
- =?utf-8?B?REV4Zk1PcFBaQ3B4cnhPa0JvdFdYL01ySVNEUFdrd3UwaHFHbkEzUkpHSmxB?=
- =?utf-8?B?MnJEUkVmMGdPOEdrTDczWFA1UXlGU0VrdWFNVWdFMHlUSVJxQlBJcjcrS3ZP?=
- =?utf-8?B?SEdib2RlKyt6SHl0VUl2RHh0Nm9wYjdlSGFDQVQyZEdvU0hjVGY4OU4xdWJT?=
- =?utf-8?B?cFBZdnVqaGgwS1NTZ2ZodkhvMXBJWThWN0R3bk9pNXpsRWFpOTk0NnhaalNZ?=
- =?utf-8?B?bUo0MlNOSTZsL1N0TzhTeVhHQ29McEJwYWw5QzYxeHZHUmNrakR2UHBxZ2tj?=
- =?utf-8?B?RkxSV2g2Qnc1cVNjNWVOQXlmRjc0Sjc5MkZmdm9SdERDTUZyMmU3Znk0TVRm?=
- =?utf-8?B?bHRRRDJTclBYMzhXNnRwa1dsNWw4ZVVpRDJuczk3SnFuZFI2cG1PcVExRnNm?=
- =?utf-8?B?YTdOY0xNWVFyd0pYNXZ0MEVZdEVOWmE5VE9QcCtWVk9nME9vZ2V6R1Y1UnNO?=
- =?utf-8?B?dGFCQVZwN2tUYUppSVVza2JpK0lKV2xNTG93WmR6UFJWc0Y2bTQ4V2lvSjJQ?=
- =?utf-8?B?OGVIMEFiSVJ0V0F3Z29KcGNUZWpEN1F6MHd6WjFnY2pjckVrZXZIZ29TNTl2?=
- =?utf-8?B?enUzUm5hQmlrSXc2UzFsaGwvVyswbWJnSjJOaVYvTmRlQ29relRGNkVVZUZB?=
- =?utf-8?B?R0RtRXVxczFLdWs4c2x6R25nbVlVY2JBajFlR0F5cy9ERDZzNitidnF6ci9h?=
- =?utf-8?B?SlBrVVgxWGVxTWJzSUhkRjZnUmQ4T3dySmhvMVlRKzZrb1pIaEhOT3d5RFFN?=
- =?utf-8?B?UGtsTTdqaE9kR3puVmJtTVdBZ1lNS2UwemUrNGtLeFVkYlVpTkg5cXR1NGNB?=
- =?utf-8?B?SHJ6VHo2dHJ1SUtFSlphcFB1UnN3UlNPM3g1QWRVSEJhOThWajdoVFVJMzQ4?=
- =?utf-8?B?MS8yTXplU3VYRWRRNmVBVnJrVFRMdUladXZBalE0NEp1c1NhZGRaOWZVMEZO?=
- =?utf-8?B?enJnd0RJY3FGSEVRZmNuaHVzeEtpZmluVWRCMjRUeHkvQ0lpOEJROFRiSHdP?=
- =?utf-8?B?aU5GQldXTGh0UG5OekNuUTk0SXZnUHBuMXo1V1RSdW1jR05Ib2ZVb2hkYVhX?=
- =?utf-8?B?cjJMYzFqVEhhK29lZ3JKby9YSWhBcVBrR0FxVFBjUjRGMlpjSDlIMndIcnF3?=
- =?utf-8?B?WkFrRnRuRjdhdWxEa0F3YjVMcUYydWdiL25pZ2tFUDJiT3dqWHE4SHZCdmtR?=
- =?utf-8?B?UGJiZmE3dEZZcVI0TWtaYzlRRG5SbmUvVFR1Wkt1K2dOTFMvSkRjMVNtT295?=
- =?utf-8?B?RWVTTUlrZDhqWVgyUXB4aThkQkNJeUZRYk14MjZ3TlBFNXdhM2U2MW85QjZW?=
- =?utf-8?B?NlZVVDMwUE5qQk9IbEY1OHQ1VFdoNy8yWndDbmJzaEdocFg2SWpKWXhEZDFl?=
- =?utf-8?B?NVIxS1BsWEhBSTU0dXpPZDF2ejB1alFKQ3YxSEdsTC9SMU0zV3h6MnpHZnd1?=
- =?utf-8?B?Vk9DaGdVWDhYaXhON05JY3gxK1hpbkdKbGlnWEcxTUNNZDB2eXlSZkJla0tD?=
- =?utf-8?B?KzJURW5nUzl4U0xEUCtCMUY0TFBmVTI5cE81Zm53d3gwb2R6a2NEOXU0WXB0?=
- =?utf-8?Q?F80tF2KTRsA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eE9rQnpKc2tLY0tKSkx1SUc1VHhkSDZVcG5KYlQyZU95MnN5QXV4TzBhNzF3?=
- =?utf-8?B?NUlZVFEvdDVuQitCMUsrc2NKUVlOcXZYM1hoQ1dkdEdNNStNcWhTUit4VCs4?=
- =?utf-8?B?eDZSS1NIRXlST1Y5ZXhqR0dhd2VMbW9ndjFoYWIvY3VEb2JtUWU5SUxtWHFU?=
- =?utf-8?B?MlB0NDRtU1ljV1h1NWQ3NURlcmtpcGdaMDNidHZlTEpXN0ZsWjkrd0FJUGY5?=
- =?utf-8?B?cU9QeDR6WFU2NHA5SGRYT1dTaERTZEQzaHNzUXJPT3lTdXFXeXdhb1ZoY0RF?=
- =?utf-8?B?Zy8yRnJwSG02bHAyU2FUS1ZQMDN4WjNUUnFNcGlIRlBjVWVuZUhadW1sM2Jz?=
- =?utf-8?B?Q1BhL0Zmb2I1V2JQU2RjQ1daMnNoVlBMdWNNUitERHRZY01pMkwzRkZWZmRj?=
- =?utf-8?B?UUVFVEdxMHVNME9YaTFJMllUSDExNzdBNk1RQTFYQzVJNlZJYks1U2VjT2Q3?=
- =?utf-8?B?K3JjNHgzVFpPUFlMRW1SckdaTmtHK3hnWEw2NFRoczhzQVVXY2swWE1XRFVs?=
- =?utf-8?B?cXVLeVFUOWs5QnVhc25BakZQTGhRK0doSXl6OVNJcU1JS2Y0cmhtSERLaXp5?=
- =?utf-8?B?ZDFwZk1jaGs1ZzhITzdOV1dIVFljL3FHZkFCR0N2Q3VDVDU4a3JuaGh6Tkcy?=
- =?utf-8?B?cjE0OTQwVCtlbmlyMW9JeGkxbGN3V2xlL0owaGZvTkpxdTUyVHpnT3k1Z0Yr?=
- =?utf-8?B?T2l2am9IN0FKbjV6YjJSelBUd0h6Tkx6NTJNTWVrOE81eHBYVW5OS3JyVXFm?=
- =?utf-8?B?Q1BTeTB2UEpLNmYzVnBnL2JiVzFJVlJ4cUhibWhjZG9sdFBYMUJ5ak5KcS91?=
- =?utf-8?B?NmpoM0dHRGdaS1dqd2YxWStwM09CK1dqdFRxMDlVL0ZaU3FoTis3VmJ3VHcr?=
- =?utf-8?B?UkxLM2hhVEpWcWxtRkl4Si9wYjZZdlVua1JWajBIUzN4TG9OMXE4by9RV0JN?=
- =?utf-8?B?dlhYSjNIeXVBRTNWWW1oREdQdHd5c3NDSHlRTkZYRVd0c2wrcElHbUN0Sjk5?=
- =?utf-8?B?d1FJeXRKajhYemZPQkR6NUw3YVljbGd0c1BoVjJoWE9Uazc5akd2YkdvSGwx?=
- =?utf-8?B?UWFJOWovR2V4T1ROTFRhSW5OYWdVUmZPeHU0eFFNUzJCdk5zZExLVVg5MWVP?=
- =?utf-8?B?d3ByejQzT1ZsVE5HelFHMEF1YnhNemowRFJML0EwdGNHLzk2dWxid1dBLzJC?=
- =?utf-8?B?QUJoTFJ6R093YzhLd2M1QktKaHgrZFM1ZHZ0WjVod0llT0EzSW8vcFFVWjlh?=
- =?utf-8?B?U2hja21kUmV6R2ZVQ2hIYm9QbGNWUWNGaTUraDdCcmxIeDBwUS9EdXhKaVhw?=
- =?utf-8?B?MlNNNTc2ZjdvL01UUThvZ04vcnltK2l5WTZFQ3QxU2VVeXBNbG1oTjQ2WFdS?=
- =?utf-8?B?bU5nU20rVStTY2xHSDFpWTBNSUFkbnhjUnRMVGh6aUR5R3NONi9WVGRWNXBa?=
- =?utf-8?B?eHA0eGh0Yk54bVRHazJVTzJjNGxiTzdrM21BM1R5RTcrazN0TU5RalYyYVFX?=
- =?utf-8?B?aUJyVmFEa1VlRmhmVFBmZjFhTjUrcXZuWkR0dmxFL3F5NlNoaTZCVUJKRWNt?=
- =?utf-8?B?MUNRSjRJSkNZaXZNek1KK01hdjJ0RElJWElkVjFDelZPUjBlczhibVRmZWdz?=
- =?utf-8?B?bEhuOXVualJpSWVUT3FmRS9RQ3RUYWVnNlZVeWUyVFI4ZFRsUmRORFdmeSsv?=
- =?utf-8?B?ckVaYUdLZHMyY1NkcDFiREdLeTZZQi9QeEsxMWlmU2lYME1LZ0tnVVRqZGYw?=
- =?utf-8?B?Uk1WOW9CcHk5R0VlM0QvcGFodUVadU4rZHI3ZEhLNjhJSlhoMnZYUngyZ2kz?=
- =?utf-8?B?TWRNd3MwTjVra3Faay90aFh6R0Q2ektkcU12MHpHR0xUdXFWc0pkR0NyZ214?=
- =?utf-8?B?Zmk4Yno5TFp2cGtzZTVMOTlMRERYYjZuWGN0dnMxS0dzM3Q3VW1OcmRCeEZV?=
- =?utf-8?B?VUNKemY0bDQrZk1GT1ZLT0dVempqbDI3SEMrMEVLT1AxeXhmREJ2ZnN2RGJE?=
- =?utf-8?B?SzlwNXh3NDMvSmluWndUQmxtMTVTd2dhNXBZS0tEdDk1UXd5UjQzSVRLeU95?=
- =?utf-8?B?VWJQMG5Ud3hmM2YrV0hwWmIzUTkvbVZFTEZDVjRhUllYT3ZKMHd2cDBTTTkv?=
- =?utf-8?Q?ZvczWEL5RTak9DjgxfEMFATlV?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: faa6d6b4-acde-4f60-532f-08dcc28eba65
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 09:42:25.0152
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /YBzWjdCnKd42GG2AglWjsbFsgXfN4ekYlYIEVam/qSQ/SMafcsMxTuziCI1lLAXSxZzhl07U1hXa+GlToZqsw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5122
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Sorry, please ignore this patch.
-Because the corresponding header file is not included, there may be 
-compilation errors.
+Hi,
 
-在 2024/8/22 14:57, Yang Ruibin 写道:
-> Instead of using the min() implementation of
-> the ternary operator, use real macros.
->
-> Signed-off-by: Yang Ruibin <11162571@vivo.com>
-> ---
->   drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c      | 5 +----
->   drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c | 7 ++-----
->   drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c     | 5 +----
->   3 files changed, 4 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> index 5e43ad2b2..8bf80f65f 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> @@ -1067,10 +1067,7 @@ static int fiji_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
->   			count++;
->   
-> -		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
-> -				hightest_pcie_level_enabled ?
-> -						(lowest_pcie_level_enabled + 1 + count) :
-> -						hightest_pcie_level_enabled;
-> +		mid_pcie_level_enabled = min(lowest_pcie_level_enabled + 1 + count,
-> +						hightest_pcie_level_enabled);
->
->   		/* set pcieDpmLevel to hightest_pcie_level_enabled */
->   		for (i = 2; i < dpm_table->sclk_table.count; i++)
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> index ff6b563ec..62d9156ef 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> @@ -1127,11 +1127,8 @@ static int polaris10_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
->   			count++;
->   
-> -		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
-> -				hightest_pcie_level_enabled ?
-> -						(lowest_pcie_level_enabled + 1 + count) :
-> -						hightest_pcie_level_enabled;
-> -
-> +		mid_pcie_level_enabled = min(lowest_pcie_level_enabled + 1 + count,
-> +						hightest_pcie_level_enabled);
->
->   		/* set pcieDpmLevel to hightest_pcie_level_enabled */
->   		for (i = 2; i < dpm_table->sclk_table.count; i++)
->   			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> index 34c9f59b8..4616c3261 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> @@ -938,10 +938,7 @@ static int vegam_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
->   			count++;
->   
-> -		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
-> -				hightest_pcie_level_enabled ?
-> -						(lowest_pcie_level_enabled + 1 + count) :
-> -						hightest_pcie_level_enabled;
-> +		mid_pcie_level_enabled = min(lowest_pcie_level_enabled + 1 + count,
-> +						hightest_pcie_level_enabled);
->
->   		/* set pcieDpmLevel to hightest_pcie_level_enabled */
->   		for (i = 2; i < dpm_table->sclk_table.count; i++)
+This looks good to me,
+
+On Thu, 22 Aug 2024 02:47:31 -0600
+Yangtao Li <frank.li@vivo.com> wrote:
+
+> Convert devm_clk_get(), clk_prepare_enable() to a single
+> call to devm_clk_get_enabled(), as this is exactly
+> what this function does.
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Thanks,
+
+Maxime
 
