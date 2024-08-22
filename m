@@ -1,171 +1,212 @@
-Return-Path: <linux-kernel+bounces-297115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5E295B35A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E64495B35D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA041C23083
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9001F23DE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4575F183CC3;
-	Thu, 22 Aug 2024 11:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8vrMuTK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A52184547;
+	Thu, 22 Aug 2024 11:00:10 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4D4184551;
-	Thu, 22 Aug 2024 11:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE0F183CBC
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724324403; cv=none; b=MpCo7tQE/mLlbTxh+Tpgxti/OZoAtipuaxL1FrxeCvRwKORdvV8VHSRSMeJyBxJ2A4szCQrxFrX2yr4W44Bg5wyO6o87+1we/0vodR5JoJhsABoikZqPFCoc1QiPv4qG1wjYb7svb+scCk/6e/+vj9bVsheeYcceG258Lbfv+pM=
+	t=1724324409; cv=none; b=ndbS8Qeg2qBBvPoAStkvliHTmDsvMpw/Uhn7iLYe9X2WSHdaY6H+8+fHtPwwqAxW5AwG+c0c8Vay26t5pNvdyGT2kfkV0XAvvx49K8Z/KrLNn2C3ZdcoPCFE//KxwTsUCKii/WoZpXVBe8C/2f2oo3yKE4+MgnVWeGezfQVuC9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724324403; c=relaxed/simple;
-	bh=ftpARBDVSOINYSY49FomyfaoJ/hYTZRwJMBbqkqTY/0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MJGZnHScShMyTy6QoAI26YjRO4DdON8PL4qKpSWvFJGAsnk9825cdzb4PJ1+Km3BmzSI/zOyEiP0+vqrU5Ne7NQshhKd6xm+5UL7G0qrSJuIClyyuHfUixt4wsB6f3goDLEiUrzyVaL7B5ALaLFCu/UI+rt7iOMCm+DUtqluxtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8vrMuTK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47M9Op2m001444;
-	Thu, 22 Aug 2024 10:59:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sCNtADH6kP3rE4w/Nyr4Fckfz/UXQrBUsaH0+FahJ18=; b=h8vrMuTKSp4yPYMW
-	Nea3LHn/Fgob/IkiRs+xoA/0NwHe3Dz+7C3JfZ86Q9AyVQ3BlLkba59ZUvmPr6uN
-	+AsutMuKY2BocnT5OQku51Wq/4eA1ZGZ0PYOS7yDhQVWxmYwvCcGH1kR02etrXa8
-	0cf7kwozJguxo3a86E3HA+LMDv/FFb8CUBDp+D9IGdEeixIAjk1dbypM4SZYhCsT
-	Rg9wwp5n2XilSmG8OWg5LIyPqVqg+DaG/ISrYG8IucycwID3gDxkRed4mTjsMFXj
-	Em0kXykzCRe41cgOmtdtkX05TnqeBgA+74GZTdTARsxGdMNtyfR3V2zc/mdn52NE
-	LNu0rA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415nrrt2xk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 10:59:55 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MAxsEr023085
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 10:59:54 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+	s=arc-20240116; t=1724324409; c=relaxed/simple;
+	bh=9JiGXSYYncNkXYemDiaONkeVDgFPCKHf2/W8KFs7ujg=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Y576zaajsY30vBO5C0fljjiYk97ycLLramrnIFDDz8xydHR4TYiPaulXW1SyNhxk3fk0bj5PcV2U0yVdgVJj3CY21xLr7eI+AAm61X6uoBnEs6uMOEbU9EZpkJtC261RnLQPwiYbPZ0alwfb9fOdFPb9auV8H7u7ZprVpuCmHyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WqKwC2LjgzyR3C;
+	Thu, 22 Aug 2024 18:59:39 +0800 (CST)
+Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0FD8918009B;
+	Thu, 22 Aug 2024 19:00:03 +0800 (CST)
+Received: from [10.174.176.125] (10.174.176.125) by
+ kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 22 Aug 2024 03:59:51 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-Subject: [PATCH v1 3/3] misc: fastrpc: Skip reference for DMA handles
-Date: Thu, 22 Aug 2024 16:29:33 +0530
-Message-ID: <20240822105933.2644945-4-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822105933.2644945-1-quic_ekangupt@quicinc.com>
-References: <20240822105933.2644945-1-quic_ekangupt@quicinc.com>
+ 15.1.2507.39; Thu, 22 Aug 2024 19:00:01 +0800
+Subject: Re: [bug report] GICv4.1: multiple vpus execute vgic_v4_load at the
+ same time will greatly increase the time consumption
+To: Marc Zyngier <maz@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Oliver Upton
+	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K Poulose
+	<suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, "open list:IRQ
+ SUBSYSTEM" <linux-kernel@vger.kernel.org>, "moderated list:ARM SMMU DRIVERS"
+	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
+	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
+	<nizhiqiang1@huawei.com>, "tangnianyao@huawei.com" <tangnianyao@huawei.com>,
+	<wangzhou1@hisilicon.com>
+References: <a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com>
+ <86msl6xhu2.wl-maz@kernel.org>
+ <f1574274-efd8-eb56-436b-5a1dd7620f2c@huawei.com>
+ <867cc9x8si.wl-maz@kernel.org>
+From: Kunkun Jiang <jiangkunkun@huawei.com>
+Message-ID: <bd3c3103-a6d7-a91b-911d-5bc5f2382dae@huawei.com>
+Date: Thu, 22 Aug 2024 18:59:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <867cc9x8si.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Sq62xZ1lzNDHqXiJUBFQpPA0Hr3DXlwg
-X-Proofpoint-GUID: Sq62xZ1lzNDHqXiJUBFQpPA0Hr3DXlwg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_03,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
- malwarescore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408220081
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600007.china.huawei.com (7.193.23.208)
 
-If multiple dma handles are passed with same fd over a remote call
-the kernel driver takes a reference and expects that put for the
-map will be called as many times to free the map. But DSP only
-updates the fd one time in the fd list when the DSP refcount
-goes to zero and hence kernel make put call only once for the
-fd. This can cause SMMU fault issue as the same fd can be used
-in future for some other call.
+Hi Marc,
 
-Fixes: 35a82b87135d ("misc: fastrpc: Add dma handle implementation")
-Cc: stable <stable@kernel.org>
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- drivers/misc/fastrpc.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+On 2024/8/22 16:26, Marc Zyngier wrote:
+>>>> According to analysis, this problem is due to the execution of vgic_v4_load.
+>>>> vcpu_load or kvm_sched_in
+>>>>       kvm_arch_vcpu_load
+>>>>       ...
+>>>>           vgic_v4_load
+>>>>               irq_set_affinity
+>>>>               ...
+>>>>                   irq_do_set_affinity
+>>>>                       raw_spin_lock(&tmp_mask_lock)
+>>>>                       chip->irq_set_affinity
+>>>>                       ...
+>>>>                         its_vpe_set_affinity
+>>>>
+>>>> The tmp_mask_lock is the key. This is a global lock. I don't quite
+>>>> understand
+>>>> why tmp_mask_lock is needed here. I think there are two possible
+>>>> solutions here:
+>>>> 1. Remove this tmp_mask_lock
+>>>
+>>> Maybe you could have a look at 33de0aa4bae98 (and 11ea68f553e24)? It
+>>> would allow you to understand the nature of the problem.
+>>>
+>>> This can probably be replaced with a per-CPU cpumask, which would
+>>> avoid the locking, but potentially result in a larger memory usage.
+>>
+>> Thanks, I will try it.
+> 
+> A simple alternative would be this:
+> 
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index dd53298ef1a5..0d11b74af38c 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -224,15 +224,12 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+>   	struct irq_desc *desc = irq_data_to_desc(data);
+>   	struct irq_chip *chip = irq_data_get_irq_chip(data);
+>   	const struct cpumask  *prog_mask;
+> +	struct cpumask tmp_mask = {};
+>   	int ret;
+>   
+> -	static DEFINE_RAW_SPINLOCK(tmp_mask_lock);
+> -	static struct cpumask tmp_mask;
+> -
+>   	if (!chip || !chip->irq_set_affinity)
+>   		return -EINVAL;
+>   
+> -	raw_spin_lock(&tmp_mask_lock);
+>   	/*
+>   	 * If this is a managed interrupt and housekeeping is enabled on
+>   	 * it check whether the requested affinity mask intersects with
+> @@ -280,8 +277,6 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+>   	else
+>   		ret = -EINVAL;
+>   
+> -	raw_spin_unlock(&tmp_mask_lock);
+> -
+>   	switch (ret) {
+>   	case IRQ_SET_MASK_OK:
+>   	case IRQ_SET_MASK_OK_DONE:
+> 
+> but that will eat a significant portion of your stack if your kernel is
+> configured for a large number of CPUs.
+>
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index ebe828770a8d..ad56e918e1f8 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -755,7 +755,7 @@ static const struct dma_buf_ops fastrpc_dma_buf_ops = {
- 
- static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
- 				u64 va, u64 len, u32 attr,
--				struct fastrpc_map **ppmap)
-+				struct fastrpc_map **ppmap, bool take_ref)
- {
- 	struct fastrpc_session_ctx *sess = fl->sctx;
- 	struct fastrpc_map *map = NULL;
-@@ -763,7 +763,7 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
- 	struct scatterlist *sgl = NULL;
- 	int err = 0, sgl_index = 0;
- 
--	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, true))
-+	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, take_ref))
- 		return 0;
- 
- 	map = kzalloc(sizeof(*map), GFP_KERNEL);
-@@ -917,14 +917,17 @@ static int fastrpc_create_maps(struct fastrpc_invoke_ctx *ctx)
- 	int i, err;
- 
- 	for (i = 0; i < ctx->nscalars; ++i) {
-+		bool take_ref = true;
- 
- 		if (ctx->args[i].fd == 0 || ctx->args[i].fd == -1 ||
- 		    ctx->args[i].length == 0)
- 			continue;
- 
-+		if (i >= ctx->nbufs)
-+			take_ref = false;
- 		err = fastrpc_map_create(ctx->fl, ctx->args[i].fd,
- 				(u64)ctx->args[i].ptr, ctx->args[i].length,
--				ctx->args[i].attr, &ctx->maps[i]);
-+				ctx->args[i].attr, &ctx->maps[i], take_ref);
- 		if (err) {
- 			dev_err(dev, "Error Creating map %d\n", err);
- 			return -EINVAL;
-@@ -1417,7 +1420,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
- 
- 	if (init.filelen && init.filefd) {
- 		err = fastrpc_map_create(fl, init.filefd, init.file,
--				init.filelen, 0, &map);
-+				init.filelen, 0, &map, true);
- 		if (err)
- 			goto err;
- 	}
-@@ -2040,7 +2043,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
- 
- 	/* create SMMU mapping */
- 	err = fastrpc_map_create(fl, req.fd, req.vaddrin, req.length,
--			0, &map);
-+			0, &map, true);
- 	if (err) {
- 		dev_err(dev, "failed to map buffer, fd = %d\n", req.fd);
- 		return err;
--- 
-2.34.1
+Currently CONFIG_NR_CPUS=4096,each `struct cpumask` occupies 512 bytes.
 
+>>
+>>>> 2. Modify the gicv4 driver,do not perfrom VMOVP via
+>>>> irq_set_affinity.
+>>>
+>>> Sure. You could also not use KVM at all if don't care about interrupts
+>>> being delivered to your VM. We do not send a VMOVP just for fun. We
+>>> send it because your vcpu has moved to a different CPU, and the ITS
+>>> needs to know about that.
+>>
+>> When a vcpu is moved to a different CPU, of course VMOVP has to be sent.
+>> I mean is it possible to call its_vpe_set_affinity() to send VMOVP by
+>> other means (instead of by calling the irq_set_affinity() API). So we
+>> can bypass this tmp_mask_lock.
+> 
+> The whole point of this infrastructure is that the VPE doorbell is the
+> control point for the VPE. If the VPE moves, then the change of
+> affinity *must* be done using irq_set_affinity(). All the locking is
+> constructed around that. Please read the abundant documentation that
+> exists in both the GIC code and KVM describing why this is done like
+> that.
+> 
+
+OK. Thank you for your guidance.
+
+>>
+>>>
+>>> You seem to be misunderstanding the use case for GICv4: a partitioned
+>>> system, without any over-subscription, no vcpu migration between CPUs.
+>>> If that's not your setup, then GICv4 will always be a net loss
+>>> compared to SW injection with GICv3 (additional HW interaction,
+>>> doorbell interrupts).
+>>
+>> Thanks for the explanation. The key to the problem is not vcpu migration
+>> between CPUs. The key point is that many vcpus execute vgic_v4_load() at
+>> the same time. Even if it is not migrated to another CPU, there may be a
+>> large number of vcpus executing vgic_v4_load() at the same time. For
+>> example, the service running in VMs has a large number of MMIO accesses
+>> and need to return to userspace for emulation. Due to the competition of
+>> tmp_mask_lock, performance will deteriorate.
+> 
+> That's only a symptom. And that doesn't affect only pathological VM
+> workloads, but all interrupts being moved around for any reason.
+> 
+
+Yes.
+
+>>
+>> When the target CPU is the same CPU as the last run, there seems to be
+>> no need to call irq_set_affinity() in this case. I did a test and it was
+>> indeed able to alleviate the problem described above.
+> 
+> The premise is that irq_set_affinity() should be cheap when there
+> isn't much to do, and you are papering over the problem.
+> 
+>>
+>> I feel it might be better to remove tmp_mask_lock or call
+>> its_vpe_set_affinity() in another way. So I mentioned these two ideas
+>> above.
+> 
+> The removal of this global lock is the only option in my opinion.
+> Either the cpumask becomes a stack variable, or it becomes a static
+> per-CPU variable. Both have drawbacks, but they are not a bottleneck
+> anymore.
+
+I also prefer to remove the global lock. Which variable do you think is
+better?
+
+Thanks,
+Kunkun Jiang
 
