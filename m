@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-297369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB7695B6FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:39:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF80D95B707
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6CF1C22494
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:39:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D8F4B2833A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854C41CB330;
-	Thu, 22 Aug 2024 13:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907991CB32A;
+	Thu, 22 Aug 2024 13:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6FxQOIP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="leY0vOD6"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50A01E50B;
-	Thu, 22 Aug 2024 13:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EAC1CB30C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724333969; cv=none; b=Ck7+H04FnkdhuFLzybUNMZ4dVDiC2j2Ma3XsqHodPqrcsOWubCf/GxUGDk0ECa29VQ2CH3SAT3is8QxVrYekzrcCRER/VrUhC3DoYP5rxiRbxPZGWmMnZIzHnVwdLoMielbc2J+jVh3zuNYE2ywbMvJsklabS2yHPh5+SlWkG2Y=
+	t=1724334103; cv=none; b=cfoySiw+hjrotNow27m3/nHmaJtgU5ggGdE4n/+1+0EMty8Sl7XsQltyG6TSFKzdZG7h2ax+KKp4J+DzSn5phcuHkZ29ooNds2suifcchkPNz67N229VNIgEiV1LZuMPozY0KdszHRFQ3cM4a+Pmd+zIvXXbSjOfMu7l+WDJdN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724333969; c=relaxed/simple;
-	bh=6IIgjYTrddV1aSYFQjhcxaP8pZ0PWHR+oYTSh+0LoJA=;
+	s=arc-20240116; t=1724334103; c=relaxed/simple;
+	bh=O8xaZOTuj5ce8Wj2OeH273OxcvlRdNasHXbOjSdFy3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cWuyG2UND/oeEHIiLe5ZO9qhQvZ+sk6xPBhOpVWNzeu1E1OuzTU2uqatDFpHfY56/ke1FTx96ECKe4cTOGr4/ZT5p2IF0KFrXzDROdOVsv5yb8B8FIlcCVZcP3cbpk9SWOP6iklhXg2qmvRig8QaNfA5GYadWiSUcHJLEe5QIxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6FxQOIP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C55C32782;
-	Thu, 22 Aug 2024 13:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724333969;
-	bh=6IIgjYTrddV1aSYFQjhcxaP8pZ0PWHR+oYTSh+0LoJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E6FxQOIPbB4y+ZT4Jd2c2fZQdQwaYSbO/3tC015s0JhzWXjq6o3MFf4MPGkgh1cTa
-	 iixXW4+KAn9Fix+9gHXTRdd7sTLdRdg2FUxC9lbo+cwfaq5WnTZ5fR5YelQ5nUKHAk
-	 vg5p6yyxsv4IsVwDBWtSxFDP0Bsssfqr9yrDokWhQyGvEi0hDC7coA2Dj1rj+O/KVu
-	 p+dYeapau7QsNqr85TJ41UZeRuw2QdYZpHg0mrlOJv6MML2w1wconUqdKuZZawyXKL
-	 vqWS6DxC2ZIjaSr+dWf29zPlMZ582Ty+wfsV/EZGbQ1AgNFTJ9f9JSaqHD2+CtNIQV
-	 1riDeHM5HcV4w==
-Date: Thu, 22 Aug 2024 14:39:20 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 13/17] dt-bindings: Move google,cros-ec-typec binding
- to usb
-Message-ID: <20240822133920.GK6858@google.com>
-References: <20240819223834.2049862-1-swboyd@chromium.org>
- <20240819223834.2049862-14-swboyd@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N4JwVi+dpMUz8HOrmnVnzQl+GQXHtriBe52kkz7x3uYZ8G7bq4ocIsQGxWs7lu+Kmk5UDKPO0ZUrqfgh8NcdXm2/FFqQCBdfPud1ikkW04bE72B4pF5QDZDy3sIMrAIC+FjzVaLXyey3nsJI/soVBwJo77EXaiYh0XCGLZU7Jcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=leY0vOD6; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52efdf02d13so1093709e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1724334100; x=1724938900; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=imZf6FTHHFv1jc8blHwhJuknb8qH4z1prHELoYZxzpU=;
+        b=leY0vOD6tVLEWSVgn164KtdekXejhKKBiHh2n9G9rtdLH1pso+gw2EwyWmDLugWrbk
+         908wn2inhm6y/gy/20xEqvWWuX2sZUbNjQpfU0LfzIJto9Yt9jyB6b5A7Wt/zJrcUy/B
+         7wl/90iW200YB+G0lQZlT52++Rhd4PG0GkStGDS0DnHOnd2WvGTDX1z10o4WvguPXHC+
+         KQx0ona0Adu1utGHyGvqJkhvWU0PMuk1Zb/Gq76+IHG5JgWeCN6bYkiVa8ibCmApvlR6
+         ZFsQzRIZTLqoDWx3l9xiflQCPT8TIWcG31WcWhwh2vRdATswExjVeQ8WRcKOWSJGw/Qu
+         oR+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724334100; x=1724938900;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=imZf6FTHHFv1jc8blHwhJuknb8qH4z1prHELoYZxzpU=;
+        b=sAcbB2X0M0N33YbjCODPfGxfjrGnHOlsF9e34buoz94QCmspV9JePGD0SIM5KWRE0x
+         ZKzISM6Vd/aj6FZoxdL6evSJ/cYdbkwQO5N2fc4jIf4QPkpiRdL6+yPqDN66rJ17ym6Z
+         8tuTkt497Dv9Tz8DRalwf2HJKm0rwyjD14LvFx2SdKZvYx+aQa3NK5Lax4lLyePJIfXd
+         7Ap1QURm0JLj/Rg/xSkE8VA+5mNNnDhxGU7rxKPDTjKkK3HxdurnkwaGLQC4ufDO2HxO
+         JI97ni2oB+TFN1YNk+z8auRyuY2sPDTo+mtve3jATbUB5VtRBO3zDIuR9uS5vnf4tgUx
+         M3+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWCG/mNum1HKJ2/+PNURvX1hZ7KnTLBg0a2hkA4nS6V/KJjdsVyp63fUQY/uVcMm7pp6bGTy0dPtcFcwj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrkv4aokabvO0J5eeGUWgaXbXuTS/lw66T9A/fzZpoWoeXlI+E
+	0tC6YvF1VrqH2VMxrcSyvU31YjzrA/FU595gn0WmlRWryOqoyyy8uSf9KpgMCaM=
+X-Google-Smtp-Source: AGHT+IH32O883q08dUa5KOEo4YvEjt3Mp2Ar6drhkiJlCswVQ0XO6rq1iTaTl5tp3/AuAH3rpAo2EQ==
+X-Received: by 2002:a05:6512:3c89:b0:52e:d0f8:2d43 with SMTP id 2adb3069b0e04-5334fbe593emr1743888e87.17.1724334099444;
+        Thu, 22 Aug 2024 06:41:39 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f220ccbsm123140966b.36.2024.08.22.06.41.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 06:41:38 -0700 (PDT)
+Date: Thu, 22 Aug 2024 15:41:38 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Quan Zhou <zhouquan@iscas.ac.cn>
+Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] riscv: perf: add guest vs host distinction
+Message-ID: <20240822-a03a7c96ebceb658325e7fce@orel>
+References: <cover.1723518282.git.zhouquan@iscas.ac.cn>
+ <3729354b59658535c4370d3c1c7e2f162433807b.1723518282.git.zhouquan@iscas.ac.cn>
+ <20240821-f5e1d6afb0d2230c1256a75b@orel>
+ <430f3d38-b12e-4ac8-8040-33bab40380ab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240819223834.2049862-14-swboyd@chromium.org>
+In-Reply-To: <430f3d38-b12e-4ac8-8040-33bab40380ab@iscas.ac.cn>
 
-On Mon, 19 Aug 2024, Stephen Boyd wrote:
-
-> This binding is about USB type-c control. Move the binding to the usb
-> directory as it's a better home than chrome.
+On Thu, Aug 22, 2024 at 02:38:44PM GMT, Quan Zhou wrote:
+...
+> > > +unsigned short perf_misc_flags(struct pt_regs *regs)
+> > 
+> > I see that the consumer of perf_misc_flags is only a u16, but all other
+> > architectures define this function as returning an unsigned long, and
+> > your last version did as well. My comment in the last version was that
+> > we should use an unsigned long for the 'misc' variable to match the
+> > return type of the function. I still think we should do that instead
+> > since the function should be consistent with the other architectures.
+> > 
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Lee Jones <lee@kernel.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Prashant Malani <pmalani@chromium.org>
-> Cc: Tzung-Bi Shih <tzungbi@kernel.org>
-> Cc: <devicetree@vger.kernel.org>
-> Cc: <chrome-platform@lists.linux.dev>
-> Cc: Pin-yen Lin <treapking@chromium.org>
-> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml     | 2 +-
->  .../bindings/{chrome => usb}/google,cros-ec-typec.yaml        | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->  rename Documentation/devicetree/bindings/{chrome => usb}/google,cros-ec-typec.yaml (90%)
+> I agree with your point that the type of `misc` should be consistent with
+> other architectures.
+> 
+> However, one thing confuses me. The return value of perf_misc_flags
+> is assigned to the `misc` field of the perf_event_header structure,
+> and the field is defined as `u16`. I checked the return type of
 
-Acked-by: Lee Jones <lee@kernel.org>
+Yes, that's what I mentioned above.
 
--- 
-Lee Jones [李琼斯]
+> `perf_misc_flags` in other architectures, and I found that for x86/arm/s390,
+> the type is `unsigned long`, while for powerpc, it is `u32`.
+> These do not match `u16`, which seems to pose a risk of type truncation and
+> feels a bit unconventional. Or is there some other reasonable consideration
+> behind this?
+
+No, it's just historic. I see three paths, one is use 'unsigned long' like
+the other architectures and assume we'll never have flags touching bits
+over 15, so it's fine. Or, same as the first path, but also add
+'#define PERF_RECORD_MISC_MAX 15' with a comment explaining misc flags
+must be 15 or less as a separate patch. Or, for the third, add patches to
+this series that first change all architectures to return u16s.
+
+Thanks,
+drew
 
