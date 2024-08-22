@@ -1,122 +1,293 @@
-Return-Path: <linux-kernel+bounces-297781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6260195BDAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BAE95BDB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B841285CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71BD7284EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DE21CF2A2;
-	Thu, 22 Aug 2024 17:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521541CF2A8;
+	Thu, 22 Aug 2024 17:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gb2MnRyM"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UHUaQn2O"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C076E6F2F3
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8831CB138
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348793; cv=none; b=i8FeCzYdz/tVCoi0vbqR2AUTpYbsryUAW5YjHKADruURfwsDTigNQgRlurn9gY2ueYPxjXmDtZA1TVYeWT/ZrUgFNym29Dw0l4A1ozF+ijxq3oNK7z71IYky75VfDK+gVFJrIdet/tt4Mcx8/61ExP85wSqTYbfWiXpyaOkzfrg=
+	t=1724348867; cv=none; b=Hy6M4hA3Chb4vg+ifiHhpiIpQ8UT904G8s0JoiMeCtGqYXpe8xaViomJ1UFmzXYTwg8nr1FdpapwETNLzhZCAg3bmUkdD90DRGc3KfGnxKrVF32pmPIhOzfmKmN7TJ7DrkTng6mtXqslpGzze7V5hRczlsimxrF8mvsmhCrWZmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348793; c=relaxed/simple;
-	bh=7Cg4Cb79uBvSL9Q/CzeY8cde8LpE8z/qbnsP+4Iz4VU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NsbUlYEOOzzjYRRFczgLkFyr/LQt4YHuPozmTfo/cIotFix7KotezXQRxzCyNZcLfNTyDpAwBp0dlciJqXM5Xkehf74ae7FZkKOJD1UdJ+nQszh2mHP+z7uvehIAosH6m0kSdqq6iOOVux2+DQ2Q+nCmCaqH9Cb6NGaQgKr/qvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gb2MnRyM; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-201fbd0d7c2so10838525ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:46:31 -0700 (PDT)
+	s=arc-20240116; t=1724348867; c=relaxed/simple;
+	bh=q6Acx4w/gpPfq64/oulJYn/HYe7pYYoDgXScvJE6EYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FrXon1CCNktvMzGjdHZZ58mbCc4I5f4nzqL+1ULXk+rnL2aKA/WVV2wAMIkUdbF1Qx81tpO6/1Azxqa1HGpH1g3AlyuzWvDdXf2aS32ssizXo7NHrWIjQvHLikYmQrkobCsQk9qO2J1dZPwzHl9fmcQz4Ich8YViYDFLlpJcp7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UHUaQn2O; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so1496565a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:47:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724348791; x=1724953591; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YPxtm48V/PPdhN8wSURGWZ+5uOKyuKnvjhxgqACifgk=;
-        b=gb2MnRyMXS9yyc40FkOAsWofNWnip6HLoNLAXtze/10YgrRm0rExZmJGlR5cUK3pn7
-         dEax3+J5pxWhD//1eeu1gijbeU/CYCs2JEpfwHAC2xjNbPLWJ6gXNecDNtZZGoqbDrgp
-         bYHlYuIwKPNY2IWFyg3wnBDOuLOcEStAhLs2s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724348791; x=1724953591;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1724348864; x=1724953664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YPxtm48V/PPdhN8wSURGWZ+5uOKyuKnvjhxgqACifgk=;
-        b=kE3BkY4J/B2muHxwfzcD9L5g1Puce/pVzMxqSRayyqfwb1A5o+qpSFQxAfhgcJguqu
-         5FJngCDSDy8UZIMkRCD7uxlHVq/IAhvkt3y8kqlawUrBYQZgAREYqT8ftpB6qS4usMm1
-         rTfXyatQmxv3GypSLqs1UnXJjlnFWnLvw8usY0G0k9menNVL8fc0IdYiyQB6c/Wv5vMi
-         /y0zKH8HuLePDjgAODxqZEG8NFvRdp7EQJcj65eFaPWd2B3X9VlQDeiLaP7ULNvhgRQx
-         P9bOHB6TIz+U6DpvqoPukK3BoC6koj7l1tN11BQj2gEF93J6pBZtQCEVglPIg/b4n8b8
-         Ullw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaBhufpottOCGMu5Yy6hgsxi8SjW9nayrMRX/hPhmd4eXta2ZANrAmHVatXlemKZIJfRItkDc4PNOs8cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9Qyhvm2tt3J0aaSnBQD2Is7PIZA5Scdm64y+HUJMy7lca+c7P
-	TMAjKk2RXGtAdZsizP9FNMfMhmjyJ1DebgT8+Zw37hUGXIzzL99ozCZLXAyogc1Qptf66dQAreg
-	=
-X-Google-Smtp-Source: AGHT+IEHvyAehqf/sUVvhH1XQLyhGtO7mHKAv+wdaxRKZtKrVcP//nm5YXV4qVZAoJjlfxKJ5ELPZg==
-X-Received: by 2002:a17:902:e812:b0:1fd:9c2d:2f27 with SMTP id d9443c01a7336-20367d2b1b9mr71582405ad.24.1724348791138;
-        Thu, 22 Aug 2024 10:46:31 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:414c:5b44:2fea:fb6e])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-203855dc28bsm15269055ad.133.2024.08.22.10.46.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 10:46:30 -0700 (PDT)
-Date: Thu, 22 Aug 2024 10:46:29 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Chen Yufan <chenyufan@vivo.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v2] wifi: mwifiex: Convert to use jiffies macro
-Message-ID: <Zsd5ddqiIgxaEPKs@google.com>
-References: <20240822102906.141488-1-chenyufan@vivo.com>
+        bh=+d+/3JN2j+IR6X0GnobgQBaQc+2mwLkx4YG52rHVeyw=;
+        b=UHUaQn2OiZcFMYqxYSMjSs0W0DAvkitoOOxF3eDluxLbmWJEysZwui5IRxE2W1JARh
+         T2fKRdP8THj4vE4qYOHRre7c/EcW2kdZ9RxjgN+l5FCts8OdH8cxyA+pQwDmr5wgKRZ3
+         G7D3jyKZTsk92EYMxz+MIh8BPpkxu3JaRawmlG9y/O5DA02NtlAVLPDq9waKbcZ/Lln8
+         sHMuIprTAjl+Bp7cdhGxeoJLdHbtfndbfFVQbFpnVGE5APO7Uxnt3KqOnaY+HapR3W0T
+         lDvwtLEMWc8LYhxiaK66wR6bzda2zaTPbixXY0i/6Ju5rbKqvqB9rvY6e8tiTQmWQsNL
+         R3NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724348864; x=1724953664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+d+/3JN2j+IR6X0GnobgQBaQc+2mwLkx4YG52rHVeyw=;
+        b=YAavL45XbWnr1W7f2f86x5aXKzH4ck6HoJfIWgW80EtdRGocNFtb7IvRkoXRgT0gjN
+         HNiQ0CkqWzKpbnSBngvnJsgj81erqMQhd8XzpE874BdepW//wgtbhlK5Vec2KNcsr5Ij
+         enrz8sYEWGSNoFFnSfuYUqm0wu3f3gQ505MA03UWViFqRSbe87uk+JsTQOLDWyXV979w
+         9+WvA7vx0hveXrQWelBhVzrfoogAmwZtPBEp7ANwaGdCsvhU+k+IQZejHRaup0ZTUDHk
+         iJHEZ33bWSR/emzJQuGIBL8Tzlv1cPJ+xVjy91rlrZJ4VVJMkNt9dNDI2c/xGAlvm0Of
+         5FCA==
+X-Gm-Message-State: AOJu0Yzft8H/ih5ZudpWtrbCFAjTHjApV7YEM2I2RC8/1Cb7eVBOyil+
+	Ngx5yrF+styixMXOsyt0Nphou6GUgEo4gc5Xu7ZaYE5f23kaB24bDAjx1q3ObRgjnr2UEWF6I/q
+	HMMpUmng2f1IhyWkhyEKHOOznTgNn7sSOlDtn
+X-Google-Smtp-Source: AGHT+IEIB/sAcCVMEpN3z08j+zbYb8nUxKknSRWyl3cnas6NGtB+MeRmDWhfLCACOfDLHCFajCUgiqMgcKAl/lGIRG8=
+X-Received: by 2002:a17:907:5cb:b0:a86:700f:93c0 with SMTP id
+ a640c23a62f3a-a8691b64e4emr280264866b.35.1724348863010; Thu, 22 Aug 2024
+ 10:47:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822102906.141488-1-chenyufan@vivo.com>
+References: <20240816144344.18135-1-me@yhndnzj.com> <20240816144344.18135-2-me@yhndnzj.com>
+ <CAJD7tkYRiA7113ehpXoiafJtk8Z+j6nV_bQWK0xoX3KaK6=wcQ@mail.gmail.com> <9e39ed273b5e25e3d2f33c5a2b8e3131efbfcedc.camel@yhndnzj.com>
+In-Reply-To: <9e39ed273b5e25e3d2f33c5a2b8e3131efbfcedc.camel@yhndnzj.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 22 Aug 2024 10:47:05 -0700
+Message-ID: <CAJD7tkYpKA+iGFsan6B0GWT6_bOPX+83hjMQnmR11F6WX1vhiw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] selftests: test_zswap: add test for hierarchical zswap.writeback
+To: Mike Yuan <me@yhndnzj.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 06:29:04PM +0800, Chen Yufan wrote:
-> Use time_after macro instead of using
-> jiffies directly to handle wraparound.
-> The modifications made compared to the previous version are as follows:
-> 1. Added a typecast to unsigned long for rssi_jiffies
-> to resolve the compilation error.
+On Tue, Aug 20, 2024 at 2:44=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrote:
+>
+> On 2024-08-19 at 12:19 -0700, Yosry Ahmed wrote:
+> > On Fri, Aug 16, 2024 at 7:44=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrot=
+e:
+> > >
+> > > Ensure that zswap.writeback check goes up the cgroup tree.
+> >
+> > Too concise :) Perhaps a little bit of description of what you are
+> > doing would be helpful.
+>
+> The patch has been merged into mm-unstable tree. Do I need to
+> send a v3 to resolve the comments?
 
-Can we just change the type in mwifiex_auto_tdls_peer::rssi_jiffies?
-Fewer casts is generally better.
+You can send a new version and Andrew usually replaces them. If the
+changes are too trivial sometimes Andrew is nice enough to make
+amendments directly :)
 
-Brian
+>
+> > >
+> > > Signed-off-by: Mike Yuan <me@yhndnzj.com>
+> > > ---
+> > >  tools/testing/selftests/cgroup/test_zswap.c | 69 ++++++++++++++---
+> > > ----
+> > >  1 file changed, 48 insertions(+), 21 deletions(-)
+> > >
+> > > diff --git a/tools/testing/selftests/cgroup/test_zswap.c
+> > > b/tools/testing/selftests/cgroup/test_zswap.c
+> > > index 190096017f80..7da6f9dc1066 100644
+> > > --- a/tools/testing/selftests/cgroup/test_zswap.c
+> > > +++ b/tools/testing/selftests/cgroup/test_zswap.c
+> > > @@ -263,15 +263,13 @@ static int test_zswapin(const char *root)
+> > >  static int attempt_writeback(const char *cgroup, void *arg)
+> > >  {
+> > >         long pagesize =3D sysconf(_SC_PAGESIZE);
+> > > -       char *test_group =3D arg;
+> > >         size_t memsize =3D MB(4);
+> > >         char buf[pagesize];
+> > >         long zswap_usage;
+> > > -       bool wb_enabled;
+> > > +       bool wb_enabled =3D *(bool *) arg;
+> > >         int ret =3D -1;
+> > >         char *mem;
+> > >
+> > > -       wb_enabled =3D cg_read_long(test_group,
+> > > "memory.zswap.writeback");
+> > >         mem =3D (char *)malloc(memsize);
+> > >         if (!mem)
+> > >                 return ret;
+> > > @@ -288,12 +286,12 @@ static int attempt_writeback(const char
+> > > *cgroup, void *arg)
+> > >                 memcpy(&mem[i], buf, pagesize);
+> > >
+> > >         /* Try and reclaim allocated memory */
+> > > -       if (cg_write_numeric(test_group, "memory.reclaim",
+> > > memsize)) {
+> > > +       if (cg_write_numeric(cgroup, "memory.reclaim", memsize)) {
+> > >                 ksft_print_msg("Failed to reclaim all of the
+> > > requested memory\n");
+> > >                 goto out;
+> > >         }
+> > >
+> > > -       zswap_usage =3D cg_read_long(test_group,
+> > > "memory.zswap.current");
+> > > +       zswap_usage =3D cg_read_long(cgroup, "memory.zswap.current");
+> > >
+> > >         /* zswpin */
+> > >         for (int i =3D 0; i < memsize; i +=3D pagesize) {
+> > > @@ -303,7 +301,7 @@ static int attempt_writeback(const char
+> > > *cgroup, void *arg)
+> > >                 }
+> > >         }
+> > >
+> > > -       if (cg_write_numeric(test_group, "memory.zswap.max",
+> > > zswap_usage/2))
+> > > +       if (cg_write_numeric(cgroup, "memory.zswap.max",
+> > > zswap_usage/2))
+> > >                 goto out;
+> > >
+> > >         /*
+> > > @@ -312,7 +310,7 @@ static int attempt_writeback(const char
+> > > *cgroup, void *arg)
+> > >          * If writeback is disabled, memory reclaim will fail as
+> > > zswap is limited and
+> > >          * it can't writeback to swap.
+> > >          */
+> > > -       ret =3D cg_write_numeric(test_group, "memory.reclaim",
+> > > memsize);
+> > > +       ret =3D cg_write_numeric(cgroup, "memory.reclaim", memsize);
+> > >         if (!wb_enabled)
+> > >                 ret =3D (ret =3D=3D -EAGAIN) ? 0 : -1;
+> > >
+> > > @@ -321,12 +319,38 @@ static int attempt_writeback(const char
+> > > *cgroup, void *arg)
+> > >         return ret;
+> > >  }
+> > >
+> > > +static int test_zswap_writeback_one(const char *cgroup, bool wb)
+> > > +{
+> > > +       long zswpwb_before, zswpwb_after;
+> > > +
+> > > +       zswpwb_before =3D get_cg_wb_count(cgroup);
+> > > +       if (zswpwb_before !=3D 0) {
+> > > +               ksft_print_msg("zswpwb_before =3D %ld instead of
+> > > 0\n", zswpwb_before);
+> > > +               return -1;
+> > > +       }
+> > > +
+> > > +       if (cg_run(cgroup, attempt_writeback, (void *) &wb))
+> > > +               return -1;
+> > > +
+> > > +       /* Verify that zswap writeback occurred only if writeback
+> > > was enabled */
+> > > +       zswpwb_after =3D get_cg_wb_count(cgroup);
+> > > +       if (zswpwb_after < 0)
+> > > +               return -1;
+> > > +
+> > > +       if (wb !=3D !!zswpwb_after) {
+> > > +               ksft_print_msg("zswpwb_after is %ld while wb is
+> > > %s",
+> > > +                               zswpwb_after, wb ? "enabled" :
+> > > "disabled");
+> > > +               return -1;
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > >  /* Test to verify the zswap writeback path */
+> > >  static int test_zswap_writeback(const char *root, bool wb)
+> > >  {
+> > > -       long zswpwb_before, zswpwb_after;
+> > >         int ret =3D KSFT_FAIL;
+> > > -       char *test_group;
+> > > +       char *test_group, *test_group_child =3D NULL;
+> > >
+> > >         test_group =3D cg_name(root, "zswap_writeback_test");
+> > >         if (!test_group)
+> > > @@ -336,29 +360,32 @@ static int test_zswap_writeback(const char
+> > > *root, bool wb)
+> > >         if (cg_write(test_group, "memory.zswap.writeback", wb ? "1"
+> > > : "0"))
+> > >                 goto out;
+> > >
+> > > -       zswpwb_before =3D get_cg_wb_count(test_group);
+> > > -       if (zswpwb_before !=3D 0) {
+> > > -               ksft_print_msg("zswpwb_before =3D %ld instead of
+> > > 0\n", zswpwb_before);
+> > > +       if (test_zswap_writeback_one(test_group, wb))
+> > >                 goto out;
+> > > -       }
+> > >
+> > > -       if (cg_run(test_group, attempt_writeback, (void *)
+> > > test_group))
+> > > +       if (cg_write(test_group, "memory.zswap.max", "max"))
+> > > +               goto out;
+> >
+> > Why is this needed? Isn't this the default value?
+>
+> attempt_writeback() would modify it.
 
-> 
-> Signed-off-by: Chen Yufan <chenyufan@vivo.com>
-> ---
->  drivers/net/wireless/marvell/mwifiex/tdls.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/tdls.c b/drivers/net/wireless/marvell/mwifiex/tdls.c
-> index 6c60621b6..e48e8affd 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/tdls.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/tdls.c
-> @@ -1439,8 +1439,8 @@ void mwifiex_check_auto_tdls(struct timer_list *t)
->  
->  	spin_lock_bh(&priv->auto_tdls_lock);
->  	list_for_each_entry(tdls_peer, &priv->auto_tdls_list, list) {
-> -		if ((jiffies - tdls_peer->rssi_jiffies) >
-> -		    (MWIFIEX_AUTO_TDLS_IDLE_TIME * HZ)) {
-> +		if (time_after(jiffies, (unsigned long)tdls_peer->rssi_jiffies +
-> +					 MWIFIEX_AUTO_TDLS_IDLE_TIME * HZ)) {
->  			tdls_peer->rssi = 0;
->  			tdls_peer->do_discover = true;
->  			priv->check_tdls_tx = true;
-> -- 
-> 2.39.0
-> 
+Oh yes, missed that.
+
+>
+> > > +       if (cg_write(test_group, "cgroup.subtree_control",
+> > > "+memory"))
+> > >                 goto out;
+> > >
+> > > -       /* Verify that zswap writeback occurred only if writeback
+> > > was enabled */
+> > > -       zswpwb_after =3D get_cg_wb_count(test_group);
+> > > -       if (zswpwb_after < 0)
+> > > +       test_group_child =3D cg_name(test_group,
+> > > "zswap_writeback_test_child");
+> > > +       if (!test_group_child)
+> > > +               goto out;
+> > > +       if (cg_create(test_group_child))
+> > > +               goto out;
+> >
+> > I'd rather have all the hierarchy setup at the beginning of the test,
+> > before the actual test logic. I don't feel strongly about it though.
+> >
+> > > +       if (cg_write(test_group_child, "memory.zswap.writeback",
+> > > "1"))
+> > >                 goto out;
+> >
+> > Is the idea here that we always hardcode the child's zswap.writeback
+> > to 1, and the parent's zswap.writeback changes from 0 to 1, and we
+> > check that the parent's value is what matters?
+> > I think we need a comment here.
+>
+> Yes, indeed.
+>
+> > TBH, I expected a separate test that checks different combinations of
+> > parent and child values (e.g. also verifies that if the parent is
+> > enabled but child is disabled, writeback is disabled).
+>
+> That's (implicitly) covered by the test itself IIUC? The parent cgroup
+> here is in turn the child of root cgroup.
+
+This assumes that the root has zswap writeback enabled, but that's a
+fair assumption as otherwise all the writeback tests will fail.
+
+TBH I'd prefer a standalone test rather than these implicitly tested scenar=
+ios.
 
