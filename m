@@ -1,392 +1,176 @@
-Return-Path: <linux-kernel+bounces-296920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4E795B09F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:36:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D743E95B09C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C16285E15
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2F4B27027
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A559B17D35B;
-	Thu, 22 Aug 2024 08:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b="MaBD9W4R"
-Received: from sender4-of-o55.zoho.com (sender4-of-o55.zoho.com [136.143.188.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72E8165F11;
+	Thu, 22 Aug 2024 08:33:28 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D794B17CA03;
-	Thu, 22 Aug 2024 08:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315620; cv=pass; b=meYm4duJTeZRqYYuPo0S8Y7Oeug4R3M5QtoZ6F0dFMGnY0Rjh92itrgtSbCw10l88sblRQJkmcwtO/IGJz64UE6OEVVIeqJx91vxu1FUHkC26mW3HDq+qAFJRfMmbEts5qVTPHv8B6WMwuiMWhDlgGae8MOxBJAS4G8cCPnzugA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315620; c=relaxed/simple;
-	bh=hHGCUtUaTPhxfLgE4Cw9O/MYQqKVunKbuzQC3CfdY30=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uj2ch2anzP1uoZd/FrFCbhuQXzQZs3BUOHmmuFlVMIVhTdinEE2iMyycSr4FSQer87w5Yq3TKodpVAkS33BG54Mq4DNpCaAwz8TKbb1QFmSOI1cP24hRTVMJlmWAxFlcnjPalsLKSLX5Xg3+w3tmhbWmV3f0q8DwlFp2I67IhIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz; spf=pass smtp.mailfrom=jevklidu.cz; dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b=MaBD9W4R; arc=pass smtp.client-ip=136.143.188.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jevklidu.cz
-ARC-Seal: i=1; a=rsa-sha256; t=1724315600; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GhKmdIuSFqdOJgJaC9epo7uH2lPVgIq3sTLjkfwPs/kqbmkeBBu8I95TCw65+HoWUnReQq05jOnIyeQ+8wBBmn/6QZHrs/4b7UujOIv2Oq/EmoJeny8CDMBI0OyyoeCeF0z7HZS9rEH0jXVp6YfUesVb8XFc1IL1RnEdaQswdfc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724315600; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=u2xe4iZmScZzyrrYEx2M4UEquQ1gVjFlwQGH+JO6v0Q=; 
-	b=HS84Jl9vJhGVoALvm+gDG46WxA3HCWuFlEcYTlN6GMili6yMLhCQLda9/xbjuYGhRI+neZpZEG/7+h4QJt0PCDNV0lEtVBMI1S1n2uoWuBcHi88O5U1Td+gH29FBdPZoUVSRMAwdMqzDII8QHK7Vv7FhljFbc8LHk6qfD7/UAvM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=jevklidu.cz;
-	spf=pass  smtp.mailfrom=petr@jevklidu.cz;
-	dmarc=pass header.from=<petr@jevklidu.cz>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724315600;
-	s=zoho; d=jevklidu.cz; i=petr@jevklidu.cz;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=u2xe4iZmScZzyrrYEx2M4UEquQ1gVjFlwQGH+JO6v0Q=;
-	b=MaBD9W4RBcRuyWIzfE0/Tuj6wUwdL1QGqM6nixfeuHxlCscf+vsGRGGGBzxy1fBX
-	rzUY53xEJGlyUZ8Fuka668Z7+lYzd0FEBQVsKbir00Gfo+Rl3cgSjN/1EEcNABysqmF
-	k1coBVu0N9hGE10rsTis9rWWWVPFhZWLk3EMurnU=
-Received: by mx.zohomail.com with SMTPS id 1724315598622873.846586922534;
-	Thu, 22 Aug 2024 01:33:18 -0700 (PDT)
-Message-ID: <5bba930f-4c32-401c-a2e0-80dbad36487a@jevklidu.cz>
-Date: Thu, 22 Aug 2024 10:33:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A68184538
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724315608; cv=none; b=NLcSaOQZF/8Yb05yTM6RRagS4CHWIedwHiSptefAp2elBW0JWLR6PKaLCag/VdYIFPijyKRZpufVFQNUkCJMIQg3m5eZTViud51JB62DGzVuuBOpYU/hTEeUXALVN7l8J5uwQkBuiTM1TRZIwsn4zS8dOId0kqNawbGPfBKy7gw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724315608; c=relaxed/simple;
+	bh=S9LqJbUue2NmI27P20+JtZLnz5o0LiiCjLon4DQXcRU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WTPz6wzuYLKOfpwPQvgylvY1d9jz/fen8Bguw/S04eLnryFmcxBGdhsH/8fxwcERhlGIR63OdWT0R0T5EExm2CamJx2T389+uwTskxpCRhyBACzS0m1ZWQpQZWdM+vwu13Bon9zHVkr1rZ5eQwXFnXArMnSnpaMN7F2jiuDpz78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d4c0fc036so6400075ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:33:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724315604; x=1724920404;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6AXC5XHZThFajyn2Wh0sKPHHef6MxuiBJh0u0wO5Ttk=;
+        b=s3I3RA9KucMW786Q76bLShKHd3DUehw2+xanVIocI1M3zG3r4RoKFpTqYs9Uz45I8o
+         YAIu73Jw9auCGhiu662O9vnYTvLT1Hup5Xr6SwetY3TUJftVOODuUDFgMcItXYR+n41T
+         DhFKek1ufgSpTqX7jBEZhP8rogvAiHfN1xf0CIlQckiI7n4ScAi+kcAd5CrJmBkcPTIr
+         nAM47RI1OToU+i/FdbAwLjT/ddAUwV1KPORvcwSn2E7SOSoD82GIL9XPL8g78PcTaBme
+         /S/86a0pNek0wNuLf68PzmeRKSXYmWsMDuv7UT8R9KLtr0xZJtPBvTwqPKug3vNOI4tT
+         hPMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkaGwOiHfsXrC67CpQ3ug5sm0/8/14BTJyJO0PkK4uO5ZJT6mPmETs/xEs/19cDHFgA5WC/IosG6+jJ9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7ed6Z/VumetFvSOsQr18XkoMGtCwaTqjzkUnbQjyFrAVZj40w
+	mgo/go0r8MJvq6WruTrIdaNtp2kFoVjNvpsH+P9OquHpw5nLqVBgHBZfq2KZe5biORCMJmrRS0R
+	80RAc5fmPfIsY1oMRVPnls4xCgH1tbeVv6Qgcz6VxHmSQG9F31MQ44uI=
+X-Google-Smtp-Source: AGHT+IE5ybtdLEnlV4DeQ6iz0cvn1pcpAcGxp4GMBZOpdSaSFD0DtGHNiO1cgcsWrQMk3fOS7aeX/vFq/w/scTtOk+yDPuci33j+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ACPI IRQ storm with 6.10
-From: Petr Valenta <petr@jevklidu.cz>
-To: Vitaly Lifshits <vitaly.lifshits@intel.com>,
- Bjorn Helgaas <helgaas@kernel.org>, Dima Ruinskiy <dima.ruinskiy@intel.com>,
- Hui Wang <hui.wang@canonical.com>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Len Brown <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Tony Nguyen <anthony.l.nguyen@intel.com>, przemyslaw.kitszel@intel.com,
- intel-wired-lan@lists.osuosl.org, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20240821145959.GA248604@bhelgaas>
- <1041b9b5-cc78-13b1-459a-d1d3a313475a@intel.com>
- <5ba3c7c2-5695-421d-a747-2a23af48db26@jevklidu.cz>
-Content-Language: cs-CZ
-In-Reply-To: <5ba3c7c2-5695-421d-a747-2a23af48db26@jevklidu.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+X-Received: by 2002:a05:6e02:1d16:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39d6c34c312mr4356805ab.1.1724315604539; Thu, 22 Aug 2024
+ 01:33:24 -0700 (PDT)
+Date: Thu, 22 Aug 2024 01:33:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000016f0070620418323@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_alloc_v4_validate
+From: syzbot <syzbot+5c0423c85f295891c7f7@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    6e4436539ae1 Merge tag 'hid-for-linus-2024081901' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17cc9387980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=62f882de896675a6
+dashboard link: https://syzkaller.appspot.com/bug?extid=5c0423c85f295891c7f7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1338058d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d0f7f3980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/75208f1b057a/disk-6e443653.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eeb34e49cb7e/vmlinux-6e443653.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bd6b9e2947c8/bzImage-6e443653.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/80d0f45895f2/mount_2.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5c0423c85f295891c7f7@syzkaller.appspotmail.com
+
+bcachefs (loop0): recovering from clean shutdown, journal seq 8
+bcachefs (loop0): Doing compatible version upgrade from 1.7: mi_btree_bitmap to 1.11: disk_accounting_inum
+  running recovery passes: check_allocations
+=====================================================
+BUG: KMSAN: uninit-value in alloc_data_type fs/bcachefs/alloc_background.h:135 [inline]
+BUG: KMSAN: uninit-value in bch2_alloc_v4_validate+0x80a/0x1c10 fs/bcachefs/alloc_background.c:256
+ alloc_data_type fs/bcachefs/alloc_background.h:135 [inline]
+ bch2_alloc_v4_validate+0x80a/0x1c10 fs/bcachefs/alloc_background.c:256
+ bch2_bkey_val_validate+0x2ac/0x470 fs/bcachefs/bkey_methods.c:143
+ bch2_btree_node_read_done+0x5be1/0x7790 fs/bcachefs/btree_io.c:1219
+ btree_node_read_work+0x973/0x1960 fs/bcachefs/btree_io.c:1323
+ bch2_btree_node_read+0x2e6b/0x36e0
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1749 [inline]
+ bch2_btree_root_read+0xa81/0x13f0 fs/bcachefs/btree_io.c:1773
+ read_btree_roots+0x51c/0x1250 fs/bcachefs/recovery.c:516
+ bch2_fs_recovery+0x422c/0x5c60 fs/bcachefs/recovery.c:844
+ bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0x13e8/0x22d0 fs/bcachefs/fs.c:1946
+ vfs_get_tree+0xa7/0x570 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3472
+ path_mount+0x742/0x1f10 fs/namespace.c:3799
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:3997
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:3997
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4113
+ __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4130
+ __do_kmalloc_node mm/slub.c:4146 [inline]
+ __kmalloc_node_noprof+0x9d6/0xf50 mm/slub.c:4164
+ __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:650
+ btree_bounce_alloc fs/bcachefs/btree_io.c:124 [inline]
+ bch2_btree_node_read_done+0x52a9/0x7790 fs/bcachefs/btree_io.c:1192
+ btree_node_read_work+0x973/0x1960 fs/bcachefs/btree_io.c:1323
+ bch2_btree_node_read+0x2e6b/0x36e0
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1749 [inline]
+ bch2_btree_root_read+0xa81/0x13f0 fs/bcachefs/btree_io.c:1773
+ read_btree_roots+0x51c/0x1250 fs/bcachefs/recovery.c:516
+ bch2_fs_recovery+0x422c/0x5c60 fs/bcachefs/recovery.c:844
+ bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0x13e8/0x22d0 fs/bcachefs/fs.c:1946
+ vfs_get_tree+0xa7/0x570 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3472
+ path_mount+0x742/0x1f10 fs/namespace.c:3799
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:3997
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:3997
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5177 Comm: syz-executor142 Not tainted 6.11.0-rc4-syzkaller-00008-g6e4436539ae1 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Dne 22. 08. 24 v 9:44 Petr Valenta napsal(a):
-> 
-> 
-> Dne 21. 08. 24 v 17:17 Vitaly Lifshits napsal(a):
->>
->> On 8/21/2024 5:59 PM, Bjorn Helgaas wrote:
->>> [+to Dima, Vitaly, Hui; beginning of thread at
->>> https://lore.kernel.org/r/60ac8988-ace4-4cf0-8c44-028ca741c0a1@kernel.org]
->>>
->>> On Wed, Aug 21, 2024 at 01:39:11PM +0200, Petr Valenta wrote:
->>>> Dne 20. 08. 24 v 23:30 Bjorn Helgaas napsal(a):
->>>>> On Tue, Aug 20, 2024 at 11:13:54PM +0200, Petr Valenta wrote:
->>>>>> Dne 20. 08. 24 v 20:09 Bjorn Helgaas napsal(a):
->>>>>>> On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
->>>>>>>> On 19. 08. 24, 6:50, Jiri Slaby wrote:
->>>>>>>>> CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to 
->>>>>>>>> b2c289415b2b)
->>>> ...
->>>>> I'm at a loss.  You could try reverting the entire b2c289415b2b commit
->>>>> (patch for that is below).
->>>> This patch didn't help, so I reverted it back.
->>>>
->>>>> If that doesn't help, I guess you could try reverting the other
->>>>> commits Jiri mentioned:
->>>>>
->>>>>     76a0a3f9cc2f e1000e: fix force smbus during suspend flow
->>>>>     c93a6f62cb1b e1000e: Fix S0ix residency on corporate systems
->>>>>     bfd546a552e1 e1000e: move force SMBUS near the end of 
->>>>> enable_ulp function
->>>>>     6918107e2540 net: e1000e & ixgbe: Remove PCI_HEADER_TYPE_MFD 
->>>>> duplicates
->>>>>     1eb2cded45b3 net: annotate writes on dev->mtu from 
->>>>> ndo_change_mtu()
->>>>>     b2c289415b2b e1000e: Remove redundant runtime resume for 
->>>>> ethtool_ops
->>>>>     75a3f93b5383 net: intel: implement modern PM ops declarations
->>>>>
->>>>> If you do this, I would revert 76a0a3f9cc2f, test, then revert
->>>>> c93a6f62cb1b in addition, test, then revert bfd546a552e1 in addition,
->>>>> etc.
->>>> I have created revert patches like this:
->>>> git format-patch --stdout -1 76a0a3f9cc2f | interdiff -q /dev/stdin \
->>>> /dev/null > revert_76a0a3f9cc2f.patch
->>>>
->>>> I have applied revert_76a0a3f9cc2f.patch (rebuild and tested), then in
->>>> addition revert_c93a6f62cb1b.patch and after applying
->>>> revert_bfd546a552e1.patch irq storm didn't appear.
->>>>
->>>> I have tested it with 3 subsequent reboots and in all those cases it 
->>>> was ok.
->>> Thanks for all this testing.  It sounds like reverting all three of
->>> 76a0a3f9cc2f, c93a6f62cb1b, and bfd546a552e1 fixed the IRQ storm, but
->>> I'm not clear on the results of other situations.
->>>
->>> It looks like c93a6f62cb1b could be reverted by itself because it's
->>> unrelated to 76a0a3f9cc2f and bfd546a552e1.  I added the authors of
->>> all three in case they have any insights.
->>>
->>> Bjorn
->>
->>
->> I doubt that it is related to c93a6f62cb1b, I believe that is more 
->> probable to be related to the two other patches.
->>
->> Apart from what I suggested in the other mailing thread (enabling 
->> e1000e debug and to test if it happens with a cable connected),
->>
->> I suggest to try to apply this patch and see if it fixes the issue:
->>
->> https://patchwork.ozlabs.org/project/intel-wired-lan/patch/20240806132348.880744-1-vitaly.lifshits@intel.com/
-> 
-> I have applied patch from link above and command bellow really doesn't 
-> start irq storm.
-> 
-> echo 'auto' > /sys/bus/pci/devices/0000:00:1f.6/power/control
-> 
-> Problem is that after executing this command and plugging cable to 
-> ethernet port, kernel is not able to detect link (LED indicate link is 
-> on) so network over cable is not working.
-> 
->>
->>
-> 
->  From mboxrd@z Thu Jan  1 00:00:00 1970
-> Return-Path: <intel-wired-lan-bounces@osuosl.org>
-> X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
->      aws-us-west-2-korg-lkml-1.web.codeaurora.org
-> Received: from smtp2.osuosl.org (smtp2.osuosl.org [140.211.166.133])
->      (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
->      (No client certificate requested)
->      by smtp.lore.kernel.org (Postfix) with ESMTPS id 7319CC531DF
->      for <intel-wired-lan@archiver.kernel.org>; Thu, 22 Aug 2024 
-> 07:44:59 +0000 (UTC)
-> Received: from localhost (localhost [127.0.0.1])
->      by smtp2.osuosl.org (Postfix) with ESMTP id 2EE99404B8;
->      Thu, 22 Aug 2024 07:44:59 +0000 (UTC)
-> X-Virus-Scanned: amavis at osuosl.org
-> Received: from smtp2.osuosl.org ([127.0.0.1])
-> by localhost (smtp2.osuosl.org [127.0.0.1]) (amavis, port 10024) with ESMTP
-> id VRgkrPDlq_WW; Thu, 22 Aug 2024 07:44:56 +0000 (UTC)
-> X-Comment: SPF check N/A for local connections - 
-> client-ip=140.211.166.34; helo=ash.osuosl.org; 
-> envelope-from=intel-wired-lan-bounces@osuosl.org; receiver=<UNKNOWN> 
-> DKIM-Filter: OpenDKIM Filter v2.11.0 smtp2.osuosl.org 53F64405BA
-> DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=osuosl.org;
->      s=default; t=1724312696;
->      bh=y3v3IIFARTszfLWu7n/j8Du29EOi4VTxMDP3GF4qp7E=;
->      h=Date:To:References:From:In-Reply-To:Subject:List-Id:
->       List-Unsubscribe:List-Archive:List-Post:List-Help:List-Subscribe:
->       Cc:From;
->      b=ZIudOsHGSDoQvtekseiE4SUpOKofnvHlxj7aT3f7bLvqCDMOCfygsO6tctN23YgSh
->       xYqnq4yBSB4/JQ4v7Juyg0P/wqTcr+XFqhORTc2qBku9GCA+Y4wRKbRUeH4/AUNthL
->       cf/zG7uEOFEKz4YALwviQFqR5E+HW9gD+YnXahtGUVqYiTjB01HuESDZdYI5huiCLI
->       eHnQDw/SSwM1YmkjLzQgICjlxtIRVYjUL+shaltRg9f7t4otZa9bvrvLptzw5Mrfc0
->       GLvrNRmHckPFKEJOXgmIeQI40IOHckD3MX2dkQ2dQ0VCrkl9JIgtuSRuS3IpB1dr65
->       TatTrq9Onm26w==
-> Received: from ash.osuosl.org (ash.osuosl.org [140.211.166.34])
->      by smtp2.osuosl.org (Postfix) with ESMTP id 53F64405BA;
->      Thu, 22 Aug 2024 07:44:56 +0000 (UTC)
-> Received: from smtp1.osuosl.org (smtp1.osuosl.org [140.211.166.138])
-> by ash.osuosl.org (Postfix) with ESMTP id 81E351BF322
-> for <intel-wired-lan@lists.osuosl.org>; Thu, 22 Aug 2024 07:44:54 +0000 
-> (UTC)
-> Received: from localhost (localhost [127.0.0.1])
-> by smtp1.osuosl.org (Postfix) with ESMTP id 79A0C80A82
-> for <intel-wired-lan@lists.osuosl.org>; Thu, 22 Aug 2024 07:44:54 +0000 
-> (UTC)
-> X-Virus-Scanned: amavis at osuosl.org
-> Received: from smtp1.osuosl.org ([127.0.0.1])
-> by localhost (smtp1.osuosl.org [127.0.0.1]) (amavis, port 10024) with ESMTP
-> id m9sJJpu9kR7y for <intel-wired-lan@lists.osuosl.org>;
-> Thu, 22 Aug 2024 07:44:53 +0000 (UTC)
-> Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=136.143.188.52;
-> helo=sender4-of-o52.zoho.com; envelope-from=petr@jevklidu.cz;
-> receiver=<UNKNOWN> DMARC-Filter: OpenDMARC Filter v1.4.2 
-> smtp1.osuosl.org 3674B80A59
-> DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.osuosl.org 3674B80A59
-> Received: from sender4-of-o52.zoho.com (sender4-of-o52.zoho.com
-> [136.143.188.52])
-> by smtp1.osuosl.org (Postfix) with ESMTPS id 3674B80A59
-> for <intel-wired-lan@lists.osuosl.org>; Thu, 22 Aug 2024 07:44:51 +0000 
-> (UTC)
-> ARC-Seal: i=1; a=rsa-sha256; t=1724312671; cv=none; d=zohomail.com; 
-> s=zohoarc; 
-> b=B0wnUG3UHEcTRfbjC9HSfLJG+WBnpU18yag7r0240QuMQMnP/cHcj9e4oJU2FgxRPLpt6OGnlZOiPNE2GUFgnkBzKBPwzxb7eTHFwW4P8cW+1IrIOQ6jZWd2rhOIyWcRKYMydfCbMPM04Z+RwKVyRlrLTYL5UDBYYKKHOG08Ikc=
-> ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; 
-> d=zohomail.com;
-> s=zohoarc; t=1724312671;
-> h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To;
-> bh=y3v3IIFARTszfLWu7n/j8Du29EOi4VTxMDP3GF4qp7E=; 
-> b=VvZAc/xKVy85rZpNNCAwUwpxquk4r4Xw2QjZmePGlnINwOvJf6oilR9lqx2WDMezV20iKTW9f3dauO4jIjp363HOdh7P21UFfa66a0oK63RODo7IQMHSCqaCwAEoO1PKHfDfTMwz0/BShU1dt+nhtAeSeKwbG7G1qizCcoXTdjo=
-> ARC-Authentication-Results: i=1; mx.zohomail.com;
-> dkim=pass  header.i=jevklidu.cz;
-> spf=pass  smtp.mailfrom=petr@jevklidu.cz;
-> dmarc=pass header.from=<petr@jevklidu.cz>
-> Received: by mx.zohomail.com with SMTPS id 1724312669862808.3168476405893;
-> Thu, 22 Aug 2024 00:44:29 -0700 (PDT)
-> Message-ID: <5ba3c7c2-5695-421d-a747-2a23af48db26@jevklidu.cz>
-> Date: Thu, 22 Aug 2024 09:44:22 +0200
-> MIME-Version: 1.0
-> User-Agent: Mozilla Thunderbird
-> To: Vitaly Lifshits <vitaly.lifshits@intel.com>,
-> Bjorn Helgaas <helgaas@kernel.org>, Dima Ruinskiy 
-> <dima.ruinskiy@intel.com>,
-> Hui Wang <hui.wang@canonical.com>
-> References: <20240821145959.GA248604@bhelgaas>
-> <1041b9b5-cc78-13b1-459a-d1d3a313475a@intel.com>
-> Content-Language: cs-CZ, en-US
-> From: Petr Valenta <petr@jevklidu.cz>
-> In-Reply-To: <1041b9b5-cc78-13b1-459a-d1d3a313475a@intel.com>
-> Content-Type: text/plain; charset=UTF-8; format=flowed
-> Content-Transfer-Encoding: 7bit
-> X-ZohoMailClient: External
-> X-Mailman-Original-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt;
-> c=relaxed/relaxed; t=1724312671; s=zoho; d=jevklidu.cz; i=petr@jevklidu.cz;
-> h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-> bh=y3v3IIFARTszfLWu7n/j8Du29EOi4VTxMDP3GF4qp7E=;
-> b=RSnIQpqoQp2O3ExJNnw4fk9dlt8CX1T5sbtB6GflBDYejiRQJTcrU3zRHn3pRkFq
-> tm00/cgXr6pF6T5vJFttBkfrHtnRiPiE8cjqni5KsNxCyOXOwri6I5ARAmPcUj42eda
-> e/xHQX9E3ayXrWSBQDAsun3Ann63tcXQKwlT7ffI=
-> X-Mailman-Original-Authentication-Results: smtp1.osuosl.org;
-> dmarc=none (p=none dis=none)
-> header.from=jevklidu.cz
-> X-Mailman-Original-Authentication-Results: smtp1.osuosl.org;
-> dkim=pass (1024-bit key,
-> unprotected) header.d=jevklidu.cz header.i=petr@jevklidu.cz
-> header.a=rsa-sha256 header.s=zoho header.b=RSnIQpqo
-> Subject: Re: [Intel-wired-lan] ACPI IRQ storm with 6.10
-> X-BeenThere: intel-wired-lan@osuosl.org
-> X-Mailman-Version: 2.1.29
-> Precedence: list
-> List-Id: Intel Wired Ethernet Linux Kernel Driver Development
-> <intel-wired-lan.osuosl.org>
-> List-Unsubscribe: 
-> <https://lists.osuosl.org/mailman/options/intel-wired-lan>, 
-> <mailto:intel-wired-lan-request@osuosl.org?subject=unsubscribe>
-> List-Archive: <http://lists.osuosl.org/pipermail/intel-wired-lan/>
-> List-Post: <mailto:intel-wired-lan@osuosl.org>
-> List-Help: <mailto:intel-wired-lan-request@osuosl.org?subject=help>
-> List-Subscribe: 
-> <https://lists.osuosl.org/mailman/listinfo/intel-wired-lan>,
-> <mailto:intel-wired-lan-request@osuosl.org?subject=subscribe>
-> Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
-> "Rafael J. Wysocki" <rafael@kernel.org>, przemyslaw.kitszel@intel.com,
-> Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-> "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-> Tony Nguyen <anthony.l.nguyen@intel.com>, Bjorn Helgaas 
-> <bhelgaas@google.com>,
-> intel-wired-lan@lists.osuosl.org, Jiri Slaby <jirislaby@kernel.org>,
-> Len Brown <lenb@kernel.org>
-> Errors-To: intel-wired-lan-bounces@osuosl.org
-> Sender: "Intel-wired-lan" <intel-wired-lan-bounces@osuosl.org>
-> 
-> 
-> 
-> Dne 21. 08. 24 v 17:17 Vitaly Lifshits napsal(a):
->>
->> On 8/21/2024 5:59 PM, Bjorn Helgaas wrote:
->>> [+to Dima, Vitaly, Hui; beginning of thread at
->>> https://lore.kernel.org/r/60ac8988-ace4-4cf0-8c44-028ca741c0a1@kernel.org]
->>>
->>> On Wed, Aug 21, 2024 at 01:39:11PM +0200, Petr Valenta wrote:
->>>> Dne 20. 08. 24 v 23:30 Bjorn Helgaas napsal(a):
->>>>> On Tue, Aug 20, 2024 at 11:13:54PM +0200, Petr Valenta wrote:
->>>>>> Dne 20. 08. 24 v 20:09 Bjorn Helgaas napsal(a):
->>>>>>> On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
->>>>>>>> On 19. 08. 24, 6:50, Jiri Slaby wrote:
->>>>>>>>> CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to 
->>>>>>>>> b2c289415b2b)
->>>> ...
->>>>> I'm at a loss.  You could try reverting the entire b2c289415b2b commit
->>>>> (patch for that is below).
->>>> This patch didn't help, so I reverted it back.
->>>>
->>>>> If that doesn't help, I guess you could try reverting the other
->>>>> commits Jiri mentioned:
->>>>>
->>>>>     76a0a3f9cc2f e1000e: fix force smbus during suspend flow
->>>>>     c93a6f62cb1b e1000e: Fix S0ix residency on corporate systems
->>>>>     bfd546a552e1 e1000e: move force SMBUS near the end of 
->>>>> enable_ulp function
->>>>>     6918107e2540 net: e1000e & ixgbe: Remove PCI_HEADER_TYPE_MFD 
->>>>> duplicates
->>>>>     1eb2cded45b3 net: annotate writes on dev->mtu from 
->>>>> ndo_change_mtu()
->>>>>     b2c289415b2b e1000e: Remove redundant runtime resume for 
->>>>> ethtool_ops
->>>>>     75a3f93b5383 net: intel: implement modern PM ops declarations
->>>>>
->>>>> If you do this, I would revert 76a0a3f9cc2f, test, then revert
->>>>> c93a6f62cb1b in addition, test, then revert bfd546a552e1 in addition,
->>>>> etc.
->>>> I have created revert patches like this:
->>>> git format-patch --stdout -1 76a0a3f9cc2f | interdiff -q /dev/stdin \
->>>> /dev/null > revert_76a0a3f9cc2f.patch
->>>>
->>>> I have applied revert_76a0a3f9cc2f.patch (rebuild and tested), then in
->>>> addition revert_c93a6f62cb1b.patch and after applying
->>>> revert_bfd546a552e1.patch irq storm didn't appear.
->>>>
->>>> I have tested it with 3 subsequent reboots and in all those cases it 
->>>> was ok.
->>> Thanks for all this testing.  It sounds like reverting all three of
->>> 76a0a3f9cc2f, c93a6f62cb1b, and bfd546a552e1 fixed the IRQ storm, but
->>> I'm not clear on the results of other situations.
->>>
->>> It looks like c93a6f62cb1b could be reverted by itself because it's
->>> unrelated to 76a0a3f9cc2f and bfd546a552e1.  I added the authors of
->>> all three in case they have any insights.
->>>
->>> Bjorn
->>
->>
->> I doubt that it is related to c93a6f62cb1b, I believe that is more 
->> probable to be related to the two other patches.
->>
->> Apart from what I suggested in the other mailing thread (enabling 
->> e1000e debug and to test if it happens with a cable connected),
->>
->> I suggest to try to apply this patch and see if it fixes the issue:
->>
->> https://patchwork.ozlabs.org/project/intel-wired-lan/patch/20240806132348.880744-1-vitaly.lifshits@intel.com/
-> 
-> I have applied patch from link above and command bellow really doesn't 
-> start irq storm.
-> 
-> echo 'auto' > /sys/bus/pci/devices/0000:00:1f.6/power/control
-> 
-> Problem is that after executing this command and plugging cable to 
-> ethernet port, kernel is not able to detect link (LED indicate link is 
-> on) so network over cable is not working.
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I have tested now how it behaves with kernel 6.9.9. There is a new 
-finding. After running "echo 'auto' > 
-/sys/bus/pci/devices/0000:00:1f.6/power/control" network over cable 
-works but irq storm arrises. I have never tested this before because I 
-don't use cable with this laptop at all. After unplugging cable irq 
-storm is gone.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-A possible workaround would be to turn off power control for the e1000e 
-at the kernel level (if is it possible) so that utilities like powertop 
-don't cause irq storm or broken network.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
->>
->>
-> 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
