@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-296904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE1C95B067
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:31:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23FC95B07B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE9B286344
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4B851C2107D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54311181B83;
-	Thu, 22 Aug 2024 08:29:28 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B64179206;
+	Thu, 22 Aug 2024 08:32:46 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E82B17F4EC;
-	Thu, 22 Aug 2024 08:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29665502BE
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315367; cv=none; b=Qy/ZgOz4p/a/nfCdX/wgREUxTJSKU4QEe68QYpEZVIXiCMQYAKuRE0me1WcmPYA1c95ZrtLOq6ShrRbPgGRerwloAU/MVUH4X1v7XTVgc6ZDv/lxYmf/o5hHYT8NzsDnhCCwNBaMcPEo8AigDMMKsIkt1YVvfl07nzRrIepCXJk=
+	t=1724315565; cv=none; b=bHB3M/JFvwQiR7sRhwp6YoUeMddTFL/ktWYXKzXc7B/llfchjgt3MwKV6ZUh7EVQoKkMW+flyL6gAYuvugE4uTI9e9KsIePCahchnZ3YdNDd3Vs37CarRW/axlx9vptOwJQlI6J6McIeHGoETe3A5ZcD8RbNoa9K6UWgf+Y1eIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315367; c=relaxed/simple;
-	bh=AmUawWbJ5Csrxl4kbSCmn+U4bMUPW8G/yy8t4f1Xn+A=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=n4KcxEZtCuFjj0Z2r8K8pY11WIrVOwE51lmOWzRTd8OZIgF0oGA68eYt4gvlLtJxfxIQ7gbpHknIXkTp1pWgq3xJc+MUbGAOjeG2XxOlBshgoPPnch7msICT08C72K4XhML9xO3rKJe7+Wd9H1tq0Vy4ErLEhr5knjZWNEK/vlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WqGW37087z1HGQs;
-	Thu, 22 Aug 2024 16:26:07 +0800 (CST)
-Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
-	by mail.maildlp.com (Postfix) with ESMTPS id 09C461400FD;
-	Thu, 22 Aug 2024 16:29:21 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 22 Aug 2024 16:29:20 +0800
-Subject: Re: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
- migration driver
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
-	<jgg@nvidia.com>, Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-References: <20240806122928.46187-1-liulongfang@huawei.com>
- <20240806122928.46187-4-liulongfang@huawei.com>
- <42784fb0fd1c44cf9470c9662e154b88@huawei.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <c7f0ae83-9490-c9db-e098-6eb18443599f@huawei.com>
-Date: Thu, 22 Aug 2024 16:29:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1724315565; c=relaxed/simple;
+	bh=F71dJ8w3E8qcBsX5SsIYbrAc8vzr77Jly8/2zlAoVBY=;
+	h=From:To:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=lRiIGHC0wiLhatoRzyodvVFm8K54oFGrrHMi5o/yCGPIDjCYO2eVYEOI9+6OQs11TCYITpYehGxa4EpiAihKYqQKd3i4CIgCGB1jRsxBMJCc4DBsYghYwA5+z15HkDrFtndwj9gsPsHFGTinP0i1XczOqL4F2VhtRSlCAiYsD9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-GoodBg: 2
+X-BAN-DOWNLOAD: 1
+X-BAN-SHARE: 1
+X-QQ-SSF: 0040000000000060
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-XMAILINFO: Mdc3TkmnJyI/E0RSfrBBIP4muIbyVWN5snoef4lWtHM0mYve4V6P7+0k
+	DYgRKFQowurUG9Gz6Kl0qkqr5hN1q2DtBn6IQKMfq1wFqtlLMgMAVp3VOY2K1/JWgLSsxSb
+	dN4ZycsDGkNu8tK1OpExx0dsWocJ3Dr7rCPcMKexYKbCrfTBiEPLKSzROSjjrgtcwo8CWtu
+	dC/KeDv+5OD6yBqb4Lz/B5ATy8MmqfCB/VyQ1m5OuQiUCxXAeHzkTuqBUnLLYJbm3bzs1Kz
+	tyCtY3POSa0tUHorTvyZwMRFRUnQI6jayifpnOTCgtkFmLD4I4aE1jwBaJfgm2UomhjtBrY
+	rjbQuWjjnmQh3lcbh6OZ/iQQDchtQ9bOLdfkp3aUrhwtJpG0q++jKqEXupNGpa8uWUAJ0xE
+	j55em2FQQdO/vTs8+/gZv4d39VVXrVfjOir+5ah8SnvNE3bJ2RjLVxKDNa25IxPGM3+i5JA
+	YmxbZJvqBXM1l6BqNNINpoPjzGPnqSllfFdq8FRbxv7E4fHgfbQ4sUIYvlKMTDEBSD4N/IP
+	qcv1CC32M/bp9mYTKr5PQPavcQPX8EJEGA6DHGj+SKP2MRj/g+w2aNynlnlCuMWf8N5xAoZ
+	QLnqK49Vo2Vs72xpwlDycc6bFrYaFqoF0uAUovGlPhgdbSQXOa/HgbqeGDorwvZ6ij8tCPN
+	3GiH0aUFNvqfurz9t6SOs8/jTP5qvrNdUWSqCnupFyG3AMGyJZoivZNUlEFNNA3F26wzZb4
+	3Nf1473/YGkai3+cB3CzpZTTmkMKHFELNB1WiGVw9ll0jtHapBMY7FFSJ9e6xoFQAZTr3Ud
+	DCFrCCuM7y4w/F9gSiG4J7P0luO9J3LRUZgPa/DaEEAbAHj+YB1dIuGWAE8QOj003EX33xq
+	IsRs+t2/eKiAP6YApjP8kaUpOCvKAGsH4R6c3R3HYBpWD/7OLgrg4pj4LZZ7DVzD+gLmzpO
+	ExO8=
+X-QQ-FEAT: D4aqtcRDiqQpBpTnjIJt3/f21w9WO3enREO5ZSgO7MU=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: 6XqUZ+koIUXooq3oJUsZpur6U54N8nOnO72U/v1+q5s=
+X-QQ-STYLE: 
+X-QQ-mid: t6gz5a-0t1724315469t6516429
+From: "=?utf-8?B?6Jme6ZmG6ZOt?=" <luming.yu@shingroup.cn>
+To: "=?utf-8?B?6Jme6ZmG6ZOt?=" <luming.yu@shingroup.cn>, "=?utf-8?B?bGludXhwcGMtZGV2?=" <linuxppc-dev@lists.ozlabs.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bXBl?=" <mpe@ellerman.id.au>, "=?utf-8?B?bnBpZ2dpbg==?=" <npiggin@gmail.com>, "=?utf-8?B?Y2hyaXN0b3BoZS5sZXJveQ==?=" <christophe.leroy@csgroup.eu>
+Subject: Re:[PATCH 2/2] powerpc/locking: enable HAVE_CMPXCHG_LOCAL in kconfig
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <42784fb0fd1c44cf9470c9662e154b88@huawei.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600005.china.huawei.com (7.193.23.191)
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Thu, 22 Aug 2024 16:31:09 +0800
+X-Priority: 3
+Message-ID: <tencent_0161BE863378EC161A2CF685@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20231204022303.528-1-luming.yu@shingroup.cn>
+	<4250629DA95C6D4F+20231204022303.528-2-luming.yu@shingroup.cn>
+In-Reply-To: <4250629DA95C6D4F+20231204022303.528-2-luming.yu@shingroup.cn>
+X-QQ-ReplyHash: 1814028533
+X-BIZMAIL-ID: 2076273090053773482
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Thu, 22 Aug 2024 16:31:10 +0800 (CST)
+Feedback-ID: t:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-0
 
-On 2024/8/14 17:39, Shameerali Kolothum Thodi wrote:
-> 
-> 
->> -----Original Message-----
->> From: liulongfang <liulongfang@huawei.com>
->> Sent: Tuesday, August 6, 2024 1:29 PM
->> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum Thodi
->> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
->> <jonathan.cameron@huawei.com>
->> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
->> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
->> Subject: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
->> migration driver
-> ... 
->> +static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
->> +{
->> +	struct device *vf_dev = seq->private;
->> +	struct vfio_pci_core_device *core_device = dev_get_drvdata(vf_dev);
->> +	struct vfio_device *vdev = &core_device->vdev;
->> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
->> hisi_acc_get_vf_dev(vdev);
->> +	size_t vf_data_sz = offsetofend(struct acc_vf_data, padding);
->> +	struct acc_vf_data *vf_data = NULL;
->> +	int ret;
->> +
->> +	vf_data = kzalloc(sizeof(struct acc_vf_data), GFP_KERNEL);
->> +	if (!vf_data)
->> +		return -ENOMEM;
->> +
->> +	mutex_lock(&hisi_acc_vdev->state_mutex);
->> +	ret = hisi_acc_vf_debug_check(seq, vdev);
->> +	if (ret) {
->> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
->> +		goto migf_err;
->> +	}
->> +
->> +	vf_data->vf_qm_state = hisi_acc_vdev->vf_qm_state;
->> +	ret = vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
->> +	if (ret) {
->> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
->> +		goto migf_err;
->> +	}
->> +
->> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
->> +
->> +	seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
->> +			(unsigned char *)vf_data,
->> +			vf_data_sz, false);
->> +
->> +	seq_printf(seq,
->> +		 "acc device:\n"
->> +		 "device  ready: %u\n"
->> +		 "device  opened: %d\n"
->> +		 "data     size: %lu\n",
->> +		 hisi_acc_vdev->vf_qm_state,
->> +		 hisi_acc_vdev->dev_opened,
-> 
-> I think the dev_opened will be always true if it reaches here and can be
-> removed from here and from hisi_acc_vf_migf_read() as well.
-> 
-> Please don't respin just for this. Let us wait for others to review this.
->
-Hello£¬Alex Williamson and Jason Gunthorpe£º
+KGluIHRleHQpDQoNCkhpLA0KDQpzcGVjaWZpYyBmb3IgbG9jYWwgY21weGNoZyBlbmFibGVk
+IG9uIHA4IHBvd2VybnYgcGxhdGZvcm0gb24gd2hpY2ggdGhlIHBhdGNoIGVuYWJsZWQgdm1f
+c3RhdGUgdXBkYXRlIHBhdGgsDQpmdHJhY2UgZGF0YSBiZWxvdyBpbmRpY2F0ZXMgaXQgaXMg
+IGF0IHRoZSBsZXZlbCAgb2ZhYm91dCA0dXMgb3IgNXVzIGxhdGVuY3ksICBmb3Igc3VjaCBh
+IGJpZyBjYWNoZSBjb2xkIG9wZXJhdGlvbnMuDQogICAgICAgICAgPC4uLj4tMjc3Nzg3ICBb
+MDA4XSAuLi4uLiA4ODM2Ni4yMzM2NDM6IHJlZnJlc2hfY3B1X3ZtX3N0YXRzIDwtdm1zdGF0
+X3VwZGF0ZQ0KICAgICAgICAgIDxpZGxlPi0wICAgICAgIFswMDhdIGQuLi4uIDg4MzY2LjIz
+MzY0ODogdGlja19ub2h6X2lkbGVfc3RvcF90aWNrIDwtZG9faWRsZQ0KDQpJIGhhdmUgbm8g
+ZGlmZiBkYXRhIGFnYWluc3QgdGhlIGxhdGVuY3kgd2l0aG91dCB0aGUgcGF0Y2guIEJ1dCBi
+YXNlZCBvbiB0aGUgZXN0aW1hdGlvbiBvZiB0aGUgcGlwZWxpbmUgb3ZlcmhlYWQgZm9yDQpz
+dWNoIGEgYmlnIG9wZXJhdGlvbiBpbmN1cnJlZCBieSB0aGUgdm0gc3RhdHMgdXBkYXRlLCBp
+dCBsb29rcyBub3QgYmFkLg0KIEkgd2lsbCBkbyBtb3JlIHRlc3RpbmcgYW5kIGNvbGxlY3Qg
+bW9yZSBoaXN0b2dyYW0gZm9yIGRpZmZlcmVudCBzY2VuYXJpb3MgdG8gZW5zdXJlIHRoYXQN
+CnRoZSBsYXRlbmN5IGxldmVsIG9mIHVuZGVyc3RhbmRpbmcgaXMgc29tZXRoaW5nIHN0YXRp
+c3RpY2FsbHkgbWFrZSBzZW5zZS4NCg0KSnVzdCBmb3IgdGhlIHJlY29yZCB0aGF0IHRoZSBz
+bWFsbCBwYXRjaCB3b3JrcyBhcyBleHBlY3RlZC4gOi0pDQoNCkJSDQpMdW1pbmcNCiANCiAN
+Ci0tLS0tLS0tLS0tLS0tLS0tLSBPcmlnaW5hbCAtLS0tLS0tLS0tLS0tLS0tLS0NCkZyb206
+ICAi6Jme6ZmG6ZOtIjxsdW1pbmcueXVAc2hpbmdyb3VwLmNuPjsNCkRhdGU6ICBNb24sIERl
+YyA0LCAyMDIzIDEwOjIzIEFNDQpUbzogICJsaW51eHBwYy1kZXYiPGxpbnV4cHBjLWRldkBs
+aXN0cy5vemxhYnMub3JnPjsgImxpbnV4LWtlcm5lbCI8bGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZz47ICJtcGUiPG1wZUBlbGxlcm1hbi5pZC5hdT47ICJucGlnZ2luIjxucGlnZ2lu
+QGdtYWlsLmNvbT47ICJjaHJpc3RvcGhlLmxlcm95IjxjaHJpc3RvcGhlLmxlcm95QGNzZ3Jv
+dXAuZXU+OyANCkNjOiAgImx1bWluZy55dSI8bHVtaW5nLnl1QGdtYWlsLmNvbT47ICJrZS56
+aGFvIjxrZS56aGFvQHNoaW5ncm91cC5jbj47ICJkYXdlaS5saSI8ZGF3ZWkubGlAc2hpbmdy
+b3VwLmNuPjsgInNoZW5naHVpLnF1IjxzaGVuZ2h1aS5xdUBzaGluZ3JvdXAuY24+OyAi6Jme
+6ZmG6ZOtIjxsdW1pbmcueXVAc2hpbmdyb3VwLmNuPjsgDQpTdWJqZWN0OiAgW1BBVENIIDIv
+Ml0gcG93ZXJwYy9sb2NraW5nOiBlbmFibGUgSEFWRV9DTVBYQ0hHX0xPQ0FMIGluIGtjb25m
+aWcNCg0KIA0KDQplbmFibGUgYXJjaCBmZWF0dXJlIEhBVkVfQ01QWENIR19MT0NBTCBmb3Ig
+cHBjIGJ5IGRlZmF1bHQNCg0KU2lnbmVkLW9mZi1ieTogTHVtaW5nIFl1IDxsdW1pbmcueXVA
+c2hpbmdyb3VwLmNuPg0KLS0tDQogYXJjaC9wb3dlcnBjL0tjb25maWcgfCAxICsNCiAxIGZp
+bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJw
+Yy9LY29uZmlnIGIvYXJjaC9wb3dlcnBjL0tjb25maWcNCmluZGV4IDZmMTA1ZWU0ZjNjZi4u
+YzEwMjI5YzAyNDNjIDEwMDY0NA0KLS0tIGEvYXJjaC9wb3dlcnBjL0tjb25maWcNCisrKyBi
+L2FyY2gvcG93ZXJwYy9LY29uZmlnDQpAQCAtMjI2LDYgKzIyNiw3IEBAIGNvbmZpZyBQUEMN
+CiAJc2VsZWN0IEhBVkVfQVJDSF9TRUNDT01QX0ZJTFRFUg0KIAlzZWxlY3QgSEFWRV9BUkNI
+X1RSQUNFSE9PSw0KIAlzZWxlY3QgSEFWRV9BU01fTU9EVkVSU0lPTlMNCisJc2VsZWN0IEhB
+VkVfQ01QWENIR19MT0NBTA0KIAlzZWxlY3QgSEFWRV9DT05URVhUX1RSQUNLSU5HX1VTRVIN
+CiAJc2VsZWN0IEhBVkVfQ19SRUNPUkRNQ09VTlQNCiAJc2VsZWN0IEhBVkVfREVCVUdfS01F
+TUxFQUsNCi0tIA0KMi40Mi4wLndpbmRvd3MuMg==
 
-Could you take a moment to review this patch?
-
-Thanks,
-Longfang.
-
-> Thanks,
-> Shameer
-> .
-> 
 
