@@ -1,154 +1,194 @@
-Return-Path: <linux-kernel+bounces-297426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD2595B824
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:16:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B08E95B829
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B7B1C236DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:16:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E617B227E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028BB1C9EC6;
-	Thu, 22 Aug 2024 14:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44CD1CB31B;
+	Thu, 22 Aug 2024 14:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z3yNLBHB"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cez+LBE5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9591CB154
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264A31EB5B
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336202; cv=none; b=QeRYh6hQ0NBEJCl/0gPlQi8OUQpjjcKusmgLEEo0MRknzfo1PLynsgL6m05WvqtkkdpUfxOX+au2Bkfp1RY0LcvpyK4CEq4W4FECMZvv2un0zUjhVFEwzPMrzWg3cst0+Hya/CCCi6iEHl1uVvz6iFX3z16pVMrYhdyWEJWw5MI=
+	t=1724336337; cv=none; b=S0mE76qYKgsmwxPds1vmvxAIOrHe5r90y82TYZ7KcpXTJ98PaZqFxTJNsY9nW2645Gs7ZZZ6nmnPetshWi820QI6gFkHNdPm5M+ls8DZErCr7rwLMf82eRUGhYuFwaGjJG1TpTLmPxhdji9xsDDpAh0jR1UtEjV8fHnHEtl+xII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724336202; c=relaxed/simple;
-	bh=jDk7djZ3yBNmmo14a1akgkoxNDAqZ1Vtw1K8JBNes+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/1Bqsb9lFT4Ti4N9nRMr69QGfMy/bTE8EcEQHwMHqVEJW59HWcpLoCzgbrkPNuvyPjp5ybGe4Ijy86eEG5vv7THMu8hIfmYQcOb9VuRkMSzudBkm/1FfKpf2pFab5lKVuazvdaUn3TTBJk2iSQgmFxy3B5GoKkWyHhMiQayfNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z3yNLBHB; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-714262f1bb4so799719b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724336200; x=1724941000; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QXJ1ar6cv5xJSH3ibLaHehRMGwnv2EhTWePpq/2jK7U=;
-        b=z3yNLBHBHrusotDhQwZPZkmDksTNNH5AS2yL2MnJWwxALP99a+8zfyhirsH8wqiGtW
-         ASh/wIRWXiTruGeqp0D74gEWWCAB+5KzXz3C9/GIhCp2vNu4dHZteRau93SHjYh9JcEx
-         kv0axdI3LWYPwciUBvt/pEd3a7GAEYhehsQ8pD+6AU1sSXmD0EJfG5x0XY4eHkj2kYxB
-         MgO9buKYTzHqbNLjeMPBOfWnma/FcWjmSL2LpiFL/O8IdSkwcg4Bj/psUEifOa28vxKF
-         sfjIfGGyQxLAmnf3fm8wOU7n9DFNs9mMKvV99uBhofS1lpwrJTn3DGRyaYhONzPwRpht
-         TJ8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724336200; x=1724941000;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QXJ1ar6cv5xJSH3ibLaHehRMGwnv2EhTWePpq/2jK7U=;
-        b=f5bsMKP4Yhh6NjEintWMhLfvxrU7ttjyjxGigLG4TQDdhXMZPr4dTKY27HZJ+a+h0i
-         9EMUEucNUBn7TRhDVF14bgHmfpZmYwbfO3KYopTCFYmItxMmjNa4wzi+S1ZFZCV14RV+
-         lUjbW86l2E9XC0ykWpG9VqvM1xAbBFY/oj8R/1WhaMkeNH37V0c1/7xVYgUaLZORJ5vo
-         0Q8EPsychfWsDQHltN7pzzDVpJJz37G5F5kHRgsZk4PsSxTtbBvqTp0cHfw1DG4fpCwT
-         ONFdsTZqZZRVthEi/jXVQw34Y8g/46KeQwXT27q1i/0oHvdALwgrMAabROpD92XU9hmF
-         UViQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGrYw33DZVqJaocWtIKpLjNN0KhCV7+Y7bRxncoJ6Vb+7mHQWKyWszGbrHw5/WDK+tSGC58jeZx9HlLrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRSdUFlQNKaI51saOrETnDpvQV3cedFmwW9qdN+2fJ20PyuTlk
-	T0W3FenBhALDKj7E+Rg0qs6Yyd5rNLwS9T2nbhM0QeG0OJO15QdpJKT5e0nu6A==
-X-Google-Smtp-Source: AGHT+IHkdMQ12rQWFKqMyidkXMfsNYAXd5qOZx1VU5F4A2klCb1RU1PJvqD+PVPCckL8GCL+bgI9tg==
-X-Received: by 2002:a05:6a20:d706:b0:1c0:e68a:9876 with SMTP id adf61e73a8af0-1caeb34f5f9mr2439099637.50.1724336200090;
-        Thu, 22 Aug 2024 07:16:40 -0700 (PDT)
-Received: from thinkpad ([120.60.60.148])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac985fesm1256061a12.7.2024.08.22.07.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:16:39 -0700 (PDT)
-Date: Thu, 22 Aug 2024 19:46:22 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
-	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-Message-ID: <20240822141622.tw7vcoc4ciwbydsw@thinkpad>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
- <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
- <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
- <100e27d7-2714-89ca-4a98-fccaa5b07be3@quicinc.com>
- <c80ae784-c1f3-4046-9d86-d7e57bd93669@kernel.org>
- <7f48f71c-7f57-492c-47df-6aac1d3b794b@quicinc.com>
- <aa311052-deba-4d13-9ede-1d863a4f362e@kernel.org>
+	s=arc-20240116; t=1724336337; c=relaxed/simple;
+	bh=3GWoh+NIjDuNmYprHwkg92rITwy5ncJNiKWjfdVr/H4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t1wa97Lf3AmKSgHC1WgGu38NaTVy0wuy6XRV4WQka+OLNZJXoxARFBpCGr/o8vpdkT04dBmtZP/e2jgebars6tW3BQz8UkkpZ5DTAn0Nckt9zoYAQAferlopesX4llZzRjifst4JgrgSXPclYA+MJVxAyDCNk3KvLk0CNqDgCyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cez+LBE5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA710C4AF0C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724336336;
+	bh=3GWoh+NIjDuNmYprHwkg92rITwy5ncJNiKWjfdVr/H4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Cez+LBE5FuMS7MOuHzeoYBffg2OYo1A1RyFMJ/z79CGDpNOsWywgyVicagMQgj0NM
+	 sfCp2JtPcQ5B3UXfPgs3+3+93AiK0waUnFda2tVjN0f/hVpA9nKYiAt+ulQCk3v92L
+	 yH32mEnAl1waFO2F0T8RspWgx/Q3Zv5ic/Q5DXZ+Pw/zQTMD2SxWgVS0G+1eEDDthF
+	 bphNP85mBw/WitrkkW8AvMsJk7Nhr1uKGGVHNPELmtbU2eeCxq4e4UXMqQXoHOUWcC
+	 aHKPvbBqNMqIy6FKlP16n390fURpxF47NUdVXnzyfhF2fpFbUE39ZWrVIj9N7QlUh0
+	 RadDMhJ/f36gw==
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3da054f7cso640491a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:18:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUI8aSHjDZLSk6yrBnGnvV38//b1vV5EygXKVlQAYNIe4EomY8xIEYa3PEmgRth5Kt0O2HTxkhOnirC6xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrXZbwcJO8deXZjZ9hU1rfcQYrA4jb5JbpqeTK7Hfj0eUAHKir
+	oaafu04GpR182tyhtx7bZMOPrz+dniXjCOs3hbG+pP00EikimAH4PRbOwEA6afBqwy4Lkg1NV1B
+	Ltxuiq4/z0x1GjYe8y+evbcHmNA==
+X-Google-Smtp-Source: AGHT+IGhC5P6/hthqUI5LUfSSQTgN84GTtxPfVyWb1+65zBVxRuWL4kVlMrBRKN/1zwtX32x5+MJ14DekdwVil/rPYY=
+X-Received: by 2002:a17:90b:204:b0:2d3:cd22:e67b with SMTP id
+ 98e67ed59e1d1-2d5e9a0581emr6419698a91.6.1724336336253; Thu, 22 Aug 2024
+ 07:18:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa311052-deba-4d13-9ede-1d863a4f362e@kernel.org>
+References: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Thu, 22 Aug 2024 22:19:09 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_8VkkxsC3yOcFSLcToVaueUtAjsdhkhAN+Zw_POO=fHtw@mail.gmail.com>
+Message-ID: <CAAOTY_8VkkxsC3yOcFSLcToVaueUtAjsdhkhAN+Zw_POO=fHtw@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Declare Z Position for all planes
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	daniel@ffwll.ch, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
+	ck.hu@mediatek.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 04:43:47PM +0200, Krzysztof Kozlowski wrote:
-> On 05/08/2024 07:57, Krishna Chaitanya Chundru wrote:
-> >>
-> > Hi Krzysztof,
-> > 
-> > QPS615 has a 3 downstream ports and 1 upstream port as described below
-> > diagram.
-> > For this entire switch there are some supplies which we described in the
-> > dt-binding (vdd18-supply, vdd09-supply etc) and one GPIO which controls
-> > reset of the switch (reset-gpio). The switch hardware can configure the
-> > individual ports DSP0, DSP1, DSP2, upstream port and also one integrated
-> > ethernet endpoint which is connected to DSP2(I didn't mentioned in the
-> > diagram) through I2C.
-> > 
-> > The properties other than supplies,i2c client, reset gpio which
-> > are added will be applicable for all the ports.
-> > _______________________________________________________________
-> > |   |i2c|                   QPS615       |Supplies||Resx gpio |
-> > |   |___|              _________________ |________||__________|
-> > |      ________________| Upstream port |_____________         |
-> > |      |               |_______________|            |         |
-> > |      |                       |                    |         |
-> > |      |                       |                    |         |
-> > |  ____|_____              ____|_____            ___|____     |
-> > |  |DSP 0   |              | DSP 1  |            | DSP 2|     |
-> > |  |________|              |________|            |______|     |
-> > |_____________________________________________________________|
-> > 
-> 
-> I don't get why then properties should apply to main device node.
-> 
+Hi, Angelo:
 
-The problem here is, we cannot differentiate between main device node and the
-upstream node. Typically the differentiation is not needed because no one cared
-about configuring the upstream port. But this PCIe switch is special (as like
-most of the Qcom peripherals).
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> =E6=96=
+=BC
+2024=E5=B9=B47=E6=9C=8818=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=884:2=
+5=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> MediaTek SoCs support multiple planes, one of which is the primary
+> and all the others are overlays (and CURSOR is the last overlay).
+>
+> In all currently supported SoCs, the Z order of the overlays can't
+> be changed with any fast muxing action, and can only be changed by
+> swapping the contents of the entire register set of one overlay
+> with the other to internally reorder the layer properties, which
+> is indeed feasible, but probably more expensive than desired.
+>
+> Declare the Z position for all planes with an immutable property
+> at least for now, so that the userspace can take its decisions
+> accordingly.
 
-I agree that if we don't differentiate then it also implies that all main node
-properties are applicable to upstream port and vice versa. But AFAIK, upstream
-port is often considered as the _device_ itself as it shares the same bus
-number.
+Applied to mediatek-drm-next [1], thanks.
 
-- Mani
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-next
 
--- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+Chun-Kuang.
+
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_crtc.c  |  2 +-
+>  drivers/gpu/drm/mediatek/mtk_plane.c | 18 +++++++++++++++++-
+>  drivers/gpu/drm/mediatek/mtk_plane.h |  3 +--
+>  3 files changed, 19 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediat=
+ek/mtk_crtc.c
+> index 072b2fdae87b..327214721b4d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
+> @@ -874,7 +874,7 @@ static int mtk_crtc_init_comp_planes(struct drm_devic=
+e *drm_dev,
+>                                 mtk_crtc_plane_type(mtk_crtc->layer_nr, n=
+um_planes),
+>                                 mtk_ddp_comp_supported_rotations(comp),
+>                                 mtk_ddp_comp_get_formats(comp),
+> -                               mtk_ddp_comp_get_num_formats(comp));
+> +                               mtk_ddp_comp_get_num_formats(comp), i);
+>                 if (ret)
+>                         return ret;
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/media=
+tek/mtk_plane.c
+> index 5bf757a3ef20..7d2cb4e0fafa 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_plane.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_plane.c
+> @@ -321,7 +321,7 @@ static const struct drm_plane_helper_funcs mtk_plane_=
+helper_funcs =3D {
+>  int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
+>                    unsigned long possible_crtcs, enum drm_plane_type type=
+,
+>                    unsigned int supported_rotations, const u32 *formats,
+> -                  size_t num_formats)
+> +                  size_t num_formats, unsigned int plane_idx)
+>  {
+>         int err;
+>
+> @@ -338,6 +338,22 @@ int mtk_plane_init(struct drm_device *dev, struct dr=
+m_plane *plane,
+>                 return err;
+>         }
+>
+> +       /*
+> +        * The hardware does not support repositioning planes by muxing: =
+their
+> +        * Z-position is infact fixed and the only way to change the actu=
+al
+> +        * order is to swap the contents of the entire register set of on=
+e
+> +        * overlay with another, which may be more expensive than desired=
+.
+> +        *
+> +        * With no repositioning, the caller of this function guarantees =
+that
+> +        * the plane_idx is correct. This means that, for example, the PR=
+IMARY
+> +        * plane fed to this function will always have plane_idx zero.
+> +        */
+> +       err =3D drm_plane_create_zpos_immutable_property(plane, plane_idx=
+);
+> +       if (err) {
+> +               DRM_ERROR("Failed to create zpos property for plane %u\n"=
+, plane_idx);
+> +               return err;
+> +       }
+> +
+>         if (supported_rotations) {
+>                 err =3D drm_plane_create_rotation_property(plane,
+>                                                          DRM_MODE_ROTATE_=
+0,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_plane.h b/drivers/gpu/drm/media=
+tek/mtk_plane.h
+> index 231bb7aac947..5b177eac67b7 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_plane.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_plane.h
+> @@ -49,6 +49,5 @@ to_mtk_plane_state(struct drm_plane_state *state)
+>  int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
+>                    unsigned long possible_crtcs, enum drm_plane_type type=
+,
+>                    unsigned int supported_rotations, const u32 *formats,
+> -                  size_t num_formats);
+> -
+> +                  size_t num_formats, unsigned int plane_idx);
+>  #endif
+> --
+> 2.45.2
+>
 
