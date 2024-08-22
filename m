@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-297457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125B695B889
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:34:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8A995B881
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3828283256
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2F4283232
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AD51CC150;
-	Thu, 22 Aug 2024 14:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o30hDNjI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DFB1CBEAD;
+	Thu, 22 Aug 2024 14:34:14 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0C31CBEA1;
-	Thu, 22 Aug 2024 14:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901541CB329;
+	Thu, 22 Aug 2024 14:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337281; cv=none; b=L+uyXdhGNwn5OBvnZVyEedjVtczrs7P08UaPaG1pH4RKHph8d8APogcO8TpsEF9HGjzpDMDdI6F0QYWHBStZsDEvYScVapUafmMkMqC9YM+s9i37plRI4EGx8wkem00g7rnbl8r83O0Eaok6T7Sk1SV0mJwIBOwvQeq54Yr7e9E=
+	t=1724337253; cv=none; b=Xe+hKRUWoNM/iD73SusBcQE2/hkP877+59mtv4piF8OjnoFi8DcMMt8ko8RbmqJByVkkBh96qpixFluLsJcmc2zip9kfmwAJxIK3LR9e+0z1ybypyFEeVKFM+z48PZucKWW+qdfP7goRnx26sm8f+mm8OFYo/ZVrA3wv0XwRuZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337281; c=relaxed/simple;
-	bh=TijZddx52s7dHM9dVKH3FQOQGg37tHlZWJ7WwnRJDz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kI3qkp1MF2/oaaX5sf91wbKT9uJ4XzaJG+IdapRE/Reik9T9b6o8/hagcEzDTPSWphDuHoGdnSeKvCYqVu77DpkgtF3bkkemfKrCZwB/wlzVwsZduauK0hv77VeC5ZUFiTvsuRC2Hwl7s69L86lao+RJ0ndEvMj8tv1LHP7ww8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o30hDNjI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B7DC32782;
-	Thu, 22 Aug 2024 14:34:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724337280;
-	bh=TijZddx52s7dHM9dVKH3FQOQGg37tHlZWJ7WwnRJDz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o30hDNjICLJUBuoyylRk4f1P6fyz268BRyUz/tzs8AmEo2LJqaUdpuwY1/DCTLSbd
-	 NExh2Pk6Jj/7Fy54LtoOM3nnYAXw7TEM23JNcbw5jlbwDCeu5Alg4Uiw6Ej9cbN2Ge
-	 qpw/+b4X2GNqjD5j7J+0C4cka8NlTnVQKV0VH7oyoZTTqeSDJ9GMaKdcBMbnCGz0oK
-	 W4uplrEpYu6xavlLKTKEmzVAaZI8ZmJCz+EmMoBcVEr/EJ1qNVQKziaZzyoACjVglL
-	 bpwXXn32E2lf1uZGdH6GNI1LnxnLk/3jwwgvDWTlduFv7KADBpKed2z8LxX6QD+/eP
-	 TV0nHHTNpyJWA==
-Date: Thu, 22 Aug 2024 22:34:31 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 13/17] dt-bindings: Move google,cros-ec-typec binding
- to usb
-Message-ID: <ZsdMd7Ywa2b-GDT6@tzungbi-laptop>
-References: <20240819223834.2049862-1-swboyd@chromium.org>
- <20240819223834.2049862-14-swboyd@chromium.org>
+	s=arc-20240116; t=1724337253; c=relaxed/simple;
+	bh=ths4hBzRouIQ/Xtd87TPrQwfMeFkjec47CprI+qjXb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jCUaclURkh6xMTeIRKnSh9RVz0isN8nTaNyNB0+HX2DII8D1T+t+0R/8fTTpi/M4fr6oBV27uyXfLOWPxdKsFrIRbfvm4JVb4Lmj/MP2UaEi22FW6my1ZzuztIDlv2+f140chf27MfBeOOJBS+s5mG0HShBaLAQRTvsW/agQgqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89EC0C4AF09;
+	Thu, 22 Aug 2024 14:34:12 +0000 (UTC)
+Date: Thu, 22 Aug 2024 10:34:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: tglozar@redhat.com, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jkacur@redhat.com
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <20240822103443.6a6ae051@gandalf.local.home>
+In-Reply-To: <ZscfFFUM6pBuwpGZ@uudg.org>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+	<20240821160316.02c03c44@gandalf.local.home>
+	<ZscfFFUM6pBuwpGZ@uudg.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819223834.2049862-14-swboyd@chromium.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 03:38:27PM -0700, Stephen Boyd wrote:
-> -title: Google Chrome OS EC(Embedded Controller) Type C port driver.
-> +title: Google Chrome OS Embedded Controller (EC) USB type-c port driver
+On Thu, 22 Aug 2024 08:20:52 -0300
+"Luis Claudio R. Goncalves" <lgoncalv@redhat.com> wrote:
 
-Given that it gets chance to modify, how about s/Chrome OS/ChromeOS/?
+> You mean the 
+> 
+> +	if (!tlat_var->kthread) {
+> +		/* the fd has been closed already */
+> 
+> bit or the kthread handling in rtla itself?
+> 
+> As Tomas already said, thank you for testing and reviewing the suggested fix!
+
+The close only happens once, but the kthread does get freed elsewhere.
+
+I used my new persistent ring buffer to debug this! I'll be posting some
+more patches that allow trace_printk() and friends to use the persistent
+ring buffer (or any instance) soon.
+
+For this bug, I would recommend instead doing:
+
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index 66a871553d4a..53de719f35cb 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -2579,7 +2587,8 @@ static int timerlat_fd_release(struct inode *inode, struct file *file)
+ 	osn_var = per_cpu_ptr(&per_cpu_osnoise_var, cpu);
+ 	tlat_var = per_cpu_ptr(&per_cpu_timerlat_var, cpu);
+ 
+-	hrtimer_cancel(&tlat_var->timer);
++	if (tlat_var->kthread)
++		hrtimer_cancel(&tlat_var->timer);
+ 	memset(tlat_var, 0, sizeof(*tlat_var));
+ 
+ 	osn_var->sampling = 0;
+
+-- Steve
 
