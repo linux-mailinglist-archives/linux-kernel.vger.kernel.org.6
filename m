@@ -1,214 +1,137 @@
-Return-Path: <linux-kernel+bounces-297988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D5B95C012
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:09:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CAB95C014
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD353B235FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:09:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A92285C55
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36EC1D0DF5;
-	Thu, 22 Aug 2024 21:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDB21D1728;
+	Thu, 22 Aug 2024 21:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=noa-labs.com header.i=@noa-labs.com header.b="DD7e43M3"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1wVX/nH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C861CEACD
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 21:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4971C9ECE;
+	Thu, 22 Aug 2024 21:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724360961; cv=none; b=GMFnROVNTf+zl4NT9thSUZPz5OLxhenWz5WFt640hhr17sn/jRqepujQ+1eJyJA2A7ivhmSeKqUJYdCH6yub1kSFDBiD0ManBEnh1Aw2jz8wVNfv5IaSjhrXIkj391M2K7oak5BiDesxKJdxKNUNZHGclg0Q/3ZPOM3CpYUJQs0=
+	t=1724360982; cv=none; b=GDjpcL090jLVy1ZfXJ0BoKyPO2mgxEQhoOurSlsD8MTqGli+8XIc6gsoVQOgK93q4CFTYYOqw/+OUfdLa8VgkXQkK9WLSXkE1Hz4di2Ft3b2cnZjxuEV06E+t36AYjYId73xjBqadP0aNbsgEv4R/fDR3ffHDMOfFlIKgtmH9kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724360961; c=relaxed/simple;
-	bh=k+W9b7G5rvqcwjRSvf8ADkLS8HeeKeVnAa0LBd1mxuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NZGbZ+4f0z4p3W/C+Y7AqOkH9bgZ8dA7wn0JToQ9oRVb2k9fLwthjp6Vm1UQ7TuYNDF3AShuIY4nrpD9J0ktBmwuxqnJiy2FOrYjmu2a5ReASEakCB+4nWWU2d7YBREiJhdrAa1/NJevdnQXbvCxsp2F0sKd5/cNY97lpsOSRNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=noa-labs.com; spf=pass smtp.mailfrom=noa-labs.com; dkim=pass (1024-bit key) header.d=noa-labs.com header.i=@noa-labs.com header.b=DD7e43M3; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=noa-labs.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=noa-labs.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e13d5cbc067so1294214276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:09:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=noa-labs.com; s=google; t=1724360957; x=1724965757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LW07k5i/80VytuCWf6fd5wnrlfOfrcGBGvooRl/kEYs=;
-        b=DD7e43M3Xgk1sbrRp0zBAKJYHmSbhy+O1Vdw9BKMIaCmjKyZva3k5aBfmwj2VZym0d
-         V6a/oNPcmQfKYQ1GjyRR+ChC7+m3oWFqSBJxkii1qkJAHa4lPHbY0pnmH8x/+1tC2FQw
-         YTIinvrR6ZeKsh+TYUiQEOgIzLaNDHQBiKG6U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724360957; x=1724965757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LW07k5i/80VytuCWf6fd5wnrlfOfrcGBGvooRl/kEYs=;
-        b=sVnKa5pVBibSy53prmTmKrGGzcLyMIGaW7FgLOQlfmgbjxHxYfLnQVjOZqESrpkOF8
-         ZABW/AoqeM2DrQHina5rll+PdrNKlNH+/GZxoh512shfhYp/DtHot4LFa5VGN/tvnM+h
-         cE4VC35TeP8hz558JpoRuL3hu1PaCRWYnxH6rMbQSW0nbMaZ4vNhDnHKQbLIH4f6Q4EW
-         e247h8F/fWk4X3ClHkqD64+yLzKdJpgkKTPidriTM6aPhPl+4n86Pqul8vSDfeWL9HaW
-         18eQIgF1I/TndXWZmsuHlBQl0YopQEN32fFlK7s0MlnRmHQs0ktwdDzmD4h84zs6Tmi/
-         LySQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDdlOhGB7s47Yw7XP7nSi5nCacCMQL6GIdXnI95uKH3c10XgeVPGcUzYvvH3NH7XHdMBI4GJHk8sx2Ya8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmjLnXErJ7aJG3jk3hgJhNvQpTZj60HDgJSPGkrABQBG1fLMhy
-	5CvTlca7VzRHkbYmDdCG0hpyoYEPTSr6BNwILLV3dOZvRHSxT1pJhhBlWB9iDvzwl49X/XtyVI2
-	Qho590UAx4sj3H9ehgczCJM+7Xe4x9ABCND3IBw==
-X-Google-Smtp-Source: AGHT+IHWA6B8BYv2zJOjY+Qab+88faFqm4Nf8qTahVMFYNr1h94/ndxDhjAemM2Gxy9Ys1H/3Ldl8RodsBm+9MRP2rI=
-X-Received: by 2002:a05:6902:1896:b0:e13:c10d:85d with SMTP id
- 3f1490d57ef6-e17a83bfc22mr320369276.7.1724360957298; Thu, 22 Aug 2024
- 14:09:17 -0700 (PDT)
+	s=arc-20240116; t=1724360982; c=relaxed/simple;
+	bh=8iBDpoxfMgDUeOxD63UGaKxo3EyWxDxolFmv468LCfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R5Gz/zaaxTfmQhjMcHDikUZXTjxPToZXJiNiW/fyTltCPBROf+F7IIUPPTbbEKGaSabtL2/aZNhAteXvv5/fzvHDIOnC67liA5IBC0LqYA3/gqGeH02+OAJhQysJY9VtrDnFITdndpubR+3mxQliIVWDaLybe6Gnqu+FFGDzDrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1wVX/nH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1088BC32782;
+	Thu, 22 Aug 2024 21:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724360981;
+	bh=8iBDpoxfMgDUeOxD63UGaKxo3EyWxDxolFmv468LCfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q1wVX/nHs2zAdvWu+r9zFRP/apRq/b/+ryhzSm1No8U7QdXqE7tGoggTrjvSyu8DO
+	 ei0o7FtzqdyX41lNzOQa2TeoyyfLJ/dbNFwtATXggZNQfqCQiSoETkJ4XcppK7Q6Pw
+	 4FBLdqn4f00J4jEJ9Ee6CIty+oWwT9lLxvMJGug5LWn0PGKSYx/4xkiYUmMoF3aXKr
+	 Pg32345iyScXOHkgSYFjuwUIAKBgIOl4SD5Fbbo7WRxy46uTLX6mB0DBWNPZ9w6CaI
+	 Rz1nZDWMN+kyDx/PS1Fsr7q1JbrtnU+8ClZ+cej6Ib2w8i+/Q6e9KWaVgWHQ6kVTZb
+	 xBb4zDHZ2kvMw==
+Date: Thu, 22 Aug 2024 18:09:38 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] perf trace: Add
+ trace__bpf_sys_enter_beauty_map() to prepare for fetching data in BPF
+Message-ID: <ZsepEpr-hGXkI8Vw@x1>
+References: <20240815013626.935097-1-howardchu95@gmail.com>
+ <20240815013626.935097-4-howardchu95@gmail.com>
+ <Zsd6MgrCs0ybQ9EW@x1>
+ <Zsd7Ep6H24Qq-h5F@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821110856.22552-1-pavel@noa-labs.com> <2b7a1c4ee1d6e78f166d545b31f4fd3fbd252e26.camel@mediatek.com>
-In-Reply-To: <2b7a1c4ee1d6e78f166d545b31f4fd3fbd252e26.camel@mediatek.com>
-From: Pavel Nikulin <pavel@noa-labs.com>
-Date: Fri, 23 Aug 2024 01:09:06 +0400
-Message-ID: <CAG-pW8EgBE4RwhcFtMXEuFtG56JJSyvOjG5+q71zG6pJyo05hg@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btusb: Add Realtek MT7925 support ID 0x13d3:0x3608
-To: =?UTF-8?B?Q2hyaXMgTHUgKOmZuOeomuazkyk=?= <Chris.Lu@mediatek.com>
-Cc: "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>, "marcel@holtmann.org" <marcel@holtmann.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	=?UTF-8?B?RGVyZW4gV3UgKOatpuW+t+S7gSk=?= <Deren.Wu@mediatek.com>, 
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, 
-	"johan.hedberg@gmail.com" <johan.hedberg@gmail.com>, =?UTF-8?B?U3RldmUgTGVlICjmnY7oppboqqAp?= <steve.lee@mediatek.com>, 
-	Sean Wang <Sean.Wang@mediatek.com>, =?UTF-8?B?QWFyb24gSG91ICjkvq/kv4rku7Ap?= <Aaron.Hou@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zsd7Ep6H24Qq-h5F@x1>
 
-Oh my, how I missed that.
+On Thu, Aug 22, 2024 at 02:53:22PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Thu, Aug 22, 2024 at 02:49:41PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Thu, Aug 15, 2024 at 09:36:19AM +0800, Howard Chu wrote:
+> > > @@ -3624,7 +3719,9 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
+> > >  {
+> > >  	int map_enter_fd = bpf_map__fd(trace->skel->maps.syscalls_sys_enter);
+> > >  	int map_exit_fd  = bpf_map__fd(trace->skel->maps.syscalls_sys_exit);
+> > > +	int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
+>  
+> > At this point we still don't have that, right? I.e. building with this
+> > patch, without the ones following it in your series, I get:
+>  
+> > builtin-trace.c: In function ‘trace__init_syscalls_bpf_prog_array_maps’:
+> > builtin-trace.c:3723:58: error: ‘struct <anonymous>’ has no member named ‘beauty_map_enter’
+> >  3723 |         int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
+> >       |                                                          ^
+> >   CC      /tmp/build/perf-tools-next/tests/code-reading.o
+> >   CC      /tmp/build/perf-tools-next/trace/beauty/clone.o
+> > make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/builtin-trace.o] Error 1
+> > make[3]: *** Waiting for unfinished jobs....
+> > 
+> > So we need to squash the patch that introduces beauty_map_enter in the
+> > augmented_raw_syscalls.bpf.c file to this one, so that we keep things
+> > bisectable, I'll try to do that.
+> 
+> So just this did the trick, I'll remove it from the later patch in your
+> series:
 
-I think a commit can be undone, and the same patch with a correct
-commit message submitted again. Somebody with access will have to
-revert it.
+But then you added syscall_arg_fmt__cache_btf_struct() ifdef'ed by
+HAVE_LIBBPF_SUPPORT to then use it on trace__bpf_sys_enter_beauty_map())
+that is ifdef'ed by HAVE_BPF_SKEL, so when building with
+BUILD_BPF_SKEL=0 we get this splat:
 
+  CC      /tmp/build/perf-tools-next/builtin-trace.o
+  AR      /tmp/build/perf-tools-next/libperf-util.a
+builtin-trace.c:930:12: error: ‘syscall_arg_fmt__cache_btf_struct’ defined but not used [-Werror=unused-function]
+  930 | static int syscall_arg_fmt__cache_btf_struct(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  GEN     /tmp/build/perf-tools-next/python/perf.cpython-312-x86_64-linux-gnu.so
+cc1: all warnings being treated as errors
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/builtin-trace.o] Error 1
+make[2]: *** [Makefile.perf:762: /tmp/build/perf-tools-next/perf-in.o] Error 2
+make[1]: *** [Makefile.perf:292: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+⬢[acme@toolbox perf-tools-next]$
 
-Pavel Nikulin
-Senior Engineer
-+971 52 386 6738
-pavel@noa-labs.com
-
-
-
-On Thu, Aug 22, 2024 at 9:54=E2=80=AFAM Chris Lu (=E9=99=B8=E7=A8=9A=E6=B3=
-=93) <Chris.Lu@mediatek.com> wrote:
->
-> Hi Luiz and Pavel,
->
-> I think these is something wrong to the title and content of this
-> patch. MT7925 is an connectivity IC from Mediatek rather than Realtek.
->
-> Although this patch has been accpeted and merged to the next tree, I'm
-> wondering if the typo can still be fixed? I'm afraid that such error
-> could cause some misunderstanding to users.
->
-> Thanks a lot!
->
-> BRs,
-> Chris
->
-> On Wed, 2024-08-21 at 15:08 +0400, Pavel Nikulin wrote:
-> > Add the support ID (0x13d3, 0x3608) to usb_device_id table for
-> > Realtek MT7925B14L found on AW-EM637 WiFi+BT modules in 2024 Asus
-> > laptops.
-> >
-> > The device info from /sys/kernel/debug/usb/devices as below.
-> >
-> > T:  Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D00 Cnt=3D01 Dev#=3D  2 Spd=3D480=
-  MxCh=3D 0
-> > D:  Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D  =
-1
-> > P:  Vendor=3D13d3 ProdID=3D3608 Rev=3D 1.00
-> > S:  Manufacturer=3DMediaTek Inc.
-> > S:  Product=3DWireless_Device
-> > S:  SerialNumber=3D000000000
-> > C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
-> > A:  FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01
-> > I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D125us
-> > E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-> > E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-> > I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-> > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-> > I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-> > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-> > I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-> > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-> > I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-> > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-> > I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-> > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-> > I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-> > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-> > I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-> > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-> > I:  If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
-> > E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
-> > I:* If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driv=
-er=3Dbtusb
-> > E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
-> > E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
-> >
-> > Signed-off-by: Pavel Nikulin <pavel@noa-labs.com>
-> > ---
-> >  drivers/bluetooth/btusb.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> > index bb698ca98..df0d2e4ab 100644
-> > --- a/drivers/bluetooth/btusb.c
-> > +++ b/drivers/bluetooth/btusb.c
-> > @@ -627,6 +627,8 @@ static const struct usb_device_id quirks_table[]
-> > =3D {
-> >       BTUSB_WIDEBAND_SPE
-> > ECH },
-> >  { USB_DEVICE(0x13d3, 0x3604), .driver_info =3D BTUSB_MEDIATEK |
-> >       BTUSB_WIDEBAND_SPE
-> > ECH },
-> > +{ USB_DEVICE(0x13d3, 0x3608), .driver_info =3D BTUSB_MEDIATEK |
-> > +     BTUSB_WIDEBAND_SPE
-> > ECH },
-> >
-> >  /* Additional Realtek 8723AE Bluetooth devices */
-> >  { USB_DEVICE(0x0930, 0x021d), .driver_info =3D BTUSB_REALTEK },
->
-> ************* MEDIATEK Confidentiality Notice ********************
-> The information contained in this e-mail message (including any
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be
-> conveyed only to the designated recipient(s). Any use, dissemination,
-> distribution, printing, retaining or copying of this e-mail (including it=
-s
-> attachments) by unintended recipient(s) is strictly prohibited and may
-> be unlawful. If you are not an intended recipient of this e-mail, or beli=
-eve
-> that you have received this e-mail in error, please notify the sender
-> immediately (by replying to this e-mail), delete any and all copies of
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+I'm moving syscall_arg_fmt__cache_btf_struct() to the same block where
+trace__bpf_sys_enter_beauty_map() is.
+ 
+> - Arnaldo
+> 
+> diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> index 0acbd74e8c760956..c885673f416dff39 100644
+> --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> @@ -79,6 +79,13 @@ struct pids_filtered {
+>  	__uint(max_entries, 64);
+>  } pids_filtered SEC(".maps");
+>  
+> +struct beauty_map_enter {
+> +	__uint(type, BPF_MAP_TYPE_HASH);
+> +	__type(key, int);
+> +	__type(value, __u32[6]);
+> +	__uint(max_entries, 512);
+> +} beauty_map_enter SEC(".maps");
+> +
+>  /*
+>   * Desired design of maximum size and alignment (see RFC2553)
+>   */
 
