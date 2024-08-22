@@ -1,137 +1,304 @@
-Return-Path: <linux-kernel+bounces-297816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF1195BE12
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:16:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E73695BE15
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528EA1F25806
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F088285C5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C291CC889;
-	Thu, 22 Aug 2024 18:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXhk7Rhh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C032F1D048C;
+	Thu, 22 Aug 2024 18:17:35 +0000 (UTC)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A8973514;
-	Thu, 22 Aug 2024 18:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B1B1CFEA6;
+	Thu, 22 Aug 2024 18:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724350606; cv=none; b=KT3P6fUkQo0ZxQVHA6vSZRC+NvmMAXOoWK+6HLifRi849ayu++MtdWajBJyE9R4yVz5WFCE3cEEeFDFJwcREFGZt766+aUPEcq0K0ePFtBsjHq5gZ86o7JorQCVagiW1kQOQAnqlnHx6EBjN1udc8wMf7JuM0miaNPuoNSJUDXY=
+	t=1724350655; cv=none; b=AOBpDjsy7nocvunJaVNLhQHYVp9LbHIe01yjcGItjsZWABuO2t0ecFc1V5edYFqmFnR9/o9tRJ6fC5no93g9/t3CeHRIqpWhS7IwuH9rihLGK/jX3N6hXJfTSqF6ElulL+eNumKuuIV2kHnDwz9P9FrJGIt3cl4pdudtzAXM4qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724350606; c=relaxed/simple;
-	bh=sOfxd46WO7U7N9DBUnZ4f41t5HJqpb3HZtZgn4ugtUU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hhcV2R1CbnDl62zgmAg6EAObizCc1NL5fkRn7VscFK/0w/S3lSYsk0nJt1zpE/FAny8YIzflWAY1CsWvaAS2CFrMTqj7PinzuRiq/QbrLC7bYeLgM+U8TD3DpZllB1TqPnLLkzpPIciCqumD/Sqo/TfPYQ8VRFXu1ouE6/McWLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXhk7Rhh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58829C32782;
-	Thu, 22 Aug 2024 18:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724350606;
-	bh=sOfxd46WO7U7N9DBUnZ4f41t5HJqpb3HZtZgn4ugtUU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=bXhk7Rhh3TukDnqjfC73MKlquG4k87ProjOj5FUMkKMn0N2Dv/8URHldrFlhkylGF
-	 syqIGkQoi6xAxYqpOLKRh/rLkXo3tyKuYB80PlPMd7flKIS3zIL8RFVr88Dj9paARf
-	 QWSgnNsFtbEptSf9D8UGZw1mPsV569UDdm80Mqvwj2HgDp29XJYGKvjUcZjsXgAWle
-	 M5HJY77Kwq9y+lsEL+5xuCYuUqRV9Zqx1L5AusYA5ur/UI9E3mOghg1lhqBjFyr05y
-	 8wMjcsRiexJNwroe46HTWMJBBMQde8bXKg5ToHL2cJwL9Ts30qzbbfoc5IGCuth+BH
-	 JKZtNJggN+GWA==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f3b8eb3df5so11228931fa.1;
-        Thu, 22 Aug 2024 11:16:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjOOvoUfPemJf/XdIGCuSK/QrJF+mVv0/2fORte0Bn1i9kO34Sfj4pPxx5bRqrwlWPvJvyXfBb46VYnr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3wYlwvyIKIdfRcbBnmNIJunWTjyRQkYAvsWKB4qx1gxFcGDc+
-	c+tB+SXIf/DJlxJNFNcpxHUM/oEhGta1QeKl+YcN8uadGPOO7dTU8Nqe2UXW88z8Fbyz7icNzBC
-	BUewK0rSVJZ2yQRBnaq0vJ1mCDwU=
-X-Google-Smtp-Source: AGHT+IGrONMzhlvwK93Qtis27nBm4jkOhhg+q1m/50JAP/hDM4TkX/iuamwIapHAD5oLjUP+IAQGld+nvPoeL6z1Mk0=
-X-Received: by 2002:a2e:4a11:0:b0:2f3:f828:efe7 with SMTP id
- 38308e7fff4ca-2f405d9161emr17898791fa.16.1724350605042; Thu, 22 Aug 2024
- 11:16:45 -0700 (PDT)
+	s=arc-20240116; t=1724350655; c=relaxed/simple;
+	bh=oIL757S+ZAaqfiPhNnNK6Z5q+HKfPbSXx+FX5S0KDRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ncstuW1YuUHjfR2NfFHOqXp6ExKdxEfO8T+79PAN40j80+34OY70gTKOcmXoOg7+ehGu7fZIC+f68MOsEabry0Kcf2KKZFYxeh38Z4UqfhqElVyxjGftUkvCLylKuiycSY+aemX4VV/3c69/7y8Eu0WQdV3Qf2xCj9m9J9tQNlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7b8884631c4so501228a12.2;
+        Thu, 22 Aug 2024 11:17:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724350653; x=1724955453;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=voC3ud9jrqh/WEZjGXtEwA67mX5h/or/7kg4NJAK10g=;
+        b=g+HuoI/vhkHwkKtWMFqYQ5mRcTW2iaz51mf0VKqvJ7eOKWf7pBHmoJkxptpJI7bijN
+         nvSXg+urzlS7PfKkc7GV4rK2oYu3wqwtijEL1JtbOeZfFrKBZnLLEhWAMpmf038yAI/v
+         cr/YgToth1fin8IYES79aQJ1XqoIk3A8RewdlirvwJAaTx74Z72fDAuuumO+z4XcvGEG
+         XkCZaQ+DqCdF7kArAwCPN8IBXZiNUPssFTBf4YLCvafikeJ7LPRqKMD4iLb8WOMe1RmE
+         gh/pO06Ud41SEOaJmV/LQr+XOKmtaK7fwQal8qtZKQ3zkXi06uOeDFrHLvjCNA6tyHcc
+         93RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1dNWLbdwpX4wjMCcFcT5m39JWwT43FItAjn46cnajmR1h3NeZ3FvX8qkzZpqgL+B2vlIruCU8r13CdcJy4kUt1g==@vger.kernel.org, AJvYcCXMTyb366vBIvnL2OaP3HGdjx4C/Se8clxjza8tBvBmVu3NPavtplEDZUkndigQYgamrUMm2Xucy0dBQ4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7whZTpL8pA4nHtEPKCufR8v2rMARlRhO4RIcdYU2K2a+D24Ew
+	6HLIZ34y2YXu4FLybQscfPRzY2Em3cR2jNASE+OdYkx6Z6S5grvsc4XuOcBrc6by2ie/CxWMsoL
+	Cf6yh95TdPrT6w3ZrA295wnQk5fo=
+X-Google-Smtp-Source: AGHT+IENRiBt1YTrC76P387T5HLPnaB/4BaCeUF3JjX0EcMBrniVz9yrzOnmR32LbcnCnW3dSDPUFRK+6agNQaaQDrg=
+X-Received: by 2002:a17:90a:c7d7:b0:2c4:aa78:b48b with SMTP id
+ 98e67ed59e1d1-2d5e9fc4d32mr7871669a91.38.1724350652428; Thu, 22 Aug 2024
+ 11:17:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 23 Aug 2024 03:16:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQX2tTZNnUD519Y1Kx5YxtnHy8WHPUB+L9K7ji_8nT89Q@mail.gmail.com>
-Message-ID: <CAK7LNAQX2tTZNnUD519Y1Kx5YxtnHy8WHPUB+L9K7ji_8nT89Q@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v6.11-rc5
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+ <ZsdKhLaPy-uzKsuH@x1> <ZsdUxxBrpbuYxtXN@x1> <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
+ <ZsdxinrZP1kHINWT@x1> <ZsdzLmIFWRqsXeXD@x1> <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
+ <Zsd39zG9BuGpZ8aA@x1> <CA+icZUXGV9dMGcRwJiP7WLcYUaY5CRCcDw1HLFr+9Sn7CrRGDw@mail.gmail.com>
+In-Reply-To: <CA+icZUXGV9dMGcRwJiP7WLcYUaY5CRCcDw1HLFr+9Sn7CrRGDw@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 22 Aug 2024 11:17:21 -0700
+Message-ID: <CAM9d7cgSR4OroaX0FuBvC_bPPMeEr7ThXJwqgMfAnj-Lfk8wNw@mail.gmail.com>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+To: sedat.dilek@gmail.com
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Linus,
+On Thu, Aug 22, 2024 at 10:59=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail.com=
+> wrote:
+>
+> On Thu, Aug 22, 2024 at 7:40=E2=80=AFPM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Thu, Aug 22, 2024 at 07:31:55PM +0200, Sedat Dilek wrote:
+> > > On Thu, Aug 22, 2024 at 7:19=E2=80=AFPM Arnaldo Carvalho de Melo
+> > > <acme@kernel.org> wrote:
+> > > >
+> > > > On Thu, Aug 22, 2024 at 02:12:46PM -0300, Arnaldo Carvalho de Melo =
+wrote:
+> > > > > On Thu, Aug 22, 2024 at 07:02:52PM +0200, Sedat Dilek wrote:
+> > > > > > On Thu, Aug 22, 2024 at 5:10=E2=80=AFPM Arnaldo Carvalho de Mel=
+o <acme@kernel.org> wrote:
+> > > > > > > +++ b/tools/perf/util/setup.py
+> > > > > > > @@ -17,7 +17,7 @@ src_feature_tests  =3D getenv('srctree') + =
+'/tools/build/feature'
+> > > > >
+> > > > > > >  def clang_has_option(option):
+> > > > > > >      cc_output =3D Popen([cc, cc_options + option, path.join(=
+src_feature_tests, "test-hello.c") ], stderr=3DPIPE).stderr.readlines()
+> > > > > > > -    return [o for o in cc_output if ((b"unknown argument" in=
+ o) or (b"is not supported" in o))] =3D=3D [ ]
+> > > > > > > +    return [o for o in cc_output if ((b"unknown argument" in=
+ o) or (b"is not supported" in o) or (b"unknown warning option" in o))] =3D=
+=3D [ ]
+> > > > > > >  if cc_is_clang:
+> > > > > > >      from sysconfig import get_config_vars
+> > > > > > > @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
+> > > > > > >  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '=
+-Wno-unused-parameter', '-Wno-redundant-decls' ]
+> > > > > > >  if cc_is_clang:
+> > > > > > >      cflags +=3D ["-Wno-unused-command-line-argument" ]
+> > > > > > > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> > > > > > > +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
+> > > > > > >  else:
+> > > > > > >      cflags +=3D ['-Wno-cast-function-type' ]
+> > > > >
+> > > > > > I tried with your diff with SLIM LLVM toolchains 18 and 19.
+> > > > >
+> > > > > > Both work - see attached build-logs.
+> > > > >
+> > > > > > Yes, are right that LLVM/Clang v19 was first introducing:
+> > > > >
+> > > > > > -Wcast-function-type-mismatch / -Wno-cast-function-type-mismatc=
+h
+> > > > >
+> > > > > > [4] says for LLVM 18.1.8:
+> > > > >
+> > > > > > -Wcast-function-type
+> > > > > > -Wcast-function-type-strict
+> > > > >
+> > > > > > Feel free to add my Reported-by/Tested-by credentials if you se=
+nt a full patch.
+> > > > >
+> > > > > Thanks for the report and test of the fix, I'll add both tags,
+> > > >
+> > > > So below is the part that deals with disabling the warning if prese=
+nt,
+> > > > the other patch supporting checking warning options I merged as a p=
+rep
+> > > > patch.
+> > > >
+> > > > Thanks!
+> > > >
+> > > > - Arnaldo
+> > > >
+> > > > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2=
+001
+> > > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > > Date: Thu, 22 Aug 2024 14:13:49 -0300
+> > > > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-m=
+ismatch if
+> > > >  present on clang
+> > > >
+> > > > The -Wcast-function-type-mismatch option was introduced in clang 19=
+ and
+> > > > its enabled by default, since we use -Werror, and python bindings d=
+o
+> > > > casts that are valid but trips this warning, disable it if present.
+> > > >
+> > > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > > > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > > > Cc: Ian Rogers <irogers@google.com>
+> > > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > > Cc: Namhyung Kim <namhyung@kernel.org>
+> > > > Cc: Nathan Chancellor <nathan@kernel.org>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9=
+uy3r2MzKXwTA5THtL7w@mail.gmail.com
+> > > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > > ---
+> > > >  tools/perf/util/setup.py | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+> > > > index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
+> > > > --- a/tools/perf/util/setup.py
+> > > > +++ b/tools/perf/util/setup.py
+> > > > @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
+> > > >  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-u=
+nused-parameter', '-Wno-redundant-decls' ]
+> > > >  if cc_is_clang:
+> > > >      cflags +=3D ["-Wno-unused-command-line-argument" ]
+> > > > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> > > > +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
+> > > >  else:
+> > > >      cflags +=3D ['-Wno-cast-function-type' ]
+> > > >
+> > > > --
+> > > > 2.46.0
+> > > >
+> > >
+> > > Thanks for the patch, Arnanldo.
+> > >
+> > > @Nathan Chancellor
+> > > What was the b4 magic to retrieve a patch included in a ML thread?
+> > >
+> > > I tried:
+> > >
+> > > link=3D"https://lore.kernel.org/all/CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haF=
+neX0C5pUMUUhG-UVKQ@mail.gmail.com/"
+> > >
+> > > b4 am $link
+> > > Grabbing thread from
+> > > lore.kernel.org/all/CA%2BicZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-=
+UVKQ@mail.gmail.com/t.mbox.gz
+> > > Analyzing 9 messages in the thread
+> > > No patches found.
+> >
+> > I use:
+> >
+> > =E2=AC=A2[acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers CA+i=
+cZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com
+> > Grabbing thread from lore.kernel.org/all/CA%2BicZUURwYd8nJSdMU7KW6nFjub=
+i-VD2f-a5%2BzQNQGUxK7%2B2aw@mail.gmail.com/t.mbox.gz
+> > Analyzing 10 messages in the thread
+> > No patches found.
+> > =E2=AC=A2[acme@toolbox perf-tools-next]$
+> >
+> > Using the Message-ID for your message, which normally is enough, but I
+> > think I didn't separate the patch from the rest of the message with ---=
+.
+> >
+> > Lemme try...
+> >
+> > ---
+> >
+> > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Date: Thu, 22 Aug 2024 14:13:49 -0300
+> > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-misma=
+tch if
+> >  present on clang
+> >
+> > The -Wcast-function-type-mismatch option was introduced in clang 19 and
+> > its enabled by default, since we use -Werror, and python bindings do
+> > casts that are valid but trips this warning, disable it if present.
+> >
+> > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Cc: Nathan Chancellor <nathan@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r=
+2MzKXwTA5THtL7w@mail.gmail.com
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
+Can we also add 'Fixes' tag to make this picked by stable kernels?
 
-Please pull Kbuild fixes for v6.11-rc5.
-Thanks.
+Thanks,
+Namhyung
 
-
-
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
-
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v6.11-2
-
-for you to fetch changes up to 8fb4ac1cee88a57e7a56faba49b408a41a4af4db:
-
-  kbuild: fix typos "prequisites" to "prerequisites" (2024-08-23 02:41:02 +0900)
-
-----------------------------------------------------------------
-Kbuild fixes for v6.11 (2nd)
-
- - Eliminate the fdtoverlay command duplication in scripts/Makefile.lib
-
- - Fix 'make compile_commands.json' for external modules
-
- - Ensure scripts/kconfig/merge_config.sh handles missing newlines
-
- - Fix some build errors on macOS
-
-----------------------------------------------------------------
-Alexandre Courbot (1):
-      Makefile: add $(srctree) to dependency of compile_commands.json target
-
-Anders Roxell (1):
-      scripts: kconfig: merge_config: config files: add a trailing newline
-
-Javier Carrasco (1):
-      Documentation/llvm: turn make command for ccache into code block
-
-Masahiro Yamada (4):
-      kbuild: clean up code duplication in cmd_fdtoverlay
-      treewide: remove unnecessary <linux/version.h> inclusion
-      kbuild: avoid scripts/kallsyms parsing /dev/null
-      kbuild: fix typos "prequisites" to "prerequisites"
-
- Documentation/kbuild/llvm.rst                         |  2 +-
- Makefile                                              |  2 +-
- drivers/accessibility/speakup/genmap.c                |  1 -
- drivers/accessibility/speakup/makemapdata.c           |  1 -
- drivers/staging/media/atomisp/include/linux/atomisp.h |  1 -
- samples/trace_events/trace_custom_sched.c             |  1 -
- scripts/Makefile.build                                |  2 +-
- scripts/Makefile.lib                                  | 28
-++++++++++------------------
- scripts/Makefile.modfinal                             |  2 +-
- scripts/Makefile.vmlinux                              |  2 +-
- scripts/Makefile.vmlinux_o                            |  2 +-
- scripts/kconfig/merge_config.sh                       |  2 ++
- scripts/link-vmlinux.sh                               |  3 ++-
- sound/soc/codecs/cs42l42.c                            |  1 -
- 14 files changed, 20 insertions(+), 30 deletions(-)
-
-
--- 
-Best Regards
-Masahiro Yamada
+> > ---
+> >  tools/perf/util/setup.py | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+> > index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
+> > --- a/tools/perf/util/setup.py
+> > +++ b/tools/perf/util/setup.py
+> > @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
+> >  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unuse=
+d-parameter', '-Wno-redundant-decls' ]
+> >  if cc_is_clang:
+> >      cflags +=3D ["-Wno-unused-command-line-argument" ]
+> > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> > +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
+> >  else:
+> >      cflags +=3D ['-Wno-cast-function-type' ]
+> >
+> > --
+> > 2.46.0
+> >
+>
+> Hmm, OK.
+>
+> My first posting:
+> https://lore.kernel.org/all/CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUh=
+G-UVKQ@mail.gmail.com/
+>
+> $ b4 am -ctsl --cc-trailers
+> CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com
+> Grabbing thread from
+> lore.kernel.org/all/CA%2BicZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5%2BzQNQGUxK7%2=
+B2aw@mail.gmail.com/t.mbox.gz
+> Checking for newer revisions
+> Grabbing search results from lore.kernel.org
+> Analyzing 11 messages in the thread
+> No patches found.
+>
+> Did you drop that part by accident or intentionally from the patch?
+>
+>  def clang_has_option(option):
+>     cc_output =3D Popen([cc, cc_options + option,
+> path.join(src_feature_tests, "test-hello.c") ],
+> stderr=3DPIPE).stderr.readlines()
+> -    return [o for o in cc_output if ((b"unknown argument" in o) or
+> (b"is not supported" in o))] =3D=3D [ ]
+> +    return [o for o in cc_output if ((b"unknown argument" in o) or
+> (b"is not supported" in o) or (b"unknown warning option" in o))] =3D=3D [
+> ]
+>
+> Thank for all.
+>
+> -Sedat-
 
