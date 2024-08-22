@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-296900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BFD95B05D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:30:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE1C95B067
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FAF51F27B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE9B286344
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FC517D374;
-	Thu, 22 Aug 2024 08:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RQ6gMGZb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54311181B83;
+	Thu, 22 Aug 2024 08:29:28 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2960B17CA0A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E82B17F4EC;
+	Thu, 22 Aug 2024 08:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315325; cv=none; b=Ll1JeDE5S4NQLHXtvlJX4B6LD/lStooJCqzLCye4pWhKkqL/GJkqaGB1h3hkWCEaZy4a8nEFgNF1y0ux7kGDA1V8zaU5K7bk018qbQrwe+HmK55hxe4kQLDMCUfCXv3UB5/rrA9+GqQPW9J9b6pt/pX8t1jszuwTh/oBClkrpb4=
+	t=1724315367; cv=none; b=Qy/ZgOz4p/a/nfCdX/wgREUxTJSKU4QEe68QYpEZVIXiCMQYAKuRE0me1WcmPYA1c95ZrtLOq6ShrRbPgGRerwloAU/MVUH4X1v7XTVgc6ZDv/lxYmf/o5hHYT8NzsDnhCCwNBaMcPEo8AigDMMKsIkt1YVvfl07nzRrIepCXJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315325; c=relaxed/simple;
-	bh=17uaz+cE2JgBv5H3Dvg0wnIYqRe9KhFU1bSLVIOsUqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+YxdTtlVpSmSDt8qedDSjR9GVV+0zi2r5h4VZRpeWzmYQwwwFYLEpFvRitgeDZCa9hUusB6AXkyU0GyVUfRaVpP7cZYJu2DFhtylsCddmijhYa9vTzsFjt0kVXYoJ3wmNyXcRPnM+2sFD8WSvbaEEqOC7P2OpCF8ebUkSZbFA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RQ6gMGZb; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724315325; x=1755851325;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=17uaz+cE2JgBv5H3Dvg0wnIYqRe9KhFU1bSLVIOsUqs=;
-  b=RQ6gMGZbf2z78OZW7UwfBKxU+INFKl+QMX4PaajCMYjvcRM5KFT5mpCQ
-   f18KuOmQTz3yrRxB8d+BiWOmqFd6sWVuEeuBZ9GIT6i6YiL60kkYxQqbX
-   4NoGvSXtOorCE/Y8Zuw4iRVJb5ZLVAoRhJqLJ4qQ7mhrdPZVk3CQTkSaW
-   KVnR0M/h7wBRtNF71l77LwhygM/5y4H4UMiIZSnHa37KyLJcTzZtt22bW
-   kmQLGWDTdBW6DDe5GsM52L8NaOeHBuyVWAJMLFWt14m5sYsrZusNyLpg4
-   wX47Yk3ru572E4aXAbmhhxyJRjs9htQERxdvaxVrT3LZjiw45gbA9x35z
-   g==;
-X-CSE-ConnectionGUID: ET9jt4rWRPeJgnZAGE1yEw==
-X-CSE-MsgGUID: J4HRSceeTNaxONAdDxthcw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33282172"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="33282172"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 01:28:37 -0700
-X-CSE-ConnectionGUID: DKvT1eLtRcWKhD0H/FBu4w==
-X-CSE-MsgGUID: tu/arhuVTVScQIqt2ipkBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="61903695"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 22 Aug 2024 01:28:15 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id C1D0849F; Thu, 22 Aug 2024 11:28:14 +0300 (EEST)
-Date: Thu, 22 Aug 2024 11:28:14 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
-	decui@microsoft.com, John.Starks@microsoft.com
-Subject: Re: [PATCH v4 6/6] x86/tdx: Implement movs for MMIO
-Message-ID: <tcngnuglju2mnpfa4o2hw3fpwdkk4ryso5dq2zjfi2wn4yr5yd@2iij74o7ugaf>
-References: <cover.1723807851.git.legion@kernel.org>
- <cover.1724248680.git.legion@kernel.org>
- <9320e721e609e55a020d3eb98f48fc856371c561.1724248680.git.legion@kernel.org>
+	s=arc-20240116; t=1724315367; c=relaxed/simple;
+	bh=AmUawWbJ5Csrxl4kbSCmn+U4bMUPW8G/yy8t4f1Xn+A=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=n4KcxEZtCuFjj0Z2r8K8pY11WIrVOwE51lmOWzRTd8OZIgF0oGA68eYt4gvlLtJxfxIQ7gbpHknIXkTp1pWgq3xJc+MUbGAOjeG2XxOlBshgoPPnch7msICT08C72K4XhML9xO3rKJe7+Wd9H1tq0Vy4ErLEhr5knjZWNEK/vlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WqGW37087z1HGQs;
+	Thu, 22 Aug 2024 16:26:07 +0800 (CST)
+Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
+	by mail.maildlp.com (Postfix) with ESMTPS id 09C461400FD;
+	Thu, 22 Aug 2024 16:29:21 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 22 Aug 2024 16:29:20 +0800
+Subject: Re: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
+	<jgg@nvidia.com>, Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+References: <20240806122928.46187-1-liulongfang@huawei.com>
+ <20240806122928.46187-4-liulongfang@huawei.com>
+ <42784fb0fd1c44cf9470c9662e154b88@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <c7f0ae83-9490-c9db-e098-6eb18443599f@huawei.com>
+Date: Thu, 22 Aug 2024 16:29:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9320e721e609e55a020d3eb98f48fc856371c561.1724248680.git.legion@kernel.org>
+In-Reply-To: <42784fb0fd1c44cf9470c9662e154b88@huawei.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600005.china.huawei.com (7.193.23.191)
 
-On Wed, Aug 21, 2024 at 04:24:38PM +0200, Alexey Gladkov wrote:
-> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+On 2024/8/14 17:39, Shameerali Kolothum Thodi wrote:
 > 
+> 
+>> -----Original Message-----
+>> From: liulongfang <liulongfang@huawei.com>
+>> Sent: Tuesday, August 6, 2024 1:29 PM
+>> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum Thodi
+>> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+>> <jonathan.cameron@huawei.com>
+>> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+>> Subject: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+>> migration driver
+> ... 
+>> +static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
+>> +{
+>> +	struct device *vf_dev = seq->private;
+>> +	struct vfio_pci_core_device *core_device = dev_get_drvdata(vf_dev);
+>> +	struct vfio_device *vdev = &core_device->vdev;
+>> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+>> hisi_acc_get_vf_dev(vdev);
+>> +	size_t vf_data_sz = offsetofend(struct acc_vf_data, padding);
+>> +	struct acc_vf_data *vf_data = NULL;
+>> +	int ret;
+>> +
+>> +	vf_data = kzalloc(sizeof(struct acc_vf_data), GFP_KERNEL);
+>> +	if (!vf_data)
+>> +		return -ENOMEM;
+>> +
+>> +	mutex_lock(&hisi_acc_vdev->state_mutex);
+>> +	ret = hisi_acc_vf_debug_check(seq, vdev);
+>> +	if (ret) {
+>> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +		goto migf_err;
+>> +	}
+>> +
+>> +	vf_data->vf_qm_state = hisi_acc_vdev->vf_qm_state;
+>> +	ret = vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
+>> +	if (ret) {
+>> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +		goto migf_err;
+>> +	}
+>> +
+>> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +
+>> +	seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
+>> +			(unsigned char *)vf_data,
+>> +			vf_data_sz, false);
+>> +
+>> +	seq_printf(seq,
+>> +		 "acc device:\n"
+>> +		 "device  ready: %u\n"
+>> +		 "device  opened: %d\n"
+>> +		 "data     size: %lu\n",
+>> +		 hisi_acc_vdev->vf_qm_state,
+>> +		 hisi_acc_vdev->dev_opened,
+> 
+> I think the dev_opened will be always true if it reaches here and can be
+> removed from here and from hisi_acc_vf_migf_read() as well.
+> 
+> Please don't respin just for this. Let us wait for others to review this.
+>
+Hello£¬Alex Williamson and Jason Gunthorpe£º
 
-Please capitalize MOVS in the subject.
+Could you take a moment to review this patch?
 
-> Add emulation of the MOVS instruction on MMIO regions. MOVS emulation
-> consists of dividing it into a series of read and write operations,
-> which in turn will be validated separately.
+Thanks,
+Longfang.
 
-Commit message is pretty sparse. I think we need to elaborate on the
-similarities and differences with SEV implementation. Locking context
-difference is important.
-
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> index a75a07f4931f..45136b1b02cc 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -503,6 +503,10 @@ struct thread_struct {
->  	struct thread_shstk	shstk;
->  #endif
->  
-> +#ifdef CONFIG_INTEL_TDX_GUEST
-> +	unsigned long		mmio_emul;
-> +#endif
-> +
->  	/* Floating point and extended processor state */
->  	struct fpu		fpu;
->  	/*
-
-Hm. Do we need to track exact target address in the thread struct?
-Wouldn't be single bit be enough to allow MMIO to userspace address from a
-kernel regs->ip?
-
-There is space for the flag next to iopl_warn.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> Thanks,
+> Shameer
+> .
+> 
 
