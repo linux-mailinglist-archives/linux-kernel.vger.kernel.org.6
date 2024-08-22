@@ -1,191 +1,153 @@
-Return-Path: <linux-kernel+bounces-296705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E7C95AE10
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:52:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCB995AE0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF7728183E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3E71F2307F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1DD15445E;
-	Thu, 22 Aug 2024 06:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE2E1531FD;
+	Thu, 22 Aug 2024 06:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="UJOnDTLD"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2046.outbound.protection.outlook.com [40.107.255.46])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JcZQelw1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8880C15099E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724309523; cv=fail; b=jW5Bhz4zYXKewYs8jzxgPrZJ7sarUMtVl5rWEmXiKt98FsukMz5PUW6zHM7uz0BskaMZQxc622cd3dIU4Ww4F4aabzWlYiRD0Mlg5T2yAL0aCniGxitauOK6YDY+JLn5Up/v7AgBdFUxZj3fakRgh08yCAtxw3B5hRKRvUrG9XA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724309523; c=relaxed/simple;
-	bh=1dPOzVSO2WaKuQLekBUuy6XZqGKutGtDNi1NRhnhjbQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CCVdHGOyOE5rHTR7DYJMAQXg75VysHQQh69uCzZ69bhXCRxuhV1KtV3TGxUansnvYQT+iWAJ10b4Sp1wm4Jvum6nFb25CroI0qmo5dxbZ3+ZYWSPkULG5hyFlDjTr5mgaS8Ykh7uzB0f8hoEbGv4GN1k0/steZJ+jo08uwau5e8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=UJOnDTLD; arc=fail smtp.client-ip=40.107.255.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pdqPlNkilRtwM1F/dD0+qZ0AGd37sy2BVbuteXIUKFzcLSiZxITGSKzzFWNegEiI16fUM2UIag8bhqZK1Z5rc6EFZi3rG7rQsun6ytX7fTDtlT8hhw70t1ZyFnxAPvKyAACam1swEScm4lirm0rnr9WgFcFogFp4E16N2VDwijocbVjaGwhnIPHjzDrTXI+1xVSrJasJOzSD8/aF3ziLHIvNDg0xBsJkcUhgYAieeyrqOV41zTWOJ2doQs+D1/nAIgUXv1db/hXK5izcaA/pf6sqLVtivQ8f8/1NdHq5fl+RedAqVEjvRnZDI4YCH+IRqbTmZ+/Npxg36ctLrQai/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AaG5MbNUU+PU5oj5mUfga4yQ1Xw2kXZCJD+gDoOUTgg=;
- b=y1ENyunFphoU3RWEELS5sumxRFSmv76vQHczdsD00FS22LCaPkY4R04PwjeOYRSbtO5jCi76F3oShMhfI3mrEP+e54xTKttZxY5wWYdhvj4Bcqp4XmCr8pYFi+AHjslwvKe35AY/L+7Is+ctx5fbchqNcI0TCjJUAfsd4ybwbN6t2WKoQmAxR9zcL3C3dG9SXVAWB64uVIR2Uez/mR9f3RxN9MyDN4Zr9b5KZuDGY92qPvacGvQngyvstwMRh1JRxUQnmidW+3O0LhRb3/t5vApBtPTYwvzaoxAknGoNhOa79WTuCGCiZt7gG14tkbXsFGzcQD2lo1A9Gwz9+lOY2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AaG5MbNUU+PU5oj5mUfga4yQ1Xw2kXZCJD+gDoOUTgg=;
- b=UJOnDTLDMcoloexC4otI0fPq6E6yZnec+5IlWK4QLIXJSol9rpppz823i/4MheSndxpWMPP1STGbB7paAH+EdY7GojjWg+7tfo6TXvk8yBFaqxCoDOVbfkINZuZQUn3ifHiBPY9Ujggot2DVAjsI9fcUpD053WyP47G1/A5W+FfyqXRdQyib2vLwpBwnHE8ki4uEc3kLvEUpDabTytgxR0L2bIEbQKGDH9Rm2ySwkk2K4U46Rulu7IvXEezG82nDyKb3rM/lZyI1riZEZDDjlcwl4p6XrZTUZqzvNs4R0TAB0RL6Jynb8EsRbU4axr4xqeOO9Jr1wfmbLCbv6Vw3Gg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by TYZPR06MB5417.apcprd06.prod.outlook.com (2603:1096:400:203::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
- 2024 06:51:58 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%7]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
- 06:51:58 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Hamza Mahfooz <hamza.mahfooz@amd.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Hersen Wu <hersenxs.wu@amd.com>,
-	Dillon Varone <dillon.varone@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1 1/6] drm/amd/display: Use max/min macro
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DC514E2D4;
+	Thu, 22 Aug 2024 06:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724309521; cv=none; b=EfPJ5dfGrFb02qwDkBmjqtnMDln6Bptnm8hQi6JaW7ezrZrRetWf5+Xa+pbbPrgM1wY+RtwXNjdpQVeKuU8Xd+Dz2C0zQjFrxtWUcs+XykQOlcrJzD93ehlcnpqTn895goFymBj6cGa3CbCiZAq6R/gypv3ngNrPTa2/zM53rrw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724309521; c=relaxed/simple;
+	bh=e501kEiNqiZZzJQ3GqU/FHgxQXDWv6I7kR2Zf+I0Iuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHiUOixRSI7l0YmMqHrquSXqct6feyqpwOLcDwHOy4YMEcgkCXnwnD8WSxQGMtDStDGmjfJe+Rgp0SXju1IYkXxdlmcbJS2XvsgYbXrSMgx5bscfZbGCLwSgAcDHusEalXp7QjqJqpNwZueZv/FddKIUCZDsMppRfkPBsyLKg3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JcZQelw1; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724309520; x=1755845520;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e501kEiNqiZZzJQ3GqU/FHgxQXDWv6I7kR2Zf+I0Iuo=;
+  b=JcZQelw1CtSvjouAr5P80Y7SB1r2krUM1GKfn2oYz6z71hDQG3nk5V3P
+   fnz7clHDRmZVOFDRDndmmbvaUVjT3ncR8WbEAMK05B61JGPtoCNi2UAbH
+   hRlD3naMMyD0iBMErjmijZScLcy+Tucyn1Bqy85O3RzoNJWDzmx9p5qm0
+   36C0RZLd6x053rkZGKf5zgOGdDSm4eKO5KfQPbhi3uRZNzKstgRvVWdQn
+   a+m1KuVs+PPlb9jLhKX+XfJ8WHMDpbnaIzPIgk9UobumeTc+aeV88K33G
+   1VwE3uJqJ1XJoZ8OfVkND3iMuGlXrGaMHjjf79EbOPMjYhC5g0KCRQIt5
+   A==;
+X-CSE-ConnectionGUID: GHn7RPzkSOWi606/XEf+bw==
+X-CSE-MsgGUID: oc16rxKxQmWGrevBOn+uiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="34087997"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="34087997"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 23:51:58 -0700
+X-CSE-ConnectionGUID: ZDUJXdY4R/6A2T/GAN1RVg==
+X-CSE-MsgGUID: KNPutsCyS5KvnBYqRnqL7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="66227345"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 21 Aug 2024 23:51:55 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sh1fj-000CUG-1W;
+	Thu, 22 Aug 2024 06:51:51 +0000
 Date: Thu, 22 Aug 2024 14:51:32 +0800
-Message-Id: <20240822065137.1331172-2-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822065137.1331172-1-yujiaoliang@vivo.com>
-References: <20240822065137.1331172-1-yujiaoliang@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0168.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::24) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+From: kernel test robot <lkp@intel.com>
+To: Daniel Golle <daniel@makrotopia.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Chad Monroe <chad.monroe@adtran.com>,
+	John Crispin <john@phrozen.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: phy: aquantia: allow forcing order of
+ MDI pairs
+Message-ID: <202408221406.WtGcNGxX-lkp@intel.com>
+References: <ed46220cc4c52d630fc481c8148fc749242c368d.1724244281.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|TYZPR06MB5417:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38239651-7806-4161-16da-08dcc276eb1c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|1800799024|366016|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pdTk4f0IAlKCi7A0zpkiCzp1y7NsB2MbhIZ+GYESIF9DM0QAzo/+Q/y60KSZ?=
- =?us-ascii?Q?OgBcc4foiImnOY7z4XDEzh+IGv5ffKYF98p4ysWcdVKVk2W7cMPbzfLxZtsp?=
- =?us-ascii?Q?lk534wD51WswmNopvsGu/eIPGID2WIvR54Y8AeMtvjVAo2N7CMYSjIefl/dX?=
- =?us-ascii?Q?k+O0YV7BIz2dQR/Y4n9hK6S6R1HT8NlwfxMuPCS8lSkQuSLjYocstWpF9BXT?=
- =?us-ascii?Q?32sywfc07UAkALzF5UprAW6RSUJZU9BqAbBMJkUCBgvEXi6KMK+FaD/kE+1C?=
- =?us-ascii?Q?v9UPUBSCRaSektGGDFdj5fVn5THbpKfnGTnZSSQXHPlN4+itHDhxClOLCcwc?=
- =?us-ascii?Q?zRglCcuqI7Gnudrml/fDR1/aekKrqlX0a6Z84Np6yojsOForuhRKHwZ0T/Ui?=
- =?us-ascii?Q?3x0M+CcNbJpX3fRxmt7brKxEv6Q3doAEJmiBrdCHYLmGd54276A1REURL1dx?=
- =?us-ascii?Q?lVxySgJUhg/VVNhbCAlNFWEmg7bKscbnHQoAr4ddIQubh//DpevlfyJG0iBR?=
- =?us-ascii?Q?44VqA4ktEq3ww9juKpgUpUcDCsqvBIXHxUXRF1bzrPSP/cs1XI50KsmmuaKF?=
- =?us-ascii?Q?exiap5EWQIsay/yjrqaUvO41w4OSYFmIlU05N2qmZmEyU/xw7Qr3K+D+xPPk?=
- =?us-ascii?Q?tWED+7luYpvu6dvl6dg65QAgDgCp6yB9xQwVZq5csc5T7Xgh5Fw1dvsDYaJE?=
- =?us-ascii?Q?VXmni05+Ej/eAZi7pjL6O12aGhCV+eqapQoSWFBl3Wn+O9nT3VjFyD9E/ciB?=
- =?us-ascii?Q?hJl5GXUEyYskP+Jolky4Dj2y878oLj2WSmFJnNUYx5gbFGMyL6pBqJ5b40Nc?=
- =?us-ascii?Q?0t0oj4lDodOcNUJg43YjJoTAmpoX2+P19CESUV4DCYtmDMnwlIakeT9EyxIg?=
- =?us-ascii?Q?WQbMDGqPPZwu4tBN50sUw7sZuSTY5WzoUqbkF8sEzotX9XEnyofq8ivyGpTI?=
- =?us-ascii?Q?WX0aUaiueHeZL2ca3QUZQx587gqDVgUnVzy3S2qt2xBmkUUT/CmbMfkN3fC/?=
- =?us-ascii?Q?1Moo5WISDtTAv1zigu9mhG/Nm8XPmTP7ztuIRbXpBKTLMYPsBp7/G7gM33Ls?=
- =?us-ascii?Q?S/GO8pwm7pTi3sXopF0RSG+ua5pN5HdYasHKmaEzUlrNXjnBipANG0yhlYL3?=
- =?us-ascii?Q?RTOXW4n0uzrcniB9LPg4T6e3vKj+72gzW5qir0Fhhm4QTK5u5yqojQzdxTPA?=
- =?us-ascii?Q?MkuexsPn877PMxyuGZmUJDte9Yy0/oF7X/pKsbmwUzQdhJzZrYWQiDWdfurS?=
- =?us-ascii?Q?5ULa/aFLhTRiBQkUNZV5YN/FNkQpVuIU84B5alDu+8oJG5uSTUaXrF/8Y5G7?=
- =?us-ascii?Q?l/Qjr7HD0/r02dTgKRmowEY79McdGZSXJqSp4uWpxsr4PT5oq+YvvSzduxUA?=
- =?us-ascii?Q?szuLVno/djlufbxzfmhBKx5VorN5uZOiAP1FwVlz/ufHiDDFRxbMicY8jfvy?=
- =?us-ascii?Q?mw/Fm6L/eME=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(1800799024)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ir0y29G0SOc39FRqWz90V5TmNHOSoGooLHD1CyD6U9xIFuMPssifkIM6vAkW?=
- =?us-ascii?Q?+1j7tPBB0E3fKoC08tdUp4yeJtZVbpf7JNyoCH8kQgMCfvnfhtGbZ4PbCxUO?=
- =?us-ascii?Q?D8rvDdj4p/29lqWGqhhcdAOvixVYlhtdhOvjUo5bOZ5UsmIRnUSv4qk7X8GO?=
- =?us-ascii?Q?Kl9N3V8APtTNpjRzTSzv3wG6GMTQ6Ocztt/grjqxvFBe1SIdcJF1cK+ukqei?=
- =?us-ascii?Q?OukhuL0OcCUw0J9oLPRDge8GXWTFOdvlYEopa3kBI+siuhhh3wMu+8Ft2sHa?=
- =?us-ascii?Q?KF/6l3VdRD2mVkJrnxpfV4yxY46f3rwnemq8Qbf/goAOGWuqsDMakXH4y7K5?=
- =?us-ascii?Q?L5UO6aVTP0wCj9lzZWe4dZ3euCKynPG4MtWHcvvw/cMJGe5bFmsn6H2Ana2o?=
- =?us-ascii?Q?VgpmXIvDEVeGqJHSgWDC+O9s+BWzdsGrF5pelMMioiA5ISzXEWl+WGmSN38K?=
- =?us-ascii?Q?kE1V8M816SqJo9jkhAnHN4F11vORuqKeI6uOA26U8cdTLHOi6fsT1qDVoNvf?=
- =?us-ascii?Q?MDICL8R3TtSyutKKUIHaiOIFdTWljnLBezEyxFc1tcmbNbmrOZq5UrGmwHzy?=
- =?us-ascii?Q?1bPM/VKiVR43ssSHG/O5qPC8cyHqfXoUcHngEeattTr/15pcaa5Ol2qP0mln?=
- =?us-ascii?Q?44byRC98U/K49IQGnn1GNEDSQM6ZjzYtqJbd5m0Wobb5PBpW65PeiDlDQDt+?=
- =?us-ascii?Q?74Zf52jDP2Bo0P6r/6E7WHFK0I+yBv7tzyecY9T4/B7V5H3THEhsBGGzd6r7?=
- =?us-ascii?Q?aSbsbemw5L0sJj/P0zK65pJtp+N5NAi8XiqhSUUaKRbpZXLL9G78isScTaon?=
- =?us-ascii?Q?iJCHi3oX9yisMJLRZ284kxq4gmcEqnsjDN4xk5A4RPvc+6T8DHaa6CjR2TWk?=
- =?us-ascii?Q?Yzr5D/z+oXtk+aMRe8yGwJakwTb592Hp25mRR0QHSQccByMTYYLM2mMrlwmP?=
- =?us-ascii?Q?r245k8P4UY9T6mKHqJbPPUzBX791kdR2JAFKkfI0h2S6yjFoEYEIyiANqk3t?=
- =?us-ascii?Q?ctLatknOdF32W/lfmj/t1qPFqheg3YM+Y42p7RZqe46ylQkdHNIMyHhF+zLq?=
- =?us-ascii?Q?w+AHYiTsc4N/3xTM9vzlNwI6gcNbIt3KJwt/Fa2qLPEYcRAT5s1KLYRxbGrg?=
- =?us-ascii?Q?+C7egH0V3WUGcIHz9ubfLboiaLyzTQEzaTVaZDRMwYRnkCHQI3aEB9bSl5zU?=
- =?us-ascii?Q?drLicnccUR31rT22yjXjOo/XleWKgc8Myew3919H2NGA+vkedb1z2ahvoF2d?=
- =?us-ascii?Q?FWNoQpGgOhrcCBJzGNylYA1yuPeJ8TU3rPQYHdNkiQV5Qm0qRLY1WFwe4D/9?=
- =?us-ascii?Q?AqOOG25DjPbOs1C8nZclCJUObnTfem04ft2gWnhB0/OGlz42JbogdzAyabNc?=
- =?us-ascii?Q?osSnYogtLEJ4WhQIdcLDdKbTU6G1dbTVC1FOtzRxwaKbETqlOKX8VHYFgzMn?=
- =?us-ascii?Q?9/FJPvtArAN6yzBqYNzf9iSb0OcDng/y4lyHRv5N9hZUtbf8pM8IEDzoaPw/?=
- =?us-ascii?Q?m/HFDqvbhI1rV+avVQwRdi3+MQR5MDRxCxgfSro1qq44R2763IAvZSupmKY3?=
- =?us-ascii?Q?GHBQqAxGRnwWdqQQpLkhf4041rBgRfqjVUiH/1h+?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38239651-7806-4161-16da-08dcc276eb1c
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 06:51:58.8304
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7FEL8rz1yjE9ZMU/O1pjbhDZMqbn7wK/Dc0baa0xLtEXapDxBptsC0vtlny9MTDaIjG88afmTmTQhRl+Rmsr7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5417
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed46220cc4c52d630fc481c8148fc749242c368d.1724244281.git.daniel@makrotopia.org>
 
-Use the macro instead of ternary operator.
+Hi Daniel,
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
----
- drivers/gpu/drm/amd/display/dc/bios/bios_parser.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-index 3bacf470f7c5..f8c1650eb21f 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-@@ -2300,8 +2300,8 @@ static enum bp_result get_integrated_info_v8(
- 		le32_to_cpu(info_v8->ulNbpStateNClkFreq[0]);
- 	for (i = 1; i < 4; ++i)
- 		info->minimum_n_clk =
--			info->minimum_n_clk < le32_to_cpu(info_v8->ulNbpStateNClkFreq[i]) ?
--			info->minimum_n_clk : le32_to_cpu(info_v8->ulNbpStateNClkFreq[i]);
-+			min(info->minimum_n_clk,
-+			    le32_to_cpu(info_v8->ulNbpStateNClkFreq[i]));
- 
- 	info->idle_n_clk = le32_to_cpu(info_v8->ulIdleNClk);
- 	info->ddr_dll_power_up_time =
+[auto build test WARNING on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Golle/net-phy-aquantia-allow-forcing-order-of-MDI-pairs/20240821-210717
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/ed46220cc4c52d630fc481c8148fc749242c368d.1724244281.git.daniel%40makrotopia.org
+patch subject: [PATCH net-next 2/2] net: phy: aquantia: allow forcing order of MDI pairs
+config: x86_64-randconfig-123-20240822 (https://download.01.org/0day-ci/archive/20240822/202408221406.WtGcNGxX-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221406.WtGcNGxX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221406.WtGcNGxX-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/phy/aquantia/aquantia_main.c:483:5: sparse: sparse: symbol 'aqr107_config_mdi' was not declared. Should it be static?
+   drivers/net/phy/aquantia/aquantia_main.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/umh.h, include/linux/kmod.h, ...):
+   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
+
+vim +/aqr107_config_mdi +483 drivers/net/phy/aquantia/aquantia_main.c
+
+   482	
+ > 483	int aqr107_config_mdi(struct phy_device *phydev)
+   484	{
+   485		struct device_node *np = phydev->mdio.dev.of_node;
+   486		bool force_normal, force_reverse;
+   487	
+   488		force_normal = of_property_read_bool(np, "marvell,force-mdi-order-normal");
+   489		force_reverse = of_property_read_bool(np, "marvell,force-mdi-order-reverse");
+   490	
+   491		if (force_normal && force_reverse)
+   492			return -EINVAL;
+   493	
+   494		if (force_normal)
+   495			return phy_modify_mmd(phydev, MDIO_MMD_PMAPMD, PMAPMD_RSVD_VEND_PROV,
+   496					      PMAPMD_RSVD_VEND_PROV_MDI_CONF,
+   497					      PMAPMD_RSVD_VEND_PROV_MDI_FORCE);
+   498	
+   499		if (force_reverse)
+   500			return phy_modify_mmd(phydev, MDIO_MMD_PMAPMD, PMAPMD_RSVD_VEND_PROV,
+   501					      PMAPMD_RSVD_VEND_PROV_MDI_CONF,
+   502					      PMAPMD_RSVD_VEND_PROV_MDI_REVERSE |
+   503					      PMAPMD_RSVD_VEND_PROV_MDI_FORCE);
+   504	
+   505		return 0;
+   506	}
+   507	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
