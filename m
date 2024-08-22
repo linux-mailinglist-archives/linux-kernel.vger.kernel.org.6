@@ -1,90 +1,49 @@
-Return-Path: <linux-kernel+bounces-297269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BF995B52C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:40:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D54495B533
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09084281841
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54DBD2859F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C2A1C9DED;
-	Thu, 22 Aug 2024 12:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B561C9DE6;
+	Thu, 22 Aug 2024 12:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fOGmcJ0y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WeCLv+Yj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60423146A6E;
-	Thu, 22 Aug 2024 12:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9A31C9DC0;
+	Thu, 22 Aug 2024 12:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724330410; cv=none; b=cTn5/rfXVKMXIHmdNcFsLvkVsQG1/6GSFL09BKIOufNJ7Gx3n0W+rPJIXW0OVWkyrVkO0jfkAckoJKZSjawVG55TlckeIOePvMro5CmQiPxfilFO1keFQkxwLS220XrFr4GBJLKUVxS/ibYQJPaw0/zBaUh9rArq+VjC5tpHFyc=
+	t=1724330428; cv=none; b=gQwyuF5j4NNt+/PZiT7ju/0PsZKNChnkhnFNqZkC/UzZdRTdosq9q/G3cyLXfYSiFpDxTkpcIy4TRFgRpYZdNBOZ1o4TqigQQhOD5aKdPY0cY5LVPjuiw6UOzMBBYmHY5OYq69UJxsljvmpMgtdjEq4A8Rbzk2SZghr5/w3Fyes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724330410; c=relaxed/simple;
-	bh=UJSYe9Co8WtZ1/D2W+TpdPAS7LIZhmBIyvDdCVYV3gI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gwpymHgB/oxkBGrqjMVQvzoIQe6+lY9UhU0P0NageNl1i6G8Y/EVxSB/Vn49Q+lq7RUAY9bbNnfdV5u9BKYoUb3ULH+5Lk7ojGe+7/a27AuFsApdE7+8xn3DCx5IeMar6dxJ+Bs7lLq/64iMazqUaQBzNTRCBprS9i9vmhyhZC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fOGmcJ0y; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724330408; x=1755866408;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=UJSYe9Co8WtZ1/D2W+TpdPAS7LIZhmBIyvDdCVYV3gI=;
-  b=fOGmcJ0y4eJqAUdG0ub3TAHKi5ZrnlxF0b/KlL06c8b71mJnwqdiKqRD
-   q6EZ5YIDSCMpNYvog3PiLqoRTpmmdyxMlQnqO1Vz8W2v3PDqonXWO4O7c
-   VNhNJMXhVqJvpFzhLptMDRGF7CBlXBr5YXH18DWIro1rE3N/TdmX7yAyw
-   cV26etSBFMjiI0ABbT0IGahKEsVPTpdoxWif7e2i0CpubOOK6KZliFvPc
-   NHf5SRnSaCqdjCc2hqdwem2ctgWQMXdNJjCFsgv6/4hZzQWLHOjIXm6A4
-   3hzGMdDBMq0FpPZzq/9sHXROBmAotD6RzFlRlmVIKyAFzEwvg/20wwS76
-   g==;
-X-CSE-ConnectionGUID: 7TaaYo0CQCKVRgR4XbSIFQ==
-X-CSE-MsgGUID: BKkteXmSRPqtrpnNC2SsgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22554207"
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="22554207"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 05:40:07 -0700
-X-CSE-ConnectionGUID: +vB+UJC6SUiseNdT72z9Ew==
-X-CSE-MsgGUID: PueyqbE5TUmfgVndqRXc+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="66320992"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 22 Aug 2024 05:40:04 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 5035B6CC; Thu, 22 Aug 2024 15:40:02 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Baoquan He <bhe@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sean Christopherson <seanjc@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>
-Subject: [PATCHv4 4/4] x86/64/kexec: Rewrite init_transition_pgtable() with kernel_ident_mapping_init()
-Date: Thu, 22 Aug 2024 15:40:00 +0300
-Message-ID: <20240822124000.1171321-5-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240822124000.1171321-1-kirill.shutemov@linux.intel.com>
-References: <20240822124000.1171321-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1724330428; c=relaxed/simple;
+	bh=3NME5TdQjQu2vBq31Ff2gB4ShQY+flAvOvLdzFegR1Q=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=VjzrBF6rMHv2fJXPH+r/KCCFKrn3k2yRbFP3Phfcjdp9D8EQ5n1jgHiKihNllQwWkRkz8z1uU3gk+mo6UzqhyDyH9mIzI5QNCQ/Ck7qYI6aEPa6YPY6zQg5s9AU3PeeRbNd+kXCmFNl3NKUS3uG3zeBC0PzNEFP67vGgS1NT3Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WeCLv+Yj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DECC32782;
+	Thu, 22 Aug 2024 12:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724330428;
+	bh=3NME5TdQjQu2vBq31Ff2gB4ShQY+flAvOvLdzFegR1Q=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WeCLv+Yjhtuo/72vuBK4G0feJIarWS5RKpHioSnBw6o75Bi+UJS5CHFu4pzizxIoV
+	 e9N1er8oKQ2NV/AGkUtl/QBEbmvRtjurWw9mMHKpVzvgYk/oMHeslTk15l/pU0FTaa
+	 czQvY6TtltsXa8eXYvv4nN4xDaK+3lghTpDSS6Xi/icz4MT2sf2/xu8u1E1OZiPdUh
+	 pHma56cyWe5B0GHtMJvP8EylZa6wCscLyDaIN5Qu8EXFZMprmyYxxAYWreTyymfNb7
+	 eeq00W7LqxxYQIrnhd2o3ApQofad9Dqn143OB9JHGdUipOk1ugLKFUs+5uU7guC+rf
+	 D7W3GsUt4SoBA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF483809A80;
+	Thu, 22 Aug 2024 12:40:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,152 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1] net: filter: Use kmemdup_array instead of kmemdup for
+ multiple allocation
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172433042779.2310315.2449086837418172334.git-patchwork-notify@kernel.org>
+Date: Thu, 22 Aug 2024 12:40:27 +0000
+References: <20240821073709.4067177-1-yujiaoliang@vivo.com>
+In-Reply-To: <20240821073709.4067177-1-yujiaoliang@vivo.com>
+To: =?utf-8?b?5LqO5L286ImvIDx5dWppYW9saWFuZ0B2aXZvLmNvbT4=?=@codeaurora.org
+Cc: martin.lau@linux.dev, daniel@iogearbox.net, john.fastabend@gmail.com,
+ ast@kernel.org, andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
 
-init_transition_pgtable() sets up transitional page tables. Rewrite it
-using kernel_ident_mapping_init() to avoid code duplication.
+Hello:
 
-Change struct kimage_arch to track allocated page tables as a list, not
-linking them to specific page table levels.
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/include/asm/kexec.h       |  5 +-
- arch/x86/kernel/machine_kexec_64.c | 89 +++++++++++-------------------
- 2 files changed, 32 insertions(+), 62 deletions(-)
+On Wed, 21 Aug 2024 15:37:08 +0800 you wrote:
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> ---
+>  net/core/filter.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index ae5482a2f0ca..7f9287f371e6 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -145,10 +145,7 @@ struct kimage_arch {
- };
- #else
- struct kimage_arch {
--	p4d_t *p4d;
--	pud_t *pud;
--	pmd_t *pmd;
--	pte_t *pte;
-+	struct list_head pages;
- };
- #endif /* CONFIG_X86_32 */
- 
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 645690e81c2d..fb350372835c 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -134,71 +134,42 @@ map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
- 	return 0;
- }
- 
-+static void *alloc_transition_pgt_page(void *data)
-+{
-+	struct kimage *image = (struct kimage *)data;
-+	unsigned long virt;
-+
-+	virt = get_zeroed_page(GFP_KERNEL);
-+	if (!virt)
-+		return NULL;
-+
-+	list_add(&virt_to_page(virt)->lru, &image->arch.pages);
-+	return (void *)virt;
-+}
-+
- static void free_transition_pgtable(struct kimage *image)
- {
--	free_page((unsigned long)image->arch.p4d);
--	image->arch.p4d = NULL;
--	free_page((unsigned long)image->arch.pud);
--	image->arch.pud = NULL;
--	free_page((unsigned long)image->arch.pmd);
--	image->arch.pmd = NULL;
--	free_page((unsigned long)image->arch.pte);
--	image->arch.pte = NULL;
-+	struct page *page, *tmp;
-+
-+	list_for_each_entry_safe(page, tmp, &image->arch.pages, lru) {
-+		list_del(&page->lru);
-+		free_page((unsigned long)page_address(page));
-+	}
- }
- 
- static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
- {
--	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
--	unsigned long vaddr, paddr;
--	int result = -ENOMEM;
--	p4d_t *p4d;
--	pud_t *pud;
--	pmd_t *pmd;
--	pte_t *pte;
-+	struct x86_mapping_info info = {
-+		.alloc_pgt_page	= alloc_transition_pgt_page,
-+		.context	= image,
-+		.page_flag	= __PAGE_KERNEL_LARGE_EXEC,
-+		.kernpg_flag	= _KERNPG_TABLE_NOENC,
-+		.offset = __START_KERNEL_map - phys_base,
-+	};
-+	unsigned long mstart = PAGE_ALIGN_DOWN(__pa(relocate_kernel));
-+	unsigned long mend = mstart + PAGE_SIZE;
- 
--	vaddr = (unsigned long)relocate_kernel;
--	paddr = __pa(relocate_kernel);
--	pgd += pgd_index(vaddr);
--	if (!pgd_present(*pgd)) {
--		p4d = (p4d_t *)get_zeroed_page(GFP_KERNEL);
--		if (!p4d)
--			goto err;
--		image->arch.p4d = p4d;
--		set_pgd(pgd, __pgd(__pa(p4d) | _KERNPG_TABLE));
--	}
--	p4d = p4d_offset(pgd, vaddr);
--	if (!p4d_present(*p4d)) {
--		pud = (pud_t *)get_zeroed_page(GFP_KERNEL);
--		if (!pud)
--			goto err;
--		image->arch.pud = pud;
--		set_p4d(p4d, __p4d(__pa(pud) | _KERNPG_TABLE));
--	}
--	pud = pud_offset(p4d, vaddr);
--	if (!pud_present(*pud)) {
--		pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
--		if (!pmd)
--			goto err;
--		image->arch.pmd = pmd;
--		set_pud(pud, __pud(__pa(pmd) | _KERNPG_TABLE));
--	}
--	pmd = pmd_offset(pud, vaddr);
--	if (!pmd_present(*pmd)) {
--		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
--		if (!pte)
--			goto err;
--		image->arch.pte = pte;
--		set_pmd(pmd, __pmd(__pa(pte) | _KERNPG_TABLE));
--	}
--	pte = pte_offset_kernel(pmd, vaddr);
--
--	if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
--		prot = PAGE_KERNEL_EXEC;
--
--	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, prot));
--	return 0;
--err:
--	return result;
-+	return kernel_ident_mapping_init(&info, pgd, mstart, mend);
- }
- 
- static void *alloc_pgt_page(void *data)
-@@ -299,6 +270,8 @@ int machine_kexec_prepare(struct kimage *image)
- 	unsigned long start_pgtable;
- 	int result;
- 
-+	INIT_LIST_HEAD(&image->arch.pages);
-+
- 	/* Calculate the offsets */
- 	start_pgtable = page_to_pfn(image->control_code_page) << PAGE_SHIFT;
- 
+Here is the summary with links:
+  - [v1] net: filter: Use kmemdup_array instead of kmemdup for multiple allocation
+    https://git.kernel.org/bpf/bpf-next/c/b6ab50902724
+
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
