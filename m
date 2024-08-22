@@ -1,121 +1,142 @@
-Return-Path: <linux-kernel+bounces-296579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C89395AC59
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:05:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007A995AC5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D692283CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2CBE283CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A8636AE0;
-	Thu, 22 Aug 2024 04:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEDF38DD3;
+	Thu, 22 Aug 2024 04:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFj5BQt9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OuSsMDjW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEEB1B970;
-	Thu, 22 Aug 2024 04:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD771B970;
+	Thu, 22 Aug 2024 04:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724299495; cv=none; b=BwLqTyAWsG8EUBY8w0IYdicozm7vLmeb/q0uXXlURIL8y5Lkqq8tajl66uPHUObmfZBWJS+2XOENaMV44o6inWeX1HRqutarMgklnXzwi4zv4cxaYIV2Y5+Mrhi9JyWPF4SaG5yo0AnVmz+G8NxBB0jcy7DqhAKFv2UM4XMYhQM=
+	t=1724299591; cv=none; b=NoOY5cY1hIWsAvjKcHvZVxuEeCepE7ToNRzmsAq5uWKHPEYj+UvP5Q9pFvhqYGZkIk4JzTYhRQ52W2GEsTbmxUFDxrQDmgI7zlWKZeL/mg2ra4BxCU48/L7DMwYOekuu65G0aZlo1yH+xJKcj9szFyLZSJ+w8pXAfEi/X57RTdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724299495; c=relaxed/simple;
-	bh=tbe4FZUkzz+iVMQdUiF9BG9MZYXNRR57xKnKHiajJZc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RWpESdh3hlouej7aiE7YGkqpWD7ygmIUqy+sS+/7yEyNiWo53SvJs+jPmzxz+ySLhikibAo1Oa35C6EJlPEke9RxcS4HO0LbNZvNje8udyNP7On4tY9+ilMtNCdakO375zcxu/GcXc8VMDhxL//c8Zyz010yi7lbfkwSIow2rZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFj5BQt9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72061C4AF09;
-	Thu, 22 Aug 2024 04:04:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724299495;
-	bh=tbe4FZUkzz+iVMQdUiF9BG9MZYXNRR57xKnKHiajJZc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JFj5BQt989BcieRka9JzUyKpbJpUE0ShZUw/SCgbsDVG7uHs3xVHiYDmFXJm5PNz7
-	 VhpYE3iW91v6e88TQuGd+3ftgW2HnMcU2GKmTfT/aKjGkg0Q+ry4tRQ8W96s0a/9XU
-	 KOpvr2PyR/0YUnJEIQ9MeeIJ46O+IDZil9a6/PWmL5BV5anmL5ZbQLFCHYPhdGOqIf
-	 rB60oYFxM69i+IUGKwVXS4BEnSaRnk98pDx7HFyRuOwM7kXyz97CkLOMvyqbyWvria
-	 WR/cvPhETy/rvHHTBBEBa7RrEn9okX+M8/jxpqD8JLlcTxTK6a38nLqDivtIawDoPO
-	 W4tkDpgsMWNdw==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v4 18/43] arm64: RME: Handle realm enter/exit
-In-Reply-To: <20240821153844.60084-19-steven.price@arm.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-19-steven.price@arm.com>
-Date: Thu, 22 Aug 2024 09:34:44 +0530
-Message-ID: <yq5a34mx2of7.fsf@kernel.org>
+	s=arc-20240116; t=1724299591; c=relaxed/simple;
+	bh=h+7VUn8zijg/bGK9rj92aQWLkRIvnnYNAUgbwBMKUtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6KBl7/LYmuobvo0r/9wJ9b6LtteB8fp6c0QG0BmfRSlyO3SGtRIXWQ9MbyVW0Kh6y4aNrTzqfR7yRHDMSpUOooDgSeqd18GMyCkE5FGGZ20NfWIY5DKgbaGLxLEdEfoR+UpDC3kEwbdo7c7mc78YSGFxjDzmbXpldXrb/r5j3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OuSsMDjW; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724299589; x=1755835589;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h+7VUn8zijg/bGK9rj92aQWLkRIvnnYNAUgbwBMKUtE=;
+  b=OuSsMDjW338wT5fwfTCIsCLbLrrbEyIkOrvDyPfjeXi41AOmxy3G+Z7/
+   n+aU5m6jQ/TlBnWQ4jPyNzlgYJh38ZVuPl/ZQ50f5IThxKpklfcE9S6+8
+   x4UtWpBxzUcFAxofKorIEDvz0Dp5UPG9pfwEL43juhDznazN4jzQ5Rm0o
+   u4rph5KS8EOY9+Y2ECUuTwb3kr3Mk+tgmYfFlfTt6rhcVsgYiTLbL9uG8
+   w1J583ObRmiftgxucMpq53A1n1eht08Koj6iDz2gkiijqLVg5J5EPkT6/
+   r63wnbuabVA0vVv8VTmcmE1tAlp/GG5bJwtFWYOdteJluhkCvv/Pm//ss
+   g==;
+X-CSE-ConnectionGUID: EqZBDZTDRwaYDqSge3GqCQ==
+X-CSE-MsgGUID: 7u+yb3ctQWis2UQI7UfNmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22874173"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="22874173"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 21:06:28 -0700
+X-CSE-ConnectionGUID: UhBDiS8ERQyGVVxG8PYIKA==
+X-CSE-MsgGUID: UMplunvoT3iAhBaIVt1hvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="84483979"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 21 Aug 2024 21:06:25 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgz5a-000CJ8-1v;
+	Thu, 22 Aug 2024 04:06:22 +0000
+Date: Thu, 22 Aug 2024 12:06:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Heiko Stuebner <heiko@sntech.de>, lee@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+	heiko@sntech.de, dmitry.torokhov@gmail.com, pavel@ucw.cz,
+	ukleinek@debian.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] mfd: add base driver for qnap-mcu devices
+Message-ID: <202408221141.ZK7cre1s-lkp@intel.com>
+References: <20240819144000.411846-3-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819144000.411846-3-heiko@sntech.de>
 
-Steven Price <steven.price@arm.com> writes:
+Hi Heiko,
 
-....
+kernel test robot noticed the following build warnings:
 
-> +static int rec_exit_ripas_change(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm *kvm = vcpu->kvm;
-> +	struct realm *realm = &kvm->arch.realm;
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +	unsigned long base = rec->run->exit.ripas_base;
-> +	unsigned long top = rec->run->exit.ripas_top;
-> +	unsigned long ripas = rec->run->exit.ripas_value & 1;
-> +	unsigned long top_ipa;
-> +	int ret = -EINVAL;
-> +
-> +	if (realm_is_addr_protected(realm, base) &&
-> +	    realm_is_addr_protected(realm, top - 1)) {
-> +		kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_page_cache,
-> +					   kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
-> +		write_lock(&kvm->mmu_lock);
-> +		ret = realm_set_ipa_state(vcpu, base, top, ripas, &top_ipa);
-> +		write_unlock(&kvm->mmu_lock);
-> +	}
-> +
-> +	WARN(ret && ret != -ENOMEM,
-> +	     "Unable to satisfy SET_IPAS for %#lx - %#lx, ripas: %#lx\n",
-> +	     base, top, ripas);
-> +
-> +	/* Exit to VMM to complete the change */
-> +	kvm_prepare_memory_fault_exit(vcpu, base, top_ipa - base, false, false,
-> +				      ripas == 1);
-> +
-> +	return 0;
-> +}
-> +
+[auto build test WARNING on next-20240819]
+[also build test WARNING on v6.11-rc4]
+[cannot apply to groeck-staging/hwmon-next lee-leds/for-leds-next lee-mfd/for-mfd-next lee-mfd/for-mfd-fixes linus/master v6.11-rc4 v6.11-rc3 v6.11-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-arch/arm64/kvm/rme-exit.c:100:6: warning: variable 'top_ipa' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-        if (realm_is_addr_protected(realm, base) &&
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/arm64/kvm/rme-exit.c:114:44: note: uninitialized use occurs here
-        kvm_prepare_memory_fault_exit(vcpu, base, top_ipa - base, false, false,
-                                                  ^~~~~~~
+url:    https://github.com/intel-lab-lkp/linux/commits/Heiko-Stuebner/dt-bindings-mfd-add-binding-for-qnap-ts433-mcu-devices/20240819-224312
+base:   next-20240819
+patch link:    https://lore.kernel.org/r/20240819144000.411846-3-heiko%40sntech.de
+patch subject: [PATCH v5 2/7] mfd: add base driver for qnap-mcu devices
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240822/202408221141.ZK7cre1s-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221141.ZK7cre1s-lkp@intel.com/reproduce)
 
--aneesh
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221141.ZK7cre1s-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/mfd/qnap-mcu.c:64: warning: Excess struct member 'reply_lock' description in 'qnap_mcu'
+
+
+vim +64 drivers/mfd/qnap-mcu.c
+
+    47	
+    48	/**
+    49	 * struct qnap_mcu - QNAP NAS embedded controller
+    50	 *
+    51	 * @serdev:	Pointer to underlying serdev
+    52	 * @bus_lock:	Lock to serialize access to the device
+    53	 * @reply_lock:	Lock protecting @reply
+    54	 * @reply:	Pointer to memory to store reply payload
+    55	 * @variant:	Device variant specific information
+    56	 * @version:	MCU firmware version
+    57	 */
+    58	struct qnap_mcu {
+    59		struct serdev_device *serdev;
+    60		struct mutex bus_lock;
+    61		struct qnap_mcu_reply reply;
+    62		const struct qnap_mcu_variant *variant;
+    63		u8 version[QNAP_MCU_VERSION_LEN];
+  > 64	};
+    65	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
