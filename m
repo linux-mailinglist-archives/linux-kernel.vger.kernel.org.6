@@ -1,91 +1,186 @@
-Return-Path: <linux-kernel+bounces-296962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275BC95B129
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:07:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DF795B132
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59FBB1C20FB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9530C1F23B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7DA17B421;
-	Thu, 22 Aug 2024 09:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4564D171092;
+	Thu, 22 Aug 2024 09:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Je9pjWkB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KV//SAUe"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2081.outbound.protection.outlook.com [40.107.255.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1161E19470;
-	Thu, 22 Aug 2024 09:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724317650; cv=none; b=IaGJlnSVmYiyuERkNrTALiip/bz8AJsGTNYwvCS+rLECWlkIcFvfs+0QRs+gegpbfyfybTpRaipYbvdET2OnGdRPNxBR89ynw9VNY95C50AksYlfkyWYWxoUl2KdG40oZuuDZTHiVMj0gjhvCljH1kYKzEtCEV5OESKrIIS0aJA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724317650; c=relaxed/simple;
-	bh=yXE5GwDVy5c4oQacgOA8G6q/nmDaZ8FtwnOwfOX+KS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1edAhDW58wT4F985uHZOHqCs9Se1zFeLrTCUIYSAQwnI90Fw2bXgq749KXYIumNx2tZvIucjITUFcZp62M1zUPJdGVpYfMKLD2Dv2aecxB26lCO/mWZi78j2t1QLXWo+5GdepJPu45UnKhz1XMzuq+8C/WZDr02AMUMZuGERJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Je9pjWkB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74879C4AF0B;
-	Thu, 22 Aug 2024 09:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724317649;
-	bh=yXE5GwDVy5c4oQacgOA8G6q/nmDaZ8FtwnOwfOX+KS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Je9pjWkBR+805tzDEsOm0djHgVbhSh+Ov0BWVmrwoT30J3f0W1ODDi0pM7GHuqjVH
-	 sajXJSy+A7c0xgJbKKX+OPAxV8acY1mvzv0/1fnrdNByFpYdsAxaOIvHWQSJzp+v5V
-	 yKiLQGta0yKudRvthJ0kG7SyQEdzPaGKSkQcl6GImFL53pg/aJiLe4gQgrb+7l2o4g
-	 AwF8c6lIYRSgqWuH6LO+ZGkJAEWnG775GikL6prYG6oVSiyXmcgf0+c6pfgdTH3Hn3
-	 W6lJPhnAkTjdplvy/Aww+6WCHXHA5faIufIHa1I9JPPet+mCxU+bKnXYLUE9mBPnVE
-	 9FQH79AgT/3iA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sh3n3-000000002gj-2Y2d;
-	Thu, 22 Aug 2024 11:07:33 +0200
-Date: Thu, 22 Aug 2024 11:07:33 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
-Message-ID: <Zsb_1YDo96J_AGkI@hovoldconsulting.com>
-References: <20240723151328.684-1-johan+linaro@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914DF19470;
+	Thu, 22 Aug 2024 09:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724317794; cv=fail; b=OUftIn4v3yPKwn1KUMEt4P/aqW6ZckQJqSRTKnC7V2qb+zGsPwoHz7M1ZS5IRUoHEdinS7yLvCmONyhA0YPVzhCzGJauYWZ/KLVnCKUsffeig72ITF1ELyGYHGl32jHlusPAXoF86VoiES3qaWGQpYnYQdQqx3+MZMDj4/6WmUw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724317794; c=relaxed/simple;
+	bh=nYke78oC27zNBxONQO5NcvUD+MUDQYuW9mudnPxYSgc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=F2FXlJ1V6gcYeF88aPgj+/VKCg+0MK5NeF6/rgfwF0R1FDqQ29HOJYe3eiE8jFwjV80cAxcjMjCojxdtXdCGAx/ATy1SRvyXMVTN3GzlL/cpzYwmPK6QU+9uAhTtd3C00c832Klzoat2Mr4bXiT1uaNCogXGTCFF0/89iOIbiKk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KV//SAUe; arc=fail smtp.client-ip=40.107.255.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QPOdKv6W4jf0GM2UT0BgkfoXnhRQUvbQKTktN0xZqLJF+q91TsPRRTZh+Hm0aTZ7uodQasuE278nhBLYJlNkEQ9nyhDqkwn0Bbq3cUS2TOrUw6kePqOqQSIOPgfKKVq5rmcRzUcKFYkQ1B8SM0IccJ+tdgmq/N7RliVS/cOYXIUayboXzCVAgG6Q/qyJE7uAQt2lwirkQ33/yL7BjSz792Xohi6tPASWKV+JiGZARSVagAIRpPPZoQ+81YOLQh8vMBuaZcGIg5cTivPiS1fWqKoH9rjfpLE4nLh1fONco3luQe73OjrJQEHlohBnOUClEuA9N1jq8NOfZaki4752ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tAKXJHhlmiEe/bEm3eU1F3I6PANSb+CKNpLIjKQj1lg=;
+ b=HxjUJiAY7r93yTPCREcO8sh43jsMUv2JsqnlwhNTXMQaw4txPlTJtBjqJJrXjI6Tzy6Nqc47AcvJ1ctfNeUfkP/LryKw4vizbqqzv4wYud6UH8FYIb8hf1LGLD7axfgmrlZ0YAD9OUoyoCY4mYzDEludyBPAh4K0yQ/6Io9cXpzChmuc1blKrQZ/HYOLmpFu2yvmpxbrjxeFMUFLTtZNDkqb6+uW76MNBSkNlUq9igrsVVlRrNzA6CcQYUS5FQ6jzqzrtB+7bGa4fcoKjSL7TFl6a45DybxbZPie2dh7wU40PBTh7LQxMTcuU+MO4Po+egAk0SobvRstFu4HkzGJ6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tAKXJHhlmiEe/bEm3eU1F3I6PANSb+CKNpLIjKQj1lg=;
+ b=KV//SAUewwXeXnCNW1y0GW827Ckh2SAofUcW/gsY53z/dl4MY9pqK7bYDvXBsYXbFGxi+wa6DChZ/kuJI3fYIoQgGnnIQCNuBcwjex784Xdiexl3ygTfWuRLRfJhq+wqjf0WPBXIMLD4Ofv4un0n5Ha+VY+73vC1U8/ZLIzP84KyLyImKrx2lRjCbs7WswdlXQpjT1XYUFfQwh/bxoCmuN6/q4mfwTzasTSld2vPdzF6dlNhcoDz88f+554lxrGH5IPuLoUCAltikHtCQOXH1KX9tQdZTHRI1CHhp4WPevWiO8bZhGFQj4pZHKzx7hE+dJIV13ke3M0r10ZIqRx77Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5724.apcprd06.prod.outlook.com (2603:1096:301:f4::9)
+ by OSQPR06MB7251.apcprd06.prod.outlook.com (2603:1096:604:29b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Thu, 22 Aug
+ 2024 09:09:47 +0000
+Received: from PUZPR06MB5724.apcprd06.prod.outlook.com
+ ([fe80::459b:70d3:1f01:e1d6]) by PUZPR06MB5724.apcprd06.prod.outlook.com
+ ([fe80::459b:70d3:1f01:e1d6%3]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
+ 09:09:47 +0000
+From: Yuesong Li <liyuesong@vivo.com>
+To: inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	krzk@kernel.org
+Cc: alim.akhtar@samsung.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [PATCH v1] drivers:drm:exynos_drm_gsc:Fix wrong assignment in gsc_bind()
+Date: Thu, 22 Aug 2024 17:09:27 +0800
+Message-Id: <20240822090927.1444466-1-liyuesong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0188.jpnprd01.prod.outlook.com
+ (2603:1096:404:ba::32) To PUZPR06MB5724.apcprd06.prod.outlook.com
+ (2603:1096:301:f4::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723151328.684-1-johan+linaro@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5724:EE_|OSQPR06MB7251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 802edba2-e0f7-4828-fca5-08dcc28a2b66
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?R78pIjoiFNnXvFSEcXncDAsQ/bjyXfmb+7KYx9eLpZlLHVGdZIaIP/R2MI1s?=
+ =?us-ascii?Q?HRlGfye0/wcOJieC45/d8trePwv1Wd/G1jh8lC7sLQTZw4g9CR+WWrMCOumw?=
+ =?us-ascii?Q?ro6jvsuopZHPC2SWhxWptOHeL/mYcEGWI7+68ESwYTLa1eQtFXrjCXxP1ALP?=
+ =?us-ascii?Q?PWFQaJPNXmPhcwFN7dLMWJYO6ABJ9HnHkrkeS9fxmfGT55/XzEETawfm/Q/d?=
+ =?us-ascii?Q?7Ovw6EM0IVgqJfXawEdv/S4Pcqb26Nw7vC6hTv2zR4R9zyvS2CSMIagAC2YG?=
+ =?us-ascii?Q?HvSM9imljLMboZQ9SgFnNJ4F0LBFsUp7jCgaxHM925VEJUJx/nRhAfmaKPhv?=
+ =?us-ascii?Q?lxjf7lr3NKEdWEtxgWEgCCxb/eMtzAj7YO+A6BSbOxftAYJ4QfBAt54EWjgh?=
+ =?us-ascii?Q?nXfbyEyg/BkLYdhfl0b4eswQLa46TMzPGYboDui2brvowe8I+VYubqWGBSGx?=
+ =?us-ascii?Q?y7O9un4vRylqO1eB3CKDs/3SlVqPAC2Du9MM3vwOIfkBSg7j0rm0r1aTum8g?=
+ =?us-ascii?Q?p/FwPjqs5RJ3cViVkUwyr4xxVq2W75bnxlhmLHCRvpKvQh/lyQtq9a+7YgWl?=
+ =?us-ascii?Q?2xrzFmoVtuCOIt0PP04U5dmnxJ4n30MYSdimwS/+qwmnMu5FDLsZuU/G8rR7?=
+ =?us-ascii?Q?3i02gifSylnT5OnFmaN+QvWP6lZLSDyN08175gHeXyanSk6E2+AADQgnMBpK?=
+ =?us-ascii?Q?auz65/lMVf+x2bOWmQLF1D95BhJBXvAkhzEiix2f0My1CZeBd71QWotkoHwK?=
+ =?us-ascii?Q?10LtT45x8Z702sBQ/aezrbDNRNRmpumQh2HiW6e55JNTr0xWgyv/hL+xmUMP?=
+ =?us-ascii?Q?P3YpGCWtQJtwyvn3sRQ7fFdKlqu87HgBDubWipHEdElY5HvkSvbo/JgLvsL3?=
+ =?us-ascii?Q?k5prxdodf1Sm7BeM4qRU0jr4ZDXFi0bBHtKqR4eg1s4LH+Bo5+87HGxEjBhG?=
+ =?us-ascii?Q?qQygNSXKR4f5kWddIRw5AychBKlfw4RcGwtSDThE9E3KS3ZnM9VPb4jE/Bs4?=
+ =?us-ascii?Q?PoTMF6EWrkUdbxKXKbfFYBn6A4ogpr7OuRyE6q6nn8Pd8bMXoTFlfLYwViCe?=
+ =?us-ascii?Q?PvRKUQHKaQ8IjvlDeYrKXHT/I2/Lme+Q31TUzIkIJdTO0gOW9Z6WPzXu7DPY?=
+ =?us-ascii?Q?1cG8KxhEulSn2G5Jq8BLT9Ur1eHC4ihZEIeIwaRIDmjzlX8q79ASVYYAFeq9?=
+ =?us-ascii?Q?Kyj5Hi/ckVqETwsE2ZtKy0+N8EjLfYZ/MQbGcRaOVezey4YIC2DWOcOIkR4+?=
+ =?us-ascii?Q?n82Mk9Mw1JpWkj8jiFD3U5mXKdU48bGoojPeRkJ2165GdgtOGqCBepjhREXH?=
+ =?us-ascii?Q?F6H60v6TV8VZTIDCYStEQxw5mjcnRWrBh6H3TEsbdblhoMDMOgMWxDi2pPPb?=
+ =?us-ascii?Q?7BTfJZe/DPdhJpUQ7/326BMvINzSb0vDYn5caqIOG3rWzYupBw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5724.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aMHsu3SYabYKCE0fT0Emy5VQ/HX1eyjjGmbOYSu4F1nYmqyw7xUXqSbo/09x?=
+ =?us-ascii?Q?KOIrnn03xHVWhWjfjTEucI8jv+hHqSOxeUXD1HvP4DgxLU2RZ22NKbND/rSj?=
+ =?us-ascii?Q?MunosXfzZHhFWzpAzniQie4HIbj3HvhxlNVKRkoN6JQ8Pfo5tO9LknaiFJnU?=
+ =?us-ascii?Q?z8urtNjpTAPz26fyOzGtMH0GCPk81dJDRdFmue4t7W+LRmg1U/d+o0GsE4S/?=
+ =?us-ascii?Q?pZtQDcuLJWOh5cM/djVxrFcP72PeKwGSQQIAk41l42JReoISQMtQ1+ZVKaTd?=
+ =?us-ascii?Q?u4z9mpXEkvxjJuYeULT8m3kDzQyD6y6qzL8/SEh66DrVS/I3s2yxM6+Iq5+0?=
+ =?us-ascii?Q?sAC2NUSCxsSzr17OdJpW6IVfTcC/eVPj6euEo7meTGR8yzJjq5GeS80qAePQ?=
+ =?us-ascii?Q?jqDrNRDkUeqGITtq+5OwGdL5RoquSGkwwVP3+IcvvNByPzNK5WW/JFM8BbbM?=
+ =?us-ascii?Q?Fp9RTrUTDb82dSyTa4MzCg6WQObKpYPie6watbif23STT7ur+TuWUMfqjCNI?=
+ =?us-ascii?Q?4TPqG/C9gHWdDY8lSK01f9MDzQvgYNr2tMET+d5LEXUP1tY3P+4v+E4ND47D?=
+ =?us-ascii?Q?k0zP0cVYFFSjlQQow/5TgDrex4OythFPPiIfqIPMfB1fErKRjF71ZWCH7qAm?=
+ =?us-ascii?Q?T9R/+UKFzgs3OQRzGff22CYq+XJmLag+uj020Hi2iDT6uO6iJ4g0UzRx+pjT?=
+ =?us-ascii?Q?gU0XDNSgwhOXkzyO0r4xofDInplJKyKJoJPoZfwr5CJS0+lymelHQipznMDj?=
+ =?us-ascii?Q?KPax6a/rrDeFpVVbvPgjGv/WhZmuLXwSeON0JByxxCZu3OAkBHUSczV06R0n?=
+ =?us-ascii?Q?64PfbSTnJ99SekA7kPkGf8vKWfEfW70kiaIDTKzbfAKA2FXYfvgetJGyc3kM?=
+ =?us-ascii?Q?s8WJ2z4LUX1q2KFGHFoCuoiiaHvzCdkycyUHjNzh7dArWVT3hnP1TIdpo/N0?=
+ =?us-ascii?Q?JQxG6J/7CdOeCVBtMNprA6rd2u8xeKjWmyd0rWU2TEOwcvwlWqfWDa7oj0UC?=
+ =?us-ascii?Q?VrGqUOy+lP9+rKkQe/kgJhn5h5T2BYROfRrPZUbm0QeRP4Wh6vDSzWJ9KcvI?=
+ =?us-ascii?Q?DM3I66xfymcbysheEID1nOBs48tInvVKTcTMsD1TDEhcdCOF4uS/RTPG4Bro?=
+ =?us-ascii?Q?8tCRS8W51BDDNoS5Dbd9EldAuHXEdSq82hzxubw34VrSKUGVvO72yvnNsQRM?=
+ =?us-ascii?Q?5PrYIa+GpHRiGXF+BRU64/YsihHSZ1wJbYIgdy5m9pagc7yJ+1O590j4McVr?=
+ =?us-ascii?Q?W8xTX3V7yvlyAK/5UfeXcV9BnT6osQnepuhFMrxaAuHKXtbqwVvk175wyP4o?=
+ =?us-ascii?Q?Yb4a8zt3eEa09v6A3GEtDTKUeGoeZMzdyLryRk07O6W1xFr1OhIOeGwuxTmr?=
+ =?us-ascii?Q?1SKXch4tLCXugPP8ElbGy2mvIsAVg8idShji1JS4GTH32Ek+2DPtLDmlj9HM?=
+ =?us-ascii?Q?fShioqNpdevF+GHjAY41WgFeL+8qUcb28fmOpgV9b9oO/gDszsQajQykA/ZK?=
+ =?us-ascii?Q?F2cNHcjptfhze1J3Gl4xipPcABiMhu00pi8TbdUS33eXg/gIaz+pFmlwi4TW?=
+ =?us-ascii?Q?qjVwa0phNDqu+UN60wUmgw989YVQ3wwqzqaFrZyV?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 802edba2-e0f7-4828-fca5-08dcc28a2b66
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5724.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 09:09:47.0980
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zEpXmEFRHs6IZ2Vrpyxt4sPS1wnu6n60NuTqJ0hJc/Ff3ybEKa/uHb+wHVQNVY96tF5tf/JC7VHuzeKeUNggRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7251
 
-On Tue, Jul 23, 2024 at 05:13:28PM +0200, Johan Hovold wrote:
-> Commit 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to
-> dedicated schema") incorrectly removed 'vddpe-3v3-supply' from the
-> bindings, which results in DT checker warnings like:
-> 
-> 	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb: pcie@600000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
->         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-> 
-> Note that this property has been part of the Qualcomm PCIe bindings
-> since 2018 and would need to be deprecated rather than simply removed if
-> there is a desire to replace it with 'vpcie3v3' which is used for some
-> non-Qualcomm controllers.
-> 
-> Fixes: 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to dedicated schema")
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+cocci reported a double assignment problem. Upon reviewing previous
+commits, it appears this may actually be an incorrect assignment.
 
-Can someone pick this one up for 6.11?
+Fixes: 8b9550344d39 ("drm/ipp: clean up debug messages")
+Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Johan
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index 1b111e2c3347..752339d33f39 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -1174,7 +1174,7 @@ static int gsc_bind(struct device *dev, struct device *master, void *data)
+ 	struct exynos_drm_ipp *ipp = &ctx->ipp;
+ 
+ 	ctx->drm_dev = drm_dev;
+-	ctx->drm_dev = drm_dev;
++	ipp->drm_dev = drm_dev;
+ 	exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
+ 
+ 	exynos_drm_ipp_register(dev, ipp, &ipp_funcs,
+-- 
+2.34.1
+
 
