@@ -1,472 +1,835 @@
-Return-Path: <linux-kernel+bounces-297254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1AE95B4FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:28:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC0E95B4FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56013288FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21C9CB23706
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52B11C9ED6;
-	Thu, 22 Aug 2024 12:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609881C945E;
+	Thu, 22 Aug 2024 12:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gNXmSee+"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dZhuavDO"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3FE1C9DCD;
-	Thu, 22 Aug 2024 12:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724329641; cv=none; b=S0d5rL0xD1DTuOU7VfusmBtheL56KcmKpn2g+YjBtbE1BRAv6TCZzCf0UPA1Oms1DmFnX3Oh0r8yANrkDMJgQDusXhAWlSSg8MZt/WrIJ+99VYsrFhKoRJAYW/uA6LzxdaCxCVoKkkADmb3mrkzvopnDmAWLiRWYYvyzGy3Iphc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724329641; c=relaxed/simple;
-	bh=QWa9CYm1Tvpc76kl4GmUq9oDb6O7fDDoC1EXVo8x888=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dcu68ov4OAZto7V/8og9q4TycxfknN7MJQiTIVB1dPI4TQcPXPAqc23iyoVh+JKO5oC8N4VKK1tPVUwCAjlzXmYVw/vCKYUfu/Cg+VwHaQuyMlqraa2aMrUgd0Tic4wAThVOq64qxnZhooBh0zHFAypY6MiUPZxguafHFdvifkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gNXmSee+; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47MCR0td085903;
-	Thu, 22 Aug 2024 07:27:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724329620;
-	bh=6PAkTaIH0mPWUPAX3HSggY7yWwox5RBjrozFFmq0Tt0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=gNXmSee+p50UyjDEmcy5eGmQfyd1lL0arYwXES3SHl1C1GqlEWgEL1RqfDDy4jQ3B
-	 iSQo9A5KA6i9gRUeof8UFeLOcbvOixFX9u7U+a8VcDh5W6tvatQNt6nytVs6lur28J
-	 cG2cVd0OSx0p0bXph7sGILT2zlkE2MxtceFkBRzk=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47MCR0ut037079
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 22 Aug 2024 07:27:00 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
- Aug 2024 07:26:59 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 22 Aug 2024 07:26:59 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47MCQxSW116993;
-	Thu, 22 Aug 2024 07:26:59 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 47MCQwr0015181;
-	Thu, 22 Aug 2024 07:26:59 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
-        Jan
- Kiszka <jan.kiszka@siemens.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>,
-        Kory Maincent <kory.maincent@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Roger
- Quadros <rogerq@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>, Nishanth
- Menon <nm@ti.com>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH net-next v7 2/2] net: ti: icssg-prueth: Add support for PA Stats
-Date: Thu, 22 Aug 2024 17:56:52 +0530
-Message-ID: <20240822122652.1071801-3-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822122652.1071801-1-danishanwar@ti.com>
-References: <20240822122652.1071801-1-danishanwar@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67C91C9452
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724329662; cv=pass; b=fbYRLC1F966T73g6E9mDi1iy1sOkL23J964UgiZvJyD6Sf7giVFbA63LBcZxI9b7NAVU9cpDMWY6/jVmsGG9tJ6CVrOe54xG9rV04XuQyHjYJuO1TmY4zyR0t7bIBJnqC9cTeTU16KpuNWpchjZ08sIf7x4igjA539E0BTp9ZL8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724329662; c=relaxed/simple;
+	bh=Jcf19tcEyFdaOHTePZ8X5RfMx/O1m9xFWzJyv/Ebbow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L/BilwG7QslWpp5a3MTNPxaApy8lrdyP5e1l5pzOOyigmiZi7tF/yOsDnfwyrqKrZViTTPSJJrKF2+gBLpun8lD0pvpCGUxKKnpQ9aGH37Vawkpr+VBGJMYq7xnbV0U+4le6VNCvQUpD2+luTxv5XGI97BFJfpVOg/PHZnQoXCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dZhuavDO; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: daniel.almeida@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724329655; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LX6NwfYX8l9h5ENVTbKswwybX4BzfayqXlPVDEXMp/WI21mp1eh7vF63mCKISDscAQOdsC3bIqTgSo8v5FAo8j2py2haLBLnWiqfgUOJo6x83Bu8Fbqr4jodTa2kR+mmSM/kcv8ld44sCi9ws+lOMh3ceHveJcgUmahWVTL2ito=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724329655; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3kVphAQ64sWIHjCV7ebBzJUIhaRacOdHzTNY/3MVIo8=; 
+	b=n97sXbITxMM3gxDFKkbT0TyXDbzup0jA3Yen8JZDsnx3Zi7MtAk4p0nTHaTRIvUpqMlP5G1nAFmzsGfnw7fKBLdnxgB/bLY83filYSAZJ3ONXN4pLZzL6w6ZiwXbbRMA+HkBYqHW4n6WHUtyTsydPb0HcUtKe4TJA6bDH/liuIY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724329655;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=3kVphAQ64sWIHjCV7ebBzJUIhaRacOdHzTNY/3MVIo8=;
+	b=dZhuavDORPMhkj+a14walbU6o1hUm88edI2GdZnKeZQ7ZHDbhZJ50mGZsyopShf/
+	A5idtc56Kr+cYbw6HmwUDU0uwWytUZU6+W/tjvElqMZ391Vygow15fQPbLXf32xQ0af
+	xvaJl7gyH6rpPVnjV4bHOAMFmEFshk1VDceLzxbs=
+Received: by mx.zohomail.com with SMTPS id 1724329654502853.5578343499503;
+	Thu, 22 Aug 2024 05:27:34 -0700 (PDT)
+Date: Thu, 22 Aug 2024 13:27:31 +0100
+From: Adrian Larumbe <adrian.larumbe@collabora.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: liviu.dudau@arm.com, steven.price@arm.com, carsten.haitzler@arm.com, 
+	boris.brezillon@collabora.com, robh@kernel.org, faith.ekstrand@collabora.com, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 RESEND 2/5] drm: panthor: add devcoredump support
+Message-ID: <e7usyccm2ycnlimul2gjqbt73q6nwgi5ear2mtet2buwvlsf7j@oflde5fyldob>
+References: <20240710225011.275153-1-daniel.almeida@collabora.com>
+ <20240821143826.3720-1-daniel.almeida@collabora.com>
+ <20240821143826.3720-3-daniel.almeida@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240821143826.3720-3-daniel.almeida@collabora.com>
 
-Add support for dumping PA stats registers via ethtool.
-Firmware maintained stats are stored at PA Stats registers.
-Also modify emac_get_strings() API to use ethtool_puts().
+> On 21.08.2024 11:37, Daniel Almeida wrote:
+> Dump the GPU state using devcoredump. This is useful for debugging
+> purposes.
+> 
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-This commit also maintains consistency between miig_stats and pa_stats by
-- renaming the array icssg_all_stats to icssg_all_miig_stats
-- renaming the structure icssg_stats to icssg_miig_stats
-- renaming ICSSG_STATS() to ICSSG_MIIG_STATS()
-- changing order of stats related data structures and arrays so that data
-  structures of a certain stats type is clubbed together.
+Reviewed-by: Adrian Larumbe <adrian.larumbe@collabora.com>
 
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_ethtool.c |  19 ++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c  |   6 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   9 +-
- drivers/net/ethernet/ti/icssg/icssg_stats.c   |  31 +++-
- drivers/net/ethernet/ti/icssg/icssg_stats.h   | 158 +++++++++++-------
- 5 files changed, 140 insertions(+), 83 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-index 5688f054cec5..5073ec195854 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-@@ -83,13 +83,11 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
- 
- 	switch (stringset) {
- 	case ETH_SS_STATS:
--		for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
--			if (!icssg_all_stats[i].standard_stats) {
--				memcpy(p, icssg_all_stats[i].name,
--				       ETH_GSTRING_LEN);
--				p += ETH_GSTRING_LEN;
--			}
--		}
-+		for (i = 0; i < ARRAY_SIZE(icssg_all_miig_stats); i++)
-+			if (!icssg_all_miig_stats[i].standard_stats)
-+				ethtool_puts(&p, icssg_all_miig_stats[i].name);
-+		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
-+			ethtool_puts(&p, icssg_all_pa_stats[i].name);
- 		break;
- 	default:
- 		break;
-@@ -104,9 +102,12 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
- 
- 	emac_update_hardware_stats(emac);
- 
--	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++)
--		if (!icssg_all_stats[i].standard_stats)
-+	for (i = 0; i < ARRAY_SIZE(icssg_all_miig_stats); i++)
-+		if (!icssg_all_miig_stats[i].standard_stats)
- 			*(data++) = emac->stats[i];
-+
-+	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
-+		*(data++) = emac->pa_stats[i];
- }
- 
- static int emac_get_ts_info(struct net_device *ndev,
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 53a3e44b99a2..f623a0f603fc 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1182,6 +1182,12 @@ static int prueth_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	prueth->pa_stats = syscon_regmap_lookup_by_phandle(np, "ti,pa-stats");
-+	if (IS_ERR(prueth->pa_stats)) {
-+		dev_err(dev, "couldn't get ti,pa-stats syscon regmap\n");
-+		return -ENODEV;
-+	}
-+
- 	if (eth0_node) {
- 		ret = prueth_get_cores(prueth, ICSS_SLICE0, false);
- 		if (ret)
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index f678d656a3ed..786bd1ba34ab 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -50,8 +50,10 @@
- 
- #define ICSSG_MAX_RFLOWS	8	/* per slice */
- 
-+#define ICSSG_NUM_PA_STATS	4
-+#define ICSSG_NUM_MIIG_STATS	60
- /* Number of ICSSG related stats */
--#define ICSSG_NUM_STATS 60
-+#define ICSSG_NUM_STATS (ICSSG_NUM_MIIG_STATS + ICSSG_NUM_PA_STATS)
- #define ICSSG_NUM_STANDARD_STATS 31
- #define ICSSG_NUM_ETHTOOL_STATS (ICSSG_NUM_STATS - ICSSG_NUM_STANDARD_STATS)
- 
-@@ -190,7 +192,8 @@ struct prueth_emac {
- 	int port_vlan;
- 
- 	struct delayed_work stats_work;
--	u64 stats[ICSSG_NUM_STATS];
-+	u64 stats[ICSSG_NUM_MIIG_STATS];
-+	u64 pa_stats[ICSSG_NUM_PA_STATS];
- 
- 	/* RX IRQ Coalescing Related */
- 	struct hrtimer rx_hrtimer;
-@@ -230,6 +233,7 @@ struct icssg_firmwares {
-  * @registered_netdevs: list of registered netdevs
-  * @miig_rt: regmap to mii_g_rt block
-  * @mii_rt: regmap to mii_rt block
-+ * @pa_stats: regmap to pa_stats block
-  * @pru_id: ID for each of the PRUs
-  * @pdev: pointer to ICSSG platform device
-  * @pdata: pointer to platform data for ICSSG driver
-@@ -263,6 +267,7 @@ struct prueth {
- 	struct net_device *registered_netdevs[PRUETH_NUM_MACS];
- 	struct regmap *miig_rt;
- 	struct regmap *mii_rt;
-+	struct regmap *pa_stats;
- 
- 	enum pruss_pru_id pru_id[PRUSS_NUM_PRUS];
- 	struct platform_device *pdev;
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.c b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-index 2fb150c13078..06a15c0b2acc 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_stats.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-@@ -11,6 +11,7 @@
- 
- #define ICSSG_TX_PACKET_OFFSET	0xA0
- #define ICSSG_TX_BYTE_OFFSET	0xEC
-+#define ICSSG_FW_STATS_BASE	0x0248
- 
- static u32 stats_base[] = {	0x54c,	/* Slice 0 stats start */
- 				0xb18,	/* Slice 1 stats start */
-@@ -22,24 +23,31 @@ void emac_update_hardware_stats(struct prueth_emac *emac)
- 	int slice = prueth_emac_slice(emac);
- 	u32 base = stats_base[slice];
- 	u32 tx_pkt_cnt = 0;
--	u32 val;
-+	u32 val, reg;
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
-+	for (i = 0; i < ARRAY_SIZE(icssg_all_miig_stats); i++) {
- 		regmap_read(prueth->miig_rt,
--			    base + icssg_all_stats[i].offset,
-+			    base + icssg_all_miig_stats[i].offset,
- 			    &val);
- 		regmap_write(prueth->miig_rt,
--			     base + icssg_all_stats[i].offset,
-+			     base + icssg_all_miig_stats[i].offset,
- 			     val);
- 
--		if (icssg_all_stats[i].offset == ICSSG_TX_PACKET_OFFSET)
-+		if (icssg_all_miig_stats[i].offset == ICSSG_TX_PACKET_OFFSET)
- 			tx_pkt_cnt = val;
- 
- 		emac->stats[i] += val;
--		if (icssg_all_stats[i].offset == ICSSG_TX_BYTE_OFFSET)
-+		if (icssg_all_miig_stats[i].offset == ICSSG_TX_BYTE_OFFSET)
- 			emac->stats[i] -= tx_pkt_cnt * 8;
- 	}
-+
-+	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
-+		reg = ICSSG_FW_STATS_BASE + icssg_all_pa_stats[i].offset *
-+		      PRUETH_NUM_MACS + slice * sizeof(u32);
-+		regmap_read(prueth->pa_stats, reg, &val);
-+		emac->pa_stats[i] += val;
-+	}
- }
- 
- void icssg_stats_work_handler(struct work_struct *work)
-@@ -57,9 +65,14 @@ int emac_get_stat_by_name(struct prueth_emac *emac, char *stat_name)
- {
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
--		if (!strcmp(icssg_all_stats[i].name, stat_name))
--			return emac->stats[icssg_all_stats[i].offset / sizeof(u32)];
-+	for (i = 0; i < ARRAY_SIZE(icssg_all_miig_stats); i++) {
-+		if (!strcmp(icssg_all_miig_stats[i].name, stat_name))
-+			return emac->stats[icssg_all_miig_stats[i].offset / sizeof(u32)];
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
-+		if (!strcmp(icssg_all_pa_stats[i].name, stat_name))
-+			return emac->pa_stats[icssg_all_pa_stats[i].offset / sizeof(u32)];
- 	}
- 
- 	netdev_err(emac->ndev, "Invalid stats %s\n", stat_name);
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.h b/drivers/net/ethernet/ti/icssg/icssg_stats.h
-index 999a4a91276c..e88b919f532c 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_stats.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_stats.h
-@@ -77,82 +77,114 @@ struct miig_stats_regs {
- 	u32 tx_bytes;
- };
- 
--#define ICSSG_STATS(field, stats_type)			\
-+#define ICSSG_MIIG_STATS(field, stats_type)			\
- {							\
- 	#field,						\
- 	offsetof(struct miig_stats_regs, field),	\
- 	stats_type					\
- }
- 
--struct icssg_stats {
-+struct icssg_miig_stats {
- 	char name[ETH_GSTRING_LEN];
- 	u32 offset;
- 	bool standard_stats;
- };
- 
--static const struct icssg_stats icssg_all_stats[] = {
-+static const struct icssg_miig_stats icssg_all_miig_stats[] = {
- 	/* Rx */
--	ICSSG_STATS(rx_packets, true),
--	ICSSG_STATS(rx_broadcast_frames, false),
--	ICSSG_STATS(rx_multicast_frames, true),
--	ICSSG_STATS(rx_crc_errors, true),
--	ICSSG_STATS(rx_mii_error_frames, false),
--	ICSSG_STATS(rx_odd_nibble_frames, false),
--	ICSSG_STATS(rx_frame_max_size, true),
--	ICSSG_STATS(rx_max_size_error_frames, false),
--	ICSSG_STATS(rx_frame_min_size, true),
--	ICSSG_STATS(rx_min_size_error_frames, false),
--	ICSSG_STATS(rx_over_errors, true),
--	ICSSG_STATS(rx_class0_hits, false),
--	ICSSG_STATS(rx_class1_hits, false),
--	ICSSG_STATS(rx_class2_hits, false),
--	ICSSG_STATS(rx_class3_hits, false),
--	ICSSG_STATS(rx_class4_hits, false),
--	ICSSG_STATS(rx_class5_hits, false),
--	ICSSG_STATS(rx_class6_hits, false),
--	ICSSG_STATS(rx_class7_hits, false),
--	ICSSG_STATS(rx_class8_hits, false),
--	ICSSG_STATS(rx_class9_hits, false),
--	ICSSG_STATS(rx_class10_hits, false),
--	ICSSG_STATS(rx_class11_hits, false),
--	ICSSG_STATS(rx_class12_hits, false),
--	ICSSG_STATS(rx_class13_hits, false),
--	ICSSG_STATS(rx_class14_hits, false),
--	ICSSG_STATS(rx_class15_hits, false),
--	ICSSG_STATS(rx_smd_frags, false),
--	ICSSG_STATS(rx_bucket1_size, true),
--	ICSSG_STATS(rx_bucket2_size, true),
--	ICSSG_STATS(rx_bucket3_size, true),
--	ICSSG_STATS(rx_bucket4_size, true),
--	ICSSG_STATS(rx_64B_frames, true),
--	ICSSG_STATS(rx_bucket1_frames, true),
--	ICSSG_STATS(rx_bucket2_frames, true),
--	ICSSG_STATS(rx_bucket3_frames, true),
--	ICSSG_STATS(rx_bucket4_frames, true),
--	ICSSG_STATS(rx_bucket5_frames, true),
--	ICSSG_STATS(rx_bytes, true),
--	ICSSG_STATS(rx_tx_total_bytes, false),
-+	ICSSG_MIIG_STATS(rx_packets, true),
-+	ICSSG_MIIG_STATS(rx_broadcast_frames, false),
-+	ICSSG_MIIG_STATS(rx_multicast_frames, true),
-+	ICSSG_MIIG_STATS(rx_crc_errors, true),
-+	ICSSG_MIIG_STATS(rx_mii_error_frames, false),
-+	ICSSG_MIIG_STATS(rx_odd_nibble_frames, false),
-+	ICSSG_MIIG_STATS(rx_frame_max_size, true),
-+	ICSSG_MIIG_STATS(rx_max_size_error_frames, false),
-+	ICSSG_MIIG_STATS(rx_frame_min_size, true),
-+	ICSSG_MIIG_STATS(rx_min_size_error_frames, false),
-+	ICSSG_MIIG_STATS(rx_over_errors, true),
-+	ICSSG_MIIG_STATS(rx_class0_hits, false),
-+	ICSSG_MIIG_STATS(rx_class1_hits, false),
-+	ICSSG_MIIG_STATS(rx_class2_hits, false),
-+	ICSSG_MIIG_STATS(rx_class3_hits, false),
-+	ICSSG_MIIG_STATS(rx_class4_hits, false),
-+	ICSSG_MIIG_STATS(rx_class5_hits, false),
-+	ICSSG_MIIG_STATS(rx_class6_hits, false),
-+	ICSSG_MIIG_STATS(rx_class7_hits, false),
-+	ICSSG_MIIG_STATS(rx_class8_hits, false),
-+	ICSSG_MIIG_STATS(rx_class9_hits, false),
-+	ICSSG_MIIG_STATS(rx_class10_hits, false),
-+	ICSSG_MIIG_STATS(rx_class11_hits, false),
-+	ICSSG_MIIG_STATS(rx_class12_hits, false),
-+	ICSSG_MIIG_STATS(rx_class13_hits, false),
-+	ICSSG_MIIG_STATS(rx_class14_hits, false),
-+	ICSSG_MIIG_STATS(rx_class15_hits, false),
-+	ICSSG_MIIG_STATS(rx_smd_frags, false),
-+	ICSSG_MIIG_STATS(rx_bucket1_size, true),
-+	ICSSG_MIIG_STATS(rx_bucket2_size, true),
-+	ICSSG_MIIG_STATS(rx_bucket3_size, true),
-+	ICSSG_MIIG_STATS(rx_bucket4_size, true),
-+	ICSSG_MIIG_STATS(rx_64B_frames, true),
-+	ICSSG_MIIG_STATS(rx_bucket1_frames, true),
-+	ICSSG_MIIG_STATS(rx_bucket2_frames, true),
-+	ICSSG_MIIG_STATS(rx_bucket3_frames, true),
-+	ICSSG_MIIG_STATS(rx_bucket4_frames, true),
-+	ICSSG_MIIG_STATS(rx_bucket5_frames, true),
-+	ICSSG_MIIG_STATS(rx_bytes, true),
-+	ICSSG_MIIG_STATS(rx_tx_total_bytes, false),
- 	/* Tx */
--	ICSSG_STATS(tx_packets, true),
--	ICSSG_STATS(tx_broadcast_frames, false),
--	ICSSG_STATS(tx_multicast_frames, false),
--	ICSSG_STATS(tx_odd_nibble_frames, false),
--	ICSSG_STATS(tx_underflow_errors, false),
--	ICSSG_STATS(tx_frame_max_size, true),
--	ICSSG_STATS(tx_max_size_error_frames, false),
--	ICSSG_STATS(tx_frame_min_size, true),
--	ICSSG_STATS(tx_min_size_error_frames, false),
--	ICSSG_STATS(tx_bucket1_size, true),
--	ICSSG_STATS(tx_bucket2_size, true),
--	ICSSG_STATS(tx_bucket3_size, true),
--	ICSSG_STATS(tx_bucket4_size, true),
--	ICSSG_STATS(tx_64B_frames, true),
--	ICSSG_STATS(tx_bucket1_frames, true),
--	ICSSG_STATS(tx_bucket2_frames, true),
--	ICSSG_STATS(tx_bucket3_frames, true),
--	ICSSG_STATS(tx_bucket4_frames, true),
--	ICSSG_STATS(tx_bucket5_frames, true),
--	ICSSG_STATS(tx_bytes, true),
-+	ICSSG_MIIG_STATS(tx_packets, true),
-+	ICSSG_MIIG_STATS(tx_broadcast_frames, false),
-+	ICSSG_MIIG_STATS(tx_multicast_frames, false),
-+	ICSSG_MIIG_STATS(tx_odd_nibble_frames, false),
-+	ICSSG_MIIG_STATS(tx_underflow_errors, false),
-+	ICSSG_MIIG_STATS(tx_frame_max_size, true),
-+	ICSSG_MIIG_STATS(tx_max_size_error_frames, false),
-+	ICSSG_MIIG_STATS(tx_frame_min_size, true),
-+	ICSSG_MIIG_STATS(tx_min_size_error_frames, false),
-+	ICSSG_MIIG_STATS(tx_bucket1_size, true),
-+	ICSSG_MIIG_STATS(tx_bucket2_size, true),
-+	ICSSG_MIIG_STATS(tx_bucket3_size, true),
-+	ICSSG_MIIG_STATS(tx_bucket4_size, true),
-+	ICSSG_MIIG_STATS(tx_64B_frames, true),
-+	ICSSG_MIIG_STATS(tx_bucket1_frames, true),
-+	ICSSG_MIIG_STATS(tx_bucket2_frames, true),
-+	ICSSG_MIIG_STATS(tx_bucket3_frames, true),
-+	ICSSG_MIIG_STATS(tx_bucket4_frames, true),
-+	ICSSG_MIIG_STATS(tx_bucket5_frames, true),
-+	ICSSG_MIIG_STATS(tx_bytes, true),
-+};
-+
-+/**
-+ * struct pa_stats_regs - ICSSG Firmware maintained PA Stats register
-+ * @fw_rx_cnt: Number of valid packets sent by Rx PRU to Host on PSI
-+ * @fw_tx_cnt: Number of valid packets copied by RTU0 to Tx queues
-+ * @fw_tx_pre_overflow: Host Egress Q (Pre-emptible) Overflow Counter
-+ * @fw_tx_exp_overflow: Host Egress Q (Express) Overflow Counter
-+ */
-+struct pa_stats_regs {
-+	u32 fw_rx_cnt;
-+	u32 fw_tx_cnt;
-+	u32 fw_tx_pre_overflow;
-+	u32 fw_tx_exp_overflow;
-+};
-+
-+#define ICSSG_PA_STATS(field)			\
-+{						\
-+	#field,					\
-+	offsetof(struct pa_stats_regs, field),	\
-+}
-+
-+struct icssg_pa_stats {
-+	char name[ETH_GSTRING_LEN];
-+	u32 offset;
-+};
-+
-+static const struct icssg_pa_stats icssg_all_pa_stats[] = {
-+	ICSSG_PA_STATS(fw_rx_cnt),
-+	ICSSG_PA_STATS(fw_tx_cnt),
-+	ICSSG_PA_STATS(fw_tx_pre_overflow),
-+	ICSSG_PA_STATS(fw_tx_exp_overflow),
- };
- 
- #endif /* __NET_TI_ICSSG_STATS_H */
--- 
-2.34.1
-
+> ---
+>  drivers/gpu/drm/panthor/Kconfig         |   1 +
+>  drivers/gpu/drm/panthor/Makefile        |   1 +
+>  drivers/gpu/drm/panthor/panthor_dump.c  | 376 ++++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_dump.h  |  21 ++
+>  drivers/gpu/drm/panthor/panthor_mmu.c   |  22 ++
+>  drivers/gpu/drm/panthor/panthor_mmu.h   |   6 +
+>  drivers/gpu/drm/panthor/panthor_sched.c |  51 +++-
+>  drivers/gpu/drm/panthor/panthor_sched.h |  10 +
+>  include/uapi/drm/panthor_drm.h          | 124 ++++++++
+>  9 files changed, 611 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_dump.c
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_dump.h
+> 
+> diff --git a/drivers/gpu/drm/panthor/Kconfig b/drivers/gpu/drm/panthor/Kconfig
+> index 55b40ad07f3b..eeb80d8e8064 100644
+> --- a/drivers/gpu/drm/panthor/Kconfig
+> +++ b/drivers/gpu/drm/panthor/Kconfig
+> @@ -14,6 +14,7 @@ config DRM_PANTHOR
+>  	select IOMMU_IO_PGTABLE_LPAE
+>  	select IOMMU_SUPPORT
+>  	select PM_DEVFREQ
+> +	select WANT_DEVCOREDUMP
+>  	help
+>  	  DRM driver for ARM Mali CSF-based GPUs.
+>  
+> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
+> index 15294719b09c..19be24ddf577 100644
+> --- a/drivers/gpu/drm/panthor/Makefile
+> +++ b/drivers/gpu/drm/panthor/Makefile
+> @@ -4,6 +4,7 @@ panthor-y := \
+>  	panthor_devfreq.o \
+>  	panthor_device.o \
+>  	panthor_drv.o \
+> +	panthor_dump.o \
+>  	panthor_fw.o \
+>  	panthor_gem.o \
+>  	panthor_gpu.o \
+> diff --git a/drivers/gpu/drm/panthor/panthor_dump.c b/drivers/gpu/drm/panthor/panthor_dump.c
+> new file mode 100644
+> index 000000000000..7ec0e21dc7e9
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_dump.c
+> @@ -0,0 +1,376 @@
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+> +/* SPDX-FileCopyrightText: Copyright Collabora 2024 */
+> +
+> +#include <drm/drm_gem.h>
+> +#include <linux/iosys-map.h>
+> +#include <linux/devcoredump.h>
+> +#include <linux/err.h>
+> +#include <linux/vmalloc.h>
+> +#include <linux/types.h>
+> +#include <uapi/drm/panthor_drm.h>
+> +
+> +#include "panthor_device.h"
+> +#include "panthor_dump.h"
+> +#include "panthor_mmu.h"
+> +#include "panthor_sched.h"
+> +
+> +/* A magic value used when starting a new section in the dump */
+> +#define PANT_DUMP_MAGIC 0x544e4150 /* PANT */
+> +#define PANT_DUMP_MAJOR 1
+> +#define PANT_DUMP_MINOR 0
+> +
+> +/* keep track of where we are in the underlying buffer */
+> +struct dump_allocator {
+> +	u8 *start;
+> +	u8 *curr;
+> +	size_t pos;
+> +	size_t capacity;
+> +};
+> +
+> +struct vm_dump_count {
+> +	u64 size;
+> +	u32 vas;
+> +};
+> +
+> +struct queue_count {
+> +	u32 queues;
+> +};
+> +
+> +struct dump_group_args {
+> +	struct panthor_device *ptdev;
+> +	struct dump_allocator *alloc;
+> +	struct panthor_group *group;
+> +};
+> +
+> +struct dump_va_args {
+> +	struct panthor_device *ptdev;
+> +	struct dump_allocator *alloc;
+> +};
+> +
+> +static void *alloc_bytes(struct dump_allocator *alloc, size_t size)
+> +{
+> +	void *ret;
+> +
+> +	if (alloc->pos + size > alloc->capacity)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ret = alloc->curr;
+> +	alloc->curr += size;
+> +	alloc->pos += size;
+> +	return ret;
+> +}
+> +
+> +static struct drm_panthor_dump_header *
+> +alloc_header(struct dump_allocator *alloc, u32 type, size_t size)
+> +{
+> +	struct drm_panthor_dump_header *hdr;
+> +	int header_size = sizeof(*hdr);
+> +
+> +	hdr = alloc_bytes(alloc, header_size);
+> +	if (IS_ERR(hdr))
+> +		return hdr;
+> +
+> +	hdr->magic = PANT_DUMP_MAGIC;
+> +	hdr->header_type = type;
+> +	hdr->header_size = header_size;
+> +	hdr->data_size = size;
+> +	return hdr;
+> +}
+> +
+> +static int dump_bo(struct panthor_device *ptdev, u8 *dst,
+> +		   struct drm_gem_object *obj, int offset, int size)
+> +{
+> +	struct iosys_map map = {};
+> +	int ret;
+> +
+> +	ret = drm_gem_vmap_unlocked(obj, &map);
+> +	if (ret)
+> +		return ret;
+> +
+> +	drm_dbg(&ptdev->base, "dumping bo %p, offset %d, size %d\n", obj,
+> +		offset, size);
+> +
+> +	memcpy(dst, map.vaddr + offset, size);
+> +	drm_gem_vunmap_unlocked(obj, &map);
+> +	return ret;
+> +}
+> +
+> +static int dump_va(struct dump_va_args *dump_va_args,
+> +		   const struct drm_gpuva *va, int type)
+> +{
+> +	struct drm_gem_object *obj = va->gem.obj;
+> +	const int hdr_size =
+> +		sizeof(struct drm_panthor_dump_gpuva) + va->va.range;
+> +	struct drm_panthor_dump_gpuva *dump_va;
+> +	struct drm_panthor_dump_header *dump_hdr;
+> +	u8 *bo_data;
+> +
+> +	dump_hdr = alloc_header(dump_va_args->alloc, type, hdr_size);
+> +	if (IS_ERR(dump_hdr))
+> +		return PTR_ERR(dump_hdr);
+> +
+> +	dump_va = alloc_bytes(dump_va_args->alloc, sizeof(*dump_va));
+> +	if (IS_ERR(dump_va))
+> +		return PTR_ERR(dump_va);
+> +
+> +	bo_data = alloc_bytes(dump_va_args->alloc, va->va.range);
+> +	if (IS_ERR(bo_data))
+> +		return PTR_ERR(bo_data);
+> +
+> +	dump_va->addr = va->va.addr;
+> +	dump_va->range = va->va.range;
+> +
+> +	return dump_bo(dump_va_args->ptdev, bo_data, obj, va->gem.offset,
+> +		       va->va.range);
+> +}
+> +
+> +static int dump_va_cb(void *priv, const struct drm_gpuva *va)
+> +{
+> +	struct dump_va_args *dump_va_args = priv;
+> +	int ret;
+> +
+> +	ret = dump_va(dump_va_args, va, DRM_PANTHOR_DUMP_HEADER_TYPE_VM);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int count_va_cb(void *priv, const struct drm_gpuva *va)
+> +{
+> +	struct vm_dump_count *count = priv;
+> +
+> +	count->vas++;
+> +	count->size += va->va.range;
+> +	return 0;
+> +}
+> +
+> +static void count_queues(struct queue_count *count,
+> +			 struct drm_panthor_dump_group_info *info)
+> +{
+> +	count->queues += info->queue_count;
+> +}
+> +
+> +static int compute_dump_size(struct vm_dump_count *va_count,
+> +			     struct queue_count *group_and_q_cnt)
+> +{
+> +	int size = 0;
+> +	int i;
+> +
+> +	size += sizeof(struct drm_panthor_dump_header);
+> +	size += sizeof(struct drm_panthor_dump_version);
+> +
+> +	size += sizeof(struct drm_panthor_dump_header);
+> +	size += sizeof(struct drm_panthor_gpu_info);
+> +
+> +	size += sizeof(struct drm_panthor_dump_header);
+> +	size += sizeof(struct drm_panthor_csif_info);
+> +
+> +	size += sizeof(struct drm_panthor_dump_header);
+> +	size += sizeof(struct drm_panthor_fw_info);
+> +
+> +	for (i = 0; i < va_count->vas; i++) {
+> +		size += sizeof(struct drm_panthor_dump_header);
+> +		size += sizeof(struct drm_panthor_dump_gpuva);
+> +	}
+> +
+> +	size += va_count->size;
+> +
+> +	size += sizeof(struct drm_panthor_dump_header);
+> +	size += sizeof(struct drm_panthor_dump_group_info);
+> +
+> +	for (i = 0; i < group_and_q_cnt->queues; i++) {
+> +		size += sizeof(struct drm_panthor_dump_header);
+> +		size += sizeof(struct drm_panthor_dump_queue_info);
+> +	}
+> +
+> +	return size;
+> +}
+> +
+> +static int dump_queue_info(struct dump_group_args *dump_group_args,
+> +			   struct drm_panthor_dump_queue_info *info)
+> +{
+> +	struct drm_panthor_dump_header *hdr;
+> +	struct drm_panthor_dump_queue_info *queue_info;
+> +
+> +	drm_dbg(&dump_group_args->ptdev->base,
+> +		"dumping queue info for cs_id %d, gpuva: %llx, insert: %llx, extract: %llx\n",
+> +		info->cs_id, info->ringbuf_gpuva, info->ringbuf_insert,
+> +		info->ringbuf_extract);
+> +
+> +	hdr = alloc_header(dump_group_args->alloc,
+> +			   DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO,
+> +			   sizeof(*info));
+> +	if (IS_ERR(hdr))
+> +		return PTR_ERR(hdr);
+> +
+> +	queue_info = alloc_bytes(dump_group_args->alloc, sizeof(*queue_info));
+> +	if (IS_ERR(queue_info))
+> +		return PTR_ERR(queue_info);
+> +
+> +	*queue_info = *info;
+> +	return 0;
+> +}
+> +
+> +static int dump_group_info(struct dump_group_args *dump_group_args,
+> +			   struct drm_panthor_dump_group_info *info)
+> +{
+> +	struct drm_panthor_dump_header *hdr;
+> +	struct drm_panthor_dump_group_info *group_info;
+> +	int ret = 0;
+> +
+> +	drm_dbg(&dump_group_args->ptdev->base,
+> +		"dumping group info for num_queues: %d, faulty bitmask: %d\n",
+> +		info->queue_count, info->faulty_bitmask);
+> +
+> +	hdr = alloc_header(dump_group_args->alloc,
+> +			   DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO,
+> +			   sizeof(*info));
+> +	if (IS_ERR(hdr))
+> +		return PTR_ERR(hdr);
+> +
+> +	group_info = alloc_bytes(dump_group_args->alloc, sizeof(*group_info));
+> +	if (IS_ERR(group_info))
+> +		return PTR_ERR(group_info);
+> +
+> +	*group_info = *info;
+> +
+> +	for (int i = 0; i < info->queue_count; i++) {
+> +		struct drm_panthor_dump_queue_info qinfo;
+> +
+> +		ret = panthor_sched_get_queueinfo(dump_group_args->group, i,
+> +						  &qinfo);
+> +		if (ret)
+> +			break;
+> +		ret = dump_queue_info(dump_group_args, &qinfo);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +int panthor_core_dump(struct panthor_core_dump_args *args)
+> +{
+> +	u8 *mem;
+> +	int dump_size;
+> +	int ret = 0;
+> +	struct dump_allocator alloc = {};
+> +	struct vm_dump_count va_count = {};
+> +	struct drm_panthor_dump_header *hdr;
+> +	struct drm_panthor_dump_version *version;
+> +	struct drm_panthor_gpu_info *gpu_info;
+> +	struct drm_panthor_csif_info *csif_info;
+> +	struct drm_panthor_fw_info *fw_info;
+> +	struct queue_count group_and_q_cnt = {};
+> +	struct dump_va_args dump_va_args = {};
+> +	struct drm_panthor_dump_group_info group_info;
+> +	struct dump_group_args dump_group_args;
+> +
+> +	panthor_vm_foreach_va(args->group_vm, count_va_cb, &va_count);
+> +
+> +	panthor_sched_get_groupinfo(args->group, &group_info);
+> +
+> +	count_queues(&group_and_q_cnt, &group_info);
+> +
+> +	dump_size = compute_dump_size(&va_count, &group_and_q_cnt);
+> +
+> +	mem = vzalloc(dump_size);
+> +	if (!mem)
+> +		return ret;
+> +
+> +	alloc = (struct dump_allocator){
+> +		.start = mem,
+> +		.curr = mem,
+> +		.pos = 0,
+> +		.capacity = dump_size,
+> +	};
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION,
+> +			   sizeof(struct drm_panthor_dump_version));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	version = alloc_bytes(&alloc, sizeof(*version));
+> +	if (IS_ERR(version)) {
+> +		ret = PTR_ERR(version);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*version = (struct drm_panthor_dump_version){
+> +		.major = PANT_DUMP_MAJOR,
+> +		.minor = PANT_DUMP_MINOR,
+> +	};
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO,
+> +			   sizeof(args->ptdev->gpu_info));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	gpu_info = alloc_bytes(&alloc, sizeof(*gpu_info));
+> +	if (IS_ERR(gpu_info)) {
+> +		ret = PTR_ERR(gpu_info);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*gpu_info = args->ptdev->gpu_info;
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO,
+> +			   sizeof(args->ptdev->csif_info));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	csif_info = alloc_bytes(&alloc, sizeof(*csif_info));
+> +	if (IS_ERR(csif_info)) {
+> +		ret = PTR_ERR(csif_info);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*csif_info = args->ptdev->csif_info;
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO,
+> +			   sizeof(args->ptdev->fw_info));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	fw_info = alloc_bytes(&alloc, sizeof(*fw_info));
+> +	if (IS_ERR(fw_info)) {
+> +		ret = PTR_ERR(fw_info);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*fw_info = args->ptdev->fw_info;
+> +
+> +	dump_va_args.ptdev = args->ptdev;
+> +	dump_va_args.alloc = &alloc;
+> +	ret = panthor_vm_foreach_va(args->group_vm, dump_va_cb, &dump_va_args);
+> +	if (ret)
+> +		goto free_valloc;
+> +
+> +	dump_group_args =
+> +		(struct dump_group_args){ args->ptdev, &alloc, args->group };
+> +	panthor_sched_get_groupinfo(args->group, &group_info);
+> +	dump_group_info(&dump_group_args, &group_info);
+> +
+> +	if (alloc.pos < dump_size)
+> +		drm_warn(&args->ptdev->base,
+> +			 "dump size mismatch: expected %d, got %zu\n",
+> +			 dump_size, alloc.pos);
+> +
+> +	dev_coredumpv(args->ptdev->base.dev, alloc.start, alloc.pos,
+> +		      GFP_KERNEL);
+> +
+> +	return ret;
+> +
+> +free_valloc:
+> +	vfree(mem);
+> +	return ret;
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_dump.h b/drivers/gpu/drm/panthor/panthor_dump.h
+> new file mode 100644
+> index 000000000000..2a02943a2dbd
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_dump.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
+> +/* SPDX-FileCopyrightText: Copyright Collabora 2024 */
+> +
+> +#ifndef __PANTHOR_DUMP_H__
+> +#define __PANTHOR_DUMP_H__
+> +
+> +#include <drm/drm_gpuvm.h>
+> +#include <drm/panthor_drm.h>
+> +
+> +#include "panthor_device.h"
+> +#include "panthor_gem.h"
+> +
+> +struct panthor_core_dump_args {
+> +	struct panthor_device *ptdev;
+> +	struct panthor_vm *group_vm;
+> +	struct panthor_group *group;
+> +};
+> +
+> +int panthor_core_dump(struct panthor_core_dump_args *args);
+> +
+> +#endif /* __PANTHOR_DUMP_H__ */
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 412e95fcfb92..61d61157ace0 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -2632,6 +2632,28 @@ int panthor_vm_prepare_mapped_bos_resvs(struct drm_exec *exec, struct panthor_vm
+>  	return drm_gpuvm_prepare_objects(&vm->base, exec, slot_count);
+>  }
+>  
+> +/**
+> + * panthor_vm_foreachva() - Execute a callback for each VA in a VM
+> + *
+> + */
+> +int panthor_vm_foreach_va(struct panthor_vm *vm,
+> +			  int (*cb)(void *priv, const struct drm_gpuva *va),
+> +			  void *priv)
+> +{
+> +	struct drm_gpuva *va;
+> +	int ret = 0;
+> +
+> +	mutex_lock(&vm->op_lock);
+> +	drm_gpuvm_for_each_va(va, &vm->base) {
+> +		ret = cb(priv, va);
+> +		if (ret)
+> +			break;
+> +	}
+> +	mutex_unlock(&vm->op_lock);
+> +
+> +	return ret;
+> +}
+> +
+>  /**
+>   * panthor_mmu_unplug() - Unplug the MMU logic
+>   * @ptdev: Device.
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
+> index 6788771071e3..05a5d68b23ae 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.h
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.h
+> @@ -8,6 +8,7 @@
+>  #include <linux/dma-resv.h>
+>  
+>  struct drm_exec;
+> +struct drm_gpuva;
+>  struct drm_sched_job;
+>  struct panthor_gem_object;
+>  struct panthor_heap_pool;
+> @@ -52,6 +53,11 @@ void panthor_vm_add_job_fence_to_bos_resvs(struct panthor_vm *vm,
+>  					   struct drm_sched_job *job);
+>  
+>  struct dma_resv *panthor_vm_resv(struct panthor_vm *vm);
+> +
+> +int panthor_vm_foreach_va(struct panthor_vm *vm,
+> +			  int (*cb)(void *priv, const struct drm_gpuva *va),
+> +			  void *priv);
+> +
+>  struct drm_gem_object *panthor_vm_root_gem(struct panthor_vm *vm);
+>  
+>  void panthor_vm_pool_destroy(struct panthor_file *pfile);
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index e0ecc8bcfaae..59c30b311ee9 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -24,6 +24,7 @@
+>  
+>  #include "panthor_devfreq.h"
+>  #include "panthor_device.h"
+> +#include "panthor_dump.h"
+>  #include "panthor_fw.h"
+>  #include "panthor_gem.h"
+>  #include "panthor_gpu.h"
+> @@ -2805,6 +2806,45 @@ static void group_sync_upd_work(struct work_struct *work)
+>  	group_put(group);
+>  }
+>  
+> +/**
+> + * panthor_sched_get_groupinfo() - Build a group info structure for the group
+> + *
+> + * @group: the group to build a group info structure for
+> + * @info: the group info structure to fill
+> + */
+> +void panthor_sched_get_groupinfo(struct panthor_group *group,
+> +				 struct drm_panthor_dump_group_info *info)
+> +{
+> +	info->queue_count = group->queue_count;
+> +	info->faulty_bitmask = group->fatal_queues;
+> +}
+> +
+> +/** panthor_sched_get_queueinfo() - Build a queue info structure for a queue
+> + * given its group and its cs_id
+> + *
+> + * @group: the group the queue belongs to
+> + * @cs_id: the command stream ID of the queue
+> + * @info: the queue info structure to fill
+> + */
+> +int panthor_sched_get_queueinfo(struct panthor_group *group, u32 cs_id,
+> +				struct drm_panthor_dump_queue_info *info)
+> +{
+> +	struct panthor_queue *queue;
+> +
+> +	if (cs_id >= group->queue_count)
+> +		return -EINVAL;
+> +
+> +	queue = group->queues[cs_id];
+> +
+> +	info->cs_id = cs_id;
+> +	info->ringbuf_insert = queue->iface.input->insert;
+> +	info->ringbuf_extract = queue->iface.output->extract;
+> +	info->ringbuf_gpuva = panthor_kernel_bo_gpuva(queue->ringbuf);
+> +	info->ringbuf_size = panthor_kernel_bo_size(queue->ringbuf);
+> +
+> +	return 0;
+> +}
+> +
+>  static struct dma_fence *
+>  queue_run_job(struct drm_sched_job *sched_job)
+>  {
+> @@ -2946,7 +2986,7 @@ queue_timedout_job(struct drm_sched_job *sched_job)
+>  	struct panthor_device *ptdev = group->ptdev;
+>  	struct panthor_scheduler *sched = ptdev->scheduler;
+>  	struct panthor_queue *queue = group->queues[job->queue_idx];
+> -
+> +	struct panthor_core_dump_args core_dump_args;
+>  	drm_warn(&ptdev->base, "job timeout\n");
+>  
+>  	drm_WARN_ON(&ptdev->base, atomic_read(&sched->reset.in_progress));
+> @@ -2955,6 +2995,15 @@ queue_timedout_job(struct drm_sched_job *sched_job)
+>  
+>  	mutex_lock(&sched->lock);
+>  	group->timedout = true;
+> +
+> +	core_dump_args = (struct panthor_core_dump_args) {
+> +		.ptdev = ptdev,
+> +		.group_vm = job->group->vm,
+> +		.group = job->group,
+> +	};
+> +
+> +	panthor_core_dump(&core_dump_args);
+> +
+>  	if (group->csg_id >= 0) {
+>  		sched_queue_delayed_work(ptdev->scheduler, tick, 0);
+>  	} else {
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
+> index 3a30d2328b30..9a5b53498dcc 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.h
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
+> @@ -17,6 +17,9 @@ struct panthor_device;
+>  struct panthor_file;
+>  struct panthor_group_pool;
+>  struct panthor_job;
+> +struct panthor_group;
+> +struct drm_panthor_dump_group_info;
+> +struct drm_panthor_dump_queue_info;
+>  
+>  int panthor_group_create(struct panthor_file *pfile,
+>  			 const struct drm_panthor_group_create *group_args,
+> @@ -41,6 +44,13 @@ int panthor_sched_init(struct panthor_device *ptdev);
+>  void panthor_sched_unplug(struct panthor_device *ptdev);
+>  void panthor_sched_pre_reset(struct panthor_device *ptdev);
+>  void panthor_sched_post_reset(struct panthor_device *ptdev, bool reset_failed);
+> +
+> +void panthor_sched_get_groupinfo(struct panthor_group *group,
+> +				 struct drm_panthor_dump_group_info *info);
+> +
+> +int panthor_sched_get_queueinfo(struct panthor_group *group, u32 cs_id,
+> +				struct drm_panthor_dump_queue_info *info);
+> +
+>  void panthor_sched_suspend(struct panthor_device *ptdev);
+>  void panthor_sched_resume(struct panthor_device *ptdev);
+>  
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index e235cf452460..82ec0f20c49e 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -969,6 +969,130 @@ struct drm_panthor_tiler_heap_destroy {
+>  	__u32 pad;
+>  };
+>  
+> +/**
+> + * enum drm_panthor_dump_header_type - Identifies the type of data that follows
+> + * in a panthor core dump.
+> + */
+> +enum drm_panthor_dump_header_type {
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION = 0,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO: Gpu information.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO = 1,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO: Command stream interface information.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO = 2,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO: Information about the firmware.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO = 3,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_VM: A dump of the VM for the context.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_VM = 4,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO: Describes a group. A dump can
+> +	 * contain either the faulty group, or all groups for the DRM FD.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO = 5,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO: Describes a faulty queue. This
+> +	 * will immediately follow a group info.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO = 6,
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_header - A header that describes a section of a panthor core dump.
+> + */
+> +struct drm_panthor_dump_header {
+> +	/** @magic: Always set to PANT (0x544e4150). */
+> +	__u32 magic;
+> +
+> +	/** @header_type: Identifies the type of data in the following section of the
+> +	 * core dump file
+> +	 */
+> +	enum drm_panthor_dump_header_type header_type;
+> +
+> +	/** @header_size: The size of the header.
+> +	 *
+> +	 * This is for backward-compatibility purposes in case this structure is
+> +	 * augmented in the future. It allows userspace to skip over the header and
+> +	 * access the actual data it describes.
+> +	 */
+> +	__u32 header_size;
+> +
+> +	/** @data_size: The size of the following section */
+> +	__u32 data_size;
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_version - Version information for a Panthor GPU dump.
+> + *
+> + * This structure is used to hold version information when performing a dump of
+> + * the state of a Panthor GPU.
+> + */
+> +struct drm_panthor_dump_version {
+> +	/** @major: Versioning information for backwards compatibility */
+> +	__u32 major;
+> +	/** @minor: Versioning information for backwards compatibility */
+> +	__u32 minor;
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_group_info - Group information for a Panthor GPU
+> + * dump.
+> + *
+> + * This structure is used to hold information about a group when performing a
+> + * dump of the state of a Panthor GPU.
+> + */
+> +struct drm_panthor_dump_group_info {
+> +	/** @queue_count: The number of queues in the group. */
+> +	__u32 queue_count;
+> +	/** @faulty_queues: A bitmask denoting the faulty queues */
+> +	__u32 faulty_bitmask;
+> +};
+> +
+> +#define DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_FAULTY	(1 << 0)
+> +
+> +/**
+> + * struct drm_panthor_dump_queue_info - Queue information for a Panthor GPU
+> + * dump.
+> + *
+> + * This structure is used to hold information about a queue when performing a
+> + * dump of the state of a Panthor GPU.
+> + */
+> +struct drm_panthor_dump_queue_info {
+> +	/** See DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_XXX */
+> +	u32 flags;
+> +	/** @cs_id: The ID of the command stream. */
+> +	__s32 cs_id;
+> +	/** @faulty: Whether this queue has faulted */
+> +	/** @ringbuf_gpuva: The GPU virtual address of the ring buffer. */
+> +	__u64 ringbuf_gpuva;
+> +	/** @ringbuf_insert: The insert point (i.e.: offset) in the ring buffer. This
+> +	 * is where a instruction would be inserted next by the CPU.
+> +	 */
+> +	__u64 ringbuf_insert;
+> +	/** @ringbuf_extract: The extract point (i.e.: offset) in the ring buffer.
+> +	 * This is where the GPU would read the next instruction.
+> +	 */
+> +	__u64 ringbuf_extract;
+> +	/** @ringbuf_size: The size of the ring buffer */
+> +	__u64 ringbuf_size;
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_gpuva - Describes a GPU VA range in the dump.
+> + */
+> +struct drm_panthor_dump_gpuva {
+> +	/** @addr: The start address for the mapping */
+> +	__u64 addr;
+> +	/** @range: The range covered by the VA mapping */
+> +	__u64 range;
+> +};
+> +
+>  #if defined(__cplusplus)
+>  }
+>  #endif
+> -- 
+> 2.45.2
 
