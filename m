@@ -1,193 +1,306 @@
-Return-Path: <linux-kernel+bounces-296890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B700F95B034
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:27:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8E195B048
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1783CB24A90
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:27:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43ECBB2395C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A319916EBED;
-	Thu, 22 Aug 2024 08:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EE317F394;
+	Thu, 22 Aug 2024 08:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Gj4Zcwsb"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010013.outbound.protection.outlook.com [52.101.128.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EL/C0LhF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1506016F271
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315110; cv=fail; b=LThqLv6bw//Ths+mMkw4+vH7H2c3OTd+OQzSIffpbq1qe9s3KYgh5p6xmUFITWXur8z1VHNYTATB0T0jvC9TJHf20ms4AZBYOQpiIIHJvDa710WtPaIDoX6MQ2TMdcQZKgiNTHsoR3xXDrx+RKhFAFOmYNSUu3SHWzsUZxPfDf8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315110; c=relaxed/simple;
-	bh=lbc+QeZKxcAdEAvly9oyzv4/WK7CZGTgnDqebQPIuho=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=A8aZqeV+KpEuGkfE5bC5Zb7/3flpUTGd7ogVVN/DMubwknIZc9lzY3P5a/hMs3n28Gc0NosgkXUxIcYttPrpe1xi9dZZJoqHTKDsJW4hL7jwgX1FJ2PsHU56n1uQ+Hoby2+lI10zT21Dn/O5KiZLE91AUaDqDzSQFTRr7ZBnPc4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Gj4Zcwsb; arc=fail smtp.client-ip=52.101.128.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EHGJeoqfFSheXoypYxpKUYAXAo6LdS+4kY/FyA9FPq5RW08G26ACbsEIlLbnbXiwDW9uqepGCwQ9CcdD2rT3IM9nbitlgkXV40BRDKo4Al3eV5ABYEN9hNlZbeABUNlORSC272dHQz0mgoQIeqXaaZKKz3LCnwUMXyARD3ZDz1n1kI3a/nEw3NfA2E6/S09899DipxhYVNfQKeDGX3gudv1oiWWDxNMsux+n9rgoxCL01CMBt3jgyPJb6WkYd2XQkdHApc6CDFA1ob35b2IIDGjopLogf/yW2xFqsBWG+6Jyd3GhORj3WcO5LvfZWQb0iOsYYDmjfj/9LJSlWJnMLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Sm2gr2/DopkgsiADqGD5hVqBdyoSL/jihrQzsg6kaOc=;
- b=ea/PyCidajtswH4HjjlI17wGVEcnKzvjNEBGZsLNoPdebIYG9khroR8h39YVOXsyK+te9ALXvpc8Ka/xiam+lawYbDOe/8InWFLxvlJZ4hVQsBU4To7TD9MRHBqHr9/xlO3ksIQZRHiJq2RrQbS+OkRewIU6/UXvqHcmY1ycuc4HGdtU7zqlJEXuZYoJgKEdCx27lqQGA/PIuM4S4U9P01GXqCdl5vFFRARJ9JQxzHRJmfXvtQanxF5q7z/iKVEqDDFDYRcSvl+5DhDgLRo+wslm2aJuUNyx04KoJqCQmj1t5LI+L+Pfe6M2LwdLJftMLMv/jmqXVj7oQBElFsmMQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Sm2gr2/DopkgsiADqGD5hVqBdyoSL/jihrQzsg6kaOc=;
- b=Gj4ZcwsbtN7L2hld26nmtVxUHpXlp4m13UGfq9tEURK94BgF4Bn3te7sfjMUeVh19SRf1HVRWMlZ2SVH1xnx6JCS7qV0NaCUQexuubF7CGUlDHUciheiLWRRwOtO9nf40OYn3HKEwCCld6MNFN8iM6kQHTcHFW1l44G2pdWohOeTZOR+uOKGZFCmSVqFLjA5PCT6Jt/77joqNV8emHEd18BuMpzD5uxxGBaZ7BkK6GHIqdJ9ngpwhBJAR/z/H7NLnIxhrfel3d8dgrnzGk8LTchiMfI12ipso1vc61EOtGk6shyx3i7y+GQwb289enud1b3HZxFVwzGw1nFP2kcZPQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
- (2603:1096:820:bf::14) by SEZPR06MB5991.apcprd06.prod.outlook.com
- (2603:1096:101:e8::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
- 2024 08:25:01 +0000
-Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
- ([fe80::2129:59e5:6c67:311f]) by KL1PR0601MB5487.apcprd06.prod.outlook.com
- ([fe80::2129:59e5:6c67:311f%7]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
- 08:25:01 +0000
-From: Chen Yufan <chenyufan@vivo.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Chen Yufan <chenyufan@vivo.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v2] X86 architecture (32-bit and 64-bit): Convert to use jiffies macro
-Date: Thu, 22 Aug 2024 16:24:49 +0800
-Message-Id: <20240822082449.34601-1-chenyufan@vivo.com>
-X-Mailer: git-send-email 2.39.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCPR01CA0085.jpnprd01.prod.outlook.com
- (2603:1096:405:3::25) To KL1PR0601MB5487.apcprd06.prod.outlook.com
- (2603:1096:820:bf::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD14917DFF2;
+	Thu, 22 Aug 2024 08:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724315165; cv=none; b=bzRL3DSA2oAvyhoYHTnfUW2qc1gfianJCg5f7Cqmo+nyTq+ojrJEHDqo0/r2gl/IEbaNqt8LRBL26ni3BoGPA8o9S5KgQB2yyTIVRDhtzNPZgRhijH+JY+xRAM+857rxyCQ9oZxzVi/dxKejrCknVodPWt9id17YW+B6B7+4fFY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724315165; c=relaxed/simple;
+	bh=dB2KYzLu/Tv5zD99j9Lz99BYHd0f0NKIEZ0d6sfyKKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r42I67XNagix/qthRynwK37/uq4uWiHbV2jrPR8zB0Ma4UFhu7WdL/69GKMyuPBMfOup1wZRpwcE038OlFAsXr4yV4lS21r3LAGQKRfPrckLKvrMAOfxbxm5NLbfdPiwLMFU7b5Bhj8POuH/tbEhVqiqVgmSUTWh2Vhsv9mIRC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EL/C0LhF; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724315163; x=1755851163;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dB2KYzLu/Tv5zD99j9Lz99BYHd0f0NKIEZ0d6sfyKKk=;
+  b=EL/C0LhFFzTxDpVXJDcDuNIbvHogNppEjvx5Ryf7VFrBtrzFn2i2Tag5
+   jXAjJ4ijUnIfbdgXNVP4T9MbUCHAwuzrPYCOkv3sugQ4SOmALqxYY8uRF
+   hd2jzKEiTjFnhepjJtzZUFe+GB9ShurM6ettlP5UY/DqBz8J7N4o9i6p+
+   fPWiy6reEHhuNGoH1+nHyJxbwSE8mi+ozbLI1oUmk5NnYBuHJRKl87Syn
+   LuRdbOVLdqc3MfVwTrZ/cyAnIC8rscCpL7nP1aoyiqVFqAuFeAlrZVXRf
+   8/7Tb4RbONUkEKWAUmgLziaiULxJiY7z/MZJlU6g1/80UFFHSO4kldcJC
+   Q==;
+X-CSE-ConnectionGUID: haY3+HVTR2Ojn07Bl4hwLg==
+X-CSE-MsgGUID: +fEeyYAKR6C2o3NbgZ6F4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="13148902"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="13148902"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 01:26:02 -0700
+X-CSE-ConnectionGUID: uYXY8uX2SiujYrUUtbnVlQ==
+X-CSE-MsgGUID: lBnQwlbcQ2yPb6NGTjducQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="66310543"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 22 Aug 2024 01:25:58 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sh38l-000CZn-1X;
+	Thu, 22 Aug 2024 08:25:55 +0000
+Date: Thu, 22 Aug 2024 16:25:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	manivannan.sadhasivam@linaro.org, esben@geanix.com,
+	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v8 5/8] mtd: rawnand: qcom: use FIELD_PREP and GENMASK
+Message-ID: <202408221634.2JY5J8DX-lkp@intel.com>
+References: <20240820104239.1774600-6-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB5487:EE_|SEZPR06MB5991:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7e92f5b-d11c-405e-daeb-08dcc283eacd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?opa14K1nEZOhq+UShCU4t1QM+sDIuRzJd+halcNd/0aN72YE8G+Ebw8ReiWF?=
- =?us-ascii?Q?4+li9PMYapIC6CSQUhGMhZ/6gposCyuzRwVceJGppXsy7WvBa28QL+BDXGdD?=
- =?us-ascii?Q?Ax3KxqRQFRmdN05V0ka6d6022AMEANYsbdXTOigrbz0UGdtj7Oww/tkxG5hL?=
- =?us-ascii?Q?Rie3HBSZef705amz47tOu7LaODE0z3vvfTcS7f/QiaD7xtv9ByAzYqMIZamy?=
- =?us-ascii?Q?s7zYs+n457HePQ42aCZvI7AVlMQE5LPXOm2Ks2dhLgQww1yNNpCQysr8+nrd?=
- =?us-ascii?Q?cHnj35cFJEkGO5n9lujeVHHpfI0uvj6QgrVapSXLBH+qs7On/cTyAV33rISJ?=
- =?us-ascii?Q?IO/wkIANid0YfxDT+5POS4DpgZtTKZRLE+ip2knwUC9+0XBqnEpIMJ8yekKP?=
- =?us-ascii?Q?q75aMx/oNF6QKtufo4REGQrwFe+B/gzmAaQi7vNzmmOG1m77OsYvqsDr/uzz?=
- =?us-ascii?Q?5fxoG6VVYhSo+LTt4Wn6q4WYihc2JJmNGN417HdtBvm1KYnzrrZyN16GcUNI?=
- =?us-ascii?Q?CuzPI6wsmz+4Bfc9DUpp9rjlnCh+1L7zqIvR58n05VbD2dpc1sKDL6KX0ht6?=
- =?us-ascii?Q?OvDlPZaFD2rDcj3Uv1ppzLu22MCZJ/IgapST2jXTr8QnIu1UPJ9UhISAiUAo?=
- =?us-ascii?Q?usknP2pTyC9Xt6tgPnQ6O3bx6SSoayRCLDKomf+MWyvFHtgYkHlHs6ynJ12K?=
- =?us-ascii?Q?30Ovt0tO/WdjIXnMB6sKtp/mB6rAoZn7gDEFzUoLrs7BBDCNiSFLBQy+buBs?=
- =?us-ascii?Q?pG9qu/07n8w8YBLCfP5YaHlpGoK9PrhflxLNIDi/403ZYpFpv6ntwHNbyTnD?=
- =?us-ascii?Q?onI2UBPoliG9ijSVU59a8WcEO9SzvQU/QtPCdB99gHb/DZKzcDEULVfM1mfL?=
- =?us-ascii?Q?MkH78r7ja1ii7FBFXpYvPyN2kJZ/0gd89nWx/B9rKLfjRSZY46fTBvxd2hfI?=
- =?us-ascii?Q?odAhfaf3b8VYs6Vw1gvjTd2dfihZwRrw3qVCvoy4A+cZxapcuerkZbSq03+t?=
- =?us-ascii?Q?z+Zf4sBE3vxxgvvYcQUme1V8GRbSbSEI9mQZLV62xoqIbK18F3TYbhEdCmPz?=
- =?us-ascii?Q?UkFdn4fOL48WN1X9KPfUI0b61agacvzD0YL3VmZ4jmzm5HmVGZlmas7R4+Y9?=
- =?us-ascii?Q?QPaVL/n2Qqkq4yg/Fv99ZrRxFpIFJc3y7M7RX+8FItt6PhBZ01sqQtFC250m?=
- =?us-ascii?Q?swDYOVyFRMGgO22fQpTHLAKnJqRlvv6D/hTHdoPrNwVn2uYuq64i6912PrI5?=
- =?us-ascii?Q?9+XwGDqTpuqmYu3f92IzXHtO9+0ZoHk+znU80woERbIZq5/RWTM1GKS6faDA?=
- =?us-ascii?Q?KO5F6mZGSGeldGNpW0jxQebc6hiFkgQvMPhhUNzp8BplfbAqEkBcxvG2G1IE?=
- =?us-ascii?Q?ufsGqcKgbilmaYccRNVBMcsn19WeTIRItqvLs9wSIOZfqH0rTg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB5487.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?16mTe+AJctNZjlT81D2DLCVN9PmWub0qyI7hJ4awSlnPL49yrX2t1fG92Gej?=
- =?us-ascii?Q?bkol9DRB/KUU1dlkulQ0Ghwx6IQAMxQvF4PnBA/JggxWpgTcNaSK4uXxBpJt?=
- =?us-ascii?Q?Aui10yIMeV+mUu9rQ49+UspynLuPU9zzMxZdC4XA72TgqRB57fnDlNqJ6PKf?=
- =?us-ascii?Q?qTjBJX96vMuYrE8FqQT+dQALXMe42CiD0J74IX9sahPWkAncM322KH8YTGpK?=
- =?us-ascii?Q?NBXbbHD5FVP6ZOSQhx5YLGmY9+xwBNJee/X8alEDr52Ntx0OJLfTzQaehSVo?=
- =?us-ascii?Q?3XIAIAdPaV83ktKwXLLLZULamfwwc3XJcD6C5qzjknA1M6uiRKUZarH/QEo4?=
- =?us-ascii?Q?0Bm8xqN+Zqu9ibz3QR4DpsPgmpuYk96lobNP2shAOKOdLvRq8FvUXq00r/4Z?=
- =?us-ascii?Q?n5HVZAr9tez+0dfM/vBVlmLzk10zbXVZEwTGjUt0/BC93Hm/7hIQhq74C11X?=
- =?us-ascii?Q?vP1m1ONE2jxmE+o++CFiWOxnqSwuSHJK0lwaXISardfpwIEZB/31bjbQqMdm?=
- =?us-ascii?Q?R7vhS85ERB8cIefiuBMXcVAFm75KVL7PZbDypTxMXLM+906eD5WdCUGN6TW4?=
- =?us-ascii?Q?YLbpzm4QEIroUFvGkOLKYXjGMaI5P+9C/NzAqzZZ9UD9+KjFrq2XMnKjJudd?=
- =?us-ascii?Q?QHAfg/rojyOCDkEhgNKltGyA5lOMDLlQROKtIK486Huc9tu0bmvij1+APbtT?=
- =?us-ascii?Q?bJTdpyDfQ9CgBx+rFIGlokiv//BU1jqg38nOWKlax+t2C+JOY762jWaibOru?=
- =?us-ascii?Q?FCeIyUWAiQB8VMyA3ST/XfJaXMUTx0Kd4HQjjRe/SxxO18Feif2MYlEATsUJ?=
- =?us-ascii?Q?rENQXRsS+N20cB1Ykoc6ZEKZCvdkPQGqzfZC7w1O56UR3fUF8Da5zQWFNKWL?=
- =?us-ascii?Q?BoUxemlSn+afK97cDXZuzUnKUPDnhtJ1bT8dpDVX80RrlIZAg2ZdlYx7BwLF?=
- =?us-ascii?Q?ecmtPkms/1T6JMI6V5EPXh1z3/uLY0Sh5KHITLyKBxSm1eMMETa5tiSYxGxG?=
- =?us-ascii?Q?x/IfKTP1KUPbHXijd3eciJYCesBUqszfZz/V5iuLAzhB5vLozUUYnFdtdNbh?=
- =?us-ascii?Q?4qRuoKADSC82iqLFmErxFZOgy3yw+Vv5RPNThQnV5cULCJkfaQ4qSSuqndnB?=
- =?us-ascii?Q?ejzUeclj/JZ7BR2/HpA8ZpRMJmKBnwuBUz+b9Qyc50VvMmyz/ENs1petF8sm?=
- =?us-ascii?Q?B8YuAbkMQ6lJjqabUbWGf5Ia0SogNu1vNrTbztxk7W9tWDdgoQsEzZYjmtd5?=
- =?us-ascii?Q?9YiZMvdFH7CQQRCWgjuRb+nBNtYR0yAIBmQ6coIQXtPD5heg5N0dbHffxbpt?=
- =?us-ascii?Q?u2MkPcNwGo+1eexd16lx3e5KyZhXXDSNSabRgG4HJ8RPSk7gGbEg6b7dktgV?=
- =?us-ascii?Q?HbjsX9uJc+OsB15uT6xmHV1CCEOBLfYsYvaGOyg4d8QWIgd71s/cSQx0EDAb?=
- =?us-ascii?Q?toe41oJ2u43q72/6793CxmRYxkj1IZBghP6o728tP0JsMPyotolEDQKlMo8K?=
- =?us-ascii?Q?1jxkAm+V8a0b2cQpK3/OCZY19Am2K77M/eWmM7W9BW7D24dNQ0KR4AHT0N6u?=
- =?us-ascii?Q?oA72eG99a+DWbCB6jYXM//Q9RXK79ecBtNnCZQHq?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7e92f5b-d11c-405e-daeb-08dcc283eacd
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5487.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 08:25:01.7411
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 524VUdR1CV8ArKMZRF2C+yCAU0+YK2SAYs6ZeRMcgbzvuqcQKhNWx+7W0HCvQyQMw7cjajTlKK4MvcqSgiqo3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5991
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820104239.1774600-6-quic_mdalam@quicinc.com>
 
-Use time_after macro instead of using
-jiffies directly to handle wraparound.
+Hi Md,
 
-Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+kernel test robot noticed the following build warnings:
 
-The modifications made compared to the previous version are as follows:
-1. Remove extra '+' in the header.
----
- arch/x86/kernel/cpu/aperfmperf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+[auto build test WARNING on mtd/nand/next]
+[also build test WARNING on broonie-spi/for-next robh/for-next linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-index 0b69bfbf3..5fe0a7576 100644
---- a/arch/x86/kernel/cpu/aperfmperf.c
-+++ b/arch/x86/kernel/cpu/aperfmperf.c
-@@ -16,6 +16,7 @@
- #include <linux/sched/topology.h>
- #include <linux/smp.h>
- #include <linux/syscore_ops.h>
-+#include <linux/jiffies.h>
- 
- #include <asm/cpu.h>
- #include <asm/cpu_device_id.h>
-@@ -434,7 +435,7 @@ unsigned int arch_freq_get_on_cpu(int cpu)
- 	 * Bail on invalid count and when the last update was too long ago,
- 	 * which covers idle and NOHZ full CPUs.
- 	 */
--	if (!mcnt || (jiffies - last) > MAX_SAMPLE_AGE)
-+	if (!mcnt || time_after(jiffies, last + MAX_SAMPLE_AGE))
- 		goto fallback;
- 
- 	return div64_u64((cpu_khz * acnt), mcnt);
+url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20240820-184732
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
+patch link:    https://lore.kernel.org/r/20240820104239.1774600-6-quic_mdalam%40quicinc.com
+patch subject: [PATCH v8 5/8] mtd: rawnand: qcom: use FIELD_PREP and GENMASK
+config: s390-randconfig-r111-20240821 (https://download.01.org/0day-ci/archive/20240822/202408221634.2JY5J8DX-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240822/202408221634.2JY5J8DX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221634.2JY5J8DX-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/mtd/nand/raw/qcom_nandc.c:168:55: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __le32 [usertype] val @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:168:55: sparse:     expected restricted __le32 [usertype] val
+   drivers/mtd/nand/raw/qcom_nandc.c:168:55: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:198:55: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __le32 [usertype] val @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:198:55: sparse:     expected restricted __le32 [usertype] val
+   drivers/mtd/nand/raw/qcom_nandc.c:198:55: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:241:28: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] addr0 @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:241:28: sparse:     expected restricted __le32 [usertype] addr0
+   drivers/mtd/nand/raw/qcom_nandc.c:241:28: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:242:28: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] addr1 @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:242:28: sparse:     expected restricted __le32 [usertype] addr1
+   drivers/mtd/nand/raw/qcom_nandc.c:242:28: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:261:29: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cmd @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:261:29: sparse:     expected restricted __le32 [usertype] cmd
+   drivers/mtd/nand/raw/qcom_nandc.c:261:29: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:263:29: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cmd @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:263:29: sparse:     expected restricted __le32 [usertype] cmd
+   drivers/mtd/nand/raw/qcom_nandc.c:263:29: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:265:21: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cmd @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:265:21: sparse:     expected restricted __le32 [usertype] cmd
+   drivers/mtd/nand/raw/qcom_nandc.c:265:21: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:269:29: sparse: sparse: restricted __le32 degrades to integer
+   drivers/mtd/nand/raw/qcom_nandc.c:269:22: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg0 @@     got unsigned int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:269:22: sparse:     expected restricted __le32 [usertype] cfg0
+   drivers/mtd/nand/raw/qcom_nandc.c:269:22: sparse:     got unsigned int
+   drivers/mtd/nand/raw/qcom_nandc.c:275:29: sparse: sparse: restricted __le32 degrades to integer
+   drivers/mtd/nand/raw/qcom_nandc.c:275:22: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg0 @@     got unsigned int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:275:22: sparse:     expected restricted __le32 [usertype] cfg0
+   drivers/mtd/nand/raw/qcom_nandc.c:275:22: sparse:     got unsigned int
+>> drivers/mtd/nand/raw/qcom_nandc.c:279:29: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [assigned] [usertype] ecc_bch_cfg @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:279:29: sparse:     expected restricted __le32 [assigned] [usertype] ecc_bch_cfg
+   drivers/mtd/nand/raw/qcom_nandc.c:279:29: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:292:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] exec @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:292:27: sparse:     expected restricted __le32 [usertype] exec
+   drivers/mtd/nand/raw/qcom_nandc.c:292:27: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:879:20: sparse: sparse: invalid assignment: &=
+   drivers/mtd/nand/raw/qcom_nandc.c:879:20: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:879:20: sparse:    right side has type unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:880:20: sparse: sparse: invalid assignment: |=
+   drivers/mtd/nand/raw/qcom_nandc.c:880:20: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:880:20: sparse:    right side has type int
+   drivers/mtd/nand/raw/qcom_nandc.c:883:27: sparse: sparse: invalid assignment: &=
+   drivers/mtd/nand/raw/qcom_nandc.c:883:27: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:883:27: sparse:    right side has type unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:884:27: sparse: sparse: invalid assignment: |=
+   drivers/mtd/nand/raw/qcom_nandc.c:884:27: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:884:27: sparse:    right side has type int
+   drivers/mtd/nand/raw/qcom_nandc.c:885:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] ecc_buf_cfg @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:885:27: sparse:     expected restricted __le32 [usertype] ecc_buf_cfg
+   drivers/mtd/nand/raw/qcom_nandc.c:885:27: sparse:     got int
+>> drivers/mtd/nand/raw/qcom_nandc.c:1490:20: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg0 @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1490:20: sparse:     expected restricted __le32 [usertype] cfg0
+   drivers/mtd/nand/raw/qcom_nandc.c:1490:20: sparse:     got unsigned long
+>> drivers/mtd/nand/raw/qcom_nandc.c:1499:20: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg1 @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1499:20: sparse:     expected restricted __le32 [usertype] cfg1
+   drivers/mtd/nand/raw/qcom_nandc.c:1499:20: sparse:     got unsigned long
+>> drivers/mtd/nand/raw/qcom_nandc.c:1506:24: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg0_raw @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1506:24: sparse:     expected restricted __le32 [usertype] cfg0_raw
+   drivers/mtd/nand/raw/qcom_nandc.c:1506:24: sparse:     got unsigned long
+>> drivers/mtd/nand/raw/qcom_nandc.c:1511:24: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg1_raw @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1511:24: sparse:     expected restricted __le32 [usertype] cfg1_raw
+   drivers/mtd/nand/raw/qcom_nandc.c:1511:24: sparse:     got unsigned long
+>> drivers/mtd/nand/raw/qcom_nandc.c:1519:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] ecc_bch_cfg @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1519:27: sparse:     expected restricted __le32 [usertype] ecc_bch_cfg
+   drivers/mtd/nand/raw/qcom_nandc.c:1519:27: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1527:35: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] ecc_buf_cfg @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1527:35: sparse:     expected restricted __le32 [usertype] ecc_buf_cfg
+   drivers/mtd/nand/raw/qcom_nandc.c:1527:35: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:1529:30: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] clrflashstatus @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1529:30: sparse:     expected restricted __le32 [usertype] clrflashstatus
+   drivers/mtd/nand/raw/qcom_nandc.c:1529:30: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1530:29: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] clrreadstatus @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1530:29: sparse:     expected restricted __le32 [usertype] clrreadstatus
+   drivers/mtd/nand/raw/qcom_nandc.c:1530:29: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:1613:39: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cmd_reg @@     got int [assigned] ret @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1613:39: sparse:     expected restricted __le32 [usertype] cmd_reg
+   drivers/mtd/nand/raw/qcom_nandc.c:1613:39: sparse:     got int [assigned] ret
+   drivers/mtd/nand/raw/qcom_nandc.c:1623:49: sparse: sparse: invalid assignment: |=
+   drivers/mtd/nand/raw/qcom_nandc.c:1623:49: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:1623:49: sparse:    right side has type int
+   drivers/mtd/nand/raw/qcom_nandc.c:1626:49: sparse: sparse: invalid assignment: |=
+   drivers/mtd/nand/raw/qcom_nandc.c:1626:49: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:1626:49: sparse:    right side has type unsigned char
+   drivers/mtd/nand/raw/qcom_nandc.c:1711:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] exec @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1711:27: sparse:     expected restricted __le32 [usertype] exec
+   drivers/mtd/nand/raw/qcom_nandc.c:1711:27: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:1770:31: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] chip_sel @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1770:31: sparse:     expected restricted __le32 [usertype] chip_sel
+   drivers/mtd/nand/raw/qcom_nandc.c:1770:31: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1771:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] exec @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1771:27: sparse:     expected restricted __le32 [usertype] exec
+   drivers/mtd/nand/raw/qcom_nandc.c:1771:27: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:1809:24: sparse: sparse: restricted __le32 degrades to integer
+   drivers/mtd/nand/raw/qcom_nandc.c:1810:30: sparse: sparse: invalid assignment: |=
+   drivers/mtd/nand/raw/qcom_nandc.c:1810:30: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:1810:30: sparse:    right side has type unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1813:41: sparse: sparse: restricted __le32 degrades to integer
+   drivers/mtd/nand/raw/qcom_nandc.c:1813:35: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg0 @@     got unsigned int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1813:35: sparse:     expected restricted __le32 [usertype] cfg0
+   drivers/mtd/nand/raw/qcom_nandc.c:1813:35: sparse:     got unsigned int
+   drivers/mtd/nand/raw/qcom_nandc.c:1816:24: sparse: sparse: restricted __le32 degrades to integer
+   drivers/mtd/nand/raw/qcom_nandc.c:1828:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] exec @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1828:27: sparse:     expected restricted __le32 [usertype] exec
+   drivers/mtd/nand/raw/qcom_nandc.c:1828:27: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:1832:17: sparse: sparse: restricted __le32 degrades to integer
+   drivers/mtd/nand/raw/qcom_nandc.c:1866:22: sparse: sparse: invalid assignment: |=
+   drivers/mtd/nand/raw/qcom_nandc.c:1866:22: sparse:    left side has type restricted __le32
+   drivers/mtd/nand/raw/qcom_nandc.c:1866:22: sparse:    right side has type unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1878:20: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg0 @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1878:20: sparse:     expected restricted __le32 [usertype] cfg0
+   drivers/mtd/nand/raw/qcom_nandc.c:1878:20: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1883:20: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cfg1 @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1883:20: sparse:     expected restricted __le32 [usertype] cfg1
+   drivers/mtd/nand/raw/qcom_nandc.c:1883:20: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1892:42: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] ecc_buf_cfg @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1892:42: sparse:     expected restricted __le32 [usertype] ecc_buf_cfg
+   drivers/mtd/nand/raw/qcom_nandc.c:1892:42: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1896:34: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] vld @@     got unsigned long @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1896:34: sparse:     expected restricted __le32 [usertype] vld
+   drivers/mtd/nand/raw/qcom_nandc.c:1896:34: sparse:     got unsigned long
+   drivers/mtd/nand/raw/qcom_nandc.c:1897:35: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] cmd1 @@     got unsigned int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1897:35: sparse:     expected restricted __le32 [usertype] cmd1
+   drivers/mtd/nand/raw/qcom_nandc.c:1897:35: sparse:     got unsigned int
+   drivers/mtd/nand/raw/qcom_nandc.c:1901:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] exec @@     got int @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1901:27: sparse:     expected restricted __le32 [usertype] exec
+   drivers/mtd/nand/raw/qcom_nandc.c:1901:27: sparse:     got int
+   drivers/mtd/nand/raw/qcom_nandc.c:1904:40: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] orig_cmd1 @@     got unsigned int [usertype] cmd1 @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1904:40: sparse:     expected restricted __le32 [usertype] orig_cmd1
+   drivers/mtd/nand/raw/qcom_nandc.c:1904:40: sparse:     got unsigned int [usertype] cmd1
+   drivers/mtd/nand/raw/qcom_nandc.c:1905:39: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] orig_vld @@     got unsigned int [usertype] vld @@
+   drivers/mtd/nand/raw/qcom_nandc.c:1905:39: sparse:     expected restricted __le32 [usertype] orig_vld
+   drivers/mtd/nand/raw/qcom_nandc.c:1905:39: sparse:     got unsigned int [usertype] vld
+
+vim +279 drivers/mtd/nand/raw/qcom_nandc.c
+
+   244	
+   245	/*
+   246	 * update_rw_regs:	set up read/write register values, these will be
+   247	 *			written to the NAND controller registers via DMA
+   248	 *
+   249	 * @num_cw:		number of steps for the read/write operation
+   250	 * @read:		read or write operation
+   251	 * @cw	:		which code word
+   252	 */
+   253	static void update_rw_regs(struct qcom_nand_host *host, int num_cw, bool read, int cw)
+   254	{
+   255		struct nand_chip *chip = &host->chip;
+   256		__le32 cmd, cfg0, cfg1, ecc_bch_cfg;
+   257		struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+   258	
+   259		if (read) {
+   260			if (host->use_ecc)
+   261				cmd = OP_PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
+   262			else
+   263				cmd = OP_PAGE_READ | PAGE_ACC | LAST_PAGE;
+   264		} else {
+   265			cmd = OP_PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
+   266		}
+   267	
+   268		if (host->use_ecc) {
+   269			cfg0 = (host->cfg0 & ~(7U << CW_PER_PAGE)) |
+   270					(num_cw - 1) << CW_PER_PAGE;
+   271	
+   272			cfg1 = host->cfg1;
+   273			ecc_bch_cfg = host->ecc_bch_cfg;
+   274		} else {
+   275			cfg0 = (host->cfg0_raw & ~(7U << CW_PER_PAGE)) |
+   276					(num_cw - 1) << CW_PER_PAGE;
+   277	
+   278			cfg1 = host->cfg1_raw;
+ > 279			ecc_bch_cfg = ECC_CFG_ECC_DISABLE;
+   280		}
+   281	
+   282		nandc->regs->cmd = cmd;
+   283		nandc->regs->cfg0 = cfg0;
+   284		nandc->regs->cfg1 = cfg1;
+   285		nandc->regs->ecc_bch_cfg = ecc_bch_cfg;
+   286	
+   287		if (!nandc->props->qpic_version2)
+   288			nandc->regs->ecc_buf_cfg = host->ecc_buf_cfg;
+   289	
+   290		nandc->regs->clrflashstatus = host->clrflashstatus;
+   291		nandc->regs->clrreadstatus = host->clrreadstatus;
+   292		nandc->regs->exec = 1;
+   293	
+   294		if (read)
+   295			nandc_set_read_loc(chip, cw, 0, 0, host->use_ecc ?
+   296					   host->cw_data : host->cw_size, 1);
+   297	}
+   298	
+
 -- 
-2.39.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
