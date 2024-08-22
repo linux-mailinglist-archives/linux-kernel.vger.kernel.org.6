@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-297809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1824B95BDFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7D095BE00
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C29BB22587
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:07:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75656282250
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45581CFEAF;
-	Thu, 22 Aug 2024 18:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1521D048B;
+	Thu, 22 Aug 2024 18:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZjMtLYV6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hrDeP3FJ"
 Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A0F43165
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 18:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9263C1CFEAC;
+	Thu, 22 Aug 2024 18:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724350061; cv=none; b=s8TIFWZo2YaJ3cX7t8jqPKxzQYn7HpL0ULhXM5Xy7kj/V/rB0GyXweVydIWuLHFJYv7kE98tM9UJlMVPYtrUDCknrkkWHPBVnxN2MLpYKFSpLhZK/3x4oT92udGYqo6mpbPzaguKRh5U/Y7LbFTeaUcGf5Ck7uLX9r1qRh7M6YM=
+	t=1724350062; cv=none; b=ACErRbXOIIri3VAF/8J/YwBYz3QdrXrKP0NkawQkP310/WS0RW4MLS98dTtfLkLZPmq4KOwLoKD6nhuzBrT6ZO0Mn8l+bofFzxOC81FZebBuGQF5kunf3r216mYCHrFWCN5eppA5Gtt+E/SjYjO86NK5RUDtgJiy74tn7DrjQO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724350061; c=relaxed/simple;
-	bh=1O9vC8Ub5ix8LyTH4b/+Hy7eOAcgoYhD/5DXIM/VygQ=;
+	s=arc-20240116; t=1724350062; c=relaxed/simple;
+	bh=pcBIeK4mcDPFBDjl4/lQsKOvSfla45+WspiEGxXvkn0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBR2DvIWU8jioiiNUT/x29SzqxCyQYqXMt7CQoBZP8iZ3CAX5i4DxxZo75CjfEnblpVW+gUZHOSR8MO1qbpDVD/PyLcR4nm29jrWPaxK4F/0zlz6M0Fx0/HWJTFU8TJzJpDrNv1441cTgt49LqWH4jDFrwEHc4llxphIfih/rJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZjMtLYV6; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d439583573so840294a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:07:38 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0Z2uUFBlm/9KbOoANn9veR5tMhcTSOstcSkET5ukg1CAS20/WUWm8QWIhq+G86Rm+7eVgOEAWtGGJi6x3n0sa3oa1Na5mtB7AkWGSErVVa3RTgF4WBW7uIyxglwfsXUZNxcYol4j7i860rlDc5IozB+6+q+j4A+zyooxI8kL7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hrDeP3FJ; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d3c99033d6so893438a91.0;
+        Thu, 22 Aug 2024 11:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724350058; x=1724954858; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724350061; x=1724954861; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L/pvOZ8QmQOJgVwLDkuJvTgRqV+BiNA2Wp1U0v/4kwo=;
-        b=ZjMtLYV6A1EKgpVMpEKNfpFJZegYaMLhj3hjvNnXs5xXWUn7AkxraUWF4NTXmRazZw
-         tmmBgr1nSUBufdw0tfFnUhD6Lmww7uElFKTxWYR6a1L64G15r7JVZhuNllOttS6CxTh8
-         Pm/9Reh13XaKVykBdddeoTP7n0v+BGT1HwEIg=
+        bh=GQybDFmkYIn6xZ+90bRuYKiZGiAETXvH8v85EQgpozk=;
+        b=hrDeP3FJB5ia7ym+qbUApZIpZWIly2Ruo/9VsY/pZQF/HPILKywYGmeSYLYrZOYvpX
+         Y4MqjYP5RCAN9Dt1tSK/gSwe+cfoqGh7hxfaf1H1HuhbVcwgX393V1V1kFpFbYPJIrS9
+         vjDEN1miASJN+Oqh7GDqW8/18XavQDx3gMuAu/OPAfjgrToRUzKLbCxNSfujsyiqw6Q6
+         gmX1au0/pcYKp3jr0F+MPM2GvrHnyj6MINhCZLRz4RbNmq9ddsZmp6EkY1lhiEdMGe2C
+         OSW253zZjmEAch7Acjlp7E3XUZVJM/abHLP/8oN5yv2mVtspS3Ba8Jt6VWQ3h6IOIU2j
+         sppw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724350058; x=1724954858;
+        d=1e100.net; s=20230601; t=1724350061; x=1724954861;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L/pvOZ8QmQOJgVwLDkuJvTgRqV+BiNA2Wp1U0v/4kwo=;
-        b=nuFztPDiiqU//JUQsvhi9AVStTTxCpI5ffamKHgl1+Sh9MLjJ63kr0r0kOEWboC3AD
-         Sa6G/uL3tSyepDpiZcky4a8pdIcrBJOSLe7HkUQhLCSWtVnV3q8GcZttDZ5FYxxRMgTC
-         zkNEUvuWHQENMyBYl2s3qFelme7zFhV550G/SQg09LFw6lL1H9fnRBIOCsLu8bwTWs/R
-         yafBv4NAi+VXnN5FMnb0h/w5+qZyxPJn3f9sGxCG1Bv3fEjajufx//p5It58yjcvg9h5
-         PNw3GiHl7AhPGw8BO5oH+pBAqPzJCrSaT6jjtdjwKeJxhDXy9p63E1NxUvlPt7OXg+cb
-         o32A==
-X-Forwarded-Encrypted: i=1; AJvYcCVTYYZU5iqVj4oNg86ufUDhXotgG2hqwPUQPfbWIOKSPZVBJg0HvdniO9myyeAA8+acBgBV4Mfwnkg67Zc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Hg2Lhs2Cox7PpG+XhsrAy9R0AIdQ6zYKWnwcECrzwxhb1Eiq
-	7b3DbfWhHxVyyFMm8eUifY2NfH60IorinpzYW5Jc8P5Nzr7pgOmaTse3MpRmqw==
-X-Google-Smtp-Source: AGHT+IEvb1NFF7jDJJq6my2bW/vOgpn7OwDAHHPeb3en8xgSUD8A2nA+Vjnbu2muHEJGXT/ggFNSPA==
-X-Received: by 2002:a17:90b:3b45:b0:2cc:ff56:5be1 with SMTP id 98e67ed59e1d1-2d5e99c52d1mr7283937a91.7.1724350057634;
-        Thu, 22 Aug 2024 11:07:37 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:414c:5b44:2fea:fb6e])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2d613a6123fsm2181163a91.33.2024.08.22.11.07.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 11:07:37 -0700 (PDT)
-Date: Thu, 22 Aug 2024 11:07:35 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 03/31] wifi: mwifiex: drop HostCmd_CMD_802_11_MAC_ADDRESS
- response handling
-Message-ID: <Zsd-ZxscUBmf0xsu@google.com>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-3-320d8de4a4b7@pengutronix.de>
+        bh=GQybDFmkYIn6xZ+90bRuYKiZGiAETXvH8v85EQgpozk=;
+        b=MbJvY2amcakA+wA1049hpOHkeQ0f6ehqg0+GuxKBAsuDTFWBfrNqaxZzsDBIvzb8AE
+         fwXWvyoc5jrCCwc/u/qlxzyCKZB8K4DCViQ8mTD/ffpjhqSsrrMqIMWZhIJDVGKpd4is
+         qx2VYkQNYqmSi+JbwqYEHvMN3xCFOPhNnSKxtJ+fIcCA6ioqv6oohxodLtB1LX7PHBQR
+         uACgYC67KSu5wvzAa/l1qhpmngkOl6zYDTYWqQn9UCnk/kXvoFi4bSsLT/1Fmh4nKgsi
+         3NwZN0VtMDE0rMZC7h8BpTRTP9GN7wnE+bvqaqCm+b6ZdBRPDUfee5EQLJjmW9S1MEy1
+         8DpA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3KjUUxLE1NEC1CM4+G6CRvjaAcdMJUhWo8w7d65PzALd3jmqbdyKURj8dv3ThoFTrKpxNV+Jz2daQDQ/qLjpI8OI=@vger.kernel.org, AJvYcCUOVSVzNZiNssMcNauaNKDCTXCERv9GPBCQDn80GHoKLTTJlP60kGkn74YxDd0b5xRjWi1OlhThXqIIKWBl@vger.kernel.org, AJvYcCWjPgFHu4WimnLCIGNC5kvQMh30ri51NrIRopX/SR84mioJq628S2ofL/Pg02QNlAy1IoD2GSkNAL40@vger.kernel.org, AJvYcCXAw8r0SZ693VwCmBr8fpPfv0dzLuugnpYDF64SrKtR3IquEUeRTDeSaTrPkg8jUxv6Nd3TT9wls04PBTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziE7t895Nb2aUcIy9Vq9iKTikjgvGAZC/F6om9O6MBFpfvgOqu
+	9PR0eIvlJ6Uh5XUIeRQ95b84omune3ZgR/sWLvHy2pPmWLBkAW/s
+X-Google-Smtp-Source: AGHT+IHBi4GxWgUXMcq98eVE29iY0upag5vzbbKCImIrJyIAQdIDDT41hS5m+8Vv4xn3Pcuv4QSJjA==
+X-Received: by 2002:a17:90b:1d8d:b0:2cd:40ef:4764 with SMTP id 98e67ed59e1d1-2d5e99ebb94mr7480722a91.17.1724350060624;
+        Thu, 22 Aug 2024 11:07:40 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:ccdb:6951:7a5:be1b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb8d235esm4544510a91.6.2024.08.22.11.07.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 11:07:40 -0700 (PDT)
+Date: Thu, 22 Aug 2024 11:07:37 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 06/14] Input: samsung-keypad - use guard notation to
+ acquire mutex
+Message-ID: <Zsd-aVM6504L_hqi@google.com>
+References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+ <20240819045813.2154642-7-dmitry.torokhov@gmail.com>
+ <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,76 +86,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240820-mwifiex-cleanup-v1-3-320d8de4a4b7@pengutronix.de>
+In-Reply-To: <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
 
-Hi Sascha,
-
-On Tue, Aug 20, 2024 at 01:55:28PM +0200, Sascha Hauer wrote:
-> The command response handler copies the new MAC address over to
-> priv->curr_addr. The same is done in the code issuing the call
-> already, so drop the unnecessary HostCmd_CMD_802_11_MAC_ADDRESS
-> handling.
-
-It took a bit to figure out what you meant here -- I guess you're
-referring to mwifiex_set_mac_address()? It could help to document what
-you mean.
-
-I'm also a bit torn; this command API ostensibly has a (unused so far,
-for this command) HostCmd_ACT_GEN_GET mode, in which case this *is*
-important.
-
-If anything, I might consider dropping some of the handling in
-mwifiex_set_mac_address(), because it seems to presume (and then has to
-undo for failure) behavior of the underlying command.
-
-Brian
-
+On Thu, Aug 22, 2024 at 05:48:33PM +0200, Krzysztof Kozlowski wrote:
+> On Sun, Aug 18, 2024 at 09:58:03PM -0700, Dmitry Torokhov wrote:
+> > Guard notation is more compact and ensures that the mutex will be
+> > released when control leaves the function.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/input/keyboard/samsung-keypad.c | 8 ++------
+> >  1 file changed, 2 insertions(+), 6 deletions(-)
+> > 
 > 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c | 20 --------------------
->  1 file changed, 20 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
-> index 9c53825f222d1..7f81e709bd6b7 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
-> @@ -473,25 +473,6 @@ static int mwifiex_ret_rf_antenna(struct mwifiex_private *priv,
->  	return 0;
->  }
->  
-> -/*
-> - * This function handles the command response of set/get MAC address.
-> - *
-> - * Handling includes saving the MAC address in driver.
-> - */
-> -static int mwifiex_ret_802_11_mac_address(struct mwifiex_private *priv,
-> -					  struct host_cmd_ds_command *resp)
-> -{
-> -	struct host_cmd_ds_802_11_mac_address *cmd_mac_addr =
-> -							&resp->params.mac_addr;
-> -
-> -	memcpy(priv->curr_addr, cmd_mac_addr->mac_addr, ETH_ALEN);
-> -
-> -	mwifiex_dbg(priv->adapter, INFO,
-> -		    "info: set mac address: %pM\n", priv->curr_addr);
-> -
-> -	return 0;
-> -}
-> -
->  /*
->   * This function handles the command response of set/get MAC multicast
->   * address.
-> @@ -1232,7 +1213,6 @@ int mwifiex_process_sta_cmdresp(struct mwifiex_private *priv, u16 cmdresp_no,
->  	case HostCmd_CMD_MAC_CONTROL:
->  		break;
->  	case HostCmd_CMD_802_11_MAC_ADDRESS:
-> -		ret = mwifiex_ret_802_11_mac_address(priv, resp);
->  		break;
->  	case HostCmd_CMD_MAC_MULTICAST_ADR:
->  		ret = mwifiex_ret_mac_multicast_adr(priv, resp);
-> 
-> -- 
-> 2.39.2
-> 
+> You need to include cleanup.h (unless some other patch already did it
+> and I missed it?)
+
+Guard for mutexes defined in mutex.h which is pulled in indirectly, and
+cleanup.h is included there.
+
+If we want to list all the headers that we need instead of relying on
+indirect inclusions I think we need a separate patch. But even then I
+wonder if things like cleanup.h should be included by drivers
+directly...
+
+Thanks.
+
+-- 
+Dmitry
 
