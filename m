@@ -1,108 +1,277 @@
-Return-Path: <linux-kernel+bounces-297360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D4195B6AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F62195B6E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFF7FB22093
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 228672872CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239ED1CB158;
-	Thu, 22 Aug 2024 13:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0611CBE98;
+	Thu, 22 Aug 2024 13:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F1B7hyyy"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WxqQ3Kqe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB50E1CB121
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F2C1CBE87;
+	Thu, 22 Aug 2024 13:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724333422; cv=none; b=ee3Ccf5nppBr/5YO3k/5lOi0qRY2d8rtCAP2VhalU+18pprDnm/sYe1UVP4aSdm/+ONhVMB8T7IDQ9cG6bN6yJYYElHeNtJKU0CvwVnRTDsR5Apd9jdlpV3PlCTfyIp7IIBuK0CDKbzSX6WDGws6GTpyHVsdvX+FsCaYSYbkJWQ=
+	t=1724333576; cv=none; b=W6jYOmOLaB4Zs0mASLlsuehpEQFlmf/LaieIdFtBaDo0RfWdrUeIvOLyacv7qXgh3SpX+m1Vag8HuyB/R9xl+SpCjgUHn7RaG0C8U+j/Quhtv3ifIax+CJ1BB42ag64/7q+IBNdcTeoOAttLmHIlGsvSZZ5bDGV3rCV5y7lKG04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724333422; c=relaxed/simple;
-	bh=6uixaA1bOPbEnG+jiXt7A8JornGFwFdjfUFAjLRH2EY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NZBsBuZR2l5sGGtqvhXbabLnq0EpJN2KS5FJFnP0+RTh+J7xQ4bIcP0LLU7PT0A+YCGSzM7ci3nKJ+BjykiYOBLfpWh43pRASwl5UpAPVtsZ5pcpL0i3DwRICErSlzZybZON7E4O9vIgEDkYk65/HRJTGXri441cw3IgRzOs8jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F1B7hyyy; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-371b97cfd6fso461549f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724333419; x=1724938219; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sow4oJ1Jg0NDdR25xAMQ/COQ7rWcnilFzdDGv7rWYss=;
-        b=F1B7hyyyQHMitx5K0P5zu5z7pN0wcPyTuQyj3pk0nae4aKv0xf4Pj+gVt864LagolK
-         PH+LB/cyZn3rFTkWUm+R74Tl4DUhEjP0uAyuzuqwrPmEEEFKSN9l61NPMQ4luqpObrfY
-         mYBpcswcP8K2Q/VJhfMOFOqvJ+0smtlx2FnNJWEaQESdpTBXfwCD/gFK0J9GNQ4mS6k6
-         4aEpjMuar/pXWx53uyJshumRJUj89PhlFwdnxwetA2wv2tpyrUHe01nEBwn5cozIRXu1
-         drV+IejapoUrKQ8raiknh8nSko7llbxOdOmK74aly878HGi0YQs5ZmxYTU4xfvj4KZlw
-         EupA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724333419; x=1724938219;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sow4oJ1Jg0NDdR25xAMQ/COQ7rWcnilFzdDGv7rWYss=;
-        b=smavxG7U8WT4oruwvampMhRMeozaZ8/Gm3yFOHo4sc5xl4NQgzPNy+WF8u0wOgU/Oy
-         SrMPry8IdSJxl2czd2vC/11xHxT5lDxVav/xMBeUbSo7JdQK4/c8GJrjwq44lu5Rs98M
-         vTXrkwgwedJtbAU4WFbMNxH+0lGvAIM3jAXh/2BSEgIMik4U5dYvpY1SvpdzLQS5OP1E
-         OMx8Ls3kjQ2BoyvSvh/m9xlOT6e2/gV5de/AO3SI1ve+rrccWpFBVKYjeRzJ/LA53rx2
-         a7mAvK254Ibnflm/ZAIOHa/xnYZFmpVqRT6Y/hTnW/jRwTAOtQlSajL+CTroDujss6r1
-         5qUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXr/JeTVHUZloDvH26QKF6UA6yjRcC+2lZz3bAK37yE/XllpunW4+aWFd7NNCnxcoghK94I9yodrznt41k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnhba9qlh3G0gp6/5xX3KrPBx8gd4C/EW3o/KWcx0Jg1F6J5W+
-	truVVHPJk+CucomX2DYhCYI1668ScHHp4f15frSKhHALFuoDyAIxkfvVB6p8DIM=
-X-Google-Smtp-Source: AGHT+IGUf6uLXVvibGKBn18YUjYGGvG9tobdZE/ovA1c/SHbPaxXsAPGDRGyV+P+LRK9TkEArUVlsg==
-X-Received: by 2002:a05:6000:124e:b0:371:8277:6649 with SMTP id ffacd0b85a97d-372fd5bb0e7mr3605771f8f.2.1724333418430;
-        Thu, 22 Aug 2024 06:30:18 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:1e6:1bb3:7777:498e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ff633sm1699552f8f.77.2024.08.22.06.30.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 06:30:18 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation: add a driver API doc for the power sequencing subsystem
-Date: Thu, 22 Aug 2024 15:30:16 +0200
-Message-ID: <172433341423.27429.12007142599226863583.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240821100818.13763-1-brgl@bgdev.pl>
-References: <20240821100818.13763-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1724333576; c=relaxed/simple;
+	bh=Ey9GWCaehbSnTHtTO44xwcZKYcD9SIp9LLt318G94E4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0xggtoV9HYcpbelXe2qn2PKMMMW8Cx6fMBIdJ8MztMmhwJ/UYjm+t2hhzgJrB0fSU3lkTdeQ4Cb2mKtZShGYzcwyHldKApQx7lJX6lDPrHPm2EFt+mU+jPcFyovWrAY/hRyWjwgn/3zdTggONpervGsQuHq2BlLXQ+bZTz/Lm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WxqQ3Kqe; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724333576; x=1755869576;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ey9GWCaehbSnTHtTO44xwcZKYcD9SIp9LLt318G94E4=;
+  b=WxqQ3KqeIwQSIWhMGF66o6eHnCA34E6dRnYD6b2nqnlz1Kfj66763KSC
+   62i7JiQ9rtlt0SoNxalDDrZj7I4TbPBL91uh38FfzPq2boRr+oxq2X0rG
+   IptahSLVYc8CvXSO0/lurOqIsAkvpGaXZQWAU6MUymW3HmiYxsYKAoI5a
+   wHh3RvdAjh+uRSSgG4Ukvhv3/2DrkxVcPmcKwGgRBMFI5CWxaHwsT7Cvv
+   RzYzh8GHPi1KvBVMg1LbGDJNKa+f6mtt9YWVt4HL9ECWBygzAbYDVvDUF
+   QyS7T2Y3URYU7MFyjWGwmAKoua4paaT065zp1o8lJxmpnTg59wDcCaAz4
+   w==;
+X-CSE-ConnectionGUID: 5rWpenhZTNe6QrrtjfoBog==
+X-CSE-MsgGUID: +SPm/M6ITFSu0+qKQORqlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="34128586"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="34128586"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:32:55 -0700
+X-CSE-ConnectionGUID: 6EKnKbPLSVqplxDBOPNGlQ==
+X-CSE-MsgGUID: ZnLsCKtgSW+HwUkAsDZXXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="61468279"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:32:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sh7vh-00000000St9-3oX7;
+	Thu, 22 Aug 2024 16:32:45 +0300
+Date: Thu, 22 Aug 2024 16:32:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
+	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Message-ID: <Zsc9_UddBybdnM1Z@smile.fi.intel.com>
+References: <20240819092850.1590758-1-ryan_chen@aspeedtech.com>
+ <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
+ <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
+ <OS8PR06MB7541EE5BA5B400445FE0295EF28E2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <ZsXVU2qy0GIANFrc@smile.fi.intel.com>
+ <OS8PR06MB7541945591A62B956DA28AD9F28F2@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OS8PR06MB7541945591A62B956DA28AD9F28F2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Aug 22, 2024 at 02:24:26AM +0000, Ryan Chen wrote:
+> > On Wed, Aug 21, 2024 at 06:43:01AM +0000, Ryan Chen wrote:
+> > > > On Mon, Aug 19, 2024 at 05:28:49PM +0800, Ryan Chen wrote:
 
+...
 
-On Wed, 21 Aug 2024 12:08:18 +0200, Bartosz Golaszewski wrote:
-> Describe what the subsystem does, how the consumers and providers work
-> and add API reference generated from kerneldocs.
+> > > > > +	/* Check 0x14's SDA and SCL status */
+> > > > > +	state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+> > > > > +	if (!(state & AST2600_I2CC_SDA_LINE_STS) && (state &
+> > > > AST2600_I2CC_SCL_LINE_STS)) {
+> > > > > +		writel(AST2600_I2CM_RECOVER_CMD_EN, i2c_bus->reg_base
+> > +
+> > > > AST2600_I2CM_CMD_STS);
+> > > > > +		r = wait_for_completion_timeout(&i2c_bus->cmd_complete,
+> > > > i2c_bus->adap.timeout);
+> > > > > +		if (r == 0) {
+> > > > > +			dev_dbg(i2c_bus->dev, "recovery timed out\n");
+> > > > > +			ret = -ETIMEDOUT;
+> > > > > +		} else {
+> > > > > +			if (i2c_bus->cmd_err) {
+> > > > > +				dev_dbg(i2c_bus->dev, "recovery error\n");
+> > > > > +				ret = -EPROTO;
+> > > > > +			}
+> > > > > +		}
+> > > > > +	}
+> > > >
+> > > > ret is set but maybe overridden.
+> > >
+> > > If will modify by following.
+> > > 		if (r == 0) {
+> > > 			dev_dbg(i2c_bus->dev, "recovery timed out\n");
+> > > 			ret = -ETIMEDOUT;
+> > > 		} else if (i2c_bus->cmd_err) {
+> > > 			dev_dbg(i2c_bus->dev, "recovery error\n");
+> > > 			ret = -EPROTO;
+> > > 		}
+> > > If no error keep ret = 0;
+> > 
+> > It doesn't change the behaviour. Still ret can be overridden below...
 > 
+> Yes, it is expectable, previous is issue recovery command out then the
+> following is double confirm the bus status.
+> If bus still busy, the function still return recovery fail.
 > 
+> Or should I modify by following?
+> 	/* Check 0x14's SDA and SCL status */
+> 	state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+> 	if (!(state & AST2600_I2CC_SDA_LINE_STS) && (state & AST2600_I2CC_SCL_LINE_STS)) {
+> 		writel(AST2600_I2CM_RECOVER_CMD_EN, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+> 		r = wait_for_completion_timeout(&i2c_bus->cmd_complete, i2c_bus->adap.timeout);
+> 		if (r == 0) {
+> 			dev_dbg(i2c_bus->dev, "recovery timed out\n");
 
-Applied, thanks!
+> 			ret = -ETIMEDOUT;
 
-[1/1] Documentation: add a driver API doc for the power sequencing subsystem
-      commit: 8b7e0a6c443e855374a426dcdfd0a19912d70df3
+This assignment doesn't make sense.
 
-Best regards,
+> 		} else if (i2c_bus->cmd_err) {
+> 				dev_dbg(i2c_bus->dev, "recovery error\n");
+> 				ret = -EPROTO;
+> 		}
+> 		/* check bus status */
+> 		state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+> 		if (state & AST2600_I2CC_BUS_BUSY_STS) {
+> 			dev_dbg(i2c_bus->dev, "Can't recover bus [%x]\n", state);
+> 			ret = -EPROTO;
+> 		}
+> 	}
+
+> > > > > +	/* Recovery done */
+> > > >
+> > > > Even if it fails above?
+> > >
+> > > This will keep check the bus status, if bus busy, will give ret =
+> > > -EPROTO;
+> > >
+> > > > > +	state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+> > > > > +	if (state & AST2600_I2CC_BUS_BUSY_STS) {
+> > > > > +		dev_dbg(i2c_bus->dev, "Can't recover bus [%x]\n", state);
+> > > > > +		ret = -EPROTO;
+> > 
+> > ...here.
+
+See above.
+
+> > > > > +	}
+> > > > > +
+> > > > > +	/* restore original master/slave setting */
+> > > > > +	writel(ctrl, i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+> > > > > +	return ret;
+
+...
+
+> > > > > +		i2c_bus->master_dma_addr =
+> > > > > +			dma_map_single(i2c_bus->dev, i2c_bus->master_safe_buf,
+> > > > > +				       msg->len, DMA_TO_DEVICE);
+> > > >
+> > > > > +		if (dma_mapping_error(i2c_bus->dev,
+> > i2c_bus->master_dma_addr))
+> > > > {
+> > > > > +			i2c_put_dma_safe_msg_buf(i2c_bus->master_safe_buf,
+> > msg,
+> > > > false);
+> > > > > +			i2c_bus->master_safe_buf = NULL;
+> > > >
+> > > > > +			return -ENOMEM;
+> > > >
+> > > > Why is the dma_mapping_error() returned error code shadowed?
+> > >
+> > > Sorry, please point me why you are think it is shadowed?
+> > > As I know dma_mapping_error() will return 0 or -ENOMEM. So I check if it
+> > is !=0.
+> > > Than return -ENOMEM.
+> > 
+> > First of all, it is a bad style to rely on the implementation details where it's not
+> > crucial. Second, today it may return only ENOMEM, tomorrow it can return a
+> > different code or codes. And in general, one should not shadow an error code
+> > without justification.
+> > 
+> Understood, The following is better, am I right? (if yest, those will update in driver)
+
+Yes.
+
+> 		Int ret;
+> 		.....
+> 		ret = dma_mapping_error(i2c_bus->dev, i2c_bus->master_dma_addr)
+> 		if (ret) {
+> 			i2c_put_dma_safe_msg_buf(i2c_bus->master_safe_buf, msg, false);
+> 			i2c_bus->master_safe_buf = NULL;
+> 			return ret;
+> 		}
+> 
+> > > > > +		}
+
+...
+
+> > > > > +	if (i2c_bus->mode == BUFF_MODE) {
+> > > > > +		i2c_bus->buf_base =
+> > > > devm_platform_get_and_ioremap_resource(pdev, 1, &res);
+> > > > > +		if (!IS_ERR_OR_NULL(i2c_bus->buf_base))
+> > > > > +			i2c_bus->buf_size = resource_size(res) / 2;
+> > > > > +		else
+> > > > > +			i2c_bus->mode = BYTE_MODE;
+> > > >
+> > > > What's wrong with positive conditional? And is it even possible to
+> > > > have NULL here?
+> > > >
+> > > Yes, if dtsi fill not following yaml example have reg 1, that will failure at buffer
+> > mode.
+> > > And I can swith to byte mode.
+> > >
+> > > reg = <0x80 0x80>, <0xc00 0x20>;
+> > 
+> > I was asking about if (!IS_ERR_OR_NULL(...)) line:
+> > 1) Why 'if (!foo) {} else {}' instead of 'if (foo) {} else {}'?
+> I will update to following.
+> 		if (IS_ERR(i2c_bus->buf_base))
+> 			i2c_bus->mode = BYTE_MODE;
+> 		else
+> 			i2c_bus->buf_size = resource_size(res) / 2;
+> 
+> > 2) Why _NULL?
+> 	If dtsi file is claim only 1 reg offset. reg = <0x80 0x80>; that will goto byte mode.
+> 	reg = <0x80 0x80>, <0xc00 0x20>; can support buffer mode.
+> 	due to 2nd is buffer register offset.
+
+I have asked why IS_ERR_OR_NULL() and not IS_ERR().
+
+> > > > > +	}
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+With Best Regards,
+Andy Shevchenko
+
+
 
