@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-297260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BC995B50F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976DD95B50E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A8F1C230FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F97028915B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134EF1C942E;
-	Thu, 22 Aug 2024 12:32:34 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBF41C945E;
+	Thu, 22 Aug 2024 12:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STdO9ocB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D367178372
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96BF1DFD1;
+	Thu, 22 Aug 2024 12:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724329953; cv=none; b=PjcYjyU2iQY8InXOgm5eXK0oho3jCAmqt+Vta4mgP0b30YAP3H/owT1rY/btfKiJ6KkWhWdCDtoGsZRhfX7TTisp5034dwb7/9c/ZvdGatWu2rDsg/iziyA2Hx72BJOy2yrDvaY3ytrNmmKjwAyWyqMjwDxrEqSDKfKrDNK1Qrc=
+	t=1724329940; cv=none; b=GXZR0++DXhbiWRPuiZLNvZBKXR0q5U2fEO9zGG0lJci2yUj4VPT5BOZO6waaWm2NA8RpfzT+XZvBbYagxphDaqBa6DiGou8Q+wR8j6otRMP9xv8IdMDRpAqVVOCQ9HYnci4nK+TF9D0ccGaoebJHt+0kz8WsOCkUE7tTgBFTHGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724329953; c=relaxed/simple;
-	bh=eEk+KsDZNRWR2xhHsOL7NbOcRiRilBUuzavFnoahOFg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=XqS7pPdhyuE9uYLSG7ojgW/nDlbs5RLzBcf2SZaHVSJofmTj8E2jaOPG7vSoj9RKQem/Z1xL2dZhbpqyDU12t0SOIiUCzMJUkC1IFbwCJyQcme8Za7WRq7NHbXZWSZxbPcK/I5hgySgNMD2fXNae+JIly7tjNucHyBcrnkuY1EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428101fa30aso5701415e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:32:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724329950; x=1724934750;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zUoiP4MzTh6ZlaFvB4vYeM5H1FzzOE8klDlNv0Drekc=;
-        b=arXI6TA7r/L171RvwAYWZdosqCp1sEr2mg55Pu+e/GivZo8AT5oZZDlWQ1/y48oZOt
-         i1xy4TAaaR/l8Yx45Eag193MFVI3JsZNwKn5zCUGtYpoSg4hnLAwkMWWDajHv1JmPRB7
-         /JsXkYD3WHa6weIlCZNHoYycCq+4wB38eDsiSaCwfIEVPJKCatitzjROXIwswFZaNp4A
-         a8cY9mZGY8KA5Qr9HF3rww5MXPLm29VVJg3T3ce/dWLN4/998KQMHVe29Ym1F2VNvtbK
-         3y+cWWkXcgwSWsaPCfm2+EGXdMCcMcIBDkUM96Nkczd/r3NJJsveEZRbyLEdml2bMASk
-         VcwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdqhoiiag115CJCkt4YZY8INgz/4heJUab6zcDYJ5tRObO774Hld8vHoJDXzMkzHqVe1ukA/UlLjvyol4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5yqDbvna1bxXh1jnS9uv2+Xay9vSiuq6utheQRfxZjRCfumUw
-	ghHmXUI9vBkPw9bc4+uXq6kcvq0HBFTurbpQk3/Jzz10sU3EfX26
-X-Google-Smtp-Source: AGHT+IHvj+hiI7T9+FiI8RZ1o0xL4xgxQMGrl4l6sFwtWWILHGoswhrw/MyRo6v1utbNYgGVY0pzrw==
-X-Received: by 2002:a05:600c:310c:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42abd11e2famr46546935e9.10.1724329950124;
-        Thu, 22 Aug 2024 05:32:30 -0700 (PDT)
-Received: from costa-tp.bos2.lab ([2a00:a041:e281:f300:ddd7:8878:b93d:7c0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac517a4c9sm23297445e9.35.2024.08.22.05.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 05:32:29 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] interrupt.h: fix typo in struct comment
-Date: Thu, 22 Aug 2024 15:31:58 +0300
-Message-ID: <20240822123205.2186221-1-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1724329940; c=relaxed/simple;
+	bh=3af2BVUg7wf877z1PfuGs3wFXkF2Hf6gkN6iUlwzOPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rUDhnp4rB9b4gAW+yo+9wXT3m+MXKVxy8ftD+tn42H9xSU013jVliiuNJ/DR5r2UAB9gAJEIjGpK3kWTcQl2YCkDjLRWajeDANZTtoWmyIaAZPR6wKPQmjErNj2Dq7G61X4Emp5UZH8VHsNQChZwg3ltuF/w8+hZOH6ugTeRH7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STdO9ocB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF54C32782;
+	Thu, 22 Aug 2024 12:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724329939;
+	bh=3af2BVUg7wf877z1PfuGs3wFXkF2Hf6gkN6iUlwzOPg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=STdO9ocBpTjzpKc8UC4eKGeTy6TjNmDSlWh9cjUoEzDxaESh2iNtis8wfxPGAkMVZ
+	 76wEdNXGmhRcmra25HKud7KEnicPW4ToYN0YAxLTd2dL/3KQAUUeDwvwIykOZWnxuI
+	 JbcPxtTSYjcQNngj7VufVPWLMY23zng8VmBY2tK5PX3unKNDXIoe48couPBQl97QEL
+	 UWxSuEX+KkiLzxErvdzvaPx8CjgzFqIVdv6PPflokB87v+RqjmFWf3tRwfjdQdwm6Q
+	 0TVKKjREqlhDcDFqtgcVtBf+qvz5vMByRv7lGQtt/IHV1A3xilmueBLcDZiEMtbIwT
+	 IOQhypjKqhXPA==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5342109d726so74522e87.0;
+        Thu, 22 Aug 2024 05:32:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOcMUHOAWX1UtM0fMHEUE7/1VVKEvBEJEsiv9vjStFpanXUdHrBjc3txABWgg+b3QCpQzA0WuHJQG2@vger.kernel.org, AJvYcCWoXGjqublbXyNRytC92WAoWx0INM5FF92qDGjhtdBcL3xUxpF7K54h+xbOFLN5zbYiAiatJqYzpgDty8IV@vger.kernel.org, AJvYcCXj6Fvgm9u/Q/cxlb4XZ03QHGDA7LdirnjOdXRDmCrF5M8oAhsAnw6oFg9lLVfjxD1uCwqnkE+D+uCx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Cp5bZGmqBWXpP5Y3k2YzOo7aiYJHkFF15az2oYjVEr8Sm8Tl
+	zxpwXAbvcYEPD29O9+vLhVkHH4WnzEmsx14yjSNW+iVyhvKLAs7EqUE8GpUDpPcoJOS+6k/PzhE
+	w16sPsChlf8EM1OfK1rY5J9XXsg==
+X-Google-Smtp-Source: AGHT+IELJMuJDkhpPsO12MEEDtrpTV6xfsgInNXMN2DkC/1JY0q8qFL3c0BlEZIxWu6oS9dghQSXPb+CLV+6LMPxZ6c=
+X-Received: by 2002:a05:6512:1095:b0:533:4517:5363 with SMTP id
+ 2adb3069b0e04-5334cab22d9mr1028392e87.21.1724329937988; Thu, 22 Aug 2024
+ 05:32:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240822092006.3134096-1-wenst@chromium.org> <20240822092006.3134096-2-wenst@chromium.org>
+In-Reply-To: <20240822092006.3134096-2-wenst@chromium.org>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 22 Aug 2024 07:32:05 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJuiB8+PdH9SVum4CTNb8uM7Kzt3r2Y33yNE2yMGFVbug@mail.gmail.com>
+Message-ID: <CAL_JsqJuiB8+PdH9SVum4CTNb8uM7Kzt3r2Y33yNE2yMGFVbug@mail.gmail.com>
+Subject: Re: [PATCH v5 01/10] of: dynamic: Add of_changeset_update_prop_string
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Saravana Kannan <saravanak@google.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove redundant "e" in "assign(e)ments".
+On Thu, Aug 22, 2024 at 4:20=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> w=
+rote:
+>
+> Add a helper function to add string property updates to an OF changeset.
+> This is similar to of_changeset_add_prop_string(), but instead of adding
+> the property (and failing if it exists), it will update the property.
+>
+> This shall be used later in the DT hardware prober.
+>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> Changes since v4:
+> - Use modern designated initializer for |prop|
+>
+> Changes since v3:
+> - Use new __of_prop_free() helper
+> - Add new line before header declaration
+>
+> Changes since v2:
+> - New patch added in v3
+> ---
+>  drivers/of/dynamic.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/of.h   |  4 ++++
+>  2 files changed, 48 insertions(+)
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
----
- include/linux/interrupt.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 694de61e0b383..457151f9f263d 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -276,7 +276,7 @@ struct irq_affinity_notify {
- #define	IRQ_AFFINITY_MAX_SETS  4
- 
- /**
-- * struct irq_affinity - Description for automatic irq affinity assignements
-+ * struct irq_affinity - Description for automatic irq affinity assignments
-  * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
-  *			the MSI(-X) vector space
-  * @post_vectors:	Don't apply affinity to @post_vectors at end of
--- 
-2.45.0
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
