@@ -1,90 +1,83 @@
-Return-Path: <linux-kernel+bounces-297085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C872295B2D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:24:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 916DE95B292
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83825283CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:24:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C635B2210E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F2E170A3E;
-	Thu, 22 Aug 2024 10:24:15 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590A7364A4
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880F9183091;
+	Thu, 22 Aug 2024 10:04:35 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CD3180A80;
+	Thu, 22 Aug 2024 10:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724322255; cv=none; b=JQfbIVIvgLKfIqCjWOq+nhtvEHqyPYX+iG3JipKLp31O6vzZaJHT1dRfZxn1azRO1d+9nH7aP6Rds0BYwqZLe4YdUfReChZHQ8AFPdmx5+ke9pfW88soB8r63nZSb/zMC8+Av/NnWZOxiwyNSG9d7kG0IibEGLO/RT2pT3TBci8=
+	t=1724321075; cv=none; b=RjykkRaJwpNAX18icybiEnOfNAnzkcyWFMxeFPYFjxXTXt8U4C1OfZLeUGtGhpFoO+5ySIhuTJYrXY601W9fUwIJnvVMI2EXLX1bp7L4QSx8cO3UrXqdnNNoHne8vC8yssIYmnpkYRcKxqM39UXRUHeNIK+9yyn0kCb0uuu3dUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724322255; c=relaxed/simple;
-	bh=1IL1tYtoU2em45umUxWpLwCAtl4YrH5Tu65uTlqCZzs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bgTH+1i5kq2gYsOEowuHWjrQJrj+2u5Ec4NxtZUtb/MNO2fMAfHpPIsWGDOsgLtO0m+dln+43v3NRE87LbOqJMELQGbUx5gvY41W7e/PYsumkh7jRPd9pJJzVATeBmIIwa8PBbBfmH6Lo0MqH/gJvWW1rVC+swEtTZmV7C1WlyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from [IPv6:::1] (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 47M9rgcZ003432;
-	Thu, 22 Aug 2024 04:54:03 -0500
-Message-ID: <8c7980d11a2141a90669b063ce8569736e4675ae.camel@kernel.crashing.org>
-Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in
- kernel mode
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Christoph Hellwig <hch@lst.de>,
-        LEROY Christophe
-	 <christophe.leroy2@cs-soprasteria.com>
-Cc: Christian Lamparter <christian.lamparter@isd.uni-stuttgart.de>,
-        Paul
- Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Stan
- Johnson <userm57@yahoo.com>, Finn Thain <fthain@linux-m68k.org>
-Date: Thu, 22 Aug 2024 19:53:42 +1000
-In-Reply-To: <20240822071443.GA6395@lst.de>
-References: 
-	<2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu>
-	 <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de>
-	 <9dbf73fe-a459-4956-8dbc-e919d9728f5e@cs-soprasteria.com>
-	 <20240822053238.GA2028@lst.de>
-	 <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com>
-	 <20240822071443.GA6395@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1724321075; c=relaxed/simple;
+	bh=uRZ+2080/qYSdqovOL+EXXS23WTCIDmPpUP6IN3B7+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K65PMLGvkuX26K6+9Mx3v01/1sRyzBVBc3TVx5sM8u63xtcu2xYzXnJLFeu9c2Qjl8DRSFUrR2XryRSQhp2q0Fh7YyWf4iUyoJGTPgfDC22y7S4FRPHtdH0G/eZcDsrCHHV6FCKMKNy1b/8ugCK1t+xc0SmXYo5WNUuCP2dNVjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 855C3C32782;
+	Thu, 22 Aug 2024 10:04:28 +0000 (UTC)
+Date: Thu, 22 Aug 2024 11:04:26 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 06/39] arm64/gcs: Document the ABI for Guarded
+ Control Stacks
+Message-ID: <ZscNKgvz2FsUc30Q@arm.com>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-6-41b81947ecb5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822-arm64-gcs-v11-6-41b81947ecb5@kernel.org>
 
-On Thu, 2024-08-22 at 09:14 +0200, Christoph Hellwig wrote:
->=20
-> I'd suggest two things:
->=20
-> =C2=A01) remove the warning.=C2=A0 The use case is perfectly valid and ev=
-erything
-> =C2=A0=C2=A0=C2=A0 using uncached memory is already slow, so people will =
-just have to
-> =C2=A0=C2=A0=C2=A0 deal with it.=C2=A0 Maybe offer a trace point instead =
-if people care about
-> =C2=A0=C2=A0=C2=A0 it.
+On Thu, Aug 22, 2024 at 02:15:09AM +0100, Mark Brown wrote:
+> Add some documentation of the userspace ABI for Guarded Control Stacks.
+> 
+> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Well... there's slow and extremely slow .. :-) dcbz() on uncached
-memory will take an exception for every "cache line" of zeros which
-will then need to be emulated. We are talking about hundreds to
-thousands of cycle per cache line.=20
-
-(Do we have an optimisation to detect memset in the emulation code and
-force it to return to a non-dcbz'ing version ? If not, that's doable
-and would at least limit it to one exception per memset() instead of
-one per cache-line).=20
-
-Cheers,
-Ben.
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
