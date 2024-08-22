@@ -1,230 +1,124 @@
-Return-Path: <linux-kernel+bounces-297137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE7A95B39A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:16:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E296795B39E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61498B21129
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98DCE282D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FE81B6548;
-	Thu, 22 Aug 2024 11:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C589D1B78F7;
+	Thu, 22 Aug 2024 11:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZoClSd0Z"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/fhxvtO"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5121B6520
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710561B655F;
+	Thu, 22 Aug 2024 11:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724325402; cv=none; b=CTTaj8zEG6pFWqfGiW977t2e4q9Jg6adqt5fo257zTUS20OxTEM26c76mFDMoOapSk7BpxGSKfMuo6rwmNEPmR57pz4Z+1VTp+UjrKbTatwlu0V5/XxCBgJnTtCP2sGAXOeCLJW74sc1mvjCwLb30kblFlQjePxUvIa1A+EDemw=
+	t=1724325406; cv=none; b=lgAvK3SC1c2aoXDWxNTAS+ZKJs2LmpPdvNHO9YmN7NHD77HBh+JH1SV7QMmv1hQY/uANCyBmAU8Z8zvw/VOKcWg1vq2UbwycAshwRkaubHUI47yq6aV7RkZYfN/k3IR5fDTGcYwYtgvMcnM4mDFg611I4RIVO2ZudBa945I8MOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724325402; c=relaxed/simple;
-	bh=ZQM0jlM0i4BhaH2ycjENVN+O4L7lnffqa+y1DBRqTx8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dA+HDulO2xyhTGMeXlwPY7zeR8bzkTsSwUVkqp9A8tHT9gfDtRlB1ofTTN8cndx9X4mEX0CmvWAp9+pECNzX2WA7+V+REahLPg3o/THUHO/+HY8otI36QBmFlTdkoHT30VdmcRsUgjFnw7LwzQsiO3QKIqQogO+WT7YZyAAI1p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZoClSd0Z; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4fce9f16f83so260149e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:16:40 -0700 (PDT)
+	s=arc-20240116; t=1724325406; c=relaxed/simple;
+	bh=MS8drOrpkprDQggPjDXBcrvOXC+E14lM29ac1WHkjMs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q/Pvd9SoqbOdzQ3GpqyaRE1FtcADi93PZBZoGkFogTgb2fvYmy1dv4FE++Fe8aULEi3blLq/7d9c7gjeoM7yqAQ7EmbtaRUArojP04c87GAkbax8H9p0ZeZP3s3jE4IMDEpGU2nmBr0VWRpOah/nA4IAGKY9ecmCF4vvpQSi5yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/fhxvtO; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a868d7f92feso96779066b.2;
+        Thu, 22 Aug 2024 04:16:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724325399; x=1724930199; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nQGhp/3TTwCIHX+uin7PrRsXOTUFzwYBGtPV6IPYgn0=;
-        b=ZoClSd0ZQtpMkwCqWRvmpU4e128f3IU/XQ567jpdcqNg0BTmmj+0X9THDhZ+bQeRu1
-         cGa+UBYS62UfVymAwQ0l1GltrPGLE9iifLGol2Ce/xGBRB6IjWXYuDzGIbfSD9mFTj7P
-         tqRjV8mFZhrZiW50iskDaV5W3ZW+fblnTZZLhOmPDqewUpYK+1k+t7TeeIQMOMEgzGl/
-         0eRcUDjkfcrM/Ev6PS3DTbKHaBNjysTKpLH4EtiQ5NP8HHMg19T6WOAgrHJJZzlMpLt7
-         r+eEc9ZT1kWHRSL8tEzXL+MGwCRUrw4POZQSsugnrPpifIyxOkuACyDUk5ty8PbVF4yO
-         v7rg==
+        d=gmail.com; s=20230601; t=1724325403; x=1724930203; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0xLWHCW9+tYtIK4g3T2wlbKqyAP5xWhxCIz1m/bwt7Q=;
+        b=R/fhxvtOR4j/JG654IrzFi4sFvp3kamONuFbaKIbm+t4E0CWDTLtlM37ZJ0GQQJoTt
+         m8rx/d4RNbbk2ZD62eVpajvkwpLAu1zr4ataqBLtc2yayjGCjFBxB8sk1wX9yDpH2CI5
+         VGyg69VjXGzP45Z5cHhR0p9HQqUhyAyaVMxxRMfECrahgPCzZ4XG4y/LXbyDOSXDLPGn
+         AVcwSk8SXkMPC60o2Ggmj+G6BAxEM3frxS2q/TcymHsAusE2BaCbsmhC/qz3OrIRs4F/
+         DNz5lZnyGG6IaRPe4wbG8/kkLUHmKE4H/C6zNsDy45jHniWiec/rFfe8S8BjibxPTxZf
+         Ra/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724325399; x=1724930199;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nQGhp/3TTwCIHX+uin7PrRsXOTUFzwYBGtPV6IPYgn0=;
-        b=lxG+YWGmaEOo9lWbM+YrOtvM0qkdW0hE5Sy7SEZH+FRQ1QUOwCXy7eoKklDDSYYhmb
-         iOcJAue11p+dz8MtN601AOLZi4lJyIc0audX38190gvxgV1ACL/XZ0sZ/HZhlx33nbiA
-         /5SuwcSOJbFa1TJwhRJc+5ZKzWO0KbgzviAF7/WCeq75aBlzeodxb3J30MDxOJRsNn11
-         eL47rs4F7A2o5JjZFIZzPALsMDcYHgiYaPiVjX1p+TT2j1i2zaxXdF9nuyeVaTxxaF57
-         Ss47ns4aMQYPZbLB/fR2LneHFI5jJaqVjcr8bf4VNkS2sNs1vOYpSpR+BfAD331oZitw
-         cS6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnM3KFNdB++TaVJu9yzOlf904RkQ9HQIixwdldZLLrMlwQqGMb2imqAZuoGOYa6d6qbYnnbNbHkpZZefM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkxDoldKkk7aYpoMxVgBBHEeqWMQKPczJkqFHdyScWKy7nxAmg
-	TF6oLIvbgvj/Aku6EG7+urmmMSreD0q+7pQm/t4b32V1E+dlu2KQMlHaLLJOAHPAqIF2dWmoZms
-	ILqOCIs5ol6sFMRWC5lo7lnKfJa/ZJE3+oEAE2g==
-X-Google-Smtp-Source: AGHT+IE/sfORkK+EpFxfIxWr2dv+G1BHkfaEQtCTObdoB+2cYQJlgUrzOdE/TYRmlB20bOqNUvTQ5IsnPD1twg0Eo14=
-X-Received: by 2002:a05:6122:a08:b0:4ef:53ad:97bd with SMTP id
- 71dfb90a1353d-4fcf1aec603mr6710881e0c.3.1724325399347; Thu, 22 Aug 2024
- 04:16:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724325403; x=1724930203;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0xLWHCW9+tYtIK4g3T2wlbKqyAP5xWhxCIz1m/bwt7Q=;
+        b=ijtUDpRpoZ6gIez5iWOTXOotlsuq3hkNsyTx+YmXW7J563t/i/hYXsxHTHi29Vd3Gh
+         iZc2AicpOFjRHxca+/t1RReg029pq3OrS/DwK0MkJ7jF5m5RsHFz8HQbTE39Q1hZoOqk
+         fZQyPrrl7UD8YohUA4YsH80nkwlM1ERbI3gJ/G/1HnTCytPSyxlsgvDrWINviRisCDvQ
+         fZhhcWoijgvIoQatoYYxgAB5LyYKTLW4Cqk3nCo3u76+26vInPkdJVz3/D9LZKJWivpM
+         HZmxlxkfuy19KhhOP/e/sZ9qSl8EEzkPWCjCr+cfMTtCJ+rJ/v/deETT5DvrrbUVTKmW
+         wbUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJnHQzYyusOwxtRwVWWHeBR36bTdrOURO052QHuIyzeBNw2GhWfbRO9baA8rGyfZ+k/j+5J3kZayj2Iz50@vger.kernel.org, AJvYcCWLDzT/1liVn2xN3N2KNbmYsOzq8VWrYe+jcZO4LCQYkD7hJ8CxtKglMd/Wu2xBMcM+6KaZ0UJfWtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGEH1tll7IQHMZHepv4nIt7SI9StuWJQaGKoFq/RfGDd+rnsoy
+	RbeEfDhKYwU324XbObOqTARsCBYe7o2mc2aa9JXCauvdsPX+FYgi
+X-Google-Smtp-Source: AGHT+IFhzGOOXgwsvNnpYNrFz0I3p4jjwtLkwh2w09oW0/0IKFVRPWg1zTOitjJxD/Qf8gWxZoj+2A==
+X-Received: by 2002:a17:907:e294:b0:a7a:a30b:7b93 with SMTP id a640c23a62f3a-a8691abaf6bmr131501866b.2.1724325402325;
+        Thu, 22 Aug 2024 04:16:42 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f46a2sm104479766b.208.2024.08.22.04.16.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 04:16:41 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/2] clk: renesas: rzv2h-cpg: Add divider clock support
+Date: Thu, 22 Aug 2024 12:16:29 +0100
+Message-Id: <20240822111631.544886-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 22 Aug 2024 16:46:27 +0530
-Message-ID: <CA+G9fYvZAUOKhf+Yg6J=OUxnJ0ckv4jxyDLGyKsqwUpAak84hw@mail.gmail.com>
-Subject: next-20240822: rcu: Unless rcu_preempt kthread gets sufficient CPU
- time, OOM is now expected behavior.
-To: rcu <rcu@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-The following kernel crash was noticed on arm64 Rock-pi 4b,
-Qcomm dragonboard 410c and 845c devices while booting / loading kernel modules
-on today's Linux next-20240822.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-First seen on next-20240822.
-  Good: next-20240821
-  BAD:  next-20240822
+Hi All,
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+This patch series aims to add divider clock support and add clock and
+reset entries for below IP blocks for RZ/V2H(P) SoC,
+- GTM
+- WDT
+- RIIC
+- SDHI
 
-We are bisecting this problem.
+v1->v2
+- Updated DDIV_PACK macro to accommodate width and dropped DDIV_DIVCTL_WIDTH
+- Updated DDIV_GET_* macros
+- Now doing rmw as some of the DIVCTLx require it
 
-Crash log:
---------
-[    0.000000] Linux version 6.11.0-rc4-next-20240822
-(tuxmake@tuxmake) (Debian clang version 18.1.8
-(++20240731024919+3b5b5c1ec4a3-1~exp1~20240731145017.142), Debian LLD
-18.1.8) #1 SMP PREEMPT @1724309008
-[    0.000000] KASLR disabled due to lack of seed
-[    0.000000] Machine model: Radxa ROCK Pi 4B
-...
-[   16.923808] coresight-cpu-debug fe430000.debug: Coresight
-debug-CPU0 initialized
-[   16.933919] coresight-cpu-debug fe432000.debug: Coresight
-debug-CPU1 initialized
-[   16.935653] coresight-cpu-debug fe434000.debug: Coresight
-debug-CPU2 initialized
-[   16.937846] coresight-cpu-debug fe436000.debug: Coresight
-debug-CPU3 initialized
-[   16.939744] coresight-cpu-debug fe610000.debug: Coresight
-debug-CPU4 initialized
-[   16.942132] coresight-cpu-debug fe710000.debug: Coresight
-debug-CPU5 initialized
-[   37.987966] rcu: INFO: rcu_preempt self-detected stall on CPU
-[   37.989037] rcu: 2-...!: (5248 ticks this GP)
-idle=d1f4/1/0x4000000000000000 softirq=1552/1553 fqs=0
-[   37.990715] rcu: (t=5250 jiffies g=1269 q=784 ncpus=6)
-[   37.991667] rcu: rcu_preempt kthread timer wakeup didn't happen for
-5249 jiffies! g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-[   37.993718] rcu: Possible timer handling issue on cpu=4 timer-softirq=296
-[   37.994966] rcu: rcu_preempt kthread starved for 5250 jiffies!
-g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=4
-[   37.996844] rcu: Unless rcu_preempt kthread gets sufficient CPU
-time, OOM is now expected behavior.
-[   37.998499] rcu: RCU grace-period kthread stack dump:
-[   37.999419] task:rcu_preempt     state:I stack:0     pid:18
-tgid:18    ppid:2      flags:0x00000008
-[   38.001117] Call trace:
-[   38.001565]  __switch_to+0x15c/0x208
-[   38.002229]  __schedule+0x54c/0x9d0
-[   38.002870]  schedule+0x12c/0x1e0
-[   38.003479]  schedule_timeout+0x9c/0x1b0
-[   38.004202]  rcu_gp_fqs_loop+0x1e0/0x880
-[   38.004926]  rcu_gp_kthread+0x70/0x230
-[   38.005616]  kthread+0x104/0x198
-[   38.006209]  ret_from_fork+0x10/0x20
-[   38.006877] CPU: 2 UID: 0 PID: 237 Comm: (udev-worker) Not tainted
-6.11.0-rc4-next-20240822 #1
-[   38.008442] Hardware name: Radxa ROCK Pi 4B (DT)
-[   38.009284] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   38.010551] pc : smp_call_function_many_cond+0x468/0x6b8
-[   38.011521] lr : smp_call_function_many_cond+0x428/0x6b8
-[   38.012490] sp : ffff800083d1bb50
-[   38.013094] x29: ffff800083d1bb90 x28: 0000000000000006 x27: 0000000000000000
-[   38.014399] x26: ffff80008269e000 x25: 0000000000000000 x24: 0000000000000001
-[   38.015702] x23: ffff8000801bc470 x22: ffff800074e75000 x21: ffff0000f74d8c20
-[   38.017005] x20: ffff0000f746cb80 x19: ffff8000826a3470 x18: ffff80007afc2000
-[   38.018308] x17: 000000000909008e x16: 0000000000000000 x15: ffff8000816092a0
-[   38.019611] x14: 060a090000000000 x13: 0000000000000003 x12: 000000000000003f
-[   38.020914] x11: 0000000000000001 x10: 0000000000000000 x9 : 0000000000000011
-[   38.022218] x8 : ffff0000f74b6c28 x7 : 0000000000000000 x6 : 0000000000000080
-[   38.023520] x5 : 000000000000003f x4 : 0000000000000000 x3 : 0000000000000006
-[   38.024823] x2 : 0000000000000004 x1 : 0000000000000004 x0 : 0000000000000004
-[   38.026126] Call trace:
-[   38.026574]  smp_call_function_many_cond+0x468/0x6b8
-[   38.027481]  kick_all_cpus_sync+0x44/0x78
-[   38.028216]  flush_module_icache+0x38/0xe0
-[   38.028965]  load_module+0x1374/0x1778
-[   38.029654]  __arm64_sys_finit_module+0x238/0x348
-[   38.030516]  invoke_syscall+0x4c/0x110
-[   38.031207]  el0_svc_common+0x8c/0xf0
-[   38.031880]  do_el0_svc+0x28/0x40
-[   38.032490]  el0_svc+0x40/0x88
-[   38.033054]  el0t_64_sync_handler+0x90/0x100
-[   38.033837]  el0t_64_sync+0x190/0x198
-[   38.034509] Sending NMI from CPU 2 to CPUs 4:
-[   48.036555] Sending NMI from CPU 2 to CPUs 5:
-[   78.247966] sched: DL replenish lagged too much
-[  121.047963] rcu: INFO: rcu_preempt self-detected stall on CPU
-[  121.049009] rcu: 2-...!: (21002 ticks this GP)
-idle=d1f4/1/0x4000000000000000 softirq=1552/1553 fqs=0
-[  121.050702] rcu: (t=26015 jiffies g=1269 q=784 ncpus=6)
-[  121.051669] rcu: rcu_preempt kthread timer wakeup didn't happen for
-26014 jiffies! g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x200
-[  121.053735] rcu: Possible timer handling issue on cpu=4 timer-softirq=296
-[  121.054982] rcu: rcu_preempt kthread starved for 26015 jiffies!
-g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x200 ->cpu=4
-[  121.056876] rcu: Unless rcu_preempt kthread gets sufficient CPU
-time, OOM is now expected behavior.
-[  121.058530] rcu: RCU grace-period kthread stack dump:
-[  121.059447] task:rcu_preempt     state:R stack:0     pid:18
-tgid:18    ppid:2      flags:0x00000008
-[  121.061140] Call trace:
-[  121.061587]  __switch_to+0x15c/0x208
-[  121.062245]  __schedule+0x54c/0x9d0
-[  121.062885]  schedule+0x12c/0x1e0
-[  121.063494]  schedule_timeout+0x9c/0x1b0
-[  121.064214]  rcu_gp_fqs_loop+0x1e0/0x880
-[  121.064936]  rcu_gp_kthread+0x70/0x230
-[  121.065625]  kthread+0x104/0x198
-[  121.066217]  ret_from_fork+0x10/0x20
-[  121.066874] CPU: 2 UID: 0 PID: 237 Comm: (udev-worker) Not tainted
-6.11.0-rc4-next-20240822 #1
-...
-[  785.590550] Sending NMI from CPU 2 to CPUs 4:
-[  795.592594] Sending NMI from CPU 2 to CPUs 5:
+Cheers,
+Prabhakar
 
-boot Log links,
---------
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240822/testrun/24939658/suite/boot/test/clang-18-lkftconfig/log
- - https://lkft.validation.linaro.org/scheduler/job/7816099#L523
- - https://lkft.validation.linaro.org/scheduler/job/7815910#L2448
+Lad Prabhakar (2):
+  clk: renesas: rzv2h-cpg: Add support for dynamic switching divider
+    clocks
+  clk: renesas: r9a09g057-cpg: Add clock and reset entries for
+    GTM/RIIC/SDHI/WDT
 
-Boot failed comparison:
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240822/testrun/24939658/suite/boot/test/clang-18-lkftconfig/history/
+ drivers/clk/renesas/r9a09g057-cpg.c |  84 ++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 165 ++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  14 +++
+ 3 files changed, 263 insertions(+)
 
-metadata:
-----
-  git describe: next-20240822
-  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  git sha: 6a7917c89f219f09b1d88d09f376000914a52763
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/config
-  kernel version: 6.11.0-rc4
-  artifact location:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/
-  toolchain: clang-18 and gcc-13
+-- 
+2.34.1
 
-Steps to reproduce:
----------
- - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2l0EbxmBUpGzF37iIJ51WvkJFt8/reproducer
- - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2l0EbxmBUpGzF37iIJ51WvkJFt8/tux_plan
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
