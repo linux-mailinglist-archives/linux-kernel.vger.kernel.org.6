@@ -1,97 +1,308 @@
-Return-Path: <linux-kernel+bounces-297796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD8195BDD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:58:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C0795BDD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B880528595D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:58:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16331C21F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0C51CF2BE;
-	Thu, 22 Aug 2024 17:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFB41CF2B8;
+	Thu, 22 Aug 2024 17:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IZ4jB7EL"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foo7cFCW"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F025C1CF2A2
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D946FB9;
+	Thu, 22 Aug 2024 17:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724349516; cv=none; b=VaMX2wr0vJwiGhEgji/D9yfJUxCNVXfc+6DzWPue+4LpOPRuRtQu54e8leuAsWEWvR5GV+aSJBS+3hFazVDaAxxCmLAUXiX9MO0e7u/ujFDJgz97sQDfFR8ewLUbG1tZDtMQlnvmx5zpF/LyV9B9oAV6tCQyeR5Lccc0QKMsD48=
+	t=1724349594; cv=none; b=fNxFfIVCzlIuNNDBzrA0/oC3cogGDNDUDjt58jju5sRQQePbj0tUx8BVeZ1T694iESBjqJWsAxCmhfj3JMsnxyuOIbrOcbU0y8NQmnz9RieD5BO3eRQBWcTxg3mJUZEVN9K3PKNUkqWiU9AnsjCWjIQrVmYL9wuGyenES5alx18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724349516; c=relaxed/simple;
-	bh=S73uaUA0DW8CttN/Jhtd1B233vB6M3ngjcc3vgt+v/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CimSaSHYNFjI31VpwNho28KCwWbAVjv0nTMKqq3qZ+88eazZK6t98OCl+okHxg0TEtl/qd2yP4M6W6LnaXWyw4wpT9IVvPIXIUaRM5QwyBpm9USkDMeWZOs3SWIRnLpVVkerCtYjFZmv7bC7Gr1RCitVU6AcYGb0QA4mrCOa/hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IZ4jB7EL; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd967d8234so722049a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:58:34 -0700 (PDT)
+	s=arc-20240116; t=1724349594; c=relaxed/simple;
+	bh=7rVIW7IMx9w7++WRw0BkF75OnYYNqvRHDpxgxeC6Qd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aWPXJ/HrEpPoViHlOgl0k24i94uMEkzGgb4ftQSq5dJI4pHTF8ClH0Kki68k2hJnP8w+q3FNU2LwI++Ip8CW27N4ba7LFncqiDbewuQkLwSbeZAfgig7CZtb+JNSPqzLaBHidAEEPUhC9Ee/wLULG0VDiHfGt3n6SHrU2O3gnF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=foo7cFCW; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5334c4d6829so1489720e87.2;
+        Thu, 22 Aug 2024 10:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724349514; x=1724954314; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6aXl0P5+cZPWz0CJSmKBVPNCrelta2lMo8G0fOIDW74=;
-        b=IZ4jB7ELFfR+JOeCXRJumpolI7xWgHqQDn6V8nZu1mlKxl/nIk6kbcIGlXictm6kNq
-         N9/r9PmgYKOWZRH9D+m2SwuSxUZtLBbjWDmwdCKAtlmqDryIVMO1P2meROOb3TQ1U54o
-         q8o4F8crSjnVyNGw108ohCC7mm/A7PR/TvZn8=
+        d=gmail.com; s=20230601; t=1724349590; x=1724954390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=57cklGDVnkv8uwWUWyzqQh1MVRQtAEfOjUoSrZ1n9ec=;
+        b=foo7cFCWt0yKakKG0m5+EFuEyk3S7MRsTU2UDxsnnePdCFVGqTavRnCQ8+ChrgaNz7
+         gv4XVSCXDdDhfSolD5WUMMG8YY3n1eHnsW51AJT+/lh7wFFi8oylaBWzO51scaE+qq2V
+         8m3xXSM0dam42Xmd6yPgWo9n5iOilAGNmmMIhGVXRnvndVZ7HV1Uxj1M9MN65V0Q5SVv
+         qBHVpn/AvMrnH3hvUyulV3DH46ViPGQual5TIg1K4OR9cIenB9+pLKqnBsllkiTARBWy
+         Ysqj4XSDHShxdnq/ay4sv7Vr5mJie8MnvrTKLx1gq39ey2yVkgMFnJXKdB+IKUYRhTS+
+         ftTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724349514; x=1724954314;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6aXl0P5+cZPWz0CJSmKBVPNCrelta2lMo8G0fOIDW74=;
-        b=EB0Qxj4J+Xb0CenxnYuLYBANfb879dMaEsp4Ob0s408ulvuIDysb4RoXIlRDtV0Avs
-         0xVh1OGwFzW5UpNYkt0Z097kuVjkd9iGfYlxJMe0v631XZJ9foFX7rICTogbj7EQ7Sx7
-         ResIYEtOoVKq6noa+2PGodnp9IFuZFKzdblYfqh2xXkkok2ocIdLWXLC18qe2HapLZO7
-         cNWGCD+MYchdh/7UYrUwDcN1UPd5/a0PxV/ckGr02QHE0zCtlPCSf/TDFkGrJSmbA3tH
-         W64VncYSU9vl0+/ZtZMMKUtoI+s1NJcJ//Qk71d4a2UlTNjrhYXD8x+WOxnCWzHzrPAD
-         /jpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMCqnJNAXRHZpEkPDeAhNAnLSKfrLAb+822OIA0yTASwk6xE20xzevGQqxwn/1BMNXEKoX7PCngjyIgMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuJkmH3GYtkhkw5T5+CukGLCKtJBZXO1vkVvTSJyvmeVAghyuW
-	rY5qzDBqRc3BivsiQPrUvnXdV6pAM26nIsqC7jrKLYinOogLbJBRV4NiapT6IQ==
-X-Google-Smtp-Source: AGHT+IHRCAtfbv2wW3c5v+2i+dD3SGwv1uIaS3D1NnMthKKsznW2OPiT8cq1knA2oMx203qjIZrdww==
-X-Received: by 2002:a17:90a:634b:b0:2d3:c303:fe14 with SMTP id 98e67ed59e1d1-2d5ea2caf9dmr6288794a91.40.1724349514149;
-        Thu, 22 Aug 2024 10:58:34 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:414c:5b44:2fea:fb6e])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2d5eba287e7sm4473583a91.34.2024.08.22.10.58.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 10:58:33 -0700 (PDT)
-Date: Thu, 22 Aug 2024 10:58:32 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 01/31] wifi: mwifiex: remove unnecessary checks for valid
- priv
-Message-ID: <Zsd8SPnKKJrdJj9W@google.com>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-1-320d8de4a4b7@pengutronix.de>
+        d=1e100.net; s=20230601; t=1724349590; x=1724954390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=57cklGDVnkv8uwWUWyzqQh1MVRQtAEfOjUoSrZ1n9ec=;
+        b=Qpw41iCunEGkV44tNeDi3smVtlzGZR+qm+v5MxiJSHFsmELWh9b60bMtUhaigjf8QD
+         bAzmxhbGPHZeQTypy0VslpCQuUSMXh/IO67/09xS3Y+4fOfjsE+rZWTY+KDUu7d1Rc1z
+         C09REpi2xrQfxzfYx1l487Os3A37nXzECgTtSPCAP/VsjUcwSj2TVdXxnUqqaKmWru7z
+         M9F1Jf2gFitlKDLtwZ0//Wk7vVAHOy9mJAThU9DuDFO2GhvAwOF5FO94906pme/80DnS
+         V9WRjxBK3tY5Ts+3+2RmbrWFkmK3kRErySYYADba6nzE8rmgfRoHygr68y6N9P76Ww/N
+         WUfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHEU44XMilTtbW2XQkY6dzSN4TT/PVh5hEXI4L7Wvu5cuRTe1VK5ZvfHEVKx6PSIP/fCeDJ/wIzzp/LgM=@vger.kernel.org, AJvYcCVrKjAKjZgXlFs9A5MSuvzJYuC4eywx7kbcsOcNJFRhUVZatoom+qRRPXVEAUc4lEuHtmZjCBqfkzX/r6ZDQYHs/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrJVworYprleOTj1PvJk5OH0vszvsn1rioylSiI4bbLFzW+L6d
+	XvFfFz0lDmDd6WmuvRQghEy9fl/60MCkrRFBjMgeVxOL9QE522dPBabYVIm3k4B46F+s/xv72J+
+	VJsTBlWSuN3gVY7xAy75Mq8Oc8Hc=
+X-Google-Smtp-Source: AGHT+IFx6VUsWhGx+Xq4Kp0jx81gmOwn+Nqab4uFvJOn1erJmFXX1OnBrG46e93xlCR1AZgqjABeVNXEifvNTUPczLQ=
+X-Received: by 2002:a05:6512:3b88:b0:52c:d84b:eee6 with SMTP id
+ 2adb3069b0e04-53348590d45mr4369818e87.38.1724349590037; Thu, 22 Aug 2024
+ 10:59:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820-mwifiex-cleanup-v1-1-320d8de4a4b7@pengutronix.de>
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+ <ZsdKhLaPy-uzKsuH@x1> <ZsdUxxBrpbuYxtXN@x1> <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
+ <ZsdxinrZP1kHINWT@x1> <ZsdzLmIFWRqsXeXD@x1> <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
+ <Zsd39zG9BuGpZ8aA@x1>
+In-Reply-To: <Zsd39zG9BuGpZ8aA@x1>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Thu, 22 Aug 2024 19:59:13 +0200
+Message-ID: <CA+icZUXGV9dMGcRwJiP7WLcYUaY5CRCcDw1HLFr+9Sn7CrRGDw@mail.gmail.com>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 01:55:26PM +0200, Sascha Hauer wrote:
-> The pointers in adapter->priv[] are allocated in mwifiex_register().
-> With an allocation failed the function will return an error and
-> driver initialization is aborted. This makes all checks for valid
-> priv pointers unnecessary throughout the driver. In many places
-> the pointers are assumed to be valid without checks, this patch
-> removes the remaining checks.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+On Thu, Aug 22, 2024 at 7:40=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Thu, Aug 22, 2024 at 07:31:55PM +0200, Sedat Dilek wrote:
+> > On Thu, Aug 22, 2024 at 7:19=E2=80=AFPM Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > > On Thu, Aug 22, 2024 at 02:12:46PM -0300, Arnaldo Carvalho de Melo wr=
+ote:
+> > > > On Thu, Aug 22, 2024 at 07:02:52PM +0200, Sedat Dilek wrote:
+> > > > > On Thu, Aug 22, 2024 at 5:10=E2=80=AFPM Arnaldo Carvalho de Melo =
+<acme@kernel.org> wrote:
+> > > > > > +++ b/tools/perf/util/setup.py
+> > > > > > @@ -17,7 +17,7 @@ src_feature_tests  =3D getenv('srctree') + '/=
+tools/build/feature'
+> > > >
+> > > > > >  def clang_has_option(option):
+> > > > > >      cc_output =3D Popen([cc, cc_options + option, path.join(sr=
+c_feature_tests, "test-hello.c") ], stderr=3DPIPE).stderr.readlines()
+> > > > > > -    return [o for o in cc_output if ((b"unknown argument" in o=
+) or (b"is not supported" in o))] =3D=3D [ ]
+> > > > > > +    return [o for o in cc_output if ((b"unknown argument" in o=
+) or (b"is not supported" in o) or (b"unknown warning option" in o))] =3D=
+=3D [ ]
+> > > > > >  if cc_is_clang:
+> > > > > >      from sysconfig import get_config_vars
+> > > > > > @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
+> > > > > >  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-W=
+no-unused-parameter', '-Wno-redundant-decls' ]
+> > > > > >  if cc_is_clang:
+> > > > > >      cflags +=3D ["-Wno-unused-command-line-argument" ]
+> > > > > > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> > > > > > +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
+> > > > > >  else:
+> > > > > >      cflags +=3D ['-Wno-cast-function-type' ]
+> > > >
+> > > > > I tried with your diff with SLIM LLVM toolchains 18 and 19.
+> > > >
+> > > > > Both work - see attached build-logs.
+> > > >
+> > > > > Yes, are right that LLVM/Clang v19 was first introducing:
+> > > >
+> > > > > -Wcast-function-type-mismatch / -Wno-cast-function-type-mismatch
+> > > >
+> > > > > [4] says for LLVM 18.1.8:
+> > > >
+> > > > > -Wcast-function-type
+> > > > > -Wcast-function-type-strict
+> > > >
+> > > > > Feel free to add my Reported-by/Tested-by credentials if you sent=
+ a full patch.
+> > > >
+> > > > Thanks for the report and test of the fix, I'll add both tags,
+> > >
+> > > So below is the part that deals with disabling the warning if present=
+,
+> > > the other patch supporting checking warning options I merged as a pre=
+p
+> > > patch.
+> > >
+> > > Thanks!
+> > >
+> > > - Arnaldo
+> > >
+> > > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 200=
+1
+> > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > Date: Thu, 22 Aug 2024 14:13:49 -0300
+> > > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mis=
+match if
+> > >  present on clang
+> > >
+> > > The -Wcast-function-type-mismatch option was introduced in clang 19 a=
+nd
+> > > its enabled by default, since we use -Werror, and python bindings do
+> > > casts that are valid but trips this warning, disable it if present.
+> > >
+> > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > > Cc: Ian Rogers <irogers@google.com>
+> > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > Cc: Namhyung Kim <namhyung@kernel.org>
+> > > Cc: Nathan Chancellor <nathan@kernel.org>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy=
+3r2MzKXwTA5THtL7w@mail.gmail.com
+> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > ---
+> > >  tools/perf/util/setup.py | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+> > > index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
+> > > --- a/tools/perf/util/setup.py
+> > > +++ b/tools/perf/util/setup.py
+> > > @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
+> > >  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unu=
+sed-parameter', '-Wno-redundant-decls' ]
+> > >  if cc_is_clang:
+> > >      cflags +=3D ["-Wno-unused-command-line-argument" ]
+> > > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> > > +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
+> > >  else:
+> > >      cflags +=3D ['-Wno-cast-function-type' ]
+> > >
+> > > --
+> > > 2.46.0
+> > >
+> >
+> > Thanks for the patch, Arnanldo.
+> >
+> > @Nathan Chancellor
+> > What was the b4 magic to retrieve a patch included in a ML thread?
+> >
+> > I tried:
+> >
+> > link=3D"https://lore.kernel.org/all/CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFne=
+X0C5pUMUUhG-UVKQ@mail.gmail.com/"
+> >
+> > b4 am $link
+> > Grabbing thread from
+> > lore.kernel.org/all/CA%2BicZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UV=
+KQ@mail.gmail.com/t.mbox.gz
+> > Analyzing 9 messages in the thread
+> > No patches found.
+>
+> I use:
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers CA+icZ=
+UURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com
+> Grabbing thread from lore.kernel.org/all/CA%2BicZUURwYd8nJSdMU7KW6nFjubi-=
+VD2f-a5%2BzQNQGUxK7%2B2aw@mail.gmail.com/t.mbox.gz
+> Analyzing 10 messages in the thread
+> No patches found.
+> =E2=AC=A2[acme@toolbox perf-tools-next]$
+>
+> Using the Message-ID for your message, which normally is enough, but I
+> think I didn't separate the patch from the rest of the message with ---.
+>
+> Lemme try...
+>
+> ---
+>
+> From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Thu, 22 Aug 2024 14:13:49 -0300
+> Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mismatc=
+h if
+>  present on clang
+>
+> The -Wcast-function-type-mismatch option was introduced in clang 19 and
+> its enabled by default, since we use -Werror, and python bindings do
+> casts that are valid but trips this warning, disable it if present.
+>
+> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2M=
+zKXwTA5THtL7w@mail.gmail.com
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/util/setup.py | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+> index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
+> --- a/tools/perf/util/setup.py
+> +++ b/tools/perf/util/setup.py
+> @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
+>  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-=
+parameter', '-Wno-redundant-decls' ]
+>  if cc_is_clang:
+>      cflags +=3D ["-Wno-unused-command-line-argument" ]
+> +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
+>  else:
+>      cflags +=3D ['-Wno-cast-function-type' ]
+>
+> --
+> 2.46.0
+>
 
-You already submitted this one separately, and it has now been merged.
+Hmm, OK.
+
+My first posting:
+https://lore.kernel.org/all/CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-=
+UVKQ@mail.gmail.com/
+
+$ b4 am -ctsl --cc-trailers
+CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com
+Grabbing thread from
+lore.kernel.org/all/CA%2BicZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5%2BzQNQGUxK7%2B2=
+aw@mail.gmail.com/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 11 messages in the thread
+No patches found.
+
+Did you drop that part by accident or intentionally from the patch?
+
+ def clang_has_option(option):
+    cc_output =3D Popen([cc, cc_options + option,
+path.join(src_feature_tests, "test-hello.c") ],
+stderr=3DPIPE).stderr.readlines()
+-    return [o for o in cc_output if ((b"unknown argument" in o) or
+(b"is not supported" in o))] =3D=3D [ ]
++    return [o for o in cc_output if ((b"unknown argument" in o) or
+(b"is not supported" in o) or (b"unknown warning option" in o))] =3D=3D [
+]
+
+Thank for all.
+
+-Sedat-
 
