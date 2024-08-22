@@ -1,139 +1,229 @@
-Return-Path: <linux-kernel+bounces-297770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E71895BD82
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2FE95BD84
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EF71F24A8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7A81F24B47
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B82A1D04B5;
-	Thu, 22 Aug 2024 17:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B6A1CF29E;
+	Thu, 22 Aug 2024 17:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Jgq3bykE"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gqczij/O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4E61CFEC1;
-	Thu, 22 Aug 2024 17:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E33B487AE;
+	Thu, 22 Aug 2024 17:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348345; cv=none; b=bAuWSk625thx3vSwpgi53Ov3cmjKbm0CwJJhB3cRkLy01BjAR3u+7/zMgiiUl4oSCd5LU++tnnQs8YNDTaMo+BBAZc7oaGiLfBwJ1Mom50/KFi1WTZacANnmDfb4//mj3Pfo/nORqA883aHEdnWfVzgjMtf03GqJgGQFmJ/WWrk=
+	t=1724348411; cv=none; b=HJi5zemtzggABwELkqDCzpDZaD/Khw7b6nZq1XaLCVCRO+ZJXzNU5JnbVJvtmr7ey1HBbr3xy0vAn17HdBhtSuRCJfgfPo4rOLnIUAngl5kniF6MoEjx7ftDaZLkdnBABq0y5io+LBHyWUIGJk/RMa6c4ZRTFq38+7tkgwevoC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348345; c=relaxed/simple;
-	bh=aLRBxg9o/yW/gnTo+4DGF+WN5uvzAM4YVy9Ll5L3diY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DBDFmUGLpP6/8sZYJYMbzj+4ULycYHJKkSD61gUZ2I096Z8a9lvXGexQP53qtLpJEhadv7FZ/UFnUXnCGYl/wQlkswEPF8tdd/3+Mr8pxUZYI0N/7YkVZ4W5pMlWREkG4BWaTjp7wb2KbONklqH0xyIRoK05/bFTTSfuTjpj/P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Jgq3bykE; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1724348328; x=1724953128; i=w_armin@gmx.de;
-	bh=HZH34bEBWlECtrEyEvw7QJJLZAR8h5MgcQYgkL9ydUw=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Jgq3bykERWn1YjJPUDHi1Lsd/baR4sidlKyMJ/bCNjxH82FX4HJFyODeKzIROFV0
-	 b4MTj/wcCtgYjqOmLRCrF0LgJwgQ/qIOayUH0DaFXxe4n0X3CyNrWruBJflbiLI9w
-	 wiBLuVtNWyDsjL1FJUbA2yE0gRR4jd0I+fMn3PU+8obGmlx4mqw1whSHO/FYtDoEK
-	 umNvgRm2CgihhDzie0wSRam32jFRzBpPzj3Nynt/A526AAIh5gRHT7g3guSlNVz0J
-	 SVdr87iebBaEHnffMTXiHwRdbgXg0PwIAqAxYRjLk/vNGo9DnPFy5VrOqjkFFE1X8
-	 e2iJgWHTlcAfMCmF2Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MbirE-1s8gEQ2KHm-00cP0F; Thu, 22 Aug 2024 19:38:48 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: james@equiv.tech,
-	jlee@suse.com,
-	corentin.chary@gmail.com,
-	luke@ljones.dev,
-	matan@svgalib.org,
-	coproscefalo@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] platform/x86: wmi: Call both legacy and WMI driver notify handlers
-Date: Thu, 22 Aug 2024 19:38:10 +0200
-Message-Id: <20240822173810.11090-6-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240822173810.11090-1-W_Armin@gmx.de>
-References: <20240822173810.11090-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1724348411; c=relaxed/simple;
+	bh=bOvfXFEBJ7hru/SrBmVn2vRabF2j+tb8OvK48mGn5qA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i4KMgucm4VNy/vePwCVZR9TDyPI943jf8hoeDoTToiqORuzGcrYBdHFcgQGdFl7l4WDJ0ivN/etVNd9E/RSSAgQI/ZSUWJutbXoUJNJw5T3Kf/wQfQg8X+tht1PA2eSjGu4mbnY18LyCU6WkioD2wdSV8axqxdzBDGMeRuQIorI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gqczij/O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1898BC32782;
+	Thu, 22 Aug 2024 17:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724348410;
+	bh=bOvfXFEBJ7hru/SrBmVn2vRabF2j+tb8OvK48mGn5qA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gqczij/OrYIZ/u9U8W1H3wa6kMNVmANz2nlw/TKj5o/u9+b94ArUq7w0UShqBAtNb
+	 hd/tEE6qLMwkogpM5zMMQegWBkLHqp1JasWwPver0olKGajV0Gq20RDxx/S8Gf7KZJ
+	 9vNGwcJjIERJ4a5dqv60oF+kR/Uxt7FcB/Dpga+B6Y0MxYAzz0JKrkmE4ioLNj8o8G
+	 5390EZNhWKBG+Ea/xhVvxSVtZri5zh8YaxYbzkkO0lsrUkXCQCykoH4pY0cCWSWsyq
+	 QgzHkH3OmLhG2+SHLagYKytAVuBQznfI0o8+vjmuQfjXgz08UBpPNdv8LgwOlNptvb
+	 2QdijYKxXwdEg==
+Date: Thu, 22 Aug 2024 14:40:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+Message-ID: <Zsd39zG9BuGpZ8aA@x1>
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+ <ZsdKhLaPy-uzKsuH@x1>
+ <ZsdUxxBrpbuYxtXN@x1>
+ <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
+ <ZsdxinrZP1kHINWT@x1>
+ <ZsdzLmIFWRqsXeXD@x1>
+ <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UDipBvfTGNVeeZOaR1S4jNMHIrRiufY8GfCw0i127xvQJ0w3fMD
- ZGXZCDkqLGcFzdEsSFacxryvgnqzLgvgFdiouWsa9KRgk8jaZ6XPtxMO53rZo+3tysKzdiE
- Kr8lZmMiNR5KnNactGWgNZvBRiaQoW4UFksUi3aXaEi06LgdAndRqDolTOdfTU0oenw2P8U
- Eh16ZMFoQejWq8aoXyXqA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:b4JDTVPIRoE=;2eionCkk0qauEx+jTUfW5w2gyht
- UIUXJq7eSuONwX+oMvDRxKVEBMGQZ0Lt+11RjYFj39lXgU9rVFWzNIE6rFi/noiVdCQbFOsEx
- Q484DWC9TMlDGE1gh6EKzYuaoxy3eS0SJ45G28gEbuumGCL2gci9XhUQZwOAoQUBq5PvTEMkE
- 7niFw48CFV4Mns9IzyGOl9jQu/DBblRk2OjBfoXiG4MGJJ9QYueDHZ/HpjtOpUR3Rnkj9je23
- 6875vUcZbHIOZ/x05NR3D4cgYAZ8A4Ow/QQSg4CnT1TVPwZ414Jjqk+E/oLLJayom22VGOr0u
- vvXEnqvoxfhj4uZQWREqQYSjMzMtP1bjbMq+GXoPH3TNQx8x8US+zwbvzuTmSBAOUMJpAUNjL
- 63/jL8Joc6HVhi6E9So2Fx3YswRRoyvRjpPSAQsipLJxjlSI0F2Tuw4xbQNc5oUHZmGhjoUB/
- L3XreYGKleYbNdoudvTtYDAfTazCnH5sTGaSOISaRZdu78gbc/Ero0P9yVD3dqeZ3aIGHlakM
- TRT9od1xdfNIHPpCIHhqF3o1goohMayS9IZgH5BSrKWEISh7sNtCCinZDohJy6eIYrqAUReSj
- qvky1aul2s14MZXwp44WNWOlv5YWSEQeM1TjQfiQdEjJrieLohdGNok8cnXccVFp2IUUVYN5U
- 7KHsVGRnCbpfJvvWPlP+xLDgjVTZ/Efd5Jv25gsZhOM24cSxQ22S8TUm01OcRozCu80Q0fOcp
- IZ6PeC8/8ogxP5RUenyf2YfP/pAH2KTzIN2ViIjQ7T0jqPkndUQ9xWw/KnknOF4Oa610es2kW
- Rt9yd5DBiHjGK+mdFfoRuxvQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
 
-Since the legacy WMI notify handlers are now using the WMI event data
-provided by the WMI driver core, they can coexist with modern WMI
-driver notify handlers.
+On Thu, Aug 22, 2024 at 07:31:55PM +0200, Sedat Dilek wrote:
+> On Thu, Aug 22, 2024 at 7:19 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Thu, Aug 22, 2024 at 02:12:46PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Thu, Aug 22, 2024 at 07:02:52PM +0200, Sedat Dilek wrote:
+> > > > On Thu, Aug 22, 2024 at 5:10 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > > > +++ b/tools/perf/util/setup.py
+> > > > > @@ -17,7 +17,7 @@ src_feature_tests  = getenv('srctree') + '/tools/build/feature'
+> > >
+> > > > >  def clang_has_option(option):
+> > > > >      cc_output = Popen([cc, cc_options + option, path.join(src_feature_tests, "test-hello.c") ], stderr=PIPE).stderr.readlines()
+> > > > > -    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o))] == [ ]
+> > > > > +    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o) or (b"unknown warning option" in o))] == [ ]
+> > > > >  if cc_is_clang:
+> > > > >      from sysconfig import get_config_vars
+> > > > > @@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
+> > > > >  cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+> > > > >  if cc_is_clang:
+> > > > >      cflags += ["-Wno-unused-command-line-argument" ]
+> > > > > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> > > > > +        cflags += ["-Wno-cast-function-type-mismatch" ]
+> > > > >  else:
+> > > > >      cflags += ['-Wno-cast-function-type' ]
+> > >
+> > > > I tried with your diff with SLIM LLVM toolchains 18 and 19.
+> > >
+> > > > Both work - see attached build-logs.
+> > >
+> > > > Yes, are right that LLVM/Clang v19 was first introducing:
+> > >
+> > > > -Wcast-function-type-mismatch / -Wno-cast-function-type-mismatch
+> > >
+> > > > [4] says for LLVM 18.1.8:
+> > >
+> > > > -Wcast-function-type
+> > > > -Wcast-function-type-strict
+> > >
+> > > > Feel free to add my Reported-by/Tested-by credentials if you sent a full patch.
+> > >
+> > > Thanks for the report and test of the fix, I'll add both tags,
+> >
+> > So below is the part that deals with disabling the warning if present,
+> > the other patch supporting checking warning options I merged as a prep
+> > patch.
+> >
+> > Thanks!
+> >
+> > - Arnaldo
+> >
+> > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Date: Thu, 22 Aug 2024 14:13:49 -0300
+> > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mismatch if
+> >  present on clang
+> >
+> > The -Wcast-function-type-mismatch option was introduced in clang 19 and
+> > its enabled by default, since we use -Werror, and python bindings do
+> > casts that are valid but trips this warning, disable it if present.
+> >
+> > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Cc: Nathan Chancellor <nathan@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  tools/perf/util/setup.py | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+> > index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
+> > --- a/tools/perf/util/setup.py
+> > +++ b/tools/perf/util/setup.py
+> > @@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
+> >  cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+> >  if cc_is_clang:
+> >      cflags += ["-Wno-unused-command-line-argument" ]
+> > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
+> > +        cflags += ["-Wno-cast-function-type-mismatch" ]
+> >  else:
+> >      cflags += ['-Wno-cast-function-type' ]
+> >
+> > --
+> > 2.46.0
+> >
+> 
+> Thanks for the patch, Arnanldo.
+> 
+> @Nathan Chancellor
+> What was the b4 magic to retrieve a patch included in a ML thread?
+> 
+> I tried:
+> 
+> link="https://lore.kernel.org/all/CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com/"
+> 
+> b4 am $link
+> Grabbing thread from
+> lore.kernel.org/all/CA%2BicZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com/t.mbox.gz
+> Analyzing 9 messages in the thread
+> No patches found.
 
-Remove the precedence of WMI driver notify handlers and call both
-when receiving an event.
+I use:
 
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/wmi.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+⬢[acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com
+Grabbing thread from lore.kernel.org/all/CA%2BicZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5%2BzQNQGUxK7%2B2aw@mail.gmail.com/t.mbox.gz
+Analyzing 10 messages in the thread
+No patches found.
+⬢[acme@toolbox perf-tools-next]$
 
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 6b27833ba5d9..3cbe180c3fc0 100644
-=2D-- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -1175,15 +1175,13 @@ static int wmi_notify_device(struct device *dev, v=
-oid *data)
- 	}
+Using the Message-ID for your message, which normally is enough, but I
+think I didn't separate the patch from the rest of the message with ---.
 
- 	down_read(&wblock->notify_lock);
--	/* The WMI driver notify handler conflicts with the legacy WMI handler.
--	 * Because of this the WMI driver notify handler takes precedence.
--	 */
--	if (wblock->dev.dev.driver && wblock->driver_ready) {
-+
-+	if (wblock->dev.dev.driver && wblock->driver_ready)
- 		wmi_notify_driver(wblock, obj);
--	} else {
--		if (wblock->handler)
--			wblock->handler(obj, wblock->handler_data);
--	}
-+
-+	if (wblock->handler)
-+		wblock->handler(obj, wblock->handler_data);
-+
- 	up_read(&wblock->notify_lock);
+Lemme try...
 
- 	kfree(obj);
-=2D-
-2.39.2
+---
+
+From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date: Thu, 22 Aug 2024 14:13:49 -0300
+Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mismatch if
+ present on clang
+
+The -Wcast-function-type-mismatch option was introduced in clang 19 and
+its enabled by default, since we use -Werror, and python bindings do
+casts that are valid but trips this warning, disable it if present.
+
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/setup.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
+ cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+ if cc_is_clang:
+     cflags += ["-Wno-unused-command-line-argument" ]
++    if clang_has_option("-Wno-cast-function-type-mismatch"):
++        cflags += ["-Wno-cast-function-type-mismatch" ]
+ else:
+     cflags += ['-Wno-cast-function-type' ]
+ 
+-- 
+2.46.0
 
 
