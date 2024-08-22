@@ -1,113 +1,76 @@
-Return-Path: <linux-kernel+bounces-297757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E3695BD55
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:31:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C71395BD56
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E6F0B250B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:31:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE219B25B0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE1A1CF284;
-	Thu, 22 Aug 2024 17:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VY0RjK3p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3A01CDFB5;
+	Thu, 22 Aug 2024 17:31:50 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888121D12E4;
-	Thu, 22 Aug 2024 17:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115691CC899
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724347896; cv=none; b=PZem3yVs54YDUMXozfYZ3Qd7IVIDVFnni+pDCQuyl0J7oeGEDbHTA13ALg+Y85xNLnZOEGK2Q7q1MEOCba7aESfOkIEcbALQzdMv3+xKoClH3vQrj4vPqsv1m/uX9HQBLsLTfFYOF/oThRM2BkD95l4FSCNoF7woxRRlI7IPpbA=
+	t=1724347910; cv=none; b=RQ7M9piMKUXL38zdNFPy8ZXz4KlsR+HOO4AuWpzrfIDxxN3MAAfvERBOY5PQvzQBhW6jEdAe0gsGjV9iUmV5j2C3m+Kf1GwouEi7xG38026WKXGsi5wX11CcXCU6ZH+AsbBaEBJrPnV8Asvy+MzVyxBn52QBzM5nf264Rko9zko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724347896; c=relaxed/simple;
-	bh=+ErfjZ5uE2QjG3DbjCEAl7HlVAjqKO+KHb2nztO5G+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=K0BwmoMkXiq7BVBiCNo+TAR3MYz/qkShm/27QkosG/UZnLq+u0ESEjETDNNyWdwP7OEXC1Lsfan5ouZ3q1M4INVWykQ9fCC9DA1rVqkhg4+r8fBRGm5W6rkXcgOvr+IVI++Cf/vTlr0ZBuwg2wK6CLyImJtRm9mM/eAqfeA97h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VY0RjK3p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6CD3C4AF0F;
-	Thu, 22 Aug 2024 17:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724347896;
-	bh=+ErfjZ5uE2QjG3DbjCEAl7HlVAjqKO+KHb2nztO5G+I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VY0RjK3pG8GUCrKZkcbrgSsSfF5Wof6KfWs1lhRagvFQ9Ad+m10dL87+j5mO9yvP0
-	 QDtKok8c5tdpB3vhkJO99uMdYhJssyWs35CvBO6NowMe5FYyd7r0+bpDiMXr2ToeVr
-	 sPNB0gueIMXpp5/tjTsr5tqqW7MRgVfNHvFHzq2uJ29nRwcbdvdoNoJop1ECHI9HWw
-	 3lfMfzvr3hN3ppwpfS/NkBik6m88ZeNaQMbXNRhbiS2gPXX4fcqB9OSpU77lEEMjTE
-	 XzEQ5Za31X+K5SDTfISwwpwSMPGQw2qv26D8T6bC/Krw1fkpVqiP8wVOgB9ern33im
-	 ymNfz3UjxteHA==
-Date: Thu, 22 Aug 2024 12:31:33 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
-Message-ID: <20240822173133.GA312907@bhelgaas>
+	s=arc-20240116; t=1724347910; c=relaxed/simple;
+	bh=9JCv/vx5AHoPLFlsebdHtRp/plzH+EWvS3Dy5bcPQws=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BDn3XynrqN8Hu4gWpLQk3YZpG4rtJzUN7nnEkIrwb+mN3+h/i+uKEHZc2Wxq6emUuor1i6wN5IPYP6CZpMaUSvbcCin0jGq1e4VigaafANPJ1X5Razzgbfnbd+kiAciB6AzbcfYtOto98r0exSBZsw0ctFc9io2WU8gkOmRL9m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81fa58fbeceso110615939f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:31:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724347908; x=1724952708;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9JCv/vx5AHoPLFlsebdHtRp/plzH+EWvS3Dy5bcPQws=;
+        b=gnlQdIV0wuxCXkneAg0pFqocIPTWhvMd8yY8AFqdFyAfGxPQa4Ta57C4HCyL5k0Bgo
+         Ir64OJcBWSkQPiYdNGNEWvn4gx8QEEPpRZf7suGY9NHb5Pdh2L3Lbhlfgiinbk2s9bur
+         YVHTDOQ41oZj3LPc/6Ylxjozk59FS5lfbag6ezdou/l1x1s547G5zi+HeZp6mZyQ21Sv
+         IfSDNaXztTpG5Q7bW+v59+XUOI/KrfKRHD2G9Qgs/0SC/1UPLNXO0qs0C9t5WRnXXYkJ
+         kWCiat5SR3UadUbd+nrA6lyiMYiZu7XaBqqp3ptXsxcFiViZLAW88wNr75vEtqWnxZkK
+         QbVQ==
+X-Gm-Message-State: AOJu0YwVg6s9A3dClxz2VsPpq1hVNhy1luPhVbGWgVpr37K95plX9NX2
+	EddrdGjcmvBvnpAauwpICAd5YohWjjfPRxBOjRB6dDz59HbAH899BP0ZkLcZ6u1yDEu1ASLu9Mm
+	n0/nJv/hFKID52a9VGVMI9pNZ4e94TYbarfJADB4idhR1Qo8MWtyDiWw=
+X-Google-Smtp-Source: AGHT+IGfTLd8FwT3nQvQmssABNou3KLj3n6o6ZsSQECxXKkjNvvRMycpNPv/TLGFm2tpyetzTjwFXR8MlRr5u1AyBtGu6DJcxNdR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822154025.vfl6mippkz3duimg@thinkpad>
+X-Received: by 2002:a05:6602:6d12:b0:81f:904a:51b1 with SMTP id
+ ca18e2360f4ac-827851d5dd0mr544539f.1.1724347907946; Thu, 22 Aug 2024 10:31:47
+ -0700 (PDT)
+Date: Thu, 22 Aug 2024 10:31:47 -0700
+In-Reply-To: <000000000000e097b1061beb2182@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000085db6d0620490811@google.com>
+Subject: Re: [syzbot] kernel BUG in bch2_fs_release (2)
+From: syzbot <syzbot+9db8552458d57264a358@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2024 at 09:10:25PM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Aug 22, 2024 at 10:16:58AM -0500, Bjorn Helgaas wrote:
-> > On Thu, Aug 22, 2024 at 12:18:23PM +0530, Manivannan Sadhasivam wrote:
-> > > On Wed, Aug 21, 2024 at 05:56:18PM -0500, Bjorn Helgaas wrote:
-> > > ...
-> > 
-> > > > Although I do have the question of what happens if the RC deasserts
-> > > > PERST# before qcom-ep is loaded.  We probably don't execute
-> > > > qcom_pcie_perst_deassert() in that case, so how does the init happen?
-> > > 
-> > > PERST# is a level trigger signal. So even if the host has asserted
-> > > it before EP booted, the level will stay low and ep will detect it
-> > > while booting.
-> > 
-> > The PERST# signal itself is definitely level oriented.
-> > 
-> > I'm still skeptical about the *interrupt* from the PCIe controller
-> > being level-triggered, as I mentioned here:
-> > https://lore.kernel.org/r/20240815224735.GA57931@bhelgaas
-> 
-> Sorry, that comment got buried into my inbox. So didn't get a chance
-> to respond.
-> 
-> > tegra194 is also dwc-based and has a similar PERST# interrupt but
-> > it's edge-triggered (tegra_pcie_ep_pex_rst_irq()), which I think
-> > is a cleaner implementation.  Then you don't have to remember the
-> > current state, switch between high and low trigger, worry about
-> > races and missing a pulse, etc.
-> 
-> I did try to mimic what tegra194 did when I wrote the qcom-ep
-> driver, but it didn't work. If we use the level triggered interrupt
-> as edge, the interrupt will be missed if we do not listen at the
-> right time (when PERST# goes from high to low and vice versa).
-> 
-> I don't know how tegra194 interrupt controller is wired up, but IIUC
-> they will need to boot the endpoint first and then host to catch the
-> PERST# interrupt.  Otherwise, the endpoint will never see the
-> interrupt until host toggles it again.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Having to control the boot ordering of endpoint and host is definitely
-problematic.
+***
 
-What is the nature of the crash when we try to enable the PHY when
-Refclk is not available?  The endpoint has no control over when the
-host asserts/deasserts PERST#.  If PERST# happens to be asserted while
-the endpoint is enabling the PHY, and this causes some kind of crash
-that the endpoint driver can't easily recover from, that's a serious
-robustness problem.
+Subject: kernel BUG in bch2_fs_release (2)
+Author: kent.overstreet@linux.dev
 
-> But there is no point in forcing this ordering and that was the
-> reason why I went with the level triggered approach.
+#syz fix bcachefs: Switch online_reserved shutdown assert to WARN()
 
