@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-297440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C70695B853
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:25:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035EA95B850
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F147628766E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334B11C23585
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56CD1CC15D;
-	Thu, 22 Aug 2024 14:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690C11CBEAC;
+	Thu, 22 Aug 2024 14:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iayurmIL"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzydcEVw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9271CBEBF;
-	Thu, 22 Aug 2024 14:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9904E1CB336;
+	Thu, 22 Aug 2024 14:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336706; cv=none; b=mRhn8u/dr9rOwO8csg7c16YXJHB+gAcicMezeiZxs3cvRdLsXmNmFc9Znr0dUwPaaZyivdKhioZ6o4HJD5hb++q6G3IUATvhURRrxKPHWjUZR+O74uXd3fVECKhEnoxzmZ0NXlo1rgXs91JfkH9ZTVnZgmBZf5hSdYs1pqgwhlk=
+	t=1724336702; cv=none; b=SMyYH3cFqRaG/fJXaP06HzmG4r74S6VM0AmeypdB5b5QMo8K7yXpVZyfMoGhKPbnP4UsPrqIdxiFUxHttMGfC/jeBVEu9JhCVgmwbiQSDVYk6YUvomcrwQwrWl1JRamFbPzVoEIsGkghqaqcC0Yt/MKDff0hFSNTEcaDpYbmv0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724336706; c=relaxed/simple;
-	bh=5gAn08tl0DWw9UTcGtfFWbARqnR/Yvy1JbPAIXA+o/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hX0fULm3lmkMvSl5cKZGCCZO0EzNTzJtf8Y1KAjAsEoAKndpGFdlpHxxwsqe16rhlKx0YY5E+cZ+6mmkcVnTA60Xhu2He7iwdgRo4W/p68j1Bv27LA7fs0sDZJnt/m1H7KFnIIsGdPfCHV2q4aYcUJvWt1rojtYrjZszP0S0Roc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iayurmIL; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WqQTC6Xh1z6ClY9L;
-	Thu, 22 Aug 2024 14:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1724336697; x=1726928698; bh=A7yFaIGsFtQ/Bafrc7gGhxSj
-	CNRGAj8JHNdgO2uxxPM=; b=iayurmILqnEybKQXnzw5y6A7YPTUlHSXOEPjy5Wq
-	s6Lqo494HmCoYbb5UZ87Cn6tvajKUZuScpHKUZkEjS5rfh0s4n4L5rPcTr8D2egU
-	8Fxa10+ArC5J9EwHrqTyPhyJ7/57Kriu/H1COPnZKY3XOFrsYnWoV/duKe64TYnI
-	hH7hb9VH9qq4Cka0me+ROlzR7A0ITIooVqn2Q9UfjIpA6Vy86ZmsCcNT6mcOmC/c
-	QuHmj+3/bIrL9p4cygKiCKhFHyLmgMOmcY7i3wPbgoU9IBYK//WZ1isbteX8mvuk
-	7opqTY9Y7SmvQoUxe6SUtWFGtVb9bcXu2aAlbtVMAkkaNQ==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Vh6dqYTRNtGE; Thu, 22 Aug 2024 14:24:57 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WqQT11wDxz6ClY9F;
-	Thu, 22 Aug 2024 14:24:52 +0000 (UTC)
-Message-ID: <1a95a60c-730a-4bb7-80c9-98b8a70f6521@acm.org>
-Date: Thu, 22 Aug 2024 07:24:52 -0700
+	s=arc-20240116; t=1724336702; c=relaxed/simple;
+	bh=//vs0/j3dL5aitkeEHYmbgKTgUS1rli4/RnXiCWDaiI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G8XhvBUopgg8DX0+XDFS5Sc+PoZYk+rycOF7rAHx/0eKnjCPC/F9cPS6xR++ZzMxMcxZaX0AgtgvLqYhQ6Vs0PtKdq9F9PIc4KyeifMNMXd4KWq4LcMtd1fRbhjIS755k7WLlaca1qDmOLKd0gP9lSZZDynwz80LwgdsxgZMdPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzydcEVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C97C32782;
+	Thu, 22 Aug 2024 14:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724336702;
+	bh=//vs0/j3dL5aitkeEHYmbgKTgUS1rli4/RnXiCWDaiI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mzydcEVwqkNhOKyJ5orBT6Sxiv1o3CueKVoCZOlKhB05hbfqLL4sRKMuFCWl3Pw6u
+	 RRseBCTvZyCyCoLYr0nNUMCuPOOIVvq5vPvNsK+Sq4f9+d1ZOsnRLFCwa/7/Svz+7U
+	 UnNdivfK/+izhZv/9R4l2xx7bS71Lmmcj0fMTebbQaShjAZYSIeCBaUWBYmh0HwFMH
+	 h0axtuuZBYajoYjtLRupBGNS0Cz7je99YbSxJY/5mRCFAyAQefFTDdwQgGNA25wZEk
+	 z2NtC8y+9AZo4jIXZD72NHp9laSWfTbJqAhMdUge6Qe1Srqq43pkpMpq2NO5+/NSVR
+	 Morx7oLq2+asg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sh8kF-005yRg-MG;
+	Thu, 22 Aug 2024 15:24:59 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	David Matlack <dmatlack@google.com>,
+	David Stevens <stevensd@chromium.org>
+Subject: Re: (subset) [PATCH v12 02/84] KVM: arm64: Disallow copying MTE to guest memory while KVM is dirty logging
+Date: Thu, 22 Aug 2024 15:24:54 +0100
+Message-Id: <172433664068.3702537.15170661496841359831.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240726235234.228822-3-seanjc@google.com>
+References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-3-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
- capacities are different"
-To: MANISH PANDEY <quic_mapa@quicinc.com>,
- Sandeep Dhavale <dhavale@google.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Qais Yousef <qyousef@layalina.io>,
- Christian Loehle <christian.loehle@arm.com>, axboe@kernel.dk,
- mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
- linux-block@vger.kernel.org, sudeep.holla@arm.com,
- Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>,
- kailash@google.com, tkjos@google.com, bvanassche@google.com,
- quic_nitirawa@quicinc.com, quic_cang@quicinc.com, quic_rampraka@quicinc.com,
- quic_narepall@quicinc.com,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
- <3feb5226-7872-432b-9781-29903979d34a@arm.com>
- <20240805020748.d2tvt7c757hi24na@airbuntu>
- <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
- <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
- <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
- <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
- <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
- <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
- <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
- <12a6f001-813e-4bc4-90c2-9f9ef7dc72e6@acm.org>
- <688ead11-c1c0-48b2-b4d1-feeb1278c692@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <688ead11-c1c0-48b2-b4d1-feeb1278c692@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: pbonzini@redhat.com, oliver.upton@linux.dev, zhaotianrui@loongson.cn, maobibo@loongson.cn, chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, borntraeger@linux.ibm.com, frankja@linux.ibm.com, imbrenda@linux.ibm.com, seanjc@google.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, dmatlack@google.com, stevensd@chromium.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 8/22/24 3:46 AM, MANISH PANDEY wrote:
-> On 8/21/2024 10:52 PM, Bart Van Assche wrote:
-> > What is the performance impact of the above change?
- >
-> No impact at all
-Is this a good summary of this email thread?
-* The first email in this thread reports an important performance
-   regression.
-* In your previous email there is a candidate fix for the performance
-   regression.
-* Above I read that the proposed fix has no performance impact at all
-   on any setup.
+On Fri, 26 Jul 2024 16:51:11 -0700, Sean Christopherson wrote:
+> Disallow copying MTE tags to guest memory while KVM is dirty logging, as
+> writing guest memory without marking the gfn as dirty in the memslot could
+> result in userspace failing to migrate the updated page.  Ideally (maybe?),
+> KVM would simply mark the gfn as dirty, but there is no vCPU to work with,
+> and presumably the only use case for copy MTE tags _to_ the guest is when
+> restoring state on the target.
+> 
+> [...]
 
-Is this a good summary of this email thread? If so, do you agree that
-this must be confusing everyone who is following this email thread?
+Applied to next, thanks!
 
-Thanks,
+[02/84] KVM: arm64: Disallow copying MTE to guest memory while KVM is dirty logging
+        commit: e0b7de4fd18c47ebd47ec0dd1af6503d4071b943
 
-Bart.
+Cheers,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
+
+
 
