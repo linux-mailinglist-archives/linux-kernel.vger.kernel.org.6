@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-297571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C368D95BAFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D16B95BAFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB611C23D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FFB283BE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9C51CCB53;
-	Thu, 22 Aug 2024 15:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780B91CDA19;
+	Thu, 22 Aug 2024 15:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRMaQutq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h60PjGww"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD9D1CCB31;
-	Thu, 22 Aug 2024 15:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4861CCED8;
+	Thu, 22 Aug 2024 15:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341837; cv=none; b=rETusxHTJQ5Kkqxyw4pdvbe/W3KDHEnCPXuF0sxxdoDXzcDiLZKK2Vi4Z6FhkPH9T8LnjllEzjKraR7OZ9o2INj2Uk0iDc5esiNBbwPBWIbUXIjut7EKEgXz71e0iyeZ/yzqttGn/2WAtlmjWcM/ZYCnZgB9fB3kPtb+7SFZiJ0=
+	t=1724341842; cv=none; b=F+atwR2mvPjZpNpMJ5i/199qDuHCAIkDWjq3c09l0lLqwLzuzK9/swH3mbj+uF5xY4QEWEhjtj9ssl7SjDc3mIdHRBblmpGsX0h+LFSjoY66aD3STNPXzmdlTFxaguBjoV3wyn1lUlyDaktT1L/aJYwtQbSEVZ7Jgpm2on7n5yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341837; c=relaxed/simple;
-	bh=j8BItr8qFtlFL1i1wA14p7v59VTidcPk+3dA1wLsBGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qnm9UTSW6Xr0X8fgfAh2Fy57ydPS+CG+4gHlM9J3HW+z+XeLB9OVKbowSLg3koQ8gC5XaVoklCRt23XVSZH6D4Dqe3LO4E7sYainphyhJ2vO8mCEWDkA0rFFx9UCz/b3ydfQ+n12qMYJ4nyLHcumodOGIW8Nd55Lsyl796C6jj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRMaQutq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5757C4AF0F;
-	Thu, 22 Aug 2024 15:50:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724341836;
-	bh=j8BItr8qFtlFL1i1wA14p7v59VTidcPk+3dA1wLsBGs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uRMaQutqD5WYFpv4feT6N9WxoNflY2zLsR6qScI6+8mpt7U+3aOC5FzdfXtAtOP/0
-	 8O4PFkoFzLCbgJ8066FAhR04P3zQuXZTe2+f91/NYls0v9lCcWCBM9AhDy3oOu1CcR
-	 2fc4ubI8NooFvaySUQwp6+xG8DvbtP8TLl73g3URb6g7UYSTkg0bNARU1Y3CiDEZu/
-	 JNFKK9TMBk+wZUVd0muGnQZmszchzfTLBrG1INisXEoINFDe72Z/ncjfHYF5ZAFXdd
-	 0CEV5UnIHRAtknLPT/Iq6rY2Ek3UPONkqC18JJQaJcZXw3/ykGYj4vlUDFguBW7eKM
-	 XcJ7ZVQzFGvPg==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-270263932d5so650211fac.2;
-        Thu, 22 Aug 2024 08:50:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUklm1dLjATZZ6HRt6idUObsM79bXiLs+cc+lTvYMuTsgEps1Emvut1PEJiYA6CtqYnf8QSm4MTpgDkQpk=@vger.kernel.org, AJvYcCWSABJyhHZkTB1b8PulWmSThV7JhNfGpBHvvCHDJVk8/L9TFZYQRBf90jjC7RSX2DgGbk0p0tOz7iA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8iGqpPLFU90KG3zkF+vP+KTDF8ImQGCGMhi17/0r80W7y+gyT
-	bQ93rnzAZLoN7Pvbeu3Z7pDF9WgnbTio7RykGBp5tzJKS8JkMRya3QKWnjEpTiANCMvCpLs20fN
-	4pCpTx1D8EK8QTWvvjfda3GZmhw8=
-X-Google-Smtp-Source: AGHT+IEjEtp8txbNTSVDAbESD159H3Xu4niXJ19/74sWzyDg/UqldA1uz+kuK2FvIRx8CoFpw4jJGKn2F6acQ3ReYOE=
-X-Received: by 2002:a05:6870:9123:b0:25d:8d4:68ab with SMTP id
- 586e51a60fabf-273cff4655dmr2938204fac.40.1724341836263; Thu, 22 Aug 2024
- 08:50:36 -0700 (PDT)
+	s=arc-20240116; t=1724341842; c=relaxed/simple;
+	bh=YLr7U4WuN7r4DANy/NK+UIDzVlCZ3BdQDPUgdZksTmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIEdH4qb5ryUSF3ALrZ6F5FjemV2Kq4MhH9FbhYAjqf09VTlLGadAGVhG1SKxWad6d7zgUx12PdoP9k+tT8aOuwxE5SsdaHLGDP4EncZ3fzRXXVKwnKmCezTUCSxZaMEVV/cC5IN7bjGX3vQiZ2JVgmt6VMBrGDo6T2XcL2HKbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h60PjGww; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YY6B1q/3dDOEaOOiRTjhyN4W4NVDnqCSJaEbhKIHa0c=; b=h60PjGwwMjPJl9EjMbiSULMd/C
+	xttWOIL+D8WwEbaBIKarBDGlMmqtbJAx81ksoMkjzFqzCEMPQ0hMJK+CYZIN3OVQjx8Wpe4qnICMt
+	kahUcea08sQaqztwYvQEpPNX0NheqS+uHAcAbSag3dbEf0ZeTBOuM7MJMtLWVIZPjb0o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1shA50-005Rbl-LF; Thu, 22 Aug 2024 17:50:30 +0200
+Date: Thu, 22 Aug 2024 17:50:30 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH net-next v3 3/3] phy: dp83td510: Utilize ALCD for cable
+ length measurement when link is active
+Message-ID: <3b5f1f4e-d132-4f42-a516-29a0a827bf59@lunn.ch>
+References: <20240822120703.1393130-1-o.rempel@pengutronix.de>
+ <20240822120703.1393130-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822012903.57986-1-yang.lee@linux.alibaba.com>
-In-Reply-To: <20240822012903.57986-1-yang.lee@linux.alibaba.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 22 Aug 2024 17:50:24 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gtvcH4ukBxwyPYOqGxJ5zKwLiuedFwGmquzm1DmGBvGg@mail.gmail.com>
-Message-ID: <CAJZ5v0gtvcH4ukBxwyPYOqGxJ5zKwLiuedFwGmquzm1DmGBvGg@mail.gmail.com>
-Subject: Re: [PATCH -next] thermal: Correct typo in thermal zone documentation
-To: Yang Li <yang.lee@linux.alibaba.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822120703.1393130-4-o.rempel@pengutronix.de>
 
-On Thu, Aug 22, 2024 at 3:29=E2=80=AFAM Yang Li <yang.lee@linux.alibaba.com=
-> wrote:
->
-> The term '@refcont' was corrected to '@refcount', ensuring clarity and
-> accuracy in the code comments.
-> Additionally, an obsolete comment regarding '@tt_zone' was removed, as
-> it was commented out in the code.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9797
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->  drivers/thermal/testing/zone.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/thermal/testing/zone.c b/drivers/thermal/testing/zon=
-e.c
-> index fcee12b152da..173d86bcc4e2 100644
-> --- a/drivers/thermal/testing/zone.c
-> +++ b/drivers/thermal/testing/zone.c
-> @@ -35,7 +35,7 @@
->   * @temp: Temperature value.
->   * @tz_temp: Current thermal zone temperature (after registration).
->   * @num_trips: Number of trip points in the @trips list.
-> - * @refcont: Reference counter for usage and removal synchronization.
-> + * @refcount: Reference counter for usage and removal synchronization.
->   */
->  struct tt_thermal_zone {
->         struct list_head list_node;
-> @@ -60,7 +60,6 @@ DEFINE_GUARD(tt_zone, struct tt_thermal_zone *, mutex_l=
-ock(&_T->lock), mutex_unl
->   * during the registration of a thermal zone based on a given zone templ=
-ate.
->   *
->   * @list_node: Node in the list of all trip template in @tt_zone.
-> - * @tt_zone: Zone template this trip template belongs to.
->   * @trip: Trip point data to use for thernal zone registration.
->   * @id: The ID of this trip template for the debugfs interface.
->   */
-> --
+On Thu, Aug 22, 2024 at 02:07:03PM +0200, Oleksij Rempel wrote:
+> In industrial environments where 10BaseT1L PHYs are replacing existing
+> field bus systems like CAN, it's often essential to retain the existing
+> cable infrastructure. After installation, collecting metrics such as
+> cable length is crucial for assessing the quality of the infrastructure.
+> Traditionally, TDR (Time Domain Reflectometry) is used for this purpose.
+> However, TDR requires interrupting the link, and if the link partner
+> remains active, the TDR measurement will fail.
+> 
+> Unlike multi-pair systems, where TDR can be attempted during the MDI-X
+> switching window, 10BaseT1L systems face greater challenges. The TDR
+> sequence on 10BaseT1L is longer and coincides with uninterrupted
+> autonegotiation pulses, making TDR impossible when the link partner is
+> active.
+> 
+> The DP83TD510 PHY provides an alternative through ALCD (Active Link
+> Cable Diagnostics), which allows for cable length measurement without
+> disrupting an active link. Since a live link indicates no short or open
+> cable states, ALCD can be used effectively to gather cable length
+> information.
+> 
+> Enhance the dp83td510 driver by:
+> - Leveraging ALCD to measure cable length when the link is active.
+> - Bypassing TDR when a link is detected, as ALCD provides the required
+>   information without disruption.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Thanks for reporting this, I've fixed up the original patch and recommitted=
- it.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
