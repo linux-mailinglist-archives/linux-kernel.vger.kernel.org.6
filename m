@@ -1,139 +1,80 @@
-Return-Path: <linux-kernel+bounces-297414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92FA95B7F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:07:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294E595B7FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E27CB25C98
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BF11F22792
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381331CBE8F;
-	Thu, 22 Aug 2024 14:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D311CB330;
+	Thu, 22 Aug 2024 14:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EKl8FB/3"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMjSrIn5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA4E17D354;
-	Thu, 22 Aug 2024 14:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36BB17D354;
+	Thu, 22 Aug 2024 14:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724335583; cv=none; b=ijxKbVECFGqW5bCeGY3VydFoahYw0Qwyb7d9Fej353JU39bk2ySDoZHLG3EeI34CSCVCFO+0FSH51eoI3v6hfR9rEyV3eG435lodYjPJC0b3Pb/ki6gmhUgs6h+Ur1U660rgI/i11f6lnhcIVC8Lwag7Qu3jCUQrBRpQrQmMxDI=
+	t=1724335670; cv=none; b=M42swjLJVmiq+bGbmYMA8vzK1N9HYOlxbdAJMUtK7ObTWM/THN7YZsvOHHS5OqNnv+MXAvu6iNwnMg0tptqRQvbgTsJZykm7+IjuSwUq5Qhet6vKGA1ms6fSSz1U6WHITES4Y/4hRbJD18ZXItyCpeQqWR52UEVUYgNpMU9v1LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724335583; c=relaxed/simple;
-	bh=jE7XT2v0u6+qqax75LFSSR4S5gAkgdZaGcEkPZHLlh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rTBSV73zWU/g3vSCUqCnkU8KnogXO/Tr9AvFeuXNGMbWFlmOw285K+N/llTd/HsLISfXKdZMlXgLRefVgsoYmXqeHYUuYOJXCakKwsgt8KGF9qX/z+2c+SljdhYXy74ycs7X4pbhmC9Y0OKhX+soard3p69RrAk0W/bdFKewY10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EKl8FB/3; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C523B20010;
-	Thu, 22 Aug 2024 14:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724335572;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5jLrdTPqJox7q3LnEDEhorVnWrlGgJLbPOWyHcz1Hts=;
-	b=EKl8FB/31jQrsFx8BSsopX+vnf7OPh/lUTLbIED/qGL7UmdnxbFgTt1M4GWFAGBU5H+WvE
-	9Oc9VdDQnfIBXVSREVxhiAKjTTW4Ar/pWFqvYyohiRUdtc2eJgvhBoBvzME9r+tzBpMzDj
-	ambtg3J+/JeIkxSTi4EYwTlmvi7N2cHND2QMLUJbeTa27Ws1vGQCqO9M5QczivftTlZGVT
-	LOZHLv9w0q/SkwMMBMKCv/WE//SYLxgmB1BgQAxAqyk2w+Tjk0nUY+WsSPhDtwBzU7VKKd
-	dHay4wNPOSnIJkfkZL+HpR1nlBac8ahHuuw2jUVVHmEGy/NwG4rB0c+M6NX50g==
-Message-ID: <d6dedcc9-b4f0-4de4-9d26-ec9c0c9fa4f6@bootlin.com>
-Date: Thu, 22 Aug 2024 16:06:11 +0200
+	s=arc-20240116; t=1724335670; c=relaxed/simple;
+	bh=Irho6dWycFCVpBcjEAhgC6mpuQ0Wca6An4qT8hsh9sk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uKR3ew+wPx9l61NFwJW5HU33YGW4GYSRgfZgnJ3QCVf+86k1lOYKyki/YzfGmbWYEiKcpVbqkBQwNsaIM7JP3RSCRK25KnTYDqSZRT5kW9jv1CNCD4sSuqQXL14R1NuH42GGYmS3SJ2GjzdOI9GGS2Ncaf0SkyqxLkg2xfPlPmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMjSrIn5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62044C32782;
+	Thu, 22 Aug 2024 14:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724335670;
+	bh=Irho6dWycFCVpBcjEAhgC6mpuQ0Wca6An4qT8hsh9sk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=RMjSrIn5iSJp7U2vmj/4eNxP4N5506s+Ecb20BIsdPq4wiL9Srvxqe2xPCH+CvGU4
+	 XBO15qAzbS8/SjoPautpGRMfBDWVP0N6ZXB+G3gZ6StQqymLWLc5QwG8kgy1gC/7G3
+	 eRUBypEfnJBaA3SH2932RdSMDYZT5AhTpriwMnymbOrGJA/asB5EgOobdI+2xw5rz0
+	 Nbgh/81UwHvcLXnPWIJnXUqndqTDvs5DBuqVtAVc3Yyb/J3FuV6YkFMIJ9/iCY9Izo
+	 39OT+AbVg7JC0LHT8uK2vVmaiFKjaPAe0/Fft0PDKhjWIxv66UMmNN7j7JaKHZLL9p
+	 0nOaECpDEE4eg==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+In-Reply-To: <20240822121539.4265-1-tzungbi@kernel.org>
+References: <20240822121539.4265-1-tzungbi@kernel.org>
+Subject: Re: (subset) [PATCH v2] mfd: cros_ec: update module description
+Message-Id: <172433566908.1343061.372789251240553871.b4-ty@kernel.org>
+Date: Thu, 22 Aug 2024 15:07:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: atmel_serial: use the correct RTS flag.
-To: Mathieu Othacehe <othacehe@gnu.org>,
- Richard Genoud <richard.genoud@bootlin.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20240808060637.19886-1-othacehe@gnu.org>
- <20240813-absinthe-plaza-70575e847015@thorsis.com>
-Content-Language: en-US, fr
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Organization: Bootlin
-In-Reply-To: <20240813-absinthe-plaza-70575e847015@thorsis.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: richard.genoud@bootlin.com
+X-Mailer: b4 0.13.0
 
+On Thu, 22 Aug 2024 20:15:39 +0800, Tzung-Bi Shih wrote:
+> The module description can be backtracked to commit e7c256fbfb15
+> ("platform/chrome: Add Chrome OS EC userspace device interface").
+> 
+> The description became out-of-date after a bunch of changes.  E.g.:
+> - 5668bfdd90cd ("platform/chrome: cros_ec_dev - Register cros-ec sensors").
+> - ea01a31b9058 ("cros_ec: Split cros_ec_devs module").
+> - 5e0115581bbc ("cros_ec: Move cros_ec_dev module to drivers/mfd").
+> 
+> [...]
 
+Applied, thanks!
 
-Le 13/08/2024 à 09:59, Alexander Dahl a écrit :
-> Hello Mathieu,
-> 
-> Am Thu, Aug 08, 2024 at 08:06:37AM +0200 schrieb Mathieu Othacehe:
->> In RS485 mode, the RTS pin is driven high by hardware when the transmitter
->> is operating. This behaviour cannot be changed. This means that the driver
->> should claim that it supports SER_RS485_RTS_ON_SEND and not
->> SER_RS485_RTS_AFTER_SEND.
->>
->> Otherwise, when configuring the port with the SER_RS485_RTS_ON_SEND, one
->> get the following warning:
->>
->> kern.warning kernel: atmel_usart_serial atmel_usart_serial.2.auto:
->> ttyS1 (1): invalid RTS setting, using RTS_AFTER_SEND instead
-> 
-> I've seen this warning already, when migrating a sam9x60 based board
-> from LTS kernel 6.1 to 6.6, so thanks for taking care of this.
-> 
-> I can confirm after applying the patch on top of 6.6.44 the warning is
-> gone, and RS-485 communication still works on our platform, so …
-> 
-> Tested-by: Alexander Dahl <ada@thorsis.com>
+[1/1] mfd: cros_ec: update module description
+      commit: 630d7615539ac09a62feb9b1944b04eb65ff3e70
 
-Acked-by: Richard Genoud <richard.genoud@bootlin.com>
+--
+Lee Jones [李琼斯]
 
-> 
-> Does this deserve a Fixes tag for the change which introduced struct
-> serial_rs485 to the atmel serial driver?  Then it should be this:
-> 
-> Fixes: af47c491e3c7 ("serial: atmel: Fill in rs485_supported")
-> 
-> Greets
-> Alex
-> 
->> which is contradictory with what's really happening.
->>
->> Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
->> ---
->>   drivers/tty/serial/atmel_serial.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
->> index 0a90964d6d107..09b246c9e389e 100644
->> --- a/drivers/tty/serial/atmel_serial.c
->> +++ b/drivers/tty/serial/atmel_serial.c
->> @@ -2514,7 +2514,7 @@ static const struct uart_ops atmel_pops = {
->>   };
->>   
->>   static const struct serial_rs485 atmel_rs485_supported = {
->> -	.flags = SER_RS485_ENABLED | SER_RS485_RTS_AFTER_SEND | SER_RS485_RX_DURING_TX,
->> +	.flags = SER_RS485_ENABLED | SER_RS485_RTS_ON_SEND | SER_RS485_RX_DURING_TX,
->>   	.delay_rts_before_send = 1,
->>   	.delay_rts_after_send = 1,
->>   };
->> -- 
->> 2.45.2
->>
->>
-> 
-
-Thanks !
 
