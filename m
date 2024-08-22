@@ -1,280 +1,146 @@
-Return-Path: <linux-kernel+bounces-296848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A977495AFBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:58:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6DC95AFC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304C21F226EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:58:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11571B2327C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB0C16B75C;
-	Thu, 22 Aug 2024 07:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="h7KKx90P"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FBA16A94F;
+	Thu, 22 Aug 2024 07:58:47 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030CA15854B
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C495165F11
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724313504; cv=none; b=uC9ohpn//oX9CGdU9MmI2fSfEWvf3Y/67898ceUkahITRNUl2eO0cSQuAGHGPw465PrymOSNCx2BuWDqvEEGqYtzNREnG/gfwVC0X8zBR89k+7uyqYWhtxYLCU6Yq1z1yHYLYuBaYRENGp7PIxKqLNa4+bVINVQ3fnfbtxfhEl0=
+	t=1724313526; cv=none; b=iJwFmi4ay+1fAtHKvOY3dP2JS3za09asikrXh15PG0o/lcK37dtzUbqYyTnik7+MGOjuIfUORm5/z456Y7w7OB5wMSbveP2ATHVYqO6HpAnkhet1FZY89ter4cxRWfKZ4MGbcmwflvNlrA4piwlKc20xpIVjWDJ1y30bVsYAQ4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724313504; c=relaxed/simple;
-	bh=M78dDH2Lv5gAbPiL85tJxK3F4eYd70NNmNQ2oSscdOQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qjXn9wH58LhbV1BbJSPLAaBNUtJOQMzXONr6JvuKU2l3FQMmpN1emG2bB8PpC/3ArwPpZ/tmMEG2lsjvqjPP8mCqYesxBdB1iZaqUlyp3Y1KtVc0Dj7ZukoI0h1mmcalf8SpN9q3wgQJ0hy1RsCRO0OYiZ5RGijuRAcNCqxGeoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=h7KKx90P; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53351642021so226536e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1724313500; x=1724918300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TnX6FjUIWpzD8kqC9V27AIE0s5MyIjBt5cBluqxEzzc=;
-        b=h7KKx90PMOHrw1zNIvIq4GpHPH7ns+gTrfp65M2qNTHq5luesWNkG+aG9HfZUFEBB7
-         65041tLcwTvvYy2GyvGkWV8xNP+uvY0b5saBiiaVTPQwnS7q5p7oKO4vzEE8vBpBCwb+
-         SjTyKmBJPctB2IgGktpv+HdFTAxU8b2n4Xv09uBjOFuBlOnkVBmmnx5+McoBXEa/LbQi
-         0Q0YbZaRYyW0OyeoiuustcL6mvvdbzSB2kBqxDkIiM/8QViaDZnE5Za1Yz/0ZwOlVR66
-         ltGuTwx1670a7Die1fRfXaZfytn4Co4C7NaTm6pEK+q/Qrcelx+ZwVcqd+rBC/RXURxu
-         IADA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724313500; x=1724918300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TnX6FjUIWpzD8kqC9V27AIE0s5MyIjBt5cBluqxEzzc=;
-        b=ZehQBZrqunu23qso010LLYT23+NDVShdRA4CljI6ciMOl0WsXSVTmRYbcIc3lmQa9q
-         BvLnpWExaWlvymjvY8Ca+QXqOVQeCwpN9VCuxQsa0svjA5lxkJ2XxP72po30t18t3+r6
-         1d9FV6C+EhUFg1w0PQjY5AmnUzclPmV+6Y3w1/hTjMzxoGciT/LdCxGBrx1E8ul7UYNg
-         ODAXaPDkvxJhq9dMRB2hzw+3MxnYXgNGzLXOWV2mx0Ne0aETuQl+SAKq1uabnLGNbV8B
-         FrTs/7pRoEm8z/h9x5N6Qsg5ZubE6MUNj06DCLMx4vEr6GnfNoxMYbNEl2OZqA/qD4xe
-         jlcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxxLlp6P8lT6z8l2BfD2R9WOv/OZw8CRzN+bzOqpempOfJQalvOYmTk/pweFgP82/iCU7wi+eDMr7OMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLnb/VmXOuHD5jvtIlgXUP+BIOJsb0aThCjFoj21QA0opZsZQI
-	SZXL5QoFOi5APVVMqWpHm9xupqNR1ANaKG8ch8FIPA39YJmbzXBLso6XNaSbIlqvG3BJzEMPjH5
-	wjxWeh8CrSXShkUzZHK5MEqZV9QYBve2NTbi41w==
-X-Google-Smtp-Source: AGHT+IHqRxXYm+H2Y+i5xzzY2IR+Nh6H8VShsmzm7UrXJCf65rsBntbXTU1CGj0TiGUJ3jrIhNx6F4PixK+Mw98vPfI=
-X-Received: by 2002:a05:6512:3f05:b0:52f:c27b:d572 with SMTP id
- 2adb3069b0e04-533485c0526mr2735846e87.59.1724313499001; Thu, 22 Aug 2024
- 00:58:19 -0700 (PDT)
+	s=arc-20240116; t=1724313526; c=relaxed/simple;
+	bh=JVqiB4HY2Y491GrobmVbch4xQAY4hzCA5VcgYB4HTrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lHTCgQO/7Irj1msqkt4DMYDQ5rLrZ4+Bxwc+C30OMb+EEKF7M7XgUlYf6Z97gB/LzJ9QUjWKa3tcGvL7293lH6U/CLnIfGIwAFXv4NF+SaVVlibUF9sp63ae8i5FtB8QtZzzWAo8RGfIwmdEtNmj7PincQq21qjstPHrVh+RGjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqFvR3X7Yz9sSK;
+	Thu, 22 Aug 2024 09:58:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id NlYp6PfhUgnd; Thu, 22 Aug 2024 09:58:43 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqFvR2NW0z9sSH;
+	Thu, 22 Aug 2024 09:58:43 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 40C628B77D;
+	Thu, 22 Aug 2024 09:58:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 2HbrGellHzJ0; Thu, 22 Aug 2024 09:58:43 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E12898B763;
+	Thu, 22 Aug 2024 09:58:42 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc/mm: Fix return type of pgd_val()
+Date: Thu, 22 Aug 2024 09:58:42 +0200
+Message-ID: <45f8fdf298ec3df7573b66d21b03a5cda92e2cb1.1724313510.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620113527.7789-1-changliang.wu@smartx.com>
- <CALHBjYFn_qB=Oo3TTg0znOnNz9rX5jP+eYSZbatAN94ys8Tzmw@mail.gmail.com> <ZsOTMHeMPgtjU6ZZ@calendula>
-In-Reply-To: <ZsOTMHeMPgtjU6ZZ@calendula>
-From: Changliang Wu <changliang.wu@smartx.com>
-Date: Thu, 22 Aug 2024 15:58:07 +0800
-Message-ID: <CALHBjYH-=fHYzx8Qd=ae_Q1Qtsnt6hiVOxbW-rfPkbQAUCak+w@mail.gmail.com>
-Subject: Re: [PATCH] netfilter: ctnetlink: support CTA_FILTER for flush
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: kadlec@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org, 
-	coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724313522; l=2891; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=JVqiB4HY2Y491GrobmVbch4xQAY4hzCA5VcgYB4HTrA=; b=hD17Uy0LwJi8VLADyyur24FjIkg6yV8fFc4Cr9B7HXs8MxCTDoNx4jIieQX1i6j4K91CL2OmE A4Y9nqhccpLACv1qIC2wC1OoMusPAJf2yBtH/bGQalYqrwYl513/ZQp
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-diff --git a/src/conntrack/filter_dump.c b/src/conntrack/filter_dump.c
-index fd2d002..18d941b 100644
---- a/src/conntrack/filter_dump.c
-+++ b/src/conntrack/filter_dump.c
-@@ -68,9 +68,5 @@ int __build_filter_dump(struct nfnlhdr *req, size_t size,
- int __build_filter_flush(struct nfnlhdr *req, size_t size,
-                        const struct nfct_filter_dump *filter_dump)
+Commit 6b0e82791bd0 ("powerpc/e500: switch to 64 bits PGD on 85xx
+(32 bits)") switched PGD entries to 64 bits, but pgd_val() returns
+an unsigned long which is 32 bits on PPC32. This is not a problem
+for regular PMD entries because the upper part is always NULL, but
+when PMD entries are leaf they contain 64 bits values, so pgd_val()
+must return an unsigned long long instead of an unsigned long.
+
+Also change the condition to CONFIG_PPC_85xx instead of CONFIG_PPC_E500
+as the change was meant for 32 bits only. Allthough this should be
+harmless on PPC64, it generates a warning with pgd_ERROR print.
+
+Fixes: 6b0e82791bd0 ("powerpc/e500: switch to 64 bits PGD on 85xx (32 bits)")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v2: Limit it to CONFIG_PPC_85xx and use a cast instead of duplicating pgd_ERROR
+---
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  4 ++--
+ arch/powerpc/include/asm/pgtable-types.h     | 12 +++++++++---
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
+index 9508399dd036..b481738c4bb5 100644
+--- a/arch/powerpc/include/asm/nohash/32/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
+@@ -52,7 +52,7 @@
+ #define USER_PTRS_PER_PGD	(TASK_SIZE / PGDIR_SIZE)
+ 
+ #define pgd_ERROR(e) \
+-	pr_err("%s:%d: bad pgd %08lx.\n", __FILE__, __LINE__, pgd_val(e))
++	pr_err("%s:%d: bad pgd %08llx.\n", __FILE__, __LINE__, (unsigned long long)pgd_val(e))
+ 
+ /*
+  * This is the bottom of the PKMAP area with HIGHMEM or an arbitrary
+@@ -170,7 +170,7 @@ static inline void pmd_clear(pmd_t *pmdp)
+ #define pmd_pfn(pmd)		(pmd_val(pmd) >> PAGE_SHIFT)
+ #else
+ #define pmd_page_vaddr(pmd)	\
+-	((const void *)(pmd_val(pmd) & ~(PTE_TABLE_SIZE - 1)))
++	((const void *)((unsigned long)pmd_val(pmd) & ~(PTE_TABLE_SIZE - 1)))
+ #define pmd_pfn(pmd)		(__pa(pmd_val(pmd)) >> PAGE_SHIFT)
+ #endif
+ 
+diff --git a/arch/powerpc/include/asm/pgtable-types.h b/arch/powerpc/include/asm/pgtable-types.h
+index 7b3d4c592a10..f3086e39e7d2 100644
+--- a/arch/powerpc/include/asm/pgtable-types.h
++++ b/arch/powerpc/include/asm/pgtable-types.h
+@@ -49,16 +49,22 @@ static inline unsigned long pud_val(pud_t x)
+ #endif /* CONFIG_PPC64 */
+ 
+ /* PGD level */
+-#if defined(CONFIG_PPC_E500) && defined(CONFIG_PTE_64BIT)
++#if defined(CONFIG_PPC_85xx) && defined(CONFIG_PTE_64BIT)
+ typedef struct { unsigned long long pgd; } pgd_t;
++
++static inline unsigned long long pgd_val(pgd_t x)
++{
++	return x.pgd;
++}
+ #else
+ typedef struct { unsigned long pgd; } pgd_t;
+-#endif
+-#define __pgd(x)	((pgd_t) { (x) })
++
+ static inline unsigned long pgd_val(pgd_t x)
  {
--       if (filter_dump->set & (1 << NFCT_FILTER_DUMP_TUPLE)) {
--               errno =3D ENOTSUP;
--               return -1;
--       }
-        return nfct_nlmsg_build_filter(&req->nlh, filter_dump);
+ 	return x.pgd;
  }
-diff --git a/utils/Makefile.am b/utils/Makefile.am
-index 7e7aef4..50a1c7c 100644
---- a/utils/Makefile.am
-+++ b/utils/Makefile.am
-@@ -11,6 +11,7 @@ check_PROGRAMS =3D expect_dump expect_create
-expect_get expect_delete \
-               conntrack_dump_filter \
-               conntrack_dump_filter_tuple \
-               conntrack_flush_filter \
-+              conntrack_flush_filter_tuple \
-               ctexp_events
++#endif
++#define __pgd(x)	((pgd_t) { (x) })
+ 
+ /* Page protection bits */
+ typedef struct { unsigned long pgprot; } pgprot_t;
+-- 
+2.44.0
 
- conntrack_grp_create_SOURCES =3D conntrack_grp_create.c
-@@ -46,6 +47,9 @@ conntrack_flush_LDADD =3D ../src/libnetfilter_conntrack.l=
-a
- conntrack_flush_filter_SOURCES =3D conntrack_flush_filter.c
- conntrack_flush_filter_LDADD =3D ../src/libnetfilter_conntrack.la
-
-+conntrack_flush_filter_tuple_SOURCES =3D conntrack_flush_filter_tuple.c
-+conntrack_flush_filter_tuple_LDADD =3D ../src/libnetfilter_conntrack.la
-+
- conntrack_events_SOURCES =3D conntrack_events.c
- conntrack_events_LDADD =3D ../src/libnetfilter_conntrack.la
-
-diff --git a/utils/conntrack_flush_filter_tuple.c
-b/utils/conntrack_flush_filter_tuple.c
-new file mode 100644
-index 0000000..f2bf558
---- /dev/null
-+++ b/utils/conntrack_flush_filter_tuple.c
-@@ -0,0 +1,61 @@
-+#include <arpa/inet.h>
-+#include <errno.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+
-+#include <libnetfilter_conntrack/libnetfilter_conntrack.h>
-+
-+static int cb(enum nf_conntrack_msg_type type, struct nf_conntrack *ct,
-+              void *data) {
-+  char buf[1024];
-+
-+  nfct_snprintf(buf, sizeof(buf), ct, NFCT_T_UNKNOWN, NFCT_O_DEFAULT,
-+                NFCT_OF_SHOW_LAYER3 | NFCT_OF_TIMESTAMP);
-+  printf("%s\n", buf);
-+
-+  return NFCT_CB_CONTINUE;
-+}
-+
-+int main(void) {
-+  int ret;
-+  struct nfct_handle *h;
-+
-+  h =3D nfct_open(CONNTRACK, 0);
-+  if (!h) {
-+    perror("nfct_open");
-+    return -1;
-+  }
-+  struct nfct_filter_dump *filter_dump =3D nfct_filter_dump_create();
-+  if (filter_dump =3D=3D NULL) {
-+    perror("nfct_filter_dump_alloc");
-+    return -1;
-+  }
-+
-+  struct nf_conntrack *ct;
-+  ct =3D nfct_new();
-+  if (!ct) {
-+    perror("nfct_new");
-+    return 0;
-+  }
-+
-+  nfct_set_attr_u8(ct, ATTR_ORIG_L3PROTO, AF_INET);
-+  nfct_set_attr_u8(ct, ATTR_L4PROTO, IPPROTO_ICMP);
-+  nfct_set_attr_u32(ct, ATTR_ORIG_IPV4_DST, inet_addr("192.168.1.1"));
-+  nfct_filter_dump_set_attr(filter_dump, NFCT_FILTER_DUMP_TUPLE, ct);
-+
-+  nfct_callback_register(h, NFCT_T_ALL, cb, NULL);
-+  ret =3D nfct_query(h, NFCT_Q_FLUSH_FILTER, filter_dump);
-+
-+  nfct_filter_dump_destroy(filter_dump);
-+
-+  printf("TEST: get conntrack ");
-+  if (ret =3D=3D -1)
-+    printf("(%d)(%s)\n", ret, strerror(errno));
-+  else
-+    printf("(OK)\n");
-+
-+  nfct_close(h);
-+
-+  ret =3D=3D -1 ? exit(EXIT_FAILURE) : exit(EXIT_SUCCESS);
-+}
-
-Thank you for your reply.
-
-Here is an example patch for conntrack_flush_filter_tuple above.
-
-Pablo Neira Ayuso <pablo@netfilter.org> =E4=BA=8E2024=E5=B9=B48=E6=9C=8820=
-=E6=97=A5=E5=91=A8=E4=BA=8C 02:47=E5=86=99=E9=81=93=EF=BC=9A
->
-> Please, provide an example program for libnetfilter_conntrack.
->
-> See:
->
-> commit 27f09380ebb0fc21c4cd20070b828a27430b5de1
-> Author: Felix Huettner <felix.huettner@mail.schwarz>
-> Date:   Tue Dec 5 09:35:16 2023 +0000
->
->     conntrack: support flush filtering
->
-> for instance.
->
-> thanks
->
-> On Thu, Jul 11, 2024 at 01:40:02PM +0800, Changliang Wu wrote:
-> > PING
-> >
-> >
-> > Changliang Wu <changliang.wu@smartx.com> =E4=BA=8E2024=E5=B9=B46=E6=9C=
-=8820=E6=97=A5=E5=91=A8=E5=9B=9B 19:35=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > From cb8aa9a, we can use kernel side filtering for dump, but
-> > > this capability is not available for flush.
-> > >
-> > > This Patch allows advanced filter with CTA_FILTER for flush
-> > >
-> > > Performace
-> > > 1048576 ct flows in total, delete 50,000 flows by origin src ip
-> > > 3.06s -> dump all, compare and delete
-> > > 584ms -> directly flush with filter
-> > >
-> > > Signed-off-by: Changliang Wu <changliang.wu@smartx.com>
-> > > ---
-> > >  net/netfilter/nf_conntrack_netlink.c | 9 +++------
-> > >  1 file changed, 3 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_=
-conntrack_netlink.c
-> > > index 3b846cbdc..93afe57d9 100644
-> > > --- a/net/netfilter/nf_conntrack_netlink.c
-> > > +++ b/net/netfilter/nf_conntrack_netlink.c
-> > > @@ -1579,9 +1579,6 @@ static int ctnetlink_flush_conntrack(struct net=
- *net,
-> > >         };
-> > >
-> > >         if (ctnetlink_needs_filter(family, cda)) {
-> > > -               if (cda[CTA_FILTER])
-> > > -                       return -EOPNOTSUPP;
-> > > -
-> > >                 filter =3D ctnetlink_alloc_filter(cda, family);
-> > >                 if (IS_ERR(filter))
-> > >                         return PTR_ERR(filter);
-> > > @@ -1610,14 +1607,14 @@ static int ctnetlink_del_conntrack(struct sk_=
-buff *skb,
-> > >         if (err < 0)
-> > >                 return err;
-> > >
-> > > -       if (cda[CTA_TUPLE_ORIG])
-> > > +       if (cda[CTA_TUPLE_ORIG] && !cda[CTA_FILTER])
-> > >                 err =3D ctnetlink_parse_tuple(cda, &tuple, CTA_TUPLE_=
-ORIG,
-> > >                                             family, &zone);
-> > > -       else if (cda[CTA_TUPLE_REPLY])
-> > > +       else if (cda[CTA_TUPLE_REPLY] && !cda[CTA_FILTER])
-> > >                 err =3D ctnetlink_parse_tuple(cda, &tuple, CTA_TUPLE_=
-REPLY,
-> > >                                             family, &zone);
-> > >         else {
-> > > -               u_int8_t u3 =3D info->nfmsg->version ? family : AF_UN=
-SPEC;
-> > > +               u8 u3 =3D info->nfmsg->version || cda[CTA_FILTER] ? f=
-amily : AF_UNSPEC;
-> > >
-> > >                 return ctnetlink_flush_conntrack(info->net, cda,
-> > >                                                  NETLINK_CB(skb).port=
-id,
-> > > --
-> > > 2.43.0
-> > >
 
