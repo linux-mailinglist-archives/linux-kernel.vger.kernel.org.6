@@ -1,95 +1,107 @@
-Return-Path: <linux-kernel+bounces-297025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590F895B1F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E74895B1C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87EDA1C230B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:42:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10401C21D0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F7C186600;
-	Thu, 22 Aug 2024 09:39:45 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF5117C224;
+	Thu, 22 Aug 2024 09:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GZcvv2nS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E49B18455D;
-	Thu, 22 Aug 2024 09:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D61615572C;
+	Thu, 22 Aug 2024 09:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319584; cv=none; b=f5Zn9gf4SpO9jiXGxuqKA1UlO+G+j5vQtsuzAf47CS639zMKb1LEMWI+eO2RL4TrglfXwzQNgkGPO0Lkv+co0JI7qSOAB2BkwDfVK0iXjMhYO9JUvyDfVSdoPb7kgRd0qt+uYXcTqc11PtD5PXTfuAhYt+Vv6LmGydWr48rwyXY=
+	t=1724319220; cv=none; b=X3UBZBewi9RPKpzfk+Rb6+5oVe9WZsOlNprD78DdEV2VLpbPzcfDXHEcWAnlJCF8f6mRFZIPGbvMmCdRqWv/1QE0EWutDx5KTulUs9krCTA463L3MgBnCK4BoCkzAeV0wE3x/DsD6ZSbC9Ag2g0IGjRkFO6rrQsMvsauVoeUsUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319584; c=relaxed/simple;
-	bh=mi7ijLilhXk+ETxebggdcMSRbjk0Ha+z94Nd6Y7tuDs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UCFbd2NTF2+chfW8hIwFIqzFif7p73pIObgqkkgIccoeObaVfP9H6hGruQb4nzMSXvva1ExBEED6wbxTeHvUOSvXJhsLojgnv7mhPSTzKTqK9OkIWajpCXAOagxT47vVz8BXgBFGgw90UmUPp7IKCkkpfYAPU9hfMqirGKEPb0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WqJ7s1NcSz1j6kd;
-	Thu, 22 Aug 2024 17:39:37 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 853401A016C;
-	Thu, 22 Aug 2024 17:39:40 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 22 Aug 2024 17:39:39 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <shaojijie@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH V3 net-next 11/11] net: add ndo_validate_addr check in dev_set_mac_address
-Date: Thu, 22 Aug 2024 17:33:34 +0800
-Message-ID: <20240822093334.1687011-12-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240822093334.1687011-1-shaojijie@huawei.com>
-References: <20240822093334.1687011-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1724319220; c=relaxed/simple;
+	bh=p7S48QfruIYwHkz8S8PWUe82mvLlNq2MePw4nAygAmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+4+HDU60JIvqRDiAppIRDJRS0ivUoGZ0i4ZzHBVYDWqLHWZd+JE1Qy58jaCfwuslYScIRshe4uls3hE/63lDVs0JI7Zw8fEOECRfcEd877Fd3QFT42GNGGumHDZmjx+fK2BWQsAk4tww2Siqt7XUpD5Gzpyl/3+2WsAhsyd8Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GZcvv2nS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A427C32782;
+	Thu, 22 Aug 2024 09:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724319220;
+	bh=p7S48QfruIYwHkz8S8PWUe82mvLlNq2MePw4nAygAmE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GZcvv2nSDceIxMI7AFu9lNkmDZhvmyMsG1aSr3IguWOc41YJx94I1plLe1fLHyzYq
+	 a9D1D7Gm6Cn3GUe+iz4byvG5GonvMkqivb99KaHVCBAD6KzkZ8Z8NsugwJaJD0uekR
+	 SmAT8IkQMyUc+3H8NVZrsTk5Oo1heDPUZRKtc8+Q=
+Date: Thu, 22 Aug 2024 17:33:37 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Faisal Hassan <quic_faisalh@quicinc.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-arm-msm@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] usb: dwc3: qcom: fix NULL pointer dereference on
+ dwc3_qcom_read_usb2_speed
+Message-ID: <2024082211-eleven-stinking-9083@gregkh>
+References: <20240813111847.31062-1-quic_faisalh@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813111847.31062-1-quic_faisalh@quicinc.com>
 
-If driver implements ndo_validate_addr,
-core should check the mac address before ndo_set_mac_address.
+On Tue, Aug 13, 2024 at 04:48:47PM +0530, Faisal Hassan wrote:
+> Null pointer dereference occurs when accessing 'hcd' to detect speed
+> from dwc3_qcom_suspend after the xhci-hcd is unbound.
+> To avoid this issue, ensure to check for NULL in dwc3_qcom_read_usb2_speed.
+> 
+> echo xhci-hcd.0.auto > /sys/bus/platform/drivers/xhci-hcd/unbind
+>   xhci_plat_remove() -> usb_put_hcd() -> hcd_release() -> kfree(hcd)
+> 
+>   Unable to handle kernel NULL pointer dereference at virtual address
+>   0000000000000060
+>   Call trace:
+>    dwc3_qcom_suspend.part.0+0x17c/0x2d0 [dwc3_qcom]
+>    dwc3_qcom_runtime_suspend+0x2c/0x40 [dwc3_qcom]
+>    pm_generic_runtime_suspend+0x30/0x44
+>    __rpm_callback+0x4c/0x190
+>    rpm_callback+0x6c/0x80
+>    rpm_suspend+0x10c/0x620
+>    pm_runtime_work+0xc8/0xe0
+>    process_one_work+0x1e4/0x4f4
+>    worker_thread+0x64/0x43c
+>    kthread+0xec/0x100
+>    ret_from_fork+0x10/0x20
+> 
+> Fixes: c5f14abeb52b ("usb: dwc3: qcom: fix peripheral and OTG suspend")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
+> ---
+>  drivers/usb/dwc3/dwc3-qcom.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> index 88fb6706a18d..0c7846478655 100644
+> --- a/drivers/usb/dwc3/dwc3-qcom.c
+> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+> @@ -319,13 +319,15 @@ static bool dwc3_qcom_is_host(struct dwc3_qcom *qcom)
+>  static enum usb_device_speed dwc3_qcom_read_usb2_speed(struct dwc3_qcom *qcom, int port_index)
+>  {
+>  	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
+> -	struct usb_device *udev;
+> +	struct usb_device __maybe_unused *udev;
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- net/core/dev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This change is not relevant to this overall patch, please remove it and
+submit it separately if still needed.
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index e7260889d4cb..7e9c3017e705 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9087,6 +9087,11 @@ int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa,
- 		return -EOPNOTSUPP;
- 	if (sa->sa_family != dev->type)
- 		return -EINVAL;
-+	if (ops->ndo_validate_addr) {
-+		err = ops->ndo_validate_addr(dev);
-+		if (err)
-+			return err;
-+	}
- 	if (!netif_device_present(dev))
- 		return -ENODEV;
- 	err = dev_pre_changeaddr_notify(dev, sa->sa_data, extack);
--- 
-2.33.0
+thanks,
 
+greg k-h
 
