@@ -1,156 +1,92 @@
-Return-Path: <linux-kernel+bounces-296662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2B095AD5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:22:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6683895AD4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C37332869DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D7E286186
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1AE13A3EC;
-	Thu, 22 Aug 2024 06:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Aj6dlKNz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lJT/kkIx"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A83136E09;
+	Thu, 22 Aug 2024 06:15:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584B81727;
-	Thu, 22 Aug 2024 06:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD362D611;
+	Thu, 22 Aug 2024 06:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724307736; cv=none; b=QtcLZy3hLrD01ufA3jnfxdqcSP8Tru5/1yN+hPvwEZFnc+4OcwrTI2Ed0ZJ3RdD89qV5EbcILJloHMHKIcCkBVkkvnGH6REnKkCXxpnfoFJzxddbI4edXN/dvpnqD1lHR/8YKbDXXfoqq91LGtWoe5ZEZSRq8n+McYE0o9hhFuE=
+	t=1724307346; cv=none; b=Z+upBD0/qPSQhH0EifAJtx4AFUZXB+FkR2bX/kLknG+EYRIlzKG5IDIc5k6mpewiPUXFDSisolXC5ngXKHwQnKSu8pZZf5NBTv98E3j7b7Da0j3kxJnZ62rEDxCK7KxSZStu03T2nj4IinNKEYX01kRdAsSrBYwbo71SCxCupOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724307736; c=relaxed/simple;
-	bh=csktVlUd6zjngU+kiQAqMkHQ0LItDogAIQxKiC3ue38=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KkZ6CWhjbeDUsOGHgvYJhTgYbdkGGW/zdkuPo7xPojVrsV8mDq7c3RoCnpZt9suUv8gMR021oV1FJmp+b/YYkESADHyE4Kj9bhClnd5IATRzs8Idvc6rcDTp/Jd1jqoZzKGD5NAk7YjlmDh+w6j8KJDvqQPK3+BH8xD7a40/uoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Aj6dlKNz; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lJT/kkIx reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1724307732; x=1755843732;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HcacUbyWZpubuOZfhpUp0O/XtbHaSh9hAtoPucDtrT8=;
-  b=Aj6dlKNzkNYTgj1uNGaZVqdFqTSq9dw/cU+lVf7xxskYxJ2vaxuAXU2I
-   zbXUsspLHjatq17TX9G9zd8KW/HIz0sy1Y3W3XdaoXga9s0+/Xiejt1bI
-   tn+HNWHKjZPUJMn7nY7wrAHPHRT63RJzrymWYJqaJw/uiLgNl7MqVxRrf
-   lM85yR7cH5m/b4uqfg2OlRK9VmsocmYQqBupySM3fug5rVy7GoTh1hL20
-   b/M7sJBqOp9T4RndoY+sIJfQYTik2LylwAVCqdwaVN13siPhatZ37DBlJ
-   yteWr6CbskWh17tW5C6BVEI7zsB2UwEoq/N/a2z6nyPy91pVbGcmmgN7s
-   g==;
-X-CSE-ConnectionGUID: E6tHCRO9QM2p7DUS4trJQw==
-X-CSE-MsgGUID: /jOy0pFhQ4SItQ8rvlmKdQ==
-X-IronPort-AV: E=Sophos;i="6.10,166,1719871200"; 
-   d="scan'208";a="38527603"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 22 Aug 2024 08:22:09 +0200
-X-CheckPoint: {66C6D911-3F-C661815F-E221238E}
-X-MAIL-CPID: 816D29BFA19136B10F9B9F48EDBA3AC2_1
-X-Control-Analysis: str=0001.0A782F16.66C6D911.0129,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D51C9169465;
-	Thu, 22 Aug 2024 08:22:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1724307725;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=HcacUbyWZpubuOZfhpUp0O/XtbHaSh9hAtoPucDtrT8=;
-	b=lJT/kkIxxTFg3RbJfT65e8khXpzaNFX2GY/oZ40cpYo4wu0AwYVTgHngkgZbLmEfD1oCHy
-	l9FDur+S3iSfUNi3qsbukLP+pX8cyOgdSQlpI8pGQEYmHM7JYG19IKBnokwsEFQ3TbNH6I
-	QnqZ8M2dzkGWDzXZgFjsyPE0VCoLRLmsE8qRz7RheYg4V8HqEGH6o11Ja7wVAeI4lsrM/j
-	bc+HDus/QTMAcuG9gtGJK82nDXOmGYRCDF10i32Y1l4NReqJFGI3rTQps/m2sdnbKXlgA6
-	VAqyfswpLVQ5KZbbeumTAJ6cL6OTtraIilnC4thVQysBr/Xb8FfGACJGQGhO2Q==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: krzk+dt@kernel.org, festevam@gmail.com, shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: tarang.raval@siliconsignals.io, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tarang Raval <tarang.raval@siliconsignals.io>
-Subject: Re: [PATCH v2] arm64: dts: imx8mm-emtop-baseboard: Add Peripherals Support
-Date: Thu, 22 Aug 2024 08:22:03 +0200
-Message-ID: <1979640.PYKUYFuaPT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240821135817.56393-1-tarang.raval@siliconsignals.io>
-References: <20240821135817.56393-1-tarang.raval@siliconsignals.io>
+	s=arc-20240116; t=1724307346; c=relaxed/simple;
+	bh=pk9rDW/8PJfyGVDRKhGR52fq86aLGSZWYWmwV6FRoZQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nOubRMHu9CNMUmHo7NRx3SX9m1qLhNTWA7BzXJI8cP6HaWymw1r4C6WokU43dQXwm3R8xD+Xm8jeqFqMyOAK88wJAKSn0EVI54gpBZ9seh18wDqkoTIjRwepDDZvk460URd2OIFqaqGiKilv3TVyVLYBMXmx0JzF5xEuccBQczA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WqCc45ytDzyR3C;
+	Thu, 22 Aug 2024 14:15:16 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5A4D81800D4;
+	Thu, 22 Aug 2024 14:15:40 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 22 Aug
+ 2024 14:15:39 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next] iommu/arm-smmu: Simplify with scoped for each OF child loop
+Date: Thu, 22 Aug 2024 14:23:11 +0800
+Message-ID: <20240822062311.3489924-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Hi,
+Use scoped for_each_child_of_node_scoped() when iterating over device
+nodes to make code a bit simpler.
 
-Am Mittwoch, 21. August 2024, 15:58:17 CEST schrieb Tarang Raval:
-> Add following peripherals support for the Emtop i.MX8M Mini Baseboard
->=20
->     * Wi-Fi
->     * Audio
->     * SD card
->     * RTC
->     * CAN bus
->     * USB OTG
->=20
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-> ---
->=20
-> Changes in v2:
->=20
-> 1. Updated the node name and pinctrl name
-> 2. Removed the 'regulators' container
-> 3. Removed a stray blank line
-> 4. Removed non-existent properties
-> 5. Removed unused node and pinctrl
->    - modem-reset
->    - pinctrl_uart1
-> 6. Defined the CAN transceiver reset GPIO separately
-> ---
->  .../dts/freescale/imx8mm-emtop-baseboard.dts  | 323 ++++++++++++++++++
->  1 file changed, 323 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-emtop-baseboard.dts b/a=
-rch/arm64/boot/dts/freescale/imx8mm-emtop-baseboard.dts
-> index 7d2cb74c64ee..322338e626ce 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-emtop-baseboard.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-emtop-baseboard.dts
-> @@ -11,6 +11,113 @@ / {
->  	model =3D "Emtop Embedded Solutions i.MX8M Mini Baseboard V1";
->  	compatible =3D "ees,imx8mm-emtop-baseboard", "ees,imx8mm-emtop-som",
->  		"fsl,imx8mm";
-> +
-> +	extcon_usb: extcon-usbotg1 {
-> +	        compatible =3D "linux,extcon-usb-gpio";
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Please refer to Documentation/devicetree/bindings/extcon/extcon-usb-gpio.ya=
-ml:
-> Deprecated, use USB connector node instead.
->
-> deprecated: true
-
-Switch to connectors instead.
-
-> +	        pinctrl-names =3D "default";
-> +	        pinctrl-0 =3D <&pinctrl_extcon_usb>;
-> +	        id-gpio =3D <&gpio1 10 GPIO_ACTIVE_HIGH>;
-> +	        enable-gpio =3D <&gpio1 12 GPIO_ACTIVE_LOW>;
-
-Use id-gpios and enable-gpios.
-
-> +	};
-> +
-
-Best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+diff --git a/drivers/iommu/arm/arm-smmu/qcom_iommu.c b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
+index b98a7a598b89..18a4568f0aaa 100644
+--- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
++++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
+@@ -764,14 +764,10 @@ static struct platform_driver qcom_iommu_ctx_driver = {
+ 
+ static bool qcom_iommu_has_secure_context(struct qcom_iommu_dev *qcom_iommu)
+ {
+-	struct device_node *child;
+-
+-	for_each_child_of_node(qcom_iommu->dev->of_node, child) {
++	for_each_child_of_node_scoped(qcom_iommu->dev->of_node, child) {
+ 		if (of_device_is_compatible(child, "qcom,msm-iommu-v1-sec") ||
+-		    of_device_is_compatible(child, "qcom,msm-iommu-v2-sec")) {
+-			of_node_put(child);
++		    of_device_is_compatible(child, "qcom,msm-iommu-v2-sec"))
+ 			return true;
+-		}
+ 	}
+ 
+ 	return false;
+-- 
+2.34.1
 
 
