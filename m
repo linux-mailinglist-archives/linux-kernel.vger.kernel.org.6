@@ -1,107 +1,90 @@
-Return-Path: <linux-kernel+bounces-297003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E74895B1C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C6D95B1C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10401C21D0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433D82855FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF5117C224;
-	Thu, 22 Aug 2024 09:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GZcvv2nS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29527175D39;
+	Thu, 22 Aug 2024 09:34:57 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D61615572C;
-	Thu, 22 Aug 2024 09:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D19C7E0E8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319220; cv=none; b=X3UBZBewi9RPKpzfk+Rb6+5oVe9WZsOlNprD78DdEV2VLpbPzcfDXHEcWAnlJCF8f6mRFZIPGbvMmCdRqWv/1QE0EWutDx5KTulUs9krCTA463L3MgBnCK4BoCkzAeV0wE3x/DsD6ZSbC9Ag2g0IGjRkFO6rrQsMvsauVoeUsUQ=
+	t=1724319296; cv=none; b=MNxzPUbloB6/YhIkk8lh4PKDYkIE+jyx8BWJKkM3JBwg5Tb0xlx3kyYi4jm9ElyHuWeW3Q1IrriAFsKwl4RxocKHdq7qXdYxlsY7P2gakrsGS7AebYxo4o5ra22SoTfUqKVNvES57X8mZaQ7f3VzDVvkY6mJyeW4tJ2f2obDf64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319220; c=relaxed/simple;
-	bh=p7S48QfruIYwHkz8S8PWUe82mvLlNq2MePw4nAygAmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+4+HDU60JIvqRDiAppIRDJRS0ivUoGZ0i4ZzHBVYDWqLHWZd+JE1Qy58jaCfwuslYScIRshe4uls3hE/63lDVs0JI7Zw8fEOECRfcEd877Fd3QFT42GNGGumHDZmjx+fK2BWQsAk4tww2Siqt7XUpD5Gzpyl/3+2WsAhsyd8Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GZcvv2nS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A427C32782;
-	Thu, 22 Aug 2024 09:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724319220;
-	bh=p7S48QfruIYwHkz8S8PWUe82mvLlNq2MePw4nAygAmE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GZcvv2nSDceIxMI7AFu9lNkmDZhvmyMsG1aSr3IguWOc41YJx94I1plLe1fLHyzYq
-	 a9D1D7Gm6Cn3GUe+iz4byvG5GonvMkqivb99KaHVCBAD6KzkZ8Z8NsugwJaJD0uekR
-	 SmAT8IkQMyUc+3H8NVZrsTk5Oo1heDPUZRKtc8+Q=
-Date: Thu, 22 Aug 2024 17:33:37 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Faisal Hassan <quic_faisalh@quicinc.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-arm-msm@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] usb: dwc3: qcom: fix NULL pointer dereference on
- dwc3_qcom_read_usb2_speed
-Message-ID: <2024082211-eleven-stinking-9083@gregkh>
-References: <20240813111847.31062-1-quic_faisalh@quicinc.com>
+	s=arc-20240116; t=1724319296; c=relaxed/simple;
+	bh=U766fscoEpNT0ZM5kLC9qGWXXREuyevL/Dmktcn0SZA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JhmGGPZ2KIPpnqT+20QqvEseKKeVctkUd+Olokq2KBFFnDVLaJUvYPUuOgvYVt75/D6MwghUt/JRNM8E2KSoJo50P1Me5lG7FjGygbpM9mZFNM7iUL6SSiao/XWi0NJcCynQbWgFVQu3V0aaAGvdsnjXn+9xA0Pn5L2EXzV7sIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from ssh248.corpemail.net
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id TJF00141;
+        Thu, 22 Aug 2024 17:34:41 +0800
+Received: from localhost.localdomain (10.94.14.234) by
+ jtjnmail201612.home.langchao.com (10.100.2.12) with Microsoft SMTP Server id
+ 15.1.2507.39; Thu, 22 Aug 2024 17:34:45 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <neil.armstrong@linaro.org>, <yangcong5@huaqin.corp-partner.google.com>,
+	<quic_jesszhan@quicinc.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<liuyanming@ieisystem.com>, Charles Han <hanchunchao@inspur.com>
+Subject: [PATCH] drm/panel: fix null pointer dereference in hx83102_get_modes
+Date: Thu, 22 Aug 2024 17:34:42 +0800
+Message-ID: <20240822093442.4262-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813111847.31062-1-quic_faisalh@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 20248221734417e5e694b74a2a687bc378a1d255a3ffa
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Tue, Aug 13, 2024 at 04:48:47PM +0530, Faisal Hassan wrote:
-> Null pointer dereference occurs when accessing 'hcd' to detect speed
-> from dwc3_qcom_suspend after the xhci-hcd is unbound.
-> To avoid this issue, ensure to check for NULL in dwc3_qcom_read_usb2_speed.
-> 
-> echo xhci-hcd.0.auto > /sys/bus/platform/drivers/xhci-hcd/unbind
->   xhci_plat_remove() -> usb_put_hcd() -> hcd_release() -> kfree(hcd)
-> 
->   Unable to handle kernel NULL pointer dereference at virtual address
->   0000000000000060
->   Call trace:
->    dwc3_qcom_suspend.part.0+0x17c/0x2d0 [dwc3_qcom]
->    dwc3_qcom_runtime_suspend+0x2c/0x40 [dwc3_qcom]
->    pm_generic_runtime_suspend+0x30/0x44
->    __rpm_callback+0x4c/0x190
->    rpm_callback+0x6c/0x80
->    rpm_suspend+0x10c/0x620
->    pm_runtime_work+0xc8/0xe0
->    process_one_work+0x1e4/0x4f4
->    worker_thread+0x64/0x43c
->    kthread+0xec/0x100
->    ret_from_fork+0x10/0x20
-> 
-> Fixes: c5f14abeb52b ("usb: dwc3: qcom: fix peripheral and OTG suspend")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
-> ---
->  drivers/usb/dwc3/dwc3-qcom.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> index 88fb6706a18d..0c7846478655 100644
-> --- a/drivers/usb/dwc3/dwc3-qcom.c
-> +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> @@ -319,13 +319,15 @@ static bool dwc3_qcom_is_host(struct dwc3_qcom *qcom)
->  static enum usb_device_speed dwc3_qcom_read_usb2_speed(struct dwc3_qcom *qcom, int port_index)
->  {
->  	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
-> -	struct usb_device *udev;
-> +	struct usb_device __maybe_unused *udev;
+In hx83102_get_modes(), the return value of drm_mode_duplicate()
+is assigned to mode, which will lead to a possible NULL
+pointer dereference on failure of drm_mode_duplicate(). Add a
+check to avoid npd.
 
-This change is not relevant to this overall patch, please remove it and
-submit it separately if still needed.
+Fixes: 0ef94554dc40 ("drm/panel: himax-hx83102: Break out as separate driver")
 
-thanks,
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
+---
+ drivers/gpu/drm/panel/panel-himax-hx83102.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-greg k-h
+diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/drm/panel/panel-himax-hx83102.c
+index 6e4b7e4644ce..7c2a5e9b7fb3 100644
+--- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
++++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
+@@ -565,6 +565,10 @@ static int hx83102_get_modes(struct drm_panel *panel,
+ 	struct drm_display_mode *mode;
+ 
+ 	mode = drm_mode_duplicate(connector->dev, m);
++	if (!mode) {
++		dev_err(&ctx->dsi->dev, "bad mode or failed to add mode\n");
++		return -EINVAL;
++	}
+ 
+ 	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+ 	drm_mode_set_name(mode);
+-- 
+2.31.1
+
 
