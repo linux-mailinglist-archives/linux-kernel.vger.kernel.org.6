@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-298074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B58F95C19C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B4B95C19E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF7F1C223E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD601C23315
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BB818732F;
-	Thu, 22 Aug 2024 23:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAF2187332;
+	Thu, 22 Aug 2024 23:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ll0/dhFl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esYSQ03W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E193D183CC8;
-	Thu, 22 Aug 2024 23:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E98183CC8;
+	Thu, 22 Aug 2024 23:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724370693; cv=none; b=QzhGAgEfeB4tGhZhFHyWFHlmSvmaldMjaTNuVE3bOEujPfgAsiN1xqM0d13YfkY7n7kaWSnegmByN/WrcPVAmzsDzxY/dYvSR2hLWqY7E1HWroyBARRXx90VtUCP2FfdBpIaM4eVEGZtR6SoWd3p3AKBMCa8kj3uVglNK1uPMxs=
+	t=1724370744; cv=none; b=ZGAA+0z1lZHmATLVEOKMARQEXJGa3w5v3Gh/KPPvcwFBBuAjZi9UkbuC2EQnlEk8cawwPJrHQdf01+tcrJ4jCqgI2BQO7CyulmxW9UJEajH56Ei3RcfgpTHxTasljvSnNJtIm8/M8yFOJFv5J/ZmgU8IBjVhhSF8JWO55Mwss6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724370693; c=relaxed/simple;
-	bh=9+QDfJ7Nji+1rQiMAkPeB7cowHiVfIKcDhXZ7rUw948=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E1qF+mAOyYQAn73dF5831g4Kwmoem6LD6R8XeR5gVHC5P4c4goIGLeE/jbuWBs8RHNX0puqY1m1fg/n0fp22onTIJA9Phq3FkIhdbDfM5olH4tgAGfmzIRslqyimxxkA2V48Y56kDgi7+MsqfAjBM0U8fAP1pvyfvqKTM0BIsvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ll0/dhFl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E2DC32782;
-	Thu, 22 Aug 2024 23:51:29 +0000 (UTC)
+	s=arc-20240116; t=1724370744; c=relaxed/simple;
+	bh=gxGU1MHo1J+sZfWdnMIA4NpClQqr2XHGp5qRtK0wyns=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KjdRsVBfyozIOH5SgJ5JmY+ia0cpuxn8ZT6ChyxDQ92ySYd6Fxq6fRnR/GU1K3KqmIeaabB7OXk7TKVCZKXIlylwSq15It95xOgFy1z6wiQqYHJPfKVUgjTYV41/iiczNwoj8cg+ot8WL5vX1lCK/KGPE6cTilTkDrDNTlfv++s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esYSQ03W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B833C32782;
+	Thu, 22 Aug 2024 23:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724370692;
-	bh=9+QDfJ7Nji+1rQiMAkPeB7cowHiVfIKcDhXZ7rUw948=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ll0/dhFlQlylb4Pn9kMEqdk3/QF9o3mbtVOmnew9/gKE3vJTTrHchqi9NJCS/jtR8
-	 PjMgkvh5gj9mnsC5FiHqiGFka3YAXBhADn4M/rRwVVtwXHFGF+W3oU1AqM9KbL8Eg4
-	 OSfDGW6NTzcPsAXun1/1llvtHSUr1AwiewaJoWVjEv49vFWEkAczH5K03biepcGyqv
-	 neLZ1zY3UlzZUp0fzDMifafPP4dA6OmzdA2rkg2IqA0K8xYEHXQ4PNDGaBqDJLMnxa
-	 NMsNJBQHduwI/021oSBboU8xTjenl+VX82UVvO+qpP904oupdqpfRjT+cBGhxWT7vt
-	 m0tX7DWKmHZJg==
-Message-ID: <85161bf4-543d-4583-9cb8-1ec43f8250a7@kernel.org>
-Date: Fri, 23 Aug 2024 01:51:26 +0200
+	s=k20201202; t=1724370744;
+	bh=gxGU1MHo1J+sZfWdnMIA4NpClQqr2XHGp5qRtK0wyns=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=esYSQ03WT4yQt5Xy+gVyMotHHWcm8x4mx1Tn/CHORiCL4Up0EVd4l7fxlF8S2yohQ
+	 Nbw6dfTcygRZyP+0NAzgMvWiIvHLg+k8F+QFZjadC+RjiZNxVmsiT9h+S+ojDVvWT4
+	 C1iZGaEfs+C82XJQttXo7Kyz5cHV9/Wu+ifYkNIIV7k5pEjkrZaLOMBrL9jhNJiTMf
+	 V8QCbmKegR3FmHwhk3f7SSVx307Kq6pAOAIG3KUhP0JOWdrosS1OX6XACdnErHDGV5
+	 B3/PjRLHKIikh4jkhje2J6x0Kqku6Qp8z7IkQcAtzGOsuJEo6CuA54F1p2svjeVdDM
+	 ape/3DzPx4NoQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6033809A81;
+	Thu, 22 Aug 2024 23:52:24 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.11-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240822210125.1542769-1-kuba@kernel.org>
+References: <20240822210125.1542769-1-kuba@kernel.org>
+X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240822210125.1542769-1-kuba@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc5
+X-PR-Tracked-Commit-Id: 0124fb0ebf3b0ef89892d42147c9387be3105318
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: aa0743a229366e8c1963f1b72a1c974a9d15f08f
+Message-Id: <172437074362.2507685.12571122128822017718.pr-tracker-bot@kernel.org>
+Date: Thu, 22 Aug 2024 23:52:23 +0000
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: Allow packing uncompressed images into distro
- packages
-To: Bjorn Andersson <andersson@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
-References: <20240819-uncompressed-distro-packages-v1-1-c8accc8bc9ea@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240819-uncompressed-distro-packages-v1-1-c8accc8bc9ea@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 20.08.2024 5:11 AM, Bjorn Andersson wrote:
-> From: Bjorn Andersson <quic_bjorande@quicinc.com>
-> 
-> The distro packages (deb-pkg, pacman-pkg, rpm-pkg) are generated using
-> the compressed kernel image, which means that the kernel once installed
-> can not be booted with systemd-boot.
-> 
-> This differs from the packages generated by the distros themselves,
-> which uses the uncompressed image.
-> 
-> Expand the newly introduced CONFIG_COMPRESSED_INSTALL option to allow
-> selection of which version of the kernel image should be packaged into
-> the distro packages.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
+The pull request you sent on Thu, 22 Aug 2024 14:01:25 -0700:
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc5
 
-Konrad
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/aa0743a229366e8c1963f1b72a1c974a9d15f08f
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
