@@ -1,148 +1,181 @@
-Return-Path: <linux-kernel+bounces-296513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B49795ABA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:05:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB8A95ABAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CA11F2944D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B9B28C4A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF609132464;
-	Thu, 22 Aug 2024 02:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DFB139CF6;
+	Thu, 22 Aug 2024 02:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wmUxSb65"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="jsxj/5EI"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2071.outbound.protection.outlook.com [40.107.255.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3906D1CAA4
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724295513; cv=none; b=Zsn8ENRqv1oD/Nqhb+Sc20Ite1RLObsWgODdLuPGFtD3yx/Nzej3fiHaosYVE1arjACZHVLjRD3YdxoY8P2yGohbMINiuElsGtCu9IDDXl87WKCwweE3A93awrof6V17+qaFNe95V0F6HnVJj1MRMdwvEFgg7xWT4Lp0/rIwK4k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724295513; c=relaxed/simple;
-	bh=lucRo7yt9fpQznmEfhCD2GM+NoVhTCIgJ5f9p6j9Xjw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oSFPUvp1vRn9v70oirY6o/wDk3P0LvMWtOHNUoRKq514qOrleNQuEoqQSGOLiKV5chBn74owkAt2b7Szrm1Zo/5KN8UX++NruhmJXm3n6mez49FyhgtttaL0u1HF6BtuVFxVuSHh/+Zjm5aVue3ba0nVU3z97MaVA+BAlinCmmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wmUxSb65; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724295506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=CMqT1JRpZMqfnZqYRqGpe67qSPBBah1BIw750OMqQxY=;
-	b=wmUxSb65WfKkxS3qaa7KcSIjJyGM42rwra/8+84lFDeqYbYuGGOX8ZgCODB8hFGuVBG26z
-	v8vP5ymj8FQpXKEZP2mkqJSeYoq22EZPulM88J3Ktpq+18q+MXxpBMzvIR4jkyPbCpGill
-	8lr88KkoaANKPYNXrgg7v6mKLNuaqYw=
-From: Hao Ge <hao.ge@linux.dev>
-To: linmiaohe@huawei.com,
-	nao.horiguchi@gmail.com,
-	akpm@linux-foundation.org,
-	surenb@google.com,
-	pasha.tatashin@soleen.com,
-	david@redhat.com,
-	kent.overstreet@linux.dev
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	hao.ge@linux.dev,
-	Hao Ge <gehao@kylinos.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] codetag: debug: mark codetags for pages which transitioned from being poison to unpoison as empty
-Date: Thu, 22 Aug 2024 10:58:00 +0800
-Message-Id: <20240822025800.13380-1-hao.ge@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DBF1CA9F;
+	Thu, 22 Aug 2024 02:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724295592; cv=fail; b=lekmuUwY0t/hQGLiHXFarZnVOYIIt4XFDVYuBIdPdwEkagcedytmtFLGbhTER6AblMlUxqHlGftgYlzMyTyM2wVniYUSQGSmdGagz0QuMVJkRB9OKJdXE9AnSi1sJaIlbqjeo/y4p6QJwqShUnZ0NAwdq1qjfzYOZizEvA7PTeQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724295592; c=relaxed/simple;
+	bh=yHLG89D8Ydj1oQcixYVTFCfv4+o/E3AFBB0mRWW+gcc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fr0dWqEctKHG9AQHY7duMpjX1VJLQk1FpWIoznbMTQB6nC9W/IehHkIEIDH1xlZ0E/Oz4cUr7tfCitYIymxSrusbtaMIAed1ur10Zrt8FAtfAuWquCzrPq5EueGd3f4Z4y71XfLG1tX7ZPZjnM6mLJ0aX+u+TkkeZ10kZesgqcE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=jsxj/5EI; arc=fail smtp.client-ip=40.107.255.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oOKalOLOWCVKjaxbMCsfkMoGvOYUBTnSKwsPXiIsvyDyEndpyHlgNnjjZcMLgMNxwVq7/+L4fpweW7ImaWGgxwB5ZL1esjlmFHaGAz53KC+JQ5PbSENdYgiaYkTIMyd6Xix1cTu+WWGtI+v7LAQZ16OY9oOf564BEzror1zCvvWPzkkE83hmUqk2xOlaiQaIoM6i0aIFFn6aP43eKV1LB3jdWJe1iSNlxbDDqawxETUqyklrvJGDpq2YrjAtPYOQsGSVkanV4wsIuEfTG2fMM8ZiEEZXXmp7F4LfefqCVfsfN0ST/o2h2W1x+5M76RC22IECroBRj4L/QBRE/FArcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ZOUbSHFskD89YaWWjWsl3E6nMfsh+q4/qRNr0QeRFg=;
+ b=DED0iyK+/jcALQBubgVtiUYoteXJ7aNwhXaP9qKn19tWeDyJ1AT5ShtJEUB1BH/R63q+2ulwNNsHPPSnVzGtzJRPoLYOJY9Wgm9REotqjrhT2ZKvivGCXsVOPxeit42iuwneIuOU4QZfDS0SBRsGZRLBfZfDpiEmCPE/zZqAFtIqdS8X5FZHXg8cZ1i82qkzMw5sRLZ1MfNSzdEutTp3W1fD1+iwpVQ4yyt3EpbLD9q46sutl2EUw6R3TCF2ZaxxK/DgnvukDm2dQTbK54PITPfBkGqGqZzDYJ3GvGSVhp/pFDjtOkQWDnwYqKm6ozd07nWljH41Fhm6dWYjxfV3Zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ZOUbSHFskD89YaWWjWsl3E6nMfsh+q4/qRNr0QeRFg=;
+ b=jsxj/5EIEqkWuvMHaFKrJKqaG79HPVgA77Dabz09QKEZ4PnpfUe/EjOjKrVRCkA29cXe0Vi5iP4gFQuh6q2BgMvzJiHpTM5j1o7ueucaKXwnoripmQsOPqPgvVA5DOUBJGHfLc2jfejPKsmuYNt96YmzS8vfBdufnC98IuDrcPAz05HgbFgTaCy46Rs0/1V34N/HgQNc5E5mGDkWME6rYcedWQtRf9bV776wKo72BQXIkOG0+lHAdvFDDUnWzmNnhsA0ZIvDx4N2BSgcrPsAH1LAM963e2Z28yN2BfDrZL7UPgYaSqTTKyVoUY3xa9KUiWko0N7iuka+O6St3Dznlw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by JH0PR06MB7180.apcprd06.prod.outlook.com (2603:1096:990:98::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
+ 2024 02:59:45 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
+ 02:59:45 +0000
+From: Yang Ruibin <11162571@vivo.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Yang Ruibin <11162571@vivo.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v1] drivers:testing:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
+Date: Wed, 21 Aug 2024 22:58:54 -0400
+Message-Id: <20240822025931.3455-1-11162571@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0224.jpnprd01.prod.outlook.com
+ (2603:1096:404:11e::20) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|JH0PR06MB7180:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b52c22f-c1d1-49af-14be-08dcc25679e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JVRO5SNSxSRcKDygOIbuuMNkAF2J3Lxc/Byc+6AIkIwFCM3ZzjmSjalmZCLN?=
+ =?us-ascii?Q?wP3nCL6lUC9QsFe+ZRjDqSuesIY2Vy+9VasZuy2LSQKpmuOhGSQH++Pgvc37?=
+ =?us-ascii?Q?1Mxl0o+sG+l2vZbYHM15yHui+KUrwLlKkHKSOrnvL+QCMyx9o7hkFVOtkvAd?=
+ =?us-ascii?Q?oOjuFooUnEAMVRY8aLfTQaB/uFfIwfRyoAjgTzWgcI2yz1tQzSPk561UQ0mj?=
+ =?us-ascii?Q?3TD7FOvy/gjKH9yLLE/Os8bCdvt6mq8EawRbmbjDv4wwfRo+VPPMd42mxIAH?=
+ =?us-ascii?Q?pAs5izOfiBVdogOdm8gdu1Ll/XwdMOfhYjMvRX84t2ZSypbDzQPCVI86ygZM?=
+ =?us-ascii?Q?Dj32E5Hackifhn1dRnDQbLneZZswudK8Plv1AYrzPm3UMBt11oN1OAKfUQ6O?=
+ =?us-ascii?Q?YhahuLaxLC5ocuO0czAueccyVGwPqQTXuhcTA7ngMyZOT2QbbQd7S/C3QI+O?=
+ =?us-ascii?Q?MDVJSQvNy83IyTeXnCQlfQ6pW2JRMk4tpxtXSA9D0hX+MSMfPuzzqTzrYh1K?=
+ =?us-ascii?Q?UiIfSYHBztvvt4VFzXhma03zdkach20B0O5iLtNQsJrvlyYIb/N7oucMmhed?=
+ =?us-ascii?Q?y+/lP/KkktRq8467ItO7Egf8HUqt1o3WKO6w7RBAfKcQecdYs9MxAlt7n5lg?=
+ =?us-ascii?Q?YwPJHLEkenZRBFr0QQIUXXI3yv9FZMIOc8k4rgDX2bll1NUe+dfaymwaalLq?=
+ =?us-ascii?Q?RSQmjDTqw8tQSGHaTiY5voHPc24BLDbcEejvSuKZO9qTJmYfd++ibdwrEbEi?=
+ =?us-ascii?Q?1ikek47/U+K8xqZVdcwMDoLOvDew7bRgSHg6WAs1whi+Pe+QPB43xo2k2130?=
+ =?us-ascii?Q?KiUxWf3TsRqC2ClzLthE0Lh4tAd2dBPX8srsedZjPO+POgOmB7hmABR6YSIn?=
+ =?us-ascii?Q?mxvxe/U58Lof6u81C7wL2wFhJMC6j+JiO+lrxUTyhN9NgLCBcEPf/IO5fq+p?=
+ =?us-ascii?Q?/BKCcwH5MTCY/pE2Z8L0rdltqknHk6Nd7L+0cN1+pprOZMm4o9/T8N/EVLgV?=
+ =?us-ascii?Q?Fo+OomIDb6BOywxoayMhYArwhsUcQYaRatG7PGYfKY637kxhaPqmG7Ai/4tA?=
+ =?us-ascii?Q?PgfGn6Xwjj9oztwPLA9b8f9B8SG6jfc634KHvCsWv+2YUZeAPF8+2q0E/UOq?=
+ =?us-ascii?Q?gMsW/TKjnD4s3bIlT0YYGqWwGVnQdKAj12Rm/n5+TXmmjMvG95jungzKm7bR?=
+ =?us-ascii?Q?KZtb0gSqJIj9GFFMmX/ryHB8Ne366T3lS+uTBustOWaQ6JGQOBZ7JwZhXBUY?=
+ =?us-ascii?Q?guVw2O9dmsUIjFlNqwVbo4mA66XI+ZlmW0O5pf5TlSMQp+pUPpG/IDjrotAY?=
+ =?us-ascii?Q?6q9j8vdV5A1fbrIIkr/DN7im5BvhmD1wHXYgUtca1g9ychxrYghaHkTwbslG?=
+ =?us-ascii?Q?NGU/cZV6yuuciSDEb1NB1tlKYVb1YERwVyglPuAGAOjV0i38VOi9ijBsppux?=
+ =?us-ascii?Q?pQ/v0H9GhlQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MpOQvTGWNdGmOcWhUUf4FvQhxObgEX+pNu49Cse+zH4ohKuETHXgJGX5CSVP?=
+ =?us-ascii?Q?EYfE2PpuiuYV7zXUqfftVDroXW877ps2+BUVJ0pFvzNXnycFc7gI6AN3mlpk?=
+ =?us-ascii?Q?q8IZQufs83nvftwrx3mnQ4NM9pu2sA6Tc4BlCD3P7G5+syv8G9WRkgjU+OB0?=
+ =?us-ascii?Q?sa9dyIAT2t/yfNZFBAce2jTurOc0h2CRbc78heVnjm/8PK5daBlgZba57PVt?=
+ =?us-ascii?Q?ktUYP8XbGzQ85wIessZybQcwZPyyzf+ggzcWsHnmU+2HGVajAXTrobgEVT+x?=
+ =?us-ascii?Q?YcIbdXw1OT7KpWLniErQTqx1l7SgueV1LXrzO3pwwzPkcohQCsx4grQumw9+?=
+ =?us-ascii?Q?R9Yq7dGooJaYarDxpZOjTBA7gQqckszt3DAD/A9DdT5VaDQ5bec7lKpI1HDN?=
+ =?us-ascii?Q?exrRwklN8O2FFPiHZV9qhnxA9jA+HQzvRPkB4YXyFnccR+rWTuNNQP4mGzD7?=
+ =?us-ascii?Q?ewvwC3eOba/2OGyTNTgWsY0oEmcGutPSzBPVvCCzbahCXDi8V2FDP7yuuycP?=
+ =?us-ascii?Q?jS+aZZvx3Wg+WyGp92jD9sUCVH85/PxD7PPC6Dy2i1tsurVylJClpc29R6a9?=
+ =?us-ascii?Q?Q6xtVt+IRu1VbG8ZgEIb31FVEPmh5pdMtVF2dNfZemZZBHPrxTUCQj41vWa1?=
+ =?us-ascii?Q?lki/ULp5PtrpAmuS2ZK1W/fjMhPle8gVTbZntG/qXylcoXiHgQtS8Zp+pMNY?=
+ =?us-ascii?Q?vL/v9TZXiUq08iLuZvFOHf/G4WneHwJsLpXRx927lBIDWdKWjrkzJBUjPOjT?=
+ =?us-ascii?Q?NJRWy6ldUB6W13xi5094iBQOXQRftpUcd+Jlzd2I92m+8ubJnvt1Xkp1Z45U?=
+ =?us-ascii?Q?9OA0LyzkHBN+dpg/39MFRB/1AooKZOpAE9XeVBMdoHXT/kc47oBekk3RRGLa?=
+ =?us-ascii?Q?6CBXv8gOl9jfPC6dIFbgAyO6LAESmrj1XZa3kwvshGWhScHZgo2rWnh69397?=
+ =?us-ascii?Q?HyJIzhmakczQTFPFj0KHxRvYsv5aWGB1zjOSFdvqXS6bV2ZJpGO5MQXwPD99?=
+ =?us-ascii?Q?hMj0HV1UEERkA1Pwzu+DDbGp7L2kVPr23Qy6YQA+6PEcvAUrlGd7ptQxAuNE?=
+ =?us-ascii?Q?/w5YK/zirrU3jRDpij80RJ1zEVFcMOisR6DW3pij7QSoT3Nx70akuyRhrWXA?=
+ =?us-ascii?Q?gm71FMXvRvM7WRFIQaICKWQ5/xLY+Lb6Fqwymyn6oWa0i11ejCXWl2MY7eOh?=
+ =?us-ascii?Q?uYZeUSjTVPtFUlAJTM3q4+uQU/ofg+RQw1BiAcaN+RI/jurCWhPDWCYbvHrE?=
+ =?us-ascii?Q?0nOP9YN39gBOC5CqfTloc1ifKHcD9XjIvzY9DvZP4LT/Xp0NmMJxnWhNaTZN?=
+ =?us-ascii?Q?6UT6qxkbW/eGe6UPabBujvz8AQBABUx1UHtuyQHJ7N2JoH7csB91YB3KOzrb?=
+ =?us-ascii?Q?6xYcq6VYFGhkAFT7X08Nm1AnLgxj8dm37mTs6TkviaWxTbsR7MY1RmfyUx/B?=
+ =?us-ascii?Q?axvKrT6GgInAC3yQBe/oOlV23q+4wrOeD8RtMVnAj9OU0Tf1knMOnv+B6gH+?=
+ =?us-ascii?Q?LHOlV55T53WMkRh+jGwPfYEe9TTO+ZWQ/j1UlSZr3JTmE9yJyQPbxH5tPWfS?=
+ =?us-ascii?Q?i4fPnfGSTXpWCDbDIcoZboqTDY2ZerRquJ7w3MLk?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b52c22f-c1d1-49af-14be-08dcc25679e0
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 02:59:44.9876
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xU2ElYgT8pqQWZQ2cDvpcmFoF4qWwUzUg6fQrNjxQAD6rlImWaozO68W79fXGg2WYbkaooh+GzrVwRBuxEKchw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7180
 
-From: Hao Ge <gehao@kylinos.cn>
+The debugfs_create_dir() function returns error pointers.
+It never returns NULL. So use IS_ERR() to check it.
 
-The PG_hwpoison page will be caught and isolated on the entrance to
-the free buddy page pool. so,when we clear this flag and return it
-to the buddy system,mark codetags for pages as empty.
-
-It was detected by [1] and the following WARN occurred:
-
-[  113.930443][ T3282] ------------[ cut here ]------------
-[  113.931105][ T3282] alloc_tag was not set
-[  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
-[  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_man4
-[  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loaded Tainted: G        W          6.11.0-rc4-dirty #18
-[  113.943003][ T3282] Tainted: [W]=WARN
-[  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
-[  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
-[  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
-[  113.946706][ T3282] sp : ffff800087093a10
-[  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: ffff80008249f0a0
-[  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0000000000000000
-[  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0000000000000000
-[  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: ffffffffffffffff
-[  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081746210
-[  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5b5d353031313339
-[  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 00000000ffffffd0
-[  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c0000000ffff7fff
-[  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0000000000000001
-[  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0000000000000000
-[  113.957962][ T3282] Call trace:
-[  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
-[  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
-[  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
-[  113.960096][ T3282]  __folio_put+0xd4/0x120
-[  113.960614][ T3282]  folio_put+0x24/0x50
-[  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
-[  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
-[  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
-[  113.963183][ T3282]  simple_attr_write+0x38/0x48
-[  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
-[  113.964330][ T3282]  full_proxy_write+0x68/0x98
-[  113.964880][ T3282]  vfs_write+0xdc/0x4d0
-[  113.965372][ T3282]  ksys_write+0x78/0x100
-[  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
-[  113.966440][ T3282]  invoke_syscall+0x7c/0x104
-[  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
-[  113.967652][ T3282]  do_el0_svc+0x2c/0x38
-[  113.968893][ T3282]  el0_svc+0x3c/0x1b8
-[  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
-[  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
-[  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
-
-Link [1]: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise11.c
-
-Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper function")
-Cc: stable@vger.kernel.org # v6.10
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
+Signed-off-by: Yang Ruibin <11162571@vivo.com>
 ---
- mm/memory-failure.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/thermal/testing/zone.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 7066fc84f351..570388c41532 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2623,6 +2623,12 @@ int unpoison_memory(unsigned long pfn)
+diff --git a/drivers/thermal/testing/zone.c b/drivers/thermal/testing/zone.c
+index fcee12b152da..26f0f80a6a5d 100644
+--- a/drivers/thermal/testing/zone.c
++++ b/drivers/thermal/testing/zone.c
+@@ -167,7 +167,7 @@ static void tt_add_tz_work_fn(struct work_struct *work)
  
- 		folio_put(folio);
- 		if (TestClearPageHWPoison(p)) {
-+			/* the PG_hwpoison page will be caught and isolated
-+			 * on the entrance to the free buddy page pool.
-+			 * so,when we clear this flag and return it to the buddy system,
-+			 * clear it's codetag
-+			 */
-+			clear_page_tag_ref(p);
- 			folio_put(folio);
- 			ret = 0;
- 		}
+ 	snprintf(f_name, TT_MAX_FILE_NAME_LENGTH, "tz%d", tt_zone->id);
+ 	tt_zone->d_tt_zone = debugfs_create_dir(f_name, d_testing);
+-	if (!tt_zone->d_tt_zone) {
++	if (IS_ERR(tt_zone->d_tt_zone)) {
+ 		tt_zone_free(tt_zone);
+ 		return;
+ 	}
 -- 
-2.25.1
+2.34.1
 
 
