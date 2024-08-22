@@ -1,63 +1,134 @@
-Return-Path: <linux-kernel+bounces-297691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B720D95BC8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D606795BC91
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BCB41F2320E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8831F23174
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5C71CDFBE;
-	Thu, 22 Aug 2024 16:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3F11CE6E5;
+	Thu, 22 Aug 2024 16:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="geUY00H6"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o5NM5+I8"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6809E1CCEF1
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D0C1CDFA5
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724345900; cv=none; b=YAcqtUgK3EZZrGfXwpj+6RRIVyuqXvhxGd945rUSw4LPYYs2njRZ8V2HsgpRaBZPSVGkrhikJVVDXs2qkP71qbbKdX1VYBF0MabSQXAVd9xwNtOKTkBQ237oBriomxTsxqqZlV1vXHszKuNXYTVge7/7bAlvCjFZDoLPzb1umiQ=
+	t=1724345927; cv=none; b=OcGjqU/fw4F76yl3NylyV/nGhOcdS3Q65Joduxg36bQ7JUbZgiSdxggWRJb+ggWPeVvVrFVbHsCdF3uN8NyRaav12s9jxC8tX15vQaTMxzJ6o1RI0827EwMe0V2KyaahXxfawpeJMhtVqRFQ3L2/UgK5J9isM8d8tozocaw7OxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724345900; c=relaxed/simple;
-	bh=w3DZMlNp/ocxUtUd5l96XlZJQwqZyykgScZAlCAdsGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HzOV+Mc7N2zlX6IDT+VnIWV7IjiX5edReS8fPF2jk4RHi4cem9BK1PXNU84qlLcZTVzbwho4Zsi2HJbmUklCJIXmHFB+Hxsy35Mgy5hWi8joJPc+rvdvb3LE/nPWXFUUZLbErJBeN0tJ38GS7YjvZMqR5alPh3pDncLIj20rU0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=geUY00H6; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 22 Aug 2024 12:58:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724345896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w3DZMlNp/ocxUtUd5l96XlZJQwqZyykgScZAlCAdsGM=;
-	b=geUY00H6OOzLfLQa9C0ULSDGapuYVIiFFs8oqMf/0+55Vx+4k+PqSv557x9TC2xaD3FT/i
-	qWB1bI82uAZ36OEctN+50RgxAeZoOXnOU4hyJzQCQboVvvLuW4tJd+rtRer65KtmpXMkH+
-	xn+YJj8oMitS7KmRBfNSzaJeLrqy+qM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+2c4fcb257ce2b6a29d0e@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_journal_replay
-Message-ID: <taxrdom7abx44rzbiklsmtvn7ha5kahzrufb2xipwbpgtx6o6o@wmx25d64tz6p>
-References: <0000000000005bad63061a89f2a1@google.com>
+	s=arc-20240116; t=1724345927; c=relaxed/simple;
+	bh=UeomF2//hAwCF+QkX7m0LD9i0ymmYaQhD/LHrqSfOr8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EHpx9Q5G058sMSFBLgu8HD/J/FNSf9F+6vKMeW5g9aO51wRRI1k4r6peBWPqAntnIsSNk4vx3ckIggvdUjRRjSZtmmugsMcHVa8q5r8tXmg5O93ufRhsIyY/T+Z9nhF/eBXC39JIZPWizszcq8l/CHpws2M4SXlYtJBP2yYHcHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o5NM5+I8; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7cd98f27becso1057407a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724345925; x=1724950725; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PnptKaBIwTlVutbudys0Nw5Cu09TSnmrnQQJzWGV6c8=;
+        b=o5NM5+I8Px1XHFS8zSMcYEKneea7C3sW4Anl+GALFbdc8W7jzIxocKi4/uKfkDzxkj
+         ueyR3JeYe3oeAmNJyEf5n3rPKWxA7MycA1dlmV6ebWAV8ct8p8k9XmLbLWh5M30tTMvR
+         /YJQfi7k0Xl6XA5ddm/XKjvPZFYnOO/uQ/gCAC1eSPgzzxFSxmvVtIF+aAYXzoPFwKl2
+         ggSVcE3e+2P5jW+0ENVvotAaT10ynT/VvWiP58thkA3R22ExGFKLax4HUwJrWkGp4ISs
+         r4OIkzomWGDRFOXnLZGXlsoXJUgZmWj5VC26mpkqoSOXmkLpi0KaIlLffmJMghJ44m4B
+         YUXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724345925; x=1724950725;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PnptKaBIwTlVutbudys0Nw5Cu09TSnmrnQQJzWGV6c8=;
+        b=HhlPft+ivRjHz6q070O/E8oLnQ9cfMcrpfSo4s2f01wluI9TWyfd944yUGkGTC42CR
+         vnowpmEhUTjYaZ0bJvxxQl6RsIfYzRGX5OFaa7GLfHlUtbpYpWRjLSIv8azOkoEWp6cd
+         GaBaarEwjPnPMC8yeH21PPuin+18h81E8UP00CvMrwU3HzbSfNc+D83TI6BNrhWa0fei
+         6uB8PIjAl0RzlGpRWb5XzMUri7ivRB6hiNlkaZVhMUVS3RhAwMFoOO/4jrqUKWdrnmXv
+         rgIZiAnRH0KkIz5cJpeMVvQZvurMhvbO1KlWcxz02WAf3uQWSQHRgQobH0DnJJytarK+
+         0fPQ==
+X-Gm-Message-State: AOJu0YycZs8PKWAqEDRElk6XHp8zpiEgUWfnUg6ykqntxn9iCQXf8ubc
+	fsYWi8yDMV2aYzbS1pOY3/P59+8NMiEJBelast5An2+Sljg9muEHJs5dGEqaUrfhhV5ovQy9C09
+	DPw==
+X-Google-Smtp-Source: AGHT+IHwvoth9fT1Z/DL4U24HgtU5PZ34fwWotGULJe3J4WG7tBh6KRt8uzZjRmfX56Dy8PjGUScXSTTOtc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a65:64ca:0:b0:6e3:e0bc:a332 with SMTP id
+ 41be03b00d2f7-7cd88b70338mr16399a12.2.1724345924436; Thu, 22 Aug 2024
+ 09:58:44 -0700 (PDT)
+Date: Thu, 22 Aug 2024 09:58:43 -0700
+In-Reply-To: <D3MJJCTNY7OM.WOB5W8AVBH9G@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000005bad63061a89f2a1@google.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20240609154945.55332-1-nsaenz@amazon.com> <20240609154945.55332-17-nsaenz@amazon.com>
+ <D3MJJCTNY7OM.WOB5W8AVBH9G@amazon.com>
+Message-ID: <ZsduQ7tg0oQFDY8h@google.com>
+Subject: Re: [PATCH 16/18] KVM: x86: Take mem attributes into account when
+ faulting memory
+From: Sean Christopherson <seanjc@google.com>
+To: Nicolas Saenz Julienne <nsaenz@amazon.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
+	vkuznets@redhat.com, linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	graf@amazon.de, dwmw2@infradead.org, pdurrant@amazon.com, mlevitsk@redhat.com, 
+	jgowans@amazon.com, corbet@lwn.net, decui@microsoft.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	amoorthy@google.com
+Content-Type: text/plain; charset="us-ascii"
 
-#syz fix: bcachefs: Fix replay_now_at() assert
+On Thu, Aug 22, 2024, Nicolas Saenz Julienne wrote:
+> On Sun Jun 9, 2024 at 3:49 PM UTC, Nicolas Saenz Julienne wrote:
+> > Take into account access restrictions memory attributes when faulting
+> > guest memory. Prohibited memory accesses will cause an user-space fault
+> > exit.
+> >
+> > Additionally, bypass a warning in the !tdp case. Access restrictions in
+> > guest page tables might not necessarily match the host pte's when memory
+> > attributes are in use.
+> >
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+> 
+> I now realize that only taking into account memory attributes during
+> faults isn't good enough for VSM. We should check the attributes anytime
+> KVM takes GPAs as input for any action initiated by the guest. If the
+> memory attributes are incompatible with such action, it should be
+> stopped. Failure to do so opens side channels that unprivileged VTLs can
+> abuse to infer information about privileged VTL. Some examples I came up
+> with:
+> - Guest page walks: VTL0 could install malicious directory entries that
+>   point to GPAs only visible to VTL1. KVM will happily continue the
+>   walk. Among other things, this could be use to infer VTL1's GVA->GPA
+>   mappings.
+> - PV interfaces like the Hyper-V TSC page or VP assist page, could be
+>   used to modify portions of VTL1 memory.
+> - Hyper-V hypercalls that take GPAs as input/output can be abused in a
+>   myriad of ways. Including ones that exit into user-space.
+> 
+> We would be protected against all these if we implemented the memory
+> access restrictions through the memory slots API. As is, it has the
+> drawback of having to quiesce the whole VM for any non-trivial slot
+> modification (i.e. VSM's memory protections). But if we found a way to
+> speed up the slot updates we could rely on that, and avoid having to
+> teach kvm_read/write_guest() and friends to deal with memattrs. Note
+> that we would still need to use memory attributes to request for faults
+> to exit onto user-space on those select GPAs. Any opinions or
+> suggestions?
+> 
+> Note that, for now, I'll stick with the memory attributes approach to
+> see what the full solution looks like.
+
+FWIW, I suspect we'll be better off honoring memory attributes.  It's not just
+the KVM side that has issues with memslot updates, my understanding is userspace
+has also built up "slow" code with respect to memslot updates, in part because
+it's such a slow path in KVM.
 
