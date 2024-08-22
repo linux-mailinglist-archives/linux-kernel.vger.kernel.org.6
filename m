@@ -1,203 +1,197 @@
-Return-Path: <linux-kernel+bounces-297202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0671295B473
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:00:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4C495B47A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B284D2842DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1E81C221DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75E91C9EC6;
-	Thu, 22 Aug 2024 12:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58221C945B;
+	Thu, 22 Aug 2024 12:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ve2Jdk8M"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010032.outbound.protection.outlook.com [52.101.69.32])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="AbXlpY6K"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0B014A08F;
-	Thu, 22 Aug 2024 11:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328000; cv=fail; b=GcOockmsjtjr+rh+QXsp5zKP9pOtQywXtYOE+EJNGKQTC4Uww2xG3ZZPMFSAxxdS4an1/kbJZJ7IrajOgHmh5qszV0RsMm2o49f8fBOrN4I7R98nO5tlGEerV9xfxD6XYbJRwtaVUre2OW4TDhJtOIBdzi55zsGY1nmlIlZu6gc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328000; c=relaxed/simple;
-	bh=KTBwd2WBHPjt5+PJTeFbonoG75knfy77+PyaTMCtwiM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=L4XZYzzCtvrbGaAFoEl0fG78iqVbJPp6g5wpKIqMwKBwCdYCIdaWAzy4+vus2mP+P275LAA1yxypr+I4hhGK/gEH7U5RHwEPggISYT8F7+2pERS7GZSTV+NoAphDpxMi9UWS5kMR2O2UtEy27nV8oMw49PgxB3ylmuO0cOitnfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ve2Jdk8M; arc=fail smtp.client-ip=52.101.69.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UR/lz/K8Xc8ouT7VFFXCQDrM6jNMWdgrgBLNrbglESn8/6I1vsCqniKHNq+V8in+KnFh2vC3ZfpzN/EcGY327L//T9lZ3lc/xoz1nPxsPvhbWoI8KVWJDwhv435MSl2vZD78Qs5eUakxifAsV2zTrXfNh66cT2pQFz+RC5vTzk28+5O18PIGPDiRVcmz38rbJv2W6kBz2OuLyJSRNEGgajzUbveBwGFgka1hU/9aqaE1TdkMzM2HwEl7VZVKsIirl2LhvRRiyRUaKl1mKli9aZM3ScKKdBTd0pTj3Q6GT2FvM2SL3Qp+XyPxHKjHCbhhS3kjBlWCF3MRk9j6ES/Yjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KTBwd2WBHPjt5+PJTeFbonoG75knfy77+PyaTMCtwiM=;
- b=CFELx5bD8WnggWjzVJVuSGiGzIsUmGbypZTumm7LsxkXGF4VhXEnxRxidvLWpjmaFOebON4inj/pPYKw01aAbZufP9EUIHpoOPUPRiZ1TJ0m1krbmWy7kpKqLFA90ZfjCJ2fzVWK6l2hTnt0kp/AJDgY6iMKjFypq8U2M2kXeyU6U1kT1OFUHAglMBVZXyILhKCZR+ar3xA7cwmwyYpZjIWLc9kLA2CYlkZ2Dz37bUUBuXXugkHXktAzn9h8WCLkM1FH+9aJ/8JQuDNMjvCHGTVTap9F/kLkqnI0r/mFwGbxh9w4Q50LyAHpzTw/wuFKx4fmCgqajhxAR9eTUGRngw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KTBwd2WBHPjt5+PJTeFbonoG75knfy77+PyaTMCtwiM=;
- b=Ve2Jdk8ML+sJVaBlLT4M8YhnnWga6of1gXg0ZuIjt/JmzC9SaveUGliOChE2IgNa8RtghYesE8ySQ0OUjXitRZ5uoYKU9DAy8oR8axtiFi8526lZev4Y9/LXVeJ8OwF4LLZN5o4MkRcHrCx6YItVxbNNZ5wNOfue9pee31hnWR7clVCEVzagIpkkDPABUKaCoatyCnVYMCV+yLS6LKov0iNzI+wcsfcPfsjYfE9l5rz/H7PrR3CMG6iJ0e1rNszixorwfSV5CG3uNcgaLC6A25jldbs59gDulRTRUOyA2irCWZM+tKtYJ7PS413O4mxUoS+AGlf/HeEQ4IAntGS6gw==
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by AM9PR04MB8161.eurprd04.prod.outlook.com (2603:10a6:20b:3e9::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Thu, 22 Aug
- 2024 11:59:56 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%5]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 11:59:55 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-CC: Sascha Hauer <s.hauer@pengutronix.de>, Brian Norris
-	<briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, Kalle
- Valo <kvalo@kernel.org>, "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>
-Subject: RE: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
-Thread-Topic: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
-Thread-Index: AQHa8vjaVhal52qkKUSAi5YxIXRvnLIzBf+wgAAGUoCAACLh8A==
-Date: Thu, 22 Aug 2024 11:59:55 +0000
-Message-ID:
- <PA4PR04MB9638C8D68F0F71C17E903DDAD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
- <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
-In-Reply-To: <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|AM9PR04MB8161:EE_
-x-ms-office365-filtering-correlation-id: e54aee1a-ac91-4655-68fe-08dcc2a1f023
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?L05DQlRWNXlUUXpxVDBpTjdyTkgxWFNnYVdRTWppZS9STEN6LytjbE84K3JZ?=
- =?utf-8?B?VzdCaUo1NnhxV3YvdHQxWFdLZGRwV3JDTGFlRWdBUmozT2xUeFZONjY5ZVVW?=
- =?utf-8?B?bmxkcGNsN2laWU9tdGlNb09wNlEvbG1PdWtJUlU2ZC9SUC9tbWVPOHRRQkw5?=
- =?utf-8?B?VVRFSmdjMDJCMW5tOVM4MGZRcGovUUVXTlhTYzR4akxBdUZMY3pUSHR2VTBw?=
- =?utf-8?B?Tmg1MXBIVEJwZDlWS3JJN1c0KzJoTFNabFBhM2ZKdmNtS0hRdG45QTRUd291?=
- =?utf-8?B?Uyt1aXo1WXhUb291UXNTYXoyTWlDWVZadE9QZm03V25OckE4U051aXQ3ZkNJ?=
- =?utf-8?B?aWhlWXlNTWovVGFiMmZZM0ZRNGVtcUdJMDVubTNsZWxSMjBWQjVYOEVRL2Nm?=
- =?utf-8?B?NnA0a0pLcE0yMVNuZGQwV0JZblhvUDlUSEtZdG52WEU5alR2cGtveTIzN3pt?=
- =?utf-8?B?SlNvREhweGZkN0NQNDV1OUNtM21wVkY5RzVqUXo0VTVxNGlxYVdEK0lhTW5t?=
- =?utf-8?B?ZGZhZUxtcjJhQ1FiTnhSMjNsVWE0TURRUVRodUVxUGo0ZDRSWEVpcXhhNFlV?=
- =?utf-8?B?b3BpWVBycXJ2RkJ5Vzd3dmtGSy9ZTWxLd3R1NGVlOGdIZTVURkpYN05LcER6?=
- =?utf-8?B?YVhsTXZUenkrc1k2RnZiSnF4OFpLUzloSXNsQk1BaGlFcnN4STA1SjJGbzFn?=
- =?utf-8?B?UDI0cUI0eUtuQldFeGZQdkg3NjYvcFhINjFadWxWdWl6M1k0ZlRZK29KVEg1?=
- =?utf-8?B?NmQxNTVRS2pBMHJXYUJORUJycVQvQytEUVRvOEFoNzRvNGgrdXNGa1dQVm9M?=
- =?utf-8?B?R0t5b3ZSSWhEbno4VzFQQVQvN1BtV0tYODhBenhFWFByWTJwYVM0VmRLWVMz?=
- =?utf-8?B?eExheG9VdlIwMWo0ZC9jY1YvelByWjRPVGkyS0xOTVQ0aGI5LzRjeExCc2ZC?=
- =?utf-8?B?N3VMMjJQaEljTmZHaFpTbUk2dGdhUzd0MVpGZFI1WmttK2d6ekZGZUF4VU8w?=
- =?utf-8?B?MzVCZlRIM2ZYTDNyLy80bXhXK0hraFFieEpPVnVoTE0vTVdCVnJBb21LUHJC?=
- =?utf-8?B?Z1lENnFUN3A5NlNkN0tqQUxOd3ZRd0txQXAzR2N4YSttdXJvKzAyWmk5b0to?=
- =?utf-8?B?UDFPZFVXa0l1OGRjZ1VXWDNiQ2lqdzFxODlEYzd5NkM2K0xjMy9XWVVVbExG?=
- =?utf-8?B?RXBGRjlKT2owd1NraDJrRDlEYzNCaEpJL2lRTlJrM2JTWTNmZG9iQW1kUFFv?=
- =?utf-8?B?Rk4xbk94Q2lHWDJKV1dBSGVZdUtKZGVuVVNXVkFwMXBhZ1IzbDJ2VjY1T0xm?=
- =?utf-8?B?U3J1WHZoZ2NlbnBWTkhKL0dYRGhyYURPMnZVanp2QmZmTk1lN0ljM0R3ZjAw?=
- =?utf-8?B?anNJOU5SZ2RxU1ZDZ2NpNlFOL25FV3l2d0FFRFdQcFdabDQwbVViMVpsYnlO?=
- =?utf-8?B?SXpnRE81VlFvUkZvTHQ5MWJrakRBTmNTK2k5NUI2ampmSUJmc0dGSmp5Wnhr?=
- =?utf-8?B?Y3FTUmNQb0pmVmNoTGJuUGZhUW5PQitURzJHYUVqbVRaTjE3WkNzNjNIYll6?=
- =?utf-8?B?RWtjcWd4Zmg1Njh4UDd4eGFGS3VDU0NPeXgyUlk1ZnRWTlB2T3BrUHgyQmRM?=
- =?utf-8?B?VzJ1bG5NdUQyVWxGNllVbnFhY3F5Y1dablJuUUdIM3RIdEdqblZ6YS80QUF1?=
- =?utf-8?B?MGxwY3VyTzNCTDNTNXpsZzg2Z2piUjJ5UEZidGorV1U2QWRvNjBrazFOaTRW?=
- =?utf-8?B?SnJBMnFucE11RTBpVCsrdDZhbDZXZWE2dE9UWCtPa3lGMUZsUFp2SXM1czJa?=
- =?utf-8?Q?MOkF4MPnwiatEnS/QJlgof5fSNIrzkezid+yQ=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?T2wrRDRKTVBYLytPVnEwNkNYMmJLTWlxU2ozTUc3L2dUWUFGK0ZRL1JJYjQ0?=
- =?utf-8?B?SzEvU0NjVGkxOS92L3JQUFJ2YWpSaVh2WGgreVlDL2ZsT0dBd1Y4cjNwdHJj?=
- =?utf-8?B?b0U0TnRVWmNUNFZacTRId3NsdHE1bEdqN3lQNm13Nmdpd3N5OXBRTW9OYnY2?=
- =?utf-8?B?NDZwOUZ3Rmo4blIxYVVpZ2Y3MVUvSnVuVFZEdzJBMzZtQjJna0MzeGdZWk1y?=
- =?utf-8?B?Yjc4Y1BLamxHWmIvSGFNWnBDTEwxeEFmRGo5Ti9pNnk0cE9BUWtnK0pTL0Ru?=
- =?utf-8?B?c2s1N0R3alRQSE9RSEJMUUpTdWNHZWd0MTJWdVBQa2NqY0Z2b1gxTzE0TExQ?=
- =?utf-8?B?UFFIZGpNMmhQblpPYUw3L0RqWXhKUGhpNTI5MzRJelNuVzVmK0FiU09zYkVJ?=
- =?utf-8?B?ODArMkhsOXJySEFBWVJINGlSbEdOSzZia3R2VVdEYUJHc2RXMldqL3J5SUwz?=
- =?utf-8?B?TTB5SExDSWx4cEZIZnpKenROQkkrZG9YUzV0RmlxbEVBV3crVEtKeDF4ZEZL?=
- =?utf-8?B?bWliVHpUcldjcEpnVVl4dk5tYW1qVk01OVlxQkVlQlhESUtxQ05LWjRRaEVG?=
- =?utf-8?B?a3MzOWdSdXo0STc4Z3B0Nmcvbi9KTlJUNW1FaXdoc2k2b1IreFVjbHVTQ3hO?=
- =?utf-8?B?UEhFOVJpSW5RNW93UTNwTUY0VTBIR0JxTnhZdlhVMWpmajR0UCtEckFWWE5h?=
- =?utf-8?B?QndtMGh4Yk5qamVQbWZGV2lTSkR0ek5abExpNEU1TVdBYjk5K25vMmpEMTJQ?=
- =?utf-8?B?T2gwN2xJcGlxd0kwcnhJQmFVRm9Oa0RZR29oT2JmQmVQTFhORThWWndFTEFs?=
- =?utf-8?B?Y2dySW1MbUJZYlA5aTZnSkZOZDRZdWxCSy91c3FRd3pLMVp4VWFRQ3RwZTI1?=
- =?utf-8?B?SmRJVVFnL1pyajZ4UXIrWmVCU0NKWGp2WGdKamZDYXhqK2h3cWcwTzNSYXQy?=
- =?utf-8?B?NjVMVExiWjBhMEdsSTZjN1pOMWFER3A2eStUSU5nS2MwVzVQekZ2NHpadHBz?=
- =?utf-8?B?ZDQvSWp6cFVuNWE2SmxGUnBVS3ErdlNMMnNxYllVWStka2diTCtnRVlabGlW?=
- =?utf-8?B?QTNOemZUbXlmV3hFNXVocHQyN090TnhxSUVKckNDNkFTOEVOSlZNdzRIVXpw?=
- =?utf-8?B?dGR6Z2ZGKy9JUnRmRGVSZUp0Z2VSdDFId25EYWpoemNIZ2FjTUMwOEtrUFUr?=
- =?utf-8?B?VDMrU3JKL21TVkdaZ0prd3JWVEtJZEliSVUweVpnWHVkNU9veURtK2VCLzJz?=
- =?utf-8?B?b0doelJvdjZBR3VMaTZ2UjAzc2htRTVKVHN5UlFtVFNMQ1ZrUWpHTUFNV0tp?=
- =?utf-8?B?eUUveGZKaUxSSEEya2FvTzdvVFNML1dMN2NseVdjL1Jkem93V0JmQ0g2YzJv?=
- =?utf-8?B?OFpRdytLT3hnY1VoUVhtR3pvWlZYWkdaSUU0QkNtWnB2QURoYXV5aE83SjU4?=
- =?utf-8?B?NHA5TmRzVWlJZ01nMERGcktGUnRLTlJJZmk1VTl5cEdIV29GZG9vRitRNFpD?=
- =?utf-8?B?eGs5bjZzOTdOQzB2ZXFLT1NuTTlPNEFNWVRoTUJqMjFjanVodU1yVkNnTE42?=
- =?utf-8?B?K0srQkZ4TXArQmExTlpCVVNkUmtJNUhEVkliNitUdnQ2T2I3QlBXMmRhclBj?=
- =?utf-8?B?dzVYMy9RY1VmcnloMEErNlpVUzJEcWZGUWRJWVAwQlhBL3RQMUFxWU56Si9S?=
- =?utf-8?B?MFpDeVpQU2E5S2s4ZkhiWllGSkpvSDJlV0pjbkxOOW5WSDY2WlZPL0FhYTBT?=
- =?utf-8?B?WHVpRFc3WnU2aWlZay84RStLVUVpaG1zNUVxVUVnT2FJNVVXb0k2YjZxanFs?=
- =?utf-8?B?OFdrQnY3MW85U1RVVEVlVEZjelN6SVVCQk42U0JjL1ExbEg5Ukh2UUxhUEt5?=
- =?utf-8?B?VU5WRTNNV1Bjek0wdCtEMG5lSlBJWUxGN25TYkZOQVJXSGhjMEd6dnJXWnNz?=
- =?utf-8?B?TzUxWFlWOURtV045aWlmVnNoQW9EeU9Sc04zcG5LODdyRnN2OVpleWZLUGxX?=
- =?utf-8?B?d2NDUy92TFVQSTNldDlFbi9XNk9mMHZaZWozL2RtY1FKdGVPWFdBQ1dnQ0pR?=
- =?utf-8?B?WUNJTVhJaGJTUnlJMzRELytiQzdMTEFGUHVySUdrWU9ic2lUdWhlSlAzZGNa?=
- =?utf-8?Q?eB3ZfaeJ1XGFZR4MG2TTY/Ld+?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1171C93D7;
+	Thu, 22 Aug 2024 12:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724328024; cv=none; b=DrR0a8XSWVVWHZv2HS6//piFdpFFyYB1x9o3rhF+UW3YA13ijFQEJXCLC1n6gDeMA6m1WavSlJQeEKXM//M4hdDSNN0qRyb8MCOM9HpLtomlRnsyNKUsQFLtow5lFmCuljO/isAkbliDBEQi7z/O6wFMJfjC5NNDfvl7li494EU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724328024; c=relaxed/simple;
+	bh=Frs7AnE6wun6QVrxYzJHiybARafDIPzKWYZS2yfNvU4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jeETstirv/C4zeL1UhVR2NBNp4BCbihEbYAapBHHbeGrpVuH45oOdEQXVS4SGVRBO14wwFa2Muvd9bfqYMg+GTE8lXla+MQkOzjFXadPuUvOUuiE3n2K5n8g5OU5SlFddXpPCyBJMgJ1URNrkyrXVtz4/8SagjIIAp9kVPewifM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=AbXlpY6K; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724328020; x=1724587220;
+	bh=Eo15Vf0KvOVZFuFUurKSOxZuNxfh+ilduZH8kmrr0LY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=AbXlpY6KEBifkw188IiiQaP/sOabCXCfj/ExVcTdKU7eh/6SlO3OqboiDUVWJ5IhF
+	 9x2JRX6TNyLMxOEb7+OlsYSn0RpFoW8DcTNl/eHly/z2XMhYMaUt1920m6sYvASBzY
+	 4qGDChY0zkDjodnIYKsJj2b8mWH+OOLPjn9Pcje6GnWWVJikR1nL7IFP6WWnHba39g
+	 G+bOL4OBCLCZh00/6y48Qd+JAnGB3DVgfuIe37+5HyB6+A2S5AjZKPX2M9ANU1aDqe
+	 3tHAUaf64vNCndueMoz+MUTnidjc4HZk13fxw7jrNgnqKqNZxGJ0kAHqYzK4uwOf6Q
+	 vtHAq/cGsXN2w==
+Date: Thu, 22 Aug 2024 12:00:15 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure fields
+Message-ID: <77e8e20c-8ca1-4df7-a4d7-ed77454f1754@proton.me>
+In-Reply-To: <2024082257-refrain-subsector-b6c4@gregkh>
+References: <20240815173903.4172139-37-samitolvanen@google.com> <20240819193851.GA4809@google.com> <a76f9422-4001-416a-a31b-37ab7dcb17f4@proton.me> <CABCJKudAF0=29js8SDcYY5r6kM7RBveTrZH9RyECNGqkcqy=nw@mail.gmail.com> <CAGSQo01kCUd64nB7C7Ssy1N=UBpOP3bORsRDcHJ1k2CqkbKsfQ@mail.gmail.com> <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me> <2024082229-elevation-emporium-8118@gregkh> <bc2e02d7-d4a7-4f0f-852c-e26ad6a8688f@proton.me> <2024082257-refrain-subsector-b6c4@gregkh>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: d4880588e8a82bc15d53eb3fbef04fb18dc7073e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e54aee1a-ac91-4655-68fe-08dcc2a1f023
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2024 11:59:55.3615
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tvQQ3HWQaQcc76/FEeN9caRDxzc8U1WxvFZYIdbRFNB0t+l2zpSYRYWN8BOwSc3eCl+6A4caH0PsGbGgEjhQ7Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8161
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-PiBGcm9tOiBNYXJjIEtsZWluZS1CdWRkZSA8bWtsQHBlbmd1dHJvbml4LmRlPg0KPiBTZW50OiBU
-aHVyc2RheSwgQXVndXN0IDIyLCAyMDI0IDU6NTMgUE0NCj4gVG86IERhdmlkIExpbiA8eXUtaGFv
-LmxpbkBueHAuY29tPg0KPiBDYzogU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRl
-PjsgQnJpYW4gTm9ycmlzDQo+IDxicmlhbm5vcnJpc0BjaHJvbWl1bS5vcmc+OyBGcmFuY2VzY28g
-RG9sY2luaSA8ZnJhbmNlc2NvQGRvbGNpbmkuaXQ+Ow0KPiBLYWxsZSBWYWxvIDxrdmFsb0BrZXJu
-ZWwub3JnPjsgbGludXgtd2lyZWxlc3NAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxA
-dmdlci5rZXJuZWwub3JnOyBrZXJuZWxAcGVuZ3V0cm9uaXguZGUNCj4gU3ViamVjdDogUmU6IFJF
-OiBbRVhUXSBbUEFUQ0ggMTAvMzFdIHdpZmk6IG13aWZpZXg6IGZpeCBpbmRlbnRpb24NCj4gDQo+
-IE9uIDIyLjA4LjIwMjQgMDk6MzY6MjksIERhdmlkIExpbiB3cm90ZToNCj4gPiBJIHdvbmRlciB3
-ZSBzdGlsbCBuZWVkIHBhdGNoIGZvciBpbmRlbnQgaXNzdWUgaGVyZT8gSWYgc28gSSBhbSBzdXJl
-IHdlDQo+ID4gd2lsbCBuZWVkIGEgYnVuY2ggb2Ygc2ltaWxhciBwYXRjaGVzIHdoaWNoIEkgZG9u
-J3QgdGhpbmsgcmVhbGx5IGhlbHANCj4gPiBpbXByb3ZlIG13aWZpZXggcXVhbGl0eQ0KPiANCj4g
-bXdpZmlleCBpcyB0aGUgYmVzdCBtYWlubGluZSBkcml2ZXIgd2UgaGF2ZSBmb3IgdGhlc2UgZGV2
-aWNlcy4NCj4gDQoNClllcywgd2Ugd2lsbCBjb250aW51ZSB0byBmaXggYnVncyBvZiBtd2lmaWV4
-IGp1c3QgbGlrZSB3ZSBhZGRlZCB0aGUgV1BBMyBzdXBwb3J0IGZvciBpdC4NCg0KPiA+IEFjdHVh
-bGx5IGluIGl0cyBzdWNjZXNzb3IgTnhwd2lmaSAoY3VycmVudGx5IHVuZGVyIHJldmlldyksIHdl
-IGhhdmUNCj4gPiBjbGVhbmVkIHVwIGFsbCBpbmRlbnQsIGFuZCBjaGVja3BhdGNoIGVycm9ycy93
-YXJuaW5ncy9jaGVja3MuDQo+IA0KPiBQdWJsaWMgcmV2aWV3Pw0KPiANCg0KTnhwd2lmaSBwYXRj
-aCB2MiBoYWQgYmVlbiBzdWJtaXR0ZWQgcmVjZW50bHkuDQoNCj4gcmVnYXJkcywNCj4gTWFyYw0K
-PiANCj4gLS0NCj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAgICAgfCBNYXJjIEtsZWlu
-ZS1CdWRkZSAgICAgICAgICB8DQo+IEVtYmVkZGVkIExpbnV4ICAgICAgICAgICAgICAgICAgIHwg
-aHR0cHM6Ly93d3cucGVuZ3V0cm9uaXguZGUgfA0KPiBWZXJ0cmV0dW5nIE7DvHJuYmVyZyAgICAg
-ICAgICAgICAgfCBQaG9uZTogKzQ5LTUxMjEtMjA2OTE3LTEyOSB8DQo+IEFtdHNnZXJpY2h0IEhp
-bGRlc2hlaW0sIEhSQSAyNjg2IHwgRmF4OiAgICs0OS01MTIxLTIwNjkxNy05ICAgfA0K
+On 22.08.24 09:29, Greg Kroah-Hartman wrote:
+> On Thu, Aug 22, 2024 at 05:55:32AM +0000, Benno Lossin wrote:
+>> On 22.08.24 01:29, Greg Kroah-Hartman wrote:
+>>> On Wed, Aug 21, 2024 at 11:31:25AM +0000, Benno Lossin wrote:
+>>>> On 20.08.24 22:03, Matthew Maurer wrote:
+>>>>>>> The way `KAbiReserved` is implemented is via a `union` (maybe a bit
+>>>>>>> ironic, considering what I said in my other replies, but in this ca=
+se,
+>>>>>>> we would provide a safe abstraction over this `union`, thus avoidin=
+g
+>>>>>>> exposing users of this type to `unsafe`):
+>>>>>>>
+>>>>>>>     #[repr(C)]
+>>>>>>>     pub union KAbiReserved<T, R> {
+>>>>>>>         value: T,
+>>>>>>>         _reserved: R,
+>>>>>>>     }
+>>>>>>
+>>>>>> I like this approach even better, assuming any remaining issues with
+>>>>>> ownership etc. can be sorted out. This would also look identical to
+>>>>>> the C version in DWARF if you rename _reserved in the union to
+>>>>>> __kabi_reserved. Of course, we can always change gendwarfksyms to
+>>>>>> support a different scheme for Rust code if a better solution comes
+>>>>>> along later.
+>>>>
+>>>> Yeah sure, that should also then work directly with this patch, right?
+>>>>
+>>>>>> Sami
+>>>>>
+>>>>> Agreement here - this seems like a good approach to representing
+>>>>> reserved in Rust code. A few minor adjustments we discussed off-list
+>>>>> which aren't required for gendwarfksyms to know about:
+>>>>> 1. Types being added to reserved fields have to be `Copy`, e.g. they
+>>>>> must be `!Drop`.
+>>>>> 2. Types being added to reserved fields must be legal to be
+>>>>> represented by all zeroes.
+>>>>> 3. Reserved fields need to be initialized to zero before having their
+>>>>> union set to the provided value when constructing them.
+>>>>> 4. It may be helpful to have delegating trait implementations to avoi=
+d
+>>>>> the couple places where autoderef won't handle the conversion.
+>>>>>
+>>>>> While I think this is the right solution, esp. since it can share a
+>>>>> representation with C, I wanted to call out one minor shortfall - a
+>>>>> reserved field can only be replaced by one type. We could still
+>>>>> indicate a replacement by two fields the same as in C, by using a
+>>>>> tuple which will look like an anonymous struct. The limitation will b=
+e
+>>>>> that if two or more new fields were introduced, we'd need to edit the
+>>>>> patches accessing them to do foo.x.y and foo.x.z for their accesses
+>>>>> instead of simply foo.y and foo.z - the autoref trick only works for =
+a
+>>>>> single type.
+>>>>
+>>>> We will have to see how often multiple fields are added to a struct. I=
+f
+>>>> they are infrequent and it's fine for those patches to then touch the
+>>>> field accesses, then I think we can just stick with this approach.
+>>>> If there are problems with that, we can also try the following:
+>>>> all fields of kABI structs must be private and must only be accessed
+>>>> through setters/getters. We can then modify the body the setters/gette=
+rs
+>>>> to handle the additional indirection.
+>>>
+>>> That's just not going to work, sorry.  Remember, the goal here is to
+>>> keep the code that comes from kernel.org identical to what you have in
+>>> your "enterprise" kernel tree, with the exception of the few extra
+>>> "padding" fields you have added to allow for changes in the future in
+>>> the kernel.org versions.
+>>
+>> Yeah, that's what I thought.
+>>
+>>> Requiring all kernel.org changes that add a new field to a structure to
+>>> only do so with a settter/getter is going to just not fly at all as the=
+y
+>>> will not care one bit.
+>>>
+>>> Or, we can just forget about "abi stability" for rust code entirely,
+>>> which I am totally fine with.  It's something that managers seem to lik=
+e
+>>> for a "check box" but in reality, no one really needs it (hint, vendors
+>>> rebuild their code anyway.)
+>>
+>> The approach already works for a adding a single field and I got from
+>> the discussions with Matthew and Sami that that is the most common case.
+>> We will reach out to the Rust folks and see what we can do about the
+>> multiple field case.
+>=20
+> No, single field is NOT the common case, the common case is reserving
+> multiple padding variables in a structure as lots of things can change
+> of the long lifetimes of some of these kernel trees.  Look at the
+> changes in the Android or SLES or RHEL kernels for specifics.
+
+Thanks for letting me know.
+
+> Here's one example in the android tree where 4 64bit fields are reserved
+> for future abi changes:
+> =09https://android.googlesource.com/kernel/common/+/refs/heads/android12-=
+5.10/include/linux/fs.h#421
+>=20
+> And here's a different place where a field is being used with many
+> remaining for future use:
+> =09https://android.googlesource.com/kernel/common/+/refs/heads/android12-=
+5.10/include/linux/sched.h#1379
+>=20
+> And also, we want/need lots of other space reservation at times, look at
+> how "Others" can get access to reserved areas in structures that need to
+> be done in an abi-safe way:
+> =09https://android.googlesource.com/kernel/common/+/refs/heads/android12-=
+5.10/include/linux/sched.h#1375
+
+Let me correct myself, it's only possible to replace one `KAbiReserved`
+by one new field. You can have as many fields of type `KAbiReserved` as
+you want. The thing that you can't do is replace a single `KAbiReserved`
+field by multiple (well you can, but then you have to change the sites
+that use it).
+
+> All of this also needs to be possible in any structures that are
+> exported by rust code if vendors want to have a way to track and ensure
+> that abis do not change over time, just like they can today in C code.
+
+All of those structs need to be `repr(C)`, otherwise they don't
+have a stable layout to begin with. Other than that, only autoderef
+might be missing. But we would have to see if that even comes up.
+
+> Or if not possible, just don't export any rust structures at all :)
+
+I think that we should try to get this working.
+
+---
+Cheers,
+Benno
+
 
