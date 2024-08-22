@@ -1,228 +1,153 @@
-Return-Path: <linux-kernel+bounces-296784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C7995AF25
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:23:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7F995AF50
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 397DA1C22BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E8E1F225D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA166A8CF;
-	Thu, 22 Aug 2024 07:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3944B152178;
+	Thu, 22 Aug 2024 07:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q72qKnkX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8CMsFHiy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r86aGzxQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9JPH6G4R"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b="sGv6qGIC";
+	dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b="1mKDYHgL";
+	dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b="slgtsiSd";
+	dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b="nDlqTNVr"
+Received: from ymitury.uuid.uk (ymitury.uuid.uk [95.179.232.160])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED8915C13A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9975F125AC;
+	Thu, 22 Aug 2024 07:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.179.232.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724311078; cv=none; b=swDb1hHYMNaojSkk0pa8gLBMvEqvk3kaJkTMl3XcTkJSU7wlKb9IDNAKgW9zoc9CVgQN3pXST13lBwoH8wAmszk7g2gKLe8wcypCxlw3g6MFMPz5AMjWwj3mEnRRg4KrQKI2Dox6IoTd3kdXMgxPs0yLof8aiLdbOTPUrFao9Vs=
+	t=1724311892; cv=none; b=gtq5Wnotg8PGKpwUT87nW0/PHdQ/U6weLJAY/JbkYxLY5fYi0WRt8WNm0jRUuHI1nsCM0hiYcMMylJW231556I0LLrtG5zGUAt4dKuLPpmrd6vFFk7YYB1DL19HLezvhr3IcSNtCJO7ruMksPBC2LG1NuBDy8iIxPVWQAeFUC/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724311078; c=relaxed/simple;
-	bh=rf9ulMskAH3M8RF9iG8KnQWxl54Eu4vwsu4uKC630d4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZF2m0sfHXVls1tDh747oSSOX/7XcgXSOYeVAqj1jinBdf3JkzFXRVDp7A5V77FNyKOdlpCLc8gHZFaN7Niiq/HkCgi+0BbGQseccBoWiyVCdP6dB8ls6BASbRo3zcdgDJcxTVceN4clxs/flU65ls0BHwNh6KrCbGDuXwPcQgUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q72qKnkX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8CMsFHiy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r86aGzxQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9JPH6G4R; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B78C1219A8;
-	Thu, 22 Aug 2024 07:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724311068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B79cYTjR2Bgjzg3ZSIzh3as+7VYTk7wzTMIDOp2bMI=;
-	b=Q72qKnkXJPxMdxYAIZiIe0ZNwrJPyC41M8YAkNm02WVV503/kL0Gj4EesAb4WQK0uj9XxF
-	xr7GErLCaepvaiTwsvYfZ1HjXYb/hwCXRLLhXMGGYd6lUK4swpYRRvucqVqcdBaBZD9lws
-	/raADIq4cOqqf9om738XXrzMeQuK0eg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724311068;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B79cYTjR2Bgjzg3ZSIzh3as+7VYTk7wzTMIDOp2bMI=;
-	b=8CMsFHiyDymxqJTfoeaoY6/Ij6cSHpQvI3PU21KfIvh3W0PyJt9nsuQqnmcX9bLl7Euvp4
-	QOI9zu3V8yzYWeDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724311067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B79cYTjR2Bgjzg3ZSIzh3as+7VYTk7wzTMIDOp2bMI=;
-	b=r86aGzxQThOLY8RemsF3WGfSSYo9FOF5OEyXRmgPXJ4EN2HJfRWzW1+97GgVTYhl2fbTPS
-	EekZoR1oitUJrrQLwvpivIuMr18sVmwFRQ41mxTwBVb/41Ax3XH4t41VLt7lcBdyGnnxwK
-	M832NQqlx1oHDjAJR7NDxtkP1j11pt4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724311067;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B79cYTjR2Bgjzg3ZSIzh3as+7VYTk7wzTMIDOp2bMI=;
-	b=9JPH6G4R3OW5y9bTD0l44lx/HUVCY3SVBs2UCx4PwaKZLEJGBbnU1j+jjCtXwfFWVD1WUC
-	DbSrpBY0K46Et4Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E32713297;
-	Thu, 22 Aug 2024 07:17:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h0NUJBvmxmbQUgAAD6G6ig
-	(envelope-from <iivanov@suse.de>); Thu, 22 Aug 2024 07:17:47 +0000
-Date: Thu, 22 Aug 2024 10:22:55 +0300
-From: "Ivan T. Ivanov" <iivanov@suse.de>
-To: Corey Minyard <corey@minyard.net>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipmi:ssif: Improve detecting during probing
-Message-ID: <20240822072255.fncuy4xdkglnf3bn@localhost.localdomain>
-References: <20240816065458.117986-1-iivanov@suse.de>
- <ZsU9SRlQgzQn8bDs@mail.minyard.net>
+	s=arc-20240116; t=1724311892; c=relaxed/simple;
+	bh=y5HJCLYriM2drLCjIHIBOA4aA48H7AbqkZYc0RWYEd0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=FI6xhsZJJkexKmlIXcTHLkO4ZVuAtwmQ0pJaQLXEvSZafxPftzmvLLgggPvN5PiXMCSlEGssNsSFhPqAop6apHlh3tG04CYEQyA1pbgtWFDI7dXUBxcECKSDC+nnPy21VGXSk/HfLMq/jdx95ahDZ+pMxa6nkNDW8lSarZJigZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=octiron.net; spf=pass smtp.mailfrom=octiron.net; dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b=sGv6qGIC; dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b=1mKDYHgL; dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b=slgtsiSd; dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b=nDlqTNVr; arc=none smtp.client-ip=95.179.232.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=octiron.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=octiron.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=octiron.net
+	; s=20230424-rsa3072; h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:
+	From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=5EdaLcB016+00N+TOyi+k7VGW7m1HvknxhrUff810zY=; t=1724311886; b=sGv6qGIC9Ji9
+	Faoz6B7xBga6Cw9A/0WGXqes0496EtfU8oAuwhp9uYd3O8wwFKJiQRVTc19HPn4IBQd1rF8iI5Rkh
+	uBL4VfiMiYSmcne15sJSChDJpecC4iF5xWyz4+w+wDo8G4ewOuIVrJnBDcOzm/cx/7e/eA9uqVhwv
+	VyHMPba8FOjZpamR5TYPxH5kavtL2RdqqxUOFnilKlPHBW8oFkdKPGIDZN3R4KZ943OE1BHbLrOl1
+	Km5sqnr/oiahi6k/Vb5hStt698muXuEv1ljYUo8b3VeM/FRBI8PsqRyifueFgy+adscpiynkcxxCa
+	1HfImrCLUXqUZJwPEPdtpYtwrx9rCplkdrzswdE//cCgsiRJSaiwZTorQGoCPTwMOBSNmHjkauByH
+	/yBci+2Tj6u99jzfhGcBPWPUy1lsCsylwzJszuyB/23GrChcWsm5XxivdO2KK2BnIodc3m2voHny8
+	ixqh8Qs25epDg2wx+W8fZ/Srfj8Q0pTxDWMZ7q;
+DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=octiron.net; s=20230410-ed25519; h=Content-Transfer-Encoding:Content-Type:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=5EdaLcB016+00N+TOyi+k7VGW7m1HvknxhrUff810zY=; t=1724311886; b=1mKDYHgLXpWA
+	Qy3Fq7ehiz7gWI8CkrpTKr1WziHegqc9dDZ8aJQZSj+DhJqtOB0mRrO0BIxRPl0XRrZJ+7QpDw==;
+Received: by ymitury.uuid.uk with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	(envelope-from <simon@octiron.net>)
+	id 1sh2C0-000zGS-3a; Thu, 22 Aug 2024 08:25:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=octiron.net
+	; s=20230424-rsa3072; h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:
+	From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=5EdaLcB016+00N+TOyi+k7VGW7m1HvknxhrUff810zY=; t=1724311512; b=slgtsiSdnqE+
+	Mqyxg206+L0FHUQd43rxDPQxGoWsmz4oBpUfQRtVD4MXQheBO56HHKJWFVdZWRtTn6mbA2LDBarCT
+	PwhOdoGM2QIWz3xjoEWQPLP3rdpW51JpWFpcGi/R0TdGcoipjshuWDJvUDDeZgiPP2bHdJR1tkpL0
+	f95/7e3yOWK+Z/YDSk8Fn+iZ+v0wDDzJ6e3CeSzvx2ccqYLJJcEEbHnpXcqdvAq1oa4EA4V9NJrmi
+	BoE+3CRDMTv5uB53W3c0fXD86S8r6uwnFMspJzgq+qla1T8CjKsSkD/k0Om+aiUgJsg/XGUHXvER6
+	Fu6OhTQSJPM7GzcMkXHhxjvn33ZaHIcuWecUQwbNmGpf6qEp2Jix/YqGUPYF0LyF5VIY3/aZLUmpx
+	Qf/xw0jByM6oeR/YlrMXo7gwO3Heiv6LX/cNpw1MmtIvgAI5d+8PrM3gQmWMbiXuv6gE/pMl/ltQy
+	CazVE0WQTmfF2dNU2UyYYYrXHp0ZpXBA0Yu76F;
+DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=octiron.net; s=20230410-ed25519; h=Content-Transfer-Encoding:Content-Type:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=5EdaLcB016+00N+TOyi+k7VGW7m1HvknxhrUff810zY=; t=1724311512; b=nDlqTNVry6HL
+	zsH32HB+1mZEESeAR5MGG+ACh928dy7PY11OW07dMIXRsgoQLwwA8dC+X33/E2KzrmL3ooxHBA==;
+Received: by tsort.uuid.uk with esmtps (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	(Exim 4.93)
+	(envelope-from <simon@octiron.net>)
+	id 1sh2Bw-000Px2-CH; Thu, 22 Aug 2024 08:25:09 +0100
+Message-ID: <4fc08687-1d80-43fe-9f0d-8ef8475e75f6@0882a8b5-c6c3-11e9-b005-00805fc181fe.uuid.home.arpa>
+Date: Thu, 22 Aug 2024 08:25:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsU9SRlQgzQn8bDs@mail.minyard.net>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,minyard.net:email,imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+From: Simon Arlott <simon@octiron.net>
+Subject: [PATCH net] can: mcp251x: fix deadlock if an interrupt occurs during
+ mcp251x_open
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org
+Content-Language: en-GB
+X-Face: -|Y&Xues/.'(7\@`_\lFE/)pw"7..-Ur1^@pRL`Nad5a()6r+Y)18-pi'!`GI/zGn>6a6ik
+ mcW-%sg_wM:4PXDw:(;Uu,n&!8=;A<P|QG`;AMu5ypJkN-Sa<eyt,Ap3q`5Z{D0BN3G`OmX^8x^++R
+ Gr9G'%+PNM/w+w1+vB*a($wYgA%*cm3Hds`a7k)CQ7'"[\C|g2k]FQ-f*DDi{pU]v%5JZm
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Corey,
+The mcp251x_hw_wake() function is called with the mpc_lock mutex held and
+disables the interrupt handler so that no interrupts can be processed while
+waking the device. If an interrupt has already occurred then waiting for
+the interrupt handler to complete will deadlock because it will be trying
+to acquire the same mutex.
 
-On 08-20 20:05, Corey Minyard wrote:
-> 
-> If an IPMI SSIF device is probed and there is something there, but
-> probably not an actual BMC, the code would just issue a lot of errors
-> before it failed.  We kind of need these errors to help with certain
-> issues, and some of the failure reports are non-fatal.
-> 
-> However, a get device id command should alway work.  If that fails,
-> nothing else is going to work and it's a pretty good indication that
-> there's no valid BMC there.  So issue and check that command and bail
-> if it fails.
-> 
-> Reported-by: Ivan T. Ivanov <iivanov@suse.de>
-> Signed-off-by: Corey Minyard <corey@minyard.net>
-> ---
->  drivers/char/ipmi/ipmi_ssif.c | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-> Ivan, is it possible for you to test this patch on the broken system?
+CPU0                           CPU1
+----                           ----
+mcp251x_open()
+ mutex_lock(&priv->mcp_lock)
+  request_threaded_irq()
+                               <interrupt>
+                               mcp251x_can_ist()
+                                mutex_lock(&priv->mcp_lock)
+  mcp251x_hw_wake()
+   disable_irq() <-- deadlock
 
-This exact system is not available to me at the moment. I have few
-other machines on which I could test this.
+Use disable_irq_nosync() instead because the interrupt handler does
+everything while holding the mutex so it doesn't matter if it's still
+running.
 
-> It should work based on what you reported, but it's nice to be sure.
-> 
-> Also, I discovered that the detect function is kind of bogus, it only
-> works on an address list that isn't present (any more).  However, I
-> re-used it for my purposes in the probe function.
-> 
-> Thanks.
-> 
-> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-> index e8e7b832c060..4c403e7a9fc8 100644
-> --- a/drivers/char/ipmi/ipmi_ssif.c
-> +++ b/drivers/char/ipmi/ipmi_ssif.c
-> @@ -1368,8 +1368,20 @@ static int ssif_detect(struct i2c_client *client, struct i2c_board_info *info)
->  	rv = do_cmd(client, 2, msg, &len, resp);
->  	if (rv)
->  		rv = -ENODEV;
+Fixes: 8ce8c0abcba3 ("can: mcp251x: only reset hardware as required")
+Signed-off-by: Simon Arlott <simon@octiron.net>
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/net/can/spi/mcp251x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What is my worry is that in case of SMBus errors, device is there but
-for some reason it got stuck/crashed or whatever, so will get out of
-detect function from here and with ENODEV return code probe function
-will be called for no reason.
+diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
+index 3b8736ff0345..ec5c64006a16 100644
+--- a/drivers/net/can/spi/mcp251x.c
++++ b/drivers/net/can/spi/mcp251x.c
+@@ -752,7 +752,7 @@ static int mcp251x_hw_wake(struct spi_device *spi)
+ 	int ret;
+ 
+ 	/* Force wakeup interrupt to wake device, but don't execute IST */
+-	disable_irq(spi->irq);
++	disable_irq_nosync(spi->irq);
+ 	mcp251x_write_2regs(spi, CANINTE, CANINTE_WAKIE, CANINTF_WAKIF);
+ 
+ 	/* Wait for oscillator startup timer after wake up */
+-- 
+2.44.0
 
-> -	else
-> +	else {
-> +	    if (len < 3) {
-> +		rv = -ENODEV;
-
-No point to call probe(), right?
-
-> +	    } else {
-> +		struct ipmi_device_id id;
-> +
-> +		rv = ipmi_demangle_device_id(resp[0] >> 2, resp[1],
-> +					     resp + 2, len - 2, &id);
-> +		if (rv)
-> +		    rv = -ENODEV; /* Error means a BMC probably isn't there. */
-
-Same.
-
-> +	    }
-> +	    if (!rv && info)
->  		strscpy(info->type, DEVICE_NAME, I2C_NAME_SIZE);
-> +	}
->  	kfree(resp);
->  	return rv;
->  }
-> @@ -1704,6 +1716,16 @@ static int ssif_probe(struct i2c_client *client)
->  		ipmi_addr_src_to_str(ssif_info->addr_source),
->  		client->addr, client->adapter->name, slave_addr);
->  
-> +	/*
-> +	 * Send a get device id command and validate its response to
-> +	 * make sure a valid BMC is there.
-> +	 */
-> +	rv = ssif_detect(client, NULL);
-> +	if (rv) {
-> +		dev_err(&client->dev, "Not present\n");
-> +		goto out;
-> +	}
-> +
-
-The point is that even after this point IPMI device can start failing
-to properly communicate with the OS, real SMBus errors, like EREMOTEIO
-in my case, but unfortunately code bellow do not handle this very well,
-I think.
-
-
->  	/* Now check for system interface capabilities */
->  	msg[0] = IPMI_NETFN_APP_REQUEST << 2;
->  	msg[1] = IPMI_GET_SYSTEM_INTERFACE_CAPABILITIES_CMD;
-> -- 
-> 2.34.1
-> 
-
-Regards,
-Ivan
-
+-- 
+Simon Arlott
 
