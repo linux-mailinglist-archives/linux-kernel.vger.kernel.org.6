@@ -1,67 +1,143 @@
-Return-Path: <linux-kernel+bounces-296816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031E195AF75
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:40:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8316C95AF7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B337A2837DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:40:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49041C22988
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881CD16A94A;
-	Thu, 22 Aug 2024 07:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5748815443B;
+	Thu, 22 Aug 2024 07:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rosiQb9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PtHo5gPp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E9016B391
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7151531F8;
+	Thu, 22 Aug 2024 07:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724312388; cv=none; b=lzLidddtSjs7siAOoeWyYd1q0BN/NBrXGldZmQHOxXrlO+87rlBtuSYcPol3ETMEjzQkT50dkuUJJT6KsyyivmyJUrqv1dLk7otRxKFoqsAkA381+shR/BLwnCLbVSMly7uO9CK7PXB2evBthKoasboA6WYprgORt6eU5u0+WfI=
+	t=1724312477; cv=none; b=GbiIy5eh5IzggcYF2Pgm/8enPLQGZuIj3RfJ3QPUEhZl9hbuT4qhEeYkkSZ0yFh/0T8OQHU29xPD95FiTqjyzg+Pt6n+4GDDEqg27TjEKI2Bb9dlWjSqp3oybf/Kh5OHrOtGJzOvin77N2jAyndGuQAh/0MvfgRW4tlLbGeextQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724312388; c=relaxed/simple;
-	bh=0625ThzK5zTHjNczZ23OpAA40ALjr//ZGbsohg+iaHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDvvtePr1wZlDvW/0nHK7Yzo8nSGTkMMOcRT/Z8UYIcVdPMguvTZfcG/PKr0l6Ey1Y0WzwbYlN9eUlqfqCsH34CxtgBJwvp2KE3ttaEov+1ZJOLMmIjXwVWMMRyWzA8H12WGsfBcwpO4G2EslMaqBPABQJqpdIlLaPgdc066NsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rosiQb9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC72BC4AF09;
-	Thu, 22 Aug 2024 07:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724312388;
-	bh=0625ThzK5zTHjNczZ23OpAA40ALjr//ZGbsohg+iaHQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rosiQb9Jqx8hTP2ZUBJuzppRq0iVIBnGbHdhCqP7eLFIKTgPvPFJvBYgpC7hXNJ1J
-	 VW5OV9n69wpHGmZQVI6VtCkPDNlg76EYL35GAwzuGFELzp1JrDPfMudswZKTsIplCl
-	 T5U2L3le36uPQFsJsmMJ9GqNeCbRurs+WicUQL4c=
-Date: Thu, 22 Aug 2024 15:39:31 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v1 0/5] driver core: fw_devlink: Clean up strings and
- mutex usages
-Message-ID: <2024082222-number-amends-e2a6@gregkh>
-References: <20240821154839.604259-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1724312477; c=relaxed/simple;
+	bh=5mwuj+VBs0qp1O3ouX4dSJkK50NaE/7bMjElULSBQgY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=untFx1fDmbnlbBI23KSd6MzcUvnjKC/CULnnelQRxPfNLeihzZI/mg6d0IZAzrLdfOWJPlpNTHFtNX8Nr3n80tzcJHjiwYR3fIZDO9TWUpujkQLzFF+/kQOuksnSAND15V4bEL14PO1gmMy1TQC9kEN7vM0XPB5ErVIx0AaM/J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PtHo5gPp; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724312476; x=1755848476;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=5mwuj+VBs0qp1O3ouX4dSJkK50NaE/7bMjElULSBQgY=;
+  b=PtHo5gPpZjOW1fD5qdD0nTp7lv0hGPIl5dCwroyvT9sFLf66EcmfJdIm
+   gVCC+FXFmzKjUbz2k3JPrz8+5dVjlOfk9Uu7C2EJ1X6F422JWgOgQld+a
+   nkeIUmkNNmn65xdTfXF2+CIAn5/cV5BuT60J+wog4FWFTuJg9I1UxVPE+
+   ph3qh00oEeLQcfP6QOWLDSNWrCYNoJKR+8N7SOZcRd3mqITb1ty7b21Q9
+   Smfys0h9XOo2w6VHVpRrH2F2HmUqQwCiH2SgYm2T10t5Rwlh2h3Xmn+KP
+   Si3nNbWwZ0sjYSbKf3Nfz7/gUPcN9RJ/wbemVjIpubLQiW+2XJGb/B3xS
+   Q==;
+X-CSE-ConnectionGUID: Xb0CG+8uQ5Gic5zTw6aF4g==
+X-CSE-MsgGUID: rj4HlvboSZm8tyuhynx1dQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22580052"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="22580052"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 00:41:15 -0700
+X-CSE-ConnectionGUID: Y4RnIK7FTpePYd6RGbc7ng==
+X-CSE-MsgGUID: XRSu0+RKSoKgOV5BhpsSPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="61506163"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.82])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 00:41:12 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 22 Aug 2024 10:41:08 +0300 (EEST)
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+cc: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>, 
+    Reinette Chatre <reinette.chatre@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, 
+    Fenghua Yu <fenghua.yu@intel.com>
+Subject: Re: [PATCH 0/3] selftests: Fix cpuid / vendor checking build
+ issues
+In-Reply-To: <7f4d4d41-e59d-4574-99e7-4dba69929954@collabora.com>
+Message-ID: <975d32d5-9a86-1a31-984e-a31dc0353123@linux.intel.com>
+References: <20240813104515.19152-1-ilpo.jarvinen@linux.intel.com> <88575c79-b6be-42d2-b863-d57f83f8c99c@linuxfoundation.org> <7f4d4d41-e59d-4574-99e7-4dba69929954@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821154839.604259-1-andriy.shevchenko@linux.intel.com>
+Content-Type: multipart/mixed; boundary="8323328-1725946267-1724312468=:1015"
 
-On Wed, Aug 21, 2024 at 06:48:18PM +0300, Andy Shevchenko wrote:
-> Replace strlen() + kmalloc() + snprintf() by kasprintf() ond other
-> string handling improvements.
-> 
-> Use guard() / scoped_guard() to handle fw_devlink mutex.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Nice clean ups, thanks!
+--8323328-1725946267-1724312468=:1015
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
+On Thu, 22 Aug 2024, Muhammad Usama Anjum wrote:
+
+> On 8/21/24 11:30 AM, Shuah Khan wrote:
+> > On 8/13/24 04:45, Ilpo J=C3=A4rvinen wrote:
+> >> First, generalize resctrl selftest non-contiguous CAT check to not
+> >> assume non-AMD vendor implies Intel. Second, improve kselftest common
+> >> parts and resctrl selftest such that the use of __cpuid_count() does
+> >> not lead into a build failure (happens at least on ARM).
+> >>
+> >> The last patch might still require some work on which symbol the
+> >> conditional in kselftest.h is implemented. I could not find any
+> >> pre-existing one that could be used. Perhaps somebody who's more
+> >> familiar with the kselftest build system has a better suggestion on
+> >> which symbol the logic should be based at?
+> >>
+> >> Ilpo J=C3=A4rvinen (3):
+> >> =C2=A0=C2=A0 selftests/resctrl: Generalize non-contiguous CAT check
+> >> =C2=A0=C2=A0 selftests/resctrl: Always initialize ecx to avoid build w=
+arnings
+> >> =C2=A0=C2=A0 [RFC] kselftest: Provide __cpuid_count() stub on non-x86 =
+archs
+> >>
+> >> =C2=A0 tools/testing/selftests/kselftest.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 6 +++++
+> >> =C2=A0 tools/testing/selftests/lib.mk=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++++
+> >> =C2=A0 tools/testing/selftests/resctrl/cat_test.c | 28 +++++++++++++--=
+-------
+> >> =C2=A0 3 files changed, 27 insertions(+), 11 deletions(-)
+> >>
+> >=20
+> > These changes look good to me. Can you send the RFC patch without the
+> > RFC tag
+> > for me to pull in? I don't apply RFC patches.
+> >=20
+> > Usama, does this fix the problem you are seeing?
+>
+> Yeah, build errors are resolved.
+
+Great, thanks for testing!
+
+I'll send v2 with RFC removed soon.
+
+> > Hi Reinette - do these look okay to you? Can you give me an ack if they=
+ do?
+> >=20
+> > thanks,
+> > -- Shuah
+> >=20
+>=20
+
+--=20
+ i.
+
+--8323328-1725946267-1724312468=:1015--
 
