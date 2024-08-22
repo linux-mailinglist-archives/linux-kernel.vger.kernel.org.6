@@ -1,208 +1,361 @@
-Return-Path: <linux-kernel+bounces-297759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5451595BD5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:32:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D455595BD61
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0014EB25C1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85B12286401
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81D11CEAD4;
-	Thu, 22 Aug 2024 17:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D715D1CEAD5;
+	Thu, 22 Aug 2024 17:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZKRgz6a"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzEyf6uQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BED1CCB4B;
-	Thu, 22 Aug 2024 17:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC93F1CCB36;
+	Thu, 22 Aug 2024 17:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724347956; cv=none; b=lb6yWV/VnwbozOx826i9s0t2MtM1Mx8RXMFDMXqMB3YTbflF5/aJ9yxOAMp5+zxQrWd7b9hM6qGAJqMXZzXBL4/MsetkLetO7MHZXB6xIMUfsm8dggruO/xAufsDxJs1FhJfkjZqkbpO9QWyzik2ZzdgAgkGsZ9LTm2cNk5S0l4=
+	t=1724348082; cv=none; b=FDMpBzj+fBYbzdL08v2otEqYT3BUazKL9k0Q6YJyFkMT8VSnYxzoO0BF1kSjixSlzX8hFberp5H+3d0vAC6NyW5vcR27CTDSrngCJMujPx5csjhHrsh4oRUgkmZLbkLsLC8LFDK3/leKH5yEE9MkX1o8sArkA+aK2Vag4l1gxq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724347956; c=relaxed/simple;
-	bh=KqEy9a0cVctATAmn+Dpx0fyqBgFKWOx+lv8yPBlOcf0=;
+	s=arc-20240116; t=1724348082; c=relaxed/simple;
+	bh=rahWFJeMcvXEHyx7jNcZStpXPA3pa18p17UBFBk8xtA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hQSMdatLd1gn7AxgxkD1c0w4GiCkv2SSfSsMW94x2ikTeSml7p9+vsx3hUVI00yuA/EXXPPoKPL8WE0OjY6FJGIPZx27vWZqSabOaCXzieePCGVYywd2SRZ9g3z5oijgWynBVC7LbOknENvDO74mXHkW7A8kU5kEwM2r10QcNb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iZKRgz6a; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3cd4ebf84so12765731fa.3;
-        Thu, 22 Aug 2024 10:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724347952; x=1724952752; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b1ajxmMCImhOILqCTIlNfWtYSVDFX5RKyWwmvdyA46g=;
-        b=iZKRgz6aWZ5yAEQ/ws8ThUYxddyO99TDbFvIzcmBpSX7xo34F75NQeIKU84lWOKbqQ
-         n31SSMbUff63cbW5mVXpNiZv4XTsSKkgXcCeEseAMSEGvxKI1HWDLjZRmbWJc0rws/fK
-         jvcJAM/7/lnVFcwcnXGK8F6B2ND13UbXvwGzwQJpmHINeTTq200KzjuukqyohUGas8N8
-         /rqt2ePVxgiS6t6meQIUsXlBP1lHx8Aayj96VdJRN9OIGRB7+BU7u0s0Agq/MfjlhdvS
-         bhBbxLJJSJKfOb+rfj04P4omUTVZ8+SAx3y043pbOE9Cdg5LM1l0v8CRdUwh4vwpSIgG
-         pZUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724347952; x=1724952752;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b1ajxmMCImhOILqCTIlNfWtYSVDFX5RKyWwmvdyA46g=;
-        b=FVb6ReH3cIZ8YkkFpzHkMxM5y19m/4yL7h9tpJGBdXGmyfLWtwfI4zhTP6JmJ+ng/U
-         eembaQtnvx/9r/z5PrRI1fobBxCenClOOWlWiBBU1HVBdixR9pBIIszvfVpjrWpE0Non
-         ipTmuBCJ/AlS6OZzNsLFIXLh+t6kkIFSKIiphIdcHA03vnEvewTJUHFA4OOytvm+uF6i
-         SDdLVmLQYG7lBhyQ+sckXnqycZJ9TyTqVSn2CqtgIGtIKyaO0Tpis206KdUeiBgSgCa6
-         qyTBDXQjbKj/3R3sAvwS+wxLR9g8jTrfy7WAgxBqQ92ONR98Iw4auGHkn2HYv6obS0zL
-         weTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGJnRIC42dCX0gKZ2vw490I/rXZGs63jjYn7kFp0QCQcBHvs7CR03iX9jUBRbzRgpl/I8G8bLuyMfO9BNs4u4f8A==@vger.kernel.org, AJvYcCWxyeeTozFhEUXJVM0J508CtQp13GV02rU8R/x60LGruLSj1RuKxE+hSymzYe3t2so5T2Cm8LBPh0uNFok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRfhyqFojIz14ReuCU+nHbqeU2Vl3PrX1ap23pu7Suvio63CzW
-	rVKA/G0o7ticTKBmWPuKozerNNpcb4h8NSrdn3LueLupJk95ubzFr1ixR1jbHswdHw8eUg+nd2G
-	WWoQKIJebuFIVIE1+JF6EcwCTDzmz1nhKNkM=
-X-Google-Smtp-Source: AGHT+IE3XmhYamZ9CrZ3eNEXIDcL6FzB/72KGSJSc7RQKCe9Fydp5OVgKtyHiYDLovVbwCQvruhx96RWo1f6S3/QDt8=
-X-Received: by 2002:a2e:e09:0:b0:2ef:265e:bb8b with SMTP id
- 38308e7fff4ca-2f3f8862cbbmr38414261fa.18.1724347951536; Thu, 22 Aug 2024
- 10:32:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=taMNqVrSugesyGvrCrmbZjvB7pjWUo0ATnzByLLH+9YlScbjvz5dQnAyw4vbop85CnFlA7hauUNh8f+4ki94/tkru0TNUywbiM7SofKXfGcMGQyfdsYqMq5iRadc+p56LOBr7hVUU+U5PHCz7yEBDmkvWZ+fmYPQ+wUqSR/HTww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzEyf6uQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D122C4AF0C;
+	Thu, 22 Aug 2024 17:34:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724348082;
+	bh=rahWFJeMcvXEHyx7jNcZStpXPA3pa18p17UBFBk8xtA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VzEyf6uQ1Mr3OOQF+Jc5klfYyY7YGp2pKAIz522AEjbgffHyjHTHl9kzx0aWLGStv
+	 q3ajF0yh41us8dyT5XeAyA7Oznuy88fLxOMD55ghzW3Et8XMQ3N5ebRA58QPahR1Pb
+	 vkZRSUSsKnMbHvda1m0IBqYKXf973eOnUCXH/rdPn4eRW7GSKyfzSxGzqp8Qdm7azL
+	 31AQoNig9nl68RxGwkmKTMh4cwpocj/PFiUOCZXurtviC8kxRROE0je9/2QiaJXGrR
+	 ASFGO7Z2SgXQQRJZwwhyyh0Nt5jRk4RtLI4odOfVorMJXHpV1aTZGYOIvO1gWGqeQa
+	 u4DD+D4l/k+wQ==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f3f163e379so17505171fa.3;
+        Thu, 22 Aug 2024 10:34:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU18RlR3X7OH2wjOAH096o4R+AdulA0ZWzbsQ7ITdq8HzPaffI8COJfnEBEI2jpeoACxOYBuSeC+mn+Af0=@vger.kernel.org, AJvYcCW1Plg0aZMElq4Q7n9GkqPIQD0msGAijONYsOfCzAusbnrUK5qQEM0L8sEkSoxesApG0U0aqpqfrwfirDjegdjK+XC3@vger.kernel.org, AJvYcCXXdxUJHR2t+rsNB1pQfK/Lm7a2QF3105H86+ELtD5iNqNP+LPNJ1M46UPHpXMHZrJ6zjpnIwjR/iwakTddVQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmQwwBQqlMH7rmZgzrVGxE+TxYESr9BFN4/w6Hiq+xFAAQr/1B
+	w3X5TOKznFvP1nyfOurIW0hoCNh7QwGyyQnpJfFDsh4/i0CJRhzHkP06Xy0OEqcrUfuOae59sf/
+	3EzatVmtfjdVw33xkDTsoD+7zRi4=
+X-Google-Smtp-Source: AGHT+IG0yd7j8ZcYnzo/5J5k1u9eHExoy9aGS6E79ggApFILT1GWudOVvzvPeOA5qyV9BShxLqQIin21+j/yT70RQ7Q=
+X-Received: by 2002:a2e:b3d4:0:b0:2f3:c384:71ee with SMTP id
+ 38308e7fff4ca-2f405eef820mr22347761fa.33.1724348080675; Thu, 22 Aug 2024
+ 10:34:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
- <ZsdKhLaPy-uzKsuH@x1> <ZsdUxxBrpbuYxtXN@x1> <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
- <ZsdxinrZP1kHINWT@x1> <ZsdzLmIFWRqsXeXD@x1>
-In-Reply-To: <ZsdzLmIFWRqsXeXD@x1>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Thu, 22 Aug 2024 19:31:55 +0200
-Message-ID: <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
-Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>
+References: <20240821040700.1919317-1-kris.van.hees@oracle.com> <20240821040700.1919317-2-kris.van.hees@oracle.com>
+In-Reply-To: <20240821040700.1919317-2-kris.van.hees@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 23 Aug 2024 02:34:04 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARsq1aT5jJnKRYscAMsp3aO5euykSU_yPF6ZLMaDoeHJw@mail.gmail.com>
+Message-ID: <CAK7LNARsq1aT5jJnKRYscAMsp3aO5euykSU_yPF6ZLMaDoeHJw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] kbuild: generate offset range data for builtin modules
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 7:19=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+On Wed, Aug 21, 2024 at 1:11=E2=80=AFPM Kris Van Hees <kris.van.hees@oracle=
+.com> wrote:
 >
-> On Thu, Aug 22, 2024 at 02:12:46PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Thu, Aug 22, 2024 at 07:02:52PM +0200, Sedat Dilek wrote:
-> > > On Thu, Aug 22, 2024 at 5:10=E2=80=AFPM Arnaldo Carvalho de Melo <acm=
-e@kernel.org> wrote:
-> > > > +++ b/tools/perf/util/setup.py
-> > > > @@ -17,7 +17,7 @@ src_feature_tests  =3D getenv('srctree') + '/tool=
-s/build/feature'
-> >
-> > > >  def clang_has_option(option):
-> > > >      cc_output =3D Popen([cc, cc_options + option, path.join(src_fe=
-ature_tests, "test-hello.c") ], stderr=3DPIPE).stderr.readlines()
-> > > > -    return [o for o in cc_output if ((b"unknown argument" in o) or=
- (b"is not supported" in o))] =3D=3D [ ]
-> > > > +    return [o for o in cc_output if ((b"unknown argument" in o) or=
- (b"is not supported" in o) or (b"unknown warning option" in o))] =3D=3D [ =
-]
-> > > >  if cc_is_clang:
-> > > >      from sysconfig import get_config_vars
-> > > > @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
-> > > >  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-u=
-nused-parameter', '-Wno-redundant-decls' ]
-> > > >  if cc_is_clang:
-> > > >      cflags +=3D ["-Wno-unused-command-line-argument" ]
-> > > > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
-> > > > +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
-> > > >  else:
-> > > >      cflags +=3D ['-Wno-cast-function-type' ]
-> >
-> > > I tried with your diff with SLIM LLVM toolchains 18 and 19.
-> >
-> > > Both work - see attached build-logs.
-> >
-> > > Yes, are right that LLVM/Clang v19 was first introducing:
-> >
-> > > -Wcast-function-type-mismatch / -Wno-cast-function-type-mismatch
-> >
-> > > [4] says for LLVM 18.1.8:
-> >
-> > > -Wcast-function-type
-> > > -Wcast-function-type-strict
-> >
-> > > Feel free to add my Reported-by/Tested-by credentials if you sent a f=
-ull patch.
-> >
-> > Thanks for the report and test of the fix, I'll add both tags,
+> Create file module.builtin.ranges that can be used to find where
+> built-in modules are located by their addresses. This will be useful for
+> tracing tools to find what functions are for various built-in modules.
 >
-> So below is the part that deals with disabling the warning if present,
-> the other patch supporting checking warning options I merged as a prep
-> patch.
+> The offset range data for builtin modules is generated using:
+>  - modules.builtin: associates object files with module names
+>  - vmlinux.map: provides load order of sections and offset of first membe=
+r
+>     per section
+>  - vmlinux.o.map: provides offset of object file content per section
+>  - .*.cmd: build cmd file with KBUILD_MODFILE
 >
-> Thanks!
+> The generated data will look like:
 >
-> - Arnaldo
+> .text 00000000-00000000 =3D _text
+> .text 0000baf0-0000cb10 amd_uncore
+> .text 0009bd10-0009c8e0 iosf_mbi
+> ...
+> .text 00b9f080-00ba011a intel_skl_int3472_discrete
+> .text 00ba0120-00ba03c0 intel_skl_int3472_discrete intel_skl_int3472_tps6=
+8470
+> .text 00ba03c0-00ba08d6 intel_skl_int3472_tps68470
+> ...
+> .data 00000000-00000000 =3D _sdata
+> .data 0000f020-0000f680 amd_uncore
 >
-> From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date: Thu, 22 Aug 2024 14:13:49 -0300
-> Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mismatc=
-h if
->  present on clang
+> For each ELF section, it lists the offset of the first symbol.  This can
+> be used to determine the base address of the section at runtime.
 >
-> The -Wcast-function-type-mismatch option was introduced in clang 19 and
-> its enabled by default, since we use -Werror, and python bindings do
-> casts that are valid but trips this warning, disable it if present.
+> Next, it lists (in strict ascending order) offset ranges in that section
+> that cover the symbols of one or more builtin modules.  Multiple ranges
+> can apply to a single module, and ranges can be shared between modules.
 >
-> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2M=
-zKXwTA5THtL7w@mail.gmail.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range dat=
+a
+> is generated for kernel modules that are built into the kernel image.
+>
+> How it works:
+>
+>   1. The modules.builtin file is parsed to obtain a list of built-in
+>      module names and their associated object names (the .ko file that
+>      the module would be in if it were a loadable module, hereafter
+>      referred to as <kmodfile>).  This object name can be used to
+>      identify objects in the kernel compile because any C or assembler
+>      code that ends up into a built-in module will have the option
+>      -DKBUILD_MODFILE=3D<kmodfile> present in its build command, and thos=
+e
+>      can be found in the .<obj>.cmd file in the kernel build tree.
+>
+>      If an object is part of multiple modules, they will all be listed
+>      in the KBUILD_MODFILE option argument.
+>
+>      This allows us to conclusively determine whether an object in the
+>      kernel build belong to any modules, and which.
+>
+>  2. The vmlinux.map is parsed next to determine the base address of each
+>     top level section so that all addresses into the section can be
+>     turned into offsets.  This makes it possible to handle sections
+>     getting loaded at different addresses at system boot.
+>
+>     We also determine an 'anchor' symbol at the beginning of each
+>     section to make it possible to calculate the true base address of
+>     a section at runtime (i.e. symbol address - symbol offset).
+>
+>     We collect start addresses of sections that are included in the top
+>     level section.  This is used when vmlinux is linked using vmlinux.o,
+>     because in that case, we need to look at the vmlinux.o linker map to
+>     know what object a symbol is found in.
+>
+>     And finally, we process each symbol that is listed in vmlinux.map
+>     (or vmlinux.o.map) based on the following structure:
+>
+>     vmlinux linked from vmlinux.a:
+>
+>       vmlinux.map:
+>         <top level section>
+>           <included section>  -- might be same as top level section)
+>             <object>          -- built-in association known
+>               <symbol>        -- belongs to module(s) object belongs to
+>               ...
+>
+>     vmlinux linked from vmlinux.o:
+>
+>       vmlinux.map:
+>         <top level section>
+>           <included section>  -- might be same as top level section)
+>             vmlinux.o         -- need to use vmlinux.o.map
+>               <symbol>        -- ignored
+>               ...
+>
+>       vmlinux.o.map:
+>         <section>
+>             <object>          -- built-in association known
+>               <symbol>        -- belongs to module(s) object belongs to
+>               ...
+>
+>  3. As sections, objects, and symbols are processed, offset ranges are
+>     constructed in a striaght-forward way:
+>
+>       - If the symbol belongs to one or more built-in modules:
+>           - If we were working on the same module(s), extend the range
+>             to include this object
+>           - If we were working on another module(s), close that range,
+>             and start the new one
+>       - If the symbol does not belong to any built-in modules:
+>           - If we were working on a module(s) range, close that range
+>
+> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
+> Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
+> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  tools/perf/util/setup.py | 2 ++
->  1 file changed, 2 insertions(+)
+>     Changes since v6:
+>      - Applied Masahiro Yamada's suggestions (Kconfig, makefile, script).
 >
-> diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-> index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
-> --- a/tools/perf/util/setup.py
-> +++ b/tools/perf/util/setup.py
-> @@ -63,6 +63,8 @@ cflags =3D getenv('CFLAGS', '').split()
->  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-=
-parameter', '-Wno-redundant-decls' ]
->  if cc_is_clang:
->      cflags +=3D ["-Wno-unused-command-line-argument" ]
-> +    if clang_has_option("-Wno-cast-function-type-mismatch"):
-> +        cflags +=3D ["-Wno-cast-function-type-mismatch" ]
->  else:
->      cflags +=3D ['-Wno-cast-function-type' ]
+>     Changes since v5:
+>      - Removed unnecessary compatibility info from option description.
 >
-> --
-> 2.46.0
+>     Changes since v4:
+>      - Improved commit description to explain the why and how.
+>      - Documented dependency on GNU AWK for CONFIG_BUILTIN_MODULE_RANGES.
+>      - Improved comments in generate_builtin_ranges.awk
+>      - Improved logic in generate_builtin_ranges.awk to handle incorrect
+>        object size information in linker maps
 >
+>     Changes since v3:
+>      - Consolidated patches 2 through 5 into a single patch
+>      - Move CONFIG_BUILTIN_MODULE_RANGES to Kconfig.debug
+>      - Make CONFIG_BUILTIN_MODULE_RANGES select CONFIG_VMLINUX_MAP
+>      - Disable CONFIG_BUILTIN_MODULE_RANGES if CONFIG_LTO_CLANG_(FULL|THI=
+N)=3Dy
+>      - Support LLVM (lld) compiles in generate_builtin_ranges.awk
+>      - Support CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=3Dy
+>
+>     Changes since v2:
+>      - Add explicit dependency on FTRACE for CONFIG_BUILTIN_MODULE_RANGES
+>      - 1st arg to generate_builtin_ranges.awk is now modules.builtin.modi=
+nfo
+>      - Switched from using modules.builtin.objs to parsing .*.cmd files
+>      - Parse data from .*.cmd in generate_builtin_ranges.awk
+>      - Use $(real-prereqs) rather than $(filter-out ...)
+> ---
+>  Documentation/process/changes.rst   |   7 +
+>  lib/Kconfig.debug                   |  16 +
+>  scripts/Makefile.vmlinux            |  18 +
+>  scripts/Makefile.vmlinux_o          |   3 +
+>  scripts/generate_builtin_ranges.awk | 506 ++++++++++++++++++++++++++++
+>  5 files changed, 550 insertions(+)
+>  create mode 100755 scripts/generate_builtin_ranges.awk
+>
+> diff --git a/Documentation/process/changes.rst b/Documentation/process/ch=
+anges.rst
+> index 3fc63f27c226..00f1ed7c59c3 100644
+> --- a/Documentation/process/changes.rst
+> +++ b/Documentation/process/changes.rst
+> @@ -64,6 +64,7 @@ GNU tar                1.28             tar --version
+>  gtags (optional)       6.6.5            gtags --version
+>  mkimage (optional)     2017.01          mkimage --version
+>  Python (optional)      3.5.x            python3 --version
+> +GNU AWK (optional)     5.1.0            gawk --version
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>
+>  .. [#f1] Sphinx is needed only to build the Kernel documentation
+> @@ -192,6 +193,12 @@ platforms. The tool is available via the ``u-boot-to=
+ols`` package or can be
+>  built from the U-Boot source code. See the instructions at
+>  https://docs.u-boot.org/en/latest/build/tools.html#building-tools-for-li=
+nux
+>
+> +GNU AWK
+> +-------
+> +
+> +GNU AWK is needed if you want kernel builds to generate address range da=
+ta for
+> +builtin modules (CONFIG_BUILTIN_MODULE_RANGES).
+> +
+>  System utilities
+>  ****************
+>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index a30c03a66172..f087dc3da321 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -571,6 +571,22 @@ config VMLINUX_MAP
+>           pieces of code get eliminated with
+>           CONFIG_LD_DEAD_CODE_DATA_ELIMINATION.
+>
+> +config BUILTIN_MODULE_RANGES
+> +       bool "Generate address range information for builtin modules"
+> +       depends on !LTO_CLANG_FULL
+> +       depends on !LTO_CLANG_THIN
 
-Thanks for the patch, Arnanldo.
 
-@Nathan Chancellor
-What was the b4 magic to retrieve a patch included in a ML thread?
+Forgot to mention this.
 
-I tried:
+These two lines can be replaced with
 
-link=3D"https://lore.kernel.org/all/CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5=
-pUMUUhG-UVKQ@mail.gmail.com/"
+         depends on !LTO
 
-b4 am $link
-Grabbing thread from
-lore.kernel.org/all/CA%2BicZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@m=
-ail.gmail.com/t.mbox.gz
-Analyzing 9 messages in the thread
-No patches found.
 
--Sedat-
+
+
+
+
+> diff --git a/scripts/generate_builtin_ranges.awk b/scripts/generate_built=
+in_ranges.awk
+> new file mode 100755
+> index 000000000000..865cb7ac4970
+> --- /dev/null
+> +++ b/scripts/generate_builtin_ranges.awk
+> @@ -0,0 +1,506 @@
+> +#!/usr/bin/gawk -f
+> +# SPDX-License-Identifier: GPL-2.0
+> +# generate_builtin_ranges.awk: Generate address range data for builtin m=
+odules
+> +# Written by Kris Van Hees <kris.van.hees@oracle.com>
+> +#
+> +# Usage: generate_builtin_ranges.awk modules.builtin vmlinux.map \
+> +#              vmlinux.o.map > modules.builtin.ranges
+> +#
+> +
+> +# Return the module name(s) (if any) associated with the given object.
+> +#
+> +# If we have seen this object before, return information from the cache.
+> +# Otherwise, retrieve it from the corresponding .cmd file.
+> +#
+> +function get_module_info(fn, mod, obj, s) {
+> +       if (fn in omod)
+> +               return omod[fn];
+> +
+> +       if (match(fn, /\/[^/]+$/) =3D=3D 0)
+> +               return "";
+> +
+> +       obj =3D fn;
+> +       mod =3D "";
+> +       fn =3D substr(fn, 1, RSTART) "." substr(fn, RSTART + 1) ".cmd";
+> +       if (getline s <fn =3D=3D 1) {
+> +               if (match(s, /DKBUILD_MODFILE=3D['"]+[^'"]+/) > 0) {
+> +                       mod =3D substr(s, RSTART + 16, RLENGTH - 16);
+> +                       gsub(/['"]/, "", mod);
+> +               }
+> +       }
+> +       close(fn);
+> +
+> +       # A single module (common case) also reflects objects that are no=
+t part
+> +       # of a module.  Some of those objects have names that are also a =
+module
+> +       # name (e.g. core).  We check the associated module file name, an=
+d if
+> +       # they do not match, the object is not part of a module.
+> +       if (mod !~ / /) {
+> +               if (!(mod in mods))
+> +                       mod =3D "";
+> +       }
+> +
+> +       gsub(/([^/ ]*\/)+/, "", mod);
+> +       gsub(/-/, "_", mod);
+> +
+> +       # At this point, mod is a single (valid) module name, or a list o=
+f
+> +       # module names (that do not need validation).
+> +       omod[obj] =3D mod;
+> +       close(fn);
+
+
+I still see the second close(fn).
+
+
+
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
