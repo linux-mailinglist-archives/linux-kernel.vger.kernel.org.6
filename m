@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-297146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F61D95B3BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:27:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9044A95B3CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8611F23744
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23C71C222B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D231C93BD;
-	Thu, 22 Aug 2024 11:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141F91C93DC;
+	Thu, 22 Aug 2024 11:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeDQB0G1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5S7dntk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD64914A0B8;
-	Thu, 22 Aug 2024 11:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8CF1C93A6;
+	Thu, 22 Aug 2024 11:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724326054; cv=none; b=WoxVpk+VvMwdrb9bA+APbY4lwMWJXA53aGTO0ac7cTfzX5UWyRAEnUYcj3/Qb6kYHQBHExUAHDqcNMuXeNjjmY6Ckcr87d2eModVRfGwxk1vTEQPCJ/3sWAxvAFIUU11HnZNohJPnNqMNdbYs6rlX/pTMzaJwJML157p9Z0zoDo=
+	t=1724326132; cv=none; b=OswGFUSAjv126Zhn94gx9vUOa9nEd08Szo9Dmw9IhQXKOLUzTt1hH1Rz5SGEq3GWRcxIS2BEn5VN8Bkk/m+EC1FB7dvYnN0ON7aZ/+Okp6gbXGNBwCYFIuR/UdiBAK2/PwvCVE678Soi7nfFgfMt3rPzdIMW4ii2MDZihQdA/tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724326054; c=relaxed/simple;
-	bh=JfZQE4xgNpbHgPpxuLPDhtB/4/9FxFiUKFkyPjhZbj8=;
+	s=arc-20240116; t=1724326132; c=relaxed/simple;
+	bh=5hbZSENnRd7z98/NMEpOsFqrQH6Pepm32EMOy9lVhqo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f9kl5VgJzrEsoFWqIPA2FtZcBjF/skRPB97J4tWiZ31uufbFV7KNnaeynk5Urg+TbI0DScjkkLwaP2pTEFbyLVnUV4s/iyHQyh/fMbbsd4jlSqsIguK5nVWcSRfRjG3k+CkkDSKbJ6JG4kOias0RKd6TcGrEEXVELnXHmwqZxFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeDQB0G1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4663FC32782;
-	Thu, 22 Aug 2024 11:27:30 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bzdnjWMswkGION09BSSIz9Q+3C6eJZlU59ldBer4aZxS/FtdQRGx0rTHPGmF18t5tSuPMxFVl5CASLthM0NYdLhL3q6CIYbievbknCMnthNtxjJ4b4eRUSELbIf5GLOBh6de2zO2RGezNmoOV6dYFZsA8Xq74pG6mc5uomgVlf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5S7dntk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BC3C32782;
+	Thu, 22 Aug 2024 11:28:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724326054;
-	bh=JfZQE4xgNpbHgPpxuLPDhtB/4/9FxFiUKFkyPjhZbj8=;
+	s=k20201202; t=1724326131;
+	bh=5hbZSENnRd7z98/NMEpOsFqrQH6Pepm32EMOy9lVhqo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OeDQB0G17NRngRY+ByffGZv7pDLtpcIpNgSRNlRod2/HoJp0uVK1Am1oGo49lnacR
-	 m9TfsuO+3wgARIPO23WvGHXP7/DgAS3ntciaWkwm8BU6vWXN6OPGNHaQlPu89dk6cX
-	 iRELSa+bSaZlHBDRF68LESigi7uHLsUTPIyx1l9rB4XL+GyP3MyrDsQkePtjCQe02I
-	 81S1tXkaJYM3yGQUrSP1gS1XqSCdXm9DPpj91sNc6e88lrkewPytyxcc4NRkBn1Knu
-	 4rG6+elJBfrRVEzq6kcudKG2suKouOdsXd+mdiMwQt1QD6efwSgRjh2y88zvMzyPEL
-	 BmzVp+8ICvqZg==
-Message-ID: <8ab571a7-6441-4616-b456-a0677b2520c7@kernel.org>
-Date: Thu, 22 Aug 2024 14:27:27 +0300
+	b=m5S7dntkbMQAo+QlAfo8AxJJ1mFq1/Y4WygNHaSBUTD/3jD7plytcoT/iQHfr7d44
+	 gu9ySOv16hraDtejVnKehXq6hpWmWz3EcF9/ohf4zVKflqWwdVPWPobG0VuobEKeIU
+	 xBoTaPwa0RObN+GVlTk3nufqXZwOsE27S7LboAKXbEsB02OSJZD/N8zAQ3EZ6uWr1B
+	 QK+xhaSsgRkdpD1mdK3QSbQ5/tN1mo4h9CUgUaaOaRZy/26DlJL1txgyXKnde5OLDf
+	 CEbxotQ+SFBB6G859sviYiYNUxfLorUWoINNts79AJdhqyAsLDl0Iby7P0oNv6h3xX
+	 E9RzH+aVwvCjg==
+Message-ID: <2b5105c6-ccc1-47fb-b22c-010537f39681@kernel.org>
+Date: Thu, 22 Aug 2024 13:28:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +49,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/7] net: ti: icssg-prueth: Enable IEP1
-To: MD Danish Anwar <danishanwar@ti.com>, "Anwar, Md Danish"
- <a0501179@ti.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Andrew Lunn <andrew@lunn.ch>, Jan Kiszka <jan.kiszka@siemens.com>,
- Vignesh Raghavendra <vigneshr@ti.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Jacob Keller <jacob.e.keller@intel.com>, Diogo Ivo <diogo.ivo@siemens.com>,
- Simon Horman <horms@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com
-References: <20240813074233.2473876-1-danishanwar@ti.com>
- <20240813074233.2473876-2-danishanwar@ti.com>
- <aee5b633-31ce-4db0-9014-90f877a33cf4@kernel.org>
- <9766c4f6-b687-49d6-8476-8414928a3a0e@ti.com>
- <ae36c591-3b26-44a7-98a4-a498ee507e27@kernel.org>
- <070a6aea-bebe-42c8-85be-56eb5f2f3ace@ti.com>
+Subject: Re: [PATCH 0/4] Add new driver for WCSS secure PIL loading
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>, andersson@kernel.org,
+ krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com,
+ quic_varada@quicinc.com, quic_srichara@quicinc.com
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <4d1c0d17-20b8-4989-9757-61031e9f03a4@kernel.org>
+ <807c9315-bf88-4a0a-9632-2ce471b329b6@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <070a6aea-bebe-42c8-85be-56eb5f2f3ace@ti.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <807c9315-bf88-4a0a-9632-2ce471b329b6@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 22/08/2024 08:52, MD Danish Anwar wrote:
+On 22/08/2024 12:43, Gokul Sriram P wrote:
 > 
+> On 8/20/2024 4:42 PM, Krzysztof Kozlowski wrote:
+>> On 20/08/2024 10:55, Gokul Sriram Palanisamy wrote:
+>>> This series depends on q6 clock removal series [1].
+>> How? So this cannot be tested and merged?
 > 
-> On 21/08/24 5:23 pm, Roger Quadros wrote:
->>
->>
->> On 21/08/2024 14:33, Anwar, Md Danish wrote:
->>> Hi Roger,
->>>
->>> On 8/21/2024 4:57 PM, Roger Quadros wrote:
->>>> Hi,
->>>>
->>>> On 13/08/2024 10:42, MD Danish Anwar wrote:
->>>>> IEP1 is needed by firmware to enable FDB learning and FDB ageing.
->>>>
->>>> Required by which firmware?
->>>>
->>>
->>> IEP1 is needed by all ICSSG firmwares (Dual EMAC / Switch / HSR)
->>>
->>>> Does dual-emac firmware need this?
->>>>
->>>
->>> Yes, Dual EMAC firmware needs IEP1 to enabled.
->>
->> Then this need to be a bug fix?
-> 
-> Correct, this is in fact a bug. But IEP1 is also needed by HSR firmware
-> so I thought of keeping this patch with HSR series. As HSR will be
-> completely broken if IEP1 is not enabled.
-> 
-> I didn't want to post two patches one as bug fix to net and one part of
-> HSR to net-next thus I thought of keeping this patch in this series only.
+> Yes. Though TrustZone enables these clocks, since Linux Kernel will 
+> consider these clock as unused.
+> These clock will be disabled so we cannot bring Q6 out of reset. So we 
+> have the dependency set.
+> I posted this as a separate series because [1] 'remove unnecessary q6 
+> clocks' series was already reviewed for some
+> versions.
 
-Bug fixes need to be posted earlier as they can get accepted sooner and
-even back-ported to stable. You also need to add the Fixes tag.
+This is not a dependency in the kernel workflow. Nothing gets broken,
+nothing stops this patch from merging. Your remark is confusing and will
+either start questions or prevent applying the patchset.
 
-> 
->> What is the impact if IEP1 is not enabled for dual emac.
->>
-> 
-> Without IEP1 enabled, Crash is seen on AM64x 10M link when connecting /
-> disconnecting multiple times. On AM65x IEP1 was always enabled because
+Best regards,
+Krzysztof
 
-In that ase you need to enable quirk_10m_link_issue for AM64x platform.
-I understand that IEP1 is not required for 100M/1G.
-
-> `prueth->pdata.quirk_10m_link_issue` was true. FDB learning and FDB
-> ageing will also get impacted if IEP1 is not enabled.
-
-Is FDB learning and ageing involved in dual Emac mode?
-
-> 
->>>
->>>>> Always enable IEP1
->>>>>
->>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>>>> ---
->>
-> 
-
--- 
-cheers,
--roger
 
