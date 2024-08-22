@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-296593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8633595AC90
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1668A95AC92
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 071C6B2186A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19641F22421
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E5E49647;
-	Thu, 22 Aug 2024 04:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18723D38E;
+	Thu, 22 Aug 2024 04:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GEnqyGhe"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lrR6V68Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5844500E;
-	Thu, 22 Aug 2024 04:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E481BF2A;
+	Thu, 22 Aug 2024 04:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724300770; cv=none; b=WlolhpklkZhE/TeLM0nY6FpmcJQvWwWv2eQnBoyxEfehJui6UtCbdtF5F8TVKr/vCw9fqwxSf/LMQE6akpK1z5sigwCnwhoCIOxn5675W2aEFpXShzxRZ6xDvioxGCvolgFvDtB+bvo5TIIGfHlxsszichNcOhQrqsR35hCznmQ=
+	t=1724300815; cv=none; b=uApI+WIbd+53hW4nGrgMtCiK15/+76hQNBeBz7rQzoi7SqbGiMthT9INHXPSCytYH6raX3b6eq0qXJxr5hJtgle7UA5Webt/pvhwMpw/Pl4U8hXiJ5m2q7LFd0OsGAYjkk0K3YlCjOOsS/8G+oDUfUna1qi71pcrINunmPDfY7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724300770; c=relaxed/simple;
-	bh=0WZ4FYM8mmmylAJa5XP131J3PNnSGiy0LDELvBrO1HQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IWU8M/35/0yC/7RlicheyRr/q0IEMdodjbnJ5aui45ad3HDdXTdyVI5vuITIynjPHKtuVmngvPaaXeHZntbETOmfnFP1Y0O7P+3YRwtmNNoMOs4xOCgybiobmeTf7KZsRYNiqX8hdnq1C3RNmeTJO4ZvoSs6ghvCmGJiZ0ddiIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GEnqyGhe; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724300764;
-	bh=yf1PhCyU7SUcZwXqZMLRrM46PFymuaSELkO92pGjvZ0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GEnqyGheuIEW7m6JKmxepjq8ILrUl10DrYmSO/vfAIStUDrnaZsqQaziQr/fLsPBg
-	 QBnoyRdWD2uYzFLd/yMvHZqB0jA1iUyiV69cH1kO1XyYjw6WaN9IQRmxs0DEo4qfJx
-	 Xj+rrG6b1Kd0SBqa+IGYPBRY1bReC2msG8VKGJ6S78V+Tuy9S1QhW14QREq/5MIW3+
-	 u9kILQoRntuf0jt3nFbPIhUD82ernqApueaDTmHNhVXyOMN9tOjbCcbD5Ial/T9X9Z
-	 YC2TYOfg+v1G6rxhLPBUmCWfhPptIlhJaiF32y1qB8Afhy3XtRk4MTcKJKYIvf7PuU
-	 phgrxfVmDrekw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wq9B35D0yz4x8Y;
-	Thu, 22 Aug 2024 14:26:03 +1000 (AEST)
-Date: Thu, 22 Aug 2024 14:26:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>
-Cc: Andrew Davis <afd@ti.com>, Hari Nagalla <hnagalla@ti.com>, Martyn Welch
- <martyn.welch@collabora.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the rpmsg tree
-Message-ID: <20240822142603.3608a26d@canb.auug.org.au>
+	s=arc-20240116; t=1724300815; c=relaxed/simple;
+	bh=vH1hkgrRUpB1Fxi+zqhCcwdl2caWcSsBMzt+Av44d8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FSgqwv+NzUa5YNyjLlKhQ5kvU1TwqbUWlEtj+8QkMu34785qwmaST0Ah98TvDTp/jAFj/4LFWZiZcQoKOiIpypSY+Ss0+vY9V/J2560sqXMYCvKPBsU0zoyD+xfYcOVokf3HBPod26W4rj7yvdX44DV/xN4QRewjVoGpEm4CAfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lrR6V68Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87CC6C4AF09;
+	Thu, 22 Aug 2024 04:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724300815;
+	bh=vH1hkgrRUpB1Fxi+zqhCcwdl2caWcSsBMzt+Av44d8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lrR6V68Z8TGghTu18GVdIYBnnYJuF6Y4AgCuC5UHChF2yXmeUGeckuea7LW+e9rkS
+	 ta7WlFoiZcX5QOndp2e16UjCVE4V9AEf/2+5ieqxWTtogySnjD3/vcBlSmZDmjXdro
+	 BggdDNNagVnfEf0Ix+s1pFWhf6lABC9rktij+kLc=
+Date: Thu, 22 Aug 2024 12:26:51 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Lei Liu <liulei.rjpt@vivo.com>
+Cc: Neal Liu <neal_liu@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Bin Liu <b-liu@ti.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH 2/5] usb: pxa27x_udc: Use devm_clk_get_enabled() helpers
+Message-ID: <2024082240-gallery-stinger-5901@gregkh>
+References: <20240821121048.31566-1-liulei.rjpt@vivo.com>
+ <20240821121048.31566-3-liulei.rjpt@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zxZe+7EeYfAOMKrcAz3ZX9D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821121048.31566-3-liulei.rjpt@vivo.com>
 
---Sig_/zxZe+7EeYfAOMKrcAz3ZX9D
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 21, 2024 at 08:10:40PM +0800, Lei Liu wrote:
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
+> 
+> This simplifies the code and avoids calls to clk_disable_unprepare().
+> 
+> Signed-off-by: Lei Liu <liulei.rjpt@vivo.com>
+> ---
+>  drivers/usb/gadget/udc/pxa27x_udc.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
+> index 1a6317e4b2a3..6e99e75f1acb 100644
+> --- a/drivers/usb/gadget/udc/pxa27x_udc.c
+> +++ b/drivers/usb/gadget/udc/pxa27x_udc.c
+> @@ -2398,14 +2398,10 @@ static int pxa_udc_probe(struct platform_device *pdev)
+>  	if (udc->gpiod)
+>  		gpiod_direction_output(udc->gpiod, 0);
+>  
+> -	udc->clk = devm_clk_get(&pdev->dev, NULL);
+> +	udc->clk = clk_prepare_enable(&pdev->dev, NULL);
 
-Hi all,
+You didn't test build this code :(
 
-After merging the rpmsg tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-  Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
-  Selected by [m]:
-  - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 || COMPILE_=
-TEST [=3Dy])
-
-Probably introduced by commit
-
-  ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsyst=
-em")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zxZe+7EeYfAOMKrcAz3ZX9D
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbGvdsACgkQAVBC80lX
-0Gx2Ywf+N1QlRG8Pjuedx9BheOXu3kXRmwalsCABwlxCsrKtQK4wNXqHMqZOgA5x
-t5xNlummSszChYyB+mLOaOgQB/OR/T7ElLF7LgEBqvGgCD5BtArsEJYbtSxh78+D
-oLdvvyaGB4pR8jYifSRvvpRntbcNoYBtx/R3Mnk3NwAKoPmF7Dc/IsJE17KZl27N
-qiTBfmsdw/TxQgNCTIkkhy7k9jG+Eq2hRK8dSTlVDt9/C+8MAlFKZu9H37+CKqSE
-ME+Llvy/fwk+jIxU1l/FP0mNXX5rDwdeBE3Kd7biFg3L9pkChblamCpZS1ni2VYu
-sch/pM4NhG0oL7+VpL21iTTYgqqNSQ==
-=4QJV
------END PGP SIGNATURE-----
-
---Sig_/zxZe+7EeYfAOMKrcAz3ZX9D--
 
