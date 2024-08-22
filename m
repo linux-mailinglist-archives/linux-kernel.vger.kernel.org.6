@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-297865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC80E95BEB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2915D95BEB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D992B230D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:15:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58CCD1C237C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5E31D0DC3;
-	Thu, 22 Aug 2024 19:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9574118EAB;
+	Thu, 22 Aug 2024 19:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPW2vXZ6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8HEkCZK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E731D04A8
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E101D0DDE
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724354142; cv=none; b=V9syqXSaGnJI2A4ObX2rIe4heGQJzonzOivP/P9DfHz8UN+7RAVjb8LuYkng3TcTa9FfZh6W7ArOtzj4bwXsCjeedYP2T8iPZkytkx+v40Ky9MZOfJ+v5S5P+NjWAACME/JsnCOqILpNBjwu+HYb5H+kdhn5QWQ2aVsIGikzrHA=
+	t=1724354143; cv=none; b=pAqffJuT30RNdsrLQqpmrioAyhxFyPAyBKISjTOXEz2wBHANj0/5VJChstFs9CGZ6+mTU0nAfeZ/hRGXlODxepPpzDr+ftwQ23cDePNGklNFMzJ3ufVqs4rvWuyKiFaYWE/P0H6+xxZUHih1jYN10mHxPd7f7a60pmUXmTlPpTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724354142; c=relaxed/simple;
-	bh=Gqu8IKz5ZDmSH1qLlC/PQjAsOLa/MoeoFtoKJgAk1OU=;
+	s=arc-20240116; t=1724354143; c=relaxed/simple;
+	bh=HqTvO4EXWR9m8S4knK2OhOF8g7vD7aNMIK2A6uNJAO8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SeICOzyP3EV0f7jLFqzB6WKGon6/cK09oR9/n/c4vp0MuAcaYLmFyV+WsJnlt0w7nfIaFVR5Q9yyCcmuZYyfUuIiJFd/R6wQ3+E5Q0PctIYH9FtvHbnwW2bE9jmKNSHiFqYMBHkqLEzTWvIY3k/3K3d3DJfOV3sNboEgIvh47FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPW2vXZ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8F0C4AF0B;
-	Thu, 22 Aug 2024 19:15:39 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=QQS/PeQNJv4RQ6ikEWJ3fK8Apj/g7f0cZ2hJvT918Wogq+TUdxeEBUvJN7Qv+80Sw6y4W2g/DoHicSlMAC+iIkn+Fuyq9R9kaT/aTT8UG9PoSsX/vyQwCCS8vOVyjIO1DSsLizcHng2mJnhXt5x52+2YAljDIAdxQ5mWQPGEHJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8HEkCZK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B2AC4AF12;
+	Thu, 22 Aug 2024 19:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724354141;
-	bh=Gqu8IKz5ZDmSH1qLlC/PQjAsOLa/MoeoFtoKJgAk1OU=;
+	s=k20201202; t=1724354143;
+	bh=HqTvO4EXWR9m8S4knK2OhOF8g7vD7aNMIK2A6uNJAO8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kPW2vXZ6T4WX6SqcSVvQ87sShPfOSoI3xRmeRX74DLMs9qD3/ERN716bUlNvLJbLr
-	 keuF0jio2tPcQXDawasMd4lbqUVeiojs2KnNGabvua3cBVUH89haltHTNbBamjRnms
-	 rx6sCuG0bGgV2774klnzMYZ1H6LhEgI1RBvRxVUzR15XOmAn0/vnPRXabJCcyvWqwz
-	 gPl1bix1AkeNi8qPG/yQIZxnw1rkRSPprIaXrklH8n+rLYbrSKWh0u00P1N4xtzZlN
-	 symNkSXDWJ0bWyVo5H1AxcxrTKW7fInileEOZ9eVq8l8ZHlpyoD4fHirU08zLT6s2L
-	 SCKB7rYyHT4Vg==
+	b=a8HEkCZKnKXnymobpVWtAm4avgezgATDH2uSDC/fqFclh/7AwmwSQiwL/dEuW3oY8
+	 3UtIQ2KUfb7EjB8W/WuyZ1z23awOIEarRePcINmkUSjh0DMtbnxMFpy1mBeAYinWpp
+	 8/NJeni7ZoxLfzbDVs9Dozm4WPgmsIsbhg1DsHRzea6PL3uTgtlsqTYPB/xZskTWOL
+	 OOdF7roGhhi2Mf+kQfp0I/ulmuL/rltSGxMaESwTnZYxzPTwohXwqkhi+vpzX0Da3a
+	 Hyw9GRXbwqrPQhY8FKARJjylxxTCVWjjzEfyl248uxNq7XROy2463GDs/ORWoPmys2
+	 cHIOQH+EYdfYg==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2024 20:13:35 +0100
-Subject: [PATCH 1/5] maple_tree: Allow external locks to be configured with
- their map
+Date: Thu, 22 Aug 2024 20:13:36 +0100
+Subject: [PATCH 2/5] regmap: Hold the regmap lock when allocating and
+ freeing the cache
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240822-b4-regmap-maple-nolock-v1-1-d5e6dbae3396@kernel.org>
+Message-Id: <20240822-b4-regmap-maple-nolock-v1-2-d5e6dbae3396@kernel.org>
 References: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
 In-Reply-To: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
 To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
@@ -60,46 +60,63 @@ Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
  maple-tree@lists.infradead.org, linux-mm@kvack.org, 
  linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1230; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Gqu8IKz5ZDmSH1qLlC/PQjAsOLa/MoeoFtoKJgAk1OU=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhrTjfWFP1/QxPVx18BDrR8NLM3vXH4uPO2je4NJyyy9G1
- 9nlG7tEJ6MRCwMjF4OsmCLL2mcZq9LDJbbOfzT/FcwgViaQKQxcnAIwkXvK7J/ZbVd+TOs9tNrn
- NYuW9dq1MxNdTXtOagm7KpxbXsdbK3ju2pKreZsUWSVjitr/hWlPsQ+2XPS5iSuz3uBasud3c9l
- 1D60lzV9/2mWzTETFxnnR1lU1Yt+s0iNjuPdE8G04WqI+4ZhmxW62HzLrZe/7RV2yYqy4V/Cg/K
- W9/88TGvy9mkd+qQvwRu7pKC1k6rtTva0iPdV7w1mHn5NOyk6NTlbpnRbgIX7FN1hQgo+TU+aqy
- calQrVf2ebdWyqr0nBrYQQXT8MWj2kG7ofXWXwpkOw4xec/R3PXPLZAhS38bDKBhQVPf9Qmsp7l
- 01WYIO46PU9jp9rZ4lIWjxfOHQs6KhhV9VTuCMw6dRgA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1507; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=HqTvO4EXWR9m8S4knK2OhOF8g7vD7aNMIK2A6uNJAO8=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmx45W7hwqN8635GlhniM9IzBeNxeV+mEbT9v4O
+ hPc/8CuTsWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZseOVgAKCRAk1otyXVSH
+ 0EOTB/wNrSyae31JmMwCaXdCreGvDhp2iBzo39oKF/d+fEx6wa5Bi1u3nZhgDhj/tZfP+nEjirv
+ WEJdY7o4yBWI4lu9+lSSF9w8sAfo7cmjmQJFGJYnqhBVBQOLtd57WU+unlf60Aj17RxD5VoO6U4
+ OvF75iSafkKRm5ADTxMPZMdjtKdtNeIwmxZiC9LvhLl4Bx+taoiodUVyIY0GGOtF7uT4joZQKdo
+ QYdy1bY44VKxvI13LI1MFNh6Z7iMxvD1ATfbRmA/dpjcCRDyb/qicbzJ+pO3moKGSIXhENto0cF
+ 4Mbmi9s3Sk1Kq85eRfgJLbtHlMEVPAIS9QjMOAybBqufyqJM
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Currently the maple tree code allows external locks to be configured by
-passing the lock itself. This is generally helpful and convenient but is
-not ideal for situations like the regmap maple tree cache where we support
-configurable locking at the regmap level and don't have the lock type when
-we are configuring the maple tree. Add a helper that allows us to pass the
-dep map directly to help with these situations. Since such code is already
-peering at the lockdep internals enough to be looking at the map no stub
-is provided.
+For the benefit of the maple tree's lockdep checking hold the lock while
+creating and exiting the cache.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/linux/maple_tree.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/base/regmap/regcache.c | 4 ++++
+ drivers/base/regmap/regmap.c   | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-index a53ad4dabd7e..bdc6b133abdc 100644
---- a/include/linux/maple_tree.h
-+++ b/include/linux/maple_tree.h
-@@ -193,6 +193,9 @@ typedef struct lockdep_map *lockdep_map_p;
- #define mt_set_external_lock(mt, lock)					\
- 	(mt)->ma_external_lock = &(lock)->dep_map
+diff --git a/drivers/base/regmap/regcache.c b/drivers/base/regmap/regcache.c
+index 7ec1ec605335..d3659ba3cc11 100644
+--- a/drivers/base/regmap/regcache.c
++++ b/drivers/base/regmap/regcache.c
+@@ -195,7 +195,9 @@ int regcache_init(struct regmap *map, const struct regmap_config *config)
+ 	if (map->cache_ops->init) {
+ 		dev_dbg(map->dev, "Initializing %s cache\n",
+ 			map->cache_ops->name);
++		map->lock(map->lock_arg);
+ 		ret = map->cache_ops->init(map);
++		map->unlock(map->lock_arg);
+ 		if (ret)
+ 			goto err_free;
+ 	}
+@@ -223,7 +225,9 @@ void regcache_exit(struct regmap *map)
+ 	if (map->cache_ops->exit) {
+ 		dev_dbg(map->dev, "Destroying %s cache\n",
+ 			map->cache_ops->name);
++		map->lock(map->lock_arg);
+ 		map->cache_ops->exit(map);
++		map->unlock(map->lock_arg);
+ 	}
+ }
  
-+#define mt_set_external_lock_dep_map(mt, dep_map)			\
-+	(mt)->ma_external_lock = dep_map
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index bfc6bc1eb3a4..9ed842d17642 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1445,6 +1445,7 @@ void regmap_exit(struct regmap *map)
+ 	struct regmap_async *async;
+ 
+ 	regcache_exit(map);
 +
- #define mt_on_stack(mt)			(mt).ma_external_lock = NULL
- #else
- typedef struct { /* nothing */ } lockdep_map_p;
+ 	regmap_debugfs_exit(map);
+ 	regmap_range_exit(map);
+ 	if (map->bus && map->bus->free_context)
 
 -- 
 2.39.2
