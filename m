@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-296952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D04195B105
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E977795B107
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FBFD1C215C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FEC41F22928
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBAB17B515;
-	Thu, 22 Aug 2024 08:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB67170A0F;
+	Thu, 22 Aug 2024 09:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mtGcUdh3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pYaYtlV+"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2AC16DEDF;
-	Thu, 22 Aug 2024 08:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD4E13B294
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724317190; cv=none; b=k9qvAHrr11U238p9CdBXg+TEc7Ad0Hi2ba4XA3vW4wBqBBFnp4Qph60/Uw2uwegyyzyIV3CUYHY15iHvzr2VIJAguxGT/TIPd60XfL0zrXe3/qr294yff0EX1fIw/DkZhR3KarruszcwBkGVUSgnLI+tWByTdvCsF3gh/8UoNxU=
+	t=1724317213; cv=none; b=r8S3skqzaek7EYlbfJ8KuDpO2h+B2uOEQc4PPukN48XLHtITT34q9UFcLfX2x87vs4RMIpVFpBxhBO/NNAYkPAyC7ZAbIeg+Oae0luD+B5i2Qjmzr0CMOkqhMt967mFpDKBbM1fLGe9uZBveyMUUtAdAxzp/X5LTjF9Tss0wfAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724317190; c=relaxed/simple;
-	bh=6fPHVZW9Wl5MBlZ31WLLPB+2/SdWlcpVd1n5Ao7R3D0=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=ShsQ2CP2/vfGVZFamh6mSq3EAZFghh9Vkze30c6R36cgemeTANZcOhQslVWS1uB2dhuwph2LKCjM3col4Rg3hNO52RjcXEY36C/OEssF2HSAVm9BMJwMzn11eCSuyQ/nmreFupKMnhZ8zHiV5//bTASmCQY6+d73YvmOnU89l0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mtGcUdh3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F545C4AF09;
-	Thu, 22 Aug 2024 08:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724317189;
-	bh=6fPHVZW9Wl5MBlZ31WLLPB+2/SdWlcpVd1n5Ao7R3D0=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=mtGcUdh3FeNAFmY6+9OYrE0l+cei2CTF7LHHhtjK2eR6jjh7Vcdi8g8MlRpb41CN7
-	 cZrtrKMsces6P865auobuLLB3sKlPdnGtM7MOcRWOGVfLwJjN+utXCOyNTNfbzjDb5
-	 HWm2fSHa7xy8YTOzNp9gqJPYplbc1Qcv7lgbPTAIeH+lZVZZ9LcWspbpXFl0jocSM6
-	 XzGQzkhMEGUTaB69+6zKn8aqtNdqSy3vGgQrxSgymZtGRB+vBWynMxJ8JyF2rtIz9w
-	 OU7up2fvbfWC5aXFYoFdUaNEpTtsMZWmNK6SE0fE7jzdwoM1bduonK8/l7Xle/7/ka
-	 Rj13DObKI6uAQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724317213; c=relaxed/simple;
+	bh=b3PxiCEc7kIl3DHgo4veoMD7JVbbi8m+YmaPJXhB+is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lzXpBMN9yVThG6YLpQ4NK1SEJNaye67T3QoYmukE8HiqiC9UKQxTK+mmLTWO96rpqh0o3Qw0NzE0uX1e4BLtNfg+1XBRqXvdAaWllfnB17d2sR1U76XyL3GMlXxWxwzqMytAv3IAjlZYd7hxqyZhhwrCsqMJd+FVsz6bQxeTY4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=pYaYtlV+; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e11693fbebaso605218276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724317211; x=1724922011; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b3PxiCEc7kIl3DHgo4veoMD7JVbbi8m+YmaPJXhB+is=;
+        b=pYaYtlV+ArtLg8ATQLngaU1OqUHKGDN6oJdJk/QyWXYOy+EdR31fFayoyz5NlYby6w
+         gLW6B0pME7mvf2k1+6ZJuB5sA31MhCGaIl1Omx6tqmsnM0Kn+0xGxKsq/iVNTC8C/zpG
+         oMl/hYXi4US6vdF1Ub78D8NKi8TMAwS0jzjII=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724317211; x=1724922011;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b3PxiCEc7kIl3DHgo4veoMD7JVbbi8m+YmaPJXhB+is=;
+        b=t/rH3dU8f9utehIQl2wotrFfGYnpjw2I36RSblcHvNCz3FwuhgUNpuzcPTUU24gO9M
+         CT41+o5yWTXaatj841wMSoYioY6fDP+s4UACdK2okZKQlCQdJVKqVlAuh4hszUeX+ErK
+         JeD86TquPLL1BMcCvWvDqQqiw8ULvY5OsBy7DsKB/CBGr5nb5e3ApLuiwUim1a9MldTZ
+         RJo0oj5eCTyeYeshY2JTkB+5w5KnrBPXhA60Jl5YPOzIJtei3obNYp0fL/GKXJqJbwaz
+         Gl01B3j2hxQfxYvHpRMI/Y4QGYtmPi2ZNxSbboT+W8Mz4beQiBuR5l4yYhKHVD0AtDGY
+         /d/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUtv3NUoZVsUkhQIfLQHPRha6abcIWdM5p9cos9Uk9zhMaICr0E0g5fywfwMjxsfok+Hph7T2VbxJn8LL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOWAdogh3elnOrZwNtRFijqJhjzzOYrsFCV1hXBP4T56PE+2lj
+	LwMRz7yaSb224ftEoOov3vCe6bZNm0a6mEHZQw/HfqAnH4AEMp5RNhk6YWZe/r3ukwSpqKdtDF9
+	37vDOQbRNKYaEqUQhVazDet+aFx7zmLkGl7LVog==
+X-Google-Smtp-Source: AGHT+IENrQPuEOtdP7yCOlOmyspu0EZ06NFvO4PhVy4yBweMHtPXhR1W9S02Ep9VQ62K8AA64Qsb89j+aX8DLHYlLMA=
+X-Received: by 2002:a05:6902:2b86:b0:e13:c773:68c2 with SMTP id
+ 3f1490d57ef6-e1665564fbdmr6272042276.51.1724317211154; Thu, 22 Aug 2024
+ 02:00:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v11 1/4] dt-bindings: net: wireless: brcm4329-fmac: add
- pci14e4,449d
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240816020635.1273911-2-jacobe.zang@wesion.com>
-References: <20240816020635.1273911-2-jacobe.zang@wesion.com>
-To: Jacobe Zang <jacobe.zang@wesion.com>
-Cc: arend.vanspriel@broadcom.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, saikrishnag@marvell.com, megi@xff.cz,
- bhelgaas@google.com, duoming@zju.edu.cn, minipli@grsecurity.net,
- yajun.deng@linux.dev, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
- christophe.jaillet@wanadoo.fr, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, Jacobe Zang <jacobe.zang@wesion.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172431718274.2217900.9766315386587933045.kvalo@kernel.org>
-Date: Thu, 22 Aug 2024 08:59:44 +0000 (UTC)
+References: <20240822012523.141846-1-vinicius.gomes@intel.com> <20240822012523.141846-17-vinicius.gomes@intel.com>
+In-Reply-To: <20240822012523.141846-17-vinicius.gomes@intel.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 10:59:58 +0200
+Message-ID: <CAJfpegt+M3RAQbWgfos=rk1iMu7CRhVS1Z5jHSHFpndTOb4Lgw@mail.gmail.com>
+Subject: Re: [PATCH v2 16/16] overlayfs: Remove ovl_override_creds_light()
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com, 
+	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Jacobe Zang <jacobe.zang@wesion.com> wrote:
+On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
+<vinicius.gomes@intel.com> wrote:
+>
+> Remove the declaration of this unsafe helper.
+>
+> As the GUARD() helper guarantees that the cleanup will run, it is less
+> error prone.
 
-> It's the device id used by AP6275P which is the Wi-Fi module
-> used by Rockchip's RK3588 evaluation board and also used in
-> some other RK3588 boards.
-> 
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+This statement is somewhat dubious.
 
-Fails to apply, please rebase on top of wireless-next.
+I suggest that unless and until the goto issue can be fixed the
+conversion to guards is postponed.
 
-Recorded preimage for 'drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c'
-Recorded preimage for 'drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c'
-error: Failed to merge in the changes.
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-Applying: wifi: brcmfmac: Add optional lpo clock enable support
-Using index info to reconstruct a base tree...
-M	drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-M	drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-M	drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-M	drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-M	drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-Falling back to patching base and 3-way merge...
-Auto-merging drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-Auto-merging drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-Auto-merging drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-Auto-merging drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-Auto-merging drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-Patch failed at 0001 wifi: brcmfmac: Add optional lpo clock enable support
-
-4 patches set to Changes Requested.
-
-13765357 [v11,1/4] dt-bindings: net: wireless: brcm4329-fmac: add pci14e4,449d
-13765358 [v11,2/4] dt-bindings: net: wireless: brcm4329-fmac: add clock description for AP6275P
-13765359 [v11,3/4] wifi: brcmfmac: Add optional lpo clock enable support
-13765360 [v11,4/4] wifi: brcmfmac: add flag for random seed during firmware download
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240816020635.1273911-2-jacobe.zang@wesion.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Thanks,
+Miklos
 
