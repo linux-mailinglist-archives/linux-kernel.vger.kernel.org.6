@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-296546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7FB95ABEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:32:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB5095ABEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9871C20EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:32:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252431F21EDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40E51D556;
-	Thu, 22 Aug 2024 03:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79AF208AD;
+	Thu, 22 Aug 2024 03:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTUKwrig"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mw7E9hcz"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0931BC39;
-	Thu, 22 Aug 2024 03:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58041CAB9;
+	Thu, 22 Aug 2024 03:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724297533; cv=none; b=eH5TL2Fnpk/DA82lUK8HkMeMJeCyLNbtD03Xf2PTCQlzM1um6ZnLQrHtXpEdSaV7xAcDCePi09I5i2dmsc0VNAB+93xBfSN3o2wj2xFl0mW03Vc4VGST37orTM20qS5PAJgrw/Ljfqu+7WCpQwkS8+kGH4iT7JjaxpxtshCOO9o=
+	t=1724297575; cv=none; b=L8I1mR8tSSYopmvz2VYwynb6YJ3Ya9EtArgWfLR/9R+DIeEPdn8ZHv5xkzacA3N1CqNEWKkdz9FvZzyq8wnv+cd0Yi+16G4DRS3A6x3HOwLst3LNOmh0LjmWI8R/0X+GuTN7o8TA34JNVqwUVdTwglvA8g7e5qVa+hiA6z+GZnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724297533; c=relaxed/simple;
-	bh=EUR9oo2bOuT8CZglnOhT9XwulidBfPQJemFZwLJ8lIQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mBRHN3vyRInHEuhsvRFHzSjqW1Hn6rHmRoyH7FQ6+4ksG6fBPtXo1Jfj8lB7GCBfGtecnEAY4FJKEu/CA7yQiEWJN1u+aUVRDUe4VjN73Y1nHuW9RbUoiyjPbHfVLnmwUCAKnsNskDdVd5y5FoQNqXElU+PfABJ7jymxn0wk/2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTUKwrig; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562F9C4AF09;
-	Thu, 22 Aug 2024 03:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724297532;
-	bh=EUR9oo2bOuT8CZglnOhT9XwulidBfPQJemFZwLJ8lIQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DTUKwrigV+YgcDIMbKDEm9Ty3d/Fn5MQIDnW5D1v/J41f4yPWrk4t3DNP+bDZ/4M4
-	 8OV9BJmuKmNRNMvDxOiRKWc1ZgsY8QagxXr6t6kn+iJUsFrrE55Fm6vzdMpHNh1uqY
-	 lZohaPsRYfRFZzX8povg3J8rg7N366nF99+4XTBDBMSOmZzY/v2mGvZbaab9Pr0syS
-	 uiwYWTVrlGZrChyUnzAKXb8p4rPNxc1NS9TCzi4u8kkow8wzfkz3OLUhOtbKZOf0n2
-	 Et355enqRwY1Cz3wtgTWxOTVHeVbS72vjBv0auJkEGt3RRrPpavkcnf83hBDGZPqH2
-	 ZtOV+cnMyxOiA==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v4 21/43] arm64: RME: Runtime faulting of memory
-In-Reply-To: <20240821153844.60084-22-steven.price@arm.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-22-steven.price@arm.com>
-Date: Thu, 22 Aug 2024 09:02:00 +0530
-Message-ID: <yq5afrqx2pxr.fsf@kernel.org>
+	s=arc-20240116; t=1724297575; c=relaxed/simple;
+	bh=FwlmxzgNNsXV1CHaYSFMIgNpOIJtze9CdHh9q/2DSgM=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=J0gNOvMLkr6ZxuhxzkHf0fCJ3T/LYT0DZhrysG7NAOEaOwkW2+aZt31ykz8CiN2hJLthi5tIzvGL1D5T6kUa79SdbaLcPvO/xolTUw5HXaLoVWTvk/HgpTaYMxj93lyd8vO3om+LJ7WBcRMzjwVsUEKUpxIHhUTOQVHm36NEOJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mw7E9hcz; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2021c03c13aso2513285ad.1;
+        Wed, 21 Aug 2024 20:32:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724297573; x=1724902373; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JsdM0828MfQOpBE/mASYHCli1q07G8PE7B75VM5BRRY=;
+        b=Mw7E9hcznfYp45t4DVFL7V5n6H+MFp4BXs6yjNVbCgAFvAr2vhaIzzxFzkVpA35TqT
+         fsX+gL2TO6D+SpYL829ZMsD15zPU0tYepqco0Ds0kHsMmmTJIoj6HuveeotgQRTxK54k
+         53aYvAk40Pphme9DWoJBzOc/pTQN9T1X2PU5moNJeueBWFno69MUQAgjsvNmyDkNsLsq
+         7JS10igrn+TqWwNe0SHoeZ5U+E/hrprHuIrTuayEeAOxti7lUR+T2/IumSxOcWq4hws2
+         m+ZBxXq/pFP5NYkDK6DtvOucTrAqrWTYfX1WN8ni9FuISf+wOgai4B3r32iFLPnCft+l
+         Gh6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724297573; x=1724902373;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JsdM0828MfQOpBE/mASYHCli1q07G8PE7B75VM5BRRY=;
+        b=Lzm81Mn7ea6raIuPlwdF8R/z1lcOIpj34kpkoYob+mFVDy/56MLndZOBoW8iehQsFm
+         3/xYA6W58NyUK2HawDRAvFME6R+lnSQwSkLIHY4FYkL0l22PX5Dod3JFnmXsBDUMorW3
+         6csjojmYeg5LqyDjl1c3NCZmu4adSDFWUGCkmJc8segkuPwEmCUT2UxKsLAV/vdZL5vj
+         FAowp5C2S0J2BbJF4dJvxicUgyJ0rMdZGV0Bw4PMDkjZhVQGJ3b5p9NZ81+jmaTtYAg2
+         Qb0s80eyRGqPNH+Rw9FlhDO5F6zQ75uryZknqmp7Ga4MopIN0FVnpFs3A2q2FmzgQ1mg
+         eMow==
+X-Forwarded-Encrypted: i=1; AJvYcCXfj+ySKzNkg3gH5o0NmXnCj12pIPoX0B+WqVeWKXBlEZ7ubucKkk5UaYPune5ctkZMSt78jik+@vger.kernel.org, AJvYcCXoPS7mUnkwGfMxYi9gTSihUMfyKtB+ch4QbJTrJOZspLVG/BglXOh9y1HYYWRnkCtwMVU0VX7eQ+Mmp7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCq5dEG47tqgx+LSdNP0WPtyjx964uSdakUZPvL2+Wb4JYsu1x
+	ceB+nAIIgRFWPoolI3XxvD8J2h7CgmSMIG0SqfJkniiStpku7BgBnFTk8FwKiY0=
+X-Google-Smtp-Source: AGHT+IHu2+Ak0Mb+Bwigr8bEWAHyxnvGBhnxMZ02OWwWSVSxNRBgFwudGO6lFR5bbRv7jRHMexRIgQ==
+X-Received: by 2002:a17:903:2310:b0:1f9:d6bf:a67c with SMTP id d9443c01a7336-2037ef230afmr25768785ad.5.1724297572738;
+        Wed, 21 Aug 2024 20:32:52 -0700 (PDT)
+Received: from localhost.localdomain ([58.18.89.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dd2e8sm3122885ad.121.2024.08.21.20.32.49
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 21 Aug 2024 20:32:52 -0700 (PDT)
+From: Xi Huang <xuiagnh@gmail.com>
+To: madalin.bucur@nxp.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xuiagnh@gmail.com
+Subject: [PATCH] net: dpaa:reduce number of synchronize_net() calls
+Date: Thu, 22 Aug 2024 11:32:43 +0800
+Message-Id: <20240822033243.38443-1-xuiagnh@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Steven Price <steven.price@arm.com> writes:
+In the function dpaa_napi_del(), we execute the netif_napi_del()
+for each cpu, which is actually a high overhead operation
+because each call to netif_napi_del() contains a synchronize_net(),
+i.e. an RCU operation. In fact, it is only necessary to call
+ __netif_napi_del and use synchronize_net() once outside of the loop.
+like commit 2543a6000e,5198d545db. here is the function definition:
+ static inline void netif_napi_del(struct napi_struct * napi)
+{
+	__netif_napi_del(napi).
+	synchronize_net();
+}
 
-> At runtime if the realm guest accesses memory which hasn't yet been
-> mapped then KVM needs to either populate the region or fault the guest.
->
-> For memory in the lower (protected) region of IPA a fresh page is
-> provided to the RMM which will zero the contents. For memory in the
-> upper (shared) region of IPA, the memory from the memslot is mapped
-> into the realm VM non secure.
->
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v2:
->  * Avoid leaking memory if failing to map it in the realm.
->  * Correctly mask RTT based on LPA2 flag (see rtt_get_phys()).
->  * Adapt to changes in previous patches.
->
+Signed-off-by: Xi Huang <xuiagnh@gmail.com>
+---
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-....
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index cfe6b57b1..5d99cfb4e 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -3156,8 +3156,9 @@ static void dpaa_napi_del(struct net_device *net_dev)
+ 	for_each_possible_cpu(cpu) {
+ 		percpu_priv = per_cpu_ptr(priv->percpu_priv, cpu);
+ 
+-		netif_napi_del(&percpu_priv->np.napi);
++		__netif_napi_del(&percpu_priv->np.napi);
+ 	}
++	synchronize_net();
+ }
+ 
+ static inline void dpaa_bp_free_pf(const struct dpaa_bp *bp,
+-- 
+2.34.1
 
-> -	gfn = ipa >> PAGE_SHIFT;
-> +	gfn = (ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
->  	memslot = gfn_to_memslot(vcpu->kvm, gfn);
-> +
-> +	if (kvm_slot_can_be_private(memslot)) {
-> +		ret = private_memslot_fault(vcpu, fault_ipa, memslot);
-> +		if (ret != -EAGAIN)
-> +			goto out;
-> +	}
->
-
-Shouldn't this be s/fault_ipa/ipa ?
-
-	ret = private_memslot_fault(vcpu, ipa, memslot);
-
--aneesh
 
