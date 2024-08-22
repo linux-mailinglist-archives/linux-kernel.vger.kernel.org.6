@@ -1,80 +1,91 @@
-Return-Path: <linux-kernel+bounces-297196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E8E95B461
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC3A95B466
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05381C22EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFFC41C22D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C671C943A;
-	Thu, 22 Aug 2024 11:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C7B1C9433;
+	Thu, 22 Aug 2024 11:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIMzc0OL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgzm8CKw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E396E1C93C9;
-	Thu, 22 Aug 2024 11:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D752513A244;
+	Thu, 22 Aug 2024 11:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724327844; cv=none; b=RpSZl0PcI3tz0ldCnaoj/iHGd3SXqgy2+QNAT91DuwcqsQFhYYgP4U3F+w/m7zGVWZ7cEBDux60+mcYDN5BkTmVtXdOppgB8e1AGLkTMM9ptZX2G65R5rp7Jly2uXtTtaiIxiq0OnDnN7nCImCSx7H5F8kt4bMJq7e3mDNexP50=
+	t=1724327941; cv=none; b=DMlG54jJWRYkO0CQGY9DEhVAe6sKbMY33Rs9vD3ptxJQ0myeXijaSBoXaFTfcdurJHczQ93N3tM7uB6RZbR4yyQw5rwdsq5RGFij0ztrkDoQ5ONT7uxy8F2ivkFCrjYDxpwQ20P+y6p1zDgYduCfX0vcPD1J+9L9XZnDdRkJq4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724327844; c=relaxed/simple;
-	bh=VElb2Qz/eI+LBiQfx0tJ7SZXVYDEbkmfxSrb8TLhlDE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Gm/x+Q/XrxhKvn112YTnzdzbbPZfnyy6nxYvDLKtK57LzrluvZP+IGzRFx3HyZ1MRn6QZU+dDJb6shjGX1i59g370GrjWMmf4tWPOyzbRQ7qCnhnalLwgjqxLbod27V7O+Jc/+wuIv5sEEevB6rmvnIFVCVQZ98Vlx5E6shQ8yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIMzc0OL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664E4C4AF0B;
-	Thu, 22 Aug 2024 11:57:23 +0000 (UTC)
+	s=arc-20240116; t=1724327941; c=relaxed/simple;
+	bh=4lHN5lEMvuoeTv53bj0M8/Wg05l7rzeFzFkqTpzgu7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R5b0ooceUqw1F2dU3o31XESfGpeEtPyib4r7ogofTYub69bV1TZVpE5lU6ufo7eprYy+ANK1YxQMsBCTaCgzcNS7Gcbd8/y/2Li3VQfh6uozRI6zWI1QasrWzWHHx9Kxxx5/Jv+6H9JFl+DDAxVTs5TPT/U4zKj8+gZgS5EL6lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgzm8CKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F83C4AF0E;
+	Thu, 22 Aug 2024 11:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724327843;
-	bh=VElb2Qz/eI+LBiQfx0tJ7SZXVYDEbkmfxSrb8TLhlDE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=VIMzc0OLHqoRjD9RGMhNRukWiJ3Xbyjnt+Bw9/S1/XiOgjIQfAxxQW+7wHr2gMVcJ
-	 4jg4s2WFgq7BXlOQxKgDKHhllAt3Hl5RYoBvZdozSx/yG9fyXczYHL/6Slxy4FdXnD
-	 5ohBL/DR17aFKOPBKMCVBc8UBPLrlLpN9XcmaK65oxk/1n9+/xa5TUWs+0kY7HxQr6
-	 ttaCdup0mUuf4Bcnjmddc+fKN0lWjjZfnpydpnmZlOZCPhJyEJoVjUY/MKwB1H4QmX
-	 9RgdZ8fTvNhanbDFubxyiODSASMetT7g9FRUfwbXaAXTttV6gAFfdbGa8tjAz02vUn
-	 OtAcSeZhVKpXQ==
-Date: Thu, 22 Aug 2024 13:57:21 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Stuart <stuart.a.hayhurst@gmail.com>
-cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-    Markus Elfring <Markus.Elfring@web.de>, linux-input@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Benjamin Tissoires <bentiss@kernel.org>
-Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
-In-Reply-To: <CALTg27nmNR=AXg=Ku_nXtwFQLxMypdbK4_Bu9CruB=vEDzxZoA@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.2408221355360.12664@cbobk.fhfr.pm>
-References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com> <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de> <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com> <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
- <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com> <f0aa2ca0-6256-48e4-8d2a-dfd5da072ad4@web.de> <78b667fa-8e54-4023-9187-4ecb999d3c01@wanadoo.fr> <CALTg27nmNR=AXg=Ku_nXtwFQLxMypdbK4_Bu9CruB=vEDzxZoA@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1724327941;
+	bh=4lHN5lEMvuoeTv53bj0M8/Wg05l7rzeFzFkqTpzgu7M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mgzm8CKwF1MsMXExrViHYzD21Y/PdTMpJkTLyyno1yVIa3zZuuu2LdSNlNApHKE9A
+	 q0NaVyis6GjyTnZzqtGseCyUcDJMoXpBpFzH8LIVxokBb89sxuLCocZI1Q86+Q/cx4
+	 u96iKr8l5wI0EcmwUmZGL9DgTBdsIcjd4xLoeQv0Wlb0t6mLP152AW1UnbbvrqJ/CX
+	 aZUimgF2NLXYa77StMMZ0Y+/AvkC8VuvDSA5LXaMZIWut7JhRh+HfC/p76wybH25Cz
+	 E9HgFkiRC2yxRk3GzcxMY7ZKwZ/GIpHFjRy95hM7Er0bEgakDlXg0wvg6MPNf/tXkm
+	 Hsml8sHeNVWXw==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2701a521f63so422223fac.0;
+        Thu, 22 Aug 2024 04:59:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYgddhvvd/x0j7mz0xJByH+/Pg8+i/SUgaDSLpN1gMjwlTMrDQF1W9gjlUBV9ciDRw9rkWTKSIn6MhFDbg@vger.kernel.org, AJvYcCVn93EsgKMFEcA7zbJ9OzEBQ7NPN/FF0PGNDYnFUo2Pj5KnaD+7VQavHRgcZdI8YCDvb/gku3gtpxgk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqOe/35FlSbGAw9gBfxT7ATEe1GSXUij8AW+H+1eW4sxwZ7xFB
+	2KX7MriEM7RmV0uouxbi71Tt1+/H1gYGMaaN33VtXo6icgng04MZF2Kog+OsE+daG645/fubJc7
+	BkoX+Ql2uXy8Dv4ia/GB2Kvq0sXI=
+X-Google-Smtp-Source: AGHT+IGa00mK6cJxqN5lGlzZQmZlmhCZ3QjPn+IQ1DOH4fzQrrwdrJSbqtjVdVS4ZUcLWG/IHAHoE7+6QJoFqdPpO/E=
+X-Received: by 2002:a05:6870:2116:b0:261:1342:26b1 with SMTP id
+ 586e51a60fabf-2738be908e3mr5179101fac.48.1724327940842; Thu, 22 Aug 2024
+ 04:59:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240822082101.391272-1-chenxiaosong@chenxiaosong.com> <20240822082101.391272-10-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20240822082101.391272-10-chenxiaosong@chenxiaosong.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 22 Aug 2024 20:58:49 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9ynmBr=xcTxUh-PC7x=_DGqvGme8u6nZxj9D9FZWw9WQ@mail.gmail.com>
+Message-ID: <CAKYAXd9ynmBr=xcTxUh-PC7x=_DGqvGme8u6nZxj9D9FZWw9WQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] smb/client: rename cifs_ace to smb_ace
+To: chenxiaosong@chenxiaosong.com
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
+	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
+	liuyun01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 22 Aug 2024, Stuart wrote:
-
-> > If I recollect correctly, there may be an alignment issue and just using
-> > the stack is not enough to guaranty what is needed.
-> 
-> I can't find any reference to issues with it, I'm not sure what I saw before.
-> Also, it seems like the hid-asus driver is using it:
-> https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/hid/hid-asus.c#L391
-
-You can't do DMA from stack; see section "What memory is DMA'able?" of 
-Documentation/core-api/dma-api-howto.rst
-
--- 
-Jiri Kosina
-SUSE Labs
-
+On Thu, Aug 22, 2024 at 5:23=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wro=
+te:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> Preparation for moving acl definitions to new common header file.
+>
+> Use the following shell command to rename:
+>
+>   find fs/smb/client -type f -exec sed -i \
+>     's/struct cifs_ace/struct smb_ace/g' {} +
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Looks good to me.
+Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
+Thanks.
 
