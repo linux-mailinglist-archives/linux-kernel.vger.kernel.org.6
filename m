@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-297991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBED95C01C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:13:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7E895C028
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0661284CA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:13:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13AC4B24583
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEAD1D1743;
-	Thu, 22 Aug 2024 21:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA3D1D174F;
+	Thu, 22 Aug 2024 21:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIdAJoFK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="Ey+uSNBz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33912AD00;
-	Thu, 22 Aug 2024 21:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724361219; cv=none; b=rnXXwTpPEedj9sdzkBZGMq2pJoTBBzxevCWiZb6GcBfAa58lFs/gV0KYZgYQantfPIJ6DcNs5i7v8gVPwJeeIStQrlO7Z+9wwyfASZM0n4evIc/rLwVApAsTZeUDnW6m+1WfynST/Ph+hWYD0ufEOT/f/Km4xN94V7TqzH/P0LI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724361219; c=relaxed/simple;
-	bh=mTBgG3Ma68htfIo38K+TfYoh4pQFiUyFdbvudorGaXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=cuJc9GCBEc6S/60/aFqDzc7T3jfW0d8n/9ESSHLOOAUJiCk2MbvQUVnEERX0KugHNoHpWIjgh8iwDaUEMhag1ACrrlPX1TZOyzHJxQeBuLCjIv6r39vZyjt+fU69HANpkwPTFROK/HeVDzhy0rg4bjTKsojWS5NSRKsjuFoMHDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIdAJoFK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1A7C32782;
-	Thu, 22 Aug 2024 21:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724361218;
-	bh=mTBgG3Ma68htfIo38K+TfYoh4pQFiUyFdbvudorGaXQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=UIdAJoFKyUrY6k1SVSCNgFxRcKhr3Q5ZDOWajIilSTCXlT83kTV/nykP+UuimYLyE
-	 zOS7U9Q+s4Y+p3Y2PGIkYlwlx7sW51ny40FP0cLIFpSWYJ7Ynvo665hiRLShDnx1ht
-	 b76D3im0Ef+MHz9z2s/X2om/rqCkbXq75YG9OCzClVuT9vIzo0Ar9NepkWq3KYFRaI
-	 5PZG1XbgvQ1fCRvBuXiMbVZkTxy0KX6gdlqaFEhodtlPZI8swE3dFYrnz58DvkTApW
-	 G/Mz1rtdZXG0wp9fIC2KMjzg6BsOh1FqG+VyHcNtzRvSE3dAahQE3yBcr8PVA+EEsj
-	 OVgolAFc7OkgQ==
-Date: Thu, 22 Aug 2024 16:13:36 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A7B13B787;
+	Thu, 22 Aug 2024 21:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724361890; cv=pass; b=jytkarap2xOaUPK4oOpxkked2Mv5p9WBc1FxviFmqUU/JvsZ1bJZ0m0qAvdzisk3jLLfP+9WKbCSPkLCf+sxLRkn1zdaiZh4K2waNASgARx8X6nprjCXuSjEVtpydFRUIe9vU70Xj2rCCPsEq3hb6SzfTo5eeA8GE/Adcw3uZmk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724361890; c=relaxed/simple;
+	bh=ICrnL6rDq0KFDlmlNTnM4OhsZ7ZcyyXWbCLjl+lj6so=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dHRFJAcZvUKmqF8zM/k7/OCxXf3ZEOmazBfYSXqi9HkMz8nruyZFME9mRngYoEslOQ1VApnnRF2lyVdmu2LL03eSFYmt0bs0DW7AbEHHYRoRTITGtyzAVhne1UWEklxFI99TpJzMDoNqI8wftJGDO1NS3d+q9nwk3uXQRttCa18=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=Ey+uSNBz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724361874; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KsM/Aicte0O3wbRU8ZNhz2ZFlBGDMpKJoZX4khZuNwD3U/jw3hqtiL5dsaqXgsSiYmwjYHRahPcKdZojqK1sbYxPmKw1cMtAEE4a09PHFnkA82WQEc7el7muV53UALF0Tpf0fGMeRKsP0Ag73s50bU8wlbtUitp3Cg9ouGtGCFU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724361874; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=U3Q3VhQHQ/S9J4oJ9vFhburznxZd296yZsat0qO4gXc=; 
+	b=UdIyT4Ou7NvPvreAmHMyM2rqqXPugld3M6IdgVBHvykuu6b1s71jLEsPmHj4U+mLXxsUtqmrLwF00aJYISHwoREXIwPbqDVSsHHfyaUxGB5h2Oq3UwEaTS8hEXNwHA7GfSPfPBmcJXjUDsyX8jafJZnQl9YlcWUmUbb/ePHntUI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724361874;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=U3Q3VhQHQ/S9J4oJ9vFhburznxZd296yZsat0qO4gXc=;
+	b=Ey+uSNBzyRG7LwVYhuEFHyc4TMMzy4swFeKVLDMDya2BIPsJ6lXOe/wjNllwp8Nf
+	NoKijpDz4SgS8nTvwDTQ+3jHXDSB/XPVcKJ8V3+RYdX6h5t5xYsEkrBM3YLuYHvy37F
+	ngmt+04DTVWBRUDODPFnNmB5yle91ptvtdwRMEBs=
+Received: by mx.zohomail.com with SMTPS id 1724361873146805.6918577651234;
+	Thu, 22 Aug 2024 14:24:33 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	andersson@kernel.org, quic_vbadigan@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 4/8] PCI: Change the parent to correctly represent
- pcie hierarchy
-Message-ID: <20240822211336.GA349622@bhelgaas>
+	Heiko Stuebner <heiko@sntech.de>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v4 0/4] Add dw_mmc support for rk3576
+Date: Thu, 22 Aug 2024 17:15:30 -0400
+Message-ID: <20240822212418.982927-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mcrrhagqykg6eXXkVJ2dYAm5ViLtwL=VKTn8i72UY12Zg@mail.gmail.com>
+X-ZohoMailClient: External
 
-On Thu, Aug 22, 2024 at 10:01:04PM +0200, Bartosz Golaszewski wrote:
-> On Thu, Aug 22, 2024 at 9:28 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> >
-> > On Tue, Aug 13, 2024 at 09:15:06PM +0200, Bartosz Golaszewski wrote:
-> > > On Sat, Aug 3, 2024 at 5:23 AM Krishna chaitanya chundru
-> > > <quic_krichai@quicinc.com> wrote:
-> > > >
-> > > > Currently the pwrctl driver is child of pci-pci bridge driver,
-> > > > this will cause issue when suspend resume is introduced in the pwr
-> > > > control driver. If the supply is removed to the endpoint in the
-> > > > power control driver then the config space access by the
-> > > > pci-pci bridge driver can cause issues like Timeouts.
-> > > >
-> > > > For this reason change the parent to controller from pci-pci bridge.
-> > > >
-> > > > Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-> > > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > > > ---
-> > >
-> > > Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > Bjorn,
-> > >
-> > > I think this should go into v6.11 as it does indeed better represent
-> > > the underlying logic.
-> >
-> > Is this patch independent of the rest?  I don't think the whole series
-> > looks like v6.11 material, but if this patch can be applied
-> > independently, *and* we can make a case in the commit log for why it
-> > is v6.11 material, we can do that.
-> >
-> > Right now the commit log doesn't tell me enough to justify a
-> > post-merge window change.
-> 
-> Please, apply this patch independently. FYI I have a WiP branch[1]
-> with a v3 of the fixes series rebased on top of this one. Manivannan
-> and I are working on fixing one last remaining issue and I'll resend
-> it. This should go into v6.11.
+The SD card controller on the rk3576 SoC stores the phase settings into
+the dw_mmc controller, so the code has to be adapted to implement that.
 
-OK.  I just need to be able to justify *why* we need it in v6.11, so I
-can apply it as soon as somebody supplies that kind of text for the
-commit log.  I.e., what is broken without this change?  What bad
-things happen if we defer it to v6.12?
+Although the feature can be detected through the USRID register value, the
+decision to use it is based on the compatible.
 
-> [1] https://git.codelinaro.org/bartosz_golaszewski/linux/-/tree/topic/pci-pwrctl-fixes
+The compatible for rk3576 is added in its own group of compatible to mark
+that all devices compatible with rk3576 have internal phase settings and
+don't have the ciu-drive and ciu-sample clocks.
+
+Changes since v3:
+- Remove internal phase auto detection
+- Set compatible in own block, with own dt_parse function
+- Add internal_phase variable
+- Use function to set clock parameters based on internal_phase variable
+  instead of multiple ifs
+- Use different commit for skipping phases higher than 270
+
+Changes since v2:
+- Drop rockchip,v2-tuning and use compatible-based detection
+- Fix coding style
+
+Changes since v1:
+- Renamed use-v2-tuning to v2-tuning
+- Rewrite v2-tuning description as the hardware feature
+
+Detlev.
+
+Detlev Casanova (2):
+  dt-bindings: mmc: Add support for rk3576 dw-mshc
+  mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
+
+Shawn Lin (2):
+  mmc: dw_mmc-rockchip: Add internal phase support
+  mmc: dw_mmc-rockchip: Skip all phases bigger than 270 degrees
+
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |   2 +
+ drivers/mmc/host/dw_mmc-rockchip.c            | 220 ++++++++++++++++--
+ 2 files changed, 207 insertions(+), 15 deletions(-)
+
+-- 
+2.46.0
+
 
