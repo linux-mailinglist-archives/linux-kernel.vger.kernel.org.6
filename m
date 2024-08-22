@@ -1,237 +1,392 @@
-Return-Path: <linux-kernel+bounces-296907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364A895B072
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:32:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4E795B09F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 897AAB21CA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C16285E15
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F5816EB55;
-	Thu, 22 Aug 2024 08:32:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A559B17D35B;
+	Thu, 22 Aug 2024 08:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b="MaBD9W4R"
+Received: from sender4-of-o55.zoho.com (sender4-of-o55.zoho.com [136.143.188.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7EF502BE
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315549; cv=none; b=g32QgQe5vUetXwbTKaMNuiH06C2ojlpnqav2TaGg3J5Cw+oMfNOhYmk2P31DxM0DHaceztiv2G0bStE0UVf1jgUYUBnWDeWWAJrUdocbEUpZ9I03Rc+t+CpEU42DTTblEZXK/R5YMzLMDu++b+s43rtYmGU1DsuNa6biOTx3WYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315549; c=relaxed/simple;
-	bh=PhwET8MorGmV9omtIqma82cZcOadVe7K1vfr7Oy1XHE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nLGGvtydkG9r9hY8cJKbcabpIYB1lc4i+8BOO/8A6avg/wtgnsFb/8HVf8QoWds5CIP+Z+f/aCukQpygPCsbRoi/WF6TOiZtqoth8BC3zpm/wgEbYTsOHJ/QuQEQWNx3w7KQOLvQg43T2NOgD+mlxFQ30xpJd3fnoH6zuX/evfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d2044b532so4752785ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:32:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724315547; x=1724920347;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K1clqBl0c8o8uNY4gpe2BS0a6L+cXSYWbuSVqKy3PZQ=;
-        b=Jmj2CBqhUzL3ZaiGGHexErO6DBnKjhXUrDcRmOqEVgowf4OH7y3GKsTjqESR0q7xGS
-         2lnyqVydOaITWy530LGeAobXE1+/si098ZbFqgZQj2eFqHWoYHPj81gTGj8qH03eWeE4
-         Sj7HKlw2Y6WaxorpenyNLJy9InptFVpySpeYmbcxOd8qgMGgxM5l7+pLuze6xDb2ltZu
-         oYIBBMI23CByj++LnDyi4JtiaTj1uI6v72M09Sxxb3ja6D//+2ohjP9gBi8wSmkpe0Sv
-         kWAmIBmlnhFOsFGLueJPeABLKb7uEDhds87KVAazvwSoWPxRhe/wihlNEu1F15/FKNXh
-         3k1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXVpT2m0xeKDIuJO2Y9utioRl452iKsUs67n0EnV6qDUJWUJ7ThwXkBvd8SqpXpegaVzXZNG3diOsPzHu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR5qAqZgvSxjl9HBxumuTAuO2qLXcWaPy4sDQLdebgqAwAs/4q
-	KpM4RW976nNkmkFQhKMTbt/BYE3xjqHWDMFofeXYR16cx77Xa/bjet9Tw0S9AWLFG6yRE5V1tn0
-	VHLzuEezhxlD+Fw0QNpFvM1cDolzQMUoQZxKZgaRnsW74u1m0e2c39cA=
-X-Google-Smtp-Source: AGHT+IF/1gaKHJrgKi3x5LpxoIrQNpEryF7V9g0HW3NQA8/F3WLctv6nsIveMaLzTf5MXmATNd+2WDwiynGP1sgtHYwDH/jvLecC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D794B17CA03;
+	Thu, 22 Aug 2024 08:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724315620; cv=pass; b=meYm4duJTeZRqYYuPo0S8Y7Oeug4R3M5QtoZ6F0dFMGnY0Rjh92itrgtSbCw10l88sblRQJkmcwtO/IGJz64UE6OEVVIeqJx91vxu1FUHkC26mW3HDq+qAFJRfMmbEts5qVTPHv8B6WMwuiMWhDlgGae8MOxBJAS4G8cCPnzugA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724315620; c=relaxed/simple;
+	bh=hHGCUtUaTPhxfLgE4Cw9O/MYQqKVunKbuzQC3CfdY30=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uj2ch2anzP1uoZd/FrFCbhuQXzQZs3BUOHmmuFlVMIVhTdinEE2iMyycSr4FSQer87w5Yq3TKodpVAkS33BG54Mq4DNpCaAwz8TKbb1QFmSOI1cP24hRTVMJlmWAxFlcnjPalsLKSLX5Xg3+w3tmhbWmV3f0q8DwlFp2I67IhIY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz; spf=pass smtp.mailfrom=jevklidu.cz; dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b=MaBD9W4R; arc=pass smtp.client-ip=136.143.188.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jevklidu.cz
+ARC-Seal: i=1; a=rsa-sha256; t=1724315600; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GhKmdIuSFqdOJgJaC9epo7uH2lPVgIq3sTLjkfwPs/kqbmkeBBu8I95TCw65+HoWUnReQq05jOnIyeQ+8wBBmn/6QZHrs/4b7UujOIv2Oq/EmoJeny8CDMBI0OyyoeCeF0z7HZS9rEH0jXVp6YfUesVb8XFc1IL1RnEdaQswdfc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724315600; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=u2xe4iZmScZzyrrYEx2M4UEquQ1gVjFlwQGH+JO6v0Q=; 
+	b=HS84Jl9vJhGVoALvm+gDG46WxA3HCWuFlEcYTlN6GMili6yMLhCQLda9/xbjuYGhRI+neZpZEG/7+h4QJt0PCDNV0lEtVBMI1S1n2uoWuBcHi88O5U1Td+gH29FBdPZoUVSRMAwdMqzDII8QHK7Vv7FhljFbc8LHk6qfD7/UAvM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=jevklidu.cz;
+	spf=pass  smtp.mailfrom=petr@jevklidu.cz;
+	dmarc=pass header.from=<petr@jevklidu.cz>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724315600;
+	s=zoho; d=jevklidu.cz; i=petr@jevklidu.cz;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=u2xe4iZmScZzyrrYEx2M4UEquQ1gVjFlwQGH+JO6v0Q=;
+	b=MaBD9W4RBcRuyWIzfE0/Tuj6wUwdL1QGqM6nixfeuHxlCscf+vsGRGGGBzxy1fBX
+	rzUY53xEJGlyUZ8Fuka668Z7+lYzd0FEBQVsKbir00Gfo+Rl3cgSjN/1EEcNABysqmF
+	k1coBVu0N9hGE10rsTis9rWWWVPFhZWLk3EMurnU=
+Received: by mx.zohomail.com with SMTPS id 1724315598622873.846586922534;
+	Thu, 22 Aug 2024 01:33:18 -0700 (PDT)
+Message-ID: <5bba930f-4c32-401c-a2e0-80dbad36487a@jevklidu.cz>
+Date: Thu, 22 Aug 2024 10:33:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2192:b0:39a:e800:eec9 with SMTP id
- e9e14a558f8ab-39d6c3d8505mr3550645ab.4.1724315547356; Thu, 22 Aug 2024
- 01:32:27 -0700 (PDT)
-Date: Thu, 22 Aug 2024 01:32:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ae63710620417f67@google.com>
-Subject: [syzbot] [squashfs?] possible deadlock in fsnotify_destroy_mark
-From: syzbot <syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk, 
-	squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    b311c1b497e5 Merge tag '6.11-rc4-server-fixes' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10351047980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c679f13773f295d2da53
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1247776b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121bb693980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-b311c1b4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1c99fa48192f/vmlinux-b311c1b4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/16d5710a012a/bzImage-b311c1b4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d59520377407/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
-------------------------------------------------------
-kswapd0/78 is trying to acquire lock:
-ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
-ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
-
-but task is already holding lock:
-ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
-ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
-
-which lock already depends on the new lock.
+User-Agent: Mozilla Thunderbird
+Subject: Re: ACPI IRQ storm with 6.10
+From: Petr Valenta <petr@jevklidu.cz>
+To: Vitaly Lifshits <vitaly.lifshits@intel.com>,
+ Bjorn Helgaas <helgaas@kernel.org>, Dima Ruinskiy <dima.ruinskiy@intel.com>,
+ Hui Wang <hui.wang@canonical.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Len Brown <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, przemyslaw.kitszel@intel.com,
+ intel-wired-lan@lists.osuosl.org, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20240821145959.GA248604@bhelgaas>
+ <1041b9b5-cc78-13b1-459a-d1d3a313475a@intel.com>
+ <5ba3c7c2-5695-421d-a747-2a23af48db26@jevklidu.cz>
+Content-Language: cs-CZ
+In-Reply-To: <5ba3c7c2-5695-421d-a747-2a23af48db26@jevklidu.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
 
-the existing dependency chain (in reverse order) is:
 
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __fs_reclaim_acquire mm/page_alloc.c:3818 [inline]
-       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3832
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       slab_pre_alloc_hook mm/slub.c:3939 [inline]
-       slab_alloc_node mm/slub.c:4017 [inline]
-       kmem_cache_alloc_noprof+0x3d/0x2a0 mm/slub.c:4044
-       inotify_new_watch fs/notify/inotify/inotify_user.c:599 [inline]
-       inotify_update_watch fs/notify/inotify/inotify_user.c:647 [inline]
-       __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:786 [inline]
-       __se_sys_inotify_add_watch+0x72e/0x1070 fs/notify/inotify/inotify_user.c:729
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Dne 22. 08. 24 v 9:44 Petr Valenta napsal(a):
+> 
+> 
+> Dne 21. 08. 24 v 17:17 Vitaly Lifshits napsal(a):
+>>
+>> On 8/21/2024 5:59 PM, Bjorn Helgaas wrote:
+>>> [+to Dima, Vitaly, Hui; beginning of thread at
+>>> https://lore.kernel.org/r/60ac8988-ace4-4cf0-8c44-028ca741c0a1@kernel.org]
+>>>
+>>> On Wed, Aug 21, 2024 at 01:39:11PM +0200, Petr Valenta wrote:
+>>>> Dne 20. 08. 24 v 23:30 Bjorn Helgaas napsal(a):
+>>>>> On Tue, Aug 20, 2024 at 11:13:54PM +0200, Petr Valenta wrote:
+>>>>>> Dne 20. 08. 24 v 20:09 Bjorn Helgaas napsal(a):
+>>>>>>> On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
+>>>>>>>> On 19. 08. 24, 6:50, Jiri Slaby wrote:
+>>>>>>>>> CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to 
+>>>>>>>>> b2c289415b2b)
+>>>> ...
+>>>>> I'm at a loss.  You could try reverting the entire b2c289415b2b commit
+>>>>> (patch for that is below).
+>>>> This patch didn't help, so I reverted it back.
+>>>>
+>>>>> If that doesn't help, I guess you could try reverting the other
+>>>>> commits Jiri mentioned:
+>>>>>
+>>>>>     76a0a3f9cc2f e1000e: fix force smbus during suspend flow
+>>>>>     c93a6f62cb1b e1000e: Fix S0ix residency on corporate systems
+>>>>>     bfd546a552e1 e1000e: move force SMBUS near the end of 
+>>>>> enable_ulp function
+>>>>>     6918107e2540 net: e1000e & ixgbe: Remove PCI_HEADER_TYPE_MFD 
+>>>>> duplicates
+>>>>>     1eb2cded45b3 net: annotate writes on dev->mtu from 
+>>>>> ndo_change_mtu()
+>>>>>     b2c289415b2b e1000e: Remove redundant runtime resume for 
+>>>>> ethtool_ops
+>>>>>     75a3f93b5383 net: intel: implement modern PM ops declarations
+>>>>>
+>>>>> If you do this, I would revert 76a0a3f9cc2f, test, then revert
+>>>>> c93a6f62cb1b in addition, test, then revert bfd546a552e1 in addition,
+>>>>> etc.
+>>>> I have created revert patches like this:
+>>>> git format-patch --stdout -1 76a0a3f9cc2f | interdiff -q /dev/stdin \
+>>>> /dev/null > revert_76a0a3f9cc2f.patch
+>>>>
+>>>> I have applied revert_76a0a3f9cc2f.patch (rebuild and tested), then in
+>>>> addition revert_c93a6f62cb1b.patch and after applying
+>>>> revert_bfd546a552e1.patch irq storm didn't appear.
+>>>>
+>>>> I have tested it with 3 subsequent reboots and in all those cases it 
+>>>> was ok.
+>>> Thanks for all this testing.  It sounds like reverting all three of
+>>> 76a0a3f9cc2f, c93a6f62cb1b, and bfd546a552e1 fixed the IRQ storm, but
+>>> I'm not clear on the results of other situations.
+>>>
+>>> It looks like c93a6f62cb1b could be reverted by itself because it's
+>>> unrelated to 76a0a3f9cc2f and bfd546a552e1.  I added the authors of
+>>> all three in case they have any insights.
+>>>
+>>> Bjorn
+>>
+>>
+>> I doubt that it is related to c93a6f62cb1b, I believe that is more 
+>> probable to be related to the two other patches.
+>>
+>> Apart from what I suggested in the other mailing thread (enabling 
+>> e1000e debug and to test if it happens with a cable connected),
+>>
+>> I suggest to try to apply this patch and see if it fixes the issue:
+>>
+>> https://patchwork.ozlabs.org/project/intel-wired-lan/patch/20240806132348.880744-1-vitaly.lifshits@intel.com/
+> 
+> I have applied patch from link above and command bellow really doesn't 
+> start irq storm.
+> 
+> echo 'auto' > /sys/bus/pci/devices/0000:00:1f.6/power/control
+> 
+> Problem is that after executing this command and plugging cable to 
+> ethernet port, kernel is not able to detect link (LED indicate link is 
+> on) so network over cable is not working.
+> 
+>>
+>>
+> 
+>  From mboxrd@z Thu Jan  1 00:00:00 1970
+> Return-Path: <intel-wired-lan-bounces@osuosl.org>
+> X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+>      aws-us-west-2-korg-lkml-1.web.codeaurora.org
+> Received: from smtp2.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+>      (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+>      (No client certificate requested)
+>      by smtp.lore.kernel.org (Postfix) with ESMTPS id 7319CC531DF
+>      for <intel-wired-lan@archiver.kernel.org>; Thu, 22 Aug 2024 
+> 07:44:59 +0000 (UTC)
+> Received: from localhost (localhost [127.0.0.1])
+>      by smtp2.osuosl.org (Postfix) with ESMTP id 2EE99404B8;
+>      Thu, 22 Aug 2024 07:44:59 +0000 (UTC)
+> X-Virus-Scanned: amavis at osuosl.org
+> Received: from smtp2.osuosl.org ([127.0.0.1])
+> by localhost (smtp2.osuosl.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+> id VRgkrPDlq_WW; Thu, 22 Aug 2024 07:44:56 +0000 (UTC)
+> X-Comment: SPF check N/A for local connections - 
+> client-ip=140.211.166.34; helo=ash.osuosl.org; 
+> envelope-from=intel-wired-lan-bounces@osuosl.org; receiver=<UNKNOWN> 
+> DKIM-Filter: OpenDKIM Filter v2.11.0 smtp2.osuosl.org 53F64405BA
+> DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=osuosl.org;
+>      s=default; t=1724312696;
+>      bh=y3v3IIFARTszfLWu7n/j8Du29EOi4VTxMDP3GF4qp7E=;
+>      h=Date:To:References:From:In-Reply-To:Subject:List-Id:
+>       List-Unsubscribe:List-Archive:List-Post:List-Help:List-Subscribe:
+>       Cc:From;
+>      b=ZIudOsHGSDoQvtekseiE4SUpOKofnvHlxj7aT3f7bLvqCDMOCfygsO6tctN23YgSh
+>       xYqnq4yBSB4/JQ4v7Juyg0P/wqTcr+XFqhORTc2qBku9GCA+Y4wRKbRUeH4/AUNthL
+>       cf/zG7uEOFEKz4YALwviQFqR5E+HW9gD+YnXahtGUVqYiTjB01HuESDZdYI5huiCLI
+>       eHnQDw/SSwM1YmkjLzQgICjlxtIRVYjUL+shaltRg9f7t4otZa9bvrvLptzw5Mrfc0
+>       GLvrNRmHckPFKEJOXgmIeQI40IOHckD3MX2dkQ2dQ0VCrkl9JIgtuSRuS3IpB1dr65
+>       TatTrq9Onm26w==
+> Received: from ash.osuosl.org (ash.osuosl.org [140.211.166.34])
+>      by smtp2.osuosl.org (Postfix) with ESMTP id 53F64405BA;
+>      Thu, 22 Aug 2024 07:44:56 +0000 (UTC)
+> Received: from smtp1.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+> by ash.osuosl.org (Postfix) with ESMTP id 81E351BF322
+> for <intel-wired-lan@lists.osuosl.org>; Thu, 22 Aug 2024 07:44:54 +0000 
+> (UTC)
+> Received: from localhost (localhost [127.0.0.1])
+> by smtp1.osuosl.org (Postfix) with ESMTP id 79A0C80A82
+> for <intel-wired-lan@lists.osuosl.org>; Thu, 22 Aug 2024 07:44:54 +0000 
+> (UTC)
+> X-Virus-Scanned: amavis at osuosl.org
+> Received: from smtp1.osuosl.org ([127.0.0.1])
+> by localhost (smtp1.osuosl.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+> id m9sJJpu9kR7y for <intel-wired-lan@lists.osuosl.org>;
+> Thu, 22 Aug 2024 07:44:53 +0000 (UTC)
+> Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=136.143.188.52;
+> helo=sender4-of-o52.zoho.com; envelope-from=petr@jevklidu.cz;
+> receiver=<UNKNOWN> DMARC-Filter: OpenDMARC Filter v1.4.2 
+> smtp1.osuosl.org 3674B80A59
+> DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.osuosl.org 3674B80A59
+> Received: from sender4-of-o52.zoho.com (sender4-of-o52.zoho.com
+> [136.143.188.52])
+> by smtp1.osuosl.org (Postfix) with ESMTPS id 3674B80A59
+> for <intel-wired-lan@lists.osuosl.org>; Thu, 22 Aug 2024 07:44:51 +0000 
+> (UTC)
+> ARC-Seal: i=1; a=rsa-sha256; t=1724312671; cv=none; d=zohomail.com; 
+> s=zohoarc; 
+> b=B0wnUG3UHEcTRfbjC9HSfLJG+WBnpU18yag7r0240QuMQMnP/cHcj9e4oJU2FgxRPLpt6OGnlZOiPNE2GUFgnkBzKBPwzxb7eTHFwW4P8cW+1IrIOQ6jZWd2rhOIyWcRKYMydfCbMPM04Z+RwKVyRlrLTYL5UDBYYKKHOG08Ikc=
+> ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; 
+> d=zohomail.com;
+> s=zohoarc; t=1724312671;
+> h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To;
+> bh=y3v3IIFARTszfLWu7n/j8Du29EOi4VTxMDP3GF4qp7E=; 
+> b=VvZAc/xKVy85rZpNNCAwUwpxquk4r4Xw2QjZmePGlnINwOvJf6oilR9lqx2WDMezV20iKTW9f3dauO4jIjp363HOdh7P21UFfa66a0oK63RODo7IQMHSCqaCwAEoO1PKHfDfTMwz0/BShU1dt+nhtAeSeKwbG7G1qizCcoXTdjo=
+> ARC-Authentication-Results: i=1; mx.zohomail.com;
+> dkim=pass  header.i=jevklidu.cz;
+> spf=pass  smtp.mailfrom=petr@jevklidu.cz;
+> dmarc=pass header.from=<petr@jevklidu.cz>
+> Received: by mx.zohomail.com with SMTPS id 1724312669862808.3168476405893;
+> Thu, 22 Aug 2024 00:44:29 -0700 (PDT)
+> Message-ID: <5ba3c7c2-5695-421d-a747-2a23af48db26@jevklidu.cz>
+> Date: Thu, 22 Aug 2024 09:44:22 +0200
+> MIME-Version: 1.0
+> User-Agent: Mozilla Thunderbird
+> To: Vitaly Lifshits <vitaly.lifshits@intel.com>,
+> Bjorn Helgaas <helgaas@kernel.org>, Dima Ruinskiy 
+> <dima.ruinskiy@intel.com>,
+> Hui Wang <hui.wang@canonical.com>
+> References: <20240821145959.GA248604@bhelgaas>
+> <1041b9b5-cc78-13b1-459a-d1d3a313475a@intel.com>
+> Content-Language: cs-CZ, en-US
+> From: Petr Valenta <petr@jevklidu.cz>
+> In-Reply-To: <1041b9b5-cc78-13b1-459a-d1d3a313475a@intel.com>
+> Content-Type: text/plain; charset=UTF-8; format=flowed
+> Content-Transfer-Encoding: 7bit
+> X-ZohoMailClient: External
+> X-Mailman-Original-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt;
+> c=relaxed/relaxed; t=1724312671; s=zoho; d=jevklidu.cz; i=petr@jevklidu.cz;
+> h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+> bh=y3v3IIFARTszfLWu7n/j8Du29EOi4VTxMDP3GF4qp7E=;
+> b=RSnIQpqoQp2O3ExJNnw4fk9dlt8CX1T5sbtB6GflBDYejiRQJTcrU3zRHn3pRkFq
+> tm00/cgXr6pF6T5vJFttBkfrHtnRiPiE8cjqni5KsNxCyOXOwri6I5ARAmPcUj42eda
+> e/xHQX9E3ayXrWSBQDAsun3Ann63tcXQKwlT7ffI=
+> X-Mailman-Original-Authentication-Results: smtp1.osuosl.org;
+> dmarc=none (p=none dis=none)
+> header.from=jevklidu.cz
+> X-Mailman-Original-Authentication-Results: smtp1.osuosl.org;
+> dkim=pass (1024-bit key,
+> unprotected) header.d=jevklidu.cz header.i=petr@jevklidu.cz
+> header.a=rsa-sha256 header.s=zoho header.b=RSnIQpqo
+> Subject: Re: [Intel-wired-lan] ACPI IRQ storm with 6.10
+> X-BeenThere: intel-wired-lan@osuosl.org
+> X-Mailman-Version: 2.1.29
+> Precedence: list
+> List-Id: Intel Wired Ethernet Linux Kernel Driver Development
+> <intel-wired-lan.osuosl.org>
+> List-Unsubscribe: 
+> <https://lists.osuosl.org/mailman/options/intel-wired-lan>, 
+> <mailto:intel-wired-lan-request@osuosl.org?subject=unsubscribe>
+> List-Archive: <http://lists.osuosl.org/pipermail/intel-wired-lan/>
+> List-Post: <mailto:intel-wired-lan@osuosl.org>
+> List-Help: <mailto:intel-wired-lan-request@osuosl.org?subject=help>
+> List-Subscribe: 
+> <https://lists.osuosl.org/mailman/listinfo/intel-wired-lan>,
+> <mailto:intel-wired-lan-request@osuosl.org?subject=subscribe>
+> Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+> "Rafael J. Wysocki" <rafael@kernel.org>, przemyslaw.kitszel@intel.com,
+> Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+> "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+> Tony Nguyen <anthony.l.nguyen@intel.com>, Bjorn Helgaas 
+> <bhelgaas@google.com>,
+> intel-wired-lan@lists.osuosl.org, Jiri Slaby <jirislaby@kernel.org>,
+> Len Brown <lenb@kernel.org>
+> Errors-To: intel-wired-lan-bounces@osuosl.org
+> Sender: "Intel-wired-lan" <intel-wired-lan-bounces@osuosl.org>
+> 
+> 
+> 
+> Dne 21. 08. 24 v 17:17 Vitaly Lifshits napsal(a):
+>>
+>> On 8/21/2024 5:59 PM, Bjorn Helgaas wrote:
+>>> [+to Dima, Vitaly, Hui; beginning of thread at
+>>> https://lore.kernel.org/r/60ac8988-ace4-4cf0-8c44-028ca741c0a1@kernel.org]
+>>>
+>>> On Wed, Aug 21, 2024 at 01:39:11PM +0200, Petr Valenta wrote:
+>>>> Dne 20. 08. 24 v 23:30 Bjorn Helgaas napsal(a):
+>>>>> On Tue, Aug 20, 2024 at 11:13:54PM +0200, Petr Valenta wrote:
+>>>>>> Dne 20. 08. 24 v 20:09 Bjorn Helgaas napsal(a):
+>>>>>>> On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
+>>>>>>>> On 19. 08. 24, 6:50, Jiri Slaby wrote:
+>>>>>>>>> CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to 
+>>>>>>>>> b2c289415b2b)
+>>>> ...
+>>>>> I'm at a loss.  You could try reverting the entire b2c289415b2b commit
+>>>>> (patch for that is below).
+>>>> This patch didn't help, so I reverted it back.
+>>>>
+>>>>> If that doesn't help, I guess you could try reverting the other
+>>>>> commits Jiri mentioned:
+>>>>>
+>>>>>     76a0a3f9cc2f e1000e: fix force smbus during suspend flow
+>>>>>     c93a6f62cb1b e1000e: Fix S0ix residency on corporate systems
+>>>>>     bfd546a552e1 e1000e: move force SMBUS near the end of 
+>>>>> enable_ulp function
+>>>>>     6918107e2540 net: e1000e & ixgbe: Remove PCI_HEADER_TYPE_MFD 
+>>>>> duplicates
+>>>>>     1eb2cded45b3 net: annotate writes on dev->mtu from 
+>>>>> ndo_change_mtu()
+>>>>>     b2c289415b2b e1000e: Remove redundant runtime resume for 
+>>>>> ethtool_ops
+>>>>>     75a3f93b5383 net: intel: implement modern PM ops declarations
+>>>>>
+>>>>> If you do this, I would revert 76a0a3f9cc2f, test, then revert
+>>>>> c93a6f62cb1b in addition, test, then revert bfd546a552e1 in addition,
+>>>>> etc.
+>>>> I have created revert patches like this:
+>>>> git format-patch --stdout -1 76a0a3f9cc2f | interdiff -q /dev/stdin \
+>>>> /dev/null > revert_76a0a3f9cc2f.patch
+>>>>
+>>>> I have applied revert_76a0a3f9cc2f.patch (rebuild and tested), then in
+>>>> addition revert_c93a6f62cb1b.patch and after applying
+>>>> revert_bfd546a552e1.patch irq storm didn't appear.
+>>>>
+>>>> I have tested it with 3 subsequent reboots and in all those cases it 
+>>>> was ok.
+>>> Thanks for all this testing.  It sounds like reverting all three of
+>>> 76a0a3f9cc2f, c93a6f62cb1b, and bfd546a552e1 fixed the IRQ storm, but
+>>> I'm not clear on the results of other situations.
+>>>
+>>> It looks like c93a6f62cb1b could be reverted by itself because it's
+>>> unrelated to 76a0a3f9cc2f and bfd546a552e1.  I added the authors of
+>>> all three in case they have any insights.
+>>>
+>>> Bjorn
+>>
+>>
+>> I doubt that it is related to c93a6f62cb1b, I believe that is more 
+>> probable to be related to the two other patches.
+>>
+>> Apart from what I suggested in the other mailing thread (enabling 
+>> e1000e debug and to test if it happens with a cable connected),
+>>
+>> I suggest to try to apply this patch and see if it fixes the issue:
+>>
+>> https://patchwork.ozlabs.org/project/intel-wired-lan/patch/20240806132348.880744-1-vitaly.lifshits@intel.com/
+> 
+> I have applied patch from link above and command bellow really doesn't 
+> start irq storm.
+> 
+> echo 'auto' > /sys/bus/pci/devices/0000:00:1f.6/power/control
+> 
+> Problem is that after executing this command and plugging cable to 
+> ethernet port, kernel is not able to detect link (LED indicate link is 
+> on) so network over cable is not working.
+> 
 
--> #0 (&group->mark_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
-       fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
-       fsnotify_destroy_marks+0x14a/0x660 fs/notify/mark.c:934
-       fsnotify_inoderemove include/linux/fsnotify.h:264 [inline]
-       dentry_unlink_inode+0x2e0/0x430 fs/dcache.c:403
-       __dentry_kill+0x20d/0x630 fs/dcache.c:610
-       shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
-       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
-       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1163
-       super_cache_scan+0x34f/0x4b0 fs/super.c:221
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
-       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
-       shrink_one+0x43b/0x850 mm/vmscan.c:4815
-       shrink_many mm/vmscan.c:4876 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4954 [inline]
-       shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
-       kswapd_shrink_node mm/vmscan.c:6762 [inline]
-       balance_pgdat mm/vmscan.c:6954 [inline]
-       kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+I have tested now how it behaves with kernel 6.9.9. There is a new 
+finding. After running "echo 'auto' > 
+/sys/bus/pci/devices/0000:00:1f.6/power/control" network over cable 
+works but irq storm arrises. I have never tested this before because I 
+don't use cable with this laptop at all. After unplugging cable irq 
+storm is gone.
 
-other info that might help us debug this:
+A possible workaround would be to turn off power control for the e1000e 
+at the kernel level (if is it possible) so that utilities like powertop 
+don't cause irq storm or broken network.
 
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&group->mark_mutex);
-                               lock(fs_reclaim);
-  lock(&group->mark_mutex);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd0/78:
- #0: ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
- #0: ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
- #1: ffff8880385580e0 (&type->s_umount_key#44){++++}-{3:3}, at: super_trylock_shared fs/super.c:562 [inline]
- #1: ffff8880385580e0 (&type->s_umount_key#44){++++}-{3:3}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 78 Comm: kswapd0 Not tainted 6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
- fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
- fsnotify_destroy_marks+0x14a/0x660 fs/notify/mark.c:934
- fsnotify_inoderemove include/linux/fsnotify.h:264 [inline]
- dentry_unlink_inode+0x2e0/0x430 fs/dcache.c:403
- __dentry_kill+0x20d/0x630 fs/dcache.c:610
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
- prune_dcache_sb+0x10f/0x180 fs/dcache.c:1163
- super_cache_scan+0x34f/0x4b0 fs/super.c:221
- do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
- shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
- shrink_one+0x43b/0x850 mm/vmscan.c:4815
- shrink_many mm/vmscan.c:4876 [inline]
- lru_gen_shrink_node mm/vmscan.c:4954 [inline]
- shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
- kswapd_shrink_node mm/vmscan.c:6762 [inline]
- balance_pgdat mm/vmscan.c:6954 [inline]
- kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>>
+>>
+> 
 
