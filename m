@@ -1,199 +1,208 @@
-Return-Path: <linux-kernel+bounces-296609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F26995ACBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:05:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 050F895ACBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C74691F22B46
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED48281BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E0E47F53;
-	Thu, 22 Aug 2024 05:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A55D4F218;
+	Thu, 22 Aug 2024 05:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iPXSStFC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eXdLtclW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8811D12E5;
-	Thu, 22 Aug 2024 05:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724303134; cv=fail; b=RPZylL5fr3lmTQ2Nt3g3xNVLUTnK+efeH8pOguU1eks/4RZe7wnnb1BAFquaXiROTcLuJ3s2k4sn6wcP6gZWw4cIwWOlk0z0ZawtRdHOaJk5MEDUNJEpLYiPdij3C4FZ3foxr7GfWskrf0trLlxtJ5eFx2+xXtxYUeIYiIpY4Rw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724303134; c=relaxed/simple;
-	bh=6l7eu1gAPBe4O/Q3Clks5XJKjAAzbBoZNgKVcw6gGUw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gLQSIfEha8OKYYbf0oc9+LASl3QfcMG6joVvvJ8AcDLJ6BkrogWYXNQaJtTvb+nvOUA/ItxVLyUsvl3pdeF85sNvaOCEyTWQ9eCQUTv/BH0jP8pxBrvt9cNboxa5aD/2JuOIgNqMD6Oa6bEeUNi0OvYX3lyKBzKVm31Dq2RTCfM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iPXSStFC; arc=fail smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEA7433CB;
+	Thu, 22 Aug 2024 05:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724303313; cv=none; b=FUh11Kf1I5YORfcKeRXgTwV0W0nu3qjmqC7Y6/DCKGEAR6APvAPecDj5m2qmVdTLPep6KzguEPU5B/jSy1xBHBaJOvmgEPiVyy3HPJfCW9Z6vQB3XDeLgwnHLv4OLYaxVdzMiSLwLWqyTzfynHdMqKS8mFUnvhqcs98eAgX+nuI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724303313; c=relaxed/simple;
+	bh=DuP6gWL2QzEDfOfhHXfJnyaOtP1/xRSOjL/ac5t2XtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XXkIzius9qNugKyNX+HW3UYn1KJzyNEkFHdQVpKiErXXrzAbEo3IVHhAC+lMdt0bhsmWPjiBxjy67lJuGdzEDZGg3mvkhgopdtX6T2ByNeGtmwNabBWjLRLWvJx2Yz3U0D96GyKXmpdFNEHU4Ye8OsEIymAmYX0d7x24ykZT424=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eXdLtclW; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724303133; x=1755839133;
+  t=1724303311; x=1755839311;
   h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=6l7eu1gAPBe4O/Q3Clks5XJKjAAzbBoZNgKVcw6gGUw=;
-  b=iPXSStFCe+E7fSGfszVkZYCC7a0euM+KR7tJcplGq6qZnvRghevEwkh7
-   FkcYR/gjs4jAFYabUMFKBnImSblkJEhq+cETDluiorytLFBoQWYzTZxuu
-   WPOdm4a1+vLKqCsUww/DaNYzTiMd5Wm+cX0zXn/dv0M0I6k2YQHW6AsZD
-   td287lkSx4CCZFAI0N2I5vsYoU6hybdaAslKAl/8vcP25/ig2TO8dytuo
-   jNcu/t+ut8+crNLGrEp1rikt4t28dTr/kjGsGW8OkXYQEBF0VHIf/cEao
-   77Fn1WgQotF2MxlrJAcCRt3Hj5sfx4tvPhC6GGD8ghja7hmBVBRnLvTWX
-   w==;
-X-CSE-ConnectionGUID: 2qR1c1O6Qu+dmeXnCqMY7w==
-X-CSE-MsgGUID: dzENqQBOTICRxoRKfTUdfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="34080160"
+   mime-version:in-reply-to;
+  bh=DuP6gWL2QzEDfOfhHXfJnyaOtP1/xRSOjL/ac5t2XtM=;
+  b=eXdLtclWDNdkpew6bSQyW2NGwmyb1J8Jq2SRJ++EOuBU91hC92/9V1dH
+   3hoguHdcDGD34k26+IBYS0QVeY0DHtJcD5mQ5lL+uM7yxSUPYDw8EBP3S
+   m4lCst3GASQ4sfo3Ond/8cfEqVQwJQcCT766wzacg41CC0xEWn792LLsh
+   +jc4DoHMasE9WWWi+F9Xtqlwym8znQxxL1pA3DXtCmN5kRL7oUIx4oI/y
+   ealrDbbOG9zn03PwBFwdePdiZJbdXQ5n7z/AeX9RolMPKt0STPmQ6ETav
+   h+MHdGjO2xeZFBG/vtlj8jTNZdvK2A4ghNeyWs1PwWnWIbUwBO0tamXus
+   A==;
+X-CSE-ConnectionGUID: 4cZPdnxXRHCwSL5GnpL2Gw==
+X-CSE-MsgGUID: yP8FfY6MRzSSILipcghGHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22220593"
 X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="34080160"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 22:05:32 -0700
-X-CSE-ConnectionGUID: kMGUaXjARguAK5Qgx4hS6g==
-X-CSE-MsgGUID: 9xtq4eyFRk+oksSwBIdnGw==
+   d="scan'208";a="22220593"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 22:08:30 -0700
+X-CSE-ConnectionGUID: 42vMd2vTT3a18T7oVQpO1w==
+X-CSE-MsgGUID: gn6y762xQ7+jR7G4GkpQDg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="92058414"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Aug 2024 22:05:32 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 21 Aug 2024 22:05:30 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 21 Aug 2024 22:05:30 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 21 Aug 2024 22:05:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MijJyqWamMYxVFhfrk3ZdAeUxL4sn+/JbgBZdFEHA4qHo1eY4FLRHIJcCLiVakq6yoj7OKG/Mf356QdzAd9kJUG6kGPi3IjOUWfsai5PmvEnvh0pN+auqsw347m+m2fzD2HVu8m69PuO4fQcPnFQKo/3F/bTvuYDJvjrZcpqrxe/APZ2z2d6Vv56X+CYWC0mRqkFrTehrdiPsnjASsziByioP6F5JPGKytfuzfImyKpGC5O5ZvV4BwHDUxsYiYigX4WQEpqHkRiwKPbkKwrNTR+VH9dYvQnCVVzxdHxu23geA/0HEwZ5/TIIVm4qJgYrWImqxdSaxaNYK8uPhKDp2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hjpsnYV6ecl0c0x8FbTcxbNSn7Sly5/qwL04zg4QNuY=;
- b=YkUCb0QtVTwDckI27Pgy6Iqw54pHCN6gDN799IylBuYWdtLvWrO5wi8/Elshu6eeDSnaF5racxVwTXFblHU8J2u0c8ld6aCqRYuVsU2yL/FzZH/Fmap4DlXvGzg9hr2bQvkR4i8iZVwpXDCqAAkuVSGo44flLA90p6osI3Z3WzNgc6bHi4P4244J0n2zlKlrudyXX2MjMy4/jwG7gl23C/iLoerEfbgpvWOyfvKhjJR91FXux7coBiSoTOwgIJT8sTG9JzNR/daUJlXEunBVFdTQlz6N841CHWPgZrKOif4s2yJ9BMlCzK8sAs7UgAWGHqOoZedLMyeRGQNz5/VJVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by BN9PR11MB5258.namprd11.prod.outlook.com (2603:10b6:408:133::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
- 2024 05:05:28 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%7]) with mapi id 15.20.7875.023; Thu, 22 Aug 2024
- 05:05:28 +0000
-Date: Thu, 22 Aug 2024 00:05:25 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-CC: Masahiro Yamada <masahiroy@kernel.org>, Michal Suchanek
-	<msuchanek@suse.de>, <linux-modules@vger.kernel.org>, Takashi Iwai
-	<tiwai@suse.com>, Lucas De Marchi <lucas.de.marchi@gmail.com>, Michal
- =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Jiri Slaby <jslaby@suse.com>,
-	"Jan Engelhardt" <jengelh@inai.de>, Nick Desaulniers
-	<ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>,
-	<linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] kmod /usr support
-Message-ID: <yvwczlqf4sgfsde26iwwrywscpaianh2pnhtr6pasobt2seco7@ahtu42or7i2l>
-References: <e3yow7ih6af2hxzkmjay2oan3jypmo4hda64vxvpfco66ajcew@i3zewn4nbklf>
- <cover.1699618135.git.msuchanek@suse.de>
- <xbgto5tttcah4mrtyjih72ubod3qb375ww6e2fd4pi342rg4eg@wipwd57q43cc>
- <CAK7LNARYK-xjBS8puEM9xFtmjBNW6KJ2Qd6f7diZkdEEbUgVHA@mail.gmail.com>
- <20240821175843.GA2531464@thelio-3990X>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240821175843.GA2531464@thelio-3990X>
-X-ClientProxiedBy: MW4PR03CA0079.namprd03.prod.outlook.com
- (2603:10b6:303:b6::24) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+   d="scan'208";a="66135184"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 21 Aug 2024 22:08:29 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sh03e-000CP2-0d;
+	Thu, 22 Aug 2024 05:08:26 +0000
+Date: Thu, 22 Aug 2024 13:07:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, alexandre.belloni@bootlin.com,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: Re: [PATCH 4/7] rtc:rtc-s3c:Use devm_clk_get_enabled() helpers
+Message-ID: <202408221253.CO0v47kj-lkp@intel.com>
+References: <20240821092846.20138-5-liaoyuanhong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|BN9PR11MB5258:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a99c8d3-8537-4e4c-14ee-08dcc2680a55
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9H4Wg4lyiAKzaMyoNL8JQX8WsGqp0tAakm/j+f5UGtNUMmACDpNk8g5DXRXa?=
- =?us-ascii?Q?Ke55Bl7RMinkA3Pv0m0iMSgRFFtZpdHorVwKL32RtN+gYiCGFLMOIq6cULa7?=
- =?us-ascii?Q?Sa5Kk4X8qSG1cXjqRVZU77qOLUok7tnw71Z0Z70ULqwy2a5s9vJTFS1BaM5A?=
- =?us-ascii?Q?guurDaDgEQzo07Nje6Zt1VedG8T43sUTllyf32DbVQXgiK/rzUWBvcUWeVFM?=
- =?us-ascii?Q?V1bc+qpRuUJDuEHUaHOZEVprEsQDJ9lL48ZY/ETzrnTg4rzrVQ/sgqknr4A8?=
- =?us-ascii?Q?ERjxAVk56fvJEwF118LoE6JnxbkjMm7eokCPB2GhJ9J2SLKIuiL+tSJtfKkg?=
- =?us-ascii?Q?XvJWGa1iBZBQKn2D2hojAIHjP5lVn8CbmGJLdagiAYmNqRkBWYftRlFAtklX?=
- =?us-ascii?Q?6bFOxDq9n3yvp7Swh6OouYuUBgMm5TmD5Lg5vZKW3J+dtz69dmGdzDqWkqe0?=
- =?us-ascii?Q?Jm1IcaqjD9ws8OcPkL/1TaTHwaVwgerlLxg3VrzB1/hGahxBktA98Nnlx2E9?=
- =?us-ascii?Q?v7joX71GMeZX7wubf5ypsrsf72ANMY9Qe+r+oEmsM77cvoUdR5MNUUrq55T/?=
- =?us-ascii?Q?pPMt++j5vzwjZqbqhfwjoz57hIQAGBIkbLkq/cKvukG4DgGtHOdU6wUM2Raw?=
- =?us-ascii?Q?OHTJV4Bu0qsHth6xIBmGB65T3PdGIQ5RRljbcj+JO79Ior77/NZnuifWDtxf?=
- =?us-ascii?Q?LUdWjUFzqZ4SxjwAqYMJkcuhLQFLI+YkfP2zSEQEIR8cnzBg/PCfnfHoZBjk?=
- =?us-ascii?Q?wbNNMa5w48/cP79B2IQYUVsh0MqRchcbaWwRwEcPkImvkBDmh6alHu2MvrSz?=
- =?us-ascii?Q?kvwDJj5l/RJjuvyBIyCGc4vCCms1y2XAj67J0IqixEJiacIzIMdKMJ5Wgyqw?=
- =?us-ascii?Q?FkZi50WqCAZTcf4NpO5bP/MNcO9ANTQnDzOfdDN/UT2DWcMFULpr6XRWhtWY?=
- =?us-ascii?Q?IqwwzezM8UKA8gjOu4HBe2U+VFcUc/MUvCDA0uB+RtlqDySRhd9sHqQTaquJ?=
- =?us-ascii?Q?YbGWvvz4ruoXzNwV8/ABUp6Z/eaRewtdm21RPGxzspMJ+QevaLOXr2eWNZBv?=
- =?us-ascii?Q?iyAsQYPYvGf4lzC/GUOf+7p8cOVLdGPa3Yfmd7BdVx675iM8ZMOriHTCyLby?=
- =?us-ascii?Q?s2nAugZmqs+1VTG+Iu8W7B2qCAcFr5tc2qkSzV4LDUfCiN14J1QDCAK2bR/m?=
- =?us-ascii?Q?+2lqrIobdtT13yK/5VielKQs4hXx4uDfXn0i/+NmDjsUCBTEXTI1RuH53yXo?=
- =?us-ascii?Q?EuYbqaFMGJueMJnuAuwkv1LqzevqCbh9ZgsMTt8LMhJ+pxQALPgoZDSbMkAk?=
- =?us-ascii?Q?gleiSX6f5oGf+Rdy6gRlvmo1XmcJ5ag1MFi8L5IZxvb6/w=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uCMZJDNarP0ZKczfen8jWASug8ggsm+pNKfgcJ3dMadGG9KcLCiSgqWBObGH?=
- =?us-ascii?Q?ZlEE7sfhdILFxw5cidsUfJb4VahO0f2+9J9A0JkXDEwrzKu/lmsIcPsQUos2?=
- =?us-ascii?Q?tZ844ZIJXY9m9aZpwuaZK2bZr4yMt+EDH40/8KvW8YSYvJ2x/svfCCEnK9+S?=
- =?us-ascii?Q?CL6ouL7gqTnnWJ3YE0avE/0XkCQ6puQuylrhKdXxm+mXHeVwRmQIH9BKmgrW?=
- =?us-ascii?Q?Yxc9BGry2yMaCGyiUrj7QppXHUY5PjomXEtFT2ecS2TOEKVKe84g4tPVrjhC?=
- =?us-ascii?Q?W0Lmt7qPY98g1vLu+8is3XF6na5CRvF5URJp9MMSB0YDuP1MxVG66Uo+ctqz?=
- =?us-ascii?Q?7NOWMuwxX/W6pDYg9ohBE2EfLXrl6l/1/FKF5jRVYvknsIVPYdffa8pK0/fG?=
- =?us-ascii?Q?lOt5mgIA4sHd2EC+PpVjR6TKJhQqO8SPAN5BdG8tdmjdBLMJqz5N5KigRv47?=
- =?us-ascii?Q?4qJ6UaG7TKFVTpj9Q0aFnDOLSbF5jxWx6+yZI3ifJ9nxw4sKLL7Ti4rNHWaB?=
- =?us-ascii?Q?ZKHch6b83VRvwF5PeujH0OUeN9B2QEdO/XJ/EiZcIezfAjqz8WatCQIlV04m?=
- =?us-ascii?Q?XKg/jVVhgsanJzSvy82yVkaHv4axhgHvP5P3i4yKYvv/s+wvbvarA6ToqZ0X?=
- =?us-ascii?Q?NCWhjxiUGvQ5G6WWomIVwaxm2IoBCkahP7bkdHIA0KWVQJZZGP2fKP9AO/TG?=
- =?us-ascii?Q?/r2wO1ykYGrfHuhVhGvrHnOX2vugkt+GMSlbClqxqkv02F/Uzn2ADK0+KtZT?=
- =?us-ascii?Q?TXIo+xjmCTDnxZ97uSY+X1ipYOa4smgGn3iHsX+eDNtnv+GYHIWu9mDybMzE?=
- =?us-ascii?Q?oPPQVfnP0TW9UTy3z1qD06GH8MghknMWzXNbAM7JNRdAzifyso1gxPAnuDAz?=
- =?us-ascii?Q?PhlPww9Cib17H8qv0Cob1+JmvyLbEROTW3yL/88IZDieu4UFmnNpsiApGGWs?=
- =?us-ascii?Q?BwGqRw9524bi2SviaVvqomr47Pm8qWbQ+Nfp9tyC7RE+2AiSbYo4fLJdKknN?=
- =?us-ascii?Q?mbrOJ/2NMOD8TBglHKw/vKxtHAiAYJqM9G/cwXA77rCXPptM9bOFJjFBKR55?=
- =?us-ascii?Q?VXDoVJhuXcQS5nRSU556PnIF+cvXLGT9atohPxSWqtDjOru6qpmBmW3xqhow?=
- =?us-ascii?Q?kSRxQG9bNw7ZtGoZV3s3U+uOWySCAsqZjAsE2Uuu97TwAmD7dv9wflToHsDz?=
- =?us-ascii?Q?fWA4h+a1KvHFFZy7yAJ85mmIswbbJhpBCgpJDPqsZ6fweCbAoUNOSobZ6BLw?=
- =?us-ascii?Q?Ax57/B/L0g9Xp1dpkMXpKz66J6/+OqM2MjVuLdbgoR0eXaahemKnPp/tVKDb?=
- =?us-ascii?Q?HrDOy0xLTzCK8LjLojHaAnV+mOElp+i2NNpr0uIzJovCwoW3P/VyzRhX3uJ7?=
- =?us-ascii?Q?mIBtPEikNsgFh5ePXw32X3eM1RwdaZogotKv3iMjGdzJO0fqaMv/UYqXD9lU?=
- =?us-ascii?Q?U+cT/XCt/SxPosXy7ZYJEg1iDSlWNmhGnyP5DZSla4J2jYq2Wz0P23ocS2GD?=
- =?us-ascii?Q?4Dso8QzE0CHy0v7LudTaPGJUC/HnKnnDHORXz8HjSR1gcpx41wBZpoQOpzcl?=
- =?us-ascii?Q?ARshWaUirOARWbjDSzL+T82+U8sOasH/LxsyJJ6ldUKeZK0K4QE+PYZX7SfO?=
- =?us-ascii?Q?tA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a99c8d3-8537-4e4c-14ee-08dcc2680a55
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 05:05:28.6513
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YjO7e6ePnj8p91fsuJH1Sk/PH6zgN4Uk/7gE7Zye14u9SA9FJwETURNTlPou2L2jgalUv+Yq3P4ioqFES2F0CsRUR0DV6+Tp2X7J6etdcPw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5258
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821092846.20138-5-liaoyuanhong@vivo.com>
 
-On Wed, Aug 21, 2024 at 10:58:43AM GMT, Nathan Chancellor wrote:
->Did this conversation go anywhere? After the upgrade to kmod 33 in Arch
+Hi Liao,
 
-no, it stalled,  thanks for reminding me. I will follow up on it.
+kernel test robot noticed the following build warnings:
 
-Lucas De Marchi
+[auto build test WARNING on abelloni/rtc-next]
+[also build test WARNING on tegra/for-next linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Liao-Yuanhong/rtc-rtc-at91rm9200-Use-devm_clk_get_enabled-helpers/20240821-190257
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/20240821092846.20138-5-liaoyuanhong%40vivo.com
+patch subject: [PATCH 4/7] rtc:rtc-s3c:Use devm_clk_get_enabled() helpers
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240822/202408221253.CO0v47kj-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221253.CO0v47kj-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221253.CO0v47kj-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/rtc/rtc-s3c.c:483:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+   }
+   ^
+   1 warning generated.
+
+
+vim +483 drivers/rtc/rtc-s3c.c
+
+1add6781c85d7e Ben Dooks           2006-07-01  397  
+5a167f4543e45d Greg Kroah-Hartman  2012-12-21  398  static int s3c_rtc_probe(struct platform_device *pdev)
+1add6781c85d7e Ben Dooks           2006-07-01  399  {
+19be09f51d3610 Chanwoo Choi        2014-10-13  400  	struct s3c_rtc *info = NULL;
+1add6781c85d7e Ben Dooks           2006-07-01  401  	int ret;
+1add6781c85d7e Ben Dooks           2006-07-01  402  
+19be09f51d3610 Chanwoo Choi        2014-10-13  403  	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+19be09f51d3610 Chanwoo Choi        2014-10-13  404  	if (!info)
+19be09f51d3610 Chanwoo Choi        2014-10-13  405  		return -ENOMEM;
+1add6781c85d7e Ben Dooks           2006-07-01  406  
+19be09f51d3610 Chanwoo Choi        2014-10-13  407  	info->dev = &pdev->dev;
+64704c92fd19c5 Marek Szyprowski    2019-01-18  408  	info->data = of_device_get_match_data(&pdev->dev);
+ae05c95074e0ea Chanwoo Choi        2014-10-13  409  	if (!info->data) {
+ae05c95074e0ea Chanwoo Choi        2014-10-13  410  		dev_err(&pdev->dev, "failed getting s3c_rtc_data\n");
+ae05c95074e0ea Chanwoo Choi        2014-10-13  411  		return -EINVAL;
+ae05c95074e0ea Chanwoo Choi        2014-10-13  412  	}
+5a5b614ba61cc2 Marek Szyprowski    2019-01-21  413  	spin_lock_init(&info->alarm_lock);
+19be09f51d3610 Chanwoo Choi        2014-10-13  414  
+19be09f51d3610 Chanwoo Choi        2014-10-13  415  	platform_set_drvdata(pdev, info);
+19be09f51d3610 Chanwoo Choi        2014-10-13  416  
+19be09f51d3610 Chanwoo Choi        2014-10-13  417  	info->irq_alarm = platform_get_irq(pdev, 0);
+faac910201e9be Stephen Boyd        2019-07-30  418  	if (info->irq_alarm < 0)
+19be09f51d3610 Chanwoo Choi        2014-10-13  419  		return info->irq_alarm;
+1add6781c85d7e Ben Dooks           2006-07-01  420  
+ce9af89392024f Marek Szyprowski    2020-12-02  421  	dev_dbg(&pdev->dev, "s3c2410_rtc: alarm irq %d\n", info->irq_alarm);
+1add6781c85d7e Ben Dooks           2006-07-01  422  
+1add6781c85d7e Ben Dooks           2006-07-01  423  	/* get the memory region */
+09ef18bcd5ac6c YueHaibing          2019-10-06  424  	info->base = devm_platform_ioremap_resource(pdev, 0);
+19be09f51d3610 Chanwoo Choi        2014-10-13  425  	if (IS_ERR(info->base))
+19be09f51d3610 Chanwoo Choi        2014-10-13  426  		return PTR_ERR(info->base);
+1add6781c85d7e Ben Dooks           2006-07-01  427  
+ab10bbbb4bf910 Liao Yuanhong       2024-08-21  428  	info->rtc_clk = devm_clk_get_enabled(&pdev->dev, "rtc");
+eb633de6abcb30 Yang Yingliang      2022-09-19  429  	if (IS_ERR(info->rtc_clk))
+eb633de6abcb30 Yang Yingliang      2022-09-19  430  		return dev_err_probe(&pdev->dev, PTR_ERR(info->rtc_clk),
+eb633de6abcb30 Yang Yingliang      2022-09-19  431  				     "failed to find rtc clock\n");
+e48add8c1c462f Atul Dahiya         2010-07-20  432  
+eaf3a659086e1d Marek Szyprowski    2014-10-29  433  	if (info->data->needs_src_clk) {
+ab10bbbb4bf910 Liao Yuanhong       2024-08-21  434  		info->rtc_src_clk = devm_clk_get_enabled(&pdev->dev, "rtc_src");
+df9e26d093d33a Chanwoo Choi        2014-10-13  435  		if (IS_ERR(info->rtc_src_clk)) {
+c52d270c68a02f Krzysztof Kozlowski 2020-08-30  436  			ret = dev_err_probe(&pdev->dev, PTR_ERR(info->rtc_src_clk),
+eaf3a659086e1d Marek Szyprowski    2014-10-29  437  					    "failed to find rtc source clock\n");
+ab10bbbb4bf910 Liao Yuanhong       2024-08-21  438  			return ret;
+df9e26d093d33a Chanwoo Choi        2014-10-13  439  		}
+eaf3a659086e1d Marek Szyprowski    2014-10-29  440  	}
+df9e26d093d33a Chanwoo Choi        2014-10-13  441  
+31b16d978f902b Marek Szyprowski    2020-12-02  442  	/* disable RTC enable bits potentially set by the bootloader */
+31b16d978f902b Marek Szyprowski    2020-12-02  443  	if (info->data->disable)
+31b16d978f902b Marek Szyprowski    2020-12-02  444  		info->data->disable(info);
+31b16d978f902b Marek Szyprowski    2020-12-02  445  
+1add6781c85d7e Ben Dooks           2006-07-01  446  	/* check to see if everything is setup correctly */
+ae05c95074e0ea Chanwoo Choi        2014-10-13  447  	if (info->data->enable)
+ae05c95074e0ea Chanwoo Choi        2014-10-13  448  		info->data->enable(info);
+1add6781c85d7e Ben Dooks           2006-07-01  449  
+d4a48c2ad75b06 Jingoo Han          2013-02-21  450  	dev_dbg(&pdev->dev, "s3c2410_rtc: RTCCON=%02x\n",
+19be09f51d3610 Chanwoo Choi        2014-10-13  451  		readw(info->base + S3C2410_RTCCON));
+1add6781c85d7e Ben Dooks           2006-07-01  452  
+51b7616e36fbad Yauhen Kharuzhy     2008-10-29  453  	device_init_wakeup(&pdev->dev, 1);
+51b7616e36fbad Yauhen Kharuzhy     2008-10-29  454  
+dba28c37f23a09 Sam Protsenko       2021-10-21  455  	info->rtc = devm_rtc_allocate_device(&pdev->dev);
+19be09f51d3610 Chanwoo Choi        2014-10-13  456  	if (IS_ERR(info->rtc)) {
+19be09f51d3610 Chanwoo Choi        2014-10-13  457  		ret = PTR_ERR(info->rtc);
+1add6781c85d7e Ben Dooks           2006-07-01  458  		goto err_nortc;
+1add6781c85d7e Ben Dooks           2006-07-01  459  	}
+1add6781c85d7e Ben Dooks           2006-07-01  460  
+dba28c37f23a09 Sam Protsenko       2021-10-21  461  	info->rtc->ops = &s3c_rtcops;
+a5feda3b361e11 Sam Protsenko       2021-10-21  462  	info->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+a5feda3b361e11 Sam Protsenko       2021-10-21  463  	info->rtc->range_max = RTC_TIMESTAMP_END_2099;
+dba28c37f23a09 Sam Protsenko       2021-10-21  464  
+dba28c37f23a09 Sam Protsenko       2021-10-21  465  	ret = devm_rtc_register_device(info->rtc);
+dba28c37f23a09 Sam Protsenko       2021-10-21  466  	if (ret)
+dba28c37f23a09 Sam Protsenko       2021-10-21  467  		goto err_nortc;
+dba28c37f23a09 Sam Protsenko       2021-10-21  468  
+19be09f51d3610 Chanwoo Choi        2014-10-13  469  	ret = devm_request_irq(&pdev->dev, info->irq_alarm, s3c_rtc_alarmirq,
+19be09f51d3610 Chanwoo Choi        2014-10-13  470  			       0, "s3c2410-rtc alarm", info);
+19be09f51d3610 Chanwoo Choi        2014-10-13  471  	if (ret) {
+19be09f51d3610 Chanwoo Choi        2014-10-13  472  		dev_err(&pdev->dev, "IRQ%d error %d\n", info->irq_alarm, ret);
+19be09f51d3610 Chanwoo Choi        2014-10-13  473  		goto err_nortc;
+19be09f51d3610 Chanwoo Choi        2014-10-13  474  	}
+eaa6e4dd4bf243 Maurus Cuelenaere   2010-06-04  475  
+5a5b614ba61cc2 Marek Szyprowski    2019-01-21  476  	s3c_rtc_disable_clk(info);
+5a5b614ba61cc2 Marek Szyprowski    2019-01-21  477  
+1add6781c85d7e Ben Dooks           2006-07-01  478  	return 0;
+1add6781c85d7e Ben Dooks           2006-07-01  479  
+1add6781c85d7e Ben Dooks           2006-07-01  480  err_nortc:
+ae05c95074e0ea Chanwoo Choi        2014-10-13  481  	if (info->data->disable)
+ae05c95074e0ea Chanwoo Choi        2014-10-13  482  		info->data->disable(info);
+1add6781c85d7e Ben Dooks           2006-07-01 @483  }
+1add6781c85d7e Ben Dooks           2006-07-01  484  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
