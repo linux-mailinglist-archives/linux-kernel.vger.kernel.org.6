@@ -1,152 +1,209 @@
-Return-Path: <linux-kernel+bounces-297468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3451B95B8C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6755895B8B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7C23B22EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2665A2828CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269871CC15C;
-	Thu, 22 Aug 2024 14:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD011CC150;
+	Thu, 22 Aug 2024 14:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+86kZaD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="HwmjM/fi"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8A21CBEB5;
-	Thu, 22 Aug 2024 14:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA29C26AC1
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337583; cv=none; b=OprI8RFmRO+KWciN9TZsBOzJiGBRNiw5ub8gHrHBP9Of0ppZRAhJZrtj9Qu4aBk4koe/Ls2D/Y/RqK2OTfE6gMAG2pPN3dlwD93dXFawo2H+FU+kwmIYvX2omhn3y1fr1oaTLtRb7F79mwIz61K8ey1GItKmEIFQPQAKhgxLAYY=
+	t=1724337655; cv=none; b=kLaLMgECKwloJjqpKhIEyZBSeIFWNd9vhvRn5QbqANutX+l9812jUU3IEiPkE3eJ776rFgqNUfDqsvxO4GP6pa5nQuFCSyiiKnmM6WJ5OyyshjoKumGwh8DEQ7WieMFOZaznTzZ5Ch7j/pn6y7KTBVcWqVizeh0s9QDEUNPj2Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337583; c=relaxed/simple;
-	bh=wmFtbOTnt4AlHC8GjMEbHtWkPKNFq/oRHL+liev7MPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IRs5oeJ1x3LPov7FiIT3VrvDFZcBBRIlBM+Y9ZhWh5R4o2g/IXycolYrG/APEppwCJHjB1Bp05Dp+ubtPAAKQbfUe8uChLoDcMzHZ2RZkNKnj488HHj9chiUUwEfF5Z8AGsJl/jag/5s0SSF6VilKARwYpsxPp3q+el5aDuvODI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+86kZaD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA81C32782;
-	Thu, 22 Aug 2024 14:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724337582;
-	bh=wmFtbOTnt4AlHC8GjMEbHtWkPKNFq/oRHL+liev7MPw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R+86kZaDpeawGQ5YDqenKtTSXbo6f71Wf4IKNcqq8LGmGWqMuQ+G10KerjfRqcT+q
-	 8yMnxL0V3dG9HMpVZQ/RpwpHW/iSxndV70OTwLHJ55BEhy9SQ3l6rVn48jHUqGnxG3
-	 gFa9sMsHB2TsIK5Y/6DWPngacw+hjlsqDeJumDEZwBBWzaG2URf1wikqX3Ow6mtsTq
-	 ijgPNOTYlZBHgejL7FBC1YIAbBeIBtQpk1CUMijaO6cL7ce+9dlm8otSNJweJ1n4vg
-	 fORTPJ9qWCUPrkRI+l7TClC93vlFy9rPMa4vfW2+tFzomEwF2dG85qe1GUdIFmeOjK
-	 3pem4L6RmCoOQ==
-Message-ID: <d44d2e53-6684-4fe5-bcc3-60d387044b63@kernel.org>
-Date: Thu, 22 Aug 2024 16:39:38 +0200
+	s=arc-20240116; t=1724337655; c=relaxed/simple;
+	bh=H8BscHhKFJDUT+YO5wHLmHbth4F1hYgX6AI7OGF4GUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QBGxPM2BfKS/Tt1xDga0tI9ZYjTdF7KEdjDCK0B3SLE9mq3kcXV44m+gNpszLPG0CvfOKU/uyN/CAd77AggxwT86DdJf2V2RqHJYkBQdTEUqSBDwi6UZamlMOXs6x5KKSajZh4CBjJaZKdtyeTYmyaO/nkmD3+yCJQfFcWPkIsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=HwmjM/fi; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-70b3b62025dso655153a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1724337653; x=1724942453; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v2BI5ynqFBhoBoWz1wdgqO1G8/PbBu+hf6d0XfvEXko=;
+        b=HwmjM/fiVqDeKnw7iQ5bRjDXdG/6EPqRNaE9yLtFeFeqrfoQ+iTJKU9VOSCpPi6+6Z
+         9Pf1iykEBSInzoc6GJLAWZ2qF0EwabqgXjDD68HJfl3A9I6/I+mrK2GcWgcwGRkDOpcG
+         WW9nVmaeJE6cvytXGNmNT0H6Hsl2ibV1c5CyXQU15X53zRfUASTYf2ckHEl/egAUoHk0
+         e2l5QJaHEHtAVxqj0JCyueUW78zDTnaVf93/4Ex766AeMb+kGigaUmw64dQbybS1W32M
+         TOAUgDzQUs+i8OdNs5eCzlVI8ALRDauJb4orpMW5aLfEqAh5+zVKCGJyqerqI9ZBiJfN
+         Wdbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724337653; x=1724942453;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v2BI5ynqFBhoBoWz1wdgqO1G8/PbBu+hf6d0XfvEXko=;
+        b=A+EBV03W98QJHgV7JQ5LfP/SGFz+SXxydmeQKrUTq+n4LegHKnYAoJtSBAgFLXghRR
+         FeBLvN9zQvodbb4S7UlKUcq1KHDJ4U8pHStM4tDwklK5neWAEamCAQgbW28wTLPsPCRh
+         nZh/LC0udMMge4bhcAlPUjtkkJP1cRL/lfv7QoKZJUIgvmze70ocWT0iiivSnnbC9O4L
+         8KnEFP9YyG27TvtTFt2gNXHG3zG7LEtjHMOhbNFMi5wtZIhpi4Rra34RALaSuVL3dYyL
+         WpX3GM4IiJ8BeFQb7Baohf7UvZKOzAKKWiMIxzj1H2Prf7l861d393F0vo5Pt1pjVo7e
+         m97Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV580EDdxWgu8adR1kW980/UFwwhby3tUob5HnIgVCTEl40zyYQNFemiV4Cj+hEfKen1NgdoAj0zxWEhYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqRujISZSuv4kzhVrH5uiQDKObe77+B1AzmDO2E915RMEaXW/X
+	+RcKMm0yrUuAmrdGGLjbFl4I1Q731bKggV5FxHkjMOUhV3u+4u9cAbk6POAXwoA=
+X-Google-Smtp-Source: AGHT+IEsSYDHHqm+C58leKzz0AgQbycyJyHK7W9kTO0a+Ck80Gt+pTCBBI6JswuJ+PWDlTw/jQ9dCQ==
+X-Received: by 2002:a05:6830:3494:b0:703:6ac4:2ab8 with SMTP id 46e09a7af769-70df851d524mr6573637a34.0.1724337652490;
+        Thu, 22 Aug 2024 07:40:52 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:57ae:721f:378d:39ca])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70e03ad2847sm288312a34.46.2024.08.22.07.40.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 07:40:52 -0700 (PDT)
+Date: Thu, 22 Aug 2024 09:40:50 -0500
+From: Corey Minyard <corey@minyard.net>
+To: "Ivan T. Ivanov" <iivanov@suse.de>
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipmi:ssif: Improve detecting during probing
+Message-ID: <ZsdN8sBIUYetCUOp@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <20240816065458.117986-1-iivanov@suse.de>
+ <ZsU9SRlQgzQn8bDs@mail.minyard.net>
+ <20240822072255.fncuy4xdkglnf3bn@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] net: dsa: Simplify with scoped for each OF child
- loop
-To: Jinjie Ruan <ruanjinjie@huawei.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240820065804.560603-1-ruanjinjie@huawei.com>
- <20240821171817.3b935a9d@kernel.org>
- <2d67e112-75a0-3111-3f3a-91e6a982652f@huawei.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <2d67e112-75a0-3111-3f3a-91e6a982652f@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822072255.fncuy4xdkglnf3bn@localhost.localdomain>
 
-On 22/08/2024 04:07, Jinjie Ruan wrote:
+On Thu, Aug 22, 2024 at 10:22:55AM +0300, Ivan T. Ivanov wrote:
+> Hi Corey,
 > 
+> On 08-20 20:05, Corey Minyard wrote:
+> > 
+> > If an IPMI SSIF device is probed and there is something there, but
+> > probably not an actual BMC, the code would just issue a lot of errors
+> > before it failed.  We kind of need these errors to help with certain
+> > issues, and some of the failure reports are non-fatal.
+> > 
+> > However, a get device id command should alway work.  If that fails,
+> > nothing else is going to work and it's a pretty good indication that
+> > there's no valid BMC there.  So issue and check that command and bail
+> > if it fails.
+> > 
+> > Reported-by: Ivan T. Ivanov <iivanov@suse.de>
+> > Signed-off-by: Corey Minyard <corey@minyard.net>
+> > ---
+> >  drivers/char/ipmi/ipmi_ssif.c | 24 +++++++++++++++++++++++-
+> >  1 file changed, 23 insertions(+), 1 deletion(-)
+> > 
+> > Ivan, is it possible for you to test this patch on the broken system?
 > 
-> On 2024/8/22 8:18, Jakub Kicinski wrote:
->> On Tue, 20 Aug 2024 14:58:04 +0800 Jinjie Ruan wrote:
->>> Use scoped for_each_available_child_of_node_scoped() when iterating over
->>> device nodes to make code a bit simpler.
->>
->> Could you add more info here that confirms this works with gotos?
->> I don't recall the details but I thought sometimes the scoped
->> constructs don't do well with gotos. I checked 5 random uses
->> of this loop and 4 of them didn't have gotos.
+> This exact system is not available to me at the moment. I have few
+> other machines on which I could test this.
 > 
-> Hi, Jakub
+> > It should work based on what you reported, but it's nice to be sure.
+> > 
+> > Also, I discovered that the detect function is kind of bogus, it only
+> > works on an address list that isn't present (any more).  However, I
+> > re-used it for my purposes in the probe function.
+> > 
+> > Thanks.
+> > 
+> > diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+> > index e8e7b832c060..4c403e7a9fc8 100644
+> > --- a/drivers/char/ipmi/ipmi_ssif.c
+> > +++ b/drivers/char/ipmi/ipmi_ssif.c
+> > @@ -1368,8 +1368,20 @@ static int ssif_detect(struct i2c_client *client, struct i2c_board_info *info)
+> >  	rv = do_cmd(client, 2, msg, &len, resp);
+> >  	if (rv)
+> >  		rv = -ENODEV;
 > 
->>From what I understand, for_each_available_child_of_node_scoped() is not
-> related to gotos, it only let the iterating child node self-declared and
-> automatic release, so the of_node_put(iterating_child_node) can be removed.
-> 
-> For example, the following use case has goto and use this macro:
-> 
-> Link:
-> https://lore.kernel.org/all/20240813-b4-cleanup-h-of-node-put-other-v1-6-cfb67323a95c@linaro.org/
+> What is my worry is that in case of SMBus errors, device is there but
+> for some reason it got stuck/crashed or whatever, so will get out of
+> detect function from here and with ENODEV return code probe function
+> will be called for no reason.
 
-Jinjie,
-You started this after me, shortly after my series, taking the commit
-msgs and subjects, and even using my work as reference or explanation of
-your patches. Basically you just copy-paste. That's ok, thouogh, but you
-could at least Cc me to tell me that you are doing it to avoid
-duplication. That would be nice... And you could *try to* understand
-what you are doing, so you can answer to such concerns as Jakub raised.
-Otherwise how can we know that your code is correct?
+That's not how the i2c code works.  See my next comment.
 
-Jakub,
-Scoped uses in-place variable declarations, thus earlier jumps over it
-are not allowed. The code I was converting did not have such jumps, so
-was fine. Not sure if this is the case here, because Jinjie Ruan should
-have checked it and explained that it is safe.
+> 
+> > -	else
+> > +	else {
+> > +	    if (len < 3) {
+> > +		rv = -ENODEV;
+> 
+> No point to call probe(), right?
 
-Best regards,
-Krzysztof
+Originally (before I add the call from ssif_probe()), this is not involved in
+the probe() call.  Instead, the detect function is involved in calling a
+table of addresses in driver->address_list.  So in this case this
+function is never called at all from the i2c code, since there is no
+address list.
 
+> 
+> > +	    } else {
+> > +		struct ipmi_device_id id;
+> > +
+> > +		rv = ipmi_demangle_device_id(resp[0] >> 2, resp[1],
+> > +					     resp + 2, len - 2, &id);
+> > +		if (rv)
+> > +		    rv = -ENODEV; /* Error means a BMC probably isn't there. */
+> 
+> Same.
+> 
+> > +	    }
+> > +	    if (!rv && info)
+> >  		strscpy(info->type, DEVICE_NAME, I2C_NAME_SIZE);
+> > +	}
+> >  	kfree(resp);
+> >  	return rv;
+> >  }
+> > @@ -1704,6 +1716,16 @@ static int ssif_probe(struct i2c_client *client)
+> >  		ipmi_addr_src_to_str(ssif_info->addr_source),
+> >  		client->addr, client->adapter->name, slave_addr);
+> >  
+> > +	/*
+> > +	 * Send a get device id command and validate its response to
+> > +	 * make sure a valid BMC is there.
+> > +	 */
+> > +	rv = ssif_detect(client, NULL);
+> > +	if (rv) {
+> > +		dev_err(&client->dev, "Not present\n");
+> > +		goto out;
+> > +	}
+> > +
+> 
+> The point is that even after this point IPMI device can start failing
+> to properly communicate with the OS, real SMBus errors, like EREMOTEIO
+> in my case, but unfortunately code bellow do not handle this very well,
+> I think.
+
+It is possible that the BMC gets rebooted or something between the call
+to ssif_detect() and the code below, but the probability is really low.
+If it answers a detect, the rest of the things should work.
+
+-corey
+
+> 
+> 
+> >  	/* Now check for system interface capabilities */
+> >  	msg[0] = IPMI_NETFN_APP_REQUEST << 2;
+> >  	msg[1] = IPMI_GET_SYSTEM_INTERFACE_CAPABILITIES_CMD;
+> > -- 
+> > 2.34.1
+> > 
+> 
+> Regards,
+> Ivan
+> 
 
