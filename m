@@ -1,172 +1,111 @@
-Return-Path: <linux-kernel+bounces-296807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F0395AF63
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:34:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A287795AF5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CA91C20C8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FAFE1F233B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3EC1537C1;
-	Thu, 22 Aug 2024 07:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="nlPGcbSN"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CA51537D7;
+	Thu, 22 Aug 2024 07:34:04 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0805A933;
-	Thu, 22 Aug 2024 07:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB04AA933;
+	Thu, 22 Aug 2024 07:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724312053; cv=none; b=bWJiCgBltBUJT1iMF392wm/UsQHy9X9nWkG0yjDEKVGIYPhT8FPQ2quDQgKAXTcAs+ht3HVlnUrEXmmcPy+kIXyBOKwecDkavjrJlCrLB8j4Wdwqx8FU95hsY2/Ka21UsblSL/XqR9ggIlqloxPOQiGB4SLEGGoh8ScbLz2uJiA=
+	t=1724312043; cv=none; b=KSxg7SxUOWK1M273J7Ou8jexObbRXFhbv8N9T0wbzfbvdHOM7ZdOnOUe0G1aK3EskwahmJoxhQYwVTulPurqXKDYanwPRDsQYe+YGirxv3GJj8oUbblXeVnvZyNSBAItTL7JnhVYr3m0vJG8Ta/odmQ+0/qy1uI0SLNwbI4nb94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724312053; c=relaxed/simple;
-	bh=lIKHvHDsMIm2CVSLExtUiHMjQu2vPE8seshIYDk/SIk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Xoe2pz7eb+mUHZJzXgpZGHZ4B8ofNx/p7hGl+TTyVUCm50/XxErPZ03l8NCywy56bzsAOpOJ7wUo/cbkIxqaBjwRFJy+x+lqdyu+Ew60DT+NWX5dfq9ACWdQhljE1t+cklWSCrSL61A/XcHN5+Bilt/H6lETIUD4l0UothAtG8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=nlPGcbSN; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=nsNs6OoEVbcw2LLEgSbDKi7BEPoPfsioIF+I1dRzjSQ=; t=1724312050; x=1724916850; 
-	b=nlPGcbSNTlJ1ua53ttil+1bd31AMJzzCWczPIlCSh1ckviFmz5/SvN4/+KmwHN7ROOQP6jaPlNN
-	xdPCDJ2h56xYGwLbDG/+tBZUxf1rSaTe4MwwBakvXHEue5fDbVIgQmXWtMjc60v723txEaBKwo3ft
-	qt3tgfrXa9vpd4k2Imvzxda6Se4VWwfsnnkjvbTyPbo26HuQIYvjkE4Kjt36HeZXyrnOKFZsV1aA7
-	5eJ2ChYEEg16SPepCcqYip+VQI0P9eLTzX0ZvVEZiHTeBhV4lvYa+XI8V0aYEmRpxT8IXlD7eH5Rw
-	nwsXDZ5c1beiTcK26lrVGa2yj3+kYQyIeyBA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sh2KT-000000008j9-3CbJ; Thu, 22 Aug 2024 09:33:57 +0200
-Received: from p5b13a2bf.dip0.t-ipconnect.de ([91.19.162.191] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sh2KT-00000002vTy-29Tp; Thu, 22 Aug 2024 09:33:57 +0200
-Message-ID: <a9d9ecd1ed8d62eae47ec26257093495e6cbd44a.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH linux-next v3 05/14] crash: clean up kdump related
- config items
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Dave Vasilevsky <dave@vasilevsky.ca>, Michael Ellerman
- <mpe@ellerman.id.au>,  kexec@lists.infradead.org,
- debian-powerpc@lists.debian.org, x86@kernel.org, 
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-mips@vger.kernel.org,  linux-riscv@lists.infradead.org,
- loongarch@lists.linux.dev,  akpm@linux-foundation.org,
- ebiederm@xmission.com, hbathini@linux.ibm.com,  piliu@redhat.com,
- viro@zeniv.linux.org.uk, Sam James <sam@gentoo.org>
-Date: Thu, 22 Aug 2024 09:33:56 +0200
-In-Reply-To: <20240124051254.67105-6-bhe@redhat.com>
-References: <20240124051254.67105-1-bhe@redhat.com>
-	 <20240124051254.67105-6-bhe@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1724312043; c=relaxed/simple;
+	bh=L30NV2AcPLbkhFmH0b3ez67bhMd6a1pynzfPCQXulrg=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=I9nTB2BH/fCeg26w4AS9H7HPh/rDofCwUeb8984gySOoc9Xw9HGn3KiKcP4jCe4QqK1ILMfRFVYkdckX8KWKqm8C9P8ZmCmnIlc4jw9SILOJTtP6xOXTdGtiybF952W2judCbBWaqWDJgJiWRxHWMhPPk5x9rKjdENpjiCflIHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WqFLq4Cz0z2Cc9Z;
+	Thu, 22 Aug 2024 15:33:55 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 047EA140447;
+	Thu, 22 Aug 2024 15:33:59 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 22 Aug 2024 15:33:57 +0800
+Message-ID: <2a809cfe-c64c-4fbe-96e5-179d5cd27779@huawei.com>
+Date: Thu, 22 Aug 2024 15:33:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, Jakub Kicinski <kuba@kernel.org>,
+	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <jdamato@fastly.com>, <horms@kernel.org>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 net-next 11/11] net: add is_valid_ether_addr check in
+ dev_set_mac_address
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240820140154.137876-1-shaojijie@huawei.com>
+ <20240820140154.137876-12-shaojijie@huawei.com>
+ <20240820185507.4ee83dcc@kernel.org>
+ <7bc7a054-f180-444a-aac0-61997b43e5d6@huawei.com>
+ <5948f3f7-a43c-4238-82ff-2806a5ef5975@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <5948f3f7-a43c-4238-82ff-2806a5ef5975@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-Hi Baoquan,
 
-On Wed, 2024-01-24 at 13:12 +0800, Baoquan He wrote:
-> By splitting CRASH_RESERVE and VMCORE_INFO out from CRASH_CORE, cleaning
-> up the dependency of FA_DMUMP on CRASH_DUMP, and moving crash codes from
-> kexec_core.c to crash_core.c, now we can rearrange CRASH_DUMP to
-> depend on KEXEC_CORE, and make CRASH_DUMP select CRASH_RESERVE and
-> VMCORE_INFO.
->=20
-> KEXEC_CORE won't select CRASH_RESERVE and VMCORE_INFO any more because
-> KEXEC_CORE enables codes which allocate control pages, copy
-> kexec/kdump segments, and prepare for switching. These codes are shared
-> by both kexec reboot and crash dumping.
->=20
-> Doing this makes codes and the corresponding config items more
-> logical (the right item depends on or is selected by the left item).
->=20
-> PROC_KCORE -----------> VMCORE_INFO
->=20
->            |----------> VMCORE_INFO
-> FA_DUMP----|
->            |----------> CRASH_RESERVE
->=20
->                                                 ---->VMCORE_INFO
->                                                /
->                                                |---->CRASH_RESERVE
-> KEXEC      --|                                /|
->              |--> KEXEC_CORE--> CRASH_DUMP-->/-|---->PROC_VMCORE
-> KEXEC_FILE --|                               \ |
->                                                \---->CRASH_HOTPLUG
->=20
-> KEXEC      --|
->              |--> KEXEC_CORE--> kexec reboot
-> KEXEC_FILE --|
->=20
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  kernel/Kconfig.kexec | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->=20
-> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> index 8faf27043432..6c34e63c88ff 100644
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -9,8 +9,6 @@ config VMCORE_INFO
->  	bool
-> =20
->  config KEXEC_CORE
-> -	select VMCORE_INFO
-> -	select CRASH_RESERVE
->  	bool
-> =20
->  config KEXEC_ELF
-> @@ -99,8 +97,11 @@ config KEXEC_JUMP
-> =20
->  config CRASH_DUMP
->  	bool "kernel crash dumps"
-> +	default y
->  	depends on ARCH_SUPPORTS_CRASH_DUMP
-> -	select KEXEC_CORE
-> +	depends on KEXEC_CORE
-> +	select VMCORE_INFO
-> +	select CRASH_RESERVE
->  	help
->  	  Generate crash dump after being started by kexec.
->  	  This should be normally only set in special crash dump kernels
+on 2024/8/21 20:15, Andrew Lunn wrote:
+> On Wed, Aug 21, 2024 at 02:04:01PM +0800, Jijie Shao wrote:
+>> on 2024/8/21 9:55, Jakub Kicinski wrote:
+>>> On Tue, 20 Aug 2024 22:01:54 +0800 Jijie Shao wrote:
+>>>> core need test the mac_addr not every driver need to do.
+>>>>
+>>>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+>>>> ---
+>>>>    net/core/dev.c | 2 ++
+>>>>    1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/net/core/dev.c b/net/core/dev.c
+>>>> index e7260889d4cb..2e19712184bc 100644
+>>>> --- a/net/core/dev.c
+>>>> +++ b/net/core/dev.c
+>>>> @@ -9087,6 +9087,8 @@ int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa,
+>>>>    		return -EOPNOTSUPP;
+>>>>    	if (sa->sa_family != dev->type)
+>>>>    		return -EINVAL;
+>>>> +	if (!is_valid_ether_addr(sa->sa_data))
+>>>> +		return -EADDRNOTAVAIL;
+>>> not every netdev is for an Ethernet device
+>> ok， this patch will be removed in v3.
+>> and the check will move to hibmcge driver.
+> No, you just need to use the correct function to perform the check.
+>
+> __dev_open() does:
+>
+>          if (ops->ndo_validate_addr)
+>                  ret = ops->ndo_validate_addr(dev);
+>
+> 	Andrew
 
-The change to enable CONFIG_CRASH_DUMP by default apparently broke the boot
-on 32-bit Power Macintosh systems which fail after GRUB with:
+okay, it looks perfect!
+	
+	Jijie Shao
 
-	"Error: You can't boot a kdump kernel from OF!"
-
-We may have to turn this off for 32-bit Power Macintosh systems.
-
-See this thread on debian-powerpc ML: https://lists.debian.org/debian-power=
-pc/2024/07/msg00001.html
-
-Thanks,
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
