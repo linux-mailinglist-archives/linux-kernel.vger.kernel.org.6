@@ -1,80 +1,103 @@
-Return-Path: <linux-kernel+bounces-297416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294E595B7FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:07:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7899295B807
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BF11F22792
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367B3286A40
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D311CB330;
-	Thu, 22 Aug 2024 14:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMjSrIn5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3781CB330;
+	Thu, 22 Aug 2024 14:10:05 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36BB17D354;
-	Thu, 22 Aug 2024 14:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01E914A08F;
+	Thu, 22 Aug 2024 14:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724335670; cv=none; b=M42swjLJVmiq+bGbmYMA8vzK1N9HYOlxbdAJMUtK7ObTWM/THN7YZsvOHHS5OqNnv+MXAvu6iNwnMg0tptqRQvbgTsJZykm7+IjuSwUq5Qhet6vKGA1ms6fSSz1U6WHITES4Y/4hRbJD18ZXItyCpeQqWR52UEVUYgNpMU9v1LU=
+	t=1724335805; cv=none; b=YhM3/2ZwY0PgJwECoPB924iIf680dojvro343AXhfh6Exc/4OHEQJhZzOto2YyECpGN358fnSXUgL07JwjVBx6ukzQXO0yxfp65Qh85H8BiuihEOWrDnLp1izX6YrUvFgDG7yUkhsJG9No4Y9iAlzwY3H/XwXa5ym8Y8nlsEcOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724335670; c=relaxed/simple;
-	bh=Irho6dWycFCVpBcjEAhgC6mpuQ0Wca6An4qT8hsh9sk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uKR3ew+wPx9l61NFwJW5HU33YGW4GYSRgfZgnJ3QCVf+86k1lOYKyki/YzfGmbWYEiKcpVbqkBQwNsaIM7JP3RSCRK25KnTYDqSZRT5kW9jv1CNCD4sSuqQXL14R1NuH42GGYmS3SJ2GjzdOI9GGS2Ncaf0SkyqxLkg2xfPlPmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMjSrIn5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62044C32782;
-	Thu, 22 Aug 2024 14:07:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724335670;
-	bh=Irho6dWycFCVpBcjEAhgC6mpuQ0Wca6An4qT8hsh9sk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RMjSrIn5iSJp7U2vmj/4eNxP4N5506s+Ecb20BIsdPq4wiL9Srvxqe2xPCH+CvGU4
-	 XBO15qAzbS8/SjoPautpGRMfBDWVP0N6ZXB+G3gZ6StQqymLWLc5QwG8kgy1gC/7G3
-	 eRUBypEfnJBaA3SH2932RdSMDYZT5AhTpriwMnymbOrGJA/asB5EgOobdI+2xw5rz0
-	 Nbgh/81UwHvcLXnPWIJnXUqndqTDvs5DBuqVtAVc3Yyb/J3FuV6YkFMIJ9/iCY9Izo
-	 39OT+AbVg7JC0LHT8uK2vVmaiFKjaPAe0/Fft0PDKhjWIxv66UMmNN7j7JaKHZLL9p
-	 0nOaECpDEE4eg==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org, Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20240822121539.4265-1-tzungbi@kernel.org>
-References: <20240822121539.4265-1-tzungbi@kernel.org>
-Subject: Re: (subset) [PATCH v2] mfd: cros_ec: update module description
-Message-Id: <172433566908.1343061.372789251240553871.b4-ty@kernel.org>
-Date: Thu, 22 Aug 2024 15:07:49 +0100
+	s=arc-20240116; t=1724335805; c=relaxed/simple;
+	bh=3XzqPt5Wor/47stQV0ZO4HNZEv39caFPd1KPaBt65M0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t5bk0U3eEFHuOwcllJSxT7/cek++Dje3kgSD95ZncmgvrjOrbkMMfQ/L+n749gJZuPf5mSAnyTyFRlWYHTO1QmyyiF6pnRMZt+04WXZHmg74Ddhh8o9r42RGEIsN8YMwkC3G5nkZfJC24o4iQxa49YAMojMrkdtMtr9rAYCmTsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WqQ2M6VHzz20m3V;
+	Thu, 22 Aug 2024 22:05:15 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id CD90514013B;
+	Thu, 22 Aug 2024 22:09:58 +0800 (CST)
+Received: from thunder-town.china.huawei.com (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 22 Aug 2024 22:09:58 +0800
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley
+	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+	<selinux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] selinux: simplify avc_xperms_audit_required()
+Date: Thu, 22 Aug 2024 22:08:58 +0800
+Message-ID: <20240822140858.1998-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.37.3.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Thu, 22 Aug 2024 20:15:39 +0800, Tzung-Bi Shih wrote:
-> The module description can be backtracked to commit e7c256fbfb15
-> ("platform/chrome: Add Chrome OS EC userspace device interface").
-> 
-> The description became out-of-date after a bunch of changes.  E.g.:
-> - 5668bfdd90cd ("platform/chrome: cros_ec_dev - Register cros-ec sensors").
-> - ea01a31b9058 ("cros_ec: Split cros_ec_devs module").
-> - 5e0115581bbc ("cros_ec: Move cros_ec_dev module to drivers/mfd").
-> 
-> [...]
+By associative and commutative laws, the result of the two 'audited' is
+zero. Take the second 'audited' as an example:
+  1) audited = requested & avd->auditallow;
+  2) audited &= ~requested;
+  ==> audited = ~requested & (requested & avd->auditallow);
+  ==> audited = (~requested & requested) & avd->auditallow;
+  ==> audited = 0 & avd->auditallow;
+  ==> audited = 0;
 
-Applied, thanks!
+In fact, it is more readable to directly write zero. The value of the
+first 'audited' is 0 because AUDIT is not allowed. The second 'audited'
+is zero because there is no AUDITALLOW permission.
 
-[1/1] mfd: cros_ec: update module description
-      commit: 630d7615539ac09a62feb9b1944b04eb65ff3e70
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ security/selinux/avc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---
-Lee Jones [李琼斯]
+diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+index b49c44869dc4627..21f5bbba50caaeb 100644
+--- a/security/selinux/avc.c
++++ b/security/selinux/avc.c
+@@ -396,7 +396,7 @@ static inline u32 avc_xperms_audit_required(u32 requested,
+ 		audited = denied & avd->auditdeny;
+ 		if (audited && xpd) {
+ 			if (avc_xperms_has_perm(xpd, perm, XPERMS_DONTAUDIT))
+-				audited &= ~requested;
++				audited = 0;
+ 		}
+ 	} else if (result) {
+ 		audited = denied = requested;
+@@ -404,7 +404,7 @@ static inline u32 avc_xperms_audit_required(u32 requested,
+ 		audited = requested & avd->auditallow;
+ 		if (audited && xpd) {
+ 			if (!avc_xperms_has_perm(xpd, perm, XPERMS_AUDITALLOW))
+-				audited &= ~requested;
++				audited = 0;
+ 		}
+ 	}
+ 
+-- 
+2.34.1
 
 
