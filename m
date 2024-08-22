@@ -1,234 +1,182 @@
-Return-Path: <linux-kernel+bounces-296611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D320F95ACC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:09:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF2D95ACC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2281F227AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C0F283E46
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA964F218;
-	Thu, 22 Aug 2024 05:09:25 +0000 (UTC)
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42524CE05;
+	Thu, 22 Aug 2024 05:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mk5QC/Nx"
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2CE43AC4;
-	Thu, 22 Aug 2024 05:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A27C134A8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724303364; cv=none; b=LCjhrCauNTegpqP20qPRlh6NoPkxRFz2idewohnCYnCSwjvvqQMhufmkYFI1dfrxgzs1bOUPFM4ux4yMrSrwz8yXdC9VVJ7DhC2gw2wfjl2/DnPNl0RE5KwxXZirP6/NzIph55A71B5/c/I4OsxLTJi4RiNn5ooVzO0PW7qY0Oc=
+	t=1724303531; cv=none; b=KWjOTCxs3dRqjbRfSoq2Plc9Am9djOgfgWx8BbdPN0Aua72NLcPr2/T0zuZXA1SmyHdHSZImjOlEqvOiit1B///XxFiImNRz7rI7Ew741rlsklh+zoLzASDgf8m9qwjL4/Ms4m6JTOrhlmsQCTYj35tNm5i4h3wcRY70pKmi1Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724303364; c=relaxed/simple;
-	bh=4BohM4unqcz+QMGbDy/FyqZD1iDOmZ0pEIkVb96uQew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3C5Ug/E0TVfIBxCF1uFdhvdwZAD3Q6wyF1GAhpEUMSXdUHCOvJJbqARKL32W033GsGPYusg237fXSxfs+zfAc/65/4SpEop+E3X2LnAhSVjYY9NJOOIOOEPk55kYUTLKI/qrz3uSViRJGxwqOEEFZ/NDn1n/1AAWSzYwL1F/X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7093472356dso240695a34.0;
-        Wed, 21 Aug 2024 22:09:22 -0700 (PDT)
+	s=arc-20240116; t=1724303531; c=relaxed/simple;
+	bh=M1SZgw4DFujc0wbsSJr0giJJPNvF9UEkZx+8mzZwYfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tg/aV+5hwoZK8eEDsReQXaJP+xwIK0OmFoNAK0pZfuUHiNJlmuq6tPk9eTetmYeiRVN0ZsBR+cgHTnGs2n3s/MQGFS0McGr7cDaCw+pY2WVo5CzQ8o3oYzdCiDl8JAAqwAPBEhAcL8mosARNSJtfeTBJST4i2pMl3mYx9uExXBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mk5QC/Nx; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-842f95d3501so258974241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 22:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724303528; x=1724908328; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k2AfdT/qUVnYEmVWqwh27YziwYiSG6ZtaTZWiB/2UCU=;
+        b=mk5QC/Nxa5K/zPEE/WNJApi1b7NEI43/fdtvfSqWaL+8eD+fq+WB2e0y+Lgu1XUvZG
+         ajecKYXkNTsn56OXqqneJmSy9SpZLI78EGSnPSREIgpjQMD6ti5jRvqaA7FV33gojQwF
+         dE+0COvwUyAe5ZnBnxn53GtyyIFO5Axv2A0FdJzVLLEesSfmuTZKf2P6uh2cdBIUht8u
+         DB3OHxQ9X2RP91KvJ788ML+McV4rMM9QyWLwzWlbDh0G14UBJuf37MyvbidTDoHacrVt
+         TIsPmEnjBP+Ujaji5xv3MYLduRYHVh9qlFsxu6lyPAtr8hw4v89P3wq/kgWqOWo8rqSH
+         kzAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724303362; x=1724908162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zUJHXMxjViKrDRkpIgP/6Ftfa7fylJAO2t0N4RwzwyM=;
-        b=LE4RRh/6qwmJbg/lkoPDjvFI+GyPqRAr1hRvrjObDGBlB6+c7Dz/xFV8S5A9J/LbqI
-         l9Mh2epKCGADjVzANrhLhkD7XFTGZGIFm43VXPyM4AITI+gegdKDZmgjcNnq1IQCEM2o
-         pZV0tkP66r01uuiG72tl4hN1AdQmGFja2wZNT98ikhGHKVsaJqfIPKuwUIidtcL5R8Rk
-         VimYvxM0i9adP6tRV7erEh1qghCTrUz/mJuq+G6nfNpH+JtOSBqxPXImbBnyiwWBg6Zs
-         NBIxOYe9ye74h96rkMFxjrSfckQxyPMMpLIkSWuDkI8op6SADOi066oCkbU13ZO1b+7Q
-         tQwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVObmgA0XBHnhIbrGeou933Hfz8kt2sre7xHBgsLCM1cakr4PvYKVGY3kVtNK1eU4116ZVtdPVh0Yk=@vger.kernel.org, AJvYcCWF3OeRKQOGsYpld1ldUb/lZiJftXTyPxa6/uxNjuStlzkIN4yPkpWDNy9BqS/u3NYRdqncFbSUzUDCep4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8fEDI7ewg4K6ZYpMaFaKatXlgaQsdgxPuXvpaoDqWrLlhNikP
-	Dkt6qQafbGi+nnfP5oZS3KyHsPw3WdByNQ3L3SWaGQ5m3lz69N9AVzyzXwBCKLk=
-X-Google-Smtp-Source: AGHT+IEg24FBbgBM+r2H8SVB5Jc5vggpp9DXZ6n1LLhvvL0fDkmOW8E+upWhtXZkPgX9pc+ZoE4/gg==
-X-Received: by 2002:a05:6830:4124:b0:703:5cde:3a1f with SMTP id 46e09a7af769-70df872f8e5mr4039515a34.1.1724303361613;
-        Wed, 21 Aug 2024 22:09:21 -0700 (PDT)
-Received: from sultan-box.localdomain ([142.147.89.224])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70e03b5e84asm159067a34.54.2024.08.21.22.09.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 22:09:21 -0700 (PDT)
-Date: Wed, 21 Aug 2024 22:09:16 -0700
-From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 04/16] sched/fair: Remove magic hardcoded margin in
- fits_capacity()
-Message-ID: <ZsbH_EtbOPxtLMU0@sultan-box.localdomain>
-References: <20240820163512.1096301-1-qyousef@layalina.io>
- <20240820163512.1096301-5-qyousef@layalina.io>
+        d=1e100.net; s=20230601; t=1724303528; x=1724908328;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k2AfdT/qUVnYEmVWqwh27YziwYiSG6ZtaTZWiB/2UCU=;
+        b=HcZ0d/G9Eow9kJWEA4GUwQtBzQc/fFplrrSY77x2x6JpSJsAq1omPDhEvl7jhw+qX4
+         O+JxyzXdTh+G2g9bW8urJnFyiA8XEaihiAiPuEtDz4izZFhhvYGp9e3WRTCIGXdfcZ37
+         c14FPxCsxW5GH3X0r0qtUUXbQOlzxT7hwUUb3i3BPuFqIyggVTeGqcFxEjc0JntqNawn
+         Qh+prHlgsoOUiX29BBN0IxllbNveZYOgmg1o6Fir9m5ldA37aBjZ5aZWLn3aDYpcOlqB
+         v9cI/wPLs/cThdzWAnrapgZyLcRrCjtT+MXk/y4HYRhAgp5GNO51+xMzcNpnshKV98T0
+         4VaA==
+X-Gm-Message-State: AOJu0YyR1qyGC9qFsYahpvgJM4iMUS9DgMW1rvWZEmXnnNnOIX6GI6Ys
+	4d0CK2bhQ9031qqN6uMBb7FxVqtOqlqkzSSzAGbPo5RFtDpC+chgllOSY4k/i8x0WlhzrXoNA7P
+	xJmKc2ljd5hklyjM+w/hqctmKGIWx9rQPE5Arzg==
+X-Google-Smtp-Source: AGHT+IE/xWmCfL8EynZ8t+uIxYk/r+mrN6h/hspk9c8WP9FVtEPbRdI2QkUqEKvc3cosufaBc/oafG+hBaPdR/iFgvA=
+X-Received: by 2002:a05:6102:dce:b0:495:c34d:ab5d with SMTP id
+ ada2fe7eead31-498e22d94c7mr984589137.13.1724303527859; Wed, 21 Aug 2024
+ 22:12:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820163512.1096301-5-qyousef@layalina.io>
+References: <20240814153558.708365-1-jens.wiklander@linaro.org> <20240814153558.708365-4-jens.wiklander@linaro.org>
+In-Reply-To: <20240814153558.708365-4-jens.wiklander@linaro.org>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Thu, 22 Aug 2024 10:41:56 +0530
+Message-ID: <CAFA6WYM4qmfitWdVUtJoyyeV1S2mTAA4KGZ87tUhf6prMts+2w@mail.gmail.com>
+Subject: Re: [PATCH v9 3/4] tee: add tee_device_set_dev_groups()
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Shyam Saini <shyamsaini@linux.microsoft.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Jerome Forissier <jerome.forissier@linaro.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Bart Van Assche <bvanassche@acm.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Manuel Traut <manut@mecka.net>, Mikko Rapeli <mikko.rapeli@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Qais,
-
-On Tue, Aug 20, 2024 at 05:35:00PM +0100, Qais Yousef wrote:
-> Replace hardcoded margin value in fits_capacity() with better dynamic
-> logic.
-> 
-> 80% margin is a magic value that has served its purpose for now, but it
-> no longer fits the variety of systems that exist today. If a system is
-> over powered specifically, this 80% will mean we leave a lot of capacity
-> unused before we decide to upmigrate on HMP system.
-> 
-> On many systems the little cores are under powered and ability to
-> migrate faster away from them is desired.
-> 
-> Redefine misfit migration to mean the utilization threshold at which the
-> task would become misfit at the next load balance event assuming it
-> becomes an always running task.
-> 
-> To calculate this threshold, we use the new approximate_util_avg()
-> function to find out the threshold, based on arch_scale_cpu_capacity()
-> the task will be misfit if it continues to run for a TICK_USEC which is
-> our worst case scenario for when misfit migration will kick in.
-> 
-> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+On Wed, 14 Aug 2024 at 21:06, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+>
+> Add tee_device_set_dev_groups() to TEE drivers to supply driver specific
+> attribute groups. The class specific attributes are from now on added
+> via the tee_class, which currently only consist of implementation_id.
+>
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 > ---
->  kernel/sched/core.c  |  1 +
->  kernel/sched/fair.c  | 40 ++++++++++++++++++++++++++++++++--------
->  kernel/sched/sched.h |  1 +
->  3 files changed, 34 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 6d35c48239be..402ee4947ef0 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8266,6 +8266,7 @@ void __init sched_init(void)
->  		rq->sd = NULL;
->  		rq->rd = NULL;
->  		rq->cpu_capacity = SCHED_CAPACITY_SCALE;
-> +		rq->fits_capacity_threshold = SCHED_CAPACITY_SCALE;
->  		rq->balance_callback = &balance_push_callback;
->  		rq->active_balance = 0;
->  		rq->next_balance = jiffies;
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 9057584ec06d..e5e986af18dc 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -95,11 +95,15 @@ int __weak arch_asym_cpu_priority(int cpu)
+>  drivers/tee/tee_core.c   | 19 +++++++++++++------
+>  include/linux/tee_core.h | 12 ++++++++++++
+>  2 files changed, 25 insertions(+), 6 deletions(-)
+>
+
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+
+-Sumit
+
+> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> index d52e879b204e..d113679b1e2d 100644
+> --- a/drivers/tee/tee_core.c
+> +++ b/drivers/tee/tee_core.c
+> @@ -40,10 +40,7 @@ static const uuid_t tee_client_uuid_ns = UUID_INIT(0x58ac9ca0, 0x2086, 0x4683,
+>  static DECLARE_BITMAP(dev_mask, TEE_NUM_DEVICES);
+>  static DEFINE_SPINLOCK(driver_lock);
+>
+> -static const struct class tee_class = {
+> -       .name = "tee",
+> -};
+> -
+> +static const struct class tee_class;
+>  static dev_t tee_devt;
+>
+>  struct tee_context *teedev_open(struct tee_device *teedev)
+> @@ -965,6 +962,13 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
 >  }
->  
->  /*
-> - * The margin used when comparing utilization with CPU capacity.
-> - *
-> - * (default: ~20%)
-> + * fits_capacity() must ensure that a task will not be 'stuck' on a CPU with
-> + * lower capacity for too long. This the threshold is the util value at which
-> + * if a task becomes always busy it could miss misfit migration load balance
-> + * event. So we consider a task is misfit before it reaches this point.
->   */
-> -#define fits_capacity(cap, max)	((cap) * 1280 < (max) * 1024)
-> +static inline bool fits_capacity(unsigned long util, int cpu)
+>  EXPORT_SYMBOL_GPL(tee_device_alloc);
+>
+> +void tee_device_set_dev_groups(struct tee_device *teedev,
+> +                              const struct attribute_group **dev_groups)
 > +{
-> +	return util < cpu_rq(cpu)->fits_capacity_threshold;
+> +       teedev->dev.groups = dev_groups;
 > +}
->  
->  /*
->   * The margin used when comparing CPU capacities.
-> @@ -4978,14 +4982,13 @@ static inline int util_fits_cpu(unsigned long util,
->  				unsigned long uclamp_max,
->  				int cpu)
->  {
-> -	unsigned long capacity = capacity_of(cpu);
->  	unsigned long capacity_orig;
->  	bool fits, uclamp_max_fits;
->  
->  	/*
->  	 * Check if the real util fits without any uclamp boost/cap applied.
->  	 */
-> -	fits = fits_capacity(util, capacity);
-> +	fits = fits_capacity(util, cpu);
->  
->  	if (!uclamp_is_used())
->  		return fits;
-> @@ -9592,12 +9595,33 @@ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
->  {
->  	unsigned long capacity = scale_rt_capacity(cpu);
->  	struct sched_group *sdg = sd->groups;
-> +	struct rq *rq = cpu_rq(cpu);
-> +	u64 limit;
->  
->  	if (!capacity)
->  		capacity = 1;
->  
-> -	cpu_rq(cpu)->cpu_capacity = capacity;
-> -	trace_sched_cpu_capacity_tp(cpu_rq(cpu));
-> +	rq->cpu_capacity = capacity;
-> +	trace_sched_cpu_capacity_tp(rq);
+> +EXPORT_SYMBOL_GPL(tee_device_set_dev_groups);
 > +
-> +	/*
-> +	 * Calculate the util at which the task must be considered a misfit.
-> +	 *
-> +	 * We must ensure that a task experiences the same ramp-up time to
-> +	 * reach max performance point of the system regardless of the CPU it
-> +	 * is running on (due to invariance, time will stretch and task will
-> +	 * take longer to achieve the same util value compared to a task
-> +	 * running on a big CPU) and a delay in misfit migration which depends
-> +	 * on TICK doesn't end up hurting it as it can happen after we would
-> +	 * have crossed this threshold.
-> +	 *
-> +	 * To ensure that invaraince is taken into account, we don't scale time
-> +	 * and use it as-is, approximate_util_avg() will then let us know the
-> +	 * our threshold.
-> +	 */
-> +	limit = approximate_runtime(arch_scale_cpu_capacity(cpu)) * USEC_PER_MSEC;
-
-Perhaps it makes more sense to use `capacity` here instead of
-`arch_scale_cpu_capacity(cpu)`? Seems like reduced capacity due to HW pressure
-(and IRQs + RT util) should be considered, e.g. for a capacity inversion due to
-HW pressure on a mid core that results in a little core being faster.
-
-Also, multiplying by the PELT period (1024 us) rather than USEC_PER_MSEC would
-be more accurate.
-
-> +	limit -= TICK_USEC; /* sd->balance_interval is more accurate */
-
-I think `limit` could easily wrap here, especially with a 100 Hz tick, and make
-it seem like an ultra-slow core (e.g. due to HW pressure) can suddenly fit any
-task.
-
-How about `lsub_positive(&limit, TICK_USEC)` instead?
-
-> +	rq->fits_capacity_threshold = approximate_util_avg(0, limit);
->  
->  	sdg->sgc->capacity = capacity;
->  	sdg->sgc->min_capacity = capacity;
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 47f158b2cdc2..ab4672675b84 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1093,6 +1093,7 @@ struct rq {
->  	struct sched_domain __rcu	*sd;
->  
->  	unsigned long		cpu_capacity;
-> +	unsigned long		fits_capacity_threshold;
->  
->  	struct balance_callback *balance_callback;
->  
-> -- 
+>  static ssize_t implementation_id_show(struct device *dev,
+>                                       struct device_attribute *attr, char *buf)
+>  {
+> @@ -983,6 +987,11 @@ static struct attribute *tee_dev_attrs[] = {
+>
+>  ATTRIBUTE_GROUPS(tee_dev);
+>
+> +static const struct class tee_class = {
+> +       .name = "tee",
+> +       .dev_groups = tee_dev_groups,
+> +};
+> +
+>  /**
+>   * tee_device_register() - Registers a TEE device
+>   * @teedev:    Device to register
+> @@ -1001,8 +1010,6 @@ int tee_device_register(struct tee_device *teedev)
+>                 return -EINVAL;
+>         }
+>
+> -       teedev->dev.groups = tee_dev_groups;
+> -
+>         rc = cdev_device_add(&teedev->cdev, &teedev->dev);
+>         if (rc) {
+>                 dev_err(&teedev->dev,
+> diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
+> index efd16ed52315..a38494d6b5f4 100644
+> --- a/include/linux/tee_core.h
+> +++ b/include/linux/tee_core.h
+> @@ -154,6 +154,18 @@ int tee_device_register(struct tee_device *teedev);
+>   */
+>  void tee_device_unregister(struct tee_device *teedev);
+>
+> +/**
+> + * tee_device_set_dev_groups() - Set device attribute groups
+> + * @teedev:    Device to register
+> + * @dev_groups: Attribute groups
+> + *
+> + * Assigns the provided @dev_groups to the @teedev to be registered later
+> + * with tee_device_register(). Calling this function is optional, but if
+> + * it's called it must be called before tee_device_register().
+> + */
+> +void tee_device_set_dev_groups(struct tee_device *teedev,
+> +                              const struct attribute_group **dev_groups);
+> +
+>  /**
+>   * tee_session_calc_client_uuid() - Calculates client UUID for session
+>   * @uuid:              Resulting UUID
+> --
 > 2.34.1
-> 
-
-Cheers,
-Sultan
+>
 
