@@ -1,122 +1,77 @@
-Return-Path: <linux-kernel+bounces-296566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E8C95AC3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:46:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3824D95AC3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6E81C20C8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC4D31F25705
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173DF3DBB7;
-	Thu, 22 Aug 2024 03:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnUtvUZl"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEF437165;
+	Thu, 22 Aug 2024 03:45:54 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F753B192;
-	Thu, 22 Aug 2024 03:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619111A277;
+	Thu, 22 Aug 2024 03:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724298357; cv=none; b=EEpV7HdNZTX9soaU4SVUZRkn6BTabMueO50dsh9heNXqITW2qhL9busoq+dbWwl7ojNraq3Q8iQAnCWY4zyoZ9O8GBEqXzPcAes28aDufOHqrSIPBFPxOZc3tahgl9eOK9qHh5PhWsLami07YiapvwhZG3w2B5xPwq41hwWCVZQ=
+	t=1724298354; cv=none; b=HnQeA9zEy337/JueWUISZsd6FycgZ4fPicuhtaidiKXMnnVysIDGDwkYZJ5R67BLwLjZxLOnIQ/xNPI1MpylYiZECHGB153D9aEvb9KUt7cPKX+MDsNT3nZVOAdWeSYAdkUMMZV4BUvnyljrBa2uVNq4kqDyY/LbPzkBiMbRHdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724298357; c=relaxed/simple;
-	bh=+7uLR+UBXmRfIR0m/59Lkz2AG+LLfT53KV1lFtES6kE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fE4G5570vfOBV91xqPuwvqImCW8Xnk68QqcASwvk5jYH7cy2xx4x39poRE1ldFp767fDQmjZWI4mEOXC5PRaOxYWtXEtvvGC011vG1FsZJdDnyzAvnxljKsY9FQOKz0DcAheNrZ62ZiLvaSJ5tPiuMxWT0TuMly6qmR8IRQnSTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnUtvUZl; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6b4412fac76so3710207b3.1;
-        Wed, 21 Aug 2024 20:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724298355; x=1724903155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EGzmkhbGckFP/y38PBeh7SnOL9LzvUwcTAANH9fPtC4=;
-        b=fnUtvUZl28T2gSWsDBwzmgsXNjVIZHJnTF+8QkV+WX94hQdZy/W+uM4NYH0anw0rtR
-         lMMFBQV9frG1UneiOG+Ju+Uhrr+z9HV7ANDYDmqEa3QxuyP6QES1RzuyeNzSTcfXGCgN
-         DJ6HIEWuJ2xFHkuLGtKLejKVr/SIjcOQfE+brh/u1Mz2AtfPBI09gIQf5FGxpWshnsKt
-         KVhAz5WQJMj0nFH9VFoSbQQzKETAfnu1ku4IDli7szX7nohqJakq3bmqjGMzsNom4lbZ
-         JumNcCDzQEGVixl52lxppQuMR5J/603+8u7CGuYlhonQKDV01SegDtm904GNm0hF2uPv
-         qpuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724298355; x=1724903155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EGzmkhbGckFP/y38PBeh7SnOL9LzvUwcTAANH9fPtC4=;
-        b=GfgOVHM0TqCXnsqUfIyuIWNb98Q16YhVVTKV+2fCpAQNroWgSuJmBIi0IoHf1Wd/Jx
-         TBmnhNo7u2ZABXNag1zHcAWZD58Eq5FDUHq2A94kFw8yVRbKfw8xlwuOl6fv8rX7CmMX
-         PjJMtlVqI6OifetJaHSp8H2xXfh8CM9hGvt/23aGgBvHeHeS3QHVKdNMpdDSugoMMRUS
-         UnPPx/+Gix6snz8zP7aKY0gQn24ZlVm2hnDPLJuSCYVLyVDXGylW2IOzWbzeyGX9HbF1
-         MlgU81LLlTmot/f0iSuGG+RId/un6K2pGkirIlxRHKj1Qn8ZmOwfCBTT6rRbnVMVG+uA
-         yruw==
-X-Forwarded-Encrypted: i=1; AJvYcCWANVHnLMaU8T9x9ORLvNlrOU9qbam+1SwxIb4HXXMsZ4TGQ4XUDmyG2TirAh4pJU5I40R+YuQk@vger.kernel.org, AJvYcCWqxk1plrV5cN4nEVbRyI8Vq3AEr6oVeJh7U30rHv89vdazgzi668S4dYW80cDGRCbS9wosydis4G+AhTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKtrRLKaMOOqkj5WmlkxKCmXgLDu1ewcqgGytSxr82Lq7zWRnX
-	ILIbdWgok1gzUfm5w//gUHcCelERvIi4n6hCNCwY1LnUvZ2TBb8ydoOP3TC1XXMbfUR/VWSIr1w
-	WITqz8qJMuTGlsK9OOXQGLCwW2GQ=
-X-Google-Smtp-Source: AGHT+IE8ITH8FXL+FbdqS6mpsyawHDXEPhV0yVV7Ud/cyt/huwSk4+VJRES1N7aqLriTNiwAWDaTtQSc65yxH9WjzGU=
-X-Received: by 2002:a05:690c:5241:b0:6b0:407a:e3af with SMTP id
- 00721157ae682-6c3d54301b0mr6230437b3.34.1724298354779; Wed, 21 Aug 2024
- 20:45:54 -0700 (PDT)
+	s=arc-20240116; t=1724298354; c=relaxed/simple;
+	bh=mIa9JYfzAipUBzgVYDV97c9fmgtfHXkkKjtZyodpapM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iy908eHdN2dOB1A8aTtWpwuZqMIU8YHuTSSqSWH6z5YMbj0gBTA2My0YB5U3/BdaRA/H6x8kIp/p/etJ5UR28Gdqfe+2Lm2Wn8M20OK/x8PrE/JjR9kcmc7BO+KgXlljfSMMaHeUccQ/exABUqFlEdcj2XPiB8AGBHswVKEoeFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 671CB227A8E; Thu, 22 Aug 2024 05:45:48 +0200 (CEST)
+Date: Thu, 22 Aug 2024 05:45:48 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/5] xfs: convert perag lookup to xarray
+Message-ID: <20240822034548.GD32681@lst.de>
+References: <20240821063901.650776-1-hch@lst.de> <20240821063901.650776-5-hch@lst.de> <20240821162810.GF865349@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819122348.490445-1-bbhushan2@marvell.com>
- <20240819122348.490445-2-bbhushan2@marvell.com> <20240820153549.732594b2@kernel.org>
-In-Reply-To: <20240820153549.732594b2@kernel.org>
-From: Bharat Bhushan <bharatb.linux@gmail.com>
-Date: Thu, 22 Aug 2024 09:15:43 +0530
-Message-ID: <CAAeCc_=Nmh25RDaY4SA2CHsu2mqgdtKEo62b4QKSV4V8icHMMw@mail.gmail.com>
-Subject: Re: [net-next,v6 1/8] octeontx2-pf: map skb data as device writeable
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sgoutham@marvell.com, gakula@marvell.com, 
-	sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, jerinj@marvell.com, 
-	lcherian@marvell.com, richardcochran@gmail.com, b@mx0a-0016f401.pphosted.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821162810.GF865349@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Aug 21, 2024 at 4:06=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Mon, 19 Aug 2024 17:53:41 +0530 Bharat Bhushan wrote:
-> > Crypto hardware need write permission for in-place encrypt
-> > or decrypt operation on skb-data to support IPsec crypto
-> > offload. So map this memory as device read-write.
->
-> How do you know the fragments are not read only?
+On Wed, Aug 21, 2024 at 09:28:10AM -0700, Darrick J. Wong wrote:
+> On Wed, Aug 21, 2024 at 08:38:31AM +0200, Christoph Hellwig wrote:
+> > Convert the perag lookup from the legacy radix tree to the xarray,
+> > which allows for much nicer iteration and bulk lookup semantics.
+> 
+> Looks like a pretty straightforward covnersion.  Is there a good
+> justification for converting the ici radix tree too?  Or is it too
+> sparse to be worth doing?
 
-IOMMU permission faults will be reported if the DMA_TO_DEVICE direction fla=
-g
-is used in dma_map_page_attrs(). This is because iommu creates read only ma=
-pping
-if the DMA_TO_DEVICE direction flag is used.  If the direction flag used in
-dma_map_pages() is DMA_BIDIRECTIONAL then iommu creates mapping with
-both read and write permission.
+radix trees and xarrays have pretty similar behavior related to
+sparseness or waste of interior nodes due to it.  So unless we find a
+better data structure for it, it would be worthwhile.
 
->
-> (Whatever the answer is it should be part of the commit msg)
+But the ici radix tree does pretty funny things in terms of also
+protecting other fields with the lock synchronizing it, so the conversion
+is fairly complicated and I don't feel like doing it right now, at least
+no without evaluating if for example a rthashtable might actually be
+the better data structure here.  The downside of the rthashtable is
+that it doens't support tags/masks and isn't great for iteration, so it
+might very much not be very suitable.
 
-Will update commit message to something like:
-
-Crypto hardware needs both read and write permission for in-place
-encryption/decryption operation. Iommu creates read only mapping
-if the DMA_TO_DEVICE direction flag is used in dma_map_page_attrs().
-Use DMA_BIDIRECTIONAL direction flag in dma_map_page_attrs(), so
-that iommu mapping is created with both read and write permission.
-
-Is that okay?
-
-Thanks
--Bharat
 
