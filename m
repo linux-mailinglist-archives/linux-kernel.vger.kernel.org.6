@@ -1,102 +1,136 @@
-Return-Path: <linux-kernel+bounces-296990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F1395B1A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:27:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8485695B1A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C897B24048
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF2021C2229A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3CD4CE05;
-	Thu, 22 Aug 2024 09:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA7717C7BF;
+	Thu, 22 Aug 2024 09:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEdBqw5d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ur5p5OC9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4831C6B5;
-	Thu, 22 Aug 2024 09:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896F114EC5E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724318822; cv=none; b=iEtbkIk9yKIrE5xDRltyFioKqLe9fTmMIhvmsBhst0oWg2y1g/XHDVNVFvMUx55eKKWAX3zXb0o/4zMws1/CDRnSgJ2fc0fG9ppFHx/5QCkFSQbj/NWDcrtK4JamDvbxMNaeI+l0nwJqtXxJv9EPuR8fau9wh4PfngdORzcR4Lk=
+	t=1724318954; cv=none; b=dUsRfKehVU5OjQzkwWvtrzhPvoGskaJ8UK/geGcZ2qswlqiMEmq7U6fgmvU287iVg0G4qyr9tq8WBlL5X/BaBFQCXTPtl7m8bjFFPlqLI2QfkYXCll0dunQVcIZa6NE+NsxJ7wsLPjIUkxJQuI5JCyFwHeu3DC8esx/xO6Rm2TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724318822; c=relaxed/simple;
-	bh=TaiVPQ5rR0ZNBImhsJxgRxIyaRggKmWmQwltsR1CBdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TdgiaDs/uwVBMLegnGp/zgj4aC4YyrIOvzAh3Z0wYi0u698O8oLEm/Q4vzBZOXHlRR2nuEiJ+GRIZVTjc0ohpltWp11eM5gMPrgjZwmPlbNHfXO3FMzXO0LBdBuEuZgiH48Ik5iA8QWqF4x0PlvmN0X+WBRTqMIdh1U7lnBKS/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MEdBqw5d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A0B0C32782;
-	Thu, 22 Aug 2024 09:27:01 +0000 (UTC)
+	s=arc-20240116; t=1724318954; c=relaxed/simple;
+	bh=vtJuoUWmrsdNKkbGI+rezLvYxha6TAvMZGOFWrjivYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mwM4Q+CmjdTZA1bo7j3gaPM6H+yAX4HZkzUOxVKx3V+tG6lYCz0PFbMbsX8n0748v/O4gsmecWW4l89t8yaPCNXYP1zwB54nWCk/icor3Ea2UHPaYZ5o3qw88itq3KqhHjsDBoMdu2JMWrC5qNU9aZUVmtTG/7keoRva4NUe0J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ur5p5OC9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE593C32782;
+	Thu, 22 Aug 2024 09:29:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724318822;
-	bh=TaiVPQ5rR0ZNBImhsJxgRxIyaRggKmWmQwltsR1CBdA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MEdBqw5dkKnsocx8AkDPu1PP0tAOCi3zCH+AUcGE13seAk4jJ/NP226G8X/ya/Wih
-	 Q2t0RQIJiPgDIsaWxVrAC2jkf0V+/9pFC/oMXnRTLkl+45G0yhbK+29675uvP93gWF
-	 1CdQDCm919jHgzsfCbPTyVcB1iPbK85PrLhidLQUNBfplsQkuV/MPQCl7CE+B1y7TG
-	 mzzoIJRGQM2XRDcUj2LLfS8JQa5UaLMb3SSM+Vy+rxmiLwy4p2QoNCmDlR19OY31XI
-	 fcz9njyFu0yyIct1KUUs1i/mcZ+ZEuS+qu+EbzZXNcGNMw2/TB6ZKVVhA8ienMxwfe
-	 ScDDmWaTvH2Zw==
-Message-ID: <f3d2c9ca-7b46-4546-af87-9f9127c1e178@kernel.org>
-Date: Thu, 22 Aug 2024 18:27:00 +0900
+	s=k20201202; t=1724318954;
+	bh=vtJuoUWmrsdNKkbGI+rezLvYxha6TAvMZGOFWrjivYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ur5p5OC9XTtEnxrPOD6bK+pZ4iaZS2GD2Adkkc40MWWpa6QW6Py9WVgwpNY3EFRmk
+	 +BIy73o/h87sQboLKXJiaMvrPR3R3/UP6pRSn6qLXzmCn9bd5xS92ej1/JJCiRd/3Y
+	 1e+TXP8Mc94UW+0vNk00CyMmGKONRCseAzjlDSdETjFsuVCllJRgHNMcHVTvyBVPro
+	 6uNTeP8mHqjI3f1I8/r3p7r4oHZ9Y4i5/26hfV1d/cYBeqHJbwT3dsjE386MQlpqPI
+	 vQGoVZq3gY3Z4kriaurvwofF+aJeWbobFN6nmV+aKKahP4xgP0LrWrCSVBLKDCzFdc
+	 sYvyYI6v/LXHQ==
+Date: Thu, 22 Aug 2024 12:28:59 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tvrtko Ursulin <tursulin@igalia.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 1/2] numa: Add simple generic NUMA emulation
+Message-ID: <ZscE23zQZGCqUz0p@kernel.org>
+References: <20240625125803.38038-1-tursulin@igalia.com>
+ <20240625125803.38038-2-tursulin@igalia.com>
+ <2024062627-curler-unlucky-51e0@gregkh>
+ <679a9dda-8e8a-4428-8d57-30b0c60f28ce@igalia.com>
+ <54b357b2-2132-4fd6-89db-7a60617dc859@igalia.com>
+ <20240808172726.0000154a@Huawei.com>
+ <7673fb84-5fe8-4d80-865d-95df3f519528@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] drivers:block:Fix the NULL vs IS_ERR() bug for
- debugfs_create_dir()
-To: Yang Ruibin <11162571@vivo.com>, linux-block@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240821064932.6592-1-11162571@vivo.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240821064932.6592-1-11162571@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7673fb84-5fe8-4d80-865d-95df3f519528@igalia.com>
 
-On 8/21/24 15:49, Yang Ruibin wrote:
-> The debugfs_create_dir() function returns error pointers.
-> It never returns NULL. So use IS_ERR() to check it.
+Hi Tvrtko,
 
-...to check its return value.
-
-And the patch title could be better. May be something like:
-
-pktcdvd: Use IS_ERR() to check debugfs_create_dir() return value
-
+On Mon, Aug 12, 2024 at 05:35:31PM +0100, Tvrtko Ursulin wrote:
 > 
-> Signed-off-by: Yang Ruibin <11162571@vivo.com>
-
-This needs a Fixes tag.
-
-> ---
->  drivers/block/pktcdvd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Jonathan,
 > 
-> diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-> index 7cece5884b9c..030b7a063a0b 100644
-> --- a/drivers/block/pktcdvd.c
-> +++ b/drivers/block/pktcdvd.c
-> @@ -498,7 +498,7 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
->  	if (!pkt_debugfs_root)
->  		return;
->  	pd->dfs_d_root = debugfs_create_dir(pd->disk->disk_name, pkt_debugfs_root);
-> -	if (!pd->dfs_d_root)
-> +	if (IS_ERR(pd->dfs_d_root))
->  		return;
->  
->  	pd->dfs_f_info = debugfs_create_file("info", 0444, pd->dfs_d_root,
+> On 08/08/2024 17:27, Jonathan Cameron wrote:
+> > On Thu, 8 Aug 2024 12:56:44 +0100
+> > Tvrtko Ursulin <tvrtko.ursulin@igalia.com> wrote:
+> > > 
+> > > c)
+> > > Strong nack for either a) or b) - so "do it in the firmware" comment.
+> > > 
+> > > Trying to understand your position so we can progress this.
+> > 
+> > See:
+> > https://lore.kernel.org/all/20240807064110.1003856-20-rppt@kernel.org/
+> > and rest of thread
+> > https://lore.kernel.org/all/20240807064110.1003856-1-rppt@kernel.org/
+> > [PATCH v4 00/26] mm: introduce numa_memblks
+> > 
+> > Much larger rework and unification set from Mike Rapoport
+> > that happens to end up adding numa emulation as part of making
+> > the x86 numa_memblk work for arm64 etc.
+> > 
+> > It's in mm-unstable now so getting some test coverage etc.
+> > 
+> > Sorry, I'd kind of assumed this also went to linux-mm so
+> > the connection would have been made.
+> 
+> This is great - I did not see it since I don't read linux-mm regularly!
+> 
+> I gave Mike's implementation a spin on top of RPi 6.11 kernel and it mostly
+> works fine.
+> 
+> Is the decision that this is going in pretty much set, that is, high level
+> acks are there?
+
+It's in mm-unstable now
+
+https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/log/?h=mm-unstable
+
+and I hope will go to Linus next merge window.
+ 
+> One area to potentially improve is working around CMA areas when they are
+> put by the firmware at a range which straddles two nodes. In my series,
+> albeit not the one I yet posted, I have some code to fudge that so that CMA
+> ends up wholly in one node and so CMA initialisation can succeed.
+> 
+> I can try and adapt that patch to this series and post as a RFC.
+> 
+> Then there are some odd things about NUMA, memory pressure and swap
+> behaviour, but that is not specific to this series and not something I got
+> to the bottom off just yet. Could be specific to my board and IO for
+> instance.
+> 
+> Regards,
+> 
+> Tvrtko
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+Sincerely yours,
+Mike.
 
