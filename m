@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-296312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D8D95A8F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:36:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0A295A8F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50671F23C16
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:36:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D63283DA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E39E6FC5;
-	Thu, 22 Aug 2024 00:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjnKmf6r"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261546FC5;
+	Thu, 22 Aug 2024 00:39:00 +0000 (UTC)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8699A1D12E0
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638421D12E0;
+	Thu, 22 Aug 2024 00:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724286960; cv=none; b=GW2XzShQRc0cHOhKSZWZq5L9I2kHaqmTyWSuA7p70yHrnqwD8+Gkg1b5IU79gt27BAN4Nr02bdIADZt2UY2yKmkxcmtAe4OLqCiVTXfRiEojTyR7L51WV6pehGC4w+rVuID6Ytl+JETIcCws6tMYFxqPhNCWB81A8cueJ2CIJtk=
+	t=1724287139; cv=none; b=b5AlJp7WM79dWLgW8+uZhTnUZj3vUHdp1guCK52sUkkVa9w+sr5fvE//GBRnAZ0I/NycOqE157x2Z6FClgL1vFd0kiG/1wU0o3cdOWTcQM6Rlw7teBJh1kuOsAU3R4QWGNnJemI5yrjbmdNoSAgjFE7JDfl/bGlSdNZliN5CpXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724286960; c=relaxed/simple;
-	bh=5MhG4H5fiBM7tHVKwlGcSJFdOHF6L+Ner2aE272rbRY=;
+	s=arc-20240116; t=1724287139; c=relaxed/simple;
+	bh=uODybORlW1Kn4hk/0jntMAIqd+PQSZLqURGiujbvz78=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UcBVtcSSyAdZ+VzuuKffTc+6BXySshTmS5+r7Gp23oKLFLlMUfUukNPmWIMm3RRULc5RiPgRUU6tMpp4H2izSZMCZG5nQjnbDtTLN56c4OR4S5XKBEtYL/sHg9vhL/r9j5uUICjDlFRlVYxdyV7VaIzMu08Oa5amGFKE2qe7dm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjnKmf6r; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=hsA9NpBD9oN3eSmWkjYFob5Ot+SWyPZMQ4oaVnaEMAejiupJio9aT/yrN4bifK2swFhT9PlUXZ5io5K9LV8Lyffb7u77q5vuyGVDsFqK8TujDBbSb9m6rKEaXJFVWVSd4czlO2CX3QImCGI+rREXfOrrJWrL4E+Yrr/bC4F3F34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6bf9ddfc2dcso903226d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724286956; x=1724891756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22zWPOj1TpYR/jHva6dX8P4bxYu0jWvouDXLuCxJapI=;
-        b=SjnKmf6rloqR3uqIwF3C5Z+yeRM8Goj/TSSCCtBS34ucwfzIvxvKgNoSrFqcqypb16
-         hsQr+lKtyN2fWKTdQ4pgwjXxqJflEptFIPe1EATbfB8oGgIzOS8wiF3xac9VXW7cCo6r
-         QgKYSzizf/asALm6ttDpC39hgJUzVhR6zRc4ugpuScURpqdtq9Oya4eDgeC6tfuejmPc
-         mXy1A1Wcfd04eSYA/DWEDzixpRALxEiMDgmFvRjfc9UpDMiWLlls+QRcX7lmZf4rP/3y
-         Pg6QAxJXTkFIxMKPscvenSIsCEfolFJdyAeL6kSNS1tozVy3pYOlDjInpT79PaQI04zU
-         nn5A==
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7c3d8f260easo188870a12.1;
+        Wed, 21 Aug 2024 17:38:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724286956; x=1724891756;
+        d=1e100.net; s=20230601; t=1724287138; x=1724891938;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=22zWPOj1TpYR/jHva6dX8P4bxYu0jWvouDXLuCxJapI=;
-        b=wSHL6r0qHoA02nz9a8L5wUQcw6zYnu37KCo8NR7unu5vkBfkEeQ5EWPmlFV7fFkOPx
-         YXs52ffdFzQqy2u5apsVDB6Zugjhh/QATD5lgllwYSysyAsOQgSSTgqm3kiCH1dWBU+F
-         lTnrsZVqD8kCCyucqP7dUXeW+kuR1NkxGH9acFrPA73hrHv6wSlHJuAtibkgmd6W488s
-         7+CbR7m3QylggJtW87pIMTVZU1SKoUazTDhXQaO7hVlcp8ta8ZvcE40d1SnfT6WLfHU4
-         xfgY1aiMj0pupoyY8H97E7ReOD85rzAief64gVNXE+cCOU7k9n9MQSR0TNlvAEC2CgyW
-         kJcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWk5FX0yJFgg2ggQWZj1THLwCIml5aMiu9nYwCV5Q/RNPSNB9vtyzCG8zRUKS7v5Clr+rB8so5w6/I9N0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqlCeLgF+NsPAyCLWWP06Fr+f9NFteBrAu6mLtdGM/Xqf1rLsY
-	O8kM6Z1ZSOCqrTzmTpP1keZ1MmD3PM5EsgAngTq4rXOsWczPLz9kuBDZOIME+dyzzuM+4yocf6p
-	+RxLrQc4jGfEjHv8hKY/jHNWe4ng=
-X-Google-Smtp-Source: AGHT+IFA7v3PE7COTekEBnadVG/BYIOlP9BEhcpwuRDzMHbYs2DiX9GTE7X59ozXJ7MpVRg4cwF21rX4O6OpKBulwMg=
-X-Received: by 2002:a05:6214:4520:b0:6b7:ae86:e33e with SMTP id
- 6a1803df08f44-6c155e09dfdmr34354096d6.37.1724286956259; Wed, 21 Aug 2024
- 17:35:56 -0700 (PDT)
+        bh=nFpmgSqC6zlZh7xPVeXEKWlc28TttUJByYddICCMgAU=;
+        b=hpA83QMls7HxoW5oN8sAvWZCep/eGeR15fqkidgQaezi+afHttjX72y/uAn+8tPB/x
+         uW/VpO9vwovdSHpsYlXoKWVar/2O/R2KIuU229o9vGuDjWhHEcmCT50d3Hm0LIAZBPDg
+         NG1XN4xSlW0swmKAEm2zoKcN8v7NHyPh1Jg7x13up0bbmeUoTjAKDIGnneP8KtUYuE72
+         LaYyPSMLiSdwew6fikXLePxVlqlpdZnRK1Miueg4G/dmvD7lUHeMFkx3jwNbVCxbYFbq
+         2d+jgh+H35cFceK1n0mgb7IIVXoavAX5XuCAM0qR2OfKO+cS3amKPpp25qOOXRlDsMh3
+         oU9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU7SMSqKRqG0wQ/+b0Cp0ccJWHJuFOr6Nzc4Y+dgRpHxqxQbILCyBJrITiwuHE857nFmgRlc88roJsS4khaRu4EnA==@vger.kernel.org, AJvYcCWdQQUrfEDJL6semyJZCvsusiQFLOI8hX/jAasRPUar7UDX7Uh4lyVKBx/dUi19IzKT8j14TkKrqzhaLF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0kkb94xSInsy6kSIct3VLscyvQdfLlyN0etHwljh0TAKrK10e
+	ZiEqDpvAsG+/DhygC3vIgrqjUHP7jiLSIDnl1UUoTwPhfwxpwho3JGWr86TFJJTJPm9i5j1Agmy
+	rpDfX45dGrQYoJu1dkY1TKqN9XcI=
+X-Google-Smtp-Source: AGHT+IEZAhCN3obd4iWx6i1hVZ/nzpajIeDbS5jp84c4JIOQUC6gRflxdHKz2kY2uuYUd2uktuewTTzAN167Luvz0ac=
+X-Received: by 2002:a05:6a21:1786:b0:1c3:fc87:374e with SMTP id
+ adf61e73a8af0-1cada15f583mr4694795637.41.1724287137418; Wed, 21 Aug 2024
+ 17:38:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820125840.9032-1-rongqianfeng@vivo.com>
-In-Reply-To: <20240820125840.9032-1-rongqianfeng@vivo.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Thu, 22 Aug 2024 10:35:45 +1000
-Message-ID: <CAGRGNgXn94ZPROLN4JButpnc+ffFFr1SwtTFM=bvcPH95DFQgQ@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: Use devm_clk_get_enabled() helpers
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, opensource.kernel@vivo.com
+References: <20240820183202.3174323-1-kan.liang@linux.intel.com>
+In-Reply-To: <20240820183202.3174323-1-kan.liang@linux.intel.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 21 Aug 2024 17:38:45 -0700
+Message-ID: <CAM9d7ch1tmkmrpcxdW4Txz20Xzt6NFx_-0m6HQzTwXAV7Opg2Q@mail.gmail.com>
+Subject: Re: [PATCH] perf hist: Don't set hpp_fmt_value for members in --no-group
+To: kan.liang@linux.intel.com
+Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org, 
+	mingo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rong,
+Hi Kan,
 
-On Tue, Aug 20, 2024 at 10:59=E2=80=AFPM Rong Qianfeng <rongqianfeng@vivo.c=
-om> wrote:
+On Tue, Aug 20, 2024 at 11:31=E2=80=AFAM <kan.liang@linux.intel.com> wrote:
 >
-> Replace devm_clk_get() and clk_prepare_enable() with
-> devm_clk_get_enabled() that also disables and unprepares it on
-> driver detach.
+> From: Kan Liang <kan.liang@linux.intel.com>
 >
-> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
-> ---
->  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 13 +++----------
->  drivers/gpu/drm/sun4i/sun6i_drc.c         | 15 ++++-----------
->  drivers/gpu/drm/sun4i/sun8i_mixer.c       | 13 +++----------
->  3 files changed, 10 insertions(+), 31 deletions(-)
+> Perf crashes as below when applying --no-group
 >
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_drc.c b/drivers/gpu/drm/sun4i/su=
-n6i_drc.c
-> index 0d342f43fa93..f263ad282828 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_drc.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_drc.c
-> @@ -42,33 +42,28 @@ static int sun6i_drc_bind(struct device *dev, struct =
-device *master,
->                 return ret;
->         }
+> perf record -e "{cache-misses,branches"} -b sleep 1
+> perf report --stdio --no-group
+> free(): invalid next size (fast)
+> Aborted (core dumped)
 >
-> -       drc->bus_clk =3D devm_clk_get(dev, "ahb");
-> +       drc->bus_clk =3D devm_clk_get_enabled(dev, "ahb");
->         if (IS_ERR(drc->bus_clk)) {
->                 dev_err(dev, "Couldn't get our bus clock\n");
->                 ret =3D PTR_ERR(drc->bus_clk);
->                 goto err_assert_reset;
->         }
-> -       clk_prepare_enable(drc->bus_clk);
+> In the __hpp__fmt(), only 1 hpp_fmt_value is allocated for the current
+> event when --no-group is applied. However, the current implementation
+> tries to assign the hists from all members to the hpp_fmt_value, which
+> exceeds the allocated memory.
 >
-> -       drc->mod_clk =3D devm_clk_get(dev, "mod");
-> +       drc->mod_clk =3D devm_clk_get_enabled(dev, "mod");
->         if (IS_ERR(drc->mod_clk)) {
->                 dev_err(dev, "Couldn't get our mod clock\n");
->                 ret =3D PTR_ERR(drc->mod_clk);
-> -               goto err_disable_bus_clk;
-> +               goto err_assert_reset;
->         }
->
->         ret =3D clk_set_rate_exclusive(drc->mod_clk, 300000000);
->         if (ret) {
->                 dev_err(dev, "Couldn't set the module clock frequency\n")=
-;
-> -               goto err_disable_bus_clk;
-> +               goto err_assert_reset;
->         }
->
-> -       clk_prepare_enable(drc->mod_clk);
+> Fixes: 8f6071a3dce4 ("perf hist: Simplify __hpp_fmt() using hpp_fmt_data"=
+)
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 
-Am I reading this right: is this changing the init sequence so that
-the clock is enabled before setting a rate?
-
-This is the sort of thing that might cause glitches and issues in some
-hardware, so it'd be polite to test such a change on the actual
-hardware before posting it.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
 Thanks,
+Namhyung
 
---=20
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+> ---
+>  tools/perf/ui/hist.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
+> index 5d1f04f66a5a..e5491995adf0 100644
+> --- a/tools/perf/ui/hist.c
+> +++ b/tools/perf/ui/hist.c
+> @@ -62,7 +62,7 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist=
+_entry *he,
+>         struct evsel *pos;
+>         char *buf =3D hpp->buf;
+>         size_t size =3D hpp->size;
+> -       int i, nr_members =3D 1;
+> +       int i =3D 0, nr_members =3D 1;
+>         struct hpp_fmt_value *values;
+>
+>         if (evsel__is_group_event(evsel))
+> @@ -72,16 +72,16 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hi=
+st_entry *he,
+>         if (values =3D=3D NULL)
+>                 return 0;
+>
+> -       i =3D 0;
+> -       for_each_group_evsel(pos, evsel)
+> -               values[i++].hists =3D evsel__hists(pos);
+> -
+> +       values[0].hists =3D evsel__hists(evsel);
+>         values[0].val =3D get_field(he);
+>         values[0].samples =3D he->stat.nr_events;
+>
+>         if (evsel__is_group_event(evsel)) {
+>                 struct hist_entry *pair;
+>
+> +               for_each_group_member(pos, evsel)
+> +                       values[++i].hists =3D evsel__hists(pos);
+> +
+>                 list_for_each_entry(pair, &he->pairs.head, pairs.node) {
+>                         for (i =3D 0; i < nr_members; i++) {
+>                                 if (values[i].hists !=3D pair->hists)
+> --
+> 2.38.1
+>
 
