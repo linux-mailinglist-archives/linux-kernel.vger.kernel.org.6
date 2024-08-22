@@ -1,110 +1,86 @@
-Return-Path: <linux-kernel+bounces-296319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55AA95A931
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:46:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B44595A933
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FAE283FE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CEB1F22CD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6E46FB9;
-	Thu, 22 Aug 2024 00:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D63E6FB9;
+	Thu, 22 Aug 2024 00:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuZWYdLk"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGQ/03we"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65B53C3C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF213C3C;
+	Thu, 22 Aug 2024 00:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724287565; cv=none; b=ZqoWTPJ+QHUZBP7t1w4ABFGMbKPyg7wl6wC2Zeour3+OiActUKOyE7mj4K5muQpg3vjFpyACH8xlE44uipLMJnpxUgerp++zZsuSdYY/a9nokE+sxBInfzjP0hxwYO01H/NxsPCdywP3pzFtDxAi2BnaCxnQzfYt4gaIpWn5VnE=
+	t=1724287632; cv=none; b=Z/ingH1fwmql+8qi8oBpOqMn1QdoMpXrnL7DZLw9RZ3kT/QITU4AUkh0xSdwpCiMuQBbCc3l18LNFBwDUABrZQ4jVpOXxBhoPY4rxoWHbOjx6q4m37Xu5oLRiA6zX3DpaMvmJNSfecf9yRNmdZWFFwYEy4FILtVs33rBBDYnskg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724287565; c=relaxed/simple;
-	bh=xbhdrzXBXQGFHkBi7JVQQnh/qFFqzJW4jZK4RQf97gQ=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nvvymVCTf8xxBPWiY7GbTIr9pJk/w0UgWbvbw00jATcP7UGrUbYjG9CdI2wCEMFj0myl3EW2TMKE8xUUQi/rLP/6CZhXg6e7j5MYCA/aq1Zf2LJRBlE4ZcM5sMPT3KlsnJ1hKmo/mNBY31frCreSIF8r/8LMdIoP+vEbIv+YB0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuZWYdLk; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70b3b62025dso204895a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724287563; x=1724892363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBNlowdOWSl10OVciaBXJoWLTKHB1MfSEqNmoSmAPy0=;
-        b=QuZWYdLkZ7tEE9bHE9/wKLb3O5tgudYmyumIKdBhdSlNivpv68qCRxsm1Qvzxmzqbt
-         F8gxNPuXxAnvglEbGIUra0GDaeHB6fpBhRX7eNXCFIBEF573s8nUIaRSlXIvysZgMd5+
-         XWCzhEFSGb1A+zosZvBK2EBd+yGrYInj4+0y1ry3dyQrgBEBmCJV4IPeYaAVS7ql81e2
-         HpIB2lyktAyiU5gVofFo8C1NWYAFDVcipj8C05ETSoco6I6qHZ6D9vSd6kHHj3DJfk7y
-         98OXFd1Xrlss5RLpJLIb4jmv91gUVQFcLrm/pVvzh8AyFJ+R5C4fW386kUf4q6PC3h9T
-         6ysw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724287563; x=1724892363;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBNlowdOWSl10OVciaBXJoWLTKHB1MfSEqNmoSmAPy0=;
-        b=SkLqkNtj6/HN7On8VU2GoqGrP+GgqoJV6TmJqhSitXD6jVVyjXIY52WnCHpLhXb+xW
-         L3DBtIQTbdyaYVEx9RQoMDnZtfpoUUW7ns6l3fYO/sv/mvT/GNajs1AttULU/Bs2lP8v
-         G6bssxO0xhpxMrEeDT2KGUgYXNyFRecX+ugoFb0WsZJVPNiXckOe6rYzL0GH53l9xKWU
-         Gu8ESoGQJGYLElmTj3b5seY3wb1qre+RXGi0P7XlKgQMVJ3EBE11y7c00m6xFULG4RRb
-         +8gyxquBACbD9k+NnQxb2OqIhwlmVlOpd4nS3IUdw+q0IHUVAUqBVuSzDAegemr/MWq5
-         onmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJvr7vKzW1jGKFSNSKmeXjoEE6L4qtZ15pgTVowAChXUfldWq8+HMYHzuOGQXJKVAdRL5GRAE9uAXGX5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAwhZYxwQiFcpGduj09XqBB/z7RTH9PQEdszqpPYCzDqoP/CCe
-	l+LKyqlGn/bsSPomrOISQnha8RdqG9tvOYrQ/dpf1x192fdmYj01
-X-Google-Smtp-Source: AGHT+IH/bjf1naOOqPi5C/0NuQzz4PHsm3FWeNxQhSdv0/HWm++aXaJE5hnZNAX492lNQZ6AiiZ1TA==
-X-Received: by 2002:a05:6870:80cb:b0:261:211:9d0d with SMTP id 586e51a60fabf-2738be524bfmr4580052fac.40.1724287562771;
-        Wed, 21 Aug 2024 17:46:02 -0700 (PDT)
-Received: from pop-os.. ([2804:14c:30:24b4:ab5f:4663:351d:b821])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342731acsm252928b3a.88.2024.08.21.17.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 17:46:02 -0700 (PDT)
-From: =?UTF-8?q?T=C3=BAlio=20Fernandes?= <tuliomf09@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH] staging: rtl8192e: Fix parenthesis alignment
-Date: Wed, 21 Aug 2024 21:45:58 -0300
-Message-Id: <20240822004558.14638-1-tuliomf09@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724287632; c=relaxed/simple;
+	bh=PnIQlKdwHT3ouDtAl2OxtHvds/KM2tmAfTOFARz2KEk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EWuZJEmTabKuWUxY79uVkFkgsp3hTlzrGlpXsUMkJAzrIxuzw3Q6lrGfyH53PQSRxaioZ7Z9vYng4eIxOtkaj2LgyN2gEkGK3Csg3ofqHZtyvUIIXOA2SZskfKHAydCTTe9yfHwT+N1oAXz7kQTbiThMeDFCTi/kEakX4s8cHMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGQ/03we; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 272F7C32781;
+	Thu, 22 Aug 2024 00:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724287632;
+	bh=PnIQlKdwHT3ouDtAl2OxtHvds/KM2tmAfTOFARz2KEk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rGQ/03weuM3hTvSXL13QTXyvn/oMBanymPc+EbIsWAsUd44JN23CejXD+VwYK/JpE
+	 FSHnuNzPWUaHJ82yvqhKf3ZGtMLvEfG/vb0zVo8blxtplbGDN1DVluKWIzLYijexTY
+	 vkKefthkIDuOv6lBb1eSivs3j1ijuYd90FzfZNkqIjusLmfiGk76eTA5aK2FA6Nx+S
+	 5ZKOg3R9pgm5OsxGBAqL6ToPzBen0pOAfPqfA1oNBN5YWdF+/lW7lr0hr+J79xX6LT
+	 I5uKHn8GVw52+Q3Cy6lZgRteBNIGl6c5PR8avykIpBx7hGMEMPN1XVF6+lk0anfpNz
+	 P53fqt+ijEXJQ==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-27012aa4a74so140363fac.0;
+        Wed, 21 Aug 2024 17:47:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV7eFAZE/4M+f5pbYpMvCTntur4zzlkuFUuFDfqz+zKqx5QzgwIZ1QxJpTQWNycoctsqkfPH5brw11cAZCx@vger.kernel.org, AJvYcCWNIK1Zim9fbMqdot5rfmzcE4unwuqoYQ/lt3ttAiZW3QJBPtBlKQvSNXzs++H2KwEtJdQ/XAetgn/h@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsa0oWqkQaaPy6SeUqt/amOLieOhwbuZMNj30J1HJZ3/aOiEME
+	S4IdypPieBjtkT5TfwNqhsPkU8WpHUDnO59xy6KyybtSXCXvGJ8Qfv+jS1tLy/lUhOwTxptS1gs
+	DY6ScjImWATjfOFiwMQIwKby1coI=
+X-Google-Smtp-Source: AGHT+IHVJAHhczihjudA1XVCQrSa6mkdzyAJ/POhyJhgfnTmBbK6ZEw29zdBnEtPsLACyRV66/q2vzdeAcws8bXp0JU=
+X-Received: by 2002:a05:6870:169e:b0:264:9161:82e8 with SMTP id
+ 586e51a60fabf-273cffcb6bcmr412044fac.41.1724287631525; Wed, 21 Aug 2024
+ 17:47:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com> <20240820143319.274033-4-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20240820143319.274033-4-chenxiaosong@chenxiaosong.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 22 Aug 2024 09:47:00 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8NkQi1+OQqk3_YFo60erMmZ79jBrXmOchRGWvHpNsj4w@mail.gmail.com>
+Message-ID: <CAKYAXd8NkQi1+OQqk3_YFo60erMmZ79jBrXmOchRGWvHpNsj4w@mail.gmail.com>
+Subject: Re: [PATCH 3/8] smb/server: remove useless variable assignment in smb2_open()
+To: chenxiaosong@chenxiaosong.com
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
+	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
+	liuyun01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix parenthesis alignment in rtl92e_set_rf_state in order to rid
-the following warning:
-
-CHECK: Alignment should match open parenthesis
-
-Signed-off-by: Túlio Fernandes <tuliomf09@gmail.com>
----
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-index 9eeae01dc98d..ad21263e725f 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -173,7 +173,7 @@ bool rtl92e_set_rf_state(struct net_device *dev,
- 				else
- 					priv->blinked_ingpio = false;
- 				rtllib_mgnt_disconnect(priv->rtllib,
--						      WLAN_REASON_DISASSOC_STA_HAS_LEFT);
-+						       WLAN_REASON_DISASSOC_STA_HAS_LEFT);
- 			}
- 		}
- 		if ((change_source == RF_CHANGE_BY_HW) && !priv->hw_radio_off)
--- 
-2.34.1
-
+On Tue, Aug 20, 2024 at 11:35=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wr=
+ote:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> The variable is already true here.
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+Looks good.
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+Thanks.
 
