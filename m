@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-298046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BFC95C112
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38EB95C114
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 392D7284735
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8116E284873
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A885F1D3622;
-	Thu, 22 Aug 2024 22:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C121D364F;
+	Thu, 22 Aug 2024 22:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MBr0PZac"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o7BV5jQ+"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D0C1D3183
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162421D31A3
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724366776; cv=none; b=ll4NHIkbBIc3AIPkZ0yrTotlEfihVXqh+szXMSAp1fyoE8ZQqsNgeOK2bYS5Kw0scACm5Qk+RlkdDNNQL3nL1WoAzRJlsLqbxnhZfdBIWpH3joQVd970RFwyR5nEeU9EXrnaW4yehpQoGfofw4MSg/JwOkj+kmcpU4leeF+apmk=
+	t=1724366778; cv=none; b=aHS8J8jg8C6SMWQkRntG6fZMmXLxpxVbOFwHv/APBDag2B9rQ+o3ViMQui6usOkhylbGZkJAYzNSwGH5eLtvfmOsNb+eWUoKILBCAs+lvKYrScV2i3VFQ/P6V3UFpyWCcW5cxOL2Txb5XpKz//bJCsf/ZOnzCnX1IOcB4a8fDCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724366776; c=relaxed/simple;
-	bh=DdbTGiKeukNvKrj58NdnlQsJE/mkxNsRhHB3HvpjByg=;
+	s=arc-20240116; t=1724366778; c=relaxed/simple;
+	bh=aTdXvkE8ROQKXFHFBAQ24D4NEQho2z3rdw1RpRjU0c0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i+gDYsvVwS1reLfDTqp1BacZbZO7jg6dbuYeQxe7c1/BcPNcne9TZ1wlG026DEN/88E3y3gCOEnsv1MjLFFvihZ6qX+gec9X5vm8i90I3S2wE7P22Kld0TKpPwgLI57Y1dfas4vCY16t1kexGe55ftA+d0yBeQ2IzU6Ck+nkl+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MBr0PZac; arc=none smtp.client-ip=209.85.167.49
+	 MIME-Version; b=kbnZSi2sn5nneW6eDAsVLFyGj17bZvUxfJ4O0XoDXoUV1p8wYO7FGuHpq4lwRI/bRBJh4hYvMnwhU/tz53nxPz7ctz/AhcvHu3BJ+mGYUG+qrCDGSCkexuO1H9axQAUm6rNU5nh0OewYMiVaaLhF+1Xvd+6s9dDfQuV5+A3ux+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o7BV5jQ+; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533461323cdso1584904e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:46:14 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f3f163e379so22750741fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724366773; x=1724971573; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724366774; x=1724971574; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/D/aVXPRU7SQfotSax/kaOpx6m/gKAibnYASkuMoMcQ=;
-        b=MBr0PZaceVkmnuGhJBesuGJ7nSFgz1cZNpzKi55wgAu3/KBXy4ZCPqrr6x3nSvOR9r
-         O2yJ7CjKmdhFwvODskfm8x1FeBXJDs6qCE/XgUEZx1JtPhyKxLchW+pIekzQkzuLUOQ0
-         qMGFDO0boE8vZHM0B2yskT1X+uaYBECzDq0U9nci3YkwjvVV/Os/c8BwTenOiqGo04q+
-         wYlQrC9q+9Bw+1fhLj1ltg/4CFfjPmmJPTpZbzcWT33/19Pd+httNAI8oe31sm6w7FcM
-         62SwGp0pBb0sOdvE1/HgMvWCf1B5tioX66d+VUlYUmoEkerf8VhNhLxvKDM7QrmeLjsO
-         mBww==
+        bh=/SUsoi4RcXT0izJStB+EvDnWgGn5xCm1gI9JONZb3y0=;
+        b=o7BV5jQ+N0P62oXue/wvqFkHWl2zRVz5w06+d3+UNS/O6K/oFROhrWnanEvc8M97Ya
+         FIbEay6117dGgDHn47H+yJScq3Lq153bbpXr6qrxb+RgS/U8zoi60hjGvFv7o2wzQYOS
+         yJw0AeenZO9bMG4YAXjbjzH1TBoicW4i/iHnAn3kJrHxjQiECy0liUxIjP7c0+tDUaF2
+         rTAkEcGB+jCp+Jg5IpQ4BqmrCpGLcWP6MSOqICI7mYzHE8cNPlloWK0qKVfSVMrVdkFV
+         ZQTLXmoKge4Br18jaOVaGGMZ9xmHgUk+FC46T+eSDdUjf25+Y7RNdLgGhD36KnDAfhuk
+         r76g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724366773; x=1724971573;
+        d=1e100.net; s=20230601; t=1724366774; x=1724971574;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/D/aVXPRU7SQfotSax/kaOpx6m/gKAibnYASkuMoMcQ=;
-        b=ia3kNwLLRQ6afck/eCbjDCJaCaOTeZVPTJZFeCLdWYcnA3chzvbUftn8/M59b5IZJh
-         OgoqP6NaVcZGYOfbLHZuNDtCwj0xqSXY56etJ2z3wulxg8yeKDjeX6xmc+49+gWNsOpa
-         Xvcu452xOOi25/+8CJr8G30F5oE8wn3c/sSkC0Uz81uTLiUasE1TqqFlD+EBDUAM3mNQ
-         y6S0GkDs2FT5SDGIxfi8CZ8NTYOimgqSNnCLbebZ7SlxDbE+DIQGsDQgi0kEsgOM8eIB
-         u7bQ4RNaOGcWINN+0OO0i8e5fjgK5+rRWUF7KgicPgw67uXoxdJuWcqZWXGjnEEmWDct
-         2Pyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVC1KozwZapZJPz0rj3RUoZCnK8fopb9dUfByckOVWkyG3W+SqGACYJlHJIVYdK5sCxWnWZvzGBuIZ8Xmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4MOqKxwKgL2Jk0sD+9J41R7X2lq1cL+F1g3D3u5soJVYfpfOJ
-	5ZDng5Xy+SC8/Oe93sVwejpPcvINwNWEUF9CrkuDWmw47WP4jkgK60gyfCxDdI0=
-X-Google-Smtp-Source: AGHT+IHhhSvatCGlzIYJAKPJG00P39imQvuyh3f4XRIvd0rEr5zWn9noMQWqj/FUZVYPNGBt3R/oLQ==
-X-Received: by 2002:a05:6512:e89:b0:52e:767a:ada7 with SMTP id 2adb3069b0e04-53438868d57mr128566e87.50.1724366772836;
-        Thu, 22 Aug 2024 15:46:12 -0700 (PDT)
+        bh=/SUsoi4RcXT0izJStB+EvDnWgGn5xCm1gI9JONZb3y0=;
+        b=CzMD85S/JZnWb7q1NiKKuDBthlsBkawOwhFdAhh8riRO+qehhWfsR9NJ60hc+Xp08/
+         qSFKgEtQDA3n/wHmayJysMFkeuUooPuIl+gC0mBpM7hegAJj/9oYnVQf9BCs/LZvRPF6
+         U9FhZRcxxV66f/ilVaGvUfDITOYczkIIZ8hrPLs0XXspExC03YHIZq33JeW7d9J7fRfd
+         dj3oAfYBmUv61okW6w4JTD0Su6Apag9+A51RLcHxOtGH3T7DoZz5RyGCsr3oVqeXk7nZ
+         i7zyk+2aWZvLoJdoQlhUNgAEejjM8P7DZ6BEXrIFRxXDUa57H42coZpEp2q58fnrNdeg
+         8yrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXep1kOcYv4dAc9Vqxj1a674Qm/WHoyU2fZYPJe6UPTircJvkGUJkW2sVPImJN4jn3IY4l45LQRlh82mq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAiTcyLt2foe2Whf6Ilv9i7VoCRWPHjyGRaaQftxF4DzJV1XLv
+	GnU9acyxQVQRNFfxW5sD3sUHGiYnkPAmTnu7horTFxlXXStiNRFeXTKXeLwCoLA=
+X-Google-Smtp-Source: AGHT+IFCCObzEZAVeGe1xfyTqYfuTrbw8eyiD2QimVszxWbvB5nuySwzUySXFi47i38a78U9YOXQGg==
+X-Received: by 2002:a05:6512:3e19:b0:532:fb9e:a175 with SMTP id 2adb3069b0e04-5343883d5e7mr474551e87.6.1724366774161;
+        Thu, 22 Aug 2024 15:46:14 -0700 (PDT)
 Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea362a4sm379443e87.66.2024.08.22.15.46.11
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea362a4sm379443e87.66.2024.08.22.15.46.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 15:46:12 -0700 (PDT)
+        Thu, 22 Aug 2024 15:46:13 -0700 (PDT)
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: Viresh Kumar <vireshk@kernel.org>,
 	Nishanth Menon <nm@ti.com>,
@@ -85,9 +85,9 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	linux-pm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/10] OPP: Drop redundant code in _link_required_opps()
-Date: Fri, 23 Aug 2024 00:45:43 +0200
-Message-Id: <20240822224547.385095-7-ulf.hansson@linaro.org>
+Subject: [PATCH v3 07/10] drm/tegra: gr3d: Convert into devm_pm_domain_attach_list()
+Date: Fri, 23 Aug 2024 00:45:44 +0200
+Message-Id: <20240822224547.385095-8-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240822224547.385095-1-ulf.hansson@linaro.org>
 References: <20240822224547.385095-1-ulf.hansson@linaro.org>
@@ -99,91 +99,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Due to that the required-devs for the required OPPs are now always being
-assigned during the attach process in genpd, we no longer need the special
-treatment in _link_required_opps() for the single PM domain case. Let's
-therefore drop it.
+Rather than hooking up the PM domains through devm_pm_opp_attach_genpd()
+and manage the device-link, let's avoid the boilerplate-code by converting
+into devm_pm_domain_attach_list().
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v3:
-	- None.
----
- drivers/opp/of.c | 39 +++------------------------------------
- 1 file changed, 3 insertions(+), 36 deletions(-)
+	- Updated commitmsg.
+	- Converted to devm mangaged version of dev_pm_domain_attach_list()
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 55c8cfef97d4..fd5ed2858258 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -295,7 +295,7 @@ void _of_clear_opp(struct opp_table *opp_table, struct dev_pm_opp *opp)
- 	of_node_put(opp->np);
+---
+ drivers/gpu/drm/tegra/gr3d.c | 38 +++++++-----------------------------
+ 1 file changed, 7 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+index 00c8564520e7..d52433cf939a 100644
+--- a/drivers/gpu/drm/tegra/gr3d.c
++++ b/drivers/gpu/drm/tegra/gr3d.c
+@@ -46,6 +46,7 @@ struct gr3d {
+ 	unsigned int nclocks;
+ 	struct reset_control_bulk_data resets[RST_GR3D_MAX];
+ 	unsigned int nresets;
++	struct dev_pm_domain_list *pd_list;
+ 
+ 	DECLARE_BITMAP(addr_regs, GR3D_NUM_REGS);
+ };
+@@ -369,18 +370,12 @@ static int gr3d_power_up_legacy_domain(struct device *dev, const char *name,
+ 	return 0;
  }
  
--static int _link_required_opps(struct dev_pm_opp *opp, struct opp_table *opp_table,
-+static int _link_required_opps(struct dev_pm_opp *opp,
- 			       struct opp_table *required_table, int index)
+-static void gr3d_del_link(void *link)
+-{
+-	device_link_del(link);
+-}
+-
+ static int gr3d_init_power(struct device *dev, struct gr3d *gr3d)
  {
- 	struct device_node *np;
-@@ -313,39 +313,6 @@ static int _link_required_opps(struct dev_pm_opp *opp, struct opp_table *opp_tab
- 		return -ENODEV;
- 	}
+-	static const char * const opp_genpd_names[] = { "3d0", "3d1", NULL };
+-	const u32 link_flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME;
+-	struct device **opp_virt_devs, *pd_dev;
+-	struct device_link *link;
+-	unsigned int i;
++	struct dev_pm_domain_attach_data pd_data = {
++		.pd_names = (const char *[]) { "3d0", "3d1" },
++		.num_pd_names = 2,
++	};
+ 	int err;
  
--	/*
--	 * There are two genpd (as required-opp) cases that we need to handle,
--	 * devices with a single genpd and ones with multiple genpds.
--	 *
--	 * The single genpd case requires special handling as we need to use the
--	 * same `dev` structure (instead of a virtual one provided by genpd
--	 * core) for setting the performance state.
--	 *
--	 * It doesn't make sense for a device's DT entry to have both
--	 * "opp-level" and single "required-opps" entry pointing to a genpd's
--	 * OPP, as that would make the OPP core call
--	 * dev_pm_domain_set_performance_state() for two different values for
--	 * the same device structure. Lets treat single genpd configuration as a
--	 * case where the OPP's level is directly available without required-opp
--	 * link in the DT.
--	 *
--	 * Just update the `level` with the right value, which
--	 * dev_pm_opp_set_opp() will take care of in the normal path itself.
--	 *
--	 * There is another case though, where a genpd's OPP table has
--	 * required-opps set to a parent genpd. The OPP core expects the user to
--	 * set the respective required `struct device` pointer via
--	 * dev_pm_opp_set_config().
--	 */
--	if (required_table->is_genpd && opp_table->required_opp_count == 1 &&
--	    !opp_table->required_devs[0]) {
--		/* Genpd core takes care of propagation to parent genpd */
--		if (!opp_table->is_genpd) {
--			if (!WARN_ON(opp->level != OPP_LEVEL_UNSET))
--				opp->level = opp->required_opps[0]->level;
+ 	err = of_count_phandle_with_args(dev->of_node, "power-domains",
+@@ -414,29 +409,10 @@ static int gr3d_init_power(struct device *dev, struct gr3d *gr3d)
+ 	if (dev->pm_domain)
+ 		return 0;
+ 
+-	err = devm_pm_opp_attach_genpd(dev, opp_genpd_names, &opp_virt_devs);
+-	if (err)
++	err = devm_pm_domain_attach_list(dev, &pd_data, &gr3d->pd_list);
++	if (err < 0)
+ 		return err;
+ 
+-	for (i = 0; opp_genpd_names[i]; i++) {
+-		pd_dev = opp_virt_devs[i];
+-		if (!pd_dev) {
+-			dev_err(dev, "failed to get %s power domain\n",
+-				opp_genpd_names[i]);
+-			return -EINVAL;
 -		}
+-
+-		link = device_link_add(dev, pd_dev, link_flags);
+-		if (!link) {
+-			dev_err(dev, "failed to link to %s\n", dev_name(pd_dev));
+-			return -EINVAL;
+-		}
+-
+-		err = devm_add_action_or_reset(dev, gr3d_del_link, link);
+-		if (err)
+-			return err;
 -	}
 -
  	return 0;
  }
  
-@@ -370,7 +337,7 @@ static int _of_opp_alloc_required_opps(struct opp_table *opp_table,
- 		if (IS_ERR_OR_NULL(required_table))
- 			continue;
- 
--		ret = _link_required_opps(opp, opp_table, required_table, i);
-+		ret = _link_required_opps(opp, required_table, i);
- 		if (ret)
- 			goto free_required_opps;
- 	}
-@@ -391,7 +358,7 @@ static int lazy_link_required_opps(struct opp_table *opp_table,
- 	int ret;
- 
- 	list_for_each_entry(opp, &opp_table->opp_list, node) {
--		ret = _link_required_opps(opp, opp_table, new_table, index);
-+		ret = _link_required_opps(opp, new_table, index);
- 		if (ret)
- 			return ret;
- 	}
 -- 
 2.34.1
 
