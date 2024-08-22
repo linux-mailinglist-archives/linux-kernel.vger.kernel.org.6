@@ -1,197 +1,159 @@
-Return-Path: <linux-kernel+bounces-297871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A4495BEBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:17:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3C195BEBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7151C21275
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E68285878
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695781D0498;
-	Thu, 22 Aug 2024 19:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F3B101C8;
+	Thu, 22 Aug 2024 19:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bsE7Juvx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZgZBPs5R"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4185018EAB
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BBC77104
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724354224; cv=none; b=s8kuDOZzrOk8ikmjO8OuZOqt9E73dDLADCLGfUs0zDVxmIpOtp/wJEUG4FJ7YV47zhycv0uRw4TZgRbN0/ASuKe3Yz8GT7zgTBsQBHQdUHD7XgpfG7KE69c8K9S+pW9rsbgxMEfezBclWvX84qOBhGLJTjuIEco0AmScDTw1kUM=
+	t=1724354242; cv=none; b=GnljgsrKQH3SpIc2BvnGZsW+KD+VtdWTlo7f47sLO5oIY6na/tLsqbh7oJwC/X/jLlhy5REi6AiXy/LqbpR05GDRUsDZTeD/9gmimFHixUJYtQiQcp62Lmx4/bj5qU/v9Kz4fIVS7eqmA1yOvtEAGxGUigfob+TWHBSYLwDiGX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724354224; c=relaxed/simple;
-	bh=uSB46zVUu3Qp45AXNGJYl4M4u3m0klZyVOj9SqTKm/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/zZxrUyAXMYLA8wPGqXIF4rCMhAYAmkVNbaHw6scUoolZcc2oLlIoYUriOAPViPxEOMWeg8G6MuCsrW78JRgkzcn+HWrkcyq/XLNpOjcB+Gq5OqDyLgPA5D6D6hRXSx4Y0HxpNZqdK1e5aiHDzGrFzDIETIVM8LLQPNVmS+8U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bsE7Juvx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724354221;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8YIGGOCAzyFLMegU+7vlNDExeBWij0GRi4vYqrn2fMA=;
-	b=bsE7Juvxqdfr7b385vESNRNAv5wUuV2nAXdUwxP/BZZYnpQqLicGAzH/1H/NKiGqcTbKdk
-	uAK+Q8PjiHlT4/4UXgTArrKv/dgcIixQINGkSLEk+85lR/kd6lpZX6Epy2ydh97orvqyXA
-	Z5CSHk/HkOEZUiBvVeStdB9iNdrOux4=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-684-BOkpwPsVPAa72fjSrmvIqQ-1; Thu, 22 Aug 2024 15:16:59 -0400
-X-MC-Unique: BOkpwPsVPAa72fjSrmvIqQ-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6bf6a05cb2eso13035326d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:16:59 -0700 (PDT)
+	s=arc-20240116; t=1724354242; c=relaxed/simple;
+	bh=QWzX0b2A6S1PCRi1PGTavwyX2sKwJnu84N2tJk7U/p8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZHgXvCqulmTXzwXuhuv5Uk/ahsn48DEJBYbgRfoKIPH2xr6nPQEg6qPCqTovncXTH2PTc0Oa1Q6o8yn8JkwhTkBK/3SPh9xgTt7LKQkfFNZf+3g61e9q4iUjbojAMWfVsH44BWfp1rq0zGBgxXfDxzgMWt9EUZF4gcWys1bfsts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZgZBPs5R; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7cd8c27fa53so1507693a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724354240; x=1724959040; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tkGGCdApsO1nBz4ff/iIpdxDUpZm3A4FCUXOxYZtFBg=;
+        b=ZgZBPs5Rp+Y04Cz3i1CWwig7L0WFVuoKQ+rpJDs1LSVgv4o0FC6VXOTZI7rh55uHnc
+         sqMHH6Mzc5CFtQj+yvMIfnsngBG0S2it3CrAzjcUBNJhVEwGCn+KMOT4gkO6FG3RWU55
+         bN4oyuV5vxkPlWEAjKWPsPmkWnaL3q1FNOCCn1rq1Kz/qnOirSfbtcrPqlud9/7nL90r
+         dIxe2AWjwCUYjk/nN3wD6kYNvAJp+xbjcYk9yXWVC80Ft6sQhPS9JD8BiuK39O5EVPlU
+         Ki+w1S8K+xpaoI3IYInf/pCVzi/efF1DSsfLM2ViB3PvKzQH6MA7MtgD0+NA0ZAuNvLb
+         WAsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724354219; x=1724959019;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8YIGGOCAzyFLMegU+7vlNDExeBWij0GRi4vYqrn2fMA=;
-        b=HAh/Q9daYiUYTh+RnVCUn87i1c1Cufe+SiFP7r7Anhy3LrQXOLwrH2nVysNMOLr+qM
-         HSxqmMxT2xaU0XrdnA/5Jk9Cnm9koQX18xYsE0HPnZa9Nif9nViCVLBC965uwkMP3ITl
-         DXJ2Gt+Ejt0EaTJSkRYFwzZs7oFaAmL97qvjKo1Z/n/BPnLh11Kb+5cIX9y10ZZ9yRlX
-         +OJfgaA8VFaaWatBFEF/K8ek0jyU6NeuoVwhRMgDTN7IHbB9ZMRJrlRKsKHhvkR+YgpW
-         HoVTSF5+IruLGmAlzR5CrQoSdjnIydyzGPn34D0VYc6IsW1ayrSc59yoQyg6rbjCwQb9
-         TX+w==
-X-Gm-Message-State: AOJu0YwhBudP4/3tu8UlaVUfgxQpp5XARMOcgzfA/Ad3DMupDyBTRzo7
-	IvdtDMm+5mvDTckxpNKLakFeWt9s7ypJRUgldZfF+OEwbZc5L/XZWxSEyx14HSSPM4SgpTuzK8c
-	WTDCafDDEaOpIlyE4UuBkcrjCsjHZ6D53mbdnELK3fkaNX3s2o0G2TdIRO05x6Q==
-X-Received: by 2002:a05:6214:5d0b:b0:6bf:77d2:bd1b with SMTP id 6a1803df08f44-6c155d50b2cmr98300246d6.1.1724354219385;
-        Thu, 22 Aug 2024 12:16:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFYSGXCSjeDYuhWfImPH5iwMXkcbcR5SnsnH9Y1R2sqbG+oUFa29LZaEVT2+yBaXWcgJ2DTA==
-X-Received: by 2002:a05:6214:5d0b:b0:6bf:77d2:bd1b with SMTP id 6a1803df08f44-6c155d50b2cmr98299806d6.1.1724354219032;
-        Thu, 22 Aug 2024 12:16:59 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162db0986sm10643056d6.97.2024.08.22.12.16.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 12:16:58 -0700 (PDT)
-Date: Thu, 22 Aug 2024 15:16:55 -0400
-From: Peter Xu <peterx@redhat.com>
-To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, "x86@kernel.org" <x86@kernel.org>,
-	Alistair Popple <apopple@nvidia.com>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Axel Rasmussen <axelrasmussen@google.com>
-Subject: Re: [PATCH RFC 2/6] mm: PGTABLE_HAS_P[MU]D_LEAVES config options
-Message-ID: <ZseOp7M9AmZtW4jw@x1n>
-References: <20240717220219.3743374-1-peterx@redhat.com>
- <20240717220219.3743374-3-peterx@redhat.com>
- <dcdde9fc-7e7c-45a8-8dc7-7f7ed13b81ec@cs-soprasteria.com>
+        d=1e100.net; s=20230601; t=1724354240; x=1724959040;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tkGGCdApsO1nBz4ff/iIpdxDUpZm3A4FCUXOxYZtFBg=;
+        b=WyWz7NVMUb6S075vTpVGKUnIhvmxphKgcvIvMF90SvgwouyE76dE/kCXd8ojNT8f31
+         siI5D6wia0rVkBNHP7JmOj6cdvnuimtY5fCaOt4MUxwc3AsFtIvkuggcJ6wVML0NSGOJ
+         3VUySfC7OUn9ozIUmdtOTmlUpRgeD3g0DOKejKrlQsG6943ocvs6KoI2kyw/6UJxyzrL
+         ISOQSyaDiniizuS2u/tv+lbl5K+7ruW4ldC6IDyHxc7xxJkbadfEcOLS1Fr/GSL4eE/z
+         BtibZYcaT/Ws7HItWEakSGSXDKC8BczM5TnEt5TEq3LuOzo7X3/pu81EKDNdWFriapnU
+         85dw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQcrPMf5xbgBdbcTE+NAZbkpNiSNZYQqcsEArynKleV+XRjB4ix58f5giu/xQ4E0t/3WlT0uaUzRqrUac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygmR5qjEzznPBY6hIEFwy7n4Nvktb27GtiIL/4pQm4WlRKomi7
+	uJhatGUqFoLkpgFh6GbU2ja5441cpzcc2osPLDZx7NjRX60uE+TMnRDChZfRYuptJlWTyV3fU9Q
+	PZA==
+X-Google-Smtp-Source: AGHT+IFDsZIDo/Am9uWb9UlvaqHhtEqkjDkuMPlMgrUvGu1xoqrBW9zzVUPA7r/A3w4Lvzt3C1l33ljLdso=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:ff14:b0:2ca:7f5a:db6c with SMTP id
+ 98e67ed59e1d1-2d60a9fa6ccmr35515a91.3.1724354240253; Thu, 22 Aug 2024
+ 12:17:20 -0700 (PDT)
+Date: Thu, 22 Aug 2024 12:17:18 -0700
+In-Reply-To: <20240816182533.2478415-2-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dcdde9fc-7e7c-45a8-8dc7-7f7ed13b81ec@cs-soprasteria.com>
+Mime-Version: 1.0
+References: <20240816182533.2478415-1-jmattson@google.com> <20240816182533.2478415-2-jmattson@google.com>
+Message-ID: <ZseOvjOSfvTwmr-6@google.com>
+Subject: Re: [PATCH v2 2/2] KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+From: Sean Christopherson <seanjc@google.com>
+To: Jim Mattson <jmattson@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Venkatesh Srinivas <venkateshs@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 22, 2024 at 05:22:03PM +0000, LEROY Christophe wrote:
+On Fri, Aug 16, 2024, Jim Mattson wrote:
+> >From Intel's documention [1], "CPUID.(EAX=07H,ECX=0):EDX[26]
+> enumerates support for indirect branch restricted speculation (IBRS)
+> and the indirect branch predictor barrier (IBPB)." Further, from [2],
+> "Software that executed before the IBPB command cannot control the
+> predicted targets of indirect branches (4) executed after the command
+> on the same logical processor," where footnote 4 reads, "Note that
+> indirect branches include near call indirect, near jump indirect and
+> near return instructions. Because it includes near returns, it follows
+> that **RSB entries created before an IBPB command cannot control the
+> predicted targets of returns executed after the command on the same
+> logical processor.**" [emphasis mine]
 > 
+> On the other hand, AMD's IBPB "may not prevent return branch
+> predictions from being specified by pre-IBPB branch targets" [3].
 > 
-> Le 18/07/2024 à 00:02, Peter Xu a écrit :
-> > Introduce two more sub-options for PGTABLE_HAS_HUGE_LEAVES:
-> > 
-> >    - PGTABLE_HAS_PMD_LEAVES: set when there can be PMD mappings
-> >    - PGTABLE_HAS_PUD_LEAVES: set when there can be PUD mappings
-> > 
-> > It will help to identify whether the current build may only want PMD
-> > helpers but not PUD ones, as these sub-options will also check against the
-> > arch support over HAVE_ARCH_TRANSPARENT_HUGEPAGE[_PUD].
-> > 
-> > Note that having them depend on HAVE_ARCH_TRANSPARENT_HUGEPAGE[_PUD] is
-> > still some intermediate step.  The best way is to have an option say
-> > "whether arch XXX supports PMD/PUD mappings" and so on.  However let's
-> > leave that for later as that's the easy part.  So far, we use these options
-> > to stably detect per-arch huge mapping support.
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> >   include/linux/huge_mm.h | 10 +++++++---
-> >   mm/Kconfig              |  6 ++++++
-> >   2 files changed, 13 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 711632df7edf..37482c8445d1 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -96,14 +96,18 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
-> >   #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
-> >   	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
-> >   
-> > -#ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
-> > -#define HPAGE_PMD_SHIFT PMD_SHIFT
-> > +#ifdef CONFIG_PGTABLE_HAS_PUD_LEAVES
-> >   #define HPAGE_PUD_SHIFT PUD_SHIFT
-> >   #else
-> > -#define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-> >   #define HPAGE_PUD_SHIFT ({ BUILD_BUG(); 0; })
-> >   #endif
-> >   
-> > +#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
-> > +#define HPAGE_PMD_SHIFT PMD_SHIFT
-> > +#else
-> > +#define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-> > +#endif
-> > +
-> >   #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
-> >   #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
-> >   #define HPAGE_PMD_MASK	(~(HPAGE_PMD_SIZE - 1))
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index 60796402850e..2dbdc088dee8 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -860,6 +860,12 @@ endif # TRANSPARENT_HUGEPAGE
-> >   config PGTABLE_HAS_HUGE_LEAVES
-> >   	def_bool TRANSPARENT_HUGEPAGE || HUGETLB_PAGE
-> >   
-> > +config PGTABLE_HAS_PMD_LEAVES
-> > +	def_bool HAVE_ARCH_TRANSPARENT_HUGEPAGE && PGTABLE_HAS_HUGE_LEAVES
-> > +
-> > +config PGTABLE_HAS_PUD_LEAVES
-> > +	def_bool HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD && PGTABLE_HAS_HUGE_LEAVES
-> > +
+> However, some AMD processors have an "enhanced IBPB" [terminology
+> mine] which does clear the return address predictor. This feature is
+> enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
 > 
-> What if an architecture has hugepages at PMD and/or PUD level and 
-> doesn't support THP ?
+> Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
+> accordingly.
+> 
+> [1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/cpuid-enumeration-and-architectural-msrs.html
+> [2] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/speculative-execution-side-channel-mitigations.html#Footnotes
+> [3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1040.html
+> [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf
+> 
+> Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features as derived in generic x86 code")
+> Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
+> Signed-off-by: Jim Mattson <jmattson@google.com>
 
-What's the arch to be discussed here?
+Venkatesh, can I grab a review from you on this?   You know this way better than
+I do, and I honestly don't feel like reading mitigation disclosures right now :-)
 
-The whole purpose of this series so far is trying to make some pmd/pud
-helpers that only defined with CONFIG_THP=on to be available even if not.
-It means this series alone (or any future plan) shouldn't affect any arch
-that has CONFIG_THP=off always.
-
-But logically I think we should need some config option just to say "this
-arch supports pmd mappings" indeed, even if CONFIG_THP=off.  When that's
-there, we should perhaps add that option into this equation so
-PGTABLE_HAS_*_LEAVES will also be selected in that case.
-
--- 
-Peter Xu
-
+> ---
+>  v2: Use IBPB_RET to identify semantic equality (Venkatesh)
+> 
+>  arch/x86/kvm/cpuid.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 2617be544480..044bdc9e938b 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
+>  	kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
+>  	kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
+>  
+> -	if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
+> +	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
+> +	    boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
+> +	    boot_cpu_has(X86_FEATURE_AMD_IBRS))
+>  		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
+>  	if (boot_cpu_has(X86_FEATURE_STIBP))
+>  		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
+> @@ -759,8 +761,10 @@ void kvm_set_cpu_caps(void)
+>  	 * arch/x86/kernel/cpu/bugs.c is kind enough to
+>  	 * record that in cpufeatures so use them.
+>  	 */
+> -	if (boot_cpu_has(X86_FEATURE_IBPB))
+> +	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+>  		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
+> +		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+> +	}
+>  	if (boot_cpu_has(X86_FEATURE_IBRS))
+>  		kvm_cpu_cap_set(X86_FEATURE_AMD_IBRS);
+>  	if (boot_cpu_has(X86_FEATURE_STIBP))
+> -- 
+> 2.46.0.184.g6999bdac58-goog
+>
 
