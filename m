@@ -1,410 +1,204 @@
-Return-Path: <linux-kernel+bounces-296675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F9395AD91
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:33:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1580D95AD69
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1401C220CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:33:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD1E1F2288D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B5613A40D;
-	Thu, 22 Aug 2024 06:33:43 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F6B137930;
+	Thu, 22 Aug 2024 06:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PUJhaAZq"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C2C1D12EA;
-	Thu, 22 Aug 2024 06:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB383B192
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724308422; cv=none; b=SO5/cdYWhq8qc+3iEWKdsBgnBcRhRSPjf6c6hXpijyuPcbyLMvaSabobuvtJXSXeUUdxzKrqvKik4BIxbNpMR9KaSXyUNLs4i/esfvqa3/g+Gf/POXotFT+fUxDgTpcYLSyy4K+ZpJ/UEQtb53t0u4EZY3oEdU+0eoeEdRJ25hU=
+	t=1724307894; cv=none; b=N3NdCwWBykpGQD6+3ydvfkx5wIHtKcYbW/pH8QehQmzgiDDpYGH/vNmyFQ8pCpd6nVctOLal3IR8lGSDy+icmef5/i9jBWFNLM8ApaBFpXucsAMwiFFLJolChhXqX7xXf+3r550cI3AMLG5cy187ofZXbkRMytum318nSQPkz2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724308422; c=relaxed/simple;
-	bh=9I8CcnSpfVtDMXgfyYR5bgyEexeV4vopq97N9hFUdbs=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=CUrmrvOeLGdUQOTrPhE0COJEFu8Jrz+C/iz2P4luvl2Bzj+YJWi8rCb8D+S8uvH6uz19mrbDCf1gbji6JZcW2p1Vug8cvYEihPVkOfqKzRIB3dUzM8sJ3abIZJUWO8Z/EWl8DnrebslgbccDV/Hcc5JnkhkpyXeuchjPDvlOzgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4WqCpp0DZMzW7y;
-	Thu, 22 Aug 2024 14:24:34 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4WqCpg2zPBz5pskc;
-	Thu, 22 Aug 2024 14:24:27 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4WqCpT72Mgz5B1G1;
-	Thu, 22 Aug 2024 14:24:17 +0800 (CST)
-Received: from njy2app08.zte.com.cn ([10.40.13.206])
-	by mse-fl2.zte.com.cn with SMTP id 47M6O8tg064627;
-	Thu, 22 Aug 2024 14:24:08 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njy2app01[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Thu, 22 Aug 2024 14:24:10 +0800 (CST)
-Date: Thu, 22 Aug 2024 14:24:10 +0800 (CST)
-X-Zmail-TransId: 2af966c6d98a13e-f53be
-X-Mailer: Zmail v1.0
-Message-ID: <20240822142410693uxzX5lKhqcLi-jAvxttlp@zte.com.cn>
+	s=arc-20240116; t=1724307894; c=relaxed/simple;
+	bh=1BSWe6ii3+DwJ4JPNZ3t55eNn7gdVfk9vRLHCXwDpcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qUicxxPb2I6JjXCXd7lrW5a6FXWmzDCg49bMbcz+PcYw65T3Rp6sZt7FCmzsCJ7nUqNgdYaIk/VJO7joWNKmXI0fFiOIy5SAQ12TFs5v2HQkVQCiLo4OjCXp+/PBheusAoWTD+8UPNZzLtyfUZ4XA6TRGFOdu9uEXMCfgMApP+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PUJhaAZq; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bef295a45bso513918a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724307891; x=1724912691; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dSj0hW6JDdfU92jXObH8IcQ1h41k65h/FvcN5Kx0k/c=;
+        b=PUJhaAZqhShe+njhEfeBmTfhuGtyKZOFO82JCopgsqZYeOIGhp4P3Ja8idip9j36lX
+         CQ/zC1x+tsb+dvxaSu46bzUuKl48LL5pm7kvp5W2t/45Q+wbEsOZx2im0APxXAlYLRZL
+         XPw2KAn3y5sMCFv7Gh0pBay5U4XyfhglQ/87UFcO5KS4AR5NR0N4xeQNB5PqYX5Qz4Lx
+         jOkZ/ZbNfPPBJZs53GQM4uvej1DTIbSaEbG1PiCZM839CTJVZ6teQvxHMcngf06tUSv9
+         NSHaE2NbkeVzb/6flnGRD5gZVDbo+xQN1wB0872lujpBhmzMJnWOaHMftj7nu0qFfMG+
+         rqcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724307891; x=1724912691;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dSj0hW6JDdfU92jXObH8IcQ1h41k65h/FvcN5Kx0k/c=;
+        b=SCcQGrvlGL0TbSAMIMZ2MKYOb4cj5+rbE4TCZJEkRwLbxWDhIotNbL2Pt5a/xLJraE
+         1LpQaU81/udjakyojjOR2Oh/rXNHCN/71igldJn30rJZydqyhIn4xI5E7AjUYkAMJbPx
+         IVdVghcgWMhhBrWZvlXaqw5zCMmmfupEHKFhd9/tlwJnCrP1UggeZAh+ZY+zUmJ11o3z
+         kI+83qRDYMA6R863Vc/GUaVBwM9G1+MHz9TFtLNKYb0q1p/rPFxjmgVBJ0Qsg9qCkv5C
+         0gW5RNEIk9ZD6pGpEzovN1EiO80XdFX0P70l4o2Bh3MlkWCbfG2R7XAWTyzgM5RwWydy
+         RALQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5nPafT0H9yCYspvCbBYjBelWKK4C+B2phur62j5REsu0N25iTjmrFvrOyIU0xEumUjMyChy3P8EkJFe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpbQM8F/A5wtxtRh8ZAn5XGzwfMkWdAsIRar5g2Lgs0wCV+ql+
+	WSW4KrCo19yJuqKRzf1It37Qe5MVyl/J+/8F+uoHefxHsCPbo3x+wwUXSCPWKPo=
+X-Google-Smtp-Source: AGHT+IHqd6rCfjoNRUOqVbNXPscNq7pN5OEsUCzKi8tCe/NqbwN/se9mjcjnct3VbqEUaVc1zCTyTg==
+X-Received: by 2002:a05:6402:35c4:b0:5be:fe26:dac1 with SMTP id 4fb4d7f45d1cf-5c0791d07fbmr957946a12.3.1724307890681;
+        Wed, 21 Aug 2024 23:24:50 -0700 (PDT)
+Received: from localhost (109-81-92-13.rct.o2.cz. [109.81.92.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3eb329sm475609a12.55.2024.08.21.23.24.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 23:24:50 -0700 (PDT)
+Date: Thu, 22 Aug 2024 08:24:49 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Cc: akpm@linux-foundation.org, mgorman@techsingularity.net,
+	hannes@cmpxchg.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, lizefan.x@bytedance.com
+Subject: Re: [External] Re: [PATCH] mm:page_alloc: fix the NULL ac->nodemask
+ in __alloc_pages_slowpath()
+Message-ID: <ZsbZsf2Z93_d9PQR@tiehlicka>
+References: <20240821135900.2199983-1-hezhongkun.hzk@bytedance.com>
+ <ZsYBDGE-_8GPPEpE@tiehlicka>
+ <CACSyD1OdKb4n1SrStdTfhwO0F1eBA5mNruxOeYKrhKP6+jTXAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <alexs@kernel.org>, <siyanteng@loongson.cn>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>, <qiu.yutan@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBEb2N1bWVudGF0aW9uL21tOiBUcmFuc2xhdGUgcGh5c2ljYWxfbWVtb3J5LnJzdCB0byBTaW1wbGlmaWVkCgogQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 47M6O8tg064627
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 66C6D9A1.000/4WqCpp0DZMzW7y
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACSyD1OdKb4n1SrStdTfhwO0F1eBA5mNruxOeYKrhKP6+jTXAg@mail.gmail.com>
 
-From: Yaxin Wang <wang.yaxin@zte.com.cn>
+On Thu 22-08-24 11:15:34, Zhongkun He wrote:
+> On Wed, Aug 21, 2024 at 11:00 PM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Wed 21-08-24 21:59:00, Zhongkun He wrote:
+> > > I found a problem in my test machine that should_reclaim_retry() do
+> > > not get the right node if i set the cpuset.mems
+> > >
+> > > 1.Test step and the machines.
+> > > ------------
+> > > root@vm:/sys/fs/cgroup/test# numactl -H | grep size
+> > > node 0 size: 9477 MB
+> > > node 1 size: 10079 MB
+> > > node 2 size: 10079 MB
+> > > node 3 size: 10078 MB
+> > >
+> > > root@vm:/sys/fs/cgroup/test# cat cpuset.mems
+> > >     2
+> > >
+> > > root@vm:/sys/fs/cgroup/test# stress --vm 1 --vm-bytes 12g  --vm-keep
+> > > stress: info: [33430] dispatching hogs: 0 cpu, 0 io, 1 vm, 0 hdd
+> > > stress: FAIL: [33430] (425) <-- worker 33431 got signal 9
+> > > stress: WARN: [33430] (427) now reaping child worker processes
+> > > stress: FAIL: [33430] (461) failed run completed in 2s
+> >
+> > OK, so the test gets killed as expected.
+> >
+> > > 2. reclaim_retry_zone info:
+> > >
+> > > We can only alloc pages from node=2, but the reclaim_retry_zone is
+> > > node=0 and return true.
+> > >
+> > > root@vm:/sys/kernel/debug/tracing# cat trace
+> > > stress-33431   [001] ..... 13223.617311: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=1 wmark_check=1
+> > > stress-33431   [001] ..... 13223.617682: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=2 wmark_check=1
+> > > stress-33431   [001] ..... 13223.618103: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=3 wmark_check=1
+> > > stress-33431   [001] ..... 13223.618454: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=4 wmark_check=1
+> > > stress-33431   [001] ..... 13223.618770: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=5 wmark_check=1
+> > > stress-33431   [001] ..... 13223.619150: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=6 wmark_check=1
+> > > stress-33431   [001] ..... 13223.619510: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=7 wmark_check=1
+> > > stress-33431   [001] ..... 13223.619850: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=8 wmark_check=1
+> > > stress-33431   [001] ..... 13223.620171: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=9 wmark_check=1
+> > > stress-33431   [001] ..... 13223.620533: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=10 wmark_check=1
+> > > stress-33431   [001] ..... 13223.620894: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=11 wmark_check=1
+> > > stress-33431   [001] ..... 13223.621224: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=12 wmark_check=1
+> > > stress-33431   [001] ..... 13223.621551: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=13 wmark_check=1
+> > > stress-33431   [001] ..... 13223.621847: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=14 wmark_check=1
+> > > stress-33431   [001] ..... 13223.622200: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=15 wmark_check=1
+> > > stress-33431   [001] ..... 13223.622580: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=16 wmark_check=1
+> >
+> > Are you suggesting that the problem is that should_reclaim_retry is
+> > iterating nodes which are not allowed by cpusets and that makes the
+> > retry loop happening more than unnecessary?
+> 
+> Yes, exactly.
+> 
+> >
+> > Is there any reason why you haven't done the same that the page
+> > allocator does in this case?
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 28f80daf5c04..cbf09c0e3b8a 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -4098,6 +4098,11 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
+> >                 unsigned long min_wmark = min_wmark_pages(zone);
+> >                 bool wmark;
+> >
+> > +               if (cpusets_enabled() &&
+> > +                       (alloc_flags & ALLOC_CPUSET) &&
+> > +                       !__cpuset_zone_allowed(zone, gfp_mask))
+> > +                               continue;
+> > +
+> >                 available = reclaimable = zone_reclaimable_pages(zone);
+> >                 available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
+> >
+> 
+> That was my original version,  but I found that the problem exists in
+> other places.
+> Please see the function flow below.
+> 
+> __alloc_pages_slowpath:
+> 
+>   get_page_from_freelist
+>      __cpuset_zone_allowed /* check the node */
+> 
+>   __alloc_pages_direct_reclaim
+>      shrink_zones
+>         cpuset_zone_allowed（）/* check the node */
+> 
+>  __alloc_pages_direct_compact
+>    try_to_compact_pages
+>        /* do not check the cpuset_zone_allowed（）*/
+> 
+>   should_reclaim_retry
+>   /* do not check the cpuset_zone_allowed（）*/
+> 
+>   should_compact_retry
+>       compaction_zonelist_suitable
+>           /* do not check the cpuset_zone_allowed（）*/
+> 
+> Should we add __cpuset_zone_allowed() checks in the three functions
+> listed above,
+> or should we set the nodemask in __alloc_pages_slowpath()  if it is empty
+> and the request comes from user space?
 
-This patch translates the "physical_memory.rst" document into
-Simplified Chinese to improve accessibility for Chinese-speaking
-developers and users.
+cpuset integration into the page allocator is rather complex (check
+ALLOC_CPUSET) use. Reviewing your change is not an easy task to make
+sure all the subtlety is preserved. Therefore I would suggest addressing
+the specific issue you have found.
 
-The translation was done with attention to technical accuracy
-and readability, ensuring that the document remains informative
-and useful in its translated form.
-
-Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
----
- .../translations/zh_CN/mm/physical_memory.rst | 310 ++++++++++++++++++
- 1 file changed, 310 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/mm/physical_memory.rst
-
-diff --git a/Documentation/translations/zh_CN/mm/physical_memory.rst b/Documentation/translations/zh_CN/mm/physical_memory.rst
-new file mode 100644
-index 000000000000..58344d8ac291
---- /dev/null
-+++ b/Documentation/translations/zh_CN/mm/physical_memory.rst
-@@ -0,0 +1,310 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+:Original: Documentation/mm/physical_memory.rst
-+
-+:翻译:
-+
-+ 王亚鑫 Yaxin Wang <wang.yaxin@zte.com.cn>
-+
-+===============
-+物理内存
-+===============
-+
-+Linux可用于多种架构，因此需要一个与架构无关的抽象来表示物理内存。本章描述了用于管理运行系统
-+中物理内存的结构。
-+
-+第一个与内存管理相关的主要概念是`非一致性内存访问(NUMA)<https://en.wikipedia.org/
-+wiki/Non-uniform_memory_access>`
-+
-+在多核和多插槽机器中，内存可能被组织成不同的库，这些内存库根据与处理器的“距离”不同而有不同的
-+访问开销。例如，可能为每个CPU分配一堆内存，或者在外围设备附近有一个非常适合DMA的内存库。
-+
-+每个内存库被称为一个节点，节点在Linux中表示为 ``struct pglist_data``，即使是在UMA架构中
-+也是这样表示。该结构总是通过 ``pg_data_t``来索引。特定节点的 ``pg_data_t`` 结构体可以通过
-+NODE_DATA(nid)引用，其中nid被称为该节点的ID。
-+
-+对于非一致性内存访问（NUMA）架构，节点数据结构在引导时由特定于架构的代码早期分配。通常，这些
-+结构是在他们所代表的内存区上本地分配。对于一致性内存访问（UMA）架构，只使用一个静态的 ``pg_data_t``
-+结构体，称为 ``contig_page_data``。节点将会在ref:`Nodes <nodes>`章节中进一步讨论。
-+
-+整个物理内存被划分为一个或多个被称为区域的块，这些区域表示内存的范围。这些范围通常由访问内存
-+的架构限制来决定。在节点内，与特定区域对应的内存范围由 ``struct zone`` 结构体描述，该结构被定义为
-+``zone_t``，每种类型都属于以下描述类型的一种。
-+
-+* ``ZONE_DMA``和 ``ZONE_DMA32``在历史上代表适用于DMA的内存，这些内存由那些不能访问所有可寻址内存的
-+外设访问。多年来，已经有了更好、更稳固的接口来获取满足特定DMA需求的内存（这些接口由Documentation/
-+core-api/dma-api.rst文档描述），但是 ``ZONE_DMA``和 ``ZONE_DMA32``仍然表示访问受限的内存范围。
-+
-+取决于架构的不同，这两种区域可以在构建时通过 ``CONFIG_ZONE_DMA``和 ``CONFIG_ZONE_DMA32``配置选项
-+来禁用。一些64位的平台可能需要这两种区域，因为他们支持具有不同DMA寻址限制的外设。
-+
-+* ``ZONE_NORMAL`` 是普通内存的区域，这种内存可以被内核随时访问。如果DMA设备支持将数据传输到
-+所有可寻址的内存区域，那么可以在该区域的页面上执行DMA操作。 ``ZONE_NORMAL`` 总是被启用的。
-+
-+* ``ZONE_HIGHMEM`` 是指那些没有在内核页表中永久映射的物理内存部分。该区域的内存只能通过临时映射
-+被内核访问。该区域只在某些32位架构上可用，并且是通过 ``CONFIG_HIGHMEM`` 配置选项来启用。
-+
-+* ``ZONE_MOVABLE`` 是用于可访问的普通内存区域，就像 ``ZONE_NORMAL`` 一样。不同之处在于 ``ZONE_MOVABLE``
-+ 中的大多数页面内容是可移动的。这意味着这些页面的虚拟地址不会改变，但它们的内容可能会在不同的物理
-+ 页面之间移动。通常，在内存热插拔期间填充 ``ZONE_MOVABLE``，但在启动时也可以使用 ``kernelcore``、
-+ ``movablecore`` 和 ``movable_node`` 这些内核命令行参数来填充。有关更多详细信息，请参阅内核文档
-+ Documentation/mm/page_migration.rst 和 Documentation/admin-guide/mm/memory-hotplug.rst。
-+
-+* ``ZONE_DEVICE`` 表示位于诸如持久性内存（PMEM）和图形处理单元（GPU）等设备上的内存。它与RAM区域类型有
-+不同的特性，并且它的存在是为了提供:ref:`struct page <Pages>` 结构和内存映射服务，以便设备驱动程序识别物理地址
-+范围。 ``ZONE_DEVICE`` 通过配置选项 ``CONFIG_ZONE_DEVICE`` 启用。
-+
-+需要注意的是，许多内核操作只能使用 ``ZONE_NORMAL`` 来执行，因此它是性能最关键区域。区域在第 :
-+:ref:`Zones <zones>` 节中有更详细的讨论。
-+
-+节点和区域范围之间的关系由固件报告的物理内存映射决定，另外也由内存寻址的架构约束以及内核命令行中的某些参数决定。
-+
-+例如，在具有2GB RAM的x86统一内存架构（UMA）机器上运行32位内核时，整个内存将位于节点0，并且将有三个
-+区域： ``ZONE_DMA``、 ``ZONE_NORMAL`` 和 ``ZONE_HIGHMEM``。
-+
-+  0                                                            2G
-+  +-------------------------------------------------------------+
-+  |                            node 0                           |
-+  +-------------------------------------------------------------+
-+
-+  0         16M                    896M                        2G
-+  +----------+-----------------------+--------------------------+
-+  | ZONE_DMA |      ZONE_NORMAL      |       ZONE_HIGHMEM       |
-+  +----------+-----------------------+--------------------------+
-+
-+
-+在内核构建时禁用了 ``ZONE_DMA`` 并启用了 ``ZONE_DMA32``，并且在具有16GB RAM平均分配在两个节点上的arm64
-+机器上，使用 ``movablecore=80%`` 参数启动时， ``ZONE_DMA32``、 ``ZONE_NORMAL`` 和
-+ ``ZONE_MOVABLE`` 位于节点0，``ZONE_NORMAL`` 和 ``ZONE_MOVABLE`` 位于节点1。
-+
-+
-+ 1G                                9G                         17G
-+  +--------------------------------+ +--------------------------+
-+  |              node 0            | |          node 1          |
-+  +--------------------------------+ +--------------------------+
-+
-+  1G       4G        4200M          9G          9320M          17G
-+  +---------+----------+-----------+ +------------+-------------+
-+  |  DMA32  |  NORMAL  |  MOVABLE  | |   NORMAL   |   MOVABLE   |
-+  +---------+----------+-----------+ +------------+-------------+
-+
-+
-+内存库可能属于交错的节点。在下面的例子中，一台x86机器有16GB的RAM分布在4个内存条上，偶数编号的内存条
-+属于节点0，奇数编号的内存条属于节点1::
-+
-+  0              4G              8G             12G            16G
-+  +-------------+ +-------------+ +-------------+ +-------------+
-+  |    node 0   | |    node 1   | |    node 0   | |    node 1   |
-+  +-------------+ +-------------+ +-------------+ +-------------+
-+
-+  0   16M      4G
-+  +-----+-------+ +-------------+ +-------------+ +-------------+
-+  | DMA | DMA32 | |    NORMAL   | |    NORMAL   | |    NORMAL   |
-+  +-----+-------+ +-------------+ +-------------+ +-------------+
-+
-+在这种情况下，节点0将覆盖从0到12GB的内存范围，而节点1将覆盖从4GB到16GB的内存范围。
-+
-+.. _nodes:
-+
-+节点
-+=====
-+
-+正如我们所提到的，内存中的每个节点都由 ``pg_data_t`` 描述，它是 ``struct pglist_data`` 结构体的类型定义。
-+在分配页面时，默认情况下，Linux 使用节点本地分配策略，从最接近当前运行CPU的节点分配内存。由于进程倾向于
-+在同一个CPU上运行，很可能会使用当前节点的内存。分配策略可以由用户控制，如内核文档 Documentation/admin-guide
-+/mm/numa_memory_policy.rst 中所述。
-+
-+大多数NUMA（非统一内存访问）架构维护了一个指向节点结构的指针数组。这些实际的结构在启动过程中的早期被分配，
-+当时特定于架构的代码解析了固件报告的物理内存映射。节点初始化的大部分工作是在启动过程后由 free_area_init()
-+函数完成的，该函数在后面的小节 :ref:`Initialization <initialization>` 中有详细描述。
-+
-+与节点结构一起，内核维护了一个名为 ``node_states`` 的 ``nodemask_t`` 位掩码数组。这个数组中的每个位掩码代表一组
-+特定属性的节点，这些属性由 ``enum node_states`` 定义，定义如下：
-+
-+``N_POSSIBLE``
-+节点可能在某个时刻上线。
-+
-+``N_ONLINE``
-+节点已经上线。
-+
-+``N_NORMAL_MEMORY``
-+节点拥有普通内存。
-+
-+``N_HIGH_MEMORY``
-+节点拥有普通或高端内存。当禁用 ``CONFIG_HIGHMEM`` 时，也可以称为 ``N_NORMAL_MEMORY`` 。
-+
-+``N_MEMORY``
-+节点拥有（普通、高端、可移动）内存。
-+
-+``N_CPU``
-+节点拥有一个或多个CPU。
-+
-+对于具有上述属性的每个节点， ``node_states[<property>]``掩码中对应于节点ID的位会被置位。
-+
-+例如，对于具有常规内存和CPU的节点2，第二个bit将被设置::
-+
-+  node_states[N_POSSIBLE]
-+  node_states[N_ONLINE]
-+  node_states[N_NORMAL_MEMORY]
-+  node_states[N_HIGH_MEMORY]
-+  node_states[N_MEMORY]
-+  node_states[N_CPU]
-+
-+有关使用节点掩码（nodemasks）可能进行的各种操作，请参考 ``include/linux/nodemask.h``。
-+
-+除此之外，节点掩码（nodemasks）提供用于节点遍历的宏，即 ``for_each_node()`` 和
-+ ``for_each_online_node()``。
-+
-+例如，要为每个在线节点调用函数 foo()，可以这样操作：
-+
-+  for_each_online_node(nid) {
-+		  pg_data_t *pgdat = NODE_DATA(nid);
-+
-+		  foo(pgdat);
-+	}
-+
-+节点数据结构
-+--------------
-+
-+节点结构 ``struct pglist_data`` 在 ``include/linux/mmzone.h`` 中声明。这里我们
-+将简要描述这个结构体的字段：
-+
-+通用字段
-+~~~~~~~
-+
-+``node_zones``
-+该节点的区域列表。并非所有区域都可能被填充，但这是完整的列表。它被该节点的 node_zonelists 以及其它
-+节点的 node_zonelists 引用。
-+
-+``node_zonelists``
-+所有节点中所有区域的列表。此列表定义了分配内存时首选的区域顺序。 ``node_zonelists`` 是在核心内存管理
-+结构初始化期间，由 ``mm/page_alloc.c`` 中的 ``build_zonelists()`` 函数设置的。
-+
-+``nr_zones``
-+此节点中已填充区域的数量。
-+
-+``node_mem_map``
-+对于使用 FLATMEM 内存模型的 UMA 系统，0 号节点的 ``node_mem_map`` 是表示每个物理帧的 struct pages 数组。
-+
-+``node_page_ext``
-+对于使用 FLATMEM 内存模型的 UMA 系统，0 号节点的 ``node_page_ext`` 是 struct pages 的扩展数组。
-+只有在启用了 ``CONFIG_PAGE_EXTENSION`` 配置选项的内核中才可用。
-+
-+``node_start_pfn``
-+此节点中起始页面帧的页面帧号。
-+
-+``node_present_pages``
-+此节点中存在的物理页面的总数。
-+
-+``node_spanned_pages``
-+包括空洞在内的物理页面范围的总大小。
-+
-+``node_size_lock``
-+一个保护定义节点范围字段的锁。仅在启用了 ``CONFIG_MEMORY_HOTPLUG`` 或
-+``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 配置选项中的某一个时才定义。提供了
-+``pgdat_resize_lock()`` 和 ``pgdat_resize_unlock()`` 来操作``node_size_lock``，
-+而无需检查 ``CONFIG_MEMORY_HOTPLUG`` 或 ``CONFIG_DEFERRED_STRUCT_PAGE_INIT``是否开启。
-+
-+``node_id``
-+节点的节点ID（NID），从0开始。
-+
-+``totalreserve_pages``
-+这是每个节点保留的页面，这些页面不可用于用户空间分配。
-+
-+``first_deferred_pfn``
-+如果大型机器上的内存初始化被推迟，那么PFN（页帧号）是需要先初始化的。仅在启用了
-+``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 配置选项时定义。
-+
-+``deferred_split_queue``
-+每个节点的大页队列，这些大页的拆分被推迟了。仅在启用了 ``CONFIG_TRANSPARENT_HUGEPAGE``
-+配置选项时定义。
-+
-+``__lruvec``
-+每个节点的 lruvec 持有 LRU（最近最少使用）列表和相关参数。仅在禁用了内存控制组（cgroups）
-+时使用。它不应该被直接访问，而应该使用 ``mem_cgroup_lruvec()`` 来查找 lruvecs。
-+
-+回收控制
-+~~~~~~~~~~~~~~~
-+
-+另见内核文档 Documentation/mm/page_reclaim.rst 文件。
-+
-+``kswapd``
-+每个节点的 kswapd 内核线程实例。
-+
-+``kswapd_wait``, ``pfmemalloc_wait``, ``reclaim_wait``
-+同步内存回收任务的工作队列。
-+
-+``nr_writeback_throttled``
-+等待写回脏页时，被被限制的任务数量。
-+
-+``kswapd_order``
-+控制 kswapd 尝试回收的order。
-+
-+``kswapd_highest_zoneidx``
-+kswapd线程可以回收的最高区域索引。
-+
-+``kswapd_failures``
-+kswapd 无法回收任何页面的运行次数。
-+
-+``min_unmapped_pages``
-+无法回收的未映射文件支持的最小页面数量。由 ``vm.min_unmapped_ratio`` 系统控制台（sysctl）
-+决定。仅在启用 ``CONFIG_NUMA`` 时定义。
-+
-+``min_slab_pages``
-+无法回收的 SLAB 页面的最少数量。由 ``vm.min_slab_ratio`` 系统控制台（sysctl）决定。仅在
-+启用 ``CONFIG_NUMA`` 时定义。
-+
-+``flags``
-+控制回收行为的标志位。
-+
-+内存压缩控制
-+~~~~~~~~~~~~~~~~~~
-+
-+``kcompactd_max_order``
-+kcompactd 应尝试实现的页面order。
-+
-+``kcompactd_highest_zoneidx``
-+kcompactd 可以压缩的最高区域索引。
-+
-+``kcompactd_wait``
-+同步内存压缩任务的工作队列。
-+
-+``kcompactd``
-+每个节点的 kcompactd 内核线程实例。
-+
-+``proactive_compact_trigger``
-+决定是否启用主动压缩。由 ``vm.compaction_proactiveness`` 系统控制台（sysctl）控制。
-+
-+统计信息
-+~~~~~~~~~~
-+
-+``per_cpu_nodestats``
-+每个 节点的Per-CPU虚拟内存统计信息。
-+
-+``vm_stat``
-+节点的虚拟内存统计数据。
-+
-+.. _zones:
-+
-+Zones
-+=====
-+
-+.. 警告:: Stub
-+
-+本节内容不完整。请列出并描述适当的字段。
-+
-+.. _folios:
-+
-+Folios
-+======
-+
-+.. 警告:: Stub
-+
-+  本节内容不完整。请列出并描述适当的字段。
-+
-+Initialization
-+==============
-+
-+.. 警告:: Stub
-+
-+  本节内容不完整。请列出并描述适当的字段。
-\ No newline at end of file
 -- 
-2.25.1
+Michal Hocko
+SUSE Labs
 
