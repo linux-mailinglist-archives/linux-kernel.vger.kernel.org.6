@@ -1,166 +1,167 @@
-Return-Path: <linux-kernel+bounces-296457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C1D95AB2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:46:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5348A95AB2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723D31F25E9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:46:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D36D1B22E31
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EC21822F8;
-	Thu, 22 Aug 2024 02:40:49 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E843B1C287;
+	Thu, 22 Aug 2024 02:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GwQFboZJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECC7176AA5;
-	Thu, 22 Aug 2024 02:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA2B1B970
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724294449; cv=none; b=lTxhiyZmiaOSDSg5DlcNqi50bokkuv3RD9yea3dUiyD5A3FGxQF3qyeql3PdBsv/2vSIwIqRyDk+QYKOwaVreUMr2OCl5RinM2OdHyzWWoKXObStslRmeTIwViMvZstLE0soozwJuxhUhZTqHBc8y8s1/bgHHXpt7FiO5N+2nNg=
+	t=1724294540; cv=none; b=r2vkFinSiXLjBM/Jg8HPtjnu9cey+SLeUaSyGcyZJvYph0mWsq7K8oiK2weQUSliUqXD2c/lk6eUGjZRdcZJe+jQnp6C+0+6CcvIA1wujc7GfnxNQ8J/Vvp2QlaYFXD+zGxeVt9oPtvfyU9kTmxZ3OpQlpurbYB6sWnvOIhAA88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724294449; c=relaxed/simple;
-	bh=mWjNdXa9ZQMCkYs9dLLQcfo9hALBsireYH9ACWkdKss=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WQwCsMe9knN5ilh4zAISu/QMzsC/RHaIiau4xypcvQ8Y+JPI7FHGcFFLJyPG7UG9NksIiGotpagoVA+YHICPZaGDJ3lech6qkxiF1LF3jwZR9MxlD4U/9ZaJNGme3bBgK9BjxTdAZ+ASJadCdZGi+3EytI6z3HyJEXPHkZBc4J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wq6rD69DBz4f3jdl;
-	Thu, 22 Aug 2024 10:40:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 159391A148B;
-	Thu, 22 Aug 2024 10:40:43 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4UapcZmqbd1CQ--.38129S29;
-	Thu, 22 Aug 2024 10:40:42 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	ojaswin@linux.ibm.com,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	libaokun@huaweicloud.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: [PATCH v2 25/25] ext4: save unnecessary indentation in ext4_ext_create_new_leaf()
-Date: Thu, 22 Aug 2024 10:35:45 +0800
-Message-Id: <20240822023545.1994557-26-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240822023545.1994557-1-libaokun@huaweicloud.com>
-References: <20240822023545.1994557-1-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1724294540; c=relaxed/simple;
+	bh=5nli8WndBJpedHicO5hZ6v2U8LcqbwxYkPoOZkOQglI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cd+IRUW10FMUHni8yxf9D+dDcZekXXUxdQZ8N1nm0+Zc86ujCKQiXVkJYEZDzIvKunYvQMOM/anzWeajy3JNNjiMFuZpcEGiAtYoNpJvqRYUxxzFxo84zkmCQ4/l/nqdJbrRfE8U1b6NgQjb1e32Y1ByfaW5VPbuK4vyUxeCbjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GwQFboZJ; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724294538; x=1755830538;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5nli8WndBJpedHicO5hZ6v2U8LcqbwxYkPoOZkOQglI=;
+  b=GwQFboZJTSHvTV70LAa2Alzm4zYi9lVjPSkgj86uUPOcUkfxpou9oy43
+   8zA4R6JTJp5nHG+vFITGnxiCZwM8Owjk7Z+HO2qmqrMPAlt+6UCAnRxPA
+   JkJWlATGP+QJuKpTrzImAFkT+Jys12/Yx9uuUiQskH047Nsm65d3KRVdi
+   kDFUC6L1D5dhgKgLxNL3T4XXWizbIX2x2JJPBAOqc9iflvfyDuTA+Xbh9
+   xDmuODmAHkfRrXJiEh961MDlFKDnEn1QKB33t7oind3ldATFF5hM6+zAS
+   7C9ONnBaU/lwkax64SgsQeneo9WJOfSaSwZ1VzNo5PTHIGkFuf5jJCr0N
+   w==;
+X-CSE-ConnectionGUID: CmKPfQDHQ7KH1O/XibR6Rw==
+X-CSE-MsgGUID: Ps23PaSMQL6CFH56g5Q38w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22821447"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="22821447"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 19:42:18 -0700
+X-CSE-ConnectionGUID: P8E22KYVS3ucOTgOZ/JLgg==
+X-CSE-MsgGUID: 97P68gC9RFGFCRbQ97TSGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="61282999"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 21 Aug 2024 19:42:14 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgxm7-000CBk-1z;
+	Thu, 22 Aug 2024 02:42:11 +0000
+Date: Thu, 22 Aug 2024 10:42:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hongyan Xia <hongyan.xia2@arm.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Warn against unbalanced util_est during
+ dequeue
+Message-ID: <202408221018.b3g39QVN-lkp@intel.com>
+References: <752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4UapcZmqbd1CQ--.38129S29
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1xWry7Gw4rXF1xtw1DJrb_yoW8tF43pF
-	s3ZF93Gr1q93yq9rZ3Wa1UZr13K3W8Wr4UJFWSyr9YvFy3ArsaqF93ta4rZFWrJFZ7Zay2
-	qrW0qw13Jw12qaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQ214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUYl19UUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgADBWbFpZhEIgAAs8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2@arm.com>
 
-From: Baokun Li <libaokun1@huawei.com>
+Hi Hongyan,
 
-Save an indentation level in ext4_ext_create_new_leaf() by removing
-unnecessary 'else'. Besides, the variable 'ee_block' is declared to
-avoid line breaks. No functional changes.
+kernel test robot noticed the following build errors:
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/ext4/extents.c | 44 +++++++++++++++++++++-----------------------
- 1 file changed, 21 insertions(+), 23 deletions(-)
+[auto build test ERROR on tip/sched/core]
+[also build test ERROR on tip/master peterz-queue/sched/core next-20240821]
+[cannot apply to tip/auto-latest linus/master v6.11-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index ca1f946514dd..45ddc0692673 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -1403,6 +1403,7 @@ ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
- {
- 	struct ext4_ext_path *curp;
- 	int depth, i, err = 0;
-+	ext4_lblk_t ee_block = le32_to_cpu(newext->ee_block);
- 
- repeat:
- 	i = depth = ext_depth(inode);
-@@ -1424,33 +1425,30 @@ ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
- 			goto errout;
- 
- 		/* refill path */
--		path = ext4_find_extent(inode,
--				    (ext4_lblk_t)le32_to_cpu(newext->ee_block),
--				    path, gb_flags);
-+		path = ext4_find_extent(inode, ee_block, path, gb_flags);
- 		return path;
--	} else {
--		/* tree is full, time to grow in depth */
--		err = ext4_ext_grow_indepth(handle, inode, mb_flags);
--		if (err)
--			goto errout;
-+	}
- 
--		/* refill path */
--		path = ext4_find_extent(inode,
--				   (ext4_lblk_t)le32_to_cpu(newext->ee_block),
--				    path, gb_flags);
--		if (IS_ERR(path))
--			return path;
-+	/* tree is full, time to grow in depth */
-+	err = ext4_ext_grow_indepth(handle, inode, mb_flags);
-+	if (err)
-+		goto errout;
- 
--		/*
--		 * only first (depth 0 -> 1) produces free space;
--		 * in all other cases we have to split the grown tree
--		 */
--		depth = ext_depth(inode);
--		if (path[depth].p_hdr->eh_entries == path[depth].p_hdr->eh_max) {
--			/* now we need to split */
--			goto repeat;
--		}
-+	/* refill path */
-+	path = ext4_find_extent(inode, ee_block, path, gb_flags);
-+	if (IS_ERR(path))
-+		return path;
-+
-+	/*
-+	 * only first (depth 0 -> 1) produces free space;
-+	 * in all other cases we have to split the grown tree
-+	 */
-+	depth = ext_depth(inode);
-+	if (path[depth].p_hdr->eh_entries == path[depth].p_hdr->eh_max) {
-+		/* now we need to split */
-+		goto repeat;
- 	}
-+
- 	return path;
- 
- errout:
+url:    https://github.com/intel-lab-lkp/linux/commits/Hongyan-Xia/sched-fair-Warn-against-unbalanced-util_est-during-dequeue/20240821-210618
+base:   tip/sched/core
+patch link:    https://lore.kernel.org/r/752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2%40arm.com
+patch subject: [PATCH] sched/fair: Warn against unbalanced util_est during dequeue
+config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20240822/202408221018.b3g39QVN-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 26670e7fa4f032a019d23d56c6a02926e854e8af)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221018.b3g39QVN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221018.b3g39QVN-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/sched/fair.c:27:
+   In file included from include/linux/mm_api.h:1:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> kernel/sched/fair.c:7180:26: error: no member named 'avg' in 'struct cfs_rq'
+    7180 |                         SCHED_WARN_ON(rq->cfs.avg.util_est);
+         |                                       ~~~~~~~ ^
+   kernel/sched/sched.h:97:42: note: expanded from macro 'SCHED_WARN_ON'
+      97 | # define SCHED_WARN_ON(x)      ({ (void)(x), 0; })
+         |                                          ^
+   kernel/sched/fair.c:7186:25: error: no member named 'avg' in 'struct cfs_rq'
+    7186 |                 SCHED_WARN_ON(rq->cfs.avg.util_est);
+         |                               ~~~~~~~ ^
+   kernel/sched/sched.h:97:42: note: expanded from macro 'SCHED_WARN_ON'
+      97 | # define SCHED_WARN_ON(x)      ({ (void)(x), 0; })
+         |                                          ^
+   1 warning and 2 errors generated.
+
+
+vim +7180 kernel/sched/fair.c
+
+  7168	
+  7169	/*
+  7170	 * The dequeue_task method is called before nr_running is
+  7171	 * decreased. We remove the task from the rbtree and
+  7172	 * update the fair scheduling stats:
+  7173	 */
+  7174	static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+  7175	{
+  7176		util_est_dequeue(&rq->cfs, p);
+  7177	
+  7178		if (dequeue_entities(rq, &p->se, flags) < 0) {
+  7179			if (!rq->cfs.h_nr_running)
+> 7180				SCHED_WARN_ON(rq->cfs.avg.util_est);
+  7181			util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
+  7182			return false;
+  7183		}
+  7184	
+  7185		if (!rq->cfs.h_nr_running)
+  7186			SCHED_WARN_ON(rq->cfs.avg.util_est);
+  7187		util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
+  7188		hrtick_update(rq);
+  7189		return true;
+  7190	}
+  7191	
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
