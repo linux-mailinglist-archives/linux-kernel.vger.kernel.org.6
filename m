@@ -1,165 +1,119 @@
-Return-Path: <linux-kernel+bounces-297878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51CC95BECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:26:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C938495BEF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA221C23027
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748381F240D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4297E1D04AD;
-	Thu, 22 Aug 2024 19:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688C71CFEB8;
+	Thu, 22 Aug 2024 19:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+ZPGhUf"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Op5BHhGk"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFB7AD55;
-	Thu, 22 Aug 2024 19:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF9528EA;
+	Thu, 22 Aug 2024 19:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724354765; cv=none; b=srlBS7Cf/c7hoJsWvCtSyQ4yvzKBm6GxdAQ54Uaqe8Th58SvsxFgd/aridn315lapv2HyMSJ0msNdvClO+B2Mz/mpzFJFAuSufNg3V/0eIYp3dOb96t0dQAVWzVd2qHBLl4/8LRdJVPDZs7xIneID2OGB18tLcVur2T9PElfNbk=
+	t=1724355240; cv=none; b=UQ0HMIOi7ku1pmhObaDVo+dSX38zpRhqZCdVG+gmpLWic7iY6Go4jXReDHCrtSmT9PdPv3qSKjZyLerH1SxYqt4pSRvujIeVro/lXFy9HyI7u4GIfbi2M7E7N1D1L/xALaHIUj8HaNHk9QXg7qgFo4noDxHGYPcg9tcVYGet2Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724354765; c=relaxed/simple;
-	bh=WYbDZM7QUswidt3McqIDkUVNjOUQNL0rA2GhDxIgzkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aVDlpk7wqJ7xxCcwZspa8qhPrUNjrl1uy9OZmj0aw6cfxgcabfHJSQIAZ6KuMKCMgh5AXMUW/ksabLvx7oEnhDPgcuVAwVS5BSqWcSTonW8V7r4ZxZKFAhg+/wUx5ofAqbRqxFkTGYV3aVNhr7OB8ts38kvzQlurZgHGCk7mR4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+ZPGhUf; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71439adca73so840764b3a.0;
-        Thu, 22 Aug 2024 12:26:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724354763; x=1724959563; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Ydy6cWyKx848iGTedxTF3ZR0DvWdKpKUr5qmEWoCHI=;
-        b=M+ZPGhUfneGWI6znwBwVP6Ir94e8Vcj9eL5mzma9SRo1i/nOVoERY2LoVyoDhPhBg7
-         ugfGl5stPAilqbZrjRZDRbxQE7UvkwdcYjp04ONMvj9PQJ3XkmWXk2CZfB5feqrT+N1k
-         dv+IHk/HQYas5azxMBIohsBcg4ZX5A3zpbix9IiqNVfLj2z7umZ+oCRKGTX68LIhUAAO
-         ocudwnZ/jUtOG7wGPddhm2bjs1upNAya4/b+tLlwwIZl62JuBrZECmxaH+xTZyBXE+xj
-         jWRFI/fn1nsa0vgRCd5kVlCxeHZEF3pSSfuPgInYAHca4mXSCK7Z1Fve1t9WooOdet7H
-         V8Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724354763; x=1724959563;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3Ydy6cWyKx848iGTedxTF3ZR0DvWdKpKUr5qmEWoCHI=;
-        b=w+RK06YfbdwCxHussnw/0sT1QRI2Hc+Sznos+wX/xv/K8RCJdZqyTmgPLhmf6uD2Dm
-         n882TKTJtrrjFYZ9zA6z+nIGhJXKn9UA+mpGnvzaq8A1NnU7io1W91X8R0PKrqoF6uh0
-         OfbRYvN4j7Dg+u2XSItrNVZh8yogqEeb5l72q03CY3yAmrhYrW8PCqAKycxzzGbjAckS
-         Men+/gJNvTc6dwWyZfu1hRygiXqRopklpEhZBEctZtkeGncdEbp7esnBieGoal4C801e
-         +wU/f4ZPk9jgEPv1KeB3eXjqUq9gsuQas/lv8flJSKlyPxQ+bbllgzizmKSXItVzbjGq
-         pKHA==
-X-Forwarded-Encrypted: i=1; AJvYcCW04uH+fOzeDfAOhRmDZJz2/FJ7lUTwr9teraROfEG9OlcRmVlR5HLtS0Z3o8AD0X/3VG6C+2xnM2YhiXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKdGz5lrPvJ+KH8DEjdgdgjMfrk2Mn4ogO3Sah5mfydab83ajJ
-	lnZKR6OfK3hby16oQ3keVGwmm5kF0l50yowmSidJ6l3KhiZaBRxzHM8Byg==
-X-Google-Smtp-Source: AGHT+IGhJEpTDKSRtIlNjz4ySN3H0JID8PWU31zyiXoN+xvrg4+3fDuWn8jQxR82lpBg6yd4arlc8A==
-X-Received: by 2002:a05:6a21:4603:b0:1ca:db9e:48aa with SMTP id adf61e73a8af0-1cc89d24aa4mr123032637.1.1724354763260;
-        Thu, 22 Aug 2024 12:26:03 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430cc6fsm1783702b3a.177.2024.08.22.12.26.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 12:26:02 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	p.zabel@pengutronix.de
-Subject: [PATCH net-next] net: ag71xx: add missing reset_control_put
-Date: Thu, 22 Aug 2024 12:25:53 -0700
-Message-ID: <20240822192600.141036-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724355240; c=relaxed/simple;
+	bh=QPkDjNuVRVaT7BYRpVMAc8keX9cRsVBul1f/oRkCzRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mhl/Qn6N89pKkZGZ470zD8qPaHsFv8zH5A9Hc2b6zEaT8MOnFfExOYeuX3y8DVVxMi4RngytzQqdJCuT97FhZWyfBdjWOK5TvfpghDciOZKZndcCsh5j0TPNnnn/i748cAf4PMMtzKZHf1iowzUPv54uer+APIkODFFTOjppm9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Op5BHhGk reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 1730b97eb82e1659; Thu, 22 Aug 2024 21:33:56 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A594F6F0E2D;
+	Thu, 22 Aug 2024 21:33:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724355236;
+	bh=QPkDjNuVRVaT7BYRpVMAc8keX9cRsVBul1f/oRkCzRE=;
+	h=From:Subject:Date;
+	b=Op5BHhGkCLsSLELLaSVIWLuio3bRHxUwF5aS8ID9dg0iZCibLDGNGtiXUi/JB5FDZ
+	 m7b5PqWDR/YQ/jyYKEz13JHkizJsvpQQL7tOB3nWiWor4r7B1nZN6GQmcA/Jorrwim
+	 DQWNKNQq5iwUMtcJXXlPPQY0jTRIF3dbBhsGtIrVnYGo7Z5tW7oPBPirAwILrhm0xT
+	 REHqQD9qA28R8XDzro9Yh8Jg2EPQkrQ7K48LpLLbJzFfLRfKbli8YqD4mU+WvpzojB
+	 /beSbQtPSnicKzNcD+og0gYmYN0Ptsk6gDKhedyjG90oz9r6hFkMwtuQI29190w7HH
+	 cVAkNAPiskYIw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Huisong Li <lihuisong@huawei.com>
+Subject:
+ [PATCH v1 2/3] thermal: core: Drop redundant checks from
+ thermal_bind_cdev_to_trip()
+Date: Thu, 22 Aug 2024 21:26:09 +0200
+Message-ID: <4607540.LvFx2qVVIh@rjwysocki.net>
+In-Reply-To: <12516814.O9o76ZdvQC@rjwysocki.net>
+References: <12516814.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddvtddgudefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdr
+ lhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhihhhuihhsohhngheshhhurgifvghirdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
 
-The original downstream driver used devm instead of of. The latter
-requires reset_control_put to be called in all return paths.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Since thermal_bind_cdev_to_trip() is only called by
+thermal_zone_cdev_binding() under the thermal zone lock and the latter
+is only called by thermal_zone_device_register_with_trips() and
+__thermal_cooling_device_register(), under thermal_list_lock in both
+cases, both lockdep_assert_held() assertions can be dropped from it.
+
+Moreover, in both cases thermal_zone_cdev_binding() is called after
+both tz and cdev have been added to the global lists of thermal zones
+and cooling device, respectively, so the check against their list nodes
+in thermal_bind_cdev_to_trip() is redundant and can be dropped either.
+
+Link: https://lore.kernel.org/linux-pm/CAJZ5v0jwkc2PB+osSkkYF9vJ1Vpp3MFE=cGQmQ2Xzjb3yjVfJg@mail.gmail.com/
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/net/ethernet/atheros/ag71xx.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/thermal/thermal_core.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index 89cd001b385f..e2aaec223c97 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -722,8 +722,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
- 	mnp = of_get_child_by_name(np, "mdio");
- 	err = devm_of_mdiobus_register(dev, mii_bus, mnp);
- 	of_node_put(mnp);
--	if (err)
-+	if (err) {
-+		reset_control_put(ag->mdio_reset);
- 		return err;
-+	}
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -775,12 +775,6 @@ static int thermal_bind_cdev_to_trip(str
+ 	bool upper_no_limit;
+ 	int result;
  
- 	return 0;
- }
-@@ -1916,20 +1918,24 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	ag71xx_hw_init(ag);
- 
- 	err = ag71xx_mdio_probe(ag);
--	if (err)
-+	if (err) {
-+		reset_control_put(ag->mdio_reset);
- 		return err;
-+	}
- 
- 	platform_set_drvdata(pdev, ndev);
- 
- 	err = ag71xx_phylink_setup(ag);
- 	if (err) {
- 		netif_err(ag, probe, ndev, "failed to setup phylink (%d)\n", err);
-+		reset_control_put(ag->mdio_reset);
- 		return err;
- 	}
- 
- 	err = devm_register_netdev(&pdev->dev, ndev);
- 	if (err) {
- 		netif_err(ag, probe, ndev, "unable to register net device\n");
-+		reset_control_put(ag->mdio_reset);
- 		platform_set_drvdata(pdev, NULL);
- 		return err;
- 	}
-@@ -1941,6 +1947,14 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void ag71xx_remove(struct platform_device *pdev)
-+{
-+	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct ag71xx *ag = ag = netdev_priv(ndev);
-+
-+	reset_control_put(ag->mdio_reset);
-+}
-+
- static const u32 ar71xx_fifo_ar7100[] = {
- 	0x0fff0000, 0x00001fff, 0x00780fff,
- };
-@@ -2025,6 +2039,7 @@ static const struct of_device_id ag71xx_match[] = {
- 
- static struct platform_driver ag71xx_driver = {
- 	.probe		= ag71xx_probe,
-+	.remove_new	= ag71xx_remove,
- 	.driver = {
- 		.name	= "ag71xx",
- 		.of_match_table = ag71xx_match,
--- 
-2.46.0
+-	lockdep_assert_held(&thermal_list_lock);
+-	lockdep_assert_held(&tz->lock);
+-
+-	if (list_empty(&tz->node) || list_empty(&cdev->node))
+-		return -EINVAL;
+-
+ 	/* lower default 0, upper default max_state */
+ 	if (cool_spec->lower == THERMAL_NO_LIMIT)
+ 		cool_spec->lower = 0;
+
+
 
 
