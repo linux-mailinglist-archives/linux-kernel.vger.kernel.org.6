@@ -1,128 +1,184 @@
-Return-Path: <linux-kernel+bounces-297520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A7F95BA10
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:27:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80F995BA18
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D6531C2310D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F3B1C231DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5B41CB334;
-	Thu, 22 Aug 2024 15:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5D51CCB2A;
+	Thu, 22 Aug 2024 15:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nuZc7wPg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OdoExPkz"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E7818EAB
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF881CB301
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724340441; cv=none; b=ovZPVo9Zou1Po+D0Xur4F5LJmpvzOZTbW48tkkyNBjjC307X6s00qXeBTKo3yzrAfXp17rW6ie7fDk7nw0gMwCFkNmlSh6R7b1qGtfDMr9g8uDTfv84D+ok5IuYzQtCvNRKxSGEegKy2k6geOMz+4jRafkGlbrSDbLFDgH57/Ag=
+	t=1724340500; cv=none; b=t2QgaXhOowen1p51HwwcG1wRYXGhtm0bW6PbqjeIMtAmEo30IwSwQQdeGDqGhKlvp95DK+gc7OvW1Ii8WUfZiBNF1T4Xc+wCDcWuJ/asQiVnlS/Tw90OdZb7bhflpCjZSNCRDORKN3RKgmvPq7bcZ4+qdZbTLWh0Ely8PeUdms8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724340441; c=relaxed/simple;
-	bh=+lbV+GG7t6KwSu4fA1t6L2r5r6EAkFGdgwOcCJKVb88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2jXvnNefhqW8+0mlnCh6267XsrxRNQp+kBQHN+WRX1qSfmQbiaLzeZjPR3FG4b1+jhdQcH3Dr86ENw71IREq7QKyL/iGJ1QGqLmBzA+o/kECtbR40UlJQUlZKtwFVI+VFo0/RNocr8keJAZyLTzej9O8CyXJeHGgrbt4EQQYs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nuZc7wPg; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724340439; x=1755876439;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+lbV+GG7t6KwSu4fA1t6L2r5r6EAkFGdgwOcCJKVb88=;
-  b=nuZc7wPglpxLBS/P/qxClQiOZ9Iktig8i2LsZO7mPnzdmb52uHMX0FgG
-   peIwuVdwB6Mri74VsJ5nHNY+Ap2ERJlyB/GrBPCALF1m9nzJLsAzB5TNU
-   uS/W9/+uOqNB/pNIM+GmuxD5uLXe/D5i+K46B2ZRDASkvZxtvl9FEV5Me
-   9CoY1o87QUbn8Svcz4Ud/QaW5Sv7lkbxkjOdV/0tgzloQLm+x9Xh8dB7S
-   Uia74zuVTMOa08XsMl8NA0bFT615yzwbMzxDw7eh3MAsLCpzB2z78wwvQ
-   /IahTbjflGijrerqlPR44mtPTDvfLLPLzZZEIh36Ugpim0DL6BlkRcat7
-   Q==;
-X-CSE-ConnectionGUID: siuyjVloQuqmZsYol4DNRg==
-X-CSE-MsgGUID: 9HWD0RpkRmu0QuXN0ln9Cg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22289233"
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="22289233"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 08:27:18 -0700
-X-CSE-ConnectionGUID: meYGC+DcQx+H28tOocj4Mg==
-X-CSE-MsgGUID: aVCLEducQTy9WIKJRZd3ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="92233313"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 22 Aug 2024 08:27:15 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sh9iT-000CuO-1w;
-	Thu, 22 Aug 2024 15:27:13 +0000
-Date: Thu, 22 Aug 2024 23:26:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen Yufan <chenyufan@vivo.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] X86 architecture (32-bit and 64-bit): Convert to use
- jiffies macro
-Message-ID: <202408222321.a5EoSpB5-lkp@intel.com>
-References: <20240822034721.9561-1-chenyufan@vivo.com>
+	s=arc-20240116; t=1724340500; c=relaxed/simple;
+	bh=LBFFDsm/zfrS0rd8SU927JaSUE2tzSc1L6UBcRcd76I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lM1C5m9xNnXj8rLzSW46W6XIAm9p+zIv37OoAIz0Nkr2NynJZiXUwugTBabGXbhJ9+aFgvjxp5gOroWpsVEwRaZy5S8gfqsCPpxluKNdUFIdrE+i97feejuITSiPBA1xRbUERe2RkXSlYM0UD8gsvPRVXfGiMVMlUkPEcZ4LcXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OdoExPkz; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53349d3071eso1235474e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:28:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724340496; x=1724945296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oG0PQto83btnEL28K6haZsLSn7p7+BWVYeK6+IqQicQ=;
+        b=OdoExPkzWUcU34Q/UVxriUD2ai3wD+qWxIX8I2iEkUM04fWwxnHQBaMxhJrMTGpV88
+         cl4GNXLI50ETCaIMBgh9qvsYYtEeBgwqID3MFf8G9xlx8+yYmSOE94ewnKhfZIkiWSyQ
+         +q6AwJNbg8pw5MewjBiaxZi/F1SASSr1C5mhUEvpyDGi828JaMqG5B5cGO8AyXh5T04J
+         bYOYASXIIyVDT81OztW6FSgWcrdArywa36PWmDX8OoCmu5x5Ysl151h7stIIdOuf+67r
+         HQFqqFwO4FjCzjMfT+BEwz4EteMmtm434rB46liZwhCUS7Pnt7BdsTMB64Ag3euhKLfP
+         P6ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724340496; x=1724945296;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oG0PQto83btnEL28K6haZsLSn7p7+BWVYeK6+IqQicQ=;
+        b=mVB1kgkPWRPAuVmqTR7pI5xCzxlomnYVtxyLjV+NJKWq5B6O7zs7z7OZYrDN2ODKUl
+         vaOG6oEvCISsUVzP4QjA8iLCyJZTj/41qkrYB74u2LhBt3rJWiQSZrvSsPMKvgki2dX2
+         5gpi8Oa0qc4FJ4JD3Hxh0oge9hewygnfza2xcU3orvxIy+lasP1dPIhFk9QHOJV3kdEK
+         vhVMJP5pZJkDL0++QIyKQ33oV3PxxceB3Dr2RPpd+I8z2xRLmnxnws0wqbzajMaMNPnO
+         pYZ4DV7eOa64vHBs1jChcSvxq5rgJt9tfgGzC+8ZgmKnM9YClpYO70YUaSJ7MvKv7dOQ
+         /xUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUL+y1Nk7VcPa1rbmBFPpk0fKMxYkPwQ8hijVzDv3b+opMSuDkLilyc2Shn+yw5x3LSQfks7CKAkF87gO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy7rENmL+lfXprPeqxiRhZ/wVN+vAHmNXjMkm7Mb3pDhGHiK5O
+	vgk2eVF85Sc9lR93j+7raTn1Xgu5XDtQnaMG5UrNqLWWbJjTZC6VLZcJWg+pCPE=
+X-Google-Smtp-Source: AGHT+IHF2HEzRj6RLICHJMj0My+kwTWQOaRUjHy9OJ1aWJK8tooH9yYqAZuBr0m26WtCehY9rsGeRw==
+X-Received: by 2002:ac2:4c46:0:b0:52e:9b92:4990 with SMTP id 2adb3069b0e04-53348562455mr4098402e87.32.1724340495855;
+        Thu, 22 Aug 2024 08:28:15 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484dc5sm134189166b.171.2024.08.22.08.28.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 08:28:15 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	gregkh@linuxfoundation.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	yoshihiro.shimoda.uh@renesas.com,
+	biju.das.jz@bp.renesas.com,
+	ulf.hansson@linaro.org
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Date: Thu, 22 Aug 2024 18:27:45 +0300
+Message-Id: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822034721.9561-1-chenyufan@vivo.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Chen,
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-kernel test robot noticed the following build errors:
+Hi,
 
-[auto build test ERROR on tip/x86/core]
-[also build test ERROR on linus/master v6.11-rc4 next-20240822]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Series adds initial USB support for the Renesas RZ/G3S SoC.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yufan/X86-architecture-32-bit-and-64-bit-Convert-to-use-jiffies-macro/20240822-114925
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20240822034721.9561-1-chenyufan%40vivo.com
-patch subject: [PATCH v1] X86 architecture (32-bit and 64-bit): Convert to use jiffies macro
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240822/202408222321.a5EoSpB5-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408222321.a5EoSpB5-lkp@intel.com/reproduce)
+Series is split as follows:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408222321.a5EoSpB5-lkp@intel.com/
+- patch 01/16		- add clock reset and power domain support for USB
+- patch 02-04/16	- add reset control support for a USB signal
+			  that need to be controlled before/after
+			  the power to USB area is turned on/off.
+			  
+			  Philipp, Ulf, Geert, all,
+			  
+			  I detailed my approach for this in patch
+			  04/16, please have a look and let me know
+			  your input.
+			  
+			  Thank you!
 
-All errors (new ones prefixed by >>):
+- patch 05/16		- moves SoC identification to SYSC driver
+- patch 06-08/16	- updates USB PHY control driver for USB
+			  support
+- patch 09/16		- update documentation for USBHS
+- patch 10-12/16	- updates the USB PHY driver for USB support
+- patch 13-15/16	- updates the device tree with USB support
+- patch 16/16		- enables the reset control driver
 
->> arch/x86/kernel/cpu/aperfmperf.c:19:1: error: expected identifier or '(' before '+' token
-      19 | +#include <linux/jiffies.h>
-         | ^
->> arch/x86/kernel/cpu/aperfmperf.c:19:2: error: stray '#' in program
-      19 | +#include <linux/jiffies.h>
-         |  ^
+Thank you,
+Claudiu Beznea
 
+Claudiu Beznea (16):
+  clk: renesas: r9a08g045: Add clocks, resets and power domains for USB
+  dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add #reset-cells for
+    RZ/G3S
+  dt-bindings: reset: renesas,r9a08g045-sysc: Add reset IDs for RZ/G3S
+    SYSC reset
+  soc: renesas: Add SYSC driver for Renesas RZ/G3S
+  soc: renesas: sysc: Move RZ/G3S SoC detection on SYSC driver
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3S SoC
+  reset: rzg2l-usbphy-ctrl: Get reset control array
+  reset: rzg2l-usbphy-ctrl: Add support for RZ/G3S
+  dt-bindings: usb: renesas,usbhs: Document RZ/G3S SoC
+  phy: renesas: rcar-gen3-usb2: Add support to initialize the bus
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/G3S phy bindings
+  phy: renesas: rcar-gen3-usb2: Add support for the RZ/G3S SoC
+  arm64: dts: renesas: Add #reset-cells to system controller node
+  arm64: dts: renesas: r9a08g045: Add USB support
+  arm64: dts: renesas: rzg3s-smarc: Enable USB support
+  arm64: defconfig: Enable RZ/G3S SYSC reset driver
 
-vim +19 arch/x86/kernel/cpu/aperfmperf.c
-
-  > 19	+#include <linux/jiffies.h>
-    20	
+ .../bindings/phy/renesas,usb2-phy.yaml        |   4 +-
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  35 +++-
+ .../soc/renesas/renesas,rzg2l-sysc.yaml       |  16 ++
+ .../bindings/usb/renesas,usbhs.yaml           |   2 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 120 +++++++++++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  61 +++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |  17 ++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  60 ++++++-
+ drivers/reset/Kconfig                         |   7 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       |   3 +-
+ drivers/reset/reset-rzg3s-sysc.c              | 140 ++++++++++++++++
+ drivers/soc/renesas/Makefile                  |   1 +
+ drivers/soc/renesas/renesas-soc.c             |  12 --
+ drivers/soc/renesas/rzg3s-sysc.c              | 158 ++++++++++++++++++
+ .../reset/renesas,r9a08g045-sysc.h            |  10 ++
+ include/linux/soc/renesas/rzg3s-sysc-reset.h  |  24 +++
+ 18 files changed, 648 insertions(+), 24 deletions(-)
+ create mode 100644 drivers/reset/reset-rzg3s-sysc.c
+ create mode 100644 drivers/soc/renesas/rzg3s-sysc.c
+ create mode 100644 include/dt-bindings/reset/renesas,r9a08g045-sysc.h
+ create mode 100644 include/linux/soc/renesas/rzg3s-sysc-reset.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.2
+
 
