@@ -1,86 +1,81 @@
-Return-Path: <linux-kernel+bounces-297569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDDD95BAF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:50:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA13195BAFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948D61F24C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0690E1C234D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384351CCB54;
-	Thu, 22 Aug 2024 15:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0181CCEF6;
+	Thu, 22 Aug 2024 15:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GR+ELl8o"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6K1MwMC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D1C1C9EC4;
-	Thu, 22 Aug 2024 15:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2691C9EC4;
+	Thu, 22 Aug 2024 15:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341801; cv=none; b=R3IRCjMHaeGY0I10x3V6S5+IqIRnJxVMijJ/dQS3oD9eh+AzdUv5dvSMQYp5N/nWJJO2kEdO30RpBOF8tydXhfeu0oABLtXDvOfnqRJLFlVJ0Xc9KmKXOrww0ChCgWCXVk6QCV325CxNhe2M3dqaTTXabvPXaB22NgEsI7jwdis=
+	t=1724341813; cv=none; b=Jf9fNTjkOIk5HiLRfrro14LIC0Vw33sSzUP42l8weRvV5Zgu3rdPuYgUp3R36kmi/2Z9j5YItXW8ruLb2Z76JrA9YtTqP6fXF1csg5dBz5BHxysyA0+2kdIJqpWT1h+P8rLXE0opc6RHSZ24BoLhkWZ5obmmaWvraByhzTyUHeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341801; c=relaxed/simple;
-	bh=Yt9hQ3I2tZCTt0WKclQj3ASyNM+KSaK1c+0J+E/9CqQ=;
+	s=arc-20240116; t=1724341813; c=relaxed/simple;
+	bh=mSYYVTkmoYUtwEeD3+5W5SN/5U8n0bSGvGL2wpln02I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYVabhC5ohsCXD2T4neyOTiM5XsvzsABF39a0FjtcY8EPQLzrQ9B4ixY4U4NAKA1127RIPCr5tFbs8/DNZp3mClddCrLYIRmN4FS1m2ZVqYb6r8jMSULJlj2nwD+H6DPld8pe0+ZgZJVftDxVUncopjXxUiyoXujmxEFNisHEkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GR+ELl8o; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=WR5hjaWl3HcDCXvvJnF07p+ySaPY+8eWnQyGTxeF4Ms=; b=GR+ELl8oTAMdaNaQmTxnVOJ9JH
-	0HIUxaROTUI2RDsbdWz10+Gc023JMu4mfUwpCMSrDNS78xGQYJ3e14xAwm9s2uhX9d04twy4DG5bt
-	F0jKaNFgHfZZ5+pRJ1+mOsx/oMdDuEkQS+ueBJ3WQxh/+ghCcGheq0J7K3+lhHeY/VfI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1shA4M-005Ra5-QN; Thu, 22 Aug 2024 17:49:50 +0200
-Date: Thu, 22 Aug 2024 17:49:50 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v3 3/3] phy: dp83tg720: Add statistics support
-Message-ID: <f18ac2ce-3bbf-4f12-8d0c-14429aaf9e40@lunn.ch>
-References: <20240822115939.1387015-1-o.rempel@pengutronix.de>
- <20240822115939.1387015-4-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RoLbJk+bBCl3pO7zjP9IMQj6CjM0x03nrYsC5Tknbc3D8Dyfh4cz1+ifG/nTyIhpLFYRyBWwhyrvZW9CxdcQcbOq2NeSPZt051WZmb77C0mdRYgs6N5X/kutQ0kr7XCzyUtTNJLxNmanc+qrDka27psfQbI+oRh6yu4I4wbVPGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6K1MwMC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EBAC32782;
+	Thu, 22 Aug 2024 15:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724341812;
+	bh=mSYYVTkmoYUtwEeD3+5W5SN/5U8n0bSGvGL2wpln02I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K6K1MwMCwFEOkxtIaIbMeU0TrBxJfane8pGUBJ6VYEx2k83jAtyxlxNl+7NyiIeSM
+	 927SjSGJ6VpC+UKlnIIn1CcFoAfpiw6Rw09m3p8OkSkQWTuXXqd6wmWFsYeXSKZWqV
+	 3DLXmnJ3ynTeJLzCv264lodJwW/OXOdeFqZ3n5MM5y8A63BkS6R3PrIEjxVk0kTThF
+	 9OOcKITbBVhu6nyH80cOeMgQ0LPuEFrwUDDDE0uCY7VSsNmnY8QmJw08CLAljv8+dl
+	 WooW6mqJ9XPTQqdzNPdzBXqm6dys19KCjInZYf70lUHLkl1F6XiIBjRlIxmHRvCEX5
+	 44vFZmmsu/tAw==
+Date: Thu, 22 Aug 2024 17:50:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 13/14] ARM: s3c: crag6410: use software nodes/properties
+ to set up GPIO keys
+Message-ID: <4zsdppcuzdjgeipotbmdybhpaylpfpfmemyyfkpkn3b6qra6sq@3lzw2u4ji4cf>
+References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+ <20240819045813.2154642-14-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240822115939.1387015-4-o.rempel@pengutronix.de>
+In-Reply-To: <20240819045813.2154642-14-dmitry.torokhov@gmail.com>
 
-On Thu, Aug 22, 2024 at 01:59:39PM +0200, Oleksij Rempel wrote:
-> Introduce statistics support for the DP83TG720 PHY driver, enabling
-> detailed monitoring and reporting of link quality and packet-related
-> metrics.
+On Sun, Aug 18, 2024 at 09:58:10PM -0700, Dmitry Torokhov wrote:
+> Switch the gpio-keys device to use software inodes/properties to
+> describe the buttons and switches. This will allow dropping support
+> for platform data from the gpio-keys driver in the future.
 > 
-> To avoid double reading of certain registers, the implementation caches
-> all relevant register values in a single operation. This approach
-> ensures accurate and consistent data retrieval, particularly for
-> registers that clear upon reading or require special handling.
-> 
-> Some of the statistics, such as link training times, do not increment
-> and therefore require special handling during the extraction process.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  arch/arm/mach-s3c/gpio-samsung-s3c64xx.h |  5 ++
+>  arch/arm/mach-s3c/gpio-samsung.c         | 35 +++++++++++
+>  arch/arm/mach-s3c/mach-crag6410.c        | 80 +++++++++++++++++-------
+>  3 files changed, 99 insertions(+), 21 deletions(-)
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-    Andrew
+Best regards,
+Krzysztof
+
 
