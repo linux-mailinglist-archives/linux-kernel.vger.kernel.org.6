@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-296594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1668A95AC92
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:27:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C370795AC95
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19641F22421
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E2D28211D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18723D38E;
-	Thu, 22 Aug 2024 04:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625403BBC5;
+	Thu, 22 Aug 2024 04:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lrR6V68Z"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v+ZgCF6e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E481BF2A;
-	Thu, 22 Aug 2024 04:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8E7381B8;
+	Thu, 22 Aug 2024 04:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724300815; cv=none; b=uApI+WIbd+53hW4nGrgMtCiK15/+76hQNBeBz7rQzoi7SqbGiMthT9INHXPSCytYH6raX3b6eq0qXJxr5hJtgle7UA5Webt/pvhwMpw/Pl4U8hXiJ5m2q7LFd0OsGAYjkk0K3YlCjOOsS/8G+oDUfUna1qi71pcrINunmPDfY7I=
+	t=1724300849; cv=none; b=DRTJnp7pAhigz4/7BTlp0ECb6soLmJEyuIIh7wVwcr2zZ4SAQZJF6sEQ2XP5/VNwy9SH/4m96mXKLPUWXFQU3hhtZzjnGY6Qzf37LqdOR10J8XtOEzucSBaldtS+QX2mIH2RsgW6xdaNhbU1EmwIpxdMCJnbmekG6VIGytEWWPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724300815; c=relaxed/simple;
-	bh=vH1hkgrRUpB1Fxi+zqhCcwdl2caWcSsBMzt+Av44d8U=;
+	s=arc-20240116; t=1724300849; c=relaxed/simple;
+	bh=7V+H9aiy6Hmq4hq9uhSZuA59Ro8lxYpKbAXrcA3sXLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSgqwv+NzUa5YNyjLlKhQ5kvU1TwqbUWlEtj+8QkMu34785qwmaST0Ah98TvDTp/jAFj/4LFWZiZcQoKOiIpypSY+Ss0+vY9V/J2560sqXMYCvKPBsU0zoyD+xfYcOVokf3HBPod26W4rj7yvdX44DV/xN4QRewjVoGpEm4CAfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lrR6V68Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87CC6C4AF09;
-	Thu, 22 Aug 2024 04:26:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HX6eypBhfZbwIHodLQlEw9aNRixWv0q6dFPNAi9uI97CLPXXqPK6DE35EVYqp/bjJ1mqnHSHCUgOss9cjAJbFxIIsfjfrRc8uWOYO5o/X2aIgidCoh5ODxYTlzSTZOkIQvL4kDR2+Xp6PYJWwuDgrX6epnlrP7HZWYSMfCnIuvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v+ZgCF6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ABF1C4AF09;
+	Thu, 22 Aug 2024 04:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724300815;
-	bh=vH1hkgrRUpB1Fxi+zqhCcwdl2caWcSsBMzt+Av44d8U=;
+	s=korg; t=1724300849;
+	bh=7V+H9aiy6Hmq4hq9uhSZuA59Ro8lxYpKbAXrcA3sXLw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lrR6V68Z8TGghTu18GVdIYBnnYJuF6Y4AgCuC5UHChF2yXmeUGeckuea7LW+e9rkS
-	 ta7WlFoiZcX5QOndp2e16UjCVE4V9AEf/2+5ieqxWTtogySnjD3/vcBlSmZDmjXdro
-	 BggdDNNagVnfEf0Ix+s1pFWhf6lABC9rktij+kLc=
-Date: Thu, 22 Aug 2024 12:26:51 +0800
+	b=v+ZgCF6eGa392JfISoJqCnTuDfcClAdh4ysQ90tWOJT9KwmDps2Ub8yXHB8VBfEt9
+	 gNm4EtxXR0XFMPuBd3fS7RWPUvFAoIt55q2o82p/TP/yq2vaQjH7uS3t9fbsq+VMv7
+	 CFVcp8RUFyDabTFc+aKR7xr/50PvrmGpZ4Joa0EU=
+Date: Thu, 22 Aug 2024 12:27:26 +0800
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: Lei Liu <liulei.rjpt@vivo.com>
 Cc: Neal Liu <neal_liu@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
@@ -52,10 +52,9 @@ Cc: Neal Liu <neal_liu@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
 	linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH 2/5] usb: pxa27x_udc: Use devm_clk_get_enabled() helpers
-Message-ID: <2024082240-gallery-stinger-5901@gregkh>
-References: <20240821121048.31566-1-liulei.rjpt@vivo.com>
- <20240821121048.31566-3-liulei.rjpt@vivo.com>
+Subject: Re: [PATCH v1 0/5] usb drivers use devm_clk_get_enabled() helpers
+Message-ID: <2024082210-stadium-sly-cf06@gregkh>
+References: <20240822040734.29412-1-liulei.rjpt@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,9 +63,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240821121048.31566-3-liulei.rjpt@vivo.com>
+In-Reply-To: <20240822040734.29412-1-liulei.rjpt@vivo.com>
 
-On Wed, Aug 21, 2024 at 08:10:40PM +0800, Lei Liu wrote:
+On Thu, Aug 22, 2024 at 12:07:25PM +0800, Lei Liu wrote:
 > The devm_clk_get_enabled() helpers:
 >     - call devm_clk_get()
 >     - call clk_prepare_enable() and register what is needed in order to
@@ -74,22 +73,19 @@ On Wed, Aug 21, 2024 at 08:10:40PM +0800, Lei Liu wrote:
 > 
 > This simplifies the code and avoids calls to clk_disable_unprepare().
 > 
-> Signed-off-by: Lei Liu <liulei.rjpt@vivo.com>
 > ---
->  drivers/usb/gadget/udc/pxa27x_udc.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+> The files ux500.c, mpfs.c, and pxa27x_udc.c have incorrect usage of 
+> certain interfaces due to the lack of synchronization during the 
+> commit updates. These issues have been corrected in the v1 version.
 > 
-> diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
-> index 1a6317e4b2a3..6e99e75f1acb 100644
-> --- a/drivers/usb/gadget/udc/pxa27x_udc.c
-> +++ b/drivers/usb/gadget/udc/pxa27x_udc.c
-> @@ -2398,14 +2398,10 @@ static int pxa_udc_probe(struct platform_device *pdev)
->  	if (udc->gpiod)
->  		gpiod_direction_output(udc->gpiod, 0);
->  
-> -	udc->clk = devm_clk_get(&pdev->dev, NULL);
-> +	udc->clk = clk_prepare_enable(&pdev->dev, NULL);
+> version 1 changes
+> 1.ux500: Incorrect usage of clk_prepare_enable() should be corrected to
+>   devm_clk_get_enabled().
+> 2.mpfs: Incorrect usage of devm_clk_get_enable() should be corrected to
+>   devm_clk_get_enabled().
+> 3.pxa27x_udc: Incorrect usage of clk_prepare_enable() should be
+>   corrected to devm_clk_get_enabled().
 
-You didn't test build this code :(
+Patch versions start at 1, this should be 2, right?
 
 
