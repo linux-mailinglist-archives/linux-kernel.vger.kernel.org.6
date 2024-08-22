@@ -1,434 +1,259 @@
-Return-Path: <linux-kernel+bounces-297005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B1595B1C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:36:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DD195B1CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DF7285BE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B685F1C20FFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9492317CA1F;
-	Thu, 22 Aug 2024 09:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2597E17C211;
+	Thu, 22 Aug 2024 09:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DW+82SUT"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RX4LDl+5"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012020.outbound.protection.outlook.com [52.101.66.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE6A175D2D
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319351; cv=none; b=eDJgA24wUPgo9yVllyn64F52BTwuelZubYMDdw8AeDjCA0bDWQ2pQC5inWD0i0ejApW3/flWBWHAEepj0vO+/FsJ/SOn8be1pKqBsmFHpw924e0OvFdbCmeYyNUtzJ3vQFwoWrzOkHCtwu3E9ZpIQQCnXUM1zh2yK/qQkY60eC4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319351; c=relaxed/simple;
-	bh=Yt0SGBdvkoQALbkyTLGjUsIfe+e/jGTFEfTctg8D1mQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CV/DG9H0eUjzSHUP5EQKeR7FAKtWkrZgfv3w8Kyg9Tzm0K2L1o8iQL6ddQ5B4xuT7HxexaodhJKNidy6YminaSu/KFo1XmRQIFRUtNH6+362ztOpnOtupLVVgfhgfl0XohJgym9DMG4LtUeX7ed0+25rjTAAyHz9sPqdZ0WSH6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DW+82SUT; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a86933829dcso52306166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724319346; x=1724924146; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5as64V3nQXJvuAvKv0T+XO2CQeSqsYWKkMYHqmyR0EU=;
-        b=DW+82SUTh0cCpgBUqBkw1ax3sFYCut/Pfm/3UCEO675HxYn022XQSMC88UhZ9UTbYN
-         WP2SfYdp0ayLVFIR85I6U5KIK0rKf6SpyyOoAgPtlIE/ylWaO8akVD/3yk3M321Wj3TH
-         Ydkz0qohGwVkEu5tGevvxSko4ABoZ0tVdbSGxvD15bCzsPU4yauHf7xvNOxwXprS782c
-         zGkaAERzJIF/pTNQzAIRTEQWMU+CsfxXGwe4lye2nLPzwjKUKUmRcNUh9UExSC/uswQ6
-         arRg82mbrhTsAWK9MShnd9zCQE/G5iXBIhkd39/eCytrjbqapDA8h1rqZ8GihVnW8eft
-         l8tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724319346; x=1724924146;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5as64V3nQXJvuAvKv0T+XO2CQeSqsYWKkMYHqmyR0EU=;
-        b=CwL5srhOcEma79BzaN7/CMet/AFRCll1esvQE+T3l2PHAVrBJOhhTscaFow9E5r/U5
-         gHRXhb+dESCACpbC4GDAhPYUjScTaD88qXt91/q+oMSEuCuMTz9o2aE2nRzPChDJgMKY
-         EAc17nn124s1iOb5GAIJyaoXZfBdYiZlDH8pQOJ2PB/W5N9F1B9xNem78L1ZkiVt2Hjm
-         uGuLA45sHvx/jX8sYA4oX5cjNJWL02yfshKjdrofyXDecY57SUHTN2Nsf2UwL8B2D8JC
-         Wlnsw9559PfGkMLS4CuoVVvh/enTRozfXKQkB9KE5xjBwzs2FRDESmV6xuDPzolpq5RB
-         JgyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUig7EUJvxe+akiPxdgzIBurtnVFRYlVy7zwZsXrHfRqK5RR/KhsTK9aq9wmcRea0dFETXPR0ws4yGHJmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytJGoa+pl6kWUcotrq9H+HU2NzAYCI/6W+b4eHfW1AgDL+Htse
-	eg1hOWKYhuAgURnYeUphLpx7lxBd6tWSODJZIkur93XEhT8hB4wpzCQBepFh05s=
-X-Google-Smtp-Source: AGHT+IFOY/EtR8WQw5iC60MgtfJT6RPxhSE4K08Yn6ESgwiAUbm+IoOrlNo+vVu7HeKvVsEjzl1GNA==
-X-Received: by 2002:a17:906:d26a:b0:a77:e48d:bae with SMTP id a640c23a62f3a-a866f3615cbmr397450866b.28.1724319345495;
-        Thu, 22 Aug 2024 02:35:45 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2a5903sm91837266b.78.2024.08.22.02.35.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 02:35:45 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 22 Aug 2024 11:35:51 +0200
-To: Conor Dooley <conor@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 01/11] dt-bindings: clock: Add RaspberryPi RP1 clock
- bindings
-Message-ID: <ZscGdxgoNJrifSgk@apocalypse>
-Mail-Followup-To: Conor Dooley <conor@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <8d7dd7ca5da41f2a96e3ef4e2e3f29fd0d71906a.1724159867.git.andrea.porta@suse.com>
- <20240820-baritone-delegate-5711f7a0bc76@spud>
- <ZsTfoC3aKLdmFPCL@apocalypse>
- <20240821-exception-nearby-5adeaaf0178b@spud>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8D716F0CA;
+	Thu, 22 Aug 2024 09:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724319395; cv=fail; b=i5zLOC1DIonkq5/5T9CBTXrsud+ABVlnqD8tgpNzs1oBqAV75MiTE8TsHH4ESsd0WGFpgm0+TprJYbWCLZA2XdYFBI6ypFbk39d5beusTmki7Zf1LqEbFN55ZElR+xmjXWVS41qHP+aemj+doL7UIF52YDbkZxY2RVL5cSRXZpA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724319395; c=relaxed/simple;
+	bh=SnRHHHbPrUwPQR0XK1DnU09B3opxIQvage2KonO9nbg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=D8MMYj9lcGIwMbkGWGKR2g0KdecH8Day6Anf/xDZEVja9rndZYnPEFCV/OU+DhRzMqlu6XCtq69oJFjTTNzsnnr34x4iyYAk44M3vH1k43L9Ei6BLYhhYcvVJ1SV6DgAwTMK44MZ+rvJNjYjhlWSkLfRYc7tEcFhbMQ2oSznu0Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RX4LDl+5; arc=fail smtp.client-ip=52.101.66.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LuFlqxb06etGZtNk9Xx6M3+hIQidypxNPGgeFjUqukLq6isVUcLT9oEbUAoIOY6mreajgYzm6BpDF1YlZ6uzV5CDwlhFVT0avISwE06Iiej/95Lpu7sJJl7kBM0Ua65mIKJuvjnQwWXmIgXm+Fgxhev6srPV96twq6x2NtFcT6k8Rm0gstRNO9d4I2hOt1IFM52VrLSUVKisQSk5javALIBq7rpHQruw+AnsjSZWXD+IGyHw9f+o9CNhHui3MyjR5ufvTWKSou98xJN5CCjN4QztD63fXgWoT1fxNkxOwZYJmuHvvs5ia9StcARYe7y2H7EPULO7WcNDVN58gBX8Fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SnRHHHbPrUwPQR0XK1DnU09B3opxIQvage2KonO9nbg=;
+ b=btaZw3gp4JitOM5kFyjjAzgcb+PVK7wwOOh6v0n4uDIWjDlqqSeqYjQcJ5YUtXQpksy0AxqhG1hNLT8hp2ZOhTV5BmXjueHiMo8nesNUhjoC6I0G+f8ocVTs8Dh8GmeMJ8UyzRKt3SzKsdNRFNxynuXvLl2LyEWMhpvL3GQFizNz6DagXIGsJe6cSLW+6FD0TViBKAE1F0pb5mV5Wcj2YaQupus733gPOs8kXRl/uhTtXpZXk8iSXErhqHWVvaOT5jjUAZTpZf2GahnGmypBqU2zvCgUYc2lMQT8/seqVvJCh7yiKWO9WefzYUOCePE9Z9I+CeRnclMCBZw5hyJ9RA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SnRHHHbPrUwPQR0XK1DnU09B3opxIQvage2KonO9nbg=;
+ b=RX4LDl+5A00jtH05s/4ZP4L4oNGQh8QsN7GPY6iwt3fD6jikF0f0Z07vPYRncN/KhSikIgSyhYN8Hku07p5KLeItHm6qRLS+X0hKkkOsLceHMQkEMxguJThuXlTuwZSsehjdicrcI7c0Vlm65J6rivzxj4wSOISwYx4rGltr82UAqRAUQXGCcyrak6jl1SN8Lg8EuvDxxH6bA58HwG0YIncXdcDc0znR1WSvJjb/ZP9bgL/SsHyxR8UDWkgkR4Bf68yw+IQpoWOqpwralUU2ahQIAe7zsxrs4D/6qI/B7iT0CttPxAe6Qgld7EBeOLglKlvfkDQQqyYj81D6VOMVvA==
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by AM9PR04MB8130.eurprd04.prod.outlook.com (2603:10a6:20b:3b5::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
+ 2024 09:36:30 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%5]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
+ 09:36:30 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>, Brian Norris
+	<briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, Kalle
+ Valo <kvalo@kernel.org>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
+Thread-Topic: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
+Thread-Index: AQHa8vjaVhal52qkKUSAi5YxIXRvnLIzBf+w
+Date: Thu, 22 Aug 2024 09:36:29 +0000
+Message-ID:
+ <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+ <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
+In-Reply-To: <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|AM9PR04MB8130:EE_
+x-ms-office365-filtering-correlation-id: f4376ecc-7c04-4335-2fcf-08dcc28de6f3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?enY4NlRicE5BTEhuZWFLZUwrSXUwQmVHb0c5RFY5cGZuZzdtVzhYS1lsTmZk?=
+ =?utf-8?B?Y0krY3dyRVBTbmx4Tm5qS0JkZHhHcDFTQkJxbHJXRDBDdVpkWVRvY25MTjUz?=
+ =?utf-8?B?dW1BVDZFUms0aFBYck5BZU1kSkwwZ2lwM3Y2NFhyWmEwajUxcnlub1BzWUd3?=
+ =?utf-8?B?elIraHVrWjE5dFcwSFdRSHhuSjNod2pSWkVsSkEzdFUvODgwZUZDODNQNzU4?=
+ =?utf-8?B?d2pYUHVjOXNYUHBHTm1zOUFsc1JKNlpvQkFjQmR5ZldhcFF3V2d0czdrUExy?=
+ =?utf-8?B?Ykc3di82dUU3QU1xV3J4RHBqVDA2dG9TdWU5QURjRlJvU3BXWktDL2hBd0Nr?=
+ =?utf-8?B?ZkpuY0lnUnA1VVVCcURwdTBCUjZuMFV0Z1FrUDFUenc3bGQ3aFU5YmNmSUlF?=
+ =?utf-8?B?R0NMMVZVSUZFL2FvVmo4TFRnZ2xpclF2Y3cyVmNYTFF5NnRURUVXOHJuNFc4?=
+ =?utf-8?B?eHkxTUZYZXFZVXBWY3RLb216amVsQmpoSzdjYkpHd3dvZEF4cE1URys4SnBT?=
+ =?utf-8?B?cHBaQUhmV2FOeDlsKzJrL3ZWUmRXWnZvOVpuS1hpblBsSnk3TmhyTXBSOFRx?=
+ =?utf-8?B?WWFMKzhyNW5jLzlzcDNHL2NRTElqTFpZOTV0YXZNbFN0QzZNckplcERBT1p0?=
+ =?utf-8?B?L0htRElwbTBJbk1obVBOWW9NQkJRazdGSUx0OURaYlVzVk1NR09jTjJFZ0p0?=
+ =?utf-8?B?dE1DR2ViQlJwZzJ5dUVQd3hQOEJHZWJjeUhkTTduUTlybzB0K2x6TkVGSkRS?=
+ =?utf-8?B?K1F0TXplSUg2ZkVVYXFYWElTVHNKWjRLbHphckt2c29abkZTS2hEOHpuZEpM?=
+ =?utf-8?B?YnF3V0ZLT0lDNUx6NGlyTllQc0IzR0R2UXVTL0Q5dTNEK2pMVXBBY3pma1V5?=
+ =?utf-8?B?UVdkQ1RSbUJ0a3U0Zlh5eVJ6MEk1WURkTkhNKzRmOCt6aFFtZ0F2OEFNSmhR?=
+ =?utf-8?B?NGRUVmpOL0h6UmJtblpRc1dVYi9CQXNRcmlqaFhFMFlaeHlLaHNBTzdweWNU?=
+ =?utf-8?B?VTdaRXBNcnpDMjVuRU9ia1FMZXNuMFluTnFnMW9iVkh2bXpXTkVRTVJBdk41?=
+ =?utf-8?B?WGVCR1lQSlc4bW1wL1Y4K3hQbzArTmJTWk9IQm1Tb3creUl5NnRVcyt5dWo4?=
+ =?utf-8?B?Z1JmWUdSQ1dGcmhxWEFheDVMRmplWmR1eHFRVytkRzY5eGI2Q1ZtMkZzdG9P?=
+ =?utf-8?B?aFA1Q3NzTTFQRktLTU9yOERwN01yMFEzcS9IZlVURm43T0xpS0VPaUgzVFl4?=
+ =?utf-8?B?U0tsbkNtdmlsQmpWSTNFQ1Fxd05HdFFhblFGTEdzY2ZheVQ5TVJGUmZ6ejB0?=
+ =?utf-8?B?eDZwb0xBeXVCVkxhbVdXUkdHWkR3bnJMaDZZVVhRV05jcGlDSk1HREl3L2Jh?=
+ =?utf-8?B?NWhsTDY3ZDFKcDRNVCtibVBjcHZlRmsrVUJVeHAwZW5NZGZUTlJUUXlyN3hB?=
+ =?utf-8?B?ZkFBSVdkWVh6cG1xSVhwcHZjZXJWOE5DM200QTF4Z3VlVG5WMi9ncW5zODBI?=
+ =?utf-8?B?aklGL252dkZneDA1NHhIZVJFa0VXMUtFRE5iZHVyYmRMYU9DSXNoQWZYQlhq?=
+ =?utf-8?B?MDVvUElMZEtCSnJVOTkzQnhNcDQwV1kzbjkrUFVPWUtSSXk5NXQ2VUpuT1ZT?=
+ =?utf-8?B?RnlicE5nREVVbUNtMzhmRmhOc3ZpLzluYmFDVnAxNFZYbXg2RkE5RUw1Lzky?=
+ =?utf-8?B?VFlPQUwvdU1KYUNmNTVwSUQ4NWxtTEwveWhNemM5bkNHMWlyZlF5UXJLaG5T?=
+ =?utf-8?B?VjlKbHM2WHVvRVl5bGJiMFZ4Q1BqM2NKVGdOZVpWdExucGtkcnZySkI0K2xP?=
+ =?utf-8?Q?X6Ml/iRuIjnnL0G2h5vUAaClkCdyzJpe3uRiA=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?dVNvcThrYTNodkIvOXdSWUhSRzJzMFF2ckVKMjc1cGJ0UWdsMHFXWmttUnlT?=
+ =?utf-8?B?dzdqWFlLVFNyZlVZUERSekFJVmtFOGFWK2lzelBJWktxQVBwWitqeVNsUXpw?=
+ =?utf-8?B?ODJsMFJKay9WVk1lc0d2UnZaNGRyek56ZlErb0l4U2xZVDk1QWhtY2NlbmY0?=
+ =?utf-8?B?KzIxM01IMk5uOC9mTXRCbEJXQ3RwVU02UU1YY3RjVVM4ZGxMRU4rcVpzWmwv?=
+ =?utf-8?B?TGQyRWllZXdUam80M05zMFdCVHBvVU1mRE8zUVFMelFCaGpXc1FrYi8xdHYv?=
+ =?utf-8?B?SGp6RWtXTmdwQVpNS2ROR044NlJ1dm9kNVNEa0tIOVdiWFo2cU9RSm9CK3dT?=
+ =?utf-8?B?YW5HRWRZY3cvSTZESysyR0dlaWJpay9DeTlVaGcwZzlGNE9URk1FNksvWkg0?=
+ =?utf-8?B?NkFjUFBaeEdXQnp5VkNmd2hhM0pOL0lzenVoREVKMUxFclpzaDlKWjRsd0lP?=
+ =?utf-8?B?QTZVa0grMm1TZXdoSEtCYko1MEJobHBQL1FpQ1dLSTZ0NDg3Tis0d2lmUkVN?=
+ =?utf-8?B?L2lBYVI3S2RsTEJNdFlRZDBUdWFyZHJSSlozZXk5Rmlid3VVRGFML2VBY2FU?=
+ =?utf-8?B?QjZJZ05yZWtuUHREYmJQdDk3c2R0MVNPOHFJSHpDa0hBZlNvdkxyZC9zc3Qr?=
+ =?utf-8?B?YlpOQ3czN2ZrNjB3bEpra1c4UHo1bTlGSk5XQThibFEyS1hleHNiSm1hdUxh?=
+ =?utf-8?B?WU1NZWNhNzdrTWdKclBCa0N6aWwyOWJpdldFMk9lSTg5dDE2RklPM0JkWDVM?=
+ =?utf-8?B?MFordFU1SDRpNmxoMmZDUlR5eDV0Sk5VWC9ORmRQdjYxMytTb3RGT3ZYL2VZ?=
+ =?utf-8?B?VkduT1dkYzhIakZWS2c0dXdWTVIrWVBUSDBrMjdRbU5GV3JtdHI1bjRLb3E0?=
+ =?utf-8?B?T25kVXJ4RWFsRVR5bWRPdkkrSFRkdkdMUFpHTnJnbVNWblVOVkVBUkRFYXUw?=
+ =?utf-8?B?V0QreXFUU29XTmNHWWQzajZuTm55RkNTUGRwdUpXS3dqbGJxd2lNakZ0R3Nh?=
+ =?utf-8?B?RWpyd3p1OUhPeE1FQ0xMYy9EOXRNSVVCL1hnbUduOUNtMXU1ajE0SE1pYWU0?=
+ =?utf-8?B?dE9VZ096NWwwRDdkY2NzWU1pR2xtOFJNU1l0S0FQa0YycXpnNnpMV3BPRGZ4?=
+ =?utf-8?B?S1Y4bTJ4dm9rODY0dkZlUnI3R3V2dEE1eURXWG9zOEdhV3I4dzE5bTU5eERU?=
+ =?utf-8?B?WllyaU93ZlBkV0oyUi9od28yRHpzS2g2QzFqRGxTQUYzTVFCOXZ0c2pNNzhM?=
+ =?utf-8?B?TFFDZ2FHR2ZoVmhsTUNlWDY5SDJCbjZrYmM3L1BTRjRQZ2gydHNsZU03Rml2?=
+ =?utf-8?B?RUZMLy9LeGs2NlNrdWZ5Z2dGdHJnVFVYZlBxTnJuUUJ0TFF0ek5RUjY5SnNs?=
+ =?utf-8?B?dXlTNFdITVo3Q2FqWlZJLzNIUXk2MHlJZEJTY1NRcFFHSHpMWXVLeWp3Y2tw?=
+ =?utf-8?B?WE1qVkNSV0hqdHN5T2M5dEozZzBNZGUrbGZxak5ZYkJkNkZKc1JQbGJkVC9K?=
+ =?utf-8?B?b1l1VjFTQndkbEZIVGVtZ1ZoWEFZalpYZ2pyY0JOOHdpV1hWc3QrWXRIazcx?=
+ =?utf-8?B?ZTlYaEx1clBLL2NPQTRPOElCcy90a2U0WXM0Kys2SXZLblVtZ1Z6M01qSHpt?=
+ =?utf-8?B?VFlkN29WekNudWk4bEs5R0x1T2R2UG1RTXRDZW9HUzh5VXA0ejBtNkUvUCty?=
+ =?utf-8?B?Qi9Ub0h1L2ExWjVNbVdVUkcrVUhEY1FyOFhNaTlpVlJ5ZklpTDNCbG50WFpa?=
+ =?utf-8?B?S0k1SU55bUMxRk5zVzNYSjJNQW9KSW9va3pzdU1MNHJCS0xCWFlsaFE3bFBB?=
+ =?utf-8?B?R2lzdG50Qmoyd3NOSmI4UHJvVnhIZWlSTUtSdGdxRE14YnFzYk9IRWpQT0Qy?=
+ =?utf-8?B?QVo1NFhWclBpU291a252NU0zYnlaYmkrUGdxYVJKemhmNzVCZUEyRU8wQWd1?=
+ =?utf-8?B?WmFzcTY1YmlMdy9rWlNYMlJUY3M3R2o3M040b3p5VlZCeDFEVnJ2Wm9hQkx4?=
+ =?utf-8?B?RHgzcEdzL0NYYXNCRTdGcWVSVi84SnloK0YvSnpzcHd5NjUycDZXUkdweTAv?=
+ =?utf-8?B?Q0FBOGdlMHVFbnk1bDRyTjB2TTQ1aU9LTFlzQXlhT0VzeTRSdFo0NmdBRGpr?=
+ =?utf-8?Q?TPe2DiX3EXPyAiTX6nEnDMgWR?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821-exception-nearby-5adeaaf0178b@spud>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4376ecc-7c04-4335-2fcf-08dcc28de6f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2024 09:36:30.0076
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 52CjMJDOBrJETgc3S+ydfbpR45cki3RHOPJ+UrD62mACNYkgXomCYTTujWWM+ShgTHXkkD5o8x1kxCSZbk4F0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8130
 
-Hi Conor,
-
-On 12:46 Wed 21 Aug     , Conor Dooley wrote:
-> On Tue, Aug 20, 2024 at 08:25:36PM +0200, Andrea della Porta wrote:
-> > Hi Conor,
-> > 
-> > On 17:19 Tue 20 Aug     , Conor Dooley wrote:
-> > > On Tue, Aug 20, 2024 at 04:36:03PM +0200, Andrea della Porta wrote:
-> > > > Add device tree bindings for the clock generator found in RP1 multi
-> > > > function device, and relative entries in MAINTAINERS file.
-> > > > 
-> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > > > ---
-> > > >  .../clock/raspberrypi,rp1-clocks.yaml         | 87 +++++++++++++++++++
-> > > >  MAINTAINERS                                   |  6 ++
-> > > >  include/dt-bindings/clock/rp1.h               | 56 ++++++++++++
-> > > >  3 files changed, 149 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > > >  create mode 100644 include/dt-bindings/clock/rp1.h
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..b27db86d0572
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > > > @@ -0,0 +1,87 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: RaspberryPi RP1 clock generator
-> > > > +
-> > > > +maintainers:
-> > > > +  - Andrea della Porta <andrea.porta@suse.com>
-> > > > +
-> > > > +description: |
-> > > > +  The RP1 contains a clock generator designed as three PLLs (CORE, AUDIO,
-> > > > +  VIDEO), and each PLL output can be programmed though dividers to generate
-> > > > +  the clocks to drive the sub-peripherals embedded inside the chipset.
-> > > > +
-> > > > +  Link to datasheet:
-> > > > +  https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: raspberrypi,rp1-clocks
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  '#clock-cells':
-> > > > +    description:
-> > > > +      The index in the assigned-clocks is mapped to the output clock as per
-> > > > +      definitions in dt-bindings/clock/rp1.h.
-> > > > +    const: 1
-> > > > +
-> > > > +  clocks:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - '#clock-cells'
-> > > > +  - clocks
-> > > > +
-> > > > +additionalProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    #include <dt-bindings/clock/rp1.h>
-> > > > +
-> > > > +    rp1 {
-> > > > +        #address-cells = <2>;
-> > > > +        #size-cells = <2>;
-> > > > +
-> > > > +        rp1_clocks: clocks@18000 {
-> > > 
-> > > The unit address does not match the reg property. I'm surprised that
-> > > dtc doesn't complain about that.
-> > 
-> > Agreed. I'll update the address with the reg value in the next release
-> > 
-> > > 
-> > > > +            compatible = "raspberrypi,rp1-clocks";
-> > > > +            reg = <0xc0 0x40018000 0x0 0x10038>;
-> > > 
-> > > This is a rather oddly specific size. It leads me to wonder if this
-> > > region is inside some sort of syscon area?
-> > 
-> > >From downstream source code and RP1 datasheet it seems that the last addressable
-> > register is at 0xc040028014 while the range exposed through teh devicetree ends
-> > up at 0xc040028038, so it seems more of a little safe margin. I wouldn't say it
-> > is a syscon area since those register are quite specific for video clock
-> > generation and not to be intended to be shared among different peripherals.
-> > Anyway, the next register aperture is at 0xc040030000 so I would say we can 
-> > extend the clock mapped register like the following:
-> > 
-> > reg = <0xc0 0x40018000 0x0 0x18000>;
-> > 
-> > if you think it is more readable.
-> 
-> I don't care
-
-Ack.
-
-> > > > +            #clock-cells = <1>;
-> > > > +            clocks = <&clk_xosc>;
-> > > > +
-> > > > +            assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
-> > 
-> > > FWIW, I don't think any of these assigned clocks are helpful for the
-> > > example. That said, why do you need to configure all of these assigned
-> > > clocks via devicetree when this node is the provider of them?
-> > 
-> > Not sure to understand what you mean here, the example is there just to
-> > show how to compile the dt node, maybe you're referring to the fact that
-> > the consumer should setup the clock freq?
-> 
-> I suppose, yeah. I don't think a particular configuration is relevant
-> for the example binding, but simultaneously don't get why you are
-> assigning the rate for clocks used by audio devices or ethernet in the
-> clock provider node.
->
-
-Honestly I don't have a strong preference here, I can manage to do some tests
-moving the clock rate settings inside the consumer nodes but I kinda like
-the curernt idea of a centralized node where clocks are setup beforehand.
-In RP1 the clock generator and peripherals such as ethernet are all on-board
-and cannot be rewired in any other way so the devices are not standalone
-consumer in their own right (such it would be an ethernet chip wired to an
-external CPU). But of course this is debatable, on the other hand the current
-approach of provider/consumer is of course very clean. I'm just wondering
-wthether you think I should take action on this or we can leave it as it is.
-Please see also below.
-
-> > Consider that the rp1-clocks
-> > is coupled to the peripherals contained in the same RP1 chip so there is
-> > not much point in letting the peripherals set the clock to their leisure.
-> 
-> How is that any different to the many other SoCs in the kernel?
-
-In fact, it isn't. Please take a look at:
- 
-arch/arm/boot/dts/st/stm32mp15xx-dhcom-som.dtsi
-arch/arm/boot/dts/ti/omap/omap44xx-clocks.dtsi
-arch/arm/boot/dts/ti/omap/dra7xx-clocks.dtsi
-arch/arm/boot/dts/nxp/imx/imx7d-zii-rpu2.dts
-
-and probably many others... they use the same approach, so I assumed it is at
-least reasonable to assign the clock rate this way.
-
-
-Many thanks,
-Andrea
-
-> 
-> > > > +                              <&rp1_clocks RP1_PLL_AUDIO_CORE>,
-> > > > +                              /* RP1_PLL_VIDEO_CORE and dividers are now managed by VEC,DPI drivers */
-> > > 
-> > > Comments like this also do not seem relevant to the binding.
-> > 
-> > Agreed, will drop in the next release.
-> > 
-> > > 
-> > > 
-> > > Cheers,
-> > > Conor.
-> > >
-> > 
-> > Many thanks,
-> > Andrea
-> >  
-> > > 
-> > > > +                              <&rp1_clocks RP1_PLL_SYS>,
-> > > > +                              <&rp1_clocks RP1_PLL_SYS_SEC>,
-> > > > +                              <&rp1_clocks RP1_PLL_AUDIO>,
-> > > > +                              <&rp1_clocks RP1_PLL_AUDIO_SEC>,
-> > > > +                              <&rp1_clocks RP1_CLK_SYS>,
-> > > > +                              <&rp1_clocks RP1_PLL_SYS_PRI_PH>,
-> > > > +                              /* RP1_CLK_SLOW_SYS is used for the frequency counter (FC0) */
-> > > > +                              <&rp1_clocks RP1_CLK_SLOW_SYS>,
-> > > > +                              <&rp1_clocks RP1_CLK_SDIO_TIMER>,
-> > > > +                              <&rp1_clocks RP1_CLK_SDIO_ALT_SRC>,
-> > > > +                              <&rp1_clocks RP1_CLK_ETH_TSU>;
-> > > > +
-> > > > +            assigned-clock-rates = <1000000000>, // RP1_PLL_SYS_CORE
-> > > > +                                   <1536000000>, // RP1_PLL_AUDIO_CORE
-> > > > +                                   <200000000>,  // RP1_PLL_SYS
-> > > > +                                   <125000000>,  // RP1_PLL_SYS_SEC
-> > > > +                                   <61440000>,   // RP1_PLL_AUDIO
-> > > > +                                   <192000000>,  // RP1_PLL_AUDIO_SEC
-> > > > +                                   <200000000>,  // RP1_CLK_SYS
-> > > > +                                   <100000000>,  // RP1_PLL_SYS_PRI_PH
-> > > > +                                   /* Must match the XOSC frequency */
-> > > > +                                   <50000000>, // RP1_CLK_SLOW_SYS
-> > > > +                                   <1000000>, // RP1_CLK_SDIO_TIMER
-> > > > +                                   <200000000>, // RP1_CLK_SDIO_ALT_SRC
-> > > > +                                   <50000000>; // RP1_CLK_ETH_TSU
-> > > > +        };
-> > > > +    };
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 42decde38320..6e7db9bce278 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -19116,6 +19116,12 @@ F:	Documentation/devicetree/bindings/media/raspberrypi,pispbe.yaml
-> > > >  F:	drivers/media/platform/raspberrypi/pisp_be/
-> > > >  F:	include/uapi/linux/media/raspberrypi/
-> > > >  
-> > > > +RASPBERRY PI RP1 PCI DRIVER
-> > > > +M:	Andrea della Porta <andrea.porta@suse.com>
-> > > > +S:	Maintained
-> > > > +F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > > > +F:	include/dt-bindings/clock/rp1.h
-> > > > +
-> > > >  RC-CORE / LIRC FRAMEWORK
-> > > >  M:	Sean Young <sean@mess.org>
-> > > >  L:	linux-media@vger.kernel.org
-> > > > diff --git a/include/dt-bindings/clock/rp1.h b/include/dt-bindings/clock/rp1.h
-> > > > new file mode 100644
-> > > > index 000000000000..1ed67b8a5229
-> > > > --- /dev/null
-> > > > +++ b/include/dt-bindings/clock/rp1.h
-> > > > @@ -0,0 +1,56 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> > > > +/*
-> > > > + * Copyright (C) 2021 Raspberry Pi Ltd.
-> > > > + */
-> > > > +
-> > > > +#define RP1_PLL_SYS_CORE		0
-> > > > +#define RP1_PLL_AUDIO_CORE		1
-> > > > +#define RP1_PLL_VIDEO_CORE		2
-> > > > +
-> > > > +#define RP1_PLL_SYS			3
-> > > > +#define RP1_PLL_AUDIO			4
-> > > > +#define RP1_PLL_VIDEO			5
-> > > > +
-> > > > +#define RP1_PLL_SYS_PRI_PH		6
-> > > > +#define RP1_PLL_SYS_SEC_PH		7
-> > > > +#define RP1_PLL_AUDIO_PRI_PH		8
-> > > > +
-> > > > +#define RP1_PLL_SYS_SEC			9
-> > > > +#define RP1_PLL_AUDIO_SEC		10
-> > > > +#define RP1_PLL_VIDEO_SEC		11
-> > > > +
-> > > > +#define RP1_CLK_SYS			12
-> > > > +#define RP1_CLK_SLOW_SYS		13
-> > > > +#define RP1_CLK_DMA			14
-> > > > +#define RP1_CLK_UART			15
-> > > > +#define RP1_CLK_ETH			16
-> > > > +#define RP1_CLK_PWM0			17
-> > > > +#define RP1_CLK_PWM1			18
-> > > > +#define RP1_CLK_AUDIO_IN		19
-> > > > +#define RP1_CLK_AUDIO_OUT		20
-> > > > +#define RP1_CLK_I2S			21
-> > > > +#define RP1_CLK_MIPI0_CFG		22
-> > > > +#define RP1_CLK_MIPI1_CFG		23
-> > > > +#define RP1_CLK_PCIE_AUX		24
-> > > > +#define RP1_CLK_USBH0_MICROFRAME	25
-> > > > +#define RP1_CLK_USBH1_MICROFRAME	26
-> > > > +#define RP1_CLK_USBH0_SUSPEND		27
-> > > > +#define RP1_CLK_USBH1_SUSPEND		28
-> > > > +#define RP1_CLK_ETH_TSU			29
-> > > > +#define RP1_CLK_ADC			30
-> > > > +#define RP1_CLK_SDIO_TIMER		31
-> > > > +#define RP1_CLK_SDIO_ALT_SRC		32
-> > > > +#define RP1_CLK_GP0			33
-> > > > +#define RP1_CLK_GP1			34
-> > > > +#define RP1_CLK_GP2			35
-> > > > +#define RP1_CLK_GP3			36
-> > > > +#define RP1_CLK_GP4			37
-> > > > +#define RP1_CLK_GP5			38
-> > > > +#define RP1_CLK_VEC			39
-> > > > +#define RP1_CLK_DPI			40
-> > > > +#define RP1_CLK_MIPI0_DPI		41
-> > > > +#define RP1_CLK_MIPI1_DPI		42
-> > > > +
-> > > > +/* Extra PLL output channels - RP1B0 only */
-> > > > +#define RP1_PLL_VIDEO_PRI_PH		43
-> > > > +#define RP1_PLL_AUDIO_TERN		44
-> > > > -- 
-> > > > 2.35.3
-> > > > 
-> > 
-> > 
-
-
+PiBGcm9tOiBTYXNjaGEgSGF1ZXIgPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+DQo+IFNlbnQ6IFR1
+ZXNkYXksIEF1Z3VzdCAyMCwgMjAyNCA3OjU2IFBNDQo+IFRvOiBCcmlhbiBOb3JyaXMgPGJyaWFu
+bm9ycmlzQGNocm9taXVtLm9yZz47IEZyYW5jZXNjbyBEb2xjaW5pDQo+IDxmcmFuY2VzY29AZG9s
+Y2luaS5pdD47IEthbGxlIFZhbG8gPGt2YWxvQGtlcm5lbC5vcmc+DQo+IENjOiBsaW51eC13aXJl
+bGVzc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGtl
+cm5lbEBwZW5ndXRyb25peC5kZTsgU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRl
+Pg0KPiBTdWJqZWN0OiBbRVhUXSBbUEFUQ0ggMTAvMzFdIHdpZmk6IG13aWZpZXg6IGZpeCBpbmRl
+bnRpb24gDQo+IA0KPiBBbGlnbiBtdWx0aWxpbmUgaWYoKSB1bmRlciB0aGUgb3BlbmluZyBicmFj
+ZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFNhc2NoYSBIYXVlciA8cy5oYXVlckBwZW5ndXRyb25p
+eC5kZT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9tYXJ2ZWxsL213aWZpZXgvd21t
+LmMgfCAxMiArKysrKystLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyks
+IDYgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3Mv
+bWFydmVsbC9td2lmaWV4L3dtbS5jDQo+IGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvbWFydmVsbC9t
+d2lmaWV4L3dtbS5jDQo+IGluZGV4IGJjYjYxZGFiN2RjODYuLjFiMTIyMmM3MzcyOGYgMTAwNjQ0
+DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL21hcnZlbGwvbXdpZmlleC93bW0uYw0KPiAr
+KysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9tYXJ2ZWxsL213aWZpZXgvd21tLmMNCj4gQEAgLTE0
+MjgsMTMgKzE0MjgsMTMgQEAgbXdpZmlleF9kZXF1ZXVlX3R4X3BhY2tldChzdHJ1Y3QNCj4gbXdp
+ZmlleF9hZGFwdGVyICphZGFwdGVyKQ0KPiAgICAgICAgIH0NCj4gDQo+ICAgICAgICAgaWYgKCFw
+dHItPmlzXzExbl9lbmFibGVkIHx8DQo+IC0gICAgICAgICAgICAgICBwdHItPmJhX3N0YXR1cyB8
+fA0KPiAtICAgICAgICAgICAgICAgcHJpdi0+d3BzLnNlc3Npb25fZW5hYmxlKSB7DQo+ICsgICAg
+ICAgICAgIHB0ci0+YmFfc3RhdHVzIHx8DQo+ICsgICAgICAgICAgIHByaXYtPndwcy5zZXNzaW9u
+X2VuYWJsZSkgew0KPiAgICAgICAgICAgICAgICAgaWYgKHB0ci0+aXNfMTFuX2VuYWJsZWQgJiYN
+Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgcHRyLT5iYV9zdGF0dXMgJiYNCj4gLSAgICAgICAg
+ICAgICAgICAgICAgICAgcHRyLT5hbXNkdV9pbl9hbXBkdSAmJg0KPiAtICAgICAgICAgICAgICAg
+ICAgICAgICBtd2lmaWV4X2lzX2Ftc2R1X2FsbG93ZWQocHJpdiwgdGlkKSAmJg0KPiAtICAgICAg
+ICAgICAgICAgICAgICAgICBtd2lmaWV4X2lzXzExbl9hZ2dyYWdhdGlvbl9wb3NzaWJsZShwcml2
+LCBwdHIsDQo+ICsgICAgICAgICAgICAgICAgICAgcHRyLT5iYV9zdGF0dXMgJiYNCj4gKyAgICAg
+ICAgICAgICAgICAgICBwdHItPmFtc2R1X2luX2FtcGR1ICYmDQo+ICsgICAgICAgICAgICAgICAg
+ICAgbXdpZmlleF9pc19hbXNkdV9hbGxvd2VkKHByaXYsIHRpZCkgJiYNCj4gKyAgICAgICAgICAg
+ICAgICAgICBtd2lmaWV4X2lzXzExbl9hZ2dyYWdhdGlvbl9wb3NzaWJsZShwcml2LCBwdHIsDQo+
+IA0KPiBhZGFwdGVyLT50eF9idWZfc2l6ZSkpDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIG13
+aWZpZXhfMTFuX2FnZ3JlZ2F0ZV9wa3QocHJpdiwgcHRyLCBwdHJfaW5kZXgpOw0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAvKiByYV9saXN0X3NwaW5sb2NrIGhhcyBiZWVuIGZyZWVkIGluDQo+
+IA0KPiAtLQ0KPiAyLjM5LjINCj4gDQoNCkkgd29uZGVyIHdlIHN0aWxsIG5lZWQgcGF0Y2ggZm9y
+IGluZGVudCBpc3N1ZSBoZXJlPyBJZiBzbyBJIGFtIHN1cmUgd2Ugd2lsbCBuZWVkIGEgYnVuY2gg
+b2Ygc2ltaWxhciBwYXRjaGVzIHdoaWNoIEkgZG9uJ3QgdGhpbmsgcmVhbGx5IGhlbHAgaW1wcm92
+ZSBtd2lmaWV4IHF1YWxpdHkNCg0KQWN0dWFsbHkgaW4gaXRzIHN1Y2Nlc3NvciBOeHB3aWZpIChj
+dXJyZW50bHkgdW5kZXIgcmV2aWV3KSwgd2UgaGF2ZSBjbGVhbmVkIHVwIGFsbCBpbmRlbnQsIGFu
+ZCBjaGVja3BhdGNoIGVycm9ycy93YXJuaW5ncy9jaGVja3MuDQoNCkkgd291bGQgc3VnZ2VzdCBm
+b3IgTXdpZmlleCB3ZSBvbmx5IHRha2UgcmVhbCBidWcgZml4ZXMgKE9kZCBmaXhlcykuDQoNCuKA
+oldBUk5JTkc6IEl0J3MgZ2VuZXJhbGx5IG5vdCB1c2VmdWwgdG8gaGF2ZSB0aGUgZmlsZW5hbWUg
+aW4gdGhlIGZpbGUNCuKAoldBUk5JTkc6IFBvc3NpYmxlIHVubmVjZXNzYXJ5ICdvdXQgb2YgbWVt
+b3J5JyBtZXNzYWdlDQrigKJXQVJOSU5HOiBzcGFjZSBwcm9oaWJpdGVkIGJldHdlZW4gZnVuY3Rp
+b24gbmFtZSBhbmQgb3BlbiBwYXJlbnRoZXNpcyAnKOKAmA0K4oCiV0FSTklORzogQ29uc2VjdXRp
+dmUgc3RyaW5ncyBhcmUgZ2VuZXJhbGx5IGJldHRlciBhcyBhIHNpbmdsZSBzdHJpbmcNCuKAoldB
+Uk5JTkc6IHVuY2hlY2tlZCBzc2NhbmZyZXR1cm4gdmFsdWUNCuKAoldBUk5JTkc6IFNpbmdsZSBz
+dGF0ZW1lbnQgbWFjcm9zIHNob3VsZCBub3QgdXNlIGEgZG8ge30gd2hpbGUgKDApIGxvb3ANCuKA
+oldBUk5JTkc6IGRvIHt9IHdoaWxlICgwKSBtYWNyb3Mgc2hvdWxkIG5vdCBiZSBzZW1pY29sb24g
+dGVybWluYXRlZA0K4oCiV0FSTklORzogbWFjcm9zIHNob3VsZCBub3QgdXNlIGEgdHJhaWxpbmcg
+c2VtaWNvbG9uDQrigKJFUlJPUjogVXNlIEM5OSBmbGV4aWJsZSBhcnJheXMgLSBzZWUgaHR0cHM6
+Ly9kb2NzLmtlcm5lbC5vcmcvcHJvY2Vzcy9kZXByZWNhdGVkLmh0bWwjemVyby1sZW5ndGgtYW5k
+LW9uZS1lbGVtZW50LWFycmF5cw0K4oCiV0FSTklORzogQmxvY2sgY29tbWVudHMgdXNlICogb24g
+c3Vic2VxdWVudCBsaW5lcw0K4oCiV0FSTklORzogY29uc3QgYXJyYXkgc2hvdWxkIHByb2JhYmx5
+IGJlIHN0YXRpYyBjb25zdA0K4oCiV0FSTklORzogUHJlZmVyIHVzaW5nICciJXMuLi4iLCBfX2Z1
+bmNfXycgdG8gdXNpbmcgJ213aWZpZXhfcmVnaXN0ZXInLCB0aGlzIGZ1bmN0aW9uJ3MgbmFtZSwg
+aW4gYSBzdHJpbmcNCuKAoldBUk5JTkc6IGJyYWNlcyB7fSBhcmUgbm90IG5lY2Vzc2FyeSBmb3Ig
+YW55IGFybSBvZiB0aGlzIHN0YXRlbWVudA0K4oCiV0FSTklORzogUHJlZmVyIHN0cnNjcHlvdmVy
+IHN0cmxjcHktIHNlZTogaHR0cHM6Ly9naXRodWIuY29tL0tTUFAvbGludXgvaXNzdWVzLzg5DQri
+gKJXQVJOSU5HOiBTdGF0ZW1lbnRzIHNob3VsZCBzdGFydCBvbiBhIHRhYnN0b3ANCuKAoldBUk5J
+Tkc6IFByZWZlciBzdHJzY3B5b3ZlciBzdHJjcHktIHNlZTogaHR0cHM6Ly9naXRodWIuY29tL0tT
+UFAvbGludXgvaXNzdWVzLzg4DQrigKJXQVJOSU5HOiBVbm5lY2Vzc2FyeSBzcGFjZSBiZWZvcmUg
+ZnVuY3Rpb24gcG9pbnRlciBhcmd1bWVudHMNCuKAoldBUk5JTkc6IFBvc3NpYmxlIHJlcGVhdGVk
+IHdvcmQ6ICdzZW5k4oCZDQrigKJXQVJOSU5HOiBQb3NzaWJsZSByZXBlYXRlZCB3b3JkOiAnZW5h
+YmxlZOKAmQ0K4oCiV0FSTklORzogcXVvdGVkIHN0cmluZyBzcGxpdCBhY3Jvc3MgbGluZXMNCuKA
+oldBUk5JTkc6IEVOT1NZUyBtZWFucyAnaW52YWxpZCBzeXNjYWxsbnInIGFuZCBub3RoaW5nIGVs
+c2UNCuKAoldBUk5JTkc6c2ltcGxlX3N0cnRvbGlzIG9ic29sZXRlLCB1c2Uga3N0cnRvbGluc3Rl
+YWQNCuKAokVSUk9SOiBjb2RlIGluZGVudCBzaG91bGQgdXNlIHRhYnMgd2hlcmUgcG9zc2libGUN
+CuKAoldBUk5JTkc6IE1pc3Npbmcgb3IgbWFsZm9ybWVkIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
+IHRhZyBpbiBsaW5lIDENCuKAokNIRUNLOiBBdm9pZCBDYW1lbENhc2U6IDxIb3N0Q21kX0NNRF9B
+RERfTkVXX1NUQVRJT04+DQrigKJXQVJOSU5HOiB2b2lkIGZ1bmN0aW9uIHJldHVybiBzdGF0ZW1l
+bnRzIGFyZSBub3QgZ2VuZXJhbGx5IHVzZWZ1bA0K4oCiV0FSTklORzogc3VzcGVjdCBjb2RlIGlu
+ZGVudCBmb3IgY29uZGl0aW9uYWwgc3RhdGVtZW50cw0K4oCiV0FSTklORzogYnJhY2VzIHt9IGFy
+ZSBub3QgbmVjZXNzYXJ5IGZvciBzaW5nbGUgc3RhdGVtZW50IGJsb2Nrcw0K4oCiV0FSTklORzog
+QXZvaWQgbXVsdGlwbGUgbGluZSBkZXJlZmVyZW5jZQ0K4oCiV0FSTklORzogZnVuY3Rpb24gZGVm
+aW5pdGlvbiBhcmd1bWVudCDigJh4eHgnIHNob3VsZCBhbHNvIGhhdmUgYW4gaWRlbnRpZmllciBu
+YW1lDQrigKJXQVJOSU5HOiBlbHNlIGlzIG5vdCBnZW5lcmFsbHkgdXNlZnVsIGFmdGVyIGEgYnJl
+YWsgb3IgcmV0dXJuDQrigKJXQVJOSU5HOiBNaXNzaW5nIGEgYmxhbmsgbGluZSBhZnRlciBkZWNs
+YXJhdGlvbnMNCuKAoldBUk5JTkc6IEJsb2NrIGNvbW1lbnRzIHVzZSBhIHRyYWlsaW5nICovIG9u
+IGEgc2VwYXJhdGUgbGluZQ0K4oCiRVJST1I6IG5lZWQgY29uc2lzdGVudCBzcGFjaW5nIGFyb3Vu
+ZCAnK+KAmQ0K4oCiRVJST1I6IG9wZW4gYnJhY2UgJ3snIGZvbGxvd2luZyBmdW5jdGlvbiBkZWZp
+bml0aW9ucyBnbyBvbiB0aGUgbmV4dCBsaW5lDQrigKJXQVJOSU5HOiBDb21wYXJpc29ucyBzaG91
+bGQgcGxhY2UgdGhlIGNvbnN0YW50IG9uIHRoZSByaWdodCBzaWRlIG9mIHRoZSB0ZXN0DQoNClRo
+YW5rcywNCkRhdmlkDQo=
 
