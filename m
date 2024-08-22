@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-298003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB5095C044
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A86895C047
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1878CB223FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAA11C2341A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5EB1D174F;
-	Thu, 22 Aug 2024 21:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijfZ53FY"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC511D1751;
+	Thu, 22 Aug 2024 21:35:46 +0000 (UTC)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFA013B5A1;
-	Thu, 22 Aug 2024 21:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F14CA933;
+	Thu, 22 Aug 2024 21:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724362456; cv=none; b=KZeVhlTNyeKr47quF83UBj2iUFRshj0O6IQi+XvP5aOQ4DnM2Eej17wG7QL7HJjHCimNnJxvQ6Wjgc46mHonDVWtWjALNwi8Ugz7MnrGbcUw6lyCvM7imztlBBPjrR8JpO4i8b+lqcfO5Z+qfQnc6WeQ/Csw2524hv/P3p6lheY=
+	t=1724362545; cv=none; b=MCLfBfwdCL4thZyFdnoGf8hEe52ixO5ZuO/nWc2co20JQvZYqKRxK1v3UiRLeygPSDolEVQOVAmQOg2DoCcUvgxT+DxydbDvruHdaVmJjTP+m3yrrsttzclDx5bEEZ1DqNvLsh5+hVoQMakkkiLnX/x4aKoHFQdRMrWsqn6lL4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724362456; c=relaxed/simple;
-	bh=WKpVnR6wmTzdQewLRNVlooHH9/7lyDdUabbFg8nWtpo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=alOWu1BMpRl7ZHlZ76XwarQMYWJdjNxp6m8hCbFJ9pjChp5ekxJIOlFm0jW2XipqPFuwpGLUM5Nmd+GAoJLWuwjlqwXc5vuRf2/O/D6HnJZ0NqEDEXqpqejd+7pirFJT1t1FO4Bmat5kVdf11r0pcVeXsfC1RnIPjHxpJQ6lHMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijfZ53FY; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1724362545; c=relaxed/simple;
+	bh=A6Ig3DIj20iSmms1/sNE5z9cyEcEk2xGv4yIfHNffXc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mYUy6/QSZy5pDE2FoEaXkVaF/8Hgs+ahU62s6kBBojSD9vwOScW0xCbfw+0NnkoNTHfyHVJHoiO9jRcRsvS6vvw/6i5SUWehzr4HEY4ZJoGK7cnApkU6G5fjz6cZvcyaQABtflkpGogSrgw+NoNSNRXH/W/YT5Db7/tP0zwXSfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bede548f7cso1822160a12.2;
-        Thu, 22 Aug 2024 14:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724362453; x=1724967253; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RFWX2cinBIO6xOaffSSaIYHyRanL2VaLxGkBzU8S0ko=;
-        b=ijfZ53FYTID82o9SkW2fTAomweT49zqTfvUSkzuf+75WOdWUJH/u8EimBjQjUYphTJ
-         lZFbZQXh71bsOXDbjZ6wjr8jtUdmvg/O4IjVwYDvTFSyIf/Q1yEX+CnpP4J+nAYZokAg
-         RpUq6X7W3osWA3P/ux21xESrSLkgXbptalIPlgIyDD95/UBuN48QnGh0u6qYvN3niUHj
-         vbBVpwugzrUHHb6d3srr+kVMsEHyGy9Kt9Svy6q50wcr2VbRnnUhnDU1sC/YWuezsXVl
-         8D28c5iXhRElnlJKxN0g107wrUF00paA4b+5jczPO5tZAdtk6Ywdv/dlQceoDaShb9Tz
-         Onwg==
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d41b082ab8so968877a91.3;
+        Thu, 22 Aug 2024 14:35:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724362453; x=1724967253;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RFWX2cinBIO6xOaffSSaIYHyRanL2VaLxGkBzU8S0ko=;
-        b=O7ch9Bt+kJIv9Tud3qdqiweCs9ZEmB/vpSa20gqOQy2tBNavHanIE5NioVQ01wW5+B
-         GGfYNtvsEDrfrR/ZSQDIon2S+OM/eqyV3L5Si6U6rCFPb7RWRmmpqOpiVgkufiFKxete
-         DMJ1Uet474em5WlCMr+DTlCQKtqXoyjWou4cdVB/8nh9IVk0wViA2tBs1PwoVROyJQWC
-         pvsEaCryihy2S4F1zULglryHlSSyZuXEOzjpwEvDoNXJPidQ2iDoDBkdFrhRwHN2PiRo
-         T+uihRUGA3Dcv4raSC5rSgL6+vz71BB7lilEyfK2WCi/6Hj7SFlERilHI4q0CSncLJG3
-         EOuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfzL9gzxsuaXD35dUQ65l2YRuuBanRvVBHryOHEZ0M2HaoOldejti1us+TKlhLjKdv/i46rDiq@vger.kernel.org, AJvYcCVMkK+3PiK0hJA0EWJXw43JyhSuHzr71bMerclwaVZASJWBzGEy3GjLdAQAXFLvAK2Bx9EYkiikdHZtabg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHgBxjvRybWsWdsuGqq+BBbC+3qBZC/9bdcYbLuukcD/LCaxRq
-	MqF3sDMEZNDJUxlLGi7t+Nur/2nUkgPK6SLej1LiJTogwElmHjFF
-X-Google-Smtp-Source: AGHT+IEVB3TMuJPdwSDpRWpHTVyOYscabrPsA9ZAKrw6yJXPdtiCdNU4xwQLMzzGWoF1fR2IMqAp1A==
-X-Received: by 2002:a17:907:1c27:b0:a86:7ba9:b061 with SMTP id a640c23a62f3a-a86a54d1230mr1371766b.64.1724362452654;
-        Thu, 22 Aug 2024 14:34:12 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f43795asm167582366b.98.2024.08.22.14.34.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 14:34:11 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] idpf: make read-only arrays tx_itr and rx_itr static const
-Date: Thu, 22 Aug 2024 22:34:10 +0100
-Message-Id: <20240822213410.644665-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1724362544; x=1724967344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4p9wr4Okb0X4f99n+dpYBp3cuqpqdb5cSoZFZz5Yzys=;
+        b=Tg41TJhNg/7ApMJ28InkQKFpmpcKf1gS3FmPWmQMWlgpv4yozfBM2ngHEakJ3tCuKl
+         Ly3KOOAj+aF51/V69OGogqQUtqGySQbpnf35NSIL6D6vew68GcoPnFOZLvvltQ46tls8
+         9OFfiZvivZ9gbur7/ofrYDK50xvix9q57Jc2LYfoWGvpEDO2PAARdB9Kordg8fXKrHev
+         OdI0fx2gvTGKFVc4ieSUxAg+hku74psFeVRlAbXb6ZQo0r3h0o0cXxTP28PDpjUARW1y
+         l0rzDHmLjuJeFQ6nyYrpAf0AVK086rLcCqMJ+xVAP3gtuLb20z7vvgEU7g7R6LCIazGb
+         hojg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyprQTyjjDvonXwLrW0w5aFAUHPhNpB+t1FBdCN8BUEt7GkM8+FxnY5xkHo/kbAS8oW+Pnh6JMIRj7Q/zt2PIHfg==@vger.kernel.org, AJvYcCVNkrKdDa9qRiUawjm2TzUcYwSSKSNCW4sPdsJlo2AeXrkqyMwe+MrTULwoN9EeUv6PUW1nGSn1bcoFXcOy@vger.kernel.org, AJvYcCXKy8qSjlHLXzGGiiDwm7ak6OwNN7iAAq8kM0Ki38tp9/wtLXtOxZzot8zgc68/Cwhgzng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxudbqnWPRNqyqX99kz8K1NRunxIz9fEimerurlJ2+8DnPSVC3Q
+	hTy4XCnrQQ2Pjto08ujCgueKae5oOPh6AaqFRKpAFOmNTmJkrJk+nfjS0YAupkQzCpBJnuDHUgQ
+	ia5CMYZUywWQGKf5SVXTBxWzBaV0=
+X-Google-Smtp-Source: AGHT+IEJKbmFokzgoavY7n974YSn4Suu2Erwxe3CdPc+gdQf0oBf7ZMv3X7CHg926U7CDuKfJ64EHOiOOU+C3mWYPNE=
+X-Received: by 2002:a17:90b:3ecd:b0:2c4:e333:35e5 with SMTP id
+ 98e67ed59e1d1-2d646d6db7dmr6211a91.36.1724362543468; Thu, 22 Aug 2024
+ 14:35:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240820154504.128923-1-namhyung@kernel.org> <20240820154504.128923-2-namhyung@kernel.org>
+ <ZsUB57VlFtdY0O0M@x1> <CAM9d7chUfoHgZ=uyVEua8XCi4HigzT6p0i7rsL6rZLU2N9r_ZA@mail.gmail.com>
+In-Reply-To: <CAM9d7chUfoHgZ=uyVEua8XCi4HigzT6p0i7rsL6rZLU2N9r_ZA@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 22 Aug 2024 14:35:32 -0700
+Message-ID: <CAM9d7chPsZUMAraWzyf5z7OjCxWUxMz-ufntr1x34c=wRVt3XQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] perf tools: Print lost samples due to BPF filter
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	KP Singh <kpsingh@kernel.org>, Song Liu <song@kernel.org>, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Don't populate the read-only arrays tx_itr and rx_itr on the stack at
-run time, instead make them static const.
+On Tue, Aug 20, 2024 at 3:50=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Tue, Aug 20, 2024 at 1:51=E2=80=AFPM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Tue, Aug 20, 2024 at 08:45:03AM -0700, Namhyung Kim wrote:
+> > > +++ b/tools/perf/builtin-report.c
+> > > @@ -795,8 +795,13 @@ static int count_lost_samples_event(const struct=
+ perf_tool *tool,
+> > >
+> > >       evsel =3D evlist__id2evsel(rep->session->evlist, sample->id);
+> > >       if (evsel) {
+> > > -             hists__inc_nr_lost_samples(evsel__hists(evsel),
+> > > -                                        event->lost_samples.lost);
+> > > +             struct hists *hists =3D evsel__hists(evsel);
+> > > +             u32 count =3D event->lost_samples.lost;
+> > > +
+> > > +             if (event->header.misc & PERF_RECORD_MISC_LOST_SAMPLES_=
+BPF)
+> > > +                     hists__inc_nr_dropped_samples(hists, count);
+> >
+> > So this is inconsistent, we call it sometimes "lost", sometines
+> > "dropped", I think we should make it consistent and call it "dropped",
+> > because its not like it was "lost" because we didn't have the required
+> > resources, memory, ring buffer being full, etc, i.e. the semantic
+> > associated with PERF_RECORD_LOST.
+> >
+> > I.e. LOST is non intentional, not expected, DROPPED is the result of th=
+e
+> > user _asking_ for something to be trown away, to be filtered, its
+> > expected behaviour, there is value in differentiating one from the
+> > other.
+>
+> Yep, that's because it's piggybacking on PERF_RECORD_LOST_SAMPLES.
+> Do you want me to add a new (user) record format for dropped samples?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Ok, I have a related issue with AMD IBS.  I'll start a new discussion
+in a different thread.  I think you can take patch 1 and 3 in this series
+as they are not controversial, right?
 
-diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-index 70986e12da28..d50e5cab05fc 100644
---- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-+++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-@@ -3149,8 +3149,8 @@ void idpf_vport_init(struct idpf_vport *vport, struct idpf_vport_max_q *max_q)
- 	struct idpf_adapter *adapter = vport->adapter;
- 	struct virtchnl2_create_vport *vport_msg;
- 	struct idpf_vport_config *vport_config;
--	u16 tx_itr[] = {2, 8, 64, 128, 256};
--	u16 rx_itr[] = {2, 8, 32, 96, 128};
-+	static const u16 tx_itr[] = {2, 8, 64, 128, 256};
-+	static const u16 rx_itr[] = {2, 8, 32, 96, 128};
- 	struct idpf_rss_data *rss_data;
- 	u16 idx = vport->idx;
- 
--- 
-2.39.2
-
+Thanks,
+Namhyung
 
