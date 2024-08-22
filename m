@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-296977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032E995B16C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:22:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CD595B173
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80AA31F23E73
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:22:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 199C6B2234F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B766F183CC8;
-	Thu, 22 Aug 2024 09:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98949184545;
+	Thu, 22 Aug 2024 09:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D3bNgzNz"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BEIB5HSP"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D66F183CAA
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A269183CCB
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724318434; cv=none; b=nGhI5q+gnINHpiiAaDJ5BIcZbXAOeWOQPVKU7/bFHjbW5ZkWdxSf/7htwANsqxV7emxiSEGFbaPlQj51MfD8hYsXNxtctST9NiJtTNQQVs7GXD1wPh729h+EZzHchlN4ZfQuclEZlZA50bYCwcPaHiHeK42vYALSzzfGZg4CkIA=
+	t=1724318437; cv=none; b=Fr/yLYvaHwiLyokzY0AmSxb0IOywy/555tiUVNRbMGvd9SX2r73WfX6seumBisIgD36sDExP20ToYKNMr6xVPQFj/bk0MzFLrRPt+10NX9C/9cPbjhn7S00gKRx2/hAEwhfJDeb7pKRg+jlMqmtrW5umOISCgxJvF2tEKlwh2fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724318434; c=relaxed/simple;
-	bh=F4P2nmGS6A9jyMX3gZMS4FBUKJs6ahBUb0pWZbTHLOA=;
+	s=arc-20240116; t=1724318437; c=relaxed/simple;
+	bh=eqNJQZhyT5lQYyjR+1n24rDLOldGDkXVEUqXxRauVRY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dqyT6hAf7dUDfIIhcdKPz5DGcRc5BPC1bXE8S/u13OYqtsTP+b2yJajQqZrSAamZkiPH7QdUSjUnRVtOxKH7yMSDENe03de+OXJGO+BUtuqLfzt0l2Mmy5hn7G2h5x6Z4K3GputGlkXGwXtw6rtG+exppwhqMkd4JkKWZMHKA/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=D3bNgzNz; arc=none smtp.client-ip=209.85.210.180
+	 MIME-Version; b=LMP/I0MWhrZ0QX92ckY3xuC2xu0nnVh6gu/uVDLH5z2ITnRNENWrlOXxr9sNgJ+TeUB8TUUYJUTibafI8Fn2Ytsv8h+z/fQxYxPs/PY1byWEGcOEHFMG/FPj3Wj1oVCzTzHOI6pvrl5rHqjKN2CLOYL7Cs6KjbWaLsUKxCLMlow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BEIB5HSP; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-712603f7ba5so516424b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:20:32 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-714261089c1so400985b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724318432; x=1724923232; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1724318435; x=1724923235; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dQ/ais/DnW2DhkO42fRSNxxKCNt0O583PTfpQXJv2Js=;
-        b=D3bNgzNzAG+WeGXfqA9KQXemJQsFfydskP0dW0Xzx2f+K+b3fSXM3u/dphwUnivZsf
-         MogL86NL5kXlIyWcZyE2PoNbj8cFAmRrRH6XgTmTbdEVKfoyPfjMcZT6sSkyCMrxVj7P
-         kTIhEK/DkD3becfGZEdV8QbVCoaE3vr0Oa/yc=
+        bh=BDc0gYFzE7XGjhJ2AhN6DupFbhnHtplhsjKD3gx9Rh0=;
+        b=BEIB5HSPmetmvorlFZgKmd3yxuKIXQrMgl67vCLj1lVAe/3KC+kP9Ncthxht0YqAua
+         XG5AAtlFha0K/ehaFocDHM2egv6pE89Kk4Fhfs1AjDcNfaTP4yBziH1JP6RqbYep9N8i
+         fWD15TRdtQQpe21BiWPCv74O3+8ZCf2h9xQCY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724318432; x=1724923232;
+        d=1e100.net; s=20230601; t=1724318435; x=1724923235;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dQ/ais/DnW2DhkO42fRSNxxKCNt0O583PTfpQXJv2Js=;
-        b=Zbg5ll7M0YEtK3bubK4SKR/rYWjLF6KDuJo0pf+PcsiCjHELD7VlNiLnJD3k1TDRf/
-         J42lA8jQ7UaFWOwDMADNBRqECTIbxaWtAZzUmFnxWwVE4Xk2a+6vnPrKXQbknpRFBJpH
-         ZRq8e8FqqMlrg4BJOyiiHG3eXGH/LqSkwfkgXoxSpKFjB2V3+NNsxtVxfxBn5sITR8Sx
-         yczAaCgdEGIz0xtltDye2EcGM+hYHcZFqdLoBg03POjjUY+CdaWDcbQt/9tzPA6mdSWk
-         2cTcCFXYTzjgJGOas3mCjfYWM+KPtVLwQPl3Eftxue1Y+P9E/cQnE5ZgnLlijoLfmoUp
-         Ir9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWxQ7yINPD39AH+qHtqc2wMOt3R/DbQYYtSXvVrqcrKXrZSzOVvBloFLR9VTP97LXe5ayxC13ud38+fC6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn55fhg2f3gHUDq8OFf7R8Rx/UTRiMx6viG36duH2qObphFoTR
-	WGcqpJEU+B+gjMS7JI8BOtCLRljcT/yLC/6BPlf9x6rqOPfZsTjV+PMsVUOoxw==
-X-Google-Smtp-Source: AGHT+IHNX1mTbdGkDuNm269HAAWFLZMuunhBrLdO555YXJUIWEo+jUShOHk7j43VZg4OPf7/Roe+/g==
-X-Received: by 2002:a05:6a21:398c:b0:1c6:f9ea:f2df with SMTP id adf61e73a8af0-1cad7f89598mr5999512637.12.1724318431795;
-        Thu, 22 Aug 2024 02:20:31 -0700 (PDT)
+        bh=BDc0gYFzE7XGjhJ2AhN6DupFbhnHtplhsjKD3gx9Rh0=;
+        b=Cxi9iNFNt13JLpIIYC9ISfwLcWqZeZnQWvmiTOCMvjdexDjUBvNunBnzrV8mc5uDkW
+         oqizsCaWz2+Qlw+2/HYybFJC65oIN0IaREJWbEN/QGn55a9DrhNNnWr4PLbE2nCGq7cr
+         NM/Qp8Yaa2qLXubkdCXIlUccGvQiuTjnl7skLfCPW8yLl/Orw556EtA8it+3185Dmdzf
+         9FoeOqK7M6mEN157Ywq8uhL8gPAc/9MbgCWNlDLGFaNwHAS1ammDnQNUHp6Z5F/+PitG
+         ZMUXLK4rKIsKnou8tNQ6GoQMg/5kXjChocWuFI5OyDpJucqch5nZ35J7C3G+Tc4vfMW/
+         hI9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBslzJL+yVe0Glo2nwNayQU7hpqZrWrdlD9VkUAQX1tQ0FuPtbP2rdFQ/vXf7DtiO4unmhcEv+mJh3ZYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRYWkZdlKO+q76ypLPKQVEC7zvHKWz4U+T5znLc/M9bwJmJsU7
+	C1Bfryd2im1EPC4rvSHXDcJlG2VSIYqQ28ZCQCZi/Xy9Tis8iWwtq0Ri8Cm+iQ==
+X-Google-Smtp-Source: AGHT+IGFjvk3XcfXwOVUDAxxMj2xSqe1AU1grF2L8qM1UCDTpX9001BmMqg32GNyYPTfbXCI1q3+QQ==
+X-Received: by 2002:a05:6a21:8804:b0:1c0:ef24:4124 with SMTP id adf61e73a8af0-1cae51ad139mr3146210637.6.1724318435415;
+        Thu, 22 Aug 2024 02:20:35 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:8470:6a67:8877:ce2c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434335e69sm951398b3a.194.2024.08.22.02.20.28
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434335e69sm951398b3a.194.2024.08.22.02.20.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 02:20:31 -0700 (PDT)
+        Thu, 22 Aug 2024 02:20:35 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>,
@@ -84,9 +84,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	Jiri Kosina <jikos@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-i2c@vger.kernel.org
-Subject: [PATCH v5 03/10] regulator: Split up _regulator_get()
-Date: Thu, 22 Aug 2024 17:19:56 +0800
-Message-ID: <20240822092006.3134096-4-wenst@chromium.org>
+Subject: [PATCH v5 04/10] regulator: Do pure DT regulator lookup in of_regulator_bulk_get_all()
+Date: Thu, 22 Aug 2024 17:19:57 +0800
+Message-ID: <20240822092006.3134096-5-wenst@chromium.org>
 X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 In-Reply-To: <20240822092006.3134096-1-wenst@chromium.org>
 References: <20240822092006.3134096-1-wenst@chromium.org>
@@ -98,119 +98,188 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-_regulator_get() contains a lot of common code doing checks prior to the
-regulator lookup and housekeeping work after the lookup. Almost all the
-code could be shared with a OF-specific variant of _regulator_get().
+The to-be-introduced I2C component prober needs to enable regulator
+supplies (and toggle GPIO pins) for the various components it intends
+to probe. To support this, a new "pure DT lookup" method for getting
+regulator supplies is needed, since the device normally requesting
+the supply won't get created until after the component is probed to
+be available.
 
-Split out the common parts so that they can be reused. The OF-specific
-version of _regulator_get() will be added in a subsequent patch.
-No functional changes were made.
+Convert the existing of_regulator_bulk_get_all() for this purpose.
+This function has no in-tree users, as the original patch [1] that
+used it was never landed. This patch changes the function ABI, but
+it is straightforward to convert users.
+
+The underlying code that supports the existing regulator_get*()
+functions has been reworked in previous patches to support this
+specific case. An internal OF-specific version of regulator_get(),
+of_regulator_get_optional(), is added for this.
+
+[1] https://lore.kernel.org/all/20231220203537.83479-2-jernej.skrabec@gmail.com/
 
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
 Changes since v4:
+- Was "regulator: Add regulator_of_get_optional() for pure DT" in v4
+- Restore platform-agnostic regulator consumer code to original state
+- Move OF-specific regulator code to of_regulator.c (separate patch)
+- Split _regulator_get() into three parts for reuse (separate patch)
+- Add OF-specific _of_regulator_get() function
+- Rename regulator_of_get_optional() to of_regulator_get_optional() for
+  consistency
+- Make of_regulator_get_optional() static, as it is only used internally
+- Convert of_regulator_bulk_get_all()
+Changes since v3:
 - New patch
 ---
- drivers/regulator/core.c     | 54 ++++++++++++++++++++++++++++--------
- drivers/regulator/internal.h |  4 +++
- 2 files changed, 47 insertions(+), 11 deletions(-)
+ drivers/regulator/core.c         |  2 +-
+ drivers/regulator/internal.h     |  2 ++
+ drivers/regulator/of_regulator.c | 54 +++++++++++++++++++++++++++-----
+ 3 files changed, 49 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 361309fcae57..4d1c640cc030 100644
+index 4d1c640cc030..d70302e30731 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -2093,26 +2093,43 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 	return ret;
- }
+@@ -1950,7 +1950,7 @@ static struct regulator_dev *regulator_dev_lookup(struct device *dev,
  
--/* Internal regulator request function */
--struct regulator *_regulator_get(struct device *dev, const char *id,
--				 enum regulator_get_type get_type)
-+/* common pre-checks for regulator requests */
-+int _regulator_get_common_check(struct device *dev, const char *id,
-+				enum regulator_get_type get_type)
+ 	/* first do a dt based lookup */
+ 	if (dev && dev->of_node) {
+-		r = of_regulator_dev_lookup(dev, supply);
++		r = of_regulator_dev_lookup(dev, dev->of_node, supply);
+ 		if (!IS_ERR(r))
+ 			return r;
+ 		if (PTR_ERR(r) == -EPROBE_DEFER)
+diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
+index 3718459fb0c5..44680ce3587b 100644
+--- a/drivers/regulator/internal.h
++++ b/drivers/regulator/internal.h
+@@ -67,6 +67,7 @@ static inline struct regulator_dev *dev_to_rdev(struct device *dev)
+ 
+ #ifdef CONFIG_OF
+ struct regulator_dev *of_regulator_dev_lookup(struct device *dev,
++					      struct device_node *np,
+ 					      const char *supply);
+ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 			         const struct regulator_desc *desc,
+@@ -82,6 +83,7 @@ bool of_check_coupling_data(struct regulator_dev *rdev);
+ 
+ #else
+ static inline struct regulator_dev *of_regulator_dev_lookup(struct device *dev,
++							    struct device_node *np,
+ 							    const char *supply)
  {
--	struct regulator_dev *rdev;
--	struct regulator *regulator;
--	struct device_link *link;
--	int ret;
--
- 	if (get_type >= MAX_GET_TYPE) {
- 		dev_err(dev, "invalid type %d in %s\n", get_type, __func__);
--		return ERR_PTR(-EINVAL);
-+		return -EINVAL;
- 	}
+ 	return -ENODEV;
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index d924f5c1de59..67a5882a917e 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -587,22 +587,24 @@ static struct device_node *of_get_child_regulator(struct device_node *parent,
  
- 	if (id == NULL) {
- 		dev_err(dev, "regulator request with no identifier\n");
--		return ERR_PTR(-EINVAL);
-+		return -EINVAL;
- 	}
+ /**
+  * of_get_regulator - get a regulator device node based on supply name
+- * @dev: Device pointer for the consumer (of regulator) device
++ * @dev: Device pointer for dev_printk messages
++ * @node: Device node pointer for supply property lookup
+  * @supply: regulator supply name
+  *
+  * Extract the regulator device node corresponding to the supply name.
+  * returns the device node corresponding to the regulator if found, else
+  * returns NULL.
+  */
+-static struct device_node *of_get_regulator(struct device *dev, const char *supply)
++static struct device_node *of_get_regulator(struct device *dev, struct device_node *node,
++					    const char *supply)
+ {
+ 	struct device_node *regnode = NULL;
+ 	char prop_name[64]; /* 64 is max size of property name */
  
--	rdev = regulator_dev_lookup(dev, id);
-+	return 0;
-+}
-+
-+/**
-+ * _regulator_get_common - Common code for regulator requests
-+ * @rdev: regulator device pointer as returned by *regulator_dev_lookup()
-+ *       Its reference count is expected to have been incremented.
-+ * @dev: device used for dev_printk messages
-+ * @id: Supply name or regulator ID
-+ * @get_type: enum regulator_get_type value corresponding to type of request
-+ *
-+ * Returns a struct regulator corresponding to @rdev,
-+ * or IS_ERR() condition containing errno.
-+ *
-+ * This function should be chained with *regulator_dev_lookup() functions.
-+ */
-+struct regulator *_regulator_get_common(struct regulator_dev *rdev, struct device *dev,
-+					const char *id, enum regulator_get_type get_type)
-+{
-+	struct regulator *regulator;
-+	struct device_link *link;
-+	int ret;
-+
- 	if (IS_ERR(rdev)) {
- 		ret = PTR_ERR(rdev);
+-	dev_dbg(dev, "Looking up %s-supply from device tree\n", supply);
++	dev_dbg(dev, "Looking up %s-supply from device node %pOF\n", supply, node);
  
-@@ -2228,6 +2245,21 @@ struct regulator *_regulator_get(struct device *dev, const char *id,
- 	return regulator;
+ 	snprintf(prop_name, 64, "%s-supply", supply);
+-	regnode = of_parse_phandle(dev->of_node, prop_name, 0);
++	regnode = of_parse_phandle(node, prop_name, 0);
+ 
+ 	if (!regnode) {
+ 		regnode = of_get_child_regulator(dev->of_node, prop_name);
+@@ -626,7 +628,8 @@ static struct regulator_dev *of_find_regulator_by_node(struct device_node *np)
  }
  
-+/* Internal regulator request function */
-+struct regulator *_regulator_get(struct device *dev, const char *id,
-+				 enum regulator_get_type get_type)
+ /** of_regulator_dev_lookup - lookup a regulator device with device tree only
+- * @dev: Device pointer for regulator supply lookup.
++ * @dev: Device pointer for dev_printk messages.
++ * @node: Device node pointer for regulator supply lookup.
+  * @supply: Supply name or regulator ID.
+  *
+  * If successful, returns a struct regulator_dev that corresponds to the name
+@@ -636,13 +639,13 @@ static struct regulator_dev *of_find_regulator_by_node(struct device_node *np)
+  * -ENODEV if lookup fails permanently, -EPROBE_DEFER if lookup could succeed
+  * in the future.
+  */
+-struct regulator_dev *of_regulator_dev_lookup(struct device *dev,
++struct regulator_dev *of_regulator_dev_lookup(struct device *dev, struct device_node *np,
+ 					      const char *supply)
+ {
+ 	struct regulator_dev *r;
+ 	struct device_node *node;
+ 
+-	node = of_get_regulator(dev, supply);
++	node = of_get_regulator(dev, np, supply);
+ 	if (node) {
+ 		r = of_find_regulator_by_node(node);
+ 		of_node_put(node);
+@@ -659,6 +662,41 @@ struct regulator_dev *of_regulator_dev_lookup(struct device *dev,
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++static struct regulator *_of_regulator_get(struct device *dev, struct device_node *node,
++					   const char *id, enum regulator_get_type get_type)
 +{
-+	struct regulator_dev *rdev;
++	struct regulator_dev *r;
 +	int ret;
 +
 +	ret = _regulator_get_common_check(dev, id, get_type);
 +	if (ret)
 +		return ERR_PTR(ret);
 +
-+	rdev = regulator_dev_lookup(dev, id);
-+	return _regulator_get_common(rdev, dev, id, get_type);
++	r = of_regulator_dev_lookup(dev, node, id);
++	return _regulator_get_common(r, dev, id, get_type);
 +}
 +
- /**
-  * regulator_get - lookup and obtain a reference to a regulator.
-  * @dev: device for regulator "consumer"
-diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
-index ffeaef22169e..3718459fb0c5 100644
---- a/drivers/regulator/internal.h
-+++ b/drivers/regulator/internal.h
-@@ -121,6 +121,10 @@ enum regulator_get_type {
- 	MAX_GET_TYPE
- };
- 
-+int _regulator_get_common_check(struct device *dev, const char *id,
-+				enum regulator_get_type get_type);
-+struct regulator *_regulator_get_common(struct regulator_dev *rdev, struct device *dev,
-+					const char *id, enum regulator_get_type get_type);
- struct regulator *_regulator_get(struct device *dev, const char *id,
- 				 enum regulator_get_type get_type);
- int _regulator_bulk_get(struct device *dev, int num_consumers,
++/**
++ * of_regulator_get_optional - get optional regulator via device tree lookup
++ * @dev: device used for dev_printk messages
++ * @node: device node for regulator "consumer"
++ * @id: Supply name
++ *
++ * Returns a struct regulator corresponding to the regulator producer,
++ * or IS_ERR() condition containing errno.
++ *
++ * This is intended for use by consumers that want to get a regulator
++ * supply directly from a device node, and can and want to deal with
++ * absence of such supplies. This will _not_ consider supply aliases.
++ * See regulator_dev_lookup().
++ */
++static struct regulator *of_regulator_get_optional(struct device *dev,
++						   struct device_node *node,
++						   const char *id)
++{
++	return _of_regulator_get(NULL, node, id, OPTIONAL_GET);
++}
++
+ /*
+  * Returns number of regulators coupled with rdev.
+  */
+@@ -875,7 +913,7 @@ int of_regulator_bulk_get_all(struct device *dev, struct device_node *np,
+ 		} else {
+ 			memcpy(name, prop->name, i);
+ 			name[i] = '\0';
+-			tmp = regulator_get(dev, name);
++			tmp = of_regulator_get_optional(dev, np, name);
+ 			if (IS_ERR(tmp)) {
+ 				ret = PTR_ERR(tmp);
+ 				goto error;
 -- 
 2.46.0.184.g6999bdac58-goog
 
