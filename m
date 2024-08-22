@@ -1,224 +1,195 @@
-Return-Path: <linux-kernel+bounces-296744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CDAE95AE72
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:11:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055BA95AE7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B9F1F2256C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:11:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69170B222D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A63D13C812;
-	Thu, 22 Aug 2024 07:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="e1AwMQMr"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010047.outbound.protection.outlook.com [52.101.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CDD14D42C;
+	Thu, 22 Aug 2024 07:13:34 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9E84963A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310674; cv=fail; b=E6ZI9S8JXFRnxOukuy69wJgCYzKEcQzKd3AuEQ60CuLiWqryWcRYpTQhMXAHJuU9ttMwmz83z3Gl1g/j9uu/BOIjAr8Ta24mVChtplXiDZ1KnJcjyosaOAdwxd7mvXJohSswq3DJGHLKvxeAILte3zATcxTnoAlN1MWQishRy8A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310674; c=relaxed/simple;
-	bh=4sLkYz3kotVFgqYkPuDWL6KEdKzx9YHMrUw50uh1Kz0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CsD8y17RaFjH3l4Cqz8ITUWnBwKsVAhdKPj46sFMYCHuI+EYFZEaVsjUW0gojPu8Uk+Bn3VtUXB0nmeEi4FzTpsKusfpMkC8eJFgVDikOfr1YO+H3la/5neDH9J5qUGNgTVx5KKdXpABGPrS1CePXHupi9D9K0i9zuGVVkTcm7I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=e1AwMQMr; arc=fail smtp.client-ip=52.101.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wTZz8ZAIZlVnGysvXXKVIDdvtpNoQYEZbMpbSDFnRc0zzIUPSREdP23tuZHtUk0LEVmAyddwCR6gw3eUe+MqH7QLH3G6lhr7d5gfgyIiYRMVRPJIF5oYGJA9IaWc8ePQPX/73Sqou4Dr+Q+ctrRr9qiu1ZzwglCSs45PU/PAVMpbAa8Yj+o26raQLVYJJRQ/VOeAaLyomKjIIq9GDQL6AA1L38E3saMQfJqszOWUPtnRP/vUVA12dHVSJdQBoRolY7lq4njeWMqNjfhJCQhAc6aQ3Jo335K56XTthqxjdAXichd/eINz+xnX01dgyk+oEdbsO+pCnp6/bbDSE+5sNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d3i9MlsMghJyLZQjdNWYFTuWDk8mbnH5lmqE/00Vz0M=;
- b=Zhabvnas9A7PhP+f0QNPTY/KRTKgeiaY0Dmt9rMVtqyupzIrK2UYAyFZRVi+YYQT4Pe3fggD0EK+T8zFeheJDinF6RDK1L/C3z8qx/J3OYKXM6x8KMo7WYGEtGhP8IWDHqWfGoe0hrRFlsOHhIMHiQsukbEpLTYiVIND0mwFsTfomVd1uAs9dnXrS2X4/T6Lnw8UI8qWNUJLJi2Y4nu+Ir7iVwkXPLvVw3eKuJYKWh30Lu5dwuzMSqrGys5JoGS8jllYrYytjB3Ndg00F90rzWYLlZKt3GIB30rNMRc2Fc6xiJkZICsjsHnqNfmP9Npb2aioCf3shiFvRr7UHFXBpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d3i9MlsMghJyLZQjdNWYFTuWDk8mbnH5lmqE/00Vz0M=;
- b=e1AwMQMrELxU1KxZH5DcpP7IBk1fGqCxe7DkBcOoTnMaULeZKwbF0MuJi0IxQDwi7G6oYzBJCSvKxSN3iIWi2z8uAnZ8qQxQNOH9llTWoPtHbAaoC8RnzgvtdUz4GuQiqimB3ohOQAbOpvOG2KWwlxeBm9Ex+KYQmPgAqHanwaUXzu0Uth/cx55spfS+3T9gWhRwFVWYwo3cHG3FToxeo5aR9n8l7ZjPW4qmDHqUuZ32jnyvwyZ7l7jyhdYc5oToiGoSzFgok5Ylx9ai9Q7O05J2N1r8jBUIci/f9qU2g5L/CDkxJrcMaIHL59YL/FyiEWMaexwHurcmlhB4j0oEyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by TYSPR06MB7257.apcprd06.prod.outlook.com (2603:1096:405:81::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
- 2024 07:11:08 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 07:11:08 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: Kenneth Feng <kenneth.feng@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Yang Ruibin <11162571@vivo.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1] drivers:smumgr:Variable names should be consistent with other modules
-Date: Thu, 22 Aug 2024 15:10:55 +0800
-Message-Id: <20240822071056.1342551-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0135.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::15) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB7313A3FD;
+	Thu, 22 Aug 2024 07:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724310813; cv=none; b=EydwLLp1N0L1u874Kwyfn6vK2dKpPvHJSnj9UA+J5ayjIUEY5hyQt4N0XBn0EiDgPucWdJNLUcMGzBbGlPyu6f3GZ44a0zJWzae+nQ5DVVMwPTqgAl0Nvcbsk8Z+cR/nG2D+Wz5pdb7jXLR6THxsZN0eT6x5+PHjWKWEKG/c5NA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724310813; c=relaxed/simple;
+	bh=LDTg0Yi2fhuFH1uAWm1BFhSE+R7SP2TBN1LukDLSwAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=npX4RPNDjb1ZABPNc1+T0M5RFCR0cz7jMtEBZ0CmeSLMzppp2F5HweE52bcU20PBVZp+6Km5x0v3yVq0bUkS3BhupJo+zPsGAlVhfg3Ust85IrQVrSOA6YB1D5ff0DqrSb0VJNzjpd6OMLcvKxqALjKefkwy4mduX0WHdCQjjYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqDv65R16z9sSK;
+	Thu, 22 Aug 2024 09:13:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 0-VRwaKzoNbn; Thu, 22 Aug 2024 09:13:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDv64Pbrz9sSH;
+	Thu, 22 Aug 2024 09:13:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 84A608B77E;
+	Thu, 22 Aug 2024 09:13:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 27TFRoaI4C9O; Thu, 22 Aug 2024 09:13:22 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6C3F08B763;
+	Thu, 22 Aug 2024 09:13:21 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 00/17] Wire up getrandom() vDSO implementation on powerpc
+Date: Thu, 22 Aug 2024 09:13:08 +0200
+Message-ID: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TYSPR06MB7257:EE_
-X-MS-Office365-Filtering-Correlation-Id: da174f75-fff9-4499-b06b-08dcc279984a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|921020|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GoVa1i9oIdKAxHBpMjvQJCfOuPblprbyHTFsgG0bSaNsDmIsB+jDcg9mGt6f?=
- =?us-ascii?Q?L8X3Q/pVEuYPJARyu04A4zgwkkTR3q7cYLKeE5J5xM9yWjRM9z/Ls2HIJIRb?=
- =?us-ascii?Q?NWuWnruzd8SX2vhm5LhH7Zhc7BckWHgkQZ1jNWPjKrDQshq/lk4ju+1VwuHt?=
- =?us-ascii?Q?MtgRH657Ch9YuEhCRhCDrDfJkcU6+y7d2gwD4H3putSNXoqGiry+v+8606qc?=
- =?us-ascii?Q?wGS922g6RN5qvmHs7erqYy6azNe0GHCS7c0S/BVBkSzVi83171FHr4j1uMO7?=
- =?us-ascii?Q?w7/hjVZLLWWU2Rne7BphiBdIihADKxAgTugOT+tXs4zrLIDnjeUIR8+w0HhY?=
- =?us-ascii?Q?OHT06PICTb4Ds1K8sYbQdqyzcMTSl1XSabQS5GVFIpjGYrrpeUAh8WTSFScV?=
- =?us-ascii?Q?NGB8CHnY03N+mlMpIB7/1LDw+QCO4muQFB0hM/JJYOGTg3XlZCBa4O/899is?=
- =?us-ascii?Q?HpcjEKxQ/7MGmgUPkjTtrpWFfHvOrB/hzxAXRf2kxkvnzp3xwZaeP/cEoUyv?=
- =?us-ascii?Q?NvMLIBgOT2WFtj657AVz5vT7cbte4T7A9pQ0/DtfOaFAK7+J2NL4Ab/KWvK6?=
- =?us-ascii?Q?s8TZ02Vm4Be+L1CFR4F7/NbbfHLQXxccl5BPUxSmRVQdOVS0LcnhMCJxZdSo?=
- =?us-ascii?Q?QKFY6XEyqEsMKh4bTFnphuFzICJtbtzzB5TtdfcydxBdhtHuYd6uozOuuKDU?=
- =?us-ascii?Q?x7Sab0AEOthJ8jvETKyt8xHIizTL4ZVVBUBhMkLPb6cGI/tMg3nJjADZpG5n?=
- =?us-ascii?Q?1Ih2syg7Y+5QWhcBsx3WkOjcG0jU/9H//By18hxRxIaxpQ9dKxSfbbTAyeDd?=
- =?us-ascii?Q?Ze4a3fKuHiyAs69MIlg27IFUCsL6p9B5F80pUTTsDbZnNkHBlTAb7SX4TdIi?=
- =?us-ascii?Q?KPVO55sXPY3qJx8L4MI+hXn0nS5BcH5jTIR3tMwqpgePFV9A55jJlwLTT39W?=
- =?us-ascii?Q?eHrT/r+Q0OLa1QvRCeziti27jwycsKu0z35GgyYHGb1cMwCx/nPI13eb/b+2?=
- =?us-ascii?Q?hMoQMC1tClUwwuIWlCO+bq1Au5Av2cfqcvVJ0g+IQDiDqMyb4YYNKGPXh5nc?=
- =?us-ascii?Q?tHoY3QVEpymWcDC7v7k1NJ7IkxKk3Ko+IFUf938ecAOT2Xl3HIfco2634wGN?=
- =?us-ascii?Q?bFBpFQtiBYpVlv/HCiLInzI65JT4CBCWf2NUrbPoV0f4CTfHynYf+NzA7Ri4?=
- =?us-ascii?Q?Mwe7bs/Vk0uOU5flu8Ui15QIdvtzUbbwqPamuhxVjC74Hyi5q70hexxhfK7B?=
- =?us-ascii?Q?mGdWJ+0vzT+PUi5EkztSRVQVd/dJRWvAF10btcLGmz5Xc9G/wXBr+Anwm/vR?=
- =?us-ascii?Q?XEAKtde8Ht62fslThnNUr0vDgtIpSk2L/pCPHUKxUipaemA1Ctukwobz4sgo?=
- =?us-ascii?Q?ON0IOEna/Ktp3UtpsZqX+xZnbMKezlVIO2WncJcXWr1wVfcuFHSrDAKj70Wc?=
- =?us-ascii?Q?jxa3tlJ/OfHlQr4aIoyqYfGE+3PND+Xk?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(921020)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8GH/TN0wVl9G0pqmz7hG799MZ7nXkSVRumQfQITJSzKTI9RwV32lNrAKD2HI?=
- =?us-ascii?Q?VxAGiyTFwd4+bWSAMR22bhftSw21k3DuC1PIJ5vUuWvd6xE90OPjGrH1Mx93?=
- =?us-ascii?Q?xA8+WAFV4eh7fN+QwzL7+MgliPHcWQVUZXMHTqEcapJkHfd9Li4YpZ8NRvft?=
- =?us-ascii?Q?+QOrN/ESoQW5Ul/bBIAkpALfdZh5BIPKRMD7U8WaUOOTle5YgUDMM4mov758?=
- =?us-ascii?Q?h5QyOfoZhIJEIqGr50+toF20vXS0G83oAStwMqlljV0HjCyXTW8xAI6ec5yi?=
- =?us-ascii?Q?LXMKaQDNqu37s/IdsbATdm9ny9Tonz1rF284bcli8YW3UHK3hbkGejTOkxGm?=
- =?us-ascii?Q?26W+8Ju88VmMlZQ1OYkfVdn8QS+GKHGmj0KUOkHMPu/yhAgHn1wQg/YDe6cI?=
- =?us-ascii?Q?Y2UNsyUbAVc1z6WaVs3njIYDXS+ii3NMPIUUO855dfpkPxj7G9F1m88QmYEM?=
- =?us-ascii?Q?TdWhJ6bC9Klkwsp0nRM2eibtq8a0yBMLZtps3DpWhakQjmbegsU52+43+KCi?=
- =?us-ascii?Q?IGGEgqrkLGdpOWgCnVwsfFurODcTjRyOBRZ3pDD4zvknN58IWeczM8JQmou2?=
- =?us-ascii?Q?b4GbBCPDQihsJzTgA5bGWpy8yzbMaroeer8l5SqO5u49NCP6wju9CZueqK9J?=
- =?us-ascii?Q?SCbh+he3vRq0EP8XwIkFt8xZikKDkbUki9UmhmoWveVn2ojf9dMQHR+VSiGN?=
- =?us-ascii?Q?kSZ4W1kQZHEm5403ckdlotY0HzbXNPGvKaiv77iJX5PON9l216M7ltwJT1xt?=
- =?us-ascii?Q?BH/hitrD8E9IT2TPQ1m+1DIE5m6bMF5qCwF4RQq5G2DnRj6oeOsVYsEoBeuv?=
- =?us-ascii?Q?kz7vASz8RkJi0JKwY9Wa1dDRigcoyqw36Tkozk4sGKVbkaouN0J/FCGzNI/V?=
- =?us-ascii?Q?ukoWlsi/5pytBBf0Eo7m4kOjdYe/79UpXaPJuQPm8EynTAjRsWoMVpzEm7ic?=
- =?us-ascii?Q?udrF4ZABQZMNGZIJ29KsJ436vmeWqJ1UeeRpSeJetn0Qn0m15+c78OqhurPt?=
- =?us-ascii?Q?PQgA3i7E/4DoAedJWOHgIIqN3ONQbKlk1m/Jr8KtTNyBuHkr9MPorjRc3zoH?=
- =?us-ascii?Q?ClNf4g86zVST4epicp49cRQ9+6LeKBLidJ5MzkWtYiP6GbbjBnf6Ee5DMG8P?=
- =?us-ascii?Q?+LYUiXs9BX6XXxPrGXjeWtaHFbFJRvE3HofU29RhflfQNb2kDilMLOHIKAGb?=
- =?us-ascii?Q?ZoZgyzqE9Ow8TLeE2xSXRvxuJAErXBVvUSNthr403JVC23zgd9jUndIcRSbo?=
- =?us-ascii?Q?2wJt+9fKUx5vNbgAObqHMOPA9cr84EvVZtvsUuo+yZuo4CCYW69IpFr3JD9v?=
- =?us-ascii?Q?L8V3DnsxToim3xArWtAYgBLdRQ/iOA4pt3T+DusF1Y3VYsL73rFIKPEmgWUL?=
- =?us-ascii?Q?8HtGewhqQhGBWH8zdlj7HXXtM/mRtq2YuVDzQNxTXVnVISYxUJoiyDb7mQFl?=
- =?us-ascii?Q?W2q+Dz0jQRg1eUP7w/UpbFguPDHspeK002Ys7I6zlMD89LxdTi0KNZwOuQlP?=
- =?us-ascii?Q?TrrIEhWb3rVwjvqHEFN+UOuce+O++iAG/9inhT6txR5d8dFP5PkDvW0xZ8Bl?=
- =?us-ascii?Q?UkBbY8lDAOQfkaBXHy/xIeV5O/A/ZeOH5qw8FlUc?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da174f75-fff9-4499-b06b-08dcc279984a
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 07:11:08.7251
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hkhsozhsO6gX0Hx/k+DeCgjYqAUiegM0bMs5YZyrwTbCIu8HeJ3Ws8FCQX73MsBrZCMWLgt5MqVvT+5AeDNSOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7257
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310793; l=4901; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=LDTg0Yi2fhuFH1uAWm1BFhSE+R7SP2TBN1LukDLSwAc=; b=dv3IJ6HgpSk062fA80pC3beOaGyDkub2uRhJOU7nq6upvK1O1zJTzR6G/vOqsb7Bf92j66uNp R/+usMEBgmRBPUzWE5rLVkIDoO79FdFlAYqzoQmRCjL2crIMNd9IRbK
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-The variable highest_pcie_level_enabled is named 
-hightest_pcie_level_enabled in other modules. 
-Please ensure the consistency of variable naming
-and use min macros instead of the triadic operator.
+This series wires up getrandom() vDSO implementation on powerpc.
 
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
----
- .../amd/pm/powerplay/smumgr/iceland_smumgr.c    | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+Tested on PPC32.
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c
-index 17d2f5bff..165fbfa2e 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c
-@@ -970,7 +970,7 @@ static int iceland_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 	SMU71_Discrete_GraphicsLevel *levels = smu_data->smc_state_table.GraphicsLevel;
- 
- 	uint32_t i;
--	uint8_t highest_pcie_level_enabled = 0;
-+	uint8_t hightest_pcie_level_enabled = 0;
- 	uint8_t lowest_pcie_level_enabled = 0, mid_pcie_level_enabled = 0;
- 	uint8_t count = 0;
- 	int result = 0;
-@@ -1003,8 +1003,8 @@ static int iceland_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 		phm_get_dpm_level_enable_mask_value(&dpm_table->sclk_table);
- 
- 	while ((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
--				(1 << (highest_pcie_level_enabled + 1))) != 0) {
--		highest_pcie_level_enabled++;
-+				(1 << (hightest_pcie_level_enabled + 1))) != 0) {
-+		hightest_pcie_level_enabled++;
- 	}
- 
- 	while ((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
-@@ -1012,19 +1012,18 @@ static int iceland_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 		lowest_pcie_level_enabled++;
- 	}
- 
--	while ((count < highest_pcie_level_enabled) &&
-+	while ((count < hightest_pcie_level_enabled) &&
- 			((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
- 				(1 << (lowest_pcie_level_enabled + 1 + count))) == 0)) {
- 		count++;
- 	}
- 
--	mid_pcie_level_enabled = (lowest_pcie_level_enabled+1+count) < highest_pcie_level_enabled ?
--		(lowest_pcie_level_enabled+1+count) : highest_pcie_level_enabled;
-+	mid_pcie_level_enabled = min(lowest_pcie_level_enabled + 1 + count,
-+					hightest_pcie_level_enabled);
- 
--
--	/* set pcieDpmLevel to highest_pcie_level_enabled*/
-+	/* set pcieDpmLevel to hightest_pcie_level_enabled*/
- 	for (i = 2; i < dpm_table->sclk_table.count; i++) {
--		smu_data->smc_state_table.GraphicsLevel[i].pcieDpmLevel = highest_pcie_level_enabled;
-+		smu_data->smc_state_table.GraphicsLevel[i].pcieDpmLevel =
-+					hightest_pcie_level_enabled;
- 	}
- 
- 	/* set pcieDpmLevel to lowest_pcie_level_enabled*/
+Performance on powerpc 885 (using kernel selftest):
+	~# ./vdso_test_getrandom bench-single
+	   vdso: 2500000 times in 7.897495392 seconds
+	   libc: 2500000 times in 56.091632232 seconds
+	syscall: 2500000 times in 55.704851989 seconds
+
+Performance on powerpc 8321 (using kernel selftest):
+	~# ./vdso_test_getrandom bench-single
+	   vdso: 2500000 times in 2.017183250 seconds
+	   libc: 2500000 times in 13.088533630 seconds
+	syscall: 2500000 times in 12.952458068 seconds
+
+Only build tested on PPC64. There is a problem with vdso_test_getrandom
+selftest, it doesn't find vDSO symbol __kernel_getrandom. There is the
+same problem with vdso_test_gettimeofday so it is not related to
+getrandom.
+
+On strange things to be clarified, there is the format of the key passed
+to __arch_chacha20_blocks_nostack(). In struct vgetrandom_state it is
+declared as a table of u32, but in reality it seems it is a flat storage
+that needs to be loaded in reversed byte order, so it should either be
+defined as a table of bytes, or as a table of __le32 but not a table of
+u32. But this has no impact and can be clarified later and fixed in a
+follow-up patch.
+
+Changes in v2:
+- Define VM_DROPPABLE for powerpc/32
+- Fixes generic vDSO getrandom headers to enable CONFIG_COMPAT build.
+- Fixed size of generation counter
+- Fixed selftests to work on non x86 architectures
+
+Christophe Leroy (17):
+  asm-generic/unaligned.h: Extract common header for vDSO
+  vdso: Clean header inclusion in getrandom
+  vdso: Add __arch_get_k_vdso_rng_data()
+  vdso: Add missing c-getrandom-y in Makefile
+  vdso: Avoid call to memset() by getrandom
+  vdso: Change getrandom's generation to unsigned long
+  mm: Define VM_DROPPABLE for powerpc/32
+  powerpc: Add little endian variants of LWZX_BE and STWX_BE
+  powerpc/vdso32: Add crtsavres
+  powerpc/vdso: Refactor CFLAGS for CVDSO build
+  powerpc/vdso: Wire up getrandom() vDSO implementation
+  selftests: vdso: Fix powerpc64 vdso_config
+  selftests: vdso: Don't hard-code location of vDSO sources
+  selftests: vdso: Make test_vdso_getrandom look for the right vDSO
+    function
+  selftests: vdso: Fix build of test_vdso_chacha
+  selftests: vdso: Make VDSO function call more generic
+  selftests: vdso: Add support for vdso_test_random for powerpc
+
+ arch/powerpc/Kconfig                          |   1 +
+ arch/powerpc/include/asm/asm-compat.h         |   8 +
+ arch/powerpc/include/asm/mman.h               |   2 +-
+ arch/powerpc/include/asm/vdso/getrandom.h     |  67 ++++
+ arch/powerpc/include/asm/vdso/vsyscall.h      |   6 +
+ arch/powerpc/include/asm/vdso_datapage.h      |   2 +
+ arch/powerpc/kernel/asm-offsets.c             |   1 +
+ arch/powerpc/kernel/vdso/Makefile             |  45 ++-
+ arch/powerpc/kernel/vdso/getrandom.S          |  58 ++++
+ arch/powerpc/kernel/vdso/gettimeofday.S       |  13 -
+ arch/powerpc/kernel/vdso/vdso32.lds.S         |   1 +
+ arch/powerpc/kernel/vdso/vdso64.lds.S         |   1 +
+ arch/powerpc/kernel/vdso/vgetrandom-chacha.S  | 297 ++++++++++++++++++
+ arch/powerpc/kernel/vdso/vgetrandom.c         |  14 +
+ arch/x86/entry/vdso/vma.c                     |   3 +
+ arch/x86/include/asm/pvclock.h                |   1 +
+ arch/x86/include/asm/vdso/vsyscall.h          |  10 +-
+ drivers/char/random.c                         |   5 +-
+ fs/proc/task_mmu.c                            |   4 +-
+ include/asm-generic/unaligned.h               |  11 +-
+ include/linux/mm.h                            |   4 +-
+ include/trace/events/mmflags.h                |   4 +-
+ include/vdso/datapage.h                       |   2 +-
+ include/vdso/getrandom.h                      |   2 +-
+ include/vdso/helpers.h                        |   1 +
+ include/vdso/unaligned.h                      |  15 +
+ lib/vdso/Makefile                             |   1 +
+ lib/vdso/getrandom.c                          |  30 +-
+ tools/arch/powerpc/vdso                       |   1 +
+ tools/arch/x86/vdso                           |   1 +
+ tools/include/linux/linkage.h                 |   4 +
+ tools/testing/selftests/vDSO/Makefile         |  12 +-
+ tools/testing/selftests/vDSO/vdso_call.h      |  52 +++
+ tools/testing/selftests/vDSO/vdso_config.h    |  14 +-
+ .../selftests/vDSO/vdso_test_getrandom.c      |  11 +-
+ 35 files changed, 628 insertions(+), 76 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/vdso/getrandom.h
+ create mode 100644 arch/powerpc/kernel/vdso/getrandom.S
+ create mode 100644 arch/powerpc/kernel/vdso/vgetrandom-chacha.S
+ create mode 100644 arch/powerpc/kernel/vdso/vgetrandom.c
+ create mode 100644 include/vdso/unaligned.h
+ create mode 120000 tools/arch/powerpc/vdso
+ create mode 120000 tools/arch/x86/vdso
+ create mode 100644 tools/testing/selftests/vDSO/vdso_call.h
+
 -- 
-2.34.1
+2.44.0
 
 
