@@ -1,96 +1,161 @@
-Return-Path: <linux-kernel+bounces-297127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC3195B381
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A60095B384
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21279B2171D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0694EB218A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C91F183CAB;
-	Thu, 22 Aug 2024 11:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/bqPNuE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935A817B505;
-	Thu, 22 Aug 2024 11:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE951183CC2;
+	Thu, 22 Aug 2024 11:10:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AF61802AB;
+	Thu, 22 Aug 2024 11:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724325026; cv=none; b=XPMzqx/DhTYsoqMs6aMMHJlowAm5PUylGFg2+LIP5X+I0Q4mFjsrCZiKvfyBfBBMZndIgLGY2irx/ZMD0ui2T4OqF0JkNu2n/vMXW1Qbc43jKe0CtDNST5l9GdsKgbDBdYXsf3m3dppTsC5hvE7vwSVazrxTaIQYqgSV/ZLokt4=
+	t=1724325054; cv=none; b=WZKaOVYZ3Ydn08ma+2nRMK37bEpcym7F7KjAEkasnzF9Gkp4BpKodyOYQlOqRb1TcM5JcV7ZCiS/Evb1JH70niisq+s4zpykpeDQygMfd9cSnEZROGOlxmT5p2OQjdAg5VaWLYoAeJvYLvrJuiWpZZBMI5OIaMqPTiFPKNO4Mz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724325026; c=relaxed/simple;
-	bh=JGjCvrzTNpYXYbWrH8AMK6WJfMGBOhy8bGcxvlipAFk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Yn16u7a0/MZvqkdoX/aphsM+9LSGLSuyuYFSyo6snICLdai0YaTphmLOyZq3hyh26RA+NktpLfAC2F1wB6nUBasXap3cPyY1zzgW97TSsCJue2lY0+n/1ORAGxtTjfPonaN9d/QvR2DR9BWYFx/2j7BhPiJGSXvekcOq479tzWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/bqPNuE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16251C32782;
-	Thu, 22 Aug 2024 11:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724325026;
-	bh=JGjCvrzTNpYXYbWrH8AMK6WJfMGBOhy8bGcxvlipAFk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=J/bqPNuE99xWsmVHH9R8sf3CBUxrVMCAiBQDAXvtAHCa/ZJF/pe2Vv8n8k8M6lMH6
-	 zw7ycni10afAWT326gBiOVMZl9RTUx34UF6oBM8grcI02VGFP4DV0ZIJ9zI0TO+ocQ
-	 P2TucD+uUCACeYTFE0KvXDu0m0vbQEMF2OtIGGwJsuIgJfU1i0Zl+0r8Hn/edfdH+q
-	 9Pepdl6ovvondMZEuKjaoK8XE41bAhdN4fS9I1l57zEuEMY5PYvxdweluYKRg5gkSu
-	 fTbdvGdVQf4TsJ9LUjsguMJ+XeTDZNJzVQf5avY1jTs0STa6mgZCnsK8VS6+PdwgVb
-	 qNlsN7H+slUDg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE5A3809A80;
-	Thu, 22 Aug 2024 11:10:26 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724325054; c=relaxed/simple;
+	bh=XWWYSuILmc2KaR1F7fSC/wqsBG/6TN/tnzp4GRVvdqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HXc2WvSBcWzYxVHanyoslJPu1M6ip5gJVW1GhY/qjLPWRm2fU4R1ZmkUHqO+IBJ4YyDbpAgn7qYcykDk1uJdrkrR4Od3LM8Uf+ZlX6S05DE50MMer1T95MVBAUt0nW/OtUwf1hXkDqksYn05tIWpsIEdOHGbJAcruoxzVZmGTnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 689C5DA7;
+	Thu, 22 Aug 2024 04:11:17 -0700 (PDT)
+Received: from [10.163.87.181] (unknown [10.163.87.181])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 44AEF3F58B;
+	Thu, 22 Aug 2024 04:10:45 -0700 (PDT)
+Message-ID: <51617076-3aec-413d-bf42-cf1c359a0c38@arm.com>
+Date: Thu, 22 Aug 2024 16:40:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: phy: realtek: Fix setting of PHY LEDs Mode B bit on
- RTL8211F
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172432502550.2289496.6882132928249081221.git-patchwork-notify@kernel.org>
-Date: Thu, 22 Aug 2024 11:10:25 +0000
-References: <PAWP192MB21287372F30C4E55B6DF6158C38E2@PAWP192MB2128.EURP192.PROD.OUTLOOK.COM>
-In-Reply-To: <PAWP192MB21287372F30C4E55B6DF6158C38E2@PAWP192MB2128.EURP192.PROD.OUTLOOK.COM>
-To: Sava Jakovljev <sjakovljev@outlook.com>
-Cc: savaj@meyersound.com, andrew@lunn.ch, hkallweit1@gmail.com,
- linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, marex@denx.de, netdev@vger.kernel.org,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] selftests: Rename sigaltstack to generic signal
+To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org, oleg@redhat.com
+Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
+ ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
+ Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
+ aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
  linux-kernel@vger.kernel.org
-
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Wed, 21 Aug 2024 04:16:57 +0200 you wrote:
-> From: Sava Jakovljev <savaj@meyersound.com>
-> 
-> The current implementation incorrectly sets the mode bit of the PHY chip.
-> Bit 15 (RTL8211F_LEDCR_MODE) should not be shifted together with the
-> configuration nibble of a LED- it should be set independently of the
-> index of the LED being configured.
-> As a consequence, the RTL8211F LED control is actually operating in Mode A.
-> Fix the error by or-ing final register value to write with a const-value of
-> RTL8211F_LEDCR_MODE, thus setting Mode bit explicitly.
-> 
-> [...]
-
-Here is the summary with links:
-  - net: phy: realtek: Fix setting of PHY LEDs Mode B bit on RTL8211F
-    https://git.kernel.org/netdev/net/c/a2f5c505b437
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+References: <20240821061523.2650568-1-dev.jain@arm.com>
+ <20240821061523.2650568-2-dev.jain@arm.com>
+ <1ac911c2-9d9c-4408-8697-1e90b3ae3e8d@linuxfoundation.org>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <1ac911c2-9d9c-4408-8697-1e90b3ae3e8d@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+On 8/22/24 08:33, Shuah Khan wrote:
+> On 8/21/24 00:15, Dev Jain wrote:
+>> Rename sigaltstack to signal, and rename the existing test to
+>> sigaltstack.c.
+>
+> Can you elaborate on the benefits if renaming the test?
+>
+> Also you have such a good information in the cover-letter for this
+> patch - it would be good to include it in the change log for this
+> one or the new test.
+
+Okay.
+
+
+>
+> The new test itself is good. I don't understand the value of renaming.
+> I can see the problems due to not being able to fix stables if the
+> existing test needs fixing. If there are good reasons for renaming,
+> I am all for it.
+
+After looking into some git history, now I understand that "sas" actually
+has some meaning, although I still can't find its full-form :) I thought 
+that
+sigaltstack would be a better name, but I guess sas is a subset of 
+sigaltstack
+as part of SA_ONSTACK. So, let us drop the renaming of the test.
+
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> Reviewed-by: Mark Brown <broonie@kernel.org>
+>> ---
+>> tools/testing/selftests/Makefile | 2 +-
+>>   tools/testing/selftests/{sigaltstack => signal}/.gitignore      | 2 +-
+>>   tools/testing/selftests/{sigaltstack => signal}/Makefile        | 2 +-
+>>   .../selftests/{sigaltstack => signal}/current_stack_pointer.h   | 0
+>>   .../selftests/{sigaltstack/sas.c => signal/sigaltstack.c}       | 0
+>>   5 files changed, 3 insertions(+), 3 deletions(-)
+>>   rename tools/testing/selftests/{sigaltstack => signal}/.gitignore 
+>> (76%)
+>>   rename tools/testing/selftests/{sigaltstack => signal}/Makefile (72%)
+>>   rename tools/testing/selftests/{sigaltstack => 
+>> signal}/current_stack_pointer.h (100%)
+>>   rename tools/testing/selftests/{sigaltstack/sas.c => 
+>> signal/sigaltstack.c} (100%)
+>>
+>> diff --git a/tools/testing/selftests/Makefile 
+>> b/tools/testing/selftests/Makefile
+>> index bc8fe9e8f7f2..edbe30fb3304 100644
+>> --- a/tools/testing/selftests/Makefile
+>> +++ b/tools/testing/selftests/Makefile
+>> @@ -87,7 +87,7 @@ TARGETS += rtc
+>>   TARGETS += rust
+>>   TARGETS += seccomp
+>>   TARGETS += sgx
+>> -TARGETS += sigaltstack
+>> +TARGETS += signal
+>>   TARGETS += size
+>>   TARGETS += sparc64
+>>   TARGETS += splice
+>> diff --git a/tools/testing/selftests/sigaltstack/.gitignore 
+>> b/tools/testing/selftests/signal/.gitignore
+>> similarity index 76%
+>> rename from tools/testing/selftests/sigaltstack/.gitignore
+>> rename to tools/testing/selftests/signal/.gitignore
+>> index 50a19a8888ce..98a7bbc4f325 100644
+>> --- a/tools/testing/selftests/sigaltstack/.gitignore
+>> +++ b/tools/testing/selftests/signal/.gitignore
+>> @@ -1,2 +1,2 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>> -sas
+>> +sigaltstack
+>> diff --git a/tools/testing/selftests/sigaltstack/Makefile 
+>> b/tools/testing/selftests/signal/Makefile
+>> similarity index 72%
+>> rename from tools/testing/selftests/sigaltstack/Makefile
+>> rename to tools/testing/selftests/signal/Makefile
+>> index 3e96d5d47036..dd6be992fd81 100644
+>> --- a/tools/testing/selftests/sigaltstack/Makefile
+>> +++ b/tools/testing/selftests/signal/Makefile
+>> @@ -1,6 +1,6 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   CFLAGS = -Wall
+>> -TEST_GEN_PROGS = sas
+>> +TEST_GEN_PROGS = sigaltstack
+>>     include ../lib.mk
+>>   diff --git 
+>> a/tools/testing/selftests/sigaltstack/current_stack_pointer.h 
+>> b/tools/testing/selftests/signal/current_stack_pointer.h
+>> similarity index 100%
+>> rename from tools/testing/selftests/sigaltstack/current_stack_pointer.h
+>> rename to tools/testing/selftests/signal/current_stack_pointer.h
+>> diff --git a/tools/testing/selftests/sigaltstack/sas.c 
+>> b/tools/testing/selftests/signal/sigaltstack.c
+>> similarity index 100%
+>> rename from tools/testing/selftests/sigaltstack/sas.c
+>> rename to tools/testing/selftests/signal/sigaltstack.c
+>
+> thanks,
+> -- Shuah
+>
 
