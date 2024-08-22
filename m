@@ -1,271 +1,179 @@
-Return-Path: <linux-kernel+bounces-297294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E3595B5A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:58:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28A295B5CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55581C234DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFD61F2272A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0191C9ECD;
-	Thu, 22 Aug 2024 12:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7E1CBE85;
+	Thu, 22 Aug 2024 12:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pHwUFx33";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J5rMZ3E8";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pHwUFx33";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J5rMZ3E8"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4DD0iR9Q"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938C01CB130;
-	Thu, 22 Aug 2024 12:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C651C9DE7
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724331492; cv=none; b=Div1/1fuQgvHlckPYrVWtWMQ/8NTYT2tSm9U8slR3ozXmR5vRp3LRNz9RecF/tOA+l3Xv2dAkiVqE0i7oMoxw1diLqXFRmi+aKPBUyXMLpK7uLeqxdNIEnVNyLaxc/elagx3L5d5YjAadTLwNXh4mGcEsNSoKtycPKH7EN4egxk=
+	t=1724331522; cv=none; b=E7znk1M3syq5ZrmdEJERNJ5rMbqoZQYYXmp3AHbaQBTbh373vDtKy43f5C5DeEOneAyuZjHmjfDV2Bfqf0axJckS3hy6RV8gwL6Iq7z5DCAPokSnU2phXrLX3BAhG9jPJrnf9hOUs2m+UGq4CPzi2E8b4BdnM/9Si1qVGSWz6UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724331492; c=relaxed/simple;
-	bh=xEWu/q10Zi1sqyCZfxacsFLRC1l6Md9VoL8qIsfM3bo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KTUVHfUNUFyWmyBI6oUmI55foRB4G6+rQpcZt5uLZmaHg3t6enkaxRNuyubSyNdfubrGw9Q4GkrWdUPfH5PRZ849CJuW/44rMyX9MYbPbb9xmaR/ngRlHi6NGzHSD2O61cEtcJ0BWPKWogZbgzNHx7KTKJA9wB5PUBBWCTAAgx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pHwUFx33; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J5rMZ3E8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pHwUFx33; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J5rMZ3E8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73E73224EF;
-	Thu, 22 Aug 2024 12:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724331488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EaRbppTaC7IJruVAKe85fN+TCCggtKkZnhM7fSjoEQM=;
-	b=pHwUFx33L1kfVzJlHaYSYXz+dU8ODe/9zNsZSqQIgzWGKwKXwERTuiZxoXCDaT/6nqwRq8
-	dtTNloQBWUhJ18VbFkODx61iE6iO7L3+B4FMa/sxh9NYrrd5sOKh8KzoWO6Ohh8lPqmxem
-	1zU82T4ZMrAS6EWem2uKxIMT/7zXNrc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724331488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EaRbppTaC7IJruVAKe85fN+TCCggtKkZnhM7fSjoEQM=;
-	b=J5rMZ3E8NImm5Wk2aIXhRkSvE79zaYH27OV3eOa7kjuDFGrR7A/ojh1y1oens+YHJkeBwZ
-	1i3I53XdUbNwW1CQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=pHwUFx33;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=J5rMZ3E8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724331488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EaRbppTaC7IJruVAKe85fN+TCCggtKkZnhM7fSjoEQM=;
-	b=pHwUFx33L1kfVzJlHaYSYXz+dU8ODe/9zNsZSqQIgzWGKwKXwERTuiZxoXCDaT/6nqwRq8
-	dtTNloQBWUhJ18VbFkODx61iE6iO7L3+B4FMa/sxh9NYrrd5sOKh8KzoWO6Ohh8lPqmxem
-	1zU82T4ZMrAS6EWem2uKxIMT/7zXNrc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724331488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EaRbppTaC7IJruVAKe85fN+TCCggtKkZnhM7fSjoEQM=;
-	b=J5rMZ3E8NImm5Wk2aIXhRkSvE79zaYH27OV3eOa7kjuDFGrR7A/ojh1y1oens+YHJkeBwZ
-	1i3I53XdUbNwW1CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02BCA139D3;
-	Thu, 22 Aug 2024 12:58:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lhcEO981x2auQwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 22 Aug 2024 12:58:07 +0000
-Message-ID: <4b5c6ba2-e16c-4884-a067-8d9ab7ad35f8@suse.de>
-Date: Thu, 22 Aug 2024 14:58:07 +0200
+	s=arc-20240116; t=1724331522; c=relaxed/simple;
+	bh=YKwteYP82haLOcFnCOnu5PEZstb4pn5XmxZSe6SLH08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VpRkU4L1s8D2bm9cUgrL/Afe7xzqETAO+Y6ByVjJMy7szR62JqfWtrDItRIRRS3GewznQhQPyw6l5vFUhMzhAfomW++egGEoRuJNmHAzWqT/RM066w7pFWdOCwBkoZw97wXJrkN8O4k9ijqfKYz7nCgopW1/AT1oHSiH23l9FiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4DD0iR9Q; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428119da952so5937345e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724331519; x=1724936319; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5v1ljrEV8B1sl82whHi7rcYWs7is5tEbFgZoqdCgmEg=;
+        b=4DD0iR9QNwwAEzY1ZevAWCvpj/PnzlliPRf3OKJQT8lQ6XeKQ6aOY2rxV3RZJFpQS0
+         OiX3TQtRJTGXV8P31AUegTFFBDv3T3X5qhLLEm1cEiIKLxpHlcWJPY153MsZLMaET9ta
+         2KksLrbQcFRqAnTqHMDr9n9QSj55hNJK0vQ1/RAzv6zA5IT33ZAv/S5yDOop/EdzCeSv
+         eTg2s+2JZIDmOW0C3tsliynHKRQRczu5lxh/19JlXaSHVegUsGEnUepVBI6A6hLxV+4c
+         h8HPxOkarU7tI2xzs5nAnzOzlfXiqqYoG9DeWEsH2osDk430VyUZ38aiivNXKI/htYgx
+         Sdeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724331519; x=1724936319;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5v1ljrEV8B1sl82whHi7rcYWs7is5tEbFgZoqdCgmEg=;
+        b=qgYs0BIu1ex7S1AgUW/ZJbAJtdmhdDo3EwG048mtP0NQNrjyFyZ2V+mLjgi/TjPJcp
+         jKvGMye21ZOfG0iWypXgVVtyN6XpPPR1Aq3FD+1KFZT3YxkXTzyXTnQptyujRufSBXAG
+         JgcoU+dcLF3PEvoG9BDzM08sN5ZDrRU+lUkujlNTCZcwTHqmlzznFZS76EL7kPR479bc
+         YSRJd6hlEqgtJYb6BWryDO9FNT9k3h9D72wQKNYYKhD4OxtdFXRsf5BZ3uh5ub2C9x51
+         ZUFzXD444BwKy8wosECbOWfgnauxmHI21kBbBjH9mxBJ7fCaH4X78pYgAT7uaVXW4dLo
+         QDUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEPANlK1st+WOQ4KVrq7l7CVgmkxaE+Hbrr+P+WPwckTg3Ld/D7EjR0wMTy6w2zQGQAlJT/70+/soGLks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVA5/Om6SM6/dFfWa+uMqC0AikXbJnGGdxkGlPaQREV3IZF02h
+	AirsYR5mQ6vCwTxKJDqOMWm6LJowQ0BChoYt+S25T32QJAq39/+ipLxaLgeO/Yy27rwfqSL97cy
+	PdEzRggscK0BMUOCpoQYZm/3u3bXYwTMWpBum
+X-Google-Smtp-Source: AGHT+IGQK+oMCGpVMlGDTiPQ1AZnVSQ0UV9HAjnelAkl0ox1QHvKMel3zzthgoJQcVcwxgCsltxdRO+B3DXGwMM1kp8=
+X-Received: by 2002:a05:600c:524e:b0:427:9dad:e6ac with SMTP id
+ 5b1f17b1804b1-42abf0a9948mr38113705e9.34.1724331518606; Thu, 22 Aug 2024
+ 05:58:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] drm/rect: Add drm_rect_overlap()
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
- Danilo Krummrich <dakr@redhat.com>
-References: <20240822073852.562286-1-jfalempe@redhat.com>
- <20240822073852.562286-3-jfalempe@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240822073852.562286-3-jfalempe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 73E73224EF
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,garyguo.net,protonmail.com,proton.me,samsung.com,google.com,vger.kernel.org,lists.freedesktop.org];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.01
-X-Spam-Flag: NO
+References: <20240813222548.049744955@infradead.org> <CAJWu+oqUSOUrro-Rk-Bg7P6PyCWGKRZVT5i4Bi36XpRRFumL5w@mail.gmail.com>
+In-Reply-To: <CAJWu+oqUSOUrro-Rk-Bg7P6PyCWGKRZVT5i4Bi36XpRRFumL5w@mail.gmail.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Thu, 22 Aug 2024 08:58:26 -0400
+Message-ID: <CAJWu+opjcGs8vs9=NcgSU_nuWZE+z73rMaOO7s7OX_=AHvSOiQ@mail.gmail.com>
+Subject: Re: [PATCH 0/9] sched: Prepare for sched_ext
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, tj@kernel.org, void@manifault.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, 
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-Am 22.08.24 um 09:33 schrieb Jocelyn Falempe:
-> Check if two rectangles overlap.
-> It's a bit similar to drm_rect_intersect() but this won't modify
-> the rectangle.
-> Simplifies a bit drm_panic.
+On Wed, Aug 21, 2024 at 5:41=E2=80=AFPM Joel Fernandes <joelaf@google.com> =
+wrote:
 >
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-There's an optional comment further below.
-
-> ---
+> On Tue, Aug 13, 2024 at 6:50=E2=80=AFPM Peter Zijlstra <peterz@infradead.=
+org> wrote:
+> >
+> > Hi,
+> >
+> > These patches apply on top of the EEVDF series (queue/sched/core), whic=
+h
+> > re-arranges the fair pick_task() functions to make them state invariant=
+ such
+> > that they can easily be restarted upon picking (and dequeueing) a delay=
+ed task.
+> >
+> > This same is required to push (the final) put_prev_task() beyond pick_t=
+ask(),
+> > like we do for sched_core already.
+> >
+> > This in turn is done to prepare for sched_ext, which wants a final call=
+back to
+> > be in possesion of the next task, such that it can tell if the context =
+switch
+> > will leave the sched_class.
+> >
+> > As such, this all re-arranges the current order of:
+> >
+> >   put_prev_task(rq, prev);
+> >   next =3D pick_next_task(rq); /* implies set_next_task(.first=3Dtrue);=
+ */
+> >
+> > to sometihng like:
+> >
+> >   next =3D pick_task(rq)
+> >   if (next !=3D prev) {
+> >     put_prev_task(rq, prev, next);
+> >     set_next_task(rq, next, true);
+> >   }
+> >
+> > The patches do a fair bit of cleaning up. Notably a bunch of sched_core=
+ stuff
+> > -- Joel, could you please test this stuff, because the self-tests we ha=
+ve are
+> > hardly adequate.
+> >
+> > The EEVDF stuff was supposed to be merged already, but since Valentin s=
+eems to
+> > be doing a read-through, I figured I'd give him a little extra time. A =
+complete
+> > set can be found at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/=
+prep
+> >
 >
-> v7:
->   * rename r1/r2 to a/b in drm_rect_overlap() (Jani Nikula)
+> So I booted queue.git sched/core branch on a newish Chromebook (after
+> applying 700 patches for making it boot and spending 2 days on it
+> since we boot old kernels -- I wasn't joking when I said I would carve
+> some time up for you this week :P).
 >
->   drivers/gpu/drm/drm_panic.c |  3 +--
->   include/drm/drm_rect.h      | 15 +++++++++++++++
->   2 files changed, 16 insertions(+), 2 deletions(-)
+> With sched/core , it boots fine with core scheduling disabled, but
+> when core scheduling is enabled I am getting hard hangs and
+> occasionally get to the login screen if I'm lucky. So there's
+> definitely something wonky in sched/core branch and core sched.
+> I could not get a trace or logs yet, since once it hangs I have to
+> hard power off.
 >
-> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> index 0a047152f88b8..59fba23e5fd7a 100644
-> --- a/drivers/gpu/drm/drm_panic.c
-> +++ b/drivers/gpu/drm/drm_panic.c
-> @@ -529,8 +529,7 @@ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
->   	/* Fill with the background color, and draw text on top */
->   	drm_panic_fill(sb, &r_screen, bg_color);
->   
-> -	if ((r_msg.x1 >= logo_width || r_msg.y1 >= logo_height) &&
-> -	    logo_width <= sb->width && logo_height <= sb->height) {
-> +	if (!drm_rect_overlap(&r_logo, &r_msg)) {
->   		if (logo_mono)
->   			drm_panic_blit(sb, &r_logo, logo_mono->data, DIV_ROUND_UP(logo_width, 8),
->   				       fg_color);
-> diff --git a/include/drm/drm_rect.h b/include/drm/drm_rect.h
-> index 73fcb899a01da..46f09cf68458c 100644
-> --- a/include/drm/drm_rect.h
-> +++ b/include/drm/drm_rect.h
-> @@ -238,6 +238,21 @@ static inline void drm_rect_fp_to_int(struct drm_rect *dst,
->   		      drm_rect_height(src) >> 16);
->   }
->   
-> +/**
-> + * drm_rect_overlap - Check if two rectangles overlap
-> + * @a: first rectangle
-> + * @b: second rectangle
-> + *
-> + * RETURNS:
-> + * %true if the rectangles overlap, %false otherwise.
-> + */
-> +static inline bool drm_rect_overlap(const struct drm_rect *a,
-> +				    const struct drm_rect *b)
-> +{
-> +	return (a->x2 > b->x1 && b->x2 > a->x1 &&
-> +		a->y2 > b->y1 && b->y2 > a->y1);
+> I could bissect it tomorrow though since it looks like a manageable
+> set of patches on 6.11-rc1.  Or did you already figure out the issue?
+>
+> I am based on:
+> commit aef6987d89544d63a47753cf3741cabff0b5574c
+> Author: Peter Zijlstra <peterz@infradead.org>
+> Date:   Thu Jun 20 13:16:49 2024 +0200
+>
+>     sched/eevdf: Propagate min_slice up the cgroup hierarchy
 
-I found this hard to understand. You may want to use the existing 
-_intersect helper
+One of these 29 in sched/core broke core-scheduling, causes hangs.
+Haven't narrowed it down to which. Not much time today. Will probably
+try to collect some logs.
+https://hastebin.com/share/uqubojiqiy.yaml
 
-bool overlap(a, b)
-{
-   struct drm_rect tmp = *a
+Also I realized I should apply the 9 in this set too. But very least
+it appears the above 29 broke core-sched vs bissection, probably the
+delayed-dequeue or task-pick rework?
 
-   return intersect(tmp, b);
-}
+I will try the sched/prep branch now, which has the 9 in this set too..
 
-Up to you.
+ thanks,
 
-Best regards
-Thomas
-
-> +}
-> +
->   bool drm_rect_intersect(struct drm_rect *r, const struct drm_rect *clip);
->   bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->   			  const struct drm_rect *clip);
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+ - Joel
 
