@@ -1,175 +1,234 @@
-Return-Path: <linux-kernel+bounces-296572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE13E95AC48
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:55:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CA095AC4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD0BB210DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92511F22CEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946963B192;
-	Thu, 22 Aug 2024 03:54:53 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEE8381C8;
+	Thu, 22 Aug 2024 03:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dJRx3i9I"
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F0C2E64B;
-	Thu, 22 Aug 2024 03:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAC3282EA
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724298893; cv=none; b=dPDkBmgRxvMtirVOrgru9ja9HWijB8DKD9tkHr3Ck0nN7DPjE2PKQ3NBYTnez3mx3hqoQ1Ar8rLe2m4w0xM4jJPIZ4Ep+hDKlxEUj4C2cbeqQVqRAGHk6ADdMwmSlN4Dqcq1dpaMhpIqzlMgx0DHbeKL2vpw7zw7OeF4afDGL1Q=
+	t=1724298919; cv=none; b=fbZ698NkiTrUnlJcVL19EAi7hL5PUlLvz/O/6jmgMxG2YZ1N9Uq2TscfEe3HgN5Ihf7rEln6PBe+48OUM59C/Q0r0Y3lLvIDTmTzWadKf8MpvKOOZIpJ18RU0OrmjAIAbJHQX/+7EXJTXEj0Hp4/lhEWOgVv0Xn1THlRwzlAWBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724298893; c=relaxed/simple;
-	bh=mKGxxLXRjwIPYRp9onC2QgTcqbbV/WwUgqAhUr35P7I=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=SF1jWQaC+NreDYRerwAoTn+KfyD7+Qsvj+S6sIgVuFFD6B+ClFVOV4tkySE73m/t4V6sKSUdHuPu0osmkD6G0YuQTTzv9YvbfESw1qyoA9yXylPUjeOIT3HFU6jWDuQED8JEaHLCuW7nwFwjKB+xH9RpP1FuUceepHdf4u8qqjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wq8Tm2W6Cz4f3jsx;
-	Thu, 22 Aug 2024 11:54:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0E27D1A018D;
-	Thu, 22 Aug 2024 11:54:46 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAXPoSEtsZmGZl6CQ--.44088S3;
-	Thu, 22 Aug 2024 11:54:45 +0800 (CST)
-Subject: Re: [PATCH 2/4] block: fix ordering between checking BLK_MQ_S_STOPPED
- and adding requests to hctx->dispatch
-To: Muchun Song <songmuchun@bytedance.com>, Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, muchun.song@linux.dev,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240811101921.4031-1-songmuchun@bytedance.com>
- <20240811101921.4031-3-songmuchun@bytedance.com> <ZsKtllxojkTe3mpY@fedora>
- <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <786a8d94-884c-8a31-151d-fdc82e1a0a63@huaweicloud.com>
-Date: Thu, 22 Aug 2024 11:54:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1724298919; c=relaxed/simple;
+	bh=7dmwSdMRLm8qv0V1Uxb8MdeHJQDP8JaPwVdiHbK6+dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRxCaZRuoBgCTHqVpLeXZ6yc/yMVDAwaXROlHmfqbHMgyq+vZp3Ll8nd4qzUcaD07ErYfSzvaulgNlNIkB78lvC0YvEri8MNen7s5Edp2NGKIHAYqCWf88m2xMZt8yjHIYQChNdYYTb7hMqQxyt3G9wVH2Ctu6P54gEKBsNlXTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dJRx3i9I; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-371c5187198so132567f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 20:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724298915; x=1724903715; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EiYt7wweiAWkF/UO6SLMM3+WC81D3aj+Mv9pKTlcxGI=;
+        b=dJRx3i9Ig3Z5yMpJmwrkQAkZg1jjSLRn7sEpDfuCh3UXqoFrtFDbg4FIUBABGsmT5y
+         wDu78y/J4KTxCgIJVfpRO8aFSks9/FeIkDNTcrpfagloqFdu7hTR6cMwLu6TTTE2R4tl
+         ZdR+1WXp+7q9/gktGvQWV00EwFffj1EOK36xtaUVrHIlEfygB3/P+pgAnWiSJaSCImwh
+         8bROEuNORSSfd49azTiKotUHcCz94HxOkHEYTEhWF1ReBkJ/1c2ZoE0bJgPFJ8lNjWi8
+         AGl2pL4G54UPSTOHdhSvMt6c1N9poXnUtIq54COuMLS6Jy4eorAbKAtXswJrRiaYhsqb
+         N54g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724298915; x=1724903715;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EiYt7wweiAWkF/UO6SLMM3+WC81D3aj+Mv9pKTlcxGI=;
+        b=eZj3uSsMpZtDhUbrTOwXaw+QVTkNA0hxZ84UplGktiKs4xi9iaV6Ka3z/PiYHCqBq/
+         fyo/I5AzYGoB99Yy6DL0DrPbRsjidLnuqzztpz6wRVxD3Jz+KLNWCIsOu/3YKard5DUB
+         GXQLGFveCLe/RF1KTCpem/+N2hmEV46SomQBN4lIitgbJLtICruTzQjJYgKQqy7KyFeG
+         3cp5gzuEqnZNdYyUysfdF194JKjsn88p+hWDVMWqc6lWWdOyRBbqCeSt/twxqQI3bJCg
+         ugT4gH7jd6pjrBRSiqzT9W891jHvgCt3ywBpbafXDBMhmfrBJ/Hpcs9j+zVIs/55GwUQ
+         25EA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRDH1UoTDYQr2GEQeGLDwD1MkOvOs/028Bo314U8cSHtwjg0UKoq5dhZJRVLlidOd2Zj4er7g/9JccleE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9a3i/nyBfpOyGX62yzHMKk+hT63XQWWsGqH/7u68kpCkwSwmk
+	QISiqkeIlHgEsSbJLxIoI0QZas1eoj4CdMsHEJQcf7SNnGcDXpXHO5Dl+UeZvtdhrMXBSZRzRNn
+	SjKhXybBw
+X-Google-Smtp-Source: AGHT+IH3il0dzh0Karjn7wXKw0/nFh5eMsCfDQk4ZeVPQydzWvcffelDn5Ofi4i92lXwme4MGZxdmQ==
+X-Received: by 2002:adf:e44c:0:b0:367:bb20:b3e1 with SMTP id ffacd0b85a97d-372fd7316a3mr2514470f8f.51.1724298914516;
+        Wed, 21 Aug 2024 20:55:14 -0700 (PDT)
+Received: from u94a ([2401:e180:8831:ab89:50b7:7c42:dbeb:f22f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dded9sm3371905ad.161.2024.08.21.20.55.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 20:55:14 -0700 (PDT)
+Date: Thu, 22 Aug 2024 11:55:05 +0800
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, dwarves@vger.kernel.org
+Cc: Jiri Slaby <jirislaby@kernel.org>, Jiri Olsa <olsajiri@gmail.com>, 
+	masahiroy@kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, 
+	msuchanek@suse.com
+Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
+Message-ID: <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
+References: <20240820085950.200358-1-jirislaby@kernel.org>
+ <ZsSpU5DqT3sRDzZy@krava>
+ <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org>
+ <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org>
+ <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXPoSEtsZmGZl6CQ--.44088S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw4fXFW8Cr1UGw1DZr15twb_yoW5tw15pa
-	1kta1Yyw4Dt3yvqw47Zr4xGw1Yy39IkrW7CryfG343Wwn8K34vvr40k3WY9FyIkrs5Cr4x
-	tw4UXrZ7uan5ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j
-	6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
-	hLUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org>
 
-Hi,
+(Add pahole maintainer and mailing list)
 
-在 2024/08/19 11:49, Muchun Song 写道:
-> On Mon, Aug 19, 2024 at 10:28 AM Ming Lei <ming.lei@redhat.com> wrote:
->>
->> Hi Muchun,
->>
->> On Sun, Aug 11, 2024 at 06:19:19PM +0800, Muchun Song wrote:
->>> Supposing the following scenario with a virtio_blk driver.
->>>
->>> CPU0                                                                CPU1
->>>
->>> blk_mq_try_issue_directly()
->>>      __blk_mq_issue_directly()
->>>          q->mq_ops->queue_rq()
->>>              virtio_queue_rq()
->>>                  blk_mq_stop_hw_queue()
->>>                                                                      virtblk_done()
->>>      blk_mq_request_bypass_insert()                                      blk_mq_start_stopped_hw_queues()
->>>          /* Add IO request to dispatch list */   1) store                    blk_mq_start_stopped_hw_queue()
->>>                                                                                  clear_bit(BLK_MQ_S_STOPPED)                 3) store
->>>      blk_mq_run_hw_queue()                                                       blk_mq_run_hw_queue()
->>>          if (!blk_mq_hctx_has_pending())                                             if (!blk_mq_hctx_has_pending())         4) load
->>>              return                                                                      return
->>>          blk_mq_sched_dispatch_requests()                                            blk_mq_sched_dispatch_requests()
->>>              if (blk_mq_hctx_stopped())          2) load                                 if (blk_mq_hctx_stopped())
->>>                  return                                                                      return
->>>              __blk_mq_sched_dispatch_requests()                                          __blk_mq_sched_dispatch_requests()
->>>
->>> The full memory barrier should be inserted between 1) and 2), as well as between
->>> 3) and 4) to make sure that either CPU0 sees BLK_MQ_S_STOPPED is cleared or CPU1
->>> sees dispatch list or setting of bitmap of software queue. Otherwise, either CPU
->>> will not re-run the hardware queue causing starvation.
->>
->> Yeah, it is one kind of race which is triggered when adding request into
->> ->dispatch list after returning STS_RESOURCE. We were troubled by lots of
->> such kind of race.
+Hi Arnaldo,
+
+We're running into kernel build failure on 32-bit (both full 32-bit and
+32-bit userspace on 64-bit kernel) because pahole crashed due to virtual
+memory exhaustion[1]. As a workaround we currently limit pahole's
+parallel job count to 1 on such system[2]:
+
+On Tue, 20 Aug 2024 10:59:50AM +0200, Jiri Slaby wrote:
+[...]
+> diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
+> index b75f09f3f424..f7de8e922bce 100644
+> --- a/scripts/Makefile.btf
+> +++ b/scripts/Makefile.btf
+> @@ -12,7 +12,9 @@ endif
+>  
+>  pahole-flags-$(call test-ge, $(pahole-ver), 121)	+= --btf_gen_floats
+>  
+> +ifeq ($(CONFIG_PAHOLE_CLASS),ELF64)
+>  pahole-flags-$(call test-ge, $(pahole-ver), 122)	+= -j
+> +endif
+>  
+>  pahole-flags-$(call test-ge, $(pahole-ver), 125)	+= --skip_encoding_btf_inconsistent_proto --btf_gen_optimized
+>  
+> diff --git a/scripts/pahole-class.sh b/scripts/pahole-class.sh
+> new file mode 100644
+> index 000000000000..d15a92077f76
+> --- /dev/null
+> +++ b/scripts/pahole-class.sh
+> @@ -0,0 +1,21 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Usage: $ ./pahole-class.sh pahole
+> +#
+> +# Prints pahole's ELF class, such as ELF64
+> +
+> +if [ ! -x "$(command -v "$@")" ]; then
+> +	echo 0
+> +	exit 1
+> +fi
+> +
+> +PAHOLE="$(which "$@")"
+> +CLASS="$(readelf -h "$PAHOLE" 2>/dev/null | sed -n 's/.*Class: *// p')"
+> +
+> +# Scripts like scripts/dummy-tools/pahole
+> +if [ -n "$CLASS" ]; then
+> +	echo "$CLASS"
+> +else
+> +	echo ELF64
+> +fi
+> -- 
+
+This helped lowered the memory usage enough so pahole no longer crash:
+
+On Wed, Aug 21, 2024 at 09:29:57AM GMT, Jiri Slaby wrote:
+> On 21. 08. 24, 8:40, Jiri Slaby wrote:
+> >  From https://bugzilla.suse.com/show_bug.cgi?id=1229450#c20:
+> > Run on 64bit:
+> > pahole -j32 -> 4.102 GB
+> > pahole -j16 -> 3.895 GB
+> > pahole -j1 -> 3.706 GB
+> > 
+> > On 32bit (the same vmlinux):
+> > pahole -j32 -> 2.870 GB (crash)
+> > pahole -j16 -> 2.810 GB
+> > pahole -j1 -> 2.444 GB
+
+Jiri (Slaby) in the meanwhile has also proposed structure packing to
+further reduce memory usage. (Note: I think the numbers below are from a
+64-bit machine)
+
+> From https://bugzilla.suse.com/show_bug.cgi?id=1229450#c21:
+> (In reply to Jiri Slaby from comment #20)
+> > | |   |   ->24.01% (954,816,480B) 0x489B4AB: UnknownInlinedFun
+> (dwarf_loader.c:959)
 > 
-> Yes. I saw the similar fix for BLK_MQ_S_SCHED_RESTART.
+> So given this struct class_member is the largest consumer, running pahole on
+> pahole. The below results in 4.102 GB -> 3.585 GB savings.
 > 
->>
->> stopping queue is used in very less drivers, and its only purpose should
->> be for throttling hw queue in case that low level queue is busy. There seems
->> more uses of blk_mq_stop_hw_queues(), but most of them should be replaced
->> with blk_mq_quiesce_queue().
->>
->> IMO, fixing this kind of issue via memory barrier is too tricky to
->> maintain cause WRITE/READ dependency is very hard to follow. I'd suggest to
->> make memory barrier solution as the last resort, and we can try to figure
->> out other easier & more reliable way first.
+> --- a/dwarves.h
+> +++ b/dwarves.h
+> @@ -487,14 +487,14 @@ int cu__for_all_tags(struct cu *cu,
+>   */
+>  struct tag {
+>         struct list_head node;
+> +       const char       *attribute;
+> +       void             *priv;
+>         type_id_t        type;
+>         uint16_t         tag;
+> +       uint16_t         recursivity_level;
+>         bool             visited;
+>         bool             top_level;
+>         bool             has_btf_type_tag;
+> -       uint16_t         recursivity_level;
+> -       const char       *attribute;
+> -       void             *priv;
+>  };
 > 
-> I do agree it is hard to maintain the dependencies in the future. We should
-> propose an easy-maintainable solution. But I thought it is a long-term issue
-> throughout different stable linux distros. Adding a mb is the easy way to fix
-> the problem (the code footprint is really small), so it will be very
-> easy for others
-> to backport those bug fixes to different stable linux distros. Therefore, mb
-> should be an interim solution. Then, we could improve it based on the solution
-> you've proposed below. What do you think?
+>  // To use with things like type->type_enum ==
+> perf_event_type+perf_user_event_type
+> @@ -1086,17 +1086,17 @@ static inline int function__inlined(const struct
+> function *func)
+>  struct class_member {
+>         struct tag       tag;
+>         const char       *name;
+> +       uint64_t         const_value;
+>         uint32_t         bit_offset;
+>         uint32_t         bit_size;
+>         uint32_t         byte_offset;
+>         int              hole;
+>         size_t           byte_size;
+> +       uint32_t         alignment;
+>         int8_t           bitfield_offset;
+>         uint8_t          bitfield_size;
+>         uint8_t          bit_hole;
+>         uint8_t          bitfield_end:1;
+> -       uint64_t         const_value;
+> -       uint32_t         alignment;
+>         uint8_t          visited:1;
+>         uint8_t          is_static:1;
+>         uint8_t          has_bit_offset:1;
+>--
 
-I'll agree with Ming, let's figure out a better fix first. Easy to 
-backport to stables is not first consideration.
-> 
-> Thanks,
-> Muchun.
-> 
->>
->> One idea I thought of is to call blk_mq_request_bypass_insert()(or rename
->> & export it) before calling blk_mq_stop_hw_queue() in driver, then
->> return new status code STS_STOP_DISPATCH for notifying blk-mq to stop
->> dispatch simply.
+What do you think?
 
-New status code look good to me, however, I wonder can we just remove
-the problematic blk_mq_stop_hw_queue(), and replace it by handling the
-new status from block layer?
+IIUC pahole's memory usage is largely tied to the number of entries in
+vmlinux/kmodule DWARF, and there probably isn't much we could do about
+that.
 
-- Passing the new status to blk_mq_run_dispatch_ops, and quiesce with
-the new status, if no request is inflight, unquiesce immediately;
-- unquiesce is any IO is done afterwards;
+Shung-Hsi
 
-Thanks,
-Kuai
-
->>
->>
->> thanks,
->> Ming
->>
-> 
-> .
-> 
-
+1: https://bugzilla.suse.com/show_bug.cgi?id=1229450
+2: https://lore.kernel.org/all/20240820085950.200358-1-jirislaby@kernel.org/
 
