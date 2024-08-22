@@ -1,239 +1,125 @@
-Return-Path: <linux-kernel+bounces-297483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335B095B919
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:54:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5118195B91B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8925286746
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:54:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9C71F27A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE3D1CC17C;
-	Thu, 22 Aug 2024 14:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44EC1CC17C;
+	Thu, 22 Aug 2024 14:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1TlC42A"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWXuVKr4"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A501EB5B;
-	Thu, 22 Aug 2024 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02DF1CC151;
+	Thu, 22 Aug 2024 14:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724338433; cv=none; b=udn14EghdA61++80NNgzKhuJMyUoSjFHQx8eJY8IdmdC+Bd6e7Yy49S80rcCzzIkOij7oN7zEf1ZRdHG6WbQXs+dDqxJD3M7R2uKZg8W79yEmOY+ejfdShrA5Gy0ulc080WkOgnwEeo5VI+jzNlEIPLY/YMzgSt3mR4xguozwEs=
+	t=1724338474; cv=none; b=eBMTYwPjJkGYqZAeleYJ9g48u8u81hWCPvryl5SeoWZSYSDeMazKpLn8SytPirCOvGYJ7Cz846SePrEca9gW7tK3S/d3TLROFDclM0MPAlM6M2uTR+ocLcnBt5uSKGQwYuOH1EB2CAgexw/Yn4sqcNGWQXx1QeVRJUvpnBj4w8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724338433; c=relaxed/simple;
-	bh=JgMnPdxIcARuczM0WQACnBcB8005hAtK3ZyFdyrVbP0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sxgE9L3FcMHKCqgxtbrRXTG7lUrd+fQG4dzL85gffzelXMiJgaxt4/PsCOxyA4VjsfBwehecDMxhyXlR02p3DxF82V2J8vgltPw785I5FEB8ZcvonSlnsBw/oWjRX4HIZZNB5R86Aim1OLU5LYZ/PdwqBvFgsXBUm5U0/NKYLmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c1TlC42A; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1724338474; c=relaxed/simple;
+	bh=+TUSP11wjCwnjRuybst5FS9wNxTbnJ3fnYQiOquRoXE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m7i6+HaXX+8KU6GAw4NHrmw4+pDERlVBZ5KxcFgd3X3/FEryZCI3RTuKTVMH8YoAV6PCPUWtuSvTEwKj2MmPAqd2pXfg9Qr4b7CNwtpqP+Be5dMx8VUWRQfq5JF8Nsf9dYdiBYPyCVyYZJn8SfPPFrqc6alFwbldoWqI8pZ+g6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWXuVKr4; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8657900fc1so148351766b.1;
-        Thu, 22 Aug 2024 07:53:51 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so13241801fa.1;
+        Thu, 22 Aug 2024 07:54:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724338430; x=1724943230; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4AFX8Jy0QsFbyyF167FDXq1PSqmdmQPvGIjIJI+2j+Q=;
-        b=c1TlC42AWeDo0N9DYeVrzbGU9bHf8nn9pm6kk5pY+tVkpnjDXQm4XzAnrkTE2Bxtou
-         euX8Yy5WNMoGriV3KwrEKi0CabFdiGnTJ/KFp7Pxc+p7Uzi9NUWcR6px1zyY+Afk2AAA
-         mAxpoEoeEENLdUVT8Jd3JbfpqgbmU5pK0fFyEacINmnQ4CqVZNpwQJDj+BDzX0tdAtuC
-         ylAQ/TBWGAuZo44/KIvmlu1L365HjxP+Uo2TIjG25u5VUzQR3JSRTjpjYweqOEnXKqI1
-         uQqJEq1bLSxQ6lysuoThio03pv/mt3qYICOJSIsqav2y/RiGA0dZIbnMaVnLcJTSusTd
-         /Aqw==
+        d=gmail.com; s=20230601; t=1724338471; x=1724943271; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+TUSP11wjCwnjRuybst5FS9wNxTbnJ3fnYQiOquRoXE=;
+        b=GWXuVKr4Zbqx8CXdUR8NIkcFBXUXeSVfYpOdiddRoyjewC5b4eFjmu7uB1z5AoV6+3
+         eGryZ0tgyPBRjAZLPttRPQ/FsUbPGohnHmnzkvNt42ENMadv2bckZHyt1t7enqXcr3Ce
+         tdSVhT/NPfXLUbvshngqbOBtfSEHh7D19FGrjtTfpZwEMsDXTFh2xnGUh1vbJ4bIdNAo
+         KA751ip7w56uUxe6X7hrTGqNVv4NVeXAPymlCeag/lCFltm6YZVZ2kgBPR5bnMST3sgw
+         g4utAp2Xjtrz3h8rUP5yaZ9awORbBQ/xCWfwTmJAf4Ow5jAaOeg7uS0//S0JvW5lBj5W
+         7Kwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724338430; x=1724943230;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4AFX8Jy0QsFbyyF167FDXq1PSqmdmQPvGIjIJI+2j+Q=;
-        b=fNtBdhfrh1TiQfoUdQfNXni8SH6k3i8/Q92WFAztDPitKESFtf/BguESp/1/naYFP3
-         LPZsmdv8U7FXFy81oWjCei6uSU8rHHNliD7vdf8Aw+NmAC1J6o91vkvp/9k2UpczGPro
-         nAs4YPX+0dt05pQunEGUvOt6rCAW6Vq+io5Teu9hvbzLpgi+6l5ekmglY3nSmtBfrGjv
-         AMzDR+M2h7kjUCDq/28VmJB0zrSuuPZO9iDefMMOicYPlT7snJaBble7SitvXe1v8Oa9
-         qTi6hyUnYBUKdze4RXF7wIG2VRyJRC0VhpTxyxb/X04IMU53FAMfkEziNyCipWQ0nRbo
-         lDyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoxSP0wqDAnHZW585WQ+3EpdGZPiFMl8zvLElqQYkLnQb31L8klrbRGIOztVhxT8l0dgz7XPHTAiunHaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmBsTa78uOYOlqIwGVHVHU8v41jiRHMa6FQACUCYd9Nyc/tled
-	a4ddLN9EeIOTNLxjyUezxPb+8QY9YIfjfQlanUbuQcaiPiBsA4qC+5wFoW8X
-X-Google-Smtp-Source: AGHT+IHyGGxERj4Yr04ZdEgjGkjg9VUVjdF/smWT9qwrNI/xE7sqJ5SuCWPYVy2wlJlellAQfWN6ow==
-X-Received: by 2002:a17:907:7f28:b0:a86:9041:a42a with SMTP id a640c23a62f3a-a8691cbabb2mr145270666b.62.1724338429183;
-        Thu, 22 Aug 2024 07:53:49 -0700 (PDT)
-Received: from WBEC325.dom.lan ([185.188.71.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f48a5d0sm128735566b.159.2024.08.22.07.53.48
+        d=1e100.net; s=20230601; t=1724338471; x=1724943271;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+TUSP11wjCwnjRuybst5FS9wNxTbnJ3fnYQiOquRoXE=;
+        b=Td6S24NUZOYUPNOW5Qs1OZ/tPOsQGBwZLGUiwmQAF3N81AXcDOtlvJGfTdsQ1fDQVp
+         AX9IuM+3+excMxvpfjat5HiPAqN/cCTnWRkRDDFJ7ca53enHgxCmvXG5GDttMi4i5aEo
+         zVd92xNhJVYcCLd/1i+0tbYStswBkfEhYlKEQSE3WcxfqdinSsUuBoxnuM20sec9ilTq
+         7VB908/naCGAkfZWKv6bsWuAv6nzb2DEeKJSeyyuixXizlwZn3gLXPkQgJwyW4JmyRdR
+         UsWt29Oa/6B/OiMojYw1sK7YnQctveXkRuXu8aVFScJTj87S55mGo1e2tMcVIEfJTMyF
+         WTKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUydCTUadLqUOrxcy9fJ6r8LZMF4S7ZRXPXIglUw/jVTTfakifLZpyvYwnCZewzY59CwyT1ZIAKyaBXOA==@vger.kernel.org, AJvYcCV/tf9k92yn+TZruHjd+P2xziIjakJTdNGB0lhJXoH23zO/Tsa/Oe81EQ/7keTXtkK4VYuTeMuc290d1I8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcnsWkAsqSTGrePEWDr56TxJ5UtUoFTx6W2LmsTPfZKfswFlsp
+	PxOoyx3FxGMafUpTqFtIMGiUeT0ElvZ7pDhThkhPEhgbBu5Zq+Vw
+X-Google-Smtp-Source: AGHT+IHHQLJky14YCYfHmGvcL+P+t82R4pEsMMJV8VeNqUl5LX/0oZXRvjHMpvuElGzR1USJVojd0A==
+X-Received: by 2002:a05:651c:154b:b0:2ef:2ba5:d214 with SMTP id 38308e7fff4ca-2f405c8bf3cmr16014141fa.4.1724338469809;
+        Thu, 22 Aug 2024 07:54:29 -0700 (PDT)
+Received: from [10.176.235.56] ([137.201.254.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f29a568sm129477266b.53.2024.08.22.07.54.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:53:48 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Pawel Dembicki <paweldembicki@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: phy: vitesse: implement MDI-X configuration in vsc73xx
-Date: Thu, 22 Aug 2024 16:53:36 +0200
-Message-Id: <20240822145336.409867-1-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 22 Aug 2024 07:54:29 -0700 (PDT)
+Message-ID: <ed370c6355dee6a4af15587cdbb3b06a1fe0b842.camel@gmail.com>
+Subject: Re: [PATCH v2 0/2] scsi: ufs: introduce a callback to override OCS
+ value
+From: Bean Huo <huobean@gmail.com>
+To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+  bvanassche@acm.org, jejb@linux.ibm.com, martin.petersen@oracle.com, 
+ beanhuo@micron.com, adrian.hunter@intel.com, h10.kim@samsung.com, 
+ hy50.seo@samsung.com, sh425.lee@samsung.com, kwangwon.min@samsung.com, 
+ junwoo80.lee@samsung.com, wkon.kim@samsung.com
+Date: Thu, 22 Aug 2024 16:54:27 +0200
+In-Reply-To: <cover.1724325280.git.kwmad.kim@samsung.com>
+References: 
+	<CGME20240822111247epcas2p2d3051255f42af05fd049b7247c395da4@epcas2p2.samsung.com>
+	 <cover.1724325280.git.kwmad.kim@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-This commit introduces MDI-X configuration support in vsc73xx phys.
+On Thu, 2024-08-22 at 20:15 +0900, Kiwoong Kim wrote:
+> UFSHCI defines OCS values but doesn't specify what exact
+> conditions raise them. So I think it needs another callback
+> to replace the original OCS value with the value that works
+> the way you want.
+>=20
+> v1 -> v2: fix build error for arguments
+>=20
+> Kiwoong Kim (2):
+> =C2=A0 scsi: ufs: core: introduce override_cqe_ocs
+> =C2=A0 scsi: ufs: ufs-exynos: implement override_cqe_ocs
 
-Vsc73xx supports only auto mode or forced MDI.
+Hi kiwoong Kim,
 
-Vsc73xx have auto MDI-X disabled by default in forced speed mode.
-This commit enables it.
+I didn't see your above two patches following your cover-letter, did
+you send patch with "--thread" optioin?
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
----
- drivers/net/phy/vitesse.c | 88 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
 
-diff --git a/drivers/net/phy/vitesse.c b/drivers/net/phy/vitesse.c
-index 54eb4e8377c4..38a025521119 100644
---- a/drivers/net/phy/vitesse.c
-+++ b/drivers/net/phy/vitesse.c
-@@ -71,6 +71,19 @@
- #define MII_VSC73XX_DOWNSHIFT_MAX		5
- #define MII_VSC73XX_DOWNSHIFT_INVAL		1
- 
-+/* VSC73XX PHY_BYPASS_CTRL register*/
-+#define MII_VSC73XX_PHY_BYPASS_CTRL		MII_DCOUNTER
-+#define MII_VSC73XX_PBC_TX_DIS			BIT(15)
-+#define MII_VSC73XX_PBC_FOR_SPD_AUTO_MDIX_DIS	BIT(7)
-+#define MII_VSC73XX_PBC_PAIR_SWAP_DIS		BIT(5)
-+#define MII_VSC73XX_PBC_POL_INV_DIS		BIT(4)
-+#define MII_VSC73XX_PBC_PARALLEL_DET_DIS	BIT(3)
-+#define MII_VSC73XX_PBC_AUTO_NP_EXCHANGE_DIS	BIT(1)
-+
-+/* VSC73XX PHY_AUX_CTRL_STAT register */
-+#define MII_VSC73XX_PHY_AUX_CTRL_STAT	MII_NCONFIG
-+#define MII_VSC73XX_PACS_NO_MDI_X_IND	BIT(13)
-+
- /* Vitesse VSC8601 Extended PHY Control Register 1 */
- #define MII_VSC8601_EPHY_CTL		0x17
- #define MII_VSC8601_EPHY_CTL_RGMII_SKEW	(1 << 8)
-@@ -319,6 +332,73 @@ static int vsc739x_config_init(struct phy_device *phydev)
- 	return 0;
- }
- 
-+static int vsc73xx_mdix_set(struct phy_device *phydev, u8 mdix)
-+{
-+	int ret;
-+	u16 val;
-+
-+	val = phy_read(phydev, MII_VSC73XX_PHY_BYPASS_CTRL);
-+
-+	switch (mdix) {
-+	case ETH_TP_MDI:
-+		val |= MII_VSC73XX_PBC_FOR_SPD_AUTO_MDIX_DIS |
-+		       MII_VSC73XX_PBC_PAIR_SWAP_DIS |
-+		       MII_VSC73XX_PBC_POL_INV_DIS;
-+		break;
-+	case ETH_TP_MDI_X:
-+		/* When MDI-X auto configuration is disabled, is possible
-+		 * to force only MDI mode. Let's use autoconfig for forced
-+		 * MDIX mode.
-+		 */
-+	default:
-+		val &= ~(MII_VSC73XX_PBC_FOR_SPD_AUTO_MDIX_DIS |
-+			 MII_VSC73XX_PBC_PAIR_SWAP_DIS |
-+			 MII_VSC73XX_PBC_POL_INV_DIS);
-+		break;
-+	}
-+
-+	ret = phy_write(phydev, MII_VSC73XX_PHY_BYPASS_CTRL, val);
-+	if (ret)
-+		return ret;
-+
-+	return genphy_restart_aneg(phydev);
-+}
-+
-+static int vsc73xx_config_aneg(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = vsc73xx_mdix_set(phydev, phydev->mdix_ctrl);
-+	if (ret)
-+		return ret;
-+
-+	return genphy_config_aneg(phydev);
-+}
-+
-+static int vsc73xx_mdix_get(struct phy_device *phydev, u8 *mdix)
-+{
-+	u16 reg_val;
-+
-+	reg_val = phy_read(phydev, MII_VSC73XX_PHY_AUX_CTRL_STAT);
-+	if (reg_val & MII_VSC73XX_PACS_NO_MDI_X_IND)
-+		*mdix = ETH_TP_MDI;
-+	else
-+		*mdix = ETH_TP_MDI_X;
-+
-+	return 0;
-+}
-+
-+static int vsc73xx_read_status(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = vsc73xx_mdix_get(phydev, &phydev->mdix);
-+	if (ret < 0)
-+		return ret;
-+
-+	return genphy_read_status(phydev);
-+}
-+
- /* This adds a skew for both TX and RX clocks, so the skew should only be
-  * applied to "rgmii-id" interfaces. It may not work as expected
-  * on "rgmii-txid", "rgmii-rxid" or "rgmii" interfaces.
-@@ -516,6 +596,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc738x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
-@@ -526,6 +608,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc738x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
-@@ -536,6 +620,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc739x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
-@@ -546,6 +632,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc739x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
--- 
-2.34.1
+Kind regards,
+Bean
+
+>=20
+> =C2=A0drivers/ufs/core/ufshcd-priv.h |=C2=A0 9 +++++++++
+> =C2=A0drivers/ufs/core/ufshcd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 11 ++++++=
++----
+> =C2=A0drivers/ufs/host/ufs-exynos.c=C2=A0 |=C2=A0 8 ++++++++
+> =C2=A0include/ufs/ufshcd.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A04 files changed, 25 insertions(+), 4 deletions(-)
+>=20
 
 
