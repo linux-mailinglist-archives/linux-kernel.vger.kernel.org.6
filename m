@@ -1,190 +1,248 @@
-Return-Path: <linux-kernel+bounces-296723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456CC95AE3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:57:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E1895AE3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B4951C20EF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:57:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E880D1F235B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6931494C1;
-	Thu, 22 Aug 2024 06:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA0114D42C;
+	Thu, 22 Aug 2024 06:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JasvBrNu"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2048.outbound.protection.outlook.com [40.107.215.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="j1QKaXk7"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19EF13C3DD
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724309745; cv=fail; b=e0rjk23SrYaacUm/cI6/lceS/lQSJfKbBT7/WMOPYLnEPzptCe5CdvSRIik2XaPhHfqkdUHVoG3T5VIqWfeaxff295mmtXQ7XPlkhzpOZvmMlnYy4TvAPanYQdCY9m895+Cwa2ga0oPVPhhtVAIjtvrIcF5qQMn9kzBYgWGL9Kk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724309745; c=relaxed/simple;
-	bh=h4Cl3b/c31t0v0WLutCjDxjfnnpeE40lYojRd4SGiRk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fLIHDsDOouIVnYLGq8g8MpSVwUEjfGbYnodyuzVqR+SMuVE83Pgm66nON7hNvXmMqgCc1qgDb4rY2txdqGf+1kpJDsxFOPF7ldV9NHJB+HoOHETgeA2244V7CSc4NEOUAgq52po3anwCYjChoprADg4vtPhEZoirR/6AlScbaEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JasvBrNu; arc=fail smtp.client-ip=40.107.215.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K7gIj89v3nCTNRGG27yy+pPXEXJPfLHs83AkUy03xV6TQUK6kIHTZ5xisDYN6i1tFOseR8LtidcyeaXabqf/NEfT7Wc8N50aM72n2MzirkdeYdhhLGH2O8xf0CuCe6vmNBX/b49yH0XvRnrCKExyQhbO4IuVlo/JRk4q4QzZzOJvD22o/Zg1Nu5H3f0NnL8KzfD1iwhcf9Zr301nV93PUR7QMWRlGH3DCigUYZoUFU17//bJ0raHIJXUveXVIUFj5e+0trr16BhfsHbsprBpHrcHbTyfPcxeBPr1YcclcpoulPyeVC/rkMOlxtMTgw6BpIHHE/DjN8fb0/haYH5HBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6Nf4qHOg4Wy94B4bQcsuL4rSf5VRXrwo3ygBKI6+/bM=;
- b=uj2lOL8H8hbqzAeVQTMkHYjzWx2CJ2FigqaDFON8x2lJqPCRAR7TNuCtq9eWCl4dqE8nGpP6v6Eq6eiKo01tXuisazCFtioBpwodC+5ya5PK7RATVFKyiDOiQEsCGkhJqy90cyKifXuBSRwBmcaUknId41ttUNwOn1W0m+SGqKWkIkeMkcDhwJKR+k80Jh0bs36ZupB62F1YVIcsp3VzuWhGjwg130osvkg97CafqXOV+AJSSt5XcVUXXOeQT6mchccPWlF68H9t+XfYWVlV3NKm2hB4YFU/PkSQ4aF6A9JxMK6wWDVO7wYurJ/OTxzjMJ6zzA1fmXT4Tk73deU67g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6Nf4qHOg4Wy94B4bQcsuL4rSf5VRXrwo3ygBKI6+/bM=;
- b=JasvBrNujCQfzikjWZdB5Wqgla5ArJq7nHcQgjwhSp/QbsBnC8AVP/bWvh8mxQVlwa92weUgf52iFHs0CGZVwhXbbepkLuXgkYcb4gUyGOviPGejUsRQvVJqLG8wm2IommScJIzBPNdkYeLnXxsZ26bpcoxQe9dcfj0lW68njZ19WgJHriEZ03Ztt/+EPHkWCijRKH8rIUUr0tVjAN+1TjvuFcMvnjZ6mYGdtU9/pvF4cVO7lDi7rlGPjpYIPzU/ec3YkykMPpHWA0pLWKHCoNBCamq/DCDLA9td/zS9fHAQrtsWtGtYjj/hOicOHQQxeN2/FumKUAhRAz7R7Y9fRA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by PUZPR06MB5982.apcprd06.prod.outlook.com (2603:1096:301:112::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
- 2024 06:55:40 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%7]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
- 06:55:40 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Hamza Mahfooz <hamza.mahfooz@amd.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Hersen Wu <hersenxs.wu@amd.com>,
-	Dillon Varone <dillon.varone@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1 6/6] drm/amd/display: Use max/min macro
-Date: Thu, 22 Aug 2024 14:54:47 +0800
-Message-Id: <20240822065447.1333390-7-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822065447.1333390-1-yujiaoliang@vivo.com>
-References: <20240822065447.1333390-1-yujiaoliang@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0094.apcprd02.prod.outlook.com
- (2603:1096:4:90::34) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BADC13C67A
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724309771; cv=none; b=uQHJ1PYekssAO3z7V+HfC4woc0BeCWISA4ndyQ5P4+xkpVClypBIfMRwYFmhD7tfkJGeI7DVzPoCFavIx7P7bG02MN4K6GYaRk+Mzp+c2J0TpcRXyL2YskNTHxxV5U2IuTAvwHhottHYdJEjXPGRZWOPRVfh0Sh5IOyj8onZLqI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724309771; c=relaxed/simple;
+	bh=zmY296PjwQeTukeX232uZ4N2lzN/Qy5XgkMD4XdJ/uQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kkEtof7OAAqa8qqmt2y7KDx+8QCoMjb2tU8vcDlmf2luE34Scs9Un4V4hekRk6QOd1+G9z1tAtMt2+2vPpwKWE5QdRr//ga3/b1N1y1RzGhcmi+iCIWrQ6VnKSddxMS5F/J0xKmXkfNg/aDLXmvt0SlAirb4iZb+Z8EPlMzhxFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=j1QKaXk7; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3db16b2c1d2so297435b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724309767; x=1724914567; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GFDydfkG+agaOlsuZHWg20v17CYJb4VeMMP0Wqz7Dj4=;
+        b=j1QKaXk73RK8u+hpUc8AqvDgGW8liQrcMOdufAnO1hV0Tdh/PmKAsLRlkL3WN3FgXy
+         0bqxMF6v/VZvChFirImtfbboQXWysLL41qZPKCgVrC921Xn05sGD1o90pxh+04OoVfGu
+         Djw3ksfXPPZoVbuG1Alj1lyVu6LZudzjsAY84GMFAS/27BK9HFTokPYvAShbI4yjhOkq
+         UR9tZjAyR/v+7aXIiQ7UAFDXsk+jmyj2BFf5eGjkX6yOleaz+kcGfljhJFrjs+On6gyx
+         t5rxesM+PBigYJBk0dQx/sbGXjAIj4BInUoxeetg/1oqwieEye86fs1XXUjEmNY6+25M
+         2MDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724309767; x=1724914567;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GFDydfkG+agaOlsuZHWg20v17CYJb4VeMMP0Wqz7Dj4=;
+        b=iXfYU6ZTrxE34S+qznQE2SC8w2ASeqlbbtOeOANUpTerf4DvrMMUOBQbkmvcu/MHqQ
+         tMdjzItmK7fqYBn8cLgZvEtxMVrF14hd5l5wX9ni57PRD/vnXr91EkziPS3vDpsYS/oN
+         0FjBEVBHwWTFRnbvW6JSAALChtE+GM151i9qtpnuXMmOBM02UFKXlPf9ygFKg9FJySx7
+         iWYM3+UUPpM5BYjiV95wxV+xnDJWsyeVkwgF+rs0UsYgUqWCRc3E05o25m2o54gO6qSD
+         0HRSpoL3csLewgeZKtjyQUK+gGO48772Qr7Q5P98muJvhsPtWaH1Xa33QWcPUBCiO1la
+         p2xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoCilrybYWQtFjOoWeqkA343/cPJ1dcYy3KV0dClRQOKJK4/J4r1fXDSnw6nC2o+c6tHZyCTMSaftR5qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiAPSGMXpgPpoWdTEkzqXFJaHUb/940I39ksiwl/MWt9Httd4o
+	0Ke/UBtsSIFe1pmNH3onh+ZzltCIUuH0dFZgltgAuKOa//XERbFNr6xLbN6hiEw=
+X-Google-Smtp-Source: AGHT+IFd6nbupeMmch8HYUZLo+nAXaiqmJ1Be/VEMkfQZfY19PJSES7bmK/eG3ZZDnQLO9L42i7OCw==
+X-Received: by 2002:a05:6808:3185:b0:3d9:3649:906f with SMTP id 5614622812f47-3de2332620bmr1021309b6e.37.1724309767610;
+        Wed, 21 Aug 2024 23:56:07 -0700 (PDT)
+Received: from GL4FX4PXWL.bytedance.net ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acbfc09sm678733a12.37.2024.08.21.23.56.04
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 21 Aug 2024 23:56:07 -0700 (PDT)
+From: Peng Zhang <zhangpeng.00@bytedance.com>
+To: pbonzini@redhat.com,
+	chao.p.peng@linux.intel.com,
+	seanjc@google.com,
+	Liam.Howlett@oracle.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	maple-tree@lists.infradead.org,
+	Peng Zhang <zhangpeng.00@bytedance.com>
+Subject: [PATCH RFC] KVM: Use maple tree to manage memory attributes.
+Date: Thu, 22 Aug 2024 14:55:44 +0800
+Message-Id: <20240822065544.65013-1-zhangpeng.00@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|PUZPR06MB5982:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7c67985-044c-4e37-ae20-08dcc2776f4c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fCspicqFE98v7SiG5/8LnUFgTAB2uHp++FTT+fF8aCspzxwKbs+NtYW6WDWB?=
- =?us-ascii?Q?fOe1OeBl47/DWkoTfMIye3AJiELgXySwKuBL/cSPuU2eN/l5X1/ja1/14jYD?=
- =?us-ascii?Q?BszpFKbZgOJ49LMol5Os++DqLwEPR8CFWnjZ1yUXiafwDpLVHKPQkdvdVDv0?=
- =?us-ascii?Q?nDAHBZ4N2kkhgDyx0d6gWhaxNqfwqv7FWVj2VrINb+sP7PvT2wqPh2fuXFv9?=
- =?us-ascii?Q?YS6qk7sStv94vtU+YfDmcCuVQFUG8ref6zmc8ro/MYAZPf4t4/3/tlpDsA6D?=
- =?us-ascii?Q?/S6MMFg8IzbuqgFyhXYbMAFKXZD2uCZ+9gTgK+ss3GDHSHJ9fU2GE3RKiB7+?=
- =?us-ascii?Q?u41mZHAPsJi+AfH+gccw5bPNbEr5w5lI5MwZcMwcGK46/KxwG/glwEeW1Tv/?=
- =?us-ascii?Q?RPMcsj4/qXfKEfE9nK5wlwzZEQk+thBrvQ+T3aEC11q9YcJ8q+1ZjRvrbWz1?=
- =?us-ascii?Q?pQe2TXJGikafGR/SyW4U5ftkHTwsIDrl8J/GF9xRECcKKjF8R4IL0tV3depI?=
- =?us-ascii?Q?t6X/Jq/4SlNCdDLStWPw2xmY7guFvYbNQiRzT6SuTgCCdetPGb6UrAFbudGx?=
- =?us-ascii?Q?KvBl9+eafdYSDGALCXWw8P0yYLIUAyoewhKZgXCqGq8vx5Cj//tQwKktqiN5?=
- =?us-ascii?Q?80vYTZPVbP7rSaoPNZC3EQDCjhf7566zTZ3sK+bn/bzx8V2864IomqhqCJwK?=
- =?us-ascii?Q?9M+K+27ZkcWDVqghvhw0B1+O3sh+jyiE20mlKr1F5zf8frjXWpn4vvfucf5m?=
- =?us-ascii?Q?jBr9QSVuLgoCI5TGtLTz39TPbA+mIRfr6gKl7rbEw7mrBIA97HPj+nIqNVZg?=
- =?us-ascii?Q?4mnuS1mVplSZvgi2Jga6lqw9nL5XS1l61NStSflXPnSl41WhHYcMJ+tTnv6F?=
- =?us-ascii?Q?6/B7mXvovZrM0MKXZpvPPqbRA2BGm2lwHk0orh/MTczm0pvMGLJUFTBTloWA?=
- =?us-ascii?Q?NlK3sE0Y8SmhGT5RMyi8W8/Om45z9kDzMx0r+GG72WTIur0xwsFPhJ8/OngY?=
- =?us-ascii?Q?spzDeOELw9y8WZWY1mxUhhsCOlyKSYH82sXIyd2R7B3LhYWeSvGm+aORzqgP?=
- =?us-ascii?Q?sWt2MdO1i0FeINh28jYxB0VOnf90a269vB09Fq66C/6FzMaKXHDa49U2dyNJ?=
- =?us-ascii?Q?HuNgr++ew4ewTkCcY8E5lM8rrdBdNwBAkri88uma5VR35dM0QncCNUqZKHis?=
- =?us-ascii?Q?RhkYQx5D0EtfPHWRXy2sPwEOHBNZt3Pvii8yVyTKlXZjB+T0al2OLiwVSIQO?=
- =?us-ascii?Q?MgQaOaHEMOp/0nAsA2xsS5FTasHlhCGWWAMgtCzAeecSPKxBE92DvBye+/v9?=
- =?us-ascii?Q?MMzIHPR782xAcYMniFnbLA/XNqCyCqsB5ckclbr9Nz6ngnxLgor4oWGDSlq5?=
- =?us-ascii?Q?UKnt40Phcjg4z97lHCXi/OjW5Z0l97Bl05O9EPNQJTRc+3VGWKcUeuTC1fuo?=
- =?us-ascii?Q?+hyiFR1msUs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XxJ2zNTx4sY0r1pnpXh/3cD3IiNcYwsUH1zHOeiKTS/2iyupV6yiG+fuslCP?=
- =?us-ascii?Q?McKjm29J/8r6KxkunAwpY9JvwwUXVBvKJz++yw3R60a5GRofMwQtaM6RCZQZ?=
- =?us-ascii?Q?vKK94s7HFQRcpedf7zE5c52UCNUGev1ZY89yA0n9+aJ+/ikC5G5dUQEMFomt?=
- =?us-ascii?Q?m+zttaDggoNw6CgW9cG36RjUxN8S5vLyeEhakEW4VpLNH1HIL25hucudx3ZM?=
- =?us-ascii?Q?aInR9lsFY9B7bjIXdnYzvgPb0/Qo3Kc7pWXzEJrYhSPM3tt6kOo37GSkDez9?=
- =?us-ascii?Q?VB7OtC/zqTdPxZtLSC3OUdDcsK/aVuN+LaXG75DpVOxd23OsLP+DlSYpFvPU?=
- =?us-ascii?Q?MvvM/XJafviFIwbMp29ylnu+wHODcH/WvrgkCZlyk31deMnbJJdjaTXHoXZc?=
- =?us-ascii?Q?2D+8wDeXHYahHw9MbJHfC08m/I6haMJ+cfOiJCZjh5VPnY8iyg8UqDCw2jxn?=
- =?us-ascii?Q?ymDDDJBXeie4v7s+AgcxqU+0+WU+gb0gX3ohCjbZHY7b+nTyCFMyoRXFQEmG?=
- =?us-ascii?Q?ZUzn9GyElq0TC23BRfFHt4cqgxTUGVNvukVvJfJbkeOp/Xv/hxOom/Bc9OWN?=
- =?us-ascii?Q?k4oIXt3diMjDj6QUAxK+BhT6KLDc+tX8343ZbwFoWMr49rnnT5zKmU34qXxj?=
- =?us-ascii?Q?MbJcdi+yOkrjdVWjIiTdd1l1likTGWqm+lDmMHJiYyfodeZ8cKkk7BCKe0Ct?=
- =?us-ascii?Q?C3HFrd6eDwSBIw7IMgvwtciZVEMQ5vx/RNtLEViD6PEkQ/16vwNrD9Qe6d8O?=
- =?us-ascii?Q?NiQXYz5f/5qJuIQFRvWtj7lAT5MQF3rhAZ8U6hkvSJc+ietVE495VP+rqe2i?=
- =?us-ascii?Q?6opCA9PstTwxOSSq9OC+hwEsdvNYw6LoHzVqP3QM9jvWSdSuhsmFt2wHxTlQ?=
- =?us-ascii?Q?HMjNwXqXvmdUO8c61f1jDKwlZKTAtjx+VpKtJTiHs7+/xRDo9QMg1Ua5fIMW?=
- =?us-ascii?Q?1AUv7+FA2/MLN/JUxdHdHMxYgju6zv7nM/iK9Z54UKqPJhJRHW0fticS8A+x?=
- =?us-ascii?Q?5zr21MxyuL9YfNtOQ8m8QesyTiL8K3nekLMUmzhPYVRlkXV3S4WF1WW+XLIu?=
- =?us-ascii?Q?y3bEg28f9yyxGN39oCrE9cQTh1i5xPfTRTaG4gFnAojIpv793bn8PXhAQCww?=
- =?us-ascii?Q?u4t9TPdT2KlGfCk+i9KLJvYmN2EKgYx/K3hsULPoMVicmI/GXylRWUqX2ijR?=
- =?us-ascii?Q?j1IpKVu2+0QUGjrov6ahDaxJFJNTDXrlyEpwdEvzCfWYK31605EvKFAA6Rli?=
- =?us-ascii?Q?lDilggiNvOEiHtOtBmUWl2a3xb8OPRBJ17rpZTR8CqWxyycfxPKmAVjmDpUI?=
- =?us-ascii?Q?ntfEBDRI77yKpQX0H6zZYMq1Icj8ot3UEJCp/j6L9h2fbbYOe0KENg2VK+Vu?=
- =?us-ascii?Q?bs+wZbyeAjOfqmuX9KXVRprTIFoFcOd6y5yvYEjGq6gpIb1AMPlWdAkSwG+/?=
- =?us-ascii?Q?cGgvqVDFyibscmI7HumBy5LKAUqkGCo3oGs6NyupVezXGH9LCW0ZJRwEw+Gy?=
- =?us-ascii?Q?LczmUiJi+RuqYw67LKQF/DAMgREQQhxyP5NJbObabmHNicKFc9tvgs5tTLaU?=
- =?us-ascii?Q?nMsYAPrYprE30VHEfxa5pV5PekdH32Co0q5w5sBS?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7c67985-044c-4e37-ae20-08dcc2776f4c
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 06:55:40.5575
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GOIG5xK1HgVGLv9kfRg8mLHmPk1MDbWWHYdEhPWS3rsCiTiTCXvIK0lX//T+Hz43wJOo0xUHORc7slqZTh6zVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5982
+Content-Transfer-Encoding: 8bit
 
-Use the macro instead of ternary operator.
+Currently, xarray is used to manage memory attributes. The memory
+attributes management here is an interval problem. However, xarray is
+not suitable for handling interval problems. It may cause memory waste
+and is not efficient. Switching it to maple tree is more elegant. Using
+maple tree here has the following three advantages:
+1. Less memory overhead.
+2. More efficient interval operations.
+3. Simpler code.
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+This is the first user of the maple tree interface mas_find_range(),
+and it does not have any test cases yet, so its stability is unclear.
+
+Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 ---
- drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/kvm_host.h |  5 +++--
+ virt/kvm/kvm_main.c      | 47 ++++++++++++++--------------------------
+ 2 files changed, 19 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-index a40e6590215a..33b9b87d8d3a 100644
---- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-+++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-@@ -1005,8 +1005,8 @@ void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
- 			(stream->timing.h_total * (long long)stream->ctx->dc->caps.max_v_total));
- 	}
- 	/* Limit minimum refresh rate to what can be supported by hardware */
--	min_refresh_in_uhz = min_hardware_refresh_in_uhz > in_config->min_refresh_in_uhz ?
--		min_hardware_refresh_in_uhz : in_config->min_refresh_in_uhz;
-+	min_refresh_in_uhz =
-+		max(min_hardware_refresh_in_uhz, in_config->min_refresh_in_uhz);
- 	max_refresh_in_uhz = in_config->max_refresh_in_uhz;
+I haven't tested this code yet, and I'm not very familiar with kvm, so I'd
+be happy if someone could help test it. This is just an RFC now. Any comments
+are welcome.
+
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 79a6b1a63027..9b3351d88d64 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -35,6 +35,7 @@
+ #include <linux/interval_tree.h>
+ #include <linux/rbtree.h>
+ #include <linux/xarray.h>
++#include <linux/maple_tree.h>
+ #include <asm/signal.h>
  
- 	/* Full range may be larger than current video timing, so cap at nominal */
+ #include <linux/kvm.h>
+@@ -839,7 +840,7 @@ struct kvm {
+ #endif
+ #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+ 	/* Protected by slots_locks (for writes) and RCU (for reads) */
+-	struct xarray mem_attr_array;
++	struct maple_tree mem_attr_mtree;
+ #endif
+ 	char stats_id[KVM_STATS_NAME_SIZE];
+ };
+@@ -2410,7 +2411,7 @@ static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+ #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+ static inline unsigned long kvm_get_memory_attributes(struct kvm *kvm, gfn_t gfn)
+ {
+-	return xa_to_value(xa_load(&kvm->mem_attr_array, gfn));
++	return xa_to_value(mtree_load(&kvm->mem_attr_mtree, gfn));
+ }
+ 
+ bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 92901656a0d4..9a99c334f4af 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -10,6 +10,7 @@
+  *   Yaniv Kamay  <yaniv@qumranet.com>
+  */
+ 
++#include "linux/maple_tree.h"
+ #include <kvm/iodev.h>
+ 
+ #include <linux/kvm_host.h>
+@@ -1159,7 +1160,8 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 	rcuwait_init(&kvm->mn_memslots_update_rcuwait);
+ 	xa_init(&kvm->vcpu_array);
+ #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+-	xa_init(&kvm->mem_attr_array);
++	mt_init_flags(&kvm->mem_attr_mtree, MT_FLAGS_LOCK_EXTERN);
++	mt_set_external_lock(&kvm->mem_attr_mtree, &kvm->slots_lock);
+ #endif
+ 
+ 	INIT_LIST_HEAD(&kvm->gpc_list);
+@@ -1356,7 +1358,9 @@ static void kvm_destroy_vm(struct kvm *kvm)
+ 	cleanup_srcu_struct(&kvm->irq_srcu);
+ 	cleanup_srcu_struct(&kvm->srcu);
+ #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+-	xa_destroy(&kvm->mem_attr_array);
++	mutex_lock(&kvm->slots_lock);
++	__mt_destroy(&kvm->mem_attr_mtree);
++	mutex_unlock(&kvm->slots_lock);
+ #endif
+ 	kvm_arch_free_vm(kvm);
+ 	preempt_notifier_dec();
+@@ -2413,30 +2417,20 @@ static u64 kvm_supported_mem_attributes(struct kvm *kvm)
+ bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+ 				     unsigned long mask, unsigned long attrs)
+ {
+-	XA_STATE(xas, &kvm->mem_attr_array, start);
+-	unsigned long index;
++	MA_STATE(mas, &kvm->mem_attr_mtree, start, start);
+ 	void *entry;
+ 
+ 	mask &= kvm_supported_mem_attributes(kvm);
+ 	if (attrs & ~mask)
+ 		return false;
+ 
+-	if (end == start + 1)
+-		return (kvm_get_memory_attributes(kvm, start) & mask) == attrs;
+-
+ 	guard(rcu)();
+-	if (!attrs)
+-		return !xas_find(&xas, end - 1);
+-
+-	for (index = start; index < end; index++) {
+-		do {
+-			entry = xas_next(&xas);
+-		} while (xas_retry(&xas, entry));
+ 
+-		if (xas.xa_index != index ||
+-		    (xa_to_value(entry) & mask) != attrs)
++	do {
++		entry = mas_find_range(&mas, end - 1);
++		if ((xa_to_value(entry) & mask) != attrs)
+ 			return false;
+-	}
++	} while (mas.last < end - 1);
+ 
+ 	return true;
+ }
+@@ -2524,9 +2518,9 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+ 		.on_lock = kvm_mmu_invalidate_end,
+ 		.may_block = true,
+ 	};
+-	unsigned long i;
+ 	void *entry;
+ 	int r = 0;
++	MA_STATE(mas, &kvm->mem_attr_mtree, start, end - 1);
+ 
+ 	entry = attributes ? xa_mk_value(attributes) : NULL;
+ 
+@@ -2540,20 +2534,11 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+ 	 * Reserve memory ahead of time to avoid having to deal with failures
+ 	 * partway through setting the new attributes.
+ 	 */
+-	for (i = start; i < end; i++) {
+-		r = xa_reserve(&kvm->mem_attr_array, i, GFP_KERNEL_ACCOUNT);
+-		if (r)
+-			goto out_unlock;
+-	}
+-
++	r = mas_preallocate(&mas, entry, GFP_KERNEL_ACCOUNT);
++	if (r)
++		goto out_unlock;
+ 	kvm_handle_gfn_range(kvm, &pre_set_range);
+-
+-	for (i = start; i < end; i++) {
+-		r = xa_err(xa_store(&kvm->mem_attr_array, i, entry,
+-				    GFP_KERNEL_ACCOUNT));
+-		KVM_BUG_ON(r, kvm);
+-	}
+-
++	mas_store_prealloc(&mas, entry);
+ 	kvm_handle_gfn_range(kvm, &post_set_range);
+ 
+ out_unlock:
 -- 
-2.34.1
+2.20.1
 
 
