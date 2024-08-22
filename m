@@ -1,130 +1,168 @@
-Return-Path: <linux-kernel+bounces-297131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B8D95B38A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:11:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6BE95B38C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06C1C1C20B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7CD1F238F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E895E185944;
-	Thu, 22 Aug 2024 11:11:09 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8D0183CC3;
+	Thu, 22 Aug 2024 11:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hsDWw8tt"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D015F184559;
-	Thu, 22 Aug 2024 11:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855ED181BA8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724325069; cv=none; b=nz5PbEn59b73/GJZ0rBXk2pA8x5aOIDP2NuLlDvD1hG49kXw775h6f8FlEmRPa/d3IxnIkizdo/gHIdVWfdIYKduVyojcjddWCTN2kQEMUL/G7QFgQ8dg6XhOKmKMBbsi7m3zKuwMLP2YnsEJ+N5ny6ALgk/VaYbYIzFJt3I2iE=
+	t=1724325138; cv=none; b=UuywIkyghfWlQBNU+ARIVOzPshXngGclDLAeRdW41HL2bHg/GIuWIlcKC5/gxtU4j1xAB037EQGXh3Aa641SQId8NFmD/Vyw15YPo+NiHWuwIxXcHjp2ztZN8uvMyd+DJkzX6Cvga6fptpuB+p2+VA8jQagIffU7yci0Cvw9rvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724325069; c=relaxed/simple;
-	bh=AK/RADRaNEcV+njaXGREya+0xoBG1DLSBupzD9CJ2gQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SRPS8cbD7Ex3yqTxQuAH8kfSxEl6XIzuFhLzW5rrtYMSqdBVk0S+Vk/W/RbiAtThcGAx9auaDN39cpqktCko7c0nf/2ruyf/L4HiyfaK6dEhRLXeQkMiv7lA0UErT2GrrprVgSe7PHY5RNE3rVXI3NFesOVGiHIvaWC94ehg0gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bf006f37daso1138829a12.1;
-        Thu, 22 Aug 2024 04:11:07 -0700 (PDT)
+	s=arc-20240116; t=1724325138; c=relaxed/simple;
+	bh=vi9h1FidMBka1pRgw2AnPFKWunRB65e+lyirWA4Ekmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKY/gsYT+TtGvHPJ8ujdIGkm040JF3K0UVhYP2jWOY90T72S7nowCEYb7lmfdGlWDVV3j6i+4fq/FcCCh5cHak3tVVuQgllKwcCHGrGcJ3BZsmbz1L31XF5G3EbOxa5dotu0tBOCFivQVqyLja6jeD6MpAfAlBZNnUpKTSNosNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hsDWw8tt; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7bcf8077742so488354a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724325136; x=1724929936; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BbJ9Z+sMrkclfRagtYJm2Qhjn1slaJi07OZtLt0xRqg=;
+        b=hsDWw8ttWVsaIp7qwC4SQh5i2dVzC10WKYFKvavGOvPcQVb80pUDxO4ayhlYf5Khi+
+         m8oNPAKdZFQsFJKhsNAWCt5C+GZioz3NKxhkSZUfihESrwwXRuCfIOEp2t9+Xylsx0ON
+         4mSUa8Oyc1s5pD7WbkQPDWzD1CZYYJrRxEEAlICodsMJjY6yH12T3GK3t+5+LaQl3hgI
+         abxt+1nVk/vL+Zpz3xH1N4GqaOiju2s9KKqbmEz+pOU+ywBHZB8fSUWIKRRfyJ2rwHSF
+         fLH5IiefzED3eBmMUw+6KrrpH3kE7fL7jIf5jmnh0mg9814fPxaRtd9+YXGYHsvDYBL5
+         DDTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724325066; x=1724929866;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7aJgFwXL8yYu3Ta7WXwhw8U8Fneee8uRNrJ2/htuey8=;
-        b=uOAjmGxjgifcsrcSZoba99gSJqAb9Wuvf88kq3sssTNbtPDaDUXVriorg4j9kL59/R
-         ITK9JRSug06U3Avqz/5pSEZxUerqnUtwez/NFMaPj3saH6suPXkZXmiLOkMX6wN4boXF
-         cqbyrujbWuHCGxxWydqVBN0i+GjQRyP1f1I0UDsrxQMc363wIzfa9yow+8nIs4H8/34O
-         A/lq23FztzUheoX0FpcecpZy1bAcxUoWmsfiDrta411Dq9YaW/5BYsW24N7cS4J5BF1U
-         cprfFmXdoDPPEuZT7vnC8uHHnvdYVk6VG+3ACwa6W7lwtLP346BlY9wqVqVnPDcpwRHw
-         oinQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMCErgeUHSNAZpH5XnrnqUQhvHj5N2z8EB7tu/YL4JxvSTQ+3hXvSjQIPr0G8i8vjMgb7UfVHr44babWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMFhTIjg4LFDimFTVUjUZmECQswzRhLon3H3rKy+1hIx2khF25
-	KMHL3+F8INTcCi/9qll3OHbeFbYSu5FEluVv4Jydg8LFAVlfsXa/
-X-Google-Smtp-Source: AGHT+IEXvb1JKvKR6a2ucE1kEQX9BJckT6JZiCBzT+sMEzhhyy/GkakP9jv5P8Jbo4D7pmyJqyrlEg==
-X-Received: by 2002:a05:6402:4305:b0:5be:c92d:b893 with SMTP id 4fb4d7f45d1cf-5bf2c04bc84mr2309949a12.15.1724325065411;
-        Thu, 22 Aug 2024 04:11:05 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-011.fbsv.net. [2a03:2880:30ff:b::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3ca017sm822339a12.24.2024.08.22.04.11.04
+        d=1e100.net; s=20230601; t=1724325136; x=1724929936;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BbJ9Z+sMrkclfRagtYJm2Qhjn1slaJi07OZtLt0xRqg=;
+        b=I7XwC5v4P2byoPeLnTqnH5f0YVXHpZqfKzQTlbM3DfkrbMAVKxohIB0s5JzVwBqHve
+         EHrTwAsyC46+u8n/y4uuqMoClF0xw1cdkHOM8jvtI9xm3SEaKOVgCMdvPfZ4htUrN+V/
+         2t21gcA4TpfUwuLfixC1qFAXOdtwW9LJCaSVSYr0jwinw+ujYuE8vfpQi4mII4f2kXrO
+         S/k912xKngmT/XR8/WDy3TtUWKRGKs2trnZwUpu54X0k3wu6+khw1xDfvBO4yjGuKOsV
+         gPdC25t5uCjHoAHei5VmtfwwGd+/CGzod8sFtYhqgZuGfIbPkkD6NCD1r4NHVNiz60Xi
+         4mEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuFhxLMyWvgDUyZ6R6p+bWwaRwTEti8iF8uiSrZ/b5nCbSh+CRsD8KVZ+PCOI6xtcYFEf2O1PPquqftyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb4qiLz3lpCJQR2/iWdpIDH4/WgK7GR+m+b4TMWwnXJnDraajd
+	5ilAo9TOhH2EbhePyd9owaqDY5Gd6h4+t/1JPcuIu+vLEpJM2RRWkhbFwTY8KA==
+X-Google-Smtp-Source: AGHT+IGzybvAIUuXxPl7dmKySzy1eKxeJTiu0SQmcSr83L0+MazI/R/cvJax85qZEJ7fPuLq07i6aA==
+X-Received: by 2002:a05:6a20:9313:b0:1ca:da6d:675f with SMTP id adf61e73a8af0-1cada6d79e0mr4593437637.0.1724325135657;
+        Thu, 22 Aug 2024 04:12:15 -0700 (PDT)
+Received: from thinkpad ([117.213.99.42])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdc7c6sm978832a12.46.2024.08.22.04.12.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 04:11:04 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aijay Adams <aijay@meta.com>
-Subject: [PATCH net-next v3 2/2] net: netconsole: Populate dynamic entry even if netpoll fails
-Date: Thu, 22 Aug 2024 04:10:48 -0700
-Message-ID: <20240822111051.179850-3-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240822111051.179850-1-leitao@debian.org>
-References: <20240822111051.179850-1-leitao@debian.org>
+        Thu, 22 Aug 2024 04:12:15 -0700 (PDT)
+Date: Thu, 22 Aug 2024 16:42:07 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Pranjal Shrivastava <praan@google.com>
+Cc: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Rob Clark <robdclark@chromium.org>, Will Deacon <will@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Georgi Djakov <quic_c_gdjako@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] iommu/arm-smmu: Pretty-print context fault
+ related regs
+Message-ID: <20240822111207.vbotlrtw72vflefj@thinkpad>
+References: <20240701162025.375134-1-robdclark@gmail.com>
+ <20240701162025.375134-4-robdclark@gmail.com>
+ <20240822100941.3tfqpjskzq43slfw@thinkpad>
+ <ZscTkTOa8UPZtwRU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZscTkTOa8UPZtwRU@google.com>
 
-Currently, netconsole discards targets that fail during initialization,
-causing two issues:
+On Thu, Aug 22, 2024 at 10:31:45AM +0000, Pranjal Shrivastava wrote:
+> On Thu, Aug 22, 2024 at 03:39:41PM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Jul 01, 2024 at 09:20:12AM -0700, Rob Clark wrote:
+> > > From: Rob Clark <robdclark@chromium.org>
+> > > 
+> > > Parse out the bitfields for easier-to-read fault messages.
+> > > 
+> > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > ---
+> > >  .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 52 +++++---------
+> > >  drivers/iommu/arm/arm-smmu/arm-smmu.c         | 70 +++++++++++++++----
+> > >  drivers/iommu/arm/arm-smmu/arm-smmu.h         | 21 ++++++
+> > >  3 files changed, 92 insertions(+), 51 deletions(-)
+> > > 
+> > 
+> > [...]
+> > 
+> > > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > > index 23cf91ac409b..79ec911ae151 100644
+> > > --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > > @@ -405,32 +405,72 @@ static const struct iommu_flush_ops arm_smmu_s2_tlb_ops_v1 = {
+> > >  	.tlb_add_page	= arm_smmu_tlb_add_page_s2_v1,
+> > >  };
+> > >  
+> > > +
+> > > +void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int idx,
+> > > +				      struct arm_smmu_context_fault_info *cfi)
+> > > +{
+> > > +	cfi->iova = arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
+> > > +	cfi->fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
+> > > +	cfi->fsynr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
+> > > +	cfi->cbfrsynra = arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx));
+> > > +}
+> > > +
+> > > +void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int idx,
+> > > +				       const struct arm_smmu_context_fault_info *cfi)
+> > > +{
+> > > +	dev_dbg(smmu->dev,
+> > > +		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+> > > +		cfi->fsr, cfi->iova, cfi->fsynr, cfi->cbfrsynra, idx);
+> > > +
+> > 
+> > I just happen to hit an IOMMU fault in 6.11-rc4 and I did not see the 'Unhandled
+> > context fault' log, but just the register dump in dmesg. Tracking that lead me
+> > to this patch.
+> > 
+> > May I know the reasoning behind making the actual error message _dbg()? It is
+> > intentional first place?
+> > 
+> > - Mani
+> 
+> Hi Mani,
+> 
+> That was a miss in this series, but it was fixed recently in [1].
+> I think it should land soon.
+> 
+> [1] https://lore.kernel.org/linux-iommu/172381862229.1794487.17068761066364130246.b4-ty@kernel.org/
+> 
 
-1) Inconsistency between target list and configfs entries
-  * user pass cmdline0, cmdline1. If cmdline0 fails, then cmdline1
-    becomes cmdline0 in configfs.
+Cool, thanks!
 
-2) Inability to manage failed targets from userspace
-  * If user pass a target that fails with netpoll (interface not loaded at
-    netcons initialization time, such as interface is a module), then
-    the target will not exist in the configfs, so, user cannot re-enable
-    or modify it from userspace.
+- Mani
 
-Failed targets are now added to the target list and configfs, but
-remain disabled until manually enabled or reconfigured. This change does
-not change the behaviour if CONFIG_NETCONSOLE_DYNAMIC is not set.
-
-CC: Aijay Adams <aijay@meta.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/netconsole.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 72384c1ecc5c..01cf33fa7503 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -1258,11 +1258,18 @@ static struct netconsole_target *alloc_param_target(char *target_config,
- 		goto fail;
- 
- 	err = netpoll_setup(&nt->np);
--	if (err)
--		goto fail;
--
-+	if (err) {
-+		pr_err("Not enabling netconsole for %s%d. Netpoll setup failed\n",
-+		       NETCONSOLE_PARAM_TARGET_PREFIX, cmdline_count);
-+		if (!IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC))
-+			/* only fail if dynamic reconfiguration is set,
-+			 * otherwise, keep the target in the list, but disabled.
-+			 */
-+			goto fail;
-+	} else {
-+		nt->enabled = true;
-+	}
- 	populate_configfs_item(nt, cmdline_count);
--	nt->enabled = true;
- 
- 	return nt;
- 
 -- 
-2.43.5
-
+மணிவண்ணன் சதாசிவம்
 
