@@ -1,149 +1,100 @@
-Return-Path: <linux-kernel+bounces-297461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6823F95B89A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:36:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125B695B889
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D4881F21E10
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3828283256
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617721CC164;
-	Thu, 22 Aug 2024 14:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AD51CC150;
+	Thu, 22 Aug 2024 14:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="neM6rCS1"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o30hDNjI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0487B1CB329;
-	Thu, 22 Aug 2024 14:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0C31CBEA1;
+	Thu, 22 Aug 2024 14:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337356; cv=none; b=L/xhq6zQ8cbPd+F1iCDcpS/G/YkpoQP9Zg+PSgOBsn02Xjn+rQDt8zyVKsFhag0fXv/O8ImhMR8XwrngjHc3WyeEVA2UXAM5wNA43oRfoEUFzN52nXdZlpd+cRfXtfUV3kS+MkWNC0UZ8l56fAQIFBiu19NQBFxuPItHxAOlZSg=
+	t=1724337281; cv=none; b=L+uyXdhGNwn5OBvnZVyEedjVtczrs7P08UaPaG1pH4RKHph8d8APogcO8TpsEF9HGjzpDMDdI6F0QYWHBStZsDEvYScVapUafmMkMqC9YM+s9i37plRI4EGx8wkem00g7rnbl8r83O0Eaok6T7Sk1SV0mJwIBOwvQeq54Yr7e9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337356; c=relaxed/simple;
-	bh=PjN1v1ZgupBNIKpW9Fc12Vy49RxRfMabNrj+qsYjiGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ds0r7gITdJFGumD135IJpRCfXL45rYtg3G3yy7Kuy0bikCMYdIW0bIMJ/zcDHYpKGB5teNbjQ/SeXrkEP3Mz+cEcegnuXms8l0APAHqBP7MAsV1z8RO1gLWJBTmQTI/xK0qs2dCQ/yaNn/5M9DOik2UN522IpTn5EnYBoo9vkKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=neM6rCS1; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id h8tQstrBMiKc3h8tQsUpzP; Thu, 22 Aug 2024 16:34:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724337277;
-	bh=hgzwBNoQY1MSKy8JqHT/xV1IQZfbcxzXziAOuuVi2Sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=neM6rCS1kmMJzPrHHqX9sK83O4PsWimcoBx2ciYUu4jh26tfT2sMCE4s40UqlTBAH
-	 4pFKq4KHjULk2fe4+fZ6VRyJeAMgtIfp+oGyCLsXgB/r4SDqjIC/klUcXqwPb+3hQq
-	 ADRdhkenk9OWOrEaS8Hwi6UcoL5ewwojw0zKgoHhyvgrV2QhZTBwmYx8O2aZ0e2M88
-	 ZbXlyF72bZipSOn5Vm9AiwL51amFk+l6PuHU3X+CkjQbwkYfL10zN0jD1hSy2FovO+
-	 n7u40WNIDo7cZt+P9gzfX3w8nCFiCUTY/aW2H2xUer/PM7tucP4iPsw8K9YXBmfbtp
-	 C7vH87XzyANow==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 22 Aug 2024 16:34:37 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <81de3898-9af7-4ad1-80ef-68d1f60d4c28@wanadoo.fr>
-Date: Thu, 22 Aug 2024 16:34:28 +0200
+	s=arc-20240116; t=1724337281; c=relaxed/simple;
+	bh=TijZddx52s7dHM9dVKH3FQOQGg37tHlZWJ7WwnRJDz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kI3qkp1MF2/oaaX5sf91wbKT9uJ4XzaJG+IdapRE/Reik9T9b6o8/hagcEzDTPSWphDuHoGdnSeKvCYqVu77DpkgtF3bkkemfKrCZwB/wlzVwsZduauK0hv77VeC5ZUFiTvsuRC2Hwl7s69L86lao+RJ0ndEvMj8tv1LHP7ww8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o30hDNjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B7DC32782;
+	Thu, 22 Aug 2024 14:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724337280;
+	bh=TijZddx52s7dHM9dVKH3FQOQGg37tHlZWJ7WwnRJDz0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o30hDNjICLJUBuoyylRk4f1P6fyz268BRyUz/tzs8AmEo2LJqaUdpuwY1/DCTLSbd
+	 NExh2Pk6Jj/7Fy54LtoOM3nnYAXw7TEM23JNcbw5jlbwDCeu5Alg4Uiw6Ej9cbN2Ge
+	 qpw/+b4X2GNqjD5j7J+0C4cka8NlTnVQKV0VH7oyoZTTqeSDJ9GMaKdcBMbnCGz0oK
+	 W4uplrEpYu6xavlLKTKEmzVAaZI8ZmJCz+EmMoBcVEr/EJ1qNVQKziaZzyoACjVglL
+	 bpwXXn32E2lf1uZGdH6GNI1LnxnLk/3jwwgvDWTlduFv7KADBpKed2z8LxX6QD+/eP
+	 TV0nHHTNpyJWA==
+Date: Thu, 22 Aug 2024 22:34:31 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 13/17] dt-bindings: Move google,cros-ec-typec binding
+ to usb
+Message-ID: <ZsdMd7Ywa2b-GDT6@tzungbi-laptop>
+References: <20240819223834.2049862-1-swboyd@chromium.org>
+ <20240819223834.2049862-14-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/9] vdpa: solidrun: Fix UB bug with devres
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: alexandre.torgue@foss.st.com, alvaro.karsz@solid-run.com,
- andy@kernel.org, axboe@kernel.dk, bhelgaas@google.com, brgl@bgdev.pl,
- broonie@kernel.org, christophe.jaillet@wanadoo.fr, corbet@lwn.net,
- davem@davemloft.net, dlechner@baylibre.com, dlemoal@kernel.org,
- edumazet@google.com, eperezma@redhat.com, hao.wu@intel.com, hare@suse.de,
- jasowang@redhat.com, joabreu@synopsys.com, kch@nvidia.com, kuba@kernel.org,
- linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, mcoquelin.stm32@gmail.com,
- mdf@kernel.org, mst@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, stable@vger.kernel.org, trix@redhat.com,
- u.kleine-koenig@pengutronix.de, virtualization@lists.linux.dev,
- xuanzhuo@linux.alibaba.com, yilun.xu@intel.com
-References: <20240822134744.44919-1-pstanner@redhat.com>
- <20240822134744.44919-8-pstanner@redhat.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240822134744.44919-8-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819223834.2049862-14-swboyd@chromium.org>
 
-Le 22/08/2024 à 15:47, Philipp Stanner a écrit :
-> In psnet_open_pf_bar() and snet_open_vf_bar() a string later passed to
-> pcim_iomap_regions() is placed on the stack. Neither
-> pcim_iomap_regions() nor the functions it calls copy that string.
-> 
-> Should the string later ever be used, this, consequently, causes
-> undefined behavior since the stack frame will by then have disappeared.
-> 
-> Fix the bug by allocating the strings on the heap through
-> devm_kasprintf().
-> 
-> Cc: stable@vger.kernel.org	# v6.3
-> Fixes: 51a8f9d7f587 ("virtio: vdpa: new SolidNET DPU driver.")
-> Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Closes: https://lore.kernel.org/all/74e9109a-ac59-49e2-9b1d-d825c9c9f891@wanadoo.fr/
-> Suggested-by: Andy Shevchenko <andy@kernel.org>
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->   drivers/vdpa/solidrun/snet_main.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/vdpa/solidrun/snet_main.c b/drivers/vdpa/solidrun/snet_main.c
-> index 99428a04068d..67235f6190ef 100644
-> --- a/drivers/vdpa/solidrun/snet_main.c
-> +++ b/drivers/vdpa/solidrun/snet_main.c
-> @@ -555,7 +555,7 @@ static const struct vdpa_config_ops snet_config_ops = {
->   
->   static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
->   {
-> -	char name[50];
-> +	char *name;
->   	int ret, i, mask = 0;
->   	/* We don't know which BAR will be used to communicate..
->   	 * We will map every bar with len > 0.
-> @@ -573,7 +573,10 @@ static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
->   		return -ENODEV;
->   	}
->   
-> -	snprintf(name, sizeof(name), "psnet[%s]-bars", pci_name(pdev));
-> +	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
-> +	if (!name)
-> +		return -ENOMEM;
-> +
->   	ret = pcim_iomap_regions(pdev, mask, name);
->   	if (ret) {
->   		SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
-> @@ -590,10 +593,12 @@ static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
->   
->   static int snet_open_vf_bar(struct pci_dev *pdev, struct snet *snet)
->   {
-> -	char name[50];
-> +	char *name;
->   	int ret;
->   
-> -	snprintf(name, sizeof(name), "snet[%s]-bar", pci_name(pdev));
-> +	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
+On Mon, Aug 19, 2024 at 03:38:27PM -0700, Stephen Boyd wrote:
+> -title: Google Chrome OS EC(Embedded Controller) Type C port driver.
+> +title: Google Chrome OS Embedded Controller (EC) USB type-c port driver
 
-s/psnet/snet/
-
-> +	if (!name)
-> +		return -ENOMEM;
->   	/* Request and map BAR */
->   	ret = pcim_iomap_regions(pdev, BIT(snet->psnet->cfg.vf_bar), name);
->   	if (ret) {
-
+Given that it gets chance to modify, how about s/Chrome OS/ChromeOS/?
 
