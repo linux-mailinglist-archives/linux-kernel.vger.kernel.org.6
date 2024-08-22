@@ -1,219 +1,118 @@
-Return-Path: <linux-kernel+bounces-296872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0048995B00F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:18:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A3295B010
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF8D1F22A44
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:18:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 447ABB23339
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B758917A588;
-	Thu, 22 Aug 2024 08:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C3716DEBB;
+	Thu, 22 Aug 2024 08:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f7iTGhq8"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uqi4OjjP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4CA176FCF;
-	Thu, 22 Aug 2024 08:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6456C1547EA
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724314677; cv=none; b=eda6JiSMKrwToW0e9ndszRf858SPKA1l3NZY7HuPLDljwNA2vcKUPPUpnYrR1ygWMaxL/Ta5Cl65gLymsVsuKLl05DWNFRmHbCtAhMusW4YGd6EkmV5BPZbc7PdN5PsfjePed1QC4TNYhE1PEqUeH+m/1pH7mxy0UqfNkPCi6WU=
+	t=1724314720; cv=none; b=hkH3Ged7kAWdWBxrx4DJg6BdbEmlga5xtb7LeYkoNwhSl7cfDbNIUtZjQdKkylGsuyCmjV4v9E77rQ5gUiWPbl/woI82AuoDbeTVBBCOvL2zpB/oTa9BkNYyb7OV/0KjiyInZRy55qZV8TBTPq4nY9xJMYRtgLJDQSn6++Mp/HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724314677; c=relaxed/simple;
-	bh=NqmSxpe1MO8XoWRvN/3Czc4Ol3rCVDg3jAFBUwMgN9I=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnJyZ+WNpHeFhQHDEb7t1fVlfCp5BfGSSVGT1/pm9OIqDYjl6SfqN16FUlKuROBTOPSJ243U0XBxfN+0blctgO8JAef+1k/H7obcOf9Q5OK3HHvQEYzPDNy31P5X5Db0nIj/xmMfm8VlFOsV+Kmb2ItoaN/UGxTVOUD8ZqqxWk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f7iTGhq8; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DF8E2240005;
-	Thu, 22 Aug 2024 08:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724314667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vLmAUqCpjFppoDxgApNLZBtCJUtY++ru5GMpCrgHDqg=;
-	b=f7iTGhq8vedFE11n/0rRwDedvjSFEEL5BKqO+trhi80xJEsMmwxnrtuXmc+78r4/4Qw7Ba
-	7zeez/x9GLji220CPXCTuOK1JdQMdCvNUSD1IHuo+dywpoQJ8QoCufvfAAlbSEanHDEmMW
-	nKFjfq7+6WpRbZb4YsnveruK+5jLT3itRdOupIwc6lC+WTso5j0eoL9Lm+a4URW+2/Udkk
-	oJR9eE4RD69a8Vf9dZFAsgJEpo/rOLVWWEQrZNj+HM7srDcQovOi3MAWROLsHSvnC1U3mt
-	rbS9yJOJp+Y2lMJyzzF0cPQ4FwziqqGoz3Qt84KtKVPn6xWAZKeB9+c09ImlEA==
-Date: Thu, 22 Aug 2024 10:17:46 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: microchip: sam9x60: Fix rtc/rtt clocks
-Message-ID: <20240822081746db0ce2bb@mail.local>
-References: <20240820132730.357347-1-ada@thorsis.com>
- <20240821055136.6858-1-ada@thorsis.com>
- <20240821235205b302068b@mail.local>
- <20240822-dragging-grapple-f26e4361e009@thorsis.com>
+	s=arc-20240116; t=1724314720; c=relaxed/simple;
+	bh=9MmmmklF/yizWWGEjFJjdie1UnunmTEc9qKCljXIsPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BIuBAjtoxawzIpKyyplCNBbklr0dkVjDC2rKym8lR/Ce0KkCfPwRimx9s6cpVEg/dkqm4Wp9/aZZ6E5vbEnhgiB3FP/4cF3LhIky7iwlUfu70rnJmVcubma+MX1jNhIrsonP4McvRUjMIxAPLjDVEtZ0hRdYCjw21KJo9mMQE9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uqi4OjjP; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724314719; x=1755850719;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9MmmmklF/yizWWGEjFJjdie1UnunmTEc9qKCljXIsPk=;
+  b=Uqi4OjjPqDDJXNciDK6JJHHpdqJbh0TvfWzcxlj7uvKrf+pdfqZ/GOuD
+   tAdKmG+pT5s6EkazMLbpQ5Tz9U6NX62RXZoeQ34c+pGa+ovuX9uCYim8X
+   ZosDPgBIwh8sg0oPcnT4jjcKULmDxqJZDDiG8ZaET5XVp2d2p5jaLOdPL
+   FkXD7T/2Kf0JsJSLyeC0OjXL2A6WPHAo4uayzOG+56n2yDbZcGD4MQqVg
+   A8Ro4N528oDsopyIFsevjRa58W7180kg1ZGEDn66OMA9Uvd66QfySokV+
+   qCl+aTC/TpJlsm2j3oLEC8FYzggOCrEncUv5ak5evFgvU0lpBCUMuctFx
+   Q==;
+X-CSE-ConnectionGUID: JGr9wI4DTQiY8SpvXQRN7g==
+X-CSE-MsgGUID: yi9PN/F8QQaRaqX1iRLzoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22883565"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="22883565"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 01:18:38 -0700
+X-CSE-ConnectionGUID: TeokA5NzSNCcM9jW0lovwQ==
+X-CSE-MsgGUID: 2rB7pi9BQSGJBX9jXJ4zqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="98863154"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 22 Aug 2024 01:18:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 5349E43E; Thu, 22 Aug 2024 11:18:05 +0300 (EEST)
+Date: Thu, 22 Aug 2024 11:18:05 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
+	decui@microsoft.com, John.Starks@microsoft.com
+Subject: Re: [PATCH v4 4/6] x86/tdx: Add a restriction on access to MMIO
+ address
+Message-ID: <fzaia3kslzfxj35mmarkpydlt73ha7fr6qo2ub47zfu7l6f7c4@axlrzkeqavod>
+References: <cover.1723807851.git.legion@kernel.org>
+ <cover.1724248680.git.legion@kernel.org>
+ <0d4381397c33426bda5d3b0e5541965dcebdf962.1724248680.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240822-dragging-grapple-f26e4361e009@thorsis.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <0d4381397c33426bda5d3b0e5541965dcebdf962.1724248680.git.legion@kernel.org>
 
-On 22/08/2024 08:53:59+0200, Alexander Dahl wrote:
-> Hello Alexandre,
+On Wed, Aug 21, 2024 at 04:24:36PM +0200, Alexey Gladkov wrote:
+> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
 > 
-> Am Thu, Aug 22, 2024 at 01:52:05AM +0200 schrieb Alexandre Belloni:
-> > On 21/08/2024 07:51:36+0200, Alexander Dahl wrote:
-> > > The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
-> > > sourced from the 32.768 kHz crystal oscillator.
-> > > 
-> > > (The previously used Monitoring domain slow clock (MD_SLCK) is sourced
-> > > from an internal RC oscillator which is most probably not precise enough
-> > > for real time clock purposes.)
-> > > 
-> > > Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
-> > > Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
-> > > Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> > > ---
-> > > 
-> > > Notes:
-> > >     Picked the wrong patch in the first try.  This v2 one has a slightly
-> > >     adapted commit message and more context below.
-> > >     
-> > >     This obviously requires a 32.768 kHz crystal oscillator to be present,
-> > >     but the sam9x60.dtsi does contain that, and the clock-controllers
-> > >     reference that, so I assume it's always present.
-> > 
-> > The crystal is optional so this is going to break the boards that don't
-> > have one. I don't really mind but this should probably be part of the
-> > commit message.
-> 
-> Okay right, according to the datasheet (Figure 27.1 SCKC Block
-> Diagram) you don't need that crystal, you can clear TD_OSCSEL and
-> td_slck runs from the internal rc then.  However, td_slck is always
-> present, it either sources from the internal slow rc oscillator or the
-> crystal oscillator.  And the datasheet says in section 29.1 (PMC):
-> 
->     "The Slow Clock Controller (SCKC) selects the source of TD_SLCK
->     (drives the real-time part (RTT/RTC)).  The source of MD_SLCK
->     (drives the rest of the system controller: wake-up logic,
->     watchdog, PMC, etc.) is always the slow RC oscillator."
-> 
-> md_slck and td_slck are both registered by the at91 sckc driver, and
-> the td_slck gets two parents in of_sam9x60_sckc_setup() when
-> registered by at91_clk_register_sam9x5_slow().  The parent can be
-> switched by clk_sam9x5_slow_set_parent() from sam9x5_slow_ops then,
-> correctly setting the OSCSEL bit.
-> 
-> The whole idea of the patch is giving the rtc/rtt td_slck as a parent
-> as documented in the datasheet.  I don't see how this should be
-> affected by the parents of td_slck?  Am I missing something?
-> 
+> In the case of userspace MMIO, if the user instruction + MAX_INSN_SIZE
+> straddles page, then the "fetch" in the kernel could trigger a #VE.
 
-You are right, I got confused because you were referring t the 32768 Hz
-crystal in your commit message and though you aimed at selected the
-parent of td_slck (and also, I didn't really work on the sam9x60).
+It has nothing to do with "straddling page". It's about tricking kernel
+into doing MMIO on user address.
 
+For instance, if in response to a syscall, kernel does put_user() and the
+target address is MMIO mapping in userspace, current #VE handler threat
+this access as kernel MMIO which is wrong and have security implications.
 
-> > This makes me realise that we always assumed the RC oscillator was
-> > running at 32768 while the sam9x60 datasheet refers to it has a 32kHz
-> > oscillator. However the RTC only has a 32768 divider...
+> In
+> this case the kernel would handle this second #VE as a !user_mode() MMIO.
+> That way, additional address verifications can be avoided.
 > 
-> When sourced from the internal rc oscillator, this would mean the
-> output would be incorrect, right?  How could one prove this?
-
-
-I guess you could have a look at how the RTC is drifting when selecting
-the RC osc as the parent but it will anyway be way less precise than the
-crystal so i'm not sure how you could get a conclusive result.
-
+> The scenario of accessing userspace MMIO addresses from kernelspace does
+> not seem appropriate under normal circumstances. Until there is a
+> specific usecase for such a scenario it can be disabled.
 > 
-> Greets
-> Alex
-> 
-> > 
-> > >     
-> > >     /sys/kernel/debug/clk/clk_summary content excerpt before:
-> > >     
-> > >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-> > >             md_slck                          4       4        0        32768       0          0     50000      Y      fffffea8.rtc                    no_connection_id
-> > >                                                                                                                       fffffe20.rtc                    no_connection_id
-> > >                                                                                                                       fffffe10.poweroff               no_connection_id
-> > >                                                                                                                       fffffe00.reset-controller       no_connection_id
-> > >                                                                                                                       timer@f8008000                  slow_clk
-> > >                                                                                                                       deviceless                      no_connection_id
-> > >     …
-> > >          slow_xtal                           0       0        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-> > >             slow_osc                         0       0        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-> > >                td_slck                       0       0        0        32768       0          0     50000      Y         deviceless                      no_connection_id
-> > >     
-> > >     And after:
-> > >     
-> > >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-> > >             md_slck                          2       2        0        32768       0          0     50000      Y      fffffe10.poweroff               no_connection_id
-> > >                                                                                                                       fffffe00.reset-controller       no_connection_id
-> > >                                                                                                                       timer@f8008000                  slow_clk
-> > >                                                                                                                       deviceless                      no_connection_id
-> > >     …
-> > >          slow_xtal                           1       1        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-> > >             slow_osc                         1       1        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-> > >                td_slck                       2       2        0        32768       0          0     50000      Y         fffffea8.rtc                    no_connection_id
-> > >                                                                                                                          fffffe20.rtc                    no_connection_id
-> > >                                                                                                                          deviceless                      no_connection_id
-> > > 
-> > >  arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > index 291540e5d81e..d077afd5024d 100644
-> > > --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > @@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
-> > >  				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
-> > >  				reg = <0xfffffe20 0x20>;
-> > >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> > > -				clocks = <&clk32k 0>;
-> > > +				clocks = <&clk32k 1>;
-> > >  			};
-> > >  
-> > >  			pit: timer@fffffe40 {
-> > > @@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
-> > >  				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
-> > >  				reg = <0xfffffea8 0x100>;
-> > >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> > > -				clocks = <&clk32k 0>;
-> > > +				clocks = <&clk32k 1>;
-> > >  			};
-> > >  
-> > >  			watchdog: watchdog@ffffff80 {
-> > > 
-> > > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-> > > -- 
-> > > 2.39.2
-> > > 
-> > 
-> > -- 
-> > Alexandre Belloni, co-owner and COO, Bootlin
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
+> Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+
+Cc: stable@ please.
+
+and this patch has to go ahead of the patchset, targeting x86/urgent
+branch.
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+  Kiryl Shutsemau / Kirill A. Shutemov
 
