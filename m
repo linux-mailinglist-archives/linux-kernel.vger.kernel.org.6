@@ -1,312 +1,156 @@
-Return-Path: <linux-kernel+bounces-297122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7345D95B374
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:07:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FB595B377
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA673B20EBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BFA21C22E9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA67183CB7;
-	Thu, 22 Aug 2024 11:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97EC183CAB;
+	Thu, 22 Aug 2024 11:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AUFK1Y5X"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXkTNMjt"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5928818C31;
-	Thu, 22 Aug 2024 11:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C7D178372;
+	Thu, 22 Aug 2024 11:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724324817; cv=none; b=gTOPTwjyUvVEOnZGLa7jy/GUOyDdVdrsUbJDWf9GDhdkVE/UHBLTgtSVGEH1VPgL5ANOjCi1pgfcKvNW8HUIH+0FS6V8ftBRkK+Fl3l+CR9B/MXsLuC984V0p1wdzQTVqiOZL+o2OxgS6EV9Y0YMM7XfDuuJyTdha7Ig95xP8Oo=
+	t=1724324880; cv=none; b=EewdryICgePHpserHpe9ioXPiewsI8bofiGkhLUggid4Bevf0cvENnjnf5kdQI7H4uLziCZPCRqOtR6NlEPo3P2xOz6/rob8Y6sIDdgmpSZpXsZmXtx8pGY0fbH6eVE46f2UZGRGlm2+DbwPHqUPcBEOd7CnETsSaxu6zQJCaR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724324817; c=relaxed/simple;
-	bh=0ZVpt94+DygDIwnohKVIUXL+sJL6EPM8sAViHuwMpdo=;
+	s=arc-20240116; t=1724324880; c=relaxed/simple;
+	bh=9o9vX73qQ0xPZivCudFLswGZR+ZgzahslDW/ZVYd0hY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dOmPch51zCYbZtx9o/JwYC1h98RT62j2sICBWIBYFZWk3cwMnV2kYjUyD1MQiDisqJz7orjtNBnaIOBVX7Zu1V00TbgjQQVYYGB5m85WLhzK3W9koH/aFQmeqrk67yL35ziA40TcZZ90jek3TfpyuZ4UiyWid8CKREwSZml6JWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AUFK1Y5X; arc=none smtp.client-ip=209.85.222.178
+	 To:Cc:Content-Type; b=PcQJbxzjz1ALP0m1aMFN/BX/EJYf7eGipvCV/utPvTjLDA/VdOzOrPhr79w03Lt8U8z6xm4c/BS9IEAcjs2qc2/jWmlG9jSHZr+V+e5ogfXWO6kkyaFNi0Pzr24gBgEDmpx6MPoAH8ZEagoDg1V7ESOZH0ZJCDwe6Nnjt/kuMqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DXkTNMjt; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a66b813847so41490085a.2;
-        Thu, 22 Aug 2024 04:06:55 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53351642021so455127e87.3;
+        Thu, 22 Aug 2024 04:07:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724324814; x=1724929614; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724324876; x=1724929676; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mhFLnSRnRhZUdmCU6NCqfN24MhIGO7x9kdWysvQtjLA=;
-        b=AUFK1Y5X/5IhGcD5oslhiBqABEYG2RV7yY01xo35J9kPTJ6QnRFKrtDp/mq3K+Qrtq
-         FyVrv3BGCkjrRqKZMZl9tiJ0lWjNtfiNy3pmk8yH8QOzdE9l1yjNk4AMEbrvI9VEgL2W
-         1ugSS9BrdWqfNZTcLIrI0rpttYObvvKMDTWrDDEVVr5nM1wwB/WfBQcjFydTezuL+DvW
-         MVuF8s0SWoyu0AbcLcQ7T2K43vNxTPcEyNT6kmcq1YaWYU2Jz5G2W5iiyFupobP0HIsE
-         39T0rbeI2nQ9e2PeZVv6Ut+HzwIMXYCQEmypayS/12LuzB+8W2mRH9bQkwES6OolPU4h
-         ZOog==
+        bh=kWaGIP6dDqiqkhtgs+gT8HH4PnvScWFmXNsEH5TKZxE=;
+        b=DXkTNMjtxdDJxJtkYJ8xwIdue+bWNkjp3DNd2jAelx7sCvgU3VZ/p4X+zIPDvpBvi2
+         FMqgYGPFeSzR9t8Q9lPwiy94JCjtJgPAuGRRu1X/l3PpPJ5KNS8ihZMF2czX/Uft1O+Q
+         DB23HKHOU5bNsSIo6QWoGg2EkjtkbSQRvSK0nYzeh8sX1rbuyz1c2g9XHA3XUBcLE8pw
+         n8KnpDQkFlOC+zDyJc+4jmsJ2qK7Vny8ycVhek+NE9crzDxVUpQ0195ScW8wMkzoIjCM
+         T3p6T5MyRYtpZ4jctZg9VsL+p8ezE8KQJOXnsh4I1eetmPM+ldBymyU+QM97yDX2wmuP
+         0/dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724324814; x=1724929614;
+        d=1e100.net; s=20230601; t=1724324876; x=1724929676;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mhFLnSRnRhZUdmCU6NCqfN24MhIGO7x9kdWysvQtjLA=;
-        b=TzaUBHEnTiaxgnL7u5w4UlBIOYGwzYMFFudSW1zf3OtCxOrO/K4OuYO/7iqvzk0KG3
-         ZNf17kKQK0CXlP1jxHWW5vKIthh5HIDndqDkgonOM+cJMKT1Z5bM7MObLzzqq4FIYGLG
-         VPcyRF4zpmZmiYLZJBbkx03kWlboi+zXntYMCnqzflltzKjJYaxkUFGBfdat4CdcjmLq
-         KEInYwFX53to0fPXwVONiGNJvrtVNmhT8r4TswNLmg6FtNhLUfwunvg9QBi7npQUcVx3
-         7NRdhb0TD3LgAJIOXFv99nD0mCFysy/LW409GdlLxFbHjhgHcAjSJSbJmj6WTt4dzTCC
-         ka5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUfzSY/DEfhuqLiYK1Uue0yhpPxKviOz1FLqmZL8NJQ8r2qCbX3ceuaQRBiVnBwbD8Gr1aeOSXfZVyGRZkL@vger.kernel.org, AJvYcCUnyysh8fjV7kTDp8tPq3n4qwkFPhCMDgAMQ2Rj7+zRzRG61drSMl6B29xBWGrM2HlVlf1wbtXxrRVTM5uW@vger.kernel.org, AJvYcCVTg6j4NCoHWfaUKziqad02eRLi474DPXYZvwTT8warE63kD8/zoJmTSbtmn4CdmE32/kOmasJQjDvZbhAdHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1EBl+BxK11iiWEbuDOlvQ9m54FlFmUCn6eq4M+UwVy7flOGXG
-	jODTI4IrXNYueI7Gk3SnhtU4fb789rkjftxKPr+WkxoKTOb72wx8iKEStZf+vpX4DZdxLmL315d
-	qFY+Sqt9ow+dN5qXywA5cg5HBrnw=
-X-Google-Smtp-Source: AGHT+IEOccYNjVZJV3Oe3jkHximYHlg6BEScKfw/qP43q003vFP7IKNX1itUZnwJ2e7FDx+FmLXrYCLh148vgrhTeXU=
-X-Received: by 2002:a05:620a:244d:b0:7a1:d431:8408 with SMTP id
- af79cd13be357-7a674047d73mr609271685a.37.1724324813779; Thu, 22 Aug 2024
- 04:06:53 -0700 (PDT)
+        bh=kWaGIP6dDqiqkhtgs+gT8HH4PnvScWFmXNsEH5TKZxE=;
+        b=WUuAoNQehivZAejeOQ03PTTmYxc7GKVkQxLB7Onted4YVOWx1Y1iEQJf6J4zsfR1l9
+         u+DDOSpvfC+5SxNytQnqWUbvEGmi1brS3T57QvOxCgEQ9ltkuer7DBJxM1Horw4P2HCi
+         74DlrLuR3NDqV+yDqST2oOEBFhUTdXosEJfyRtrbocw8q6lWbzxu9mzxIPLMChViW+Lm
+         W7G5aQUcm5dlV+46PBRS5Ck1GrV6lXHqVvWVeXqPO2HGTuzTXQT5MIkKamte5f+lQidW
+         T4pjGZ524T2HrYjk+xFnAguLBB0jnbf7PE3oZPNmnDNWpfOAA2okRMh8DRcnr93ogfbJ
+         pQUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7yH8Af4HO2xEFNKPj9jaXNARYLEn3P8jnz/0uRn0AeRvTbdx1xzl7WwaQ0KdHkSAzzXkSWm/yYc4=@vger.kernel.org, AJvYcCXd9n90uty1ZHpEQOMwKmv23UeCEzlyR9BXfijqcjVyWMekx2LftT+ZWOlT2cLEMOPms/gtx9mPemFl9G6F@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza7aTDx4iogNCNq4ZhRlsZykHVfu6ulPQeH9Y2QkAvGuNRaEvS
+	vlOvhnf61l1nRJ/bJyxAc9C83+ZpRb31AHrYXfQTOBo8GX3XdzB5tGdZR54lEsFWlipbKGE3Zno
+	d169O1P6/SFe6pR7wxjc0TAbRGjM=
+X-Google-Smtp-Source: AGHT+IHxKn71fneXC0mOrCUQ8O/UhiKqicMYXk24eeQeis0vIsw8HOfefDPZQlRbqHP/GYh/E3J4H1ACbYbxJuMH6XA=
+X-Received: by 2002:a05:6512:3d91:b0:532:ef22:eb4e with SMTP id
+ 2adb3069b0e04-5334859576bmr2742345e87.54.1724324876122; Thu, 22 Aug 2024
+ 04:07:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822012523.141846-1-vinicius.gomes@intel.com> <20240822012523.141846-11-vinicius.gomes@intel.com>
-In-Reply-To: <20240822012523.141846-11-vinicius.gomes@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 22 Aug 2024 13:06:42 +0200
-Message-ID: <CAOQ4uxizZ0wM4LPUkAnpJT7ouJGeEa7FPUZqe9M17xL1w_gddQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/16] overlayfs/file: Convert to cred_guard()
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: brauner@kernel.org, hu1.chen@intel.com, miklos@szeredi.hu, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240819072052.8722-1-eichest@gmail.com> <20240819072052.8722-2-eichest@gmail.com>
+ <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
+In-Reply-To: <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 22 Aug 2024 08:07:44 -0300
+Message-ID: <CAOMZO5CeT+LvQ__3GUf6teL3=8pZe5qxmFffYJX-h3E27UXwtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master mode
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, Frank.Li@nxp.com, 
+	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 3:25=E2=80=AFAM Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Replace the override_creds_light()/revert_creds_light() pairs of
-> operations with cred_guard()/cred_scoped_guard().
->
-> Only ovl_copyfile() and ovl_fallocate() use cred_scoped_guard(),
-> because of 'goto', which can cause the cleanup flow to run on garbage
-> memory.
->
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> ---
->  fs/overlayfs/file.c | 64 ++++++++++++++++++---------------------------
->  1 file changed, 25 insertions(+), 39 deletions(-)
->
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 5533fedcbc47..97aa657e6916 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -31,7 +31,6 @@ static struct file *ovl_open_realfile(const struct file=
- *file,
->         struct inode *inode =3D file_inode(file);
->         struct mnt_idmap *real_idmap;
->         struct file *realfile;
-> -       const struct cred *old_cred;
->         int flags =3D file->f_flags | OVL_OPEN_FLAGS;
->         int acc_mode =3D ACC_MODE(flags);
->         int err;
-> @@ -39,7 +38,7 @@ static struct file *ovl_open_realfile(const struct file=
- *file,
->         if (flags & O_APPEND)
->                 acc_mode |=3D MAY_APPEND;
->
-> -       old_cred =3D ovl_override_creds_light(inode->i_sb);
-> +       cred_guard(ovl_creds(inode->i_sb));
->         real_idmap =3D mnt_idmap(realpath->mnt);
->         err =3D inode_permission(real_idmap, realinode, MAY_OPEN | acc_mo=
-de);
->         if (err) {
-> @@ -51,7 +50,6 @@ static struct file *ovl_open_realfile(const struct file=
- *file,
->                 realfile =3D backing_file_open(&file->f_path, flags, real=
-path,
->                                              current_cred());
->         }
-> -       revert_creds_light(old_cred);
->
->         pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
->                  file, file, ovl_whatisit(inode, realinode), file->f_flag=
-s,
-> @@ -182,7 +180,6 @@ static loff_t ovl_llseek(struct file *file, loff_t of=
-fset, int whence)
->  {
->         struct inode *inode =3D file_inode(file);
->         struct fd real;
-> -       const struct cred *old_cred;
->         loff_t ret;
->
->         /*
-> @@ -211,9 +208,8 @@ static loff_t ovl_llseek(struct file *file, loff_t of=
-fset, int whence)
->         ovl_inode_lock(inode);
->         real.file->f_pos =3D file->f_pos;
->
-> -       old_cred =3D ovl_override_creds_light(inode->i_sb);
-> +       cred_guard(ovl_creds(inode->i_sb));
->         ret =3D vfs_llseek(real.file, offset, whence);
-> -       revert_creds_light(old_cred);
->
->         file->f_pos =3D real.file->f_pos;
->         ovl_inode_unlock(inode);
-> @@ -385,7 +381,6 @@ static ssize_t ovl_splice_write(struct pipe_inode_inf=
-o *pipe, struct file *out,
->  static int ovl_fsync(struct file *file, loff_t start, loff_t end, int da=
-tasync)
->  {
->         struct fd real;
-> -       const struct cred *old_cred;
->         int ret;
->
->         ret =3D ovl_sync_status(OVL_FS(file_inode(file)->i_sb));
-> @@ -398,9 +393,8 @@ static int ovl_fsync(struct file *file, loff_t start,=
- loff_t end, int datasync)
->
->         /* Don't sync lower file for fear of receiving EROFS error */
->         if (file_inode(real.file) =3D=3D ovl_inode_upper(file_inode(file)=
-)) {
-> -               old_cred =3D ovl_override_creds_light(file_inode(file)->i=
-_sb);
-> +               cred_guard(ovl_creds(file_inode(file)->i_sb));
->                 ret =3D vfs_fsync_range(real.file, start, end, datasync);
-> -               revert_creds_light(old_cred);
->         }
->
->         fdput(real);
-> @@ -424,7 +418,6 @@ static long ovl_fallocate(struct file *file, int mode=
-, loff_t offset, loff_t len
->  {
->         struct inode *inode =3D file_inode(file);
->         struct fd real;
-> -       const struct cred *old_cred;
->         int ret;
->
->         inode_lock(inode);
-> @@ -438,9 +431,8 @@ static long ovl_fallocate(struct file *file, int mode=
-, loff_t offset, loff_t len
->         if (ret)
->                 goto out_unlock;
->
-> -       old_cred =3D ovl_override_creds_light(file_inode(file)->i_sb);
-> -       ret =3D vfs_fallocate(real.file, mode, offset, len);
-> -       revert_creds_light(old_cred);
-> +       cred_scoped_guard(ovl_creds(file_inode(file)->i_sb))
-> +               ret =3D vfs_fallocate(real.file, mode, offset, len);
->
+Hi Stefan and Oleksij,
 
-I find this syntax confusing. Even though it is a valid syntax,
-I prefer that if there is a scope we use explicit brackets for it even
-if the scope is
-a single line.
+On Wed, Aug 21, 2024 at 8:01=E2=80=AFAM Fabio Estevam <festevam@gmail.com> =
+wrote:
 
-How about using:
-       {
-               cred_guard(ovl_creds(file_inode(file)->i_sb));
-               ret =3D vfs_fallocate(real.file, mode, offset, len);
-       }
+> This fixes a pca953x probe error on an imx8mp board running linux-stable =
+6.6:
+>
+> [    1.893260] pca953x 2-0020: failed writing register
+> [    1.898258] pca953x 2-0020: probe with driver pca953x failed with erro=
+r -11
+>
+> Could you please add a Fixes tag and Cc stable so that this can reach
+> the stable kernels?
+>
+> Tested-by: Fabio Estevam <festevam@denx.de>
 
-It is more clear and helps averting the compiler bug(?).
+I am sorry, but I have to withdraw my Tested-by tag.
 
->         /* Update size */
->         ovl_file_modified(file);
-> @@ -456,16 +448,14 @@ static long ovl_fallocate(struct file *file, int mo=
-de, loff_t offset, loff_t len
->  static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int=
- advice)
->  {
->         struct fd real;
-> -       const struct cred *old_cred;
->         int ret;
->
->         ret =3D ovl_real_fdget(file, &real);
->         if (ret)
->                 return ret;
->
-> -       old_cred =3D ovl_override_creds_light(file_inode(file)->i_sb);
-> +       cred_guard(ovl_creds(file_inode(file)->i_sb));
->         ret =3D vfs_fadvise(real.file, offset, len, advice);
-> -       revert_creds_light(old_cred);
->
->         fdput(real);
->
-> @@ -484,7 +474,6 @@ static loff_t ovl_copyfile(struct file *file_in, loff=
-_t pos_in,
->  {
->         struct inode *inode_out =3D file_inode(file_out);
->         struct fd real_in, real_out;
-> -       const struct cred *old_cred;
->         loff_t ret;
->
->         inode_lock(inode_out);
-> @@ -506,26 +495,25 @@ static loff_t ovl_copyfile(struct file *file_in, lo=
-ff_t pos_in,
->                 goto out_unlock;
->         }
->
-> -       old_cred =3D ovl_override_creds_light(file_inode(file_out)->i_sb)=
-;
-> -       switch (op) {
-> -       case OVL_COPY:
-> -               ret =3D vfs_copy_file_range(real_in.file, pos_in,
-> -                                         real_out.file, pos_out, len, fl=
-ags);
-> -               break;
-> -
-> -       case OVL_CLONE:
-> -               ret =3D vfs_clone_file_range(real_in.file, pos_in,
-> -                                          real_out.file, pos_out, len, f=
-lags);
-> -               break;
-> -
-> -       case OVL_DEDUPE:
-> -               ret =3D vfs_dedupe_file_range_one(real_in.file, pos_in,
-> -                                               real_out.file, pos_out, l=
-en,
-> -                                               flags);
-> -               break;
-> +       cred_scoped_guard(ovl_creds(file_inode(file_out)->i_sb)) {
-> +               switch (op) {
-> +               case OVL_COPY:
-> +                       ret =3D vfs_copy_file_range(real_in.file, pos_in,
-> +                                                 real_out.file, pos_out,=
- len, flags);
-> +                       break;
-> +
-> +               case OVL_CLONE:
-> +                       ret =3D vfs_clone_file_range(real_in.file, pos_in=
-,
-> +                                                  real_out.file, pos_out=
-, len, flags);
-> +                       break;
-> +
-> +               case OVL_DEDUPE:
-> +                       ret =3D vfs_dedupe_file_range_one(real_in.file, p=
-os_in,
-> +                                                       real_out.file, po=
-s_out, len,
-> +                                                       flags);
-> +                       break;
-> +               }
->         }
-> -       revert_creds_light(old_cred);
-> -
->         /* Update size */
->         ovl_file_modified(file_out);
->
+For debugging purposes, I kept 'fw_devlink=3Doff' in the kernel command
+line and that's what made it work.
 
-Maybe we should just place cred_guard(ovl_creds(file_inode(file_out)->i_sb)=
-)
-in ovl_copy_file_range()?
+Removing 'fw_devlink=3Doff' I still get the probe failure, even with all
+the series from Stefan applied:
 
-I don't think that the order of ovl_override_creds() vs. inode_lock()
-really matters?
+[    1.849097] pca953x 2-0020: supply vcc not found, using dummy regulator
+[    1.855857] pca953x 2-0020: using no AI
+[    1.859965] i2c i2c-2: <i2c_imx_write> write failed with -6
+[    1.865578] pca953x 2-0020: failed writing register: -6
 
-Thanks,
-Amir.
+In my case, I can get the pca953x driver to probe successfully in one
+of the following cases:
+
+1. Select pca953x as a module instead of built-in
+
+or
+
+2. Pass 'fw_devlink=3Doff' in the kernel command line
+
+or
+
+3.  Register the i2c-imx driver as module_platform_driver():
+
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -1586,17 +1586,7 @@ static struct platform_driver i2c_imx_driver =3D {
+        .id_table =3D imx_i2c_devtype,
+ };
+
+-static int __init i2c_adap_imx_init(void)
+-{
+-       return platform_driver_register(&i2c_imx_driver);
+-}
+-subsys_initcall(i2c_adap_imx_init);
+-
+-static void __exit i2c_adap_imx_exit(void)
+-{
+-       platform_driver_unregister(&i2c_imx_driver);
+-}
+-module_exit(i2c_adap_imx_exit);
++module_platform_driver(i2c_imx_driver);
+
+or
+
+4. Use the NXP vendor kernel imx_6.1.22_2.0.0 kernel
+
+Stefan, do you get the arbitration errors if you try methods 2 or 3 above?
 
