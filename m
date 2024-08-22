@@ -1,126 +1,94 @@
-Return-Path: <linux-kernel+bounces-297588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D8E95BB24
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:57:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA0395BB34
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6DD1C23A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:57:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0019B26E88
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7918B1CE711;
-	Thu, 22 Aug 2024 15:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230821CEAB4;
+	Thu, 22 Aug 2024 15:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fpdodkho"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I3O0vdCZ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB1B1CCB42
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0E41CE71B
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724342107; cv=none; b=gUx4dhIg7yJ2L7l9ntSztHUmmeLFFzUDchdftdWs9w8f/AwXBsKyIjWYdMhdbGRrfD6B6rp6tksnVZbtF5OD+uBm3v7icDi/mXko1zE5uezSe91lU1pAamhPZIYTYpipcCQKFsZNYAZycj4oo4qiGmJ87R37E4gmOkqOGVwrfYg=
+	t=1724342121; cv=none; b=PagTOixaC+78mtyWyiuNZy7tUABV90wZE8SXP4Z/E3jLpDQA2gy+8jkBECmMN18MxgroCPjWlcvu3zt8A4YDbV3tDKFE8b9624nSZa/Q0mnVoMtZ4GeFZ1DI85NO+AMvwxoz3j5jFiWL629SnM16bT2xaEufIG3m9l9bMVAX9hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724342107; c=relaxed/simple;
-	bh=T6FKB7FiGWOqnwODINwXV6nvlWEjZs6TSxWvbCgu9q4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AoKtjRbzc3zcbxjrvia1LqjlQvvrhMV55RvMGb5M0hvt1D/X5zqNLzinYstCmht8tGJh+KwZBTCs/JAN2aMh3dIsfifSnhEIpVX8MXSH3JRwxJzdiUc1f0BuC9a+G5aN+82nq4nlaBV9qU7yA5FUtSMtYoSZcq0yxIfoevGfa48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fpdodkho; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1724342104; x=1755878104;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=T6FKB7FiGWOqnwODINwXV6nvlWEjZs6TSxWvbCgu9q4=;
-  b=fpdodkho4YekUfJH0Fxgv2g4O8qGugfvP4TVyE9IebV6XBa9JreMD+cr
-   1CuA0/9p8QnEU1nWfmZB0PGR5IMD5ddqghqwGJ7QQkm4uTk2NydRBXBSa
-   SkWQSVIb0OpBW6+DQTcaasEDhnvOy6xnv2vZBMAJ/eMkDChn+WwYHsdJW
-   NCcQwPD31gZMeinIRUau9HeWRWWUoEbLpxPqf4Z7V/tPOmJzXHXrlhEXk
-   3QGMBDn4RHNn1lB9os0BDBa1My2P/c44grKPz/3s9zXS9/EEsqJiMM7mh
-   av49X81y+YEHAoXP2tToIuIZrHjQf0wtQuHbdxn55wlhuLT26dzZTPgEi
-   A==;
-X-CSE-ConnectionGUID: SN1/6utRSOOKy8/CQdqDBg==
-X-CSE-MsgGUID: kRwOVHM1RAC6HedrkcyYKA==
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="198218186"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Aug 2024 08:55:03 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 22 Aug 2024 08:54:33 -0700
-Received: from [10.180.116.170] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 22 Aug 2024 08:54:29 -0700
-Message-ID: <a65c4728-4cec-4fb0-a00f-052b0e08d7c1@microchip.com>
-Date: Thu, 22 Aug 2024 17:54:53 +0200
+	s=arc-20240116; t=1724342121; c=relaxed/simple;
+	bh=jdwuLAb4tfrdQ0WNu15vvEX060UAwSVPW6HKAaf2qyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NMreHKGu5wLuDde13bG1SDoOmOZw/nCC4NcnsX1gx4G/FYDdxz2aVae4/dr/hBAybZajDgwIm8T9UkHaBDAJKu/qNCIynKnYcQn33e2mNZo/V58KyA/0Iw4/tq95I9cWYnBO1k4B4ES9Q9AGoHBk7poigBYpa+/Rzbe9kkWyAQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I3O0vdCZ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zDYD8mwxX6eQtQZYTIeuMaOPon4Wwg8QX/pqSpudFzE=; b=I3O0vdCZyUOzzAjF5VVolfkg70
+	jJJ85HbyzHF7slSTbm8VM/w/vuaL/IDydFRo4QsiPXUdCrlAsiKZqW/7AubgvM5x7UbfJVCUv0P6y
+	OcFHVZu3enA5oCKgHSzR6Oz8tljkCpv4VJg4icoxEc2pr2j7IpdgOZIHcapANlRvimplrFyvcZ9Sh
+	uvhthsMVN1W9R+n6RgkXYMbB5a+lm6K8WCEMYKG5w1sK+cSxKdA+/RKH11kQ2z/Nw3X1+iy3G0nCP
+	8tARGdH+DZatAebmUkWpdLE695TJl4xOFFGS4acKlkyZ3i4kuXHTAdPsCvb3MlQHQRAr20I0cqxk1
+	5bGtR6BQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1shA9Q-0000000AgSE-1KXQ;
+	Thu, 22 Aug 2024 15:55:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E4900300642; Thu, 22 Aug 2024 17:55:03 +0200 (CEST)
+Date: Thu, 22 Aug 2024 17:55:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Hongyan Xia <hongyan.xia2@arm.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [PATCH 00/24] Complete EEVDF
+Message-ID: <20240822155503.GC17097@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <c6a673d4-ee16-4458-bf68-8f75d5062984@arm.com>
+ <717e6294-5c62-415c-bc8b-5da1d8ac3642@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mtd: nand: raw: atmel: Add message on DMA usage
-Content-Language: en-US, fr-FR
-To: Alexander Dahl <ada@thorsis.com>, <linux-mtd@lists.infradead.org>
-CC: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
-	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Kees Cook <kees@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support"
-	<linux-arm-kernel@lists.infradead.org>, open list
-	<linux-kernel@vger.kernel.org>
-References: <20240821142006.645306-1-ada@thorsis.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20240821142006.645306-1-ada@thorsis.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <717e6294-5c62-415c-bc8b-5da1d8ac3642@arm.com>
 
-On 21/08/2024 at 16:20, Alexander Dahl wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Wed, Aug 21, 2024 at 10:46:07AM +0100, Hongyan Xia wrote:
+> Okay, in case the trace I provided isn't clear enough, I traced the crash to
+> a call chain like this:
 > 
-> Like for other atmel drivers (serial, crypto, mmc, …), too.
+> dl_server_start()
+> 	enqueue_dl_entity()
+> 		update_stats_enqueue_dl()
+> 			update_stats_enqueue_sleeper_dl()
+> 				__schedstats_from_dl_se()
+> 					dl_task_of() <---------- crash
 > 
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> If I undefine CONFIG_SCHEDSTATS, then it boots fine, and I wonder if this is
+> the reason why other people are not seeing this. This is probably not EEVDF
+> but DL refactoring related.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Thanks for the report -- I'll see if I can spot something. Since you
+initially fingered these eevdf patches, could you confirm or deny that
+changing:
 
-> ---
-> 
-> Notes:
->      v1 -> v2:
->      - make info message conditional (thanks Miquel)
-> 
->   drivers/mtd/nand/raw/atmel/nand-controller.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> index dc75d50d52e8..f9ccfd02e804 100644
-> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> @@ -2049,7 +2049,10 @@ static int atmel_nand_controller_init(struct atmel_nand_controller *nc,
->                  dma_cap_set(DMA_MEMCPY, mask);
-> 
->                  nc->dmac = dma_request_channel(mask, NULL, NULL);
-> -               if (!nc->dmac)
-> +               if (nc->dmac)
-> +                       dev_info(nc->dev, "using %s for DMA transfers\n",
-> +                                dma_chan_name(nc->dmac));
-> +               else
->                          dev_err(nc->dev, "Failed to request DMA channel\n");
->          }
-> 
-> 
-> base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-> --
-> 2.39.2
-> 
+  kernel/sched/features.h:SCHED_FEAT(DELAY_DEQUEUE, true)
 
+to false, makes any difference in the previously failing case?
 
