@@ -1,89 +1,118 @@
-Return-Path: <linux-kernel+bounces-296851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036B195AFC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:59:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA25C95AFC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87616B23485
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A83AB2843F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E3416F0DE;
-	Thu, 22 Aug 2024 07:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9153B16C854;
+	Thu, 22 Aug 2024 07:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8+yh6yP"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uCenwbu9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB87E16DC15;
-	Thu, 22 Aug 2024 07:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15B51D12EA;
+	Thu, 22 Aug 2024 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724313577; cv=none; b=P3j2WlL6wWybFjtiiM/wfq39yk84bCIm1VUMH42vYIve0Rqn7XexT7VHRuiJESjX3KCpVU4GeCb4KinYi1N5LxJyK6F8XARdfW0QKkpU8kzF4YLAHN5ly3bk3Wxa5y8jr4Mevfe0ttZPAA9wtQuH2DtVYeFN7TZZqWWFtAsJ5J8=
+	t=1724313576; cv=none; b=QkldQwL9XhrSsyx6QFMHc6mebLODPzAjxXZR5jMcnSAWZNvT0M6m6Qg+/y72gdE5Mfsrt2wicjcqyDol8VhXK0kUiJtRUFpQ/nSNqJ6KukfyFx+g0sFEj5WkSMYZPjqGHYzpvvczvHB8iH3rs6NZhqk7XbVhy3ZEuS/634/YvNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724313577; c=relaxed/simple;
-	bh=RYUJXFHMwWOGiIu4bdUc7sNiib6veLbjl54CFkPTusM=;
+	s=arc-20240116; t=1724313576; c=relaxed/simple;
+	bh=OMRaVUfkgBOS/ydy85MiTpiO8SuezrvTPeHkVgl84Ng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VX3swm3ze3Sc4emUMbsMfnYUKxz5Jb/ZiwnJ7eO8SX/KYt6/WBxiJSUNhZAnKIPBEuM8tjEVh/YSJcakYu31FS6+va1RfDbgR7xrcoYy51SuIYyB1fF8J8chv+o24MkihhV3AvlVAsRIaaU/JEXNAL+KWXd9KiMvF7snrOwABvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8+yh6yP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF079C4AF09;
-	Thu, 22 Aug 2024 07:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724313577;
-	bh=RYUJXFHMwWOGiIu4bdUc7sNiib6veLbjl54CFkPTusM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKcxTqZNaYph7r5BzilNB89PFQezdHFEpen0TTcj4SFBMewKTiyKZEN2Bpg2fAZWGwfn4rbXH7EsrQb2BaIo2OiEUhHWj1qcKnL4SrmMNSiDAnhTDF/p4uPGk086vDAl6aFE40jyIGEnBOsbnJARrzdJZcYoNwHgjuv9seUEMvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uCenwbu9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFA1C4AF0C;
+	Thu, 22 Aug 2024 07:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724313576;
+	bh=OMRaVUfkgBOS/ydy85MiTpiO8SuezrvTPeHkVgl84Ng=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S8+yh6yPts3jDToMQfi0amHJEvv5QhVfDFuNPKk9eUBKSxrfdS3c4SPT+KkTDKtaD
-	 Wgt3TdL0Ft/my0XdKjXWeW2ckqUDzSLAVgnnCpdNqxu14M8q+AgvFtFQngQC8p6C2S
-	 zkbh5x/7Z9srUKZOEBRUUt6h8jaWtkQZVPOwdD6qLcn9wRjTJKqHp/AH6NjxC4UDpe
-	 NZLHQ9PeNKERVK51absSTQCJcRZbE36uZaOOkE5FoD9ZwA2C2xVlJ0mwcCdj6zc6UQ
-	 ijrtzIgEs2ZHaVgsp3ow4a4vIwrRazUmB6bV6ACOJu9aCoQpPgfC/lvD3uiKhbdQBg
-	 IVxQooqgbl5gA==
-Date: Thu, 22 Aug 2024 09:59:29 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
- controller for IPQ SoC
-Message-ID: <gnf37fpnqihv4z3qq3jkrqaokapj5lgtgoonnhagjlua4js5kl@pn7y53pqmddf>
-References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
- <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+	b=uCenwbu9YYwwECz8i1SyhtXbJlNMkFAxdqOYES/Pf6gN7i2siRxEVL36XQ6eqmClg
+	 iLVnZIB6ogF03Gjps2NdMpSiYDG7TLarv78PkVeaHgEuHnHJpCRLh46Sm3Nha0H6oZ
+	 OTWDrybEkiRuQ28xLD006PC2NVQLSagduC2OeQKI=
+Date: Thu, 22 Aug 2024 15:59:33 +0800
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
+	shijie.cai@samsung.com, stable@vger.kernel.org
+Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
+ buffer address access
+Message-ID: <2024082212-copper-oversight-f84f@gregkh>
+References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
+ <20240815064836.1491-1-selvarasu.g@samsung.com>
+ <2024081618-singing-marlin-2b05@gregkh>
+ <4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
+ <2024081700-skittle-lethargy-9567@gregkh>
+ <c477fdb2-a92a-4551-b6c8-38ada06914c6@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+In-Reply-To: <c477fdb2-a92a-4551-b6c8-38ada06914c6@samsung.com>
 
-On Tue, Aug 20, 2024 at 10:02:42PM +0800, Luo Jie wrote:
-> The CMN PLL controller provides clocks to networking hardware blocks
-> on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
-> and produces output clocks at fixed rates. These output rates are
-> predetermined, and are unrelated to the input clock rate. The output
-> clocks are supplied to the Ethernet hardware such as PPE (packet
-> process engine) and the externally connected switch or PHY device.
+On Sat, Aug 17, 2024 at 07:13:53PM +0530, Selvarasu Ganesan wrote:
 > 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
->  2 files changed, 85 insertions(+)
+> On 8/17/2024 10:47 AM, Greg KH wrote:
+> > On Fri, Aug 16, 2024 at 09:13:09PM +0530, Selvarasu Ganesan wrote:
+> >> On 8/16/2024 3:25 PM, Greg KH wrote:
+> >>> On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
+> >>>> This commit addresses an issue where the USB core could access an
+> >>>> invalid event buffer address during runtime suspend, potentially causing
+> >>>> SMMU faults and other memory issues in Exynos platforms. The problem
+> >>>> arises from the following sequence.
+> >>>>           1. In dwc3_gadget_suspend, there is a chance of a timeout when
+> >>>>           moving the USB core to the halt state after clearing the
+> >>>>           run/stop bit by software.
+> >>>>           2. In dwc3_core_exit, the event buffer is cleared regardless of
+> >>>>           the USB core's status, which may lead to an SMMU faults and
+> >>>>           other memory issues. if the USB core tries to access the event
+> >>>>           buffer address.
+> >>>>
+> >>>> To prevent this hardware quirk on Exynos platforms, this commit ensures
+> >>>> that the event buffer address is not cleared by software  when the USB
+> >>>> core is active during runtime suspend by checking its status before
+> >>>> clearing the buffer address.
+> >>>>
+> >>>> Cc: stable@vger.kernel.org # v6.1+
+> >>> Any hint as to what commit id this fixes?
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >>
+> >> Hi Greg,
+> >>
+> >> This issue is not related to any particular commit. The given fix is
+> >> address a hardware quirk on the Exynos platform. And we require it to be
+> >> backported on stable kernel 6.1 and above all stable kernel.
+> > If it's a hardware quirk issue, why are you restricting it to a specific
+> > kernel release and not a specific kernel commit?  Why not 5.15?  5.4?
+> 
+> Hi Greg,
+> 
+> I mentioned a specific kernel because our platform is set to be tested 
+> and functioning with kernels 6.1 and above, and the issue was reported 
+> with these kernel versions. However, we would be fine if all stable 
+> kernels, such as 5.4 and 5.15, were backported. In this case, if you 
+> need a new patch version to update the Cc tag for all stable kernels, 
+> please suggest the Cc tag to avoid confusion in next version.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I'll fix it up when applying it, thanks.
 
-Best regards,
-Krzysztof
-
+greg k-h
 
