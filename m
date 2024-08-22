@@ -1,138 +1,125 @@
-Return-Path: <linux-kernel+bounces-296576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7E595AC53
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:00:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAAA95AC55
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF811F22D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C8C1C21F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE44B1CD3F;
-	Thu, 22 Aug 2024 04:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F55A364CD;
+	Thu, 22 Aug 2024 04:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KNKi5Lzh"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WZUTdksn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF6F6FB9
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3582E416;
+	Thu, 22 Aug 2024 04:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724299247; cv=none; b=HW+I5oizR8AmbjnN8XdJZxpLyZucg/ULC0atIK3l81U3fFdoHAPz1HAhhjdhZnqyj2GXeJK/fgJHXkshSKgpxNzA2lQrUDlV0qBGXetqpsPGbeKdwR0Cv6iqDaIl/lGgSLYcxwpRKhHInin6bs35Ssw0LFVZBofdvsUIkjCrUIQ=
+	t=1724299267; cv=none; b=Gm/ZbaeInhGkz4RcGpT21LRzExd4nPNkcq/+WxDPTgJUITJxsCFWNGiQgW/R0Ne3pGakLEze8vBbfup2QqmLhrxPRZKO8mn+m2Db1/wjcg72He+dfPOXWANiMcml0IiTjRNj04KJvolHwnnJLidOVDAf9SxwQvD6fyXLCK/bEd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724299247; c=relaxed/simple;
-	bh=ZNBnb2MBRZChM5p5DlBJ+j/8JEsahVpm4SRU8iYMuQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rYLOjCgFyr8fMJzavyDf1viXRhSLHThoa5C6EhmIQrHS/wgyTlFdBTO0Y/Ic7j02DfU3UXLL3fwYl/XPWFUzs1Hl7zvo4mIWbyShZa1WdUOclU2Nu1Lb8S/pi9NbedeATUmH+hZjW9oQnZTqwHzYM6PfY/seEWIwZBr454yLHIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KNKi5Lzh; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d1c655141so279898b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:00:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1724299244; x=1724904044; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IC6CfuTtEHvKBNzqsZ0ny4OYlztAT2lA7Mfqh0zGmfs=;
-        b=KNKi5LzhtNSFo26ZLfBagzgENkjC8K8qCqqmHYjarZ/9BSb64LL01XzxHihlwRr5IK
-         dLRVUXkUDUvDC3Vs+aaPGsymj1WJsTgVGJVirr83AwrwiyyLLSIkGqrmZB2da9pMIGpl
-         uul/k9zuy8KlSpyZaN9OEJY/vl0TfLiBvSqzw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724299244; x=1724904044;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IC6CfuTtEHvKBNzqsZ0ny4OYlztAT2lA7Mfqh0zGmfs=;
-        b=ty68wzr0Di4qHFfjaiHVLKo35S3OoBzv1+nwgeILGwLhuMQLHSyNqkLr0nhHvgxyiz
-         vDCRDF+0yhidG07m3a0yeSdjlkLlh8EEX74VFpyuMZYtwYodxC3pFsgddaqlUL0K/3hC
-         g/Q6AIiNUq0X9h5ojRN47MP28mJ/D8f+JLpfors7RSK0x0+FJ7d+3PNtNwPo7GUftZc2
-         t4j89ZbGIvHg/mC+JANEzf2FKdeWtBkzeDlJzGSkUQgH/yZxjbF6bKg2UObDKZ8lWP5P
-         gg09dZPahL0MI2gjdK0a3OijNIHaxmTkm2O3vAYGlEdXEX02r/x3qw0KFL+Wh9p7n0hU
-         dJJw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/roPWq/n8huuZmM/VLiz4uz4E1PGxC043+eT/zqc5BUjhk/yH6spQf80a9g7Gh2sTH0QsrnDxg5iUovw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ7hBvolsJwsH3X/hl1j/hENQ3cWwTyQtOMzF8X/XMhN5jajdu
-	zyktmpOLhYZ536LjOnPOWSEQxJEXPf4UjIbdePknB8j+vnsXX6bVcQxxOLTXbrw=
-X-Google-Smtp-Source: AGHT+IGpiUh7868KEC0x1i2/YY+kSSNWvJC4PyummMLhe5yqtFWXCz4fCtcDkQFRLNryHKTDBEqj/A==
-X-Received: by 2002:a05:6a21:918a:b0:1c6:a83c:d5db with SMTP id adf61e73a8af0-1cad7fd2893mr4553030637.31.1724299244174;
-        Wed, 21 Aug 2024 21:00:44 -0700 (PDT)
-Received: from [172.20.0.208] ([218.188.70.188])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad55b2asm391187a12.71.2024.08.21.21.00.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 21:00:43 -0700 (PDT)
-Message-ID: <d18ac213-a4cf-4a29-a696-0e99b45b96e2@linuxfoundation.org>
-Date: Wed, 21 Aug 2024 22:00:40 -0600
+	s=arc-20240116; t=1724299267; c=relaxed/simple;
+	bh=F/gSLtnKYiZ+iHz/9zkLaDxiaF4alUERFDL39holi40=;
+	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
+	 Message-ID:In-Reply-To; b=fNujtI0BoY5sA+qhlGsgcjUHVgFvFiLBqRokKZpuOmKIG4qj0iYXnkywSLLC9AE5UwrbM8FwHE2pPTO9Ar20oSPi0Ump3KgMVZyL5eiTfMpmER0W0rsqCtPgDDtCwF8jtx/dYYo8TSMy8wIQ2lNiaXLQ9lPr5B6ZQRiHrf74No4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WZUTdksn; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724299266; x=1755835266;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=F/gSLtnKYiZ+iHz/9zkLaDxiaF4alUERFDL39holi40=;
+  b=WZUTdksnv/dblUFuXguSuD2YPePL+ptGid+Kvw/LpvkKCwdn4R0p1miN
+   swk2IGeay21ONHyrsqk0I2i0t32SdRfJZJi0mSnP73PnecDgOievdmn4P
+   lSftQ9+k0xYNrlV8yLc8DwR12imc+k5V8JFXqedM5rv3BDKJpkiBHf2bu
+   ci5JO+ROTMCfULbJPThSb01tRJ94nBLaxUTli/1yaw6UnJlv8sarbkIkO
+   A90QM5tvfR+Swvscl0bOA308gbWPKxdn+bNFsXLW/ms8m7Mfm8d6yQjXw
+   h/bnbqpW00nO2Ti3WtpxoJlzUPZ4/AIPiyAl6XKpzE/LOPrL6IZ73oXIR
+   w==;
+X-CSE-ConnectionGUID: 7Ts3LtA1QSedT9+9L64VXA==
+X-CSE-MsgGUID: cw0bsFtvQ0iH7caB8WWNRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="26561838"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="26561838"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 21:01:05 -0700
+X-CSE-ConnectionGUID: Yt8gNyoYQSuimIeoYG0wlw==
+X-CSE-MsgGUID: LJUScDFqQImHR1DrzI32DA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="61167903"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.246.119.97])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 21 Aug 2024 21:00:56 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To: jarkko@kernel.org, dave.hansen@linux.intel.com, kai.huang@intel.com,
+ tj@kernel.org, mkoutny@suse.com, chenridong@huawei.com,
+ linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
+ cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ hpa@zytor.com, sohil.mehta@intel.com, tim.c.chen@linux.intel.com, "Haitao
+ Huang" <haitao.huang@linux.intel.com>
+Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
+ zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
+ yangjie@microsoft.com, chrisyan@microsoft.com
+Subject: Re: [PATCH v16 09/16] x86/sgx: Add basic EPC reclamation flow for
+ cgroup
+References: <20240821015404.6038-1-haitao.huang@linux.intel.com>
+ <20240821015404.6038-10-haitao.huang@linux.intel.com>
+Date: Wed, 21 Aug 2024 23:00:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] include: uapi: drm: drm_mode: fix documentation and
- coding style issue
-To: Nihar Chaithanya <niharchaithanya@gmail.com>,
- maarten.lankhorst@linux.intel.com
-Cc: tzimmermann@suse.de, linux-kernel@vger.kernel.org, airlied@gmail.com,
- daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240821202039.63516-1-niharchaithanya@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240821202039.63516-1-niharchaithanya@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+From: "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2svz3rfywjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <20240821015404.6038-10-haitao.huang@linux.intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 
-On 8/21/24 14:20, Nihar Chaithanya wrote:
-> Fix documentation and coding style issue in include/uapi/drm/drm_mode.h.
-> Changes include:
-> - Adding description of function parameter.
-> - Correcting block comment style.
-> 
-> Fix documentation warnings in include/uapi/drm/drm_mode.h encountered
-> from make htmldocs:
-> ./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'width' not described in 'drm_plane_size_hint'
-> ./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'height' not described in 'drm_plane_size_hint'
-> 
-> Fix coding style warning in include/uapi/drm/drm_mode.h reported
-> by checkpatch.pl:
-> WARNING: Block comments use a trailing */ on a separate line
-> 
-> Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
-> ---
->   include/uapi/drm/drm_mode.h | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-> index d390011b89b4..bbdba76a5d25 100644
-> --- a/include/uapi/drm/drm_mode.h
-> +++ b/include/uapi/drm/drm_mode.h
-> @@ -147,7 +147,8 @@ extern "C" {
->   
->   /* Scaling mode options */
->   #define DRM_MODE_SCALE_NONE		0 /* Unmodified timing (display or
-> -					     software can still scale) */
-> +					   * software can still scale)
-> +					   */
->   #define DRM_MODE_SCALE_FULLSCREEN	1 /* Full screen, ignore aspect */
->   #define DRM_MODE_SCALE_CENTER		2 /* Centered, no scaling */
->   #define DRM_MODE_SCALE_ASPECT		3 /* Full screen, preserve aspect */
-> @@ -864,7 +865,9 @@ struct drm_color_lut {
->    * array of struct drm_plane_size_hint.
->    */
->   struct drm_plane_size_hint {
-> +	/** @width: Width of the plane in pixels. */
->   	__u16 width;
-> +	/** @height: Height of the plane in pixels. */
->   	__u16 height;
->   };
->   
+> +static struct sgx_cgroup *sgx_cgroup_next_descendant_pre(struct  
+> sgx_cgroup *root,
+> +							 struct sgx_cgroup *cg)
+> +{
+> +	struct cgroup_subsys_state *next;
+> +
+> +	rcu_read_lock();
+> +	for (;;) {
+> +		next = css_next_descendant_pre(&cg->cg->css, &root->cg->css);
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+I  messed it up in a last minute change and rebase. Above should be:
 
-thanks,
--- Shuah
++	struct cgroup_subsys_state *next = &cg->cg->css;
++
++	rcu_read_lock();
++	for (;;) {
++		next = css_next_descendant_pre(next, &root->cg->css);
+
+Fixed in a branch here:  
+https://github.com/haitaohuang/linux/tree/sgx_cg_upstream_v16_plus
+Will include in next version or update if needed.
+
+> +		if (!next) {
+> +			next = &root->cg->css;
+> +			break;
+> +		}
+> +
+> +		if (css_tryget(next))
+> +			break;
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	return sgx_cgroup_from_misc_cg(css_misc(next));
+> +}
+> +
+BR
+Haitao
 
