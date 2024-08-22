@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-296756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6D295AEB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:16:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4F795AEC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F531C2346C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:16:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E41B1B244B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A58B17E010;
-	Thu, 22 Aug 2024 07:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jgVV2gB5"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA94183CD9;
+	Thu, 22 Aug 2024 07:14:10 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29AE17E017
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98D6183CB6;
+	Thu, 22 Aug 2024 07:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310842; cv=none; b=b4DaRN5XBe/TqYUU78YD6SYhmfwNzo3EPYvQ7jCdBCNDGOJLJz+v712Xn1C0EeTXYlNL3XUnanTLYBPG3dqNjvOelz9N7SrwDj9G5zeja0s/gYEaBQC4HQvk1Z99inQVUM8jO54DrXdbDOKg+mNzhhqWhsLmApX8fO27eHMFvXE=
+	t=1724310850; cv=none; b=L6blD2QGo5Wj45cQXWEtfCGKjIdvU4XC0LAyYy3+QmIcLbh28TFQB0WCeIViRoRZDEudskOICGTb5iHY49JvjExbJyYH2A+EqlcIwIx1jwNYoR+rCKq5ae0sBLRQwkQYyUjrYb2WzbLrBtGzh6iP9NqtUS6Txcf42BQ+bEMYzZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310842; c=relaxed/simple;
-	bh=teCrZ+KkZo6t4Or+udcvaGbXMI71z8Jup5FtH5y7iEs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F3u34HMo8a3jnsTkQswrTWtS3qWgLgI7Zb3nC3du5IB+Er15TiZz7ylWxW/TeA9qklSX9BRdxQg/G5dnHNFMTxD/VClnI94b/1yK1tWu6E7MyGedwwc+OxHoU7jaEkQVkIyblhd7OJahrQ0cBvQ3xsmK6Y9rDfD8i1Do26k9JGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jgVV2gB5; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cd830e0711so482772a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724310840; x=1724915640; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d/m1IXPfk7xvDU+Qn41r4NiqBFnWc/gEWMU/opSilGI=;
-        b=jgVV2gB5HUOcTcQdvv/+80zLDKJW01SWXJSVjMSFhFIu4hIloKYuC4+dSWaY2Vxrgr
-         6m+UDN8wZ5gdfGZ3Z61GSEE98Qwiho5wfSiVxJp5VgxQfz0bHZVD5N9zNO2wEqMxFs91
-         aIzh2YTPejzQ02S78aX5SoaE01lqhRJAN6Rg0vX3IYqVXMu7z0PPNgxvcwdEY/T7LTlw
-         7h6Sv03dUppIvVQQybaxIsWyYafvyATJDPyTlvVOf9afKP1b0wIJFbN19rlafBOasUUF
-         Yo43ZzSHh5UEf+RnMZ+ysu7VbxjnZAZ/Mo+FLdhIVcLMD80cjUjwNyE5eOPsrt5MxpmG
-         oY4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724310840; x=1724915640;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d/m1IXPfk7xvDU+Qn41r4NiqBFnWc/gEWMU/opSilGI=;
-        b=WmjefoIX7Yc4mNsoFkcUzRK5666b4eJSJjHnDjX/TFGZykdSLl7xkyIO/ncdcIjFpr
-         woJrgwRUnxuLKGuG4x+cbcVkVHhLqN8B04wdJ3amajRg0JGJYnDwQi2x2Rd3muS6N2zY
-         3nFoH1uPqQ7ZUIMEzePRfPpMMJFUI5uXOQvPKMwBFG32ctxZ2ffPkRy14BYN/sePMwhU
-         ZejPjLQkdyVmy8qIl1rku3+B6ZzQncH9fei4O1YQ8e+G9fVbtjRGOFKhB3RPRILyrSWK
-         VI7+pvBWV60oBdbeUDwB+ZKppYbJX1vjXIeKOoMqqyIMMB4KTnPc/y36OtxQ/sfbS6qE
-         TYQQ==
-X-Gm-Message-State: AOJu0Yy3pp4DEpxvzfzqbYt/D2PYj3un2M3yT3FPWuxVfHTnNLWVekgn
-	xNCDGtEOmmgTlVHcvP0tXIyo2hpdv0fqqjf8DVTHLaFtVw4ovlUg3OcjkBYj7Go=
-X-Google-Smtp-Source: AGHT+IEhsa9RMy8FC6eeC7Dc/qzW9nWoiqPGY6DtNfgP/dDTOo2T0oKgHsMPC17UGp2n78kSJG5uNg==
-X-Received: by 2002:a05:6a20:6a2a:b0:1c4:9c08:5df3 with SMTP id adf61e73a8af0-1cae51cf01cmr3205085637.7.1724310840022;
-        Thu, 22 Aug 2024 00:14:00 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([240e:473:c90:f96:d029:ea8a:4e6d:d272])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac994a3sm695095a12.16.2024.08.22.00.13.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 00:13:59 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: david@redhat.com,
-	hughd@google.com,
-	willy@infradead.org,
-	muchun.song@linux.dev,
-	vbabka@kernel.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org,
-	vishal.moola@gmail.com,
-	peterx@redhat.com,
-	ryan.roberts@arm.com,
-	christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1724310850; c=relaxed/simple;
+	bh=utdv6V/SvZxVA50hOk7t/lkGWDvSE1q/kJYchx6i5SU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=s1cWeYa3YzA0xgnFvM5z+V8dEFjlvPjPfcVVwJaanVqx5/kEpEwsv5Lh9n7ZpN7rru1KGB43io853NnLEWnLMIWwGZQ/BHbDHOjw8gZ2+Mw4Sy6NY84hTrbfMpyym+CORfJyAbN/7zWfTnEtKekAYNBOzOKAL2tbYvM5Cm6H3aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqDvJ1ts2z9sSZ;
+	Thu, 22 Aug 2024 09:13:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id J19dfRjWyl6q; Thu, 22 Aug 2024 09:13:32 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDvJ14jHz9sSH;
+	Thu, 22 Aug 2024 09:13:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 13A3D8B77D;
+	Thu, 22 Aug 2024 09:13:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id mXHlUX_aoLcN; Thu, 22 Aug 2024 09:13:31 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 02F3A8B77E;
+	Thu, 22 Aug 2024 09:13:30 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2 02/14] arm: adjust_pte() use pte_offset_map_rw_nolock()
-Date: Thu, 22 Aug 2024 15:13:17 +0800
-Message-Id: <7915acf5887e7bf0c5cc71ff30ad2fe8447d005d.1724310149.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <cover.1724310149.git.zhengqi.arch@bytedance.com>
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 09/17] powerpc/vdso32: Add crtsavres
+Date: Thu, 22 Aug 2024 09:13:17 +0200
+Message-ID: <3730201dbc5add4d3a87c0ce80dd1dddf938d13a.1724309198.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310794; l=2796; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=utdv6V/SvZxVA50hOk7t/lkGWDvSE1q/kJYchx6i5SU=; b=SZIg9brB+vtPlEI/uhJ6lsYxQKnhHvbMUlfNQ42Zutu1csaGNwZMYx5RZ2ib0CRRFeQMaLt+k d2yQvcpbkvsCMYHUVfLugVTmTgBTZPnr1GTiaE51BS2+woZrEdRxKII
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-In do_adjust_pte(), we may modify the pte entry. At this time, the write
-lock of mmap_lock is not held, and the pte_same() check is not performed
-after the PTL held. The corresponding pmd entry may have been modified
-concurrently. Therefore, in order to ensure the stability if pmd entry,
-use pte_offset_map_rw_nolock() to replace pte_offset_map_nolock(), and do
-pmd_same() check after holding the PTL.
+Commit 08c18b63d965 ("powerpc/vdso32: Add missing _restgpr_31_x to fix
+build failure") added _restgpr_31_x to the vdso for gettimeofday, but
+the work on getrandom shows that we will need more of those functions.
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Remove _restgpr_31_x and link in crtsavres.o so that we get all
+save/restore functions when optimising the kernel for size.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- arch/arm/mm/fault-armv.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/vdso/Makefile       |  5 ++++-
+ arch/powerpc/kernel/vdso/gettimeofday.S | 13 -------------
+ 2 files changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mm/fault-armv.c b/arch/arm/mm/fault-armv.c
-index 831793cd6ff94..de6c7d8a2ddfc 100644
---- a/arch/arm/mm/fault-armv.c
-+++ b/arch/arm/mm/fault-armv.c
-@@ -94,6 +94,7 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
- 	pud_t *pud;
- 	pmd_t *pmd;
- 	pte_t *pte;
-+	pmd_t pmdval;
- 	int ret;
+diff --git a/arch/powerpc/kernel/vdso/Makefile b/arch/powerpc/kernel/vdso/Makefile
+index 1425b6edc66b..c07a425b8f78 100644
+--- a/arch/powerpc/kernel/vdso/Makefile
++++ b/arch/powerpc/kernel/vdso/Makefile
+@@ -43,6 +43,7 @@ else
+ endif
  
- 	pgd = pgd_offset(vma->vm_mm, address);
-@@ -112,16 +113,22 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
- 	if (pmd_none_or_clear_bad(pmd))
- 		return 0;
+ targets := $(obj-vdso32) vdso32.so.dbg vgettimeofday-32.o
++targets += crtsavres-32.o
+ obj-vdso32 := $(addprefix $(obj)/, $(obj-vdso32))
+ targets += $(obj-vdso64) vdso64.so.dbg vgettimeofday-64.o
+ obj-vdso64 := $(addprefix $(obj)/, $(obj-vdso64))
+@@ -68,7 +69,7 @@ targets += vdso64.lds
+ CPPFLAGS_vdso64.lds += -P -C
  
-+again:
- 	/*
- 	 * This is called while another page table is mapped, so we
- 	 * must use the nested version.  This also means we need to
- 	 * open-code the spin-locking.
- 	 */
--	pte = pte_offset_map_nolock(vma->vm_mm, pmd, address, &ptl);
-+	pte = pte_offset_map_rw_nolock(vma->vm_mm, pmd, address, &pmdval, &ptl);
- 	if (!pte)
- 		return 0;
- 
- 	do_pte_lock(ptl);
-+	if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
-+		do_pte_unlock(ptl);
-+		pte_unmap(pte);
-+		goto again;
-+	}
- 
- 	ret = do_adjust_pte(vma, address, pfn, pte);
- 
+ # link rule for the .so file, .lds has to be first
+-$(obj)/vdso32.so.dbg: $(obj)/vdso32.lds $(obj-vdso32) $(obj)/vgettimeofday-32.o FORCE
++$(obj)/vdso32.so.dbg: $(obj)/vdso32.lds $(obj-vdso32) $(obj)/vgettimeofday-32.o $(obj)/crtsavres-32.o FORCE
+ 	$(call if_changed,vdso32ld_and_check)
+ $(obj)/vdso64.so.dbg: $(obj)/vdso64.lds $(obj-vdso64) $(obj)/vgettimeofday-64.o FORCE
+ 	$(call if_changed,vdso64ld_and_check)
+@@ -76,6 +77,8 @@ $(obj)/vdso64.so.dbg: $(obj)/vdso64.lds $(obj-vdso64) $(obj)/vgettimeofday-64.o
+ # assembly rules for the .S files
+ $(obj-vdso32): %-32.o: %.S FORCE
+ 	$(call if_changed_dep,vdso32as)
++$(obj)/crtsavres-32.o: %-32.o: $(srctree)/arch/powerpc/lib/crtsavres.S FORCE
++	$(call if_changed_dep,vdso32as)
+ $(obj)/vgettimeofday-32.o: %-32.o: %.c FORCE
+ 	$(call if_changed_dep,vdso32cc)
+ $(obj-vdso64): %-64.o: %.S FORCE
+diff --git a/arch/powerpc/kernel/vdso/gettimeofday.S b/arch/powerpc/kernel/vdso/gettimeofday.S
+index 48fc6658053a..67254ac9c8bb 100644
+--- a/arch/powerpc/kernel/vdso/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso/gettimeofday.S
+@@ -118,16 +118,3 @@ V_FUNCTION_END(__kernel_clock_getres)
+ V_FUNCTION_BEGIN(__kernel_time)
+ 	cvdso_call __c_kernel_time call_time=1
+ V_FUNCTION_END(__kernel_time)
+-
+-/* Routines for restoring integer registers, called by the compiler.  */
+-/* Called with r11 pointing to the stack header word of the caller of the */
+-/* function, just beyond the end of the integer restore area.  */
+-#ifndef __powerpc64__
+-_GLOBAL(_restgpr_31_x)
+-_GLOBAL(_rest32gpr_31_x)
+-	lwz	r0,4(r11)
+-	lwz	r31,-4(r11)
+-	mtlr	r0
+-	mr	r1,r11
+-	blr
+-#endif
 -- 
-2.20.1
+2.44.0
 
 
