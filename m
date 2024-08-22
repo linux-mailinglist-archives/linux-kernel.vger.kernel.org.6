@@ -1,282 +1,322 @@
-Return-Path: <linux-kernel+bounces-296861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC5C95AFEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:11:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD9F95AFF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41DE2839F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BAD01C21D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6131016EBE6;
-	Thu, 22 Aug 2024 08:11:26 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3818D16DEDF;
+	Thu, 22 Aug 2024 08:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nlTqmfIL"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB4115CD78
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724314285; cv=none; b=SOu2Zx/7DrGpBkmA4bGyZ2z4GZQYkw24oVSnIl/NffiFwl3j2lNjunBo9MhspKwUbjx4zXFCajxaeUSFqrmRPXky/K4MHGceA8RwWZ+I/xSase7kDxBnfWKarD69GF0wzQKmTsMnTQfW9blNPNkUjTvEVuiUiVfRsef9fhoN8rI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724314285; c=relaxed/simple;
-	bh=tVkdswe9xQVmknWB9VRAPZTc/NJtTaQcFvU1o/Sm3ro=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PfkDeyaiNngA5wDNF1LVRUzmDxqIDB6rLIuqdw1pEJLp1TmT+6E0C/i1KUKdoFDI3bElVGbQKa2f08CUaaV4vlIaWCorhqYxYpto+fhlmyiYXzLDXbiMOg2RLzWZHBxyhr/kmETDpEiZ37Ixx/f0Anv9IMPQvs4NrAemvYVlCAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8489097eso54134939f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:11:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724314283; x=1724919083;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8n6TomVcgKymYoaWYHCdRFzPAq8H4Qhml/yUWttNS9w=;
-        b=lYFdDJPPP4G3FZw+emcA4uXCpDu39MYapFtTDZngfgOb4UOqqS3uQ0u+RNpAoMijxw
-         xLuBpd7wlMAMjczmguzz7xV4SExlvhJuxf96o+hmJ04Qg00qwXJf77Fd5tdTzmqrs3Ln
-         wF8m1r4P372S4tVRzc4ziTWEBY2ITVpt0fV3cKIkl8Famp70YnDrtpWo3AoGxM5KNBQl
-         gKnbsuChswQhzsvxbd5fjVPDcOZxp6Lt4ezU72KwK62uBtu4ijPfczXLFr41kfPyQisE
-         QNmasfeSJOUY9riyfb4vjIt1hViuxhiB6FqdAOWB+LTpvcAa/iNoIVwDk1HGrAxk0rE5
-         41sA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5oLkYZv1Tw+b87+mbef3c9Qkm4Zh/BmC18hlcxgnywaVhJlN3WUJ2PpvdJanePBR046f+u9wRlhvp5tU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/ztRMKYoelINnrXH/NyHOM8Mqz9qk1YOiaN3rsnJWFzuzRTFy
-	SNV1Wvs1LYiWROCQ6y8lT1/PP+U36knnWlU4WaPhBIzj2yPDz6bEHMMFtckQKgMl0wNx++rJZR9
-	XwFB5RkyUbzi7kB1DLFtgZdZZh1OopsW0vzejmCOkDvEDOqhElYHZNkg=
-X-Google-Smtp-Source: AGHT+IGoqcoF3Dr/k+a7ZnoC5QQeN7XY6eTPsPVDTkUcCe91GvpszITyq7s+q+D4VWSfwIyCohK1TAMjpKf7XykmdD8cX5zGxmgv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2B217B51B;
+	Thu, 22 Aug 2024 08:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724314311; cv=fail; b=s7wb63fDC95FHnxOiSgqcLAOkCPBth6rP9TN4TPMx1RrKl5pejnMJVy26GARkbCCiA22MKzH5eKagzeq53GofqV8bgZK2degrQWMmh2uXeOXPJCGCe9MDKw2vNXiWL/JR6CoLpxAwMZvo3I4PrOMBuPuCxdAmqcgFyoRKLbqPyM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724314311; c=relaxed/simple;
+	bh=vUPWpXdB3v01WhULYWKwV7zOWKMiemLFJVK41hYOmAs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fRDec2u6bP8ekhCXm2ZiEtyX7xMdG211mncq8v1QpvlXLdT5cds+z9fi2u+5egFQwctxQ98Tj62eQSFPbTkBGq9e1zaxiJu6Ezt/ILVZTDWNZ1Sy56Xl2CW89Q2nf0R3yFU0HNdleyNtN+nPG9rlfSPmWRAEQPOE1oIxYb+EzcY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nlTqmfIL; arc=fail smtp.client-ip=40.107.93.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yog1sif5RX3eM1N9yIlQxgmWRAGxXjVkrdJLnnsRxc6PboBoCfkaieZaNVs4JN0kqi+4IheBC6xxqHyeMDV2MHH+SgOY16wGAPPZnK8D4hdRMrLwMb0kgRlkE4A+DSvjGLYlLYvMUXWuqTLGe2qLRw1DnU3mrC2PzDGyaFBE2W3p/oTUrYr2MGNCgt0KEVB7OE0IWXe5T0o4xIDUDFURD2r7u7+US0yW9rlPSPwdFrfkc5TFDPkW7ONwJ5YP9BugG3FfnPFeWuyYhr9d6WviypKjNLY0epUQ3Sc1Md9jCnxjD/q83V8U2MHWi1vOfrmGMrZuelFBmkdjM9wy0wmSNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=duvHtm8oCbdNlvxLKbdq08yhkcJQQiFUlJLFs6dRNc4=;
+ b=IswMF1ydewNieW1XDxn9Fn/01rHma1hDSdQKXVwW6Zl4CXa70YK1CefYKd3/+cR3x1Gvsxw4d8jGVFbTF/747h838P7c4ji1NAfl2HT4l9C6hxsanA+BbdHvQLRctBrsDAx/n5Aot+75QPr0XADAWDdmkrJ9KL6E581HncuukccIoSx8gSA2LG2+amyBtacAJ72wyFP9u3x0dIsO3k2mIIceZNn8hOcnQTqp0sW+8Ki/QNVhHOcMTdrPL1tVodWfJtBPVAvpKUMJulUtHcGWb5Vn4TxkQt4kzETGacZolVH99Q+QpM/75x6iUiit+dGNZW0jUc7KdLY+R9wRQnOcUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=duvHtm8oCbdNlvxLKbdq08yhkcJQQiFUlJLFs6dRNc4=;
+ b=nlTqmfILgXwpJa64EwILq4w9Y3hV1z5PVj5xOgoksX2WgU+hfdl25CHN2wPiYGZkPaTXeoWDcfQumwSMk3y7K5/tsNQXDFDife/Qx+5W6JNWVCAq0U7odljJhEL7m/jxltGl1y0PfMzxGdKTe/uRl7jHEumbfpHJMK4lxBnSh4c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SA1PR12MB9245.namprd12.prod.outlook.com (2603:10b6:806:3a7::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
+ 2024 08:11:47 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
+ 08:11:47 +0000
+Message-ID: <194af8a6-fd7e-4d4d-a773-305fd9fd0a4a@amd.com>
+Date: Thu, 22 Aug 2024 10:11:41 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] udmabuf: cancel mmap page fault, direct map it
+To: Huan Yang <link@vivo.com>, "Kasireddy, Vivek"
+ <vivek.kasireddy@intel.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240805032550.3912454-1-link@vivo.com>
+ <20240805032550.3912454-2-link@vivo.com>
+ <IA0PR11MB718542BA11A38A5BD40ECB00F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
+ <de3f3cc4-5e0a-4524-902f-4913addba227@vivo.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <de3f3cc4-5e0a-4524-902f-4913addba227@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0148.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:98::6) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8416:b0:4ce:54dc:fa44 with SMTP id
- 8926c6da1cb9f-4ce62da0098mr199462173.1.1724314283016; Thu, 22 Aug 2024
- 01:11:23 -0700 (PDT)
-Date: Thu, 22 Aug 2024 01:11:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000052138306204134f2@google.com>
-Subject: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_claim_suballoc_bits
-From: syzbot <syzbot+5054473a31f78f735416@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB9245:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9204903-6c04-456b-b856-08dcc282112e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d3F1eld6c0kvQVQvRXNyMzY1TS9lVHVJSzRvazZ0L21IdUlvbnFlZ2dvTzl3?=
+ =?utf-8?B?dWpSV3RkZURzZlNCZEMvbXF4NFdhTGRmSU9CQk9SallLYXB5ZmNtQWZUeThr?=
+ =?utf-8?B?ZDJXUk42QWJiYVJYakNuaEpwaG5vQ290dXNiUWNET0NDdGhqbkJLMmIvZHJX?=
+ =?utf-8?B?Q3VCK0tsQVh1ZlpNaXZDZnArM296T1VyOG52cjVpNmdmNk5OeGhibjhPTFVK?=
+ =?utf-8?B?SElOU0hCRVFPaUdrbE96NWhxdUlsajZNNlFBblhqd2wreXQ2WFVZQkIzTFpP?=
+ =?utf-8?B?VHBoQmg2ZWMxUVJ5S0F3ZzZPZGRVdmh5UkRybUdYM1JOczBUaWZDSWF5NUpa?=
+ =?utf-8?B?dnU0RnpMSFZzb2NYRVgvUzJKdGdiUHo2RXk0TDN1aHRpR0RNR0dpaG5rdkVj?=
+ =?utf-8?B?TVNob2tLcnlHUVFxQ3FIeHpGb3dya1k1NjZzZkhjMnNNcGN5dHNTeElZVVcr?=
+ =?utf-8?B?OHdxOXZYZUNtWVBkb0t4VERhbE1MZ1JSUmJEK1RnMFBqR29XMnR5WU01WE1p?=
+ =?utf-8?B?RzJlbW03TE82VlRNUXVoSE9DSlRZcFpnODdtZ21LUXBncjlDMENGM2lhNEZF?=
+ =?utf-8?B?dFF1TkY2dTJYeFA0Q3FZRUVwSE8zWVhONXZSbmNQdEtkbmRQTXM1VFVxdkZ5?=
+ =?utf-8?B?OVMzY1FxMTNmQTBlaTBRU2l4N3YwaWMwSVk2SVp5dUJxVTd3akowd09NaTZw?=
+ =?utf-8?B?NXBBU3BlY0M0TlEwdzRZR1BLTWQ4SG11VTkzY1JuS0hueTYxc09ZMmdjY1BO?=
+ =?utf-8?B?cTNXTGg3NlhUM09Kd09KRVhwS2xXUHQ1c0JHQ21sT1NjNUdWTHQzWWNUeHVv?=
+ =?utf-8?B?THlEL0Y4KzBWaVE5OEZpcmdOKzlqM1dJTzZMakEvbmVWSDM3OGdIcndvV25U?=
+ =?utf-8?B?Zk1hWUlmM3VuVlFnUU9aUzRlNWFiZVhKVFc4MUFHOGllcUtRNnZpV2loWVdK?=
+ =?utf-8?B?eGtNajhqU3IzNlc4NzgvMWlNemV6dDZ5RENFc1JteXI2SFRudnJ6VzZjS2F1?=
+ =?utf-8?B?U2NlcjdxcWpDNG9jaFVzNUxXZFdML0tISVFuRG9hZ1c4cTI2ZDJiNG5GRGpM?=
+ =?utf-8?B?NnVFVFo2R3FYYURXbjMwZnJBM3J3Zi9Jb2lielRrQ25QYXh6UlVja2VOV05m?=
+ =?utf-8?B?L0ZvVTYvdFhBcVBLUzRLeGovekJMMWN5Qkx3b1loMFloUFA4RWM4bElhNlYw?=
+ =?utf-8?B?Sk1FNm9hZ1FKUGlpU0lVejV2QlZnUHVJRGltM1NkUXVTbEhkLy9qU0V1c2ta?=
+ =?utf-8?B?L3AzakFRaC9zc2xnWnZVbVg1bWFoVVEzRFNEb25LeHpIUGRPMDBiT3dPcHoy?=
+ =?utf-8?B?cUxWdGtmdGdWZ05nU1JoNmNwWkY0azJENHh1UXVqaWtXbnpxcjZFM0F1T0Zj?=
+ =?utf-8?B?UlVNMk9xQWx0RnE2elJWajBuMlpLM0xOT2tLYWFTUFNrREFraUxVMDF0b29Q?=
+ =?utf-8?B?SkVPdklKaVRpYlR1R0pVbGN4RDZ1eVNtTU9pU3ExNmlEOTJMZjE0aEJRSXFT?=
+ =?utf-8?B?RndGSTFHTW55MWtMTWFVM29Tb1U3RU53NE1BU3RqQ2dxdWI2bUVLSnUvVDl4?=
+ =?utf-8?B?MDhUQ293RUlGWGsxTFkyMjBCV3JtUjdBOElWY1d2OGlKYUU0b01NTU1Ec1Ra?=
+ =?utf-8?B?U2ZOWlBkQWU5RmVoWHpwZzluWU5JbUEzcTRWQjlRV2NEbGZVWTYvUXIzMDJr?=
+ =?utf-8?B?SURsaVZSalJnSzRIRmZnNVRkZGFDN3E0QW5NQ3RmclZvbmx0SnBWSXpCL0ZS?=
+ =?utf-8?B?MWtyUncreXM5VzhJaVFuY3RGcGZOWVpHWDZkODJBcERSaU4vK2loTHlyTCt6?=
+ =?utf-8?B?TnlhbjR4OHMrZXFaUWFtUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WFlybVA0SHBack52UXJFWTcvU05jVnY4c0tneUdQVjIwMVh1SVFXUksvRXg0?=
+ =?utf-8?B?SDZRR0lDdzdMT25GdUltU1ZqUGhLaE0wczlkemF2TTgrdkl1MC9rRXdKMnZo?=
+ =?utf-8?B?NHFFTjF1S244ek9LeXEyMjIxQTVlVHpUKytjdFNIdkZkMFVQbjdrVkJnb3Qr?=
+ =?utf-8?B?K1NrdjhaenZCQlZodUh6WTBwMnYyZ2ZUY0RCdkVEeFNPRzRkRjA4b0tTZjlB?=
+ =?utf-8?B?NisxZDJvdUtZcFBvN1ZrVVZPMjZtK0JZVkR1L0V3aXc3UC9XK2Y1dE81ZGZx?=
+ =?utf-8?B?SEZWTGF5RGxMYjk3MWE2YkIyRC9tQU1BYTNZY2I1WjNSM202MytXejZoL3Fi?=
+ =?utf-8?B?UFBnQWUzMjlNdTZNbmd5enU2cHNTdWJUdDVDNjkvYmhiVnpxajZSTjdzN0Zn?=
+ =?utf-8?B?SUhVSVN5aEpLanZBMjJ5Qmhyc1VGWkZZaitCTGR1Y1NLZEVYZDhrdEJjdGRq?=
+ =?utf-8?B?YmJkRk1nMDdFVlJOdkVqSHZMa08vdmN2SW5DNGFaRlRvUjZSdk1xV1g4Z0NC?=
+ =?utf-8?B?d2JKWUZGZ0RxS3ZJSlMxc3FlWTNXRHZ4UFlTSkNxendaS1U0Q2tJODVEZFQ1?=
+ =?utf-8?B?K3dmMGFkV1phOFpUS0tRWjRhZGlNUlBXVjVXY3Z6dk5DVnoyWFlwNHNTZ2Y5?=
+ =?utf-8?B?Z0V6TWxMdjlEUm0rNXBGcHdPRWRGMDdKVE5Xck9mTkpQM1EzVWNhRGhBWDJq?=
+ =?utf-8?B?VUM4bU1ZekNvRHBZdUxWa2RZZjRiSGVzUnZ2TlF4VEZVS3lXcjBjOS9oSGhk?=
+ =?utf-8?B?Wnl1a1o2UDBOb2d2dWo2TEtpK1BKRk1kMnJ0VkZ0Y2hCb2l6OEprRFJQa2Iw?=
+ =?utf-8?B?VFFsbDdpL2x4bkxwa3pkZXhqeU56WFEyZG1NV2hLNGZkbDYzcVNEbzFrQkR2?=
+ =?utf-8?B?cGt2Zm9YeUJQbTQ4Q3lpSmM0VXZodmhsci82K1FjbEkwclFob2lMSkNwbVdO?=
+ =?utf-8?B?Wk96dFlrYy9XazlLdzdWeTBQMWUrWHR6bkEyT2Q3VFhmZW9GZnV1ZEtjM056?=
+ =?utf-8?B?aWExd1JIRnRwSFYzUEVWeDltQ1lkTzhsNVYwRUNlNjJzMzZ0c1NQMUZvNVpv?=
+ =?utf-8?B?bmNET0YzVVBZZy81S0NqMkF4L0pCQVR3eU1OUDVGdmFpSjRQYVFHaittNW44?=
+ =?utf-8?B?Qkc1WExiamh1WGFGZ2NNOXVHQzhDcWFFVDlteklPOVR5VVBZTUZHZjRid2pO?=
+ =?utf-8?B?UW0vTDFQZTNoa1BKMVIweWZiUkJlTnkrdkpGTnVhc09mVVJBT2hsamV2bXUx?=
+ =?utf-8?B?dndlc1ByY1p4Smxpb1ovSVkxOGk0V2VubzJpRjEzdHpTbEsrc0d6Qmwzd252?=
+ =?utf-8?B?TjJhQXpwaWFSVDBUV0NiY1pPQTNhME9BVEJEZ0IwTmNVNERzZ1B2aDBORUR1?=
+ =?utf-8?B?d2d6YnJqLzhxcDhXaGVvY0EvZzl0d01NbEN1VGk1M0JEaTdCaS9PbXJtejdP?=
+ =?utf-8?B?RDZHZk5CcGJYd01CQzl5SXA1MVBRY3VoV1FuNmNRWG5aTkhFRDdobklPL0hN?=
+ =?utf-8?B?b08rMnFSNVlxWko0QzhHS0NmZ0pBYzkzUDR0QlM2Z3U5RmNKajJ4VHBXVnZv?=
+ =?utf-8?B?bnlES0NTbWVaaUd1YzNzVFhPL2xXZEtjY2ZPc3VSc01OUGtXMElFRnhWSnVE?=
+ =?utf-8?B?V1E3cUgxR1c4UnNtYzV1UEpRcFB4RGc4NDJSQWo4VzhJOHdkSkZGOWlDOXgx?=
+ =?utf-8?B?WEtlUHkweWY4bmdoeld3bjNaOXVZYzRHcUVMeGVsaFVPbDc3Nk9uRUlKREVU?=
+ =?utf-8?B?bzNPWW9jbjRDTzhvYkVNMzZJc055TDQ5UjZCVmpDd0NyMFprUHQwYmxXd1ls?=
+ =?utf-8?B?dmxHcW5Nd04zc1hrRG1TcE55UFNjZ3k5NW9CQ0tlVThxK3pkU1Y2cXFQWmhk?=
+ =?utf-8?B?T1VyT3dYazdZcXVMVXJMSGNPYWhmUXNvNUYrbDdRU0R2dDhJNkZLVENkaHNj?=
+ =?utf-8?B?MjlaSnJyYkRMKzBiTGpqMTNJNUMzSFJyMlQzZ2w3Q0hnTVBLb2xvdmVNZ1p6?=
+ =?utf-8?B?bkhHRDRoeTJHd1A1NEhVTTRhcFlOelg1UURyQ0VSOFpVemdiZUFJNHZqR3Vn?=
+ =?utf-8?B?WWNidmhtMEVOQTFIZVgyRDNkMGNKODdLSkJjV3hlbjAyUDBic0JzL3NKL21O?=
+ =?utf-8?Q?VyV1KWOoW1xdtbfXkNm3iVFss?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9204903-6c04-456b-b856-08dcc282112e
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 08:11:47.0693
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /Lpze0nzJz2UH1p5DrZFcB2RvoOVJmsnfT01ea/R/fh5VKcD3Q/8LATGwX1RrJM/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9245
 
-Hello,
+Am 12.08.24 um 04:49 schrieb Huan Yang:
+>
+> 在 2024/8/10 9:28, Kasireddy, Vivek 写道:
+>> [Some people who received this message don't often get email from 
+>> vivek.kasireddy@intel.com. Learn why this is important at 
+>> https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> Hi Huan,
+>>
+>>> The current udmabuf mmap uses a page fault mechanism to populate the
+>>> vma.
+>>>
+>>> However, the current udmabuf has already obtained and pinned the folio
+>>> upon completion of the creation.This means that the physical memory has
+>>> already been acquired, rather than being accessed dynamically. The
+>>> current page fault method only saves some page table memory.
+>>>
+>>> As a result, the page fault mechanism has lost its purpose as a 
+>>> demanding
+>>> page. Due to the fact that page fault requires trapping into kernel 
+>>> mode
+>>> and filling in when accessing the corresponding virtual address in 
+>>> mmap,
+>>> this means that user mode access to virtual addresses needs to trap 
+>>> into
+>>> kernel mode.
+>>>
+>>> Therefore, when creating a large size udmabuf, this represents a
+>>> considerable overhead.
+>>>
+>>> The current patch removes the page fault method of mmap and
+>>> instead fills it directly when mmap is triggered.
+>> I think it makes sense to populate the vma when the first fault is 
+>> triggered
+>> instead of doing it during mmap. This is because the userspace may call
+>> mmap but does not actually use the data. Qemu works this way 
+>> depending on
+> Yes, the idea of this is also related to the concept of page fault.
+>
+> However, the folio has already been pinned during creation. I think 
+> using the page fault
+>
+> again is theoretically sound, but it may not save memory, only 
+> increase context switch overhead.
 
-syzbot found the following issue on:
+This is not about saving memory but rather correctness and desired handling.
 
-HEAD commit:    b311c1b497e5 Merge tag '6.11-rc4-server-fixes' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1459247b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5054473a31f78f735416
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124009a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112e6dd5980000
+A mmap() operation is for creating the VMA and *not* filling the page 
+tables. That might work but is not really a desired approach.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-b311c1b4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1c99fa48192f/vmlinux-b311c1b4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/16d5710a012a/bzImage-b311c1b4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/1ed1386176c5/mount_0.gz
+Regards,
+Christian.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
+>
+>
+>> whether opengl is available in the environment or not.
+>>
+>>> Signed-off-by: Huan Yang <link@vivo.com>
+>>> ---
+>>>   drivers/dma-buf/udmabuf.c | 39 
+>>> ++++++++++++++++-----------------------
+>>>   1 file changed, 16 insertions(+), 23 deletions(-)
+>>>
+>>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>>> index 047c3cd2ceff..475268d4ebb1 100644
+>>> --- a/drivers/dma-buf/udmabuf.c
+>>> +++ b/drivers/dma-buf/udmabuf.c
+>>> @@ -38,36 +38,29 @@ struct udmabuf_folio {
+>>>        struct list_head list;
+>>>   };
+>>>
+>>> -static vm_fault_t udmabuf_vm_fault(struct vm_fault *vmf)
+>>> -{
+>>> -     struct vm_area_struct *vma = vmf->vma;
+>>> -     struct udmabuf *ubuf = vma->vm_private_data;
+>>> -     pgoff_t pgoff = vmf->pgoff;
+>>> -     unsigned long pfn;
+>>> -
+>>> -     if (pgoff >= ubuf->pagecount)
+>>> -             return VM_FAULT_SIGBUS;
+>>> -
+>>> -     pfn = folio_pfn(ubuf->folios[pgoff]);
+>>> -     pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
+>>> -
+>>> -     return vmf_insert_pfn(vma, vmf->address, pfn);
+>>> -}
+>>> -
+>>> -static const struct vm_operations_struct udmabuf_vm_ops = {
+>>> -     .fault = udmabuf_vm_fault,
+>>> -};
+>>> -
+>>>   static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct
+>>> *vma)
+>>>   {
+>>>        struct udmabuf *ubuf = buf->priv;
+>>> +     unsigned long addr;
+>>> +     unsigned long end;
+>>> +     unsigned long pgoff;
+>>> +     int ret;
+>>>
+>>>        if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
+>>>                return -EINVAL;
+>>>
+>>> -     vma->vm_ops = &udmabuf_vm_ops;
+>>> -     vma->vm_private_data = ubuf;
+>>> -     vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND |
+>>> VM_DONTDUMP);
+>>> +     for (pgoff = vma->vm_pgoff, end = vma->vm_end, addr = vma-
+>>>> vm_start;
+>>> +          addr < end; pgoff++, addr += PAGE_SIZE) {
+>>> +             struct page *page =
+>>> +                     folio_page(ubuf->folios[pgoff],
+>>> +                                ubuf->offsets[pgoff] >> PAGE_SHIFT);
+>> Please don't use struct page pointers, given the recent conversion to 
+>> use
+>> only folios in udmabuf driver. I think what you are trying to do 
+>> above can
+>> be done using only folios.
+> Yes, just use pfn. Consider of HVO, must use this.
+>>
+>>> +
+>>> +             ret = remap_pfn_range(vma, addr, page_to_pfn(page),
+>>> PAGE_SIZE,
+>>> +                                   vma->vm_page_prot);
+>> Could you please retain the use of vmf_insert_pfn() here, given the 
+>> simplicity,
+>> among other reasons?
+> I will make the correction.
+>
+> Thanks.
+>>
+>> Thanks,
+>> Vivek
+>>
+>>> +             if (ret)
+>>> +                     return ret;
+>>> +     }
+>>> +
+>>>        return 0;
+>>>   }
+>>>
+>>> -- 
+>>> 2.45.2
 
-loop0: detected capacity change from 0 to 32768
-JBD2: Ignoring recovery information on journal
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-==================================================================
-BUG: KASAN: slab-use-after-free in ocfs2_find_victim_chain fs/ocfs2/suballoc.c:1445 [inline]
-BUG: KASAN: slab-use-after-free in ocfs2_claim_suballoc_bits+0x10d3/0x2570 fs/ocfs2/suballoc.c:1982
-Read of size 4 at addr ffff888038568000 by task syz-executor335/5105
-
-CPU: 0 UID: 0 PID: 5105 Comm: syz-executor335 Not tainted 6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- ocfs2_find_victim_chain fs/ocfs2/suballoc.c:1445 [inline]
- ocfs2_claim_suballoc_bits+0x10d3/0x2570 fs/ocfs2/suballoc.c:1982
- ocfs2_claim_metadata+0x16d/0x580 fs/ocfs2/suballoc.c:2057
- ocfs2_create_refcount_tree+0x699/0x15f0 fs/ocfs2/refcounttree.c:590
- ocfs2_reflink_remap_blocks+0x2f6/0x1f30 fs/ocfs2/refcounttree.c:4634
- ocfs2_remap_file_range+0x600/0x8e0 fs/ocfs2/file.c:2724
- vfs_copy_file_range+0xc1f/0x1530 fs/read_write.c:1522
- __do_sys_copy_file_range fs/read_write.c:1612 [inline]
- __se_sys_copy_file_range+0x3f2/0x5d0 fs/read_write.c:1575
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f73908ff1e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe3ab025f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000146
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f73908ff1e9
-RDX: 0000000000000004 RSI: 0000000000000000 RDI: 0000000000000006
-RBP: 0000000000000000 R08: 0000000000000006 R09: 0000000000000000
-R10: 00000000200000c0 R11: 0000000000000246 R12: 00007ffe3ab0262c
-R13: 0000000000000001 R14: 431bde82d7b634db R15: 00007ffe3ab02660
- </TASK>
-
-Allocated by task 5091:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3988 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
- vma_lock_alloc kernel/fork.c:445 [inline]
- vm_area_dup+0x61/0x290 kernel/fork.c:498
- dup_mmap kernel/fork.c:695 [inline]
- dup_mm kernel/fork.c:1672 [inline]
- copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
- copy_process+0x187c/0x3e10 kernel/fork.c:2387
- kernel_clone+0x226/0x8f0 kernel/fork.c:2800
- __do_sys_clone kernel/fork.c:2943 [inline]
- __se_sys_clone kernel/fork.c:2927 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2927
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5093:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2252 [inline]
- slab_free mm/slub.c:4473 [inline]
- kmem_cache_free+0x145/0x350 mm/slub.c:4548
- vma_lock_free kernel/fork.c:457 [inline]
- __vm_area_free+0xe3/0x110 kernel/fork.c:513
- remove_vma mm/mmap.c:187 [inline]
- exit_mmap+0x645/0xc80 mm/mmap.c:3436
- __mmput+0x115/0x390 kernel/fork.c:1345
- exec_mmap+0x680/0x710 fs/exec.c:1089
- begin_new_exec+0x12c6/0x2050 fs/exec.c:1355
- load_elf_binary+0x969/0x2680 fs/binfmt_elf.c:996
- search_binary_handler fs/exec.c:1827 [inline]
- exec_binprm fs/exec.c:1869 [inline]
- bprm_execve+0xaf8/0x1770 fs/exec.c:1920
- do_execveat_common+0x55f/0x6f0 fs/exec.c:2027
- do_execve fs/exec.c:2101 [inline]
- __do_sys_execve fs/exec.c:2177 [inline]
- __se_sys_execve fs/exec.c:2172 [inline]
- __x64_sys_execve+0x92/0xb0 fs/exec.c:2172
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888038568000
- which belongs to the cache vma_lock of size 152
-The buggy address is located 0 bytes inside of
- freed 152-byte region [ffff888038568000, ffff888038568098)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x38568
-flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 04fff00000000000 ffff8880166fcc80 ffffea00006ec940 0000000000000002
-raw: 0000000000000000 0000000000120012 00000001fdffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5052, tgid 5052 (dhcpcd-run-hook), ts 70503623283, free_ts 70500820923
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2321
- allocate_slab+0x5a/0x2f0 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
- __slab_alloc+0x58/0xa0 mm/slub.c:3813
- __slab_alloc_node mm/slub.c:3866 [inline]
- slab_alloc_node mm/slub.c:4025 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4044
- vma_lock_alloc kernel/fork.c:445 [inline]
- vm_area_dup+0x61/0x290 kernel/fork.c:498
- dup_mmap kernel/fork.c:695 [inline]
- dup_mm kernel/fork.c:1672 [inline]
- copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
- copy_process+0x187c/0x3e10 kernel/fork.c:2387
- kernel_clone+0x226/0x8f0 kernel/fork.c:2800
- __do_sys_clone kernel/fork.c:2943 [inline]
- __se_sys_clone kernel/fork.c:2927 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2927
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5056 tgid 5056 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_folios+0x103a/0x1b00 mm/page_alloc.c:2660
- folios_put_refs+0x76e/0x860 mm/swap.c:1039
- free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
- tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
- exit_mmap+0x44f/0xc80 mm/mmap.c:3425
- __mmput+0x115/0x390 kernel/fork.c:1345
- exit_mm+0x220/0x310 kernel/exit.c:571
- do_exit+0x9b2/0x27f0 kernel/exit.c:869
- do_group_exit+0x207/0x2c0 kernel/exit.c:1031
- __do_sys_exit_group kernel/exit.c:1042 [inline]
- __se_sys_exit_group kernel/exit.c:1040 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888038567f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888038567f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888038568000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff888038568080: fb fb fb fc fc fc fc fc fc fc fc fa fb fb fb fb
- ffff888038568100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
