@@ -1,150 +1,112 @@
-Return-Path: <linux-kernel+bounces-297829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2D695BE31
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:24:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0901F95BE36
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BCFD28299D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:24:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B5C1C231D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38B41CFEC6;
-	Thu, 22 Aug 2024 18:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4411CFEDD;
+	Thu, 22 Aug 2024 18:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DQAbb8vj"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hp6PetVH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5AC7347D
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 18:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADABC2AE77;
+	Thu, 22 Aug 2024 18:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724351039; cv=none; b=M7aO8C7Ny6yt6zG5pb0Y7a1VviXBI4/SoaErYPTqVn6HMIcIZGpC7pvOYbWjpvjfkUD2MgbYtN4fkVa0aZiz3Tqk61sIvyvUI8DB0N13q0vZl7+KzJ/M+Ee4lymxGc0AARhR3qpTPxw+YtFhF+bbIJB4Xljt8pPlqGkjl/SFQQ0=
+	t=1724351123; cv=none; b=MS28EHAuZdsJEaUscrmEvOqQcmeO3Ilu5BWDbu7wQLe7VfEYKXslrvmgvH56QFYEhHSVMmZF+wuTmu1hvNnYWEXzr1yu1A5H3OrQPhgVFTWMbdtlq3Vdh9Z+G6CDIM009TU18c83lbWOMIncqeMqyFiOM2WaQZaw2WyMZZ8V3ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724351039; c=relaxed/simple;
-	bh=6oJWkRUERFpB3blIaG9wUxYb6rEF/EMjl0nYm0PPiQo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DUYzk45Wp8TmG+teTIJtdGozXvb6b0pqqfJeQ/xWfZp4vccTtwlG/1a5h9CTRzzIc8J1eNVaDmA4IpnSGSWwQ1AnMWGpT1D1wjWo+d//vc8SxHgswt2WXYEca96KNQW65Q1uMHKn1zbV/rLqEMB6+pkq2bWGiSoNCyeMy1KyoZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DQAbb8vj; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b38bd44424so20715637b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724351037; x=1724955837; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=U+hG+801nTFiswIqakBQXEm/IokDZ+OxzOt1ioPF7rw=;
-        b=DQAbb8vjuklhZKWnRN8YbX9GwD3cpEHVJ/WHCplTep5m3cOOKqaLR7MRtuDgRslis+
-         rl6P3r3PfnLypmAel90ucym3tLX43BDVXEks9YEobymw8vRZgNoEz/B8LmiGCoKhGzOO
-         P0YBfpOozkrZAhYWyQ9kVb9S4oydWVE9ugr7dE0yrIQS1TTbYtAbrSiRLarpNUUqaF/P
-         yvIRSTxpSaREX8Un5D24SaYkrsnEMvQv3gkXKydcVYIvcf6tnyCD7vnn0cRLFO59uO0q
-         jhSrb95LGn73h/bG2ejVXITQ2RTuHa0N1ZdVj3MlHQdJmK9xcOwfpla8YcjXaQ22KyMs
-         LbLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724351037; x=1724955837;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U+hG+801nTFiswIqakBQXEm/IokDZ+OxzOt1ioPF7rw=;
-        b=rLbsohBUth3LbOgShGqfaFH4ewgJNVsB5HSD5/Wy7tGVTcx+OO1HFZMsZj2mMhDHUE
-         icTm13YNIJlrP3xHEhkFe3+y/L8qXxfi3abeii5Dcn8zEe5J5QXH0F4KNfDevXK0ofDj
-         nBTht9/61cyJesgtXYZYdavyQdoyF/aNpmIZsKl9bmcJ16hu9IsX+WHWaQrYYmxMMHci
-         BkSuV/SJiWPkcdS2P5Q4b199ndnKmHKP2QFLzWTrwSBaUiMiytuZ1r7RULuXJNT0mG1X
-         Qi/rbbxmqrAnBIm6U4c7EC4pLIXHIk4WphOLPf5619Gc2s+wZ7VQMpx/FVDLvLRavp4U
-         QMwA==
-X-Gm-Message-State: AOJu0YzCIWn5kTgWBhKwVfOFwdcZN7dCPOA9Mdb4karxwYKOWZWF34Qx
-	NYWh7UxtsqsyH70FP5X5mZipsZphpRa8aZAd334w9isdOF09v2UIZv4w0KgzUbK8iWooyXTIqYK
-	MuV5RwLlLGQ==
-X-Google-Smtp-Source: AGHT+IGL3M8E0FGhFOjRuhFKH/kFSpPF3ugmAHbWuJ2qVdPZ+0SaWvWhHdLf4oiHO4rCpWSjXyBMkwnrPwO5tw==
-X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a05:690c:62c8:b0:69b:2f8e:4d1a with SMTP
- id 00721157ae682-6c0a08fcac2mr4589687b3.9.1724351037439; Thu, 22 Aug 2024
- 11:23:57 -0700 (PDT)
-Date: Thu, 22 Aug 2024 18:23:52 +0000
+	s=arc-20240116; t=1724351123; c=relaxed/simple;
+	bh=d5SxwQXp9IhK4Vqaj8bbSuKXGNiP1rcA5S9sV1iqwyM=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=jmG56IrgSeSIuJ1PfG+U+IXWN104CpjmliybWhl9og4jKGGSA8095Dzke60789vL+URsaai6ARBS/DbqszeHuZOILCeJMrrAZQU0odZvZklBX7zF5ZfJi0SmaXfmyygBYoeb1WElzjwQ80emQlxx5ymi+q5nhqUXZVsWJXxerkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hp6PetVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEDC9C32782;
+	Thu, 22 Aug 2024 18:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724351123;
+	bh=d5SxwQXp9IhK4Vqaj8bbSuKXGNiP1rcA5S9sV1iqwyM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=hp6PetVHW09spfI6vqrH0HD/2lrD3vzayiGkJ4liiE6JmEOhI5KDDdt/w1Y7vUUeD
+	 TlqM+WZgoY+fw+9pX6RGLCAGL9MHBK1N2Nm/boHbeDc8X0FJ7KFxsAp9Ts8+87+lhr
+	 z9isTyFZ6fZoUGTyFWL+d/4mQq16nRNjJ7y6baIUe8OUIwpHB5v+T8PkwPtBJuUn1N
+	 A3fkAEMHIcitbnuvG5o4LXPf7TKbgTTDWqJpGz5LXiHTU8i44pL90oYXbtCuHRHDfl
+	 jE9fE3jPZMcz8lx+RxGpdhLx4oq+uJGdWSdb+zzrnVJFwB846kBF3BSFZeT6erIUE2
+	 Oz62C8couXaTQ==
+Date: Thu, 22 Aug 2024 13:25:21 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240822182353.2129600-1-cmllamas@google.com>
-Subject: [PATCH] binder: fix UAF caused by offsets overwrite
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Todd Kjos <tkjos@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: robin.murphy@arm.com, devicetree@vger.kernel.org, 
+ Hugues.KambaMpiana@arm.com, linux-kernel@vger.kernel.org, 
+ liviu.dudau@arm.com, Adam.Johnston@arm.com, mathieu.poirier@linaro.org, 
+ sudeep.holla@arm.com, Drew.Reed@arm.com, linux-remoteproc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, lpieralisi@kernel.org, 
+ andersson@kernel.org
+In-Reply-To: <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+Message-Id: <172435112119.3486691.3093277909404901548.robh@kernel.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the
+ External Systems remote processors
 
-Binder objects are processed and copied individually into the target
-buffer during transactions. Any raw data in-between these objects is
-copied as well. However, this raw data copy lacks an out-of-bounds
-check. If the raw data exceeds the data section size then the copy
-overwrites the offsets section. This eventually triggers an error that
-attempts to unwind the processed objects. However, at this point the
-offsets used to index these objects are now corrupted.
 
-Unwinding with corrupted offsets can result in decrements of arbitrary
-nodes and lead to their premature release. Other users of such nodes are
-left with a dangling pointer triggering a use-after-free. This issue is
-made evident by the following KASAN report (trimmed):
+On Thu, 22 Aug 2024 18:09:47 +0100, Abdellatif El Khlifi wrote:
+> Add devicetree binding schema for the External Systems remote processors
+> 
+> The External Systems remote processors are provided on the Corstone-1000
+> IoT Reference Design Platform via the SSE-710 subsystem.
+> 
+> For more details about the External Systems, please see Corstone SSE-710
+> subsystem features [1].
+> 
+> [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
+> 
+> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> ---
+>  .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> 
 
-  ==================================================================
-  BUG: KASAN: slab-use-after-free in _raw_spin_lock+0xe4/0x19c
-  Write of size 4 at addr ffff47fc91598f04 by task binder-util/743
+My bot found errors running 'make dt_binding_check' on your patch:
 
-  CPU: 9 UID: 0 PID: 743 Comm: binder-util Not tainted 6.11.0-rc4 #1
-  Hardware name: linux,dummy-virt (DT)
-  Call trace:
-   _raw_spin_lock+0xe4/0x19c
-   binder_free_buf+0x128/0x434
-   binder_thread_write+0x8a4/0x3260
-   binder_ioctl+0x18f0/0x258c
-  [...]
+yamllint warnings/errors:
 
-  Allocated by task 743:
-   __kmalloc_cache_noprof+0x110/0x270
-   binder_new_node+0x50/0x700
-   binder_transaction+0x413c/0x6da8
-   binder_thread_write+0x978/0x3260
-   binder_ioctl+0x18f0/0x258c
-  [...]
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.example.dtb: /example-0/syscon@1a010000: failed to match any schema with compatible: ['arm,sse710-host-base-sysctrl', 'simple-mfd', 'syscon']
 
-  Freed by task 745:
-   kfree+0xbc/0x208
-   binder_thread_read+0x1c5c/0x37d4
-   binder_ioctl+0x16d8/0x258c
-  [...]
-  ==================================================================
+doc reference errors (make refcheckdocs):
 
-To avoid this issue, let's check that the raw data copy is within the
-boundaries of the data section.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240822170951.339492-2-abdellatif.elkhlifi@arm.com
 
-Fixes: 6d98eb95b450 ("binder: avoid potential data leakage when copying txn")
-Cc: Todd Kjos <tkjos@google.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/android/binder.c | 1 +
- 1 file changed, 1 insertion(+)
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 905290c98c3c..e8643c69d426 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3422,6 +3422,7 @@ static void binder_transaction(struct binder_proc *proc,
- 		 */
- 		copy_size = object_offset - user_offset;
- 		if (copy_size && (user_offset > object_offset ||
-+				object_offset > tr->data_size ||
- 				binder_alloc_copy_user_to_buffer(
- 					&target_proc->alloc,
- 					t->buffer, user_offset,
--- 
-2.46.0.295.g3b9ea8a38a-goog
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
