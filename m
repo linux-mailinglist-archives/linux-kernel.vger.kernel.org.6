@@ -1,291 +1,141 @@
-Return-Path: <linux-kernel+bounces-297055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B26F95B265
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:53:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CDF95B25E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F56F1C22E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A5A1F247A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62CD17E919;
-	Thu, 22 Aug 2024 09:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B17179206;
+	Thu, 22 Aug 2024 09:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dh6KNaeU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HITlbrzo"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857E51CF8B;
-	Thu, 22 Aug 2024 09:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42A77E0E8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724320363; cv=none; b=feGPHwNkF/YC9CVGRi/JCrjJhzB+UR0zenCul7612lfw6yVwp4TqJwP9Qc9T6EzHsewZ3Y+BThqIKuhkBsHNH76Ivwqj3Ik/9pPBXSf+UkVrhSzlHu/PSlxMCmorgEPhwK35kIIqGtV2P3lGNUe2oJKQGj4jJUH291HmLGdja98=
+	t=1724320357; cv=none; b=WYlRyrsfP9gOhh1to63wgJDrMGnFJMEkS2cmppPFSHZtT6BZMVyf5Y2zbPsnF9TG7sCfKaFtkMOMElOBxIKEJ+wfnAIqE9QbMR9x5a6bMWZAa8JmQ5CVhW9RJ0Z2+5uNPFf+qNNqSaGwdD2or280YDqDo3GIrttbjwPw2dOsm+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724320363; c=relaxed/simple;
-	bh=c17xwt2hmAnmUIH5Ljz9mvg5PeMzUgVb+UvId+Q5omE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=s4kvtF9RHAkzl7scisDz3fw329/B977jaEpXxDtvbNeisR91gUz602FdojhcaoW1Mdwo3aWvcIj0tPD+NZQJnzm8tI+gqiTUNtlSAWGVrmtGHD1Ah5lpKHScV1F0uFq+hYfe2X/XE11C30hfG4urNewM0KefPmlH2eZKDTfoZoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dh6KNaeU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD3FC32782;
-	Thu, 22 Aug 2024 09:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724320363;
-	bh=c17xwt2hmAnmUIH5Ljz9mvg5PeMzUgVb+UvId+Q5omE=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Dh6KNaeUzxmRVg7H844ll/9gV0K5AJ0t5YTRulJK0DHthiuskwp0Xji1RGhzUl9RI
-	 Pbl0rvajBzESq3wAweIoplTEB2dDL5l+rMIX58hedNDeXXarVuD0wazrEPaazFGJRZ
-	 V2GTTUjHP2iEIQeVhj5+nsr5UQa2XfaUFbIzaBkFO+iGphCcjiGNTAA7WkexFqQiLJ
-	 OhsVONI9C6Xn0Zr2juRhiMG5p89NyYLGlvKbrs/yn/4aaZD67RdnKATh+xT60aaY18
-	 jtcvohHkhEox+Eoz9RKRz+kqSAKya0TDBVdu/tzDdSsp/1780JAyTGQN0GI9ePVMcH
-	 mPf1RkMZxHpeQ==
-Message-ID: <399ff156-ffc9-4d50-8e5f-a86dc82da2fa@kernel.org>
-Date: Thu, 22 Aug 2024 11:52:27 +0200
+	s=arc-20240116; t=1724320357; c=relaxed/simple;
+	bh=YQDoeRsr6q+u3voHfHxdWEDewqv24NSCdzIjQnnVtEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DOHD+OKO3mC4UP9BTc2ysdibi8rz6RgNobryOgA5944VJavSbEC5/uBZEG5aH0lVqiLg1aidDBLzhCSA/c9p1CL0VoU5j2cf1OzBQTJdg5NgH4JZ7U7wUiPx9M/iaYLs3HvlsAO9S2ytOtwqWEmxKHGTf4M2yxjvcjmyvLazH14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HITlbrzo; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53349ee42a9so781952e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724320354; x=1724925154; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ioDL8+VV11S+Jkj2FT4N18seewzyeREKSup0+frDKw=;
+        b=HITlbrzoSM79DTmFlA+UZ5+lKMsZu7F3jDajilDVrekGJIzNLl2iKdyZS0eVXQ4w1K
+         puXac/jLh3GllCR3+dWwsnnhxTdXvK4gvD+/0LERm9LWmCDRrLx3oCk5y2OLnzU/bbgB
+         dZlkXTKoF/E0SjauCNL8xyJdp3FQmscCFIN1JOM0EHIRtRf1HhiggujY9IWykqAlBmYl
+         bEPO+yOYv6EhpImV9FVfC6g4/SYn2YpX11774iC0qtSrfSbp5FzfeKELD0MXDi9E2Mog
+         rRZ/YkUnKGHn33NlY44mylMaRB5C/6W8YOAuvMfgH+74dCEjV/jItfyvOZQ9QX6CzQxp
+         azPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724320354; x=1724925154;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6ioDL8+VV11S+Jkj2FT4N18seewzyeREKSup0+frDKw=;
+        b=h2ee1+snjWd1ZkVGmwA39ELADfGhgd3GZ/HM6qPrIZgL6zidu61UavgDhIR9RknxYR
+         wIrl5mnCzP2RiK4Y5H8Ii3apJzvWAL5ItzAYYwWpXmongCvvkBGfN8aNSLfwUsOxP3Uq
+         I7yN9nuKSOnWPm7D88forkG9GmE/5DsBLHSjxqtf/mgmaqobK3v9iG0OmnU8KkiKGFuu
+         1cnXzaVtUejmZlBqyB1R0AOzAgeiy/j7XeACHMnHMH8UeyGoTxjOFUbyOMqk0qk1R59M
+         O8q0DG9d1F14mW8lB5DJcIvNovQakDNLBrYhTk6xMXhV2j4GwioxgUDEA+UIQfA5p8ak
+         HD4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUzwo6yRxEpSAy4i8f/ajsEvlYPiMvhWmc4S/cgcmtcNgyi4YVRnRACtOsKAdNwPXVK0sId92TW+GgMz5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrzRSsgFN0w5aUQYnou4ul0PCz2dL6tjGw9nLOOWsNc9FqkJa1
+	N6DScrHM7kwGxTHS7Ftw5vXUPBATj6ANJBs+QmV7enPDY4ODPbdkga/MId5H7tuMs0Sw2ngDgPT
+	R
+X-Google-Smtp-Source: AGHT+IE6AR0cXAnZyVzfNmM6b2iJejrQlthgszJ9kbrDjazQQ+yfrh4+RvUHZrPu2x1o2MjsO6mC/w==
+X-Received: by 2002:a05:6512:114d:b0:52e:9ab9:da14 with SMTP id 2adb3069b0e04-53348575002mr3203521e87.31.1724320353542;
+        Thu, 22 Aug 2024 02:52:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3ead33sm700430a12.47.2024.08.22.02.52.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 02:52:32 -0700 (PDT)
+Date: Thu, 22 Aug 2024 12:52:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yuesong Li <liyuesong@vivo.com>
+Cc: gregkh@linuxfoundation.org, soumya.negi97@gmail.com,
+	piroyangg@gmail.com, andi.shyti@linux.intel.com,
+	alexondunkan@gmail.com, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] driver:staging:vme:Remove NULL check of list_entry()
+Message-ID: <3e6423eb-0845-4ab2-8d92-86da2c814569@stanley.mountain>
+References: <20240822025736.1208339-1-liyuesong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/11] dt-bindings: clock: Add RaspberryPi RP1 clock
- bindings
-To: Conor Dooley <conor@kernel.org>,
- Andrea della Porta <andrea.porta@suse.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <8d7dd7ca5da41f2a96e3ef4e2e3f29fd0d71906a.1724159867.git.andrea.porta@suse.com>
- <20240820-baritone-delegate-5711f7a0bc76@spud> <ZsTfoC3aKLdmFPCL@apocalypse>
- <20240821-exception-nearby-5adeaaf0178b@spud> <ZscGdxgoNJrifSgk@apocalypse>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZscGdxgoNJrifSgk@apocalypse>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822025736.1208339-1-liyuesong@vivo.com>
 
-On 22/08/2024 11:35, Andrea della Porta wrote:
-> Hi Conor,
-> 
-> On 12:46 Wed 21 Aug     , Conor Dooley wrote:
->> On Tue, Aug 20, 2024 at 08:25:36PM +0200, Andrea della Porta wrote:
->>> Hi Conor,
->>>
->>> On 17:19 Tue 20 Aug     , Conor Dooley wrote:
->>>> On Tue, Aug 20, 2024 at 04:36:03PM +0200, Andrea della Porta wrote:
->>>>> Add device tree bindings for the clock generator found in RP1 multi
->>>>> function device, and relative entries in MAINTAINERS file.
->>>>>
->>>>> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
->>>>> ---
->>>>>  .../clock/raspberrypi,rp1-clocks.yaml         | 87 +++++++++++++++++++
->>>>>  MAINTAINERS                                   |  6 ++
->>>>>  include/dt-bindings/clock/rp1.h               | 56 ++++++++++++
->>>>>  3 files changed, 149 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
->>>>>  create mode 100644 include/dt-bindings/clock/rp1.h
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..b27db86d0572
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
->>>>> @@ -0,0 +1,87 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title: RaspberryPi RP1 clock generator
->>>>> +
->>>>> +maintainers:
->>>>> +  - Andrea della Porta <andrea.porta@suse.com>
->>>>> +
->>>>> +description: |
->>>>> +  The RP1 contains a clock generator designed as three PLLs (CORE, AUDIO,
->>>>> +  VIDEO), and each PLL output can be programmed though dividers to generate
->>>>> +  the clocks to drive the sub-peripherals embedded inside the chipset.
->>>>> +
->>>>> +  Link to datasheet:
->>>>> +  https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: raspberrypi,rp1-clocks
->>>>> +
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  '#clock-cells':
->>>>> +    description:
->>>>> +      The index in the assigned-clocks is mapped to the output clock as per
->>>>> +      definitions in dt-bindings/clock/rp1.h.
->>>>> +    const: 1
->>>>> +
->>>>> +  clocks:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +required:
->>>>> +  - compatible
->>>>> +  - reg
->>>>> +  - '#clock-cells'
->>>>> +  - clocks
->>>>> +
->>>>> +additionalProperties: false
->>>>> +
->>>>> +examples:
->>>>> +  - |
->>>>> +    #include <dt-bindings/clock/rp1.h>
->>>>> +
->>>>> +    rp1 {
->>>>> +        #address-cells = <2>;
->>>>> +        #size-cells = <2>;
->>>>> +
->>>>> +        rp1_clocks: clocks@18000 {
->>>>
->>>> The unit address does not match the reg property. I'm surprised that
->>>> dtc doesn't complain about that.
->>>
->>> Agreed. I'll update the address with the reg value in the next release
->>>
->>>>
->>>>> +            compatible = "raspberrypi,rp1-clocks";
->>>>> +            reg = <0xc0 0x40018000 0x0 0x10038>;
->>>>
->>>> This is a rather oddly specific size. It leads me to wonder if this
->>>> region is inside some sort of syscon area?
->>>
->>> >From downstream source code and RP1 datasheet it seems that the last addressable
->>> register is at 0xc040028014 while the range exposed through teh devicetree ends
->>> up at 0xc040028038, so it seems more of a little safe margin. I wouldn't say it
->>> is a syscon area since those register are quite specific for video clock
->>> generation and not to be intended to be shared among different peripherals.
->>> Anyway, the next register aperture is at 0xc040030000 so I would say we can 
->>> extend the clock mapped register like the following:
->>>
->>> reg = <0xc0 0x40018000 0x0 0x18000>;
->>>
->>> if you think it is more readable.
->>
->> I don't care
-> 
-> Ack.
-> 
->>>>> +            #clock-cells = <1>;
->>>>> +            clocks = <&clk_xosc>;
->>>>> +
->>>>> +            assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
->>>
->>>> FWIW, I don't think any of these assigned clocks are helpful for the
->>>> example. That said, why do you need to configure all of these assigned
->>>> clocks via devicetree when this node is the provider of them?
->>>
->>> Not sure to understand what you mean here, the example is there just to
->>> show how to compile the dt node, maybe you're referring to the fact that
->>> the consumer should setup the clock freq?
->>
->> I suppose, yeah. I don't think a particular configuration is relevant
->> for the example binding, but simultaneously don't get why you are
->> assigning the rate for clocks used by audio devices or ethernet in the
->> clock provider node.
->>
-> 
-> Honestly I don't have a strong preference here, I can manage to do some tests
-> moving the clock rate settings inside the consumer nodes but I kinda like
-> the curernt idea of a centralized node where clocks are setup beforehand.
-> In RP1 the clock generator and peripherals such as ethernet are all on-board
-> and cannot be rewired in any other way so the devices are not standalone
-> consumer in their own right (such it would be an ethernet chip wired to an
-> external CPU). But of course this is debatable, on the other hand the current
-> approach of provider/consumer is of course very clean. I'm just wondering
-> wthether you think I should take action on this or we can leave it as it is.
-> Please see also below.
-> 
->>> Consider that the rp1-clocks
->>> is coupled to the peripherals contained in the same RP1 chip so there is
->>> not much point in letting the peripherals set the clock to their leisure.
->>
->> How is that any different to the many other SoCs in the kernel?
-> 
-> In fact, it isn't. Please take a look at:
->  
-> arch/arm/boot/dts/st/stm32mp15xx-dhcom-som.dtsi
-> arch/arm/boot/dts/ti/omap/omap44xx-clocks.dtsi
-> arch/arm/boot/dts/ti/omap/dra7xx-clocks.dtsi
-> arch/arm/boot/dts/nxp/imx/imx7d-zii-rpu2.dts
-> 
-> and probably many others... they use the same approach, so I assumed it is at
-> least reasonable to assign the clock rate this way.
+I think Greg may have already merged your commit, which I'm okay with
+because so far as I can see it's fine.  But there should normally be
+some additional analysis for this type of patch.
 
-Please do not bring some ancient DTS, not really worked on, as example.
-stm32 could is moderately recent but dra and omap are not.
+On Thu, Aug 22, 2024 at 10:57:36AM +0800, Yuesong Li wrote:
+> list_entry() will never return a NULL pointer, thus remove the
+> check.
+> 
 
-Best regards,
-Krzysztof
+This is true.  But the other possibility here is that it could be that
+list_entry_or_null() was intended.
+
+In other words, sure, this patch doesn't introduce new crashing bugs, but it
+might going against the work that static checker developers do to find risky
+code.
+
+The first thing I would do would be to see which commit introduced this.
+git log -p --follow drivers/staging/vme_user/vme.c
+This issue was introduced in 2009.  Probably if the code has been this way for
+15 years and no one has complained then it's fine to remove the NULL check.
+
+To be honest, that's probably all the analysis you need.  :P  I did a little bit
+more analysis using Smatch.  These are the places where Smatch says that
+->entry is set.  You'd have to build the cross function database using
+~/smatch/smatch_scripts/build_kernel_data.sh and then run
+`smatch/smatch_data/db/smdb.py where vme_resource entry`.
+
+drivers/staging/vme_user/vme_user.c | vme_user_probe                 | (struct vme_resource)->entry | min-max
+drivers/staging/vme_user/vme_user.c | vme_user_remove                | (struct vme_resource)->entry | min-max
+drivers/staging/vme_user/vme.c | vme_slave_request              | (struct vme_resource)->entry | 0-u64max
+drivers/staging/vme_user/vme.c | vme_slave_free                 | (struct vme_resource)->entry | min-max
+drivers/staging/vme_user/vme.c | vme_master_request             | (struct vme_resource)->entry | 0-u64max
+drivers/staging/vme_user/vme.c | vme_master_free                | (struct vme_resource)->entry | min-max
+drivers/staging/vme_user/vme.c | vme_dma_request                | (struct vme_resource)->entry | 0-u64max
+drivers/staging/vme_user/vme.c | vme_dma_free                   | (struct vme_resource)->entry | min-max
+drivers/staging/vme_user/vme.c | vme_lm_request                 | (struct vme_resource)->entry | 0-u64max
+drivers/staging/vme_user/vme.c | vme_lm_free                    | (struct vme_resource)->entry | min-max
+
+When you look at the code, ->entry gets pointed to an entry in the list in the
+request function and never modified again.
+
+Which is slightly weird.  In other words, struct vme_resource)->entry is not
+used as a list at all so far as I can see.  It's unclear to me what's going on
+with vme, but I suspect we're going to remove it.  See 35ba63b8f6d0 ("vme: move
+back to staging").  Otherwise the temptation would be to ask that we set a
+pointer directly to slave_image and master_image instead of saving a pointer to
+entry.
+
+regards,
+dan carpenter
+
 
 
