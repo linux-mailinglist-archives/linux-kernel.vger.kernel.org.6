@@ -1,216 +1,100 @@
-Return-Path: <linux-kernel+bounces-297241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E97595B4D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B50395B4D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E2B1F225A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA47C286EFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F35F1C9450;
-	Thu, 22 Aug 2024 12:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66F71C9442;
+	Thu, 22 Aug 2024 12:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ReNxpoMH"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMug2ECN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAF317E00F;
-	Thu, 22 Aug 2024 12:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E954F1C93B3;
+	Thu, 22 Aug 2024 12:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328929; cv=none; b=ByLABEfUuxhImmp04Iq6Zhqq8IT5UMT7f1Wxs/BQCpDrP9BYtOTB3/ijB4ePGq2/uxHUOUyw3BpY//BmNnnXOr/iPSuDXP8P7KKXuv5WYFr927KfSnbBXiMrnUzI3kAmaZYbhDFlI0LXOMmZiDBHPmiNrPCWr7cHafpCLtpKjBU=
+	t=1724328946; cv=none; b=Tj83V1tsY/vVUI8y3Zw3lvSY/1hpd0a29bLqctYlwGQDVWUgANrF7ZdZEPcUzIyaGUCZm/Y2iGME4ey+wcU3PKFU+xZppRdCxybZf6xR4TnA2u8qBKzxRBpEmj6IgJClXtJLdjrzNRPiUxuB8olWz0DHVYTMoSo9j4xhqVkT7Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328929; c=relaxed/simple;
-	bh=/f5kHxv/qK38/VwCO46f6T1RghKua+/79bPaONA41XQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ExK+Swnd6QBILgCqZVAJO+wKbsnnW4CtSatabYjQu37iaaivNRmDEV34j5Dh0v6vrlVC1Ahk874CF4mr9EoZl5MMXbwc1kUW1dqHy9Ltr2Ge93DpfJRU83sg5I2OYSHxbqoLVwxmKyMLn7QHaNiLBFwEEOrqvPRK2K1GieZwlT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ReNxpoMH; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47MCEuiC062629;
-	Thu, 22 Aug 2024 07:14:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724328896;
-	bh=UDOd1zGVF6byxfuiey4IHC/bFKsyGbIAfpFqY9kh0cg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ReNxpoMHajC3pnzXUJ/iVd0KVYqRBmBbhRxZeQ/ZQtj3R7O8EeWaIgwUnhzqAm08/
-	 61ksTLbz3bfSgRMverAT24grYtDBSCiCKYO4sVCO9F2RZJK1s9/Qhu6h1+IQ9V+D0/
-	 u2rHSPEPwtHTrkIYLvSnb2Avku6OZD/EPEn21L/E=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47MCEuaS010685
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 22 Aug 2024 07:14:56 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
- Aug 2024 07:14:55 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 22 Aug 2024 07:14:55 -0500
-Received: from [10.249.135.225] ([10.249.135.225])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47MCElSa086425;
-	Thu, 22 Aug 2024 07:14:47 -0500
-Message-ID: <59756906-bfbb-4e83-88fc-bc1363515711@ti.com>
-Date: Thu, 22 Aug 2024 17:44:46 +0530
+	s=arc-20240116; t=1724328946; c=relaxed/simple;
+	bh=0uGoE9r7ziKqpBpmXRYc9j0/bsYanK1ptyBgDHkdCWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wlhp5RP4JCPGSHyPLpRZecmn00VMMtkLeNRbAwynmDe5rBSuqBS6T/XBWUoGkQF6F1JkjnKH0J6uHf9YZYscAQhhKax2VIv7NnA1S3q4kg8FW3/1wrJSCNdaWovgCLdLko6J5RqWczdIKjmu33YSwPHmtkwRfQWX63iNl4QC6cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMug2ECN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDF9C4AF0B;
+	Thu, 22 Aug 2024 12:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724328945;
+	bh=0uGoE9r7ziKqpBpmXRYc9j0/bsYanK1ptyBgDHkdCWc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZMug2ECNEVz5Cg1buTW31ms1rMu1JVJbcgfkk384/603fNfDUPSgJxX14O9Dp4OnZ
+	 XED7Fedfzsw5gG1X88Ldc9oOIHlO9EROZUrhpuTYi/jl73Xe/s45WfMflUcN0fKqio
+	 wOHo/FPWr8uCtrtyBp4kikAmqXW2k+hHL3Bi1qcpyBnkQX0KUyvF7N9Mb+x4W8QpZB
+	 k7LHOY8NaAhJQJFV+Lh5hY3Hu4VkYeznXZsCFiRKKjWvA/eUiopYdEAk0+oMvEG5zK
+	 FcYz0VeXq1tqj6EdtqE8ddGGUj8FWOXRRywvk/Snkax8Y5Y9PAjCHIn2kSXerOeeNE
+	 sI4wAYoLrJd6Q==
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: lee@kernel.org
+Cc: chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	tzungbi@kernel.org
+Subject: [PATCH v2] mfd: cros_ec: update module description
+Date: Thu, 22 Aug 2024 20:15:39 +0800
+Message-ID: <20240822121539.4265-1-tzungbi@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 2/2] net: ti: icssg-prueth: Add support for PA
- Stats
-To: Roger Quadros <rogerq@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
-        Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Diogo Ivo
-	<diogo.ivo@siemens.com>,
-        Kory Maincent <kory.maincent@bootlin.com>,
-        Heiner
- Kallweit <hkallweit1@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Simon Horman
-	<horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski
-	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240820091657.4068304-1-danishanwar@ti.com>
- <20240820091657.4068304-3-danishanwar@ti.com>
- <03172556-8661-4804-8a3b-0252d91fdf46@kernel.org>
- <79dfc7d2-d738-4899-aadf-a6b4df338c23@ti.com>
- <42f29ba8-e341-474e-9e2a-59f55850803a@kernel.org>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <42f29ba8-e341-474e-9e2a-59f55850803a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
+The module description can be backtracked to commit e7c256fbfb15
+("platform/chrome: Add Chrome OS EC userspace device interface").
 
+The description became out-of-date after a bunch of changes.  E.g.:
+- 5668bfdd90cd ("platform/chrome: cros_ec_dev - Register cros-ec sensors").
+- ea01a31b9058 ("cros_ec: Split cros_ec_devs module").
+- 5e0115581bbc ("cros_ec: Move cros_ec_dev module to drivers/mfd").
 
-On 8/22/2024 4:59 PM, Roger Quadros wrote:
-> 
-> 
-> On 22/08/2024 08:28, MD Danish Anwar wrote:
->>
->>
->> On 21/08/24 6:05 pm, Roger Quadros wrote:
->>>
->>>
->>> On 20/08/2024 12:16, MD Danish Anwar wrote:
->>>> Add support for dumping PA stats registers via ethtool.
->>>> Firmware maintained stats are stored at PA Stats registers.
->>>> Also modify emac_get_strings() API to use ethtool_puts().
->>>>
->>>> This commit also renames the array icssg_all_stats to icssg_mii_g_rt_stats
->>>> and creates a new array named icssg_all_pa_stats for PA Stats.
->>>>
->>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>>> ---
->>
->> [ ... ]
->>
->>>> +
->>>>  #define ICSSG_STATS(field, stats_type)			\
->>>>  {							\
->>>>  	#field,						\
->>>> @@ -84,13 +98,24 @@ struct miig_stats_regs {
->>>>  	stats_type					\
->>>>  }
->>>>  
->>>> +#define ICSSG_PA_STATS(field)			\
->>>> +{						\
->>>> +	#field,					\
->>>> +	offsetof(struct pa_stats_regs, field),	\
->>>> +}
->>>> +
->>>>  struct icssg_stats {
->>>
->>> icssg_mii_stats?
->>>
->>
->> Sure Roger. I will name it icssg_miig_stats to be consistent with
->> 'struct miig_stats_regs'
->>
->>>>  	char name[ETH_GSTRING_LEN];
->>>>  	u32 offset;
->>>>  	bool standard_stats;
->>>>  };
->>>>  
->>>> -static const struct icssg_stats icssg_all_stats[] = {
->>>> +struct icssg_pa_stats {
->>>> +	char name[ETH_GSTRING_LEN];
->>>> +	u32 offset;
->>>> +};
->>>> +
->>>> +static const struct icssg_stats icssg_mii_g_rt_stats[] = {
->>>
->>> icssg_all_mii_stats? to be consistend with the newly added
->>> icssg_pa_stats and icssg_all_pa_stats.
->>>
->>> Could you please group all mii_stats data strucutres and arrays together
->>> followed by pa_stats data structures and arrays?
->>>
->>
->> Sure Roger, I will group all mii stats related data structures and
->> pa_stats related data structures together.
->>
->> The sequence and naming will be something like this,
->>
->> struct miig_stats_regs
->> #define ICSSG_MIIG_STATS(field, stats_type)
->> struct icssg_miig_stats
->> static const struct icssg_miig_stats icssg_all_miig_stats[]
->>
->> struct pa_stats_regs
->> #define ICSSG_PA_STATS(field)
->> struct icssg_pa_stats
->> static const struct icssg_pa_stats icssg_all_pa_stats[]
->>
->> Let me know if this looks ok to you.
-> 
-> This is good. Thanks!
-> 
+Update the description.
 
-Sure I will post next version soon.
+Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+---
+Changes from v1:
+- Drop the term "MFD".
 
->>
->>>>  	/* Rx */
->>>>  	ICSSG_STATS(rx_packets, true),
->>>>  	ICSSG_STATS(rx_broadcast_frames, false),
->>>> @@ -155,4 +180,11 @@ static const struct icssg_stats icssg_all_stats[] = {
->>>>  	ICSSG_STATS(tx_bytes, true),t
->>>>  };
->>>>  
->>>> +static const struct icssg_pa_stats icssg_all_pa_stats[] = > +	ICSSG_PA_STATS(fw_rx_cnt),
->>>> +	ICSSG_PA_STATS(fw_tx_cnt),
->>>> +	ICSSG_PA_STATS(fw_tx_pre_overflow),
->>>> +	ICSSG_PA_STATS(fw_tx_exp_overflow),
->>>> +};
->>>> +
->>>>  #endif /* __NET_TI_ICSSG_STATS_H */
->>>
->>
-> 
+ drivers/mfd/cros_ec_dev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 55b30076763b..f3dc812b359f 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * cros_ec_dev - expose the Chrome OS Embedded Controller to user-space
++ * ChromeOS Embedded Controller
+  *
+  * Copyright (C) 2014 Google, Inc.
+  */
+@@ -377,6 +377,6 @@ module_init(cros_ec_dev_init);
+ module_exit(cros_ec_dev_exit);
+ 
+ MODULE_AUTHOR("Bill Richardson <wfrichar@chromium.org>");
+-MODULE_DESCRIPTION("Userspace interface to the Chrome OS Embedded Controller");
++MODULE_DESCRIPTION("ChromeOS Embedded Controller");
+ MODULE_VERSION("1.0");
+ MODULE_LICENSE("GPL");
 -- 
-Thanks and Regards,
-Md Danish Anwar
+2.43.0
+
 
