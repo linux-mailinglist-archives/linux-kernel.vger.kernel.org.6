@@ -1,293 +1,138 @@
-Return-Path: <linux-kernel+bounces-297081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6B595B2CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:21:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C0895B2CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33781C221A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ABAB1F232AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47C6364A4;
-	Thu, 22 Aug 2024 10:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4AD17E918;
+	Thu, 22 Aug 2024 10:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="imXIvYFK"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2108.outbound.protection.outlook.com [40.107.223.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG528NqD"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19179171088;
-	Thu, 22 Aug 2024 10:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724322061; cv=fail; b=dETYfRQ5TrXmcl8wfRNupnQEgjPlcRL/OgO2I52AMKT/MlfXSM73geHO0En08RK82M2p1wc//vUw/N+0xSfXqHJam3l/6yaVy7lIxS+XzE05Wxl/Gqn5pm4b/691rRh7KqTAdNHsk+vvMWzYIJ2nrSfUZ4Hn5EqwIaNh0bL9BMQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724322061; c=relaxed/simple;
-	bh=Mo8+xM2VrNmAXjMc1NNKUGPeT5AIAdpTqM21qqPqvy8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lswfmQqS075AK6K6yFxIdZ4S7zyHMSd904p9/Tk3XtLJIan37H9tnYDCijSMvhPOFik9H6DB3d8Lib8Rx1MpWJ6FYOcheA0n23+TLuJzDs3yLg1O6ziV6k4yodUOw2M0YFncbyoSyF09plfATLw0UpPjpgQbmroDsmBNFRnhdZI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=imXIvYFK reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.223.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M4W9rhnyYW+DgcYyGWTzfGF2FYAy4jSskBVVbeEMno70SMe8KUTeejDkZ+0Su8jbbe4jhIJ7TZiF4Fnt17bAOYCkn7XcIQ2BC3A/Sj7B4jYNlHzSJiJ88UtKWFa0F7aGdCfJNwCu6/T3ldbH+6Xqta3m15p7+dXeLj8a3L2rLK7IRSTopezTeg+qhaeebJmvYslQ+/DJKxU7RD8Ptk9F7XDD4q1WxF/ouMwGzx8UaR+nqs7A31jlwR40mXAAQXqOZcl1g7G8sjRgFuqe9AYBodB6l6ci/yB5bPKdfpFNi5fZ/6tEPrjA8dpk3czH9vcT5A+7/65WOi4tfQaqt7uu2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2T9/WH5WwyRjEYVJPXsKbu/RW1ChtcUf5IDdZiLw3+c=;
- b=fIFiwyJ7kPHoI0fDxSuJEyLtJ4Fa11SM48VVxxcGeS+q82OGnXrjVtJSV54/VAppux15enOYlwRna4pLmOZj6UGayyPc9A0Iaf1FYdVmkU4/Vy66eb9wLtBiS0bxPnAshVB59LNRHr4nntv2+rhOgKAChekm4EKr7OpK0xUUm6TuoQdoZQNhC5jodtk5dCp/huHv1tZY3XdkzL5RIN3t4E4755biT+PhRT6Fad2mVVh3WAOoBwEGT1O+c538tz/J5klA1HwnQkt5My088qOnanltfpCSKNBwEHvuP/xgp5ZW5rfRuo9Y2ZxX/EgLn6puJh6zWc/bzQclq6DMwX36LQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0112D364A4;
+	Thu, 22 Aug 2024 10:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724322110; cv=none; b=lxMXz1n6PGfkT5/r+sRleJaDw2vbQYrXHmaw6vdOCg/faApNVYSON/RbkInw3RdfmC7BOcHHdQ+YQwBjuL4rhyhrrm+f9ewWvO7eux+uWIwyPtN/ErZK9HvVRIeOv9e9YQjfeJA80XopRsWyew3oMFiG3Vf+pjG8PdKhCZQBOxU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724322110; c=relaxed/simple;
+	bh=UvnmyoORO8Qlvqn0VCeIiPZzTWkIxDwy8sX3YeOfxNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ajW79nZ5fBlhn6LIMrDB9s1Mea7BHx/qCyAVc6ybd7nWJRdujuK7BHMsc82SUPCR/k90Ar9Z1J0CkTx1WuneCMiiesUNLwldiwDrMtkHx4/az78QNTbWwhp5OJnxmaQ+FrYn/XaSJjzG43ezA0Qaqgg1JNYvTu1w+p+3ja6Ghnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG528NqD; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so942769a12.2;
+        Thu, 22 Aug 2024 03:21:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2T9/WH5WwyRjEYVJPXsKbu/RW1ChtcUf5IDdZiLw3+c=;
- b=imXIvYFKlAx93PgfALWawHUsxjvCEZebY+eR0NJUDzTTkyeqV+68wkIWzNzpBhD/dy0AUrHR9Hg5tHtmLuDxceBbcPq28v6R13E5PdJBmkbps0qajUGZFordmblm7KpPxVGDt9lmYRWxpiLndSMinIL8g0SPCEgDypQcSibfYo8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
- DS1PR01MB8872.prod.exchangelabs.com (2603:10b6:8:21f::21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7897.17; Thu, 22 Aug 2024 10:20:54 +0000
-Received: from BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 10:20:53 +0000
-Message-ID: <d1ee66fa-e504-409f-97de-a923123f3d44@amperemail.onmicrosoft.com>
-Date: Thu, 22 Aug 2024 17:20:43 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] dt-bindings: hwmon: Add maxim max31790
-To: Chanh Nguyen <chanh@os.amperecomputing.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>
-Cc: Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>,
- Khanh Pham <khpham@amperecomputing.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240822084808.299884-1-chanh@os.amperecomputing.com>
-Content-Language: en-US
-From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-In-Reply-To: <20240822084808.299884-1-chanh@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CYZPR14CA0045.namprd14.prod.outlook.com
- (2603:10b6:930:a0::13) To BL3PR01MB7057.prod.exchangelabs.com
- (2603:10b6:208:35c::16)
+        d=gmail.com; s=20230601; t=1724322107; x=1724926907; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4HpUPm5maP5njGxqT2EPfesiPfuO4nNvXVn6FksK0GY=;
+        b=ZG528NqDfL7JotubUSlkH2oR4mJ2IXf/ldBma/cpeIi+iklvhspNxb8GOxyG0PSW6V
+         kCQTXTdzVyzaBQvyDa6Dyt0KZrWtVg6DoUgeQUJP11L/U3cjiRnJ4zfhCOw+yuBDkAk7
+         FvNBomspLgbRGxvwYcEU4PVVBzjpgb3uinhbld6URaAKiyr6km5YgpmcDqKJ3pRlXVBD
+         +efy6pCBHI73OvY1TKy9h/utXD1jnKoPM3QPO47VpUaErmhQyf+3KuHLLfzeqpXXU3xJ
+         2ez5i9yNQ4FQfx6Or+QLJd3lrcssfquG/cxi6QGK8eSHsv5cxc0YuzfUjKKfozGAa/c9
+         OosQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724322107; x=1724926907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4HpUPm5maP5njGxqT2EPfesiPfuO4nNvXVn6FksK0GY=;
+        b=SMstXkZeCO8HzO9sfvxFEofXeL2zix0nXbJMhEJQVo8GhXGUMU215GV+ZvegqATct5
+         0UBFDLd0c9q3OudAuyCsGSjdcH5GHSoQVfynrWeYmSRaoFhLJCPsbk86L0h3E/0Ltm7t
+         +lF7Pah83J89586WJ1Gfb9UY9+EmkMP5DV0c83N9M5ptmwYtUmHGPuICQ1OeSPWrJ+6w
+         eodvjy5CnaelN7MIX7bncpTQNlpUtdxJCrVOo2Or+176Eqk+9/BzkgmTnoql96w1h5gr
+         hxLn6jwg6XLSPH6RTGUB3l96oEV6YBEdIGVNo7YBn2/mMKOTDKcf0RF+t1zvtHKMb2XB
+         klxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKEXbuPjO3ITeSyQoxzopG/zSUECPiMs9AVNQUKAyBe9JRbbN46ahryBTVVXxEOZ47b4MJI5qwr7AGzTEP@vger.kernel.org, AJvYcCW46gh0xmLP8xk6x/KYSQWM4S6697RHkzVQIahQByeBS1rAOLTyCLJaGDVRfaBgJqNSHA/3F38l49RwAv2X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9Ygb3BfchrnRt8QBNSzkQCtj1lEB5mMvaln5p3qdQmTTDnMvZ
+	gS6W0DhyuCTtMrxVcYWapYfgif+A40vH94kmCkYM7AN/CEmr6D9CpwxHVw==
+X-Google-Smtp-Source: AGHT+IH7cxLf7SLbT+duZmRQ8/OxZhpJzcy4IUnNX0FVEwpl6kAbYyUk2yogRoHtbNd15kJmyRa7YQ==
+X-Received: by 2002:a05:6402:4308:b0:5be:fc2e:b7d4 with SMTP id 4fb4d7f45d1cf-5c0791ebb13mr928332a12.13.1724322107097;
+        Thu, 22 Aug 2024 03:21:47 -0700 (PDT)
+Received: from f (cst-prg-86-203.cust.vodafone.cz. [46.135.86.203])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddbee6sm773164a12.9.2024.08.22.03.21.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 03:21:46 -0700 (PDT)
+Date: Thu, 22 Aug 2024 12:21:39 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] avoid extra path_get/path_put cycle in path_openat()
+Message-ID: <o2uu6mzozjaruja5udzfnv2p5fwfoeud5movtve7gyuj57xlz3@aqy6sil3o2ze>
+References: <20240807070552.GW5334@ZenIV>
+ <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV>
+ <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+ <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+ <20240807124348.GY5334@ZenIV>
+ <20240807203814.GA5334@ZenIV>
+ <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
+ <20240822003359.GO504335@ZenIV>
+ <20240822004149.GR504335@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|DS1PR01MB8872:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa7f894b-3bc2-45cd-6705-08dcc2941a2f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cExQMytjZVVZR0x4a1BmVHJQdTVzZTBTeGRZT2c5M3NGM3RoQTFjUlZDMWVJ?=
- =?utf-8?B?OFZzTDZuaVVzaytpcnpmbWxCeGhEVnNUUzVILzBNanBubElrK0ZtcDhOUjYy?=
- =?utf-8?B?NFBXSW1nNDV5bEtEcFFuUExhYmRRZG45NXJlOU44UVFnaXFlN04rNXFSTkpl?=
- =?utf-8?B?NWhHRnVMdjBSNWxFN2xRcFN0SVl6YXlEaHJGdFFXbUZ3ZVNCNHJLOGVuS2dV?=
- =?utf-8?B?TkR0MU5oVVQ3Z1B2bTR2OTBlOHJaMldFdHlnWDRGK2RoRm4rWUZaRi9hRHZX?=
- =?utf-8?B?c1ZJMGpJNENFT01KUytNRGFCMGNRa1M2UnUrZVZyYWZYeXlSMWNVeGxRRVZz?=
- =?utf-8?B?K0t4eU5IWVN3cDdKQXRYWEp0NThXNHNycWRMOXNrZ2YwcEFhek1nbGVDMmVO?=
- =?utf-8?B?VS9scTNMdzErWEpvUUxkMk9CQUxFRjQzSlFUdHVCTXo4bkNYQTErRXpMMmFK?=
- =?utf-8?B?Z2hlZCs5VUphaTlFeDZnWWJlRi9scTFpdG1LbDFKQ0sxVTRlbE41Vm5iREFq?=
- =?utf-8?B?YXNUaWUxYmJ4U25wTXA2aGd3S3lMTzFSVUMyMWN4RzRLNnlqZGVCOE4xUkI5?=
- =?utf-8?B?bkkwUVVzRjdWN2lEQUh4UE1wWit5aVB0RklONkc3UURZV3h1dVNHR1M1SW1s?=
- =?utf-8?B?REdiOG81MGI1L09JZGtpRkZHTFVsYjUyaUlFME4xeTZrSmdhNzRlT0pSN1ov?=
- =?utf-8?B?QjZOb29SS0UvV1JFd3lYWUNHT0xtakNqb1pyZGE4RWl0WXZ3M3FJWFlha0RS?=
- =?utf-8?B?cEFwcGYzM3ZhMFZBUy95cjZRcWR1QUYyUGpJVXUwQWpBeHJlVENoRWIxTnZt?=
- =?utf-8?B?MS9iWGNhU3FreENYNGlnMEY0V042a1lSdUpVU3d0aWo2citSSVp5ZURxazhJ?=
- =?utf-8?B?RDZTMEdVTG1VWHlPRnRpVUVBM1pRMEpXckVubzNBRGhqellZelB4SXJ4VmYw?=
- =?utf-8?B?dGJRVHVrWXFlSEcyQjliSkZtc3h6ZG5oNzlucFl0VUY0RmpNVjBncDBGSHEz?=
- =?utf-8?B?YURpQVRDWVpvQUM4SWo2NGl5VHMzOTNpekpDMHBjd1d1OHREZlkraU1MczV1?=
- =?utf-8?B?MWJIZ2t2T2ZiTmU2b0JsQXBCNzlNNlhVbGtsd3dJVUN5cXJucGF1OU5pNjZm?=
- =?utf-8?B?L2ovU2xDa0JsWW9uU084V24weGRtSTlsR0NlU3RlUEk4dnBlS3lUeFRDN0Rt?=
- =?utf-8?B?UnllbVBYMHJWZlF6MExkRHkyRVY5QXZLVU1yc1ZVZnR0UzZwazdxaEdqK1FG?=
- =?utf-8?B?WnVFUFpMWkhxU0lzek90dDBjRXk3QlBKVHJZOXNDNDZ6ZVJGSzVjUkRkZVFG?=
- =?utf-8?B?ZWVNWFZsNEF0Q0M1S2hjbWZ6NlJOai95NnpEOGh3dGRwcnh2amsvMDJFTWE5?=
- =?utf-8?B?Wlh1NmxBRE9CbjduMzR5ZDhYYTBaR2Q3bHAxRmdQTmRydmtYYnRvTXg3Rk5U?=
- =?utf-8?B?N3VvMy9FRmFJazhicW5INzhhZjNpTFpndUhteTk0WHUzQWdmV0VIa01EWUp4?=
- =?utf-8?B?a0tETERzMElOb05uZnNBRWpXQzhXWGtEODFLS09NOVI2ZThjbkV0R2lDeE9t?=
- =?utf-8?B?OGlVdlYrWVRURlRKdFFINnhVcmVBajJFbmlveUJYTTZMcGVxQ1RocmxsMFpk?=
- =?utf-8?B?eVprQitYWjBPbzQxQXhvanlvVWxlUmNrOFNvUFF4SVY5RWk5MjJUT1FNQ1JR?=
- =?utf-8?B?Qk1aWk0xbDFHa3B5THB5elFFTlJFWlJpaUhSVG9LQ1U5MTZRQnZ6OGpSNzE3?=
- =?utf-8?B?TGtuQXN4UWEwVmsydjk2OFc2UDR2dFNlZTQ5SGo0Y3hsdVdZZG95M2lPY05B?=
- =?utf-8?B?c0V2REZvam1ZYkFsengrdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2UwWjMvT09HcVM2TW1vTkVocTJtOEFCWTU5ZHRGQ3F5N0RrS0NoWGwzdDNU?=
- =?utf-8?B?eUpISjhFUVVyRG5KL09rUzZiU1B4OHRBbSs0UXJ4d1k5dHo4NkE0Sis1MHV5?=
- =?utf-8?B?WHlNMTVsZFlYcFRmNGsrVGV0c3kvSm9SNWFiOWFtZ2QwNGZ4UGIxR2FDTWd6?=
- =?utf-8?B?QitGamhtWVcrZUJ2NnpidG9sMnV2N25hQkprUmNESlhXNW1NS282WWhQb3lK?=
- =?utf-8?B?aUhEZjdZeC9EY1Jib0VxNU9wMlJoZFJXMlk3d2VFd05aV1lDOGV2emxPZlpm?=
- =?utf-8?B?RzZZOE1SeFM1SWExdmtvdWRlaDVuUUFVUkN3UllYZVF1VlZGYW84Q3lvWlRV?=
- =?utf-8?B?L2t2WFZyVTZWT3d0MmRiSG9CTEpSWGtOM1kwOUFDYUxKU3dycU1oL0U3UDdx?=
- =?utf-8?B?cDlFb2ErTWhKb3NVVkxZUG81TnNHMXdiVkxhSXcxM3VzRnJmVWttdHB5QWdG?=
- =?utf-8?B?QnVXRnEvRmlBa2cxamIwUFkrUlZEYnllenJQZlA2Wkt5cTczZzFyZjVXVFUw?=
- =?utf-8?B?SE90bzkrcW9hWFJyanROdHg2Rnc1ZDQxMlVRazdUQjR5NG9yN2NCM1pnL04z?=
- =?utf-8?B?ZmovSlhDQ0hNVzdYS1RjSFpXQVlVSThiVVpRcUhtbG4wZTNzVVdNUmI0TnB4?=
- =?utf-8?B?QlVWeXBRNklFZ21VSHNXNlBad0Z1VnRtMi9nLzBjYUFGcUxZMDIrQjI2azNh?=
- =?utf-8?B?dWpGODJFRTY1YjBBMUFlMXlDWGFNVG9MQ1ZTNGhtbTBBTUFzZklNY1RVNXlu?=
- =?utf-8?B?cGVlR01qc3JhNmNoSDk4NFNwa3lrdDVmbHNGMmRWa2dvVHQzSk0vem0yendN?=
- =?utf-8?B?a3JEVkFXYjNzbmlHekNCcitUVG9HSUltM3VLRWZGa3RSa21WSloxVUtnaXpZ?=
- =?utf-8?B?ZWJuRVMyZUZna1VoNDRNM0xiWU1rVnBIU3pTUEhLTEhyZnBYcmFOTlVZMnR2?=
- =?utf-8?B?L0QzK0M0ZTl3T3p5cWIveDFlcERXcUdYQ0hWZUl6ZEJoQTlPT01FUjJ0MDVI?=
- =?utf-8?B?cW5zdjByQkk4dE9nd2xRbU5nY2QzQ0p6V1JyMTRKc0RjdURHa3lyZGZQYmJW?=
- =?utf-8?B?U3dTVCthYlg0eTFTYkJKNGZSRlJsVTA2bStZQ2RmQjQvM3pLZlM3cGJiajdP?=
- =?utf-8?B?V1JGdlB4NXBOUjJrcEhCQVgycFl4RE4xTTh3UnNLbStjRTZsakNLSXFKUHlE?=
- =?utf-8?B?SGhGeHo4Vlp4eUY2R2cxNHJJeXoyWEpMZFhHSXBOeGFsN3NEMS9TelNsNlBD?=
- =?utf-8?B?Mk5BN0pzRVUySEw0VWVybHlQWkdzRTVjTkhNVXlPN1VJNG5NSllwdDY1Nk9a?=
- =?utf-8?B?QWdMVmNOUkVidDhQUFJOc0dvcjRuVDdPRXdzZ3lHOUEvYWFwTmY4VzhrOTVz?=
- =?utf-8?B?ZDJuKzhlajRuZ0M1cmhmc1d4MWliUEV3eWNSdnhRemtNd1VQV2pacVB3ekR3?=
- =?utf-8?B?TTlBM0M3clhUWXJodld4azZOQmh3aXRpNFY2THpXOVdiSUI2NDVhSWtvWVhN?=
- =?utf-8?B?ZXRudXJiNXUwdG1xZ3NJa0grZmxFSmZnTGFSK3U3blczOXhxNWdhaHhGbDNK?=
- =?utf-8?B?QjZlMWhNQ3k4YkJSVmVZbXpnSVZ5WklOemJsZDFReitYTVZIQUsrd241YzJI?=
- =?utf-8?B?akNQQ2c3NXYzL0ZyUGhEYUxIVDV5S1AwWGY0czFOb09xMUIwekFUcXB0bGU5?=
- =?utf-8?B?NHlseEQyOFNzTzVyV1BvclhCYTNGaEltdnhRUGpSSXdFaGx1dEtWakRaYlFq?=
- =?utf-8?B?TG1KK0ZUZHU0aVJWeHRaVzRrSE1aWXdEenN5dzBOUVBTS3ZRd2doNnVDSHYx?=
- =?utf-8?B?cWhudHBUSCt0WGxTalUwQjIxUEg3bkQ5N2lmdzNsVks0QmlBNzRYOUpNVkJV?=
- =?utf-8?B?NW5GTnFZUzNhTm5WNmRsbUltcUtJQUFyODNTa0ZPVVpBVUVuaHJYQmRTRm9i?=
- =?utf-8?B?clFXeDRsUlliUWYrQk5QY1ZiOUtwRncvcXFuSnJ2US92QWtnWEpRYmU3VjRn?=
- =?utf-8?B?SmNBYWVNcFBaV3YxNVdYR0VTVUV2V0xhS2RUbzIvcTRPK3FSdjZLTHdtZUp2?=
- =?utf-8?B?aGJzVXB0T2h4aU5pV2F1eEFUWGNnTDhScHNvdG1HdjNTSXBLcnZ2YlRoM3RW?=
- =?utf-8?B?TkEzS25tU2hQcWRTSmx0dHo1cXRoejZJd05LajVJRFFrUklLSG1MRjltN2l4?=
- =?utf-8?Q?d/5bioS3/zLob8T7Y6pXrSg=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa7f894b-3bc2-45cd-6705-08dcc2941a2f
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 10:20:53.3244
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /CQ5HgnRwPLCMongE2LAb8U0w2yPdg/MUinEB9csWwYmS0SJx8NzbA+hqwR22DREn4teHNXnOk3FoZ6iNBc32yyr++DbmYiYQqy3CO/InAxE8ChtDOQ8y26ZMejPueW8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR01MB8872
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240822004149.GR504335@ZenIV>
 
-Hi all,
-
-I only linked to patch v3: 
-https://lore.kernel.org/lkml/20240813084152.25002-1-chanh@os.amperecomputing.com/T/#mce666b8184682e4d463d418a294d95512d95c07a 
-
-
-Thanks,
-Chanh
-
-On 22/08/2024 15:48, Chanh Nguyen wrote:
-> Add device tree bindings and an example for max31790 device.
+On Thu, Aug 22, 2024 at 01:41:49AM +0100, Al Viro wrote:
+> Once we'd opened the file, nd->path and file->f_path have the
+> same contents.  Rather than having both pinned and nd->path
+> dropped by terminate_walk(), let's have them share the
+> references from the moment when FMODE_OPENED is set and
+> clear nd->path just before the terminate_walk() in such case.
 > 
-> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> Changes in v2:
->   - Update filename of the maxim,max31790.yaml                        [Krzysztof]
->   - Add the common fan schema to $ref                                 [Krzysztof]
->   - Update the node name to "fan-controller" in maxim,max31790.yaml   [Krzysztof]
->   - Drop "driver" in commit title                                     [Krzysztof]
-> Changes in v3:
->   - Drop redundant "bindings" in commit title                         [Krzysztof]
->   - Add the clocks and resets property in example                     [Krzysztof]
->   - Add child node refer to fan-common.yaml                           [Krzysztof, Conor]
-> Changes in v4:
->   - Add Chanh Nguyen to maintainers list                              [Chanh]
->   - Drop incomplete example                                           [Krzysztof, Conor]
->   - Drop the cover letter because only a patch existed                [Chanh]
-> ---
->   .../bindings/hwmon/maxim,max31790.yaml        | 70 +++++++++++++++++++
->   1 file changed, 70 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
+> To do that, we
+> 	* add a variant of vfs_open() that does *not* do conditional
+> path_get() (vfs_open_borrow()); use it in do_open().
+> 	* don't grab f->f_path.mnt in finish_open() - only
+> f->f_path.dentry.  Have atomic_open() drop the child dentry
+> in FMODE_OPENED case and return f->path.dentry without grabbing it.
+> 	* adjust vfs_tmpfile() for finish_open() change (it
+> is called from ->tmpfile() instances).
+> 	* make do_o_path() use vfs_open_borrow(), collapse path_put()
+> there with the conditional path_get() we would've get in vfs_open().
+> 	* in FMODE_OPENED case clear nd->path before calling
+> terminate_walk().
 > 
-> diff --git a/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
-> new file mode 100644
-> index 000000000000..b1ff496f87f9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: The Maxim MAX31790 Fan Controller
-> +
-> +maintainers:
-> +  - Guenter Roeck <linux@roeck-us.net>
-> +  - Chanh Nguyen <chanh@os.amperecomputing.com>
-> +
-> +description: >
-> +  The MAX31790 controls the speeds of up to six fans using six
-> +  independent PWM outputs. The desired fan speeds (or PWM duty cycles)
-> +  are written through the I2C interface.
-> +
-> +  Datasheets:
-> +    https://datasheets.maximintegrated.com/en/ds/MAX31790.pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max31790
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  "#pwm-cells":
-> +    const: 1
-> +
-> +patternProperties:
-> +  "^fan-[0-9]+$":
-> +    $ref: fan-common.yaml#
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      pwm_provider: fan-controller@20 {
-> +        compatible = "maxim,max31790";
-> +        reg = <0x20>;
-> +        clocks = <&sys_clk>;
-> +        resets = <&reset 0>;
-> +        #pwm-cells = <1>;
-> +
-> +        fan-0 {
-> +          pwms = <&pwm_provider 1>;
-> +        };
-> +
-> +        fan-1 {
-> +          pwms = <&pwm_provider 2>;
-> +        };
-> +      };
-> +    };
-> +
+> diff --git a/fs/open.c b/fs/open.c
+> index 0ec2e9a33856..f9988427fb97 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1046,7 +1046,7 @@ int finish_open(struct file *file, struct dentry *dentry,
+>  	file->f_path.dentry = dentry;
+>  	err = do_dentry_open(file, open);
+>  	if (file->f_mode & FMODE_OPENED)
+> -		path_get(&file->f_path);
+> +		dget(&file->f_path.dentry);
+>  	return err;
+>  }
+
+There are numerous consumers of finish_open(), I don't see how they got
+adjusted to cope with this (or why they would not need adjustment).
+
+For example fuse_create_open().
+
+If this is sorted out I would argue it needs to be explained in the
+commit message.
+
+fwiw I don't think patching up the convention of finish_open() is needed
+for avoiding the extra ref cycle to work.
 
