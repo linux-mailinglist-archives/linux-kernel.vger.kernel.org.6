@@ -1,227 +1,353 @@
-Return-Path: <linux-kernel+bounces-297009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD9095B1D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:38:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6239C95B267
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241832825D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA3F1F24959
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C17F17C211;
-	Thu, 22 Aug 2024 09:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4413D175D3F;
+	Thu, 22 Aug 2024 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cTUrA7Cq"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010032.outbound.protection.outlook.com [52.101.128.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZaAfkEqc"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914615572C;
-	Thu, 22 Aug 2024 09:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319482; cv=fail; b=IBSabfnCjHmXP8sVQfGMjYaPbPY3YptlZSATV84KblBy0sCNZaU9kYYwRNPB4JtSAfVWqvPdVt957TF14fbyhw2yoMSWKYknHnC2xb0F79G/V5ASS6PZlixnhlj/WWXkN+022LHqHWXOBq5oJpIDVzd9R0ntbuZF/tNSgSirJ+o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319482; c=relaxed/simple;
-	bh=qREbto2vrHDM07hy9EqBa+918xWYwPkzWZyZUhUtzXc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FV3xeuN2vMzSvZWQYrSKzqg6s6/X6mpoz88KLacQNDwjSVBg8gr9IpLtUUSF6iv9MPB1pAjuhzkdg/3ckydHQLO2FwOp1JDfrrxYOqupDF+LWh+Bk+yYGnADedo2bAvY5ujkVD1yJNzU+LlOQNC5oRvAJZnpJz04QIDhOPlq+Ys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cTUrA7Cq; arc=fail smtp.client-ip=52.101.128.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KTIgpKlShpfruRPiFJxEhWz45jB+RSvJNIHGIpuVPmCJpWadf9VNkHFGYz3yw86+Of4cej0ZtF1ttiovWio8QW8OQjGk+7QAntvJ82vI8wFE1CC25jrUSW5hBX8sT6SmPe0wMa7lEC9K+A7e7NA4TQf2Isaa2+cgMnbroPkyNLTcftI0bdOm/m11qEGfbVtW8VzjlJkxTEmD5EPIkd6Yddj5EXtHnUcavU98L5ywkwOUBS4lFtIR7tL17n6q9J+W5ofw0cfPzPDGxENZu/s3H/W1z12inDB1AvnUX1JhvrB4t6UGBNFcMGUUlUc9aR3Pv56S09Zhx/W3BoExzCXnAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JeecfOJ+S+bvgslxe330KSYK96rKrdRIOMpMQ4qjwp4=;
- b=jg6ff3wce1PR1ceZ6gxKux6XaJXqbWlVy+xTKfXLZdpY8qadZ+WXZeK6XAPYnziv5o/sFAwKlNO/dXxzjGJKkL/jML9TGfB/+PsCAsg7zvJbcnX/4ZonJkKPWth6mZOQALKvDRFHowMpvZt4VcWF9ThyZDV9JwEW5Vh9Ca4ZXYOMlvQ6X0b+tQMkv16ZSAd/gKDpKbM2XoBbeHcVrl/UzOWEKFotXTiFB3aMzeKPqXCkzn5vt9o7QtBUUU15iL2ve62TwCUohuLS0OD1CSt8iBv7kn40Lhpx1LhSgf9ihsjESXMW1faSPG/cMtsQPc5A5skXNKzV/MKynpaa8blk9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JeecfOJ+S+bvgslxe330KSYK96rKrdRIOMpMQ4qjwp4=;
- b=cTUrA7CqwUhcOE2qP8FFa2wjBk4wh20HQUXMBCug0Sb6NENqMEaaH5bI7JkhLSAvmEarESdyYAZwIncO2dfRDbgzXOYoWeTs9Suhg0a+JnaVAN74Ytas+IB1NKFrcSwA2eeBIexAQ7wCWb0WWZqIZD35nsycxSIoRdP9uo815fff7OnYnnbxO1pYcyGZLLnsPPktBuwOcJGPtG10LfrwQz8E3WvaBa+lYTv5BH0fPoywdVdoOYnq3ggAit+x3fGahmrTAVURPwmDdS+TGu8gblAzbILztiSQZ1s+75EBm0IdtnU8ebvzPKR+AZLOhXH17anr5y8Y/CN8hp4dVvnA9w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
- by TYZPR06MB7315.apcprd06.prod.outlook.com (2603:1096:405:a5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Thu, 22 Aug
- 2024 09:37:56 +0000
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 09:37:55 +0000
-From: Wu Bo <bo.wu@vivo.com>
-To: linux-kernel@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Wu Bo <bo.wu@vivo.com>,
-	linux-sound@vger.kernel.org,
-	Wu Bo <wubo.oduw@gmail.com>
-Subject: [PATCH] ASoC: dwc: change to use devm_clk_get_enabled() helpers
-Date: Thu, 22 Aug 2024 03:52:49 -0600
-Message-Id: <20240822095249.1642713-1-bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0018.apcprd04.prod.outlook.com
- (2603:1096:4:197::9) To PSAPR06MB4486.apcprd06.prod.outlook.com
- (2603:1096:301:89::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B03015F3F0
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724320405; cv=none; b=qNb6qzANy6SlQY94N4EpZq+n4hQM3MuYvxa0ueTqvIo5SUd4DUCBQSzFRpbVHczjwJmUNdhsqg02deStBatohRCOiJv+VdSImHV+w9ontnyGpj4n8p+MubmN2B399aPZ1sFX1RQDIu0tNfvdpqfYu00UO7VHnwTGZOne1d/FOFg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724320405; c=relaxed/simple;
+	bh=kjxJT0PufR2fBZ6eWMYdVwEKUblb9lUuf7DPVKPS12Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QFePWE3fVX6IXVf01RqkrWjnbRYZlzWG70ma9/t7mBIVsPuZgX9CYEe9JGmnzhNyaITcx0F+tIsAgVz9zgUzzGPPatr/l1dB85ng2rFLrgHQVx+2FD781+jqaE8XoOLA2xOP7y1cyuOmD21aRCBB4UhQqEbYZYctJSEmmSECRzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZaAfkEqc; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7cd830e0711so585279a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724320403; x=1724925203; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k6v89rhrKyUhVgO1w6bbOml5um8TYxqEfF5vzO7isEI=;
+        b=ZaAfkEqcIo3rp1zI0iLd9yvQr4fi4IO0T8JMMMyU0SCYFwCKZsvowJ+zJ5TLFZE+O7
+         NbYCTeda6mPC/NBlQBvE3sir5vVNZZjP+w8npV/KZaTPybizCjQr/YD8Sl9jAU+IsRDh
+         hlXZnP0JhyWUqAm3QFSTrM17l/1vE+rUTdAPgp+bKU4jXtx1F5GTn44Fhk8SYt1rycAS
+         jVxFZ3c5nW3OwlHcASM6GyMWKaWrVd49YxJFiqJ2MKOBSiFA9R9SFu1lxVqIoccjpSFP
+         G4pf116JSj73KGae2ykk3v6zRca8hkvTPGyzyvklGBJ2ToeWocue0J65qYKXKaXFeH51
+         qzXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724320403; x=1724925203;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k6v89rhrKyUhVgO1w6bbOml5um8TYxqEfF5vzO7isEI=;
+        b=VTdT/IAdMKuXzKMthwtwN3GD6DTx4ALC8+kTRRUetrqttEl0ONFZwum1FxPvSVWShP
+         d7KDz2HpakHxBGX/OYEl/kGkDBov+oaVH7PwocVBEt09FJU4XerQhQH+Pld4y9amywzt
+         aFsKS4I44i4fvqG75mdw33kLd8bRBD/0Pq6tFgCZsvzzDMyzSjUiu3VMvfkWn4tlRrTC
+         j6REk3o6nETMysVHGxiqgDo3cZTVJsCJrPmvhfLd+hKuHx2o3h6EVPoZxnOAlEYTEbRC
+         H6/0ITfGHXHmuqGDMirTYIKxD4tHcXRlMIShlwvHf/EDoBiA8UApkd5diml6/oHPonZF
+         PAew==
+X-Forwarded-Encrypted: i=1; AJvYcCUHDla71h387r1NkKYzMOSJqDg+5O4eAUFuupz3IaQYFPrvC+n6aFk+hKPErO0Sj4sAQpx3e58E+b43UG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqMQrHJmRluXuy15WQQJtsUZp83xJMdgRZYhsQKh+w64z2uLTe
+	2r0JTEcyU6QPf+VvnFLX1kbxowNKI3uiT+5Ew8WvaIvVtg8IuPseXwKGQrc88kzRa4Z3CGOr6/b
+	UFqCypUhK78ylGhkP4KMdcIe8lhimgTSA7lLCrw==
+X-Google-Smtp-Source: AGHT+IHFRpkvfxbmXPRh29eoHXLed7FlXD9Hqza26GhJl+GAf7VYWdaTkmiIEi1s1HzSexLIJzqpQNl2pXdfo4vCdBY=
+X-Received: by 2002:a17:90a:ff17:b0:2c8:2cd1:881b with SMTP id
+ 98e67ed59e1d1-2d60aa0f083mr3591110a91.20.1724320402615; Thu, 22 Aug 2024
+ 02:53:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|TYZPR06MB7315:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2834d25-e9fd-486b-826e-08dcc28e19b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?y8wa0evJniQwNw5GrVEwArqN++/be2y0cp41wlavgAYeYzGGWXe5D2I2jrF/?=
- =?us-ascii?Q?iTkkx1IL2WByeCOaUoNFFAoXzxnL/2dj3aRtny+OEEj42gosHeaaWMOysBrQ?=
- =?us-ascii?Q?6PsW9WCBwTml+qmogllCiCFj3/XlXOX+deT+z9wMxIOj9evE2s3egtBmUVOW?=
- =?us-ascii?Q?0mK3p8rAHjmgwOFJJqq9jSL4ejwAGHotYdNN/NFEmY1Me4OiZqqUeIkQcgKv?=
- =?us-ascii?Q?CWeDwvTRBXm56M76kvEPKyfOMgvK6bDqwxvc/KnYoklypnRqRFfJmIWj+CoD?=
- =?us-ascii?Q?Bh1Oz8wajuJGUpuMlMEsi2xqLwAlcmxP1MCH6yHX8UkW5t2RTYLZyBWudH85?=
- =?us-ascii?Q?qeKeXx39De+p/UKq6ZlfIoMxc6CDCkL8wb4a9dY8QPXX43UcNuZwuyoxGE/y?=
- =?us-ascii?Q?welWoyw+J4EBkEDxKZ3O/krbPxABjF3PvYvO1jYiVWTZD8UPJXey7jrXbun3?=
- =?us-ascii?Q?9UqaIZj1Tx1tAiXhvo6NCMzaGipje+G7kDynzsKO9mMTeMi2SzMsd4X5bsB3?=
- =?us-ascii?Q?C8p6HhTFuGDTv1ZRleNFFnqWjnxykEbXVO+InA0nhxpBUgco/UDEjb5zbL7V?=
- =?us-ascii?Q?n820yg2oc3dC0PMnfcbM/JPshoERMvBcea20sKmGfcb4zR0Nba2VOgOxahsh?=
- =?us-ascii?Q?SsWwG4NjXKmE1/2yImCPT7aEaiIzaqBkBC8jrDLKuGv+irfAy5tCBtgToHm4?=
- =?us-ascii?Q?LuNdlWgfFdO06sQ7IMoM2F0dVNnc0axAyilXlwycIg2cduTVObqMSslzL2ML?=
- =?us-ascii?Q?TvoPHJmUVLG8vlQpV/Dxe/k0iVkcip9j9UXFUphYaQ7vIs6eMIoWZ03/SXa7?=
- =?us-ascii?Q?2K0FhdYsNDbugTHtp9eRZaaOK7UXGKvF0UERIQQNTy/iQSRWA/9lcaBAbpjr?=
- =?us-ascii?Q?mM1dhFjjFNekgbxkHhoGNTbgC+ZqrHwhN+M7Ew3qpOpmmENwWLiWrZi8KE42?=
- =?us-ascii?Q?kSudriZtUOCK7BZ34VFRK/UKbQNcYc5yFzz9L1GCUXHrHo/ARmyoE+niEgX2?=
- =?us-ascii?Q?JTszq1xgl42GO4pFJc26vZIF3KCzOoV+w7zC5LCyu8iJWZIl8FUrqK02vldu?=
- =?us-ascii?Q?oxQ/bikOdtdfgG1eGUTC/raOWUtPCHg7JNqPK4oXmE8hnC1GWMniaAEAXhzc?=
- =?us-ascii?Q?Iomi6uitQzLUAgQpegaCE+Qm3V3PA6nPzBBKUKRdFT+E1SU7DfBhBagEomY8?=
- =?us-ascii?Q?Yp549dI9r6WK8AvJjc0rV8g65dLUuQ1aypriUkAieG6S5A0X7T5LsBNkKC7O?=
- =?us-ascii?Q?XyNM4N8W45LGK0RDAMimQG7fINLsGDmCD28ljkVwzNduOLtKLP/cA+sSOEcE?=
- =?us-ascii?Q?d/LeNO2sNjXjkaeLx+lgrwR+L/NGArzV4Stm8UBqHSa7bAZBcaeyJSB0mCdX?=
- =?us-ascii?Q?rvsCLfTM/XviZvZRlG3Zb8TGHWHmTPklUvzQIeZ95AnI3xtimw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EBVV3WXClg4ZlkDzx4RoIGpWhQU18FeDQr82S7ZgEOtWFy96oYuNXYV1wYdk?=
- =?us-ascii?Q?sFMvKFBP9x+ws2YBrI2WThd0x18aSDCoxVMlO2hzdl5+X9sCSPdtFV0rJQQw?=
- =?us-ascii?Q?L5074AG7bwfqNKM++hrjwVid7Hn+q0Dbh/0iZYsx4UILnHAnxXtckbYCgTCi?=
- =?us-ascii?Q?577yss7dCVgrU1d7DtmEU0Ek5y1uewwgRPI6VVY4sxcEOuFalIyIcprAvdyj?=
- =?us-ascii?Q?8M3g7NDf5X37HeDMXi30ql/s9j5Fc+EnqkWHEyLocsW5Tve/xGgYBjPTeCOk?=
- =?us-ascii?Q?clT7xcPXei3WbpUTYyJ3IgL+nwRIIrWWe12DBlEgy+TtkrTMosseF+hR7g+N?=
- =?us-ascii?Q?ZDTezG390bPj5uFdy4mOc58ZGswYF5bC8hqArl+VWrT3sdQ18H6SnUEgyw24?=
- =?us-ascii?Q?lRM6dhk7brYDqiK9nAQAIa+ScCtJ+rDRowHRJ7hztlDhAmEm9fvxu/cYDilP?=
- =?us-ascii?Q?w4Xt70qDyjbJiG+c6fNDIpe1MCFe5qZB94OJ5if2Y7JsItZOKhiUXfWb55wJ?=
- =?us-ascii?Q?nTQRGZaQ47ptD4QVd0CZbcE76f0r5/b7HbJdrSXTLATGqcwQy/yHF8/wftJJ?=
- =?us-ascii?Q?H0Gflt4/ts4rvLXmTdsZAazDfSyVtpXc6hzxuqXO/FSUcexJxZ0Q41IDMFT9?=
- =?us-ascii?Q?JloxRuSYZ58oNjSdsT/IpaBKbZ5417x62IWve6stBRtE/kC0c68ZcgaMqPGZ?=
- =?us-ascii?Q?DA5qcHNNisZvcwcR6V4qCKIDPoP/eXkg6BTh6wMV8JgYdbqk2laMVvVW9WMS?=
- =?us-ascii?Q?J+iXfp0gkj2ruEbb2A5N7+0oIx1iklbGKMMeZYoMbdqHeJJ7ovVX07MbJyli?=
- =?us-ascii?Q?hd0K9ukj5GGkoOlVs2UT9s7LK4Uxisn5BTo2aEcjZH5HmnpihUhUL57FJyyd?=
- =?us-ascii?Q?K2VLPAnpznyVQDP0/HbE7ptLjBisnAlTumfkb25TJy4fS/GlzHp7FTEG/vZf?=
- =?us-ascii?Q?kA9IRa9mFSKIiXKGeeVyeArs9tywb05ydXCWwMfNwpZC8ROUeGfUdPLrMWat?=
- =?us-ascii?Q?rBF3O4P4tjtYOFLfa0p32+/tqqISVmAO+mvni2chtcVIu/xZXT+sNpoCii+y?=
- =?us-ascii?Q?AIEc56hEOuLThOMyxyBnX8bJ2yMxgn+eNpa+Pv9Rj6n0nDHm4N1yrjC8oFq8?=
- =?us-ascii?Q?tYQn+pm73llKH1UujnBhJDHP2l9SB2mQQfPqGkIr674gogxQuOZNaB/w9HXY?=
- =?us-ascii?Q?hJEtO7UJy7tgjHPeXa5X1YqnwaeS8cV4BIqGwJHnUDu2yEUQnk/h1llDAOb6?=
- =?us-ascii?Q?qVSUXO5/vv98ERFAOPKZU9RPqZ8+RhVwtWqsp1NMYyFeYQQfPgb0Xctj4F8b?=
- =?us-ascii?Q?Jg7XmZwO9pV587F/xLSZQWLlesdyRq2OwkHbiCzK3TauN+xEU5HfrNvbW9fr?=
- =?us-ascii?Q?720HLCfRMGrI0Dsk1YGGJ2iol79G6YTvGoj576x5V194pjr7khFqKBUK2Ph+?=
- =?us-ascii?Q?83zACjLJ9DAbmBiyoOR1sinYQ856ILZ5h48obOsBdgXY4+drDF+CVpafnU7A?=
- =?us-ascii?Q?ieXDu4wc/MXYfU1Q1u/WfE2Um95+L3wjEibqJuA9Ar9k6FkjmDhkSWfosKXZ?=
- =?us-ascii?Q?UWbKn6DX/SKwF+2qRgc603ViTGDZSbOh9IE5UASa?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2834d25-e9fd-486b-826e-08dcc28e19b1
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 09:37:55.4566
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ADC5tMFr3F+OHGj0XepGZ2EIo7DLaoD+Z98AQpgTiWhPopna6k19YVjeFNYsM6pYcfDrXj3vGbvUaAL+tPLLAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7315
+References: <20240727102732.960974693@infradead.org> <20240727105029.315205425@infradead.org>
+ <6f39e567-fd9a-4157-949d-7a9ccd9c3592@arm.com> <CAKfTPtAS0eSqf5Qoq_rpQC7DbyyGX=GACsB7OPdhi8=HEciPUQ@mail.gmail.com>
+ <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com>
+In-Reply-To: <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 22 Aug 2024 11:53:11 +0200
+Message-ID: <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
+Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
+To: Luis Machado <luis.machado@arm.com>
+Cc: Hongyan Xia <hongyan.xia2@arm.com>, Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de, 
+	efault@gmx.de
+Content-Type: text/plain; charset="UTF-8"
 
-Make the code cleaner and avoid call clk_disable_unprepare()
+On Thu, 22 Aug 2024 at 11:22, Luis Machado <luis.machado@arm.com> wrote:
+>
+> On 8/22/24 09:19, Vincent Guittot wrote:
+> > Hi,
+> >
+> > On Wed, 21 Aug 2024 at 15:34, Hongyan Xia <hongyan.xia2@arm.com> wrote:
+> >>
+> >> Hi Peter,
+> >>
+> >> Sorry for bombarding this thread in the last couple of days. I'm seeing
+> >> several issues in the latest tip/sched/core after these patches landed.
+> >>
+> >> What I'm now seeing seems to be an unbalanced call of util_est. First, I applied
+> >
+> > I also see a remaining util_est for idle rq because of an unbalance
+> > call of util_est_enqueue|dequeue
+> >
+>
+> I can confirm issues with the utilization values and frequencies being driven
+> seemingly incorrectly, in particular for little cores.
+>
+> What I'm seeing with the stock series is high utilization values for some tasks
+> and little cores having their frequencies maxed out for extended periods of
+> time. Sometimes for 5+ or 10+ seconds, which is excessive as the cores are mostly
+> idle. But whenever certain tasks get scheduled there, they have a very high util
+> level and so the frequency is kept at max.
+>
+> As a consequence this drives up power usage.
+>
+> I gave Hongyan's draft fix a try and observed a much more reasonable behavior for
+> the util numbers and frequencies being used for the little cores. With his fix,
+> I can also see lower energy use for my specific benchmark.
 
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- sound/soc/dwc/dwc-i2s.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+The main problem is that the util_est of a delayed dequeued task
+remains on the rq and keeps the rq utilization high and as a result
+the frequency higher than needed.
 
-diff --git a/sound/soc/dwc/dwc-i2s.c b/sound/soc/dwc/dwc-i2s.c
-index c04466f5492e..e6a5eebe5bc9 100644
---- a/sound/soc/dwc/dwc-i2s.c
-+++ b/sound/soc/dwc/dwc-i2s.c
-@@ -995,16 +995,12 @@ static int dw_i2s_probe(struct platform_device *pdev)
- 				goto err_assert_reset;
- 			}
- 		}
--		dev->clk = devm_clk_get(&pdev->dev, clk_id);
-+		dev->clk = devm_clk_get_enabled(&pdev->dev, clk_id);
- 
- 		if (IS_ERR(dev->clk)) {
- 			ret = PTR_ERR(dev->clk);
- 			goto err_assert_reset;
- 		}
+The below seems to works for me and keep sync the enqueue/dequeue of
+uti_test with the enqueue/dequeue of the task as if de dequeue was not
+delayed
+
+Another interest is that we will not try to migrate a delayed dequeue
+sleeping task that doesn't actually impact the current load of the cpu
+and as a result will not help in the load balance. I haven't yet fully
+checked what would happen with hotplug
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index fea057b311f6..0970bcdc889a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6944,11 +6944,6 @@ enqueue_task_fair(struct rq *rq, struct
+task_struct *p, int flags)
+        int rq_h_nr_running = rq->cfs.h_nr_running;
+        u64 slice = 0;
+
+-       if (flags & ENQUEUE_DELAYED) {
+-               requeue_delayed_entity(se);
+-               return;
+-       }
 -
--		ret = clk_prepare_enable(dev->clk);
--		if (ret < 0)
--			goto err_assert_reset;
- 	}
- 
- 	dev_set_drvdata(&pdev->dev, dev);
-@@ -1012,7 +1008,7 @@ static int dw_i2s_probe(struct platform_device *pdev)
- 					 dw_i2s_dai, 1);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "not able to register dai\n");
--		goto err_clk_disable;
-+		goto err_assert_reset;
- 	}
- 
- 	if (!pdata || dev->is_jh7110) {
-@@ -1030,16 +1026,13 @@ static int dw_i2s_probe(struct platform_device *pdev)
- 		if (ret) {
- 			dev_err(&pdev->dev, "could not register pcm: %d\n",
- 					ret);
--			goto err_clk_disable;
-+			goto err_assert_reset;
- 		}
- 	}
- 
- 	pm_runtime_enable(&pdev->dev);
- 	return 0;
- 
--err_clk_disable:
--	if (dev->capability & DW_I2S_MASTER)
--		clk_disable_unprepare(dev->clk);
- err_assert_reset:
- 	reset_control_assert(dev->reset);
- 	return ret;
-@@ -1049,9 +1042,6 @@ static void dw_i2s_remove(struct platform_device *pdev)
- {
- 	struct dw_i2s_dev *dev = dev_get_drvdata(&pdev->dev);
- 
--	if (dev->capability & DW_I2S_MASTER)
--		clk_disable_unprepare(dev->clk);
--
- 	reset_control_assert(dev->reset);
- 	pm_runtime_disable(&pdev->dev);
- }
--- 
-2.25.1
+        /*
+         * The code below (indirectly) updates schedutil which looks at
+         * the cfs_rq utilization to select a frequency.
+@@ -6957,6 +6952,11 @@ enqueue_task_fair(struct rq *rq, struct
+task_struct *p, int flags)
+         */
+        util_est_enqueue(&rq->cfs, p);
 
++       if (flags & ENQUEUE_DELAYED) {
++               requeue_delayed_entity(se);
++               return;
++       }
++
+        /*
+         * If in_iowait is set, the code below may not trigger any cpufreq
+         * utilization updates, so do it here explicitly with the IOWAIT flag
+@@ -9276,6 +9276,8 @@ int can_migrate_task(struct task_struct *p,
+struct lb_env *env)
+
+        lockdep_assert_rq_held(env->src_rq);
+
++       if (p->se.sched_delayed)
++               return 0;
+        /*
+         * We do not migrate tasks that are:
+         * 1) throttled_lb_pair, or
+
+>
+>
+> >> the following diff to warn against util_est != 0 when no tasks are on
+> >> the queue:
+> >>
+> >> https://lore.kernel.org/all/752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2@arm.com/
+> >>
+> >> Then, I'm reliably seeing warnings on my Juno board during boot in
+> >> latest tip/sched/core.
+> >>
+> >> If I do the same thing to util_est just like what you did in this uclamp
+> >> patch, like this:
+> >
+> > I think that the solution is simpler than your proposal and we just
+> > need to always call util_est_enqueue() before the
+> > requeue_delayed_entity
+> >
+> > @@ -6970,11 +6970,6 @@ enqueue_task_fair(struct rq *rq, struct
+> > task_struct *p, int flags)
+> >         int rq_h_nr_running = rq->cfs.h_nr_running;
+> >         u64 slice = 0;
+> >
+> > -       if (flags & ENQUEUE_DELAYED) {
+> > -               requeue_delayed_entity(se);
+> > -               return;
+> > -       }
+> > -
+> >         /*
+> >          * The code below (indirectly) updates schedutil which looks at
+> >          * the cfs_rq utilization to select a frequency.
+> > @@ -6983,6 +6978,11 @@ enqueue_task_fair(struct rq *rq, struct
+> > task_struct *p, int flags)
+> >          */
+> >         util_est_enqueue(&rq->cfs, p);
+> >
+> > +       if (flags & ENQUEUE_DELAYED) {
+> > +               requeue_delayed_entity(se);
+> > +               return;
+> > +       }
+> > +
+> >         /*
+> >          * If in_iowait is set, the code below may not trigger any cpufreq
+> >          * utilization updates, so do it here explicitly with the IOWAIT flag
+> >
+> >
+> >>
+> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> >> index 574ef19df64b..58aac42c99e5 100644
+> >> --- a/kernel/sched/fair.c
+> >> +++ b/kernel/sched/fair.c
+> >> @@ -6946,7 +6946,7 @@ enqueue_task_fair(struct rq *rq, struct
+> >> task_struct *p, int flags)
+> >>
+> >>         if (flags & ENQUEUE_DELAYED) {
+> >>                 requeue_delayed_entity(se);
+> >> -               return;
+> >> +               goto util_est;
+> >>         }
+> >>
+> >>         /*
+> >> @@ -6955,7 +6955,6 @@ enqueue_task_fair(struct rq *rq, struct
+> >> task_struct *p, int flags)
+> >>          * Let's add the task's estimated utilization to the cfs_rq's
+> >>          * estimated utilization, before we update schedutil.
+> >>          */
+> >> -       util_est_enqueue(&rq->cfs, p);
+> >>
+> >>         /*
+> >>          * If in_iowait is set, the code below may not trigger any cpufreq
+> >> @@ -7050,6 +7049,9 @@ enqueue_task_fair(struct rq *rq, struct
+> >> task_struct *p, int flags)
+> >>         assert_list_leaf_cfs_rq(rq);
+> >>
+> >>         hrtick_update(rq);
+> >> +util_est:
+> >> +       if (!p->se.sched_delayed)
+> >> +               util_est_enqueue(&rq->cfs, p);
+> >>   }
+> >>
+> >>   static void set_next_buddy(struct sched_entity *se);
+> >> @@ -7173,7 +7175,8 @@ static int dequeue_entities(struct rq *rq, struct
+> >> sched_entity *se, int flags)
+> >>    */
+> >>   static bool dequeue_task_fair(struct rq *rq, struct task_struct *p,
+> >> int flags)
+> >>   {
+> >> -       util_est_dequeue(&rq->cfs, p);
+> >> +       if (!p->se.sched_delayed)
+> >> +               util_est_dequeue(&rq->cfs, p);
+> >>
+> >>         if (dequeue_entities(rq, &p->se, flags) < 0) {
+> >>                 if (!rq->cfs.h_nr_running)
+> >>
+> >> which is basically enqueuing util_est after enqueue_task_fair(),
+> >> dequeuing util_est before dequeue_task_fair() and double check
+> >> p->se.delayed_dequeue, then the unbalanced issue seems to go away.
+> >>
+> >> Hopefully this helps you in finding where the problem could be.
+> >>
+> >> Hongyan
+> >>
+> >> On 27/07/2024 11:27, Peter Zijlstra wrote:
+> >>> Delayed dequeue has tasks sit around on the runqueue that are not
+> >>> actually runnable -- specifically, they will be dequeued the moment
+> >>> they get picked.
+> >>>
+> >>> One side-effect is that such a task can get migrated, which leads to a
+> >>> 'nested' dequeue_task() scenario that messes up uclamp if we don't
+> >>> take care.
+> >>>
+> >>> Notably, dequeue_task(DEQUEUE_SLEEP) can 'fail' and keep the task on
+> >>> the runqueue. This however will have removed the task from uclamp --
+> >>> per uclamp_rq_dec() in dequeue_task(). So far so good.
+> >>>
+> >>> However, if at that point the task gets migrated -- or nice adjusted
+> >>> or any of a myriad of operations that does a dequeue-enqueue cycle --
+> >>> we'll pass through dequeue_task()/enqueue_task() again. Without
+> >>> modification this will lead to a double decrement for uclamp, which is
+> >>> wrong.
+> >>>
+> >>> Reported-by: Luis Machado <luis.machado@arm.com>
+> >>> Reported-by: Hongyan Xia <hongyan.xia2@arm.com>
+> >>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >>> ---
+> >>>   kernel/sched/core.c |   16 +++++++++++++++-
+> >>>   1 file changed, 15 insertions(+), 1 deletion(-)
+> >>>
+> >>> --- a/kernel/sched/core.c
+> >>> +++ b/kernel/sched/core.c
+> >>> @@ -1676,6 +1676,9 @@ static inline void uclamp_rq_inc(struct
+> >>>       if (unlikely(!p->sched_class->uclamp_enabled))
+> >>>               return;
+> >>>
+> >>> +     if (p->se.sched_delayed)
+> >>> +             return;
+> >>> +
+> >>>       for_each_clamp_id(clamp_id)
+> >>>               uclamp_rq_inc_id(rq, p, clamp_id);
+> >>>
+> >>> @@ -1700,6 +1703,9 @@ static inline void uclamp_rq_dec(struct
+> >>>       if (unlikely(!p->sched_class->uclamp_enabled))
+> >>>               return;
+> >>>
+> >>> +     if (p->se.sched_delayed)
+> >>> +             return;
+> >>> +
+> >>>       for_each_clamp_id(clamp_id)
+> >>>               uclamp_rq_dec_id(rq, p, clamp_id);
+> >>>   }
+> >>> @@ -1979,8 +1985,12 @@ void enqueue_task(struct rq *rq, struct
+> >>>               psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
+> >>>       }
+> >>>
+> >>> -     uclamp_rq_inc(rq, p);
+> >>>       p->sched_class->enqueue_task(rq, p, flags);
+> >>> +     /*
+> >>> +      * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
+> >>> +      * ->sched_delayed.
+> >>> +      */
+> >>> +     uclamp_rq_inc(rq, p);
+> >>>
+> >>>       if (sched_core_enabled(rq))
+> >>>               sched_core_enqueue(rq, p);
+> >>> @@ -2002,6 +2012,10 @@ inline bool dequeue_task(struct rq *rq,
+> >>>               psi_dequeue(p, flags & DEQUEUE_SLEEP);
+> >>>       }
+> >>>
+> >>> +     /*
+> >>> +      * Must be before ->dequeue_task() because ->dequeue_task() can 'fail'
+> >>> +      * and mark the task ->sched_delayed.
+> >>> +      */
+> >>>       uclamp_rq_dec(rq, p);
+> >>>       return p->sched_class->dequeue_task(rq, p, flags);
+> >>>   }
+> >>>
+> >>>
+>
 
