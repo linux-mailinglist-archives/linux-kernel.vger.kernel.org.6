@@ -1,152 +1,152 @@
-Return-Path: <linux-kernel+bounces-297099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBD095B313
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B3E695B311
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05DA91F23E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D5F1F23E18
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E424E18454C;
-	Thu, 22 Aug 2024 10:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A47183CC5;
+	Thu, 22 Aug 2024 10:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CH6+LB2v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JfS5wt5d"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90917183CC4;
-	Thu, 22 Aug 2024 10:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30A514A0B8;
+	Thu, 22 Aug 2024 10:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724323148; cv=none; b=Vx7OUu0mcRzMVE3dIq+3eFGN+2k884k3xoTdxenv0EN9LsZY55FzwHR/RROx7sHO2SMiLgOCjXr9+BOJX5gFsEkK8fpzuI3YcgyxbkAGtTWEhpe2aTxTnnQ+AgWfUpn2+iTWX5iBoy3zXZjp8mfCZLV0K00yUIKiTs9NEzd0njo=
+	t=1724323145; cv=none; b=T4PgDdno+uad9enXEosMRYMZzChTNXCcDjtqrGU+YJQ4U+SteGLjJhx8QylkF0VQzoXMMKeUqY7hQn6ClOLclqVL+n5hldgzePULy5QHcm0M5SmbzkpXC+G1Lletwf7DST/wZG0UjYqHuZx62Iu2y2OZyBRD/VJNasNHCO6jyD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724323148; c=relaxed/simple;
-	bh=Io9HIxmoSqST+xmstMBwH5AUMwojE/puDceefBlKsTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQTiqoSOEYs3GcXwhZ5I7XAND/p4ucfjD/G2U3DIAdqodf6PeIFTQ/WD5ocl2iR/AiwXWM31wjyIFmvhUvtFCCQpy6NkeQv4BkaMOe4LCZg+f2T2mNWZFu/81PEIv3uyTBJsgUN2/uhZuonzrIz2FgBkjT4lSygeDbSJ5HZd12I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CH6+LB2v; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724323145; x=1755859145;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Io9HIxmoSqST+xmstMBwH5AUMwojE/puDceefBlKsTU=;
-  b=CH6+LB2vZyYgW55xWQJ4dmgQW9WOk/w/PsUN+QgjkdKd1npE3dHSIYCQ
-   tmb6WNjlU8ocGSRLAGxsw6uo7KHtXldTZ4BPnyM3S6V6hUi9TO38BLQPv
-   m8n2V3SlPNvNMpEUPG4EAPmyA1ZsZ4ZOnlm3mQjCfVVh0k+Az/Ynda9oe
-   VvgL2l3u/llr7MGCJsX2LDaFe9bhRQkoCHE0HwSMmpgfTbbJ7U7mKxY11
-   xwbE6f/rmFSWVUw/ELOD7q+Pu62x19mark0zuHbXAZnrfJ888buAFO+V1
-   a8N6SH9nE4BGELT7TGDJNErheBSCa+y40q0S+d7he8Gk26219xNf+cP+d
-   A==;
-X-CSE-ConnectionGUID: pv+1dAuDRha5DHxBpCAUiQ==
-X-CSE-MsgGUID: Lf2gwXAjRW+c1/cwO1v6sw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33346049"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="33346049"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 03:39:04 -0700
-X-CSE-ConnectionGUID: ZhXwxmwCT0KLnj6UUSK+1Q==
-X-CSE-MsgGUID: mBz6vPkIRAiOT0CUj44S4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="92144920"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 22 Aug 2024 03:39:02 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sh5DX-000Cfy-1p;
-	Thu, 22 Aug 2024 10:38:59 +0000
-Date: Thu, 22 Aug 2024 18:38:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, beanhuo@micron.com,
-	adrian.hunter@intel.com, h10.kim@samsung.com, hy50.seo@samsung.com,
-	sh425.lee@samsung.com, kwangwon.min@samsung.com,
-	junwoo80.lee@samsung.com, wkon.kim@samsung.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Kiwoong Kim <kwmad.kim@samsung.com>
-Subject: Re: [PATCH v1 1/2] scsi: ufs: core: introduce override_cqe_ocs
-Message-ID: <202408221823.jnozM7Ys-lkp@intel.com>
-References: <895b69ac1e938490cd1d17b5f82b6f730bcd82c2.1724222619.git.kwmad.kim@samsung.com>
+	s=arc-20240116; t=1724323145; c=relaxed/simple;
+	bh=73U3oxAgVvHOaMzR1QpVTyqEX8IRtnR3bzMy3tyiFOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HikgG/UlQUhdy8c6L00dn6osKkqTCp//H1mTgq1CPFgPxH3bNIMWakWnYfcxefbaQIUjVFRqE7MPStqMHJDrKBFabM5a3eESPTJ+cDKzIEWtrI5WXzB7OIc4Snyoh+o1a01OgG4E++k7DzQMLljtqZROhSWd12ebO6xn+NXdDB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JfS5wt5d; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MA3RXO031491;
+	Thu, 22 Aug 2024 10:39:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	A1xhamwPcK8kSkzkJ4K90mqhrkcwsBHMWhpVZtpwV98=; b=JfS5wt5dcnfQvMcl
+	oVEdUWOooKtEGPYYmrgJgHCSgDRcPIN0B53Ld+VQDX20+/8CNtMrXMRrA0FJ7x0l
+	egHZQwOruVA7U/FRhP/vayayqGq5t1PJ7uL3KNNeoUjjEOsiAJeeBguBYdiZPB2v
+	U6jg0/T/iNYWVe7DsCHvU3f0qKPoh44vLsyP/DykHhrEcYfpfHZVMtotwWPaqFaw
+	0MU8Rw8VGHi7ud8QKyjjZH8UojYWr/JQwlCddbyeZFpsMiXlLq1PCB//e3pGYydK
+	BfeNjM416v9HfRxXyTLzFMe5C9pErB11Gie+qCWZGGb1rujTXJ172xwmQd0RzDM4
+	J+EjCw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415ck9c1mq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:39:00 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MAd0wC031825
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:39:00 GMT
+Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
+ 2024 03:38:56 -0700
+Message-ID: <0af53810-4148-4330-9d7c-063114cdb455@quicinc.com>
+Date: Thu, 22 Aug 2024 16:08:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <895b69ac1e938490cd1d17b5f82b6f730bcd82c2.1724222619.git.kwmad.kim@samsung.com>
-
-Hi Kiwoong,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on jejb-scsi/for-next]
-[also build test ERROR on mkp-scsi/for-next krzk/for-next linus/master v6.11-rc4 next-20240822]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kiwoong-Kim/scsi-ufs-core-introduce-override_cqe_ocs/20240821-144404
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-patch link:    https://lore.kernel.org/r/895b69ac1e938490cd1d17b5f82b6f730bcd82c2.1724222619.git.kwmad.kim%40samsung.com
-patch subject: [PATCH v1 1/2] scsi: ufs: core: introduce override_cqe_ocs
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240822/202408221823.jnozM7Ys-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221823.jnozM7Ys-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408221823.jnozM7Ys-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/ufs/core/ufshcd.c:828:39: error: use of undeclared identifier 'hba'
-     828 |                 return ufshcd_vops_override_cqe_ocs(hba,
-         |                                                     ^
-   drivers/ufs/core/ufshcd.c:10344:44: warning: shift count >= width of type [-Wshift-count-overflow]
-    10344 |                 if (!dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(64)))
-          |                                                          ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
-      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                                      ^ ~~~
-   1 warning and 1 error generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: ipq5332: add nodes to bringup q6
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
+        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <20240820085517.435566-4-quic_gokulsri@quicinc.com>
+ <f6g2bvosd7y5zyufel73lm6xr2otf25q7ut6tz3vnphtlqotk6@uftsnu4z6xql>
+Content-Language: en-US
+From: Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <f6g2bvosd7y5zyufel73lm6xr2otf25q7ut6tz3vnphtlqotk6@uftsnu4z6xql>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UzHyG1PBKN7CbETfglDktEDyeUbVGmYa
+X-Proofpoint-ORIG-GUID: UzHyG1PBKN7CbETfglDktEDyeUbVGmYa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_03,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=787
+ suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408220079
 
 
-vim +/hba +828 drivers/ufs/core/ufshcd.c
+On 8/20/2024 4:51 PM, Krzysztof Kozlowski wrote:
+> On Tue, Aug 20, 2024 at 02:25:16PM +0530, Gokul Sriram Palanisamy wrote:
+>> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>
+>> Enable nodes required for q6 remoteproc bring up.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/ipq5332.dtsi | 62 +++++++++++++++++++++++++++
+>>   1 file changed, 62 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+>> index 0a74ed4f72cc..ec93e7b64b9e 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+>> @@ -145,6 +145,11 @@ smem@4a800000 {
+>>   
+>>   			hwlocks = <&tcsr_mutex 3>;
+>>   		};
+>> +
+>> +		q6_region: wcnss@4a900000 {
+> Why here it is wcnss...
+will change it to wcss.
+>> +			reg = <0x0 0x4a900000 0x0 0x2b00000>;
+>> +			no-map;
+>> +		};
+>>   	};
+>>   
+>>   	soc@0 {
+>> @@ -476,6 +481,39 @@ frame@b128000 {
+>>   				status = "disabled";
+>>   			};
+>>   		};
+>> +
+>> +		q6v5_wcss: remoteproc@d100000 {
+> but everywhere else is wcss?
+yes, will stick to wcss everywhere.
+>
+>> +			compatible = "qcom,ipq5332-wcss-sec-pil";
+>> +			reg = <0xd100000 0x4040>;
+>> +			firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
+> It's one firmware independent of board?
 
-   814	
-   815	/**
-   816	 * ufshcd_get_tr_ocs - Get the UTRD Overall Command Status
-   817	 * @lrbp: pointer to local command reference block
-   818	 * @cqe: pointer to the completion queue entry
-   819	 *
-   820	 * This function is used to get the OCS field from UTRD
-   821	 *
-   822	 * Return: the OCS field in the UTRD.
-   823	 */
-   824	static enum utp_ocs ufshcd_get_tr_ocs(struct ufshcd_lrb *lrbp,
-   825					      struct cq_entry *cqe)
-   826	{
-   827		if (cqe)
- > 828			return ufshcd_vops_override_cqe_ocs(hba,
-   829							    le32_to_cpu(cqe->status) &
-   830							    MASK_OCS);
-   831	
-   832		return lrbp->utr_descriptor_ptr->header.ocs & MASK_OCS;
-   833	}
-   834	
+Yes, we have only one firmware across all our boards.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+
+Gokul
+
+>
+> Best regards,
+> Krzysztof
+>
 
