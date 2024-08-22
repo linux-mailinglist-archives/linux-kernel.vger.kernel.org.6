@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-297976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD4795BFE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:46:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD8F95BFEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFC7EB25350
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:46:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD051C2106F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B6716F907;
-	Thu, 22 Aug 2024 20:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2B81D0DF1;
+	Thu, 22 Aug 2024 20:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWUKh0j4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfvArPAW"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB78D13AA2E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4F013AA2E;
+	Thu, 22 Aug 2024 20:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724359538; cv=none; b=jdw7I7faTiCDW13dRop26MflC5hoa0bjZlv3CkJKAzhArnSmzVNozafZ+pN3k9AAtzew+B9yXfq/TVSCKdkwWcPsj8Wwi6alN2A4wx6Xj/KX2SDFNG7S7t8Vi3tQUYEbfHJH36ssSZcH5HpTVtR0kuEj75HyPz3tQL5LQt3ugdk=
+	t=1724359852; cv=none; b=rh82TGoCkDsmzSY1Z0IaJMRQk3MtAKGIeyu1TQ49lH5qdbG3xLzHPqpAMiSnoBtGVl04hkVQ0hZMynab1S69jCtJUDg4CpaJCjjjh2NRxjdu4wmMXPMFngymUOiEfkayBse3BKCtop+4ujHAFV4B44hdWnnN4YkqyGxoTWxetq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724359538; c=relaxed/simple;
-	bh=XWJGcW0yVcEmLEupBHIYRHIv6dBL2UB76q3jGJxsu4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhcIZzGGEDnlSpWcgxIKll1gWI0fUTQbx8GK8eFlUot+deNABP5tWq71W940Y6KKNRgDYfFKerJqj19nwqouABnCwKqThXnl1g4LR2AlhWjhPvTW7WOjFqdM16kHceemd8QHrxsRbv3tiXzaSwjJ1wgdEpTfRFC1UzbYf3JemQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWUKh0j4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10DFC32782;
-	Thu, 22 Aug 2024 20:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724359538;
-	bh=XWJGcW0yVcEmLEupBHIYRHIv6dBL2UB76q3jGJxsu4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HWUKh0j4Cnsa8UbbM0rYlW6UaYrDnlnMMy5ONE/G/1I8lZs6rqAJKAY7tGZGco2sn
-	 Zsfn+vxVAbYQky8PrH5ItBXkW84tn9atEv7OIT7jB6RziMjk+J1rS1+ZfsEhkZbq5K
-	 hhwdZVTah3kZnzUH9t6/QbR3C5HI184vmhXU9DPhLEaL2U+ofNy4PTX8n/5v3cT/mw
-	 10bPorKmYobSnJbbikHHdHrvr1xozjGqkFBvNFIraF9YaMvJJKupLu39L8SbB4p5aw
-	 Noy89LDpzhw6Cm2H/8heFfa6c+OPEwDtL0k0LOefHp+O40gxTKDiUIx2JuZYUP6s6u
-	 qy24raiK6Ak8Q==
-Date: Thu, 22 Aug 2024 21:45:35 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org,
+	s=arc-20240116; t=1724359852; c=relaxed/simple;
+	bh=Q54Nx+O2Sl23E88hssQiSTeCj8d0ltDBodtJOVav6nk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ldN2jPdcn4bVd3+m7sJW//0r5Es7lZ0dQYpKasnSwWm4y5OY72CHipqesT93USlPRXx18lLZqrmdHwmvcoXrBKrSk0k44z/+BFUJyjtY7WJjMXmGvX6w5jRqMcWzSttB6ar7Lr+sY76und6gnRHP5gDhBHXcV1HOmaHY8Ly0vyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfvArPAW; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8666734767so164786966b.1;
+        Thu, 22 Aug 2024 13:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724359849; x=1724964649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
+        b=XfvArPAWBQxV/l4RpMToC5J2cagnMhlCCEG/Oih54fT5N49ok6oPRcxss/nBH+d5vO
+         7ltB8iKupdXZzIi89E5YLdv4tv0TfBomSWVyou0hWltABx8pkBQe2i75vtXMt3/BXznB
+         /0YEfn9d4lZ+Her7XQ8RBA35WsZsMFtc2baJ26UZdiXcK1PgbNGNU2Po9f/2CO+RnADR
+         BNPStNZqXDcBeSdfgHDRtJQMaL02hCexB/c9Ti3XPLnf9cyIYK21Av9h1HVHXFe2HTi1
+         ZiSwyRZ/2Iw1S07x7De8oPINrwbOEWjIwpO7v9lVyGa8dAJ19d6LYOQ88hp0MM/Od4JS
+         3Skw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724359849; x=1724964649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
+        b=lCpmZ8nFBWQy/ZheaNE6p8/7cRgwVrmzPfe+UOS8tY8QKC9AQrBYgMt6cf5GkAvAYv
+         ihW3Nqdprgf/KQRhSOOUxm/j8vLtfXVMACH9qwR9y+Hk1VTCrpTrC9D3N92s1j8x6Dga
+         3phUfmrWr+hO16265k909xst42e/UzfwczIAIioUr1BXen9eZSQaFOjpwj+AcjfzynN8
+         WO9k30LZ9C/Q/oo67JvdJMuBPuyQ1xCqmiuV1f5NOfu1tKUAF+vyxwYyd4OIdCTw0rSH
+         kxfNAmg9RTwZOxUwwl0kf0L3WvBXrEC8geYLWqt+ObXXS0v/rYrAJF0Ey9v1X5JrnI5a
+         y6Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzCYG86Gu9N5y+IaDlxsjoS7p17WVFuKeUwG6ldNxi8AuPpzdJNkxawhUVR695LGcQ99J7+X5j5QN+rU=@vger.kernel.org, AJvYcCVx299T+s9LpHaGYBuffglL52N4W4mHNj9Mq902mgZz+aTk6ezAkPgSjcctxELqIczluODuYv21cnjc1kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwQtC5EgbloxYQL3h1Si3ddHRo98IRlW7+R1qrNeNDdyErIL78
+	tk48tWhslvpGyPxKSs7K/9v2iAhdVf+oNviUBe9CyliBceIK0i8F
+X-Google-Smtp-Source: AGHT+IHva2stwTSqG7rGZTaZUHh+/wTMO8O+48GKKMUS8dBUyWj5Buqho3Efd6rTd7pGcg1cwITIAQ==
+X-Received: by 2002:a17:906:eec4:b0:a7a:3928:3529 with SMTP id a640c23a62f3a-a866f110c45mr589588266b.13.1724359848540;
+        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436ba2sm162067366b.120.2024.08.22.13.50.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] maple_tree: Allow external locks to be configured
- with their map
-Message-ID: <ZsebVzVVzcA4QBhG@finisterre.sirena.org.uk>
-References: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
- <20240822-b4-regmap-maple-nolock-v1-1-d5e6dbae3396@kernel.org>
- <ZsePxD2FtYcBIaD5@casper.infradead.org>
- <ZseWKBCkxTrJfEot@finisterre.sirena.org.uk>
- <ZseXqP6q7qyFeiCO@casper.infradead.org>
+Subject: [PATCH][next] drm/tegra: hdmi: make read-only const array possible_nvram_sizes static
+Date: Thu, 22 Aug 2024 21:50:47 +0100
+Message-Id: <20240822205047.642845-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eY41iKqCdtWMhFlH"
-Content-Disposition: inline
-In-Reply-To: <ZseXqP6q7qyFeiCO@casper.infradead.org>
-X-Cookie: Your love life will be... interesting.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+Don't populate the const read-only array possible_nvram_sizes on the
+stack at run time, instead make it static.
 
---eY41iKqCdtWMhFlH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/tegra/hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Aug 22, 2024 at 08:55:20PM +0100, Matthew Wilcox wrote:
-> On Thu, Aug 22, 2024 at 08:48:56PM +0100, Mark Brown wrote:
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 09987e372e3e..6bf2dae82ca0 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -434,7 +434,7 @@ tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pix_clock,
+ 
+ static void tegra_hdmi_setup_audio_fs_tables(struct tegra_hdmi *hdmi)
+ {
+-	const unsigned int freqs[] = {
++	static const unsigned int freqs[] = {
+ 		32000, 44100, 48000, 88200, 96000, 176400, 192000
+ 	};
+ 	unsigned int i;
+-- 
+2.39.2
 
-> > I mean, we do use the internal lock here since otherwise lockdep moans
-> > but it's pure overhead which just complicates the code.  It's only ever
-
-> When it's an uncontended spinlock, there's really no overhead.  I wish I'd
-> been firmer on that point earlier and prohibited the external lock hack.
-
-> The point is that the lock protects the tree.  If we are ever going to
-> be able to defragment slabs (and I believe this is an ability that Linux
-> must gain), we must be able to go from the object (the maple node) to
-> a lock that will let us reallocate the node.  If there's some external
-> lock that protects the tree, we can't possibly do that.
-
-If the external lock guarantees that nothing can possibly be contending
-access to the tree (including the read side) I don't see any issue
-there?
-
---eY41iKqCdtWMhFlH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHo2UACgkQJNaLcl1U
-h9BYKQf/fju1QFL7eew4kcIkh7VOofjEAnrdmk+guHPAJJekLZH5oIqXpak7g+u+
-9evsL/NIqhR6tZQ7iJSUBnJf2hyriOAmHDzyD0X+ficeQhHGB7d+8ASkq53bUmWz
-PhVVxFYFJ5bk2DG9kpcHvOdh1wxEk8VHGv8EalkVapEbQuuYwH/ZnJ/x0GyuJ0EO
-SoE7mcgjkrxDl6QpJDTOAIu5UWgjfa/R77LgcT7jCaOXmsn8LR6Kx8VTC/6z1TDz
-61qmV+XcvHMSJ4O4hLm5fVFQkBP6fEPl7V8rVKmT5ebV8XmNyNg1NsjhbMYpjtki
-GfONtM47Oz++f4QHafeNdUxjtV+GBg==
-=ZFM8
------END PGP SIGNATURE-----
-
---eY41iKqCdtWMhFlH--
 
