@@ -1,186 +1,249 @@
-Return-Path: <linux-kernel+bounces-296968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9773A95B13F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AA695B14A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B5B1F23983
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:14:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496EE1F23F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA4417DE06;
-	Thu, 22 Aug 2024 09:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1D017BB2F;
+	Thu, 22 Aug 2024 09:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV1OBTU7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZRQOSWwA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256E01C6B5;
-	Thu, 22 Aug 2024 09:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193671BF2A;
+	Thu, 22 Aug 2024 09:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724318045; cv=none; b=TqdbAezVBoezdtye6TTAGcu+UlkaW3unrxwMutl/NXOP+Ky1BXkgNUvFWqAmJlyeUKqKcdyGVgpE84eU3QkWZwHI2sJX2vwRZ+5N5XYZncYJw50QsLmfzLOKWyn31Siiy37NsiqxN13BN3UzTN1td2YDoSko1OYAK0zwtlUKPTo=
+	t=1724318226; cv=none; b=qkPJdQ8+BaPR9Tb0Ap+5gMKY21cH8Xx43vR8ex0V7bYQ4FIVw2+bxriYCFlSNgjZf6ZjUsg853OD3gB1Axzd6Rk5+EYkScU4BN9SzI6GPdia968Rp6ITbAp2Wb0H6d44EeUZ+j1GqsbThoLaulrD69npwKAvNx/TZVT5UsNNs+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724318045; c=relaxed/simple;
-	bh=3pePhm2enxScNpWzI2H1OmyMtOOZNL1UYS5tRffuIWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kgh3RRBmwWJUTY8Kd67ZITjx5jBwVu7vbC2pEwnzDQiClAxCoB9PMDdZhKl/XS3pWS8SbdXImshSXrwljFTPkoivND+nmMDFEuGph0lXJXGyTRSDa17eZDHLYIg3ollYAmhb6hFKNsG4rNdEFybZ3mF8lD3De3hCTfqX8syqWwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV1OBTU7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C71C4AF0C;
-	Thu, 22 Aug 2024 09:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724318044;
-	bh=3pePhm2enxScNpWzI2H1OmyMtOOZNL1UYS5tRffuIWs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qV1OBTU79pM2Hpfxa6ebghJmrVPv1R3kKngrwaBlLdJXdsuJNcUBjck35GNRjfWdn
-	 h5EeXt8+pIH99N80YPTdafro723rFXxaKkq66Aznh6XC0/xp+2qDEK1W1weN83H5U5
-	 U68lM5a2NRyB+dp5QoV2mLcEVZ1ZHyKNqFxrZP5dLnS/aQb3FvKq3L96hfyqjYM6KC
-	 CtjZZ7uGtH1cYc6GX2W/bp4bEhmbJspEQiVe8ZvVrT0mAuimVlKoWF1NHTnWBfL+Ic
-	 skKTHEGqkjU7wfhi6sqDIsZdL7afBB+rZaYrgfgJRrNK8s/yl+a9x48LAaUl0FYbMN
-	 Pr1JFRb+0cvLA==
-Message-ID: <0201ab87-5f65-4287-bda2-d170a90ae458@kernel.org>
-Date: Thu, 22 Aug 2024 11:13:51 +0200
+	s=arc-20240116; t=1724318226; c=relaxed/simple;
+	bh=a5PNgAbycCCuxa0C4C7BKpl2tPEQguQMGeFz4yS4IDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlCuktJ39+TUWn81LwxDu5W/OsgaUYSwtw2C6tABb7CU2L1kitMmvw6CkArVh/pwsi1FrK6cM5AVAkOQdUypStcqiiJheadqFyiJt2jdE4ajM0ULrC0O56gnVMl7vuSrKdfLB47Vso3sPGzY9XGhxQlsMGEUnFnM5w7olOmkJOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZRQOSWwA; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724318224; x=1755854224;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a5PNgAbycCCuxa0C4C7BKpl2tPEQguQMGeFz4yS4IDY=;
+  b=ZRQOSWwAP70nOk1RlD53e4s2ZE5nyxXgB+2ePOgdMlGnEt3Mh2OYXA4E
+   tR+nb+xyXIJA9Ix8QCxCFkaN5pQhE2+NFYIJolsM3xLcArrf0EmTvCYHR
+   bovgo+wZPgN1atR0IsLnGFCvieF/dgThk43IV0fGlwo+XWCgsRJLoGNKP
+   KkXxVUkeKd/lys5IodEkiEA2HEEtV+JwC5IFvO5wp464pz6KAd2HhWI/w
+   TXacwd1IH/PIkoZXHZYhTlDHRefu2CfsYVSGBIbTD4YAWfzIx+ISoW+oA
+   84lzGOhtnb7mFn4yzttvQt1AZRfnHepbL6iTbNIYg3dw+bg0ArEp3jGVN
+   g==;
+X-CSE-ConnectionGUID: WdY/AILkQKWXg0lmc/FzrA==
+X-CSE-MsgGUID: N/DotHE7Q9STouhZJ81VJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33873634"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="33873634"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 02:17:03 -0700
+X-CSE-ConnectionGUID: eN96XfaFTkanRcr91cANTg==
+X-CSE-MsgGUID: RfBXsT0JSoaL6GquC24RHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="61702781"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 22 Aug 2024 02:16:59 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sh3w9-000Ccy-1e;
+	Thu, 22 Aug 2024 09:16:57 +0000
+Date: Thu, 22 Aug 2024 17:16:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
+	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+Message-ID: <202408221624.UtsHD8HQ-lkp@intel.com>
+References: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH bpf-next v4 2/2] selftests/bpf: Add mptcp subflow subtest
-Content-Language: en-GB
-To: Manu Bretelle <chantra@meta.com>, Martin KaFai Lau <martin.lau@linux.dev>
-Cc: "mptcp@lists.linux.dev" <mptcp@lists.linux.dev>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Mykola Lysenko <mykolal@meta.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- "sdf@fomichev.me" <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- Daniel Xu <dxu@dxuuu.xyz>
-References: <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-0-2b4ca6994993@kernel.org>
- <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-2-2b4ca6994993@kernel.org>
- <2136317a-3e95-4993-b2fc-1f3b2c28dbdc@linux.dev>
- <364C4C5B-27A0-4210-84E2-8CA9867E4127@meta.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <364C4C5B-27A0-4210-84E2-8CA9867E4127@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
 
-Hi Manu,
+Hi Billy,
 
-On 21/08/2024 22:32, Manu Bretelle wrote:
-> 
-> 
->> On Aug 13, 2024, at 6:12 PM, Martin KaFai Lau <martin.lau@linux.dev> wrote:
->>
->>>
->> On 8/5/24 2:52 AM, Matthieu Baerts (NGI0) wrote:
->>> +static int endpoint_init(char *flags)
->>> +{
->>> + SYS(fail, "ip -net %s link add veth1 type veth peer name veth2", NS_TEST);
->>> + SYS(fail, "ip -net %s addr add %s/24 dev veth1", NS_TEST, ADDR_1);
->>> + SYS(fail, "ip -net %s link set dev veth1 up", NS_TEST);
->>> + SYS(fail, "ip -net %s addr add %s/24 dev veth2", NS_TEST, ADDR_2);
->>> + SYS(fail, "ip -net %s link set dev veth2 up", NS_TEST);
->>> + if (SYS_NOFAIL("ip -net %s mptcp endpoint add %s %s", NS_TEST, ADDR_2, flags)) {
->>> + printf("'ip mptcp' not supported, skip this test.\n");
->>> + test__skip();
->>
->> It is always a skip now in bpf CI:
->>
->> #171/3   mptcp/subflow:SKIP
->>
->> This test is a useful addition for the bpf CI selftest.
->>
->> It can't catch regression if it is always a skip in bpf CI though.
->>
->> iproute2 needs to be updated (cc: Daniel Xu and Manu, the outdated iproute2 is something that came up multiple times).
->>
->> Not sure when the iproute2 can be updated. In the mean time, your v3 is pretty close to getting pm_nl_ctl compiled. Is there other blocker on this?
-> 
-> I have updated runners to Ubuntu 24.04 which comes with:
-> root@1fdd5d75581b:/actions-runner# ip --json -V
-> ip utility, iproute2-6.1.0, libbpf 1.3.0
-> root@1fdd5d75581b:/actions-runner# ip mptcp help
-> Usage:  ip mptcp endpoint add ADDRESS [ dev NAME ] [ id ID ]
->                                       [ port NR ] [ FLAG-LIST ]
->         ip mptcp endpoint delete id ID [ ADDRESS ]
->         ip mptcp endpoint change [ id ID ] [ ADDRESS ] [ port NR ] CHANGE-OPT
->         ip mptcp endpoint show [ id ID ]
->         ip mptcp endpoint flush
->         ip mptcp limits set [ subflows NR ] [ add_addr_accepted NR ]
->         ip mptcp limits show
->         ip mptcp monitor
-> FLAG-LIST := [ FLAG-LIST ] FLAG
-> FLAG  := [ signal | subflow | backup | fullmesh ]
-> CHANGE-OPT := [ backup | nobackup | fullmesh | nofullmesh ]
-> 
-> Assuming I don’t need to revert back to old runners due to unrelated issue, you should now have `ip mptcp` available.
+kernel test robot noticed the following build errors:
 
-Great, thank you for this update, that will ease the inclusion of this
-series!
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-(That's a shame Ubuntu 24.04 didn't come with IPRoute 6.8, same version
-as their default kernel [1]... but that's not blocking us here)
+url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240821-150951
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20240821070740.2378602-3-billy_tsai%40aspeedtech.com
+patch subject: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240822/202408221624.UtsHD8HQ-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 26670e7fa4f032a019d23d56c6a02926e854e8af)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221624.UtsHD8HQ-lkp@intel.com/reproduce)
 
-[1] https://bugs.launchpad.net/ubuntu/+source/iproute2/+bug/2051672
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221624.UtsHD8HQ-lkp@intel.com/
 
-Cheers,
-Matt
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from drivers/gpio/gpio-aspeed-g7.c:10:
+   In file included from include/linux/gpio/driver.h:8:
+   In file included from include/linux/irqchip/chained_irq.h:10:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from drivers/gpio/gpio-aspeed-g7.c:10:
+   In file included from include/linux/gpio/driver.h:8:
+   In file included from include/linux/irqchip/chained_irq.h:10:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from drivers/gpio/gpio-aspeed-g7.c:10:
+   In file included from include/linux/gpio/driver.h:8:
+   In file included from include/linux/irqchip/chained_irq.h:10:
+   In file included from include/linux/irq.h:591:
+   In file included from arch/s390/include/asm/hw_irq.h:6:
+   In file included from include/linux/pci.h:37:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     529 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/gpio/gpio-aspeed-g7.c:474:49: error: too few arguments to function call, expected 2, have 1
+     474 |         return pinctrl_gpio_request(chip->base + offset);
+         |                ~~~~~~~~~~~~~~~~~~~~                    ^
+   include/linux/pinctrl/consumer.h:30:5: note: 'pinctrl_gpio_request' declared here
+      30 | int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
+         |     ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c:479:39: error: too few arguments to function call, expected 2, have 1
+     479 |         pinctrl_gpio_free(chip->base + offset);
+         |         ~~~~~~~~~~~~~~~~~                    ^
+   include/linux/pinctrl/consumer.h:31:6: note: 'pinctrl_gpio_free' declared here
+      31 | void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
+         |      ^                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c:676:48: error: too few arguments to function call, expected 3, have 2
+     676 |                 return pinctrl_gpio_set_config(offset, config);
+         |                        ~~~~~~~~~~~~~~~~~~~~~~~               ^
+   include/linux/pinctrl/consumer.h:36:5: note: 'pinctrl_gpio_set_config' declared here
+      36 | int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+         |     ^                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      37 |                                 unsigned long config);
+         |                                 ~~~~~~~~~~~~~~~~~~~~
+   17 warnings and 3 errors generated.
+
+
+vim +474 drivers/gpio/gpio-aspeed-g7.c
+
+   468	
+   469	static int aspeed_gpio_g7_request(struct gpio_chip *chip, unsigned int offset)
+   470	{
+   471		if (!have_gpio(gpiochip_get_data(chip), offset))
+   472			return -ENODEV;
+   473	
+ > 474		return pinctrl_gpio_request(chip->base + offset);
+   475	}
+   476	
+
 -- 
-Sponsored by the NGI0 Core fund.
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
