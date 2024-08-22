@@ -1,251 +1,175 @@
-Return-Path: <linux-kernel+bounces-297320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11A395B63B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:16:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F3C95B64B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07DE1C21E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59A1528156F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C061C9DF8;
-	Thu, 22 Aug 2024 13:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMXMdHmi"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3077E1CB150;
+	Thu, 22 Aug 2024 13:19:30 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478551CB14A;
-	Thu, 22 Aug 2024 13:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF891C9EC5
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724332556; cv=none; b=T0kzA9ylKrJQmg2QIh2OCRaEcWPHscWyGwLr01weVDdQCvqG+rLriRBJjALIa/xgeuYzXOC2faOniSxAGQ+CV37aqUXIAF1uvAGRFvlPpsla8ymXZ+KhyQ49BqfaG2hvlKMPvtU4vKlAQRSYcIl1ICUbSNmIhAlNz29qJKN5KfU=
+	t=1724332769; cv=none; b=l23EUeM30elb938QgLmtNUXKXwaenMwQxtIHrBfkGppG0dQT23p14GpkO+jZ4dnwHdi1LzyIVl3gx0JyZ3d8semE5nCdvu8wubqBEKaTu/1hzdzCASWRzGjnRflfKcZnSR7C8jKieuEBwBPUt9mp/DWgjN0JSe6mCPLsjZiZlLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724332556; c=relaxed/simple;
-	bh=shBXYRqMx0IAfmMpg2wQxeQLtHqZY5+uN391kqnTO3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p9+Ezc/C7/ac1JBiAr16h6+G7ZwPz/g2ZRq8vAOQYg1izuZn6QMQdp+QvaS2wPAzAa6qAV7RVXNgKOc2hS1ScB11JJedRzNqr5eejUfSw8+v5d4FaZGXRsO0jFNNDJ8GQCVW5u8HJdMOPDV2Q+Y2p1TAa3jyEqS0icdahsiM5A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMXMdHmi; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso7754171fa.2;
-        Thu, 22 Aug 2024 06:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724332552; x=1724937352; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6gdj/0hP+mZgd6u8VFFrAhOgItw0v7uJFK6VqA6SLE=;
-        b=ZMXMdHmiY3elAMguHL2ls3EtL3npT3IfR8LpN2atybi8n+gVQi+rOTk46wj4VgDg01
-         1Tru5aE8fRg9hMfUwCT01PaIAZDzlOGNcEb8rJBUK6oi+KFFMuaFTXNs2ojdo9G1WVto
-         l+8yoKv+plosE59ILbI6U89zHcNjk+fGMqqLgVIdc7zsO1eZij09pPeaS9Xc5Mrmnu6v
-         LyhIRv1/z9YeAo9J7YlmibIWABFtlYt6jmCuT6IfP9Hv1G65/wP/d8i0lffd+r9CoL+3
-         m6MWXIWBm8xUI7MdTt1xzFiY9ZEUvmVxzNh15Ipvu3HVArkbnIJgkhzIt0PCBRDjo31z
-         lhdQ==
+	s=arc-20240116; t=1724332769; c=relaxed/simple;
+	bh=D9cK9uxNc2DTmMy1nRI557QSzFuh3VCn2aBMNFQhG2s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=beVGXdrFWfMWbwqARxzR5nSxu0TxwxDRYgWjINy0vOSC6IXDq6llJ4MjD90RSo2yb9SoWqUzQN8lrzv+70sYqhOSFHfv0jn3tvCZlVqeA0KGbrDvNbPuWaDtJcky+ge3HDZKFb4P7bGazRiyewxFqYeVNPTbJlVIsx6s6U040uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d4c745e31so9008095ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:19:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724332552; x=1724937352;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N6gdj/0hP+mZgd6u8VFFrAhOgItw0v7uJFK6VqA6SLE=;
-        b=AZAWn12Rxvghs+SIkAyXNAqTWxcnUZ8OuHxGLuVwOjD3xF5Tit9MlOCt3kkda2HPfD
-         d3tKGS+h9Y5RGG6u0BQwoQ14+Ik6tUn5utMb0dLJCFggyYRQanH6X+K4xVHYfWnxKswN
-         bI/QMbugnXBALZ7q6YpUc+ExIAQ/PrOEYwKGKn5TWmR9Y/TxLDRjzOuyVvg6iYG+e7zQ
-         X5g7wNkDDAOskoRZhgoNoOByK7u07qubruRpJAyG+eMEnMhjd339eOCXeEdN4pAQP+G7
-         YX6IFoBO42Ogkuuhe/LhXrg2KK7r5jMRCSTGF9Q7K+jVNnF8jZr22ZV3p0UmCOZMw7Ah
-         hi4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXo2Klw41eJQFNO41T1Fl6NNIYDh1L6BKjXjkv+Ls/6k7AMG2VVJ9syXW8C+4tqh3pcLoMlR7HRgI8/iVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9LXv3n1BnKlr06ZrchCpvqZVVby5Ve6l3NbYyJBjKZ61n//QY
-	fUGeSTOAM0b24K5opT/zt4pC0sWvIfAJMb3Aati/IaHrIo3PPXcGB3pFFZZ1
-X-Google-Smtp-Source: AGHT+IHvpnRh4MEQc506ZZstwf+9J9oXOoIFS3485d8YKvY/RjnFOk6N6jiuq1nTQBYmICpM2vLTdQ==
-X-Received: by 2002:a2e:3c08:0:b0:2f3:f82d:bb21 with SMTP id 38308e7fff4ca-2f3f89191dbmr34811891fa.29.1724332551849;
-        Thu, 22 Aug 2024 06:15:51 -0700 (PDT)
-Received: from f.. (cst-prg-86-203.cust.vodafone.cz. [46.135.86.203])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a961esm904010a12.83.2024.08.22.06.15.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 06:15:51 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: torvalds@linux-foundation.org,
-	paul@paul-moore.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [RESEND PATCH] cred: separate the refcount from frequently read fields
-Date: Thu, 22 Aug 2024 15:15:41 +0200
-Message-ID: <20240822131542.785546-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1724332767; x=1724937567;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OiweJPU3v8cK3ex6a+klsO0dVK70QTWG1SHf6umFjdQ=;
+        b=dt5uITQP+vJnxXEvypmPI4jJF3AY4uAQJSHTy9SaMCxRCnaiF3QioffN9NwsKa+J79
+         s0dxXmEF1todgOVMNChLhpQH4FnxBERhnNYvUlru5j4mt0u5zw6oqXweotu4cJDv9JG1
+         o1K9zNkEBFUpCWVQ8NFsWCPKnOQeimfwFv0Kga2JWeIzLk7Lt/+70Dr2/k1txb6XbVLQ
+         psMZJdkxmGvr3Rv6yknioeM8ZKzw5IowarOmpAZM20WeKdUCcUOAEYL4dzoIoV31a2cN
+         mlDMx5nAiecq51qO0FYUW/gC1j9VyEBORHiVCj7E4hW2eBCykmMZXESJifsTX3uJ/6Wr
+         KbCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKUCE4Zo+HOwAD/buTWFXorn4N07r5+PHKmPfWRKq08i+8recZ8nq9jC7E9LN40Ie3ZzUGem49mPmNvbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjXVs8AyauWSvmLKf2RPugjhydGBMyP5uxEeEg5Mjilq3YFkk1
+	+IyHfGNoFnntxq54P4PxbhAC5b0bCJD8gwf0oKkU6HyqixZKoEj1qfnZR0WZRzi2rfIAqKQz5jz
+	oFgM4R0exHNh7eluoNDdgCyuLT7b5rMcX9dtCjrPC3DfvbRa59qiGsgg=
+X-Google-Smtp-Source: AGHT+IE3lFUcUO93ZsOVuNmmaL3DvmvZ4QiZ6RcvZDG7fyA03QgA475t8D+4JtyKFOVE3KZkO/7fktBrZ7PfvAJNtVkGtfZQMxzr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2196:b0:396:ec3b:df63 with SMTP id
+ e9e14a558f8ab-39d6c3c7f86mr3171705ab.4.1724332767278; Thu, 22 Aug 2024
+ 06:19:27 -0700 (PDT)
+Date: Thu, 22 Aug 2024 06:19:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001187a706204582bb@google.com>
+Subject: [syzbot] [bpf?] [net?] WARNING in sock_map_close (2)
+From: syzbot <syzbot+8dbe3133b840c470da0e@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
+	jakub@cloudflare.com, jchapman@katalix.com, john.fastabend@gmail.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tparkin@katalix.com
+Content-Type: text/plain; charset="UTF-8"
 
-The refcount shares the cacheline with uid, gid and other frequently
-read fields.
+Hello,
 
-Said counter gest modified a lot (for example every time a file is
-closed or opened) in turn causing avoidable bounces when another thread
-tries to do permission checks. Said bouncing can be avoided without
-growing the struct by reordering the fields -- keyring (enabled by
-default) is comparatively rarely used and can suffer bouncing instead.
+syzbot found the following issue on:
 
-An additional store is performed to clear the non_rcu flag. Since the
-flag is rarely set (a special case in the access(2) system call) and
-transitions at most once, it can get placed in a read-mostly area and is
-only conditionally written to.
+HEAD commit:    d785ed945de6 net: wwan: t7xx: PCIe reset rescan
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15d43b05980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=8dbe3133b840c470da0e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13621239980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12378c33980000
 
-With this in place regular permission checks no longer bounce cachelines
-in face of refcount changes.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9b04b4f2471c/disk-d785ed94.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2db64580639d/vmlinux-d785ed94.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/04e43f8b9f9b/bzImage-d785ed94.xz
 
-Validated with a simple test where one thread opens and closes a file
-(dirtying creds twice), while another keeps re-reading *another* file in
-a loop (ops/s):
-before:	4353763
-after:	4742792 (+9%)
+The issue was bisected to:
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+commit 4a4cd70369f162f819b7855b0eabcb2db21f01f4
+Author: James Chapman <jchapman@katalix.com>
+Date:   Mon Jul 29 15:38:04 2024 +0000
+
+    l2tp: don't set sk_user_data in tunnel socket
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=157a0791980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=177a0791980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=137a0791980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8dbe3133b840c470da0e@syzkaller.appspotmail.com
+Fixes: 4a4cd70369f1 ("l2tp: don't set sk_user_data in tunnel socket")
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5225 at net/core/sock_map.c:1699 sock_map_close+0x399/0x3d0 net/core/sock_map.c:1699
+Modules linked in:
+CPU: 0 UID: 0 PID: 5225 Comm: syz-executor110 Not tainted 6.11.0-rc3-syzkaller-00508-gd785ed945de6 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:sock_map_close+0x399/0x3d0 net/core/sock_map.c:1699
+Code: 48 89 df e8 e9 a3 5a f8 4c 8b 23 eb 05 e8 8f 5e f3 f7 e8 ba ea ff ff 4c 89 ef e8 82 e1 da ff e9 47 ff ff ff e8 78 5e f3 f7 90 <0f> 0b 90 48 83 c4 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc
+RSP: 0018:ffffc900035b7b10 EFLAGS: 00010293
+RAX: ffffffff89a02af8 RBX: ffffffff95312d30 RCX: ffff88802424da00
+RDX: 0000000000000000 RSI: ffffffff8c0ad560 RDI: ffffffff8c606900
+RBP: 0000000000000000 R08: ffffffff937328e7 R09: 1ffffffff26e651c
+R10: dffffc0000000000 R11: fffffbfff26e651d R12: ffffffff89a02760
+R13: ffff88802fc0a800 R14: dffffc0000000000 R15: ffffffff89a02791
+FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff975386110 CR3: 000000000e734000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ inet_release+0x17d/0x200 net/ipv4/af_inet.c:437
+ __sock_release net/socket.c:659 [inline]
+ sock_close+0xbc/0x240 net/socket.c:1421
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xa2f/0x27f0 kernel/exit.c:882
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ __do_sys_exit_group kernel/exit.c:1042 [inline]
+ __se_sys_exit_group kernel/exit.c:1040 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff97530ad09
+Code: Unable to access opcode bytes at 0x7ff97530acdf.
+RSP: 002b:00007ffc8457e748 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff97530ad09
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 00007ff9753852b0 R08: ffffffffffffffb8 R09: 0000000000000006
+R10: 0000000000000006 R11: 0000000000000246 R12: 00007ff9753852b0
+R13: 0000000000000000 R14: 00007ff975385d00 R15: 00007ff9752dbf60
+ </TASK>
+
+
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This is a resend with a reworded commit message and added Linus since he
-wrote the non_rcu thing.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Note each process has its on creds, so this is not causing bounces
-globally.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Even so, there is stuff I plan to do in the area and this patch can be
-considered prep (only one store to non_rcu).
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-I'll also note I don't see a way to *whack* non_rcu either. :)
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-0 rush
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
- fs/open.c            |  2 +-
- include/linux/cred.h | 31 +++++++++++++++----------------
- kernel/cred.c        |  6 +++---
- 3 files changed, 19 insertions(+), 20 deletions(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index 22adbef7ecc2..930e22fe8dba 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -455,7 +455,7 @@ static const struct cred *access_override_creds(void)
- 	 * cred accesses will keep things non-racy to avoid RCU
- 	 * freeing.
- 	 */
--	override_cred->non_rcu = 1;
-+	override_cred->non_rcu = true;
- 
- 	old_cred = override_creds(override_cred);
- 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..3127eaad4140 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -110,7 +110,16 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-  */
- struct cred {
- 	atomic_long_t	usage;
--	kuid_t		uid;		/* real UID of the task */
-+	struct rcu_head	rcu;		/* RCU deletion hook */
-+#ifdef CONFIG_KEYS
-+	unsigned char	jit_keyring;	/* default keyring to attach requested
-+					 * keys to */
-+	struct key	*session_keyring; /* keyring inherited over fork */
-+	struct key	*process_keyring; /* keyring private to this process */
-+	struct key	*thread_keyring; /* keyring private to this thread */
-+	struct key	*request_key_auth; /* assumed request_key authority */
-+#endif
-+	kuid_t		uid ____cacheline_aligned_in_smp;/* real UID of the task */
- 	kgid_t		gid;		/* real GID of the task */
- 	kuid_t		suid;		/* saved UID of the task */
- 	kgid_t		sgid;		/* saved GID of the task */
-@@ -119,19 +128,12 @@ struct cred {
- 	kuid_t		fsuid;		/* UID for VFS ops */
- 	kgid_t		fsgid;		/* GID for VFS ops */
- 	unsigned	securebits;	/* SUID-less security management */
-+	bool		non_rcu;	/* Can we skip RCU deletion? */
- 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
- 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
- 	kernel_cap_t	cap_effective;	/* caps we can actually use */
- 	kernel_cap_t	cap_bset;	/* capability bounding set */
- 	kernel_cap_t	cap_ambient;	/* Ambient capability set */
--#ifdef CONFIG_KEYS
--	unsigned char	jit_keyring;	/* default keyring to attach requested
--					 * keys to */
--	struct key	*session_keyring; /* keyring inherited over fork */
--	struct key	*process_keyring; /* keyring private to this process */
--	struct key	*thread_keyring; /* keyring private to this thread */
--	struct key	*request_key_auth; /* assumed request_key authority */
--#endif
- #ifdef CONFIG_SECURITY
- 	void		*security;	/* LSM security */
- #endif
-@@ -139,11 +141,6 @@ struct cred {
- 	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
- 	struct ucounts *ucounts;
- 	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
--	/* RCU deletion */
--	union {
--		int non_rcu;			/* Can we skip RCU deletion? */
--		struct rcu_head	rcu;		/* RCU deletion hook */
--	};
- } __randomize_layout;
- 
- extern void __put_cred(struct cred *);
-@@ -217,7 +214,8 @@ static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
- 	struct cred *nonconst_cred = (struct cred *) cred;
- 	if (!cred)
- 		return cred;
--	nonconst_cred->non_rcu = 0;
-+	if (unlikely(nonconst_cred->non_rcu))
-+		WRITE_ONCE(nonconst_cred->non_rcu, false);
- 	return get_new_cred_many(nonconst_cred, nr);
- }
- 
-@@ -242,7 +240,8 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
- 		return NULL;
- 	if (!atomic_long_inc_not_zero(&nonconst_cred->usage))
- 		return NULL;
--	nonconst_cred->non_rcu = 0;
-+	if (unlikely(nonconst_cred->non_rcu))
-+		WRITE_ONCE(nonconst_cred->non_rcu, false);
- 	return cred;
- }
- 
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 075cfa7c896f..23b73ee2ec63 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -104,7 +104,7 @@ void __put_cred(struct cred *cred)
- 	BUG_ON(cred == current->cred);
- 	BUG_ON(cred == current->real_cred);
- 
--	if (cred->non_rcu)
-+	if (unlikely(cred->non_rcu))
- 		put_cred_rcu(&cred->rcu);
- 	else
- 		call_rcu(&cred->rcu, put_cred_rcu);
-@@ -218,7 +218,7 @@ struct cred *prepare_creds(void)
- 	old = task->cred;
- 	memcpy(new, old, sizeof(struct cred));
- 
--	new->non_rcu = 0;
-+	new->non_rcu = false;
- 	atomic_long_set(&new->usage, 1);
- 	get_group_info(new->group_info);
- 	get_uid(new->user);
-@@ -643,7 +643,7 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
- 	old = get_task_cred(daemon);
- 
- 	*new = *old;
--	new->non_rcu = 0;
-+	new->non_rcu = false;
- 	atomic_long_set(&new->usage, 1);
- 	get_uid(new->user);
- 	get_user_ns(new->user_ns);
--- 
-2.43.0
-
+If you want to undo deduplication, reply with:
+#syz undup
 
