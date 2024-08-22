@@ -1,214 +1,110 @@
-Return-Path: <linux-kernel+bounces-296318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8B495A909
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:42:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55AA95A931
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D481C22C67
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FAE283FE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708028BF3;
-	Thu, 22 Aug 2024 00:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6E46FB9;
+	Thu, 22 Aug 2024 00:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Nmz14YyN"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuZWYdLk"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBAE6FB6;
-	Thu, 22 Aug 2024 00:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65B53C3C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724287312; cv=none; b=JjZfrRbzjGBFGiEOQNxUWqzgxgtwz+NK7tLIafYv6GmFMa3Qqc4hvdIWFXzz81uBOJpEkxwEhqH8RFKpURWP0u0WtUxemeOiAiGgBCzeOthQDhBKrnC7iDHcfWkDY15zxmXCKT+zHgWDadVBxLdo0D2XMKfQQIhAVi7oBMT9AjE=
+	t=1724287565; cv=none; b=ZqoWTPJ+QHUZBP7t1w4ABFGMbKPyg7wl6wC2Zeour3+OiActUKOyE7mj4K5muQpg3vjFpyACH8xlE44uipLMJnpxUgerp++zZsuSdYY/a9nokE+sxBInfzjP0hxwYO01H/NxsPCdywP3pzFtDxAi2BnaCxnQzfYt4gaIpWn5VnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724287312; c=relaxed/simple;
-	bh=OWIaCLCw+YDjM1iGQfQB/ATG874p/QQ0AQi/DMMrKyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/E79+KTmoXxZGTRMCIKXOCeK11WkQOnYf1zERig7rZ1dEgAX+4AbGKYdS5ky/T2vKXX1eTuPtfd7x1VbpDk/Hu7kwnmuXIJ1hJ1Pk9FZ+1tRpCyAMz/nW8OkF1GDSiESqxirhjoDpqkxROOP+ry38Ax1qOTfwIA8WzkYt3dW/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Nmz14YyN; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jOvJz6QgpnGbqa1CWybFI8tgiz0e3Wr6osoyeSb2piY=; b=Nmz14YyN0Xy8a1TY/HjLTuxBZg
-	sFTvX+++4Kxacq1fenTkyDHpSl+WAghhBp8b9PjyzXNwC4+HSTBFdYPKZPnBayfUCYEtGYjMuNSgI
-	p1nqDxNlHZXDA42nQBKuWkAjePcIWKsPusp8G1mhqOzVxFCvCEvhy/Zo4A/9zOCtnymXJAh6Csww1
-	HCy9c1XtXK0g3otUdcxyNYEXZwh4N6diAnM4T15gXeqP09C42UPLwe6B3gpo3dlfKinPQsOFhaRi6
-	H72VUVXIHPWdNbuor9/ErFEMObBPPOVx1RYG90zEiDtmjZrOmPyxJKcCJT2fOO8ATClHL01SjC5e+
-	pXvCWnPA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sgvtd-00000003wRQ-3JY9;
-	Thu, 22 Aug 2024 00:41:49 +0000
-Date: Thu, 22 Aug 2024 01:41:49 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] avoid extra path_get/path_put cycle in path_openat()
-Message-ID: <20240822004149.GR504335@ZenIV>
-References: <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
- <20240807070552.GW5334@ZenIV>
- <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV>
- <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
- <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
- <20240807124348.GY5334@ZenIV>
- <20240807203814.GA5334@ZenIV>
- <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
- <20240822003359.GO504335@ZenIV>
+	s=arc-20240116; t=1724287565; c=relaxed/simple;
+	bh=xbhdrzXBXQGFHkBi7JVQQnh/qFFqzJW4jZK4RQf97gQ=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nvvymVCTf8xxBPWiY7GbTIr9pJk/w0UgWbvbw00jATcP7UGrUbYjG9CdI2wCEMFj0myl3EW2TMKE8xUUQi/rLP/6CZhXg6e7j5MYCA/aq1Zf2LJRBlE4ZcM5sMPT3KlsnJ1hKmo/mNBY31frCreSIF8r/8LMdIoP+vEbIv+YB0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuZWYdLk; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70b3b62025dso204895a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724287563; x=1724892363; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iBNlowdOWSl10OVciaBXJoWLTKHB1MfSEqNmoSmAPy0=;
+        b=QuZWYdLkZ7tEE9bHE9/wKLb3O5tgudYmyumIKdBhdSlNivpv68qCRxsm1Qvzxmzqbt
+         F8gxNPuXxAnvglEbGIUra0GDaeHB6fpBhRX7eNXCFIBEF573s8nUIaRSlXIvysZgMd5+
+         XWCzhEFSGb1A+zosZvBK2EBd+yGrYInj4+0y1ry3dyQrgBEBmCJV4IPeYaAVS7ql81e2
+         HpIB2lyktAyiU5gVofFo8C1NWYAFDVcipj8C05ETSoco6I6qHZ6D9vSd6kHHj3DJfk7y
+         98OXFd1Xrlss5RLpJLIb4jmv91gUVQFcLrm/pVvzh8AyFJ+R5C4fW386kUf4q6PC3h9T
+         6ysw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724287563; x=1724892363;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iBNlowdOWSl10OVciaBXJoWLTKHB1MfSEqNmoSmAPy0=;
+        b=SkLqkNtj6/HN7On8VU2GoqGrP+GgqoJV6TmJqhSitXD6jVVyjXIY52WnCHpLhXb+xW
+         L3DBtIQTbdyaYVEx9RQoMDnZtfpoUUW7ns6l3fYO/sv/mvT/GNajs1AttULU/Bs2lP8v
+         G6bssxO0xhpxMrEeDT2KGUgYXNyFRecX+ugoFb0WsZJVPNiXckOe6rYzL0GH53l9xKWU
+         Gu8ESoGQJGYLElmTj3b5seY3wb1qre+RXGi0P7XlKgQMVJ3EBE11y7c00m6xFULG4RRb
+         +8gyxquBACbD9k+NnQxb2OqIhwlmVlOpd4nS3IUdw+q0IHUVAUqBVuSzDAegemr/MWq5
+         onmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJvr7vKzW1jGKFSNSKmeXjoEE6L4qtZ15pgTVowAChXUfldWq8+HMYHzuOGQXJKVAdRL5GRAE9uAXGX5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAwhZYxwQiFcpGduj09XqBB/z7RTH9PQEdszqpPYCzDqoP/CCe
+	l+LKyqlGn/bsSPomrOISQnha8RdqG9tvOYrQ/dpf1x192fdmYj01
+X-Google-Smtp-Source: AGHT+IH/bjf1naOOqPi5C/0NuQzz4PHsm3FWeNxQhSdv0/HWm++aXaJE5hnZNAX492lNQZ6AiiZ1TA==
+X-Received: by 2002:a05:6870:80cb:b0:261:211:9d0d with SMTP id 586e51a60fabf-2738be524bfmr4580052fac.40.1724287562771;
+        Wed, 21 Aug 2024 17:46:02 -0700 (PDT)
+Received: from pop-os.. ([2804:14c:30:24b4:ab5f:4663:351d:b821])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342731acsm252928b3a.88.2024.08.21.17.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 17:46:02 -0700 (PDT)
+From: =?UTF-8?q?T=C3=BAlio=20Fernandes?= <tuliomf09@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht
+Subject: [PATCH] staging: rtl8192e: Fix parenthesis alignment
+Date: Wed, 21 Aug 2024 21:45:58 -0300
+Message-Id: <20240822004558.14638-1-tuliomf09@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822003359.GO504335@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Once we'd opened the file, nd->path and file->f_path have the
-same contents.  Rather than having both pinned and nd->path
-dropped by terminate_walk(), let's have them share the
-references from the moment when FMODE_OPENED is set and
-clear nd->path just before the terminate_walk() in such case.
+Fix parenthesis alignment in rtl92e_set_rf_state in order to rid
+the following warning:
 
-To do that, we
-	* add a variant of vfs_open() that does *not* do conditional
-path_get() (vfs_open_borrow()); use it in do_open().
-	* don't grab f->f_path.mnt in finish_open() - only
-f->f_path.dentry.  Have atomic_open() drop the child dentry
-in FMODE_OPENED case and return f->path.dentry without grabbing it.
-	* adjust vfs_tmpfile() for finish_open() change (it
-is called from ->tmpfile() instances).
-	* make do_o_path() use vfs_open_borrow(), collapse path_put()
-there with the conditional path_get() we would've get in vfs_open().
-	* in FMODE_OPENED case clear nd->path before calling
-terminate_walk().
+CHECK: Alignment should match open parenthesis
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Túlio Fernandes <tuliomf09@gmail.com>
 ---
- fs/internal.h |  1 +
- fs/namei.c    | 22 ++++++++++++++--------
- fs/open.c     | 19 ++++++++++++++++++-
- 3 files changed, 33 insertions(+), 9 deletions(-)
+ drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index cdd73209eecb..11834829cc3f 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -194,6 +194,7 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
- 		int flag);
- int chown_common(const struct path *path, uid_t user, gid_t group);
- extern int vfs_open(const struct path *, struct file *);
-+extern int vfs_open_borrow(const struct path *, struct file *);
- 
- /*
-  * inode.c
-diff --git a/fs/namei.c b/fs/namei.c
-index 5512cb10fa89..e02160460422 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3443,10 +3443,8 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
- 	d_lookup_done(dentry);
- 	if (!error) {
- 		if (file->f_mode & FMODE_OPENED) {
--			if (unlikely(dentry != file->f_path.dentry)) {
--				dput(dentry);
--				dentry = dget(file->f_path.dentry);
--			}
-+			dput(dentry);
-+			dentry = file->f_path.dentry;
- 		} else if (WARN_ON(file->f_path.dentry == DENTRY_NOT_SET)) {
- 			error = -EIO;
- 		} else {
-@@ -3724,7 +3722,7 @@ static int do_open(struct nameidata *nd,
- 	}
- 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
- 	if (!error && !(file->f_mode & FMODE_OPENED))
--		error = vfs_open(&nd->path, file);
-+		error = vfs_open_borrow(&nd->path, file);
- 	if (!error)
- 		error = security_file_post_open(file, op->acc_mode);
- 	if (!error && do_truncate)
-@@ -3777,8 +3775,10 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
- 	mode = vfs_prepare_mode(idmap, dir, mode, mode, mode);
- 	error = dir->i_op->tmpfile(idmap, dir, file, mode);
- 	dput(child);
--	if (file->f_mode & FMODE_OPENED)
-+	if (file->f_mode & FMODE_OPENED) {
-+		mntget(file->f_path.mnt);
- 		fsnotify_open(file);
-+	}
- 	if (error)
- 		return error;
- 	/* Don't check for other permissions, the inode was just created */
-@@ -3857,8 +3857,9 @@ static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
- 	int error = path_lookupat(nd, flags, &path);
- 	if (!error) {
- 		audit_inode(nd->name, path.dentry, 0);
--		error = vfs_open(&path, file);
--		path_put(&path);
-+		error = vfs_open_borrow(&path, file);
-+		if (!(file->f_mode & FMODE_OPENED))
-+			path_put(&path);
- 	}
- 	return error;
- }
-@@ -3884,6 +3885,11 @@ static struct file *path_openat(struct nameidata *nd,
- 			;
- 		if (!error)
- 			error = do_open(nd, file, op);
-+		if (file->f_mode & FMODE_OPENED) {
-+			// borrowed into file->f_path, transfer it there
-+			nd->path.mnt = NULL;
-+			nd->path.dentry = NULL;
-+		}
- 		terminate_walk(nd);
- 	}
- 	if (likely(!error)) {
-diff --git a/fs/open.c b/fs/open.c
-index 0ec2e9a33856..f9988427fb97 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1046,7 +1046,7 @@ int finish_open(struct file *file, struct dentry *dentry,
- 	file->f_path.dentry = dentry;
- 	err = do_dentry_open(file, open);
- 	if (file->f_mode & FMODE_OPENED)
--		path_get(&file->f_path);
-+		dget(&file->f_path.dentry);
- 	return err;
- }
- EXPORT_SYMBOL(finish_open);
-@@ -1102,6 +1102,23 @@ int vfs_open(const struct path *path, struct file *file)
- 	return ret;
- }
- 
-+int vfs_open_borrow(const struct path *path, struct file *file)
-+{
-+	int ret;
-+
-+	file->f_path = *path;
-+	ret = do_dentry_open(file, NULL);
-+	if (!ret) {
-+		/*
-+		 * Once we return a file with FMODE_OPENED, __fput() will call
-+		 * fsnotify_close(), so we need fsnotify_open() here for
-+		 * symmetry.
-+		 */
-+		fsnotify_open(file);
-+	}
-+	return ret;
-+}
-+
- struct file *dentry_open(const struct path *path, int flags,
- 			 const struct cred *cred)
- {
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+index 9eeae01dc98d..ad21263e725f 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+@@ -173,7 +173,7 @@ bool rtl92e_set_rf_state(struct net_device *dev,
+ 				else
+ 					priv->blinked_ingpio = false;
+ 				rtllib_mgnt_disconnect(priv->rtllib,
+-						      WLAN_REASON_DISASSOC_STA_HAS_LEFT);
++						       WLAN_REASON_DISASSOC_STA_HAS_LEFT);
+ 			}
+ 		}
+ 		if ((change_source == RF_CHANGE_BY_HW) && !priv->hw_radio_off)
 -- 
-2.39.2
+2.34.1
 
 
