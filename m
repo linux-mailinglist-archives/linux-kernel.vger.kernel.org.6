@@ -1,155 +1,378 @@
-Return-Path: <linux-kernel+bounces-297068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF8295B296
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:05:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B69395B297
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DF88B24463
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705471C21688
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2574B17E01D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B708D181334;
 	Thu, 22 Aug 2024 10:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="idDRPCRy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dkDDp1oz"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F621CF8B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABF916F8E5
 	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724321125; cv=none; b=WyKUfTpwJLNbyTj09F+KiTM7lMFOzuT0XYkcOqnFJBaVamTjj7yuY+dFct/ZJxikKv8+qsqOAPOD1VHeusv/qN9jBE3SWTg0aPT/BvUecay7SojHrakHw8OmjfscCkCwNzywqwi3XmAqIwOYCbCZiqV0tifWoJqpNN112JSmhlg=
+	t=1724321125; cv=none; b=ZIvz4iroD4Vh/BUatMvXyf0bCnSDGF6bdaw+1wU3erYhYiyswJo4cI/Ri+ALY+Xq9cLJ0ujMLDQ8+mkxg1AgwyQ2WdIO24rG85WWyJojA6PhPeEq5cwR1+o3chOm+XzQ4RJxyzgWc9wO5erJoGHVtxK1VPa6nAq+D/4Yl/fn5hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724321125; c=relaxed/simple;
-	bh=qAUbTDOzk0zhiqxb6tWLJqxN1kgzvrXx4lodHtPt7WU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oxTIWS6zFtUtKiEJTxQTmn0xEdX08RoDmg97+NEgIo9YIhNM7zrui6pQlvKSZSeXk7Xsw/QHYURfGuyGyuxOde5DlIx1e/ZKhgjYqasWdWgWIw4Wp3WZJsvIvNntFXGk8g0EpWyquB1r24OAIbyq9C3guAIdlTbHbDP3aHXF7Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=idDRPCRy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724321122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MmsvyI30nD2zCrXLKRcTPe+eQYAntSELOFpP0acs7lU=;
-	b=idDRPCRy6EUHF3wyIurVYWXLHotiD9iVT5BEXCVE4SHf5TLO7gAPOSj249EgKxNcdGPyku
-	1KubgIDf9TwCJ+Zv8mDpE3r1C6YdQqt/1u9YU7cDOjwlPAANsX7zB0w5RnIlxwDkRcFS8J
-	j0L7OCvgCFGIw8WG38Pz3kVZtZOeli4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-65-oLM8cyxFPU6MD71gtgq2-Q-1; Thu, 22 Aug 2024 06:05:21 -0400
-X-MC-Unique: oLM8cyxFPU6MD71gtgq2-Q-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280d8e685eso4992255e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:05:20 -0700 (PDT)
+	bh=AqOSFVoKPParxnmT7WF221Z1Ip1REBiC8PrGUOHP5vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MGc5f46q1brE2GBbh035ER3rAAI6tUdic9qGoGrbcRlwFBJkKJQyq2mdryyvZlgydJdIWrdNkVZjHAMUTFyT9RVPx66Rz45csB5Rcd8SozA3DHqrQ7QEQ3QbssCW7No4pdLAEFcI5SLJjcbUGoVzc/da6h+yXnpbkVjcbmD6Ljs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dkDDp1oz; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a869332c2c2so61384766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724321122; x=1724925922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VsRlx36JSyjICqgc+aUAvgwW16JZKgE9Yu8s3izwD3U=;
+        b=dkDDp1ozGxvMfWcFI6Z8SmO41xJoi3YPUPsigc+kILryaiIkmOWFjsVHLMEiAHuGYW
+         O5KW5dVMLVxV60HaXSw2jUFkGn2qm+s2tcHhj0TZ7meORhTgc1WDJLSj9lxABk1VRrDt
+         8EK2I2lNJsuhRrEw4i83b2QwwBfysXNMeFETrY83z47vyDehZJxl3J6mW2B+x4EPgi5E
+         kuqORTGKpYjOV0gCJSorU9BfTs7km+DOU7mlEuuQR7LOB5nj+dKKnW6GVnlr7AfEswYi
+         pCjKGzMnPbQjdyTNytoGWCMp6mfjA8PHWeFRimnJc+J820E4/sLF3onPtShLuKXbLchG
+         zZEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724321120; x=1724925920;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MmsvyI30nD2zCrXLKRcTPe+eQYAntSELOFpP0acs7lU=;
-        b=JSexFBkadvD4EVqDQBpTMzKcVfuiapBj4PUfy4msXZp4Y0BIb23RWAFJ2laQVRURwV
-         q94GaRVk4H0+ejwcXSF8pDppTk6aFC6oceQEpEO7OrM6ZKTylSgtyz97ZKZaT5tC/06A
-         5ZZIKpgn6C04XDzekEQfO+StPkBpi/f3x+oMolb75VQU3npqw2b8xhOaEytKmmwxU4K7
-         jmPK7NZs0OdxOMjQ+6vaHt0hWaPXqlFkC7O1uZ9QSK7M/qtsaTuqNDZUMnCLLe+eW0uq
-         b6bTqhgvwkb+FxnQ2yRCHQ8bwOXq2FDNm1PtwLXV8vZrjyd7vFv5+o/p/LmQHxH4DSlr
-         M2gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXa/is6KBA8k9uhTFP3xtUB1rJt6p+/vuOQyOt8IGvA7MiHYxrUcy9RlLIiHIR8AjcZxYTWOy0gydc8fYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6TjOGfUMDG9CXUGjBsFwQW5ltgLHYu8Yyfcr/pQ5fMzwG45+W
-	gThtlwLM3uUvY+1Cz3Sb52jLHrLEJn4/HQegZ/EE1rGFZ3BRhr3TCfO2RLtieTPa5lTu/ziE0tS
-	1q4lF0QhE1TUooF2VCWyVrhdA+OJNxqecRWC4IqvXX5z1gsiop9WTc83RddpY8w==
-X-Received: by 2002:a05:600c:4755:b0:428:d83:eb6b with SMTP id 5b1f17b1804b1-42abf05917fmr35122995e9.15.1724321119901;
-        Thu, 22 Aug 2024 03:05:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQwgmm9FuBsRBptjyF/Blm1gjCVTKlIsWCF4aU18+UfJb/reUv4GyHZYUqE7kfqsR+XjYeYw==
-X-Received: by 2002:a05:600c:4755:b0:428:d83:eb6b with SMTP id 5b1f17b1804b1-42abf05917fmr35122815e9.15.1724321119435;
-        Thu, 22 Aug 2024 03:05:19 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1b51:3b10:b0e7:ba61:49af:e2d5? ([2a0d:3344:1b51:3b10:b0e7:ba61:49af:e2d5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abee8d1d9sm56753095e9.22.2024.08.22.03.05.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 03:05:19 -0700 (PDT)
-Message-ID: <0540a49d-40e2-45a7-a068-fd14b75584f0@redhat.com>
-Date: Thu, 22 Aug 2024 12:05:17 +0200
+        d=1e100.net; s=20230601; t=1724321122; x=1724925922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VsRlx36JSyjICqgc+aUAvgwW16JZKgE9Yu8s3izwD3U=;
+        b=eEjuTfn9e32Ci75FsxmvvvphP0ySQMxlFh3oeE7+iWgozh8nn0ySeNCfZw0C8QH4+I
+         aUQ8VSOqvejFTHMBoL61aYOCHgapOUZ/ZEDdfozFd5noBtQGCIxMrSMP0W0iiIHXr69I
+         4VVUiEGxzHHb6U5Tgje/BOfP1+sW3z3YjWUOn8++RCfX8zfCvdzC3rgDo8+mVpbj8cxO
+         /XkXwr3jkodanPnxCtVlHkG1SfpVu3+obeoN7DyJjaZvEi+XxRDlYKMzHUNSfCn48HEi
+         55pfYURR2Bs0BWdztnVFlkSDAolQ/3ZHXXKI6RemOSzPvFNhXDu3/41DcntxOAVhpEbx
+         hEHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0FPEQyoZZmMkqsadqjqaMLEz+BRXtylnVWef/kap9tSJ1bbshjQXsHXKx5TBgOe1oudcPzgyeZu35QG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiVD6pMg9CFrZ75GKqOjgu8SgsyKxAxbsouM/rouoFXFqP8Gd1
+	RUsqDIBhxaPJjwx7g5JAUPKWHOG8vXXfdoRsZ9IUNbxWNwjhOPaXmtrKjT7Yf6k=
+X-Google-Smtp-Source: AGHT+IFf0/TfRn1dVTDMHRyeniY/BWcdE5p/lEJgK1hbqEWNBZ3MreGTUcv92qqLG54gU4SR/KmMYA==
+X-Received: by 2002:a17:906:d54b:b0:a77:db39:cc04 with SMTP id a640c23a62f3a-a868a61ebd1mr188730566b.11.1724321121490;
+        Thu, 22 Aug 2024 03:05:21 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f22018csm98471966b.11.2024.08.22.03.05.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 03:05:21 -0700 (PDT)
+Date: Thu, 22 Aug 2024 12:05:19 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: nerdopolis <bluescreen_avenger@verizon.net>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Greg KH <gregkh@linuxfoundation.org>, john.ogness@linutronix.de,
+	senozhatsky@chromium.org, tglx@linutronix.de, tony@atomide.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: VT-less kernels, and /dev/console on x86
+Message-ID: <ZscNX79dnXUjeTc4@pathway.suse.cz>
+References: <2669238.7s5MMGUR32.ref@nerdopolis2>
+ <2719346.q0ZmV6gNhb@nerdopolis2>
+ <ZsSaQAGj-R5Z9q9N@pathway.suse.cz>
+ <5322439.6fTUFtlzNn@nerdopolis2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: fix csum calculation for encapsulated packets
-To: =?UTF-8?B?5rKI5a6J55CqKOWHm+eOpSk=?= <amy.saq@antgroup.com>,
- netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20240819111745.129190-1-amy.saq@antgroup.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240819111745.129190-1-amy.saq@antgroup.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5322439.6fTUFtlzNn@nerdopolis2>
 
-
-
-On 8/19/24 13:17, 沈安琪(凛玥) wrote:
-> This commit fixes the issue that when a packet is encapsulated, such as
-> sending through a UDP tunnel, the outer TCP/UDP checksum is not
-> correctly recalculated if (1) checksum has been offloaded to hardware
-> and (2) encapsulated packet has been NAT-ed again, which causes the
-> packet being dropped due to the invalid outer checksum.
+On Wed 2024-08-21 13:12:03, nerdopolis wrote:
+> On Tuesday, August 20, 2024 9:29:36 AM EDT Petr Mladek wrote:
+> > On Mon 2024-08-19 11:50:39, nerdopolis wrote:
+> > > On Monday, August 19, 2024 11:09:35 AM EDT Steven Rostedt wrote:
+> > > > On Sun, 18 Aug 2024 10:30:22 -0400
+> > > > nerdopolis <bluescreen_avenger@verizon.net> wrote:
+> > > > 
+> > > > > On Sunday, August 18, 2024 8:33:25 AM EDT nerdopolis wrote:
+> > > > > > On Sunday, August 18, 2024 1:12:14 AM EDT Greg KH wrote:  
+> > > > > > > On Sat, Aug 17, 2024 at 08:09:20PM -0400, nerdopolis wrote:  
+> > > > > > > > Hi
+> > > > > > > > 
+> > > > > > > > I originally brought this up on linux-serial, but I think it makes more sense
+> > > > > > > > that it's part of how printk console device selection works. Without VTs, while
+> > > > > > > > most software is able to handle the situation, some userspace programs expect
+> > > > > > > > /dev/console to still be responsive. Namely systemd. It calls isatty() against
+> > > > > > > > /dev/console, and since /dev/console on VT-less systems currently defaults to
+> > > > > > > > /dev/ttyS0, and when /dev/ttyS0 is disconnected, the ioctl's fail, and it
+> > > > > > > > refuses to write log messages to it.
+> > > > > > > > 
+> > > > > > > > There doesn't seem to be a mailing list for printk, so I had to use
+> > > > > > > > get_maintainer.pl. Hopefully this is correct
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > After some grepping and guessing and testing, and playing around Something like
+> > > > > > > > diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> > > > > > > > index a45d423ad10f..f94a4632aab0 100644
+> > > > > > > > --- a/drivers/tty/Kconfig
+> > > > > > > > +++ b/drivers/tty/Kconfig
+> > > > > > > > @@ -384,9 +384,12 @@ config NULL_TTY
+> > > > > > > >  
+> > > > > > > >           In order to use this driver, you should redirect the console to this
+> > > > > > > >           TTY, or boot the kernel with console=ttynull.
+> > > > > > > > -
+> > > > > > > >           If unsure, say N.
+> > > > > > > >  
+> > > > > > > > +config NULL_TTY_CONSOLE
+> > > > > > > > +        bool "Supports /dev/ttynull as a console automatically"
+> > > > > > > > +        depends on NULL_TTY && !VT_CONSOLE
+> > > > > > > > +
+> > > > > > > >  config VCC
+> > > > > > > >         tristate "Sun Virtual Console Concentrator"
+> > > > > > > >         depends on SUN_LDOMS
+> > > > > > > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > > > > > > > index dddb15f48d59..c1554a789de8 100644
+> > > > > > > > --- a/kernel/printk/printk.c
+> > > > > > > > +++ b/kernel/printk/printk.c
+> > > > > > > > @@ -3712,6 +3712,11 @@ void __init console_init(void)
+> > > > > > > >         initcall_t call;
+> > > > > > > >         initcall_entry_t *ce;
+> > > > > > > >  
+> > > > > > > > +#ifdef CONFIG_NULL_TTY_CONSOLE
+> > > > > > > > +       if (!strstr(boot_command_line, "console="))
+> > > > > > > > +               add_preferred_console("ttynull", 0, NULL);
+> > > > > > > > +#endif
+> > > > > > > > +
+> > > > > > > >         /* Setup the default TTY line discipline. */
+> > > > > > > >         n_tty_init();
+> > > > > > > >  
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > seems to work, it conflicts with CONFIG_VT_CONSOLE since it is effectively
+> > > > > > > > redundant, it is optional, so that it doesn't cause any changes to
+> > > > > > > > configurations, that historically had CONFIG_VT_CONSOLE turned off in the past,
+> > > > > > > > and for bootloader configs, it won't change any behavior if the kernel command
+> > > > > > > > line has a console device specified  
+> > > > > > > 
+> > > > > > > What is wrong with just setting the kernel command line for this
+> > > > > > > instead?
+> > > > > > >   
+> > > > > > When they eventually start shipping kernels without VTs, they will then have to
+> > > > > > include a script in their upgrade process that runs
+> > > > > > 
+> > > > > > sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"nomodeset /g" /etc/default/grub  
+> > > > > Ugh, I meant
+> > > > > sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"console=ttynull /g" /etc/default/grub
+> > > > > sorry
+> > > > 
+> > > > If you can modify the kernel .config for this, can you just update:
+> > > > 
+> > > >   CONFIG_CMDLINE_BOOL=y
+> > > >   CONFIG_CMDLINE="console=ttynull"
+> > > > 
+> > > > ?
+> > > > 
+> > > That could work, I think. I'll have to see how that works when a different
+> > > console= is specified on the command line from the bootloader though, I am
+> > > thinking that if console=ttyS0 is then manually specified by a user, there will
+> > > be two devices in /proc/consoles (ttyS0 on top of ttynull), but I admit I don't
+> > > know if there are actual ramifications of that, or not...
+> > 
+> > I guess that it would register both consoles in this case.
+> > 
+> > > I am not sure if real distributions would want this to be the answer I guess I
+> > > will have to see if any others are using CONFIG_CMDLINE_BOOL/CONFIG_CMDLINE,
+> > > although this gives me an idea..
+> > > 
+> > > Would something like this below be more acceptable? I didn't test it yet, but
+> > > just the theory. I am thinking that this could have more use to allow a
+> > > preferred to be set...
+> > > 
+> > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > > index dddb15f48d59..c1554a789de8 100644
+> > > --- a/kernel/printk/printk.c
+> > > +++ b/kernel/printk/printk.c
+> > > @@ -3712,6 +3712,11 @@ void __init console_init(void)
+> > >  	initcall_t call;
+> > >  	initcall_entry_t *ce;
+> > >  
+> > > +#ifdef CONFIG_DEFAULT_CONSOLE_HINT_BOOL
+> > > +       if (!strstr(boot_command_line, "console="))
+> > > +               add_preferred_console(CONFIG_DEFAULT_CONSOLE_HINT, 0, NULL);
+> > > +#endif
+> > > +
+> > >  	/* Setup the default TTY line discipline. */
+> > >  	n_tty_init();
+> > 
+> > This is better. But it does not handle some situations. For example,
+> > default console might also by defined by:
+> > 
+> >    + scpr, see acpi_parse_spcr()
+> >    + device tree, see of_console_check()
+> >    + netconsole=, it is hidden in init_netconsole()
+> > 
+> > I tried to handle this another way. The "ttynull" console was
+> > added when /dev/console could not be opened in console_on_rootfs(),
+> > see the commit 757055ae8dedf5333af17b ("init/console: Use ttynull
+> > as a fallback when there is no console").
+> > 
+> > But it did not work well and we had to revert the change, see
+> > the commit a91bd6223ecd46addc71ee6f ("Revert "init/console: Use
+> > ttynull as a fallback when there is no console").
+> > 
+> > Another idea:
+> > 
+> > 1. We could use the same trick as netconsole. I mean to use:
+> > 
+> > 	ttynull_console.flags |= CON_ENABLED;
+> > 
+> >    to force register_console() to register the console even
+> >    when it is not defined in the list of preferred consoles.
+> > 
+> >    It is a kind of hack. But it looks cleaner that adding
+> >    ttynull console into the list of preferred consoles.
+> > 
+> > 
+> > 2. We need to decide whether the fallback to ttynull console
+> >    is needed as late as possible. It should be done after
+> >    all other drivers call register_console().
+> > 
+> >    I would do it in late_initcall_sync().
+> > 
+> > 
+> > 3. We need to detect when the fallback is needed. The check
+> >    of /dev/console does not work, see
+> >    the commit a91bd6223ecd46addc71ee6f ("Revert "init/console: Use
+> >    ttynull as a fallback when there is no console").
+> > 
+> >    A solution might be to check if @console_list is empty.
+> > 
+> > 
+> > Something like (not even compile tested):
+> > 
+> > diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
+> > index 6b2f7208b564..7cd7ba2ec33c 100644
+> > --- a/drivers/tty/ttynull.c
+> > +++ b/drivers/tty/ttynull.c
+> > @@ -59,6 +59,16 @@ static struct console ttynull_console = {
+> >  	.device = ttynull_device,
+> >  };
+> >  
+> > +void __init register_ttynull_console_force(void)
+> > +{
+> > +	if (!ttynull_driver)
+> > +		return;
+> > +
+> > +	/* Force registration by setting the CON_ENABLED flag. */
+> > +	ttynull_console.flags |= CON_ENABLED;
+> > +	register_console(&ttynull_console);
+> > +}
+> > +
+> >  static int __init ttynull_init(void)
+> >  {
+> >  	struct tty_driver *driver;
+> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > index 054c0e7784fd..004612e6fc7f 100644
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -3857,6 +3857,25 @@ static int __init printk_late_init(void)
+> >  }
+> >  late_initcall(printk_late_init);
+> >  
+> > +static int __init console_fallback(void)
+> > +{
+> > +	bool need_fallback = false;
+> > +
+> > +	console_list_lock();
+> > +	/*
+> > +	 * Make sure that there is a console which can be associated
+> > +	 * with /dev/console
+> > +	 */
+> > +	if (hlist_empty(&console_list))
+> > +		need_fallback = true;
+> > +
+> > +	console_list_unlock();
+> > +
+> > +	if (need_fallback)
+> > +		register_ttynull_console_force();
+> > +}
+> > +late_initcall_sync(console_fallback);
+> > +
+> >  #if defined CONFIG_PRINTK
+> >  /* If @con is specified, only wait for that console. Otherwise wait for all. */
+> >  static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progress)
+> > 
+> > 
+> I got it to compile with
 > 
-> Previously, when an encapsulated packet met some NAT rules and its
-> src/dst ip and/or src/dst port has been modified,
-> inet_proto_csum_replace4 will be invoked to recalculated the outer
-> checksum. However, if the packet is under the following condition: (1)
-> checksum offloaded to hardware and (2) NAT rule has changed the src/dst
-> port, its outer checksum will not be recalculated, since (1)
-> skb->ip_summed is set to CHECKSUM_PARTIAL due to csum offload and (2)
-> pseudohdr is set to false since port number is not part of pseudo
-> header. 
-
-I don't see where nat is calling inet_proto_csum_replace4() with 
-pseudohdr == false: please include more detailed description of the 
-relevant setup (ideally a self-test) or at least a backtrace leading to 
-the issue.
-
-> This leads to the outer TCP/UDP checksum invalid since it does
-> not change along with the port number change.
+> --- a/include/linux/console.h
+> +++ b/include/linux/console.h
+> @@ -513,9 +513,12 @@ extern int braille_register_console(struct console *, int index,
+>  extern int braille_unregister_console(struct console *);
+>  #ifdef CONFIG_TTY
+>  extern void console_sysfs_notify(void);
+> +extern void register_ttynull_console_force(void);
+>  #else
+>  static inline void console_sysfs_notify(void)
+>  { }
+> +static inline void register_ttynull_console_force(void)
+> +{ }
+>  #endif
+>  extern bool console_suspend_enabled;
+>  
+> and throwing a "return 0;" in console_fallback()
 > 
-> In this commit, another condition has been added to recalculate outer
-> checksum: if (1) the packet is encapsulated, (2) checksum has been
-> offloaded, (3) the encapsulated packet has been NAT-ed to change port
-> number and (4) outer checksum is needed, the outer checksum for
-> encapsulated packet will be recalculated to make sure it is valid.
-
-Please add a suitable fix tag.
-
-> Signed-off-by: Anqi Shen <amy.saq@antgroup.com>
-> ---
->   net/core/utils.c | 2 ++
->   1 file changed, 2 insertions(+)
+> Seems like at least on x86 though, when I tested (CONFIG_VT_CONSOLE disabled),
+> the console is still ttyS0, even if I add "-serial none" to the QEMU VM.
 > 
-> diff --git a/net/core/utils.c b/net/core/utils.c
-> index c994e95172ac..d9de60e9b347 100644
-> --- a/net/core/utils.c
-> +++ b/net/core/utils.c
-> @@ -435,6 +435,8 @@ void inet_proto_csum_replace4(__sum16 *sum, struct sk_buff *skb,
->   		*sum = ~csum_fold(csum_add(csum_sub(csum_unfold(*sum),
->   						    (__force __wsum)from),
->   					   (__force __wsum)to));
-> +	else if (skb->encapsulation && !!(*sum))
-> +		csum_replace4(sum, from, to);
+> 
+> 
+> I saw 757055ae8dedf5333af17b, but I feel like the intent is different, if I am
+> understanding that correctly, which I very well could not be, to me it looks
+> like it is using ttynull as a _last_ resort when all else fails, but x86 always
+> seems to have /dev/ttyS0's, unless I make changes before the serial consoles
+> are used.
+> 
+> My concerns are more about the distributions that have had /dev/console work
+> no matter what because of CONFIG_VT_CONSOLE. isatty() always returns true 
+> against /dev/console when enabled. When it is disabled, /dev/ttyS0 wins and now
+> software like systemd that logs there is now at the mercy of how /dev/ttyS0 is
+> physically connected or not for it to be able to log successfully.
 
-This looks incorrect for a csum partial value, and AFAICS the nat caller 
-has already checked for !!(*sum).
+I see. I have misunderstood the original problem.
 
-Thanks,
+Hmm, historically, the kernel tries to enable any available console by
+default. It makes some sense. One would expect that when there is a
+device than the user should be able to access it and see the messages there.
 
-Paolo
+If I get it correctly, you suggest to do not register serial port
+when it is not physically connected. It makes some sense.
 
+But I think that this should be implemented on the serial console layer.
+It should not call register_console() when the port is not connected.
+
+Plus, it would need the above patch which would register
+ttynull_console driver as the final fallback. Otherwise, /dev/console
+would not be backed by any device. Or we could update console_device()
+to return the ttynull_driver as a fallback when there is no console
+registered.
+
+> One of my _other_ ideas was to in setup_arch() in arch/x86/kernel/setup.c add
+> the "add_preferred_console("ttynull", 0, NULL);" when CONFIG_NULL_TTY_CONSOLE
+> is enabled right above where it calls vgacon_register_screen() for this reason.
+> 
+> It worked, but it probably was not correct either...
+
+IMHO, this is not acceptable for a generic kernel. The kernel should
+try show the messages whenever possible. It should not ignore serial
+consoles when they are available.
+
+Also I am sure that the kernel is used on devices which only
+have a serial console. Such a change would cause regression
+there.
+
+Best Regards,
+Petr
 
