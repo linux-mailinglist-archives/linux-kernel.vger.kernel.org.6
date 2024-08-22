@@ -1,271 +1,182 @@
-Return-Path: <linux-kernel+bounces-298063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4A495C178
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:15:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D6695C17D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69F9EB22F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:15:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170EA284E87
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD9B17C7C7;
-	Thu, 22 Aug 2024 23:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC361D1F6D;
+	Thu, 22 Aug 2024 23:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMtgMG+y"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Md+6yKIL"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C8A4687;
-	Thu, 22 Aug 2024 23:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3F71D0DFF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 23:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724368541; cv=none; b=IQXUjdzPIZAVrfVRnH0LvpHlkPvSTi6GXnbljj33xXVdzia5QHQgA3FxyF9DW3jMDwqQUbKAKNNCvEa51u8DU3Pb2V7gghV0quyAbk7vU7OAHP0VI+DDN39djCvbkt3xy1O9Y4INnKUwdMJtLWe6oFny4+JjoThgsL6d9qR59sU=
+	t=1724369237; cv=none; b=aIkeHS5M5tDuuAH27qmrzTY+WI3CczdNzdCa8BXFyuQOnWC1ZLvs6PUFIwhE4JfQjX0rbhOi5+N/x8V16qKDU1/SZCYMkQm8Ts5g731hItX3KLIe3St8kfuXPmZ55xbqOJqf3xhUHFJssfE+A97eAa6yN5cm7IuMMx1hUgEJGME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724368541; c=relaxed/simple;
-	bh=FmOH4VCHQ7RRV3os04x39johr6N30/iNrwZAk4GnNfo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QcW5sB1rLQRulXgAdKACWHnRSMp5YnacDkF3TY1zNMduTRqjI5+NrcaOkkS0RzLGxCea2yeYoq1UfyZJI4XwFTbU+Yed8oscJSXF2LYbEGq4hPefuT+vTW4/ZplBzhexDqVemtp2D/y0w2sWVBrbF0XsAvTb8d5RhQQeCaA6sw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMtgMG+y; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bf009cf4c0so1668447a12.1;
-        Thu, 22 Aug 2024 16:15:39 -0700 (PDT)
+	s=arc-20240116; t=1724369237; c=relaxed/simple;
+	bh=Egwy9hybB6x9w7JJMCbClhbFUJdrUwmrFCIS7VcEce0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ueamwP4pB+LMroufO+ozbJ07jcimWyw7UNaEYzh5NTNRIssQjWYf/Eim1RwlPRxmzEfHhOFpicI6UEvlitY0nHHtqXsguegqml3fbw4IDgoLG1Tb/daP0MmKGR0u3DuWzCb0MFQ2or6/+2SaNzzXCZ0Xlc3EtwkHGwOI3T4XDQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Md+6yKIL; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e178e745c49so1672601276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:27:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724368538; x=1724973338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WlY1SNCKTKo0ttR05+nbVrXCxk2tU/xwtzki62FkZqk=;
-        b=kMtgMG+y372I3hF1wpG/NL9i/vL0G2XvMopNMEtDUeG65ARqRGdMtO70Qbt1DylbTg
-         joadLRuQg+t8RvSGuEKdedd9O1KTfNKlKdQZFSFmFjRqscJ0+UdK8mLItKxjsGXVZapV
-         +EeV+6R1oHv2rtKe9s1lfjYDnx+JY2vujXgnkKOhLzamIvgjdJtfyC9+T+9UHcTQv3K7
-         Pxhj/fh29S++3PUKm2kskxR1H0XbK+v15xSg1hgXKAnapqJ+EAkaZAkjfSCivbuHCBia
-         ySp/SrNJbEmrDiFPxhWICBnzglH6SMByP6l1csLmkY4gmY03bAYQkkMvEgbs7GDJUMCl
-         UTng==
+        d=google.com; s=20230601; t=1724369234; x=1724974034; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BnLx+0iU61LzYD3h0xQcqP5Ih66Md4VDgKsUo14Lf3E=;
+        b=Md+6yKILvWkic2kdHlJLoJCZblSZGs3IpuU08YB6XNCopZXqWL/Yg4hM4k2XWIlNY5
+         RAgA9ewPRsQhKduzI1A7zsdIliBxiKrxkLOHb7zWNYix4ACbbsgk4NS+fHbkaqznCpd7
+         t/MGLrMEWVT3PRuD+oY4rq/G1fSYDS0vsTQWWpkGrW+foZLdrNkFvnzOIno5xZ4r89pj
+         bZv/T/Eig+woyx5u3Rxjc5ZJBSjjZHz+XLlafaY37x0xE7jZzzppxCr7RGsuGHAr5Ntb
+         kapVYKHznTVxqT+0blNnJsN5ZFIMeF0GrZqdYHcUqxuYsrGm3h0Jw7hQ2PkvE62qhUM5
+         Abcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724368538; x=1724973338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WlY1SNCKTKo0ttR05+nbVrXCxk2tU/xwtzki62FkZqk=;
-        b=FtPs6xo8Rute0FAS5F+gyXWMRNz15tCztE5noXPoB/eva09Pw+7+qoTHRocehnhFA/
-         OKcufCzLV5LPvNId++ix80lV4muVmXwWo9PoQYBw1f2Ggc0Mfm0G+lV9uYYXpR3XS2Yc
-         mXcrgzmcdUor4vmorSu4+M/bbImU1SMtjwe4Qcdf2GNEs9a7zKVaUx+0i3uVnBcuNLD0
-         HHk2KALAiW7Qx4/jNbLKtfJNHDDDKLkdMxAw8/d+T0+I1Og+E5/mOxVUhFreljGhsonW
-         2QwgPd68mRbO3xf2bniVo6/debgIxuaOl3QljXl7SLxwZEXGkD3zQo4I+YHWvHHymZvD
-         +F/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXI8DGVUvRkTqGjzvnKnxzcq9ZsodcQ561rDemS4WtKriVQCBFPnOEKUHQ3P/P+tK/zFbQtNuBxXjAGHdLC@vger.kernel.org, AJvYcCXy9/iM4okz+1GPQJZNtPd+c/OlY/SsjwZmHLHy1qzys2lontSYHkoQDrTp5PYWX07y0UEgVEkv4n+KZCb3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlwjiGwossKwjXeSUdRBLUw3FXWCKqdbsFxjoD7Se3uQcxlA7Y
-	qz67ZRBTFVW7PZB+iVvg3nUm2F78zl2hPv4eR4aTiXlGF+TscHjmPZ3/uwnEQRaq/SkqlJi8Y5H
-	Snff1s2CQaOTvg9Aa2GyCFK1usGpmdw==
-X-Google-Smtp-Source: AGHT+IHnSJYv0lPhOFFX0bl0T7rDppf3ajTMjwwg0WAsK4RjyNO+BvVGm1/RFj3FQoF0uV7st09q2ymgIkwION7q1MA=
-X-Received: by 2002:a05:6402:40c5:b0:57c:9d54:67db with SMTP id
- 4fb4d7f45d1cf-5c08916a094mr117351a12.9.1724368537311; Thu, 22 Aug 2024
- 16:15:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724369234; x=1724974034;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BnLx+0iU61LzYD3h0xQcqP5Ih66Md4VDgKsUo14Lf3E=;
+        b=uugspWso2BrHWh/lOTfVTKfz4ewbFipsuvLJg2tSsXXvEaGPWShGt7IVDpP+BcEerF
+         I6nMwnCG0yhkTc3bOZWaaniJLh8NDUWXnR//xckF136l0hiJYsB9M2JOnAwv+3WxzKaO
+         1XipkE1fiz3pvNoGXqUXbUiUNv5WeOmr9S/QyOjgdMtoIlu0Z66pfUEA/yekaM8JUpna
+         hU0ZFOrjuIsRnBQEegeKMpAylAdJ8VdjIm6rHaGkglzEH00j1e2Kf+mL2VokdIssBg88
+         3wG8PhssJ1v51S0Y3ypotp8BNSrqkW810RIG9xH7QHCJ96xITdySJZSODZp6eTTPNBoZ
+         W8Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXqC8K+H/2aH4byULgC/h/0PkLTMQ2NChMoo75a+7MSpWsu5/uHM7xhjjiNIA2gpNU/xJTOYbWeiiaGoEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeGuxzu/CqupQK1eBUa/jc9NmQM4VRqT/eMuMHlCkIZHB0um9i
+	qDmo65C75lUhb02F9rxrDKQogd8N7uusi7MdcEwmwQ+6NqGY+zmxvrBw8dZw2zdx7yjw6pTLtSN
+	/3g==
+X-Google-Smtp-Source: AGHT+IElSAlI6s3smFamDaezE5icBKCGAry+0iIK7L7uIrAXJ1G+6bxPsNLWqzK7Li9sC4VyeR0PXN53VeU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a5b:92:0:b0:e11:7039:ff92 with SMTP id
+ 3f1490d57ef6-e17a8666f19mr695276.11.1724369234549; Thu, 22 Aug 2024 16:27:14
+ -0700 (PDT)
+Date: Thu, 22 Aug 2024 16:27:13 -0700
+In-Reply-To: <20240822202226.862398-1-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240820171652.145673-1-robdclark@gmail.com> <20240820171652.145673-5-robdclark@gmail.com>
- <20240822203401.odfmdlqto6lsqefz@hu-akhilpo-hyd.qualcomm.com>
-In-Reply-To: <20240822203401.odfmdlqto6lsqefz@hu-akhilpo-hyd.qualcomm.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 22 Aug 2024 16:15:24 -0700
-Message-ID: <CAF6AEGtGCT=TSp2XRmPaqb23dk42V_ic06OCB+JLEp6f5Y4tNg@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] drm/msm: Extend gpu devcore dumps with pgtbl info
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Mostafa Saleh <smostafa@google.com>, 
-	Will Deacon <will@kernel.org>, Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, 
-	"open list:DRM DRIVER for Qualcomm Adreno GPUs" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240822202226.862398-1-sohil.mehta@intel.com>
+Message-ID: <ZsfJUT0AWFhoONWf@google.com>
+Subject: Re: [RFC PATCH] x86/cpufeature: Add feature dependency checks
+From: Sean Christopherson <seanjc@google.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Vegard Nossum <vegard.nossum@oracle.com>, 
+	Tony Luck <tony.luck@intel.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>, Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 22, 2024 at 1:34=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicin=
-c.com> wrote:
->
-> On Tue, Aug 20, 2024 at 10:16:47AM -0700, Rob Clark wrote: > From: Rob Cl=
-ark <robdclark@chromium.org>
-> >
-> > In the case of iova fault triggered devcore dumps, include additional
-> > debug information based on what we think is the current page tables,
-> > including the TTBR0 value (which should match what we have in
-> > adreno_smmu_fault_info unless things have gone horribly wrong), and
-> > the pagetable entries traversed in the process of resolving the
-> > faulting iova.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++++++++
-> >  drivers/gpu/drm/msm/msm_gpu.c           |  9 +++++++++
-> >  drivers/gpu/drm/msm/msm_gpu.h           |  8 ++++++++
-> >  drivers/gpu/drm/msm/msm_iommu.c         | 22 ++++++++++++++++++++++
-> >  drivers/gpu/drm/msm/msm_mmu.h           |  3 ++-
-> >  5 files changed, 51 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/=
-msm/adreno/adreno_gpu.c
-> > index 1c6626747b98..3848b5a64351 100644
-> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > @@ -864,6 +864,16 @@ void adreno_show(struct msm_gpu *gpu, struct msm_g=
-pu_state *state,
-> >               drm_printf(p, "  - dir=3D%s\n", info->flags & IOMMU_FAULT=
-_WRITE ? "WRITE" : "READ");
-> >               drm_printf(p, "  - type=3D%s\n", info->type);
-> >               drm_printf(p, "  - source=3D%s\n", info->block);
-> > +
-> > +             /* Information extracted from what we think are the curre=
-nt
-> > +              * pgtables.  Hopefully the TTBR0 matches what we've extr=
-acted
-> > +              * from the SMMU registers in smmu_info!
-> > +              */
-> > +             drm_puts(p, "pgtable-fault-info:\n");
-> > +             drm_printf(p, "  - ttbr0: %.16llx\n", (u64)info->pgtbl_tt=
-br0);
->
-> "0x" prefix? Otherwise, it is a bit confusing when the below one is
-> decimal.
+On Thu, Aug 22, 2024, Sohil Mehta wrote:
+> Currently, the cpuid-deps[] table is only exercised when a particular
+> feature gets explicitly disabled and clear_cpu_cap() is called. However,
+> some of these listed dependencies might already be missing during boot.
+> Unexpected failures can occur when the kernel tries to use such a
+> feature.
+> 
+> Therefore, add boot time checks for missing feature dependencies and
+> disable any feature whose dependencies are not met.
+> 
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> ---
+> Arguably, this situation should only happen on broken hardware and it may not
+> make sense to add such a check to the kernel. OTOH, this can be viewed as a
+> safety mechanism to make failures more graceful on such configurations in real
+> or virtual environments.
 
-mixed feelings, the extra 0x is annoying when pasting into calc which
-is a simple way to get binary decoding
+And goofy Kconfigs.   But yeah, lack of any meaningful fallout is why my version
+didn't go anywhere.
 
-OTOH none of this is machine decoded so I guess we could change it
+https://lore.kernel.org/all/20221203003745.1475584-2-seanjc@google.com
 
-> > +             drm_printf(p, "  - asid: %d\n", info->asid);
-> > +             drm_printf(p, "  - ptes: %.16llx %.16llx %.16llx %.16llx\=
-n",
-> > +                        info->ptes[0], info->ptes[1], info->ptes[2], i=
-nfo->ptes[3]);
->
-> Does crashdec decodes this?
+> I feel since we already have the cpuid-deps[] table and the incremental changes
+> are small, this patch might be a useful addition.
+> 
+> Also, if this check seems worthwhile, would it be useful to combine and rewrite
+> it with filter_cpuid_features() since it tries to do something similar?
+> ---
+> 
+>  arch/x86/include/asm/cpufeature.h |  1 +
+>  arch/x86/kernel/cpu/common.c      |  4 ++++
+>  arch/x86/kernel/cpu/cpuid-deps.c  | 10 ++++++++++
+>  3 files changed, 15 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+> index 0b9611da6c53..347ef04f65ef 100644
+> --- a/arch/x86/include/asm/cpufeature.h
+> +++ b/arch/x86/include/asm/cpufeature.h
+> @@ -148,6 +148,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+>  
+>  extern void setup_clear_cpu_cap(unsigned int bit);
+>  extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+> +extern void filter_feature_dependencies(struct cpuinfo_x86 *c);
+>  
+>  #define setup_force_cpu_cap(bit) do {			\
+>  							\
+> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> index d4e539d4e158..6b725dbd8db7 100644
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -1602,6 +1602,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+>  
+>  		c->cpu_index = 0;
+>  		filter_cpuid_features(c, false);
+> +		filter_feature_dependencies(c);
+>  
+>  		if (this_cpu->c_bsp_init)
+>  			this_cpu->c_bsp_init(c);
+> @@ -1854,6 +1855,9 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+>  	/* Filter out anything that depends on CPUID levels we don't have */
+>  	filter_cpuid_features(c, true);
+>  
+> +	/* Filter out features that don't have their dependencies met */
+> +	filter_feature_dependencies(c);
+> +
+>  	/* If the model name is still unset, do table lookup. */
+>  	if (!c->x86_model_id[0]) {
+>  		const char *p;
+> diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+> index b7d9f530ae16..88b34a97278a 100644
+> --- a/arch/x86/kernel/cpu/cpuid-deps.c
+> +++ b/arch/x86/kernel/cpu/cpuid-deps.c
+> @@ -147,3 +147,13 @@ void setup_clear_cpu_cap(unsigned int feature)
+>  {
+>  	do_clear_cpu_cap(NULL, feature);
+>  }
+> +
+> +void filter_feature_dependencies(struct cpuinfo_x86 *c)
+> +{
+> +	const struct cpuid_dep *d;
+> +
+> +	for (d = cpuid_deps; d->feature; d++) {
+> +		if (boot_cpu_has(d->feature) && !boot_cpu_has(d->depends))
 
-No, it just passed thru for human eyeballs
+I don't think checking boot_cpu_has() is correct, it's entirely possible for a CPU
+to have divergent features from the boot CPU, e.g. if a feature is dependent on
+BIOS enabling (or disabling) and BIOS messed up.
 
-crashdec _does_ have some logic to flag buffers that are "near" the
-faulting iova to help identify if the fault is an underflow/overflow
-(which has been, along with the pte trail, useful to debug some
-issues)
-
-BR,
--R
-
-> -Akhil.
->
-> >       }
-> >
-> >       drm_printf(p, "rbbm-status: 0x%08x\n", state->rbbm_status);
-> > diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gp=
-u.c
-> > index 3666b42b4ecd..bf2f8b2a7ccc 100644
-> > --- a/drivers/gpu/drm/msm/msm_gpu.c
-> > +++ b/drivers/gpu/drm/msm/msm_gpu.c
-> > @@ -281,6 +281,15 @@ static void msm_gpu_crashstate_capture(struct msm_=
-gpu *gpu,
-> >       if (submit) {
-> >               int i;
-> >
-> > +             if (state->fault_info.ttbr0) {
-> > +                     struct msm_gpu_fault_info *info =3D &state->fault=
-_info;
-> > +                     struct msm_mmu *mmu =3D submit->aspace->mmu;
-> > +
-> > +                     msm_iommu_pagetable_params(mmu, &info->pgtbl_ttbr=
-0,
-> > +                                                &info->asid);
-> > +                     msm_iommu_pagetable_walk(mmu, info->iova, info->p=
-tes);
-> > +             }
-> > +
-> >               state->bos =3D kcalloc(submit->nr_bos,
-> >                       sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
-> >
-> > diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gp=
-u.h
-> > index 1f02bb9956be..82e838ba8c80 100644
-> > --- a/drivers/gpu/drm/msm/msm_gpu.h
-> > +++ b/drivers/gpu/drm/msm/msm_gpu.h
-> > @@ -101,6 +101,14 @@ struct msm_gpu_fault_info {
-> >       int flags;
-> >       const char *type;
-> >       const char *block;
-> > +
-> > +     /* Information about what we think/expect is the current SMMU sta=
-te,
-> > +      * for example expected_ttbr0 should match smmu_info.ttbr0 which
-> > +      * was read back from SMMU registers.
-> > +      */
-> > +     phys_addr_t pgtbl_ttbr0;
-> > +     u64 ptes[4];
-> > +     int asid;
-> >  };
-> >
-> >  /**
-> > diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_=
-iommu.c
-> > index 2a94e82316f9..3e692818ba1f 100644
-> > --- a/drivers/gpu/drm/msm/msm_iommu.c
-> > +++ b/drivers/gpu/drm/msm/msm_iommu.c
-> > @@ -195,6 +195,28 @@ struct iommu_domain_geometry *msm_iommu_get_geomet=
-ry(struct msm_mmu *mmu)
-> >       return &iommu->domain->geometry;
-> >  }
-> >
-> > +int
-> > +msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova, uint=
-64_t ptes[4])
-> > +{
-> > +     struct msm_iommu_pagetable *pagetable;
-> > +     struct arm_lpae_io_pgtable_walk_data wd =3D {};
-> > +
-> > +     if (mmu->type !=3D MSM_MMU_IOMMU_PAGETABLE)
-> > +             return -EINVAL;
-> > +
-> > +     pagetable =3D to_pagetable(mmu);
-> > +
-> > +     if (!pagetable->pgtbl_ops->pgtable_walk)
-> > +             return -EINVAL;
-> > +
-> > +     pagetable->pgtbl_ops->pgtable_walk(pagetable->pgtbl_ops, iova, &w=
-d);
-> > +
-> > +     for (int i =3D 0; i < ARRAY_SIZE(wd.ptes); i++)
-> > +             ptes[i] =3D wd.ptes[i];
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static const struct msm_mmu_funcs pagetable_funcs =3D {
-> >               .map =3D msm_iommu_pagetable_map,
-> >               .unmap =3D msm_iommu_pagetable_unmap,
-> > diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mm=
-u.h
-> > index 88af4f490881..96e509bd96a6 100644
-> > --- a/drivers/gpu/drm/msm/msm_mmu.h
-> > +++ b/drivers/gpu/drm/msm/msm_mmu.h
-> > @@ -53,7 +53,8 @@ static inline void msm_mmu_set_fault_handler(struct m=
-sm_mmu *mmu, void *arg,
-> >  struct msm_mmu *msm_iommu_pagetable_create(struct msm_mmu *parent);
-> >
-> >  int msm_iommu_pagetable_params(struct msm_mmu *mmu, phys_addr_t *ttbr,
-> > -             int *asid);
-> > +                            int *asid);
-> > +int msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova, =
-uint64_t ptes[4]);
-> >  struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *m=
-mu);
-> >
-> >  #endif /* __MSM_MMU_H__ */
-> > --
-> > 2.46.0
-> >
+> +			do_clear_cpu_cap(c, d->feature);
+> +	}
+> +}
+> -- 
+> 2.34.1
+> 
 
