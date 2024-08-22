@@ -1,212 +1,214 @@
-Return-Path: <linux-kernel+bounces-296317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661BB95A907
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:41:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8B495A909
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF5AB21796
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:41:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D481C22C67
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58A36FB9;
-	Thu, 22 Aug 2024 00:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708028BF3;
+	Thu, 22 Aug 2024 00:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCXfzPf1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Nmz14YyN"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98D1134A0;
-	Thu, 22 Aug 2024 00:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBAE6FB6;
+	Thu, 22 Aug 2024 00:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724287293; cv=none; b=GuqJeP2TwUPCoBJF+wioaPJEKhLt2vvLKNhuszT4zNJD7tRcfLVzz0JVUSP9h9TYHSr6bSjbsdqPQ5v0T0NKWzhvkVntppFRv0otMlf/2KVV3p4enoS7tUcvnLbhx9m0O2lLZ2R5zAiFdlyV17xSdAD9oDGh6tJrIl4WUz1PNZM=
+	t=1724287312; cv=none; b=JjZfrRbzjGBFGiEOQNxUWqzgxgtwz+NK7tLIafYv6GmFMa3Qqc4hvdIWFXzz81uBOJpEkxwEhqH8RFKpURWP0u0WtUxemeOiAiGgBCzeOthQDhBKrnC7iDHcfWkDY15zxmXCKT+zHgWDadVBxLdo0D2XMKfQQIhAVi7oBMT9AjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724287293; c=relaxed/simple;
-	bh=NEssf0xVc7ugi9uMlrCSuabJ7ZJLuNn69lL2053VhPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MjTsFpg04ekNbfwA9OFN65xD5uthyTUn7Br3AyqrZOyea3PPwBRjPd7+DV/nd6o1psb1SEQdaPSA+Ftl2RkcaKc8ilK3XfkcQCH1dKS+2eoT9QEGD0/tG3p3aIMfEX6x906FLqf4Zmrmh7b3TQr+i9XY4xBx7inTIr69L2stm1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCXfzPf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E93C4AF09;
-	Thu, 22 Aug 2024 00:41:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724287292;
-	bh=NEssf0xVc7ugi9uMlrCSuabJ7ZJLuNn69lL2053VhPo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OCXfzPf1xT7jC3YWS4EfIz5Mnm/NdjcH7ZtZ8b84uvqmw1hhylZvoZXI1SXnzWFtr
-	 XWYteRcO/6cDfsq4SGVg8sbEuS8GPB8CmdIZuZWjBcqymfD/wcuEH/L5nURx9iMXlb
-	 13h7Q5EZUw7t09fbfC8HzFhJltWXxWDcWj279ERVyXFMB/dKmLcqTbmoIBPmnmwdMY
-	 pkR3BoAqGQZ5Lafyxv7II2pDESDmj9uO3kXCRd16bdJ0Sjl17MP8gIf+Wv3juzGM7f
-	 Hiy78cGjozEtgXSzBNQbacAbFI4XKPaf8tdWE2kZNPbJ6Fl+yv3J841QpRYcsY5sfb
-	 DKlWNJSeZub1g==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-273c8514254so165931fac.0;
-        Wed, 21 Aug 2024 17:41:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUy0OsZVlObb5jo8+LmSdYRwNHpLNRLZ3faQzQtiq7CxectNAW3svufIy3LioReKbwNNvuhWafquKF+@vger.kernel.org, AJvYcCWMyzzrAXgoVhTTZQSkG0+P1eFFpj9SO+Gen1rh2GiZmYHwshNdFudvn6zzpg0itP0vmx7c/WY6RPeHhrir@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTQlOqCU/BL4RX8/lfDpBYP7cZfpkTtg+1ZZx4XlQaZAAttBjI
-	ykrO7xXawO5ua+PRMmwnWblk+6sdO1MLVFrRZvnvvx4AKtZhEC1OTri+65k+qVZZD1rzaajZTon
-	C0gtPp2XsrRb05KBAXGRaxTpH8qo=
-X-Google-Smtp-Source: AGHT+IElt6sefHhqIxqFCoAxywErgtfOh5OvhtkKT1xldNaCmtIjA7e3BdbEdccx7xsHZn1JD0zM7TFQBxoxtObEoW8=
-X-Received: by 2002:a05:6870:9708:b0:260:f058:48eb with SMTP id
- 586e51a60fabf-2737ef041cemr4706474fac.20.1724287292078; Wed, 21 Aug 2024
- 17:41:32 -0700 (PDT)
+	s=arc-20240116; t=1724287312; c=relaxed/simple;
+	bh=OWIaCLCw+YDjM1iGQfQB/ATG874p/QQ0AQi/DMMrKyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/E79+KTmoXxZGTRMCIKXOCeK11WkQOnYf1zERig7rZ1dEgAX+4AbGKYdS5ky/T2vKXX1eTuPtfd7x1VbpDk/Hu7kwnmuXIJ1hJ1Pk9FZ+1tRpCyAMz/nW8OkF1GDSiESqxirhjoDpqkxROOP+ry38Ax1qOTfwIA8WzkYt3dW/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Nmz14YyN; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jOvJz6QgpnGbqa1CWybFI8tgiz0e3Wr6osoyeSb2piY=; b=Nmz14YyN0Xy8a1TY/HjLTuxBZg
+	sFTvX+++4Kxacq1fenTkyDHpSl+WAghhBp8b9PjyzXNwC4+HSTBFdYPKZPnBayfUCYEtGYjMuNSgI
+	p1nqDxNlHZXDA42nQBKuWkAjePcIWKsPusp8G1mhqOzVxFCvCEvhy/Zo4A/9zOCtnymXJAh6Csww1
+	HCy9c1XtXK0g3otUdcxyNYEXZwh4N6diAnM4T15gXeqP09C42UPLwe6B3gpo3dlfKinPQsOFhaRi6
+	H72VUVXIHPWdNbuor9/ErFEMObBPPOVx1RYG90zEiDtmjZrOmPyxJKcCJT2fOO8ATClHL01SjC5e+
+	pXvCWnPA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sgvtd-00000003wRQ-3JY9;
+	Thu, 22 Aug 2024 00:41:49 +0000
+Date: Thu, 22 Aug 2024 01:41:49 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 3/3] avoid extra path_get/path_put cycle in path_openat()
+Message-ID: <20240822004149.GR504335@ZenIV>
+References: <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
+ <20240807070552.GW5334@ZenIV>
+ <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV>
+ <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+ <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+ <20240807124348.GY5334@ZenIV>
+ <20240807203814.GA5334@ZenIV>
+ <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
+ <20240822003359.GO504335@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com> <20240820143319.274033-3-chenxiaosong@chenxiaosong.com>
-In-Reply-To: <20240820143319.274033-3-chenxiaosong@chenxiaosong.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 22 Aug 2024 09:41:21 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_N2Hgba2EsDkem7mmGrWxxpXOtz4L_ReXwqUCG_BRU=w@mail.gmail.com>
-Message-ID: <CAKYAXd_N2Hgba2EsDkem7mmGrWxxpXOtz4L_ReXwqUCG_BRU=w@mail.gmail.com>
-Subject: Re: [PATCH 2/8] smb/server: fix potential null-ptr-deref of
- lease_ctx_info in smb2_open()
-To: chenxiaosong@chenxiaosong.com
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
-	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
-	liuyun01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822003359.GO504335@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Aug 20, 2024 at 11:35=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wr=
-ote:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> null-ptr-deref will occur when (req_op_level =3D=3D SMB2_OPLOCK_LEVEL_LEA=
-SE)
-> and parse_lease_state() return NULL.
->
-> Fix this by returning error pointer on parse_lease_state() and checking
-> error.
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-We intended for it to return null. We shouldn't handle the error even
-if it fails.
-All places check if lc is null except the one.
-We can fix it like the following one. please send this patch if you are oka=
-y.
+Once we'd opened the file, nd->path and file->f_path have the
+same contents.  Rather than having both pinned and nd->path
+dropped by terminate_walk(), let's have them share the
+references from the moment when FMODE_OPENED is set and
+clear nd->path just before the terminate_walk() in such case.
 
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index b6c5a8ea3887..884e21992c92 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -3404,7 +3404,7 @@ int smb2_open(struct ksmbd_work *work)
-                        goto err_out1;
-                }
-        } else {
--               if (req_op_level =3D=3D SMB2_OPLOCK_LEVEL_LEASE) {
-+               if (req_op_level =3D=3D SMB2_OPLOCK_LEVEL_LEASE && lc) {
-                        if (S_ISDIR(file_inode(filp)->i_mode)) {
-                                lc->req_state &=3D ~SMB2_LEASE_WRITE_CACHIN=
-G_LE;
-                                lc->is_dir =3D true;
+To do that, we
+	* add a variant of vfs_open() that does *not* do conditional
+path_get() (vfs_open_borrow()); use it in do_open().
+	* don't grab f->f_path.mnt in finish_open() - only
+f->f_path.dentry.  Have atomic_open() drop the child dentry
+in FMODE_OPENED case and return f->path.dentry without grabbing it.
+	* adjust vfs_tmpfile() for finish_open() change (it
+is called from ->tmpfile() instances).
+	* make do_o_path() use vfs_open_borrow(), collapse path_put()
+there with the conditional path_get() we would've get in vfs_open().
+	* in FMODE_OPENED case clear nd->path before calling
+terminate_walk().
 
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/internal.h |  1 +
+ fs/namei.c    | 22 ++++++++++++++--------
+ fs/open.c     | 19 ++++++++++++++++++-
+ 3 files changed, 33 insertions(+), 9 deletions(-)
 
-> ---
->  fs/smb/server/oplock.c  | 11 +++++++----
->  fs/smb/server/smb2pdu.c | 17 ++++++++++++-----
->  2 files changed, 19 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/smb/server/oplock.c b/fs/smb/server/oplock.c
-> index a8f52c4ebbda..e8591686a037 100644
-> --- a/fs/smb/server/oplock.c
-> +++ b/fs/smb/server/oplock.c
-> @@ -1510,7 +1510,8 @@ void create_lease_buf(u8 *rbuf, struct lease *lease=
-)
->   * parse_lease_state() - parse lease context containted in file open req=
-uest
->   * @open_req:  buffer containing smb2 file open(create) request
->   *
-> - * Return:  oplock state, -ENOENT if create lease context not found
-> + * Return: allocated lease context object on success, otherwise error po=
-inter.
-> + *        -ENOENT pointer if create lease context not found.
->   */
->  struct lease_ctx_info *parse_lease_state(void *open_req)
->  {
-> @@ -1519,12 +1520,14 @@ struct lease_ctx_info *parse_lease_state(void *op=
-en_req)
->         struct lease_ctx_info *lreq;
->
->         cc =3D smb2_find_context_vals(req, SMB2_CREATE_REQUEST_LEASE, 4);
-> -       if (IS_ERR_OR_NULL(cc))
-> -               return NULL;
-> +       if (!cc)
-> +               return ERR_PTR(-ENOENT);
-> +       if (IS_ERR(cc))
-> +               return ERR_CAST(cc);
->
->         lreq =3D kzalloc(sizeof(struct lease_ctx_info), GFP_KERNEL);
->         if (!lreq)
-> -               return NULL;
-> +               return ERR_PTR(-ENOMEM);
->
->         if (sizeof(struct lease_context_v2) =3D=3D le32_to_cpu(cc->DataLe=
-ngth)) {
->                 struct create_lease_v2 *lc =3D (struct create_lease_v2 *)=
-cc;
-> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-> index d8a827e0dced..119c1ba5f255 100644
-> --- a/fs/smb/server/smb2pdu.c
-> +++ b/fs/smb/server/smb2pdu.c
-> @@ -2767,8 +2767,9 @@ static int parse_durable_handle_context(struct ksmb=
-d_work *work,
->                                 }
->                         }
->
-> -                       if (((lc && (lc->req_state & SMB2_LEASE_HANDLE_CA=
-CHING_LE)) ||
-> -                            req_op_level =3D=3D SMB2_OPLOCK_LEVEL_BATCH)=
-) {
-> +                       if ((!IS_ERR_OR_NULL(lc) > 0 &&
-> +                            (lc->req_state & SMB2_LEASE_HANDLE_CACHING_L=
-E)) ||
-> +                           req_op_level =3D=3D SMB2_OPLOCK_LEVEL_BATCH) =
-{
->                                 dh_info->CreateGuid =3D
->                                         durable_v2_blob->CreateGuid;
->                                 dh_info->persistent =3D
-> @@ -2788,8 +2789,9 @@ static int parse_durable_handle_context(struct ksmb=
-d_work *work,
->                                 goto out;
->                         }
->
-> -                       if (((lc && (lc->req_state & SMB2_LEASE_HANDLE_CA=
-CHING_LE)) ||
-> -                            req_op_level =3D=3D SMB2_OPLOCK_LEVEL_BATCH)=
-) {
-> +                       if ((!IS_ERR_OR_NULL(lc) &&
-> +                            (lc->req_state & SMB2_LEASE_HANDLE_CACHING_L=
-E)) ||
-> +                           req_op_level =3D=3D SMB2_OPLOCK_LEVEL_BATCH) =
-{
->                                 ksmbd_debug(SMB, "Request for durable ope=
-n\n");
->                                 dh_info->type =3D dh_idx;
->                         }
-> @@ -2935,8 +2937,13 @@ int smb2_open(struct ksmbd_work *work)
->                         ksmbd_put_durable_fd(fp);
->                         goto reconnected_fp;
->                 }
-> -       } else if (req_op_level =3D=3D SMB2_OPLOCK_LEVEL_LEASE)
-> +       } else if (req_op_level =3D=3D SMB2_OPLOCK_LEVEL_LEASE) {
->                 lc =3D parse_lease_state(req);
-> +               if (IS_ERR(lc)) {
-> +                       rc =3D PTR_ERR(lc);
-> +                       goto err_out2;
-> +               }
-> +       }
->
->         if (le32_to_cpu(req->ImpersonationLevel) > le32_to_cpu(IL_DELEGAT=
-E)) {
->                 pr_err("Invalid impersonationlevel : 0x%x\n",
-> --
-> 2.34.1
->
+diff --git a/fs/internal.h b/fs/internal.h
+index cdd73209eecb..11834829cc3f 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -194,6 +194,7 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ 		int flag);
+ int chown_common(const struct path *path, uid_t user, gid_t group);
+ extern int vfs_open(const struct path *, struct file *);
++extern int vfs_open_borrow(const struct path *, struct file *);
+ 
+ /*
+  * inode.c
+diff --git a/fs/namei.c b/fs/namei.c
+index 5512cb10fa89..e02160460422 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3443,10 +3443,8 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
+ 	d_lookup_done(dentry);
+ 	if (!error) {
+ 		if (file->f_mode & FMODE_OPENED) {
+-			if (unlikely(dentry != file->f_path.dentry)) {
+-				dput(dentry);
+-				dentry = dget(file->f_path.dentry);
+-			}
++			dput(dentry);
++			dentry = file->f_path.dentry;
+ 		} else if (WARN_ON(file->f_path.dentry == DENTRY_NOT_SET)) {
+ 			error = -EIO;
+ 		} else {
+@@ -3724,7 +3722,7 @@ static int do_open(struct nameidata *nd,
+ 	}
+ 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
+ 	if (!error && !(file->f_mode & FMODE_OPENED))
+-		error = vfs_open(&nd->path, file);
++		error = vfs_open_borrow(&nd->path, file);
+ 	if (!error)
+ 		error = security_file_post_open(file, op->acc_mode);
+ 	if (!error && do_truncate)
+@@ -3777,8 +3775,10 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
+ 	mode = vfs_prepare_mode(idmap, dir, mode, mode, mode);
+ 	error = dir->i_op->tmpfile(idmap, dir, file, mode);
+ 	dput(child);
+-	if (file->f_mode & FMODE_OPENED)
++	if (file->f_mode & FMODE_OPENED) {
++		mntget(file->f_path.mnt);
+ 		fsnotify_open(file);
++	}
+ 	if (error)
+ 		return error;
+ 	/* Don't check for other permissions, the inode was just created */
+@@ -3857,8 +3857,9 @@ static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
+ 	int error = path_lookupat(nd, flags, &path);
+ 	if (!error) {
+ 		audit_inode(nd->name, path.dentry, 0);
+-		error = vfs_open(&path, file);
+-		path_put(&path);
++		error = vfs_open_borrow(&path, file);
++		if (!(file->f_mode & FMODE_OPENED))
++			path_put(&path);
+ 	}
+ 	return error;
+ }
+@@ -3884,6 +3885,11 @@ static struct file *path_openat(struct nameidata *nd,
+ 			;
+ 		if (!error)
+ 			error = do_open(nd, file, op);
++		if (file->f_mode & FMODE_OPENED) {
++			// borrowed into file->f_path, transfer it there
++			nd->path.mnt = NULL;
++			nd->path.dentry = NULL;
++		}
+ 		terminate_walk(nd);
+ 	}
+ 	if (likely(!error)) {
+diff --git a/fs/open.c b/fs/open.c
+index 0ec2e9a33856..f9988427fb97 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1046,7 +1046,7 @@ int finish_open(struct file *file, struct dentry *dentry,
+ 	file->f_path.dentry = dentry;
+ 	err = do_dentry_open(file, open);
+ 	if (file->f_mode & FMODE_OPENED)
+-		path_get(&file->f_path);
++		dget(&file->f_path.dentry);
+ 	return err;
+ }
+ EXPORT_SYMBOL(finish_open);
+@@ -1102,6 +1102,23 @@ int vfs_open(const struct path *path, struct file *file)
+ 	return ret;
+ }
+ 
++int vfs_open_borrow(const struct path *path, struct file *file)
++{
++	int ret;
++
++	file->f_path = *path;
++	ret = do_dentry_open(file, NULL);
++	if (!ret) {
++		/*
++		 * Once we return a file with FMODE_OPENED, __fput() will call
++		 * fsnotify_close(), so we need fsnotify_open() here for
++		 * symmetry.
++		 */
++		fsnotify_open(file);
++	}
++	return ret;
++}
++
+ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *cred)
+ {
+-- 
+2.39.2
+
 
