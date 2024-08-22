@@ -1,107 +1,79 @@
-Return-Path: <linux-kernel+bounces-297540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F397A95BA80
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:34:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2251995BA7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A442887BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410611C23FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105A21CDA2E;
-	Thu, 22 Aug 2024 15:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DD71CDA00;
+	Thu, 22 Aug 2024 15:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ptt2VT+f";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="SMxVOOgZ"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fHda7+9I"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2058.outbound.protection.outlook.com [40.107.223.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4191129CE8;
-	Thu, 22 Aug 2024 15:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8B518EAB;
+	Thu, 22 Aug 2024 15:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724340611; cv=fail; b=EFiER9/Qq9kTEbM7mJiRrWIQEiiTZAY4EoP8wDFb/ZNIYAUgD5lSL0VJD3GmA5QEJLDOaN1nFn9AgvrAUBiGPSVHJk+lL334FJ06RjROmyR1PLv2UgHKw4Xz4gpkXsCnvGEADzE7intBpIg73G/D49/pOOroWGi1a3IaXe7c0Q4=
+	t=1724340594; cv=fail; b=ZCcXA/epPhrGhxI9mq66z5ElDm+JYZ4X130/6QB/MLuMxExQFM7GAF8VR2TrCqfsAUqnkl/B+fJZW/eUGMYZw+I3HB2056c33chbXjLEgmi1eDyUgKisaFctYTxSIy0S3y9nv4bPGIvhZiR46Sg5MbTg6WejtaCwWWechh40+Q0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724340611; c=relaxed/simple;
-	bh=C45ekd932JLLsI6PD22kk9k3qR20RTlBDxIkh/IY+iw=;
+	s=arc-20240116; t=1724340594; c=relaxed/simple;
+	bh=lSrEBxJdK/RcVrxzd09kccvrbdqupGmiWvFdBsgqc6Q=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=N6qlHjkgZtQywNPFazDvUeWXvrJgD0QQSmyHul5TdidX1nyytUU2T+KyfWaviOfkNZ1NVJs2gSDFj7iCArPvUjS6Syn2wbo263J9nNE/FLtjvAbeAZhilRTLR9O+c4SdBxnmaSDyPxzyuYheRSoGYHYSXfdHiRoQyEh/lq6nsLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ptt2VT+f; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=SMxVOOgZ; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MEQVUB028663;
-	Thu, 22 Aug 2024 15:29:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=8TF4JZJgoeXP8bLvXl3ylyyRU2fXe1CDVAevPdNNJmw=; b=
-	Ptt2VT+fJ+tdSJC3lCIihyj06RH+mwN0xhuqBrhJeYfNcXx0VOXWz3pfSI0cx3Ph
-	BEy487cjN5ibg5sEgkNFj7sQLqOGzSIB+ChTRvOuOUmcGqTcgukK5xhLQmW2vSpZ
-	czQXUEnUdprHj27WQOWokrD66csHjPrQiTtXgxjXbP11rJQgL2bTQJHuNi2HcAkU
-	abkmzUx6XintEOQ+0PLClT+SAoqfeqGT+/7nkAyjDOcf8ziZvSkKZkwhtqqjXXjJ
-	KSUWCID/KvD0Ie8OzxXdEgjg7SxLw7ISifO9lovX0RL2yRnTGZ6UnJHP10b8lSs2
-	ssxEAVBzmNoXGFjPh1aIkA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m2djcuu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Aug 2024 15:29:56 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47MFCRfS038541;
-	Thu, 22 Aug 2024 15:29:49 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4167s68rfp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Aug 2024 15:29:49 +0000
+	 Content-Type:MIME-Version; b=LMbwUPD3LGzhCQZTtNfZxqpbBuMw5XkqRA3ZpG6uZ70/GdqCjSLmOE2AgYqc1ufd7WKia8FF4QNptFEn7HYxomxbG7FVJY3Mg3pgXv2kQ1veXpZaV8IihLNRjWUW7CUHxZlF22y7wOLxi2JGhHgbfAvJSowtAthhS7p9wvVguHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fHda7+9I; arc=fail smtp.client-ip=40.107.223.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wZPoUkBHasgIRt6mRwZ0fhwPHhNMBpXaiRm5PZGoXGWCjbjx8B68YvdA50lOjHY7qz598y5JgrztVEYMU8N+AqS7EyJHAIG16b/WtYYH/17TYnkIRDuE8/MLA30E5MeHpIoYtT8lBzcUbs8ZgQOyPptBWgh0Q2KRRng6Rb5RKDWa94m0JgCjm3Erjx3locKG4XfMXaW/wGZPJ9eA3kUvtP/zGRNIuBOpLFm8xY2CBhju9ZSkl8MmMDavCbAceyP3uYsod+OpeTjgKrP47Ky8DjpilKwXNTWFaEEGuZ4VbpLQf4Ez2ik72qV6xDBWGPFm0wHhHzzJ8i0oPCOP5Xl0DA==
+ b=llNlh6ZVAX8HA4foKnt5OdrHJidzPkDABIuRSHxtOuARe+3MjqDHhGfpTLeb9+Y4f/q3POB+OLfF2ocv1WwLtjawHXlCrxzrzLx7XdokeZHJJ4kEAoPyk3L6mpJoE29K7fAVF/XXxOf0oFPQv7DUTeayavDqpuW/kjTuVBHTu0KbQnHLmVUmiWgWLLP9RPIBCsAZn4Tl0uT5XyPhFYoQsi0v34e9yLhU++MxaOvvJsY9LiHzqIqEfrBJtBe5XFOCJwNkYSxUMHcQtcaRFfXhYtyLAuJQxX6DLo2bezjrKjqjV12ERrwaGQjw5MQLVc0d9YF1CaZBexKG+Z+EEtZAqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8TF4JZJgoeXP8bLvXl3ylyyRU2fXe1CDVAevPdNNJmw=;
- b=kUChKLvrjbsXIWPx/1UF7uJq1e8mE7hkAhO4XOvGMIu3USEL6+O+lEoCwKK5WYtCqRu86kxnwzaZ5bXGXs9MPCeBp63hnTKGiFyNGjnJcJHVnrvnJwiuqLoyjIIqAmOpFlFJZ0uxGJyNPAvvJ6VJMALR+/O2Ej/NXJZYTe2pkRqMjltigkVsV3Fr2eqgo4ZF3m6D1NczDJp+y0JW1RY+9b2dalbMawzmcGiDNV1t+ACB5yPlGPoHHCJPdu7dXKS/r2MqqeewEi1PnTybx63OkunLy/+XxxezFAl77B4hkUGRipWELa9RYcoD109Lr1lEduO8knvYX9U7f3vrVLYtWA==
+ bh=oMGvqkPmjO4v+4lnlLIOU9DHS0rDrxS4znE1gOjtNjU=;
+ b=sxMlb+YLrXDItbJChwzLvsMEpo69KBn39XZodW6Us072Sy1hTlGjAcJpLfx4S5PQ9JBqYP0oS+U1kNmAF+bJi3awDPc0EXgxuyEnSTZMv2QD5YqSe+/1RGILZ3sxKNl22bkTkS3w4+qS/LrgqYF8jNOl+s+x5q119jBaRqwZlL75xXibf46NoEJ/U5DVB/8o4KiG4cgw7FS3zEXmvRvKvWWQQoVxNlldTyFowLwS4yH3OXURsBgcF5Kaoe3WJs+50qWTg33bm6GChA9Chya1N3qROYEk5evAQoUGZyQommbZaXGlPIDe4akld0l+sWTep7+FLUm7iQqlurSBiCIVbw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8TF4JZJgoeXP8bLvXl3ylyyRU2fXe1CDVAevPdNNJmw=;
- b=SMxVOOgZYAfbVGZQfHM2Qeu12UhTzu2FF/qOsfDdnSRrTx3q/fvU/bqDTBNF+JhLW/CYY3XE7O9dCDmFw9SK1mIsDLDIIPCzy+Jq8uEzX3QpyqX1cPgQdwfXDLf+XN/BixdFRkhiEGsu0F4G3V1zZ3Tl4fMYU+Y1K+26pvB+59w=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by CY8PR10MB7338.namprd10.prod.outlook.com (2603:10b6:930:7e::21) with
+ bh=oMGvqkPmjO4v+4lnlLIOU9DHS0rDrxS4znE1gOjtNjU=;
+ b=fHda7+9I2IqIOiOeyT2MEUbLF+39tZKKB1GIgcY+jdBGuWqHn7Vw5Xlsaiu4PW9xBWN3IUAVSb/fbhP49RfkUI25/5XX3lCw8bRwf1hVyiFc/pB55u1lqL63Yw/RBOG9x/8Z0vszxg+HvGxZdZ8VwmTUNc35aQiFlAOmj5/yBe8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CH3PR12MB8404.namprd12.prod.outlook.com (2603:10b6:610:12d::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
- 2024 15:29:38 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.7918.006; Thu, 22 Aug 2024
- 15:29:38 +0000
-Message-ID: <a91557d2-95d4-4e73-9936-72fc1fbe100f@oracle.com>
-Date: Thu, 22 Aug 2024 16:29:34 +0100
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.27; Thu, 22 Aug
+ 2024 15:29:46 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Thu, 22 Aug 2024
+ 15:29:46 +0000
+Message-ID: <6da512d2-464d-40fa-9d05-02928246ddba@amd.com>
+Date: Thu, 22 Aug 2024 10:29:55 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/7] fs: iomap: Atomic write support
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-        chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de,
-        martin.petersen@oracle.com, catherine.hoang@oracle.com,
-        kbusch@kernel.org
-References: <20240817094800.776408-1-john.g.garry@oracle.com>
- <20240817094800.776408-4-john.g.garry@oracle.com>
- <20240821165803.GI865349@frogsfrogsfrogs>
+Subject: Re: [PATCH v3] PCI: Detect and trust built-in Thunderbolt chips
+To: Esther Shimanovich <eshimanovich@chromium.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: iommu@lists.linux.dev, Lukas Wunner <lukas@wunner.de>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240815-trust-tbt-fix-v3-1-6ba01865d54c@chromium.org>
 Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20240821165803.GI865349@frogsfrogsfrogs>
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240815-trust-tbt-fix-v3-1-6ba01865d54c@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LNXP265CA0077.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:76::17) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+X-ClientProxiedBy: SN7PR04CA0032.namprd04.prod.outlook.com
+ (2603:10b6:806:120::7) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,390 +81,523 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CY8PR10MB7338:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd9f42c3-cf80-444c-479e-08dcc2bf3bf1
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH3PR12MB8404:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2f735c6-4ed7-4f7c-368f-08dcc2bf40cb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjNJWDF0UmVUOWhONWkyYStFMlZ5RHF5emk5eFF3cll5TWFXcWZFSzhoM1Bz?=
- =?utf-8?B?azRVOG93QUNHL0NIdWl2aDEwZlZMa0NCdDRmQzFGSnBlV2puWVZsYTU2RTU2?=
- =?utf-8?B?b2QyYkhobnh1T0F6cnJnVEZFY1Z2d0RDUDUxUFpaNHU1eEJmQ09udFJXQlNO?=
- =?utf-8?B?Uko1VUp3Rm1TMjV6RkIxaU9MdEs5T1lsVlFjU0xoRlk0dDlzMmIwM21vcHNp?=
- =?utf-8?B?Wjl5R3lFZDBNVmNVZG9qczNTdHBiZjVPUkFqdUVyTkVLOG54S2dBOHBUR3ps?=
- =?utf-8?B?U3BmczBQRFEycGxaK0I0VzdQUU1iZ09LVzREcHAyckc3eE8yRndWM1lhbE15?=
- =?utf-8?B?QjRHcWxMQk5GMmVsQjYvVUZpK0Z5U3g3OUwrU3pGbTdza2hjQ1B2R1R1emND?=
- =?utf-8?B?cnlGTlo0WXd2TisrL3VQQUtoTXNqSitibkdYMFBFYlROdll1QzhtaUtNNktQ?=
- =?utf-8?B?VXJ1UEFyZmhZMlBjTzVMUXUxWm45cExQQWQ2MHQ3VDhqQ3RINURJZWZkeURH?=
- =?utf-8?B?dXZIUjdYL1VMQTkxWEcwUmJRVXl3ZHYxMVA3YmFoTys2em9jcVZxQ245MVlU?=
- =?utf-8?B?czhKcmRmcndqRk1PcjVrYkM4QmV5V251SUdvSWd3NFdGLzFMMEY3UUNxaElK?=
- =?utf-8?B?Z0hjWXN3bHJqY2xYQk9lZktkZXpnUWtXVGxkVmx0TEZSZFovUkptWkgxTW5k?=
- =?utf-8?B?NDNTYXpzeU5wQW81OStVaHJaSjZ1RVlpcFo2M0tmQ1VSdlE4M0pCVFM3ZUNs?=
- =?utf-8?B?cnh0U1o4MWcvVFJwaGxUQWlkdm51eHo5R0t5UzVqcHhycUtYL3FraHprYy9D?=
- =?utf-8?B?bjdsT0dLcUl5YURobExkbGw3R3pGbXNXSWd3NXFWVTM5UHpKNXNyWXllTXZG?=
- =?utf-8?B?RHYyaFBxZFFhaGJlUXprSVl3OGZJVkpNZlFsS3VmT0doSzlqMUVzTUs2VFRk?=
- =?utf-8?B?VzVMazI4Tm9UMEp6bkp1VTc4V1BJMzdVanl5bG03WDVuOGl2ejArRHJDS000?=
- =?utf-8?B?TVFFcy9sb0ZGN0tsTzkxQ3A0bUdwR3JHSHRzc1hQMHZLN2VWb3oxUmg5MGJy?=
- =?utf-8?B?ak9VOEJXTjVGMzJ1enNiN2NkeS9HR3JpMU9FMDVBT3Yvb2xZS3V1Rk42a1Nk?=
- =?utf-8?B?UlIvRjh6Z1pMSDV1MEFtK3d0MXRVbk5KQWNEbEQ4NGtyM2Zsem8wU1R1dEg4?=
- =?utf-8?B?czFnVVozRmNaMXM5Q1FJcWlXZ1Rxb2RIYWJoZjNNS2p2ZWs1TnVCNlZzR29k?=
- =?utf-8?B?RTMrNGV1TEtkaHBlckp1SWEyaFFrZ04rM05vNDRSMDJiZFlGeHd4cEQ0dlJq?=
- =?utf-8?B?SEYyZFJXTmUyU2NWYkdwYk5qNHl2UHBoUGlSSTdUcll4U0syY3ZMdVN3QlBt?=
- =?utf-8?B?TTNUaTB0TmRxclNvSmVFanRKTWN6Vi9iaE9DdE9VR0x4M0JvZkkyY1FnakFr?=
- =?utf-8?B?dURCaHlCZHBmSTQ1eWY1cTJTSm0vT3l2TGcxeXJkdUZZVHg4UysyNDFFNWVi?=
- =?utf-8?B?cW5jVGUyT3VTbnNGcG1TZFNlcjZrR2FjWHgzM1M4aWRVQWU4NzZSOVE3dGY4?=
- =?utf-8?B?WE13dFJpcy9FUTJVQnVqQlgvZjV6R1hwdWJyK2o4N2RVNjNUU0xSbVdaekwr?=
- =?utf-8?B?S04vSGtCZkNsazJsbHRLVGVJeS9NZUd6UzQybFpRb0pDT1ZuQVBFdTFydllT?=
- =?utf-8?B?ejgvcDNLc2dEc0QrMmh5ODJMcGozNC9rejVlcVVnR0FwM0tCZU1KY0pGc0Fi?=
- =?utf-8?Q?IWAtecInBSQHhkIz9s=3D?=
+	=?utf-8?B?OVh1Z0Y4K0UyVzloeUpTNG4yMUJTT0w4QkI2VVRLOWN5NllsV2dMVFNXRmwr?=
+ =?utf-8?B?V3dTNVZLOFp0M0RtUTdHWkczUjlKL3l3MzBJR3Z5VFpVWXVFbWJkRWdlcG05?=
+ =?utf-8?B?dC96OWZ5Mys5WVhHaXhLZm9kclQ2cFd5N2tHYXhlTmFOZmU1L2I2UjlYS1Y4?=
+ =?utf-8?B?QlZnNk05ZGoyc2ZScmNvL1Y1RGdMUEpTS09VRktiUFJmbEg3R1M3Kzh3WG5y?=
+ =?utf-8?B?UnlxQ3RMYlQ4b0JKb2FKSG5VdzkzajhWVGtPWVQzZEJRZ1dSYUJlRzNnenhV?=
+ =?utf-8?B?bGxFbkluaVNmTGxaSHNNRjAvZzRqeHQ3Q0NpdmFEcTRQWFVuRlE3TUp4ZEtT?=
+ =?utf-8?B?cGZxY3o4S3dBM085U0FuTTVqOWpzNS9FTEdqdlVxVCt1TG5MY09IdDFNNEhn?=
+ =?utf-8?B?eitFdXVhd1BPeEtZM2twL0kvbWNWUXVFVUEzeGVzTVpEdkZNblNLdHg5ekpZ?=
+ =?utf-8?B?RWhNbGFLUm96M3J4SXNzdGhVZFZFUGp3ek1QNXlESTFBRS9ObUpZT21VMXQv?=
+ =?utf-8?B?S3hmek1hRE9LaFYrcVZwMlpNZXFOc0NjcDR4QjNhdjRBTkwwMFk4cXBkRzJY?=
+ =?utf-8?B?NkxqOTZkYjZXWlNlTkVGVjRjMlprcFphWEI5QlVnYXFjYlJvSEk2RFVWaUd4?=
+ =?utf-8?B?NVRlbmhLR2FqUHluMTNKZGx0Rk05Q3lGSjRGR2pIdlArZmx5ZWlaN1AyaDcv?=
+ =?utf-8?B?SExZQXB6SW10R2ErRDdFWmpsQXRSRnltUnVNVzQ0Ri9TdzRkWTRoZU9qWVFT?=
+ =?utf-8?B?WGFENWdSOHU0bUsvd01TMDRIRDFhdk84a2ZWeUg1QmxqOENXSFhpN0dUMFNy?=
+ =?utf-8?B?OWRuaEFYK0I2Y2s4b3hPeklEQVlLUzVXNGE4NkdDK2FuYXdBQUVrTUNHTzZL?=
+ =?utf-8?B?czhHUUNLM3VoTEM2aVV5U1ZiUC9jb3VNM0xQR0h5WFhQN212bnVYaG9TNTA5?=
+ =?utf-8?B?Rk5mVncvL2lLOTVBcngzV0g3T2FRdEQwQ2lhZ2RyUU5NL2pzUUFTTHNkNS90?=
+ =?utf-8?B?SUFzRTI0S3lSZWdmY3pFWUpTekVaRkp5Z0tlakg4bHhLWFYvVGcyZDJvMHNL?=
+ =?utf-8?B?N25Pa1BXRGVTYXZNZXB5RDU4UUVQYXJjRVdlRi8xaVBXY2pEKzV6L2UzUVMw?=
+ =?utf-8?B?VFkxMi9FcEY3eUhLUHlFb255bjJWT2o4OHdwbnF4SjI0SmRwQS9sSW1pRmdH?=
+ =?utf-8?B?ZEpsYis3KzhHR0dzeHZxZWdTZWJvamUraCtsdmtzZEthT0RrdnlNNC9QODMw?=
+ =?utf-8?B?djZ5bmhHZGRtbzVFcnRVRzRjd2FwV0swNSsySHBBWDArV3hZalQ2ay9BQklF?=
+ =?utf-8?B?NmQ4Rjdqb0R1Z29sUjVXRGdKKytORmpTb1hadWJkS3VkL0Z5Vm1jN2xzV1BX?=
+ =?utf-8?B?bXRCQzFiT2oxRDJpTGRvSmd2UGxZWU1IdXg2UlZ0b1N1RnpVbTkzS0VBWVJK?=
+ =?utf-8?B?aFNzYVVxWmF6aWRRUXM1RkZZaTlWMWN3aWsyR0F1ZUhlUDBJT216Vk5CWmda?=
+ =?utf-8?B?aVFzT3Rhc2hrV1RpWGY3U2VYai9TSXBEbWpRYkk2R05SSWRBZ0VycXNPWllS?=
+ =?utf-8?B?ZDFrSDQvVlJ4akplNXZaeFhJbWZHZXA4QkdXL2FSbXZpMHNHYmFGNlliNHZE?=
+ =?utf-8?B?Ym90d3FORzNrSnNxNWllSnlMU0RFc2hMYVZPOXE5Nmk0d1JOMU50MjZSNVZm?=
+ =?utf-8?B?OVhTUWpCSXZabC92a2NOZXVjVE1aMkJJKzNDYUYramJ2U0srL1p1bjROM3pS?=
+ =?utf-8?Q?LA8+yRErXJsNy03V4iHom7xywKCxRK5zqokR6Fx?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K0FGOGpuSk5mOVRzYmZOY3VBeFBFMG5qb1BoUEN3dXEvc2tick9MS1M0a3Zz?=
- =?utf-8?B?QUd2bXM2L3E5RERxRWIvN084T01CUHVOTVZnK1ZjOHJjOHpyeVdqZi9kMUk1?=
- =?utf-8?B?bTFkVWRhMVA5cFg3eHZqOUJmMUc4RWdSVE1ldkl3R0JGTUdKUngwdU9PN2tI?=
- =?utf-8?B?bUtDQlpBRmpQQzdsMTA2dzRuT2FUbzVHdEYyUGsyMGI5VGUyaWUwbXZ5T2x0?=
- =?utf-8?B?SlFmVmQvakZRcVRxUHZPckFnVlZIMXNveGIwWlRYdm5vMlI3cS9SbmFyWFkv?=
- =?utf-8?B?Wk9OTzRyYmhTQkZJQm1wQUlnNEZwaGdnd1o3ak5yNGY4YUVvTEhEUGdvS2lN?=
- =?utf-8?B?K3BZWFBGVTNkVCtNZjhBVkVTV0l5VkFSVm9zTGpXUzNsUFdSUEN3WFVwblJv?=
- =?utf-8?B?WFlNWC9Bdy83L3M4Z2RyejFocmxkbm5PZGsrbUJPcnZvTEo0YkYxMjIxUUE5?=
- =?utf-8?B?aHlDbDdOSko4czNHSUZNQjBUbjVubkd0WDVQV1lqV0gyZDgzTHlDN1lUSUNu?=
- =?utf-8?B?QXVwWlFzb3ZWaGVwYjRraVVheXU4Y1lWUDFPWG5DNk1rc2g2dHZhMzJITGZG?=
- =?utf-8?B?eVpWM2pzenhzN0dTaVMzSEN1ZGRrVklJUG10TVR4SVhpb05iUDZ2THZGVTVY?=
- =?utf-8?B?RTMwWVg2MlY3VlNrZ2FYK3FlbkRGcUJ5WE5JZTlJYjNRZys0azJKbHU1R0lE?=
- =?utf-8?B?ZXY1RndMRitmc1hjLzBIWVJCdVQ1N0NXVy9ySFR5OTR2cnFwejg0N3JISUZX?=
- =?utf-8?B?bG1zeVlVK2dRSThNUWNSc1FDZi9ObzEvVkJWWFYwWUI4ZG1RQW9ZMkw3Y2VT?=
- =?utf-8?B?R25kM3BnWkNvOCs3YnFaQ2RNMWw2bTgvbUhVL0ZNNThRNTJQcGU5ZzlZMFpE?=
- =?utf-8?B?Y0NnaURSbUpvbkNIRW12VTdnRXZvY3c5dmVMcmd2cTlSL2YyOGhTZGEyZmF2?=
- =?utf-8?B?cGluejVscitOYWUzeWJsZHNmcEViMlp6bnFLQ0s2K2pmcjRRZmRuOUVtT0hh?=
- =?utf-8?B?cUZwTW52a3F1ODlldHZaaDZRMmxOclJ3SEM5UkhwTUxtY1JhNjh6bDcyMjVE?=
- =?utf-8?B?Y1JoNUI3eHI1Z24rN1JrbzM5OUg4TTRCNDlhMkJadGl1dmdNejM3bGlhd0Jy?=
- =?utf-8?B?UXRmaEMyNSs4SnFkSkttNlZkbm1PYU5TYmF0MEFua2xaK09JTUsvejVwdjYy?=
- =?utf-8?B?QVhJZ3E4Z2huSS90dDBiSWZ5b3dyRWFseVY5Snlsa3dNVkJVL2NWd3lramEr?=
- =?utf-8?B?UGZyZE9JZW5TYW5ENnBuMnBESk90Q0wvU2ZnR2QvYjZDdk5oL3BtTVY3c1RV?=
- =?utf-8?B?Q3VNMW5OWVdJMGR1aGRVWW9Ca1hWbDE2SE5jZFRkWFlwYUEvZ0lsRVJXSVAv?=
- =?utf-8?B?TEdGZE52TTY5M2FxZUdYQ0JCRnRKMkRGOFFQZzVWSm9zY3dMSVJubzNOdWVv?=
- =?utf-8?B?VjBkeDNzdjZBdFhkbm8xM1hoNHBaQnR3Y0NySG4rem5JS3VaUkxUY1lINk16?=
- =?utf-8?B?M1R5T2hQQStIMjhmM014SnJzRVZNbkZaN2ZITnZaekU1L0p6Qm96Ny9ZZFlP?=
- =?utf-8?B?ektwQzZTWEVZUUsvcVNoWCsvZzcrRWpMNHpFWW1GT2dsakkva2FhOE55TDRQ?=
- =?utf-8?B?OUI0eFgxSk8zMWtHd0FMM0ZpbElUU044ZGNPVk13MUtERmdiWVhVN2xWUVFv?=
- =?utf-8?B?RStpNGFtQWtpWFg3SUxZa1g5dy96cmZQdDNBTVAzSTlINnpVVlBZWWtFbG1N?=
- =?utf-8?B?bFhJTndKQzJqRGduZ2I3R1lXL2NkZUxTQzZVQnVXWVRVZ0F0QXNwSzVVQS9T?=
- =?utf-8?B?bWRtRW8vQld4OWs3dXg2TFJSZ3EzVHoxaHhTTWhuRmFJL0pKNTJ5bFlBQ3JT?=
- =?utf-8?B?SnMzUjhvSVI4ZzV4TU1ReFZvN0llTXVlbSt2bmNzVUlocFZtakNDTmEvdGJ0?=
- =?utf-8?B?OTVhOFJObHpYbFBXbmNacHRyVzZrOHZxZVZRakFWUy9uTjhwdlZOSTlZVGR0?=
- =?utf-8?B?cmZLa3hQc0FXM2tkRFJKcVcxcG41ZWlQN01CeEI1U2xramwyY3NnSTVTMHZC?=
- =?utf-8?B?QkNnZFQvYzJWWXIwdGpZbjdkeUJnblcxVzJQWEdsU3RybnZkL2FIbkVXSmJ2?=
- =?utf-8?Q?p5e0mWCFc3/QXtHJj0G3WA1o2?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jAAYI33zi/eVABxh15XZZBUFcPPtr7L+dYJAk26EDlkb9trTRqBxZCLtNx6g44jn/O4sUvqqwZNb6DIQe8YaQ0OMbukgcpmgM8mbuE+lAHZcTpvc5SZJRNeuGkH+4j4xFC51fj/56H8kBGV/CHujIvzGC1xwWXplWcy5K+xeg04gcAp5ZoZtZzXDYTpEkAJuJCl17JOsQjLN2OwHmfbG48wrQJwxgEzLWLTKUESo2UTXdW3v2xCeVPuMrGfdx6iYVX7eUqLhBwp53e0hKP6dELguNwxblMrpwkOZZFGS8/Z+XIKDh+gn5BH1ap988UZTwS8Glhw4SxJSoCoq9GZ+J+ORNRykhRxFHctRIOz3THGww/gtv0gkDQT7OdEJgsOJ0CvOcKDlJu22K7eh+xFs42n2VIa6G+zMIHWTo+NBJb9nj7wECONgoxMTnJiInS/u2+k7leubM42K34RGQC5nXCnKg3mAuHvr4hUXhoQPO5UtWpcaKn9THtmRV5Nxhh8P7Ww+dsLVgPmS6j17pz4GPNubeI4Gi8G54ohHhX5HkP8uCpc5BAbI8KWfmYjMu7NgA34NQ5g1pT9PCg4NxxqvmKYFcSlslrhSX2sHsPKCdDc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd9f42c3-cf80-444c-479e-08dcc2bf3bf1
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+	=?utf-8?B?VERZN3RoR1NzWm9qdzlUWDRkTmI5RDl4NDJKNzcvUEkzeHEzNEpUaGVLR0xL?=
+ =?utf-8?B?WFUzTjVhRSs0SStyTTZGZ3hLMTZYREVPWE14ZCtCVVdMSXlRWGkyL0xmZi9t?=
+ =?utf-8?B?WExWdVd2YTJ0dXJ4Q3l5cjhWczUySmZzelF2VlBrY1k1UTdJOXpwakxOSS9G?=
+ =?utf-8?B?YzlOL05DcnJGQ2VNaGs5M0dmc0szK1RtRFAwYnoycldoQzlKWVRGNnJEbFNR?=
+ =?utf-8?B?WnZWK2VjdUdXbzBQVjVoV3ZDYzRwcmNUVGVrQjgxZFVDY09KTUJOc1cwcjZ0?=
+ =?utf-8?B?YjV4WitMMTA4UFdmUnhUZmFQTEJJWDJidmVmNjN5OVc5WVZVK3hJaEJ2WXRi?=
+ =?utf-8?B?aDJJdWtFbUcwK2ttd1Z6ZjlPY2orZDJ0N0dSZEFPNmRDRGRob1V3TlhXRmdI?=
+ =?utf-8?B?WkRycVZNY0VCRktXWjk1S1FtU2lXNE9EWFQ2Q0xTNEZxdXk1d29wdTA3NjM2?=
+ =?utf-8?B?a1c3MzNseVpqbW8rbkpoM3lBdGFTRXNFQnhNZDdkSWZXTTkweEZYTnlYbUZ1?=
+ =?utf-8?B?cFAyd3hoRWJvL3JFL1FaTzdxVzZGU0FPY3RyM0hROTNTUnRFeW5SeWo3ZE9t?=
+ =?utf-8?B?SHk5bEdMdmtBZWM1TXA2Y3dyb3ZmbnhSYysyem1Odmo2QVJsZXhXcUlqZktG?=
+ =?utf-8?B?QjdjWVdLWVFTcVQ1SkdMM3BjK3k4Mm9DYnhWM0NhUEMyaXFIRU9VdGUyUEU1?=
+ =?utf-8?B?OHdTTmtrZlZicUo0SWtwV25sWVc0Wi91cm51K3VuVlB4b205dU1tL01sLzJp?=
+ =?utf-8?B?MGh1Wkk3WmlDMDBTNUROeExlS2xlaVBmRGk2YmRjRzJFSWJ1YU5LRnovMjRJ?=
+ =?utf-8?B?UWNISTZDcXc3TjJTbmI3Vm9OdHRCUTZGalY4TFpKZmRRcFhlL0FPdjU4VjRN?=
+ =?utf-8?B?V2RqOGJ3N2ZJckZmSVlGYi9yT1Z3czAwQW5FK0VyMWlIUzhIUFhvNjNqZkVr?=
+ =?utf-8?B?bzRQclVWOTN5R085MzVqOHBXM1BtVnBreTc3MEl0Z2U3ZVlFMVVTMU1sZ2Ju?=
+ =?utf-8?B?K1JIbEQwb001UXBGb3hKamFMcTZaazZXbkc5OXJxT1dzVHF4S1JvODJDOEV3?=
+ =?utf-8?B?Vnd2RThiU1ZGMmZsTGl5c1VuKzZqbGlvK24rcERWdWdxVGg0eDRMVlUxRkps?=
+ =?utf-8?B?MmZqT1VlaGZoNGx5cktjaXhhQ05paFpRRmxpMFhvZlU5cjdJcGhLdnpKaE9W?=
+ =?utf-8?B?QmhxekdPeEpwZ1luWUpDMjVXV0YyMmhhdTg5U0pCSTZJbW05TzRRc2dhcC90?=
+ =?utf-8?B?OUxuVTNqVGVGK3VtL0RKUWpVMXZlb1l0cGlkSVJTaktEczlZVDcveUE5bTZR?=
+ =?utf-8?B?bDc1SjVBYjk4UFdjMTlvd1lmdTBWeXRJVkFLbWFLNzgrVnJzaGtlTDhpUklq?=
+ =?utf-8?B?ZzJMalAzTEQ5cDBvNlYyRmg4RE5INnBGeG1KeE1YVTFQd0tDK0JONXpESWY4?=
+ =?utf-8?B?citlTkJSNFpHNjZjWmhmTWFUVFUyR1AyYVdJdytpbWNtMk54VWRoUnp1VW16?=
+ =?utf-8?B?bzJlZWtxUnF4a3J2UlVXN0tWeitISHNVYjNjT0VVQnJTY0VTYy95QWVRTEY5?=
+ =?utf-8?B?Z2kyTXBMQzRyMTByczc4ZzBQMEllKzlhUE9vTWlland3VTV6MkVJRVdpVi9k?=
+ =?utf-8?B?RnBWT2xNcVNGaDViWGxBRG1kQit1amZDZUhmVitmWldiSXlPTmg3ZU9keEgv?=
+ =?utf-8?B?YXlTUTlPUEpoaTFmVVFmeFdFV2d2eUVITDByWmdYakVKVzZuWEdGSU9nNWJl?=
+ =?utf-8?B?ejVSKzJLbVk0cHl5dzNkSUxHQnpKR2g5b2h4cUwvTWhoU2laWk95aFM3SHlq?=
+ =?utf-8?B?czdkK2VQbGFiSElBeUV1Mi95K1pTeUx3Q2pJOGFaNUxRZ2lDS0NDaW1NUklj?=
+ =?utf-8?B?bUFFUEIvQUFpNGEvK1ZyNGJRUXFPczlReFBJWVlxT29PZ0x5YXExUFVlMUU1?=
+ =?utf-8?B?NGxvUU1GY05udm5WVU9NdHg0VUZoNVlZMUFkU3VCWWJuVGhNRWw4Vm5pM3VW?=
+ =?utf-8?B?anJyUlk3Y25QbWRrMnNiZ0dTYitLRzk2UXM5SmNrbzdKNENZKzZSMFBTazFE?=
+ =?utf-8?B?dG9KTEVoQjRKVGticXJ5K2JqclJqNy9TcFRLNXRUSDU3VkJUZVVQZTRqVGps?=
+ =?utf-8?Q?tF55bCszTL8bqH6GRnvRIS3T9?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2f735c6-4ed7-4f7c-368f-08dcc2bf40cb
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 15:29:38.2175
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 15:29:46.2569
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o8qfjToShE3tdnn7NlZTQdpuTEV9+3IJHyX9Yo8eehdWBZJD7YO/cdeVBH7Nf77aSu8o/kIER0JnK39t/I1dvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB7338
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_08,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408220117
-X-Proofpoint-GUID: aDSjkdmRi9uiTyZ6mdo6p28_Cz2EAou4
-X-Proofpoint-ORIG-GUID: aDSjkdmRi9uiTyZ6mdo6p28_Cz2EAou4
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8HcnUW2pNSSSieBPGUhNZNE6T8cmMk4Io9K/UVhjiH48uXLLWrzOZaZpLZHTFq8aORxRY7QM51VNo3zEXFccEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8404
 
-
->> +
->>   static void iomap_dio_submit_bio(const struct iomap_iter *iter,
->>   		struct iomap_dio *dio, struct bio *bio, loff_t pos)
->>   {
->> @@ -256,7 +275,7 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
->>    * clearing the WRITE_THROUGH flag in the dio request.
->>    */
->>   static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
->> -		const struct iomap *iomap, bool use_fua)
->> +		const struct iomap *iomap, bool use_fua, bool atomic)
->>   {
->>   	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
->>   
->> @@ -268,6 +287,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
->>   		opflags |= REQ_FUA;
->>   	else
->>   		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
->> +	if (atomic)
->> +		opflags |= REQ_ATOMIC;
->>   
->>   	return opflags;
->>   }
->> @@ -275,21 +296,23 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
->>   static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   		struct iomap_dio *dio)
->>   {
->> +	bool atomic = dio->iocb->ki_flags & IOCB_ATOMIC;
->>   	const struct iomap *iomap = &iter->iomap;
->>   	struct inode *inode = iter->inode;
->>   	unsigned int fs_block_size = i_blocksize(inode), pad;
->> +	struct iov_iter *i = dio->submit.iter;
+On 8/15/2024 14:07, Esther Shimanovich wrote:
+> Some computers with CPUs that lack Thunderbolt features use discrete
+> Thunderbolt chips to add Thunderbolt functionality. These Thunderbolt
+> chips are located within the chassis; between the root port labeled
+> ExternalFacingPort and the USB-C port.
 > 
-> If you're going to pull this out into a convenience variable, please do
-> that as a separate patch so that the actual untorn write additions don't
-> get mixed in.
-
-Yeah, I was thinking of doing that, so ok.
-
+> These Thunderbolt PCIe devices should be labeled as fixed and trusted,
+> as they are built into the computer. Otherwise, security policies that
+> rely on those flags may have unintended results, such as preventing
+> USB-C ports from enumerating.
 > 
->>   	loff_t length = iomap_length(iter);
->>   	loff_t pos = iter->pos;
->>   	blk_opf_t bio_opf;
->>   	struct bio *bio;
->>   	bool need_zeroout = false;
->>   	bool use_fua = false;
->> -	int nr_pages, ret = 0;
->> +	int nr_pages, orig_nr_pages, ret = 0;
->>   	size_t copied = 0;
->>   	size_t orig_count;
->>   
->>   	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
->> -	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
->> +	    !bdev_iter_is_aligned(iomap->bdev, i))
->>   		return -EINVAL;
->>   
->>   	if (iomap->type == IOMAP_UNWRITTEN) {
->> @@ -322,15 +345,35 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   			dio->flags &= ~IOMAP_DIO_CALLER_COMP;
->>   	}
->>   
->> +	if (dio->atomic_bio) {
->> +		/*
->> +		 * These should not fail, but check just in case.
->> +		 * Caller takes care of freeing the bio.
->> +		 */
->> +		if (iter->iomap.bdev != dio->atomic_bio->bi_bdev) {
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		if (dio->atomic_bio->bi_iter.bi_sector +
->> +		    (dio->atomic_bio->bi_iter.bi_size >> SECTOR_SHIFT) !=
+> Detect the above scenario through the process of elimination.
 > 
-> Hmm, so I guess you stash an untorn write bio in the iomap_dio so that
-> multiple iomap_dio_bio_iter can try to combine a mixed mapping into a
-> single contiguous untorn write that can be completed all at once?
-
-Right, we are writing to a contiguous LBA address range with a single 
-bio that happens to cover many different extents.
-
-> I suppose that works as long as the iomap->type is the same across all
-> the _iter calls, but I think that needs explicit checking here.
-
-As an sample, if we try to atomically write over the data in the 
-following file:
-
-# xfs_bmap -vvp mnt/file
-mnt/file:
-EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-   0: [0..127]:        hole                                   128
-   1: [128..135]:      256..263          0 (256..263)           8 010000
-   2: [136..143]:      264..271          0 (264..271)           8 000000
-   3: [144..255]:      272..383          0 (272..383)         112 010000
-FLAG Values:
-    0100000 Shared extent
-    0010000 Unwritten preallocated extent
-    0001000 Doesn't begin on stripe unit
-    0000100 Doesn't end   on stripe unit
-    0000010 Doesn't begin on stripe width
-    0000001 Doesn't end   on stripe width
-#
-
-
-Then, the iomap->type/flag is either IOMAP_UNWRITTEN/IOMAP_F_DIRTY or 
-IOMAP_MAPPED/IOMAP_F_DIRTY per iter. So the type is not consistent. 
-However we will set IOMAP_DIO_UNWRITTEN in dio->flags, so call 
-xfs_dio_write_endio() -> xfs_iomap_write_unwritten() for the complete 
-FSB range.
-
-Do you see a problem with this?
-
-Please see this also for some more background:
-https://lore.kernel.org/linux-xfs/20240726171358.GA27612@lst.de/
-
-
+> 1) Integrated Thunderbolt host controllers already have Thunderbolt
+>     implemented, so anything outside their external facing root port is
+>     removable and untrusted.
 > 
->> +			iomap_sector(iomap, pos)) {
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +	} else if (atomic) {
->> +		orig_nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
->> +	}
->> +
->>   	/*
->>   	 * Save the original count and trim the iter to just the extent we
->>   	 * are operating on right now.  The iter will be re-expanded once
->>   	 * we are done.
->>   	 */
->> -	orig_count = iov_iter_count(dio->submit.iter);
->> -	iov_iter_truncate(dio->submit.iter, length);
->> +	orig_count = iov_iter_count(i);
->> +	iov_iter_truncate(i, length);
->>   
->> -	if (!iov_iter_count(dio->submit.iter))
->> +	if (!iov_iter_count(i))
->>   		goto out;
->>   
->>   	/*
->> @@ -365,27 +408,46 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   	 * can set up the page vector appropriately for a ZONE_APPEND
->>   	 * operation.
->>   	 */
->> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
->> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
->> +
->> +	if (atomic) {
->> +		size_t orig_atomic_size;
->> +
->> +		if (!dio->atomic_bio) {
->> +			dio->atomic_bio = iomap_dio_alloc_bio_data(iter,
->> +					dio, orig_nr_pages, bio_opf, pos);
->> +		}
->> +		orig_atomic_size = dio->atomic_bio->bi_iter.bi_size;
->> +
->> +		/*
->> +		 * In case of error, caller takes care of freeing the bio. The
->> +		 * smallest size of atomic write is i_node size, so no need for
+>     Detect them using the following properties:
 > 
-> What is "i_node size"?  Are you referring to i_blocksize?
-
-Yes, I meant i_blocksize()
-
+>       - Most integrated host controllers have the usb4-host-interface
+>         ACPI property, as described here:
+> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
 > 
->> +		 * tail zeroing out.
->> +		 */
->> +		ret = bio_iov_iter_get_pages(dio->atomic_bio, i);
->> +		if (!ret) {
->> +			copied = dio->atomic_bio->bi_iter.bi_size -
->> +				orig_atomic_size;
->> +		}
->>   
->> -	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
->> +		dio->size += copied;
->> +		goto out;
->> +	}
->> +
->> +	nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
->>   	do {
->>   		size_t n;
->>   		if (dio->error) {
->> -			iov_iter_revert(dio->submit.iter, copied);
->> +			iov_iter_revert(i, copied);
->>   			copied = ret = 0;
->>   			goto out;
->>   		}
->>   
->> -		bio = iomap_dio_alloc_bio(iter, dio, nr_pages, bio_opf);
->> +		bio = iomap_dio_alloc_bio_data(iter, dio, nr_pages, bio_opf, pos);
->>   		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
->>   					  GFP_KERNEL);
->> -		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
->> -		bio->bi_write_hint = inode->i_write_hint;
->> -		bio->bi_ioprio = dio->iocb->ki_ioprio;
->> -		bio->bi_private = dio;
->> -		bio->bi_end_io = iomap_dio_bio_end_io;
+>       - Integrated Thunderbolt PCIe root ports before Alder Lake do not
+>         have the usb4-host-interface ACPI property. Identify those with
+>         their PCI IDs instead.
 > 
-> I see two places (here and iomap_dio_zero) that allocate a bio and
-> perform some initialization of it.  Can you move the common pieces to
-> iomap_dio_alloc_bio instead of adding a iomap_dio_alloc_bio_data
-> variant, and move all that to a separate cleanup patch?
-
-Sure
-
-So can it cause harm if we set bio->bi_write_hint and ->bi_ioprio with 
-the same values as iomap_dio_alloc_bio() for iomap_dio_zero()? If no, 
-this would help make all the bio alloc code common
-
+> 2) If a root port does not have integrated Thunderbolt capabilities, but
+>     has the ExternalFacingPort ACPI property, that means the manufacturer
+>     has opted to use a discrete Thunderbolt host controller that is
+>     built into the computer.
 > 
->> -		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
->> +		ret = bio_iov_iter_get_pages(bio, i);
->>   		if (unlikely(ret)) {
->>   			/*
->>   			 * We have to stop part way through an IO. We must fall
->> @@ -408,8 +470,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   		dio->size += n;
->>   		copied += n;
->>   
->> -		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
->> -						 BIO_MAX_VECS);
->> +		nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
->>   		/*
->>   		 * We can only poll for single bio I/Os.
->>   		 */
->> @@ -435,7 +496,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   	}
->>   out:
->>   	/* Undo iter limitation to current extent */
->> -	iov_iter_reexpand(dio->submit.iter, orig_count - copied);
->> +	iov_iter_reexpand(i, orig_count - copied);
->>   	if (copied)
->>   		return copied;
->>   	return ret;
->> @@ -555,6 +616,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->>   	struct blk_plug plug;
->>   	struct iomap_dio *dio;
->>   	loff_t ret = 0;
->> +	size_t orig_count = iov_iter_count(iter);
->>   
->>   	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
->>   
->> @@ -580,6 +642,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->>   	if (iocb->ki_flags & IOCB_NOWAIT)
->>   		iomi.flags |= IOMAP_NOWAIT;
->>   
->> +	if (iocb->ki_flags & IOCB_ATOMIC) {
->> +		if (bio_iov_vecs_to_alloc(iter, INT_MAX) > BIO_MAX_VECS)
->> +			return ERR_PTR(-EINVAL);
->> +		iomi.flags |= IOMAP_ATOMIC;
->> +	}
->> +	dio->atomic_bio = NULL;
->> +
->>   	if (iov_iter_rw(iter) == READ) {
->>   		/* reads can always complete inline */
->>   		dio->flags |= IOMAP_DIO_INLINE_COMP;
->> @@ -665,6 +734,21 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->>   		iocb->ki_flags &= ~IOCB_HIPRI;
->>   	}
->>   
->> +	if (iocb->ki_flags & IOCB_ATOMIC) {
->> +		if (ret >= 0) {
->> +			if (dio->size == orig_count) {
->> +				iomap_dio_submit_bio(&iomi, dio,
->> +					dio->atomic_bio, iocb->ki_pos);
+>     This host controller can be identified by virtue of being located
+>     directly below an external-facing root port that lacks integrated
+>     Thunderbolt. Label it as trusted and fixed.
 > 
-> Does this need to do task_io_account_write like regular direct writes
-> do?
-
-yes, I missed that, will fix
-
+>     Everything downstream from it is untrusted and removable.
 > 
->> +			} else {
->> +				if (dio->atomic_bio)
->> +					bio_put(dio->atomic_bio);
->> +				ret = -EINVAL;
->> +			}
->> +		} else if (dio->atomic_bio) {
->> +			bio_put(dio->atomic_bio);
+> The ExternalFacingPort ACPI property is described here:
+> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
 > 
-> This ought to null out dio->atomic_bio to prevent accidental UAF.
+> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Esther Shimanovich <eshimanovich@chromium.org>
+> Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> While working with devices that have discrete Thunderbolt chips, I
+> noticed that their internal TBT chips are inaccurately labeled as
+> untrusted and removable.
+> 
+> I've observed that this issue impacts all computers with internal,
+> discrete Intel JHL Thunderbolt chips, such as JHL6240, JHL6340, JHL6540,
+> and JHL7540, across multiple device manufacturers such as Lenovo, Dell,
+> and HP.
+> 
+> This affects the execution of any downstream security policy that
+> relies on the "untrusted" or "removable" flags.
+> 
+> I initially submitted a quirk to resolve this, which was too small in
+> scope, and after some discussion, Mika proposed a more thorough fix:
+> https://lore.kernel.org/lkml/20240510052616.GC4162345@black.fi.intel.com
+> I refactored it and am submitting as a new patch.
 
-ok, fine
+My apologies on my delayed response, I've been OOO a while.
 
-Thanks,
-John
+I had a test with this patch on an AMD Phoenix system on top of 
+6.11-rc4.  I am noticing that with it, it's now flagging an internal PCI 
+host bridge as untrusted.  I added some extra debugging and it falls 
+through to the last case of pcie_is_tunneled() where it returns true.
+
+Here is the topology of the system:
+
+-[0000:00]-+-00.0
+            +-00.2
+            +-01.0
+            +-01.3-[01]----00.0
+            +-02.0
+            +-02.1-[02]----00.0
+            +-02.4-[03]----00.0
+            +-03.0
+            +-03.1-[04-62]--
+            +-04.0
+            +-04.1-[63-c1]--
+            +-08.0
+            +-08.1-[c2]--+-00.0
+            |            +-00.1
+            |            +-00.2
+            |            +-00.3
+            |            +-00.4
+            |            +-00.5
+            |            +-00.6
+            |            \-00.7
+            +-08.2-[c3]--+-00.0
+            |            \-00.1
+            +-08.3-[c4]--+-00.0
+            |            +-00.3
+            |            +-00.4
+            |            +-00.5
+            |            \-00.6
+            +-14.0
+            +-14.3
+            +-18.0
+            +-18.1
+            +-18.2
+            +-18.3
+            +-18.4
+            +-18.5
+            +-18.6
+            \-18.7
+
+Here are the details of all devices on the system:
+
+00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14e8]
+00:00.2 IOMMU [0806]: Advanced Micro Devices, Inc. [AMD] Device [1022:14e9]
+00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ea]
+00:01.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ee]
+00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ea]
+00:02.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ee]
+00:02.4 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ee]
+00:03.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ea]
+00:03.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 19h 
+USB4/Thunderbolt PCIe tunnel [1022:14ef]
+00:04.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ea]
+00:04.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 19h 
+USB4/Thunderbolt PCIe tunnel [1022:14ef]
+00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14ea]
+00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14eb]
+00:08.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14eb]
+00:08.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14eb]
+00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH SMBus 
+Controller [1022:790b] (rev 71)
+00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD] FCH LPC 
+Bridge [1022:790e] (rev 51)
+00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f0]
+00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f1]
+00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f2]
+00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f3]
+00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f4]
+00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f5]
+00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f6]
+00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:14f7]
+01:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd. 
+RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller 
+[10ec:8168] (rev 1c)
+02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. RTS5261 
+PCI Express Card Reader [10ec:5261] (rev 01)
+03:00.0 Non-Volatile memory controller [0108]: Samsung Electronics Co 
+Ltd NVMe SSD Controller PM9A1/PM9A3/980PRO [144d:a80a]
+c2:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. 
+[AMD/ATI] Phoenix1 [1002:15bf] (rev 03)
+c2:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] 
+Rembrandt Radeon High Definition Audio Controller [1002:1640]
+c2:00.2 Encryption controller [1080]: Advanced Micro Devices, Inc. [AMD] 
+Family 19h (Model 74h) CCP/PSP 3.0 Device [1022:15c7]
+c2:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:15b9]
+c2:00.4 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:15ba]
+c2:00.5 Multimedia controller [0480]: Advanced Micro Devices, Inc. [AMD] 
+ACP/ACP3X/ACP6x Audio Coprocessor [1022:15e2] (rev 63)
+c2:00.6 Audio device [0403]: Advanced Micro Devices, Inc. [AMD] Family 
+17h/19h HD Audio Controller [1022:15e3]
+c2:00.7 Signal processing controller [1180]: Advanced Micro Devices, 
+Inc. [AMD] Device [1022:164a]
+c3:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, 
+Inc. [AMD] Device [1022:14ec]
+c3:00.1 Signal processing controller [1180]: Advanced Micro Devices, 
+Inc. [AMD] AMD IPU Device [1022:1502]
+c4:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, 
+Inc. [AMD] Device [1022:14ec]
+c4:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:15c0]
+c4:00.4 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device 
+[1022:15c1]
+c4:00.5 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Pink 
+Sardine USB4/Thunderbolt NHI controller #1 [1022:1668]
+c4:00.6 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Pink 
+Sardine USB4/Thunderbolt NHI controller #2 [1022:1669]
+
+Here's the snippet from the kernel log with the patch in place.  You can 
+see it flagged 00:02.0 as untrusted and removable, but it definitely isn't.
+
+Aug 22 10:11:10 test-TBI1100B kernel: pci_bus 0000:02: scanning bus
+Aug 22 10:11:10 test-TBI1100B kernel: pci 0000:02:00.0: marking as untrusted
+Aug 22 10:11:10 test-TBI1100B kernel: pci 0000:02:00.0: marking as removable
+Aug 22 10:11:10 test-TBI1100B kernel: pci 0000:02:00.0: [10ec:5261] type 
+00 class 0xff0000 PCIe Endpoint
+Aug 22 10:11:10 test-TBI1100B kernel: pci 0000:02:00.0: BAR 0 [mem 
+0xb0c00000-0xb0c00fff]
+Aug 22 10:11:10 test-TBI1100B kernel: pci 0000:02:00.0: supports D1 D2
+Aug 22 10:11:10 test-TBI1100B kernel: pci 0000:02:00.0: PME# supported 
+from D1 D2 D3hot D3cold
+Aug 22 10:11:10 test-TBI1100B kernel: pci_bus 0000:02: fixups for bus
+Aug 22 10:11:10 test-TBI1100B kernel: pci 0000:00:02.1: PCI bridge to 
+[bus 02]
+Aug 22 10:11:10 test-TBI1100B kernel: pci_bus 0000:02: bus scan 
+returning with max=02
+
+I wonder if you want another case for pcie_switch_directly_under() of 
+PCI_EXP_TYPE_PCIE_BRIDGE to help this perhaps?
+
+> ---
+> Changes in v3:
+> - Incorporated minor edits suggested by Mika Westerberg.
+> - Mika Westerberg tested patch (more details in v2 link)
+> - Added "reviewed-by" and "tested-by" lines
+> - Link to v2: https://lore.kernel.org/r/20240808-trust-tbt-fix-v2-1-2e34a05a9186@chromium.org
+> 
+> Changes in v2:
+> - I clarified some comments, and made minor fixins
+> - I also added a more detailed description of implementation into the
+>    commit message
+> - Added Cc recipients Mike recommended
+> - Link to v1: https://lore.kernel.org/r/20240806-trust-tbt-fix-v1-1-73ae5f446d5a@chromium.org
+> ---
+>   drivers/pci/probe.c | 153 +++++++++++++++++++++++++++++++++++++++++++++++++---
+>   1 file changed, 146 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index b14b9876c030..308d5a0e5c51 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -1629,25 +1629,160 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
+>   		dev->is_thunderbolt = 1;
+>   }
+>   
+> +/*
+> + * Checks if pdev is part of a PCIe switch that is directly below the
+> + * specified bridge.
+> + */
+> +static bool pcie_switch_directly_under(struct pci_dev *bridge,
+> +				       struct pci_dev *pdev)
+> +{
+> +	struct pci_dev *parent = pci_upstream_bridge(pdev);
+> +
+> +	/* If the device doesn't have a parent, it's not under anything.*/
+> +	if (!parent)
+> +		return false;
+> +
+> +	/*
+> +	 * If the device has a PCIe type, check if it is below the
+> +	 * corresponding PCIe switch components (if applicable). Then check
+> +	 * if its upstream port is directly beneath the specified bridge.
+> +	 */
+> +	switch (pci_pcie_type(pdev)) {
+> +	case PCI_EXP_TYPE_UPSTREAM:
+> +		if (parent == bridge)
+> +			return true;
+> +		break;
+> +
+> +	case PCI_EXP_TYPE_DOWNSTREAM:
+> +		if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
+> +			parent = pci_upstream_bridge(parent);
+> +			if (parent == bridge)
+> +				return true;
+> +		}
+> +		break;
+> +
+> +	case PCI_EXP_TYPE_ENDPOINT:
+> +		if (pci_pcie_type(parent) == PCI_EXP_TYPE_DOWNSTREAM) {
+> +			parent = pci_upstream_bridge(parent);
+> +			if (parent && pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
+> +				parent = pci_upstream_bridge(parent);
+> +				if (parent == bridge)
+> +					return true;
+> +			}
+> +		}
+> +		break;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
+> +{
+> +	struct fwnode_handle *fwnode;
+> +
+> +	/*
+> +	 * For USB4, the tunneled PCIe root or downstream ports are marked
+> +	 * with the "usb4-host-interface" ACPI property, so we look for
+> +	 * that first. This should cover most cases.
+> +	 */
+> +	fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
+> +				       "usb4-host-interface", 0);
+> +	if (!IS_ERR(fwnode)) {
+> +		fwnode_handle_put(fwnode);
+> +		return true;
+> +	}
+> +
+> +	/*
+> +	 * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
+> +	 * before Alder Lake do not have the "usb4-host-interface"
+> +	 * property so we use their PCI IDs instead. All these are
+> +	 * tunneled. This list is not expected to grow.
+> +	 */
+> +	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
+> +		switch (pdev->device) {
+> +		/* Ice Lake Thunderbolt 3 PCIe Root Ports */
+> +		case 0x8a1d:
+> +		case 0x8a1f:
+> +		case 0x8a21:
+> +		case 0x8a23:
+> +		/* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
+> +		case 0x9a23:
+> +		case 0x9a25:
+> +		case 0x9a27:
+> +		case 0x9a29:
+> +		/* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
+> +		case 0x9a2b:
+> +		case 0x9a2d:
+> +		case 0x9a2f:
+> +		case 0x9a31:
+> +			return true;
+> +		}
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static bool pcie_is_tunneled(struct pci_dev *pdev)
+> +{
+> +	struct pci_dev *parent, *root;
+> +
+> +	parent = pci_upstream_bridge(pdev);
+> +	/* If pdev doesn't have a parent, then there's no way it is tunneled.*/
+> +	if (!parent)
+> +		return false;
+> +
+> +	root = pcie_find_root_port(pdev);
+> +	/* If pdev doesn't have a root, then there's no way it is tunneled.*/
+> +	if (!root)
+> +		return false;
+> +
+> +	/* Internal PCIe devices are not tunneled. */
+> +	if (!root->external_facing)
+> +		return false;
+> +
+> +	/* Anything directly behind a "usb4-host-interface" is tunneled. */
+> +	if (pcie_has_usb4_host_interface(parent))
+> +		return true;
+> +
+> +	/*
+> +	 * Check if this is a discrete Thunderbolt/USB4 controller that is
+> +	 * directly behind the non-USB4 PCIe Root Port marked as
+> +	 * "ExternalFacingPort". Those are not behind a PCIe tunnel.
+> +	 */
+> +	if (pcie_switch_directly_under(root, pdev))
+> +		return false;
+> +
+> +	/* PCIe devices after the discrete chip are tunneled. */
+> +	return true;
+> +}
+> +
+>   static void set_pcie_untrusted(struct pci_dev *dev)
+>   {
+> -	struct pci_dev *parent;
+> +	struct pci_dev *parent = pci_upstream_bridge(dev);
+>   
+> +	if (!parent)
+> +		return;
+>   	/*
+> -	 * If the upstream bridge is untrusted we treat this device
+> +	 * If the upstream bridge is untrusted we treat this device as
+>   	 * untrusted as well.
+>   	 */
+> -	parent = pci_upstream_bridge(dev);
+> -	if (parent && (parent->untrusted || parent->external_facing))
+> +	if (parent->untrusted)
+>   		dev->untrusted = true;
+> +
+> +	if (pcie_is_tunneled(dev)) {
+> +		pci_dbg(dev, "marking as untrusted\n");
+> +		dev->untrusted = true;
+> +	}
+>   }
+>   
+>   static void pci_set_removable(struct pci_dev *dev)
+>   {
+>   	struct pci_dev *parent = pci_upstream_bridge(dev);
+>   
+> +	if (!parent)
+> +		return;
+>   	/*
+> -	 * We (only) consider everything downstream from an external_facing
+> +	 * We (only) consider everything tunneled below an external_facing
+>   	 * device to be removable by the user. We're mainly concerned with
+>   	 * consumer platforms with user accessible thunderbolt ports that are
+>   	 * vulnerable to DMA attacks, and we expect those ports to be marked by
+> @@ -1657,9 +1792,13 @@ static void pci_set_removable(struct pci_dev *dev)
+>   	 * accessible to user / may not be removed by end user, and thus not
+>   	 * exposed as "removable" to userspace.
+>   	 */
+> -	if (parent &&
+> -	    (parent->external_facing || dev_is_removable(&parent->dev)))
+> +	if (dev_is_removable(&parent->dev))
+> +		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
+> +
+> +	if (pcie_is_tunneled(dev)) {
+> +		pci_dbg(dev, "marking as removable\n");
+>   		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
+> +	}
+>   }
+>   
+>   /**
+> 
+> ---
+> base-commit: 3f386cb8ee9f04ff4be164ca7a1d0ef3f81f7374
+> change-id: 20240806-trust-tbt-fix-5f337fd9ec8a
+> 
+> Best regards,
+
 
