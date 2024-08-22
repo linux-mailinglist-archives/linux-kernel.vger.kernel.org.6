@@ -1,74 +1,55 @@
-Return-Path: <linux-kernel+bounces-297688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCF695BC7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:52:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F12A95BC85
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B0B4B25BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE4D1C22FE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9B01CDFBE;
-	Thu, 22 Aug 2024 16:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUGT99XO"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69E61CDFB6;
+	Thu, 22 Aug 2024 16:55:23 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4041CDFAC
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C672C190
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724345525; cv=none; b=Cb+MiEYCLFtG9mVB1+GJl19Z4yhO0VfMJUgdzpKbNprKy5MUWkK9h2maZbYmehsZWbx3PAELrJfQyb9fdUzp1VG3uasGFr3IvtYb7xk7/gFOAl9JPtgkrxaRefkoElQxQSoIEtnhbmjed34AeApShwUnTi0yS655Cq2tihwLWWA=
+	t=1724345723; cv=none; b=O+k6ZhMgcSqQLEjfJCAqCPEhDUMBvXSOOovDgyO/8MTVkmhjGw9lyy0MKAUxnNhtsIf1Wl9lQ7OTPbVGPk1ggPfJRLkaXGxJTdiy5GdrmykOT6L5M+uUtj9jkuUJpFNE64C2SVrWAL7bFkg0YJE6GcrDelcFLtLMOTewhq7G6v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724345525; c=relaxed/simple;
-	bh=PYun9E4NdnlNTayM1uIxJGk9dxfQdSd5lwmXFLu+Bxg=;
+	s=arc-20240116; t=1724345723; c=relaxed/simple;
+	bh=i6+v1x+gM1gJ1hPgbf59vltoFnCdz/t/ctYKql5R06k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WSxt9Eqr4utBTReKukNq/OSwR3ffChTYpp+ydYFHye8S9tL5eu3iUuUrKpys2RJDxLuYwxMncE21UB3IoP6V80VXjlTfNGaq40Wq0unKxjQ0Kmvvh0XG7adPtd1rge97nB5aRWJVFWGz+nM8T0Ddkrss9oGSO4mbLCUPm8pzXNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eUGT99XO; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-428e09ee91eso1409145e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724345522; x=1724950322; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/QUDsxMTjf2w+QDhT+U7tmzKnt6f0H6iAuBZFC82qFA=;
-        b=eUGT99XOLxwA3pNF6SYaEAcc62PWT2GJGHXxdF9hm51YEUVT6Qx+HLy2pHPymJfMvS
-         QI1iy+azoXDzTGRg2EzvCNwolJLlAI2so8ZvEpW4BwWfHXzCflratOKeVP3fWaiR/Que
-         b/1DsyjrjBC8l+PO9X5y9Tbp35iQ0nra6FbG582ZcQTpz+EGear4spoPlANEsnHidC5S
-         V4H8IXagYuQIDlGzZpZAwH8GFBE6BM54unpPrPKoeF2RsEnVZQQljNV5oT0xU+AxdZ20
-         Vsc7MCga7T/fxwVB4yhzo8X8dHF23BFiWHOpRGuozBnLT/XlTdxb1sUl61u2hDvUKQnK
-         owQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724345522; x=1724950322;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/QUDsxMTjf2w+QDhT+U7tmzKnt6f0H6iAuBZFC82qFA=;
-        b=dqDzprb+mbZlV51PQvX9HklPBfTaspy1CwnqgqZg31jKrD7/tFeV+T8pbEk8UZ832v
-         0ryTvScdNFK/zTLBuJNJZYBfDuUVNo1QCKgmiuMUk2Xj7W1mYZqG4WX66sKqq7Mh0JWA
-         wTuIV6OVAJZDq/OFpD+yTia46DBG03m8qFqOiWfHk1lHb4BSaK9sWFQ2L1+D92PXkucE
-         7o/3KcrfG18PRx73WBEPK92gp0Cy6w/NNOa3HnU7HYDv+uFzRjfBkn9YVjvhWY+1dmd3
-         ZBLXNw+44+ITW5s3uYI1B0dEKe21O2BjU1plcFghYMl9ckjZL0n5b/pyEztOa9nN92B1
-         0dKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXby4jDlkdeRhBjwKzpuerqRUp+NZqQrOQtm8AD6Qj2SE8gQRC2qjNZzfVrRxYooV3DT/PdnqwnPBeId3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy32XbiysdBlqZaMImephQV82esn7USrs5lXxpzUQCa2LOmPH5p
-	dpqBWiU1sgrA82FXMzuF5dSALqVJkJXY6y/PT2PelDVn/GLC8Xrn56176g+KnXY=
-X-Google-Smtp-Source: AGHT+IEmRXduMOrtFKh/hFBgUXKJK9/J/CuRfA2q/OHoR+nQkaNMhkQzQGKUk+hf3U7+h5e56zPw1g==
-X-Received: by 2002:a5d:6d01:0:b0:367:90a8:4d3b with SMTP id ffacd0b85a97d-372fd585cefmr2573813f8f.3.1724345522334;
-        Thu, 22 Aug 2024 09:52:02 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730826b10bsm2072959f8f.114.2024.08.22.09.52.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 09:52:01 -0700 (PDT)
-Message-ID: <3813d9d1-5481-47d6-ada3-977439ee9b6a@linaro.org>
-Date: Thu, 22 Aug 2024 18:52:00 +0200
+	 In-Reply-To:Content-Type; b=g6IDsh26uDXK9qpHma5unQHPyJhK/HT2HIO+GVYVVWnwFMTNRj01Dzoh7Pcxvyobv1FNlOrt3dRNCkwUKMl1BBPwyAb9UC57Ka7zhnngxg4hVsvA/COdKtutF4kOZ99UnNu1eYs9OiRlNZQ415SO80tKPyNsGIxvjhYtof+7bjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqTpb33Jrz9sSK;
+	Thu, 22 Aug 2024 18:55:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id tHnpF95fD7qK; Thu, 22 Aug 2024 18:55:19 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqTpb2JDhz9rvV;
+	Thu, 22 Aug 2024 18:55:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 404E78B77D;
+	Thu, 22 Aug 2024 18:55:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id DyQRBygMVoHV; Thu, 22 Aug 2024 18:55:19 +0200 (CEST)
+Received: from [192.168.232.181] (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id EDCA18B763;
+	Thu, 22 Aug 2024 18:55:18 +0200 (CEST)
+Message-ID: <3241a692-088d-4316-85c9-f2939a9179b2@csgroup.eu>
+Date: Thu, 22 Aug 2024 18:55:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,77 +57,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: smem_state: fix missing of_node_put in error
- path
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240822164853.231087-1-krzysztof.kozlowski@linaro.org>
- <20240822164853.231087-2-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240822164853.231087-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] soc: fsl: qbman: Remove redundant warnings
+To: Xiaolei Wang <xiaolei.wang@windriver.com>, robh@kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240802021651.3854295-1-xiaolei.wang@windriver.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240802021651.3854295-1-xiaolei.wang@windriver.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 22/08/2024 18:48, Krzysztof Kozlowski wrote:
-> If of_parse_phandle_with_args() succeeds, the OF node reference should
-> be dropped, regardless of number of phandle arguments.
+Hi,
+
+Le 02/08/2024 à 04:16, Xiaolei Wang a écrit :
+> [Vous ne recevez pas souvent de courriers de xiaolei.wang@windriver.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 9460ae2ff308 ("soc: qcom: Introduce common SMEM state machine code")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> RESERVEDMEM_OF_DECLARE usage has been removed. For
+> non-popwerpc platforms, such as ls1043, this warning
+> is redundant. ls1043 itself uses shared-dma-mem.
+
+Can you please explain in more details ? I don't understand what it is 
+redundant with.
+
+Thanks
+Christophe
+
+> 
+> Fixes: 3e62273ac63a ("soc: fsl: qbman: Remove RESERVEDMEM_OF_DECLARE usage")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 > ---
-
-And this one patch is a duplicate of what I sent separately. Can be
-ignored. Sorry for the mess, time to finish work for today. :(
-
-Best regards,
-Krzysztof
-
+>   drivers/soc/fsl/qbman/qman_ccsr.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
+> index 392e54f14dbe..aa5348f4902f 100644
+> --- a/drivers/soc/fsl/qbman/qman_ccsr.c
+> +++ b/drivers/soc/fsl/qbman/qman_ccsr.c
+> @@ -791,8 +791,6 @@ static int fsl_qman_probe(struct platform_device *pdev)
+>           * FQD memory MUST be zero'd by software
+>           */
+>          zero_priv_mem(fqd_a, fqd_sz);
+> -#else
+> -       WARN(1, "Unexpected architecture using non shared-dma-mem reservations");
+>   #endif
+>          dev_dbg(dev, "Allocated FQD 0x%llx 0x%zx\n", fqd_a, fqd_sz);
+> 
+> --
+> 2.25.1
+> 
 
