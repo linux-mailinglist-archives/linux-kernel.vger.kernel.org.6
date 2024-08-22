@@ -1,193 +1,174 @@
-Return-Path: <linux-kernel+bounces-297251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7C095B4F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:26:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C1B95B4FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6CC2881EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADBF4288DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0CC1C9447;
-	Thu, 22 Aug 2024 12:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89021C9EA6;
+	Thu, 22 Aug 2024 12:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="hpi+34wc"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tMBUL2pj"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CD617E00F
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724329595; cv=pass; b=tNr/9Os2FHrKR2G6WAicyrGJhz2mILuUtj+9LViQ7b9svzpwCyd6O3WruDTQ+3f6yqZ1XKu/ZGMIxOvgGR7HVtRUrnGzMnNgpNYnM8fbZCS5oZns1YQx8rFazlnVKBJ25XL+Exe/ayLvlWvmCi+tRhIo1ItLfLWnSO4NR36khvY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724329595; c=relaxed/simple;
-	bh=6ZE+N434G5UYO8xiY/vnGYGgRSwa2DAbjDl6hXEAwEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApKetNEaHd5bjzsSRtCOKGUnyknGGHW+Nv5MBAtoB5GDFpxEw0YyxRrWVQ+zSyzKfF28I0n5K6JtU4ntzikPbjA+O/wyAwf+4exQLSjLNSZ8EulkvH9u+ROi12i3xN5KNcnhXJapET2I35BxLvm5NqHdrQ6turvoNRdfIClbATc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=hpi+34wc; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: daniel.almeida@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724329589; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=I1AOLA7JXHuh1V+BQT8hB8A9vbZA+FZmy5tzJpGQ3zjYdpNmlN6XcHVNDe5D3mDy7NKsLpFH0RrmwnjGDi1RKSbbvn8NqtAqVYzdZAxs38xjTkAAcXKOSxqDZdiEwdTcVvtKAcHmpTLdRm7ZdYWLZsbQm9xVyqobnyKct8r6BqM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724329589; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=MBJdd8KyfyKJ1i4soeI5nN0YXryd/ZxIuVHZOT4Tu+M=; 
-	b=DPIniZ5W2KKrxr7uZ9qBEyUR1sYPtmvkY8l0VbDETx7GynkKxX9t6uecq6jJtY/U8pFLRfM9FFJiKtyyZmppCxZYU4L+T6EpBYI9kYLNL6ELN8pXrBIQQt4A7BYjQOLwLSyojkyjVV3rxSh7GUaBzUWkFQLyTUeXfkN1KBGa46M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724329589;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=MBJdd8KyfyKJ1i4soeI5nN0YXryd/ZxIuVHZOT4Tu+M=;
-	b=hpi+34wcukYlIqUvTS3DLafW2VEv7RHncaIf5BuoR00FhqiLsZJDuQ5WZGSff3se
-	Xtrlfm3gV9aTT1nE5Qjwi2rBDIZyWdHCGkdxxwEiC2INQCZ6f6wcBf1ZC+CsHfHu6Qg
-	PsTb6yys0c/FSAefYXdRta1H9i0AWrWUAHC6vSHw=
-Received: by mx.zohomail.com with SMTPS id 1724329587572951.0995191883987;
-	Thu, 22 Aug 2024 05:26:27 -0700 (PDT)
-Date: Thu, 22 Aug 2024 13:26:24 +0100
-From: Adrian Larumbe <adrian.larumbe@collabora.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: liviu.dudau@arm.com, steven.price@arm.com, carsten.haitzler@arm.com, 
-	boris.brezillon@collabora.com, robh@kernel.org, faith.ekstrand@collabora.com, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 RESEND 1/5] drm: panthor: expose some fw information
- through the query ioctl
-Message-ID: <474yoitdvq4xdplmm4qlnzcxkhdjo2mltswsdzvedeamz74pi5@tifdq7sgve3d>
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <20240821143826.3720-1-daniel.almeida@collabora.com>
- <20240821143826.3720-2-daniel.almeida@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639471C9DC3;
+	Thu, 22 Aug 2024 12:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724329641; cv=none; b=smFCoSpJlP1Ka6B0qGI+SUE+Du1pZLaib99oGcF3NTPKyFYrJxR+8pvWl72Ta3scOpau4YYuq6NaRohTwCzttBYpQMYQy88aJ8b8tSIzB9nGWHniQ22ltiUhVWT1OuBZokDCn6oUQzYcZ7RkriYfEa54WOGQ6PMg7q80d2AWODM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724329641; c=relaxed/simple;
+	bh=pEvcrxr4une554HicftcYGaTBsQfuFT04uonE+qQdrI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YcaKwTSbfL0suJ+f5xqQdkaGlug+HZp53KspTQLEYG4x2/BFqvzLrhNTAOHfNzfHq51uB/51FxICg9/HihLLB47nKvwlZyRKBPn0hSBhWjAbApGCvQgR5ooxAh+hiHJF/HHWWphNhljLONzaCs/gfnYQoIv5wrCb+sFB87NqH6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tMBUL2pj; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47MCQubM123904;
+	Thu, 22 Aug 2024 07:26:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724329616;
+	bh=gIekhkefUB+8majHOiNvNR7rn9Yl7464DUsDGsBTk68=;
+	h=From:To:CC:Subject:Date;
+	b=tMBUL2pjxv2/YqOB5p3DedQruxUCgsZyatVLmeqA/ICOVoyvaugugVPdbVu9UsvTm
+	 VOWGlPM+WsSo9WKopzMd4rsWSqZ9Q5KQM3O/Kcl3OUSMagjbye99E8TlaSseupIskV
+	 vDJ22HQhO+mQIL7cgEQ9Vwimy6j0QTIP3BJNb4vg=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47MCQuPt037058
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 22 Aug 2024 07:26:56 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
+ Aug 2024 07:26:56 -0500
+Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 22 Aug 2024 07:26:55 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47MCQtAF014889;
+	Thu, 22 Aug 2024 07:26:55 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 47MCQt59015169;
+	Thu, 22 Aug 2024 07:26:55 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
+        Jan
+ Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Kory Maincent <kory.maincent@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Roger
+ Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Nishanth
+ Menon <nm@ti.com>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH net-next v7 0/2] Add support for ICSSG PA_STATS
+Date: Thu, 22 Aug 2024 17:56:50 +0530
+Message-ID: <20240822122652.1071801-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240821143826.3720-2-daniel.almeida@collabora.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-> On 21.08.2024 11:37, Daniel Almeida wrote:
-> This is of interest to userspace, and similar in nature to the GPU
-> and CSIF information we already return in the query ioctl.
-> 
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+Hi,
 
-Reviewed-by: Adrian Larumbe <adrian.larumbe@collabora.com>
+This series adds support for PA_STATS. Previously this series was a
+standalone patch adding documentation for PA_STATS in dt-bindings file
+ti,pruss.yaml.
 
-> ---
->  drivers/gpu/drm/panthor/panthor_device.h |  3 +++
->  drivers/gpu/drm/panthor/panthor_drv.c    |  8 ++++++++
->  drivers/gpu/drm/panthor/panthor_sched.c  |  5 +++++
->  include/uapi/drm/panthor_drm.h           | 19 +++++++++++++++++++
->  4 files changed, 35 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index e388c0472ba7..224c53dcfe6d 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -100,6 +100,9 @@ struct panthor_device {
->  	/** @csif_info: Command stream interface information. */
->  	struct drm_panthor_csif_info csif_info;
->  
-> +	/** @fw_info: Firmware info for the global interface */
-> +	struct drm_panthor_fw_info fw_info;
-> +
->  	/** @gpu: GPU management data. */
->  	struct panthor_gpu *gpu;
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index b8a84f26b3ef..fb30e119d9bf 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -164,6 +164,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
->  	_Generic(_obj_name, \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_fw_info, instr_features), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
-> @@ -765,6 +766,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
->  			args->size = sizeof(ptdev->csif_info);
->  			return 0;
->  
-> +		case DRM_PANTHOR_DEV_QUERY_FW_INFO:
-> +			args->size = sizeof(ptdev->fw_info);
-> +			return 0;
-> +
->  		default:
->  			return -EINVAL;
->  		}
-> @@ -777,6 +782,9 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
->  	case DRM_PANTHOR_DEV_QUERY_CSIF_INFO:
->  		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->csif_info);
->  
-> +	case DRM_PANTHOR_DEV_QUERY_FW_INFO:
-> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->fw_info);
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 79ffcbc41d78..e0ecc8bcfaae 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -3495,6 +3495,11 @@ int panthor_sched_init(struct panthor_device *ptdev)
->  	ptdev->csif_info.cs_slot_count = sched->cs_slot_count;
->  	ptdev->csif_info.scoreboard_slot_count = sched->sb_slot_count;
->  
-> +	ptdev->fw_info.version = glb_iface->control->version;
-> +	ptdev->fw_info.features = glb_iface->control->features;
-> +	ptdev->fw_info.group_num = glb_iface->control->group_num;
-> +	ptdev->fw_info.instr_features = glb_iface->control->instr_features;
-> +
->  	sched->last_tick = 0;
->  	sched->resched_target = U64_MAX;
->  	sched->tick_period = msecs_to_jiffies(10);
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> index aaed8e12ad0b..e235cf452460 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -260,6 +260,9 @@ enum drm_panthor_dev_query_type {
->  
->  	/** @DRM_PANTHOR_DEV_QUERY_CSIF_INFO: Query command-stream interface information. */
->  	DRM_PANTHOR_DEV_QUERY_CSIF_INFO,
-> +
-> +	/** @DRM_PANTHOR_DEV_QUERY_FW_INFO: Query firmware information */
-> +	DRM_PANTHOR_DEV_QUERY_FW_INFO,
->  };
->  
->  /**
-> @@ -377,6 +380,22 @@ struct drm_panthor_csif_info {
->  	__u32 pad;
->  };
->  
-> +/** struct drm_panthor_fw_info - FW information
-> + *
-> + * Structure grouping all queryable information relating to the global FW interface.
-> + */
-> +
-> +struct drm_panthor_fw_info {
-> +	/** @version: Global interface version */
-> +	__u32 version;
-> +	/** @features: Global interface features */
-> +	__u32 features;
-> +	/** @group_num: Number of CSG interfaces */
-> +	__u32 group_num;
-> +	/** @instr_features: Instrumentation features */
-> +	__u32 instr_features;
-> +};
-> +
->  /**
->   * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
->   */
-> -- 
-> 2.45.2
+As discussed in v4, posting driver and binding patch together.
+
+Changes isnce v6:
+*) Addressed Roger's comments and renamed stats related data strcutures
+and array so that they remain consitent.
+*) Re-ordered data structures and arrays related to stats type as asked
+by Roger.
+*) Modified commit message to state these additional changes
+
+Changes since v5:
+*) Used ARRAY_SIZE(icssg_all_pa_stats) instead of ICSSG_NUM_PA_STATS so
+   that it's consistent with the loop as suggested by Dan Carpenter
+   <dan.carpenter@linaro.org>
+*) Created emac->pa_stats array for storing pa_stats as suggested by
+   Dan Carpenter <dan.carpenter@linaro.org>
+*) Renamed `icssg_all_stats` to `icssg_mii_g_rt_stats`.
+*) Added entry for pa_stats in kernel doc for structure prueth as asked by
+   Simon Horman <horms@kernel.org>.
+*) Improved syntax for kernel doc of pa_stats_regs register by dropping
+   u32 from kernel doc.
+
+Changes since v4:
+*) Added net-next to both driver and binding patch as they are both now
+   meant to be merged via net-next.
+*) Added Acked by tag of Nishanth Menon <nm@ti.com>
+*) Dropped device tree patches as they don't need merge now.
+*) Modified patch 2 to use ethtool_puts() as suggested by Jakub Kicinski
+   <kuba@kernel.org>
+
+Changes since v3:
+*) Added full series as asked by Nishanth Menon <nm@ti.com>
+
+Changes from v2 to v3:
+*) Added RB tag of Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> to
+   patch 2/2
+*) Added patch 1/2 to the series as the binding file is orphan.
+
+Changes from v1 to v2:
+*) Added ^ in pa-stats as suggested by Krzysztof Kozlowski
+   <krzk@kernel.org>
+*) Moved additionalProperties: false to right after type:object as
+   suggested by Krzysztof Kozlowski <krzk@kernel.org>
+*) Updated description of pa-stats to explain the purpose of PA_STATS
+   module in context of ICSSG.
+
+v1 https://lore.kernel.org/all/20240430121915.1561359-1-danishanwar@ti.com/
+v2 https://lore.kernel.org/all/20240529115149.630273-1-danishanwar@ti.com/
+v3 https://lore.kernel.org/all/20240625153319.795665-1-danishanwar@ti.com/
+v4 https://lore.kernel.org/all/20240729113226.2905928-1-danishanwar@ti.com/
+v5 https://lore.kernel.org/all/20240814092033.2984734-1-danishanwar@ti.com/
+v6 https://lore.kernel.org/all/20240820091657.4068304-1-danishanwar@ti.com/
+
+MD Danish Anwar (2):
+  dt-bindings: soc: ti: pruss: Add documentation for PA_STATS support
+  net: ti: icssg-prueth: Add support for PA Stats
+
+ .../devicetree/bindings/soc/ti/ti,pruss.yaml  |  20 +++
+ drivers/net/ethernet/ti/icssg/icssg_ethtool.c |  19 ++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  |   6 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   9 +-
+ drivers/net/ethernet/ti/icssg/icssg_stats.c   |  31 +++-
+ drivers/net/ethernet/ti/icssg/icssg_stats.h   | 158 +++++++++++-------
+ 6 files changed, 160 insertions(+), 83 deletions(-)
+
+
+base-commit: 812a2751e827fa1eb01f3bd268b4d74c23f4226a
+-- 
+2.34.1
+
 
