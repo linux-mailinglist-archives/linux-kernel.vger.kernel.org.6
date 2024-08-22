@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-296610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050F895ACBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:08:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D320F95ACC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED48281BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:08:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2281F227AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A55D4F218;
-	Thu, 22 Aug 2024 05:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eXdLtclW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA964F218;
+	Thu, 22 Aug 2024 05:09:25 +0000 (UTC)
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEA7433CB;
-	Thu, 22 Aug 2024 05:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2CE43AC4;
+	Thu, 22 Aug 2024 05:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724303313; cv=none; b=FUh11Kf1I5YORfcKeRXgTwV0W0nu3qjmqC7Y6/DCKGEAR6APvAPecDj5m2qmVdTLPep6KzguEPU5B/jSy1xBHBaJOvmgEPiVyy3HPJfCW9Z6vQB3XDeLgwnHLv4OLYaxVdzMiSLwLWqyTzfynHdMqKS8mFUnvhqcs98eAgX+nuI=
+	t=1724303364; cv=none; b=LCjhrCauNTegpqP20qPRlh6NoPkxRFz2idewohnCYnCSwjvvqQMhufmkYFI1dfrxgzs1bOUPFM4ux4yMrSrwz8yXdC9VVJ7DhC2gw2wfjl2/DnPNl0RE5KwxXZirP6/NzIph55A71B5/c/I4OsxLTJi4RiNn5ooVzO0PW7qY0Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724303313; c=relaxed/simple;
-	bh=DuP6gWL2QzEDfOfhHXfJnyaOtP1/xRSOjL/ac5t2XtM=;
+	s=arc-20240116; t=1724303364; c=relaxed/simple;
+	bh=4BohM4unqcz+QMGbDy/FyqZD1iDOmZ0pEIkVb96uQew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XXkIzius9qNugKyNX+HW3UYn1KJzyNEkFHdQVpKiErXXrzAbEo3IVHhAC+lMdt0bhsmWPjiBxjy67lJuGdzEDZGg3mvkhgopdtX6T2ByNeGtmwNabBWjLRLWvJx2Yz3U0D96GyKXmpdFNEHU4Ye8OsEIymAmYX0d7x24ykZT424=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eXdLtclW; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724303311; x=1755839311;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DuP6gWL2QzEDfOfhHXfJnyaOtP1/xRSOjL/ac5t2XtM=;
-  b=eXdLtclWDNdkpew6bSQyW2NGwmyb1J8Jq2SRJ++EOuBU91hC92/9V1dH
-   3hoguHdcDGD34k26+IBYS0QVeY0DHtJcD5mQ5lL+uM7yxSUPYDw8EBP3S
-   m4lCst3GASQ4sfo3Ond/8cfEqVQwJQcCT766wzacg41CC0xEWn792LLsh
-   +jc4DoHMasE9WWWi+F9Xtqlwym8znQxxL1pA3DXtCmN5kRL7oUIx4oI/y
-   ealrDbbOG9zn03PwBFwdePdiZJbdXQ5n7z/AeX9RolMPKt0STPmQ6ETav
-   h+MHdGjO2xeZFBG/vtlj8jTNZdvK2A4ghNeyWs1PwWnWIbUwBO0tamXus
-   A==;
-X-CSE-ConnectionGUID: 4cZPdnxXRHCwSL5GnpL2Gw==
-X-CSE-MsgGUID: yP8FfY6MRzSSILipcghGHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22220593"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="22220593"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 22:08:30 -0700
-X-CSE-ConnectionGUID: 42vMd2vTT3a18T7oVQpO1w==
-X-CSE-MsgGUID: gn6y762xQ7+jR7G4GkpQDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="66135184"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 21 Aug 2024 22:08:29 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sh03e-000CP2-0d;
-	Thu, 22 Aug 2024 05:08:26 +0000
-Date: Thu, 22 Aug 2024 13:07:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, alexandre.belloni@bootlin.com,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: Re: [PATCH 4/7] rtc:rtc-s3c:Use devm_clk_get_enabled() helpers
-Message-ID: <202408221253.CO0v47kj-lkp@intel.com>
-References: <20240821092846.20138-5-liaoyuanhong@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3C5Ug/E0TVfIBxCF1uFdhvdwZAD3Q6wyF1GAhpEUMSXdUHCOvJJbqARKL32W033GsGPYusg237fXSxfs+zfAc/65/4SpEop+E3X2LnAhSVjYY9NJOOIOOEPk55kYUTLKI/qrz3uSViRJGxwqOEEFZ/NDn1n/1AAWSzYwL1F/X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7093472356dso240695a34.0;
+        Wed, 21 Aug 2024 22:09:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724303362; x=1724908162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zUJHXMxjViKrDRkpIgP/6Ftfa7fylJAO2t0N4RwzwyM=;
+        b=LE4RRh/6qwmJbg/lkoPDjvFI+GyPqRAr1hRvrjObDGBlB6+c7Dz/xFV8S5A9J/LbqI
+         l9Mh2epKCGADjVzANrhLhkD7XFTGZGIFm43VXPyM4AITI+gegdKDZmgjcNnq1IQCEM2o
+         pZV0tkP66r01uuiG72tl4hN1AdQmGFja2wZNT98ikhGHKVsaJqfIPKuwUIidtcL5R8Rk
+         VimYvxM0i9adP6tRV7erEh1qghCTrUz/mJuq+G6nfNpH+JtOSBqxPXImbBnyiwWBg6Zs
+         NBIxOYe9ye74h96rkMFxjrSfckQxyPMMpLIkSWuDkI8op6SADOi066oCkbU13ZO1b+7Q
+         tQwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVObmgA0XBHnhIbrGeou933Hfz8kt2sre7xHBgsLCM1cakr4PvYKVGY3kVtNK1eU4116ZVtdPVh0Yk=@vger.kernel.org, AJvYcCWF3OeRKQOGsYpld1ldUb/lZiJftXTyPxa6/uxNjuStlzkIN4yPkpWDNy9BqS/u3NYRdqncFbSUzUDCep4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8fEDI7ewg4K6ZYpMaFaKatXlgaQsdgxPuXvpaoDqWrLlhNikP
+	Dkt6qQafbGi+nnfP5oZS3KyHsPw3WdByNQ3L3SWaGQ5m3lz69N9AVzyzXwBCKLk=
+X-Google-Smtp-Source: AGHT+IEg24FBbgBM+r2H8SVB5Jc5vggpp9DXZ6n1LLhvvL0fDkmOW8E+upWhtXZkPgX9pc+ZoE4/gg==
+X-Received: by 2002:a05:6830:4124:b0:703:5cde:3a1f with SMTP id 46e09a7af769-70df872f8e5mr4039515a34.1.1724303361613;
+        Wed, 21 Aug 2024 22:09:21 -0700 (PDT)
+Received: from sultan-box.localdomain ([142.147.89.224])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70e03b5e84asm159067a34.54.2024.08.21.22.09.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 22:09:21 -0700 (PDT)
+Date: Wed, 21 Aug 2024 22:09:16 -0700
+From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/16] sched/fair: Remove magic hardcoded margin in
+ fits_capacity()
+Message-ID: <ZsbH_EtbOPxtLMU0@sultan-box.localdomain>
+References: <20240820163512.1096301-1-qyousef@layalina.io>
+ <20240820163512.1096301-5-qyousef@layalina.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,131 +77,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240821092846.20138-5-liaoyuanhong@vivo.com>
+In-Reply-To: <20240820163512.1096301-5-qyousef@layalina.io>
 
-Hi Liao,
+Hi Qais,
 
-kernel test robot noticed the following build warnings:
+On Tue, Aug 20, 2024 at 05:35:00PM +0100, Qais Yousef wrote:
+> Replace hardcoded margin value in fits_capacity() with better dynamic
+> logic.
+> 
+> 80% margin is a magic value that has served its purpose for now, but it
+> no longer fits the variety of systems that exist today. If a system is
+> over powered specifically, this 80% will mean we leave a lot of capacity
+> unused before we decide to upmigrate on HMP system.
+> 
+> On many systems the little cores are under powered and ability to
+> migrate faster away from them is desired.
+> 
+> Redefine misfit migration to mean the utilization threshold at which the
+> task would become misfit at the next load balance event assuming it
+> becomes an always running task.
+> 
+> To calculate this threshold, we use the new approximate_util_avg()
+> function to find out the threshold, based on arch_scale_cpu_capacity()
+> the task will be misfit if it continues to run for a TICK_USEC which is
+> our worst case scenario for when misfit migration will kick in.
+> 
+> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> ---
+>  kernel/sched/core.c  |  1 +
+>  kernel/sched/fair.c  | 40 ++++++++++++++++++++++++++++++++--------
+>  kernel/sched/sched.h |  1 +
+>  3 files changed, 34 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 6d35c48239be..402ee4947ef0 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8266,6 +8266,7 @@ void __init sched_init(void)
+>  		rq->sd = NULL;
+>  		rq->rd = NULL;
+>  		rq->cpu_capacity = SCHED_CAPACITY_SCALE;
+> +		rq->fits_capacity_threshold = SCHED_CAPACITY_SCALE;
+>  		rq->balance_callback = &balance_push_callback;
+>  		rq->active_balance = 0;
+>  		rq->next_balance = jiffies;
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 9057584ec06d..e5e986af18dc 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -95,11 +95,15 @@ int __weak arch_asym_cpu_priority(int cpu)
+>  }
+>  
+>  /*
+> - * The margin used when comparing utilization with CPU capacity.
+> - *
+> - * (default: ~20%)
+> + * fits_capacity() must ensure that a task will not be 'stuck' on a CPU with
+> + * lower capacity for too long. This the threshold is the util value at which
+> + * if a task becomes always busy it could miss misfit migration load balance
+> + * event. So we consider a task is misfit before it reaches this point.
+>   */
+> -#define fits_capacity(cap, max)	((cap) * 1280 < (max) * 1024)
+> +static inline bool fits_capacity(unsigned long util, int cpu)
+> +{
+> +	return util < cpu_rq(cpu)->fits_capacity_threshold;
+> +}
+>  
+>  /*
+>   * The margin used when comparing CPU capacities.
+> @@ -4978,14 +4982,13 @@ static inline int util_fits_cpu(unsigned long util,
+>  				unsigned long uclamp_max,
+>  				int cpu)
+>  {
+> -	unsigned long capacity = capacity_of(cpu);
+>  	unsigned long capacity_orig;
+>  	bool fits, uclamp_max_fits;
+>  
+>  	/*
+>  	 * Check if the real util fits without any uclamp boost/cap applied.
+>  	 */
+> -	fits = fits_capacity(util, capacity);
+> +	fits = fits_capacity(util, cpu);
+>  
+>  	if (!uclamp_is_used())
+>  		return fits;
+> @@ -9592,12 +9595,33 @@ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+>  {
+>  	unsigned long capacity = scale_rt_capacity(cpu);
+>  	struct sched_group *sdg = sd->groups;
+> +	struct rq *rq = cpu_rq(cpu);
+> +	u64 limit;
+>  
+>  	if (!capacity)
+>  		capacity = 1;
+>  
+> -	cpu_rq(cpu)->cpu_capacity = capacity;
+> -	trace_sched_cpu_capacity_tp(cpu_rq(cpu));
+> +	rq->cpu_capacity = capacity;
+> +	trace_sched_cpu_capacity_tp(rq);
+> +
+> +	/*
+> +	 * Calculate the util at which the task must be considered a misfit.
+> +	 *
+> +	 * We must ensure that a task experiences the same ramp-up time to
+> +	 * reach max performance point of the system regardless of the CPU it
+> +	 * is running on (due to invariance, time will stretch and task will
+> +	 * take longer to achieve the same util value compared to a task
+> +	 * running on a big CPU) and a delay in misfit migration which depends
+> +	 * on TICK doesn't end up hurting it as it can happen after we would
+> +	 * have crossed this threshold.
+> +	 *
+> +	 * To ensure that invaraince is taken into account, we don't scale time
+> +	 * and use it as-is, approximate_util_avg() will then let us know the
+> +	 * our threshold.
+> +	 */
+> +	limit = approximate_runtime(arch_scale_cpu_capacity(cpu)) * USEC_PER_MSEC;
 
-[auto build test WARNING on abelloni/rtc-next]
-[also build test WARNING on tegra/for-next linus/master v6.11-rc4 next-20240821]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Perhaps it makes more sense to use `capacity` here instead of
+`arch_scale_cpu_capacity(cpu)`? Seems like reduced capacity due to HW pressure
+(and IRQs + RT util) should be considered, e.g. for a capacity inversion due to
+HW pressure on a mid core that results in a little core being faster.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Liao-Yuanhong/rtc-rtc-at91rm9200-Use-devm_clk_get_enabled-helpers/20240821-190257
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-patch link:    https://lore.kernel.org/r/20240821092846.20138-5-liaoyuanhong%40vivo.com
-patch subject: [PATCH 4/7] rtc:rtc-s3c:Use devm_clk_get_enabled() helpers
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20240822/202408221253.CO0v47kj-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221253.CO0v47kj-lkp@intel.com/reproduce)
+Also, multiplying by the PELT period (1024 us) rather than USEC_PER_MSEC would
+be more accurate.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408221253.CO0v47kj-lkp@intel.com/
+> +	limit -= TICK_USEC; /* sd->balance_interval is more accurate */
 
-All warnings (new ones prefixed by >>):
+I think `limit` could easily wrap here, especially with a 100 Hz tick, and make
+it seem like an ultra-slow core (e.g. due to HW pressure) can suddenly fit any
+task.
 
->> drivers/rtc/rtc-s3c.c:483:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
-   }
-   ^
-   1 warning generated.
+How about `lsub_positive(&limit, TICK_USEC)` instead?
 
+> +	rq->fits_capacity_threshold = approximate_util_avg(0, limit);
+>  
+>  	sdg->sgc->capacity = capacity;
+>  	sdg->sgc->min_capacity = capacity;
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 47f158b2cdc2..ab4672675b84 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1093,6 +1093,7 @@ struct rq {
+>  	struct sched_domain __rcu	*sd;
+>  
+>  	unsigned long		cpu_capacity;
+> +	unsigned long		fits_capacity_threshold;
+>  
+>  	struct balance_callback *balance_callback;
+>  
+> -- 
+> 2.34.1
+> 
 
-vim +483 drivers/rtc/rtc-s3c.c
-
-1add6781c85d7e Ben Dooks           2006-07-01  397  
-5a167f4543e45d Greg Kroah-Hartman  2012-12-21  398  static int s3c_rtc_probe(struct platform_device *pdev)
-1add6781c85d7e Ben Dooks           2006-07-01  399  {
-19be09f51d3610 Chanwoo Choi        2014-10-13  400  	struct s3c_rtc *info = NULL;
-1add6781c85d7e Ben Dooks           2006-07-01  401  	int ret;
-1add6781c85d7e Ben Dooks           2006-07-01  402  
-19be09f51d3610 Chanwoo Choi        2014-10-13  403  	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-19be09f51d3610 Chanwoo Choi        2014-10-13  404  	if (!info)
-19be09f51d3610 Chanwoo Choi        2014-10-13  405  		return -ENOMEM;
-1add6781c85d7e Ben Dooks           2006-07-01  406  
-19be09f51d3610 Chanwoo Choi        2014-10-13  407  	info->dev = &pdev->dev;
-64704c92fd19c5 Marek Szyprowski    2019-01-18  408  	info->data = of_device_get_match_data(&pdev->dev);
-ae05c95074e0ea Chanwoo Choi        2014-10-13  409  	if (!info->data) {
-ae05c95074e0ea Chanwoo Choi        2014-10-13  410  		dev_err(&pdev->dev, "failed getting s3c_rtc_data\n");
-ae05c95074e0ea Chanwoo Choi        2014-10-13  411  		return -EINVAL;
-ae05c95074e0ea Chanwoo Choi        2014-10-13  412  	}
-5a5b614ba61cc2 Marek Szyprowski    2019-01-21  413  	spin_lock_init(&info->alarm_lock);
-19be09f51d3610 Chanwoo Choi        2014-10-13  414  
-19be09f51d3610 Chanwoo Choi        2014-10-13  415  	platform_set_drvdata(pdev, info);
-19be09f51d3610 Chanwoo Choi        2014-10-13  416  
-19be09f51d3610 Chanwoo Choi        2014-10-13  417  	info->irq_alarm = platform_get_irq(pdev, 0);
-faac910201e9be Stephen Boyd        2019-07-30  418  	if (info->irq_alarm < 0)
-19be09f51d3610 Chanwoo Choi        2014-10-13  419  		return info->irq_alarm;
-1add6781c85d7e Ben Dooks           2006-07-01  420  
-ce9af89392024f Marek Szyprowski    2020-12-02  421  	dev_dbg(&pdev->dev, "s3c2410_rtc: alarm irq %d\n", info->irq_alarm);
-1add6781c85d7e Ben Dooks           2006-07-01  422  
-1add6781c85d7e Ben Dooks           2006-07-01  423  	/* get the memory region */
-09ef18bcd5ac6c YueHaibing          2019-10-06  424  	info->base = devm_platform_ioremap_resource(pdev, 0);
-19be09f51d3610 Chanwoo Choi        2014-10-13  425  	if (IS_ERR(info->base))
-19be09f51d3610 Chanwoo Choi        2014-10-13  426  		return PTR_ERR(info->base);
-1add6781c85d7e Ben Dooks           2006-07-01  427  
-ab10bbbb4bf910 Liao Yuanhong       2024-08-21  428  	info->rtc_clk = devm_clk_get_enabled(&pdev->dev, "rtc");
-eb633de6abcb30 Yang Yingliang      2022-09-19  429  	if (IS_ERR(info->rtc_clk))
-eb633de6abcb30 Yang Yingliang      2022-09-19  430  		return dev_err_probe(&pdev->dev, PTR_ERR(info->rtc_clk),
-eb633de6abcb30 Yang Yingliang      2022-09-19  431  				     "failed to find rtc clock\n");
-e48add8c1c462f Atul Dahiya         2010-07-20  432  
-eaf3a659086e1d Marek Szyprowski    2014-10-29  433  	if (info->data->needs_src_clk) {
-ab10bbbb4bf910 Liao Yuanhong       2024-08-21  434  		info->rtc_src_clk = devm_clk_get_enabled(&pdev->dev, "rtc_src");
-df9e26d093d33a Chanwoo Choi        2014-10-13  435  		if (IS_ERR(info->rtc_src_clk)) {
-c52d270c68a02f Krzysztof Kozlowski 2020-08-30  436  			ret = dev_err_probe(&pdev->dev, PTR_ERR(info->rtc_src_clk),
-eaf3a659086e1d Marek Szyprowski    2014-10-29  437  					    "failed to find rtc source clock\n");
-ab10bbbb4bf910 Liao Yuanhong       2024-08-21  438  			return ret;
-df9e26d093d33a Chanwoo Choi        2014-10-13  439  		}
-eaf3a659086e1d Marek Szyprowski    2014-10-29  440  	}
-df9e26d093d33a Chanwoo Choi        2014-10-13  441  
-31b16d978f902b Marek Szyprowski    2020-12-02  442  	/* disable RTC enable bits potentially set by the bootloader */
-31b16d978f902b Marek Szyprowski    2020-12-02  443  	if (info->data->disable)
-31b16d978f902b Marek Szyprowski    2020-12-02  444  		info->data->disable(info);
-31b16d978f902b Marek Szyprowski    2020-12-02  445  
-1add6781c85d7e Ben Dooks           2006-07-01  446  	/* check to see if everything is setup correctly */
-ae05c95074e0ea Chanwoo Choi        2014-10-13  447  	if (info->data->enable)
-ae05c95074e0ea Chanwoo Choi        2014-10-13  448  		info->data->enable(info);
-1add6781c85d7e Ben Dooks           2006-07-01  449  
-d4a48c2ad75b06 Jingoo Han          2013-02-21  450  	dev_dbg(&pdev->dev, "s3c2410_rtc: RTCCON=%02x\n",
-19be09f51d3610 Chanwoo Choi        2014-10-13  451  		readw(info->base + S3C2410_RTCCON));
-1add6781c85d7e Ben Dooks           2006-07-01  452  
-51b7616e36fbad Yauhen Kharuzhy     2008-10-29  453  	device_init_wakeup(&pdev->dev, 1);
-51b7616e36fbad Yauhen Kharuzhy     2008-10-29  454  
-dba28c37f23a09 Sam Protsenko       2021-10-21  455  	info->rtc = devm_rtc_allocate_device(&pdev->dev);
-19be09f51d3610 Chanwoo Choi        2014-10-13  456  	if (IS_ERR(info->rtc)) {
-19be09f51d3610 Chanwoo Choi        2014-10-13  457  		ret = PTR_ERR(info->rtc);
-1add6781c85d7e Ben Dooks           2006-07-01  458  		goto err_nortc;
-1add6781c85d7e Ben Dooks           2006-07-01  459  	}
-1add6781c85d7e Ben Dooks           2006-07-01  460  
-dba28c37f23a09 Sam Protsenko       2021-10-21  461  	info->rtc->ops = &s3c_rtcops;
-a5feda3b361e11 Sam Protsenko       2021-10-21  462  	info->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-a5feda3b361e11 Sam Protsenko       2021-10-21  463  	info->rtc->range_max = RTC_TIMESTAMP_END_2099;
-dba28c37f23a09 Sam Protsenko       2021-10-21  464  
-dba28c37f23a09 Sam Protsenko       2021-10-21  465  	ret = devm_rtc_register_device(info->rtc);
-dba28c37f23a09 Sam Protsenko       2021-10-21  466  	if (ret)
-dba28c37f23a09 Sam Protsenko       2021-10-21  467  		goto err_nortc;
-dba28c37f23a09 Sam Protsenko       2021-10-21  468  
-19be09f51d3610 Chanwoo Choi        2014-10-13  469  	ret = devm_request_irq(&pdev->dev, info->irq_alarm, s3c_rtc_alarmirq,
-19be09f51d3610 Chanwoo Choi        2014-10-13  470  			       0, "s3c2410-rtc alarm", info);
-19be09f51d3610 Chanwoo Choi        2014-10-13  471  	if (ret) {
-19be09f51d3610 Chanwoo Choi        2014-10-13  472  		dev_err(&pdev->dev, "IRQ%d error %d\n", info->irq_alarm, ret);
-19be09f51d3610 Chanwoo Choi        2014-10-13  473  		goto err_nortc;
-19be09f51d3610 Chanwoo Choi        2014-10-13  474  	}
-eaa6e4dd4bf243 Maurus Cuelenaere   2010-06-04  475  
-5a5b614ba61cc2 Marek Szyprowski    2019-01-21  476  	s3c_rtc_disable_clk(info);
-5a5b614ba61cc2 Marek Szyprowski    2019-01-21  477  
-1add6781c85d7e Ben Dooks           2006-07-01  478  	return 0;
-1add6781c85d7e Ben Dooks           2006-07-01  479  
-1add6781c85d7e Ben Dooks           2006-07-01  480  err_nortc:
-ae05c95074e0ea Chanwoo Choi        2014-10-13  481  	if (info->data->disable)
-ae05c95074e0ea Chanwoo Choi        2014-10-13  482  		info->data->disable(info);
-1add6781c85d7e Ben Dooks           2006-07-01 @483  }
-1add6781c85d7e Ben Dooks           2006-07-01  484  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Sultan
 
