@@ -1,142 +1,91 @@
-Return-Path: <linux-kernel+bounces-296313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0A295A8F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9293595A900
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D63283DA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2EA1F247D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261546FC5;
-	Thu, 22 Aug 2024 00:39:00 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C4D10A3D;
+	Thu, 22 Aug 2024 00:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLncRyUE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638421D12E0;
-	Thu, 22 Aug 2024 00:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951B1101E2;
+	Thu, 22 Aug 2024 00:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724287139; cv=none; b=b5AlJp7WM79dWLgW8+uZhTnUZj3vUHdp1guCK52sUkkVa9w+sr5fvE//GBRnAZ0I/NycOqE157x2Z6FClgL1vFd0kiG/1wU0o3cdOWTcQM6Rlw7teBJh1kuOsAU3R4QWGNnJemI5yrjbmdNoSAgjFE7JDfl/bGlSdNZliN5CpXE=
+	t=1724287238; cv=none; b=LdkGcFNF2HU+7M1Ee7BPnpvye3ion4/VN0Jy16KxhkcYiBxWKE7RAAG2XPp4Z+iMGh4Ik75Jpy7bDrvRsggFWUkQ5+PeOkGhswbINKI9T1ri9HvX8SfdavBCxWTAL1sqeEnQVsSjNmIywG0TyrkB+8Vu6KrikKkB685ryn8CV9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724287139; c=relaxed/simple;
-	bh=uODybORlW1Kn4hk/0jntMAIqd+PQSZLqURGiujbvz78=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hsA9NpBD9oN3eSmWkjYFob5Ot+SWyPZMQ4oaVnaEMAejiupJio9aT/yrN4bifK2swFhT9PlUXZ5io5K9LV8Lyffb7u77q5vuyGVDsFqK8TujDBbSb9m6rKEaXJFVWVSd4czlO2CX3QImCGI+rREXfOrrJWrL4E+Yrr/bC4F3F34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7c3d8f260easo188870a12.1;
-        Wed, 21 Aug 2024 17:38:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724287138; x=1724891938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nFpmgSqC6zlZh7xPVeXEKWlc28TttUJByYddICCMgAU=;
-        b=hpA83QMls7HxoW5oN8sAvWZCep/eGeR15fqkidgQaezi+afHttjX72y/uAn+8tPB/x
-         uW/VpO9vwovdSHpsYlXoKWVar/2O/R2KIuU229o9vGuDjWhHEcmCT50d3Hm0LIAZBPDg
-         NG1XN4xSlW0swmKAEm2zoKcN8v7NHyPh1Jg7x13up0bbmeUoTjAKDIGnneP8KtUYuE72
-         LaYyPSMLiSdwew6fikXLePxVlqlpdZnRK1Miueg4G/dmvD7lUHeMFkx3jwNbVCxbYFbq
-         2d+jgh+H35cFceK1n0mgb7IIVXoavAX5XuCAM0qR2OfKO+cS3amKPpp25qOOXRlDsMh3
-         oU9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7SMSqKRqG0wQ/+b0Cp0ccJWHJuFOr6Nzc4Y+dgRpHxqxQbILCyBJrITiwuHE857nFmgRlc88roJsS4khaRu4EnA==@vger.kernel.org, AJvYcCWdQQUrfEDJL6semyJZCvsusiQFLOI8hX/jAasRPUar7UDX7Uh4lyVKBx/dUi19IzKT8j14TkKrqzhaLF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0kkb94xSInsy6kSIct3VLscyvQdfLlyN0etHwljh0TAKrK10e
-	ZiEqDpvAsG+/DhygC3vIgrqjUHP7jiLSIDnl1UUoTwPhfwxpwho3JGWr86TFJJTJPm9i5j1Agmy
-	rpDfX45dGrQYoJu1dkY1TKqN9XcI=
-X-Google-Smtp-Source: AGHT+IEZAhCN3obd4iWx6i1hVZ/nzpajIeDbS5jp84c4JIOQUC6gRflxdHKz2kY2uuYUd2uktuewTTzAN167Luvz0ac=
-X-Received: by 2002:a05:6a21:1786:b0:1c3:fc87:374e with SMTP id
- adf61e73a8af0-1cada15f583mr4694795637.41.1724287137418; Wed, 21 Aug 2024
- 17:38:57 -0700 (PDT)
+	s=arc-20240116; t=1724287238; c=relaxed/simple;
+	bh=22s5hdA760B1zZTA4ie8B6ytn3zDxLtniGVKvxzPjZc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rpkprNAnwEL3aVLJK0FZyzdHNmUshCTSJQ7G8oyCSUr0pl6uwWZi7P21f7YBNIDFeOwoVjo4mPE3TMgMFqHc7/OphZm6545LbUsyEk6j7yXhlinDmAYzVLn5oEMB0x+/JA/kJLxDpw+hxDPnuuGj7C7lE46D22uB0Npl6J2bShE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLncRyUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21508C32781;
+	Thu, 22 Aug 2024 00:40:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724287238;
+	bh=22s5hdA760B1zZTA4ie8B6ytn3zDxLtniGVKvxzPjZc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=JLncRyUEAgPwse+n4HkdvUkrkx6zu5IdIbYAAdPdm26jvG3FudmgMXmc15+1ic3ln
+	 dytjTTLbGVRW+9C9DUUOYmtxED5Hv86y/7NiEl2v+CU5RWqSMxUvkuQMKNOASupOnQ
+	 mGBy/3ADuz5mDpPbXjUy8IcF1or6pp6zFytiBd++pe9WBuX1tqLmPvx+QllMoPHJgX
+	 69j7XHSl50l4k+Z0dtkK6/Cx7UO3SCYNkTj1K/CFah9OUZNYw+H/K+679OS8ytjj+P
+	 Tzvih5aWw598E94QQ/YTImKjtOF3sxVQX81SZB39afd0zinEDVDihlWIH1TaGTtRnA
+	 KbxIGmHfHErDw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD8F3804CAB;
+	Thu, 22 Aug 2024 00:40:38 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820183202.3174323-1-kan.liang@linux.intel.com>
-In-Reply-To: <20240820183202.3174323-1-kan.liang@linux.intel.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 21 Aug 2024 17:38:45 -0700
-Message-ID: <CAM9d7ch1tmkmrpcxdW4Txz20Xzt6NFx_-0m6HQzTwXAV7Opg2Q@mail.gmail.com>
-Subject: Re: [PATCH] perf hist: Don't set hpp_fmt_value for members in --no-group
-To: kan.liang@linux.intel.com
-Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org, 
-	mingo@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ipv6: remove redundant check
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172428723773.1872412.3417555253186546832.git-patchwork-notify@kernel.org>
+Date: Thu, 22 Aug 2024 00:40:37 +0000
+References: <20240820115442.49366-1-xuiagnh@gmail.com>
+In-Reply-To: <20240820115442.49366-1-xuiagnh@gmail.com>
+To: Xi Huang <xuiagnh@gmail.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Hi Kan,
+Hello:
 
-On Tue, Aug 20, 2024 at 11:31=E2=80=AFAM <kan.liang@linux.intel.com> wrote:
->
-> From: Kan Liang <kan.liang@linux.intel.com>
->
-> Perf crashes as below when applying --no-group
->
-> perf record -e "{cache-misses,branches"} -b sleep 1
-> perf report --stdio --no-group
-> free(): invalid next size (fast)
-> Aborted (core dumped)
->
-> In the __hpp__fmt(), only 1 hpp_fmt_value is allocated for the current
-> event when --no-group is applied. However, the current implementation
-> tries to assign the hists from all members to the hpp_fmt_value, which
-> exceeds the allocated memory.
->
-> Fixes: 8f6071a3dce4 ("perf hist: Simplify __hpp_fmt() using hpp_fmt_data"=
-)
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-
-Thanks,
-Namhyung
-
+On Tue, 20 Aug 2024 19:54:42 +0800 you wrote:
+> err varibale will be set everytime,like -ENOBUFS and in if (err < 0),
+>  when code gets into this path. This check will just slowdown
+> the execution and that's all.
+> 
+> Signed-off-by: Xi Huang <xuiagnh@gmail.com>
 > ---
->  tools/perf/ui/hist.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
-> index 5d1f04f66a5a..e5491995adf0 100644
-> --- a/tools/perf/ui/hist.c
-> +++ b/tools/perf/ui/hist.c
-> @@ -62,7 +62,7 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist=
-_entry *he,
->         struct evsel *pos;
->         char *buf =3D hpp->buf;
->         size_t size =3D hpp->size;
-> -       int i, nr_members =3D 1;
-> +       int i =3D 0, nr_members =3D 1;
->         struct hpp_fmt_value *values;
->
->         if (evsel__is_group_event(evsel))
-> @@ -72,16 +72,16 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hi=
-st_entry *he,
->         if (values =3D=3D NULL)
->                 return 0;
->
-> -       i =3D 0;
-> -       for_each_group_evsel(pos, evsel)
-> -               values[i++].hists =3D evsel__hists(pos);
-> -
-> +       values[0].hists =3D evsel__hists(evsel);
->         values[0].val =3D get_field(he);
->         values[0].samples =3D he->stat.nr_events;
->
->         if (evsel__is_group_event(evsel)) {
->                 struct hist_entry *pair;
->
-> +               for_each_group_member(pos, evsel)
-> +                       values[++i].hists =3D evsel__hists(pos);
-> +
->                 list_for_each_entry(pair, &he->pairs.head, pairs.node) {
->                         for (i =3D 0; i < nr_members; i++) {
->                                 if (values[i].hists !=3D pair->hists)
-> --
-> 2.38.1
->
+>  net/ipv6/addrconf.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+
+Here is the summary with links:
+  - ipv6: remove redundant check
+    https://git.kernel.org/netdev/net-next/c/d35a3a8f1b7f
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
