@@ -1,231 +1,94 @@
-Return-Path: <linux-kernel+bounces-297636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55A495BBD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:24:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EF895BBDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A50DB266B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74078B279E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B641CDA03;
-	Thu, 22 Aug 2024 16:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9191CCEF1;
+	Thu, 22 Aug 2024 16:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHkvnzvX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="PAPM7owE"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05348282FC;
-	Thu, 22 Aug 2024 16:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4135C1D130F;
+	Thu, 22 Aug 2024 16:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343792; cv=none; b=UMdsxxKIgfEwAR/rY3tTUIAKp6F8WtN5BfkRJJrWx6yxf1XWAHyimQKrCRWAJh0P2cxU7lbzcrPHaqk47NG3RO3WBstDrwJNBVBOyvPS8+pry9ICzTXu4QlzgZ/8dgPoH14S+p1e9b2xVf3TuInoaLcjk1Iw8TOgpao87O0mJQg=
+	t=1724343847; cv=none; b=n/jplLC+4+2gn4qzjGVWVRfav2RSFK28vC8lZtQQgASQmL8E1vc2Q6A/Ot1GUnbAuu6FyJsv8yeYugZLqV0Fmwgn9lNg3E0VtIusj3NDpUFfum0J+W5cQNutQQqjxcj5Eza2rHmdQNWqgIgHyQeEa1jLTj5GyD7bACErpbpJ5kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343792; c=relaxed/simple;
-	bh=43L7DnNwf5PKhCn45ifgPN7YWE34/X02RDZibv66tIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q5rR223E0ZvdW1Fyvhr18jhEa66QZF/Tpdhl52ga2GaCM96In6gN2J29Q3mG3i0tB/yfklXoIMbdvH2fECyf10jvUHONL6mNhP+YdcNFsoVmZmpZ4PStgKA1kYmHMO/TPi67xEcj4Z6KA0Mk7TC692WE1VjimwGG6jqOII9CtEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NHkvnzvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FF9C4AF16;
-	Thu, 22 Aug 2024 16:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724343791;
-	bh=43L7DnNwf5PKhCn45ifgPN7YWE34/X02RDZibv66tIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NHkvnzvXwnE6uzWrZj3r8QS7huQYHl6lQUYwWj4Ch6u/DQaoBdkprt3nE9whm0XSC
-	 JWfdoCkn9uQ738thQ7Mf/GZEsOdygoyA+HjgYQ0h26/08YxBQuRIt1bED2mvFsLWA2
-	 scH8G+pyi8FaQ7GdKEkbagnrT6FWj73l8KtMriASbVskJTkAYw1F6FsW/RWTbIHvPe
-	 SXq1hj00pqD/luPofnGZmKPkEliydpp3cN1c6VdnGZcx0rKHA4Ur2p/H7lvE0EHVrR
-	 fqKFZmx0krWiok3jMAx+j3eBlhzlsKJY8zkTwnfAH5mKumXoQXrX/8svvLsQtysEbO
-	 Qckd+tLlb+xUw==
-Date: Thu, 22 Aug 2024 17:23:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 01/11] dt-bindings: clock: Add RaspberryPi RP1 clock
- bindings
-Message-ID: <20240822-refutable-railroad-a3f111ab1e3f@spud>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <8d7dd7ca5da41f2a96e3ef4e2e3f29fd0d71906a.1724159867.git.andrea.porta@suse.com>
- <20240820-baritone-delegate-5711f7a0bc76@spud>
- <ZsTfoC3aKLdmFPCL@apocalypse>
- <20240821-exception-nearby-5adeaaf0178b@spud>
- <ZscGdxgoNJrifSgk@apocalypse>
- <399ff156-ffc9-4d50-8e5f-a86dc82da2fa@kernel.org>
+	s=arc-20240116; t=1724343847; c=relaxed/simple;
+	bh=SwqBy/IFYkSdaGABowxYG5PFUg0JN/99ks5RBxE5S+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WkNOrhnCF7OzacejJAh/48ipM3qyJaWx2WytzaeyRucnKCie30U+typaOtMvxD8YJ957sKZ7epfXZR8e+f1I6OhKuuIhaLlbNSHJ7fuYooD2MBtBIs3uRhNqa5tG3i4ul3ekPl/epPChxI3FvIFLFfWpuvxisn9nukRtne622eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=PAPM7owE; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WqT6Y41Ndz6ClY9J;
+	Thu, 22 Aug 2024 16:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1724343840; x=1726935841; bh=SwqBy/IFYkSdaGABowxYG5PF
+	Ug0JN/99ks5RBxE5S+Y=; b=PAPM7owElkhyjgHV4tA9gF1hkyKQCfiX+vtJeoN6
+	5Tw6LRD8vBoTnxdbrvvq9lX3ED4kr/TEdLfXJbIJBoR3qb4vfC2RUQtRGOOD+7qB
+	uJjF1YSvamdHp2+HnJc5Ma/sxq6ixEic88quP5xq80iDYSEGrns5PtRDddEwuxMw
+	MTHb4VtzPh0TgAkU9ONQO1IZk7Z8HoELszMzqx05HspZgYrFRSel6tdSP2ibaDHy
+	t9a/qD0IhwhzIgFE0ZGL4UozbuXy/dn9G2LtEPcumdXRPoHBnu7d5t6ZWUlR33L9
+	7+VZ4TlWrdhQ01CWN501kSnO8SaLbXVS8xjqyc5/TSHTag==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id BTZvaIiRj0pn; Thu, 22 Aug 2024 16:24:00 +0000 (UTC)
+Received: from [IPV6:2a00:79e0:2e14:8:2a97:b8c7:bd2d:fb28] (unknown [104.135.204.80])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WqT6R0GnWz6ClY9D;
+	Thu, 22 Aug 2024 16:23:58 +0000 (UTC)
+Message-ID: <0ad83cb2-3835-4438-a7c3-398b1ff5798a@acm.org>
+Date: Thu, 22 Aug 2024 09:23:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MUECiN+fSdL5Fn4Y"
-Content-Disposition: inline
-In-Reply-To: <399ff156-ffc9-4d50-8e5f-a86dc82da2fa@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] scsi: ufs: introduce a callback to override OCS
+ value
+To: Bean Huo <huobean@gmail.com>, Kiwoong Kim <kwmad.kim@samsung.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, beanhuo@micron.com, adrian.hunter@intel.com,
+ h10.kim@samsung.com, hy50.seo@samsung.com, sh425.lee@samsung.com,
+ kwangwon.min@samsung.com, junwoo80.lee@samsung.com, wkon.kim@samsung.com
+References: <CGME20240822111247epcas2p2d3051255f42af05fd049b7247c395da4@epcas2p2.samsung.com>
+ <cover.1724325280.git.kwmad.kim@samsung.com>
+ <ed370c6355dee6a4af15587cdbb3b06a1fe0b842.camel@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ed370c6355dee6a4af15587cdbb3b06a1fe0b842.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 8/22/24 7:54 AM, Bean Huo wrote:
+> I didn't see your above two patches following your cover-letter, did
+> you send patch with "--thread" optioin?
 
---MUECiN+fSdL5Fn4Y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I haven't received these patches either but found them here:
 
-On Thu, Aug 22, 2024 at 11:52:27AM +0200, Krzysztof Kozlowski wrote:
+https://lore.kernel.org/linux-scsi/763ab716ba0207ecdad6f55ce38edf2d1bc7d04b.1724325280.git.kwmad.kim@samsung.com/
 
-> >>>>> +examples:
-> >>>>> +  - |
-> >>>>> +    #include <dt-bindings/clock/rp1.h>
-> >>>>> +
-> >>>>> +    rp1 {
-> >>>>> +        #address-cells =3D <2>;
-> >>>>> +        #size-cells =3D <2>;
-> >>>>> +
-> >>>>> +        rp1_clocks: clocks@18000 {
-> >>>>
-> >>>> The unit address does not match the reg property. I'm surprised that
-> >>>> dtc doesn't complain about that.
-> >>>
-> >>> Agreed. I'll update the address with the reg value in the next release
-> >>>
-> >>>>
-> >>>>> +            compatible =3D "raspberrypi,rp1-clocks";
-> >>>>> +            reg =3D <0xc0 0x40018000 0x0 0x10038>;
-> >>>>
-> >>>> This is a rather oddly specific size. It leads me to wonder if this
-> >>>> region is inside some sort of syscon area?
-> >>>
-> >>> >From downstream source code and RP1 datasheet it seems that the last=
- addressable
-> >>> register is at 0xc040028014 while the range exposed through teh devic=
-etree ends
-> >>> up at 0xc040028038, so it seems more of a little safe margin. I would=
-n't say it
-> >>> is a syscon area since those register are quite specific for video cl=
-ock
-> >>> generation and not to be intended to be shared among different periph=
-erals.
-> >>> Anyway, the next register aperture is at 0xc040030000 so I would say =
-we can=20
-> >>> extend the clock mapped register like the following:
-> >>>
-> >>> reg =3D <0xc0 0x40018000 0x0 0x18000>;
-> >>>
-> >>> if you think it is more readable.
-> >>
-> >> I don't care
-> >=20
-> > Ack.
-> >=20
-> >>>>> +            #clock-cells =3D <1>;
-> >>>>> +            clocks =3D <&clk_xosc>;
-> >>>>> +
-> >>>>> +            assigned-clocks =3D <&rp1_clocks RP1_PLL_SYS_CORE>,
-> >>>
-> >>>> FWIW, I don't think any of these assigned clocks are helpful for the
-> >>>> example. That said, why do you need to configure all of these assign=
-ed
-> >>>> clocks via devicetree when this node is the provider of them?
-> >>>
-> >>> Not sure to understand what you mean here, the example is there just =
-to
-> >>> show how to compile the dt node, maybe you're referring to the fact t=
-hat
-> >>> the consumer should setup the clock freq?
-> >>
-> >> I suppose, yeah. I don't think a particular configuration is relevant
-> >> for the example binding, but simultaneously don't get why you are
-> >> assigning the rate for clocks used by audio devices or ethernet in the
-> >> clock provider node.
-> >>
-> >=20
-> > Honestly I don't have a strong preference here, I can manage to do some=
- tests
-> > moving the clock rate settings inside the consumer nodes but I kinda li=
-ke
-> > the curernt idea of a centralized node where clocks are setup beforehan=
-d.
-> > In RP1 the clock generator and peripherals such as ethernet are all on-=
-board
-> > and cannot be rewired in any other way so the devices are not standalone
-> > consumer in their own right (such it would be an ethernet chip wired to=
- an
-> > external CPU). But of course this is debatable, on the other hand the c=
-urrent
-> > approach of provider/consumer is of course very clean. I'm just wonderi=
-ng
-> > wthether you think I should take action on this or we can leave it as i=
-t is.
-> > Please see also below.
-> >=20
-> >>> Consider that the rp1-clocks
-> >>> is coupled to the peripherals contained in the same RP1 chip so there=
- is
-> >>> not much point in letting the peripherals set the clock to their leis=
-ure.
-> >>
-> >> How is that any different to the many other SoCs in the kernel?
-> >=20
-> > In fact, it isn't. Please take a look at:
-> > =20
-> > arch/arm/boot/dts/st/stm32mp15xx-dhcom-som.dtsi
-> > arch/arm/boot/dts/ti/omap/omap44xx-clocks.dtsi
-> > arch/arm/boot/dts/ti/omap/dra7xx-clocks.dtsi
-> > arch/arm/boot/dts/nxp/imx/imx7d-zii-rpu2.dts
-> >=20
-> > and probably many others... they use the same approach, so I assumed it=
- is at
-> > least reasonable to assign the clock rate this way.
->=20
-> Please do not bring some ancient DTS, not really worked on, as example.
-> stm32 could is moderately recent but dra and omap are not.
+Bart.
 
-Right, there may be some examples like this, but there are many many
-other SoCs where clocks are also not re-wireable, that do not. To me
-this line of argument is akin to the clock driver calling enable on all
-of the clocks because "all of the peripherals are always on the SoC".
-The peripheral is the actual consumer of the clock that quote-unquote
-wants the particular rate, not the clock provider, so having the rate
-assignments in the consumers is the only thing that makes sense to me.
-
-
-
---MUECiN+fSdL5Fn4Y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsdl5gAKCRB4tDGHoIJi
-0qOXAQD5rgYw5/X4Ja91lG6uIEE1SemLGNR402ItvyyoKoxd1wEAwHPc8uJHiM0U
-N6HspNFbOaRmU2j/vypiAMrlT9GH6A0=
-=ar8E
------END PGP SIGNATURE-----
-
---MUECiN+fSdL5Fn4Y--
 
