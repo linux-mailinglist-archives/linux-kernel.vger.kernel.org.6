@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-297506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841AB95B9CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE8295B9CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D060287D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:15:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8381928817B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80301CCB35;
-	Thu, 22 Aug 2024 15:14:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D471CB31B;
-	Thu, 22 Aug 2024 15:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CECE1CCB5A;
+	Thu, 22 Aug 2024 15:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDuattuE"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5ED1CB31B;
+	Thu, 22 Aug 2024 15:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339666; cv=none; b=ZgKvT8hf1c6dQEqftfFPibH7V8g2kKlPGdkBYEaCAWfmT8ioaWgTRN8aZ8RbzrPoEr8welU22OMMsPt9thhc6CM80T61yuz7JIH4OkPiSWUm2pTxSA24ZTjKP4ZsGmO6lqP0IS+IHuL7VdRjTou8iqOJHugo6tBYW1dhRcWcWZQ=
+	t=1724339678; cv=none; b=F8dA6fg/E71LXnQzyhfVsRr9Ru92ZuFQVwMZDji61lvWZFum4Jmn/98nzkB0ft92lZP/wIw2iASX7876JPyuFhmhGyPjsKL/LdjSKElabD8OEvsZBoHrbP5qf5yDeXrFRMP5NKjx7aO744+mWVfmPPop1jlQOU/ovFYET9UZUCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339666; c=relaxed/simple;
-	bh=Z0x+iQbZGRupwKlqBCAsGrzbaayYp2vs4jBrbc+BHTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JLuWTz7M/AUMSM5kQDyeisdZsXE/dSa7EOJWYZ+HwpiD7MbsN7noVWuxY3+ASZadiJuLq0uo65LOyB45yf2W5bx81bg8Ce0mUJYkWFlmapROmwT6KX+6K/HQ45FL7Np5QJH7WdbGmqNWJZAk1p+pAY/s7IAYlkzTqFyoz6kv38Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB36F169E;
-	Thu, 22 Aug 2024 08:14:50 -0700 (PDT)
-Received: from [10.57.85.214] (unknown [10.57.85.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58C693F58B;
-	Thu, 22 Aug 2024 08:14:20 -0700 (PDT)
-Message-ID: <8c0f787c-35d4-4cb1-84d3-ff3f2e3f003a@arm.com>
-Date: Thu, 22 Aug 2024 16:14:18 +0100
+	s=arc-20240116; t=1724339678; c=relaxed/simple;
+	bh=77fmTpb268lxUkmsKvsJAfmwXNKfDcoQsRsOama0J+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BwzrXp+rorfXdrcOorIDyyZVXq5JLCvzlDkKkyrP+DjB3RPEoC/ylgwVxML9h1U/EWAkB6RFQAi9V8IQJUz3/cWGn7+KSH0D/7debi6vPfZoG7+sL3h59gnfVPhZilvNDiGrGLyo8+YyK3rpA6YunRLIlflMI4OcR9KxPEWcMFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDuattuE; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-429ec9f2155so7131415e9.2;
+        Thu, 22 Aug 2024 08:14:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724339675; x=1724944475; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=77fmTpb268lxUkmsKvsJAfmwXNKfDcoQsRsOama0J+0=;
+        b=ZDuattuEgBU5KvhlK8mgyFDSN1xPZefJI6rFAhic5LETc6vo40hrsqWvqA4nCwSgDf
+         nlhD57D687nrXOuXTjZ4IivIcNVILomL/Qry6x10WHxhaJ7CxFKL7GfZA+r8JdvxUgL9
+         wMV1jSetK2M5iLUe5z51BHztTySBUD8ULEtkZmpN887nWHuOteO6OcmtnW0V5Hj818KI
+         p62cYcHAMHnU71v+DA4kulAs6mH4IwseA6rjNVZMel/sE+r09LLWEJbDpfQxNB6v5BC0
+         C/rdGmEAIDf0dWpkpeHCh0OaUrpmRPDeb0DJ73swRoHi7bUSMi97VKBJvXoBW9l97QAK
+         L4sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724339675; x=1724944475;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=77fmTpb268lxUkmsKvsJAfmwXNKfDcoQsRsOama0J+0=;
+        b=bF1r7Nq6z+nJqx5AhRv3BCQsJc8dQg24VotGEHS4XCYbyIUkorLxiDNheHFSXr0IHw
+         l3pTevooTIsBFhL/n7vDf6c5/vJfmc5onx/bXekAfWg3b7t3Ekx627YEkPs9nW1dz4vW
+         B6dvbMLCAGxm9LX0ZBu0fCtyWg4EVXpsUEn9BwK9gMuRspnJyjrN+SKNxpLNpNRfOmS8
+         sjLPCueDCJ5J8AEZivqhygIz9jMQUgimqS4hkvmFXFUD7rNuzz8yQfnRdKtsYMkevGTp
+         prOSJdmsCDOxYHj6IiyKaXo8yfgJB9GxT7L6Meaxrrh+AAcpe0olehRwdx+TnBv8QaC7
+         LBBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaOkqf0Zp9GDKhtV9dX9bnrxB7zsmv2UQ3MyWCrPixFUSmKu8zHt+dNPFGCYnPpqi6gxI9+NkD+BHZwF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlMy7inPlILAfD9F9K+VpsckxP0V3gYkwuy0qVub5/Tv3GlonE
+	pYuA00y7+bUOUY5lF08UuUuALErABdLAYENdnhiziMvfV7yucVuDf56Qxk9jKzMrHv/wNXdePbg
+	NO5KuCe/Uoazs4MWe9DH+qNP5pXg=
+X-Google-Smtp-Source: AGHT+IGov/pMjupnpHYVJc6+65OTM4jElaKGQQjSxJ6LLffM0+Ijq+rtzAgmK9lGK35PMPafHNJoNX60akfSW52CyBM=
+X-Received: by 2002:a05:600c:3581:b0:428:e09d:3c with SMTP id
+ 5b1f17b1804b1-42abf0a8d02mr37633075e9.33.1724339674502; Thu, 22 Aug 2024
+ 08:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 21/43] arm64: RME: Runtime faulting of memory
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-22-steven.price@arm.com> <yq5afrqx2pxr.fsf@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <yq5afrqx2pxr.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com>
+ <8a4c117b-7cab-4149-a9e7-c6214d6d92ad@wanadoo.fr> <CALTg27kBYb5+GOwBz4a1-xeM-21DrbUh7eQyNkW9K_m6TdSwNQ@mail.gmail.com>
+ <171ecc6e-281e-4b43-8bab-c776faa89ccb@wanadoo.fr>
+In-Reply-To: <171ecc6e-281e-4b43-8bab-c776faa89ccb@wanadoo.fr>
+From: Stuart <stuart.a.hayhurst@gmail.com>
+Date: Thu, 22 Aug 2024 16:14:23 +0100
+Message-ID: <CALTg27=xcMSyq0vyxRJWyeqABa-MBfvDxC3cKHaTPnA2X1meqg@mail.gmail.com>
+Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family driver
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
+	Markus Elfring <Markus.Elfring@web.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 22/08/2024 04:32, Aneesh Kumar K.V wrote:
-> Steven Price <steven.price@arm.com> writes:
-> 
->> At runtime if the realm guest accesses memory which hasn't yet been
->> mapped then KVM needs to either populate the region or fault the guest.
->>
->> For memory in the lower (protected) region of IPA a fresh page is
->> provided to the RMM which will zero the contents. For memory in the
->> upper (shared) region of IPA, the memory from the memslot is mapped
->> into the realm VM non secure.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v2:
->>  * Avoid leaking memory if failing to map it in the realm.
->>  * Correctly mask RTT based on LPA2 flag (see rtt_get_phys()).
->>  * Adapt to changes in previous patches.
->>
-> 
-> ....
-> 
->> -	gfn = ipa >> PAGE_SHIFT;
->> +	gfn = (ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
->>  	memslot = gfn_to_memslot(vcpu->kvm, gfn);
->> +
->> +	if (kvm_slot_can_be_private(memslot)) {
->> +		ret = private_memslot_fault(vcpu, fault_ipa, memslot);
->> +		if (ret != -EAGAIN)
->> +			goto out;
->> +	}
->>
-> 
-> Shouldn't this be s/fault_ipa/ipa ?
+> BTW, the return value of corsair_void_request_status() is not used.
+> Does it make sense to change it into avoid function?
 
-Well they should both be the same unless we're in some scary parallel
-universe where we have nested virtualisation *and* realms at the same
-time (shudder!). But yes "ipa" would be more consistent so I'll change it!
+Good catch, I've moved the error reporting to its callers instead,
+that means we can ditch the default case then and simplify it
 
-Steve
-
-> 	ret = private_memslot_fault(vcpu, ipa, memslot);
-> 
-> -aneesh
-
+Stuart
 
