@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-297221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556EB95B49C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F328995B49E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007891F23BD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F712285761
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEB11C945B;
-	Thu, 22 Aug 2024 12:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C067F1C9440;
+	Thu, 22 Aug 2024 12:07:15 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B301C9DD7
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CB01C93D7
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328330; cv=none; b=LtIUVBUeXmpTQXg0REOTDddTzXaQ9A1MAJjWmfWy4nxrHqtLOt+AOwgwznZIW7hv5wt+Q/RWDjgO/Cv10dm+OgxlWG6X5DmGJWwRsNThOi9/xXTzaU1encSMEyFppGJTWqNnk68VZdvZojupYVlSE6xZag+vNZ8np6aWQfqkUoA=
+	t=1724328435; cv=none; b=Mp0TzacaOUdmqYIobXZBAwooWrEaBomi9Z4EHPDpBHrCn2F58QDBe3BUuwtl0xwCtqYj8wrDMOYxGlxI90s/bO432MQ6nJnt4n2c0eCbEfww6GJYtGZphLOgdQtFGZXeWYyTBBTCfGtZx1Tl377Isp4hWFSwwAOeI3FGu7yosUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328330; c=relaxed/simple;
-	bh=sRjg4Hbw8XmUSTcUYKi2RffU9tTcSQR2LO9nIL6UDis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6y+UYjVUwI7H7fzhNSyBOG9oQhjr2pchb+DjEADHP+uKphKCF6CLmz0kfseFP5x4P8YVs0ahVF9QPIRrB89hgHgodfraCa5UKCJAEIKlZwGiesLzDKgJQAn45XhC7rctDeehz3KBV4n3qZWgQILgrADv1RpKE5jy2Fev7JoKd8=
+	s=arc-20240116; t=1724328435; c=relaxed/simple;
+	bh=czRTfrk98lKNEWjV/3Slon7RyFlia9ef9kXjv+T+6BQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HtkFjk7zzMjap6gSvosp1+cYZXIk4dpKXke/1DMZ8XmlgSCSbmOO8QoXkWTCJDSaNsIxa9Lt2zMLSmUvKMWri87HLSFVjguc31giEhKdU0V7lvJ5P6A3DcspnoZMKTsI/HA0s1pjVw6EcKDKnmGW1nvPyc59YweQqt7lI94YXsk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh6Z9-0007no-Pi; Thu, 22 Aug 2024 14:05:23 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sh6an-0008CW-MG; Thu, 22 Aug 2024 14:07:05 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh6Z8-002F62-Sx; Thu, 22 Aug 2024 14:05:22 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 8AFA432497E;
-	Thu, 22 Aug 2024 12:05:22 +0000 (UTC)
-Date: Thu, 22 Aug 2024 14:05:22 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
-	Brian Norris <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Kalle Valo <kvalo@kernel.org>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
-Message-ID: <20240822-brainy-liberal-toucan-bc498c-mkl@pengutronix.de>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
- <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
- <PA4PR04MB9638C8D68F0F71C17E903DDAD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	(envelope-from <ore@pengutronix.de>)
+	id 1sh6an-002F7R-5s; Thu, 22 Aug 2024 14:07:05 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sh6an-005qQF-0M;
+	Thu, 22 Aug 2024 14:07:05 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH net-next v3 0/3] Add ALCD Support to Cable Testing Interface
+Date: Thu, 22 Aug 2024 14:07:00 +0200
+Message-Id: <20240822120703.1393130-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="stss5vizbnrqvxu3"
-Content-Disposition: inline
-In-Reply-To: <PA4PR04MB9638C8D68F0F71C17E903DDAD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Hi all,
 
---stss5vizbnrqvxu3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch series introduces support for Active Link Cable Diagnostics
+(ALCD) in the ethtool cable testing interface and the DP83TD510 PHY
+driver.
 
-On 22.08.2024 11:59:55, David Lin wrote:
-> > From: Marc Kleine-Budde <mkl@pengutronix.de>
-> > Sent: Thursday, August 22, 2024 5:53 PM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: Sascha Hauer <s.hauer@pengutronix.de>; Brian Norris
-> > <briannorris@chromium.org>; Francesco Dolcini <francesco@dolcini.it>;
-> > Kalle Valo <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; kernel@pengutronix.de
-> > Subject: Re: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
-> >=20
-> > On 22.08.2024 09:36:29, David Lin wrote:
-> > > I wonder we still need patch for indent issue here? If so I am sure we
-> > > will need a bunch of similar patches which I don't think really help
-> > > improve mwifiex quality
-> >=20
-> > mwifiex is the best mainline driver we have for these devices.
-> >=20
->=20
-> Yes, we will continue to fix bugs of mwifiex just like we added the
-> WPA3 support for it.
+Why ALCD?
+On a 10BaseT1L interface, TDR (Time Domain Reflectometry) is not
+possible if the link partner is active - TDR will fail in these cases
+because it requires interrupting the link. Since the link is active, we
+already know the cable is functioning, so instead of using TDR, we can
+use ALCD.
 
-Why do you think 2 drivers are easier to handle/support/maintain/...
-than 1 driver, especially given the low available review bandwidth?
+ALCD lets us measure cable length without disrupting the active link,
+which is crucial in environments where network uptime is important. It
+provides a way to gather diagnostic data without the need for downtime.
 
-regards,
-Marc
+What's in this series:
+- Extended the ethtool cable testing interface to specify the source of
+  diagnostic results (TDR or ALCD).
+- Updated the DP83TD510 PHY driver to use ALCD when the link is
+  active, ensuring we can still get cable length info without dropping the
+  connection.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Changes are described in separate patches.
 
---stss5vizbnrqvxu3
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Oleksij
 
------BEGIN PGP SIGNATURE-----
+Oleksij Rempel (3):
+  ethtool: Extend cable testing interface with result source information
+  ethtool: Add support for specifying information source in cable test
+    results
+  phy: dp83td510: Utilize ALCD for cable length measurement when link is
+    active
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbHKX8ACgkQKDiiPnot
-vG9wkQf9F6vKJT0xmAB+kOkKNUxB3qVf8c29av7suMe7+KvnkDeltCpn+UD0mxjx
-meC6xia2OwT0eIRu3M6/ErqYW+vX7ssLmO16RQ3OlX6z2xrjLzLONYuQ0WthgI+P
-n1BgJCcu8+wqAUnhgqA6BWYm83/Br79nmeF/0nX6AnZ+gNQeZ4iGLgxIRqOUoEtJ
-eiEmwuN29EwQKV/tetQ1hpKAS8dVB9CTqu0pCY5KP07s0tHg2bQp8h+dhu67Vx05
-mtf46VNfuS85hpNcCWAMwm2xahzdmmJ2zLwTvJDdjjTVd43CWF7fFlhzW5/cK5po
-r4WjkJB5jHgzmvI4C2tN2F6GDCJpHQ==
-=P8Gx
------END PGP SIGNATURE-----
+ Documentation/netlink/specs/ethtool.yaml     |   6 +
+ Documentation/networking/ethtool-netlink.rst |   5 +
+ drivers/net/phy/dp83td510.c                  | 119 ++++++++++++++++++-
+ include/linux/ethtool_netlink.h              |  29 ++++-
+ include/uapi/linux/ethtool_netlink.h         |  11 ++
+ net/ethtool/cabletest.c                      |  19 ++-
+ 6 files changed, 173 insertions(+), 16 deletions(-)
 
---stss5vizbnrqvxu3--
+--
+2.39.2
+
 
