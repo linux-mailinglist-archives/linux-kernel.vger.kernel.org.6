@@ -1,172 +1,174 @@
-Return-Path: <linux-kernel+bounces-297183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E242B95B439
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:50:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9213595B43C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3912839B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:50:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC5B2842A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740451C945E;
-	Thu, 22 Aug 2024 11:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C6B1C9446;
+	Thu, 22 Aug 2024 11:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AcLRxDqB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnkO5SG1"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386581C93D3
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA59217CA12;
+	Thu, 22 Aug 2024 11:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724327406; cv=none; b=Ak1Qiw3jF2EeKgZf6IVjIrOlFok97lfnAhXfPlYdHl96WC5AiHKdsRV116PkC9P1DOLY2j3PwJ9qSuEuskV1FsmmwP2lV71qFMM0npLtwLXS08Y5VgN9+UMCNPcRK1QUOLf2AK3XPbk6jbfHkGRhTbF0/t5/dxSHFsptc8pNn2c=
+	t=1724327421; cv=none; b=I+uSw89L7b276YJxKONjDs0BFZukKWs+VKZton0Ww34BV+cY8sAyBpI27TGzcjPOr3ZPeYDsr6fD97tZiChhht5GPwdU4Sli4tyoI5FLxHMhXCpJnLdouvE/oSCwBIl42N1c9EckxthPC1gaNAvmBMtO7AvhIT4WG2YxxqstnuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724327406; c=relaxed/simple;
-	bh=ZjfICjdygkafhwqXwqFKmZoelO4IcMB/uKcSschNJvk=;
+	s=arc-20240116; t=1724327421; c=relaxed/simple;
+	bh=N6dRmALgAXeOUmo8+n+weP8KObEBZgC/wKGwfLlLAPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMyKFd3J0WXt3JOT2HtNaoa97IWOymunfvG3uDyzojTolOBKRucm/UlagBX5J6300O5uTfRblyzIW/bFHX4Th9KIzuFxKKHAZjZphA3T6UaPQ7/0UpqquSJZlpn5U9fgEBUhhd/e2PbiPY6CB3TMP8R/YOWlk/8J+q7BIw7NThg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AcLRxDqB; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724327405; x=1755863405;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZjfICjdygkafhwqXwqFKmZoelO4IcMB/uKcSschNJvk=;
-  b=AcLRxDqB46A9CjSVRcUK/ELi2Z8pBq3P0OHpPk3u/HXpsQ7uwrdB/9dV
-   oBY0NlR9eJBEQSBTYoGCy11kk7XfQF4zJYhyhjxwj0GHzpTr7Ktig+zfY
-   m3rQwMbt2tbCwcySGKJj5OndjKQTdG5OnzU/Q0lIRpURAFvSt9u4GK2pw
-   ZYEVVTvsmlAxiu42wAWF9hpkdkYSwqrfgmjTCtGHOzppU9Pfc8jAayWOr
-   qRb1xbIDO84t0r2B4wvdknv2jWO4Iy72L+j2nWc3Lj1iHAyswBpcJwW/4
-   jX5lw/gIyvm8yeqhF9K97hFclHorxCKKCNeorDhPtswu5D7ZEaSQ5iIv9
-   Q==;
-X-CSE-ConnectionGUID: 8XIah60rQY+F6XpPB89/6g==
-X-CSE-MsgGUID: JQgCT81NQECaMSRcS80upg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="40198218"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="40198218"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 04:50:04 -0700
-X-CSE-ConnectionGUID: Uix08maDS6uaLmyLNfZvIA==
-X-CSE-MsgGUID: aJnraHPxT+uXt+PJPirdkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="84587182"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 04:50:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sh6KG-00000000RDB-42SQ;
-	Thu, 22 Aug 2024 14:50:00 +0300
-Date: Thu, 22 Aug 2024 14:50:00 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: quic_zijuhu <quic_zijuhu@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/5] driver core: Sort headers
-Message-ID: <Zscl6G82YY1c-Lb3@smile.fi.intel.com>
-References: <20240821154839.604259-1-andriy.shevchenko@linux.intel.com>
- <20240821154839.604259-2-andriy.shevchenko@linux.intel.com>
- <36bc2da3-80c2-467d-bcdd-0797809ace72@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pvg13tHMp5g8MyMjIvCYrLYvrZLfdHktFSPCKSYqESd2MAP9etmmPsIu2q7WRw9fvC5XE8/rY41XL88zUZBAChodYu7g8r1/7tYo1DuG65VzNgbfQWCbtIFKQL/WrqLDmXjKEfDJpQzL16OTbAEL6q2hDps3v1SCO0ZqKXPN9Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gnkO5SG1; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8692bbec79so77722366b.3;
+        Thu, 22 Aug 2024 04:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724327418; x=1724932218; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=K08JVc0Hn+S+yk8ZDM9GspDTZHjWKjn6EOcLVOcvC/A=;
+        b=gnkO5SG1scsQaOmYM/iWt46Zunqq3EQ+17jBYsPjxlFYw5cAPj5XRLtB/uwTl4F+4Q
+         t6vSoLIsOOQuOy1IXeDDAcUEdQ6A/l1CeVRys291OBfSjWpe1G9Sotepl3Oi6GmkluSG
+         vU6omjkFfjAD7VbawDXO8gZi3glywBZLCAodRaV6zQt50lp4eWOlwQQUi8Pi4FStBj2f
+         u7QYlpbP5b73TjQmSUloaHN9mIpAaVTzwBTLtcM/1GKuv7RgWDkiE8lbrrM0VlSDOmuT
+         tTuqlxEL0FmUNfhv06fE6emZMJ1ox0+JLKPJrxq6fHwaxQk1Slt5qRaCo6Ilfo9S/88x
+         S+Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724327418; x=1724932218;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K08JVc0Hn+S+yk8ZDM9GspDTZHjWKjn6EOcLVOcvC/A=;
+        b=LTKYKmhZ/5w99qGS9kzYNZmHcoBDatnE6OOc3tyorgaHoIX0/sjVi/LtCJxLZKhWnW
+         Rnd8f6LGogL0tnwPUup8+xAs/UE+E50dzo2Y/xwL+aNUzzi2SCH2zMTu47R76xtkimuv
+         9uBFiGuAjo6QMGgn/VtxtcnsYDCz0o47VoEns5tyvG5VJkZjRzBveAhZW32z/iEhUjg9
+         0K/9+7XpYU/QZqcoMF5093Vttv6UsiNIUZciyLTH1bvXmq52uuYW4D+/WvRA26lBOQ5m
+         A5xrCxfE1TuykxFYtyd2ZqwithljKALIO2X/7iqtLw+LaySC+PyBT5RWV11S3PQQ14lD
+         k/6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU91jH2NK+dCYed1BeUZleU0TDlTbIYK2HY9s/sgaA2YoMu19UM+CC3mNHIcHFV9ghumxAb67PlwQxms0s+@vger.kernel.org, AJvYcCVgN4LJz6yRNCb1692xDz2pJvjP0PJPwNX2ZxnPRYQKi0aY1TVkllT25FkpRcNRWlP+Ay6n1vnDlXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7MlaNlXasnadybj9CICRzSl+FvA/iEWDpnBgUBBAd6qygkBUH
+	AvPuZysvefysN0lmfz61lgsS3ynJ8CfauWa+F71lz2sQnJ87/Z40
+X-Google-Smtp-Source: AGHT+IGwqD+8gzMCJdo8LLwoHsX3EVXJqes6Nv6AKEZPfuRZLAr97yDLTDQ4c6GPXBlh2PjBTNid6Q==
+X-Received: by 2002:a17:907:97ce:b0:a86:7924:11c0 with SMTP id a640c23a62f3a-a867924134amr432391866b.55.1724327417556;
+        Thu, 22 Aug 2024 04:50:17 -0700 (PDT)
+Received: from eichest-laptop ([2a02:168:af72:0:daa9:644d:3c2:44bb])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f47d31fsm109533566b.151.2024.08.22.04.50.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 04:50:17 -0700 (PDT)
+Date: Thu, 22 Aug 2024 13:50:15 +0200
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, Frank.Li@nxp.com,
+	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
+ mode
+Message-ID: <Zscl99sSlbhOTrnQ@eichest-laptop>
+References: <20240819072052.8722-1-eichest@gmail.com>
+ <20240819072052.8722-2-eichest@gmail.com>
+ <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
+ <CAOMZO5CeT+LvQ__3GUf6teL3=8pZe5qxmFffYJX-h3E27UXwtQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <36bc2da3-80c2-467d-bcdd-0797809ace72@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOMZO5CeT+LvQ__3GUf6teL3=8pZe5qxmFffYJX-h3E27UXwtQ@mail.gmail.com>
 
-On Thu, Aug 22, 2024 at 11:30:07AM +0800, quic_zijuhu wrote:
-> On 8/21/2024 11:48 PM, Andy Shevchenko wrote:
-> > Sort the headers in alphabetic order in order to ease
-> > the maintenance for this part.
+Hi Fabio,
 
-...
-
-> i don't think it is good idea to sort headers by alphabetic order.
-
-I strongly disagree on this on several points:
-
-- the header dependencies has to be resolved on each header by applying IWYU
-  (Include What You Use) principle:
-
-    in this case we don't care what is needed for each header in question
-
-- the end developer shouldn't care about header dependencies changes as
-  the project is evolving:
-
-    it's way out of human being capacity to follow _all_ the changes in the Linux
-    kernel headers
-
-- it's much easier to maintain the inclusion block when it's sorted (to avoid
-  dups, or to see in a fast manner what's already included):
-
-    we are writing code for humans, and not for the machines (leave the
-    optimisation task to the compiler in many cases)
-
-- overall it makes the development process much easier as a whole:
-
-    I do not believe there is a single person in the world who may tell you
-    the correct order of inclusion to any, even simple, Linux kernel driver
-
-> why ?
+On Thu, Aug 22, 2024 at 08:07:44AM -0300, Fabio Estevam wrote:
+> Hi Stefan and Oleksij,
 > 
-> 1) header's dependency is not related to its file (name|path), their
-> dependency are related to # includes order.
-
-That's not true. More precisely we are working hard to make it not true (and
-it's not a Plan 9 OS where as far as I know the idea was that developer knows
-the exact order).
-
-> 2) it maybe be easy to cause build error.
-
-Yes, and again we are trying to avoid this by enforcing IWYU principle.
-
-> 3) header's path or name maybe be related to subsystem, it is not good
-> to sort one subsystem's headers before the other.
-
-There is a grouping approach which makes this easier to get. See IIO subsystem
-as a prime example for IWYU implementation in the Linux kernel.
-
-> For header's order, my points is that:
+> On Wed, Aug 21, 2024 at 8:01 AM Fabio Estevam <festevam@gmail.com> wrote:
 > 
-> 1) sort by their dependency.
+> > This fixes a pca953x probe error on an imx8mp board running linux-stable 6.6:
+> >
+> > [    1.893260] pca953x 2-0020: failed writing register
+> > [    1.898258] pca953x 2-0020: probe with driver pca953x failed with error -11
+> >
+> > Could you please add a Fixes tag and Cc stable so that this can reach
+> > the stable kernels?
+> >
+> > Tested-by: Fabio Estevam <festevam@denx.de>
+> 
+> I am sorry, but I have to withdraw my Tested-by tag.
+> 
+> For debugging purposes, I kept 'fw_devlink=off' in the kernel command
+> line and that's what made it work.
+> 
+> Removing 'fw_devlink=off' I still get the probe failure, even with all
+> the series from Stefan applied:
+> 
+> [    1.849097] pca953x 2-0020: supply vcc not found, using dummy regulator
+> [    1.855857] pca953x 2-0020: using no AI
+> [    1.859965] i2c i2c-2: <i2c_imx_write> write failed with -6
+> [    1.865578] pca953x 2-0020: failed writing register: -6
+> 
+> In my case, I can get the pca953x driver to probe successfully in one
+> of the following cases:
+> 
+> 1. Select pca953x as a module instead of built-in
+> 
+> or
+> 
+> 2. Pass 'fw_devlink=off' in the kernel command line
+> 
+> or
+> 
+> 3.  Register the i2c-imx driver as module_platform_driver():
+> 
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -1586,17 +1586,7 @@ static struct platform_driver i2c_imx_driver = {
+>         .id_table = imx_i2c_devtype,
+>  };
+> 
+> -static int __init i2c_adap_imx_init(void)
+> -{
+> -       return platform_driver_register(&i2c_imx_driver);
+> -}
+> -subsys_initcall(i2c_adap_imx_init);
+> -
+> -static void __exit i2c_adap_imx_exit(void)
+> -{
+> -       platform_driver_unregister(&i2c_imx_driver);
+> -}
+> -module_exit(i2c_adap_imx_exit);
+> +module_platform_driver(i2c_imx_driver);
+> 
+> or
+> 
+> 4. Use the NXP vendor kernel imx_6.1.22_2.0.0 kernel
+> 
+> Stefan, do you get the arbitration errors if you try methods 2 or 3 above?
 
-See above. No way, it's completely impractical.
+I will try to test this on my end tomorrow. In our test case however one
+problem was that when the schedule was called the ADC (TI ADS1015) may
+timeout if it is not processed within 25ms which sometimes happened.
+However, it also requires the other change because even if we have not
+set multi-master, the wakeup of the sender/receiver thread can take too
+much time, so we still end up in this 25ms timeout. This only happens
+when the system is under heavy load.
 
->    #include <b_header.h>
->    #include <a_header.h>
->    if
->    a_header.h:
->    #include <b_header.h>
-> 
-> 2) all #include <> block before all #include "" block.
-> 
-> 3) sort headers related to source file at the last.
-> 
->    prefix_xyz.c:
-> 
->    #include <>
->    .....
->    #include <prefix_xyz.h>   // it is the last if it is exposed.
-> 
->    #include "internal_header.h"
->    ....
-> 
-> 4)
-> sort relevant header together as far as possible, for example, they
-> belong to the same subsystem.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+In your setup, do you know what mode (atomic, interrupt, dma) the driver
+uses when it works and when it fails?
 
