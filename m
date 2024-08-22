@@ -1,135 +1,150 @@
-Return-Path: <linux-kernel+bounces-296777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F97295AF1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB5E95AF23
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE91287BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:21:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0861C22CC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713291885B7;
-	Thu, 22 Aug 2024 07:14:50 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683C0178381;
+	Thu, 22 Aug 2024 07:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="eiRY1gSD"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E171885A4
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5572714F9DA
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310890; cv=none; b=Qph3Zp+ddChP1aR7+nkX/9CzHTmN4KLQ0vwf8tFpflYBV5H1LHx4Cmg6BvVlADAITBYCo2qQ2NMCQHd/ZsUGvIJ+TOazy+rGvTJ2E51FbmynAIHNN//1ng1AFyz9u8tekxN5oSRtMXtaVGlxZiIbtTvFKYXdGbYZEnQR44ScV2g=
+	t=1724310945; cv=none; b=czikLDj31rb5ruZk6G9EQm2RxhIqENHL4Ur0Ohxin+WgLAoSl5ooewnEVGVJYHL/yp4VYStKKUR13bQS5ChM0LZeJmMd5LtLsXCYW3/kKmu+bPpXerMSl9/0ba1T/At1l8RjCkb1kKKSxACEn5UD7Zi+dGLKLfwu0tcGk1fW7CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310890; c=relaxed/simple;
-	bh=k4YLC8qVtdFqenFkrMNJ2tu1cgMK7Q2kM2c+DNaE0uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T10GuexeaXW3Dok3d485h4WCUJluC3F6nqYEBERUepwZG+MCqe2Nvl/DuM/TBwnKs+kRMipePDEWLy+NLh9U9Yqe4zP7ot+4imBNe484o9ryi2vVj3guq1fZ4aM9ZQo+3fJgyTXNPCY3IDmFsxIwnDV9GGFbdWyxdW5F6kA0cV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 52DA0227AAA; Thu, 22 Aug 2024 09:14:44 +0200 (CEST)
-Date: Thu, 22 Aug 2024 09:14:43 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Christian Lamparter <christian.lamparter@isd.uni-stuttgart.de>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Paul Mackerras <paulus@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	Stan Johnson <userm57@yahoo.com>,
-	Finn Thain <fthain@linux-m68k.org>
-Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in
- kernel mode
-Message-ID: <20240822071443.GA6395@lst.de>
-References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu> <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de> <9dbf73fe-a459-4956-8dbc-e919d9728f5e@cs-soprasteria.com> <20240822053238.GA2028@lst.de> <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com>
+	s=arc-20240116; t=1724310945; c=relaxed/simple;
+	bh=GHMKK28P5WFG9CY73l5UrXowcCT9+qJTTq73QMMe2o8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HUUADWRU2uhoEhvkLxywCidR0tYoIWzVaoPfZ3B/+Q8CMqOGX1Rdw8eoGyy/iiVxVMpoashVm3LD2XOWRLCrXa8YaTYcgQp0gRWARQRjXmUDB1o5hcJBqislKjkYFpbSVhR7riP2zDnaq1QGuOCznWXyH5RarzbzGFnelk7fyQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=eiRY1gSD; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id BCE053F2F2
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:15:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1724310934;
+	bh=1x5Vq9E8qun2g1cNXzLviVdr7wWOjdbEml0Dxvdx+jE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=eiRY1gSDEw2Y5KyT751pTv+a7RH94I7OrOQfBRuJAivZ3hAuz5EaNkeLcHh7M3Ltu
+	 CMWZ0TbZkzwSKoc9olqewkN4cbcLbfFe1XIT7tKNRhVqLA7yNlqCwAi1DE7eYd3ozC
+	 y6VdpX5FlYMcKWpXEfE5d44qtTUlGdbGRIZSxZuPwXSodmNIwnOKN+DgOCcjDkWYi3
+	 F4XLOzzsoF6p6PbojcuxXt7Cf5MBAGUWkUm7zVWvZWFy9wUONetBX+c9seMc/zCnNB
+	 UnW5vNWQn7lallekTQxMk0rCpUWm4Fu8OGTD6OFgizIeKKsfUnZ8Tv/LoBjaNw0nhj
+	 ospnhyUyDC0cg==
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-7bc8bb2f6f5so621774a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:15:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724310933; x=1724915733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1x5Vq9E8qun2g1cNXzLviVdr7wWOjdbEml0Dxvdx+jE=;
+        b=JCNYDpij0KkbawK3XH+ZZzadEM4YzqWMd8qBKBhnlOcvtz+lbJ/wjVAWIoALMLi/r9
+         KHcbHqFkZGM2GY09y+OLoHj/1ODsel35bX+3g1FfLyTe9MDbVlfCWCkB+yNNrh3EBh2J
+         7Smm1555xE/CLZI3JVVSpxILcHPRWUyatDnD+oVSjqyRkM/sJA0Jau27TO6Fp1Czb3qx
+         EDh2En7x/eZBdYOHihiwNkQf3uAbILm1F5C4lOXCQGUCCy3XPIDUoib6g6e4oKlBSgWU
+         ONlL2FkDpGi352zPRsbJI7aLuCnqzq1oTzff6M6oPfvqzgXNVaZTSrWRRfuFWEbW4ptx
+         0haQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Jar+P4xSQDgkCywOaX1bBtypNTqg3SZ5d4iUi8xxjWfkBCVo7NtlkMFPJRIAp1rDtsFtbsbdaFqRXKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw+a8R+8DLh+t4Xnz1GU+vvSa+BL67XU8uDBoAkELpW2WoeL6k
+	jpoif1rXYBLdt8q/sEmEiuY6TFcwQLou5DlUd1OF/ufavRMSy+Zcrp6+S58luHkP1GChu5yZRGP
+	ASTowoEiJXt1vtWtqGGWQbAn90MUQR8HgP5R+noQimHuM5eJEFonJeW+Dlg2Bo1KttmRYsirI2l
+	O/Z8Xw5KYthSF+MIvOF/CyYWSArwKFJ/3D99156t1JUpiMBacKsvfq
+X-Received: by 2002:a05:6a20:7b1a:b0:1ca:dc1b:319c with SMTP id adf61e73a8af0-1cadc1b31c1mr3963360637.6.1724310932783;
+        Thu, 22 Aug 2024 00:15:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFEPkh9puTCLERBLO8DJrwBxsq1v7kj7XihgY9K2CgmZv96owv921d7HarOT+cOVzsmPR5oa3p8zGmcGks/n3E=
+X-Received: by 2002:a05:6a20:7b1a:b0:1ca:dc1b:319c with SMTP id
+ adf61e73a8af0-1cadc1b31c1mr3963348637.6.1724310932487; Thu, 22 Aug 2024
+ 00:15:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20240712185418.937087-1-superm1@kernel.org> <789f9bc0-45f4-4602-9f8c-c286fa7b922b@kernel.org>
+In-Reply-To: <789f9bc0-45f4-4602-9f8c-c286fa7b922b@kernel.org>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Thu, 22 Aug 2024 15:15:20 +0800
+Message-ID: <CAAd53p67SR+FrdRro7kmZJbYRXZHw2PToyi6gSJv6+8=jZkyyA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Put XHCI controllers into D3 at S4/S5
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	mika.westerberg@linux.intel.com, 
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 06:39:33AM +0000, LEROY Christophe wrote:
-> powerpc has a magic instruction 'dcbz' which clears a full cacheline in 
-> one go. It is far more efficient than a loop to store zeros, and since 
-> 2015 memset(0) has been implemented with that instruction (commit 
-> 5b2a32e80634 ("powerpc/32: memset(0): use cacheable_memzero"))
-> 
-> But that instruction generates an alignment exception when used on 
-> non-cached memory (whether it is RAM or not doesn't matter). It is then 
-> emulated by the kernel but it of course leads to a serious performance 
-> degradation, hence the warning added by commit cbe654c77961 ("powerpc: 
-> warn on emulation of dcbz instruction in kernel mode"). Until now it 
-> helped identify and fix use of memset() on IO memory.
-> 
-> But if memset() is expected to be used with non-cached RAM, then I don't 
-> know what to do. Any suggestion ?
+Hi Mario,
 
-I'd suggest two things:
+On Tue, Aug 20, 2024 at 10:06=E2=80=AFAM Mario Limonciello <superm1@kernel.=
+org> wrote:
+>
+> On 7/12/24 13:54, superm1@kernel.org wrote:
+> > From: Mario Limonciello <mario.limonciello@amd.com>
+> >
+> > When the system is put into S4 or S5 XHCI controllers remain in D0.  Th=
+is
+> > causes higher power consumption and may compromise energy certification=
+s.
+> > Consequently some systems consume more power in S5 than s0i3.
+> >
+> > This affects all PCIe devices, but looking at breakdowns XHCI is the
+> > biggest offender for power consumption.
+> >
+> > This series checks if any wakeups are needed and puts controllers into =
+D3
+> > if no wakeup necessary.
+> >
+> > This series is a spiritual successor to [1] which aimed to do this more
+> > generally in PCI.  It also accomplishes similar goals as [2], but aims =
+for
+> > both S4 and S5.
+> >
+> > [1] https://lore.kernel.org/linux-pci/20231213182656.6165-1-mario.limon=
+ciello@amd.com/#t
+> > [2] https://lore.kernel.org/linux-pci/9d2f1619-1c61-4e8c-b28d-d4eddefa4=
+5c3@amd.com/T/
+> >
+> > Mario Limonciello (2):
+> >    xhci: pci: If no ports have wakeup enabled then disable PCI device a=
+t
+> >      S4
+> >    xhci: pci: Put XHCI controllers into D3hot at shutdown
+> >
+> >   drivers/usb/host/xhci-pci.c | 17 +++++++++++------
+> >   1 file changed, 11 insertions(+), 6 deletions(-)
+> >
+>
+> Hello,
+>
+> Any feedback for this series?
 
- 1) remove the warning.  The use case is perfectly valid and everything
-    using uncached memory is already slow, so people will just have to
-    deal with it.  Maybe offer a trace point instead if people care about
-    it.
- 2) figure out a way to avoid this case in the dma-coherent allocator,
-    which is probably the only case where it happens frequently
-    (a few drivers also zero or re-zero coherent memory, but most of the
-     time that is cargo cult programming and not actually needed)
+Does commit 0fab972eef49 ("drivers: core: Detach device from power
+domain on shutdown") work for your case?
+The commit was reverted because it regressed some DT based devices,
+but probably still worth doing for ACPI based systems.
 
-For 2 I can think of two options:
+Kai-Heng
 
- a) provide a arch hook for zeroing the dma memory that defaults to
-    memset, but which powerpc can override
- a) figure out a way to clear the memory before marking it uncached
-    if we can
-
-a) it obviously easier to verify, but b) is probably going to give
-   way better performance.
-
-Below is an untested implementation of b) for dma-direct, I just need to
-find out if there is any architecture that requires the memory to be
-zeroed after it іt has been remapped.  The iommu drivers might also
-need similar treatment.
-
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 4480a3cd92e087..66e94b32ab0081 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -275,6 +275,9 @@ void *dma_direct_alloc(struct device *dev, size_t size,
- 		if (force_dma_unencrypted(dev))
- 			prot = pgprot_decrypted(prot);
- 
-+		if (!PageHighMem(page))
-+			memset(page_address(page), 0, size);
-+
- 		/* remove any dirty cache lines on the kernel alias */
- 		arch_dma_prep_coherent(page, size);
- 
-@@ -283,14 +286,15 @@ void *dma_direct_alloc(struct device *dev, size_t size,
- 				__builtin_return_address(0));
- 		if (!ret)
- 			goto out_free_pages;
-+		if (PageHighMem(page))
-+			memset(ret, 0, size);
- 	} else {
- 		ret = page_address(page);
- 		if (dma_set_decrypted(dev, ret, size))
- 			goto out_leak_pages;
-+		memset(ret, 0, size);
- 	}
- 
--	memset(ret, 0, size);
--
- 	if (set_uncached) {
- 		arch_dma_prep_coherent(page, size);
- 		ret = arch_dma_set_uncached(ret, size);
+>
+> Thanks,
 
