@@ -1,86 +1,79 @@
-Return-Path: <linux-kernel+bounces-297472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C9C95B8D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:45:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2B095B8D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6CE2848BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:45:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80C6C1F21E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738CD1CC178;
-	Thu, 22 Aug 2024 14:45:41 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CA51EB27;
+	Thu, 22 Aug 2024 14:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mJqrRP/i"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E56F1CC151;
-	Thu, 22 Aug 2024 14:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A73B1CB15F
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337941; cv=none; b=R9VFt2MGiChisaiY8Gw9RynC3N0/5fDDZcrcQXF/xe39nXMe3JHKAs8rTIcT1hLl19La+fVZ9g2pCe12x8bgG0umHWXtT3UaKMptcN65XJBcJMmO9XSYbgx6EK41G33qH6p+0IUr0aEU+TYBTFoMfylmQh5X/w0iw/cRZTspSgc=
+	t=1724337957; cv=none; b=jpyCW47kPIvYL4a6BaDlH/6xZ9y2FckYGrRfCiedUrTAZccxevjUQaN4nJoarlgOzS/F9zvEGGoPYXqBTOZumavGReZ2S4oUeeu6lJIBUkI601sX411DKUgiOrZzM5YaywbBygY468sqwY8ckbQAfaH+Vo9APIgvVScXn3e4UeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337941; c=relaxed/simple;
-	bh=UcNmewGgwyuxbDnzR4bXFjP2OTNp1avsMTCp4oLUCHs=;
+	s=arc-20240116; t=1724337957; c=relaxed/simple;
+	bh=UYliqU8zC6Cy5j0FVRYrcTVg1FwZP3pGPNuhEz8qz/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6P8uegCJWodsxGKWZTL8RBj3xqumRmQZOZ+2HYfj4NjcKD3+iIiV40HotOXc0s7PVE4ewSf9AvPzsvncce2bXln+Q7F72riiCBkPmF21TbkuAKa/kC3mGp1H3G8kDq1UlKoEkWGNqMvlgR9nz2tTJSihGyEhJtsliK3M5Ud9+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: JYs8hsk/SPOqOm6KgRIllA==
-X-CSE-MsgGUID: oOlud7wuS9+NH2oiiWXqUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22360667"
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="22360667"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 07:45:38 -0700
-X-CSE-ConnectionGUID: 8qTJ1xUcTSCwD9dSqx9njw==
-X-CSE-MsgGUID: DQf8vM2PTiWk6u+9lqITwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="65665426"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 07:45:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sh93K-00000000U3f-1bWg;
-	Thu, 22 Aug 2024 17:44:42 +0300
-Date: Thu, 22 Aug 2024 17:44:42 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
-	Chaitanya Kulkarni <kch@nvidia.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH v3 5/9] ethernet: cavium: Replace deprecated PCI functions
-Message-ID: <ZsdO2q8uD829hP-X@smile.fi.intel.com>
-References: <20240822134744.44919-1-pstanner@redhat.com>
- <20240822134744.44919-6-pstanner@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=irWWXTB064U/BaCN/4Z/1ie5m42XIsZxboXwcLTZEss4Q4AsooU5v0NJu4IxuubvR3RBCPNMlV+FT8UrPD+g2lAXSgGOa6gKf1oTYjGndK7iqY7DXjl69CE5hThJkrwQqqj5zRZR6FTB4F+XDMu8rZ6hWfw1gmY02u4cXDAastQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mJqrRP/i; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so88801766b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:45:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724337953; x=1724942753; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dqfRiCuHOz5QjE+AHIg341g7rC3lTF4xMoQGWnAZTk4=;
+        b=mJqrRP/ilWhIcTA7O/+1TPT3krVbJ8SuineB10Jthbaw3LdV1dEKvcHco7G32NGwpV
+         I3QIMA2HQ4d5gpcD1WLpZhlCJvQV05oWNLuxh3i5hj8DS0O7BcawMf+x2hy31QUvRWdE
+         UptyPeCYSUZM7YHmDuPXoQyNrU/LOe0Bi5MaW3cLc5zXAXtA0sf5LPcUmkpeMrzttMMl
+         HswVbtNdXCCo3JGzTmzG/havxyXDFJRYLBDhdc+0UFGvuf0rbEIpq5QKi4ekwAt8/dum
+         DBZtjxomW7ihjD5invJ50fmhAHXDK25oVnaTnDKMNVPTbCSM4GR/Jrfx6hUfDj0YKQJZ
+         nXbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724337953; x=1724942753;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dqfRiCuHOz5QjE+AHIg341g7rC3lTF4xMoQGWnAZTk4=;
+        b=curVoShuHdiaWhWM8znbhN4ELQUF3+6Ajh8UdPTHgzUXOxfolqcE1aZouw5EG9MR92
+         CV2W8eJQfePcF91RbBRNyP7r26ajDrAbBDrXV5VbZS/yPv4COD5Kpv7SCv7fk4SKuS30
+         nE4mrWBJKhxH+ZWywB5Sr+EZyX28X4bV7QhclUso4QWgrRgKDQgJZuITf8evzV1tjfVS
+         8d3istib1Zne02AvTnq9X8U4tXi8+PafVn9gyH8+APCj/84oWrwMzxzUbEQIYDvFdWbL
+         gYQZJw/DUUpjeXsmm/cWG+hzRh8KUqvmcELT5OCfebJGE7Ux0x8czOp6IBwP4AMHAt48
+         bMbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3K4Rq3t4oSwHKFhX1mf3uANJYIA8JYB8hbtTabj4FRVprrBfbxX0x+UtjVkkzCQEt11oWTNxaikwl3lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYBfwhAj5KykvmxeYJYe4gAbxcKGCljC0Oa+iO/91FskqxW2hZ
+	BXeGwREGDOfW8T5d0URj2FfB994qkxf4cgs0loi2Fhzp5+0ldgJOY22XgM1JVyA=
+X-Google-Smtp-Source: AGHT+IGTms71ZGwKzmBD3O9q9nvmNcRB0v5c3voGic8zxDJXfFeHvsSYDv7q1ppR3nY92D+zJk3qww==
+X-Received: by 2002:a17:907:3daa:b0:a86:8916:b5ef with SMTP id a640c23a62f3a-a868916b8a6mr253254066b.69.1724337953177;
+        Thu, 22 Aug 2024 07:45:53 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f5ae7sm127798266b.219.2024.08.22.07.45.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 07:45:52 -0700 (PDT)
+Date: Thu, 22 Aug 2024 17:45:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Hans Buss <hansbh123@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH v3] staging: rtl8192e: Insert spaces around '|'
+Message-ID: <b4b68832-3f5a-4d77-b55d-832bd6caa65b@stanley.mountain>
+References: <20240822143837.37768-1-hansbh123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,42 +82,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822134744.44919-6-pstanner@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240822143837.37768-1-hansbh123@gmail.com>
 
-On Thu, Aug 22, 2024 at 03:47:37PM +0200, Philipp Stanner wrote:
-> pcim_iomap_regions() and pcim_iomap_table() have been deprecated by
-> the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+On Thu, Aug 22, 2024 at 11:36:55AM -0300, Hans Buss wrote:
+> From: Hans Buss <hans.buss@mailfence.com>
 > 
-> Replace these functions with the function pcim_iomap_region().
+> Insert spaces around '|' to adhre to Linux kernel coding style.
+> 
+> CHECK: spaces preferred around that '|' (ctx:VxV)
+> 
+> Signed-off-by: Hans Buss <hans.buss@mailfence.com>
+> 
+> ---
 
-...
+Thanks!
 
-> -	err = pcim_iomap_regions(pdev, 1 << PCI_PTP_BAR_NO, pci_name(pdev));
-> -	if (err)
-> +	clock->reg_base = pcim_iomap_region(pdev, PCI_PTP_BAR_NO, pci_name(pdev));
-> +	if (IS_ERR(clock->reg_base)) {
-> +		err = PTR_ERR(clock->reg_base);
->  		goto error_free;
-> -
-> -	clock->reg_base = pcim_iomap_table(pdev)[PCI_PTP_BAR_NO];
-> +	}
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Perhaps
-
-	clock->reg_base = pcim_iomap_region(pdev, PCI_PTP_BAR_NO, pci_name(pdev));
-	err = PTR_ERR_OR_ZERO(clock->reg_base);
-	if (err)
-		goto error_free;
-
-This will make your patch smaller and neater.
-
-P.S. Do you use --histogram diff algo when preparing patches?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+regards,
+dan carpenter
 
 
