@@ -1,166 +1,186 @@
-Return-Path: <linux-kernel+bounces-296967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C220595B13A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:14:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9773A95B13F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D51B0B20CFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B5B1F23983
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BB017A92F;
-	Thu, 22 Aug 2024 09:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA4417DE06;
+	Thu, 22 Aug 2024 09:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V7caCqqM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV1OBTU7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1061C6B5;
-	Thu, 22 Aug 2024 09:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256E01C6B5;
+	Thu, 22 Aug 2024 09:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724318040; cv=none; b=gEYr6d2NvHbSB3BKr3qEyjrzYnyLlIrsIMduWL7nNv2s6HqrNpjS6ePcFerH3PYeCRj63uhjX4laNg2navusq6Bt29K6+9sBCBwVfxwY7nfSiP89S5UTI9xPegmBmKa1JjQlwl/gEi3aPhRDSKZMyG7vbfCdJOt57JUeJyPJPEA=
+	t=1724318045; cv=none; b=TqdbAezVBoezdtye6TTAGcu+UlkaW3unrxwMutl/NXOP+Ky1BXkgNUvFWqAmJlyeUKqKcdyGVgpE84eU3QkWZwHI2sJX2vwRZ+5N5XYZncYJw50QsLmfzLOKWyn31Siiy37NsiqxN13BN3UzTN1td2YDoSko1OYAK0zwtlUKPTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724318040; c=relaxed/simple;
-	bh=rXJDC/w4XjnwLzyRijLVTTmhmJ4yQ3CslilWco2rv6k=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Tz45pqbFWFoIbndxt6qAWkPo9AjIiewm/wquwaUjLZH2rOPV62o9xmNQFLYehdYr0aMc9bnbZu8zZsKgUTw2bkBuGIKTQtfOFO71XM9+I2ROfmhqzLf9Qmtzf7lvZ5MQ0z/b/wJkxwcY+1jeBlfqA6zQOvZE1jILgWe1HtyknFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V7caCqqM; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724318038; x=1755854038;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=rXJDC/w4XjnwLzyRijLVTTmhmJ4yQ3CslilWco2rv6k=;
-  b=V7caCqqMxlkANDQ1xUYyiDNGL1ZDPvcH9xUar9m9yos+kgLomzZkrAAh
-   j9dO1TN0M0XPmiGK/V1Bmlk3bobFq33EllfvWKIPJHJmpPupl3WtRkKGP
-   2Z/Jnqs+KkZflaiP/woC7e83Vh76WiHkwASwpgh/a3NQbB/IBnAvJBqvK
-   NfrGtDzU9VWMZ4S08Rs9QyoYaPkmuIN16vXraqrUtZLA7kdVQdCuH/yxI
-   lATt4DaR/fhhNsT05TS5zzCT/eJnH/ae4VqmUztSmaPqUMMNLkpCI9eg0
-   o6fC7UkN4RB78cFI9uQT28z4tOygY6nIaVclqHD79GbiOLM/kDj1AYBYW
-   g==;
-X-CSE-ConnectionGUID: zoWFvNXYR06DQH0HXJOtuA==
-X-CSE-MsgGUID: Bw2F8JzyTaOpzIAjgna9dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33873346"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="33873346"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 02:13:52 -0700
-X-CSE-ConnectionGUID: S+E1D7ZnRjW/IPV7cEyJNQ==
-X-CSE-MsgGUID: RJkoOjyvRU+QjwiXZzaeEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="61702096"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.82])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 02:13:49 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 22 Aug 2024 12:13:45 +0300 (EEST)
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-cc: Matthew W Carlis <mattc@purestorage.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] PCI: Revert to the original speed after PCIe
- failed link retraining
-In-Reply-To: <alpine.DEB.2.21.2408091204580.61955@angie.orcam.me.uk>
-Message-ID: <58809d75-34c1-fc4f-3884-76301a8b5976@linux.intel.com>
-References: <alpine.DEB.2.21.2408091017050.61955@angie.orcam.me.uk> <alpine.DEB.2.21.2408091204580.61955@angie.orcam.me.uk>
+	s=arc-20240116; t=1724318045; c=relaxed/simple;
+	bh=3pePhm2enxScNpWzI2H1OmyMtOOZNL1UYS5tRffuIWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kgh3RRBmwWJUTY8Kd67ZITjx5jBwVu7vbC2pEwnzDQiClAxCoB9PMDdZhKl/XS3pWS8SbdXImshSXrwljFTPkoivND+nmMDFEuGph0lXJXGyTRSDa17eZDHLYIg3ollYAmhb6hFKNsG4rNdEFybZ3mF8lD3De3hCTfqX8syqWwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV1OBTU7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C71C4AF0C;
+	Thu, 22 Aug 2024 09:13:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724318044;
+	bh=3pePhm2enxScNpWzI2H1OmyMtOOZNL1UYS5tRffuIWs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qV1OBTU79pM2Hpfxa6ebghJmrVPv1R3kKngrwaBlLdJXdsuJNcUBjck35GNRjfWdn
+	 h5EeXt8+pIH99N80YPTdafro723rFXxaKkq66Aznh6XC0/xp+2qDEK1W1weN83H5U5
+	 U68lM5a2NRyB+dp5QoV2mLcEVZ1ZHyKNqFxrZP5dLnS/aQb3FvKq3L96hfyqjYM6KC
+	 CtjZZ7uGtH1cYc6GX2W/bp4bEhmbJspEQiVe8ZvVrT0mAuimVlKoWF1NHTnWBfL+Ic
+	 skKTHEGqkjU7wfhi6sqDIsZdL7afBB+rZaYrgfgJRrNK8s/yl+a9x48LAaUl0FYbMN
+	 Pr1JFRb+0cvLA==
+Message-ID: <0201ab87-5f65-4287-bda2-d170a90ae458@kernel.org>
+Date: Thu, 22 Aug 2024 11:13:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH bpf-next v4 2/2] selftests/bpf: Add mptcp subflow subtest
+Content-Language: en-GB
+To: Manu Bretelle <chantra@meta.com>, Martin KaFai Lau <martin.lau@linux.dev>
+Cc: "mptcp@lists.linux.dev" <mptcp@lists.linux.dev>,
+ Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@meta.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ "sdf@fomichev.me" <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ Daniel Xu <dxu@dxuuu.xyz>
+References: <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-0-2b4ca6994993@kernel.org>
+ <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-2-2b4ca6994993@kernel.org>
+ <2136317a-3e95-4993-b2fc-1f3b2c28dbdc@linux.dev>
+ <364C4C5B-27A0-4210-84E2-8CA9867E4127@meta.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <364C4C5B-27A0-4210-84E2-8CA9867E4127@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 9 Aug 2024, Maciej W. Rozycki wrote:
+Hi Manu,
 
-> When `pcie_failed_link_retrain' has failed to retrain the link by hand 
-> it leaves the link speed restricted to 2.5GT/s, which will then affect 
-> any device that has been plugged in later on, which may not suffer from 
-> the problem that caused the speed restriction to have been attempted.  
-> Consequently such a downstream device will suffer from an unnecessary 
-> communication throughput limitation and therefore performance loss.
+On 21/08/2024 22:32, Manu Bretelle wrote:
 > 
-> Remove the speed restriction then and revert the Link Control 2 register 
-> to its original state if link retraining with the speed restriction in 
-> place has failed.  Retrain the link again afterwards to remove any 
-> residual state, ignoring the result as it's supposed to fail anyway.
 > 
-> Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
-> Reported-by: Matthew W Carlis <mattc@purestorage.com>
-> Link: https://lore.kernel.org/r/20240806000659.30859-1-mattc@purestorage.com/
-> Link: https://lore.kernel.org/r/20240722193407.23255-1-mattc@purestorage.com/
-> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> Cc: stable@vger.kernel.org # v6.5+
-> ---
-> New change in v2.
-> ---
->  drivers/pci/quirks.c |   11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+>> On Aug 13, 2024, at 6:12 PM, Martin KaFai Lau <martin.lau@linux.dev> wrote:
+>>
+>>>
+>> On 8/5/24 2:52 AM, Matthieu Baerts (NGI0) wrote:
+>>> +static int endpoint_init(char *flags)
+>>> +{
+>>> + SYS(fail, "ip -net %s link add veth1 type veth peer name veth2", NS_TEST);
+>>> + SYS(fail, "ip -net %s addr add %s/24 dev veth1", NS_TEST, ADDR_1);
+>>> + SYS(fail, "ip -net %s link set dev veth1 up", NS_TEST);
+>>> + SYS(fail, "ip -net %s addr add %s/24 dev veth2", NS_TEST, ADDR_2);
+>>> + SYS(fail, "ip -net %s link set dev veth2 up", NS_TEST);
+>>> + if (SYS_NOFAIL("ip -net %s mptcp endpoint add %s %s", NS_TEST, ADDR_2, flags)) {
+>>> + printf("'ip mptcp' not supported, skip this test.\n");
+>>> + test__skip();
+>>
+>> It is always a skip now in bpf CI:
+>>
+>> #171/3   mptcp/subflow:SKIP
+>>
+>> This test is a useful addition for the bpf CI selftest.
+>>
+>> It can't catch regression if it is always a skip in bpf CI though.
+>>
+>> iproute2 needs to be updated (cc: Daniel Xu and Manu, the outdated iproute2 is something that came up multiple times).
+>>
+>> Not sure when the iproute2 can be updated. In the mean time, your v3 is pretty close to getting pm_nl_ctl compiled. Is there other blocker on this?
 > 
-> linux-pcie-failed-link-retrain-fail-unclamp.diff
-> Index: linux-macro/drivers/pci/quirks.c
-> ===================================================================
-> --- linux-macro.orig/drivers/pci/quirks.c
-> +++ linux-macro/drivers/pci/quirks.c
-> @@ -66,7 +66,7 @@
->   * apply this erratum workaround to any downstream ports as long as they
->   * support Link Active reporting and have the Link Control 2 register.
->   * Restrict the speed to 2.5GT/s then with the Target Link Speed field,
-> - * request a retrain and wait 200ms for the data link to go up.
-> + * request a retrain and check the result.
->   *
->   * If this turns out successful and we know by the Vendor:Device ID it is
->   * safe to do so, then lift the restriction, letting the devices negotiate
-> @@ -74,6 +74,10 @@
->   * firmware may have already arranged and lift it with ports that already
->   * report their data link being up.
->   *
-> + * Otherwise revert the speed to the original setting and request a retrain
-> + * again to remove any residual state, ignoring the result as it's supposed
-> + * to fail anyway.
-> + *
->   * Return TRUE if the link has been successfully retrained, otherwise FALSE.
->   */
->  bool pcie_failed_link_retrain(struct pci_dev *dev)
-> @@ -92,6 +96,8 @@ bool pcie_failed_link_retrain(struct pci
->  	pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
->  	if ((lnksta & (PCI_EXP_LNKSTA_LBMS | PCI_EXP_LNKSTA_DLLLA)) ==
->  	    PCI_EXP_LNKSTA_LBMS) {
-> +		u16 oldlnkctl2 = lnkctl2;
-> +
->  		pci_info(dev, "broken device, retraining non-functional downstream link at 2.5GT/s\n");
->  
->  		lnkctl2 &= ~PCI_EXP_LNKCTL2_TLS;
-> @@ -100,6 +106,9 @@ bool pcie_failed_link_retrain(struct pci
->  
->  		if (pcie_retrain_link(dev, false)) {
->  			pci_info(dev, "retraining failed\n");
-> +			pcie_capability_write_word(dev, PCI_EXP_LNKCTL2,
-> +						   oldlnkctl2);
-> +			pcie_retrain_link(dev, false);
+> I have updated runners to Ubuntu 24.04 which comes with:
+> root@1fdd5d75581b:/actions-runner# ip --json -V
+> ip utility, iproute2-6.1.0, libbpf 1.3.0
+> root@1fdd5d75581b:/actions-runner# ip mptcp help
+> Usage:  ip mptcp endpoint add ADDRESS [ dev NAME ] [ id ID ]
+>                                       [ port NR ] [ FLAG-LIST ]
+>         ip mptcp endpoint delete id ID [ ADDRESS ]
+>         ip mptcp endpoint change [ id ID ] [ ADDRESS ] [ port NR ] CHANGE-OPT
+>         ip mptcp endpoint show [ id ID ]
+>         ip mptcp endpoint flush
+>         ip mptcp limits set [ subflows NR ] [ add_addr_accepted NR ]
+>         ip mptcp limits show
+>         ip mptcp monitor
+> FLAG-LIST := [ FLAG-LIST ] FLAG
+> FLAG  := [ signal | subflow | backup | fullmesh ]
+> CHANGE-OPT := [ backup | nobackup | fullmesh | nofullmesh ]
+> 
+> Assuming I don’t need to revert back to old runners due to unrelated issue, you should now have `ip mptcp` available.
 
-Hi again all,
+Great, thank you for this update, that will ease the inclusion of this
+series!
 
-While rebasing the bandwidth controller patches, I revisited this line and 
-realized using false for use_lt is not optimal here.
+(That's a shame Ubuntu 24.04 didn't come with IPRoute 6.8, same version
+as their default kernel [1]... but that's not blocking us here)
 
-It would definitely seem better to use LT (true) in this case because it 
-likely results in much shorter wait. In hotplug cases w/o a peer device, 
-DLLLA will just make the wait last until the timeout, whereas LT would 
-short-circuit the training almost right away I think (mostly guessing with 
-limited knowledge about LTSSM). We are no longer even expecting the link 
-to come up at this point so using DLLLA seems illogical.
+[1] https://bugs.launchpad.net/ubuntu/+source/iproute2/+bug/2051672
 
-Do you agree?
-
+Cheers,
+Matt
 -- 
- i.
+Sponsored by the NGI0 Core fund.
 
 
