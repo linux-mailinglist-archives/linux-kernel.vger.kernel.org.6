@@ -1,98 +1,98 @@
-Return-Path: <linux-kernel+bounces-297626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8984995BBA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDE195BB97
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F21CB2AD1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8391F2175F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DBD1CCEFB;
-	Thu, 22 Aug 2024 16:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ACA1CDA26;
+	Thu, 22 Aug 2024 16:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egYjdcXN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F4F1D130F;
-	Thu, 22 Aug 2024 16:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9501CDA19;
+	Thu, 22 Aug 2024 16:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343442; cv=none; b=eGmDVmK0qBG/dNhaLdFHrPNw+fy8qNVq+IqsF19V8E2H1MYFK1szUQRYoksgxd7oMybYv5asgV1VxNJ1fRJzyZ5B0z3rBHUSMyYvwlWDGnrEdVa5T/DvZuq9/BgXNweWnlpsfUglpgsteaEH9cYh50hi8dZ4cYAtEuWF03QVHPg=
+	t=1724343444; cv=none; b=FvFJOdBO5t4E1pUTX0zAdv6/CgpkmbrJglZwk18Fh7UPxCsLxu3M8dvDjnX82rm3frFbeY1T4ZsIWK1/MccHpeSqzuFxeCRSoDFnpfjMFtf4IpJp9QVOnP+GLcW5ed49czLJDVIa4CcwnKLN7SIwYqWfueMXq8FAGC9TKDb0LpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343442; c=relaxed/simple;
-	bh=2lU/3y2goxQWS9PMYm6ZBCHEwiRDEHAAUriQ/kBXkJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPeua9azWlS6VQbVmFbSokqsJyevZ6unzWCto8bt4Bga2WhH5LAHrg2GNdZPJgugTabsKW7ZSOSlg7RqW62A5tzGTds8e8nbUm2oYd+AR0QF21JsE4auVTsHHftNPrDyQvRUTCkBGrAE1rhdwpa6TduYjLkatu28HYgFcPzwl28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A5ABC32782;
-	Thu, 22 Aug 2024 16:17:16 +0000 (UTC)
-Date: Thu, 22 Aug 2024 17:17:14 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 21/39] arm64/gcs: Ensure that new threads have a GCS
-Message-ID: <ZsdkikRi2wgBlODX@arm.com>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-21-41b81947ecb5@kernel.org>
+	s=arc-20240116; t=1724343444; c=relaxed/simple;
+	bh=fpHmEMDUJlobT6BnM8Q7a9kfIIAHfyAJxCshLGZLMLw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dVWCmhaTxfgGRAQ8qZzFiKFgvQUOmEHKETsfa9nUTpr0iYZ1Kt0Lf5vVMGDxtJi+6nNWz1tnaZRBj+GjwssxBJ3TIkcfI7/ilQ2BoYp9YJYHoinpBu0LXLCozBc9DMa2UIrj+/+cQ4oreexPWH6QIh+yZJiCNvmnAuIn0TezGmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egYjdcXN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF35C4AF0C;
+	Thu, 22 Aug 2024 16:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724343444;
+	bh=fpHmEMDUJlobT6BnM8Q7a9kfIIAHfyAJxCshLGZLMLw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=egYjdcXN/Y74/t8OqAxD+lWEiuJQEvq3UarlKicw2k2CVB2JRAg/bwbEjxmAEHrDc
+	 X8ohIORWJNVu+CGTmJeevhQcC4K2PGy0Y69TAaXYEnSG188ltUZaypH2rQXU8vFF2r
+	 SDxqfdnReq9jL5SJcOCAAjniMPxu1aPq5TQDG1/B2wwo1s5AEAQVkosCnTgCYi9RAA
+	 uQs5CPHzH6wtp3Xa5M+6WTmaVgm7niUypliPgK4yuUAvpVvAGYlpBw1giDxk/4faI9
+	 b097XROc/aCdXdCObE9zobOjUUZ/sqEuXe1YFtr0oSLn8LfpWMa1+zq6sg2xq9LIZn
+	 V/BwUzlIlCw+Q==
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org, Wu Bo <bo.wu@vivo.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Xingyu Wu <xingyu.wu@starfivetech.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ linux-sound@vger.kernel.org, Wu Bo <wubo.oduw@gmail.com>
+In-Reply-To: <20240822095249.1642713-1-bo.wu@vivo.com>
+References: <20240822095249.1642713-1-bo.wu@vivo.com>
+Subject: Re: [PATCH] ASoC: dwc: change to use devm_clk_get_enabled()
+ helpers
+Message-Id: <172434344101.724373.7008343292226699330.b4-ty@kernel.org>
+Date: Thu, 22 Aug 2024 17:17:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822-arm64-gcs-v11-21-41b81947ecb5@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Thu, Aug 22, 2024 at 02:15:24AM +0100, Mark Brown wrote:
-> @@ -512,10 +538,16 @@ static void gcs_thread_switch(struct task_struct *next)
->  		gcs_set_el0_mode(next);
->  
->  	/*
-> -	 * Ensure that GCS changes are observable by/from other PEs in
-> -	 * case of migration.
-> +	 * Ensure that GCS memory effects of the 'prev' thread are
-> +	 * ordered before other memory accesses with release semantics
-> +	 * (or preceded by a DMB) on the current PE. In addition, any
-> +	 * memory accesses with acquire semantics (or succeeded by a
-> +	 * DMB) are ordered before GCS memory effects of the 'next'
-> +	 * thread. This will ensure that the GCS memory effects are
-> +	 * visible to other PEs in case of migration.
->  	 */
-> -	gcsb_dsync();
-> +	if (task_gcs_el0_enabled(current) || task_gcs_el0_enabled(next))
-> +		gcsb_dsync();
->  }
+On Thu, 22 Aug 2024 03:52:49 -0600, Wu Bo wrote:
+> Make the code cleaner and avoid call clk_disable_unprepare()
+> 
+> 
 
-Ah, the comment turned up in this patch. It looks fine.
+Applied to
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: dwc: change to use devm_clk_get_enabled() helpers
+      commit: 23618f5b630a1dde8c465150ddb2fd308b686b08
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
