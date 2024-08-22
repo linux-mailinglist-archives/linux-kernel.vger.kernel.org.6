@@ -1,137 +1,157 @@
-Return-Path: <linux-kernel+bounces-297448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB12C95B863
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:30:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B4095B87A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 613871F259DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:30:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71E94B2ABB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B81D1CBEA2;
-	Thu, 22 Aug 2024 14:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1061CBE86;
+	Thu, 22 Aug 2024 14:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPnrX6dw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="VT3u47Yj"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDA71CB135
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72F442A9E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337000; cv=none; b=fSWjm6Yjsl+sCTQnR4/wAvHOYXmecpqJwTcttMSmFXDryYOTqWWzGieaQKUBDUidJzdYRF0epSSK1qKjzkuzqiNrMudrOZIeRHKSGZr+wlmo19nbvkcykiKUIwxo4NquXGB7MHGWv0NyhPLKF7iukkOE0Qvb4RtubNXdspBBIhM=
+	t=1724337025; cv=none; b=WeD6kJuNt3ISIqgBS67OUwccSjj8xvAmHJliRpFqkvXOsDUnarSG5M80Lw3BTkmnRck8FxRWAZG46jbpiRB8c8yr62iSZK6t8tP7QypFRzck845GdeDVFDOLmZm/ANPlKlxPWxdCB/NBLSXcewbqW0sPjGXoTe9vYlZguB/44I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337000; c=relaxed/simple;
-	bh=EIbyKKjLdJJZGFxhalx33/RF7GG9+9/lkUn6G18mVOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T5yACPArDTvfIdRU22ROnUKA1PHlMAIrbbyRmUNtgU9L05PdFLWdvWG0KKUqAewh/v5fcYPi0t958qZH23q3++GMhyxC67rT40bA/QDpg0EL+kUH1++yk9G+zDJSCdKJxH1KlgJdpYY3dG2wxoOUvQChC1I4MaA0vq6HT5sPLoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPnrX6dw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F0D7C4AF0C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724337000;
-	bh=EIbyKKjLdJJZGFxhalx33/RF7GG9+9/lkUn6G18mVOg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TPnrX6dw3L+LDovQuv/hS4rw5M/MIjwr32NwoybJluXqQXmtVLUYk9f0nBMvk9zyE
-	 rbw2c5+E1noh9ol3NxemjLQ8TZxVkF+TUat5RZJJ6ui3WNh8eMmX4lCkpAW2yx51Xw
-	 gCtgsIuxHHVj+BpuhM1YUetZAvtz/M5Aw4cXXByE/1yKkIo1CuzxZXL0vcf0TZ7/+I
-	 cLbdNlU2xRvZtv2s4vTv8LyzVB5Y5fdDRTv6QJ6BmuBjNh1vF4zn4YaA+rzjqrTBHW
-	 kXCuhNo9D6wcPd3A4WNJiS7njYd74qHBWQZU9wfKeTI4/Dc5XbzexarjD3sp3obdce
-	 fzOhLoi8l9YBw==
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd967d8234so575523a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:30:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWdbijVms/nx53VT3ehh6nMRC18+mvnYb2acp7MdxpNIujKWjBYvQf54Tl48poua6m1A+3eEW87odba/XE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzWG8GIlsvN9w1P5zzkHhZpDmnWNCIgbT1N+x7QlyhrXcK2qsb
-	KXsVVEOS9kkkFvsB8ZBfSezIiCARO9RoSh/BlAPhzEHbOlNHCexVFPixFqHo9/OlQyOW5L2cNnu
-	ekmSGI2xZtD5aI8DHd8wrQOXM2g==
-X-Google-Smtp-Source: AGHT+IFNd1a5Jn4I/J6gdxNiBFWoik4UOxFcPN5z5dO1KYVQfJeBHZU2AH9pzjwMOeJbBICz51dLQG3eoiE91A8UOhs=
-X-Received: by 2002:a17:90b:104b:b0:2d3:c976:dd80 with SMTP id
- 98e67ed59e1d1-2d5ea2ca713mr6422970a91.39.1724336999689; Thu, 22 Aug 2024
- 07:29:59 -0700 (PDT)
+	s=arc-20240116; t=1724337025; c=relaxed/simple;
+	bh=jn506kOABGogquftoPFGSqZkTv7WWTTZWicv78hgAO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxstDH2l/9MxVk1cofy8rAiGP/5UhuS0TiHPzgEE1Bg67BJOABovPRN+9IL8ASZ4uiFzCxfMafIJlqldikms1eSL4tlJs34WKd9Ud4vduBB5iY89wWDcsgrK5gA/N06pX2/IKib3TRtudSMeywLl/ybdlTtaXoIMG8dNUA7GLPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=VT3u47Yj; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-533462b9428so1493968e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724337022; x=1724941822; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0AOgkHsmxrrYPyGQ/4+OtViWpYvO8BCZysRgvY+GiaY=;
+        b=VT3u47YjR9IGyU/jMgtDEW/hHHCJ/rTIAc07//ewslcvK5Sg+rcgMcNnN4sPJNHpYn
+         DcoqBv1/Tp5RTNFS52dE+Z7upK8swQGFlYY+8k8vTzYQofibOh3BcfYPkmmWGJImJLtm
+         WHfc920OclE491CdLCKBTDS7MpdpF5QKGYfhnk1ZYhc5zrQEBiGjfe2SsXbq4DaC5UBX
+         VlIwPWL6MP5zc/q4oCJQDXfyYf9JTCWYD32qYPQZYvRZFKPTCgduHVIedoUV5/x3rhnb
+         69KkTdirdiZ7sI49DiEE6vvVAbG1WI+V1GuKhJ2zA+BDankuTBY4GVNthdmDt8r4iBnb
+         jntg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724337022; x=1724941822;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0AOgkHsmxrrYPyGQ/4+OtViWpYvO8BCZysRgvY+GiaY=;
+        b=sEZRaZlFS2bwMY66IdhGzEQ+7DCLDZY256WUI8yxNW/kHoZyQP6skdbjtae2pNxLoZ
+         8beKQOoQQijqNcz4+dxz83SZw7S/V6n44RRMBG5h6hszH4qRVvMg5kuBYBciH5y5X9jh
+         VqloeqAWp5ciT7PoYnon6w6pL3Ds+24+wTObgC0l2U44IXJOLfOCVN+7KvZy99NIyUy3
+         PpmpNdzcOqf8qaS8o8YoZCBYP8fyPNskSC6zcHou8rH69K8vIRJ/I47VuKCovP8yBFEi
+         UfNeD7IDzEC/pvLG9NiBPEB/iRNtniZEKPjw/H3nLdspdsDZv1PZX50yVS0JZ3RFiray
+         pP5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXB/kQheqF5OntGNd3SzVC1fvdEchzHFAZVCjWq21c6wl20iKj056dJ8n0qkQ4ySLdeLvXPjjJy0sKsjaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHNGBKjRiBS0/RuMI9dyMP7lk4k7GbgzmIWJJhda5wSZFNBsjB
+	f/DSkS5Pcn6AKPD9DbtASMR787Z0l6JH7pPP+n4xS4j6LTcP/VcBfp4FBhHwUio=
+X-Google-Smtp-Source: AGHT+IGSZcPc7HtL1sG19hUCiCBTwxU/ErZjo9Q2ro/3Je5UYCF2HgNJnsmS00Hm02ZgfSnuVdIs3g==
+X-Received: by 2002:a05:6512:3c89:b0:52e:d0f8:2d43 with SMTP id 2adb3069b0e04-5334fbe593emr1904871e87.17.1724337021802;
+        Thu, 22 Aug 2024 07:30:21 -0700 (PDT)
+Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484b29sm126444466b.162.2024.08.22.07.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 07:30:21 -0700 (PDT)
+Date: Thu, 22 Aug 2024 16:30:19 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Geethasowjanya Akula <gakula@marvell.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"edumazet@google.com" <edumazet@google.com>,
+	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
+	Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+	Hariprasad Kelam <hkelam@marvell.com>
+Subject: Re: [EXTERNAL] Re: [net-next PATCH v10 01/11] octeontx2-pf:
+ Refactoring RVU driver
+Message-ID: <ZsdLe-FY3bzzgU9v@nanopsycho.orion>
+References: <20240805131815.7588-1-gakula@marvell.com>
+ <20240805131815.7588-2-gakula@marvell.com>
+ <ZrTnK78ITIGU-7qj@nanopsycho.orion>
+ <CH0PR18MB4339720BC03E2E4E6FAC0251CD812@CH0PR18MB4339.namprd18.prod.outlook.com>
+ <Zr9d18M31WsT1mgf@nanopsycho.orion>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731201407.1838385-1-robh@kernel.org>
-In-Reply-To: <20240731201407.1838385-1-robh@kernel.org>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Thu, 22 Aug 2024 22:30:13 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_-DT--eLNMzLd0ftoo6e74yV-cfta0C8nB+5k2hifd3dg@mail.gmail.com>
-Message-ID: <CAAOTY_-DT--eLNMzLd0ftoo6e74yV-cfta0C8nB+5k2hifd3dg@mail.gmail.com>
-Subject: Re: [PATCH] drm: mediatek: Drop unnecessary check for property presence
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr9d18M31WsT1mgf@nanopsycho.orion>
 
-Hi, Rob:
+Fri, Aug 16, 2024 at 04:10:31PM CEST, jiri@resnulli.us wrote:
+>Fri, Aug 16, 2024 at 03:36:41PM CEST, gakula@marvell.com wrote:
+>>
+>>
+>>>-----Original Message-----
+>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>Sent: Thursday, August 8, 2024 9:12 PM
+>>>To: Geethasowjanya Akula <gakula@marvell.com>
+>>>Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; kuba@kernel.org;
+>>>davem@davemloft.net; pabeni@redhat.com; edumazet@google.com; Sunil
+>>>Kovvuri Goutham <sgoutham@marvell.com>; Subbaraya Sundeep Bhatta
+>>><sbhatta@marvell.com>; Hariprasad Kelam <hkelam@marvell.com>
+>>>Subject: [EXTERNAL] Re: [net-next PATCH v10 01/11] octeontx2-pf: Refactoring
+>>>RVU driver
+>>>
+>>>Mon, Aug 05, 2024 at 03:18:05PM CEST, gakula@marvell.com wrote:
+>>>>Refactoring and export list of shared functions such that they can be
+>>>>used by both RVU NIC and representor driver.
+>>>>
+>>>>Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+>>>>Reviewed-by: Simon Horman <horms@kernel.org>
+>>>>---
+>>>> .../ethernet/marvell/octeontx2/af/common.h    |   2 +
+>>>> .../net/ethernet/marvell/octeontx2/af/mbox.h  |   2 +
+>>>> .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
+>>>> .../net/ethernet/marvell/octeontx2/af/rvu.c   |  11 +
+>>>> .../net/ethernet/marvell/octeontx2/af/rvu.h   |   1 +
+>>>> .../marvell/octeontx2/af/rvu_debugfs.c        |  27 --
+>>>> .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  47 ++--
+>>>> .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
+>>>> .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   4 +
+>>>> .../marvell/octeontx2/af/rvu_struct.h         |  26 ++
+>>>> .../marvell/octeontx2/af/rvu_switch.c         |   2 +-
+>>>> .../marvell/octeontx2/nic/otx2_common.c       |   6 +-
+>>>> .../marvell/octeontx2/nic/otx2_common.h       |  43 ++--
+>>>> .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 240 +++++++++++-------
+>>>> .../marvell/octeontx2/nic/otx2_txrx.c         |  17 +-
+>>>> .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
+>>>> .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |   7 +-
+>>>> 17 files changed, 266 insertions(+), 178 deletions(-)
+>>>
+>>>How can anyone review this?
+>>>
+>>>If you need to refactor the code in preparation for a feature, you can do in in a
+>>>separate patchset sent before the feature appears. This patch should be split
+>>>into X patches. One logical change per patch.
+>>If these changes are moved into a separate patchset.  How can someone understand and review 
+>>them without knowing where they get reused.
+>
+>Describe it then. No problem.
 
-Rob Herring (Arm) <robh@kernel.org> =E6=96=BC 2024=E5=B9=B48=E6=9C=881=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=884:14=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> of_property_read_u32() returns -EINVAL if a property is not present, so
-> the preceeding check for presence with of_find_property() can be
-> dropped. Really, what the errno is shouldn't matter. Either the property
-> can be read and used or it can't and is ignored.
->
-> This is part of a larger effort to remove callers of of_find_property()
-> and similar functions. of_find_property() leaks the DT struct property
-> and data pointers which is a problem for dynamically allocated nodes
-> which may be freed.
+I think you misunderstood.
 
-Applied to mediatek-drm-next [1], thanks.
+You should describe the motivation for the refactor. Do the refactor in
+a separate patchset, one logical change per patch. In the cover letter
+tell what you do and why. Tell it is a preparation for follow-up
+patchset that does X. Simple as that.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-next
-
-Regards,
-Chun-Kuang.
-
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/m=
-ediatek/mtk_disp_rdma.c
-> index 634bbba5d43f..07243f372260 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> @@ -341,14 +341,11 @@ static int mtk_disp_rdma_probe(struct platform_devi=
-ce *pdev)
->                 dev_dbg(dev, "get mediatek,gce-client-reg fail!\n");
->  #endif
->
-> -       if (of_find_property(dev->of_node, "mediatek,rdma-fifo-size", &re=
-t)) {
-> -               ret =3D of_property_read_u32(dev->of_node,
-> -                                          "mediatek,rdma-fifo-size",
-> -                                          &priv->fifo_size);
-> -               if (ret)
-> -                       return dev_err_probe(dev, ret,
-> -                                            "Failed to get rdma fifo siz=
-e\n");
-> -       }
-> +       ret =3D of_property_read_u32(dev->of_node,
-> +                                  "mediatek,rdma-fifo-size",
-> +                                  &priv->fifo_size);
-> +       if (ret && (ret !=3D -EINVAL))
-> +               return dev_err_probe(dev, ret, "Failed to get rdma fifo s=
-ize\n");
->
->         /* Disable and clear pending interrupts */
->         writel(0x0, priv->regs + DISP_REG_RDMA_INT_ENABLE);
-> --
-> 2.43.0
 >
 
