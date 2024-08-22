@@ -1,157 +1,175 @@
-Return-Path: <linux-kernel+bounces-296571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D2295AC46
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:54:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE13E95AC48
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66BCF1C21543
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:54:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD0BB210DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0A13611B;
-	Thu, 22 Aug 2024 03:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CHpwZIFk"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946963B192;
+	Thu, 22 Aug 2024 03:54:53 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8202C208A7
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F0C2E64B;
+	Thu, 22 Aug 2024 03:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724298889; cv=none; b=oc5jnlzS18gUyqwtRlqfEmeIUdKkSIwcrONTnkH6E2UQVisAbX5EeX63MqAXkn/fSWsORceX8XLw91uhYyNkIP4Oi+oMmze6cRu2QUpB3lME5izBS1dW3EF5XTWtrk1R/NUNJHQnh9gTXi9A/fCv/sRgvPC039nF2V0RN7MziFE=
+	t=1724298893; cv=none; b=dPDkBmgRxvMtirVOrgru9ja9HWijB8DKD9tkHr3Ck0nN7DPjE2PKQ3NBYTnez3mx3hqoQ1Ar8rLe2m4w0xM4jJPIZ4Ep+hDKlxEUj4C2cbeqQVqRAGHk6ADdMwmSlN4Dqcq1dpaMhpIqzlMgx0DHbeKL2vpw7zw7OeF4afDGL1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724298889; c=relaxed/simple;
-	bh=T/F5YWbBsHJ/z0Iuh2yAc4urVrY6y59yzaKigq0sOvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZ5nplvtn9Nq5R6qhuMTeEiZBDuYo2ZUD2yBG8+Rio9pRi6T3fIINv3POcE9i9ozQlFdGHilOxpA0tQl98VQIbHQYu2LsTmGY0EZNtJ4SQ7FfHd3bw+s2QrjpsnksEYya2AZUraWj7fZ+8z+0lT0AR/lKePZiVElbpyUkXf0dgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CHpwZIFk; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so256280b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 20:54:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1724298886; x=1724903686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3+51o8YiuRVZF11J4eUjPb8uV0dcc874YeCBbU5SJ2E=;
-        b=CHpwZIFk7PKPPrusbDFktlICkdUajUnnYEPKiqgT33nxNZbcY6Unn32lxf1eaHfrB7
-         s5XjLAPLVXtdVXq5t5SwKqEfmHD2W59cqNgIl50Hj3IvQxWp7kZ6ip9T5F0QbQnDfaJO
-         VUUapfPMZ+VebD8eHQ1twkw13Eh2t86zUkx9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724298886; x=1724903686;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3+51o8YiuRVZF11J4eUjPb8uV0dcc874YeCBbU5SJ2E=;
-        b=ar5cmgMruMXkk8UJ5rSR2CJw11L2Qy4ceW1YA24gaGd1oJVzPrlsyEmGsvdKiayzUJ
-         k2rbq8/Xo6IHon+Ge9iE+D6MeWNNtLU2NeCrCCwTwUeUKxQTePWA+EsF6KOn0R8E6MVQ
-         prh/nxTjOnd4GuyW4B9cjAVbza8rOhXzpnMgNAE99yr5fQVcjYnj74FF1KiTyeX7+RTa
-         XBzpLpYHxHhfLQ/0ulR9H1j5To54ao4svjtiTxuGfgdh8ehM4xqvHI+ALXtLFNSgy6kT
-         8LWcEF7SRH17Cm9hW1E4mElG/+b8z+7vMbTCGERFI6vyXAnW1UTm6heJMD5OYMl1RAYC
-         zMpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1p2jYAoGTwtthE/n9+dPrE0bg9ZJ78Fi2R0iei1HGqnFqBE6lnwmbMq55ifxLDSpF9iOn2n9UBOTaksE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu88ewENoOe+6i1SghmKyO7xpxBpgYUvEkhRH65QlrJT68nBGM
-	wKRAZRuJiSK585Zd+6bmUt+KGxoExuJ66rKMIJhc6CR31aeQLyQMQalYOq8XqrU=
-X-Google-Smtp-Source: AGHT+IEF5mjPTWIL5LkSLOikrrXvOOmbWUvTcH0b28Ep5CS8oSuo0W0v93DNqIuCxV5/NJGwDW5vvg==
-X-Received: by 2002:a05:6a21:920b:b0:1c6:fbc8:670d with SMTP id adf61e73a8af0-1cada148a32mr5136891637.43.1724298885562;
-        Wed, 21 Aug 2024 20:54:45 -0700 (PDT)
-Received: from [172.20.0.208] ([218.188.70.188])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385bdc5e0sm3324215ad.271.2024.08.21.20.54.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 20:54:44 -0700 (PDT)
-Message-ID: <3901c521-be69-4824-a571-9182b9af02b6@linuxfoundation.org>
-Date: Wed, 21 Aug 2024 21:54:42 -0600
+	s=arc-20240116; t=1724298893; c=relaxed/simple;
+	bh=mKGxxLXRjwIPYRp9onC2QgTcqbbV/WwUgqAhUr35P7I=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=SF1jWQaC+NreDYRerwAoTn+KfyD7+Qsvj+S6sIgVuFFD6B+ClFVOV4tkySE73m/t4V6sKSUdHuPu0osmkD6G0YuQTTzv9YvbfESw1qyoA9yXylPUjeOIT3HFU6jWDuQED8JEaHLCuW7nwFwjKB+xH9RpP1FuUceepHdf4u8qqjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wq8Tm2W6Cz4f3jsx;
+	Thu, 22 Aug 2024 11:54:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 0E27D1A018D;
+	Thu, 22 Aug 2024 11:54:46 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAXPoSEtsZmGZl6CQ--.44088S3;
+	Thu, 22 Aug 2024 11:54:45 +0800 (CST)
+Subject: Re: [PATCH 2/4] block: fix ordering between checking BLK_MQ_S_STOPPED
+ and adding requests to hctx->dispatch
+To: Muchun Song <songmuchun@bytedance.com>, Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, muchun.song@linux.dev,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240811101921.4031-1-songmuchun@bytedance.com>
+ <20240811101921.4031-3-songmuchun@bytedance.com> <ZsKtllxojkTe3mpY@fedora>
+ <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <786a8d94-884c-8a31-151d-fdc82e1a0a63@huaweicloud.com>
+Date: Thu, 22 Aug 2024 11:54:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ftrace/selftest: Test combination of function_graph
- tracer and function profiler
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240821150903.05c6cf96@gandalf.local.home>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240821150903.05c6cf96@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXPoSEtsZmGZl6CQ--.44088S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw4fXFW8Cr1UGw1DZr15twb_yoW5tw15pa
+	1kta1Yyw4Dt3yvqw47Zr4xGw1Yy39IkrW7CryfG343Wwn8K34vvr40k3WY9FyIkrs5Cr4x
+	tw4UXrZ7uan5ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j
+	6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
+	hLUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 8/21/24 13:09, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Masami reported a bug when running function graph tracing then the
-> function profiler. The following commands would cause a kernel crash:
-> 
->    # cd /sys/kernel/tracing/
->    # echo function_graph > current_tracer
->    # echo 1 > function_profile_enabled
-> 
-> In that order. Create a test to test this two to make sure this does not
-> come back as a regression.
-> 
-> Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->   .../ftrace/test.d/ftrace/fgraph-profiler.tc   | 30 +++++++++++++++++++
->   1 file changed, 30 insertions(+)
->   create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-> new file mode 100644
-> index 000000000000..62d44a1395da
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-> @@ -0,0 +1,30 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: ftrace - function profiler with function graph tracing
-> +# requires: function_profile_enabled set_ftrace_filter function_graph:tracer
-> +
-> +# The function graph tracer can now be run along side of the function
-> +# profiler. But there was a bug that caused the combination of the two
-> +# to crash. It also required the function graph tracer to be started
-> +# first.
-> +#
-> +# This test triggers that bug
-> +#
-> +# We need function_graph and profiling to to run this test
-> +
-> +fail() { # mesg
-> +    echo $1
-> +    exit_fail
-> +}
-> +
-> +echo "Enabling function graph tracer:"
-> +echo function_graph > current_tracer
-> +echo "enable profiler"
-> +
-> +# Older kernels do not allow function_profile to be enabled with
-> +# function graph tracer. If the below fails, mark it as unsupported
-> +echo 1 > function_profile_enabled || exit_unsupported
-> +
-> +sleep 1
+Hi,
 
-Any specific reason for this sleep 1 - can you add a comment on top?
-> +
-> +exit 0
+在 2024/08/19 11:49, Muchun Song 写道:
+> On Mon, Aug 19, 2024 at 10:28 AM Ming Lei <ming.lei@redhat.com> wrote:
+>>
+>> Hi Muchun,
+>>
+>> On Sun, Aug 11, 2024 at 06:19:19PM +0800, Muchun Song wrote:
+>>> Supposing the following scenario with a virtio_blk driver.
+>>>
+>>> CPU0                                                                CPU1
+>>>
+>>> blk_mq_try_issue_directly()
+>>>      __blk_mq_issue_directly()
+>>>          q->mq_ops->queue_rq()
+>>>              virtio_queue_rq()
+>>>                  blk_mq_stop_hw_queue()
+>>>                                                                      virtblk_done()
+>>>      blk_mq_request_bypass_insert()                                      blk_mq_start_stopped_hw_queues()
+>>>          /* Add IO request to dispatch list */   1) store                    blk_mq_start_stopped_hw_queue()
+>>>                                                                                  clear_bit(BLK_MQ_S_STOPPED)                 3) store
+>>>      blk_mq_run_hw_queue()                                                       blk_mq_run_hw_queue()
+>>>          if (!blk_mq_hctx_has_pending())                                             if (!blk_mq_hctx_has_pending())         4) load
+>>>              return                                                                      return
+>>>          blk_mq_sched_dispatch_requests()                                            blk_mq_sched_dispatch_requests()
+>>>              if (blk_mq_hctx_stopped())          2) load                                 if (blk_mq_hctx_stopped())
+>>>                  return                                                                      return
+>>>              __blk_mq_sched_dispatch_requests()                                          __blk_mq_sched_dispatch_requests()
+>>>
+>>> The full memory barrier should be inserted between 1) and 2), as well as between
+>>> 3) and 4) to make sure that either CPU0 sees BLK_MQ_S_STOPPED is cleared or CPU1
+>>> sees dispatch list or setting of bitmap of software queue. Otherwise, either CPU
+>>> will not re-run the hardware queue causing starvation.
+>>
+>> Yeah, it is one kind of race which is triggered when adding request into
+>> ->dispatch list after returning STS_RESOURCE. We were troubled by lots of
+>> such kind of race.
+> 
+> Yes. I saw the similar fix for BLK_MQ_S_SCHED_RESTART.
+> 
+>>
+>> stopping queue is used in very less drivers, and its only purpose should
+>> be for throttling hw queue in case that low level queue is busy. There seems
+>> more uses of blk_mq_stop_hw_queues(), but most of them should be replaced
+>> with blk_mq_quiesce_queue().
+>>
+>> IMO, fixing this kind of issue via memory barrier is too tricky to
+>> maintain cause WRITE/READ dependency is very hard to follow. I'd suggest to
+>> make memory barrier solution as the last resort, and we can try to figure
+>> out other easier & more reliable way first.
+> 
+> I do agree it is hard to maintain the dependencies in the future. We should
+> propose an easy-maintainable solution. But I thought it is a long-term issue
+> throughout different stable linux distros. Adding a mb is the easy way to fix
+> the problem (the code footprint is really small), so it will be very
+> easy for others
+> to backport those bug fixes to different stable linux distros. Therefore, mb
+> should be an interim solution. Then, we could improve it based on the solution
+> you've proposed below. What do you think?
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+I'll agree with Ming, let's figure out a better fix first. Easy to 
+backport to stables is not first consideration.
+> 
+> Thanks,
+> Muchun.
+> 
+>>
+>> One idea I thought of is to call blk_mq_request_bypass_insert()(or rename
+>> & export it) before calling blk_mq_stop_hw_queue() in driver, then
+>> return new status code STS_STOP_DISPATCH for notifying blk-mq to stop
+>> dispatch simply.
 
-Let me know if you would like v2 for this to be taken through my tree.
+New status code look good to me, however, I wonder can we just remove
+the problematic blk_mq_stop_hw_queue(), and replace it by handling the
+new status from block layer?
 
-thanks,
--- Shuah
+- Passing the new status to blk_mq_run_dispatch_ops, and quiesce with
+the new status, if no request is inflight, unquiesce immediately;
+- unquiesce is any IO is done afterwards;
+
+Thanks,
+Kuai
+
+>>
+>>
+>> thanks,
+>> Ming
+>>
+> 
+> .
+> 
+
 
