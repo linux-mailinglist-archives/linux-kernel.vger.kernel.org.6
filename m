@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-297989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CAB95C014
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:09:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0665E95C017
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A92285C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:09:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D6A7B2369A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDB21D1728;
-	Thu, 22 Aug 2024 21:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4031E1D173C;
+	Thu, 22 Aug 2024 21:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1wVX/nH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBhfFNMJ"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4971C9ECE;
-	Thu, 22 Aug 2024 21:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007BAA933;
+	Thu, 22 Aug 2024 21:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724360982; cv=none; b=GDjpcL090jLVy1ZfXJ0BoKyPO2mgxEQhoOurSlsD8MTqGli+8XIc6gsoVQOgK93q4CFTYYOqw/+OUfdLa8VgkXQkK9WLSXkE1Hz4di2Ft3b2cnZjxuEV06E+t36AYjYId73xjBqadP0aNbsgEv4R/fDR3ffHDMOfFlIKgtmH9kM=
+	t=1724361032; cv=none; b=GSMEKRUMlQrDgdQYmPjLGVyYs6wt3AcBmNH4zFlWIPjqJ5my8Z/AGzM3XQgPkzJBOeQoQzx6hr8+Wu8bLmISbNosSwquwAQCPpY290taV1uvpMY9JTMQ7xXbOzLDHFT1h264OoCsi5HEHeA8kNtVgXeHrApUWDfmSGMBTkb8oK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724360982; c=relaxed/simple;
-	bh=8iBDpoxfMgDUeOxD63UGaKxo3EyWxDxolFmv468LCfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R5Gz/zaaxTfmQhjMcHDikUZXTjxPToZXJiNiW/fyTltCPBROf+F7IIUPPTbbEKGaSabtL2/aZNhAteXvv5/fzvHDIOnC67liA5IBC0LqYA3/gqGeH02+OAJhQysJY9VtrDnFITdndpubR+3mxQliIVWDaLybe6Gnqu+FFGDzDrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1wVX/nH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1088BC32782;
-	Thu, 22 Aug 2024 21:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724360981;
-	bh=8iBDpoxfMgDUeOxD63UGaKxo3EyWxDxolFmv468LCfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q1wVX/nHs2zAdvWu+r9zFRP/apRq/b/+ryhzSm1No8U7QdXqE7tGoggTrjvSyu8DO
-	 ei0o7FtzqdyX41lNzOQa2TeoyyfLJ/dbNFwtATXggZNQfqCQiSoETkJ4XcppK7Q6Pw
-	 4FBLdqn4f00J4jEJ9Ee6CIty+oWwT9lLxvMJGug5LWn0PGKSYx/4xkiYUmMoF3aXKr
-	 Pg32345iyScXOHkgSYFjuwUIAKBgIOl4SD5Fbbo7WRxy46uTLX6mB0DBWNPZ9w6CaI
-	 Rz1nZDWMN+kyDx/PS1Fsr7q1JbrtnU+8ClZ+cej6Ib2w8i+/Q6e9KWaVgWHQ6kVTZb
-	 xBb4zDHZ2kvMw==
-Date: Thu, 22 Aug 2024 18:09:38 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] perf trace: Add
- trace__bpf_sys_enter_beauty_map() to prepare for fetching data in BPF
-Message-ID: <ZsepEpr-hGXkI8Vw@x1>
-References: <20240815013626.935097-1-howardchu95@gmail.com>
- <20240815013626.935097-4-howardchu95@gmail.com>
- <Zsd6MgrCs0ybQ9EW@x1>
- <Zsd7Ep6H24Qq-h5F@x1>
+	s=arc-20240116; t=1724361032; c=relaxed/simple;
+	bh=r06AXZGbjR2lnzyRwYDix3F99b52eEoIvUYsvtXMWyA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Sq4qVXg4oRL7iPjD8kHYiSSiB1ubrskSP9Kq9x/sT4iuyT7c2SEbq373v78fbsHg5I2ECnbZ/J5lNXH9EYQjgWEMpmTIR/DXCCQmdHAXC/S/vimW2RBYtJQD7HU2Zqo+BPHsoSyQYV/AQyw2hY7Nr5ueBBij5aTeD/NTWGRbDnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBhfFNMJ; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5becd359800so1620434a12.0;
+        Thu, 22 Aug 2024 14:10:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724361029; x=1724965829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UKG7y3+TWKlqo/GtL3gWRJVbZ7YjZ1zLepbMo7yV13c=;
+        b=nBhfFNMJYtUhwlfOFr9noo/0wFgNJvrIoJ1DIULbnzWPhsDO47oGuigrxHAN+IkFWw
+         nQc8y6sbciTyd0iLhGN4Hyn/Ellddw2r6MFIEY5jKaNhvs14LzvR0r6X2Vn3+kRMmt4t
+         4jFGoxox6V+5mauuXrPg7GDg2u10yzPEIS3vB2XNL+GTpI8onr+hllRz2y1F4z0wVy+2
+         1VUau5MjmJRn9tonxTbOe+Vw3o10Iv+SkqcRZmzDob13Btxc1Hbx8WrHGfsxf0TX+ywi
+         Vt5jmarVpEuPc7xwYoXSsh9ViFm64H4km3BvX9i3q6gRRD2hJZUo/bN3AfFhfq/WiUQ4
+         +AWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724361029; x=1724965829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UKG7y3+TWKlqo/GtL3gWRJVbZ7YjZ1zLepbMo7yV13c=;
+        b=cqCMG58i6MX+4f+x3sM0nJhJHcnJrbjG95GE1AFLrPRKmtanpVoOoVwFpdAyQfa/qh
+         rDsY5+BTClyIYnxEpMOEoyVkuqxqXoW39Ef8unhJP1ZrHDyL2AV2FVsLoIKs3ZCAxXFp
+         wJna3y3Utek7FQowhwjTIT65Hl9IH5b0hH+m6QhNbI0m+zKbm3QoJiqSm3Qd15NJJnS4
+         L2BA/34IA1K+Xg0BtfQ6stbucxUcmzTGYRUot+SBJfV2aerVRKraZngvDDdsDHwY7zGz
+         3vZziEPLFl71cQznXccd6CnJOdsBX3CtPt85lBQHWN4BKfr0SNwYChrUptviF0dIlgSj
+         hVvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3v6qNUFxZqvBk3kMtaoeNqYh+nMA/UcivHJ9AcQws67I3iKlYie5x3REgGE8ueH62sHDvgsGS57cRvDw=@vger.kernel.org, AJvYcCU9G8xczT/2HDklNq9Qos6FoHnXsJSbPca7btwHxDKxFqkHrZayovIEYjNvhs171SsTl4APp4/Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YySuUFk+BtgsKJpKGjzyKWCCJHelHjUVWdnfqZq/6mFKV+zqwoY
+	GwAuOv77JriBQHkf5sBWiwu7px4Yd8Cixpwjce64keSK+SNcgqZe
+X-Google-Smtp-Source: AGHT+IHijaSPCIR3E01r3fs5QqT+uN0jaBThFV5yQt4sEVQEbdSz1/CzkAL9ZUKOwnH3W16tuN6taw==
+X-Received: by 2002:a17:907:9488:b0:a86:7a23:1284 with SMTP id a640c23a62f3a-a867a23272emr499241166b.48.1724361029166;
+        Thu, 22 Aug 2024 14:10:29 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484e05sm164262266b.167.2024.08.22.14.10.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 14:10:28 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shahed Shaikh <shshaikh@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] qlcnic: make read-only const array key static
+Date: Thu, 22 Aug 2024 22:10:28 +0100
+Message-Id: <20240822211028.643682-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zsd7Ep6H24Qq-h5F@x1>
 
-On Thu, Aug 22, 2024 at 02:53:22PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Aug 22, 2024 at 02:49:41PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Thu, Aug 15, 2024 at 09:36:19AM +0800, Howard Chu wrote:
-> > > @@ -3624,7 +3719,9 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
-> > >  {
-> > >  	int map_enter_fd = bpf_map__fd(trace->skel->maps.syscalls_sys_enter);
-> > >  	int map_exit_fd  = bpf_map__fd(trace->skel->maps.syscalls_sys_exit);
-> > > +	int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
->  
-> > At this point we still don't have that, right? I.e. building with this
-> > patch, without the ones following it in your series, I get:
->  
-> > builtin-trace.c: In function ‘trace__init_syscalls_bpf_prog_array_maps’:
-> > builtin-trace.c:3723:58: error: ‘struct <anonymous>’ has no member named ‘beauty_map_enter’
-> >  3723 |         int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
-> >       |                                                          ^
-> >   CC      /tmp/build/perf-tools-next/tests/code-reading.o
-> >   CC      /tmp/build/perf-tools-next/trace/beauty/clone.o
-> > make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/builtin-trace.o] Error 1
-> > make[3]: *** Waiting for unfinished jobs....
-> > 
-> > So we need to squash the patch that introduces beauty_map_enter in the
-> > augmented_raw_syscalls.bpf.c file to this one, so that we keep things
-> > bisectable, I'll try to do that.
-> 
-> So just this did the trick, I'll remove it from the later patch in your
-> series:
+Don't populate the const read-only array key on the stack at
+run time, instead make it static.
 
-But then you added syscall_arg_fmt__cache_btf_struct() ifdef'ed by
-HAVE_LIBBPF_SUPPORT to then use it on trace__bpf_sys_enter_beauty_map())
-that is ifdef'ed by HAVE_BPF_SKEL, so when building with
-BUILD_BPF_SKEL=0 we get this splat:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-  CC      /tmp/build/perf-tools-next/builtin-trace.o
-  AR      /tmp/build/perf-tools-next/libperf-util.a
-builtin-trace.c:930:12: error: ‘syscall_arg_fmt__cache_btf_struct’ defined but not used [-Werror=unused-function]
-  930 | static int syscall_arg_fmt__cache_btf_struct(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  GEN     /tmp/build/perf-tools-next/python/perf.cpython-312-x86_64-linux-gnu.so
-cc1: all warnings being treated as errors
-make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/builtin-trace.o] Error 1
-make[2]: *** [Makefile.perf:762: /tmp/build/perf-tools-next/perf-in.o] Error 2
-make[1]: *** [Makefile.perf:292: sub-make] Error 2
-make: *** [Makefile:119: install-bin] Error 2
-make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-⬢[acme@toolbox perf-tools-next]$
-
-I'm moving syscall_arg_fmt__cache_btf_struct() to the same block where
-trace__bpf_sys_enter_beauty_map() is.
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+index bcef8ab715bf..5a91e9f9c408 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+@@ -2045,9 +2045,11 @@ int qlcnic_83xx_config_rss(struct qlcnic_adapter *adapter, int enable)
+ 	int err;
+ 	u32 word;
+ 	struct qlcnic_cmd_args cmd;
+-	const u64 key[] = { 0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
+-			    0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
+-			    0x255b0ec26d5a56daULL };
++	static const u64 key[] = {
++		0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
++		0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
++		0x255b0ec26d5a56daULL
++	};
  
-> - Arnaldo
-> 
-> diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> index 0acbd74e8c760956..c885673f416dff39 100644
-> --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> @@ -79,6 +79,13 @@ struct pids_filtered {
->  	__uint(max_entries, 64);
->  } pids_filtered SEC(".maps");
->  
-> +struct beauty_map_enter {
-> +	__uint(type, BPF_MAP_TYPE_HASH);
-> +	__type(key, int);
-> +	__type(value, __u32[6]);
-> +	__uint(max_entries, 512);
-> +} beauty_map_enter SEC(".maps");
-> +
->  /*
->   * Desired design of maximum size and alignment (see RFC2553)
->   */
+ 	err = qlcnic_alloc_mbx_args(&cmd, adapter, QLCNIC_CMD_CONFIGURE_RSS);
+ 	if (err)
+-- 
+2.39.2
+
 
