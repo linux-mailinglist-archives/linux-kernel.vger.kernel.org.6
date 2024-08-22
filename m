@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-297045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7810295B237
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A7495B1DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3539C284407
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4118D281818
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5033F186E58;
-	Thu, 22 Aug 2024 09:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58FE17C211;
+	Thu, 22 Aug 2024 09:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="wcHRVP5r"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fWONRY/9"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7D5186E30;
-	Thu, 22 Aug 2024 09:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8B515572C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319808; cv=none; b=L/zuEWtcC1L/nQTzk064XAfrwxLWBfI6CMPQQmv2pK8CxQvNkbKznwODg8GbGYScqELqJ1ROgT0TwfukrxRmX4dfG16pT3iM5f0KBjOMrn3OpDIVc9K10ZnRrhJIlXY1Su2MJZP8aWafuv0KEHfduemgrzryILEJRe9G99nME0w=
+	t=1724319517; cv=none; b=HnX247BVyCCOJdYFCwU9aY6fwWAEQCBhorffNQiEbi7Unr8sIFkC+EUudfB9ozbh5bk56WutgHIc3EppGdArbFdji4E733noWj3ll3FALFQKdh+2/D0ezk41LlUTDBs+pjzV5sBEr+vlUu14Sjl6EHvfnQHroYYiRwH9OOeahJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319808; c=relaxed/simple;
-	bh=y2/kcadb3S8A62lL0Sh1F6IC/6vmv+LQMeVO5YYko0I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d4TN5LpzXNRVhut2w59tosS8IzbUUeQH6UQEkNlRu0Xr8JqIZ2+YVY7GlSXJcFzCKQeh7u5QHMgZBhcFIzvE/wP4Kp+9jMA9vIyC+S3ZTqzP+JHgq09HAkuAbNRdGtFePzYQ1+9XtQkiR4422C+gTiDV3k+QgxcaBuz46r+xPaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=wcHRVP5r; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47M9h0O013805580, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1724319780; bh=y2/kcadb3S8A62lL0Sh1F6IC/6vmv+LQMeVO5YYko0I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=wcHRVP5rjfGVXEinBnuntktBTo9YE/SjjdeAWurUMvWg8mJMfPWp+3v6gKb46ZHxi
-	 6l8n7r860mRpIWKXpKrueYRC7q3Ooq+zlheR12wACOYI3mPpMwKBaDBYN7n5xJgd9C
-	 gAXgbpYLTil0J+oauP4naCrOAyvu2RQlHshJ3Wqil0AIP/31ZLgfwhXOACNHLw8DPN
-	 jf8ua5vLOBgBp/65lv9XrxQcERrDq3bWd6u+ipBo1fBBaygKxHvgFvneFRFfd1zjzB
-	 uR3j9+YgfVc22zX/Ixu8FxBTBNfdLZCLStLSSCHB80phdLZ2vx1iyROTnEmhz01QX4
-	 TM/1wVbwctbUQ==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47M9h0O013805580
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Aug 2024 17:43:00 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 22 Aug 2024 17:43:01 +0800
-Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 22 Aug
- 2024 17:43:00 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
-        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, "Justin
- Lai" <justinlai0215@realtek.com>
-Subject: [PATCH net-next v28 13/13] MAINTAINERS: Add the rtase ethernet driver entry
-Date: Thu, 22 Aug 2024 17:37:54 +0800
-Message-ID: <20240822093754.17117-14-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822093754.17117-1-justinlai0215@realtek.com>
-References: <20240822093754.17117-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1724319517; c=relaxed/simple;
+	bh=111O/5/1ojVV7OI8NIPGIbmOFNtTVFkol4UsxQyR9uU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RVnMqWsFEF/pat2Iu80jpdESo4fDImh3hiN1eh9pTSGv0vVMx02IpW9hRrsAttHDW8/yNW/IUnego5B0NqywTHkwLCZijPDd2GfCYvMoy9qohj8JlHRUnKTxdnKcFDI7odCstBNteNmu1L5xSh4a3lUjzLYubMDKn4iEHHEbuso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fWONRY/9; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37308a2ea55so29014f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724319513; x=1724924313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kcAP1+UzidHHBut/wkiIQwc08/qanMcQw9/HOzcokdI=;
+        b=fWONRY/9UMTzGG2Qzqvg0H7UBr3TB1U+gX5960uBT4/SWB360FJTy7nM/VXeoqAKQ2
+         94cVylOhpoJ+8qh+jovXrAPviM5FaGdMQgarRt//YbuzpR6VMQPrXt5KKizz9K37WkJ9
+         NT794Gzmzebjzbznq8rHw3dQnjBF/T/cIm3ddqWArD6wq/y2ol9SdbfmVXBUU72AZoaL
+         X9N2fb2WtQDXGiBzkvhvZwyQ/ooOIEbbMBCD2P2epP4CnyGqtKvRBhcNJY78tBfqB4W7
+         olua1koQa4puJthRGptKzKCgY02bGzzVOfogOGcVbymO6X78KGMIMoUNhZXBKmMlIiad
+         zTWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724319513; x=1724924313;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kcAP1+UzidHHBut/wkiIQwc08/qanMcQw9/HOzcokdI=;
+        b=Ngz8c+iup7m+qaloLmR608y1Ofl1uP3BPQN1ACB/MrN0YnQus0wiYu87Ds+/94Ct+8
+         l/eTAO6xKXmBZHDozPG6qog3i5LLy5IzxfYpr3YFIEl6lmWhnjjUP8EuV3OIZsdqhShD
+         mzlAV11vELkCn9omcMI/6fDbEay/c2oR1EETAovHQL8R2gnnJIronkRuAJCOBdK9EEsM
+         gxMfnHbJc7mDfFEbM3wSUhKvhem8FACMyNU6a7Z1D17M7dYcSAII93wRsl6AqbAusIKq
+         N+ZfyHZzkC1EOJkY6NEO0r0TPmXKAmExeFJRwtGxPxOGPzOZIKIaaBWIHng64wHfGtel
+         2AoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjNoRHLhm5BuHvS2n2BrBBY/c73rAoY96swvbeYelIy60AuE+EONWqBloYo82BuE3+v6FxxYEqwcc9T2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztJQ5e09T01YXazc4Z5/U4U4831SrmRQuSJkhFZgLvex7LgkDq
+	WwMvLBoDYfp49u1Y1tseuDA6XKPMRLZh6T7uSxnsj9uTYqA4T8r52OdwzQifOI8=
+X-Google-Smtp-Source: AGHT+IFJFErUAThi7f4GEL5kxSEupuPH+kbml2cXMv40hedr33cHGawmpp718dh+i0XjTApnjQJUxQ==
+X-Received: by 2002:a5d:5e0f:0:b0:36b:b2a1:ef74 with SMTP id ffacd0b85a97d-372fd82f725mr1321582f8f.8.1724319512802;
+        Thu, 22 Aug 2024 02:38:32 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730817a5acsm1221805f8f.64.2024.08.22.02.38.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 02:38:32 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Kwanghoon Son <k.son@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+References: <CGME20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e@epcas1p3.samsung.com>
+ <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynosautov9: Add dpum SysMMU
+Message-Id: <172431951098.22090.17586720049616945954.b4-ty@linaro.org>
+Date: Thu, 22 Aug 2024 11:38:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-Add myself and Larry Chiu as the maintainer for the rtase ethernet driver.
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Mon, 19 Aug 2024 16:55:45 +0900, Kwanghoon Son wrote:
+> Add System Memory Management Unit(SysMMU) for dpum also called iommu.
+> 
+> This sysmmu is version 7.4, which has same functionality as exynos850.
+> 
+> DPUM has 4 dma channel, each channel is mapped to one iommu.
+> 
+> 
+> [...]
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5dbf23cf11c8..7d6d3c7dd526 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19848,6 +19848,13 @@ L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- F:	drivers/tty/rpmsg_tty.c
- 
-+RTASE ETHERNET DRIVER
-+M:	Justin Lai <justinlai0215@realtek.com>
-+M:	Larry Chiu <larry.chiu@realtek.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	drivers/net/ethernet/realtek/rtase/
-+
- RTL2830 MEDIA DRIVER
- L:	linux-media@vger.kernel.org
- S:	Orphan
+Applied, thanks!
+
+[1/1] arm64: dts: exynosautov9: Add dpum SysMMU
+      https://git.kernel.org/krzk/linux/c/71e0b08ed2a98e5ab5eb255fc86cda04205b141e
+
+Best regards,
 -- 
-2.34.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
