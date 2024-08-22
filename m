@@ -1,125 +1,138 @@
-Return-Path: <linux-kernel+bounces-297484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5118195B91B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:54:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0C795B91C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9C71F27A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D5B28672C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44EC1CC17C;
-	Thu, 22 Aug 2024 14:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A401CC178;
+	Thu, 22 Aug 2024 14:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWXuVKr4"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="TRUGfsK8"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02DF1CC151;
-	Thu, 22 Aug 2024 14:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FE41CB329;
+	Thu, 22 Aug 2024 14:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724338474; cv=none; b=eBMTYwPjJkGYqZAeleYJ9g48u8u81hWCPvryl5SeoWZSYSDeMazKpLn8SytPirCOvGYJ7Cz846SePrEca9gW7tK3S/d3TLROFDclM0MPAlM6M2uTR+ocLcnBt5uSKGQwYuOH1EB2CAgexw/Yn4sqcNGWQXx1QeVRJUvpnBj4w8w=
+	t=1724338543; cv=none; b=tJRTinUyyzxNvzs+LIBfAj+QM2AbRdu/k6iifksYfIqF/OEES+qveGTP43OmuAQmXjxPEznJqJdrr+SOl5/DEt+fbme2mu5M9K1aEvzVuW6vaGSH1CaAntff5x6n6PHb+NhqlYsBECsP+3K3iP1wf/JQcCYfKkewqX6Kr5CSwSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724338474; c=relaxed/simple;
-	bh=+TUSP11wjCwnjRuybst5FS9wNxTbnJ3fnYQiOquRoXE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m7i6+HaXX+8KU6GAw4NHrmw4+pDERlVBZ5KxcFgd3X3/FEryZCI3RTuKTVMH8YoAV6PCPUWtuSvTEwKj2MmPAqd2pXfg9Qr4b7CNwtpqP+Be5dMx8VUWRQfq5JF8Nsf9dYdiBYPyCVyYZJn8SfPPFrqc6alFwbldoWqI8pZ+g6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWXuVKr4; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so13241801fa.1;
-        Thu, 22 Aug 2024 07:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724338471; x=1724943271; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+TUSP11wjCwnjRuybst5FS9wNxTbnJ3fnYQiOquRoXE=;
-        b=GWXuVKr4Zbqx8CXdUR8NIkcFBXUXeSVfYpOdiddRoyjewC5b4eFjmu7uB1z5AoV6+3
-         eGryZ0tgyPBRjAZLPttRPQ/FsUbPGohnHmnzkvNt42ENMadv2bckZHyt1t7enqXcr3Ce
-         tdSVhT/NPfXLUbvshngqbOBtfSEHh7D19FGrjtTfpZwEMsDXTFh2xnGUh1vbJ4bIdNAo
-         KA751ip7w56uUxe6X7hrTGqNVv4NVeXAPymlCeag/lCFltm6YZVZ2kgBPR5bnMST3sgw
-         g4utAp2Xjtrz3h8rUP5yaZ9awORbBQ/xCWfwTmJAf4Ow5jAaOeg7uS0//S0JvW5lBj5W
-         7Kwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724338471; x=1724943271;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+TUSP11wjCwnjRuybst5FS9wNxTbnJ3fnYQiOquRoXE=;
-        b=Td6S24NUZOYUPNOW5Qs1OZ/tPOsQGBwZLGUiwmQAF3N81AXcDOtlvJGfTdsQ1fDQVp
-         AX9IuM+3+excMxvpfjat5HiPAqN/cCTnWRkRDDFJ7ca53enHgxCmvXG5GDttMi4i5aEo
-         zVd92xNhJVYcCLd/1i+0tbYStswBkfEhYlKEQSE3WcxfqdinSsUuBoxnuM20sec9ilTq
-         7VB908/naCGAkfZWKv6bsWuAv6nzb2DEeKJSeyyuixXizlwZn3gLXPkQgJwyW4JmyRdR
-         UsWt29Oa/6B/OiMojYw1sK7YnQctveXkRuXu8aVFScJTj87S55mGo1e2tMcVIEfJTMyF
-         WTKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUydCTUadLqUOrxcy9fJ6r8LZMF4S7ZRXPXIglUw/jVTTfakifLZpyvYwnCZewzY59CwyT1ZIAKyaBXOA==@vger.kernel.org, AJvYcCV/tf9k92yn+TZruHjd+P2xziIjakJTdNGB0lhJXoH23zO/Tsa/Oe81EQ/7keTXtkK4VYuTeMuc290d1I8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcnsWkAsqSTGrePEWDr56TxJ5UtUoFTx6W2LmsTPfZKfswFlsp
-	PxOoyx3FxGMafUpTqFtIMGiUeT0ElvZ7pDhThkhPEhgbBu5Zq+Vw
-X-Google-Smtp-Source: AGHT+IHHQLJky14YCYfHmGvcL+P+t82R4pEsMMJV8VeNqUl5LX/0oZXRvjHMpvuElGzR1USJVojd0A==
-X-Received: by 2002:a05:651c:154b:b0:2ef:2ba5:d214 with SMTP id 38308e7fff4ca-2f405c8bf3cmr16014141fa.4.1724338469809;
-        Thu, 22 Aug 2024 07:54:29 -0700 (PDT)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f29a568sm129477266b.53.2024.08.22.07.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:54:29 -0700 (PDT)
-Message-ID: <ed370c6355dee6a4af15587cdbb3b06a1fe0b842.camel@gmail.com>
-Subject: Re: [PATCH v2 0/2] scsi: ufs: introduce a callback to override OCS
- value
-From: Bean Huo <huobean@gmail.com>
-To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-  bvanassche@acm.org, jejb@linux.ibm.com, martin.petersen@oracle.com, 
- beanhuo@micron.com, adrian.hunter@intel.com, h10.kim@samsung.com, 
- hy50.seo@samsung.com, sh425.lee@samsung.com, kwangwon.min@samsung.com, 
- junwoo80.lee@samsung.com, wkon.kim@samsung.com
-Date: Thu, 22 Aug 2024 16:54:27 +0200
-In-Reply-To: <cover.1724325280.git.kwmad.kim@samsung.com>
-References: 
-	<CGME20240822111247epcas2p2d3051255f42af05fd049b7247c395da4@epcas2p2.samsung.com>
-	 <cover.1724325280.git.kwmad.kim@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1724338543; c=relaxed/simple;
+	bh=zH6rG0oJh5l6WZBwxmOV4UVRzizh6K6xQrAqQ2aysDY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eY7WYLF4HysQtAYKKTGhxu36jXP1ttHi381/FdJBlN30Iy5UFc2fSJgSc8rNcY2w0dm3cefipUZqHya8pKWZ5oEpGvq3SaOAhxwCnyMl1RVe/ntRIC6x3OtCQMdsr3JAvgOh3C2OwFXUIpD96ThOKTio1XGH2kzmfgosIxX+7K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=TRUGfsK8; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MEJ365019841;
+	Thu, 22 Aug 2024 09:55:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=4+Sz9yjJhiRIV11e
+	yx/ilwSbY3eKJY/WxVIPtCZbYpg=; b=TRUGfsK8l2U4Z1V6EIPnwFS/QUMi8fO+
+	Y5dgkkN5ybQPiFFEc2KSf7lsqeaX6V2lCQ9T6j9asX/Xu04DunyIdGbVebPFC4/S
+	SIydPge9CQxT0YtiJzN3txkvge/XOzmzaVnUBiYGTP8beg9dr64+Z89l8Qnv870G
+	kn7ZWh/XTeiKosNfO9IsqfdH2a+/5bdcwBQAdSEO01jbSXUVIvm/k9Tzuy74Yvfq
+	uEoN9yH5uPQ/qgjDzo98NgPKs3gbNfyaFL0weT94kdadOLNzSc/553qZ7Wt2cBPX
+	TsaCE976JDANJsGTUIfCqtTIGi0Dba07NZhfat9XnTnLiekGUFrz8A==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 412r9hwwcx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 09:55:37 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
+ 2024 15:55:36 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 22 Aug 2024 15:55:35 +0100
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id DF524820244;
+	Thu, 22 Aug 2024 14:55:35 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH] ASoC: cs35l56: Make struct regmap_config const
+Date: Thu, 22 Aug 2024 15:55:35 +0100
+Message-ID: <20240822145535.336407-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 571aD0sItkqQmmXif9ZBrqs6H-E-lUC0
+X-Proofpoint-ORIG-GUID: 571aD0sItkqQmmXif9ZBrqs6H-E-lUC0
+X-Proofpoint-Spam-Reason: safe
 
-On Thu, 2024-08-22 at 20:15 +0900, Kiwoong Kim wrote:
-> UFSHCI defines OCS values but doesn't specify what exact
-> conditions raise them. So I think it needs another callback
-> to replace the original OCS value with the value that works
-> the way you want.
->=20
-> v1 -> v2: fix build error for arguments
->=20
-> Kiwoong Kim (2):
-> =C2=A0 scsi: ufs: core: introduce override_cqe_ocs
-> =C2=A0 scsi: ufs: ufs-exynos: implement override_cqe_ocs
+It's now possible to declare instances of struct regmap_config as
+const data.
 
-Hi kiwoong Kim,
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+ include/sound/cs35l56.h           | 6 +++---
+ sound/soc/codecs/cs35l56-shared.c | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-I didn't see your above two patches following your cover-letter, did
-you send patch with "--thread" optioin?
-
-
-Kind regards,
-Bean
-
->=20
-> =C2=A0drivers/ufs/core/ufshcd-priv.h |=C2=A0 9 +++++++++
-> =C2=A0drivers/ufs/core/ufshcd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 11 ++++++=
-+----
-> =C2=A0drivers/ufs/host/ufs-exynos.c=C2=A0 |=C2=A0 8 ++++++++
-> =C2=A0include/ufs/ufshcd.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> =C2=A04 files changed, 25 insertions(+), 4 deletions(-)
->=20
+diff --git a/include/sound/cs35l56.h b/include/sound/cs35l56.h
+index a51acefa785f..94e8185c4795 100644
+--- a/include/sound/cs35l56.h
++++ b/include/sound/cs35l56.h
+@@ -282,9 +282,9 @@ static inline bool cs35l56_is_otp_register(unsigned int reg)
+ 	return (reg >> 16) == 3;
+ }
+ 
+-extern struct regmap_config cs35l56_regmap_i2c;
+-extern struct regmap_config cs35l56_regmap_spi;
+-extern struct regmap_config cs35l56_regmap_sdw;
++extern const struct regmap_config cs35l56_regmap_i2c;
++extern const struct regmap_config cs35l56_regmap_spi;
++extern const struct regmap_config cs35l56_regmap_sdw;
+ 
+ extern const struct cirrus_amp_cal_controls cs35l56_calibration_controls;
+ 
+diff --git a/sound/soc/codecs/cs35l56-shared.c b/sound/soc/codecs/cs35l56-shared.c
+index bd74fef33d49..ae286ba3be1d 100644
+--- a/sound/soc/codecs/cs35l56-shared.c
++++ b/sound/soc/codecs/cs35l56-shared.c
+@@ -925,7 +925,7 @@ const unsigned int cs35l56_tx_input_values[] = {
+ };
+ EXPORT_SYMBOL_NS_GPL(cs35l56_tx_input_values, SND_SOC_CS35L56_SHARED);
+ 
+-struct regmap_config cs35l56_regmap_i2c = {
++const struct regmap_config cs35l56_regmap_i2c = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+@@ -941,7 +941,7 @@ struct regmap_config cs35l56_regmap_i2c = {
+ };
+ EXPORT_SYMBOL_NS_GPL(cs35l56_regmap_i2c, SND_SOC_CS35L56_SHARED);
+ 
+-struct regmap_config cs35l56_regmap_spi = {
++const struct regmap_config cs35l56_regmap_spi = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.pad_bits = 16,
+@@ -958,7 +958,7 @@ struct regmap_config cs35l56_regmap_spi = {
+ };
+ EXPORT_SYMBOL_NS_GPL(cs35l56_regmap_spi, SND_SOC_CS35L56_SHARED);
+ 
+-struct regmap_config cs35l56_regmap_sdw = {
++const struct regmap_config cs35l56_regmap_sdw = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-- 
+2.39.2
 
 
