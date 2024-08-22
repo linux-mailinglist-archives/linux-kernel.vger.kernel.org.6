@@ -1,203 +1,232 @@
-Return-Path: <linux-kernel+bounces-296926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6535F95B0AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:39:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E08B095B0AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBF94B23A04
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA221C21F9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C5816EB76;
-	Thu, 22 Aug 2024 08:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2186B16D4EF;
+	Thu, 22 Aug 2024 08:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hL7eLS9d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="S/wkCrD0"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B482C1C6B5
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AAB1802E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315943; cv=none; b=DTcZU8FVuRea9NC1+ONTeCu/N5UfZThAnp6wSlJ0RV+BW5/7KsD6oN5NEYaCvpaAVvMWHCLtTA7o5tluK7+/SCHMUan4pPw8ppu+oqAELZIVDP7elnAV3bQ+nAfubyocUdQTf8Q5T77wIxDcb0vTahpRNwtW3o6fWjThCOFK1E8=
+	t=1724315935; cv=none; b=YxDJZG0NLfCF+85YkIAMD+5ihfoz3VN9y8l+/Ykpir1Oi+d1/0AqvP/peJWacagTpa/28gAEnDvlcp0xVaj88xtxpVwmjCk0IChHWOxUUfAw3Iw0qgaJIbcAaYtcBaP5LU8pVD03bDssGCvvNiSW9wiqG9rNaEuqXCldUlczAIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315943; c=relaxed/simple;
-	bh=fT+LjnGshFLC6OilIQ2o41qvjgIH/HkFb4wDZbRnQc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BiLVhR/Ni6pbuvbukR5LUCx/xXS0c46R5kdB463WSVdaLgXIWoW2hzFXiWSIpY9NpAcVyelOUdw63SamEANdtOcf9YBYTzp1AZ4NvCU73HGdSZVuUsLgdVCeJSdLQeKVoRPwhInLcGSZVjoZqA3KLWnv1f0juVB2T9uxkuROOfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hL7eLS9d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724315940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X0Vz3poE28odMJXeH7OFFxcqgCyFXuVG32HcyaGKNT8=;
-	b=hL7eLS9dKPPLDwbNjZBPukaWBVxljyTt1hHob5mla63vIZDVaGPLGr80794JC3G30U/lB0
-	CBLJh5zs3QjWbGr1k3cw6Q+BNjmaA5XuxXBQPoz7SwOwBI+mv1yEI4pYUZ01YGX/G14a1/
-	lbhnTkN/g+PdqEHivFcHfo0NYMdaKII=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-WMhlBAwINuStXpHSLIZ41Q-1; Thu, 22 Aug 2024 04:38:58 -0400
-X-MC-Unique: WMhlBAwINuStXpHSLIZ41Q-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2d3efe18d05so642194a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:38:58 -0700 (PDT)
+	s=arc-20240116; t=1724315935; c=relaxed/simple;
+	bh=g63rxuMJg0My3XKsPFmskBD2F9Wgzjk54qZBlYYQwbc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xx3o9fQ9xyNUWIbMpJlfd+sbsjyHWypWluGzNs317riWBhG6X4xgH1ysHArt+wvJo95+14xjJqOWkq/QN37xI1P+xLtIKBtQrle6YHLPjih3LZbrYn5bJYHvpniYG82gnQ/JGPVCT6qZTKjxQAsm2YmetqpjPULTCDN5b+jjLA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=S/wkCrD0; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201fbd0d7c2so5290435ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724315932; x=1724920732; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b2u1WsAxt5JgAdG/+BbrIkNxjYeux2TdSi6nksps3OA=;
+        b=S/wkCrD0vsNcQsN1GTgwsplRIeLDHlBqPOLyb/3jOOI1CH1M6c2lrSho8tBIkc3zD+
+         ydqEXNnReLFCgkV7vx5hOGxXmZcdTEJwRSeo2tx/cKEiR+1zCGR2+4Qs2miJfGAoiPZt
+         SZ4E8MSuYFDWRx4Gd3oSeIPt5VQfI0ABJUqzWUVQBDsjRPcxNx5aMwyy8uMfa87GXfbd
+         9Hs5pkeU1gC2zT9qqklb7eImGjGKyofX4C/QYsjekZXdi4ro+DuT93z3aTnBnA8PSnNl
+         JWSChLrDnowOgUYqpM8SVVOC3TL09uySPXOfDf70YdoHkOde6MkM+TZ3B9JsZekIjQVq
+         a0Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724315937; x=1724920737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X0Vz3poE28odMJXeH7OFFxcqgCyFXuVG32HcyaGKNT8=;
-        b=G1R2IvMeB1AijegO0CpGEC6QNkq4/f4z8UPY0R6ChS041r41CJdJnBD5YI+EJVMTM4
-         BWkhS23rYkNo3tPvNE8v2+oX2dZ+MbJnbnH9GE47BdX45+QaEvNjCi5iphFEPslDZ8Hn
-         c8/VD3U59AGyEM6C+pLM9LvZzP5B7zp1YoQZWaIZoDFMmGoIo0iDDneTtrAocGCGkvq4
-         gX9DVp7FqvP0/KoOsCEmnTfOa/ZqzD/RvroXxO+OYsTgrJHUNocdo1QpYn84FcWgX55W
-         nTtO/cqDOQE56fjrCvkq5XPfC6cP0+OfeigFdTLiQ1shVwEGIYmkV1MHpUj26aUi/gZI
-         qChg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzlgc+FYGh5eZsNo+P8tmkUORSQDiTRh+VSA03ady0c3bN8PDzKTjJgrZjr0i7jr8xC2JWQWFflf5XX30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzJmaCCsNRdXnKl5pmy5Q/WkuCoArg0J9KmyZfyg6/oAJYbB1T
-	2ZQZrBEzuH+7NLNWVgjxJvH947b6TUt7UouO6qO3qtmNuHzGKaKp1/HqSItcY2QZvi1FXlr3VMt
-	A6LiROaFhly/1PVjGnSlvj/z4iOKmYKBmdyBgdxKjk1lYifNdmpcOk9XEZX3BC0NieLdS8lkLvi
-	yQ1sr6KFWgor/JtD/Eoa+WFyMdHv/b+X/NYWqOg5omXcio3VuZFQ==
-X-Received: by 2002:a17:90b:4b06:b0:2c9:cf1d:1bcc with SMTP id 98e67ed59e1d1-2d5e9ed072bmr4886746a91.36.1724315937151;
-        Thu, 22 Aug 2024 01:38:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE84AxuhDeVWOp48vYsEoskV6JDDEduFK9EcAwn/4EexUiY/p9jPGKilPMbrZ7lPmbXAhd2QaIzXTCWqJq1R1U=
-X-Received: by 2002:a17:90b:4b06:b0:2c9:cf1d:1bcc with SMTP id
- 98e67ed59e1d1-2d5e9ed072bmr4886728a91.36.1724315936607; Thu, 22 Aug 2024
- 01:38:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724315932; x=1724920732;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b2u1WsAxt5JgAdG/+BbrIkNxjYeux2TdSi6nksps3OA=;
+        b=oNUEp92q1B54SPc8bXCWEkf59oSxEfhG7ViAuq3NkJrXjclD4H9TkZU0mOvzAjWxn1
+         faiE7nm+lel5b2+sj/YPc0caltEbP2uVcHW+wRW1uzpqIVPdnT5okFzYMnQbMCnAnZxw
+         Go36IoE2GY3q/qepzQTVbHVVDKkgUcfbxxrwjW7Xn7NaMHu+wUhATvIJ6e9fU1tkNKD+
+         qf751w0LjE3ohnZz6pzHnGNIDCALsj1lrMEvbB+T3oez34mycm153StVU+EEkxvSTIGB
+         bQFeZBBInbecYt3o1S1N4fsEMQJY/D6QVmA9GqZPOYkUzOtSlIwOeIpviZe3MBhJ+5/i
+         lkdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXODyjSw/CBzirPB5OrGiBbM08IyMAHeZt9cDzdtYY3IBCXsb3jZXLMcb+Z7CRBPTRWpCCB1Xr5ENhy3EI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu6SD4n6aTTw14f0HMq4SSS4NMyud9Eocs3OxzcGkE1Fv5Ig8m
+	rSF2QERhI+VZEF90SkWW8e1j4lFUXYl9+10Vdpg3hzeMpLzRqY4Qh+XNVAKOadlXwj8xLomFemw
+	U
+X-Google-Smtp-Source: AGHT+IE6zPuDFiYPZ9j6ugZo61SY5bpPFGgMRvk+dLzDnZlHpisUHQTef0KsNQ2Vz/xKZ70B17VEWA==
+X-Received: by 2002:a17:902:da8f:b0:1fd:8c25:415d with SMTP id d9443c01a7336-20367f6ad3bmr63104275ad.36.1724315932202;
+        Thu, 22 Aug 2024 01:38:52 -0700 (PDT)
+Received: from n37-034-248.byted.org ([180.184.51.142])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855816dcsm7870835ad.112.2024.08.22.01.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 01:38:51 -0700 (PDT)
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+To: mhocko@suse.com,
+	akpm@linux-foundation.org,
+	mgorman@techsingularity.net,
+	hannes@cmpxchg.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	lizefan.x@bytedance.com,
+	Zhongkun He <hezhongkun.hzk@bytedance.com>
+Subject: [PATCH V1] mm:page_alloc: fix the NULL ac->nodemask in __alloc_pages_slowpath()
+Date: Thu, 22 Aug 2024 16:38:42 +0800
+Message-Id: <20240822083842.3167137-1-hezhongkun.hzk@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822024718.2158259-1-yukuai1@huaweicloud.com>
-In-Reply-To: <20240822024718.2158259-1-yukuai1@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-Date: Thu, 22 Aug 2024 16:38:42 +0800
-Message-ID: <CALTww28Pj6kPSc_JGX3ya6B5bgUUyoHxVXd6BnCZ1P-ub404bw@mail.gmail.com>
-Subject: Re: [PATCH md-6.12 00/41] md/md-bitmap: introduce bitmap_operations
- and make structure internel
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, mariusz.tkaczyk@linux.intel.com, l@damenly.org, 
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 10:52=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> =
-wrote:
->
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> Changes from RFC v1:
->  - add patch 1-8 to prevent dereference bitmap directly, and the last
->  patch to make bitmap structure internel.
->  - use plain function alls "bitmap_ops->xxx()" directly;
->
-> Changes from RFC v2:
->  - some coding style.
->
-> The background is that currently bitmap is using a global spin_lock,
-> cauing lock contention and huge IO performance degration for all raid
-> levels.
->
-> However, it's impossible to implement a new lock free bitmap with
-> current situation that md-bitmap exposes the internal implementation
-> with lots of exported apis. Hence bitmap_operations is invented, to
-> describe bitmap core implementation, and a new bitmap can be introduced
-> with a new bitmap_operations, we only need to switch to the new one
-> during initialization.
->
-> And with this we can build bitmap as kernel module, but that's not
-> our concern for now.
->
-> This version was tested with mdadm tests. There are still few failed
-> tests in my VM, howerver, it's the test itself need to be fixed and
-> we're working on it.
+I found a problem in my test machine that should_reclaim_retry() do
+not get the right node if i set the cpuset.mems.
+The should_reclaim_retry() and try_to_compact_pages() are iterating
+nodes which are not allowed by cpusets and that makes the retry loop
+happening more than unnecessary.
 
-Hi Kuai
+1.Test step and the machines.
+------------
+root@vm:/sys/fs/cgroup/test# numactl -H | grep size
+node 0 size: 9477 MB
+node 1 size: 10079 MB
+node 2 size: 10079 MB
+node 3 size: 10078 MB
 
-Do you run lvm2 test regression tests? It's better to run lvm2
-regression tests for such a big change.
+root@vm:/sys/fs/cgroup/test# cat cpuset.mems
+    2
 
-And by the way, does this patch set have a conflict with patch set
-"[RFC V7] md/bitmap: Optimize lock contention". I haven't read the
-patches, it's an optimization for the bitmap lock too.
+root@vm:/sys/fs/cgroup/test# stress --vm 1 --vm-bytes 12g  --vm-keep
+stress: info: [33430] dispatching hogs: 0 cpu, 0 io, 1 vm, 0 hdd
+stress: FAIL: [33430] (425) <-- worker 33431 got signal 9
+stress: WARN: [33430] (427) now reaping child worker processes
+stress: FAIL: [33430] (461) failed run completed in 2s
 
-Best Regards
-Xiao
->
-> Yu Kuai (41):
->   md/raid1: use md_bitmap_wait_behind_writes() in raid1_read_request()
->   md/md-bitmap: replace md_bitmap_status() with a new helper
->     md_bitmap_get_stats()
->   md: use new helper md_bitmap_get_stats() in update_array_info()
->   md/md-bitmap: add 'events_cleared' into struct md_bitmap_stats
->   md/md-bitmap: add 'sync_size' into struct md_bitmap_stats
->   md/md-bitmap: add 'file_pages' into struct md_bitmap_stats
->   md/md-bitmap: add 'behind_writes' and 'behind_wait' into struct
->     md_bitmap_stats
->   md/md-cluster: use helper md_bitmap_get_stats() to get pages in
->     resize_bitmaps()
->   md/md-bitmap: add a new helper md_bitmap_set_pages()
->   md/md-bitmap: introduce struct bitmap_operations
->   md/md-bitmap: simplify md_bitmap_create() + md_bitmap_load()
->   md/md-bitmap: merge md_bitmap_create() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_load() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_destroy() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_flush() into bitmap_operations
->   md/md-bitmap: make md_bitmap_print_sb() internal
->   md/md-bitmap: merge md_bitmap_update_sb() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_status() into bitmap_operations
->   md/md-bitmap: remove md_bitmap_setallbits()
->   md/md-bitmap: merge bitmap_write_all() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_dirty_bits() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_startwrite() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_endwrite() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_start_sync() into bitmap_operations
->   md/md-bitmap: remove the parameter 'aborted' for md_bitmap_end_sync()
->   md/md-bitmap: merge md_bitmap_end_sync() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_close_sync() into bitmap_operations
->   md/md-bitmap: mrege md_bitmap_cond_end_sync() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_sync_with_cluster() into
->     bitmap_operations
->   md/md-bitmap: merge md_bitmap_unplug_async() into md_bitmap_unplug()
->   md/md-bitmap: merge bitmap_unplug() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_daemon_work() into bitmap_operations
->   md/md-bitmap: pass in mddev directly for md_bitmap_resize()
->   md/md-bitmap: merge md_bitmap_resize() into bitmap_operations
->   md/md-bitmap: merge get_bitmap_from_slot() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_copy_from_slot() into struct
->     bitmap_operation.
->   md/md-bitmap: merge md_bitmap_set_pages() into struct
->     bitmap_operations
->   md/md-bitmap: merge md_bitmap_free() into bitmap_operations
->   md/md-bitmap: merge md_bitmap_wait_behind_writes() into
->     bitmap_operations
->   md/md-bitmap: merge md_bitmap_enabled() into bitmap_operations
->   md/md-bitmap: make in memory structure internal
->
->  drivers/md/dm-raid.c     |   7 +-
->  drivers/md/md-bitmap.c   | 560 +++++++++++++++++++++++++++++----------
->  drivers/md/md-bitmap.h   | 268 ++++---------------
->  drivers/md/md-cluster.c  |  91 ++++---
->  drivers/md/md.c          | 155 +++++++----
->  drivers/md/md.h          |   3 +-
->  drivers/md/raid1-10.c    |   9 +-
->  drivers/md/raid1.c       |  78 +++---
->  drivers/md/raid10.c      |  73 ++---
->  drivers/md/raid5-cache.c |   8 +-
->  drivers/md/raid5.c       |  62 ++---
->  11 files changed, 752 insertions(+), 562 deletions(-)
->
-> --
-> 2.39.2
->
+2. reclaim_retry_zone info:
+
+We can only alloc pages from node=2, but the reclaim_retry_zone is
+node=0 and return true.
+
+root@vm:/sys/kernel/debug/tracing# cat trace
+stress-33431   [001] ..... 13223.617311: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=1 wmark_check=1
+stress-33431   [001] ..... 13223.617682: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=2 wmark_check=1
+stress-33431   [001] ..... 13223.618103: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=3 wmark_check=1
+stress-33431   [001] ..... 13223.618454: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=4 wmark_check=1
+stress-33431   [001] ..... 13223.618770: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=5 wmark_check=1
+stress-33431   [001] ..... 13223.619150: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=6 wmark_check=1
+stress-33431   [001] ..... 13223.619510: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=7 wmark_check=1
+stress-33431   [001] ..... 13223.619850: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=8 wmark_check=1
+stress-33431   [001] ..... 13223.620171: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=9 wmark_check=1
+stress-33431   [001] ..... 13223.620533: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=10 wmark_check=1
+stress-33431   [001] ..... 13223.620894: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=11 wmark_check=1
+stress-33431   [001] ..... 13223.621224: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=12 wmark_check=1
+stress-33431   [001] ..... 13223.621551: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=13 wmark_check=1
+stress-33431   [001] ..... 13223.621847: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=14 wmark_check=1
+stress-33431   [001] ..... 13223.622200: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=15 wmark_check=1
+stress-33431   [001] ..... 13223.622580: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=16 wmark_check=1
+
+3. Root cause:
+Nodemask usually comes from mempolicy in policy_nodemask(), which
+is always NULL unless the memory policy is bind or prefer_many.
+
+nodemask = NULL
+__alloc_pages_noprof()
+	prepare_alloc_pages
+		ac->nodemask = &cpuset_current_mems_allowed;
+
+	get_page_from_freelist()
+
+	ac.nodemask = nodemask;  /*set  NULL*/
+
+	__alloc_pages_slowpath() {
+		f (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
+			ac->nodemask = NULL;
+			ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
+					ac->highest_zoneidx, ac->nodemask);
+
+		/* so ac.nodemask = NULL */
+	}
+
+According to the function flow above, we do not have the memory limit to
+follow cpuset.mems, so we need to add it.
+
+Test result:
+Try 3 times with different cpuset.mems and alloc large memorys than that numa size.
+echo 1 > cpuset.mems
+stress --vm 1 --vm-bytes 12g --vm-hang 0
+---------------
+echo 2 > cpuset.mems
+stress --vm 1 --vm-bytes 12g --vm-hang 0
+---------------
+echo 3 > cpuset.mems
+stress --vm 1 --vm-bytes 12g --vm-hang 0
+
+The retry trace look like:
+stress-2139    [003] .....   666.934104: reclaim_retry_zone: node=1 zone=Normal   order=0 reclaimable=7 available=7355 min_wmark=8598 no_progress_loops=1 wmark_check=0
+stress-2204    [010] .....   695.447393: reclaim_retry_zone: node=2 zone=Normal   order=0 reclaimable=2 available=6916 min_wmark=8598 no_progress_loops=1 wmark_check=0
+stress-2271    [008] .....   725.683058: reclaim_retry_zone: node=3 zone=Normal   order=0 reclaimable=17 available=8079 min_wmark=8597 no_progress_loops=1 wmark_check=0
+
+With this patch, we can check the right node and get less retry in __alloc_pages_slowpath()
+because there is nothing to do.
+
+V1:
+Do the same with the page allocator using __cpuset_zone_allowed().
+
+Suggested-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
+---
+ mm/compaction.c | 6 ++++++
+ mm/page_alloc.c | 5 +++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index d1041fbce679..a2b16b08cbbf 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -23,6 +23,7 @@
+ #include <linux/freezer.h>
+ #include <linux/page_owner.h>
+ #include <linux/psi.h>
++#include <linux/cpuset.h>
+ #include "internal.h"
+ 
+ #ifdef CONFIG_COMPACTION
+@@ -2822,6 +2823,11 @@ enum compact_result try_to_compact_pages(gfp_t gfp_mask, unsigned int order,
+ 					ac->highest_zoneidx, ac->nodemask) {
+ 		enum compact_result status;
+ 
++		if (cpusets_enabled() &&
++			(alloc_flags & ALLOC_CPUSET) &&
++			!__cpuset_zone_allowed(zone, gfp_mask))
++				continue;
++
+ 		if (prio > MIN_COMPACT_PRIORITY
+ 					&& compaction_deferred(zone, order)) {
+ 			rc = max_t(enum compact_result, COMPACT_DEFERRED, rc);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 29608ca294cf..8a67d760b71a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4128,6 +4128,11 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
+ 		unsigned long min_wmark = min_wmark_pages(zone);
+ 		bool wmark;
+ 
++		if (cpusets_enabled() &&
++			(alloc_flags & ALLOC_CPUSET) &&
++			!__cpuset_zone_allowed(zone, gfp_mask))
++				continue;
++
+ 		available = reclaimable = zone_reclaimable_pages(zone);
+ 		available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
+ 
+-- 
+2.20.1
 
 
