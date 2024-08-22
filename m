@@ -1,173 +1,232 @@
-Return-Path: <linux-kernel+bounces-298008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5746195C060
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:41:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C179895C063
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6E71F24E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446511F24D93
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3041D175D;
-	Thu, 22 Aug 2024 21:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5891D1752;
+	Thu, 22 Aug 2024 21:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCEOvW2r"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+lPa/MH"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2485918EB1;
-	Thu, 22 Aug 2024 21:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76624A933;
+	Thu, 22 Aug 2024 21:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724362871; cv=none; b=UZuIJEgFtd2wQ98xJvkOiY6friJpSEgpZkiKvfqwy8pbo8XCz9sU6VFiYnQjgdnh64HOuDLpDGioyy/8d3T1zpYw+9Efd1C7eYdWsbDeug8OiRu0t9OKLP2vi9/faA2WkSo5tdSf/OteGWE0HgRBRlgXzOyR2WmTpy0Ral0eOc0=
+	t=1724362953; cv=none; b=EfSH9laIv7aYIWuVl2nKhDtcHY6UO1jPV6BMOx68hTRN7X0TxGgPAnByABEsXJ8BA2hjq6AtCJnniZAWvsYBpEtBZtRj1mH0OQ+DMh02sZeGR5DqQPanQ/3p4vighEp1P/hNZompYyHuMSttr9yy+YegqYcBPflPtSoD0sbUQEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724362871; c=relaxed/simple;
-	bh=OY0Cw4jKHYyA2YTNmNjSXtMsaRpmLSV3pecbLOsimfU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8Tgor+qRhJD/+octBax2dwdhQaIcUQXDfepGWU9uASbru+1kvQ1p2X/Si524QHqB0f89Nbp7awfWSYJX0VsmJwQsE3fz1oW7tZrqQRKZHM9FA1d0Y12eBX2AgpJIWITtVsOItiYZXycobg5dQ6O90N0i3CshR1rPXPAbRTWb8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCEOvW2r; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1724362953; c=relaxed/simple;
+	bh=RonItg1Xd/SunYcSkqFRspw+YkvUnNSQrO5Lkh+YH18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eXUkUjHU25rQJckWnRKeS5EUofXxhAOYJWjEo1yefGzzbJ4bn1h4gHBNrpSP1arPD7cwyZj8t/LjEGVe4lpV0+Q2UlDdb4o0XwGhzkoGeFCHVlwwjcRB8/nzxLPifFu01If/P5t+ASvuqcPR+MscQwjI2+H0b+Fq/Naz/+SeHS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+lPa/MH; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20219a0fe4dso13418675ad.2;
-        Thu, 22 Aug 2024 14:41:09 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3fea6a0a9so11714711fa.0;
+        Thu, 22 Aug 2024 14:42:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724362869; x=1724967669; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fefpIDiQsvmyVmJ9DTk9OrkozwCKfzpukO3kKB0G7io=;
-        b=dCEOvW2rzl4DmfE1p+TJshEFPJvnzxJhja+dhWHpentCx8mgwQmY2q8ln6UHOM5JhH
-         JaT5yhmqoY/5hve8b5ux27dgk0Dh2YVDo4D1ROlJWaP9rdxVYabWvtdkC2eo+6wP0v27
-         oXXWs7oPZ0VwHxpHxuKVQJ1oClYtAsYzGewy0ZFH25ueZQgCwMkVT9OFHlVAWJIxyfYH
-         gCg72+wX0yV02FxXQJ7kj9xZqKc4lIv5LlJAm+5NJqtDuBOp/6rGmmdljslfo7KMU2S/
-         6U0pAQLuJV+EVB/5hhdwb2ve0hJWQs8ug5d8NJSrGOUuttjrIVKxIj2yIS2R3Eh0BMWP
-         OL3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724362869; x=1724967669;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724362949; x=1724967749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fefpIDiQsvmyVmJ9DTk9OrkozwCKfzpukO3kKB0G7io=;
-        b=HTjTXCXqUJr2h6jp+u+0VhQ7WDafZpBrb5j2VDreZo0lYFIxxxyjU8Y8trmSVNVpFo
-         rd0DKrwKqKJeNFMOrQv4eKZbrSfxIcjJlzhPggZ63dC8a40IQfyBmukHGBd+BloVtIM/
-         IZx2bsjyuyoYI+kk3avU31ffeE4A6OHuzRbZosd9Ia+aQ0kTCaH+t6XDD69bagjqNAD0
-         CvGu3EVcENfYBl5XHahUNO23VxmbobPQ/rKsupwOn15Br3ch8xny7WR0OCue/QguxKwI
-         e4jDrWO/BdSe0C8SvHh2ODY7l+mvQY4vqzU6ZPqwAIM70RQF6uxixsh9/WXuewv2eFmJ
-         Mdjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUU8y0PhB2E0la1mcklsP2G5SmuO3hJuwrR/ZHTRx6SzoEC1gx4p5fGdR+QgUQ91QR64XWWSbFhOd0Cc68C@vger.kernel.org, AJvYcCUZ2o/NkOZpxNFrVmQY1XOURe2vF8wZKIRaVxbXNL+2uraYBJk/QLmI9T9IvwLTpCSyeQEOLwsT3mbb@vger.kernel.org, AJvYcCVKazYZBGDpqyXnV7NNxxZ01bVe2xENEgYo1EJv2eigwowLJPxN7xSSYCmLiF8Nql/Ep2JlAVgyZID5@vger.kernel.org, AJvYcCXY8K1qdghlRdRZXfNx6G/BwkB2el05oZpPDtvHWqCyB0n6W2rTfo6E7BxDCqy4TLyXxgmdaG/j9NMYlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJh7/QJFB2CKPSuUo/p0TLgaPbHBKZQBwu2ggSOjXCAtYmLiVn
-	H8TdTg/mJbOX8ecz2b+xPNnGpv0Gu7MWpOHmyKKuBHvIc0ekkxyL
-X-Google-Smtp-Source: AGHT+IHCWUeOTFC/rJ8NysGSN8g7BvV82Pdq7JDaAlLehwEn9Kj+6aSkyw+tasX7G1339cnBWDepbA==
-X-Received: by 2002:a17:902:d2d0:b0:1fd:8c25:415c with SMTP id d9443c01a7336-2039e4891ddmr1772985ad.24.1724362869331;
-        Thu, 22 Aug 2024 14:41:09 -0700 (PDT)
-Received: from fan ([2601:646:8f03:9fee:3cd4:f45f:79d:1096])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038b7ebe0dsm14920535ad.287.2024.08.22.14.41.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 14:41:09 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Thu, 22 Aug 2024 14:41:05 -0700
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH v3 15/25] cxl/pci: Factor out interrupt policy check
-Message-ID: <Zsewcfl5alK4mvZS@fan>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-15-7c9b96cba6d7@intel.com>
+        bh=awwpG6BcnKIVmBP8lggk8RTlcBpoUDmXTZGY9kK67gs=;
+        b=E+lPa/MHeu1dOEUP1sTd+HMp2F05eS2HGQpXZ7yf6pBgpSEYLBT7QSpuHlVF915GFf
+         +giPOnZOBOYMCNyr18m8V3cbvTOJ8Jz9LrSQgVAG+fJnciTOajk1MhRscrlZ+8xHcYZS
+         1pDCovLvc5bVnGC2mJjUzSJaVCwSPtoc0B4l7bWt9Du89b2cPrQcN1Egj8SaLx/NNP1U
+         QQ2LCEFTt/scfaX7D7DK/rfGN9tv4/5hYrRTEDI7gXSPHZ/285XZbFTww12UeiMxMiY7
+         tzLgBESzYPkCaGe19qWxt3LLOnN1O3Iod425LVQWZ0ih+IIAtNzRpZGxR5BofGJNHQgc
+         aSOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724362949; x=1724967749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=awwpG6BcnKIVmBP8lggk8RTlcBpoUDmXTZGY9kK67gs=;
+        b=iS7eNBGah3QAFKCDyWmoY3WbzvIXSnP1Wg/B1jLjs/oSZfgBKEmD2MY083N7inEmk3
+         67ZFIcD+0OyVuN+xq8/3kn09QA4ll7lHzbcP2VG/6Ll30EquR8MH+Eus1J42tr+tMd7R
+         l1ZZ2g4TGveJuOzIKsYxZ+m71oigTvtLYJdfZLmIGQnzwxhIRnsnPgZl1ufRdGAODYCa
+         FJkjg5MAlMqKkeGkA90UT1aVsUClSPJuqiS0RLU6n4Vo5cXsUbqD4GR/MgCsE8SNYkO+
+         IqxJG22UBAhBaT8FwnsR0SqOK6RFFP+ifg3dVaLwkJTXe8be/E9Mz3UZBk1v+4QSn4eK
+         EUYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9vDtdF6FwE/73Bxo8nVQaF8E6TuJL57qGGjbcZWoes+kc4KKev7RnMGCZFxakcaMWd1X5zT91VrSciRbH@vger.kernel.org, AJvYcCVQhbDOPK5XCipQbXUfUEw7P3cXBJlKxgnFyymY6M57fcrcRXN28kkn32nG3iiha5zf2SwAZ0aw26sDavUaIVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynGUreQ1ppqD+9I6Ca1LtN4UF2v8i0baC9YNCQBZMjYtg8g4QL
+	OCj3EfjOn00FQxe6pvCmHPNH0wjjUC+hhshadigBeth8WL2dvss+/Tt5Z5iG5lDkCrlVMJpHLkg
+	dPnriKxAnenxaa2rqE3M9PzM9l6s=
+X-Google-Smtp-Source: AGHT+IFZJWagQvx5+2x+g91KGo2waPGKCL0f+e79wkpFqT045NpDP3GLMXEFPHm1GgcrX3bTw/UTgJoGytHjbkY8LkU=
+X-Received: by 2002:a2e:b88f:0:b0:2f3:f1cf:5314 with SMTP id
+ 38308e7fff4ca-2f4f4910acemr1141741fa.10.1724362948284; Thu, 22 Aug 2024
+ 14:42:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816-dcd-type2-upstream-v3-15-7c9b96cba6d7@intel.com>
+References: <20240821110856.22552-1-pavel@noa-labs.com> <2b7a1c4ee1d6e78f166d545b31f4fd3fbd252e26.camel@mediatek.com>
+ <CAG-pW8EgBE4RwhcFtMXEuFtG56JJSyvOjG5+q71zG6pJyo05hg@mail.gmail.com>
+In-Reply-To: <CAG-pW8EgBE4RwhcFtMXEuFtG56JJSyvOjG5+q71zG6pJyo05hg@mail.gmail.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 22 Aug 2024 17:42:15 -0400
+Message-ID: <CABBYNZJL6qkOPE6UuKz+=03KTUNF4091iR=1j4e2P+Wf2c+oWg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btusb: Add Realtek MT7925 support ID 0x13d3:0x3608
+To: Pavel Nikulin <pavel@noa-labs.com>
+Cc: =?UTF-8?B?Q2hyaXMgTHUgKOmZuOeomuazkyk=?= <Chris.Lu@mediatek.com>, 
+	"marcel@holtmann.org" <marcel@holtmann.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	=?UTF-8?B?RGVyZW4gV3UgKOatpuW+t+S7gSk=?= <Deren.Wu@mediatek.com>, 
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, 
+	"johan.hedberg@gmail.com" <johan.hedberg@gmail.com>, =?UTF-8?B?U3RldmUgTGVlICjmnY7oppboqqAp?= <steve.lee@mediatek.com>, 
+	Sean Wang <Sean.Wang@mediatek.com>, =?UTF-8?B?QWFyb24gSG91ICjkvq/kv4rku7Ap?= <Aaron.Hou@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 09:44:23AM -0500, Ira Weiny wrote:
-> Dynamic Capacity Devices (DCD) require event interrupts to process
-> memory addition or removal.  BIOS may have control over non-DCD event
-> processing.  DCD interrupt configuration needs to be separate from
-> memory event interrupt configuration.
-> 
-> Factor out event interrupt setting validation.
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
+Hi Pavel,
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
+On Thu, Aug 22, 2024 at 5:09=E2=80=AFPM Pavel Nikulin <pavel@noa-labs.com> =
+wrote:
+>
+> Oh my, how I missed that.
+>
+> I think a commit can be undone, and the same patch with a correct
+> commit message submitted again. Somebody with access will have to
+> revert it.
 
-> ---
-> Changes:
-> [iweiny: reword commit message]
-> [iweiny: keep review tags on simple patch]
-> ---
->  drivers/cxl/pci.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> index 17bea49bbf4d..370c74eae323 100644
-> --- a/drivers/cxl/pci.c
-> +++ b/drivers/cxl/pci.c
-> @@ -738,6 +738,21 @@ static bool cxl_event_int_is_fw(u8 setting)
->  	return mode == CXL_INT_FW;
->  }
->  
-> +static bool cxl_event_validate_mem_policy(struct cxl_memdev_state *mds,
-> +					  struct cxl_event_interrupt_policy *policy)
-> +{
-> +	if (cxl_event_int_is_fw(policy->info_settings) ||
-> +	    cxl_event_int_is_fw(policy->warn_settings) ||
-> +	    cxl_event_int_is_fw(policy->failure_settings) ||
-> +	    cxl_event_int_is_fw(policy->fatal_settings)) {
-> +		dev_err(mds->cxlds.dev,
-> +			"FW still in control of Event Logs despite _OSC settings\n");
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  			    struct cxl_memdev_state *mds, bool irq_avail)
->  {
-> @@ -760,14 +775,8 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  	if (rc)
->  		return rc;
->  
-> -	if (cxl_event_int_is_fw(policy.info_settings) ||
-> -	    cxl_event_int_is_fw(policy.warn_settings) ||
-> -	    cxl_event_int_is_fw(policy.failure_settings) ||
-> -	    cxl_event_int_is_fw(policy.fatal_settings)) {
-> -		dev_err(mds->cxlds.dev,
-> -			"FW still in control of Event Logs despite _OSC settings\n");
-> +	if (!cxl_event_validate_mem_policy(mds, &policy))
->  		return -EBUSY;
-> -	}
->  
->  	rc = cxl_event_config_msgnums(mds, &policy);
->  	if (rc)
-> 
-> -- 
-> 2.45.2
-> 
+I will do that once I rebase for the next pull request, it is just a
+matter of doing s/Realtek/Mediatek?
+
+>
+> Pavel Nikulin
+> Senior Engineer
+> +971 52 386 6738
+> pavel@noa-labs.com
+>
+>
+>
+> On Thu, Aug 22, 2024 at 9:54=E2=80=AFAM Chris Lu (=E9=99=B8=E7=A8=9A=E6=
+=B3=93) <Chris.Lu@mediatek.com> wrote:
+> >
+> > Hi Luiz and Pavel,
+> >
+> > I think these is something wrong to the title and content of this
+> > patch. MT7925 is an connectivity IC from Mediatek rather than Realtek.
+> >
+> > Although this patch has been accpeted and merged to the next tree, I'm
+> > wondering if the typo can still be fixed? I'm afraid that such error
+> > could cause some misunderstanding to users.
+> >
+> > Thanks a lot!
+> >
+> > BRs,
+> > Chris
+> >
+> > On Wed, 2024-08-21 at 15:08 +0400, Pavel Nikulin wrote:
+> > > Add the support ID (0x13d3, 0x3608) to usb_device_id table for
+> > > Realtek MT7925B14L found on AW-EM637 WiFi+BT modules in 2024 Asus
+> > > laptops.
+> > >
+> > > The device info from /sys/kernel/debug/usb/devices as below.
+> > >
+> > > T:  Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D00 Cnt=3D01 Dev#=3D  2 Spd=3D4=
+80  MxCh=3D 0
+> > > D:  Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D=
+  1
+> > > P:  Vendor=3D13d3 ProdID=3D3608 Rev=3D 1.00
+> > > S:  Manufacturer=3DMediaTek Inc.
+> > > S:  Product=3DWireless_Device
+> > > S:  SerialNumber=3D000000000
+> > > C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
+> > > A:  FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01
+> > > I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D125us
+> > > E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > > E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > > I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+> > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+> > > I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+> > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+> > > I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+> > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+> > > I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+> > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+> > > I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+> > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+> > > I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+> > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+> > > I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+> > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+> > > I:  If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
+> > > E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
+> > > I:* If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Dr=
+iver=3Dbtusb
+> > > E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+> > > E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+> > >
+> > > Signed-off-by: Pavel Nikulin <pavel@noa-labs.com>
+> > > ---
+> > >  drivers/bluetooth/btusb.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > > index bb698ca98..df0d2e4ab 100644
+> > > --- a/drivers/bluetooth/btusb.c
+> > > +++ b/drivers/bluetooth/btusb.c
+> > > @@ -627,6 +627,8 @@ static const struct usb_device_id quirks_table[]
+> > > =3D {
+> > >       BTUSB_WIDEBAND_SPE
+> > > ECH },
+> > >  { USB_DEVICE(0x13d3, 0x3604), .driver_info =3D BTUSB_MEDIATEK |
+> > >       BTUSB_WIDEBAND_SPE
+> > > ECH },
+> > > +{ USB_DEVICE(0x13d3, 0x3608), .driver_info =3D BTUSB_MEDIATEK |
+> > > +     BTUSB_WIDEBAND_SPE
+> > > ECH },
+> > >
+> > >  /* Additional Realtek 8723AE Bluetooth devices */
+> > >  { USB_DEVICE(0x0930, 0x021d), .driver_info =3D BTUSB_REALTEK },
+> >
+> > ************* MEDIATEK Confidentiality Notice ********************
+> > The information contained in this e-mail message (including any
+> > attachments) may be confidential, proprietary, privileged, or otherwise
+> > exempt from disclosure under applicable laws. It is intended to be
+> > conveyed only to the designated recipient(s). Any use, dissemination,
+> > distribution, printing, retaining or copying of this e-mail (including =
+its
+> > attachments) by unintended recipient(s) is strictly prohibited and may
+> > be unlawful. If you are not an intended recipient of this e-mail, or be=
+lieve
+> > that you have received this e-mail in error, please notify the sender
+> > immediately (by replying to this e-mail), delete any and all copies of
+> > this e-mail (including any attachments) from your system, and do not
+> > disclose the content of this e-mail to any other person. Thank you!
+
+
+
+--=20
+Luiz Augusto von Dentz
 
