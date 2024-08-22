@@ -1,84 +1,124 @@
-Return-Path: <linux-kernel+bounces-297100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5189895B315
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:40:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BBA95B31B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE6D2825BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 995231C22DBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21A517E00A;
-	Thu, 22 Aug 2024 10:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4903183CA5;
+	Thu, 22 Aug 2024 10:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQiRinaB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HxLmPgeo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0B317DE16;
-	Thu, 22 Aug 2024 10:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B37014A0B8;
+	Thu, 22 Aug 2024 10:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724323198; cv=none; b=ZGKnJ78iYOszla7zeCwNTQzs3uZGqSYd6ltXwB2NnOj9pcEXaT/i+By/ZguE6GXgiMX9gs1XFT7nYXj85K9N0iyI/W2+pRm1jcTOqQoPvsmE8Z4Zlr0Y+5P65NaDE3WYiapeEopCimyMB394DtCjioLx4Svq9DGy8ZEchn6r1H8=
+	t=1724323396; cv=none; b=kw6pTQU0D0/TK2LP54bxx7r3KowPy0AIAnMRCjcmJ2CHqbQ+dFKDR4U/K7QJBJHCPnweakJ/SXi/Dv30KLV0Fq8UDPkFTX7fSnBs9hPOaYZS+L/Mu0VVOGm4wZpdjWvZ+E4UTlMnnwOaKKYYrXHWGk1Gr/1vOHhraMGWcXSQSNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724323198; c=relaxed/simple;
-	bh=485sC5htGkQO+bcO6uAudwe1l+1z182B98DT/0EBhQk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DIwucanPcUYKE5tNBFaHdafkwjwFLIJThnnQecBJ/esU15utr4THYBqJ5CmPU/XZzBE1MUXaKGivVIQmOSj0p+kimaR9ezbbYHiJ/Dd6LaRVXbiw3TI58fIuBId8GdzuRIoopCpA2++uEZFZhF3aTbkBFqEX7na3X8mWNPLqHEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQiRinaB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6E6C32782;
-	Thu, 22 Aug 2024 10:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724323197;
-	bh=485sC5htGkQO+bcO6uAudwe1l+1z182B98DT/0EBhQk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CQiRinaBV9nEhy6u5Yd1esF30tlcz2TZT+eJs5cqZuQNRytLysINpr+WCaU4EVQUq
-	 ZEaUe4ndARtlRJKQdRoR/wlN20gmiRHoMm2mwMZT/o3YSPlgkX+zVqXLtk2tRkbuZy
-	 6BT52w5nEUqi9HfVaGsoYO2g5Ah1FTMQNEVcD3Fa+puREG8kSth6ijUIPmk7HQceU0
-	 GhkREw0EKaRG9xxhWIte45I5mGfDNuV6SI9/5hi8s4GqQbyfL7mjTh9GI1UzbPZ+9K
-	 XVP6n2gu4floh79DHbyk8AZ5dhSdY6C7YcUt4eWie0jkPxDfznZ/DOsThonSrFq4o2
-	 006SeUe1b3KTg==
-From: Lee Jones <lee@kernel.org>
-To: pavel@ucw.cz, lee@kernel.org, wens@csie.org, jernej.skrabec@gmail.com, 
- samuel@sholland.org, Abhishek Tamboli <abhishektamboli9@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, skhan@linuxfoundation.org, 
- rbmarliere@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240816171129.6411-1-abhishektamboli9@gmail.com>
-References: <20240816171129.6411-1-abhishektamboli9@gmail.com>
-Subject: Re: (subset) [PATCH] leds: sun50i-a100: Replace msleep() with
- usleep_range()
-Message-Id: <172432319478.1263517.9477247439443460396.b4-ty@kernel.org>
-Date: Thu, 22 Aug 2024 11:39:54 +0100
+	s=arc-20240116; t=1724323396; c=relaxed/simple;
+	bh=fpVem33D+69grzXobRjgZMqRFbVQXeX7AgxHmOmo6qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LmZXyWcIcRph51DcyFe5uYKptDKPUsZzOvbyjnEAcTgJsgbWEz9UupfQRmaZLkAgxCXgwWiW56mSraL3DlSmmMNRjktBke+E8krv3qXr1Nj0f1hgFPt+0B3arBy6szNaZB9AlDNSCPEKEeOgET8u9uKnDmQiRyIi3xCv+LFLHfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HxLmPgeo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MAEgjv019074;
+	Thu, 22 Aug 2024 10:43:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cQyW5VfaY0Obw4r4NigChgacwm6QBnZfPZ/0IXOPeQ8=; b=HxLmPgeoR2cELSUW
+	Xv4SAwFEbZOmYg08QAiOBNbum+qfhzy7TO8JcpQJYgjrPHKB3h/BT+6sgzdaEaE5
+	fyDPsNLqgMcN4C5RgE+Boy6r5/5PeWbqtF45tOYDN2QY7c4b8AbC7AzcEbT4VGAt
+	f6sOqPIml97H0Lq+xBm2FfbvyHbtmQFVfUgHm6CGn+JwE1GzWlgnEgUgFg2Ddsz2
+	hp9F5jcTFMW0HXekJlvj57Q4caCEc0q8A9QjevvgnBW8pqkapSDYmcElpF8q19Fq
+	Gfc8C9XgfR9CQnhKx/tn77dIZTXrfwI5nCa/lYmAfjhPJVXFxs1BvHVeX7mnUkFz
+	kGAC2w==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415vsah8pg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:43:11 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MAhBO4008204
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:43:11 GMT
+Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
+ 2024 03:43:06 -0700
+Message-ID: <807c9315-bf88-4a0a-9632-2ce471b329b6@quicinc.com>
+Date: Thu, 22 Aug 2024 16:13:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Add new driver for WCSS secure PIL loading
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <krzk+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
+        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <4d1c0d17-20b8-4989-9757-61031e9f03a4@kernel.org>
+Content-Language: en-US
+From: Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <4d1c0d17-20b8-4989-9757-61031e9f03a4@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mJwCyVfArXUEWTriWtdPqJgoudWRntI3
+X-Proofpoint-ORIG-GUID: mJwCyVfArXUEWTriWtdPqJgoudWRntI3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_03,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 spamscore=0 clxscore=1015 phishscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 mlxlogscore=945 malwarescore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408220080
 
-On Fri, 16 Aug 2024 22:41:29 +0530, Abhishek Tamboli wrote:
-> Replace msleep() with usleep_range() in sun50i_a100_ledc_suspend()
-> to address the checkpatch.pl warning. msleep() for such short delay
-> can lead to inaccurate sleep times. Switch to usleep_range()
-> provide more precise delay.
-> 
-> Fix the following warning from checkpatch.pl:
-> 
-> [...]
 
-Applied, thanks!
+On 8/20/2024 4:42 PM, Krzysztof Kozlowski wrote:
+> On 20/08/2024 10:55, Gokul Sriram Palanisamy wrote:
+>> This series depends on q6 clock removal series [1].
+> How? So this cannot be tested and merged?
 
-[1/1] leds: sun50i-a100: Replace msleep() with usleep_range()
-      commit: 8f3f07517834382e819e168740bf855273f13d47
+Yes. Though TrustZone enables these clocks, since Linux Kernel will 
+consider these clock as unused.
+These clock will be disabled so we cannot bring Q6 out of reset. So we 
+have the dependency set.
+I posted this as a separate series because [1] 'remove unnecessary q6 
+clocks' series was already reviewed for some
+versions.
 
---
-Lee Jones [李琼斯]
+[1] 
+https://patchwork.kernel.org/project/linux-arm-msm/cover/20240820055618.267554-1-quic_gokulsri@quicinc.com/
 
+Regards,
+
+Gokul
+
+> That's second patchset to day with some totally bogus dependencies.
+> People, stop it.
+>
+>
+> Best regards,
+> Krzysztof
+>
 
