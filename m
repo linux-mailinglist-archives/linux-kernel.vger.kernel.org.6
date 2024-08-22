@@ -1,351 +1,216 @@
-Return-Path: <linux-kernel+bounces-297239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADE095B4CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:15:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E97595B4D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805A21C2311E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E2B1F225A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F281C9DCC;
-	Thu, 22 Aug 2024 12:14:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFEF1C9458;
-	Thu, 22 Aug 2024 12:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F35F1C9450;
+	Thu, 22 Aug 2024 12:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ReNxpoMH"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAF317E00F;
+	Thu, 22 Aug 2024 12:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328881; cv=none; b=tUmB22j2ft1lUj5wiq9P2lL5WkBFD5R5goY4RCubFZzX8DRSJYsUlh7ouF6BshxSJaiqj1go3RLsF2LRfMNYd9Ldf2KlNDa4NQpBVJLp9GIFn7SdwTzxw0fIzISlLkeye2/g+wG8V/0Y45R1cSjMOBk4xkS0DTpGJOLYAtxBOFo=
+	t=1724328929; cv=none; b=ByLABEfUuxhImmp04Iq6Zhqq8IT5UMT7f1Wxs/BQCpDrP9BYtOTB3/ijB4ePGq2/uxHUOUyw3BpY//BmNnnXOr/iPSuDXP8P7KKXuv5WYFr927KfSnbBXiMrnUzI3kAmaZYbhDFlI0LXOMmZiDBHPmiNrPCWr7cHafpCLtpKjBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328881; c=relaxed/simple;
-	bh=seFO9TIQA80Rk3vfTWOTemUdTrJGdSJnXUw8WYFJSEQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sELX7QrumMUgmqzRBsBe22yE+IPKfGtss4of/KuEgIloHdLuY5eI28/yZRPsSFbc9pZOM6xR4QxakxeeB9GyT0jodn4AxIdd4tmLhBsYAq0Ytgr7+VPYI/+qPcaUKB6vlZn1J8VR1kD+kNnvqF7DzXJK9hXpbL7C0/xPWGGmwO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27393DA7;
-	Thu, 22 Aug 2024 05:15:05 -0700 (PDT)
-Received: from e116581.arm.com (unknown [10.163.87.181])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2637B3F66E;
-	Thu, 22 Aug 2024 05:14:33 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: shuah@kernel.org,
-	oleg@redhat.com
-Cc: mingo@kernel.org,
-	tglx@linutronix.de,
-	mark.rutland@arm.com,
-	ryan.roberts@arm.com,
-	broonie@kernel.org,
-	suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com,
-	DeepakKumar.Mishra@arm.com,
-	aneesh.kumar@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v6 2/2] selftests: Add a test mangling with uc_sigmask
-Date: Thu, 22 Aug 2024 17:44:15 +0530
-Message-Id: <20240822121415.3589190-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822121415.3589190-1-dev.jain@arm.com>
-References: <20240822121415.3589190-1-dev.jain@arm.com>
+	s=arc-20240116; t=1724328929; c=relaxed/simple;
+	bh=/f5kHxv/qK38/VwCO46f6T1RghKua+/79bPaONA41XQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ExK+Swnd6QBILgCqZVAJO+wKbsnnW4CtSatabYjQu37iaaivNRmDEV34j5Dh0v6vrlVC1Ahk874CF4mr9EoZl5MMXbwc1kUW1dqHy9Ltr2Ge93DpfJRU83sg5I2OYSHxbqoLVwxmKyMLn7QHaNiLBFwEEOrqvPRK2K1GieZwlT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ReNxpoMH; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47MCEuiC062629;
+	Thu, 22 Aug 2024 07:14:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724328896;
+	bh=UDOd1zGVF6byxfuiey4IHC/bFKsyGbIAfpFqY9kh0cg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ReNxpoMHajC3pnzXUJ/iVd0KVYqRBmBbhRxZeQ/ZQtj3R7O8EeWaIgwUnhzqAm08/
+	 61ksTLbz3bfSgRMverAT24grYtDBSCiCKYO4sVCO9F2RZJK1s9/Qhu6h1+IQ9V+D0/
+	 u2rHSPEPwtHTrkIYLvSnb2Avku6OZD/EPEn21L/E=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47MCEuaS010685
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 22 Aug 2024 07:14:56 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
+ Aug 2024 07:14:55 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 22 Aug 2024 07:14:55 -0500
+Received: from [10.249.135.225] ([10.249.135.225])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47MCElSa086425;
+	Thu, 22 Aug 2024 07:14:47 -0500
+Message-ID: <59756906-bfbb-4e83-88fc-bc1363515711@ti.com>
+Date: Thu, 22 Aug 2024 17:44:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 2/2] net: ti: icssg-prueth: Add support for PA
+ Stats
+To: Roger Quadros <rogerq@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
+        Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Diogo Ivo
+	<diogo.ivo@siemens.com>,
+        Kory Maincent <kory.maincent@bootlin.com>,
+        Heiner
+ Kallweit <hkallweit1@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Simon Horman
+	<horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240820091657.4068304-1-danishanwar@ti.com>
+ <20240820091657.4068304-3-danishanwar@ti.com>
+ <03172556-8661-4804-8a3b-0252d91fdf46@kernel.org>
+ <79dfc7d2-d738-4899-aadf-a6b4df338c23@ti.com>
+ <42f29ba8-e341-474e-9e2a-59f55850803a@kernel.org>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <42f29ba8-e341-474e-9e2a-59f55850803a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The test is motivated by the following observation:
 
-Raise a signal, jump to signal handler. The ucontext_t structure dumped
-by kernel to userspace has a uc_sigmask field having the mask of blocked
-signals. If you run a fresh minimalistic program doing this, this field
-is empty, even if you block some signals while registering the handler
-with sigaction().
 
-Here is what the man-pages have to say:
+On 8/22/2024 4:59 PM, Roger Quadros wrote:
+> 
+> 
+> On 22/08/2024 08:28, MD Danish Anwar wrote:
+>>
+>>
+>> On 21/08/24 6:05 pm, Roger Quadros wrote:
+>>>
+>>>
+>>> On 20/08/2024 12:16, MD Danish Anwar wrote:
+>>>> Add support for dumping PA stats registers via ethtool.
+>>>> Firmware maintained stats are stored at PA Stats registers.
+>>>> Also modify emac_get_strings() API to use ethtool_puts().
+>>>>
+>>>> This commit also renames the array icssg_all_stats to icssg_mii_g_rt_stats
+>>>> and creates a new array named icssg_all_pa_stats for PA Stats.
+>>>>
+>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>> ---
+>>
+>> [ ... ]
+>>
+>>>> +
+>>>>  #define ICSSG_STATS(field, stats_type)			\
+>>>>  {							\
+>>>>  	#field,						\
+>>>> @@ -84,13 +98,24 @@ struct miig_stats_regs {
+>>>>  	stats_type					\
+>>>>  }
+>>>>  
+>>>> +#define ICSSG_PA_STATS(field)			\
+>>>> +{						\
+>>>> +	#field,					\
+>>>> +	offsetof(struct pa_stats_regs, field),	\
+>>>> +}
+>>>> +
+>>>>  struct icssg_stats {
+>>>
+>>> icssg_mii_stats?
+>>>
+>>
+>> Sure Roger. I will name it icssg_miig_stats to be consistent with
+>> 'struct miig_stats_regs'
+>>
+>>>>  	char name[ETH_GSTRING_LEN];
+>>>>  	u32 offset;
+>>>>  	bool standard_stats;
+>>>>  };
+>>>>  
+>>>> -static const struct icssg_stats icssg_all_stats[] = {
+>>>> +struct icssg_pa_stats {
+>>>> +	char name[ETH_GSTRING_LEN];
+>>>> +	u32 offset;
+>>>> +};
+>>>> +
+>>>> +static const struct icssg_stats icssg_mii_g_rt_stats[] = {
+>>>
+>>> icssg_all_mii_stats? to be consistend with the newly added
+>>> icssg_pa_stats and icssg_all_pa_stats.
+>>>
+>>> Could you please group all mii_stats data strucutres and arrays together
+>>> followed by pa_stats data structures and arrays?
+>>>
+>>
+>> Sure Roger, I will group all mii stats related data structures and
+>> pa_stats related data structures together.
+>>
+>> The sequence and naming will be something like this,
+>>
+>> struct miig_stats_regs
+>> #define ICSSG_MIIG_STATS(field, stats_type)
+>> struct icssg_miig_stats
+>> static const struct icssg_miig_stats icssg_all_miig_stats[]
+>>
+>> struct pa_stats_regs
+>> #define ICSSG_PA_STATS(field)
+>> struct icssg_pa_stats
+>> static const struct icssg_pa_stats icssg_all_pa_stats[]
+>>
+>> Let me know if this looks ok to you.
+> 
+> This is good. Thanks!
+> 
 
-sigaction(2): "sa_mask specifies a mask of signals which should be blocked
-(i.e., added to the signal mask of the thread in which the signal handler
-is invoked) during execution of the signal handler. In addition, the
-signal which triggered the handler will be blocked, unless the SA_NODEFER
-flag is used."
+Sure I will post next version soon.
 
-signal(7): Under "Execution of signal handlers", (1.3) implies:
+>>
+>>>>  	/* Rx */
+>>>>  	ICSSG_STATS(rx_packets, true),
+>>>>  	ICSSG_STATS(rx_broadcast_frames, false),
+>>>> @@ -155,4 +180,11 @@ static const struct icssg_stats icssg_all_stats[] = {
+>>>>  	ICSSG_STATS(tx_bytes, true),t
+>>>>  };
+>>>>  
+>>>> +static const struct icssg_pa_stats icssg_all_pa_stats[] = > +	ICSSG_PA_STATS(fw_rx_cnt),
+>>>> +	ICSSG_PA_STATS(fw_tx_cnt),
+>>>> +	ICSSG_PA_STATS(fw_tx_pre_overflow),
+>>>> +	ICSSG_PA_STATS(fw_tx_exp_overflow),
+>>>> +};
+>>>> +
+>>>>  #endif /* __NET_TI_ICSSG_STATS_H */
+>>>
+>>
+> 
 
-"The thread's current signal mask is accessible via the ucontext_t
-object that is pointed to by the third argument of the signal handler."
-
-But, (1.4) states:
-
-"Any signals specified in act->sa_mask when registering the handler with
-sigprocmask(2) are added to the thread's signal mask.  The signal being
-delivered is also added to the signal mask, unless SA_NODEFER was
-specified when registering the handler.  These signals are thus blocked
-while the handler executes."
-
-There clearly is no distinction being made in the man pages between
-"Thread's signal mask" and ucontext_t; this logically should imply
-that a signal blocked by populating struct sigaction should be visible
-in ucontext_t.
-
-Here is what the kernel code does (for Aarch64):
-
-do_signal() -> handle_signal() -> sigmask_to_save(), which returns
-&current->blocked, is passed to setup_rt_frame() -> setup_sigframe() ->
-__copy_to_user(). Hence, &current->blocked is copied to ucontext_t
-exposed to userspace. Returning back to handle_signal(),
-signal_setup_done() -> signal_delivered() -> sigorsets() and
-set_current_blocked() are responsible for using information from
-struct ksignal ksig, which was populated through the sigaction()
-system call in kernel/signal.c:
-copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)),
-to update &current->blocked; hence, the set of blocked signals for the
-current thread is updated AFTER the kernel dumps ucontext_t to
-userspace.
-
-Assuming that the above is indeed the intended behaviour, because it
-semantically makes sense, since the signals blocked using sigaction()
-remain blocked only till the execution of the handler, and not in the
-context present before jumping to the handler (but nothing can be
-confirmed from the man-pages), this patch introduces a test for
-mangling with uc_sigmask.
-
-The test asserts the relation between blocked signal, delivered signal,
-and ucontext. The ucontext is mangled with, by adding a signal mask to
-it; on return from the handler, the thread must block the corresponding
-signal.
-
-In the test description, I have also described signal delivery and blockage,
-for ease of understanding what the test does.
-
-Signed-off-by: Dev Jain <dev.jain@arm.com>
-Reviewed-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/signal/.gitignore     |   1 +
- tools/testing/selftests/signal/Makefile       |   3 +-
- .../selftests/signal/mangle_uc_sigmask.c      | 184 ++++++++++++++++++
- 3 files changed, 187 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/signal/mangle_uc_sigmask.c
-
-diff --git a/tools/testing/selftests/signal/.gitignore b/tools/testing/selftests/signal/.gitignore
-index 50a19a8888ce..3f339865a3b6 100644
---- a/tools/testing/selftests/signal/.gitignore
-+++ b/tools/testing/selftests/signal/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+mangle_uc_sigmask
- sas
-diff --git a/tools/testing/selftests/signal/Makefile b/tools/testing/selftests/signal/Makefile
-index 3e96d5d47036..e0bf7058d19c 100644
---- a/tools/testing/selftests/signal/Makefile
-+++ b/tools/testing/selftests/signal/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS = -Wall
--TEST_GEN_PROGS = sas
-+TEST_GEN_PROGS = mangle_uc_sigmask
-+TEST_GEN_PROGS += sas
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/signal/mangle_uc_sigmask.c b/tools/testing/selftests/signal/mangle_uc_sigmask.c
-new file mode 100644
-index 000000000000..b79ab92178a8
---- /dev/null
-+++ b/tools/testing/selftests/signal/mangle_uc_sigmask.c
-@@ -0,0 +1,184 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2024 ARM Ltd.
-+ *
-+ * Author: Dev Jain <dev.jain@arm.com>
-+ *
-+ * Test describing a clear distinction between signal states - delivered and
-+ * blocked, and their relation with ucontext.
-+ *
-+ * A process can request blocking of a signal by masking it into its set of
-+ * blocked signals; such a signal, when sent to the process by the kernel,
-+ * will get blocked by the process and it may later unblock it and take an
-+ * action. At that point, the signal will be delivered.
-+ *
-+ * We test the following functionalities of the kernel:
-+ *
-+ * ucontext_t describes the interrupted context of the thread; this implies
-+ * that, in case of registering a handler and catching the corresponding
-+ * signal, that state is before what was jumping into the handler.
-+ *
-+ * The thread's mask of blocked signals can be permanently changed, i.e, not
-+ * just during the execution of the handler, by mangling with uc_sigmask
-+ * from inside the handler.
-+ *
-+ * Assume that we block the set of signals, S1, by sigaction(), and say, the
-+ * signal for which the handler was installed, is S2. When S2 is sent to the
-+ * program, it will be considered "delivered", since we will act on the
-+ * signal and jump to the handler. Any instances of S1 or S2 raised, while the
-+ * program is executing inside the handler, will be blocked; they will be
-+ * delivered immediately upon termination of the handler.
-+ *
-+ * For standard signals (also see real-time signals in the man page), multiple
-+ * blocked instances of the same signal are not queued; such a signal will
-+ * be delivered just once.
-+ */
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <signal.h>
-+#include <ucontext.h>
-+
-+#include "../kselftest.h"
-+
-+void handler_verify_ucontext(int signo, siginfo_t *info, void *uc)
-+{
-+	int ret;
-+
-+	/* Kernel dumps ucontext with USR2 blocked */
-+	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR2);
-+	ksft_test_result(ret == 1, "USR2 blocked in ucontext\n");
-+
-+	/*
-+	 * USR2 is blocked; can be delivered neither here, nor after
-+	 * exit from handler
-+	 */
-+	if (raise(SIGUSR2))
-+		ksft_exit_fail_perror("raise");
-+}
-+
-+void handler_segv(int signo, siginfo_t *info, void *uc)
-+{
-+	/*
-+	 * Three cases possible:
-+	 * 1. Program already terminated due to segmentation fault.
-+	 * 2. SEGV was blocked even after returning from handler_usr.
-+	 * 3. SEGV was delivered on returning from handler_usr.
-+	 * The last option must happen.
-+	 */
-+	ksft_test_result_pass("SEGV delivered\n");
-+}
-+
-+static int cnt;
-+
-+void handler_usr(int signo, siginfo_t *info, void *uc)
-+{
-+	int ret;
-+
-+	/*
-+	 * Break out of infinite recursion caused by raise(SIGUSR1) invoked
-+	 * from inside the handler
-+	 */
-+	++cnt;
-+	if (cnt > 1)
-+		return;
-+
-+	/* SEGV blocked during handler execution, delivered on return */
-+	if (raise(SIGSEGV))
-+		ksft_exit_fail_perror("raise");
-+
-+	ksft_print_msg("SEGV bypassed successfully\n");
-+
-+	/*
-+	 * Signal responsible for handler invocation is blocked by default;
-+	 * delivered on return, leading to recursion
-+	 */
-+	if (raise(SIGUSR1))
-+		ksft_exit_fail_perror("raise");
-+
-+	ksft_test_result(cnt == 1,
-+			 "USR1 is blocked, cannot invoke handler right now\n");
-+
-+	/* Raise USR1 again; only one instance must be delivered upon exit */
-+	if (raise(SIGUSR1))
-+		ksft_exit_fail_perror("raise");
-+
-+	/* SEGV has been blocked in sa_mask, but ucontext is empty */
-+	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGSEGV);
-+	ksft_test_result(ret == 0, "SEGV not blocked in ucontext\n");
-+
-+	/* USR1 has been blocked, but ucontext is empty */
-+	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR1);
-+	ksft_test_result(ret == 0, "USR1 not blocked in ucontext\n");
-+
-+	/*
-+	 * Mangle ucontext; this will be copied back into &current->blocked
-+	 * on return from the handler.
-+	 */
-+	if (sigaddset(&((ucontext_t *)uc)->uc_sigmask, SIGUSR2))
-+		ksft_exit_fail_perror("sigaddset");
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct sigaction act, act2;
-+	sigset_t set, oldset;
-+
-+	ksft_print_header();
-+	ksft_set_plan(7);
-+
-+	act.sa_flags = SA_SIGINFO;
-+	act.sa_sigaction = &handler_usr;
-+
-+	/* Add SEGV to blocked mask */
-+	if (sigemptyset(&act.sa_mask) || sigaddset(&act.sa_mask, SIGSEGV)
-+	    || (sigismember(&act.sa_mask, SIGSEGV) != 1))
-+		ksft_exit_fail_msg("Cannot add SEGV to blocked mask\n");
-+
-+	if (sigaction(SIGUSR1, &act, NULL))
-+		ksft_exit_fail_perror("Cannot install handler");
-+
-+	act2.sa_flags = SA_SIGINFO;
-+	act2.sa_sigaction = &handler_segv;
-+
-+	if (sigaction(SIGSEGV, &act2, NULL))
-+		ksft_exit_fail_perror("Cannot install handler");
-+
-+	/* Invoke handler */
-+	if (raise(SIGUSR1))
-+		ksft_exit_fail_perror("raise");
-+
-+	/* USR1 must not be queued */
-+	ksft_test_result(cnt == 2, "handler invoked only twice\n");
-+
-+	/* Mangled ucontext implies USR2 is blocked for current thread */
-+	if (raise(SIGUSR2))
-+		ksft_exit_fail_perror("raise");
-+
-+	ksft_print_msg("USR2 bypassed successfully\n");
-+
-+	act.sa_sigaction = &handler_verify_ucontext;
-+	if (sigaction(SIGUSR1, &act, NULL))
-+		ksft_exit_fail_perror("Cannot install handler");
-+
-+	if (raise(SIGUSR1))
-+		ksft_exit_fail_perror("raise");
-+
-+	/*
-+	 * Raising USR2 in handler_verify_ucontext is redundant since it
-+	 * is blocked
-+	 */
-+	ksft_print_msg("USR2 still blocked on return from handler\n");
-+
-+	/* Confirm USR2 blockage by sigprocmask() too */
-+	if (sigemptyset(&set))
-+		ksft_exit_fail_perror("sigemptyset");
-+
-+	if (sigprocmask(SIG_BLOCK, &set, &oldset))
-+		ksft_exit_fail_perror("sigprocmask");
-+
-+	ksft_test_result(sigismember(&oldset, SIGUSR2) == 1,
-+			 "USR2 present in &current->blocked\n");
-+
-+	ksft_finished();
-+}
 -- 
-2.30.2
-
+Thanks and Regards,
+Md Danish Anwar
 
