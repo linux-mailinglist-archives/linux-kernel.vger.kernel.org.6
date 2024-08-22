@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-297118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E6895B363
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:01:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646EE95B369
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE191F23EBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21994283EA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC59918455B;
-	Thu, 22 Aug 2024 11:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EA9183CB5;
+	Thu, 22 Aug 2024 11:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="bGGJMN5+"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DW3ljmRa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30AE184532;
-	Thu, 22 Aug 2024 11:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E005183063
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724324437; cv=none; b=Ru6/TBMXd+/Rq6NrSgTZxHEWDLOgDY8SP+07UIGIMmjfrro5PdgxGACJVvzs+xhDH6dSUv4Wsxv8FOseBcrVG/DAD4DtuTlKWHdcogtvGWTO7dJrfh846+U2BKF3sLMTUPnaV97CLyMQdeofzUTMkRjn/P93j87FYvAxJMMhvk0=
+	t=1724324560; cv=none; b=SkmIY2Edpae1qqeXOdExJzF1GjGzkbunkbk2ig9GUPhR1rkwctXvQ9vHCHAEgXbUxQkQJ2kNIi1D0Cm5f5QSqclQvPzXMmYSSc9wlY5jJi/VYp1zdmKbQB4ERGK1AFYEtDIzORwBCoSHz7UfJiWrR3X/Wykh1dDbDhwD+VJnF10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724324437; c=relaxed/simple;
-	bh=iPpc/Yn2vxrvQVc7R5jdvGjWlJbng8RMD0p1QbAGcvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dvZVdDwGUjIFfYvVIqw+CENsFEx3MKDIJSgE+Lbj7EVan/JT+MR5cjnLxtBWbO3mDsVD5w9LxNRojNgZdTiFmCUVf4ov9s50gyyqgUL1s3c1J2ZurPDEMCh+AxuNJWSHy1f4lTaUVK/h842fBfC9/SicuSpSPgNaogkgZQiwV8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=bGGJMN5+; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 5AE841C009C; Thu, 22 Aug 2024 13:00:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1724324425;
+	s=arc-20240116; t=1724324560; c=relaxed/simple;
+	bh=2nODh978mMzK3j0GjNsmpF8YNFjkBxrPTFe2CgovZbo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bq1T+24i/6ys2ArH1k+0wbqEqC5UHoJUM5gvxOBks3tP/jzBHnyZV7NKPLOYhVztmn6XVoI2NQqpJqTi9yMaHH29BOWPLJvXGSy4gTqguRND3F2PSGZtXdxIRm53La95MB6FDe/EzGt6fYgFXETn8GkprDZMhF/uv0fr7NfLimU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DW3ljmRa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724324558;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DbN7xxKejcgonMeotHUK0SRxnMl5EyvNy1IsqTj1/es=;
-	b=bGGJMN5+SGZzthtavwSMYsE86HTgzJnpwyZsyq+/sBhPAyLBVMRFjb5mGT7qoY9osjYx29
-	iY65twuO4CGc0uw0zKxiPBitbzX+jzFfC+4s2J1p4ltyBYZmu2If7LE5b4qlFAJSOx5Ok7
-	RJYFZGbAurXga17EzGNgRwdhDk2eGes=
-Date: Thu, 22 Aug 2024 13:00:24 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Tim Huang <Tim.Huang@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>, Xinhui.Pan@amd.com,
-	airlied@gmail.com, daniel@ffwll.ch, lijo.lazar@amd.com,
-	Zhigang.Luo@amd.com, Hawking.Zhang@amd.com, Yunxiang.Li@amd.com,
-	victor.skvortsov@amd.com, victorchengchi.lu@amd.com,
-	Vignesh.Chander@amd.com, surbhi.kakarya@amd.com,
-	danijel.slivka@amd.com, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH AUTOSEL 5.10 04/38] drm/amdgpu: fix uninitialized scalar
- variable warning
-Message-ID: <ZscaSHwgW5fzy/Z+@duo.ucw.cz>
-References: <20240801003643.3938534-1-sashal@kernel.org>
- <20240801003643.3938534-4-sashal@kernel.org>
+	bh=mkldUBIK7FYjS/3cQzFqhh6w3aGsW6ya31tCj3iSXs8=;
+	b=DW3ljmRaH8QxP+hH9B4IOryfeM9X0ymQ59winFouWK5uUNamV6tyIo1PQPT5budb90x0Mu
+	Vrnlws27JFFB6KrlBuYEq2k3RHEdpq/JyPkcr/ZBxCv9cjmsP5vMPnJWoib6k/SNhrE1bH
+	9JMhv/nVOrLZi1/7irSfHl8TYhHTPy4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368-zNaQLyDVOG2peX81Ofaiww-1; Thu, 22 Aug 2024 07:02:34 -0400
+X-MC-Unique: zNaQLyDVOG2peX81Ofaiww-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-428e0d30911so5479085e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:02:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724324553; x=1724929353;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mkldUBIK7FYjS/3cQzFqhh6w3aGsW6ya31tCj3iSXs8=;
+        b=HwXqB8f/ob/0POIP9N1rccf5JS2aiFDVV8RnfwuT8An9T1mH7LXaZ7k3ym3uObvBK/
+         M7UNdYfKfA8qs9SZz0ywwuaGwE4QUMLBH9EzCZNFR6tTd2Wx63/OJwiOMRHBauynXe9/
+         WGQHBjKYQhTodEVjtNsnWa+wGDlmniMgAQlnmlFXbbGE5769u9B67Yd0+YiX7iS/7vTF
+         mbmEc1gNrha1owLXPstvPAUsmxWzIBxQRnIdzuUBE2W9006a8Ez58CHS2+hQ9ph/o8ys
+         p6IFAtncZEO6sv8AH0mQ/rBGf62uRJrGS0nzBsdmqJPqITL1t+3RmTav6SGI9S6eyvB6
+         smZg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7kJ0MqOk8dqGvdyZjoXhU2ZY/8DqmFV2PjN+U2XSZxeCKSTZWE2uis3Xtcd1mbI/Nn4tHl+p26Jt7y+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUGxVdfR/oo6CHXpXVxmDTqq3Eg2B/UxaC9A1YntyzWzNEm8I9
+	WGwi3VvPct1iXbed2Vi/d8Rh0MSABewUPNNZMirnHVPBaMlrwF9/n82CXyXBH7w88hUlnQScZZc
+	h43+pXeP1TG0OtiXDIBxzQneAUssSaK3d5m2oi189rtAuhkn+CnUp9DDNwir09g==
+X-Received: by 2002:a05:600c:524e:b0:427:9dad:e6ac with SMTP id 5b1f17b1804b1-42abf0a9948mr35751365e9.34.1724324552984;
+        Thu, 22 Aug 2024 04:02:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBnjCtefwrwoXOwIfy4zozQekcOrOC3c7UFCnsmdTFsHXi5VMk8GxYOLmUniZcLdcFxziotQ==
+X-Received: by 2002:a05:600c:524e:b0:427:9dad:e6ac with SMTP id 5b1f17b1804b1-42abf0a9948mr35751095e9.34.1724324552430;
+        Thu, 22 Aug 2024 04:02:32 -0700 (PDT)
+Received: from [192.168.1.25] ([145.224.103.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac624bb23sm15992425e9.32.2024.08.22.04.02.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 04:02:32 -0700 (PDT)
+Message-ID: <313e8573-6c84-473a-90ee-ef98b553dd3d@redhat.com>
+Date: Thu, 22 Aug 2024 13:02:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="m3M4ZguZpdVcYcTu"
-Content-Disposition: inline
-In-Reply-To: <20240801003643.3938534-4-sashal@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: phy: realtek: Fix setting of PHY LEDs Mode B bit on
+ RTL8211F
+To: Sava Jakovljev <sjakovljev@outlook.com>
+Cc: savaj@meyersound.com, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Marek Vasut <marex@denx.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <PAWP192MB21287372F30C4E55B6DF6158C38E2@PAWP192MB2128.EURP192.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <PAWP192MB21287372F30C4E55B6DF6158C38E2@PAWP192MB2128.EURP192.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---m3M4ZguZpdVcYcTu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 8/21/24 04:16, Sava Jakovljev wrote:
+> From: Sava Jakovljev <savaj@meyersound.com>
+> 
+> The current implementation incorrectly sets the mode bit of the PHY chip.
+> Bit 15 (RTL8211F_LEDCR_MODE) should not be shifted together with the
+> configuration nibble of a LED- it should be set independently of the
+> index of the LED being configured.
+> As a consequence, the RTL8211F LED control is actually operating in Mode A.
+> Fix the error by or-ing final register value to write with a const-value of
+> RTL8211F_LEDCR_MODE, thus setting Mode bit explicitly.
+> 
+> Fixes: 17784801d888 ("net: phy: realtek: Add support for PHY LEDs on RTL8211F")
 
-> From: Tim Huang <Tim.Huang@amd.com>
->=20
-> [ Upstream commit 9a5f15d2a29d06ce5bd50919da7221cda92afb69 ]
->=20
-> Clear warning that uses uninitialized value fw_size.
+Please, do not insert blank lines in the tag area i.e. between the fixes 
+and sob tags.
 
-This is queued for 5.15 and 6.10, but not 6.1, for example. Mistake?
+I'll one-off fix this while applying the patch,
 
-Best regards,
-								Pavel
-							=09
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-> @@ -404,6 +404,8 @@ static void amdgpu_virt_add_bad_page(struct amdgpu_de=
-vice *adev,
->  	uint64_t retired_page;
->  	uint32_t bp_idx, bp_cnt;
-> =20
-> +	memset(&bp, 0, sizeof(bp));
-> +
->  	if (bp_block_size) {
->  		bp_cnt =3D bp_block_size / sizeof(uint64_t);
->  		for (bp_idx =3D 0; bp_idx < bp_cnt; bp_idx++) {
+No need to resent
 
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
+Cheers,
 
---m3M4ZguZpdVcYcTu
-Content-Type: application/pgp-signature; name="signature.asc"
+Paolo
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZscaSAAKCRAw5/Bqldv6
-8qmWAJ9K4ap3buYYXtSedluoaXWY+f/29QCgq2QwH5AqKX+fw4Vz68CQNy4tCfs=
-=AenU
------END PGP SIGNATURE-----
-
---m3M4ZguZpdVcYcTu--
 
