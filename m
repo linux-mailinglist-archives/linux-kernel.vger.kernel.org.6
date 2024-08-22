@@ -1,83 +1,132 @@
-Return-Path: <linux-kernel+bounces-297543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F18095BA89
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC72295BA8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CFBC1C23FA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A77A289404
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CA21CCB59;
-	Thu, 22 Aug 2024 15:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A831CCEDF;
+	Thu, 22 Aug 2024 15:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMtAECi2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1C1ytT3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE24E1CB147;
-	Thu, 22 Aug 2024 15:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C451CB147;
+	Thu, 22 Aug 2024 15:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724340851; cv=none; b=MMJ/mFbPBwgvTiFfbrDQNDgH89vQe+rUZVFhIrdMPk08toEL2wsEW/rNua0NRjyYmqbensDwCR9TtSAIkNBXmkyO0NT+ZhEwULdIkLy1gLjfCoVDaVS6GAK137+vxvGOunC6lLqzzWmWBMVT1kuQUtejmpKStz+YOSPeL6HPsCw=
+	t=1724340871; cv=none; b=CrfvxpVt5m4cDOBJSg29c2phyTbJoFgE6euEn48ArJC3wYdKrb2Ab2Ml/cItoBRnADuQmPH4zYXmasgEJOgHr5XPxnvnaAcKYX6mx/oe+iZ4w1J5Y89vVmsx9FZEuHm6go51FpkqLKIDw9WrPWB1B9+PSNGtwLOq31g5F89BQko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724340851; c=relaxed/simple;
-	bh=OP8lF7oeT/CTs5WaHYhcMzt+Wz9kFx2xDQKUUihobcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DdUNedM9bAWtmfyp6pzA36KYLRZU+XJ8i6hSDfjZ5fOtcFoU8kOpFmSqHPutclD2MMUVYYqBdKbBm1yJcP59InSYmXPG3SrEPa5BkK9BPC+0jUo0l4yqA2CtSJkI8+/XULDwTD9PLJ1HdZsiF1AmWuJpInIInI8iuA7yGgmudgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMtAECi2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CF6C32782;
-	Thu, 22 Aug 2024 15:34:10 +0000 (UTC)
+	s=arc-20240116; t=1724340871; c=relaxed/simple;
+	bh=5MVYlNkiaPPAnsyr3ZlSbPRbp2R38tq8YVu6j+aJAR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p3ONMp7yNP429GTToc9xhyQVEMX5SFNJAMDBi1sNPaH6/A6WtpnbrXaSu6Vw7y7bgNvcdEJwNHWmaYNNBS1JCHXNHkwLP75+91FiTk7tJnt1CTR4iGYXQaeOlWot/XLsco9q94GRxb+IXLmRhZODUnIxbbxYrGX+wuZSVKcC554=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1C1ytT3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70728C32782;
+	Thu, 22 Aug 2024 15:34:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724340851;
-	bh=OP8lF7oeT/CTs5WaHYhcMzt+Wz9kFx2xDQKUUihobcA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LMtAECi2JU62ydFv5EeS8D9T99864EUvv1hg+DiHXO8AFDzNpnjsHq4uCGbUEDEb0
-	 hQpAMFZj6cblWtC3TSQjTL7IYGg38vGWXUolduHXg4L7M2//ySs3iiZHhfnJr9MxgO
-	 Eqrjq36fsR0vbTZpU4lKGGUCNXTjHJ9bS2O5o9lhPo82ykpkhwKP43i8VTsERjWEBL
-	 PiTk25z2M4g2Wy+mGFs12V9WFhXP6e4B1/YbUCxZvTIC+D6LZEibd5oVq/z0b/QUQI
-	 xLeHRDIQXPkrXqqiGA3PXJxnq2IRMEJHYmCNwGlGGTzreO6uxGk2s64ktB1wzl+cEv
-	 tZykJJFYSpwUA==
-Date: Thu, 22 Aug 2024 08:34:10 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hyperv@vger.kernel.org, bpf@vger.kernel.org, Jay Vosburgh
- <jv@jvosburgh.net>, Andy Gospodarek <andy@greyhouse.net>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang
- <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
- <decui@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>
-Subject: Re: [PATCH net-next v2] net: refactor ->ndo_bpf calls into
- dev_xdp_propagate
-Message-ID: <20240822083410.2edf979f@kernel.org>
-In-Reply-To: <20240822055154.4176338-1-almasrymina@google.com>
-References: <20240822055154.4176338-1-almasrymina@google.com>
+	s=k20201202; t=1724340870;
+	bh=5MVYlNkiaPPAnsyr3ZlSbPRbp2R38tq8YVu6j+aJAR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T1C1ytT3dd3LB2hG6TyKrAVcx09Mh7UVc9kHFCoQi6zg71RNmMwuSqkexUnuXOv9t
+	 47x4ZIz9yuvCYJQmX4vH6Dmw0LWXW37TCYu+uQbwpIbFcIFQ+tekTfKkgy4+lCkV63
+	 l7NF4FqdPGO7atiyF+GFly5YQlWhBbPTTEnyQhqXeoa4CRs9v+E+aW4jY1YG7ZaQAQ
+	 SniylBKxLZsKmhoCwsoSVr/vAI9hMdkQ3BHRBek0bY+F7NLwxaZ5c7mFXaCJu7rTdR
+	 1CWHuyK6U+j/cW6S56KaXdkgZLgoHJ38iefNEzTyAL0xWxCCIWpBOOvt5ZHqhas/ta
+	 2mMmOWR+K8F+Q==
+Date: Thu, 22 Aug 2024 12:34:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: sedat.dilek@gmail.com, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+Message-ID: <ZsdaglSCDdFoBcjQ@x1>
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+ <CA+icZUXpB4KMiRek3MkgCapwoW5TC31L4-TffrV=jdhM1k8=Sg@mail.gmail.com>
+ <CAM9d7cgHCJgJb10zaNt7b1Dy=4raiv+a1C1GwrVptNz5Uh+SNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM9d7cgHCJgJb10zaNt7b1Dy=4raiv+a1C1GwrVptNz5Uh+SNg@mail.gmail.com>
 
-On Thu, 22 Aug 2024 05:51:54 +0000 Mina Almasry wrote:
-> When net devices propagate xdp configurations to slave devices,
-> we will need to perform a memory provider check to ensure we're
-> not binding xdp to a device using unreadable netmem.
+On Wed, Aug 21, 2024 at 01:37:25PM -0700, Namhyung Kim wrote:
+> Hello,
 > 
-> Currently the ->ndo_bpf calls in a few places. Adding checks to all
-> these places would not be ideal.
+> On Wed, Aug 21, 2024 at 12:37 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> >
+> > As a workaround:
+> >
+> > dileks@iniza:~/src/linux/git$ git diff
+> > diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+> > index 142e9d447ce7..db45e6fe7a21 100644
+> > --- a/tools/perf/util/setup.py
+> > +++ b/tools/perf/util/setup.py
+> > @@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
+> > cflags += ['-fno-strict-aliasing', '-Wno-write-strings',
+> > '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+> > if cc_is_clang:
+> >     cflags += ["-Wno-unused-command-line-argument" ]
+> > +    cflags += ["-Wno-cast-function-type-mismatch" ]
+> > +
+> > else:
+> >     cflags += ['-Wno-cast-function-type' ]
+> >
 > 
-> Refactor all the ->ndo_bpf calls into one place where we can add this
-> check in the future.
+> Thanks for the fix.  I wasn't aware of the issue and the fix
+> looks good to me.  I'll add it to perf-tools if nobody objects.
 
-LGTM! (if anyone is planning to review this please TAL, I'm thinking of
-applying it a few hours before the full 24h period to let Mina post his
-larger series today)
+It doesn't work, please see the alternative patch I sent, if you try
+that in a clang that doesn't have that warning option, it will fail,
+i.e. clang 18 fails with the above patch.
+
+- Arnaldo
+ 
+> Thanks,
+> Namhyung
+> 
+> 
+> > dileks@iniza:~/src/linux/git$ ~/bin/perf -vv
+> > perf version 6.11.0-rc4
+> >                 dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+> >    dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+> >         syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+> >                libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
+> >            debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
+> >                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+> >               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+> > numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+> >               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+> >             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+> >              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+> >             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+> >             libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+> >    libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+> >           libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
+> >                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+> >                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+> >             get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+> >                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+> >                   aio: [ on  ]  # HAVE_AIO_SUPPORT
+> >                  zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+> >               libpfm4: [ on  ]  # HAVE_LIBPFM
+> >         libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+> >         bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
+> >  dwarf-unwind-support: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
+> >            libopencsd: [ OFF ]  # HAVE_CSTRACE_SUPPORT
+> >
+> > -Sedat-
 
