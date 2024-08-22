@@ -1,229 +1,282 @@
-Return-Path: <linux-kernel+bounces-297078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3603F95B2B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF9C95B2F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD749B22902
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30BE01C22F4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5270A183CA6;
-	Thu, 22 Aug 2024 10:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148771802AB;
+	Thu, 22 Aug 2024 10:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="aKbiAiev"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2054.outbound.protection.outlook.com [40.107.255.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P4QIUzTd"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF8A18309C;
-	Thu, 22 Aug 2024 10:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724321716; cv=fail; b=KrykU18mDg4zZA4I7fr/l/OjWx2+u4B94k7h5AvKTOqSKDtz9azfXQkLdFHbI+CrUtyfoGFGT7uX9Y/Mil2S928hRrhLAdJtTnb0aeMc8Zf3CRz8Ed5bipQ2iFcicuJ0Wb0rUOZJfvCPDR6QhMDkXfffh5uqEqfemcqPNWGz8nw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724321716; c=relaxed/simple;
-	bh=0l1kjpl1M2wJpCMDOCtWpkXwGQtdjtbUK14Kim8TSQE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=qoqk8W+kVTtA0PJTEWKJSp2S7xiJWf197nTi9FbepesaivXYunvYvYa49n3igYKs6JRAjAbZxol45zlu+8S8ZhXbeb2vn9B1gcMv/pDEUAq+qCDTI4PMnPh1mgd4L0K01G0BSY71qcef9DiGZwQhbg5aoHQkkBq+jyANi7iJ0Cg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=aKbiAiev; arc=fail smtp.client-ip=40.107.255.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H9x6U46ckfjWO2wd55vcLY8z/P64Sjo+yE1YUxXK0LtZCFzqTQodblrKVM/arroQSHlWtsE6z1QVp01kv3kJulW9jTVPFECFhYIJUtySKqxULEpWPwzsGHv6Pbmsah1PFahdGRzzAMVqZm+WBVXRt1bJphueBAe8LDLfUavCWl4O3In4qxjLx1OwoNwK2vbbb0oTVV3jUNcgAjnbAv+6TYoPZnvJR1FYCFCaR4MnPtVeCWJb60x3gCUSwU3XcLEYXLon60PpQQBDTbOHIX7X0KadZL81nuXgIXZu7n7jXRQJyLmyG5sCtdaU8gAGRSrLmV18yuFklMDgqlEj5GI2yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ru6pjjNs2mdiEJd/HSztW+qRuRGhQRs1IoJxnKMXu6Q=;
- b=A/KaOgKn47mFuE9VJ/PG3FSvNuSV5GMOJz4eqou/OOBUy9oFk4MobWs4kV0sWjUXXsUnRhbXGksEUf8sdPZgkD8REEsXDx+ClYBiGLGBJvV0w8jkzn0Mp6oLusan4xKn+3NIUT7b0jYhUNOCfvc4z6tShUWgpG+GEYhDs4vtNhi0zivY+i0CtAW/maGA924W1ABll4X8lW3HO5aAuBoB2nLi5RnW2Hf9719PU1lZhJmLmPW0Sao6MYj8xTNGJqvx+nkiLUVSDT6LhrPHmrMn2ZhER2n5o3SJWhvoHCjZSc8qhP0QFM7MC7YR+VfvI/GiXP5q4/EYSefadZPMqpQ6cQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ru6pjjNs2mdiEJd/HSztW+qRuRGhQRs1IoJxnKMXu6Q=;
- b=aKbiAievOdbLRzrFg5li966kI84exL0hxPKkHChJSQNnWUeDg1CBw2qGcxPRMQJAw+W7Ka4koEMlthqCPv/stTNYo0Z0xEfYxiqvLC1uFa1QqutakvjvUc/MvljRnTTKR39xgZtixKhGx3nNH5O84Tt0Vlc9ZJ2/9a+R/+mYIWtuX6gJFPVRpjCk4KInI8y/TbUPVB5PgROAo1AfsL3n+k1hP/owqjqjvOQ1sIkbSdJYi0WNUQtbeSosD557lho7AUWbPNNfJQoTk/mJafTBOJznbL096s2v6dQOsLLwkqaY8gcp50gnmgiFPkaOJUvUqJsNf98FJQBco5WIGhkQpA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
- by SI6PR06MB7217.apcprd06.prod.outlook.com (2603:1096:4:24f::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Thu, 22 Aug
- 2024 10:15:11 +0000
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 10:15:11 +0000
-From: Wu Bo <bo.wu@vivo.com>
-To: linux-kernel@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA0A170A16
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724322719; cv=none; b=P0jyJ+sBFbXaEWGUTsU/h6dll7seHKUmX0UEmUzCN8AOXPiiXTJi0vKR7i8M5I/u8Afb5FHrDzdf+FGaVibwN8jHiKa2XC+niplpKX0CApEj6oe/fHYl7Dl8trxjNgxEjj0ltAOePbUX7nqAGrzf/ppiJO7X98WLv/johajD/B0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724322719; c=relaxed/simple;
+	bh=6NzIRtrCKVOraXP7l2FUaMsD6YoLTX34J6Pp95H1Haw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXudjZZx3Ui3cVKTrzCFWc6siI+VvCZwT9p95YYc/gfb5kKI71Y/nHs4LVbEKe9JZNhkdhFLipNK56WJS70lmN/f4ayZka/u4tDKQIhXG9cI+zdA7dU9SrTVTZMqFPLyHsJcZQkrfT6yLKK0mtAQx04AZmoyTMve9hY0L0n1YLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P4QIUzTd; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20353e5de9cso164275ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:31:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724322717; x=1724927517; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tUXipJTdapUuZZdhDEMNQWdCBYBL4+gU+qAyOZlKfmk=;
+        b=P4QIUzTd22bQb9mo5mX47HeL9x1+jq11C240IfzfEOwtC7UnAPAJjYlIQyo0EpMWd+
+         yC3goGRAnZTbHmW4oX1tu/KZjuRsGcKIuK3NPl5qbwWFEgniOtyOC/fT7VgswjbGRYbk
+         OBVODaNBzm97bXPEwS+KGMyeCEG8obUprZgSwBa7GcCJ1XxN28wqKJBYy9xDabjOvx51
+         nd9HBjyyM+i1mBWZCzDm1Z3RFxczeXckYlOH3OIMihiop/uunuUl9ynw9693dCJ/lP31
+         NRfsFxuJl04aCSyXtRw2RiHzFzUZ40mvTGxDsenoAMH2yz04kClwABGl9a6/ZGfqIhNf
+         Ol2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724322717; x=1724927517;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tUXipJTdapUuZZdhDEMNQWdCBYBL4+gU+qAyOZlKfmk=;
+        b=s/+M9vvFG8Ip4npqG7cfSpT+uSx+DMyBgijKqRsXYFa24kwhJ90cvQ3cbfn+LTaaOI
+         ZZAqbDPKgBlRz3DCpWW7EepnU2HGjQfok3mItbwO+knNpsV8qllb7srnmjGNshJs4Zre
+         BnAn8aU5os2Tvsz+UErmuPSkTahTtFMlEp25lPgMWVJ9YbzT1LpCTlPQkncuMwBEfSm6
+         wia3cxS16ktps80pAmX5SuzqshzXOJO28MQIzbrWPNaaBtnWaepzfwitlo88ojbvX0l3
+         07BDY+QehlGb1cg4VaI6fLq7Z2ZYWFEMCHWTP6/hGfIWbj/lTX5iizq1cL86rciQjPep
+         ZJfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmfCkk5E6mAcU8inbRNxhmw4om7wjiPOYLFmMIE0BNaoKBssdYZr4KTaeh4bBziYW0CzQ3Y57+LgMcd8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaM48m6tB1Q1ED0TVlvpGWtnLTNDrO1wopKV9bEnM0wK3zWEnS
+	tzJ99uMp3qaRSGClptuL8M+eHQUEybMMdwJrHdm+n871Dfuv/l2jlE9VcUjLFA==
+X-Google-Smtp-Source: AGHT+IEH781ASflOBSZPkMIu7v/uf1ImBmbiSA+jZOLkQNWeidW1nwk8ZmripLpE58FpyKVExr8vpw==
+X-Received: by 2002:a17:903:32d1:b0:1f4:50b4:a50b with SMTP id d9443c01a7336-203824cefddmr2830035ad.18.1724322716320;
+        Thu, 22 Aug 2024 03:31:56 -0700 (PDT)
+Received: from google.com (202.141.197.35.bc.googleusercontent.com. [35.197.141.202])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613941e6esm1395309a91.26.2024.08.22.03.31.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 03:31:55 -0700 (PDT)
+Date: Thu, 22 Aug 2024 10:31:45 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Rob Clark <robdclark@chromium.org>, Will Deacon <will@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
 	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Wu Bo <wubo.oduw@gmail.com>,
-	Wu Bo <bo.wu@vivo.com>
-Subject: [PATCH] PCI: armada8k: change to use devm_clk_get_enabled() helpers
-Date: Thu, 22 Aug 2024 04:29:52 -0600
-Message-Id: <20240822102952.1656027-1-bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0211.apcprd04.prod.outlook.com
- (2603:1096:4:187::19) To PSAPR06MB4486.apcprd06.prod.outlook.com
- (2603:1096:301:89::11)
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Georgi Djakov <quic_c_gdjako@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] iommu/arm-smmu: Pretty-print context fault
+ related regs
+Message-ID: <ZscTkTOa8UPZtwRU@google.com>
+References: <20240701162025.375134-1-robdclark@gmail.com>
+ <20240701162025.375134-4-robdclark@gmail.com>
+ <20240822100941.3tfqpjskzq43slfw@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|SI6PR06MB7217:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1058aca-f011-420b-1944-08dcc2934e4b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WfksQO1iyMQOzYfkGuqmVMccFTN46uXPFj4KysmRBZbwxaP15sBQWbUItmYQ?=
- =?us-ascii?Q?DcURJn6wsPzKvGyx/zfEZEKkPLCCbKIxxh2FbvoO9Su05gt7wruJVeFLhXU7?=
- =?us-ascii?Q?DkSryZnw+aB1CQyEtWVLQxyLNfkuiLPBAuVgcuveKT/SStpj+ueTPmNSAq83?=
- =?us-ascii?Q?2hMmyFuiuX6cWcCqz9GwC3aUQfgUg2RcBVv2c8KFSpn93vyM34my1E+vAcRf?=
- =?us-ascii?Q?lslQc0BhoIV3H38jxBBexqVyWtOIFQnQjD5RzsRqaiTUwtlSiPafYMSQ2E9X?=
- =?us-ascii?Q?xWJqh0Lj6XLdc0Co9y4l9Jbv3Zy5oY4P4/2VvI13PQTRnre2x+x6I2fLwwnj?=
- =?us-ascii?Q?SDaTZkUIIwv+ozAddOAWq6rL6qgg2oAtrlVs1aqOOpQwy3Q/E321tEFAVtgO?=
- =?us-ascii?Q?waDG5OkzYaz9dODveekTvwVyL5U07HchpUf23U9sDlwVgiKvqTj6tqHmTQL1?=
- =?us-ascii?Q?35z+87inJ7jSAxa/Hx3amKH80HEq/eW1C5p57DvHHknsBjCDigbCEk1GYY8W?=
- =?us-ascii?Q?N8u/Y/s4bnI7DKiRVNs7LwOzQwXqzbPx9gtrcXWkf0dHl1h3jDCkvShD1qsa?=
- =?us-ascii?Q?RWGECFoY/CXnNQDO5TkUDcp0nmJBaNvqcEnhzNQZBkV+qlBLAiE3lXStHoSW?=
- =?us-ascii?Q?MO2400gsywkI4tSYYFCOds+pj2qODxpUtnHTaSJAKe4zDDneM6SijPVIa1yc?=
- =?us-ascii?Q?ho0ziYrdGLpR9hIZjHzpjj5Zdy52oEi7by56hUpAtG4JVHcMorLaVl/+rSP2?=
- =?us-ascii?Q?V/vLXiPane+cQSoXj9DI4PQCvnxADhPG9Vi0nFp/Cdo3ZyhWS/hnfUy6iMdB?=
- =?us-ascii?Q?S31ALQIs1bm58EbECJ4zov9bCGhFXs0rXjXSwOS9iFSWs/U7FHbkgHm+TAml?=
- =?us-ascii?Q?KJSPNahQgCFePDoW8LSEYWj2OyIun0c7kE8kbWhwMREfTEKrxqKo+y7cuKjj?=
- =?us-ascii?Q?V0nCSNkmGOYfa7LKSAOd7ERRftUOyHm9xNJcH1joqZHlA5galJ+eFtixys9C?=
- =?us-ascii?Q?nst7y6ydDOeBEPqWejM1N3e4U1sjKQSaBddYPAo7tBI+v4h5nviMmGCiGwT7?=
- =?us-ascii?Q?KQLBK3rTHMf9EKyVOcnGGSfgSAJkDWOttmpn7xgXdvCwhMUPIxiB1h8y8jdV?=
- =?us-ascii?Q?q6UahA3NpAZH/NozzjI6B+vn400O++uwGZ5jP7HS9lMawpj69SjCZQ8rEfuc?=
- =?us-ascii?Q?fNE8WN9uY+5mnEF/o1cAUprdelD/dRJx0DQXTzqk5HDB1VagFY1HgpOl7/xG?=
- =?us-ascii?Q?4FhLW09KH039ReAvx+cSGZTHXvHmNZHO9tFD1NwyiP539PSV613NsglJpazl?=
- =?us-ascii?Q?iU+GYVOWi+DI+tx4qepK/f7Y9Hv3p12pb5NODx0fbebzzaASznUPPhonc8aS?=
- =?us-ascii?Q?2UB27wmwwOPekY6MHcnt3GZCUBYbUfucs4tezBIFYi7dIDWqGQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5pxT23QGvf4ysT5gEVQ0C0GI2qt4XuDiDqPTVJ4xllJdydTmEQHTJHfqDBps?=
- =?us-ascii?Q?mhWfDg9926dgHTx1ZPNPHs137c/+viKt79pzOfZTknpNZISmrcVRZi7Ixx2v?=
- =?us-ascii?Q?9+M5NVnkCp5ofAW78Du1IhVHhaOFxfdZCVXLel9lm9UjwdQIVxv6ewYy3Dl6?=
- =?us-ascii?Q?kYaDXHDsxtvpjtY3jQjrmQNno7au2GnNPdPPDSWOJ7cL/YlJV9aGDFl6fMPW?=
- =?us-ascii?Q?by/tm5y5Cqhez114gcLrmiKDhmx22td6bPsWU0We89n6/OQPqnXt7ANz7myy?=
- =?us-ascii?Q?mA9z0xXDGXT/EZyYGA+i7AZ1y+nEODIJWo5MaaY4HsP5lOAjHxHaKMa9b7kx?=
- =?us-ascii?Q?omjXTfi9RVoc98XDdp//xSypnEdbBhDrBi+u+RCPI86K86rxhWMvzthaIVEb?=
- =?us-ascii?Q?BoeQ+Y+CpuKYnxVHXNovND8gRzb96ya1dbxrtUSwPh5jKavPqz1C2+6GvvD8?=
- =?us-ascii?Q?Hna2/BKk1YxrtsFppyQx0o8u9EPF6KFySP6+XDT6oKO3vz2SV+9XapLIkL6O?=
- =?us-ascii?Q?G+EvtN8cLZMrovR4OoHd13qvtNbL/dmuwePXpBt4qfdeMn+QpjVz1s0fhaxI?=
- =?us-ascii?Q?dZGpGam1rT/3zsgDQmHwqwLHbU8nLPQQL3UQtEbqhCqYaywCB6km8W6HVtp1?=
- =?us-ascii?Q?8m8H08dbPpvveYx+Lhz8dksG35nRI/orZWOvhOoPoNyydSnUh2rzSHKViJIP?=
- =?us-ascii?Q?N6gm3/c4814lmxT6NcfO0fSfiWHx+fN/+Eh5wllynjn466vR64rL57uMh12G?=
- =?us-ascii?Q?MhUfb5GLdl2BXVTNZOgXJ5CN3yJGYh7fXbYq6EnNiQQynnQDQKSne5NWIh8k?=
- =?us-ascii?Q?xm5pput0ymRXeAOs81OpPj70EfTycdDmftMDtE74Sk4uXrQ8HC9SafM5qoDS?=
- =?us-ascii?Q?W+T8PucOkr3LU6l3NJHCFtlDoRPnhs66VHviqDO+5xmYkJRptYAwJScYmvaq?=
- =?us-ascii?Q?e0e8HUEfTILYi1uLyqvolcbHFDmolXC61OB7+HejIQRxIzreAhIRyZr1C9HX?=
- =?us-ascii?Q?P4Ib0vj7YRnmY54zkzznKoAtswayMGWXXh454ghKFfI5CfNTBQqok7MVSKZq?=
- =?us-ascii?Q?5LWVFF8GfEcAAE7yfi1Cl7R0iknoK3YsH9Q73Rn91laUOmzvdN19ZjWCnxZk?=
- =?us-ascii?Q?1SSjOW+xs9X+a7d/4EiGER3Ef2qTTisg85c8igTJhP3LLsEpRpod/aXKyRMq?=
- =?us-ascii?Q?6wDyvhHQxGjlK+9Cv+qiKlcI9oZyBhKPwd80Lkaz17O0QzKNkzNrgjs+l7B1?=
- =?us-ascii?Q?sVL7CPOst0eAZoxvFDT6zf6JFoHKmvNu3cMpJd/QbrRbjea0/pWtyfroI9+S?=
- =?us-ascii?Q?dtspVozriL6/FNAN4SrAaOZ8cQW+GoB9PqXXTMQqWbVuhSF060eBySMsJrUp?=
- =?us-ascii?Q?d8RkTnvWXVIcyYsLBn60dlbiFi7PdAHLuQUwMAAArgCuvzEElqHQ0m4aJ+v8?=
- =?us-ascii?Q?pur2OGNt/asBRYmcoBAlOLzn5CWfj3jrN0Y3PA0ekwSCwmHyelunKN95wtM+?=
- =?us-ascii?Q?DJQdGbcxiL+onHTcclXhh7rdo3FEjXzOaQXxcRURYG4Rce0xLO2KwsNKVHbl?=
- =?us-ascii?Q?vXJqw2U3ZajKQ9IvlYKe+U4HFlUYpDKZyie9BEom?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1058aca-f011-420b-1944-08dcc2934e4b
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 10:15:11.1035
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x5AwaxTdZFOkjeBKOkgwdfIvu+xwrtlE3q9GFUkkSunRWRyC8AOcQ5uyihcHs1/HB9TtNFiQIUn/OdKSij1YEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI6PR06MB7217
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240822100941.3tfqpjskzq43slfw@thinkpad>
 
-Make the code cleaner and avoid call clk_disable_unprepare()
+On Thu, Aug 22, 2024 at 03:39:41PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Jul 01, 2024 at 09:20:12AM -0700, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> > 
+> > Parse out the bitfields for easier-to-read fault messages.
+> > 
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> >  .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 52 +++++---------
+> >  drivers/iommu/arm/arm-smmu/arm-smmu.c         | 70 +++++++++++++++----
+> >  drivers/iommu/arm/arm-smmu/arm-smmu.h         | 21 ++++++
+> >  3 files changed, 92 insertions(+), 51 deletions(-)
+> > 
+> 
+> [...]
+> 
+> > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > index 23cf91ac409b..79ec911ae151 100644
+> > --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > @@ -405,32 +405,72 @@ static const struct iommu_flush_ops arm_smmu_s2_tlb_ops_v1 = {
+> >  	.tlb_add_page	= arm_smmu_tlb_add_page_s2_v1,
+> >  };
+> >  
+> > +
+> > +void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int idx,
+> > +				      struct arm_smmu_context_fault_info *cfi)
+> > +{
+> > +	cfi->iova = arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
+> > +	cfi->fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
+> > +	cfi->fsynr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
+> > +	cfi->cbfrsynra = arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx));
+> > +}
+> > +
+> > +void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int idx,
+> > +				       const struct arm_smmu_context_fault_info *cfi)
+> > +{
+> > +	dev_dbg(smmu->dev,
+> > +		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+> > +		cfi->fsr, cfi->iova, cfi->fsynr, cfi->cbfrsynra, idx);
+> > +
+> 
+> I just happen to hit an IOMMU fault in 6.11-rc4 and I did not see the 'Unhandled
+> context fault' log, but just the register dump in dmesg. Tracking that lead me
+> to this patch.
+> 
+> May I know the reasoning behind making the actual error message _dbg()? It is
+> intentional first place?
+> 
+> - Mani
 
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- drivers/pci/controller/dwc/pcie-armada8k.c | 29 ++++++----------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+Hi Mani,
 
-diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
-index b5c599ccaacf..48009098fa6b 100644
---- a/drivers/pci/controller/dwc/pcie-armada8k.c
-+++ b/drivers/pci/controller/dwc/pcie-armada8k.c
-@@ -284,36 +284,25 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
- 
- 	pcie->pci = pci;
- 
--	pcie->clk = devm_clk_get(dev, NULL);
-+	pcie->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(pcie->clk))
- 		return PTR_ERR(pcie->clk);
- 
--	ret = clk_prepare_enable(pcie->clk);
--	if (ret)
--		return ret;
--
--	pcie->clk_reg = devm_clk_get(dev, "reg");
--	if (pcie->clk_reg == ERR_PTR(-EPROBE_DEFER)) {
--		ret = -EPROBE_DEFER;
--		goto fail;
--	}
--	if (!IS_ERR(pcie->clk_reg)) {
--		ret = clk_prepare_enable(pcie->clk_reg);
--		if (ret)
--			goto fail_clkreg;
--	}
-+	pcie->clk_reg = devm_clk_get_enabled(dev, "reg");
-+	if (pcie->clk_reg == ERR_PTR(-EPROBE_DEFER))
-+		return -EPROBE_DEFER;
- 
- 	/* Get the dw-pcie unit configuration/control registers base. */
- 	base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl");
- 	pci->dbi_base = devm_pci_remap_cfg_resource(dev, base);
- 	if (IS_ERR(pci->dbi_base)) {
- 		ret = PTR_ERR(pci->dbi_base);
--		goto fail_clkreg;
-+		goto out;
- 	}
- 
- 	ret = armada8k_pcie_setup_phys(pcie);
- 	if (ret)
--		goto fail_clkreg;
-+		goto out;
- 
- 	platform_set_drvdata(pdev, pcie);
- 
-@@ -325,11 +314,7 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
- 
- disable_phy:
- 	armada8k_pcie_disable_phys(pcie);
--fail_clkreg:
--	clk_disable_unprepare(pcie->clk_reg);
--fail:
--	clk_disable_unprepare(pcie->clk);
--
-+out:
- 	return ret;
- }
- 
--- 
-2.25.1
+That was a miss in this series, but it was fixed recently in [1].
+I think it should land soon.
 
+[1] https://lore.kernel.org/linux-iommu/172381862229.1794487.17068761066364130246.b4-ty@kernel.org/
+
+Thanks,
+Pranjal
+
+> 
+> > +	dev_err(smmu->dev, "FSR    = %08x [%s%sFormat=%u%s%s%s%s%s%s%s%s], SID=0x%x\n",
+> > +		cfi->fsr,
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_MULTI)  ? "MULTI " : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_SS)     ? "SS " : "",
+> > +		(u32)FIELD_GET(ARM_SMMU_CB_FSR_FORMAT, cfi->fsr),
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_UUT)    ? " UUT" : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_ASF)    ? " ASF" : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_TLBLKF) ? " TLBLKF" : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_TLBMCF) ? " TLBMCF" : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_EF)     ? " EF" : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_PF)     ? " PF" : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_AFF)    ? " AFF" : "",
+> > +		(cfi->fsr & ARM_SMMU_CB_FSR_TF)     ? " TF" : "",
+> > +		cfi->cbfrsynra);
+> > +
+> > +	dev_err(smmu->dev, "FSYNR0 = %08x [S1CBNDX=%u%s%s%s%s%s%s PLVL=%u]\n",
+> > +		cfi->fsynr,
+> > +		(u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_S1CBNDX, cfi->fsynr),
+> > +		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_AFR) ? " AFR" : "",
+> > +		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_PTWF) ? " PTWF" : "",
+> > +		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_NSATTR) ? " NSATTR" : "",
+> > +		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_IND) ? " IND" : "",
+> > +		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_PNU) ? " PNU" : "",
+> > +		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_WNR) ? " WNR" : "",
+> > +		(u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_PLVL, cfi->fsynr));
+> > +}
+> > +
+> >  static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+> >  {
+> > -	u32 fsr, fsynr, cbfrsynra;
+> > -	unsigned long iova;
+> > +	struct arm_smmu_context_fault_info cfi;
+> >  	struct arm_smmu_domain *smmu_domain = dev;
+> >  	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> > +	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
+> > +				      DEFAULT_RATELIMIT_BURST);
+> >  	int idx = smmu_domain->cfg.cbndx;
+> >  	int ret;
+> >  
+> > -	fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
+> > -	if (!(fsr & ARM_SMMU_CB_FSR_FAULT))
+> > -		return IRQ_NONE;
+> > +	arm_smmu_read_context_fault_info(smmu, idx, &cfi);
+> >  
+> > -	fsynr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
+> > -	iova = arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
+> > -	cbfrsynra = arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx));
+> > +	if (!(cfi.fsr & ARM_SMMU_CB_FSR_FAULT))
+> > +		return IRQ_NONE;
+> >  
+> > -	ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
+> > -		fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+> > +	ret = report_iommu_fault(&smmu_domain->domain, NULL, cfi.iova,
+> > +		cfi.fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+> >  
+> > -	if (ret == -ENOSYS)
+> > -		dev_err_ratelimited(smmu->dev,
+> > -		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+> > -			    fsr, iova, fsynr, cbfrsynra, idx);
+> > +	if (ret == -ENOSYS && __ratelimit(&rs))
+> > +		arm_smmu_print_context_fault_info(smmu, idx, &cfi);
+> >  
+> > -	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
+> > +	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, cfi.fsr);
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> > index b04a00126a12..e2aeb511ae90 100644
+> > --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> > @@ -198,6 +198,7 @@ enum arm_smmu_cbar_type {
+> >  #define ARM_SMMU_CB_FSR			0x58
+> >  #define ARM_SMMU_CB_FSR_MULTI		BIT(31)
+> >  #define ARM_SMMU_CB_FSR_SS		BIT(30)
+> > +#define ARM_SMMU_CB_FSR_FORMAT		GENMASK(10, 9)
+> >  #define ARM_SMMU_CB_FSR_UUT		BIT(8)
+> >  #define ARM_SMMU_CB_FSR_ASF		BIT(7)
+> >  #define ARM_SMMU_CB_FSR_TLBLKF		BIT(6)
+> > @@ -223,7 +224,14 @@ enum arm_smmu_cbar_type {
+> >  #define ARM_SMMU_CB_FAR			0x60
+> >  
+> >  #define ARM_SMMU_CB_FSYNR0		0x68
+> > +#define ARM_SMMU_CB_FSYNR0_PLVL		GENMASK(1, 0)
+> >  #define ARM_SMMU_CB_FSYNR0_WNR		BIT(4)
+> > +#define ARM_SMMU_CB_FSYNR0_PNU		BIT(5)
+> > +#define ARM_SMMU_CB_FSYNR0_IND		BIT(6)
+> > +#define ARM_SMMU_CB_FSYNR0_NSATTR	BIT(8)
+> > +#define ARM_SMMU_CB_FSYNR0_PTWF		BIT(10)
+> > +#define ARM_SMMU_CB_FSYNR0_AFR		BIT(11)
+> > +#define ARM_SMMU_CB_FSYNR0_S1CBNDX	GENMASK(23, 16)
+> >  
+> >  #define ARM_SMMU_CB_FSYNR1		0x6c
+> >  
+> > @@ -533,4 +541,17 @@ struct arm_smmu_device *qcom_smmu_impl_init(struct arm_smmu_device *smmu);
+> >  void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx);
+> >  int arm_mmu500_reset(struct arm_smmu_device *smmu);
+> >  
+> > +struct arm_smmu_context_fault_info {
+> > +	unsigned long iova;
+> > +	u32 fsr;
+> > +	u32 fsynr;
+> > +	u32 cbfrsynra;
+> > +};
+> > +
+> > +void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int idx,
+> > +				      struct arm_smmu_context_fault_info *cfi);
+> > +
+> > +void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int idx,
+> > +				       const struct arm_smmu_context_fault_info *cfi);
+> > +
+> >  #endif /* _ARM_SMMU_H */
+> > -- 
+> > 2.45.2
+> > 
+> > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
