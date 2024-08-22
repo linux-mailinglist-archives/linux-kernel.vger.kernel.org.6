@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-296536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896FC95ABD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB90095ABDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B610B1C22AE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A201F282785
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC91920B04;
-	Thu, 22 Aug 2024 03:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC81CD2B;
+	Thu, 22 Aug 2024 03:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sp727Q7D"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A/EVDd8B"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9812033A;
-	Thu, 22 Aug 2024 03:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDDC208B8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724297122; cv=none; b=izWR0pUKFTHTx73olR/Gsc0x1ZbHkPk6nxpy/WGvSeivNoupJ4fzXqGkQr8Jj/cg6janzCeC6cI3PxZJOKcosKLmpEaBicgjEVwgg01u1uSTUwudOeprvpaMs0/gCgvQCuCCb1Y36DjrgPnDPaY/aJKIgNpi4nE2sKCCxYTuT+8=
+	t=1724297124; cv=none; b=W9rt7/0hPjpCGafkvKKAycHq3/uaWqPlPj0aQVteY0nuHdeMpjvovsH5iLpOOdPRfnxhWe0tX9kVGf0sgj98R6C0cZffR/tC0O09I0v4C9GPKNDxMlqAZp5HBvU5pm8WMJK5pLMT8zy388Lw+a47/DsaK/bleD32JSWohnpAKKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724297122; c=relaxed/simple;
-	bh=8uy+Bg2eGFPzkDqiOgyhJynla4bqzmj8hPQSZfG+Los=;
+	s=arc-20240116; t=1724297124; c=relaxed/simple;
+	bh=MIqF375ibJSnM4YyPzDw9hdtZR7zLyO70D4shPrCUuc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TP9lrUzV5ukACgbMSwG/qwRnyE2M4fGuamF4SQWw/TUScMpFBBXSG+QdOn9AyGQ+6RgzN6Ks0DhuOEeJzvSjISWbvE5buGi+IzTzMJ9Mwwf2OhTmqy+/n69neQPpw9tlrNdfa4XFb91j4434uB2rq/+QCaQ/XNkgV1L7rcj5T6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sp727Q7D; arc=none smtp.client-ip=192.198.163.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=brkpgjxWEBRw4ec1tAFHjiFSga0Y7JXw4/oWRKwrmKEStWwJaS1Kj2Z+PEnaVbQrx1Fj3i9ffIacwkf/mKED1g0as1BgHTDcZZhbFAXqqkI5UnmgDSOwV5svV/d2uE+5FMyNnPpBMgQML8AiTIH4YZIszOlMbLDUIav3XHgxS68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A/EVDd8B; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724297120; x=1755833120;
+  t=1724297122; x=1755833122;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=8uy+Bg2eGFPzkDqiOgyhJynla4bqzmj8hPQSZfG+Los=;
-  b=Sp727Q7Dx9pd6fkhikon2vuPKNg7+8JRsVUBFfiYzvJFM86plgBWK8Nb
-   Osr3U2rWvBkui6vh1FcJGI126a29fBPgHg37gUApH5aurhzcixcW56MYZ
-   IvCOj9JOa3BdG1n4v21QNR6u6HZj4/bw4xprP6vAyOxroupMqfGpjDsYR
-   w7rgRQgMmnA98LjpKexYEgP3lEgV6fMAUGJq/yovPErI4s3NwjYq85RAy
-   DXdLzSZhW4aNb+CRV/wkt1mMzI45iEre9tICAXN2bVDLGYz1+IuZVx3F/
-   iLs7RemUwB80b7tWwJu72wCmcesPH3GOQwwEcfVopZtauKYtb8lyNWZaP
+  bh=MIqF375ibJSnM4YyPzDw9hdtZR7zLyO70D4shPrCUuc=;
+  b=A/EVDd8BHcD6kPEqtZ8g/DiufifFGnoyw54hR0JQLEMQqfFWlcYCX2+e
+   Ae5ISuqaW5vidJLzQa9sA849a+CbionT3/FBDZGThobjcpGvgbqAnlMrb
+   ey9tyYFLZUMpg4yBKU+CBtLkL96qQAEkaOOeZ9sF3K3PaGfuo6JD2fl5X
+   7IqhxfGIQS6rigoile2n0VnZQ/jkzdJoD3FVqDWZuE5qEXgoAa5tPOx5/
+   aUxUxqMdiIXRaO7XR1MKH5ptvd71szX93JJYR15seKvKVDhQMLF3HyOqe
+   K6LggP8DSoD6MNXO/vDa8zMqaDzx5CzITbH9YCCRTMvgeZTBQsnbPxc+6
    Q==;
-X-CSE-ConnectionGUID: nboOX5o2Qz6PbcUkHr5NOw==
-X-CSE-MsgGUID: Xifv9IHcTV+Aq4EFhJBWTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="13145921"
+X-CSE-ConnectionGUID: 8uY/iAQMQKOVAUVGXztZCw==
+X-CSE-MsgGUID: P4G87kxySASdmjVkqbHwTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="13145927"
 X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="13145921"
+   d="scan'208";a="13145927"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
   by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 20:25:19 -0700
-X-CSE-ConnectionGUID: 8oWk0ZT6QXWO0Y4TjO8w3Q==
-X-CSE-MsgGUID: Dzv4d56QSxu2MDS2PGmcRw==
+X-CSE-ConnectionGUID: a+MHE1AlS0u6A2stIc492g==
+X-CSE-MsgGUID: 8r2pG5hBR0Ku5ZDhLueedg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="61288488"
+   d="scan'208";a="61288490"
 Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
   by orviesa009.jf.intel.com with ESMTP; 21 Aug 2024 20:25:17 -0700
 Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sgyRm-000CER-2a;
+	id 1sgyRm-000CET-2h;
 	Thu, 22 Aug 2024 03:25:14 +0000
 Date: Thu, 22 Aug 2024 11:24:51 +0800
 From: kernel test robot <lkp@intel.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, alexandre.belloni@bootlin.com,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Charles Han <hanchunchao@inspur.com>, neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com, mripard@kernel.org
 Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: Re: [PATCH 1/7] rtc:rtc-at91rm9200:Use devm_clk_get_enabled() helpers
-Message-ID: <202408221130.3Kw5w51m-lkp@intel.com>
-References: <20240821092846.20138-2-liaoyuanhong@vivo.com>
+	linux-kernel@vger.kernel.org, liuyanming@ieisystem.com,
+	hanchunchao <hanchunchao@inspur.com>
+Subject: Re: [PATCH] drm/panel/hx83102: fix null pointer dereference in
+ hx83102_get_modes
+Message-ID: <202408221127.2O9Pauzi-lkp@intel.com>
+References: <20240821095039.15282-1-hanchunchao@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,281 +80,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240821092846.20138-2-liaoyuanhong@vivo.com>
+In-Reply-To: <20240821095039.15282-1-hanchunchao@inspur.com>
 
-Hi Liao,
+Hi Charles,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on abelloni/rtc-next]
-[also build test ERROR on tegra/for-next linus/master v6.11-rc4 next-20240821]
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.11-rc4 next-20240821]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Liao-Yuanhong/rtc-rtc-at91rm9200-Use-devm_clk_get_enabled-helpers/20240821-190257
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-patch link:    https://lore.kernel.org/r/20240821092846.20138-2-liaoyuanhong%40vivo.com
-patch subject: [PATCH 1/7] rtc:rtc-at91rm9200:Use devm_clk_get_enabled() helpers
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20240822/202408221130.3Kw5w51m-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221130.3Kw5w51m-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Charles-Han/drm-panel-hx83102-fix-null-pointer-dereference-in-hx83102_get_modes/20240821-191703
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240821095039.15282-1-hanchunchao%40inspur.com
+patch subject: [PATCH] drm/panel/hx83102: fix null pointer dereference in hx83102_get_modes
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240822/202408221127.2O9Pauzi-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 26670e7fa4f032a019d23d56c6a02926e854e8af)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221127.2O9Pauzi-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408221130.3Kw5w51m-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221127.2O9Pauzi-lkp@intel.com/
 
-All error/warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   drivers/rtc/rtc-at91rm9200.c:473:6: warning: unused variable 'ret' [-Wunused-variable]
-           int ret = 0;
-               ^
->> drivers/rtc/rtc-at91rm9200.c:504:2: warning: non-void function does not return a value in all control paths [-Wreturn-type]
-           }
-           ^
->> drivers/rtc/rtc-at91rm9200.c:506:30: error: expected ')'
-           at91_rtc_write(AT91_RTC_CR, 0);
-                                       ^
-   drivers/rtc/rtc-at91rm9200.c:506:2: note: to match this '('
-           at91_rtc_write(AT91_RTC_CR, 0);
-           ^
-   drivers/rtc/rtc-at91rm9200.c:89:17: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-                          ^
->> drivers/rtc/rtc-at91rm9200.c:506:30: error: type specifier missing, defaults to 'int' [-Werror,-Wimplicit-int]
-           at91_rtc_write(AT91_RTC_CR, 0);
-                                       ^
-   drivers/rtc/rtc-at91rm9200.c:506:2: error: type specifier missing, defaults to 'int' [-Werror,-Wimplicit-int]
-           at91_rtc_write(AT91_RTC_CR, 0);
-           ^
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:56: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                                              ^
-   include/linux/byteorder/generic.h:88:21: note: expanded from macro 'cpu_to_le32'
-   #define cpu_to_le32 __cpu_to_le32
-                       ^
-   include/uapi/linux/byteorder/little_endian.h:34:36: note: expanded from macro '__cpu_to_le32'
-   #define __cpu_to_le32(x) ((__force __le32)(__u32)(x))
-                                      ^
->> drivers/rtc/rtc-at91rm9200.c:506:2: error: function cannot return function type 'int (int)'
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:56: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                                              ^
-   include/linux/byteorder/generic.h:88:21: note: expanded from macro 'cpu_to_le32'
-   #define cpu_to_le32 __cpu_to_le32
-                       ^
-   include/uapi/linux/byteorder/little_endian.h:34:43: note: expanded from macro '__cpu_to_le32'
-   #define __cpu_to_le32(x) ((__force __le32)(__u32)(x))
-                                             ^
-   drivers/rtc/rtc-at91rm9200.c:506:2: error: type specifier missing, defaults to 'int' [-Werror,-Wimplicit-int]
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:51: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                                         ^
->> drivers/rtc/rtc-at91rm9200.c:506:2: error: function cannot return function type 'int (int ((*)(__le32))(__u32))' (aka 'int (int ((*)(unsigned int))(unsigned int))')
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:42: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                                ^
->> drivers/rtc/rtc-at91rm9200.c:506:2: error: unknown type name 'at91_rtc_regs'
-   drivers/rtc/rtc-at91rm9200.c:89:24: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-                                 ^
-   drivers/rtc/rtc-at91rm9200.c:506:2: error: expected ')'
-   drivers/rtc/rtc-at91rm9200.c:89:38: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-                                               ^
-   drivers/rtc/rtc-at91rm9200.c:506:2: note: to match this '('
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:41: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                               ^
-   drivers/rtc/rtc-at91rm9200.c:506:2: error: type specifier missing, defaults to 'int' [-Werror,-Wimplicit-int]
-           at91_rtc_write(AT91_RTC_CR, 0);
-           ^
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:29: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                   ^
-   arch/arm/include/asm/io.h:92:22: note: expanded from macro '__raw_writel'
-   #define __raw_writel __raw_writel
-                        ^
-   drivers/rtc/rtc-at91rm9200.c:507:30: error: expected ')'
-           at91_rtc_write(AT91_RTC_MR, at91_rtc_read(AT91_RTC_MR) & ~AT91_RTC_HRMOD);
-                                       ^
-   drivers/rtc/rtc-at91rm9200.c:87:2: note: expanded from macro 'at91_rtc_read'
-           readl_relaxed(at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:277:27: note: expanded from macro 'readl_relaxed'
-   #define readl_relaxed(c) ({ u32 __r = le32_to_cpu((__force __le32) \
-                             ^
-   drivers/rtc/rtc-at91rm9200.c:507:30: note: to match this '('
-   drivers/rtc/rtc-at91rm9200.c:87:2: note: expanded from macro 'at91_rtc_read'
-           readl_relaxed(at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:277:26: note: expanded from macro 'readl_relaxed'
-   #define readl_relaxed(c) ({ u32 __r = le32_to_cpu((__force __le32) \
-                            ^
-   drivers/rtc/rtc-at91rm9200.c:507:57: error: expected ')'
-           at91_rtc_write(AT91_RTC_MR, at91_rtc_read(AT91_RTC_MR) & ~AT91_RTC_HRMOD);
-                                                                  ^
-   drivers/rtc/rtc-at91rm9200.c:507:2: note: to match this '('
-           at91_rtc_write(AT91_RTC_MR, at91_rtc_read(AT91_RTC_MR) & ~AT91_RTC_HRMOD);
-           ^
-   drivers/rtc/rtc-at91rm9200.c:89:17: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-                          ^
-   drivers/rtc/rtc-at91rm9200.c:507:30: error: type specifier missing, defaults to 'int' [-Werror,-Wimplicit-int]
-           at91_rtc_write(AT91_RTC_MR, at91_rtc_read(AT91_RTC_MR) & ~AT91_RTC_HRMOD);
-                                       ^
-   drivers/rtc/rtc-at91rm9200.c:87:2: note: expanded from macro 'at91_rtc_read'
-           readl_relaxed(at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:277:27: note: expanded from macro 'readl_relaxed'
-   #define readl_relaxed(c) ({ u32 __r = le32_to_cpu((__force __le32) \
-                             ^
-   drivers/rtc/rtc-at91rm9200.c:507:2: error: type specifier missing, defaults to 'int' [-Werror,-Wimplicit-int]
-           at91_rtc_write(AT91_RTC_MR, at91_rtc_read(AT91_RTC_MR) & ~AT91_RTC_HRMOD);
-           ^
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:56: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                                              ^
-   include/linux/byteorder/generic.h:88:21: note: expanded from macro 'cpu_to_le32'
-   #define cpu_to_le32 __cpu_to_le32
-                       ^
-   include/uapi/linux/byteorder/little_endian.h:34:36: note: expanded from macro '__cpu_to_le32'
-   #define __cpu_to_le32(x) ((__force __le32)(__u32)(x))
-                                      ^
-   drivers/rtc/rtc-at91rm9200.c:507:2: error: function cannot return function type 'int (int)'
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:56: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                                              ^
-   include/linux/byteorder/generic.h:88:21: note: expanded from macro 'cpu_to_le32'
-   #define cpu_to_le32 __cpu_to_le32
-                       ^
-   include/uapi/linux/byteorder/little_endian.h:34:43: note: expanded from macro '__cpu_to_le32'
-   #define __cpu_to_le32(x) ((__force __le32)(__u32)(x))
-                                             ^
-   drivers/rtc/rtc-at91rm9200.c:507:2: error: type specifier missing, defaults to 'int' [-Werror,-Wimplicit-int]
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:51: note: expanded from macro 'writel_relaxed'
-   #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
-                                                         ^
-   drivers/rtc/rtc-at91rm9200.c:507:2: error: function cannot return function type 'int (int ((*)(__le32))(__u32))' (aka 'int (int ((*)(unsigned int))(unsigned int))')
-   drivers/rtc/rtc-at91rm9200.c:89:2: note: expanded from macro 'at91_rtc_write'
-           writel_relaxed((val), at91_rtc_regs + field)
-           ^
-   arch/arm/include/asm/io.h:282:42: note: expanded from macro 'writel_relaxed'
+   In file included from drivers/gpu/drm/panel/panel-himax-hx83102.c:12:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     504 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:510:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     510 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     511 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:523:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     523 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     524 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/gpu/drm/panel/panel-himax-hx83102.c:569:11: error: incompatible pointer types passing 'struct drm_device *' to parameter of type 'const struct device *' [-Werror,-Wincompatible-pointer-types]
+     569 |                 dev_err(connector->dev, "bad mode or failed to add mode\n");
+         |                         ^~~~~~~~~~~~~~
+   include/linux/dev_printk.h:154:44: note: expanded from macro 'dev_err'
+     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                   ^~~
+   include/linux/dev_printk.h:110:11: note: expanded from macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   include/linux/dev_printk.h:50:36: note: passing argument to parameter 'dev' here
+      50 | void _dev_err(const struct device *dev, const char *fmt, ...);
+         |                                    ^
+   4 warnings and 1 error generated.
 
 
-vim +506 drivers/rtc/rtc-at91rm9200.c
+vim +569 drivers/gpu/drm/panel/panel-himax-hx83102.c
 
-f6a46f8b302d9b drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2020-11-09  465  
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  466  /*
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  467   * Initialize and install RTC driver
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  468   */
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  469  static int __init at91_rtc_probe(struct platform_device *pdev)
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  470  {
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  471  	struct rtc_device *rtc;
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  472  	struct resource *regs;
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14 @473  	int ret = 0;
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  474  
-288d9cf1764a25 drivers/rtc/rtc-at91rm9200.c Claudiu Beznea                   2019-09-26  475  	at91_rtc_config = of_device_get_match_data(&pdev->dev);
-de645475913f67 drivers/rtc/rtc-at91rm9200.c Johan Hovold                     2013-06-12  476  	if (!at91_rtc_config)
-de645475913f67 drivers/rtc/rtc-at91rm9200.c Johan Hovold                     2013-06-12  477  		return -ENODEV;
-de645475913f67 drivers/rtc/rtc-at91rm9200.c Johan Hovold                     2013-06-12  478  
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  479  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  480  	if (!regs) {
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  481  		dev_err(&pdev->dev, "no mmio resource defined\n");
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  482  		return -ENXIO;
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  483  	}
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  484  
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  485  	irq = platform_get_irq(pdev, 0);
-faac910201e9be drivers/rtc/rtc-at91rm9200.c Stephen Boyd                     2019-07-30  486  	if (irq < 0)
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  487  		return -ENXIO;
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  488  
-f3766250b2e9f2 drivers/rtc/rtc-at91rm9200.c Sachin Kamat                     2013-11-12  489  	at91_rtc_regs = devm_ioremap(&pdev->dev, regs->start,
-f3766250b2e9f2 drivers/rtc/rtc-at91rm9200.c Sachin Kamat                     2013-11-12  490  				     resource_size(regs));
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  491  	if (!at91_rtc_regs) {
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  492  		dev_err(&pdev->dev, "failed to map registers, aborting.\n");
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  493  		return -ENOMEM;
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  494  	}
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14  495  
-735ae2056b3c72 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2017-07-06  496  	rtc = devm_rtc_allocate_device(&pdev->dev);
-735ae2056b3c72 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2017-07-06  497  	if (IS_ERR(rtc))
-735ae2056b3c72 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2017-07-06  498  		return PTR_ERR(rtc);
-735ae2056b3c72 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2017-07-06  499  	platform_set_drvdata(pdev, rtc);
-735ae2056b3c72 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2017-07-06  500  
-40844cea20a5f8 drivers/rtc/rtc-at91rm9200.c Liao Yuanhong                    2024-08-21  501  	sclk = devm_clk_get_enabled(&pdev->dev, NULL);
-11f67a8bbf6587 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2015-07-31  502  	if (IS_ERR(sclk))
-11f67a8bbf6587 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2015-07-31  503  		return PTR_ERR(sclk);
-11f67a8bbf6587 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2015-07-31 @504  	}
-11f67a8bbf6587 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2015-07-31  505  
-d28bdfc5c80fb6 drivers/rtc/rtc-at91rm9200.c Jean-Christophe PLAGNIOL-VILLARD 2011-11-14 @506  	at91_rtc_write(AT91_RTC_CR, 0);
-f6a46f8b302d9b drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2020-11-09  507  	at91_rtc_write(AT91_RTC_MR, at91_rtc_read(AT91_RTC_MR) & ~AT91_RTC_HRMOD);
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  508  
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  509  	/* Disable all interrupts */
-e304fcd075a0e9 drivers/rtc/rtc-at91rm9200.c Johan Hovold                     2013-06-12  510  	at91_rtc_write_idr(AT91_RTC_ACKUPD | AT91_RTC_ALARM |
-e7a8bb12c24af8 drivers/rtc/rtc-at91.c       Andrew Morton                    2006-06-25  511  					AT91_RTC_SECEV | AT91_RTC_TIMEV |
-e7a8bb12c24af8 drivers/rtc/rtc-at91.c       Andrew Morton                    2006-06-25  512  					AT91_RTC_CALEV);
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  513  
-f3766250b2e9f2 drivers/rtc/rtc-at91rm9200.c Sachin Kamat                     2013-11-12  514  	ret = devm_request_irq(&pdev->dev, irq, at91_rtc_interrupt,
-dd1f1f391dd7f3 drivers/rtc/rtc-at91rm9200.c Boris Brezillon                  2015-03-02  515  			       IRQF_SHARED | IRQF_COND_SUSPEND,
-d728b1e69fd582 drivers/rtc/rtc-at91.c       David Brownell                   2006-11-25  516  			       "at91_rtc", pdev);
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  517  	if (ret) {
-6588208cb2be4a drivers/rtc/rtc-at91rm9200.c Jingoo Han                       2013-02-21  518  		dev_err(&pdev->dev, "IRQ %d already in use.\n", irq);
-40844cea20a5f8 drivers/rtc/rtc-at91rm9200.c Liao Yuanhong                    2024-08-21  519  		return ret;
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  520  	}
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  521  
-5d4675a811fb71 drivers/rtc/rtc-at91rm9200.c David Brownell                   2007-02-20  522  	/* cpu init code should really have flagged this device as
-5d4675a811fb71 drivers/rtc/rtc-at91rm9200.c David Brownell                   2007-02-20  523  	 * being wake-capable; if it didn't, do that here.
-5d4675a811fb71 drivers/rtc/rtc-at91rm9200.c David Brownell                   2007-02-20  524  	 */
-5d4675a811fb71 drivers/rtc/rtc-at91rm9200.c David Brownell                   2007-02-20  525  	if (!device_can_wakeup(&pdev->dev))
-5d4675a811fb71 drivers/rtc/rtc-at91rm9200.c David Brownell                   2007-02-20  526  		device_init_wakeup(&pdev->dev, 1);
-5d4675a811fb71 drivers/rtc/rtc-at91rm9200.c David Brownell                   2007-02-20  527  
-f6a46f8b302d9b drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2020-11-09  528  	if (at91_rtc_config->has_correction)
-f6a46f8b302d9b drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2020-11-09  529  		rtc->ops = &sama5d4_rtc_ops;
-f6a46f8b302d9b drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2020-11-09  530  	else
-735ae2056b3c72 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2017-07-06  531  		rtc->ops = &at91_rtc_ops;
-f6a46f8b302d9b drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2020-11-09  532  
-6c78a872a673c4 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2018-05-17  533  	rtc->range_min = RTC_TIMESTAMP_BEGIN_1900;
-6c78a872a673c4 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2018-05-17  534  	rtc->range_max = RTC_TIMESTAMP_END_2099;
-fdcfd854333be5 drivers/rtc/rtc-at91rm9200.c Bartosz Golaszewski              2020-11-09  535  	ret = devm_rtc_register_device(rtc);
-735ae2056b3c72 drivers/rtc/rtc-at91rm9200.c Alexandre Belloni                2017-07-06  536  	if (ret)
-40844cea20a5f8 drivers/rtc/rtc-at91rm9200.c Liao Yuanhong                    2024-08-21  537  		return ret;
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  538  
-2fe121e1f5aa3b drivers/rtc/rtc-at91rm9200.c Boris Brezillon                  2014-06-06  539  	/* enable SECEV interrupt in order to initialize at91_rtc_upd_rdy
-2fe121e1f5aa3b drivers/rtc/rtc-at91rm9200.c Boris Brezillon                  2014-06-06  540  	 * completion.
-2fe121e1f5aa3b drivers/rtc/rtc-at91rm9200.c Boris Brezillon                  2014-06-06  541  	 */
-2fe121e1f5aa3b drivers/rtc/rtc-at91rm9200.c Boris Brezillon                  2014-06-06  542  	at91_rtc_write_ier(AT91_RTC_SECEV);
-2fe121e1f5aa3b drivers/rtc/rtc-at91rm9200.c Boris Brezillon                  2014-06-06  543  
-6588208cb2be4a drivers/rtc/rtc-at91rm9200.c Jingoo Han                       2013-02-21  544  	dev_info(&pdev->dev, "AT91 Real Time Clock driver.\n");
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  545  	return 0;
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  546  }
-788b1fc619a31e drivers/rtc/rtc-at91.c       Andrew Victor                    2006-06-25  547  
+   559	
+   560	static int hx83102_get_modes(struct drm_panel *panel,
+   561				    struct drm_connector *connector)
+   562	{
+   563		struct hx83102 *ctx = panel_to_hx83102(panel);
+   564		const struct drm_display_mode *m = ctx->desc->modes;
+   565		struct drm_display_mode *mode;
+   566	
+   567		mode = drm_mode_duplicate(connector->dev, m);
+   568		if (!mode) {
+ > 569			dev_err(connector->dev, "bad mode or failed to add mode\n");
+   570			return -EINVAL;
+   571		}
+   572	
+   573		mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+   574		drm_mode_set_name(mode);
+   575		drm_mode_probed_add(connector, mode);
+   576	
+   577		connector->display_info.width_mm = ctx->desc->size.width_mm;
+   578		connector->display_info.height_mm = ctx->desc->size.height_mm;
+   579		connector->display_info.bpc = 8;
+   580	
+   581		return 1;
+   582	}
+   583	
 
 -- 
 0-DAY CI Kernel Test Service
