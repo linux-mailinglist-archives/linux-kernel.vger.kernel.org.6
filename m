@@ -1,164 +1,139 @@
-Return-Path: <linux-kernel+bounces-297793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B001B95BDCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:56:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19C095BDCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC8B28544E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:56:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FB94B25259
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1A91D048F;
-	Thu, 22 Aug 2024 17:55:52 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702051CF2BB;
+	Thu, 22 Aug 2024 17:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYHjqw8z"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD3D168497;
-	Thu, 22 Aug 2024 17:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73911CF2A9;
+	Thu, 22 Aug 2024 17:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724349352; cv=none; b=a8Yd29/LturzYZ6MAu+ZpYobeXQTy18qLJu738qVuQsMVPsTpFL9L8iMIZL+XnbPaHlhbvljYRV371ej83aKUEC+FJ2sitAIwapjGHI0zJQ5Gl459Lz1EZO8HfhnXfweUaM7PQP9XcjiOqLXRZB1apcrvW5DGSSb1A6At+Vmp/A=
+	t=1724349361; cv=none; b=Z2azlNki9Cgy924G4AtuKaFH/fStbaQwk/wej160Fl02Gq1Dza6jCTeB8sbNjpwJoILlOvmDsrVPf7BM/hGz/l1ffFfOgW29n3ks7xDK1fZsBUCYrENnbkrVbLalhAruRQfY5e9ZKSDejLWEh29eW3HLBDCP4NfLK0zoRBqwAOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724349352; c=relaxed/simple;
-	bh=pROawHmFV2BT+O5PvWXvAmoiKYg1NL9rMqu4AAWOwOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aByE4Ofih/DhnBY4Juy7GVomSUrVr0gBa85L1HPEJxMgQq+NPx/YLdENXSicWNPUvkJ4ZQpOg7EoN09QzAhKRLC4RJm45QZwI3LyWKWnu0RM4BVge+1sQ8r+/k2VsXxmXFu78ruNXtSOgYhe/foOFw98k5HAV66DXtXF1hfi778=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1724349361; c=relaxed/simple;
+	bh=smVYnWuAmitIbB8+8SNe7l+nZkHzp1QzNF7x5k33bTc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oG9eUUkyD0gMMn4oANVtyVzM3xW1gQGatSvS3O8vVt0arEr5Nut/4BHbxhQwI+PzkibyD6JdGHgzGYFu6SYGzpto2R0vCV2EkAlk48uxTfliemkNElNah/a3bJXAWM/gTccZ1PDXUOBHz0YEXSwAvvOQq9nBSdE3iFY1qQpHemw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYHjqw8z; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so1505822a12.2;
-        Thu, 22 Aug 2024 10:55:50 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-201e2ebed48so727125ad.0;
+        Thu, 22 Aug 2024 10:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724349358; x=1724954158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qhXu1/y7UKtVxtPjaKnW4gHUfJYvKyvM1SAHsg1HIWY=;
+        b=HYHjqw8zDU5Hijh/rtpWIt366YUxIGkm/p+HTtEMQPIJQk96WYsrAAqvqyvEf0VcI2
+         w9TS9gnoVyy42W1EZc4gxqJkGH7AOIldRdz4wmxDoWpyJuMGZdzW9UaOQ732NUY2bocC
+         oFzHE68MvBPkGrlEa3aRaFRdifPg706w2Kes70o3Yz2LrRHq3ikEMMFrptmETZjupdbH
+         MvWg0b21RaPJY5+GsXe7UFopgLwEXMpPjVfInihSCpAQZ1oDT+5Lwton396BhkzZ6LCP
+         wrTx6aI2yXI5I7HebiRDc7oNjAwKSRn2DiQSj+ywrBy1sNBBQyshirHmF4dT9MIPshyM
+         oV4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724349349; x=1724954149;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724349358; x=1724954158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WCPimQ84Bcp6pN8w/ENlDXV/sgr5BQCEPEmtyI0sdvk=;
-        b=WqDc0QuvZqSPWqMQY4zNUxTRJSqi6U8uzOMNy98kQyF0oAwRDoA36iEAByA8JKVcq2
-         UBR5e2C5Vd4GAjozUcIpaf3WWPXd4vJ3GKaUqQu2eNxATy+NIVWA4wXU1uX1dyFdCGTs
-         XIQutgTCASc+QY1pV33o6NVGLSOa/CVC2sKPASACi02MGDV3VLUaxrfSCOGfC1jTxdtF
-         +aiHSzVPc5ldgfcCW9+8yIX5freFb29Bv1natHilqjsGP12j6AkySou/LkgmlofZ/TDT
-         18V54H/l/qP1tmZjviiGDvFmMO6VRVDjNavRuX2+pFJOrO4nSw69/AlFybR6bloVhAKR
-         DhfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0qBGz786UeJfoUBAnsNz9JQXwLTCk8vFCEU2ofQsg2VkZu9FGphvyGbpcTi2vGcQUgxo96z8AJWasF+4=@vger.kernel.org, AJvYcCV3yWMUfIQZzTek5SUleChGuYbReo1ttJa8+G9gJBg0Un48dtnlmykRRWWIErTdP4QaxqcNDE/DXWMD85QpzlVN@vger.kernel.org, AJvYcCVdpmclRRBOZf4sPnkXk1L1Ui8bfCZPKGaXIbLcYlgaEt7+ivO35TT2wmSP8LLPEP4rrSylfLlj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBO4CQ/tWarBjFaRXH7Fn9QzdHCn7TWOTi5xBN2rO7aTxhhGql
-	IZeWYKQkEOFxUWROsw6Kvdt/QCp8X6Fj/PO2fpIMTRRfqhi5PVvE
-X-Google-Smtp-Source: AGHT+IGo1m/dgH1SW/4jpR310dTx7p6yetF0QpZG78l9g2MOTp3K+MRKtOc7nZ70JE7HCctoRqlZMw==
-X-Received: by 2002:a05:6402:520e:b0:5be:fadc:8707 with SMTP id 4fb4d7f45d1cf-5c0791ce631mr1725856a12.7.1724349348275;
-        Thu, 22 Aug 2024 10:55:48 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddc612sm1139524a12.18.2024.08.22.10.55.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 10:55:47 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: fw@strlen.de,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: leit@meta.com,
-	netfilter-devel@vger.kernel.org (open list:NETFILTER),
-	coreteam@netfilter.org (open list:NETFILTER),
-	netdev@vger.kernel.org (open list:NETWORKING [IPv4/IPv6]),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH nf-next 2/2] netfilter: Make IP6_NF_IPTABLES_LEGACY selectable
-Date: Thu, 22 Aug 2024 10:55:36 -0700
-Message-ID: <20240822175537.3626036-2-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240822175537.3626036-1-leitao@debian.org>
-References: <20240822175537.3626036-1-leitao@debian.org>
+        bh=qhXu1/y7UKtVxtPjaKnW4gHUfJYvKyvM1SAHsg1HIWY=;
+        b=d2PtxzyPEEkbukUvYklvh6PjiULQPAKvlAwjkW1gj1ufuj6W2tGAPUOQJzNJ56BZEk
+         CMoexdy17OjMurrwSmd5wOZ0VrnHdenBE+ibtMQiAl+Naf+EzaBH85BqbquH324/1/Wg
+         D11jj4rAjLWdYiHBJQdXEVn4iiwdeORBPQDVwNWjmMDviazqlmUXbQRUsaZCNoq3qRd2
+         MmComP16aXKN3S29lvQS4fKgk7PPc3+D4BclRe0uMQWojLCnHxYeprtnTzEvvfAiKEsV
+         THBcSI9QmKzB1b8EGWQpazsxGDre8weW2vOyBKYKKLt9/HzHWUFsvWdwjbh5nKZHwySy
+         otog==
+X-Forwarded-Encrypted: i=1; AJvYcCW/LDFct6cziZixym3Hcur+lKhTckUIlcEFz7d4Jm3y251nunf7B+2YYoHdxquvvf4An6DAC2LI@vger.kernel.org, AJvYcCX9WqpIaHCDGgRrXtGqZ/HQPm39RTpRu95PuDgyeLDAQVQ5Wh7wPzG/53v1OBHDBUagKtn+ShiYIoKEdfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSBK4U03CqO1jL+tuEzvGF0Tl5ucxxu/CU88uaiF3Sx1o1XoTW
+	JpGEIDW0s/3LlDADfkBWTcy5kIAJDDUPDZKAgDtleb6TH9xbLwTQkAFTQkYkwP7jJF2v9vktVUz
+	ZlqS9yMZhO5v7mL4Vt4kmkhEzyZHk7w==
+X-Google-Smtp-Source: AGHT+IETlDVRl8j8jbZqDqUvSIioAvhet305MNQITQRtCniCu61LWrGuZC6R67R9iHP+nA+QKCEStVE/J8zJyaAFQls=
+X-Received: by 2002:a17:902:c406:b0:1fa:a9f5:64b1 with SMTP id
+ d9443c01a7336-20367d0d354mr44078375ad.3.1724349357971; Thu, 22 Aug 2024
+ 10:55:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240821042724.1391169-1-make24@iscas.ac.cn>
+In-Reply-To: <20240821042724.1391169-1-make24@iscas.ac.cn>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 22 Aug 2024 13:55:46 -0400
+Message-ID: <CADnq5_Orq-RkKxOeG9UMnnJGodsB-9Tek0_NyYNP3EGaiEXpGQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND] drm/amd/display: avoid using null object of framebuffer
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, daniel@ffwll.ch, mwen@igalia.com, aurabindo.pillai@amd.com, 
+	joshua@froggi.es, hamza.mahfooz@amd.com, marek.olsak@amd.com, 
+	HaoPing.Liu@amd.com, akpm@linux-foundation.org, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This option makes IP6_NF_IPTABLES_LEGACY user selectable, giving
-users the option to configure iptables without enabling any other
-config.
+Applied.  Thanks!
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- net/ipv6/netfilter/Kconfig | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
-index f3c8e2d918e1..dad0a50d3ef4 100644
---- a/net/ipv6/netfilter/Kconfig
-+++ b/net/ipv6/netfilter/Kconfig
-@@ -8,7 +8,13 @@ menu "IPv6: Netfilter Configuration"
- 
- # old sockopt interface and eval loop
- config IP6_NF_IPTABLES_LEGACY
--	tristate
-+	tristate "Legacy IP6 tables support"
-+	depends on INET && IPV6
-+	select NETFILTER_XTABLES
-+	default n
-+	help
-+	  ip6tables is a general, extensible packet identification legacy framework.
-+	  This is not needed if you are using iptables over nftables (iptables-nft).
- 
- config NF_SOCKET_IPV6
- 	tristate "IPv6 socket lookup support"
-@@ -190,7 +196,7 @@ config IP6_NF_TARGET_HL
- config IP6_NF_FILTER
- 	tristate "Packet filtering"
- 	default m if NETFILTER_ADVANCED=n
--	select IP6_NF_IPTABLES_LEGACY
-+	depends on IP6_NF_IPTABLES_LEGACY
- 	tristate
- 	help
- 	  Packet filtering defines a table `filter', which has a series of
-@@ -227,7 +233,7 @@ config IP6_NF_TARGET_SYNPROXY
- config IP6_NF_MANGLE
- 	tristate "Packet mangling"
- 	default m if NETFILTER_ADVANCED=n
--	select IP6_NF_IPTABLES_LEGACY
-+	depends on IP6_NF_IPTABLES_LEGACY
- 	help
- 	  This option adds a `mangle' table to iptables: see the man page for
- 	  iptables(8).  This table is used for various packet alterations
-@@ -237,7 +243,7 @@ config IP6_NF_MANGLE
- 
- config IP6_NF_RAW
- 	tristate  'raw table support (required for TRACE)'
--	select IP6_NF_IPTABLES_LEGACY
-+	depends on IP6_NF_IPTABLES_LEGACY
- 	help
- 	  This option adds a `raw' table to ip6tables. This table is the very
- 	  first in the netfilter framework and hooks in at the PREROUTING
-@@ -249,9 +255,7 @@ config IP6_NF_RAW
- # security table for MAC policy
- config IP6_NF_SECURITY
- 	tristate "Security table"
--	depends on SECURITY
--	depends on NETFILTER_ADVANCED
--	select IP6_NF_IPTABLES_LEGACY
-+	depends on SECURITY && NETFILTER_ADVANCED && IP6_NF_IPTABLES_LEGACY
- 	help
- 	  This option adds a `security' table to iptables, for use
- 	  with Mandatory Access Control (MAC) policy.
-@@ -260,10 +264,8 @@ config IP6_NF_SECURITY
- 
- config IP6_NF_NAT
- 	tristate "ip6tables NAT support"
--	depends on NF_CONNTRACK
--	depends on NETFILTER_ADVANCED
-+	depends on NF_CONNTRACK && NETFILTER_ADVANCED && IP6_NF_IPTABLES_LEGACY
- 	select NF_NAT
--	select IP6_NF_IPTABLES_LEGACY
- 	select NETFILTER_XT_NAT
- 	help
- 	  This enables the `nat' table in ip6tables. This allows masquerading,
--- 
-2.43.5
-
+On Wed, Aug 21, 2024 at 3:45=E2=80=AFAM Ma Ke <make24@iscas.ac.cn> wrote:
+>
+> Instead of using state->fb->obj[0] directly, get object from framebuffer
+> by calling drm_gem_fb_get_obj() and return error code when object is
+> null to avoid using null object of framebuffer.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 5d945cbcd4b1 ("drm/amd/display: Create a file dedicated to planes"=
+)
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/dr=
+ivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+> index a83bd0331c3b..5cb11cc2d063 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+> @@ -28,6 +28,7 @@
+>  #include <drm/drm_blend.h>
+>  #include <drm/drm_gem_atomic_helper.h>
+>  #include <drm/drm_plane_helper.h>
+> +#include <drm/drm_gem_framebuffer_helper.h>
+>  #include <drm/drm_fourcc.h>
+>
+>  #include "amdgpu.h"
+> @@ -935,10 +936,14 @@ static int amdgpu_dm_plane_helper_prepare_fb(struct=
+ drm_plane *plane,
+>         }
+>
+>         afb =3D to_amdgpu_framebuffer(new_state->fb);
+> -       obj =3D new_state->fb->obj[0];
+> +       obj =3D drm_gem_fb_get_obj(new_state->fb, 0);
+> +       if (!obj) {
+> +               DRM_ERROR("Failed to get obj from framebuffer\n");
+> +               return -EINVAL;
+> +       }
+> +
+>         rbo =3D gem_to_amdgpu_bo(obj);
+>         adev =3D amdgpu_ttm_adev(rbo->tbo.bdev);
+> -
+>         r =3D amdgpu_bo_reserve(rbo, true);
+>         if (r) {
+>                 dev_err(adev->dev, "fail to reserve bo (%d)\n", r);
+> --
+> 2.25.1
+>
 
