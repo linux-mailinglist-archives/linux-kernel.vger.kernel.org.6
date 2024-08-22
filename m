@@ -1,117 +1,423 @@
-Return-Path: <linux-kernel+bounces-297939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E2A95BF70
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:11:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F84595BF73
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761A31C2271F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 190DFB21D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533F16D4EF;
-	Thu, 22 Aug 2024 20:11:36 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D6915443B;
+	Thu, 22 Aug 2024 20:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZssenzNG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FC61F957;
-	Thu, 22 Aug 2024 20:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A42B1BF3A
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724357496; cv=none; b=ST2FyOkfIXKqUVG3bXgciX6XyLvmKOBczpkM0fLOUvleeoPHLCyWDXOLqj7f8ItrqepoEYPY7VFhyvIgAK49goe7bHJA7X0+eyTj9pXlPAmx6O/08nF1fJGeiOPREmVEVjgEvt1H9XsZ0UgIY4Vovptpj0zalrRlaeuFSArKYnE=
+	t=1724357784; cv=none; b=BdPz7PZFea6CTEqO7J7DxRdbCtjh1phkrpe0WHJRgZKaMbfBfQrRmSfWfF1+gDmiD76NLnR/CyO1DmvKP+03bVCETWh+eBQsRdWpBpscRqQ7bK1VeGGFoVEOgp4yhxY73tcmAD1/TROxqJwo6irXM38iLQ9HeuOuIfm4ZWThzbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724357496; c=relaxed/simple;
-	bh=x3wXMcSjHjfNELF3zxCuDFp8wKWLyYb+BkEuhtZTcio=;
+	s=arc-20240116; t=1724357784; c=relaxed/simple;
+	bh=tk0K02bLzaw+nmzpDxhNt+aoHh6I1fzKq3BgCJhAkEg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lhb5Pm9ls0kOjKM+Tc+OJe24NvX8cC8JemM7kX2Vm3ZpWRAqIARFhiqCw0Ln30XdaTIoNCQi4tUYkX5SwZ3ofkGf15tFOE83/CLONs3+dumqjFKp3BUEaF58/pEIHGEokHqPBuca7o7EIIAHOzzDF9AbeBAIsNKuJI/GUyeNAmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d60f48a2ccso994692a91.3;
-        Thu, 22 Aug 2024 13:11:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724357494; x=1724962294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=06JTAuxEC5nLVViX4Co1aPJmJYMF6kbZxHJmX2rPoME=;
-        b=gun3WOi9PuihQQXZQm6FjWSDkFd3mZNRd7OxGlmlouG3GoTcQF+YEpRTk9QjwhT/su
-         prdDbHaanh/tIwrDIpK/TpNIUuS6hWqr3aqKjVf/aLMB48bxRw7BupFJ88HL3N/Vhmas
-         8SyL1Bo5SILKABV1iPFHq/yCmO/X9rIiOgOjwgTTwfuR5O8Drd9NNk8d4TMRJctBeUyp
-         h5pOfHS0dwGIalvdPlkwilrhDUuHHi17G++2Lrg9Uj0X6LoYWN55qH/rQYR00XiaYcN5
-         drJEfEKsrhOlY5u+Il8mRsHLV1pgRlg24Hkxwcdo/qFSbTEQzJFIO3XNR3wGrgJPLQGK
-         JHoA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4lLGCL4BGWCfGDtr+pvCO1NqLrQlIkDQKCLhIUrIlbZUWzOwqBcHcSghBiX/SIMMLDBuHq8UZQFO8eIOKGvD1CA==@vger.kernel.org, AJvYcCX07t3ZsfBeuQx1vbeMFDGpTjXRaR1AqeAH/ldDwQUM43szFjVFGZQH5gVzqG7ghrVkxZechY0xOhhggZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/6i69V/JBxSfibtozNL4EGVwj/o1B66R8MCq64Mn63ccaIXOK
-	H+5DPFPKxbGaDRDdwVtZI+4qRK/t51MFcM7/MfPI/pwgeTv43CUS704UDMYzjTQmg51w6eaLI7g
-	mn/6bJFbiqT9lGfZ6selslbEInts6yF7Y
-X-Google-Smtp-Source: AGHT+IESOtRJRywMB8gvUEXgV1uQRnr37iUBGb+9p0zPpFr3/swh71gpwTplE5rab/YoDhAW5sopNAj/rydJCab/mSE=
-X-Received: by 2002:a17:90b:e8c:b0:2c9:9f2a:2b20 with SMTP id
- 98e67ed59e1d1-2d616b28cb3mr3801138a91.22.1724357494188; Thu, 22 Aug 2024
- 13:11:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=QKqN5MnnhbJLACyvnOOiRfsbKbp0iwcT1Rd833XY8xu/SJ1b//c6XRcf4s0QHG7k/JeUI5pOkZkhcgS0TWBLlI1YjZdkjHB95fG786fwlAoIdDqP3I7Vjd5G5uAJI6Q8UmxHOqrEgb1h6W7Feo78PY9V7xLZEsJc0SWdgJJX8yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZssenzNG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE150C4AF12
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724357783;
+	bh=tk0K02bLzaw+nmzpDxhNt+aoHh6I1fzKq3BgCJhAkEg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZssenzNGF0T4JgWJwbP1ykPMVXxQpHs1yrn4UF2fzOY0GZRmdHND7tma0wyV/bzrD
+	 E1pcZKHUNeh5GGM+eVXmgrJ/+9DLzDa5yfIR6EeukTp+I5O2kR6pj0SE744bUbpQP+
+	 feb0E3xVXga2r5yr1va2M5OqpCPBLjhFZXBcxVNszZ2jjVWfgEzc3gczFMW85QgZPV
+	 7lmmfu0yw5qX1ciaTUZc83r0V8MhmQz8pTEv3LLDxSg0VDLmQwmrqiwsImVUvoccdX
+	 EGlAP/H0RIDeQJrcT+sCVbdZimqtDGjCGxIu3ueNN5mq1YGltiBpxMGwYy8uY8/zYX
+	 hPlKUMNDEn/sQ==
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1659e9a982so1430469276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:16:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTRApwFnVJMBkWtmZjeYRsJbMf9JpJ/gmykbk35c5SOijt40Kj10NYHFArp5oglhwKbG511IfGjT2Wj+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2X7io0SBQ3WugpiLpYq/02UWUcczhfO+UKhcsY96oWw2HyUli
+	ctfSFUrmTZNh9BKrdJxrnJZbGPTO/69cYkBMJfss7yLz3ASe1Qhh70CWvBhgqGNjtddC2Uf6rHu
+	CcYSJhjA8ULIrYfz8XylSt4L7qJG4B3K6Rqaeuw==
+X-Google-Smtp-Source: AGHT+IHYk0T8u8pG+UNDogRAP2V5686B5zcR4sagkcdeFglT3slBjUxvhKDW2NhUVFZ86ml0TFBwmdvKfolemOXv/tU=
+X-Received: by 2002:a05:690c:3506:b0:650:672e:9c64 with SMTP id
+ 00721157ae682-6c09fa8adb6mr91669517b3.33.1724357782829; Thu, 22 Aug 2024
+ 13:16:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
- <ZsdKhLaPy-uzKsuH@x1> <ZsdUxxBrpbuYxtXN@x1> <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
- <ZsdxinrZP1kHINWT@x1> <ZsdzLmIFWRqsXeXD@x1> <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
- <Zsd39zG9BuGpZ8aA@x1> <CA+icZUXGV9dMGcRwJiP7WLcYUaY5CRCcDw1HLFr+9Sn7CrRGDw@mail.gmail.com>
- <CAM9d7cgSR4OroaX0FuBvC_bPPMeEr7ThXJwqgMfAnj-Lfk8wNw@mail.gmail.com> <ZseBZ1DIi4Y5zC2W@x1>
-In-Reply-To: <ZseBZ1DIi4Y5zC2W@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 22 Aug 2024 13:11:22 -0700
-Message-ID: <CAM9d7cib0JFJPM4KdFDPkw_2K0Nu79QGHBsVZ7XyR-Yz1ZBHdg@mail.gmail.com>
-Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: sedat.dilek@gmail.com, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+References: <CAMgjq7BhpCoPMEkSkCAqWcvTO93KQK4xzn2Av6M0ATkk8YZapg@mail.gmail.com>
+ <20240821054921.43468-1-21cnbao@gmail.com> <CAMgjq7Czvr+PXF7Q5eSChAdmiLH-uvd7HTred63T8JPCCYzTSQ@mail.gmail.com>
+ <CAJD7tkYxAUVhvb_khBngRg5d504-KYVbW-v=GNfUPR-6_f-rVQ@mail.gmail.com>
+In-Reply-To: <CAJD7tkYxAUVhvb_khBngRg5d504-KYVbW-v=GNfUPR-6_f-rVQ@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 22 Aug 2024 13:16:11 -0700
+X-Gmail-Original-Message-ID: <CACePvbWN4Tt_gyGRebLQeg8edifNaMLKyKHObTyEqkFCyOj2BA@mail.gmail.com>
+Message-ID: <CACePvbWN4Tt_gyGRebLQeg8edifNaMLKyKHObTyEqkFCyOj2BA@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING in zswap_swapoff
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Kairui Song <ryncsn@gmail.com>, Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, 
+	chengming.zhou@linux.dev, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, ying.huang@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 11:20=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+On Thu, Aug 22, 2024 at 11:13=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
 >
-> On Thu, Aug 22, 2024 at 11:17:21AM -0700, Namhyung Kim wrote:
-> > > On Thu, Aug 22, 2024 at 7:40=E2=80=AFPM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2=
-001
-> > > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > > Date: Thu, 22 Aug 2024 14:13:49 -0300
-> > > > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-m=
-ismatch if
-> > > >  present on clang
-> > > >
-> > > > The -Wcast-function-type-mismatch option was introduced in clang 19=
- and
-> > > > its enabled by default, since we use -Werror, and python bindings d=
-o
-> > > > casts that are valid but trips this warning, disable it if present.
-> > > >
-> > > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > > Cc: Ian Rogers <irogers@google.com>
-> > > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > > Cc: Nathan Chancellor <nathan@kernel.org>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9=
-uy3r2MzKXwTA5THtL7w@mail.gmail.com
-> > > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> On Tue, Aug 20, 2024 at 11:42=E2=80=AFPM Kairui Song <ryncsn@gmail.com> w=
+rote:
 > >
-> > Can we also add 'Fixes' tag to make this picked by stable kernels?
+> > On Wed, Aug 21, 2024 at 1:49=E2=80=AFPM Barry Song <21cnbao@gmail.com> =
+wrote:
+> > >
+> > > On Tue, Aug 20, 2024 at 9:02=E2=80=AFPM Kairui Song <ryncsn@gmail.com=
+> wrote:
+> > > >
+> > > > On Tue, Aug 20, 2024 at 4:47=E2=80=AFPM Kairui Song <ryncsn@gmail.c=
+om> wrote:
+> > > > >
+> > > > > On Tue, Aug 20, 2024 at 4:13=E2=80=AFAM Yosry Ahmed <yosryahmed@g=
+oogle.com> wrote:
+> > > > > > On Fri, Aug 16, 2024 at 12:52=E2=80=AFPM syzbot
+> > > > > > <syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com> wrote:
+> > > > > > >
+> > > > > > > Hello,
+> > > > > > >
+> > > > > > > syzbot found the following issue on:
+> > > > > > >
+> > > > > > > HEAD commit:    367b5c3d53e5 Add linux-next specific files fo=
+r 20240816
+> > > > >
+> > > > > I can't find this commit, seems this commit is not in linux-next =
+any more?
+> > > > >
+> > > > > > > git tree:       linux-next
+> > > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1=
+2489105980000
+> > > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6=
+1ba6f3b22ee5467
+> > > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dce6=
+029250d7fd4d0476d
+> > > > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binu=
+tils for Debian) 2.40
+> > > > > > >
+> > > > > > > Unfortunately, I don't have any reproducer for this issue yet=
+.
+> > > > > > >
+> > > > > > > Downloadable assets:
+> > > > > > > disk image: https://storage.googleapis.com/syzbot-assets/0b1b=
+4e3cad3c/disk-367b5c3d.raw.xz
+> > > > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/5bb090f=
+7813c/vmlinux-367b5c3d.xz
+> > > > > > > kernel image: https://storage.googleapis.com/syzbot-assets/66=
+74cb0709b1/bzImage-367b5c3d.xz
+> > > > > > >
+> > > > > > > IMPORTANT: if you fix the issue, please add the following tag=
+ to the commit:
+> > > > > > > Reported-by: syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmai=
+l.com
+> > > > > > >
+> > > > > > > ------------[ cut here ]------------
+> > > > > > > WARNING: CPU: 0 PID: 11298 at mm/zswap.c:1700 zswap_swapoff+0=
+x11b/0x2b0 mm/zswap.c:1700
+> > > > > > > Modules linked in:
+> > > > > > > CPU: 0 UID: 0 PID: 11298 Comm: swapoff Not tainted 6.11.0-rc3=
+-next-20240816-syzkaller #0
+> > > > > > > Hardware name: Google Google Compute Engine/Google Compute En=
+gine, BIOS Google 06/27/2024
+> > > > > > > RIP: 0010:zswap_swapoff+0x11b/0x2b0 mm/zswap.c:1700
+> > > > > > > Code: 74 05 e8 78 73 07 00 4b 83 7c 35 00 00 75 15 e8 1b bd 9=
+e ff 48 ff c5 49 83 c6 50 83 7c 24 0c 17 76 9b eb 24 e8 06 bd 9e ff 90 <0f>=
+ 0b 90 eb e5 48 8b 0c 24 80 e1 07 80 c1 03 38 c1 7c 90 48 8b 3c
+> > > > > > > RSP: 0018:ffffc9000302fa38 EFLAGS: 00010293
+> > > > > > > RAX: ffffffff81f4d66a RBX: dffffc0000000000 RCX: ffff88802c19=
+bc00
+> > > > > > > RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff88801598=
+6248
+> > > > > > > RBP: 0000000000000000 R08: ffffffff81f4d620 R09: 1ffffffff1d4=
+76ac
+> > > > > > > R10: dffffc0000000000 R11: fffffbfff1d476ad R12: dffffc000000=
+0000
+> > > > > > > R13: ffff888015986200 R14: 0000000000000048 R15: 000000000000=
+0002
+> > > > > > > FS:  00007f9e628a5380(0000) GS:ffff8880b9000000(0000) knlGS:0=
+000000000000000
+> > > > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > > > CR2: 0000001b30f15ff8 CR3: 000000006c5f0000 CR4: 000000000035=
+06f0
+> > > > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000000=
+0000
+> > > > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000000=
+0400
+> > > > > > > Call Trace:
+> > > > > > >  <TASK>
+> > > > > > >  __do_sys_swapoff mm/swapfile.c:2837 [inline]
+> > > > > > >  __se_sys_swapoff+0x4653/0x4cf0 mm/swapfile.c:2706
+> > > > > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > > > > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> > > > > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > > > RIP: 0033:0x7f9e629feb37
+> > > > > > > Code: 73 01 c3 48 8b 0d f1 52 0d 00 f7 d8 64 89 01 48 83 c8 f=
+f c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a8 00 00 00 0f 05 <48>=
+ 3d 01 f0 ff ff 73 01 c3 48 8b 0d c1 52 0d 00 f7 d8 64 89 01 48
+> > > > > > > RSP: 002b:00007fff17734f68 EFLAGS: 00000246 ORIG_RAX: 0000000=
+0000000a8
+> > > > > > > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9e629f=
+eb37
+> > > > > > > RDX: 00007f9e62a9e7e8 RSI: 00007f9e62b9beed RDI: 000056309094=
+2a20
+> > > > > > > RBP: 0000563090942a20 R08: 0000000000000000 R09: 77872e07ed16=
+4f94
+> > > > > > > R10: 000000000000001f R11: 0000000000000246 R12: 00007fff1773=
+5188
+> > > > > > > R13: 00005630909422a0 R14: 0000563073724169 R15: 00007f9e62bd=
+da80
+> > > > > > >  </TASK>
+> > > > > >
+> > > > > > I am hoping syzbot would find a reproducer and bisect this for =
+us.
+> > > > > > Meanwhile, from a high-level it looks to me like we are missing=
+ a
+> > > > > > zswap_invalidate() call in some paths.
+> > > > > >
+> > > > > > If I have to guess, I would say it's related to the latest mTHP=
+ swap
+> > > > > > changes, but I am not following closely. Perhaps one of the fol=
+lowing
+> > > > > > things happened:
+> > > > > >
+> > > > > > (1) We are not calling zswap_invalidate() in some invalidation =
+paths.
+> > > > > > It used to not be called for the cluster freeing path, so maybe=
+ we end
+> > > > > > up with some order-0 swap entries in a cluster? or maybe there =
+is an
+> > > > > > entirely new invalidation path that does not go through
+> > > > > > free_swap_slot() for order-0 entries?
+> > > > > >
+> > > > > > (2) Some higher order swap entries (i.e. a cluster) end up in z=
+swap
+> > > > > > somehow. zswap_store() has a warning to cover that though. Mayb=
+e
+> > > > > > somehow some swap entries are allocated as a cluster, but then =
+pages
+> > > > > > are swapped out one-by-one as order-0 (which can go to zswap), =
+but
+> > > > > > then we still free the swap entries as a cluster?
+> > > > >
+> > > > > Hi Yosry, thanks for the report.
+> > > > >
+> > > > > There are many mTHP related optimizations recently, for this prob=
+lem I
+> > > > > can reproduce this locally. Can confirm the problem is gone for m=
+e
+> > > > > after reverting:
+> > > > >
+> > > > > "mm: attempt to batch free swap entries for zap_pte_range()"
+> > > > >
+> > > > > Hi Barry,
+> > > > >
+> > > > > If a set of continuous slots are having the same value, they are
+> > > > > considered a mTHP and freed, bypassing the slot cache, and causin=
+g
+> > > > > zswap leak.
+> > > > > This didn't happen in put_swap_folio because that function is
+> > > > > expecting an actual mTHP folio behind the slots but
+> > > > > free_swap_and_cache_nr is simply walking the slots.
+> > > > >
+> > > > > For the testing, I actually have to disable mTHP, because linux-n=
+ext
+> > > > > will panic with mTHP due to lack of following fixes:
+> > > > > https://lore.kernel.org/linux-mm/a4b1b34f-0d8c-490d-ab00-eaedbf3f=
+e780@gmail.com/
+> > > > > https://lore.kernel.org/linux-mm/403b7f3c-6e5b-4030-ab1c-3198f36e=
+3f73@gmail.com/
+> > > > >
+> > > > > >
+> > > > > > I am not closely following the latest changes so I am not sure.=
+ CCing
+> > > > > > folks who have done work in that area recently.
+> > > > > >
+> > > > > > I am starting to think maybe it would be more reliable to just =
+call
+> > > > > > zswap_invalidate() for all freed swap entries anyway. Would tha=
+t be
+> > > > > > too expensive? We used to do that before the zswap_invalidate()=
+ call
+> > > > > > was moved by commit 0827a1fb143f ("mm/zswap: invalidate zswap e=
+ntry
+> > > > > > when swap entry free"), and that was before we started using th=
+e
+> > > > > > xarray (so it was arguably worse than it would be now).
+> > > > > >
+> > > > >
+> > > > > That might be a good idea, I suggest moving zswap_invalidate to
+> > > > > swap_range_free and call it for every freed slot.
+> > > > >
+> > > > > Below patch can be squash into or put before "mm: attempt to batc=
+h
+> > > > > free swap entries for zap_pte_range()".
+> > > >
+> > > > Hmm, on second thought, the commit message in the attachment commit
+> > > > might be not suitable, current zswap_invalidate is also designed to
+> > > > only work for order 0 ZSWAP, so things are not clean even after thi=
+s.
+> > >
+> > > Kairui, what about the below? we don't touch the path of __try_to_rec=
+laim_swap() where
+> > > you have one folio backed?
+> > >
+> > > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > > index c1638a009113..8ff58be40544 100644
+> > > --- a/mm/swapfile.c
+> > > +++ b/mm/swapfile.c
+> > > @@ -1514,6 +1514,8 @@ static bool __swap_entries_free(struct swap_inf=
+o_struct *si,
+> > >         unlock_cluster_or_swap_info(si, ci);
+> > >
+> > >         if (!has_cache) {
+> > > +               for (i =3D 0; i < nr; i++)
+> > > +                       zswap_invalidate(swp_entry(si->type, offset +=
+ i));
+> > >                 spin_lock(&si->lock);
+> > >                 swap_entry_range_free(si, entry, nr);
+> > >                 spin_unlock(&si->lock);
+> > >
+> >
+> > Hi Barry,
+> >
+> > Thanks for updating this thread, I'm thinking maybe something will
+> > better be done at the zswap side?
+> >
+> > The concern of using zswap_invalidate is that it calls xa_erase which
+> > requires the xa spin lock. But if we are calling zswap_invalidate in
+> > swap_entry_range_free, and ensure the slot is HAS_CACHE pinned, doing
+> > a lockless read first with xa_load should be OK for checking if the
+> > slot needs a ZSWAP invalidation. The performance cost will be minimal
+> > and we only need to call zswap_invalidate in one place, something like
+> > this (haven't tested, comments are welcome). Also ZSWAP mthp will
+> > still store entried in order 0 so this should be OK for future.
 >
-> Fixes what? This isn't a regression, clang 19 isn't available for Fedora
-> 40, the most recent.
+>
+> While I do agree with this change on a high level, it's essentially
+> reverting commit 0827a1fb143f ("mm/zswap: invalidate zswap entry when
+> swap entry free") which fixed a small problem with zswap writeback.
+> I'd prefer that we don't if possible.
+>
+> One thing that I always wanted to do is to pull some of the work done
+> in swap_entry_range_free() and swap_range_free() before the slots
+> caching layer. The memcg uncharging, clearing shadow entries from the
+> swap cache, arch invalidation, zswap invalidation, etc. If we can have
+> a hook for these pre-free callbacks we can call it for single entries
+> before we add them to the slots cache, and call them for the clusters
+> as we do today. This should also reduce the amount of work done under
+> the lock, and move more work to where the freeing is actually
+> happening vs. the cache draining.
+>
+> I remember discussing this briefly with Ying before. Anyone have any thou=
+ghts?
 
-No, I'm not saying it's a bug.  But we may want to build the old
-source code using new clang.
+Hi Yosry,
 
-Thanks,
-Namhyung
+If I understand correctly, the lock you are talking about is the
+si->lock, right?
+
+Kairui has some WIP patches removing the swap slot cache in the swap
+entry freeing path. Basically the si->lock is only used to protect the
+cluster list. Most of the time freeing swap entry will only take the
+ci->lock. No need to take the si->lock to change the cluster lists.
+Only when the cluster moves to another list will it require the
+si->lock e.g. the cluster moves to the free list when all 512 entries
+are freed. Because each cluster has 512 entries. The need to take
+si->lock is dramatically reduced. That patch is based on the new
+cluster swap allocator series. Kairui can share more details.
+
+I don't think ci->lock has heavy contentions.
+
+Chris
+
+>
+> >
+> > diff --git a/mm/swap_slots.c b/mm/swap_slots.c
+> > index 13ab3b771409..d7bb3caa9d4e 100644
+> > --- a/mm/swap_slots.c
+> > +++ b/mm/swap_slots.c
+> > @@ -273,9 +273,6 @@ void free_swap_slot(swp_entry_t entry)
+> >  {
+> >          struct swap_slots_cache *cache;
+> >
+> > -        /* Large folio swap slot is not covered. */
+> > -        zswap_invalidate(entry);
+> > -
+> >          cache =3D raw_cpu_ptr(&swp_slots);
+> >          if (likely(use_swap_slot_cache && cache->slots_ret)) {
+> >                  spin_lock_irq(&cache->free_lock);
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index f947f4dd31a9..fbc25d38a27e 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -242,9 +242,6 @@ static int __try_to_reclaim_swap(struct
+> > swap_info_struct *si,
+> >          folio_set_dirty(folio);
+> >
+> >          spin_lock(&si->lock);
+> > -        /* Only sinple page folio can be backed by zswap */
+> > -        if (nr_pages =3D=3D 1)
+> > -                zswap_invalidate(entry);
+> >          swap_entry_range_free(si, entry, nr_pages);
+> >          spin_unlock(&si->lock);
+> >          ret =3D nr_pages;
+> > @@ -1545,6 +1542,10 @@ static void swap_entry_range_free(struct
+> > swap_info_struct *si, swp_entry_t entry
+> >          unsigned char *map_end =3D map + nr_pages;
+> >          struct swap_cluster_info *ci;
+> >
+> > +        /* Slots are pinned with SWAP_HAS_CACHE, safe to invalidate */
+> > +        for (int i =3D 0; i < nr_pages; ++i)
+> > +                zswap_invalidate(swp_entry(si->type, offset + i));
+> > +
+> >          ci =3D lock_cluster(si, offset);
+> >          do {
+> >                  VM_BUG_ON(*map !=3D SWAP_HAS_CACHE);
+> > diff --git a/mm/zswap.c b/mm/zswap.c
+> > index df66ab102d27..100ad04397fe 100644
+> > --- a/mm/zswap.c
+> > +++ b/mm/zswap.c
+> > @@ -1656,15 +1656,18 @@ bool zswap_load(struct folio *folio)
+> >          return true;
+> >  }
+> >
+> > +/* Caller need to pin the slot to prevent parallel store */
+> >  void zswap_invalidate(swp_entry_t swp)
+> >  {
+> >          pgoff_t offset =3D swp_offset(swp);
+> >          struct xarray *tree =3D swap_zswap_tree(swp);
+> >          struct zswap_entry *entry;
+> >
+> > -        entry =3D xa_erase(tree, offset);
+> > -        if (entry)
+> > -                zswap_entry_free(entry);
+> > +        if (xa_load(tree, offset)) {
+> > +                entry =3D xa_erase(tree, offset);
+> > +                if (entry)
+> > +                        zswap_entry_free(entry);
+> > +        }
+> >  }
+> >
+> >  int zswap_swapon(int type, unsigned long nr_pages)
+> > --
+> > 2.45.2
 
