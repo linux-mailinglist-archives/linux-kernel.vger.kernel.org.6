@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-297222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F328995B49E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED43C95B49F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F712285761
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:07:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A1BCB24332
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C067F1C9440;
-	Thu, 22 Aug 2024 12:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0551C9457;
+	Thu, 22 Aug 2024 12:07:16 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CB01C93D7
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509E0166F3D
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328435; cv=none; b=Mp0TzacaOUdmqYIobXZBAwooWrEaBomi9Z4EHPDpBHrCn2F58QDBe3BUuwtl0xwCtqYj8wrDMOYxGlxI90s/bO432MQ6nJnt4n2c0eCbEfww6GJYtGZphLOgdQtFGZXeWYyTBBTCfGtZx1Tl377Isp4hWFSwwAOeI3FGu7yosUc=
+	t=1724328435; cv=none; b=DBLJZJcugYR2QtYpOzOFkQQr/9hL4wJ72d/d39bG3ppZPHJEbsEIONUvfAXVrRSqafsvF4UPfvx5cIoi3gl4+E9Kzz6+23ZjU/G13Ny0YxcNzudF/F+x8+6Wh/gdCtAT8SEaUzPtgY7TA3HtW5eVv+TBKQIiaafb5hUyj6JynuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724328435; c=relaxed/simple;
-	bh=czRTfrk98lKNEWjV/3Slon7RyFlia9ef9kXjv+T+6BQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HtkFjk7zzMjap6gSvosp1+cYZXIk4dpKXke/1DMZ8XmlgSCSbmOO8QoXkWTCJDSaNsIxa9Lt2zMLSmUvKMWri87HLSFVjguc31giEhKdU0V7lvJ5P6A3DcspnoZMKTsI/HA0s1pjVw6EcKDKnmGW1nvPyc59YweQqt7lI94YXsk=
+	bh=0/kZ5kTdGoks6QrkmC3SqdsHYofk1DuEBDq2H7eYYFQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=R4jFkc+7w4DVHE+6+ryGSOJvOjMXOuRPYHF2bTWjS/JTWShAqm3wLFTnEbcSnnhoy5yhhniOel76iDj0cjlKFoN6QNos8YT9eVUm+IDVg6LB9bvksmu3OL8Tnw9uh9ljLeX6oCCTskcQmzyUM3qQkxHivzwEGb5nY9Mc/TPs0Lg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -31,15 +32,15 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1sh6an-0008CW-MG; Thu, 22 Aug 2024 14:07:05 +0200
+	id 1sh6an-0008Cc-MB; Thu, 22 Aug 2024 14:07:05 +0200
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <ore@pengutronix.de>)
-	id 1sh6an-002F7R-5s; Thu, 22 Aug 2024 14:07:05 +0200
+	id 1sh6an-002F7S-6w; Thu, 22 Aug 2024 14:07:05 +0200
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1sh6an-005qQF-0M;
+	id 1sh6an-005qQP-0S;
 	Thu, 22 Aug 2024 14:07:05 +0200
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: Andrew Lunn <andrew@lunn.ch>,
@@ -54,10 +55,12 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH net-next v3 0/3] Add ALCD Support to Cable Testing Interface
-Date: Thu, 22 Aug 2024 14:07:00 +0200
-Message-Id: <20240822120703.1393130-1-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v3 1/3] ethtool: Extend cable testing interface with result source information
+Date: Thu, 22 Aug 2024 14:07:01 +0200
+Message-Id: <20240822120703.1393130-2-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240822120703.1393130-1-o.rempel@pengutronix.de>
+References: <20240822120703.1393130-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,51 +73,113 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi all,
+Extend the ethtool netlink cable testing interface by adding support for
+specifying the source of cable testing results. This allows users to
+differentiate between results obtained through different diagnostic
+methods.
 
-This patch series introduces support for Active Link Cable Diagnostics
-(ALCD) in the ethtool cable testing interface and the DP83TD510 PHY
-driver.
+For example, some TI 10BaseT1L PHYs provide two variants of cable
+diagnostics: Time Domain Reflectometry (TDR) and Active Link Cable
+Diagnostic (ALCD). By introducing `ETHTOOL_A_CABLE_RESULT_SRC` and
+`ETHTOOL_A_CABLE_FAULT_LENGTH_SRC` attributes, this update enables
+drivers to indicate whether the result was derived from TDR or ALCD,
+improving the clarity and utility of diagnostic information.
 
-Why ALCD?
-On a 10BaseT1L interface, TDR (Time Domain Reflectometry) is not
-possible if the link partner is active - TDR will fail in these cases
-because it requires interrupting the link. Since the link is active, we
-already know the cable is functioning, so instead of using TDR, we can
-use ALCD.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+changes v3:
+- use u32 instead of u8
+changes v2:
+- update Documentation/netlink/specs/ethtool.yaml
+- use u8 instead of u32 for _src
+- update comments
+---
+ Documentation/netlink/specs/ethtool.yaml     |  6 ++++++
+ Documentation/networking/ethtool-netlink.rst |  5 +++++
+ include/uapi/linux/ethtool_netlink.h         | 11 +++++++++++
+ 3 files changed, 22 insertions(+)
 
-ALCD lets us measure cable length without disrupting the active link,
-which is crucial in environments where network uptime is important. It
-provides a way to gather diagnostic data without the need for downtime.
-
-What's in this series:
-- Extended the ethtool cable testing interface to specify the source of
-  diagnostic results (TDR or ALCD).
-- Updated the DP83TD510 PHY driver to use ALCD when the link is
-  active, ensuring we can still get cable length info without dropping the
-  connection.
-
-Changes are described in separate patches.
-
-Thanks,
-Oleksij
-
-Oleksij Rempel (3):
-  ethtool: Extend cable testing interface with result source information
-  ethtool: Add support for specifying information source in cable test
-    results
-  phy: dp83td510: Utilize ALCD for cable length measurement when link is
-    active
-
- Documentation/netlink/specs/ethtool.yaml     |   6 +
- Documentation/networking/ethtool-netlink.rst |   5 +
- drivers/net/phy/dp83td510.c                  | 119 ++++++++++++++++++-
- include/linux/ethtool_netlink.h              |  29 ++++-
- include/uapi/linux/ethtool_netlink.h         |  11 ++
- net/ethtool/cabletest.c                      |  19 ++-
- 6 files changed, 173 insertions(+), 16 deletions(-)
-
---
+diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
+index 1bbeaba5c6442..057f8916024a6 100644
+--- a/Documentation/netlink/specs/ethtool.yaml
++++ b/Documentation/netlink/specs/ethtool.yaml
+@@ -659,6 +659,9 @@ attribute-sets:
+       -
+         name: code
+         type: u8
++      -
++        name: src
++        type: u32
+   -
+     name: cable-fault-length
+     attributes:
+@@ -668,6 +671,9 @@ attribute-sets:
+       -
+         name: cm
+         type: u32
++      -
++        name: src
++        type: u32
+   -
+     name: cable-nest
+     attributes:
+diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
+index 3f6c6880e7c48..5ca0b3661379a 100644
+--- a/Documentation/networking/ethtool-netlink.rst
++++ b/Documentation/networking/ethtool-netlink.rst
+@@ -1307,12 +1307,17 @@ information.
+  +-+-+-----------------------------------------+--------+---------------------+
+  | | | ``ETHTOOL_A_CABLE_RESULTS_CODE``        | u8     | result code         |
+  +-+-+-----------------------------------------+--------+---------------------+
++ | | | ``ETHTOOL_A_CABLE_RESULT_SRC``          | u32    | information source  |
++ +-+-+-----------------------------------------+--------+---------------------+
+  | | ``ETHTOOL_A_CABLE_NEST_FAULT_LENGTH``     | nested | cable length        |
+  +-+-+-----------------------------------------+--------+---------------------+
+  | | | ``ETHTOOL_A_CABLE_FAULT_LENGTH_PAIR``   | u8     | pair number         |
+  +-+-+-----------------------------------------+--------+---------------------+
+  | | | ``ETHTOOL_A_CABLE_FAULT_LENGTH_CM``     | u32    | length in cm        |
+  +-+-+-----------------------------------------+--------+---------------------+
++ | | | ``ETHTOOL_A_CABLE_FAULT_LENGTH_SRC``    | u32    | information source  |
++ +-+-+-----------------------------------------+--------+---------------------+
++
+ 
+ CABLE_TEST TDR
+ ==============
+diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
+index 9074fa309bd6d..810c8630bfbed 100644
+--- a/include/uapi/linux/ethtool_netlink.h
++++ b/include/uapi/linux/ethtool_netlink.h
+@@ -569,10 +569,20 @@ enum {
+ 	ETHTOOL_A_CABLE_PAIR_D,
+ };
+ 
++/* Information source for specific results. */
++enum {
++	ETHTOOL_A_CABLE_INF_SRC_UNSPEC,
++	/* Results provided by the Time Domain Reflectometry (TDR) */
++	ETHTOOL_A_CABLE_INF_SRC_TDR,
++	/* Results provided by the Active Link Cable Diagnostic (ALCD) */
++	ETHTOOL_A_CABLE_INF_SRC_ALCD,
++};
++
+ enum {
+ 	ETHTOOL_A_CABLE_RESULT_UNSPEC,
+ 	ETHTOOL_A_CABLE_RESULT_PAIR,		/* u8 ETHTOOL_A_CABLE_PAIR_ */
+ 	ETHTOOL_A_CABLE_RESULT_CODE,		/* u8 ETHTOOL_A_CABLE_RESULT_CODE_ */
++	ETHTOOL_A_CABLE_RESULT_SRC,		/* u32 ETHTOOL_A_CABLE_INF_SRC_ */
+ 
+ 	__ETHTOOL_A_CABLE_RESULT_CNT,
+ 	ETHTOOL_A_CABLE_RESULT_MAX = (__ETHTOOL_A_CABLE_RESULT_CNT - 1)
+@@ -582,6 +592,7 @@ enum {
+ 	ETHTOOL_A_CABLE_FAULT_LENGTH_UNSPEC,
+ 	ETHTOOL_A_CABLE_FAULT_LENGTH_PAIR,	/* u8 ETHTOOL_A_CABLE_PAIR_ */
+ 	ETHTOOL_A_CABLE_FAULT_LENGTH_CM,	/* u32 */
++	ETHTOOL_A_CABLE_FAULT_LENGTH_SRC,	/* u32 ETHTOOL_A_CABLE_INF_SRC_ */
+ 
+ 	__ETHTOOL_A_CABLE_FAULT_LENGTH_CNT,
+ 	ETHTOOL_A_CABLE_FAULT_LENGTH_MAX = (__ETHTOOL_A_CABLE_FAULT_LENGTH_CNT - 1)
+-- 
 2.39.2
 
 
