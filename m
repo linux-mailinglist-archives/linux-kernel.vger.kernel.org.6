@@ -1,160 +1,158 @@
-Return-Path: <linux-kernel+bounces-297946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E5C95BF82
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:28:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A64FE95BF83
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E380B1F24704
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D1B1F2466B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164C21D0DC3;
-	Thu, 22 Aug 2024 20:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3BE1D0DC5;
+	Thu, 22 Aug 2024 20:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="heuVggci"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9PKdujN"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B06E1BF3A;
-	Thu, 22 Aug 2024 20:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18521CFEA7
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724358478; cv=none; b=lpHJ0reNrPXJUjn+8t01kfF5Fn5wsboYKYtRHwRAivEHiY6Re6mAzAen8dRholEJgJOb//J/Gqtu4vbkIw4VW2mWPlXIs7w8A09l9zFDg6A69GOkdaF4fKPhbFBa0QIFDnD7drPXYrxZBkCXOtNpvdezsaV/KenPCfa5kxZz1A4=
+	t=1724358496; cv=none; b=XAgvJazYbBoCqfF16X5/e+jwhxQI4fBLKqSrwpmKgI3XatlXK1jnHmMgd1BENBnd5LcoLKpd5uOVW90lbgq7hO0ZxIFJcTgyahWkkM2XtrmnF8322EXbFmksEeS2JqTnwIpeF9n90rUMp5hn7WpwiBHV/WGpi504W1frnDmGvZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724358478; c=relaxed/simple;
-	bh=qhAa+DZHF9p9Q3Oqx+GNM4SBsaAPWcXvKFXKK/iHx5c=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lciomj5sxnHExARrr+p93YfgOb6STHsKAwEXX1ZSE641Srto7RptlLNoPF23vD2n9m+dnXD28kZi54Baz3Z/D5ndUa6RXO4fx36uBIcwQkaIoVtKYkqVs/8dVykfGdgWQR0H3ALe1N5Ob3b9Z6hOeTK9UlgiC/rjvNafrRHSEt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=heuVggci; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1724358473; x=1724617673;
-	bh=qhrVJME/TVc+nkhTY4ymDiaKtXm+h6wS453WZyaCymE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=heuVggci3Rul3WCQ+DVP4Nzw99r4Z+fb/03GYNoT09ZLxRz05kXmPZjly/qKbN7X+
-	 L4B4GImt7GSabKuHvXpq3hxDS5dlNEkK70xtd0YNuKe/2z6Cdms/fflsAh2PW0ktCY
-	 pIgTMVviA7HmoIv9RpjIKaQzValq5FjFecAuVfhcAGmi9wLoOq4BaSbZrK9KjfYWcT
-	 c5bVB5A5lKvHIqu6dvWLH0UnIBCCOOcEuTmIApArfbnhS0wr9zOLRaKmFwrXvxQyTV
-	 /Mwkc6VjmaO5wiveou6RO3mb04mxucYOa0mgq1ITTaYnT2NDKN7AcQY3i7oBgUG+kg
-	 WMW+djPR6qhMA==
-Date: Thu, 22 Aug 2024 20:27:48 +0000
-To: Daniel Almeida <daniel.almeida@collabora.com>, wedsonaf@gmail.com, ojeda@kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: kernel: add support for bits/genmask macros
-Message-ID: <15e93515-400b-4cd3-8f35-afcba24fb32b@proton.me>
-In-Reply-To: <20240822173518.2717-1-daniel.almeida@collabora.com>
-References: <20240822173518.2717-1-daniel.almeida@collabora.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 02ad3e09411026153390232ab1ac88d95ee2977d
+	s=arc-20240116; t=1724358496; c=relaxed/simple;
+	bh=TRdCqKPel7q/1MHoOydkP58CnRkHirDzfH7Lx5kMZiU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SQ1r1EPWW0ohMtvzV9qma8wrUJ53FXE+mZqy7K0gW89+dSB57h55aUYII30Yi5R6LE0zDJy6AXNZIaa/UFB7Iej0wLYPr/pDxa9MbAbOYcNQSMvCSctPAD5V6xLs3TuUVPdXqR9RaMrJKJ9CXZFp3mQnXBkReaaKWeZwjzTjbi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F9PKdujN; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-70944d76a04so835010a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724358494; x=1724963294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kOL/fNnXaWdoKAkeEncC6MoPhHPgBP4rm3mSsYbtP7M=;
+        b=F9PKdujN8pcox+LQ3oPwwlm4OP9z8p/DVlt/tyeWkdvPlqOvCwHltSQRiUu2SUfbj5
+         /0Rr6uFeY98zm8kOz56Ye7lwqfuDuVsExYC3RJe26NYmnwTPMsqZelbPWFpGqBjPONc3
+         iS3OCwziluxJ1tG/QMS0oOhiwPphVvfK7/suFLDhgPACR2M4YW7UhBayulkRWfpB7qkM
+         71XSAIVAR/qqMXpSLxy+2YreE+HZRfmLuByPrWXOWX63plJQua8FKiYLqX+JGnnrV3wD
+         h53Ew2KJ7mYXvi5EVgifQxYd+6A2zcrJK02RMKqsFNY4tWR++BU5pMe9e9crpNg3GWbC
+         gVww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724358494; x=1724963294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kOL/fNnXaWdoKAkeEncC6MoPhHPgBP4rm3mSsYbtP7M=;
+        b=ryn0hrPbP8upKo6FzK4tfNCToHNC+j8B2+GHteiAnjcspmFXf7Hk9ju0KewLLb8waf
+         jGYuzwynoFjuc0o8d1qI2q/vkTTdlR48Kr8JfM0fWIJR8yB+3V2eaCOpBjMhf1ReNbbR
+         sQ4VNY1T3xs2CYMxIxl5/k7/fMBkh3RW54aSY+dYymB1eF+0VYww2VjHCYidZm+MjDwT
+         G5Vu8sQsRcmZXg/ECI5+U+5G8GOE8mKulRddtwHjH2qx5I50UBijKB2AiYu/Q+67PkqY
+         TzvR3wVQwpa+r9ZMTASRCqSTGVx/yqgnr0YdeXbhhAyLuPl3/hBCx+jwoQk8+t6hCZz9
+         Wmjw==
+X-Gm-Message-State: AOJu0YwTQWHV13QJMltOtBoqRTyn1wlRtGyDjbuYIxcaINhqSRYlGVpQ
+	rdoMTUqsrAu6EYXEQj/skNrxPkLQXx4xMTLP1OZOFdWNy0LWG+2JyT1kJC/F
+X-Google-Smtp-Source: AGHT+IG+b8+rh+weNuQzr3aYdIHNhytmbEf+tbNYhQ48GtEiG9O5RHQ6QpprH8GqE1FOdKK6MYyXgw==
+X-Received: by 2002:a05:6808:210e:b0:3d6:2bab:16ca with SMTP id 5614622812f47-3de2a2ca587mr84006b6e.13.1724358493701;
+        Thu, 22 Aug 2024 13:28:13 -0700 (PDT)
+Received: from localhost.localdomain ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3de2252d5fbsm421265b6e.1.2024.08.22.13.28.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 13:28:13 -0700 (PDT)
+From: Stuart Hayes <stuart.w.hayes@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Martin Belanger <Martin.Belanger@dell.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Daniel Wagner <dwagner@suse.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	David Jeffery <djeffery@redhat.com>,
+	Jeremy Allison <jallison@ciq.com>,
+	Jens Axboe <axboe@fb.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org
+Cc: Stuart Hayes <stuart.w.hayes@gmail.com>
+Subject: [PATCH v8 0/4] shut down devices asynchronously
+Date: Thu, 22 Aug 2024 15:28:01 -0500
+Message-Id: <20240822202805.6379-1-stuart.w.hayes@gmail.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 22.08.24 19:35, Daniel Almeida wrote:
-> These macros were converted from their C equivalent.
-> ---
->=20
-> Hey all, I did not see any patch for this floating in the mailing list.
->=20
-> Please let me know your thoughts. This one should be rather trivial.
->=20
->=20
->  rust/kernel/bits.rs | 32 ++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs  |  1 +
->  2 files changed, 33 insertions(+)
->  create mode 100644 rust/kernel/bits.rs
->=20
-> diff --git a/rust/kernel/bits.rs b/rust/kernel/bits.rs
-> new file mode 100644
-> index 000000000000..8ac142392086
-> --- /dev/null
-> +++ b/rust/kernel/bits.rs
-> @@ -0,0 +1,32 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Bit manipulation macros.
-> +//!
-> +//! C header: [`include/linux/bits.h`](srctree/include/linux/bits.h)
-> +
-> +/// Produces a literal where bit `n` is set.
-> +///
-> +/// Equivalent to the kernel's BIT macro.
+This adds the ability for the kernel to shutdown devices asynchronously.
 
-For better markdown rendering, you should use backtics on `BIT`.
+Only devices with drivers that enable it are shut down asynchronously.
 
-> +///
-> +#[macro_export]
-> +macro_rules! bit {
-> +    ($n:expr) =3D> {
+This can dramatically reduce system shutdown/reboot time on systems that
+have multiple devices that take many seconds to shut down (like certain
+NVMe drives). On one system tested, the shutdown time went from 11 minutes
+without this patch to 55 seconds with the patch.
 
-Using `expr` here will allow things like `bit!(3 + 8)`. I am not sure if
-we want that, is that the same behavior as in C?
-If we don't want that, we can use `literal` instead.
-I am not suggesting changing it, only if it makes sense.
+Changes from V7:
 
-> +        (1 << $n)
-> +    };
-> +}
-> +
-> +/// Create a contiguous bitmask starting at bit position `l` and ending =
-at
-> +/// position `h`, where h <=3D l.
+Do not expose driver async_shutdown_enable in sysfs.
+Wrapped a long line.
+ 
+Changes from V6:
 
-Ditto here for `h <=3D l`.
+Removed a sysfs attribute that allowed the async device shutdown to be
+"on" (with driver opt-out), "safe" (driver opt-in), or "off"... what was
+previously "safe" is now the only behavior, so drivers now only need to
+have the option to enable or disable async shutdown.
 
-> +///
-> +/// For example genmask(39, 21) gives us the 64bit vector
-> +/// 0x000000ffffe00000.
+Changes from V5:
 
-This can probably be an example (with ``` and `assert!`), because then
-we also test the macro already :)
+Separated into multiple patches to make review easier.
+Reworked some code to make it more readable
+Made devices wait for consumers to shut down, not just children
+  (suggested by David Jeffery)
 
-> +///
-> +#[macro_export]
-> +macro_rules! genmask {
-> +    ($h:expr, $l:expr) =3D> {{
+Changes from V4:
 
-Same question about `expr` vs `literal` here.
+Change code to use cookies for synchronization rather than async domains
+Allow async shutdown to be disabled via sysfs, and allow driver opt-in or
+  opt-out of async shutdown (when not disabled), with ability to control
+  driver opt-in/opt-out via sysfs
 
-> +        const _: () =3D {
-> +            assert!($h >=3D $l);
+Changes from V3:
 
-Would be nice to mention this in the documentation.
+Bug fix (used "parent" not "dev->parent" in device_shutdown)
 
----
-Cheers,
-Benno
+Changes from V2:
 
-> +        };
-> +        ((!0u64 - (1u64 << $l) + 1) & (!0u64 >> (64 - 1 - $h)))
-> +    }};
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 274bdc1b0a82..3aaa1c410d2c 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -27,6 +27,7 @@
->  extern crate self as kernel;
->=20
->  pub mod alloc;
-> +pub mod bits;
->  #[cfg(CONFIG_BLOCK)]
->  pub mod block;
->  mod build_assert;
-> --
-> 2.45.2
->=20
->=20
+Removed recursive functions to schedule children to be shutdown before
+  parents, since existing device_shutdown loop will already do this
+
+Changes from V1:
+
+Rewritten using kernel async code (suggested by Lukas Wunner)
+
+
+Stuart Hayes (4):
+  driver core: don't always lock parent in shutdown
+  driver core: separate function to shutdown one device
+  driver core: shut down devices asynchronously
+  nvme-pci: Make driver prefer asynchronous shutdown
+
+ drivers/base/base.h           |   4 ++
+ drivers/base/core.c           | 108 ++++++++++++++++++++++++++--------
+ drivers/nvme/host/pci.c       |   1 +
+ include/linux/device/driver.h |   2 +
+ 4 files changed, 90 insertions(+), 25 deletions(-)
+
+-- 
+2.39.3
 
 
