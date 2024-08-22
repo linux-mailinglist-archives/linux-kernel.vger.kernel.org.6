@@ -1,228 +1,237 @@
-Return-Path: <linux-kernel+bounces-296324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3E595A93C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:53:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A60E95A941
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A085EB21A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86AA2832E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2158C5684;
-	Thu, 22 Aug 2024 00:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YR+trwI9"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D98AD2C;
+	Thu, 22 Aug 2024 00:57:57 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49CF6AAD
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA2C3FC2;
+	Thu, 22 Aug 2024 00:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724287980; cv=none; b=UD1hWD+/yPq0iBv0c9JwIEpjo44UGoXTiz8FciLEXrcRB/G4Jh+evJdqI+QUtgz6SVtGi/oYi0wv8LZW5TKEi+G0lANBzFKFVchK6hqd6zhA2qnm+oCUuvpgvV4tFqNhqwPIGGk339QjK2j7JDRaVaN90Q5wiwwQy5JGU+Q4fJs=
+	t=1724288277; cv=none; b=maRzsSo6zcIJQGbI1uwfVB43jEXP9TzftE19wTexetqNyajOlskllQhghxT51q00EXgO29k4iYAD9goKEV0dbSe7fvcX17v4pI6wSDh8cmnlyCU9QXNsFAgwn+XfRcxTKNqLxC+xGiN2MeqH3ZAU9T5cef1l/yvpBqgLkgGxQmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724287980; c=relaxed/simple;
-	bh=VSkrQUydtfBFweXylJFC2xlyhZXtbf8kJBOpMOnqOEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UpdSSRS+g3hQdMRq23wJwwDfJ+VlzTcEVu2rEvBR1pQyTrnPBQ1Rp+ix2TFsxNBfTYgJMv0ahDkHKz0y4cT1OaAOfLs19KSAqG1UzLYhQahZy+uG9bmelwzo4guI0WLSrdY8KzDUH2PKwJJu0tayhBR8EnYDR9PTFfbzx8A1bt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YR+trwI9; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-83446a5601bso116868241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724287977; x=1724892777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RvNUmXh6QYHC9p2pKnLZfslXEAtuHNdoak5tt5thDe0=;
-        b=YR+trwI9O5sUUOE4f59yv1wrIJnuWiqpxGuJaAzo+B/JYIQpoyAENIaqHjjZIjWZPQ
-         vEcu1GyFgyKxEfk6Nfv4BLsEgIv40j5w6nkc56CJbX7uVa0GLtk/xXIAVvqIbP4lnno5
-         imUD+HvrfJnshZnHdZyCDk5B+3ODRFXmhsBJUwA5uLPJnhHjXYAceGmlWRiftcPDUBgw
-         lI8D/6fo25lqmEeiuvx2EV8o3pVaGW+ly3cMsf6UwaC741+XJXOmA/zXHvYYiiUghsfK
-         67Oef335tV3VD6HC08dburM8NQ4XD9qIluKx9wI7lNUpiH83DAfi0KITWTjOtAdjIEk5
-         HpKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724287977; x=1724892777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RvNUmXh6QYHC9p2pKnLZfslXEAtuHNdoak5tt5thDe0=;
-        b=EOV40EYTAiS95wgbFL5aRNtFpjmDffxHubywis+nJczY+aXj9oYAYD6fOWL46u7iDj
-         BjfPKoY62Ot4ScHJJIHi5veJCrrvy9DdPXh3NQofIEo7v8oSg4QcVF5R0QrZ/powgNxL
-         H+YjWJyRSxKMh5/k8JyRGTTc5o71Wgta95+DdC2DzATKi5+LEuD2XhgwgR6OPpWJFu5P
-         wlkDtP5WaBvTwUNx+uPU3nWr8AIZR24Kt0ybc3+9doERUwliKXCwsvyXC0agyWogZc7T
-         kPJsbUNzKzTuBXn7XyMWtCpkn4ppNNaikZ9Li8pepq3H8nop53Iy1pXdosm49aCrrMk9
-         b1WA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbsb1qcg5pvpxWXHNu6VY4OJSZNp6M824ZnXYPnt79Iq/qlSNRP4/2rxgvDrW0t7+ZmYCtmSbcUTfEsjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP9Ei+c7EWPmeBafmDoIvTGYPUWN74DzkCdSpvxiVTMnX6TVH6
-	5YLsUAL6OSdakVbcsOTWEp+V6IkN9Xybhf8fFQbPK1KCJ2VmoJZdJRfvoihN9nH/bXus1aAqufC
-	bc0MU+/qbIDUxxMxpOhvaH2wSCyI=
-X-Google-Smtp-Source: AGHT+IEl3MsbTYZQIajgTxyKIGV+TI3/pnxNw23DZ/6DGgfoWTK+gno5G+goww3B/BQ8SjYp+OzkBtSV2gx+2xET4I0=
-X-Received: by 2002:a05:6102:e0b:b0:493:b2b4:3708 with SMTP id
- ada2fe7eead31-498d2ffd644mr5148601137.27.1724287977448; Wed, 21 Aug 2024
- 17:52:57 -0700 (PDT)
+	s=arc-20240116; t=1724288277; c=relaxed/simple;
+	bh=GF3kc1MoXFYXXSOu/JYMm0rx2AdGuuFfP2+dV92sAM4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XzIpA30Ma6P52SrFfGvMaOpDQF5BWzLpIjoIo2SZqAFx5FruCX8Cbb7CXpNbnkqITPImCeJcfXkoWqUaNbpwjdy7C3aVLRAqoE9BIHo45G5KfPoLRyLwub8PPRKFkYjUjX3Lth9f7p2GYbUKl6bqD4OYXFNKIdnL/OBXeH68xko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wq4YX2q6Mz4f3jdl;
+	Thu, 22 Aug 2024 08:57:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 92EBE1A0568;
+	Thu, 22 Aug 2024 08:57:50 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgCnr1ELjcZmzF4nCQ--.43726S2;
+	Thu, 22 Aug 2024 08:57:48 +0800 (CST)
+Message-ID: <8c1ccd1b-47cd-43b6-b961-2829a5a24513@huaweicloud.com>
+Date: Thu, 22 Aug 2024 08:57:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811224940.39876-1-21cnbao@gmail.com> <20240811224940.39876-2-21cnbao@gmail.com>
- <3572ae2e-2141-4a70-99da-850b2e7ade41@redhat.com>
-In-Reply-To: <3572ae2e-2141-4a70-99da-850b2e7ade41@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 22 Aug 2024 08:52:44 +0800
-Message-ID: <CAGsJ_4w9gg=z6KgAZ4Tur+t-ZhpXdvmq4A5tOQiUZLeuPFSupg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mm: collect the number of anon large folios
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
-	ioworker0@gmail.com, kaleshsingh@google.com, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com, 
-	ziy@nvidia.com, yuanshuai@oppo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240817093334.6062-1-chenridong@huawei.com>
+ <20240817093334.6062-2-chenridong@huawei.com>
+Content-Language: en-US
+In-Reply-To: <20240817093334.6062-2-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgCnr1ELjcZmzF4nCQ--.43726S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF1kKw4UGrW8Zw4fWw1fCrg_yoWxWw1xpr
+	s8Aw15tw4rGr4qg3yUtayqgryF9a1Fqr4UCry8Jw1fAr43Xrn0qr1DuFyYvF98CF93uw13
+	ZF1YvrZxK3yjv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Thu, Aug 22, 2024 at 5:34=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 12.08.24 00:49, Barry Song wrote:
-> > From: Barry Song <v-songbaohua@oppo.com>
-> >
-> > Anon large folios come from three places:
-> > 1. new allocated large folios in PF, they will call folio_add_new_anon_=
-rmap()
-> > for rmap;
-> > 2. a large folio is split into multiple lower-order large folios;
-> > 3. a large folio is migrated to a new large folio.
-> >
-> > In all above three counts, we increase nr_anon by 1;
-> >
-> > Anon large folios might go either because of be split or be put
-> > to free, in these cases, we reduce the count by 1.
-> >
-> > Folios that have been added to the swap cache but have not yet received
-> > an anon mapping won't be counted. This is consistent with the AnonPages
-> > statistics in /proc/meminfo.
->
-> Thinking out loud, I wonder if we want to have something like that for
-> any anon folios (including small ones).
->
-> Assume we longterm-pinned an anon folio and unmapped/zapped it. It would
-> be quite interesting to see that these are actually anon pages still
-> consuming memory. Same with memory leaks, when an anon folio doesn't get
-> freed for some reason.
->
-> The whole "AnonPages" counter thingy is just confusing, it only counts
-> what's currently mapped ... so we'd want something different.
->
-> But it's okay to start with large folios only, there we have a new
-> interface without that legacy stuff :)
 
-We have two options to do this:
-1. add a new separate nr_anon_unmapped interface which
-counts unmapped anon memory only
-2. let the nr_anon count both mapped and unmapped anon
-folios.
 
-I would assume 1 is clearer as right now AnonPages have been
-there for years. and counting all mapped and unmapped together,
-we are still lacking an approach to find out anon memory leak
-problem you mentioned.
+On 2024/8/17 17:33, Chen Ridong wrote:
+> We found a hung_task problem as shown below:
+> 
+> INFO: task kworker/0:0:8 blocked for more than 327 seconds.
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/0:0     state:D stack:13920 pid:8     ppid:2       flags:0x00004000
+> Workqueue: events cgroup_bpf_release
+> Call Trace:
+>   <TASK>
+>   __schedule+0x5a2/0x2050
+>   ? find_held_lock+0x33/0x100
+>   ? wq_worker_sleeping+0x9e/0xe0
+>   schedule+0x9f/0x180
+>   schedule_preempt_disabled+0x25/0x50
+>   __mutex_lock+0x512/0x740
+>   ? cgroup_bpf_release+0x1e/0x4d0
+>   ? cgroup_bpf_release+0xcf/0x4d0
+>   ? process_scheduled_works+0x161/0x8a0
+>   ? cgroup_bpf_release+0x1e/0x4d0
+>   ? mutex_lock_nested+0x2b/0x40
+>   ? __pfx_delay_tsc+0x10/0x10
+>   mutex_lock_nested+0x2b/0x40
+>   cgroup_bpf_release+0xcf/0x4d0
+>   ? process_scheduled_works+0x161/0x8a0
+>   ? trace_event_raw_event_workqueue_execute_start+0x64/0xd0
+>   ? process_scheduled_works+0x161/0x8a0
+>   process_scheduled_works+0x23a/0x8a0
+>   worker_thread+0x231/0x5b0
+>   ? __pfx_worker_thread+0x10/0x10
+>   kthread+0x14d/0x1c0
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork+0x59/0x70
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork_asm+0x1b/0x30
+>   </TASK>
+> 
+> This issue can be reproduced by the following pressuse test:
+> 1. A large number of cpuset cgroups are deleted.
+> 2. Set cpu on and off repeatly.
+> 3. Set watchdog_thresh repeatly.
+> The scripts can be obtained at LINK mentioned above the signature.
+> 
+> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
+> acquired in different tasks, which may lead to deadlock.
+> It can lead to a deadlock through the following steps:
+> 1. A large number of cpusets are deleted asynchronously, which puts a
+>     large number of cgroup_bpf_release works into system_wq. The max_active
+>     of system_wq is WQ_DFL_ACTIVE(256). Consequently, all active works are
+>     cgroup_bpf_release works, and many cgroup_bpf_release works will be put
+>     into inactive queue. As illustrated in the diagram, there are 256 (in
+>     the acvtive queue) + n (in the inactive queue) works.
+> 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
+>     smp_call_on_cpu work into system_wq. However step 1 has already filled
+>     system_wq, 'sscs.work' is put into inactive queue. 'sscs.work' has
+>     to wait until the works that were put into the inacvtive queue earlier
+>     have executed (n cgroup_bpf_release), so it will be blocked for a while.
+> 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by step 2.
+> 4. Cpusets that were deleted at step 1 put cgroup_release works into
+>     cgroup_destroy_wq. They are competing to get cgroup_mutex all the time.
+>     When cgroup_metux is acqured by work at css_killed_work_fn, it will
+>     call cpuset_css_offline, which needs to acqure cpu_hotplug_lock.read.
+>     However, cpuset_css_offline will be blocked for step 3.
+> 5. At this moment, there are 256 works in active queue that are
+>     cgroup_bpf_release, they are attempting to acquire cgroup_mutex, and as
+>     a result, all of them are blocked. Consequently, sscs.work can not be
+>     executed. Ultimately, this situation leads to four processes being
+>     blocked, forming a deadlock.
+> 
+> system_wq(step1)		WatchDog(step2)			cpu offline(step3)	cgroup_destroy_wq(step4)
+> ...
+> 2000+ cgroups deleted asyn
+> 256 actives + n inactives
+> 				__lockup_detector_reconfigure
+> 				P(cpu_hotplug_lock.read)
+> 				put sscs.work into system_wq
+> 256 + n + 1(sscs.work)
+> sscs.work wait to be executed
+> 				warting sscs.work finish
+> 								percpu_down_write
+> 								P(cpu_hotplug_lock.write)
+> 								...blocking...
+> 											css_killed_work_fn
+> 											P(cgroup_mutex)
+> 											cpuset_css_offline
+> 											P(cpu_hotplug_lock.read)
+> 											...blocking...
+> 256 cgroup_bpf_release
+> mutex_lock(&cgroup_mutex);
+> ..blocking...
+> 
+> To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
+> which can break the loop and solve the problem. System wqs are for misc
+> things which shouldn't create a large number of concurrent work items.
+> If something is going to generate >WQ_DFL_ACTIVE(256) concurrent work
+> items, it should use its own dedicated workqueue.
+> 
+> Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from cgroup itself")
+> Link: https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/bpf/cgroup.c             | 2 +-
+>   kernel/cgroup/cgroup-internal.h | 1 +
+>   kernel/cgroup/cgroup.c          | 2 +-
+>   3 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+> index 8ba73042a239..a611a1274788 100644
+> --- a/kernel/bpf/cgroup.c
+> +++ b/kernel/bpf/cgroup.c
+> @@ -334,7 +334,7 @@ static void cgroup_bpf_release_fn(struct percpu_ref *ref)
+>   	struct cgroup *cgrp = container_of(ref, struct cgroup, bpf.refcnt);
+>   
+>   	INIT_WORK(&cgrp->bpf.release_work, cgroup_bpf_release);
+> -	queue_work(system_wq, &cgrp->bpf.release_work);
+> +	queue_work(cgroup_destroy_wq, &cgrp->bpf.release_work);
+>   }
+>   
+>   /* Get underlying bpf_prog of bpf_prog_list entry, regardless if it's through
+> diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
+> index c964dd7ff967..17ac19bc8106 100644
+> --- a/kernel/cgroup/cgroup-internal.h
+> +++ b/kernel/cgroup/cgroup-internal.h
+> @@ -13,6 +13,7 @@
+>   extern spinlock_t trace_cgroup_path_lock;
+>   extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
+>   extern void __init enable_debug_cgroup(void);
+> +extern struct workqueue_struct *cgroup_destroy_wq;
+>   
+>   /*
+>    * cgroup_path() takes a spin lock. It is good practice not to take
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index 75058fbf4450..77fa9ed69c86 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -124,7 +124,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
+>    * destruction work items don't end up filling up max_active of system_wq
+>    * which may lead to deadlock.
+>    */
+> -static struct workqueue_struct *cgroup_destroy_wq;
+> +struct workqueue_struct *cgroup_destroy_wq;
+>   
+>   /* generate an array of cgroup subsystem pointers */
+>   #define SUBSYS(_x) [_x ## _cgrp_id] = &_x ## _cgrp_subsys,
 
-We are right now comparing nr_anon(including mapped folios only)
-with AnonPages to get the distribution of different folio sizes in
-performance profiling.
+Ping.
+Hi,TJ, Roman and Michal, I have updated commit message, I think it can 
+be much clearer now, can you review it again?
 
-unmapped_nr_anon should be normally always quite small. otherwise,
-something must be wrong.
+Thanks,
+Ridong
 
->
-> >
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >   Documentation/admin-guide/mm/transhuge.rst |  5 +++++
-> >   include/linux/huge_mm.h                    | 15 +++++++++++++--
-> >   mm/huge_memory.c                           | 13 ++++++++++---
-> >   mm/migrate.c                               |  4 ++++
-> >   mm/page_alloc.c                            |  5 ++++-
-> >   mm/rmap.c                                  |  1 +
-> >   6 files changed, 37 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
-/admin-guide/mm/transhuge.rst
-> > index 058485daf186..9fdfb46e4560 100644
-> > --- a/Documentation/admin-guide/mm/transhuge.rst
-> > +++ b/Documentation/admin-guide/mm/transhuge.rst
-> > @@ -527,6 +527,11 @@ split_deferred
-> >           it would free up some memory. Pages on split queue are going =
-to
-> >           be split under memory pressure, if splitting is possible.
-> >
-> > +nr_anon
-> > +       the number of anon huge pages we have in the whole system.
->
-> "transparent ..." otherwise people might confuse it with anon hugetlb
-> "huge pages" ... :)
->
-> I briefly tried coming up with a better name than "nr_anon" but failed.
->
->
-
-if we might have unmapped_anon counter later, maybe rename it to
-nr_anon_mapped? and the new interface we will have in the future
-might be nr_anon_unmapped?
-
-> [...]
->
-> > @@ -447,6 +449,8 @@ static int __folio_migrate_mapping(struct address_s=
-pace *mapping,
-> >        */
-> >       newfolio->index =3D folio->index;
-> >       newfolio->mapping =3D folio->mapping;
-> > +     if (folio_test_anon(folio) && folio_test_large(folio))
-> > +             mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
-> >       folio_ref_add(newfolio, nr); /* add cache reference */
-> >       if (folio_test_swapbacked(folio)) {
-> >               __folio_set_swapbacked(newfolio);
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 84a7154fde93..382c364d3efa 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -1084,8 +1084,11 @@ __always_inline bool free_pages_prepare(struct p=
-age *page,
-> >                       (page + i)->flags &=3D ~PAGE_FLAGS_CHECK_AT_PREP;
-> >               }
-> >       }
-> > -     if (PageMappingFlags(page))
-> > +     if (PageMappingFlags(page)) {
-> > +             if (PageAnon(page) && compound)
-> > +                     mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
->
-> I wonder if you could even drop the "compound" check. mod_mthp_stat
-> would handle order =3D=3D 0 just fine. Not that I think it makes much
-> difference.
-
-i think either is fine as mod_mthp_stat will filter out order=3D=3D0
-right now.
-
->
->
-> Nothing else jumped at me.
->
-> Acked-by: David Hildenbrand <david@redhat.com>
->
-
-Thanks!
-
-> --
-> Cheers,
->
-> David / dhildenb
->
-
-Barry
 
