@@ -1,76 +1,138 @@
-Return-Path: <linux-kernel+bounces-297760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BA995BD5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:34:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4276795BD86
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3CD285D91
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:34:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5DD1C2330A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647791CEACC;
-	Thu, 22 Aug 2024 17:34:32 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9331CF29D;
+	Thu, 22 Aug 2024 17:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GHgcFMhA"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73D81CCB4B
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348072; cv=none; b=UhZLxAp6nbDNyiiXVc/yhop95lDamGPScV5h7NKleh7Ruq56sPp7MpsMAWLkQ+bAHKDo+dXt+WvzCyZCQ0Nu6eEBiHHUf6DbbHnKvkCl1Sm8lfNch86tl5NJSdtah1kHrIA/nNFB751WNFZ0GLm1jQPTP0+lEXUTXThUV//Bv4I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348072; c=relaxed/simple;
-	bh=78Ge9xdFVB5SJQtWsDq34ATddoaZ8hq7Mv+q/MAADgc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=r6SDj/cNmwrsh/xhzjky2eL22seGuY4q2JZrPGPEKC5CtrNW4UkpZRFmZzXfkc4QIzDjbTYfSwzthZrsm0LmybEK0NvYEgP1S2j9ro2pKEFNwHTTN+i5lHDlUzpwLp+Rykc7Zk6PxB+Oxfk3ekcophYp8ZEWfH4IQWLnj/fpgqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8252a16781eso108639039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:34:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724348070; x=1724952870;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=78Ge9xdFVB5SJQtWsDq34ATddoaZ8hq7Mv+q/MAADgc=;
-        b=o0oH5l9KB0Ag/lF8IKfb5jLDnjwVuv9WCITq6QbicMFkh0deGKHp/PUZLApfPcS+pP
-         lQ4LlBsu8CtOKvnOXQauktgTVSrx6vmTEUNrhjE9tibc+h6qey9yZ0WegGMEgHPS+7yX
-         geiNbDMdZU8mNiG2Nz9QVsP3uVtm2+1741qXki4IIA2/s+f4HMKguChyL9qKB6oR3C5i
-         msgalI9TssKLBfLH0QWYAqqmaX8A1ix/dVgH16acFlmpf+0dXhhRIJee1vJr5k5Jnr//
-         2iq8G66Lc3Y9C8hmVSoqYjJp2Mk9U4rJ3RlKz96tzmYzXeH+dS/nM8EFCfn902miDp7r
-         9uPQ==
-X-Gm-Message-State: AOJu0YyKO9xU7JrL8Aw5+mw2eLujHaGSOb1P14G0tbWCeSX6Lxn0/kZf
-	fFapR4MTydAr5r6ZEj94F7ma/6D3KTRfFrHfNJss1ftOeOhuSDqe8TjoIIhD8YI7LtL6Qnilj87
-	FJ7nfr1kOKdyLOy18Yks5nP7Qneai/FcClgj0VPXI1Hs6+KxPcz82ybk=
-X-Google-Smtp-Source: AGHT+IF9Q24DoIeXkpHNugN5mzqzduTydU0uymBk0TFXXBaUjWIs8BrUZdrRyVlguGHr38IOjpNuz3YUaXgfmsNq3OE0bWgxJ8Cx
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DBA487AE;
+	Thu, 22 Aug 2024 17:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724348541; cv=pass; b=HRzEr6fHxTdGe6N0EZRoyilwnTsMUuXlvxSjyZsu1R1uW3SIhpLZKI/H61r+7z3hDvRjVFeHVWzsUxD9liIhWyIeGCmlnHd4xMLcMIe6mLnXfyPNxVg5RsmxBuMH9Ox90jZbiQK9AqzcfrNhc+PxTahUb4EHInhVW8efsBsc3OE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724348541; c=relaxed/simple;
+	bh=pJo3IItqLTuWfWlzXgr6lFXycFBd+dbxoqHla3s2OZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nKomicjRsvBgMahnSMJvZm+QEi2Q5FPUBceLXb8y0dZh0j/VXmWDZWHMKaFHT0lPJTv1HIqP/3YMY3MTZFwCQ5H2NJPAFC7QX38RRqqn9M5WDCApb2hTtzJsoRCWj5i4IRb2DU2zOo12pC672RF4Ket2imAOsI3pWTLf7so2jrw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GHgcFMhA; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: daniel.almeida@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724348534; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fdbNa7Ji5MFVW6syk7i/H7Y3SpI8BKoWZfbteR5MRXr0lJiMT38Txaz6hyTEo/bkYH4+YOAVg9pVTNm4lJNnUwqpK2z0L6ItQEYVLHNFlUThBv7w5Z+v9wD0zBVQd4mE8DiwSJY3k4Muk7UNJ0ZvYTJEU1wbnHEfqkZRCUDzljI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724348534; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BUHc0eQ0h+KvwEezOpf3+G+PjwpjDpBw+nDAGnUcAuM=; 
+	b=GBAzoJwnjU5GG7ynWl4H8ujb7Hmbm4CQWc/yAjZZb+MVuehkPYWvRGaR+ItIP/9bbRs1LHLU2LwsVCd9IOUgrYpiRAIBIh23b3W/wtJDq3U+nOV4Ad1QvHANXzDegMRjE+MDMiXeRG3yb+ttowswfJdO1erc9ULDdJ2Ta6IReZs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724348534;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=BUHc0eQ0h+KvwEezOpf3+G+PjwpjDpBw+nDAGnUcAuM=;
+	b=GHgcFMhAqOe2WTvUaqWD/o1nLm3YWnS1JhwXaDUZrLiIQ2Vb8/rsoCrz5KkKMr3/
+	3N5ZLCxiXUrIx5bRICWwCiWd/doxWzespdb3lHO1c8G+m+0R75K6TPSbK9xJrPpD+6c
+	FTOjzf9RsSbu+ZL42Vy5rfdU7Bttz0qbU5nDLU84=
+Received: by mx.zohomail.com with SMTPS id 1724348532364877.0917933602898;
+	Thu, 22 Aug 2024 10:42:12 -0700 (PDT)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+To: wedsonaf@gmail.com,
+	ojeda@kernel.org
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rust: kernel: add support for bits/genmask macros
+Date: Thu, 22 Aug 2024 14:35:17 -0300
+Message-ID: <20240822173518.2717-1-daniel.almeida@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1567:b0:39b:3c0c:c3a4 with SMTP id
- e9e14a558f8ab-39d6c37d505mr2891145ab.2.1724348069655; Thu, 22 Aug 2024
- 10:34:29 -0700 (PDT)
-Date: Thu, 22 Aug 2024 10:34:29 -0700
-In-Reply-To: <000000000000d38be106186a5e45@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000029482306204912bc@google.com>
-Subject: Re: [syzbot] kernel panic: bch_dev->ref underflow, last put: bch2_get_next_dev
-From: syzbot <syzbot+a96175a4ea467a49c546@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+These macros were converted from their C equivalent.
+---
 
-***
+Hey all, I did not see any patch for this floating in the mailing list.
 
-Subject: kernel panic: bch_dev->ref underflow, last put: bch2_get_next_dev
-Author: kent.overstreet@linux.dev
+Please let me know your thoughts. This one should be rather trivial.
 
-#syz fix bcachefs: Fix ref in trans_mark_dev_sbs() error path
+
+ rust/kernel/bits.rs | 32 ++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs  |  1 +
+ 2 files changed, 33 insertions(+)
+ create mode 100644 rust/kernel/bits.rs
+
+diff --git a/rust/kernel/bits.rs b/rust/kernel/bits.rs
+new file mode 100644
+index 000000000000..8ac142392086
+--- /dev/null
++++ b/rust/kernel/bits.rs
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Bit manipulation macros.
++//!
++//! C header: [`include/linux/bits.h`](srctree/include/linux/bits.h)
++
++/// Produces a literal where bit `n` is set.
++///
++/// Equivalent to the kernel's BIT macro.
++///
++#[macro_export]
++macro_rules! bit {
++    ($n:expr) => {
++        (1 << $n)
++    };
++}
++
++/// Create a contiguous bitmask starting at bit position `l` and ending at
++/// position `h`, where h <= l.
++///
++/// For example genmask(39, 21) gives us the 64bit vector
++/// 0x000000ffffe00000.
++///
++#[macro_export]
++macro_rules! genmask {
++    ($h:expr, $l:expr) => {{
++        const _: () = {
++            assert!($h >= $l);
++        };
++        ((!0u64 - (1u64 << $l) + 1) & (!0u64 >> (64 - 1 - $h)))
++    }};
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 274bdc1b0a82..3aaa1c410d2c 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -27,6 +27,7 @@
+ extern crate self as kernel;
+ 
+ pub mod alloc;
++pub mod bits;
+ #[cfg(CONFIG_BLOCK)]
+ pub mod block;
+ mod build_assert;
+-- 
+2.45.2
+
 
