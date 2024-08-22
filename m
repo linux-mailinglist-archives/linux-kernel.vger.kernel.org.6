@@ -1,141 +1,165 @@
-Return-Path: <linux-kernel+bounces-296772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9443595AEE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A0D95AEE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5144A287565
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62071F26328
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB943187350;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CE816D33F;
 	Thu, 22 Aug 2024 07:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ErxJaY8c"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC91E186E59
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0D2186E4F;
+	Thu, 22 Aug 2024 07:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310876; cv=none; b=jAT1ZznNQRpkEP0wliENfiRlQBdVmaKHqH1M6iSdLhX3PgIaOVuq6WuW5pkl+bwbNAlpmrsmujoSb+bY6RLS/2CkgRf2F5YP9/ZUlc0f8g/TxTQf5Sau4+g51vuCHS67gFP8aeKfRDQPbPBf961mv9AYgiq4Q2kdPN/auUNFZjA=
+	t=1724310875; cv=none; b=JVDa3EB1fLWuz4VK34LJoMcIx1HejAWvyYyHWD+UKZXrtVqLqwNFBR35oryQB7zlGmNHXIIPPO1MK4pb2jWQm0CWvM5yCL5ipAcjq/9r/UNJ8cpB3bk+3+gke4qKXYQnt3Lt5axc+Br/GQQOQqHkDwIGa0DbDJImGSi8BprPT2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310876; c=relaxed/simple;
-	bh=WdDTWPZUPkSR+kcJuyPx2uR8BaTylSuO9xQOyQmoS7Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=csZGugFPKsi6yBnoSCxzn6AUjum74XJMU4z15BOK8B3kaiVZue70RFptJcsLmeOMejOym//fPtjP3fClfeOk8uxLa9tyP5Oz3I30goOdzePXWs5ih4joTEWHuKLmFZ70abMz5RJ2Cc5rVsGshBwPjSOpEHlulHYGKHIlifWkjOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ErxJaY8c; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-713edc53429so393939b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724310874; x=1724915674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lG9D96+xW+VlDYZHTIMi8bcfezh9NEOiBopQjA6w29o=;
-        b=ErxJaY8cMvWIqMENGPWTrpgSx/6nOKfPjChRLppkUwiYLndY80aOsf81E2sES/l5mn
-         nx/CYnT2s+0rilg1MW/zC0GU16FotNvM445/SoN1PqeinqUuyaPWcclR6sajvoszNlDP
-         l741y4q5vi1aOqDYq6JFzKjnqQxcBxnJyn/BX8XNaSv4uhsghzX/7UG4vXPF5ah9aP4v
-         RTYvIO0df6CEPGvb9+67vJuM4JEPMTZMw+e5fwOD1zIlK0Rf/ffD93XFkpCul5yF5G4H
-         WoseaOcPWwtu8ZJNsqaQ18h4Lk6d1KtMK5GkRy49T8NGSmXHT6K4xNcbgL00O+qGXfkT
-         9wSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724310874; x=1724915674;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lG9D96+xW+VlDYZHTIMi8bcfezh9NEOiBopQjA6w29o=;
-        b=cvejM8v1jF22FpgBd2quc+lllFfyndL8xyKeQJABg3apPU6cnhJvDr9JkCSoPpMREn
-         s3Yued6RraTzV+puhcGLCBOVmdg4dRGYDnIGJgwfcdH1B/Lej49yN6Lk+IDTstv0FIFB
-         6EaHdfylcyJOG+0g7c9vTIh0cAVFv/tNocKYkXc8s3hDVDFfGEDSaFpFwbI4gCMHhQcp
-         wgXcJf165zEw716N5QqpUnj3wJC7sgDgbuqN7ayYruDFiYf6ZytEU3orYTKwJT1/uA+V
-         yayqdCcpf0xPOnT3E++bgG4O19P6+nSMZ2iX9hfad/qhG8odlJ4kwE8Ch0LmoQPlT0Ux
-         dHug==
-X-Gm-Message-State: AOJu0YwyvgLSQ7zHvglrByENZWYTB6LNbiekCrcYUHEg2NLnKEOPo+Eb
-	dE3gwELPlMQI22b04OMS7quwxwcO6wUFX5NIwYreTOI+7F080dRI0getT9hYfbQ=
-X-Google-Smtp-Source: AGHT+IE1Azw7tBspdYFUO9+EydXCiNKc3KqrNzafyoF+69WNl4yC4JRDYA6cJOAAfX+V+yHVonAuzQ==
-X-Received: by 2002:a05:6a20:9d91:b0:1c4:f209:f1ea with SMTP id adf61e73a8af0-1cad80f657emr5853305637.31.1724310873985;
-        Thu, 22 Aug 2024 00:14:33 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([240e:473:c90:f96:d029:ea8a:4e6d:d272])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac994a3sm695095a12.16.2024.08.22.00.14.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 00:14:33 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: david@redhat.com,
-	hughd@google.com,
-	willy@infradead.org,
-	muchun.song@linux.dev,
-	vbabka@kernel.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org,
-	vishal.moola@gmail.com,
-	peterx@redhat.com,
-	ryan.roberts@arm.com,
-	christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1724310875; c=relaxed/simple;
+	bh=myEwghlIo0VFEa/kCbUR8jkMcaOa8Dz8PO/V1GnGZDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tHR8jR0diuBAG8Y1FKBY8S21ZkwTZcldcM0d8Ni35IN2RJp7tYqwqzKD5Z+WQWqM7I93/2NTiUxVx7bb8CCII6DSMNwmtVZfX91/Ul02We7zN9XQN9BbuUb6cih/t5kf4xHYmnjPcFVBdWBVjWPtVJg6cr1OfoyU9UGvEN7tEqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqDvQ4rYFz9sT7;
+	Thu, 22 Aug 2024 09:13:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id n4SVLNdodNdx; Thu, 22 Aug 2024 09:13:38 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDvQ3xMdz9sSy;
+	Thu, 22 Aug 2024 09:13:38 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 73F9A8B77E;
+	Thu, 22 Aug 2024 09:13:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id HFEB0Yp4iArX; Thu, 22 Aug 2024 09:13:38 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6065C8B77D;
+	Thu, 22 Aug 2024 09:13:37 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2 08/14] mm: copy_pte_range() use pte_offset_map_rw_nolock()
-Date: Thu, 22 Aug 2024 15:13:23 +0800
-Message-Id: <71100c3867c4cf6f5f429ce9f2db8432066d0e99.1724310149.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <cover.1724310149.git.zhengqi.arch@bytedance.com>
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 15/17] selftests: vdso: Fix build of test_vdso_chacha
+Date: Thu, 22 Aug 2024 09:13:23 +0200
+Message-ID: <50cc36936b310d8dd6d7539c552cc8dd84052020.1724309198.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310795; l=3948; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=myEwghlIo0VFEa/kCbUR8jkMcaOa8Dz8PO/V1GnGZDU=; b=3pzQ86+owF0quZVMNfNkNt1pF9agoztEqTpacb3+y5tzmYnNz4M7kg6ndA6tudWCTTaQ+v5Ls uth/LEL3EsrDJl98Nr2BREqhGR2wN0QN52ZMiThEVDzt+0TzB1GKIi/
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-In copy_pte_range(), we may modify the src_pte entry after holding the
-src_ptl, so convert it to using pte_offset_map_rw_nolock(). But since we
-already hold the write lock of mmap_lock, there is no need to get pmdval
-to do pmd_same() check, just pass a dummy variable to it.
+Building test_vdso_chacha on powerpc leads to following issue:
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+  In file included from /home/chleroy/linux-powerpc/include/linux/limits.h:7,
+                   from /opt/powerpc64-e5500--glibc--stable-2024.02-1/powerpc64-buildroot-linux-gnu/sysroot/usr/include/bits/local_lim.h:38,
+                   from /opt/powerpc64-e5500--glibc--stable-2024.02-1/powerpc64-buildroot-linux-gnu/sysroot/usr/include/bits/posix1_lim.h:161,
+                   from /opt/powerpc64-e5500--glibc--stable-2024.02-1/powerpc64-buildroot-linux-gnu/sysroot/usr/include/limits.h:195,
+                   from /opt/powerpc64-e5500--glibc--stable-2024.02-1/lib/gcc/powerpc64-buildroot-linux-gnu/12.3.0/include-fixed/limits.h:203,
+                   from /opt/powerpc64-e5500--glibc--stable-2024.02-1/lib/gcc/powerpc64-buildroot-linux-gnu/12.3.0/include-fixed/syslimits.h:7,
+                   from /opt/powerpc64-e5500--glibc--stable-2024.02-1/lib/gcc/powerpc64-buildroot-linux-gnu/12.3.0/include-fixed/limits.h:34,
+                   from /tmp/sodium/usr/local/include/sodium/export.h:7,
+                   from /tmp/sodium/usr/local/include/sodium/crypto_stream_chacha20.h:14,
+                   from vdso_test_chacha.c:6:
+  /opt/powerpc64-e5500--glibc--stable-2024.02-1/powerpc64-buildroot-linux-gnu/sysroot/usr/include/bits/xopen_lim.h:99:6: error: missing binary operator before token "("
+     99 | # if INT_MAX == 32767
+        |      ^~~~~~~
+  /opt/powerpc64-e5500--glibc--stable-2024.02-1/powerpc64-buildroot-linux-gnu/sysroot/usr/include/bits/xopen_lim.h:102:7: error: missing binary operator before token "("
+    102 | #  if INT_MAX == 2147483647
+        |       ^~~~~~~
+  /opt/powerpc64-e5500--glibc--stable-2024.02-1/powerpc64-buildroot-linux-gnu/sysroot/usr/include/bits/xopen_lim.h:126:6: error: missing binary operator before token "("
+    126 | # if LONG_MAX == 2147483647
+        |      ^~~~~~~~
+
+This is due to kernel include/linux/limits.h being included instead of libc's
+limits.h
+
+This is because directory include/ is added through option -isystem so it goes
+prior to glibc's include directory.
+
+Replace -isystem by -idirafter
+
+But this implies that now tools/include/linux/linkage.h is
+included instead of include/linux/linkage.h, so define a stub
+for SYM_FUNC_START() and SYM_FUNC_END().
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- mm/memory.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ tools/include/linux/linkage.h         | 4 ++++
+ tools/testing/selftests/vDSO/Makefile | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 7b6071a0e21e2..30d98025b2a40 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1083,6 +1083,7 @@ copy_pte_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 	struct mm_struct *src_mm = src_vma->vm_mm;
- 	pte_t *orig_src_pte, *orig_dst_pte;
- 	pte_t *src_pte, *dst_pte;
-+	pmd_t dummy_pmdval;
- 	pte_t ptent;
- 	spinlock_t *src_ptl, *dst_ptl;
- 	int progress, max_nr, ret = 0;
-@@ -1108,7 +1109,15 @@ copy_pte_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	src_pte = pte_offset_map_nolock(src_mm, src_pmd, addr, &src_ptl);
+diff --git a/tools/include/linux/linkage.h b/tools/include/linux/linkage.h
+index bc763d500262..a48ff086899c 100644
+--- a/tools/include/linux/linkage.h
++++ b/tools/include/linux/linkage.h
+@@ -1,4 +1,8 @@
+ #ifndef _TOOLS_INCLUDE_LINUX_LINKAGE_H
+ #define _TOOLS_INCLUDE_LINUX_LINKAGE_H
+ 
++#define SYM_FUNC_START(x) .globl x; x:
 +
-+	/*
-+	 * Use the maywrite version to indicate that dst_pte will be modified,
-+	 * but since we already hold the write lock of mmap_lock, there is no
-+	 * need to get pmdval to do pmd_same() check, just pass a dummy variable
-+	 * to it.
-+	 */
-+	src_pte = pte_offset_map_rw_nolock(src_mm, src_pmd, addr, &dummy_pmdval,
-+					   &src_ptl);
- 	if (!src_pte) {
- 		pte_unmap_unlock(dst_pte, dst_ptl);
- 		/* ret == 0 */
++#define SYM_FUNC_END(x)
++
+ #endif /* _TOOLS_INCLUDE_LINUX_LINKAGE_H */
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+index c9a819cacbf2..10ffdda3f2fa 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -42,7 +42,7 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
+ 
+ $(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(ARCH)/vdso/vgetrandom-chacha.S
+ $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
+-                                      -isystem $(top_srcdir)/arch/$(ARCH)/include \
+-                                      -isystem $(top_srcdir)/include \
++                                      -idirafter $(top_srcdir)/arch/$(ARCH)/include \
++                                      -idirafter $(top_srcdir)/include \
+                                       -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 \
+                                       -Wa,--noexecstack $(SODIUM)
 -- 
-2.20.1
+2.44.0
 
 
