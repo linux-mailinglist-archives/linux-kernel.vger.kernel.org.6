@@ -1,176 +1,152 @@
-Return-Path: <linux-kernel+bounces-297869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC72695BEB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35BFB95BEAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 299E1B23A0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:16:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF2BEB2264A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F501D175D;
-	Thu, 22 Aug 2024 19:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AF11D04A3;
+	Thu, 22 Aug 2024 19:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5b70VjH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zS9TR09t"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118361D174E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2310076025
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724354150; cv=none; b=bJP9bER+/vWTfSi7ov4o5Eb84Z0aOZcf+W8BOsHzdGEhhLEgRHeBaw9VE36K7pp8APU12g3o3fUpdkLdrcdnbhkCqJhU8LGAhAxSMbODnsmddSklBld83lTJO9GW5McpVwsCnm8HaUSKbQN6VyQJ/xvCeG5Slq6ckzLW/VaNA2w=
+	t=1724354053; cv=none; b=rLCkRHAbH2w+GZc/ckjDI1lVA5AhO5tDYH/4hONCYS3jFMy2FxrWe+AET+WH2V4sP+kpip9/iyqZ6puyyI3xxLYx17VS0VnhJqgtrmzMdcJmrQ1WxoJFaEro1GCvWqPbMqWurzMKOxI93gI/+ZOxrmllRG1oXdhpYDY3t0la7YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724354150; c=relaxed/simple;
-	bh=3IkVv+qB4U5hLvXfbSxIYJIDDH95Yvi/JvCEmYiEG0s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H4RJB6MYdmkc8cDQ4rk4Gnz3rNxgM7VaZ5mZvj5SPEAAZ5ARuXkSyrd42z00DMfLnpfB7FAnXZrwbhIBA+pj/hOlyFg4payLYcZFY8yjMOkpAAovXDtkjFmlnF6Up9g16+r8thkyZEoVPJjxLfkPlaqTybZpYgxHjx3ImM1aaYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5b70VjH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC970C4AF12;
-	Thu, 22 Aug 2024 19:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724354149;
-	bh=3IkVv+qB4U5hLvXfbSxIYJIDDH95Yvi/JvCEmYiEG0s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=U5b70VjHfQEHCBxGcuJkIaZuR3G/OzNuKadvdXSUyLMPsPPYw5KHYR5RNmZ4R81tr
-	 5U8hq/bgBfqVHmd4RaNTTKLmhWpSIvhs+1HVg8J1r/gN6M/3bfDFx72BPrAIH+F2J8
-	 4BkKW8CP6RYQfXgOngDOsBcq+HnW0dwSD18fvTwkJkAGiZGm1MZgZmVALySIF/io43
-	 R2C3c+1d0mhm0rVhN/thZ5ybKAn9TgKp8m3R/iYdStDyD0ngzF01dzgsCyra/Gg9xY
-	 R+7frdyONZQ9KZxnVDe+vfQ++8bueNVc1Mcj44MPYyu6FQWlWFx2JgQyNRuaXtiYaN
-	 BWxE0XEfNPTjQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2024 20:13:39 +0100
-Subject: [PATCH 5/5] regmap: Don't double lock maple cache when using a
- regmap provided lock
+	s=arc-20240116; t=1724354053; c=relaxed/simple;
+	bh=kdl9m04IeIhLS7PfVFGy7WD8kTp/VKtBqIsyLvNi4Qs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dRsKRJhEaIVZWoz5A9Yg4Xhc7bk7q6hPhdwjG5711OOSjROSmOfNtQFOJZCM3B8CEc9tAFgaFq/v8ngqGB7YLFgY8XqWCyzP1M2kKKrOP2z1Eemt8ldxWJv0V4A6QlRVOT871zGEhT6nQHR1EkkP/Qxe8fX6/BTFQrBcUZHRYHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zS9TR09t; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e13e682bee1so1938582276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724354051; x=1724958851; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MaMcsggMRGrmcGjmkJfU9HDzyIESFhgorCuZMXV4ePU=;
+        b=zS9TR09tBvX5uvvL3U44zaIz3FwnWsTDYfS4YLW+q7PK1beex0IhbvmbfYiEblMnk1
+         xEUhDND7OD43WH/CGd/4JN/804TNbLj+6ZQBPJ3WasjM+wzl9LMLK4FHAsRNpDYcII35
+         hIknjMi059LHD9an+JxO58xRaYlvDahCW94VSh6oqFAZ5rRikygfXE/6ICd86JghbUlD
+         f4xRka6xwwlNXKFU3JuSnv1/+/6YNeFtVKM2Xr9BFVf9vytt858k8VbRgV0Pi8Fiy0jn
+         QBc79DZU2cQJz570VWqGRcmsY59QmIsxPXG1Iv86vsJwpy1Sg5Gup3PC4ItDUoe6dmIo
+         3kUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724354051; x=1724958851;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MaMcsggMRGrmcGjmkJfU9HDzyIESFhgorCuZMXV4ePU=;
+        b=djvPC437HSt8vK5JmzhNoAlSl8o2Z27mEU0AOtFFUxZqbQvuGfXIJYMGe2Riak5yPm
+         G9NClCENv1mGA/XDnRTXPC385XH1nQ4xzgC5hg63RafeIrlLZtCeEpfJ4owTS6DtsEKY
+         azccRIhAbmV6+87eDpj/t4llgxT0cZATeZxBk1GWf6bRGTuaVqQn36CMorEQGnRglNcT
+         LrRxplbpPdymBG/8r5IGsr1TNkOnUPPfrUZb8AYVtpBXOA2dYQ5rE4L1krpwEKlpIb2h
+         j9b8sXmNhZZYilOmCW6XRY9HjAd75e52idom+jgCJsfGnRMUFRmlsg5Ru2M/EMLow88u
+         Jb4g==
+X-Forwarded-Encrypted: i=1; AJvYcCV4y8EKyO4iaHgFK5UMmdud7+CyMaZNv6IHMWYExt9StmKh/twSgmjX0NNlHpPpkE36q2tqcXw5Y+kx0G4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6gmFhBlyw6eulw8FeBIhHcVyxDtSrbxceCbhalLtV/rSxgQl1
+	eDyErnaIZ9LqyhDAQqKeoaU1ACwEvKreal3Tmxpvjnrk0Jk1CkJ6UNe7l84H5rOGC1c3rmqxWZw
+	Jow==
+X-Google-Smtp-Source: AGHT+IHBl6IuQkEvzLArh/LdYV3EHTO/Q8/miBxNSbv712XSc9lkasrB1zLI2uH/r1NHjG6hta0iQtO2RM4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:6d54:0:b0:e11:6c69:72ed with SMTP id
+ 3f1490d57ef6-e166552f9eemr59121276.8.1724354051211; Thu, 22 Aug 2024 12:14:11
+ -0700 (PDT)
+Date: Thu, 22 Aug 2024 12:14:09 -0700
+In-Reply-To: <20230227174654.94641-1-ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240822-b4-regmap-maple-nolock-v1-5-d5e6dbae3396@kernel.org>
-References: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
-In-Reply-To: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
- maple-tree@lists.infradead.org, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3508; i=broonie@kernel.org;
- h=from:subject:message-id; bh=3IkVv+qB4U5hLvXfbSxIYJIDDH95Yvi/JvCEmYiEG0s=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmx45Z28y0ReLetC9q+2YdjmiA9bBTW+merSGJe
- 7fXi8QJgY+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZseOWQAKCRAk1otyXVSH
- 0CHEB/4su90f4gO7Qt9qNpuaveRhDVSkPq+70sBLqnd/TbhsYX1jIHDW1A9Qfz5h+u8gLoJJflf
- jdGXYJ1a+pR5vDp3krO/QpawNW3lwaI6acc1SqbGzseANmX/sVpWjOb6l8plm/vFCdoJVjgVzP2
- IHtmE7JEwMP5ldgQAu+610rCQRFeW3Oqr02p1fDApahKnw1hVNOrAWfFWrrmutoQuOYKGceqyo6
- Y6dbwEs0nrrGzWyFNSB4C1q8z8eUd5DJw2Jgprqv6mKRiq1ASMR2SWEXlQEfXmTram5pkcbY/3y
- Me6usgkEUE3WhqMjVulp0qD/k/vxWmd4oAo+/jj9U9jckyf9
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Mime-Version: 1.0
+References: <20230227174654.94641-1-ackerleytng@google.com>
+Message-ID: <ZseOAY0OIrEIGG2h@google.com>
+Subject: Re: [PATCH] tools: Copy linux/align.h into tools/
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: yury.norov@gmail.com, andriy.shevchenko@linux.intel.com, 
+	linux@rasmusvillemoes.dk, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-It is not possible to use the maple tree without holding a lock of some
-kind, by default the maple tree incorporates a lock but it does have
-support for registering an external lock which will be asserted against
-instead. At present regmap uses the maple tree's internal lock which is
-unfortunate since there is also regmap level locking above the cache which
-protects the cache data structure and things like read/modify/write
-operations.
+On Mon, Feb 27, 2023, Ackerley Tng wrote:
+> This provides alignment macros for use in selftests.
+> 
+> Also clean up tools/include/linux/bitmap.h's inline definition of
+> IS_ALIGNED().
+> 
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> ---
 
-Let's reduce the overhead here by telling the maple tree about the regmap
-level lock for cases where regmap does it's own locking. We also support
-external and custom locking for regmap, neither of which will benefit from
-this, but this will cover the vast majority of users.
+FYI, an almost-equivalent change went through net/, commit 10a04ff09bcc ("tools:
+move alignment-related macros to new <linux/align.h>").  It doesn't have these
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/base/regmap/internal.h       | 12 ++++++++++++
- drivers/base/regmap/regcache-maple.c |  9 +++++++++
- drivers/base/regmap/regmap.c         |  4 ++++
- 3 files changed, 25 insertions(+)
+  #define __ALIGN_MASK(x, mask)	__ALIGN_KERNEL_MASK((x), (mask))
+  #define PTR_ALIGN(p, a)		((typeof(p))ALIGN((unsigned long)(p), (a)))
+  #define PTR_ALIGN_DOWN(p, a)	((typeof(p))ALIGN_DOWN((unsigned long)(p), (a)))
 
-diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
-index 83acccdc1008..a5fe052a70ce 100644
---- a/drivers/base/regmap/internal.h
-+++ b/drivers/base/regmap/internal.h
-@@ -59,6 +59,9 @@ struct regmap {
- 			unsigned long raw_spinlock_flags;
- 		};
- 	};
-+#ifdef CONFIG_LOCKDEP
-+	struct lockdep_map *lockdep;
-+#endif
- 	regmap_lock lock;
- 	regmap_unlock unlock;
- 	void *lock_arg; /* This is passed to lock/unlock functions */
-@@ -344,4 +347,13 @@ struct regmap *__regmap_init_raw_ram(struct device *dev,
- #define regmap_init_raw_ram(dev, config, data)				\
- 	__regmap_lockdep_wrapper(__regmap_init_raw_ram, #dev, dev, config, data)
- 
-+#ifdef CONFIG_LOCKDEP
-+static inline void regmap_set_lockdep(struct regmap *m, struct lockdep_map *l)
-+{
-+	m->lockdep = l;
-+}
-+#else
-+#define regmap_set_lockdep(m, l)
-+#endif
-+
- #endif
-diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
-index d2de3eba1646..1247ff3ae397 100644
---- a/drivers/base/regmap/regcache-maple.c
-+++ b/drivers/base/regmap/regcache-maple.c
-@@ -365,7 +365,16 @@ static int regcache_maple_init(struct regmap *map)
- 		return -ENOMEM;
- 	map->cache = mt;
- 
-+#ifdef CONFIG_LOCKDEP
-+	if (map->lockdep) {
-+		mt_init_flags(mt, MT_FLAGS_LOCK_EXTERN);
-+		mt_set_external_lock_dep_map(mt, map->lockdep);
-+	} else {
-+		mt_init(mt);
-+	}
-+#else
- 	mt_init(mt);
-+#endif
- 
- 	if (!map->num_reg_defaults)
- 		return 0;
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 9ed842d17642..f66b5ef56cf8 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -729,12 +729,15 @@ struct regmap *__regmap_init(struct device *dev,
- 				map->unlock = regmap_unlock_raw_spinlock;
- 				lockdep_set_class_and_name(&map->raw_spinlock,
- 							   lock_key, lock_name);
-+				regmap_set_lockdep(map,
-+						   &map->raw_spinlock.dep_map);
- 			} else {
- 				spin_lock_init(&map->spinlock);
- 				map->lock = regmap_lock_spinlock;
- 				map->unlock = regmap_unlock_spinlock;
- 				lockdep_set_class_and_name(&map->spinlock,
- 							   lock_key, lock_name);
-+				regmap_set_lockdep(map, &map->spinlock.dep_map);
- 			}
- 		} else {
- 			mutex_init(&map->mutex);
-@@ -743,6 +746,7 @@ struct regmap *__regmap_init(struct device *dev,
- 			map->can_sleep = true;
- 			lockdep_set_class_and_name(&map->mutex,
- 						   lock_key, lock_name);
-+			regmap_set_lockdep(map, &map->mutex.dep_map);
- 		}
- 		map->lock_arg = map;
- 	}
+but I'm pretty sure your use case doesn't need them, so you should be good to go.
+And if not, it's easy enough to include a delta patch to add them.
 
--- 
-2.39.2
-
+>  tools/include/linux/align.h  | 15 +++++++++++++++
+>  tools/include/linux/bitmap.h |  2 +-
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/include/linux/align.h
+> 
+> diff --git a/tools/include/linux/align.h b/tools/include/linux/align.h
+> new file mode 100644
+> index 000000000000..2b4acec7b95a
+> --- /dev/null
+> +++ b/tools/include/linux/align.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_ALIGN_H
+> +#define _LINUX_ALIGN_H
+> +
+> +#include <linux/const.h>
+> +
+> +/* @a is a power of 2 value */
+> +#define ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
+> +#define ALIGN_DOWN(x, a)	__ALIGN_KERNEL((x) - ((a) - 1), (a))
+> +#define __ALIGN_MASK(x, mask)	__ALIGN_KERNEL_MASK((x), (mask))
+> +#define PTR_ALIGN(p, a)		((typeof(p))ALIGN((unsigned long)(p), (a)))
+> +#define PTR_ALIGN_DOWN(p, a)	((typeof(p))ALIGN_DOWN((unsigned long)(p), (a)))
+> +#define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
+> +
+> +#endif	/* _LINUX_ALIGN_H */
+> diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
+> index f3566ea0f932..8c6852dba04f 100644
+> --- a/tools/include/linux/bitmap.h
+> +++ b/tools/include/linux/bitmap.h
+> @@ -3,6 +3,7 @@
+>  #define _TOOLS_LINUX_BITMAP_H
+>  
+>  #include <string.h>
+> +#include <linux/align.h>
+>  #include <linux/bitops.h>
+>  #include <linux/find.h>
+>  #include <stdlib.h>
+> @@ -126,7 +127,6 @@ static inline bool bitmap_and(unsigned long *dst, const unsigned long *src1,
+>  #define BITMAP_MEM_ALIGNMENT (8 * sizeof(unsigned long))
+>  #endif
+>  #define BITMAP_MEM_MASK (BITMAP_MEM_ALIGNMENT - 1)
+> -#define IS_ALIGNED(x, a) (((x) & ((typeof(x))(a) - 1)) == 0)
+>  
+>  static inline bool bitmap_equal(const unsigned long *src1,
+>  				const unsigned long *src2, unsigned int nbits)
+> -- 
+> 2.39.2.722.g9855ee24e9-goog
+> 
 
