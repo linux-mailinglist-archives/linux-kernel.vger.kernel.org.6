@@ -1,264 +1,1059 @@
-Return-Path: <linux-kernel+bounces-297635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC4195BBB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:20:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C29495BBD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B403E28A510
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6BBB1F27D62
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F381CCEC9;
-	Thu, 22 Aug 2024 16:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610091CCEF0;
+	Thu, 22 Aug 2024 16:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fX2cXHOe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFY5jX6y"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979EE1CE71A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343592; cv=fail; b=I47ThL7FMa6rVWMiGMX+6o1aXMgGqM5BLHYN8Mscy5I3qEw6qp9SfPZwlUg0uUI+KzDhorDdrj7PAP3wKc/dz6hEYHcVyBb8LTSU9tDSWaiGbZBNrJdky6ZqAaqPy2de1ZTstDzdtvmDpwN0QmeCdAiTDHoDEbJnwgfZLnfoobY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343592; c=relaxed/simple;
-	bh=URKCXc/MqFHiWVpavl303vyVaHRrJXAK8DashlCuudg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sHgtrUVOTtyF+bvBRfv+QnlrgNKgGGUFfvKMMyFkrXqy1R3ICUbihy2A2VCZWmrftrOtjsNLtXZDYKR1o3DFH9JnPYOQCMsKuSSV8dKsFeDBDYMl7PiSZ9DCSVjPf5vTEtgWbYe/wzmwRu/NKnljxgB7oSj2KpXzfHOz28VYPZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fX2cXHOe; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724343590; x=1755879590;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=URKCXc/MqFHiWVpavl303vyVaHRrJXAK8DashlCuudg=;
-  b=fX2cXHOeDd5gVirafGqmyD9wMGtHzsxsbe2Fl2HPW1beTcLMpqjMfaIp
-   5K9+oHhO1S5eeov+sdKCk+YlDmTJNwrrOEDq4FlabQc5/2aiX8dg2cm31
-   tkyA7qB+jfiHeWKjq+VWvDvh2IC681ReTASOZ/SEcZ6VJNaO2oR1F/d/E
-   tMerH7l1tu3ff2S9/cK5S21BBcQjsuJJuq9kAixblrAeP2TYilk9sq5BL
-   9xXlkaWHND1TqaVNBBf4z00ZyUnb1FWuCwopDc2SvfzGcwPvsx+NMTwPt
-   664gqnrciDmfyeoF+MlvyYlKR41ajjGGGCnG3s+m/HX4ZzED0Pk/+FLDe
-   w==;
-X-CSE-ConnectionGUID: ZLzK2boeS4qceezSsVtJRA==
-X-CSE-MsgGUID: eZNrPvRYSsakjwdjQH7LOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22650287"
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="22650287"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 09:19:49 -0700
-X-CSE-ConnectionGUID: 7sYX1MEMQeSTGI1fSiyJzQ==
-X-CSE-MsgGUID: 9U8MRPQLQbisPRbD0pmFGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="66333730"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Aug 2024 09:19:50 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 22 Aug 2024 09:19:48 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 22 Aug 2024 09:19:48 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.177)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 22 Aug 2024 09:19:48 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xEsZODs72dlt3DaNfNh8MPwbpccnJBFIbRd5QxLpogqlfT0zKo0MXJJsFqHQhSMS8YiaGSEcL8CC2iHzsNjkw0kpqtPb26YP1iW7lpru0GdI6A/G8Xfo5gqfrQ5IotEGbh33J3PjV/fScNpW/iKtleMPMjjbSJFBbIZZcWK2KGgjeJscBCZVGBctCaRjO0GANT0UUrJABYarIgVllZ2shvUezB03/reAi/LAd/sifWOkV9DtOzvPGOLZc/+eT+GTWHjGMSGF4pPH96ivNt9ofchTbwosNrP2yKAPhe5LZ8kNcZtGH/DKRtgZj1Fyqyd8GwzyfdVsqqfIO9pDT2Vr5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=URKCXc/MqFHiWVpavl303vyVaHRrJXAK8DashlCuudg=;
- b=naA35aoDGm+86TLDeUuCzgHKHwqinBvRbPnCBXrpzvlf0j9EQhAuAKhLpWNroSqo4Qy/kIIoQlvlEbGPHtXdV63fyd4wnHwXuYxdT+JSzuGtVzBf/7oS21AEu8LwMI7gzPQWbyJjUy6xMJ81Gj32qXd5BIFPVhKhG73XPibrEIPqpRPgPuziQwwnQ4N87dp/YJvmmbrYyF/pHkqHNnNHsreL9/8syXBjr6kMAAj8TaIOgawGxEBT8UI4QVCh09/t+vl7RKCrFVFWZFTQU6iNW5V3FzSfagPcjZuACvGpFDEVTs51bvjsgv6l1ICBuqrrZCJXhMoIq2TqEmqsjbl/Kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
- by PH7PR11MB8058.namprd11.prod.outlook.com (2603:10b6:510:24d::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
- 2024 16:19:41 +0000
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c%5]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 16:19:41 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: Michal Hocko <mhocko@suse.com>
-CC: Nhat Pham <nphamcs@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosryahmed@google.com"
-	<yosryahmed@google.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com"
-	<21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K"
-	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Subject: RE: [PATCH v1] mm: Defines obj_cgroup_get() if CONFIG_MEMCG is not
- defined.
-Thread-Topic: [PATCH v1] mm: Defines obj_cgroup_get() if CONFIG_MEMCG is not
- defined.
-Thread-Index: AQHa8zownmBKtHWwPk69pMRSa2JXJ7IyGPSAgAADIMCAALKRgIAAqLRw
-Date: Thu, 22 Aug 2024 16:19:41 +0000
-Message-ID: <SJ0PR11MB5678C68754B7CC837E947F41C98F2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-References: <20240820195005.5941-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=N-xuQume6C+xq0LfhVNOaK9rOiz_0c39GfoBB-4+6eng@mail.gmail.com>
- <SJ0PR11MB5678BCBBA46F1AA205A274F2C98E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <ZsbXR6NKM7yOLODb@tiehlicka>
-In-Reply-To: <ZsbXR6NKM7yOLODb@tiehlicka>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|PH7PR11MB8058:EE_
-x-ms-office365-filtering-correlation-id: d31a455f-2388-4b59-653d-08dcc2c63a35
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?bnRqWnZySjZMd0xnM21mT0xIaVFaTDV6VjR1OTU2ZGovMjFPQnVTL0VCSlVC?=
- =?utf-8?B?NjI3VkpvaDlZMGx2cFJkdlNaZDhXMGpyVXBFNzhmMENGT3oySGlBam1uR1BO?=
- =?utf-8?B?NzRqcXhoejZtUWhReTNKVStMNFpsMTFPVmFnQlUzUVIrcTYrM0JjYWdIby9o?=
- =?utf-8?B?SGNmcitjWlNnbHJmLzhDVnR2T2F0b01yY2lYUkx5U0xjbU9kR0FMc21QenlU?=
- =?utf-8?B?Wm5wWUtKQmhwYmp0MC9vOXlaVWFtMlcrQnFHYlRCNkdRd3hpbWNIak8vR3lZ?=
- =?utf-8?B?SHdrZWYrWnMySjBxN0ZFMXBZU3ptVDVnUEUyc3hyWUxhWjQ0M0JETUphc3ZP?=
- =?utf-8?B?QTVzaHF6ZmtGaFVia2FYYmswR2pmU0owWnlwcTlJa0FYMkxReWtCa0w2dlVR?=
- =?utf-8?B?RE1seUhHY0x0c0pQdUNSemZvTkVuYUxmZjg2QlVZQmxPUWM1cERCNklpL2tW?=
- =?utf-8?B?L0pITWRzVmdWUlB6TVN4anhPZFBtVHBaTnpvUHh4b1VmN3ZLTXNLQUNSOHB1?=
- =?utf-8?B?NEgvYXJxakx6bjVrV0FyWDBZL1RMRGRkMG8ybi9qUWJVNnR3VGlyRzFSMDN0?=
- =?utf-8?B?TVRZTyttQWE1R1FCcHBtRDFXc0REQWd0c0xleit1RjBzTGNSTjhYNlRJNjRW?=
- =?utf-8?B?YWJlYjFQNmJKR1V5VXRpK2NURElVU0xWV0FPQ0F5dzYvRnVXaS9sMUNZUUtX?=
- =?utf-8?B?a0lEQmJIT2YxdnkwYy8yeSt2Rmt3VXV0SVdTZzVlSWJWYi9zaDhzMXZTb0ls?=
- =?utf-8?B?UktpQkM4NWQxMVZIZFZuMFdRTExBdGhGdlRmM283c0Q1TWFjVzdzYk9CUUJ6?=
- =?utf-8?B?b0JQTEhHOTVrT2xoVW9nN1d4M3lLZFZSWktVTkRQd0JNNXhtZ0dYTXpHVDZO?=
- =?utf-8?B?OUlybXYyTFNlRzl2c1hjOEJHaThTWURvR3RwYWRQZVZHQ056SDBNVkpCNHpi?=
- =?utf-8?B?dzBhVGYwUmpYaXRSUlZweGlKK3p0VURKN2tOVmkwZGpQRzRxWnptd01DVzZL?=
- =?utf-8?B?dGVYTG41ejJJdENyTnVCcjlhLzVhLzNVeGYwcjNuM2syemdrMXlhV1pHWFVt?=
- =?utf-8?B?TWdvQ0ZZUG9tRjVUV2t1ZkdQbGtzWndWUzV2ZjFmUkIxc1hZUkNHc0lxdWVK?=
- =?utf-8?B?ejNQZXdmUE4zWWdMV2pQNC8xUmVkcXU1a1JzZi9vaG1QOGFJeVY1OW1PRkJF?=
- =?utf-8?B?UXV0SVZvVTc0NnJhRWo3WGxERkg2eFVKN2FXbkt5b0lESWJicUV1T3RRenJF?=
- =?utf-8?B?QzczVFZ1WmxQWktiQTlmSjZoMEhWWk1ZU2d1NUh2T0RJNDVNVXZpVWs3ZS9R?=
- =?utf-8?B?d3pTdHRhNkVBaFRJYzBZNWdXblVHTUhpaWlMeWRtK3htMHpqbmZIemhlK0ph?=
- =?utf-8?B?NjZucEw4dkM2cjA4bS91VmVIYkx2cWlFaGlvY3RhSTRMRGxZYTdhWGtkQ3Yx?=
- =?utf-8?B?V2JlVFBXZ3Zoc05JNDNhUVhocFVJTXJCKy9OY1UxVTIwTWZXdFZmYzA2dWJT?=
- =?utf-8?B?NUxRSng2NnBXZmpQelBZTFRlb2hZL1F6V0RURWM1cjBnRmRvVk56Umozc2Ix?=
- =?utf-8?B?ZFJueExQS3lvT29kZXhPeEdJWWhTR2VhcFNTNVpKdjRJVUJlaU5ZN2RYUlIw?=
- =?utf-8?B?eEhHdm5VY1VNTmszOHRqYXRNUnpneVhqUzVGWjBYMlhzWncyQ2hFVmFMZU1C?=
- =?utf-8?B?eUdZTlBpSVVWNWtuNytuVmNQUWs4VEgwS3VxeUI3WTB0MHRKc2dnWkpnOGtZ?=
- =?utf-8?B?Ri9NK1VzN01BTldxREIzU0NNQUZjcEwrUjNCYzB3aFdZc1pZZDZGODF1Kzht?=
- =?utf-8?B?N0dxQzN3WnNPRWtpRWpxVmRUL0hEd0tSNVU5YUpnaWRCdVZMeDh5NlFqanBY?=
- =?utf-8?B?czVsTlNCQzhzSFNEVXFrTTZzbkVHbVJEMWl2ZFZDTTBMSkE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Y3Vndk0rV1FXUU1MWjNUQXMvTXBvayt2N056Um4yYmZBTHBYdUdzT0w2Y2FN?=
- =?utf-8?B?ZTVWMkdqRmg1eGUzazFjMUp4SWJVRUxQR1FVUGE2SGhET3QvSEZaMEdGandM?=
- =?utf-8?B?cnI3MHI3c09LVHlVc3lFOWNqU1IrdW9TMUhDbUh2WldEeENSNWF1VWNCSmlR?=
- =?utf-8?B?azlrYTRnMHA1MS9TYXR5QWNrZ3FmYXJ2c210eC9TWkhpOWlkc2JCUEZEblF6?=
- =?utf-8?B?aTFlT0NISEgxVGRqeFgxemVEQU5XY2RuSTFWdU1aYWZzaGlLZkpCVm5OdnRP?=
- =?utf-8?B?c0VOMXZsVkVUbGxCT202Vlk2VVU0blF0Z0FTZTQyZTl2RnptQk9TcEFFbHNX?=
- =?utf-8?B?QnZ3WDQ2N0JmeTAyWVZ3d3FvN0Z3VnZFZkJCTGphQStxUzBjaU5IMGg4cURq?=
- =?utf-8?B?Rm4yTGZYZSs1aDlyNzdFekFWSXFhak5MVWFsT1lxTGRkWnUwcmFmZG9sOTVz?=
- =?utf-8?B?RGxnZTNxdC9RY0l6RG1seXd3WWozclVBdm14dzFrcGFMNEMyRkxZeFZDYmpX?=
- =?utf-8?B?VW1xYk8vMkV6YkthUTZDVEUxK2JTUm9FVlhGU29tYmVnaGZCWXduY0NTZFR0?=
- =?utf-8?B?L2FxRnZqdlBHbS9ORkUvMDBWc0kvUGhnVlFPWDI2Skw4OE5JVDFhL3hQZnJ2?=
- =?utf-8?B?Sm5tY21zM21Dak8xTlI3K2ZuNERCQWhTbHRsRmZ1VGQ1eGZ1SDM2L2lJTUlX?=
- =?utf-8?B?MVhDZkttZ3FCcnhpbnFYcHgvMWc1bWViazZFU0R0eE9zZUd0VlJQSVJjVndl?=
- =?utf-8?B?OGtFODJndnJKZ3A5MUhtcGxhcWFMb2hOblRJVFlsVy9kdXdvRnR0RllOTXIw?=
- =?utf-8?B?cDFSM2NXejhwZlhqZkdHQk5SRVBqb2lTeEtBZ05KOURnVGZDbDRyd0gySnZ6?=
- =?utf-8?B?WW81STBVdjUvS1BCblByd2lGSmNjMVdIdzJwM0p0Q0R5c25LbHpkbVdIMjNO?=
- =?utf-8?B?NVhVWi85WWNrMW1uaW42L2FJcC9nb1hFNUdRbmdvcHd0bDFCa3pRQVF5MkJk?=
- =?utf-8?B?ZGJjSnJDbXZMRlhXQ3hOYWR3dVhRL1Mvd1dZQk0zTjBzNnlScTJIOXFScjZR?=
- =?utf-8?B?ZjczN1Jrd3hnVEUxSW9wV0liWTc1ejFLdEQxSWpyTW8vZi9kNlpnTXkwb3V4?=
- =?utf-8?B?bzFYTC82UEJwK215M3RlS3BQNWYwTnBsQ3ZkdTg2VDFkTWdjM0tnTlVXOHBW?=
- =?utf-8?B?ZHIwMXBhRzVGZ3FMQi93cFpnYVMxMXZUWHNjQzl2aHAxdW1SRFdSWjV1OXJC?=
- =?utf-8?B?d0JpK1g2L3hmRkZzSWhVNkx2Tk1sWEtmcUp4dmxaTXdKdHhvdHRCY0gyZnlq?=
- =?utf-8?B?a3lSWENsWHlaLzdDdmNHZmpXWW42ZkNjSmF4NnZWUFoySjdsT0pNYU0vaW9W?=
- =?utf-8?B?b1pVZlRJaFZxL01BVXhwUEZMOFd2OCthVTEzTWVZWTZmdXJjSjhHcnU5bXN6?=
- =?utf-8?B?d1FudHR6RTNyUE1Ycy9xRldXbUhKUFRUdm1pNEFhdmIwMDROWXZOMk9NWm93?=
- =?utf-8?B?TFlvaUdORS9Tb1FuUVBPOXRHeWlTeHlobkQyc1NQSDQ3elZqTWwvTm95K0dh?=
- =?utf-8?B?TUFvU0pCMytMTjRXS2VLU3JlRlNielcvWm9CV1pMcXB5Q0NNdk1kNU0yUThC?=
- =?utf-8?B?aUNwVUV6SFRRNDRTU285dGZlUVFrM09vakJNV0hTTjNVUk85VURrVU5MK0JO?=
- =?utf-8?B?a3Q2cUJyaWEvTnZZUDBoUmRoOCtLZ25PZDZIZG4wWjNrbXFVdTBWcFZ6Tld4?=
- =?utf-8?B?UWF1Q09JL1Z0R01ZSmFKVVVCdDl6d0ZYOTNzb0ZOZDJ2T0E3MmxWVzE5bE01?=
- =?utf-8?B?ckZoRXJQQ0twZ1ZBOXRiTzcwNEN2dVRzVEhyc005U284UzhEZTBpNTZEMmRT?=
- =?utf-8?B?SnJLRjYvNUxHY1ZlbmZMdFYyZ1ZuSzRpV3Y0T2cxK1hnL0FZbE1UQW5ac1lL?=
- =?utf-8?B?TFFyVExUNlc3TDRBQlRrb3V2VElhWjNNc0hvY2dwYXVLSC80NlZWU3llN09j?=
- =?utf-8?B?NEVHWVlFNGtmOXh2WlBBQUdSV0hXVmgwOFE1RU9ETXVHbFJ4QmJTU1NtMWgy?=
- =?utf-8?B?UERxOFdyUC9pSXVnbG5VWUdvVnRLcmV3ajBRanIxczJNRDJmOWEwNHYrYmVi?=
- =?utf-8?B?WDgxK0VQMTBDOStobkVXa045SUd5Y1Ruc2wyTzBEUlVXSTg3N3VhVlV3MWFF?=
- =?utf-8?B?ZXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7571CCEC1;
+	Thu, 22 Aug 2024 16:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724343913; cv=none; b=I4IjAiXZpV+HkQoetj9LRhvO+DRZikMVQx/8L4DEwijiKH8J19ji69OarDvpt+Un/kG5JSo1M8elkGR4rNsREtj3yzVbhBUg82r5TIjemf/LxMKPCqpbcqgpw3Vn3y11AQqMFkzG+C43BdowSSoi+g58IzpmGENITmkq0sqQm1M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724343913; c=relaxed/simple;
+	bh=EuOLXN9dqkihIi3EXa9ef1306N0O2l4djybQ4jeM998=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W9PnpnmpEZ3W+WN1WeVhVE2rU3qNacv1c4VM6TVQnv3WPV0Da25lpt6E6tLYTCDwOzHBmC1kIcNWDKWUmgz6pzBXwlSmkNLSluKuGkrAEaWHfOAc4VYGXFa2PdWkO8C+7pXTSStNIyxpIZsyQdMcsQzK7ukuC//+YsWAeaSayF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZFY5jX6y; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3f25a1713so10410861fa.2;
+        Thu, 22 Aug 2024 09:25:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724343908; x=1724948708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KDr0eBYO1PskvMpKKS8B3DeUmu6SCTgOxEomSvKBglQ=;
+        b=ZFY5jX6yREPBxmrlws/wiKh6GRfw6bt78JWJ6mYYv5Bmb9RgnXp70UaXHqTcIT93bL
+         4NaoCw2RVYylOkF7f/nBu5PzuF6OLHIuOm4qjLCaiP7mIanL4f9XZEZGjkrsOEefDS9F
+         gDmq3EEUaeSxsYia6NLX6Ug4Ib9N7T8MiYnMjYUV5aw71g1czA+RRmN/UhP7/191+goz
+         g7v7xa5DWLHZqEimkJW+gm9ij5lz5uEoRVWoydAVIdSkxO9oRS/+xK1tJ9MjT1SoJEn+
+         5/755hAEtNPecwLXBah+fBAZiI+yF4uVhCT9ZhhKGAROHhuo+xjO/nIh9YOvz9iacd43
+         tJrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724343908; x=1724948708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KDr0eBYO1PskvMpKKS8B3DeUmu6SCTgOxEomSvKBglQ=;
+        b=MbBmpz6KHLjE1xWvTuHsrKHhGiitarzw8GQb51e1BLKi/xltO3GsmbFCclebUvf4hR
+         pvIIcaXcjuVkkmErJRXnpI2IDueeT9emoS4hQuaavnu8fbH5APeWp0zvSTTd1TSoXghq
+         JBDdGManAxYUTv0HGnYmej4oKjCP6tQeFGfk78i7Lv5GzQKgx+kujhVRX5lLhR4Aq3+G
+         E2DLa/SZHafUC0RP1Yny+y2ThEzShnJDkUh6J1+qzXFjbkChSi44LhhACMdan0xw6n0O
+         F0x8ZNdgVL+hQlaInAiYj60fmbNVcgQfXoy143MVLZBQXMCfqTSxaH/EM8F6X8otmW24
+         JV8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUrynnz5vy5na+x6R/+PO+N19huVc3Gq9KI3cJEv+n4pjrRlrki227UieYWfCMX253YSZLh4WCUo+tWbTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKn0xQ5JX+HUlWkWbFxN9P9nfssVjHmXt7IpVM9HdyHaMXjoUm
+	D1Y2vR0hEC7T9ITbSOCOR5tEWNFEIs+IYZqVorDR/uREJ7EWbJVLeilF/ugQ
+X-Google-Smtp-Source: AGHT+IGoHDuJzr0Qt/lQCb68akdziXOX2e/nO43xda9UyzDLlUql34at2fYiQa+IfHVM6lO/pHeHSQ==
+X-Received: by 2002:a2e:a589:0:b0:2f1:59ed:87ab with SMTP id 38308e7fff4ca-2f3f88ea892mr44504921fa.24.1724343907547;
+        Thu, 22 Aug 2024 09:25:07 -0700 (PDT)
+Received: from localhost.localdomain ([188.74.74.117])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c43e7sm1091595a12.70.2024.08.22.09.25.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 09:25:06 -0700 (PDT)
+From: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v4] HID: corsair-void: Add Corsair Void headset family driver
+Date: Thu, 22 Aug 2024 17:20:43 +0100
+Message-ID: <20240822162041.38743-4-stuart.a.hayhurst@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d31a455f-2388-4b59-653d-08dcc2c63a35
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2024 16:19:41.5290
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 56waTrMZrEcJX+9Hd7tNOn30NMbJnBIs6t/V2z1EBaiCXd8a4n4IEdtDg5HjxL+aUlmupJz1sN5KEkUu2dK7e8Uo5t9F+Nfk1YZwmcWMylc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8058
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1pY2hhbCBIb2NrbyA8bWhv
-Y2tvQHN1c2UuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIEF1Z3VzdCAyMSwgMjAyNCAxMToxNSBQ
-TQ0KPiBUbzogU3JpZGhhciwgS2FuY2hhbmEgUCA8a2FuY2hhbmEucC5zcmlkaGFyQGludGVsLmNv
-bT4NCj4gQ2M6IE5oYXQgUGhhbSA8bnBoYW1jc0BnbWFpbC5jb20+OyBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC0NCj4gbW1Aa3ZhY2sub3JnOyBoYW5uZXNAY21weGNoZy5vcmc7
-IHlvc3J5YWhtZWRAZ29vZ2xlLmNvbTsNCj4gcnlhbi5yb2JlcnRzQGFybS5jb207IEh1YW5nLCBZ
-aW5nIDx5aW5nLmh1YW5nQGludGVsLmNvbT47DQo+IDIxY25iYW9AZ21haWwuY29tOyBha3BtQGxp
-bnV4LWZvdW5kYXRpb24ub3JnOyBab3UsIE5hbmhhaQ0KPiA8bmFuaGFpLnpvdUBpbnRlbC5jb20+
-OyBGZWdoYWxpLCBXYWpkaSBLIDx3YWpkaS5rLmZlZ2hhbGlAaW50ZWwuY29tPjsNCj4gR29wYWws
-IFZpbm9kaCA8dmlub2RoLmdvcGFsQGludGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2
-MV0gbW06IERlZmluZXMgb2JqX2Nncm91cF9nZXQoKSBpZiBDT05GSUdfTUVNQ0cgaXMNCj4gbm90
-IGRlZmluZWQuDQo+IA0KPiBPbiBXZWQgMjEtMDgtMjQgMTk6NDA6NDIsIFNyaWRoYXIsIEthbmNo
-YW5hIFAgd3JvdGU6DQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4g
-PiBGcm9tOiBOaGF0IFBoYW0gPG5waGFtY3NAZ21haWwuY29tPg0KPiA+ID4gU2VudDogV2VkbmVz
-ZGF5LCBBdWd1c3QgMjEsIDIwMjQgMTI6MjQgUE0NCj4gPiA+IFRvOiBTcmlkaGFyLCBLYW5jaGFu
-YSBQIDxrYW5jaGFuYS5wLnNyaWRoYXJAaW50ZWwuY29tPg0KPiA+ID4gQ2M6IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LW1tQGt2YWNrLm9yZzsNCj4gPiA+IGhhbm5lc0BjbXB4
-Y2hnLm9yZzsgeW9zcnlhaG1lZEBnb29nbGUuY29tOw0KPiByeWFuLnJvYmVydHNAYXJtLmNvbTsN
-Cj4gPiA+IEh1YW5nLCBZaW5nIDx5aW5nLmh1YW5nQGludGVsLmNvbT47IDIxY25iYW9AZ21haWwu
-Y29tOyBha3BtQGxpbnV4LQ0KPiA+ID4gZm91bmRhdGlvbi5vcmc7IFpvdSwgTmFuaGFpIDxuYW5o
-YWkuem91QGludGVsLmNvbT47IEZlZ2hhbGksIFdhamRpIEsNCj4gPiA+IDx3YWpkaS5rLmZlZ2hh
-bGlAaW50ZWwuY29tPjsgR29wYWwsIFZpbm9kaCA8dmlub2RoLmdvcGFsQGludGVsLmNvbT4NCj4g
-PiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjFdIG1tOiBEZWZpbmVzIG9ial9jZ3JvdXBfZ2V0KCkg
-aWYgQ09ORklHX01FTUNHDQo+IGlzDQo+ID4gPiBub3QgZGVmaW5lZC4NCj4gPiA+DQo+ID4gPiBP
-biBUdWUsIEF1ZyAyMCwgMjAyNCBhdCAzOjUw4oCvUE0gS2FuY2hhbmEgUCBTcmlkaGFyDQo+ID4g
-PiA8a2FuY2hhbmEucC5zcmlkaGFyQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+
-IFRoaXMgcmVzb2x2ZXMgYW4gaXNzdWUgd2l0aCBvYmpfY2dyb3VwX2dldCgpIG5vdCBiZWluZyBk
-ZWZpbmVkDQo+ID4gPiA+IGlmIENPTkZJR19NRU1DRyBpcyBub3QgZGVmaW5lZC4gVGhpcyBjYXVz
-ZXMgYnVpbGQgZXJyb3JzIGlmDQo+ID4gPiA+IG9ial9jZ3JvdXBfZ2V0KCkgaXMgY2FsbGVkIGZy
-b20gY29kZSB0aGF0IGlzIGFnbm9zdGljIG9mDQo+IENPTkZJR19NRU1DRy4NCj4gPiA+ID4NCj4g
-PiA+ID4gVGhlIHBhdGNoIHJlc29sdmVzIHRoaXMuDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1v
-ZmYtYnk6IEthbmNoYW5hIFAgU3JpZGhhciA8a2FuY2hhbmEucC5zcmlkaGFyQGludGVsLmNvbT4N
-Cj4gPiA+ID4gLS0tDQo+ID4gPg0KPiA+ID4gVGhpcyBpcyBvbmx5IGV4cG9zZWQgYmVjYXVzZSBv
-ZiB5b3VyIHpzd2FwIG1USFAgcGF0Y2ggc2VyaWVzIHJpZ2h0Pw0KPiA+ID4gQ291bGQgeW91IGlu
-Y2x1ZGUgdGhpcyBwYXRjaCBhcyBwYXJ0IG9mIHRoYXQgc2VyaWVzIChzaW5jZSB3ZSBkb24ndA0K
-PiA+ID4gbmVlZCB0aGlzIHdpdGhvdXQgdGhhdCBwYXRjaCBzZXJpZXMpLCBvciBtYWtlIGl0IGNs
-ZWFyIGluIHRoZSBjaGFuZ2UNCj4gPiA+IGxvZz8NCj4gPg0KPiA+IFRoYXQncyBjb3JyZWN0LCBO
-aGF0LiBBbHRob3VnaCwgaXQgbWlnaHQgYmUgdXNlZnVsIHRvIGhhdmUgb2JqX2Nncm91cF9nZXQo
-KQ0KPiA+IGRlZmluZWQgaW4gdGhlIGNhc2Ugd2hlcmUgQ09ORklHX01FTUNHIGlzIG5vdCBkZWZp
-bmVkLiBtZW1jb250cm9sLmgNCj4gPiBoYW5kbGVzIG9ial9jZ3JvdXBfcHV0KCkgc2ltaWxhcmx5
-LiBXb3VsZCBpdCBiZSBPayBpZiBJIGluY2x1ZGVkIGEgcmVmZXJlbmNlDQo+ID4gdG8gdGhlIHpz
-d2FwIG1USFAgcGF0Y2ggc2VyaWVzIGluIHRoZSBjaGFuZ2UgbG9nPw0KPiANCj4gSSB3b3VsZCBq
-dXN0IGZvbGQgaXQgaW50byB0aGUgcGF0Y2ggd2hpY2ggZXhwb3NlcyB1c2Ugd2l0aG91dA0KPiBD
-T05GSUdfTUVNQ0cuIFdlIGN1cnJlbnRseSBkbyBub3QgaGF2ZSBhbnkgc3VjaCB1c2VyLiBUaGF0
-J3Mgd2h5IEkndmUNCj4gYXNrZWQgd2hhdCBpcyB0aGlzIHBhdGNoIGJhc2VkIG9uLg0KDQpPaywg
-dGhpcyBzb3VuZHMgZ29vZCwgTWljaGFsIGFuZCBOaGF0Lg0KDQpUaGFua3MsDQpLYW5jaGFuYQ0K
-DQo+IC0tDQo+IE1pY2hhbCBIb2Nrbw0KPiBTVVNFIExhYnMNCg==
+Introduce a driver for the Corsair Void family of headsets, supporting:
+ - Battery reporting (power_supply)
+ - Sidetone setting support
+ - Physical microphone location reporting
+ - Headset and receiver firmware version reporting
+ - Built-in alert triggering
+ - USB wireless_status
+
+Tested with a Void Pro Wireless, Void Elite Wireless and a Void Elite Wired
+
+Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+---
+
+Just a couple questions about the sysfs attributes:
+ - Should the sysfs documentation use the implementation date (current), or the date it was submitted?
+ - Are the attribute names correct? I guessed reasonable names, but if there's a convention I'll correct them
+ - For cases where the wireless headset is disconnected, `microphone_up` returns -ENODEV
+  - Should it be left like that, or deregister the attributes when the headset disconnects?
+
+v3 -> v4:
+ - Added missing <linux/device.h> include
+ - Added missing newline, fix indent
+ - Use hid_hw_raw_request return code directly for wireless sidetone
+ - Use battery status enum for remaining values
+ - Use of devm_kasprintf() to create battery string
+ - Moved corsair_void_request_status error reporting to callers
+ - Simplified corsair_void_request_status
+ - Removed battery_struct_size, use sizeof(*battery_data) instead
+ - Removed unnecessary curly brackets in send_alert_store
+
+v2 -> v3:
+ - Use __free(kfree) helper to free allocations
+ - Combined similar condition checks
+ - Check power_supply was created successfully before saving it
+ - Removed explicit initialisation of return value in corsair_void_probe
+ - Use preferred syntax for drvdata's struct allocation size
+ - Removed named success exit point from driver probe
+ - Removed unused driver probe exit point
+
+v1 -> v2:
+ - Added a module author email address
+ - Removed unused variable (psy_cfg)
+ - Corrected status request buffer size from 12 bytes to 2 bytes
+ - Use enums for battery status
+ - Use kmalloc instead of kzalloc where applicable
+ - Use __le16 type for cpu_to_le16
+ - Use DEVICE_ATTR_RO and DEVICE_ATTR_WO to create attributes
+ - Simplified corsair_void_set_sidetone_wired
+ - Cleaned up patch description
+
+ .../ABI/testing/sysfs-driver-hid-corsair-void |  38 +
+ drivers/hid/Kconfig                           |  10 +
+ drivers/hid/Makefile                          |   1 +
+ drivers/hid/hid-corsair-void.c                | 829 ++++++++++++++++++
+ 4 files changed, 878 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-corsair-void
+ create mode 100644 drivers/hid/hid-corsair-void.c
+
+diff --git a/Documentation/ABI/testing/sysfs-driver-hid-corsair-void b/Documentation/ABI/testing/sysfs-driver-hid-corsair-void
+new file mode 100644
+index 000000000000..f933ba15dd6d
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-driver-hid-corsair-void
+@@ -0,0 +1,38 @@
++What:		/sys/bus/hid/drivers/hid-corsair-void/<dev>/fw_version_headset
++Date:		January 2024
++KernelVersion:	6.12
++Contact:	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
++Description:	(R) The firmware version of the headset
++			* Returns -ENODATA if no version was reported
++
++What:		/sys/bus/hid/drivers/hid-corsair-void/<dev>/fw_version_receiver
++Date:		January 2024
++KernelVersion:	6.12
++Contact:	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
++Description:	(R) The firmware version of the receiver
++
++What:		/sys/bus/hid/drivers/hid-corsair-void/<dev>/microphone_up
++Date:		July 2023
++KernelVersion:	6.12
++Contact:	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
++Description:	(R) Get the physical position of the microphone
++			* 1 -> Microphone up
++			* 0 -> Microphone down
++
++What:		/sys/bus/hid/drivers/hid-corsair-void/<dev>/send_alert
++Date:		July 2023
++KernelVersion:	6.12
++Contact:	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
++Description:	(W) Play a built-in notification from the headset (0 / 1)
++
++What:		/sys/bus/hid/drivers/hid-corsair-void/<dev>/set_sidetone
++Date:		December 2023
++KernelVersion:	6.12
++Contact:	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
++Description:	(W) Set the sidetone volume (0 - sidetone_max)
++
++What:		/sys/bus/hid/drivers/hid-corsair-void/<dev>/sidetone_max
++Date:		July 2024
++KernelVersion:	6.12
++Contact:	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
++Description:	(R) Report the maximum sidetone volume
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 08446c89eff6..7dcf911f3367 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -221,6 +221,16 @@ config HID_CORSAIR
+ 	- Vengeance K90
+ 	- Scimitar PRO RGB
+ 
++config HID_CORSAIR_VOID
++	tristate "Corsair Void headsets"
++	depends on USB_HID
++	select POWER_SUPPLY
++	help
++	Support for Corsair Void headsets.
++
++	Supported devices:
++	- Corsair Void headsets
++
+ config HID_COUGAR
+ 	tristate "Cougar devices"
+ 	help
+diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+index e40f1ddebbb7..037d7e3b6c3e 100644
+--- a/drivers/hid/Makefile
++++ b/drivers/hid/Makefile
+@@ -39,6 +39,7 @@ obj-$(CONFIG_HID_CHERRY)	+= hid-cherry.o
+ obj-$(CONFIG_HID_CHICONY)	+= hid-chicony.o
+ obj-$(CONFIG_HID_CMEDIA)	+= hid-cmedia.o
+ obj-$(CONFIG_HID_CORSAIR)	+= hid-corsair.o
++obj-$(CONFIG_HID_CORSAIR_VOID)	+= hid-corsair-void.o
+ obj-$(CONFIG_HID_COUGAR)	+= hid-cougar.o
+ obj-$(CONFIG_HID_CP2112)	+= hid-cp2112.o
+ obj-$(CONFIG_HID_CYPRESS)	+= hid-cypress.o
+diff --git a/drivers/hid/hid-corsair-void.c b/drivers/hid/hid-corsair-void.c
+new file mode 100644
+index 000000000000..6ece56b850fc
+--- /dev/null
++++ b/drivers/hid/hid-corsair-void.c
+@@ -0,0 +1,829 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *  HID driver for Corsair Void headsets
++ *
++ *  Copyright (C) 2023-2024 Stuart Hayhurst
++ */
++
++/* -------------------------------------------------------------------------- */
++/* Receiver report information: (ID 100)                                      */
++/* -------------------------------------------------------------------------- */
++/*
++ * When queried, the receiver reponds with 5 bytes to describe the battery
++ *   The power button, mute button and moving the mic also trigger this report
++ * This includes power button + mic + connection + battery status and capacity
++ * The information below may not be perfect, it's been gathered through guesses
++ *
++ * 0: REPORT ID
++ *  100 for the battery packet
++ *
++ * 1: POWER BUTTON + (?)
++ *  Largest bit is 1 when power button pressed
++ *
++ * 2: BATTERY CAPACITY + MIC STATUS
++ *  Battery capacity:
++ *    Seems to report ~54 higher than reality when charging
++ *    Capped at 100, charging or not
++ *  Microphone status:
++ *    Largest bit is set to 1 when the mic is physically up
++ *    No bits change when the mic is muted, only when physically moved
++ *    This report is sent every time the mic is moved, no polling required
++ *
++ * 3: CONNECTION STATUS
++ *  16: Wired headset
++ *  38: Initialising
++ *  49: Lost connection
++ *  51: Disconnected, searching
++ *  52: Disconnected, not searching
++ *  177: Normal
++ *
++ * 4: BATTERY STATUS
++ *  0: Disconnected
++ *  1: Normal
++ *  2: Low
++ *  3: Critical - sent during shutdown
++ *  4: Fully charged
++ *  5: Charging
++ */
++/* -------------------------------------------------------------------------- */
++
++/* -------------------------------------------------------------------------- */
++/* Receiver report information: (ID 102)                                      */
++/* -------------------------------------------------------------------------- */
++/*
++ * When queried, the recevier responds with 4 bytes to describe the firmware
++ * The first 2 bytes are for the receiver, the second 2 are the headset
++ * The headset firmware version will be 0 if no headset is connected
++ *
++ * 0: Recevier firmware major version
++ *  Major version of the receiver's firmware
++ *
++ * 1: Recevier firmware minor version
++ *  Minor version of the receiver's firmware
++ *
++ * 2: Headset firmware major version
++ *  Major version of the headset's firmware
++ *
++ * 3: Headset firmware minor version
++ *  Minor version of the headset's firmware
++ */
++/* -------------------------------------------------------------------------- */
++
++#include <linux/bitfield.h>
++#include <linux/bitops.h>
++#include <linux/cleanup.h>
++#include <linux/device.h>
++#include <linux/hid.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/power_supply.h>
++#include <linux/usb.h>
++#include <linux/workqueue.h>
++#include <asm/byteorder.h>
++
++#include "hid-ids.h"
++
++#define CORSAIR_VOID_DEVICE(id, type)		{ HID_USB_DEVICE(USB_VENDOR_ID_CORSAIR, (id)), \
++						.driver_data = (type) }
++#define CORSAIR_VOID_WIRELESS_DEVICE(id)	CORSAIR_VOID_DEVICE((id), CORSAIR_VOID_WIRELESS)
++#define CORSAIR_VOID_WIRED_DEVICE(id)		CORSAIR_VOID_DEVICE((id), CORSAIR_VOID_WIRED)
++
++#define CORSAIR_VOID_STATUS_REQUEST_ID		0xC9
++#define CORSAIR_VOID_NOTIF_REQUEST_ID		0xCA
++#define CORSAIR_VOID_SIDETONE_REQUEST_ID	0xFF
++#define CORSAIR_VOID_STATUS_REPORT_ID		0x64
++#define CORSAIR_VOID_FIRMWARE_REPORT_ID		0x66
++
++#define CORSAIR_VOID_USB_SIDETONE_REQUEST	0x1
++#define CORSAIR_VOID_USB_SIDETONE_REQUEST_TYPE	0x21
++#define CORSAIR_VOID_USB_SIDETONE_VALUE		0x200
++#define CORSAIR_VOID_USB_SIDETONE_INDEX		0xB00
++
++#define CORSAIR_VOID_MIC_MASK			GENMASK(7, 7)
++#define CORSAIR_VOID_CAPACITY_MASK		GENMASK(6, 0)
++
++#define CORSAIR_VOID_WIRELESS_CONNECTED		177
++
++#define CORSAIR_VOID_SIDETONE_MAX_WIRELESS	55
++#define CORSAIR_VOID_SIDETONE_MAX_WIRED		4096
++
++enum {
++	CORSAIR_VOID_WIRELESS,
++	CORSAIR_VOID_WIRED,
++};
++
++enum {
++	CORSAIR_VOID_BATTERY_NORMAL	= 1,
++	CORSAIR_VOID_BATTERY_LOW	= 2,
++	CORSAIR_VOID_BATTERY_CRITICAL	= 3,
++	CORSAIR_VOID_BATTERY_CHARGED	= 4,
++	CORSAIR_VOID_BATTERY_CHARGING	= 5,
++};
++
++static enum power_supply_property corsair_void_battery_props[] = {
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_CAPACITY,
++	POWER_SUPPLY_PROP_CAPACITY_LEVEL,
++	POWER_SUPPLY_PROP_SCOPE,
++	POWER_SUPPLY_PROP_MODEL_NAME,
++	POWER_SUPPLY_PROP_MANUFACTURER,
++};
++
++struct corsair_void_battery_data {
++	int status;
++	bool present;
++	int capacity;
++	int capacity_level;
++};
++
++struct corsair_void_drvdata {
++	struct hid_device *hid_dev;
++	struct device *dev;
++
++	char *name;
++	bool is_wired;
++	unsigned int sidetone_max;
++
++	struct corsair_void_battery_data battery_data;
++	bool mic_up;
++	bool connected;
++	int fw_receiver_major;
++	int fw_receiver_minor;
++	int fw_headset_major;
++	int fw_headset_minor;
++
++	struct power_supply *battery;
++	struct power_supply_desc battery_desc;
++	struct mutex battery_mutex;
++
++	struct delayed_work delayed_status_work;
++	struct delayed_work delayed_firmware_work;
++	struct work_struct battery_remove_work;
++	struct work_struct battery_add_work;
++};
++
++/*
++ * Functions to process receiver data
++*/
++
++static void corsair_void_set_wireless_status(struct corsair_void_drvdata *drvdata)
++{
++	struct usb_interface *usb_if = to_usb_interface(drvdata->dev->parent);
++
++	if (drvdata->is_wired)
++		return;
++
++	usb_set_wireless_status(usb_if, drvdata->connected ?
++					USB_WIRELESS_STATUS_CONNECTED :
++					USB_WIRELESS_STATUS_DISCONNECTED);
++}
++
++static void corsair_void_set_unknown_batt(struct corsair_void_drvdata *drvdata)
++{
++	struct corsair_void_battery_data *battery_data = &drvdata->battery_data;
++
++	battery_data->status = POWER_SUPPLY_STATUS_UNKNOWN;
++	battery_data->present = false;
++	battery_data->capacity = 0;
++	battery_data->capacity_level = POWER_SUPPLY_CAPACITY_LEVEL_UNKNOWN;
++}
++
++/* Reset data that may change between wireless connections */
++static void corsair_void_set_unknown_wireless_data(struct corsair_void_drvdata *drvdata)
++{
++	/* Only 0 out headset, receiver is always known if relevant */
++	drvdata->fw_headset_major = 0;
++	drvdata->fw_headset_minor = 0;
++
++	drvdata->connected = false;
++	drvdata->mic_up = false;
++
++	corsair_void_set_wireless_status(drvdata);
++}
++
++static void corsair_void_process_receiver(struct corsair_void_drvdata *drvdata,
++					  int raw_battery_capacity,
++					  int raw_connection_status,
++					  int raw_battery_status)
++{
++	struct corsair_void_battery_data *battery_data = &drvdata->battery_data;
++	struct corsair_void_battery_data orig_battery_data;
++
++	/* Save initial battery data, to compare later */
++	orig_battery_data = *battery_data;
++
++	/* Headset not connected, or it's wired */
++	if (raw_connection_status != CORSAIR_VOID_WIRELESS_CONNECTED)
++		goto unknown_battery;
++
++	/* Battery information unavailable */
++	if (raw_battery_status == 0)
++		goto unknown_battery;
++
++	/* Battery must be connected then */
++	battery_data->present = true;
++	battery_data->capacity_level = POWER_SUPPLY_CAPACITY_LEVEL_NORMAL;
++
++	/* Set battery status */
++	switch (raw_battery_status) {
++	case CORSAIR_VOID_BATTERY_NORMAL:
++	case CORSAIR_VOID_BATTERY_LOW:
++	case CORSAIR_VOID_BATTERY_CRITICAL:
++		battery_data->status = POWER_SUPPLY_STATUS_DISCHARGING;
++		if (raw_battery_status == CORSAIR_VOID_BATTERY_LOW)
++			battery_data->capacity_level = POWER_SUPPLY_CAPACITY_LEVEL_LOW;
++		else if (raw_battery_status == CORSAIR_VOID_BATTERY_CRITICAL)
++			battery_data->capacity_level = POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL;
++
++		break;
++	case CORSAIR_VOID_BATTERY_CHARGED:
++		battery_data->status = POWER_SUPPLY_STATUS_FULL;
++		break;
++	case CORSAIR_VOID_BATTERY_CHARGING:
++		battery_data->status = POWER_SUPPLY_STATUS_CHARGING;
++		break;
++	default:
++		hid_warn(drvdata->hid_dev, "unknown battery status '%d'",
++			 raw_battery_status);
++		goto unknown_battery;
++		break;
++	}
++
++	battery_data->capacity = raw_battery_capacity;
++	corsair_void_set_wireless_status(drvdata);
++
++	goto success;
++unknown_battery:
++	corsair_void_set_unknown_batt(drvdata);
++success:
++
++	/* Inform power supply if battery values changed */
++	if (memcmp(&orig_battery_data, battery_data, sizeof(*battery_data))) {
++		scoped_guard(mutex, &drvdata->battery_mutex) {
++			if (drvdata->battery) {
++				power_supply_changed(drvdata->battery);
++			}
++		}
++	}
++}
++
++/*
++ * Functions to report stored data
++*/
++
++static int corsair_void_battery_get_property(struct power_supply *psy,
++					     enum power_supply_property prop,
++					     union power_supply_propval *val)
++{
++	struct corsair_void_drvdata *drvdata = power_supply_get_drvdata(psy);
++
++	switch (prop) {
++		case POWER_SUPPLY_PROP_SCOPE:
++			val->intval = POWER_SUPPLY_SCOPE_DEVICE;
++			break;
++		case POWER_SUPPLY_PROP_MODEL_NAME:
++			if (!strncmp(drvdata->hid_dev->name, "Corsair ", 8))
++				val->strval = drvdata->hid_dev->name + 8;
++			else
++				val->strval = drvdata->hid_dev->name;
++			break;
++		case POWER_SUPPLY_PROP_MANUFACTURER:
++			val->strval = "Corsair";
++			break;
++		case POWER_SUPPLY_PROP_STATUS:
++			val->intval = drvdata->battery_data.status;
++			break;
++		case POWER_SUPPLY_PROP_PRESENT:
++			val->intval = drvdata->battery_data.present;
++			break;
++		case POWER_SUPPLY_PROP_CAPACITY:
++			val->intval = drvdata->battery_data.capacity;
++			break;
++		case POWER_SUPPLY_PROP_CAPACITY_LEVEL:
++			val->intval = drvdata->battery_data.capacity_level;
++			break;
++		default:
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
++static ssize_t microphone_up_show(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct corsair_void_drvdata *drvdata = dev_get_drvdata(dev);
++
++	if (!drvdata->connected)
++		return -ENODEV;
++
++	return sysfs_emit(buf, "%d\n", drvdata->mic_up);
++}
++
++static ssize_t fw_version_receiver_show(struct device *dev,
++					struct device_attribute *attr,
++					char *buf)
++{
++	struct corsair_void_drvdata *drvdata = dev_get_drvdata(dev);
++
++	if (drvdata->fw_receiver_major == 0 && drvdata->fw_receiver_minor == 0)
++		return -ENODATA;
++
++	return sysfs_emit(buf, "%d.%02d\n", drvdata->fw_receiver_major,
++			  drvdata->fw_receiver_minor);
++}
++
++
++static ssize_t fw_version_headset_show(struct device *dev,
++				       struct device_attribute *attr,
++				       char *buf)
++{
++	struct corsair_void_drvdata *drvdata = dev_get_drvdata(dev);
++
++	if (drvdata->fw_headset_major == 0 && drvdata->fw_headset_minor == 0)
++		return -ENODATA;
++
++	return sysfs_emit(buf, "%d.%02d\n", drvdata->fw_headset_major,
++			  drvdata->fw_headset_minor);
++}
++
++static ssize_t sidetone_max_show(struct device *dev,
++				 struct device_attribute *attr,
++				 char *buf)
++{
++	struct corsair_void_drvdata *drvdata = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%d\n", drvdata->sidetone_max);
++}
++
++/*
++ * Functions to send data to headset
++*/
++
++static ssize_t send_alert_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct corsair_void_drvdata *drvdata = dev_get_drvdata(dev);
++	struct hid_device *hid_dev = drvdata->hid_dev;
++	unsigned char alert_id;
++	unsigned char *send_buf __free(kfree) = NULL;
++	int ret;
++
++	if (!drvdata->connected || drvdata->is_wired)
++		return -ENODEV;
++
++	/* Only accept 0 or 1 for alert ID */
++	if (kstrtou8(buf, 10, &alert_id) || alert_id >= 2)
++		return -EINVAL;
++
++	send_buf = kmalloc(3, GFP_KERNEL);
++	if (!send_buf)
++		return -ENOMEM;
++
++	/* Packet format to send alert with ID alert_id */
++	send_buf[0] = CORSAIR_VOID_NOTIF_REQUEST_ID;
++	send_buf[1] = 0x02;
++	send_buf[2] = alert_id;
++
++	ret = hid_hw_raw_request(hid_dev, CORSAIR_VOID_NOTIF_REQUEST_ID,
++				 send_buf, 3, HID_OUTPUT_REPORT,
++				 HID_REQ_SET_REPORT);
++	if (ret < 0)
++		hid_warn(hid_dev, "failed to send alert request (reason: %d)",
++			 ret);
++	else
++		ret = count;
++
++	return ret;
++}
++
++static int corsair_void_set_sidetone_wired(struct device *dev, const char *buf,
++					   unsigned int sidetone)
++{
++	struct usb_interface *usb_if = to_usb_interface(dev->parent);
++	struct usb_device *usb_dev = interface_to_usbdev(usb_if);
++
++	/* Packet format to set sidetone for wired headsets */
++	__le16 sidetone_le = cpu_to_le16(sidetone);
++
++	return usb_control_msg_send(usb_dev, 0,
++				   CORSAIR_VOID_USB_SIDETONE_REQUEST,
++				   CORSAIR_VOID_USB_SIDETONE_REQUEST_TYPE,
++				   CORSAIR_VOID_USB_SIDETONE_VALUE,
++				   CORSAIR_VOID_USB_SIDETONE_INDEX,
++				   &sidetone_le, 2, USB_CTRL_SET_TIMEOUT,
++				   GFP_KERNEL);
++}
++
++static int corsair_void_set_sidetone_wireless(struct device *dev,
++					      const char *buf,
++					      unsigned char sidetone)
++{
++	struct corsair_void_drvdata *drvdata = dev_get_drvdata(dev);
++	struct hid_device *hid_dev = drvdata->hid_dev;
++	unsigned char *send_buf __free(kfree) = NULL;
++
++	send_buf = kmalloc(12, GFP_KERNEL);
++	if (!send_buf)
++		return -ENOMEM;
++
++	/* Packet format to set sidetone for wireless headsets */
++	send_buf[0] = CORSAIR_VOID_SIDETONE_REQUEST_ID;
++	send_buf[1] = 0x0B;
++	send_buf[2] = 0x00;
++	send_buf[3] = 0xFF;
++	send_buf[4] = 0x04;
++	send_buf[5] = 0x0E;
++	send_buf[6] = 0xFF;
++	send_buf[7] = 0x05;
++	send_buf[8] = 0x01;
++	send_buf[9] = 0x04;
++	send_buf[10] = 0x00;
++	send_buf[11] = sidetone + 200;
++
++	return hid_hw_raw_request(hid_dev, CORSAIR_VOID_SIDETONE_REQUEST_ID,
++				  send_buf, 12, HID_FEATURE_REPORT,
++				  HID_REQ_SET_REPORT);
++}
++
++static ssize_t set_sidetone_store(struct device *dev,
++				  struct device_attribute *attr,
++				  const char *buf, size_t count)
++{
++	struct corsair_void_drvdata *drvdata = dev_get_drvdata(dev);
++	struct hid_device *hid_dev = drvdata->hid_dev;
++	unsigned int sidetone;
++	int ret;
++
++	if (!drvdata->connected)
++		return -ENODEV;
++
++	/* sidetone must be between 0 and drvdata->sidetone_max inclusive */
++	if (kstrtouint(buf, 10, &sidetone) || sidetone > drvdata->sidetone_max)
++		return -EINVAL;
++
++	if (drvdata->is_wired)
++		ret = corsair_void_set_sidetone_wired(dev, buf, sidetone);
++	else
++		ret = corsair_void_set_sidetone_wireless(dev, buf, sidetone);
++
++	if (ret < 0)
++		hid_warn(hid_dev, "failed to send sidetone (reason: %d)", ret);
++	else
++		ret = count;
++
++	return ret;
++}
++
++static int corsair_void_request_status(struct hid_device *hid_dev, int id)
++{
++	unsigned char *send_buf __free(kfree) = NULL;
++
++	send_buf = kmalloc(2, GFP_KERNEL);
++	if (!send_buf)
++		return -ENOMEM;
++
++	/* Packet format to request data item (status / firmware) refresh */
++	send_buf[0] = CORSAIR_VOID_STATUS_REQUEST_ID;
++	send_buf[1] = id;
++
++	/* Send request for data refresh */
++	return hid_hw_raw_request(hid_dev, CORSAIR_VOID_STATUS_REQUEST_ID,
++				  send_buf, 2, HID_OUTPUT_REPORT,
++				  HID_REQ_SET_REPORT);
++}
++
++/*
++ * Headset connect / disconnect handlers and work handlers
++*/
++
++static void corsair_void_status_work_handler(struct work_struct *work)
++{
++	struct corsair_void_drvdata *drvdata;
++	struct delayed_work *delayed_work;
++	int battery_ret;
++
++	delayed_work = container_of(work, struct delayed_work, work);
++	drvdata = container_of(delayed_work, struct corsair_void_drvdata,
++			       delayed_status_work);
++
++	battery_ret = corsair_void_request_status(drvdata->hid_dev,
++						  CORSAIR_VOID_STATUS_REPORT_ID);
++	if (battery_ret < 0) {
++		hid_warn(drvdata->hid_dev,
++			 "failed to request battery (reason: %d)", battery_ret);
++	}
++}
++
++static void corsair_void_firmware_work_handler(struct work_struct *work)
++{
++	struct corsair_void_drvdata *drvdata;
++	struct delayed_work *delayed_work;
++	int firmware_ret;
++
++	delayed_work = container_of(work, struct delayed_work, work);
++	drvdata = container_of(delayed_work, struct corsair_void_drvdata,
++			       delayed_firmware_work);
++
++	firmware_ret = corsair_void_request_status(drvdata->hid_dev,
++						   CORSAIR_VOID_FIRMWARE_REPORT_ID);
++	if (firmware_ret < 0) {
++		hid_warn(drvdata->hid_dev,
++			 "failed to request firmware (reason: %d)", firmware_ret);
++	}
++
++}
++
++static void corsair_void_battery_remove_work_handler(struct work_struct *work)
++{
++	struct corsair_void_drvdata *drvdata;
++
++	drvdata = container_of(work, struct corsair_void_drvdata,
++			       battery_remove_work);
++	scoped_guard(mutex, &drvdata->battery_mutex) {
++		if (drvdata->battery) {
++			power_supply_unregister(drvdata->battery);
++			drvdata->battery = NULL;
++		}
++	}
++}
++
++static void corsair_void_battery_add_work_handler(struct work_struct *work)
++{
++	struct corsair_void_drvdata *drvdata;
++	struct power_supply_config psy_cfg;
++	struct power_supply *new_supply;
++
++	drvdata = container_of(work, struct corsair_void_drvdata,
++			       battery_add_work);
++	guard(mutex)(&drvdata->battery_mutex);
++	if (drvdata->battery)
++		return;
++
++	psy_cfg.drv_data = drvdata;
++	new_supply = power_supply_register(drvdata->dev,
++					   &drvdata->battery_desc,
++					   &psy_cfg);
++
++	if (IS_ERR(new_supply)) {
++		hid_err(drvdata->hid_dev,
++			"failed to register battery '%s' (reason: %ld)\n",
++			drvdata->battery_desc.name,
++			PTR_ERR(new_supply));
++		return;
++	}
++
++	if (power_supply_powers(new_supply, drvdata->dev)) {
++		power_supply_unregister(new_supply);
++		return;
++	}
++
++	drvdata->battery = new_supply;
++}
++
++static void corsair_void_headset_connected(struct corsair_void_drvdata *drvdata)
++{
++	schedule_work(&drvdata->battery_add_work);
++	schedule_delayed_work(&drvdata->delayed_firmware_work,
++			      msecs_to_jiffies(100));
++}
++
++static void corsair_void_headset_disconnected(struct corsair_void_drvdata *drvdata)
++{
++	schedule_work(&drvdata->battery_remove_work);
++
++	corsair_void_set_unknown_wireless_data(drvdata);
++	corsair_void_set_unknown_batt(drvdata);
++}
++
++/*
++ * Driver setup, probing and HID event handling
++*/
++
++static DEVICE_ATTR_RO(fw_version_receiver);
++static DEVICE_ATTR_RO(fw_version_headset);
++static DEVICE_ATTR_RO(microphone_up);
++static DEVICE_ATTR_RO(sidetone_max);
++
++static DEVICE_ATTR_WO(send_alert);
++static DEVICE_ATTR_WO(set_sidetone);
++
++static struct attribute *corsair_void_attrs[] = {
++	&dev_attr_fw_version_receiver.attr,
++	&dev_attr_fw_version_headset.attr,
++	&dev_attr_microphone_up.attr,
++	&dev_attr_send_alert.attr,
++	&dev_attr_set_sidetone.attr,
++	&dev_attr_sidetone_max.attr,
++	NULL,
++};
++
++static const struct attribute_group corsair_void_attr_group = {
++	.attrs = corsair_void_attrs,
++};
++
++static int corsair_void_probe(struct hid_device *hid_dev,
++			      const struct hid_device_id *hid_id)
++{
++	int ret;
++	struct corsair_void_drvdata *drvdata;
++	char *name;
++
++	if (!hid_is_usb(hid_dev))
++		return -EINVAL;
++
++	drvdata = devm_kzalloc(&hid_dev->dev, sizeof(*drvdata),
++			       GFP_KERNEL);
++	if (!drvdata)
++		return -ENOMEM;
++
++	hid_set_drvdata(hid_dev, drvdata);
++	dev_set_drvdata(&hid_dev->dev, drvdata);
++
++	drvdata->dev = &hid_dev->dev;
++	drvdata->hid_dev = hid_dev;
++	drvdata->is_wired = hid_id->driver_data == CORSAIR_VOID_WIRED;
++
++	drvdata->sidetone_max = CORSAIR_VOID_SIDETONE_MAX_WIRELESS;
++	if (drvdata->is_wired)
++		drvdata->sidetone_max = CORSAIR_VOID_SIDETONE_MAX_WIRED;
++
++	/* Set initial values for no wireless headset attached */
++	/* If a headset is attached, it'll be prompted later */
++	corsair_void_set_unknown_wireless_data(drvdata);
++	corsair_void_set_unknown_batt(drvdata);
++
++	/* Receiver version won't be reset after init */
++	/* Headset version already set via set_unknown_wireless_data */
++	drvdata->fw_receiver_major = 0;
++	drvdata->fw_receiver_minor = 0;
++
++	ret = hid_parse(hid_dev);
++	if (ret) {
++		hid_err(hid_dev, "parse failed (reason: %d)\n", ret);
++		return ret;
++	}
++
++	name = devm_kasprintf(drvdata->dev, GFP_KERNEL,
++			      "corsair-void-%d-battery", hid_dev->id);
++	if (!name)
++		return -ENOMEM;
++
++	drvdata->battery_desc.name = name;
++	drvdata->battery_desc.type = POWER_SUPPLY_TYPE_BATTERY;
++	drvdata->battery_desc.properties = corsair_void_battery_props;
++	drvdata->battery_desc.num_properties = ARRAY_SIZE(corsair_void_battery_props);
++	drvdata->battery_desc.get_property = corsair_void_battery_get_property;
++
++	drvdata->battery = NULL;
++	INIT_WORK(&drvdata->battery_remove_work,
++		  corsair_void_battery_remove_work_handler);
++	INIT_WORK(&drvdata->battery_add_work,
++		  corsair_void_battery_add_work_handler);
++	ret = devm_mutex_init(drvdata->dev, &drvdata->battery_mutex);
++	if (ret)
++		return ret;
++
++	ret = sysfs_create_group(&hid_dev->dev.kobj, &corsair_void_attr_group);
++	if (ret)
++		return ret;
++
++	/* Any failures after here will need to call hid_hw_stop */
++	ret = hid_hw_start(hid_dev, HID_CONNECT_DEFAULT);
++	if (ret) {
++		hid_err(hid_dev, "hid_hw_start failed (reason: %d)\n", ret);
++		goto failed_after_sysfs;
++	}
++
++	/* Refresh battery data, in case wireless headset is already connected */
++	INIT_DELAYED_WORK(&drvdata->delayed_status_work,
++			  corsair_void_status_work_handler);
++	schedule_delayed_work(&drvdata->delayed_status_work,
++			      msecs_to_jiffies(100));
++
++	/* Refresh firmware versions */
++	INIT_DELAYED_WORK(&drvdata->delayed_firmware_work,
++			  corsair_void_firmware_work_handler);
++	schedule_delayed_work(&drvdata->delayed_firmware_work,
++			      msecs_to_jiffies(100));
++
++	return 0;
++
++failed_after_sysfs:
++	sysfs_remove_group(&hid_dev->dev.kobj, &corsair_void_attr_group);
++	return ret;
++}
++
++static void corsair_void_remove(struct hid_device *hid_dev)
++{
++	struct corsair_void_drvdata *drvdata = hid_get_drvdata(hid_dev);
++
++	hid_hw_stop(hid_dev);
++	cancel_work_sync(&drvdata->battery_remove_work);
++	cancel_work_sync(&drvdata->battery_add_work);
++	if (drvdata->battery)
++		power_supply_unregister(drvdata->battery);
++
++	cancel_delayed_work_sync(&drvdata->delayed_firmware_work);
++	sysfs_remove_group(&hid_dev->dev.kobj, &corsair_void_attr_group);
++}
++
++static int corsair_void_raw_event(struct hid_device *hid_dev,
++				  struct hid_report *hid_report,
++				  u8 *data, int size)
++{
++	struct corsair_void_drvdata *drvdata = hid_get_drvdata(hid_dev);
++	bool was_connected = drvdata->connected;
++
++	/* Description of packets are documented at the top of this file */
++	if (hid_report->id == CORSAIR_VOID_STATUS_REPORT_ID) {
++		drvdata->mic_up = FIELD_GET(CORSAIR_VOID_MIC_MASK, data[2]);
++		drvdata->connected = (data[3] == CORSAIR_VOID_WIRELESS_CONNECTED) ||
++				     drvdata->is_wired;
++
++		corsair_void_process_receiver(drvdata,
++					      FIELD_GET(CORSAIR_VOID_CAPACITY_MASK, data[2]),
++					      data[3], data[4]);
++	} else if (hid_report->id == CORSAIR_VOID_FIRMWARE_REPORT_ID) {
++		drvdata->fw_receiver_major = data[1];
++		drvdata->fw_receiver_minor = data[2];
++		drvdata->fw_headset_major = data[3];
++		drvdata->fw_headset_minor = data[4];
++	}
++
++	/* Handle wireless headset connect / disconnect */
++	if ((was_connected != drvdata->connected) && !drvdata->is_wired) {
++		if (drvdata->connected)
++			corsair_void_headset_connected(drvdata);
++		else
++			corsair_void_headset_disconnected(drvdata);
++	}
++
++	return 0;
++}
++
++static const struct hid_device_id corsair_void_devices[] = {
++	/* Corsair Void Wireless */
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a0c),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a2b),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x1b23),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x1b25),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x1b27),
++
++	/* Corsair Void USB */
++	CORSAIR_VOID_WIRED_DEVICE(0x0a0f),
++	CORSAIR_VOID_WIRED_DEVICE(0x1b1c),
++	CORSAIR_VOID_WIRED_DEVICE(0x1b29),
++	CORSAIR_VOID_WIRED_DEVICE(0x1b2a),
++
++	/* Corsair Void Surround */
++	CORSAIR_VOID_WIRED_DEVICE(0x0a30),
++	CORSAIR_VOID_WIRED_DEVICE(0x0a31),
++
++	/* Corsair Void Pro Wireless */
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a14),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a16),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a1a),
++
++	/* Corsair Void Pro USB */
++	CORSAIR_VOID_WIRED_DEVICE(0x0a17),
++	CORSAIR_VOID_WIRED_DEVICE(0x0a1d),
++
++	/* Corsair Void Pro Surround */
++	CORSAIR_VOID_WIRED_DEVICE(0x0a18),
++	CORSAIR_VOID_WIRED_DEVICE(0x0a1e),
++	CORSAIR_VOID_WIRED_DEVICE(0x0a1f),
++
++	/* Corsair Void Elite Wireless */
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a51),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a55),
++	CORSAIR_VOID_WIRELESS_DEVICE(0x0a75),
++
++	/* Corsair Void Elite USB */
++	CORSAIR_VOID_WIRED_DEVICE(0x0a52),
++	CORSAIR_VOID_WIRED_DEVICE(0x0a56),
++
++	/* Corsair Void Elite Surround */
++	CORSAIR_VOID_WIRED_DEVICE(0x0a53),
++	CORSAIR_VOID_WIRED_DEVICE(0x0a57),
++
++	{}
++};
++
++MODULE_DEVICE_TABLE(hid, corsair_void_devices);
++
++static struct hid_driver corsair_void_driver = {
++	.name = "hid-corsair-void",
++	.id_table = corsair_void_devices,
++	.probe = corsair_void_probe,
++	.remove = corsair_void_remove,
++	.raw_event = corsair_void_raw_event,
++};
++
++module_hid_driver(corsair_void_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Stuart Hayhurst <stuart.a.hayhurst@gmail.com>");
++MODULE_DESCRIPTION("HID driver for Corsair Void headsets");
+-- 
+2.45.2
+
 
