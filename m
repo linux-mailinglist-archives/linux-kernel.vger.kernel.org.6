@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-297111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B0A95B347
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:56:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7507095B351
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAA41F23E16
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:56:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF603B2199C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7033C183CB6;
-	Thu, 22 Aug 2024 10:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE67183CBB;
+	Thu, 22 Aug 2024 10:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="lhSM6N0F";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qlQXi0Og"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F/oymJhZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5CC166F3D;
-	Thu, 22 Aug 2024 10:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3469A166F3D;
+	Thu, 22 Aug 2024 10:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724324192; cv=none; b=FzAVI7PtDIEfxA/L1x0zI2ANJdKMnqNFE1pNzbTXAGVKEeDJXCpMHRjTxY/uej9VVJ94yesPn8EYnkpciQqhqu9Et7YxNf/9EYXE3woupfPQpQVHvou/fX3iQyx7J5YAXujXPMeXr7W03u8cbFm/fY1n7E70I0CNPeN1A+zVAbE=
+	t=1724324392; cv=none; b=BSwSKkjwiOZCNvMu7Jv1+XpPAVf+jTGqtnrzOx7TqyT5ksvsJAeI6I78IQT7OOCmwbMT+oBAjAEgJm9nj58owHNQMLY48zduVLR38B5W/QjD5SYrUFBv9yTMPKwPHy//ijaqMQPghS7qgOXT1/58Q8evg+fiBw0Sjvl0V0V0q1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724324192; c=relaxed/simple;
-	bh=9VAzPXP0yAx0cd+vsCr1BnDmKh5mz33Zt2lS7Q04KSg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HUFNFqZW+TeKG+Vjs/WKPoo8mXZfV1HFRXs1xEoPzjXkEKYGTVAQLQyP0z47yt+NKXquuylDCz1ifeujruG30kBsX8XX1MJS6HV6Vy0BkgQV+RXFk1AC82pIOVuIVmWSyqfnXv9hkcDXOs8BknM9N2VYZcobJxgjKpxHog5yFyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=lhSM6N0F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qlQXi0Og; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 5BA10138FC54;
-	Thu, 22 Aug 2024 06:56:29 -0400 (EDT)
-Received: from phl-imap-09 ([10.202.2.99])
-  by phl-compute-06.internal (MEProxy); Thu, 22 Aug 2024 06:56:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724324189;
-	 x=1724410589; bh=ZLaLyJEH9kAfKRmJ7C9mQmjk14xh4u+FXopaAqi2VN8=; b=
-	lhSM6N0FPks4+A+qc5VwYCIhb49FxO/NT/Y5fYZwykIZO1L32xZ0fqRg5ovXGgb6
-	ok9gRWUxKXrUqHKDusthrherCwa344O6Fnd/x5rCa8VxyrF+AwzHcGoGitCwL23K
-	lVB8Lx+XCuPS+P7wmguWt0aIcXilkYiNccs7PsghfhuDdHyE0zOYUgBB+sQbgxDd
-	RlReFhIsXDQRcxkSJhZFsRJC4xR6r20baZygaSkv42mfkav1tBcyqN4a//3rsxtn
-	loGW0vJrQ/8uTKCzjU9uwA9QB9+jn1FwO5CwJ9BtMapsqviYytM1gT1IK1u2Ip14
-	vYocBQfHjkFOZOQCz8Pmxw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724324189; x=
-	1724410589; bh=ZLaLyJEH9kAfKRmJ7C9mQmjk14xh4u+FXopaAqi2VN8=; b=q
-	lQXi0OgCaiuSf5foI+YXfLATsug7LcWWj0ucMGwIhCGz10gmC6juSdNY22qLUdhH
-	ddGBwYAoJrinrvFV/uUfPajTVtkQAQ+QVxu397m0/pmfNiHmc2fFftbu0xEfLWhs
-	VdPwB9OSuXNMFEY0XFoyJygQqfJX13a+M6gg0xpQfTbujw5PRPhRDrfWAs9pMXOh
-	cjA1Cy449T7j2MbHldTaIfnHAAU/iD5BN3FbUJOM9ai8FzcERltatx0Oh4heIu+p
-	na3dQPg3iVZeWWId/jZFSw6ti3i4dDM2QrxYM+j4LE63Vge5p9aDZO6rrP0lwmxN
-	j7tHYf1WOkZ8hrYkuB7pA==
-X-ME-Sender: <xms:XBnHZsPXLAFwdU3KNEtUuScoXi0ht7Ug7A0_6XEV5c2pP81eoWuPMw>
-    <xme:XBnHZi8sqxM_-UkAzwWZ7Ce2M5Sb1mOksGUCTna1U2DAuGNh44rw-qs9Ul_29iDPx
-    PRdVKGmbLpbLUZ612A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvtddgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpefoggffhffvvefk
-    jghfufgtgfesthejredtredttdenucfhrhhomhepfdflrghnucfjvghnughrihhkucfhrg
-    hrrhdfuceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepvdeu
-    gfegheefudeikeeihfekgeevvedvkeduudejhedujeefgedvleffteeiffffnecuffhomh
-    grihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfu
-    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrd
-    gttgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehmiiigrhgvrghrhiestdhpohhinhhtvghrrdguvgdprhgtphhtthhopegtrghtrghlih
-    hnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgr
-    nhgusegrrhhmrdgtohhmpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehjrghrkhhkoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvgigvggtsehlihhsthhsrdhinhhfrh
-    gruggvrggurdhorhhgpdhrtghpthhtohepsghhvgesrhgvughhrghtrdgtohhmpdhrtghp
-    thhtohepugihohhunhhgsehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:XBnHZjRiSJ5uhVIWfntvv_tdKfRRzIx1KmTP1PqKDZlk6xphx3SuuQ>
-    <xmx:XBnHZkv031FSjHiPTHeY2evQdxQ7GQqawYlO0HSlldcs6FaE30rhpQ>
-    <xmx:XBnHZkcqPo1EYr-qJso-71jeYZWsIeGHIY7FDqUnEE-mfJi_7AwMew>
-    <xmx:XBnHZo1mzgmqluJlONDy8nw0Az1p0BshL3g2BQ0yVyO83UiK5kNR0w>
-    <xmx:XRnHZj_C7_bGGBPLtlDFN0agSRPIeKJNqTXmbTP2BuwpgG2xYtfC0dZp>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C7C90780062; Thu, 22 Aug 2024 06:56:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724324392; c=relaxed/simple;
+	bh=sPhTzw6MWquu8DOI0XirQFdU1uZuXiJ6Z+7sH4c7qiM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sbPrI94PyErr52137LGsrleRO+k6TM6s74L4zJM1LVGQNkqKELnEOskn5TqG2Aghp1PeBUS8XKn9/FZ/lg1svlb2CcqbaItEET5s8N53yf9iORENAJZriyDB6Zhhk4g6WzbAPrAKaHkh3fjtRl8J7cfbflnWMJN+I01aOZhfxbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F/oymJhZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47M9WWKi007555;
+	Thu, 22 Aug 2024 10:59:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=uchlU7Co3j6QPK5uI9GwWr
+	cRPa058bIwAtkQL0OyCaY=; b=F/oymJhZS+2KcwaiCt2uewZjYvFdIzQU2JPUOS
+	De/OzZ6JAb7EMU+vZcd7P33oahbU3+FmAPtE9ugzNhf0pnBWy0SwPf3pxIkBLXgR
+	c4rrFILy4O61+N1dsey3dxfbESZF/hYru8D2uL3oqtbU3BEIVbSxc491dOvBg1jM
+	YDvwvO3e7uxBextYlNNL4woN9WbA1zZw7z/MQRCuRbm/RurdyAw9d7O/dc2kIhaR
+	fil/L/pO6gePU5nV/ztPFbCkjsOF5cIHADKUuLjo4+9AvzsJdRjJG9oWq7Nxry8m
+	gvvPLrbY158M0wMVKYVECrQlDHkLY1vVAFHBXB9zIy2tTiWA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415gsd314w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:59:45 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MAxixi018481
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:59:44 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 22 Aug 2024 03:59:41 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
+Subject: [PATCH v1 0/3] Add missing fixes to FastRPC driver
+Date: Thu, 22 Aug 2024 16:29:30 +0530
+Message-ID: <20240822105933.2644945-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 22 Aug 2024 12:56:07 +0200
-From: "Jan Hendrik Farr" <kernel@jfarr.cc>
-To: "Dave Young" <dyoung@redhat.com>, "Pingfan Liu" <piliu@redhat.com>
-Cc: "Lennart Poettering" <mzxreary@0pointer.de>,
- "Ard Biesheuvel" <ardb@kernel.org>, "Philipp Rudo" <prudo@redhat.com>,
- "Jarkko Sakkinen" <jarkko@kernel.org>,
- "Eric Biederman" <ebiederm@xmission.com>, "Baoquan He" <bhe@redhat.com>,
- "Mark Rutland" <mark.rutland@arm.com>, "Will Deacon" <will@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <ec8befa0-f193-4de3-acea-8e37f8437c7e@app.fastmail.com>
-In-Reply-To: 
- <CALu+AoQRdxJUpNK_eCjKJ=ydRZ4av2S3xBaz3CYJZp12xqm=jQ@mail.gmail.com>
-References: <20240819145417.23367-1-piliu@redhat.com>
- <ZsX5QNie3pzocSfT@gardel-login>
- <CAF+s44S2Ph1_nFcZYy3j0Jr4yuHayb5zdNu1YXg8ce_Lf3TOgQ@mail.gmail.com>
- <CALu+AoQRdxJUpNK_eCjKJ=ydRZ4av2S3xBaz3CYJZp12xqm=jQ@mail.gmail.com>
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vErizSZqHKQ69PmlrxSt0sZxNrF4z7uq
+X-Proofpoint-ORIG-GUID: vErizSZqHKQ69PmlrxSt0sZxNrF4z7uq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_03,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=794 clxscore=1015 lowpriorityscore=0 impostorscore=0
+ mlxscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408220081
 
-Hi Dave,
+This patch series adds the listed bug fixes that have been missing
+in upstream fastRPC driver.
+- Store actual size of map and check it against the user passed size.
+- Consider map user VA and actual size for map lookup.
+- Skip refcount increment for DMA handles.
 
-> I forgot why we can not just extract the kernel from UKI and then load
-> it directly,  if the embedded kernel is also signed it should be good?
+Ekansh Gupta (3):
+  misc: fastrpc: Save actual DMA size in fastrpc_map structure
+  misc: fastrpc: Fix fastrpc_map_lookup operation
+  misc: fastrpc: Skip reference for DMA handles
 
-The problem is that in the basic usecase for UKI you only sign the entire
-UKI PE file and not the included kernel, because you only want that kernel
-to be run with that one initrd and that one kernel cmdline.
+ drivers/misc/fastrpc.c | 54 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
 
-So at a minimum you have to have the signature on the whole UKI checked by
-the kernel and than have the kernel extract UKI into its parts unless you
-somehow want to extent trust into userspace to have a helper program do that.
+-- 
+2.34.1
 
-That's what my UKI support implementation from last year did.
-
-v1: https://lore.kernel.org/lkml/20230909161851.223627-1-kernel@jfarr.cc/
-v2: https://lore.kernel.org/lkml/20230911052535.335770-1-kernel@jfarr.cc/
-v3-wip: https://github.com/Cydox/linux/blob/2908db6d8556fa617298cfb713355edaa9e4b095/arch/x86/kernel/kexec-uki.c
-
-It however also lacks support for the "side-car" files. One option to add them
-would be to load them using subsequent calls to kexec_file_load with a special
-flag maybe.
-
-TPM measurements are also not done although they are way easier to
-implement with this approach as we still have the rest of the kernel around.
-
-However TPM measurements in this case would be implemented by the kexec loader
-in the kernel not by the UKI deciding what to measure. So we would have to
-have a very firm agreement on what to measure.
-
-Going the UEFI emulator route gives the UKI format (and other (future) formats)
-way more flexibility. The cost is to potentially implementing a large portion
-of the UEFI spec, especially if the goal is to support future unknown formats
-which IIRC was one of the reasons this approach was suggested.
-
-Kind regards,
-Jan
 
