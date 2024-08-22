@@ -1,98 +1,62 @@
-Return-Path: <linux-kernel+bounces-296597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EDC95AC9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA3695AC9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155A11F222C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:33:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6856A1F22538
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B657B3BB47;
-	Thu, 22 Aug 2024 04:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iEz6BxuT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fgRcYOkt";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iEz6BxuT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fgRcYOkt"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E351146556;
+	Thu, 22 Aug 2024 04:36:32 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E630428DCC
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B251BF2A;
+	Thu, 22 Aug 2024 04:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724301227; cv=none; b=kovabP0VI995obOFhxnbCZ3U50INLlG0enH2A4IEZ9Popj5VUcuaAeYfaaBmEdUEFwym8jjcEjIo+EBrUjGobZpAgWmP5i7OFpWzTbesJiuWN/XZIh7BRyS1qQ0TLzMPnUnylFqVvKicUbHacscx19OsJuSurWzOc4vKDHL5sBk=
+	t=1724301392; cv=none; b=uNsBvHn7aPHqPUGaJMjG28qddyFzVxF562W/seSixxDgl4TWYKTl2GwRYbEr0jd272HtXEWMdQii0pLpmmJFJSdtbrVLjqizadH9z9Q7b7Yfnmrt6QJeCy9Z/kAR+ItK8SNFI9sI2dNxz56wOfJpx6SE7mwlWtGP4BntWJcqXcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724301227; c=relaxed/simple;
-	bh=jkVz6ub2t90tCPvJU2OYmYkvyWismnjyYbBqVe47Mk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rLbdje3nxTtIDiLTj8DmwsV4o8GLI6W6/jwW+F/TkZCKHBP8TuMYsSohM76go8cnvoz8r/C72k3kB54iO6Hkf+h/jA8ugcTgf2z4vgSo4+iCSevmwsXIHXn4vzkWxM3P18PvRM/hz53piijH4Z4RCodYMhm9+6FJaGCrgEtHZjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iEz6BxuT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fgRcYOkt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iEz6BxuT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fgRcYOkt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1724301392; c=relaxed/simple;
+	bh=rGhOD38GjPd2YCkgM1QGnWfa7sS2RIeAm2BRL6NL45I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J7ugdsblc5/qINGJGH6yFLUOHNZuzTwI3aAUEef0ZqB/6izLa0941LhlL4HwF8p38D+HYFDcuMqBku+oVfiG0jdoeH6o772PLdT3NuEJxYLnDXFAkVwfVSCTAa6YqDqGu1+uw+1ppiswtOHCj3brZ7qbwxzfGNWgmqAzQM36bzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id BA818A9EBD;
+	Thu, 22 Aug 2024 13:36:27 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id G7ptISx-GhRg; Thu, 22 Aug 2024 13:36:27 +0900 (JST)
+Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0671222499;
-	Thu, 22 Aug 2024 04:33:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724301224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=u+50gYUJFGmIA+n4VtDqikJkBoNG7yQ98SFBZ8R9ygQ=;
-	b=iEz6BxuTFPtvnVbI2Yu1BUQ0apv8zIoX0zbnFWUWEqpAFpHIkILaY+RuyPZiJc8ajuFi8W
-	UL6DeuNeY+ciZB8MMtVmqsVJdZJ+tYLHz0tIgce4ORBVd4bX68u/88Oeoi7m2yiDucb3Nc
-	WMkuQR6luRtR8C+Si82aFdD+0ApraPE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724301224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=u+50gYUJFGmIA+n4VtDqikJkBoNG7yQ98SFBZ8R9ygQ=;
-	b=fgRcYOkt2lgxZGRNFQKP1brjkwswdezbv6jsMLKMITvgK0f7VvpwLcnl3WZmEeD7HI/1xq
-	l8IPU7PxwPk+TiBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=iEz6BxuT;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fgRcYOkt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724301224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=u+50gYUJFGmIA+n4VtDqikJkBoNG7yQ98SFBZ8R9ygQ=;
-	b=iEz6BxuTFPtvnVbI2Yu1BUQ0apv8zIoX0zbnFWUWEqpAFpHIkILaY+RuyPZiJc8ajuFi8W
-	UL6DeuNeY+ciZB8MMtVmqsVJdZJ+tYLHz0tIgce4ORBVd4bX68u/88Oeoi7m2yiDucb3Nc
-	WMkuQR6luRtR8C+Si82aFdD+0ApraPE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724301224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=u+50gYUJFGmIA+n4VtDqikJkBoNG7yQ98SFBZ8R9ygQ=;
-	b=fgRcYOkt2lgxZGRNFQKP1brjkwswdezbv6jsMLKMITvgK0f7VvpwLcnl3WZmEeD7HI/1xq
-	l8IPU7PxwPk+TiBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 725CD13A8D;
-	Thu, 22 Aug 2024 04:33:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Bh0DCaS/xmZ9JAAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Thu, 22 Aug 2024 04:33:40 +0000
-From: David Disseldorp <ddiss@suse.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-kernel-library@freelists.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Mel Gorman <mgorman@suse.de>,
-	Hajime Tazaki <thehajime@gmail.com>,
-	David Disseldorp <ddiss@suse.de>
-Subject: [PATCH] sched: remove unused __HAVE_THREAD_FUNCTIONS hook support
-Date: Thu, 22 Aug 2024 04:33:28 +0000
-Message-ID: <20240822043328.4180-1-ddiss@suse.de>
-X-Mailer: git-send-email 2.43.0
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id 8B39EA9B76;
+	Thu, 22 Aug 2024 13:36:27 +0900 (JST)
+From: takakura@valinux.co.jp
+To: pablo@netfilter.org,
+	kadlec@netfilter.org,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	fw@strlen.de
+Cc: netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ryo Takakura <takakura@valinux.co.jp>
+Subject: [PATCH] netfilter: Don't track counter updates of do_add_counters()
+Date: Thu, 22 Aug 2024 13:36:09 +0900
+Message-Id: <20240822043609.141992-1-takakura@valinux.co.jp>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,84 +64,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 0671222499
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_CC(0.00)[freelists.org,redhat.com,infradead.org,linaro.org,suse.de,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.01
-X-Spam-Flag: NO
 
-__HAVE_THREAD_FUNCTIONS could be defined by architectures wishing to
-provide their own task_thread_info(), task_stack_page(),
-setup_thread_stack() and end_of_stack() hooks.
+From: Ryo Takakura <takakura@valinux.co.jp>
 
-Commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
-removed the last upstream consumer of __HAVE_THREAD_FUNCTIONS, so change
-the remaining !CONFIG_THREAD_INFO_IN_TASK && !__HAVE_THREAD_FUNCTIONS
-conditionals to only check for the former case.
+While adding counters in do_add_counters(), we call
+xt_write_recseq_begin/end to indicate that counters are being updated.
+Updates are being tracked so that the counters retrieved by get_counters()
+will reflect concurrent updates.
 
-Signed-off-by: David Disseldorp <ddiss@suse.de>
+However, there is no need to track the updates done by do_add_counters() as
+both do_add_counters() and get_counters() acquire per ipv4,ipv6,arp mutex
+beforehand which prevents concurrent update and retrieval between the two.
+
+Moreover, as the xt_write_recseq_begin/end is shared among ipv4,ipv6,arp,
+do_add_counters() called by one of ipv4,ipv6,arp can falsely delay the 
+synchronization of concurrent get_counters() or xt_replace_table() called 
+by any other than the one calling do_add_counters().
+
+So remove xt_write_recseq_begin/end from do_add_counters() for ipv4,ipv6,arp.
+
+Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
 ---
- include/linux/sched.h            | 2 +-
- include/linux/sched/task_stack.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/netfilter/arp_tables.c | 4 ----
+ net/ipv4/netfilter/ip_tables.c  | 3 ---
+ net/ipv6/netfilter/ip6_tables.c | 3 ---
+ 3 files changed, 10 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f8d150343d42..9dbcdfe173cf 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1874,7 +1874,7 @@ extern unsigned long init_stack[THREAD_SIZE / sizeof(unsigned long)];
+diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
+index 14365b20f1c5..20de048d3e0c 100644
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -1009,7 +1009,6 @@ static int do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 	const struct xt_table_info *private;
+ 	int ret = 0;
+ 	struct arpt_entry *iter;
+-	unsigned int addend;
  
- #ifdef CONFIG_THREAD_INFO_IN_TASK
- # define task_thread_info(task)	(&(task)->thread_info)
--#elif !defined(__HAVE_THREAD_FUNCTIONS)
-+#else
- # define task_thread_info(task)	((struct thread_info *)(task)->stack)
- #endif
+ 	paddc = xt_copy_counters(arg, len, &tmp);
+ 	if (IS_ERR(paddc))
+@@ -1029,8 +1028,6 @@ static int do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 	}
  
-diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-index ccd72b978e1f..55042ff01a6d 100644
---- a/include/linux/sched/task_stack.h
-+++ b/include/linux/sched/task_stack.h
-@@ -33,7 +33,7 @@ static __always_inline unsigned long *end_of_stack(const struct task_struct *tas
- #endif
- }
+ 	i = 0;
+-
+-	addend = xt_write_recseq_begin();
+ 	xt_entry_foreach(iter,  private->entries, private->size) {
+ 		struct xt_counters *tmp;
  
--#elif !defined(__HAVE_THREAD_FUNCTIONS)
-+#else
+@@ -1038,7 +1035,6 @@ static int do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 		ADD_COUNTER(*tmp, paddc[i].bcnt, paddc[i].pcnt);
+ 		++i;
+ 	}
+-	xt_write_recseq_end(addend);
+  unlock_up_free:
+ 	local_bh_enable();
+ 	xt_table_unlock(t);
+diff --git a/net/ipv4/netfilter/ip_tables.c b/net/ipv4/netfilter/ip_tables.c
+index fe89a056eb06..f54dea2a8fcd 100644
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -1162,7 +1162,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 	const struct xt_table_info *private;
+ 	int ret = 0;
+ 	struct ipt_entry *iter;
+-	unsigned int addend;
  
- #define task_stack_page(task)	((void *)(task)->stack)
+ 	paddc = xt_copy_counters(arg, len, &tmp);
+ 	if (IS_ERR(paddc))
+@@ -1182,7 +1181,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 	}
  
+ 	i = 0;
+-	addend = xt_write_recseq_begin();
+ 	xt_entry_foreach(iter, private->entries, private->size) {
+ 		struct xt_counters *tmp;
+ 
+@@ -1190,7 +1188,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 		ADD_COUNTER(*tmp, paddc[i].bcnt, paddc[i].pcnt);
+ 		++i;
+ 	}
+-	xt_write_recseq_end(addend);
+  unlock_up_free:
+ 	local_bh_enable();
+ 	xt_table_unlock(t);
+diff --git a/net/ipv6/netfilter/ip6_tables.c b/net/ipv6/netfilter/ip6_tables.c
+index 131f7bb2110d..f1d3bb74eb16 100644
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -1179,7 +1179,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 	const struct xt_table_info *private;
+ 	int ret = 0;
+ 	struct ip6t_entry *iter;
+-	unsigned int addend;
+ 
+ 	paddc = xt_copy_counters(arg, len, &tmp);
+ 	if (IS_ERR(paddc))
+@@ -1198,7 +1197,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 	}
+ 
+ 	i = 0;
+-	addend = xt_write_recseq_begin();
+ 	xt_entry_foreach(iter, private->entries, private->size) {
+ 		struct xt_counters *tmp;
+ 
+@@ -1206,7 +1204,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
+ 		ADD_COUNTER(*tmp, paddc[i].bcnt, paddc[i].pcnt);
+ 		++i;
+ 	}
+-	xt_write_recseq_end(addend);
+  unlock_up_free:
+ 	local_bh_enable();
+ 	xt_table_unlock(t);
 -- 
-2.43.0
+2.34.1
 
 
