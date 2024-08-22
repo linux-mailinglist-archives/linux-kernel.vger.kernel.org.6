@@ -1,100 +1,112 @@
-Return-Path: <linux-kernel+bounces-297572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D16B95BAFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:51:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3743F95BB44
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FFB283BE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:51:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFEEFB297E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780B91CDA19;
-	Thu, 22 Aug 2024 15:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A021CDFAC;
+	Thu, 22 Aug 2024 16:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h60PjGww"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="C3VDduoJ";
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="FGMovMnR"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4861CCED8;
-	Thu, 22 Aug 2024 15:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A021E1CCB2E;
+	Thu, 22 Aug 2024 16:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341842; cv=none; b=F+atwR2mvPjZpNpMJ5i/199qDuHCAIkDWjq3c09l0lLqwLzuzK9/swH3mbj+uF5xY4QEWEhjtj9ssl7SjDc3mIdHRBblmpGsX0h+LFSjoY66aD3STNPXzmdlTFxaguBjoV3wyn1lUlyDaktT1L/aJYwtQbSEVZ7Jgpm2on7n5yE=
+	t=1724342492; cv=none; b=Zl7U69rlvOJbMMy43YpMMIpJ47sgkSGikGQA7XBL0OeW81uQoy7B0lm0RsIuCWkk2W7llPziss+gdR8ot6tm3znuQke3FGoIik/BgfprtdEnw2hiULuUf9XGdYt5PyWLX+dFtjFM3OWlIzCDu8nrwOu2QeV1oANLp7UkSiUvyJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341842; c=relaxed/simple;
-	bh=YLr7U4WuN7r4DANy/NK+UIDzVlCZ3BdQDPUgdZksTmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIEdH4qb5ryUSF3ALrZ6F5FjemV2Kq4MhH9FbhYAjqf09VTlLGadAGVhG1SKxWad6d7zgUx12PdoP9k+tT8aOuwxE5SsdaHLGDP4EncZ3fzRXXVKwnKmCezTUCSxZaMEVV/cC5IN7bjGX3vQiZ2JVgmt6VMBrGDo6T2XcL2HKbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h60PjGww; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YY6B1q/3dDOEaOOiRTjhyN4W4NVDnqCSJaEbhKIHa0c=; b=h60PjGwwMjPJl9EjMbiSULMd/C
-	xttWOIL+D8WwEbaBIKarBDGlMmqtbJAx81ksoMkjzFqzCEMPQ0hMJK+CYZIN3OVQjx8Wpe4qnICMt
-	kahUcea08sQaqztwYvQEpPNX0NheqS+uHAcAbSag3dbEf0ZeTBOuM7MJMtLWVIZPjb0o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1shA50-005Rbl-LF; Thu, 22 Aug 2024 17:50:30 +0200
-Date: Thu, 22 Aug 2024 17:50:30 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v3 3/3] phy: dp83td510: Utilize ALCD for cable
- length measurement when link is active
-Message-ID: <3b5f1f4e-d132-4f42-a516-29a0a827bf59@lunn.ch>
-References: <20240822120703.1393130-1-o.rempel@pengutronix.de>
- <20240822120703.1393130-4-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1724342492; c=relaxed/simple;
+	bh=EAj6vzOlOtssY1hIGQWlO2sMAKi2kO2/p2ueIrvDLtI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HxMkOBSbrBw5dY2y+kJWjl55C2cJ4ZjTsgEbRg9AZ2P1ybm/Etor+GQa69Igngfj5hssLI3F2/hyq8zd3hoS8MHcuUt+VOgf9MHaY9zKDX/C2uOP6W8mScYevIquVUugVwybzms5esaQwql7747ftueUpu1mQsENa9YhtJxXQ5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=C3VDduoJ; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=FGMovMnR; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id BA45621D4;
+	Thu, 22 Aug 2024 15:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1724341460;
+	bh=+9Cxjj5ewNAyiHqG0WkT/4GxljY17nZF4nw5J/qyUhg=;
+	h=From:To:CC:Subject:Date;
+	b=C3VDduoJ7TMUVEeTYuPv8PI2sRTSfBBOT0jpN/lHmUxyE4tiSUqu894jQTwMvNoDk
+	 +awtZxZvBa/+3OF6zMMQXAZKAPNsJxph7NrzRyapmk/9t6eOEjHHNzkxh0k2YH2UDl
+	 dbXzZpt9dHvVCUi4Mxh3p85X7u9nThJ6Zg0o8xgE=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id DBA812215;
+	Thu, 22 Aug 2024 15:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1724341936;
+	bh=+9Cxjj5ewNAyiHqG0WkT/4GxljY17nZF4nw5J/qyUhg=;
+	h=From:To:CC:Subject:Date;
+	b=FGMovMnREefJuL8C/CDJqvDon3PtIJdKK4yJ2YwuuJnuqvjGTp7RdY6JQcuD1tMLY
+	 U8z863Jf1yHkudq1/c/xQSg/l2rN0Ql8TuAol+l3zp40TiyBecGgGFEbQY4lVDERT4
+	 /5e31hnTTUku8Msjl7DIE2oeR5ytA1v1axF3u8Xc=
+Received: from ntfs3vm.paragon-software.com (192.168.211.133) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Thu, 22 Aug 2024 18:52:16 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH 00/14] fs/ntfs3: Bugfix and work with compression
+Date: Thu, 22 Aug 2024 18:51:53 +0300
+Message-ID: <20240822155207.600355-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822120703.1393130-4-o.rempel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Thu, Aug 22, 2024 at 02:07:03PM +0200, Oleksij Rempel wrote:
-> In industrial environments where 10BaseT1L PHYs are replacing existing
-> field bus systems like CAN, it's often essential to retain the existing
-> cable infrastructure. After installation, collecting metrics such as
-> cable length is crucial for assessing the quality of the infrastructure.
-> Traditionally, TDR (Time Domain Reflectometry) is used for this purpose.
-> However, TDR requires interrupting the link, and if the link partner
-> remains active, the TDR measurement will fail.
-> 
-> Unlike multi-pair systems, where TDR can be attempted during the MDI-X
-> switching window, 10BaseT1L systems face greater challenges. The TDR
-> sequence on 10BaseT1L is longer and coincides with uninterrupted
-> autonegotiation pulses, making TDR impossible when the link partner is
-> active.
-> 
-> The DP83TD510 PHY provides an alternative through ALCD (Active Link
-> Cable Diagnostics), which allows for cable length measurement without
-> disrupting an active link. Since a live link indicates no short or open
-> cable states, ALCD can be used effectively to gather cable length
-> information.
-> 
-> Enhance the dp83td510 driver by:
-> - Leveraging ALCD to measure cable length when the link is active.
-> - Bypassing TDR when a link is detected, as ALCD provides the required
->   information without disruption.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Here are fixes for sparse warnings, possible deadlooks.
+Refactoring was done with extraction of common code and some optimizations.
+Added the ability to set a compression attribute (chattr).
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Konstantin Komarov (14):
+  fs/ntfs3: Do not call file_modified if collapse range failed
+  fs/ntfs3: Optimize large writes into sparse file
+  fs/ntfs3: Separete common code for file_read/write iter/splice
+  fs/ntfs3: Fix sparse warning for bigendian
+  fs/ntfs3: Fix warning possible deadlock in ntfs_set_state
+  fs/ntfs3: Remove '__user' for kernel pointer
+  fs/ntfs3: Refactor enum_rstbl to suppress static checker
+  fs/ntfs3: Stale inode instead of bad
+  fs/ntfs3: Add rough attr alloc_size check
+  fs/ntfs3: Make checks in run_unpack more clear
+  fs/ntfs3: Implement fallocate for compressed files
+  fs/ntfs3: Add support for the compression attribute
+  fs/ntfs3: Replace fsparam_flag_no -> fsparam_flag
+  fs/ntfs3: Rename ntfs3_setattr into ntfs_setattr
 
-    Andrew
+ fs/ntfs3/attrib.c  |  96 ++++++++++++++++++++++---
+ fs/ntfs3/file.c    | 176 +++++++++++++++++++++++++++++++++------------
+ fs/ntfs3/frecord.c |  74 ++++++++++++++++++-
+ fs/ntfs3/fslog.c   |  19 ++++-
+ fs/ntfs3/inode.c   |  15 ++--
+ fs/ntfs3/namei.c   |   4 +-
+ fs/ntfs3/ntfs_fs.h |   8 ++-
+ fs/ntfs3/record.c  |   3 +
+ fs/ntfs3/run.c     |   8 ++-
+ fs/ntfs3/super.c   |  57 ++++++++-------
+ fs/ntfs3/xattr.c   |   2 +-
+ 11 files changed, 360 insertions(+), 102 deletions(-)
+
+-- 
+2.34.1
+
 
