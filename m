@@ -1,157 +1,212 @@
-Return-Path: <linux-kernel+bounces-296509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2468C95ABA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44CC95ABA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FAD28BF56
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587E91F29238
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9E528E37;
-	Thu, 22 Aug 2024 02:57:20 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C20E44C97
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724295440; cv=none; b=E0Hsgb/Mlg6ToKrlME+guHtrmgu3LqNQL+H8gb/nClBod3Ar9Z1AaBMvEVZZNF9I6W9x8bdM+avxetqEIExnB72xOK77h5N5la0oKyZMEUObbVQxKqhwa6cfDM1cESUEsKSe4PfLjwyfaZ/e7DQKBf4/YCFYUe/69nafcVUXT08=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724295440; c=relaxed/simple;
-	bh=8CObXoMgSKoS4ZUJ0qUwPLz2SDMC/KxFvL88BD+5ztY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=M1AjOghpnS87hx1kGF9snpdS/EZ1JKUogZRY/0hZnFD/kIimo/tsj4ErcDJ4DnvL3IfeWmQGCIdaW4zmYgUufGjToSgl3a1ipd4b7lDO+wwcklpJL2Od2LavOgoK+bad15pAWWq6YeO5eU0mZFYU1NjwrPFAXV8W2CM1M5r1Sh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxKuoLqcZmnccbAA--.59909S3;
-	Thu, 22 Aug 2024 10:57:15 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMCxC2cJqcZmdF4dAA--.33083S3;
-	Thu, 22 Aug 2024 10:57:15 +0800 (CST)
-Subject: Re: [PATCH v1 2/2] LoongArch: Add ifdefs to fix LSX and LASX related
- issues
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240820123731.31568-1-yangtiezhu@loongson.cn>
- <20240820123731.31568-3-yangtiezhu@loongson.cn>
- <1d23bbfe-dd36-b2ff-c4b3-cf69396ea53f@loongson.cn>
- <882d3aa3-24cf-9866-7e00-161e94893811@loongson.cn>
- <57818c31-c767-e8f4-2ea9-765e2dbbe1ba@loongson.cn>
- <6a8f6421-0ea8-cec9-7e6d-8473d474baa3@loongson.cn>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <5a4d674c-579f-f644-4fbf-9ef41d4af8de@loongson.cn>
-Date: Thu, 22 Aug 2024 10:57:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEF56BFA5;
+	Thu, 22 Aug 2024 02:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="XdgYnRp4"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2051.outbound.protection.outlook.com [40.107.117.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C660B558BB;
+	Thu, 22 Aug 2024 02:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724295488; cv=fail; b=FlCCvf5Q7tCi8sNHq7id9vPJgwitakxRpO/uMmA69KcwwCVtLrxHRYSBXjvPfhPDE4uQilQJ8T9nvMiQJUzErRPZ6Z9jbAXZVi24Lt1YlVH23QgfyspdmMk+fC5H7oNoYnRlx4hGvEtm8+FjOn2MKy+MwI2M2RmZdKJNzFdh3uY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724295488; c=relaxed/simple;
+	bh=iotJW+4NpJY1XFgYO0Zhl0U7RHvn7Uc8KMaxkorCz1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JXaz3b5f9mD7lcBYHg9CmjP9iGRTG2NuhrcbxJjfhAdIUKDeilSHJNR5abmFyBW/DURCBwjhyl9vXzzElbCc6rkYoIertRGrOg+Do1dtqQKP00CRq6bYRNUJzNqENUkHomNdGhsrkB30gz9n0Q+utJXaJ3yIKoIFQkJC8GULx7Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=XdgYnRp4; arc=fail smtp.client-ip=40.107.117.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wjD/Nbt/JyASiGJS8dqlnpgjcOPQJ0Vh8eHROTtqyrq96T2yIF5hLkEBRZJ4bfVlLO8Tk0l+8iAYFEwHYUA7vW1cZzCLGLYjU21pY3b9/bzg+r0U6O35kvjFAGlIB9OMi0Q3K7Q35CPOSlRvPY8Vt9zwZ0IDWRk5qOsbSFm8OKo+sa5XRSbnm8vF3nu1dUyrMV/zhiYSflahCzzIWLB+hZOjH3mhb8+750PLXEIAl+1OjFLLVDaPPv5xT4uwIhs/2K327og+2c0iOGeys2+H/JcarFzTnogCU9aYVVxuQYl46RyUEsdpoirk3a7uLbX6OR+5J0mm58M8OeeN79AwTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1KxLOalht2J+m7HvN4oDVwKjt27Tw14ExCM8SBu1uq8=;
+ b=eGNWu6hBUvpxnKQ/KjOR7LjL0821r5mmU2kV9aFteDI2U0V04t62NKEXzz0RbfxsDHLOLDvLvtFKPIRqhFG6l5XDMy2FqLCHd6tO7e1Y7M84JToK7ms/vfh837Rk+r0LbMNAnPVJIcwQbRklAMp29OKzdnNFyElRerBrNdUijerYwF+Vf1Dh4YQ4J0b1ww7jVjKzzDFB3bbKQY8UC8looWAHMpE66PVtXxnF7etnbU612o5SXFNQE4UFPl/k+0Z5D7EGRujydIzIhpnbagzxyCqgfm5kwXTy7c7CzSumeYBGUMUylrAbh1vxmE03xQb3dYJ4Rs/k/2xXlLM4Dp+5/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1KxLOalht2J+m7HvN4oDVwKjt27Tw14ExCM8SBu1uq8=;
+ b=XdgYnRp42C0UqEP9qZoCNNxDdQVSf1GHLwH8CVWdPNq4ldmZhofKvByjMcyBhFDixL8U7eUlzpwA5vzxr6HTl2pW73psxjvu/dntQ4y0DmjI5y2NPFtVp3iJBTFyhEaouhApUglVSJdmZ2G58X4Elem3uYHtNcK3p8Gs9v/42Wlv7+o3CDtj2caoR4NwiDwkGeVCoCbZXICNwPvJOLRX/NbUUnxr6wDgzJ2NTeENtEt+z+yFtvzMWABIUHElqOpYdqEZaD2yrVj8772utvmgIlwdPhYnJypM139+bNkxT7+DVNMxuAhaPdboMHtCh1CfDZs3+/znZiN39tSc4GcFsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14) by TYZPR06MB7144.apcprd06.prod.outlook.com
+ (2603:1096:405:b3::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Thu, 22 Aug
+ 2024 02:58:02 +0000
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f]) by KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f%7]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
+ 02:58:02 +0000
+From: Chen Yufan <chenyufan@vivo.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Chen Yufan <chenyufan@vivo.com>
+Subject: [PATCH v1] bcachefs: Convert to use jiffies macros
+Date: Thu, 22 Aug 2024 10:57:31 +0800
+Message-Id: <20240822025731.5651-1-chenyufan@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0153.apcprd04.prod.outlook.com (2603:1096:4::15)
+ To KL1PR0601MB5487.apcprd06.prod.outlook.com (2603:1096:820:bf::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6a8f6421-0ea8-cec9-7e6d-8473d474baa3@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxC2cJqcZmdF4dAA--.33083S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXFyUGF18Cw1UZF48Ary3WrX_yoW5Aryxpr
-	ykAFWDtFWrGr1kAr1qqw1DWa4Utr1kJw1UXr1UJFy8Jws8tr4agr4UXF1j9ryDWr4rJ3WS
-	yrW8X3sIvryUJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
-	14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnI
-	WIevJa73UjIFyTuYvjxU7_MaUUUUU
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5487:EE_|TYZPR06MB7144:EE_
+X-MS-Office365-Filtering-Correlation-Id: 247d76d9-ba1b-4a71-cdcf-08dcc2563cd6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zY5FHDNiF1f4CfMVwCgoavsLI+e5hmUXx3pnUk5M1yqryT8+23vjiiDuFbn5?=
+ =?us-ascii?Q?cLFgxpu0KsmQH2PMnj7r8dmbUDlxcVmR6OkE9PNFcwU5hArzrp88s1z3gjN3?=
+ =?us-ascii?Q?LbprnuKdNksSzmnLweTF4zIhpTd2Rn3PSFzhDevTfenzU0asXyETeTejLvY8?=
+ =?us-ascii?Q?2tJrhwaaGluYplDUDJ0WDrLOuP67unqGFNZDAFOLmEqOmh0+npgpuZKD5yOz?=
+ =?us-ascii?Q?iivcZPMTFjZO7IRdHvRRsO+1OwxatkH0qFG73sWArR/skmV58qfc3j3ryUDw?=
+ =?us-ascii?Q?p9Eio9mOZau8n5hPHVfx/bWOeR6LuF9JLiYZsHF/t6jQWcXRLnMhMt2CVJVw?=
+ =?us-ascii?Q?FW1yTmZsrvjtU7qv39wFtjZ6db/hUmeTsVALii0D3kLRMyzhqawGkYwRdmx6?=
+ =?us-ascii?Q?H7owBwD+U1HFtC9ChIOf5dwsEtrWtlkuVS9oOJ8WtX9iIXoJvLK+3WhFMjpb?=
+ =?us-ascii?Q?S3bT1eNjsMZmumx/cltM3epVkUC50fpAlWpzxyq9xOiYzrQNvwlKYzviZipl?=
+ =?us-ascii?Q?n8O/hH3lYAkX00B8rStYknOhjMXariWp1ZJGL2MgM566WLRZ798pSrvlcjFh?=
+ =?us-ascii?Q?98PSgVgPZjVPIftdS7v8h3kJCzl61miR5YxFG+gu7ngkQNBwhG0coeb/duSI?=
+ =?us-ascii?Q?/A3+y5x4EJhsEgwo66bH0D5TpH+K/Cn5o1h1xTbLTAfMDDglCLNzqa9ztKdu?=
+ =?us-ascii?Q?v1xWU4wmHumVUJwKjpNJ+tLdvKco51Rf3FxJfEnZNdLFvKyyZMo9ECkdMxkA?=
+ =?us-ascii?Q?H4ogNqg6u1/zNHon/PIcXnyyu3wH6KV7AzdbUtU/9cbgdrpQPrh6VbAhW2uk?=
+ =?us-ascii?Q?dz7pGLu98g2Enx21wxONC8E/YSAu5iYs43kZ69x0u6KKJoLil29VjNobJ9cg?=
+ =?us-ascii?Q?T8d5+BIDKgxUd6obOp5d3jzUonD1j0+YhOhBkkYggORPmMT06AydHbRQRD7i?=
+ =?us-ascii?Q?3bo6rmcIBdRZgcspW2UOLAIg0f2hPcWTe4/BRz8qIpkIFFYzRM0AaUtcLLpQ?=
+ =?us-ascii?Q?FbSYEav+48K7rhfxvxZjgRbA5wGjWmOnmGLBNEtonnZ9dcXhPAhnSoXqtDOw?=
+ =?us-ascii?Q?YA0GM+FSM8thZ2YHrFlGE/rkDktEmw79rUBZlfvNR/vAFD3V+9cp8H5fRjYy?=
+ =?us-ascii?Q?3rfpFmbXcLVcfMukVrlimCX5hhIl9274IOYJNpTWUhq+iaqTM5RjGb+6NtMN?=
+ =?us-ascii?Q?W9F9x6+4ZVTXGOKKC0Kdv/8Mh1cV8hNLxGXAZRH0Efj8g9AOsVgSAh33WqA2?=
+ =?us-ascii?Q?SVRHX2OP5DkZ4/nhpsVBMghZ7NCaszXJqfc+QN+510wLYsoRqO2BMEEbmZ0M?=
+ =?us-ascii?Q?/RDYIFaos9sJT+NOILQlDpw4B6d+NYzjiH8UCgaCeiiZkVl4tHqzBh7yaLSL?=
+ =?us-ascii?Q?nSSO9KY8fk+KEQq7FxogB+SG5Wp91MPOFJee8SZQetHsLI+AnA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB5487.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yrr8PDVReKh65yIEbjbbHSpouwOLfAG6H3tyRMGULE9ancauNuIFr2S0kfFD?=
+ =?us-ascii?Q?dRqi2Pj4gT06tK2eTL2bJwLf7QGgS2SA7rA7HLl/iKcCL6FpkKx2/oGJOH3p?=
+ =?us-ascii?Q?uYX6cygF7snlYbmT77aCHRs2MEYURJyCC92gW0JX4KO32OMeDVGTUiqwg3Oi?=
+ =?us-ascii?Q?MoolM5yHRHr6T/TvROgVI6H0w3SEZPjp/UVY46ZP6Iu7dylyJCm7/iskQXXb?=
+ =?us-ascii?Q?OzgVog3rhrHp3LP2UbqHoe+OQUWfVrbaUXHf7TLpp1b9jnsZrn0vtAONZNgb?=
+ =?us-ascii?Q?Q5m4TqcQ74KATqLoG/2bKRPKCye9DbBuOp2j6oY/UorSvmZ4Q8S/0qnolZb1?=
+ =?us-ascii?Q?y10x+3d5tpkV84gBAk9tjEtvbG72AMFr/xRIp6L+2n2Foyw3w97B5+Q+Mg8I?=
+ =?us-ascii?Q?W56FWhLyomvYTaOI3Nbp9hfRSS7y5PNsY/lmXQeDewxigQuoflO1Al1Bhek9?=
+ =?us-ascii?Q?rrAis5EOp80qvBviZ0AV0fUezfUdv2oQ/ZgWqmxT2lY6Wv3OZsvNeotMPpp3?=
+ =?us-ascii?Q?1CY+In9ZnHmSjsepg5OLsLnLmiQVIxXAkCLSIU3Lv0vGk4oMax8aXSyoDbId?=
+ =?us-ascii?Q?KXhStt+6UL2+HmIZpgejSHDT81+G/NX6ClbAYvQ+m6XyI7odyMzR3zM2Wqr1?=
+ =?us-ascii?Q?O4BcgiOpBNt0H5zgJkPxkm0WDArZMdiKq2h8PS2IL2GDIbJDWuvyUeIKXnSG?=
+ =?us-ascii?Q?FkIEJk3ESIreEgpBisnVuYT9b/FQt2wW9QwsIK1OQ/11U8Hf/AACa3853Kdu?=
+ =?us-ascii?Q?w1mev6TQA3XPCtF1/DE5q8URLsrHv0W2W1B5aEjjNy03RdmsPg+soFfAdqdI?=
+ =?us-ascii?Q?dyUtAg1km5Dav+lyOqH6mC9h5DZeCw2Afiez02pCAwa2GaNbBdH7hmT0ZjAk?=
+ =?us-ascii?Q?lQeB2tDyk3JGImswEznKJ9MuoCgBRDKhN76YHt9HttXVhIxmCuZ86rEeN9iE?=
+ =?us-ascii?Q?aPS/BP85WvtulND2gcO0a5dJewuO1gvdtME7yazGHSHgwb4+9NUtrdXv/9rG?=
+ =?us-ascii?Q?lS4T1mqX/kcdasY2e6/dDmvoZNmI3KQHUtBL9EePB6ifLXovKkyO+fHW7z3a?=
+ =?us-ascii?Q?TYwCRyGvg8gC0AphkeSQsXowhW3tukt2jbRa2D71/RIduKuL/Xk99hfX11LL?=
+ =?us-ascii?Q?4QWEoukbbMtMgUdSJjC7MhLVWbFfwHpUkCXfWkcmqL1JecVR4n8ceVqN1Ul+?=
+ =?us-ascii?Q?TU+MBaN1LTqku9R11D8PcOZ363wHsfXZs2QZeTKLuxd/O52qRHz47VPiPydd?=
+ =?us-ascii?Q?Fx6dK30DLWIc/6+v5tpHPZvxrKVyf5KaMD2BYyid7xkjQDqAKSc3asQIyCTV?=
+ =?us-ascii?Q?gD5lXwxemJP/JEb9de5jy18no+Y/u33nPXPLVcV78YBGZzCkisslmajr0kKs?=
+ =?us-ascii?Q?G/E/aPe5lT9a9drPt42hRtv6Wf7vnH/Lez3lihVAIlMkjbf8fW9uBMG6qngl?=
+ =?us-ascii?Q?iJTC9FnUkJ/zuILAbgCr0topphpHpmTLyYL1n+sfyOFHspwULGmimRLnK3N9?=
+ =?us-ascii?Q?1DiubxVlPs0dvMXcQ6j6ooevMmWY4A6M19jBbOy5DiafFg+XBSMrM1Mi4MaM?=
+ =?us-ascii?Q?kQ1G8QDJ2vLudVnEcAcdMRq+cd5qr1gCxJrIjeDp?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 247d76d9-ba1b-4a71-cdcf-08dcc2563cd6
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5487.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 02:58:02.5015
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: y6kgH6P3aE0ZqQu9gsuk1bMdyIZIXl2iR9yQhgSl7n2GcqzAP3DxsCC6ef4F7YDQfjNdSMliOuCarXIL10afEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7144
 
+Use jiffies macros instead of using jiffies directly to handle wraparound.
 
+Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+---
+ fs/bcachefs/alloc_background.c | 3 ++-
+ fs/bcachefs/journal_io.c       | 3 ++-
+ fs/bcachefs/thread_with_file.c | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-On 2024/8/22 上午10:51, Tiezhu Yang wrote:
-> On 08/22/2024 09:09 AM, maobibo wrote:
->>
->>
->> On 2024/8/21 下午6:07, Tiezhu Yang wrote:
->>> On 08/21/2024 09:12 AM, maobibo wrote:
->>>>
->>>>
->>>> On 2024/8/20 下午8:37, Tiezhu Yang wrote:
->>>>> There exist some issues when building kernel if CONFIG_CPU_HAS_LBT
->>>>> is set
->>>>> but CONFIG_CPU_HAS_LSX and CONFIG_CPU_HAS_LASX are not set. In this
->>>>> case,
->>>>> there are no definitions of _restore_lsx and _restore_lasx and there
->>>>> are
->>>>> also no definitions of kvm_restore_lsx and kvm_restore_lasx in fpu.S
->>>>> and
->>>>> switch.S respectively, just add some ifdefs to fix the issues.
->>>
->>> ...
->>>
->>>> It is hard to understand to put CONFIG_CPU_HAS_LASX inside
->>>> CONFIG_CPU_HAS_LBT, in general option CONFIG_CPU_HAS_LBT has nothing
->>>> with CONFIG_CPU_HAS_LASX.
->>>>
->>>> Would you like to add parameter func in macro fpu_restore_csr like 
->>>> this?
->>>>
->>>> --- a/arch/loongarch/include/asm/asmmacro.h
->>>> +++ b/arch/loongarch/include/asm/asmmacro.h
->>>> @@ -55,10 +55,11 @@
->>>>  #endif
->>>>         .endm
->>>>
->>>> -       .macro fpu_restore_csr thread tmp0 tmp1
->>>> +       .macro fpu_restore_csr thread tmp0 tmp1 func
->>>>         ldptr.w         \tmp0, \thread, THREAD_FCSR
->>>>         movgr2fcsr      fcsr0, \tmp0
->>>>  #ifdef CONFIG_CPU_HAS_LBT
->>>> +       STACK_FRAME_NON_STANDARD        \func
->>>>         /* TM bit is always 0 if LBT not supported */
->>>>         andi            \tmp0, \tmp0, FPU_CSR_TM
->>>>         beqz            \tmp0, 2f
->>>> @@ -282,10 +283,10 @@
->>>>         lsx_save_data           \thread, \tmp0
->>>>         .endm
->>>
->>> For the record, I modified the related code as you suggested and
->>> tested with various configs, it works well.
->>>
->>> But as we discussed offline, these current changes are small relatively
->>> and the STACK_FRAME_NON_STANDARD related code may be removed if there
->>> is a proper possible way, so just leave it as is in my opinion.
->> Just be curious, what is the proper possible way to remove this, is it
->> solved with new gcc/binutil version?  Do we plan to drop latest
->> gcc/binutils support in near future only in order to remove these
->> STACK_FRAME_NON_STANDARD code?
-> 
-> These STACK_FRAME_NON_STANDARD related assembler code are irrelevant
-> with compiler toolchains, the proper possible way is not yet clear
-> for now but it is only related with kernel code itself.
-OK, I see. Thanks for the explanation, and I am ok for this patch.
-
-Regards
-Bibo Mao
-> 
-> The support of compiler toolchains is to solve the issues such as
-> the relocation type of label diff and jumptable info of swith case.
-> 
-> The above two things are independent.
-> 
-> Thanks,
-> Tiezhu
+diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
+index ac933142a..795539556 100644
+--- a/fs/bcachefs/alloc_background.c
++++ b/fs/bcachefs/alloc_background.c
+@@ -30,6 +30,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/sched/task.h>
+ #include <linux/sort.h>
++#include <linux/jiffies.h>
+ 
+ static void bch2_discard_one_bucket_fast(struct bch_dev *, u64);
+ 
+@@ -2181,7 +2182,7 @@ int bch2_dev_freespace_init(struct bch_fs *c, struct bch_dev *ca,
+ 	 * freespace/need_discard/need_gc_gens btrees as needed:
+ 	 */
+ 	while (1) {
+-		if (last_updated + HZ * 10 < jiffies) {
++		if (time_after(jiffies, last_updated + HZ * 10)) {
+ 			bch_info(ca, "%s: currently at %llu/%llu",
+ 				 __func__, iter.pos.offset, ca->mi.nbuckets);
+ 			last_updated = jiffies;
+diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
+index 7664b68e6..32b886feb 100644
+--- a/fs/bcachefs/journal_io.c
++++ b/fs/bcachefs/journal_io.c
+@@ -1950,7 +1950,8 @@ static int bch2_journal_write_pick_flush(struct journal *j, struct journal_buf *
+ 	if (error ||
+ 	    w->noflush ||
+ 	    (!w->must_flush &&
+-	     (jiffies - j->last_flush_write) < msecs_to_jiffies(c->opts.journal_flush_delay) &&
++	     time_before(jiffies, j->last_flush_write +
++		 msecs_to_jiffies(c->opts.journal_flush_delay)) &&
+ 	     test_bit(JOURNAL_may_skip_flush, &j->flags))) {
+ 		w->noflush = true;
+ 		SET_JSET_NO_FLUSH(w->data, true);
+diff --git a/fs/bcachefs/thread_with_file.c b/fs/bcachefs/thread_with_file.c
+index 0807ce9b1..fb3442a7c 100644
+--- a/fs/bcachefs/thread_with_file.c
++++ b/fs/bcachefs/thread_with_file.c
+@@ -387,7 +387,7 @@ int bch2_stdio_redirect_readline_timeout(struct stdio_redirect *stdio,
+ 	seen = buf->buf.nr;
+ 	char *n = memchr(buf->buf.data, '\n', seen);
+ 
+-	if (!n && timeout != MAX_SCHEDULE_TIMEOUT && jiffies >= until) {
++	if (!n && timeout != MAX_SCHEDULE_TIMEOUT && time_after_eq(jiffies, until)) {
+ 		spin_unlock(&buf->lock);
+ 		return -ETIME;
+ 	}
+-- 
+2.39.0
 
 
