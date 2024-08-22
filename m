@@ -1,155 +1,95 @@
-Return-Path: <linux-kernel+bounces-297141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D621895B3A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:20:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F75E95B3AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71463B22175
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:20:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A201D1C22EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C6A1C93BA;
-	Thu, 22 Aug 2024 11:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C921C93BB;
+	Thu, 22 Aug 2024 11:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aw6uEk4u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpyzUIT+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3411779BB;
-	Thu, 22 Aug 2024 11:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DBB183CC7;
+	Thu, 22 Aug 2024 11:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724325605; cv=none; b=MZJxt4QSnsIl3WDVeU53dVZWTZK7vBFhBKUvEtx5hmFAZm2e+I4fMWJRdez8+5HCNIWydzg3t+Aoxb6cGdV/GcLF40wOh5Ez6vmq57Rw7bC0bJTJFdMg8obL96u7xUs2Y785GRZMdqNv6mkYXnemLkmvar/RvKYbzplw5EVXWvU=
+	t=1724325633; cv=none; b=hicOs7VMqe37JMj5O6UGsjq2a8ePq9LkSM51WxSnrRgrQUorn5knsgSpj7YCSDYALOMVG5nyABVpHNlY6Mm1VNnEllL7NDK9nudv9aHJHjgz/T2Mcpjfd2skf888+QBGI7Ae3afl2kBfkselGIHJxWq2bUIFFYWIxmeRrRrGeNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724325605; c=relaxed/simple;
-	bh=hwSpFaqpeuGl3qZPQ50oAYaSciVFPkcvEDwgd+BtA7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fS1Zx807EmYS01C7SarzFppdvcoXK2C4oPrzqxq68D4uwX9WtPEflps2YnBWjVjenWsxNpejbjDno1eLD7nDQEi4xLwcs/q0CQFRYvlFLwVCm8D1G/QIp77clokHYe/0C3lereIgaQpbb5VO+SbwM8w3gArXePF4Q5oEpEKY30Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aw6uEk4u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DC5C32782;
-	Thu, 22 Aug 2024 11:20:04 +0000 (UTC)
+	s=arc-20240116; t=1724325633; c=relaxed/simple;
+	bh=W9zzyC79Di5ouv9UwCv0oBYTSnRehCS2jEyLnu2TMLc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Ci5iZpfvC7CNFuvABS3kPwThqjaR5hNw4gxWQTgHz7731eIqQqiXkb6OFqrFZ1i9wNiHl1nxd6atmK/AUVVK2WDCKtCaso30gF3SrwO7k1pDr6iy6Ev3pymr1m//xQD3U//yReUqcMy0sn3HVNiDhDLa+pyTdjyHtvOFInLK2Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpyzUIT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BCCDC4AF09;
+	Thu, 22 Aug 2024 11:20:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724325605;
-	bh=hwSpFaqpeuGl3qZPQ50oAYaSciVFPkcvEDwgd+BtA7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aw6uEk4uYQvyuKFKiZ59WtsnZUlq7WwoSVqk499WafQ06X6DkE+pEKVdUoBbjlZwE
-	 IZG9aA8/G2hn1J7yJTZNmL+z9g9GO2BDClZtdWZMx/i36doVWKWc5JQ9xOJUCsydci
-	 suHgZtWMqeJ89PPKDVXRg2RuEI3RYe61vM2E52TBc9CgpwLjQ8NKy5ACRqIuEeQD2b
-	 o9jY1k9lB8jqeGZYzQm7G7+cFeIwWAOA4+L3k2wfu6Tg5O9lL+WGMW18qzKb/prnKb
-	 TW9iQWKltknpczArJMj7p99B8JpYf/gNcVK+iVlA8DjZvIUtm7DLIEZ8J65X/NnrHm
-	 ZjW1K968pAe2g==
-Date: Thu, 22 Aug 2024 19:19:56 +0800
-From: Peter Chen <peter.chen@kernel.org>
-To: Pawel Laszczak <pawell@cadence.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] usb: cdnsp: fix for Link TRB with TC
-Message-ID: <20240822111956.GA783015@nchen-desktop>
-References: <20240821060426.84380-1-pawell@cadence.com>
- <PH7PR07MB953878279F375CCCE6C6F40FDD8E2@PH7PR07MB9538.namprd07.prod.outlook.com>
+	s=k20201202; t=1724325633;
+	bh=W9zzyC79Di5ouv9UwCv0oBYTSnRehCS2jEyLnu2TMLc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=HpyzUIT+Q8tZjC66wxIUsObAn4JkSDNIZ0V6CzPy8KyHBO88YcQoStPTe/boflyUn
+	 IGnnyi8FhcEFGC8iPz+cy9xDVPsaSEvYRFjCK49PenMUL38P0et622+KNl88SD3raD
+	 85XftUsGN/YtlLBI8pSSvNtKLBvJ5ev2E4d6giirjg8kdAy35FL/5k669Oumsa8YP1
+	 kfYgn8YC7/wav71eLn5JsCG/yBEur0ILm2vIiz6NAGGwPYSIXA9u3oUo5nQi3oviwO
+	 QoJRjL/kdZFoK3phB02txovHWFSAlZ2KGDHWy32gqUQDdAeeBpT8pZnG2PKtHB+TGU
+	 5vS7Krtp8XKew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B763809A80;
+	Thu, 22 Aug 2024 11:20:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH7PR07MB953878279F375CCCE6C6F40FDD8E2@PH7PR07MB9538.namprd07.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [net PATCH v3] octeontx2-af: Fix CPT AF register offset calculation
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172432563290.2291309.15266043095086207002.git-patchwork-notify@kernel.org>
+Date: Thu, 22 Aug 2024 11:20:32 +0000
+References: <20240821070558.1020101-1-bbhushan2@marvell.com>
+In-Reply-To: <20240821070558.1020101-1-bbhushan2@marvell.com>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+ hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com, lcherian@marvell.com,
+ ndabilpuram@marvell.com
 
-On 24-08-21 06:07:42, Pawel Laszczak wrote:
-> Stop Endpoint command on LINK TRB with TC bit set to 1 causes that
-> internal cycle bit can have incorrect state after command complete.
-> In consequence empty transfer ring can be incorrectly detected
-> when EP is resumed.
-> NOP TRB before LINK TRB avoid such scenario. Stop Endpoint command
-> is then on NOP TRB and internal cycle bit is not changed and have
-> correct value.
-> 
-> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
-> cc: <stable@vger.kernel.org>
-> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+Hello:
 
-Reviewed-by: Peter Chen <peter.chen@kernel.org>
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Peter
-> ---
->  drivers/usb/cdns3/cdnsp-gadget.h |  3 +++
->  drivers/usb/cdns3/cdnsp-ring.c   | 28 ++++++++++++++++++++++++++++
->  2 files changed, 31 insertions(+)
+On Wed, 21 Aug 2024 12:35:58 +0530 you wrote:
+> Some CPT AF registers are per LF and others are global. Translation
+> of PF/VF local LF slot number to actual LF slot number is required
+> only for accessing perf LF registers. CPT AF global registers access
+> do not require any LF slot number. Also, there is no reason CPT
+> PF/VF to know actual lf's register offset.
 > 
-> diff --git a/drivers/usb/cdns3/cdnsp-gadget.h b/drivers/usb/cdns3/cdnsp-gadget.h
-> index e1b5801fdddf..9a5577a772af 100644
-> --- a/drivers/usb/cdns3/cdnsp-gadget.h
-> +++ b/drivers/usb/cdns3/cdnsp-gadget.h
-> @@ -811,6 +811,7 @@ struct cdnsp_stream_info {
->   *        generate Missed Service Error Event.
->   *        Set skip flag when receive a Missed Service Error Event and
->   *        process the missed tds on the endpoint ring.
-> + * @wa1_nop_trb: hold pointer to NOP trb.
->   */
->  struct cdnsp_ep {
->  	struct usb_ep endpoint;
-> @@ -838,6 +839,8 @@ struct cdnsp_ep {
->  #define EP_UNCONFIGURED		BIT(7)
->  
->  	bool skip;
-> +	union cdnsp_trb	 *wa1_nop_trb;
-> +
->  };
->  
->  /**
-> diff --git a/drivers/usb/cdns3/cdnsp-ring.c b/drivers/usb/cdns3/cdnsp-ring.c
-> index 275a6a2fa671..75724e60653c 100644
-> --- a/drivers/usb/cdns3/cdnsp-ring.c
-> +++ b/drivers/usb/cdns3/cdnsp-ring.c
-> @@ -1904,6 +1904,23 @@ int cdnsp_queue_bulk_tx(struct cdnsp_device *pdev, struct cdnsp_request *preq)
->  	if (ret)
->  		return ret;
->  
-> +	/*
-> +	 * workaround 1: STOP EP command on LINK TRB with TC bit set to 1
-> +	 * causes that internal cycle bit can have incorrect state after
-> +	 * command complete. In consequence empty transfer ring can be
-> +	 * incorrectly detected when EP is resumed.
-> +	 * NOP TRB before LINK TRB avoid such scenario. STOP EP command is
-> +	 * then on NOP TRB and internal cycle bit is not changed and have
-> +	 * correct value.
-> +	 */
-> +	if (pep->wa1_nop_trb) {
-> +		field = le32_to_cpu(pep->wa1_nop_trb->trans_event.flags);
-> +		field ^= TRB_CYCLE;
-> +
-> +		pep->wa1_nop_trb->trans_event.flags = cpu_to_le32(field);
-> +		pep->wa1_nop_trb = NULL;
-> +	}
-> +
->  	/*
->  	 * Don't give the first TRB to the hardware (by toggling the cycle bit)
->  	 * until we've finished creating all the other TRBs. The ring's cycle
-> @@ -1999,6 +2016,17 @@ int cdnsp_queue_bulk_tx(struct cdnsp_device *pdev, struct cdnsp_request *preq)
->  		send_addr = addr;
->  	}
->  
-> +	if (cdnsp_trb_is_link(ring->enqueue + 1)) {
-> +		field = TRB_TYPE(TRB_TR_NOOP) | TRB_IOC;
-> +		if (!ring->cycle_state)
-> +			field |= TRB_CYCLE;
-> +
-> +		pep->wa1_nop_trb = ring->enqueue;
-> +
-> +		cdnsp_queue_trb(pdev, ring, 0, 0x0, 0x0,
-> +				TRB_INTR_TARGET(0), field);
-> +	}
-> +
->  	cdnsp_check_trb_math(preq, enqd_len);
->  	ret = cdnsp_giveback_first_trb(pdev, pep, preq->request.stream_id,
->  				       start_cycle, start_trb);
-> -- 
-> 2.43.0
+> Without this fix microcode loading will fail, VFs cannot be created
+> and hardware is not usable.
 > 
+> [...]
+
+Here is the summary with links:
+  - [net,v3] octeontx2-af: Fix CPT AF register offset calculation
+    https://git.kernel.org/netdev/net/c/af688a99eb1f
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
