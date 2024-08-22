@@ -1,81 +1,74 @@
-Return-Path: <linux-kernel+bounces-296843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F2A95AFAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:54:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F273195AFB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37BDB1F216FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:54:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3144D1C21745
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E1715F404;
-	Thu, 22 Aug 2024 07:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF59415F3F0;
+	Thu, 22 Aug 2024 07:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jv8L2qBJ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fOyJ+Q1T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965E6139D1A;
-	Thu, 22 Aug 2024 07:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F201531D2;
+	Thu, 22 Aug 2024 07:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724313269; cv=none; b=HHabARVKLIbtImA4JU3m8a6A2TU7s/N0f9+RRhE5/fTRTBHkjJ6Tlfyr3Vn0nLYzIWGG12YRy7J2mTC+96VvS0XOO2+BIk5MML5XoJkA6ve9V6SXBLWK8Wfu0x0UoW0homnWBKz/ksCGA6mkuPBP/aAAjSq2NuqGX3Tg7NSmGR0=
+	t=1724313293; cv=none; b=SXSoPir4IlmI6WJwrHymidabhIEtyKKy7RaasLg3k/5EalUxwVsCN+p4v7PNYtSPVDhb0xB53FzwtwO4IFGa8DLxsceZvYwxiV7BnWeBI08yG7YiTCYtPEI7XgckndP9AJjqnPOt3phk9hTruFE1AMP9NGSV2VcWjAgTb68KHEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724313269; c=relaxed/simple;
-	bh=uSnDynklvX7IdSjujnB4XlMNdWjBb3XWSwgI4AMLTZU=;
+	s=arc-20240116; t=1724313293; c=relaxed/simple;
+	bh=IlqsuZ6hZibTkQ0QrRoDCjfhPE1xkMTE176u4XyjfD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oEZAhhcM+bTAOAvCWQ4wd9IOQ7E0/nqZ3k91i78lRK6lseH/giJ/QgLXxyU59SLzLWF39R3CpWx5E1s0Uko1sOJYIa8blubXQbsMM6NQsH8sBDjrp8zSUS3BX5h71TX0E/XgGURlm05/hxslfmWgULrKqohIeuxSBAR9EN6HMII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jv8L2qBJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB48C4AF09;
-	Thu, 22 Aug 2024 07:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724313269;
-	bh=uSnDynklvX7IdSjujnB4XlMNdWjBb3XWSwgI4AMLTZU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRe7ErLcKtqb9TO86rz8GStCobHz2nh/PDfdPdXTKcyrfxp2zJ/E33BRNrQePJHNZXhKgl0BLv5MnGQ4FQzuLarn2XUAzkggz8Z0heTeIflCb4OruIydh1Qm3NfwywX4ZMEdz8R1Bc0j0DEz4gxZEUFRvBUBW4CxBAvXVIZh0KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fOyJ+Q1T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 260B4C4AF09;
+	Thu, 22 Aug 2024 07:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724313292;
+	bh=IlqsuZ6hZibTkQ0QrRoDCjfhPE1xkMTE176u4XyjfD0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jv8L2qBJE0oMQVGA3L+nF7k/3D4zT2gc5SqvaXIwN3D2jGKxPaIvtKwWndHAG918x
-	 fnwXDY1DdSfgIPghsydtwzPQkPe4ZWkkm3/j74DBUEd8mZ1HFOq3HkBvSfIqBxmHH8
-	 jfo2f/ax4UE8eK6prNMNMT46c8yiyo30cWlEnlwTxJzb5F33HMvfGtNRF+FtWrIJGc
-	 uFr/aa5REueuZpX1rQ1hCLu1UGid8GLxFXfiHyLI7Q3fZC6ERV4kWckzzDDesGwUUL
-	 v7vcC9ZCEpFeaY6WeeXk970lFMeYuram8pvt8a/RTsa2b9VSDR+i1rxowzyI98sY8K
-	 1QhbBtMUGLq6A==
-Date: Thu, 22 Aug 2024 09:54:25 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] lift grabbing path into caller of do_dentry_open()
-Message-ID: <20240822-planzahlen-szenarien-ecc66363fbe0@brauner>
-References: <20240807070552.GW5334@ZenIV>
- <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV>
- <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
- <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
- <20240807124348.GY5334@ZenIV>
- <20240807203814.GA5334@ZenIV>
- <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
- <20240822003359.GO504335@ZenIV>
- <20240822004101.GQ504335@ZenIV>
+	b=fOyJ+Q1TZsuePJhmNLeq6pJTFrmuYvALVdWM8POsIlBNS1DJO4JTmXyPFUtR+CIYd
+	 GlRAAAiAQM0OSX2a+6+kMG9ePTtQoQavtZlUXEuUTiVBzkFKaMiicr+2QE7OMCpjmG
+	 8x1qXCZN0AN5tff2SjBuiOaDjZm56cFaDwNmbWBc=
+Date: Thu, 22 Aug 2024 15:54:50 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Gustavo Montenari Pechta <mrpechta@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH] staging: rtl8192e: Fix camel case
+Message-ID: <2024082207-backroom-botany-30ae@gregkh>
+References: <20240822002733.27609-1-mrpechta@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822004101.GQ504335@ZenIV>
+In-Reply-To: <20240822002733.27609-1-mrpechta@gmail.com>
 
-On Thu, Aug 22, 2024 at 01:41:01AM GMT, Al Viro wrote:
-> ... and do that after the call.  Legitimate, since no ->open()
-> instance tries to modify ->f_path.  Never had been promised to
-> work, never had been done by any such instance, now it's clearly
-> forbidden.
+On Wed, Aug 21, 2024 at 09:27:30PM -0300, Gustavo Montenari Pechta wrote:
+> Fix camel case on variable name to match style convention
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Gustavo Montenari Pechta <mrpechta@gmail.com>
 > ---
+>  .../staging/rtl8192e/rtl8192e/r8192E_dev.c    | 32 +++++++++----------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
 
-Yes, I like it!
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+This doesn't apply due to it conflicting with another change that
+someone else in this "group" just submitted for this file and function
+that came in before yours.  Please rebase your tree on the latest
+staging-next branch and resend it.
+
+thanks,
+
+greg k-h
 
