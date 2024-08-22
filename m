@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-297795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723D395BDD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD8195BDD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFEF281DC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B880528595D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A504E1CFEA0;
-	Thu, 22 Aug 2024 17:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0C51CF2BE;
+	Thu, 22 Aug 2024 17:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A0TnMeyY"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IZ4jB7EL"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8268418D64F
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F025C1CF2A2
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724349482; cv=none; b=HWrs5oVK6tYjSrTiCxRidoayjyBvKcuObjub5dopKGINBjojU1q1VdCaQ1JZFFueJFndouIT0Np+x1OpDj1A6hOUYx/ZLg1dFRPpr4mF6ikvDuZPeYAGhaoDQ/wJUic3tn3No/XnYW2JzekGrTl7WA09KNIv/6dNY2xTmp8DQdc=
+	t=1724349516; cv=none; b=VaMX2wr0vJwiGhEgji/D9yfJUxCNVXfc+6DzWPue+4LpOPRuRtQu54e8leuAsWEWvR5GV+aSJBS+3hFazVDaAxxCmLAUXiX9MO0e7u/ujFDJgz97sQDfFR8ewLUbG1tZDtMQlnvmx5zpF/LyV9B9oAV6tCQyeR5Lccc0QKMsD48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724349482; c=relaxed/simple;
-	bh=AyQnYoPe6sf/wSyLAOYvZiLsLlNC/z1c6uDn8wvCjt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WVgTyzSoUMBHUpNTBFYaOZbIi5QcE1M6fO2LApTJ2wYxgiLAzfccmAmhW6/HyVDBLBItXcTcGzHgw2Xpe4CrDeZc9OB5oATegmrdPJFCQNwRrIBQW2k1bH+oIzsUzieaA9jm9FDIdE3oRoVZgk6/ZIsnX50DNHyVPU2NR+Y0Y0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A0TnMeyY; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44fee2bfd28so27451cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:58:00 -0700 (PDT)
+	s=arc-20240116; t=1724349516; c=relaxed/simple;
+	bh=S73uaUA0DW8CttN/Jhtd1B233vB6M3ngjcc3vgt+v/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CimSaSHYNFjI31VpwNho28KCwWbAVjv0nTMKqq3qZ+88eazZK6t98OCl+okHxg0TEtl/qd2yP4M6W6LnaXWyw4wpT9IVvPIXIUaRM5QwyBpm9USkDMeWZOs3SWIRnLpVVkerCtYjFZmv7bC7Gr1RCitVU6AcYGb0QA4mrCOa/hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IZ4jB7EL; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd967d8234so722049a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:58:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724349479; x=1724954279; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TOajGVKCmpE5kmdw/T7Qp/wNBvNSdZEW8S+OXk3bvwo=;
-        b=A0TnMeyYdHzSVj/b2HPYdhkBusch8SVI34fBwCpGSZbzyKirr+eshjNsd/eyeq1DmH
-         oEr82q5XOSGB1/Nx1BGV2zQLPQlIgtgpFR1pZc/iXchTci7b68j1vVkIGq1uzemWAQw7
-         hekHQKnm1CFInFEdfnZ5IOA/Z+sChhxSlyDv5rT/jTdD8P+xRkRAlrAlRJwEa2FFSirN
-         vHVDlAcwUKdM3bd3GXaNoSv1CHgBKVmFyLN2QsL7RX7KF1f2EBLwd0bh8hMWDwuK3UUP
-         xR3QqYAs+OYTHkxpYBIniCYr0vKfRzi3DFiIBdFhkOnhrr2vDJKE9fFiYcdeIBUaUajI
-         nnzg==
+        d=chromium.org; s=google; t=1724349514; x=1724954314; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6aXl0P5+cZPWz0CJSmKBVPNCrelta2lMo8G0fOIDW74=;
+        b=IZ4jB7ELFfR+JOeCXRJumpolI7xWgHqQDn6V8nZu1mlKxl/nIk6kbcIGlXictm6kNq
+         N9/r9PmgYKOWZRH9D+m2SwuSxUZtLBbjWDmwdCKAtlmqDryIVMO1P2meROOb3TQ1U54o
+         q8o4F8crSjnVyNGw108ohCC7mm/A7PR/TvZn8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724349479; x=1724954279;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TOajGVKCmpE5kmdw/T7Qp/wNBvNSdZEW8S+OXk3bvwo=;
-        b=Vh2sjVB6tuoOmpbj7O1jg6ttp70qHzpCKZNFNFY2y1LFthPS3JQQ2q0qhNiN05Ub74
-         Mc/x8WIMSmH84giD2sBep9MmopsdX+PS42bQlzES8asinD+6c2GrA/Uom3ejG7gy/qO5
-         yvpRVyyyRbGMBzatFSEpApbwy5Blf3CdtmU13gu6sFdojVwB5Tvjp9F6aj/TdFii1vKa
-         uaHNztshE3jMVixrQ/Z7R/k9QPBD797KjDnM4iHz1MWAjT19VksN9vs6kyOSnzdlHE7V
-         LfGWfirusoMSAJ+W5lHR40ly/FU03gZM5+VFMug+TgzsQABVWn2h3bYk6qDIzleMai9C
-         UIFw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8satF69YN5JEBkJ6i++HgSxSKZ63dgAlJxyYkKa5wnKFWOLNUH7vAh3y9UBZDm7OjX+wzk6mSdV1aC0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWrW7PWt2xpRi8fhw7MLX9hIud9bd63b9+YEicYc58KMwogds9
-	D5Vav98P9a/vME84MteuHzcv3hOe2/oYymMEtqvokIKZibjCE1K/N3ipVdtDBGPRffXAqFVFqhu
-	zgAjh4e+3ljgHehi+tSUP0gH4ElOP71SmkO/A
-X-Google-Smtp-Source: AGHT+IHpOQGA1+Xvu8VfAIHeP2jPYfCEPVVyYq8ryHdwZRdhtAaz9lpYz6WE5A47PoBLoqFMm3zfFnuZRf1AcYxhCf8=
-X-Received: by 2002:a05:622a:1b91:b0:447:e3e3:77c1 with SMTP id
- d75a77b69052e-4550859549emr27021cf.29.1724349479217; Thu, 22 Aug 2024
- 10:57:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724349514; x=1724954314;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6aXl0P5+cZPWz0CJSmKBVPNCrelta2lMo8G0fOIDW74=;
+        b=EB0Qxj4J+Xb0CenxnYuLYBANfb879dMaEsp4Ob0s408ulvuIDysb4RoXIlRDtV0Avs
+         0xVh1OGwFzW5UpNYkt0Z097kuVjkd9iGfYlxJMe0v631XZJ9foFX7rICTogbj7EQ7Sx7
+         ResIYEtOoVKq6noa+2PGodnp9IFuZFKzdblYfqh2xXkkok2ocIdLWXLC18qe2HapLZO7
+         cNWGCD+MYchdh/7UYrUwDcN1UPd5/a0PxV/ckGr02QHE0zCtlPCSf/TDFkGrJSmbA3tH
+         W64VncYSU9vl0+/ZtZMMKUtoI+s1NJcJ//Qk71d4a2UlTNjrhYXD8x+WOxnCWzHzrPAD
+         /jpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMCqnJNAXRHZpEkPDeAhNAnLSKfrLAb+822OIA0yTASwk6xE20xzevGQqxwn/1BMNXEKoX7PCngjyIgMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuJkmH3GYtkhkw5T5+CukGLCKtJBZXO1vkVvTSJyvmeVAghyuW
+	rY5qzDBqRc3BivsiQPrUvnXdV6pAM26nIsqC7jrKLYinOogLbJBRV4NiapT6IQ==
+X-Google-Smtp-Source: AGHT+IHRCAtfbv2wW3c5v+2i+dD3SGwv1uIaS3D1NnMthKKsznW2OPiT8cq1knA2oMx203qjIZrdww==
+X-Received: by 2002:a17:90a:634b:b0:2d3:c303:fe14 with SMTP id 98e67ed59e1d1-2d5ea2caf9dmr6288794a91.40.1724349514149;
+        Thu, 22 Aug 2024 10:58:34 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:414c:5b44:2fea:fb6e])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2d5eba287e7sm4473583a91.34.2024.08.22.10.58.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 10:58:33 -0700 (PDT)
+Date: Thu, 22 Aug 2024 10:58:32 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH 01/31] wifi: mwifiex: remove unnecessary checks for valid
+ priv
+Message-ID: <Zsd8SPnKKJrdJj9W@google.com>
+References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+ <20240820-mwifiex-cleanup-v1-1-320d8de4a4b7@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com> <874j7ccxtz.fsf@trenco.lwn.net>
-In-Reply-To: <874j7ccxtz.fsf@trenco.lwn.net>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Thu, 22 Aug 2024 10:57:21 -0700
-Message-ID: <CABCJKud=YO=fxF_tmX1N2ec66Rzqh8RsaQu0qrbC5WB529wgWg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/19] Implement DWARF modversions
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820-mwifiex-cleanup-v1-1-320d8de4a4b7@pengutronix.de>
 
-Hi Jon,
+On Tue, Aug 20, 2024 at 01:55:26PM +0200, Sascha Hauer wrote:
+> The pointers in adapter->priv[] are allocated in mwifiex_register().
+> With an allocation failed the function will return an error and
+> driver initialization is aborted. This makes all checks for valid
+> priv pointers unnecessary throughout the driver. In many places
+> the pointers are assumed to be valid without checks, this patch
+> removes the remaining checks.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-On Thu, Aug 22, 2024 at 9:43=E2=80=AFAM Jonathan Corbet <corbet@lwn.net> wr=
-ote:
->
-> Sami Tolvanen <samitolvanen@google.com> writes:
->
-> > The first 16 patches of this series add a small tool for computing
-> > symbol versions from DWARF, called gendwarfksyms. When passed a
-> > list of exported symbols and an object file, the tool generates
-> > an expanded type string for each symbol, and computes symbol CRCs
-> > similarly to genksyms.
->
-> Potentially silly question but: how similarly?  Specifically, do the two
-> tools generate the same CRCs for the same symbols?  It seems that might
-> be important for users transitioning to the new DWARF world order.
-
-Reconstructing the source-based type strings genksyms uses from DWARF
-wouldn't really be feasible, so the CRCs will be different. The
-similar part is just that we build a human-readable string from the
-debugging information and compute a CRC from it. If anyone is
-interested in switching to gendwarfksyms, they'll have to rebuild all
-their modules too.
-
-Sami
+You already submitted this one separately, and it has now been merged.
 
