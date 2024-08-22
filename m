@@ -1,68 +1,79 @@
-Return-Path: <linux-kernel+bounces-296797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDAD95AF40
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:28:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B13695AF45
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8852847FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:28:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E769E1F225EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242FE13D538;
-	Thu, 22 Aug 2024 07:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3AE13C812;
+	Thu, 22 Aug 2024 07:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqHeC8m5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8dEVsvb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6578579C8;
-	Thu, 22 Aug 2024 07:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3951531DD;
+	Thu, 22 Aug 2024 07:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724311702; cv=none; b=S7aIMFiouc86eY0x+Fl4iJ3575SThjVgaC/13HWt3EA8yHnHaGbukEN1xZmieYqwnxf6qhXPDXzXxvehLD98M0bB4Hi3VgW54EmoXV1tGfrM7pPBVNx7lAq1TYWsL1kdBTjbb3AlRFNJeXIrFgjD/qEm44845w1nYZL0ym/OoWE=
+	t=1724311729; cv=none; b=gZ3dp6LoOAVYz4oucn+K1l3cOL/8aHiYlaHCUguqWFSr8QRYUeVNQ712vx8y61yqGsDk12bSuTe3yVP817geBt5qyTB7Qn07SpNtBCmgCYG61q41Jlq6ecFRxWk1NhbfeUuWJ/S3hGPhRKzyeTWHdJI4xDmLshJJ6mkEQIioCt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724311702; c=relaxed/simple;
-	bh=fCkvXQVwlOMQMDcAgYdyb16PEYfY11o30Wpa7cYaIgM=;
+	s=arc-20240116; t=1724311729; c=relaxed/simple;
+	bh=JOmB3H1enfZrkteU613aUSjuKOs8i3PjWruFo3Cqz08=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuTr7A8Aeg1HEH3+67GzaytHr4rYilAQtVKpjng7TY3RtoUilbMsHDQXbV9izuEqZaI8637BMcKdfByCtbFzUqMldlG0ZIZ+GdTgXvgkbcsFQiCOma7bAOhNhr4u/Q6r5n4oIyZvTC+cCvXsvwLBM5lGiEVkiGsNoHdL5+4GhH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqHeC8m5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B4BC4AF0C;
-	Thu, 22 Aug 2024 07:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724311701;
-	bh=fCkvXQVwlOMQMDcAgYdyb16PEYfY11o30Wpa7cYaIgM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QqHeC8m5R8Hqy5EEZ4Cx74nUQKpahVQ8R0YpFKqzXpNIOOVPCKJWw4YkWMA5TiYCU
-	 WMEY2e+u3O4y855RQFYU+x24nPysP/HlHHzcwkRON5O35IS75gP7oBLkuDbvB7gR+g
-	 Qi3MYQcHtCbvFGqhH9irMkErlxF87bmV/c9QIOr4GeiTNYQI2yvDnWzfXqO7JI6fGd
-	 61jUyLadfaynwG55OWDCGUyQu1NqGlr/+iwCKwZKCoBhBxuEXCD4EMkln4UMw+dYjE
-	 49AGXDWly952eu0nJGNs9gite0DiKXW1EMQXOivicbO7KnxH1dlGP1EvCuKfwqxaCu
-	 pC+Vrpva2wkLg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sh2F7-000000005Mg-10og;
-	Thu, 22 Aug 2024 09:28:25 +0200
-Date: Thu, 22 Aug 2024 09:28:25 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH 1/2] soc: qcom: pd_mapper: Add X1E80100
-Message-ID: <ZsbomSG6DXTfYxXZ@hovoldconsulting.com>
-References: <20240708-x1e80100-pd-mapper-v1-0-854386af4cf5@linaro.org>
- <20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org>
- <Zqet8iInnDhnxkT9@hovoldconsulting.com>
- <ZqiyLvP0gkBnuekL@hovoldconsulting.com>
- <oj4qv5wdxymsgpuy4col2w5gabn6k5blybf2fmrckydjo6sftd@eppcqaqwjn5b>
- <60aa6833-7e08-4986-93e7-4790a8eb8568@quicinc.com>
- <CAA8EJpopAYp3Y6cW8B+2cVM=_oAnWeOqS6zygc4o7b+r9Lj1ZQ@mail.gmail.com>
- <02e3c217-490d-4051-8fb8-6bfcf322e27d@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1WwDJCHxPjfspuggYhhbqVyBPgIJyxJTTEnVwdaNx9cHEGeNUrBzruExTREG8j0Asi5pYXGY21n/518MJ3LX4aE7kqFetlMXJz0x599TtcyiGhm+KA9BPEy3L3GM2TKmaFPn/+EiZsVbOUt5YrvRvLWETU/JKt6Houzr9fj1zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8dEVsvb; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724311727; x=1755847727;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JOmB3H1enfZrkteU613aUSjuKOs8i3PjWruFo3Cqz08=;
+  b=O8dEVsvbmbzFX8HsYfA+1ksejZsh2ul6ubInl7fzX5z89KaWO97yFbVz
+   QT2JhNW7OX7a6pgM+HVNweqkYMzzyz8nZQauyVIdWAdbm4FHxj5XFkS+y
+   5DFZniDp58YETA6QMgXKaGkVi/F10RSWHQtIfZF0AWYt5uacGAuD/uE+s
+   yczaklqwCh+eQi3I8QsgT9a02WxgxvU+/peUHmgd5xcagbZ0G6Siql00K
+   xgVRZlJjfGDRwiWtuUWhsIMp57Sqo0ndQMfMd7EHn34VzQKDKEH1dJpa2
+   Y9huaKt4pmKEYVWmbTFR+A/rR6cG53dIrV/V9hHCxfB346RNncRrgo9dQ
+   w==;
+X-CSE-ConnectionGUID: w4qhHA+USqGwP0dbnX5HWg==
+X-CSE-MsgGUID: VTnPA6IVSkWcjuUHpYocbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33371618"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="33371618"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 00:28:46 -0700
+X-CSE-ConnectionGUID: JW9dLWMFT2CEn/TH1fuMtw==
+X-CSE-MsgGUID: BbNyJbfDQvmkLO66SzP5Lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="65698857"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 00:28:41 -0700
+Date: Thu, 22 Aug 2024 10:28:38 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, badal.nilawar@intel.com,
+	riana.tauro@intel.com, ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com
+Subject: Re: [PATCH v6] drm/i915/hwmon: expose fan speed
+Message-ID: <ZsbophGauSzh15lz@black.fi.intel.com>
+References: <20240820062010.2000873-1-raag.jadav@intel.com>
+ <ZsRup8uKiqUvADFl@smile.fi.intel.com>
+ <ZsSWTtew8nCYWrxF@black.fi.intel.com>
+ <ZsSi73YyfKletmgk@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,75 +82,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <02e3c217-490d-4051-8fb8-6bfcf322e27d@quicinc.com>
+In-Reply-To: <ZsSi73YyfKletmgk@smile.fi.intel.com>
 
-On Tue, Jul 30, 2024 at 11:04:58PM -0700, Chris Lew wrote:
-
-> GLINK has a concept that is called "intents". An intent is an object 
-> that signifies that a remote channel is ready to receive a packet 
-> through GLINK. Intents can be pre-emptively queued, or they can be 
-> requested by the sending entity. GLINK will not try to send or it will 
-> block until there is an intent available.
+On Tue, Aug 20, 2024 at 05:06:39PM +0300, Andy Shevchenko wrote:
+> On Tue, Aug 20, 2024 at 04:12:46PM +0300, Raag Jadav wrote:
+> > On Tue, Aug 20, 2024 at 01:23:35PM +0300, Andy Shevchenko wrote:
+> > > On Tue, Aug 20, 2024 at 11:50:10AM +0530, Raag Jadav wrote:
+> > > 
+> > > But it still has an issue with 64-bit division on 32-bit platforms, right?
+> > > 
+> > > > +	/*
+> > > > +	 * Calculate fan speed in RPM by time averaging two subsequent
+> > > > +	 * readings in minutes.
+> > > > +	 * RPM = number of rotations * msecs per minute / time in msecs
+> > > > +	 */
+> > > > +	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
+> > > 
+> > > ...somewhere here?
+> > 
+> > Use div64_u64() instead? Or is there a better alternative?
 > 
-> Intents are exchanged with GLINK_CMD_INTENT packets. When Linux receives 
-> one of these packets we add it to an idr "riids".
-> 
-> Example sending call:
->      pmic_glink_send() --> rpmsg_send() --> qcom_glink_send() --> 
-> __qcom_glink_send() --> qcom_glink_request_intent()
-> 
-> In __qcom_glink_send(), we check if there are any available intents in 
-> "riids", if there aren't any intents we request an intent through 
-> qcom_glink_request_intent(). This sends a GLINK_CMD_RX_INTENT_REQ packet 
-> to the remote and waits for a GLINK_CMD_RX_INTENT_REQ_ACK packet in 
-> return. This ack packet will have a field that says whether the intent 
-> has been granted or not. When linux gets this ack packet, we will wake 
-> up the thread waiting in qcom_glink_request_intent().
-> 
-> The ECANCELED comes from qcom_glink_request_intent() when we receive a 
-> GLINK_CMD_RX_INTENT_REQ_ACK that has granted == false.
-> 
-> On the firmware, when a glink channel is registered they can optionally 
-> fill in a handler for GLINK_CMD_RX_INTENT_REQ packets. If this handler 
-> is not configured, then a default one will be used where all 
-> GLINK_CMD_RX_INTENT_REQ packets will be responded with 
-> GLINK_CMD_RX_INTENT_REQ_ACK and granted == false. If a channel is 
-> implemented this way, then the only thing Linux can do is wait and retry 
-> until the remote queues the intents on its own accord.
-> 
-> This would be my current guess as to what's happening based on this not 
-> being consistent and only seen every couple of reboots. A stop path 
-> problem sounds like it should happen every time, and we should also see 
-> the remoteproc prints related to powering down the adsp. The above race 
-> should be applicable to all platforms but depends on the speed of the 
-> ADSP vs the CPU.
+> I don't know the code well to offer anything better. Probably for a starter
+> you can switch to use DIV_ROUND_UP_ULL().
 
-Thanks for the above. This indeed seems to match what I'm seeing as I
-also reported here [1]:
+This one seems to work. Does it warrant an explanation here?
 
-[    9.539415]  30000000.remoteproc:glink-edge: qcom_glink_handle_intent_req_ack - cid = 9, granted = 0
-[    9.561750] qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
-
-[    9.448945]  30000000.remoteproc:glink-edge: qcom_glink_handle_intent_req_ack - cid = 9, granted = 0
-[    9.461267] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
-[    9.469241] qcom,apr 30000000.remoteproc:glink-edge.adsp_apps.-1.-1: Adding APR/GPR dev: gprsvc:service:2:1
-[    9.478968] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
-
-I assume we do not want to have every client driver implement a retry
-loop for the first communication with the remote end, so can this be
-handled by the pmic_glink driver somehow? For example, by not forwarding
-state changes until some generic request has gone through?
-
-And what about the audio service errors:
-
-	[   14.565059] PDR: avs/audio get domain list txn wait failed: -110
-        [   14.571943] PDR: service lookup for avs/audio failed: -110
-
-Does this seem to be a separate (but related) issue or just a different
-symptom?
-
-Johan
-
-
-[1] https://lore.kernel.org/lkml/ZsRGV4hplvidpYji@hovoldconsulting.com/
+Raag
 
