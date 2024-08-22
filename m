@@ -1,98 +1,128 @@
-Return-Path: <linux-kernel+bounces-297211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D2195B48A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:04:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC4295B487
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7802825CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29669B22321
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1611C9448;
-	Thu, 22 Aug 2024 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4511C93CF;
+	Thu, 22 Aug 2024 12:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KhBkwVaI"
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lY7SHzWL"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF6217D374;
-	Thu, 22 Aug 2024 12:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541FC183CB7;
+	Thu, 22 Aug 2024 12:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328247; cv=none; b=C+sjyeWzoKaejgcRVzpBh6Uj4PBDYxErUvdGwpGn5evxrkhf16TU26ViPNn+tAoB82FNgyyI7PgZ/QoYw9MD+n46fToDE2jUJdttIIjL5SsxkNS2YCxZc1W9AMxfad8PCms6smK/KjVFTRwHKgoNwef5KUIwTXuOzsYC4ZsiHps=
+	t=1724328238; cv=none; b=nmm61gXOTZnZ1U/YCzhihkxo8Ohs52CoY50tvuVuKPb7pBr8pQ9Z5vF4MrsorkzWRQjmOe9U61fi/HMhp9QQh6B7La7woc1Bz/pGQlsOgh3c0ZUe4cLh86UAX38tMgrdnrhyG3KnRpCf60jBdpvfZdCNRX/akaPyrAgduvlq6L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328247; c=relaxed/simple;
-	bh=Qf0pfe2B4skxex88RWsBgOZlJ1oK+6WmfO9yIv9vPhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NpV9Rz9YbKkusNPiO9EQIK7io1LHNXjS5KTHBjMsoVUKP8wH2tzvVKsBxQS+hIFsnZmdBsK1pP4TnkF9CY+s8EuhONHjouvSh9mpj+dARac0Hz1xcaWYCW48yvG+etcsAPpt7kfoozkqnhFRa6exb9QqKARxCRFHNyai3vqCY8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KhBkwVaI; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay4-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::224])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id 95853C5348;
-	Thu, 22 Aug 2024 11:59:58 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C486E0007;
-	Thu, 22 Aug 2024 11:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724327991;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6WzS31XWKQ+PAVvVlTIcXBZWu/ygTzCRj8Asrux5SM=;
-	b=KhBkwVaIS0Tti/okSc8ezPChFhGcFeUmJhyL8ECkY33mqZnzIKWU/3C85mPtfYwmDf+Pzq
-	zO26tKZ5SRgUa6QuYXuT9ercQuKOwnuuw+aZ+3W5SEwDqMOlbdqVg6AMxKe6piWsa1Qbhv
-	Rk0hkrmTzzI49Uk0WOauWL9SgY+iftrsZyAVrz0V7kQj58KAAYorlPAxrlZiVKnbNSjI3/
-	WHp0EamOpPX3u2LQJ7VYrFYt+BvbgCRzFX8BKAdZnrK/DpkWaDkLm+gLY2Smu5Ia8KOJfS
-	k5aC9bWeDWCpG07eWahcSh+q7p9gh5n48T3+uvEfTDB+Jd0H5/qCosOPONVxcQ==
-Date: Thu, 22 Aug 2024 13:59:46 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
- olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
- linus.walleij@linaro.org, marcin.s.wojtas@gmail.com, linux@armlinux.org.uk,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com,
- mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, justinstitt@google.com,
- kees@kernel.org, u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com,
- horms@kernel.org, shannon.nelson@amd.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [Linux-stm32] [net-next 3/9] net: ethernet: cortina: Convert to
- devm_clk_get_enabled()
-Message-ID: <20240822135946.356332a5@fedora-3.home>
-In-Reply-To: <20240822084733.1599295-4-frank.li@vivo.com>
-References: <20240822084733.1599295-1-frank.li@vivo.com>
-	<20240822084733.1599295-4-frank.li@vivo.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724328238; c=relaxed/simple;
+	bh=/7JxRU4cpPBTZFx1w71DWizOwcTnSWrV3CmQH03IfkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQrsG6kKD7CumoRHLRfVw/yickolivVWEckCzgDxKwiWc6RWfFL/Pv8/E/ORhjy18DXtrg9JA4FvXUDYSuk3MmnLXZUH5xAK8rlpv1fdZ9ej0TJlLo8dwM+yM/yb8XCHLSi9YpxdIJPfUX8APc+9nmIGJ1hHBrMWOWuf+deX3Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lY7SHzWL; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280ee5f1e3so5537235e9.0;
+        Thu, 22 Aug 2024 05:03:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724328236; x=1724933036; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AY16LwIBghLKS2thXS/HdTgvr57cr8ORfO+2U5rpJTM=;
+        b=lY7SHzWLoQJZEBGU6XMZhIDOnG+9qKxc3puCbYG+gKfsbXnFThO7RiUR1eXB0j1mn8
+         IbJDwKAO/NAOPbXdqz4oYoME/nDgSwteJyGrOZPwEePoTIPl04+uNfhmLTmARLsNAhhs
+         SwBvg+Uv8XLK+CZiAkYlj5aO0ibXtSzqJMAUyw6Au85/bxb5WOxHIzms7HEq0IWaKQHn
+         Vsanz5s2LJNpQVdOAekoaIR2qfaKbjI/FnTbkIC7wN2OmCn/vbmEqs+vfdHN8LCh8DS/
+         47TPUReQrQ7duEqExN8rERlf5J6Vvc8pknnOa6lDMQxT22y1uljuunEHdrY9WngNTtL3
+         GzGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724328236; x=1724933036;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AY16LwIBghLKS2thXS/HdTgvr57cr8ORfO+2U5rpJTM=;
+        b=TVmIiIeFDGFRZ/C16/AEW0JHTPBSCJ0lNbcrGF2/Rxn6AkrExETy1bHU2YIQzeoVXk
+         LJ5Q511dffpXLhyJ111T7Pmtix9HsUkmdOXr+5G/pJ1ty1KIjSEKlOFV4LGCluh66F9L
+         eVIAvDIqa2aGvZryO85BD1Y4ocvoH/xBcq2DkyysWrpDDukGwsaZGoaUoW5Q2XF9VsuC
+         mEGb8MjPNVhFMR2dvvo+MB+4DABm0rA6dxkPVIGnIbg5bp0szl9e5+Pd0VTm1hSgvC5u
+         TsFFC6Fxm6rOYxet4KtU7fY49Vr3pWBgpG0Rd9Ys+Qe85r5ml7Gj/UaufSO8jfHNaDD3
+         RPsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUI6wDbla3TLFqBVYjv9cQxH2QS1QaEoiPWd8NMbyjQ5kk88Ibec24MMgGccJUuyOfdddCdWaKIQLk=@vger.kernel.org, AJvYcCWvFs6othLPOPzuoFpJZL8ClJkTuEB7U5u8mqoGyAdTv586bfMqL2eyvq5mM6EWNYUqby+wOpcacLz6Ie3/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQxxFAAuqaSiYMM7QSW4avcLFHOsjhoThcKcn/oQ7eNAUWqS3D
+	Fjl2LCBHJ+7r9GtEEOkzCFFOokeQ0TGHgvpXaS0PrXBQurR8AXdt
+X-Google-Smtp-Source: AGHT+IEFxPFmRaY+PNp14y1u8ekMx5ha3DFQw+w7+iWj6isuIlJVoOIiRVhai99HMnCgTpLp5x6Kjw==
+X-Received: by 2002:a05:600c:310c:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42abd11e2famr45807665e9.10.1724328235478;
+        Thu, 22 Aug 2024 05:03:55 -0700 (PDT)
+Received: from eichest-laptop ([2a02:168:af72:0:daa9:644d:3c2:44bb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac51860e8sm21974725e9.48.2024.08.22.05.03.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 05:03:55 -0700 (PDT)
+Date: Thu, 22 Aug 2024 14:03:53 +0200
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andi Shyti <andi.shyti@kernel.org>, kernel@pengutronix.de,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+	Frank.Li@nxp.com, francesco.dolcini@toradex.com,
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
+ mode
+Message-ID: <ZscpKSzdYklxIkjZ@eichest-laptop>
+References: <20240819072052.8722-1-eichest@gmail.com>
+ <20240819072052.8722-2-eichest@gmail.com>
+ <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
+ <Zsbi2xcxBGE7o9uE@eichest-laptop>
+ <ZscNO2PKNlK3ru_7@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZscNO2PKNlK3ru_7@pengutronix.de>
 
-Hi,
-
-On Thu, 22 Aug 2024 02:47:27 -0600
-Yangtao Li <frank.li@vivo.com> wrote:
-
-> Convert devm_clk_get(), clk_prepare_enable() to a single
-> call to devm_clk_get_enabled(), as this is exactly
-> what this function does.
+On Thu, Aug 22, 2024 at 12:04:43PM +0200, Oleksij Rempel wrote:
+> On Thu, Aug 22, 2024 at 09:03:55AM +0200, Stefan Eichenberger wrote:
+> > Hi Andi,
+> > 
+> > On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
+> > > Hi Stefan,
+> > > 
+> > > > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
+> > > >  		goto rpm_disable;
+> > > >  	}
+> > > >  
+> > > > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
+> > > > +
+> > > 
+> > > you might also want to add the multi-master boolean property in
+> > > the binding.
+> > 
+> > We discussed this internally and weren't sure when it was required
+> > because e.g. i2c-rcar and i2c-tegra don't have it documented in their
+> > bindings. Is it still required if it is part of the dt-schema?
+> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> The i2c-imx.yaml has "unevaluatedProperties: false", which fill discard
+> every thing not in this yaml
+> 
+> > If so, I will add it in the next version.
+> 
+> Yes, please.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Perfect, thanks for the explanation.
 
-Thanks,
-
-Maxime
+Regards,
+Stefan
 
