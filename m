@@ -1,115 +1,176 @@
-Return-Path: <linux-kernel+bounces-297610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6897195BB69
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812DC95BB71
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5C21F2418B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF821C20A0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791821CCED5;
-	Thu, 22 Aug 2024 16:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9253F1CCEE1;
+	Thu, 22 Aug 2024 16:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wC/2Iep0"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="gYbxUTov"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F86F1CB300
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343044; cv=none; b=bqARGA6dPiXU57/mwPSrL0VJbmGuRbvspOez5pia6wllvDlqfESpz0iR8hPd6LzibbzMqtgqmbzF8xYACMXC74H8O6EAgSICFMCjRQz67YTnR+I8x7R27cvoTDOuCovxgro8Tz7LFGuDa5+FhqsloCfVKSPE3Y5BWiXfkbqid/Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343044; c=relaxed/simple;
-	bh=oTVnwnxoi3MwR+fT4MSoMLg39Y4GQfy4UfuGydIln/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fpzZuBWodiG/X6gBgTZUKUy6sq6QPb7fSiWvBc8jpSO1mklu/dTgiXGD/BePbfuX87MXkKWbvjWGfPhLrhezlZCXaVZwyZV+xx502yzFQppULMXbTvv9grrcsFcoF7riYCIk3o0Ou/ZFIh6x+mtB4lXdqDEagGUicsTTVKg4AbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wC/2Iep0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428119da952so7732815e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724343042; x=1724947842; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ghU7bGQfCH6VMs7XeQb7I+ZFRK+m6U/I472i0hWudlY=;
-        b=wC/2Iep0M0IEKgTPpYzAOntqPZRcTH8+Crcnc5mpjAoy7eiT1E7gjvhZBTadltxUG2
-         UoaICx2j2/wK3ubd0Quv+fJXDdxWDne2xXocjwTWmQZ3GdNvYNqm5SiEbleZtVnSaeAN
-         LBS5zkznBnRRMjiwmDC6SiYdxbAuP1hqf6XYjt+3z+nX6f9J8ka2xHP3VjkCUq74liva
-         imjIg7ARB3OBSxl0egIeyXIi4pg+u9rPGu1TVuoF61Vj/0SRHiOurZD9Fet1CUxNY6Vp
-         nwboLI2MCMsm0TNuFBN6g4tvR+nDtB1nENMmkqSGIl3NZct1DJU5pXrQKr9E+2AhxqZ9
-         jxNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724343042; x=1724947842;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ghU7bGQfCH6VMs7XeQb7I+ZFRK+m6U/I472i0hWudlY=;
-        b=sS20ZSThK+2u33HoQkzDHUrVR1LG0jLkxWsQ0/IhxDmxXOtpL7vzWOrbcCafgySbAg
-         vxx5azpP58EgnOaO/yh6gpfIQOFUsaY4mPK3f5Ts6VXM2l/GNKQaCnTxVcftdVNLh9aL
-         WGfbxUfaVN/XACQ7vFiiA8A0hd10ymKYBUYp+QEt7PsNb4gxvnpvzlt+TzuHfIVEyqBC
-         j6N9Y56p5S+G0LLposb7GRvnnF6QIaE0hxixYpYWoKs4g0ePdhoM8Xp0YuAAT1cRTHCS
-         2PDb5iO+ryB/1cD+a24608b38mvPj620n0G9S6US8+rMZU2id7dIOKcSqNUXggOF+V93
-         2BQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvtYtamkHgV+x5fl3MkSBn1pnTAWI26zcK7h2lhgX0P2CDxfIisbQEsAV2wjatAJv9Ww03agKOodC6F2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKmm0T/j4uRTIRPkavnI86J770H0Fct/x9eqojofmLaoF31VIt
-	2Gqy4MtpqfsAT4jCgdjM3TpNtOneyj0pzljiPk0uEWF2mmpFedd9K48xqqUhRu8=
-X-Google-Smtp-Source: AGHT+IFbeUlcYW7rVjFtPeB/keXD1uOdpULEogsJaEXgMJoh81iXZzt7Lg0xKqgNI513crPHQS93Ng==
-X-Received: by 2002:a05:600c:c8d:b0:427:d72a:6c26 with SMTP id 5b1f17b1804b1-42abf048b3dmr42289485e9.6.1724343041166;
-        Thu, 22 Aug 2024 09:10:41 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42ac500e119sm29671935e9.0.2024.08.22.09.10.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 09:10:40 -0700 (PDT)
-Message-ID: <133ea087-a5e9-48ca-bb89-33f41220276f@linaro.org>
-Date: Thu, 22 Aug 2024 18:10:40 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDDD1CB300;
+	Thu, 22 Aug 2024 16:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724343125; cv=pass; b=WJf4A0Oy9CWbyYaDFksu0UxhVxGDnbdpj15uZ23sVTpfLtcuNus2r3tUBD2ZmgbdVxNCH4SYfF2E9n68g+W5POUg479X/uAgOOScYB/I7JvylH6Z/5j6zOjb79wE+owWLOpg16kyvoPMCQ6NRbfY6E+ANoZUwQCMW3vSbAKtP2w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724343125; c=relaxed/simple;
+	bh=IAPpadmY9nOSrLXOdO9VmSBsmBnj7Z29mUjVF7BMWFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZI2aJDeTdcd5frMDQ7pEsWtdpQYGS8QEujuTI/INPRl0WXQmIVsNKeDUrz+fX2QHV1nMrb+7vHBlmUQ5/9Wvj98H2xuPhj675zc1an1WCyvx8s7pitGXOSGbwwOVXZXEYCiivVGydhjnPxvGbYpVvaoiqeNz6E7e1Ce7cq+LFM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=gYbxUTov; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: nfraprado@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724343112; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AGCLLuOTPFmktZHK2UbZoDIgJ/8Oe+1WFWpy8SZSGokqVofHXvgl/x8IvxmRWosGS0Zos3K3hqcCh0IBta2eORekDsQaTFN8r0bL97dDDobqWliVfsEC8bMNuldeS828d4ex6LBbRm55IO8+F7OvG6GP8Kj0pW0uHui6DDrcynI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724343112; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=g6oveps4DwZyjx7Lo/bkkZCFv0Cut+y/Y1Be0D4ooTM=; 
+	b=LHgpdv4wWG108Ao4aHayTRSkoSbNts+zRMjv2JqFstadGTH5NEbFfm5SVnp7PsCL+mIKkqoq29AX7Kqp6qgzvonLoh7/G45tHDXX+Zyq0MH7DOrs9gBi3vGuTz/gt4XDAz0lk87KqaTabv5mqzMFyVUz0R7dRfOoOooMmDWdUkI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724343112;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=g6oveps4DwZyjx7Lo/bkkZCFv0Cut+y/Y1Be0D4ooTM=;
+	b=gYbxUTovw4k9Y5lglq6Y/q4jYSjFApYFwFfOt01mLUy6OeG7yD/8vq3+eeUBocHz
+	CYak82arKAH8GsT8z22ohShZ9UPq89oiqDCsu+Ug1S6mtlGTvfoCxbaQy03eJTyE54A
+	w+tbh6bZtDBK+/vmfoRJlsM1MMt47LRUc1//ioxA=
+Received: by mx.zohomail.com with SMTPS id 1724343110302766.1410833559867;
+	Thu, 22 Aug 2024 09:11:50 -0700 (PDT)
+Date: Thu, 22 Aug 2024 18:11:45 +0200
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: =?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Nathan Hebert <nhebert@chromium.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Hsin-Yi Wang <hsinyi@chromium.org>,
+	Fritz Koenig <frkoenig@chromium.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v4 3/7] media: mediatek: vcodec: flush decoder before
+ stream off
+Message-ID: <20240822161145.jv7i45wlajcxpazw@basti-XPS-13-9310>
+References: <20240807082444.21280-1-yunfei.dong@mediatek.com>
+ <20240807082444.21280-4-yunfei.dong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] thermal: of: Fix OF node leak in
- thermal_of_zone_register()
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240814195823.437597-1-krzysztof.kozlowski@linaro.org>
- <20240814195823.437597-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240814195823.437597-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240807082444.21280-4-yunfei.dong@mediatek.com>
+X-ZohoMailClient: External
 
-On 14/08/2024 21:58, Krzysztof Kozlowski wrote:
-> thermal_of_zone_register() calls of_thermal_zone_find() which will
-> iterate over OF nodes with for_each_available_child_of_node() to find
-> matching thermal zone node.  When it finds such, it exits the loop and
-> returns the node.  Prematurely ending for_each_available_child_of_node()
-> loops requires dropping OF node reference, thus success of
-> of_thermal_zone_find() means that caller must drop the reference.
-> 
-> Fixes: 3fd6d6e2b4e8 ("thermal/of: Rework the thermal device tree initialization")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Hey Yunfei,
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+On 07.08.2024 16:24, Yunfei Dong wrote:
+>Flush decoder will reset the driver to flush status. If lat or core
+>work queue in active before flush when stream off, will lead to get
+>dst buffer NULL or buff done with one non-existent source buffer.
+>
+>Flush decoder when stream off no matter output or capture queue
+>calling stream off firstly.
+>
+>Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+>---
+> .../mediatek/vcodec/decoder/mtk_vcodec_dec.c  | 45 ++++++++++---------
+> 1 file changed, 23 insertions(+), 22 deletions(-)
+>
+>diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+>index 7080ca3e18b0..fc4ee1fb7cd1 100644
+>--- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+>+++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+>@@ -882,6 +882,29 @@ void vb2ops_vdec_stop_streaming(struct vb2_queue *q)
+> 	mtk_v4l2_vdec_dbg(3, ctx, "[%d] (%d) state=(%x) ctx->decoded_frame_cnt=%d",
+> 			  ctx->id, q->type, ctx->state, ctx->decoded_frame_cnt);
+>
+>+	if (ctx->state >= MTK_STATE_HEADER && ctx->state != MTK_STATE_FLUSH) {
+>+		/*
+>+		 * The resolution hasn't been changed when STREAMOFF is called.
+>+		 * Update the picinfo here with previous resolution if VIDIOC_G_FMT
+>+		 * is called.
+>+		 */
+>+		ctx->picinfo = ctx->last_decoded_picinfo;
+>+
+>+		mtk_v4l2_vdec_dbg(2, ctx,
+>+				  "[%d]-> new(%d,%d), old(%d,%d), real(%d,%d)",
+>+				  ctx->id, ctx->last_decoded_picinfo.pic_w,
+>+				  ctx->last_decoded_picinfo.pic_h,
+>+				  ctx->picinfo.pic_w, ctx->picinfo.pic_h,
+>+				  ctx->last_decoded_picinfo.buf_w,
+>+				  ctx->last_decoded_picinfo.buf_h);
+>+
+>+		ret = ctx->dev->vdec_pdata->flush_decoder(ctx);
+>+		if (ret)
+>+			mtk_v4l2_vdec_err(ctx, "DecodeFinal failed, ret=%d", ret);
+>+
+>+		ctx->state = MTK_STATE_FLUSH;
+>+	}
+>+
+> 	if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+> 		while ((src_buf = v4l2_m2m_src_buf_remove(ctx->m2m_ctx))) {
+> 			if (src_buf != &ctx->empty_flush_buf.vb) {
+>@@ -894,28 +917,6 @@ void vb2ops_vdec_stop_streaming(struct vb2_queue *q)
+> 			}
+> 		}
+>
+>-		if (ctx->state >= MTK_STATE_HEADER) {
+>-			/*
+>-			 * The resolution hasn't been changed when STREAMOFF is called.
+>-			 * Update the picinfo here with previous resolution if VIDIOC_G_FMT
+>-			 * is called.
+>-			 */
+>-			ctx->picinfo = ctx->last_decoded_picinfo;
+>-
+>-			mtk_v4l2_vdec_dbg(2, ctx,
+>-					  "[%d]-> new(%d,%d), old(%d,%d), real(%d,%d)",
+>-					  ctx->id, ctx->last_decoded_picinfo.pic_w,
+>-					  ctx->last_decoded_picinfo.pic_h,
+>-					  ctx->picinfo.pic_w, ctx->picinfo.pic_h,
+>-					  ctx->last_decoded_picinfo.buf_w,
+>-					  ctx->last_decoded_picinfo.buf_h);
+>-
+>-			ret = ctx->dev->vdec_pdata->flush_decoder(ctx);
+>-			if (ret)
+>-				mtk_v4l2_vdec_err(ctx, "DecodeFinal failed, ret=%d", ret);
+>-		}
+>-
+>-		ctx->state = MTK_STATE_FLUSH;
 
+you just changed this routine in patch 2/7, why was patch 2/7 needed if
+you remove it right away in the next patch?
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+regards,
+Sebastian Fricke
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> 		return;
+> 	}
+>
+>-- 
+>2.46.0
+>
+>
 
