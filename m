@@ -1,134 +1,88 @@
-Return-Path: <linux-kernel+bounces-298073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FFD95C199
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:50:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA93295C183
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19661F23FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C702853C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC4F18732B;
-	Thu, 22 Aug 2024 23:50:01 +0000 (UTC)
-Received: from sxb1plsmtpa01-02.prod.sxb1.secureserver.net (sxb1plsmtpa01-02.prod.sxb1.secureserver.net [188.121.53.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CDF183CC5;
+	Thu, 22 Aug 2024 23:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5/9mpLn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B3B183CC8
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 23:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53BD137C35;
+	Thu, 22 Aug 2024 23:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724370601; cv=none; b=eMjgNtLPip2NS7JIu7dHwoEDBtBqAJxskIJ5pFqiYK8JVahbnSzBLmMZXb7CTdx2zXoZCRyTmfChSWLERR/WWLYzUqUlaVYmDwB8LLoX9b0CyQwbFx3H9geXQKcDv4ixA2dfQgZHB/mS91U0o3JVxxRyZFsydC7LUCM1NHoJWzk=
+	t=1724369492; cv=none; b=KWtEcp2hwc6Fanjb5SHVcB7MkzVI4f7qB6wCejSvSCMmtRA7BB5ygTb038m1eY0usLUt0kEhm4OC7lCP4gcRGzKgnPSSADKF6omPEYvol1e3l3GsT9SeRMBxLRqbgYa+4Rfr6z1tYrgSdNWo+RBBM/MCep8v+taBoXI/K7Pc/4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724370601; c=relaxed/simple;
-	bh=pGEKN+wc+DZuM3ExeQa9PJHgawcNAtSwfDs6zevQAN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n6Vcm2zkKSt7t/zofczw474rey6xS3Jm3AZGH3zyp06gGiud1qcIi1edtTXHybytdfHSBeHa78z5FBy6HLfIgjimtsXVlmUDSMCEp/dMVfU1yuT5/ja7XtClbskFBHsKfxjp0wmGFxbikZF3fW2Zdrzy4NdL2aAGbOKJQSSa5kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from phoenix.fritz.box ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id hHGOsHsK5LW3HhHGasoxDN; Thu, 22 Aug 2024 16:30:57 -0700
-X-CMAE-Analysis: v=2.4 cv=Lan36Sfi c=1 sm=1 tr=0 ts=66c7ca31
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=VwQbUJbxAAAA:8
- a=FXvPX3liAAAA:8 a=s94iO8TKwuVpzBr5ofsA:9 a=AjGcO6oz07-iQ99wixmX:22
- a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: akpm@linux-foundation.org,
-	brauner@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Phillip Lougher <phillip@squashfs.org.uk>
-Subject: [PATCH V3] Squashfs: Ensure all readahead pages have been used
-Date: Fri, 23 Aug 2024 00:31:06 +0100
-Message-Id: <20240822233106.121522-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724369492; c=relaxed/simple;
+	bh=FO9U2Ov2ImeMA85PsKnevWiU5M1lkdOpK5NZi0mxcT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nJlhs1j/orMqsb3uxbLqoFaYyL5Isa5JSKZltdjH4UCS3/clAdzr7NvZba7eRpXNI4+oi5swUEVGB6X1XCmez9DBhnHx25eZNIIJh6B3D43GMPoL9gKXjSUmPUKogR70+RV5PNxZ6Babhp5yldkwUybNz+ei/oKljEkuwCnwQBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5/9mpLn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF6CC32782;
+	Thu, 22 Aug 2024 23:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724369491;
+	bh=FO9U2Ov2ImeMA85PsKnevWiU5M1lkdOpK5NZi0mxcT4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H5/9mpLnikwS6/r81+7ruKfnvkNNHZ/NrOpnIoEAqYdYsXaunzVyLH5ldO9/WmNjA
+	 cgP7tyrnxVpWkEOgzbc3GXwIs+pCPpS1zRhPHaQ4ETADQ9W8yrTWO606PY6/QWFD4Q
+	 /OsiFP7fwPCnjDQx06zWGs3v/yiwv6aHtuzZGNfCfO+OuIzDFEE2dTgwKArHYepnYv
+	 zhOmGBF7pbc88jh8GQSXQP1rygQ9ZM4wHCdYGpbCerIrsqTES5/jrZrUMJJrdLyV4h
+	 9VZ/QbNaQZZnGnNq4cpTSOwNgZ9lQMBwBifZ9SQdHfRhRuQ4p5nXKbD7CPwOiJ//yO
+	 MAbW3fhp5ZGMA==
+Date: Thu, 22 Aug 2024 16:31:29 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Eric Dumazet <edumazet@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, David Ahern
+ <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Lunn
+ <andrew@lunn.ch>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ <nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v4 2/6] netdev_features: remove unused
+ __UNUSED_NETIF_F_1
+Message-ID: <20240822163129.0982128f@kernel.org>
+In-Reply-To: <d080d3a6-3fdd-4edc-ae66-a576243ab3f0@intel.com>
+References: <20240821150700.1760518-1-aleksander.lobakin@intel.com>
+	<20240821150700.1760518-3-aleksander.lobakin@intel.com>
+	<CANn89iL+VTJ6tEe-PZ24h+0U9BYs0t4gZDndiy7j1DwuKMBEFg@mail.gmail.com>
+	<fc659137-c6f0-42bf-8af3-56f4f0deae1b@intel.com>
+	<CANn89i+qJa8FSwdxkK76NSz2Wi4OxP56edFmJ14Zok8BpYQFjQ@mail.gmail.com>
+	<d080d3a6-3fdd-4edc-ae66-a576243ab3f0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfGQ+ljdeCwq4R4QkaKRx4wdqc1EIsUZnsGZe4Fozhg5f2rSUiwnsc2fSCza2HVTuq2Hjj+hsCxkLODof5DxMDw6pYeyt+iePY5bb7sd70GLNkVIYBm1J
- DqVPQIXRjw8yw6I5kPvMfSSJOgE/4Fr1IcBJnoizmrLPeP/DjWA+UddC0V6CBifXdLTGBjMzbnQFh0oX9P9GuWOZ1dd2czyKCV5QLhKAwCTEm9plrmii5x9I
- 3JnwDtT17En/PIpQhO6gZcIVA+VWSvkdVo+cEz5gvmVOyozcD32otj+vECCmey4CAxGOcnzffcFQtkQnBHos8GJQOeY5SO+4XrEzxZ5QN9DycdW1fTwPEh+m
- bxwmRVT+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In the recent work to remove page->index, a sanity check
-that ensured all the readhead pages were covered by the
-Squashfs data block was removed [1].
+On Thu, 22 Aug 2024 18:19:24 +0200 Alexander Lobakin wrote:
+> > I was simply suggesting to correct the changelog, and make clear we
+> > need a recent enough ethtool.  
+> 
+> Yeah I got it, thanks. Will reword.
+> 
+> > We can not simply say that ethtool always supported the modern way
+> > (ETH_SS_FEATURES)  
+> 
+> I didn't work with Linux at all back in 2011, so I didn't even know
+> there were older ways of handling this :D Always something to learn, nice.
 
-To avoid any regression, this commit adds the sanity check
-back in an equivalent way.  Namely the page actor will now
-return error if any pages are unused after completion.
-
-[1] https://lore.kernel.org/all/20240818235847.170468-3-phillip@squashfs.org.uk/
-
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
---
-V3: last_page should be actor->last_page
----
- fs/squashfs/file.c        | 4 ++--
- fs/squashfs/file_direct.c | 2 +-
- fs/squashfs/page_actor.h  | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-index 5a3745e52025..21aaa96856c1 100644
---- a/fs/squashfs/file.c
-+++ b/fs/squashfs/file.c
-@@ -535,7 +535,7 @@ static int squashfs_readahead_fragment(struct page **page,
- 
- 	last_page = squashfs_page_actor_free(actor);
- 
--	if (copied == expected) {
-+	if (copied == expected && !IS_ERR(last_page)) {
- 		/* Last page (if present) may have trailing bytes not filled */
- 		bytes = copied % PAGE_SIZE;
- 		if (bytes && last_page)
-@@ -625,7 +625,7 @@ static void squashfs_readahead(struct readahead_control *ractl)
- 
- 		last_page = squashfs_page_actor_free(actor);
- 
--		if (res == expected) {
-+		if (res == expected && !IS_ERR(last_page)) {
- 			int bytes;
- 
- 			/* Last page (if present) may have trailing bytes not filled */
-diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
-index 646d4d421f99..22251743fadf 100644
---- a/fs/squashfs/file_direct.c
-+++ b/fs/squashfs/file_direct.c
-@@ -80,7 +80,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	if (res < 0)
- 		goto mark_errored;
- 
--	if (res != expected) {
-+	if (res != expected || IS_ERR(last_page)) {
- 		res = -EIO;
- 		goto mark_errored;
- 	}
-diff --git a/fs/squashfs/page_actor.h b/fs/squashfs/page_actor.h
-index c6d837f0e9ca..ffe25eb77c32 100644
---- a/fs/squashfs/page_actor.h
-+++ b/fs/squashfs/page_actor.h
-@@ -33,10 +33,11 @@ extern struct squashfs_page_actor *squashfs_page_actor_init_special(
- 				loff_t start_index);
- static inline struct page *squashfs_page_actor_free(struct squashfs_page_actor *actor)
- {
--	struct page *last_page = actor->last_page;
-+	struct page *last_page = actor->next_page == actor->pages ? actor->last_page : ERR_PTR(-EIO);
- 
- 	kfree(actor->tmp_buffer);
- 	kfree(actor);
-+
- 	return last_page;
- }
- static inline void *squashfs_first_page(struct squashfs_page_actor *actor)
--- 
-2.39.2
-
+Are we removing the bit definitions just for code cleanliness?
+On one hand it may be good to make any potential breakage obvious,
+on the other we could avoid regressions if we stick to reserving 
+the bits, and reusing them, but the bits we don't delete could remain
+at their current position?
 
