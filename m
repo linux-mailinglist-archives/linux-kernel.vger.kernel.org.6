@@ -1,148 +1,181 @@
-Return-Path: <linux-kernel+bounces-297832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF6F95BE3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E3895BE40
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48593B277C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35991C21522
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947BF1D0486;
-	Thu, 22 Aug 2024 18:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F461D048C;
+	Thu, 22 Aug 2024 18:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKcge+rG"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="LWndbxnZ"
+Received: from sender3-of-o57.zoho.com (sender3-of-o57.zoho.com [136.143.184.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9052AE77;
-	Thu, 22 Aug 2024 18:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724351397; cv=none; b=SY0sdqrZZObhppL80NhXtY9lGKVBUu4WVXbn2ItfjZVzi7uHJI33/qea+MenTf6RKzM1PGdqOP/h2Ou8/0hhDkryFha9qKQ/1OMDJexzRwjCGIoyE1K0mMl3xZQsVn4Fjs03WQqlAR8xbyxO4qbf0en+uaZt9CHgMmCyYF/nBks=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724351397; c=relaxed/simple;
-	bh=4VQZ1nKAqmZY3C0LHWDH6tVHf0R2awT3hntj19h+MXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=quHoGungpk2fFfZWMeJva34RkhVoHN6Jd7GXnVnYsivqypLY6IzJOvV6hGOk9839aYTOO8g7WFynHfTpTZZqN6i4tHCtsMgEhnQkOXV85u/zwYZ6xzREpkjdlVBCmNzswQxMRUYtGWNNfN58jzOQ0UzkZAYs8IPQTUz3zveO7GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKcge+rG; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f43de7ad5eso8689911fa.1;
-        Thu, 22 Aug 2024 11:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724351394; x=1724956194; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6eq0Zc6Vxfr46aaR2skl2I5AqjzF0NL14ez30VtrVd0=;
-        b=YKcge+rG87/SadC5/0l/r5rh4cHIEJVnlJ7ltRvAKyl6n7g3wBOktrRYA/x25E49qz
-         rs6/RrETf7YCXnK3N14xOID/vXKb2BuE0rsdEnp/otQQwIpi9STbm4rtd0F6TBWUTpB7
-         NlIVP7w8J7EvqHsLZo4i1+peWMKSpxMFWXjPuRIUplatmPGqUQ9KRsgCRtTOsUbzM+co
-         lDgbrUwrQGDkEvoU26V7uWgnMmB7Jl1f0n13sLDR8i+oV2Wam+fGkSApPjG52OgX9r04
-         JCzBrT0U0xyHkK+7h9/xMbHcQ3y8504zWX4kwqXDHUd+Mdr+b7XiVAyY7buNkgj2Gal+
-         lZkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724351394; x=1724956194;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6eq0Zc6Vxfr46aaR2skl2I5AqjzF0NL14ez30VtrVd0=;
-        b=mav1+utRifPuwj0/rKHABt2XRbuQ5qCXtBDpe0Fd7tQgPJ3RoqgUyAtV3xSOCN8tYd
-         w+3BxkZ8Z1Qq9vQa69kIQnhb8A5+Ul81srVdhY2hZn/bgRaMXO2Aal8IUZ4Gb6s1Hh6i
-         oOmDuEYPoaduM4JFRPfjeEuDCPz0OHjvnCjhTPC8Sbg3/+9WqFGbQTCzqsUbuwTg+owJ
-         B2ykvZbeRV2dE+KClkc/+nwqFqp1SurSEXAxqGKqCrcHAov3yyc+/1TO9Athmh/PN/NT
-         j1+oASOcr6Qi9A/0ItG52jzboJFuTmINWtWE3CDfp2sUK3MBgVPKyg8S+W5gMzKMHT1W
-         YpNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUocLOpVkk4P1Xv8oK4lKg/mky/1GcUyLosi3CGvZE8fwOp6nZYyHchRe5uYqn5AxjoPzDxkTzvtZSKezg=@vger.kernel.org, AJvYcCWwwonOi4dNG525iED4pcA3BUJ3b+8abGBW+mXAP0RoHaKV3jaJULvYLgBIpkBZJYoAMNvGJesTgviiPZQCv7dT9A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9WfLiS4ZA5/XTgChlZN+kkfNgiXiUKXlQfNAYk84O1yhLrTjq
-	Bfg0dL1nWKg68Lm29zGvc3WtP6W5xlCie2OFdWvjNruh9UO2eA6Wim5MBqmeOwJd288zXaUta9B
-	aOhAczxfuI1GHTVK9bzWgdcGhyhEbvpQSrlo=
-X-Google-Smtp-Source: AGHT+IGkBeDjy0yQ9wegTiaoJJqWpW89C0016X6i0GMs1w+V/QuMO/F33Sjtzf7J8+eTEt0NcYsr2rRhSBJbyZMd2EQ=
-X-Received: by 2002:a05:651c:198a:b0:2f2:b1ed:4496 with SMTP id
- 38308e7fff4ca-2f3f8b570famr46210591fa.42.1724351394252; Thu, 22 Aug 2024
- 11:29:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86DFEC5;
+	Thu, 22 Aug 2024 18:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724351476; cv=pass; b=DjtlAO4jxEDjb5OCzhDa6aC9dqZcDzuWs2vbKD5M2zonlfxDgH7CBSrZ2B2ZfvzaZoai1+MVtCYKp3IGF3FGzlQZ/mxdx3eF5IpARPPC+7sKMSp3nYGByWTQqVC6cNJ5Yt2GqgY0gV5WH7F1Ex3LcFXcWBO50sokM5ViOFEfpfE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724351476; c=relaxed/simple;
+	bh=agHBdZkQ8BulJoORPycTlSOnOyfy9kfTwiKBhxMAjag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VkQwmhFYO7roLIV4f+GbFbuS4asXoazYfaCyLI0+rIiytKmygp1j8G6FNMayAE5LNaFeZA5YwleJvGdIt7b2409PvLPC7VzX/bJzh62zUo6KxPuxgfQwg6SqljzeEinSvV5q2cbyKEbJH1WzL5ydL4b0TY9iZpQd1giLUDHxsHw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=LWndbxnZ; arc=pass smtp.client-ip=136.143.184.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724351396; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ensxJanajnfNH4lrohozTfRp/kJ8ndAR/I5SeOCvPtvZpwA/RS3UKS9IzW5MnGlu3KwD9JZgR/559mn/GKEg7+II30GBHjPG+RHQQXv6qYJ8VO6d6q5godbIQcqq8y5Wsi0Giv6acyQMSSuozV5LPKeS57s5x4o9g8w+sokW13c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724351396; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MyQlkXBuBh5D5+ORO/Ajt6ntHefewg/FMRXibyLJvKQ=; 
+	b=fPGGbQa6PDJETfzD86dOnyy2nf1dhiCXht9Z7kAfpQDeTDuKfPlCsPgzwzvQy4C7qDUHI6mVeTa8+DiKlK4twHkkFW7Rmr4iNCsDZl/Ko9tv8Bi0jkphPJpIC2WLsxxLAEHGJm+ZQJ0UDZdtX2DQt0UJL9HnfiEXQoDXnto9fHQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724351396;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=MyQlkXBuBh5D5+ORO/Ajt6ntHefewg/FMRXibyLJvKQ=;
+	b=LWndbxnZqsXgRW0zxX0skSHrs/RICB+4zvHapAfsJIHhBjt1SzpRUZ8bMV2l5ynf
+	xRPob/zjMHRjYX8ykLglY1hM59kdZCqo6e2s59dYvXpsTBX6lSomKRhRHWTKfRE2XAz
+	FMGosfle+46Swp76HbPabYQUH+ZMH+FO0Ir/i62I=
+Received: by mx.zohomail.com with SMTPS id 1724351393878947.9797156192928;
+	Thu, 22 Aug 2024 11:29:53 -0700 (PDT)
+Message-ID: <281c3bb3-13f6-47a2-9a9a-134e397bf686@apertussolutions.com>
+Date: Thu, 22 Aug 2024 14:29:48 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
- <ZsdKhLaPy-uzKsuH@x1> <ZsdUxxBrpbuYxtXN@x1> <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
- <ZsdxinrZP1kHINWT@x1> <ZsdzLmIFWRqsXeXD@x1> <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
- <Zsd39zG9BuGpZ8aA@x1> <CA+icZUXGV9dMGcRwJiP7WLcYUaY5CRCcDw1HLFr+9Sn7CrRGDw@mail.gmail.com>
- <CAM9d7cgSR4OroaX0FuBvC_bPPMeEr7ThXJwqgMfAnj-Lfk8wNw@mail.gmail.com> <ZseBZ1DIi4Y5zC2W@x1>
-In-Reply-To: <ZseBZ1DIi4Y5zC2W@x1>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Thu, 22 Aug 2024 20:29:17 +0200
-Message-ID: <CA+icZUWt88VFaRON5j6+MQNgndiopmdpiWu+sopHW6usrpBhiA@mail.gmail.com>
-Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: Thomas Gleixner <tglx@linutronix.de>,
+ "Eric W. Biederman" <ebiederm@xmission.com>,
+ Eric Biggers <ebiggers@kernel.org>
+Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+ peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+ nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
+ corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+ kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
+ trenchboot-devel@googlegroups.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+Content-Language: en-US
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+In-Reply-To: <87ttflli09.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, Aug 22, 2024 at 8:20=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Thu, Aug 22, 2024 at 11:17:21AM -0700, Namhyung Kim wrote:
-> > > On Thu, Aug 22, 2024 at 7:40=E2=80=AFPM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2=
-001
-> > > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > > Date: Thu, 22 Aug 2024 14:13:49 -0300
-> > > > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-m=
-ismatch if
-> > > >  present on clang
-> > > >
-> > > > The -Wcast-function-type-mismatch option was introduced in clang 19=
- and
-> > > > its enabled by default, since we use -Werror, and python bindings d=
-o
-> > > > casts that are valid but trips this warning, disable it if present.
-> > > >
-> > > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > > Cc: Ian Rogers <irogers@google.com>
-> > > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > > Cc: Nathan Chancellor <nathan@kernel.org>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9=
-uy3r2MzKXwTA5THtL7w@mail.gmail.com
-> > > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> >
-> > Can we also add 'Fixes' tag to make this picked by stable kernels?
->
-> Fixes what? This isn't a regression, clang 19 isn't available for Fedora
-> 40, the most recent.
->
-> - Arnaldo
+On 8/15/24 15:10, Thomas Gleixner wrote:
+> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
+>> On 5/31/24 09:54, Eric W. Biederman wrote:
+>>> Eric Biggers <ebiggers@kernel.org> writes:
+>>>> That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
+>>>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
+>>>> that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
+>>>> but why would you not at least *prefer* SHA-256?
+>>>
+>>> Yes.  Please prefer to use SHA-256.
+>>>
+>>> Have you considered implementing I think it is SHA1-DC (as git has) that
+>>> is compatible with SHA1 but blocks the known class of attacks where
+>>> sha1 is actively broken at this point?
+>>
+>> We are using the kernel's implementation, addressing what the kernel
+>> provides is beyond our efforts. Perhaps someone who is interested in
+>> improving the kernel's SHA1 could submit a patch implementing/replacing
+>> it with SHA1-DC, as I am sure the maintainers would welcome the help.
+> 
+> Well, someone who is interested to get his "secure" code merged should
+> have a vested interested to have a non-broken SHA1 implementation if
+> there is a sensible requirement to use SHA1 in that new "secure" code,
+> no?
+> 
+> Just for the record. The related maintainers can rightfully decide to
+> reject known broken "secure" code on a purely technical argument.
+> 
+> Thanks,
+> 
+>          tglx
+> 
 
-From [1]:
+There is one simple question, does allowing the Secure Launch code to 
+record SHA1 measurements make the system insecure, and the answer is 
+absolutely not.
 
-LLVM Release Schedule - 19.1.x:
+The role of the Secure Launch code base in the context of the larger 
+launch process is to function as observer. Within this role, its only 
+responsibility is continuing the trust chain(s) that were started by the 
+CPU/Hardware. It does so by measuring the components and configuration 
+it is responsible for loading and applying, i.e. in TCG parlance, it is 
+continuing the construction of the transitive trust for the system. In 
+this aspect, the only degradation of security that can affect the 
+kernel's role is whether all the necessary entities are safely measured 
+and not what algorithms are used.
 
-Jul 23rd: release/19.x branch created
-Jul 26th: 19.1.0-rc1
-Aug  6th: 19.1.0-rc2
-Aug 20th: 19.1.0-rc3
-Sep  3rd: 19.1.0 <--- XXX
-Sep 17th: 19.1.1
-Oct  1st: 19.1.2
-Oct 15th: 19.1.3
-Oct 29th: 19.1.4
-Nov 12th: 19.1.5
-Nov 26th: 19.1.6 (if necessary)
+If the system integrator, whether that be the OEM, your employer, the 
+distro maintainer, the system administrator, or the end user, configures 
+the DL preamble to only use SHA1 or used older hardware that has a 
+TPM1.2, then they are accepting the risk it creates in their solution. 
+In fact, a greater threat to the security of the launch is the 
+misconfiguration of the IOMMU, which risks the kernel's ability to 
+safely make measurements, as compared to the use of SHA1. Yet it was 
+insisted in past reviews that we allow the user to specify an incorrect 
+IOMMU policy.
 
--Sedat-
+In the end, the "security" of an RTM solution is how and what 
+measurements are used to assess the health of a system. Thus bringing it 
+back to the opening question, if SHA1 measurements are made but not 
+used, i.e. the attestation enforcement only uses SHA2, then it has zero 
+impact on the security of the system.
 
-[1] https://github.com/ClangBuiltLinux/linux/issues/2040
+Another fact to consider is that the current Intel's TXT MLE 
+specification dictates SHA1 as a valid configuration. Secure Launch's 
+use of SHA1 is therefore to comply with Intel's specification for TXT. 
+And like the IOMMU situation, having the option available allows the 
+user to determine how they ultimately want to integrate Secure Launch 
+into their integrity management. And because Secure Launch will only 
+attempt SHA1 if it was in the TXT configuration, when either Intel 
+removes SHA1 from the MLE specification or firmware manufactures begin 
+disabling the SHA1 banks, this will obviously mean that Secure Launch 
+will not produce SHA1 measurements.
+
+On a side note, with my remote attestation hat on, the SHA1 measurements 
+can in fact be extremely useful. If an attestation was made containing 
+both SHA1 and SHA2 chains, and the SHA1 of an event was correct but the 
+SHA2 was not, either a natural collision happened or someone maliciously 
+caused a collision. The former has an extremely low probability, while 
+the latter is highly probable.
+
+Thus, with this information alone, it is possible to make the reasonable 
+determination the device is compromised. Whereas if both hashes are 
+mismatched, without any additional information it is equally probable of 
+either misconfiguration or compromise. And to state the obvious, with 
+only SHA2, further information is needed to distinguish between 
+misconfiguration and compromise.
+
+V/r,
+Daniel P. Smith
 
