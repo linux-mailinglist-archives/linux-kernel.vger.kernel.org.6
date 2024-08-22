@@ -1,181 +1,172 @@
-Return-Path: <linux-kernel+bounces-297103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315F895B324
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A093695B329
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29B71F21E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EB831F22162
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFBC17F4EC;
-	Thu, 22 Aug 2024 10:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F7617DE16;
+	Thu, 22 Aug 2024 10:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dtrMJJac"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kw+hgXoJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB04214A086
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0670B149DFD;
+	Thu, 22 Aug 2024 10:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724323554; cv=none; b=k0QrCo+Uu/oQcGRbfFihFBIXxfZIHxbK/QVF7DDDUw9jmOcCxaHaCS3qsCeGW14wlWmyK6i5uT99odKbUkE59e/9p7ay8US+OihnyUoek499rjrPjm4JcArmsAKRcp23ylxxcK1tmpji2/hzHkqe5VXVoG5ixJnMHxLTNp7wHBI=
+	t=1724323609; cv=none; b=nH9AZp73rrfO1KsDln5GzNPldbLqNKtcyr1rLgdZRYnCW2dR3cw3rXUMpOsZncotxCeXADbz/dlNrORuf25oqeQKznfNwfOzetS12f/PlSUfMrS+zPHSnRT5K4ekGkP28V4IaMPx+Q3/RFoufRwt7i7I0Exy1duMBEB8Qb4wizo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724323554; c=relaxed/simple;
-	bh=Wocgy9mWm5Al1pCnBkdgVtr0QQyRxnroK8DSq3J9Mio=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mM/NSi+AKqStTEqgzbMdfBHvTk7A7xy4Ly3lAMxkOJ0zCKpX5wpT4qkpYVuRlUk4BctEht6seqhcwdD0H0T2tttb6ilTwwWQBFMGkUxbTHC67oRxU/toeIcDCr2Fz0i+WaBmGlmjwBtnjGIAHSR7TfT4Ee1KgT5sL/mad80Kcxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dtrMJJac; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724323551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mpnb3SemwFliUZ4/dS7d4EoXv878E5NLpOTu5i7vK3A=;
-	b=dtrMJJacDsM6/+davMe/iSafYtkviH34QvnzxUqkVjHlj/v6V5ibwaFnxcEDVPg4l6SIQt
-	Xz+tnjfCh8vzxChg6vskpJHPhgEsMD4y7n4kYjuNfr8HYf4ibYMfqAZ9v+Ad4zHadZuk+D
-	QSKPWcR2coojJ2khrbBqHbhnAkBUWDg=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-128-hoDsUrm8P3iY80xpu99H8g-1; Thu, 22 Aug 2024 06:45:50 -0400
-X-MC-Unique: hoDsUrm8P3iY80xpu99H8g-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6c1610cd159so13064026d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:45:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724323550; x=1724928350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mpnb3SemwFliUZ4/dS7d4EoXv878E5NLpOTu5i7vK3A=;
-        b=dVNl1THDzj3oJBg15ursX0T7pcajd8DGSpem5Qw0gcN8dP3ukS2t+/OhE2gR8jgHm2
-         efku0vZ+DRewn9OsswGQThzGSTBVrTe97SPP2g7oNXDYmlG/kdF/2IXsqiP2BkpibIY6
-         hGKyKNpw4gGzvWQbYeD8rqFVABXsGuFgey0Q3ioyUQ+ppRWqefBP4lZwouS9r/lgRA2K
-         JKF0KzYAplr6WCyxaskzWS9HadWZ6IYNZNn6LPP2nflgUUGmZdESdzvEjnvAK0UWcVWJ
-         965IXLoxlVfX35Woplg8Zt0TmxF2WylEjceF0D+gJM5i0d+qRut1nhZVKGPT+b+wr+Gz
-         ajcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyMQGHSt8IkqZwHOe5Uf4zx1AAnc5Zx8yBkHFu5eu8dIeiMkaZcUVXNiWsiBdIDXYYdxuSx6que8mhUnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrYIHBJfCX2aftArhSo1BMW6VcTV6JuT7JolRPsE61D3uxAI1C
-	l/N48msZNe6jwNchKmAiyYhj5XEDSD2NyyKHL8JD+mk2gFwn0QsO5LiYI9o3MadtnJVpLNsbwbC
-	vYdrzWErRW3SNQj3ZL7aiZlx22FPCq8CGv/LamszZ/kAldoVyDrVkliFf900cbb5dSs1U4OCZzH
-	RBOnmHXGrpizdFMuKs53ivUqYGJDM0J0AxkOKL
-X-Received: by 2002:a05:6214:2b93:b0:6bf:60b8:d4d7 with SMTP id 6a1803df08f44-6c160c71354mr52485466d6.15.1724323549902;
-        Thu, 22 Aug 2024 03:45:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHDpqdsRgZKmZj2LlYLuSKDF48ze2sPIDVJNwTHfTXpNGLbI9DbeX+bnNBTGnZjFpbQMzRQrZC/Ggb2z0yJ5U=
-X-Received: by 2002:a05:6214:2b93:b0:6bf:60b8:d4d7 with SMTP id
- 6a1803df08f44-6c160c71354mr52485196d6.15.1724323549541; Thu, 22 Aug 2024
- 03:45:49 -0700 (PDT)
+	s=arc-20240116; t=1724323609; c=relaxed/simple;
+	bh=3GdhEK3KthQRHzd1qGeTOLt099FG/J8g/4JutJARSzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lH1fqzeiPkbXMFiFd0EkljfYolN5mOcZwkbP9Bg9ZPuRDvPJZwr5PVHrYESVMcFnyH1icI7de2EWDV0elOmjbSWpQ3IeYOs7G3kmGI8KlezAAgX/fjn5CwG4hapfRVUWkTGSA1AZSZ9Tw6qta5BLNncwZVwE+J1wnQ6TfDJoRwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kw+hgXoJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MAP4Te027868;
+	Thu, 22 Aug 2024 10:46:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RnSs2fCnHqGNQUdVyPDQqtWajASwUgx/EBp+1AMY6DM=; b=Kw+hgXoJ/wZnA6LY
+	tJm6tz+lBWWcNFM31OU3GuadHLNlSJFUdB5OBHtMfs9w4p5RcFd4UHPpiAw4LKrW
+	OGaBkP5qcE4K62IIVB7lzDAHgXtC0/HEm1qUKcICrdNM3FbSvl+KHvUoYpATTg6G
+	JTwqJD33MT6+YR0XW77voe2oYl6FaGy4TWtjfvLlxZe8ZcIztxIolsqIKpYyqdOl
+	AjV+4d7BypypMF7uPI7RBpaXvAQigTDP6Ol0mU0lxhkAErcbEv3Kv72DzyaLTUFi
+	T/OAVxSBSJhVSng3OeQ52sGCp5a8M+bpbUo+jm3qKXW5wrLvfukO0Urt8ICOMmQz
+	6ru4nQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414v5cehb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:46:31 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MAkUlF012375
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 10:46:30 GMT
+Received: from [10.216.41.123] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
+ 2024 03:46:24 -0700
+Message-ID: <688ead11-c1c0-48b2-b4d1-feeb1278c692@quicinc.com>
+Date: Thu, 22 Aug 2024 16:16:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819145417.23367-1-piliu@redhat.com> <ZsX5QNie3pzocSfT@gardel-login>
- <CAF+s44S2Ph1_nFcZYy3j0Jr4yuHayb5zdNu1YXg8ce_Lf3TOgQ@mail.gmail.com> <Zsb1isJ2cYRp2jpj@gardel-login>
-In-Reply-To: <Zsb1isJ2cYRp2jpj@gardel-login>
-From: Pingfan Liu <piliu@redhat.com>
-Date: Thu, 22 Aug 2024 18:45:38 +0800
-Message-ID: <CAF+s44TauSXk-gDgRHn=6CsQrAv8Q-QyGXkDJO+_sTh_yKde5w@mail.gmail.com>
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
-To: Lennart Poettering <mzxreary@0pointer.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Philipp Rudo <prudo@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+To: Bart Van Assche <bvanassche@acm.org>,
+        Sandeep Dhavale
+	<dhavale@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+CC: Qais Yousef <qyousef@layalina.io>,
+        Christian Loehle
+	<christian.loehle@arm.com>, <axboe@kernel.dk>,
+        <mingo@kernel.org>, <peterz@infradead.org>,
+        <vincent.guittot@linaro.org>, <linux-block@vger.kernel.org>,
+        <sudeep.holla@arm.com>, Jaegeuk Kim
+	<jaegeuk@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, <kailash@google.com>,
+        <tkjos@google.com>, <bvanassche@google.com>,
+        <quic_nitirawa@quicinc.com>, <quic_cang@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_narepall@quicinc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <3feb5226-7872-432b-9781-29903979d34a@arm.com>
+ <20240805020748.d2tvt7c757hi24na@airbuntu>
+ <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
+ <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
+ <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
+ <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
+ <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
+ <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
+ <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
+ <12a6f001-813e-4bc4-90c2-9f9ef7dc72e6@acm.org>
+Content-Language: en-US
+From: MANISH PANDEY <quic_mapa@quicinc.com>
+In-Reply-To: <12a6f001-813e-4bc4-90c2-9f9ef7dc72e6@acm.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tD19fjYyjhLufL6dnsZvLsArdI74DqmX
+X-Proofpoint-ORIG-GUID: tD19fjYyjhLufL6dnsZvLsArdI74DqmX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_03,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408220080
 
-On Thu, Aug 22, 2024 at 4:23=E2=80=AFPM Lennart Poettering <mzxreary@0point=
-er.de> wrote:
->
-> On Do, 22.08.24 13:42, Pingfan Liu (piliu@redhat.com) wrote:
->
->  > On Wed, Aug 21, 2024 at 10:27=E2=80=AFPM Lennart Poettering
-> > <mzxreary@0pointer.de> wrote:
-> > >
-> > > On Mo, 19.08.24 22:53, Pingfan Liu (piliu@redhat.com) wrote:
-> > >
-> > > > *** Background ***
-> > > >
-> > > > As more PE format kernel images are introduced, it post challenge t=
-o kexec to
-> > > > cope with the new format.
-> > > >
-> > > > In my attempt to add support for arm64 zboot image in the kernel [1=
-],
-> > > > Ard suggested using an emulator to tackle this issue.  Last year, w=
-hen
-> > > > Jan tried to introduce UKI support in the kernel [2], Ard mentioned=
- the
-> > > > emulator approach again [3]
-> > >
-> > > Hmm, systemd's systemd-stub code tries to load certain "side-car"
-> > > files placed next to the UKI, via the UEFI file system APIs. What's
-> > > your intention with the UEFI emulator regarding that? The sidecars ar=
-e
-> > > somewhat important, because that's how we parameterize otherwise
-> > > strictly sealed, immutable UKIs.
-> > >
-> > IIUC, you are referring to UKI addons.
->
-> Yeah, UKI addons, as well as credential files, and sysext/confext
-> DDIs.
->
-> The addons are the most interesting btw, because we load them into
-> memory as PE files, and ask the UEFI to authenticate them.
->
-> > > Hence, what's the story there? implement some form of fs driver (for
-> > > what fs precisely?) in the emulator too?
-> > >
-> > As for addon, that is a missing part in this series. I have overlooked
-> > this issue. Originally, I thought that there was no need to implement
-> > a disk driver and vfat file system, just preload them into memory, and
-> > finally present them through the uefi API. I will take a closer look
-> > at it and chew on it.
->
-> It doesn't have to be VFAT btw. It just has to be something. For
-> example, it might suffice to take these files, pack them up as cpio or
-> so and pass them along with the UEFI execution. The UEFI emulator
-> would then have to expose them as a file system then.
->
-> We are not talking of a bazillion of files here, it's mostly a
-> smallish number of sidecar files I'd expect.
->
-Yes, I think about using <key, value>, where key is the file path,
-value is the file content.
 
-> > > And regarding tpm? tpms require drivers and i guess at the moment uef=
-i
-> > > emulator would run those aren't available anymore? but we really
-> > > should do a separator measurement then. (also there needs to be some
-> > > way to pass over measurement log of that measurement?)
-> >
-> > It is a pity that it is a common issue persistent with kexec-reboot
-> > kernel nowadays.
-> > I am not familiar with TPM and have no clear idea for the time being.
-> > (emulating Platform Configuration Registers ?).  But since this
-> > emulator is held inside a linux kernel image, and the UKI's signature
-> > is checked during kexec_file_load. All of them are safe from
-> > modification, this security is not an urgent issue.
->
-> Hmm, I'd really think about this with some priority. The measurement
-> stuff should not be an afterthought, it typically has major
-> implications on how you design your transitions, because measurements
-> of some component always need to happen *before* you pass control to
-> it, otherwise they are pointless.
->
 
-OK, I will look into the details of TPM to see how to bail out.
+On 8/21/2024 10:52 PM, Bart Van Assche wrote:
+> On 8/21/24 5:29 AM, MANISH PANDEY wrote:
+>> How about introducing a new rq_affinity ( may be rq_affinity = 3) for 
+>> using cpus_equal_capacity() using new flag QUEUE_FLAG_SAME_CAPACITY.
+>>
+>> if (cpu == rq->mq_ctx->cpu ||
+>>      (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
+>>        cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
+>> +      (test_bit(QUEUE_FLAG_CPU_CAPACITY, &rq->q->queue_flags))
+>>         && cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
+>>          return false;
+>>
+>> Could you please consider raising similar change, if this seems fine 
+>> for all.
+> 
+> I'm not sure that a change like the above would be acceptable.
+> 
+> What is the performance impact of the above change? Redirecting
+> completion interrupts from a slow core to a fast core causes additional
+> cache misses if the I/O was submitted from a slow core. Are there
+> perhaps use cases for which the above change slows down I/O?
+> 
+> Thanks,
+> 
+> Bart.
 
-Thanks,
+Hi Bart,
 
-Pingfan
+
+ > What is the performance impact of the above change?
+No impact at all, as we are not changing the logic, we are just 
+proposing an on/off switch and give flexibility to users. Let the user 
+choose what's the best for their system.
+
+Intention behind proposing a new flag is like we shouldn't break the 
+backward compatibility, as the change is also included in stable release 
+branches.
+
+	/* same CPU or cache domain and capacity?  Complete locally */
+	if (cpu == rq->mq_ctx->cpu ||
+	    (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
+	     cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
++	     (test_bit(QUEUE_FLAG_CPU_CAPACITY, &rq->q->queue_flags) ||
+	      cpus_equal_capacity(cpu, rq->mq_ctx->cpu))))
+		return false;
+
+So basically below would act as on/ off switch
+QUEUE_FLAG_CPU_CAPACITY - with rq_affinity=1 , it will be clear
+                         - with rq_affinity=3 , it will be set.
+
+
+Regards
+Mansih
 
 
