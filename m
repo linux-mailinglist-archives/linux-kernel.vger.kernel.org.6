@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-297487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D4995B924
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8772D95B927
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B0B1F27A6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EFA728518B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90171CC17B;
-	Thu, 22 Aug 2024 14:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C738A1CC8A0;
+	Thu, 22 Aug 2024 14:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tM6ilSH4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UIGjM6yM"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1241CB329;
-	Thu, 22 Aug 2024 14:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB841CC891
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724338691; cv=none; b=UI/e/ExhPZMb9VY7zElUADTJG0VvH3xGeugcl9LDARWdmiLizTN3xRJgkwtVtDEY79tHVqVC5+UY/lUT7gAtBhvmh4ioBsZ1geJvlqR2sULF+ZpNoliXfeaiDvR+yEeFAJYHL54UQgErr8SWjBs4Q3TM5FAVozNK8yMKLjbSaEE=
+	t=1724338695; cv=none; b=WYQ9/ehJydyZ4rdOAb5A/GbbvJaUNUxvF/QGsEGAQl5/ry2wqI7Yyj7B4d9/yNuylXEJRe7wdQfbh/+ay3lOMGKdoFdCoVFHTpKUbKvBKRjH/ah6+QGlmc8t8JK4DYnr3QsY4KdMcUYGJ/dutIX0rXRVmKJlEBVOUuDEn0QhPdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724338691; c=relaxed/simple;
-	bh=Bj+Yrsv0zLoxJiQB3tANzn1xKu5HVSY1AdAXVzJxuO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i1nYQ18gJsPHRxxux9gjAasPoiewffRRfRvejdgy7g5ifOUCVaANlJ61V0pw/bkn4oFhqgVhxMhsajHQAOQy3fFQjOOnmFGd36CzTQfL200XsWYyfpgRqCvq0JIB9EeTBR6+BYzAzf+ubSganFraLX5zXTkG071CI+deRBLXpik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tM6ilSH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD805C32782;
-	Thu, 22 Aug 2024 14:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724338690;
-	bh=Bj+Yrsv0zLoxJiQB3tANzn1xKu5HVSY1AdAXVzJxuO4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tM6ilSH4HBJRpOK1zAJJmcsiHCcE5dbLSp11N7aT+RNDIybd0nm+lK5oOzSZhoJrb
-	 LW13yqbfvG52RMcGF2Dx3XKUHldPuBmSaRbmLtbhUsGWv4KiPY2mskfWNdSB21Jke8
-	 3OuJFcqtdBrg/EueNBG5SPcisUHeioOKP9QJUqcMeB+lZ3eevDHFJigOA2+GyrktVt
-	 0+CqqF7iGPTLbAflCUlQJTUR6AKpy6c6C7L3VI7YmrrWBIB+vuMA63K/NaI4BudXEJ
-	 TWHTDQ41zdkRNtHN6LLakNLEcWz74EuL9elqikX3pKKXSMU3P74qljf1UVyt9Nf0IF
-	 pUUDNGQR6Y0bA==
-Date: Thu, 22 Aug 2024 15:58:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] spi: stm32-qspi: Simpify resource lookup
-Message-ID: <ZsdR-G9S5nYbQX4s@finisterre.sirena.org.uk>
-References: <20240820123707.1788370-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724338695; c=relaxed/simple;
+	bh=pcwH8aGPMs5tBc6ZGRP//bIqRFQZ1ST6Zm6/q7fmsSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TISbJfoOR+IUcd8+Ft40FtlRuGPyJyn+aQjeBqxpTDso5GZMnzYgf+nfTDKjmNLhwq4AB08o4m74bOT7FkzVIPlaZCasHiowH+lELHVxPAnzijfFGWFPeXjkdxDDiOQibL0RR4ADvTY1rmMEsrGmWqYJrMD6tVdFXEEmB9BKqrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UIGjM6yM; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d3c99033d6so719983a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:58:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724338693; x=1724943493; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pcwH8aGPMs5tBc6ZGRP//bIqRFQZ1ST6Zm6/q7fmsSQ=;
+        b=UIGjM6yMqJux8b3Z+EsvjUB6fxovH4fhNYuvQgul15tHlbAaWCdgnY0LTQ2G5qgPan
+         dZI7KgRvXZec0BNuO9jCehw/qBF75dhFV57YN7JW5GkOCGYwnGwRbKfNsVrUxNPtb5I+
+         DZ5ld60lZUOxyC3aEdcwYNZnD5dqGP28LCgyoMCAkwe0Y2coouj1PD26zNPamZ/4ynY1
+         kgjeJ4Im1SY/8oQoSnm6VnaInkfuuKW3mZYetToyZVUaOsjgz58BGkSVTH6N14ryunDW
+         EFyWJWv0+ur1L94x0qZTmyacdJOa5NreP/I0cLfQ3nwPx22/R/tU3grPBHGLTY5CHBuh
+         9G0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724338693; x=1724943493;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pcwH8aGPMs5tBc6ZGRP//bIqRFQZ1ST6Zm6/q7fmsSQ=;
+        b=vabP+eL+TGB/s9kzf3nMFmLBHQG/WDM6ihRpVX6i3CFOc/gCZ57muZXY8PdD6jcVkz
+         eZTDiMNREvV2la3vffT0J1zcXxUHjcOfBnYWLyZXbgBFPfPgzEJo9g/6yBYsVqzLU/Lr
+         8SFgKGmSlgW9OOF3yutUaeLOKkBId6N52wU6OslxA3rqusjOD/ie5hi4tc2ZcDlM8THP
+         UkjQKqIqSe7SeKUvNKqZSXWvyRBtY06uyD/7DMInKwH6bhKao2pySxnEMtf7c8ah2OkR
+         ULgPSTcczrMBnf4vXvxK0jm6PnCDAQjE+eGuwd5dqWbDwyMX17ebraUeYq+zy695dPZj
+         SLbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz9ez9kufLXVUgl2rIry60GMyJXXvvFbDjg5sq0ylQ7zZgl15nWaZf11V0YFcR78c23OzUmJp6lJbnyQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvgJEU06djeh4TA6OSkt118LeYg8Kq8fu9q6VDbfazn+nIoIZW
+	uMo5EfVpMydYzp0xH3BX4UJrBsfiqCw6uaNHeC8y8sIZSOEn1hRiwuzrvlL/btfnLrXIo+LqogX
+	idh96YXtOjGho0iPUibwXppp31VZYtwyIkQYQSQ==
+X-Google-Smtp-Source: AGHT+IFBzA7sUk7HKZaKD1z7zupkeCJ7fKQC1YOkxg0hMk+U9wAWDGq8TT9eJZylSTxao0ffA4E2UYLi1VIrl+zq68E=
+X-Received: by 2002:a17:90b:1643:b0:2cf:28c1:4cc2 with SMTP id
+ 98e67ed59e1d1-2d5e99c5a30mr8037115a91.3.1724338692703; Thu, 22 Aug 2024
+ 07:58:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6s/GAhPIkOk69QT9"
-Content-Disposition: inline
-In-Reply-To: <20240820123707.1788370-1-ruanjinjie@huawei.com>
-X-Cookie: You need not be present to win.
+References: <20240727102732.960974693@infradead.org> <20240727105029.315205425@infradead.org>
+ <6f39e567-fd9a-4157-949d-7a9ccd9c3592@arm.com> <CAKfTPtAS0eSqf5Qoq_rpQC7DbyyGX=GACsB7OPdhi8=HEciPUQ@mail.gmail.com>
+ <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com> <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
+ <83a20d85-de7a-4fe6-8cd8-5a96d822eb6b@arm.com> <629937b1-6f97-41d1-aa4f-7349c2ffa29d@arm.com>
+ <CAKfTPtBPK8ovttHDQjfuwve63PK_pNH4WMznEHWoXQ=2vGhKQQ@mail.gmail.com>
+In-Reply-To: <CAKfTPtBPK8ovttHDQjfuwve63PK_pNH4WMznEHWoXQ=2vGhKQQ@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 22 Aug 2024 16:58:01 +0200
+Message-ID: <CAKfTPtDO3n-4mcr2Sk-uu0ZS5xQnagdicQmaBh-CyrndPLM8eQ@mail.gmail.com>
+Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
+To: Luis Machado <luis.machado@arm.com>
+Cc: Hongyan Xia <hongyan.xia2@arm.com>, Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de, 
+	efault@gmx.de
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 22 Aug 2024 at 14:10, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Thu, 22 Aug 2024 at 14:08, Luis Machado <luis.machado@arm.com> wrote:
+> >
+> > Vincent,
+> >
+> > On 8/22/24 11:28, Luis Machado wrote:
+> > > On 8/22/24 10:53, Vincent Guittot wrote:
+> > >> On Thu, 22 Aug 2024 at 11:22, Luis Machado <luis.machado@arm.com> wrote:
+> > >>>
+> > >>> On 8/22/24 09:19, Vincent Guittot wrote:
+> > >>>> Hi,
+> > >>>>
+> > >>>> On Wed, 21 Aug 2024 at 15:34, Hongyan Xia <hongyan.xia2@arm.com> wrote:
+> > >>>>>
+> > >>>>> Hi Peter,
+> > >>>>>
+> > >>>>> Sorry for bombarding this thread in the last couple of days. I'm seeing
+> > >>>>> several issues in the latest tip/sched/core after these patches landed.
+> > >>>>>
+> > >>>>> What I'm now seeing seems to be an unbalanced call of util_est. First, I applied
+> > >>>>
+> > >>>> I also see a remaining util_est for idle rq because of an unbalance
+> > >>>> call of util_est_enqueue|dequeue
+> > >>>>
+> > >>>
+> > >>> I can confirm issues with the utilization values and frequencies being driven
+> > >>> seemingly incorrectly, in particular for little cores.
+> > >>>
+> > >>> What I'm seeing with the stock series is high utilization values for some tasks
+> > >>> and little cores having their frequencies maxed out for extended periods of
+> > >>> time. Sometimes for 5+ or 10+ seconds, which is excessive as the cores are mostly
+> > >>> idle. But whenever certain tasks get scheduled there, they have a very high util
+> > >>> level and so the frequency is kept at max.
+> > >>>
+> > >>> As a consequence this drives up power usage.
+> > >>>
+> > >>> I gave Hongyan's draft fix a try and observed a much more reasonable behavior for
+> > >>> the util numbers and frequencies being used for the little cores. With his fix,
+> > >>> I can also see lower energy use for my specific benchmark.
+> > >>
+> > >> The main problem is that the util_est of a delayed dequeued task
+> > >> remains on the rq and keeps the rq utilization high and as a result
+> > >> the frequency higher than needed.
+> > >>
+> > >> The below seems to works for me and keep sync the enqueue/dequeue of
+> > >> uti_test with the enqueue/dequeue of the task as if de dequeue was not
+> > >> delayed
+> > >>
+> > >> Another interest is that we will not try to migrate a delayed dequeue
+> > >> sleeping task that doesn't actually impact the current load of the cpu
+> > >> and as a result will not help in the load balance. I haven't yet fully
+> > >> checked what would happen with hotplug
+> > >
+> > > Thanks. Those are good points. Let me go and try your patch.
+> >
+> > I gave your fix a try, but it seems to make things worse. It is comparable
+> > to the behavior we had before Peter added the uclamp imbalance fix, so I
+> > believe there is something incorrect there.
+>
+> we need to filter case where task are enqueued/dequeued several
+> consecutive times. That's what I'm look now
 
---6s/GAhPIkOk69QT9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 20, 2024 at 08:37:07PM +0800, Jinjie Ruan wrote:
-> Use the devm_platform_ioremap_resource_byname() helper instead of
-> calling platform_get_resource_byname() and devm_ioremap_resource()
-> separately.
-
-This breaks boot on the Avenger96 board, it causes a NULL pointer
-dereference:
-
-[    2.350480] Unable to handle kernel NULL pointer dereference at virtual =
-address 00000000 when read
-
-=2E..
-
-[    2.695787] Call trace:
-[    2.695807]  stm32_qspi_probe from platform_probe+0x5c/0xb0
-[    2.703914]  platform_probe from really_probe+0xc8/0x2c8
-[    2.709284]  really_probe from __driver_probe_device+0x88/0x19c
-[    2.715145]  __driver_probe_device from driver_probe_device+0x30/0x104
-
-https://lava.sirena.org.uk/scheduler/job/650792
-
-> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "qspi");
-> -	qspi->io_base =3D devm_ioremap_resource(dev, res);
-> +	qspi->io_base =3D devm_platform_ioremap_resource_byname(pdev, "qspi");
->  	if (IS_ERR(qspi->io_base))
->  		return PTR_ERR(qspi->io_base);
-> =20
->  	qspi->phys_base =3D res->start;
-> =20
-> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "qspi_mm");
-> -	qspi->mm_base =3D devm_ioremap_resource(dev, res);
-> +	qspi->mm_base =3D devm_platform_ioremap_resource_byname(pdev, "qspi_mm"=
-);
->  	if (IS_ERR(qspi->mm_base))
->  		return PTR_ERR(qspi->mm_base);
-
-I can't identify any obvious error here, these look like a direct
-subsitution - the implementation of devm_platform_ioremap_resource_byname()
-looks to be the same as the replaced code and dev is set to &pdev->dev
-but I'm seeing the above behaviour.
-
---6s/GAhPIkOk69QT9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHUfcACgkQJNaLcl1U
-h9CN8Af8DY4LE/KzrL+ENEN0vrqUzAsXF0kFyjft3xYuOnC0JEMBmrZ6/QtgG2JV
-oWwmu82T2kkirx3dgWZn3U6ig9+wTWrdu9mPFPDKzDgl/l7TtO60iojlCNk61c82
-O4Ki59eHrRFKOKffBDCREilTuj7zGUSIp8hfc2oPD8JVWQ7ENQ6nTQ0AZJwUmWuA
-aEhxVuL9+I+IQ+IeG8fzc6S+AAMpaj142AsB5Rft84YRBPWFmt4wnQuaLpVC4SvW
-ftXzNetwjfeTC47eS5B9Ygaslz4pxfxYSVab7VzMSgcBxKl8QBKwXmH+9lSl7yjJ
-cMHHn+8fvbJP2MyGPJ33A/l6U3/HEA==
-=kpgY
------END PGP SIGNATURE-----
-
---6s/GAhPIkOk69QT9--
+I just realize before that It's not only util_est but the h_nr_running
+that keeps delayed tasks as well so all stats of the rq are biased:
+h_nr_running, util_est, runnable avg and load_avg.
 
