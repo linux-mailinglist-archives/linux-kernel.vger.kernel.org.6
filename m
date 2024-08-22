@@ -1,164 +1,310 @@
-Return-Path: <linux-kernel+bounces-297263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB2D95B51D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:36:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E5495B51E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD609B22636
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C461C22F4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A677E1C9444;
-	Thu, 22 Aug 2024 12:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="eC0Tf4Mu"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C25B1C9DDA;
+	Thu, 22 Aug 2024 12:36:39 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557CC1E4B0
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724330190; cv=pass; b=EtoGaG7sa5vVbrzVY0D9wYaCnCPoyBquVOskS4OVAQRpc8XHUjT1pwvkAN7+pO7LQVfjokA85sZ0Gztt/DMVH3iU5D9ty4UHwJf9dXxSPxCYHhde22mwHEgzngGjVn0Dj47qYmuPaI3jLMU8Ua39Ye4OQKxiQkP8a1935w9c+SA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724330190; c=relaxed/simple;
-	bh=gLnLBfqujvpZB9TJnjIk9d/iMy/PHLFu/eFSf4A8gZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPKtOryTi2S1zEGh6G6IfcR0PWWjQXLcIjBf0iRC3rNhGBevX4rdy9Wz7awmi+yFJNB5YKkqXbsrHxnyVpn+8ub09HZe+H8abvagAgxY4hC2CtTvAY6d+6R7lZ3PAmYAB/sYUAVzAyuh0qO12P3BQFekfigTBwQyppnQ5ggBLRs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=eC0Tf4Mu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: daniel.almeida@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724330180; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=azhOFkXSznyw5G04VoBx5MKTwpR6ixBsd9c8t2tUp5+hyvAEh6GNk45HNIZBB/7X+KTqhjOh2j1J/OvOO3HNOP75MMkJn47uzTQar8mc60gdY1A0KPE39yFK3G2uy8RzwUIs/fAri3HmKjfrK2hCzdoCwbHUI11lyv6ml916tMc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724330180; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ec363QkCLP4KD8xSeOi8b8K870mSXT4Tm6Uy/rkLhnw=; 
-	b=NQrZtevNYCqr/ZkA+g3dWumiJ7zPWENJBBr4fqbtgEsFwmKhRcnRIIjVyC+2cKTjs/EpBtsTTYErBh2xVXrpEcGbuc2K9eM5ptW8lvpASG9BFgjUEHsprWzKBDsWKOiRLB7VugYUeGeatMqzL1KgJ0vR7v2vRFqr9lIn/DN5XNQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724330180;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=Ec363QkCLP4KD8xSeOi8b8K870mSXT4Tm6Uy/rkLhnw=;
-	b=eC0Tf4MuS/ipbqs/TrCFWeUvKl5WWfy67QYRCaDlipFlPpOzMwpAM/2EDQq3yixe
-	2GqggesT7gpNzU2Qtm4COavXgeVIsegswhMrx1Y1vvwejOz/AHl/ChDq7AZllNWO+iW
-	/gDK3NIRJTDXl505wwwQ8iXYY8wr9wr21eawm/GA=
-Received: by mx.zohomail.com with SMTPS id 172433017839347.8194884756972;
-	Thu, 22 Aug 2024 05:36:18 -0700 (PDT)
-Date: Thu, 22 Aug 2024 13:36:15 +0100
-From: Adrian Larumbe <adrian.larumbe@collabora.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: liviu.dudau@arm.com, steven.price@arm.com, carsten.haitzler@arm.com, 
-	boris.brezillon@collabora.com, robh@kernel.org, faith.ekstrand@collabora.com, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 RESEND 4/5] drm: panthor: add debugfs knob to dump
- successful jobs
-Message-ID: <tsui2rjbzxwj4wg2gw5o6y4ruap7yvimoshknvrmbxnyylsqoc@mkh54dzmpkfu>
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <20240821143826.3720-1-daniel.almeida@collabora.com>
- <20240821143826.3720-5-daniel.almeida@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611C21E4B0
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724330198; cv=none; b=gA2LXKVHRNSWo/g33uXqh60jIYe1rbCL+UFtgMoPNcLazEgCX86GrHNJ/cVU+H0hb9zHBgmpHBRcxhvnTZSyIxN4KAiIUYnBakxj7Lksjq4xDRZsV/8TNX0ijMhiVRRnA4VfioWPIFTnRmFbeUAhHVQsR4gEPG+ilDedE7PURhw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724330198; c=relaxed/simple;
+	bh=hoCilJreoZt/eVXqgEJWRg8nUXnlnJBdWFxRC3HjQj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X51xEIeEBcjS5h3cWGBYTbn2PSIjU1SkSbJ66jQoIOSuBH4Aufto8OfKrxO4BXwo4wQ5rGMamPRjdvmgakLkYtKtV0UeLE0/hNBK0tSRBV7uIQ1CuegMihz5RH6pK5oai9jL5WxVZQkpTkdbF3mGILBSkE8idXLW4l5UsHrJpFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WqN0F4pbnz1HGvm;
+	Thu, 22 Aug 2024 20:33:17 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id DE2B314013B;
+	Thu, 22 Aug 2024 20:36:30 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 22 Aug 2024 20:36:29 +0800
+Message-ID: <39117062-fa67-2154-3f3f-55c7a1a6a265@huawei.com>
+Date: Thu, 22 Aug 2024 20:36:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240821143826.3720-5-daniel.almeida@collabora.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 1/3] entry: Add some arch funcs to support arm64 to use
+ generic entry
+Content-Language: en-US
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
+	<kees@kernel.org>, <wad@chromium.org>, <rostedt@goodmis.org>,
+	<arnd@arndb.de>, <ardb@kernel.org>, <broonie@kernel.org>,
+	<mark.rutland@arm.com>, <rick.p.edgecombe@intel.com>, <leobras@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
+ <20240629085601.470241-2-ruanjinjie@huawei.com>
+ <1ce09739-14a4-42a2-b5c9-66fdc72ae999@arm.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <1ce09739-14a4-42a2-b5c9-66fdc72ae999@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Hi Daniel,
 
-> On 21.08.2024 11:37, Daniel Almeida wrote:
-> It can be advantageous for userspace to have access to successful jobs.
 
-While it's true that perhaps having additional jobs as part of the same devcoredump file
-could provide further information as to why a later job failed, I see a few snags with this
-approach:
-
-- The time since the debugfs knob is triggered and therefore some successful jobs dumped
-until a later job fails might be very long, so the preceding jobs maybe won't provide
-much context.
-- Besides being mostly interested in immediately preceding jobs, I think we'd want these
-to belong to the same scheduling group and VM as the failing job, but this approach
-will dump them all consecutively, even if they belong to a different open DRM file.
-- In my experience writing a similar feature for the Panfrost driver, I think it's best
-to wait until users of the driver run into specific bugs for us to come up with debug
-features that would be useful for them, rather than sort of trying to guess them instead,
-because there's the risk they'll never be used and then just add cruft into the codebase.
-
-Other than that, the preceding patches look absolutely gorgeous to me, so I
-think it's best if you resubmit them, and maybe keep patches 3-5 on hold until
-we run into a bug scenario where they might prove useful.
-
-Cheers,
-Adrian
-
-> Allow this as an opt-in through a debugfs file.
+On 2024/8/20 19:41, Kevin Brodsky wrote:
+> On 29/06/2024 10:55, Jinjie Ruan wrote:
+>> Add some arch functions to support arm64 to use generic entry, which do not
+>> affect existing architectures that use generic entry:
+>>
+>>  - arch_prepare/post_report_syscall_entry/exit().
+>>
+>>  - arch_enter_from_kernel_mode(), arch_exit_to_kernel_mode_prepare().
+>>
+>>  - arch_irqentry_exit_need_resched() to support architecture-related
+>>    need_resched() check logic.
+>>
+>> Also make syscall_exit_work() not static and move report_single_step() to
+>> thread_info.h, which can be used by arm64 later.
+>>
+>> x86 and Riscv compilation test ok after this patch.
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>> v3:
+>> - Make the arch funcs not use __weak as Thomas suggested.
+>> - Make arch_forget_syscall() folded in arch_post_report_syscall_entry().
+>> - __always_inline -> inline.
+>> - Move report_single_step() to thread_info.h for arm64
+>> - Add Suggested-by.
+>> - Update the commit message.
+>>
+>> v2:
+>> - Fix a bug that not call arch_post_report_syscall_entry() in
+>>   syscall_trace_enter() if ptrace_report_syscall_entry() return not zero.
+>> - Update the commit message.
+>> ---
+>>  include/linux/entry-common.h | 90 ++++++++++++++++++++++++++++++++++++
+>>  include/linux/thread_info.h  | 13 ++++++
+>>  kernel/entry/common.c        | 37 +++++++--------
+>>  3 files changed, 122 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+>> index b0fb775a600d..2aea23ca9d66 100644
+>> --- a/include/linux/entry-common.h
+>> +++ b/include/linux/entry-common.h
+>> @@ -290,6 +290,94 @@ static __always_inline void arch_exit_to_user_mode(void);
+>>  static __always_inline void arch_exit_to_user_mode(void) { }
+>>  #endif
+>>  
+>> +/**
+>> + * arch_enter_from_kernel_mode - Architecture specific check work.
 > 
-> Note that the devcoredump infrastructure will discard new dumps if a
-> previous dump hasn't been read. A future patch will add support for
-> multi-job dumps which will work around this limitation.
+> Maybe those comments could be expanded to be closer to the existing
+> ones, like arch_enter_from_user_mode()? It would help if they were more
+> specific as to where they are called (especially the *report_syscall*
+> ones) and how they are expected to be used.
+
+You are right! It needed to be expanded.
+
 > 
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+>> + */
+>> +static inline void arch_enter_from_kernel_mode(struct pt_regs *regs);
+>> +
+>> +#ifndef arch_enter_from_kernel_mode
+>> +static inline void arch_enter_from_kernel_mode(struct pt_regs *regs) { }
+>> +#endif
+>> +
+>> +/**
+>> + * arch_exit_to_kernel_mode_prepare - Architecture specific final work before
+>> + *				      exit to kernel mode.
+>> + */
+>> +static inline void arch_exit_to_kernel_mode_prepare(struct pt_regs *regs);
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index afd644c7d9f1..ea2696c1075a 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -10,6 +10,7 @@
->  
->  #include <linux/build_bug.h>
->  #include <linux/clk.h>
-> +#include <linux/debugfs.h>
->  #include <linux/delay.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/dma-resv.h>
-> @@ -317,6 +318,9 @@ struct panthor_scheduler {
->  		 */
->  		struct list_head stopped_groups;
->  	} reset;
-> +
-> +	/** @dump_successful_jobs: whether to dump successful jobs through coredumpv */
-> +	bool dump_successful_jobs;
->  };
->  
->  /**
-> @@ -2946,6 +2950,16 @@ queue_run_job(struct drm_sched_job *sched_job)
->  	queue->iface.input->extract = queue->iface.output->extract;
->  	queue->iface.input->insert = job->ringbuf.end;
->  
-> +	if (sched->dump_successful_jobs) {
-> +		struct panthor_core_dump_args core_dump_args = {
-> +			.ptdev = ptdev,
-> +			.group_vm = job->group->vm,
-> +			.group = job->group,
-> +		};
-> +
-> +		panthor_core_dump(&core_dump_args);
-> +	}
-> +
->  	if (group->csg_id < 0) {
->  		/* If the queue is blocked, we want to keep the timeout running, so we
->  		 * can detect unbounded waits and kill the group when that happens.
-> @@ -3609,5 +3623,8 @@ void panthor_sched_debugfs_init(struct drm_minor *minor)
->  	struct panthor_device *ptdev =
->  		container_of(minor->dev, struct panthor_device, base);
->  	struct panthor_scheduler *sched = ptdev->scheduler;
-> +
-> +	debugfs_create_bool("dump_successful_jobs", 0644, minor->debugfs_root,
-> +			    &sched->dump_successful_jobs);
->  }
->  #endif /* CONFIG_DEBUG_FS */
-> -- 
-> 2.45.2
+> Any reason to suffix this function with "prepare"? Just
+> arch_exit_to_kernel_mode() seems appropriate (symmetric with
+> arch_enter_from_kernel_mode()).
+
+prepare means it is the first function before all other exit_to_kernel
+operation in irqentry_exit(), but as the order problem, it can be
+adjusted to the last to aligh with the older arm64 version.
+
+> 
+>> +
+>> +#ifndef arch_exit_to_kernel_mode_prepare
+>> +static inline void arch_exit_to_kernel_mode_prepare(struct pt_regs *regs) { }
+>> +#endif
+>> +
+>> +/**
+>> + * arch_prepare_report_syscall_entry - Architecture specific work before
+>> + *			               report_syscall_entry().
+>> + */
+>> +static inline unsigned long arch_prepare_report_syscall_entry(struct pt_regs *regs);
+> 
+> The most common naming patterns for such arch helper pairs seems to be
+> pre/post, so maybe arch_pre_report_syscall_entry()?
+
+Right!
+
+> 
+>> +
+>> +#ifndef arch_prepare_report_syscall_entry
+>> +static inline unsigned long arch_prepare_report_syscall_entry(struct pt_regs *regs)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif
+>> +
+>> +/**
+>> + * arch_post_report_syscall_entry - Architecture specific work after
+>> + *			            report_syscall_entry().
+>> + */
+>> +static inline void arch_post_report_syscall_entry(struct pt_regs *regs,
+>> +						  unsigned long saved_reg,
+>> +						  long ret);
+>> +
+>> +#ifndef arch_post_report_syscall_entry
+>> +static inline void arch_post_report_syscall_entry(struct pt_regs *regs,
+>> +						  unsigned long saved_reg,
+>> +						  long ret)
+>> +{
+>> +}
+>> +#endif
+>> +
+>> +/**
+>> + * arch_prepare_report_syscall_exit - Architecture specific work before
+>> + *			              report_syscall_exit().
+>> + */
+>> +static inline unsigned long arch_prepare_report_syscall_exit(struct pt_regs *regs,
+>> +							     unsigned long work);
+>> +
+>> +#ifndef arch_prepare_report_syscall_exit
+>> +static inline unsigned long arch_prepare_report_syscall_exit(struct pt_regs *regs,
+>> +							     unsigned long work)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif
+>> +
+>> +/**
+>> + * arch_post_report_syscall_exit - Architecture specific work after
+>> + *			           report_syscall_exit().
+>> + */
+>> +static inline void arch_post_report_syscall_exit(struct pt_regs *regs,
+>> +						 unsigned long saved_reg,
+>> +						 unsigned long work);
+>> +
+>> +#ifndef arch_post_report_syscall_exit
+>> +static inline void arch_post_report_syscall_exit(struct pt_regs *regs,
+>> +						 unsigned long saved_reg,
+>> +						 unsigned long work)
+>> +{
+>> +}
+>> +#endif
+>> +
+>> +/**
+>> + * arch_irqentry_exit_need_resched - Architecture specific need resched function
+>> + */
+>> +static inline bool arch_irqentry_exit_need_resched(void);
+>> +
+>> +#ifndef arch_irqentry_exit_need_resched
+>> +static inline bool arch_irqentry_exit_need_resched(void) { return true; }
+>> +#endif
+> 
+> Nit: the existing arch_* hooks seem to be declared close to the function
+> they are called from (e.g. arch_enter_from_user_mode() just before
+> enter_from_user_mode()), maybe we could do the same with those new
+> hooks, where possible.
+
+Yes, do the same with those new hooks will be nice.
+
+> 
+>> +
+>>  /**
+>>   * arch_do_signal_or_restart -  Architecture specific signal delivery function
+>>   * @regs:	Pointer to currents pt_regs
+>> @@ -552,4 +640,6 @@ irqentry_state_t noinstr irqentry_nmi_enter(struct pt_regs *regs);
+>>   */
+>>  void noinstr irqentry_nmi_exit(struct pt_regs *regs, irqentry_state_t irq_state);
+>>  
+>> +void syscall_exit_work(struct pt_regs *regs, unsigned long work);
+>> +
+>>  #endif
+>> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+>> index 9ea0b28068f4..062de9666ef3 100644
+>> --- a/include/linux/thread_info.h
+>> +++ b/include/linux/thread_info.h
+>> @@ -55,6 +55,19 @@ enum syscall_work_bit {
+>>  #define SYSCALL_WORK_SYSCALL_AUDIT	BIT(SYSCALL_WORK_BIT_SYSCALL_AUDIT)
+>>  #define SYSCALL_WORK_SYSCALL_USER_DISPATCH BIT(SYSCALL_WORK_BIT_SYSCALL_USER_DISPATCH)
+>>  #define SYSCALL_WORK_SYSCALL_EXIT_TRAP	BIT(SYSCALL_WORK_BIT_SYSCALL_EXIT_TRAP)
+>> +
+>> +/*
+>> + * If SYSCALL_EMU is set, then the only reason to report is when
+>> + * SINGLESTEP is set (i.e. PTRACE_SYSEMU_SINGLESTEP).  This syscall
+>> + * instruction has been already reported in syscall_enter_from_user_mode().
+>> + */
+>> +static inline bool report_single_step(unsigned long work)
+>> +{
+>> +	if (work & SYSCALL_WORK_SYSCALL_EMU)
+>> +		return false;
+>> +
+>> +	return work & SYSCALL_WORK_SYSCALL_EXIT_TRAP;
+>> +}
+>>  #endif
+>>  
+>>  #include <asm/thread_info.h>
+>> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+>> index 90843cc38588..cd76391ffcb9 100644
+>> --- a/kernel/entry/common.c
+>> +++ b/kernel/entry/common.c
+>> @@ -28,6 +28,7 @@ static inline void syscall_enter_audit(struct pt_regs *regs, long syscall)
+>>  long syscall_trace_enter(struct pt_regs *regs, long syscall,
+>>  				unsigned long work)
+>>  {
+>> +	unsigned long saved_reg;
+> 
+> Nit: could be declared inside the if block.
+
+Right!
+
+> 
+> Kevin
+> 
+>>  	long ret = 0;
+>>  
+>>  	/*
+>> @@ -42,8 +43,10 @@ long syscall_trace_enter(struct pt_regs *regs, long syscall,
+>>  
+>>  	/* Handle ptrace */
+>>  	if (work & (SYSCALL_WORK_SYSCALL_TRACE | SYSCALL_WORK_SYSCALL_EMU)) {
+>> +		saved_reg = arch_prepare_report_syscall_entry(regs);
+>>  		ret = ptrace_report_syscall_entry(regs);
+>> -		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU))
+>> +		arch_post_report_syscall_entry(regs, saved_reg, ret);
+>> +		if (ret || work & SYSCALL_WORK_SYSCALL_EMU)
+>>  			return -1L;
+>>  	}
+>>  
+>> [...]
+> 
 
