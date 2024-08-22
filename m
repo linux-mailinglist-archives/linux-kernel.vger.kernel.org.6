@@ -1,237 +1,235 @@
-Return-Path: <linux-kernel+bounces-296416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D0095AAC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:59:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0F795AAC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260F01F23485
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:59:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C20A1C21D5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0EE134C4;
-	Thu, 22 Aug 2024 01:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4607B673;
+	Thu, 22 Aug 2024 02:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIXx4Zx2"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="o+XXvd4J"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2054.outbound.protection.outlook.com [40.107.117.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3852079C2
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724291959; cv=none; b=Gsgm7TlPwjiZ+GR0htlwH0EZb6yM2DZ9fkGSX0J7IJluk74dPveXD1SwMZsGqVwGUQZkiACq8nNQCQzpIBxl0O6+DpVQPs8PFjF3IeOAfl3P138Vzmum7hw/cGMoGINdYePWK7JZHecUsYGOlGrvwWNnixeVSyZpIIrkXwKUZ7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724291959; c=relaxed/simple;
-	bh=eaczjHz+dJJ/tSBUKip+3HvnPtJhbykxgxeJwqW7ixE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fRf5OFjFQSgL2TAbtRUkZlUhExgZdqlJWWTucX7CJ0MtiN+DB4uz5rke/WQSUHgAl33diwHCH2NPPzA4s0TabkD+X2AWpruSmqJLZxFNKmT9VDkOfWdLFVtRYNV9iaXKRT4neT6FrOfF2ppp2GKO17aMeKwYoom6jiy35+1sKV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIXx4Zx2; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d3d7a1e45fso193150a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 18:59:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724291957; x=1724896757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VFO2kWCGjNOD3FeA4OtRgD3pdjDivL5vvXpR1ohJQTE=;
-        b=HIXx4Zx2l4QfOupGw4vU0xjipPpMS3VUB3lHhFNfCt3LJKeAta1Rjn5nKp6I0rRA1k
-         qA+S+DnUK4z2mcVl36eUH1ThPYlCZ/Caoh4t6NKW1i3hukLbuMgzVGWAuMdZwFLITFo9
-         DNOimWysjKIVTyrQ7ptAuQ2NEUh+qk4yjaPmbPzNQ9N9Xq2izJUwW/YIRNny+vN09u1Y
-         RXQoybzKlA4W0rowJN9fRYvJagAx39kBEFq/GCbb8g/h8xsetcDR9ExjwwjlwOxU7GKc
-         eArzTrItM4leK0xh/prl3BRxT74/L3iFM+L+qKrAre90jNl9AoKmPu9NPxoPdQe6qRGu
-         HIvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724291957; x=1724896757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VFO2kWCGjNOD3FeA4OtRgD3pdjDivL5vvXpR1ohJQTE=;
-        b=r05EB45iKPJLCmvFHBsSlr6dStBX4o1tswva/XBUV+Kx5iGWciuwYOSf8ivjOlozcz
-         vC+ZyMas2E/7josZM72AqF/wktTRXm5NZX8tGBxQrdGrIdvVYC6LKgUFCr5pNXe5X1HN
-         Ikrdqa9rokOQ/S0nZfJJpyxOU5SnJ+nbd1LmjDmtsjD8loA9yRBCFnKEdBLnFqJ92qoi
-         NHCF8CWX3j2drtQVur4fTZoj+QgcrRNsma6IBS6Y6sTMJNyCOLUF5ND9iOh4Cbx4KeRh
-         x82Bysfi5Uh1QP6nWSYjWFt8uDppb6FdfG1hFdeOXndkTq1ALdh9KLzm9g4W0asDl9m/
-         HcBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtRqllsIIA4j31mjSTv0/GtS6Yb2d8pzJrolRngq6v63oqPR8goxCRRQJk/37IbDWB8S6DcnZZg34Dup8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSXUiaRNaY5TQvyZYa/OZW4Ne5AhxoVyurl6muLL9R4aQ/X/ba
-	sVzxU5zllArmaRv6VE9ohcdJ9phuRojDXxv/dWNMql9jAumTVKu5MKyUALWDOHHECeycafUO/pd
-	UCO5u8udlCuJ+rcDOwlr39B6xW2A=
-X-Google-Smtp-Source: AGHT+IHo1XypQ2DhBU9dvxFb47f1VVfuO5TlGuhS61QXHHxtYiys4WJVmwOODJ9pBcwZtDtC4hQnUAZDYgMqTdynFSo=
-X-Received: by 2002:a17:90a:4d83:b0:2c9:58dd:e01d with SMTP id
- 98e67ed59e1d1-2d5e9a09e2bmr4589896a91.14.1724291957272; Wed, 21 Aug 2024
- 18:59:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B0F848C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724292015; cv=fail; b=EcyvKsXmHtHvKMFPgFMd9BIFTYWLKnc9z0T1vE3p7/rOMlB/mgrAc0uPdFThCK+2IWQLFSCvR11C5fUC3E8E3+ZkHxdNtUVjUMSs3aHWQzNJzrdnB+9pREL9iyppx0ayW+qB6sRzXELOOSXK7pjsJDV4fZQCXXlE3cAR8G+YwWA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724292015; c=relaxed/simple;
+	bh=nhw7UU/vK83x4u+GywzHztcAAHz8BIpSp46t+7me40A=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=mpwHi5vrrxsAvII7fd98JwaKg/HpTLgq29uJZhsL50k/KBw4WprVBxw13goeuqkYdv4NQmlbCwYX9SPDI2saPyQ6QytqOAXAZ7lFITQOJj+WpazUNMGlXscN90/rky9Zb4aEyxBKYQ3HSTfblPkXgA6Pdoau4EREVOWp+U4QGQk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=o+XXvd4J; arc=fail smtp.client-ip=40.107.117.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DhuGmfnATxO7hYhoCcqAsNx1k/RXbUaGptMCzPOCBtysREVVJ6VrzOWbWweLt1IjnY/ToDHA/4vuqNJ9aysyBbyJRK0Q/ahiHlIGZPBkZghPm26EQvfwMkh2EONj2dI/sg9gtUAuG6Cg1yn9VIi7Xj+xb+82w1WHVokRHwSJwThzUygbHCg0iz/EZ2Ece3hMnO9UPkVUk9BzAorYGFH2PK7m3dR7hzFlHZRjZkRMVN/t7P3wdrFiNlZfDoSXXQeI1AvtXuVnJYcEilHdEDH1kyh+V7gqFTY30Ngf7ChJ82BOsp74Hba46Cu2mbYqSbdL03Bse8peZzuaXKBV/8WA1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DdWP9PCwJJC55+9OUEG4fR5VKWlal0bT0Y1LaL0Fwg8=;
+ b=i4cW7cGoFhFyUZ8xG4EGiWwh/cT+j6sAmiU7ND6v/5IFdE8cIVxBb8YsXsLaeE3uR9a0BLvZUuYs5xkVlSjst6v4KxZD+OOR6wBfesWYhA7OJyGPpbkzjV3/5X7B0b5ECXX4lAqr6LmjRHINzh8mPurVFUz0JtwbyQ/W9ceb95KPD67AJpXUJISS4uWj8sJKtT8QSgAPCS1kQAHrikLSDdx+jlT8a88GdVatrgG7dx2jijA6pZP7hzkTXu9Y31sPST1sYC6KYi47WL4aa95ZGR3imakNkpyuGFx8Uxc4QNsqVFRG6iJ24Oh9Eo4uhzbXOL53lpcBKddefrKaLPpOig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DdWP9PCwJJC55+9OUEG4fR5VKWlal0bT0Y1LaL0Fwg8=;
+ b=o+XXvd4JztYlEdoTp0YHQ5ixquZg9j4CMDMZmaS9mDHiqJzt4rj/GBV+wnf8IbVSWRGFEGZLCwM7E/gLrcp9Hs56ASRA0zy2IjDLEHCGjxOGC952ZsPIb/seXC8+EStfnoJ11Uq9QSfSyDYIrPgDXEN0O8NRAdbxpneZKB9fg9lUkkoD26LmcEGsLAZbK4OlQ86GBLhFZuxFsfqUJt/oibar5SfwgR1DNehThmkbVGycD2/gbgTCkloXGnyKtbhzrelO7PRSAgs7HNkQ2tuQ15g2t1ziTqTvz4qT3x/0u1NsXPl7zle55veGGVZb21Vc/D0N9NHnOgeOMfEHcjmDZQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by KL1PR0601MB5654.apcprd06.prod.outlook.com (2603:1096:820:b3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
+ 2024 02:00:07 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%5]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
+ 02:00:06 +0000
+From: Huan Yang <link@vivo.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Huan Yang <link@vivo.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v3] mailbox: sprd: Use devm_clk_get_enabled() helpers
+Date: Thu, 22 Aug 2024 09:59:55 +0800
+Message-ID: <20240822015956.468945-1-link@vivo.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0046.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::14) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240203165307.7806-1-aford173@gmail.com> <20240203165307.7806-11-aford173@gmail.com>
- <Zm_UzO4Jmm7Aykcm@atmark-techno.com> <22a3f5266260dd3915269ae3eec7724f7537eb55.camel@pengutronix.de>
- <cd03ecb1-100e-4699-95ed-d837a2802dc7@kontron.de> <CAHCN7x+bh_ka250hOCenO3Et6re4EJ=5TG8=kpG1hs-PV0dQxQ@mail.gmail.com>
- <ZsVluV50NvuGGHFX@atmark-techno.com> <CAHCN7xJnjfjr7HfKF+4pwbENP+p2=vvMXWW1AQShNy87vfQ=-A@mail.gmail.com>
-In-Reply-To: <CAHCN7xJnjfjr7HfKF+4pwbENP+p2=vvMXWW1AQShNy87vfQ=-A@mail.gmail.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 21 Aug 2024 20:59:05 -0500
-Message-ID: <CAHCN7xKgpqfRf_2p1z5NyKiOYubbcDA7YE5ML8G56pVmcV+1xA@mail.gmail.com>
-Subject: Re: drm/bridge/imx8mp-hdmi-tx: Allow inexact pixel clock frequencies
- (Was: [PATCH V8 10/12] drm/bridge: imx: add bridge wrapper driver for i.MX8MP
- DWC HDMI)
-To: Dominique MARTINET <dominique.martinet@atmark-techno.com>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, Lucas Stach <l.stach@pengutronix.de>, 
-	linux-arm-kernel@lists.infradead.org, marex@denx.de, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	NXP Linux Team <linux-imx@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	Makoto Sato <makoto.sato@atmark-techno.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|KL1PR0601MB5654:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2cc8355b-3546-4cfa-6290-08dcc24e2505
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hgLFoRGEofNWNa3J2/FsfPp6F/b0+htYC/nUYIFP0eCUoffk2pWJvCpse6nH?=
+ =?us-ascii?Q?vgtJO4ekk+AKKdLLgDG9ZpM7FIP/+rYMYi+5u0yM3FXKQJbvPOQ8JRKfQp6L?=
+ =?us-ascii?Q?A6aTlTtYI/tGP1ZWhKQumHTGHXigT0esiP+KMTm/DUlmmjaqjb+Q3InuUWPq?=
+ =?us-ascii?Q?1giKuGejbPR1sQAuk1CpZEZMrph8CipxXBvSvjgI70PiYjqiWg0n218s02hx?=
+ =?us-ascii?Q?zF8UVyR4zVcfY3NKZViUcnw1GLIqLtgzwL7Z69SiquRxRZkkhRYto/Lclf+l?=
+ =?us-ascii?Q?OZA6cME2O/+ZuWdH1/iPPHvQS7zNhei/13ms4aHpACRtk7xSm2mesQL3pEHX?=
+ =?us-ascii?Q?ZVAHqO8nRTFvVHxnCv0yYFkBtwnpgT2+ZYBkm/5s41V9W6U819hTOKKPhDNu?=
+ =?us-ascii?Q?dDpYqMKlrBi8jUAESd6k7gVXa0W9otOd8kOdyYx+owQWrM9d94BRM+tPOlfH?=
+ =?us-ascii?Q?Q68ffTai2hikMmwCj9/TJHrVd/Wjzq9+lLzJee6uIcFVxiKwL/EmP/hdOGgu?=
+ =?us-ascii?Q?N8tCv2YQPMUFmLrqpfsgT5BXJXIWYM+npywwWOwtm5M+NYm+GhARFf1Wzwgj?=
+ =?us-ascii?Q?GxubHMF3QAkqm5MbZQSkUPQ/AXdXBrSkqrCo4ewxcfaDtdQTTdG9CgaNDh23?=
+ =?us-ascii?Q?o3aPwPzIU94QxyVefrV40Qb1a3zKeW2Y7H6DHeo6bkdcf9yEJstLO+G0I177?=
+ =?us-ascii?Q?VV6CrElkuERFpiXBgJ9wUgn22g0NnGJWzic2VOksSBCm9U1hhD+LxsFwNRM9?=
+ =?us-ascii?Q?hc7lS9mnOgW7xtvXMWZ15+IFiDaXTr6IMyNsxEXwEXHOlGsPb9QB52yeSsCt?=
+ =?us-ascii?Q?4f9QJfXpCmfszsMEhOb7k/wZQRga1sbAjtOu8/igg5mJLjZ3SkxBTFQDF/7k?=
+ =?us-ascii?Q?Cj0tJvPKEz9ZyEGoBpXG5ml3sBG3WeHjnp/GEIOvM4beJqEwDhoxXDLLOfAi?=
+ =?us-ascii?Q?h+9mJaBwgyqjyTP06bsKs3NPe4OWSkcodkHTd+zn4atSpBwQSoOD00NVHU8/?=
+ =?us-ascii?Q?CXWUoqyBJXTxUqD2sf0PL2WlmcJQx3/RT71IO4mR8dfMvDcVaKKgtQ5Oe+Wi?=
+ =?us-ascii?Q?YaR7DkidI7lw2UdKqcIBD9YFUNr4MoRbMBqSY8bal7iOhJozyUc93HWldYBs?=
+ =?us-ascii?Q?3lBWQJRjNa7j02A8qwuisvexEBOQm+T/nX3UCzPdKcyMnvHOllbeu0CB70y2?=
+ =?us-ascii?Q?qab+ZvQk0VYTgwMMFWzD7cVtDuMzHTVMUMP/wI5tBBJADRIwMNsoFM1laGnA?=
+ =?us-ascii?Q?yHgH/VhnNKFCSCcEIChzcAWi9LUsweJrlyPj5NIs3j7cCfOrOoJRuU/83gG+?=
+ =?us-ascii?Q?Sj5d8MDX/w2CUZfF2W3kY/1HDH8SEge7Qn/RQ9yG4tG02xhaXp1LcMtZjm00?=
+ =?us-ascii?Q?eh/KRqgf+KRMNAM3mp5fEKD+rCUA4Pp1NopsyxSHYvV5F/9fwQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Ym2YObz33zXORLDLO+2UEd/QWlaI9D4Y2rVVdk8IUbWc2HcH6x2R3Vgs6ocm?=
+ =?us-ascii?Q?FjTdu9u5mQ8nZfOc0F991laO8LSIE0A9iZ8T/5Jh/DForq4Mj/E8uV++Rnx3?=
+ =?us-ascii?Q?RIrMPxM93R1UpaZrokMDoeBSQSe7GTUCazWDfS4rNP5tbMdaEdeSF6xrnVCk?=
+ =?us-ascii?Q?qiCPMbM4Cvpmz4mmQrjub4Y0CIp9IVJYPcFt4QGZOAyZ/wyFT7RK8/Kn4w4L?=
+ =?us-ascii?Q?olOcd83vELoHucLYn6Buz6L9tMIwyOcZPfogsdjtTNRG2EigNb0685mnK+S8?=
+ =?us-ascii?Q?5SBiqBEUWrz1mnjJCRcRt6Fnk/pDTDu8WPgWxTWhxPJoKsspi5bLnVD3bq5W?=
+ =?us-ascii?Q?u7k+x8tEWDAxOpnFOC21PMe9V0DPMUSEL/cTLKeck/ZGnLOF64Bj8FRpLWtq?=
+ =?us-ascii?Q?ICmGz85itdOwtRayNfQCpra6HhWV1dhtIjthHCc/q2tqQ2qEUeyKtcSAzgFh?=
+ =?us-ascii?Q?hP7fVCBNA+Ygwj5FIyzrgm6qqWd4Pw7n7ejrwr/GFv1Rg1SjGxhq7hRhbQaP?=
+ =?us-ascii?Q?y73MuMx0o39F2aX84BU5dlgUUuR/vp630Wjson8I8tp34Gc0dZFhSipMKWql?=
+ =?us-ascii?Q?1GmoDMfB1QFk3deucVOFxQBlc/aoWkrzb1z4kXnoR08XA/DsF64VWYVNFexA?=
+ =?us-ascii?Q?nOEWakIi4ZOULLvpsYL9bMeaXJagRK27Ad3B3AjTRdtnX9FFElCTYtr2W0OK?=
+ =?us-ascii?Q?nQEuEkXjWvfGGhUkpJ1EaQ9ei+In8F5PQ2m0fTGNhKdyCXnqagRpmcdgYl2+?=
+ =?us-ascii?Q?lcxkn66d6z6madU4g9D9T77kwIer6cY3fCtTXTNgJsBwtOzDu/kOZ7NA/Rxz?=
+ =?us-ascii?Q?axSvizTa/diyGal8Ph722QFQMfBBa04h0gWLKXjK5eculg5N/kuztWpkiRtY?=
+ =?us-ascii?Q?R/cbAosvF3j2IP+W2MNUz7/BBefTPPq35EUvPX3/TRiyH/t4BtVsBwk3C8GK?=
+ =?us-ascii?Q?AMzUtDYFV+0bEdBWjiyC5SLX9AAM5pcyxWUrb06Z0Uhysc4CIPLx2hWYzZfR?=
+ =?us-ascii?Q?mNTwqseOFEQ02kOEFkpcu/if10RHSzYKE5sx6KsvULYQ6h0x4o5zJ1OIdN4d?=
+ =?us-ascii?Q?SrdSYI0Eqwnou2XLs0FspJ4VOobBzwNNuyUqkyH7omNRP8LvEGC8hDL/duZj?=
+ =?us-ascii?Q?Wl5CiDNuAsLhr3AG+K7uExsfZuBXUR2A2deZaxqFXtfsABA03LlRWNd/WqYY?=
+ =?us-ascii?Q?FEoPYnJslU6zAATWrLHILCRFT4AEnKxF+aRLAVrCkYLDyVeECXI6IZlVop8F?=
+ =?us-ascii?Q?LNOiX8fpjdOUXGd6jHZMgsp0x7lnPhXzABybugi4JtQQgK/QaEXR3nF4tpII?=
+ =?us-ascii?Q?/Oohxtw6hX+7zm/Wr8m2Ee52DVXZijJ3UCkGmdtHemdYSFPTMdnEcLqZJLtG?=
+ =?us-ascii?Q?scdDmAcZDgVi6qWquPbclD87Rap/vIwhVhZtXBJFPa7uoSshhERK7ttYcI8o?=
+ =?us-ascii?Q?KRNbU6XWRd8kI3VbQuXB44JLN0DJvmnapmETn9RP07aO7a55QpYF3YGC/P4E?=
+ =?us-ascii?Q?M4HLUFyWMrjbYhSc/g8gTNfuQmkQJcTlsEjz//cpfYLalsD9zWJc8UWO/oLy?=
+ =?us-ascii?Q?K8feBzIsJ5TceZdBMscZfE+GorKSWFdoUwJwioy4?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cc8355b-3546-4cfa-6290-08dcc24e2505
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 02:00:06.5768
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zm4USHz7ngRaRMn9xqcYUZIH2IrzBGbupl65xNSzcq8CoQA2HMsKqvHzij+zXmmoPbAAujNKONP4tm5ThhmUrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5654
 
-On Wed, Aug 21, 2024 at 7:45=E2=80=AFAM Adam Ford <aford173@gmail.com> wrot=
-e:
->
-> On Tue, Aug 20, 2024 at 10:58=E2=80=AFPM Dominique MARTINET
-> <dominique.martinet@atmark-techno.com> wrote:
-> >
-> > Adam Ford wrote on Tue, Aug 20, 2024 at 09:49:03PM -0500:
-> > > > > However, this check is a bit overcautious in that it only allows =
-exact
-> > > > > rate matches. IIRC HDMI allows a rate mismatch of +- 0.5%, so thi=
-s
-> > > > > check could be relaxed quite a bit to allow for that.
-> > > >
-> > > > I checked with a 1080p display that reports 23 possible modes via E=
-DID.
-> > > > Out of these 15 are accepted by the driver with the strict check.
-> > > >
-> > > > Two more would be accepted with a relaxed check that allows a 0.5% =
-margin.
-> > > >
-> > > > For the remaining six modes, the pixel clock would deviate up to ~5=
-%
-> > > > from what the display expects. Still, if I remove the check altoget=
-her,
-> > > > all 23 modes seem to work just fine.
-> >
-> > I can confirm the displays I tested also seem pretty tolerant in
-> > practice (up to ~3-4% at least), but I agree with Lucas that this isn't
-> > something we can rely on for a general purpose driver as having example=
-s
-> > of things being tolerant doesn't mean all hardware will be as flexible.=
-.
-> >
-> > > > I'd really like to be able to add more PHY PLL setpoints for displa=
-ys
-> > > > that use non-CEA-861 modes. Unfortunately I didn't manage to figure=
- out
-> > > > the fractional-n PLL parameter calculation so far.
-> > > >
-> > > > The i.MX8MP Reference Manual provides formulas to calculate the
-> > > > parameters based on the register values and I tried to make sense o=
-f it
-> > > > using the existing register values in the driver. But somehow it do=
-esn't
-> > > > add up for me.
-> > > >
-> > > > Lucas, did you already work with the PLL parameters? By any chance,=
- do
-> > > > you now how the math behind them works?
-> > >
-> > > I spent a little time trying to understand it a bit.  I created a PMS
-> > > calculator similar to the one used on the DSI controller,
-> >
-> > Great! I'll admit this also flies over my head and I don't have the
-> > time to study this, so this is much appreciated.
-> >
-> > > except that
-> > > the M seems to be fixed at a value of 62 per the data sheet, so it's
-> > > more of a PS calculator.
-> >
-> > Hmm... PHY_REG2 in the datasheet only lists '0011_1110b - 62' as
-> > example(?) values, but it doesn't say other values are reserved either,
-> > I'm not sure what to make of it.
-> > In the current driver PHY_REG_02 (driver macro) is assigned the first
-> > field of .pll_div_regs, which goes anywhere from 0x4b to 0x7b -- pretty
-> > far from 62(0x3e)...
->
-> OK.  I will experiment with increasing the range of M from being fixed
-> at 3e to a range of 3b to 7b to see if my PMS integer calculator can
-> get more accurate.
->
-> >
-> > Since other frequencies have been adjusting this main diviser ratio we
-> > actually tried copying neighboring values and adjusting only that reg 2
-> > (so the M if I get this right?), but the end result ended up not
-> > synchronizing properly every time... We didn't have time to check with =
-a
-> > scope if the generated signal was ugly or if it just didn't lock
-> > properly, but the display worked when we just re-used the neighboring
-> > values without changing anything despite being ~3-4% off, so we took th=
-e
-> > easy way out here and didn't dig much further.
-> >
-> > > Anyway, When I run my P-S calculator to generate the 'best rate' I ge=
-t
-> > > a value that's usually 0.2% variance from nominal, but I only verifie=
-d
-> > > a handful of values:
-> > >
-> > > Several which were +0.2%
-> > > 297600000 vs 297000000 (4k@30)
-> > > 148800000 vs 148500000 (1080p60)
-> > > 74400 vs 74200
-> > >
-> > > One value was -0.16%
-> > > 24800000 vs 25200000
-> > >
-> > > If the M value was a bit more flexible, we might be able to reduce
-> > > that variance more.
-> >
-> > Yes, I think the M value could be more flexible, but that'd require
-> > checking if it actually works, whereas having slightly off frequencies
-> > will most likely be OK so I don't think it's worth the effort -- happy
-> > to stick to what the datasheet describes.
-> >
-> > > If / when I get some time, I might play with trying to disable the
-> > > fractional mode and just use the PMS calculator for simplicity despit=
-e
-> > > the inaccuracy.  Maybe we could fall back to using the PMS calculator
-> > > if the desired frequency isn't in the look-up-table.
-> >
-> > That'd be greatly appreciated, I don't have any strong opinion on
-> > whether that should completely replace the table, or only be used if
-> > there is no exact match in the table as these are values we know will
-> > work; but we can definitely test any patch you can throw at us here.
->
-> I can't promise it'll be quick.  I am not fully certain I understand
-> how the whole thing works, but as a rule, I don't generally like look
-> up tables if they can be calculated dynamically.
+The devm_clk_get_enabled() helpers:
+     - call devm_clk_get()
+     - call clk_prepare_enable() and register what is needed in order to
+      call clk_disable_unprepare() when needed, as a managed resource.
 
-I updated my PMS calculator, and I randomly selected 5 resolutions and
-they all returned an exact clock match, so I'll attempt to use the PMS
-integer clock instead of the fractional one.
+This simplifies the code and avoids the calls to clk_disable_unprepare().
 
-It'll be a little while longer before I can do anything with it.
+Due to clk only used in probe, not in suspend\resume, this pointer can
+remove from sprd_mbox_priv to save a little memory.
 
-adam
->
-> adam
-> >
-> >
-> > Cheers,
-> > --
-> > Dominique
-> >
-> >
+Signed-off-by: Huan Yang <link@vivo.com>
+Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2 -> v3: remove unneccessary suggested-by, add v2 marked reviewed tag
+v1 -> v2: remove clk pointer from sprd_mbox_priv
+
+ drivers/mailbox/sprd-mailbox.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/mailbox/sprd-mailbox.c b/drivers/mailbox/sprd-mailbox.c
+index 9ae57de77d4d..ee8539dfcef5 100644
+--- a/drivers/mailbox/sprd-mailbox.c
++++ b/drivers/mailbox/sprd-mailbox.c
+@@ -62,7 +62,6 @@ struct sprd_mbox_priv {
+ 	void __iomem		*outbox_base;
+ 	/*  Base register address for supplementary outbox */
+ 	void __iomem		*supp_base;
+-	struct clk		*clk;
+ 	u32			outbox_fifo_depth;
+ 
+ 	struct mutex		lock;
+@@ -291,19 +290,13 @@ static const struct mbox_chan_ops sprd_mbox_ops = {
+ 	.shutdown	= sprd_mbox_shutdown,
+ };
+ 
+-static void sprd_mbox_disable(void *data)
+-{
+-	struct sprd_mbox_priv *priv = data;
+-
+-	clk_disable_unprepare(priv->clk);
+-}
+-
+ static int sprd_mbox_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct sprd_mbox_priv *priv;
+ 	int ret, inbox_irq, outbox_irq, supp_irq;
+ 	unsigned long id, supp;
++	struct clk *clk;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -331,20 +324,10 @@ static int sprd_mbox_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->outbox_base))
+ 		return PTR_ERR(priv->outbox_base);
+ 
+-	priv->clk = devm_clk_get(dev, "enable");
+-	if (IS_ERR(priv->clk)) {
++	clk = devm_clk_get_enabled(dev, "enable");
++	if (IS_ERR(clk)) {
+ 		dev_err(dev, "failed to get mailbox clock\n");
+-		return PTR_ERR(priv->clk);
+-	}
+-
+-	ret = clk_prepare_enable(priv->clk);
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(dev, sprd_mbox_disable, priv);
+-	if (ret) {
+-		dev_err(dev, "failed to add mailbox disable action\n");
+-		return ret;
++		return PTR_ERR(clk);
+ 	}
+ 
+ 	inbox_irq = platform_get_irq_byname(pdev, "inbox");
+-- 
+2.45.2
+
 
