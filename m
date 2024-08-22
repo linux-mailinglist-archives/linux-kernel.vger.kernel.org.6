@@ -1,118 +1,195 @@
-Return-Path: <linux-kernel+bounces-298004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A86895C047
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7182695C04C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAA11C2341A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:35:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DC21C23212
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC511D1751;
-	Thu, 22 Aug 2024 21:35:46 +0000 (UTC)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A731D1752;
+	Thu, 22 Aug 2024 21:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tpaz0k2p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F14CA933;
-	Thu, 22 Aug 2024 21:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E4F1D172E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 21:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724362545; cv=none; b=MCLfBfwdCL4thZyFdnoGf8hEe52ixO5ZuO/nWc2co20JQvZYqKRxK1v3UiRLeygPSDolEVQOVAmQOg2DoCcUvgxT+DxydbDvruHdaVmJjTP+m3yrrsttzclDx5bEEZ1DqNvLsh5+hVoQMakkkiLnX/x4aKoHFQdRMrWsqn6lL4s=
+	t=1724362630; cv=none; b=CU6VZxXOSDu+hsSCLjzqhZtJpZvCNfzUy3T+2ExmhZjFXta+FnXhD9VnMV1HUv8HBCQQVdTneZnC1c26/4AQwABLfbEmHv19UWKMuZprG0F0PhBj74Lhat4RXeB5KrHwzPinCtE+LPRzWUEX7KKN6TM3bLKHS4pjHrCNWcxXA9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724362545; c=relaxed/simple;
-	bh=A6Ig3DIj20iSmms1/sNE5z9cyEcEk2xGv4yIfHNffXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mYUy6/QSZy5pDE2FoEaXkVaF/8Hgs+ahU62s6kBBojSD9vwOScW0xCbfw+0NnkoNTHfyHVJHoiO9jRcRsvS6vvw/6i5SUWehzr4HEY4ZJoGK7cnApkU6G5fjz6cZvcyaQABtflkpGogSrgw+NoNSNRXH/W/YT5Db7/tP0zwXSfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d41b082ab8so968877a91.3;
-        Thu, 22 Aug 2024 14:35:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724362544; x=1724967344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4p9wr4Okb0X4f99n+dpYBp3cuqpqdb5cSoZFZz5Yzys=;
-        b=Tg41TJhNg/7ApMJ28InkQKFpmpcKf1gS3FmPWmQMWlgpv4yozfBM2ngHEakJ3tCuKl
-         Ly3KOOAj+aF51/V69OGogqQUtqGySQbpnf35NSIL6D6vew68GcoPnFOZLvvltQ46tls8
-         9OFfiZvivZ9gbur7/ofrYDK50xvix9q57Jc2LYfoWGvpEDO2PAARdB9Kordg8fXKrHev
-         OdI0fx2gvTGKFVc4ieSUxAg+hku74psFeVRlAbXb6ZQo0r3h0o0cXxTP28PDpjUARW1y
-         l0rzDHmLjuJeFQ6nyYrpAf0AVK086rLcCqMJ+xVAP3gtuLb20z7vvgEU7g7R6LCIazGb
-         hojg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyprQTyjjDvonXwLrW0w5aFAUHPhNpB+t1FBdCN8BUEt7GkM8+FxnY5xkHo/kbAS8oW+Pnh6JMIRj7Q/zt2PIHfg==@vger.kernel.org, AJvYcCVNkrKdDa9qRiUawjm2TzUcYwSSKSNCW4sPdsJlo2AeXrkqyMwe+MrTULwoN9EeUv6PUW1nGSn1bcoFXcOy@vger.kernel.org, AJvYcCXKy8qSjlHLXzGGiiDwm7ak6OwNN7iAAq8kM0Ki38tp9/wtLXtOxZzot8zgc68/Cwhgzng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxudbqnWPRNqyqX99kz8K1NRunxIz9fEimerurlJ2+8DnPSVC3Q
-	hTy4XCnrQQ2Pjto08ujCgueKae5oOPh6AaqFRKpAFOmNTmJkrJk+nfjS0YAupkQzCpBJnuDHUgQ
-	ia5CMYZUywWQGKf5SVXTBxWzBaV0=
-X-Google-Smtp-Source: AGHT+IEJKbmFokzgoavY7n974YSn4Suu2Erwxe3CdPc+gdQf0oBf7ZMv3X7CHg926U7CDuKfJ64EHOiOOU+C3mWYPNE=
-X-Received: by 2002:a17:90b:3ecd:b0:2c4:e333:35e5 with SMTP id
- 98e67ed59e1d1-2d646d6db7dmr6211a91.36.1724362543468; Thu, 22 Aug 2024
- 14:35:43 -0700 (PDT)
+	s=arc-20240116; t=1724362630; c=relaxed/simple;
+	bh=icQnrCzDD/QHiymbI340Kuyyn1Ca7Gddfa0MRaGXDZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsJMTlwxQl8CKWT+Jkr/sD5pzAA9ajLXW1qt/IRcxg57i9tpU8PyXYrkCmmXq6zPAvqcS6127lrbXJVJYAF1kOAGk/itZA1WpXuHdpaQqVTtu+hq5deSayKOIA9mcoh6N8fdFgfXd6L7oAvGGrDqYLEAz61Dtkpy05rDACOzRV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tpaz0k2p; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724362627; x=1755898627;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=icQnrCzDD/QHiymbI340Kuyyn1Ca7Gddfa0MRaGXDZI=;
+  b=Tpaz0k2p/lp+dzutk4Lh+B+jqss4AoKZGCmAvL5hjwY6YBfmoLhDojCb
+   CYaVEFOmhv/wfONmxCevMOf+EZ86ztfqUeZQDDu7HPRgTS7X4+ReLUTec
+   P6CYKRqn1nnSPS1xOdwIbWsufqObjRcq2UGhxv2ieQdiUhHXsx7pCy2u6
+   /BlDvb+KgLx7MayIRPZDQvp0kJXr3f+pkIncbgkRtmd1D7yJrRPp+jwVO
+   AzQ7/LftdjEaxB1BAp7GMMFTtdZB/sUyOTWvReq5Lkkw+3Qd16HjWLtWL
+   Q1JLkFk0PufqaTsyRIJGSLmdWFb6wnrhIk4zoloovegiHl0PnsTJ5rhyo
+   w==;
+X-CSE-ConnectionGUID: KoIXWBvSR5Wwd+0M0ui3bg==
+X-CSE-MsgGUID: UEjoVyPCRAW7e7L3QHNH2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22973251"
+X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
+   d="scan'208";a="22973251"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 14:37:07 -0700
+X-CSE-ConnectionGUID: 2ffUV8QAQHuprfxMizfYwQ==
+X-CSE-MsgGUID: RQy+U63LR4mpzcCdL5sW/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
+   d="scan'208";a="66487955"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 22 Aug 2024 14:37:05 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1shFUM-000DD6-0d;
+	Thu, 22 Aug 2024 21:37:02 +0000
+Date: Fri, 23 Aug 2024 05:36:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yue Haibing <yuehaibing@huawei.com>, anup@brainfault.org,
+	tglx@linutronix.de, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, ruanjinjie@huawei.com, bjorn@rivosinc.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, yuehaibing@huawei.com
+Subject: Re: [PATCH -next] irqchip/riscv-aplic: Fix NULL vs IS_ERR() bug
+Message-ID: <202408230558.er4j09Nd-lkp@intel.com>
+References: <20240820132857.247679-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820154504.128923-1-namhyung@kernel.org> <20240820154504.128923-2-namhyung@kernel.org>
- <ZsUB57VlFtdY0O0M@x1> <CAM9d7chUfoHgZ=uyVEua8XCi4HigzT6p0i7rsL6rZLU2N9r_ZA@mail.gmail.com>
-In-Reply-To: <CAM9d7chUfoHgZ=uyVEua8XCi4HigzT6p0i7rsL6rZLU2N9r_ZA@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 22 Aug 2024 14:35:32 -0700
-Message-ID: <CAM9d7chPsZUMAraWzyf5z7OjCxWUxMz-ufntr1x34c=wRVt3XQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] perf tools: Print lost samples due to BPF filter
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	KP Singh <kpsingh@kernel.org>, Song Liu <song@kernel.org>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820132857.247679-1-yuehaibing@huawei.com>
 
-On Tue, Aug 20, 2024 at 3:50=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Tue, Aug 20, 2024 at 1:51=E2=80=AFPM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Tue, Aug 20, 2024 at 08:45:03AM -0700, Namhyung Kim wrote:
-> > > +++ b/tools/perf/builtin-report.c
-> > > @@ -795,8 +795,13 @@ static int count_lost_samples_event(const struct=
- perf_tool *tool,
-> > >
-> > >       evsel =3D evlist__id2evsel(rep->session->evlist, sample->id);
-> > >       if (evsel) {
-> > > -             hists__inc_nr_lost_samples(evsel__hists(evsel),
-> > > -                                        event->lost_samples.lost);
-> > > +             struct hists *hists =3D evsel__hists(evsel);
-> > > +             u32 count =3D event->lost_samples.lost;
-> > > +
-> > > +             if (event->header.misc & PERF_RECORD_MISC_LOST_SAMPLES_=
-BPF)
-> > > +                     hists__inc_nr_dropped_samples(hists, count);
-> >
-> > So this is inconsistent, we call it sometimes "lost", sometines
-> > "dropped", I think we should make it consistent and call it "dropped",
-> > because its not like it was "lost" because we didn't have the required
-> > resources, memory, ring buffer being full, etc, i.e. the semantic
-> > associated with PERF_RECORD_LOST.
-> >
-> > I.e. LOST is non intentional, not expected, DROPPED is the result of th=
-e
-> > user _asking_ for something to be trown away, to be filtered, its
-> > expected behaviour, there is value in differentiating one from the
-> > other.
->
-> Yep, that's because it's piggybacking on PERF_RECORD_LOST_SAMPLES.
-> Do you want me to add a new (user) record format for dropped samples?
+Hi Yue,
 
-Ok, I have a related issue with AMD IBS.  I'll start a new discussion
-in a different thread.  I think you can take patch 1 and 3 in this series
-as they are not controversial, right?
+kernel test robot noticed the following build errors:
 
-Thanks,
-Namhyung
+[auto build test ERROR on next-20240820]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yue-Haibing/irqchip-riscv-aplic-Fix-NULL-vs-IS_ERR-bug/20240820-213521
+base:   next-20240820
+patch link:    https://lore.kernel.org/r/20240820132857.247679-1-yuehaibing%40huawei.com
+patch subject: [PATCH -next] irqchip/riscv-aplic: Fix NULL vs IS_ERR() bug
+config: riscv-allnoconfig (https://download.01.org/0day-ci/archive/20240823/202408230558.er4j09Nd-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408230558.er4j09Nd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408230558.er4j09Nd-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/irqchip/irq-riscv-aplic-main.c: In function 'aplic_probe':
+>> drivers/irqchip/irq-riscv-aplic-main.c:178:9: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+     178 |         if (IS_ERR(regs))
+         |         ^~
+   drivers/irqchip/irq-riscv-aplic-main.c:180:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+     180 |                 return PTR_ERR(regs);
+         |                 ^~~~~~
+>> drivers/irqchip/irq-riscv-aplic-main.c:174:13: warning: unused variable 'rc' [-Wunused-variable]
+     174 |         int rc;
+         |             ^~
+>> drivers/irqchip/irq-riscv-aplic-main.c:172:14: warning: unused variable 'msi_mode' [-Wunused-variable]
+     172 |         bool msi_mode = false;
+         |              ^~~~~~~~
+   drivers/irqchip/irq-riscv-aplic-main.c: At top level:
+>> drivers/irqchip/irq-riscv-aplic-main.c:187:9: warning: data definition has no type or storage class
+     187 |         msi_mode = of_property_present(to_of_node(dev->fwnode), "msi-parent");
+         |         ^~~~~~~~
+>> drivers/irqchip/irq-riscv-aplic-main.c:187:9: error: type defaults to 'int' in declaration of 'msi_mode' [-Wimplicit-int]
+   In file included from drivers/irqchip/irq-riscv-aplic-main.c:10:
+>> include/linux/of.h:168:9: error: braced-group within expression allowed only inside a function
+     168 |         ({                                                              \
+         |         ^
+   drivers/irqchip/irq-riscv-aplic-main.c:187:40: note: in expansion of macro 'to_of_node'
+     187 |         msi_mode = of_property_present(to_of_node(dev->fwnode), "msi-parent");
+         |                                        ^~~~~~~~~~
+>> drivers/irqchip/irq-riscv-aplic-main.c:188:9: error: expected identifier or '(' before 'if'
+     188 |         if (msi_mode)
+         |         ^~
+>> drivers/irqchip/irq-riscv-aplic-main.c:190:9: error: expected identifier or '(' before 'else'
+     190 |         else
+         |         ^~~~
+   drivers/irqchip/irq-riscv-aplic-main.c:192:9: error: expected identifier or '(' before 'if'
+     192 |         if (rc)
+         |         ^~
+   In file included from include/linux/device.h:15,
+                    from include/linux/platform_device.h:13,
+                    from drivers/irqchip/irq-riscv-aplic-main.c:12:
+>> include/linux/dev_printk.h:111:10: error: expected identifier or '(' before ')' token
+     111 |         })
+         |          ^
+   include/linux/dev_printk.h:154:9: note: in expansion of macro 'dev_printk_index_wrap'
+     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~
+   drivers/irqchip/irq-riscv-aplic-main.c:193:17: note: in expansion of macro 'dev_err'
+     193 |                 dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mode ? "MSI" : "direct");
+         |                 ^~~~~~~
+>> drivers/irqchip/irq-riscv-aplic-main.c:195:9: error: expected identifier or '(' before 'return'
+     195 |         return rc;
+         |         ^~~~~~
+>> drivers/irqchip/irq-riscv-aplic-main.c:196:1: error: expected identifier or '(' before '}' token
+     196 | }
+         | ^
+
+
+vim +187 drivers/irqchip/irq-riscv-aplic-main.c
+
+2333df5ae51ead Anup Patel  2024-03-07  168  
+2333df5ae51ead Anup Patel  2024-03-07  169  static int aplic_probe(struct platform_device *pdev)
+2333df5ae51ead Anup Patel  2024-03-07  170  {
+2333df5ae51ead Anup Patel  2024-03-07  171  	struct device *dev = &pdev->dev;
+2333df5ae51ead Anup Patel  2024-03-07 @172  	bool msi_mode = false;
+2333df5ae51ead Anup Patel  2024-03-07  173  	void __iomem *regs;
+2333df5ae51ead Anup Patel  2024-03-07 @174  	int rc;
+2333df5ae51ead Anup Patel  2024-03-07  175  
+2333df5ae51ead Anup Patel  2024-03-07  176  	/* Map the MMIO registers */
+2333df5ae51ead Anup Patel  2024-03-07  177  	regs = devm_platform_ioremap_resource(pdev, 0);
+bb109b384dab1e Yue Haibing 2024-08-20 @178  	if (IS_ERR(regs))
+2333df5ae51ead Anup Patel  2024-03-07  179  		dev_err(dev, "failed map MMIO registers\n");
+bb109b384dab1e Yue Haibing 2024-08-20  180  		return PTR_ERR(regs);
+2333df5ae51ead Anup Patel  2024-03-07  181  	}
+2333df5ae51ead Anup Patel  2024-03-07  182  
+2333df5ae51ead Anup Patel  2024-03-07  183  	/*
+2333df5ae51ead Anup Patel  2024-03-07  184  	 * If msi-parent property is present then setup APLIC MSI
+2333df5ae51ead Anup Patel  2024-03-07  185  	 * mode otherwise setup APLIC direct mode.
+2333df5ae51ead Anup Patel  2024-03-07  186  	 */
+2333df5ae51ead Anup Patel  2024-03-07 @187  	msi_mode = of_property_present(to_of_node(dev->fwnode), "msi-parent");
+2333df5ae51ead Anup Patel  2024-03-07 @188  	if (msi_mode)
+ca8df97fe6798a Anup Patel  2024-03-07  189  		rc = aplic_msi_setup(dev, regs);
+2333df5ae51ead Anup Patel  2024-03-07 @190  	else
+2333df5ae51ead Anup Patel  2024-03-07  191  		rc = aplic_direct_setup(dev, regs);
+2333df5ae51ead Anup Patel  2024-03-07  192  	if (rc)
+2333df5ae51ead Anup Patel  2024-03-07  193  		dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mode ? "MSI" : "direct");
+2333df5ae51ead Anup Patel  2024-03-07  194  
+2333df5ae51ead Anup Patel  2024-03-07 @195  	return rc;
+2333df5ae51ead Anup Patel  2024-03-07 @196  }
+2333df5ae51ead Anup Patel  2024-03-07  197  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
