@@ -1,121 +1,76 @@
-Return-Path: <linux-kernel+bounces-297735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B8C95BCE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:12:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E6895BCE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21261C2425E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0285A1F233CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ED41CE707;
-	Thu, 22 Aug 2024 17:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o11WOgOz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D681CDFCE;
+	Thu, 22 Aug 2024 17:13:58 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4AC19995D;
-	Thu, 22 Aug 2024 17:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D50D1CCB4B
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724346766; cv=none; b=a7vbiJ1cjnBqEU4GRlRBnPiN6Rq7tdyE+tmS0gNPPCjDq52uKJ0vLJf1EFcu3vBlhRLk+YR6yeKqzChXRnji0hkPmzM+g7PfvtGBb7L33vB3WBPXSdjOBbYb3ayy+uvgfjstwuiUtufOVSPMSRFg4kDjJTlhDVuHNeUHWZMxNDg=
+	t=1724346837; cv=none; b=b5R7r0YRXANMp06edWZ0VBHBRKJlit2ESOvzfutoDQoFVXKpYYJonjF2h9X9cxO7vqqvLThdLXM4oYqlvcLWS3IufutHTO7GQTvGZvjVS5RfgmLCqUPPNkJLC1BwQT7bEqklVTivsWFqoFGTfFFu+bcWHwpWBSo3uLd37nKqZLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724346766; c=relaxed/simple;
-	bh=5Kuz5r6O6ybAxLbOJKEYjD5BuDZKylHdvrJjA90RVis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iwG9SYHW8lilzGizh/Ml3bYkuSsWUjMMH3fBW65fQES+L//jln5mivGHZWrXUFTv6ohfl4tOOJt+fx7rAU2OflMy/LB8o0H4ShOUM8io0BtcYa/Ki5ZMZlxA4iVM9jz4IAveQVbugyYW9cpzPH7QT/9dmdpBfvSQ2sgLDcHkdwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o11WOgOz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B48C32782;
-	Thu, 22 Aug 2024 17:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724346766;
-	bh=5Kuz5r6O6ybAxLbOJKEYjD5BuDZKylHdvrJjA90RVis=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o11WOgOzp52LmEZiVqP2LfRIox5pfMeD5ozCJUuwZS1h9SY0sb1ojEZnRskFH+8qP
-	 cNilRjpBKZLeDpPs77Id2PrvrPvmpnCBJtIk1ymS7Tx3hO3v+1sTUHVKhw0Nb/rpSK
-	 vAINhABHpuEdNLqIXwUIJFoNV1PzvpQD16EBDQrg7d/DJ0mfiD+zTpCPgvJkYW3vs3
-	 on22holRETSTETzWBVFL3Es4TClUGxipyO1paolO58sihkbMfXNotDjGtMCNxJs0FI
-	 IswZIMBEZ5WFe9YWb46a644Obhm4MkK/NxqSBVzHZahWecYQjkqLA7F7YzJGMpOGqx
-	 Bb+HspRUCzZig==
-Date: Thu, 22 Aug 2024 14:12:42 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
-Message-ID: <ZsdxinrZP1kHINWT@x1>
-References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
- <ZsdKhLaPy-uzKsuH@x1>
- <ZsdUxxBrpbuYxtXN@x1>
- <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
+	s=arc-20240116; t=1724346837; c=relaxed/simple;
+	bh=XxfQw7k9iN4403Scvjy/OjBhKaXVfuV/HBrdyRrjJjQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pVuA1sJ7NF+p7n8aVSRW8RCnByFjJ4u7sjVKePMsSgWzx1NKWYSZ9WrAQUbkOfn8tr9jOAskq3awi65eZfa9Z05tA3XYFrHxgVOY58rNjGW/YpGhBK7A9zAre0WdWOG3YKzVHWBCLJbqwBAbHg5VNNUAXyR+8Np/TC2/DkTnhg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d17abca55so9967435ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:13:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724346835; x=1724951635;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XxfQw7k9iN4403Scvjy/OjBhKaXVfuV/HBrdyRrjJjQ=;
+        b=IDdJNikXEuD+rYdMAQEMMOqoLS/g4cjq2HEZb2aQU3HRIbGy56mI4bmb4p8fgF8l+R
+         7MSH7UlNPOQDJckGxXzfRwVcsWebkI3/za83o2ZOmFJGQEEReBFS9+tFXytVlY1wu3cg
+         YrZEHYrq7YiYFAnk/zd7efILm5NAWr7z0ADDBwzEBGL4XhUcEp91RDekC+2Na70sDUd2
+         +YBKYvr07Nra8u21VjHf9pkJsqSLe7BMIDI9l8LIIA99Q+MvPc3knAjg1EYXLTMTnKlJ
+         QHg9FruTO8I+Ph7Nc3hRbnf1AIBocjqXbApyeKX4XxCtvcboHE7alzvnnQjkR/V603CZ
+         hQPg==
+X-Gm-Message-State: AOJu0YzEUd6vufXO3Yr73dFNxa4erXe+xtlALag7ldBM2o9cq8Q7rW8Q
+	u4V+p1A2ECoAuX9CCHAvhHifxx79QTHWJN8qr+koFKEx3no5Nmge7zno7bfku6zibggBmv+CJUb
+	eiB/uo749kcp1a2kTJH5mW8uXEfMbNNi5hP2HyFP128yrwh01lw8ggk4=
+X-Google-Smtp-Source: AGHT+IElaEZG1lpo6MQT++LI+4S8oBsFOdWqtF1IPVyHWFCno8J+2cMasue1p+Lev19b6YwmC+zQ6yT3AmU+wBhMzJjubINP3aHr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1384:b0:397:5d37:61fa with SMTP id
+ e9e14a558f8ab-39d6c350b30mr2868935ab.2.1724346835593; Thu, 22 Aug 2024
+ 10:13:55 -0700 (PDT)
+Date: Thu, 22 Aug 2024 10:13:55 -0700
+In-Reply-To: <0000000000003aacfb061aa140ad@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009b0160062048c852@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bcachefs?] WARNING in bch2_fs_ioctl
+From: syzbot <syzbot+9757fdbdabd69eae08ad@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2024 at 07:02:52PM +0200, Sedat Dilek wrote:
-> On Thu, Aug 22, 2024 at 5:10 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > +++ b/tools/perf/util/setup.py
-> > @@ -17,7 +17,7 @@ src_feature_tests  = getenv('srctree') + '/tools/build/feature'
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> >  def clang_has_option(option):
-> >      cc_output = Popen([cc, cc_options + option, path.join(src_feature_tests, "test-hello.c") ], stderr=PIPE).stderr.readlines()
-> > -    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o))] == [ ]
-> > +    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o) or (b"unknown warning option" in o))] == [ ]
-> >  if cc_is_clang:
-> >      from sysconfig import get_config_vars
-> > @@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
-> >  cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
-> >  if cc_is_clang:
-> >      cflags += ["-Wno-unused-command-line-argument" ]
-> > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
-> > +        cflags += ["-Wno-cast-function-type-mismatch" ]
-> >  else:
-> >      cflags += ['-Wno-cast-function-type' ]
- 
-> I tried with your diff with SLIM LLVM toolchains 18 and 19.
- 
-> Both work - see attached build-logs.
- 
-> Yes, are right that LLVM/Clang v19 was first introducing:
- 
-> -Wcast-function-type-mismatch / -Wno-cast-function-type-mismatch
- 
-> [4] says for LLVM 18.1.8:
- 
-> -Wcast-function-type
-> -Wcast-function-type-strict
- 
-> Feel free to add my Reported-by/Tested-by credentials if you sent a full patch.
+***
 
-Thanks for the report and test of the fix, I'll add both tags,
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_fs_ioctl
+Author: kent.overstreet@linux.dev
 
-Best regards,
-
-- Arnaldo
- 
-> Thanks.
-> 
-> BR,
-> -Sedat-
-> 
-> [1] https://mirrors.edge.kernel.org/pub/tools/llvm/
-> [2] https://mirrors.edge.kernel.org/pub/tools/llvm/files/llvm-18.1.8-x86_64.tar.xz
-> [3] https://mirrors.edge.kernel.org/pub/tools/llvm/files/llvm-19.1.0-rc3-x86_64.tar.xz
-> [4] https://releases.llvm.org/18.1.8/tools/clang/docs/DiagnosticsReference.html
-> [5] https://clang.llvm.org/docs/DiagnosticsReference.html
-
-
-
+#syz fix bcachefs: Fix shutdown ordering
 
