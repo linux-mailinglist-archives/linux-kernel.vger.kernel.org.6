@@ -1,119 +1,259 @@
-Return-Path: <linux-kernel+bounces-297057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA9495B268
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B3695B270
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F301C20362
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:53:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68561280E6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D7117DFFC;
-	Thu, 22 Aug 2024 09:53:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87CD17D345;
+	Thu, 22 Aug 2024 09:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXX4zrl5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B7415F3F0
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E6313A3F2;
+	Thu, 22 Aug 2024 09:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724320413; cv=none; b=iHje5a+Yi3BYFbqzF5MOGcJoE08UoaQl+1jVcaQgGHe8/CB7yzTRDejvU8qR89/alc7pttJmv0cIvNBrkWq6iKAEY3sPF9l3p41Jh1ZbXluppbSIE2U3Jn7rUlIZjZevP6t+jxTQTe0WhmlokyVtktlf1/p2yMncXN/Eo2aS7qo=
+	t=1724320552; cv=none; b=lq7jN414Uvi9wDFn8kF5LaUGWYS32B6GXEOUkPkHG9VpisWHcgHh/ZJtlq3s0uxM0f3OKEJJsqgqDpTeF08t2i9WNe3ZOyQ6ZqVpFdy5Qn7Q0ejGxug6xUpA5RCemR111GYzkSVAaQlMCXL/HbrZiuGI1Noq74UEz7ToNXCiR1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724320413; c=relaxed/simple;
-	bh=H91w8kLXLCbNh3zV0BgTbMDdbQa4ZHAV5Rw3uan0CRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BoyIUBLUSpXwPsDiI5rmY4SpVKSTRZQzo8RkV+PUwlO9Y+/wVBrZVyp/xhQFPN9/sYSDVq+YrIvOa+5Dk1VvTWsp/lL/Zin5na/A9QYtykRRgRozgc3CaZYWyBH3iYpA6Oc0t9X4czabE66wiLblfT1JMbmYsUn88o1Bv3fnGyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh4VS-00009v-SZ; Thu, 22 Aug 2024 11:53:26 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh4VS-002Det-4m; Thu, 22 Aug 2024 11:53:26 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id CB2E6323702;
-	Thu, 22 Aug 2024 09:53:25 +0000 (UTC)
-Date: Thu, 22 Aug 2024 11:53:25 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
-	Brian Norris <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Kalle Valo <kvalo@kernel.org>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
-Message-ID: <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
- <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1724320552; c=relaxed/simple;
+	bh=ViprO3gDNUk5DkzxK1abOXekExxNqv0cNOF2GS0EpfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pFr3DCoecXI5blEpVE+6upXEjFvCNmATIXXL+wy2/U3mtxvrDldVL9HRhXXxxde8H76y+uPiZkXUq+bivkmEq9YxDmtekx8hjYhkFZeLZzQqayQIS4o+E2832ggbSjYWMX/JCvqmXVBy0d/vVUXCoBNF4oqzzlpprMHQg9eLZo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXX4zrl5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB23C4AF0B;
+	Thu, 22 Aug 2024 09:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724320551;
+	bh=ViprO3gDNUk5DkzxK1abOXekExxNqv0cNOF2GS0EpfY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eXX4zrl5CG3va68oJotDM7mvlxscrCBWAJHr0N0p8cerBsLP2xtPJDVvCByoSCZNx
+	 ddQJOdm8PTr3AaqXZ2QIN2ogY5D644w4y7kYaqN28Y19khGFFXm9ieo+zEwVZb0WNg
+	 vbwYTR+XORD6OOJtMNB76oT+RO2Q71ClGrofQOks5/T06m7LtJJAuNosWhsK7r/vMJ
+	 lNaJ/mrDAaz4doAqVDv9YzFpdizVdNvhKsYTeg8MsjbT9FBev4ye/tFG1NKA7GdTD6
+	 LZ6oOu+gOIIRQ0RvV/jHDgf3w1MGfLBo4orMCobVmLFdmqQVwNZJsXqrg9zakmfJI4
+	 5ilHwwy1yZEdA==
+Message-ID: <89690fa9-fb7f-4f9f-aeac-0f8cb22572a3@kernel.org>
+Date: Thu, 22 Aug 2024 11:55:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nibdz654ztaxzimx"
-Content-Disposition: inline
-In-Reply-To: <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] dt-bindings: arm: Add Coresight TMC Control Unit
+ hardware
+To: JieGan <quic_jiegan@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Tao Zhang <quic_taozha@quicinc.com>, Song Chai <quic_songchai@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240812024141.2867655-1-quic_jiegan@quicinc.com>
+ <20240812024141.2867655-4-quic_jiegan@quicinc.com>
+ <20240818142834.GA27754-robh@kernel.org>
+ <ZsKkm/Pz0GYtH2Gl@jiegan-gv.ap.qualcomm.com>
+ <9d9704ed-6ef8-4920-9874-29e0a815e2ba@kernel.org>
+ <ZsMHnKKvOey4SA1O@jiegan-gv.ap.qualcomm.com>
+ <d117e157-f2e2-4e17-bbe4-b84001eae1bb@kernel.org>
+ <ZsQ5aMkXnyX9mumz@jiegan-gv.ap.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZsQ5aMkXnyX9mumz@jiegan-gv.ap.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 20/08/2024 08:36, JieGan wrote:
+> On Mon, Aug 19, 2024 at 11:51:41AM +0200, Krzysztof Kozlowski wrote:
+>> On 19/08/2024 10:51, JieGan wrote:
+>>> On Mon, Aug 19, 2024 at 08:25:33AM +0200, Krzysztof Kozlowski wrote:
+>>>> On 19/08/2024 03:49, JieGan wrote:
+>>>>> On Sun, Aug 18, 2024 at 08:28:34AM -0600, Rob Herring wrote:
+>>>>>> On Mon, Aug 12, 2024 at 10:41:39AM +0800, Jie Gan wrote:
+>>>>>>> Add binding file to specify how to define a Coresight TMC
+>>>>>>> Control Unit device in device tree.
+>>>>>>>
+>>>>>>> It is responsible for controlling the data filter function
+>>>>>>> based on the source device's Trace ID for TMC ETR device.
+>>>>>>> The trace data with that Trace id can get into ETR's buffer
+>>>>>>> while other trace data gets ignored.
+>>>>>>>
+>>>>>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>>>>>>> ---
+>>>>>>>  .../bindings/arm/qcom,coresight-ctcu.yaml     | 79 +++++++++++++++++++
+>>>>>>>  1 file changed, 79 insertions(+)
+>>>>>>>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+>>>>>>> new file mode 100644
+>>>>>>> index 000000000000..7a9580007942
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+>>>>>>> @@ -0,0 +1,79 @@
+>>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>>>> +%YAML 1.2
+>>>>>>> +---
+>>>>>>> +$id: http://devicetree.org/schemas/arm/qcom,coresight-ctcu.yaml#
+>>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>>>> +
+>>>>>>> +title: CoreSight TMC Control Unit
+>>>>>>> +
+>>>>>>> +maintainers:
+>>>>>>> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
+>>>>>>> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
+>>>>>>> +  - Jie Gan <quic_jiegan@quicinc.com>
+>>>>>>> +
+>>>>>>> +description:
+>>>>>>> +  The Coresight TMC Control unit controls various Coresight behaviors.
+>>>>>>> +  It works as a helper device when connected to TMC ETR device.
+>>>>>>> +  It is responsible for controlling the data filter function based on
+>>>>>>> +  the source device's Trace ID for TMC ETR device. The trace data with
+>>>>>>> +  that Trace id can get into ETR's buffer while other trace data gets
+>>>>>>> +  ignored.
+>>>>>>
+>>>>>> Nowhere is TMC defined.
+>>>>> The Coresight TMC control unit(CTCU) connected to Coresight TMC device via replicator and
+>>>>> works as a helper device to TMC device.
+>>>>
+>>>> Did you understand the feedback or just responding with whatever to get
+>>>> rid of reviewers?
+>>>
+>>> Sorry for the insufficient clarity in my response, I am just misunderstood the feedback and try
+>>> to explain the relationship between TMC and CTCU device.
+>>>
+>>> I will add the TMC description to explain what TMC is as shown below:
+>>> The Trace Memory Controller(TMC) is used for Embedded Trace Buffer(ETB), Embedded Trace FIFO(ETF)
+>>> and Embedded Trace Router(ETR) configurations. The configuration mode (ETB, ETF, ETR) is
+>>> discovered at boot time when the device is probed.
+>>
+>> Thanks.
+>>
+>>>
+>>>>
+>>>>>
+>>>>> The in-ports listed below illustrate their connection to TMC devices.
+>>>>>
+>>>>>>
+>>>>>>> +
+>>>>>>> +properties:
+>>>>>>> +  compatible:
+>>>>>>> +    enum:
+>>>>>>> +      - qcom,sa8775p-ctcu
+>>>>>>> +
+>>>>>>> +  reg:
+>>>>>>> +    maxItems: 1
+>>>>>>> +
+>>>>>>> +  clocks:
+>>>>>>> +    maxItems: 1
+>>>>>>> +
+>>>>>>> +  clock-names:
+>>>>>>> +    items:
+>>>>>>> +      - const: apb
+>>>>>>> +
+>>>>>>> +  in-ports:
+>>>>>>
+>>>>>> Use 'ports' unless you have both in and out ports.
+>>>>> The ‘in-ports’ and ‘out-ports’ properties will be parsed by ‘of_coresight_get_port_parent’
+>>>>> and their relationships to other devices will be stored in the coresight_platform_data structure.
+>>>>>
+>>>>> for example:
+>>>>> struct coresight_platform_data {
+>>>>> 	int nr_inconns;
+>>>>> 	int nr_outconns;
+>>>>> 	struct coresight_connection **out_conns;
+>>>>> 	struct coresight_connection **in_conns;
+>>>>> };
+>>>>>
+>>>>> https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/hwtracing/coresight/coresight-platform.c#L147
+>>>>
+>>>> and? If you respond with some unrelated argument, we will respond with
+>>>> the same: Use 'ports' unless you have both in and out ports.
+>>>
+>>> Sorry for the insufficient response.
+>>>
+>>> The Coresight driver prefers using ‘in-ports’ and ‘out-ports’ instead of the ‘ports’ property, as each
+>>> Coresight component needs to specify its input and output directions.
+>>>
+>>> The Coresight system operates by integrating all Coresight components and construting its data flow path
+>>> based on the defined directions. 
+>>>
+>>> Consequently, the data flow direction cannot be determined when utilizing the ‘ports’ property in the
+>>> Coresight system.
+>>
+>> It can be determined. Driver knows that there are only in-ports, so you
+>> cannot have here other direction. Maybe the drivers have somehow this
+>> hard-coded? But that's a bit annoying limitation.
+>>
+> In Coresight platform driver, the of_coresight_get_port_parent function is used to retrieve the parent of the 'ports' node.
+> The function is specifically hard-coded to recognize 'in-ports' and 'out-ports'. I think that's the limitation for
+> 'ports' property.
+> 
+> https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/hwtracing/coresight/coresight-platform.c#L147
 
---nibdz654ztaxzimx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's a limitation of coresight platform driver, not bindings. Fix your
+drivers.
 
-On 22.08.2024 09:36:29, David Lin wrote:
-> I wonder we still need patch for indent issue here? If so I am sure we
-> will need a bunch of similar patches which I don't think really help
-> improve mwifiex quality
+Best regards,
+Krzysztof
 
-mwifiex is the best mainline driver we have for these devices.
-
-> Actually in its successor Nxpwifi (currently under review), we have
-> cleaned up all indent, and checkpatch errors/warnings/checks.
-
-Public review?
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---nibdz654ztaxzimx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbHCpIACgkQKDiiPnot
-vG9cPAf4hXOva7w9uM737RBhcL4kCh2Ip++yRPZvGdQbepbwtWJBzVMjjqNfiSb6
-BepLO8Y7dwM7NeLcfQpcT0sJbgD5ZkfHsHKfayf+VrAB9p2atuwVZ1fiTrsUg8tb
-Lyk/r9i/IUHGbIB9utbqQ3mIY6rW7w5a0MCPLDAXYNsWTmAYuJlomKkpbnR40XvJ
-l52sU6OE+HyygrrnABgZh1w6lTaKbLnRvosXKkMEOkGW3FvXe1Fuv96ONbxjewFS
-IFluZF2fADEPiQyZa+4M3t1cCHcOxiuH1rVa6zvM90A4e3rLtsxllPb9gMTcjCMd
-V3S01dn0a5M8KYdRJMlz4+iqFqNd
-=lOZk
------END PGP SIGNATURE-----
-
---nibdz654ztaxzimx--
 
