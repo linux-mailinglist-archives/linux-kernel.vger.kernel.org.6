@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-297613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC4F95BB73
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:12:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647D495BBB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23711F212EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9454A1C21DEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC6D1CCEDD;
-	Thu, 22 Aug 2024 16:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ordt0V0+"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549871CDFB6;
+	Thu, 22 Aug 2024 16:19:39 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B7113A86C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4D929CE8;
+	Thu, 22 Aug 2024 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343153; cv=none; b=jly++7YKJzSj1ORZIJSCIxqmHi05MxTxkuYs6Y4Xkud1+sEAn2p2Beu/rEyYWwYmQCKI4Ns3asEX1+kaSl7gz7MO8lUnIkGAXIpgIjlTZGR0bmnjvTUqCPATN7Nk5H0GxL3gr/TUwAUWy2mPRczO5aefeT5WfjnwKOLfA3PZO9M=
+	t=1724343578; cv=none; b=RUmx0XPawuGYZLDDXBjvtjT1kSwTrhyoe68sSQzCrxKPxscPQUJj88PJuvntrosJ/CFZohS5+ZDaI22gD2wsHg/99r9lV4eepFSssXhL/7D+lkOOB44RsKzl0eu4l/d06HKxsO6yLFA6j07lGHPFDZWCk2pYQFjFAg5oqwRjPrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343153; c=relaxed/simple;
-	bh=Ba1IvEzIg0HqH4m0Pj00DWclSyzLhBeuHHgLKg8p/xY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GqLQy/v0PRcpDWgZe5g37VC8nV/pre/QkA6ho0Rxj0XG24ZdvZYB5e9rK6HcPtjGFBZPAOowWv8bEm5OJPtexoxmUG+2bfDG54ALCQ4or6lwH483TGSx+514DGQ7MFrYsVYzLShJ1naYmpHyBZFjXaXMtXY1coZBOGwhot5qBHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ordt0V0+; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-81f8d644fe0so14012639f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724343151; x=1724947951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ba1IvEzIg0HqH4m0Pj00DWclSyzLhBeuHHgLKg8p/xY=;
-        b=ordt0V0+cwQXMnCf4PcUWG585Fz4sQ+YkT5TcCyYVUxlLeKx0zBkXXWWWl2cwxGgmP
-         shGpbiVEbw3y2jK6c552rkBYHw4qwdl9uuVkbS8LfbmbeStkyu2LDdKi/YgkTCziXCTQ
-         dSBXQJiU04OHKaulw9Yn/3IrVtSCPpiN5LM3KCRBv8Rm1NeL4tk9k0zMk63I2IRICifC
-         ZMLZtico886KOeiyFbtdp0xrs3Fd7zQacugPxuYVGnRZP4aofRSoebyW308H9T49njkH
-         nqQcghVNpFMCzmPSPI8jYNBw0T7wUwYgQPeIKkL9KqMiROd8ZcXr7nwWT8VC03ZLzzRo
-         cCTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724343151; x=1724947951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ba1IvEzIg0HqH4m0Pj00DWclSyzLhBeuHHgLKg8p/xY=;
-        b=hHxsMxV0MEEORYOqJsYqGl8Fbsa7hTZJ9RuACSfIcwsA0QWkwAilOlKfOCqEDMvVp3
-         xut/2hHmwVf+xbpcwNxbFUhbcyOCfRTDCcJIU+MRcq7R+aNFdb4eR7dCsf1psioycctU
-         yhtZMo1J8wyRIK0HeOWOKU2Px8NBtzEpuatiLQEVtVwtT01iPaIO37V1KwWvyqC0OXmT
-         D6p71SQstHxRUJ4zwlK004ongK24CFSodaK66aqs61/j/KqacaKS6tfaTYQDeq99U873
-         V2tRx9fcpfSekgoBZdzKqFiV/q4DQN/MaJETj7CFWr02bXp9od6j11aX2X4Fuzx106Oo
-         6+wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhY2pbiCherjRLKNecyRSy63P+rW22bUtP9nBXJEslZzPBgomy6ZnW7VH7UNN9NQ0jNbtCEGb2GoTRskQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy//lDZ8ITS8/XkuxfBDc5SoiHA1sAo/F74h1G5aKLpOsNKH39I
-	JJRKt7gKSjw+CivKyWgSASEMcDHPGnxECdHczt9bUCgEC7P4afiiIaAcGhTGexT+bY3JtBXZbBG
-	kGQqkO1FQy/pat950LsQIJkW7THdq9OAuWAcX
-X-Google-Smtp-Source: AGHT+IEGLPuEsDAvSUvkTG3B+q34v5yszocQDhualPE03uRvgkr+IilDM2gHqzh5kOtJRZV+mqs9gHW0ku1hkX58aGo=
-X-Received: by 2002:a05:6602:1483:b0:803:f97f:59d8 with SMTP id
- ca18e2360f4ac-8252f1344d8mr807386939f.0.1724343151288; Thu, 22 Aug 2024
- 09:12:31 -0700 (PDT)
+	s=arc-20240116; t=1724343578; c=relaxed/simple;
+	bh=29iFkZR0+8piizM7eOLaTOEEcC+Kohez/RRszdWp+sc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ONStGw4jg/muyQAO9qvQ8J6ucTr8oRhDu9qvXZSHebtuDb17km+pDNdhbyIs9GawGptfCS6mHbM1ZkuO6XINXvRXs/4KSZ1bZNAxWrnVpMj8N3YngM8fIeZArVkVMqjTfHdpwPWYqtDIHZl22uVXujJXbUUT9P0XaYk1qw5Pyaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: by air.basealt.ru (Postfix, from userid 490)
+	id 62DDD2F2024E; Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
+X-Spam-Level: 
+Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
+	by air.basealt.ru (Postfix) with ESMTPSA id 23D162F2024C;
+	Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
+From: kovalev@altlinux.org
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aivazian.tigran@gmail.com,
+	stable@vger.kernel.org
+Cc: lvc-patches@linuxtesting.org,
+	dutyrok@altlinux.org,
+	kovalev@altlinux.org,
+	syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
+Subject: [PATCH v3 1/2] bfs: prevent null pointer dereference in bfs_move_block()
+Date: Thu, 22 Aug 2024 19:12:18 +0300
+Message-Id: <20240822161219.459054-2-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
+In-Reply-To: <20240822161219.459054-1-kovalev@altlinux.org>
+References: <20240822161219.459054-1-kovalev@altlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821150700.1760518-1-aleksander.lobakin@intel.com>
- <20240821150700.1760518-3-aleksander.lobakin@intel.com> <CANn89iL+VTJ6tEe-PZ24h+0U9BYs0t4gZDndiy7j1DwuKMBEFg@mail.gmail.com>
- <fc659137-c6f0-42bf-8af3-56f4f0deae1b@intel.com>
-In-Reply-To: <fc659137-c6f0-42bf-8af3-56f4f0deae1b@intel.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 22 Aug 2024 18:12:18 +0200
-Message-ID: <CANn89i+qJa8FSwdxkK76NSz2Wi4OxP56edFmJ14Zok8BpYQFjQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 2/6] netdev_features: remove unused __UNUSED_NETIF_F_1
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 5:24=E2=80=AFPM Alexander Lobakin
-<aleksander.lobakin@intel.com> wrote:
->
-> From: Eric Dumazet <edumazet@google.com>
-> Date: Wed, 21 Aug 2024 17:43:16 +0200
->
-> > On Wed, Aug 21, 2024 at 5:07=E2=80=AFPM Alexander Lobakin
-> > <aleksander.lobakin@intel.com> wrote:
-> >>
-> >> NETIF_F_NO_CSUM was removed in 3.2-rc2 by commit 34324dc2bf27
-> >> ("net: remove NETIF_F_NO_CSUM feature bit") and became
-> >> __UNUSED_NETIF_F_1. It's not used anywhere in the code.
-> >> Remove this bit waste.
-> >>
-> >> It wasn't needed to rename the flag instead of removing it as
-> >> netdev features are not uAPI/ABI. Ethtool passes their names
-> >> and values separately with no fixed positions and the userspace
-> >> Ethtool code doesn't have any hardcoded feature names/bits, so
-> >> that new Ethtool will work on older kernels and vice versa.
-> >
-> > This is only true for recent enough ethtool (>=3D 3.4)
-> >
-> > You might refine the changelog to not claim this "was not needed".
-> >
-> > Back in 2011 (and linux-2.6.39) , this was needed for sure.
-> >
-> > I am not sure we have a documented requirement about ethtool versions.
->
-> But how then Ethtool < 3.4 works with the latest kernels? I believe we
-> already moved some bits and/or removed some features or it's not true?
->
+From: Vasiliy Kovalev <kovalev@altlinux.org>
 
-Presumably most of the 'old and useful' bits are at the same location,
-or ethtool has been updated by distros.
+Detect a failed sb_getblk() call (before copying data)
+so that null pointer dereferences should not happen any more.
+We also decrement (brelse) the bh counter in this case.
 
-> I could try building it, not sure it would build though. How do you
-> think then we should approach this? Maybe document the requirement?
-> I don't think we should leave the features as they are and sit with no
-> bits available only to support ancient Ethtool versions.
+Found when launching the reproducer generated by Syzkaller:
 
-I was simply suggesting to correct the changelog, and make clear we
-need a recent enough ethtool.
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+Comm: mark_buffer_dir Tainted: G  W  6.1.105-un-def-alt1.kasan #1
+RIP: 0010:bfs_get_block+0x35b/0xdf0 (fs/bfs/file.c:42) [bfs]
+Call Trace:
+<TASK>
+ __die_body.cold (arch/x86/kernel/dumpstack.c:478)
+ die_addr (arch/x86/kernel/dumpstack.c:462)
+ exc_general_protection (arch/x86/kernel/traps.c:787)
+ asm_exc_general_protection (./arch/x86/include/asm/idtentry.h:564)
+ __getblk_gfp (fs/buffer.c:1335)
+ bfs_get_block (fs/bfs/file.c:42) bfs
+ bfs_get_block (fs/bfs/file.c:56) bfs
+ bfs_get_block (fs/bfs/file.c:125) bfs
+ bfs_write_begin (fs/bfs/file.c:66) bfs
+ __block_write_begin_int (fs/buffer.c:1991)
+ bfs_write_begin (fs/bfs/file.c:66) bfs
+ invalidate_bh_lrus_cpu (fs/buffer.c:1955)
+ fault_in_readable (mm/gup.c:1898)
+ PageHeadHuge (mm/hugetlb.c:2123)
+ bfs_write_begin (fs/bfs/file.c:66) bfs
+ block_write_begin (fs/buffer.c:2103)
+ bfs_write_begin (fs/bfs/file.c:178) bfs
+ generic_perform_write (mm/filemap.c:3817)
+ generic_file_readonly_mmap (mm/filemap.c:3781)
+ new_inode (fs/inode.c:2126)
+ generic_write_checks (fs/read_write.c:1687)
+ __generic_file_write_iter (mm/filemap.c:3946)
+ generic_file_write_iter (./include/linux/fs.h:763 mm/filemap.c:3978)
+ vfs_write (./include/linux/fs.h:2265 fs/read_write.c:491)
+ kernel_write (fs/read_write.c:565)
+ __fget_files (fs/file.c:918)
+ ksys_write (fs/read_write.c:638)
 
-We can not simply say that ethtool always supported the modern way
-(ETH_SS_FEATURES)
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
+Link: https://syzkaller.appspot.com/text?tag=ReproC&x=16515ba3e80000
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+ fs/bfs/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/bfs/file.c b/fs/bfs/file.c
+index 57ae5ee6deec12..23773e62994024 100644
+--- a/fs/bfs/file.c
++++ b/fs/bfs/file.c
+@@ -39,6 +39,10 @@ static int bfs_move_block(unsigned long from, unsigned long to,
+ 	if (!bh)
+ 		return -EIO;
+ 	new = sb_getblk(sb, to);
++	if (!new) {
++		brelse(bh);
++		return -EIO;
++	}
+ 	memcpy(new->b_data, bh->b_data, bh->b_size);
+ 	mark_buffer_dirty(new);
+ 	bforget(bh);
+-- 
+2.33.8
+
 
