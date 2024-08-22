@@ -1,120 +1,98 @@
-Return-Path: <linux-kernel+bounces-297261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A6195B513
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:34:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D2195B48A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B215B1F220E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7802825CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C4E1C9444;
-	Thu, 22 Aug 2024 12:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1611C9448;
+	Thu, 22 Aug 2024 12:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="X8qU7jXY"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KhBkwVaI"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A469F1E4B0;
-	Thu, 22 Aug 2024 12:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF6217D374;
+	Thu, 22 Aug 2024 12:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724330073; cv=none; b=cs9/JICZoBu5XfiWQI5myMGHp9F2eUbpL3AGmLF67C/sQSAqzIPNSK32HKvHLsz0h/VSmsFS1dUVq/UJx1/z5TPsMDBnJEoBXXQ1ngRkx7qCoLzQCWRLbYK54BrX+QWTYYfL149zPrpgu8xe0ftOWN7ADIIhA8LZE6YJV9qOYC8=
+	t=1724328247; cv=none; b=C+sjyeWzoKaejgcRVzpBh6Uj4PBDYxErUvdGwpGn5evxrkhf16TU26ViPNn+tAoB82FNgyyI7PgZ/QoYw9MD+n46fToDE2jUJdttIIjL5SsxkNS2YCxZc1W9AMxfad8PCms6smK/KjVFTRwHKgoNwef5KUIwTXuOzsYC4ZsiHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724330073; c=relaxed/simple;
-	bh=3t8k4IPYRftT6nZ8UX7GzF4RhagPZ3in+/Up5WFzFM8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tF0EKBMbxFJZMQozro8y1ScL7mxXkxB7Sj6TIvOoOGjxXPxwVvbf6uT3Cykv5RbWqCuQpkOmWNmiCX9yCWcwUbXpvNRACbB2+ceVgigj3C1mhQXektaloZiA+3FgdXSigIjJrOEUteK2kqmsoEOfijxO/BYI1HxCMwPo3IqSd0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=X8qU7jXY; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LNl4nZ025114;
-	Thu, 22 Aug 2024 06:57:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=Ek+bakmG4WGbqKlO
-	WEEBoQdUCTBQawtInzbF4OKh30E=; b=X8qU7jXY0JBX6Z9n1ExbYLjOi3tLUBla
-	pKpyyg2apofFaFKrj2/rx9oERt3u1QgYUz3OgWhBFOvPCstAHjLH1UxwNiV/KFh4
-	MqsR20YoUIrQRgT33Mk8PbBjjyDwzxAUsefDOyMIZteAofoQFGNuTqf0NvY+Nav4
-	wmBAskDIcFMQkISzYQr/uwAhEltndSOeopKQKyILOoqCL6wqv2XDL8aSOLVbRaxv
-	V553ylPPHNKqU3vgFJrEdesmjqzc1TBcSE41lJuCiarfrI6lpPn6FKAVqGe6p6JK
-	GgaWVMz9spk9tSjAom3dmPlpnMMA7IrcB98rJwMl+5NiC3etMMUSSA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 412s8x5pa3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 06:57:27 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
- 2024 12:57:25 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Thu, 22 Aug 2024 12:57:25 +0100
-Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 759DA820244;
-	Thu, 22 Aug 2024 11:57:25 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH] ASoC: cs-amp-lib-test: Force test calibration blob entries to be valid
-Date: Thu, 22 Aug 2024 12:57:25 +0100
-Message-ID: <20240822115725.259568-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724328247; c=relaxed/simple;
+	bh=Qf0pfe2B4skxex88RWsBgOZlJ1oK+6WmfO9yIv9vPhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NpV9Rz9YbKkusNPiO9EQIK7io1LHNXjS5KTHBjMsoVUKP8wH2tzvVKsBxQS+hIFsnZmdBsK1pP4TnkF9CY+s8EuhONHjouvSh9mpj+dARac0Hz1xcaWYCW48yvG+etcsAPpt7kfoozkqnhFRa6exb9QqKARxCRFHNyai3vqCY8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KhBkwVaI; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay4-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::224])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id 95853C5348;
+	Thu, 22 Aug 2024 11:59:58 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C486E0007;
+	Thu, 22 Aug 2024 11:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724327991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V6WzS31XWKQ+PAVvVlTIcXBZWu/ygTzCRj8Asrux5SM=;
+	b=KhBkwVaIS0Tti/okSc8ezPChFhGcFeUmJhyL8ECkY33mqZnzIKWU/3C85mPtfYwmDf+Pzq
+	zO26tKZ5SRgUa6QuYXuT9ercQuKOwnuuw+aZ+3W5SEwDqMOlbdqVg6AMxKe6piWsa1Qbhv
+	Rk0hkrmTzzI49Uk0WOauWL9SgY+iftrsZyAVrz0V7kQj58KAAYorlPAxrlZiVKnbNSjI3/
+	WHp0EamOpPX3u2LQJ7VYrFYt+BvbgCRzFX8BKAdZnrK/DpkWaDkLm+gLY2Smu5Ia8KOJfS
+	k5aC9bWeDWCpG07eWahcSh+q7p9gh5n48T3+uvEfTDB+Jd0H5/qCosOPONVxcQ==
+Date: Thu, 22 Aug 2024 13:59:46 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
+ linus.walleij@linaro.org, marcin.s.wojtas@gmail.com, linux@armlinux.org.uk,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+ mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, justinstitt@google.com,
+ kees@kernel.org, u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com,
+ horms@kernel.org, shannon.nelson@amd.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [Linux-stm32] [net-next 3/9] net: ethernet: cortina: Convert to
+ devm_clk_get_enabled()
+Message-ID: <20240822135946.356332a5@fedora-3.home>
+In-Reply-To: <20240822084733.1599295-4-frank.li@vivo.com>
+References: <20240822084733.1599295-1-frank.li@vivo.com>
+	<20240822084733.1599295-4-frank.li@vivo.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Q3c_HikjKUd-Hxa-t1uddM9YssOYEp4l
-X-Proofpoint-GUID: Q3c_HikjKUd-Hxa-t1uddM9YssOYEp4l
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-For a normal calibration blob the calTarget values must be non-zero and
-unique, and the calTime values must be non-zero. Don't rely on
-get_random_bytes() to be random enough to guarantee this. Force the
-calTarget and calTime values to be valid while retaining randomness
-in the values.
+Hi,
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Fixes: 177862317a98 ("ASoC: cs-amp-lib: Add KUnit test for calibration helpers")
----
- sound/soc/codecs/cs-amp-lib-test.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Thu, 22 Aug 2024 02:47:27 -0600
+Yangtao Li <frank.li@vivo.com> wrote:
 
-diff --git a/sound/soc/codecs/cs-amp-lib-test.c b/sound/soc/codecs/cs-amp-lib-test.c
-index 15f991b2e16e..8169ec88a8ba 100644
---- a/sound/soc/codecs/cs-amp-lib-test.c
-+++ b/sound/soc/codecs/cs-amp-lib-test.c
-@@ -38,6 +38,7 @@ static void cs_amp_lib_test_init_dummy_cal_blob(struct kunit *test, int num_amps
- {
- 	struct cs_amp_lib_test_priv *priv = test->priv;
- 	unsigned int blob_size;
-+	int i;
- 
- 	blob_size = offsetof(struct cirrus_amp_efi_data, data) +
- 		    sizeof(struct cirrus_amp_cal_data) * num_amps;
-@@ -49,6 +50,14 @@ static void cs_amp_lib_test_init_dummy_cal_blob(struct kunit *test, int num_amps
- 	priv->cal_blob->count = num_amps;
- 
- 	get_random_bytes(priv->cal_blob->data, sizeof(struct cirrus_amp_cal_data) * num_amps);
-+
-+	/* Ensure all timestamps are non-zero to mark the entry valid. */
-+	for (i = 0; i < num_amps; i++)
-+		priv->cal_blob->data[i].calTime[0] |= 1;
-+
-+	/* Ensure that all UIDs are non-zero and unique. */
-+	for (i = 0; i < num_amps; i++)
-+		*(u8 *)&priv->cal_blob->data[i].calTarget[0] = i + 1;
- }
- 
- static u64 cs_amp_lib_test_get_target_uid(struct kunit *test)
--- 
-2.39.2
+> Convert devm_clk_get(), clk_prepare_enable() to a single
+> call to devm_clk_get_enabled(), as this is exactly
+> what this function does.
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Thanks,
+
+Maxime
 
