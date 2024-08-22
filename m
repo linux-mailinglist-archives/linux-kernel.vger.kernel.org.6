@@ -1,123 +1,181 @@
-Return-Path: <linux-kernel+bounces-297109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7770B95B33B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:53:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315F895B324
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E215282F58
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29B71F21E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ADA183CAB;
-	Thu, 22 Aug 2024 10:53:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFBC17F4EC;
+	Thu, 22 Aug 2024 10:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dtrMJJac"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0414F14A4F1
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB04214A086
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724323993; cv=none; b=buheGzWln23Yxu4o9C3EYJiQOD7TvQcKWxyOAOMsUA7oJ/f72vTd/Mo0zhdGPuUykZ8eMaz/SCqzJ1dfap4AV/JGqg1rUZJ+VanqXjP62imLZ3XZsf/tM7H0n1xg3FHFrc3mV+9eA91QlhREghHZeGKN0+03lL4EIa9a9Klc9nM=
+	t=1724323554; cv=none; b=k0QrCo+Uu/oQcGRbfFihFBIXxfZIHxbK/QVF7DDDUw9jmOcCxaHaCS3qsCeGW14wlWmyK6i5uT99odKbUkE59e/9p7ay8US+OihnyUoek499rjrPjm4JcArmsAKRcp23ylxxcK1tmpji2/hzHkqe5VXVoG5ixJnMHxLTNp7wHBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724323993; c=relaxed/simple;
-	bh=sQOdsfZF/NazDQhP/OQAo187eK9B8ObIDLTIoidHfx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QD5pQRDxMXq5xRHY2oDIVnzzSsjXwHNwEGYnK2pet4oUgNhasMUUMSEYXcgmruHY/m9tADRZTOv03UQcv7PNbrm++oTZXnhjWgME18n67r8Rk1/lt190fcxYBlYazWiLApnpH//9R2fHVCUpL7zZoZivN5uuPQLC6cX/rak6hGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh5RC-0005Mn-3R; Thu, 22 Aug 2024 12:53:06 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh5RB-002ELB-AK; Thu, 22 Aug 2024 12:53:05 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 22B4C324871;
-	Thu, 22 Aug 2024 10:44:35 +0000 (UTC)
-Date: Thu, 22 Aug 2024 12:44:34 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
-	Brian Norris <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Kalle Valo <kvalo@kernel.org>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
-Message-ID: <20240822-clever-caracara-of-drizzle-d56d0e-mkl@pengutronix.de>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
- <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
+	s=arc-20240116; t=1724323554; c=relaxed/simple;
+	bh=Wocgy9mWm5Al1pCnBkdgVtr0QQyRxnroK8DSq3J9Mio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mM/NSi+AKqStTEqgzbMdfBHvTk7A7xy4Ly3lAMxkOJ0zCKpX5wpT4qkpYVuRlUk4BctEht6seqhcwdD0H0T2tttb6ilTwwWQBFMGkUxbTHC67oRxU/toeIcDCr2Fz0i+WaBmGlmjwBtnjGIAHSR7TfT4Ee1KgT5sL/mad80Kcxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dtrMJJac; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724323551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mpnb3SemwFliUZ4/dS7d4EoXv878E5NLpOTu5i7vK3A=;
+	b=dtrMJJacDsM6/+davMe/iSafYtkviH34QvnzxUqkVjHlj/v6V5ibwaFnxcEDVPg4l6SIQt
+	Xz+tnjfCh8vzxChg6vskpJHPhgEsMD4y7n4kYjuNfr8HYf4ibYMfqAZ9v+Ad4zHadZuk+D
+	QSKPWcR2coojJ2khrbBqHbhnAkBUWDg=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-128-hoDsUrm8P3iY80xpu99H8g-1; Thu, 22 Aug 2024 06:45:50 -0400
+X-MC-Unique: hoDsUrm8P3iY80xpu99H8g-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6c1610cd159so13064026d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:45:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724323550; x=1724928350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mpnb3SemwFliUZ4/dS7d4EoXv878E5NLpOTu5i7vK3A=;
+        b=dVNl1THDzj3oJBg15ursX0T7pcajd8DGSpem5Qw0gcN8dP3ukS2t+/OhE2gR8jgHm2
+         efku0vZ+DRewn9OsswGQThzGSTBVrTe97SPP2g7oNXDYmlG/kdF/2IXsqiP2BkpibIY6
+         hGKyKNpw4gGzvWQbYeD8rqFVABXsGuFgey0Q3ioyUQ+ppRWqefBP4lZwouS9r/lgRA2K
+         JKF0KzYAplr6WCyxaskzWS9HadWZ6IYNZNn6LPP2nflgUUGmZdESdzvEjnvAK0UWcVWJ
+         965IXLoxlVfX35Woplg8Zt0TmxF2WylEjceF0D+gJM5i0d+qRut1nhZVKGPT+b+wr+Gz
+         ajcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyMQGHSt8IkqZwHOe5Uf4zx1AAnc5Zx8yBkHFu5eu8dIeiMkaZcUVXNiWsiBdIDXYYdxuSx6que8mhUnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrYIHBJfCX2aftArhSo1BMW6VcTV6JuT7JolRPsE61D3uxAI1C
+	l/N48msZNe6jwNchKmAiyYhj5XEDSD2NyyKHL8JD+mk2gFwn0QsO5LiYI9o3MadtnJVpLNsbwbC
+	vYdrzWErRW3SNQj3ZL7aiZlx22FPCq8CGv/LamszZ/kAldoVyDrVkliFf900cbb5dSs1U4OCZzH
+	RBOnmHXGrpizdFMuKs53ivUqYGJDM0J0AxkOKL
+X-Received: by 2002:a05:6214:2b93:b0:6bf:60b8:d4d7 with SMTP id 6a1803df08f44-6c160c71354mr52485466d6.15.1724323549902;
+        Thu, 22 Aug 2024 03:45:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHDpqdsRgZKmZj2LlYLuSKDF48ze2sPIDVJNwTHfTXpNGLbI9DbeX+bnNBTGnZjFpbQMzRQrZC/Ggb2z0yJ5U=
+X-Received: by 2002:a05:6214:2b93:b0:6bf:60b8:d4d7 with SMTP id
+ 6a1803df08f44-6c160c71354mr52485196d6.15.1724323549541; Thu, 22 Aug 2024
+ 03:45:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lxmmtxri4kik5hni"
-Content-Disposition: inline
-In-Reply-To: <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---lxmmtxri4kik5hni
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240819145417.23367-1-piliu@redhat.com> <ZsX5QNie3pzocSfT@gardel-login>
+ <CAF+s44S2Ph1_nFcZYy3j0Jr4yuHayb5zdNu1YXg8ce_Lf3TOgQ@mail.gmail.com> <Zsb1isJ2cYRp2jpj@gardel-login>
+In-Reply-To: <Zsb1isJ2cYRp2jpj@gardel-login>
+From: Pingfan Liu <piliu@redhat.com>
+Date: Thu, 22 Aug 2024 18:45:38 +0800
+Message-ID: <CAF+s44TauSXk-gDgRHn=6CsQrAv8Q-QyGXkDJO+_sTh_yKde5w@mail.gmail.com>
+Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+To: Lennart Poettering <mzxreary@0pointer.de>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Philipp Rudo <prudo@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, 
+	Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 22.08.2024 11:53:25, Marc Kleine-Budde wrote:
-> On 22.08.2024 09:36:29, David Lin wrote:
-> > I wonder we still need patch for indent issue here? If so I am sure we
-> > will need a bunch of similar patches which I don't think really help
-> > improve mwifiex quality
->=20
-> mwifiex is the best mainline driver we have for these devices.
->=20
-> > Actually in its successor Nxpwifi (currently under review), we have
-> > cleaned up all indent, and checkpatch errors/warnings/checks.
->=20
-> Public review?
+On Thu, Aug 22, 2024 at 4:23=E2=80=AFPM Lennart Poettering <mzxreary@0point=
+er.de> wrote:
+>
+> On Do, 22.08.24 13:42, Pingfan Liu (piliu@redhat.com) wrote:
+>
+>  > On Wed, Aug 21, 2024 at 10:27=E2=80=AFPM Lennart Poettering
+> > <mzxreary@0pointer.de> wrote:
+> > >
+> > > On Mo, 19.08.24 22:53, Pingfan Liu (piliu@redhat.com) wrote:
+> > >
+> > > > *** Background ***
+> > > >
+> > > > As more PE format kernel images are introduced, it post challenge t=
+o kexec to
+> > > > cope with the new format.
+> > > >
+> > > > In my attempt to add support for arm64 zboot image in the kernel [1=
+],
+> > > > Ard suggested using an emulator to tackle this issue.  Last year, w=
+hen
+> > > > Jan tried to introduce UKI support in the kernel [2], Ard mentioned=
+ the
+> > > > emulator approach again [3]
+> > >
+> > > Hmm, systemd's systemd-stub code tries to load certain "side-car"
+> > > files placed next to the UKI, via the UEFI file system APIs. What's
+> > > your intention with the UEFI emulator regarding that? The sidecars ar=
+e
+> > > somewhat important, because that's how we parameterize otherwise
+> > > strictly sealed, immutable UKIs.
+> > >
+> > IIUC, you are referring to UKI addons.
+>
+> Yeah, UKI addons, as well as credential files, and sysext/confext
+> DDIs.
+>
+> The addons are the most interesting btw, because we load them into
+> memory as PE files, and ask the UEFI to authenticate them.
+>
+> > > Hence, what's the story there? implement some form of fs driver (for
+> > > what fs precisely?) in the emulator too?
+> > >
+> > As for addon, that is a missing part in this series. I have overlooked
+> > this issue. Originally, I thought that there was no need to implement
+> > a disk driver and vfat file system, just preload them into memory, and
+> > finally present them through the uefi API. I will take a closer look
+> > at it and chew on it.
+>
+> It doesn't have to be VFAT btw. It just has to be something. For
+> example, it might suffice to take these files, pack them up as cpio or
+> so and pass them along with the UEFI execution. The UEFI emulator
+> would then have to expose them as a file system then.
+>
+> We are not talking of a bazillion of files here, it's mostly a
+> smallish number of sidecar files I'd expect.
+>
+Yes, I think about using <key, value>, where key is the file path,
+value is the file content.
 
-Found it:
-https://lore.kernel.org/all/20240809094533.1660-1-yu-hao.lin@nxp.com/
+> > > And regarding tpm? tpms require drivers and i guess at the moment uef=
+i
+> > > emulator would run those aren't available anymore? but we really
+> > > should do a separator measurement then. (also there needs to be some
+> > > way to pass over measurement log of that measurement?)
+> >
+> > It is a pity that it is a common issue persistent with kexec-reboot
+> > kernel nowadays.
+> > I am not familiar with TPM and have no clear idea for the time being.
+> > (emulating Platform Configuration Registers ?).  But since this
+> > emulator is held inside a linux kernel image, and the UKI's signature
+> > is checked during kexec_file_load. All of them are safe from
+> > modification, this security is not an urgent issue.
+>
+> Hmm, I'd really think about this with some priority. The measurement
+> stuff should not be an afterthought, it typically has major
+> implications on how you design your transitions, because measurements
+> of some component always need to happen *before* you pass control to
+> it, otherwise they are pointless.
+>
 
-Marc
+OK, I will look into the details of TPM to see how to bail out.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Thanks,
 
---lxmmtxri4kik5hni
-Content-Type: application/pgp-signature; name="signature.asc"
+Pingfan
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbHFo8ACgkQKDiiPnot
-vG/bvgf8DaPnCJxuHqvkBU3lcM9WlGZEdp6nAvrrnAOZLesx1OlePO0xIxScMfAB
-HUSRIyRE/mbZTCZJ9i/K/Wmw8wYXDTtJGpH++83sXE+WCCU4Gkn1YABMw6uJz0rp
-eFZ4qnhTgcghpoOG9MjRv8gHRQ6ZlxIWLD6CD7eJ7Suu/uPdfZdtg76zpGUFybz/
-ezG0h2txl4xTRvAK7GuXpwxldJ3vrHGrvWapO5F626ywMNIIP0gPrAqYZ9teMPb1
-nrmv+0GbgpB2xVP3Pc4CqWCkk5VyiXMpXx47N70jfInwnJ6kXu4sPaEj37Pf7arR
-ynKmNPJhen90Y+nHBQ9voHlslp5sNQ==
-=YZ2v
------END PGP SIGNATURE-----
-
---lxmmtxri4kik5hni--
 
