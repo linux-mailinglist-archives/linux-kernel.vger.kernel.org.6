@@ -1,198 +1,253 @@
-Return-Path: <linux-kernel+bounces-298070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0646C95C193
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:39:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D498C95C194
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82C9A1F23A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:39:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08C621C225AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCDC184526;
-	Thu, 22 Aug 2024 23:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dTr6QtTJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1424E183CD0;
+	Thu, 22 Aug 2024 23:40:13 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF6C1836ED;
-	Thu, 22 Aug 2024 23:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724369952; cv=none; b=oDshj+9mMT8AFco6B8UdMZVR3xVPe9wmoTrlaeqmA0Vzl8oMz+56NwCnEyiz/+ukODbTLUbekJaiFBnFAiUBViVjf5DMJO6DLRkJNJgaFJoRF6MyJe/cZ2P1fc79Ubz+dqVfbz+BB2xrsikfggeozHRLEnFlDku/8N16swN0Q6I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724369952; c=relaxed/simple;
-	bh=sIxFb7phyP103k8jvVNt3nWalzWNNxGUURuGx6otySo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bfET+94fTFQ4RJSfTvZyxTI3APvbpHA8XTdg5b27VjyncuHDScGRLtK0k7ykEIvalX32V9ypV6CrnTXcr9RguxZ5lJXbjECwD/TdQesAFnyJTeQxDWQ6V7QHpnhdKsQ0pBwup+QhjPJaV+yvpeOzUvEsNTQAGBXyuWp0KiK6DwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dTr6QtTJ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724369951; x=1755905951;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sIxFb7phyP103k8jvVNt3nWalzWNNxGUURuGx6otySo=;
-  b=dTr6QtTJpvbvY8aCjhUrS+twfXjAOV4yNQosPtteq5cmGyBk6OFUGw5N
-   igDIZ3Nj/59dj/RgHR8+vc1J1m2eeqNs+IFp3pK1RYdTWQO29kgsJxH4D
-   hRAzxAsvghKtL4I05X/1RflW3MzYFfs3/M7dPbKzyA9X3530KXL+Fklnc
-   Dl2TeurGS8PNPBPmOYEXxitYkq7SPVdityIbpkupm0whL1+6Cd7jHhEKo
-   TEZMngz76V3CxoOF3Za+ODLux8jAGdwFzykDMtoOdT0jcrQ2EVbrzy8A/
-   GqfWqNtuBz9Nvj/yT9E4kLEWzgvZM7hDrLKlhaA5PHOxFwhNmT/MHjDae
-   w==;
-X-CSE-ConnectionGUID: KwGbPLUdS/aAmCheH3VogQ==
-X-CSE-MsgGUID: 9snuZTVoTXuR0gzL3GOiyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="26614760"
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="26614760"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 16:39:10 -0700
-X-CSE-ConnectionGUID: JHK45ctpRkmr+OFgl6kk8Q==
-X-CSE-MsgGUID: YUquk5AoR1SIs2CQNrtZhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="61757259"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 22 Aug 2024 16:39:07 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shHOT-000DI0-0b;
-	Thu, 22 Aug 2024 23:39:05 +0000
-Date: Fri, 23 Aug 2024 07:38:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>,
-	Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 11/31] wifi: mwifiex: use priv index as bss_num
-Message-ID: <202408230753.OZVsdQpL-lkp@intel.com>
-References: <20240820-mwifiex-cleanup-v1-11-320d8de4a4b7@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19501836ED
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 23:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724370012; cv=fail; b=TecU/lNRS5WbpMhkRikFJdUAO6cME4EDG5Bi96rubOa/2+7WZqddipl+z9/OCHKfcSmxuqat3+5+7UqCnShmb9Un8sdVFFjKFZpTvHdZ9CQsEs8qdJg3/u3J0NsgUtPMKHl8mfU61CdbkeCzEuPLrL3eIsJUKRkCYBDeba61L+Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724370012; c=relaxed/simple;
+	bh=u9v9MjphFuPrQr1CeoYY8vbDcSir8SpPvUt7ZeKgIHk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=U5LADSyJ+OkTZqh8jR66mfROOu0Ac14GJniVr6dfjLmu20CrXQDZ5MJTswseqf7Tn8axkUNZx0ITN8il+WBKddtHuh1Ve7+nzKwbSRg9wvNZNvF/fQ6Obg6zAm+1G1oA0NsfT26d6Hab9zyBnuXfs4vmjJvZrR/YO839KmE3J5k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MNOGbu011815;
+	Thu, 22 Aug 2024 23:39:38 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2171.outbound.protection.outlook.com [104.47.56.171])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412ju6wxcn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 23:39:38 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h18wcQ1nOFislx4GNvgHLZP/oyeFvXgxewXcHI6rgyKDLskIgTphqdyeF9+WfRvrqki5EbL7EcOYxHMB86iG+QOo0A7FGONwXvb0ZSe4ZwcFSopOeHK8bEzB08LvNRIyXRfe3+AHsYn4UyjBXNWdEkSBEqc7/r4qFF9sISYttwuvNuQEH/xGWDxjFKXqHazWGYg3r2sD9THMRJX79sJAbm4a/eKTEZGc/RBntOEuYwBZGqFyyPnbva0ZKH+g8MU0OU7/fqO9HXhRfIofD2BGL57+GwnGs+cbOr5eROKhu7CPQcnrUQQQDvvfj+UEliqFyqDiHF7q0uwJYwJj6PToRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eISFEs7UKtv1YQ6ZmuLaorNIG1FAb6jdGeBiyFcgTfs=;
+ b=P8H8kpaCk/IVX1yNqmUC0ewxB4HetIWjxZoKqj+157nfakLIJ3eMMwpRGBevKwex+PCaLBozdG6/FJULBIgrWkfWWuwpkosg/M+wmblyglktCJfLzXKBIbJYi+I/I3qbaxaRHjR9tK+JSsEGgHAZPt+uUvRYpWC5zmEOxjIYbPr779MKB9su3nuDa0yRo09EEAZ74CcoBMoenQZZkXUaUjkXRCxM46/hcwgJ3w5oEdPCu2d6KEp1RsJiPQfFRXqQPXh9a3J0prcAhFu8oKiNW/Wav6fD5dyXkzvNT9XEmIVV24u9PFrA/1hkgd43GoiDDLN+6XxNbi2g1QojUwByiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by SJ0PR11MB6621.namprd11.prod.outlook.com (2603:10b6:a03:477::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
+ 2024 23:39:35 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8%6]) with mapi id 15.20.7828.023; Thu, 22 Aug 2024
+ 23:39:34 +0000
+Message-ID: <4e7d4ed7-049b-47d7-8502-7f9d0bd9c196@windriver.com>
+Date: Fri, 23 Aug 2024 07:39:28 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: fsl: qbman: Remove redundant warnings
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, robh@kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20240802021651.3854295-1-xiaolei.wang@windriver.com>
+ <3241a692-088d-4316-85c9-f2939a9179b2@csgroup.eu>
+Content-Language: en-US
+From: xiaolei wang <xiaolei.wang@windriver.com>
+In-Reply-To: <3241a692-088d-4316-85c9-f2939a9179b2@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYAPR01CA0059.jpnprd01.prod.outlook.com
+ (2603:1096:404:2b::23) To MW5PR11MB5764.namprd11.prod.outlook.com
+ (2603:10b6:303:197::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820-mwifiex-cleanup-v1-11-320d8de4a4b7@pengutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|SJ0PR11MB6621:EE_
+X-MS-Office365-Filtering-Correlation-Id: c600db5a-22e3-499d-8a31-08dcc303ada0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VGt1RHlPS2F0ZVpWNDduUXZJbGFJSnhYSVlMMlJaMWk1cWwxNlpJbmIwWnFu?=
+ =?utf-8?B?b2I1bzgwV003V2tlcHdiQzVTdnpnSklGaTRYd3Eyc2NSQldMM0pWQVMrZGpy?=
+ =?utf-8?B?L1BpUytiMEZsMiszcEdDekM4Ujkzd0dWTnZiQVVkWUlIdWpXSUlSNTBpYzFk?=
+ =?utf-8?B?WXEwOUpyYldRWDRaZlQ3d1hwbFZLNmZobFh2Ull2cDJ6azZ3alo0dXFaZFdk?=
+ =?utf-8?B?YUVvK3B0K2NVYi96SFFsemtBdzhJOWYzdmtKNlRONjRQdmRPbFhXcnF0ZVF6?=
+ =?utf-8?B?M0oxZXVpVnF3QlRlNkhVR3pZa0RxUWRlOW9sbldNSDZHVjlDTlZpYS9ZNjRH?=
+ =?utf-8?B?cFBIY3B0VnZ1dDY5b1F2dyt5ZnA3N0ZJU2lsYlJ0ZUVkOWoxVzVkWWR3N25S?=
+ =?utf-8?B?QWQwVWdBWVNNRHZuM1R3b2R6UFlPVnFxZElGUUs1bHo5OWxPdm56SXNFVEdq?=
+ =?utf-8?B?WUlqcWEwTXNnZ3RFRWtIYzh2dEZCMGFvTEJEdmtRTlc1QVZQZXFPVEp6Z0hl?=
+ =?utf-8?B?SWVBanZ2aXcyc0t4UmNob2tzUkJ1ZWJ3NlJqbWllN1B5NHQyQ2lIRDFtN1VQ?=
+ =?utf-8?B?R0dVcjluUFhrOExHQnQzUHB6S1dxZUhmNmVOT1hXaFl4Wm5rSkhVUFZCTFQx?=
+ =?utf-8?B?c2dzcFRGWStPemwrdFFzeDVtc2E0YjdwOHNDWk1nNnB6TnVFaEVhNFFBUk5a?=
+ =?utf-8?B?VzZHMm83cjFldEVHdXdCZ2hRWFdkRlc5YzZvMkRCdVZCTi8zVWgxTDNkcWNq?=
+ =?utf-8?B?Slh2M051ZGoweit3M2dMSXNvRnR5dEdMVHR4enNxa0FEMFcxWGdXQ3Rod1lw?=
+ =?utf-8?B?cHlqU0hubDJxM00yOCtaOWNlZEc5a2tJZFVwZ2pRV2pubE5mbnpZRHJiSmxq?=
+ =?utf-8?B?Q04vTGtPZGxnZXROM2QzRU1MWVFjWGx3cFdRSlJkaW1jU1RzQUdneUJJTWJi?=
+ =?utf-8?B?bkEyTUJibm9PS0dlQW42clJEZFAvK29LU3V6STFBYkcwTThIa0h1MXc2SnBS?=
+ =?utf-8?B?MTJ1c1B6eHBndWtkeUpNQUh4QlcrbXBCMVVDTS9JUlp4czZyenJJcUpPT3Zo?=
+ =?utf-8?B?MjZZUUp1MGRtSFNLbXVyQU1XeXRDMDlOTDh3Y0d3dmlBaDJ2TlYwc1Mzbm5r?=
+ =?utf-8?B?YkZaN291ZjhOUVhGTGg0bG5LSTQ3YW9ZUCttbnJkWm5XYysrdWpOSmxiMCs3?=
+ =?utf-8?B?am5wZ0ZPUGYrSmNNOUJHWUJ5d1pra3hNMFYyUkRGcnEycmV2UGlMYmZYeS9J?=
+ =?utf-8?B?ak5LVXg2N0w5UG82cjJVUUYzazdRekJ1UDU5TjdiRnBTZEVGdWVzN0NmQ2VG?=
+ =?utf-8?B?Ny9EM3pSL2hmTjBJZ2N2bGUvYjZaTjd1bmp3VEh3d25sUkp1bVNHcldGL3o5?=
+ =?utf-8?B?TjBZTTNGa1E3L2ZLeWlpQzFnbmdZN3lwWW5vN3VoTjIrRGpTcklJckFqb3ZJ?=
+ =?utf-8?B?MDczREVDV3VXWlJ6KytPcTNoMHN0aEZSK0tqYXU1Vk16TmNyY0FmUlRnZ25X?=
+ =?utf-8?B?VXFXWXpQT1ljSFZNdzlKaE5PeXZ3RjZzUTRZbFBLVGlZM3V3VHlnbVdMVnNm?=
+ =?utf-8?B?SUVMaGNla0tPei9sSGtjTXgxSDdXcGR2dkdCVTVaTTJ1cDlaRy9JOEV4WjFT?=
+ =?utf-8?B?dSsxUXhZTWp5YjBxQzFXUnQxaUhEV1l2NDNXcDlhK1A2VVE4M3pmYytTUGds?=
+ =?utf-8?B?TkxqSUQwNkpOTCtjY0UyQzdYQnMxN0ZFTThJL21FVmtoeWI4cTNvWHFzcndv?=
+ =?utf-8?B?eTJqWkxZQTZIcFhoZFdOTXoyTDJuaDEvRFF6UHBnN2RvaE1HeFJ2ZldTdm15?=
+ =?utf-8?B?RmRzRE0zakx5L3l1d0hnUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?d3pBWHFVa3FXd0pWZFR0SWx0clovdnN5VENzeElDL0JpbkZjait6Njhhb0VE?=
+ =?utf-8?B?NS9KMEJJUGdFS0hVSnJKK3FrZjV5REo1M3pjNGEyUW1uTk56NWFwM1dZd1p2?=
+ =?utf-8?B?V3NvMXluUzJrWjJ0LzRMQnZRVjUzdDJmTUJFNy9nSDB3Qy9jNE40UlNrem1Y?=
+ =?utf-8?B?aWVKU1oxcmJ5citMK0NVYStWVTlzSGxjTytyNVBHZjI2VVhvbkUyTERVQ2tu?=
+ =?utf-8?B?bHZGZFFHT2RuNDlXS2ZVUFZkUU9qdUpQRFRFazlnZk1oRUhSblFaNjI1WEZF?=
+ =?utf-8?B?NS9yNkxZU0hqa3R2S0xwOExlTXJlcE5jcFhmd0RJNE1sWWp3OURUcndOd2RE?=
+ =?utf-8?B?Q3d3ejY2YklPK0R4bWFzR3FDOVQwYjJJYllqSkdNaFFjSm5CM2JtL2xhUEIx?=
+ =?utf-8?B?SVFQc1ZIUC9TQnU1MlZNUnVWeiszdDUyMFJST1pQWStLaFhCaEZKT1laenY0?=
+ =?utf-8?B?ZDhobldTc1pHdVBuczhTN281bGJmK0JIOFNUdVhWSXFSeHVoTFBoMWlUWnRx?=
+ =?utf-8?B?RktmSEEwS1NMTkdqdXdQckVqVktsZ1lyWGlYY3BPc1RkLzBxTUQ0STV5em52?=
+ =?utf-8?B?UjE2Nk93QU56eURRKzE4K2t0U2tQVWxVNzZ1VmJlb3h3ZEg1aHNkRngzQVNk?=
+ =?utf-8?B?dUpjOG9TYVBGZWVET2dQdTVVZ2tkVEZncHlXZ3VIZlIzRFZDNEJkQ0FlSElm?=
+ =?utf-8?B?U2NwVlBCT3YyTlhpZUx6MElVdWlkcS90dzRPZ3Z1eG5HdVBQVG41WDAxVXc4?=
+ =?utf-8?B?UFd5YStFNDgzQUwyS0FDQVpMSy85emw3MisxeFprUGExSzN0bGNnQVg0dHNv?=
+ =?utf-8?B?ZWprTXVvN2pCM09oazUva1NYbXl0c1pqYSsvSlZsVGFkT0JVUU9xM1hqcWxF?=
+ =?utf-8?B?ZkZPVHU2U005YkxuTnUyUGZpNFlUckdXL3ZPSTBjeldaNzYzVkxPeUYvRkFE?=
+ =?utf-8?B?bllQLzNMeXRTbUx6WS9xbTF2OTBKYnJVMndJOXNENmFEbEJyckNjdnJuMWdG?=
+ =?utf-8?B?NVV3OEZ2eWdyOHB5V1JNbTBMaFNxUGZwUnB2VEpTdmROTThZRnpGUjJDemsr?=
+ =?utf-8?B?QlRqQ2wrQ0hNVTdXNnlmL2oxYlN2Y2dnRXV0TTFXalVZTGU2cTNMbzV1a054?=
+ =?utf-8?B?VWJZUllXUFp3QzkzZEQzL2dlcFhwMWZsQ3FuMlU3R1BRR2RoRU9xalBEazk5?=
+ =?utf-8?B?MmM0QmpURGtxaXpOS1lJVHVwaXgxNUV6VnNBQWw0bEl6dkg4b05lR0NocDh0?=
+ =?utf-8?B?dW9FN0VjMkh1MkRMQkNZd0M4L3FleGRnNFVUdjllUjdoUTNBdU5lWk0zVWVT?=
+ =?utf-8?B?ck1mSjNoMkVjUGJTR0pDMU9NZEpKaE1ITCtmS1k2R05aWVU2OHU3aEhOOUhX?=
+ =?utf-8?B?VFhNYnJLZDV1bGJZZURqTW1kOEFoKzRxM29SQTZQNTFYMjFORk13cXlvby9z?=
+ =?utf-8?B?QjNOeHllWndIN3Zkdk4wa3FpMVYrVXdnUVV5dnlPZDgzNGlPZWdXNm9Kc3hC?=
+ =?utf-8?B?WlZTSmd4WG92RldFaDhQRXNHU0dMUFBscmJZZGJMRlNJM0JXN2o5a2ROUHJ3?=
+ =?utf-8?B?dEs1dmFMaWhHbzBzeUFyL24rL0VUekFTY3RGcWVFdlZLYmxYaTJKT1B5aEl4?=
+ =?utf-8?B?cUxiY2ptaHppZXNLWFZuc2JzR2xkdWZtVTZLckVFOXBpdEpNaXVWSTA5Z3NL?=
+ =?utf-8?B?eXBVeUZQSkZqK3lyaVk4ZW5aRDFIOURFcUtLVGYweGtmTkxnSndrcTVKbnVx?=
+ =?utf-8?B?TnExQ2xmdTVZbjZ6a2VBNUF1YjFRbVBacmNwRjNJa1JnQkZhNjBjWlB0V3Az?=
+ =?utf-8?B?bWtQQ2JwNGQvem13elIvd1Axc2VvRHkvK3dKV3NlRnpxZTBOdGg5V1hWSHE3?=
+ =?utf-8?B?MWx6Q2srWFBUN0ppeTdMRnpDb1NQWlJPSnpZWGJYNzY2YjdBUVlmZTU4Vzd3?=
+ =?utf-8?B?R09UVm9Ob2JKLzNLLzIyeG5oaEdHeDIvVlBQOVpSWTRXbkFWV3krMVVzQWtV?=
+ =?utf-8?B?UkVsWWNMR3l1VWpTdWovTUtWMEV5WS9ZZVoweW9BYkhQanFjRUYyWkFLK1RG?=
+ =?utf-8?B?Q3hIWGM3elA4bkZXSXBiT1dweXpLd3ZUd3pWRWpxcm9HM3FxaVJCd1FmVkg1?=
+ =?utf-8?B?d0dicFFxSW9xM2ppakRhZjRITGhzYjFGWVRZNzQ3MlhvS1hFMXo3UThBR01Q?=
+ =?utf-8?B?WXFCeVNCWlVjYWMvV0YxYkhQS1NBRGpld1NVYjR0RVEvcXE3TFkvRVdoam1L?=
+ =?utf-8?B?YStqM3VZYmtrSjVBbC9pOVdvSDNnPT0=?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c600db5a-22e3-499d-8a31-08dcc303ada0
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 23:39:34.6869
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7rKkT4H6K8Sks0OsezRQbAzvduqiyeRuGVNga064870i6V87mr7m+Lqt55w+kGYf4M6vd857m3lomb1NbW6/U2yKoZSx2LICiGfwqLJZ3uw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6621
+X-Proofpoint-ORIG-GUID: TlmkyfuUMDLFyIfJ1AmCqgOVsABYxTkp
+X-Authority-Analysis: v=2.4 cv=VdWlP0p9 c=1 sm=1 tr=0 ts=66c7cc3a cx=c_pps a=vIBLTX18KUGM0ea88UIWow==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=bRTqI5nwn0kA:10 a=t7CeM3EgAAAA:8 a=_EeEMxcBAAAA:8
+ a=r2w2zTtO5Mu2xhSWNFQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=FdTzh2GWekK77mhwV6Dw:22 a=syqr5EOPB93U0NEwqYpB:22
+X-Proofpoint-GUID: TlmkyfuUMDLFyIfJ1AmCqgOVsABYxTkp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_16,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408220178
 
-Hi Sascha,
 
-kernel test robot noticed the following build warnings:
+On 8/23/24 00:55, Christophe Leroy wrote:
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender 
+> and know the content is safe.
+>
+> Hi,
+>
+> Le 02/08/2024 à 04:16, Xiaolei Wang a écrit :
+>> [Vous ne recevez pas souvent de courriers de 
+>> xiaolei.wang@windriver.com. Découvrez pourquoi ceci est important à 
+>> https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> RESERVEDMEM_OF_DECLARE usage has been removed. For
+>> non-popwerpc platforms, such as ls1043, this warning
+>> is redundant. ls1043 itself uses shared-dma-mem.
+>
+> Can you please explain in more details ? I don't understand what it is
+> redundant with.
 
-[auto build test WARNING on daaf0dd0398d5e93b7304f35184ca182ed583681]
+commit 07f86917a450 used shared-dma-pool for QMan private memory 
+allocations and
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sascha-Hauer/wifi-mwifiex-remove-unnecessary-checks-for-valid-priv/20240820-200559
-base:   daaf0dd0398d5e93b7304f35184ca182ed583681
-patch link:    https://lore.kernel.org/r/20240820-mwifiex-cleanup-v1-11-320d8de4a4b7%40pengutronix.de
-patch subject: [PATCH 11/31] wifi: mwifiex: use priv index as bss_num
-config: arc-allmodconfig (https://download.01.org/0day-ci/archive/20240823/202408230753.OZVsdQpL-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408230753.OZVsdQpL-lkp@intel.com/reproduce)
+added this warning, but this is only for non-PPC platforms and using non 
+shared-dma-mem
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408230753.OZVsdQpL-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/net/wireless/marvell/mwifiex/sta_event.c: In function 'mwifiex_process_multi_chan_event':
->> drivers/net/wireless/marvell/mwifiex/sta_event.c:419:23: warning: variable 'bss_type' set but not used [-Wunused-but-set-variable]
-     419 |         int intf_num, bss_type, bss_num, i;
-         |                       ^~~~~~~~
+reservations. However, for non-PPC platforms, commit 3e62273ac63a will 
+output a warning anyway.
 
 
-vim +/bss_type +419 drivers/net/wireless/marvell/mwifiex/sta_event.c
+At the same time, ls1043 already uses shared-dma-mem, so is this warning 
+still necessary?
 
-ddd7ceb3f6dd90 drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  410  
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  411  void mwifiex_process_multi_chan_event(struct mwifiex_private *priv,
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  412  				      struct sk_buff *event_skb)
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  413  {
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  414  	struct mwifiex_ie_types_multi_chan_info *chan_info;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  415  	struct mwifiex_ie_types_mc_group_info *grp_info;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  416  	struct mwifiex_adapter *adapter = priv->adapter;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  417  	struct mwifiex_ie_types_header *tlv;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  418  	u16 tlv_buf_left, tlv_type, tlv_len;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18 @419  	int intf_num, bss_type, bss_num, i;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  420  	struct mwifiex_private *intf_priv;
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  421  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  422  	tlv_buf_left = event_skb->len - sizeof(u32);
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  423  	chan_info = (void *)event_skb->data + sizeof(u32);
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  424  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  425  	if (le16_to_cpu(chan_info->header.type) != TLV_TYPE_MULTI_CHAN_INFO ||
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  426  	    tlv_buf_left < sizeof(struct mwifiex_ie_types_multi_chan_info)) {
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  427  		mwifiex_dbg(adapter, ERROR,
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  428  			    "unknown TLV in chan_info event\n");
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  429  		return;
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  430  	}
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  431  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  432  	adapter->usb_mc_status = le16_to_cpu(chan_info->status);
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  433  	mwifiex_dbg(adapter, EVENT, "multi chan operation %s\n",
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  434  		    adapter->usb_mc_status ? "started" : "over");
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  435  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  436  	tlv_buf_left -= sizeof(struct mwifiex_ie_types_multi_chan_info);
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  437  	tlv = (struct mwifiex_ie_types_header *)chan_info->tlv_buffer;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  438  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  439  	while (tlv_buf_left >= (int)sizeof(struct mwifiex_ie_types_header)) {
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  440  		tlv_type = le16_to_cpu(tlv->type);
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  441  		tlv_len  = le16_to_cpu(tlv->len);
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  442  		if ((sizeof(struct mwifiex_ie_types_header) + tlv_len) >
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  443  		    tlv_buf_left) {
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  444  			mwifiex_dbg(adapter, ERROR, "wrong tlv: tlvLen=%d,\t"
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  445  				    "tlvBufLeft=%d\n", tlv_len, tlv_buf_left);
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  446  			break;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  447  		}
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  448  		if (tlv_type != TLV_TYPE_MC_GROUP_INFO) {
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  449  			mwifiex_dbg(adapter, ERROR, "wrong tlv type: 0x%x\n",
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  450  				    tlv_type);
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  451  			break;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  452  		}
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  453  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  454  		grp_info = (struct mwifiex_ie_types_mc_group_info *)tlv;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  455  		intf_num = grp_info->intf_num;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  456  		for (i = 0; i < intf_num; i++) {
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  457  			bss_type = grp_info->bss_type_numlist[i] >> 4;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  458  			bss_num = grp_info->bss_type_numlist[i] & BSS_NUM_MASK;
-92ace9c7fa9726 drivers/net/wireless/marvell/mwifiex/sta_event.c Sascha Hauer  2024-08-20  459  			intf_priv = mwifiex_get_priv_by_id(adapter, bss_num);
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  460  			if (!intf_priv) {
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  461  				mwifiex_dbg(adapter, ERROR,
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  462  					    "Invalid bss_type bss_num\t"
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  463  					    "in multi channel event\n");
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  464  				continue;
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  465  			}
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  466  			if (adapter->iface_type == MWIFIEX_USB) {
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  467  				u8 ep;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  468  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  469  				ep = grp_info->hid_num.usb_ep_num;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  470  				if (ep == MWIFIEX_USB_EP_DATA ||
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  471  				    ep == MWIFIEX_USB_EP_DATA_CH2)
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  472  					intf_priv->usb_port = ep;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  473  			}
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  474  		}
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  475  
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  476  		tlv_buf_left -= sizeof(struct mwifiex_ie_types_header) +
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  477  				tlv_len;
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  478  		tlv = (void *)((u8 *)tlv + tlv_len +
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  479  			       sizeof(struct mwifiex_ie_types_header));
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  480  	}
-2b0f997db43f01 drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  481  
-7e4e5d2cd0817b drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  482  	if (adapter->iface_type == MWIFIEX_USB) {
-7e4e5d2cd0817b drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  483  		adapter->tx_lock_flag = true;
-7e4e5d2cd0817b drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  484  		adapter->usb_mc_setup = true;
-7e4e5d2cd0817b drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  485  		mwifiex_multi_chan_resync(adapter);
-7e4e5d2cd0817b drivers/net/wireless/mwifiex/sta_event.c         Zhaoyang Liu  2015-09-18  486  	}
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  487  }
-8d6b538a5eac1f drivers/net/wireless/mwifiex/sta_event.c         Avinash Patil 2015-06-22  488  
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+thanks
+
+xiaolei
+
+>
+> Thanks
+> Christophe
+>
+>>
+>> Fixes: 3e62273ac63a ("soc: fsl: qbman: Remove RESERVEDMEM_OF_DECLARE 
+>> usage")
+>> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+>> ---
+>>   drivers/soc/fsl/qbman/qman_ccsr.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c 
+>> b/drivers/soc/fsl/qbman/qman_ccsr.c
+>> index 392e54f14dbe..aa5348f4902f 100644
+>> --- a/drivers/soc/fsl/qbman/qman_ccsr.c
+>> +++ b/drivers/soc/fsl/qbman/qman_ccsr.c
+>> @@ -791,8 +791,6 @@ static int fsl_qman_probe(struct platform_device 
+>> *pdev)
+>>           * FQD memory MUST be zero'd by software
+>>           */
+>>          zero_priv_mem(fqd_a, fqd_sz);
+>> -#else
+>> -       WARN(1, "Unexpected architecture using non shared-dma-mem 
+>> reservations");
+>>   #endif
+>>          dev_dbg(dev, "Allocated FQD 0x%llx 0x%zx\n", fqd_a, fqd_sz);
+>>
+>> -- 
+>> 2.25.1
+>>
 
