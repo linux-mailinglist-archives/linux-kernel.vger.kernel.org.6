@@ -1,307 +1,199 @@
-Return-Path: <linux-kernel+bounces-297644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A22995BBEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BAE895BBF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0797B282C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1CE2818F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBBD1CCEF1;
-	Thu, 22 Aug 2024 16:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lcbobesO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622151CDA01;
+	Thu, 22 Aug 2024 16:30:25 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACC41CCEC2;
-	Thu, 22 Aug 2024 16:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724344068; cv=fail; b=dEhjIEUHwaT8RBc898vDV6a2eFcWcIonCfrQDOoOa4qPYXUuj8mBApKGZPK4XTLpidfJWkYHGS4vd3QWt/M2QXMoOOOQhN+0DwCoEIIR3K5bv+x6W8N14/HRFLYvNWyQoCh8iymFHTy1Nwawg886tjzH+VjHRiHTjxdj4yM2tJQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724344068; c=relaxed/simple;
-	bh=qm3CM7UDuz3nswBIz2Ij7u+xD/3XvexSq8ul42XMPpI=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FMFbWy+mcwFJHSUmfpcNIxO7Ho80VcRosLJbqTMf+JEj07lqLLo0BZanma7sTO3vigwoTQIGJZncmjwzFCS37EJNFjn8HJ/5rjNWu2fGa5Mr4YO+6R4e0ugd5b08iaD/rpSQe2u+6AafDo2y0XfrhDYbTqK6I7X3w7LmJNKSIW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lcbobesO; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724344068; x=1755880068;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qm3CM7UDuz3nswBIz2Ij7u+xD/3XvexSq8ul42XMPpI=;
-  b=lcbobesO7G2xOKWxd3n00Ny7e/u0bs8AkfgN3jp9bNJob3OwOdOD0Vua
-   zf7WyO1wkJ0PnmOzICT6K15lZP09oPWDZF0y3MmKl18lU4WURtRf3zGqb
-   Ik8s+Vn44xZcXsANWUZCW9id9v8OSWozcK+FwEXu3q7PsICjHhNlDswvV
-   JF7mFG/HS7tkXRfXaQbma4codNpEVHk86SFdHsXKPmajnWe11BW80vNqM
-   LBnQnCdta4MSMks4d0SjDlYamaBZYryvJ6MMy74aufX2U0WvX+6zNwBM6
-   Lm+DuO92npV7HXERasiR2Klxp1N4TQEaht0ROaPQ4G1ejY+f0FtB8RXns
-   w==;
-X-CSE-ConnectionGUID: WGvBmcaIROiG7l7Z6jPVAQ==
-X-CSE-MsgGUID: GOaseHG6Qm2cBqpae5Nwwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="40240097"
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="40240097"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 09:27:47 -0700
-X-CSE-ConnectionGUID: LLzuF2DbTaCum22CiClDwA==
-X-CSE-MsgGUID: lnqJ9yoQQyKRlwjMb6hL3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="84684904"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Aug 2024 09:27:46 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 22 Aug 2024 09:27:45 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 22 Aug 2024 09:27:45 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.43) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 22 Aug 2024 09:27:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VLodLc7eMrzfMSwg1S3n03MgmWa+KHXWwD21LzLg6SJhhKnqVci0URgZELE3ZLNu5BUe6zOSeIaCvZOZDb4yE0HcWNA3qhQOGrhRJDrOBsSLN71GpYJARXQlCcE0GwXMWb1q003voVVSG6NPeEQ+6Qa8OoGhk1NDYT9Md6boNx1qh54HHTD65zMWQRt4zoWJKcaSAYILANycXndL06FOA81wMZEwwzYu9QjxIsA0DBawYUUGm5PN3pWF8ZskR25hCtdHE202A1h2/aGsYu1ISEyxxvIQJHwZfpf3TZTQSD947JCMkM6r5YIVhZAfux8F3+5vC6MDF5r3Fjbc9zULMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z+0lwDvIuVofaKyZKfwL+PFPHVisDEhYMSPGujnmeCQ=;
- b=YpW9+r6XAjbZWfX566bt1cXuNhibizSR7Pueka1ax64FR9HXVCAXCrODQmDZi7YbvzyowIulfJI0KLO/27Ye5sg6JrNGCx4Od91+Q8UtHOyyjnivwObxjJH0qHPAv92GwJIh4x0KDLdurV39N9Jiy2xOUD20qjkYmRoLlTMZc3wQytbI93al5w2i5yRU+BYlk3JbIN8to3FznUbjRb4jWj/OSOBYai4Wkml/xfiq0MLviGsyj7p7pzZJ8WC+9UWq1YTUDmZMp9Vhr+QUsDCSUzX6UcVN2rJGU22DnxmmA0SnUk7PySmOPRfUMnA7OZDSb6EzbKpI/cF9OZ953unKxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by MW3PR11MB4748.namprd11.prod.outlook.com (2603:10b6:303:2e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
- 2024 16:27:43 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 16:27:43 +0000
-Message-ID: <cd09f5e0-2353-4223-b02c-aa8461c1dbe5@intel.com>
-Date: Thu, 22 Aug 2024 09:27:41 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] kselftest: Provide __cpuid_count() stub on non-x86
- archs
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Muhammad
- Usama Anjum" <usama.anjum@collabora.com>, Shuah Khan <shuah@kernel.org>,
-	<linux-kselftest@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Shaopeng Tan
-	<tan.shaopeng@jp.fujitsu.com>, Fenghua Yu <fenghua.yu@intel.com>
-References: <20240822081114.4695-1-ilpo.jarvinen@linux.intel.com>
- <20240822081114.4695-4-ilpo.jarvinen@linux.intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240822081114.4695-4-ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4P220CA0020.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:303:115::25) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438A937708
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724344224; cv=none; b=Het090JJ+JIi2y+6l/cnByVBHFV93tgP0EcW0yGMAqpkEcYT7VKd5tR56KJWAOmXpLX9FkChauqSRj7/+McYCvJ5i0wlJy9CadLTGVpTwpEdEaEjDQr4UwR0V+lq8VtRPnEXbUoqfo5kisCdG/8l5jOK3B//B+zHv7lg185Imio=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724344224; c=relaxed/simple;
+	bh=BWdXtAcNwxzBNo16ZJtlU2rVrR/1hE9KXxAeaNMs/5I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WpB1/hFoj7/mT9/WUSDI2gGwrnl+73zUvTCNYUEPikFatYDi3WHryuN6rmv+GQP5onsuBd2oVxwbwo1O/SEdkw8XI9EIwEA8fWcjbdWxICbx26hArmE3uvpWiwSzUr+Xr8X3/nDUP8UrpwmKHJvzyQK+OoO4s92itkbOu1TIdYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d5537a62dso12189155ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:30:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724344222; x=1724949022;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qif1MudHsyBAV5aHIOp6JFKSCGppEIb74zgdeN0q9UQ=;
+        b=KrIFfupASuyo1ZsifPC7YV7Y1rmJZrGXdqi1zmpwtrIpt/CdJo1ZBJr+fV9h+iXJl6
+         L5PmKec4TZSdc22PYAknvlmGvCE7+jARDuXZd8nEyEdhF7ODsVfqbgchcgRKqlnOU/S1
+         X3a9/OxigUdLlKSAHUpWxeuZzZTROIvHilVDJxsH2OVi+9voKoJssqSBbNZ9OQslCRP9
+         h9LVZq04G1UtBg1/ttm7eCGgOS2q+tSm4QgldNbhD55Wf7VOSCRhiG2qRLIFpRgGkG65
+         59BnVnciWC1x0OC0cjzchwrsa65oHrwgPZ9tUM8VY+fEoaDYiHjrM65P1RKsfUgarfLH
+         nW6A==
+X-Gm-Message-State: AOJu0YyBx7LayrEiMyE+hN3hGLNPbgW+je08lM/dhiJuerex7qegarAO
+	RGJYVsB4/pUaBIcIstCUaRxjV53HjxBRso20Dy1dfhdXPuR9Zv8miO1mGqtG+MGRImqFJO2spdJ
+	24F1zMigLllYRvoOAuB27AH/Wymj2MmNZYBJSfL+dGsvKzpmcCqe2pC0=
+X-Google-Smtp-Source: AGHT+IH8EF9IDNcGlfrtK4R9MNHNZv+CoEMQ8NTiZOei98+9Yzo8NmwGrLgGRxYZ8qVYpGq7Rg0fmBQJBmNV7w48ArXZN+36BLKU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|MW3PR11MB4748:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d7ca31e-39b5-4c50-e1f8-08dcc2c75944
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Q011bkFkeE4zT002YmEyenNxOHlFSEM5MEh6MGI1eDBxYUF6QTF3aWhDUUpU?=
- =?utf-8?B?eWIxRDZTV0p2T25vRlB2V2VCcERUS3FSSW5WeUFFaThFMzNLWHJxY3RCMkdB?=
- =?utf-8?B?V0FIZTNkSjNUYy9OT0MvRDlKLzRIYXBIMUlWVmtzQ3lCWDA1dml2MktmN2pS?=
- =?utf-8?B?TmlJbWJGcWNlNDdCZXdXRWdKVENxbHhYaGtHN2NKbzhDVTQ4UkZKUXloY1h6?=
- =?utf-8?B?NjhTbDUveU5rK1l1eXovczBzM3RkTG5aNUlyWEJKZnhXcm5LSkxGT21OaFVG?=
- =?utf-8?B?TzFpRmpDQXU5ZXBQdzFITk9nVkNoYkkzZlIyYWdraEQwSXpiYkdvR1ljY1Jo?=
- =?utf-8?B?S3RzM0o5d2tOTjZwS3Qza3Axa0tEQ0Nab0FWbDQvbjFDNWo2V1ZIRDZsTjFX?=
- =?utf-8?B?UDBIRC9IVWgrS2pxQTczek1tbk43NUJ0bS9FcUxCd21WditpOC94NUNYd1FC?=
- =?utf-8?B?d2x3SENjRWYrcE9IUWNlVmVPeHN5cmFHdWIweUdoYlNaeHlNYmtTZW5MdGhK?=
- =?utf-8?B?Ry9LYmZFUXBNTVA2UE1aTE9lV1puRk0vKzlhSEVDVmxMZTZqLzIrRG5YL0Zn?=
- =?utf-8?B?N1JCWUlhTCtkVUNUbkNGK3pncEo1OVk1K2dVMjd3bHk4VHZOWXhWZy82VVJ5?=
- =?utf-8?B?dVNoQXF3M3ZKL2FSWUhMa0ZoNUVCRG05ZEtPWk5CRFpZVDcrSTdidG9KcllC?=
- =?utf-8?B?VDNsM0JtVzhqYzlWNmlXWXkrOW5IYnI0ckE4bys2ZFJDZzZQY0I4aEVCV1p1?=
- =?utf-8?B?YTZmT1hKWUlBOHdHVjFydDkvNnZsVk0rb2h2dUtycSttSTRLaWV2aWRCcmRi?=
- =?utf-8?B?cjUxZk9BdDBESjVuOVgybXlpRjB3V2wzbml5L3Z5c0FQc081RlpwSThIdFh1?=
- =?utf-8?B?aE9vbzB4QXNrWm84dzVybzhXZkp5ZkI5WUkzREloalhXZ0QwNm8weEVzdUsr?=
- =?utf-8?B?NXJxdVVjTWwxazRqZzkyaWxuWmQwTTBZSkJOQ2dtNURJazZWQmg1L0I5VmJn?=
- =?utf-8?B?RTl3WGhIUjdGM3NhOG11QjFVV1QwZklRSFRNTmhsdXlZQzhzcTlvRGZodWho?=
- =?utf-8?B?T3lkSFhma3MxVFluYW80eWhxOTJUUERaUUs0Y1llMmpnT202ak1QYnd4VytX?=
- =?utf-8?B?cXVlcGlOOTZhMjJGVHMvcllteElsNERtMEY5WXpvSFBscW92ckRsM0ZOMEo4?=
- =?utf-8?B?eEJiZzJ3Tlcwd08xbXV1YUlXVXlRR2x3MFV4eU9sQi9ta1ByNnBtaG1OTHhu?=
- =?utf-8?B?ZVJaWS9ZUjBzRHBkTUllOTcvVUJ0UWViNThTK3N3WjNBRlVHaGdvWUZPWnIv?=
- =?utf-8?B?c0twVENxV05PSy8yL2R5WHFqUStNeHJGYm9qM2Y0SEtDNlFNR3ZzeUhpajJX?=
- =?utf-8?B?bFV1VUhDamFoR3lrcTFhSm9hNko0Lzg1ekRVakFUTS9LNVNiM0lTWkcxR0Za?=
- =?utf-8?B?VHdCYnc5OUZpNzV3a2tJZnVkVzl3cTdOMlZlSXhZRjlCdyt5Sk9yWWxpanNF?=
- =?utf-8?B?T2pYVDJlWWcwS2VFMXphVVFmUnJTTloxb0IvR2hFQjlhalZhb0VqWmI0WFlq?=
- =?utf-8?B?ZCtZVVFtVXhndWJiZ0ZIV1c0YmJZa2x1anRESFd1bDAzaTBHR1p0UE1meDVP?=
- =?utf-8?B?NWlpUmdOdmFCQzFCQzNNVzIrNyt3TTYzVERFY3FiaDIrTjdTbUtVemYveklY?=
- =?utf-8?B?K3lEYWFKSWV4WklJNHNKU2NBMWxLTEtQemtCVlFKcG1wZTlOUGdrRm0vcjhQ?=
- =?utf-8?Q?z+FSr6xQsuLQcnaGfU=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U00yTXVpSWNIS1B3U08wYTUzeG1LaHAxdTRpQUZDK2E1Tkp2azEwTmpWSjZa?=
- =?utf-8?B?dEZmc3hGb3Bud0d0RExtRTRzWnJYS1REdWtpMW9kaDlRTEtHNHpJajRta09W?=
- =?utf-8?B?Q0FuVlY1akpLY2Z4TGptWEJwd0FQeUd6OSswWTYvVVNkNWdGRllVQ0lqTUJo?=
- =?utf-8?B?S3pVaE1yK09qeHdBVEFPbG50N3NLN0o4cTNHRUVqeVAxRWVkaVZGNlVMU2NF?=
- =?utf-8?B?MFlrZ3pBRVo4ZDhUUkFyWWQ0TG9NMW1KaDF0Y0ZzVnJJQnVteUUrRXR3YTR2?=
- =?utf-8?B?VmpFNEl1NytVaHJkN0Z5RUdrVENmYWI1TDRQbWdKYlNQdXJjc1AwM0pnb0tV?=
- =?utf-8?B?Uy9LK1lLWnBPUU1hTVFTZHFXSFovZE5Sd3N2RTFMK1VMYXd3ODVRQXBsNHNO?=
- =?utf-8?B?d0FmWFZvTmkvOFI4UHdEc05rVGVsWVh4WHJPc1ZwQk1VNXJrTHRWY3RmazZu?=
- =?utf-8?B?RkVxMEQzcWRPWkU2ZjJVY2Jhb3JjeDZJS2paQXBldDRtYnNOZmJ6cUs4UEFR?=
- =?utf-8?B?WjdoUEdCMUZtcEVjYTJRemVOcUtsRndtd1dVUkUrZUVRNGM2Yjloamt6Q3Rq?=
- =?utf-8?B?UDR2OWhZTis2Qk5HL0hZMy9wSkpaSktzTC83TW5DMGZybEJFZ1dOMUxWUUhD?=
- =?utf-8?B?ck1DR0lXTm9DNVhWQ2I2a204ZkhlRlpqazNzQTBzczdlSmRGUGZZNk1FeUha?=
- =?utf-8?B?UDhiRnZnV2Y2b3FRc3JSRnA5YkNwSi9henRaakpIRXA0SllGVnMwS05oVFc0?=
- =?utf-8?B?V2pHT2RnNXBBVmwvR0FNcHAxSFBWaFlXdWxSQklqYmdTdWNKUXZJQ2VhajJK?=
- =?utf-8?B?QlZzNnAvWDRCcXBDSHBDajdpcWtBOUlkWjR0ZjJ3elVYeXRtYmZ0dCtNUFY4?=
- =?utf-8?B?SDdXS0VWdWJoNEw4bmZGM3pMRHgwRmNpUHhjVUFKM1A0QUdWaFA4N25VV09T?=
- =?utf-8?B?d1FZVy9va1FPUUJYNUhZTnU4V0M5NWNxTm5yeG5NcHB3TU01Q1BOa2NMdW9I?=
- =?utf-8?B?QjNtbkVMM09meFZHVzdMbWpuQXV6d1RCN0RQNHc2bkNxVmh4MGxXTi9IUUVR?=
- =?utf-8?B?bXZFcHVPS2R6ZkdQSmd4THBSQUpKc1ZrcmsyYm9nWlVXbVFtZW9xbFdIQ0FT?=
- =?utf-8?B?UWJJQWNiWGUwMm9PQ3VrNnpFcnNOZ2VTaTlwQkdzaHNxZzlpTGNkQUdsQ0s2?=
- =?utf-8?B?R0tWcDM2WC8yTHp2Z2w2eWVXZ3d1NlpERXNQUXNMYlFFUkJUT0tWQ2lNbGhj?=
- =?utf-8?B?NmY4QjNBdXBaMzdHcVVOdEcwd3VyZUp0eFpSdDFxbWc5UitwakgrNXJaK3BG?=
- =?utf-8?B?NVNocXRWSUxsRnMzME5aWmZ0QlJLWnh6NC81Y2hHTFV4cTFXY0NuVFNGV21y?=
- =?utf-8?B?QjMxejROV0dlRXpGNlZIbHRIcmo3aUJaV0M3aGJsUVd5ekRUc1dFN1FZTDgw?=
- =?utf-8?B?c2tEdE82YnNjZ1EwYktrZjhBRG11N0dlVXM2b3FrV1lBZE1leHRqUmU0WWY0?=
- =?utf-8?B?Ri8vYUkxRkF6Y1VWOWFIZm12dEpMS0xtT1ozTnhpbGJ5eTR4d2lIVWRHSGtr?=
- =?utf-8?B?RURtYUV4K1M4WTRsK2RCbjZWT2t3NHFXaDFaT3o5M1FpR0JqbGRQVnlZYThu?=
- =?utf-8?B?WDc4QzFjVjRTNUh1V0lBS3Z1K0haTjRCaElkMjIrVGtLU051UWF4UC96Nkt4?=
- =?utf-8?B?M2dPUzF4cHRIek9jaWZzOEJBNzUwY29zLzE0VFhZeEJ1T1UvcEVRQVhCbzVV?=
- =?utf-8?B?ZHYrZ21wem5IZndWQ0pXaklyaEdLQlZSWmJ0TlcwR3dPT1krTDJRaDV2WVlr?=
- =?utf-8?B?Z2xxWTg5T0JFRUFWTEpoRXJhcmhVVU90dWhqK3JqU3NWcm9qc0o5ajA1Smwr?=
- =?utf-8?B?OFhpOGFpd3ZMSmpQSUZtOGFaMlB5K1p2ZnUrZjdwVGRpem9PUHg2MjdLTXZP?=
- =?utf-8?B?K0w4UUlFazJNMFJoN3V5WjFWNFhFTWtTSTJNK1ZXalpjb0hIU2xuSmdNZ29n?=
- =?utf-8?B?ZVdwYXJ6WWc2Z05lVnRvM3pmR0g0TmFrdFNjdmpZWjVnOFRkWXlOWldNU2N6?=
- =?utf-8?B?dFVnNkdZZFFpYUhtTUdFSmNuNHBJNmZPSFdQZkpXNncrOWhDdngwRlBEdi9C?=
- =?utf-8?B?Q0xaVjNTYVF3Tmo4bFBkSm92UmhDTmJXbTBWVGhJQmN6eXRFcWJQd1hzRzZM?=
- =?utf-8?B?OUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d7ca31e-39b5-4c50-e1f8-08dcc2c75944
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 16:27:43.2786
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dqZGtR5qkywF48ekPF+rR8IBq97SzfJ09fKx/l5a4CJ3mxhK+3nnZs0v107ubqUB1whuvbWQmQj8xmvpDCY+VuIp5gg9rj8igRf0Gqrsa1A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4748
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6e02:1a89:b0:39d:1d50:e6f9 with SMTP id
+ e9e14a558f8ab-39e3a8adc24mr65235ab.4.1724344222145; Thu, 22 Aug 2024 09:30:22
+ -0700 (PDT)
+Date: Thu, 22 Aug 2024 09:30:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d4f46a0620482c7e@google.com>
+Subject: [syzbot] [kernel?] KASAN: stack-out-of-bounds Write in __unwind_start
+From: syzbot <syzbot+3fce94ba68be647848da@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ilpo,
+Hello,
 
-On 8/22/24 1:11 AM, Ilpo Järvinen wrote:
-> Building resctrl selftest fails on ARM because it uses __cpuid_count()
-> that fails the build with error:
-> 
->    CC       resctrl_tests
-> In file included from resctrl.h:24,
->                   from cat_test.c:11:
-> In function 'arch_supports_noncont_cat',
->      inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
-> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->     74 |         __asm__ __volatile__ ("cpuid\n\t"       \
->        |         ^~~~~~~
-> cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
->    301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
->        |                 ^~~~~~~~~~~~~
-> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->     74 |         __asm__ __volatile__ ("cpuid\n\t"       \
->        |         ^~~~~~~
-> cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
->    303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
->        |                 ^~~~~~~~~~~~~
-> 
-> The resctrl selftest would run that code only on Intel CPUs but
-> as is, the code cannot be build at all.
-> 
-> Provide an empty stub for __cpuid_count() if it is not supported to
-> allow build to succeed. The stub casts its arguments to void to avoid
-> causing variable unused warnings.
-> 
-> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
-> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> 
-> v2:
-> - Removed RFC & added Fixes and Tested-by
-> - Fixed the error message's line splits
-> - Noted down the reason for void casts in the stub
-> ---
->   tools/testing/selftests/kselftest.h | 6 ++++++
->   tools/testing/selftests/lib.mk      | 4 ++++
->   2 files changed, 10 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-> index b8967b6e29d5..71593add1b39 100644
-> --- a/tools/testing/selftests/kselftest.h
-> +++ b/tools/testing/selftests/kselftest.h
-> @@ -70,10 +70,16 @@
->    * have __cpuid_count().
->    */
->   #ifndef __cpuid_count
-> +#ifdef HAVE_CPUID
->   #define __cpuid_count(level, count, a, b, c, d)				\
->   	__asm__ __volatile__ ("cpuid\n\t"				\
->   			      : "=a" (a), "=b" (b), "=c" (c), "=d" (d)	\
->   			      : "0" (level), "2" (count))
-> +#else
-> +#define __cpuid_count(level, count, a, b, c, d)	do {			\
-> +	(void)a; (void)b; (void)c; (void)d;				\
+syzbot found the following issue on:
 
-The changelog states that this casting to void is done to avoid unused variable warnings.
-It is thus unexpected that not all parameters obtain the same casting treatment. It looks
-to me as though this only targets the resctrl selftest usage where the "level" and "count"
-parameters are constants. This is intended as a general kselftest solution so I believe
-that all parameters would need this casting to handle the cases where "level" and/or
-"count" are variables.
+HEAD commit:    c3f2d783a459 Merge tag 'mm-hotfixes-stable-2024-08-17-19-3..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b0ddcb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=3fce94ba68be647848da
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> +} while (0)
-> +#endif
->   #endif
->   
->   /* define kselftest exit codes */
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index d6edcfcb5be8..236db9b24037 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -199,6 +199,10 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
->   # Build with _GNU_SOURCE by default
->   CFLAGS += -D_GNU_SOURCE=
->   
-> +ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
-> +CFLAGS += -DHAVE_CPUID=
-> +endif
+Unfortunately, I don't have any reproducer for this issue yet.
 
-My earlier comment [1] when this work started remains. This technique depends
-on environment passing ARCH, which cannot be guaranteed. Looking at other
-usages of ARCH in the kselftest Makefiles it seems that the pattern is to
-initialize ARCH with "uname -m" if unset.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-c3f2d783.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4d927f7c3cfd/vmlinux-c3f2d783.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ea54bdfad24b/bzImage-c3f2d783.xz
 
-> +
->   # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
->   # make USERCFLAGS=-Werror USERLDFLAGS=-static
->   CFLAGS += $(USERCFLAGS)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3fce94ba68be647848da@syzkaller.appspotmail.com
 
-Reinette
+loop0: detected capacity change from 0 to 256
+==================================================================
+BUG: KASAN: stack-out-of-bounds in __unwind_start+0x3e/0x7c0 arch/x86/kernel/unwind_orc.c:688
+Write of size 96 at addr ffffc900018373c0 by task syz.0.0/5109
 
-[1] https://lore.kernel.org/lkml/db16db55-5f68-484f-ba9f-3312b41bf426@intel.com/
+CPU: 0 UID: 0 PID: 5109 Comm: syz.0.0 Not tainted 6.11.0-rc3-syzkaller-00338-gc3f2d783a459 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memset+0x23/0x50 mm/kasan/shadow.c:84
+ __unwind_start+0x3e/0x7c0 arch/x86/kernel/unwind_orc.c:688
+ unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+ arch_stack_walk+0x103/0x1b0 arch/x86/kernel/stacktrace.c:24
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3988 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
+ vm_area_dup+0x27/0x290 kernel/fork.c:486
+ dup_mmap kernel/fork.c:695 [inline]
+ dup_mm kernel/fork.c:1672 [inline]
+ copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
+ copy_process+0x187c/0x3e10 kernel/fork.c:2387
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2800
+ __do_sys_clone3 kernel/fork.c:3104 [inline]
+ __se_sys_clone3+0x2cb/0x350 kernel/fork.c:3083
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff7f27799b9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff7f358ef08 EFLAGS: 00000246 ORIG_RAX: 00000000000001b3
+RAX: ffffffffffffffda RBX: 0000000000000058 RCX: 00007ff7f27799b9
+RDX: 00007ff7f358ef20 RSI: 0000000000000058 RDI: 00007ff7f358ef20
+RBP: 00007ff7f27e78d8 R08: 0000000000000000 R09: 0000000000000058
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ff7f2915f80 R15: 00007ffc51f8f378
+ </TASK>
+
+The buggy address belongs to stack of task syz.0.0/5109
+
+The buggy address belongs to the virtual mapping at
+ [ffffc90001830000, ffffc90001839000) created by:
+ copy_process+0x5d1/0x3e10 kernel/fork.c:2217
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x45dba
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN|__GFP_ZERO), pid 5108, tgid 5108 (syz.0.0), ts 82537916190, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
+ vm_area_alloc_pages mm/vmalloc.c:3584 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3653 [inline]
+ __vmalloc_node_range_noprof+0xa40/0x1400 mm/vmalloc.c:3834
+ alloc_thread_stack_node kernel/fork.c:313 [inline]
+ dup_task_struct+0x444/0x8c0 kernel/fork.c:1113
+ copy_process+0x5d1/0x3e10 kernel/fork.c:2217
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2800
+ __do_sys_clone3 kernel/fork.c:3104 [inline]
+ __se_sys_clone3+0x2cb/0x350 kernel/fork.c:3083
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffffc90001837280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90001837300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90001837380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f2
+                                                                ^
+ ffffc90001837400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90001837480: f1 f1 f1 f1 00 00 00 f3 f3 f3 f3 f3 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
