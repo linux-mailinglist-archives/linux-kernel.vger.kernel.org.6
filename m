@@ -1,105 +1,167 @@
-Return-Path: <linux-kernel+bounces-297473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2B095B8D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:46:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F8295B8D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80C6C1F21E30
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7041F26039
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CA51EB27;
-	Thu, 22 Aug 2024 14:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EF71CC896;
+	Thu, 22 Aug 2024 14:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mJqrRP/i"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vf/9Nta3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A73B1CB15F
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06351CC173;
+	Thu, 22 Aug 2024 14:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337957; cv=none; b=jpyCW47kPIvYL4a6BaDlH/6xZ9y2FckYGrRfCiedUrTAZccxevjUQaN4nJoarlgOzS/F9zvEGGoPYXqBTOZumavGReZ2S4oUeeu6lJIBUkI601sX411DKUgiOrZzM5YaywbBygY468sqwY8ckbQAfaH+Vo9APIgvVScXn3e4UeY=
+	t=1724337959; cv=none; b=mfYoygfjtriW1Twb9Xho9zpD+PMD8wnf53/duAkztki5QQn2sWRuU5HStAb+Vhbvsx3E6GnifVPmeTd3cdi80s6lZK7PsGtHJkpuub3JokybyG94tM5+947J4G/UbxNerE+jXyZD1wG6lNOV4yoHBhR1/0bNMehtEPf9+DNtwOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337957; c=relaxed/simple;
-	bh=UYliqU8zC6Cy5j0FVRYrcTVg1FwZP3pGPNuhEz8qz/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irWWXTB064U/BaCN/4Z/1ie5m42XIsZxboXwcLTZEss4Q4AsooU5v0NJu4IxuubvR3RBCPNMlV+FT8UrPD+g2lAXSgGOa6gKf1oTYjGndK7iqY7DXjl69CE5hThJkrwQqqj5zRZR6FTB4F+XDMu8rZ6hWfw1gmY02u4cXDAastQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mJqrRP/i; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so88801766b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:45:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724337953; x=1724942753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dqfRiCuHOz5QjE+AHIg341g7rC3lTF4xMoQGWnAZTk4=;
-        b=mJqrRP/ilWhIcTA7O/+1TPT3krVbJ8SuineB10Jthbaw3LdV1dEKvcHco7G32NGwpV
-         I3QIMA2HQ4d5gpcD1WLpZhlCJvQV05oWNLuxh3i5hj8DS0O7BcawMf+x2hy31QUvRWdE
-         UptyPeCYSUZM7YHmDuPXoQyNrU/LOe0Bi5MaW3cLc5zXAXtA0sf5LPcUmkpeMrzttMMl
-         HswVbtNdXCCo3JGzTmzG/havxyXDFJRYLBDhdc+0UFGvuf0rbEIpq5QKi4ekwAt8/dum
-         DBZtjxomW7ihjD5invJ50fmhAHXDK25oVnaTnDKMNVPTbCSM4GR/Jrfx6hUfDj0YKQJZ
-         nXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724337953; x=1724942753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dqfRiCuHOz5QjE+AHIg341g7rC3lTF4xMoQGWnAZTk4=;
-        b=curVoShuHdiaWhWM8znbhN4ELQUF3+6Ajh8UdPTHgzUXOxfolqcE1aZouw5EG9MR92
-         CV2W8eJQfePcF91RbBRNyP7r26ajDrAbBDrXV5VbZS/yPv4COD5Kpv7SCv7fk4SKuS30
-         nE4mrWBJKhxH+ZWywB5Sr+EZyX28X4bV7QhclUso4QWgrRgKDQgJZuITf8evzV1tjfVS
-         8d3istib1Zne02AvTnq9X8U4tXi8+PafVn9gyH8+APCj/84oWrwMzxzUbEQIYDvFdWbL
-         gYQZJw/DUUpjeXsmm/cWG+hzRh8KUqvmcELT5OCfebJGE7Ux0x8czOp6IBwP4AMHAt48
-         bMbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3K4Rq3t4oSwHKFhX1mf3uANJYIA8JYB8hbtTabj4FRVprrBfbxX0x+UtjVkkzCQEt11oWTNxaikwl3lE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYBfwhAj5KykvmxeYJYe4gAbxcKGCljC0Oa+iO/91FskqxW2hZ
-	BXeGwREGDOfW8T5d0URj2FfB994qkxf4cgs0loi2Fhzp5+0ldgJOY22XgM1JVyA=
-X-Google-Smtp-Source: AGHT+IGTms71ZGwKzmBD3O9q9nvmNcRB0v5c3voGic8zxDJXfFeHvsSYDv7q1ppR3nY92D+zJk3qww==
-X-Received: by 2002:a17:907:3daa:b0:a86:8916:b5ef with SMTP id a640c23a62f3a-a868916b8a6mr253254066b.69.1724337953177;
-        Thu, 22 Aug 2024 07:45:53 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f5ae7sm127798266b.219.2024.08.22.07.45.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:45:52 -0700 (PDT)
-Date: Thu, 22 Aug 2024 17:45:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hans Buss <hansbh123@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH v3] staging: rtl8192e: Insert spaces around '|'
-Message-ID: <b4b68832-3f5a-4d77-b55d-832bd6caa65b@stanley.mountain>
-References: <20240822143837.37768-1-hansbh123@gmail.com>
+	s=arc-20240116; t=1724337959; c=relaxed/simple;
+	bh=x0e29J9g52f8NEmIe2hsAYq/rb04QNT+gdvduOEJ1Wc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sKHLvZW4LqiI92TUB9NcPcspkUuwMHqukX4VARl+KVuEDdsXbZ0v75CQfDs0wqVYLulhhnuNtPzyQq8D/3+QB3I6l+pKM5XnFint/Y2Gx/60M5TcgWqOKQYxOvQtWDAlOHD//cvHhXgBkM0dUUQxfv7CuDp8xdc9Jr011y9E8Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vf/9Nta3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 690B1C32782;
+	Thu, 22 Aug 2024 14:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724337959;
+	bh=x0e29J9g52f8NEmIe2hsAYq/rb04QNT+gdvduOEJ1Wc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vf/9Nta37Ucz9t7QAy2ohdXznWnvO3b6dts/6ERC3dR035ogV9Y5RsDeXVtjRctCA
+	 IfpvZ3/+iB0dL99vJ6uJvJ8Aei8S4V1erVBv97vduuCek7VO8U1YHdcEc1aYhklvX8
+	 E1s88DDeuqZL1wn+wNwEUfNnygTT3zOTfJiWomEyljPSh3kvWXuLYfelSCUKTL1MpG
+	 Bahm/K6E5OsEyxZXOqt3QGbPEMi9hb0i8rPxpWtJMsUk6H1eeqENbzQcUbsSbgoOpP
+	 g0ERss+Qc9+8TMBaA6RSFldaL/NbuyVnius+b5Il7SH/60xm6fCfGtzm9QloLctvjH
+	 ghJbWyo+nlPVw==
+Message-ID: <b4b96be5-fad6-458c-a236-9b6761eac968@kernel.org>
+Date: Thu, 22 Aug 2024 23:45:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822143837.37768-1-hansbh123@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dt-bindings: extcon: convert extcon-usb-gpio.txt to
+ yaml format
+To: Frank Li <Frank.Li@nxp.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "open list:EXTERNAL CONNECTOR SUBSYSTEM (EXTCON)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240812201754.3830198-1-Frank.Li@nxp.com>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20240812201754.3830198-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 11:36:55AM -0300, Hans Buss wrote:
-> From: Hans Buss <hans.buss@mailfence.com>
+24. 8. 13. 05:17에 Frank Li 이(가) 쓴 글:
+> Convert binding doc extcon-usb-gpio.txt to yaml format to fix below
+> warning:
+> arch/arm64/boot/dts/freescale/imx8mp-msc-sm2s-ep1.dtb: /extcon-usb0:
+>     failed to match any schema with compatible: ['linux,extcon-usb-gpio']
 > 
-> Insert spaces around '|' to adhre to Linux kernel coding style.
+> Additional change:
+> - rename id-gpio to id-gpios
+> - rename vbus-gpio to vbus-gpios
 > 
-> CHECK: spaces preferred around that '|' (ctx:VxV)
-> 
-> Signed-off-by: Hans Buss <hans.buss@mailfence.com>
-> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
+>  .../bindings/extcon/extcon-usb-gpio.txt       | 21 ----------
+>  .../extcon/linux,extcon-usb-gpio.yaml         | 38 +++++++++++++++++++
+>  2 files changed, 38 insertions(+), 21 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
+>  create mode 100644 Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt b/Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
+> deleted file mode 100644
+> index dfc14f71e81fb..0000000000000
+> --- a/Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
+> +++ /dev/null
+> @@ -1,21 +0,0 @@
+> -USB GPIO Extcon device
+> -
+> -This is a virtual device used to generate USB cable states from the USB ID pin
+> -connected to a GPIO pin.
+> -
+> -Required properties:
+> -- compatible: Should be "linux,extcon-usb-gpio"
+> -
+> -Either one of id-gpio or vbus-gpio must be present. Both can be present as well.
+> -- id-gpio: gpio for USB ID pin. See gpio binding.
+> -- vbus-gpio: gpio for USB VBUS pin.
+> -
+> -Example: Examples of extcon-usb-gpio node in dra7-evm.dts as listed below:
+> -	extcon_usb1 {
+> -		compatible = "linux,extcon-usb-gpio";
+> -		id-gpio = <&gpio6 1 GPIO_ACTIVE_HIGH>;
+> -	}
+> -
+> -	&omap_dwc3_1 {
+> -		extcon = <&extcon_usb1>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml b/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
+> new file mode 100644
+> index 0000000000000..1caf58c297d34
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
+> @@ -0,0 +1,38 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/extcon/linux,extcon-usb-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: USB GPIO Extcon device
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +description:
+> +  This is a virtual device used to generate USB cable states from the USB ID pin
+> +  connected to a GPIO pin.
+> +
+> +properties:
+> +  compatible:
+> +    const: linux,extcon-usb-gpio
+> +
+> +  id-gpios:
+> +    description: gpio for USB ID pin. See gpio binding.
+> +  vbus-gpios:
+> +    description: gpio for USB VBUS pin.
+> +
+> +required:
+> +  - compatible
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    extcon_usb1 {
+> +        compatible = "linux,extcon-usb-gpio";
+> +        id-gpios = <&gpio6 1 GPIO_ACTIVE_HIGH>;
+> +    };
+> +
 
-Thanks!
+Applied it. Thanks.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
 
 
