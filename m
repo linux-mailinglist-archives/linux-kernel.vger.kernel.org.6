@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-297438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2521E95B84D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:24:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8CE95B84A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964981F2606E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:24:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB66A1C2402D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B991CC157;
-	Thu, 22 Aug 2024 14:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947E41CBEA4;
+	Thu, 22 Aug 2024 14:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="fMnrl6jU"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozyO7lH5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5010E1CBEBB;
-	Thu, 22 Aug 2024 14:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336665; cv=pass; b=PvdR2lRub4C3ekHxUxg2kYEeCFTlAYpfUD+/bWpVvSkS9+r2P8sUbDFlvGKPrdKNDESTdU/8wZXylfk58WwGlLF8KCVep50RmD9gSBVqFG4tV98OBhHLSy90oaHQ7Pveaw1Y1IJz03DSiwNIra58B7xGBaPLctSZQfPbqczDXzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724336665; c=relaxed/simple;
-	bh=m3FoKnazzhoSynDMr6FzFSNCp4QJxDulvfbdU8hPmOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djvWFOgtYWS9jasTTZspEw/8hxP+goC33rqbSHPbhIUZDvjUpUdNaoSslcL9ki0VVG8vMfbQ/uTtEVSEkSlRA3bS1zNbdFKSJiiifg5cRuDR0nEv6B4skLc0Kzh/cpshVHR5OaqXeGQPvAcIC80rxN6HEYWlz6DnWcviCmUhwJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=fMnrl6jU; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: nicolas.dufresne@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724336651; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Mpx6Tju8i2+Z/P9CadF62VFv3LtT3DTz5DReE9TaEdq7pAGYUCdZbjTtQXqYoQ2WAeKEllZYt96/taERw53o+pFb7+pQJpRondfa0Knqty/98l6aLdgqNFQnp84fP+o5pkWggZXbrQbtNjeP8pbKg+3nkgj+GbF3q+AeK6bjJoA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724336651; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=m3FoKnazzhoSynDMr6FzFSNCp4QJxDulvfbdU8hPmOk=; 
-	b=lASDQe8P+lMwn4YyIjk42b/pHMwqvVRjiG7NB9QI8U81GcJZtesUQqC4pM2WQuwfVOrw+hN5ZPHSs4xlp9b5SaG2hA9bp5AF0ltQJLSvQj6TPqPFHo0RrPRIKqNEbz0Jc27gKUxBBCGBdbkqj4Tb8b+/Rw3jKp2Wavq2QCEbo6I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724336651;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=m3FoKnazzhoSynDMr6FzFSNCp4QJxDulvfbdU8hPmOk=;
-	b=fMnrl6jU07UoRPvSalOg4CYeppuHPIcRYHopPzTznW+43U6NrEVyCZs/fZrWJ8Fm
-	G3W69oWQYuqhMn5l3ZNMG02pp7Kg9KJGxaStkB+BTE6aZI+mpZIU/OW0nKNm/Q0ATQd
-	3oIylcKHfSz5EIQJbMXTGd/2fmJxylAwwvYJh8eI=
-Received: by mx.zohomail.com with SMTPS id 1724336649022368.2581026629399;
-	Thu, 22 Aug 2024 07:24:09 -0700 (PDT)
-Date: Thu, 22 Aug 2024 16:24:03 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Fei Shao <fshao@chromium.org>
-Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] media: mediatek: vcodec: Reduce msg queue trans buffer
- size
-Message-ID: <20240822142403.qz3ia26at3rxob2v@basti-XPS-13-9310>
-References: <20240521095536.3869399-1-fshao@chromium.org>
- <9f73dffc48394e6304263ac2293a2b18864ae3dd.camel@collabora.com>
- <CAC=S1njnqrdrQqJZYQ7mffgmAUUxtoO7utZumED0dmX=Fa9+Qw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD83017C216;
+	Thu, 22 Aug 2024 14:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724336659; cv=none; b=PsdEo35pCvEGf/PAvLkmoa+9D9rSpuaHE/z4Xd2eo++rDqsyrmDP5m9mVDE1VAO2tuRtThSpsZpakLO9Ru1paC+oLw0AFJuh76qUV+utO/beHFg4IHYXYti1Y/Iw2bzqzW1T4HvOOSPxZC6Tlej2JGnnkiM3CEu8wQh1x/8AJLY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724336659; c=relaxed/simple;
+	bh=0qohOtlUlbQ+S7qqgBywKvuqNp39ChdhI74mz8dd2Dw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nGgmEB/vGxBpcfO7d6JgoInQV9kGvnoxItRkOrx4+7rANzNkjnZkFDCHfsmud8Ol5Yjeb/90UMTO1I0B8o+pGCQwW8+mjAvqmmj4OlKJRlumkeHEnDxypzfsIZyqfWEiMQ9reZw7p1Ykgfr0sK7kfl6FXG9ERzPPYz+IbYS9BBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozyO7lH5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3890DC32782;
+	Thu, 22 Aug 2024 14:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724336659;
+	bh=0qohOtlUlbQ+S7qqgBywKvuqNp39ChdhI74mz8dd2Dw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ozyO7lH51LENj0pz8yJ9fFnASqP4aSjXxFuKZyH76eEZfApci5B9okfoLmHxgZvRl
+	 kmY9knEHycx303qDiMZFMJsfJpqn6tVYWhMcbpsPdtqyR08wW7dGyBdAsKT/SPSplB
+	 fsLLGJh7rF1T+sOm5wl9+C8L1ISbJpzVAWk59zSHzqRq0uD/9uvelRrd7eTZKAPmsX
+	 EE6ZTNoCRSU4stcONEEC1E2/aGmZZLiutDtV3jSzJnNIXTcN7FHtjLNHbi+zf06rbl
+	 jcQwthABEVYJa5D5/i7LiPEJzJe88IgPhkFgJFPF1dhSGtFvraxCKRnGO8MM55oKVU
+	 JebJWUwYL2VmA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sh8jY-005yPd-K8;
+	Thu, 22 Aug 2024 15:24:16 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	David Matlack <dmatlack@google.com>,
+	David Stevens <stevensd@chromium.org>
+Subject: Re: (subset) [PATCH v12 01/84] KVM: arm64: Release pfn, i.e. put page, if copying MTE tags hits ZONE_DEVICE
+Date: Thu, 22 Aug 2024 15:24:11 +0100
+Message-Id: <172433664067.3702537.13271681605926473288.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240726235234.228822-2-seanjc@google.com>
+References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC=S1njnqrdrQqJZYQ7mffgmAUUxtoO7utZumED0dmX=Fa9+Qw@mail.gmail.com>
-X-ZohoMailClient: External
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: pbonzini@redhat.com, oliver.upton@linux.dev, zhaotianrui@loongson.cn, maobibo@loongson.cn, chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, borntraeger@linux.ibm.com, frankja@linux.ibm.com, imbrenda@linux.ibm.com, seanjc@google.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, dmatlack@google.com, stevensd@chromium.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hey Fei,
+On Fri, 26 Jul 2024 16:51:10 -0700, Sean Christopherson wrote:
+> Put the page reference acquired by gfn_to_pfn_prot() if
+> kvm_vm_ioctl_mte_copy_tags() runs into ZONE_DEVICE memory.  KVM's less-
+> than-stellar heuristics for dealing with pfn-mapped memory means that KVM
+> can get a page reference to ZONE_DEVICE memory.
+> 
+> 
 
-On 07.06.2024 19:20, Fei Shao wrote:
->On Fri, May 31, 2024 at 8:47 PM Nicolas Dufresne
-><nicolas.dufresne@collabora.com> wrote:
->>
->> Le mardi 21 mai 2024 à 17:54 +0800, Fei Shao a écrit :
->> > In the MediaTek HW vcodec pipeline, the `trans` buffer is used to
->> > transfer the data decoded by the lat decoder to the core decoder.
->> >
->> > In the beginning, 6MB and 30MB were allocated for the trans buffer to
->> > handle FHD and higher-resolution contents respectively, but it turns out
->> > that's more than enough in practice and there's room for improvement.
->> >
->> > The buffer sizes were reduced to 5MB / 8MB respectively and the decoders
->> > have been validated to work normally on the MediaTek Android products.
->> > It's time to adopt that change in the upstream MediaTek vcodec driver.
->> >
->> > Reduce the msg queue trans buffer size to 5MB / 8MB respectively to
->> > optimize the memory usage per decoder instance and improve the overall
->> > system performance.
->>
->> I don't disagree with the change, but it feels like this is has hack over a
->> hack. We have an entropy decoder (LAT) metadata buffer, which of course is
->> resolution dependent, for which we hardcore two sizes.
->>
->> Any chance Mediatek can document this blob, or at least document the proper
->> relation between the size and the resolution ? This way we could dynamically
->> size the buffer for the chosen resolution and trust it to remain big enough for
->> a long time. Removing the non scientific claim of "have been validated", which
->> is producible for anyone hitting issue with that change in the future.
->>
->> Nicolas
->>
->
->Sorry for the delayed reply. I totally agree with your point, but last
->time I was told these are what they are using internally so I guess
->it's not there... or it could be me that didn't ask the right question
->(we want to do this with finer granularity or dynamically).
->If we don't get an answer here, I can also bring this up to MediaTek
->next time and see if they can provide more details.
->
->Regards,
->Fei
+Applied to next, thanks!
 
-So are you going to send a new version for this?
+[01/84] KVM: arm64: Release pfn, i.e. put page, if copying MTE tags hits ZONE_DEVICE
+        commit: ae41d7dbaeb4f79134136cd65ad7015cf9ccf78a
 
-Regards,
-Sebastian Fricke
-Consultant Software Engineer
+Cheers,
 
-Collabora Ltd
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-Registered in England & Wales no 5513718.
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
+
+
 
