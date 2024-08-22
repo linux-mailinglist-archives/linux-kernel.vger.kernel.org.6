@@ -1,71 +1,280 @@
-Return-Path: <linux-kernel+bounces-296847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F81A95AFBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:57:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A977495AFBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72A801C21FE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:57:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304C21F226EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E316C451;
-	Thu, 22 Aug 2024 07:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB0C16B75C;
+	Thu, 22 Aug 2024 07:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iSidvW1R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="h7KKx90P"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B8F14C5A9;
-	Thu, 22 Aug 2024 07:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030CA15854B
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724313453; cv=none; b=jPnyHvKkBqBZwupsj34A/bHdy/y5uZHsxouYWP5I4NHpJn+AaOx9+PR5HIBj4r890VeKpMmGPxJel3WQTPeN3nFqOnMjQ+hRJx0t8c2xQhTQDvsKc8fCix+GQj5Kbxj/QwxFpmVfSqtFxLBrh7EZcVdnEADTuuijS7Nsm3RyM1I=
+	t=1724313504; cv=none; b=uC9ohpn//oX9CGdU9MmI2fSfEWvf3Y/67898ceUkahITRNUl2eO0cSQuAGHGPw465PrymOSNCx2BuWDqvEEGqYtzNREnG/gfwVC0X8zBR89k+7uyqYWhtxYLCU6Yq1z1yHYLYuBaYRENGp7PIxKqLNa4+bVINVQ3fnfbtxfhEl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724313453; c=relaxed/simple;
-	bh=m1vFRTuC+cNBv1XHeT8sUiWunzQa4kwaLH+5mQG8VCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qltgBD9RhECwnH1jl1qSZgqe/o1T1puqlrQeFQRtGFXfwlYC9CMrH0zt5MlQfAgef6tO2FB/ChHnm+Szq29BaboOUsVBZkXM7gmskaqtgeeglBlSfhdYv26Uzxxv/NAmEsv57/qRrwYsyG7zOoNdbkpMEzlO9w8DzmOnfUpoHZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iSidvW1R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B14C4AF09;
-	Thu, 22 Aug 2024 07:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724313453;
-	bh=m1vFRTuC+cNBv1XHeT8sUiWunzQa4kwaLH+5mQG8VCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iSidvW1RtRLE5ce6i+DhRukhxvCP3wt7VhtQ4TORMZi5AACQVwrf+bmJKGdwGkI0u
-	 s5CumzstPH/ecXKG/BplUqKPtOsyfAfKUKwEwQ8zFqaVhy3bBhMivzpQhc37Xc1I6r
-	 R24k0ysnHjLxuXsfntjVjvlyyx/3ax6G3YML43+o=
-Date: Thu, 22 Aug 2024 15:57:30 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Michael Grzeschik <mgr@pengutronix.de>,
-	Avichal Rakesh <arakesh@google.com>, linux-usb@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Mark UVC gadget driver as orphan
-Message-ID: <2024082206-unmatched-sandlot-082d@gregkh>
-References: <20240813104447.25821-1-laurent.pinchart@ideasonboard.com>
+	s=arc-20240116; t=1724313504; c=relaxed/simple;
+	bh=M78dDH2Lv5gAbPiL85tJxK3F4eYd70NNmNQ2oSscdOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qjXn9wH58LhbV1BbJSPLAaBNUtJOQMzXONr6JvuKU2l3FQMmpN1emG2bB8PpC/3ArwPpZ/tmMEG2lsjvqjPP8mCqYesxBdB1iZaqUlyp3Y1KtVc0Dj7ZukoI0h1mmcalf8SpN9q3wgQJ0hy1RsCRO0OYiZ5RGijuRAcNCqxGeoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=h7KKx90P; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53351642021so226536e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1724313500; x=1724918300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TnX6FjUIWpzD8kqC9V27AIE0s5MyIjBt5cBluqxEzzc=;
+        b=h7KKx90PMOHrw1zNIvIq4GpHPH7ns+gTrfp65M2qNTHq5luesWNkG+aG9HfZUFEBB7
+         65041tLcwTvvYy2GyvGkWV8xNP+uvY0b5saBiiaVTPQwnS7q5p7oKO4vzEE8vBpBCwb+
+         SjTyKmBJPctB2IgGktpv+HdFTAxU8b2n4Xv09uBjOFuBlOnkVBmmnx5+McoBXEa/LbQi
+         0Q0YbZaRYyW0OyeoiuustcL6mvvdbzSB2kBqxDkIiM/8QViaDZnE5Za1Yz/0ZwOlVR66
+         ltGuTwx1670a7Die1fRfXaZfytn4Co4C7NaTm6pEK+q/Qrcelx+ZwVcqd+rBC/RXURxu
+         IADA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724313500; x=1724918300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TnX6FjUIWpzD8kqC9V27AIE0s5MyIjBt5cBluqxEzzc=;
+        b=ZehQBZrqunu23qso010LLYT23+NDVShdRA4CljI6ciMOl0WsXSVTmRYbcIc3lmQa9q
+         BvLnpWExaWlvymjvY8Ca+QXqOVQeCwpN9VCuxQsa0svjA5lxkJ2XxP72po30t18t3+r6
+         1d9FV6C+EhUFg1w0PQjY5AmnUzclPmV+6Y3w1/hTjMzxoGciT/LdCxGBrx1E8ul7UYNg
+         ODAXaPDkvxJhq9dMRB2hzw+3MxnYXgNGzLXOWV2mx0Ne0aETuQl+SAKq1uabnLGNbV8B
+         FrTs/7pRoEm8z/h9x5N6Qsg5ZubE6MUNj06DCLMx4vEr6GnfNoxMYbNEl2OZqA/qD4xe
+         jlcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcxxLlp6P8lT6z8l2BfD2R9WOv/OZw8CRzN+bzOqpempOfJQalvOYmTk/pweFgP82/iCU7wi+eDMr7OMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLnb/VmXOuHD5jvtIlgXUP+BIOJsb0aThCjFoj21QA0opZsZQI
+	SZXL5QoFOi5APVVMqWpHm9xupqNR1ANaKG8ch8FIPA39YJmbzXBLso6XNaSbIlqvG3BJzEMPjH5
+	wjxWeh8CrSXShkUzZHK5MEqZV9QYBve2NTbi41w==
+X-Google-Smtp-Source: AGHT+IHqRxXYm+H2Y+i5xzzY2IR+Nh6H8VShsmzm7UrXJCf65rsBntbXTU1CGj0TiGUJ3jrIhNx6F4PixK+Mw98vPfI=
+X-Received: by 2002:a05:6512:3f05:b0:52f:c27b:d572 with SMTP id
+ 2adb3069b0e04-533485c0526mr2735846e87.59.1724313499001; Thu, 22 Aug 2024
+ 00:58:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813104447.25821-1-laurent.pinchart@ideasonboard.com>
+References: <20240620113527.7789-1-changliang.wu@smartx.com>
+ <CALHBjYFn_qB=Oo3TTg0znOnNz9rX5jP+eYSZbatAN94ys8Tzmw@mail.gmail.com> <ZsOTMHeMPgtjU6ZZ@calendula>
+In-Reply-To: <ZsOTMHeMPgtjU6ZZ@calendula>
+From: Changliang Wu <changliang.wu@smartx.com>
+Date: Thu, 22 Aug 2024 15:58:07 +0800
+Message-ID: <CALHBjYH-=fHYzx8Qd=ae_Q1Qtsnt6hiVOxbW-rfPkbQAUCak+w@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: ctnetlink: support CTA_FILTER for flush
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: kadlec@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org, 
+	coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 01:44:47PM +0300, Laurent Pinchart wrote:
-> I haven't had time to maintain the UVC gadget driver for a long while.
-> Dan Scally confirmed he is also in a similar -ENOTIME situation with no
-> short term hope of fixing that. Being listed as maintainers doesn't help
-> progress, so mark the driver as orphan to reflect the current state.
+diff --git a/src/conntrack/filter_dump.c b/src/conntrack/filter_dump.c
+index fd2d002..18d941b 100644
+--- a/src/conntrack/filter_dump.c
++++ b/src/conntrack/filter_dump.c
+@@ -68,9 +68,5 @@ int __build_filter_dump(struct nfnlhdr *req, size_t size,
+ int __build_filter_flush(struct nfnlhdr *req, size_t size,
+                        const struct nfct_filter_dump *filter_dump)
+ {
+-       if (filter_dump->set & (1 << NFCT_FILTER_DUMP_TUPLE)) {
+-               errno =3D ENOTSUP;
+-               return -1;
+-       }
+        return nfct_nlmsg_build_filter(&req->nlh, filter_dump);
+ }
+diff --git a/utils/Makefile.am b/utils/Makefile.am
+index 7e7aef4..50a1c7c 100644
+--- a/utils/Makefile.am
++++ b/utils/Makefile.am
+@@ -11,6 +11,7 @@ check_PROGRAMS =3D expect_dump expect_create
+expect_get expect_delete \
+               conntrack_dump_filter \
+               conntrack_dump_filter_tuple \
+               conntrack_flush_filter \
++              conntrack_flush_filter_tuple \
+               ctexp_events
 
-Sorry to see this, but thank you for all the work you have put in here
-over the years, it's much appreciated!
+ conntrack_grp_create_SOURCES =3D conntrack_grp_create.c
+@@ -46,6 +47,9 @@ conntrack_flush_LDADD =3D ../src/libnetfilter_conntrack.l=
+a
+ conntrack_flush_filter_SOURCES =3D conntrack_flush_filter.c
+ conntrack_flush_filter_LDADD =3D ../src/libnetfilter_conntrack.la
 
-greg k-h
++conntrack_flush_filter_tuple_SOURCES =3D conntrack_flush_filter_tuple.c
++conntrack_flush_filter_tuple_LDADD =3D ../src/libnetfilter_conntrack.la
++
+ conntrack_events_SOURCES =3D conntrack_events.c
+ conntrack_events_LDADD =3D ../src/libnetfilter_conntrack.la
+
+diff --git a/utils/conntrack_flush_filter_tuple.c
+b/utils/conntrack_flush_filter_tuple.c
+new file mode 100644
+index 0000000..f2bf558
+--- /dev/null
++++ b/utils/conntrack_flush_filter_tuple.c
+@@ -0,0 +1,61 @@
++#include <arpa/inet.h>
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include <libnetfilter_conntrack/libnetfilter_conntrack.h>
++
++static int cb(enum nf_conntrack_msg_type type, struct nf_conntrack *ct,
++              void *data) {
++  char buf[1024];
++
++  nfct_snprintf(buf, sizeof(buf), ct, NFCT_T_UNKNOWN, NFCT_O_DEFAULT,
++                NFCT_OF_SHOW_LAYER3 | NFCT_OF_TIMESTAMP);
++  printf("%s\n", buf);
++
++  return NFCT_CB_CONTINUE;
++}
++
++int main(void) {
++  int ret;
++  struct nfct_handle *h;
++
++  h =3D nfct_open(CONNTRACK, 0);
++  if (!h) {
++    perror("nfct_open");
++    return -1;
++  }
++  struct nfct_filter_dump *filter_dump =3D nfct_filter_dump_create();
++  if (filter_dump =3D=3D NULL) {
++    perror("nfct_filter_dump_alloc");
++    return -1;
++  }
++
++  struct nf_conntrack *ct;
++  ct =3D nfct_new();
++  if (!ct) {
++    perror("nfct_new");
++    return 0;
++  }
++
++  nfct_set_attr_u8(ct, ATTR_ORIG_L3PROTO, AF_INET);
++  nfct_set_attr_u8(ct, ATTR_L4PROTO, IPPROTO_ICMP);
++  nfct_set_attr_u32(ct, ATTR_ORIG_IPV4_DST, inet_addr("192.168.1.1"));
++  nfct_filter_dump_set_attr(filter_dump, NFCT_FILTER_DUMP_TUPLE, ct);
++
++  nfct_callback_register(h, NFCT_T_ALL, cb, NULL);
++  ret =3D nfct_query(h, NFCT_Q_FLUSH_FILTER, filter_dump);
++
++  nfct_filter_dump_destroy(filter_dump);
++
++  printf("TEST: get conntrack ");
++  if (ret =3D=3D -1)
++    printf("(%d)(%s)\n", ret, strerror(errno));
++  else
++    printf("(OK)\n");
++
++  nfct_close(h);
++
++  ret =3D=3D -1 ? exit(EXIT_FAILURE) : exit(EXIT_SUCCESS);
++}
+
+Thank you for your reply.
+
+Here is an example patch for conntrack_flush_filter_tuple above.
+
+Pablo Neira Ayuso <pablo@netfilter.org> =E4=BA=8E2024=E5=B9=B48=E6=9C=8820=
+=E6=97=A5=E5=91=A8=E4=BA=8C 02:47=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Please, provide an example program for libnetfilter_conntrack.
+>
+> See:
+>
+> commit 27f09380ebb0fc21c4cd20070b828a27430b5de1
+> Author: Felix Huettner <felix.huettner@mail.schwarz>
+> Date:   Tue Dec 5 09:35:16 2023 +0000
+>
+>     conntrack: support flush filtering
+>
+> for instance.
+>
+> thanks
+>
+> On Thu, Jul 11, 2024 at 01:40:02PM +0800, Changliang Wu wrote:
+> > PING
+> >
+> >
+> > Changliang Wu <changliang.wu@smartx.com> =E4=BA=8E2024=E5=B9=B46=E6=9C=
+=8820=E6=97=A5=E5=91=A8=E5=9B=9B 19:35=E5=86=99=E9=81=93=EF=BC=9A
+> > >
+> > > From cb8aa9a, we can use kernel side filtering for dump, but
+> > > this capability is not available for flush.
+> > >
+> > > This Patch allows advanced filter with CTA_FILTER for flush
+> > >
+> > > Performace
+> > > 1048576 ct flows in total, delete 50,000 flows by origin src ip
+> > > 3.06s -> dump all, compare and delete
+> > > 584ms -> directly flush with filter
+> > >
+> > > Signed-off-by: Changliang Wu <changliang.wu@smartx.com>
+> > > ---
+> > >  net/netfilter/nf_conntrack_netlink.c | 9 +++------
+> > >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_=
+conntrack_netlink.c
+> > > index 3b846cbdc..93afe57d9 100644
+> > > --- a/net/netfilter/nf_conntrack_netlink.c
+> > > +++ b/net/netfilter/nf_conntrack_netlink.c
+> > > @@ -1579,9 +1579,6 @@ static int ctnetlink_flush_conntrack(struct net=
+ *net,
+> > >         };
+> > >
+> > >         if (ctnetlink_needs_filter(family, cda)) {
+> > > -               if (cda[CTA_FILTER])
+> > > -                       return -EOPNOTSUPP;
+> > > -
+> > >                 filter =3D ctnetlink_alloc_filter(cda, family);
+> > >                 if (IS_ERR(filter))
+> > >                         return PTR_ERR(filter);
+> > > @@ -1610,14 +1607,14 @@ static int ctnetlink_del_conntrack(struct sk_=
+buff *skb,
+> > >         if (err < 0)
+> > >                 return err;
+> > >
+> > > -       if (cda[CTA_TUPLE_ORIG])
+> > > +       if (cda[CTA_TUPLE_ORIG] && !cda[CTA_FILTER])
+> > >                 err =3D ctnetlink_parse_tuple(cda, &tuple, CTA_TUPLE_=
+ORIG,
+> > >                                             family, &zone);
+> > > -       else if (cda[CTA_TUPLE_REPLY])
+> > > +       else if (cda[CTA_TUPLE_REPLY] && !cda[CTA_FILTER])
+> > >                 err =3D ctnetlink_parse_tuple(cda, &tuple, CTA_TUPLE_=
+REPLY,
+> > >                                             family, &zone);
+> > >         else {
+> > > -               u_int8_t u3 =3D info->nfmsg->version ? family : AF_UN=
+SPEC;
+> > > +               u8 u3 =3D info->nfmsg->version || cda[CTA_FILTER] ? f=
+amily : AF_UNSPEC;
+> > >
+> > >                 return ctnetlink_flush_conntrack(info->net, cda,
+> > >                                                  NETLINK_CB(skb).port=
+id,
+> > > --
+> > > 2.43.0
+> > >
 
