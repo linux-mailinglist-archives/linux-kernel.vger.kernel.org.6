@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-297773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4276795BD86
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:42:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FE895BD64
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5DD1C2330A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A944C285621
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9331CF29D;
-	Thu, 22 Aug 2024 17:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE96D1CF284;
+	Thu, 22 Aug 2024 17:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GHgcFMhA"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbE7+FBS"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DBA487AE;
-	Thu, 22 Aug 2024 17:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348541; cv=pass; b=HRzEr6fHxTdGe6N0EZRoyilwnTsMUuXlvxSjyZsu1R1uW3SIhpLZKI/H61r+7z3hDvRjVFeHVWzsUxD9liIhWyIeGCmlnHd4xMLcMIe6mLnXfyPNxVg5RsmxBuMH9Ox90jZbiQK9AqzcfrNhc+PxTahUb4EHInhVW8efsBsc3OE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348541; c=relaxed/simple;
-	bh=pJo3IItqLTuWfWlzXgr6lFXycFBd+dbxoqHla3s2OZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nKomicjRsvBgMahnSMJvZm+QEi2Q5FPUBceLXb8y0dZh0j/VXmWDZWHMKaFHT0lPJTv1HIqP/3YMY3MTZFwCQ5H2NJPAFC7QX38RRqqn9M5WDCApb2hTtzJsoRCWj5i4IRb2DU2zOo12pC672RF4Ket2imAOsI3pWTLf7so2jrw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GHgcFMhA; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: daniel.almeida@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724348534; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fdbNa7Ji5MFVW6syk7i/H7Y3SpI8BKoWZfbteR5MRXr0lJiMT38Txaz6hyTEo/bkYH4+YOAVg9pVTNm4lJNnUwqpK2z0L6ItQEYVLHNFlUThBv7w5Z+v9wD0zBVQd4mE8DiwSJY3k4Muk7UNJ0ZvYTJEU1wbnHEfqkZRCUDzljI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724348534; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=BUHc0eQ0h+KvwEezOpf3+G+PjwpjDpBw+nDAGnUcAuM=; 
-	b=GBAzoJwnjU5GG7ynWl4H8ujb7Hmbm4CQWc/yAjZZb+MVuehkPYWvRGaR+ItIP/9bbRs1LHLU2LwsVCd9IOUgrYpiRAIBIh23b3W/wtJDq3U+nOV4Ad1QvHANXzDegMRjE+MDMiXeRG3yb+ttowswfJdO1erc9ULDdJ2Ta6IReZs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724348534;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=BUHc0eQ0h+KvwEezOpf3+G+PjwpjDpBw+nDAGnUcAuM=;
-	b=GHgcFMhAqOe2WTvUaqWD/o1nLm3YWnS1JhwXaDUZrLiIQ2Vb8/rsoCrz5KkKMr3/
-	3N5ZLCxiXUrIx5bRICWwCiWd/doxWzespdb3lHO1c8G+m+0R75K6TPSbK9xJrPpD+6c
-	FTOjzf9RsSbu+ZL42Vy5rfdU7Bttz0qbU5nDLU84=
-Received: by mx.zohomail.com with SMTPS id 1724348532364877.0917933602898;
-	Thu, 22 Aug 2024 10:42:12 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-To: wedsonaf@gmail.com,
-	ojeda@kernel.org
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: kernel: add support for bits/genmask macros
-Date: Thu, 22 Aug 2024 14:35:17 -0300
-Message-ID: <20240822173518.2717-1-daniel.almeida@collabora.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB301CCB36;
+	Thu, 22 Aug 2024 17:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724348151; cv=none; b=QtbiVCg7QuXNzUi15o6BgP2SgECRxblRvfitJ57bg+uIyu1EuNhSR1WpSnkuCdEqC06p9Y6eHRqJj1GbXHpFC2rpEeG79M5xOtWmU4euzNS7phxzTfQt8vkfIcbF61OYph+H2bpyTCW9E1aWA1HEbY2Aic31h5G/TkTapQhuKX0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724348151; c=relaxed/simple;
+	bh=0cjZRWio38h6TVJuWmOEQeTFBkW78OpMzIj8gruOkJ8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UhqLwbzVS2TaobNXVQjco5prMlRlERZ+sr0hi7Ul5DtXubtr6CmvIysM5prk5jOnKXqPtqvwe82H8IHlkDkwUojAnM8LGtVMRwb/5ZSxhHahIkKuRQBzujJZMdscUChnDkpUI1lwdnaWr3z7lf3UAUETUNJ1fK8Sym3Iy+fFWX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FbE7+FBS; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so106775166b.1;
+        Thu, 22 Aug 2024 10:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724348148; x=1724952948; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xkghB6aOOio8GGfQ7tQKfRPcfOy2NJ6+od2KQKax6X8=;
+        b=FbE7+FBS4J3LdKnu0h00CUgDBqixEYANqQdtzJui2Lfj75+Au4savbECNReWKikBPT
+         BsIUcKPeGTdR1OEdiWjoBToApgrjPV61dZf6BKF64wxGL70t+yrKMFfRlF/Gr60rhEKl
+         5/xxpyq8TpEuPSxyLAUY9Eo7KR6luxDxQN7UwMBUVmw7yy66xVoXRHc//EM39fEcPsnn
+         SpMjyM1TVW2VbbBgGerIxUc+W6z5jJmSxCsphtePZLLCmXiV52ewo+7WPZ8TZLEFr4DW
+         DFnZSJFADlV2aXuoDa3fY6PeORQ++J3VXT/KJJyVMjfI8ZSdPwM5jT0IIk61VFilY2jY
+         +Pkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724348148; x=1724952948;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xkghB6aOOio8GGfQ7tQKfRPcfOy2NJ6+od2KQKax6X8=;
+        b=PKWDNMHcgd8afUo0dUsMquF+/FulDDP3qKXSgGhTSIJToHQXQSe9NoycedPGZAbsIL
+         cOqqiXVjjPcN6lp7i/iLL6y4J4CQksdtuSnyPRRu0btMjPqCKhTbD01pSpu2eSqWuEI1
+         +eZXGzJf48BQg1qi6Vg/ocuoYRoxMkAYfs2jeox1CnrpE60fG7YjUbhCfn/pmBAyiwG4
+         25yAgn9t0fhPQbgVEGIqs4BQ1xcNUkp289SKgyrGAn2rnGfgpX7IhfwfZpKPFey2HQVA
+         WhJXgsQtv0KIilWXEin5fOQ7o3+9MY4ccIGgBqgCtATEie7CoI1V2cZt29WlubcWZmbt
+         AelA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVGmYUzkyoBfnLmXeyODJnxsTNfbKmBaEsRJ78PeUWXyAmD33iQQxZH+rZY3qXw+uG7Kuy7vAMWJq0WGGo@vger.kernel.org, AJvYcCWNWlCFbyFkIOTwUBAW+qSFBb32yBxPdczlnhjrAUqqAjYvFyAR5ngeMRkwk9Twch5bm4U=@vger.kernel.org, AJvYcCXZkrCnmTeM0Uwz3KvHkNkIunHoy7jNOFvXwln3Bu2hy/M7dODksQl5ctAo3vX+FN7XzSfqoN74q2ft6FAV+2O9CCGv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTvMUM02pv/YmNrx2PktWFpngrbVrXn5kzKfwmjjFnTnbhEPHT
+	Mjq+lhuZBOabZIGcVHqKfG8PC+PTIyDYLXXjlBYbk9FfaFrfiStZ3oOzUA==
+X-Google-Smtp-Source: AGHT+IG13gU20y3TlIQxwweTw3gebAPEJD5PFbgA33AGSYwPcKHrWQnQCve7QM97eDQ02yrRkx83NQ==
+X-Received: by 2002:a17:907:96a3:b0:a86:78ef:d4ad with SMTP id a640c23a62f3a-a8678efd649mr496048566b.20.1724348147459;
+        Thu, 22 Aug 2024 10:35:47 -0700 (PDT)
+Received: from krava (85-193-35-108.rib.o2.cz. [85.193.35.108])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f48a77asm144168466b.180.2024.08.22.10.35.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 10:35:47 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 22 Aug 2024 19:35:45 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
+	akpm@linux-foundation.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 04/13] uprobes: travers uprobe's consumer list
+ locklessly under SRCU protection
+Message-ID: <Zsd28aEHBLkRpUQs@krava>
+References: <20240813042917.506057-1-andrii@kernel.org>
+ <20240813042917.506057-5-andrii@kernel.org>
+ <ZsdJuwIuJ-KFA6Rz@krava>
+ <CAEf4Bzb-1na=S9+XVpEpmtDE4mJLQRywZJ6wB8JyN++2Si6Pgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <CAEf4Bzb-1na=S9+XVpEpmtDE4mJLQRywZJ6wB8JyN++2Si6Pgw@mail.gmail.com>
 
-These macros were converted from their C equivalent.
----
+On Thu, Aug 22, 2024 at 09:59:29AM -0700, Andrii Nakryiko wrote:
+> On Thu, Aug 22, 2024 at 7:22 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Mon, Aug 12, 2024 at 09:29:08PM -0700, Andrii Nakryiko wrote:
+> >
+> > SNIP
+> >
+> > > @@ -1125,18 +1103,31 @@ void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > >       int err;
+> > >
+> > >       down_write(&uprobe->register_rwsem);
+> > > -     if (WARN_ON(!consumer_del(uprobe, uc))) {
+> > > -             err = -ENOENT;
+> > > -     } else {
+> > > -             err = register_for_each_vma(uprobe, NULL);
+> > > -             /* TODO : cant unregister? schedule a worker thread */
+> > > -             if (unlikely(err))
+> > > -                     uprobe_warn(current, "unregister, leaking uprobe");
+> > > -     }
+> > > +
+> > > +     list_del_rcu(&uc->cons_node);
+> >
+> > hi,
+> > I'm using this patchset as base for my changes and stumbled on this today,
+> > I'm probably missing something, but should we keep the 'uprobe->consumer_rwsem'
+> > lock around the list_del_rcu?
+> >
+> 
+> Note that original code also didn't take consumer_rwsem, but rather
+> kept register_rwsem (which we still use).
 
-Hey all, I did not see any patch for this floating in the mailing list.
+humm, consumer_del took consumer_rwsem, right?
 
-Please let me know your thoughts. This one should be rather trivial.
+jirka
 
-
- rust/kernel/bits.rs | 32 ++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs  |  1 +
- 2 files changed, 33 insertions(+)
- create mode 100644 rust/kernel/bits.rs
-
-diff --git a/rust/kernel/bits.rs b/rust/kernel/bits.rs
-new file mode 100644
-index 000000000000..8ac142392086
---- /dev/null
-+++ b/rust/kernel/bits.rs
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Bit manipulation macros.
-+//!
-+//! C header: [`include/linux/bits.h`](srctree/include/linux/bits.h)
-+
-+/// Produces a literal where bit `n` is set.
-+///
-+/// Equivalent to the kernel's BIT macro.
-+///
-+#[macro_export]
-+macro_rules! bit {
-+    ($n:expr) => {
-+        (1 << $n)
-+    };
-+}
-+
-+/// Create a contiguous bitmask starting at bit position `l` and ending at
-+/// position `h`, where h <= l.
-+///
-+/// For example genmask(39, 21) gives us the 64bit vector
-+/// 0x000000ffffe00000.
-+///
-+#[macro_export]
-+macro_rules! genmask {
-+    ($h:expr, $l:expr) => {{
-+        const _: () = {
-+            assert!($h >= $l);
-+        };
-+        ((!0u64 - (1u64 << $l) + 1) & (!0u64 >> (64 - 1 - $h)))
-+    }};
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 274bdc1b0a82..3aaa1c410d2c 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -27,6 +27,7 @@
- extern crate self as kernel;
- 
- pub mod alloc;
-+pub mod bits;
- #[cfg(CONFIG_BLOCK)]
- pub mod block;
- mod build_assert;
--- 
-2.45.2
-
+> 
+> There is a bit of mix of using register_rwsem and consumer_rwsem for
+> working with consumer list. Code hints at this as being undesirable
+> and "temporary", but you know, it's not broken :)
+> 
+> Anyways, my point is that we didn't change the behavior, this should
+> be fine. That _rcu() in list_del_rcu() is not about lockless
+> modification of the list, but rather modification in such a way as to
+> keep lockless RCU-protected *readers* correct. It just does some more
+> memory barrier/release operations more carefully.
+> 
+> > jirka
+> >
+> >
+> > > +     err = register_for_each_vma(uprobe, NULL);
+> > > +
+> > >       up_write(&uprobe->register_rwsem);
+> > >
+> > > -     if (!err)
+> > > -             put_uprobe(uprobe);
+> > > +     /* TODO : cant unregister? schedule a worker thread */
+> > > +     if (unlikely(err)) {
+> > > +             uprobe_warn(current, "unregister, leaking uprobe");
+> > > +             goto out_sync;
+> > > +     }
+> > > +
+> > > +     put_uprobe(uprobe);
+> > > +
 
