@@ -1,181 +1,178 @@
-Return-Path: <linux-kernel+bounces-296598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA3695AC9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:36:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA6195ACA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6856A1F22538
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D7528260A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E351146556;
-	Thu, 22 Aug 2024 04:36:32 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994654436B;
+	Thu, 22 Aug 2024 04:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JncvMHdi"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2073.outbound.protection.outlook.com [40.107.255.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B251BF2A;
-	Thu, 22 Aug 2024 04:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724301392; cv=none; b=uNsBvHn7aPHqPUGaJMjG28qddyFzVxF562W/seSixxDgl4TWYKTl2GwRYbEr0jd272HtXEWMdQii0pLpmmJFJSdtbrVLjqizadH9z9Q7b7Yfnmrt6QJeCy9Z/kAR+ItK8SNFI9sI2dNxz56wOfJpx6SE7mwlWtGP4BntWJcqXcs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724301392; c=relaxed/simple;
-	bh=rGhOD38GjPd2YCkgM1QGnWfa7sS2RIeAm2BRL6NL45I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J7ugdsblc5/qINGJGH6yFLUOHNZuzTwI3aAUEef0ZqB/6izLa0941LhlL4HwF8p38D+HYFDcuMqBku+oVfiG0jdoeH6o772PLdT3NuEJxYLnDXFAkVwfVSCTAa6YqDqGu1+uw+1ppiswtOHCj3brZ7qbwxzfGNWgmqAzQM36bzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id BA818A9EBD;
-	Thu, 22 Aug 2024 13:36:27 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id G7ptISx-GhRg; Thu, 22 Aug 2024 13:36:27 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id 8B39EA9B76;
-	Thu, 22 Aug 2024 13:36:27 +0900 (JST)
-From: takakura@valinux.co.jp
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	fw@strlen.de
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F8513AF2;
+	Thu, 22 Aug 2024 04:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724301739; cv=fail; b=OI8W6rsImjVbWiCoL7jWcRZxArirQYbnxvoz5Q4isT2MELZZL2dAS8opPtIN/rV5O7okEgkcqZZ6ikXApRfXBO6JTA3zIhh06ui3+bSfV5WhUm1NvIaEmfXPotCupX+gUxOFcjlnJtytPjuGlnI7opNX4Z+Cw0FutIbgGPcoPko=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724301739; c=relaxed/simple;
+	bh=VrY/PFmC5kLS3cEzAqqTpw3bcPikHTOk6sS9LvZSWH4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=F9yxsrAZ0VW9fOB0yHED+fyc+yXaX4kI4BAJS34Hp+S3Krr/uVvABQ0TpDyNtHYhjhHdd9qInT1hHBfuRzj1cMh27FRVS+0cEQuL5QuFCZhG3YvSVjiip7GD5DbwOzgBaRNcXVE6y5nr/g3NeQVcLUteuJMWdHKkw8qDolv/nT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JncvMHdi; arc=fail smtp.client-ip=40.107.255.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h8g4z2C+7UHDj679P8ilzOfq1YirKgShQFRpIceNGsT5zK/JxcUIlXQRp0c4+kDlD3QGJWxuem7UyAt3fiNzCxXB4fbxL3oPEopWbsn6AALZzu5/6VqksESC9tEYC78yhuEOxn4AF9bOGYjODiPR1OFFM2mY5ajIYVirB21oAd1eYzRAwUwiUv6P9W+qzR/PHpPin2jun0VZWUirIPOfXj9y5lOvmodupVKhfTirhkfgtht+8X1Th9oTXfvYrkFiDiUuMOZJKwPiPXhX8lASZzIJ8HjUVa/Gh8ZxiM7dxTAhPlXjTu4AiXn0E51RLJpwCBn7fC5SfZf8z80K4zrrTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CqDAwsRiOcYlQ3xptTuFwr88Z38YpJJQ+WG1qE2qFWU=;
+ b=UYGdbqO0BkOqsu173kS3XLTdQbDL8wsP2Wh3SEegugJF9nydaz48ruyrcjoISr2WLk7wmC1a9cU5CerPiBBvCJ02oLb2BXe6jXT5UMWmCWP5m6dQS92M0P8uXrol7UELYRdnMIGB3bK5uYv5vIuftkOuF9ISYN9JRxuXfo2MixJWmZ+nUB8Cev8rPLDXyvFkt0IEm+PzgKoQo7LvCg08JkGMgV5FItbaqA7Dz/KgICny8hysujgBePfFI5FFU3jDDXyyh5Jw5EKvr1gwHGntnydb4n6EyTm2XjjZIOPnz71MogsLXULLHRRIWTdCoQ2+SFmJw2UhCC+OKYMQAkIRwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CqDAwsRiOcYlQ3xptTuFwr88Z38YpJJQ+WG1qE2qFWU=;
+ b=JncvMHdiKW//l9OlerperPIgV3OuAl25Q1mI8HS3KxX+AnY8TwWq/Ar+gKztkbxqisG4TX0ItDkVlH5RQBvtBBCzgczicmC6sleX0faiHoy3PMoAIcG6W2wl64BHFlD44YKPJisyzxJqfaD3GhAAjFGlUvgIC/REUo9nzpqD9iBYlhKDudY11XZtxRSICX0IQaRreX0tbuWokU6v9dIUQhswKpFT0gKjbX0C4CNqPDf1NGVC0YFvfNXUaxJzqGEWk0Z7ZwTqdpKKwm2hxhh89jUDO3x+VJO7bTTlgT2X+qgH4i7xeqWQISNZcQpmtYDIpUkKz4HQtkYQp28OgnquAQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by SI2PR06MB5139.apcprd06.prod.outlook.com (2603:1096:4:1ae::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
+ 2024 04:42:08 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
+ 04:42:08 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Ryo Takakura <takakura@valinux.co.jp>
-Subject: [PATCH] netfilter: Don't track counter updates of do_add_counters()
-Date: Thu, 22 Aug 2024 13:36:09 +0900
-Message-Id: <20240822043609.141992-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
+	opensource.kernel@vivo.com,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v1] drivers/pinctrl: Switch to use kmemdup_array() 
+Date: Thu, 22 Aug 2024 12:41:56 +0800
+Message-Id: <20240822044156.2301-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0057.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::10) To SEZPR06MB5899.apcprd06.prod.outlook.com
+ (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|SI2PR06MB5139:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6b6b5ff-22c0-4075-d14c-08dcc264c774
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1kayZMzoco7aP8ObqYLLlC77LwE0Dhq67FZvHCT2uF0v4MroLTqWmQOfVLi+?=
+ =?us-ascii?Q?d+7ppJdgoCiR58+lM56HSsnlnSuxBf7WNfd86oHxSX5vWISAT2/SeX3AETSs?=
+ =?us-ascii?Q?725Nyau3eXnM/SHQexc340SBLNFBRT2kHIfMfOFtHGQ1vztDSDg3obClB+DN?=
+ =?us-ascii?Q?udBHoVwC7IbmkqHK2JVl8sMCAjICshoQPmgOnl7q495VLym5ReXSyN8nL0b0?=
+ =?us-ascii?Q?X5Ojve4kjh7z6kZYlUZxASFz/URPR7hcEmXTa2gg4DzXRCadx51HeXzJV6K2?=
+ =?us-ascii?Q?jjQP3Tl4Hzj8F2DNwZqCbQYzlxx3aC/WgCzZCFDKH7sztwm0q0iQiAIZLFoO?=
+ =?us-ascii?Q?PKlWtzwE5eKUA0iksnn4/gZ7YdbDlYjFhOaC8kg8RWSQy1wItQOIX/DXAcvR?=
+ =?us-ascii?Q?sM4yKgquUfZcWIAnxWbZsy1pYvfVLuSXQpXpva+CuRkHnP//1YoaTgs/wat4?=
+ =?us-ascii?Q?ZygHNa/k/43fQ7HyehEqDdvcyWztn0ZdjM7YLqsX4X5cNZ9x658xuPpN6bl8?=
+ =?us-ascii?Q?+tDiLhhvfqfamMC5M7L2O8Mr98UPNURH7vvdGeVVDcOB2Mt3A4l4axF0HRzM?=
+ =?us-ascii?Q?xhj18G5qOj3wjppeHhCvDJ7yVa9u14jpJ9rx4qYnr3txD2GcQscSFzGJZV//?=
+ =?us-ascii?Q?qtz0nx+BlaJmpAVMAdjabSjs/aInnpIS8jyB57QWRDuGFKtXE+chma5WcY2p?=
+ =?us-ascii?Q?N9w3PS4pAZgv8t2WhfjqNuWGFMaVErNY9topbEKq6SlWNXAmazKgJthEWDQX?=
+ =?us-ascii?Q?6918AzwoL26PfaMOmA99ImNNLSIHxmA/96Kvgv60DzuMMUy98d44TrNf448T?=
+ =?us-ascii?Q?aI79F3y2vNOxZ/M5Ay5cJL67GszTm0Z/AaFqHw1JdSxSsazkk83tCPYOShcO?=
+ =?us-ascii?Q?5uu4OK2caHLoJGL5mFOdKkBj3n5r5bwkPc7GHn8gramLV5MSvAaCfRn2RXl1?=
+ =?us-ascii?Q?46JVHin3Gxp6TbI8i42j9Tsj1Q/SLZONLigT5rhA9Hfvy0hF/IUT7x/f+K13?=
+ =?us-ascii?Q?2HCYybEuric1P81AI9hzobo7p7PxsEqhL3UsceyAfSqsRxYmGq9hmLRI1XFg?=
+ =?us-ascii?Q?90eLQVU59Tu7ry4L45Hyw0TGPlJdmy1o6su7qX0SvFTi7mB6D/44ghTLeILU?=
+ =?us-ascii?Q?O4OQ7HBMkDTLgKuxp43s8+NL7EvSvxrWTojyDBE/LgIqoPbO732MFHxmVVx8?=
+ =?us-ascii?Q?w3Z6aFvCDEpjRRCsutq0WVZ6/Sj+JMHilbcJFHQ5/Qj2weiqsVl+AIVYTgGb?=
+ =?us-ascii?Q?A1hHDN/046RCTYve9pXySwTQ7YxzpGO28FX+cq5VJjHLk763L+8ypaZl/yMk?=
+ =?us-ascii?Q?CkedtjXcAYPsMR3abz8zwTiuiz4JeJfAoupVJa8Mzn/y9glhdEpONZYmoBbt?=
+ =?us-ascii?Q?CCxckFqLmFmqKv95k0oG9KQ9Kl8O3p+Lhl8rjOq+yEcnsNNQLw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LSiIFI9K2hDlV/CLucMhb1QutvsiodH6uSmbAA+OhXh5AGl+sc5qxrdw0+ri?=
+ =?us-ascii?Q?ZhV5fehsMXj/v9roVJYeG2RPxLIjm4d4ET93krkWjB4mOnW1vaWzssMUJ8ZJ?=
+ =?us-ascii?Q?Ej4l4iATpCd/HOByM/Tiv7T6wmAwvgYmObCsi7kEon+eRBG2UPbNOrkRVwWB?=
+ =?us-ascii?Q?Vr4Hde32Jfifx9vDP8lAXAZJ0K0uoVVok7pPtAOYr8CQwwIdrt70DRRx/zMv?=
+ =?us-ascii?Q?V6xUWAjx3Kb3qQGx2OU0i/QtUrkJxdiAqkY5N8tJ9SSn3Psu9DsGlROH2UQE?=
+ =?us-ascii?Q?0Joiu2hnlKQ9XeBQM3+aiU14kKzQpQ0Nvnz/Or/Uo1mC/6NyZjCRbkhgRNOQ?=
+ =?us-ascii?Q?f8K2+5RXyugjaW+HAspba9mwBNGJ2SuXz8mvTvebtez+z9zYdMKQvCkY/Rrr?=
+ =?us-ascii?Q?D7Wm+VMuomHXyzeAKwdyBurq8dx6o8ISQo0f4H7xx3ot3y6tRIs9Tpo+OBnh?=
+ =?us-ascii?Q?af9saa2a6O9vP9j14opfLMgUSZ29QmOH3y6XAJQ5knMtuAl22CVlRDLsfxk0?=
+ =?us-ascii?Q?W1e1qAKvRTn1A6Zr3JjLg1tSnOrjoFNXt95ywK5HhX5Y+qq5ABdtsfuKEGnp?=
+ =?us-ascii?Q?k/i7BQ4hEdiYITsRg595K8rPx1SeXNf3p9zgonk0sC2peH+BvmjP9cN+V5Cb?=
+ =?us-ascii?Q?SBfeXpmRwQg0bcCYYggErIPi1dEtlTbVQDQ4uaIhvNuEO+lsf1X8atzIBeen?=
+ =?us-ascii?Q?8f9cj7UCb3AdADeE91DS/mo8++HxO9B2Jpry9zLAtRk3EtC917o5PBl463nB?=
+ =?us-ascii?Q?ykf6vEOL3MO2WGz3T/K7//WpsY4ZC8I2BGYhP2goNsHqYRD/KML8nQTRuFbZ?=
+ =?us-ascii?Q?n8pY4Jcj2ArZlsMHBHP+7PzuoZ0uN8/P+NjImvbYG+z0ToO6ubSHWrWg6qwt?=
+ =?us-ascii?Q?RpsTNhmAvQivclqLQUaBLc0T6eXzeK6TBVagS5IJXlUeabQj+U9m1XASu9GN?=
+ =?us-ascii?Q?WWDuvwodEwAc7pe4pUxIcA631dRGm6sIbbwXUtQVDpHeFVLF03nomOI6OR2j?=
+ =?us-ascii?Q?HhP+0KHaasZB16kicjgGBOU5hfyRC9M8HzI5mTOSYAUXsbayoOAGCuQ3t1Mh?=
+ =?us-ascii?Q?yaFNoACAICl54qa2FIwRo+ZXhOaM8c/capqIyXbS3dtNgoGT507NAkeiZLkY?=
+ =?us-ascii?Q?J5qx3YZzaoMzokBAiQlpfaNmpJC5VhR/F6QEy9A2qfuiD9tJ5q2TmVMFS8G3?=
+ =?us-ascii?Q?JLvU474rpxxQqXRmHnUgSxu0E5hB9dHhWOR8VfDK0j9iu3TZg7mpwOh5lZEi?=
+ =?us-ascii?Q?aHp0epg6QSFGHy0U7PwvvuOcu7e/4SP6tF0grXJ1jldsE32u7bUVRSvieDEX?=
+ =?us-ascii?Q?Ko6sy89dWlZ9xjlPkRUfI7ZugkvB+Qb5DLSGE8AXCIRE1SqRekXF/kIXYtyw?=
+ =?us-ascii?Q?iv8M8UHdlsWWHqRg7baZtT+ddGfBcIVibUWOLCmASm3WGJe4lk8vdEwf8pzY?=
+ =?us-ascii?Q?c5H2wVp64EX5+LZvQMh9kqzsMh0lk7YOejTSLtqjdjdWoscGOplvq8tBNQDA?=
+ =?us-ascii?Q?uqH1mLHJTZiD90QsD3gYkUe6/KJapJD4ruy2LBlJPICiMvEdf2dQc1lf0/VD?=
+ =?us-ascii?Q?j8bWO94wyVW6NsHVVROLToLguqX643mC4QoIDpVB?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6b6b5ff-22c0-4075-d14c-08dcc264c774
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 04:42:08.0763
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M671UQog68+bYvXulsBZdibFKNm4WagR/saoqEMwclw2g+HLajB4Ny33BBu0TqGZJswph3oBR1VD3UqSdY9U6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5139
 
-From: Ryo Takakura <takakura@valinux.co.jp>
+Let the kememdup_array() take care about 
+multiplication and possible overflows.
 
-While adding counters in do_add_counters(), we call
-xt_write_recseq_begin/end to indicate that counters are being updated.
-Updates are being tracked so that the counters retrieved by get_counters()
-will reflect concurrent updates.
-
-However, there is no need to track the updates done by do_add_counters() as
-both do_add_counters() and get_counters() acquire per ipv4,ipv6,arp mutex
-beforehand which prevents concurrent update and retrieval between the two.
-
-Moreover, as the xt_write_recseq_begin/end is shared among ipv4,ipv6,arp,
-do_add_counters() called by one of ipv4,ipv6,arp can falsely delay the 
-synchronization of concurrent get_counters() or xt_replace_table() called 
-by any other than the one calling do_add_counters().
-
-So remove xt_write_recseq_begin/end from do_add_counters() for ipv4,ipv6,arp.
-
-Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
 ---
- net/ipv4/netfilter/arp_tables.c | 4 ----
- net/ipv4/netfilter/ip_tables.c  | 3 ---
- net/ipv6/netfilter/ip6_tables.c | 3 ---
- 3 files changed, 10 deletions(-)
+ drivers/pinctrl/pinctrl-utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
-index 14365b20f1c5..20de048d3e0c 100644
---- a/net/ipv4/netfilter/arp_tables.c
-+++ b/net/ipv4/netfilter/arp_tables.c
-@@ -1009,7 +1009,6 @@ static int do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 	const struct xt_table_info *private;
- 	int ret = 0;
- 	struct arpt_entry *iter;
--	unsigned int addend;
+diff --git a/drivers/pinctrl/pinctrl-utils.c b/drivers/pinctrl/pinctrl-utils.c
+index d81d7b46116c..f18903de1d71 100644
+--- a/drivers/pinctrl/pinctrl-utils.c
++++ b/drivers/pinctrl/pinctrl-utils.c
+@@ -70,8 +70,8 @@ int pinctrl_utils_add_map_configs(struct pinctrl_dev *pctldev,
+ 	if (WARN_ON(*num_maps == *reserved_maps))
+ 		return -ENOSPC;
  
- 	paddc = xt_copy_counters(arg, len, &tmp);
- 	if (IS_ERR(paddc))
-@@ -1029,8 +1028,6 @@ static int do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 	}
+-	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
+-			      GFP_KERNEL);
++	dup_configs = kmemdup_array(configs, num_configs,
++				sizeof(*dup_configs), GFP_KERNEL);
+ 	if (!dup_configs)
+ 		return -ENOMEM;
  
- 	i = 0;
--
--	addend = xt_write_recseq_begin();
- 	xt_entry_foreach(iter,  private->entries, private->size) {
- 		struct xt_counters *tmp;
- 
-@@ -1038,7 +1035,6 @@ static int do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 		ADD_COUNTER(*tmp, paddc[i].bcnt, paddc[i].pcnt);
- 		++i;
- 	}
--	xt_write_recseq_end(addend);
-  unlock_up_free:
- 	local_bh_enable();
- 	xt_table_unlock(t);
-diff --git a/net/ipv4/netfilter/ip_tables.c b/net/ipv4/netfilter/ip_tables.c
-index fe89a056eb06..f54dea2a8fcd 100644
---- a/net/ipv4/netfilter/ip_tables.c
-+++ b/net/ipv4/netfilter/ip_tables.c
-@@ -1162,7 +1162,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 	const struct xt_table_info *private;
- 	int ret = 0;
- 	struct ipt_entry *iter;
--	unsigned int addend;
- 
- 	paddc = xt_copy_counters(arg, len, &tmp);
- 	if (IS_ERR(paddc))
-@@ -1182,7 +1181,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 	}
- 
- 	i = 0;
--	addend = xt_write_recseq_begin();
- 	xt_entry_foreach(iter, private->entries, private->size) {
- 		struct xt_counters *tmp;
- 
-@@ -1190,7 +1188,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 		ADD_COUNTER(*tmp, paddc[i].bcnt, paddc[i].pcnt);
- 		++i;
- 	}
--	xt_write_recseq_end(addend);
-  unlock_up_free:
- 	local_bh_enable();
- 	xt_table_unlock(t);
-diff --git a/net/ipv6/netfilter/ip6_tables.c b/net/ipv6/netfilter/ip6_tables.c
-index 131f7bb2110d..f1d3bb74eb16 100644
---- a/net/ipv6/netfilter/ip6_tables.c
-+++ b/net/ipv6/netfilter/ip6_tables.c
-@@ -1179,7 +1179,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 	const struct xt_table_info *private;
- 	int ret = 0;
- 	struct ip6t_entry *iter;
--	unsigned int addend;
- 
- 	paddc = xt_copy_counters(arg, len, &tmp);
- 	if (IS_ERR(paddc))
-@@ -1198,7 +1197,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 	}
- 
- 	i = 0;
--	addend = xt_write_recseq_begin();
- 	xt_entry_foreach(iter, private->entries, private->size) {
- 		struct xt_counters *tmp;
- 
-@@ -1206,7 +1204,6 @@ do_add_counters(struct net *net, sockptr_t arg, unsigned int len)
- 		ADD_COUNTER(*tmp, paddc[i].bcnt, paddc[i].pcnt);
- 		++i;
- 	}
--	xt_write_recseq_end(addend);
-  unlock_up_free:
- 	local_bh_enable();
- 	xt_table_unlock(t);
 -- 
-2.34.1
+2.17.1
 
 
