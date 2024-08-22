@@ -1,190 +1,163 @@
-Return-Path: <linux-kernel+bounces-296985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253C295B186
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:24:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A390695B172
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963B61F2168A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:24:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 048DAB2213E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6EF1865F9;
-	Thu, 22 Aug 2024 09:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA17B184527;
+	Thu, 22 Aug 2024 09:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n0CPqB4X"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="7kggdDlB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JhhPKz+J"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8937D185B7E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC33183CB6;
+	Thu, 22 Aug 2024 09:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724318459; cv=none; b=JiUhcuUx+qZXng4cbHtu5j5ASenA1EJAgiWSbPDu2fzQzCZcIQ74S44sSVzm+sfhtBAyDmCN6tRcyZCiGi/OB2KE2xgqqsCRBeHc/orPaC1Ny72174mrU/zjBEKOR/qS5HmYJS+SFT7OUWv6eL4J7ucLkdrC7dHb76Yh4M9oEtg=
+	t=1724318436; cv=none; b=GyARj8OQVbBL9tUYHFJScbBH6szESD2cblpYc9W40dOTO+LwXZtf9nPgnWgC0bCXjI3f5GK110dLUrWbaAFnqN+IOkPbrLK7+l6ZtMAaKCuz2ee8Y/4QxbmIcyWPqNegeLUmP5z2IDe+iBQKEUNalXifZhgJJnN24f7FZMQU2nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724318459; c=relaxed/simple;
-	bh=KPKZx+o2UwLiNaiDemeY/MCCfCJXoZ6VeunQ3tP7UxE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PXkMJh9nTzwGEXveJ10v7cCwhqwrAVWR7gvzk7GvxFEfqC0CHawZ6yUsrK+XNDSN/ejYfs2/EEZ47id6l62WVMOgMyP+aoz1th059OPsZechyQLea1rIOw0FWOHnYoa/YwCJOGKVRLr5L5cfsPP51/mWQmNAI34efORQWZKxgks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n0CPqB4X; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7141b04e7b5so362171b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724318457; x=1724923257; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b0ZXsCUO90vlD45ZJO1I+QT/1oidv8iaRsna2l2Dubk=;
-        b=n0CPqB4Xuvhg7W13cy97dJnxh0HwAyaWacv3xLpLC2/r5kr5P1l5iLCavXUhIIEB1I
-         twt9Nao6GLLHerKxIYfFzFUneIdbZX+Ut5Lqc+yS18po3ldEKV/e9jEe9z55HqV4fbVp
-         UmBU7pr8ttSOrBwUXW+tRlj/inWDn+cWUHRpU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724318457; x=1724923257;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b0ZXsCUO90vlD45ZJO1I+QT/1oidv8iaRsna2l2Dubk=;
-        b=ID7NG3xSOvU04/t4YodBchPPmDE9iWAyiTycT8nGGyLYGET6IepirITgKwpz1W7QnY
-         o9FDjZC0g7nxi2Ribi/hMLcvfWGy7Senkn4m1kqhG3XwiLfnp2TEqG4o8QZjgNJrFwGc
-         drH6B2zKA+MydoTxzfOVa30bbwRkJjgGL8WTks9aW3FZVo8YRvo07tlb+OENV+y8bJvX
-         CUdJ1EkbQ+j66ZnaWEG9mZV5b6gsyKl95tVvkZCIWgfmNKiJaOH4pbyrxzg09Ry2heI+
-         0Fa3fS/zBkGUHEk63HTZa+FjDU2XljhiQzbrfn5uBt9SOMs4z+hdxhiacGrorcJFytT+
-         oJ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXiKI2W+aWBa7xT7jJb/ya2NhxHaECdTSu+42q5KgDwZV1nU7pGcwSOYLsAZkXmurc/Jhpug6gRqIzx48k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsYfQ62HD0zukAt2+P1IAaOBKDBmHl6yPF6Lqm4pRhtj5/nycS
-	eYqbuTkdLU8vF5EXZRMztPe/xx4YWysqBfFYtoQUQAziunIAYcIWr38HZMoBVg==
-X-Google-Smtp-Source: AGHT+IGopbbojtmE4fS/IUOg0cpO0JEZHF2VnB3L6eDK3aI3tJHchVj0lRN1Md7MFI5PPKTGcEf3AQ==
-X-Received: by 2002:a05:6a20:2d26:b0:1c6:fb07:381e with SMTP id adf61e73a8af0-1cad8180a2amr6660606637.44.1724318456919;
-        Thu, 22 Aug 2024 02:20:56 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:8470:6a67:8877:ce2c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434335e69sm951398b3a.194.2024.08.22.02.20.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 02:20:56 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v5 10/10] arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and trackpads as fail
-Date: Thu, 22 Aug 2024 17:20:03 +0800
-Message-ID: <20240822092006.3134096-11-wenst@chromium.org>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240822092006.3134096-1-wenst@chromium.org>
-References: <20240822092006.3134096-1-wenst@chromium.org>
+	s=arc-20240116; t=1724318436; c=relaxed/simple;
+	bh=qv3s0CGi5ZNdpz6DyZ6n/g321A0Z/c9BiEcI2QfCxqs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sxPhlvty0DOh3yP+dbAB8cAfLJSAH8sB13Haav7i3ZltUfbQ7/4KNC341YXowiOJmxdJc1ma6eaf6P44r23H6cf9Djc2pVw21sJIxhPBKzfSzlrVISiNgDW2hl0nfhaWFzNz63UebnUeghNcRGg+R1IgUzGIG8Q4WoUu8W7Qdco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=7kggdDlB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JhhPKz+J; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id E62461151BC9;
+	Thu, 22 Aug 2024 05:20:33 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Thu, 22 Aug 2024 05:20:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1724318433;
+	 x=1724404833; bh=NqlevIU6Cve7LDsN6A1JYwfxKGffozPjIZqiNJCdjXU=; b=
+	7kggdDlBoD4jBu6ZTyzc+Ih6UJ60zJXqJVdXpBq0yN71ikmoslDeIw3ufSLwtJe9
+	DbZBxxywq5IGTv1cSoEJDjmTdz62aB4AiKER0ZOnNzGM8rWnvf+Ng0oovZkw9HqD
+	XDX7UuJLkDQBiUse3TqQuU1X1bavRdJSOZF65wOLsB1x0S4qUtwFpH2QKeQNlOUI
+	afmDwtaGs2mDHlJZsas/UNZ6G7drn56C5ilSWVaoNLhu1ZoLkg7dYnbfGD2AESSw
+	JJGuJIgei3KbvW/v6W0/MASSNTaTN49kU3T52gMK7aaEYclJ90OT1KxLb92yIxqo
+	xvomGOJtqiOBXSfYkQ6ejA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724318433; x=
+	1724404833; bh=NqlevIU6Cve7LDsN6A1JYwfxKGffozPjIZqiNJCdjXU=; b=J
+	hhPKz+JF1iiGaqS4+ZV3ohxu8xu0fv9wh6rOmUnXxQVthDRYToJmyw8TDIA8G0a6
+	gSDdE3psDUMMFF47GsuoU9SeIgJoMFyA7i7vNF4J+rtu9biX5Ss6VNtDUer1oie+
+	hOCufgDljU4kJohHE6c2QJr0sgACf0WIOT2nSVhBgXdPpZWb5EQr+CBFST2aIKi7
+	6K0fCGg73sxQZkzUfoGYuctaw1wawgwndpGoKqYnit7LzpIMq5dGihxU4BZ+cTcG
+	xFpdcLucc09VS3b9dNbSZqC1Vtiu1gVjuRmdgTTkO+8rj1ThXCm6pHHOYkFpzgrZ
+	V9mgnMRP8nl6BdofHKDog==
+X-ME-Sender: <xms:4QLHZvseH5wu33u2QREUJABRAwJqIzi6RRbVU-VUP8rVzfeP1Ez87g>
+    <xme:4QLHZgfPb_A4WNYt18e31sZfWINX0U9aBaRDOLhjz1kQOhKvV-cJ-Ko1GmvgDdBSI
+    pPl7FjnAuVNLqdDLqQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvtddgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthho
+    pehphhhilhhmugeslhhinhgrrhhordhorhhgpdhrtghpthhtoheptghorhgsvghtsehlfi
+    hnrdhnvghtpdhrtghpthhtohepmhgrtghrohesohhrtggrmhdrmhgvrdhukhdprhgtphht
+    thhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:4QLHZizIb7dhEij1f49m7M_Y4e5B4zA5SJToAVR165wsPAufPjfU0A>
+    <xmx:4QLHZuMu430_Er1Svca--cZas2jI1X92IrLT78XzmaxnLOh2ozO0QQ>
+    <xmx:4QLHZv-sYgXfJGs8ceA2X6tiBHLpr6g5L2UNI_UaVmLsQs-oF6bKlg>
+    <xmx:4QLHZuVeaxB_bDhusegdPd4xkeLQAdPm_ZuBdgq6HCo5ZfWHdJws0w>
+    <xmx:4QLHZvw4TrcUuSKMgZZL-edFvUHNltxSB89P32XoLk4oKpVgb2shjLln>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 995B41C2005C; Thu, 22 Aug 2024 05:20:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Thu, 22 Aug 2024 10:20:13 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "Jonathan Corbet" <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+Message-Id: <b9396b1f-b2ea-4900-af81-b2c3d916be9c@app.fastmail.com>
+In-Reply-To: <ZsbwhoTS+ji41FuW@alpha.franken.de>
+References: <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com>
+ <Zo457UgAkhbAgm2R@alpha.franken.de>
+ <alpine.DEB.2.21.2407101015120.38148@angie.orcam.me.uk>
+ <a8741e38-837b-4fbb-8656-1e6d50bdfcc0@app.fastmail.com>
+ <alpine.DEB.2.21.2407110315170.38148@angie.orcam.me.uk>
+ <de07ff44-41ee-4158-b629-90a1835bd9cb@app.fastmail.com>
+ <alpine.DEB.2.21.2407121250350.38148@angie.orcam.me.uk>
+ <dad7b36f-2e37-44db-939e-cdb454875e2a@app.fastmail.com>
+ <alpine.DEB.2.21.2407150225310.58077@angie.orcam.me.uk>
+ <ac94941f-3ac3-4820-b94d-aeb72a7a7a5c@app.fastmail.com>
+ <ZsbwhoTS+ji41FuW@alpha.franken.de>
+Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Instead of having them all available, mark them all as "fail-needs-probe"
-and have the implementation try to probe which one is present.
 
-Also remove the shared resource workaround by moving the pinctrl entry
-for the trackpad interrupt line back into the individual trackpad nodes.
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Changes since v4:
-- Rebased
+=E5=9C=A82024=E5=B9=B48=E6=9C=8822=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8A=E5=
+=8D=889:02=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+> On Mon, Jul 15, 2024 at 08:35:21PM +0800, Jiaxun Yang wrote:
+>> =E5=9C=A82024=E5=B9=B47=E6=9C=8815=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=888:15=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
+>> >  It's not much to do anyway, as I have prepared `ptrace_setfcr31' a=
+lready=20
+>> > to handle masking correctly, so all you have to do is to set the ma=
+sk as=20
+>> > required for the right thing to happen.  I shouldn't have needed to=
+ point=20
+>> > you at it though, as that code is easy to find.
+>>=20
+>> I think I got your point, will try to implement it.
+>
+> any news about this ?
+Hi Thomas,
 
-Changes since v3:
-- Also remove second source workaround, i.e. move the interrupt line
-  pinctrl entry from the i2c node back to the components.
+Sorry, I implemented it but was unsure that my test coverage was ideal a=
+s I was
+unable to access my usual switchable NaN hardware (FPGA based on interAp=
+tiv MR3)
+for testing.
 
-Changes since v2:
-- Drop class from status
----
- arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi | 13 +++++++++++++
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi      |  4 ++--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+Will post patch after gain access to that again. Hardware ETA 10 Sept.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-index 8d1cbc92bce3..251e084bf7de 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-@@ -14,6 +14,7 @@ touchscreen2: touchscreen@34 {
- 		compatible = "melfas,mip4_ts";
- 		reg = <0x34>;
- 		interrupts-extended = <&pio 88 IRQ_TYPE_LEVEL_LOW>;
-+		status = "fail-needs-probe";
- 	};
- 
- 	/*
-@@ -26,6 +27,7 @@ touchscreen3: touchscreen@20 {
- 		reg = <0x20>;
- 		hid-descr-addr = <0x0020>;
- 		interrupts-extended = <&pio 88 IRQ_TYPE_LEVEL_LOW>;
-+		status = "fail-needs-probe";
- 	};
- 
- 	/* Lenovo Ideapad C330 uses G2Touch touchscreen as a 2nd source touchscreen */
-@@ -47,9 +49,12 @@ &i2c4 {
- 	trackpad2: trackpad@2c {
- 		compatible = "hid-over-i2c";
- 		interrupts-extended = <&pio 117 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_irq>;
- 		reg = <0x2c>;
- 		hid-descr-addr = <0x0020>;
- 		wakeup-source;
-+		status = "fail-needs-probe";
- 	};
- };
- 
-@@ -74,3 +79,11 @@ pins_wp {
- 		};
- 	};
- };
-+
-+&touchscreen {
-+	status = "fail-needs-probe";
-+};
-+
-+&trackpad {
-+	status = "fail-needs-probe";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-index b4d85147b77b..eee64461421f 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-@@ -358,12 +358,12 @@ touchscreen: touchscreen@10 {
- &i2c4 {
- 	clock-frequency = <400000>;
- 	status = "okay";
--	pinctrl-names = "default";
--	pinctrl-0 = <&trackpad_irq>;
- 
- 	trackpad: trackpad@15 {
- 		compatible = "elan,ekth3000";
- 		interrupts-extended = <&pio 117 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_irq>;
- 		reg = <0x15>;
- 		vcc-supply = <&mt6397_vgp6_reg>;
- 		wakeup-source;
--- 
-2.46.0.184.g6999bdac58-goog
+Thanks
+- Jiaxun
 
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
+rily a
+> good idea.                                                [ RFC1925, 2=
+.3 ]
+
+--=20
+- Jiaxun
 
