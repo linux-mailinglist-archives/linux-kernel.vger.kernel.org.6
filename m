@@ -1,77 +1,56 @@
-Return-Path: <linux-kernel+bounces-298017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2746495C0A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:08:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D7F95C0A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68F3DB24BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:08:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA8611C22DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE551D1F51;
-	Thu, 22 Aug 2024 22:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3D91D1F4B;
+	Thu, 22 Aug 2024 22:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pd4JAvhA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLw8NIZr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716471D1726;
-	Thu, 22 Aug 2024 22:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6963C1CC17A;
+	Thu, 22 Aug 2024 22:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724364490; cv=none; b=hrmG2ECU9PyumQU9CswYdZsXE2KUVWCut6RGjctZZ22icX0pJBlL8Oqz/wY8u9dBG/oBj2vEL4gQfpZbzPU6l/5brrwtSpBvDxFuhfUrS0EChI2nBTuW6i4/W34Rean8Ig/tGO5p06R2u4dSQkST/3u+Z6Uugl8UHG9MIB/RUoI=
+	t=1724364849; cv=none; b=of1VOiDqKKlC8QZIGZm73Eh1ZCRjYeRQkqhAhFN3Hv6IDyAmFubzm457O6T5TYZuYCXWKrkA4cJNTwu7aZNWChSFBHHmkvfpcbu4ryrN92Sj07L9OVhLx7GOZsPj/46FN4sq5/M7sySKCPvjs1T1ex5tjP6sakP3WB08SwWxVjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724364490; c=relaxed/simple;
-	bh=SKeCR3aepMCJp8PsMCBEO9vQI7iqOgVY8Vselt1nZaM=;
+	s=arc-20240116; t=1724364849; c=relaxed/simple;
+	bh=jb43N9TsK73cP08FhYPnstm//ojSGwfD2/0o5mDH2Nc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQMQ2x3CWikPPgdWsxVrnN5Vt2ZMS9+RbkbjHTDitoVCxNY3eJIkktGKGJ5B93G2HlSzORcGhykr4uE/e/6l4Z4pLOQZAbf8NVCLOm0kIl67BnY1p/Ai8bVOXux22kzA6eAKzHtf2c0jREP1rpMhpH6UfxK5NAaOOU/8LENTuxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pd4JAvhA; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724364489; x=1755900489;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SKeCR3aepMCJp8PsMCBEO9vQI7iqOgVY8Vselt1nZaM=;
-  b=Pd4JAvhALUwnEIRGDRfj81BbfwSgQIRVJDFtigdnMHhM3shCKxhS0W9m
-   G39gWLrvYO0gFEqHkTarDuTAv/qpLzFY01hvPMVPINw18P8ukwyHpoZFj
-   lqgAAQpd5f0lKKhobU7Ut9ENGOXWxArGMHWCYTGagccd40JVg89rokwJ7
-   bOWxp3H3NyfDCwecP9/WH3k0YJmRYsvhhnfNfVTsPqbXP9Q7/tQ1n8N5K
-   JF8oCHYxOa4pa4oSFN/J2h7mP0CyykVLceevTfrY2nKTj6SAYlpmBADF7
-   lMWuGuiW3CtY3cOU259mgJPLohkunbAcAAaYlnE88cJiWQ5U7drOIZtaa
-   w==;
-X-CSE-ConnectionGUID: H3zDzldvQc2g+uSl3hHy8A==
-X-CSE-MsgGUID: w4LAiboFSeaeyH8dMC6qWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22677747"
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="22677747"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 15:08:08 -0700
-X-CSE-ConnectionGUID: 1qR69IqqTg+OhZmK7uK4kA==
-X-CSE-MsgGUID: fWT2TuyQSWmTiFyCfi1fgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="92384742"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 22 Aug 2024 15:08:04 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shFyN-000DEc-0S;
-	Thu, 22 Aug 2024 22:08:03 +0000
-Date: Fri, 23 Aug 2024 06:07:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>, song@kernel.org,
-	mariusz.tkaczyk@linux.intel.com, l@damenly.org, xni@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org, yukuai3@huawei.com,
-	yukuai1@huaweicloud.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH md-6.12 05/41] md/md-bitmap: add 'sync_size' into struct
- md_bitmap_stats
-Message-ID: <202408230544.w18wb47U-lkp@intel.com>
-References: <20240822024718.2158259-6-yukuai1@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQUpN6yyz2RbJsW9Di5Xpw+E+YAPBLbbI1aFeyyT/GDeZQ42O6lOZ8mpzksD/vXr9/tHvVgP/vu14kG4FvlkGuYE2/CmC5bZ0kCFUyOElbUans0NVd4MWG4qmlHjBvXIYTB7S6OSSKPi3x61zB55C2HDf1jPrMXK2sFl/3GIHD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLw8NIZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BCC7C32782;
+	Thu, 22 Aug 2024 22:14:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724364849;
+	bh=jb43N9TsK73cP08FhYPnstm//ojSGwfD2/0o5mDH2Nc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NLw8NIZrP9wqlyLT+Qer/79YOdW1bvFoU8suD+dxVIII+kWTcN0ur7fnW0bpXHhe+
+	 Y6MV/2OieRyVUQPl8BUeRjr6Nl2D20dPGe+P343r2EbEgfl6ux2Mw5N96XLZdey7J5
+	 VIFvCYe9EEHk+VxO9E6QAq1Mrx8/hPZ8NVliVGuTVGqKqTGbbsPfqL22H5qtMwr4bO
+	 kEQq/fmYNkw/vf499EyftM+H4Zt1vUsKGzu8XHpdvZUVNnAobOis3szK/mL2Ry7CMi
+	 CJ+Bjh3EKHRQofmJvmrlKCIMcuMWhBOZtO2VdNmakE87JqpjDkrDMS1CQbxQsDlx/q
+	 JhPo4wUukiAeA==
+Date: Thu, 22 Aug 2024 19:14:05 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] perf trace: Add some string arguments' name in
+ syscall_arg_fmt__init_array()
+Message-ID: <Zse4LR6gtIO8-Fch@x1>
+References: <20240815013626.935097-1-howardchu95@gmail.com>
+ <20240815013626.935097-5-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,68 +59,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822024718.2158259-6-yukuai1@huaweicloud.com>
+In-Reply-To: <20240815013626.935097-5-howardchu95@gmail.com>
 
-Hi Yu,
+On Thu, Aug 15, 2024 at 09:36:20AM +0800, Howard Chu wrote:
+> Add them so that we can augment more strings (which is a file path)
+> 
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/builtin-trace.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index e7e8c89d9538..84c7398312d8 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -1918,7 +1918,13 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+>  
+>  		if (strcmp(field->type, "const char *") == 0 &&
+>  		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+> -		     strstr(field->name, "path") != NULL))
+> +		     strstr(field->name, "path") ||
+> +		     strstr(field->name, "file") ||
+> +		     strstr(field->name, "root") ||
+> +		     strstr(field->name, "key") ||
+> +		     strstr(field->name, "special") ||
+> +		     strstr(field->name, "type") ||
+> +		     strstr(field->name, "description")))
+>  			arg->scnprintf = SCA_FILENAME;
+>  		else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
+>  			arg->scnprintf = SCA_PTR;
 
-kernel test robot noticed the following build warnings:
+Humm?
 
-[auto build test WARNING on device-mapper-dm/for-next]
-[also build test WARNING on linus/master v6.11-rc4 next-20240822]
-[cannot apply to song-md/md-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+root@number:~# for field_name in file root key special type description ; do grep "field:.* $field_name\>" /sys/kernel/tracing/events/syscalls/sys_enter_*/format ; done
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Kuai/md-raid1-use-md_bitmap_wait_behind_writes-in-raid1_read_request/20240822-110233
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
-patch link:    https://lore.kernel.org/r/20240822024718.2158259-6-yukuai1%40huaweicloud.com
-patch subject: [PATCH md-6.12 05/41] md/md-bitmap: add 'sync_size' into struct md_bitmap_stats
-config: x86_64-randconfig-121-20240822 (https://download.01.org/0day-ci/archive/20240823/202408230544.w18wb47U-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408230544.w18wb47U-lkp@intel.com/reproduce)
+/sys/kernel/tracing/events/syscalls/sys_enter_msgget/format:	field:key_t key;	offset:16;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_semget/format:	field:key_t key;	offset:16;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_shmget/format:	field:key_t key;	offset:16;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_quotactl/format:	field:const char * special;	offset:24;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_kcmp/format:	field:int type;	offset:32;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_mount/format:	field:char * type;	offset:32;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_socket/format:	field:int type;	offset:24;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_socketpair/format:	field:int type;	offset:24;	size:8;	signed:0;
+/sys/kernel/tracing/events/syscalls/sys_enter_syslog/format:	field:int type;	offset:16;	size:8;	signed:0;
+root@number:~#
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408230544.w18wb47U-lkp@intel.com/
+Skipping this one. Please ellaborate, what am I missing?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/md/md-bitmap.c:2106:26: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned long sync_size @@     got restricted __le64 [usertype] sync_size @@
-   drivers/md/md-bitmap.c:2106:26: sparse:     expected unsigned long sync_size
-   drivers/md/md-bitmap.c:2106:26: sparse:     got restricted __le64 [usertype] sync_size
-   drivers/md/md-bitmap.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
-
-vim +2106 drivers/md/md-bitmap.c
-
-  2096	
-  2097	int md_bitmap_get_stats(struct bitmap *bitmap, struct md_bitmap_stats *stats)
-  2098	{
-  2099		struct bitmap_counts *counts;
-  2100		bitmap_super_t *sb;
-  2101	
-  2102		if (!bitmap)
-  2103			return -ENOENT;
-  2104	
-  2105		sb = kmap_local_page(bitmap->storage.sb_page);
-> 2106		stats->sync_size = sb->sync_size;
-  2107		kunmap_local(sb);
-  2108	
-  2109		counts = &bitmap->counts;
-  2110		stats->missing_pages = counts->missing_pages;
-  2111		stats->pages = counts->pages;
-  2112	
-  2113		stats->events_cleared = bitmap->events_cleared;
-  2114		stats->file = bitmap->storage.file;
-  2115	
-  2116		return 0;
-  2117	}
-  2118	EXPORT_SYMBOL_GPL(md_bitmap_get_stats);
-  2119	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Arnaldo
 
