@@ -1,259 +1,233 @@
-Return-Path: <linux-kernel+bounces-296957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB2495B124
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:06:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0438B95B117
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485591F22CDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2848B1C21EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C02D15C156;
-	Thu, 22 Aug 2024 09:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989A417BB2A;
+	Thu, 22 Aug 2024 09:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LGKcCJpU"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="juLGC5q8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F54157467
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C15157467;
+	Thu, 22 Aug 2024 09:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724317266; cv=none; b=OZPe0o8O7V1KfMHN5dv3RhhwyAf8MX4XBJvRE7ohSLgDI7pYXJySwGkMzvoEHaek8ugNPHNiqFew3AU69LrBJR6Mglgc9viO+Z70HRknja0taxA3+sapNuAbg7P+t9AaT/XT4CcxnSNsniPautCbD4a1KEgt8g16AEy4NxpQlB8=
+	t=1724317311; cv=none; b=mjTUFlL1kz39CBWhVBMOHEWRyldc6nr6VzMpU4uSwh5pCxwKhIyRaf0a6nK4redLHeWz/9VeaVrzFe0s+bxCBCkEn9MiLfvP53xjXWVj9UngqNFw4Gtixvqr/YCkkKDmCRqnwfBasGIUmOcuhCK9sUVPqzyrm6zP87TzCnkw/gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724317266; c=relaxed/simple;
-	bh=dYSZHrB15aNs4HD3tmdPRvXvYZEy4vdoQ7Y8f5ur/uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhQAaXEmKa7WugfpPCtYMh1iwdZ/TIAsHARkyzrQnaL/+M08H2XS1tMHccr4vDcm2SlShcTKuqCchq4CHuFDuEXc/Ypy9SYBvMaK2UNIU4IOypP3RTWOjpv3z1RYeGEOj/0HhOW8h31rFATx3Nh1e6NUbwP65IwEI41e7C7R7oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LGKcCJpU; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bed83487aeso688654a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724317260; x=1724922060; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uE7q2R79ra943CHmNIYAz4Se/oF9orTNMf7om9x/0w8=;
-        b=LGKcCJpUUbogK2mrehfj0+++zgj5h9woFh16kXRu+dxcImt6HbbTqg/bibb+8OLM76
-         tJZRWtmJXOmWW7q+eQTtY2dGSgxsPBE1ECEUz2a0TFFcvQVB7uSJg3gzITVV2sgVn9qy
-         VUVtxegLe6zp5JZGwcWMisZEH9QnJIi+2Nf1iKvSW238vwcx4nmnjCd/ualQDnuv7PJR
-         KUA9a/BcBhz3S+HLowrLjsMKXaVrSilfF5NhPcdTpp2gOkO2CWOdhh7kLjceo6hFuNgV
-         D1L3uO7YxSBo+P0JWMMakLgPEgr8msPlH28TqR15WpmukSSFv0jURI7ibT1dlqYhhd/+
-         YGQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724317260; x=1724922060;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uE7q2R79ra943CHmNIYAz4Se/oF9orTNMf7om9x/0w8=;
-        b=ICtiMkQOSSWp/6MDre8UFv01VnFBHLZjk4beM9lVCb/gfjwJYbcY0ymoP1Ae5TdknX
-         UkTQsddMwbVARP4NHF5Gk5Cvfewb7V2DSoWOcVppdeNgJx+UFauZu3nvjd+iR7TQTN/i
-         AFNDd8mQd7mM8o7MimO0FlhJoF+Bf6wPVf+/pllgJKT+POYZGLR/dHWazHBmCp3TgLB0
-         nQo3X2rsQdUGUKa0CvVv5yDCBf4U55AhtG6fDYNcIpX9NNMKnCeEWr/lmm4IphOU/EiI
-         xDNkcES2iPro4Po9XycHUeiVIeblooQ4CksjLT/6faTV8cwYNyKftjQ01lfd+5wF9YMb
-         u/vw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4gc+hgziZs9DfNQFu2zhNIijHhJVsByJtXYDNU1Tjz+PsjmWXQ3W6EdV/K5uiIheUx9WIl+cRoxUtD9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjtTbDaet7lE9sARAUOw7uGuD9WQJ0o1wRMBILDpAz2uasNUzD
-	ce/ZQfNML8JCUXdTVPtw20WpaAMIfVSKes8KuQ+LNtPKZm7GA+4i+GE5AyvUHKA=
-X-Google-Smtp-Source: AGHT+IFRHcWUO3cIfl5f6DBKBpDvlWiZOWF7yzXIw1+52agalZunwjd6e1IbdV4DxmmtLRMKBbuxQA==
-X-Received: by 2002:a05:6402:5251:b0:5be:fd3a:558 with SMTP id 4fb4d7f45d1cf-5bf1f0d7cd9mr3866329a12.9.1724317259593;
-        Thu, 22 Aug 2024 02:00:59 -0700 (PDT)
-Received: from localhost (109-81-92-13.rct.o2.cz. [109.81.92.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddc0fcsm647618a12.5.2024.08.22.02.00.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 02:00:59 -0700 (PDT)
-Date: Thu, 22 Aug 2024 11:00:58 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: akpm@linux-foundation.org, mgorman@techsingularity.net,
-	hannes@cmpxchg.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, lizefan.x@bytedance.com
-Subject: Re: [PATCH V1] mm:page_alloc: fix the NULL ac->nodemask in
- __alloc_pages_slowpath()
-Message-ID: <Zsb-SplgW_JizWdE@tiehlicka>
-References: <20240822083842.3167137-1-hezhongkun.hzk@bytedance.com>
+	s=arc-20240116; t=1724317311; c=relaxed/simple;
+	bh=EB5XLDiY+WJ5p4OL9UgSPS1vRM/EIxd3jTHfKz8SejI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TvJUIifkU5HckCqqzP4W+ADhVAjlqP3HWZUTcq+G9vu2FC9G4flAO5cAlCGK6L9Kv1RlmmzFX3SPdwS+MKqqBaU0oaXZ1o5mtDN5B935/hIGLsbRLlWBniq9/L7hWr/i75SMazC+egnU51GbdVwzQvMO4LdWwEg33vgKPvr84N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=juLGC5q8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47M12PZM001986;
+	Thu, 22 Aug 2024 09:01:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0ATTq5zni+CfcXZ/YPJd6N7qjhxRv0fqB5rv69GUFdA=; b=juLGC5q8X1gDyHt8
+	tQRdrqL/UzZHXCFMDDRuPSxx+dJOrY5WzOBlKmrEM3vCVsjL/Jhfw9/1WIj4KuDn
+	JCl2n8o1jPCnXOJHDnoyK/E4r+lzeeFV1vov4yk/sK3WajYQqyciybfVBE7UL/8B
+	uYbaa20E829jCFg5L7l8KFS9qXEJFSsD+UBr84IX3vKhWxTG6WfM/6NGM9R+h2XN
+	0V2x3di9wqmIZwTI93G2V3lnmtTHGjgCLg68kLhv+TOFAiLJQpBXPgKxGoANRf0Q
+	/+cDyy6sFCAFRXHdJvfgwU9YeuY4R0mlPni5xm5sZh4h7NLPWkb4dSpmWXR5bzja
+	ySNLeQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415nrrst38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 09:01:47 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47M91k3S024960
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 09:01:46 GMT
+Received: from [10.151.37.150] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
+ 2024 02:01:43 -0700
+Message-ID: <c7f24af9-c43f-4d8b-b5c1-e34c34de4d44@quicinc.com>
+Date: Thu, 22 Aug 2024 14:31:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822083842.3167137-1-hezhongkun.hzk@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: qcom: add hexagon based WCSS secure PIL
+ driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
+        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <20240820085517.435566-3-quic_gokulsri@quicinc.com>
+ <4y37wrg7gi3unpqw5ukgd6jrwuqmuofcabhmtwzlgfpgtiighw@74abrhmpzktv>
+Content-Language: en-US
+From: Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <4y37wrg7gi3unpqw5ukgd6jrwuqmuofcabhmtwzlgfpgtiighw@74abrhmpzktv>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: E0asXlR0VLCkFlI5PpTv0B-_ZqjC5W5R
+X-Proofpoint-GUID: E0asXlR0VLCkFlI5PpTv0B-_ZqjC5W5R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_03,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=744 mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408220066
 
-On Thu 22-08-24 16:38:42, Zhongkun He wrote:
-> I found a problem in my test machine that should_reclaim_retry() do
-> not get the right node if i set the cpuset.mems.
-> The should_reclaim_retry() and try_to_compact_pages() are iterating
-> nodes which are not allowed by cpusets and that makes the retry loop
-> happening more than unnecessary.
 
-I would update the problem description because from the above it is not
-really clear what the actual problem is.
-
-should_reclaim_retry is not ALLOC_CPUSET aware and that means that it
-considers reclaimability of NUMA nodes which are outside of the cpuset.
-If other nodes have a lot of reclaimable memory then should_reclaim_retry
-would instruct page allocator to retry even though there is no memory
-reclaimable on the cpuset nodemask. This is not really a huge problem
-because the number of retries without any reclaim progress is bound but
-it could be certainly improved. This is a cold path so this shouldn't
-really have a measurable impact on performance on most workloads.
-
-> 
-> 1.Test step and the machines.
-> ------------
-> root@vm:/sys/fs/cgroup/test# numactl -H | grep size
-> node 0 size: 9477 MB
-> node 1 size: 10079 MB
-> node 2 size: 10079 MB
-> node 3 size: 10078 MB
-> 
-> root@vm:/sys/fs/cgroup/test# cat cpuset.mems
->     2
-> 
-> root@vm:/sys/fs/cgroup/test# stress --vm 1 --vm-bytes 12g  --vm-keep
-> stress: info: [33430] dispatching hogs: 0 cpu, 0 io, 1 vm, 0 hdd
-> stress: FAIL: [33430] (425) <-- worker 33431 got signal 9
-> stress: WARN: [33430] (427) now reaping child worker processes
-> stress: FAIL: [33430] (461) failed run completed in 2s
-> 
-> 2. reclaim_retry_zone info:
-> 
-> We can only alloc pages from node=2, but the reclaim_retry_zone is
-> node=0 and return true.
-> 
-> root@vm:/sys/kernel/debug/tracing# cat trace
-> stress-33431   [001] ..... 13223.617311: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=1 wmark_check=1
-> stress-33431   [001] ..... 13223.617682: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=2 wmark_check=1
-> stress-33431   [001] ..... 13223.618103: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=3 wmark_check=1
-> stress-33431   [001] ..... 13223.618454: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=4 wmark_check=1
-> stress-33431   [001] ..... 13223.618770: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=5 wmark_check=1
-> stress-33431   [001] ..... 13223.619150: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=6 wmark_check=1
-> stress-33431   [001] ..... 13223.619510: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=7 wmark_check=1
-> stress-33431   [001] ..... 13223.619850: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=8 wmark_check=1
-> stress-33431   [001] ..... 13223.620171: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=9 wmark_check=1
-> stress-33431   [001] ..... 13223.620533: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=10 wmark_check=1
-> stress-33431   [001] ..... 13223.620894: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=11 wmark_check=1
-> stress-33431   [001] ..... 13223.621224: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=12 wmark_check=1
-> stress-33431   [001] ..... 13223.621551: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=13 wmark_check=1
-> stress-33431   [001] ..... 13223.621847: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=14 wmark_check=1
-> stress-33431   [001] ..... 13223.622200: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=15 wmark_check=1
-> stress-33431   [001] ..... 13223.622580: reclaim_retry_zone: node=0 zone=Normal   order=0 reclaimable=4260 available=1772019 min_wmark=5962 no_progress_loops=16 wmark_check=1
-> 
-
-You can drop the following
-
-> 3. Root cause:
-> Nodemask usually comes from mempolicy in policy_nodemask(), which
-> is always NULL unless the memory policy is bind or prefer_many.
-> 
-> nodemask = NULL
-> __alloc_pages_noprof()
-> 	prepare_alloc_pages
-> 		ac->nodemask = &cpuset_current_mems_allowed;
-> 
-> 	get_page_from_freelist()
-> 
-> 	ac.nodemask = nodemask;  /*set  NULL*/
-> 
-> 	__alloc_pages_slowpath() {
-> 		f (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
-> 			ac->nodemask = NULL;
-> 			ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
-> 					ac->highest_zoneidx, ac->nodemask);
-> 
-> 		/* so ac.nodemask = NULL */
-> 	}
-> 
-> According to the function flow above, we do not have the memory limit to
-> follow cpuset.mems, so we need to add it.
-> 
-> Test result:
-> Try 3 times with different cpuset.mems and alloc large memorys than that numa size.
-> echo 1 > cpuset.mems
-> stress --vm 1 --vm-bytes 12g --vm-hang 0
-> ---------------
-> echo 2 > cpuset.mems
-> stress --vm 1 --vm-bytes 12g --vm-hang 0
-> ---------------
-> echo 3 > cpuset.mems
-> stress --vm 1 --vm-bytes 12g --vm-hang 0
-> 
-> The retry trace look like:
-> stress-2139    [003] .....   666.934104: reclaim_retry_zone: node=1 zone=Normal   order=0 reclaimable=7 available=7355 min_wmark=8598 no_progress_loops=1 wmark_check=0
-> stress-2204    [010] .....   695.447393: reclaim_retry_zone: node=2 zone=Normal   order=0 reclaimable=2 available=6916 min_wmark=8598 no_progress_loops=1 wmark_check=0
-> stress-2271    [008] .....   725.683058: reclaim_retry_zone: node=3 zone=Normal   order=0 reclaimable=17 available=8079 min_wmark=8597 no_progress_loops=1 wmark_check=0
-> 
-
-And only keep this
-
-> With this patch, we can check the right node and get less retry in __alloc_pages_slowpath()
-> because there is nothing to do.
-> 
-> V1:
-> Do the same with the page allocator using __cpuset_zone_allowed().
-> 
-> Suggested-by: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
-
-With those changes you can add
-Acked-by: Michal Hocko <mhocko@suse.com>
-Thanks!
-
-> ---
->  mm/compaction.c | 6 ++++++
->  mm/page_alloc.c | 5 +++++
->  2 files changed, 11 insertions(+)
-> 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index d1041fbce679..a2b16b08cbbf 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -23,6 +23,7 @@
->  #include <linux/freezer.h>
->  #include <linux/page_owner.h>
->  #include <linux/psi.h>
-> +#include <linux/cpuset.h>
->  #include "internal.h"
->  
->  #ifdef CONFIG_COMPACTION
-> @@ -2822,6 +2823,11 @@ enum compact_result try_to_compact_pages(gfp_t gfp_mask, unsigned int order,
->  					ac->highest_zoneidx, ac->nodemask) {
->  		enum compact_result status;
->  
-> +		if (cpusets_enabled() &&
-> +			(alloc_flags & ALLOC_CPUSET) &&
-> +			!__cpuset_zone_allowed(zone, gfp_mask))
-> +				continue;
-> +
->  		if (prio > MIN_COMPACT_PRIORITY
->  					&& compaction_deferred(zone, order)) {
->  			rc = max_t(enum compact_result, COMPACT_DEFERRED, rc);
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 29608ca294cf..8a67d760b71a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4128,6 +4128,11 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
->  		unsigned long min_wmark = min_wmark_pages(zone);
->  		bool wmark;
->  
-> +		if (cpusets_enabled() &&
-> +			(alloc_flags & ALLOC_CPUSET) &&
-> +			!__cpuset_zone_allowed(zone, gfp_mask))
-> +				continue;
-> +
->  		available = reclaimable = zone_reclaimable_pages(zone);
->  		available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
->  
-> -- 
-> 2.20.1
-
--- 
-Michal Hocko
-SUSE Labs
+On 8/20/2024 4:55 PM, Krzysztof Kozlowski wrote:
+> On Tue, Aug 20, 2024 at 02:25:15PM +0530, Gokul Sriram Palanisamy wrote:
+>> From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+>>
+>> Add support to bring up hexagon based WCSS secure PIL remoteproc.
+>> IPQ5332, IPQ9574 supports secure PIL remoteproc.
+>>
+>> Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>> +static int wcss_sec_dump_segments(struct rproc *rproc,
+>> +				  const struct firmware *fw)
+>> +{
+>> +	struct device *dev = rproc->dev.parent;
+>> +	struct reserved_mem *rmem = NULL;
+>> +	struct device_node *node;
+>> +	int num_segs, index = 0;
+>> +	int ret;
+>> +
+>> +	/* Parse through additional reserved memory regions for the rproc
+>> +	 * and add them to the coredump segments
+>> +	 */
+>> +	num_segs = of_count_phandle_with_args(dev->of_node,
+>> +					      "memory-region", NULL);
+>> +	while (index < num_segs) {
+>> +		node = of_parse_phandle(dev->of_node,
+>> +					"memory-region", index);
+>> +		if (!node)
+>> +			return -EINVAL;
+>> +
+>> +		rmem = of_reserved_mem_lookup(node);
+>> +		if (!rmem) {
+>> +			dev_err(dev, "unable to acquire memory-region index %d num_segs %d\n",
+>> +				index, num_segs);
+> Leaking refcnt.
+Got it. Will update. Thank you.
+>> +			return -EINVAL;
+>> +		}
+>> +
+>> +		of_node_put(node);
+>> +
+>> +		dev_dbg(dev, "Adding segment 0x%pa size 0x%pa",
+>> +			&rmem->base, &rmem->size);
+>> +		ret = rproc_coredump_add_custom_segment(rproc,
+>> +							rmem->base,
+>> +							rmem->size,
+>> +							wcss_sec_copy_segment,
+>> +							NULL);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		index++;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct rproc_ops wcss_sec_ops = {
+>> +	.start = wcss_sec_start,
+>> +	.stop = wcss_sec_stop,
+>> +	.da_to_va = wcss_sec_da_to_va,
+>> +	.load = wcss_sec_load,
+>> +	.get_boot_addr = rproc_elf_get_boot_addr,
+>> +	.panic = wcss_sec_panic,
+>> +	.parse_fw = wcss_sec_dump_segments,
+>> +};
+>> +
+>> +static int wcss_sec_alloc_memory_region(struct wcss_sec *wcss)
+>> +{
+>> +	struct reserved_mem *rmem = NULL;
+>> +	struct device_node *node;
+>> +	struct device *dev = wcss->dev;
+>> +
+>> +	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+>> +	if (node) {
+>> +		rmem = of_reserved_mem_lookup(node);
+>> +	} else {
+> No, that's over complicated.
+>
+> Just if (!node) { error handling }.
+Ok. Will update.
+>> +		dev_err(dev, "can't find phandle memory-region\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	of_node_put(node);
+>> +
+>> +	if (!rmem) {
+>> +		dev_err(dev, "unable to acquire memory-region\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	wcss->mem_phys = rmem->base;
+>> +	wcss->mem_reloc = rmem->base;
+>> +	wcss->mem_size = rmem->size;
+>> +	wcss->mem_region = devm_ioremap_wc(dev, wcss->mem_phys, wcss->mem_size);
+>> +	if (!wcss->mem_region) {
+>> +		dev_err(dev, "unable to map memory region: %pa+%pa\n",
+>> +			&rmem->base, &rmem->size);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+> ...
+>
+>> +static int wcss_sec_ipq5332_init_clk(struct wcss_sec *wcss)
+>> +{
+>> +	int ret;
+>> +	struct device *dev = wcss->dev;
+>> +
+>> +	wcss->im_sleep = devm_clk_get(wcss->dev, "im_sleep");
+>> +	if (IS_ERR(wcss->im_sleep)) {
+>> +		ret = PTR_ERR(wcss->im_sleep);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "failed to get im_sleep clock");
+> Syntax is return dev_err_probe.
+Thanks. Will update.
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(wcss->im_sleep);
+>> +	if (ret) {
+>> +		dev_err(dev, "could not enable im_sleep clk\n");
+>> +		return ret;
+> Just use devm_clk_get_enabled.
+Will update.
+>> +	}
+>> +
+>> +	return 0;
+> Best regards,
+> Krzysztof
+>
 
