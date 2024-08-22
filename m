@@ -1,111 +1,114 @@
-Return-Path: <linux-kernel+bounces-297459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FE095B88E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:35:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A3395B899
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CA61C240F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:35:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06FE9B2BC70
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83D61CBEBD;
-	Thu, 22 Aug 2024 14:35:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AC61CB329;
-	Thu, 22 Aug 2024 14:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0005E1CC177;
+	Thu, 22 Aug 2024 14:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oggBKWKC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2784C1CBEB0;
+	Thu, 22 Aug 2024 14:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337314; cv=none; b=gqlm77vCpMfblkHpzhZPs3HGETn7kPsUNGKLqgzvy0yXdwRDpTw4vN0Aa6rEcYUl4FUNZkElj1vFkmTPhYXm9GOBG43rdqLl0OyMVml/Z1SCh1z+pQUzBDY7Pp1OIgl2/l4IIOd1uTRiMfw1rdWNExvj72XnPTkWjzXtBd5k3ec=
+	t=1724337323; cv=none; b=sVKbPernnjO2DvkulZxtE685TrbroOYWDVhUVUz/yeNZYv2RsIAG/GuWLOv4tAUtrpMfGV/6yuiFrkfxTZMyOPnH8I7Q08Q/cG4Q0IBqFdbAb6Nh6jFZBu1GgiE8JvPQCNa0EOmI0vsgecjf7wX1DPenJ207teJN5+hl6ZRRS+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337314; c=relaxed/simple;
-	bh=Yrbud2/p+d0nyomNYkBZ+AczxiW0KfleN4GvLDqchV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E3DSU+yys1prxTr0D1od691RCMbHE2HyYv41k0D4AKzf9V3Ai0Sg3EVEWLZpG87alQ2hxzhtImXiCKhi33ns2gDHxaO/R5HQQ2bWhAXC8/6dGB/Uqbu6uBRCswcslwEpztSXjnSvUoQdAU71NZmR72HYS4Xj9B/WhiG7cm29HBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071C3DA7;
-	Thu, 22 Aug 2024 07:35:38 -0700 (PDT)
-Received: from [10.57.72.240] (unknown [10.57.72.240])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49AD23F66E;
-	Thu, 22 Aug 2024 07:35:08 -0700 (PDT)
-Message-ID: <aab886f3-ebbf-4853-b26b-5cf70c801683@arm.com>
-Date: Thu, 22 Aug 2024 15:35:06 +0100
+	s=arc-20240116; t=1724337323; c=relaxed/simple;
+	bh=Y+k+ZeSnySUlvXeIpIB978BSbObVC7BsdVZXFENjDJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQcqf2dEnQXSDC1SpslqjIQn+rqY89PpbANYQ0VF2JW3e1eivRJ/6pphPNhzyCfYsMLCvjv3xb7ImDQn20weRXYOdKM3x8fKuQtPWijjw/S0TJqRp+G8LmNTb+Gck+Ko2It3tdQoEOo/9g2Q0U+E9AGwvkhfCfDqJhkm255S/p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oggBKWKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F2CC4AF11;
+	Thu, 22 Aug 2024 14:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724337322;
+	bh=Y+k+ZeSnySUlvXeIpIB978BSbObVC7BsdVZXFENjDJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oggBKWKCnwj/ZBDyPl3ydL03TtQ8w7ICv3O3Bq2vzYDm5i3Sh+Fp4B1xOwUJndSRO
+	 bsldW5ZjBrO3iYqTAD6yhlUKJNEFG2uVO9WSsIP/BMbZvWlmqYbi+OTJXFvURlkaJE
+	 0cXff0KY8O3HzyFpLWCHtzcStqRdOBBaAIHki3hWy/822v3kaQt018aeqnig39Ai1h
+	 kepfkvgJDxBCn+AjYvnjYBoh/O6LIi93KP6YCfbGwFP77J/kxUiv8KhbeLty8xoVB9
+	 4b7UOJvS4a3mRc8Peylwth4W1WtoNWdmzeqQ7NF6cuCTju3DkmNAwBxQXYd/4hMSIG
+	 PQAz44TrnEK7w==
+Date: Thu, 22 Aug 2024 22:35:13 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v3 15/17] platform/chrome: cros_ec_typec: Add support for
+ signaling DP HPD via drm_bridge
+Message-ID: <ZsdMoRpwv5twOwqx@tzungbi-laptop>
+References: <20240819223834.2049862-1-swboyd@chromium.org>
+ <20240819223834.2049862-16-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/17] coresight: Use per-sink trace ID maps for Perf
- sessions
-Content-Language: en-GB
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, coresight@lists.linaro.org,
- gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
- leo.yan@linux.dev, anshuman.khandual@arm.com,
- James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240722101202.26915-1-james.clark@linaro.org>
- <ZqOwGWcYosGe9ru4@x1> <6476a228-847b-4804-9229-c11a881663c7@arm.com>
- <ZqOzio8Oco9ZFsDm@x1> <8068c8ff-a8ce-4bcd-bb19-2c25b45cf6f3@arm.com>
- <ZqO3gPcCCVh1r5WM@x1>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <ZqO3gPcCCVh1r5WM@x1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819223834.2049862-16-swboyd@chromium.org>
 
-Hi Arnaldo,
+On Mon, Aug 19, 2024 at 03:38:29PM -0700, Stephen Boyd wrote:
+> +struct cros_typec_dp_bridge {
+> +	struct cros_typec_data *typec_data;
+> +	struct drm_dp_typec_bridge_dev *dev;
+> +};
 
-On 26/07/2024 15:49, Arnaldo Carvalho de Melo wrote:
-> On Fri, Jul 26, 2024 at 03:38:13PM +0100, Suzuki K Poulose wrote:
->> On 26/07/2024 15:32, Arnaldo Carvalho de Melo wrote:
->>> On Fri, Jul 26, 2024 at 03:26:04PM +0100, Suzuki K Poulose wrote:
->>>> On 26/07/2024 15:18, Arnaldo Carvalho de Melo wrote:
->>>>> On Mon, Jul 22, 2024 at 11:11:42AM +0100, James Clark wrote:
->>>>>> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
->>>>>> as long as there are fewer than that many ETMs connected to each sink.
->>>>>
->>>>> Hey, may I take the tools part, i.e. patches 0-7 and someone on the ARM
->>>>> kernel team pick the driver bits?
-> 
->>>> I plan to pick the kernel driver bits for v6.12
-> 
->>> Perhaps it is better for me to wait for that?
-> 
->> Yes, please.
-> 
-> Please let me know when you do so so that I can merge the tooling bits.
+It looks like structs are all defined in cros_ec_typec.h.  I think this struct
+definition can be also moved there.
 
-I have now merged the driver changes to coresight/next, they will be
-sent to Greg for v6.12. [0]
+> diff --git a/drivers/platform/chrome/cros_ec_typec.h b/drivers/platform/chrome/cros_ec_typec.h
+> index deda180a646f..73d300427140 100644
+> --- a/drivers/platform/chrome/cros_ec_typec.h
+> +++ b/drivers/platform/chrome/cros_ec_typec.h
+> @@ -27,6 +27,8 @@ struct cros_typec_altmode_node {
+>  	struct list_head list;
+>  };
+>  
+> +struct cros_typec_dp_bridge;
 
-You may go ahead and merge the tool bits.
-
-Thanks
-Suzuki
-
-[0] 
-https://lkml.kernel.org/r/172433479466.350842.6920589600831615538.b4-ty@arm.com
-
-
-> 
-> Thanks,
-> 
-> - Arnaldo
-
+If the struct definition moves here, it doesn't need to declare forward.
 
