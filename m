@@ -1,48 +1,45 @@
-Return-Path: <linux-kernel+bounces-296954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E863295B10A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:00:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0A695B10C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A497628232D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5BDF1F2289C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42F4176FCF;
-	Thu, 22 Aug 2024 09:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2386B17C7C1;
+	Thu, 22 Aug 2024 09:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWGaTTIt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcpPMgCv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C8A1CFB9;
-	Thu, 22 Aug 2024 09:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E77B1CFB9;
+	Thu, 22 Aug 2024 09:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724317228; cv=none; b=qK4IzeBg6Q+2PZFxU97h/8o4z7TPpyubVW/zs5r5Qw0YUxRBODYxHUvoym9vkkC1t9E258Kb2mijcAQV0eXZdwHDOkPfx6zfvsH4wL1XjiyGOg4LbfK4JLLxoTV7hs8snx0Mr/RkTflOppouMkjaZ3t2Vi5e6VDodJ28Ya4VSQ0=
+	t=1724317233; cv=none; b=GHe5VF7GvNyo8LTTe19yQyeNjhK6+Fnss1NYdE27c0nev1Bdc0hcH3pzXMa42dX6XA0u8eSb8tXSfWBc0LNvvElUEN0rZEXYcy8eW5eGYOiJjr3RGJo3dYCecKLQXNx3BWp+HiX87nzhUejl68HsvyGi/AJPsJRF8PH0+IMTJ1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724317228; c=relaxed/simple;
-	bh=atPSiCFdfkMcesNUaH6RuZASJxuNsj/f1YGmoqPIWgo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=paLS2Q7WtC+mNGH6VWqFFof7TShh4uAIc1oIbsvFelKiOsim4c35sBj8lG5h6n0iS5nGcxDjlSTRMnTDTkDdM/EBOMRyF2D8i39ID6oqIXyy7Y7/M1ISuOlEGDJgDza5zw4FiXCuG+24Jhbce8ZxXcfHHYJWMmUPoI83Hgtv3vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWGaTTIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC00C4AF09;
-	Thu, 22 Aug 2024 09:00:27 +0000 (UTC)
+	s=arc-20240116; t=1724317233; c=relaxed/simple;
+	bh=DTKmkZCfsT6mqM6ng6WdvHgR2q9ReddZ1ktwO8MCYkE=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=juRV+HTkIx/NBp6DB/NdXssZB1vvFaqUtfTxukaguOQ//iUwSj5RgF4NeZiwhYatB1/SfPwzpb6VdDE0Neia0cbhPKGEYyVJAf5fWAwqG/MsZljfmg+lQscmy+J158++M0m9bxcjIN6AVBbHILR8dmqCa59WmtQ1UMDIwnI5ASs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LcpPMgCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8935AC4AF0B;
+	Thu, 22 Aug 2024 09:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724317227;
-	bh=atPSiCFdfkMcesNUaH6RuZASJxuNsj/f1YGmoqPIWgo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OWGaTTItiO+GC3W9uvk1QaPFeC9waDb3ltn95nb36adI8/I2eUGkyNvhu6iL8VtLz
-	 TMsxCWbW5fDCvn2Y+DBNgoCZo4aZSi9E40Sicvm+t+ylUVEcebm/I2P91YbPDK9Mz/
-	 PLLqq+oRtJeNg+Y+1zHVSzH7tM7kUm3SeXQ0WEDmQqqFqoQJ3Qn7jz43NzcKsfSqjx
-	 uSraPRmxdHsHz3sEOzpvZQm7bCWJZYqPRnaGFhK0R0QPJ4i3FoWBQVpD7frUylxwB9
-	 EyE8cBwxenYfbGTazNdL0xky5FvPfYiiaHCUqXeOtjDOL745ftYGMI8q0jraASnwMk
-	 Po02GmrzjxS4g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341F03809A80;
-	Thu, 22 Aug 2024 09:00:28 +0000 (UTC)
+	s=k20201202; t=1724317232;
+	bh=DTKmkZCfsT6mqM6ng6WdvHgR2q9ReddZ1ktwO8MCYkE=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=LcpPMgCvgs6HYzca5AdXgCT186sdoQNV3w+dl9C4qcjmzLzoLGg+iKLxf6p9HQ6x7
+	 F0H2d7s96K3XZfIk45EgVwsfuM1HXD/dbxKmeer4LBBHpRsClc+F+hNkGHEocQz60K
+	 2cFUGo0NuWSkUMoPgSSuGIXUQXZWeMDV39oV9wSqQfl/U/JU41DsQFt33QcRsqyUJX
+	 LXdtWPgEBrgBdKcnFGK6ZK5m5X6nUoS4Krp26BVk4o7W8ZlbWvwmbQQlmY18XW6t3W
+	 Y4osOFBlOLLKPoRR07bzI75v9bn343mqIOMMvLmR7Dki9ilxJ10WNpNkHV18ks+7Lt
+	 olLDV0OU3mkhw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -50,47 +47,40 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/2] net: ipv6: ioam6: introduce tunsrc
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172431722701.2256827.13061551625019118054.git-patchwork-notify@kernel.org>
-Date: Thu, 22 Aug 2024 09:00:27 +0000
-References: <20240817131818.11834-1-justin.iurman@uliege.be>
-In-Reply-To: <20240817131818.11834-1-justin.iurman@uliege.be>
-To: Justin Iurman <justin.iurman@uliege.be>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: mwifiex: remove unnecessary checks for valid priv
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: 
+ <20240816-mwifiex-remove-priv-checks-v1-1-6dd6553e8ed9@pengutronix.de>
+References: 
+ <20240816-mwifiex-remove-priv-checks-v1-1-6dd6553e8ed9@pengutronix.de>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172431722965.2217900.9384549285038078950.kvalo@kernel.org>
+Date: Thu, 22 Aug 2024 09:00:31 +0000 (UTC)
 
-Hello:
+Sascha Hauer <s.hauer@pengutronix.de> wrote:
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sat, 17 Aug 2024 15:18:16 +0200 you wrote:
-> This series introduces a new feature called "tunsrc" (just like seg6
-> already does).
+> The pointers in adapter->priv[] are allocated in mwifiex_register().
+> With an allocation failed the function will return an error and
+> driver initialization is aborted. This makes all checks for valid
+> priv pointers unnecessary throughout the driver. In many places
+> the pointers are assumed to be valid without checks, this patch
+> removes the remaining checks.
 > 
-> v3:
-> - address Jakub's comments
-> 
-> v2:
-> - add links to performance result figures (see patch#2 description)
-> - move the ipv6_addr_any() check out of the datapath
-> 
-> [...]
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Acked-by: Brian Norris <briannorris@chromium.org>
 
-Here is the summary with links:
-  - [net-next,v3,1/2] net: ipv6: ioam6: code alignment
-    https://git.kernel.org/netdev/net-next/c/924b8bea870b
-  - [net-next,v3,2/2] net: ipv6: ioam6: new feature tunsrc
-    https://git.kernel.org/netdev/net-next/c/273f8c142003
+Patch applied to wireless-next.git, thanks.
 
-You are awesome, thank you!
+67a72043aa2e wifi: mwifiex: remove unnecessary checks for valid priv
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+https://patchwork.kernel.org/project/linux-wireless/patch/20240816-mwifiex-remove-priv-checks-v1-1-6dd6553e8ed9@pengutronix.de/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
 
