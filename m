@@ -1,153 +1,172 @@
-Return-Path: <linux-kernel+bounces-296629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0367295ACFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:42:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF0F95ACFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86BC01F23394
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D451C226EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D480C5674E;
-	Thu, 22 Aug 2024 05:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645485B05E;
+	Thu, 22 Aug 2024 05:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SnGR8xCo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Xg2F1uxQ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF78405E6
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2FA770E2;
+	Thu, 22 Aug 2024 05:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724305350; cv=none; b=qpawo2J6uv1MwpNatKW+DXI7OgWC4nCY91wSbxvHlYYpWXTZegcvHcsPSpf9Hxzh28WrJ539n0JyixvLxqrb0gVS4iM+IADTd0c8FYGCyaggVZ+i2qJlnm689xSgGVoBt3uCcIiVhya7mwaxwX525cl5Rs4iWO8XUfTxWEHMG7I=
+	t=1724305370; cv=none; b=qwuZA8rjDQkfO7Jkh1IkUzilfCcfL00sPV3+5Z6IZPrx9NIGjhOHd7YzDaHF8y9uNcivIdGepNJTxtcR+vI0ppAYIfZcOzHIH2gPZ7tx3ap2ktmTc3Kd/92lnAh2GtF7rHpqfaFYeKc6vGvxeePucdqv8TP/l3uycTdkRMoa5/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724305350; c=relaxed/simple;
-	bh=F1vzZdH4Kt43rchY2omF6Rwx1ceg2XOFfMB0oV8w5es=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gGAmZ2fqPGp60YbtpaYICnPTfqRv7quEL2YM5TdkMYaAcJupUE1Uaqk0lWYeUkkawrbC6quzRZ9O3bk2ecoKyvmpvNh2GlUE3DlDH9GNF69oFUrVsuBCxBH0dOwO/Yg/wkD3I6DrlVUFJ2jlaHmNWeU+Bwr6kSl/Sm8uim76Ee8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SnGR8xCo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724305347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=POmJdiV0VSWZbzyF9DzR22AxZLSfVLCRRZmOGu8DXAE=;
-	b=SnGR8xCoV2H79HsGta+Ul1dPdlXZppfwKhCCXjRtQPUCjHH5x6wxQuNTbHWxaspTL49CJC
-	TB9nL1jXqL0vU5UgJYR/0v2cT4BM18rM3ru5GNkjCR1Dyr9qXjSio6rGazwfM7C41ZiGee
-	3nkbI++tU3WtDFV8n7ELAmeM9ZTWLrA=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-42-enStgC5qNgCan8f8hM7QFA-1; Thu, 22 Aug 2024 01:42:25 -0400
-X-MC-Unique: enStgC5qNgCan8f8hM7QFA-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44ffe348e70so5693331cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 22:42:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724305345; x=1724910145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=POmJdiV0VSWZbzyF9DzR22AxZLSfVLCRRZmOGu8DXAE=;
-        b=dLcY6owsCZZTbW/ah4IumvDqn0kcQt5ZEDxq5ZbalqehBazgjQbrtJ0AptsoA8DMm6
-         pImLqL2C4DoB5YRazcTH+oLkSgYtveb9spHWN2BNXje2hokngCdJ8EG1um4uludpQgvu
-         0XyZEmxc4J4wOBaFqJ4ZvDu1HaJGeHU8VxX476cf4Acj8jvnJMNjqnCTAHYoG2J5bDY7
-         jm7Na762Kfz4X6l0L+YZzExpPOGJqrcm6qzchw/u1t/H4hvOvjHVHAKFIa0CZC4E3zSf
-         +Zt2vfPScw+rqTHrORz77yXleV5MeUgk7u+gn0wQao+Pa5MYAm3O5/DJbrp+DWiZUDJL
-         ip0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVXv6vgYj4kx5DpRJab0mTd0J+Syse8+JaOgb5ZExhivABiWhqcU3Pxp/9PHjfwwt48iPd7mgSIFP22ZQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOYk9mgDo+bBcv6W4L6u3NeZQDwFkGXuZupyf7+TigMs6yZu2d
-	72C0YR96FzpKO/Da76hmONhvL95TtG46kC3Evv184Z44ACmNQHIPvqqnCufATCuOfREzOvmHnCh
-	k5rrEcJswZtphGofsW6ajPYnppBrvqzu4QP+KgQVuWiiSXiR9acV1LVTyjw6A/pJWJUJ3H8Lil7
-	8mzmZX4PJAGrJnCdcmeDdbW996NiotIOPQ8yRW
-X-Received: by 2002:a05:6214:590a:b0:6bf:6a1d:bd32 with SMTP id 6a1803df08f44-6c155e32b6amr52213456d6.54.1724305345107;
-        Wed, 21 Aug 2024 22:42:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElvJrntPKuDfwVGetI/C58C3ESzxqLa/dqLxQVN4fUwqqoca5WN3EJ+ZSDJ797qfFuc/4TtSX998fGB+XueXM=
-X-Received: by 2002:a05:6214:590a:b0:6bf:6a1d:bd32 with SMTP id
- 6a1803df08f44-6c155e32b6amr52213366d6.54.1724305344763; Wed, 21 Aug 2024
- 22:42:24 -0700 (PDT)
+	s=arc-20240116; t=1724305370; c=relaxed/simple;
+	bh=4ny/AX7pmP8OylgEVpTCTj8KvgTX+1PJ3JWGr2PMteY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AKehwLAfd9vs+FZ2ITYZoChDIAyMIcwKC+3K9lg/j1WCmxPXM15eawymVMiETf1O1PAMilurxYscq3yTESoajs7fKYqMUALp5dkxCsQ17k9TuKJrbIqO6cg1yNAzOjJcmMtTj6YGM7hrHQ+3rp1+Q4bGHlu/KMZGKgiV8BRH6Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Xg2F1uxQ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47M5geCs121532;
+	Thu, 22 Aug 2024 00:42:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724305360;
+	bh=R3mFWZN4/uiZw/T38Ef+OCPWTrZeTTqTXEWeaYsyccI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Xg2F1uxQE6hhlxkAP4Dptvk8iSZBmnqzaCUYyr6crHClx7EUv7f6oTB9X9lY8hyrJ
+	 ob41Lmei0gW+ftWAscnH9iIHDcEEUi7xz/ii/Ke+2GvLjMamgm9nnATXLf0B8Jpy+h
+	 j/VrNFREGhOfucloYvPkT82qhPyLR6iDkRf0vQDQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47M5geUg022713
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 22 Aug 2024 00:42:40 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
+ Aug 2024 00:42:40 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 22 Aug 2024 00:42:40 -0500
+Received: from [172.24.156.139] (ltpw0bk3z4.dhcp.ti.com [172.24.156.139])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47M5ga5m068395;
+	Thu, 22 Aug 2024 00:42:37 -0500
+Message-ID: <94faa49d-3acc-45c5-aa17-817e3fb31b5b@ti.com>
+Date: Thu, 22 Aug 2024 11:12:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819145417.23367-1-piliu@redhat.com> <ZsX5QNie3pzocSfT@gardel-login>
-In-Reply-To: <ZsX5QNie3pzocSfT@gardel-login>
-From: Pingfan Liu <piliu@redhat.com>
-Date: Thu, 22 Aug 2024 13:42:14 +0800
-Message-ID: <CAF+s44S2Ph1_nFcZYy3j0Jr4yuHayb5zdNu1YXg8ce_Lf3TOgQ@mail.gmail.com>
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
-To: Lennart Poettering <mzxreary@0pointer.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Philipp Rudo <prudo@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix error handling when power-up
+ failed
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Apurva Nandan
+	<a-nandan@ti.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>
+References: <9f481156-f220-4adf-b3d9-670871351e26@siemens.com>
+ <cf1783e3-e378-482d-8cc2-e03dedca1271@ti.com>
+ <3c8844db-0712-4727-a54c-0a156b3f9e9c@siemens.com>
+ <716d189d-1f62-4fc0-9bb5-6c78967c5cba@ti.com>
+ <eaa07d0d-e2fc-49f2-8ee6-c18b5d7b3b5f@siemens.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <eaa07d0d-e2fc-49f2-8ee6-c18b5d7b3b5f@siemens.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Aug 21, 2024 at 10:27=E2=80=AFPM Lennart Poettering
-<mzxreary@0pointer.de> wrote:
+
+On 22-08-2024 10:57, Jan Kiszka wrote:
+> On 22.08.24 07:22, Beleswar Prasad Padhi wrote:
+>> On 21-08-2024 23:40, Jan Kiszka wrote:
+>>> On 21.08.24 07:30, Beleswar Prasad Padhi wrote:
+>>>> On 19-08-2024 20:54, Jan Kiszka wrote:
+>>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>>
+>>>>> By simply bailing out, the driver was violating its rule and internal
+>>>> Using device lifecycle managed functions to register the rproc
+>>>> (devm_rproc_add()), bailing out with an error code will work.
+>>>>
+>>>>> assumptions that either both or no rproc should be initialized. E.g.,
+>>>>> this could cause the first core to be available but not the second one,
+>>>>> leading to crashes on its shutdown later on while trying to dereference
+>>>>> that second instance.
+>>>>>
+>>>>> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up
+>>>>> before powering up core1")
+>>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>> ---
+>>>>>     drivers/remoteproc/ti_k3_r5_remoteproc.c | 3 ++-
+>>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>>> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>>> index 39a47540c590..eb09d2e9b32a 100644
+>>>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>>> @@ -1332,7 +1332,7 @@ static int k3_r5_cluster_rproc_init(struct
+>>>>> platform_device *pdev)
+>>>>>                 dev_err(dev,
+>>>>>                     "Timed out waiting for %s core to power up!\n",
+>>>>>                     rproc->name);
+>>>>> -            return ret;
+>>>>> +            goto err_powerup;
+>>>>>             }
+>>>>>         }
+>>>>>     @@ -1348,6 +1348,7 @@ static int k3_r5_cluster_rproc_init(struct
+>>>>> platform_device *pdev)
+>>>>>             }
+>>>>>         }
+>>>>>     +err_powerup:
+>>>>>         rproc_del(rproc);
+>>>> Please use devm_rproc_add() to avoid having to do rproc_del() manually
+>>>> here.
+>>> This is just be the tip of the iceberg. The whole code needs to be
+>>> reworked accordingly so that we can drop these goto, not just this one.
+>>
+>> You are correct. Unfortunately, the organic growth of this driver has
+>> resulted in a need to refactor. I plan on doing this and post the
+>> refactoring soon. This should be part of the overall refactoring as
+>> suggested by Mathieu[2]. But for the immediate problem, your fix does
+>> patch things up.. hence:
+>>
+>> Acked-by: Beleswar Padhi <b-padhi@ti.com>
+>>
+>> [2]: https://lore.kernel.org/all/Zr4w8Vj0mVo5sBsJ@p14s/
+>>
+>>> Just look at k3_r5_reserved_mem_init. Your change in [1] was also too
+>>> early in this regard, breaking current error handling additionally.
+>>
+>>
+>> Curious, Could you point out how does the change in [1] breaks current
+>> error handling?
+>>
+> Same story: You leave the inner loop of k3_r5_cluster_rproc_init() via
+> return without that loop having been converted to support this.
+
+
+The rproc has been allocated via devm_rproc_alloc[3] before the 
+return[4] at k3_r5_cluster_rproc_init. Thus, it is capable of freeing 
+the rproc just based on error codes. It was tested.
+[3]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/remoteproc/ti_k3_r5_remoteproc.c#n1238
+[4]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/remoteproc/ti_k3_r5_remoteproc.c#n1259
+
 >
-> On Mo, 19.08.24 22:53, Pingfan Liu (piliu@redhat.com) wrote:
+> Jan
 >
-> > *** Background ***
-> >
-> > As more PE format kernel images are introduced, it post challenge to ke=
-xec to
-> > cope with the new format.
-> >
-> > In my attempt to add support for arm64 zboot image in the kernel [1],
-> > Ard suggested using an emulator to tackle this issue.  Last year, when
-> > Jan tried to introduce UKI support in the kernel [2], Ard mentioned the
-> > emulator approach again [3]
->
-> Hmm, systemd's systemd-stub code tries to load certain "side-car"
-> files placed next to the UKI, via the UEFI file system APIs. What's
-> your intention with the UEFI emulator regarding that? The sidecars are
-> somewhat important, because that's how we parameterize otherwise
-> strictly sealed, immutable UKIs.
->
-IIUC, you are referring to UKI addons.
-
-> Hence, what's the story there? implement some form of fs driver (for
-> what fs precisely?) in the emulator too?
->
-As for addon, that is a missing part in this series. I have overlooked
-this issue. Originally, I thought that there was no need to implement
-a disk driver and vfat file system, just preload them into memory, and
-finally present them through the uefi API. I will take a closer look
-at it and chew on it.
-
-> And regarding tpm? tpms require drivers and i guess at the moment uefi
-> emulator would run those aren't available anymore? but we really
-> should do a separator measurement then. (also there needs to be some
-> way to pass over measurement log of that measurement?)
->
-
-It is a pity that it is a common issue persistent with kexec-reboot
-kernel nowadays.
-I am not familiar with TPM and have no clear idea for the time being.
-(emulating Platform Configuration Registers ?).  But since this
-emulator is held inside a linux kernel image, and the UKI's signature
-is checked during kexec_file_load. All of them are safe from
-modification, this security is not an urgent issue.
-
-Thanks for sharing your thoughts and insights.
-
-Best Regards,
-
-Pingfan
-
-> Lennart
->
-> --
-> Lennart Poettering, Berlin
->
-
 
