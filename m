@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-297195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253FB95B45E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:57:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E8E95B461
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B62DCB210C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05381C22EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56A31C9430;
-	Thu, 22 Aug 2024 11:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C671C943A;
+	Thu, 22 Aug 2024 11:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxaxJ5AR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIMzc0OL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172B91C93C9;
-	Thu, 22 Aug 2024 11:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E396E1C93C9;
+	Thu, 22 Aug 2024 11:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724327831; cv=none; b=Af/KR+Des7mCC70a2IX/Cq/vXaZHLZddFItawj6/xMd2lW3dWCnG3zaKwDcza3pUw2QCC83zDcAwQNEGGISYDr+vZU0bBHK85WNTAI6I+3Igf8IKlqMQbNaTF4iTH3NKM6l1w/Ibu107ELYf/wYFYVM51Fr7cjkQz1Rrvxxis4s=
+	t=1724327844; cv=none; b=RpSZl0PcI3tz0ldCnaoj/iHGd3SXqgy2+QNAT91DuwcqsQFhYYgP4U3F+w/m7zGVWZ7cEBDux60+mcYDN5BkTmVtXdOppgB8e1AGLkTMM9ptZX2G65R5rp7Jly2uXtTtaiIxiq0OnDnN7nCImCSx7H5F8kt4bMJq7e3mDNexP50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724327831; c=relaxed/simple;
-	bh=eIvJwYWNWLdxSUlyhPRI8/XCAOzbPZ1AflvgFAZEnzY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oOnaQL5WHe4PVXmJ3cyWRzDrv6Djj8nqB9mxpHg7p2qf0TdfsAfXO9BhVIhGVTsapp7nsHkhIsBj8rQMQoF9JXzas5hTAbcl5M15z3+mdu6MVKZSLQRdfg1rLhKSBQINBvOEx5tMMYBmGCmlIf4fAewUMhT0Flsy8zwJPqieBqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxaxJ5AR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB43C4AF10;
-	Thu, 22 Aug 2024 11:57:10 +0000 (UTC)
+	s=arc-20240116; t=1724327844; c=relaxed/simple;
+	bh=VElb2Qz/eI+LBiQfx0tJ7SZXVYDEbkmfxSrb8TLhlDE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Gm/x+Q/XrxhKvn112YTnzdzbbPZfnyy6nxYvDLKtK57LzrluvZP+IGzRFx3HyZ1MRn6QZU+dDJb6shjGX1i59g370GrjWMmf4tWPOyzbRQ7qCnhnalLwgjqxLbod27V7O+Jc/+wuIv5sEEevB6rmvnIFVCVQZ98Vlx5E6shQ8yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIMzc0OL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664E4C4AF0B;
+	Thu, 22 Aug 2024 11:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724327830;
-	bh=eIvJwYWNWLdxSUlyhPRI8/XCAOzbPZ1AflvgFAZEnzY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hxaxJ5ARQhBkkKkvxpsMsFMKRyV0Th6TAIDgb+VpZ2zqz2Tmtu5lAKPDOyoPerhbW
-	 YWf2pU+SUOES1tIa/nbXWAMPbHvc9Y2OnHsfbSue2jecPyWE7yp3mJX+FdOLdGuUj5
-	 4Msd0uwxA8x+Qv/Y9kfT/ZYjeb5VQYMtFkO05F5MsPVpYBR9dE7h5W2yrzL5VpZEyt
-	 BPxQztXFGAa2xvj4itAsM1kHZFItCnkf/iO8JwPRiZ0KwuoSCGv+ey118stzNz+3Nz
-	 0P/MDvLE2Qcf4iSUP+dYBVDvMZhGePD7gLDVKgPDCehA19YPmws/NQKtnXkAkFM3B+
-	 jpvRgw1tYdPrQ==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2702a00aad4so399853fac.1;
-        Thu, 22 Aug 2024 04:57:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUyP0D5XvYGIzD94BpcqEHaw6nz8nCtEhD6TD3wl40mflhf5wkJel5jkbRgmVWndn6jgVinfvbChNNv@vger.kernel.org, AJvYcCVd0ESqoiT2pkSQHhaaXnVVDJQe/nZTOyCitb5BTAdYyEafJHZJWyBRmF70rpPcv7+TngrHIhDPplGSVjtN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMCj0WemlyixNAJPl/wO1YI+d8KmQiwW0gqFNg/qGMKtRz8Rsz
-	nnFOe61m9Y5U6UrcK9rM+KcF4waViWkif7icsrp0IcpCOGpMPZkshAMPNusxfKNI1b/eGSicuNn
-	XRU83UCPiOyODDyMfnkwnEtL1O5M=
-X-Google-Smtp-Source: AGHT+IGyf3NGdl2vPrw3MYVNPwFiGVpI83bsESwsu7qk95GyHE6/BKjmHu/B4y6C4/OQzAjYvsDApd38bvTF4K3+lWM=
-X-Received: by 2002:a05:6870:2116:b0:261:1342:26b1 with SMTP id
- 586e51a60fabf-2738be908e3mr5173419fac.48.1724327829985; Thu, 22 Aug 2024
- 04:57:09 -0700 (PDT)
+	s=k20201202; t=1724327843;
+	bh=VElb2Qz/eI+LBiQfx0tJ7SZXVYDEbkmfxSrb8TLhlDE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=VIMzc0OLHqoRjD9RGMhNRukWiJ3Xbyjnt+Bw9/S1/XiOgjIQfAxxQW+7wHr2gMVcJ
+	 4jg4s2WFgq7BXlOQxKgDKHhllAt3Hl5RYoBvZdozSx/yG9fyXczYHL/6Slxy4FdXnD
+	 5ohBL/DR17aFKOPBKMCVBc8UBPLrlLpN9XcmaK65oxk/1n9+/xa5TUWs+0kY7HxQr6
+	 ttaCdup0mUuf4Bcnjmddc+fKN0lWjjZfnpydpnmZlOZCPhJyEJoVjUY/MKwB1H4QmX
+	 9RgdZ8fTvNhanbDFubxyiODSASMetT7g9FRUfwbXaAXTttV6gAFfdbGa8tjAz02vUn
+	 OtAcSeZhVKpXQ==
+Date: Thu, 22 Aug 2024 13:57:21 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Stuart <stuart.a.hayhurst@gmail.com>
+cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+    Markus Elfring <Markus.Elfring@web.de>, linux-input@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Benjamin Tissoires <bentiss@kernel.org>
+Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
+In-Reply-To: <CALTg27nmNR=AXg=Ku_nXtwFQLxMypdbK4_Bu9CruB=vEDzxZoA@mail.gmail.com>
+Message-ID: <nycvar.YFH.7.76.2408221355360.12664@cbobk.fhfr.pm>
+References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com> <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de> <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com> <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
+ <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com> <f0aa2ca0-6256-48e4-8d2a-dfd5da072ad4@web.de> <78b667fa-8e54-4023-9187-4ecb999d3c01@wanadoo.fr> <CALTg27nmNR=AXg=Ku_nXtwFQLxMypdbK4_Bu9CruB=vEDzxZoA@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822082101.391272-1-chenxiaosong@chenxiaosong.com> <20240822082101.391272-7-chenxiaosong@chenxiaosong.com>
-In-Reply-To: <20240822082101.391272-7-chenxiaosong@chenxiaosong.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 22 Aug 2024 20:56:58 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-4UwpcqfA0=7bfkDu+0yHcXsPH3or=BNWnfsVDxfPYaA@mail.gmail.com>
-Message-ID: <CAKYAXd-4UwpcqfA0=7bfkDu+0yHcXsPH3or=BNWnfsVDxfPYaA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] smb/client: rename cifs_ntsd to smb_ntsd
-To: chenxiaosong@chenxiaosong.com
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
-	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
-	liuyun01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Aug 22, 2024 at 5:23=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wro=
-te:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> Preparation for moving acl definitions to new common header file.
->
-> Use the following shell command to rename:
->
->   find fs/smb/client -type f -exec sed -i \
->     's/struct cifs_ntsd/struct smb_ntsd/g' {} +
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Looks good to me.
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
-Thanks.
+On Thu, 22 Aug 2024, Stuart wrote:
+
+> > If I recollect correctly, there may be an alignment issue and just using
+> > the stack is not enough to guaranty what is needed.
+> 
+> I can't find any reference to issues with it, I'm not sure what I saw before.
+> Also, it seems like the hid-asus driver is using it:
+> https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/hid/hid-asus.c#L391
+
+You can't do DMA from stack; see section "What memory is DMA'able?" of 
+Documentation/core-api/dma-api-howto.rst
+
+-- 
+Jiri Kosina
+SUSE Labs
+
 
