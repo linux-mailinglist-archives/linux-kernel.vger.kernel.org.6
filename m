@@ -1,211 +1,183 @@
-Return-Path: <linux-kernel+bounces-296716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A9595AE29
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:55:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4953F95AE34
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D001C2288F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0013E281519
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B009F146D42;
-	Thu, 22 Aug 2024 06:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F7013C812;
+	Thu, 22 Aug 2024 06:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="S8S7ZuLd"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NlX9DIqT"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2079.outbound.protection.outlook.com [40.107.215.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655D036AE0;
-	Thu, 22 Aug 2024 06:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724309659; cv=none; b=D1Cj06Ss7+ENzLcRRdrZeIUTzd597jydwV9pMf+m5sE3nbvgNHZZFob5zeKXftQNrdQBCB/Wfwv7H0lPKJ/RKIIMCrKZ3Ihbxy0toY4OXxUNY+NO9ohaYSEwyGzMIQzc7VVxvZTOrIv8tlIzjBTf5/XtePoDBqJUZw00nsJcCAM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724309659; c=relaxed/simple;
-	bh=J5qTjgvonapsBOyCIzQacsWWKEU4fMQ8azAJVk6Ob+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Po2kn0/tdIQX1A+qY0uKY05aYdTLQzolvWVOLWM+GJhCPQlepzGltZZ6Yo2+C7zG1DWOEnf46uqd5DE3xF2EWm2fJkw6a/ZX8fsOi6F2pbhQJ5XqvFAJ0jYVVFdtMdXeafTBEjv0mJcKhF7KL9/er3Tt491ybw/EeyfY+RXKJ2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=S8S7ZuLd; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 53AA41488029;
-	Thu, 22 Aug 2024 08:54:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724309647; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=de6MoEyBS/Lfov2Lt3zwW7HF86NRS6v5JvZdfjrosdI=;
-	b=S8S7ZuLdvFRhCyPMC36ayIiyhgBM3HlNV1yHt3NswaRC0CfS1jFT5hAxmEA+WsV8m2kDWV
-	7nmC1T1A2/n44Zy/ghzVyvNuGciLdj/DNaSvwL+kaF51O8MvS5gwSbf+ukX6v1dKESN25x
-	aGJe86bS/PkaKd6eF5XrUe0RUWd/AFuj/BhjAY1s3f0S5MbQxXh8crggffSuEIikZVIlNn
-	dsmsKnFNN6rr6YDaWM0Omjk0coax17AGXcVKZ7Ig3U5jbwyHrbHjfT6m4LhKMiNJ4lBKHn
-	k23aPA+reeAcoiZLig+Ag4NithnT0VS+siPNscDEckUpAAyyey9lfEIzDjubRg==
-Date: Thu, 22 Aug 2024 08:53:59 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Alexander Dahl <ada@thorsis.com>, linux-clk@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: microchip: sam9x60: Fix rtc/rtt clocks
-Message-ID: <20240822-dragging-grapple-f26e4361e009@thorsis.com>
-Mail-Followup-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240820132730.357347-1-ada@thorsis.com>
- <20240821055136.6858-1-ada@thorsis.com>
- <20240821235205b302068b@mail.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3243C13A885
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724309704; cv=fail; b=HKu1CokICX9JQI9AxoKEqAnYOMSY1ZlZoPdvaR14nqgkJaBWnJ3AwlakOGsyX/+Xs7jwhu548oUnSd02sTGKkiJRgwhVIQKiKnZah13mLcWfodKuwe0TFXSu/6/d0oqChaWjVi2xUm8lBgZ17lyCCtv4NaHZnuqvS40nl33pOjA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724309704; c=relaxed/simple;
+	bh=1s0nyRJBvzJPnrv5yqWGVVxraogaoOogwjLPTFOZR44=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=hxfbI347CUIBa6UY5I5bH1gI/r3lD1SU9TL8PN1/osLx95E+FUGgLfjr8bfG3/29WhhW3l6/UjzmLhnHJ8aLekZGMEJpmTPYuG8CEWd2mRI5v4KGFM5Z3lqbTF9v60cqx0Zekqw8UCm4fE+YqTgwo7+FccmHWBjN4iVPrjpQap4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NlX9DIqT; arc=fail smtp.client-ip=40.107.215.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HHdesLoFQUqH8G05/+Vf+wWnxCIEjaJFN2ZWrVzWS7FeqLpNTjoiko2b3LMN5+CEKrMDw+Nq6YkrhBTR2g5R3/yTPFyg1AmhiYypkMOL56XY4o8CxiGDb/pocLQPIWtRLu5bvPRXdgEQm0f9OdNgmgQMjmvJViye6oSV7NKGIhJAgXZPUkqdIsd0EZFcbHywyignFCUMej9s6gQ2D1x6ntJQ2GKCXOVgrCKMVtxRT2KyQ/TxrZZhAVOVtdLotnf/03W+4wdPP9FpYWsxCRy2u9pnTblMSAVcE0k4auUdWHmGAfAw8ymlb2ncsSoT8ejCRMTh5/PW+V93SW679mPRag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aMue/GgpVw8nABjZci2DVgEuQomrkaZd0cUzq031dwg=;
+ b=jFADm1jAC4PfoWFfrpDtpSpClhamBOoCC90X6Ue2IXsaAgp8ts4oR0FDRd77DhAmdOXSpcUNdlQTOd0Cq5TFJ/PtjY6AYlhd3iadTQOFuJ/uktCEQilrdmeApHK08JHBk+nepAGRIzsvCP4Hhn3LZA7JOouNMSkYoqwPLYewVc2NW3OyoOoj4lQAtaLRB+tvy25o8g8d7HeYp3Bboh7YMKqwMH4qcKXorlSuyZcDaOpt4zKdfV9KykoceO0SlYN5B4OyfbACTErCv/GHbvwNaTHoJNnGR5k2KBqAsTXLz3R8eXEF/Hu4PJfuldL4uzEBUiUN+w8Atj5xvO1kVaLT9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aMue/GgpVw8nABjZci2DVgEuQomrkaZd0cUzq031dwg=;
+ b=NlX9DIqTP8XfsC1bCd32zgmKyEP6r62KRKI+SvKHVEyhMcv/bS3hBS0Zpszh4YVIM20R5HsjAwcteGr2VyqOtl242JZOFUpuWoJsrmreFriaGmBbyb54+4f+YAGSqH+YnaRjAjbg3EosEN3JQzte/oM8tkppdaG9kqDEfOi93zsbbZ375k6zN5n55TCFu9vOjY1RHZuAAQ39kLW934rU1V2hVOMpUhFNlNaNFi5s/tKUI8f+HMnNSBXztahLfhWfAcO4RCbB3xuegjIL7ibatz5p4gWJJvRjs42hPdLAObCzZ+xefqnm/ufXFAA1vthZyw9zDO6qrohMxMM8sgc2vw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
+ by PUZPR06MB5982.apcprd06.prod.outlook.com (2603:1096:301:112::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
+ 2024 06:54:58 +0000
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70%7]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
+ 06:54:58 +0000
+From: Yu Jiaoliang <yujiaoliang@vivo.com>
+To: Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Hersen Wu <hersenxs.wu@amd.com>,
+	Dillon Varone <dillon.varone@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v1 0/6] drm/amd/display: Use max/min macro
+Date: Thu, 22 Aug 2024 14:54:41 +0800
+Message-Id: <20240822065447.1333390-1-yujiaoliang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0094.apcprd02.prod.outlook.com
+ (2603:1096:4:90::34) To TYZPR06MB4461.apcprd06.prod.outlook.com
+ (2603:1096:400:82::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240821235205b302068b@mail.local>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|PUZPR06MB5982:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0540c949-50f2-4119-ec82-08dcc2775627
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NUUOi4j4+6iO2nZzwAUC9l/0o1pIx41SCTbpIuNcw1zqBu6+1ygDvu+S88Ht?=
+ =?us-ascii?Q?bnHZ09ogXyj9kuRWfDq2NV3io97MW/lN3D2R6PGtqL1pTkZcv9y9zPRaJv50?=
+ =?us-ascii?Q?PtPTXu0YaGeABoKY9D1KFRSDt3dHZwzvrRqMV5tQU6ZMIl6CZNi2LosPpDlT?=
+ =?us-ascii?Q?iISDVpVd1udP76ogfS0XobOMwXNSUEWwliRY4TFenAAqXrm3JGRCKXZmdDO9?=
+ =?us-ascii?Q?e3lXHlob+0rWpnZFNaM0hXAyGSLb4RsssZYpiQixzAOrRcCbQXPlQ+SCBKqv?=
+ =?us-ascii?Q?6k4qNllI4i2eluLmktBCTgD6Lr6MbUmoBYaRKj6TvUGNjRiFA/T+rAk2OoLi?=
+ =?us-ascii?Q?ekKzhqKLR1SJlLuR0YsHoe258Xc5i/swoVyOKNgLj1OfbxjWTD5L2YB9vinv?=
+ =?us-ascii?Q?R3L4HH3sX8536WwrLAXpKvCpM+4OFBQt/28g6EOUBzdtvLKN5NbPnWwnb7iu?=
+ =?us-ascii?Q?K5i3n/0atXUV2Thgcjcig7i+fhCa7RfgnkZD2cUK+o/YowaJQ4soY92Ow+HJ?=
+ =?us-ascii?Q?zr1c0NF9+qtiTyrrYGgUaf7gGFmaBGr3gJZRCbk5bkL2R08PO/gdJNamLfGG?=
+ =?us-ascii?Q?SA7QFAuYec+fzMnX8DrJ3QOuXdR0LqEmm/JokcWFmEOZxZQhciKupdizKUQT?=
+ =?us-ascii?Q?Lhn959bkANHnTsSdgeHNreHVchHeS9Rzr9Sdk7hFSgurt/FUeXcq34zJb87l?=
+ =?us-ascii?Q?aoP2lXMYJqlTGCuGhVnVGFtBUAHmKu7gdO1dlT47PvQZDq0wqbnWi8cql3Ii?=
+ =?us-ascii?Q?noebkF2D8X3QRyHo8l22pkoTHmQhV0u17diSDMcLfmWU647GWLHe5UkwUpdJ?=
+ =?us-ascii?Q?gCrP6A3FKYkuHCPcWOApUAODCaPmuQ4Ug7RByrpDxberwqKJw0wNfqSIA3Pf?=
+ =?us-ascii?Q?ztSOmQpIzcYA5iGRQAUF66iIiWsqn617pRzTheK4/X9aSDLrRZqrVT4ugaYV?=
+ =?us-ascii?Q?wNe0J9RFx1U7GWdLwP9s+CQOqlbmIFMklWL8PoeaABwqK88ydmiqXVpryjuR?=
+ =?us-ascii?Q?ffMQx33jUdvLAtgYymwm4Hhw8yBhJIBsjrTl9K5+ckogZlgpH+eZh95N8/up?=
+ =?us-ascii?Q?fQOidglLfOpzYKX6xj0428AQHO+boWhKz4SjvqUZYl6Wb/u5OgQQRLMyMhrC?=
+ =?us-ascii?Q?FOLkWDq8x2GCjnuZukAXXBcNWtvnXa3UiW0hKAolDxZkCHGXOdhO4b2uXYp3?=
+ =?us-ascii?Q?ofsoOJ9QbnVeL38iq3MWwc6bJFAL/n8/VmpGVfaXbfrlI+HrA1jjZjP40Tf5?=
+ =?us-ascii?Q?KGzCoR40R5+Ra4GwR9DNiEIUkPLcMM33bsbNAJGCb6EehXZxoBT+IgpA+TNm?=
+ =?us-ascii?Q?9aqg+EpEJxx4UjnbQNssiEWxL4dnXAA3r7MXf2f3xZozs6vZ0V1Cw2uZV0LU?=
+ =?us-ascii?Q?AMXMGNXCn0pLDWi7v6pr74PyEGhup8q5tnfmIDWa5t+UrXhxyGXWyZzu9wEn?=
+ =?us-ascii?Q?Q0/Bu+JyqxA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Wb2aiNlRrRJZXMVLizazQfAqMo0cb88S0vpHF8Vj2MIhpIcfcOFZA2qd3+u6?=
+ =?us-ascii?Q?WmVzv/H8MeG2j1ORIRhfHqdj0d2NES/apJdqNOZvkBVuFkMYLSbxmHyR2ucd?=
+ =?us-ascii?Q?PgmK3ywPuYBghdzwcGfZiNGYv3aECBdH7ebJs7xbJA6A3Ol6bocbntWHef5X?=
+ =?us-ascii?Q?2GSFdR6Enf49x1T7NjlT5Xl2na2Zt/hY+bB+dKT94kfd3reMJZvWjrjmaSSO?=
+ =?us-ascii?Q?AQ8AHzBuUObrqOsqGRRE18eKJTdznEypZytE824pdprLk0ZHxCJMB/2QjwfD?=
+ =?us-ascii?Q?D8Zcpk3NIgbOboY6CKeqWRw602tgzf9FvpRmHSO+3/wGpT8WbUe38kEIdfRB?=
+ =?us-ascii?Q?bdzncd/EBCk1ZBO8JAUAUfc7Qnq3MZvQuMuKS2i9mM4RaiAeyjFlZjwq/3bb?=
+ =?us-ascii?Q?cLGi0x2mgEg7k3VvNeJ6jn5VpiGpXXhyjg7nlLZlM9tPFclTzTwaaxOgLKgA?=
+ =?us-ascii?Q?6/2YwOLBftM/KWVZ6ydVcc4xaT2kxkNgo3VbEP9BilOHqU740yWw5rX6UmU7?=
+ =?us-ascii?Q?h1YGnNc5Nwo05VaryHIS4Dvl6vxveDPnxZetkt3Cl7sgSDw7nzxBxh08Zwvb?=
+ =?us-ascii?Q?iLYaKjCBrlekwyBeKk+Slo4UV7PIojie+owVFlkUFxQdebkdTqGNwh9pdy41?=
+ =?us-ascii?Q?D5vD7eE3LBtIWW/xZ78olF1K5778I96IX/xeMcjPuWoEnjA/8ofsuU5+YBds?=
+ =?us-ascii?Q?wueTSR2KFDQ0obnfqyjXUMvm+7iaSgj5M6KfZuQvpabJKskV3LSb7vQud3EU?=
+ =?us-ascii?Q?7d5kM/t1MlvD4OlZgA6mM4SNED+4ChpIjlnuVNa9GLYjrtY6+MB7W6V2AMhX?=
+ =?us-ascii?Q?f1Ic5zm30ahyyO701AHu2xoXN4SkuE3dv2WLg72ndxJy1N/h+gugVyEhUFoV?=
+ =?us-ascii?Q?59g/hAhDn6hjDhDPk5fU0amhe1sIqAncwdaysnmytShuE7p4QXtdj3HiTJw8?=
+ =?us-ascii?Q?ntGGCNOesqkZpkVr1YcGcS7FaAgjdchwmf7cOy2+CeZw71WvFHezkb4PkCzk?=
+ =?us-ascii?Q?LS+YR2SgV2IQi6n3cKJg1TsVvlhxpeqaFR3JRMPE0cGI9Q4A5vBX0wXH+rxF?=
+ =?us-ascii?Q?eKWLrDqg6NzyCRclsILh3LEkqAOLXHX8Bk617MlM0+UKGzlrJRuTp4OTsopi?=
+ =?us-ascii?Q?U2n7oHEfwN0l8GM256a7eq0WR2+dFw4rxmJCYDJHc+/29Wryg8WQu0nNS373?=
+ =?us-ascii?Q?gLkOLC965Xd439O8ruiG3tzgcklJAggK9NmUBP3DYiJwwf0mSfPUbpHsTsAw?=
+ =?us-ascii?Q?Fu+QxBHrMzwK0Oxt/FSvrv3X4d8XzVrnaKW3zHC2R2SobwkJ/X9cMhy5SFgr?=
+ =?us-ascii?Q?9mV2Hmjn9rlNhxuc6XggcFva7mZQtcl/uajQQ8biS5YuyeaQhjvx089bxi8f?=
+ =?us-ascii?Q?VafOfpv8l2aKfWLh0eWYyv1AXDTeK/UCgm575DE1jE3rhQnHuAbcgf2gU2dp?=
+ =?us-ascii?Q?5meDNE3YX/LKilbrg4wt3UJxyE7fo5w8VHJuUYzDYwjwgh/C/EqYF/m8EQP2?=
+ =?us-ascii?Q?H1DR6fYivMumcdPk7QAOP8VJey9bKBYJ4uj6CV+FlA1VYHnpFL1FnQZI7bmd?=
+ =?us-ascii?Q?4IiO0dZJ0hJ7oE4TwtpGVUyZuSf7CoeAp5tSWF+y?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0540c949-50f2-4119-ec82-08dcc2775627
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 06:54:58.4252
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +ltCh9Y/ijB2s2/1jgYep5dD5xhvO6jLCEGk15JTmU+mkNih46lP8SncvNdFZAwwncE+6O9OTHj2VUUnH3I+Zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5982
 
-Hello Alexandre,
+*** BLURB HERE ***
 
-Am Thu, Aug 22, 2024 at 01:52:05AM +0200 schrieb Alexandre Belloni:
-> On 21/08/2024 07:51:36+0200, Alexander Dahl wrote:
-> > The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
-> > sourced from the 32.768 kHz crystal oscillator.
-> > 
-> > (The previously used Monitoring domain slow clock (MD_SLCK) is sourced
-> > from an internal RC oscillator which is most probably not precise enough
-> > for real time clock purposes.)
-> > 
-> > Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
-> > Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
-> > Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> > ---
-> > 
-> > Notes:
-> >     Picked the wrong patch in the first try.  This v2 one has a slightly
-> >     adapted commit message and more context below.
-> >     
-> >     This obviously requires a 32.768 kHz crystal oscillator to be present,
-> >     but the sam9x60.dtsi does contain that, and the clock-controllers
-> >     reference that, so I assume it's always present.
-> 
-> The crystal is optional so this is going to break the boards that don't
-> have one. I don't really mind but this should probably be part of the
-> commit message.
+Yu Jiaoliang (6):
+  drm/amd/display: Use max/min macro
+  drm/amd/display: Use max/min macro
+  drm/amd/display: Use max/min macro
+  drm/amd/display: Use max/min macro
+  drm/amd/display: Use max/min macro
+  drm/amd/display: Use max/min macro
 
-Okay right, according to the datasheet (Figure 27.1 SCKC Block
-Diagram) you don't need that crystal, you can clear TD_OSCSEL and
-td_slck runs from the internal rc then.  However, td_slck is always
-present, it either sources from the internal slow rc oscillator or the
-crystal oscillator.  And the datasheet says in section 29.1 (PMC):
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser.c            | 4 ++--
+ drivers/gpu/drm/amd/display/dc/clk_mgr/dcn20/dcn20_clk_mgr.c | 4 +++-
+ drivers/gpu/drm/amd/display/dc/core/dc_resource.c            | 4 ++--
+ drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c                 | 2 +-
+ drivers/gpu/drm/amd/display/dc/spl/dc_spl.c                  | 4 ++--
+ drivers/gpu/drm/amd/display/modules/freesync/freesync.c      | 4 ++--
+ 6 files changed, 12 insertions(+), 10 deletions(-)
 
-    "The Slow Clock Controller (SCKC) selects the source of TD_SLCK
-    (drives the real-time part (RTT/RTC)).  The source of MD_SLCK
-    (drives the rest of the system controller: wake-up logic,
-    watchdog, PMC, etc.) is always the slow RC oscillator."
+-- 
+2.34.1
 
-md_slck and td_slck are both registered by the at91 sckc driver, and
-the td_slck gets two parents in of_sam9x60_sckc_setup() when
-registered by at91_clk_register_sam9x5_slow().  The parent can be
-switched by clk_sam9x5_slow_set_parent() from sam9x5_slow_ops then,
-correctly setting the OSCSEL bit.
-
-The whole idea of the patch is giving the rtc/rtt td_slck as a parent
-as documented in the datasheet.  I don't see how this should be
-affected by the parents of td_slck?  Am I missing something?
-
-> This makes me realise that we always assumed the RC oscillator was
-> running at 32768 while the sam9x60 datasheet refers to it has a 32kHz
-> oscillator. However the RTC only has a 32768 divider...
-
-When sourced from the internal rc oscillator, this would mean the
-output would be incorrect, right?  How could one prove this?
-
-Greets
-Alex
-
-> 
-> >     
-> >     /sys/kernel/debug/clk/clk_summary content excerpt before:
-> >     
-> >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-> >             md_slck                          4       4        0        32768       0          0     50000      Y      fffffea8.rtc                    no_connection_id
-> >                                                                                                                       fffffe20.rtc                    no_connection_id
-> >                                                                                                                       fffffe10.poweroff               no_connection_id
-> >                                                                                                                       fffffe00.reset-controller       no_connection_id
-> >                                                                                                                       timer@f8008000                  slow_clk
-> >                                                                                                                       deviceless                      no_connection_id
-> >     …
-> >          slow_xtal                           0       0        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-> >             slow_osc                         0       0        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-> >                td_slck                       0       0        0        32768       0          0     50000      Y         deviceless                      no_connection_id
-> >     
-> >     And after:
-> >     
-> >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-> >             md_slck                          2       2        0        32768       0          0     50000      Y      fffffe10.poweroff               no_connection_id
-> >                                                                                                                       fffffe00.reset-controller       no_connection_id
-> >                                                                                                                       timer@f8008000                  slow_clk
-> >                                                                                                                       deviceless                      no_connection_id
-> >     …
-> >          slow_xtal                           1       1        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-> >             slow_osc                         1       1        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-> >                td_slck                       2       2        0        32768       0          0     50000      Y         fffffea8.rtc                    no_connection_id
-> >                                                                                                                          fffffe20.rtc                    no_connection_id
-> >                                                                                                                          deviceless                      no_connection_id
-> > 
-> >  arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > index 291540e5d81e..d077afd5024d 100644
-> > --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > @@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
-> >  				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
-> >  				reg = <0xfffffe20 0x20>;
-> >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> > -				clocks = <&clk32k 0>;
-> > +				clocks = <&clk32k 1>;
-> >  			};
-> >  
-> >  			pit: timer@fffffe40 {
-> > @@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
-> >  				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
-> >  				reg = <0xfffffea8 0x100>;
-> >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> > -				clocks = <&clk32k 0>;
-> > +				clocks = <&clk32k 1>;
-> >  			};
-> >  
-> >  			watchdog: watchdog@ffffff80 {
-> > 
-> > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-> > -- 
-> > 2.39.2
-> > 
-> 
-> -- 
-> Alexandre Belloni, co-owner and COO, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
 
