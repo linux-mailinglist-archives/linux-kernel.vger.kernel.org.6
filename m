@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-297464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208B795B8A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2F995B89C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9D01C23491
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559031F22230
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2CF1CC17A;
-	Thu, 22 Aug 2024 14:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctOmC7Y9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0A61CC148;
+	Thu, 22 Aug 2024 14:36:51 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAA21CBEB8;
-	Thu, 22 Aug 2024 14:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BDC1C943E;
+	Thu, 22 Aug 2024 14:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337434; cv=none; b=YkbbjtZ3cyemqz5Hse/+rpKP2ddrm5PekYgvbzwo7IvDa3ugAizzJUf/g2AmckbK4bGWPTN7rCXRRXU9gDY6VFdX1DQvg233m+F2rZBCztNYA2OBEGYBo/nK3g6QkRUobs6LlrBOolXnZLEzCvmrxkWmt8S5b4laM+HEu8HF+U4=
+	t=1724337411; cv=none; b=DqQvGH8Uzn2Zi32faDu4T8yNdJZedX1h1lbtwbkGj6vfQIn8VNlTKSqj2h6rRBB7rC52rlCRRp8n/UZomEw4jxmpXbCUwSIKHXBQVj8CCnYEsD4Tg+ZlwWa2NXGh4i0EMGY83xMT5APnFZ5uL2MZOc4EWaj3MY5wXSQPYL3cUMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337434; c=relaxed/simple;
-	bh=ZkpJaD0BSKB4PQoNUPxvvmFUzWqr/hvDqpY1MhGCy+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=faJyZ6h31GaFoU1CAN6zSc0d5iG1n6wvNw+lknGLsQINBDQOo53wMr8tcmhOiIO8VAmEAkZYbzB98mNeCzLbAufvezXLpTg9H2Ornq0hv2hLDqazOePbBMa0EYxVGnt9X7CuMAM397GCaiJWoJw4JHOGO50vNkhhgcNGmrcIeKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctOmC7Y9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72AA8C32782;
-	Thu, 22 Aug 2024 14:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724337434;
-	bh=ZkpJaD0BSKB4PQoNUPxvvmFUzWqr/hvDqpY1MhGCy+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ctOmC7Y9I5pctjwa+bfvcuJQnPKxeiOldkSiZey7L8AQjTgSHSocZlA+zCq72uwB3
-	 LWVTnaND1yi3ccNgiiz9wrc3Cals3TBSy4p7BVwYX94vzhmWuOJzOP3jmenujcCNcS
-	 bW5GDiO9y7HxNnxU5wTD9Dn/akgxr6wDJaGfWz0YZ3L12Hl+VyO7DwR2FVy+V8+pLs
-	 9P4wbYXFM3++q8YqIGml3T1hkx8NQfayBQw3YkMI4GniXfzrHxowf/b6Lci3uYP1Mh
-	 dw+8t2cS+cRA4FyWfmgXtOO3RiS5Gfx7MvRajOXarKVShQF4RViDrSa5HuO1tMNfId
-	 i19liD/cvcqFg==
-Date: Thu, 22 Aug 2024 22:37:05 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v3 16/17] platform/chrome: cros_ec_typec: Support DP
- muxing
-Message-ID: <ZsdNEWX-eeLiokZl@tzungbi-laptop>
-References: <20240819223834.2049862-1-swboyd@chromium.org>
- <20240819223834.2049862-17-swboyd@chromium.org>
+	s=arc-20240116; t=1724337411; c=relaxed/simple;
+	bh=GngTIWVjEdQQRJqZqgEd2ZI2YXyq+Zxg5qyDCTYyz2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ccfcNMeZGMBA7Xts36+DWjf3jjq8ofIAzRFkAJxRpInFFmvuyasjuR2+dY2DZSASbsWw4V2vS5MoIeTG1v2RJm4OFp9IRuLKi6u5cWN5FPnG6lhelK5uisYUhmcRXfRPWF4YuTs/Q8aq1CcsVPtvMh+MNRZh6J7SJM7tppqVRd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803ECC32782;
+	Thu, 22 Aug 2024 14:36:50 +0000 (UTC)
+Date: Thu, 22 Aug 2024 10:37:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <20240822103721.1e2eb074@gandalf.local.home>
+In-Reply-To: <20240822103202.130cf0df@gandalf.local.home>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+	<20240821160316.02c03c44@gandalf.local.home>
+	<CAP4=nvRTH5VxSO3VSDCospWcZagawTMs0L9J_kcKdGSkn7xT_Q@mail.gmail.com>
+	<20240822103202.130cf0df@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819223834.2049862-17-swboyd@chromium.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 03:38:30PM -0700, Stephen Boyd wrote:
-> @@ -671,6 +674,20 @@ static int cros_typec_configure_mux(struct cros_typec_data *typec, int port_num,
->  	if (port->mux_flags == resp.flags && port->role == pd_ctrl->role)
->  		return 0;
->  
-> +	dp_enabled = resp.flags & USB_PD_MUX_DP_ENABLED;
-> +	hpd_asserted = resp.flags & USB_PD_MUX_HPD_LVL;
-> +	/*
-> +	 * Assume the first port to have HPD asserted is the one muxed to DP
-> +	 * (i.e. active_port). When there's only one port this delays setting
-> +	 * the active_port until HPD is asserted, but before that the
-> +	 * drm_connector looks disconnected so active_port doesn't need to be
-> +	 * set.
-> +	 */
-> +	if (dp_bridge && hpd_asserted && !dp_bridge->active_port)
-> +		dp_bridge->active_port = port;
-> +
-> +	is_active_port = !dp_bridge || dp_bridge->active_port == port;
+On Thu, 22 Aug 2024 10:32:02 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Why `!dp_bridge`?  When will `dp_bridge` be NULL?
+> > Yeah, it seems there might be multiple bugs in the user workload
+> > handling, the other NULL pointer dereference and refcount warning
+> > above might be related (but I have yet to reproduce it on an upstream
+> > kernel). I'm also going to look at the code and will post any findings
+> > here.  
+> 
+> Yes that is the second bug and it is related to the that this addresses.
+
+There's nothing protecting the clearing of the kthreads and calling
+put_task_struct(). Here's the fix to the second bug:
+
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index 66a871553d4a..53de719f35cb 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -2106,7 +2106,9 @@ static int osnoise_cpu_init(unsigned int cpu)
+  */
+ static int osnoise_cpu_die(unsigned int cpu)
+ {
++	mutex_lock(&interface_lock);
+ 	stop_kthread(cpu);
++	mutex_unlock(&interface_lock);
+ 	return 0;
+ }
+ 
+@@ -2239,8 +2241,11 @@ static ssize_t osnoise_options_write(struct file *filp, const char __user *ubuf,
+ 	 */
+ 	mutex_lock(&trace_types_lock);
+ 	running = osnoise_has_registered_instances();
+-	if (running)
++	if (running) {
++		mutex_lock(&interface_lock);
+ 		stop_per_cpu_kthreads();
++		mutex_unlock(&interface_lock);
++	}
+ 
+ 	mutex_lock(&interface_lock);
+ 	/*
+@@ -2355,8 +2360,11 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
+ 	 */
+ 	mutex_lock(&trace_types_lock);
+ 	running = osnoise_has_registered_instances();
+-	if (running)
++	if (running) {
++		mutex_lock(&interface_lock);
+ 		stop_per_cpu_kthreads();
++		mutex_unlock(&interface_lock);
++	}
+ 
+ 	mutex_lock(&interface_lock);
+ 	/*
+@@ -2951,7 +2960,9 @@ static void osnoise_workload_stop(void)
+ 	 */
+ 	barrier();
+ 
++	mutex_lock(&interface_lock);
+ 	stop_per_cpu_kthreads();
++	mutex_unlock(&interface_lock);
+ 
+ 	osnoise_unhook_events();
+ }
+
+
+With both of these fixes, the bug goes away.
+
+I'll add this fix (after enabling lockdep and making sure I didn't screw up
+the locking). Can you resend this patch with just not calling cancel if
+kthread is NULL. No need to exit out early. I still like to make sure the
+clean up happens, and not assume it will already be done.
+
+-- Steve
 
