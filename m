@@ -1,185 +1,192 @@
-Return-Path: <linux-kernel+bounces-297274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697F295B567
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:48:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8536B95B547
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949171F24B13
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:41:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9F7CB23902
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0373D1DFF0;
-	Thu, 22 Aug 2024 12:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB441C9ED1;
+	Thu, 22 Aug 2024 12:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JWNOYtks"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2063.outbound.protection.outlook.com [40.107.255.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K9Dr0N76"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFEB1C9DDA;
-	Thu, 22 Aug 2024 12:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724330490; cv=fail; b=ngsAwYHF+HRYcPiVdfv9mWGZcUxGlgQDXzjHNR1NSn4UrInzUgdENRN7gFYhDmKpQ8lnGUstC0RMwDSkoEZA2MrcIo+uOPRrdByt8rC4aRMaiYy3g0U5ULFBlAZgjzJeKdMxPnCHvUKLDxbCkix9k5cnXvdysXxDuegN6/EZJp0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724330490; c=relaxed/simple;
-	bh=WIt0z/bc9gFwhJfuhW5wgIGc7M4P/d7O4rPkg2vfVy4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HFftMPpDntXlICsQY+08uuvvNABYZW8E0duaeBjLtOuaLz/8QOqUcwbcvhyweAV7zJPLMSSMPtApMGFRv4PLaMaXaC1TfZ4rUaMAzlSgjA5jPXw0rquwMVghgYSOdT8BeXIcpTB51ZuBdxBnOuC99D6JqBHVahlasyAAPmseu9w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JWNOYtks; arc=fail smtp.client-ip=40.107.255.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VCIZhfsEMMQUzmJ5deWiQPQzjjDce5v8Ma1+Oz+b4xYNUv5d4/5DUYMgeo7NSYX/wb4gFI0ojfKFRn62TYUjEh4qNUX8SOfNGsfzP760AyLD1D7Zw9fTRFY0kArj02ynVI50baBQTC3P2nYApp5qlGaW3yIF9FNy/+2bsArh8PPgFV1l+kfeDzoiFrH8D/Xmc/750ww68FuXx0sz7tjiW24iFN5qITsY2gLC3dv/bYIlf9Z/SCYxSbKOLx412VEGJevGqhmQFrfFzw2+phj+SunsxDSMHSDHfgRjRYD3h5m9eULnbpxTcfpSr6NhxWORtVZA40svKzojGZeVsYGCzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vtPDZwyW3MJIy27bGPusSYZoacn8pxx2u7hO4cpYNRM=;
- b=DeT+NX1vZQ+FQ8Ye+sSWfLW4Q+ohqXOpNnaPPoR/RifrPfhF8Mc2qs7kEwFvSd6EMgIrCdmMj/TSpdiq/Cqvw2H8dg55x5wyKNWUTWlxyjqw9wB11iR9biTFPD4+uRWcBXOs2Uh9btixD4cYIWGOlx43aMSytyf7vNmRIHAbdOfOgKUdICCz9oYUJ2+q/KazyCwXgDKKHVffalWKimXxRdSxnc9DAQWwhl5tg8JezNnftjDOHX7UklgL8rznxggA4XSIwIUTwNvpm0WkCA16q23Jcfb84X7ntQ5fIoaSzhss8VMKVkASOntmstpqSOw5U2EDEDiJRYxntZ5muFW7Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vtPDZwyW3MJIy27bGPusSYZoacn8pxx2u7hO4cpYNRM=;
- b=JWNOYtksYrBFMKfHLPglF5fKYsBsItUjnicijgCnTuh02+19gmCJqUY9pec1XGLCeZPg1L4N/0c1EWtWyXCEmFN3Ykaa8sLveeXe4FRId+e2O4pCqEfohKlmWCUbzEBtj9+Ao2Wy96zGmIiJ3n+doCQfsfIJ/Z+TWnGqLAmLFqkoNzK9lP5ZtnLOzjXSmzZembeZNdl+86WcCfzV4AMnIw/t4+s2S75Dc/w71cwkV9UCjHEbh7F1z+i8Ue1Pk9/k4I6X45p93MnAsrASL7YXSq+B6PeqWmOn44z3JAJFvjlsGRERqfRa+GvjoREwciV16ak+ImfMRksIKmQHfugi3A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by TYZPR06MB5997.apcprd06.prod.outlook.com (2603:1096:400:335::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.27; Thu, 22 Aug
- 2024 12:41:24 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 12:41:24 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Borislav Petkov <bp@suse.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Yang Ruibin <11162571@vivo.com>
-Subject: [PATCH v2] drivers:block:Use IS_ERR() to check debugfs_create_dir() return value
-Date: Thu, 22 Aug 2024 20:41:06 +0800
-Message-Id: <20240822124109.2259697-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0165.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::21) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDF01C9DF5
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724330751; cv=none; b=kmtxEbhme+ciWF0uJJ5cJmZFnls6cZ4akdmbSs8COwcrUb0CPYj990msaPAtSbXK2bq46yd+Tk5GPnpaazs9/8eVxUp7SjKQhfgTX2sw2KfFAKxd/+zOmDKdWJ778YvEEp1Ampp4n2a01UmR/jYPxex0+X2n2XKwir5ed2UI4HU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724330751; c=relaxed/simple;
+	bh=yoETc8josiIKxYd6PCEzQLh0A57oAlHqLJq3xfUOsqk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hK8OtsOk8WxOa8UDw1cQxF6M4OaakABtXPIqFHpT2NfB/875OgDsJxub/99GAn/Vig75/9jY+zSCqR+qph9Z6P6muZMtIXG8ZCcZ4l/YJFh2OREyWiZyc5zvzmUJ3IVPXjPC4EiEsYMPYvlVVAL1jFtikJqW6gfPdqJ5U1mVqPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K9Dr0N76; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42809d6e719so5441235e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724330747; x=1724935547; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TziPBUOm9WXx2RorriSSxIgK2odcIsd7J/hDhpc2D5o=;
+        b=K9Dr0N76uobB6o5KpDQbECDRii0wiHSWjTTPEQiUrfX2Yo/p1/npzJAbYAaOcosVE1
+         2FkIpmiMAehPjMZFXt8D+G7SpeHjI7T0ZlVBIcjB/W/KneNgQSFvPBsIEWb4rqlNSIxc
+         lQPvRfLD9csBsD7cWKqAQ15KBL5YZCHHPuA+R45hlFh25F45ad2OiNZ/0oZD7T5DU/6b
+         OzScG1NPG8LyxLe+lfz30VZyGwQw6m3ETaU3lWDVMlvEwlyphTCyblmgT+C5qD7vAMvJ
+         gnYnCxCyXwi2N1FSWL/YIhTSTOXBoz1aknRiK43rpniOBTENEWwCzssnakVPZ9Zq36x2
+         0yIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724330747; x=1724935547;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TziPBUOm9WXx2RorriSSxIgK2odcIsd7J/hDhpc2D5o=;
+        b=wnHWQe+3UvMneSvuN45ILFXrmuufErs1lrrWxm2VZZVkvPdwt1hEXBolZUxIuuCb2J
+         +6HfFZ6tjd/XNMcqSaIr7sV6l1LFf40OI+VrNVn3Bl528/nbxR+hBtyqYvISwan4hTv5
+         mFI+w/9x1SLYl615TQcZ2R6+rG69/RiGjhu1cTZ/v2pvlIBAIWo/6+qcV/+CB5Bcx+EJ
+         zp0uXIEJmZ3zgS3Qj0ZtfzZs5BPceMqpdu0vDefrf00BeDZbjgpVZpn+xK+o4dWM1XzA
+         X7YJwhpa62csLaRH53eAK2U6C2hZJwPtyJcsmRWB4v4+nKg19l95ICqPY0/N2OvcBx+H
+         Tr/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU8kbZ4/dv6UO+HQN1aECZx8gRZPe+hl/oNjf4N5ppailwKnKZaQj60RjS48YQ/iItlaV1lPVZa8US6lPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWVkjhENz2MqzeT54YNmI+fP9k3oNNB7Ejxenpt+abBSbDBqUK
+	NLZOETXT+ca4SHmLZ45vq0Lwhv3DPj/guDfKdXIRte0UNZZaAhXo5AGm04/PzlI=
+X-Google-Smtp-Source: AGHT+IH0tUq78bCn9f3nkkiY/CPIRenPfJA7C5++cEDXkitHmsonwTgrf4H0CBGWrdvPatL9StsXdg==
+X-Received: by 2002:a05:600c:1992:b0:426:6ee7:c05a with SMTP id 5b1f17b1804b1-42abd23061amr38113545e9.15.1724330746830;
+        Thu, 22 Aug 2024 05:45:46 -0700 (PDT)
+Received: from [127.0.0.1] ([2a01:e0a:448:76e0:8da6:6d6d:c8ed:16c5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac514e269sm24032195e9.2.2024.08.22.05.45.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 05:45:46 -0700 (PDT)
+From: Esteban Blanc <eblanc@baylibre.com>
+Subject: [PATCH 0/6] iio: adc: ad4030: new driver for AD4030 and similar
+ ADCs
+Date: Thu, 22 Aug 2024 14:45:16 +0200
+Message-Id: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TYZPR06MB5997:EE_
-X-MS-Office365-Filtering-Correlation-Id: c0d804d2-6ad7-4b0f-7c98-08dcc2a7bbb6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8Oeiis3+rDhKzkfGQeXZ6ulVAoRA6vY9AhXZgY/7/RwypbhB0oDjLX3HGYp2?=
- =?us-ascii?Q?4GRz3Zj15mE85uYzmBJquvUhDsE4+FBuOJlXNFRx+vYOEk6s+H7JMSACuTZv?=
- =?us-ascii?Q?XOBVFfwr93F/qEBKYt6+ALGO5UmbzrqMX+eHiwbXE6kBpFPOWvGQVi7Q2gRv?=
- =?us-ascii?Q?OdqhzLXKoAqD71u7+d4CWq3CaWUy3WtavQIFE1MIMvwTHufmqVGKJBH2cwZ0?=
- =?us-ascii?Q?VdwP9S5ToRxp97gAxmdSQXn927GKMhFTB8Ja7uxRdAeWMP1a5x/3jWDkpzR5?=
- =?us-ascii?Q?wWOvyrMVRreedHuCKF8U8CnQ96iDhVNN20x4BezR1198bLDBBtpnUmy8dtnj?=
- =?us-ascii?Q?P2T/iN4GEZWTO9yt/n0W1J20mGmgQMmo9QOZ1oFWi1c0u1V1x7ajBWOpQ0uM?=
- =?us-ascii?Q?nbws9PENWP7n2Qx7XKD12bMhYuAfCw8tIhdoSFvrw4qlhPI/NKzWhPWvhpkd?=
- =?us-ascii?Q?32yla/UlL6/y7ieo45OPFr37BAKxvsr8aCVWg+wGLZUeu+zj0Ednxt8Noavp?=
- =?us-ascii?Q?pY0shlA9XKmTIoqiCd6bkVfoJCOhi9Dq+CI+lj24kfXgqk8QSDvkG8/33FZ6?=
- =?us-ascii?Q?cm3VD7/ApjrUAhWmxRF0sn0ENaT4lppTf1pXa/MZEF7DBfzvumRs+dS/fM+W?=
- =?us-ascii?Q?NHy/cJW4bWlBr2op5N5qLdXBLii/2LHMcScdn+t0zIgjHnru0XrAsDp4PJ76?=
- =?us-ascii?Q?EkPIJxD1cgnAUps2kkM6tT4VZTLfBiQivEmjo9lAwvIuHi9li7hXDM54rMWd?=
- =?us-ascii?Q?FlONn5iD53ZP0aRkr5G2gb9U0kUQ0wd7x4uMfl0fOYyCBbd/9bwQM1AVLUyF?=
- =?us-ascii?Q?2mVpKOejOxG+oIr9y3axp1td6yCRfJ7KEgkxI6hegtUziikeQZ0nhM0Ej8XJ?=
- =?us-ascii?Q?IwmE/H5gQticErWxnha8LEKgoV5gXR5J/Qj09M45cKY3qjhZL9Zs1IL5Pwtp?=
- =?us-ascii?Q?Ck8fAgo809Gxs7exhD1fmFXjmAdLg5chkNgqC8udBS/Feuw9t648W7sbS5uq?=
- =?us-ascii?Q?covj056ucRh1Z1YO2jbYaENuUwvy4JgTXwQII7Fp+k088bjjHbrAGhWyAUKe?=
- =?us-ascii?Q?GcAc9HLWOhRbcmfYvklWeMKZQn3hyPnsBJYr6mI8dnu4gbNRTvONMCOO0SPT?=
- =?us-ascii?Q?NsGwJT/6xcDBO/zSA6X0JKX3AdBx3GxM0H1HXjw9WFSV25E72y0EsFB+5wXl?=
- =?us-ascii?Q?WpybjG7Ohhy//0IgsDqxi6aqowwvTX2+vrc+6YDRi4nnK4aeu/4H51JId9v+?=
- =?us-ascii?Q?gJ8EghoYI69alyQt3/2v0wru4aqprvhEhL1Ie9RLvbHxNGOBRb67HLN4mt+B?=
- =?us-ascii?Q?1TsGVAi0wpUs98VaCZngQgJAgShykT2oOeo36YndFkjK5oVXJ4r1UnjOnKIt?=
- =?us-ascii?Q?3AZI4/kJ28jG4E6QywJ36WCk4qjcI92OrcYEDv+3Jhl7np2ixk3shvf7Lwcx?=
- =?us-ascii?Q?d0bHzbbWW7g=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bfLW2mbjjcCj9Cot3HKS3uxKBp5ApurK7S3S5BZS47ZOiDwrvtiJ1BiZA0fw?=
- =?us-ascii?Q?qHBCMMxu+gQvZF2/8ZNwKwJgRFLH/Jfh2wEyd2WXr/3AF7WeKvEiijvn0Cbf?=
- =?us-ascii?Q?ItTWscpTBFRrnFJIQNdyH9L11V1mg7kvdiNKJsLx6SvEBiANpF9DnxWZIUCX?=
- =?us-ascii?Q?hNDF9/tNVTDEAwOM1fAWzwOiV49FdteyuVUdd4vRKsZ7OrWcs0+qFemtqc2c?=
- =?us-ascii?Q?pSn83HOVwmnurI+OGT6zCHvGvdYijsQAS2fq2mo5gYS0hgRioaPZPffCzazZ?=
- =?us-ascii?Q?IKMbb5B1CfvjNy85djiHarlzSdUE/742OJH+Mhqq+MoCPLNANw6Bcr4Q2x14?=
- =?us-ascii?Q?XhEDI/1XzRxZxNEtz8e7Q+gOT4LqQBOxRjlyHKZFIPg+PSuO3Hta32EXtf3f?=
- =?us-ascii?Q?gRP7RuBVaqnTV5h7k0tFd7TvUzpvzUy+CTs1dxV8jIMttQbRdgaXQV0q4lMd?=
- =?us-ascii?Q?1Ut1c7Q504n3hBDTSGDbhQiqacZiux+gChCPQlcpiPueEcBQW1Wfuay3a/3g?=
- =?us-ascii?Q?uBasmB93rblT0XK0zkcrPjVwk44VpVEtwbXhg6t9q/fvqpub0fYChoAXbqm1?=
- =?us-ascii?Q?f4Z+Jazof7c1ELZAuiUP/ko4UicxNOZrPvyqiExyfbGaY7H7VdZAit36UwIZ?=
- =?us-ascii?Q?CG8xgJMngwsxGQ+VKLt3olBePTSWyMAcM42LvCmUfAP7r0fBdRMQhLi0UTYu?=
- =?us-ascii?Q?NX+/KdR2uhT/+Jiz08ZgVlYwy3lEs6+d5SD8gmUKGf8VNXioLGKU3fy7Y9WU?=
- =?us-ascii?Q?aZU2nstWLy6FAUclyMoknQjjzPAk/R8e8qnIBm/zu8Q2MaAmwW6YJNOuPNOk?=
- =?us-ascii?Q?57xZPs2dktPs7n+5eOBzAgtJWNpwiAN8PnpQKjAR6XBs0Nok+QQ/XZe+lCEX?=
- =?us-ascii?Q?6Xag+kiCqqws5j628sofi3ZV36WDKTB8am6Co9/JCiz5I8G2Y+4G5mUVzQK6?=
- =?us-ascii?Q?QEhlhmr+oaeSKdW8n5asLuBXa2PwYX2Ry1pCclvc/c3z8C7iNH8UWJgGqwTl?=
- =?us-ascii?Q?AyDMgznfkazNKFTjaYhJYlu3TFCkbV+NFaH9HvD9fQ4Pej0AoUYuFNB8GdA+?=
- =?us-ascii?Q?ZwAEjQ4Jb0erPG8gt1MN59Zuy89VvFq6DZAI0oP2z9f8GfXHeo8prk2kh0S7?=
- =?us-ascii?Q?F6ALfqBx+1I3rMGLt5DJzrlyeaTNn0DsI+iM2keAwA03dq1ZhBVHr5nBLLZu?=
- =?us-ascii?Q?ETXe4QMiXZOdTBUQy8pstb437Ss/cR+0loq/NUr/YwTS7zk0kMoiVYyrs2P6?=
- =?us-ascii?Q?TQlWFUCOEVOYAhE5vwZTJhG86hXWJpxypRozQm5Tv6TIrpcdiFAsHuWA1bVb?=
- =?us-ascii?Q?S55UKrmwAIKQHBUS4XTcOKj3hAkTY7mrjJo7aoWLF+gelpqVqcyPE6l8vqyy?=
- =?us-ascii?Q?HBqB2OS16erv7bYJqGqOeoXIxu0j2Wyd1c7Gb0RO+zt1xAcL06OgGBEJUSpM?=
- =?us-ascii?Q?9W8Ndn6cpJV4Wv5odo5q27Nz8H+o8qp4nJq9/tZIHDk+wavJhee++7iLhhIa?=
- =?us-ascii?Q?diYQ4Werybg7odcQBWC0Ls50Z/LZZOs8adxNh3WoClFiDHPVAIkn6YTeLnJh?=
- =?us-ascii?Q?BT9FUH5ijDzlJxcReUCNcaQ8/t52DZtUvcT5Xj/P?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0d804d2-6ad7-4b0f-7c98-08dcc2a7bbb6
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 12:41:24.6664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T+VV6P8YnkGe4sftQVFdnKXuHgFnFoLZ/ESLedW+ztDJIgMv6lYXafjuxUPCAxCGepaqX4WzFmk0aIW8ijMeiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5997
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANwyx2YC/32NzQrCMBAGX6XkbGQ3DQn15HtIkfxsbaC2kkiwl
+ L67afHiQWEv88HMLixRDJTYqVpYpBxSmMYCeKiY6814Ix58YSZASFBCcrKDGR03Xqoarhk5GtA
+ SGk22QVa0R6QuvPbkpS3ch/Sc4rx/yLitf2LlgCtvlJYOayvpbM08BBvp6Kb7lv+4+ofbeQcKw
+ Ynawrfbruv6BvomNZnvAAAA
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>, 
+ linux-doc@vger.kernel.org, Esteban Blanc <eblanc@baylibre.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openssh-sha256; t=1724330718; l=2951;
+ i=eblanc@baylibre.com; s=yubikey; h=from:subject:message-id;
+ bh=yoETc8josiIKxYd6PCEzQLh0A57oAlHqLJq3xfUOsqk=;
+ b=U1NIU0lHAAAAAQAAAhcAAAAHc3NoLXJzYQAAAAMBAAEAAAIBALJZcW6pLD4ksSdWnXd5r65Ze
+ 5Qc5pH7+DmmbKJasOXeVYRPFEmnORS7pwhURG11AMVFmnCVYWj+wPYrbCEeM7XKfO4oQzc66kYB
+ 7y0RrFwjoWKofytjI026zV5b2pn1JAItgu0Ijth+TSa6KVOTSXqqiVzOTDM1WL0hAIIzpkhE3Vt
+ AVJrFDsh/nWed9OpeSS+S6e3ZxyJtlnhqbVIemcDmjwMihtFgTKeJWlxP7KGY/RQKPF/Ef7pS+O
+ AckOrxuqGKvpOiNVCmuQEUQM0+r4uvwtja4zRSl+huqW+g1nLyReoZPzFwfJWREd+89dtTJTXN7
+ xmmFNdX6KzRKBLVw1RY/R3mhAd+MkrdiNaRNKj+LO1QIxPoW90cPG9WpdVDUZf1VxhdciB6Hlxn
+ lfEDFuCxU0n5H+kC4eiZvw+c9D4xX7iVdjPTMEaE6GBQNnMncdljBwA5NVN8WcaUhnAQnq7qhcz
+ 85L2Br7MPqe3q3J/PHIe0nHO56j7tTY6cFFs/ckqcQSTJigh2rA7InN1d7GqZFLzlewRTGaCY+M
+ 93d7DCIuxTxJWRpVm7NW1FBeX6d00+dAcQ/dS+jmA3kcdRoWtH160jmmYYvOgrsQTcMIQrPtK+B
+ rULRmmIvEIJMF5UfNmxruWmWn6MM/xeejTNszoKqrORpbr7q3BnkKt2y/KdAAAABnBhdGF0dAAA
+ AAAAAAAGc2hhNTEyAAACFAAAAAxyc2Etc2hhMi01MTIAAAIAOcwMZFiJqxgsZdycbbpIOFEaiRS
+ iTgFrNXG6NQKEOjEjm0Nt5hnzf93DqlhFL9FKnRwptCQMORJaxvUBNwEn5gYJ+f1VIHqdG++kbU
+ hZMzHFU+49QD2RxUgakRshe+wECARgW3B/7t/XH5Vnvh6I1+GhcmoHCi2NnXjRCX+8x9p5joJvO
+ c2QXAJk6FQordb0snje9m9xElhbQMuBY2yF5LIaKSf1nI4fPreEpcbwt8s/5r/WGX+cf0RDOoqc
+ jwbOkX9l4IJNCfL35tUjbH0eHWpTmCRj3nBUheLw3ayDaxm5kCLMxaOqi/+4T6hqQ3WuFdV0OYT
+ aRk8P/vOYKqwaY6+SV8mf/HDbct+zHbP5IG5fwqHm8BS1Y/+WCRssHgMu1vcwbAIyDReOmJ5Mjs
+ s2zaLi0Jt0ZA963WoW1OLZ7RhZKj6nGd8JYwcaZDUgG3bIskj08Y27GE47aYHOHzdkv/hNR9PKK
+ 6ztj/y/310XHqLg8GTOIS6cwfS5+HaPexDW0K7Z9JgE23bpMoHRb+iZRhZ+zYcbIAnV5s3Egr9b
+ 2+p2aOw2MwYM/dNa3WfINFqH+0+oQk7b2EojqgWkl3Ht+uINcv6Yf2Wnh7vr/HFBGPYDyE3ZLVk
+ t78fDKB9asOz5lTOoUaCXXfgyqUyFoLgJ8WGw0mErwQvZeRN0xEDBL2A=
+X-Developer-Key: i=eblanc@baylibre.com; a=openssh;
+ fpr=SHA256:LOxhPHcL6HLuSaOVHuI2Yq7hvD2blbngN1ohWi2rJOw
 
-The debugfs_create_dir() function returns error pointers.It
-never returns NULL. So use IS_ERR() to check its return value.
+This is adding DT bindings and a new driver for AD4030, AD4630 and
+AD4632 ADCs.
 
-Fixes: 011d82611172 ("RAS: Add a Corrected Errors Collector")
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
+This work is being done in collaboration with Analog Devices Inc.,
+hence they are listed as maintainers rather than me.
+
+The code has been tested on a Zedboard with an EVAL-AD4030-24FMCZ,
+an EVAL-AD4630-24FMCZ and an EVAL-AD4630-16FMCZ. As there is no eval
+board for AD4632 the support can't be tested at the moment. The main
+difference is the reduced throughput.
+
+To: Lars-Peter Clausen <lars@metafoo.de>
+To: Michael Hennerich <Michael.Hennerich@analog.com>
+To: Jonathan Cameron <jic23@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Nuno Sa <nuno.sa@analog.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Michael Hennerich <michael.hennerich@analog.com>
+Cc: linux-iio@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: David Lechner <dlechner@baylibre.com>
+Cc: linux-doc@vger.kernel.org
+Signed-off-by: Esteban Blanc <eblanc@baylibre.com>
+
+Changes since RFC:
+- Reorder IIO channels to have the common byte channel next to its differential
+  channel.
+- Extended names for IIO channels.
+- Diffrential data channels are marked as differential channels on IIO
+  side.
+- Use get/put_unaligned_be24 for offset and sign extend it.
+- Common byte channel now has 32 realbits. This will be the same as what the
+  FPGA will return, avoiding different channel layouts.
+- Fix missing newline in some error messages.
+- Add comment for the use of spi_sync_transfer instead of
+  spi_write_then_read in ad4030_spi_read.
+- Use DMA safe buffers for regmap operations.
+- Clarify calculation for number of bytes to read from the device during
+  conversion.
+- Formating fixes.
+- Add documentation page.
+- Link to RFC: https://lore.kernel.org/r/20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com
+
 ---
- drivers/block/pktcdvd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Esteban Blanc (6):
+      dt-bindings: iio: adc: add ADI ad4030, ad4630 and ad4632
+      iio: adc: ad4030: add driver for ad4030-24
+      iio: adc: ad4030: add averaging support
+      iio: adc: ad4030: add support for ad4630-24 and ad4630-16
+      iio: adc: ad4030: add support for ad4632-16 and ad4632-24
+      docs: iio: ad4030: add documentation
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 7cece5884b9c..030b7a063a0b 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -498,7 +498,7 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
- 	if (!pkt_debugfs_root)
- 		return;
- 	pd->dfs_d_root = debugfs_create_dir(pd->disk->disk_name, pkt_debugfs_root);
--	if (!pd->dfs_d_root)
-+	if (IS_ERR(pd->dfs_d_root))
- 		return;
- 
- 	pd->dfs_f_info = debugfs_create_file("info", 0444, pd->dfs_d_root,
+ .../devicetree/bindings/iio/adc/adi,ad4030.yaml    |  113 ++
+ Documentation/iio/ad4030.rst                       |  129 +++
+ Documentation/iio/index.rst                        |    1 +
+ MAINTAINERS                                        |   10 +
+ drivers/iio/adc/Kconfig                            |   13 +
+ drivers/iio/adc/Makefile                           |    1 +
+ drivers/iio/adc/ad4030.c                           | 1141 ++++++++++++++++++++
+ 7 files changed, 1408 insertions(+)
+---
+base-commit: 3545ef5c627c761c76bbdf71e4b4d423fe30e51b
+change-id: 20240624-eblanc-ad4630_v1-1a074097eb91
+
+Best regards,
 -- 
-2.34.1
+Esteban Blanc <eblanc@baylibre.com>
 
 
