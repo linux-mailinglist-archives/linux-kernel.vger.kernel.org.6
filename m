@@ -1,229 +1,112 @@
-Return-Path: <linux-kernel+bounces-297771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2FE95BD84
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:40:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C8795BD85
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7A81F24B47
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:40:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACB72859DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B6A1CF29E;
-	Thu, 22 Aug 2024 17:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABF01CF285;
+	Thu, 22 Aug 2024 17:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gqczij/O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gr6enR+3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E33B487AE;
-	Thu, 22 Aug 2024 17:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC12C487AE;
+	Thu, 22 Aug 2024 17:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348411; cv=none; b=HJi5zemtzggABwELkqDCzpDZaD/Khw7b6nZq1XaLCVCRO+ZJXzNU5JnbVJvtmr7ey1HBbr3xy0vAn17HdBhtSuRCJfgfPo4rOLnIUAngl5kniF6MoEjx7ftDaZLkdnBABq0y5io+LBHyWUIGJk/RMa6c4ZRTFq38+7tkgwevoC8=
+	t=1724348512; cv=none; b=ZxR95+q2kWgbmtdoO6Q4i7gFcajdPNMFl2j1FuKJAP0yq5eb9U5JQ+kZ5Ukr60+8rGcdFJD/yWZn9pyGgPJIQrc4/BWDNvHEkf/YdHaD39X939vMblDbMh5xMTCm33sQufnj/yEb7E0V4a2tkjrSd+gSCJid2+IiKrJ5Ry96z8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348411; c=relaxed/simple;
-	bh=bOvfXFEBJ7hru/SrBmVn2vRabF2j+tb8OvK48mGn5qA=;
+	s=arc-20240116; t=1724348512; c=relaxed/simple;
+	bh=EIA1hEYwm1C2TI9GOWGiHROnOXNDw/yWFqOCejDP7oo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4KMgucm4VNy/vePwCVZR9TDyPI943jf8hoeDoTToiqORuzGcrYBdHFcgQGdFl7l4WDJ0ivN/etVNd9E/RSSAgQI/ZSUWJutbXoUJNJw5T3Kf/wQfQg8X+tht1PA2eSjGu4mbnY18LyCU6WkioD2wdSV8axqxdzBDGMeRuQIorI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gqczij/O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1898BC32782;
-	Thu, 22 Aug 2024 17:40:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQFT0RRuc3XPuqrZjNVm8CNcF2iCjQ5oxjFc8ZA/aYpWDMt34UjIJmSGtTWCt3I8E+gbqfB3QVhbJgcgtarzBZxeF6spBzb81uFFIwCTUhRw+1Vn8JmLga5MvRkln5AjABGj5ayMp1vNt1UbsdZq17Ea/6l2ogn9XhfTKXGfI64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gr6enR+3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63DECC32782;
+	Thu, 22 Aug 2024 17:41:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724348410;
-	bh=bOvfXFEBJ7hru/SrBmVn2vRabF2j+tb8OvK48mGn5qA=;
+	s=k20201202; t=1724348511;
+	bh=EIA1hEYwm1C2TI9GOWGiHROnOXNDw/yWFqOCejDP7oo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gqczij/OrYIZ/u9U8W1H3wa6kMNVmANz2nlw/TKj5o/u9+b94ArUq7w0UShqBAtNb
-	 hd/tEE6qLMwkogpM5zMMQegWBkLHqp1JasWwPver0olKGajV0Gq20RDxx/S8Gf7KZJ
-	 9vNGwcJjIERJ4a5dqv60oF+kR/Uxt7FcB/Dpga+B6Y0MxYAzz0JKrkmE4ioLNj8o8G
-	 5390EZNhWKBG+Ea/xhVvxSVtZri5zh8YaxYbzkkO0lsrUkXCQCykoH4pY0cCWSWsyq
-	 QgzHkH3OmLhG2+SHLagYKytAVuBQznfI0o8+vjmuQfjXgz08UBpPNdv8LgwOlNptvb
-	 2QdijYKxXwdEg==
-Date: Thu, 22 Aug 2024 14:40:07 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
-Message-ID: <Zsd39zG9BuGpZ8aA@x1>
-References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
- <ZsdKhLaPy-uzKsuH@x1>
- <ZsdUxxBrpbuYxtXN@x1>
- <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
- <ZsdxinrZP1kHINWT@x1>
- <ZsdzLmIFWRqsXeXD@x1>
- <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
+	b=Gr6enR+36v6pPq8NzbStvk6GTD120FWyjr6SQHOSZ7oQZpGhHbE+1VFa7NmXzNFnV
+	 qi9pD51GM1eorajAlFle0jVSHC7W6LbGVrGiREVBiuNEiHH3B3qNcmrRVlqKJFaMQV
+	 p+i9fSRcqakGYyoDrlBKXgaSoNXToyXX3zswYTJ20xS6GPs5aBC6JREBgC7bYxuKty
+	 samd23N8OLvgX9JLDVN5PkLwpLwejSwKlmXBzsTjJMNECaEERrZ62oEo0ixmayO4bF
+	 15Btlg/GzTisTXtSygtdIZjkZssPtoTcuZ/ZMqLpfh/QuoIHPe63hDWTmkKR9w5q7e
+	 RFUJdoo4HNANg==
+Date: Thu, 22 Aug 2024 10:41:50 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] xen/pci: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <202408221040.2961A81@keescook>
+References: <ZsU58MvoYEEqBHZl@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
+In-Reply-To: <ZsU58MvoYEEqBHZl@elsanto>
 
-On Thu, Aug 22, 2024 at 07:31:55PM +0200, Sedat Dilek wrote:
-> On Thu, Aug 22, 2024 at 7:19 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Thu, Aug 22, 2024 at 02:12:46PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Thu, Aug 22, 2024 at 07:02:52PM +0200, Sedat Dilek wrote:
-> > > > On Thu, Aug 22, 2024 at 5:10 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > > > > +++ b/tools/perf/util/setup.py
-> > > > > @@ -17,7 +17,7 @@ src_feature_tests  = getenv('srctree') + '/tools/build/feature'
-> > >
-> > > > >  def clang_has_option(option):
-> > > > >      cc_output = Popen([cc, cc_options + option, path.join(src_feature_tests, "test-hello.c") ], stderr=PIPE).stderr.readlines()
-> > > > > -    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o))] == [ ]
-> > > > > +    return [o for o in cc_output if ((b"unknown argument" in o) or (b"is not supported" in o) or (b"unknown warning option" in o))] == [ ]
-> > > > >  if cc_is_clang:
-> > > > >      from sysconfig import get_config_vars
-> > > > > @@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
-> > > > >  cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
-> > > > >  if cc_is_clang:
-> > > > >      cflags += ["-Wno-unused-command-line-argument" ]
-> > > > > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
-> > > > > +        cflags += ["-Wno-cast-function-type-mismatch" ]
-> > > > >  else:
-> > > > >      cflags += ['-Wno-cast-function-type' ]
-> > >
-> > > > I tried with your diff with SLIM LLVM toolchains 18 and 19.
-> > >
-> > > > Both work - see attached build-logs.
-> > >
-> > > > Yes, are right that LLVM/Clang v19 was first introducing:
-> > >
-> > > > -Wcast-function-type-mismatch / -Wno-cast-function-type-mismatch
-> > >
-> > > > [4] says for LLVM 18.1.8:
-> > >
-> > > > -Wcast-function-type
-> > > > -Wcast-function-type-strict
-> > >
-> > > > Feel free to add my Reported-by/Tested-by credentials if you sent a full patch.
-> > >
-> > > Thanks for the report and test of the fix, I'll add both tags,
-> >
-> > So below is the part that deals with disabling the warning if present,
-> > the other patch supporting checking warning options I merged as a prep
-> > patch.
-> >
-> > Thanks!
-> >
-> > - Arnaldo
-> >
-> > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
-> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Date: Thu, 22 Aug 2024 14:13:49 -0300
-> > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mismatch if
-> >  present on clang
-> >
-> > The -Wcast-function-type-mismatch option was introduced in clang 19 and
-> > its enabled by default, since we use -Werror, and python bindings do
-> > casts that are valid but trips this warning, disable it if present.
-> >
-> > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > Cc: Ian Rogers <irogers@google.com>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Nathan Chancellor <nathan@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> >  tools/perf/util/setup.py | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-> > index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
-> > --- a/tools/perf/util/setup.py
-> > +++ b/tools/perf/util/setup.py
-> > @@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
-> >  cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
-> >  if cc_is_clang:
-> >      cflags += ["-Wno-unused-command-line-argument" ]
-> > +    if clang_has_option("-Wno-cast-function-type-mismatch"):
-> > +        cflags += ["-Wno-cast-function-type-mismatch" ]
-> >  else:
-> >      cflags += ['-Wno-cast-function-type' ]
-> >
-> > --
-> > 2.46.0
-> >
+On Tue, Aug 20, 2024 at 06:50:56PM -0600, Gustavo A. R. Silva wrote:
+> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+> a flexible structure where the size of the flexible-array member
+> is known at compile-time, and refactor the rest of the code,
+> accordingly.
 > 
-> Thanks for the patch, Arnanldo.
+> So, with this, fix the following warning:
 > 
-> @Nathan Chancellor
-> What was the b4 magic to retrieve a patch included in a ML thread?
+> drivers/xen/pci.c:48:55: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 > 
-> I tried:
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  drivers/xen/pci.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
 > 
-> link="https://lore.kernel.org/all/CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com/"
-> 
-> b4 am $link
-> Grabbing thread from
-> lore.kernel.org/all/CA%2BicZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com/t.mbox.gz
-> Analyzing 9 messages in the thread
-> No patches found.
+> diff --git a/drivers/xen/pci.c b/drivers/xen/pci.c
+> index 72d4e3f193af..a2facd8f7e51 100644
+> --- a/drivers/xen/pci.c
+> +++ b/drivers/xen/pci.c
+> @@ -44,15 +44,11 @@ static int xen_add_device(struct device *dev)
+>  	}
+>  #endif
+>  	if (pci_seg_supported) {
+> -		struct {
+> -			struct physdev_pci_device_add add;
+> -			uint32_t pxm;
+> -		} add_ext = {
+> -			.add.seg = pci_domain_nr(pci_dev->bus),
+> -			.add.bus = pci_dev->bus->number,
+> -			.add.devfn = pci_dev->devfn
+> -		};
+> -		struct physdev_pci_device_add *add = &add_ext.add;
+> +		DEFINE_RAW_FLEX(struct physdev_pci_device_add, add, optarr, 1);
+> +
+> +		add->seg = pci_domain_nr(pci_dev->bus);
+> +		add->bus = pci_dev->bus->number;
+> +		add->devfn = pci_dev->devfn;
+>  
+>  #ifdef CONFIG_ACPI
+>  		acpi_handle handle;
 
-I use:
+Looks correct to me!
 
-⬢[acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com
-Grabbing thread from lore.kernel.org/all/CA%2BicZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5%2BzQNQGUxK7%2B2aw@mail.gmail.com/t.mbox.gz
-Analyzing 10 messages in the thread
-No patches found.
-⬢[acme@toolbox perf-tools-next]$
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-Using the Message-ID for your message, which normally is enough, but I
-think I didn't separate the patch from the rest of the message with ---.
-
-Lemme try...
-
----
-
-From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Thu, 22 Aug 2024 14:13:49 -0300
-Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mismatch if
- present on clang
-
-The -Wcast-function-type-mismatch option was introduced in clang 19 and
-its enabled by default, since we use -Werror, and python bindings do
-casts that are valid but trips this warning, disable it if present.
-
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/setup.py | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 26c0f2614fe92eb6..649550e9b7aa8c8f 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
- cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
- if cc_is_clang:
-     cflags += ["-Wno-unused-command-line-argument" ]
-+    if clang_has_option("-Wno-cast-function-type-mismatch"):
-+        cflags += ["-Wno-cast-function-type-mismatch" ]
- else:
-     cflags += ['-Wno-cast-function-type' ]
- 
 -- 
-2.46.0
-
+Kees Cook
 
