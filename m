@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-297864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042FC95BEB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:15:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC80E95BEB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8C72858E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D992B230D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE18C170A3D;
-	Thu, 22 Aug 2024 19:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5E31D0DC3;
+	Thu, 22 Aug 2024 19:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCX26eM/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPW2vXZ6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF22101C8
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E731D04A8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 19:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724354140; cv=none; b=jX7Apf7+TMwBfpwyGVAenSnPvi0ClulSnw98W7Qv12okND7/oQT/ac0QwzflMj17nI8Shag+m8Vi6dJM+Y4ucbm6QCqf5vcrgYghnvIZwu1SMP+VU/wcYRkSgg4wWBDI7/kYw5nit9Vak25fmcl/XnwGAKg2fMm4RXM+qZbEPgE=
+	t=1724354142; cv=none; b=V9syqXSaGnJI2A4ObX2rIe4heGQJzonzOivP/P9DfHz8UN+7RAVjb8LuYkng3TcTa9FfZh6W7ArOtzj4bwXsCjeedYP2T8iPZkytkx+v40Ky9MZOfJ+v5S5P+NjWAACME/JsnCOqILpNBjwu+HYb5H+kdhn5QWQ2aVsIGikzrHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724354140; c=relaxed/simple;
-	bh=iHV8J9Zsq73NG/UgN8gpCP+unnbp42Lw8cYPkBOeKyg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UUUxuT4FfzM7dd0fiBh0PRJdJ0b57CNLoePDFTgslNanpmNVCNsufDAzom+CmzpZS891U9Ccxj0Ejk6DuRYVZMiv2ywzZG0v/6yek6Tpku3xgBbMpWFbyLp5nrH8Ej5z9QDNhA2Rh0uS7eQO6scGOB1/Vy/JeHRGU1yUiKb4+OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCX26eM/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D8BC32782;
-	Thu, 22 Aug 2024 19:15:38 +0000 (UTC)
+	s=arc-20240116; t=1724354142; c=relaxed/simple;
+	bh=Gqu8IKz5ZDmSH1qLlC/PQjAsOLa/MoeoFtoKJgAk1OU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SeICOzyP3EV0f7jLFqzB6WKGon6/cK09oR9/n/c4vp0MuAcaYLmFyV+WsJnlt0w7nfIaFVR5Q9yyCcmuZYyfUuIiJFd/R6wQ3+E5Q0PctIYH9FtvHbnwW2bE9jmKNSHiFqYMBHkqLEzTWvIY3k/3K3d3DJfOV3sNboEgIvh47FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPW2vXZ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8F0C4AF0B;
+	Thu, 22 Aug 2024 19:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724354139;
-	bh=iHV8J9Zsq73NG/UgN8gpCP+unnbp42Lw8cYPkBOeKyg=;
-	h=From:Subject:Date:To:Cc:From;
-	b=HCX26eM/OW9tFCJGQczIpkiPMY3yQxmKP9lecHNTjvMev/4t9wvCmdOOLHaP5rjJ4
-	 gY38s7N2q99XOo4OZcRNvOg+38c5/RlDlpxaUm4Eu4naPnh64Ff1yik+4MHM47hdkx
-	 cLDyestAcG77huKvhRWhIzwsZnVbYqJ2Hz1ClwyBl7hfrw+cHEBwV2IVv2Drl55eC9
-	 H+alzwxs/XKiNURcHqEOYdAwnRwRG15qOG2lEcx7kLSL10V1/05EqpD/b7QKqv45Mn
-	 zWYqTSecsnMuUdCDwblaH4j5sI9dTXIcQhVOM+5mcXU75fja7u+O8i0M+F+MFjcgp6
-	 bBVAMmkpf6Zzw==
+	s=k20201202; t=1724354141;
+	bh=Gqu8IKz5ZDmSH1qLlC/PQjAsOLa/MoeoFtoKJgAk1OU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=kPW2vXZ6T4WX6SqcSVvQ87sShPfOSoI3xRmeRX74DLMs9qD3/ERN716bUlNvLJbLr
+	 keuF0jio2tPcQXDawasMd4lbqUVeiojs2KnNGabvua3cBVUH89haltHTNbBamjRnms
+	 rx6sCuG0bGgV2774klnzMYZ1H6LhEgI1RBvRxVUzR15XOmAn0/vnPRXabJCcyvWqwz
+	 gPl1bix1AkeNi8qPG/yQIZxnw1rkRSPprIaXrklH8n+rLYbrSKWh0u00P1N4xtzZlN
+	 symNkSXDWJ0bWyVo5H1AxcxrTKW7fInileEOZ9eVq8l8ZHlpyoD4fHirU08zLT6s2L
+	 SCKB7rYyHT4Vg==
 From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 0/5] regmap: Improve lock handling with maple tree
-Date: Thu, 22 Aug 2024 20:13:34 +0100
-Message-Id: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
+Date: Thu, 22 Aug 2024 20:13:35 +0100
+Subject: [PATCH 1/5] maple_tree: Allow external locks to be configured with
+ their map
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,56 +52,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAN6Nx2YC/x2MQQqAMAwEvyI5G2hKD+JXxIPaWIO1lRZEEP9u8
- DCHYdh9oHIRrtA3DxS+pEpOKtQ2sGxTCozi1cEa60xHDmeHhcMxnahExpRjXnYk0uytN94R6Pg
- svMr9Hw/j+37JUZkqaAAAAA==
+Message-Id: <20240822-b4-regmap-maple-nolock-v1-1-d5e6dbae3396@kernel.org>
+References: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
+In-Reply-To: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
 To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
  maple-tree@lists.infradead.org, linux-mm@kvack.org, 
  linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1391; i=broonie@kernel.org;
- h=from:subject:message-id; bh=iHV8J9Zsq73NG/UgN8gpCP+unnbp42Lw8cYPkBOeKyg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmx45VKWNSD4iZpnAfqdbBrTIOLwI1wRoaeLLbq
- +twGrzL8FKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZseOVQAKCRAk1otyXVSH
- 0Mz2B/9XOF/nJGdxDZPnJSRLE3shPds8kL5j8u8s+wPVjfkPkupRUKaALUZeO1AjkGugzqENUUw
- RESzItsSCVHT9qU11EgxBTMkztAKynrVKwISpIon5ohoe2rUaglYXu85V2+C/osphUz9fsWnHiY
- 5rWGH4QAjl4Iju55ehIQKJHP6kMNDdG/dRM1rCvYffOYbGhXcaN1e7CgVv3byruBvf3707JZYsb
- m8Fqaa//fSJ8tJhPuMYqw587uKKvIdBgV0yAWsA+J8EhLqoPWlj7aq3aJVXpBASMIj1RqxHNGf7
- CqE4/aSqbiRos6BtWVwuOSOlynb2Mbh790XLcLOXWURhZb1d
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1230; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=Gqu8IKz5ZDmSH1qLlC/PQjAsOLa/MoeoFtoKJgAk1OU=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhrTjfWFP1/QxPVx18BDrR8NLM3vXH4uPO2je4NJyyy9G1
+ 9nlG7tEJ6MRCwMjF4OsmCLL2mcZq9LDJbbOfzT/FcwgViaQKQxcnAIwkXvK7J/ZbVd+TOs9tNrn
+ NYuW9dq1MxNdTXtOagm7KpxbXsdbK3ju2pKreZsUWSVjitr/hWlPsQ+2XPS5iSuz3uBasud3c9l
+ 1D60lzV9/2mWzTETFxnnR1lU1Yt+s0iNjuPdE8G04WqI+4ZhmxW62HzLrZe/7RV2yYqy4V/Cg/K
+ W9/88TGvy9mkd+qQvwRu7pKC1k6rtTva0iPdV7w1mHn5NOyk6NTlbpnRbgIX7FN1hQgo+TU+aqy
+ calQrVf2ebdWyqr0nBrYQQXT8MWj2kG7ofXWXwpkOw4xec/R3PXPLZAhS38bDKBhQVPf9Qmsp7l
+ 01WYIO46PU9jp9rZ4lIWjxfOHQs6KhhV9VTuCMw6dRgA
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The lockdep asserts in the maple tree code and the double locking that
-we're doing continue to cause issues, most recently some warnings
-reported by Cristian Ciocaltea due to dynamic cache allocations in
-interrupt context (which are an issue in themselves, but still).  Let's
-start trying to improve the situation by configuring the regmap lock as
-an external lock for maple tree, allowing it to do it's asserts without
-having a separate lock.
+Currently the maple tree code allows external locks to be configured by
+passing the lock itself. This is generally helpful and convenient but is
+not ideal for situations like the regmap maple tree cache where we support
+configurable locking at the regmap level and don't have the lock type when
+we are configuring the maple tree. Add a helper that allows us to pass the
+dep map directly to help with these situations. Since such code is already
+peering at the lockdep internals enough to be looking at the map no stub
+is provided.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Mark Brown (5):
-      maple_tree: Allow external locks to be configured with their map
-      regmap: Hold the regmap lock when allocating and freeing the cache
-      regmap: Use locking during kunit tests
-      regmap: Wrap maple tree locking
-      regmap: Don't double lock maple cache when using a regmap provided lock
+ include/linux/maple_tree.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/base/regmap/internal.h       | 12 +++++++++++
- drivers/base/regmap/regcache-maple.c | 41 +++++++++++++++++++++++++++---------
- drivers/base/regmap/regcache.c       |  4 ++++
- drivers/base/regmap/regmap-kunit.c   |  2 --
- drivers/base/regmap/regmap.c         |  5 +++++
- include/linux/maple_tree.h           |  3 +++
- 6 files changed, 55 insertions(+), 12 deletions(-)
----
-base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-change-id: 20240814-b4-regmap-maple-nolock-11408d2d0d41
+diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+index a53ad4dabd7e..bdc6b133abdc 100644
+--- a/include/linux/maple_tree.h
++++ b/include/linux/maple_tree.h
+@@ -193,6 +193,9 @@ typedef struct lockdep_map *lockdep_map_p;
+ #define mt_set_external_lock(mt, lock)					\
+ 	(mt)->ma_external_lock = &(lock)->dep_map
+ 
++#define mt_set_external_lock_dep_map(mt, dep_map)			\
++	(mt)->ma_external_lock = dep_map
++
+ #define mt_on_stack(mt)			(mt).ma_external_lock = NULL
+ #else
+ typedef struct { /* nothing */ } lockdep_map_p;
 
-Best regards,
 -- 
-Mark Brown <broonie@kernel.org>
+2.39.2
 
 
