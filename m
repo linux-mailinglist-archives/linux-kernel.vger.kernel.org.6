@@ -1,298 +1,277 @@
-Return-Path: <linux-kernel+bounces-297292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5430B95B57E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:56:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205F295B582
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C573A1F24007
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7E11F23A0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2378E1C9DE4;
-	Thu, 22 Aug 2024 12:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288F71C9DFF;
+	Thu, 22 Aug 2024 12:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0zslUbW"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gzuvZUav"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302CA1C9DD5
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724331401; cv=none; b=ODfQolobieYfnz8ZRjYBugcMroxVNSUpNks2dgWsQaVgJbdg2u+rWZdR7o9Aa6MUHhMY7PkW7AgOSpkM5B8BFrGHoq49lqkYCJLp5TcO/ja5a2F+2JnVysP97zZ73NIAqE/mkM/uwoyWjV6M59EMEgg7rKj+wNOYJZ1RX1HDACc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724331401; c=relaxed/simple;
-	bh=oZQW9gysa9kbvHWb4PVjqVBkPCHtSRJXRiGFa4IvQdQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z8v4lgPDHGSxPPqSWHOFaDdLYoIOf/NItJJlaorMVlg0l8X6qZptVQgUFc4bjnhsYQ5QrGDZrLIB6YBjm8DrmVu2lICQ74A7dKiUBWTxgM9qOwLTcRMVmvtWZIt4Um49el6WEoUVNSCg9O6U067H7Zl3JHDZ/wKxcQ+VREscQKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0zslUbW; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3719f0758c6so401170f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724331396; x=1724936196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:reply-to
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2NI5LFlNxsloHO/MXLodkDWQJ7BpVf9SBIBu3OZTDp0=;
-        b=q0zslUbWJoXRXjkaNOulYQnS11wPjLzcEw1pvXVDsMY0t4j3C5rB+RlGyhwr1cSISX
-         nizzVu3gHF2BhQMNMxYQ83RFEnzeyBygVr2N0WtX4A7NSaCtBZ2SRVItG0Tda3skttH7
-         FE5+bPd9b0uua8SfpZyIvVi2aPHx0zt99tRSuh2rODxwHeqxPGG20gd8WE0XpASbuc8r
-         GNq8ATQnVel41oj3u0NYeLn1yJHIwFvgwVD7de9YYD9riutP+64roQY7pyOX/hvNxeYm
-         zv47JzyqTUt8Qv5b0cjzouQj2Gt5PngPZxRptkO/5iTWGAbLeG0DqDppf0t2lwA/sS1k
-         dcwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724331396; x=1724936196;
-        h=content-transfer-encoding:in-reply-to:organization:reply-to
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2NI5LFlNxsloHO/MXLodkDWQJ7BpVf9SBIBu3OZTDp0=;
-        b=HA2RBNn9mZ6t+DRclLPEKmA2lqhIZEO3nGcVrnTEelY0Tuq/5JiLn46kRdTPRxGm8i
-         rLhe7OR7+1zy57luLDRgSTYNdA3bi1VR+ALiXDf3RDAhV1v5dH95uLuvsw4/cI5VpdBd
-         upOt3TxAiTLsJ7++AFyf5BBW+XmNhJJa2N0lJInsx5GBAqtlAPlQgWZaBDjrLPEBO43K
-         X7Zfje32Fo6yPJb1X9rOs8XjlJaTo7qqw8I/TJbs5rowx3hHPIYdP7Cc/0eu5Q4luuRQ
-         pm3uKfq1EXtzySRh6LjLr2yIet2/Q+jcH+opaDJbjhio2S4rGgk1JIoMAI9dRl/p7I7j
-         MyHg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+k5P/Q+NASux0j4TyLAAWZ0fuBiTJTaatZdYmAtEk4UlsOZBvp1xr+aDEPyIKuIvvrZJFvWvk9CNdvOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwv1DEEcAv86BSs8EenlvwWL4b2cVqbRWgD1SKMYpsyLpeS79E
-	RisCD5kZp89bnM16l4vTgaFSt+bqSLmq5r1dNkHQkBnSRSKf4ZCmMAnvmcbR3p8=
-X-Google-Smtp-Source: AGHT+IH7Npize1/MPoSbHq38Pg4ilRoun8TonDorBUmkSbOd4DbVQXUFq81/s+M6Mld9Z4V2DcuVXw==
-X-Received: by 2002:adf:e60a:0:b0:371:87d4:8f12 with SMTP id ffacd0b85a97d-372fd58cf57mr3585916f8f.17.1724331395960;
-        Thu, 22 Aug 2024 05:56:35 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f06:7793:d95e:24b? ([2a01:e0a:982:cbb0:f06:7793:d95e:24b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815c035sm1624377f8f.55.2024.08.22.05.56.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 05:56:35 -0700 (PDT)
-Message-ID: <91ed1523-faeb-4e04-8000-c411dba5a542@linaro.org>
-Date: Thu, 22 Aug 2024 14:56:34 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277F11C9429;
+	Thu, 22 Aug 2024 12:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724331428; cv=fail; b=ENr+lC/ZLVf88pzHbvfwdsR7rkb698KiYP7ZQYck+4YdXP3TGv8WTrPSin8y9rOc/GwlfILT/6/pAxP0phTiSPabnu+O72p+5zk5BzfIW1MdgM70kEwSwxceefSu8yG9fSEnlwEqvPI97b+WnXmufLdYCwgmUpVKvM8OhH1wQ+o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724331428; c=relaxed/simple;
+	bh=mnriv2Oy8KXNzxD16S1pMNiWdfUYE06Td6wOMKhB9Hk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Z+m5N+IDlm+0JCn71XiWlAa22OZlSO047g4Qes07DD6FPNAtRkXcPiJIRzBMn+sMvifPmwqdRqJq8+Wvzp6WlWXEQYpCqdTQc4bkOGJ1Qk2pVxtitl5/GSeOpbXzSQ2PQ8ZSCFBlQQ/9tjwS5RGKAmDXZNxssyqog40tPGuCgA0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gzuvZUav; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724331427; x=1755867427;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=mnriv2Oy8KXNzxD16S1pMNiWdfUYE06Td6wOMKhB9Hk=;
+  b=gzuvZUav9c9dVrRVraz1BMhx7ORAGUre48TWKF5O8H7ZyKa4yMvAFa+S
+   SXoPEL1InmRJ8tgAcqFuuC4NswhsxBfmCjHNzEj2PSVTHox8PktXMvTPt
+   c+lrxjfLIeEckz2X/pFNO6M3fg7fGSDefuactw85Mt9d3WXX4SZj19Gyh
+   rJ36CUklj/0coMq/F4Z5Rez9FG9Bzn4O0Bd3+b8mcRysPHS+z3YrsUon1
+   9HJdNLDxQtIn+wNyfZ4lU3P6dmw5h6EX2ZTUU2HueRlP3jGJyeT9pJqWX
+   GUwtqiHqBf8efOvluOxnR6o9xyON8bnjrjFKE4Bmg7jx1iw7CVYlGPoZc
+   g==;
+X-CSE-ConnectionGUID: DApi1fCQRKWHWW9F+PYsUw==
+X-CSE-MsgGUID: GB1r7/9PTbGkiN7skHO4kQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22922016"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="22922016"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 05:57:06 -0700
+X-CSE-ConnectionGUID: oLAuGm9cTqyRV2un1Ty6VQ==
+X-CSE-MsgGUID: csH7tBYsT6KRAi5l0i5wRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="84605416"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Aug 2024 05:57:05 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 22 Aug 2024 05:57:04 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 22 Aug 2024 05:57:04 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 22 Aug 2024 05:57:04 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 22 Aug 2024 05:57:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m5DsnuE+xv22Svcj2BBmqWQWQtcbLFNZ/TAwVMsaeB/szFW+NE69kFGqjdHI+8y5WHawvOHiVV9zGrw5yL/OkLp2TLYimcq5IKQpcz8qTCXzDjYtFPod8DkDhlYSdOsc4gJfCfaY4KgkDEjm3LyjBZlDj4XpNtca0Ihw9rn80CWrGUEvmPJCwco//WHalKofVb7Wgqz6tag+g/86M8Knj9XIUl/KX1A3fBfwR9B3iQ+yfOsdH1YUT8jocDRqXBvCTyDXsb1YwS+zIBs+h/bhR6gyPTYgtcg38QL1SE1z37RtbQ6fizGn7qeQvcHq/SNpJiOd9EBy7FSM71LGSyrRZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zyitgmYEsJpNhH4EaLnvGexqNtt1mzMay1xlY7uROUE=;
+ b=XzH0qpZ8uhyZ5mfZA/7emj+GPAiQ3uL5MkjXUaKTgZagzrYsE/ygdNbfaGLOkogxw0H9uYfpev5x0ZlfOK1bLT87V76nDPUbvWMAFth/oXBLwswoKSwoM9I/BCSca+e4ZaVVWTVhV8uGMPLfHZLjL3wxAgMBIb0RFEp0pN0vEzJPgMcMQd35XhNulhMrcX43NZ0xMa3ZUui/r3dFJaPsLPtwjIUblTh6tIKR35RqymV4rVoaq6KaQ0eaVHLMF4wzTHdJc7X+lct8ixWhKCvDOZtW4VecHaIEXl7V7j+ocv99G932lMZgCxIKzH4A6sIfgPiwwxQwnVZ8wYz4EcIb0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB7540.namprd11.prod.outlook.com (2603:10b6:806:340::7)
+ by PH8PR11MB6879.namprd11.prod.outlook.com (2603:10b6:510:229::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 22 Aug
+ 2024 12:57:02 +0000
+Received: from SN7PR11MB7540.namprd11.prod.outlook.com
+ ([fe80::399f:ff7c:adb2:8d29]) by SN7PR11MB7540.namprd11.prod.outlook.com
+ ([fe80::399f:ff7c:adb2:8d29%3]) with mapi id 15.20.7875.018; Thu, 22 Aug 2024
+ 12:57:02 +0000
+Date: Thu, 22 Aug 2024 14:56:50 +0200
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+CC: <intel-wired-lan@lists.osuosl.org>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, "Jacob
+ Keller" <jacob.e.keller@intel.com>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <magnus.karlsson@intel.com>, Michal Kubiak
+	<michal.kubiak@intel.com>, Wojciech Drewek <wojciech.drewek@intel.com>,
+	Amritha Nambiar <amritha.nambiar@intel.com>, Chandan Kumar Rout
+	<chandanx.rout@intel.com>
+Subject: Re: [PATCH iwl-net v3 4/6] ice: check ICE_VSI_DOWN under rtnl_lock
+ when preparing for reset
+Message-ID: <Zsc1ktk/oX+LpFxl@lzaremba-mobl.ger.corp.intel.com>
+References: <20240819100606.15383-1-larysa.zaremba@intel.com>
+ <20240819100606.15383-5-larysa.zaremba@intel.com>
+ <ZsciSbsTeIRGc1dZ@boxer>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZsciSbsTeIRGc1dZ@boxer>
+X-ClientProxiedBy: ZR2P278CA0020.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:46::6) To SN7PR11MB7540.namprd11.prod.outlook.com
+ (2603:10b6:806:340::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: next-20240822: rcu: Unless rcu_preempt kthread gets sufficient
- CPU time, OOM is now expected behavior.
-To: Naresh Kamboju <naresh.kamboju@linaro.org>, rcu <rcu@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Mark Brown
- <broonie@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- Anders Roxell <anders.roxell@linaro.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>,
- "linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>
-References: <CA+G9fYvZAUOKhf+Yg6J=OUxnJ0ckv4jxyDLGyKsqwUpAak84hw@mail.gmail.com>
-Content-Language: en-US, fr
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Reply-To: neil.armstrong@linaro.org
-Organization: Linaro
-In-Reply-To: <CA+G9fYvZAUOKhf+Yg6J=OUxnJ0ckv4jxyDLGyKsqwUpAak84hw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB7540:EE_|PH8PR11MB6879:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc322c91-b47f-4948-de49-08dcc2a9ea8f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ZgBb+nFTQHDBwBbTZrnk9PMEl0LonpC1lT4Qz4yky2HlKWSyhEJO8Kbvpwyf?=
+ =?us-ascii?Q?uOJCDFDUEYbZpLgmRCF8srEwz8TzfcyNqetRWEENo1KBTUX3XNzoIfZ7IGWP?=
+ =?us-ascii?Q?WJ2Ogt5ZIOVH5D+Mf57xhuiGfK+kKi7HbiJNXCFKsEcBr6fouYgDyS2kFvOX?=
+ =?us-ascii?Q?GkoCfiFUfBcAA1bDaWz/ZZJPPZ+PyWS6B6wQx3ro/NgKGsn6Owm5skdQACwH?=
+ =?us-ascii?Q?p2AgazqMQ1vINp462+lpMkr09LoxdDFj4v3ofmgE+x7VKeKiBBCe1cajfJdQ?=
+ =?us-ascii?Q?k1F4T+t2RDCIOsyA8Xl5LipuN2k+iDHElIzxG7KJSGMiK/49Sg5Be/0/rB+U?=
+ =?us-ascii?Q?4uwbOKVgGEVn2yvu+rz+LGMyHbY1pcFvJkX3MVugCfmxYDRyJvPP2sipyGq8?=
+ =?us-ascii?Q?wq4EVPgKsFUW0DsNE+XtvqgzNhz+MHA3rBfnh1be0lpNF6LnrnIbUHd1PL11?=
+ =?us-ascii?Q?C0WW9DHqQHfN3K7i8EBGZDky2DJZnQP0L8J6dr2h9lCwT+xQoCwmI/t5pCuR?=
+ =?us-ascii?Q?OG2qJEh/3Y6PDPMAr3jUINZX0QTg9RdJsd26JsE1TgzUSqIA7qFxigCuvj8R?=
+ =?us-ascii?Q?Oc2KkvUf3tll9fvk49PP1ywlFs4V1ZpW/x21dfgjxDb/esCIr/U85tDk52YS?=
+ =?us-ascii?Q?FXmBHdY2vnDXQfIaRM/8kpAF9ymA8zMzGDxwOep1WsPNPJkt07+V88AHT6lW?=
+ =?us-ascii?Q?xsmv8wrPqaXIhNNAXlVNpWG0NvCzswGYBlYpejalDkMIY2S7lhRu6EALP33Z?=
+ =?us-ascii?Q?wz4CKsuTFZOmd2QFztgrhYgBNkjuwIkwzdNgvyma2XObXRDBM/tEAXMDKqM6?=
+ =?us-ascii?Q?b3nEBtz2Hv20vtaqoG2kLyMob+igI4iEq4GEmSb8zaK8dg7p7bZU+0DhNdje?=
+ =?us-ascii?Q?tLqIIGSqfJMVqetv/RtZ24GGhWJKTzJtIhYdDQD108Y6L39UT4pllzMsTbSZ?=
+ =?us-ascii?Q?Vndt+NnNvPDR11fmrJ9xhmcSZDA33wZKnQ/EfTr0B2XfDA7Vd4jVcfODW70k?=
+ =?us-ascii?Q?mN1OWgk6Q8/6dtaqngpVSlOCyqWVsMKtyo852AeWNjooeGQuHRZ9xb9FeqHP?=
+ =?us-ascii?Q?/qDUNXL6BJt38ts9POQWNWkmqwojgF46GbXLmUpmfmB0i8z2c8wNb2BfvK7O?=
+ =?us-ascii?Q?1aoEtCdt56UoLBQ4cAPYLH94hnwRhx2ZVJisH9JXQhcKo1xB/k5sEE1yx2iD?=
+ =?us-ascii?Q?ea8VblRWt0fRTOMUV+jwHtKFKcl0n7BFClBgwknVlKqgtCK3xLYTVLVw0xjS?=
+ =?us-ascii?Q?QKbfWf0CPbLFnzoNys7r4DpflAuuc3otPQKRhpVMTJNeygyG320HXhLOX47o?=
+ =?us-ascii?Q?uNo3w0XRJXXsThIochEPXLKjYNpClIP7Si+ZxGHyZkVw3g=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB7540.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ohioJC7NLbS87cCF31KsEkzR4jReCHsta+G74wa88R8BHBuUH7IbC3tEc03r?=
+ =?us-ascii?Q?fvzHqhmZG70+5PWAY4C5LW9+PyYP8XeU4PCzBgaHrZ43M0fRPOB3PteVUfy+?=
+ =?us-ascii?Q?SSMY0N+K3/z5ZkZW1WP/fFF1uUsmmCriLrfy3M4iKKk2JvNXkLuPoUgOThX+?=
+ =?us-ascii?Q?cWkSV9gbLExRG1OH0xTIjUwMhswrkKHeXAq0nL4hD4MC1Rbz8jQ82MOYyWG2?=
+ =?us-ascii?Q?bW60WzxL/rA7zbPPHWWU/R8OgirlXe8sj1xDk9y9nsMWbBksDGi4TJe0YFA5?=
+ =?us-ascii?Q?lhzFB0aqjv07Nzgwe3rJPfTX7tYPDLPE3+4ogMglTPh+yeF2cVFUQpzEmj4y?=
+ =?us-ascii?Q?qoxvo0mDGMZ7qIVhZHDalmGWRyEraehjNLt7fhGcGYqMUc5CO0B5cGykKzCN?=
+ =?us-ascii?Q?H/RFgZL4GMkuS9Tk9ZZK9oJDKkOlUlya/ulw6oOPCtsiDsSOPppoToDOPJ6A?=
+ =?us-ascii?Q?dunlRC70AM1xA/VPPfsYM0tdl/KYivPtGr/Dd2el58fX2IEFfD3+5akM1Olr?=
+ =?us-ascii?Q?7vKS8opYR2YTyFrBfIa9R/eulijTX2gx3p4MVt+Ym86aen6cqlLV8xTX4Y4K?=
+ =?us-ascii?Q?WKGL1DI7ifnUTEj0hjElCcUx1FWoZuyMrfbzFU7DQEWv8J4WyRL56Gr9tDMR?=
+ =?us-ascii?Q?zyH8XYVwnHrEyJDp4wg+M0a8QzcRxqn4QpNFrlD2MFjE7Sb5EU0r4dbH9HNk?=
+ =?us-ascii?Q?jqUINcx1DLQJtyCeVpf9YAHMzBgMua+8ubyMvaSpOmWgTbMnsEb9PwxmGOkV?=
+ =?us-ascii?Q?jEIuRvErLuz8OPYjCIh2oph06JLBNQklGtdDVtVsPaxPDOaq2sj7tK8XdDE5?=
+ =?us-ascii?Q?DoCk29tp65D6j1S+KmFBwJoNg8cgWGPpUcNzQWKUdYiO1FV/XP/5oyPlY2Xw?=
+ =?us-ascii?Q?yT4f2javkAWRQegrhrrjeuWWyYqF4ki6K5OnK4o6fCngreb27TOHylPCnWvp?=
+ =?us-ascii?Q?mQk+SBE/RZsEladI3noHkLn+V0EdJhzhx1lQBZlCxQJT6MzTju+Omzgs+YvG?=
+ =?us-ascii?Q?quVEgh/S7kkmPFfblkIGJn1wsadirdScpSGC8ziPifP+iY+EQAkIUZY2kEaW?=
+ =?us-ascii?Q?20hauPafzfSFhK+/wkFxdcScBF/0DTnKxlxLrv88SzEiSZtGC3WU3t7lG/wO?=
+ =?us-ascii?Q?RFH5XF+gjfVKu+wzFAMcq9FTaOOMuY/VVYsnI5QqgjqmSsT7OJ7y9hosU0lb?=
+ =?us-ascii?Q?neVewwtLTQugFmIA4SoiCHtC/y+HqLt+e4sdQhvhXKEqIPezI0IRUmnHsGx8?=
+ =?us-ascii?Q?GJeZWgDqbloDcpAubkPLKzMC+89EQ5BvN4+5jzyegoFq4wmhjvhV80cnzBh2?=
+ =?us-ascii?Q?IjEC1GoQroXqNHvOp1JHzd3P0LjzQuiZDMMsEX3GS9gRLu9QCBssabK/JY02?=
+ =?us-ascii?Q?zc5ZBoJ3mYBoY611CaZ2IvL1sdjRz6OD9Vu6Eiu4TMsjdnqj2QcZIW781Mnb?=
+ =?us-ascii?Q?zRaccHuiUHi7P7+prhj3dOLGEMCW9EALQztm+twDUMERhqUQqWGYmdtAv1n4?=
+ =?us-ascii?Q?3WKmD14fJ7tUYA0OZmqxBtvxSLBtMjflmZ3/r2/xwn0p6PJWe8/pMdqmuqfJ?=
+ =?us-ascii?Q?+quExuygE0nH2VP/84a3AWlI6e6irGboznRREb0O?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc322c91-b47f-4948-de49-08dcc2a9ea8f
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB7540.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 12:57:02.1569
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1G6GBfcbeVhAk9cgj02oaw1XSBFFAptBNwTpE0WV8KXmrLkdZvsqD9FMcWwaduA0CWbUA/HpuWODBvNuSU6hK2X8mKCINOHfoAaQ8WUbr4A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6879
+X-OriginatorOrg: intel.com
 
-Hi,
+On Thu, Aug 22, 2024 at 01:34:33PM +0200, Maciej Fijalkowski wrote:
+> On Mon, Aug 19, 2024 at 12:05:41PM +0200, Larysa Zaremba wrote:
+> > Consider the following scenario:
+> > 
+> > .ndo_bpf()		| ice_prepare_for_reset()		|
+> > ________________________|_______________________________________|
+> > rtnl_lock()		|					|
+> > ice_down()		|					|
+> > 			| test_bit(ICE_VSI_DOWN) - true		|
+> > 			| ice_dis_vsi() returns			|
+> > ice_up()		|					|
+> > 			| proceeds to rebuild a running VSI	|
+> > 
+> > .ndo_bpf() is not the only rtnl-locked callback that toggles the interface
+> > to apply new configuration. Another example is .set_channels().
+> > 
+> > To avoid the race condition above, act only after reading ICE_VSI_DOWN
+> > under rtnl_lock.
+> > 
+> > Fixes: 0f9d5027a749 ("ice: Refactor VSI allocation, deletion and rebuild flow")
+> > Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+> > Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> > Tested-by: Chandan Kumar Rout <chandanx.rout@intel.com>
+> > Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> > ---
+> >  drivers/net/ethernet/intel/ice/ice_lib.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/intel/ice/ice_lib.c b/drivers/net/ethernet/intel/ice/ice_lib.c
+> > index b72338974a60..94029e446b99 100644
+> > --- a/drivers/net/ethernet/intel/ice/ice_lib.c
+> > +++ b/drivers/net/ethernet/intel/ice/ice_lib.c
+> > @@ -2665,8 +2665,7 @@ int ice_ena_vsi(struct ice_vsi *vsi, bool locked)
+> >   */
+> >  void ice_dis_vsi(struct ice_vsi *vsi, bool locked)
+> >  {
+> > -	if (test_bit(ICE_VSI_DOWN, vsi->state))
+> > -		return;
+> > +	bool already_down = test_bit(ICE_VSI_DOWN, vsi->state);
+> >  
+> >  	set_bit(ICE_VSI_NEEDS_RESTART, vsi->state);
+> >  
+> > @@ -2674,15 +2673,16 @@ void ice_dis_vsi(struct ice_vsi *vsi, bool locked)
+> >  		if (netif_running(vsi->netdev)) {
+> >  			if (!locked)
+> >  				rtnl_lock();
+> > -
+> > -			ice_vsi_close(vsi);
+> > +			already_down = test_bit(ICE_VSI_DOWN, vsi->state);
+> > +			if (!already_down)
+> > +				ice_vsi_close(vsi);
+> 
+> ehh sorry for being sloppy reviewer. we still are testing ICE_VSI_DOWN in
+> ice_vsi_close(). wouldn't all of this be cleaner if we would bail out of
+> the called function when bit was already set?
+>
 
-On 22/08/2024 13:16, Naresh Kamboju wrote:
-> The following kernel crash was noticed on arm64 Rock-pi 4b,
-> Qcomm dragonboard 410c and 845c devices while booting / loading kernel modules
-> on today's Linux next-20240822.
+I am not sure I see the possibility to rewrite this as you suggest, we cannot 
+bail out for the netif_running() case due to needing to unlock after 
+ice_vsi_close() finishes. This leaves bailing out in case of CTRL VSI and 
+non-running PF, which we could do, but it would require a lengthy if condition, 
+which is not that much better than nested code, IMO.
 
-I see the same crash log on the following devices built with next-20240822 and ARM64 defconfig:
-- Libre Computer AML-S805X-AC (Amlogic S805X)
-- BananaPi M2S (Amlogic A311D)
-- Snapdragon DB410c
-- Qcom SM8250-HDK
-
-I do not see the same crash log, but the following board fails to complete boot:
-- Banana Pi BPI-M5 (Amlogic S905X3)
-- Libre Computer AML-S905X-CC (Amlogic S905X)
-- Qcom SM8150-HDK
-- Qcom DB845c
-- Qcom SM8350-HDK
-- Qcom SM8450-HDK
-- Qcom SM8550-HDK
-- Qcom SM8550-QRD
-- Qcom SM8650-HDK
-- Qcom SM8650-QRD
-
-Neil
-
-> 
-> First seen on next-20240822.
->    Good: next-20240821
->    BAD:  next-20240822
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> We are bisecting this problem.
-> 
-> Crash log:
-> --------
-> [    0.000000] Linux version 6.11.0-rc4-next-20240822
-> (tuxmake@tuxmake) (Debian clang version 18.1.8
-> (++20240731024919+3b5b5c1ec4a3-1~exp1~20240731145017.142), Debian LLD
-> 18.1.8) #1 SMP PREEMPT @1724309008
-> [    0.000000] KASLR disabled due to lack of seed
-> [    0.000000] Machine model: Radxa ROCK Pi 4B
-> ...
-> [   16.923808] coresight-cpu-debug fe430000.debug: Coresight
-> debug-CPU0 initialized
-> [   16.933919] coresight-cpu-debug fe432000.debug: Coresight
-> debug-CPU1 initialized
-> [   16.935653] coresight-cpu-debug fe434000.debug: Coresight
-> debug-CPU2 initialized
-> [   16.937846] coresight-cpu-debug fe436000.debug: Coresight
-> debug-CPU3 initialized
-> [   16.939744] coresight-cpu-debug fe610000.debug: Coresight
-> debug-CPU4 initialized
-> [   16.942132] coresight-cpu-debug fe710000.debug: Coresight
-> debug-CPU5 initialized
-> [   37.987966] rcu: INFO: rcu_preempt self-detected stall on CPU
-> [   37.989037] rcu: 2-...!: (5248 ticks this GP)
-> idle=d1f4/1/0x4000000000000000 softirq=1552/1553 fqs=0
-> [   37.990715] rcu: (t=5250 jiffies g=1269 q=784 ncpus=6)
-> [   37.991667] rcu: rcu_preempt kthread timer wakeup didn't happen for
-> 5249 jiffies! g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-> [   37.993718] rcu: Possible timer handling issue on cpu=4 timer-softirq=296
-> [   37.994966] rcu: rcu_preempt kthread starved for 5250 jiffies!
-> g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=4
-> [   37.996844] rcu: Unless rcu_preempt kthread gets sufficient CPU
-> time, OOM is now expected behavior.
-> [   37.998499] rcu: RCU grace-period kthread stack dump:
-> [   37.999419] task:rcu_preempt     state:I stack:0     pid:18
-> tgid:18    ppid:2      flags:0x00000008
-> [   38.001117] Call trace:
-> [   38.001565]  __switch_to+0x15c/0x208
-> [   38.002229]  __schedule+0x54c/0x9d0
-> [   38.002870]  schedule+0x12c/0x1e0
-> [   38.003479]  schedule_timeout+0x9c/0x1b0
-> [   38.004202]  rcu_gp_fqs_loop+0x1e0/0x880
-> [   38.004926]  rcu_gp_kthread+0x70/0x230
-> [   38.005616]  kthread+0x104/0x198
-> [   38.006209]  ret_from_fork+0x10/0x20
-> [   38.006877] CPU: 2 UID: 0 PID: 237 Comm: (udev-worker) Not tainted
-> 6.11.0-rc4-next-20240822 #1
-> [   38.008442] Hardware name: Radxa ROCK Pi 4B (DT)
-> [   38.009284] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   38.010551] pc : smp_call_function_many_cond+0x468/0x6b8
-> [   38.011521] lr : smp_call_function_many_cond+0x428/0x6b8
-> [   38.012490] sp : ffff800083d1bb50
-> [   38.013094] x29: ffff800083d1bb90 x28: 0000000000000006 x27: 0000000000000000
-> [   38.014399] x26: ffff80008269e000 x25: 0000000000000000 x24: 0000000000000001
-> [   38.015702] x23: ffff8000801bc470 x22: ffff800074e75000 x21: ffff0000f74d8c20
-> [   38.017005] x20: ffff0000f746cb80 x19: ffff8000826a3470 x18: ffff80007afc2000
-> [   38.018308] x17: 000000000909008e x16: 0000000000000000 x15: ffff8000816092a0
-> [   38.019611] x14: 060a090000000000 x13: 0000000000000003 x12: 000000000000003f
-> [   38.020914] x11: 0000000000000001 x10: 0000000000000000 x9 : 0000000000000011
-> [   38.022218] x8 : ffff0000f74b6c28 x7 : 0000000000000000 x6 : 0000000000000080
-> [   38.023520] x5 : 000000000000003f x4 : 0000000000000000 x3 : 0000000000000006
-> [   38.024823] x2 : 0000000000000004 x1 : 0000000000000004 x0 : 0000000000000004
-> [   38.026126] Call trace:
-> [   38.026574]  smp_call_function_many_cond+0x468/0x6b8
-> [   38.027481]  kick_all_cpus_sync+0x44/0x78
-> [   38.028216]  flush_module_icache+0x38/0xe0
-> [   38.028965]  load_module+0x1374/0x1778
-> [   38.029654]  __arm64_sys_finit_module+0x238/0x348
-> [   38.030516]  invoke_syscall+0x4c/0x110
-> [   38.031207]  el0_svc_common+0x8c/0xf0
-> [   38.031880]  do_el0_svc+0x28/0x40
-> [   38.032490]  el0_svc+0x40/0x88
-> [   38.033054]  el0t_64_sync_handler+0x90/0x100
-> [   38.033837]  el0t_64_sync+0x190/0x198
-> [   38.034509] Sending NMI from CPU 2 to CPUs 4:
-> [   48.036555] Sending NMI from CPU 2 to CPUs 5:
-> [   78.247966] sched: DL replenish lagged too much
-> [  121.047963] rcu: INFO: rcu_preempt self-detected stall on CPU
-> [  121.049009] rcu: 2-...!: (21002 ticks this GP)
-> idle=d1f4/1/0x4000000000000000 softirq=1552/1553 fqs=0
-> [  121.050702] rcu: (t=26015 jiffies g=1269 q=784 ncpus=6)
-> [  121.051669] rcu: rcu_preempt kthread timer wakeup didn't happen for
-> 26014 jiffies! g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x200
-> [  121.053735] rcu: Possible timer handling issue on cpu=4 timer-softirq=296
-> [  121.054982] rcu: rcu_preempt kthread starved for 26015 jiffies!
-> g1269 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x200 ->cpu=4
-> [  121.056876] rcu: Unless rcu_preempt kthread gets sufficient CPU
-> time, OOM is now expected behavior.
-> [  121.058530] rcu: RCU grace-period kthread stack dump:
-> [  121.059447] task:rcu_preempt     state:R stack:0     pid:18
-> tgid:18    ppid:2      flags:0x00000008
-> [  121.061140] Call trace:
-> [  121.061587]  __switch_to+0x15c/0x208
-> [  121.062245]  __schedule+0x54c/0x9d0
-> [  121.062885]  schedule+0x12c/0x1e0
-> [  121.063494]  schedule_timeout+0x9c/0x1b0
-> [  121.064214]  rcu_gp_fqs_loop+0x1e0/0x880
-> [  121.064936]  rcu_gp_kthread+0x70/0x230
-> [  121.065625]  kthread+0x104/0x198
-> [  121.066217]  ret_from_fork+0x10/0x20
-> [  121.066874] CPU: 2 UID: 0 PID: 237 Comm: (udev-worker) Not tainted
-> 6.11.0-rc4-next-20240822 #1
-> ...
-> [  785.590550] Sending NMI from CPU 2 to CPUs 4:
-> [  795.592594] Sending NMI from CPU 2 to CPUs 5:
-> 
-> boot Log links,
-> --------
->   - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240822/testrun/24939658/suite/boot/test/clang-18-lkftconfig/log
->   - https://lkft.validation.linaro.org/scheduler/job/7816099#L523
->   - https://lkft.validation.linaro.org/scheduler/job/7815910#L2448
-> 
-> Boot failed comparison:
->   - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240822/testrun/24939658/suite/boot/test/clang-18-lkftconfig/history/
-> 
-> metadata:
-> ----
->    git describe: next-20240822
->    git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
->    git sha: 6a7917c89f219f09b1d88d09f376000914a52763
->    kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/config
->    kernel version: 6.11.0-rc4
->    artifact location:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/
->    build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2l0EZh4ZCNgUovHichD9yUraMrY/
->    toolchain: clang-18 and gcc-13
-> 
-> Steps to reproduce:
-> ---------
->   - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2l0EbxmBUpGzF37iIJ51WvkJFt8/reproducer
->   - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2l0EbxmBUpGzF37iIJ51WvkJFt8/tux_plan
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
-> 
-
+> >  
+> >  			if (!locked)
+> >  				rtnl_unlock();
+> > -		} else {
+> > +		} else if (!already_down) {
+> >  			ice_vsi_close(vsi);
+> >  		}
+> > -	} else if (vsi->type == ICE_VSI_CTRL) {
+> > +	} else if (vsi->type == ICE_VSI_CTRL && !already_down) {
+> >  		ice_vsi_close(vsi);
+> >  	}
+> >  }
+> > -- 
+> > 2.43.0
+> > 
 
