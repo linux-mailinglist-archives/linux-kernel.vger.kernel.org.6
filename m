@@ -1,91 +1,94 @@
-Return-Path: <linux-kernel+bounces-297193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3DE95B458
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:55:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6CD95B45C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752191F21FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8E22826B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B531C9424;
-	Thu, 22 Aug 2024 11:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708211C9433;
+	Thu, 22 Aug 2024 11:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbE8IaIh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gkf/OszT"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6527119E7D8;
-	Thu, 22 Aug 2024 11:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596D319E7D8;
+	Thu, 22 Aug 2024 11:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724327743; cv=none; b=ZPeHhpg4bCrLd0CHcZ+UXMv76MpoSZUkw+jPaRyWO3NA4EQfcoj63rhHrCqEvwuBJk1Hmv4HoAzYBwp1XcN3zlX6jt5EQefKnKQE5xEvp3I1a9di1aDdR7pwe0eeNPAJVI1LvbQscgRzBAHn1C26Iecv49wrUTOJYt/M3uiwneQ=
+	t=1724327790; cv=none; b=eAmCby/LAN9ITewBmc0471+bbNi4lfTMZzYDrZboVC9I/7d4cyUwMnE3woQgXyS7tL1Yf1jldo6p3QveYrb4W7f34J8xO+lA0Hx0Tj32X8BvE0YhnHZsum4dnb/2YLtP1mFM46uNRGlGjOXQ12BT5ewMl7gPPwmxNSTx0sqT81M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724327743; c=relaxed/simple;
-	bh=xyyYSHlpETdxXpgwIpg+3WZM1dT9wVjT8Zwh1foGbqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDLnhfaMkmsNj2BQDBFKnRefDxsTNj0VzjY/PyVwRmsowp4RhbKf0FIy9jBmrbpwCgCYstk1fY0OJGobB0FcXgnS3xQngF5yJHnQeb1d//3tCMPEK1bKK07tOyd0IxQ4Pr97QV62VTAc7S0oLT8AdQBPxOkkD/bRjEGSr3dBHsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbE8IaIh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA2CEC4AF13;
-	Thu, 22 Aug 2024 11:55:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724327743;
-	bh=xyyYSHlpETdxXpgwIpg+3WZM1dT9wVjT8Zwh1foGbqg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RbE8IaIh+qFR9m9mAiPJstYgtt1NZV6+n4Jcm/DYWkuj6jDGnv/0x9TiO0zRRqZRN
-	 NQHl4hGFT17ykVyEIyHaGDT3KhFyo9/5erjyDe4C1jDuOsM832eTf72jKTF6S7RRZl
-	 rVvWqI+d/8Ydtb/CKOy5w9Ww+KsLta4VBJP92WeKtRo7PaTAVygJOBr07kYoqRlbZY
-	 92wso2zAsnPvRZ4gsXKzHItGIy6/7ie6Itp8nQ5fvSGH9tPUSCDkiQOYvo4mA6mWZB
-	 nCcfXBF/l5aDryBRY9JTSVy3DmiFzBFYBWhHtzLaJ29MxktVQa53ZfGK4qyo9IOE4t
-	 KhvGILOv99yfw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5334a8a1b07so1016442e87.1;
-        Thu, 22 Aug 2024 04:55:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQXkbBLWTBq0TXHYFOFTlxnIhBBLAdYpi35JU7ddzSW611wS2raLRN3V/fAjm33OBY5rFfzaHednQN@vger.kernel.org, AJvYcCVv+hhCfHgez4mwx6rtXXC8MlmR6Gjs3V3dVwMkQ1H7yvReulgLVfSiwbuiIcI9AHZe7ZKuV3cxAbcUa6U8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhJeAuFJ+cVwfnJPD3VFARmTitdJ893vL8BrZj8aT8dUNeef9A
-	Xih8n6EzetSrlC6RVdq8BcBJS8CJ8CyeUlbBZGsvANKsQM2V1lrFf4EmMKc9FYjzlYvCjrBbVXA
-	4dpUWTxn1ptnCmXIRZLmviAzLpO4=
-X-Google-Smtp-Source: AGHT+IE1gy1iDsFbXQ02n/87I53EUf1zm9XfxU3SKWRARAL0monG66bMYMWqjeqi6UB73LrbwRHcIAQYMivYiiBFuYQ=
-X-Received: by 2002:a05:6512:2244:b0:530:aa09:b6bf with SMTP id
- 2adb3069b0e04-5334fc0027amr1076551e87.24.1724327741295; Thu, 22 Aug 2024
- 04:55:41 -0700 (PDT)
+	s=arc-20240116; t=1724327790; c=relaxed/simple;
+	bh=wCZ/RqvUaI9pmi2QwxuBeDkz4tI51Ex2sMXt6lPcgA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q2paML+gXhYZRIjxWoA4wexRmFywU4a11rGCutIFZuC9xl0cr8pGCGEROPHSDJJOTzZMFHxNmwBrJ5s4id5uxTVarjaJDMangF0IBS31/cS6i/yLAyW4rsEr3ZzAbPcE2OEhhpur/L4RURIpSLv8mFmgtluJ9k8587OCPghzcys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gkf/OszT; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 42C44240009;
+	Thu, 22 Aug 2024 11:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724327786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/gOwxgtxFAxYkk7+l7KBiOk6VqViegG+X4kGMpiBsEo=;
+	b=Gkf/OszTAyzJ4UL7JWAhorzjFpHa9YZk/knbSvzZMWiYR/gsX3vGUS0W/UcuXE88EWTD/q
+	N5vdK2U48d1gIQpUChHYHilR7KkVvjUDeDSWRBXrZTSY/WMBLeyjD7chhw5p9bVQqard0L
+	qvN9lT1lp+lZAP1zFfkjeU64eV4z3BRSfJqc9IIGIDTq+TbefvY10+K3tNeLuPOL8wZKIz
+	tDxM359xOKHifHiW+6fbC21dGftgAdV4hTriKsWgNs6dcrWVbiC13Rp4Qhq2vrE8lUbs2q
+	Fjb9IeoGAUNpkmP+8eEzrjhX2Nx5ssjhQHcpQ4/vz5+GzMv2ZhjIrHEX+K8sKg==
+Date: Thu, 22 Aug 2024 13:56:24 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
+ linus.walleij@linaro.org, marcin.s.wojtas@gmail.com, linux@armlinux.org.uk,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+ mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, justinstitt@google.com,
+ kees@kernel.org, u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com,
+ horms@kernel.org, shannon.nelson@amd.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [Linux-stm32] [net-next 2/9] net: stmmac: platform: Convert to
+ devm_clk_get_enabled() and devm_clk_get_optional_enabled()
+Message-ID: <20240822135624.4ca9a98d@fedora-3.home>
+In-Reply-To: <20240822084733.1599295-3-frank.li@vivo.com>
+References: <20240822084733.1599295-1-frank.li@vivo.com>
+	<20240822084733.1599295-3-frank.li@vivo.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822082101.391272-1-chenxiaosong@chenxiaosong.com> <20240822082101.391272-9-chenxiaosong@chenxiaosong.com>
-In-Reply-To: <20240822082101.391272-9-chenxiaosong@chenxiaosong.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 22 Aug 2024 20:55:27 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8-FmNH9gxGJniVNEXOpTYH8bD8Z0wHTjDN87WBDjYnOQ@mail.gmail.com>
-Message-ID: <CAKYAXd8-FmNH9gxGJniVNEXOpTYH8bD8Z0wHTjDN87WBDjYnOQ@mail.gmail.com>
-Subject: Re: [PATCH v2 08/12] smb/client: rename cifs_acl to smb_acl
-To: chenxiaosong@chenxiaosong.com
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
-	chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn, 
-	liuyun01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Thu, Aug 22, 2024 at 5:23=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wro=
-te:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> Preparation for moving acl definitions to new common header file.
->
-> Use the following shell command to rename:
->
->   find fs/smb/client -type f -exec sed -i \
->     's/struct cifs_acl/struct smb_acl/g' {} +
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Looks good to me.
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
-Thanks.
+Hi,
+
+On Thu, 22 Aug 2024 02:47:26 -0600
+Yangtao Li <frank.li@vivo.com> wrote:
+
+> Use devm_clk_get_enabled() and devm_clk_get_optional_enabled()
+> to simplify code.
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Thanks,
+
+Maxime
 
