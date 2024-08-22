@@ -1,168 +1,126 @@
-Return-Path: <linux-kernel+bounces-296614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60AE95ACD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:23:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D03595ACD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117EE1C22613
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FAE01C228B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD024CE05;
-	Thu, 22 Aug 2024 05:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01294F881;
+	Thu, 22 Aug 2024 05:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RcMgJv83"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="EJr90hX4"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8F729A5;
-	Thu, 22 Aug 2024 05:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C57D364DC;
+	Thu, 22 Aug 2024 05:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724304174; cv=none; b=cPnQcs8GVI9UVjAtS4Jsp41605621SCmxTiNrKoOKav1Be/T0Y58eJSoiO8o8U76dtXdsi3QDgGVquNbszRio2BEWf9tE7qcd+SXm71D7WNDPjl/BhRu0LWQGI2zUnLFs94/kkTcCO3/hyQIHYeNmwvz3Ch9HqikavOHJmuBTu0=
+	t=1724304206; cv=none; b=s8hrICTOU/GY3iKMaIPdVciutt85a49Nhg3lVH+hRXcNmAW2QFTqSAJ3Tehm37QKH9CJirngFcqJkNKsN+4CV1I+ET+aUJIZ2HaUKZ5l1ZHPABJw3sY72VhTEtLzTLYPkK0DmL3mbgzG6iXMiOqflvGltoi5+klfVVHZs1Rav/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724304174; c=relaxed/simple;
-	bh=wBB8OLwdPMIKI0ZGPMFhPRYD31g6/ZptmagEcO/2VOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pk6E9iqnytzGPY3vmhQTjX27fq/wfaI0E4uGxovmB3LeI/gG6oLt61AQMdmPzx4ovpsKj2VoiRNy2Fa69tMhFD5V/L03+XLAA1u/R/CvYjHk59V5eSSVct5eWlwpC4GxJoNMPPxuBHpa5sQ9cHv3ajSgrAyZ+oVJ0EegkD4WvRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RcMgJv83; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47M5MijY063532;
-	Thu, 22 Aug 2024 00:22:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724304164;
-	bh=QSzuUgLfVeB4msNs33a4Z+SPmNW8bVs+3RUbVH6JXdM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RcMgJv83CpAXVBkoQOQVV1f95TY9XmqpWzY5QLQfAZ187skvTiyViJs8BN8CM3orc
-	 +0DdMhZnxHk0EEVSGNyxUKjXcbHQlL5vU0DQwXj4JwuZen5to3gmcxfFtStf2dG762
-	 DjSI6+FsBm6tCG/70wbZ+fk2gjGw2xm+O2I7QQME=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47M5Miv6060514
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 22 Aug 2024 00:22:44 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
- Aug 2024 00:22:44 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 22 Aug 2024 00:22:44 -0500
-Received: from [172.24.156.139] (ltpw0bk3z4.dhcp.ti.com [172.24.156.139])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47M5Me4M027111;
-	Thu, 22 Aug 2024 00:22:41 -0500
-Message-ID: <716d189d-1f62-4fc0-9bb5-6c78967c5cba@ti.com>
-Date: Thu, 22 Aug 2024 10:52:40 +0530
+	s=arc-20240116; t=1724304206; c=relaxed/simple;
+	bh=JvviZ/TvdZzyy0lB23E39wSs1MZdbpxISdkQn13dXe0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WyIFsBHqUbbtUUmrktlcy4eIZLsu4IhOm63vSp1bzPvSnyleTBpL4qiyvvvbHLfT2yWEDVF254KTvXGyMX6mNt5MUKusbCsZSR/EX1HzHRXvCtCA1scfXgYOtZ1Sds6hC3p10CHGKUeCWSj2YPnBQdZ6wDT5ljKiTOqMZZvoYn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=EJr90hX4; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: a1d68574604611ef8593d301e5c8a9c0-20240822
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Zi1oFdwslpFsySYhI5Npfy3fFU8blZB+R3aDcpwYrDk=;
+	b=EJr90hX42QkxH5dLceei7o5zekXmK+Pwhs2mRyBjUfQcBcwmw+KL9cbzmRLLGJ4O36eiUkKLgrejl+OfoRCKiURwE7/J+zc/N/nUEO51kpaLfk73jzFlOkhW+lZBOilPRGLXw/s5vP/eTkVKxP+c9NHAJ6JsvgYqpakZAA8sSKg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:4e655bc7-c2a6-4667-8ea7-e762cb4a6147,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6dc6a47,CLOUDID:48e7fdce-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: a1d68574604611ef8593d301e5c8a9c0-20240822
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <hao.qin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1287319304; Thu, 22 Aug 2024 13:23:15 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 22 Aug 2024 13:23:14 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 22 Aug 2024 13:23:13 +0800
+From: Hao Qin <hao.qin@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Chris Lu <chris.lu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, "Steve
+ Lee" <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Hao Qin <hao.qin@mediatek.com>
+Subject: [PATCH] Bluetooth: btmtk: Remove resetting mt7921 before downloading the fw
+Date: Thu, 22 Aug 2024 13:23:10 +0800
+Message-ID: <20240822052310.25220-1-hao.qin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Fix error handling when power-up
- failed
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Apurva Nandan
-	<a-nandan@ti.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>
-References: <9f481156-f220-4adf-b3d9-670871351e26@siemens.com>
- <cf1783e3-e378-482d-8cc2-e03dedca1271@ti.com>
- <3c8844db-0712-4727-a54c-0a156b3f9e9c@siemens.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <3c8844db-0712-4727-a54c-0a156b3f9e9c@siemens.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.498600-8.000000
+X-TMASE-MatchedRID: hQ3LGvLpFaKGsPek1xLHVhuZoNKc6pl+Kx5ICGp/WtGIoW+1yT7Gw43q
+	EYKsEnZO8DRYXhYkzdkwc9Bdak/KgMcUiDRLzlgWRlqShqb35p59LQinZ4QefPcjNeVeWlqY+gt
+	Hj7OwNO34ZhR52Rc1ar8VznWR013yuuTZ49+OrM4KkaNHlVdn53Hot+sf2xIPIBp7MM+pUoZl7Z
+	Lan9xbOfC4Kd09x+FJ9Wlxn6Xuslj+Nzym4pugNUma3zYT97IFAYfQIAUhBayZvmCbKVb49sZL6
+	x5U/HridGByp+zdaDg=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.498600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	CC8BD9FB5F7243A38A9609A53706687D8166E6C3555EE50B17BC3AC959645F4E2000:8
 
+Remove resetting mt7921 before downloading the fw, as it may cause
+command timeout when performing the reset.
 
-On 21-08-2024 23:40, Jan Kiszka wrote:
-> On 21.08.24 07:30, Beleswar Prasad Padhi wrote:
->> On 19-08-2024 20:54, Jan Kiszka wrote:
->>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>
->>> By simply bailing out, the driver was violating its rule and internal
->>
->> Using device lifecycle managed functions to register the rproc
->> (devm_rproc_add()), bailing out with an error code will work.
->>
->>> assumptions that either both or no rproc should be initialized. E.g.,
->>> this could cause the first core to be available but not the second one,
->>> leading to crashes on its shutdown later on while trying to dereference
->>> that second instance.
->>>
->>> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up
->>> before powering up core1")
->>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->>> ---
->>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 3 ++-
->>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> index 39a47540c590..eb09d2e9b32a 100644
->>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> @@ -1332,7 +1332,7 @@ static int k3_r5_cluster_rproc_init(struct
->>> platform_device *pdev)
->>>                dev_err(dev,
->>>                    "Timed out waiting for %s core to power up!\n",
->>>                    rproc->name);
->>> -            return ret;
->>> +            goto err_powerup;
->>>            }
->>>        }
->>>    @@ -1348,6 +1348,7 @@ static int k3_r5_cluster_rproc_init(struct
->>> platform_device *pdev)
->>>            }
->>>        }
->>>    +err_powerup:
->>>        rproc_del(rproc);
->>
->> Please use devm_rproc_add() to avoid having to do rproc_del() manually
->> here.
-> This is just be the tip of the iceberg. The whole code needs to be
-> reworked accordingly so that we can drop these goto, not just this one.
+Signed-off-by: Hao Qin <hao.qin@mediatek.com>
+---
+ drivers/bluetooth/btmtk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index 2b7c80043aa2..a46f70135cbd 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -1326,7 +1326,6 @@ int btmtk_usb_setup(struct hci_dev *hdev)
+ 		fwname = FIRMWARE_MT7668;
+ 		break;
+ 	case 0x7922:
+-	case 0x7961:
+ 	case 0x7925:
+ 		/* Reset the device to ensure it's in the initial state before
+ 		 * downloading the firmware to ensure.
+@@ -1334,7 +1333,8 @@ int btmtk_usb_setup(struct hci_dev *hdev)
+ 
+ 		if (!test_bit(BTMTK_FIRMWARE_LOADED, &btmtk_data->flags))
+ 			btmtk_usb_subsys_reset(hdev, dev_id);
+-
++		fallthrough;
++	case 0x7961:
+ 		btmtk_fw_get_filename(fw_bin_name, sizeof(fw_bin_name), dev_id,
+ 				      fw_version, fw_flavor);
+ 
+-- 
+2.18.0
 
-You are correct. Unfortunately, the organic growth of this driver has 
-resulted in a need to refactor. I plan on doing this and post the 
-refactoring soon. This should be part of the overall refactoring as 
-suggested by Mathieu[2]. But for the immediate problem, your fix does 
-patch things up.. hence:
-
-Acked-by: Beleswar Padhi <b-padhi@ti.com>
-
-[2]: https://lore.kernel.org/all/Zr4w8Vj0mVo5sBsJ@p14s/
-
-> Just look at k3_r5_reserved_mem_init. Your change in [1] was also too
-> early in this regard, breaking current error handling additionally.
-
-
-
-Curious, Could you point out how does the change in [1] breaks current 
-error handling?
-
->
-> I'll stop my whac-a-mole. Someone needs to sit down and do that for the
-> complete code consistently. And test the error cases.
->
-> Jan
->
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
->
->>>    err_add:
->>>        k3_r5_reserved_mem_exit(kproc);
 
