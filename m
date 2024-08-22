@@ -1,187 +1,190 @@
-Return-Path: <linux-kernel+bounces-296776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE40D95AF1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4930295AF1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BF741F26A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057B42873FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC8D18859B;
-	Thu, 22 Aug 2024 07:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BSUNtw57"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B239218858A;
+	Thu, 22 Aug 2024 07:14:44 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1D11885A2
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38C3187FEF;
+	Thu, 22 Aug 2024 07:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310887; cv=none; b=pkdhGgvLTOJoxRL/h9C67sOVuVVtWPucaOoNcz+jNgIacJBQc3069IBbUvz5PyesBclkHPRkbuieQsxQzx467KG1Bsxy9Ih3ZWA6J81Qj86BWHxg0dB6fKpVvw5UjazK26M0G3lMgpfy17gLfAOySjiSbzEqyY+NU5idtxAk8Ps=
+	t=1724310884; cv=none; b=u4MdGpRUMhEjvA7Yb+nsqYncTbV/+H1RmLB9XrExyuTx3BzuFQca3YSopd0UXaIMBAiV8TxJHpZJQytigrQcRkHH7W1R1n12cJT/kYFbRPKwpxCDEOVjtaR+ZXcQgTzNykp/ttA+YlCIXBkXCpfdoVuuW3nlWmB4f20tf9TSgSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310887; c=relaxed/simple;
-	bh=NDVt8UFk+zbfrRMfMiJ0eEKdBEzxM75Y5QRnhcSFNmY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c4nrUdLEq1WxLgbdwLDAv3RSh6mgp74xIvo1T9D+ScuEC0iXLFy0pprX2dhQHNno+9MUN1+Q98xhYJA59OTOa7BnazwcUQAJJGb4vQTRWnxC+YZBwKU2zjka+/dyWcOZaOHqcAMKLSFvnpdnYb1fSVyDRMXc10GBO8Al0258ESE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BSUNtw57; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3db2315d7ceso298595b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724310885; x=1724915685; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Crbz/R3rJcbpbcovfp9fh4ozsAEMZSaAxrx7zvZfRRw=;
-        b=BSUNtw576jvEjIJoJ9xgAAwGsuSieh8ylg8a5IgnAubAVyCc2jyMnkLhSE+C4uBAow
-         TegzwyVMOSAWIwytdourj9Qu8i4ywKkofc+PPJKX6G89ErjdsjXwlxP1UIO/oBQc0+30
-         WaOGPr4B9MkyehQJ0A2Zf82WELGkIjjL2rGNQ3VPTa7nTzNdQa9D53poRsiQKn7eEk3R
-         np3iOayYoPW6CJ4KUz2R6EkqQtHCuhn22jIvS9bUt2lALzUxHFu+Kp/HU2o1Wm9VcDE0
-         Ytx7+jQLbq7T9SfpIvOUHi296FCCM+vsTPdolPwZVJIKAqezQkSF+mDFYHqt4jCpyieL
-         KdiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724310885; x=1724915685;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Crbz/R3rJcbpbcovfp9fh4ozsAEMZSaAxrx7zvZfRRw=;
-        b=T84h6pXSkv1gNHTxMT87VtbYkkS3R+DixNp60tDLYZ0NPsOiOfmdtx1j9JVMGCrQs5
-         2Wm9WQkfFD3Cx5w+fi2gPfFLqf8230YXVVlE9+gebxo8bjbpzC2cWZ0exPF7YXW/aCA2
-         DYL6c9ZCDWInYQxqjWpuJkHzsp2iX5lmny4ju+qop8P3cm+vg8ByuLsb/P9jiE5BjM2B
-         j5aWb61Cwlar4+5ORuhWOqq1R7Jw8Tl3sd6Gvl9RejTrddl/5XZGZ+20m8min68LjeDe
-         sg02Rz4NyQ/JCShB9fVo1rgIt8SW3Rbfrmog8WLZbtjcf94OK0T/FjVIYkWnJRNNzN8D
-         he2A==
-X-Gm-Message-State: AOJu0YxNMWaMhkBfSB595SF6XEiWF0uVBncwIN4gR3edo8Spx699bPAE
-	MexhO3t9B3YgGphxY51LFbSzGDOI0HW4MOMQbvijahyKe+aVSbB/kGtaNf5V0vo=
-X-Google-Smtp-Source: AGHT+IF73IAzwqsx0nomJCVJryAV7cndKc0EgZ0+2TYoDy25bfQlq+9JSwXFUBQmZZcxXSkt111lxw==
-X-Received: by 2002:a05:6808:d46:b0:3d9:29c1:be5c with SMTP id 5614622812f47-3de194fbf2bmr5329807b6e.12.1724310885053;
-        Thu, 22 Aug 2024 00:14:45 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([240e:473:c90:f96:d029:ea8a:4e6d:d272])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac994a3sm695095a12.16.2024.08.22.00.14.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 00:14:44 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: david@redhat.com,
-	hughd@google.com,
-	willy@infradead.org,
-	muchun.song@linux.dev,
-	vbabka@kernel.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org,
-	vishal.moola@gmail.com,
-	peterx@redhat.com,
-	ryan.roberts@arm.com,
-	christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1724310884; c=relaxed/simple;
+	bh=yXWU/vOrVCh1tH6IvVskRabYNHCoI2MUD+0kW8f8BRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=N2NRfjVnzkrq+s41/HWxNTmlvZjAgOKieInbMf1QybnyvJf0uLMMfxWHxibt/MtUXuwKefXjN/oVEeK7ZxdXVdFS0WU3PJiDdIY+aXYXUKfFxHnByZVe1zeOWDvQQZ+bsOkstiiYNwinL9P2eG2I1+sR3k6bZabmz4K9CnkV7p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqDvS5M5gz9sTD;
+	Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5BXvRolJCPmB; Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDvS4Ts4z9sSy;
+	Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 898D68B763;
+	Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id M06ncktVG1Is; Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7999F8B77D;
+	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2 10/14] mm: page_vma_mapped_walk: map_pte() use pte_offset_map_rw_nolock()
-Date: Thu, 22 Aug 2024 15:13:25 +0800
-Message-Id: <d200bf710fc6f11202ea2d777ac2eb9f7fb0c6c9.1724310149.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <cover.1724310149.git.zhengqi.arch@bytedance.com>
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 17/17] selftests: vdso: Add support for vdso_test_random for powerpc
+Date: Thu, 22 Aug 2024 09:13:25 +0200
+Message-ID: <7a612370f645d6f8defd4dc8c1ebf31ee39dfb1f.1724309198.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310795; l=2831; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=yXWU/vOrVCh1tH6IvVskRabYNHCoI2MUD+0kW8f8BRY=; b=KS6Wqd4DIG71241Ra4HKWqyJqfA08PcnWHdqJqXSzHx1GQ2rQRMw4i3n5nKIJ8DUdMbYpgKlH PcZJDDWZcGgD4/4e4J7ugbtDnH9tX2JYCnkXxsBKExFDkk4hm1KeDA9
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-In the caller of map_pte(), we may modify the pvmw->pte after acquiring
-the pvmw->ptl, so convert it to using pte_offset_map_rw_nolock(). At
-this time, the write lock of mmap_lock is not held, and the pte_same()
-check is not performed after the pvmw->ptl held, so we should get pmdval
-and do pmd_same() check to ensure the stability of pvmw->pmd.
+Add the necessary symbolic link and tell Makefile to build
+vdso_test_random for powerpc.
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+In makefile, don't use $(uname_M) which is wrong when cross-building
+for powerpc on an x86_64.
+
+Implement the required VDSO_CALL macro to correctly handle errors.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- mm/page_vma_mapped.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ tools/arch/powerpc/vdso                  |  1 +
+ tools/testing/selftests/vDSO/Makefile    |  6 ++++
+ tools/testing/selftests/vDSO/vdso_call.h | 40 ++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+)
+ create mode 120000 tools/arch/powerpc/vdso
 
-diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-index ae5cc42aa2087..f1d73fd448708 100644
---- a/mm/page_vma_mapped.c
-+++ b/mm/page_vma_mapped.c
-@@ -13,9 +13,11 @@ static inline bool not_found(struct page_vma_mapped_walk *pvmw)
- 	return false;
- }
+diff --git a/tools/arch/powerpc/vdso b/tools/arch/powerpc/vdso
+new file mode 120000
+index 000000000000..d31004bf8f55
+--- /dev/null
++++ b/tools/arch/powerpc/vdso
+@@ -0,0 +1 @@
++../../../arch/powerpc/kernel/vdso/
+\ No newline at end of file
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+index 10ffdda3f2fa..7e7c9fd200d3 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -17,6 +17,12 @@ ifneq ($(SODIUM),)
+ TEST_GEN_PROGS += vdso_test_chacha
+ endif
+ endif
++ifeq ($(ARCH),powerpc)
++TEST_GEN_PROGS += vdso_test_getrandom
++ifneq ($(SODIUM),)
++TEST_GEN_PROGS += vdso_test_chacha
++endif
++endif
  
--static bool map_pte(struct page_vma_mapped_walk *pvmw, spinlock_t **ptlp)
-+static bool map_pte(struct page_vma_mapped_walk *pvmw, pmd_t *pmdvalp,
-+		    spinlock_t **ptlp)
- {
- 	pte_t ptent;
-+	pmd_t pmdval;
+ CFLAGS := -std=gnu99
  
- 	if (pvmw->flags & PVMW_SYNC) {
- 		/* Use the stricter lookup */
-@@ -25,6 +27,7 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw, spinlock_t **ptlp)
- 		return !!pvmw->pte;
- 	}
+diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftests/vDSO/vdso_call.h
+index ca5db2220925..2a33c25756dc 100644
+--- a/tools/testing/selftests/vDSO/vdso_call.h
++++ b/tools/testing/selftests/vDSO/vdso_call.h
+@@ -7,6 +7,46 @@
+ #ifndef __VDSO_CALL_H__
+ #define __VDSO_CALL_H__
  
-+again:
- 	/*
- 	 * It is important to return the ptl corresponding to pte,
- 	 * in case *pvmw->pmd changes underneath us; so we need to
-@@ -32,10 +35,11 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw, spinlock_t **ptlp)
- 	 * proceeds to loop over next ptes, and finds a match later.
- 	 * Though, in most cases, page lock already protects this.
- 	 */
--	pvmw->pte = pte_offset_map_nolock(pvmw->vma->vm_mm, pvmw->pmd,
--					  pvmw->address, ptlp);
-+	pvmw->pte = pte_offset_map_rw_nolock(pvmw->vma->vm_mm, pvmw->pmd,
-+					     pvmw->address, &pmdval, ptlp);
- 	if (!pvmw->pte)
- 		return false;
-+	*pmdvalp = pmdval;
- 
- 	ptent = ptep_get(pvmw->pte);
- 
-@@ -69,6 +73,12 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw, spinlock_t **ptlp)
- 	}
- 	pvmw->ptl = *ptlp;
- 	spin_lock(pvmw->ptl);
++#ifdef __powerpc__
 +
-+	if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pvmw->pmd)))) {
-+		spin_unlock(pvmw->ptl);
-+		goto again;
-+	}
++#define LOADARGS_5(fn, __arg1, __arg2, __arg3, __arg4, __arg5) do { 	\
++	_r0 = fn;							\
++	_r3 = (long)__arg1;						\
++	_r4 = (long)__arg2;						\
++	_r5 = (long)__arg3;						\
++	_r6 = (long)__arg4;						\
++	_r7 = (long)__arg5;						\
++} while (0)
 +
- 	return true;
- }
++#define VDSO_CALL(fn, nr, args...) ({					\
++	register void *_r0 asm ("r0");					\
++	register long _r3 asm ("r3");					\
++	register long _r4 asm ("r4");					\
++	register long _r5 asm ("r5");					\
++	register long _r6 asm ("r6");					\
++	register long _r7 asm ("r7");					\
++	register long _r8 asm ("r8");					\
++	register long _rval asm ("r3");					\
++									\
++	LOADARGS_##nr(fn, args);					\
++									\
++	asm volatile(							\
++		"	mtctr %0\n"					\
++		"	bctrl\n"					\
++		"	bns+	1f\n"					\
++		"	neg	3, 3\n"					\
++		"1:"							\
++		: "+r" (_r0), "=r" (_r3), "+r" (_r4), "+r" (_r5),	\
++		  "+r" (_r6), "+r" (_r7), "+r" (_r8)			\
++		: "r" (_rval)						\
++		: "r9", "r10", "r11", "r12", "cr0", "cr1", "cr5",	\
++		  "cr6", "cr7", "xer", "lr", "ctr", "memory"		\
++	);								\
++	_rval;								\
++})
++
++#else
+ #define VDSO_CALL(fn, nr, args...)	fn(args)
++#endif
  
-@@ -278,7 +288,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- 			step_forward(pvmw, PMD_SIZE);
- 			continue;
- 		}
--		if (!map_pte(pvmw, &ptl)) {
-+		if (!map_pte(pvmw, &pmde, &ptl)) {
- 			if (!pvmw->pte)
- 				goto restart;
- 			goto next_pte;
-@@ -307,6 +317,12 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- 		if (!pvmw->ptl) {
- 			pvmw->ptl = ptl;
- 			spin_lock(pvmw->ptl);
-+			if (unlikely(!pmd_same(pmde, pmdp_get_lockless(pvmw->pmd)))) {
-+				pte_unmap_unlock(pvmw->pte, pvmw->ptl);
-+				pvmw->ptl = NULL;
-+				pvmw->pte = NULL;
-+				goto restart;
-+			}
- 		}
- 		goto this_pte;
- 	} while (pvmw->address < end);
+ #endif
 -- 
-2.20.1
+2.44.0
 
 
