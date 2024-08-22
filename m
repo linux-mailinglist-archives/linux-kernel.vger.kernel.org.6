@@ -1,132 +1,78 @@
-Return-Path: <linux-kernel+bounces-297246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFE395B4DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D0B95B4E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95327B218A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314A8287C47
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5895E1C93D6;
-	Thu, 22 Aug 2024 12:20:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3641C9DD2;
+	Thu, 22 Aug 2024 12:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrYz7ko5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E9C26AF6
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4482116A940;
+	Thu, 22 Aug 2024 12:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724329218; cv=none; b=XghTas5lwT7qs5SNmEKLQWxwYQwqO5Bh/VNmYUCun3tQyOPluo+/uUlzO1pogY8BaOqqUwXkZgU0c2EalKux7WUlqDHuhX2Ls91N8VPyZIVzFMtJwf760ajrcJzFpnKIqC6d8+BXzunCLDe5I1Ruw0n5Z/IJ0i1MOxT1Sjqjlis=
+	t=1724329230; cv=none; b=QkUc+3ro7MePwZalvznWP9l0xNHkZtw71DDp46pZI1Bj/Cksv3VddEM4rvNVa5mqlBUE41oB4lOqH6dldYo2BO+ysfHkYdYvWqOiepQIqLf7aDaR/zKmr6knIVf5Wb4hsMwMa1Yv1dYWXxfNDc9C/dcyAwwtVldBwayvYEl2fqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724329218; c=relaxed/simple;
-	bh=BUaGhDKugO8KmJcMu6yG5efX9QIwQvWnMGEzBPRTyGI=;
+	s=arc-20240116; t=1724329230; c=relaxed/simple;
+	bh=stMLxFv66OkFuObD6fVYFuyIPTsazrqfFXFvEAHOF3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oSCrv4w2vO1S0ESmV3kk0Pu1RW9cYY8gppQYdXTxHuT4H8/apYcKEDWuzA6EVNNByJJp7F8K/26DrPPYbBHYMaYEcmD+TYg9+or/hULmVr2gugcURBBEQPEnuzZVHG24L8QbULWfUR+aGw3DMSjIVsKVHgWt8HkpVVrNKPzhzxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh6nU-0001ow-0R; Thu, 22 Aug 2024 14:20:12 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sh6nT-002FNW-6r; Thu, 22 Aug 2024 14:20:11 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D93CA3249CC;
-	Thu, 22 Aug 2024 12:20:10 +0000 (UTC)
-Date: Thu, 22 Aug 2024 14:20:10 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
-	Brian Norris <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Kalle Valo <kvalo@kernel.org>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: RE: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
-Message-ID: <20240822-attentive-solemn-rat-13a85e-mkl@pengutronix.de>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
- <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
- <PA4PR04MB9638C8D68F0F71C17E903DDAD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <20240822-brainy-liberal-toucan-bc498c-mkl@pengutronix.de>
- <PA4PR04MB963813C76F476449A5003FFCD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3lnihXCZfeT7XfqTu/FZ6kuoMO2fZLwrwdcCfCrHFYlbPX4lFJ0poSsDlak4oWMovLYnDLIbXdQkfBdYfZghYqNZLYkvfrpRlIZJMm+qscs52KozlcY7qvJkyQE48guCisnfEcU7p6R2Cqt+ZEnH/J64qRBj2pQhuuUHmpvs2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrYz7ko5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D811C32782;
+	Thu, 22 Aug 2024 12:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724329230;
+	bh=stMLxFv66OkFuObD6fVYFuyIPTsazrqfFXFvEAHOF3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OrYz7ko56CTvUx56VYqHQecOjKEIpjE9/UFtZHt9JuWSTEiKLEAdVTcePGmwT3rQ/
+	 eQm3/XQLWiccxxmk7mBJqQfIX1Q/CQL/gjIkf2sWWjd3D78m00m2JnYLYFMlxcHnJv
+	 pkNGZMkIU71FGjiCnOAoGKHapbMEJ2k715dk8kDSoEyeiQeOJmzBiRXnceg4tTwus1
+	 YE+92S8LrOQZi65J0AHVi/B+SlQEt7vWhSAPvQJnPWj8uAazWqnxneo8TYlh7Z1Eh7
+	 D5Lyt0SwEVLJyp6IWxDVbW81eXsUF65GtpAkHjTpuVewgAltDHu9l1EwEC9GhcYd/3
+	 jGek+Yd0G/8xg==
+Date: Thu, 22 Aug 2024 13:20:26 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] net: netlink: Remove the dump_cb_mutex field
+ from struct netlink_sock
+Message-ID: <20240822122026.GO2164@kernel.org>
+References: <c15ce0846e0aed6f342d85f36092c386c6148d00.1724309198.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="stabsaq2vdo4glry"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PA4PR04MB963813C76F476449A5003FFCD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <c15ce0846e0aed6f342d85f36092c386c6148d00.1724309198.git.christophe.jaillet@wanadoo.fr>
 
+On Thu, Aug 22, 2024 at 09:03:20AM +0200, Christophe JAILLET wrote:
+> Commit 5fbf57a937f4 ("net: netlink: remove the cb_mutex "injection" from
+> netlink core") has removed the usage of the 'dump_cb_mutex' field from the
+> struct netlink_sock.
+> 
+> Remove the field itself now. It saves a few bytes in the structure.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
 
---stabsaq2vdo4glry
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-On 22.08.2024 12:11:15, David Lin wrote:
-> > Why do you think 2 drivers are easier to handle/support/maintain/...
-> > than 1 driver, especially given the low available review bandwidth?
-> >=20
->=20
-> Nxpwifi is used to support new NXP WiFi chips. You can check the commit m=
-essage of Nxpwifi to
-> know the reason why we need a new driver to support new NXP WiFi chips.
-
-FTR:
-
-https://lore.kernel.org/all/20240809094533.1660-1-yu-hao.lin@nxp.com/
-
->> [1] We had considered adding IW61x to mwifiex driver, however due to
->>     FW architecture, host command interface and supported features are
->>     significantly different, we have to create the new nxpwifi driver.
->>     Subsequent NXP chipsets will be added and sustained in this new driv=
-er.
-
-Thanks for the clarification.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---stabsaq2vdo4glry
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbHLPcACgkQKDiiPnot
-vG+J4gf+IEXO+QAQVMqrjhoe6SJq11AT5ZT+0VfCWfc/cnKSt5J/qPyINKQSpNFX
-y/ONVGx388jCSpujPpcmuyHgzyZRx1phYBSIoGPKCq3ZnPZ4pgLvQLgnwJP22rET
-nMkY48c+8CcaAvDuVpwUtcIsWXtGlb3qUNwf8HixneB/rnqiKG5B41H+1rYt6D+B
-K69MwkOvNcnCZWARkw4M8Wp7drUHyabXdi1e/l+ugRrwJMRgKqzXi+tBvNNEdI6E
-giMDbn7C6aZJPagFWSuQ/FRA7eHLqZahrUy7CX+E8JdcRJxj6IhVkXLS8f4jjecs
-RULd3GGaTRPqab+zERzlY6VUzV35vg==
-=Ej8p
------END PGP SIGNATURE-----
-
---stabsaq2vdo4glry--
 
