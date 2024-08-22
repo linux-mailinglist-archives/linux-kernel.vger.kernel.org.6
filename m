@@ -1,377 +1,241 @@
-Return-Path: <linux-kernel+bounces-297953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B29A95BF90
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3987195BF98
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4709F1C20C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF861285681
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAAB1D1726;
-	Thu, 22 Aug 2024 20:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E332E1D0DE8;
+	Thu, 22 Aug 2024 20:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gp29njgO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cFFyeyuT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7189E14A4CC;
-	Thu, 22 Aug 2024 20:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237612AE77;
+	Thu, 22 Aug 2024 20:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724358659; cv=none; b=ihGD/iKOxKSP7FfCIj6xc1AIsi883Q+q+ad2IJDRSP8GtSiM157WFSJ0PT2M0MiTaA0glBKCkArXBYVnASyV1C4vpOfQ+Gyj6CJitXFzhEmjTaBiuBKANxlN5es5So5LHhcz/njwsEEaWvAyYx5TABV0IDPWX97xHoCDmt5puHg=
+	t=1724358868; cv=none; b=N++KbvfAO3Z6q5rYnp2cnzqS0HGjUX49DV4wb5B8RWgfZAFCksK/mZzJGU1X71EKDEEtdxJpA+XCX8gqpmAT+IbRPWzWg/1hOeCa60xyimomlJhzbkudabXYsRtoEZXlSRGlLzAAev4iIxtGACoI/rQDVjyXPZ5DLsKXJdpphCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724358659; c=relaxed/simple;
-	bh=DSY6th/sRSXoB1K5edub5QsT/OYwGJY3+8ohmpVQeeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6NvW89UnBpycQ/vj6qDtIxQ5VvXbQQ8IHYbtyImSEz6l9FwSkHeXEOpu76z/0HizOZmiOJUDeR80Lu4DpduJsyNGrhf1fvvXm61zNGyKP5Z/zCmS1e4uNnfujDfA29GNoJ/K3WkLZdece3bA0OQA+egvM0ED8Pm4uhJPjtikag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gp29njgO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5B7C32782;
-	Thu, 22 Aug 2024 20:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724358659;
-	bh=DSY6th/sRSXoB1K5edub5QsT/OYwGJY3+8ohmpVQeeI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gp29njgOe0oi5Z9LvL24nqgbJTkzB8FUNhHzZGFdob4VHu7REIWVpMXDmxuCoYPpJ
-	 n55mdUbjUY9+3AGKodNfffocG9x+lUePyKL1GOU5MqRY7ID151iB3gBI0PGlggeOrC
-	 CrmWf1uzofJqYw3LKqeFF++S/dJAg4iQ0QXXlqH0N1ltzGFwFQ+O8j0zfRcxNIPghU
-	 pSbkhfG8HUSFfDC0apa9Q+k3ZTtqvOADRVu7wlFM4+VOGGJnVArSO06aSzfVNo3yGm
-	 br2SgfY6VD40rNbdFD6iyFnrDHdC7uPQDEBmTArvXfRGTiSwR5mZeF1eVE0szmQex1
-	 QuqoQD2w0UFyg==
-Date: Thu, 22 Aug 2024 13:30:58 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
-	hch@lst.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, hare@suse.de,
-	martin.petersen@oracle.com, catherine.hoang@oracle.com,
-	kbusch@kernel.org
-Subject: Re: [PATCH v5 3/7] fs: iomap: Atomic write support
-Message-ID: <20240822203058.GR865349@frogsfrogsfrogs>
-References: <20240817094800.776408-1-john.g.garry@oracle.com>
- <20240817094800.776408-4-john.g.garry@oracle.com>
- <20240821165803.GI865349@frogsfrogsfrogs>
- <a91557d2-95d4-4e73-9936-72fc1fbe100f@oracle.com>
+	s=arc-20240116; t=1724358868; c=relaxed/simple;
+	bh=ctQ9UYC6J8LJzX45tOSyD1Sw4BDUIamOloH6hatvdnQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHssr7VBkt9ZtTAd9wsSmbIHBukk6ArlcdCEMVXagU2keUi3GsYqJuwWW/lR8wgeezvAgLuNMHwUqlAfFAMJH7ZEwDo0WA5ldlda3Umv8z2JrFghkI1wWuNZNTMRAdmg1PRdXsGV/0PFV3wMm1SB/WwrqikwyQeLN5m0Ec2XqQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cFFyeyuT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MACTBV029158;
+	Thu, 22 Aug 2024 20:34:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BPxAlT+tRjlhmKxEHYvrHQUR
+	U/2LRCMPb+ZpasSAVuI=; b=cFFyeyuT+pQda/3Q6XcHXMp4106+PzyPJQqGlJhz
+	xBQ5qAAsCg3y/cwOWWi1Nlkb6k5FL/Yavho95OqD2WEy9dzKWQgORu5Gb9GbvwwL
+	gCQ+DhoWW23YurVlzFU+WJ8qYxlp79BSS69PQL9xUDNblrWI5cP1o6RU2eC9dBQ4
+	h4ZBdfz2JDYKJp/hzpnkyf/Z/z1lAwWbnK5Gz8Bd1tT28pZyjxth5ZL0P9o6go7i
+	TkcOo5T1SmEFvlD13Rpl9qYI+HFOeb8jipnBts4HKzdzbZvE31dct1F31IR5zorq
+	xABvFkcGTS4rGltOtJXL5xohiZTiKjRDlRu/g7WDaef6Xg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4159ade7ve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 20:34:11 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MKY9Og022939
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 20:34:09 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 22 Aug 2024 13:34:05 -0700
+Date: Fri, 23 Aug 2024 02:04:01 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>
+CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>, Mostafa Saleh <smostafa@google.com>,
+        "Will
+ Deacon" <will@kernel.org>, Rob Clark <robdclark@chromium.org>,
+        Sean Paul
+	<sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVER
+ for Qualcomm Adreno GPUs" <dri-devel@lists.freedesktop.org>,
+        open list
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 4/4] drm/msm: Extend gpu devcore dumps with pgtbl info
+Message-ID: <20240822203401.odfmdlqto6lsqefz@hu-akhilpo-hyd.qualcomm.com>
+References: <20240820171652.145673-1-robdclark@gmail.com>
+ <20240820171652.145673-5-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <a91557d2-95d4-4e73-9936-72fc1fbe100f@oracle.com>
+In-Reply-To: <20240820171652.145673-5-robdclark@gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RA3gRm1gs5mXuRX2CYjzVSUtV0AEWAf_
+X-Proofpoint-ORIG-GUID: RA3gRm1gs5mXuRX2CYjzVSUtV0AEWAf_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_14,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=844
+ impostorscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0 mlxscore=0
+ bulkscore=0 phishscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408220152
 
-On Thu, Aug 22, 2024 at 04:29:34PM +0100, John Garry wrote:
+On Tue, Aug 20, 2024 at 10:16:47AM -0700, Rob Clark wrote: > From: Rob Clark <robdclark@chromium.org>
 > 
-> > > +
-> > >   static void iomap_dio_submit_bio(const struct iomap_iter *iter,
-> > >   		struct iomap_dio *dio, struct bio *bio, loff_t pos)
-> > >   {
-> > > @@ -256,7 +275,7 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-> > >    * clearing the WRITE_THROUGH flag in the dio request.
-> > >    */
-> > >   static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> > > -		const struct iomap *iomap, bool use_fua)
-> > > +		const struct iomap *iomap, bool use_fua, bool atomic)
-> > >   {
-> > >   	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
-> > > @@ -268,6 +287,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> > >   		opflags |= REQ_FUA;
-> > >   	else
-> > >   		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
-> > > +	if (atomic)
-> > > +		opflags |= REQ_ATOMIC;
-> > >   	return opflags;
-> > >   }
-> > > @@ -275,21 +296,23 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> > >   static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   		struct iomap_dio *dio)
-> > >   {
-> > > +	bool atomic = dio->iocb->ki_flags & IOCB_ATOMIC;
-> > >   	const struct iomap *iomap = &iter->iomap;
-> > >   	struct inode *inode = iter->inode;
-> > >   	unsigned int fs_block_size = i_blocksize(inode), pad;
-> > > +	struct iov_iter *i = dio->submit.iter;
-> > 
-> > If you're going to pull this out into a convenience variable, please do
-> > that as a separate patch so that the actual untorn write additions don't
-> > get mixed in.
+> In the case of iova fault triggered devcore dumps, include additional
+> debug information based on what we think is the current page tables,
+> including the TTBR0 value (which should match what we have in
+> adreno_smmu_fault_info unless things have gone horribly wrong), and
+> the pagetable entries traversed in the process of resolving the
+> faulting iova.
 > 
-> Yeah, I was thinking of doing that, so ok.
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++++++++
+>  drivers/gpu/drm/msm/msm_gpu.c           |  9 +++++++++
+>  drivers/gpu/drm/msm/msm_gpu.h           |  8 ++++++++
+>  drivers/gpu/drm/msm/msm_iommu.c         | 22 ++++++++++++++++++++++
+>  drivers/gpu/drm/msm/msm_mmu.h           |  3 ++-
+>  5 files changed, 51 insertions(+), 1 deletion(-)
 > 
-> > 
-> > >   	loff_t length = iomap_length(iter);
-> > >   	loff_t pos = iter->pos;
-> > >   	blk_opf_t bio_opf;
-> > >   	struct bio *bio;
-> > >   	bool need_zeroout = false;
-> > >   	bool use_fua = false;
-> > > -	int nr_pages, ret = 0;
-> > > +	int nr_pages, orig_nr_pages, ret = 0;
-> > >   	size_t copied = 0;
-> > >   	size_t orig_count;
-> > >   	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
-> > > -	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> > > +	    !bdev_iter_is_aligned(iomap->bdev, i))
-> > >   		return -EINVAL;
-> > >   	if (iomap->type == IOMAP_UNWRITTEN) {
-> > > @@ -322,15 +345,35 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   			dio->flags &= ~IOMAP_DIO_CALLER_COMP;
-> > >   	}
-> > > +	if (dio->atomic_bio) {
-> > > +		/*
-> > > +		 * These should not fail, but check just in case.
-> > > +		 * Caller takes care of freeing the bio.
-> > > +		 */
-> > > +		if (iter->iomap.bdev != dio->atomic_bio->bi_bdev) {
-> > > +			ret = -EINVAL;
-> > > +			goto out;
-> > > +		}
-> > > +
-> > > +		if (dio->atomic_bio->bi_iter.bi_sector +
-> > > +		    (dio->atomic_bio->bi_iter.bi_size >> SECTOR_SHIFT) !=
-> > 
-> > Hmm, so I guess you stash an untorn write bio in the iomap_dio so that
-> > multiple iomap_dio_bio_iter can try to combine a mixed mapping into a
-> > single contiguous untorn write that can be completed all at once?
-> 
-> Right, we are writing to a contiguous LBA address range with a single bio
-> that happens to cover many different extents.
-> 
-> > I suppose that works as long as the iomap->type is the same across all
-> > the _iter calls, but I think that needs explicit checking here.
-> 
-> As an sample, if we try to atomically write over the data in the following
-> file:
-> 
-> # xfs_bmap -vvp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..127]:        hole                                   128
->   1: [128..135]:      256..263          0 (256..263)           8 010000
->   2: [136..143]:      264..271          0 (264..271)           8 000000
->   3: [144..255]:      272..383          0 (272..383)         112 010000
-> FLAG Values:
->    0100000 Shared extent
->    0010000 Unwritten preallocated extent
->    0001000 Doesn't begin on stripe unit
->    0000100 Doesn't end   on stripe unit
->    0000010 Doesn't begin on stripe width
->    0000001 Doesn't end   on stripe width
-> #
-> 
-> 
-> Then, the iomap->type/flag is either IOMAP_UNWRITTEN/IOMAP_F_DIRTY or
-> IOMAP_MAPPED/IOMAP_F_DIRTY per iter. So the type is not consistent. However
-> we will set IOMAP_DIO_UNWRITTEN in dio->flags, so call xfs_dio_write_endio()
-> -> xfs_iomap_write_unwritten() for the complete FSB range.
-> 
-> Do you see a problem with this?
-> 
-> Please see this also for some more background:
-> https://lore.kernel.org/linux-xfs/20240726171358.GA27612@lst.de/
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index 1c6626747b98..3848b5a64351 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -864,6 +864,16 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
+>  		drm_printf(p, "  - dir=%s\n", info->flags & IOMMU_FAULT_WRITE ? "WRITE" : "READ");
+>  		drm_printf(p, "  - type=%s\n", info->type);
+>  		drm_printf(p, "  - source=%s\n", info->block);
+> +
+> +		/* Information extracted from what we think are the current
+> +		 * pgtables.  Hopefully the TTBR0 matches what we've extracted
+> +		 * from the SMMU registers in smmu_info!
+> +		 */
+> +		drm_puts(p, "pgtable-fault-info:\n");
+> +		drm_printf(p, "  - ttbr0: %.16llx\n", (u64)info->pgtbl_ttbr0);
 
-Yes -- if you have a mix of written and unwritten blocks for the same
-chunk of physical space:
+"0x" prefix? Otherwise, it is a bit confusing when the below one is
+decimal.
 
-0      7
-WUWUWUWU
+> +		drm_printf(p, "  - asid: %d\n", info->asid);
+> +		drm_printf(p, "  - ptes: %.16llx %.16llx %.16llx %.16llx\n",
+> +			   info->ptes[0], info->ptes[1], info->ptes[2], info->ptes[3]);
 
-the directio ioend function will start four separate transactions to
-convert blocks 1, 3, 5, and 7 to written status.  If the system crashes
-midway through, they will see this afterwards:
+Does crashdec decodes this?
 
-WWWWW0W0
+-Akhil.
 
-IOWs, although the *disk write* was completed successfully, the mapping
-updates were torn, and the user program sees a torn write.
-
-The most performant/painful way to fix this would be to make the whole
-ioend completion a logged operation so that we could commit to updating
-all the unwritten mappings and restart it after a crash.
-
-The least performant of course is to write zeroes at allocation time,
-like we do for fsdax.
-
-A possible middle ground would be to detect IOMAP_ATOMIC in the
-->iomap_begin method, notice that there are mixed mappings under the
-proposed untorn IO, and pre-convert the unwritten blocks by writing
-zeroes to disk and updating the mappings before handing the one single
-mapping back to iomap_dio_rw to stage the untorn writes bio.  At least
-you'd only be suffering that penalty for the (probable) corner case of
-someone creating mixed mappings.
-
-> 
-> > 
-> > > +			iomap_sector(iomap, pos)) {
-> > > +			ret = -EINVAL;
-> > > +			goto out;
-> > > +		}
-> > > +	} else if (atomic) {
-> > > +		orig_nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
-> > > +	}
-> > > +
-> > >   	/*
-> > >   	 * Save the original count and trim the iter to just the extent we
-> > >   	 * are operating on right now.  The iter will be re-expanded once
-> > >   	 * we are done.
-> > >   	 */
-> > > -	orig_count = iov_iter_count(dio->submit.iter);
-> > > -	iov_iter_truncate(dio->submit.iter, length);
-> > > +	orig_count = iov_iter_count(i);
-> > > +	iov_iter_truncate(i, length);
-> > > -	if (!iov_iter_count(dio->submit.iter))
-> > > +	if (!iov_iter_count(i))
-> > >   		goto out;
-> > >   	/*
-> > > @@ -365,27 +408,46 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   	 * can set up the page vector appropriately for a ZONE_APPEND
-> > >   	 * operation.
-> > >   	 */
-> > > -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
-> > > +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
-> > > +
-> > > +	if (atomic) {
-> > > +		size_t orig_atomic_size;
-> > > +
-> > > +		if (!dio->atomic_bio) {
-> > > +			dio->atomic_bio = iomap_dio_alloc_bio_data(iter,
-> > > +					dio, orig_nr_pages, bio_opf, pos);
-> > > +		}
-> > > +		orig_atomic_size = dio->atomic_bio->bi_iter.bi_size;
-> > > +
-> > > +		/*
-> > > +		 * In case of error, caller takes care of freeing the bio. The
-> > > +		 * smallest size of atomic write is i_node size, so no need for
-> > 
-> > What is "i_node size"?  Are you referring to i_blocksize?
-> 
-> Yes, I meant i_blocksize()
-> 
-> > 
-> > > +		 * tail zeroing out.
-> > > +		 */
-> > > +		ret = bio_iov_iter_get_pages(dio->atomic_bio, i);
-> > > +		if (!ret) {
-> > > +			copied = dio->atomic_bio->bi_iter.bi_size -
-> > > +				orig_atomic_size;
-> > > +		}
-> > > -	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
-> > > +		dio->size += copied;
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
-> > >   	do {
-> > >   		size_t n;
-> > >   		if (dio->error) {
-> > > -			iov_iter_revert(dio->submit.iter, copied);
-> > > +			iov_iter_revert(i, copied);
-> > >   			copied = ret = 0;
-> > >   			goto out;
-> > >   		}
-> > > -		bio = iomap_dio_alloc_bio(iter, dio, nr_pages, bio_opf);
-> > > +		bio = iomap_dio_alloc_bio_data(iter, dio, nr_pages, bio_opf, pos);
-> > >   		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
-> > >   					  GFP_KERNEL);
-> > > -		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
-> > > -		bio->bi_write_hint = inode->i_write_hint;
-> > > -		bio->bi_ioprio = dio->iocb->ki_ioprio;
-> > > -		bio->bi_private = dio;
-> > > -		bio->bi_end_io = iomap_dio_bio_end_io;
-> > 
-> > I see two places (here and iomap_dio_zero) that allocate a bio and
-> > perform some initialization of it.  Can you move the common pieces to
-> > iomap_dio_alloc_bio instead of adding a iomap_dio_alloc_bio_data
-> > variant, and move all that to a separate cleanup patch?
-> 
-> Sure
-> 
-> So can it cause harm if we set bio->bi_write_hint and ->bi_ioprio with the
-> same values as iomap_dio_alloc_bio() for iomap_dio_zero()? If no, this would
-> help make all the bio alloc code common
-
-I'd leave the bi_write_hint and bi_ioprio initialization out of the
-common function.
-
---D
-
-> > 
-> > > -		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
-> > > +		ret = bio_iov_iter_get_pages(bio, i);
-> > >   		if (unlikely(ret)) {
-> > >   			/*
-> > >   			 * We have to stop part way through an IO. We must fall
-> > > @@ -408,8 +470,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   		dio->size += n;
-> > >   		copied += n;
-> > > -		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
-> > > -						 BIO_MAX_VECS);
-> > > +		nr_pages = bio_iov_vecs_to_alloc(i, BIO_MAX_VECS);
-> > >   		/*
-> > >   		 * We can only poll for single bio I/Os.
-> > >   		 */
-> > > @@ -435,7 +496,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   	}
-> > >   out:
-> > >   	/* Undo iter limitation to current extent */
-> > > -	iov_iter_reexpand(dio->submit.iter, orig_count - copied);
-> > > +	iov_iter_reexpand(i, orig_count - copied);
-> > >   	if (copied)
-> > >   		return copied;
-> > >   	return ret;
-> > > @@ -555,6 +616,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> > >   	struct blk_plug plug;
-> > >   	struct iomap_dio *dio;
-> > >   	loff_t ret = 0;
-> > > +	size_t orig_count = iov_iter_count(iter);
-> > >   	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
-> > > @@ -580,6 +642,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> > >   	if (iocb->ki_flags & IOCB_NOWAIT)
-> > >   		iomi.flags |= IOMAP_NOWAIT;
-> > > +	if (iocb->ki_flags & IOCB_ATOMIC) {
-> > > +		if (bio_iov_vecs_to_alloc(iter, INT_MAX) > BIO_MAX_VECS)
-> > > +			return ERR_PTR(-EINVAL);
-> > > +		iomi.flags |= IOMAP_ATOMIC;
-> > > +	}
-> > > +	dio->atomic_bio = NULL;
-> > > +
-> > >   	if (iov_iter_rw(iter) == READ) {
-> > >   		/* reads can always complete inline */
-> > >   		dio->flags |= IOMAP_DIO_INLINE_COMP;
-> > > @@ -665,6 +734,21 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> > >   		iocb->ki_flags &= ~IOCB_HIPRI;
-> > >   	}
-> > > +	if (iocb->ki_flags & IOCB_ATOMIC) {
-> > > +		if (ret >= 0) {
-> > > +			if (dio->size == orig_count) {
-> > > +				iomap_dio_submit_bio(&iomi, dio,
-> > > +					dio->atomic_bio, iocb->ki_pos);
-> > 
-> > Does this need to do task_io_account_write like regular direct writes
-> > do?
-> 
-> yes, I missed that, will fix
-> 
-> > 
-> > > +			} else {
-> > > +				if (dio->atomic_bio)
-> > > +					bio_put(dio->atomic_bio);
-> > > +				ret = -EINVAL;
-> > > +			}
-> > > +		} else if (dio->atomic_bio) {
-> > > +			bio_put(dio->atomic_bio);
-> > 
-> > This ought to null out dio->atomic_bio to prevent accidental UAF.
-> 
-> ok, fine
-> 
-> Thanks,
-> John
+>  	}
+>  
+>  	drm_printf(p, "rbbm-status: 0x%08x\n", state->rbbm_status);
+> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+> index 3666b42b4ecd..bf2f8b2a7ccc 100644
+> --- a/drivers/gpu/drm/msm/msm_gpu.c
+> +++ b/drivers/gpu/drm/msm/msm_gpu.c
+> @@ -281,6 +281,15 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
+>  	if (submit) {
+>  		int i;
+>  
+> +		if (state->fault_info.ttbr0) {
+> +			struct msm_gpu_fault_info *info = &state->fault_info;
+> +			struct msm_mmu *mmu = submit->aspace->mmu;
+> +
+> +			msm_iommu_pagetable_params(mmu, &info->pgtbl_ttbr0,
+> +						   &info->asid);
+> +			msm_iommu_pagetable_walk(mmu, info->iova, info->ptes);
+> +		}
+> +
+>  		state->bos = kcalloc(submit->nr_bos,
+>  			sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
+>  
+> diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
+> index 1f02bb9956be..82e838ba8c80 100644
+> --- a/drivers/gpu/drm/msm/msm_gpu.h
+> +++ b/drivers/gpu/drm/msm/msm_gpu.h
+> @@ -101,6 +101,14 @@ struct msm_gpu_fault_info {
+>  	int flags;
+>  	const char *type;
+>  	const char *block;
+> +
+> +	/* Information about what we think/expect is the current SMMU state,
+> +	 * for example expected_ttbr0 should match smmu_info.ttbr0 which
+> +	 * was read back from SMMU registers.
+> +	 */
+> +	phys_addr_t pgtbl_ttbr0;
+> +	u64 ptes[4];
+> +	int asid;
+>  };
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+> index 2a94e82316f9..3e692818ba1f 100644
+> --- a/drivers/gpu/drm/msm/msm_iommu.c
+> +++ b/drivers/gpu/drm/msm/msm_iommu.c
+> @@ -195,6 +195,28 @@ struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu)
+>  	return &iommu->domain->geometry;
+>  }
+>  
+> +int
+> +msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova, uint64_t ptes[4])
+> +{
+> +	struct msm_iommu_pagetable *pagetable;
+> +	struct arm_lpae_io_pgtable_walk_data wd = {};
+> +
+> +	if (mmu->type != MSM_MMU_IOMMU_PAGETABLE)
+> +		return -EINVAL;
+> +
+> +	pagetable = to_pagetable(mmu);
+> +
+> +	if (!pagetable->pgtbl_ops->pgtable_walk)
+> +		return -EINVAL;
+> +
+> +	pagetable->pgtbl_ops->pgtable_walk(pagetable->pgtbl_ops, iova, &wd);
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(wd.ptes); i++)
+> +		ptes[i] = wd.ptes[i];
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct msm_mmu_funcs pagetable_funcs = {
+>  		.map = msm_iommu_pagetable_map,
+>  		.unmap = msm_iommu_pagetable_unmap,
+> diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
+> index 88af4f490881..96e509bd96a6 100644
+> --- a/drivers/gpu/drm/msm/msm_mmu.h
+> +++ b/drivers/gpu/drm/msm/msm_mmu.h
+> @@ -53,7 +53,8 @@ static inline void msm_mmu_set_fault_handler(struct msm_mmu *mmu, void *arg,
+>  struct msm_mmu *msm_iommu_pagetable_create(struct msm_mmu *parent);
+>  
+>  int msm_iommu_pagetable_params(struct msm_mmu *mmu, phys_addr_t *ttbr,
+> -		int *asid);
+> +			       int *asid);
+> +int msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova, uint64_t ptes[4]);
+>  struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu);
+>  
+>  #endif /* __MSM_MMU_H__ */
+> -- 
+> 2.46.0
 > 
 
