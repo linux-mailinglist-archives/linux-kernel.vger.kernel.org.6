@@ -1,147 +1,127 @@
-Return-Path: <linux-kernel+bounces-296624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169CA95ACEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:36:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B6195ACEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EBD02812AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:36:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94ECE1C22871
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA076D1B9;
-	Thu, 22 Aug 2024 05:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD401132464;
+	Thu, 22 Aug 2024 05:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XVS3x+Gq"
-Received: from msa.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UwJGGL/V"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA14A2E3EE;
-	Thu, 22 Aug 2024 05:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610C12E3EE;
+	Thu, 22 Aug 2024 05:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724304948; cv=none; b=d+dKlwkYOutUSsd7HucrZuxxL5uh1wxUZxyOHjkJD1QJi6GyV0nlrQdhuuAajU3lm1RE/a2uYO3IrFShdNbCY0p+NANb7/4BuTzkGuRvJpe1XqqfWuhdDTdueM3RCk+44bq1bmCAf95u2URWrsB8xY4TPcU8jqHRGftkBbLWRlw=
+	t=1724304955; cv=none; b=ZrpKMyM7Yc7HaKpBZH2m8UncmlJJi2SSiccG113rCCU7jj6twbpe4mNH7ZScA5Ul8A5U+fi0EbCE0metC42Cssul2+mFbqt8+jnfSKoxPdQrLnvDu8GcQKHd4/2fabeDRsKzlILK3hKo+nQ4ZQPjce8R62FCl+Saq0dUOOe1ICw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724304948; c=relaxed/simple;
-	bh=XdvD1KyMTUI1+9GAfEn02LHXODNszkiZ2XbS5NvGUqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C/3fNyxYUXdgNEGvcoeYzZRKnLNDWtrQvunDOTqaHSSZ6QX0qZkc2Zbb2duHZy6VcL3QBP3CR73BWVD3SzPWa+FL50kx5tU18MYP8DLEefjQUnN6ndgaEkSsEx2ajbQ0XF/EuzCStq26RImnWsc3pV8bqgqB3ezkAIK/vBCUBoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XVS3x+Gq; arc=none smtp.client-ip=80.12.242.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id h0Sesc5R58iG0h0Sfsuo75; Thu, 22 Aug 2024 07:34:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724304874;
-	bh=BmQSPiNuluw12WlvUYDCD0UY6O2GPBeyKleY3PHQSBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=XVS3x+Gqr0Umk1fLe69p3azBWSp7OIVtY5YHyJNxNu1dJSO61RJp8dcKsElv+GbYF
-	 TwBhBsmCh8HeTNa34OXkw3rtMtAKRPVvJaeMdI7yanvsk/0480JZvCLdv5xUtB+W1K
-	 VIAZOa2lX+eHsKnoZV2nVK3PriXSOSuLRPofDa8THYd3fq6oYkJj79UXGD8ibFfORJ
-	 Bm70SDhwdP6Wv/lAvy1C5sQW2x+qP6IVUO/1QIHsVSzi4cQbsBGx9gwdH8/yIPHMUm
-	 YkEZf5jix0ElLNeYUXTD7T3bgekagtN1gaKbeO2l4ahUvOyoRw0bMKPaBtrh2VmUNr
-	 MOdFJBuAcJkjA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 22 Aug 2024 07:34:34 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <1fe20e5e-1c90-4029-9d40-625ec3bb3248@wanadoo.fr>
-Date: Thu, 22 Aug 2024 07:34:16 +0200
+	s=arc-20240116; t=1724304955; c=relaxed/simple;
+	bh=CtEq7g1d94vXFrvgU8cst6cdSd/EbtYFYxOLd205oZw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RWSON6zmERqu0OnD2aC7fioK0KsXwe7FPs9xYZLO2CeHhPiNjtFM8erkDFJoAwq9PxB6+dZQRliSC6/MqOe4PyXiZEaNA7lSYzoryKRT5Rtj9FcggO/m21e9obBod/U5IkEqLCBpq0Rt/+gljAWc6x/7iri0lPiytbGUeKSgvoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UwJGGL/V; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47M5Ze9Z120376;
+	Thu, 22 Aug 2024 00:35:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724304940;
+	bh=3G/831VZMPg/EVxycyligIipdeBJkvkoKP5/tNrzULg=;
+	h=From:To:CC:Subject:Date;
+	b=UwJGGL/VSqUVmoz8nyp0T6sEhyc10NVwUCYcbEt9lrbSf6ZjnHpmR+hpCjA3oVUsh
+	 Kb0ry/0UX7qfTfA7/Y05LvQ2NQG5fmjFBKn+jsrM8p7i3ljRVxNYWRZhlVPonb/EI4
+	 NVgbDBoU3YWyjaMsQeil7CaBHFfv8xNBiTZwvZS4=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47M5ZeLq002632
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 22 Aug 2024 00:35:40 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
+ Aug 2024 00:35:40 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 22 Aug 2024 00:35:40 -0500
+Received: from localhost ([10.249.128.135])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47M5ZcHY042740;
+	Thu, 22 Aug 2024 00:35:39 -0500
+From: Bhavya Kapoor <b-kapoor@ti.com>
+To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <b-kapoor@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-j722s-evm: Describe main_uart5
+Date: Thu, 22 Aug 2024 11:05:38 +0530
+Message-ID: <20240822053538.10475-1-b-kapoor@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: mana: Fix race of mana_hwc_post_rx_wqe and new
- hwc response
-To: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, decui@microsoft.com, edumazet@google.com,
- hawk@kernel.org, jesse.brandeburg@intel.com, john.fastabend@gmail.com,
- kuba@kernel.org, kys@microsoft.com, leon@kernel.org,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, longli@microsoft.com, netdev@vger.kernel.org,
- olaf@aepfle.de, pabeni@redhat.com, paulros@microsoft.com,
- shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
- stable@vger.kernel.org, stephen@networkplumber.org, tglx@linutronix.de,
- vkuznets@redhat.com, wei.liu@kernel.org
-References: <1724272949-2044-1-git-send-email-haiyangz@microsoft.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1724272949-2044-1-git-send-email-haiyangz@microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Le 21/08/2024 à 22:42, Haiyang Zhang a écrit :
-> The mana_hwc_rx_event_handler() / mana_hwc_handle_resp() calls
-> complete(&ctx->comp_event) before posting the wqe back. It's
-> possible that other callers, like mana_create_txq(), start the
-> next round of mana_hwc_send_request() before the posting of wqe.
-> And if the HW is fast enough to respond, it can hit no_wqe error
-> on the HW channel, then the response message is lost. The mana
-> driver may fail to create queues and open, because of waiting for
-> the HW response and timed out.
-> Sample dmesg:
-> [  528.610840] mana 39d4:00:02.0: HWC: Request timed out!
-> [  528.614452] mana 39d4:00:02.0: Failed to send mana message: -110, 0x0
-> [  528.618326] mana 39d4:00:02.0 enP14804s2: Failed to create WQ object: -110
-> 
-> To fix it, move posting of rx wqe before complete(&ctx->comp_event).
-> 
-> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Fixes: ca9c54d2d6a5 ("net: mana: Add a driver for Microsoft Azure Network Adapter (MANA)")
-> Signed-off-by: Haiyang Zhang <haiyangz-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>
-> ---
->   .../net/ethernet/microsoft/mana/hw_channel.c  | 62 ++++++++++---------
->   1 file changed, 34 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-> index cafded2f9382..a00f915c5188 100644
-> --- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
-> +++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-> @@ -52,9 +52,33 @@ static int mana_hwc_verify_resp_msg(const struct hwc_caller_ctx *caller_ctx,
->   	return 0;
->   }
->   
-> +static int mana_hwc_post_rx_wqe(const struct hwc_wq *hwc_rxq,
-> +				struct hwc_work_request *req)
-> +{
-> +	struct device *dev = hwc_rxq->hwc->dev;
-> +	struct gdma_sge *sge;
-> +	int err;
-> +
-> +	sge = &req->sge;
-> +	sge->address = (u64)req->buf_sge_addr;
-> +	sge->mem_key = hwc_rxq->msg_buf->gpa_mkey;
-> +	sge->size = req->buf_len;
-> +
-> +	memset(&req->wqe_req, 0, sizeof(struct gdma_wqe_request));
-> +	req->wqe_req.sgl = sge;
-> +	req->wqe_req.num_sge = 1;
-> +	req->wqe_req.client_data_unit = 0;
+main_uart5 in J722S platform is used by the firmware. Thus,
+describe it for completeness, adding the pinmux and mark
+it as reserved.
 
-Hi,
+Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-unrelated to your patch, but this initialization is useless, it is 
-already memset(0)'ed a few lines above.
-So why client_data_unit and not some other fields?
-
-> +
-> +	err = mana_gd_post_and_ring(hwc_rxq->gdma_wq, &req->wqe_req, NULL);
-> +	if (err)
-> +		dev_err(dev, "Failed to post WQE on HWC RQ: %d\n", err);
-> +	return err;
-> +}
-
-...
-
-Just my 2c.
-
-CJ
-
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+index 24e9f2ea509b..5addf1c0afc2 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+@@ -20,6 +20,7 @@ / {
+ 	aliases {
+ 		serial0 = &wkup_uart0;
+ 		serial2 = &main_uart0;
++		serial3 = &main_uart5;
+ 		mmc0 = &sdhci0;
+ 		mmc1 = &sdhci1;
+ 	};
+@@ -211,6 +212,13 @@ J722S_IOPAD(0x01cc, PIN_OUTPUT, 0)	/* (B22) UART0_TXD */
+ 		bootph-all;
+ 	};
+ 
++	main_uart5_pins_default: main-uart5-default-pins {
++		pinctrl-single,pins = <
++			J722S_IOPAD(0x0108, PIN_INPUT, 3)       /* (J27) UART5_RXD */
++			J722S_IOPAD(0x010c, PIN_OUTPUT, 3)      /* (H27) UART5_TXD */
++		>;
++	};
++
+ 	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
+ 		pinctrl-single,pins = <
+ 			J722S_IOPAD(0x0120, PIN_INPUT, 7) /* (F27) MMC2_CMD.GPIO0_70 */
+@@ -330,6 +338,12 @@ &main_uart0 {
+ 	bootph-all;
+ };
+ 
++&main_uart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&main_uart5_pins_default>;
++	status = "reserved";
++};
++
+ &mcu_pmx0 {
+ 
+ 	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
+-- 
+2.34.1
 
 
