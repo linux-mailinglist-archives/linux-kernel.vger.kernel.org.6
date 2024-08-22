@@ -1,246 +1,165 @@
-Return-Path: <linux-kernel+bounces-297160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB30B95B3F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:34:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042AE95B3E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D05B1F23FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:34:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE27D1F22A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686E51C942A;
-	Thu, 22 Aug 2024 11:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6ED1C93C9;
+	Thu, 22 Aug 2024 11:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hmVS/XRc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oe3Tqtkg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0402F1C9422;
-	Thu, 22 Aug 2024 11:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7022C17DE06;
+	Thu, 22 Aug 2024 11:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724326459; cv=none; b=bwFyrGPQ5N85WGx6acccmRwXudMspcQPtFrF8olO9jRRO9TdK98aZK5pzXUiLWZ+0s1nBTvMgIh+8GaEXGGt85LeEqh/qQrtDpJ2tYDSih8UbiM9wyEY/rSpBumk6eFh9tC1zcgbF/77KuaLkUJ+SeSXkSywlPWpqk6a1l5VBPQ=
+	t=1724326267; cv=none; b=e44tpfd+3fmnKxQ8u9Qx8OKlUF+cmyx60vXoDXR8laYx3JpL1oyN4vai7QGc495xT/x8g1vUIcIS1FNDyK/rJixGSjciZtB19iiMCjeySK/zO3VpTSVPG3KwUC/hdDR5X7yN0B0l9WwZgi4x5DzUg2MwHa2iZ6Y2HaaqTLwOUS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724326459; c=relaxed/simple;
-	bh=ks4Cl3uJ9vYL8M58M6kStg4d+FEUG4oB1hhFIymCAHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WIH6zPUVPkzmTqcpYhz29neE6ET4upBJafVOL/DKnS54LEMFKK1rpPWM/lJoSGRrNtNMLmX76zesYM6hWdiinMCb5I0SVAdSi4bWZhZUMUy1bMUzE7BAMj+kDTbf9Llh/IeZclMBIFNY3eDmzRfY9eBjqVdVO/JiobQP+KrzAt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hmVS/XRc; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724326458; x=1755862458;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ks4Cl3uJ9vYL8M58M6kStg4d+FEUG4oB1hhFIymCAHc=;
-  b=hmVS/XRcQxRyMYuKe8ZV/wnU1QqOoBu7XGJXXGWlhPu/tTio3UHX21s5
-   i7B3iTSMgGcT9y3OTfLB//gJkHOwT5SuOVqKWrp3AhxkogdU0PrHAgiYf
-   i7Ao5k9Q9SfrGuDfJ/zGGrU2RBtMNHB6f9ng0FHx5iMCWm//rpn94/cn6
-   3vx+m4ohHI7dXuyS7yJ6BdNXcBtYebtqEqiYhVs/KL/jEKjDev4M/L2AV
-   N7K+755nH4zbiegFR/ZAidCNTGNu9Rx/LF41i+vrHKEATi1CpOutkejBo
-   NGsgsee+KZSAaR2GgQmuBCXRtpKK9L22tG2P3/uTz6VvW6vKsSByIo/vE
-   Q==;
-X-CSE-ConnectionGUID: pMI3NK3hR+SdHrPbIOEB7w==
-X-CSE-MsgGUID: 0q/jOhAFRl6DRwNTanfuAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22547598"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="22547598"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 04:34:13 -0700
-X-CSE-ConnectionGUID: CtLCHmiVTFKdXXXJ2yNGhA==
-X-CSE-MsgGUID: WisIL1XDQy2hdYJ3ifFTSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="61566048"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 22 Aug 2024 04:34:11 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A84052F2; Thu, 22 Aug 2024 14:34:09 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v1 2/2] spi: pxa2xx: Move PM runtime handling to the glue drivers
-Date: Thu, 22 Aug 2024 14:30:54 +0300
-Message-ID: <20240822113408.750831-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240822113408.750831-1-andriy.shevchenko@linux.intel.com>
-References: <20240822113408.750831-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1724326267; c=relaxed/simple;
+	bh=gDbTL4GZRvQeDgNI3gcM09/p4LhAfcobcN6NTa3ZLBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rxU139VIFBBLLfgT1QNf7RoCun7NK2tKPyo0fhxTn2MdFKc03Jmwvi3kWn8NViTywDn3VCoVHcM3T4OtIqfzIxRYyPWKzo0OOVBMwQ7HWVgH5SKRWptnnaANdgzhKnijcAiFrFtLJ5ypQ+9B7LedjiV0uTYmsm5hqvAavRCaVks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oe3Tqtkg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E87C32782;
+	Thu, 22 Aug 2024 11:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724326267;
+	bh=gDbTL4GZRvQeDgNI3gcM09/p4LhAfcobcN6NTa3ZLBk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oe3Tqtkg1IlHXhjmboLrWfO1WBSTFiwjBK9XuytGxkdmGjMAuGKZTq6MYcfkVzigh
+	 BFwraNixJP8gULzt85oN9y6+JZcmBgzYTd0tkZIK+UDB+xNehayYFP/qh9fh9Lfntp
+	 t0Y/o/r9JQi51HK3/+JLqVcNkDpKNfc/Uoj1Jz1PUhSUaCy9uuCQ3izys63VOro0iC
+	 R22dOUDsuM+8fYhRL9UDbPxBtoul99TbdlI7+wtZ/OSPVMgzJaf15vZRQ6ab11wWEE
+	 qPwaSWz16jUSe9inDqrUVB7WGSwJoCUvMBVCNAgw9USgFYUeFVglhXtZImYxG667HF
+	 CmtE95KYH1NFA==
+Message-ID: <7b8f488a-deac-4089-be7a-c0d76afca0fa@kernel.org>
+Date: Thu, 22 Aug 2024 13:30:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon based
+ WCSS secure PIL
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>,
+	q@krzk-bin.smtp.subspace.kernel.org
+Cc: andersson@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com,
+ quic_mmanikan@quicinc.com, quic_varada@quicinc.com, quic_srichara@quicinc.com
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <20240820085517.435566-2-quic_gokulsri@quicinc.com>
+ <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
+ <2b6b43b3-c99b-4aac-b1fb-24f6e5e562ce@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2b6b43b3-c99b-4aac-b1fb-24f6e5e562ce@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-PCI and platform buses have different defaults for runtime PM.
-In particular PCI probe is assumed to be called when PM runtime
-is enabled by the PCI core. In this case if we try enable it again
-the PM runtime complaints with
+On 22/08/2024 12:47, Gokul Sriram P wrote:
+>>> +
+>>> +  interrupts:
+>>> +    items:
+>>> +      - description: Watchdog interrupt
+>>> +      - description: Fatal interrupt
+>>> +      - description: Ready interrupt
+>>> +      - description: Handover interrupt
+>>> +      - description: Stop acknowledge interrupt
+>>> +
+>>> +  interrupt-names:
+>>> +    items:
+>>> +      - const: wdog
+>>> +      - const: fatal
+>>> +      - const: ready
+>>> +      - const: handover
+>>> +      - const: stop-ack
+>>> +
+>>> +  clocks:
+>>> +    items:
+>>> +      - description: IM SLEEP clock
+>> What is IM? Explain all acronyms.
+>>
+>> What is SLEEP?
+> 
+> IM_SLEEP_CLK - Internal Module sleep clock needed for Q6 reset.
+> 
+> SLEEP is not an acronym here.
 
-    pxa2xx_spi_pci 0000:00:07.0: Unbalanced pm_runtime_enable!
+Then probably you mean "Internal sleep", although "internal" is also
+confusing. Devices do not receive as input something which is internal
+to them.
 
-Fix this by moving PM runtime handling from the SPI PXA2xx core
-to the glue drivers.
+> 
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: im_sleep
+>> sleep? Are there different sleep clocks here?
+> 
+> We have different branches of sleep clk each enabled separately.
+> 
+> im_sleep is one of those branches that q6 uses.
 
-Fixes: cc160697a576 ("spi: pxa2xx: Convert PCI driver to use spi-pxa2xx code directly")
-Fixes: 3d8f037fbcab ("spi: pxa2xx: Move platform driver to a separate file")
-Fixes: 20ade9b9771c ("spi: pxa2xx: Extract pxa2xx_spi_platform_*() callbacks")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/spi/spi-pxa2xx-pci.c      | 15 ++++++++++++++-
- drivers/spi/spi-pxa2xx-platform.c | 22 ++++++++++++++++++++--
- drivers/spi/spi-pxa2xx.c          | 15 +--------------
- 3 files changed, 35 insertions(+), 17 deletions(-)
+So this device misses other branches? Then provide them. Otherwise it is
+just "sleep".
 
-diff --git a/drivers/spi/spi-pxa2xx-pci.c b/drivers/spi/spi-pxa2xx-pci.c
-index c98bb214b6ae..cc8dcf782399 100644
---- a/drivers/spi/spi-pxa2xx-pci.c
-+++ b/drivers/spi/spi-pxa2xx-pci.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/pm.h>
-+#include <linux/pm_runtime.h>
- #include <linux/sprintf.h>
- #include <linux/string.h>
- #include <linux/types.h>
-@@ -297,11 +298,23 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 		return ret;
- 	ssp->irq = pci_irq_vector(dev, 0);
- 
--	return pxa2xx_spi_probe(&dev->dev, ssp, pdata);
-+	ret = pxa2xx_spi_probe(&dev->dev, ssp, pdata);
-+	if (ret)
-+		return ret;
-+
-+	pm_runtime_set_autosuspend_delay(&dev->dev, 50);
-+	pm_runtime_use_autosuspend(&dev->dev);
-+	pm_runtime_put_autosuspend(&dev->dev);
-+	pm_runtime_allow(&dev->dev);
-+
-+	return 0;
- }
- 
- static void pxa2xx_spi_pci_remove(struct pci_dev *dev)
- {
-+	pm_runtime_forbid(&dev->dev);
-+	pm_runtime_get_noresume(&dev->dev);
-+
- 	pxa2xx_spi_remove(&dev->dev);
- }
- 
-diff --git a/drivers/spi/spi-pxa2xx-platform.c b/drivers/spi/spi-pxa2xx-platform.c
-index f9504cddc7ba..595af9fa4e0f 100644
---- a/drivers/spi/spi-pxa2xx-platform.c
-+++ b/drivers/spi/spi-pxa2xx-platform.c
-@@ -7,6 +7,7 @@
- #include <linux/init.h>
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/property.h>
- #include <linux/types.h>
- 
-@@ -142,6 +143,7 @@ static int pxa2xx_spi_platform_probe(struct platform_device *pdev)
- 	struct pxa2xx_spi_controller *platform_info;
- 	struct device *dev = &pdev->dev;
- 	struct ssp_device *ssp;
-+	int ret;
- 
- 	platform_info = dev_get_platdata(dev);
- 	if (!platform_info) {
-@@ -156,12 +158,28 @@ static int pxa2xx_spi_platform_probe(struct platform_device *pdev)
- 	if (!ssp)
- 		ssp = &platform_info->ssp;
- 
--	return pxa2xx_spi_probe(dev, ssp, platform_info);
-+	pm_runtime_set_autosuspend_delay(dev, 50);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+
-+	ret = pxa2xx_spi_probe(dev, ssp, platform_info);
-+	if (ret)
-+		pm_runtime_disable(dev);
-+
-+	return ret;
- }
- 
- static void pxa2xx_spi_platform_remove(struct platform_device *pdev)
- {
--	pxa2xx_spi_remove(&pdev->dev);
-+	struct device *dev = &pdev->dev;
-+
-+	pm_runtime_get_sync(dev);
-+
-+	pxa2xx_spi_remove(dev);
-+
-+	pm_runtime_put_noidle(dev);
-+	pm_runtime_disable(dev);
- }
- 
- static const struct acpi_device_id pxa2xx_spi_acpi_match[] = {
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index e3a95adc5279..bf1f34b0ffc8 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1449,24 +1449,16 @@ int pxa2xx_spi_probe(struct device *dev, struct ssp_device *ssp,
- 		}
- 	}
- 
--	pm_runtime_set_autosuspend_delay(dev, 50);
--	pm_runtime_use_autosuspend(dev);
--	pm_runtime_set_active(dev);
--	pm_runtime_enable(dev);
--
- 	/* Register with the SPI framework */
- 	dev_set_drvdata(dev, drv_data);
- 	status = spi_register_controller(controller);
- 	if (status) {
- 		dev_err_probe(dev, status, "problem registering SPI controller\n");
--		goto out_error_pm_runtime_enabled;
-+		goto out_error_clock_enabled;
- 	}
- 
- 	return status;
- 
--out_error_pm_runtime_enabled:
--	pm_runtime_disable(dev);
--
- out_error_clock_enabled:
- 	clk_disable_unprepare(ssp->clk);
- 
-@@ -1483,8 +1475,6 @@ void pxa2xx_spi_remove(struct device *dev)
- 	struct driver_data *drv_data = dev_get_drvdata(dev);
- 	struct ssp_device *ssp = drv_data->ssp;
- 
--	pm_runtime_get_sync(dev);
--
- 	spi_unregister_controller(drv_data->controller);
- 
- 	/* Disable the SSP at the peripheral and SOC level */
-@@ -1495,9 +1485,6 @@ void pxa2xx_spi_remove(struct device *dev)
- 	if (drv_data->controller_info->enable_dma)
- 		pxa2xx_spi_dma_release(drv_data);
- 
--	pm_runtime_put_noidle(dev);
--	pm_runtime_disable(dev);
--
- 	/* Release IRQ */
- 	free_irq(ssp->irq, drv_data);
- }
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+
+
+Best regards,
+Krzysztof
 
 
