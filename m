@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-297497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5646695B951
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:07:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A5195B94B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F5B2824C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ADA32849A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80B31CC8B9;
-	Thu, 22 Aug 2024 15:05:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75D51CC8AB;
-	Thu, 22 Aug 2024 15:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2311CBEAE;
+	Thu, 22 Aug 2024 15:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fEhz7fCP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4A21CB31B;
+	Thu, 22 Aug 2024 15:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339157; cv=none; b=eXYLGKr4H9hrk86Ff/ljy7Lw1No1GkOEZtC6+CwJubQxP1+BOBC3kvm9YjSa87oOP7MwPFC0kdL9W203EOLzHA2+W4EWB5GjJ6WNZRqv0DkTlDnWBLH3sLcY+D/SWzl6q3+g+xbASdtoK/YCWF1xSvTdrT5KhxPvzoVRbFVNKcM=
+	t=1724339182; cv=none; b=qRd8ipXYcPIKnEcAJljpGaOeQX9jRizQ8kivvih3IpZkq3uAVY9l8hzEjXNCiHEncBk9KCVXLwB/QIS6OuXrpCMRxbZaO/yD8IPJPqrhxqcIjZqRsUDjT2Zd32AS5HFag3tnO9jU9OjE9XxZCekyRoNYNoLHEm00quqI/lrbvl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339157; c=relaxed/simple;
-	bh=s0pG1NvmsW9sQDPXQdqIhgDTrl4Tp4o+C7zN6zwtY1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EJ7NDHRsKmor7AjJ0Gdj7ow3tAfslIrWUWRN4/YI47ZdjU0CvXHMvhtrPNoHUjpeWFN4U12yzs7syZQxt2v0L1UJokpwb/Ujl6gv5EJATuwCi0/QOMfGXB+F5Y2Hms9v+9y0FZu2japzlF18SQJ5bdiGRUybBVkAHoukZnK1QwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A9A1DA7;
-	Thu, 22 Aug 2024 08:06:21 -0700 (PDT)
-Received: from [10.57.85.214] (unknown [10.57.85.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7774D3F58B;
-	Thu, 22 Aug 2024 08:05:51 -0700 (PDT)
-Message-ID: <7bbd5f46-de70-4158-a790-d2aa90d32929@arm.com>
-Date: Thu, 22 Aug 2024 16:05:51 +0100
+	s=arc-20240116; t=1724339182; c=relaxed/simple;
+	bh=w1WMQAnyWSzskX4164UJpPQqWq1VBFOrPzKkXmke+zQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Q740wfHk9pb5ay21XAcyMzw4+VyrLHGzM1zIkfdJJLMtyMz3qlV+JH7efawuUZyeKzBeSFv4Gu2TG7mX/wXXZbfWnuuSHEnbpCngFtlPAX6Uwv6LxDriT+GLsuc8xqB3ReSCP818lh4e2GOd4LTU3IECOQAXWJsG+eg2uMrkLL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fEhz7fCP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id AC4E120B7165; Thu, 22 Aug 2024 08:06:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AC4E120B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724339180;
+	bh=rd7R630toxj6aIKFFnZEA9j1f3Unx/sdBFKbopGVCek=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fEhz7fCP2j5Gc9JGK8Dn9aiz9aKFz6DKnoy7VBmhXp1WkacarqJX540jBN9L3o16d
+	 pGw9SEZw8m3JcQuo2PN5q4ygpjcn+J92UvQswlLDkWMovP04GjMVsbo6Ic2g6ctIDV
+	 r4mPJIanrGpFQxXWAEDgBlIOQUEnXoF8xaYJJ3mM=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ernis@microsoft.com,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Subject: [PATCH v3] net: netvsc: Update default VMBus channels
+Date: Thu, 22 Aug 2024 08:06:08 -0700
+Message-Id: <1724339168-20913-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 18/43] arm64: RME: Handle realm enter/exit
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-19-steven.price@arm.com> <yq5a5xrt2oov.fsf@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <yq5a5xrt2oov.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 22/08/2024 04:58, Aneesh Kumar K.V wrote:
-> Steven Price <steven.price@arm.com> writes:
-> 
->> +	/* Exit to VMM to complete the change */
->> +	kvm_prepare_memory_fault_exit(vcpu, base, top_ipa - base, false, false,
->> +				      ripas == 1);
->> +
-> 
-> 
-> s/1/RMI_RAM ?
+Change VMBus channels macro (VRSS_CHANNEL_DEFAULT) in
+Linux netvsc from 8 to 16 to align with Azure Windows VM
+and improve networking throughput.
 
-Ah, good spot - I must have missed that when I added the definitions.
+For VMs having less than 16 vCPUS, the channels depend
+on number of vCPUs. Between 16 to 64 vCPUs, the channels
+default to VRSS_CHANNEL_DEFAULT. For greater than 64 vCPUs,
+set the channels to number of physical cores / 2 returned by
+netif_get_num_default_rss_queues() as a way to optimize CPU
+resource utilization and scale for high-end processors with
+many cores. Due to hyper-threading, the number of
+physical cores = vCPUs/2.
+Maximum number of channels are by default set to 64.
 
-> May be we can make it an enum like rsi_ripas
+Based on this change the channel creation would change as follows:
 
-I guess that makes sense - I tend to avoid enums where the value is
-controlled by something external, but here it makes some sense.
+-------------------------------------------------------------
+| No. of vCPU	|  dev_info->num_chn	| channels created  |
+-------------------------------------------------------------
+|  0-16		|       16		|       vCPU        |
+| >16 & <=64	|       16		|       16          |
+| >64 & <=256	|       vCPU/4		|       vCPU/4      |
+| >256		|       vCPU/4		|       64          |
+-------------------------------------------------------------
 
-Thanks,
+Performance tests showed significant improvement in throughput:
+- 0.54% for 16 vCPUs
+- 0.83% for 32 vCPUs
+- 0.86% for 48 vCPUs
+- 9.72% for 64 vCPUs
+- 13.57% for 96 vCPUs
 
-Steve
+Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+---
+Changes in v3:
+* Use netif_get_num_default_rss_queues() to set channels
+* Change terminology for channels in commit message
+---
+Changes in v2:
+* Set dev_info->num_chn based on vCPU count.
+---
+ drivers/net/hyperv/hyperv_net.h | 2 +-
+ drivers/net/hyperv/netvsc_drv.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-> modified   arch/arm64/include/asm/rmi_smc.h
-> @@ -62,9 +62,11 @@
->  #define RMI_ERROR_REC		3
->  #define RMI_ERROR_RTT		4
->  
-> -#define RMI_EMPTY		0
-> -#define RMI_RAM			1
-> -#define RMI_DESTROYED		2
-> +enum rmi_ripas {
-> +	RMI_EMPTY,
-> +	RMI_RAM,
-> +	RMI_DESTROYED,
-> +};
->  
->  #define RMI_NO_MEASURE_CONTENT	0
->  #define RMI_MEASURE_CONTENT	1
-> modified   arch/arm64/kvm/rme-exit.c
-> @@ -112,7 +112,7 @@ static int rec_exit_ripas_change(struct kvm_vcpu *vcpu)
->  
->  	/* Exit to VMM to complete the change */
->  	kvm_prepare_memory_fault_exit(vcpu, base, top_ipa - base, false, false,
-> -				      ripas == 1);
-> +				      ripas == RMI_RAM);
->  
->  	return 0;
->  }
+diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
+index 810977952f95..e690b95b1bbb 100644
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -882,7 +882,7 @@ struct nvsp_message {
+ 
+ #define VRSS_SEND_TAB_SIZE 16  /* must be power of 2 */
+ #define VRSS_CHANNEL_MAX 64
+-#define VRSS_CHANNEL_DEFAULT 8
++#define VRSS_CHANNEL_DEFAULT 16
+ 
+ #define RNDIS_MAX_PKT_DEFAULT 8
+ #define RNDIS_PKT_ALIGN_DEFAULT 8
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 44142245343d..a6482afe4217 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -987,7 +987,8 @@ struct netvsc_device_info *netvsc_devinfo_get(struct netvsc_device *nvdev)
+ 			dev_info->bprog = prog;
+ 		}
+ 	} else {
+-		dev_info->num_chn = VRSS_CHANNEL_DEFAULT;
++		dev_info->num_chn = max(VRSS_CHANNEL_DEFAULT,
++					netif_get_num_default_rss_queues());
+ 		dev_info->send_sections = NETVSC_DEFAULT_TX;
+ 		dev_info->send_section_size = NETVSC_SEND_SECTION_SIZE;
+ 		dev_info->recv_sections = NETVSC_DEFAULT_RX;
+-- 
+2.34.1
 
 
