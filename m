@@ -1,212 +1,123 @@
-Return-Path: <linux-kernel+bounces-297117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E64495B35D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCB895B35C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9001F23DE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EB8D1C22F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A52184547;
-	Thu, 22 Aug 2024 11:00:10 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6042E183CC8;
+	Thu, 22 Aug 2024 11:00:08 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE0F183CBC
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4561850B6;
+	Thu, 22 Aug 2024 11:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724324409; cv=none; b=ndbS8Qeg2qBBvPoAStkvliHTmDsvMpw/Uhn7iLYe9X2WSHdaY6H+8+fHtPwwqAxW5AwG+c0c8Vay26t5pNvdyGT2kfkV0XAvvx49K8Z/KrLNn2C3ZdcoPCFE//KxwTsUCKii/WoZpXVBe8C/2f2oo3yKE4+MgnVWeGezfQVuC9k=
+	t=1724324407; cv=none; b=Ika7SmwkmXnFJ6NWDGh2Nklh2UX20dQKA9hRLISNdRW1E7L5/xB8NruXvjRP1CqzY4Ct3vBhq132R4Cdk3map15VcJ9tZ4dcwQ+WBbe8hCEsPJE6Zlx+J6AUJ1kZQVttMWATNIcLFK6Qta/RfdAEnNrlp/jQJMLWyqHab1YwsW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724324409; c=relaxed/simple;
-	bh=9JiGXSYYncNkXYemDiaONkeVDgFPCKHf2/W8KFs7ujg=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Y576zaajsY30vBO5C0fljjiYk97ycLLramrnIFDDz8xydHR4TYiPaulXW1SyNhxk3fk0bj5PcV2U0yVdgVJj3CY21xLr7eI+AAm61X6uoBnEs6uMOEbU9EZpkJtC261RnLQPwiYbPZ0alwfb9fOdFPb9auV8H7u7ZprVpuCmHyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WqKwC2LjgzyR3C;
-	Thu, 22 Aug 2024 18:59:39 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0FD8918009B;
-	Thu, 22 Aug 2024 19:00:03 +0800 (CST)
-Received: from [10.174.176.125] (10.174.176.125) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 22 Aug 2024 19:00:01 +0800
-Subject: Re: [bug report] GICv4.1: multiple vpus execute vgic_v4_load at the
- same time will greatly increase the time consumption
-To: Marc Zyngier <maz@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Oliver Upton
-	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K Poulose
-	<suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, "open list:IRQ
- SUBSYSTEM" <linux-kernel@vger.kernel.org>, "moderated list:ARM SMMU DRIVERS"
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
-	<nizhiqiang1@huawei.com>, "tangnianyao@huawei.com" <tangnianyao@huawei.com>,
-	<wangzhou1@hisilicon.com>
-References: <a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com>
- <86msl6xhu2.wl-maz@kernel.org>
- <f1574274-efd8-eb56-436b-5a1dd7620f2c@huawei.com>
- <867cc9x8si.wl-maz@kernel.org>
-From: Kunkun Jiang <jiangkunkun@huawei.com>
-Message-ID: <bd3c3103-a6d7-a91b-911d-5bc5f2382dae@huawei.com>
-Date: Thu, 22 Aug 2024 18:59:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+	s=arc-20240116; t=1724324407; c=relaxed/simple;
+	bh=tsj8wNjiLlZC3DrbW6llGYMikgPdxVPIsEy9bqFyxEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=STlUCvE2LoiQCM6oPiHzYNtolRRBXg7Fn9b3d8IkMzNrdbS9tvY09urPaoP1mHfZ24A5diaWl7PCkaPUyWrGQ+V55EAPyNnqkkFpVihpfqrP3UnDxH2bqbwSz1xKZTmFZnUhRVvvsXfDn6ytKS/8yYRCId27GR0fqZQe2WupcEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a86984e035aso28097466b.2;
+        Thu, 22 Aug 2024 04:00:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724324404; x=1724929204;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cXav5ea0ttZidZUshIDeqG+jlv7MuDZssQmcmhYi3W8=;
+        b=hJLDs0cBaNoifFr1WcWrNC7J91N1hTcBn1oGTwUAVwIDDe4kZk6+VEBEn506SzWGpr
+         IeySNFtKMVG17++ggv5yLfXE9jqpSOwzZoAcTFTqbSbsRwoEyUAvdokx4TqHvfm4sLeq
+         D6pz2CLaMKizKixSCh3WPb/PdMI7h5aON2XYNhxWt+psI/hnSYD8GJtOtf8MDyqs8hKs
+         t5VnTPMDwJ3b+17V0okJ67bOjno7pQYM+x3WJsF/oYopWZCyRVjHLftOEJga6CJa0EAt
+         aMwac6ywF0Yvqt71sV+7Rt7HOp8I0doaMeoeKERNXOokHixhZi+MSq/qrLJje2g8TcA5
+         nYBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZa2uZlZrs27GPPqYuF7o5HvfQPY+sfudHKx+N69VZQ66HkiJB1t9hmObpMMa6hHXrkG7UjfRT@vger.kernel.org, AJvYcCWssgV+iC8r47Z3XQC1hgz2wL0UQtNLshreN+ugGW5MhdkJb+K0zhHFrXoX+y/thj/fEiEJrJPE8xyiiOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXnqrAsaDLGEO+32LUeVbvksiAJnwmrpoWy9NhK/OK3SFSFh78
+	/nha07gsYPoookCQIR37Ih2kFTdbC9nHEiL/xOtUQh/n9PlMHMrwhHbqvA==
+X-Google-Smtp-Source: AGHT+IFMbrWbzp6WQb0W8vJCPoFh+b4nkmLALfcZ7m0+8FrEj+1rfKebSOMSK337bFY6kN3D5INLiA==
+X-Received: by 2002:a17:907:2d0a:b0:a86:963f:ea90 with SMTP id a640c23a62f3a-a86963ff812mr62331166b.46.1724324403876;
+        Thu, 22 Aug 2024 04:00:03 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a869b2d89c5sm9379266b.143.2024.08.22.04.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 04:00:03 -0700 (PDT)
+Date: Thu, 22 Aug 2024 04:00:01 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Aijay Adams <aijay@meta.com>
+Subject: Re: [PATCH net-next v2 3/3] netconsole: Populate dynamic entry even
+ if netpoll fails
+Message-ID: <ZscaMfmnU3HmZWm5@gmail.com>
+References: <20240819103616.2260006-1-leitao@debian.org>
+ <20240819103616.2260006-4-leitao@debian.org>
+ <20240820162725.6b9064f8@kernel.org>
+ <ZsWjpuoszvApM1I0@gmail.com>
+ <20240821154926.14785d66@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <867cc9x8si.wl-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821154926.14785d66@kernel.org>
 
-Hi Marc,
+Hello Jakub,
 
-On 2024/8/22 16:26, Marc Zyngier wrote:
->>>> According to analysis, this problem is due to the execution of vgic_v4_load.
->>>> vcpu_load or kvm_sched_in
->>>>       kvm_arch_vcpu_load
->>>>       ...
->>>>           vgic_v4_load
->>>>               irq_set_affinity
->>>>               ...
->>>>                   irq_do_set_affinity
->>>>                       raw_spin_lock(&tmp_mask_lock)
->>>>                       chip->irq_set_affinity
->>>>                       ...
->>>>                         its_vpe_set_affinity
->>>>
->>>> The tmp_mask_lock is the key. This is a global lock. I don't quite
->>>> understand
->>>> why tmp_mask_lock is needed here. I think there are two possible
->>>> solutions here:
->>>> 1. Remove this tmp_mask_lock
->>>
->>> Maybe you could have a look at 33de0aa4bae98 (and 11ea68f553e24)? It
->>> would allow you to understand the nature of the problem.
->>>
->>> This can probably be replaced with a per-CPU cpumask, which would
->>> avoid the locking, but potentially result in a larger memory usage.
->>
->> Thanks, I will try it.
+On Wed, Aug 21, 2024 at 03:49:26PM -0700, Jakub Kicinski wrote:
+> On Wed, 21 Aug 2024 01:21:58 -0700 Breno Leitao wrote:
+> > Another way to write this is:
+> > 
+> >         err = netpoll_setup(&nt->np);
+> >         if (err) {
+> >                 pr_err("Not enabling netconsole. Netpoll setup failed\n");
+> >                 if (!IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC))
+> >                         goto fail
+> >         } else {
+> >                 nt->enabled = true;
+> >         }
+> > 
+> > is it better? Or, Is there a even better way to write this?
 > 
-> A simple alternative would be this:
+> Yes, I think this is better! Or at least I wouldn't have made the same
+> mistake reading it if it was written this way :)
 > 
-> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-> index dd53298ef1a5..0d11b74af38c 100644
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -224,15 +224,12 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
->   	struct irq_desc *desc = irq_data_to_desc(data);
->   	struct irq_chip *chip = irq_data_get_irq_chip(data);
->   	const struct cpumask  *prog_mask;
-> +	struct cpumask tmp_mask = {};
->   	int ret;
->   
-> -	static DEFINE_RAW_SPINLOCK(tmp_mask_lock);
-> -	static struct cpumask tmp_mask;
-> -
->   	if (!chip || !chip->irq_set_affinity)
->   		return -EINVAL;
->   
-> -	raw_spin_lock(&tmp_mask_lock);
->   	/*
->   	 * If this is a managed interrupt and housekeeping is enabled on
->   	 * it check whether the requested affinity mask intersects with
-> @@ -280,8 +277,6 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
->   	else
->   		ret = -EINVAL;
->   
-> -	raw_spin_unlock(&tmp_mask_lock);
-> -
->   	switch (ret) {
->   	case IRQ_SET_MASK_OK:
->   	case IRQ_SET_MASK_OK_DONE:
+> > > As for the message would it be more helpful to indicate target will be
+> > > disabled? Move the print after the check for dynamic and say "Netpoll
+> > > setup failed, netconsole target will be disabled" ?  
+> > 
+> > In both cases the target will be disabled, right? In one case, it will
+> > populate the cmdline0 configfs (if CONFIG_NETCONSOLE_DYNAMIC is set),
+> > otherwise it will fail completely. Either way, netconsole will be
+> > disabled.
 > 
-> but that will eat a significant portion of your stack if your kernel is
-> configured for a large number of CPUs.
->
+> No strong feelings. I was trying to highlight that it's a single target
+> that ends up being disabled "netconsole disabled" sounds like the whole
+> netconsole module is completely out of commission.
 
-Currently CONFIG_NR_CPUS=4096,each `struct cpumask` occupies 512 bytes.
+That is fair, let me print the cmdline number, so, we can see something
+as:
 
->>
->>>> 2. Modify the gicv4 driver,do not perfrom VMOVP via
->>>> irq_set_affinity.
->>>
->>> Sure. You could also not use KVM at all if don't care about interrupts
->>> being delivered to your VM. We do not send a VMOVP just for fun. We
->>> send it because your vcpu has moved to a different CPU, and the ITS
->>> needs to know about that.
->>
->> When a vcpu is moved to a different CPU, of course VMOVP has to be sent.
->> I mean is it possible to call its_vpe_set_affinity() to send VMOVP by
->> other means (instead of by calling the irq_set_affinity() API). So we
->> can bypass this tmp_mask_lock.
-> 
-> The whole point of this infrastructure is that the VPE doorbell is the
-> control point for the VPE. If the VPE moves, then the change of
-> affinity *must* be done using irq_set_affinity(). All the locking is
-> constructed around that. Please read the abundant documentation that
-> exists in both the GIC code and KVM describing why this is done like
-> that.
-> 
-
-OK. Thank you for your guidance.
-
->>
->>>
->>> You seem to be misunderstanding the use case for GICv4: a partitioned
->>> system, without any over-subscription, no vcpu migration between CPUs.
->>> If that's not your setup, then GICv4 will always be a net loss
->>> compared to SW injection with GICv3 (additional HW interaction,
->>> doorbell interrupts).
->>
->> Thanks for the explanation. The key to the problem is not vcpu migration
->> between CPUs. The key point is that many vcpus execute vgic_v4_load() at
->> the same time. Even if it is not migrated to another CPU, there may be a
->> large number of vcpus executing vgic_v4_load() at the same time. For
->> example, the service running in VMs has a large number of MMIO accesses
->> and need to return to userspace for emulation. Due to the competition of
->> tmp_mask_lock, performance will deteriorate.
-> 
-> That's only a symptom. And that doesn't affect only pathological VM
-> workloads, but all interrupts being moved around for any reason.
-> 
-
-Yes.
-
->>
->> When the target CPU is the same CPU as the last run, there seems to be
->> no need to call irq_set_affinity() in this case. I did a test and it was
->> indeed able to alleviate the problem described above.
-> 
-> The premise is that irq_set_affinity() should be cheap when there
-> isn't much to do, and you are papering over the problem.
-> 
->>
->> I feel it might be better to remove tmp_mask_lock or call
->> its_vpe_set_affinity() in another way. So I mentioned these two ideas
->> above.
-> 
-> The removal of this global lock is the only option in my opinion.
-> Either the cpumask becomes a stack variable, or it becomes a static
-> per-CPU variable. Both have drawbacks, but they are not a bottleneck
-> anymore.
-
-I also prefer to remove the global lock. Which variable do you think is
-better?
-
-Thanks,
-Kunkun Jiang
+	netpoll: netconsole: local port 6666
+	netpoll: netconsole: local IPv6 address 2401:db00:3120:21a9:face:0:270:0
+	netpoll: netconsole: interface 'ethX'
+	netpoll: netconsole: remote port 1514
+	netpoll: netconsole: remote IPv6 address 2803:6080:a89c:a670::1
+	netpoll: netconsole: remote ethernet address 02:90:fb:66:aa:e5
+	netpoll: netconsole: ethX doesn't exist, aborting
+	netconsole: Not enabling netconsole for cmdline0. Netpoll setup failed
 
