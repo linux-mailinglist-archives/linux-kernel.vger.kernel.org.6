@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-297210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC4295B487
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:04:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E4295B48B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29669B22321
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAEAB1C2307B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4511C93CF;
-	Thu, 22 Aug 2024 12:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86B21C945F;
+	Thu, 22 Aug 2024 12:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lY7SHzWL"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqVAQt6I"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541FC183CB7;
-	Thu, 22 Aug 2024 12:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88612183CB7;
+	Thu, 22 Aug 2024 12:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328238; cv=none; b=nmm61gXOTZnZ1U/YCzhihkxo8Ohs52CoY50tvuVuKPb7pBr8pQ9Z5vF4MrsorkzWRQjmOe9U61fi/HMhp9QQh6B7La7woc1Bz/pGQlsOgh3c0ZUe4cLh86UAX38tMgrdnrhyG3KnRpCf60jBdpvfZdCNRX/akaPyrAgduvlq6L8=
+	t=1724328248; cv=none; b=RCLh4uDjC9iBLzdX7cvdnEFHVGgnfNSZYW9s0/RLEg+adlwwP9aEDn0wocZosUFMR2H+jpC/0JxQ7tMo8KRfxC8kfZmehl+pefguo5AnVKycSUW4ozDyQ01vNIeCdaVBDHffNp74zd7iwdqW89mdHTCr94/Ag27x+ZpkoBgVjZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328238; c=relaxed/simple;
-	bh=/7JxRU4cpPBTZFx1w71DWizOwcTnSWrV3CmQH03IfkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQrsG6kKD7CumoRHLRfVw/yickolivVWEckCzgDxKwiWc6RWfFL/Pv8/E/ORhjy18DXtrg9JA4FvXUDYSuk3MmnLXZUH5xAK8rlpv1fdZ9ej0TJlLo8dwM+yM/yb8XCHLSi9YpxdIJPfUX8APc+9nmIGJ1hHBrMWOWuf+deX3Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lY7SHzWL; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1724328248; c=relaxed/simple;
+	bh=b2i1UyIA19HHknlm0wM6tx/e+HaRrcCa/2GwEuR9DrY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BReNIv7b0YyNOJq9+tULznkBaOrHADwvniN6AP8O9Mji7sqnMkv8dU3N2cheskIKgPDT3K3Vgjig2/koBNosGCYagZ5bQYRpyeHh8j67F9bO3wiOja0q1Dotf+2J0K0YqwIrAOlB/9Trl5D7YH22ICBThWILWnWA0Hv+7jU+opY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqVAQt6I; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280ee5f1e3so5537235e9.0;
-        Thu, 22 Aug 2024 05:03:57 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533462b9428so1210573e87.3;
+        Thu, 22 Aug 2024 05:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724328236; x=1724933036; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724328245; x=1724933045; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AY16LwIBghLKS2thXS/HdTgvr57cr8ORfO+2U5rpJTM=;
-        b=lY7SHzWLoQJZEBGU6XMZhIDOnG+9qKxc3puCbYG+gKfsbXnFThO7RiUR1eXB0j1mn8
-         IbJDwKAO/NAOPbXdqz4oYoME/nDgSwteJyGrOZPwEePoTIPl04+uNfhmLTmARLsNAhhs
-         SwBvg+Uv8XLK+CZiAkYlj5aO0ibXtSzqJMAUyw6Au85/bxb5WOxHIzms7HEq0IWaKQHn
-         Vsanz5s2LJNpQVdOAekoaIR2qfaKbjI/FnTbkIC7wN2OmCn/vbmEqs+vfdHN8LCh8DS/
-         47TPUReQrQ7duEqExN8rERlf5J6Vvc8pknnOa6lDMQxT22y1uljuunEHdrY9WngNTtL3
-         GzGw==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ORE2H7Bi9/OqilhSDX+7ewEAaquD0x8jX2ZwC4dJsHU=;
+        b=mqVAQt6IriumDvXky5QgmZTZrQtR576ktfZuKf0jZ79n9/puzVOyDi93MdkQVBV5kB
+         C2TEIQikOQWQYyaY8XcBqIvtcW9g+rUaPl/D2Q0FgfsofpSmxqJ+yNFPCEaKKwEtJ8zI
+         49qrw+n8O/z9OE9c3XtfBInWzhk08Ze5Din9UpEG2TlldVOFaHpxTDowGD3OyBtlITk1
+         MEyYZY3R6hkxKN1tgBGT8rD+eURhjtfNUE7c46iml3i5SqeYkKaXvnm60CcKRrRQRRBp
+         3V3jwvlhMrRnN6Eb60i9VRjutYF9tLiHZHpqlXbGzmkEFpKApLgb5SARxRVbpCCTjMAz
+         6vew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724328236; x=1724933036;
+        d=1e100.net; s=20230601; t=1724328245; x=1724933045;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AY16LwIBghLKS2thXS/HdTgvr57cr8ORfO+2U5rpJTM=;
-        b=TVmIiIeFDGFRZ/C16/AEW0JHTPBSCJ0lNbcrGF2/Rxn6AkrExETy1bHU2YIQzeoVXk
-         LJ5Q511dffpXLhyJ111T7Pmtix9HsUkmdOXr+5G/pJ1ty1KIjSEKlOFV4LGCluh66F9L
-         eVIAvDIqa2aGvZryO85BD1Y4ocvoH/xBcq2DkyysWrpDDukGwsaZGoaUoW5Q2XF9VsuC
-         mEGb8MjPNVhFMR2dvvo+MB+4DABm0rA6dxkPVIGnIbg5bp0szl9e5+Pd0VTm1hSgvC5u
-         TsFFC6Fxm6rOYxet4KtU7fY49Vr3pWBgpG0Rd9Ys+Qe85r5ml7Gj/UaufSO8jfHNaDD3
-         RPsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUI6wDbla3TLFqBVYjv9cQxH2QS1QaEoiPWd8NMbyjQ5kk88Ibec24MMgGccJUuyOfdddCdWaKIQLk=@vger.kernel.org, AJvYcCWvFs6othLPOPzuoFpJZL8ClJkTuEB7U5u8mqoGyAdTv586bfMqL2eyvq5mM6EWNYUqby+wOpcacLz6Ie3/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQxxFAAuqaSiYMM7QSW4avcLFHOsjhoThcKcn/oQ7eNAUWqS3D
-	Fjl2LCBHJ+7r9GtEEOkzCFFOokeQ0TGHgvpXaS0PrXBQurR8AXdt
-X-Google-Smtp-Source: AGHT+IEFxPFmRaY+PNp14y1u8ekMx5ha3DFQw+w7+iWj6isuIlJVoOIiRVhai99HMnCgTpLp5x6Kjw==
-X-Received: by 2002:a05:600c:310c:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42abd11e2famr45807665e9.10.1724328235478;
-        Thu, 22 Aug 2024 05:03:55 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:daa9:644d:3c2:44bb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac51860e8sm21974725e9.48.2024.08.22.05.03.54
+        bh=ORE2H7Bi9/OqilhSDX+7ewEAaquD0x8jX2ZwC4dJsHU=;
+        b=OO3OFpc03uugPYg+2//LiHmcQo4MoPCneZh6wsOJcAkARuHGHqCYbQ+c/54s11nlRY
+         d62JNqo4D8ijVFdWmUygfYz/KUWkvJyoXysXrw4ci27bMImIFDb6AHKcHw2lv4tjXb+H
+         WF6fSvNjshjFTNheZ8/mWl0hFN2hB0li3pYxIMM6T4CVKiNK9qkb7U1K5B5jdI2DX76c
+         BSdhENtrHS3m9Yq1VEjmxRmlaGixsO8HohfZBAuRqxU3++8TMGQEbSk+ZSG58U31Ll/u
+         xft3ahYsAmikUT2uNm7dKcni3gAZYW/0aJtPSNoKqAkUYZPTQn4rNiqk6D4f77/DW1EA
+         j8QA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS93SMOzcXvoKeMHG+2hy7MYOWGOSEvJtarvT/e+vQbCBi8LvWXbvYi8nzt7WwR03N1hA5nzx+/he7HwI=@vger.kernel.org, AJvYcCVe77Q80NtOnouVI7GfbABrpwWIDiEWa6ERXmbPXU3t5yCDAYx7lUqxMaoo3GoTPL7O23wN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFaLlkozOlTKU0c5euiz384WH2KBimo9jI5w+/vMWuHizxKslH
+	VYaziwC2ow35XFcAE0jU4o6AjnYGb19zdlcA9n+aJfWPFdSnK70GWCAkjw==
+X-Google-Smtp-Source: AGHT+IEVu6F+vYWFapwOIsSBCZqfIGcTVjkndzoHwS5/90qXb1xwWOeD715zm01hBVFCmQxVkbQS5w==
+X-Received: by 2002:a05:6512:318f:b0:52c:8342:6699 with SMTP id 2adb3069b0e04-5334fd64850mr1536544e87.55.1724328243955;
+        Thu, 22 Aug 2024 05:04:03 -0700 (PDT)
+Received: from pc636 (host-90-233-193-131.mobileonline.telia.com. [90.233.193.131])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea296b0sm243565e87.31.2024.08.22.05.04.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 05:03:55 -0700 (PDT)
-Date: Thu, 22 Aug 2024 14:03:53 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andi Shyti <andi.shyti@kernel.org>, kernel@pengutronix.de,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	Frank.Li@nxp.com, francesco.dolcini@toradex.com,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <ZscpKSzdYklxIkjZ@eichest-laptop>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
- <Zsbi2xcxBGE7o9uE@eichest-laptop>
- <ZscNO2PKNlK3ru_7@pengutronix.de>
+        Thu, 22 Aug 2024 05:04:03 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 22 Aug 2024 14:04:01 +0200
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
+Message-ID: <ZscpMfiyoRE95ZiF@pc636>
+References: <20240820155935.1167988-1-urezki@gmail.com>
+ <1cc13276-43fe-4c2d-8055-0a1a8a7ee156@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,39 +89,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZscNO2PKNlK3ru_7@pengutronix.de>
+In-Reply-To: <1cc13276-43fe-4c2d-8055-0a1a8a7ee156@suse.cz>
 
-On Thu, Aug 22, 2024 at 12:04:43PM +0200, Oleksij Rempel wrote:
-> On Thu, Aug 22, 2024 at 09:03:55AM +0200, Stefan Eichenberger wrote:
-> > Hi Andi,
+On Wed, Aug 21, 2024 at 08:06:08PM +0200, Vlastimil Babka wrote:
+> On 8/20/24 5:59 PM, Uladzislau Rezki (Sony) wrote:
+> > Add a kvfree_rcu_barrier() function. It waits until all
+> > in-flight pointers are freed over RCU machinery. It does
+> > not wait any GP completion and it is within its right to
+> > return immediately if there are no outstanding pointers.
 > > 
-> > On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
-> > > Hi Stefan,
-> > > 
-> > > > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
-> > > >  		goto rpm_disable;
-> > > >  	}
-> > > >  
-> > > > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
-> > > > +
-> > > 
-> > > you might also want to add the multi-master boolean property in
-> > > the binding.
+> > This function is useful when there is a need to guarantee
+> > that a memory is fully freed before destroying memory caches.
+> > For example, during unloading a kernel module.
 > > 
-> > We discussed this internally and weren't sure when it was required
-> > because e.g. i2c-rcar and i2c-tegra don't have it documented in their
-> > bindings. Is it still required if it is part of the dt-schema?
-> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> The i2c-imx.yaml has "unevaluatedProperties: false", which fill discard
-> every thing not in this yaml
+> Thanks Ulad, replaced the patch in slab/for-next
 > 
-> > If so, I will add it in the next version.
-> 
-> Yes, please.
+You are welcome :)
 
-Perfect, thanks for the explanation.
-
-Regards,
-Stefan
+--
+Uladzislau Rezki
 
