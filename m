@@ -1,45 +1,53 @@
-Return-Path: <linux-kernel+bounces-296515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A18F95ABAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B51B95ABAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9CED1F2988A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2621C261C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C6C33CF1;
-	Thu, 22 Aug 2024 03:00:07 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07D3136E37;
+	Thu, 22 Aug 2024 03:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HFD74vOx"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159EE13AD09;
-	Thu, 22 Aug 2024 03:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2D813AA46
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724295606; cv=none; b=kYyGhs+kCkHQqDUzlVH/R14Rwga0Gg3iQSJbXi17Y0W7FLax1Ri9x6pQLa4c5laa2GxkdVrDt3mKOt+39O2DWZ3/SFQ7xHKqyHAL8cB6K2j3Vv/9klsDWtLgv4NSdev6LVl6r5a0DOfLZK0rfQCpIKbpBE5aeAvyVbsh0Xj5x0c=
+	t=1724295689; cv=none; b=rULp0stHaVs45AZ/FhjV5eiiso2bGKwFHJBJW/gE9ZYBnkE7rQAf3grjVAlm2YxgkVRIuhjE1fWAsT1gatzguClsPCYcDK60972+oo3N0Qp3atscKaC325OhSDmbf/4O9UQ4rQu21JeUfTSZAhTj7HpzekqGWrwFeP6xYNJdI7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724295606; c=relaxed/simple;
-	bh=MiLS6QNJIotafRSJtcVlL+FuD4p7HukeuznkH6hVuas=;
+	s=arc-20240116; t=1724295689; c=relaxed/simple;
+	bh=yoDJJnZ+Xn/jAXpqLOY6g3dJGpq1zThA1sAqh5zgo30=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWez2t92CK5vahrElJvQse/mbXz3sCZX1wRS7MtjsBCyz+CVLuv6YKRCII2+vlDgemAg1qQeJKh8CNZOm9K4sdzwnI9xe8OZm3onlX1T29Ebr960szCwYcqavIZeJ01aSxxGLUp9E2t+Y+sQMCz61jvT2ITNJg2MbZNBPV0fm9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2C504227A8E; Thu, 22 Aug 2024 04:59:53 +0200 (CEST)
-Date: Thu, 22 Aug 2024 04:59:52 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, cassel@kernel.org,
-	dlemoal@kernel.org, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	hch@lst.de, linux-ppc@kolla.no, vidra@ufal.mff.cuni.cz
-Subject: Re: [PATCH v2] ata: pata_macio: Use WARN instead of BUG
-Message-ID: <20240822025952.GA32067@lst.de>
-References: <20240820030407.627785-1-mpe@ellerman.id.au> <6b2208d1-c18f-14d5-e6d0-acd5c82b4db1@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nR5KAI2IfzIZdAeaY/PD+1qYo+OtSrn1yx6cNC4lB9uFmPUe0HLLEwL50/Ff5QQdcrSzhL0uoQTDr86StaUvxx4/ZN71P4S2s3wE6NPy4+wUr+Xl3BnX4w7t3sdFQg9NT37hpheDqkeOsYv3aAQzOmNU9cJRkgx8DdhnYQ8bIlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HFD74vOx; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 21 Aug 2024 23:01:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724295682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jiueZ9s/AO2OHEiYoojw4fXRPY2DnVwlCYFnpOkvQDk=;
+	b=HFD74vOxRiQFxLcOi1rCgMnkD8/MFrkHSuAf+qGOk0jQfxrdEHXQWzgbB5zjXl7ot9Sf1j
+	+6EwPqRvVGU0FYClmw+FrCOHhpbVQpSu7LFfgQvpNzB3fnEKJO6SulzvJHxygC2WKIHaJ2
+	ZePm8up+7V5QHGdRei0Gf6lXqbMzYuM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Chen Yufan <chenyufan@vivo.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] bcachefs: Convert to use jiffies macros
+Message-ID: <vthxausjk2h5dujrtef7odyxpl35l5bgak7ce5sbtietsh43ib@3njnr6xcfdtt>
+References: <20240822025731.5651-1-chenyufan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,22 +56,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6b2208d1-c18f-14d5-e6d0-acd5c82b4db1@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240822025731.5651-1-chenyufan@vivo.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 22, 2024 at 12:13:52AM +0300, Sergei Shtylyov wrote:
-> On 8/20/24 6:04 AM, Michael Ellerman wrote:
+On Thu, Aug 22, 2024 at 10:57:31AM GMT, Chen Yufan wrote:
+> Use jiffies macros instead of using jiffies directly to handle wraparound.
 > 
-> > The overflow/underflow conditions in pata_macio_qc_prep() should never
-> > happen. But if they do there's no need to kill the system entirely, a
-> > WARN and failing the IO request should be sufficient and might allow the
-> > system to keep running.
+> Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+
+Applied
+
+> ---
+>  fs/bcachefs/alloc_background.c | 3 ++-
+>  fs/bcachefs/journal_io.c       | 3 ++-
+>  fs/bcachefs/thread_with_file.c | 2 +-
+>  3 files changed, 5 insertions(+), 3 deletions(-)
 > 
->    WARN*() can kill your system with panic_on_warn -- Android is particularly
-> fond of this kernel parameter but I guess it's not your case... :-)
->    Greg KH usually advices against using these macros. :-)
-
-And in this case he is simply totally wrong.  The whole poing of WARN_ON
-is to have a standardized way to assert conditions.
-
+> diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
+> index ac933142a..795539556 100644
+> --- a/fs/bcachefs/alloc_background.c
+> +++ b/fs/bcachefs/alloc_background.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/rcupdate.h>
+>  #include <linux/sched/task.h>
+>  #include <linux/sort.h>
+> +#include <linux/jiffies.h>
+>  
+>  static void bch2_discard_one_bucket_fast(struct bch_dev *, u64);
+>  
+> @@ -2181,7 +2182,7 @@ int bch2_dev_freespace_init(struct bch_fs *c, struct bch_dev *ca,
+>  	 * freespace/need_discard/need_gc_gens btrees as needed:
+>  	 */
+>  	while (1) {
+> -		if (last_updated + HZ * 10 < jiffies) {
+> +		if (time_after(jiffies, last_updated + HZ * 10)) {
+>  			bch_info(ca, "%s: currently at %llu/%llu",
+>  				 __func__, iter.pos.offset, ca->mi.nbuckets);
+>  			last_updated = jiffies;
+> diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
+> index 7664b68e6..32b886feb 100644
+> --- a/fs/bcachefs/journal_io.c
+> +++ b/fs/bcachefs/journal_io.c
+> @@ -1950,7 +1950,8 @@ static int bch2_journal_write_pick_flush(struct journal *j, struct journal_buf *
+>  	if (error ||
+>  	    w->noflush ||
+>  	    (!w->must_flush &&
+> -	     (jiffies - j->last_flush_write) < msecs_to_jiffies(c->opts.journal_flush_delay) &&
+> +	     time_before(jiffies, j->last_flush_write +
+> +		 msecs_to_jiffies(c->opts.journal_flush_delay)) &&
+>  	     test_bit(JOURNAL_may_skip_flush, &j->flags))) {
+>  		w->noflush = true;
+>  		SET_JSET_NO_FLUSH(w->data, true);
+> diff --git a/fs/bcachefs/thread_with_file.c b/fs/bcachefs/thread_with_file.c
+> index 0807ce9b1..fb3442a7c 100644
+> --- a/fs/bcachefs/thread_with_file.c
+> +++ b/fs/bcachefs/thread_with_file.c
+> @@ -387,7 +387,7 @@ int bch2_stdio_redirect_readline_timeout(struct stdio_redirect *stdio,
+>  	seen = buf->buf.nr;
+>  	char *n = memchr(buf->buf.data, '\n', seen);
+>  
+> -	if (!n && timeout != MAX_SCHEDULE_TIMEOUT && jiffies >= until) {
+> +	if (!n && timeout != MAX_SCHEDULE_TIMEOUT && time_after_eq(jiffies, until)) {
+>  		spin_unlock(&buf->lock);
+>  		return -ETIME;
+>  	}
+> -- 
+> 2.39.0
+> 
 
