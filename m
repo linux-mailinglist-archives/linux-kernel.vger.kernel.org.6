@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-297567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BACA95BAF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:49:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDDD95BAF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B80AA1F228E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:49:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948D61F24C21
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3AC1CCB5F;
-	Thu, 22 Aug 2024 15:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384351CCB54;
+	Thu, 22 Aug 2024 15:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vcN6TSqY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GR+ELl8o"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFF91CC892;
-	Thu, 22 Aug 2024 15:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D1C1C9EC4;
+	Thu, 22 Aug 2024 15:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341769; cv=none; b=HCqStGkH/yUsi9NBHsb5yLcNjSEyTmv11ij+nN1jhazyZF26QOVSRnhO3vVCU1AWuedaZQZwuF3Dnd/oRJBYE4RiOZlZhGA5PDjK6PnsIRd+9tUqZNVv8J1V0ebKi/B+CeqHi46O1QAhB+UR2VejHisH4liwI4tks1WmyFudF8E=
+	t=1724341801; cv=none; b=R3IRCjMHaeGY0I10x3V6S5+IqIRnJxVMijJ/dQS3oD9eh+AzdUv5dvSMQYp5N/nWJJO2kEdO30RpBOF8tydXhfeu0oABLtXDvOfnqRJLFlVJ0Xc9KmKXOrww0ChCgWCXVk6QCV325CxNhe2M3dqaTTXabvPXaB22NgEsI7jwdis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341769; c=relaxed/simple;
-	bh=kb/+At/yhpH4fro1jvnObHk9+W2eMayvImHkltIZTc4=;
+	s=arc-20240116; t=1724341801; c=relaxed/simple;
+	bh=Yt9hQ3I2tZCTt0WKclQj3ASyNM+KSaK1c+0J+E/9CqQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6T3NodxwZB5vj4wNzR3pEFDyKaMNKDN9tTkltRVtNawWzyrFqNSWXqicertbWn9mpAP52ymF/upmA5774kxei36Hcd1QIJ9LmmO3wsFJAqVOp1/7dTiIi9RjRnDLk6BtfCaJ6QXf3RkRTKLyncc9CDoPCC2iT5rHWWgFGlinGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vcN6TSqY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wo5Or872JRMjs2yvDuW/n+As0PQ5HyrLwv/bvl+wIBc=; b=vcN6TSqYHCgGksehp9Nz/C4610
-	rXFMGYO1dlVPO7YYYXQ6njjV/Zn6QDVkQKVZKTvwx8amSiUGTKsYbF4SBfrPVjWz86CdSuHhjn7FW
-	jTlX4ruu7oMl7XsadkOrNDheZO0VjIFXaJe/HREN/JdAynLc6ANcKE4f8rC8t1wHDD5dP8RzbXA52
-	dgMQiqFcJ+VmhQ5DGRSeNv6vHaqONBDyQz1b+8PafiNLffIa5bTTGOSZWhdMiPxxgDHSF+OLxbp8T
-	GXpcqGO57MgiwB4YpljEVUAsGf7n1oHWWYX85PL+ZqoJtfO6mLoEM8VZZn7ECtV6BeqKKoOmDN82Z
-	KfSYmRpA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1shA3w-0000000Ag7l-2GrF;
-	Thu, 22 Aug 2024 15:49:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8D177300642; Thu, 22 Aug 2024 17:49:23 +0200 (CEST)
-Date: Thu, 22 Aug 2024 17:49:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	aubrey.li@linux.intel.com
-Subject: Re: [peterz-queue:sched/core] [sched/fair]  420356c350:
- WARNING:at_kernel/sched/core.c:#__might_sleep
-Message-ID: <20240822154923.GB17097@noisy.programming.kicks-ass.net>
-References: <202408161619.9ed8b83e-lkp@intel.com>
- <20240817093329.GA32430@noisy.programming.kicks-ass.net>
- <ZsLNtymGVe5wk5vP@chenyu5-mobl2>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qYVabhC5ohsCXD2T4neyOTiM5XsvzsABF39a0FjtcY8EPQLzrQ9B4ixY4U4NAKA1127RIPCr5tFbs8/DNZp3mClddCrLYIRmN4FS1m2ZVqYb6r8jMSULJlj2nwD+H6DPld8pe0+ZgZJVftDxVUncopjXxUiyoXujmxEFNisHEkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GR+ELl8o; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=WR5hjaWl3HcDCXvvJnF07p+ySaPY+8eWnQyGTxeF4Ms=; b=GR+ELl8oTAMdaNaQmTxnVOJ9JH
+	0HIUxaROTUI2RDsbdWz10+Gc023JMu4mfUwpCMSrDNS78xGQYJ3e14xAwm9s2uhX9d04twy4DG5bt
+	F0jKaNFgHfZZ5+pRJ1+mOsx/oMdDuEkQS+ueBJ3WQxh/+ghCcGheq0J7K3+lhHeY/VfI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1shA4M-005Ra5-QN; Thu, 22 Aug 2024 17:49:50 +0200
+Date: Thu, 22 Aug 2024 17:49:50 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v3 3/3] phy: dp83tg720: Add statistics support
+Message-ID: <f18ac2ce-3bbf-4f12-8d0c-14429aaf9e40@lunn.ch>
+References: <20240822115939.1387015-1-o.rempel@pengutronix.de>
+ <20240822115939.1387015-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,80 +63,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZsLNtymGVe5wk5vP@chenyu5-mobl2>
+In-Reply-To: <20240822115939.1387015-4-o.rempel@pengutronix.de>
 
-On Mon, Aug 19, 2024 at 12:44:39PM +0800, Chen Yu wrote:
-> On 2024-08-17 at 11:33:29 +0200, Peter Zijlstra wrote:
-> > On Fri, Aug 16, 2024 at 05:15:12PM +0800, kernel test robot wrote:
-> > > kernel test robot noticed "WARNING:at_kernel/sched/core.c:#__might_sleep" on:
-> > > 
-> > > commit: 420356c3504091f0f6021974389df7c58f365dad ("sched/fair: Implement delayed dequeue")
-> > > https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git sched/core
-> > 
-> > > [   86.252370][  T674] ------------[ cut here ]------------
-> > > [ 86.252945][ T674] do not call blocking ops when !TASK_RUNNING; state=1 set at kthread_worker_fn (kernel/kthread.c:?) 
-> > > [ 86.254001][ T674] WARNING: CPU: 1 PID: 674 at kernel/sched/core.c:8469 __might_sleep (kernel/sched/core.c:8465) 
-> > 
-> > > [ 86.283398][ T674] ? handle_bug (arch/x86/kernel/traps.c:239) 
-> > > [ 86.283995][ T674] ? exc_invalid_op (arch/x86/kernel/traps.c:260) 
-> > > [ 86.284787][ T674] ? asm_exc_invalid_op (arch/x86/include/asm/idtentry.h:621) 
-> > > [ 86.285682][ T674] ? __might_sleep (kernel/sched/core.c:8465) 
-> > > [ 86.286380][ T674] ? __might_sleep (kernel/sched/core.c:8465) 
-> > > [ 86.287116][ T674] kthread_worker_fn (include/linux/kernel.h:73 include/linux/freezer.h:53 kernel/kthread.c:851) 
-> > > [ 86.287701][ T674] ? kthread_worker_fn (kernel/kthread.c:?) 
-> > > [ 86.288138][ T674] kthread (kernel/kthread.c:391) 
-> > > [ 86.288482][ T674] ? __cfi_kthread_worker_fn (kernel/kthread.c:803) 
-> > > [ 86.288951][ T674] ? __cfi_kthread (kernel/kthread.c:342) 
-> > > [ 86.289560][ T674] ret_from_fork (arch/x86/kernel/process.c:153) 
-> > > [ 86.290162][ T674] ? __cfi_kthread (kernel/kthread.c:342) 
-> > > [ 86.291465][ T674] ret_from_fork_asm (arch/x86/entry/entry_64.S:254) 
-> > 
-> > AFAICT this is a pre-existing issue. Notably that all transcribes to:
-> > 
-> > kthread_worker_fn()
-> >   ...
-> > repeat:
-> >   set_current_state(TASK_INTERRUPTIBLE);
-> >   ...
-> >   if (work) { // false
-> >     __set_current_state(TASK_RUNNING);
-> >     ...
-> >   } else if (!freezing(current)) // false -- we are freezing
-> >     schedule();
-> > 
-> >   // so state really is still TASK_INTERRUPTIBLE here
-> >   try_to_freeze()
-> >     might_sleep() <--- boom, per the above.
-> >
+On Thu, Aug 22, 2024 at 01:59:39PM +0200, Oleksij Rempel wrote:
+> Introduce statistics support for the DP83TG720 PHY driver, enabling
+> detailed monitoring and reporting of link quality and packet-related
+> metrics.
 > 
-> Would the following fix make sense?
+> To avoid double reading of certain registers, the implementation caches
+> all relevant register values in a single operation. This approach
+> ensures accurate and consistent data retrieval, particularly for
+> registers that clear upon reading or require special handling.
+> 
+> Some of the statistics, such as link training times, do not increment
+> and therefore require special handling during the extraction process.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Yeah, that looks fine. Could you write it up as a proper patch please?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> 
-> diff --git a/kernel/kthread.c b/kernel/kthread.c
-> index f7be976ff88a..09850b2109c9 100644
-> --- a/kernel/kthread.c
-> +++ b/kernel/kthread.c
-> @@ -848,6 +848,12 @@ int kthread_worker_fn(void *worker_ptr)
->  	} else if (!freezing(current))
->  		schedule();
->  
-> +	/*
-> +	 * Explictly set the running state in case we are being frozen
-> +	 * and skip the schedule() above. try_to_freeze() expects the
-> +	 * current task to be in running state.
-> +	 */
-> +	__set_current_state(TASK_RUNNING);
->  	try_to_freeze();
->  	cond_resched();
->  	goto repeat;
-> -- 
-> 2.25.1
-> 
-> Hi Oliver,
-> Could you please help check if above change would make the warning go away?
-> 
-> thanks,
-> Chenyu
+    Andrew
 
