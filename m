@@ -1,167 +1,105 @@
-Return-Path: <linux-kernel+bounces-296376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F8795AA32
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:29:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81BB95A98E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66FA1F213E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AAE01F21B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C43C78C6C;
-	Thu, 22 Aug 2024 01:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9D411712;
+	Thu, 22 Aug 2024 01:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEBEIs5j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="fVe++O1g"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6582536B11;
-	Thu, 22 Aug 2024 01:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1126920B04
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724289844; cv=none; b=oFnsEIGeHhiqqqkNeCDRyR0eT2+pQIsPkfCN0xrtfXByWrklNdqT63wLl8eqsCFgLKNm5Wq9EQigg3c6LpXRN49qqS57r3BlX59ti6A6eLtYcoQ14UqoYy63Aa4Smu4U0mP0nMNONb/QOGIxlvo9GdbkeYl9o7pMGy/OaPXerO4=
+	t=1724289456; cv=none; b=i3z55DrmRaxzcSX3qzSYeA+8zV06DqDBcCQZ5uw7IT6yNMjALeCB5AU92dgwNjereaF9C9hARA8a+mkJimaNs4UehoI+0waIDxXW1h1YWnw0DCemFTQ7EsF7A1dbel2NS3PQSR+lu/owg0gQSaWSGANizFMRTZCEHZDFcGAU/tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724289844; c=relaxed/simple;
-	bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cLM05Qpn12w1dHTyyDzPWnb0P1CrLhNE7OXsbmLfun8ifjyhyVbIKd+4487W+LRZKcIvzEuWL5B6wcczPiveH9hswAmF5PEQCypTOwbgHKlAWmcMQQUPzFb94tYw0CdHxv3e6nFup/fLeHljjbLnUPNgpdNjVZSNeiMU4Kg4V3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEBEIs5j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B08CC32781;
-	Thu, 22 Aug 2024 01:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724289844;
-	bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iEBEIs5j4ESOyOuAI+C1WdLslac5LfFf4kq+lkNdmDRnyIC5yWmiqWDSMJJspLip0
-	 ml9uTFJFpjA0iZB8kpDqcRdUVrEAN3rgae1b0KWClRy/Dt5K3C0ScTk7Y4SWdSQ+0J
-	 J9ynhy9+9DciCFx1xbPMettqUNcK0C/8oPiqZYnE2aLmN//nbDx9gRXLGbrz6FOC9N
-	 QJZK6dQb2Eneww26LRoFWKUpXmLr8bA0krMzkGL40Umad43ef518YlBAcLdGrQ/xva
-	 UmXJOYn+WGgW0hN/+th9qactP+9HaSOVf/vKYQVY8GyrjynJ7JP8i2m+nC2YGho1yB
-	 C5cIrr/0/qsMQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2024 02:15:42 +0100
-Subject: [PATCH v11 39/39] KVM: selftests: arm64: Add GCS registers to
- get-reg-list
+	s=arc-20240116; t=1724289456; c=relaxed/simple;
+	bh=0ocl6vAjLUjMe85M4UYlMut9slATQNpCCmfh9xaJJrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=IPJH2ofOn4tmkqFF6fQRlmQq6OmZhL4oQZzwsJ/Khpv6vORC9bfi2cUvBDGhPCKPjRaVgiuWl2KK15HZN4UtlFTWsz2BknL7BQlyyjVE+ck8k8/VCxXjQvH90HO+LWfjO7WmbJ9Uszs3JRAHxeWTGonvHz0ut5nQxZ3AtUY73x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=fVe++O1g; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from mx0.riseup.net (mx0-pn.riseup.net [10.0.1.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4Wq50M4Kg1zDqXg
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 01:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1724289454; bh=0ocl6vAjLUjMe85M4UYlMut9slATQNpCCmfh9xaJJrE=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=fVe++O1gN9xCaszUhRvQC8ozoKjBrpPKlW/tSZCxo0BZ/ID4YMWSjJU6l9jj4oPjP
+	 GAm5U4ykuxkBTIW0vQgq6dPL8Ysq1xQCKxGJ7OXwFrTiAd+ZiebcBUkce84FbAEqBy
+	 fP9hj/rGV7/bDiqPuHFjz4RT9x0WQbk1kgtjrRA4=
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx0.riseup.net (Postfix) with ESMTPS id 4Wq50D5qbvz9tN3;
+	Thu, 22 Aug 2024 01:17:16 +0000 (UTC)
+X-Riseup-User-ID: 544F8F7C7C3A49EB88682F1EC5343E8C89F0D55A160541232EC9FAD805D6580D
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4Wq50C12Y3zJn1j;
+	Thu, 22 Aug 2024 01:17:14 +0000 (UTC)
+Message-ID: <d607cf0d-4de1-4a18-8075-d8f3fff98373@riseup.net>
+Date: Wed, 21 Aug 2024 22:17:12 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH] stagging: rtl8192e: Insert spaces around '|'
+To: Hans Buss <hansbh123@gmail.com>
+References: <20240822003156.141717-1-hansbh123@gmail.com>
+Content-Language: en-US
+Cc: linux-staging@lists.linux.dev, ~lkcamp/patches@lists.sr.ht,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeida@riseup.net>
+In-Reply-To: <20240822003156.141717-1-hansbh123@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240822-arm64-gcs-v11-39-41b81947ecb5@kernel.org>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
-In-Reply-To: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Andrew Morton <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, 
- Shuah Khan <shuah@kernel.org>, 
- "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, 
- Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Florian Weimer <fweimer@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
- Ross Burton <ross.burton@arm.com>, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
- linux-arch@vger.kernel.org, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2418; i=broonie@kernel.org;
- h=from:subject:message-id; bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhrRjE52aWuqWJvl43G370Cb14vXG7leGPtlWHj9eFSeamTBo
- X9LqZDRiYWDkYpAVU2RZ+yxjVXq4xNb5j+a/ghnEygQyhYGLUwAu0sP+veD2HY0mXtEA/3Nzfa4Jyf
- PZBDNMzlaYvXxd9UdPmQeKau5R/7pmxk1bVJ80KV7nZ/iJg4lH3l6T79aqUAtX1T7NdHV6wdU22f2z
- DoV6ifrOnBJdf1xGTvvHPIXgYzx+IXyfDnGuTNt9Jn1zzH2fmQqTrCclRJxxLr+9bOLp1XfPyQj6yc
- /iSVB6KvkueNHaLp8L5yP/BqR1nWaqPGK77aHK4sT4ptQ/SlOm5x6/HTXHf7th4Q1tZn217NVH7xju
- 0hSU+cvxlVlNNSErf+uMqFO19qckeCd42zv9/LSrXmn+w9OaR+uVBaI+iD31MpvczNFmEhmVLF5/wT
- fTwpAtSN7+ZuDJ9Z9Es+4WMQIA
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-GCS adds new registers GCSCR_EL1, GCSCRE0_EL1, GCSPR_EL1 and GCSPR_EL0. Add
-these to those validated by get-reg-list.
+Hi Hans,
 
-Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/aarch64/get-reg-list.c | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Em 21/08/2024 21:31, Hans Buss escreveu:
+> From: Hans Buss <hans.buss@mailfence.com>
+> 
+> Insert spaces around '|' to adhre to Linux kernel coding style.
+> 
+> CHECK: spaces preferred around that '|' (ctx:VxV)
+> 
+> Signed-off-by: Hans Buss <hans.buss@mailfence.com>
 
-diff --git a/tools/testing/selftests/kvm/aarch64/get-reg-list.c b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-index 709d7d721760..9785f41e6042 100644
---- a/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-@@ -29,6 +29,24 @@ static struct feature_id_reg feat_id_regs[] = {
- 		0,
- 		1
- 	},
-+	{
-+		ARM64_SYS_REG(3, 0, 2, 5, 0),	/* GCSCR_EL1 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 0, 2, 5, 1),	/* GCSPR_EL1 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 0, 2, 5, 2),	/* GCSCRE0_EL1 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
-+	},
- 	{
- 		ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
- 		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
-@@ -40,6 +58,12 @@ static struct feature_id_reg feat_id_regs[] = {
- 		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
- 		4,
- 		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 3, 2, 5, 1),	/* GCSPR_EL0 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
- 	}
- };
- 
-@@ -460,6 +484,9 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(3, 0, 2, 0, 1),	/* TTBR1_EL1 */
- 	ARM64_SYS_REG(3, 0, 2, 0, 2),	/* TCR_EL1 */
- 	ARM64_SYS_REG(3, 0, 2, 0, 3),	/* TCR2_EL1 */
-+	ARM64_SYS_REG(3, 0, 2, 5, 0),	/* GCSCR_EL1 */
-+	ARM64_SYS_REG(3, 0, 2, 5, 1),	/* GCSPR_EL1 */
-+	ARM64_SYS_REG(3, 0, 2, 5, 2),	/* GCSCRE0_EL1 */
- 	ARM64_SYS_REG(3, 0, 5, 1, 0),	/* AFSR0_EL1 */
- 	ARM64_SYS_REG(3, 0, 5, 1, 1),	/* AFSR1_EL1 */
- 	ARM64_SYS_REG(3, 0, 5, 2, 0),	/* ESR_EL1 */
-@@ -475,6 +502,7 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(3, 0, 13, 0, 4),	/* TPIDR_EL1 */
- 	ARM64_SYS_REG(3, 0, 14, 1, 0),	/* CNTKCTL_EL1 */
- 	ARM64_SYS_REG(3, 2, 0, 0, 0),	/* CSSELR_EL1 */
-+	ARM64_SYS_REG(3, 3, 2, 5, 1),	/* GCSPR_EL0 */
- 	ARM64_SYS_REG(3, 3, 13, 0, 2),	/* TPIDR_EL0 */
- 	ARM64_SYS_REG(3, 3, 13, 0, 3),	/* TPIDRRO_EL0 */
- 	ARM64_SYS_REG(3, 3, 14, 0, 1),	/* CNTPCT_EL0 */
+There's a small typo in your commit message, the correct name is 
+staging, not "stagging".
 
--- 
-2.39.2
-
+> ---
+>   drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h b/drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h
+> index 1b444529b59c..e507593b939c 100644
+> --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h
+> +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h
+> @@ -229,7 +229,7 @@ enum _RTL8192PCI_HW {
+>   				RATR_MCS6 | RATR_MCS7)
+>   #define RATE_ALL_OFDM_2SS	(RATR_MCS8 | RATR_MCS9 | RATR_MCS10 |	\
+>   				RATR_MCS11 | RATR_MCS12 | RATR_MCS13 |	\
+> -				RATR_MCS14|RATR_MCS15)
+> +				RATR_MCS14 | RATR_MCS15)
+>   
+>   	DRIVER_RSSI		= 0x32c,
+>   	MCS_TXAGC		= 0x340,
 
