@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-297306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348FC95B5FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:08:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA8F95B5FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 635B0B20D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:08:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95E7B23FC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992A81CB312;
-	Thu, 22 Aug 2024 13:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB14A1C9EBD;
+	Thu, 22 Aug 2024 13:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UBa9NbrU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DCVFNsFB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFA71C9EAC;
-	Thu, 22 Aug 2024 13:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47191CBEA9;
+	Thu, 22 Aug 2024 13:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724332050; cv=none; b=TA2qJVV67dkppo/vSDWvucs42s7ueSuHvC3jrhdLMe1Z15ybpZ87iGAQBjgSnk7KhNlSzmlJurCM7/6ayz6kU8XdhyphdJabgiStifp2K3FoZperD3WKh9lf4gEs+hEVnbwo8EERFvazDFXE49Nqsr1amNL6wSSRecrR1sjfZCc=
+	t=1724332060; cv=none; b=aVi2rwIlHjdj0X++FJAUGgI2TNRy7rnc2sXSKoM+DbOVytkCJhrMpXZvMjQdY/261U6sUxrlPp/CL2vXk4NkR1MX/PSc/8tcIh7FMU23oLaGxpIQ2hiKTaQyQxApabA2l8e7WQVDB2T2oSUD8KQAjb6AHo5DpOxAFjovgOSCpcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724332050; c=relaxed/simple;
-	bh=OqnDzu9+ZUXGdtQdWMi+KA9baRD3epmipJVFFEG+fXg=;
+	s=arc-20240116; t=1724332060; c=relaxed/simple;
+	bh=6yzkxgeeNpy0+7GerH1TmbwM9kjda6sRhMx93hTsO3k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Icx270Ii3ljawauecoStbEoNzNlHRxYFKunpXouTpb4fYMSefBDL7AMaGj0npe8YJbSmmstQi/GIZeuD0yMXKlAI5gfv/N/d49X73Muf08SSivmPGdvym6FGH2Hnn5KG1/xst7QO4IGTSPMDjCiMAQkvk2xCw12Nm9l4A7s7iec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UBa9NbrU; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version:Content-Type; b=ecyuTmCa/kKjo21kKflFbH2+H4uR0s3YKMLaGebFAtEAUWpLI8oLMKTWsdbmd9tcnKyeS2O05jsbjxRoSLKHwacjJMRX7hLBCaA+3CM4X1XzLn+bh2Ax8/AAdscO6CEHcSdVexYq1efv3cWUkn6AHVAxA6Ie8cWAwUAZQxb3JDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DCVFNsFB; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724332050; x=1755868050;
+  t=1724332058; x=1755868058;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=OqnDzu9+ZUXGdtQdWMi+KA9baRD3epmipJVFFEG+fXg=;
-  b=UBa9NbrUyN6UA4bh7dH9Q2Wc5QzXuIockut0b5OG7rmsW45/l7xqqVwd
-   E9A/tP+44wYvE02FAfKlWFNivHBF+zkOv02YowxRj+Fo/xQYSFgTQ/4gS
-   AZKjztmdwc4nekHAGn1Di1zVCEnyUieyPzPD0HBNFoTgMtBJp/qcAktsE
-   9vZTxFKjMo1Z0+sWqPLFtoHa/8soeAtXUx1x/QjjkIy5zHnvoKPix+g8F
-   EmpGD6ApGcZZlhPyP/66U43rxm77zNfQaKXXFGaLVHFW3bcJkjDYBOR6J
-   clZsPG5RNSForLFmcsBNjs6rbXH4T78xJeEas/iQce22wp4a1fUIvL/H7
-   g==;
-X-CSE-ConnectionGUID: rVNG4oZSSbit29v76+UNYg==
-X-CSE-MsgGUID: rMGNNms7QJS02SoenqxeBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22621716"
+  bh=6yzkxgeeNpy0+7GerH1TmbwM9kjda6sRhMx93hTsO3k=;
+  b=DCVFNsFBlwzqMX+/jlAtdoClKE0dawN0Vq9JunE5sVdQDe2Ucl1dfJ6o
+   sKQbAgr6SFrTUl9Dkecuo5WZxH7GmkfnyXhcbZsmuXUafLG3GOkn+ewCv
+   ewQpOavmP9wU87AYby3e/3EAy7OARj6sraS6YOLP7Y2AZ1orTffcslRwK
+   OC/WF9L0+uEMwWdrZNRmx1FKT0UxHk+XpP3cAE+eUX9CyTKxx1rUgCtCT
+   eDtVYc8/bV9TDJSMlwhJKzw/j+Qs4GBqTJVKvzTQ4RHC7dALSWEgD7OZp
+   FaxUq5Sld6WU+lOAKJvL5SRyEtbYSNOMwDl1YKByNc1XCGMUx+nqW7EjY
+   w==;
+X-CSE-ConnectionGUID: a6tOBIvaSaqvTALI3azZsg==
+X-CSE-MsgGUID: 9uVBiN6YQU6vFTQ9aA5STg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="26538887"
 X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="22621716"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:07:27 -0700
-X-CSE-ConnectionGUID: 3G/r6TtETPSpG7yPi+/cLg==
-X-CSE-MsgGUID: Nl++LU2QRnOGqCaGmbBKPg==
+   d="scan'208";a="26538887"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:07:38 -0700
+X-CSE-ConnectionGUID: GhF9q9DCRZu6KIHJfg9RaQ==
+X-CSE-MsgGUID: bW4xKgsjQJKwf+eqvTGVTA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="66363060"
+   d="scan'208";a="61146785"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 22 Aug 2024 06:07:25 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 22 Aug 2024 06:07:34 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 9C43D4D7; Thu, 22 Aug 2024 16:07:23 +0300 (EEST)
+	id AAF0C6CC; Thu, 22 Aug 2024 16:07:23 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
@@ -68,9 +68,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	platform-driver-x86@vger.kernel.org
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Daniel Scally <djrscally@gmail.com>
-Subject: [PATCH v2 3/4] platform/x86: int3472: Use GPIO_LOOKUP() macro
-Date: Thu, 22 Aug 2024 16:05:40 +0300
-Message-ID: <20240822130722.1261891-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 4/4] platform/x86: int3472: Use str_high_low()
+Date: Thu, 22 Aug 2024 16:05:41 +0300
+Message-ID: <20240822130722.1261891-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
 References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
@@ -83,32 +83,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Use GPIO_LOOKUP() macro which provides a compound literal
-and can be used with dynamic data.
+Use str_high_low() rather than open coding.
 
 Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel/int3472/discrete.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/platform/x86/intel/int3472/discrete.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
-index 29df19379464..a360901d03f0 100644
+index a360901d03f0..0559295dfb27 100644
 --- a/drivers/platform/x86/intel/int3472/discrete.c
 +++ b/drivers/platform/x86/intel/int3472/discrete.c
-@@ -69,11 +69,7 @@ static int skl_int3472_fill_gpiod_lookup(struct gpiod_lookup *table_entry,
- 	if (!adev)
- 		return -ENODEV;
+@@ -11,6 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/overflow.h>
+ #include <linux/platform_device.h>
++#include <linux/string_choices.h>
+ #include <linux/uuid.h>
  
--	table_entry->key = acpi_dev_name(adev);
--	table_entry->chip_hwnum = agpio->pin_table[0];
--	table_entry->con_id = func;
--	table_entry->idx = 0;
--	table_entry->flags = polarity;
-+	*table_entry = GPIO_LOOKUP(acpi_dev_name(adev), agpio->pin_table[0], func, polarity);
+ #include "common.h"
+@@ -240,7 +241,7 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
  
- 	return 0;
- }
+ 	dev_dbg(int3472->dev, "%s %s pin %d active-%s\n", func,
+ 		agpio->resource_source.string_ptr, agpio->pin_table[0],
+-		(polarity == GPIO_ACTIVE_HIGH) ? "high" : "low");
++		str_high_low(polarity == GPIO_ACTIVE_HIGH));
+ 
+ 	switch (type) {
+ 	case INT3472_GPIO_TYPE_RESET:
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
