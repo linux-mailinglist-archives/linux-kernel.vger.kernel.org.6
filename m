@@ -1,320 +1,162 @@
-Return-Path: <linux-kernel+bounces-296824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C74895AF81
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:42:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EB895AF88
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63590B21D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09AD11C21F24
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D7D154448;
-	Thu, 22 Aug 2024 07:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C67C157467;
+	Thu, 22 Aug 2024 07:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PFyTifgt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zyBzqCmx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9513315351A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4103A77102;
+	Thu, 22 Aug 2024 07:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724312520; cv=none; b=Dil05XH4+7kSl70R3cBeGl6oLVjOA1oa/Hohf4DwVjiTJkSLvYhP6ftr5PG6CbG5H1fNQlw7LCUIh0zS5uMYicdB4SURagneVZAQ5jmh5pKKeGcuO1oXyno89WoWHcoxbkKWHhL8t6aV4HETD0mO6LOxCmHVqxwZv2z8Ehxij44=
+	t=1724312568; cv=none; b=kqe3BGAbszYii0Yp2HSw8gplGECWjRG3vvbstQdxZQggS4PFjFKds72NMsIZdcf09vPy4SRjxtzTg0uyII7gnk33lNe2Pc9PzetDhSWvUqNeDzB0UWpIqwwmw1kMO4cOpEtNnrqxh1OHBz3NR1BxRFbNNhkMZM1q+Lh5rYtNqcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724312520; c=relaxed/simple;
-	bh=Or1rajALrSV7YECqXm9O1WUbrv85cQKW8oH61rd+ulU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=qydWxmam5kHLhOoSn2gYs+PWN7M2IpGaOKER0UeCo0vIEfNISp7jBr1nLAd1tLDTs0NXNzJUyuoEHOi+47INVIMyFGk18457sXs6hIP7Nk7JF3wwAuTuMDKHkdyVNjnntlni2WmkP7V9DX/Ij2hSK1u1lnUSeATWD+rPZWb93rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PFyTifgt; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724312518; x=1755848518;
-  h=date:from:to:cc:subject:message-id;
-  bh=Or1rajALrSV7YECqXm9O1WUbrv85cQKW8oH61rd+ulU=;
-  b=PFyTifgt5P0cI+zbyrzSOKXyNKbx0Udx0pfJR2UiKaL8p7UzCEFTF575
-   26atVPFzhuZc9bFHqJqQT4aa8pqFuwJ6JWOA7OM93mXrnAEWfY8YfTBmh
-   ynLz5eny8MuYHGOR6aMnXS08cY2wj+4G0jTEEEwgQBqI+809vQPgcpocV
-   qqWpGtCQIDNjaQFLNbeTUeZ6DD0kkAXAhCGIJnxFIEFVJe+c0MeZzbjky
-   UOGa7ckXRrYcRjMiMUUkH8ekSrJ8eMRMXtg8jvAXx+UzHwWtrM6gTPwqB
-   zRiaUbiuiHzXgD5VyzqWgpzoiirVw23+p04GWFE+GP8/W5G5o1JPelRxg
-   w==;
-X-CSE-ConnectionGUID: qPj1JMoBSTWmQWz4T02ApA==
-X-CSE-MsgGUID: PU6RdEoeSRClx1UOQE2LNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22580205"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="22580205"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 00:41:58 -0700
-X-CSE-ConnectionGUID: UR9ESWJaQSCY/lBDaQJgFQ==
-X-CSE-MsgGUID: iXK+1Nd8T7K6ss59j5qF0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="61506551"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 22 Aug 2024 00:41:57 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sh2SA-000CYA-1w;
-	Thu, 22 Aug 2024 07:41:54 +0000
-Date: Thu, 22 Aug 2024 15:41:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- b34bbe44b8222d43d6311d5caa1226ebddda4bfb
-Message-ID: <202408221548.nJywZuz6-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1724312568; c=relaxed/simple;
+	bh=77Qoum3GF39xs41H2sgZOPq8cHo25AlzYUCwqlQFLDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njAnIGTUuIoMreVWf+GeAgyARvqx2sGtDP9DURusBV2RasXtbabQ3Diqvbo8RmQRUgIps1/tFHN5wepWajnbZvmKUB7wOxFgs8B+RoZDxKx/P7e+OBR6L0iyXJGb34FJ7krAEuZ3cI/3fBZ6kkST9l1Yoz+P0RivMvU+sJEgOM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zyBzqCmx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD51C4AF0B;
+	Thu, 22 Aug 2024 07:42:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724312567;
+	bh=77Qoum3GF39xs41H2sgZOPq8cHo25AlzYUCwqlQFLDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zyBzqCmxJ0LOzunqFJjWG5/Z931e0S/ZD+BxPgnwFRkdx+U+F0PBSaoVA+KgAW4c5
+	 uGd2CEuNwh5rAR+M5VHu+SdoCljjAMfniff4rNxGb4AhTApLjice/FL7pcPojol9z/
+	 kiIdX1pdyaBEdH1YofAKJRmf1qfj2hXBo9lQRb/c=
+Date: Thu, 22 Aug 2024 15:42:45 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jann Horn <jannh@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] firmware_loader: Block path traversal
+Message-ID: <2024082252-september-relapsing-6152@gregkh>
+References: <20240820-firmware-traversal-v1-1-8699ffaa9276@google.com>
+ <ZsPf02GrdMiyZP8a@pollux>
+ <CAG48ez3AEU+LD-i7Qwo3kreJ0zGQEZOnthFX++QTUOMxe3e40Q@mail.gmail.com>
+ <CAG48ez3nUfUS3Ec=tMS91w20N2vY-D+_c_k19-=5hs0-_MLmfA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3nUfUS3Ec=tMS91w20N2vY-D+_c_k19-=5hs0-_MLmfA@mail.gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: b34bbe44b8222d43d6311d5caa1226ebddda4bfb  Merge branch into tip/master: 'x86/timers'
+On Tue, Aug 20, 2024 at 02:42:46AM +0200, Jann Horn wrote:
+> On Tue, Aug 20, 2024 at 2:23 AM Jann Horn <jannh@google.com> wrote:
+> > On Tue, Aug 20, 2024 at 2:14 AM Danilo Krummrich <dakr@kernel.org> wrote:
+> > > On Tue, Aug 20, 2024 at 01:18:54AM +0200, Jann Horn wrote:
+> > > > Most firmware names are hardcoded strings, or are constructed from fairly
+> > > > constrained format strings where the dynamic parts are just some hex
+> > > > numbers or such.
+> > > >
+> > > > However, there are a couple codepaths in the kernel where firmware file
+> > > > names contain string components that are passed through from a device or
+> > > > semi-privileged userspace; the ones I could find (not counting interfaces
+> > > > that require root privileges) are:
+> > > >
+> > > >  - lpfc_sli4_request_firmware_update() seems to construct the firmware
+> > > >    filename from "ModelName", a string that was previously parsed out of
+> > > >    some descriptor ("Vital Product Data") in lpfc_fill_vpd()
+> > > >  - nfp_net_fw_find() seems to construct a firmware filename from a model
+> > > >    name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
+> > > >    think parses some descriptor that was read from the device.
+> > > >    (But this case likely isn't exploitable because the format string looks
+> > > >    like "netronome/nic_%s", and there shouldn't be any *folders* starting
+> > > >    with "netronome/nic_". The previous case was different because there,
+> > > >    the "%s" is *at the start* of the format string.)
+> > > >  - module_flash_fw_schedule() is reachable from the
+> > > >    ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
+> > > >    GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
+> > > >    enough to pass the privilege check), and takes a userspace-provided
+> > > >    firmware name.
+> > > >    (But I think to reach this case, you need to have CAP_NET_ADMIN over a
+> > > >    network namespace that a special kind of ethernet device is mapped into,
+> > > >    so I think this is not a viable attack path in practice.)
+> > > >
+> > > > For what it's worth, I went looking and haven't found any USB device
+> > > > drivers that use the firmware loader dangerously.
+> > >
+> > > Your commit message very well describes the status quo, but only implies the
+> > > problem, and skips how you intend to solve it.
+> > >
+> > > >
+> > > > Cc: stable@vger.kernel.org
+> > > > Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
+> > > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > > ---
+> > > > I wasn't sure whether to mark this one for stable or not - but I think
+> > > > since there seems to be at least one PCI device model which could
+> > > > trigger firmware loading with directory traversal, we should probably
+> > > > backport the fix?
+> > > > ---
+> > > >  drivers/base/firmware_loader/main.c | 10 +++++++++-
+> > > >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> > > > index a03ee4b11134..a32be64f3bf5 100644
+> > > > --- a/drivers/base/firmware_loader/main.c
+> > > > +++ b/drivers/base/firmware_loader/main.c
+> > > > @@ -864,7 +864,15 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+> > > >       if (!firmware_p)
+> > > >               return -EINVAL;
+> > > >
+> > > > -     if (!name || name[0] == '\0') {
+> > > > +     /*
+> > > > +      * Reject firmware file names with "/../" sequences in them.
+> > > > +      * There are drivers that construct firmware file names from
+> > > > +      * device-supplied strings, and we don't want some device to be able
+> > > > +      * to tell us "I would like to be sent my firmware from
+> > > > +      * ../../../etc/shadow, please".
+> > > > +      */
+> > > > +     if (!name || name[0] == '\0' ||
+> > > > +         strstr(name, "/../") != NULL || strncmp(name, "../", 3) == 0) {
+> > >
+> > > Seems reasonable, but are there any API users that rely on that?
+> >
+> > I tried grepping for in-kernel users and didn't find any, though I
+> > guess I could have missed something.
+> > I suppose slightly more likely than in-kernel users, there could be
+> > userspace code out there that intentionally uses netlink or sysfs
+> > interfaces to tell the kernel to load from firmware paths outside the
+> > firmware directory, though that would be kinda weird?
+> 
+> I guess if we are seriously concerned that someone might rely on that,
+> there are several things we could do to mitigate it, ordered by
+> increasing level of how annoying it would be to implement and how much
+> it would nerf the check:
+> 
+> 1. add a pr_warn() specifically for this case, so if it does break,
+> users know what's wrong and can complain - I think I should probably
+> do that in v2 anyway
 
-elapsed time: 1409m
+That seems sane, at least provide a way to see what went wrong (or if
+someone is trying to do something "bad").
 
-configs tested: 228
-configs skipped: 15
+And yes, it should be backported to stable, so please leave that in
+there for your v2 patch.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Thanks for finding this!
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                          axs103_defconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                     nsimosci_hs_defconfig   gcc-13.2.0
-arc                   randconfig-001-20240822   gcc-13.2.0
-arc                   randconfig-002-20240822   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                            dove_defconfig   gcc-14.1.0
-arm                      footbridge_defconfig   gcc-13.2.0
-arm                          ixp4xx_defconfig   gcc-13.2.0
-arm                            mmp2_defconfig   gcc-13.2.0
-arm                          moxart_defconfig   gcc-14.1.0
-arm                           omap1_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240822   gcc-13.2.0
-arm                   randconfig-002-20240822   gcc-13.2.0
-arm                   randconfig-003-20240822   gcc-13.2.0
-arm                   randconfig-004-20240822   gcc-13.2.0
-arm                        shmobile_defconfig   gcc-13.2.0
-arm64                            allmodconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240822   gcc-13.2.0
-arm64                 randconfig-002-20240822   gcc-13.2.0
-arm64                 randconfig-003-20240822   gcc-13.2.0
-arm64                 randconfig-004-20240822   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240822   gcc-13.2.0
-csky                  randconfig-002-20240822   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240821   gcc-12
-i386         buildonly-randconfig-001-20240822   gcc-12
-i386         buildonly-randconfig-002-20240821   gcc-12
-i386         buildonly-randconfig-002-20240822   gcc-12
-i386         buildonly-randconfig-003-20240821   clang-18
-i386         buildonly-randconfig-003-20240821   gcc-12
-i386         buildonly-randconfig-003-20240822   gcc-12
-i386         buildonly-randconfig-004-20240821   gcc-12
-i386         buildonly-randconfig-004-20240822   gcc-12
-i386         buildonly-randconfig-005-20240821   gcc-12
-i386         buildonly-randconfig-005-20240822   gcc-12
-i386         buildonly-randconfig-006-20240821   gcc-12
-i386         buildonly-randconfig-006-20240822   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240821   gcc-12
-i386                  randconfig-001-20240822   gcc-12
-i386                  randconfig-002-20240821   gcc-12
-i386                  randconfig-002-20240822   gcc-12
-i386                  randconfig-003-20240821   gcc-12
-i386                  randconfig-003-20240822   gcc-12
-i386                  randconfig-004-20240821   gcc-12
-i386                  randconfig-004-20240822   gcc-12
-i386                  randconfig-005-20240821   clang-18
-i386                  randconfig-005-20240821   gcc-12
-i386                  randconfig-005-20240822   gcc-12
-i386                  randconfig-006-20240821   gcc-12
-i386                  randconfig-006-20240822   gcc-12
-i386                  randconfig-011-20240821   gcc-11
-i386                  randconfig-011-20240821   gcc-12
-i386                  randconfig-011-20240822   gcc-12
-i386                  randconfig-012-20240821   gcc-12
-i386                  randconfig-012-20240822   gcc-12
-i386                  randconfig-013-20240821   clang-18
-i386                  randconfig-013-20240821   gcc-12
-i386                  randconfig-013-20240822   gcc-12
-i386                  randconfig-014-20240821   clang-18
-i386                  randconfig-014-20240821   gcc-12
-i386                  randconfig-014-20240822   gcc-12
-i386                  randconfig-015-20240821   gcc-12
-i386                  randconfig-015-20240822   gcc-12
-i386                  randconfig-016-20240821   gcc-12
-i386                  randconfig-016-20240822   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch                 loongson3_defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240822   gcc-13.2.0
-loongarch             randconfig-002-20240822   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                         apollo_defconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-m68k                            q40_defconfig   gcc-13.2.0
-m68k                          sun3x_defconfig   gcc-14.1.0
-m68k                           virt_defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-mips                          ath25_defconfig   gcc-14.1.0
-mips                        bcm47xx_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240822   gcc-13.2.0
-nios2                 randconfig-002-20240822   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240822   gcc-13.2.0
-parisc                randconfig-002-20240822   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      bamboo_defconfig   gcc-13.2.0
-powerpc                    gamecube_defconfig   gcc-14.1.0
-powerpc                     kmeter1_defconfig   gcc-13.2.0
-powerpc                     kmeter1_defconfig   gcc-14.1.0
-powerpc                 linkstation_defconfig   gcc-13.2.0
-powerpc                 mpc836x_rdk_defconfig   gcc-14.1.0
-powerpc                     mpc83xx_defconfig   gcc-14.1.0
-powerpc64             randconfig-001-20240822   gcc-13.2.0
-powerpc64             randconfig-002-20240822   gcc-13.2.0
-powerpc64             randconfig-003-20240822   gcc-13.2.0
-riscv                            allmodconfig   clang-20
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240822   gcc-13.2.0
-riscv                 randconfig-002-20240822   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240822   gcc-13.2.0
-s390                  randconfig-002-20240822   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                        dreamcast_defconfig   gcc-14.1.0
-sh                          landisk_defconfig   gcc-13.2.0
-sh                          lboxre2_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240822   gcc-13.2.0
-sh                    randconfig-002-20240822   gcc-13.2.0
-sh                          rsk7269_defconfig   gcc-14.1.0
-sh                          sdk7780_defconfig   gcc-14.1.0
-sh                           se7724_defconfig   gcc-13.2.0
-sh                             sh03_defconfig   gcc-13.2.0
-sh                   sh7770_generic_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240822   gcc-13.2.0
-sparc64               randconfig-002-20240822   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240822   gcc-13.2.0
-um                    randconfig-002-20240822   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240822   gcc-12
-x86_64       buildonly-randconfig-002-20240822   gcc-12
-x86_64       buildonly-randconfig-003-20240822   gcc-12
-x86_64       buildonly-randconfig-004-20240822   gcc-12
-x86_64       buildonly-randconfig-005-20240822   gcc-12
-x86_64       buildonly-randconfig-006-20240822   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240822   gcc-12
-x86_64                randconfig-002-20240822   gcc-12
-x86_64                randconfig-003-20240822   gcc-12
-x86_64                randconfig-004-20240822   gcc-12
-x86_64                randconfig-005-20240822   gcc-12
-x86_64                randconfig-006-20240822   gcc-12
-x86_64                randconfig-011-20240822   gcc-12
-x86_64                randconfig-012-20240822   gcc-12
-x86_64                randconfig-013-20240822   gcc-12
-x86_64                randconfig-014-20240822   gcc-12
-x86_64                randconfig-015-20240822   gcc-12
-x86_64                randconfig-016-20240822   gcc-12
-x86_64                randconfig-071-20240822   gcc-12
-x86_64                randconfig-072-20240822   gcc-12
-x86_64                randconfig-073-20240822   gcc-12
-x86_64                randconfig-074-20240822   gcc-12
-x86_64                randconfig-075-20240822   gcc-12
-x86_64                randconfig-076-20240822   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240822   gcc-13.2.0
-xtensa                randconfig-002-20240822   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+greg k-h
 
