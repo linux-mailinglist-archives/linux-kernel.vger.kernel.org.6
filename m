@@ -1,283 +1,312 @@
-Return-Path: <linux-kernel+bounces-297819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3A295BE17
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:19:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D66895BE1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BACF61F25A9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:19:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEA35B21E43
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA961CFEA5;
-	Thu, 22 Aug 2024 18:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539901CF2AF;
+	Thu, 22 Aug 2024 18:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLkRc2nM"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ohTfAe/4";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="f3C4/zor"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E56D38F9A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 18:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724350782; cv=none; b=JYhl5ndn/rBxC/h7Q7XO2+kJabxYJS/3D5zLObwtP+xsFA1fSKy/rI2/C+A/ZyOM5jUqOnLBCOlno4ywLrssMDR6MUnmXrwJGixWCCN7timywHT9Ymhd7PHKc788K/8iTE74oAq8u25wZ02p/bBSNcL7IKYdzbIr7d8WJHtn94g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724350782; c=relaxed/simple;
-	bh=utMDmTbX1/LidnSzDyHrA8dZFqyO95ZnxKXD+vRAYH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pXP/OauecuYvdicE3p/NWPn6KJwD14FMMYaVcKH7PInPKCwiivHE+lBI0u4X+SOooaCePu4Ea3p+c+L5mjaJyLAv432b0s+/1JK7gbGKsFr/dEcQye0if/Enjlh7CwNrp7NFtuY8i3Uga/Sb0iK//+6CawDxoAI4XpgjvhzjCYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLkRc2nM; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso1900860a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:19:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F2B38F9A;
+	Thu, 22 Aug 2024 18:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724350804; cv=fail; b=Ni6Gzjv9kf6lnmyUIEPqE/zMMWQhxFvTC01qdXT25nsBYU98BfnOH5/2d9eQNodItBPy8DLHBmJEk5ZuKSSUEDaSrq+pIzbVhySjfhGKdWuCrlxg2ogTxsrsKly4+nrTfiC3dt3ZLC/fQKMWBKT0bKLiQlWaLBggXJk2ami2WkU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724350804; c=relaxed/simple;
+	bh=AMIWnPPxp35GZNBIbVfCD/YMaTN17JvGPL/D93rUAxE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G5yJt7e5l8qlYY9BR6yrI25yxWwhY+u8UcLW+tZpzfaVwVafDvTm1EmGzrhHZ1A78Je3cbjsKGERjwzyJyri1t+x52H52WMTITlQeTDq8MUrXXOHqOeQv1YXJ9VEEJZkxyqx3nryF/e0dDgJZUEWvWDmpBM3JGIVyf8iz4mc8BE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ohTfAe/4; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=f3C4/zor; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MEQV5m028668;
+	Thu, 22 Aug 2024 18:19:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:content-transfer-encoding:content-type:mime-version; s=
+	corp-2023-11-20; bh=MaBtw2Yeg4samzeg/WoTfxwItfmeN6axk475xKEGKX0=; b=
+	ohTfAe/4KuIgiSh5F2Xb/qCMjFR96DI5Qp/Pbx5g9wKZi0HMtEjB0hp/8C5Tr0ls
+	+UJR6Pri9Cv8Op+2g7xkQtDhDxsGPlqgak/DKWMMht2x1Zc3t0q7gCDvGbCBkcKC
+	vlgug9AIIo7lBWW5/MRh/gez7AZxzHZyb9Gz+YLMgMgLLBnvQLllr5/Tt/h+Dgqn
+	QcyEVh6lZ6/KMwHUkK/rfbGqXLRiV+iOSMJ5g1K66EbLgSkx+6lN0rqHBztzazmR
+	w4Rclo6h8iRQE/ZiCLR8Ff6UVaMCA5lFayH82tn9//T8LdfvZzMMi+r1Hd86axU5
+	eBlfuzEq0FECqvLQU1pMew==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m2djt1r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 22 Aug 2024 18:19:53 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47MI8X2M027569;
+	Thu, 22 Aug 2024 18:19:52 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2046.outbound.protection.outlook.com [104.47.55.46])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 416947m911-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 22 Aug 2024 18:19:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jXnZV2OhOJzt22P/dZlcQicS+Uk3nm+m17k+5Qma4s6NiqgYh1Fhr4dxSVTx4hIKSPOEO0TJgQpAAN50A50gB9g5FXRvsOl/3W5Hiy6pV+DeCM9+6Q9fq43oEHsObBaxF69tHLftEcNvQaRJZkCon/Mc9ASOAtO+xbtSidQz7aOlXR2YpQZmH9fIUcg6jaP4If7k3ALbGzmEE1eLRagR2lPJu2WX61X+MLH5qBSpRm8LhVtAA+Ng7rOy6Ws5CnMwsviN6y3rGxl1AK0cjhZjEGwxqS9ErPUUQ6+ZOX5wAHMJ0mWjwpK9sImhRo2n7+eu26GkC80VBEWv+TTmtbobQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MaBtw2Yeg4samzeg/WoTfxwItfmeN6axk475xKEGKX0=;
+ b=Asa4xx4udta/Ixp/ba810s2KKfYf8w2oqxbdtjeamT0MGNzPw+FusViPSUJs7FexlEhI7iA4EU9CO8fWokePj+eOo5Rt9Xrl6y1HyImOo/Wke3PmUsr1r50pWcAOoMsrGYbLu8LGUlIB3xVdGZ+MCMcc9oR6z4Ic1gYov4/3Ter4qagiEXYJtk0nO4+skL/Idq9nqQBonOImWgsaVVleLex/vxS/zcFMf/UKv7WEs4r1wQxhrFpddXzJTpj0LDmOKNC+/kz2rsGOm/IA1MN25vkDXZ04zkOm6a12l89EPRzCUFBzRcadYeL7OnUVHv+pYD8gvQhlSia4Sk98FYOvuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724350778; x=1724955578; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PNLLVZZpLxZWh2dHAkGEpD5DarfqjR8a+UwpDgaaask=;
-        b=RLkRc2nMpb3LBpUDC25kgJhffA8VrIQ4ry2DxfG55DmH61p1iYVbykZjj7/oEi+fGE
-         OyEtqmRQyhbgCpL0ErwmL8v6x2BxFWrCe0kkM9SvFmjzjF3wtYorOy4DYAMyOBvUiifi
-         LNYT/372TvohayooBHhfmMMicnmTNWIHYEbOh5RtWXdiM11XQIap8UKfeUGpg1eCaB/M
-         dVxAHXDSLBPkQHC1Nj5109KFmIdpkPv2U1EINmG84DYOYFb0ZxqJ6VFk3att0iXBNuAs
-         PvFueHZaXeuixhIRpd2pRVPHKOo0SpVAb/wwZdVPDv13EQGT8zpDIj+3zrGnxx8f8DF7
-         NVlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724350778; x=1724955578;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PNLLVZZpLxZWh2dHAkGEpD5DarfqjR8a+UwpDgaaask=;
-        b=OzNitZNnaCNiZ0elPJUMOi/XOEpX8Mrwq288QcbBFVkXaTl2bLGk06uN2dizv9cD30
-         b/RSAuIwsVpfRkNGxtOXtQkSwmHGHaEPXpUOYr9pZUxjsxgsQWUKEz+XPKlK1VjBuVq7
-         rtCTvP1DuAcUY3UZ//r1TsTxbtSTVduruEjweCkqIjO88oQ93OhD3b3vzvGuTQC00y60
-         VwNfzTc8N5fFRY1k7jWmEgtZiNFx41IMMo0H5q7d8pVc+sWsmw7Jbz80OfqImKf4tBzw
-         raY0rGm+3Rvk703Ih4NRaWbG0CaO3imQuWwdiCftzHpqUgToSgA15FL8aDHF2j6S/MYV
-         wv1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWYT/mEPgl5NaJPHtX6yOOzGGw+XmE9cocY1rcV3BQ9qHVhbH2gxgFxo/ER0lB0RKBr65iI+V6ImFRnIYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK+shi2axSn/pW6lpjfrdVTIdN2JeFtm/lY8e3RB49r6BakCr5
-	Fr26xFaWMlyBeXa3NxZ31RSo1UMRxdNRKASuwGwi7CGLafVYq3GM
-X-Google-Smtp-Source: AGHT+IFcRHsyiimrgW0dgblDDhP/odLIbjcyN7K2AHf50Myrbes0N15kXf6XZtLz/oDERNeyKA45Ig==
-X-Received: by 2002:a05:6402:278e:b0:5bf:9c3:8dd4 with SMTP id 4fb4d7f45d1cf-5bf1f289a5amr4963198a12.34.1724350778006;
-        Thu, 22 Aug 2024 11:19:38 -0700 (PDT)
-Received: from shift.daheim (p200300d5ff191e0050f496fffe46beef.dip0.t-ipconnect.de. [2003:d5:ff19:1e00:50f4:96ff:fe46:beef])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddbb8fsm1180914a12.1.2024.08.22.11.19.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 11:19:37 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1])
-	by shift.daheim with esmtp (Exim 4.98)
-	(envelope-from <chunkeey@gmail.com>)
-	id 1shCPE-00000001DyZ-0UfP;
-	Thu, 22 Aug 2024 20:19:36 +0200
-Message-ID: <b039012c-1b04-40cb-a760-b1ef942fe23c@gmail.com>
-Date: Thu, 22 Aug 2024 20:19:36 +0200
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MaBtw2Yeg4samzeg/WoTfxwItfmeN6axk475xKEGKX0=;
+ b=f3C4/zordtoQ2mMSWHUknyTNjFGm/NYcRKUFdOEM4gt3xo7vpn2rlT7uhAU1ixFHejqafdwVCeK/8aDervua19Sde8bLErO7CaKWJVrgDoZ6K2w9rucwkdYUgpg+KEiQ+pND+lkbkNFrnPYkZkOV+7PeKCT/cWZxPonc4OUGN1A=
+Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
+ by CY5PR10MB6094.namprd10.prod.outlook.com (2603:10b6:930:39::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Thu, 22 Aug
+ 2024 18:19:46 +0000
+Received: from SN7PR10MB6287.namprd10.prod.outlook.com
+ ([fe80::5a47:2d75:eef9:1d29]) by SN7PR10MB6287.namprd10.prod.outlook.com
+ ([fe80::5a47:2d75:eef9:1d29%3]) with mapi id 15.20.7897.007; Thu, 22 Aug 2024
+ 18:19:46 +0000
+From: Kris Van Hees <kris.van.hees@oracle.com>
+To: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jiri Olsa <olsajiri@gmail.com>,
+        Elena Zannoni <elena.zannoni@oracle.com>
+Subject: [PATCH v8 0/4] Generate address range data for built-in modules
+Date: Thu, 22 Aug 2024 14:19:37 -0400
+Message-ID: <20240822181942.2626536-1-kris.van.hees@oracle.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240821040700.1919317-1-kris.van.hees@oracle.com>
+References: <20240821040700.1919317-1-kris.van.hees@oracle.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0250.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a0::15) To SN7PR10MB6287.namprd10.prod.outlook.com
+ (2603:10b6:806:26d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in
- kernel mode
-To: Christoph Hellwig <hch@lst.de>,
- LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Stan Johnson <userm57@yahoo.com>, Finn Thain <fthain@linux-m68k.org>
-References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu>
- <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de>
- <9dbf73fe-a459-4956-8dbc-e919d9728f5e@cs-soprasteria.com>
- <20240822053238.GA2028@lst.de>
- <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com>
- <20240822071443.GA6395@lst.de>
-Content-Language: de-DE, en-US
-From: Christian Lamparter <chunkeey@gmail.com>
-In-Reply-To: <20240822071443.GA6395@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|CY5PR10MB6094:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1cee136b-b5ab-45c3-ebd1-08dcc2d700d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KEon2BojBTxSbUDRCfbYmMRDzuCQrJ2CZJDKckftbCXMFBC9hMKpfVUWGRnL?=
+ =?us-ascii?Q?rnnb4rV4xcljycI7kK3YYwCU6rk4Hg3c3k1KE0ngfVAahNFgKG9tP4sE6wEy?=
+ =?us-ascii?Q?45QK2XEazzXsrQIrIxDoOm8MAumoZl0yBsAyp1+T8iu5HKXsr6UgY9RTpu1A?=
+ =?us-ascii?Q?aAxF0bsPvZv0XUrcfhrUdedUczDXySGKxZVby2Ar7hV3bgasiawkXIsnM4vh?=
+ =?us-ascii?Q?dXHcGAZa9Aai/oNn2O1EIpF6Qs8uLfOMME+EfmoEjCtDDBRHOdcc3ms2ixqE?=
+ =?us-ascii?Q?DTsqDCiv9Ca/WeeANrmTvokiNt3ABwMeaP+5oph0h+pxcRbHmt4Xa6j5cr7E?=
+ =?us-ascii?Q?FfjZ+L8nr+xbQuy/18mhWH9sdJWuKcY+SHFMeDqjC5j25b6jv8WOpreDrPfX?=
+ =?us-ascii?Q?BqODVEuVFQkiWgFnPv5cbFXdvizB56MCU7ZnW3jc/sPNCYg+DDZ2bozdVa7n?=
+ =?us-ascii?Q?3bVNe5Utatba1ErJ4JvMsWgVy3cPjxBCSFB78/6+vPZFKBe8+7wZ7KpOhJed?=
+ =?us-ascii?Q?T4Upd7HE4Q99aBg/c1MpsD90f02m1B4FHCArmSE+KS4OlV0u8Q012k9wtl2k?=
+ =?us-ascii?Q?akEMJdqEtmrV+3YUGSVV9KzA3VEADFvmRg6kbvihzzsjZ3Co+ZwyZG3RTxiO?=
+ =?us-ascii?Q?DYkvMWsSG2VpsrZVnkttxNKSHNrvUKFYqdf0ODMdJ4VaVn1FzY7x+3o9k9/O?=
+ =?us-ascii?Q?gac/f+xZlTxK6uuJ8yDTwAOCQHlcql7cO2cidmYnUn1s/gQUFoagwbsd6b94?=
+ =?us-ascii?Q?nbm8kPe+30gkF3IeK4xeHWQp3vO5inMLGCvnjeUbBzaSAZE//mAHe1Puj4+g?=
+ =?us-ascii?Q?pVhvGSkUmVfQ0yKi95K+1ZPJRLefsgCw1zEtcSCLN4oy/ImVyVxl27qNnqL9?=
+ =?us-ascii?Q?MveOW6HPOKjoQKiB0j3Sd8eDCcyRR6QvQgUtOuUdVn2VqgqMHK6Eq5cKp1Pn?=
+ =?us-ascii?Q?Pqf/PELdc7cNA/mG71XJpEN2/raaqLvqTmGs16qEe7YuVSBlUOgmfNKcSqYQ?=
+ =?us-ascii?Q?kbgwv1exgpBM20fXPpco8jyuNn0sAe4QsRrMdN4hzLFrEQwKSawVAe78rJng?=
+ =?us-ascii?Q?hdXpRmzZzBpYs86SRand8txAvj54Jc2uOiisDdYOU1x1nbCxWfWzzNr3lYzk?=
+ =?us-ascii?Q?5R2HLP4jnIzgs4lAT+uZbJMHbvkLBEx3l+ovpHK59mUHNoXxDtW7TrgJT3I9?=
+ =?us-ascii?Q?tgrXZlg3JOs/e8BbGj/EK1iI0GK3kaomL8nE4M7OD6aHBfcmV2XwoEQLKHpJ?=
+ =?us-ascii?Q?Cl53x1dn06AeX1OeCytVFtVbKFHVFGdEFXGR81ZcehV6dGmOTjD9kB7L/TNs?=
+ =?us-ascii?Q?0vC0jno+A6gN8F/ACArUpHiqZyTpi+Xvh98Lh6FBp9aNuw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PAxDZyUDOTuLYzwjWKkuVCbA13bH23jFehhL47WFJRVhycTAME8C1rpiFpco?=
+ =?us-ascii?Q?4G7uysb1ly+l/WeFNXZLYG2vud7Ugpv4lLBd+cfMWAVmv8+E6el65WhjmAWX?=
+ =?us-ascii?Q?ve5Mvz+9A1gi3OPbD4p7zXBjiiqUFKfcojubgvN5RZVjkBSZxCW3PRaHPnR9?=
+ =?us-ascii?Q?YxKhGNyPC2r2NIAxisTixA/wMIoQ7ZhNS/Eaqh7l+dnZNcU710kRnzssVIly?=
+ =?us-ascii?Q?s9fzvdCK4CkZp3Q/93E2z/FQjAdRCHLt+dvhq6ilM9+CsAopQoseICNeU2n/?=
+ =?us-ascii?Q?ITaZTvavY+H/GcrebmumtfdigKlOIesB6rlCnqxrYqLqIFFeu/uUdd8w5YCW?=
+ =?us-ascii?Q?ZJ0NoIsqg5yBeeWEC0KZakf7NCRJhN9GLUAwt0yaR3g6BLJiX9VvdASz0k21?=
+ =?us-ascii?Q?f5WL6ZPw6Hi4nZoGXdkdRXK43RyuMleE9mQ1JmkWUnYh4Vo2TWrZn+X7WYHb?=
+ =?us-ascii?Q?eOkna912ujpLip8aM82wW9ukIbB24EYd0kKiAjawmd0b7T9evoKSGvzWVKkp?=
+ =?us-ascii?Q?bNBag78d/Wp8W93vYLxDgiNk1uxIncnYybhdX748jnXiTEcxsNpEBA3X+RXS?=
+ =?us-ascii?Q?WQjN0esXsEQlS2mNz85fDhHwaZtQ1qQen2j66PzJ3fN5Kd6IR0peCsJN8MPG?=
+ =?us-ascii?Q?ZdKWnr4wjxBbuO5z95QSyCTYYmB8E/RnRUkHvr+usQevso4ojTCrl3m9sQ/m?=
+ =?us-ascii?Q?suSEdvcy/8P12v21ffygiP06bStnmpEkgUWIlYF7VSsQkUE+eap6AIcbc0f5?=
+ =?us-ascii?Q?L4gwK1ekX0i+nrCf8bFJnmJcrTCMGr3SfBbh4K3Fv5ZXXHbj7bo+itDpf3U6?=
+ =?us-ascii?Q?iSVAgovinB/0pPjqyotWhj7FHT5fzaIWAAE8ywbnQrPipoXjBJcDBystYVvm?=
+ =?us-ascii?Q?R5xBVPOGljFZuni4ZPdmkXVjNg/BUi6nKzM4psQTcwhVzukKrCj72xcTatqS?=
+ =?us-ascii?Q?4CmrrBRG/o1MJe7gCmQmSGyvVPjDXwSWP27xtJ6LKyS64f6FAJxBl6HCnw1X?=
+ =?us-ascii?Q?NSnI9GA9UsW4LmNqLrLPnF7NedPQiYDwBdHog9igcwjXsoAsSX4xWa6rX69A?=
+ =?us-ascii?Q?fMNvNaxsgRy/6vMQwuwObyEIt9BuGdsQpQyfjV5oyzCkua4wZIRwEQpIGxZn?=
+ =?us-ascii?Q?8Z7GoeElru6mlI+DKNBJEonNSIFpMyzZ1T+Dj3+mJcUtLrpbiMnfJsBkJ5Ta?=
+ =?us-ascii?Q?g5adoqlmgC7mELHlqxRi9ASA8yXpkDjY07X73gZ3PslE/1q1E9eCRI90L0/g?=
+ =?us-ascii?Q?GnbHSaiA67MGp/kw8qajjaxPwp0ThXdhTWp2z88J/uM9MHG9zfxMEomRzCTw?=
+ =?us-ascii?Q?iiwgB63w86leNDFnkxAKCZv/MhJ+e66WCXP7nNnCP2gyIwjWHrZSR5OBTFZ1?=
+ =?us-ascii?Q?ccJS4lMTPYM1N5Sf9cXiH4K1pz+N0E1hoNGUQlKjPm5Ut4azktM1/L88YGDk?=
+ =?us-ascii?Q?RMtkONqSNBacFCoa4ztirvT3bEceFiq71bbPifHwClPodP4GU4Av4b0hpxXX?=
+ =?us-ascii?Q?2uu6lIbhgavgs7e0qOzfvED6xc0YUX4g4yKkR5gQadHyfdnp76WrJY4XU2ak?=
+ =?us-ascii?Q?cXJm83qr/o4P9O9uWnVn+ifc+YsENXL7TfJsH/fquT/qHuMlpV8GJMcXKTei?=
+ =?us-ascii?Q?EynmRCoqnI+2aGWqcdVGMe0=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	OifsgjoLUqhFHzc2GmipRak6h/DmQKwazR0gEweuQD0XRcQaaZsAQMeiem3YBnXl70c8mtcFm8sKQvaCYmPPHxXfwotIJONZw4Ho51qVJRwh/3zznDZEjfBci6DThpaJQ0PBG/Aoo8fhhNYXmCNMJ6u58d/Wk4QZxkQyHKRV5htwcIo5TSXVMoF4GaXIMWWoRkrWxrV11WuKfd+u8m9e4VqYP5qaIsvoB6H0iVa5GjQYbECu3z6/2R5Sz6qFSdOniXrcmVoVVX4B3sTSDWSZRm0gohgJwFN4EPkLrY4N4Cfd1ff/oay/n447NlJZaZ1ww+bVNASfElLsxJRcTiNCwuhBhmQqBmekPnWoN/A8M6ae2QRGj/USS7w0BjiyqLAW7F2+7uAoqwXR8zMnyYrOW9TJzm0Mp0KVWg0MEOWCecwI1DvVo9lxsLxm+t1cGXdfTr442M8Tldb/GwDq/WLeSL66bOIVqg2yH/jcpJEE5GPLqEZUuXioOhhxUuaH/TPyxjx5oLVxm47GXXY3mRRjUWTk4+J/ANIuhr9YS99HXeYdzkWdjHV57a0CD5BJCGN/zNcyhHynxgE+WrEiPFFkz0ofxDftr0Qs3W+36o0Ldaw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cee136b-b5ab-45c3-ebd1-08dcc2d700d6
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 18:19:46.8690
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SlxX4beMfzHgryxCBIWv2eg5YXiHyLOfc2PEpfpzX+NauBw0JrsMKnn/OgScbKRKrliOurcPLnRClkcfd7uLBEIRjWHOrTVwwIU6C1X63/s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB6094
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_12,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ malwarescore=0 adultscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2408220137
+X-Proofpoint-GUID: 6g8AJqpNKNoX5LMfghKp_vuD656GTCu7
+X-Proofpoint-ORIG-GUID: 6g8AJqpNKNoX5LMfghKp_vuD656GTCu7
 
-Hi!
+At build time, create the file modules.builtin.ranges that will hold
+address range data of the built-in modules that can be used by tracers.
 
-Thank you all for your insightful insights :-) .
-... and derp, used the wrong mail.
+Especially for tracing applications, it is convenient to be able to
+refer to a symbol using a <module name, symbol name> pair and to be able
+to translate an address into a <nodule mname, symbol name> pair.  But
+that does not work if the module is built into the kernel because the
+object files that comprise the built-in module implementation are simply
+linked into the kernel image along with all other kernel object files.
 
-On 8/22/24 9:14 AM, Christoph Hellwig wrote:
-> On Thu, Aug 22, 2024 at 06:39:33AM +0000, LEROY Christophe wrote:
->> powerpc has a magic instruction 'dcbz' which clears a full cacheline in
->> one go. It is far more efficient than a loop to store zeros, and since
->> 2015 memset(0) has been implemented with that instruction (commit
->> 5b2a32e80634 ("powerpc/32: memset(0): use cacheable_memzero"))
->>
->> But that instruction generates an alignment exception when used on
->> non-cached memory (whether it is RAM or not doesn't matter). It is then
->> emulated by the kernel but it of course leads to a serious performance
->> degradation, hence the warning added by commit cbe654c77961 ("powerpc:
->> warn on emulation of dcbz instruction in kernel mode"). Until now it
->> helped identify and fix use of memset() on IO memory.
->>
->> But if memset() is expected to be used with non-cached RAM, then I don't
->> know what to do. Any suggestion ?
-> 
-> I'd suggest two things:
-> 
->   1) remove the warning.  The use case is perfectly valid and everything
->      using uncached memory is already slow, so people will just have to
->      deal with it.  Maybe offer a trace point instead if people care about
->      it.
->   2) figure out a way to avoid this case in the dma-coherent allocator,
->      which is probably the only case where it happens frequently
->      (a few drivers also zero or re-zero coherent memory, but most of the
->       time that is cargo cult programming and not actually needed)
+This is especially visible when providing tracing scripts for support
+purposes, where the developer of the script targets a particular kernel
+version, but does not have control over whether the target system has
+a particular module as loadable module or built-in module.  When tracing
+symbols within a module, referring them by <module name, symbol name>
+pairs is both convenient and aids symbol lookup.  But that naming will
+not work if the module name information is lost if the module is built
+into the kernel on the target system.
 
-I tested your patch below and got the next warning. This time from
-dma_alloc_from_pool about a similar memset in:
-https://elixir.bootlin.com/linux/v6.6.47/source/kernel/dma/pool.c#L261
+Earlier work addressing this loss of information for built-in modules
+involved adding module name information to the kallsyms data, but that
+required more invasive code in the kernel proper.  This work never did
+get merged into the kernel tree.
 
-it triggers for the sata_dwc_ex460 driver when it access the harddrive.
-For anyone interested, please look below for the full warning splat.
+All that is really needed is knowing whether a given address belongs to
+a particular module (or multiple modules if they share an object file).
+Or in other words, whether that address falls within an address range
+that is associated with one or more modules.
 
-(I switched to the MyBook Live, it's easier to disassemble+reassemble
-than the MX60... but with similar results).
+Objects can be identified as belonging to a particular module (or
+modules) based on defines that are passed as flags to their respective
+compilation commands.  The data found in modules.builtin is used to
+determine what modules are built into the kernel proper.  Then,
+vmlinux.o.map and vmlinux.map can be parsed in a single pass to generate
+a modules.buitin.ranges file with offset range information (relative to
+the base address of the associated section) for built-in modules.  This
+file gets installed along with the other modules.builtin.* files.
 
-> For 2 I can think of two options:
-> 
->   a) provide a arch hook for zeroing the dma memory that defaults to
->      memset, but which powerpc can override
->   a) figure out a way to clear the memory before marking it uncached
->      if we can
-> 
-> a) it obviously easier to verify, but b) is probably going to give
->     way better performance.
-> 
-> Below is an untested implementation of b) for dma-direct, I just need to
-> find out if there is any architecture that requires the memory to be
-> zeroed after it іt has been remapped.  The iommu drivers might also
-> need similar treatment.
-> 
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 4480a3cd92e087..66e94b32ab0081 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -275,6 +275,9 @@ void *dma_direct_alloc(struct device *dev, size_t size,
->   		if (force_dma_unencrypted(dev))
->   			prot = pgprot_decrypted(prot);
->   
-> +		if (!PageHighMem(page))
-> +			memset(page_address(page), 0, size);
-> +
->   		/* remove any dirty cache lines on the kernel alias */
->   		arch_dma_prep_coherent(page, size);
->   
-> @@ -283,14 +286,15 @@ void *dma_direct_alloc(struct device *dev, size_t size,
->   				__builtin_return_address(0));
->   		if (!ret)
->   			goto out_free_pages;
-> +		if (PageHighMem(page))
-> +			memset(ret, 0, size);
->   	} else {
->   		ret = page_address(page);
->   		if (dma_set_decrypted(dev, ret, size))
->   			goto out_leak_pages;
-> +		memset(ret, 0, size);
->   	}
->   
-> -	memset(ret, 0, size);
-> -
->   	if (set_uncached) {
->   		arch_dma_prep_coherent(page, size);
->   		ret = arch_dma_set_uncached(ret, size);
+The impact on the kernel build is minimal because everything is done
+using a single-pass AWK script.  The generated data size is minimal as
+well, (depending on the exact kernel configuration) usually in the range
+of 500-700 lines, with a file size of 20-40KB (if all modules are built
+in, the file contains about 8000 lines, with a file size of about 285KB).
 
-I added a counter in fix_alignment to count the number of traps
-issued by the kernel code. From what I measured in a quick test,
-With this patch, the count during boot went down from ~21000
-(unmodified) to 1200 (patched)... but from what I can tell, it
-still triggers for the dma_direct_alloc in emac.
+Changes since v7:
+ - Remove extra close(fn) in scripts.
+ - Make CONFIG_BUILTIN_MODULE_RANGES depend on !LTO.
 
-if there are more patches, please. I can test them during the next
-few days while I'm on holiday.
+Changes since v6:
+ - Applied Masahiro Yamada's patches for kconfig, makefile, and scripts.
 
-Cheers,
-Christian
+Changes since v5:
+ - More improved commit descriptions to explain the why and how.
+ - Removed unnecessary compatibility info from option description.
+ - Added optional 6th arg to verifier to specify kernel build directory.
+ - Report error and exit from verifier if .*.o.cmd files cannot be read.
 
----
+Changes since v4:
+ - Improved commit descriptions to explain the why and how.
+ - Documented dependency on GNU AWK for CONFIG_BUILTIN_MODULE_RANGES.
+ - Improved comments in generate_builtin_ranges.awk
+ - Improved logic in generate_builtin_ranges.awk to handle incorrect
+   object size information in linker maps
+ - Added verify_builtin_ranges.awk
 
-[    2.596136] ------------[ cut here ]------------
-[    2.600759] WARNING: CPU: 0 PID: 24 at fix_alignment+0x17c/0x1b4
-[    2.606760] Modules linked in:
-[    2.609813] CPU: 0 PID: 24 Comm: kworker/u2:2 Not tainted 6.6.47 #0
-[    2.616057] Hardware name: MyBook Live APM821XX 0x12c41c83 PowerPC 44x Platform
-[    2.623337] Workqueue: events_unbound async_run_entry_fn
-[    2.628646] NIP:  c0003190 LR: c0003070 CTR: c0014744
-[    2.633674] REGS: c11a94b0 TRAP: 0700   Not tainted  (6.6.47)
-[    2.639402] MSR:  00021000 <CE,ME>  CR: 22008808  XER: 20000000
-[    2.645312]
-[    2.645312] GPR00: c0008640 c11a95a0 c10de300 00000000 00000001 00000018 01f01cdf 00000004
-[    2.645312] GPR08: c0f30000 00000000 0147ae14 c11a9610 c0013abc 00000000 c004c1e4 00000002
-[    2.645312] GPR16: 00000000 00000001 00000000 00000000 d1000000 c0910000 c1182010 c0f50000
-[    2.645312] GPR24: c11a9774 c00804a8 c0f30000 c0910000 c0910000 00001000 c108e3a0 c11a9620
-[    2.680114] NIP [c0003190] fix_alignment+0x17c/0x1b4
-[    2.685065] LR [c0003070] fix_alignment+0x5c/0x1b4
-[    2.689844] Call Trace:
-[    2.692279] [c11a95a0] [c11a9734] 0xc11a9734 (unreliable)
-[    2.697670] [c11a95f0] [c0008640] alignment_exception+0xf0/0x164
-[    2.703666] [c11a9610] [c0000a30] Alignment+0x130/0x180
-[    2.708877] --- interrupt: 600 at memset+0x60/0xc0
-[    2.713672] NIP:  c0013abc LR: c0081df8 CTR: 0000007f
-[    2.718700] REGS: c11a9620 TRAP: 0600   Not tainted  (6.6.47)
-[    2.724420] MSR:  00021000 <CE,ME>  CR: 42008808  XER: 20000000
-[    2.730330] DEAR: d1000020 ESR: 00000000
-[    2.730330] GPR00: 00000007 c11a9710 c10de300 d1000000 00000000 00001000 d100001c 00000004
-[    2.730330] GPR08: 00001000 0000007f 00000001 53c20800 28008808 00000000 c004c1e4 00000002
-[    2.730330] GPR16: 00000000 00000001 00000000 00000000 d1000000 c0910000 c1182010 c0f50000
-[    2.730330] GPR24: c11a9774 c00804a8 c0f30000 c0910000 c0910000 00001000 c108e3a0 000010a0
-[    2.767645] NIP [c0013abc] memset+0x60/0xc0
-[    2.771819] LR [c0081df8] dma_alloc_from_pool+0x118/0x204
-[    2.777201] --- interrupt: 600
-[    2.780242] [c11a9710] [c0081eb0] dma_alloc_from_pool+0x1d0/0x204 (unreliable)
-[    2.787449] [c11a9760] [c00807e0] dma_direct_alloc+0x90/0x2a4
-[    2.793178] [c11a97a0] [c007f850] dma_alloc_attrs+0xa8/0xf8
-[    2.798758] [c11a97e0] [c019d180] dma_pool_alloc+0x11c/0x2ac
-[    2.804409] [c11a9810] [c0434cec] dwc_desc_get+0x2c/0x98
-[    2.809722] [c11a9840] [c04355cc] dwc_prep_slave_sg+0x180/0x524
-[    2.815633] [c11a98b0] [c04d7938] sata_dwc_qc_issue+0x1d8/0x268
-[    2.821559] [c11a9920] [c04bbfb0] ata_qc_issue+0x174/0x2b0
-[    2.827046] [c11a9940] [c04c674c] __ata_scsi_queuecmd+0x200/0x4fc
-[    2.833129] [c11a9960] [c04c6a84] ata_scsi_queuecmd+0x3c/0x88
-[    2.838865] [c11a9980] [c04a7bb0] scsi_queue_rq+0x6fc/0xb40
-[    2.844429] [c11a99c0] [c03801e8] __blk_mq_issue_directly+0x40/0xe0
-[    2.850694] [c11a99f0] [c038462c] blk_mq_try_issue_directly+0xa8/0x10c
-[    2.857208] [c11a9a10] [c03854e4] blk_mq_submit_bio+0x5f4/0x67c
-[    2.863118] [c11a9a70] [c0374ef4] submit_bio_noacct_nocheck+0x210/0x2d0
-[    2.869728] [c11a9aa0] [c0206850] block_read_full_folio+0x1f4/0x3a4
-[    2.875983] [c11a9b10] [c01353d8] filemap_read_folio+0x40/0x240
-[    2.881910] [c11a9b60] [c01382d0] do_read_cache_folio+0xb4/0x228
-[    2.887906] [c11a9b90] [c039144c] read_part_sector+0x50/0x10c
-[    2.893643] [c11a9bb0] [c0392358] read_lba+0xb8/0x198
-[    2.898680] [c11a9bf0] [c0392854] efi_partition+0xd8/0xc30
-[    2.904150] [c11a9cc0] [c0390be4] bdev_disk_changed+0x2ac/0x710
-[    2.910051] [c11a9d30] [c036be5c] blkdev_get_whole+0xc4/0xd8
-[    2.915693] [c11a9d50] [c036cb7c] blkdev_get_by_dev.part.0+0x288/0x380
-[    2.922199] [c11a9d90] [c038d49c] disk_scan_partitions+0x90/0x150
-[    2.928272] [c11a9dc0] [c038d9ac] device_add_disk+0x450/0x484
-[    2.934001] [c11a9df0] [c04b7718] sd_probe+0x360/0x4fc
-[    2.939132] [c11a9e20] [c0479db0] really_probe+0x2a0/0x370
-[    2.944628] [c11a9e50] [c0479f10] __driver_probe_device+0x90/0x200
-[    2.950796] [c11a9e70] [c047a0c8] driver_probe_device+0x48/0x104
-[    2.956793] [c11a9ea0] [c047a268] __device_attach_driver+0xe4/0x130
-[    2.963048] [c11a9ec0] [c04772e0] bus_for_each_drv+0x88/0xe4
-[    2.968699] [c11a9ef0] [c047939c] __device_attach_async_helper+0xa0/0xe8
-[    2.975386] [c11a9f20] [c005096c] async_run_entry_fn+0x40/0x11c
-[    2.981296] [c11a9f40] [c0044b70] process_one_work+0x1bc/0x35c
-[    2.987111] [c11a9f70] [c0045088] worker_thread+0x378/0x4e8
-[    2.992667] [c11a9fc0] [c004c2c8] kthread+0xe4/0xe8
-[    2.997548] [c11a9ff0] [c000d210] start_kernel_thread+0x10/0x14
-[    3.003449] Code: 39400000 7d500ba6 4c00012c 2c090000 41a2fec4 83e1004c 3860fff2 38210050 4e800020 38a00000 3920fff2 4bffffd4 <0fe00000> 4bffff8c 80010054 7c0803a6
-[    3.018138] ---[ end trace 0000000000000000 ]---
+Changes since v3:
+ - Consolidated patches 2 through 5 into a single patch
+ - Move CONFIG_BUILTIN_MODULE_RANGES to Kconfig.debug
+ - Make CONFIG_BUILTIN_MODULE_RANGES select CONFIG_VMLINUX_MAP
+ - Disable CONFIG_BUILTIN_MODULE_RANGES if CONFIG_LTO_CLANG_(FULL|THIN)=y
+ - Support LLVM (lld) compiles in generate_builtin_ranges.awk
+ - Support CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y
+ - Only install modules.builtin.ranges if CONFIG_BUILTIN_MODULE_RANGES=y
 
+Changes since v2:
+ - Switched from using modules.builtin.objs to parsing .*.cmd files
+ - Add explicit dependency on FTRACE for CONFIG_BUILTIN_MODULE_RANGES
+ - 1st arg to generate_builtin_ranges.awk is now modules.builtin.modinfo
+ - Parse data from .*.cmd in generate_builtin_ranges.awk
+ - Use $(real-prereqs) rather than $(filter-out ...)
+ - Include modules.builtin.ranges in modules install target
+
+Changes since v1:
+ - Renamed CONFIG_BUILTIN_RANGES to CONFIG_BUILTIN_MODULE_RANGES
+ - Moved the config option to the tracers section
+ - 2nd arg to generate_builtin_ranges.awk should be vmlinux.map
+
+Kris Van Hees (5):
+  trace: add CONFIG_BUILTIN_MODULE_RANGES option
+  kbuild: generate a linker map for vmlinux.o
+  module: script to generate offset ranges for builtin modules
+  kbuild: generate modules.builtin.ranges when linking the kernel
+  module: add install target for modules.builtin.ranges
+
+Luis Chamberlain (1):
+  kbuild: add modules.builtin.objs
+
+ .gitignore                          |   2 +-
+ Documentation/dontdiff              |   2 +-
+ Documentation/kbuild/kbuild.rst     |   5 ++
+ Makefile                            |   8 +-
+ include/linux/module.h              |   4 +-
+ kernel/trace/Kconfig                |  17 ++++
+ scripts/Makefile.lib                |   5 +-
+ scripts/Makefile.modinst            |  11 ++-
+ scripts/Makefile.vmlinux            |  17 ++++
+ scripts/Makefile.vmlinux_o          |  18 ++++-
+ scripts/generate_builtin_ranges.awk | 149 ++++++++++++++++++++++++++++++++++++
+ 11 files changed, 228 insertions(+), 10 deletions(-)
+ create mode 100755 scripts/generate_builtin_ranges.awk
+
+
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+-- 
+2.42.0
 
 
