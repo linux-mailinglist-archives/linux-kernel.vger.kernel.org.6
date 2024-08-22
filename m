@@ -1,102 +1,151 @@
-Return-Path: <linux-kernel+bounces-297821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF50995BE1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:20:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E6195BE2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52E10B22FDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29AA1F25D25
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14951CFEC0;
-	Thu, 22 Aug 2024 18:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF0F1D0DD5;
+	Thu, 22 Aug 2024 18:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNWmwf+E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="BjZgmJnz"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35361CDFBA;
-	Thu, 22 Aug 2024 18:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EFA1CF2BC
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 18:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724350827; cv=none; b=Ops8e+eYCnbZoofHIdUicfl4bFWCx9r9F9DrWWun4wzW83syMBdCjZ5lkmpCDEozJwzXqCUBpHUlcKBfAa1YGaXF4CmrsXFEgiGZ53irxRsZyBidGMpcTTLjDDT1u513NFMPXib1D7SvIwlYjskQAzQsctFbUP4mwQ+66+oLHwU=
+	t=1724350879; cv=none; b=HMQBVaw9S6Rd9rqH8gn1RemkbPyLR6cmiG8HGUd9DGqanWyXcmKZ7PKAqfjsPLZulq0yESyjsFHUtZ32xx9fAQAUOmelAKAyVrOvEy7iFCoAhNqFkco2kaPxQSbW09znGLz8GhlBJAv82DB57JSgOviXDcKRjT2ZSp98xKBGTw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724350827; c=relaxed/simple;
-	bh=tCfCh7YxdUdYoBP2Tmi0wAnXZGOg3kgKmGEv4IokuO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mp0MXrhh1GLzJawuRfSLExJOd1BtPkJ0PBx1v1k+PnEypYr8Xa6bSP6Jk5yBMwxEGE+qz0/BHQJXcpeeT1PuzOa3NYNbnNa3tKiRUWooTqOKAT01A17KkDjKYw07eSkfVyb/0MV0kwEfAT7BtR5nctewiWiaNJs+TV0dFDM2YL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNWmwf+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6A5C4AF0C;
-	Thu, 22 Aug 2024 18:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724350826;
-	bh=tCfCh7YxdUdYoBP2Tmi0wAnXZGOg3kgKmGEv4IokuO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SNWmwf+EMs/f2S5OaHflosIymaDX5ECvHIlcwX0TAd4XmgreTAA5F7dtGQ5RBFUpX
-	 HqnXt2WJP8xMcO/6hhzNhx1fdfIfBzYJ2wcXpbLfWfBf87WI030rCaeBtRk8N0RXov
-	 6a9wwe88gBzuIzXg9gctnnDgELRHBqROu+qziEY/ZpbPLKQvpFCLfgY3aCC8p7Xth4
-	 WDGxWsC1N5kuTLZDVoKwIVJqDzzH02hfULOILEgobFv3UAlRSR2TrGVfywDysbIbFJ
-	 ymSmGLo8e3ZAqgSloyeRyAkhYgKAlU2lzr/CJeLEX0cs/S/ZP28ibZKMcQDG6+WeX9
-	 Ba6HTukDd74pw==
-Date: Thu, 22 Aug 2024 15:20:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: sedat.dilek@gmail.com, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
-Message-ID: <ZseBZ1DIi4Y5zC2W@x1>
-References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
- <ZsdKhLaPy-uzKsuH@x1>
- <ZsdUxxBrpbuYxtXN@x1>
- <CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com>
- <ZsdxinrZP1kHINWT@x1>
- <ZsdzLmIFWRqsXeXD@x1>
- <CA+icZUURwYd8nJSdMU7KW6nFjubi-VD2f-a5+zQNQGUxK7+2aw@mail.gmail.com>
- <Zsd39zG9BuGpZ8aA@x1>
- <CA+icZUXGV9dMGcRwJiP7WLcYUaY5CRCcDw1HLFr+9Sn7CrRGDw@mail.gmail.com>
- <CAM9d7cgSR4OroaX0FuBvC_bPPMeEr7ThXJwqgMfAnj-Lfk8wNw@mail.gmail.com>
+	s=arc-20240116; t=1724350879; c=relaxed/simple;
+	bh=RLs+TgOeDB9U+OeJ5ILJJE/1qQupOxoL4NtsHLcUl2s=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=BxSK+ajlaLLb7gKz6ZtPn8fecZ4HgvICvPYlT6isQ2qf+GPPwPrOLAjnF4khQRoc1amnJfTqR/J5XMG7LblKmMN1ChngSN9dGJiMfGp1bo1HQVQIUV3kz37e7MJT0eIcyAi4xK/nmR3kCjO5lY8eqyQjCD7lofwXVD9V++mk8xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=BjZgmJnz; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b3afc6cd01so18402317b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:21:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google; t=1724350876; x=1724955676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RLs+TgOeDB9U+OeJ5ILJJE/1qQupOxoL4NtsHLcUl2s=;
+        b=BjZgmJnzgKmTy9uPpQxTpyyohGj/7FztpcBZoNI+XvVk1sYuQnCNZ/jtDlz8wGECdB
+         9yeSLdZWvtkStppTav2cv1269PQ8dvT42o+OUC/zlQ4TruNwNMxgrSlYrFoN7lPeQYwC
+         +s0SmlGzwisHwmaEDV62XgPl4hedgsKL5Xaz8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724350876; x=1724955676;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RLs+TgOeDB9U+OeJ5ILJJE/1qQupOxoL4NtsHLcUl2s=;
+        b=N8CP4JaTbVa/0Qu+4AjUIiK5Ir9zdHNnulZkWuRtoMovYJMheBQbaWGL6tQtEU0ZZ5
+         3u7BJUDhHNK9MemPBi60jkn+9AS5xyrNMjcCq77WS/6fMWpQAL7wM86M9HzA+O09hM3Z
+         wUw0Vq/8mIXfa1avEI3UxIYaUdIVWDn0UVjHY2S8m0d1JnIITzCEduf7R6lR/OkN5edL
+         a5WyRB8Uj4KprY5Z/fZ8IKWlC4CjFTPc9oz5jnxGpJcGsJWzy0u+xvvladiiYJuoeYhB
+         Mcge+SKXUTpnussRG4HFcKrmJxUUzYEFj7MOV/hmPMYhK1hdkneXQ/+NthTlckX+Rm3r
+         eEsw==
+X-Forwarded-Encrypted: i=1; AJvYcCW89khUjFgw16Dh1DBc7ZmHe8jUkeSHLPjkAQN2xcbUSmX8/kpPkvH4ZQNNbekhfFV3e/HHvzI8apiLHno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrxYP4o9mz84J0RXnyaTknMt9Twce6aye24aBbLEnfVWc4bEKb
+	5lGwNex++G7liXLSx408/KiLH8xXdn0ptBksNVMYnhP8macduYaKosw1Ewj8NHc=
+X-Google-Smtp-Source: AGHT+IHtXIMIiSwuBpmYLdcwUNBMd26Nuu8pfXN1VwE1UCqgTVayCXIzfx3aHHiMJ03T6ZoVnLerIw==
+X-Received: by 2002:a05:690c:6d8c:b0:665:71a4:21ac with SMTP id 00721157ae682-6c303cf699fmr39887947b3.10.1724350876111;
+        Thu, 22 Aug 2024 11:21:16 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:45f:f211:3a7c:9377? ([2603:8080:7400:36da:45f:f211:3a7c:9377])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39a7525bdsm2992047b3.31.2024.08.22.11.21.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 11:21:15 -0700 (PDT)
+Message-ID: <4f4572c8-1d8c-4ec6-96a1-fb74848475af@digitalocean.com>
+Date: Thu, 22 Aug 2024 13:21:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: virtualization@lists.linux-foundation.org, mst@redhat.com,
+ jasowang@redhat.com
+From: Carlos Bilbao <cbilbao@digitalocean.com>
+Subject: [RFC] vDPA: Trying to make sense of config data
+Cc: kvm@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7cgSR4OroaX0FuBvC_bPPMeEr7ThXJwqgMfAnj-Lfk8wNw@mail.gmail.com>
 
-On Thu, Aug 22, 2024 at 11:17:21AM -0700, Namhyung Kim wrote:
-> > On Thu, Aug 22, 2024 at 7:40 PM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > > From 155212c965b5b23a90b8558449dbfd1c60dad934 Mon Sep 17 00:00:00 2001
-> > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > Date: Thu, 22 Aug 2024 14:13:49 -0300
-> > > Subject: [PATCH 1/1] perf python: Disable -Wno-cast-function-type-mismatch if
-> > >  present on clang
-> > >
-> > > The -Wcast-function-type-mismatch option was introduced in clang 19 and
-> > > its enabled by default, since we use -Werror, and python bindings do
-> > > casts that are valid but trips this warning, disable it if present.
-> > >
-> > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > Cc: Ian Rogers <irogers@google.com>
-> > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > Cc: Nathan Chancellor <nathan@kernel.org>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Link: https://lore.kernel.org/lkml/CA+icZUVtHn8X1Tb_Y__c-WswsO0K8U9uy3r2MzKXwTA5THtL7w@mail.gmail.com
-> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> Can we also add 'Fixes' tag to make this picked by stable kernels?
+Hello folks,
 
-Fixes what? This isn't a regression, clang 19 isn't available for Fedora
-40, the most recent.
+I'm using the code below to retrieve configuration data for my vDPA file
+via ioctl. I get as output:
 
-- Arnaldo
+Configuration data (24 bytes):
+5a c3 5f 68 48 a9 01 00 08 00 dc 05 00 00 00 00
+00 00 00 00 00 00 00 00
+ASCII representation:
+Z._hH...................
+
+Could a good Samaritan point me in the right direction for the docs I need
+to understand these values and convert them to a human-readable format?
+hank you in advance!
+
+Regards,
+Carlos
+
+---
+
+void check_config(int fd) {
+
+    uint32_t size;
+    struct vhost_vdpa_config *config;
+    uint8_t *buf;
+
+    if (ioctl(fd, VHOST_VDPA_GET_CONFIG_SIZE, &size) < 0) {
+        perror("ioctl failed");
+        return;
+    }
+
+    config = malloc(sizeof(struct vhost_vdpa_config) + size);
+    if (!config) {
+        perror("malloc failed");
+        return;
+    }
+
+    memset(config, 0, sizeof(struct vhost_vdpa_config) + size);
+    config->len = size;
+    config->off = 0;
+
+    buf = config->buf;
+
+    if (ioctl(fd, VHOST_VDPA_GET_CONFIG, config) < 0) {
+        perror("ioctl failed");
+    } else {
+        printf("Configuration data (%u bytes):\n", size);
+
+        /* Print the data in a human-readable format */
+        for (unsigned int i = 0; i < size; i++) {
+            if (i % 16 == 0 && i != 0) printf("\n");
+            printf("%02x ", buf[i]);
+        }
+        printf("\n");
+
+        printf("ASCII representation:\n");
+        for (unsigned int i = 0; i < size; i++) {
+            if (buf[i] >= 32 && buf[i] <= 126) {
+                printf("%c", buf[i]);
+            } else {
+                printf(".");
+            }
+        }
+        printf("\n");
+    }
+
+    free(config);
+}
 
