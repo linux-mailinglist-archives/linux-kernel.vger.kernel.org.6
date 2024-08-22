@@ -1,343 +1,78 @@
-Return-Path: <linux-kernel+bounces-297503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1F295B989
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E4495B98F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2EA4285404
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:12:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132D21F23876
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A431CC8A3;
-	Thu, 22 Aug 2024 15:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CA71CCB5B;
+	Thu, 22 Aug 2024 15:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zGdf6yYy"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntFNBRGB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FE41CC16F
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32991CCB41;
+	Thu, 22 Aug 2024 15:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339534; cv=none; b=aaegqdpIrWhwwOkTQ/puAruR7s0KD7VV46i8CpfxBntmgVOUgjxzPgqVT2eLy7NNPigDOuYp9meMuBo68Sgd2jU+QXZTBOhJELj/UkiogBmmjVysgMDieHOEJ/uJtMeMa8ZXakJyFV4JcioerwqAWqVjrXLIsfooLg4GHMhIZVc=
+	t=1724339538; cv=none; b=jH7bpe6869eJ18cVi+SPIOQTwtwg6MbZCboobUEsbkLrRtu+nc4BElYxnlh8+kAjxCAGzSNBq/nAkps3OOUPYjQdqdkor8PfohL38OiwnSDmahbD3vd4re32Yi80hOLfU9Yw+QhDBHZpC8t7wzZDaAyeFq1faPQXNwZIDSABMnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339534; c=relaxed/simple;
-	bh=gA6H6vFpf7GM6RrL4t5PzyVE3XI+sqGxTDadnkAmLK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XpvZ2R/NS4iPGRVlLxJT6/0uo1s0gM26zJ9qWf+yXrJ0OGd8hEIoCv4Zz6Dg179KgoVikBWuCUeuVzKtz6+mpYUEWTKgQa622WQmOkCMkNM51XQhihCVJMch2VV0mvxNV/38EgsXimiKQU9SVjAhfJJzfXcMReoTxNb8FdJVvIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zGdf6yYy; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3eabcd293so10881221fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724339530; x=1724944330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5TWv+mzh3DTgixeu4UaNi8undy9enZO8UogSQ6mlVfs=;
-        b=zGdf6yYyhWuLYz8bb9LlU5Vv3EFwSC+WiSvJG/XTN1IxtjSRD570rzFgtnV4W4mqou
-         w5YPL+VWQaJCMmiq9ink5NBXJ0jek/EEdbFx/lUxgXYpxdLLBHzXmxjv+O9TGPrRDko4
-         3pgQaDsL7X/8Nll/akQePjaRxLRnrYHfHKzyOd6TAdhhpCVY4gkslBRsxbHRCCrXGoHQ
-         NyZ9+IxnwQWGHVyJjoE3tCrYcHuVSbrcBYsLfnZM0nuBMlzliTj5bTZx2V9YdBOQ1HCD
-         N1SEDGSriG4wJW8XG+O4AFVZUwk74RzqMJ3F8272DYyAl3yfrEhpu/Cy3lsAxW/fc1rr
-         xj1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724339530; x=1724944330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5TWv+mzh3DTgixeu4UaNi8undy9enZO8UogSQ6mlVfs=;
-        b=eUFknNotvgfO9hsWs/5tXw4+HkePgNgGkKmF+BnbG3V0ZXrzxTgpcRVOL96Sf+3KKH
-         HQly2g1ufjze1euEEepLTnELegZmcDr54tRrC8Nk7O21masQP/paoOBUIrDkNndehVbF
-         eFhWc7+hP2voIzgEBmPAD/VLi8aB27cXS7SSWkaCFbpDPHrUZlJrGiD3JwiM2Z9Rg8yF
-         6yJCPjyPtYLXVlOKniLTxKQYoLkEqaDtQwqP7QJlf/Ja3eqnBpCkFbmeSMnF9Rx5QFNW
-         chiNwcMyPkzj8I5YgIRI44s7lpdVL5ATA8mzxDakEIBZIH5Ewf8hZv+cLnPK2VE5nEYQ
-         EEwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO2clhP48BpmrzCKXZ0d7EJoGe0DwL79K/Iy/yiMTBJ4GYNGo+0C/x/kEFqcUxnroWGbW0JYVlr1bCR/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRpMrSUpkTrf5noE40xS3ID0eXvCeID+VmLVicq89zCoXRIRfN
-	J8bODKtzIPYyG3688pHTOBVtw3yJZxXzrYQQeM7wyRSibKbuw5fZCvGR+rTDKmy+InILvmLxHKe
-	GMUOp6d/wYNu3TQ+E+t0lvqGLkXVKJd2JXyOLcw==
-X-Google-Smtp-Source: AGHT+IFiLmEsOvYvdr3VyiyqB861aTavzd4tiwin4hjTDIgK3KZVq4VStdlXBdk3Plh+1gYEh1qgoVqRfz/lcHt5430=
-X-Received: by 2002:a05:651c:1547:b0:2ef:2b38:879c with SMTP id
- 38308e7fff4ca-2f405c7c266mr14899621fa.3.1724339529793; Thu, 22 Aug 2024
- 08:12:09 -0700 (PDT)
+	s=arc-20240116; t=1724339538; c=relaxed/simple;
+	bh=BG/jbKcKbD5vdjEhhTKbOXzvNIOD9+PGWQh6++o2UHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dnzpzxiGZmc6T2XdyjT6xf3kljbfgdDPyZnBSyLDuKqJK8GKOw07JuAlN5n3JsCjwkAOwph7qSnevaF0CFR2eXCHUfEHHEdB1aLzqnaV48IleQJK89V+nIlm3l92pWKHcJVdXFGiS0IXe47lwdKFe71v3FM37Siuz0Vxqlg8UGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntFNBRGB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2FFC32782;
+	Thu, 22 Aug 2024 15:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724339537;
+	bh=BG/jbKcKbD5vdjEhhTKbOXzvNIOD9+PGWQh6++o2UHo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ntFNBRGBKInNNBmuLq3tHESjRia0wIV+mqCQrXNqiOAJhkWeP8L4yTvx6n0Q7xwgy
+	 nLCYRC/8BOrMvTqRFbCsTx4IunQWLo4qfrMoLlFqIRCK+q6veDGSZV51bzZewuPDiO
+	 Zxb6rlSga+NGfO2mDZAZL1QWNSs+dItjJoF1tGWVgT0P9M0sQ6fqJBL5rkNG0ZsGHV
+	 0kYQJ6Qwj+9YutAFBZH2N1hc/ROqP0R7+YprfkCm0D2sOFEqKXN9/9UDzdnEdJoq0W
+	 SUKWeN8iiwY3ifxX1zbl3i6aojy8vtSZ2Lvde6zcsmuc17LT6XPJYBglod2rwNXRAj
+	 8mlgFMz5Y4NEA==
+Date: Thu, 22 Aug 2024 08:12:16 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Xi Huang <xuiagnh@gmail.com>
+Cc: madalin.bucur@nxp.com, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] net: dpaa:reduce number of synchronize_net() calls
+Message-ID: <20240822081216.78b3a0de@kernel.org>
+In-Reply-To: <20240822072042.42750-1-xuiagnh@gmail.com>
+References: <20240822072042.42750-1-xuiagnh@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515112308.10171-1-yong.wu@mediatek.com> <20240515112308.10171-8-yong.wu@mediatek.com>
-In-Reply-To: <20240515112308.10171-8-yong.wu@mediatek.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 22 Aug 2024 17:11:57 +0200
-Message-ID: <CAHUa44GHtEGsXagwLLAix7HxpjZt45rsZkWCb4i0LUmr54Xjqg@mail.gmail.com>
-Subject: Re: [PATCH v5 7/9] dma-buf: heaps: restricted_heap: Add MediaTek
- restricted heap and heap_init
-To: Yong Wu <yong.wu@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, christian.koenig@amd.com, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, tjmercier@google.com, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Robin Murphy <robin.murphy@arm.com>, Vijayanand Jitta <quic_vjitta@quicinc.com>, 
-	Joakim Bech <joakim.bech@linaro.org>, Jeffrey Kardatzke <jkardatzke@google.com>, 
-	Pavel Machek <pavel@ucw.cz>, Simon Ser <contact@emersion.fr>, Pekka Paalanen <ppaalanen@gmail.com>, 
-	willy@infradead.org, Logan Gunthorpe <logang@deltatee.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	jianjiao.zeng@mediatek.com, kuohong.wang@mediatek.com, 
-	youlin.pei@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 15, 2024 at 1:25=E2=80=AFPM Yong Wu <yong.wu@mediatek.com> wrot=
-e:
->
-> Add a MediaTek restricted heap which uses TEE service call to restrict
-> buffer. Currently this restricted heap is NULL, Prepare for the later
-> patch. Mainly there are two changes:
-> a) Add a heap_init ops since TEE probe late than restricted heap, thus
->    initialize the heap when we require the buffer the first time.
-> b) Add a priv_data for each heap, like the special data used by MTK
->    (such as "TEE session") can be placed in priv_data.
->
-> Currently our heap depends on CMA which could only be bool, thus
-> depend on "TEE=3Dy".
->
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ---
->  drivers/dma-buf/heaps/Kconfig               |   7 ++
->  drivers/dma-buf/heaps/Makefile              |   1 +
->  drivers/dma-buf/heaps/restricted_heap.c     |  11 ++
->  drivers/dma-buf/heaps/restricted_heap.h     |   2 +
->  drivers/dma-buf/heaps/restricted_heap_mtk.c | 115 ++++++++++++++++++++
->  5 files changed, 136 insertions(+)
->  create mode 100644 drivers/dma-buf/heaps/restricted_heap_mtk.c
->
-> diff --git a/drivers/dma-buf/heaps/Kconfig b/drivers/dma-buf/heaps/Kconfi=
-g
-> index e54506f480ea..84f748fb2856 100644
-> --- a/drivers/dma-buf/heaps/Kconfig
-> +++ b/drivers/dma-buf/heaps/Kconfig
-> @@ -21,3 +21,10 @@ config DMABUF_HEAPS_RESTRICTED
->           heap is to manage buffers that are inaccessible to the kernel a=
-nd user space.
->           There may be several ways to restrict it, for example it may be=
- encrypted or
->           protected by a TEE or hypervisor. If in doubt, say N.
-> +
-> +config DMABUF_HEAPS_RESTRICTED_MTK
-> +       bool "MediaTek DMA-BUF Restricted Heap"
-> +       depends on DMABUF_HEAPS_RESTRICTED && TEE=3Dy
-> +       help
-> +         Enable restricted dma-buf heaps for MediaTek platform. This hea=
-p is backed by
-> +         TEE client interfaces. If in doubt, say N.
-> diff --git a/drivers/dma-buf/heaps/Makefile b/drivers/dma-buf/heaps/Makef=
-ile
-> index a2437c1817e2..0028aa9d875f 100644
-> --- a/drivers/dma-buf/heaps/Makefile
-> +++ b/drivers/dma-buf/heaps/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_DMABUF_HEAPS_CMA)         +=3D cma_heap.o
->  obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED)  +=3D restricted_heap.o
-> +obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED_MTK)      +=3D restricted_heap_mtk.=
-o
->  obj-$(CONFIG_DMABUF_HEAPS_SYSTEM)      +=3D system_heap.o
-> diff --git a/drivers/dma-buf/heaps/restricted_heap.c b/drivers/dma-buf/he=
-aps/restricted_heap.c
-> index 4e45d46a6467..8bc8a5e3f969 100644
-> --- a/drivers/dma-buf/heaps/restricted_heap.c
-> +++ b/drivers/dma-buf/heaps/restricted_heap.c
-> @@ -151,11 +151,22 @@ restricted_heap_allocate(struct dma_heap *heap, uns=
-igned long size,
->                          unsigned long fd_flags, unsigned long heap_flags=
-)
->  {
->         struct restricted_heap *rheap =3D dma_heap_get_drvdata(heap);
-> +       const struct restricted_heap_ops *ops =3D rheap->ops;
->         struct restricted_buffer *restricted_buf;
->         DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
->         struct dma_buf *dmabuf;
->         int ret;
->
-> +       /*
-> +        * In some implements, TEE is required to protect buffer. However=
- TEE probe
-> +        * may be late, Thus heap_init is performed when the first buffer=
- is requested.
-> +        */
-> +       if (ops->heap_init) {
-> +               ret =3D ops->heap_init(rheap);
-> +               if (ret)
-> +                       return ERR_PTR(ret);
-> +       }
-> +
->         restricted_buf =3D kzalloc(sizeof(*restricted_buf), GFP_KERNEL);
->         if (!restricted_buf)
->                 return ERR_PTR(-ENOMEM);
-> diff --git a/drivers/dma-buf/heaps/restricted_heap.h b/drivers/dma-buf/he=
-aps/restricted_heap.h
-> index 6d9599a4a34e..2a33a1c7a48b 100644
-> --- a/drivers/dma-buf/heaps/restricted_heap.h
-> +++ b/drivers/dma-buf/heaps/restricted_heap.h
-> @@ -19,6 +19,8 @@ struct restricted_heap {
->         const char              *name;
->
->         const struct restricted_heap_ops *ops;
-> +
-> +       void                    *priv_data;
->  };
->
->  struct restricted_heap_ops {
-> diff --git a/drivers/dma-buf/heaps/restricted_heap_mtk.c b/drivers/dma-bu=
-f/heaps/restricted_heap_mtk.c
-> new file mode 100644
-> index 000000000000..52e805eb9858
-> --- /dev/null
-> +++ b/drivers/dma-buf/heaps/restricted_heap_mtk.c
-> @@ -0,0 +1,115 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * DMABUF restricted heap exporter for MediaTek
-> + *
-> + * Copyright (C) 2024 MediaTek Inc.
-> + */
-> +#define pr_fmt(fmt)     "rheap_mtk: " fmt
-> +
-> +#include <linux/dma-buf.h>
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/tee_drv.h>
-> +#include <linux/uuid.h>
-> +
-> +#include "restricted_heap.h"
-> +
-> +#define TZ_TA_MEM_UUID_MTK             "4477588a-8476-11e2-ad15-e41f1390=
-d676"
-> +
-> +#define TEE_PARAM_NUM                  4
-> +
-> +enum mtk_secure_mem_type {
-> +       /*
-> +        * MediaTek static chunk memory carved out for TrustZone. The mem=
-ory
-> +        * management is inside the TEE.
-> +        */
-> +       MTK_SECURE_MEMORY_TYPE_CM_TZ    =3D 1,
-> +};
-> +
-> +struct mtk_restricted_heap_data {
-> +       struct tee_context      *tee_ctx;
-> +       u32                     tee_session;
-> +
-> +       const enum mtk_secure_mem_type mem_type;
-> +
-> +};
-> +
-> +static int mtk_tee_ctx_match(struct tee_ioctl_version_data *ver, const v=
-oid *data)
-> +{
-> +       return ver->impl_id =3D=3D TEE_IMPL_ID_OPTEE;
-> +}
-> +
-> +static int mtk_tee_session_init(struct mtk_restricted_heap_data *data)
-> +{
-> +       struct tee_param t_param[TEE_PARAM_NUM] =3D {0};
-> +       struct tee_ioctl_open_session_arg arg =3D {0};
-> +       uuid_t ta_mem_uuid;
-> +       int ret;
-> +
-> +       data->tee_ctx =3D tee_client_open_context(NULL, mtk_tee_ctx_match=
-, NULL, NULL);
-> +       if (IS_ERR(data->tee_ctx)) {
-> +               pr_err_once("%s: open context failed, ret=3D%ld\n", __fun=
-c__,
-> +                           PTR_ERR(data->tee_ctx));
-> +               return -ENODEV;
-> +       }
-> +
-> +       arg.num_params =3D TEE_PARAM_NUM;
-> +       arg.clnt_login =3D TEE_IOCTL_LOGIN_PUBLIC;
-> +       ret =3D uuid_parse(TZ_TA_MEM_UUID_MTK, &ta_mem_uuid);
-> +       if (ret)
-> +               goto close_context;
-> +       memcpy(&arg.uuid, &ta_mem_uuid.b, sizeof(ta_mem_uuid));
-> +
-> +       ret =3D tee_client_open_session(data->tee_ctx, &arg, t_param);
-> +       if (ret < 0 || arg.ret) {
-> +               pr_err_once("%s: open session failed, ret=3D%d:%d\n",
-> +                           __func__, ret, arg.ret);
-> +               ret =3D -EINVAL;
-> +               goto close_context;
-> +       }
-> +       data->tee_session =3D arg.session;
-> +       return 0;
-> +
-> +close_context:
-> +       tee_client_close_context(data->tee_ctx);
+On Thu, 22 Aug 2024 15:20:42 +0800 Xi Huang wrote:
+> In the function dpaa_napi_del(), we execute the netif_napi_del()
+> for each cpu, which is actually a high overhead operation
+> because each call to netif_napi_del() contains a synchronize_net(),
+> i.e. an RCU operation. In fact, it is only necessary to call
+>  __netif_napi_del and use synchronize_net() once outside of the loop.
+> This change is similar to commit 2543a6000e593a ("gro_cells: reduce
+> number of synchronize_net() calls") and commit 5198d545dba8ad (" net:
+> remove napi_hash_del() from driver-facing API") 5198d545db.
+> 
+> Signed-off-by: Xi Huang <xuiagnh@gmail.com>
+> Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-There's a
-data->tee_ctx =3D NULL;
-missing here.
-
-Cheers,
-Jens
-
-> +       return ret;
-> +}
-> +
-> +static int mtk_restricted_heap_init(struct restricted_heap *rheap)
-> +{
-> +       struct mtk_restricted_heap_data *data =3D rheap->priv_data;
-> +
-> +       if (!data->tee_ctx)
-> +               return mtk_tee_session_init(data);
-> +       return 0;
-> +}
-> +
-> +static const struct restricted_heap_ops mtk_restricted_heap_ops =3D {
-> +       .heap_init              =3D mtk_restricted_heap_init,
-> +};
-> +
-> +static struct mtk_restricted_heap_data mtk_restricted_heap_data =3D {
-> +       .mem_type               =3D MTK_SECURE_MEMORY_TYPE_CM_TZ,
-> +};
-> +
-> +static struct restricted_heap mtk_restricted_heaps[] =3D {
-> +       {
-> +               .name           =3D "restricted_mtk_cm",
-> +               .ops            =3D &mtk_restricted_heap_ops,
-> +               .priv_data      =3D &mtk_restricted_heap_data,
-> +       },
-> +};
-> +
-> +static int mtk_restricted_heap_initialize(void)
-> +{
-> +       struct restricted_heap *rheap =3D mtk_restricted_heaps;
-> +       unsigned int i;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(mtk_restricted_heaps); i++, rheap++)
-> +               restricted_heap_add(rheap);
-> +       return 0;
-> +}
-> +module_init(mtk_restricted_heap_initialize);
-> +MODULE_DESCRIPTION("MediaTek Restricted Heap Driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.25.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+You missed the part of Eric's response that told you to wait 24 hours:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
+-- 
+pv-bot: 24h
 
