@@ -1,448 +1,228 @@
-Return-Path: <linux-kernel+bounces-297957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BCA95BFA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:38:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CE895BFA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31FD1F24904
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD771C223B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3471D172D;
-	Thu, 22 Aug 2024 20:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2231D0DF8;
+	Thu, 22 Aug 2024 20:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tlx79lBW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="UeJy/+A7"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6781CDFD5;
-	Thu, 22 Aug 2024 20:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E8F1D0DD8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724359123; cv=none; b=bSQlNhQw2KksS4XJ7f+tPyUmrlIioATNz1tnauBK2RpMgqjdPpbLBbL2mLQjGPsErgKgMPLbM8D09cUNY90+zxj/jyDpAWimXGD+ZfYZImaSb9DehZyY2++OK6WYZM+CMN19ztbk+Tz4QAtWpajmKbphV+YL+GFZnq9wy0giIQE=
+	t=1724359157; cv=none; b=UKgHr/5BbtVE4KLgiF8tSsiAJi01o57NmVJ0YF37hnjeVd2UTqjKXcncZpXPWSUtzXYn0uwbRWlKFzLkiVdcTHpXkD7OsTtJjK+l0rDcfgg6III1Mf3wB4RK38mztIUcaKHBd4fjh5mHNwloeYlvkycxKgxH3p4qQHIy1pGmcl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724359123; c=relaxed/simple;
-	bh=isHl9poBpTskrcA5v1Y8VLsWSL0zZ9cZYKHumN6Hxy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qcFGHoI611B+nHl6d5AKryKR4C5vpWHUwyVTFRCjgEBx037wJrGsoT9fRx6jKoFKV1rOKObXjGxbSWUayJzhpPdQjOaBJ2vjX1XKXEvSxJChdnS9UzUAzxUH9T8sMauH/EL9Jb6FQcm5q0selJsl5LZ51RRUbDFhTacymExKb4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tlx79lBW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81510C32782;
-	Thu, 22 Aug 2024 20:38:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724359122;
-	bh=isHl9poBpTskrcA5v1Y8VLsWSL0zZ9cZYKHumN6Hxy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tlx79lBW99BqJWeyIsiKYW2Gw9kVoxIZ+fHxGXKDil8uCk4ZpW6+Ao+pqeYH8WH6f
-	 7EqhWWUGSedA8YMsGIn7dEuM34siOpup92HF5rcAxD4iM3IbPZjw0l+YZdh6V6oT22
-	 BTTUYgFiVa5oOqd9mPC7GA4+MqpsYT+majZfEK904EUBnGNq735SymD4HwKdi2mAxb
-	 OsvYcdijTy4VIrb6JjpPZ9+4Hk2L9usYKCUFdgE4n9ctvMgPGzwZglhdTdCsJW86uZ
-	 XcERbmDWf3ZZVe2fqj98NRj0L0vsbeP9EuHCtQxZIVHRKYDo8lYhprjZaYm5nKIfOG
-	 vRLq0W2iTc5pw==
-Date: Thu, 22 Aug 2024 13:38:42 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
-	hch@lst.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, hare@suse.de,
-	martin.petersen@oracle.com, catherine.hoang@oracle.com,
-	kbusch@kernel.org
-Subject: Re: [PATCH v5 4/7] xfs: Support FS_XFLAG_ATOMICWRITES for forcealign
-Message-ID: <20240822203842.GT865349@frogsfrogsfrogs>
-References: <20240817094800.776408-1-john.g.garry@oracle.com>
- <20240817094800.776408-5-john.g.garry@oracle.com>
- <20240821170734.GJ865349@frogsfrogsfrogs>
- <a2a0ec49-37e5-4e0f-9916-d9d05cf5bb96@oracle.com>
+	s=arc-20240116; t=1724359157; c=relaxed/simple;
+	bh=tDCqrqpDYIv3O4fx5f8QNj6vedfwK8+6GsRpsKvRbkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HwjFBoGYcqiI8rtWT/ohLLMh1UDhbDCiGXWNGIQR1XtCvoD7J0Opccqnf3LFYzB6fCaZvEZFeH6SPd5gIiDLfygtMr+Ac0wYjPEhuhurVNwK7dNnYGAxeVB1yZgyf4IxIE+0TnJoCkb0yWPq/FuvIIn3vdiyJ0VU8F9DPTQ16DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=UeJy/+A7; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d81dc0beso79857285a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724359154; x=1724963954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aVFB9PSUxxNQxYSa9Dc2uzxRSZf/ScsRdF3Dy3pBcbw=;
+        b=UeJy/+A7aLxBu6Y8zZIxOXDHqpasJL/8delrYD2b/lfL1pUemRj4d81w7D0FG9FsF/
+         kHllOmbd6a8ftjFCdRtQgVV6AaNeW7PMK5QGEI/d7Si9L2VJSpQq0dmiYf6O7/eUwAOm
+         gcazt9LzemsiC3vSYLZJUFYjsr4HJv6zSfWHVCuyl/+fUyZ2ehioueNZ6brQpu/n0U0m
+         ohppTtPCMUrakc+vo2AchJo+1IeCiUFhl9T8w5tO2Cj92FnY6Ev3F1EsyLCF/fszwLwo
+         ITP8oZuDWG8GDk8FLsSVBJT22qnU89mdVk9YSy/02ITic9/BJxL43TNVcLYtU6C7HALz
+         OfyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724359154; x=1724963954;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aVFB9PSUxxNQxYSa9Dc2uzxRSZf/ScsRdF3Dy3pBcbw=;
+        b=LRlLyxuiJWLft2MqarqSpVkjElN4ttVvphv8FT5EBKKikYzf5hUOvO01jYBLEfUuL9
+         eqGT0k6Xb2/fnv7FXGmhfn3VMgtki6YxQGUNPK1K/L/wLWGZKpVeniPGjaL7EDLZ30Mj
+         szmb0KBkMC8CylR/WMOaiopPykjhWx2G/U5HMx0ortywqXrkOPMwT2CLbGoz2kImIqrN
+         gnfI3x/7l+evyVGCPDOlyQyqTZ9leOcxhqroz+JOaHPo7ND0O18hRv0bkzsKaoXL+q0+
+         6vl7PPs4XcRZF85nVbCuDtwFG9mYJ2s7cn1fLnu6K8C8L5waBsVi3NE2kZpvMxhxKGQQ
+         LirQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtpPAnIQwHc1GyJAf1pf13tnDKF2XxI80AKX3bQzEv5P2kjBhwsLndq4V9p2fGopiTKAjXzbGO7y2hEiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjSa5Mtb4s8zP6wGcTpipihQiRkPKqDBlBrnqeNSAI5+WA626b
+	DdeU7T7Q/zRKKYK50+KLME/Amv7O2cYUbegSsQwT4h3qrrbRbnMiFsSSyuYRGxc=
+X-Google-Smtp-Source: AGHT+IEoRpx83TwCTADpbTIPE8iEGIQ8Pwle6TGVihkq7WkEL+JaskxzQiEWVFEUECXATS3MnClPBw==
+X-Received: by 2002:a05:620a:1990:b0:7a2:d64:1cbc with SMTP id af79cd13be357-7a680a57533mr449953785a.26.1724359154139;
+        Thu, 22 Aug 2024 13:39:14 -0700 (PDT)
+Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f327ce2sm108846185a.1.2024.08.22.13.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 13:39:13 -0700 (PDT)
+From: Jesse Taube <jesse@rivosinc.com>
+To: linux-riscv@lists.infradead.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Conor Dooley <conor@kernel.org>,
+	Evan Green <evan@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Jesse Taube <jesse@rivosinc.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] RISC-V: hwprobe: Use BIT macro to avoid warnings
+Date: Thu, 22 Aug 2024 16:39:12 -0400
+Message-ID: <20240822203913.2306574-1-jesse@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2a0ec49-37e5-4e0f-9916-d9d05cf5bb96@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 06:45:16PM +0100, John Garry wrote:
-> On 21/08/2024 18:07, Darrick J. Wong wrote:
-> > On Sat, Aug 17, 2024 at 09:47:57AM +0000, John Garry wrote:
-> > > Add initial support for new flag FS_XFLAG_ATOMICWRITES for forcealign
-> > > enabled.
-> > > 
-> > > This flag is a file attribute that mirrors an ondisk inode flag.  Actual
-> > > support for untorn file writes (for now) depends on both the iflag and the
-> > > underlying storage devices, which we can only really check at statx and
-> > > pwritev2() time.  This is the same story as FS_XFLAG_DAX, which signals to
-> > > the fs that we should try to enable the fsdax IO path on the file (instead
-> > > of the regular page cache), but applications have to query STAT_ATTR_DAX to
-> > > find out if they really got that IO path.
-> > > 
-> > > Current kernel support for atomic writes is based on HW support (for atomic
-> > > writes). As such, it is required to ensure extent alignment with
-> > > atomic_write_unit_max so that an atomic write can result in a single
-> > > HW-compliant IO operation.
-> > > 
-> > > rtvol also guarantees extent alignment, but we are basing support initially
-> > > on forcealign, which is not supported for rtvol yet.
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   fs/xfs/libxfs/xfs_format.h     | 11 +++++--
-> > >   fs/xfs/libxfs/xfs_inode_buf.c  | 52 ++++++++++++++++++++++++++++++++++
-> > >   fs/xfs/libxfs/xfs_inode_util.c |  4 +++
-> > >   fs/xfs/libxfs/xfs_sb.c         |  2 ++
-> > >   fs/xfs/xfs_buf.c               | 15 +++++++++-
-> > >   fs/xfs/xfs_buf.h               |  4 ++-
-> > >   fs/xfs/xfs_buf_mem.c           |  2 +-
-> > >   fs/xfs/xfs_inode.h             |  5 ++++
-> > >   fs/xfs/xfs_ioctl.c             | 52 ++++++++++++++++++++++++++++++++++
-> > >   fs/xfs/xfs_mount.h             |  2 ++
-> > >   fs/xfs/xfs_super.c             | 12 ++++++++
-> > >   include/uapi/linux/fs.h        |  1 +
-> > >   12 files changed, 157 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> > > index 04c6cbc943c2..a9f3389438a6 100644
-> > > --- a/fs/xfs/libxfs/xfs_format.h
-> > > +++ b/fs/xfs/libxfs/xfs_format.h
-> > > @@ -353,12 +353,16 @@ xfs_sb_has_compat_feature(
-> > >   #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
-> > >   #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
-> > >   #define XFS_SB_FEAT_RO_COMPAT_FORCEALIGN (1 << 30)	/* aligned file data extents */
-> > > +#define XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES (1 << 31)	/* atomicwrites enabled */
-> > 
-> > Do you ever see test failures in xfs/270?
-> 
-> Well it wasn't with forcealign only. I'll check again for atomic writes.
-> 
-> > 
-> > > +
-> > >   #define XFS_SB_FEAT_RO_COMPAT_ALL \
-> > >   		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
-> > >   		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
-> > >   		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
-> > >   		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT | \
-> > > -		 XFS_SB_FEAT_RO_COMPAT_FORCEALIGN)
-> > > +		 XFS_SB_FEAT_RO_COMPAT_FORCEALIGN | \
-> > > +		 XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES)
-> > > +
-> > >   #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
-> > >   static inline bool
-> > >   xfs_sb_has_ro_compat_feature(
-> > > @@ -1097,6 +1101,7 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
-> > >   #define XFS_DIFLAG2_NREXT64_BIT 4	/* large extent counters */
-> > >   /* data extent mappings for regular files must be aligned to extent size hint */
-> > >   #define XFS_DIFLAG2_FORCEALIGN_BIT 5
-> > > +#define XFS_DIFLAG2_ATOMICWRITES_BIT 6
-> > >   #define XFS_DIFLAG2_DAX		(1 << XFS_DIFLAG2_DAX_BIT)
-> > >   #define XFS_DIFLAG2_REFLINK     (1 << XFS_DIFLAG2_REFLINK_BIT)
-> > > @@ -1104,10 +1109,12 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
-> > >   #define XFS_DIFLAG2_BIGTIME	(1 << XFS_DIFLAG2_BIGTIME_BIT)
-> > >   #define XFS_DIFLAG2_NREXT64	(1 << XFS_DIFLAG2_NREXT64_BIT)
-> > >   #define XFS_DIFLAG2_FORCEALIGN	(1 << XFS_DIFLAG2_FORCEALIGN_BIT)
-> > > +#define XFS_DIFLAG2_ATOMICWRITES	(1 << XFS_DIFLAG2_ATOMICWRITES_BIT)
-> > >   #define XFS_DIFLAG2_ANY \
-> > >   	(XFS_DIFLAG2_DAX | XFS_DIFLAG2_REFLINK | XFS_DIFLAG2_COWEXTSIZE | \
-> > > -	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | XFS_DIFLAG2_FORCEALIGN)
-> > > +	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | XFS_DIFLAG2_FORCEALIGN | \
-> > > +	 XFS_DIFLAG2_ATOMICWRITES)
-> > >   static inline bool xfs_dinode_has_bigtime(const struct xfs_dinode *dip)
-> > >   {
-> > > diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
-> > > index 1c59891fa9e2..59933c7df56d 100644
-> > > --- a/fs/xfs/libxfs/xfs_inode_buf.c
-> > > +++ b/fs/xfs/libxfs/xfs_inode_buf.c
-> > > @@ -178,7 +178,10 @@ xfs_inode_from_disk(
-> > >   	struct xfs_inode	*ip,
-> > >   	struct xfs_dinode	*from)
-> > >   {
-> > > +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> > >   	struct inode		*inode = VFS_I(ip);
-> > > +	struct xfs_mount	*mp = ip->i_mount;
-> > > +	struct xfs_sb		*sbp = &mp->m_sb;
-> > >   	int			error;
-> > >   	xfs_failaddr_t		fa;
-> > > @@ -261,6 +264,13 @@ xfs_inode_from_disk(
-> > >   	}
-> > >   	if (xfs_is_reflink_inode(ip))
-> > >   		xfs_ifork_init_cow(ip);
-> > > +
-> > > +	if (xfs_inode_has_atomicwrites(ip)) {
-> > > +		if (sbp->sb_blocksize < target->bt_bdev_awu_min ||
-> > > +		    sbp->sb_blocksize * ip->i_extsize > target->bt_bdev_awu_max)
-> > 
-> > Can this multiplication trigger integer overflows?
-> 
-> I should just use xfs_inode_alloc_unitsize()
-> 
-> > 
-> > > +			ip->i_diflags2 &= ~XFS_DIFLAG2_ATOMICWRITES;
-> > 
-> > Ondisk iflag updates must use transactions.
-> 
-> I want to change this.
-> 
-> The idea was to runtime clear this flag in case the bdev cannot satisfy the
-> FS atomic write range, but that does not work.
+In uapi/asm/hwprobe.h file, (1 << N) is used to define the bit field
+which causes checkpatch to warn. Use BIT(N) and BIT_ULL(N) to avoid
+these warnings.
 
-Yeah, the ondisk and incore state have to be separate when we're playing
-with hardware features because the fs image can be created on a device
-that supports $feature and then moved to a device that does not.  For
-that case you don't enable the incore state.  Though I suppose for
-untorn writes you /could/ just let things EIO...
+Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+V1 -> V2:
+ - Reword commit message
+---
+ arch/riscv/include/uapi/asm/hwprobe.h | 102 +++++++++++++-------------
+ 1 file changed, 51 insertions(+), 51 deletions(-)
 
-> > Or you can fail IOCB_ATOMIC writes if XFS_DIFLAG2_ATOMICWRITES is set
-> > but the forcealign blocksize doesn't fit with awu_min/max.
-> 
-> I'd rather just not set FMODE_CAN_ATOMIC_WRITE
+diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+index b706c8e47b02..d0874ff2fd37 100644
+--- a/arch/riscv/include/uapi/asm/hwprobe.h
++++ b/arch/riscv/include/uapi/asm/hwprobe.h
+@@ -21,57 +21,57 @@ struct riscv_hwprobe {
+ #define RISCV_HWPROBE_KEY_MARCHID	1
+ #define RISCV_HWPROBE_KEY_MIMPID	2
+ #define RISCV_HWPROBE_KEY_BASE_BEHAVIOR	3
+-#define		RISCV_HWPROBE_BASE_BEHAVIOR_IMA	(1 << 0)
++#define		RISCV_HWPROBE_BASE_BEHAVIOR_IMA	BIT_ULL(0)
+ #define RISCV_HWPROBE_KEY_IMA_EXT_0	4
+-#define		RISCV_HWPROBE_IMA_FD		(1 << 0)
+-#define		RISCV_HWPROBE_IMA_C		(1 << 1)
+-#define		RISCV_HWPROBE_IMA_V		(1 << 2)
+-#define		RISCV_HWPROBE_EXT_ZBA		(1 << 3)
+-#define		RISCV_HWPROBE_EXT_ZBB		(1 << 4)
+-#define		RISCV_HWPROBE_EXT_ZBS		(1 << 5)
+-#define		RISCV_HWPROBE_EXT_ZICBOZ	(1 << 6)
+-#define		RISCV_HWPROBE_EXT_ZBC		(1 << 7)
+-#define		RISCV_HWPROBE_EXT_ZBKB		(1 << 8)
+-#define		RISCV_HWPROBE_EXT_ZBKC		(1 << 9)
+-#define		RISCV_HWPROBE_EXT_ZBKX		(1 << 10)
+-#define		RISCV_HWPROBE_EXT_ZKND		(1 << 11)
+-#define		RISCV_HWPROBE_EXT_ZKNE		(1 << 12)
+-#define		RISCV_HWPROBE_EXT_ZKNH		(1 << 13)
+-#define		RISCV_HWPROBE_EXT_ZKSED		(1 << 14)
+-#define		RISCV_HWPROBE_EXT_ZKSH		(1 << 15)
+-#define		RISCV_HWPROBE_EXT_ZKT		(1 << 16)
+-#define		RISCV_HWPROBE_EXT_ZVBB		(1 << 17)
+-#define		RISCV_HWPROBE_EXT_ZVBC		(1 << 18)
+-#define		RISCV_HWPROBE_EXT_ZVKB		(1 << 19)
+-#define		RISCV_HWPROBE_EXT_ZVKG		(1 << 20)
+-#define		RISCV_HWPROBE_EXT_ZVKNED	(1 << 21)
+-#define		RISCV_HWPROBE_EXT_ZVKNHA	(1 << 22)
+-#define		RISCV_HWPROBE_EXT_ZVKNHB	(1 << 23)
+-#define		RISCV_HWPROBE_EXT_ZVKSED	(1 << 24)
+-#define		RISCV_HWPROBE_EXT_ZVKSH		(1 << 25)
+-#define		RISCV_HWPROBE_EXT_ZVKT		(1 << 26)
+-#define		RISCV_HWPROBE_EXT_ZFH		(1 << 27)
+-#define		RISCV_HWPROBE_EXT_ZFHMIN	(1 << 28)
+-#define		RISCV_HWPROBE_EXT_ZIHINTNTL	(1 << 29)
+-#define		RISCV_HWPROBE_EXT_ZVFH		(1 << 30)
+-#define		RISCV_HWPROBE_EXT_ZVFHMIN	(1ULL << 31)
+-#define		RISCV_HWPROBE_EXT_ZFA		(1ULL << 32)
+-#define		RISCV_HWPROBE_EXT_ZTSO		(1ULL << 33)
+-#define		RISCV_HWPROBE_EXT_ZACAS		(1ULL << 34)
+-#define		RISCV_HWPROBE_EXT_ZICOND	(1ULL << 35)
+-#define		RISCV_HWPROBE_EXT_ZIHINTPAUSE	(1ULL << 36)
+-#define		RISCV_HWPROBE_EXT_ZVE32X	(1ULL << 37)
+-#define		RISCV_HWPROBE_EXT_ZVE32F	(1ULL << 38)
+-#define		RISCV_HWPROBE_EXT_ZVE64X	(1ULL << 39)
+-#define		RISCV_HWPROBE_EXT_ZVE64F	(1ULL << 40)
+-#define		RISCV_HWPROBE_EXT_ZVE64D	(1ULL << 41)
+-#define		RISCV_HWPROBE_EXT_ZIMOP		(1ULL << 42)
+-#define		RISCV_HWPROBE_EXT_ZCA		(1ULL << 43)
+-#define		RISCV_HWPROBE_EXT_ZCB		(1ULL << 44)
+-#define		RISCV_HWPROBE_EXT_ZCD		(1ULL << 45)
+-#define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 46)
+-#define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
+-#define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
++#define		RISCV_HWPROBE_IMA_FD		BIT_ULL(0)
++#define		RISCV_HWPROBE_IMA_C		BIT_ULL(1)
++#define		RISCV_HWPROBE_IMA_V		BIT_ULL(2)
++#define		RISCV_HWPROBE_EXT_ZBA		BIT_ULL(3)
++#define		RISCV_HWPROBE_EXT_ZBB		BIT_ULL(4)
++#define		RISCV_HWPROBE_EXT_ZBS		BIT_ULL(5)
++#define		RISCV_HWPROBE_EXT_ZICBOZ	BIT_ULL(6)
++#define		RISCV_HWPROBE_EXT_ZBC		BIT_ULL(7)
++#define		RISCV_HWPROBE_EXT_ZBKB		BIT_ULL(8)
++#define		RISCV_HWPROBE_EXT_ZBKC		BIT_ULL(9)
++#define		RISCV_HWPROBE_EXT_ZBKX		BIT_ULL(10)
++#define		RISCV_HWPROBE_EXT_ZKND		BIT_ULL(11)
++#define		RISCV_HWPROBE_EXT_ZKNE		BIT_ULL(12)
++#define		RISCV_HWPROBE_EXT_ZKNH		BIT_ULL(13)
++#define		RISCV_HWPROBE_EXT_ZKSED		BIT_ULL(14)
++#define		RISCV_HWPROBE_EXT_ZKSH		BIT_ULL(15)
++#define		RISCV_HWPROBE_EXT_ZKT		BIT_ULL(16)
++#define		RISCV_HWPROBE_EXT_ZVBB		BIT_ULL(17)
++#define		RISCV_HWPROBE_EXT_ZVBC		BIT_ULL(18)
++#define		RISCV_HWPROBE_EXT_ZVKB		BIT_ULL(19)
++#define		RISCV_HWPROBE_EXT_ZVKG		BIT_ULL(20)
++#define		RISCV_HWPROBE_EXT_ZVKNED	BIT_ULL(21)
++#define		RISCV_HWPROBE_EXT_ZVKNHA	BIT_ULL(22)
++#define		RISCV_HWPROBE_EXT_ZVKNHB	BIT_ULL(23)
++#define		RISCV_HWPROBE_EXT_ZVKSED	BIT_ULL(24)
++#define		RISCV_HWPROBE_EXT_ZVKSH		BIT_ULL(25)
++#define		RISCV_HWPROBE_EXT_ZVKT		BIT_ULL(26)
++#define		RISCV_HWPROBE_EXT_ZFH		BIT_ULL(27)
++#define		RISCV_HWPROBE_EXT_ZFHMIN	BIT_ULL(28)
++#define		RISCV_HWPROBE_EXT_ZIHINTNTL	BIT_ULL(29)
++#define		RISCV_HWPROBE_EXT_ZVFH		BIT_ULL(30)
++#define		RISCV_HWPROBE_EXT_ZVFHMIN	BIT_ULL(31)
++#define		RISCV_HWPROBE_EXT_ZFA		BIT_ULL(32)
++#define		RISCV_HWPROBE_EXT_ZTSO		BIT_ULL(33)
++#define		RISCV_HWPROBE_EXT_ZACAS		BIT_ULL(34)
++#define		RISCV_HWPROBE_EXT_ZICOND	BIT_ULL(35)
++#define		RISCV_HWPROBE_EXT_ZIHINTPAUSE	BIT_ULL(36)
++#define		RISCV_HWPROBE_EXT_ZVE32X	BIT_ULL(37)
++#define		RISCV_HWPROBE_EXT_ZVE32F	BIT_ULL(38)
++#define		RISCV_HWPROBE_EXT_ZVE64X	BIT_ULL(39)
++#define		RISCV_HWPROBE_EXT_ZVE64F	BIT_ULL(40)
++#define		RISCV_HWPROBE_EXT_ZVE64D	BIT_ULL(41)
++#define		RISCV_HWPROBE_EXT_ZIMOP		BIT_ULL(42)
++#define		RISCV_HWPROBE_EXT_ZCA		BIT_ULL(43)
++#define		RISCV_HWPROBE_EXT_ZCB		BIT_ULL(44)
++#define		RISCV_HWPROBE_EXT_ZCD		BIT_ULL(45)
++#define		RISCV_HWPROBE_EXT_ZCF		BIT_ULL(46)
++#define		RISCV_HWPROBE_EXT_ZCMOP		BIT_ULL(47)
++#define		RISCV_HWPROBE_EXT_ZAWRS		BIT_ULL(48)
+ #define RISCV_HWPROBE_KEY_CPUPERF_0	5
+ #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
+ #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
+@@ -85,6 +85,6 @@ struct riscv_hwprobe {
+ /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+ 
+ /* Flags */
+-#define RISCV_HWPROBE_WHICH_CPUS	(1 << 0)
++#define RISCV_HWPROBE_WHICH_CPUS	BIT(0)
+ 
+ #endif
+-- 
+2.45.2
 
-...but I'll move that discussion to that email.
-
-> > > +	}
-> > > +
-> > >   	return 0;
-> > >   out_destroy_data_fork:
-> > > @@ -483,6 +493,40 @@ xfs_dinode_verify_nrext64(
-> > >   	return NULL;
-> > >   }
-> > > +static xfs_failaddr_t
-> > > +xfs_inode_validate_atomicwrites(
-> > > +	struct xfs_mount	*mp,
-> > > +	uint32_t		extsize,
-> > > +	uint64_t		flags2)
-> > > +{
-> > > +	/* superblock rocompat feature flag */
-> > > +	if (!xfs_has_atomicwrites(mp))
-> > > +		return __this_address;
-> > > +
-> > > +	/*
-> > > +	 * forcealign is required, so rely on sanity checks in
-> > > +	 * xfs_inode_validate_forcealign()
-> > > +	 */
-> > > +	if (!(flags2 & XFS_DIFLAG2_FORCEALIGN))
-> > > +		return __this_address;
-> > > +
-> > > +	if (!is_power_of_2(extsize))
-> > > +		return __this_address;
-> > > +
-> > > +	/* Required to guarantee data block alignment */
-> > > +	if (mp->m_sb.sb_agblocks % extsize)
-> > > +		return __this_address;
-> > > +
-> > > +	/* Requires stripe unit+width be a multiple of extsize */
-> > > +	if (mp->m_dalign && (mp->m_dalign % extsize))
-> > > +		return __this_address;
-> > > +
-> > > +	if (mp->m_swidth && (mp->m_swidth % extsize))
-> > 
-> > IIRC m_dalign and m_swidth can be set at mount time,
-> 
-> I thought that these were fixed at mkfs time, however I see that the comment
-> for xfs_update_alignment() mentions "values based on mount options". And we
-> are reading mp values, and not sbp values, which is a good clue...
-
-Yes.
-
-> > which can result in
-> > inode verifiers logging corruption errors if those parameters change.  I
-> > think we should validate these two congruencies when setting
-> > FMODE_CAN_ATOMIC_WRITE.
-> 
-> That would make sense.
-> 
-> > 
-> > > +		return __this_address;
-> > > +
-> > > +	return NULL;
-> > > +}
-> > > +
-> > >   xfs_failaddr_t
-> > >   xfs_dinode_verify(
-> > >   	struct xfs_mount	*mp,
-> > > @@ -666,6 +710,14 @@ xfs_dinode_verify(
-> > >   			return fa;
-> > >   	}
-> > > +	if (flags2 & XFS_DIFLAG2_ATOMICWRITES) {
-> > > +		fa = xfs_inode_validate_atomicwrites(mp,
-> > > +				be32_to_cpu(dip->di_extsize),
-> > > +				flags2);
-> > > +		if (fa)
-> > > +			return fa;
-> > > +	}
-> > > +
-> > >   	return NULL;
-> > >   }
-> > > diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
-> > > index b264939d8855..dbd5b16e1844 100644
-> > > --- a/fs/xfs/libxfs/xfs_inode_util.c
-> > > +++ b/fs/xfs/libxfs/xfs_inode_util.c
-> > > @@ -82,6 +82,8 @@ xfs_flags2diflags2(
-> > >   		di_flags2 |= XFS_DIFLAG2_COWEXTSIZE;
-> > >   	if (xflags & FS_XFLAG_FORCEALIGN)
-> > >   		di_flags2 |= XFS_DIFLAG2_FORCEALIGN;
-> > > +	if (xflags & FS_XFLAG_ATOMICWRITES)
-> > > +		di_flags2 |= XFS_DIFLAG2_ATOMICWRITES;
-> > >   	return di_flags2;
-> > >   }
-> > > @@ -130,6 +132,8 @@ xfs_ip2xflags(
-> > >   			flags |= FS_XFLAG_COWEXTSIZE;
-> > >   		if (ip->i_diflags2 & XFS_DIFLAG2_FORCEALIGN)
-> > >   			flags |= FS_XFLAG_FORCEALIGN;
-> > > +		if (ip->i_diflags2 & XFS_DIFLAG2_ATOMICWRITES)
-> > > +			flags |= FS_XFLAG_ATOMICWRITES;
-> > >   	}
-> > >   	if (xfs_inode_has_attr_fork(ip))
-> > > diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
-> > > index e56911553edd..5de8725bf93a 100644
-> > > --- a/fs/xfs/libxfs/xfs_sb.c
-> > > +++ b/fs/xfs/libxfs/xfs_sb.c
-> > > @@ -166,6 +166,8 @@ xfs_sb_version_to_features(
-> > >   		features |= XFS_FEAT_INOBTCNT;
-> > >   	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_FORCEALIGN)
-> > >   		features |= XFS_FEAT_FORCEALIGN;
-> > > +	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES)
-> > > +		features |= XFS_FEAT_ATOMICWRITES;
-> > >   	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_FTYPE)
-> > >   		features |= XFS_FEAT_FTYPE;
-> > >   	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_SPINODES)
-> > > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > > index aa4dbda7b536..44bee3e2b2bb 100644
-> > > --- a/fs/xfs/xfs_buf.c
-> > > +++ b/fs/xfs/xfs_buf.c
-> > > @@ -2060,6 +2060,8 @@ int
-> > >   xfs_init_buftarg(
-> > >   	struct xfs_buftarg		*btp,
-> > >   	size_t				logical_sectorsize,
-> > > +	unsigned int			awu_min,
-> > > +	unsigned int			awu_max,
-> > >   	const char			*descr)
-> > >   {
-> > >   	/* Set up device logical sector size mask */
-> > > @@ -2086,6 +2088,9 @@ xfs_init_buftarg(
-> > >   	btp->bt_shrinker->scan_objects = xfs_buftarg_shrink_scan;
-> > >   	btp->bt_shrinker->private_data = btp;
-> > >   	shrinker_register(btp->bt_shrinker);
-> > > +
-> > > +	btp->bt_bdev_awu_min = awu_min;
-> > > +	btp->bt_bdev_awu_max = awu_max;
-> > >   	return 0;
-> > >   out_destroy_io_count:
-> > > @@ -2102,6 +2107,7 @@ xfs_alloc_buftarg(
-> > >   {
-> > >   	struct xfs_buftarg	*btp;
-> > >   	const struct dax_holder_operations *ops = NULL;
-> > > +	unsigned int awu_min = 0, awu_max = 0;
-> > >   #if defined(CONFIG_FS_DAX) && defined(CONFIG_MEMORY_FAILURE)
-> > >   	ops = &xfs_dax_holder_operations;
-> > > @@ -2115,6 +2121,13 @@ xfs_alloc_buftarg(
-> > >   	btp->bt_daxdev = fs_dax_get_by_bdev(btp->bt_bdev, &btp->bt_dax_part_off,
-> > >   					    mp, ops);
-> > > +	if (bdev_can_atomic_write(btp->bt_bdev)) {
-> > > +		struct request_queue *q = bdev_get_queue(btp->bt_bdev);
-> > > +
-> > > +		awu_min = queue_atomic_write_unit_min_bytes(q);
-> > > +		awu_max = queue_atomic_write_unit_max_bytes(q);
-> > > +	}
-> > > +
-> > >   	/*
-> > >   	 * When allocating the buftargs we have not yet read the super block and
-> > >   	 * thus don't know the file system sector size yet.
-> > > @@ -2122,7 +2135,7 @@ xfs_alloc_buftarg(
-> > >   	if (xfs_setsize_buftarg(btp, bdev_logical_block_size(btp->bt_bdev)))
-> > >   		goto error_free;
-> > >   	if (xfs_init_buftarg(btp, bdev_logical_block_size(btp->bt_bdev),
-> > > -			mp->m_super->s_id))
-> > > +			awu_min, awu_max, mp->m_super->s_id))
-> > >   		goto error_free;
-> > >   	return btp;
-> > > diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-> > > index b1580644501f..3bcd8137d739 100644
-> > > --- a/fs/xfs/xfs_buf.h
-> > > +++ b/fs/xfs/xfs_buf.h
-> > > @@ -124,6 +124,8 @@ struct xfs_buftarg {
-> > >   	struct percpu_counter	bt_io_count;
-> > >   	struct ratelimit_state	bt_ioerror_rl;
-> > > +	unsigned int		bt_bdev_awu_min, bt_bdev_awu_max;
-> > 
-> > Please add a comment here about what these mean.  Not everyone is going
-> > to know what "awu" abbreviates.
-> 
-> sure
-> 
-> > > +
-> > >   static int
-> > >   xfs_ioctl_setattr_xflags(
-> > >   	struct xfs_trans	*tp,
-> > > @@ -511,9 +554,12 @@ xfs_ioctl_setattr_xflags(
-> > >   	struct xfs_mount	*mp = ip->i_mount;
-> > >   	bool			rtflag = (fa->fsx_xflags & FS_XFLAG_REALTIME);
-> > >   	bool			forcealign = fa->fsx_xflags & FS_XFLAG_FORCEALIGN;
-> > > +	bool			atomic_writes;
-> > >   	uint64_t		i_flags2;
-> > >   	int			error;
-> > > +	atomic_writes = fa->fsx_xflags & FS_XFLAG_ATOMICWRITES;
-> > > +
-> > >   	/* Can't change RT or forcealign flags if any extents are allocated. */
-> > >   	if (rtflag != XFS_IS_REALTIME_INODE(ip) ||
-> > >   	    forcealign != xfs_inode_has_forcealign(ip)) {
-> > > @@ -554,6 +600,12 @@ xfs_ioctl_setattr_xflags(
-> > >   			return error;
-> > >   	}
-> > > +	if (atomic_writes) {
-> > > +		error = xfs_ioctl_setattr_atomicwrites(ip, fa);
-> > > +		if (error)
-> > > +			return error;
-> > > +	}
-> > > +
-> > >   	ip->i_diflags = xfs_flags2diflags(ip, fa->fsx_xflags);
-> > >   	ip->i_diflags2 = i_flags2;
-> > > diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> > > index 30228fea908d..0c5a3ae3cdaf 100644
-> > > --- a/fs/xfs/xfs_mount.h
-> > > +++ b/fs/xfs/xfs_mount.h
-> > > @@ -300,6 +300,7 @@ typedef struct xfs_mount {
-> > >   #define XFS_FEAT_NREXT64	(1ULL << 26)	/* large extent counters */
-> > >   #define XFS_FEAT_EXCHANGE_RANGE	(1ULL << 27)	/* exchange range */
-> > >   #define XFS_FEAT_FORCEALIGN	(1ULL << 28)	/* aligned file data extents */
-> > > +#define XFS_FEAT_ATOMICWRITES	(1ULL << 29)	/* atomic writes support */
-> > >   /* Mount features */
-> > >   #define XFS_FEAT_NOATTR2	(1ULL << 48)	/* disable attr2 creation */
-> > > @@ -387,6 +388,7 @@ __XFS_HAS_V4_FEAT(v3inodes, V3INODES)
-> > >   __XFS_HAS_V4_FEAT(crc, CRC)
-> > >   __XFS_HAS_V4_FEAT(pquotino, PQUOTINO)
-> > >   __XFS_HAS_FEAT(forcealign, FORCEALIGN)
-> > > +__XFS_HAS_FEAT(atomicwrites, ATOMICWRITES)
-> > >   /*
-> > >    * Mount features
-> > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> > > index b52a01b50387..5352b90b2bb6 100644
-> > > --- a/fs/xfs/xfs_super.c
-> > > +++ b/fs/xfs/xfs_super.c
-> > > @@ -1721,6 +1721,18 @@ xfs_fs_fill_super(
-> > >   		mp->m_features &= ~XFS_FEAT_DISCARD;
-> > >   	}
-> > > +	if (xfs_has_atomicwrites(mp)) {
-> > > +		if (!xfs_has_forcealign(mp)) {
-> > > +			xfs_alert(mp,
-> > > +	"forcealign required for atomicwrites!");
-> > 
-> > This (atomicwrites && !forcealign) ought to be checked in the superblock
-> > verifier.
-> 
-> You mean in xfs_fs_validate_params(), right?
-
-xfs_validate_sb_common, where we do all the other ondisk superblock
-validation.
-
---D
-
-> 
-> Thanks,
-> John
-> 
-> > 
-> 
 
