@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-297342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6D895B683
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:25:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE6395B687
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961A31F26BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:25:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DE3D1C21127
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A75C1CC168;
-	Thu, 22 Aug 2024 13:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAEF1CB330;
+	Thu, 22 Aug 2024 13:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VezjcJ6S"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HhqxQj7r"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B571CC151;
-	Thu, 22 Aug 2024 13:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2BB1C9ED7;
+	Thu, 22 Aug 2024 13:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724333059; cv=none; b=LfmhB1NxfASYJBTxRBZ6WPLquadL1JAesjaPL3zOhM0ClPTgbRpbHpfwMA5EQ8lUuKC7b8rsy7qaGPqwgvNMn7VkpGd8e4ur9gsvbydl5NGBJctdCTLq0xBMXZFEdrjQfTzu+THGrO3BPZqBlh+0SEfNKr5fmYf4qLBdtWtM6bA=
+	t=1724333090; cv=none; b=aumW4aLxK6dr6kBqBaCmUOLSECV8yijkWSW8/OqhLekKU7rZJBLVjDhr0AR9jHFvxQsojxYEDLvIgs1W4K3AobEXXCtNyv5WtmmxNMhcoa3RDzv/8Oz0wVqY6j4pS1JwUcA68r33PRpXnny3QD8QWTWeHQHyWYMuA39Bid+7quM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724333059; c=relaxed/simple;
-	bh=Ifzdw8rZaLUtG4yjgZfU3oaFMdqGu3/9BL4OZPs5jTM=;
+	s=arc-20240116; t=1724333090; c=relaxed/simple;
+	bh=hMKTAFPMmnp5ENGpfIiTVO92Kxs1Ls8UZuBvyv6u6KA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umykvL5nmhHl29twOEksTCZbwsQmX5+crxmdDX8ilPUenn/ZuwDZ2WzQeFjPKUtWn+ZfH5dI3rhaACRuP9i/0mwgeME+N8ubT+DuICIMjWycJPjKD0+sxhDW2YNz1OajFFQExsZnT5eq9EXrSyoCn+nRMmaahmCxnuefSjN57ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VezjcJ6S; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChTkaJWqjl44FZj5Rcf0a/FKG/HVu+2r/RzGxxH9qcTbBJLzwItYnUUhWiKFjSpdaRDYgO0whlLYYmKAhJaNmTxa3j/8kwD4/+oW2pxdAuHKvq0YeakFGzYaLrpf4h8++/74Fq0kZ+JWoUT9/z1rVkjvXogmf8nQtk/aSo+KKR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HhqxQj7r; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724333058; x=1755869058;
+  t=1724333088; x=1755869088;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Ifzdw8rZaLUtG4yjgZfU3oaFMdqGu3/9BL4OZPs5jTM=;
-  b=VezjcJ6SoCjfXvMnbTp6nuaCthl9H4reMo5TJFDAWRCjZtiqBgToBMT/
-   MFg1fvXvxUrxBwgcgcgPTNOjOmxBeXwPkhnVH+gVovOahUvd489ha7jOc
-   uPFkwQq9nxYEqDtt+/RWyNslFT75uzf8W5XsFZPpJcv40YCH+E0DREXY6
-   G7MIiOJ6HloimolbIYh5b1RP8cGEbH/CSyJS672p9sV4OJZvUVYqTTukr
-   lejxZe4UoKjT8GIqPyssJKRMzllQi41f+33YlKgJg8dvq8Fibp9bP2We0
-   bbJFsg0ANLP/NfUJFMkwlXjUYPhiVF6vd9sIMfq3Dwbd0SVK45EXrFzYh
-   w==;
-X-CSE-ConnectionGUID: w6Iq4jioQnKBncraYmxkeQ==
-X-CSE-MsgGUID: Fz8CJB25R9mrigqNCJTCQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22614258"
+   mime-version:in-reply-to;
+  bh=hMKTAFPMmnp5ENGpfIiTVO92Kxs1Ls8UZuBvyv6u6KA=;
+  b=HhqxQj7rwDahoVuVpjlvWkcrpk39tb+03h9Dn4PR7MmbOlMwXMqjcZwu
+   lJwLXnAunPNBa6yihlADvCXSaC7oHOVh58j01Sb7AC9CNDJqILw9hmjf7
+   SU4OeytI1DW6Y78DfiCFEd1EUBz1TsUiba2PHtmgfx2NlhLcJ603JgAlo
+   Yf3KrAoGnmf/J0TfoDGDtY4gmcv5uY7SftkJLhI5Ifbczic6pmFNccmhl
+   j2GaT+1ur/lojDPJjZPM/KGJNwoHMqI3wiX3hlt8H8cpYOFVtvw/6Cw5h
+   cL1X4CPeSZTNvfrlI77VrVG7daqukkJQCj51PWOdiR6aj4umVEGHLRW4t
+   A==;
+X-CSE-ConnectionGUID: q5gDb6TsRBuEveF95PECFw==
+X-CSE-MsgGUID: okOYYW7DSNiDyNTyHuphdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22614292"
 X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="22614258"
+   d="scan'208";a="22614292"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:24:17 -0700
-X-CSE-ConnectionGUID: l54lGSTOTjqGjj8UehtWGA==
-X-CSE-MsgGUID: 8oVq4/R6Qk+gMwwh54YXQA==
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:24:47 -0700
+X-CSE-ConnectionGUID: NjfhMLZNRSWmH0Sokx28yQ==
+X-CSE-MsgGUID: NR8tqyPZTBOZ7ScQOTO1OA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="61596334"
+   d="scan'208";a="61596395"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:24:10 -0700
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:24:46 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sh7nJ-00000000Sif-16vw;
-	Thu, 22 Aug 2024 16:24:05 +0300
-Date: Thu, 22 Aug 2024 16:24:05 +0300
+	id 1sh7nv-00000000SjU-2eDK;
+	Thu, 22 Aug 2024 16:24:43 +0300
+Date: Thu, 22 Aug 2024 16:24:43 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Lei Liu <liulei.rjpt@vivo.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Valentin Caron <valentin.caron@foss.st.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH 1/8] tty: 8250_ingenic: Use devm_clk_get_enabled() helpers
-Message-ID: <Zsc79Y6MURWZdnzU@smile.fi.intel.com>
-References: <20240822033924.32397-1-liulei.rjpt@vivo.com>
- <20240822033924.32397-2-liulei.rjpt@vivo.com>
- <09d6a69610ccec161ad8e0f2df64d8264c0a64fe.camel@crapouillou.net>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] wifi: mwifiex: Fix memcpy() field-spanning write
+ warning in mwifiex_cmd_802_11_scan_ext()
+Message-ID: <Zsc8G-c6xW982XLU@smile.fi.intel.com>
+References: <ZsZa5xRcsLq9D+RX@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <09d6a69610ccec161ad8e0f2df64d8264c0a64fe.camel@crapouillou.net>
+In-Reply-To: <ZsZa5xRcsLq9D+RX@elsanto>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Aug 22, 2024 at 11:40:46AM +0200, Paul Cercueil wrote:
-> Le jeudi 22 août 2024 à 11:39 +0800, Lei Liu a écrit :
+On Wed, Aug 21, 2024 at 03:23:51PM -0600, Gustavo A. R. Silva wrote:
+> Replace one-element array with a flexible-array member in
+> `struct host_cmd_ds_802_11_scan_ext`.
+> 
+> With this, fix the following warning:
+> 
+> elo 16 17:51:58 surfacebook kernel: ------------[ cut here ]------------
+> elo 16 17:51:58 surfacebook kernel: memcpy: detected field-spanning write (size 243) of single field "ext_scan->tlv_buffer" at drivers/net/wireless/marvell/mwifiex/scan.c:2239 (size 1)
+> elo 16 17:51:58 surfacebook kernel: WARNING: CPU: 0 PID: 498 at drivers/net/wireless/marvell/mwifiex/scan.c:2239 mwifiex_cmd_802_11_scan_ext+0x83/0x90 [mwifiex]
 
-...
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> Not really worth a V2, but if you make a V2, please "return data-
-> >line;" directly.
-
-> Acked-by: Paul Cercueil <paul@crapouillou.net>
-
-Despite of this, the series has other small issues that needs to be addressed,
-so I would wait for v2.
+Thank you!
 
 -- 
 With Best Regards,
