@@ -1,101 +1,189 @@
-Return-Path: <linux-kernel+bounces-297788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03A395BDBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:50:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A3C95BDBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57ECD1F24A59
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:50:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756791C22C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3291CF2A8;
-	Thu, 22 Aug 2024 17:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C631CF2AC;
+	Thu, 22 Aug 2024 17:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HdmhTDMH"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekeVrC3m"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F93A6F2F3
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8DE15ACA;
+	Thu, 22 Aug 2024 17:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724349027; cv=none; b=NidB+d8wUfm7nje+YU42pPpTvEopoXQGLUztGZY7tLdNohgF2vLyepn1E+4PdS3RN6wgodzDXwZ32mSs7Tm/MZuIW2v5CDHYexuf1A3c/4oXu+w6fz9b4aOWifkVDnOKngoWJjkwYgG0rr+Ja2r6piEByj9irh8DpNIm33L9cDc=
+	t=1724349129; cv=none; b=uc/5x7EJtkluZWuAppTJetMUGmQDEZuPWp9DoyR3MPumT7L+68IBejldjcc2TvPS8TNipoRdGjfWy1kn3XS6yKCIgo1JVVHbBraM7i+pvT/0/zftYhS7GNHreUhAjYcgaZOnaa0dn0IoRmnNEx5VxvIBqD+Q7bt8BzQDIajrVJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724349027; c=relaxed/simple;
-	bh=dvjLhd87vCdRo/xiVsfDDYj5ouJ7dOsDPOl5m/jQnB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lzck3invs3pd6vE7cMOtv0gTfjy/CRKN8ZGkSn2blb4s8JgGN0tmn7ZZB8H43TXID/Kr3nAJSJ9Ju7b9PS7i1Of2Fuhcy5I/rzKU0u6AFwRBFtGGa0iutJ/r68+Gf1A9Ep/ulEqcQWUD9yAbQMXQznZuNy/ijfOgLcY7HV1eemg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HdmhTDMH; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-714302e7285so938471b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:50:25 -0700 (PDT)
+	s=arc-20240116; t=1724349129; c=relaxed/simple;
+	bh=Gj5Koluh95p+c/vgpBqDLm1Ruabq+Htz4HNcGWNDX/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=el/IEiaHAkrCq86kHYb6HffzYYyuUrMDpS0DFziHMqnLMkYlIDhILnFP1PWLiqLirrvj90jZh0ZkaQJYRoTJvkGY2T0e22T5gdDUKh89/Pn1sB6XS+ht5Z2yiTJILwAsPJcf5XfO+Zk/1MWfK9a7OYRBd8TU+hHZmxQmwEPgqhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ekeVrC3m; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d3bae081efso886212a91.1;
+        Thu, 22 Aug 2024 10:52:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724349025; x=1724953825; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tCVHnlO2pIa86JaK5QjGr85qfeXpWfBdUE9lyP9m+/o=;
-        b=HdmhTDMHdO0Cld6OncFcPIZAjg/uddeimxjulI3Ld4XVDE5G+5872NDI0wXrAVpx51
-         uGbPsNkdAXEOyZfWZNgTi//CDbasczllkNQiMCBZ0gblO9nFUTXxjfYLfVyJVB4Aq7n7
-         owSWzVTi64B+XpCgePSRh/V277TT/NWvHyv9Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724349025; x=1724953825;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724349127; x=1724953927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tCVHnlO2pIa86JaK5QjGr85qfeXpWfBdUE9lyP9m+/o=;
-        b=HvFQH9FAr5cCWK/qq1+8zY03saj4Yx5x08n3PjzZfhk9MMBpsoKpQkse4nOm1oDSLY
-         hP12EvWIMoPuNlG4Zw3LXnmxDZ8s+b8wucu4FCpRbFuYEpI1kqBqc0+4CmjEr0D3WhgZ
-         SpykUn0GH3GQK2erxc+4o61ghcDb3hYZYP3EsNlWvOnU2aUzZy4E19IfGEe+LusKCgwG
-         yPa0Hm8PElePDzDeJ2KippuTll5Kyi4Ce5xWW0PelRrzJyscHHLhSf82AxsPJYGmovVy
-         Crrz7FuBCACYTN5aNp6voJlYjsoFNH3hUw/ujs3E7a9EUFAnw9EDCMJ4mySE6bnO5Gal
-         4VIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkv2Ow0Wk/U9SikI5ijv4latCYBxE82J4q8sKpW9OwQFghk4oQZR5TlF45RBMFQmTKXEqS4dG8oytJ9ug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0ds8cVdWFVAVs89HaqwejubE69Vdn68tAXeQRaQKHegyLpLmU
-	9dDpVaJnHbtSaUOFusV37Za5N+TRik2lR/y4sVrNiSflQd+2EySA8TB/tIf4Yg==
-X-Google-Smtp-Source: AGHT+IGfoGIJeQ5mwpQoLfvcD1BDbE9Q0hdoNktosEIXDb7FIO+5WC0W5xfEfFjtY5088xV28XfHJg==
-X-Received: by 2002:a05:6a21:3418:b0:1c6:f043:693f with SMTP id adf61e73a8af0-1cada054f37mr7146439637.17.1724349025477;
-        Thu, 22 Aug 2024 10:50:25 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:414c:5b44:2fea:fb6e])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7143577090fsm1537422b3a.137.2024.08.22.10.50.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 10:50:25 -0700 (PDT)
-Date: Thu, 22 Aug 2024 10:50:24 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] wifi: mwifiex: Fix memcpy() field-spanning write
- warning in mwifiex_cmd_802_11_scan_ext()
-Message-ID: <Zsd6YE6z5CNWQocz@google.com>
-References: <ZsZa5xRcsLq9D+RX@elsanto>
+        bh=TSMdvcvti+RWCtYMd+FEZT5Ru/ACmw+rmYf/bGB23eI=;
+        b=ekeVrC3m5Be+Du1jzMwT6gVYPJzV0QKDDuG5BdrGk9kUElmlG8Xt/cANm3uUZmBw0Q
+         KqaD3CQpmh8axQ02G5pMeWeG79WKfE5I92vTSiM2bYHDoNoGHREZ0sxL+6TYK9fhi5ty
+         10l8ufk22OsQBhCKz4Kk8b8zaD489lkacdKabojChgMWsrzucT2ymV50Tjx1GmW+EFX/
+         rYhKA5ZGSTWYzx+Y8t0aGtdCWP+fLy9MTUujzpYRgjLEugcW1jiT4duKqKXlKTMtw19J
+         RQxE5l0f4LnBK66AJ/viq4jjC1n7GmAlsskW0vQiQsUF+Co8yT5hkble5RCF0br5dBWu
+         cBZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724349127; x=1724953927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TSMdvcvti+RWCtYMd+FEZT5Ru/ACmw+rmYf/bGB23eI=;
+        b=v4VoiERPiZHJPMAEbxHm6RjmshCkBLH0C++lYi2FhAJxDEKdbVtT3KYXebr7oKnilt
+         06Vo1suqCpAUXzU42ehRfWtskSpU9qu2wFn2koFYfNiAfZNO1p1NeR9GFZXgEuXdY3sx
+         Y2LyQCdDGWvWmqEfp919BxmN0e4JTPKmh33x8f06TcGMwETX02hMz2WfUpqGy8wzZ58N
+         4NAgn2Jm+91OJ9p5Ovv+jm2k+oc5QP0AR5AdUtkV7aeV4VYEIB4RcZnYtZcz5HSsYN8L
+         CXipBpoorXbYLCWi8JJ2i4D9qIh1hceTl0WFFnj82qgPUOKah+f+gjrwVULYtgGJCSBz
+         TtJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxjj5cog9KPU4O/huDshuk69PuAUdarQ+jB9O4HXZ4Y5a0O2kwqVBp5MCj3gI1nIivqBKt7J63NBXWqAJl@vger.kernel.org, AJvYcCVDSG8Q0yh+9IjoMcM9wC9flYrSk7QI61NJQb4kjmHxBeCCWIqXTbgEwEPmoDLozPsJf+s=@vger.kernel.org, AJvYcCW6jHb77fwnaFrFg+uWq7LwNxDLHPUTThcrRV1MCe7z4yUgvcHyiEEHc8UhRVrtR6IQzlNsC46al6DSwR0IgyNuFhbN@vger.kernel.org
+X-Gm-Message-State: AOJu0YySYrkE/zRyfZIYFECBGO/kv/g2JWIew9hWHuIewz4RGWmLY3iZ
+	ttJotWSaynXAvhjgteH8S1gilttLcWMrxWAqBBkVO4+xv1rOpFyxvt4rWSbpHUrBX5ANMAzfgvn
+	PlTwSWRP1ghP9k/WHpButtTABuIg=
+X-Google-Smtp-Source: AGHT+IFbNA+AYoJwPKkug+4J4dkzuWlv61LePE1OdqmnnD6GiBA+gHzMQMKHafS8xgKroO9gkSs966LHnR+mMgns4Bo=
+X-Received: by 2002:a17:90a:9a4:b0:2c4:ee14:94a2 with SMTP id
+ 98e67ed59e1d1-2d5e9ec9953mr7556078a91.27.1724349127031; Thu, 22 Aug 2024
+ 10:52:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsZa5xRcsLq9D+RX@elsanto>
+References: <20240813042917.506057-1-andrii@kernel.org> <20240813042917.506057-5-andrii@kernel.org>
+ <ZsdJuwIuJ-KFA6Rz@krava> <CAEf4Bzb-1na=S9+XVpEpmtDE4mJLQRywZJ6wB8JyN++2Si6Pgw@mail.gmail.com>
+ <Zsd28aEHBLkRpUQs@krava>
+In-Reply-To: <Zsd28aEHBLkRpUQs@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 22 Aug 2024 10:51:54 -0700
+Message-ID: <CAEf4Bza43g4O-OP2ZTvri2+rnUVzKcV6LCRugzt7AcFqmkSP4g@mail.gmail.com>
+Subject: Re: [PATCH v3 04/13] uprobes: travers uprobe's consumer list
+ locklessly under SRCU protection
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
+	akpm@linux-foundation.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 03:23:51PM -0600, Gustavo A. R. Silva wrote:
-> Replace one-element array with a flexible-array member in
-> `struct host_cmd_ds_802_11_scan_ext`.
-> 
-> With this, fix the following warning:
-> 
-> elo 16 17:51:58 surfacebook kernel: ------------[ cut here ]------------
-> elo 16 17:51:58 surfacebook kernel: memcpy: detected field-spanning write (size 243) of single field "ext_scan->tlv_buffer" at drivers/net/wireless/marvell/mwifiex/scan.c:2239 (size 1)
-> elo 16 17:51:58 surfacebook kernel: WARNING: CPU: 0 PID: 498 at drivers/net/wireless/marvell/mwifiex/scan.c:2239 mwifiex_cmd_802_11_scan_ext+0x83/0x90 [mwifiex]
-> 
-> Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Closes: https://lore.kernel.org/linux-hardening/ZsZNgfnEwOcPdCly@black.fi.intel.com/
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+On Thu, Aug 22, 2024 at 10:35=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wro=
+te:
+>
+> On Thu, Aug 22, 2024 at 09:59:29AM -0700, Andrii Nakryiko wrote:
+> > On Thu, Aug 22, 2024 at 7:22=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> =
+wrote:
+> > >
+> > > On Mon, Aug 12, 2024 at 09:29:08PM -0700, Andrii Nakryiko wrote:
+> > >
+> > > SNIP
+> > >
+> > > > @@ -1125,18 +1103,31 @@ void uprobe_unregister(struct uprobe *uprob=
+e, struct uprobe_consumer *uc)
+> > > >       int err;
+> > > >
+> > > >       down_write(&uprobe->register_rwsem);
+> > > > -     if (WARN_ON(!consumer_del(uprobe, uc))) {
+> > > > -             err =3D -ENOENT;
+> > > > -     } else {
+> > > > -             err =3D register_for_each_vma(uprobe, NULL);
+> > > > -             /* TODO : cant unregister? schedule a worker thread *=
+/
+> > > > -             if (unlikely(err))
+> > > > -                     uprobe_warn(current, "unregister, leaking upr=
+obe");
+> > > > -     }
+> > > > +
+> > > > +     list_del_rcu(&uc->cons_node);
+> > >
+> > > hi,
+> > > I'm using this patchset as base for my changes and stumbled on this t=
+oday,
+> > > I'm probably missing something, but should we keep the 'uprobe->consu=
+mer_rwsem'
+> > > lock around the list_del_rcu?
+> > >
+> >
+> > Note that original code also didn't take consumer_rwsem, but rather
+> > kept register_rwsem (which we still use).
+>
+> humm, consumer_del took consumer_rwsem, right?
+>
 
-Acked-by: Brian Norris <briannorris@chromium.org>
+Ah, it was inside consume_del(), sorry, my bad. I can add nested
+consumer_rwsem back, but what I mentioned earlier, regiser_rwsem is
+sort of interchangeable and sufficient enough for working with
+consumer list, it seems. There are a bunch of places where we iterated
+this list without holding consumer_rwsem lock and that doesn't break
+anything.
+
+Also, consumer_add() and consumer_del() are always called with
+register_rwsem, so that consumer_rwsem isn't necessary.
+
+We also have prepare_uprobe() holding consumer_rwsem and there is a
+comment about abuse of that rwsem and suggestion to move it to
+registration, I never completely understood that. But prepare_uprobe()
+doesn't seem to modify consumers list at all.
+
+And the one remaining use of consumer_rwsem is filter_chain(), which
+for handler_chain() will be also called under register_rwsem, if
+purely lockless traversal is not enough.
+
+There are two other calls to filter_chain() that are not protected by
+register_rwsem, so just because of those two maybe we should keep
+consumer_rwsem, but so far all the stress testing never caught any
+problem.
+
+
+> jirka
+>
+> >
+> > There is a bit of mix of using register_rwsem and consumer_rwsem for
+> > working with consumer list. Code hints at this as being undesirable
+> > and "temporary", but you know, it's not broken :)
+> >
+> > Anyways, my point is that we didn't change the behavior, this should
+> > be fine. That _rcu() in list_del_rcu() is not about lockless
+> > modification of the list, but rather modification in such a way as to
+> > keep lockless RCU-protected *readers* correct. It just does some more
+> > memory barrier/release operations more carefully.
+> >
+> > > jirka
+> > >
+> > >
+> > > > +     err =3D register_for_each_vma(uprobe, NULL);
+> > > > +
+> > > >       up_write(&uprobe->register_rwsem);
+> > > >
+> > > > -     if (!err)
+> > > > -             put_uprobe(uprobe);
+> > > > +     /* TODO : cant unregister? schedule a worker thread */
+> > > > +     if (unlikely(err)) {
+> > > > +             uprobe_warn(current, "unregister, leaking uprobe");
+> > > > +             goto out_sync;
+> > > > +     }
+> > > > +
+> > > > +     put_uprobe(uprobe);
+> > > > +
 
