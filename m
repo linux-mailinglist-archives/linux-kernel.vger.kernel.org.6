@@ -1,150 +1,276 @@
-Return-Path: <linux-kernel+bounces-297323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467FD95B650
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303A895B655
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F4D1F275F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:19:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3172845A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D1D1CB146;
-	Thu, 22 Aug 2024 13:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995E61CB153;
+	Thu, 22 Aug 2024 13:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H+vpwglV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="W+4XIpD+"
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6E226AC1;
-	Thu, 22 Aug 2024 13:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746D01C9453;
+	Thu, 22 Aug 2024 13:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724332785; cv=none; b=WiuDbwKArMOC9LILxOpAhZPnJ/gxlCJekwEQlgcgV5nOhs7mULyAr50l217qzQFB+PyFdg7IMoBvAe8vTSY3fXpRHrZhuF4qAywKXaGGmfvd6X1t8EbwFEBP0pezBmiGqX0bC+kHiXPiK47mxE1wL4697KC/Qrs5vQmSY6WyqZg=
+	t=1724332829; cv=none; b=P8JzG2S4kUyS1Vf3yl7et1LRacrESEyDlnXtHsDpmA0aBi8qzEab2jdY41Mz4hvihhgfrMWkm+LPNAx49q5ynzH2j1XtCaeUGKbPJOG74d6V8T7eAuX5LOhl+KfNw0+1Qb99sMBA9cgW5WiuUrvOEK78MwMcMthvb1saf1kx64s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724332785; c=relaxed/simple;
-	bh=AOwS0wzy6B8Bvq3MTZmnJ0ymFayaCPe5P2yYx0ql3J8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7FI/7OZbtQQ9hG3GddvEDM9XZ6gPDaObmF5fRf6Fy3ylbyJHG6TL9Lv1cwT9URM2udGKKwgpcY6QZnvkx4cn/AEc+byhG6LiXvoXI2WLdcv84C4Td9f+pRciLCD5KFcco0eCB6J0aP4LqzOwBRfgsm3l+qJs2Cx8dBYrKv4q+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H+vpwglV; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724332784; x=1755868784;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AOwS0wzy6B8Bvq3MTZmnJ0ymFayaCPe5P2yYx0ql3J8=;
-  b=H+vpwglVWgoC/avrB9DxIKxx/gLjCi1f26Jth7Tn6TVSim397GhaBmmX
-   vt3pFT/TRuPf3lJQxu9MUWmLxMHFmewQJQ9OFLSkxxQV+hkcfOXuLBdl4
-   RPfakzSMcf1MZoA6KFjGZUPf39O8FAzrN4+zeZc3XOJ1HYCFtxXkPmcUc
-   Bml/vLniXieAhzffi8Hk6f/7pxvcHA3lCuQ24mQj5EeMrMQnF4HtvMgtB
-   scy+5KKqT5EmfjQe3QJ5rr9YHoKCU49kquLLLbA/JmxIPhUipFgstrmum
-   eXw1gnr7DYbQ6nwvWINd6bZgz9eUPxRBmRC0EUsXffvor04mCVnOCoLZU
-   Q==;
-X-CSE-ConnectionGUID: xy4MgfQhSJOnSdcmQeJwWQ==
-X-CSE-MsgGUID: GC5IktyIQJm5SE03JqkdUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="26495225"
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="26495225"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:19:43 -0700
-X-CSE-ConnectionGUID: aZqIIPrXQmaC3bF8xGIB7w==
-X-CSE-MsgGUID: cjWQAwxoQza2rxDC3PVRCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="61110275"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:19:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sh7it-00000000Sdx-13zx;
-	Thu, 22 Aug 2024 16:19:31 +0300
-Date: Thu, 22 Aug 2024 16:19:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Valentin Caron <valentin.caron@foss.st.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Amelie Delaunay <amelie.delaunay@foss.st.com>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH 5/8] tty: mps2-uart: Use devm_clk_get_enabled() helpers
-Message-ID: <Zsc645l_nFK_Xp-t@smile.fi.intel.com>
-References: <20240822033924.32397-1-liulei.rjpt@vivo.com>
- <20240822033924.32397-6-liulei.rjpt@vivo.com>
+	s=arc-20240116; t=1724332829; c=relaxed/simple;
+	bh=R3MgZulENDqdRbIellqr75I/ViIa9URQw996p0CUctQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Dr4xAcXTGOJbm9fQ+p3y4tarVnGNuBXkwa0sNAdSoh6caaxA1SCc++F+ELNym1I+2HXuLI2URSW6mm3glKu/fIhLY9Npx2MC4Sy+IPL+uKyrugrWEIyuHBArCMmv4Je17VD9+qgWf8fBZLe3R2Ihz7D4F9WTsoNmWfzNpqgAkBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=W+4XIpD+; arc=none smtp.client-ip=193.252.23.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id h7jWsmJZhS3tRh7jXsZQYa; Thu, 22 Aug 2024 15:20:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724332818;
+	bh=7o9kJ8LE12X5cmoi/urYscWziJB8NGZ/vwHTmpS6Onc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=W+4XIpD+BKMw9oCv2HAHZXJJZHYqQGx35HJuoYPDcB0ldecA9YFMMXLHDCrIWIbIT
+	 HHzuK1GZXDqaaKkd4J7orgh3RsXYLjbtqE4vCTxSnj5hLketVJGkzf6DVX0afS2sCP
+	 3x2vJwq0ZAYLhcc4D6ZHzFjc6CQ7GvxhdbdieTxAUGNL9zkHtO5EU9uLnf57E13hoo
+	 ffk/uMpXQ2ySXG7WMLj2WKfCoQD2HJUhhd2zJs9NBi5nYYX9XbEnguYvRXhV04Tzt2
+	 pbOfRayGuGpnzZp6/gs88zlcI3fS3mYumE98eyAmvdRrSj6mfYzRrf7vfTzSkmWO8y
+	 4Qz+TWNHzxA+A==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 22 Aug 2024 15:20:18 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <15ba8f05-8909-4ade-b0f3-c98cad0bd9f0@wanadoo.fr>
+Date: Thu, 22 Aug 2024 15:20:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822033924.32397-6-liulei.rjpt@vivo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [net-next 8/9] net: mvpp2: Convert to devm_clk_get_enabled() and
+ devm_clk_get_optional_enabled()
+To: Yangtao Li <frank.li@vivo.com>, clement.leger@bootlin.com,
+ andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+ marcin.s.wojtas@gmail.com, linux@armlinux.org.uk,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, hkallweit1@gmail.com,
+ justinstitt@google.com, kees@kernel.org, u.kleine-koenig@pengutronix.de,
+ jacob.e.keller@intel.com, horms@kernel.org, shannon.nelson@amd.com
+Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20240822084733.1599295-1-frank.li@vivo.com>
+ <20240822084733.1599295-9-frank.li@vivo.com>
+Content-Language: en-US, fr-FR
+In-Reply-To: <20240822084733.1599295-9-frank.li@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 11:39:09AM +0800, Lei Liu wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
+Le 22/08/2024 à 10:47, Yangtao Li a écrit :
+> Use devm_clk_get_enabled() and devm_clk_get_optional_enabled()
+> to simplify code.
 > 
-> This simplifies the code and avoids calls to clk_disable_unprepare().
-
-...
-
-> -	mps_port->clk = devm_clk_get(&pdev->dev, NULL);
-> +	mps_port->clk = devm_clk_get_enabled(&pdev->dev, NULL);
->  	if (IS_ERR(mps_port->clk))
->  		return PTR_ERR(mps_port->clk);
->  
-> -	ret = clk_prepare_enable(mps_port->clk);
-> -	if (ret)
-> -		return ret;
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>   drivers/net/ethernet/marvell/mvpp2/mvpp2.h    |  7 --
+>   .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 86 +++++--------------
+>   2 files changed, 22 insertions(+), 71 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+> index 9e02e4367bec..643a645e8097 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+> @@ -1044,13 +1044,6 @@ struct mvpp2 {
+>   	 */
+>   	struct regmap *sysctrl_base;
+>   
+> -	/* Common clocks */
+> -	struct clk *pp_clk;
+> -	struct clk *gop_clk;
+> -	struct clk *mg_clk;
+> -	struct clk *mg_core_clk;
+> -	struct clk *axi_clk;
 > -
->  	mps_port->port.uartclk = clk_get_rate(mps_port->clk);
->  
-> -	clk_disable_unprepare(mps_port->clk);
+>   	/* List of pointers to port structures */
+>   	int port_count;
+>   	struct mvpp2_port *port_list[MVPP2_MAX_PORTS];
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 2fe8bae4eb3c..0075499de29f 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -7462,6 +7462,7 @@ static int mvpp2_get_sram(struct platform_device *pdev,
+>   
+>   static int mvpp2_probe(struct platform_device *pdev)
+>   {
+> +	struct clk *pp_clk, *gop_clk, *mg_clk, *mg_core_clk, *axi_clk;
 
-Your change is not equivalent. In case this clock is shared this may lead to
-run-time issues. Hence I don't think this patch is needed in this case.
-Instead, you may add a comment on top of devm_clk_get() to explain that we only
-need it be enabled to get clock rate in the probe.
+Hi,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Nitpick: you could also define just struct clk *pp_clk, *clk; and reuse 
+clk for most calls.
+*Maybe* clk_get_rate() could be moved in order to only need 1 clk.
 
+CJ
+
+>   	struct mvpp2 *priv;
+>   	struct resource *res;
+>   	void __iomem *base;
+> @@ -7561,56 +7562,30 @@ static int mvpp2_probe(struct platform_device *pdev)
+>   		priv->max_port_rxqs = 32;
+>   
+>   	if (dev_of_node(&pdev->dev)) {
+> -		priv->pp_clk = devm_clk_get(&pdev->dev, "pp_clk");
+> -		if (IS_ERR(priv->pp_clk))
+> -			return PTR_ERR(priv->pp_clk);
+> -		err = clk_prepare_enable(priv->pp_clk);
+> -		if (err < 0)
+> -			return err;
+> +		pp_clk = devm_clk_get_enabled(&pdev->dev, "pp_clk");
+> +		if (IS_ERR(pp_clk))
+> +			return PTR_ERR(pp_clk);
+>   
+> -		priv->gop_clk = devm_clk_get(&pdev->dev, "gop_clk");
+> -		if (IS_ERR(priv->gop_clk)) {
+> -			err = PTR_ERR(priv->gop_clk);
+> -			goto err_pp_clk;
+> -		}
+> -		err = clk_prepare_enable(priv->gop_clk);
+> -		if (err < 0)
+> -			goto err_pp_clk;
+> +		gop_clk = devm_clk_get_enabled(&pdev->dev, "gop_clk");
+> +		if (IS_ERR(gop_clk))
+> +			return PTR_ERR(gop_clk);
+>   
+>   		if (priv->hw_version >= MVPP22) {
+> -			priv->mg_clk = devm_clk_get(&pdev->dev, "mg_clk");
+> -			if (IS_ERR(priv->mg_clk)) {
+> -				err = PTR_ERR(priv->mg_clk);
+> -				goto err_gop_clk;
+> -			}
+> -
+> -			err = clk_prepare_enable(priv->mg_clk);
+> -			if (err < 0)
+> -				goto err_gop_clk;
+> -
+> -			priv->mg_core_clk = devm_clk_get_optional(&pdev->dev, "mg_core_clk");
+> -			if (IS_ERR(priv->mg_core_clk)) {
+> -				err = PTR_ERR(priv->mg_core_clk);
+> -				goto err_mg_clk;
+> -			}
+> +			mg_clk = devm_clk_get_enabled(&pdev->dev, "mg_clk");
+> +			if (IS_ERR(mg_clk))
+> +				return PTR_ERR(mg_clk);
+>   
+> -			err = clk_prepare_enable(priv->mg_core_clk);
+> -			if (err < 0)
+> -				goto err_mg_clk;
+> +			mg_core_clk = devm_clk_get_optional_enabled(&pdev->dev, "mg_core_clk");
+> +			if (IS_ERR(mg_core_clk))
+> +				return PTR_ERR(mg_core_clk);
+>   		}
+>   
+> -		priv->axi_clk = devm_clk_get_optional(&pdev->dev, "axi_clk");
+> -		if (IS_ERR(priv->axi_clk)) {
+> -			err = PTR_ERR(priv->axi_clk);
+> -			goto err_mg_core_clk;
+> -		}
+> -
+> -		err = clk_prepare_enable(priv->axi_clk);
+> -		if (err < 0)
+> -			goto err_mg_core_clk;
+> +		axi_clk = devm_clk_get_optional_enabled(&pdev->dev, "axi_clk");
+> +		if (IS_ERR(axi_clk))
+> +			return PTR_ERR(axi_clk);
+>   
+>   		/* Get system's tclk rate */
+> -		priv->tclk = clk_get_rate(priv->pp_clk);
+> +		priv->tclk = clk_get_rate(pp_clk);
+>   	} else {
+>   		err = device_property_read_u32(&pdev->dev, "clock-frequency", &priv->tclk);
+>   		if (err) {
+> @@ -7622,7 +7597,7 @@ static int mvpp2_probe(struct platform_device *pdev)
+>   	if (priv->hw_version >= MVPP22) {
+>   		err = dma_set_mask(&pdev->dev, MVPP2_DESC_DMA_MASK);
+>   		if (err)
+> -			goto err_axi_clk;
+> +			return err;
+>   		/* Sadly, the BM pools all share the same register to
+>   		 * store the high 32 bits of their address. So they
+>   		 * must all have the same high 32 bits, which forces
+> @@ -7630,7 +7605,7 @@ static int mvpp2_probe(struct platform_device *pdev)
+>   		 */
+>   		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+>   		if (err)
+> -			goto err_axi_clk;
+> +			return err;
+>   	}
+>   
+>   	/* Map DTS-active ports. Should be done before FIFO mvpp2_init */
+> @@ -7649,12 +7624,12 @@ static int mvpp2_probe(struct platform_device *pdev)
+>   	err = mvpp2_init(pdev, priv);
+>   	if (err < 0) {
+>   		dev_err(&pdev->dev, "failed to initialize controller\n");
+> -		goto err_axi_clk;
+> +		return err;
+>   	}
+>   
+>   	err = mvpp22_tai_probe(&pdev->dev, priv);
+>   	if (err < 0)
+> -		goto err_axi_clk;
+> +		return err;
+>   
+>   	/* Initialize ports */
+>   	device_for_each_child_node_scoped(&pdev->dev, port_fwnode) {
+> @@ -7665,8 +7640,7 @@ static int mvpp2_probe(struct platform_device *pdev)
+>   
+>   	if (priv->port_count == 0) {
+>   		dev_err(&pdev->dev, "no ports enabled\n");
+> -		err = -ENODEV;
+> -		goto err_axi_clk;
+> +		return -ENODEV;
+>   	}
+>   
+>   	/* Statistics must be gathered regularly because some of them (like
+> @@ -7698,16 +7672,6 @@ static int mvpp2_probe(struct platform_device *pdev)
+>   err_port_probe:
+>   	for (i = 0; i < priv->port_count; i++)
+>   		mvpp2_port_remove(priv->port_list[i]);
+> -err_axi_clk:
+> -	clk_disable_unprepare(priv->axi_clk);
+> -err_mg_core_clk:
+> -	clk_disable_unprepare(priv->mg_core_clk);
+> -err_mg_clk:
+> -	clk_disable_unprepare(priv->mg_clk);
+> -err_gop_clk:
+> -	clk_disable_unprepare(priv->gop_clk);
+> -err_pp_clk:
+> -	clk_disable_unprepare(priv->pp_clk);
+>   	return err;
+>   }
+>   
+> @@ -7745,12 +7709,6 @@ static void mvpp2_remove(struct platform_device *pdev)
+>   
+>   	if (!dev_of_node(&pdev->dev))
+>   		return;
+> -
+> -	clk_disable_unprepare(priv->axi_clk);
+> -	clk_disable_unprepare(priv->mg_core_clk);
+> -	clk_disable_unprepare(priv->mg_clk);
+> -	clk_disable_unprepare(priv->pp_clk);
+> -	clk_disable_unprepare(priv->gop_clk);
+>   }
+>   
+>   static const struct of_device_id mvpp2_match[] = {
 
 
