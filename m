@@ -1,127 +1,146 @@
-Return-Path: <linux-kernel+bounces-296625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B6195ACEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 536DA95ACF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94ECE1C22871
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857831C22950
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD401132464;
-	Thu, 22 Aug 2024 05:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UwJGGL/V"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708D656766;
+	Thu, 22 Aug 2024 05:37:00 +0000 (UTC)
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610C12E3EE;
-	Thu, 22 Aug 2024 05:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CD42E3EE;
+	Thu, 22 Aug 2024 05:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724304955; cv=none; b=ZrpKMyM7Yc7HaKpBZH2m8UncmlJJi2SSiccG113rCCU7jj6twbpe4mNH7ZScA5Ul8A5U+fi0EbCE0metC42Cssul2+mFbqt8+jnfSKoxPdQrLnvDu8GcQKHd4/2fabeDRsKzlILK3hKo+nQ4ZQPjce8R62FCl+Saq0dUOOe1ICw=
+	t=1724305020; cv=none; b=GrVMRKooIX7sbF2gCQ9THg8U5JBSTk5c/0cOtTwnB3IG5bKuv8HfDhY6zLfPnAxAlCvdWifxmqJeNH2pMsklQqzKfdUyDyS+wIhDfUObwH995b9heU3VEr6jQIJNF32C4bOBLFB//vcWyN/KYj/CiulZ40cLFbq7l/26FPI4z4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724304955; c=relaxed/simple;
-	bh=CtEq7g1d94vXFrvgU8cst6cdSd/EbtYFYxOLd205oZw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RWSON6zmERqu0OnD2aC7fioK0KsXwe7FPs9xYZLO2CeHhPiNjtFM8erkDFJoAwq9PxB6+dZQRliSC6/MqOe4PyXiZEaNA7lSYzoryKRT5Rtj9FcggO/m21e9obBod/U5IkEqLCBpq0Rt/+gljAWc6x/7iri0lPiytbGUeKSgvoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UwJGGL/V; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47M5Ze9Z120376;
-	Thu, 22 Aug 2024 00:35:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724304940;
-	bh=3G/831VZMPg/EVxycyligIipdeBJkvkoKP5/tNrzULg=;
-	h=From:To:CC:Subject:Date;
-	b=UwJGGL/VSqUVmoz8nyp0T6sEhyc10NVwUCYcbEt9lrbSf6ZjnHpmR+hpCjA3oVUsh
-	 Kb0ry/0UX7qfTfA7/Y05LvQ2NQG5fmjFBKn+jsrM8p7i3ljRVxNYWRZhlVPonb/EI4
-	 NVgbDBoU3YWyjaMsQeil7CaBHFfv8xNBiTZwvZS4=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47M5ZeLq002632
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 22 Aug 2024 00:35:40 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
- Aug 2024 00:35:40 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 22 Aug 2024 00:35:40 -0500
-Received: from localhost ([10.249.128.135])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47M5ZcHY042740;
-	Thu, 22 Aug 2024 00:35:39 -0500
-From: Bhavya Kapoor <b-kapoor@ti.com>
-To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <b-kapoor@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-j722s-evm: Describe main_uart5
-Date: Thu, 22 Aug 2024 11:05:38 +0530
-Message-ID: <20240822053538.10475-1-b-kapoor@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724305020; c=relaxed/simple;
+	bh=KPOxtiKo5x8eJszu3Twv8hgyaXlqavRyVwS6OTA8qrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojquKu/dXa6gTyRkvv6gc57STGqDiaG/FpqtRcqP9qFQl+MIXmmxANwXu1Cw5+2WE2zx6QXqJalu9yO+eAH+aPNwm4ZdfS+7+B1EDqJ7Bb1IEuf/I2luGuCW2XHh1vGR1uOlA8CyFj1LFpRoGou6TEEIIxdhdxtiYQzAOlCaXCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-709339c91f9so268627a34.0;
+        Wed, 21 Aug 2024 22:36:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724305017; x=1724909817;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oyW4TRGPQxi6X8KZLrjHz14wtL6cqlbDd7KpbHD+axQ=;
+        b=C9n6uyF+nNUrPGvF6xLFZxbjqiaUxpw62cW3vXuNvkrZNTzlkbDO6DAAJUwVJnH80G
+         lvIvwBpAfzIb8JhKUj9bo5ZEffCV8AsY1oGMxIcjOTMrB4NR7Ys6+ykuPEt+SGG736FH
+         T/lS7kBeRb/kGisXoDjc9HGvJI/oTXW+rmq7aoWiTMZ8VQeSlsn5GY/IOYjIpCTG0gN3
+         hquDr4IqWSzVx7HxeNQxgzN7r+hf0hkMXoJVfjsg0x1+wosO6q9k+p6XdvxLK3poowV3
+         KnVra58cDpW6kYQZme5VyfGSwnMypNJiyPXFf/EXGtU3sPCSNT+G8sKY6YGpY+L2N9Ir
+         oPEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWs9y/8VzTdy9Xy3vf1JG1xXA6uiLMsXk8XwX12ZlCRhbwnAztoiUBJm745Ym58JfQ0Do4GBR510GNxECg=@vger.kernel.org, AJvYcCXYe8c32yeN3YJSnI1IPUSB2vRUDoZ2yqzcbQQHnlyZvyGt8nSqw6SyXLqBlRUmuu+POrO1+q9t8d8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPXntyboR5XD+iM4XltZgqlGCmLow4r7k9wx7P6YAoB2LuebUY
+	APWEZQFZhXoOdpvPXi39m55qquBT3eYUBnN9Ofip+//5s/jR3Esr
+X-Google-Smtp-Source: AGHT+IGCWj5tGsuQ+vZM5hyLnQGYRlRmUiNpvzMvUP/IALZR5Cd3jB3npUJHRS4vXG4RgbCTDsUdJQ==
+X-Received: by 2002:a05:6830:b88:b0:709:32c3:68ef with SMTP id 46e09a7af769-70df888ce24mr4950610a34.30.1724305017334;
+        Wed, 21 Aug 2024 22:36:57 -0700 (PDT)
+Received: from sultan-box.localdomain ([142.147.89.224])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70e03ad4bf9sm171329a34.48.2024.08.21.22.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 22:36:57 -0700 (PDT)
+Date: Wed, 21 Aug 2024 22:36:52 -0700
+From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 03/16] sched/pelt: Add a new function to approximate
+ runtime to reach given util
+Message-ID: <ZsbOdOf7jHTvVXPj@sultan-box.localdomain>
+References: <20240820163512.1096301-1-qyousef@layalina.io>
+ <20240820163512.1096301-4-qyousef@layalina.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820163512.1096301-4-qyousef@layalina.io>
 
-main_uart5 in J722S platform is used by the firmware. Thus,
-describe it for completeness, adding the pinmux and mark
-it as reserved.
+On Tue, Aug 20, 2024 at 05:34:59PM +0100, Qais Yousef wrote:
+> It is basically the ramp-up time from 0 to a given value. Will be used
+> later to implement new tunable to control response time  for schedutil.
+> 
+> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> ---
+>  kernel/sched/pelt.c  | 21 +++++++++++++++++++++
+>  kernel/sched/sched.h |  1 +
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> index 2ce83e880bd5..06cb881ba582 100644
+> --- a/kernel/sched/pelt.c
+> +++ b/kernel/sched/pelt.c
+> @@ -487,3 +487,24 @@ unsigned long approximate_util_avg(unsigned long util, u64 delta)
+>  
+>  	return sa.util_avg;
+>  }
+> +
+> +/*
+> + * Approximate the required amount of runtime in ms required to reach @util.
+> + */
+> +u64 approximate_runtime(unsigned long util)
+> +{
+> +	struct sched_avg sa = {};
+> +	u64 delta = 1024; // period = 1024 = ~1ms
+> +	u64 runtime = 0;
+> +
+> +	if (unlikely(!util))
+> +		return runtime;
 
-Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Seems like this check can be removed since it's covered by the loop condition.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index 24e9f2ea509b..5addf1c0afc2 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -20,6 +20,7 @@ / {
- 	aliases {
- 		serial0 = &wkup_uart0;
- 		serial2 = &main_uart0;
-+		serial3 = &main_uart5;
- 		mmc0 = &sdhci0;
- 		mmc1 = &sdhci1;
- 	};
-@@ -211,6 +212,13 @@ J722S_IOPAD(0x01cc, PIN_OUTPUT, 0)	/* (B22) UART0_TXD */
- 		bootph-all;
- 	};
- 
-+	main_uart5_pins_default: main-uart5-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x0108, PIN_INPUT, 3)       /* (J27) UART5_RXD */
-+			J722S_IOPAD(0x010c, PIN_OUTPUT, 3)      /* (H27) UART5_TXD */
-+		>;
-+	};
-+
- 	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
- 		pinctrl-single,pins = <
- 			J722S_IOPAD(0x0120, PIN_INPUT, 7) /* (F27) MMC2_CMD.GPIO0_70 */
-@@ -330,6 +338,12 @@ &main_uart0 {
- 	bootph-all;
- };
- 
-+&main_uart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_uart5_pins_default>;
-+	status = "reserved";
-+};
-+
- &mcu_pmx0 {
- 
- 	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
--- 
-2.34.1
+> +
+> +	while (sa.util_avg < util) {
+> +		accumulate_sum(delta, &sa, 1, 0, 1);
+> +		___update_load_avg(&sa, 0);
+> +		runtime++;
+> +	}
 
+I think this could be a lookup table (probably 1024 * u8), for constant-time
+runtime approximation.
+
+> +
+> +	return runtime;
+> +}
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 294c6769e330..47f158b2cdc2 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -3065,6 +3065,7 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+>  				 unsigned long max);
+>  
+>  unsigned long approximate_util_avg(unsigned long util, u64 delta);
+> +u64 approximate_runtime(unsigned long util);
+>  
+>  /*
+>   * Verify the fitness of task @p to run on @cpu taking into account the
+> -- 
+> 2.34.1
+> 
+
+Cheers,
+Sultan
 
