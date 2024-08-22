@@ -1,120 +1,139 @@
-Return-Path: <linux-kernel+bounces-297415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C438595B7FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:07:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92FA95B7F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C626B262E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E27CB25C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEDB1CBEAA;
-	Thu, 22 Aug 2024 14:06:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5421CC170;
-	Thu, 22 Aug 2024 14:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381331CBE8F;
+	Thu, 22 Aug 2024 14:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EKl8FB/3"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA4E17D354;
+	Thu, 22 Aug 2024 14:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724335588; cv=none; b=bGvxGz20DsK5f3OBuWLHoO7zpNgYfTct+T8wHKU7wHDJm8RHsE6b6y59nm1rZLHggMWLjr5XhJqb0pVNw9ivWAIUXz4ZcuSceKS8rwpiGiAr8PtBIT7QG1a1sPh/FW1asq2A0JiBNqHe8MX2+ifHAhQ3gwgPtDYb5MVh7xeVHxQ=
+	t=1724335583; cv=none; b=ijxKbVECFGqW5bCeGY3VydFoahYw0Qwyb7d9Fej353JU39bk2ySDoZHLG3EeI34CSCVCFO+0FSH51eoI3v6hfR9rEyV3eG435lodYjPJC0b3Pb/ki6gmhUgs6h+Ur1U660rgI/i11f6lnhcIVC8Lwag7Qu3jCUQrBRpQrQmMxDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724335588; c=relaxed/simple;
-	bh=BPtoV+Z2sZAtwy9VZzlsztIQ+D4S9C7Y7xrQ4jNccaU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K7w/1ylcb2TghJivLj4PM1HVyG8zsYrbAt4V1BFhlybqazX2+SFr2Xgy3h1U0CLCvI/2iaLMOGy+mBPS3DnYcCLcQm+rIm0vjt6oBnAwf99mLcz+EjVwdNXQ7zaLU+EyeJCPPjuVTlFii6kL7rsQVwxZxlxXHkiVhmrpC5JijXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EC40DA7;
-	Thu, 22 Aug 2024 07:06:51 -0700 (PDT)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 403FE3F66E;
-	Thu, 22 Aug 2024 07:06:22 -0700 (PDT)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: anshuman.khandual@arm.com,
-	James Clark <james.clark@linaro.org>,
-	gankulkarni@os.amperecomputing.com,
-	mike.leach@linaro.org,
-	leo.yan@linux.dev,
-	coresight@lists.linaro.org
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ian Rogers <irogers@google.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-perf-users@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	James Clark <james.clark@arm.com>
-Subject: Re: (subset) [PATCH v6 00/17] coresight: Use per-sink trace ID maps for Perf sessions
-Date: Thu, 22 Aug 2024 15:05:53 +0100
-Message-Id: <172433479466.350842.6920589600831615538.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240722101202.26915-1-james.clark@linaro.org>
-References: <20240722101202.26915-1-james.clark@linaro.org>
+	s=arc-20240116; t=1724335583; c=relaxed/simple;
+	bh=jE7XT2v0u6+qqax75LFSSR4S5gAkgdZaGcEkPZHLlh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rTBSV73zWU/g3vSCUqCnkU8KnogXO/Tr9AvFeuXNGMbWFlmOw285K+N/llTd/HsLISfXKdZMlXgLRefVgsoYmXqeHYUuYOJXCakKwsgt8KGF9qX/z+2c+SljdhYXy74ycs7X4pbhmC9Y0OKhX+soard3p69RrAk0W/bdFKewY10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EKl8FB/3; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C523B20010;
+	Thu, 22 Aug 2024 14:06:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724335572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5jLrdTPqJox7q3LnEDEhorVnWrlGgJLbPOWyHcz1Hts=;
+	b=EKl8FB/31jQrsFx8BSsopX+vnf7OPh/lUTLbIED/qGL7UmdnxbFgTt1M4GWFAGBU5H+WvE
+	9Oc9VdDQnfIBXVSREVxhiAKjTTW4Ar/pWFqvYyohiRUdtc2eJgvhBoBvzME9r+tzBpMzDj
+	ambtg3J+/JeIkxSTi4EYwTlmvi7N2cHND2QMLUJbeTa27Ws1vGQCqO9M5QczivftTlZGVT
+	LOZHLv9w0q/SkwMMBMKCv/WE//SYLxgmB1BgQAxAqyk2w+Tjk0nUY+WsSPhDtwBzU7VKKd
+	dHay4wNPOSnIJkfkZL+HpR1nlBac8ahHuuw2jUVVHmEGy/NwG4rB0c+M6NX50g==
+Message-ID: <d6dedcc9-b4f0-4de4-9d26-ec9c0c9fa4f6@bootlin.com>
+Date: Thu, 22 Aug 2024 16:06:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: atmel_serial: use the correct RTS flag.
+To: Mathieu Othacehe <othacehe@gnu.org>,
+ Richard Genoud <richard.genoud@bootlin.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20240808060637.19886-1-othacehe@gnu.org>
+ <20240813-absinthe-plaza-70575e847015@thorsis.com>
+Content-Language: en-US, fr
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Organization: Bootlin
+In-Reply-To: <20240813-absinthe-plaza-70575e847015@thorsis.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: richard.genoud@bootlin.com
 
-On Mon, 22 Jul 2024 11:11:42 +0100, James Clark wrote:
-> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
-> as long as there are fewer than that many ETMs connected to each sink.
+
+
+Le 13/08/2024 à 09:59, Alexander Dahl a écrit :
+> Hello Mathieu,
 > 
-> Each sink owns its own trace ID map, and any Perf session connecting to
-> that sink will allocate from it, even if the sink is currently in use by
-> other users. This is similar to the existing behavior where the dynamic
-> trace IDs are constant as long as there is any concurrent Perf session
-> active. It's not completely optimal because slightly more IDs will be
-> used than necessary, but the optimal solution involves tracking the PIDs
-> of each session and allocating ID maps based on the session owner. This
-> is difficult to do with the combination of per-thread and per-cpu modes
-> and some scheduling issues. The complexity of this isn't likely to worth
-> it because even with multiple users they'd just see a difference in the
-> ordering of ID allocations rather than hitting any limits (unless the
-> hardware does have too many ETMs connected to one sink).
+> Am Thu, Aug 08, 2024 at 08:06:37AM +0200 schrieb Mathieu Othacehe:
+>> In RS485 mode, the RTS pin is driven high by hardware when the transmitter
+>> is operating. This behaviour cannot be changed. This means that the driver
+>> should claim that it supports SER_RS485_RTS_ON_SEND and not
+>> SER_RS485_RTS_AFTER_SEND.
+>>
+>> Otherwise, when configuring the port with the SER_RS485_RTS_ON_SEND, one
+>> get the following warning:
+>>
+>> kern.warning kernel: atmel_usart_serial atmel_usart_serial.2.auto:
+>> ttyS1 (1): invalid RTS setting, using RTS_AFTER_SEND instead
 > 
-> [...]
+> I've seen this warning already, when migrating a sam9x60 based board
+> from LTS kernel 6.1 to 6.6, so thanks for taking care of this.
+> 
+> I can confirm after applying the patch on top of 6.6.44 the warning is
+> gone, and RS-485 communication still works on our platform, so …
+> 
+> Tested-by: Alexander Dahl <ada@thorsis.com>
 
-Applied, the kernel driver changes to coresight/next. Thanks!
+Acked-by: Richard Genoud <richard.genoud@bootlin.com>
 
-[09/17] coresight: Remove unused ETM Perf stubs
-        https://git.kernel.org/coresight/c/34172002bdac
-[10/17] coresight: Clarify comments around the PID of the sink owner
-        https://git.kernel.org/coresight/c/eda1d11979c0
-[11/17] coresight: Move struct coresight_trace_id_map to common header
-        https://git.kernel.org/coresight/c/acb0184fe9bc
-[12/17] coresight: Expose map arguments in trace ID API
-        https://git.kernel.org/coresight/c/7e52877868ae
-[13/17] coresight: Make CPU id map a property of a trace ID map
-        https://git.kernel.org/coresight/c/d53c8253c782
-[14/17] coresight: Use per-sink trace ID maps for Perf sessions
-        https://git.kernel.org/coresight/c/5ad628a76176
-[15/17] coresight: Remove pending trace ID release mechanism
-        https://git.kernel.org/coresight/c/de0029fdde86
-[16/17] coresight: Emit sink ID in the HW_ID packets
-        https://git.kernel.org/coresight/c/487eec8da80a
-[17/17] coresight: Make trace ID map spinlock local to the map
-        https://git.kernel.org/coresight/c/988d40a4d4e7
+> 
+> Does this deserve a Fixes tag for the change which introduced struct
+> serial_rs485 to the atmel serial driver?  Then it should be this:
+> 
+> Fixes: af47c491e3c7 ("serial: atmel: Fill in rs485_supported")
+> 
+> Greets
+> Alex
+> 
+>> which is contradictory with what's really happening.
+>>
+>> Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
+>> ---
+>>   drivers/tty/serial/atmel_serial.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+>> index 0a90964d6d107..09b246c9e389e 100644
+>> --- a/drivers/tty/serial/atmel_serial.c
+>> +++ b/drivers/tty/serial/atmel_serial.c
+>> @@ -2514,7 +2514,7 @@ static const struct uart_ops atmel_pops = {
+>>   };
+>>   
+>>   static const struct serial_rs485 atmel_rs485_supported = {
+>> -	.flags = SER_RS485_ENABLED | SER_RS485_RTS_AFTER_SEND | SER_RS485_RX_DURING_TX,
+>> +	.flags = SER_RS485_ENABLED | SER_RS485_RTS_ON_SEND | SER_RS485_RX_DURING_TX,
+>>   	.delay_rts_before_send = 1,
+>>   	.delay_rts_after_send = 1,
+>>   };
+>> -- 
+>> 2.45.2
+>>
+>>
+> 
 
-Best regards,
--- 
-Suzuki K Poulose <suzuki.poulose@arm.com>
+Thanks !
 
