@@ -1,139 +1,119 @@
-Return-Path: <linux-kernel+bounces-297339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F2A95B67B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:25:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E8195B67D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E415828524C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:24:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A50E1C236DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5A71CBE9B;
-	Thu, 22 Aug 2024 13:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0531CB30A;
+	Thu, 22 Aug 2024 13:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="evq7WW+W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGBhDaiM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882D81CB150;
-	Thu, 22 Aug 2024 13:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BB21CB15A;
+	Thu, 22 Aug 2024 13:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724332997; cv=none; b=dfoA4lL0ovkfcvbdKi9J2f6+y9w+uzYYrlJSdzhzHsyMeIAKHurAh3cK0yj4fPlw1KT9N7TfBx1PZBFdOD+Y2zwohuy+4cOIXqmKzbfpgdi21xW1XfZUMdDOusWDEE0nwS8dptb+WmBCzEQEZZUZx51LRQ7g1sRIVWEVezorfKc=
+	t=1724333032; cv=none; b=gYogyr6RtGr/t8QH4d8qn7R0Nju7NOTLbfhSpHzdWyb29++JdgDj60e4mLxEqkoz7206QkT+ooAsohQ/h4hlo2c2MsoajsVHp77qGFm4bRKIC5HOZFVYoJUb5RIVMBPdyjzS1sSg+BeuCn80CfKfQzeRZND/hxgyuB8HdbdZ8DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724332997; c=relaxed/simple;
-	bh=KFpKpnvDW0vqhhMnIVIsrqf2HnMAwgbclbS7nIfq404=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOgl73Rk0VNP6dqUzGU0MIlR/X3gEryrtu6y2j7qIrUrVujeYGKYXcb5GeX+Zw0zXibsWv8qw9VgV1ChGZTyftZhqeoVzDni/jZJ6mdn363tDh00SamaOJBrZ+goKUDHtNz8hHna+kEy2EgHqngYUH+iZ6TLvvSwItSjpvIJq8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=evq7WW+W; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724332996; x=1755868996;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KFpKpnvDW0vqhhMnIVIsrqf2HnMAwgbclbS7nIfq404=;
-  b=evq7WW+WktleBA/ikqcK1M+UVjEh/Rf7+PjOs2P6h+pwD+w5FQhhy+u8
-   WHZGp3tk5PHlKJHqLCmd1Ca++1aFfFZOZ5jdfyT3kZ3w/ggk+Y2Wx8Tv7
-   rkyNaRxLXAEQLdeV08qbn3B9tCqd0kIR5AZEc6L3I3eDMMs9WxaWoL1XU
-   La2nfRVvH8WR1KK8tTRlNr3GjvIanIoJjPlYgwtR/yP0TKCbAkhi0LNFK
-   XbU9+Ij0CS2XdJxrSS/FPXb6vV33OqNY3HFc4ScFKDgk3M3sDrPZxj77n
-   2dAH0c45O1aLV6npd9bgokp4mg+nY0V1Ywd27p+d7KOyCmJ2GXZbZrDTe
-   A==;
-X-CSE-ConnectionGUID: knoBIpfFQNyX8UFDegX0Jg==
-X-CSE-MsgGUID: nEMRu3trSx6m59z+sdNo+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="40206693"
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="40206693"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:23:15 -0700
-X-CSE-ConnectionGUID: mVP2oLmLRwW6zgMul9JDcQ==
-X-CSE-MsgGUID: /9OVbZTARoyrygXmExiBxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
-   d="scan'208";a="65644729"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:23:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sh7mI-00000000Shg-0KHI;
-	Thu, 22 Aug 2024 16:23:02 +0300
-Date: Thu, 22 Aug 2024 16:23:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Valentin Caron <valentin.caron@foss.st.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Amelie Delaunay <amelie.delaunay@foss.st.com>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH 8/8] tty: stm32-usart: Use devm_clk_get_enabled() helpers
-Message-ID: <Zsc7tWn7oSKp7zTx@smile.fi.intel.com>
-References: <20240822033924.32397-1-liulei.rjpt@vivo.com>
- <20240822033924.32397-9-liulei.rjpt@vivo.com>
+	s=arc-20240116; t=1724333032; c=relaxed/simple;
+	bh=P8fGI17fBYSUR6JP+2SBG3qvob6J8CR4tBanfBqwSGc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HO5NXK/zHe7LdLIMMSLSrawg0kMAGuTc3mEacpqbnnIHaP1AdmXm5gkTfNZYubo+h0lmBf27SxDqN5AXayHOQblIY3sUahok6kAKWWSEUiMeBasMmaTFEaT76UpTdkB95lx6K+ZwGR1lnjSNEUylvqH2dn3V7W1RxCkomAJvyJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGBhDaiM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8568EC32782;
+	Thu, 22 Aug 2024 13:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724333032;
+	bh=P8fGI17fBYSUR6JP+2SBG3qvob6J8CR4tBanfBqwSGc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CGBhDaiMw2PCzbV69OVFQ0ASgOFCZlBCVU//h7NPdqWhY2mrxJnSxoIwGfLoT9Tx3
+	 vPNsvUZPxmFVRp1GootR00vw7jSBqjx2BHZ/+HBY0MLM1wzC/zocgeAI8J+frkmbhL
+	 QkBm962Y83FwnEqbMk5KRUTYG2ItWkAqgJjfMD3X+AnkWlLKzzf7IWTTwHlqBjiCka
+	 SYdfHF5DfvTZXWiBNj1D7vDVKMwRE2Whb7scaT0G3YiVhntKEL6to6I2FrMLDKoMX9
+	 Y5eeHKQ+QZue8gk/gFL8rDQAmp88wwQ0bulTzjnBXHrTKDMJsEmtalHP9M120qHE/y
+	 M4Vnhj3kUUSsQ==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Sean Wang <sean.wang@mediatek.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Riku Voipio <riku.voipio@iki.fi>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+In-Reply-To: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
+References: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
+Subject: Re: [PATCH 00/17] leds: Use scoped device node handling to
+ simplify error paths
+Message-Id: <172433302926.1317537.8444655210561506833.b4-ty@kernel.org>
+Date: Thu, 22 Aug 2024 14:23:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822033924.32397-9-liulei.rjpt@vivo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Thu, Aug 22, 2024 at 11:39:12AM +0800, Lei Liu wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
+On Fri, 16 Aug 2024 17:31:32 +0200, Krzysztof Kozlowski wrote:
+> Make code a bit smaller/simpler, with less of_node_put() thanks to
+> cleanup.h.
 > 
-> This simplifies the code and avoids calls to clk_disable_unprepare().
+> Best regards,
+> Krzysztof
+> 
 
-...
+Applied, thanks!
 
->  err_clk:
-> -	clk_disable_unprepare(stm32port->clk);
->  
->  	return ret;
+[01/17] leds: aat1290: Use scoped device node handling to simplify error paths
+        commit: 1e63395e58b2b1d0105bb5ffdb1e5d7400a4be82
+[02/17] leds: ktd2692: Use scoped device node handling to simplify error paths
+        commit: 700b6c984b418c04c63a54f67b6758b81016f0e3
+[03/17] leds: max77693: add missing of_node_get for probe duration
+        commit: d225d436f7baccde74ad80d9dc7f08e1271b8473
+[04/17] leds: max77693: Simplify with scoped for each OF child loop
+        commit: 05c2f554d1edd6399720e8f8097e9165dcf17044
+[05/17] leds: 88pm860x: Simplify with scoped for each OF child loop
+        commit: 6c17a9a8991cf1f4e0767c2a8b3c110ea34e1019
+[06/17] leds: aw2013: Simplify with scoped for each OF child loop
+        commit: 073f016511913e2ea6c52e5d77d33a8cb03c4424
+[07/17] leds: bcm6328: Simplify with scoped for each OF child loop
+        commit: 6a1d796e70c703a7557c7ef21304879de85f40ec
+[08/17] leds: bcm6358: Simplify with scoped for each OF child loop
+        commit: c57ba40ea1e78bbf544ec667a9e0f885a8957f5c
+[09/17] leds: is31fl32xx: Simplify with scoped for each OF child loop
+        commit: 2c37529ee95d06ab44613572bfa474413f9a5b58
+[10/17] leds: lp55xx: Simplify with scoped for each OF child loop
+        commit: 9d4cfee092ecdaf98f255ee61d094334ddf9f110
+[11/17] leds: mc13783: Use scoped device node handling to simplify error paths
+        commit: e98a7f1fb9296733855347a98b1cac16e70b7ed8
+[12/17] leds: mt6323: Simplify with scoped for each OF child loop
+        commit: 84e2b97f87b8bc7dde90555ef29ac5eae27b3c8e
+[13/17] leds: netxbig: Simplify with scoped for each OF child loop
+        commit: d3f5f674058f5f1d93d9402c79f56684d81e5993
+[14/17] leds: pca9532: Simplify with scoped for each OF child loop
+        commit: af728722d7a1d81dd38bdf9a646fee84aefde901
+[15/17] leds: sc27xx: Simplify with scoped for each OF child loop
+        commit: 42476bce8d78eeea5057f34738daa8236b9912a6
+[16/17] leds: turris-omnia: Simplify with scoped for each OF child loop
+        commit: 122d57e2960c81b6916a5ebe44bfb8c14ebe81de
+[17/17] leds: qcom-lpg: Simplify with scoped for each OF child loop
+        commit: 9557b4376d02088a33e5f4116bcc324d35a3b64c
 
-No unneeded label, please drop it as well and return directly.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+--
+Lee Jones [李琼斯]
 
 
