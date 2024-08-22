@@ -1,114 +1,65 @@
-Return-Path: <linux-kernel+bounces-296550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5770795ABF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1372C95ABEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE864B229FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF741C21007
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3615523775;
-	Thu, 22 Aug 2024 03:35:39 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C997A1F95E;
+	Thu, 22 Aug 2024 03:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ury7Hfg3"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F52C208B8;
-	Thu, 22 Aug 2024 03:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2790F1CFBE
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724297738; cv=none; b=Uyo2P3WSsn5O+LwQ8whek0uNKJ0pj9ASsH4jzsJcwOOfZ1UFw2NoOIMGzoImtqmQx+B2HPhytdnyh8TqtojOMpCSiwpGEXe+XTdcBTygWtL4VpMpYKHusl1xH1ZVgLKc77D0p4bNtl6FqBWG1PmOgXE6PvVb0fO5tqjVCJLqZSU=
+	t=1724297491; cv=none; b=mG2p2+wyMnfPt1k6UX02FgRXU1sZxOHILxxohyfLHQx7cSNruIVUMJseMfbna2Jh6IKgi5HdxXxuxlPs7R2h5P9pczgXTTdcCWrZGX2cS6mZhs89T9Q57bDLMUb5Kesc5zrs50Qx0CLaECyffrejuLlL/MUo3Q6UqIFIGODtGkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724297738; c=relaxed/simple;
-	bh=LpeK4LmFRIzC/X1tCygRYSS8Ml63lXTG+oftOKRoQec=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cYNofgVPuRnMvW5xvimEinESRmASrtGUVUOkyNXqenwJ+NYLolPTF7sYjSyKkCBsLpak20TKtAY1Ei0t1qnkHvesCcXkjIxFs/K7noL3T05M68lnPIf6OavzeuAdTJbu5Bs0gPq6+iBxRPv/DAjQrN9uxzeIdedxDjPbinS1wTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wq83S4BCwz4f3lg0;
-	Thu, 22 Aug 2024 11:35:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B3A541A058E;
-	Thu, 22 Aug 2024 11:35:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBXfoQBssZmTVZ5CQ--.38201S4;
-	Thu, 22 Aug 2024 11:35:31 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org
-Cc: linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH v2] ata: libata: Fix memory leak for error path in ata_host_alloc()
-Date: Thu, 22 Aug 2024 11:30:50 +0800
-Message-Id: <20240822033050.2909195-1-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724297491; c=relaxed/simple;
+	bh=a46l7iXz0WtBz7CZJjdmIJHzpbuIfnkkjcvh23FpB2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrkTBxs/s8q6RBCOKr/mOGmWpI3TTA8qNrAU2ICgH9hY0u+M11YUtVd6RYY7w/MkbEpQftwhNGshx0uu4SEybCIG1WoZmrME81LfCfJd/5I6g0+75t9bGw+SX+imq5l1BqCPOMej1hbdazGiZ6XFxZPPCsHt0M2EO/xsdFlMjBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ury7Hfg3; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 21 Aug 2024 23:31:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724297487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a46l7iXz0WtBz7CZJjdmIJHzpbuIfnkkjcvh23FpB2s=;
+	b=Ury7Hfg3udj2aBnMoqgyI/N4faNnbpyy5gEUUS56RJ8JdBMnWWWFBN0bFKl2BjfZQFu0St
+	7XoXqea2nLZspW4BlwfLOxDl+LPxnB5d6bsys7uAXflnBHBEH8LhNFIUvoiVv8ENOXdJWO
+	+8A52YmygO3ILSCnB4UKNiv9Pj1EKKY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+9e0404b505e604f67e41@syzkaller.appspotmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in
+ percpu_ref_put
+Message-ID: <wsianmy6cqt7ok2dosx5dp4dufneu2ekykfzvlvvcvbwv7qint@2zr2esze5ur5>
+References: <fmgmxhirocusm3zmnki4m7miyqemwgxyjybjr4wvq7u2xupjyg@qwqjonwarhcl>
+ <000000000000108bb406203d368d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXfoQBssZmTVZ5CQ--.38201S4
-X-Coremail-Antispam: 1UD129KBjvdXoWruw18WF4rJF45KFWDGFyDWrg_yoWDtFXEka
-	4Fkr1xury8Ja1fGw1ftF47uFWvkr1xWrs3Wr4vgFsxKry7tr4DG3s2v34YyFn7Ww4YvryU
-	ur4DXr4xZr1aqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Jr0_Jr4l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUotCzDUUUU
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000108bb406203d368d@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: Zheng Qixing <zhengqixing@huawei.com>
-
-In ata_host_alloc(), if ata_port_alloc(host) fails to allocate memory
-for a port, the allocated 'host' structure is not freed before returning
-from the function. This results in a potential memory leak.
-
-This patch adds a kfree(host) before the error handling code is executed
-to ensure that the 'host' structure is properly freed in case of an
-allocation failure.
-
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
----
-Changes in v2:
- - error path is wrong in v1
-
- drivers/ata/libata-core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index e4023fc288ac..f27a18990c38 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -5663,8 +5663,10 @@ struct ata_host *ata_host_alloc(struct device *dev, int n_ports)
- 	}
- 
- 	dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
--	if (!dr)
-+	if (!dr) {
-+		kfree(host);
- 		goto err_out;
-+	}
- 
- 	devres_add(dev, dr);
- 	dev_set_drvdata(dev, host);
--- 
-2.39.2
-
+#syz fix bcachefs: Fix refcounting in discard path
 
