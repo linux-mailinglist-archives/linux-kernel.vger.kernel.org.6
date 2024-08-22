@@ -1,114 +1,152 @@
-Return-Path: <linux-kernel+bounces-297977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD8F95BFEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:51:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3425595BFF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD051C2106F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:51:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6624A1C210F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2B81D0DF1;
-	Thu, 22 Aug 2024 20:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395DA1D0DF6;
+	Thu, 22 Aug 2024 20:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfvArPAW"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xSU3+fxt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PfdDAwWD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4F013AA2E;
-	Thu, 22 Aug 2024 20:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6685154448;
+	Thu, 22 Aug 2024 20:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724359852; cv=none; b=rh82TGoCkDsmzSY1Z0IaJMRQk3MtAKGIeyu1TQ49lH5qdbG3xLzHPqpAMiSnoBtGVl04hkVQ0hZMynab1S69jCtJUDg4CpaJCjjjh2NRxjdu4wmMXPMFngymUOiEfkayBse3BKCtop+4ujHAFV4B44hdWnnN4YkqyGxoTWxetq4=
+	t=1724359938; cv=none; b=tTCedamDz57bE3wRE+PaXQ/lU0eXEhTf1Fwwo/v/pr6WSapGkeE0xL4+Nb0oYJsROb/a6E/wgf1l3cSpXhIwt5XupR0cGimumehrRxCG5Vwj1MqR9OB2r1rYw2UJzKq0juuOZBe83rdiGGoL3Dk/7ekF8CgtXkQSrnALW7X+540=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724359852; c=relaxed/simple;
-	bh=Q54Nx+O2Sl23E88hssQiSTeCj8d0ltDBodtJOVav6nk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ldN2jPdcn4bVd3+m7sJW//0r5Es7lZ0dQYpKasnSwWm4y5OY72CHipqesT93USlPRXx18lLZqrmdHwmvcoXrBKrSk0k44z/+BFUJyjtY7WJjMXmGvX6w5jRqMcWzSttB6ar7Lr+sY76und6gnRHP5gDhBHXcV1HOmaHY8Ly0vyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfvArPAW; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8666734767so164786966b.1;
-        Thu, 22 Aug 2024 13:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724359849; x=1724964649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
-        b=XfvArPAWBQxV/l4RpMToC5J2cagnMhlCCEG/Oih54fT5N49ok6oPRcxss/nBH+d5vO
-         7ltB8iKupdXZzIi89E5YLdv4tv0TfBomSWVyou0hWltABx8pkBQe2i75vtXMt3/BXznB
-         /0YEfn9d4lZ+Her7XQ8RBA35WsZsMFtc2baJ26UZdiXcK1PgbNGNU2Po9f/2CO+RnADR
-         BNPStNZqXDcBeSdfgHDRtJQMaL02hCexB/c9Ti3XPLnf9cyIYK21Av9h1HVHXFe2HTi1
-         ZiSwyRZ/2Iw1S07x7De8oPINrwbOEWjIwpO7v9lVyGa8dAJ19d6LYOQ88hp0MM/Od4JS
-         3Skw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724359849; x=1724964649;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
-        b=lCpmZ8nFBWQy/ZheaNE6p8/7cRgwVrmzPfe+UOS8tY8QKC9AQrBYgMt6cf5GkAvAYv
-         ihW3Nqdprgf/KQRhSOOUxm/j8vLtfXVMACH9qwR9y+Hk1VTCrpTrC9D3N92s1j8x6Dga
-         3phUfmrWr+hO16265k909xst42e/UzfwczIAIioUr1BXen9eZSQaFOjpwj+AcjfzynN8
-         WO9k30LZ9C/Q/oo67JvdJMuBPuyQ1xCqmiuV1f5NOfu1tKUAF+vyxwYyd4OIdCTw0rSH
-         kxfNAmg9RTwZOxUwwl0kf0L3WvBXrEC8geYLWqt+ObXXS0v/rYrAJF0Ey9v1X5JrnI5a
-         y6Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUFzCYG86Gu9N5y+IaDlxsjoS7p17WVFuKeUwG6ldNxi8AuPpzdJNkxawhUVR695LGcQ99J7+X5j5QN+rU=@vger.kernel.org, AJvYcCVx299T+s9LpHaGYBuffglL52N4W4mHNj9Mq902mgZz+aTk6ezAkPgSjcctxELqIczluODuYv21cnjc1kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwQtC5EgbloxYQL3h1Si3ddHRo98IRlW7+R1qrNeNDdyErIL78
-	tk48tWhslvpGyPxKSs7K/9v2iAhdVf+oNviUBe9CyliBceIK0i8F
-X-Google-Smtp-Source: AGHT+IHva2stwTSqG7rGZTaZUHh+/wTMO8O+48GKKMUS8dBUyWj5Buqho3Efd6rTd7pGcg1cwITIAQ==
-X-Received: by 2002:a17:906:eec4:b0:a7a:3928:3529 with SMTP id a640c23a62f3a-a866f110c45mr589588266b.13.1724359848540;
-        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436ba2sm162067366b.120.2024.08.22.13.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/tegra: hdmi: make read-only const array possible_nvram_sizes static
-Date: Thu, 22 Aug 2024 21:50:47 +0100
-Message-Id: <20240822205047.642845-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724359938; c=relaxed/simple;
+	bh=2x3OHdXqC2nN68R6PsfrH7HZf8vLL3DwjDZ/e8OcwPI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Dn+wXH6EjVUKKI1lU3KAgBw29s/GGeaCASUD7zJQpexSoAQ3iLjB3RLoTx9M+Hjd5tV7vQjTwDVleimJnkqqIzisTgq7DJbBJeL2nDJkw9pb194JGfmt6+eDRX29KEuv/bEE8/42fUXsiy4jwPEatK0PALzg9JDnU/2Rh24a2IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xSU3+fxt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PfdDAwWD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724359934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LwRahi9Tt5Gcpo+n8KvB8bABTwMi1Q1kuJQ9Biekl6A=;
+	b=xSU3+fxtjjSwe8kudeyVPEiovj2q5IGkfReXjg9445u3ij5IKsu8+xHlcnClHw1XCnNHit
+	pxIBDJj1sI0dphETij+17EKZNJIAMzijqrJgnGlK4pu3auNV+qEWnpa4zlfb4uLjxmIshV
+	UGo5Ks9BQMg8C+l7pr6B4+mgoaC8TjdE6QmOWfMIxWPUeuDPUSaFi0vT2RKS7XEPjRMFTc
+	OokcyFiNrMet5UArOaKsbwXi5rEJnPcjRjuO/EL1+0pkWrrDfv96pU54bF5jFxJnO31JJ0
+	HtEh1H3OeaFZLxAh+qWyxog832OH4ST8FZXdc0T4F9Ppwl7XeDpS8VITlhejQA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724359934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LwRahi9Tt5Gcpo+n8KvB8bABTwMi1Q1kuJQ9Biekl6A=;
+	b=PfdDAwWDxxlAY208eWnSCU8Z8GWkec9oOlmVGmRFbxtqo+iJYOA6x2kNDGzpwvlybzkczF
+	S8pyLJRkHUCI1XBQ==
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianyang Zhang <zhangtianyang@loongson.cn>, corbet@lwn.net,
+ alexs@kernel.org, kernel@xen0n.name, jiaxun.yang@flygoat.com,
+ gaoliang@loongson.cn, wangliupu@loongson.cn, lvjianmin@loongson.cn,
+ yijun@loongson.cn, mhocko@suse.com, akpm@linux-foundation.org,
+ dianders@chromium.org, maobibo@loongson.cn, xry111@xry111.site,
+ zhaotianrui@loongson.cn, nathan@kernel.org, yangtiezhu@loongson.cn,
+ zhoubinbin@loongson.cn, loongarch@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen
+ <chenhuacai@loongson.cn>
+Subject: Re: [PATCH v10 2/2] irqchip/loongarch-avec: Add AVEC irqchip support
+In-Reply-To: <CAAhV-H4umZBXAugRm45=dewiTGjpDSJf2wnjCtkakk+xG3VLHg@mail.gmail.com>
+References: <20240815112608.26925-1-zhangtianyang@loongson.cn>
+ <20240815112608.26925-3-zhangtianyang@loongson.cn> <87msl7jgye.ffs@tglx>
+ <CAAhV-H424SB_Ff6y4m4Cb7Cx9eWTLbK08Wycwa803y08qWVoOA@mail.gmail.com>
+ <87cym2hrqz.ffs@tglx>
+ <CAAhV-H4umZBXAugRm45=dewiTGjpDSJf2wnjCtkakk+xG3VLHg@mail.gmail.com>
+Date: Thu, 22 Aug 2024 22:52:14 +0200
+Message-ID: <87r0aggu0x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Don't populate the const read-only array possible_nvram_sizes on the
-stack at run time, instead make it static.
+Huacai!
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/tegra/hdmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Aug 22 2024 at 19:53, Huacai Chen wrote:
+> On Wed, Aug 21, 2024 at 10:31=E2=80=AFPM Thomas Gleixner <tglx@linutronix=
+.de> wrote:
+>>
+>> On Wed, Aug 21 2024 at 21:14, Huacai Chen wrote:
+>> > On Wed, Aug 21, 2024 at 12:29=E2=80=AFAM Thomas Gleixner <tglx@linutro=
+nix.de> wrote:
+>> >> This patch is doing too many things at once and is absolutely not
+>> >> reviewable.
+>> >>
+>> >> Please split it up into the obvious bits and pieces:
+>> > Splitting may cause another problem: some patches will get upstream
+>> > via the arch tree and others via the irq tree. These dependencies may
+>> > cause build errors in a certain tree. But anyway, we will try our best
+>> > to do this.
+>>
+>> That's not a problem at all. The trivial way to solve this is to apply
+>> the architecture changes to the loongarch tree in a separate branch
+>> which is based of some -rcX tag and only contains those dependencies.
+>> That branch is then merged into the main loongarch branch and I can pull
+>> it in to my tree for adding the irqchip changes. No conflicts, no merge
+>> dependencies, nothing.
+> Emm, another way is apply all patches to the irq tree with my Acked-by.
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index 09987e372e3e..6bf2dae82ca0 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -434,7 +434,7 @@ tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pix_clock,
- 
- static void tegra_hdmi_setup_audio_fs_tables(struct tegra_hdmi *hdmi)
- {
--	const unsigned int freqs[] = {
-+	static const unsigned int freqs[] = {
- 		32000, 44100, 48000, 88200, 96000, 176400, 192000
- 	};
- 	unsigned int i;
--- 
-2.39.2
+Correct, but that has the potential of creating conflicts when the
+loongarch tree grows changes in the same areas.
 
+>> > These macros are not in hot-path, and we have already tried our best
+>> > to avoid using #ifdefs for cpu_has_xxx, so I suggest not introduce a
+>> > new Kconfig option. Moreover, the new option should always be selected
+>> > due to the deep coupling among loongson's irqchips, which makes the
+>> > #ifdefs useless.
+>>
+>> They are removed in step 8 again. It's for having a sanely split up and
+>> structured patch series instead of one big lump.
+> I see, but I'm trying another splitting way to avoid
+> adding-and-then-removing, of course it should also make reviews easy.
+
+That's the whole point of the exercise.
+
+>> The complexity of the x86 allocation/activate/set_affinity mechanisms
+>> is there for a reason and not just because we did not have anything
+>> better to do. :)
+>
+> Frankly, I haven't absorbed everything here, but I think I can try to
+> answer my question "can irq_create_affinity_masks() still work".
+>
+> irq_create_affinity_masks() can still mark interrupts "managed" if
+> avecintc driver doesn't support "managed", but it cannot guarantee
+> that set_affinity can always succeed. If the destination cpu has a
+> free vector, then set_affinity succeeds, otherwise it will fail. But
+> if avecintc driver supports "managed", set_affinity can always
+> succeed, because the destination cpu has already reserved a vector for
+> this. Am I right?
+
+It can work by some definition of "works", but in case of vector
+exhaustion it will fail which is contrary to the purpose of managed
+interrupts.
+
+The matrix allocator already provides all the infrastructure and the
+x86 reference implementation does the right thing. So why do you want to
+shortcut that and make loongarch a special snowflake?
+
+Thanks,
+
+        tglx
 
