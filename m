@@ -1,336 +1,318 @@
-Return-Path: <linux-kernel+bounces-297298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EF695B5D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 186B995B5D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C001F213B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:00:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 904711F22660
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D060B1C9EBE;
-	Thu, 22 Aug 2024 13:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5921C9DE6;
+	Thu, 22 Aug 2024 13:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sHknc/0K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cKgUc3hK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sHknc/0K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cKgUc3hK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kVdpistj"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1735D1C9DE9;
-	Thu, 22 Aug 2024 13:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0284023774
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724331604; cv=none; b=iOQqHtxOZzNad76G5TXM1phau5wJwfZVyw2a5wCMKUb5ud+VtCqvmjnhb4S3cUYxn81H6ZFwoQhwMJVig8uWsc2dfDeYTuUMC4oDhQJCtsQfYX3SJ7XmmXheN9d5WO3nMHc5/t3JL9MGKB608pK+rv/HcjGkZ6YanVK5NTyEnzk=
+	t=1724331687; cv=none; b=G/E2RYgCaq59WmzyIGQ7ZuixhQDwuAv9LI/+JmBdeOg5MVtz5dTXPlcOntH16Zu0uKSBR5SZYUnsUm8skkYrbtLfmAa+pKmON6BkjUJuaellwz5+jfEG7P51BWrzGehDPj+zcL3YOcqeDLnA1YCDTQvlikFMqUyVuRXBC1LKSS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724331604; c=relaxed/simple;
-	bh=P/SAj/rWhMNW4pL1tlCld6Fxb5PT1QetomjPKmi/Zs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qpJrTJrK5ZoVOUC8/XIYbpmud8xnqxabrz5ZeRW3Z0eyc+f+WhQ7KvTSGEwLstjgrvgKEUrSGmG5XJZQ1YDeXldVFQ0Zcdy6w6W/MY3soODih3N1t7ISVS8JLBD0c8z6IlklacpJHr8ReY3SrkEkVtbKGk+iMQp/WAibaIfQwPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sHknc/0K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cKgUc3hK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sHknc/0K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cKgUc3hK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 12794201CD;
-	Thu, 22 Aug 2024 13:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724331601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKBeKe7fsSigTAIyXm5r128hyGCDYYRNTizHP6ywY/g=;
-	b=sHknc/0KD9HUiCcYFITR/8Un5NYcFkOjWjxbvaQfmRZrRvY5NK554n6OjdCVMmyBYf7Dqq
-	02xfgn+WPfMtkEuHuNUCVmuAj/aLISlfnQq9hG9+0cLBsUztcmu33EnzlGSVSRmLvYQ3pl
-	d/hPBFQWmVhSPJ7jof1sgnlHGNSHWYw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724331601;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKBeKe7fsSigTAIyXm5r128hyGCDYYRNTizHP6ywY/g=;
-	b=cKgUc3hKaZa2iMTlKnEvY4ZZU2HK8U7t8SYuU5c2MaMpG4o2sXcC3u7I/Li0wnaQP40iPg
-	DXctKX0ZQE7JdHCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="sHknc/0K";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cKgUc3hK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724331601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKBeKe7fsSigTAIyXm5r128hyGCDYYRNTizHP6ywY/g=;
-	b=sHknc/0KD9HUiCcYFITR/8Un5NYcFkOjWjxbvaQfmRZrRvY5NK554n6OjdCVMmyBYf7Dqq
-	02xfgn+WPfMtkEuHuNUCVmuAj/aLISlfnQq9hG9+0cLBsUztcmu33EnzlGSVSRmLvYQ3pl
-	d/hPBFQWmVhSPJ7jof1sgnlHGNSHWYw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724331601;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKBeKe7fsSigTAIyXm5r128hyGCDYYRNTizHP6ywY/g=;
-	b=cKgUc3hKaZa2iMTlKnEvY4ZZU2HK8U7t8SYuU5c2MaMpG4o2sXcC3u7I/Li0wnaQP40iPg
-	DXctKX0ZQE7JdHCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 92F64139D3;
-	Thu, 22 Aug 2024 13:00:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 84SKIlA2x2ZfRAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 22 Aug 2024 13:00:00 +0000
-Message-ID: <166850ea-ef40-4868-be26-681ea7a0bca4@suse.de>
-Date: Thu, 22 Aug 2024 15:00:00 +0200
+	s=arc-20240116; t=1724331687; c=relaxed/simple;
+	bh=owZmZ7SsMzo6HvJw3pjeT1sL82SMFrYVE8Xm+FXng3A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZtLC3YAKXpGvMAa4vZwyIU8P55ZeQIHo8yEQFakpp8xkERH/FiMcNi2uHZT5x5ywShvLn9Qzh0gr6094BWTJuUfvAOczaAZwfkKNUgSRs4Oy6CHQie4DTaYRs5lHOp9/HHyRdxJWbd/Tua+kxM0+pUJafom0sygDVmdYLak4Dec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kVdpistj; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso93118666b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724331684; x=1724936484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VKrLJYBCeSt+5JS6KiSrzcIQGoXQRdGQJhvseDyr6cc=;
+        b=kVdpistjh0byld6bvVEbeIcHN7iWxseZLhYH9ws5+i6Um+s3jziA8Gvhza7uVJVjz5
+         f5rmRpNKml6CqSwOv55Uvf1W7iQJU3vST5NdeuXjPi/pR056tUn5pTBE39E2kc8EOm+G
+         Z8xYvR2s1w62AmNKpbma1RgYYxUJs5O6W+snYhB+ZBBOasPgMvuqGapp4lQLaRFi+oHc
+         EX2IrTFa/mTzc2MN7qqHt02f3f7WvaR/pU3wZWWtMbk2V7Gl+lqjLejIXfmJ8v3jzy1V
+         rBbT/6ShR2fXOxDpMwlJq8o1tL7qU/Mcro2ajnoM5fi00ssceWFmjkWzn3s5lm20150f
+         a6RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724331684; x=1724936484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VKrLJYBCeSt+5JS6KiSrzcIQGoXQRdGQJhvseDyr6cc=;
+        b=AgB3xOyHCl1qinPsCf8W1XflsW0w9Tj09hYFaHYHAhN1SF5sMmrP/ab+/WxQnMdxcr
+         oZ65XP/4l85268LaGuiX/rX0I89STDHf77bmTpZevKF3h0dXkToe4wEPua/ngfrnoIzj
+         qGyAEk3GdSGiPkGtjlyZbSmvrMeLWmu/81yq903B+4cAg56s5nHWE4NbMWhq3pfrajuz
+         YQqKPvV+0ta/5fgeAsf96iBtaxZ0BFxGZ+C4sNTDUkHGO0+zZgeBQ/wMBQUYh5oATg9m
+         vNUInIwK1z9hn5uHpWEe16MxevqCkKpOL6B+9ed2gjcnKYIKWbW+JM0Nmq62TlwCkqnY
+         AKEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVA6U25RtQX18as0ckSRJ1EtehoQPCXOG4vVrysBwPnF8azhO4UPZdIlPQ1+vJZC4RMzFVO/wFQ7ieEXQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwckjWPCEnqE8aF3fXFs48zK6jCHfDyjX7gnclmFMPZzdMXYxU8
+	fkv1BrocH45gOE1NV6gAkgmbWQbdQjojAGl581A0WtsqUeHQcfD3K3GzvLQUGNWklRd1UVYmv9v
+	WmwQDNwoH6h0dY9tG0C/NvFHx13ucvbF8W9HU
+X-Google-Smtp-Source: AGHT+IEjHXq/ezJxdmtpF0kqpvK1c0szuFu3H/nYnMaoLhZ6aQB145dUjxf788a65z5zTwBUQOsdW8Dw9BypPl0NCCo=
+X-Received: by 2002:a17:907:d88:b0:a86:9cff:6798 with SMTP id
+ a640c23a62f3a-a869cff6865mr7091366b.30.1724331681764; Thu, 22 Aug 2024
+ 06:01:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/4] drm/panic: Simplify logo handling
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
- Danilo Krummrich <dakr@redhat.com>
-References: <20240822073852.562286-1-jfalempe@redhat.com>
- <20240822073852.562286-4-jfalempe@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240822073852.562286-4-jfalempe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 12794201CD
-X-Spam-Score: -5.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,garyguo.net,protonmail.com,proton.me,samsung.com,google.com,vger.kernel.org,lists.freedesktop.org];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <0000000000006bc6d20620023a14@google.com> <00000000000090974a0620398254@google.com>
+ <CANn89iKkFB3iLbqq=a0RXEygKq8wYY1uiSWpWQu7zaYUEQeJYQ@mail.gmail.com> <20240822110942.990-1-hdanton@sina.com>
+In-Reply-To: <20240822110942.990-1-hdanton@sina.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 22 Aug 2024 15:01:07 +0200
+Message-ID: <CANn89iK7gLjcnMOAvFnz2zpnEHgk_v-b65ExpL8ayHmP68HP=g@mail.gmail.com>
+Subject: Re: [syzbot] [ppp?] inconsistent lock state in valid_state (4)
+To: Hillf Danton <hdanton@sina.com>
+Cc: syzbot <syzbot+d43eb079c2addf2439c3@syzkaller.appspotmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-Am 22.08.24 um 09:33 schrieb Jocelyn Falempe:
-> Move logo rectangle initialisation, and logo drawing in separate
-> functions, so they can be re-used by different panic screens.
-> It prepares the introduction of the QR code panic screen.
+On Thu, Aug 22, 2024 at 1:10=E2=80=AFPM Hillf Danton <hdanton@sina.com> wro=
+te:
 >
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-with the comments considered.
-
-> ---
+> On Thu, 22 Aug 2024 08:29:35 +0200 Eric Dumazet <edumazet@google.com>
+> > On Thu, Aug 22, 2024 at 1:00=3DE2=3D80=3DAFAM syzbot
+> > <syzbot+d43eb079c2addf2439c3@syzkaller.appspotmail.com> wrote:
+> > >
+> > > syzbot has found a reproducer for the following issue on:
+> > >
+> > > HEAD commit:    b311c1b497e5 Merge tag '6.11-rc4-server-fixes' of git=
+://g=3D
+> > i..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D3D12dccc7=
+b98000=3D
+> > 0
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D3Ddf2f0ed=
+7e30a6=3D
+> > 39d
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D3Dd43eb079c=
+2addf2=3D
+> > 439c3
+> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for=
+ Deb=3D
+> > ian) 2.40
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D3D17cf9=
+3d5980=3D
+> > 000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D3D101bb69=
+398000=3D
+> > 0
+> > >
+> > > Downloadable assets:
+> > > disk image (non-bootable): https://storage.googleapis.com/syzbot-asse=
+ts/7=3D
+> > bc7510fe41f/non_bootable_disk-b311c1b4.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/1c99fa48192f/vm=
+linu=3D
+> > x-b311c1b4.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/16d5710a01=
+2a/b=3D
+> > zImage-b311c1b4.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the =
+comm=3D
+> > it:
+> > > Reported-by: syzbot+d43eb079c2addf2439c3@syzkaller.appspotmail.com
+> > >
+> > > =3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3=
+D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D
+> > =3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D=3D3D
+> > > WARNING: inconsistent lock state
+> > > 6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
+> > > --------------------------------
+> > > inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+> > > ksoftirqd/0/16 [HC0[0]:SC1[1]:HE1:SE0] takes:
+> > > ffff888039c531e0 (&pch->downl){+.?.}-{2:2}, at: spin_lock include/lin=
+ux/s=3D
+> > pinlock.h:351 [inline]
+> > > ffff888039c531e0 (&pch->downl){+.?.}-{2:2}, at: ppp_channel_bridge_in=
+put =3D
+> > drivers/net/ppp/ppp_generic.c:2272 [inline]
+> > > ffff888039c531e0 (&pch->downl){+.?.}-{2:2}, at: ppp_input+0x18b/0xa10=
+ dri=3D
+> > vers/net/ppp/ppp_generic.c:2304
+> > > {SOFTIRQ-ON-W} state was registered at:
+> > >   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+> > >   __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+> > >   _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+> > >   spin_lock include/linux/spinlock.h:351 [inline]
+> > >   ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline=
+]
+> > >   ppp_input+0x18b/0xa10 drivers/net/ppp/ppp_generic.c:2304
+> > >   pppoe_rcv_core+0x117/0x310 drivers/net/ppp/pppoe.c:379
+> > >   sk_backlog_rcv include/net/sock.h:1111 [inline]
+> > >   __release_sock+0x243/0x350 net/core/sock.c:3004
+> > >   release_sock+0x61/0x1f0 net/core/sock.c:3558
+> > >   pppoe_sendmsg+0xd5/0x750 drivers/net/ppp/pppoe.c:903
+> > >   sock_sendmsg_nosec net/socket.c:730 [inline]
+> > >   __sock_sendmsg+0x221/0x270 net/socket.c:745
+> > >   ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+> > >   ___sys_sendmsg net/socket.c:2651 [inline]
+> > >   __sys_sendmmsg+0x3b2/0x740 net/socket.c:2737
+> > >   __do_sys_sendmmsg net/socket.c:2766 [inline]
+> > >   __se_sys_sendmmsg net/socket.c:2763 [inline]
+> > >   __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2763
+> > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> > >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > irq event stamp: 1309336
+> > > hardirqs last  enabled at (1309336): [<ffffffff8bc0d5ff>] __raw_spin_=
+unlo=3D
+> > ck_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+> > > hardirqs last  enabled at (1309336): [<ffffffff8bc0d5ff>] _raw_spin_u=
+nloc=3D
+> > k_irqrestore+0x8f/0x140 kernel/locking/spinlock.c:194
+> > > hardirqs last disabled at (1309335): [<ffffffff8bc0d300>] __raw_spin_=
+lock=3D
+> > _irqsave include/linux/spinlock_api_smp.h:108 [inline]
+> > > hardirqs last disabled at (1309335): [<ffffffff8bc0d300>] _raw_spin_l=
+ock_=3D
+> > irqsave+0xb0/0x120 kernel/locking/spinlock.c:162
+> > > softirqs last  enabled at (1309326): [<ffffffff81578ffa>] run_ksoftir=
+qd+0=3D
+> > xca/0x130 kernel/softirq.c:928
+> > > softirqs last disabled at (1309331): [<ffffffff81578ffa>] run_ksoftir=
+qd+0=3D
+> > xca/0x130 kernel/softirq.c:928
+> > >
+> > > other info that might help us debug this:
+> > >  Possible unsafe locking scenario:
+> > >
+> > >        CPU0
+> > >        ----
+> > >   lock(&pch->downl);
+> > >   <Interrupt>
+> > >     lock(&pch->downl);
+> > >
+> > >  *** DEADLOCK ***
+> > >
+> > > 1 lock held by ksoftirqd/0/16:
+> > >  #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acqui=
+re i=3D
+> > nclude/linux/rcupdate.h:326 [inline]
+> > >  #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock =
+incl=3D
+> > ude/linux/rcupdate.h:838 [inline]
+> > >  #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ppp_channel_br=
+idge=3D
+> > _input drivers/net/ppp/ppp_generic.c:2267 [inline]
+> > >  #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ppp_input+0x55=
+/0xa=3D
+> > 10 drivers/net/ppp/ppp_generic.c:2304
+> > >
+> > > stack backtrace:
+> > > CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.11.0-rc4-syzkal=
+ler-=3D
+> > 00019-gb311c1b497e5 #0
 >
-> v6:
->   * rebase, and handle conflict with 5d45c01dea6f ("drm/panic: Add panic description")
+> This report looks bogus to me given that kthread is unable to preempt a
+> userspace task with spinlock held.
+
+
+This report is absolutely legit.
+
+User space might be interrupted by a softirq.
+
+Issue here is that ppp_channel_bridge_input() can either be run
+directly from BH context, or process context.
+
+Therefore it needs to make sure BH are blocked. I will submit the
+patch formally.
+
 >
->   drivers/gpu/drm/drm_panic.c | 58 +++++++++++++++++++++----------------
->   1 file changed, 33 insertions(+), 25 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> index 59fba23e5fd7a..473db5fafb617 100644
-> --- a/drivers/gpu/drm/drm_panic.c
-> +++ b/drivers/gpu/drm/drm_panic.c
-> @@ -85,7 +85,7 @@ static struct drm_panic_line panic_msg[] = {
->   	PANIC_LINE(""), /* will be replaced by the panic description */
->   };
->   
-> -#define PANIC_MSG_LINES ARRAY_SIZE(panic_msg)
-> +static const int panic_msg_lines = ARRAY_SIZE(panic_msg);
-
-This type should be size_t instead of int
-
->   
->   static const struct drm_panic_line logo_ascii[] = {
->   	PANIC_LINE("     .--.        _"),
-> @@ -97,7 +97,7 @@ static const struct drm_panic_line logo_ascii[] = {
->   	PANIC_LINE(" \\___)=(___/"),
->   };
->   
-> -#define PANIC_LOGO_LINES ARRAY_SIZE(logo_ascii)
-> +static const int logo_ascii_lines = ARRAY_SIZE(logo_ascii);
-
-size_t
-
->   
->   #if defined(CONFIG_LOGO) && !defined(MODULE)
->   static const struct linux_logo *logo_mono;
-> @@ -496,31 +496,44 @@ static void draw_txt_rectangle(struct drm_scanout_buffer *sb,
->   	}
->   }
->   
-> +static void drm_panic_logo_rect(struct drm_rect *rect, const struct font_desc *font)
-> +{
-> +	if (logo_mono)
-> +		drm_rect_init(rect, 0, 0, logo_mono->width, logo_mono->height);
-> +	else {
-> +		int logo_width = get_max_line_len(logo_ascii, logo_ascii_lines) * font->width;
-> +
-> +		drm_rect_init(rect, 0, 0, logo_width, logo_ascii_lines * font->height);
-> +	}
-> +}
-> +
-> +static void drm_panic_logo_draw(struct drm_scanout_buffer *sb, struct drm_rect *rect,
-> +				const struct font_desc *font, u32 fg_color)
-> +{
-> +	if (logo_mono)
-> +		drm_panic_blit(sb, rect, logo_mono->data,
-> +			       DIV_ROUND_UP(drm_rect_width(rect), 8), 1, fg_color);
-> +	else
-> +		draw_txt_rectangle(sb, font, logo_ascii, logo_ascii_lines, false, rect,
-> +				   fg_color);
-> +}
-> +
->   static void draw_panic_static_user(struct drm_scanout_buffer *sb)
->   {
->   	u32 fg_color = convert_from_xrgb8888(CONFIG_DRM_PANIC_FOREGROUND_COLOR, sb->format->format);
->   	u32 bg_color = convert_from_xrgb8888(CONFIG_DRM_PANIC_BACKGROUND_COLOR, sb->format->format);
->   	const struct font_desc *font = get_default_font(sb->width, sb->height, NULL, NULL);
->   	struct drm_rect r_screen, r_logo, r_msg;
-> -	unsigned int logo_width, logo_height;
->   	unsigned int msg_width, msg_height;
->   
->   	if (!font)
->   		return;
->   
->   	r_screen = DRM_RECT_INIT(0, 0, sb->width, sb->height);
-> +	drm_panic_logo_rect(&r_logo, font);
->   
-> -	if (logo_mono) {
-> -		logo_width = logo_mono->width;
-> -		logo_height = logo_mono->height;
-> -	} else {
-> -		logo_width = get_max_line_len(logo_ascii, PANIC_LOGO_LINES) * font->width;
-> -		logo_height = PANIC_LOGO_LINES * font->height;
-> -	}
-> -	r_logo = DRM_RECT_INIT(0, 0, logo_width, logo_height);
-> -
-> -	msg_width = min(get_max_line_len(panic_msg, PANIC_MSG_LINES) * font->width, sb->width);
-> -	msg_height = min(PANIC_MSG_LINES * font->height, sb->height);
-> +	msg_width = min(get_max_line_len(panic_msg, panic_msg_lines) * font->width, sb->width);
-> +	msg_height = min(panic_msg_lines * font->height, sb->height);
->   	r_msg = DRM_RECT_INIT(0, 0, msg_width, msg_height);
->   
->   	/* Center the panic message */
-> @@ -529,15 +542,10 @@ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
->   	/* Fill with the background color, and draw text on top */
->   	drm_panic_fill(sb, &r_screen, bg_color);
->   
-> -	if (!drm_rect_overlap(&r_logo, &r_msg)) {
-> -		if (logo_mono)
-> -			drm_panic_blit(sb, &r_logo, logo_mono->data, DIV_ROUND_UP(logo_width, 8),
-> -				       fg_color);
-> -		else
-> -			draw_txt_rectangle(sb, font, logo_ascii, PANIC_LOGO_LINES, false, &r_logo,
-> -					   fg_color);
-> -	}
-> -	draw_txt_rectangle(sb, font, panic_msg, PANIC_MSG_LINES, true, &r_msg, fg_color);
-> +	if (!drm_rect_overlap(&r_logo, &r_msg))
-> +		drm_panic_logo_draw(sb, &r_logo, font, fg_color);
-> +
-> +	draw_txt_rectangle(sb, font, panic_msg, panic_msg_lines, true, &r_msg, fg_color);
->   }
->   
->   /*
-> @@ -647,7 +655,7 @@ static void drm_panic_set_description(const char *description)
->   	u32 len;
->   
->   	if (description) {
-> -		struct drm_panic_line *desc_line = &panic_msg[PANIC_MSG_LINES - 1];
-> +		struct drm_panic_line *desc_line = &panic_msg[panic_msg_lines - 1];
->   
->   		desc_line->txt = description;
->   		len = strlen(description);
-> @@ -660,7 +668,7 @@ static void drm_panic_set_description(const char *description)
->   
->   static void drm_panic_clear_description(void)
->   {
-> -	struct drm_panic_line *desc_line = &panic_msg[PANIC_MSG_LINES - 1];
-> +	struct drm_panic_line *desc_line = &panic_msg[panic_msg_lines - 1];
->   
->   	desc_line->len = 0;
->   	desc_line->txt = NULL;
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+> > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debia=
+n-1.=3D
+> > 16.3-2~bpo12+1 04/01/2014
+> > > Call Trace:
+> > >  <TASK>
+> > >  __dump_stack lib/dump_stack.c:93 [inline]
+> > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+> > >  valid_state+0x13a/0x1c0 kernel/locking/lockdep.c:4012
+> > >  mark_lock_irq+0xbb/0xc20 kernel/locking/lockdep.c:4215
+> > >  mark_lock+0x223/0x350 kernel/locking/lockdep.c:4677
+> > >  __lock_acquire+0xbf9/0x2040 kernel/locking/lockdep.c:5096
+> > >  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+> > >  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+> > >  _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+> > >  spin_lock include/linux/spinlock.h:351 [inline]
+> > >  ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
+> > >  ppp_input+0x18b/0xa10 drivers/net/ppp/ppp_generic.c:2304
+> > >  ppp_sync_process+0x71/0x160 drivers/net/ppp/ppp_synctty.c:490
+> > >  tasklet_action_common+0x321/0x4d0 kernel/softirq.c:785
+> > >  handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+> > >  run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
+> > >  smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+> > >  kthread+0x2f0/0x390 kernel/kthread.c:389
+> > >  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> > >  </TASK>
+> > >
+> > >
+> > > ---
+> > > If you want syzbot to run the reproducer, reply with:
+> > > #syz test: git://repo/address.git branch-or-commit-hash
+> > > If you attach or paste a git patch, syzbot will apply it before testi=
+ng.
+> >
+> > Bug probably added in
+> >
+> > commit 4cf476ced45d7f12df30a68e833b263e7a2202d1
+> > Author: Tom Parkin <tparkin@katalix.com>
+> > Date:   Thu Dec 10 15:50:57 2020 +0000
+> >
+> >     ppp: add PPPIOCBRIDGECHAN and PPPIOCUNBRIDGECHAN ioctls
+> >
+> >
+> >
+> > sk_backlog_rcv() is called without BH being blocked.
+> >
+> > Fx would be :
+> >
+> > diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generi=
+c.c
+> > index eb9acfcaeb097496b5e28c87af13f5b4091a9bed..9d2656afba660a1a0eda5a5=
+3903=3D
+> > b0f668a11abc9
+> > 100644
+> > --- a/drivers/net/ppp/ppp_generic.c
+> > +++ b/drivers/net/ppp/ppp_generic.c
+> > @@ -2269,7 +2269,7 @@ static bool ppp_channel_bridge_input(struct
+> > channel *pch, struct sk_buff *skb)
+> >         if (!pchb)
+> >                 goto out_rcu;
+> >
+> > -       spin_lock(&pchb->downl);
+> > +       spin_lock_bh(&pchb->downl);
+> >         if (!pchb->chan) {
+> >                 /* channel got unregistered */
+> >                 kfree_skb(skb);
+> > @@ -2281,7 +2281,7 @@ static bool ppp_channel_bridge_input(struct
+> > channel *pch, struct sk_buff *skb)
+> >                 kfree_skb(skb);
+> >
+> >  outl:
+> > -       spin_unlock(&pchb->downl);
+> > +       spin_unlock_bh(&pchb->downl);
+> >  out_rcu:
+> >         rcu_read_unlock();
+> >
 
