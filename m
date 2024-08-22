@@ -1,96 +1,50 @@
-Return-Path: <linux-kernel+bounces-298050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562EA95C119
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:48:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBAA995C11D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9FE28201C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEA7C1C22F6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C127F1D4151;
-	Thu, 22 Aug 2024 22:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9Y8KOdX"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EA61D2785;
+	Thu, 22 Aug 2024 22:47:43 +0000 (UTC)
+Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0876C1D4142
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2A11D1753
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724366781; cv=none; b=WA2ymTB+xIJ/niq6BH7HBWP8rwCqkfuclXHPhT0zgdZtO9Kvwr2QIX1G60rFLo0TiZXor93kaIFqcoQgmMQSqptRNSOakdvP/tHa+6+IJVesrjMkpyUH0imjAyLlqvcmi214Ah/gOAM2XuSSD6mbrWFAqaa+gXpjq6Nf9p7xNJc=
+	t=1724366863; cv=none; b=Mso26Ic2v/SNMhKQmcCTp3WBTiAfyFjPINLQ62lbLVRZpkl40QH2t/+C+ML+eZjLMVoWpVrw31XhjwxaplMO9zCeNgZ53KgDKaUMRQlE//DMHewJCfxI0K6PfF2VRBkN6+VsrmMifxzLD4Kes06x/7lep3yvC2E+WegsD6bHNiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724366781; c=relaxed/simple;
-	bh=B+QYo/05J+LjG9pa7GZRM+j5LasnoK0b6yQeAZz29bc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GU03Q+wEgwZl0vvzT0A/LKYq++V0pxztFcLyB0VdHlAFHs81bK4mKmI+13jdBBv6QbmArroavMK7CtcR7mOEPD+9UAz56/NtutGuX6EbzI5Bol5RehKyqDbK7bez1OaoS21yybF8IM3Wfv/knkpVLJWMvpFrqcLzruxM72mPrwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b9Y8KOdX; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5334879ba28so1672087e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724366778; x=1724971578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VphURB1Gan/55uptQu3RfCpWor8wG0jCnNbpjQVr+aE=;
-        b=b9Y8KOdXYy2tEkdyjH9tI726n/QiCiErvdulB+h9r6tYpFzkWrGEm5JvLYEL95snBH
-         tpmbdy4zvRZbswbjoFvBCRUVgTY5wRidF6050EHmVNzLWZlDIpZnNIn3tSwpGMSKzUKj
-         0tWuAKQo7LJo3tlCz70VOdrTyo8fw+rNmZbDl/KWQSfGIkqq4MKT0VPah4g3ysxu2Rml
-         S9x6VRR6/jh/vU4fptgo5LDTAiSwslYwvUsR7+MBkL/iZHf/FA1mGoS6u27LhkpH2dTg
-         MEUY/OvUEdBDkfGeT7Fe9RtZMMwdTy+dX4Vxtf+AG+4PG9Q8jWQ1+nbyvzjRawlaG4yI
-         2ivw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724366778; x=1724971578;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VphURB1Gan/55uptQu3RfCpWor8wG0jCnNbpjQVr+aE=;
-        b=gVDd2BU54JUQrjJc29T+KnfjR9kO4oWzPdUTfrl7Xsb0LCUKb8YUdHCwbSCnFQyfsP
-         m3vKd1uhGhZdtEyGvSqsUjSq3vJ5xKmZ+4SEJABwezJ6zSmm1jM2ELaNfua2MzNGwIUL
-         Q/7lOv069n3LfcUpnbJAM6LQ6mAClVunBBX6i7Cv12jAofpI8FVMvSDdmxD07U8ujnYY
-         fL20zXVCcwM2pt/Uf2dNjNsaYH/enfRNKWMDA3R9Pt8nXFpKbS51Irfoenxc0p0BJZPN
-         M3KH5mAMH+c4CK3CsPXpX7+AH4m1Ms0ICBxKuEC7DBSAAhkCHgBmwtgLqFwA/0oJUAEd
-         ilPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWornw3Y24UZ+M5TqMgv7Z7q0hdAzn8WWspjTjvvCDWftgFrs+pwgbRksk4vzsA5w2h1+xN4CzAisYk+GU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5dt5NPFDwRbsk6Ot0p89eYvgfGFCAF+DcHlXkzr4V/UJ98Y2n
-	6OTeMyHH0Xm16Mnu8o7CSncArFrDojhKndjovoNE78NWwYaNESG7O2lllutkijU=
-X-Google-Smtp-Source: AGHT+IFXpNYl8qtj2IvlPSDp3CA4+6RBm9vf/UbMJ3jZi+owQVOFOxqR3Yik2fhh9EMH6VdRLWKJ4g==
-X-Received: by 2002:a05:6512:31c4:b0:52e:f950:31f3 with SMTP id 2adb3069b0e04-53438785441mr234491e87.35.1724366778108;
-        Thu, 22 Aug 2024 15:46:18 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea362a4sm379443e87.66.2024.08.22.15.46.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 15:46:17 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ilia Lin <ilia.lin@kernel.org>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1724366863; c=relaxed/simple;
+	bh=1rMKw9UC6oo+REg5Z8MwVw2U7Asv5iEsjJzJB6Xcj8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZjs6Jcpybla7K37eRG4AgwO1wSdyfRlI4qWto3luo61i9B5G/Q6YfhNCP/1gquctYQepS9/FKoX49OPUlbKye3ZgJQpstw2zX72PhiKoofYaVamHxKyQRIqiAODYZPU5j4WYJjN3IDZ1wZV/0y4No12GtE3B/HBCoeXq1JoQg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 883d3ed8-60d8-11ef-822f-005056bdfda7;
+	Fri, 23 Aug 2024 01:47:38 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Prathamesh Shete <pshete@nvidia.com>,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/10] OPP: Drop redundant _opp_attach|detach_genpd()
-Date: Fri, 23 Aug 2024 00:45:47 +0200
-Message-Id: <20240822224547.385095-11-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822224547.385095-1-ulf.hansson@linaro.org>
-References: <20240822224547.385095-1-ulf.hansson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v1 1/1] gpio: tegra186: Replace of_node_to_fwnode() with more suitable API
+Date: Fri, 23 Aug 2024 01:47:37 +0300
+Message-ID: <20240822224737.706870-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,221 +53,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All users of _opp_attach|detach_genpd(), have been converted to use
-dev|devm_pm_domain_attach|detach_list(), hence let's drop it along with its
-corresponding exported functions.
+of_node_to_fwnode() is a IRQ domain specific implementation of
+of_fwnode_handle(). Replace the former with more suitable API.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
+ drivers/gpio/gpio-tegra186.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes in v3:
-	- None.
-
----
- drivers/opp/core.c     | 96 +-----------------------------------------
- drivers/opp/opp.h      |  3 +-
- include/linux/pm_opp.h | 38 +----------------
- 3 files changed, 3 insertions(+), 134 deletions(-)
-
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index cad7e84c9ad3..66cac7a1d9db 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -2360,86 +2360,6 @@ static void _opp_put_config_regulators_helper(struct opp_table *opp_table)
- 		opp_table->config_regulators = NULL;
- }
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 9130c691a2dd..1ecb733a5e88 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/seq_file.h>
  
--static void _opp_detach_genpd(struct opp_table *opp_table)
--{
--	int index;
--
--	for (index = 0; index < opp_table->required_opp_count; index++) {
--		if (!opp_table->required_devs[index])
--			continue;
--
--		dev_pm_domain_detach(opp_table->required_devs[index], false);
--	}
--}
--
--/*
-- * Multiple generic power domains for a device are supported with the help of
-- * virtual genpd devices, which are created for each consumer device - genpd
-- * pair. These are the device structures which are attached to the power domain
-- * and are required by the OPP core to set the performance state of the genpd.
-- * The same API also works for the case where single genpd is available and so
-- * we don't need to support that separately.
-- *
-- * This helper will normally be called by the consumer driver of the device
-- * "dev", as only that has details of the genpd names.
-- *
-- * This helper needs to be called once with a list of all genpd to attach.
-- * Otherwise the original device structure will be used instead by the OPP core.
-- *
-- * The order of entries in the names array must match the order in which
-- * "required-opps" are added in DT.
-- */
--static int _opp_attach_genpd(struct opp_table *opp_table, struct device *dev,
--			const char * const *names, struct device ***virt_devs)
--{
--	struct device *virt_dev;
--	int index = 0, ret = -EINVAL;
--	const char * const *name = names;
--
--	if (!opp_table->required_devs) {
--		dev_err(dev, "Required OPPs not available, can't attach genpd\n");
--		return -EINVAL;
--	}
--
--	/* Genpd core takes care of propagation to parent genpd */
--	if (opp_table->is_genpd) {
--		dev_err(dev, "%s: Operation not supported for genpds\n", __func__);
--		return -EOPNOTSUPP;
--	}
--
--	/* Checking only the first one is enough ? */
--	if (opp_table->required_devs[0])
--		return 0;
--
--	while (*name) {
--		if (index >= opp_table->required_opp_count) {
--			dev_err(dev, "Index can't be greater than required-opp-count - 1, %s (%d : %d)\n",
--				*name, opp_table->required_opp_count, index);
--			goto err;
--		}
--
--		virt_dev = dev_pm_domain_attach_by_name(dev, *name);
--		if (IS_ERR_OR_NULL(virt_dev)) {
--			ret = virt_dev ? PTR_ERR(virt_dev) : -ENODEV;
--			dev_err(dev, "Couldn't attach to pm_domain: %d\n", ret);
--			goto err;
--		}
--
--		index++;
--		name++;
--	}
--
--	if (virt_devs)
--		*virt_devs = opp_table->required_devs;
--
--	return 0;
--
--err:
--	_opp_detach_genpd(opp_table);
--	return ret;
--
--}
--
- static int _opp_set_required_dev(struct opp_table *opp_table,
- 				 struct device *dev,
- 				 struct device *required_dev,
-@@ -2516,9 +2436,6 @@ static void _opp_clear_config(struct opp_config_data *data)
- {
- 	if (data->flags & OPP_CONFIG_REQUIRED_DEV)
- 		_opp_put_required_dev(data->opp_table, data->index);
--	else if (data->flags & OPP_CONFIG_GENPD)
--		_opp_detach_genpd(data->opp_table);
--
- 	if (data->flags & OPP_CONFIG_REGULATOR)
- 		_opp_put_regulators(data->opp_table);
- 	if (data->flags & OPP_CONFIG_SUPPORTED_HW)
-@@ -2630,18 +2547,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
- 		data->flags |= OPP_CONFIG_REGULATOR;
- 	}
+ #include <dt-bindings/gpio/tegra186-gpio.h>
+@@ -928,7 +929,7 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
  
--	/* Attach genpds */
--	if (config->genpd_names) {
--		if (config->required_dev)
--			goto err;
--
--		ret = _opp_attach_genpd(opp_table, dev, config->genpd_names,
--					config->virt_devs);
--		if (ret)
--			goto err;
--
--		data->flags |= OPP_CONFIG_GENPD;
--	} else if (config->required_dev && config->required_opp_table) {
-+	if (config->required_dev && config->required_opp_table) {
- 		ret = _opp_set_required_dev(opp_table, dev,
- 					    config->required_dev,
- 					    config->required_opp_table);
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index 5b5a4bd89c9e..318a4ecbabf1 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -34,8 +34,7 @@ extern struct list_head opp_tables;
- #define OPP_CONFIG_REGULATOR_HELPER	BIT(2)
- #define OPP_CONFIG_PROP_NAME		BIT(3)
- #define OPP_CONFIG_SUPPORTED_HW		BIT(4)
--#define OPP_CONFIG_GENPD		BIT(5)
--#define OPP_CONFIG_REQUIRED_DEV		BIT(6)
-+#define OPP_CONFIG_REQUIRED_DEV		BIT(5)
- 
- /**
-  * struct opp_config_data - data for set config operations
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 5fade5c4de40..451a7465a605 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -62,11 +62,7 @@ typedef int (*config_clks_t)(struct device *dev, struct opp_table *opp_table,
-  * @supported_hw: Array of hierarchy of versions to match.
-  * @supported_hw_count: Number of elements in the array.
-  * @regulator_names: Array of pointers to the names of the regulator, NULL terminated.
-- * @genpd_names: Null terminated array of pointers containing names of genpd to
-- *		attach. Mutually exclusive with required_dev.
-- * @virt_devs: Pointer to return the array of genpd virtual devices. Mutually
-- *		exclusive with required_dev.
-- * @required_dev: Required OPP device. Mutually exclusive with genpd_names/virt_devs.
-+ * @required_dev: Required OPP device.
-  * @required_opp_table: The corresponding required OPP table for @required_dev.
-  *
-  * This structure contains platform specific OPP configurations for the device.
-@@ -80,8 +76,6 @@ struct dev_pm_opp_config {
- 	const unsigned int *supported_hw;
- 	unsigned int supported_hw_count;
- 	const char * const *regulator_names;
--	const char * const *genpd_names;
--	struct device ***virt_devs;
- 	struct device *required_dev;
- 	struct opp_table *required_opp_table;
- };
-@@ -677,36 +671,6 @@ static inline void dev_pm_opp_put_config_regulators(int token)
- 	dev_pm_opp_clear_config(token);
- }
- 
--/* genpd helpers */
--static inline int dev_pm_opp_attach_genpd(struct device *dev,
--					  const char * const *names,
--					  struct device ***virt_devs)
--{
--	struct dev_pm_opp_config config = {
--		.genpd_names = names,
--		.virt_devs = virt_devs,
--	};
--
--	return dev_pm_opp_set_config(dev, &config);
--}
--
--static inline void dev_pm_opp_detach_genpd(int token)
--{
--	dev_pm_opp_clear_config(token);
--}
--
--static inline int devm_pm_opp_attach_genpd(struct device *dev,
--					   const char * const *names,
--					   struct device ***virt_devs)
--{
--	struct dev_pm_opp_config config = {
--		.genpd_names = names,
--		.virt_devs = virt_devs,
--	};
--
--	return devm_pm_opp_set_config(dev, &config);
--}
--
- /* prop-name helpers */
- static inline int dev_pm_opp_set_prop_name(struct device *dev, const char *name)
- {
+ 	irq = &gpio->gpio.irq;
+ 	gpio_irq_chip_set_chip(irq, &tegra186_gpio_irq_chip);
+-	irq->fwnode = of_node_to_fwnode(pdev->dev.of_node);
++	irq->fwnode = dev_fwnode(&pdev->dev);
+ 	irq->child_to_parent_hwirq = tegra186_gpio_child_to_parent_hwirq;
+ 	irq->populate_parent_alloc_arg = tegra186_gpio_populate_parent_fwspec;
+ 	irq->child_offset_to_irq = tegra186_gpio_child_offset_to_irq;
 -- 
-2.34.1
+2.46.0
 
 
