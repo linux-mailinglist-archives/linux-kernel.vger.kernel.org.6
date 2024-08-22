@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-297756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D303E95BD4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:31:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E3695BD55
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ABF8B20E31
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:31:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E6F0B250B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7D41CEAD4;
-	Thu, 22 Aug 2024 17:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE1A1CF284;
+	Thu, 22 Aug 2024 17:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikqtAQwt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VY0RjK3p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2DA1D12E4;
-	Thu, 22 Aug 2024 17:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888121D12E4;
+	Thu, 22 Aug 2024 17:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724347859; cv=none; b=EN4vgeKd9UBvupeYtuj48maAkCelVdXmx5QJJNoqD6Rrad3KUuQo0OmPW6W5eUQ9FR2SfCYzpha6qxYxvuKofBcHjjXaAl1iPfcVjr3A/Al52rSgmICLjR8pBOXrCQe67hrrXBiLc8PMLcWQQPDbvDNKTA8+X+7L1kP+BfofmuU=
+	t=1724347896; cv=none; b=PZem3yVs54YDUMXozfYZ3Qd7IVIDVFnni+pDCQuyl0J7oeGEDbHTA13ALg+Y85xNLnZOEGK2Q7q1MEOCba7aESfOkIEcbALQzdMv3+xKoClH3vQrj4vPqsv1m/uX9HQBLsLTfFYOF/oThRM2BkD95l4FSCNoF7woxRRlI7IPpbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724347859; c=relaxed/simple;
-	bh=NEmbbg8L2Bfrsg3LdNNpLmYp7+z/wYUOhdnFgomJAhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gybwa6OqavMFZ0iZ7crZJrRWkBs9xfd0n3tvXGTmJNp2z4d0g+D++906PbqBV+9uy5V9jxUeWAJ9fphWB0iZRQOWo1abM180D9B5H3qybzkcowG8e4F1x5QSntP6ZJ0B1P2nkhYsciW5+S+EcKPOKT263VwJP4JMt9wEWi7xvsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikqtAQwt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85044C32782;
-	Thu, 22 Aug 2024 17:30:58 +0000 (UTC)
+	s=arc-20240116; t=1724347896; c=relaxed/simple;
+	bh=+ErfjZ5uE2QjG3DbjCEAl7HlVAjqKO+KHb2nztO5G+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=K0BwmoMkXiq7BVBiCNo+TAR3MYz/qkShm/27QkosG/UZnLq+u0ESEjETDNNyWdwP7OEXC1Lsfan5ouZ3q1M4INVWykQ9fCC9DA1rVqkhg4+r8fBRGm5W6rkXcgOvr+IVI++Cf/vTlr0ZBuwg2wK6CLyImJtRm9mM/eAqfeA97h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VY0RjK3p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6CD3C4AF0F;
+	Thu, 22 Aug 2024 17:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724347859;
-	bh=NEmbbg8L2Bfrsg3LdNNpLmYp7+z/wYUOhdnFgomJAhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ikqtAQwtRrEpLzRohAGA+qNmOG+TVb1qThYeB20Y/Rk8LI7FU0VJET/gHeWL16BXq
-	 QZJfX39NMfafJ1FzVkN4ltE2CZW3ItKeVYt8IycDgCeLLfuh0r2uRLDWZ04/PypHs6
-	 s+MGNZPewB6jtWVhV7hrSdK3dA9ZJDHvvHhPAtsfxbo5lcriqWLIPch63YvNEb7bvj
-	 mKT4+II0xSVQPbirmPqGpXOCJtrJ5BOwbz+S2JpDOkZcFSQI6txfB5pByPQr/Jo0Mu
-	 8SvR/xM9sWHMARckle6xSHr228r6G6hj9zO2NXqWhsK7TG51FQwJDp+RQ7WZOdHsEf
-	 rIBkFTrNQkZOg==
-Date: Thu, 22 Aug 2024 18:30:55 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 19/39] arm64/mm: Handle GCS data aborts
-Message-ID: <Zsd1zxJ1n5-_lpbx@finisterre.sirena.org.uk>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-19-41b81947ecb5@kernel.org>
- <ZsdjbsDrMWgBU9Hj@arm.com>
- <Zsdq4ymaW0vQffH_@finisterre.sirena.org.uk>
- <ZsdzKrTbrolW0lHn@arm.com>
+	s=k20201202; t=1724347896;
+	bh=+ErfjZ5uE2QjG3DbjCEAl7HlVAjqKO+KHb2nztO5G+I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VY0RjK3pG8GUCrKZkcbrgSsSfF5Wof6KfWs1lhRagvFQ9Ad+m10dL87+j5mO9yvP0
+	 QDtKok8c5tdpB3vhkJO99uMdYhJssyWs35CvBO6NowMe5FYyd7r0+bpDiMXr2ToeVr
+	 sPNB0gueIMXpp5/tjTsr5tqqW7MRgVfNHvFHzq2uJ29nRwcbdvdoNoJop1ECHI9HWw
+	 3lfMfzvr3hN3ppwpfS/NkBik6m88ZeNaQMbXNRhbiS2gPXX4fcqB9OSpU77lEEMjTE
+	 XzEQ5Za31X+K5SDTfISwwpwSMPGQw2qv26D8T6bC/Krw1fkpVqiP8wVOgB9ern33im
+	 ymNfz3UjxteHA==
+Date: Thu, 22 Aug 2024 12:31:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
+Message-ID: <20240822173133.GA312907@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QBL8uS70EYGjHk3p"
-Content-Disposition: inline
-In-Reply-To: <ZsdzKrTbrolW0lHn@arm.com>
-X-Cookie: Your love life will be... interesting.
-
-
---QBL8uS70EYGjHk3p
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240822154025.vfl6mippkz3duimg@thinkpad>
 
-On Thu, Aug 22, 2024 at 06:19:38PM +0100, Catalin Marinas wrote:
-> On Thu, Aug 22, 2024 at 05:44:19PM +0100, Mark Brown wrote:
-> > On Thu, Aug 22, 2024 at 05:12:30PM +0100, Catalin Marinas wrote:
-> > > On Thu, Aug 22, 2024 at 02:15:22AM +0100, Mark Brown wrote:
-> >=20
-> > > > +static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 =
-esr)
-> >=20
-> > > > +	} else if (unlikely(vma->vm_flags & VM_SHADOW_STACK)) {
-> > > > +		/* Only GCS operations can write to a GCS page */
-> > > > +		return is_write_abort(esr);
-> > > > +	}
+On Thu, Aug 22, 2024 at 09:10:25PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Aug 22, 2024 at 10:16:58AM -0500, Bjorn Helgaas wrote:
+> > On Thu, Aug 22, 2024 at 12:18:23PM +0530, Manivannan Sadhasivam wrote:
+> > > On Wed, Aug 21, 2024 at 05:56:18PM -0500, Bjorn Helgaas wrote:
+> > > ...
+> > 
+> > > > Although I do have the question of what happens if the RC deasserts
+> > > > PERST# before qcom-ep is loaded.  We probably don't execute
+> > > > qcom_pcie_perst_deassert() in that case, so how does the init happen?
+> > > 
+> > > PERST# is a level trigger signal. So even if the host has asserted
+> > > it before EP booted, the level will stay low and ep will detect it
+> > > while booting.
+> > 
+> > The PERST# signal itself is definitely level oriented.
+> > 
+> > I'm still skeptical about the *interrupt* from the PCIe controller
+> > being level-triggered, as I mentioned here:
+> > https://lore.kernel.org/r/20240815224735.GA57931@bhelgaas
+> 
+> Sorry, that comment got buried into my inbox. So didn't get a chance
+> to respond.
+> 
+> > tegra194 is also dwc-based and has a similar PERST# interrupt but
+> > it's edge-triggered (tegra_pcie_ep_pex_rst_irq()), which I think
+> > is a cleaner implementation.  Then you don't have to remember the
+> > current state, switch between high and low trigger, worry about
+> > races and missing a pulse, etc.
+> 
+> I did try to mimic what tegra194 did when I wrote the qcom-ep
+> driver, but it didn't work. If we use the level triggered interrupt
+> as edge, the interrupt will be missed if we do not listen at the
+> right time (when PERST# goes from high to low and vice versa).
+> 
+> I don't know how tegra194 interrupt controller is wired up, but IIUC
+> they will need to boot the endpoint first and then host to catch the
+> PERST# interrupt.  Otherwise, the endpoint will never see the
+> interrupt until host toggles it again.
 
-> > Yes, that should check for a data abort.  I think I'd formed the
-> > impression that is_write_abort() included that check somehow.  As you
-> > say it's to avoid spinning trying to resolve a permission fault for a
-> > write (non-GCS reads to a GCS page are valid), I do think we need the=
-=20
-> > is_write_abort() since non-GCS reads are valid so something like:
-> >=20
-> > 	if (!esr_is_data_abort(esr))
-> > 		return false;
-> >=20
-> > 	return is_write_abort(esr);
->=20
-> We do need the write abort check but not unconditionally, only if to a
-> GCS page (you can have other genuine write aborts).
+Having to control the boot ordering of endpoint and host is definitely
+problematic.
 
-tThat was to replace the checks in the above case, not the function as a
-whole.
+What is the nature of the crash when we try to enable the PHY when
+Refclk is not available?  The endpoint has no control over when the
+host asserts/deasserts PERST#.  If PERST# happens to be asserted while
+the endpoint is enabling the PHY, and this causes some kind of crash
+that the endpoint driver can't easily recover from, that's a serious
+robustness problem.
 
---QBL8uS70EYGjHk3p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHdcwACgkQJNaLcl1U
-h9DRZgf/cfCggcnTIkzrBOCGpdBnnvrHenLxqYdUHuYxfAA/f/+OY6Ryiz7GiVVN
-dsEg7gYHWwsk0cTwEgGm++++b84foIZ1WeBZ46XlkFKSK0McT1h01SxvUqi6bu3R
-Mj62HWq2M43bg8tVzjIsNFMIZKxKg/8RJVKFsg0KTx/Y4JLXoJkLtplgh4eCuxh0
-Xg0yYgmx4aE7JOYegrvzRVUuj0F6rT8Io3eU7LbdJ4GpP28wCf6jVymCjyhQOHav
-sWHIP3j85jUutzI9HQAsfUt9BnT6GMnKfu16R9nOAdGgfc/XMzzW7lgzRJhLeroa
-kebp1dN/8F8ek5AKqLqstfOmgDdTzg==
-=+1Rr
------END PGP SIGNATURE-----
-
---QBL8uS70EYGjHk3p--
+> But there is no point in forcing this ordering and that was the
+> reason why I went with the level triggered approach.
 
