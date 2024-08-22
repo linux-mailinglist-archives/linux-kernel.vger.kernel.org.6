@@ -1,220 +1,157 @@
-Return-Path: <linux-kernel+bounces-296570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD4E95AC43
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:53:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D2295AC46
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF17281B3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:53:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66BCF1C21543
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C2136AE0;
-	Thu, 22 Aug 2024 03:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0A13611B;
+	Thu, 22 Aug 2024 03:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huLp39pL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CHpwZIFk"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6323433C0;
-	Thu, 22 Aug 2024 03:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8202C208A7
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 03:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724298799; cv=none; b=KL0OssDg0P+61zVWbXDO5qTcA5Ke3iz8tPPRYu8zS7B/UB5aYKYfCvdcBUypJNh58Bs/kzZf1b3K77lEhXXkHtcO8h/e6PIPDvssfXd8vS9QRZcmssnu/M+QPxtONR4wRK8HDDt7ww4YrUSxqIirGnhkD/z/+lK1PVLUujJtvaw=
+	t=1724298889; cv=none; b=oc5jnlzS18gUyqwtRlqfEmeIUdKkSIwcrONTnkH6E2UQVisAbX5EeX63MqAXkn/fSWsORceX8XLw91uhYyNkIP4Oi+oMmze6cRu2QUpB3lME5izBS1dW3EF5XTWtrk1R/NUNJHQnh9gTXi9A/fCv/sRgvPC039nF2V0RN7MziFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724298799; c=relaxed/simple;
-	bh=lQkngNsxmX1RosieqOuwNFWeXUOJ8jXJeC0eLMrePwE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Sn7NRdnXmZLLLfJsSNdwDIoxA7wWgyLz6CM647gHV5+kPtPmmyMWJqHr11DQBOKibFunZGHDPN+GqsySnXYwK+28E44aIBFS0S7Jr9wUvqTpGxQ8JgrMBagBKG62kC1pGubXs3duBYMcEZepYS9bKRLEAcUlx4831fcXHH6pw3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huLp39pL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B71BC4AF09;
-	Thu, 22 Aug 2024 03:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724298799;
-	bh=lQkngNsxmX1RosieqOuwNFWeXUOJ8jXJeC0eLMrePwE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=huLp39pLmt+ag3odDw/P4H9LBhorXwgCcr53HUzIaWgRD+DjFLiOSPqPWXg5cHXYv
-	 +2KpDKpZq6sAiql+luhHtCqJjCXL1XWHTGvQNo7Vt5fhzhPaRX7QZ3qx4CIPU9mRIh
-	 oLoI1xyRnF6DvT+TqDVJe5rPaNITdxHyWh0TOV7M6c5KlsICuThy/SFIVguIiIFYRS
-	 6Nrz8P/bOPGNKPo3JOpU+/7fPwoU5lXQ+FX696mS+NsTqm+d3Gx5WhmKDHtsxTt03U
-	 OGHH04cOa4EN0wmcFJUTqUWQjAwY5rhUxex6rH4lrtbV/YLs/ubEI/iEZ+uNDT0m/y
-	 tqo/9W3olcjZQ==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v4 18/43] arm64: RME: Handle realm enter/exit
-In-Reply-To: <20240821153844.60084-19-steven.price@arm.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-19-steven.price@arm.com>
-Date: Thu, 22 Aug 2024 09:23:07 +0530
-Message-ID: <yq5aa5h52oyk.fsf@kernel.org>
+	s=arc-20240116; t=1724298889; c=relaxed/simple;
+	bh=T/F5YWbBsHJ/z0Iuh2yAc4urVrY6y59yzaKigq0sOvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BZ5nplvtn9Nq5R6qhuMTeEiZBDuYo2ZUD2yBG8+Rio9pRi6T3fIINv3POcE9i9ozQlFdGHilOxpA0tQl98VQIbHQYu2LsTmGY0EZNtJ4SQ7FfHd3bw+s2QrjpsnksEYya2AZUraWj7fZ+8z+0lT0AR/lKePZiVElbpyUkXf0dgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CHpwZIFk; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so256280b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 20:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1724298886; x=1724903686; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3+51o8YiuRVZF11J4eUjPb8uV0dcc874YeCBbU5SJ2E=;
+        b=CHpwZIFk7PKPPrusbDFktlICkdUajUnnYEPKiqgT33nxNZbcY6Unn32lxf1eaHfrB7
+         s5XjLAPLVXtdVXq5t5SwKqEfmHD2W59cqNgIl50Hj3IvQxWp7kZ6ip9T5F0QbQnDfaJO
+         VUUapfPMZ+VebD8eHQ1twkw13Eh2t86zUkx9M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724298886; x=1724903686;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3+51o8YiuRVZF11J4eUjPb8uV0dcc874YeCBbU5SJ2E=;
+        b=ar5cmgMruMXkk8UJ5rSR2CJw11L2Qy4ceW1YA24gaGd1oJVzPrlsyEmGsvdKiayzUJ
+         k2rbq8/Xo6IHon+Ge9iE+D6MeWNNtLU2NeCrCCwTwUeUKxQTePWA+EsF6KOn0R8E6MVQ
+         prh/nxTjOnd4GuyW4B9cjAVbza8rOhXzpnMgNAE99yr5fQVcjYnj74FF1KiTyeX7+RTa
+         XBzpLpYHxHhfLQ/0ulR9H1j5To54ao4svjtiTxuGfgdh8ehM4xqvHI+ALXtLFNSgy6kT
+         8LWcEF7SRH17Cm9hW1E4mElG/+b8z+7vMbTCGERFI6vyXAnW1UTm6heJMD5OYMl1RAYC
+         zMpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1p2jYAoGTwtthE/n9+dPrE0bg9ZJ78Fi2R0iei1HGqnFqBE6lnwmbMq55ifxLDSpF9iOn2n9UBOTaksE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu88ewENoOe+6i1SghmKyO7xpxBpgYUvEkhRH65QlrJT68nBGM
+	wKRAZRuJiSK585Zd+6bmUt+KGxoExuJ66rKMIJhc6CR31aeQLyQMQalYOq8XqrU=
+X-Google-Smtp-Source: AGHT+IEF5mjPTWIL5LkSLOikrrXvOOmbWUvTcH0b28Ep5CS8oSuo0W0v93DNqIuCxV5/NJGwDW5vvg==
+X-Received: by 2002:a05:6a21:920b:b0:1c6:fbc8:670d with SMTP id adf61e73a8af0-1cada148a32mr5136891637.43.1724298885562;
+        Wed, 21 Aug 2024 20:54:45 -0700 (PDT)
+Received: from [172.20.0.208] ([218.188.70.188])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385bdc5e0sm3324215ad.271.2024.08.21.20.54.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 20:54:44 -0700 (PDT)
+Message-ID: <3901c521-be69-4824-a571-9182b9af02b6@linuxfoundation.org>
+Date: Wed, 21 Aug 2024 21:54:42 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ftrace/selftest: Test combination of function_graph
+ tracer and function profiler
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240821150903.05c6cf96@gandalf.local.home>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240821150903.05c6cf96@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Steven Price <steven.price@arm.com> writes:
-
-> Entering a realm is done using a SMC call to the RMM. On exit the
-> exit-codes need to be handled slightly differently to the normal KVM
-> path so define our own functions for realm enter/exit and hook them
-> in if the guest is a realm guest.
->
-> Signed-off-by: Steven Price <steven.price@arm.com>
+On 8/21/24 13:09, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Masami reported a bug when running function graph tracing then the
+> function profiler. The following commands would cause a kernel crash:
+> 
+>    # cd /sys/kernel/tracing/
+>    # echo function_graph > current_tracer
+>    # echo 1 > function_profile_enabled
+> 
+> In that order. Create a test to test this two to make sure this does not
+> come back as a regression.
+> 
+> Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
-> Changes since v2:
->  * realm_set_ipa_state() now provides an output parameter for the
->    top_iap that was changed. Use this to signal the VMM with the correct
->    range that has been transitioned.
->  * Adapt to previous patch changes.
-> ---
->  arch/arm64/include/asm/kvm_rme.h |   3 +
->  arch/arm64/kvm/Makefile          |   2 +-
->  arch/arm64/kvm/arm.c             |  19 +++-
->  arch/arm64/kvm/rme-exit.c        | 181 +++++++++++++++++++++++++++++++
->  arch/arm64/kvm/rme.c             |  11 ++
->  5 files changed, 210 insertions(+), 6 deletions(-)
->  create mode 100644 arch/arm64/kvm/rme-exit.c
->
-> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
-> index c064bfb080ad..0e44b20cfa48 100644
-> --- a/arch/arm64/include/asm/kvm_rme.h
-> +++ b/arch/arm64/include/asm/kvm_rme.h
-> @@ -96,6 +96,9 @@ void kvm_realm_destroy_rtts(struct kvm *kvm, u32 ia_bits);
->  int kvm_create_rec(struct kvm_vcpu *vcpu);
->  void kvm_destroy_rec(struct kvm_vcpu *vcpu);
->  
-> +int kvm_rec_enter(struct kvm_vcpu *vcpu);
-> +int handle_rme_exit(struct kvm_vcpu *vcpu, int rec_run_status);
+>   .../ftrace/test.d/ftrace/fgraph-profiler.tc   | 30 +++++++++++++++++++
+>   1 file changed, 30 insertions(+)
+>   create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+> new file mode 100644
+> index 000000000000..62d44a1395da
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+> @@ -0,0 +1,30 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# description: ftrace - function profiler with function graph tracing
+> +# requires: function_profile_enabled set_ftrace_filter function_graph:tracer
 > +
->  void kvm_realm_unmap_range(struct kvm *kvm,
->  			   unsigned long ipa,
->  			   u64 size,
-> diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
-> index 5e79e5eee88d..9f893e86cac9 100644
-> --- a/arch/arm64/kvm/Makefile
-> +++ b/arch/arm64/kvm/Makefile
-> @@ -21,7 +21,7 @@ kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
->  	 vgic/vgic-mmio.o vgic/vgic-mmio-v2.o \
->  	 vgic/vgic-mmio-v3.o vgic/vgic-kvm-device.o \
->  	 vgic/vgic-its.o vgic/vgic-debug.o \
-> -	 rme.o
-> +	 rme.o rme-exit.o
->  
->  kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu.o
->  kvm-$(CONFIG_ARM64_PTR_AUTH)  += pauth.o
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 568e9e6e5a4e..e8dabb996705 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -1282,7 +1282,10 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
->  		trace_kvm_entry(*vcpu_pc(vcpu));
->  		guest_timing_enter_irqoff();
->  
-> -		ret = kvm_arm_vcpu_enter_exit(vcpu);
-> +		if (vcpu_is_rec(vcpu))
-> +			ret = kvm_rec_enter(vcpu);
-> +		else
-> +			ret = kvm_arm_vcpu_enter_exit(vcpu);
->  
->  		vcpu->mode = OUTSIDE_GUEST_MODE;
->  		vcpu->stat.exits++;
-> @@ -1336,10 +1339,13 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
->  
->  		local_irq_enable();
->  
-> -		trace_kvm_exit(ret, kvm_vcpu_trap_get_class(vcpu), *vcpu_pc(vcpu));
-> -
->  		/* Exit types that need handling before we can be preempted */
-> -		handle_exit_early(vcpu, ret);
-> +		if (!vcpu_is_rec(vcpu)) {
-> +			trace_kvm_exit(ret, kvm_vcpu_trap_get_class(vcpu),
-> +				       *vcpu_pc(vcpu));
+> +# The function graph tracer can now be run along side of the function
+> +# profiler. But there was a bug that caused the combination of the two
+> +# to crash. It also required the function graph tracer to be started
+> +# first.
+> +#
+> +# This test triggers that bug
+> +#
+> +# We need function_graph and profiling to to run this test
 > +
-> +			handle_exit_early(vcpu, ret);
-> +		}
->  
->  		preempt_enable();
->  
-> @@ -1362,7 +1368,10 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
->  			ret = ARM_EXCEPTION_IL;
->  		}
->  
-> -		ret = handle_exit(vcpu, ret);
-> +		if (vcpu_is_rec(vcpu))
-> +			ret = handle_rme_exit(vcpu, ret);
-> +		else
-> +			ret = handle_exit(vcpu, ret);
->  	}
->
+> +fail() { # mesg
+> +    echo $1
+> +    exit_fail
+> +}
+> +
+> +echo "Enabling function graph tracer:"
+> +echo function_graph > current_tracer
+> +echo "enable profiler"
+> +
+> +# Older kernels do not allow function_profile to be enabled with
+> +# function graph tracer. If the below fails, mark it as unsupported
+> +echo 1 > function_profile_enabled || exit_unsupported
+> +
+> +sleep 1
 
-like kvm_rec_enter, should we name this as handle_rec_exit()?
+Any specific reason for this sleep 1 - can you add a comment on top?
+> +
+> +exit 0
 
- arch/arm64/include/asm/kvm_rme.h | 2 +-
- arch/arm64/kvm/arm.c             | 2 +-
- arch/arm64/kvm/rme-exit.c        | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
 
-diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
-index a72e06cf4ea6..cd42c19ca21d 100644
---- a/arch/arm64/include/asm/kvm_rme.h
-+++ b/arch/arm64/include/asm/kvm_rme.h
-@@ -102,7 +102,7 @@ int kvm_create_rec(struct kvm_vcpu *vcpu);
- void kvm_destroy_rec(struct kvm_vcpu *vcpu);
- 
- int kvm_rec_enter(struct kvm_vcpu *vcpu);
--int handle_rme_exit(struct kvm_vcpu *vcpu, int rec_run_status);
-+int handle_rec_exit(struct kvm_vcpu *vcpu, int rec_run_status);
- 
- void kvm_realm_unmap_range(struct kvm *kvm,
- 			   unsigned long ipa,
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 05d9062470c2..1e34541d88db 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -1391,7 +1391,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
- 		}
- 
- 		if (vcpu_is_rec(vcpu))
--			ret = handle_rme_exit(vcpu, ret);
-+			ret = handle_rec_exit(vcpu, ret);
- 		else
- 			ret = handle_exit(vcpu, ret);
- 	}
-diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
-index 0940575b0a14..f888cfe72dfa 100644
---- a/arch/arm64/kvm/rme-exit.c
-+++ b/arch/arm64/kvm/rme-exit.c
-@@ -156,7 +156,7 @@ static void update_arch_timer_irq_lines(struct kvm_vcpu *vcpu)
-  * Return > 0 to return to guest, < 0 on error, 0 (and set exit_reason) on
-  * proper exit to userspace.
-  */
--int handle_rme_exit(struct kvm_vcpu *vcpu, int rec_run_ret)
-+int handle_rec_exit(struct kvm_vcpu *vcpu, int rec_run_ret)
- {
- 	struct realm_rec *rec = &vcpu->arch.rec;
- 	u8 esr_ec = ESR_ELx_EC(rec->run->exit.esr);
--- 
+Let me know if you would like v2 for this to be taken through my tree.
 
+thanks,
+-- Shuah
 
