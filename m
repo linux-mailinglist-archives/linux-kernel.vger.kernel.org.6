@@ -1,240 +1,113 @@
-Return-Path: <linux-kernel+bounces-297240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EEA395B4CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C571895B4C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B991F237D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:15:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67CEA1F21BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753271C9DC5;
-	Thu, 22 Aug 2024 12:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rNa90iTq"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7521C944B;
-	Thu, 22 Aug 2024 12:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89071C9DE1;
+	Thu, 22 Aug 2024 12:14:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEFB1C9459;
+	Thu, 22 Aug 2024 12:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724328895; cv=none; b=m1I2oVfsPneEpX0flFssRY/VwPwqZz7yBpof7shy4xNJZFU5IzJ7dq4BuywmiCPca9G7qmpguML3A+9tV5InQ6s34W6s1oXZ6/HN8UzDhsg76yyuGtrNRtitsOMxnR6WYjs/9w/5TUe8rg21y8pW6yiMjtT5A/RalswGbEZZ6Gs=
+	t=1724328875; cv=none; b=efqhCnSlZcAjfaS6xyzI9Sdqq7Mlxn8XNAB+oNpPbyeVjyo4N08lhlx4WFq8yzHHpeSWWelQltLxqUQ8gglz3Gl+NqeTKbmNy8/krCC4e/I7zFhhTUnHD4eKx4xjlHiv44gnsy55ajdFNiDv0UOxntBzBsP54cYQAxR9BLE4rp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724328895; c=relaxed/simple;
-	bh=ATJVp3lpnkfs4QsNFNntgkzRlk3XMHUwG4vsdi09DVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Qaz6M9T7EM2rH1uWa66mqsfMk7INvzUOZBpgEtwIQzPqOdREMYTb6NByStqWJ0iPOcdkNwPlLlgvYXwiw0qPgaPeRngq1lCnXnyN5hv7Ve59ZvCoBJvH2obchgZL7Ap8DdHjsCqeRYnpfxi/rdMF04jan0EQ9C5u6/yG3OhBEAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rNa90iTq; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47MCEP7W083434;
-	Thu, 22 Aug 2024 07:14:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724328865;
-	bh=DSYOcj5Ckgo8h2B8oow/pztkj2240hze06pziEVRE44=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=rNa90iTq6GzGO56/5tc60EmZEsgrwgLewCu9Lr/0kJMnGnr841KO7LNBaQhdneFGW
-	 2ixRE12+IwgF05PW8NgOIQmNaGFB08rppVjAIBJiosEmiPGOCZbYOl30FqTWjJlAbA
-	 UFziabLXATMf8fAqrmSZRYBfaV/M8EiaKpGXTVRU=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47MCEPKY097467
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 22 Aug 2024 07:14:25 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
- Aug 2024 07:14:25 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 22 Aug 2024 07:14:25 -0500
-Received: from [10.249.135.225] ([10.249.135.225])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47MCEFR8104126;
-	Thu, 22 Aug 2024 07:14:16 -0500
-Message-ID: <3bee2863-8d6c-4b62-aadf-a051b6f9905a@ti.com>
+	s=arc-20240116; t=1724328875; c=relaxed/simple;
+	bh=cYztCLdn/b65lfJRc1shdcdICRccq0c2A1+0DdVlHEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=s8T11gJLkv6h1SjPkZDchkPMFMSWY7YgGnxWCTz5RlDjUoNwaJRSlIeT9CxK2/qJD5xzdsj/+NTfK8u9Ny+2A6W/OXhx/ZnobAVhAB2PG+XVb/WFtnvSWyL3DMfp1zqRM9eG6/JcOfS/uzE8r05GkjZ5vHT6wj5cGXUbmOMxyBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81220DA7;
+	Thu, 22 Aug 2024 05:14:59 -0700 (PDT)
+Received: from e116581.arm.com (unknown [10.163.87.181])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 80B5A3F66E;
+	Thu, 22 Aug 2024 05:14:28 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: shuah@kernel.org,
+	oleg@redhat.com
+Cc: mingo@kernel.org,
+	tglx@linutronix.de,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	broonie@kernel.org,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com,
+	aneesh.kumar@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
 Date: Thu, 22 Aug 2024 17:44:14 +0530
+Message-Id: <20240822121415.3589190-2-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240822121415.3589190-1-dev.jain@arm.com>
+References: <20240822121415.3589190-1-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 7/7] net: ti: icssg-prueth: Enable HSR Tx Tag
- and Rx Tag offload
-To: Roger Quadros <rogerq@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>, Andrew Lunn <andrew@lunn.ch>,
-        Jan
- Kiszka <jan.kiszka@siemens.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-        Jacob Keller
-	<jacob.e.keller@intel.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
-	<horms@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-References: <20240813074233.2473876-1-danishanwar@ti.com>
- <20240813074233.2473876-8-danishanwar@ti.com>
- <9f8beb62-42db-47d9-bba6-f942a655217d@kernel.org>
- <cfb025a4-41a4-448f-a7a8-7ce14f8532f5@ti.com>
- <e89b3b8d-98db-4bf7-b90b-4df1fd1105e3@kernel.org>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <e89b3b8d-98db-4bf7-b90b-4df1fd1105e3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
+Rename sigaltstack to generic signal directory, to allow adding more
+signal tests in the future.
 
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/Makefile                                | 2 +-
+ tools/testing/selftests/{sigaltstack => signal}/.gitignore      | 0
+ tools/testing/selftests/{sigaltstack => signal}/Makefile        | 0
+ .../selftests/{sigaltstack => signal}/current_stack_pointer.h   | 0
+ tools/testing/selftests/{sigaltstack => signal}/sas.c           | 0
+ 5 files changed, 1 insertion(+), 1 deletion(-)
+ rename tools/testing/selftests/{sigaltstack => signal}/.gitignore (100%)
+ rename tools/testing/selftests/{sigaltstack => signal}/Makefile (100%)
+ rename tools/testing/selftests/{sigaltstack => signal}/current_stack_pointer.h (100%)
+ rename tools/testing/selftests/{sigaltstack => signal}/sas.c (100%)
 
-On 8/22/2024 4:58 PM, Roger Quadros wrote:
-> 
-> 
-> On 22/08/2024 11:03, MD Danish Anwar wrote:
->>
->>
->> On 21/08/24 5:45 pm, Roger Quadros wrote:
->>>
->>>
->>> On 13/08/2024 10:42, MD Danish Anwar wrote:
->>>> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
->>>>
->>>> Add support to offload HSR Tx Tag Insertion and Rx Tag Removal
->>>> and duplicate discard.
->>>
->>> I can see code for Tx Tag insertion and RX tag removal.
->>> Where are you doing duplicate discard in this patch?
->>>
->>
->> Roger, duplicate discard is done as part of RX tag removal and it is
->> done by firmware.
->> When driver sends the command ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE, firmware
->> does RX tag removal as well as duplicate discard.
->>
->> Maybe I can modify the commit message to stated that duplicate discard
->> is done as part of rx tag removal?
-> 
-> Yes please, that will help. Thanks!
-> 
-
-Sure Roger, will do.
-
->>
->>>>
->>>> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
->>>> ---
->>>>  drivers/net/ethernet/ti/icssg/icssg_common.c |  3 +++
->>>>  drivers/net/ethernet/ti/icssg/icssg_config.c |  4 +++-
->>>>  drivers/net/ethernet/ti/icssg/icssg_config.h |  2 ++
->>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 11 ++++++++++-
->>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  1 +
->>>>  5 files changed, 19 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
->>>> index 2d6d8648f5a9..4eae4f9250c0 100644
->>>> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
->>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
->>>> @@ -721,6 +721,9 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
->>>>  	if (prueth->is_hsr_offload_mode && (ndev->features & NETIF_F_HW_HSR_DUP))
->>>>  		dst_tag_id = PRUETH_UNDIRECTED_PKT_DST_TAG;
->>>>  
->>>> +	if (prueth->is_hsr_offload_mode && (ndev->features & NETIF_F_HW_HSR_TAG_INS))
->>>> +		epib[1] |= PRUETH_UNDIRECTED_PKT_TAG_INS;
->>>> +
->>>>  	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, dst_tag_id);
->>>>  	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
->>>>  	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
->>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
->>>> index 2f485318c940..f061fa97a377 100644
->>>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
->>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
->>>> @@ -531,7 +531,9 @@ static const struct icssg_r30_cmd emac_r32_bitmask[] = {
->>>>  	{{EMAC_NONE,  0xffff4000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx ENABLE*/
->>>>  	{{EMAC_NONE,  0xbfff0000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx DISABLE*/
->>>>  	{{0xffff0010,  EMAC_NONE, 0xffff0010, EMAC_NONE}},	/* VLAN AWARE*/
->>>> -	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}}	/* VLAN UNWARE*/
->>>> +	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}},	/* VLAN UNWARE*/
->>>> +	{{0xffff2000, EMAC_NONE, EMAC_NONE, EMAC_NONE}},	/* HSR_RX_OFFLOAD_ENABLE */
->>>> +	{{0xdfff0000, EMAC_NONE, EMAC_NONE, EMAC_NONE}}		/* HSR_RX_OFFLOAD_DISABLE */
->>>>  };
->>>>  
->>>>  int icssg_set_port_state(struct prueth_emac *emac,
->>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
->>>> index 1ac60283923b..92c2deaa3068 100644
->>>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
->>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
->>>> @@ -80,6 +80,8 @@ enum icssg_port_state_cmd {
->>>>  	ICSSG_EMAC_PORT_PREMPT_TX_DISABLE,
->>>>  	ICSSG_EMAC_PORT_VLAN_AWARE_ENABLE,
->>>>  	ICSSG_EMAC_PORT_VLAN_AWARE_DISABLE,
->>>> +	ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE,
->>>> +	ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE,
->>>>  	ICSSG_EMAC_PORT_MAX_COMMANDS
->>>>  };
->>>>  
->>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->>>> index 521e9f914459..582e72dd8f3f 100644
->>>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->>>> @@ -42,7 +42,9 @@
->>>>  #define DEFAULT_UNTAG_MASK	1
->>>>  
->>>>  #define NETIF_PRUETH_HSR_OFFLOAD	(NETIF_F_HW_HSR_FWD | \
->>>> -					 NETIF_F_HW_HSR_DUP)
->>>> +					 NETIF_F_HW_HSR_DUP | \
->>>> +					 NETIF_F_HW_HSR_TAG_INS | \
->>>> +					 NETIF_F_HW_HSR_TAG_RM)
->>>>  
->>>>  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
->>>>  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
->>>> @@ -1032,6 +1034,13 @@ static void icssg_change_mode(struct prueth *prueth)
->>>>  
->>>>  	for (mac = PRUETH_MAC0; mac < PRUETH_NUM_MACS; mac++) {
->>>>  		emac = prueth->emac[mac];
->>>> +		if (prueth->is_hsr_offload_mode) {
->>>> +			if (emac->ndev->features & NETIF_F_HW_HSR_TAG_RM)
->>>> +				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE);
->>
->> Duplicate discard is done here ^^^^
-> 
-> Got it.
-> 
->>
->>>> +			else
->>>> +				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE);
->>>> +		}
->>>> +
->>>>  		if (netif_running(emac->ndev)) {
->>>>  			icssg_fdb_add_del(emac, eth_stp_addr, prueth->default_vlan,
->>>>  					  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
->>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>>> index 6cb1dce8b309..246f1e41c13a 100644
->>>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>>> @@ -58,6 +58,7 @@
->>>>  #define IEP_DEFAULT_CYCLE_TIME_NS	1000000	/* 1 ms */
->>>>  
->>>>  #define PRUETH_UNDIRECTED_PKT_DST_TAG	0
->>>> +#define PRUETH_UNDIRECTED_PKT_TAG_INS	BIT(30)
->>>>  
->>>>  /* Firmware status codes */
->>>>  #define ICSS_HS_FW_READY 0x55555555
->>>
->>
-> 
-
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index bc8fe9e8f7f2..edbe30fb3304 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -87,7 +87,7 @@ TARGETS += rtc
+ TARGETS += rust
+ TARGETS += seccomp
+ TARGETS += sgx
+-TARGETS += sigaltstack
++TARGETS += signal
+ TARGETS += size
+ TARGETS += sparc64
+ TARGETS += splice
+diff --git a/tools/testing/selftests/sigaltstack/.gitignore b/tools/testing/selftests/signal/.gitignore
+similarity index 100%
+rename from tools/testing/selftests/sigaltstack/.gitignore
+rename to tools/testing/selftests/signal/.gitignore
+diff --git a/tools/testing/selftests/sigaltstack/Makefile b/tools/testing/selftests/signal/Makefile
+similarity index 100%
+rename from tools/testing/selftests/sigaltstack/Makefile
+rename to tools/testing/selftests/signal/Makefile
+diff --git a/tools/testing/selftests/sigaltstack/current_stack_pointer.h b/tools/testing/selftests/signal/current_stack_pointer.h
+similarity index 100%
+rename from tools/testing/selftests/sigaltstack/current_stack_pointer.h
+rename to tools/testing/selftests/signal/current_stack_pointer.h
+diff --git a/tools/testing/selftests/sigaltstack/sas.c b/tools/testing/selftests/signal/sas.c
+similarity index 100%
+rename from tools/testing/selftests/sigaltstack/sas.c
+rename to tools/testing/selftests/signal/sas.c
 -- 
-Thanks and Regards,
-Md Danish Anwar
+2.30.2
+
 
