@@ -1,225 +1,101 @@
-Return-Path: <linux-kernel+bounces-297787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6177295BDB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:49:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03A395BDBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 163F328469A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:49:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57ECD1F24A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBE31CFEB8;
-	Thu, 22 Aug 2024 17:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3291CF2A8;
+	Thu, 22 Aug 2024 17:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZyx3+l8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HdmhTDMH"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65431CF2B7;
-	Thu, 22 Aug 2024 17:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F93A6F2F3
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348981; cv=none; b=nwsR0Tnn07p3iA2YadW7UBxQFlDZhfrwSujB1aOM3tHDm91spC6LKf+jLwpUs5uhTUTSUWas4Wrv+RUNcMxw5ZjGHyRxeldtKOBy6yhjvSvqCRlHni5HogR+1Py8r57UOAc0i9gToL8GYsU+9wi98WkN/F1tLDmQjcTSsokfric=
+	t=1724349027; cv=none; b=NidB+d8wUfm7nje+YU42pPpTvEopoXQGLUztGZY7tLdNohgF2vLyepn1E+4PdS3RN6wgodzDXwZ32mSs7Tm/MZuIW2v5CDHYexuf1A3c/4oXu+w6fz9b4aOWifkVDnOKngoWJjkwYgG0rr+Ja2r6piEByj9irh8DpNIm33L9cDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348981; c=relaxed/simple;
-	bh=u08SxWemWJDzA5D25sAohXYrUeCGZcoPglqzdff1VQk=;
+	s=arc-20240116; t=1724349027; c=relaxed/simple;
+	bh=dvjLhd87vCdRo/xiVsfDDYj5ouJ7dOsDPOl5m/jQnB8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7m+p2QhCxRmElWouIWzIIEvFbIfXr0x2Ve272gGPiaShhxq7+Jc7hBeGbiCNT6SguHfPe4Qxhe3+Wh0E3a/AJP0sV0OrLcncNFUODKbcIgg1UNbqbomjT6tTTeTW0CtTfhzhxAUEvBkR5tZVAJCP6uHU/pgti0dmsRgvuPgTLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZyx3+l8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACA3C4AF0F;
-	Thu, 22 Aug 2024 17:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724348981;
-	bh=u08SxWemWJDzA5D25sAohXYrUeCGZcoPglqzdff1VQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PZyx3+l8olFxvVWAaaaIXhy+QEa22BliqHGrWd0+GiZvJbk7Zy+SuP7Ok6/NKwopO
-	 pJT7QI/yMLMcpbBmBoMS9zv9yoTlaEd5Whu1C5MIXF6wRkS5M9BQOOaHmi4JQNZlmw
-	 lANP3EIeUO5cTKDToBGD0E6rJ4zaIAOkJHEWFb0zSKYvvRCA4gowQLmFLuqLgFad7B
-	 zAK4YA1tpUcRLHM0MwCEtkhVBEcyuDACZV19DAEWSVN0VN488QuJh199//IPgKSgVf
-	 KMX/23tp67fiqulaoEW1f/yBsFnLTj34IsgpWT5l5qI2/zzJvEecb3K+5E8RkHbohC
-	 NVON4rXsq2LWg==
-Date: Thu, 22 Aug 2024 14:49:38 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] perf trace: Add
- trace__bpf_sys_enter_beauty_map() to prepare for fetching data in BPF
-Message-ID: <Zsd6MgrCs0ybQ9EW@x1>
-References: <20240815013626.935097-1-howardchu95@gmail.com>
- <20240815013626.935097-4-howardchu95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lzck3invs3pd6vE7cMOtv0gTfjy/CRKN8ZGkSn2blb4s8JgGN0tmn7ZZB8H43TXID/Kr3nAJSJ9Ju7b9PS7i1Of2Fuhcy5I/rzKU0u6AFwRBFtGGa0iutJ/r68+Gf1A9Ep/ulEqcQWUD9yAbQMXQznZuNy/ijfOgLcY7HV1eemg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HdmhTDMH; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-714302e7285so938471b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 10:50:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724349025; x=1724953825; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tCVHnlO2pIa86JaK5QjGr85qfeXpWfBdUE9lyP9m+/o=;
+        b=HdmhTDMHdO0Cld6OncFcPIZAjg/uddeimxjulI3Ld4XVDE5G+5872NDI0wXrAVpx51
+         uGbPsNkdAXEOyZfWZNgTi//CDbasczllkNQiMCBZ0gblO9nFUTXxjfYLfVyJVB4Aq7n7
+         owSWzVTi64B+XpCgePSRh/V277TT/NWvHyv9Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724349025; x=1724953825;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tCVHnlO2pIa86JaK5QjGr85qfeXpWfBdUE9lyP9m+/o=;
+        b=HvFQH9FAr5cCWK/qq1+8zY03saj4Yx5x08n3PjzZfhk9MMBpsoKpQkse4nOm1oDSLY
+         hP12EvWIMoPuNlG4Zw3LXnmxDZ8s+b8wucu4FCpRbFuYEpI1kqBqc0+4CmjEr0D3WhgZ
+         SpykUn0GH3GQK2erxc+4o61ghcDb3hYZYP3EsNlWvOnU2aUzZy4E19IfGEe+LusKCgwG
+         yPa0Hm8PElePDzDeJ2KippuTll5Kyi4Ce5xWW0PelRrzJyscHHLhSf82AxsPJYGmovVy
+         Crrz7FuBCACYTN5aNp6voJlYjsoFNH3hUw/ujs3E7a9EUFAnw9EDCMJ4mySE6bnO5Gal
+         4VIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkv2Ow0Wk/U9SikI5ijv4latCYBxE82J4q8sKpW9OwQFghk4oQZR5TlF45RBMFQmTKXEqS4dG8oytJ9ug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0ds8cVdWFVAVs89HaqwejubE69Vdn68tAXeQRaQKHegyLpLmU
+	9dDpVaJnHbtSaUOFusV37Za5N+TRik2lR/y4sVrNiSflQd+2EySA8TB/tIf4Yg==
+X-Google-Smtp-Source: AGHT+IGfoGIJeQ5mwpQoLfvcD1BDbE9Q0hdoNktosEIXDb7FIO+5WC0W5xfEfFjtY5088xV28XfHJg==
+X-Received: by 2002:a05:6a21:3418:b0:1c6:f043:693f with SMTP id adf61e73a8af0-1cada054f37mr7146439637.17.1724349025477;
+        Thu, 22 Aug 2024 10:50:25 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:414c:5b44:2fea:fb6e])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7143577090fsm1537422b3a.137.2024.08.22.10.50.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 10:50:25 -0700 (PDT)
+Date: Thu, 22 Aug 2024 10:50:24 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] wifi: mwifiex: Fix memcpy() field-spanning write
+ warning in mwifiex_cmd_802_11_scan_ext()
+Message-ID: <Zsd6YE6z5CNWQocz@google.com>
+References: <ZsZa5xRcsLq9D+RX@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240815013626.935097-4-howardchu95@gmail.com>
+In-Reply-To: <ZsZa5xRcsLq9D+RX@elsanto>
 
-On Thu, Aug 15, 2024 at 09:36:19AM +0800, Howard Chu wrote:
-> Set up beauty_map, load it to BPF, in such format: if argument No.3 is a
-> struct of size 32 bytes (of syscall number 114) beauty_map[114][2] = 32;
+On Wed, Aug 21, 2024 at 03:23:51PM -0600, Gustavo A. R. Silva wrote:
+> Replace one-element array with a flexible-array member in
+> `struct host_cmd_ds_802_11_scan_ext`.
 > 
-> if argument No.3 is a string (of syscall number 114) beauty_map[114][2] =
-> 1;
+> With this, fix the following warning:
 > 
-> if argument No.3 is a buffer, its size is indicated by argument No.4 (of
-> syscall number 114) beauty_map[114][2] = -4; /* -1 ~ -6, we'll read this
-> buffer size in BPF  */
+> elo 16 17:51:58 surfacebook kernel: ------------[ cut here ]------------
+> elo 16 17:51:58 surfacebook kernel: memcpy: detected field-spanning write (size 243) of single field "ext_scan->tlv_buffer" at drivers/net/wireless/marvell/mwifiex/scan.c:2239 (size 1)
+> elo 16 17:51:58 surfacebook kernel: WARNING: CPU: 0 PID: 498 at drivers/net/wireless/marvell/mwifiex/scan.c:2239 mwifiex_cmd_802_11_scan_ext+0x83/0x90 [mwifiex]
 > 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/builtin-trace.c | 106 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 106 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 97076b962688..e7e8c89d9538 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -113,6 +113,7 @@ struct syscall_arg_fmt {
->  	bool	   show_zero;
->  #ifdef HAVE_LIBBPF_SUPPORT
->  	const struct btf_type *type;
-> +	int	   type_id; /* used in btf_dump */
->  #endif
->  };
->  
-> @@ -926,6 +927,23 @@ static void syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, str
->  	arg_fmt->type = btf__type_by_id(btf, id);
->  }
->  
-> +static int syscall_arg_fmt__cache_btf_struct(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
-> +{
-> +       int id;
-> +
-> +	if (arg_fmt->type != NULL)
-> +		return -1;
-> +
-> +       id = btf__find_by_name(btf, type);
-> +       if (id < 0)
-> +		return -1;
-> +
-> +       arg_fmt->type    = btf__type_by_id(btf, id);
-> +       arg_fmt->type_id = id;
-> +
-> +       return 0;
-> +}
-> +
->  static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
->  {
->  	const struct btf_type *bt = arg->fmt->type;
-> @@ -3520,6 +3538,83 @@ static int trace__bpf_prog_sys_exit_fd(struct trace *trace, int id)
->  	return sc ? bpf_program__fd(sc->bpf_prog.sys_exit) : bpf_program__fd(trace->skel->progs.syscall_unaugmented);
->  }
->  
-> +static int trace__bpf_sys_enter_beauty_map(struct trace *trace, int key, unsigned int *beauty_array)
-> +{
-> +	struct tep_format_field *field;
-> +	struct syscall *sc = trace__syscall_info(trace, NULL, key);
-> +	const struct btf_type *bt;
-> +	char *struct_offset, *tmp, name[32];
-> +	bool can_augment = false;
-> +	int i, cnt;
-> +
-> +	if (sc == NULL)
-> +		return -1;
-> +
-> +	trace__load_vmlinux_btf(trace);
-> +	if (trace->btf == NULL)
-> +		return -1;
-> +
-> +	for (i = 0, field = sc->args; field; ++i, field = field->next) {
-> +		struct_offset = strstr(field->type, "struct ");
-> +
-> +		if (field->flags & TEP_FIELD_IS_POINTER && struct_offset) { /* struct */
-> +			struct_offset += 7;
-> +
-> +			/* for 'struct foo *', we only want 'foo' */
-> +			for (tmp = struct_offset, cnt = 0; *tmp != ' ' && *tmp != '\0'; ++tmp, ++cnt) {
-> +			}
-> +
-> +			strncpy(name, struct_offset, cnt);
-> +			name[cnt] = '\0';
-> +
-> +			/* cache struct's btf_type and type_id */
-> +			if (syscall_arg_fmt__cache_btf_struct(&sc->arg_fmt[i], trace->btf, name))
-> +				continue;
-> +
-> +			bt = sc->arg_fmt[i].type;
-> +			beauty_array[i] = bt->size;
-> +			can_augment = true;
-> +		} else if (field->flags & TEP_FIELD_IS_POINTER && /* string */
-> +		    strcmp(field->type, "const char *") == 0 &&
-> +		    (strstr(field->name, "name") ||
-> +		     strstr(field->name, "path") ||
-> +		     strstr(field->name, "file") ||
-> +		     strstr(field->name, "root") ||
-> +		     strstr(field->name, "key") ||
-> +		     strstr(field->name, "special") ||
-> +		     strstr(field->name, "type") ||
-> +		     strstr(field->name, "description"))) {
-> +			beauty_array[i] = 1;
-> +			can_augment = true;
-> +		} else if (field->flags & TEP_FIELD_IS_POINTER && /* buffer */
-> +			   strstr(field->type, "char *") &&
-> +			   (strstr(field->name, "buf") ||
-> +			    strstr(field->name, "val") ||
-> +			    strstr(field->name, "msg"))) {
-> +			int j;
-> +			struct tep_format_field *field_tmp;
-> +
-> +			/* find the size of the buffer that appears in pairs with buf */
-> +			for (j = 0, field_tmp = sc->args; field_tmp; ++j, field_tmp = field_tmp->next) {
-> +				if (!(field_tmp->flags & TEP_FIELD_IS_POINTER) && /* only integers */
-> +				    (strstr(field_tmp->name, "count") ||
-> +				     strstr(field_tmp->name, "siz") ||  /* size, bufsiz */
-> +				     (strstr(field_tmp->name, "len") && strcmp(field_tmp->name, "filename")))) {
-> +					 /* filename's got 'len' in it, we don't want that */
-> +					beauty_array[i] = -(j + 1);
-> +					can_augment = true;
-> +					break;
-> +				}
-> +			}
-> +		}
-> +	}
-> +
-> +	if (can_augment)
-> +		return 0;
-> +
-> +	return -1;
-> +}
-> +
->  static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace, struct syscall *sc)
->  {
->  	struct tep_format_field *field, *candidate_field;
-> @@ -3624,7 +3719,9 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
->  {
->  	int map_enter_fd = bpf_map__fd(trace->skel->maps.syscalls_sys_enter);
->  	int map_exit_fd  = bpf_map__fd(trace->skel->maps.syscalls_sys_exit);
-> +	int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
+> Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Closes: https://lore.kernel.org/linux-hardening/ZsZNgfnEwOcPdCly@black.fi.intel.com/
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-At this point we still don't have that, right? I.e. building with this
-patch, without the ones following it in your series, I get:
-
-builtin-trace.c: In function ‘trace__init_syscalls_bpf_prog_array_maps’:
-builtin-trace.c:3723:58: error: ‘struct <anonymous>’ has no member named ‘beauty_map_enter’
- 3723 |         int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
-      |                                                          ^
-  CC      /tmp/build/perf-tools-next/tests/code-reading.o
-  CC      /tmp/build/perf-tools-next/trace/beauty/clone.o
-make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/builtin-trace.o] Error 1
-make[3]: *** Waiting for unfinished jobs....
-
-
-So we need to squash the patch that introduces beauty_map_enter in the
-augmented_raw_syscalls.bpf.c file to this one, so that we keep things
-bisectable, I'll try to do that.
-
-- Arnaldo
+Acked-by: Brian Norris <briannorris@chromium.org>
 
