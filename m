@@ -1,146 +1,197 @@
-Return-Path: <linux-kernel+bounces-296640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37EEB95AD19
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:56:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C3095AD1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666981C218E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:56:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C29282E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A25A77102;
-	Thu, 22 Aug 2024 05:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D243A7A15B;
+	Thu, 22 Aug 2024 05:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iaJQv0Kq"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LiNx0AQE"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E887614F98;
-	Thu, 22 Aug 2024 05:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5A614F98;
+	Thu, 22 Aug 2024 05:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724306150; cv=none; b=QHXuysyasXvIY0nX7PWa8e6wiM6OORsCeBcpMd4mGOg6YqU9wdWj9W2GWhw1MwjUnSfrtnU+QACkhX3qbqtb5S3jZii4pq3Xrk/DiPu8g2rCWSE97UnL7T3NQjjUIZQYweCJrvqqfC8qibcBdkn1m4olRKYOaaKVBfO60NwRcRg=
+	t=1724306235; cv=none; b=QR9MfxdsXptokdOWX5/hwSfjJ/PCOZcEiFRVmWkwzEr1sWjBmSusfQVhKh/pbhJvMR41bgY5P3KG8uzaJyOVTx/aVWrfjIzjfJPmzkLMkkeQlBMP2w69/Jjcc4GReccod43p7JWTVm7GwE/JPSiLSp9VAjsNn9XREK1myF9Hs84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724306150; c=relaxed/simple;
-	bh=m/sO5FPgcCf9G3nqnkG+KKrMuIS3HQHWKVpYTi+rluM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZbVgoFdX4WlOavrcWLw+vMhYbV2SxxvUk1aWS68bN8jlTO8ZY7eijthmq9i7YKwQVpM+QPPYYC8ab3CxN1uvypzGRqhqzrgFOw8+m4QDL2GUWoXVuROfout36mVEEvaXnmQBI6jmIJkp9iQHGYDvM9BEkj7ZXV23m6VkSYwj0+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iaJQv0Kq; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=2ii4ater2fgzrn6kgtbqfxyb3u.protonmail; t=1724306138; x=1724565338;
-	bh=sJAoDFrW8OINZyvtQYnpCwQ6z339HrEgCnaAsc27+J4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=iaJQv0KqfPxemqkFKJRbQFh6nmZ2gvxxaQd6xFGcNwZY8DTmcU8ETuWUYx6Asrz7m
-	 4e5hxSjmTTtW4QriHhS/GwU9j5Kib5xw5WIox9NLeXK7wvdNn3HKDNABTnZmmClnlk
-	 b+xfEBCNZMaqmV2/cOJUdcBly4vZg8T2q5JkWOw2EOmjD2WpN/sIJSMhSNak/NznCW
-	 iCzpDzyx3rOkTWNzqCccT7xcqEa4br4LcEzd7ibYZ8aSJpxMMsmoGhX0aj0blq8QZE
-	 hLtFsS5Pn6hLf3DHDBnhzYxyna0WGAYHjxYd6FHYS7A+a4jsr4ZpzixF7X9NymydUJ
-	 mn4eQ3ckovJeA==
-Date: Thu, 22 Aug 2024 05:55:32 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure fields
-Message-ID: <bc2e02d7-d4a7-4f0f-852c-e26ad6a8688f@proton.me>
-In-Reply-To: <2024082229-elevation-emporium-8118@gregkh>
-References: <20240815173903.4172139-37-samitolvanen@google.com> <2024081705-overarch-deceptive-6689@gregkh> <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me> <20240819193851.GA4809@google.com> <a76f9422-4001-416a-a31b-37ab7dcb17f4@proton.me> <CABCJKudAF0=29js8SDcYY5r6kM7RBveTrZH9RyECNGqkcqy=nw@mail.gmail.com> <CAGSQo01kCUd64nB7C7Ssy1N=UBpOP3bORsRDcHJ1k2CqkbKsfQ@mail.gmail.com> <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me> <2024082229-elevation-emporium-8118@gregkh>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ecef86a32da28f909a9c19f91fbf2ed95b01f8b1
+	s=arc-20240116; t=1724306235; c=relaxed/simple;
+	bh=Qv/FIG4tECBbGOVhaiFcD/vclJuvfVYKTVvZXXEkz5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MbPVgZuXCaewDQKOOBs9NTTUsY60RSSWR+8ox1oijRvg5EljNBZoFwXFleAmNMPPMP+QCXh6NZX9s4IEfwtplf+HaIK3pA8ucnO+ZDFf53Dv6eu8uxdxH9/QLV5d2ciKHnlJRAEmnxkzLogvn6BB76Ftvp2GKJ8maAPoBO7zt0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LiNx0AQE; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47M5utJr098589;
+	Thu, 22 Aug 2024 00:56:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724306215;
+	bh=TuRNmcBKxnCIB7jBUuUSZF9+fWiW8nFGT+64IFkt8RQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=LiNx0AQERHZqfpjPVyU1BjaoKb8cCBbWQl9Vi1kycC8MYnwWC/njF1QzVHxQUcxGd
+	 cyq+pAjpfOC612Oxv+uQ4mGYzN1eDaVEd0AbiNlElrfep7dFWVad1fdiHKXQ9UZsJl
+	 xZEgJ0R3a9ZUbIZP4G/9CySfenm1YnpMzuLwW2K0=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47M5utvc014013
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 22 Aug 2024 00:56:55 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
+ Aug 2024 00:56:55 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 22 Aug 2024 00:56:55 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47M5unfZ063464;
+	Thu, 22 Aug 2024 00:56:50 -0500
+Message-ID: <ac6e47f1-5d60-4fc2-8138-5cddc17f0c4c@ti.com>
+Date: Thu, 22 Aug 2024 11:26:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 6/7] net: ti: icssg-prueth: Add multicast
+ filtering support in HSR mode
+To: Roger Quadros <rogerq@kernel.org>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jan Kiszka
+	<jan.kiszka@siemens.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
+	<horms@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+References: <20240813074233.2473876-1-danishanwar@ti.com>
+ <20240813074233.2473876-7-danishanwar@ti.com>
+ <aa3d740f-403e-4bd3-a74a-d077b163dbdd@kernel.org>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <aa3d740f-403e-4bd3-a74a-d077b163dbdd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 22.08.24 01:29, Greg Kroah-Hartman wrote:
-> On Wed, Aug 21, 2024 at 11:31:25AM +0000, Benno Lossin wrote:
->> On 20.08.24 22:03, Matthew Maurer wrote:
->>>>> The way `KAbiReserved` is implemented is via a `union` (maybe a bit
->>>>> ironic, considering what I said in my other replies, but in this case=
-,
->>>>> we would provide a safe abstraction over this `union`, thus avoiding
->>>>> exposing users of this type to `unsafe`):
->>>>>
->>>>>     #[repr(C)]
->>>>>     pub union KAbiReserved<T, R> {
->>>>>         value: T,
->>>>>         _reserved: R,
->>>>>     }
->>>>
->>>> I like this approach even better, assuming any remaining issues with
->>>> ownership etc. can be sorted out. This would also look identical to
->>>> the C version in DWARF if you rename _reserved in the union to
->>>> __kabi_reserved. Of course, we can always change gendwarfksyms to
->>>> support a different scheme for Rust code if a better solution comes
->>>> along later.
+
+
+On 21/08/24 5:40 pm, Roger Quadros wrote:
+> 
+> 
+> On 13/08/2024 10:42, MD Danish Anwar wrote:
+>> Add support for multicast filtering in HSR mode
 >>
->> Yeah sure, that should also then work directly with this patch, right?
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 38 +++++++++++++++++++-
+>>  1 file changed, 37 insertions(+), 1 deletion(-)
 >>
->>>> Sami
->>>
->>> Agreement here - this seems like a good approach to representing
->>> reserved in Rust code. A few minor adjustments we discussed off-list
->>> which aren't required for gendwarfksyms to know about:
->>> 1. Types being added to reserved fields have to be `Copy`, e.g. they
->>> must be `!Drop`.
->>> 2. Types being added to reserved fields must be legal to be
->>> represented by all zeroes.
->>> 3. Reserved fields need to be initialized to zero before having their
->>> union set to the provided value when constructing them.
->>> 4. It may be helpful to have delegating trait implementations to avoid
->>> the couple places where autoderef won't handle the conversion.
->>>
->>> While I think this is the right solution, esp. since it can share a
->>> representation with C, I wanted to call out one minor shortfall - a
->>> reserved field can only be replaced by one type. We could still
->>> indicate a replacement by two fields the same as in C, by using a
->>> tuple which will look like an anonymous struct. The limitation will be
->>> that if two or more new fields were introduced, we'd need to edit the
->>> patches accessing them to do foo.x.y and foo.x.z for their accesses
->>> instead of simply foo.y and foo.z - the autoref trick only works for a
->>> single type.
->>
->> We will have to see how often multiple fields are added to a struct. If
->> they are infrequent and it's fine for those patches to then touch the
->> field accesses, then I think we can just stick with this approach.
->> If there are problems with that, we can also try the following:
->> all fields of kABI structs must be private and must only be accessed
->> through setters/getters. We can then modify the body the setters/getters
->> to handle the additional indirection.
->=20
-> That's just not going to work, sorry.  Remember, the goal here is to
-> keep the code that comes from kernel.org identical to what you have in
-> your "enterprise" kernel tree, with the exception of the few extra
-> "padding" fields you have added to allow for changes in the future in
-> the kernel.org versions.
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> index b32a2bff34dc..521e9f914459 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> @@ -490,6 +490,36 @@ static int icssg_prueth_del_mcast(struct net_device *ndev, const u8 *addr)
+>>  	return 0;
+>>  }
+>>  
+>> +static int icssg_prueth_hsr_add_mcast(struct net_device *ndev, const u8 *addr)
+>> +{
+>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>> +	struct prueth *prueth = emac->prueth;
+>> +
+>> +	icssg_fdb_add_del(emac, addr, prueth->default_vlan,
+>> +			  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
+>> +			  ICSSG_FDB_ENTRY_P1_MEMBERSHIP |
+>> +			  ICSSG_FDB_ENTRY_P2_MEMBERSHIP |
+>> +			  ICSSG_FDB_ENTRY_BLOCK, true);
+>> +
+>> +	icssg_vtbl_modify(emac, emac->port_vlan, BIT(emac->port_id),
+>> +			  BIT(emac->port_id), true);
+>> +	return 0;
+>> +}
+>> +
+>> +static int icssg_prueth_hsr_del_mcast(struct net_device *ndev, const u8 *addr)
+>> +{
+>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>> +	struct prueth *prueth = emac->prueth;
+>> +
+>> +	icssg_fdb_add_del(emac, addr, prueth->default_vlan,
+>> +			  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
+>> +			  ICSSG_FDB_ENTRY_P1_MEMBERSHIP |
+>> +			  ICSSG_FDB_ENTRY_P2_MEMBERSHIP |
+>> +			  ICSSG_FDB_ENTRY_BLOCK, false);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  /**
+>>   * emac_ndo_open - EMAC device open
+>>   * @ndev: network adapter device
+>> @@ -651,6 +681,7 @@ static int emac_ndo_stop(struct net_device *ndev)
+>>  	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
+>>  
+>>  	__dev_mc_unsync(ndev, icssg_prueth_del_mcast);
+> 
+> Above unsync call will already remove all MC addresses so nothing
+> is left to unsync in the below unsync call.
+>> +	__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
+> 
+> Do you have to use an if/else like you do while calling __dev_mc_sync?
+> 
 
-Yeah, that's what I thought.
+Yes Roger, we will need and if/else here and remove MC addresses based
+on the current mode.
 
-> Requiring all kernel.org changes that add a new field to a structure to
-> only do so with a settter/getter is going to just not fly at all as they
-> will not care one bit.
->=20
-> Or, we can just forget about "abi stability" for rust code entirely,
-> which I am totally fine with.  It's something that managers seem to like
-> for a "check box" but in reality, no one really needs it (hint, vendors
-> rebuild their code anyway.)
+if (emac->prueth->is_hsr_offload_mode)
+	__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
+else
+	__dev_mc_unsync(ndev, icssg_prueth_del_mcast);
 
-The approach already works for a adding a single field and I got from
-the discussions with Matthew and Sami that that is the most common case.
-We will reach out to the Rust folks and see what we can do about the
-multiple field case.
+I will make this change and update the series.
 
----
-Cheers,
-Benno
+>>  
+>>  	atomic_set(&emac->tdown_cnt, emac->tx_ch_num);
+>>  	/* ensure new tdown_cnt value is visible */
+>> @@ -728,7 +759,12 @@ static void emac_ndo_set_rx_mode_work(struct work_struct *work)
+>>  		return;
+>>  	}
+>>  
+>> -	__dev_mc_sync(ndev, icssg_prueth_add_mcast, icssg_prueth_del_mcast);
+>> +	if (emac->prueth->is_hsr_offload_mode)
+>> +		__dev_mc_sync(ndev, icssg_prueth_hsr_add_mcast,
+>> +			      icssg_prueth_hsr_del_mcast);
+>> +	else
+>> +		__dev_mc_sync(ndev, icssg_prueth_add_mcast,
+>> +			      icssg_prueth_del_mcast);
+>>  }
+>>  
+>>  /**
+> 
 
+-- 
+Thanks and Regards,
+Danish
 
