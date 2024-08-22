@@ -1,750 +1,229 @@
-Return-Path: <linux-kernel+bounces-297655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9E795BC12
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B92995BC13
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106B91F211EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE8AA1F20172
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F451CDA37;
-	Thu, 22 Aug 2024 16:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10681CCEF6;
+	Thu, 22 Aug 2024 16:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="ugisybDf"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ub1WDO5r"
+Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com [209.85.222.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF6D1C9ED0;
-	Thu, 22 Aug 2024 16:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724344578; cv=fail; b=rh8nI8pMVGngUDMuF4xzWuAj8i632I6bV10xYw89frG9fmL9DXAT8MeEfWfRBnECwnAnBA1HeqkxDDeqBBo/dzQZU7+/0QNBGfRouP3+0VtPI2A7djs9u1RNwCySD0iWzV4Hwl0GNasS9PtQOQSahivLqTQPzI085FqEWwJbnGQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724344578; c=relaxed/simple;
-	bh=gFJBB9LNLr7DaN6C4PQD87q52Y0kWfi/uvGdAQJc7B8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WaKB0fysVrTGIJWWZzX/oKQp7x3o69KU4PliTaYrrX5GAJzZfnR+J8KRk0z2nqCJbdadMJ0TWzZorS9DsUdKCk5ZRD5K6TIq5PUaVtj1PAjZBGVMJi52m4niWRfvxLs0GouADGPQ6lduxvHVUwuBwzJsl3aEUJ/FXkiAF1OF070=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=ugisybDf; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47M9WcvW017393;
-	Thu, 22 Aug 2024 09:35:23 -0700
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2174.outbound.protection.outlook.com [104.47.56.174])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4162sp2113-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 09:35:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vnWecAFkXYHRhOfU8jeMi/UVyPmA+gcpzzGL9MYuhBUAASC2NAfCwDEg+4ZoTx9Uen6ker2DxA4Bq07xNwwyzgKIhRMdEbmlSiFw709uhrGdFv4b418fsoqdCrJCLDT7eFyC9TwEapCp6c9HsPV/TW5GjVTv98gIbWyojsMZojt+BmzcuNlkCUfo3fqoAYuFfk1cAmDC0AGbubQJlTGnBKAUirMFFAa6d+Q052DPbrNLNjcPn9u82c8HefMONvfzZpaBxNzYwNxPLfZ/dNhvpsdN4tJaNVOgCg5dliloUfjm1G3A2konilAueBwfFzYVMnLihj6H3v0xr3GcZP3Orw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yd408lgW0doSM9KAJ+bC1VcZgAakhrUnCZ4T3qD/kag=;
- b=gYRa5MpnYiRdYqB2qbCFPnMadMUwsm1q4SNnVk4VT2IH+OyW7tKuraL6u9MNn3igZ1IFjA88+2peShbl83cnbIqrffXGiqJhuBco20fwm8wNsFl1corpYvQ0T/ByaudN6aIftrzCYY4B/emSd4dsrtzKfBsIHT0i06D7wyWQDwzaog5g5zscuMJOn6n+qkKZ/9cgqmfCZxOOKnRXtsZzwEBnJ2z0DtEHFi8+15YgReoLJEa6YM7r42QxOwOw1wBYzalYglTiiydUWia5qivOOY6Gm1SA2lnp+HCqJjgOzjF/PcRVMQ7vi47xNq2TfXo86k0bAE+Fn/oe1M9bNeFOfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yd408lgW0doSM9KAJ+bC1VcZgAakhrUnCZ4T3qD/kag=;
- b=ugisybDfrtuT0FTjd3OU/y0bN4E33jCPWXFbYPtyHJ58c0nH5KDZ+Gzv9yU80ImJsDMiElS0MecO/W9xfea3D4E0NukVKBmosX81QaVRQOrE09CT2ewecVnVnJK7nPOZBBXi/G1T1SCT4yyOUQTpJsGnnuaEXrmBPBIE2nPYRbs=
-Received: from MW4PR18MB5084.namprd18.prod.outlook.com (2603:10b6:303:1a7::8)
- by CH0PR18MB4258.namprd18.prod.outlook.com (2603:10b6:610:b9::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
- 2024 16:35:21 +0000
-Received: from MW4PR18MB5084.namprd18.prod.outlook.com
- ([fe80::1fe2:3c84:eebf:a905]) by MW4PR18MB5084.namprd18.prod.outlook.com
- ([fe80::1fe2:3c84:eebf:a905%6]) with mapi id 15.20.7875.019; Thu, 22 Aug 2024
- 16:35:20 +0000
-Message-ID: <5f7a617e-a8a2-40ca-a54a-19e58d69ab33@marvell.com>
-Date: Thu, 22 Aug 2024 22:05:15 +0530
-User-Agent: Mozilla Thunderbird
-Subject: [net-next v4 4/5] net: stmmac: Add PCI driver support for BCM8958x
-To: jitendra.vegiraju@broadcom.com, netdev@vger.kernel.org
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com,
-        richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net,
-        hawk@kernel.org, john.fastabend@gmail.com, fancer.lancer@gmail.com,
-        rmk+kernel@armlinux.org.uk, ahalaney@redhat.com,
-        xiaolei.wang@windriver.com, rohan.g.thomas@intel.com,
-        Jianheng.Zhang@synopsys.com, leong.ching.swee@intel.com,
-        linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
-        andrew@lunn.ch, linux@armlinux.org.uk, horms@kernel.org,
-        florian.fainelli@broadcom.com
-References: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
- <20240814221818.2612484-5-jitendra.vegiraju@broadcom.com>
-Content-Language: en-US
-From: Amit Singh Tomar <amitsinght@marvell.com>
-In-Reply-To: <20240814221818.2612484-5-jitendra.vegiraju@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0154.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::7) To MW4PR18MB5084.namprd18.prod.outlook.com
- (2603:10b6:303:1a7::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947AB1EB5B
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724344683; cv=none; b=aeUnee1uaWoAwqRi3Qm0wch0JE1VnMJqTtBCm8QhtLvqeAeyk0Ft2AbDiaedIjIWFcjfOiiGf7IErxqSVbGOy/HYHnxuoaBLMhVnKUtz7hoyGnt7alH1LrLkwi1KRUpFOJ7lYP2q3rU24p/+h//HDJQWZauU2EB0aGIt+Jp4Xrw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724344683; c=relaxed/simple;
+	bh=boH9DiVHHh9n49/gKpx7tX3Sq1XXSoYcGI3Bl+z1Ivo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jaAjM6F7IW3gr78aThj7KUjJ0QphfuTPpLO45a0XaLf901EgszxX9qpl39wzvhvOO/g/v+MsuN3cOgKh1qtEvpolLj0Xp0Uv2J8iOFBuzA49eRJejUffJMI2FC0cS92wbXq01sOafrDlgqszDjMr1NbJu476/hfASxQA30cRW1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ub1WDO5r; arc=none smtp.client-ip=209.85.222.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
+Received: by mail-qk1-f202.google.com with SMTP id af79cd13be357-7a1e9a383d1so127268785a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724344679; x=1724949479; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jVzXt96H5P6RLbsz+QdDQh4G+mrg+8IkJohzzh0JIv0=;
+        b=Ub1WDO5rEsMfV+OaGpwUF41J8cpLMdk8udPmy/4Wk9zmvMxpv1HuSnTQkrVeYMNv9O
+         2gKgT5h5EgjGPNeoa7L/KIrQrJUED7SIebblgO0V/plI3ftZTVVh3NxEdpgwUggbxQqe
+         HQeMiERtySndYDdq12N9gpamOC9UzXmAG1hhTiWFvqL+biHK045oDB+IHsYWLRUk1XFD
+         1ngtWV4Uyzow7/3jbrHJk0LVaudGemvw2nG9UYlx25gokTY8Eu+M4Q35IGozrbcTEIb4
+         27wAvmGqODY/jIw0ydNX26Mw+dD9o5PAnHoS/Otdd8wdjtQZk2B/XwkNzd7VFqVzyU55
+         5DAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724344679; x=1724949479;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jVzXt96H5P6RLbsz+QdDQh4G+mrg+8IkJohzzh0JIv0=;
+        b=LP6zPgBrwLn2OIftEjeJ2CJKJOvD0Yad71MdJxeoHCZdajKez4CtzIvuKEn9ZjQ65V
+         eutI2n8FzcrL6FDumnE/1v7F2hSURlm2f+CfdscJTrzvsSz+25evpw82Qu/AQgG93Z6G
+         a3lfBAN3vL9w8k5AzX+ENTbPALHQV3L/iq6UeRmaXlYRBsR1BLncSSHoJjbIo7P1zIXf
+         ielqdC6DhuFJYKWOadquBLJN7AVYP8+86X3TUUXXFovTOvXrw6EP+SOY4nXZefGcql1X
+         ZrDgNxoWxx2xG1Lo617aqJSe2vptxGIkaPCu45sfnO+YfgourDVL6kKNZzjpmYQ3FRi/
+         xkOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaFcfvkUxljjY7M9xmfOOwn7SzvunEoFF46jAJBo1/pefz19s8YBArFzBZEFrOH+/HGX+xBdGODfhlkjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztO7tvrXApEmbWsOtO/eINEDf/bwyPsJMrJ4vHq+Lw09bPWYvB
+	t2Jf1yaP25ESMu1ti5Ca78mfm/36JNBGgDiPSwirCxRvI7G5jI8SWZ5MQQT6Klq+wr9qdEL33Zf
+	+gu/HYGo/kctwzMpzOoilCY00yQ==
+X-Google-Smtp-Source: AGHT+IFMgVJK+HuwAXeTtH1ydSyn4VGbJloHaPmZXdI0D+Ndjft0XofXon7O2yv1olSGNPpDGSGHUvB0SU1u9wiKXJo=
+X-Received: from mattgilbride.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2ac5])
+ (user=mattgilbride job=sendgmr) by 2002:a05:620a:14bc:b0:7a5:196:8864 with
+ SMTP id af79cd13be357-7a6740d137amr1007985a.12.1724344679406; Thu, 22 Aug
+ 2024 09:37:59 -0700 (PDT)
+Date: Thu, 22 Aug 2024 16:37:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR18MB5084:EE_|CH0PR18MB4258:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2251f247-451e-483f-fb15-08dcc2c869df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NjFpWGRWQmdpTzAzbHdNNUoxUHpBbk1YeFBxVUVRc1IwQU5od3lhaHVWRzFk?=
- =?utf-8?B?K3k2QUd2SnFmZG15dGJ3RFhDYks5THFYck5WcEkxNERKamJyWDZLdm5MOFVw?=
- =?utf-8?B?YW4xTDVyZmNIRWVEb1NWYS9hbG9rWkJueGNZY1o5Sm5rK1NKK0cvL3dPbGVV?=
- =?utf-8?B?b0pYZVBlNFpRTDBFYVR2b2lUY2loc1NTYklZcGY1TFg0Nm9tZ0hwQUlGcDMz?=
- =?utf-8?B?S2t2VUtKeXg4NDlSQVJ6Rnk0clRSZ1VjZVZUN1l1eVBvenlZaEFZQ2FsYjk4?=
- =?utf-8?B?TUV3VUlqR0tRc2ZRWGR5anN3TituaUFzcFpyeWNqWVlmR1pjVmV1Q05rT1I4?=
- =?utf-8?B?cHYwNXdkSGc2TzRUR1FZVk43WkhxcFIreEEzaXlBemRIVEtCN3BUY2o5Tzlt?=
- =?utf-8?B?RjJJZHpkUkgwU25kN0RuTnIvbzdYc2FSNFpmOG05RkxoN1gvbUM4ZUN4Y002?=
- =?utf-8?B?dzQzdVh6WXhwc1FLU09MZjJPUmpaM2xVSktYVUlydmcvNytvek5tdEdDb0RT?=
- =?utf-8?B?d0E5WUtOWkcyem50dWtFbld4ZTNGWmdqQmJLZEhXTUN4d2ZmcURBVkZJcndX?=
- =?utf-8?B?TmZYaTNwZUpRRmVySHZqa0Qvc1A4MXpCMjdKck9RaFR3Sm9saUlsQ0V6N2tK?=
- =?utf-8?B?SjArclJQOTdYNjBPeHcrY2NwMDNkU2pKUUpXWmZpbG9NK0xqdmtrNE1GakU0?=
- =?utf-8?B?eEc4cjlKVjQwNWk3aGFmQ05UbVlyb3dZUXVrRG95VmtzYUVHQXI2eVdsVXM0?=
- =?utf-8?B?NXhFbWtoSzF2NkFLb205MkVhbDVTeVFQL0JJQ2NJVlNkNGRMaStJZGtDdVY3?=
- =?utf-8?B?M2hCbEJtU3gyNjJSbmpMWTcrcTNVRk43ZG84U2FKVkFpMlFCYWUrWlNiWkFo?=
- =?utf-8?B?Ukt4SkdRekhvUHExbXB2Qy9VR3cvM2JhRC9SK1Z4bElVTENvdEl3akw5bk52?=
- =?utf-8?B?WWJTL2pJRE5WUm9KVjNNUXNqVVRBamdyOXdSVWQwdE40YW4xbHdqY3ZEbzE2?=
- =?utf-8?B?VzNKZ1ovU1NSZEs1THJBdUcxM3Y4Qnh6UGY1M0tzaWRNU25VekRYOCtUM2Mv?=
- =?utf-8?B?VXV3NEZsZFB6RTFIZVZFT3dnNXVNRmozMHpuZktBTFBubzlhM0VpbmxFeG91?=
- =?utf-8?B?UlFLdDVXMGlGNjlIaXpSd2U1bkczbWt5cHFuK0Z4bXN0K05vNTFyaVJrb3lC?=
- =?utf-8?B?eXFRMytXaFVFNnI1Q1k0VE1EYVoyN0toSnRKakhlcjRQbS84Q3padjl0Tkcr?=
- =?utf-8?B?NTdOalBoNlhJc00wQjd2U0JteDZKbjl6ZjJSSXFmcUZlUFRub1FkYUxxMWQ3?=
- =?utf-8?B?TmJBR215Wk1tTUFrWUxxZjdTdEVtdmhBOEtOWDArVEh6UXdwSXAyYjlKeWNC?=
- =?utf-8?B?dDByYk10T1hBT3p3SmIzNXNGeGhoZDhEUE5LY2pNME4wVm5sSWhucW14dWRp?=
- =?utf-8?B?TW5uZDFvUXBaNjZZM0NBMXV1dW9yZ21BNDZCZkh3RjNZdjRvQnFZZFlTNERh?=
- =?utf-8?B?a0RZd3pIZkhuTGZsY091dzlzSzZFRG1xZ21BUzJCaXc0enVScjRjMFQybUtL?=
- =?utf-8?B?Q21TQjVBSHA1b0hWdzQvUzRRTGNZdHlxdHJHZmxtbkdTTXNOcmJJMUlUYk15?=
- =?utf-8?B?UkZCd200WTNZQ3RQUVk3eVNlL1ExbTRWaGlMOUFLa05aU3c2WEU5UGxRZXFQ?=
- =?utf-8?B?VVhKV1ZxVHg3enRqcGFQakgzbENleGQrQUNFRWh5OGFDTUtvOVB3Zk1XOEtp?=
- =?utf-8?B?cXk0ZHdwazBZQjJZSGZzK1BZVXF1K2dvb3F4VUo2aG0weU1WV2hpT0tac2RV?=
- =?utf-8?B?K3piNTVjWjY4d2Qwa2s3Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR18MB5084.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkF2dWczQk5vaE5FRU5BN2F4c2RTZzR6aHZ2WkFlZHhKSUxNZ2VxTFpXem1o?=
- =?utf-8?B?dXFWbDIvbC91Q0xESjVHNEZjMTBlVmZCOU15M3Y2d09nSjhWNzk1NG96OVdh?=
- =?utf-8?B?T2VpRTBGb1BNazZUWnhOVFMzUTNKWWJIcjVZTjVHU0phMnhkMmNMa05NWWRV?=
- =?utf-8?B?Z24xbFM1ekRabktQbFAvTGdSQXNSK3RjZk5ld2s3ek9mVG5MajhteEQ5QUJJ?=
- =?utf-8?B?VC9nb3phSU9zUGRmUjhLMVRPRzdES09oS0p0dUM0bGU0MzRVSWg5UXE5aVFj?=
- =?utf-8?B?dkp6NXlXU096QkgwdldCczV3M1JTOGdHaTBteUpjRlRzVlFLTnIxMlhsVU9T?=
- =?utf-8?B?aUV6RDRhQVRVZ2tYb0RzMXhUaGdXUS9QYlYwWXhSUWY5dXBpWUpDS0JITGtu?=
- =?utf-8?B?cnY3c1FJS2RkSytIbzUrdlY1SUYzdVZyQlpUN2lDeXRJZVhCamN3UE9pa3h1?=
- =?utf-8?B?NU80alVYY0piWDVsRGR6TEZDSlZ0WFZ4aVFpdmZuOFNxWGU3bHhld1RqZE5Y?=
- =?utf-8?B?Z3IxV0pPa3ZlZklwU1p0M2lUd3Q0S2EzdDZaS2o5c0ZkckVhMEs5VUQvK2ZH?=
- =?utf-8?B?UUErQUdKOVM4UFpFSjlwcUxkdDZJd0dzTTF6Z1ByYUdlZjBaNjNYeS9HLzRB?=
- =?utf-8?B?L05KRVc5OWJVbGJjRTFOT2dlNHVDeDhYajBtTnd1TXNtdjN0eU1BZ0tIVnVF?=
- =?utf-8?B?djJieUd3MTZpeHVPbzIzWUhMaUxVS0FqZ2tjRlB5Z1grK2xISVFkdnljdFA2?=
- =?utf-8?B?bFdiWUwranRLYWIxZC95ZHgxL21rSmk1ejZhL3dhUU9Jbkx1Um9kTDErK0s4?=
- =?utf-8?B?Mk1XUmxMbTlMWEpBMmlURGpTSFIwbGM4QXpqK0V1c255MlgzRE5vbkQ3aVZC?=
- =?utf-8?B?VjhLMjFKeWJGdEFmbkUvM05aekE5a2h5UHlRbVRGUmdpUmZqNUNYdzc1Q0ox?=
- =?utf-8?B?bEp5amxzUSt6cndGNWp1eWpyL2xHcEM2cFNOM05pY2RQVzJEYkJBcktnSTFz?=
- =?utf-8?B?dzhoQUpKNDBld3c4TVV6NGFsZzJ5VDY5R3hVeDNIUlN2MjloMCtEeEpPVGxP?=
- =?utf-8?B?cE1yUXlKQkZyVk1xUWhicThWdDN2VTRZbWk4Kzlla0FpTVptK1BOTzljRWQ4?=
- =?utf-8?B?eUdVSWFvTm5zK2wwamNKOEdqMzErVDM1cGJEU29LQlVmOTJsbzlNNjdnZUJO?=
- =?utf-8?B?QVdPSDRnenhNU0hSV0Rab2dZTUtKUTRXd0JRb20vZVZSYWJLNXBhd2Z5Qjcw?=
- =?utf-8?B?K1o4TDVmK05pS3N3d1d4WjN4L25OcURqaldYSkZMcU9rSzNvbG10MW03dmhL?=
- =?utf-8?B?UU9UUGlUTmFRZ1JDRS9xMkVJQzBRZmFXRlNWdW9NSGt1NzBTaTdxTmNOWG9M?=
- =?utf-8?B?NmdqUnFQdWZBODgzQzBXZkMwQnhuT0orRE01SmdHalhYbmdVMDI5dmJJOFl6?=
- =?utf-8?B?TUd6VDlBWXphUVdEYmo4UEcrbzlkNGVqbGRuOVA1dThrcjhpLzVnVE1OQkRD?=
- =?utf-8?B?UzREeDBQbG11NmtYQk1WYVpOem0rcUl6NHdXUHdFTlRNeFBnTTl0NktrZDZ5?=
- =?utf-8?B?WE1hYnd2N2MyOGh5NmFjYkdVMExGS3l6R2xseHJvejB6SzlEUjU4L1Z2NDl0?=
- =?utf-8?B?QitXNDRXQ2NuelJ3eHlnekRzQ0tYYy9ocHhoWEpKc25qRXVpRHZJOHVZUGE4?=
- =?utf-8?B?ZlZwamt5aGVBeHZ6M2ZiR3duRm53OENtOXY4NEsvS3ZmR1FmK0VIZjhWekFy?=
- =?utf-8?B?Si90L1NJK2xYK1ozMFpZelhuMVBLR3AwRTlFeURyUkJoTko5TlFHKzJjVE9a?=
- =?utf-8?B?cUNKbU1hZHN3bGlFMXloZDBUWVR3YlhGVkdKWTd4OEliejlQVkhJL09kSUpq?=
- =?utf-8?B?dHlaYTJpcEJ5OUFjTUwwQUxWUEtOMEI1dmFpNENkQk1nTFIyMHQwdUpTejEx?=
- =?utf-8?B?WDZZWjMwSVVhY2JvYXU5TEZuWlZTYm0rV3V3WCt2SzVFU21ZRndlblNzd2Z3?=
- =?utf-8?B?K3d0NjVTajdWbmdzcjhoVDdsV1ZmRGlvbUE0WXUycWVWeGcycWVkQnBhSHkw?=
- =?utf-8?B?NGRwRG93L0tUY3RpZDlEWXpicXpKZUl0N0lwVit0WTRRb3Z6OTUxWXZMbENs?=
- =?utf-8?Q?+GczSYX0G54xq+8W2n4l2k+eY?=
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2251f247-451e-483f-fb15-08dcc2c869df
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR18MB5084.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 16:35:20.6808
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hYCUTxOiWhK5JLuTMGDX5w6dmMTBAzC4nU/Pq9fTkcEzpy/883QJrap6dnKTUaS7ndArqQ7AomhHTEGDpJAMWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR18MB4258
-X-Proofpoint-GUID: 37dFgqULVddQsfdpjoSnB7Uylj0BEodU
-X-Proofpoint-ORIG-GUID: 37dFgqULVddQsfdpjoSnB7Uylj0BEodU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_10,2024-08-22_01,2024-05-17_01
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGBpx2YC/23SwW7DIAwG4Fepcl4mGxMgO+09ph0MmDbStkxJF
+ W2q+u6DXkLEjiC+39hw61ZZJlm7l9OtW2Sb1mn+ygtUT6cuXPjrLP0U80anQBEqGHqv+8VfF5G
+ evUcGNAkYunz+e5E0/TzC3t7z+jKt13n5fWRvWHZLioZjyoY99OM4CIkIuQCv53k+f8hzmD+7E
+ rOpiuJYU5UpeERi9kQQG0o71ehqSpmSIkHSNEKQhuqdGqCa6kLBiaZo2KfQ0KGmpqZD6dUkyXO
+ T0f7Tq9mpRaypyRS1l4TsQvTcUFtRdahqM2UR5wJzymUb6mpqa+rKhQc0ABxZk27ouFOHh6pjp
+ loNXmvFycrQUITaHh4WoczYk1dBR0ucWlx9KKcOk8Lyo1SMwZikzGjVAd/v9z+tamBX9gIAAA= =
+X-Mailer: b4 0.13.0
+Message-ID: <20240822-b4-rbtree-v12-0-014561758a57@google.com>
+Subject: [PATCH v12 0/5] Red-black tree abstraction needed by Rust Binder
+From: Matt Gilbride <mattgilbride@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
+Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matt Gilbride <mattgilbride@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hi,
+This patchset contains the red-black tree abstractions needed by the Rust
+implementation of the Binder driver.
 
+Binder driver benefits from O(log n) search/insertion/deletion of
+key/value mappings in various places, including `process.rs` and
+`range_alloc.rs`.  In `range_alloc.rs`, the ability to store and
+search by a generic key type is also useful.
 
-> 
-> This SoC device has PCIe ethernet MAC directly attached to an integrated
-> ethernet switch using XGMII interface. Since device tree support is not
-> available on this platform, a software node is created to enable
-> fixed-link support using phylink driver.
-> 
-> Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> ---
->    .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 530 ++++++++++++++++++
->    1 file changed, 530 insertions(+)
->    create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
-> new file mode 100644
-> index 000000000000..4384f45e86b1
-> --- /dev/null
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
-> @@ -0,0 +1,530 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (c) 2024 Broadcom Corporation
-> + *
-> + * PCI driver for ethernet interface of BCM8958X automotive switch chip.
-> + *
-> + * High level block diagram of the device.
-> + *              +=================================+
-> + *              |       Host CPU/Linux            |
-> + *              +=================================+
-> + *                         || PCIe
-> + *                         ||
-> + *         +==========================================+
-> + *         |           +--------------+               |
-> + *         |           | PCIE Endpoint|               |
-> + *         |           | Ethernet     |               |
-> + *         |           | Controller   |               |
-> + *         |           |   DMA        |               |
-> + *         |           +--------------+               |
-> + *         |           |   MAC        |   BCM8958X    |
-> + *         |           +--------------+   SoC         |
-> + *         |               || XGMII                   |
-> + *         |               ||                         |
-> + *         |           +--------------+               |
-> + *         |           | Ethernet     |               |
-> + *         |           | switch       |               |
-> + *         |           +--------------+               |
-> + *         |             || || || ||                  |
-> + *         +==========================================+
-> + *                       || || || || More external interfaces
-> + *
-> + * This SoC device has PCIe ethernet MAC directly attached to an integrated
-> + * ethernet switch using XGMII interface. Since devicetree support is not
-> + * available on this platform, a software node is created to enable
-> + * fixed-link support using phylink driver.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/dmi.h>
-> +#include <linux/pci.h>
-> +#include <linux/phy.h>
-> +
-> +#include "stmmac.h"
-> +#include "dwxgmac2.h"
-> +
-> +#define PCI_DEVICE_ID_BROADCOM_BCM8958X		0xa00d
-> +#define BRCM_MAX_MTU				1500
-> +#define READ_POLL_DELAY_US			100
-> +#define READ_POLL_TIMEOUT_US			10000
-> +#define DWMAC_125MHZ				125000000
-> +#define DWMAC_250MHZ				250000000
-> +#define BRCM_XGMAC_NUM_VLAN_FILTERS		32
-> +
-> +/* TX and RX Queue counts */
-> +#define BRCM_TX_Q_COUNT				4
-> +#define BRCM_RX_Q_COUNT				4
-> +
-> +#define BRCM_XGMAC_DMA_TX_SIZE			1024
-> +#define BRCM_XGMAC_DMA_RX_SIZE			1024
-> +#define BRCM_XGMAC_BAR0_MASK			BIT(0)
-> +
-> +#define BRCM_XGMAC_IOMEM_MISC_REG_OFFSET	0x0
-> +#define BRCM_XGMAC_IOMEM_MBOX_REG_OFFSET	0x1000
-> +#define BRCM_XGMAC_IOMEM_CFG_REG_OFFSET		0x3000
-> +
-> +#define XGMAC_MMC_CTRL_RCHM_DISABLE		BIT(31)
-> +#define XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_LOW	0x940
-> +#define XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_LO_VALUE	0x00000001
-> +#define XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_HIGH	0x944
-> +#define XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_HI_VALUE	0x88000000
-> +
-> +#define XGMAC_PCIE_MISC_MII_CTRL_OFFSET			0x4
-> +#define XGMAC_PCIE_MISC_MII_CTRL_PAUSE_RX		BIT(0)
-> +#define XGMAC_PCIE_MISC_MII_CTRL_PAUSE_TX		BIT(1)
-> +#define XGMAC_PCIE_MISC_MII_CTRL_LINK_UP		BIT(2)
-> +#define XGMAC_PCIE_MISC_PCIESS_CTRL_OFFSET		0x8
-> +#define XGMAC_PCIE_MISC_PCIESS_CTRL_EN_MSI_MSIX		BIT(9)
-> +#define XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_LO_OFFSET	0x90
-> +#define XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_LO_VALUE	0x00000001
-> +#define XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_HI_OFFSET	0x94
-> +#define XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_HI_VALUE	0x88000000
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST0_OFFSET	0x700
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST0_VALUE	1
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST1_OFFSET	0x704
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST1_VALUE	1
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST_DBELL_OFFSET	0x728
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST_DBELL_VALUE	1
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_SBD_ALL_OFFSET	0x740
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_SBD_ALL_VALUE	0
-> +
-> +#define XGMAC_PCIE_MISC_FUNC_RESOURCES_PF0_OFFSET	0x804
-> +
-> +/* MSIX Vector map register starting offsets */
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_RX0_PF0_OFFSET	0x840
-> +#define XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_TX0_PF0_OFFSET	0x890
-> +#define BRCM_MAX_DMA_CHANNEL_PAIRS		4
-> +
-> +#define BRCM_XGMAC_MSI_MAC_VECTOR		0
-> +#define BRCM_XGMAC_MSI_RX_VECTOR_START		9
-> +#define BRCM_XGMAC_MSI_TX_VECTOR_START		10
-> +
-> +static char *fixed_link_node_name = "fixed-link";
-> +
-> +static const struct property_entry fixed_link_properties[] = {
-> +	PROPERTY_ENTRY_U32("speed", 10000),
-> +	PROPERTY_ENTRY_BOOL("full-duplex"),
-> +	PROPERTY_ENTRY_BOOL("pause"),
-> +	{ }
-> +};
-> +
-> +struct brcm_priv_data {
-> +	void __iomem *mbox_regs;    /* MBOX  Registers*/
-> +	void __iomem *misc_regs;    /* MISC  Registers*/
-> +	void __iomem *xgmac_regs;   /* XGMAC Registers*/
-> +	struct software_node fixed_link_node;
-> +};
-> +
-> +struct dwxgmac_brcm_pci_info {
-> +	int (*setup)(struct pci_dev *pdev, struct plat_stmmacenet_data *plat);
-> +};
-> +
-> +static void misc_iowrite(struct brcm_priv_data *brcm_priv,
-> +			 u32 reg, u32 val)
-> +{
-> +	iowrite32(val, brcm_priv->misc_regs + reg);
-> +}
-> +
-> +static struct mac_device_info *dwxgmac_brcm_setup(void *ppriv)
-> +{
-> +	struct stmmac_priv *priv = ppriv;
-> +	struct mac_device_info *mac;
-> +
-> +	mac = devm_kzalloc(priv->device, sizeof(*mac), GFP_KERNEL);
-> +	if (!mac)
-> +		return NULL;
-> +	/** Update both Synopsys ID and DEVID **/
-> +	priv->synopsys_id = DW25GMAC_CORE_4_00;
-> +	priv->synopsys_dev_id = DW25GMAC_ID;
-> +	priv->dma_conf.dma_tx_size = BRCM_XGMAC_DMA_TX_SIZE;
-> +	priv->dma_conf.dma_rx_size = BRCM_XGMAC_DMA_RX_SIZE;
-> +	priv->plat->rss_en = 1;
-> +	mac->pcsr = priv->ioaddr;
-> +	priv->dev->priv_flags |= IFF_UNICAST_FLT;
-> +	mac->multicast_filter_bins = priv->plat->multicast_filter_bins;
-> +	mac->unicast_filter_entries = priv->plat->unicast_filter_entries;
-> +	mac->mcast_bits_log2 = 0;
-> +
-> +	if (mac->multicast_filter_bins)
-> +		mac->mcast_bits_log2 = ilog2(mac->multicast_filter_bins);
-> +
-> +	mac->link.duplex = DUPLEX_FULL;
-> +	mac->link.caps = (MAC_ASYM_PAUSE | MAC_SYM_PAUSE | MAC_10000FD);
-> +	mac->link.xgmii.speed10000 = XGMAC_CONFIG_SS_10000;
-> +	mac->link.speed_mask = XGMAC_CONFIG_SS_MASK;
-> +
-> +	return mac;
-> +}
-> +
-> +static void dwxgmac_brcm_common_default_data(struct plat_stmmacenet_data *plat)
-> +{
-> +	int i;
-> +
-> +	plat->has_xgmac = 1;
-> +	plat->force_sf_dma_mode = 1;
-> +	plat->mac_port_sel_speed = SPEED_10000;
-> +	plat->clk_ptp_rate = DWMAC_125MHZ;
-> +	plat->clk_ref_rate = DWMAC_250MHZ;
-> +	plat->setup = dwxgmac_brcm_setup;
-> +	plat->tx_coe = 1;
-> +	plat->rx_coe = 1;
-> +	plat->max_speed = SPEED_10000;
-> +
-> +	/* Set default value for multicast hash bins */
-> +	plat->multicast_filter_bins = HASH_TABLE_SIZE;
-> +
-> +	/* Set default value for unicast filter entries */
-> +	plat->unicast_filter_entries = 1;
-> +
-> +	/* Set the maxmtu to device's default */
-> +	plat->maxmtu = BRCM_MAX_MTU;
-> +
-> +	/* Set default number of RX and TX queues to use */
-> +	plat->tx_queues_to_use = BRCM_TX_Q_COUNT;
-> +	plat->rx_queues_to_use = BRCM_RX_Q_COUNT;
-> +
-> +	plat->tx_sched_algorithm = MTL_TX_ALGORITHM_SP;
-> +	for (i = 0; i < plat->tx_queues_to_use; i++) {
-> +		plat->tx_queues_cfg[i].use_prio = false;
-> +		plat->tx_queues_cfg[i].prio = 0;
-> +		plat->tx_queues_cfg[i].mode_to_use = MTL_QUEUE_AVB;
-> +		plat->dma_cfg->hdma_cfg->tvdma_tc[i] = i;
-> +		plat->dma_cfg->hdma_cfg->tpdma_tc[i] = i;
-> +	}
-> +
-> +	plat->rx_sched_algorithm = MTL_RX_ALGORITHM_SP;
-> +	for (i = 0; i < plat->rx_queues_to_use; i++) {
-> +		plat->rx_queues_cfg[i].use_prio = false;
-> +		plat->rx_queues_cfg[i].mode_to_use = MTL_QUEUE_AVB;
-> +		plat->rx_queues_cfg[i].pkt_route = 0x0;
-> +		plat->rx_queues_cfg[i].chan = i;
-> +		plat->dma_cfg->hdma_cfg->rvdma_tc[i] = i;
-> +		plat->dma_cfg->hdma_cfg->rpdma_tc[i] = i;
-> +	}
-> +}
-> +
-> +static int dwxgmac_brcm_default_data(struct pci_dev *pdev,
-> +				     struct plat_stmmacenet_data *plat)
-> +{
-> +	/* Set common default data first */
-> +	dwxgmac_brcm_common_default_data(plat);
-> +
-> +	plat->bus_id = 0;
-> +	plat->phy_addr = 0;
-> +	plat->phy_interface = PHY_INTERFACE_MODE_USXGMII;
-> +
-> +	plat->dma_cfg->pbl = 32;
-> +	plat->dma_cfg->pblx8 = 0;
-> +	plat->dma_cfg->aal = 0;
-> +	plat->dma_cfg->eame = 1;
-> +
-> +	plat->axi->axi_wr_osr_lmt = 31;
-> +	plat->axi->axi_rd_osr_lmt = 31;
-> +	plat->axi->axi_fb = 0;
-> +	plat->axi->axi_blen[0] = 4;
-> +	plat->axi->axi_blen[1] = 8;
-> +	plat->axi->axi_blen[2] = 16;
-> +	plat->axi->axi_blen[3] = 32;
-> +	plat->axi->axi_blen[4] = 64;
-> +	plat->axi->axi_blen[5] = 128;
-> +	plat->axi->axi_blen[6] = 256;
-> +
-> +	plat->msi_mac_vec = BRCM_XGMAC_MSI_MAC_VECTOR;
-> +	plat->msi_rx_base_vec = BRCM_XGMAC_MSI_RX_VECTOR_START;
-> +	plat->msi_tx_base_vec = BRCM_XGMAC_MSI_TX_VECTOR_START;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct dwxgmac_brcm_pci_info dwxgmac_brcm_pci_info = {
-> +	.setup = dwxgmac_brcm_default_data,
-> +};
-> +
-> +static int brcm_config_multi_msi(struct pci_dev *pdev,
-> +				 struct plat_stmmacenet_data *plat,
-> +				 struct stmmac_resources *res)
-> +{
-> +	int ret;
-> +	int i;
-nit: This can be merged into single line.
-> +
-> +	if (plat->msi_rx_base_vec >= STMMAC_MSI_VEC_MAX ||
-> +	    plat->msi_tx_base_vec >= STMMAC_MSI_VEC_MAX) {
-> +		dev_err(&pdev->dev, "%s: Invalid RX & TX vector defined\n",
-> +			__func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = pci_alloc_irq_vectors(pdev, 2, STMMAC_MSI_VEC_MAX,
-> +				    PCI_IRQ_MSI | PCI_IRQ_MSIX);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "%s: multi MSI enablement failed\n",
-> +			__func__);
-> +		return ret;
-> +	}
-> +
-> +	/* For RX MSI */
-> +	for (i = 0; i < plat->rx_queues_to_use; i++)
-> +		res->rx_irq[i] = pci_irq_vector(pdev,
-> +						plat->msi_rx_base_vec + i * 2);
-> +
-> +	/* For TX MSI */
-> +	for (i = 0; i < plat->tx_queues_to_use; i++)
-> +		res->tx_irq[i] = pci_irq_vector(pdev,
-> +						plat->msi_tx_base_vec + i * 2);
-> +
-> +	if (plat->msi_mac_vec < STMMAC_MSI_VEC_MAX)
-> +		res->irq = pci_irq_vector(pdev, plat->msi_mac_vec);
-> +
-> +	plat->flags |= STMMAC_FLAG_MULTI_MSI_EN;
-> +	plat->flags |= STMMAC_FLAG_TSO_EN;
-> +
-> +	return 0;
-> +}
-> +
-> +static int dwxgmac_brcm_pci_probe(struct pci_dev *pdev,
-> +				  const struct pci_device_id *id)
-> +{
-> +	struct dwxgmac_brcm_pci_info *info =
-> +		(struct dwxgmac_brcm_pci_info *)id->driver_data;
-> +	struct plat_stmmacenet_data *plat;
-> +	struct brcm_priv_data *brcm_priv;
-> +	struct stmmac_resources res;
-> +	struct device *dev;
-> +	int rx_offset;
-> +	int tx_offset;
-> +	int vector;
-> +	int ret;
-> +
-> +	dev = &pdev->dev;
-> +
-> +	brcm_priv = devm_kzalloc(&pdev->dev, sizeof(*brcm_priv), GFP_KERNEL);
-> +	if (!brcm_priv)
-> +		return -ENOMEM;
-> +
-> +	plat = devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
-> +	if (!plat)
-> +		return -ENOMEM;
-> +
-> +	plat->dma_cfg = devm_kzalloc(&pdev->dev, sizeof(*plat->dma_cfg),
-> +				     GFP_KERNEL);
-> +	if (!plat->dma_cfg)
-> +		return -ENOMEM;
-> +
-> +	plat->dma_cfg->hdma_cfg = devm_kzalloc(&pdev->dev,
-> +					       sizeof(*plat->dma_cfg->hdma_cfg),
-> +					       GFP_KERNEL);
-> +	if (!plat->dma_cfg->hdma_cfg)
-> +		return -ENOMEM;
-> +
-> +	plat->axi = devm_kzalloc(&pdev->dev, sizeof(*plat->axi), GFP_KERNEL);
-> +	if (!plat->axi)
-> +		return -ENOMEM;
-> +
-> +	/* This device is directly attached to the switch chip internal to the
-> +	 * SoC using XGMII interface. Since no MDIO is present, register
-> +	 * fixed-link software_node to create phylink.
-> +	 */
-> +	plat->port_node = fwnode_create_software_node(NULL, NULL);
-> +	brcm_priv->fixed_link_node.name = fixed_link_node_name;
-> +	brcm_priv->fixed_link_node.properties = fixed_link_properties;
-> +	brcm_priv->fixed_link_node.parent = to_software_node(plat->port_node);
-> +	device_add_software_node(dev, &brcm_priv->fixed_link_node);
-> +
-> +	/* Disable D3COLD as our device does not support it */
-> +	pci_d3cold_disable(pdev);
-> +
-> +	/* Enable PCI device */
-> +	ret = pcim_enable_device(pdev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "%s: ERROR: failed to enable device\n",
-> +			__func__);
-> +		return ret;
-> +	}
-> +
-> +	/* Get the base address of device */
-> +	ret = pcim_iomap_regions(pdev, BRCM_XGMAC_BAR0_MASK, pci_name(pdev));
-> +	if (ret)
-> +		goto err_disable_device;
-> +	pci_set_master(pdev);
-> +
-> +	memset(&res, 0, sizeof(res));
-> +	res.addr = pcim_iomap_table(pdev)[0];
-> +	/* MISC Regs */
-> +	brcm_priv->misc_regs = res.addr + BRCM_XGMAC_IOMEM_MISC_REG_OFFSET;
-> +	/* MBOX Regs */
-> +	brcm_priv->mbox_regs = res.addr + BRCM_XGMAC_IOMEM_MBOX_REG_OFFSET;
-> +	/* XGMAC config Regs */
-> +	res.addr += BRCM_XGMAC_IOMEM_CFG_REG_OFFSET;
-> +	brcm_priv->xgmac_regs = res.addr;
-> +
-> +	plat->bsp_priv = brcm_priv;
-> +
-> +	/* Initialize all MSI vectors to invalid so that it can be set
-> +	 * according to platform data settings below.
-> +	 * Note: MSI vector takes value from 0 up to 31 (STMMAC_MSI_VEC_MAX)
-> +	 */
-> +	plat->msi_mac_vec = STMMAC_MSI_VEC_MAX;
-> +	plat->msi_wol_vec = STMMAC_MSI_VEC_MAX;
-> +	plat->msi_lpi_vec = STMMAC_MSI_VEC_MAX;
-> +	plat->msi_sfty_ce_vec = STMMAC_MSI_VEC_MAX;
-> +	plat->msi_sfty_ue_vec = STMMAC_MSI_VEC_MAX;
-> +	plat->msi_rx_base_vec = STMMAC_MSI_VEC_MAX;
-> +	plat->msi_tx_base_vec = STMMAC_MSI_VEC_MAX;
-> +
-> +	ret = info->setup(pdev, plat);
-> +	if (ret)
-> +		goto err_disable_device;
-> +
-> +	pci_write_config_dword(pdev, XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_LOW,
-> +			       XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_LO_VALUE);
-> +	pci_write_config_dword(pdev, XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_HIGH,
-> +			       XGMAC_PCIE_CFG_MSIX_ADDR_MATCH_HI_VALUE);
-> +
-> +	misc_iowrite(brcm_priv, XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_LO_OFFSET,
-> +		     XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_LO_VALUE);
-> +	misc_iowrite(brcm_priv, XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_HI_OFFSET,
-> +		     XGMAC_PCIE_MISC_MSIX_ADDR_MATCH_HI_VALUE);
-> +
-> +	/* SBD Interrupt */
-> +	misc_iowrite(brcm_priv, XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_SBD_ALL_OFFSET,
-> +		     XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_SBD_ALL_VALUE);
-> +	/* EP_DOORBELL Interrupt */
-> +	misc_iowrite(brcm_priv,
-> +		     XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST_DBELL_OFFSET,
-> +		     XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST_DBELL_VALUE);
-> +	/* EP_H0 Interrupt */
-> +	misc_iowrite(brcm_priv,
-> +		     XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST0_OFFSET,
-> +		     XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST0_VALUE);
-> +	/* EP_H1 Interrupt */
-> +	misc_iowrite(brcm_priv,
-> +		     XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST1_OFFSET,
-> +		     XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_EP2HOST1_VALUE);
-> +
-> +	rx_offset = XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_RX0_PF0_OFFSET;
-> +	tx_offset = XGMAC_PCIE_MISC_MSIX_VECTOR_MAP_TX0_PF0_OFFSET;
-> +	vector = BRCM_XGMAC_MSI_RX_VECTOR_START;
-> +	for (int i = 0; i < BRCM_MAX_DMA_CHANNEL_PAIRS; i++) {
-> +		/* RX Interrupt */
-> +		misc_iowrite(brcm_priv, rx_offset, vector++);
-> +		/* TX Interrupt */
-> +		misc_iowrite(brcm_priv, tx_offset, vector++);
-> +		rx_offset += 4;
-> +		tx_offset += 4;
-> +	}
-> +
-> +	/* Enable Switch Link */
-> +	misc_iowrite(brcm_priv, XGMAC_PCIE_MISC_MII_CTRL_OFFSET,
-> +		     XGMAC_PCIE_MISC_MII_CTRL_PAUSE_RX |
-> +		     XGMAC_PCIE_MISC_MII_CTRL_PAUSE_TX |
-> +		     XGMAC_PCIE_MISC_MII_CTRL_LINK_UP);
-> +	/* Enable MSI-X */
-> +	misc_iowrite(brcm_priv, XGMAC_PCIE_MISC_PCIESS_CTRL_OFFSET,
-> +		     XGMAC_PCIE_MISC_PCIESS_CTRL_EN_MSI_MSIX);
-> +
-> +	ret = brcm_config_multi_msi(pdev, plat, &res);
-> +	if (ret) {
-> +		dev_err(&pdev->dev,
-> +			"%s: ERROR: failed to enable IRQ\n", __func__);
-> +		goto err_disable_msi;
-> +	}
-> +
-> +	ret = stmmac_dvr_probe(&pdev->dev, plat, &res);
-> +	if (ret)
-> +		goto err_disable_msi;
-> +
-> +	return ret;
-> +
-> +err_disable_msi:
-> +	pci_free_irq_vectors(pdev);
-> +err_disable_device:
-> +	pci_disable_device(pdev);
-Shouldn't pcim_iounmap_region be called here to unmap and release PCI BARs?
-> +
-> +	return ret;
-> +}
-> +
-> +static void dwxgmac_brcm_software_node_remove(struct pci_dev *pdev)
-> +{
-> +	struct fwnode_handle *fwnode;
-> +	struct stmmac_priv *priv;
-> +	struct net_device *ndev;
-> +	struct device *dev;
-> +
-> +	dev = &pdev->dev;
-> +	ndev = dev_get_drvdata(dev);
-> +	priv = netdev_priv(ndev);
-> +	fwnode = priv->plat->port_node;
-> +
-> +	fwnode_remove_software_node(fwnode);
-> +	device_remove_software_node(dev);
-> +}
-> +
-> +static void dwxgmac_brcm_pci_remove(struct pci_dev *pdev)
-> +{
-> +	stmmac_dvr_remove(&pdev->dev);
-> +	pci_free_irq_vectors(pdev);
-> +	pcim_iounmap_regions(pdev, BRCM_XGMAC_BAR0_MASK);
-> +	pci_clear_master(pdev);
-> +	dwxgmac_brcm_software_node_remove(pdev);
-> +}
-> +
-> +static int __maybe_unused dwxgmac_brcm_pci_suspend(struct device *dev)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +	int ret;
-> +
-> +	ret = stmmac_suspend(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pci_save_state(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pci_disable_device(pdev);
-> +	pci_wake_from_d3(pdev, true);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused dwxgmac_brcm_pci_resume(struct device *dev)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +	int ret;
-> +
-> +	pci_restore_state(pdev);
-> +	pci_set_power_state(pdev, PCI_D0);
-> +
-> +	ret = pci_enable_device(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pci_set_master(pdev);
-> +
-> +	return stmmac_resume(dev);
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(dwxgmac_brcm_pm_ops,
-> +			 dwxgmac_brcm_pci_suspend,
-> +			 dwxgmac_brcm_pci_resume);
-> +
-> +static const struct pci_device_id dwxgmac_brcm_id_table[] = {
-> +	{ PCI_DEVICE_DATA(BROADCOM, BCM8958X, &dwxgmac_brcm_pci_info) },
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(pci, dwxgmac_brcm_id_table);
-> +
-> +static struct pci_driver dwxgmac_brcm_pci_driver = {
-> +	.name = "brcm-bcm8958x",
-> +	.id_table = dwxgmac_brcm_id_table,
-> +	.probe	= dwxgmac_brcm_pci_probe,
-> +	.remove = dwxgmac_brcm_pci_remove,
-> +	.driver = {
-> +		.pm = &dwxgmac_brcm_pm_ops,
-> +	},
-> +};
-> +
-> +module_pci_driver(dwxgmac_brcm_pci_driver);
-> +
-> +MODULE_DESCRIPTION("Broadcom 10G Automotive Ethernet PCIe driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.34.1
-> 
-> 
+Please see the Rust Binder RFC for usage examples [1]. Note that
+the `container_of` macro is currently used only by `rbtree` itself.
+
+Users of "rust: rbtree: add red-black tree implementation backed by the C version"
+    [PATCH RFC 03/20] rust_binder: add threading support
+    [PATCH RFC 05/20] rust_binder: add nodes and context managers
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add iterator"
+    [PATCH RFC 17/20] rust_binder: add oneway spam detection
+
+Users of "rust: rbtree: add mutable iterator"
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add `RBTreeCursor`"
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add RBTree::entry"
+    Not used in the original RFC, but introduced after further
+    code review.  See: https://r.android.com/2849906
+
+The Rust Binder RFC addresses the upstream deprecation of red-black
+tree. Quoted here for convenience:
+
+"This RFC uses the kernel's red-black tree for key/value mappings, but we
+are aware that the red-black tree is deprecated. We did this to make the
+performance comparison more fair, since C binder also uses rbtree for
+this. We intend to replace these with XArrays instead. That said, we
+don't think that XArray is a good fit for the range allocator, and we
+propose to continue using the red-black tree for the range allocator."
+
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+---
+Changes in v12:
+- Address feedback from v11 (superfluous INVARIANT comments in patch 4)
+- Link to v11: https://lore.kernel.org/r/20240821-b4-rbtree-v11-0-2ddc66f26972@google.com
+
+Changes in v11:
+- Address feedback from v10
+- Link to v10: https://lore.kernel.org/r/20240819-b4-rbtree-v10-0-3b3b2c4d73af@google.com
+
+Changes in v10:
+- Rebase on top of rust-for-linux/rust-next (e26fa546042add70944d018b930530d16b3cf626)
+  - Adapt to changes from "rust: kbuild: split up helpers.c"
+    (876346536c1b59a5b1b5e44477b1b3ece77647fd)
+- Rebase on top of "rust: kernel: add `drop_contents` to `BoxExt`" instead of including it in the patch series
+  - https://lore.kernel.org/all/CAH5fLgj2urZ6OD2ki6E=6EuPqW3Z8BGg8jd6Bgo4OOrNiptnDw@mail.gmail.com/
+- Link to v9: https://lore.kernel.org/r/20240816-b4-rbtree-v9-0-425b442af7e5@google.com
+
+Changes in v9:
+- Rebase on top of Linux 6.11-rc2
+- Address feedback from v8
+- Link to v8: https://lore.kernel.org/r/20240727-b4-rbtree-v8-0-951600ada434@google.com
+
+Changes in v8:
+- Fix small style nit (use ? operator)
+- Fix doc comment pointing at a private item
+- Link to v7: https://lore.kernel.org/r/20240726-b4-rbtree-v7-0-aee88caaf97c@google.com
+
+Changes in v7:
+- make `RawVacantEntry.rbtree` a raw pointer like
+  `RawVacantEntry.child_field_of_parent`, since the latter can
+  technically point at a field of the former. We prefer that the
+  implementation be explicit about the safety guarantees of both because
+  of the relationship between them.
+- Link to v6: https://lore.kernel.org/r/20240711-b4-rbtree-v6-0-14bef1a8cdba@google.com
+
+Changes in v6:
+- Minimize usage of `*mut bindings::rb_node`, replacing with
+  `NonNull<bindings::rb_node>`. Specifically, changing
+  `RBTreeCursor.current` to be `NonNull<bindings::rb_node>` and updating
+  the corresponding functions.
+- Update `RBTreeCursor:to_key_value` helpers to have their own lifetime
+  (they are not instance methods, using a different lifetime than that
+  of the `impl` block they are in makes things more clear.
+- Fix misplaced semicolon in `cursor_lower_bound`.
+- Link to v5: https://lore.kernel.org/r/20240606-b4-rbtree-v5-0-96fe1a0e97c0@google.com
+
+Changes in v5:
+- Used `Box::write` in `RBTreeNodeReservation::into_node`, removing
+  unnecessary `unsafe` blocks.
+- Updated `RBTreeCursor::remove_current` to return the removed node.
+- Link to v4: https://lore.kernel.org/r/20240603-b4-rbtree-v4-0-308e43d6abfc@google.com
+
+Changes in v4:
+- rebased onto the tip of rust-for-linux/rust-next (97ab3e8eec0ce79d9e265e6c9e4c480492180409)
+- addressed comments from draft PR on GitHub: https://github.com/Rust-for-Linux/linux/pull/1081
+- Link to v3: https://lore.kernel.org/r/20240418-b4-rbtree-v3-0-323e134390ce@google.com
+
+Changes in v3:
+- Address various feedback re: SAFETY and INVARIANT comments from v2.
+- Update variable naming and add detailed comments for the `RBTree::insert` (later moved to
+  `RBTree::raw_entry`) implementation.
+- Link to v2: https://lore.kernel.org/r/20240219-b4-rbtree-v2-0-0b113aab330d@google.com
+
+Changes in v2:
+- Update documentation link to the C header file
+- Use `core::convert::Infallible` in try_reserve_node
+- Link to v1: https://lore.kernel.org/r/20240205-b4-rbtree-v1-0-995e3eee38c0@google.com
+
+---
+Alice Ryhl (1):
+      rust: rbtree: add `RBTree::entry`
+
+Matt Gilbride (1):
+      rust: rbtree: add cursor
+
+Wedson Almeida Filho (3):
+      rust: rbtree: add red-black tree implementation backed by the C version
+      rust: rbtree: add iterator
+      rust: rbtree: add mutable iterator
+
+ rust/helpers/helpers.c |    1 +
+ rust/helpers/rbtree.c  |    9 +
+ rust/kernel/lib.rs     |    1 +
+ rust/kernel/rbtree.rs  | 1279 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 1290 insertions(+)
+---
+base-commit: 68ad5e31ad2ccab128468e829f53191cf60f601f
+change-id: 20231205-b4-rbtree-abb1a016f0a0
+
+Best regards,
+-- 
+Matt Gilbride <mattgilbride@google.com>
 
 
