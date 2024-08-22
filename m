@@ -1,140 +1,159 @@
-Return-Path: <linux-kernel+bounces-297877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82EF695BECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4356D95BEFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB2A2B2329D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002D6285B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CAA1D04A4;
-	Thu, 22 Aug 2024 19:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D709C1D049A;
+	Thu, 22 Aug 2024 19:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PEpJVh+L"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="sa0Ey35s"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A980AAD55;
-	Thu, 22 Aug 2024 19:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F1A1C9ED9;
+	Thu, 22 Aug 2024 19:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724354678; cv=none; b=C4GR90vjVjQiYGZdFYgljd2DRH3WLwt//bWs2WzVHeGmdTcJT2a+OXyM1EH7OW/y7Etrz5unosxCflEmCOaxUSpdMy2xK2SIk2vem7i8xyrD08jwqopDtivSo6fvQMMpUgYtRDk08Ujtldxvz45VSNBzcpFoof917aHluxUAh0w=
+	t=1724355365; cv=none; b=dU5l8e10u/0RPzCKSE/hZznk0PoKQ4LQcAB+Emn26vqLMoBPY1h+QDj7ocDzY/sum+SfSMKXfPCpzcZ2nZIAR7hGYVfsTx49G/tgmN1BgfQbk2I8B43COiSawQxRV5MSRi2rTmVR3i00pC0oGOCdCW6nrQ3roOZfdotQ/Z+HUro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724354678; c=relaxed/simple;
-	bh=CMOB+O9xYjrYPfwsiJrPxt5KD1sMYaK3IxMxqgSyUww=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fr/1dd36UTXOWdfDzMlSgZcDMtXAwRsnWIcMaZH3fVwy7ctjsa5sjvWF8kH8/RHdCAeOlB52cvKRQAsSQQvcMAngZWSpOHkHjWWpb5PqKTbnCztg2LSTzfd3pRfOTMwkJJlcWn/YkmazcCOJmgazicfRiz2k+qEkFqcUjRijbNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PEpJVh+L; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47M9hMnr030621;
-	Thu, 22 Aug 2024 19:23:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=12SSZQZUIyFp5vaQeuaZT4AA
-	+kfpcMBYt84o9QCHHoc=; b=PEpJVh+L+4ts/gXSOgVPwbzAL1jBvx1izNtGtirT
-	hok5FmsgXLInLjQ/c6WRNAe6h/+a+kNEAjOoHhQONulLg0sMF0LKhiV3KIDFKe/B
-	35F8c8m5NteBZLTy/a7yp4VkLU2/SkEEJ8vGvz5nmwD9hDjXTakMdYKOrF3WSa/r
-	Dev8NWj/KZK7nEdd/NPu0P6TY09pPyERFrzrPxYl5kOrwc8sntUi0CWXtIdejwV0
-	rcD0CGLs7XTgmkZftldBRBKxIt2liwGrAvBpFnmO716gHLdsQftSKe1n9MC3YwSS
-	CcxsisSzLON2Qan7XJ+7fJKNBYZuj/52lO2Tds64LKRuog==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pdmh3ub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 19:23:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MJNtVW031096
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 19:23:55 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 22 Aug 2024 12:23:50 -0700
-Date: Fri, 23 Aug 2024 00:53:47 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Antonino Maniscalco <antomani103@gmail.com>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konrad.dybcio@linaro.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: Re: [PATCH 4/7] drm/msm/A6xx: Implement preemption for A7XX targets
-Message-ID: <20240822192347.ffezairwoqqolssl@hu-akhilpo-hyd.qualcomm.com>
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
- <20240815-preemption-a750-t-v1-4-7bda26c34037@gmail.com>
- <20240819200837.etzn7oaoamnceigr@hu-akhilpo-hyd.qualcomm.com>
- <14591112-4455-49b4-8b1a-3feffc4d343f@gmail.com>
+	s=arc-20240116; t=1724355365; c=relaxed/simple;
+	bh=T+iCPLKGp1giRFibjyR4hsCwo3Qni64/av4ClDCe4II=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DVElOFQ04cYelTF6U6zZTKPAKoR5E2RLgQnGk1XhY2QbrQo3bn3ZyJ/YgYYmu4+wJi0TViXugXS2nyRjROORc5mXlum/vvLwX8OyC8Hj8x5PmJ4md52Qj7KRzjJiRg8Hh3opDjylHqbqpMNFwRlEqKT7NOVnabqNcw3IPFBEKa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=sa0Ey35s reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 3997934921ddacdf; Thu, 22 Aug 2024 21:36:01 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8CD556F0E2D;
+	Thu, 22 Aug 2024 21:36:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724355361;
+	bh=T+iCPLKGp1giRFibjyR4hsCwo3Qni64/av4ClDCe4II=;
+	h=From:Subject:Date;
+	b=sa0Ey35scqCCNm7XeCvsQHJGeCXix7BVXCfNOC+hvETXnmKbY5RgmTUjok9vyPp4I
+	 QfjvEpZF6rCbRu+FkhI/Eyljw3IDGAcAP3qdfWzZ+nz2PO9IWsB3TstK1LpQuorZ5r
+	 tc9Lwe3Iy/XD3eaKHJ0Z54DZgH2Fv1K98+ainRlO48tkJgXAf9SWL4/VoxrnCZecTq
+	 57Y0ZC8EK6h0vmpsAnzK0h4ACGddT/X962gJYtnk8dQGhOH3lwBpOzfTegETV9WjYS
+	 CCxZGdAdLinzGovz4Lns8fSJPgGdkT+L3XSmyZJSDCvg/RwQxwqJONzFyBjeBfX65O
+	 y33y36ejUZwrw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Huisong Li <lihuisong@huawei.com>
+Subject:
+ [PATCH v1 1/3] thermal: core: Rename cdev-to-thermal-zone bind/unbind
+ functions
+Date: Thu, 22 Aug 2024 21:24:35 +0200
+Message-ID: <6093162.lOV4Wx5bFT@rjwysocki.net>
+In-Reply-To: <12516814.O9o76ZdvQC@rjwysocki.net>
+References: <12516814.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <14591112-4455-49b4-8b1a-3feffc4d343f@gmail.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WHBhUGAaLUxB20-KScTvmRCNhIOeUX06
-X-Proofpoint-ORIG-GUID: WHBhUGAaLUxB20-KScTvmRCNhIOeUX06
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_12,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=705 spamscore=0
- suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408220146
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddvtddgudefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdr
+ lhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhihhhuihhsohhngheshhhurgifvghirdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=18 Fuz1=18 Fuz2=18
 
-On Wed, Aug 21, 2024 at 04:34:15PM +0200, Antonino Maniscalco wrote:
-> On 8/19/24 10:08 PM, Akhil P Oommen wrote:
-> > On Thu, Aug 15, 2024 at 08:26:14PM +0200, Antonino Maniscalco wrote:
-> > > This patch implements preemption feature for A6xx targets, this allows
-> > > the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
-> > > hardware as such supports multiple levels of preemption granularities,
-> > > ranging from coarse grained(ringbuffer level) to a more fine grained
-> > > such as draw-call level or a bin boundary level preemption. This patch
-> > > enables the basic preemption level, with more fine grained preemption
-> > > support to follow.
-> > > 
-> > > Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-> > > Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> > > ---
-> > 
-> > No postamble packets which resets perfcounters? It is necessary. Also, I
-> > think we should disable preemption during profiling like we disable slumber.
-> > 
-> > -Akhil.
-> > 
-> 
-> You mention that we disable slumber during profiling however I wasn't able
-> to find code doing that. Can you please clarify which code you are referring
-> to or a mechanism through which the kernel can know when we are profiling?
-> 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Please check msm_file_private_set_sysprof().
+Rename thermal_zone_cdev_binding() and thermal_zone_cdev_unbinding()
+to thermal_zone_cdev_bind() and thermal_zone_cdev_unbind(), respectively,
+to make the naming more consistent with the rest of the code.
 
--Akhil
+No functional impact.
 
-> Best regards,
-> -- 
-> Antonino Maniscalco <antomani103@gmail.com>
-> 
+Link: https://lore.kernel.org/linux-pm/19beefd9-d3f9-4d43-a45d-d241996de2d0@linaro.org/
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -937,8 +937,8 @@ void print_bind_err_msg(struct thermal_z
+ 		cdev->type, thermal_zone_trip_id(tz, trip), ret);
+ }
+ 
+-static void thermal_zone_cdev_binding(struct thermal_zone_device *tz,
+-				      struct thermal_cooling_device *cdev)
++static void thermal_zone_cdev_bind(struct thermal_zone_device *tz,
++				   struct thermal_cooling_device *cdev)
+ {
+ 	struct thermal_trip_desc *td;
+ 
+@@ -1063,7 +1063,7 @@ __thermal_cooling_device_register(struct
+ 
+ 	/* Update binding information for 'this' new cdev */
+ 	list_for_each_entry(pos, &thermal_tz_list, node)
+-		thermal_zone_cdev_binding(pos, cdev);
++		thermal_zone_cdev_bind(pos, cdev);
+ 
+ 	list_for_each_entry(pos, &thermal_tz_list, node)
+ 		if (atomic_cmpxchg(&pos->need_update, 1, 0))
+@@ -1264,8 +1264,8 @@ unlock_list:
+ }
+ EXPORT_SYMBOL_GPL(thermal_cooling_device_update);
+ 
+-static void thermal_zone_cdev_unbinding(struct thermal_zone_device *tz,
+-					struct thermal_cooling_device *cdev)
++static void thermal_zone_cdev_unbind(struct thermal_zone_device *tz,
++				     struct thermal_cooling_device *cdev)
+ {
+ 	struct thermal_trip_desc *td;
+ 
+@@ -1304,7 +1304,7 @@ void thermal_cooling_device_unregister(s
+ 
+ 	/* Unbind all thermal zones associated with 'this' cdev */
+ 	list_for_each_entry(tz, &thermal_tz_list, node)
+-		thermal_zone_cdev_unbinding(tz, cdev);
++		thermal_zone_cdev_unbind(tz, cdev);
+ 
+ 	mutex_unlock(&thermal_list_lock);
+ 
+@@ -1517,7 +1517,7 @@ thermal_zone_device_register_with_trips(
+ 
+ 	/* Bind cooling devices for this zone */
+ 	list_for_each_entry(cdev, &thermal_cdev_list, node)
+-		thermal_zone_cdev_binding(tz, cdev);
++		thermal_zone_cdev_bind(tz, cdev);
+ 
+ 	mutex_unlock(&thermal_list_lock);
+ 
+@@ -1611,7 +1611,7 @@ void thermal_zone_device_unregister(stru
+ 
+ 	/* Unbind all cdevs associated with 'this' thermal zone */
+ 	list_for_each_entry(cdev, &thermal_cdev_list, node)
+-		thermal_zone_cdev_unbinding(tz, cdev);
++		thermal_zone_cdev_unbind(tz, cdev);
+ 
+ 	mutex_unlock(&thermal_list_lock);
+ 
+
+
+
 
