@@ -1,145 +1,165 @@
-Return-Path: <linux-kernel+bounces-297828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A442095BE2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:22:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7634695BE32
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25569B26CF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:22:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC556B26DFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87911CFEDC;
-	Thu, 22 Aug 2024 18:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FA57347D;
+	Thu, 22 Aug 2024 18:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bSIiCtSr"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k59Iucmm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A4812FB1B
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 18:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBBA1CFECF;
+	Thu, 22 Aug 2024 18:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724350957; cv=none; b=morl62XZeb0JsiMqbkwNwYGextRwyY7vDfG9T+ceRJHZo+QnTC0gngT01T0wDtAQWDJH6Of5oX/y+CVfQZCdQ85Z/IAurFOvQ6Y4XCF8rsbtkjHQjm3suWGxjP9mQqCAZBDqtL4FkNmZ9VqtvJOEOcP/fj8dJ7Ilufs9hvvx/Gc=
+	t=1724351042; cv=none; b=bJ3nx8GJOeM/xRdFLwtkBOG667Qd9alSO+PrVEwdc8p24OozKHFLPSgOCWgM4A0ds4FyhsV41pwJGXo6M3cO2Kk7QSOArn4hKTVwJhC5WMvkYQ40TLC3jxscV6oNVaB23g4EDuo4SSZKULxEkgH2X6/+RU923QFlqrYvkjqkOMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724350957; c=relaxed/simple;
-	bh=8AaFxJBdDfuuSQorSwGuqnL6mAG545GzLyJgufi+ciE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U/ddTd46XFo/TGlD5CkTwsnPIndvSEqMm/4KURQfq7sWwLioro3xS7zUbUzm3iJso1te5BCGOjA7+933kVVNf8GmCg3In0y22xvfLvtj94E30ubrLsfb+sH89yFc7PINiD65YixqrdZK92Yta2sRqNMD1VNraZlEAiNZX6jdr48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bSIiCtSr; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44fee2bfd28so37301cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724350954; x=1724955754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dqn2V80u3kfHC/0zkp/qWJvODxJTdLLWbBCfitLm7s8=;
-        b=bSIiCtSrjNnHR/wBFRwgru+72jXnQTAB+bjd2PHYFSSzqz9zKSDhcuDMm8YXKCptiH
-         T50g5yzGcii8HPUfOrSZ7WX3He0eyEpEweOWfoGUSckJwppeofDjzSA+maL5IGNvq5FY
-         Y1xrDe2j2C4peUBWssStrBvAacTYPXEdu8+FT65gzc9HrnjObg1ie1+EUgnMMDxMsPTc
-         aWTQ/3pPvZHEVuPF9RoYN1gk/XmpmJ6OESNK5/3xshKvKoMgPfFiM2j39UwJL4hHlo0p
-         ZUXQ4EO51HmxGkEOHheTwrZ0RTlyCT2/vGb/tMnwXaCz+QdZ+6TJVkDm5xlKtUySfWbp
-         bybg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724350954; x=1724955754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dqn2V80u3kfHC/0zkp/qWJvODxJTdLLWbBCfitLm7s8=;
-        b=wFmyu08JzFhJltMXLPP4ex8Jmkpxi1BpBHB7oLLV5iUf2obYdNCocawGbAYxOYCgDh
-         sulaObQlcf3zwM23/KJakjrpBUeEmD9uFQPd70WR1YkPXwU1Uuf1fZ5lHQEq0RNKXz8k
-         eSGXhbUl7xscNK0QyuY4VbOjijL0BZqmq0fXUAocvn5vCjz8fgtr9IuYFkfoUPgNPZAx
-         wR96Jx3MiQlNoWSDlq7VmQ1qQnpssRxlwO4+yw9NO4oWPU7iIPw7xaOkMCrQkYXNkN4X
-         KRj/biYHNS7tr4t1A6JYmhC99Vd40yWNPg3ceE/NGLzRFvQaeuFtaLJYae4eYi/USyKZ
-         qdxw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6JitDjVNwdwdn0pkxnQAI7Ob/VQfuQm9Gq1/A+ZgT1r+QjjClfZD9OYioUoBhzio6TcLZ+AWTexUWL9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJigg4qCGYr0HPbQSjG8oYGY/F3yKYa3bFiRlEvegxwc8qZYcM
-	9ll/lV5XeX10ePr4178DjZIKBSP59M8fR9VLx3uU6jH41EvqdRvBU/RSac7HbIvrNDGoeaNU73G
-	WXEp2E/4a0wUbT89gC+jjiDrPM6O/Ib09E7on
-X-Google-Smtp-Source: AGHT+IFYGfaezjyjEqYQB3pI2kWejCzKz9jLeGF4X9rS5dsdgTvBJ5gQkACpK5kCBi/bcGIWug9I4TFT2RW+UfyedA4=
-X-Received: by 2002:a05:622a:1183:b0:447:e0e1:2a7b with SMTP id
- d75a77b69052e-4550858300amr110241cf.23.1724350954184; Thu, 22 Aug 2024
- 11:22:34 -0700 (PDT)
+	s=arc-20240116; t=1724351042; c=relaxed/simple;
+	bh=26023cvbuvY65m/DCPXCvwiUvr4ZctAqH8tU/OdXUxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sMJeAF+4WXwaLx/uD1m7PmGTVyrKgQGzU64o17DUo1hH4GqSEknZtAAGkcxKT3/bAFjds23OC6TMYip8vgPQ1ujTvmg2fi8iof2+TkoHnRyapX3AMLp9rJLBtBnaHnxVPkgkx7EtiLn2xLMlJebeTaAtc4+0NYzObapy5R4k8uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k59Iucmm; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724351041; x=1755887041;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=26023cvbuvY65m/DCPXCvwiUvr4ZctAqH8tU/OdXUxY=;
+  b=k59IucmmI92lMLGh7bu7ZPN+zIuJO/wYxViPOVVr4plv7f0rDHewWieq
+   N1WIwd99X11g7ygHLIHxBEZJ0HOfmnq8Gmt6qu1ve3M5G3HZgNwqSbA63
+   uep3/5iWhLE9WRqoQfHlZ6KWyr1c+lyCIJIhHBsbvFBGpWpACFN6Ku/te
+   1IwwIGmTRgDqOQodYRRWi7nhUOWRJuFA7ZQIWZciVDUNvxsJx8W3nzbYn
+   fgYBynOA9w9y7oOgGT/hugho+zxAXzGQGFoj57gbpnhn3c48jO/k34psr
+   KUAbsM13NwQVH3mkSpA/Z4Bw/zHY8MXF6oYEwbI7lHwDrieBOPpzf6oCO
+   A==;
+X-CSE-ConnectionGUID: u/cUA4rqS7e7t0PXD8Hp9w==
+X-CSE-MsgGUID: EK32mRmJQkKNcF0dQtAcWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33948297"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="33948297"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 11:24:00 -0700
+X-CSE-ConnectionGUID: YnezqHWITqiS5OfTYfA2Vw==
+X-CSE-MsgGUID: srfiwqCUTT6XvafazEm8mA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="61552240"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.26.196])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 11:23:55 -0700
+Message-ID: <ec8302c0-517f-418a-a00d-20022335dda7@intel.com>
+Date: Thu, 22 Aug 2024 21:23:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703095712.64202-1-dapeng1.mi@linux.intel.com> <20240703095712.64202-7-dapeng1.mi@linux.intel.com>
-In-Reply-To: <20240703095712.64202-7-dapeng1.mi@linux.intel.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 22 Aug 2024 11:22:23 -0700
-Message-ID: <CALMp9eSEuA70itad7oQUo=Ak6MVJYLo4kG4zJwEXkiUG6MgdnA@mail.gmail.com>
-Subject: Re: [Patch v5 06/18] x86: pmu: Add asserts to warn inconsistent fixed
- events and counters
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mingwei Zhang <mizhang@google.com>, 
-	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
-	Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] perf/core: Fix incorrect time diff in tick adjust
+ period
+To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, kan.liang@linux.intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240821134227.577544-1-luogengkun@huaweicloud.com>
+ <20240821134227.577544-3-luogengkun@huaweicloud.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240821134227.577544-3-luogengkun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 2, 2024 at 7:12=E2=80=AFPM Dapeng Mi <dapeng1.mi@linux.intel.co=
-m> wrote:
->
-> Current PMU code deosn't check whether PMU fixed counter number is
-> larger than pre-defined fixed events. If so, it would cause memory
-> access out of range.
->
-> So add assert to warn this invalid case.
->
-> Reviewed-by: Mingwei Zhang <mizhang@google.com>
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+On 21/08/24 16:42, Luo Gengkun wrote:
+> Perf events has the notion of sampling frequency which is implemented in
+> software by dynamically adjusting the counter period so that samples occur
+> at approximately the target frequency.  Period adjustment is done in 2
+> places:
+>  - when the counter overflows (and a sample is recorded)
+>  - each timer tick, when the event is active
+> The later case is slightly flawed because it assumes that the time since
+> the last timer-tick period adjustment is 1 tick, whereas the event may not
+> have been active (e.g. for a task that is sleeping).
+> 
+> Fix by using jiffies to determine the elapsed time in that case.
+> 
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+
 > ---
->  x86/pmu.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/x86/pmu.c b/x86/pmu.c
-> index b4de2680..3e0bf3a2 100644
-> --- a/x86/pmu.c
-> +++ b/x86/pmu.c
-> @@ -113,8 +113,12 @@ static struct pmu_event* get_counter_event(pmu_count=
-er_t *cnt)
->                 for (i =3D 0; i < gp_events_size; i++)
->                         if (gp_events[i].unit_sel =3D=3D (cnt->config & 0=
-xffff))
->                                 return &gp_events[i];
-> -       } else
-> -               return &fixed_events[cnt->ctr - MSR_CORE_PERF_FIXED_CTR0]=
-;
-> +       } else {
-> +               unsigned int idx =3D cnt->ctr - MSR_CORE_PERF_FIXED_CTR0;
+>  include/linux/perf_event.h |  1 +
+>  kernel/events/core.c       | 11 ++++++++---
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 1a8942277dda..d29b7cf971a1 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -265,6 +265,7 @@ struct hw_perf_event {
+>  	 * State for freq target events, see __perf_event_overflow() and
+>  	 * perf_adjust_freq_unthr_context().
+>  	 */
+> +	u64				freq_tick_stamp;
+>  	u64				freq_time_stamp;
+>  	u64				freq_count_stamp;
+>  #endif
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index a9395bbfd4aa..86e80e3ef6ac 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -55,6 +55,7 @@
+>  #include <linux/pgtable.h>
+>  #include <linux/buildid.h>
+>  #include <linux/task_work.h>
+> +#include <linux/jiffies.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -4120,7 +4121,7 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>  {
+>  	struct perf_event *event;
+>  	struct hw_perf_event *hwc;
+> -	u64 now, period = TICK_NSEC;
+> +	u64 now, period, tick_stamp;
+>  	s64 delta;
+>  
+>  	list_for_each_entry(event, event_list, active_list) {
+> @@ -4148,6 +4149,10 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>  		 */
+>  		event->pmu->stop(event, PERF_EF_UPDATE);
+>  
+> +		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
+> +		period = tick_stamp - hwc->freq_tick_stamp;
+> +		hwc->freq_tick_stamp = tick_stamp;
 > +
-> +               assert(idx < ARRAY_SIZE(fixed_events));
+>  		now = local64_read(&event->count);
+>  		delta = now - hwc->freq_count_stamp;
+>  		hwc->freq_count_stamp = now;
+> @@ -4157,9 +4162,9 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>  		 * reload only if value has changed
+>  		 * we have stopped the event so tell that
+>  		 * to perf_adjust_period() to avoid stopping it
+> -		 * twice.
+> +		 * twice. And skip if it is the first tick adjust period.
+>  		 */
+> -		if (delta > 0)
+> +		if (delta > 0 && likely(period != tick_stamp))
+>  			perf_adjust_period(event, period, delta, false);
+>  
+>  		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
 
-Won't this assertion result in a failure on bare metal, for CPUs
-supporting fixed counter 3?
-
-> +               return &fixed_events[idx];
-> +       }
->
->         return (void*)0;
->  }
-> @@ -740,6 +744,8 @@ int main(int ac, char **av)
->         printf("Fixed counters:      %d\n", pmu.nr_fixed_counters);
->         printf("Fixed counter width: %d\n", pmu.fixed_counter_width);
->
-> +       assert(pmu.nr_fixed_counters <=3D ARRAY_SIZE(fixed_events));
-> +
-
-And this one as well?
-
->         apic_write(APIC_LVTPC, PMI_VECTOR);
->
->         check_counters();
-> --
-> 2.40.1
->
 
