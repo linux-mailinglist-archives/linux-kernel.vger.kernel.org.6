@@ -1,221 +1,141 @@
-Return-Path: <linux-kernel+bounces-297050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431B595B244
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:51:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B02695B246
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF6CC282A94
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417EF1F2464D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B23317E46E;
-	Thu, 22 Aug 2024 09:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8228715C156;
+	Thu, 22 Aug 2024 09:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZnmCjvha"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N2BfALIl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAB613C9CB
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396D113C9CB
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319973; cv=none; b=QoehJRXTXkrFolKtQuNOpFmbPQsz2WkLo+oLndMKvVSjtpzEFn3sEPytg6DBJvf4tv9cruCd8zahAVidKhK84E0TE1GCzqt8TSWjvVH7ZYSPAhKYbG0ih99pHsoBchKMAzX/wtSwJZ6/UPenoqH0OFusPfBcS+YKCbwjlNubUDQ=
+	t=1724320000; cv=none; b=OJ65Kvu7ur36fZ2uDB8nMMT/7LV9VVjMb+zdJswHvhkhpwnv+1ZlqXXPTtIKRDYxNZUlhkxkW424KnZ6VHdAefstTw5zsEpGe6ZoheWynqD0BdhlxyAWEStR9JEcI+eGogb/PHhHN51O2W0fjN7oCrrS3S8owvi9RiV9We8xXpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319973; c=relaxed/simple;
-	bh=nMM5xc87HjLe57Hpiot1MTxh121OV1wiV02Mms8rhng=;
+	s=arc-20240116; t=1724320000; c=relaxed/simple;
+	bh=9LgryV2GQqe/l3lws3rfKC2TYYO9HW3gUt67U7qz7g0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bE4NikoWxlO862FiU8GNuYExSu/0Cs1NBCnYr60BLd35R4KzyY1Ulkij0Q5+Kr/J8fu3HojT2ACL/UNRarq94lz9ouqKDoLtXn5Poo/VhZ/T2oSh9smjqdm1BGWVz2Uj/mpRhi9qf+W1kYnumzvaN/f8waslK+dCOJjyWreDMbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZnmCjvha; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724319965;
+	 In-Reply-To:Content-Type; b=SLpBLDSMFkQzUCgWTmyDy7KbtuMaWQ4Fk19AzrHFMoghF8WtvGmYvSzV0Iq/laNs8NaDn/1jAlM7sJt/uSpLIa1j2eGL3xyEBYRP8DkTKMcWc+3NQZPF8GoY9xkmrDfLHGf2vFS74JcU3ixe5UQ/T+TMQlLXQh2P1PaH1vzaLIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N2BfALIl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724319998;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RpLoHGwQLK8WQXV+c9zw5UdCABNMrKwbUQvPoiXDGGI=;
-	b=ZnmCjvhaKsFk3ZN13JjRJLCgg0qX5lN0bs07e3X85nnPxEeM++zMfsEIHJu8iXteKEe1jG
-	gFmQ+dPpCtMyuWuUA4D7h7Qhu5W+/GFhU2FNenvWhEPx/YkhUtP/FmZuAqX7MKCj0tlrN2
-	XoUn5two9gmQVZ/ns2jn5Ee+X7OsyNE=
-Date: Thu, 22 Aug 2024 17:45:40 +0800
+	bh=ggRp79wknNfn3alru8HeXa4AZlJP0k4bw1WSXsEJS38=;
+	b=N2BfALIlS0BDHFT6SDxHdz16VrT3lZa84S2MVdu2Uw2QvD1MBovFQhfmJbHNKl0APPEjGf
+	9eTBRYgW017SLzmH7fAwk5gaVMYiCmHX4TbHYQOTUjMTBReiAMSgSgqWh4arIFZrd/wTgu
+	1uTWlkOTuJKOo7zN/RHvklk1uZnfxaI=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-484-k2Pi9uwkPwagrQ0U2z57vA-1; Thu, 22 Aug 2024 05:46:36 -0400
+X-MC-Unique: k2Pi9uwkPwagrQ0U2z57vA-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2f3f6a6e3e8so4588711fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:46:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724319995; x=1724924795;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggRp79wknNfn3alru8HeXa4AZlJP0k4bw1WSXsEJS38=;
+        b=tADQTo/baxFhw+WYC3NlctcAEGN6QD0Yhq14NQhJ3uOQpwYqdhW7/nHzTyLoUiMJgK
+         p8ka/d6T77hzFji8Ec1bQjN/5tRSN4OntVqn7sEGmpGrsJ+TfpsgBzs5896aAM5ck2u3
+         gfFXIHp8axFVm3JtiW+9I5zSBl4++Z6pi1EQ4izdrHW7VJBOlJc0kBDF1/vM51IGonoO
+         LQusLbBECKGYRLWe9v5UHp9L9KeqBxfCbuPdaRrBNERE9Kfm8FEVqHXjWMTqSyLcV+Kw
+         jIQLqFHDB3lvrEc3A6LlZZWbxEqs5GHNWAEOxlBFITtRBqbM4qf3nLf1uIh8P3IfqY+A
+         286w==
+X-Forwarded-Encrypted: i=1; AJvYcCVB3FVzcZ1ouqROebrEf8NX5gr4Qbxb5VkzHBZZxEp6g20yUpYw0854Z3oCNyqK4wLGTu3GUoLJax56feI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6GIgSikoed72/YKxeslS2sYnbXvT1R4aZZSkdH/4xWqnoYa3+
+	mELVfeGWzhsur8FExa31hbniiq1DhYf8uK6VsangMz093QO9ZWMw1uQOTXjyzmQQe+I3STJ2zJz
+	ImWPnLDpwvsLCo0+uivRIIWGGkWQLtmb/CkmpB6TIoU5mE0qD0QpXdGCKOJoaFQ==
+X-Received: by 2002:a05:6512:3b8c:b0:52e:fa5f:b6a7 with SMTP id 2adb3069b0e04-5334fbe5954mr1009814e87.13.1724319994700;
+        Thu, 22 Aug 2024 02:46:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9xW+dmd/gXKMsIZeDVEH8teo4GMrxkxKCOlqmTdl1N95CvydtAPbONpi1qEeEezfv8gue9Q==
+X-Received: by 2002:a05:6512:3b8c:b0:52e:fa5f:b6a7 with SMTP id 2adb3069b0e04-5334fbe5954mr1009786e87.13.1724319994097;
+        Thu, 22 Aug 2024 02:46:34 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2ca516sm93612966b.87.2024.08.22.02.46.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 02:46:33 -0700 (PDT)
+Message-ID: <0923283f-0b7a-4dcf-8d22-b55595b1ba35@redhat.com>
+Date: Thu, 22 Aug 2024 11:46:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] codetag: debug: mark codetags for pages which
- transitioned from being poison to unpoison as empty
-To: Miaohe Lin <linmiaohe@huawei.com>, surenb@google.com,
- kent.overstreet@linux.dev
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Hao Ge <gehao@kylinos.cn>, stable@vger.kernel.org, nao.horiguchi@gmail.com,
- akpm@linux-foundation.org, pasha.tatashin@soleen.com, david@redhat.com
-References: <20240822025800.13380-1-hao.ge@linux.dev>
- <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/platform/geode: switch GPIO buttons and LEDs to
+ software properties
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mark Gross <mgross@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Borislav Petkov <bp@alien8.de>,
+ linux-geode@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+References: <ZsV6MNS_tUPPSffJ@google.com>
+ <a2366dcc-908e-41e9-875e-529610682dc1@redhat.com>
+ <ZsYu0SEy8ZUKEJqP@google.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZsYu0SEy8ZUKEJqP@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Miaohe
+Hi,
 
-
-Thank you for taking the time to review this patch.
-
-
-On 8/22/24 16:04, Miaohe Lin wrote:
-> On 2024/8/22 10:58, Hao Ge wrote:
->> From: Hao Ge <gehao@kylinos.cn>
+On 8/21/24 8:15 PM, Dmitry Torokhov wrote:
+> On Wed, Aug 21, 2024 at 12:15:51PM +0200, Hans de Goede wrote:
+>> Hi Dmitry,
 >>
-> Thanks for your patch.
->
->> The PG_hwpoison page will be caught and isolated on the entrance to
->> the free buddy page pool. so,when we clear this flag and return it
->> to the buddy system,mark codetags for pages as empty.
+>> On 8/21/24 7:25 AM, Dmitry Torokhov wrote:
+>>> Convert GPIO-connected buttons and LEDs in Geode boards to software
+>>> nodes/properties, so that support for platform data can be removed from
+>>> gpio-keys driver (which will rely purely on generic device properties
+>>> for configuration).
+>>>
+>>> To avoid repeating the same data structures over and over and over
+>>> factor them out into a new geode-common.c file.
+>>>
+>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 >>
-> Is below scene cause the problem?
->
-> 1. Pages are allocated. pgalloc_tag_add() will be called when prep_new_page().
->
-> 2. Pages are hwpoisoned. memory_failure() will set PG_hwpoison flag and pgalloc_tag_sub()
-> will be called when pages are caught and isolated on the entrance to buddy.
->
-> 3. unpoison_memory cleared flags and sent the pages to buddy. pgalloc_tag_sub() will be
-> called again in free_pages_prepare().
->
-> So there is a imbalance that pgalloc_tag_add() is called once and pgalloc_tag_sub() is called twice?
-As you said, that's exactly the case.
->
-> If so, let's think about more complicated scene:
->
-> 1. Same as above.
->
-> 2. Pages are hwpoisoned. But memory_failure() fails to handle it. So PG_hwpoison flag is set
-> but pgalloc_tag_sub() is not called (pages are not sent to buddy).
->
-> 3. unpoison_memory cleared flags and calls clear_page_tag_ref() without calling pgalloc_tag_sub()
-> first. Will this cause problem?
->
-> Though this should be really rare...
->
-> Thanks.
-> .
-
-Great, I didn't anticipate this scenario.
-
-When we call clear_page_tag_ref() without calling pgalloc_tag_sub(),
-
-It will cause exceptions in|tag->counters->bytes|and|tag->counters->calls|.
-
-We can add a layer of protection to handle it
-
-The pseudocode is as follows:
-
-if (mem_alloc_profiling_enabled()) {
-         union codetag_ref *ref = get_page_tag_ref(page);
-
-         if (ref) {
-             if( ref->ct != NULL && !is_codetag_empty(ref))
-             {
-                 tag = ct_to_alloc_tag(ref->ct);
-                 this_cpu_sub(tag->counters->bytes, bytes);
-                 this_cpu_dec(tag->counters->calls);
-             }
-             set_codetag_empty(ref);
-             put_page_tag_ref(ref);
-         }
-}
-
-Hi Suren and Kent
-
-Do you have any suggestions for this? If it's okay, I'll add comments 
-and include this pseudocode in|clear_page_tag_ref|.
-
->> It was detected by [1] and the following WARN occurred:
+>> Thanks, patch looks good to me:
 >>
->> [  113.930443][ T3282] ------------[ cut here ]------------
->> [  113.931105][ T3282] alloc_tag was not set
->> [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
->> [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_man4
->> [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loaded Tainted: G        W          6.11.0-rc4-dirty #18
->> [  113.943003][ T3282] Tainted: [W]=WARN
->> [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
->> [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
->> [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
->> [  113.946706][ T3282] sp : ffff800087093a10
->> [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: ffff80008249f0a0
->> [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0000000000000000
->> [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0000000000000000
->> [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: ffffffffffffffff
->> [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081746210
->> [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5b5d353031313339
->> [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 00000000ffffffd0
->> [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c0000000ffff7fff
->> [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0000000000000001
->> [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0000000000000000
->> [  113.957962][ T3282] Call trace:
->> [  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
->> [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
->> [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
->> [  113.960096][ T3282]  __folio_put+0xd4/0x120
->> [  113.960614][ T3282]  folio_put+0x24/0x50
->> [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
->> [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
->> [  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
->> [  113.963183][ T3282]  simple_attr_write+0x38/0x48
->> [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
->> [  113.964330][ T3282]  full_proxy_write+0x68/0x98
->> [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
->> [  113.965372][ T3282]  ksys_write+0x78/0x100
->> [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
->> [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
->> [  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
->> [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
->> [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
->> [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
->> [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
->> [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
+>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 >>
->> Link [1]: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise11.c
->>
->> Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper function")
->> Cc: stable@vger.kernel.org # v6.10
->> Signed-off-by: Hao Ge <gehao@kylinos.cn>
->> ---
->>   mm/memory-failure.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index 7066fc84f351..570388c41532 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -2623,6 +2623,12 @@ int unpoison_memory(unsigned long pfn)
->>   
->>   		folio_put(folio);
->>   		if (TestClearPageHWPoison(p)) {
->> +			/* the PG_hwpoison page will be caught and isolated
->> +			 * on the entrance to the free buddy page pool.
->> +			 * so,when we clear this flag and return it to the buddy system,
->> +			 * clear it's codetag
->> +			 */
->> +			clear_page_tag_ref(p);
->>   			folio_put(folio);
->>   			ret = 0;
->>   		}
->>
->>
-Thanks
+>> Question has this been tested on at least 1 affected device ?
+> 
+> No unfortunately it has not been as I do not have the hardware. I am
+> hoping folks on geode list could give this patch a spin.
 
-BR
+Ok. I assume this is part of some bigger plan to remove platform_data
+support from either LEDs and/or the GPIO buttons ?
 
-Hao
+I would rather not merge this untested, but if it is part of some
+bigger plan, then I'm ok with merging this if still no-one has tested
+this when the rest of the bits for the plan are ready.
+
+IOW lets wait a bit to see if someone steps up to test and of not
+then lets merge this before it becomes a blocker for further changes.
+
+Regards,
+
+Hans
+
 
 
