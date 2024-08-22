@@ -1,185 +1,103 @@
-Return-Path: <linux-kernel+bounces-297042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D9695B22D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:49:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D2A95B23B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51565286426
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED0F1C23B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409A0186601;
-	Thu, 22 Aug 2024 09:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE03A18A6A7;
+	Thu, 22 Aug 2024 09:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5ZNT5Lk"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HU95Pd/v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF47186606
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1179A189BBF;
+	Thu, 22 Aug 2024 09:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319774; cv=none; b=NkcQshOtXTGFifF+s9VqofnvaGdn0H7q6QML3ISwatO6maXc4nRSBGbXouGZQGyUNy1OnR8741toOlIzrWXPxCZzQ8Y+wtUOu9a9rkvpQqyQjkXvltvE2LDKMuXh6erbO8Ooh6B6L397VfHYRb/ntHlrEmV812WkyyzBUkk3rTI=
+	t=1724319812; cv=none; b=o4sth4CcTbCiGsan7W8me29gQ6Yv1AGIfQQtz0xfnfXkJ5+fJNxNPypYrai/QLed7ENW52dbzAZqLSUq0LrpnaBzRq6N5EuxsQyM5B7tagLMTwSMgUoUJmSGNi0obGCMksEE5DajqC3hUKgbCO09/Lsjc6/2Z5vsf5hVLevT3ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319774; c=relaxed/simple;
-	bh=addi5O1iO8rPzp7Xba1I/SVDBMpDp0inLY71MiioA78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AmWOTOvzgJewkNXJZVet+qIsbTLlCJpA76sQSrJLftcvvrJMQYFFwfVyVG+M82Wg2sKc/wxGT1Z9jG5T129BqIJZD4iq4u7gKQ5/M9Fn73Kx8CiWPxcbXjf+66afxJspaiMS25kidnnjuM1L2sYiJ/Zn3td7BoJsWtst7j/g5Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c5ZNT5Lk; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20230059241so5060475ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 02:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724319771; x=1724924571; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rT9nphr3FBy8w8TlOkDTcSqop/iUievOqu1C/QTIuD4=;
-        b=c5ZNT5Lkf7Woof+RDwAmTdBCUkGwgHzZJ9vwFSQfvVVMcEj+aQF2Tvdh5Q+5d1zeM+
-         sa6RP9LuW9h300308GXQ4kTk3urVDoD1/R9BhINzL0A6V/SVCbL/6g5Qy4L9Rngtuu0t
-         0HKMCpj1dD2CUGxcdJ/Ri/KlRayIEnVp8E9gM2yocv90gCEVKNJ9VnPgPGSVauW+bOUn
-         lOLzkatrVy4P5EUXxLUu6kEWcQGyA4j6QvDTvK/6lmVuxya86EgPaQvwOJnjIIjL7Es8
-         gpTnuKnfM/c5YBgVvJWCOTc+QoxyCKBx3zCDTVgKynK5CHnTQAYP62EZ2obzI/IwWLtS
-         Oe5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724319771; x=1724924571;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rT9nphr3FBy8w8TlOkDTcSqop/iUievOqu1C/QTIuD4=;
-        b=Vjo3aPgL4PwP3heVMOTZn+YFHOthvEg89atAZ7dz0PqRcgHAQBta9WG1548zW9AKEI
-         bY6XjGWvN4hV4O8wu38wrUTKDLcne7n9iSpOgHnG5kAEoqfQkUEphbmSma2G6kRlxY4L
-         dFitmDtdqxWlqv4nqf+aRfo1n4JI+9U0spCra4yDi87BlgSZ8aMdEn1YjhunbuWPYko7
-         H4DdhKvvfcxjluzYXJsBC0/mXyloUALjdrxuB6f638yV0aXmgGgmfGJ3a38GPvFRjxjP
-         JUCx07YKgrJ0x3TXU8p3gWwAtJIYd0fEcyZDH4DfxkPqoxUIDqCS5jqV1opP9v5UMvAb
-         Y8tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDxOOiYu3/HqtKPQLGMl3RWLw/6AHl2UM7ocMfd1f/Opb8Ul3qUbksmvNkeyaW5XRIv5cS9qcWP/eJKoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8jTQvQTNL/20ZMRheoMGuhLq97B8FekuR9ANr/Q59kJENTYiv
-	mjwcdEzGnUvrefXJQ2vJ1yw9X44l/v/lijJqt777UTYYRtMuok/uLhKBXc+qvg==
-X-Google-Smtp-Source: AGHT+IHfsANLzJW+TqoOiWeWY8HxcLe//pwPC8OGFSSjXI3DlfJLCyXQY4eLQyLzlBfwBgYxNwVtwA==
-X-Received: by 2002:a17:903:22cc:b0:1fb:1afb:b864 with SMTP id d9443c01a7336-203881f3792mr15614615ad.5.1724319770860;
-        Thu, 22 Aug 2024 02:42:50 -0700 (PDT)
-Received: from thinkpad ([117.213.99.42])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038b7ebe0dsm6850535ad.287.2024.08.22.02.42.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 02:42:50 -0700 (PDT)
-Date: Thu, 22 Aug 2024 15:12:43 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
-Message-ID: <20240822094243.b7crebodnbb542te@thinkpad>
-References: <20240723151328.684-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1724319812; c=relaxed/simple;
+	bh=F7BUekgpSBz/vqVm7E/ihOaYYuVE6h06fv6UgNcQzaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eexSkxvR+kmTMkGlK3Gr3VoAi72HM93a8uc9Jaur7Q/zvsLz8jbZNGc8JV6I0LX8Yav1D48G9z3F7mIgG93A9SSP0OGxgitbvQw3SC/E4iJ2rqRXjAnVQE8SMwy7NqgBaS+XCmmZtShJbhKzd+4Gp0mqg8pHxR43nWLJyn3vI/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HU95Pd/v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE0CDC4AF0B;
+	Thu, 22 Aug 2024 09:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724319811;
+	bh=F7BUekgpSBz/vqVm7E/ihOaYYuVE6h06fv6UgNcQzaw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HU95Pd/v0cv35pX8cVCMuZsYIAEygDKAzGPsXkpgHQ7S8J+wATftssj73mqUW/3A6
+	 4p1X1xoofnNMmW531U1viGPGgKuuLNJ/4Vn/fmCaaGK/lPvJJ/r3GACksA1p9wemJR
+	 mbhUI6so9As/Z/FnHAOr+CoZBYz6maPGvKrb8ddsvt6L24sZIIzS1zIJDJBIgfqboG
+	 wi6gJyeeS5EadFHujLZ7jCDZMrd6lE/IgLgh98wLuxJMtgkv2Q4pf4vcxvkuwvAM8Z
+	 lNjewUxc2oLcD1PiJ8k6nBJPsz+MkWJVjALMIObiPKBTBdSid9umW9C0J4fpUou7hq
+	 fOpSEQJDGNC7Q==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-27028b2cf22so248162fac.1;
+        Thu, 22 Aug 2024 02:43:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEbMGsHijNAWzjYiz93GjjgbC5cxoxE1yfKmXH8xx20LI5AH5sYg960iAnOUYxCLmJamDA1iuRc90=@vger.kernel.org, AJvYcCWb1nVrCRzatt2p3LvMhovheTmvZUKAyrgtaSWK4fesE0s3Ed1d0ChetwLX6DVJgpLy4ZOpcaI8yeS04Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9TEtOwNce/M7qSJNNa7M22MCM4lOEVVd3QXe++IYucmgSRI6C
+	IVzedfsBS7vgcCed6o7DW/ks+bPWgC1oQyb0U9nWN6AHhdpzMh4A94gKQyNpW9AAsPMY9xJoyLh
+	9nQhXpzZCttSeefdF+SykyWXr8bA=
+X-Google-Smtp-Source: AGHT+IG+OvYekMcBSrw29waillvHKP4F/lCraJ7EtDkhEiD/cMZ3SblaK6dpDvRVsqqiu/1MIpMGTpS9mRC2A8icwGM=
+X-Received: by 2002:a05:6871:146:b0:268:a1e0:79db with SMTP id
+ 586e51a60fabf-273c8dd3b6dmr813230fac.14.1724319811080; Thu, 22 Aug 2024
+ 02:43:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240723151328.684-1-johan+linaro@kernel.org>
+References: <20240822025931.3455-1-11162571@vivo.com>
+In-Reply-To: <20240822025931.3455-1-11162571@vivo.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 22 Aug 2024 11:43:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jq_2RoH8qJjKn3UUxLgNn4o4RqB=cfnT_pEFqtcMDdsw@mail.gmail.com>
+Message-ID: <CAJZ5v0jq_2RoH8qJjKn3UUxLgNn4o4RqB=cfnT_pEFqtcMDdsw@mail.gmail.com>
+Subject: Re: [PATCH v1] drivers:testing:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
+To: Yang Ruibin <11162571@vivo.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 23, 2024 at 05:13:28PM +0200, Johan Hovold wrote:
-> Commit 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to
-> dedicated schema") incorrectly removed 'vddpe-3v3-supply' from the
-> bindings, which results in DT checker warnings like:
-> 
-> 	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb: pcie@600000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
->         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-> 
-> Note that this property has been part of the Qualcomm PCIe bindings
-> since 2018 and would need to be deprecated rather than simply removed if
-> there is a desire to replace it with 'vpcie3v3' which is used for some
-> non-Qualcomm controllers.
-> 
-> Fixes: 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to dedicated schema")
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
+On Thu, Aug 22, 2024 at 4:59=E2=80=AFAM Yang Ruibin <11162571@vivo.com> wro=
+te:
+>
+> The debugfs_create_dir() function returns error pointers.
+> It never returns NULL. So use IS_ERR() to check it.
+>
+> Signed-off-by: Yang Ruibin <11162571@vivo.com>
 > ---
->  Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml   | 3 +++
->  Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml   | 3 ---
->  Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml | 3 ---
->  Documentation/devicetree/bindings/pci/qcom,pcie.yaml          | 3 +++
->  4 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> index 0a39bbfcb28b..2b6f5a171f20 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> @@ -78,6 +78,9 @@ properties:
->      description: GPIO controlled connection to WAKE# signal
->      maxItems: 1
->  
-> +  vddpe-3v3-supply:
-> +    description: PCIe endpoint power supply
-> +
->  required:
->    - reg
->    - reg-names
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
-> index 634da24ec3ed..7ed46a929d73 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
-> @@ -66,9 +66,6 @@ properties:
->      items:
->        - const: pci
->  
-> -  vddpe-3v3-supply:
-> -    description: PCIe endpoint power supply
-> -
->  allOf:
->    - $ref: qcom,pcie-common.yaml#
->  
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml
-> index 25c9f13ae977..15ba2385eb73 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml
-> @@ -58,9 +58,6 @@ properties:
->      items:
->        - const: pci
->  
-> -  vddpe-3v3-supply:
-> -    description: A phandle to the PCIe endpoint power supply
-> -
->  required:
->    - interconnects
->    - interconnect-names
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> index f867746b1ae5..ffabbac57fc1 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> @@ -91,6 +91,9 @@ properties:
->    vdda_refclk-supply:
->      description: A phandle to the core analog power supply for IC which generates reference clock
->  
-> +  vddpe-3v3-supply:
-> +    description: A phandle to the PCIe endpoint power supply
-> +
->    phys:
->      maxItems: 1
->  
-> -- 
-> 2.44.2
-> 
+>  drivers/thermal/testing/zone.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/testing/zone.c b/drivers/thermal/testing/zon=
+e.c
+> index fcee12b152da..26f0f80a6a5d 100644
+> --- a/drivers/thermal/testing/zone.c
+> +++ b/drivers/thermal/testing/zone.c
+> @@ -167,7 +167,7 @@ static void tt_add_tz_work_fn(struct work_struct *wor=
+k)
+>
+>         snprintf(f_name, TT_MAX_FILE_NAME_LENGTH, "tz%d", tt_zone->id);
+>         tt_zone->d_tt_zone =3D debugfs_create_dir(f_name, d_testing);
+> -       if (!tt_zone->d_tt_zone) {
+> +       if (IS_ERR(tt_zone->d_tt_zone)) {
+>                 tt_zone_free(tt_zone);
+>                 return;
+>         }
+> --
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks for catching this, but I'll just redo the patch while it is still fr=
+esh.
 
