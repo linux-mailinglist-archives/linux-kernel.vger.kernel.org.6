@@ -1,187 +1,244 @@
-Return-Path: <linux-kernel+bounces-297420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFC295B80B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3EA295B812
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FBA11F23FAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32A41C23587
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A321CBE89;
-	Thu, 22 Aug 2024 14:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5B91CBE8F;
+	Thu, 22 Aug 2024 14:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwRK10DB"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="ZSV0lHCa"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E95414A08F
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBCE1CB15D
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724335817; cv=none; b=U8GNagaj/yn72YP8Yfz/NY4k48dRBv2vMyf4ALsuLMb71035ZM0KtMpKvsDVY+6E869dymA8lnuokL3mASDTzEeXNfOAovfu9WPkJAmMyXPXXy7dwv18aO0KhuT4xtyFE1TKO/oYmaKmf/uM/qOTzF5HH2Ptua2UkAFlRy304jI=
+	t=1724336031; cv=none; b=GeMvmN5klQo+6+Z0WcAF08twtxfR2L1ZCqQ2hULE/0Ywx86zjG7rA/7Da8le5H+aMpFn9Ae+hmDXKSK+p3CjKOeEMD1OJVOeQd5Yt+SETs8Npdvi73pvaqKW6URQLHSletTjCV1NhioDAqUEaF/O90oniLfvB+/VLn+cbjxyIoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724335817; c=relaxed/simple;
-	bh=0zjURCfVd5HHj/VTX5X8G1aOa7+YHoPv4IrUn3361ys=;
+	s=arc-20240116; t=1724336031; c=relaxed/simple;
+	bh=GYaq+MxG8yhcxgoZ1kl+qP/dBkspH7s/mmAwHM4UZNM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMReIa0oV3/JiS84yTDr4Z0pK9eHQ/S4bamJG53u1dvNNxfNeXLhwfWKGFVX6ItfUvRfm9flGjkhdLs+cLkblVHZKIDTF35Bx0E8mhDE+fcrd0oWbQf/7cntdciia75XmVDKnypSa3XvmYNKtLXH1Y1hR9wUbXy3ugf3Gi7LMXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZwRK10DB; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20202df1c2fso13193395ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:10:14 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHNrezghdvAuhBw2SaEVkUrthAP0aIA6RmzO91lG8EIiMlPz+86BglFvwVwqh6nLuJdxsblQHvFrW4ZPtRgUYY6xDkD0TgZoZgqhGZZAuC0Qwn2WT+wZV6aAuEE8kQkaQ7XD+bLnGQCbwZb93+cJxFMQVAPKzgt/gM2iyb8dJjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=ZSV0lHCa; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86910caf9cso127190666b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724335814; x=1724940614; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ksLULyP/cLRQ/mJ475rRnLjhOrwePPcDiwX+xXFf4p4=;
-        b=ZwRK10DBAUbWV0dSM3OA9u0IlISYXoCNeimPb++TbYD4Tm/Uicn5BYFz4ToO68hA6R
-         LvR/0SLOe6YmN/GaY9S0J0w5mBGCL1K1lZvjlrjvCKpKG7sRLxgDAXKBs0pr02yBFRqH
-         j5KgLvDsN3km41CPwMlKF8aLjt8ZBYVoPsByAYBJDoxgRq5OrZONoPDK9t0N2sqN4uxi
-         1nmC0LiOoyYJvPj3UdPWeJluJXHxsZNysrH5UNsOrdDiYTNWKyUiX9lYi15sapzYPQZP
-         Vy4qBs+eJUqFRQwdA6uM0s0HNNi7HdlPTEnNGfG+rwIJMYTTy4tT2AQEcmN9KHz9ISdo
-         +wpw==
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724336026; x=1724940826; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NJnN3A3xo85nVe01BVIiv2LcPxZdBfiNlZcKruPVwls=;
+        b=ZSV0lHCaIrcHuoiW1sqOFGm1BQ7VuYKdbkt4k7JndLZh4NW7KscRf3isSWzV7vaggE
+         QzI+1l5X+dY6dHPMup0xYRP+W7dVOZLehOnOQif3LiwXsmgqNASDIhlpVxuGZTXoULaW
+         DUdI0NIN2sk1bTfJHEY9MUqNfdItpnMyZHLkOEBBF2B6JWX0sfP/uSbiJwXwezxPL0Rn
+         +f+ezw5WTMFP6mhHhqvkDesKWXyjgch5UhKb/7t3KNQYTSh3KwbpUAONKL0UCAIlPo1J
+         zSn5tkD4BCMUZXHGR1Ykw4MLrLrS7F2xK0FRsdi3pUystUxvhtGr0scS3jkaEyq+rdWw
+         aqYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724335814; x=1724940614;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ksLULyP/cLRQ/mJ475rRnLjhOrwePPcDiwX+xXFf4p4=;
-        b=IFVt2hD6qcenz+vkr0QkHMLu49tL3P73Pr7ZXEnuxTw1Ua8DF5VC+FAbIWCSyBjkvo
-         Rmo3xJb/AEncn4zMF9KwAcyJcile5Itz/P/7tMIUCYJwIqxSQOObgNzzfDUd3HCroOPm
-         b1B3fi+vvLlE7s1ZA3X4P7Fop3IAYQ4ehfwj6/6C+qfCFr4Ko8LlbaiHJ/OGS8yUcGuO
-         tFq8A6t9YMME/zO2P8ojhcglSqgUKCZjyH25AGG0TC2vdjuNlmTT/mbQVY4VL/A7Bq2U
-         z1uT3rvQYAx59iiglcheB54mQOl4j1hop8l1b9uN6cow3LvoMH6XA4/v9BbZKmqhoW6G
-         NqUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPOH2KRePPgyBRQWb8arcsGnJ/zPjK/e4dpmlh8vjfwTuxXhIYsvmTWFf0wCgeHciZCCKWWWsCY8SF8Qk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLK30Yzv+vNLK/T7npXyxoEcECQQ/6QY0TGbIsc7o9rOrOc0NT
-	+tDJQsxpri1Nbpk2e6mIaIQsUEKq9C1xVa3TZDCFPXTL2JTt5zch6qlTJMDU+g==
-X-Google-Smtp-Source: AGHT+IFzrt+20YcBicCQwfyJ+mUBIOMfNnIP2J0ZKEzrCrBDMEr3UYtUjafNmadoQZ655bU1nScC3Q==
-X-Received: by 2002:a17:902:db03:b0:202:4bd9:aea5 with SMTP id d9443c01a7336-2037ef2a562mr46871435ad.14.1724335813800;
-        Thu, 22 Aug 2024 07:10:13 -0700 (PDT)
-Received: from thinkpad ([120.60.60.148])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560fb70sm13035215ad.232.2024.08.22.07.10.08
+        d=1e100.net; s=20230601; t=1724336026; x=1724940826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NJnN3A3xo85nVe01BVIiv2LcPxZdBfiNlZcKruPVwls=;
+        b=oAyZIQGeCYg69y5N3WNk9IAccIF1RArgNRVxZ+Tr02wie2IGp9bhpDWWmJfki+rihn
+         pqPbI6rz+Oe0wpbqvKb3O6tJ0BEuXW10rbTaTBhi+WAb25mv0B3jERkYH0CcuoQ/LLH+
+         y30PJMa6By7hRdFCEk5LxdNCiDKxTJCvqZC1xYloDbC7ULSfRAdwqJNWe86E4jFKSzer
+         O01MZklu0aF6e85sc2ISS/933QdHMycAxcJadsVZ6eETV//2UYNcXL5xkdG1fMoiu0Sm
+         R+l3sRJW15Cc2UWbCbvNV+ct9Kp4zkFqZv7xd8DbfnULCawWz0KsMrePefHKH52NJDbW
+         ABvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXS1Z6N7H/KrA/Pu57Cr9QBrSNrUvbjm67GTTprlfgiW7ZjBmRIIzCNAzp4nYGg1yRqnt+JIrxOKwHq38s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcDYFwu7j07MJDo0jI849foT13WVQs5W9SGVoi+n4a3BUeLsoq
+	6MkSOxT0Lj3MuewBO5Z3XQ/4GsAF64U5gol7v79+xuKTmoBhYlmO5gTzduxImEc=
+X-Google-Smtp-Source: AGHT+IGj/XlqDCQK8puMTtLkkNZtL+0lMaXAygNVS1fY0ac52D3TBvA1TbWtFFq7XPu/ONazyumUdA==
+X-Received: by 2002:a17:907:72d4:b0:a77:cdae:6a59 with SMTP id a640c23a62f3a-a868a84f205mr327697066b.21.1724336025287;
+        Thu, 22 Aug 2024 07:13:45 -0700 (PDT)
+Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f38c4sm125073866b.191.2024.08.22.07.13.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 07:10:13 -0700 (PDT)
-Date: Thu, 22 Aug 2024 19:39:56 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
-	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-Message-ID: <20240822140956.unt45fgpleqwniwa@thinkpad>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
- <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
- <ZrEGypbL85buXEsO@hu-bjorande-lv.qualcomm.com>
- <90582c92-ca50-4776-918d-b7486cf942b0@kernel.org>
- <20240808120109.GA18983@thinkpad>
- <cb69c01b-08d0-40a1-9ea2-215979fb98c8@kernel.org>
- <20240808124121.GB18983@thinkpad>
- <c5bae58c-4200-40d3-94c6-669d2ee131d4@kernel.org>
+        Thu, 22 Aug 2024 07:13:44 -0700 (PDT)
+Date: Thu, 22 Aug 2024 16:13:43 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
+	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
+Subject: Re: [net-next PATCH v11 00/11] Introduce RVU representors
+Message-ID: <ZsdHl487u9jHmz-z@nanopsycho.orion>
+References: <20240822132031.29494-1-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c5bae58c-4200-40d3-94c6-669d2ee131d4@kernel.org>
+In-Reply-To: <20240822132031.29494-1-gakula@marvell.com>
 
-On Thu, Aug 08, 2024 at 03:06:28PM +0200, Krzysztof Kozlowski wrote:
-> On 08/08/2024 14:41, Manivannan Sadhasivam wrote:
-> > On Thu, Aug 08, 2024 at 02:13:01PM +0200, Krzysztof Kozlowski wrote:
-> >> On 08/08/2024 14:01, Manivannan Sadhasivam wrote:
-> >>> On Mon, Aug 05, 2024 at 07:18:04PM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 05/08/2024 19:07, Bjorn Andersson wrote:
-> >>>>> On Mon, Aug 05, 2024 at 09:41:26AM +0530, Krishna Chaitanya Chundru wrote:
-> >>>>>> On 8/4/2024 2:23 PM, Krzysztof Kozlowski wrote:
-> >>>>>>> On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
-> >>>>>>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> >>>>> [..]
-> >>>>>>>> +  qps615,axi-clk-freq-hz:
-> >>>>>>>> +    description:
-> >>>>>>>> +      AXI clock which internal bus of the switch.
-> >>>>>>>
-> >>>>>>> No need, use CCF.
-> >>>>>>>
-> >>>>>> ack
-> >>>>>
-> >>>>> This is a clock that's internal to the QPS615, so there's no clock
-> >>>>> controller involved and hence I don't think CCF is applicable.
-> >>>>
-> >>>> AXI does not sound that internal.
-> >>>
-> >>> Well, AXI is applicable to whatever entity that implements it. We mostly seen it
-> >>> in ARM SoCs (host), but in this case the PCIe switch also has a microcontroller
-> >>> /processor of some sort, so AXI is indeed relevant for it. The naming actually
-> >>> comes from the switch's i2c register name that is being configured in the driver
-> >>> based on this property value.
-> >>>
-> >>>> DT rarely needs to specify internal
-> >>>> clock rates. What if you want to define rates for 20 clocks? Even
-> >>>> clock-frequency is deprecated, so why this would be allowed?
-> >>>> bus-frequency is allowed for buses, but that's not the case here, I guess?
-> >>>>
-> >>>
-> >>> This clock frequency is for the switch's internal AXI bus that runs at default
-> >>> 200MHz. And this property is used to specify a frequency that is configured over
-> >>> the i2c interface so that the switch's AXI bus can operate in a low frequency
-> >>> there by reducing the power consumption of the switch.
-> >>>
-> >>> It is not strictly needed for the switch operation, but for power optimization.
-> >>> So this property can also be dropped for the initial submission and added later
-> >>> if you prefer.
-> >>
-> >> So if the clock rate can change, why this is static in DTB? Or why this
-> >> is configurable per-board?
-> >>
-> > 
-> > Because, board manufacturers can change the frequency depending on the switch
-> > configuration (enablement of DSP's etc...)
-> > 
-> >> There is a reason why clock-frequency property is not welcomed and you
-> >> are re-implementing it.
-> >>
-> > 
-> > Hmm, I'm not aware that 'clock-frequency' is not encouraged these days. So you
-> > are suggesting to change the rate in the driver itself based on the switch
-> > configuration? If so, what difference does it make?
-> 
-> Based on the switch, other clocks, votes etc. whatever is reasonable
-> there. In most cases, not sure if this one here as well, devices can
-> operate on different clock frequencies thus specifying fixed frequency
-> in the DTS is simplification and lack of flexibility. It is chosen by
-> people only because it is easier for them but then they come back with
-> ABI issues when it turns out they need to switch to some dynamic control.
-> 
+Thu, Aug 22, 2024 at 03:20:20PM CEST, gakula@marvell.com wrote:
+>This series adds representor support for each rvu devices.
+>When switchdev mode is enabled, representor netdev is registered
+>for each rvu device. In implementation of representor model, 
+>one NIX HW LF with multiple SQ and RQ is reserved, where each
+>RQ and SQ of the LF are mapped to a representor. A loopback channel
+>is reserved to support packet path between representors and VFs.
+>CN10K silicon supports 2 types of MACs, RPM and SDP. This
+>patch set adds representor support for both RPM and SDP MAC
+>interfaces.
+>
+>- Patch 1: Refactors and exports the shared service functions.
+>- Patch 2: Implements basic representor driver.
+>- Patch 3: Add devlink support to create representor netdevs that
+>  can be used to manage VFs.
+>- Patch 4: Implements basec netdev_ndo_ops.
+>- Patch 5: Installs tcam rules to route packets between representor and
+>	   VFs.
+>- Patch 6: Enables fetching VF stats via representor interface
+>- Patch 7: Adds support to sync link state between representors and VFs .
+>- Patch 8: Enables configuring VF MTU via representor netdevs.
+>- Patch 9: Add representors for sdp MAC.
+>- Patch 10: Add devlink port support.
+>
+>
+>Command to create PF/VF representor
+>#devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
+>
+>VF representors are created for each VF when switch mode is set switchdev on
+>representor PCI device. Each PF support upto 3VFs. Representor can be created
+>before or after the VFs creation. 
 
-Atleast for this device, this frequency is going to be static. Because, the
-device itself cannot change the frequency, only the host driver can. That too is
-only possible before enumerating the device. So there is no way the frequency is
-going to change dynamically.
+What do you mean by the last sentence? I don't understand it.
 
-- Mani
+>
+>#devlink dev
+>pci/0002:1c:00.0
+>
+>#devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
+>
+># ip link show
+>	pf1vf0rep: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether 7e:5a:66:ea:fe:d6 brd ff:ff:ff:ff:ff:ff
+>	pf1vf1rep: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether de:29:be:10:9e:bf brd ff:ff:ff:ff:ff:ff
+>	pf1vf2rep: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether 4a:12:c7:a2:66:ad brd ff:ff:ff:ff:ff:ff
+>	pf1vf3rep: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether c2:b8:a8:0e:73:fd brd ff:ff:ff:ff:ff:ff
 
--- 
-மணிவண்ணன் சதாசிவம்
+Where do you have physical port netdev? Looks like all macs are made up.
+I would expect the phisical port netdev to have some fixed vendor-based
+mac.
+
+
+>
+>
+>~# devlink port
+>pci/0002:1c:00.0/0: type eth netdev pf1vf0rep flavour physical port 1 splittable false
+
+vf0? What does it mean? Could you please let udev do it's work and let
+it rename netdevices properly?
+
+
+>pci/0002:1c:00.0/1: type eth netdev pf1vf1rep flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
+
+Do you have pf 0 or you start with 1? If yes, why?
+
+
+>pci/0002:1c:00.0/2: type eth netdev pf1vf2rep flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
+>pci/0002:1c:00.0/3: type eth netdev pf1vf3rep flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
+>
+>-----------
+>v1-v2:
+> -Fixed build warnings.
+> -Address review comments provided by "Kalesh Anakkur Purayil".
+>
+>v2-v3:
+> - Used extack for error messages.
+> - As suggested reworked commit messages.
+> - Fixed sparse warning.
+>
+>v3-v4: 
+> - Patch 2 & 3: Fixed coccinelle reported warnings.
+> - Patch 10: Added devlink port support.
+>
+>v4-v5:
+>  - Patch 3: Removed devm_* usage in rvu_rep_create()
+>  - Patch 3: Fixed build warnings.
+>
+>v5-v6:
+>  - Addressed review comments provided by "Simon Horman".
+>  - Added review tag. 
+>
+>v6-v7:
+>  - Rebased on top net-next branch.
+>
+>v7-v8:
+>   - Implemented offload stats ndo.
+>   - Added documentation.
+>
+>v8-v9:
+>   - Updated the documentation.
+>
+>v9-v10:
+>  - Fixed build warning w.r.t documentation.
+>
+>v10-v11:
+>  - As suggested by "Jiri Pirko" adjusted the documentation.
+>  - Added more commit description to patch1. 
+>
+>Geetha sowjanya (11):
+>  octeontx2-pf: Refactoring RVU driver
+>  octeontx2-pf: RVU representor driver
+>  octeontx2-pf: Create representor netdev
+>  octeontx2-pf: Add basic net_device_ops
+>  octeontx2-af: Add packet path between representor and VF
+>  octeontx2-pf: Get VF stats via representor
+>  octeontx2-pf: Add support to sync link state between representor and
+>    VFs
+>  octeontx2-pf: Configure VF mtu via representor
+>  octeontx2-pf: Add representors for sdp MAC
+>  octeontx2-pf: Add devlink port support
+>  octeontx2-pf: Implement offload stats ndo for representors
+>
+> .../ethernet/marvell/octeontx2.rst            |  85 ++
+> .../net/ethernet/marvell/octeontx2/Kconfig    |   8 +
+> .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+> .../ethernet/marvell/octeontx2/af/common.h    |   2 +
+> .../net/ethernet/marvell/octeontx2/af/mbox.h  |  74 ++
+> .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
+> .../net/ethernet/marvell/octeontx2/af/rvu.c   |  11 +
+> .../net/ethernet/marvell/octeontx2/af/rvu.h   |  30 +-
+> .../marvell/octeontx2/af/rvu_debugfs.c        |  27 -
+> .../marvell/octeontx2/af/rvu_devlink.c        |   6 +
+> .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  81 +-
+> .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
+> .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   4 +
+> .../ethernet/marvell/octeontx2/af/rvu_rep.c   | 464 +++++++++++
+> .../marvell/octeontx2/af/rvu_struct.h         |  26 +
+> .../marvell/octeontx2/af/rvu_switch.c         |  20 +-
+> .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +
+> .../ethernet/marvell/octeontx2/nic/cn10k.c    |   4 +-
+> .../ethernet/marvell/octeontx2/nic/cn10k.h    |   2 +-
+> .../marvell/octeontx2/nic/otx2_common.c       |  58 +-
+> .../marvell/octeontx2/nic/otx2_common.h       |  84 +-
+> .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++
+> .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 305 ++++---
+> .../marvell/octeontx2/nic/otx2_txrx.c         |  38 +-
+> .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
+> .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  19 +-
+> .../net/ethernet/marvell/octeontx2/nic/rep.c  | 744 ++++++++++++++++++
+> .../net/ethernet/marvell/octeontx2/nic/rep.h  |  53 ++
+> 28 files changed, 1981 insertions(+), 227 deletions(-)
+> create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
+> create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+>
+>-- 
+>2.25.1
+>
 
