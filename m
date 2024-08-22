@@ -1,174 +1,176 @@
-Return-Path: <linux-kernel+bounces-296757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804D095AEB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:16:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834BD95AE99
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38AF1C2342E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:16:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FE491F24503
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4130B17F397;
-	Thu, 22 Aug 2024 07:14:03 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD41A175D3D;
+	Thu, 22 Aug 2024 07:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TEgUvu2S"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEE217E01A;
-	Thu, 22 Aug 2024 07:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A0114D42C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310842; cv=none; b=pVjMl/AvH2qJTQyvVDaN1UFkR6JaK21CvfdnUU07bBQ0tHSSMlIhNc3GQux1UoYNH4oTJuWl0Y41FVK+XhQ5UCA6nrUeT4g9zoG6H6fJ+DJHvNwMtBPMmqePbXgGp0kvxsTlzDTAW2ujXTHqEe8c98tn6v33D3NrVT8GbyIvg9U=
+	t=1724310832; cv=none; b=U9iSoq4TmwL8WhfPqjhhkDqsjCAjJPwQbhYHjPOqtb6ubIOZoamFwFALX6KffdfvZSV0y3+B5h/hAGalA7qxzelFYXkeq7+JqSXPEGPLFPvuqkykrXjVR8XQopR+WGZwT6MQxIu6s5fhVA6tfm36zZrE1Akrgv4cy0H/u8vHFbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310842; c=relaxed/simple;
-	bh=OlEqmFYyA/zYCHsi3M5a6YAHLTZymd8rahW36+TnP9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X5IVpAvMmWyVG1gs8JsZJSru7PQLUuAQSHrEVM/v0vg+QLG3+V+qq4MyCmGz03/VF07FpXkLmtd0AJuV37ofWg2LuYZL3stLOAUlLqBnEZgZqou02qJA4TU6ZbWwTlpn/xCgoh7BnZv/yuJduel+gAgSucgPTIXJxr+d5XzkXSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WqDvG1Hfxz9sSX;
-	Thu, 22 Aug 2024 09:13:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id cfcB8-hHUiZb; Thu, 22 Aug 2024 09:13:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDvG0NQrz9sSH;
-	Thu, 22 Aug 2024 09:13:30 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id ED0E58B77D;
-	Thu, 22 Aug 2024 09:13:29 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id mLRSvJmx548r; Thu, 22 Aug 2024 09:13:29 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D75308B77E;
-	Thu, 22 Aug 2024 09:13:28 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
+	s=arc-20240116; t=1724310832; c=relaxed/simple;
+	bh=kWsXm+TNMemG6NWyPN6g5pavxhI7t+IxsfCaHKkZEGc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=trqb86DEU8c1Qv7B8pFVHVmY0sJZKy7RDAC1ew2XfVtqB0YLhfLUbZUm9D2XHsyl2KMFellgKqu2l87KQHo4K5SDESOAQOlg4CWl1jiTqItvpQdBY1UHTM2cBbm87UsA7CIcqI2JyzeQrzEzB6r23yb/NKVk7mnToDfQcarLGgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TEgUvu2S; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-70942ebcc29so347500a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 00:13:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724310829; x=1724915629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CFMLU37SF14i0z7/xzd4z7SOLQqMigYLuSMvL0jdhU0=;
+        b=TEgUvu2SeK48mfNVWRCrkE4BM+eMv4QkccuRMVGLdyifaa9nLBDgARE0eT66/JP2cz
+         S+9rPK8L72J/BN2y7KJ4KTwD+m7eRy+bVEZ4jxtQi5mB3EggGEjUAtceYFn27Hki5Tr9
+         IHwhJ6uUUYVYk4FTuegF1VMFarYq6Sm/qJ2bnYIKw12gcp7CVbfqju4lnptG6r/Ul6Ry
+         PaDB1qzHIiB6phfu5ACk6gUh6dTetQimhDvVtyz02elWnrBfaOODLK4D/GtKlsUnwb1U
+         Aq6YK7+ZAfmNUBYuHchLWQqVtT4Xx8trolrMELFze5Mvo4oXOVdYpFYUYN8lnyNxUNEg
+         5B4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724310829; x=1724915629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CFMLU37SF14i0z7/xzd4z7SOLQqMigYLuSMvL0jdhU0=;
+        b=nsOxtFPTFwIgHF+h4Oe0JJ9QwIHiRY3qsDNZ2gS3MnFgqTrfcutZZqEaZpgY7gGqBf
+         P4V3gwjXLH/h5aVznuBTAwb2uV9kEoXJ+kWEL1UJiEu0fiJ+YL04IOhrHwbng0lo8e+G
+         1wNVI74/wN8fAMifTwhzgnRz9WTUQbma78LdF54W2Oo85WN19Ad4FHiB9JC/rBgK18VA
+         oSREgG062MNnIeiAyAOAJA/ohzV9BzN6qspFRATV58KoQty5hOhg1uIL2oC/NAgB+nve
+         0RVqcdRRp5zRvWKrVJ8ktX83n9G3Bz0VrQ6q9dZHahPwMshZd5QA/geJGwTg2iMz113j
+         HIZQ==
+X-Gm-Message-State: AOJu0Yw3jUNhvtombp7D5/AjQNpsmK4u0jt7e7qcafYj+SI3YKMFx5nC
+	nwc8OWX75jMCVXzA1ZMb1jz4ozMBjxINoaD4zEluPWc/EWPqEhR8qZkQo19d8NQ=
+X-Google-Smtp-Source: AGHT+IHFVt0p20Eao8jGQp/M4A8gGxgTtYUk7Hnj/FFBLeb56GgWurcM0rgpuj3RCCjsswwc/siqyg==
+X-Received: by 2002:a05:6830:4386:b0:702:5a0:2f82 with SMTP id 46e09a7af769-70e043561e4mr1361943a34.0.1724310828958;
+        Thu, 22 Aug 2024 00:13:48 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([240e:473:c90:f96:d029:ea8a:4e6d:d272])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac994a3sm695095a12.16.2024.08.22.00.13.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 00:13:48 -0700 (PDT)
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+To: david@redhat.com,
+	hughd@google.com,
+	willy@infradead.org,
+	muchun.song@linux.dev,
+	vbabka@kernel.org,
+	akpm@linux-foundation.org,
+	rppt@kernel.org,
+	vishal.moola@gmail.com,
+	peterx@redhat.com,
+	ryan.roberts@arm.com,
+	christophe.leroy2@cs-soprasteria.com
+Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
-Date: Thu, 22 Aug 2024 09:13:15 +0200
-Message-ID: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v2 00/14] introduce pte_offset_map_{ro|rw}_nolock()
+Date: Thu, 22 Aug 2024 15:13:15 +0800
+Message-Id: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310794; l=2716; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=OlEqmFYyA/zYCHsi3M5a6YAHLTZymd8rahW36+TnP9o=; b=0KtX+75e5aHacqDKWQzqJJ0c3IpXSB6kgpJ4hqMZLLHdQ8eM9uPGFxsA9pxzj08bhyJT2vwTC Mzj8u0pdGU1Avply/I3zb6bed28Vac+xMEzM29FNgP7xAAaRupkUHDN
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Commit 9651fcedf7b9 ("mm: add MAP_DROPPABLE for designating always
-lazily freeable mappings") only adds VM_DROPPABLE for 64 bits
-architectures.
+Changes in v2:
+ - rename pte_offset_map_{readonly|maywrite}_nolock() to
+   pte_offset_map_{ro|rw}_nolock() (LEROY Christophe)
+ - make pte_offset_map_rw_nolock() not accept NULL parameters
+   (David Hildenbrand)
+ - rebase onto the next-20240822
 
-In order to also use the getrandom vDSO implementation on powerpc/32,
-use VM_ARCH_1 for VM_DROPPABLE on powerpc/32. This is possible because
-VM_ARCH_1 is used for VM_SAO on powerpc and VM_SAO is only for
-powerpc/64.
+Hi all,
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- fs/proc/task_mmu.c             | 4 +++-
- include/linux/mm.h             | 4 +++-
- include/trace/events/mmflags.h | 4 ++--
- 3 files changed, 8 insertions(+), 4 deletions(-)
+As proposed by David Hildenbrand [1], this series introduces the following two
+new helper functions to replace pte_offset_map_nolock().
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 5f171ad7b436..4a3fe961cbf6 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -987,8 +987,10 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- #ifdef CONFIG_X86_USER_SHADOW_STACK
- 		[ilog2(VM_SHADOW_STACK)] = "ss",
- #endif
--#ifdef CONFIG_64BIT
-+#if VM_DROPPABLE != VM_NONE
- 		[ilog2(VM_DROPPABLE)] = "dp",
-+#endif
-+#ifdef CONFIG_64BIT
- 		[ilog2(VM_SEALED)] = "sl",
- #endif
- 	};
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c4b238a20b76..865d3e21ee5e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -359,7 +359,7 @@ extern unsigned int kobjsize(const void *objp);
- 
- #if defined(CONFIG_X86)
- # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
--#elif defined(CONFIG_PPC)
-+#elif defined(CONFIG_PPC64)
- # define VM_SAO		VM_ARCH_1	/* Strong Access Ordering (powerpc) */
- #elif defined(CONFIG_PARISC)
- # define VM_GROWSUP	VM_ARCH_1
-@@ -409,6 +409,8 @@ extern unsigned int kobjsize(const void *objp);
- #ifdef CONFIG_64BIT
- #define VM_DROPPABLE_BIT	40
- #define VM_DROPPABLE		BIT(VM_DROPPABLE_BIT)
-+#elif defined(CONFIG_PPC32)
-+#define VM_DROPPABLE		VM_ARCH_1
- #else
- #define VM_DROPPABLE		VM_NONE
- #endif
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index b63d211bd141..9820cbfbcb14 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -143,7 +143,7 @@ IF_HAVE_PG_ARCH_X(arch_3)
- 
- #if defined(CONFIG_X86)
- #define __VM_ARCH_SPECIFIC_1 {VM_PAT,     "pat"           }
--#elif defined(CONFIG_PPC)
-+#elif defined(CONFIG_PPC64)
- #define __VM_ARCH_SPECIFIC_1 {VM_SAO,     "sao"           }
- #elif defined(CONFIG_PARISC)
- #define __VM_ARCH_SPECIFIC_1 {VM_GROWSUP,	"growsup"	}
-@@ -165,7 +165,7 @@ IF_HAVE_PG_ARCH_X(arch_3)
- # define IF_HAVE_UFFD_MINOR(flag, name)
- #endif
- 
--#ifdef CONFIG_64BIT
-+#if VM_DROPPABLE != VM_NONE
- # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
- #else
- # define IF_HAVE_VM_DROPPABLE(flag, name)
+1. pte_offset_map_ro_nolock()
+2. pte_offset_map_rw_nolock()
+
+As the name suggests, pte_offset_map_ro_nolock() is used for read-only
+case. In this case, only read-only operations will be performed on PTE page
+after the PTL is held. The RCU lock in pte_offset_map_nolock() will ensure that
+the PTE page will not be freed, and there is no need to worry about whether the
+pmd entry is modified. Therefore pte_offset_map_ro_nolock() is just a renamed
+version of pte_offset_map_nolock().
+
+pte_offset_map_rw_nolock() is used for may-write case. In this case, the pte or
+pmd entry may be modified after the PTL is held, so we need to ensure that the
+pmd entry has not been modified concurrently. So in addition to the name change,
+it also outputs the pmdval when successful. This can help the caller recheck
+*pmd once the PTL is taken. In some cases, that is, either the mmap_lock for
+write, or pte_same() check on contents, is also enough to ensure that the pmd
+entry is stable. But in order to prevent the interface from being abused, we
+choose to pass in a dummy local variable instead of NULL.
+
+This series will convert all pte_offset_map_nolock() into the above two helper
+functions one by one, and finally completely delete it.
+
+This also a preparation for reclaiming the empty user PTE page table pages.
+
+This series is based on the next-20240822.
+
+Comments and suggestions are welcome!
+
+Thanks,
+Qi
+
+[1]. https://lore.kernel.org/lkml/f79bbfc9-bb4c-4da4-9902-2e73817dd135@redhat.com/
+
+Qi Zheng (14):
+  mm: pgtable: introduce pte_offset_map_{ro|rw}_nolock()
+  arm: adjust_pte() use pte_offset_map_rw_nolock()
+  powerpc: assert_pte_locked() use pte_offset_map_ro_nolock()
+  mm: filemap: filemap_fault_recheck_pte_none() use
+    pte_offset_map_ro_nolock()
+  mm: khugepaged: __collapse_huge_page_swapin() use
+    pte_offset_map_ro_nolock()
+  mm: handle_pte_fault() use pte_offset_map_rw_nolock()
+  mm: khugepaged: collapse_pte_mapped_thp() use
+    pte_offset_map_rw_nolock()
+  mm: copy_pte_range() use pte_offset_map_rw_nolock()
+  mm: mremap: move_ptes() use pte_offset_map_rw_nolock()
+  mm: page_vma_mapped_walk: map_pte() use pte_offset_map_rw_nolock()
+  mm: userfaultfd: move_pages_pte() use pte_offset_map_rw_nolock()
+  mm: multi-gen LRU: walk_pte_range() use pte_offset_map_rw_nolock()
+  mm: pgtable: remove pte_offset_map_nolock()
+  mm: khugepaged: retract_page_tables() use pte_offset_map_rw_nolock()
+
+ Documentation/mm/split_page_table_lock.rst |  6 +++-
+ arch/arm/mm/fault-armv.c                   |  9 ++++-
+ arch/powerpc/mm/pgtable.c                  |  2 +-
+ include/linux/mm.h                         |  7 ++--
+ mm/filemap.c                               |  4 +--
+ mm/khugepaged.c                            | 39 ++++++++++++++++++--
+ mm/memory.c                                | 23 ++++++++++--
+ mm/mremap.c                                |  9 ++++-
+ mm/page_vma_mapped.c                       | 24 ++++++++++---
+ mm/pgtable-generic.c                       | 42 ++++++++++++++++------
+ mm/userfaultfd.c                           | 15 ++++++--
+ mm/vmscan.c                                |  9 ++++-
+ 12 files changed, 157 insertions(+), 32 deletions(-)
+
 -- 
-2.44.0
+2.20.1
 
 
