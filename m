@@ -1,106 +1,95 @@
-Return-Path: <linux-kernel+bounces-297904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6772095BEF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:31:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CFF95BEF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5A3281E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:31:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9347B1C2301C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AA81D2782;
-	Thu, 22 Aug 2024 19:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0101D1734;
+	Thu, 22 Aug 2024 19:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5kCDyUw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Q80JPWcP"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6748F1D0DFF;
-	Thu, 22 Aug 2024 19:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D5D1D0DC7;
+	Thu, 22 Aug 2024 19:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724354921; cv=none; b=R3PwlzALcyipMsUpRjaxXIAasZcxjJ1kcfrWlDrvbasXtOy+qZSkWFYzDi+HUivPxRyx0q1nOxxbwgHCtigb1RFog51ZQk7XCRNLt3dcpZDSAdGg/zKaSriC6k+uVkkGmOJpPcc0T7RvWrU9ZOJbcS6AkbV+ZDTnx2u0jZioxaE=
+	t=1724354971; cv=none; b=huMud2LxsW7IhzfRbFShc7ppl3ZG/tNvLct4aLGxH/4Ms/t39QDw9XTEVYjEMFq0uegmHRc/3DXm3sAYOOwGMCLHmw4gD3Tpbi8MON5r6tRBfdjJ5nlukCWmOzhR3zUNP83x2gcDTAngRfyi2OliElVQPCpZQULOim0uxIuBl/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724354921; c=relaxed/simple;
-	bh=fGRxk6UbXKFSx34H54JxOG55A9SXa9LNifaF9L2xmls=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=QJNVQxvS7RBVvzodzco5b9dViFAxulcGlpknYjXiYFSVYY4GYc6VUeXHlYCuY63/vUR8fic/ReXXQdXzzynSnH/OtVj3WfjppvJNnj6q3SdMEHz9sO6II64prB8qpJkIaXGXHcd8QYr3rJ7w3S+hc2XrICgpTC0Ais3mYvfZnYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5kCDyUw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A07DBC32782;
-	Thu, 22 Aug 2024 19:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724354921;
-	bh=fGRxk6UbXKFSx34H54JxOG55A9SXa9LNifaF9L2xmls=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Y5kCDyUw+6QFk1lEpiWdG4V2cjaCcSKGrSuUBoZdE+pyvjc0Q5kSQw4QTvgEhZcE4
-	 31tnowmTAt+LqlmqyHv0kxsqBt4V8fD3oxRdbbj8Gj5e552dtFU+8K796nS4nvLVVT
-	 +BbeeDvWVKc18k2kJkbN7LdNxPK+ZHhbECyvJoUEAsETLp+Z79k9i0pqfzh/BaeN5T
-	 HERU41Da+JIGFMT2Grjm88Ft+fu1kZ261a2bqvCxtUwnZqml1eFAQC94AELqehux+Q
-	 D+SVlMiRZ9L34O/obBekjjpfqCqy96VBR9s1ShPH2bU88gzUpqfh+KxFsn/UGpIFaH
-	 Y+jSfNZvksYIA==
-Date: Thu, 22 Aug 2024 14:28:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	andersson@kernel.org, quic_vbadigan@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 4/8] PCI: Change the parent to correctly represent
- pcie hierarchy
-Message-ID: <20240822192838.GA346474@bhelgaas>
+	s=arc-20240116; t=1724354971; c=relaxed/simple;
+	bh=9ZEgusTWJU2HXLnzHir15+nHfQOEL9J2dmjPlBk4gZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=kDgVgdBAyWKK2gVCJqtJJfHOWDkG2juaVCeYCuug5TytmDhz1CaxzBZKh7UsN8htL10qWQNTMFyigTYKaKPH21HBBS85PMAiqtAJpeNQAWCqsJX4UzqegmqdtJFL4ylqVeRMA6I3oq3loY2AGGkjTQZHG62zPBbbgWbUhOFlhiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Q80JPWcP; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WqYDT0MPfzlgVnK;
+	Thu, 22 Aug 2024 19:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1724354964; x=1726946965; bh=9ZEgusTWJU2HXLnzHir15+nH
+	fQOEL9J2dmjPlBk4gZ4=; b=Q80JPWcPlkv2CO7rMQcOBV9cJQj4CxnH8yk4cRxO
+	1nfR9UrEJAzCs41yxpGZg2MZWpK6InAbCRglO7WakUDR4dP6dMVqJMlaIINenVTD
+	rGn+PuDbqf59N9yxrvJq0CyK9ZHs3XK2tYrmI9RKb70tVcS0t0cUwRx/dy1/rvZq
+	Laar2dL9MOWAc4J5YUs/zfBnhh49UdXKCAIymaCND9Kba2legHFyDhYRbFUfCF4h
+	c/w3qL6ZtGV7m5jA3NroU3bHhypV41Wshg8HYHB/+b1Ngm5XpizUduyPJgd2pz8W
+	UNIB+/2P3SWRDWs+ITC9BqqXG0o0j1UgeU+KWsWuZTJ6yg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id itsm-lJJiOpf; Thu, 22 Aug 2024 19:29:24 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WqYDL0lXRzlgVnF;
+	Thu, 22 Aug 2024 19:29:21 +0000 (UTC)
+Message-ID: <f8bb65ed-cdf2-4d23-b794-765ce0b48a4b@acm.org>
+Date: Thu, 22 Aug 2024 12:29:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeWFs+M+2kpotRqmcbPgXx8xCWEa-DqatGxWUAcixQb2g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/7] Introduce swiotlb throttling
+To: mhklinux@outlook.com, kbusch@kernel.org, axboe@kernel.dk,
+ sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, robin.murphy@arm.com, hch@lst.de,
+ m.szyprowski@samsung.com, petr@tesarici.cz, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-coco@lists.linux.dev
+References: <20240822183718.1234-1-mhklinux@outlook.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240822183718.1234-1-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 13, 2024 at 09:15:06PM +0200, Bartosz Golaszewski wrote:
-> On Sat, Aug 3, 2024 at 5:23 AM Krishna chaitanya chundru
-> <quic_krichai@quicinc.com> wrote:
-> >
-> > Currently the pwrctl driver is child of pci-pci bridge driver,
-> > this will cause issue when suspend resume is introduced in the pwr
-> > control driver. If the supply is removed to the endpoint in the
-> > power control driver then the config space access by the
-> > pci-pci bridge driver can cause issues like Timeouts.
-> >
-> > For this reason change the parent to controller from pci-pci bridge.
-> >
-> > Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-> > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > ---
-> 
-> Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Bjorn,
-> 
-> I think this should go into v6.11 as it does indeed better represent
-> the underlying logic.
+On 8/22/24 11:37 AM, mhkelley58@gmail.com wrote:
+> Linux device drivers may make DMA map/unmap calls in contexts that
+> cannot block, such as in an interrupt handler.
 
-Is this patch independent of the rest?  I don't think the whole series
-looks like v6.11 material, but if this patch can be applied
-independently, *and* we can make a case in the commit log for why it
-is v6.11 material, we can do that.
+Although I really appreciate your work, what alternatives have been
+considered? How many drivers perform DMA mapping from atomic context?
+Would it be feasible to modify these drivers such that DMA mapping
+always happens in a context in which sleeping is allowed?
 
-Right now the commit log doesn't tell me enough to justify a
-post-merge window change.
+Thanks,
 
-Bjorn
+Bart.
 
