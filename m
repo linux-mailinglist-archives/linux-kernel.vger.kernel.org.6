@@ -1,228 +1,115 @@
-Return-Path: <linux-kernel+bounces-297958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CE895BFA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:39:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E6C95BFA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 22:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD771C223B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D771C23310
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2231D0DF8;
-	Thu, 22 Aug 2024 20:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547D71D0DF7;
+	Thu, 22 Aug 2024 20:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="UeJy/+A7"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXzlJ3mp"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E8F1D0DD8
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4241D0DED;
+	Thu, 22 Aug 2024 20:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724359157; cv=none; b=UKgHr/5BbtVE4KLgiF8tSsiAJi01o57NmVJ0YF37hnjeVd2UTqjKXcncZpXPWSUtzXYn0uwbRWlKFzLkiVdcTHpXkD7OsTtJjK+l0rDcfgg6III1Mf3wB4RK38mztIUcaKHBd4fjh5mHNwloeYlvkycxKgxH3p4qQHIy1pGmcl8=
+	t=1724359159; cv=none; b=MVqzE4qwrUozrRRKDK2CpmM3lInLHAS+go4wgYHXkhKEhpGxCSocxq3WVHjEULl4EH65KK8Wsaqy0Z+sg19lI6gHY975b1XoHI3WRVQUNyoOpchJuUoYGH7LgJ+z8gl6/FdgiEGKDlf2lzsei4iHdB+8AwzIhPhqKbnD/Ls2KlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724359157; c=relaxed/simple;
-	bh=tDCqrqpDYIv3O4fx5f8QNj6vedfwK8+6GsRpsKvRbkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HwjFBoGYcqiI8rtWT/ohLLMh1UDhbDCiGXWNGIQR1XtCvoD7J0Opccqnf3LFYzB6fCaZvEZFeH6SPd5gIiDLfygtMr+Ac0wYjPEhuhurVNwK7dNnYGAxeVB1yZgyf4IxIE+0TnJoCkb0yWPq/FuvIIn3vdiyJ0VU8F9DPTQ16DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=UeJy/+A7; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d81dc0beso79857285a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 13:39:15 -0700 (PDT)
+	s=arc-20240116; t=1724359159; c=relaxed/simple;
+	bh=AQjV6ehQmbvNgyTGaLfWJdq63F7rPiXDtiyi9bGvcBA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YRG1dihua5OTxWe+Iy5JjHnyJZFbN0z7jvtjdmFAzW8xC4fsaozzgyrVsZklV6umv2geQjlZFSO5LsbxkJqSczwTvTyckaAg6Mnd1E6d5JkXGeyyXHWTGz/rTMh8qay2Cbeb7M7lfK3HGlKgnO/Sg68xxu0juoG4pUOhiCBSJKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXzlJ3mp; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-533de5a88f8so623058e87.3;
+        Thu, 22 Aug 2024 13:39:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724359154; x=1724963954; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aVFB9PSUxxNQxYSa9Dc2uzxRSZf/ScsRdF3Dy3pBcbw=;
-        b=UeJy/+A7aLxBu6Y8zZIxOXDHqpasJL/8delrYD2b/lfL1pUemRj4d81w7D0FG9FsF/
-         kHllOmbd6a8ftjFCdRtQgVV6AaNeW7PMK5QGEI/d7Si9L2VJSpQq0dmiYf6O7/eUwAOm
-         gcazt9LzemsiC3vSYLZJUFYjsr4HJv6zSfWHVCuyl/+fUyZ2ehioueNZ6brQpu/n0U0m
-         ohppTtPCMUrakc+vo2AchJo+1IeCiUFhl9T8w5tO2Cj92FnY6Ev3F1EsyLCF/fszwLwo
-         ITP8oZuDWG8GDk8FLsSVBJT22qnU89mdVk9YSy/02ITic9/BJxL43TNVcLYtU6C7HALz
-         OfyA==
+        d=gmail.com; s=20230601; t=1724359156; x=1724963956; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OkFn0AdhVgyDSLEmCSbk7UuIUs0dBVqwRiVvtrDuc3Y=;
+        b=gXzlJ3mpdIg0Sqk/a61hpcNazhrnqLSM7egAoYnn8siPSza1n2f+MW3FqlBdpoyKiY
+         PgX/sa51wuVhTke6uUwJDIYRbiggO1/vXOO2PWbEjtbAuOuroOinv0ZFu5TyknpR8Izw
+         xCNIpRrRv6YbQ2fAlH9L6IbEYRgbSh36yUi7b5WLTVz8x+h+uyOEXwcVRCIAPxKtaPF/
+         bP+T1H7kT+dMecXMjJT+L/syVd3Q5y+RZojDAxzHAXrOsSxr+GU83WD61+i5jfPm1mr8
+         BZ+rGixRuh3ttjOTSf48tUwXkFl/rx+nUnpRZE8IZNmDge4IPZKXo9w/g9qvLYnBTJee
+         8VQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724359154; x=1724963954;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aVFB9PSUxxNQxYSa9Dc2uzxRSZf/ScsRdF3Dy3pBcbw=;
-        b=LRlLyxuiJWLft2MqarqSpVkjElN4ttVvphv8FT5EBKKikYzf5hUOvO01jYBLEfUuL9
-         eqGT0k6Xb2/fnv7FXGmhfn3VMgtki6YxQGUNPK1K/L/wLWGZKpVeniPGjaL7EDLZ30Mj
-         szmb0KBkMC8CylR/WMOaiopPykjhWx2G/U5HMx0ortywqXrkOPMwT2CLbGoz2kImIqrN
-         gnfI3x/7l+evyVGCPDOlyQyqTZ9leOcxhqroz+JOaHPo7ND0O18hRv0bkzsKaoXL+q0+
-         6vl7PPs4XcRZF85nVbCuDtwFG9mYJ2s7cn1fLnu6K8C8L5waBsVi3NE2kZpvMxhxKGQQ
-         LirQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtpPAnIQwHc1GyJAf1pf13tnDKF2XxI80AKX3bQzEv5P2kjBhwsLndq4V9p2fGopiTKAjXzbGO7y2hEiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjSa5Mtb4s8zP6wGcTpipihQiRkPKqDBlBrnqeNSAI5+WA626b
-	DdeU7T7Q/zRKKYK50+KLME/Amv7O2cYUbegSsQwT4h3qrrbRbnMiFsSSyuYRGxc=
-X-Google-Smtp-Source: AGHT+IEoRpx83TwCTADpbTIPE8iEGIQ8Pwle6TGVihkq7WkEL+JaskxzQiEWVFEUECXATS3MnClPBw==
-X-Received: by 2002:a05:620a:1990:b0:7a2:d64:1cbc with SMTP id af79cd13be357-7a680a57533mr449953785a.26.1724359154139;
-        Thu, 22 Aug 2024 13:39:14 -0700 (PDT)
-Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f327ce2sm108846185a.1.2024.08.22.13.39.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 13:39:13 -0700 (PDT)
-From: Jesse Taube <jesse@rivosinc.com>
-To: linux-riscv@lists.infradead.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Conor Dooley <conor@kernel.org>,
-	Evan Green <evan@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] RISC-V: hwprobe: Use BIT macro to avoid warnings
-Date: Thu, 22 Aug 2024 16:39:12 -0400
-Message-ID: <20240822203913.2306574-1-jesse@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1724359156; x=1724963956;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OkFn0AdhVgyDSLEmCSbk7UuIUs0dBVqwRiVvtrDuc3Y=;
+        b=iT8T4q9pwxmm231DmjLJO4er2oVBNmznbC4Lkt9VhegLrp3oh4JchfD8+uHumNFXtF
+         eK5lOrFZsOB+CLQpW3oNIchMTidJo4vcn2lyGVEQcXVANZZZnRWk/tYVoulRIOBlpMlY
+         XWjTyNIqDnUURSfPn3piDko7mc3soHx1LKV2mtouQkVZTxYjhq0BdOTAwpS7fv8oASz8
+         fDirA1B5Z8MsoNvdoDnkrWnSKy9iNDRgbT/N3b9V0kkjw+kzfa2+OCfs+nRxwXUC1/hM
+         GeCRuZJ354kQwqjRLX7oxqDgKYSPvuu2gg6u/uClSa7dadkm1d8toi5HU/OhVLak4qM2
+         vZrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDdph/6OtOcm7G6ZAU0SThgHMQMXQwVudSYgNSvRkEv2Ju00efvyD1W8utUNDqzd4wF9rIGR/yffM=@vger.kernel.org, AJvYcCVHMjVht+hX1HFIBrwTgNVt7zPC3nJPUzNhsRXa6SVFyHRgY410C/gaEehbobX2HJVdjKqyTt62XgWoCc+I@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcl0kIrXEtFfn+RClm7CAxRNDrAICUsHm9hV6T4r3dCq6K71MR
+	AMhCmr39xoc7AiSIH/3WS/EeBkIl8qh/H8qFvbN08WJYtHvQ5rRJ
+X-Google-Smtp-Source: AGHT+IG7aXm73Ndu+NiqWPAkccFpdhVsfBo5sgR8yeluU7T/U/g51mQZyz4I6LQ6xQXtCJpg3cjjSg==
+X-Received: by 2002:a05:6512:224a:b0:52c:d626:77aa with SMTP id 2adb3069b0e04-534387c290dmr71446e87.58.1724359155604;
+        Thu, 22 Aug 2024 13:39:15 -0700 (PDT)
+Received: from [192.168.1.105] ([31.173.84.20])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea59415sm356805e87.120.2024.08.22.13.39.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 13:39:15 -0700 (PDT)
+Subject: Re: [PATCH v2] ata: pata_macio: Use WARN instead of BUG
+To: Christoph Hellwig <hch@lst.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, cassel@kernel.org,
+ dlemoal@kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-ppc@kolla.no, vidra@ufal.mff.cuni.cz
+References: <20240820030407.627785-1-mpe@ellerman.id.au>
+ <6b2208d1-c18f-14d5-e6d0-acd5c82b4db1@gmail.com>
+ <20240822025952.GA32067@lst.de>
+From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <95c3cc5d-17e3-d19b-22f6-6a519f480143@gmail.com>
+Date: Thu, 22 Aug 2024 23:39:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240822025952.GA32067@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-In uapi/asm/hwprobe.h file, (1 << N) is used to define the bit field
-which causes checkpatch to warn. Use BIT(N) and BIT_ULL(N) to avoid
-these warnings.
+On 8/22/24 5:59 AM, Christoph Hellwig wrote:
+[...]
 
-Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Charlie Jenkins <charlie@rivosinc.com>
----
-V1 -> V2:
- - Reword commit message
----
- arch/riscv/include/uapi/asm/hwprobe.h | 102 +++++++++++++-------------
- 1 file changed, 51 insertions(+), 51 deletions(-)
+>>> The overflow/underflow conditions in pata_macio_qc_prep() should never
+>>> happen. But if they do there's no need to kill the system entirely, a
+>>> WARN and failing the IO request should be sufficient and might allow the
+>>> system to keep running.
+>>
+>>    WARN*() can kill your system with panic_on_warn -- Android is particularly
+>> fond of this kernel parameter but I guess it's not your case... :-)
+>>    Greg KH usually advices against using these macros. :-)
+> 
+> And in this case he is simply totally wrong.  The whole poing of WARN_ON
 
-diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-index b706c8e47b02..d0874ff2fd37 100644
---- a/arch/riscv/include/uapi/asm/hwprobe.h
-+++ b/arch/riscv/include/uapi/asm/hwprobe.h
-@@ -21,57 +21,57 @@ struct riscv_hwprobe {
- #define RISCV_HWPROBE_KEY_MARCHID	1
- #define RISCV_HWPROBE_KEY_MIMPID	2
- #define RISCV_HWPROBE_KEY_BASE_BEHAVIOR	3
--#define		RISCV_HWPROBE_BASE_BEHAVIOR_IMA	(1 << 0)
-+#define		RISCV_HWPROBE_BASE_BEHAVIOR_IMA	BIT_ULL(0)
- #define RISCV_HWPROBE_KEY_IMA_EXT_0	4
--#define		RISCV_HWPROBE_IMA_FD		(1 << 0)
--#define		RISCV_HWPROBE_IMA_C		(1 << 1)
--#define		RISCV_HWPROBE_IMA_V		(1 << 2)
--#define		RISCV_HWPROBE_EXT_ZBA		(1 << 3)
--#define		RISCV_HWPROBE_EXT_ZBB		(1 << 4)
--#define		RISCV_HWPROBE_EXT_ZBS		(1 << 5)
--#define		RISCV_HWPROBE_EXT_ZICBOZ	(1 << 6)
--#define		RISCV_HWPROBE_EXT_ZBC		(1 << 7)
--#define		RISCV_HWPROBE_EXT_ZBKB		(1 << 8)
--#define		RISCV_HWPROBE_EXT_ZBKC		(1 << 9)
--#define		RISCV_HWPROBE_EXT_ZBKX		(1 << 10)
--#define		RISCV_HWPROBE_EXT_ZKND		(1 << 11)
--#define		RISCV_HWPROBE_EXT_ZKNE		(1 << 12)
--#define		RISCV_HWPROBE_EXT_ZKNH		(1 << 13)
--#define		RISCV_HWPROBE_EXT_ZKSED		(1 << 14)
--#define		RISCV_HWPROBE_EXT_ZKSH		(1 << 15)
--#define		RISCV_HWPROBE_EXT_ZKT		(1 << 16)
--#define		RISCV_HWPROBE_EXT_ZVBB		(1 << 17)
--#define		RISCV_HWPROBE_EXT_ZVBC		(1 << 18)
--#define		RISCV_HWPROBE_EXT_ZVKB		(1 << 19)
--#define		RISCV_HWPROBE_EXT_ZVKG		(1 << 20)
--#define		RISCV_HWPROBE_EXT_ZVKNED	(1 << 21)
--#define		RISCV_HWPROBE_EXT_ZVKNHA	(1 << 22)
--#define		RISCV_HWPROBE_EXT_ZVKNHB	(1 << 23)
--#define		RISCV_HWPROBE_EXT_ZVKSED	(1 << 24)
--#define		RISCV_HWPROBE_EXT_ZVKSH		(1 << 25)
--#define		RISCV_HWPROBE_EXT_ZVKT		(1 << 26)
--#define		RISCV_HWPROBE_EXT_ZFH		(1 << 27)
--#define		RISCV_HWPROBE_EXT_ZFHMIN	(1 << 28)
--#define		RISCV_HWPROBE_EXT_ZIHINTNTL	(1 << 29)
--#define		RISCV_HWPROBE_EXT_ZVFH		(1 << 30)
--#define		RISCV_HWPROBE_EXT_ZVFHMIN	(1ULL << 31)
--#define		RISCV_HWPROBE_EXT_ZFA		(1ULL << 32)
--#define		RISCV_HWPROBE_EXT_ZTSO		(1ULL << 33)
--#define		RISCV_HWPROBE_EXT_ZACAS		(1ULL << 34)
--#define		RISCV_HWPROBE_EXT_ZICOND	(1ULL << 35)
--#define		RISCV_HWPROBE_EXT_ZIHINTPAUSE	(1ULL << 36)
--#define		RISCV_HWPROBE_EXT_ZVE32X	(1ULL << 37)
--#define		RISCV_HWPROBE_EXT_ZVE32F	(1ULL << 38)
--#define		RISCV_HWPROBE_EXT_ZVE64X	(1ULL << 39)
--#define		RISCV_HWPROBE_EXT_ZVE64F	(1ULL << 40)
--#define		RISCV_HWPROBE_EXT_ZVE64D	(1ULL << 41)
--#define		RISCV_HWPROBE_EXT_ZIMOP		(1ULL << 42)
--#define		RISCV_HWPROBE_EXT_ZCA		(1ULL << 43)
--#define		RISCV_HWPROBE_EXT_ZCB		(1ULL << 44)
--#define		RISCV_HWPROBE_EXT_ZCD		(1ULL << 45)
--#define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 46)
--#define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
--#define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
-+#define		RISCV_HWPROBE_IMA_FD		BIT_ULL(0)
-+#define		RISCV_HWPROBE_IMA_C		BIT_ULL(1)
-+#define		RISCV_HWPROBE_IMA_V		BIT_ULL(2)
-+#define		RISCV_HWPROBE_EXT_ZBA		BIT_ULL(3)
-+#define		RISCV_HWPROBE_EXT_ZBB		BIT_ULL(4)
-+#define		RISCV_HWPROBE_EXT_ZBS		BIT_ULL(5)
-+#define		RISCV_HWPROBE_EXT_ZICBOZ	BIT_ULL(6)
-+#define		RISCV_HWPROBE_EXT_ZBC		BIT_ULL(7)
-+#define		RISCV_HWPROBE_EXT_ZBKB		BIT_ULL(8)
-+#define		RISCV_HWPROBE_EXT_ZBKC		BIT_ULL(9)
-+#define		RISCV_HWPROBE_EXT_ZBKX		BIT_ULL(10)
-+#define		RISCV_HWPROBE_EXT_ZKND		BIT_ULL(11)
-+#define		RISCV_HWPROBE_EXT_ZKNE		BIT_ULL(12)
-+#define		RISCV_HWPROBE_EXT_ZKNH		BIT_ULL(13)
-+#define		RISCV_HWPROBE_EXT_ZKSED		BIT_ULL(14)
-+#define		RISCV_HWPROBE_EXT_ZKSH		BIT_ULL(15)
-+#define		RISCV_HWPROBE_EXT_ZKT		BIT_ULL(16)
-+#define		RISCV_HWPROBE_EXT_ZVBB		BIT_ULL(17)
-+#define		RISCV_HWPROBE_EXT_ZVBC		BIT_ULL(18)
-+#define		RISCV_HWPROBE_EXT_ZVKB		BIT_ULL(19)
-+#define		RISCV_HWPROBE_EXT_ZVKG		BIT_ULL(20)
-+#define		RISCV_HWPROBE_EXT_ZVKNED	BIT_ULL(21)
-+#define		RISCV_HWPROBE_EXT_ZVKNHA	BIT_ULL(22)
-+#define		RISCV_HWPROBE_EXT_ZVKNHB	BIT_ULL(23)
-+#define		RISCV_HWPROBE_EXT_ZVKSED	BIT_ULL(24)
-+#define		RISCV_HWPROBE_EXT_ZVKSH		BIT_ULL(25)
-+#define		RISCV_HWPROBE_EXT_ZVKT		BIT_ULL(26)
-+#define		RISCV_HWPROBE_EXT_ZFH		BIT_ULL(27)
-+#define		RISCV_HWPROBE_EXT_ZFHMIN	BIT_ULL(28)
-+#define		RISCV_HWPROBE_EXT_ZIHINTNTL	BIT_ULL(29)
-+#define		RISCV_HWPROBE_EXT_ZVFH		BIT_ULL(30)
-+#define		RISCV_HWPROBE_EXT_ZVFHMIN	BIT_ULL(31)
-+#define		RISCV_HWPROBE_EXT_ZFA		BIT_ULL(32)
-+#define		RISCV_HWPROBE_EXT_ZTSO		BIT_ULL(33)
-+#define		RISCV_HWPROBE_EXT_ZACAS		BIT_ULL(34)
-+#define		RISCV_HWPROBE_EXT_ZICOND	BIT_ULL(35)
-+#define		RISCV_HWPROBE_EXT_ZIHINTPAUSE	BIT_ULL(36)
-+#define		RISCV_HWPROBE_EXT_ZVE32X	BIT_ULL(37)
-+#define		RISCV_HWPROBE_EXT_ZVE32F	BIT_ULL(38)
-+#define		RISCV_HWPROBE_EXT_ZVE64X	BIT_ULL(39)
-+#define		RISCV_HWPROBE_EXT_ZVE64F	BIT_ULL(40)
-+#define		RISCV_HWPROBE_EXT_ZVE64D	BIT_ULL(41)
-+#define		RISCV_HWPROBE_EXT_ZIMOP		BIT_ULL(42)
-+#define		RISCV_HWPROBE_EXT_ZCA		BIT_ULL(43)
-+#define		RISCV_HWPROBE_EXT_ZCB		BIT_ULL(44)
-+#define		RISCV_HWPROBE_EXT_ZCD		BIT_ULL(45)
-+#define		RISCV_HWPROBE_EXT_ZCF		BIT_ULL(46)
-+#define		RISCV_HWPROBE_EXT_ZCMOP		BIT_ULL(47)
-+#define		RISCV_HWPROBE_EXT_ZAWRS		BIT_ULL(48)
- #define RISCV_HWPROBE_KEY_CPUPERF_0	5
- #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
- #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-@@ -85,6 +85,6 @@ struct riscv_hwprobe {
- /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
- 
- /* Flags */
--#define RISCV_HWPROBE_WHICH_CPUS	(1 << 0)
-+#define RISCV_HWPROBE_WHICH_CPUS	BIT(0)
- 
- #endif
--- 
-2.45.2
+   Greg does have a point: on billions of Linux systems (Android phones) that
+all use panic_on_warn=1, WARN*() is pretty much equivalent to panic()... :-/
 
+> is to have a standardized way to assert conditions.
+
+   Hm, makes me remember assert() in C aborts a program... :-)
+
+MBR, Sergey
 
