@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-297647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA31695BBF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EE695BBF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BF1284C69
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103201F288F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2D81CDA0B;
-	Thu, 22 Aug 2024 16:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53C21CDA25;
+	Thu, 22 Aug 2024 16:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeluPO4/"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2sb31TT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B05E1CCEEE
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DBF1CC8BD;
+	Thu, 22 Aug 2024 16:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724344265; cv=none; b=TifOjRTkdiPa7sixSPd3crYpctTxDUR/Ldbov9jz/97bcVk2mQ77hNWOernwx9f2w+j8tOifsqwI96BYtpQCWZsr6zxwN3Xjx1Ii/PdBDfRA2umf5FI78neCE2OeyKMaRIukalScsAjpz+mIHq16W2IbUX1WJ1EHBaBWwkC02EU=
+	t=1724344282; cv=none; b=DTWqIrxHwHFagProFnwsWCgmvJimWljg+vOolqUbFZPNMBsoCHrdCQ/IQ/0wXGWlMS6BBCVRTVJnWvNf28Qgc38F6Zs+hcLL6IICyaK6HBPAoqemMpnp1qVDNZGk+A1e0OkGo3Kmsz9uAjC/727/15EdyP6q2le7LYVEMq80qUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724344265; c=relaxed/simple;
-	bh=L24VTJWehq7n35SdssG5EI5FVmJPtbNKUxwuU96OtUM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=LKKq9OVCnNGxt9KLL/+joqqAE9Gy7fowCmdrYBF1twhLShg/gsKMu+n3+TMQejXJ+NOUPulbdVaHu6BPHUksv3eD09Tm7AYhbOjTQ1sUey8BzsBa+/5HOWVVz4WZu+H5TjZJfpkuNUqHz3lApNGR1EBzlReEHtfljQXtcTLKOXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeluPO4/; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2021a99af5eso9123095ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:31:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724344263; x=1724949063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=51BB2dJoLtPN4L6oCxZATSFDdvc4kXBltpR8Z3f09pg=;
-        b=jeluPO4/VoQ0gJKagvtgueRnsVVLjH9WFiQ8NNbckt4WTgYHfduKxekAYqBUL8Zwa7
-         5GdXo1udUqqr6scv22Rf2CPe44BcAmjCGdEnjHMMU/gd3KsjKmkxks9v6p9Vppr49F/Z
-         vVSxUlXcFI7XSwwe+iOShiyPnfsPC/lAo8yjxFKNrO5re87qQG/iSnDooG1MQXQVM/nR
-         9xJF15K/y+S0RFiLMQR0ysiVgTixBngoQz284KGKHm8RneLm7F3+9AzgF/LqDhMkYBMC
-         B9GPpOUNmn1GHb3UIjgPvZj8P5ia/OSjYZdBlHyJbh4Ny7ItR4nZwmAvCg0VGNCbBmX3
-         qI5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724344263; x=1724949063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=51BB2dJoLtPN4L6oCxZATSFDdvc4kXBltpR8Z3f09pg=;
-        b=g6ZjOIYs1m7AU5yzfcr6QqT4+fcVYbmzMne6IXxDK0TqW/vWzEPSsS+SM/NPYE8vE0
-         A5mm7qAcx9vQjr9nJakpoSxRSj1DXx2iq29EAbCs3Oo9PV5c5YcvowkqL9UGqZbLqMhU
-         Wsh9eT9xP/SDLueIIFpHVGDD7gI6xWExhBMCXwpo6UwxLOBefnCICgFUVIioJu5t/Yzu
-         V4jxEZrg+VMcav0dGVAQdS86olNi9gfivRoKjlKQHtjgHIs1l8vcxepFqxJ65KwBaJ1V
-         5zQlV34oxnh6ZbOIOunbfhYTEwHhm7cI8yFLRS3h1yjvncyQO/+gfBLK8ublnNVRhBQm
-         GgwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGYxCdjvwcFYVH+I32fDOLOlJrDk9hCaDWddDUeCTAs7OdfpW/1CdaFrnwxH/VbuGkoq8LDpJWYBK3G1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyHfRwhZ2ik89Nqkb1cMmCGpa1YhlNEohVoYiaIkATKPRyqo7c
-	8dYtdvCNVVDC4fZLKw578fwd/H23gY5SaMV5EeKmzBMJSAEvQxIE
-X-Google-Smtp-Source: AGHT+IFfeNhr3PHpe5oNd8MbjpQIV7g7fdN+4/1M64+JppkvnVSnk184PcHB2uvtTf+ZHCt227Dg3A==
-X-Received: by 2002:a17:902:e848:b0:202:cf5:1014 with SMTP id d9443c01a7336-2038820e999mr28673245ad.4.1724344263007;
-        Thu, 22 Aug 2024 09:31:03 -0700 (PDT)
-Received: from localhost.localdomain ([2804:868:d047:6251:55a1:af12:b907:522])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385ae4f62sm14535935ad.256.2024.08.22.09.31.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 09:31:02 -0700 (PDT)
-From: Alien Wesley <alienwesley51@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH] staging: rtl8192e: Fix Assignment operator '=' in rtl_dm.c:1488
-Date: Thu, 22 Aug 2024 13:30:57 -0300
-Message-Id: <20240822163057.14114-1-alienwesley51@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724344282; c=relaxed/simple;
+	bh=VUg12QjX/BWOxsree9EbeHZn9D5q4/HlKniQvKwsUbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ixQ51+kXdmAIxorFRL7qLYOP72rwn7IEN4sYxYTARGoSqCBGtLrqXClvcjMu5uZw/yzaY6mu71ygB4RT+EJHtm1ivQoz7SR60CKdf1J2ZOIlS0L0n7BiI1M1TuhDVOE/tsGaFh/Ygo2o6AtqPGJI8K5ofGLKrJXGN+pn0aC2ieo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2sb31TT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE19BC32782;
+	Thu, 22 Aug 2024 16:31:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724344281;
+	bh=VUg12QjX/BWOxsree9EbeHZn9D5q4/HlKniQvKwsUbU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F2sb31TT5g+PjzoVukTl5h2JEC2kDVdeg7nBVbMScaaOxvPYuZaHoYkcfKlUrUN6P
+	 AsOCA9l6P8infkmm70iBiMvW5dIOERWTQ8DWgNjEJ1ThbqA6Fv7I1JwDLV62zQTukR
+	 uIUy7TwBZwgBqDx4i5WNaOdUnD5Ns5bWM3tkoJsQxPJn+hwFrG1SCONKmCCEv46TzE
+	 fs6z5etBnMVissxaHq0/baQA6bOcLp3UsqAnuPSFdRIY8bItuV+mwfw3Wdd9CpGsq2
+	 yFY4RK6kS2DDKBKyuZ2JhCcjro00ziexgiXQX3Afzbgxj66BCLhebdtOhVlwV3XTrI
+	 yyU+GaGQKLbuQ==
+Date: Thu, 22 Aug 2024 17:31:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 18/39] arm64/traps: Handle GCS exceptions
+Message-ID: <Zsdn1SC_Ajrc3-GJ@finisterre.sirena.org.uk>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-18-41b81947ecb5@kernel.org>
+ <ZsdczGTaMgZnEaDy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ewesK6QkmZD/wpzC"
+Content-Disposition: inline
+In-Reply-To: <ZsdczGTaMgZnEaDy@arm.com>
+X-Cookie: Your love life will be... interesting.
 
-Removed enter before operator '=' in rtl_dm.c:1488 in order to silence the
-following checkpatch warning.
 
-CHECK: Assignment operator '=' should be on the previous line
+--ewesK6QkmZD/wpzC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Alien Wesley <alienwesley51@gmail.com>
----
- drivers/staging/rtl8192e/rtl8192e/rtl_dm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, Aug 22, 2024 at 04:44:12PM +0100, Catalin Marinas wrote:
+> On Thu, Aug 22, 2024 at 02:15:21AM +0100, Mark Brown wrote:
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-index 0c7f38a4a7db..e9ca5a8768ad 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-@@ -1484,8 +1484,7 @@ static void _rtl92e_dm_rx_path_sel_byrssi(struct net_device *dev)
- 					rtl92e_set_bb_reg(dev,
- 							  rOFDM1_TRxPathEnable,
- 							  0x1 << i, 0x1);
--					dm_rx_path_sel_table.rf_enable_rssi_th[i]
--						 = 100;
-+					dm_rx_path_sel_table.rf_enable_rssi_th[i] = 100;
- 					disabled_rf_cnt--;
- 				}
- 			}
--- 
-2.34.1
+> > +void do_el0_gcs(struct pt_regs *regs, unsigned long esr)
+> > +{
+> > +	force_signal_inject(SIGSEGV, SEGV_CPERR, regs->pc, 0);
+> > +}
 
+> Just double checking: a GCSPOPM (for example, it can be a RET) from a
+> non-GCS page would generate a classic permission fault with ISS2.GCS set
+> rather than a GCS exception. That's my reading from the Arm ARM
+> pseudocode, the text isn't clear to me.
+
+Yes, we only generate GCS exceptions on checking values that have
+successfully been loaded from memory or other GCS logic errors - memory
+accesses generate data aborts.
+
+--ewesK6QkmZD/wpzC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHZ9UACgkQJNaLcl1U
+h9D9lQf/RHcsNQy/AveAnVZZzgRTxMTttaUD1tUEFeexMusqT2Ar0MqopzgIKpam
+lu4zjPI6W5uKaH9xBTV9Rpx//q9HIzraNH4NL9kJNl4NiY+04Y2QMew5hXyC4Qlb
+bRkNLFpOdr3kWhYEizRFaoZoT/A3mk/Hml4UOB8SVQmGkXmizkEPy+z48sUlWHfQ
+VsDqfKBBnFOkIz5rYVMZP9g/Q6uYE5meFpo/sTWSP9X8S9XUL4GOLpassoZA6vPq
+quUdPJfme+jeZI0gN9Rpuktzc6etbvVb5I/pf71dk+Zqr/hbgAaa+gmdQQsOpYdU
+K9DAZ5xndPmiuX7YI36ktz2o2+0STQ==
+=iVqg
+-----END PGP SIGNATURE-----
+
+--ewesK6QkmZD/wpzC--
 
