@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-297562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD1395BAE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:47:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6163295BAE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62448B2A2E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:46:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A910B2A8B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688B21CC89A;
-	Thu, 22 Aug 2024 15:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F96C1CCB2B;
+	Thu, 22 Aug 2024 15:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVvtbIlq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cvMHwKn8"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4941E50B;
-	Thu, 22 Aug 2024 15:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775561EEE3
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 15:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341588; cv=none; b=RRI+dkvL2M5N+dTLq1U4s3jQ276NHmWZWsgzTl+JJ4b3Yf6KabxRzzPjaquP/rI+gs5Gsd8lEJHhbHKqWsJvy2J+eITjluca+rN1n0FUikiblHSIY2lYfWOSphETbGjgSJ4kPYBlyM1dNzUPknSbUiTuU8aOPcWSck0kE2YtG4M=
+	t=1724341704; cv=none; b=AJ+XwhroOJK2nzQfMmH3tg3hIBGdmD0N290+DzrAobfN4a1ehXQD7Vc+1efCNsTgp/zNxc5sCBiTTDZ5OrXomJD55u9MwjR4A7Gln006x9ieFh1cfXM2tDQzH4JJjeoPAharFB/pNLk/KBtCPthAnEprua/bXTHlyF8olMXkJVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341588; c=relaxed/simple;
-	bh=eOt8jRygP/v2t+krP/0RcccBpfA1nP8tvUrqtnRvwwk=;
+	s=arc-20240116; t=1724341704; c=relaxed/simple;
+	bh=s1EhVvaSO1gpIspbSHhTTtb5IH7FCC3bOxcpOGvXxd4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tu4ZGv4yFofDIjBV7LC4idAdjgkDx4APqBwvhURoYkDjfrFwoIwscCKYo0LA8m/5BCV7ZMMTOca83OMvkfoZvi/1Y1f9MYLwZxEi/WPMk+ODrKueEXb2WRfZ7X9bhDVBWC6AORFX5Q1xBOhiMznA+GUT0CNrR80xjy5Eie8UU3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVvtbIlq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C035C32782;
-	Thu, 22 Aug 2024 15:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724341588;
-	bh=eOt8jRygP/v2t+krP/0RcccBpfA1nP8tvUrqtnRvwwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RVvtbIlqJxFlufZALFAVqCJw1njd5jdtD+wPt0InzL5IbgyAemue5+Nt9RoYIX5F9
-	 AzbYq4sBajoiOCcb6MSO2hN6bCJ7Owh3vJchi5B4pdJsrCvORAXlYlfkKz9dj4e08A
-	 bBE3T0pxBFUy/NodiuDDIAiA8EhhA08DpnwQ+T5lLir3lvN5busgTTdXeQsKzYLEiI
-	 fjhtw/wm9mxAQFcsm5TIZcj3bI7BROGJd0iQd60jaJCIA9KQE3DWsRSEv6xs2bEwDw
-	 0HU+89EEmgeHM0d2bFJSUyaJyNbnabnDT8PkS/AKzl8FVPovpJIaeCb6J4i4EtO3YH
-	 Z/cdHDdHiLDpw==
-Date: Thu, 22 Aug 2024 08:46:26 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: anders.blomdell@control.lth.se
-Cc: Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-	Anders Blomdell <anders.blomdell@gmail.com>,
-	linux-xfs@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>
-Subject: Re: XFS mount timeout in linux-6.9.11
-Message-ID: <20240822154626.GQ865349@frogsfrogsfrogs>
-References: <ZraeRdPmGXpbRM7V@dread.disaster.area>
- <252d91e2-282e-4af4-b99b-3b8147d98bc3@gmail.com>
- <ZrfzsIcTX1Qi+IUi@dread.disaster.area>
- <4697de37-a630-402f-a547-cc4b70de9dc3@gmail.com>
- <ZrlRggozUT6dJRh+@dread.disaster.area>
- <6a19bfdf-9503-4c3b-bc5b-192685ec1bdd@gmail.com>
- <ZrslIPV6/qk6cLVy@dread.disaster.area>
- <20240813145925.GD16082@lst.de>
- <20240813152530.GF6051@frogsfrogsfrogs>
- <AS8PR09MB65809D71E78A5E1FA20013EBE48F2@AS8PR09MB6580.eurprd09.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMKCHejPTUyI+u/xP9I6wFtg2VEvPQOKUyFM4MJ77jiJrv2Z7FKV6DQB077SjORVg84X+9zyCQUp2sclS8PFjefsamXFdEqcTbWMMxwsF5RRaFefjLv9eJPlrGhreAHz2ym1chtMcDagEKZG20HrqyCJW5zp18HwUwAdWu04xy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cvMHwKn8; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=s1EhVvaSO1gpIspbSHhTTtb5IH7FCC3bOxcpOGvXxd4=; b=cvMHwKn89lTSVg5ozx28zkOtEj
+	xxWOHeRJy/X8J3qWuI6UKX7lngVg6i5HwePTjTE1+cXaWEjokEtjDpjTJViuu+Tf1aCFMfXifPNDH
+	ZZNxa/6o0GvdKA1UaKmNCPPL1R/RRWotY6HfWtYlp8Iug9q/HWIlqiDVuXA6YtJxgDfO74n2+eN+P
+	NmXl46iVlG+RnLHkLnCPdgLbspv7RCW51o02Af1pM/olQIOjYgNPTqHMXc8J1gJqBs5fk46OvNjJv
+	mUP2TKmHiPJY0b05P72BBhpe6rRT8nT/V2BolCc9z/nVlo5VgrTe9g3p/gNPWsx9DQxWFi3vqeRM5
+	xF0JS/LA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1shA2h-00000009zPo-2oz4;
+	Thu, 22 Aug 2024 15:48:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4E401300642; Thu, 22 Aug 2024 17:48:07 +0200 (CEST)
+Date: Thu, 22 Aug 2024 17:48:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: mingo@kernel.org, tj@kernel.org, void@manifault.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: Re: [PATCH 0/9] sched: Prepare for sched_ext
+Message-ID: <20240822154807.GA17097@noisy.programming.kicks-ass.net>
+References: <20240813222548.049744955@infradead.org>
+ <CAJWu+oqUSOUrro-Rk-Bg7P6PyCWGKRZVT5i4Bi36XpRRFumL5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,49 +66,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AS8PR09MB65809D71E78A5E1FA20013EBE48F2@AS8PR09MB6580.eurprd09.prod.outlook.com>
+In-Reply-To: <CAJWu+oqUSOUrro-Rk-Bg7P6PyCWGKRZVT5i4Bi36XpRRFumL5w@mail.gmail.com>
 
-On Thu, Aug 22, 2024 at 12:25:03PM +0200, Anders Blomdell wrote:
-> Anything I need to do to get this patch into the affected kernel versions?
+On Wed, Aug 21, 2024 at 05:41:32PM -0400, Joel Fernandes wrote:
 
-Dave: Can you please (re)send this as a proper patch thread and ask
-Chandan to add it to his fixes branch asap?
+> With sched/core , it boots fine with core scheduling disabled, but
+> when core scheduling is enabled I am getting hard hangs and
+> occasionally get to the login screen if I'm lucky. So there's
+> definitely something wonky in sched/core branch and core sched.
+> I could not get a trace or logs yet, since once it hangs I have to
+> hard power off.
 
---D
-
-> /Anders
-> 
-> On 2024-08-13 17:25, Darrick J. Wong wrote:
-> > On Tue, Aug 13, 2024 at 04:59:25PM +0200, Christoph Hellwig wrote:
-> > > On Tue, Aug 13, 2024 at 07:19:28PM +1000, Dave Chinner wrote:
-> > > > In hindsight, this was a wholly avoidable bug - a single patch made
-> > > > two different API modifications that only differed by a single
-> > > > letter, and one of the 23 conversions missed a single letter. If
-> > > > that was two patches - one for the finobt conversion, the second for
-> > > > the inobt conversion, the bug would have been plainly obvious during
-> > > > review....
-> > > 
-> > > Maybe we should avoid identifiers that close anyway :)
-> > > 
-> > > The change looks good:
-> > > 
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > 
-> > Looks good to me too
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > --D
-> > 
-> 
-> -- 
-> Since Lund University (allegedly due to insufficient funding/manpower) prohibits
-> sending email from Linux clients, mail from me will come from the address
-> anders.blomdell.at.control.lth.se@outlook.com.
-> 
-> Anders Blomdell                  Email: anders.blomdell@control.lth.se
-> Department of Automatic Control
-> Lund University                  Phone:    +46 46 222 8793
-> P.O. Box 118
-> SE-221 00 Lund, Sweden
-> 
+Uff, thanks for this (and the follow up), I'll try and figure out where
+core-sched went sideways.
 
