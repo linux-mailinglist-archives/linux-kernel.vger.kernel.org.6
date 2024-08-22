@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-297608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F7495BB63
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:09:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE75595BB67
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8E228265A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F731F2461D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA321CCEC7;
-	Thu, 22 Aug 2024 16:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738E61CCED5;
+	Thu, 22 Aug 2024 16:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XqXRiPgI"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ub03fLtv"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552131CCB2E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79575182DF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724342950; cv=none; b=kywsB6wdeP9KNbNkKITCQ6fn8Wu+2/tgBd1qFFDMAUM+wkHBh4Yume52GEUQ5y6yJ6M4HA6oG5xwu5L8mWS4giRH9JDebKWyccy5u76FyVwUB+RpOQDAu0lo9jRTsam1qumdkyxDlYYi4SMFX1pq5swBEgbEiVx2Mqd8aUzDnWE=
+	t=1724342979; cv=none; b=SMvSuewXKJ+ZZfaT8EBRuV1ZxzRDRTuq0G93bDmsTOB47vod0o6QQZGdBt0ZZFQ86GKliPAPbZsRp76yMQ+fGsBw5caKcLiTQkkLaiS6XPNUnLLxq3Y6cj8j+NkpE5K6T1nZoADzH+ckdPbruMI2kDEZKgge+ordZ1b+tf+TFDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724342950; c=relaxed/simple;
-	bh=UpopM0iCKTPu7oD7wDK7usjY91WrEhIWx1dqahbwaGc=;
+	s=arc-20240116; t=1724342979; c=relaxed/simple;
+	bh=N1zMZ+hXVfz11gY2kkBw6IRe1yiWuDqeJ3l7e5bM8Vs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rPwNyh/l1A+SZGKu2blLViq5G2pqLJ/ajG08tl9hQBcyIF4ob5jnXIxh1uOLBbR/u7nhozf1+djdAfBK2fG3rxzxczXtEwmYbWR7FWPeV8x6NvoZ0hJblgeinD7FcDVGE0S7djDyYCKHHPlsfhjXQZAdWVSmbquwk/lVyTbaekM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XqXRiPgI; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=nDJiprewGxxQDYIYqlvPPwdO+IcKmVe+CH9aEf+jOv3vHZW+YXURfTyhaAGNVhNGVgym6UE7p0LusyFe2DZ7n/WGefIQkNTu+wG+hpqrccwVfbhYMT99X2mx9kPoHyPHXSfu4auc/49EtOkEXxiAui1tmGT8FQi+fpwq+j5UFaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ub03fLtv; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428e0d18666so7155405e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:09:08 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37182eee02dso562109f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724342947; x=1724947747; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724342976; x=1724947776; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mxWtqtu6B9Te+Ly60+I2Fkm4q9IiogrBTjwymbi54UI=;
-        b=XqXRiPgIz5P0/WJnN9Yg7tmqldQsiP2YwJk5T4hdLJnN6DnZU6mGMeEYXRvrOFZIVH
-         4lSDfliqti0iV+pDut8ao0/okOvEH4wQ8Q+csodxCCz2zBR38cyivCxChT91NPv16bpF
-         kqYCDL8fr2mphiQpS/t2R53ZTPVfvJ1BsYT3nyMw/4kBuuOt4JxHi7VR3Pjw8WtZH/w9
-         FFWKbDZRAEsSKv90Yop4Ciuw2+2404yPSeX5saiClm7MKu4G/CfSUn43aFRbiIV/+V3Q
-         npAwctDwUlryvyPLpKJqYzYohgPoHFxes5AvK2L+u6EgOv37tJHxr7uk4kGN5r3BP5mE
-         Hrvg==
+        bh=YVHwgiGRwBVRiA1k1Gg1ltpgqyX9aL/hfU0tA2E2xBs=;
+        b=Ub03fLtvJPJBUCdiCNr+J76L0yFG82k/Tz0UTY1aE5DvJMhWxd9vhyON/CoYLGAezG
+         vOOAldCbqa4Z8sTVmHlJNYDB5NJbcCpVBfZvmgmO7xUGiLwAhY5iv63v1iiLsq1GtySM
+         +93OyZ25s1mngsE7TpUbm2AWIi41UO9lZIRzQnbXdR3lzneIeLN4qd1ArGoClh21x9gz
+         dsNp8BLO4NMW5EXoVHlu7sB9SFTttjcD3ED6Veikr6ChVwIMi8GQQd6fS7VTI1PoiFa5
+         ER1pSCBCam2OFI5viLJhGIS++wETBVficE5kw8wspH71ifPjdOakUCMSwprgD9P37Kg5
+         5Qqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724342947; x=1724947747;
+        d=1e100.net; s=20230601; t=1724342976; x=1724947776;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mxWtqtu6B9Te+Ly60+I2Fkm4q9IiogrBTjwymbi54UI=;
-        b=tkYcaJ7oOa5NoBsTrEhIBIvDpHMFZjWoEuGyH9BQcclXU4k0HIv05oAZRUDqC/VKiO
-         SzY9UEN67/0wDLLR17nbSOPLpYrRm3SHITTmzEjPOlJav43T/Pg6oxzwKJlnmF8Wyvvy
-         sTlzv98N5d1BPJP33JEgbnmbDMvvflilwFYyAeOFBik5FCe8hEU8bqCzpdIqzk8c01u8
-         7X9kc55NWPrtAO1MYX0dolQeCrl3ME+CfGYPCBsR3nscvMVoPzCBG2X2wk9hmvkBbf82
-         SPFcR5rQUdaQ/Yqi5eUglO+Y9aUil4cstO1NMcUpiONYkH8axXT9kqEmYrlxOa+/sMAH
-         p2Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCW20QKuWKIHEIYTigbtl3bnNFVYYUS7oszYQjGnpkWhSJNmKTxk42rP7O/YNV4D/1LYYp+KIKf8w1N7lac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4zdz38uPfEKsfXiJxbCOnkEkm5VaELR3XzLzgr97i64me9F2a
-	dpTqT6sNS0l5Ylzl40eTTdXIVuTGb5EKVJAQi3qhARexFB5v2G0N1MVEbwrRsQo=
-X-Google-Smtp-Source: AGHT+IEN98bUxf5mTW8am5jeqLmJ9b+md3U9v/C8Oin8X/xeA+XvE29YV7xWzZoqUMcgJ7TNmlyYiQ==
-X-Received: by 2002:adf:dd87:0:b0:371:8ed7:49e9 with SMTP id ffacd0b85a97d-372fd6f0fafmr3816719f8f.26.1724342946252;
-        Thu, 22 Aug 2024 09:09:06 -0700 (PDT)
+        bh=YVHwgiGRwBVRiA1k1Gg1ltpgqyX9aL/hfU0tA2E2xBs=;
+        b=M9XF2E6GMkJDLGgFyqjfSiopyFXHzAf7DW6WfOY5JhNXodtkbe8SJ+DgfGLRBPEedI
+         TsIEOfMA9aSfaz3zbBi3dFy5wezwVA80BKOny2s3VlcAzW7eAh9k+feeUVvyji+CaAuL
+         Ks+h8FErKsFPUj5Yk1GAii2vK30luBprJcb18cd8yk5NhwYUw3caZOGxC/ynH86addLk
+         EfIlXUSiSpKW5oYzR/2UIc8CSFqHohxK3qPqtWRR2MZlStPHYpLQnXlKVWG9h5wJdmuy
+         2f46ytXiHHCknYtdRqIu3Z+Yqfb5Wr/+6q3fGJiSK6Xjsq0yGnw2bgyBSaKzNIY0IvBG
+         uAjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+9tyZyhpp1qltS0J4+M6yXbwVRPXanqSkMNCOUndDTracfxNO7pjmMWTvGubs5W8E5pUTHDNXLj27AGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWcGfhGAg7orj+RG4vvpdGVcNl6IwpTcYJgHbR4MN7fc3ieKI2
+	nrZS07LBzmKOcJV9lZoFiyv8sv5IwC7t03H31n72lwYXmwAcCKYUP8iIA8aQdZM=
+X-Google-Smtp-Source: AGHT+IF1xtLjO7HbauT10nJjxAFzvO6sbfbstsDOKVLiY/kd6TeqGRF7IYYKtPte/9nFo8s5ewLDcA==
+X-Received: by 2002:a5d:6e8b:0:b0:36b:5d86:d885 with SMTP id ffacd0b85a97d-373052b51a8mr2118977f8f.24.1724342975461;
+        Thu, 22 Aug 2024 09:09:35 -0700 (PDT)
 Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3730821a8bcsm2002038f8f.90.2024.08.22.09.09.05
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abee86df3sm65738805e9.14.2024.08.22.09.09.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 09:09:05 -0700 (PDT)
-Message-ID: <9296367b-500e-4701-9eca-a7fa7eea36d9@linaro.org>
-Date: Thu, 22 Aug 2024 18:09:05 +0200
+        Thu, 22 Aug 2024 09:09:35 -0700 (PDT)
+Message-ID: <65d60efb-9512-45a9-9303-4354eec21bd4@linaro.org>
+Date: Thu, 22 Aug 2024 18:09:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,61 +77,30 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/3] thermal: of: Fix OF node leak in
  thermal_of_trips_init() error path
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
 References: <20240814195823.437597-1-krzysztof.kozlowski@linaro.org>
- <f3d2c104-360a-4da0-8d77-59af89ebda2b@linaro.org>
- <CAJZ5v0hiR0sqgfR1WiuT=tXx3XRWgAE-j3biEMMaV5FjiSZwbw@mail.gmail.com>
- <9e6d817f-1fcf-4d31-b0c5-d68753e1f949@linaro.org>
- <CAJZ5v0jU4xOwgA8neFVMijV+T9=oiOBoEjD9viaCq=g51wFGkQ@mail.gmail.com>
- <CAJZ5v0iGkGeHV5a_LpeVFTnzKAZf9ynmpYWfH4D95jw2t6sFOg@mail.gmail.com>
 Content-Language: en-US
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAJZ5v0iGkGeHV5a_LpeVFTnzKAZf9ynmpYWfH4D95jw2t6sFOg@mail.gmail.com>
+In-Reply-To: <20240814195823.437597-1-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 22/08/2024 17:54, Rafael J. Wysocki wrote:
-> On Mon, Aug 19, 2024 at 3:31 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>
->> On Mon, Aug 19, 2024 at 3:22 PM Daniel Lezcano
->> <daniel.lezcano@linaro.org> wrote:
->>>
->>> On 19/08/2024 15:20, Rafael J. Wysocki wrote:
->>>> On Mon, Aug 19, 2024 at 12:12 PM Daniel Lezcano
->>>> <daniel.lezcano@linaro.org> wrote:
->>>>>
->>>>> On 14/08/2024 21:58, Krzysztof Kozlowski wrote:
->>>>>> Terminating for_each_child_of_node() loop requires dropping OF node
->>>>>> reference, so bailing out after thermal_of_populate_trip() error misses
->>>>>> this.  Solve the OF node reference leak with scoped
->>>>>> for_each_child_of_node_scoped().
->>>>>>
->>>>>> Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
->>>>>> Cc: <stable@vger.kernel.org>
->>>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>> ---
->>>>>
->>>>> Applied, thanks for the fixes
->>>>
->>>> Is there a place from which I can pull these?
->>>>
->>>> It would be good to include them into 6.11 as they are -stable material.
->>>>
->>>> Alternatively, I can pick them up from the list.
->>>
->>> I'll send a PR for fixes only. Let me double check if there are other
->>> fixes to go along with those
->>
->> Sure, thanks!
+On 14/08/2024 21:58, Krzysztof Kozlowski wrote:
+> Terminating for_each_child_of_node() loop requires dropping OF node
+> reference, so bailing out after thermal_of_populate_trip() error misses
+> this.  Solve the OF node reference leak with scoped
+> for_each_child_of_node_scoped().
 > 
-> Sorry for pressing, but it would be good to get this material into -rc5.
-> 
-> I can still pick up the patches, I don't believe they are controversial.
+> Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Ok, feel free to pick them. Give me a few minutes to add my tags
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
 
 -- 
 <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
