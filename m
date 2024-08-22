@@ -1,220 +1,132 @@
-Return-Path: <linux-kernel+bounces-297245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFB795B4DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:19:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFE395B4DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2941C22CB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:19:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95327B218A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F2D17E00F;
-	Thu, 22 Aug 2024 12:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hWyZfSpB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5895E1C93D6;
+	Thu, 22 Aug 2024 12:20:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6F826AF6
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E9C26AF6
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724329149; cv=none; b=CfhgoZz23MVbO0dq3oE9Nz5jdl/GbiO9J7ZYjbGBQVVF5eGkfka6ikqC24Ksaw+DX75m3Ds5u8fjrxnsdRYEjB56G1+VIa5YivGWcXBbUKtJ3kibuoGL9wLt+USEX9aWYAwHf702/6d67tPD9xVdmiEASzCRkbHBSjg5ndNgRqo=
+	t=1724329218; cv=none; b=XghTas5lwT7qs5SNmEKLQWxwYQwqO5Bh/VNmYUCun3tQyOPluo+/uUlzO1pogY8BaOqqUwXkZgU0c2EalKux7WUlqDHuhX2Ls91N8VPyZIVzFMtJwf760ajrcJzFpnKIqC6d8+BXzunCLDe5I1Ruw0n5Z/IJ0i1MOxT1Sjqjlis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724329149; c=relaxed/simple;
-	bh=Z7K5HszN4h0s2JYbyn6tJmPadkH4dVzPzfyg8Qv0VIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QjKpGGildITyR6sJ3dsxF3cmR4D0VzcnmeAI2DAx68GTnRPZggQHCZmjilLzRY688jgk0XdD4vd0/8Bimi7fNi4XXlH44MHTpdNAv9Bi8vXh6ZLA4f1s3bt4u0VTzNMYD2dp+/cq3CFAdUFyEja2/+KpsSHVZyAV0uBDwH6NdNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hWyZfSpB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724329146;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TkmBKasCieEXjo2TVqkYnfAxfMqsNMhdyVXpm9rsAmM=;
-	b=hWyZfSpBzNBhtjd/zKEhWjmTvdMaYnL20AWuKNVraFdJRDekZQdr8oUfLTjWazw8Je3ywE
-	rtkEKWYP27rOqpyseqqzhHDdBLWJteAoVlpLpCUhJ7IPENfAlfJIH5TTQWBO5kesNxmTkO
-	AHdts5dTdqyc5b2z9Kn5QnSWBtDGD7E=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-531-qyqGA6pjPdqZvti3Rnh6kA-1; Thu, 22 Aug 2024 08:19:05 -0400
-X-MC-Unique: qyqGA6pjPdqZvti3Rnh6kA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3717cc80ce1so486926f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 05:19:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724329144; x=1724933944;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TkmBKasCieEXjo2TVqkYnfAxfMqsNMhdyVXpm9rsAmM=;
-        b=pP/YhmZsnvJTEHPZanRE1Di8FIISd6fAICRGMXoDf8vf0lNo0EEvQvZA3MCyHGBy7m
-         jTZR/1NZUW4ZXyvf+PLvVwmHrSIM7Dr4dcSa+4WNVVqaMmdxVOAH/FgRRJROr48L0qvU
-         yq4UjVgQAiD1FgOBkR2QTXwMARMjio8tie33NglB1jOwzKR2p9sHrMT9j8nF4quuZIS4
-         dGrjEgQUaP7Une4n/0Gr46F3XiPcwNszYkv3ITwmpYejXG+hU55588fYBJLshtGxbVH1
-         yInZt8oJP3bCTUn7UhkHyzCIyn0mPHh+BMePzXvvnidUWnDVaT8K3n7Fj+Vmr55OC0Ma
-         6kGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjARG3E46vk28tjGbOii06qmLcwWvaMeP/5Ya+VKP49FqXNkz/prLUPnvUjayWHIUDhFtojQKemTe6mjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEYtIPjaOqD57vt2UiyPgacBjThNVMxcSkptojfMIecuoxLMre
-	K7qtSHgTWf+8WvKS/s0IVG1RcXYFmNoKH6MV4f8gs3Ng9aX140pEDoothBpOdIpwoWq42du904u
-	nPcLnE48UmbY1bhmLoIVUSIDcolR/oR+wemUb+3WM+ZvjbQQr2GfDzh7JPk8t9w==
-X-Received: by 2002:adf:f60d:0:b0:367:9621:6fa with SMTP id ffacd0b85a97d-372fd5ca8damr3645436f8f.37.1724329143941;
-        Thu, 22 Aug 2024 05:19:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUx+YDDxgqRcDJR/2ELwCGRMB9JIiGMlHuOPJmREuQ076olN3nXdv+XbVkjm1FNBbf+TOJ2g==
-X-Received: by 2002:adf:f60d:0:b0:367:9621:6fa with SMTP id ffacd0b85a97d-372fd5ca8damr3645400f8f.37.1724329142983;
-        Thu, 22 Aug 2024 05:19:02 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70f:2b00:f928:47d8:c9be:9d87? (p200300cbc70f2b00f92847d8c9be9d87.dip0.t-ipconnect.de. [2003:cb:c70f:2b00:f928:47d8:c9be:9d87])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac515a2a5sm23144385e9.20.2024.08.22.05.19.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 05:19:02 -0700 (PDT)
-Message-ID: <38d6caeb-1aba-43d2-8daf-12b9aaba77bd@redhat.com>
-Date: Thu, 22 Aug 2024 14:19:01 +0200
+	s=arc-20240116; t=1724329218; c=relaxed/simple;
+	bh=BUaGhDKugO8KmJcMu6yG5efX9QIwQvWnMGEzBPRTyGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oSCrv4w2vO1S0ESmV3kk0Pu1RW9cYY8gppQYdXTxHuT4H8/apYcKEDWuzA6EVNNByJJp7F8K/26DrPPYbBHYMaYEcmD+TYg9+or/hULmVr2gugcURBBEQPEnuzZVHG24L8QbULWfUR+aGw3DMSjIVsKVHgWt8HkpVVrNKPzhzxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sh6nU-0001ow-0R; Thu, 22 Aug 2024 14:20:12 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sh6nT-002FNW-6r; Thu, 22 Aug 2024 14:20:11 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D93CA3249CC;
+	Thu, 22 Aug 2024 12:20:10 +0000 (UTC)
+Date: Thu, 22 Aug 2024 14:20:10 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
+	Brian Norris <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
+	Kalle Valo <kvalo@kernel.org>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: RE: RE: RE: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
+Message-ID: <20240822-attentive-solemn-rat-13a85e-mkl@pengutronix.de>
+References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+ <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
+ <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <20240822-gay-myrtle-tarantula-bae0e0-mkl@pengutronix.de>
+ <PA4PR04MB9638C8D68F0F71C17E903DDAD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <20240822-brainy-liberal-toucan-bc498c-mkl@pengutronix.de>
+ <PA4PR04MB963813C76F476449A5003FFCD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/14] mm: handle_pte_fault() use
- pte_offset_map_maywrite_nolock()
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
- "hughd@google.com" <hughd@google.com>,
- "willy@infradead.org" <willy@infradead.org>,
- "muchun.song@linux.dev" <muchun.song@linux.dev>,
- "vbabka@kernel.org" <vbabka@kernel.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "rppt@kernel.org" <rppt@kernel.org>,
- "vishal.moola@gmail.com" <vishal.moola@gmail.com>,
- "peterx@redhat.com" <peterx@redhat.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <cover.1724226076.git.zhengqi.arch@bytedance.com>
- <239432a0bc56464e58a6baf3622fdc72526c8d57.1724226076.git.zhengqi.arch@bytedance.com>
- <6a586524-5116-4eaf-b4f3-c1aea290d7c1@cs-soprasteria.com>
- <b4bf605a-d31a-40ad-8cee-fe505e45dc64@bytedance.com>
- <4b867535-8481-4fa1-bed1-ad25a76682f0@redhat.com>
- <ef40c2ef-e4a4-4b02-85b8-a930285a3d0e@bytedance.com>
- <61c05197-0baa-4680-ad24-5965ba37dc35@redhat.com>
- <83142dc8-edcf-4e47-8215-8b359a2b7156@bytedance.com>
- <04dccff9-87dd-4e97-a712-b62fa51b32f7@redhat.com>
- <da7aa8d2-098c-431b-86d0-b817981a9a5f@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <da7aa8d2-098c-431b-86d0-b817981a9a5f@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="stabsaq2vdo4glry"
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB963813C76F476449A5003FFCD18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 22.08.24 14:17, Qi Zheng wrote:
-> Hi David,
-> 
-> On 2024/8/22 17:29, David Hildenbrand wrote:
->> On 21.08.24 12:03, Qi Zheng wrote:
->>>
->>>
-> 
-> [...]
-> 
->>>>>>>>> -        vmf->pte = pte_offset_map_nolock(vmf->vma->vm_mm,
->>>>>>>>> vmf->pmd,
->>>>>>>>> -                         vmf->address, &vmf->ptl);
->>>>>>>>> +        vmf->pte = pte_offset_map_maywrite_nolock(vmf->vma->vm_mm,
->>>>>>>>> +                              vmf->pmd, vmf->address,
->>>>>>>>> +                              NULL, &vmf->ptl);
->>>>>>
->>>>>> I think we discussed that passing NULL should be forbidden for that
->>>>>> function.
->>>>>
->>>>> Yes, but for some maywrite case, there is no need to get pmdval to
->>>>> do pmd_same() check. So I passed NULL and added a comment to
->>>>> explain this.
->>>>
->>>> I wonder if it's better to pass a dummy variable instead. One has to
->>>> think harder why that is required compared to blindly passing "NULL" :)
->>>
->>> You are afraid that subsequent caller will abuse this function, right?
->>
->> Yes! "oh, I don't need a pmdval, why would I? let's just pass NULL,
->> easy" :)
->>
->>> My initial concern was that this would add a useless local vaiable, but
->>> perhaps that is not a big deal.
->>
->> How many of these "special" instances do we have?
-> 
-> We have 5 such special instances.
-> 
->>
->>>
->>> Both are fine for me. ;)
->>
->> Also no strong opinion, but having to pass a variable makes you think
->> what you are supposed to do with it and why it is not optional.
-> 
-> Yeah, I added 'BUG_ON(!pmdvalp);' in pte_offset_map_ro_nolock(), and
-> have updated the v2 version [1].
 
-No BUG_ON please :) VM_WARN_ON_ONCE() is good enough.
+--stabsaq2vdo4glry
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Cheers,
+On 22.08.2024 12:11:15, David Lin wrote:
+> > Why do you think 2 drivers are easier to handle/support/maintain/...
+> > than 1 driver, especially given the low available review bandwidth?
+> >=20
+>=20
+> Nxpwifi is used to support new NXP WiFi chips. You can check the commit m=
+essage of Nxpwifi to
+> know the reason why we need a new driver to support new NXP WiFi chips.
 
-David / dhildenb
+FTR:
 
+https://lore.kernel.org/all/20240809094533.1660-1-yu-hao.lin@nxp.com/
+
+>> [1] We had considered adding IW61x to mwifiex driver, however due to
+>>     FW architecture, host command interface and supported features are
+>>     significantly different, we have to create the new nxpwifi driver.
+>>     Subsequent NXP chipsets will be added and sustained in this new driv=
+er.
+
+Thanks for the clarification.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--stabsaq2vdo4glry
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbHLPcACgkQKDiiPnot
+vG+J4gf+IEXO+QAQVMqrjhoe6SJq11AT5ZT+0VfCWfc/cnKSt5J/qPyINKQSpNFX
+y/ONVGx388jCSpujPpcmuyHgzyZRx1phYBSIoGPKCq3ZnPZ4pgLvQLgnwJP22rET
+nMkY48c+8CcaAvDuVpwUtcIsWXtGlb3qUNwf8HixneB/rnqiKG5B41H+1rYt6D+B
+K69MwkOvNcnCZWARkw4M8Wp7drUHyabXdi1e/l+ugRrwJMRgKqzXi+tBvNNEdI6E
+giMDbn7C6aZJPagFWSuQ/FRA7eHLqZahrUy7CX+E8JdcRJxj6IhVkXLS8f4jjecs
+RULd3GGaTRPqab+zERzlY6VUzV35vg==
+=Ej8p
+-----END PGP SIGNATURE-----
+
+--stabsaq2vdo4glry--
 
