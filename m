@@ -1,99 +1,60 @@
-Return-Path: <linux-kernel+bounces-297846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDC195BE68
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 649D395BE71
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 20:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C05281D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6E7283E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459531D27B7;
-	Thu, 22 Aug 2024 18:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F241D04A1;
+	Thu, 22 Aug 2024 18:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHW2lTJA"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="fheAtz0J"
+Received: from terefe.re (terefe.re [5.255.96.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64191D04A3;
-	Thu, 22 Aug 2024 18:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482C2AD00;
+	Thu, 22 Aug 2024 18:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.255.96.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724351876; cv=none; b=sea4+MYfz5p9fgxsPi1gLdkeyaKmsvvml9/KpAgac8djYPvMm0RXsqD37T35J7ILqoto4aY9I2zn+VEHMfTiEL9vDIcCm1qdWov80moO1EXTtJb0LLRiszl4i1TFtqTANy6UFEmTNwTq++c2TVuvx4EXne9eNCNYHBGULtaI3Ug=
+	t=1724352366; cv=none; b=lpgd11D3emqD6tQpj0yCFZfxf0YsXB6XXyNbJYHdf4I0erMy2z648CtKlVlH1QqFb8zO33uBT+ewel555gvvkjMF0nf07Ju+bsdTHA5GtnRHtnW4H/ACWVCAXLpk3y6fHzIQ7rzipO4uBFO0UKjgZJ4HVlCwZerUEIJWqfUlNt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724351876; c=relaxed/simple;
-	bh=vZUjHFmFvrYfCCwn47JEj2O7xPIiU/Pgnb18WTQj4is=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KsxOE+WsGBQ2KA6WPGpQJ3Qt/jPvGTChFdWvgT7E/pNBmK8FZvzewg4PNw7APvaHM4SIH+HcJGmhpOWnvX4tKRzMn9I9NGvqqGG+l4sS2RlgFAmCFAmXYRz/odaeKVNJuE6woZHKJw7gZOwevrDlBRBNUCbAPJMkf3RHLGtgJ1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHW2lTJA; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fec34f94abso11359465ad.2;
-        Thu, 22 Aug 2024 11:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724351874; x=1724956674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Hlc/i1KYMFZn1UW3B36jY0bAKWAgeG5KXhGYCaItEQ=;
-        b=LHW2lTJAldE/Uz5Y5H0xOGSRgixDn/dgr6L7llcRddcOvgO+ccohnvpForui0qSCbA
-         V/f8pci7cnQpRFFHwcxtSwtzPeRx4Obkl72eKKpYFHu8/bVigNwNj63kFs4IDhutsJmE
-         9ix7gy5DROKtaNfgqx4wHYWBWujZdwVjEMD1d4Ui+8jVlRzovHpQwWij1nJ3aIDOPRtb
-         Oe46MiUmVKrDU7IPhKteXV6Pq3OdJYdASSr+0WNl7y0Rn2zSREEymGvWuR93gVfSmSMD
-         +10mHbL1e9XyTOqDEvua/1wldrFy0SOPamrl4h2PSnSbMBSUhrqddFY+7ldtj3RI3JKR
-         wH5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724351874; x=1724956674;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1Hlc/i1KYMFZn1UW3B36jY0bAKWAgeG5KXhGYCaItEQ=;
-        b=Am7GoIg9w2ciNZz5osSW596XcE9zFFxRhrbaxb9TMzHmnu/Vr3I7v6eCEEmAMIk66Y
-         NpdUEhp8TjosYKDsKTQQIfVJ1zNIbQzkBC8FNu8swPupQKTSNC2BQPC+mmmb5pebw7tA
-         70Jfa4RVKyKYjmZfmir2IKaXjM/GJpfXTqOUJN0Vf7PjHvbo3nWWv/6DNzmVR5ZG9UjJ
-         0l3dahQKZoEEEqDcVEKqCxBEs4XKkXSXIfSyAGkCLc6MP6aTieEeyePARvx86DHa5szt
-         onC8urdThoTpElQyJe3SPLstx4T3+p4gZqMANn9EQLk91vzc7bODdMR+O/KMUjeyW8hY
-         4GzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV823huBSNkDOulcDn43oz44jRs9dU8MDClv8GMX+abz8EHCGjlyZSaczzxOrv18P+VIWCuShYiryF3Sjo=@vger.kernel.org, AJvYcCVumV+b/QqllqIC1q4/7dQcuwf45Bc9NesCLGeVA1QUYBPeUPFKF9Syv+0qYb2ypUWV7e1mB/Y2QaSOww==@vger.kernel.org, AJvYcCXw8uxrs0l8OQ8ezRgBb+679gZqSICoReU1PMxiHWuXysQ4WNgo7VkuB8sM5dtMv84WxxgyHDEDZa4enGXd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRiavsOizqcw2BtifTbWGO1oVdGygi/9LceJ6nGyEuVKTNdcrd
-	RneB80kQJL9cAJDN1kco8xj+Z/B5Ll61FP6YR3zbT7dMHYWpg9J+
-X-Google-Smtp-Source: AGHT+IE+oTsuXbaq9ZvaSNrcslYkvt3uX+Tvp8+A11rBrdRfV8hOJKmntJKX/3gWBiFYZVMV3hYEuw==
-X-Received: by 2002:a17:902:d2ce:b0:202:13ca:d73e with SMTP id d9443c01a7336-20388240fbcmr30142745ad.28.1724351873947;
-        Thu, 22 Aug 2024 11:37:53 -0700 (PDT)
-Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038557e4f9sm15667145ad.65.2024.08.22.11.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 11:37:53 -0700 (PDT)
-From: mhkelley58@gmail.com
-X-Google-Original-From: mhklinux@outlook.com
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	sagi@grimberg.me,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	robin.murphy@arm.com,
-	hch@lst.de,
-	m.szyprowski@samsung.com,
-	petr@tesarici.cz,
-	iommu@lists.linux.dev,
+	s=arc-20240116; t=1724352366; c=relaxed/simple;
+	bh=zfOiErGOf9PASUESkcUjB4NpTO1hs1IUST0d42YNoL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X2IQXkOifkWnKjs4PAx6P7MlMF+1mSGncFPoSbxyqkaAaj9cGz9IkS8+4x5O3OnD7a9h+fSMUVm0WX/OgRnRuAWKA0jhEUXTvrZvbjvHZJ+tH5GXt3QG2WrEOHlg4OwFqMeZWrzCn/PbWwdx68fx/BOxu4q6BtF5+xshXU6GnHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=fheAtz0J; arc=none smtp.client-ip=5.255.96.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=terefe.re
+Received: from localhost.localdomain (unknown [212.106.161.95])
+	by terefe.re (Postfix) with ESMTPSA id C6E341FFBF;
+	Thu, 22 Aug 2024 20:46:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=terefe.re; s=default;
+	t=1724352361; bh=zfOiErGOf9PASUESkcUjB4NpTO1hs1IUST0d42YNoL0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fheAtz0J9Uyql+rN9sp41We6TAegcHo5BYGHrpKz4ipGBUw5IX4Y/g2jSbN9rbAHp
+	 /MRHanJPor6D4XFReQW1UNCEA8uuqJOcYgBx28XyWJZuXiogO2PvltL+prv4EN2zHi
+	 Jrf4qg7Fz5/phfLgEYi4e5BLIm8QrOJn+m6BpCQUMoTMys3FQlPoEruLMwJVS2P8l0
+	 jvBrLwMV1IQAaBn7jlv5g1avhMDo7jq+JCAjZRa10EVdLbKbjOysQES0fd3B6QRNpK
+	 dfVspQ82bOPrQXa1fcSRZo6gD1y8HDTpl6/tgGRUv4ZFmTzZVTwi3d3f9BXRO3e/PN
+	 pR4bCrNxIRAuw==
+From: Tomasz Maciej Nowak <tmn505@terefe.re>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: [RFC 7/7] nvme: Enable swiotlb throttling for NVMe PCI devices
-Date: Thu, 22 Aug 2024 11:37:18 -0700
-Message-Id: <20240822183718.1234-8-mhklinux@outlook.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240822183718.1234-1-mhklinux@outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
-Reply-To: mhklinux@outlook.com
+	Tomasz Maciej Nowak <tmn505@gmail.com>
+Subject: [PATCH v2] ARM: tegra: wire up two front panel LEDs on TrimSlice
+Date: Thu, 22 Aug 2024 20:41:02 +0200
+Message-ID: <20240822184555.20353-1-tmn505@terefe.re>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,101 +63,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Michael Kelley <mhklinux@outlook.com>
+From: Tomasz Maciej Nowak <tmn505@gmail.com>
 
-In a CoCo VM, all DMA-based I/O must use swiotlb bounce buffers
-because DMA cannot be done to private (encrypted) portions of VM
-memory. The bounce buffer memory is marked shared (decrypted) at
-boot time, so I/O is done to/from the bounce buffer memory and then
-copied by the CPU to/from the final target memory (i.e, "bounced").
-Storage devices can be large consumers of bounce buffer memory because
-it is possible to have large numbers of I/Os in flight across multiple
-devices. Bounce buffer memory must be pre-allocated at boot time, and
-it is difficult to know how much memory to allocate to handle peak
-storage I/O loads. Consequently, bounce buffer memory is typically
-over-provisioned, which wastes memory, and may still not avoid a peak
-that exhausts bounce buffer memory and cause storage I/O errors.
+Pins responsible for controlling these LEDs need to have tristate
+control removed if we want them as GPIOs. This change alings with pinmux
+configuration of "dte" pin group in downstream kernel[1].
+These LEDs had no function assigned on vendor kernel and there is no
+label on the case, the only markings are on PCB which are part of node
+names (ds1 marking is on power LED controlled by PMIC), so generic term
+is assigned as the function.
 
-For Coco VMs running with NVMe PCI devices, update the driver to
-permit bounce buffer throttling. Gate the throttling behavior
-on a DMA layer check indicating that throttling is useful, so that
-no change occurs in a non-CoCo VM. If throttling is useful, enable
-the BLK_MQ_F_BLOCKING flag, and pass the DMA_ATTR_MAY_BLOCK attribute
-into dma_map_bvec() and dma_map_sgtable() calls. With these options in
-place, DMA map requests are pended when necessary to reduce the
-likelihood of usage peaks caused by the NVMe driver that could exhaust
-bounce buffer memory and generate errors.
+1. https://github.com/compulab/trimslice-android-kernel/blob/upstream/arch/arm/mach-tegra/board-trimslice-pinmux.c#L45
 
-Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 ---
- drivers/nvme/host/pci.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+Previous version: https://lore.kernel.org/linux-tegra/20180219201623.6987-1-tmn505@gmail.com
+Changes in v2:
+- rebase
+- reword commit title and message
+- align to changes in leds subsystem
+- align to dtschema recomendations
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 6cd9395ba9ec..2c39943a87f8 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -156,6 +156,7 @@ struct nvme_dev {
- 	dma_addr_t host_mem_descs_dma;
- 	struct nvme_host_mem_buf_desc *host_mem_descs;
- 	void **host_mem_desc_bufs;
-+	unsigned long dma_attrs;
- 	unsigned int nr_allocated_queues;
- 	unsigned int nr_write_queues;
- 	unsigned int nr_poll_queues;
-@@ -735,7 +736,8 @@ static blk_status_t nvme_setup_prp_simple(struct nvme_dev *dev,
- 	unsigned int offset = bv->bv_offset & (NVME_CTRL_PAGE_SIZE - 1);
- 	unsigned int first_prp_len = NVME_CTRL_PAGE_SIZE - offset;
+ .../arm/boot/dts/nvidia/tegra20-trimslice.dts | 30 +++++++++++++++----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts b/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
+index 7cae6ad57544..4caeeb9f1e1d 100644
+--- a/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
+@@ -2,6 +2,7 @@
+ /dts-v1/;
  
--	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req), 0);
-+	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req),
-+					dev->dma_attrs);
- 	if (dma_mapping_error(dev->dev, iod->first_dma))
- 		return BLK_STS_RESOURCE;
- 	iod->dma_len = bv->bv_len;
-@@ -754,7 +756,8 @@ static blk_status_t nvme_setup_sgl_simple(struct nvme_dev *dev,
- {
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ #include "tegra20.dtsi"
+ #include "tegra20-cpu-opp.dtsi"
  
--	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req), 0);
-+	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req),
-+					dev->dma_attrs);
- 	if (dma_mapping_error(dev->dev, iod->first_dma))
- 		return BLK_STS_RESOURCE;
- 	iod->dma_len = bv->bv_len;
-@@ -800,7 +803,7 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
- 		goto out_free_sg;
+@@ -201,16 +202,17 @@ uca {
+ 			conf_ata {
+ 				nvidia,pins = "ata", "atc", "atd", "ate",
+ 					"crtp", "dap2", "dap3", "dap4", "dta",
+-					"dtb", "dtc", "dtd", "dte", "gmb",
+-					"gme", "i2cp", "pta", "slxc", "slxd",
+-					"spdi", "spdo", "uda";
++					"dtb", "dtc", "dtd", "gmb", "gme",
++					"i2cp", "pta", "slxc", "slxd", "spdi",
++					"spdo", "uda";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			conf_atb {
+ 				nvidia,pins = "atb", "cdev1", "cdev2", "dap1",
+-					"gma", "gmc", "gmd", "gpu", "gpu7",
+-					"gpv", "sdio1", "slxa", "slxk", "uac";
++					"dte", "gma", "gmc", "gmd", "gpu",
++					"gpu7", "gpv", "sdio1", "slxa", "slxk",
++					"uac";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+@@ -408,6 +410,24 @@ key-power {
+ 		};
+ 	};
  
- 	rc = dma_map_sgtable(dev->dev, &iod->sgt, rq_dma_dir(req),
--			     DMA_ATTR_NO_WARN);
-+			     dev->dma_attrs | DMA_ATTR_NO_WARN);
- 	if (rc) {
- 		if (rc == -EREMOTEIO)
- 			ret = BLK_STS_TARGET;
-@@ -828,7 +831,8 @@ static blk_status_t nvme_map_metadata(struct nvme_dev *dev, struct request *req,
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
- 	struct bio_vec bv = rq_integrity_vec(req);
- 
--	iod->meta_dma = dma_map_bvec(dev->dev, &bv, rq_dma_dir(req), 0);
-+	iod->meta_dma = dma_map_bvec(dev->dev, &bv, rq_dma_dir(req),
-+					dev->dma_attrs);
- 	if (dma_mapping_error(dev->dev, iod->meta_dma))
- 		return BLK_STS_IOERR;
- 	cmnd->rw.metadata = cpu_to_le64(iod->meta_dma);
-@@ -3040,6 +3044,12 @@ static struct nvme_dev *nvme_pci_alloc_dev(struct pci_dev *pdev,
- 	 * a single integrity segment for the separate metadata pointer.
- 	 */
- 	dev->ctrl.max_integrity_segments = 1;
++	leds {
++		compatible = "gpio-leds";
 +
-+	if (dma_recommend_may_block(dev->dev)) {
-+		dev->ctrl.blocking = true;
-+		dev->dma_attrs = DMA_ATTR_MAY_BLOCK;
-+	}
++		led-ds2 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <2>;
++			gpios = <&gpio TEGRA_GPIO(D, 2) GPIO_ACTIVE_LOW>;
++		};
 +
- 	return dev;
- 
- out_put_device:
++		led-ds3 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <3>;
++			gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_LOW>;
++		};
++	};
++
+ 	poweroff {
+ 		compatible = "gpio-poweroff";
+ 		gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
 -- 
-2.25.1
+2.46.0
 
 
