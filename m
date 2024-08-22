@@ -1,135 +1,192 @@
-Return-Path: <linux-kernel+bounces-297452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C32E95B8AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A384095B888
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE754B2B4C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0013B2AC1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064961CBEA9;
-	Thu, 22 Aug 2024 14:31:33 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAD61CBEA6;
+	Thu, 22 Aug 2024 14:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WIlAuT4I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912D41C93BC;
-	Thu, 22 Aug 2024 14:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1817936AE0;
+	Thu, 22 Aug 2024 14:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337092; cv=none; b=MvURu6fYrS75znrQgp4EaiZNohCNw/REboYi0kobBP/nPB7BgIFql56uNxyewpYP+Wh8yPRtZc+xpHy2JpWKyP37VDhCXo/jRCWX2b6u5LEQBnx0mqcjH3gV56OyJU4VZKynb31nIRINSM9HXfVNcWLLkhOcU43y8EpaE34xIGg=
+	t=1724337143; cv=none; b=qW/MMp8KD7aNLrRMHya5NSL+O64012wXTc6xiW7zOvLLl/k45B9uYwzzf9mbxVgOooVB0rSu3nBFA8UcH/kr9e7cnLxRZJEGjQXHZY2SE75XQrLNuxdz+1zclZyNa7Y59XyvqMzAk18d2/mDdhHOP1LXOM4YGO6jBQ/hInIV/Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337092; c=relaxed/simple;
-	bh=c/Cj9RrvqJul5t8m3NiqMO38iRJFNFSyGlqIQpBEd94=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QnB2xzXTj3PK0V7fHO3Dn8H6Y4OMrb2vBjBB1phUfPyLujofqLZZoF8rzZPhQWzr7R37BnT7TjIvTCrpZRPjNs2o5CDcAtGVGdSYeXt9g+UlVQP5YuXWL14926upcgb+k4LuLtnrUqTfPQazQgC7l4LkICxEf3Zs9bZtitqeYBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CC80C32782;
-	Thu, 22 Aug 2024 14:31:31 +0000 (UTC)
-Date: Thu, 22 Aug 2024 10:32:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
- timerlat_fd_release
-Message-ID: <20240822103202.130cf0df@gandalf.local.home>
-In-Reply-To: <CAP4=nvRTH5VxSO3VSDCospWcZagawTMs0L9J_kcKdGSkn7xT_Q@mail.gmail.com>
-References: <20240820130001.124768-1-tglozar@redhat.com>
-	<20240821160316.02c03c44@gandalf.local.home>
-	<CAP4=nvRTH5VxSO3VSDCospWcZagawTMs0L9J_kcKdGSkn7xT_Q@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724337143; c=relaxed/simple;
+	bh=NS3q3U8hzU1cWKxAYW9fxXlTW9hRlvFjnwtADI+DcVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cqxB4t0FMEBF3hSz0PW0nlYihnRj0ukmwgfB+99QWfrJd5MiNQrumnWSTCNSJCvcsRpdVhHslWV6i05Qm3OJIfAhYjIcbCOk/JKsHJiyOix917j7AIL+/UoHNgZ3qeuppV54ezC7WhxgkMyAcT10t4iVyib+q2JEb5MSEyZ21PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WIlAuT4I; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724337142; x=1755873142;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NS3q3U8hzU1cWKxAYW9fxXlTW9hRlvFjnwtADI+DcVA=;
+  b=WIlAuT4IPLNovd1I6F6u/aqXwVUHZIpEjgChU/Wx9FZJGSP7eAdK8Uv6
+   uYAp2DM39USNVrIUZo7rsxcFrNaQ0dqy30zOaZELTUVFHRudt4ksGu6s0
+   ndfiuLSAfHQDYFAOgJ8t7zDmFSN+aAKMMhUg6de4+RMJ0JAcUUfKX34jO
+   ZyS069aXz+W2dCSct7JOKKIE1EmKSANlHMZ1r2AePgI12Pa2Y7Jz6lxHr
+   OTPsp0WvM4xLXz9Rd/+rnOC1sZSW77deTAyXFBVLkFhOMf/4bBWPbMBLm
+   V/IcNY+AFbfo19UOp296oJ4IMUDO69W/cJfzZjyMaD1ViwzC3c/dHdBIo
+   Q==;
+X-CSE-ConnectionGUID: PeFZ83yqTdGPQcnUWb41vw==
+X-CSE-MsgGUID: wfy/JXpqRturhpsWBqAXbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22937496"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="22937496"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 07:32:21 -0700
+X-CSE-ConnectionGUID: INfOr/i0TGeT81CmF5537g==
+X-CSE-MsgGUID: i41scn94RkC/i84HzmL2Cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="61309210"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 07:32:21 -0700
+Received: from [10.212.65.115] (kliang2-mobl1.ccr.corp.intel.com [10.212.65.115])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 803F820CFEDC;
+	Thu, 22 Aug 2024 07:32:17 -0700 (PDT)
+Message-ID: <db095820-58a7-4b40-a12a-04b2f82cf903@linux.intel.com>
+Date: Thu, 22 Aug 2024 10:32:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] Event parsing fixes
+To: James Clark <james.clark@linaro.org>, irogers@google.com,
+ linux-perf-users@vger.kernel.org
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Weilin Wang <weilin.wang@intel.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Yang Jihong <yangjihong@bytedance.com>,
+ Colin Ian King <colin.i.king@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+ Ze Gao <zegao2021@gmail.com>, Jing Zhang <renyu.zj@linux.alibaba.com>,
+ Sun Haiyong <sunhaiyong@loongson.cn>, Yicong Yang
+ <yangyicong@hisilicon.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240822132506.1468090-1-james.clark@linaro.org>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240822132506.1468090-1-james.clark@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 22 Aug 2024 11:32:07 +0200
-Tomas Glozar <tglozar@redhat.com> wrote:
-
-> st 21. 8. 2024 v 22:02 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.or=
-g> napsal:
-> >
-> > I'm able to reproduce this with the above. Unfortunately, I can still
-> > reproduce it after applying this patch :-(
-> > =20
->=20
-> Thank you for looking at this. I was at first not too sure about
-> whether this is the proper fix, but after some discussion with Luis
-> (in CC), we have come to the conclusion that the double-close of the
-> timerlat_fd might be a possible explanation, and this patch worked for
-> both of us. Are you reproducing the same bug (NULL pointer dereference
-> in hrtimer_active) with the patch? IIUC that should not happen anymore
-> since the patch explicitly checks for zero in the hrtimer structure.
-
-There isn't a double close. But there are two bugs and you did sorta fix
-one of them.
-
->=20
-> I have caught however a different panic in addition to the one
-> reported above while testing "rtla: Support idle state disabling via
-> libcpupower in timerlat" on an EL9 RT kernel:
->=20
-> BUG: kernel NULL pointer dereference, address: 0000000000000014
-> CPU: 6 PID: 1 Comm: systemd Kdump: loaded Tainted: G        W
-> -------  ---  5.14.0-452.el9.x86_64+rt #1
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-1.fc39
-> 04/01/2014
-> RIP: 0010:task_dump_owner+0x3d/0x100
-> RSP: 0018:ffffadd6c0013aa8 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: ffffa00c864f4580 RCX: ffffa00c87453e10
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffa00c864f4580
-> RBP: ffffa00c87453e10 R08: ffffa00c87418e80 R09: ffffa00c87418e80
-> R10: ffffa00c88236600 R11: ffffffffb73f1868 R12: ffffa00c87453e0c
-> R13: 0000000000000000 R14: ffffa00cb5e430c0 R15: ffffa00cb5e430c8
-> FS:  00007f9336b41b40(0000) GS:ffffa00cffd80000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000014 CR3: 00000000025ee002 CR4: 0000000000770ef0
-> PKRU: 55555554
-> Call Trace:
-> <TASK>
-> ? show_trace_log_lvl+0x1c4/0x2df
-> ? show_trace_log_lvl+0x1c4/0x2df
-> ? proc_pid_make_inode+0xa0/0x110
-> ? __die_body.cold+0x8/0xd
-> ? page_fault_oops+0x140/0x180
-> ? do_user_addr_fault+0x61/0x690
-> ? kvm_read_and_reset_apf_flags+0x45/0x60
-> ? exc_page_fault+0x65/0x180
-> ? asm_exc_page_fault+0x22/0x30
-> ? task_dump_owner+0x3d/0x100
-> ? task_dump_owner+0x36/0x100
-> proc_pid_make_inode+0xa0/0x110
-> proc_pid_instantiate+0x21/0xb0
-> proc_pid_lookup+0x95/0x170
-> proc_root_lookup+0x1d/0x50
-> __lookup_slow+0x9c/0x150
-> walk_component+0x158/0x1d0
-> link_path_walk.part.0.constprop.0+0x24e/0x3c0
-> ? path_init+0x326/0x4d0
-> path_openat+0xb1/0x280
-> do_filp_open+0xb2/0x160
-> ? migrate_enable+0xd5/0x150
-> ? rt_spin_unlock+0x13/0x40
-> do_sys_openat2+0x96/0xd0
-> __x64_sys_openat+0x53/0xa0
-> ...
+Content-Transfer-Encoding: 7bit
 
 
-> Yeah, it seems there might be multiple bugs in the user workload
-> handling, the other NULL pointer dereference and refcount warning
-> above might be related (but I have yet to reproduce it on an upstream
-> kernel). I'm also going to look at the code and will post any findings
-> here.
 
-Yes that is the second bug and it is related to the that this addresses.
+On 2024-08-22 9:24 a.m., James Clark wrote:
+> I rebased this one and made some other fixes so that I could test it,
+> so I thought I'd repost it here in case it's helpful. I also added a
+> new test.
+> 
+> But for the testing it all looks ok.
+> 
+> There is one small difference where it now shows "stalled-cycles-..."
+> as <not supported> events, when before it just didn't show them at all when
+> they weren't supported:
+> 
+>   $ perf stat -- true
+> 
+>   Performance counter stats for 'true':
+> 
+>               0.66 msec task-clock                       #    0.384 CPUs utilized             
+>                  0      context-switches                 #    0.000 /sec                      
+>                  0      cpu-migrations                   #    0.000 /sec                      
+>                 52      page-faults                      #   78.999 K/sec                     
+>      <not counted>      cpu_atom/instructions/                                                  (0.00%)
+>            978,399      cpu_core/instructions/           #    1.02  insn per cycle            
+>      <not counted>      cpu_atom/cycles/                                                        (0.00%)
+>            959,722      cpu_core/cycles/                 #    1.458 GHz                       
+>    <not supported>      cpu_atom/stalled-cycles-frontend/                                      
+>    <not supported>      cpu_core/stalled-cycles-frontend/                                      
+>
 
--- Steve
+Intel didn't support the events for a very long time. It would impact
+many existing generations and all future generations.
+The current method is to hide the non-exist events. The TopdownL1 is an
+example. If it doesn't exist in the json file, perf stat will not
+display it.
+I don't think it's a good idea to disclose non-exist events in the perf
+stat default.
+
+The <not supported> doesn't help here, since there could be many reasons
+that the perf tool fails to open a counter. It just provides a
+misleading message for an event that never existed.
+
+Thanks,
+Kan
+> I don't think that's a big deal though and could probably be fixed up
+> later if we really want to.
+> 
+> Tested on Raptor Lake, Juno, N1, Ampere (with the DSU cycles PMU) and
+> I also faked an Apple M on Juno. 
+> 
+> Changes since v3:
+> 
+>   * Rebase onto perf-tools-next 6236ebe07
+>   * Fix Intel TPEBS counting mode test
+>   * Fix arm-spe build
+>   * Add support for DT devices in stat test
+>   * Add a new test for hybrid perf stat default arguments
+> 
+> Ian Rogers (5):
+>   perf evsel: Add alternate_hw_config and use in evsel__match
+>   perf stat: Uniquify event name improvements
+>   perf stat: Remove evlist__add_default_attrs use strings
+>   perf evsel x86: Make evsel__has_perf_metrics work for legacy events
+>   perf evsel: Remove pmu_name
+> 
+> James Clark (2):
+>   perf test: Make stat test work on DT devices
+>   perf test: Add a test for default perf stat command
+> 
+>  tools/perf/arch/arm64/util/arm-spe.c          |   4 +-
+>  tools/perf/arch/x86/util/evlist.c             |  74 +----
+>  tools/perf/arch/x86/util/evsel.c              |  35 ++-
+>  tools/perf/builtin-diff.c                     |   6 +-
+>  tools/perf/builtin-stat.c                     | 291 +++++++-----------
+>  tools/perf/tests/parse-events.c               |   2 +-
+>  tools/perf/tests/shell/stat.sh                |  33 +-
+>  .../perf/tests/shell/test_stat_intel_tpebs.sh |  11 +-
+>  tools/perf/util/evlist.c                      |  46 +--
+>  tools/perf/util/evlist.h                      |  12 -
+>  tools/perf/util/evsel.c                       |  28 +-
+>  tools/perf/util/evsel.h                       |  22 +-
+>  tools/perf/util/metricgroup.c                 |   4 +-
+>  tools/perf/util/parse-events.c                |  58 ++--
+>  tools/perf/util/parse-events.h                |   8 +-
+>  tools/perf/util/parse-events.y                |   2 +-
+>  tools/perf/util/pmu.c                         |   6 +-
+>  tools/perf/util/pmu.h                         |   2 +-
+>  tools/perf/util/stat-display.c                | 101 ++++--
+>  tools/perf/util/stat-shadow.c                 |  14 +-
+>  tools/perf/util/stat.c                        |   2 +-
+>  21 files changed, 348 insertions(+), 413 deletions(-)
+> 
 
