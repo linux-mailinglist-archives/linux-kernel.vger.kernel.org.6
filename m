@@ -1,186 +1,97 @@
-Return-Path: <linux-kernel+bounces-296327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083AC95A94A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:02:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C564D95A947
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833961F22F70
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:02:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB711F22EE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF869461;
-	Thu, 22 Aug 2024 01:01:55 +0000 (UTC)
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E827AB67F;
+	Thu, 22 Aug 2024 01:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSyvIRSZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EB41D1316;
-	Thu, 22 Aug 2024 01:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3380C15A8;
+	Thu, 22 Aug 2024 01:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724288515; cv=none; b=mK+uv+wL+W52JfKky/DvwsmKFuVLx2VnVaQi4r8z1Qo1xofsOh/Qy8tw0CS/LZhArqKZDHrbhHn1aADN/wjqAH0ZflpOnWOvqwrGh/EmFoRYdGjrsme7NdHC2fLd24bELcA+BG7v54f/GGemqiJ/2pRG77Y47vqL3FFHgK1ftdc=
+	t=1724288432; cv=none; b=GbcJb8KSlRFb9u4q3roV7U6oUhM9hQhQKmM3JXKUR6Xm9YH2wH2rzdteaDbJnZHdDpLO1oYhFxQ6JB99YmOtRYc5f7Vyb+URoFfPJOgkwjvyBdIlLhWSASrBUWgXUVDBrHrsRsW0MW8fyHurIQGvsdEm4AqxZh8hg0JvXgz8xlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724288515; c=relaxed/simple;
-	bh=GrWUXGZxAo3zB05ftoSwm5wCxyAwLv2N24W6lfKi7ws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ravb2ZhOLM0gZ8CH/wSWqCyhACaHViOu9MNqJCJr0iIHzt4SLu5s50DZnC7ZCmJahGpFEzqa9nOk7fWSelXNgucxNSka7F8m5gPZqELD9azha2dsCqAzbmrJCGTlVm4Te31E0HVS2qU2j+eOx0npKPphShfXpgqOmOELpDLDc3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: bizesmtpsz4t1724288385ti5jdib
-X-QQ-Originating-IP: D/Uhbekbc7o4Swvn8dI4oKjkVNdBoIpmYCFKMlCzgds=
-Received: from [192.168.3.231] ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 22 Aug 2024 08:59:42 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13306384276286975094
-Message-ID: <F9BB72E1C6B6AFFD+37b5bda8-2488-439a-8203-e0c376fae679@chenxiaosong.com>
-Date: Thu, 22 Aug 2024 08:59:42 +0800
+	s=arc-20240116; t=1724288432; c=relaxed/simple;
+	bh=ko1Gt2R3hp5jRp7FVaneBoHdEBiZ+I6juZQq4g8HoDQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JsX2xjZZ93aqSQoQJUmh8T51doJ69Fcz7mqkyAJxp2ZnZpJrbV2LYzaNjp3HCstQzAWjjIt6zRyg6bo0JLqZMsuVkhKWYLRWwiILMEOxmr8/EcQ9EC4ra86vJktwTYcfkXAzP0t+XJ9ZyiV5Kp/CNqMWoQudEluxV5e6HryH0W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSyvIRSZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1753C32782;
+	Thu, 22 Aug 2024 01:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724288430;
+	bh=ko1Gt2R3hp5jRp7FVaneBoHdEBiZ+I6juZQq4g8HoDQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=kSyvIRSZ66B0YbETC4qLlHCRHUp5pX/4llBRPz/qY+48RC0uP+2/E8zgO0bqEBjIL
+	 y8EkpVH0Gt+fLvJZrjtPKJSyeE0bswZAwqAlEtilszSroYLiakMPjWHnAogWgjwCfU
+	 WkGHhbq9K2Wvv3eVlhrhao47yn5JlEDEoaOGiSEKNEp6Kr9FsKM3FA5KBwxg3eQJ4s
+	 Q5MwG4Bd/UTdmhBHexsDUCvpaiwsngMInYEt9X3prvtbm6k0Tro3p8PZouwQiFaV0T
+	 Vo5ga4UCaaWy3aP5MZ5t2TgedX79lz219u5asLmhTa/EAyBTYVyx/5AvhUDEn3WGDw
+	 n2H8gefmYh2sA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D2E3804CAB;
+	Thu, 22 Aug 2024 01:00:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] smb/server: fix potential null-ptr-deref of
- lease_ctx_info in smb2_open()
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
- linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com,
- ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com,
- chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, huhai@kylinos.cn,
- liuyun01@kylinos.cn
-References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com>
- <20240820143319.274033-3-chenxiaosong@chenxiaosong.com>
- <CAKYAXd_N2Hgba2EsDkem7mmGrWxxpXOtz4L_ReXwqUCG_BRU=w@mail.gmail.com>
-Content-Language: en-US
-From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-In-Reply-To: <CAKYAXd_N2Hgba2EsDkem7mmGrWxxpXOtz4L_ReXwqUCG_BRU=w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Subject: Re: [PATCH net-next v4 0/2] net: xilinx: axienet: Add statistics support
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172428843028.1875438.3178062453740587499.git-patchwork-notify@kernel.org>
+Date: Thu, 22 Aug 2024 01:00:30 +0000
+References: <20240820175343.760389-1-sean.anderson@linux.dev>
+In-Reply-To: <20240820175343.760389-1-sean.anderson@linux.dev>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: andrew@lunn.ch, radhey.shyam.pandey@amd.com, netdev@vger.kernel.org,
+ michal.simek@amd.com, linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, edumazet@google.com,
+ horms@kernel.org, linux-arm-kernel@lists.infradead.org
 
-Thanks for your reply. I will send v2 patchset soon based on your 
-suggestions.
+Hello:
 
-在 2024/8/22 08:41, Namjae Jeon 写道:
-> On Tue, Aug 20, 2024 at 11:35 PM <chenxiaosong@chenxiaosong.com> wrote:
->>
->> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->>
->> null-ptr-deref will occur when (req_op_level == SMB2_OPLOCK_LEVEL_LEASE)
->> and parse_lease_state() return NULL.
->>
->> Fix this by returning error pointer on parse_lease_state() and checking
->> error.
->>
->> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-> We intended for it to return null. We shouldn't handle the error even
-> if it fails.
-> All places check if lc is null except the one.
-> We can fix it like the following one. please send this patch if you are okay.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 20 Aug 2024 13:53:40 -0400 you wrote:
+> Add support for hardware statistics counters (if they are enabled) in
+> the AXI Ethernet driver. Unfortunately, the implementation is
+> complicated a bit since the hardware might only support 32-bit counters.
 > 
-> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-> index b6c5a8ea3887..884e21992c92 100644
-> --- a/fs/smb/server/smb2pdu.c
-> +++ b/fs/smb/server/smb2pdu.c
-> @@ -3404,7 +3404,7 @@ int smb2_open(struct ksmbd_work *work)
->                          goto err_out1;
->                  }
->          } else {
-> -               if (req_op_level == SMB2_OPLOCK_LEVEL_LEASE) {
-> +               if (req_op_level == SMB2_OPLOCK_LEVEL_LEASE && lc) {
->                          if (S_ISDIR(file_inode(filp)->i_mode)) {
->                                  lc->req_state &= ~SMB2_LEASE_WRITE_CACHING_LE;
->                                  lc->is_dir = true;
+> Changes in v4:
+> - Reduce hw_last_counter to u32 to ensure we use (wrapping) 32-bit
+>   arithmetic.
+> - Implement get_ethtool_stats for nonstandard statistics
+> - Rebase onto net-next/main
 > 
-> 
->> ---
->>   fs/smb/server/oplock.c  | 11 +++++++----
->>   fs/smb/server/smb2pdu.c | 17 ++++++++++++-----
->>   2 files changed, 19 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/smb/server/oplock.c b/fs/smb/server/oplock.c
->> index a8f52c4ebbda..e8591686a037 100644
->> --- a/fs/smb/server/oplock.c
->> +++ b/fs/smb/server/oplock.c
->> @@ -1510,7 +1510,8 @@ void create_lease_buf(u8 *rbuf, struct lease *lease)
->>    * parse_lease_state() - parse lease context containted in file open request
->>    * @open_req:  buffer containing smb2 file open(create) request
->>    *
->> - * Return:  oplock state, -ENOENT if create lease context not found
->> + * Return: allocated lease context object on success, otherwise error pointer.
->> + *        -ENOENT pointer if create lease context not found.
->>    */
->>   struct lease_ctx_info *parse_lease_state(void *open_req)
->>   {
->> @@ -1519,12 +1520,14 @@ struct lease_ctx_info *parse_lease_state(void *open_req)
->>          struct lease_ctx_info *lreq;
->>
->>          cc = smb2_find_context_vals(req, SMB2_CREATE_REQUEST_LEASE, 4);
->> -       if (IS_ERR_OR_NULL(cc))
->> -               return NULL;
->> +       if (!cc)
->> +               return ERR_PTR(-ENOENT);
->> +       if (IS_ERR(cc))
->> +               return ERR_CAST(cc);
->>
->>          lreq = kzalloc(sizeof(struct lease_ctx_info), GFP_KERNEL);
->>          if (!lreq)
->> -               return NULL;
->> +               return ERR_PTR(-ENOMEM);
->>
->>          if (sizeof(struct lease_context_v2) == le32_to_cpu(cc->DataLength)) {
->>                  struct create_lease_v2 *lc = (struct create_lease_v2 *)cc;
->> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
->> index d8a827e0dced..119c1ba5f255 100644
->> --- a/fs/smb/server/smb2pdu.c
->> +++ b/fs/smb/server/smb2pdu.c
->> @@ -2767,8 +2767,9 @@ static int parse_durable_handle_context(struct ksmbd_work *work,
->>                                  }
->>                          }
->>
->> -                       if (((lc && (lc->req_state & SMB2_LEASE_HANDLE_CACHING_LE)) ||
->> -                            req_op_level == SMB2_OPLOCK_LEVEL_BATCH)) {
->> +                       if ((!IS_ERR_OR_NULL(lc) > 0 &&
->> +                            (lc->req_state & SMB2_LEASE_HANDLE_CACHING_LE)) ||
->> +                           req_op_level == SMB2_OPLOCK_LEVEL_BATCH) {
->>                                  dh_info->CreateGuid =
->>                                          durable_v2_blob->CreateGuid;
->>                                  dh_info->persistent =
->> @@ -2788,8 +2789,9 @@ static int parse_durable_handle_context(struct ksmbd_work *work,
->>                                  goto out;
->>                          }
->>
->> -                       if (((lc && (lc->req_state & SMB2_LEASE_HANDLE_CACHING_LE)) ||
->> -                            req_op_level == SMB2_OPLOCK_LEVEL_BATCH)) {
->> +                       if ((!IS_ERR_OR_NULL(lc) &&
->> +                            (lc->req_state & SMB2_LEASE_HANDLE_CACHING_LE)) ||
->> +                           req_op_level == SMB2_OPLOCK_LEVEL_BATCH) {
->>                                  ksmbd_debug(SMB, "Request for durable open\n");
->>                                  dh_info->type = dh_idx;
->>                          }
->> @@ -2935,8 +2937,13 @@ int smb2_open(struct ksmbd_work *work)
->>                          ksmbd_put_durable_fd(fp);
->>                          goto reconnected_fp;
->>                  }
->> -       } else if (req_op_level == SMB2_OPLOCK_LEVEL_LEASE)
->> +       } else if (req_op_level == SMB2_OPLOCK_LEVEL_LEASE) {
->>                  lc = parse_lease_state(req);
->> +               if (IS_ERR(lc)) {
->> +                       rc = PTR_ERR(lc);
->> +                       goto err_out2;
->> +               }
->> +       }
->>
->>          if (le32_to_cpu(req->ImpersonationLevel) > le32_to_cpu(IL_DELEGATE)) {
->>                  pr_err("Invalid impersonationlevel : 0x%x\n",
->> --
->> 2.34.1
->>
-> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v4,1/2] net: xilinx: axienet: Report RxRject as rx_dropped
+    https://git.kernel.org/netdev/net-next/c/d70e3788da1d
+  - [net-next,v4,2/2] net: xilinx: axienet: Add statistics support
+    https://git.kernel.org/netdev/net-next/c/76abb5d675c4
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
