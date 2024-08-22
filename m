@@ -1,114 +1,132 @@
-Return-Path: <linux-kernel+bounces-297665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7028D95BC28
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D2B95BC2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242721F26DB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A64E2841C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FD31CDFC9;
-	Thu, 22 Aug 2024 16:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183DF1CDA32;
+	Thu, 22 Aug 2024 16:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jgoU3StG"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hgqDK1MK"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD851CDFBD
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9605A1CCB5E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 16:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724344990; cv=none; b=EuIG6P8xAjmZsefsul0rojQJ716KLwvd6ZNdIAvTOKwHWFxkxmHQ3ZdxGMxNIClWISt/tmqinQW8RotjvXAHkERz6tFtm43RvWs5fbj3FtKFtMjCbMLROTd7xAdz3FO9NvsGOSiF930xPMeeDdCH+3NdImN0ywA/DQt4s/vx5F4=
+	t=1724345020; cv=none; b=RG9M176Jt3qPvzij47oD719+o/7CGQYN6OLoES0obmhgJ8CMPwcGb/linRO/tVOkSunu5Zg0o7o+MLrc9aHLZmdq/8w7kY7ktB2TI3Q7wmK0uQi38Jb5FOcI2hnwGhdEflwco//KQeYNC4GCkpoEuF0h61fU6Lgt5tRnxkF7wYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724344990; c=relaxed/simple;
-	bh=WORizGtRIG3wQEd5cKsiYTz4nE4FIsBA2fCtRinTt8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SS7SW75QYEyR/vgshqAE0hU5XHozoUrY/VSQd5+e7ztLWCK/ydNNW29DCdPFWKCNiop8mtfEUl2JmSmR+m+vSDrjFTnE9w/Qjnl476dC1sxSnFCwdmclMTMrAJPAIyxAQagjgz+T/ywMwe77B2JcvajYW3IxEQyFIzJIxIfEbhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jgoU3StG; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bec831d77eso134799a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:43:08 -0700 (PDT)
+	s=arc-20240116; t=1724345020; c=relaxed/simple;
+	bh=vUV+6eQAPuNrLhvow2mnEQrXqT4STDw6iajrWO5TyOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LR3FlbCMmi5IGpnJb7vdMjqiXdflNuHUPvXPcAMCzvRGdIIEzK8eNQAlKAbgktyL6zYD4SvxPo7rA75o0A1RjbJgeE8l3Wkst/s5yLy+sEc0KYTDHqzZMiavmoeUc4o7aMl70b8eNzEsZu+JKknF6IC+0J6cNENUHipLpu9gjLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hgqDK1MK; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44ff7cc5432so7542781cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:43:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724344987; x=1724949787; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Jn92E/Ky5nVM/5+Oud+V0WsM8/cEIOvqMjdYQHvInY=;
-        b=jgoU3StGDINJefkaofltccf/S+1Plw27anSoR1O3EoWYIGvT+xxlnNAvwsSodj6p83
-         3cymQ5Z6Lfd7lvfvZhPeegdBZJaVsuI8rQePhwuhVOZuFo4omMqOiU8RmutK2q9Oc7v2
-         8Cd3LDcwzoXlwPF21P3Vp/abChEcCwbt99Biz5ao7JoBNtCZJ/llSykNOgJtDQgOXQsQ
-         XFsvpCNFV2KzV3yXBDPvJcmz+5XhaPulSTv/rer9IVRaf2WS6EaZDFjZyBIJRM5YhuP1
-         /IQy9RjYANJUCEueyuSlJm1veRXqqXnsc4PF5KRsR5Fj1hjdGGt/A+mFtIGbuyGTQC6B
-         QEYw==
+        d=broadcom.com; s=google; t=1724345017; x=1724949817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CPKTbaL/FXWM3w7cKHQVTv5E900J5Zpuy86Fh8cTkTA=;
+        b=hgqDK1MKFx629kulPWT20zkt9EtMjrg2YqW/iIntvFQs3qUia/NK1N6gEe/NPbwrfN
+         YAC54wr5gGNW3xbxWBv/3l4x3oDvaD6YHjmzd08BwaEPZGsVcP+XekGvay6Gzb793EZK
+         ItzF2dPePjHOGBw6mPC5TMyAHK2E1rFg1fAro=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724344987; x=1724949787;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Jn92E/Ky5nVM/5+Oud+V0WsM8/cEIOvqMjdYQHvInY=;
-        b=VfY63514T3EDYGB422sjLH2Nc0JDGdBkSpyWYtbI4OtJR0ctmwsKIdVfsqyXa9xsEK
-         d5TwJgqzEa11M+3xuonf3TREzK9hANqNGOPQkq1hz2b6A0msFAbPx2+IpiUx2gHPczXY
-         kO0d7jGxafeO6aCXW9hucyQ1fw20h+N/ctEEjp7GzlSSt67GUA22GhszhQ+KNW6uYEGN
-         7wyRgoSKU45hA6O/RSvY3Hmmx1etIVG/v/weUi6eadnY2mdwmlSE5DFteJgYaILaVxl1
-         m7LJ1Q1jvyho2zSrxgbdnirL1H5bdZ6h52iYVDqW6RNIELzVxVfpu5BGO5/jVtehsegX
-         V2Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4RWo3kVqOC7/OzZKT/I+Gh9DgMEIgNeZAnayk6Pz0t6JIcUHKhNF7Jnfd5SbCwjvS+OyHG2cigvUxf+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoOEnl/CHM4O07d1FL5UfD101FGkfwKRi42Uv5WC827mIucW57
-	dTGNA9NsfnMuKXeyI+e3aD+e+ZPWh2BOkr0aqbxsbe0LV4/e0GbTMia2A+lEPQs=
-X-Google-Smtp-Source: AGHT+IFWHvOSWI8W904tEjwil9ah8KgnsIfJo4HPKhd1OzOwIfvV0E+wvnktUkdkVAXtJ+4ms/IStw==
-X-Received: by 2002:a05:6402:34c6:b0:5aa:19b1:ffd6 with SMTP id 4fb4d7f45d1cf-5bf1f27b2camr2444941a12.4.1724344986388;
-        Thu, 22 Aug 2024 09:43:06 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c59c5sm1103432a12.63.2024.08.22.09.43.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 09:43:05 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Andy Gross <agross@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] soc: qcom: smem_state: fix missing of_node_put in error path
-Date: Thu, 22 Aug 2024 18:43:03 +0200
-Message-ID: <20240822164303.227021-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1724345017; x=1724949817;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CPKTbaL/FXWM3w7cKHQVTv5E900J5Zpuy86Fh8cTkTA=;
+        b=M+hcrqddulaytDJTN6cMbCbBw8zSkTOWB9ZWwx1zBsB4rzq0g9ffXoWs/tJLksv+pK
+         qIgv56fd+8dJQpDtnXkdCGxL5E6ZnQIDUh4xuBtH/cK1POx6+/am7AmOJ2p7J5HA1mub
+         gF1LLbuDcW49/UwQZHYh54xpWPIuL5VV5UIyS38sK83V0mca7sx5zCAiyVJJlRJUjJ5O
+         oH+FbiCjjiB53Nlg0vFWnoP0XyK/yOTCSu3bMcCbnlxTfOr+AS1yGNercFVvmik4x6YL
+         HOj2loxN+Qun0zOH9FmWHQkDn4DrD+JbgFFW9LRxIJYa1GHFSlessSzS6os0LQKgKma1
+         ITTw==
+X-Gm-Message-State: AOJu0YyzvY7w4Plum76MycN5mZEiRu3rVwJp0XIrrJlAR6EWr9klUJvJ
+	OP1aKOSvq0oQjNwv87VgOZDCmCTgAT+WZpNgzdnZjcWU7i52TSsSuo8ki4JObQ==
+X-Google-Smtp-Source: AGHT+IEYJJwdiO3Jqfsdb3UAdLIpYety34m3zyGBgW4qPYBS7AMDrTw8J9qY1DAMEaAZwqZQYR8DpQ==
+X-Received: by 2002:a05:622a:22a0:b0:446:59ab:5695 with SMTP id d75a77b69052e-454ff8ea1f8mr24628841cf.54.1724345017277;
+        Thu, 22 Aug 2024 09:43:37 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fe1c5646sm8295381cf.94.2024.08.22.09.43.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 09:43:36 -0700 (PDT)
+Message-ID: <4d66fe35-0e91-4252-96d2-95d8c94968db@broadcom.com>
+Date: Thu, 22 Aug 2024 09:43:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 2/4] usb: misc: brcmstb-usb-pinmap: fix module
+ autoloading
+To: Liao Chen <liaochen4@huawei.com>, linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+ alcooperx@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+ heikki.krogerus@linux.intel.com, stern@rowland.harvard.edu,
+ justin.chen@broadcom.com
+References: <20240822130113.164644-1-liaochen4@huawei.com>
+ <20240822130113.164644-3-liaochen4@huawei.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240822130113.164644-3-liaochen4@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If of_parse_phandle_with_args() succeeds, the OF node reference should
-be dropped, regardless of number of phandle arguments.
+On 8/22/24 06:01, 'Liao Chen' via BCM-KERNEL-FEEDBACK-LIST,PDL wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.
+> 
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
 
-Cc: <stable@vger.kernel.org>
-Fixes: 9460ae2ff308 ("soc: qcom: Introduce common SMEM state machine code")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/soc/qcom/smem_state.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/qcom/smem_state.c b/drivers/soc/qcom/smem_state.c
-index d9bfac6c54fb..cc5be8019b6a 100644
---- a/drivers/soc/qcom/smem_state.c
-+++ b/drivers/soc/qcom/smem_state.c
-@@ -112,7 +112,8 @@ struct qcom_smem_state *qcom_smem_state_get(struct device *dev,
- 
- 	if (args.args_count != 1) {
- 		dev_err(dev, "invalid #qcom,smem-state-cells\n");
--		return ERR_PTR(-EINVAL);
-+		state = ERR_PTR(-EINVAL);
-+		goto put;
- 	}
- 
- 	state = of_node_to_state(args.np);
+Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.43.0
+Florian
 
 
