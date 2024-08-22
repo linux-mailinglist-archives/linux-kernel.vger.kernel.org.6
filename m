@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-296601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C880095ACA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:49:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D595895ACA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06FFC1C2289A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:49:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41E01C228BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBD946556;
-	Thu, 22 Aug 2024 04:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="iifGeQpN"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC21C23776;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18645588B;
+	Thu, 22 Aug 2024 04:49:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8A7364CD;
 	Thu, 22 Aug 2024 04:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724302147; cv=pass; b=Ly4bDRu16BFB/pGH0/X0uLjjax6iYCqsIszimEXuQ1LEJHhBNbjzRodicjeM5gD4hbzYrahlQFL7t0rCS5xvj60VQepgOxXUSPEMA/uzaSofqceF1yK86FcNqIk/q3U/+2Yq8O/G9KPZ8z33kYt5y+NEAX50ePkxLUqwJZvGU2Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724302147; c=relaxed/simple;
-	bh=5dBVWyMJFOLY6LczPjuoq+vMAPbe8U9BdHH5gN0bJ8k=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BPFDYkA/pBlVEX9qrr+/wF1qtUJKhKxhVTNAs3uVXlL7mXkCuldmyK4KFr2pw1thI6UOZ7RzsWIOlH9Dxytn1vc6rVhIg7qRfMskM6XhGgta6vksz19qjGjmLei5PlB1uauQHCWRrRAPOBtmp1yI/lu3tZXIGLRxNkknZJw/dBo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=iifGeQpN; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: Usama.Anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724302138; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Qrelygl3WYDKCHc4WIQd8rSlbUULgYfR3lBJN679mWPVp06BUG96AepYbBPJSvWXui/yNeMasbms7sl79IUeI+pcdc2oLEvjbLCAGPO8eMIn127V9qMaqZpvHZk3M7sHXd8GoW8AZQtkyr2dYD6fpgSVZAIeCTM8f3sGp4Vw08w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724302138; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=MKVnjeNqhOLvl5ZtR4WUgOtRDwUS8L6JXBA6uB/6hIQ=; 
-	b=Svp00Vupwf8DCI57if1+ura6/PYRO8Q4hbgzCCrbgDTwnc+PoGSIC1XaiM1hfnxvE2wytgs9zCBkY0BspduEV95Y0UbuQaY9/Xm91JEbw8cIK4vXM1YW68EAqt5Jc4Ife3CZt7dCkBFFOZ+00Vqep62RLm3Z+KQCdD9m7zzaNuI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724302138;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=MKVnjeNqhOLvl5ZtR4WUgOtRDwUS8L6JXBA6uB/6hIQ=;
-	b=iifGeQpNnVlR8y13E/JPYk+rsmesyYRo4eN1uSFAPxCQp7eAKsUp9h+W3uwXBeYm
-	7ddNTjZk1sVcWRKm8p7ADbNoAUTCIQKMvDi/62ADlzm708mA/8Nb0Tl1uVLOYDv/0YV
-	XLQHiw5+nn7VEQ17uJ1Fcr0sLUNvXxg0+BNQbujU=
-Received: by mx.zohomail.com with SMTPS id 172430213644657.83712784848478;
-	Wed, 21 Aug 2024 21:48:56 -0700 (PDT)
-Message-ID: <b24092fa-ed99-4373-a23f-a890969adcd8@collabora.com>
-Date: Thu, 22 Aug 2024 09:48:47 +0500
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724302149; cv=none; b=PzHnjbQ2qkEfFtj4IjMmFuzeprzTDaGPmr+WpLolXtD+pvD3iTWORTyzZlTMGsFUK7qZOTAJFWxqFWhV1mEbl5Dz+tmo4pIYs8shsTDnM3FuCcN4HUAOZ/wVAUGKIMnWZ+ZyIPDjJYeaLD136gyzIdLMp8+QyCXYp6AozESRyCA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724302149; c=relaxed/simple;
+	bh=XIqY+SgIHpcP4gp2NuKQWlNd35iGqc40AXkBCZxuSMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R4dF7gjyRrrCZW3jfwttY9+uR6SOxK5rZAo69VaZBGQoqipXE3Drlowa24lQW1IqcqX+dxNRMFAMiQDXyQJvIWJcgMJ0kXR5fLlG9LpdyIzP/EW0Wjf/+qVoIGAfw4miAUBBAePNtFFyGA8tmrwvGAt8KECR+XaHDsxh4V6kEpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59D3FDA7;
+	Wed, 21 Aug 2024 21:49:31 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.59.133])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 763C33F73B;
+	Wed, 21 Aug 2024 21:49:02 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-kernel@vger.kernel.org,
+	yury.norov@gmail.com,
+	arnd@arndb.de
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-arch@vger.kernel.org
+Subject: [PATCH V4 0/2] uapi: Add support for GENMASK_U128()
+Date: Thu, 22 Aug 2024 10:18:51 +0530
+Message-Id: <20240822044853.567386-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, linux-kernel@vger.kernel.org,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: Re: [PATCH 1/3] selftests/resctrl: Generalize non-contiguous CAT
- check
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Shuah Khan <shuah@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>,
- linux-kselftest@vger.kernel.org
-References: <20240813104515.19152-1-ilpo.jarvinen@linux.intel.com>
- <20240813104515.19152-2-ilpo.jarvinen@linux.intel.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20240813104515.19152-2-ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-On 8/13/24 3:45 PM, Ilpo Järvinen wrote:
-> arch_supports_noncont_cat() checks if vendor is ARCH_AMD and if that is
-> not true, ARCH_INTEL is assumed which might not be true either because
-> get_vendor() can also return zero if neither AMD nor Intel is detected.
-> 
-> Generalize the vendor check using switch/case logic and return false
-> for unknown vendors.
-> 
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+This adds support for GENMASK_U128() and some corresponding tests as well.
+GENMASK_U128() generated 128 bit masks will be required later on the arm64
+platform for enabling FEAT_SYSREG128 and FEAT_D128 features.
 
-> ---
->  tools/testing/selftests/resctrl/cat_test.c | 26 +++++++++++++---------
->  1 file changed, 16 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
-> index 742782438ca3..51a1cb6aac34 100644
-> --- a/tools/testing/selftests/resctrl/cat_test.c
-> +++ b/tools/testing/selftests/resctrl/cat_test.c
-> @@ -292,19 +292,25 @@ static bool arch_supports_noncont_cat(const struct resctrl_test *test)
->  {
->  	unsigned int eax, ebx, ecx, edx;
->  
-> -	/* AMD always supports non-contiguous CBM. */
-> -	if (get_vendor() == ARCH_AMD)
-> +	switch (get_vendor()) {
-> +	case ARCH_AMD:
-> +		/* AMD always supports non-contiguous CBM. */
->  		return true;
->  
-> -	/* Intel support for non-contiguous CBM needs to be discovered. */
-> -	if (!strcmp(test->resource, "L3"))
-> -		__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-> -	else if (!strcmp(test->resource, "L2"))
-> -		__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-> -	else
-> -		return false;
-> +	case ARCH_INTEL:
-> +		/* Intel support for non-contiguous CBM needs to be discovered. */
-> +		if (!strcmp(test->resource, "L3"))
-> +			__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-> +		else if (!strcmp(test->resource, "L2"))
-> +			__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-> +		else
-> +			return false;
-> +
-> +		return ((ecx >> 3) & 1);
->  
-> -	return ((ecx >> 3) & 1);
-> +	default:
-> +		return false;
-> +	}
->  }
->  
->  static int noncont_cat_run_test(const struct resctrl_test *test,
+Because GENMAKS_U128() depends on __int128 data type being supported in the
+compiler, its usage needs to be protected with CONFIG_ARCH_SUPPORTS_INT128.
+
+This series is being used for an work in progress on arm64 platform.
+
+https://lore.kernel.org/all/20240801054436.612024-1-anshuman.khandual@arm.com/
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Arnd Bergmann <arnd@arndb.de>>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+
+Changes in V4:
+
+- Folded in the below patch which guards against assembly code
+- Fixed __GENMASK_U128() for the corner case (128 bit left shift)
+- Improved genmask_u128_test() and genmask_input_check_test()
+
+https://lore.kernel.org/lkml/20240803133753.1598137-1-yury.norov@gmail.com/
+
+Changes in V3:
+
+https://lore.kernel.org/lkml/20240801071646.682731-1-anshuman.khandual@arm.com/
+
+- Dropped unused __BITS_PER_U128
+- Moved #ifdef CONFIG_ARCH_SUPPORTS_INT128 inside genmask_u128_test()
+- Added asm unsupported comments for GENMASK_U128() and __BIT128()
+- Added reviewed tag from Arnd
+
+Changes in V2:
+
+https://lore.kernel.org/all/20240725054808.286708-1-anshuman.khandual@arm.com/
+
+- Wrapped genmask_u128_test() with CONFIG_ARCH_SUPPORTS_INT128
+- Defined __BITS_PER_U128 unconditionally as 128
+- Defined __GENMASK_U128() via new _BIT128()
+- Dropped _U128() and _AC128()
+
+Changes in V1:
+
+https://lore.kernel.org/lkml/20240724103142.165693-1-anshuman.khandual@arm.com/
+
+Anshuman Khandual (2):
+  uapi: Define GENMASK_U128
+  lib/test_bits.c: Add tests for GENMASK_U128()
+
+ include/linux/bits.h       | 15 +++++++++++++++
+ include/uapi/linux/bits.h  |  3 +++
+ include/uapi/linux/const.h | 17 +++++++++++++++++
+ lib/test_bits.c            | 34 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 69 insertions(+)
 
 -- 
-BR,
-Muhammad Usama Anjum
+2.30.2
 
 
