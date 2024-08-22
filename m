@@ -1,67 +1,93 @@
-Return-Path: <linux-kernel+bounces-297157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFD095B3EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:32:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5A095B3ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C85284377
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:32:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDE0EB20E57
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79771C93D4;
-	Thu, 22 Aug 2024 11:32:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D851C93C7;
+	Thu, 22 Aug 2024 11:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RQQwgE6R"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3295E17DE06;
-	Thu, 22 Aug 2024 11:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F5C17DE06
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724326323; cv=none; b=DGiCw51+SC5f5FylkrsuaVQ4o1V5LC4hfNf32jSu7TVV3hyxXveJlT2GBea7wPXncFVnDh3HfBlaPznoze3V1xLIGkGStPFsVz53obdE87ElmKQ2x56u50Jr2masHmHd3H6Ul8pTUdypS5Z/QDeS5jp3WFJWipCF/JDBfHJ2KH0=
+	t=1724326378; cv=none; b=ekj7dhJx3rJCSC5jxdMFOPXtDZtiFrDLH4nzxBcYtAfQmhXtvjt0YQKezy1WEYeU7fcLrzzsSNe78gdGUsXriQEB82xoF8W555bKBndVhYK9k4bMRjI11LJiKNinXv7ACuXp4XktonJ27CQ84T/obcFGoi1nuTo3RYbtCHt6f+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724326323; c=relaxed/simple;
-	bh=ahYQxnZlDKF67DiooDXeohmk++gTfdE7lJjaYpBT67Q=;
+	s=arc-20240116; t=1724326378; c=relaxed/simple;
+	bh=Ci63qR+zDbNpd55vwrnyuRDltjguxaDQhHSy/g6tS/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVvTAjIPLxySkIKyp3iITiHnm7P3BBE6aH1RmXTwQBNq4B18v4jghgNP4gh91JZRfCsvI8duDGKxoAa27zyALAkULCnB9Oa5g6lNtE4s+Ozn1uihPi+/lgtzgbFhF8qKqB36Y9GorFHnsY0r3cqtB4wyNQPVWGh9iutSYUGlUKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3579BC32782;
-	Thu, 22 Aug 2024 11:31:57 +0000 (UTC)
-Date: Thu, 22 Aug 2024 12:31:55 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 18/39] arm64/traps: Handle GCS exceptions
-Message-ID: <Zschq9JbvIRjmXVR@arm.com>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-18-41b81947ecb5@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjdekyz8IjS+BnAbc2iuQHtEfCCfPduffH9eo5voX7YLkKVPEyakJ1PGVoCmfjIfE9I3HlnATNCizlgLALvD+ibbzgPJ6B2J7LJTjqcL0knikX7wDx8PZrDLpmQ386d8GNL9x7HPAiyoSMCs0hu0TCKwD8VkEoZmKzS2Hlo3eTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RQQwgE6R; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a869332c2c2so75092766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:32:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724326375; x=1724931175; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OEuqfEPz/wQcg88M/7L6hQvyoAuxf4QP4VV7eRrYBJ0=;
+        b=RQQwgE6R1OtJ3CqVqI1q/ssZV6m/Ibzr+BEbJA1RCMV3Wpj6dR8e8hIkpSEdD8/8sH
+         9finI92i3n1GF8Q8dL+enNAfVOcMAA3cp+w8amFhyVsanNdGnwI7HJwzh4/zcBOJu+QO
+         QXhvt6YX7Z9h9Jai7bT1EC5AJhZjGCqmXh1xNXGrxqvTVcSWuebWhejsZCv3NygFjYxk
+         ZG3Je47LvYCOZvGHoOF+eEpzMVMNS4H55BW+bmNRZEjmLUGHACb90EYZxf00j+TbyzEI
+         d6zFl7UhB8t+uv/XXqGxjWwUFRyam4DpT7//8Gog0DhNaQI1YO+yXfmkjRDe8XCnHWWk
+         yUpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724326375; x=1724931175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OEuqfEPz/wQcg88M/7L6hQvyoAuxf4QP4VV7eRrYBJ0=;
+        b=OWOLy1buUdRbdZ4Wd4vIREqUvIgrw5EJp702RR4nPU2vg30SJxMKTIJjrF/KEP0Yau
+         8l5WF6Junee/aUbVk65EchiBtTLxMhBaKrFzUSeQzVK2JNlPpkwFvUn/ZH6Uyv0jz7dW
+         5SaRfETR7fp9V8dbkR950LMXO5+jeiqVbCOA2ritUTtLYIGNtJ1z0xNc0BJpqsSTAy/J
+         3pJyILTfRkE3/IqnDKNGuK2BQ8fxJKr9IUQcaF65WHoYEK+p/8GG7ClNvqDV1F9aX27G
+         vEBb+oyEEIo9Y7YpAIhQ9YnGxmVgUEqMxXYhiwjRJTr7PBssEg60sCZmmFU7W+CjmCru
+         tvTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkgeHnHjZguc/URBS+5olBz7stLTogrXgW2mERlzjHT6EqkSXfIaeWeKOf7rwHhuzuEhMqQ+Tev+g37TQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMWOHERGH9VXI0Q7Sw/s9ZtkFaE12njd5CCi/qLW1AS+tAv57C
+	cpN+xPezqEW2oLbMrkRA5/Y8HPC55aEyKD5v0jHDxtdWGZLSLvoAC5E74qsssOE=
+X-Google-Smtp-Source: AGHT+IEZLMLyT9V9R+7tijjPChEoFjN4faNKVaDnMSiAg9BTtShFVYMWr/ION2Rh8H2N39z2OxY4VQ==
+X-Received: by 2002:a17:906:f598:b0:a83:849e:ea80 with SMTP id a640c23a62f3a-a868a921340mr258262266b.32.1724326374890;
+        Thu, 22 Aug 2024 04:32:54 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436c11sm107578866b.135.2024.08.22.04.32.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 04:32:54 -0700 (PDT)
+Date: Thu, 22 Aug 2024 14:32:50 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Roger Quadros <rogerq@kernel.org>, "Anwar, Md Danish" <a0501179@ti.com>,
+	Andrew Lunn <andrew@lunn.ch>, Jan Kiszka <jan.kiszka@siemens.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH net-next v2 1/7] net: ti: icssg-prueth: Enable IEP1
+Message-ID: <5fa6c2e5-19e9-49fc-b195-edc5c6b3db7c@stanley.mountain>
+References: <20240813074233.2473876-1-danishanwar@ti.com>
+ <20240813074233.2473876-2-danishanwar@ti.com>
+ <aee5b633-31ce-4db0-9014-90f877a33cf4@kernel.org>
+ <9766c4f6-b687-49d6-8476-8414928a3a0e@ti.com>
+ <ae36c591-3b26-44a7-98a4-a498ee507e27@kernel.org>
+ <070a6aea-bebe-42c8-85be-56eb5f2f3ace@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,25 +96,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822-arm64-gcs-v11-18-41b81947ecb5@kernel.org>
+In-Reply-To: <070a6aea-bebe-42c8-85be-56eb5f2f3ace@ti.com>
 
-On Thu, Aug 22, 2024 at 02:15:21AM +0100, Mark Brown wrote:
-> A new exception code is defined for GCS specific faults other than
-> standard load/store faults, for example GCS token validation failures,
-> add handling for this. These faults are reported to userspace as
-> segfaults with code SEGV_CPERR (protection error), mirroring the
-> reporting for x86 shadow stack errors.
+On Thu, Aug 22, 2024 at 11:22:44AM +0530, MD Danish Anwar wrote:
 > 
-> GCS faults due to memory load/store operations generate data aborts with
-> a flag set, these will be handled separately as part of the data abort
-> handling.
 > 
-> Since we do not currently enable GCS for EL1 we should not get any faults
-> there but while we're at it we wire things up there, treating any GCS
-> fault as fatal.
+> On 21/08/24 5:23 pm, Roger Quadros wrote:
+> > 
+> > 
+> > On 21/08/2024 14:33, Anwar, Md Danish wrote:
+> >> Hi Roger,
+> >>
+> >> On 8/21/2024 4:57 PM, Roger Quadros wrote:
+> >>> Hi,
+> >>>
+> >>> On 13/08/2024 10:42, MD Danish Anwar wrote:
+> >>>> IEP1 is needed by firmware to enable FDB learning and FDB ageing.
+> >>>
+> >>> Required by which firmware?
+> >>>
+> >>
+> >> IEP1 is needed by all ICSSG firmwares (Dual EMAC / Switch / HSR)
+> >>
+> >>> Does dual-emac firmware need this?
+> >>>
+> >>
+> >> Yes, Dual EMAC firmware needs IEP1 to enabled.
+> > 
+> > Then this need to be a bug fix?
 > 
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Correct, this is in fact a bug. But IEP1 is also needed by HSR firmware
+> so I thought of keeping this patch with HSR series. As HSR will be
+> completely broken if IEP1 is not enabled.
+> 
+> I didn't want to post two patches one as bug fix to net and one part of
+> HSR to net-next thus I thought of keeping this patch in this series only.
+> 
+> > What is the impact if IEP1 is not enabled for dual emac.
+> > 
+> 
+> Without IEP1 enabled, Crash is seen on AM64x 10M link when connecting /
+> disconnecting multiple times. On AM65x IEP1 was always enabled because
+> `prueth->pdata.quirk_10m_link_issue` was true. FDB learning and FDB
+> ageing will also get impacted if IEP1 is not enabled.
+> 
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Please could you add the information mentioned in this email into the commit
+message?
+
+regards,
+dan carpenter
+
 
