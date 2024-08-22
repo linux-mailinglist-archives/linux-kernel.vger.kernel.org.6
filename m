@@ -1,101 +1,168 @@
-Return-Path: <linux-kernel+bounces-296613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E0C95ACC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:14:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E60AE95ACD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 07:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8561F229BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:14:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117EE1C22613
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 05:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AA350297;
-	Thu, 22 Aug 2024 05:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD024CE05;
+	Thu, 22 Aug 2024 05:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bvmPV9NX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RcMgJv83"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882DD134A8;
-	Thu, 22 Aug 2024 05:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8F729A5;
+	Thu, 22 Aug 2024 05:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724303684; cv=none; b=Z2ZZIUO4gVER5nxIm9u28NEhq6bPuNhzhb9AUTUSoLp3umJGMrjl4ZZzZN6X+3XkRS6S2t4OVqJuQS5/bBpomL1WMK+p4CoPg+41OCSmByL8c3cVr0MRbczYvkfXU/cZ9ci7EAmNKW6LFR7Ria2jgOeK2pUq+hueVWUXfM1XcaE=
+	t=1724304174; cv=none; b=cPnQcs8GVI9UVjAtS4Jsp41605621SCmxTiNrKoOKav1Be/T0Y58eJSoiO8o8U76dtXdsi3QDgGVquNbszRio2BEWf9tE7qcd+SXm71D7WNDPjl/BhRu0LWQGI2zUnLFs94/kkTcCO3/hyQIHYeNmwvz3Ch9HqikavOHJmuBTu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724303684; c=relaxed/simple;
-	bh=ngDz7AVNJAUvMqiSy4yLF8BEcn3Ug63o03RV0QSI7As=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHKNWDz993fyTjPvkWFe439wqH8h+df5IGJdMbRolnGClj7Cy92bQHpSnUdc0RFekbEXjUWyGNVI2xHmr+ARlnWlfcUscivJlSBxaeGYprPEabHHnh7iRnXcU3DRy9IFc9CTvKE2NQGKXGCfYdGcLLnWNt5w0uRjYp0X84pTFEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bvmPV9NX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A4FC4AF0C;
-	Thu, 22 Aug 2024 05:14:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724303684;
-	bh=ngDz7AVNJAUvMqiSy4yLF8BEcn3Ug63o03RV0QSI7As=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bvmPV9NXqdombM0PixL1Rz1L8hnVmLhM/nT7uN//JOYsQ4ikNMF4yIjWioKyAHi7U
-	 i1IPgzSne267LhLUlNoDVXZKlNvHax8kXpgU9jOIBr4GZP6TvgTZNiVgQkETYXemrQ
-	 oWf4eUnU3vvEMu6Tf16e32MKRtt5lGZ+5sHH+XHo=
-Date: Thu, 22 Aug 2024 13:14:41 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Neal Liu <neal_liu@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Bin Liu <b-liu@ti.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1 0/5] usb drivers use devm_clk_get_enabled() helpers
-Message-ID: <2024082227-sports-resource-9c65@gregkh>
-References: <20240822040734.29412-1-liulei.rjpt@vivo.com>
- <2024082210-stadium-sly-cf06@gregkh>
- <b356bdb2-fc17-44ef-b0e5-3868b452a8c2@vivo.com>
+	s=arc-20240116; t=1724304174; c=relaxed/simple;
+	bh=wBB8OLwdPMIKI0ZGPMFhPRYD31g6/ZptmagEcO/2VOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pk6E9iqnytzGPY3vmhQTjX27fq/wfaI0E4uGxovmB3LeI/gG6oLt61AQMdmPzx4ovpsKj2VoiRNy2Fa69tMhFD5V/L03+XLAA1u/R/CvYjHk59V5eSSVct5eWlwpC4GxJoNMPPxuBHpa5sQ9cHv3ajSgrAyZ+oVJ0EegkD4WvRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RcMgJv83; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47M5MijY063532;
+	Thu, 22 Aug 2024 00:22:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724304164;
+	bh=QSzuUgLfVeB4msNs33a4Z+SPmNW8bVs+3RUbVH6JXdM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=RcMgJv83CpAXVBkoQOQVV1f95TY9XmqpWzY5QLQfAZ187skvTiyViJs8BN8CM3orc
+	 +0DdMhZnxHk0EEVSGNyxUKjXcbHQlL5vU0DQwXj4JwuZen5to3gmcxfFtStf2dG762
+	 DjSI6+FsBm6tCG/70wbZ+fk2gjGw2xm+O2I7QQME=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47M5Miv6060514
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 22 Aug 2024 00:22:44 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
+ Aug 2024 00:22:44 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 22 Aug 2024 00:22:44 -0500
+Received: from [172.24.156.139] (ltpw0bk3z4.dhcp.ti.com [172.24.156.139])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47M5Me4M027111;
+	Thu, 22 Aug 2024 00:22:41 -0500
+Message-ID: <716d189d-1f62-4fc0-9bb5-6c78967c5cba@ti.com>
+Date: Thu, 22 Aug 2024 10:52:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix error handling when power-up
+ failed
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Apurva Nandan
+	<a-nandan@ti.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>
+References: <9f481156-f220-4adf-b3d9-670871351e26@siemens.com>
+ <cf1783e3-e378-482d-8cc2-e03dedca1271@ti.com>
+ <3c8844db-0712-4727-a54c-0a156b3f9e9c@siemens.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <3c8844db-0712-4727-a54c-0a156b3f9e9c@siemens.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b356bdb2-fc17-44ef-b0e5-3868b452a8c2@vivo.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Aug 22, 2024 at 12:46:10PM +0800, Lei Liu wrote:
-> 
-> on 2024/8/22 12:27, Greg Kroah-Hartman wrote:
-> > On Thu, Aug 22, 2024 at 12:07:25PM +0800, Lei Liu wrote:
-> > > The devm_clk_get_enabled() helpers:
-> > >      - call devm_clk_get()
-> > >      - call clk_prepare_enable() and register what is needed in order to
-> > >       call clk_disable_unprepare() when needed, as a managed resource.
-> > > 
-> > > This simplifies the code and avoids calls to clk_disable_unprepare().
-> > > 
-> > > ---
-> > > The files ux500.c, mpfs.c, and pxa27x_udc.c have incorrect usage of
-> > > certain interfaces due to the lack of synchronization during the
-> > > commit updates. These issues have been corrected in the v1 version.
-> > > 
-> > > version 1 changes
-> > > 1.ux500: Incorrect usage of clk_prepare_enable() should be corrected to
-> > >    devm_clk_get_enabled().
-> > > 2.mpfs: Incorrect usage of devm_clk_get_enable() should be corrected to
-> > >    devm_clk_get_enabled().
-> > > 3.pxa27x_udc: Incorrect usage of clk_prepare_enable() should be
-> > >    corrected to devm_clk_get_enabled().
-> > Patch versions start at 1, this should be 2, right?
-> 
-> Hi，Do I need to update the patch from v1 to v2 again?
 
-Yes please, otherwise our tools will get confused.
+On 21-08-2024 23:40, Jan Kiszka wrote:
+> On 21.08.24 07:30, Beleswar Prasad Padhi wrote:
+>> On 19-08-2024 20:54, Jan Kiszka wrote:
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>
+>>> By simply bailing out, the driver was violating its rule and internal
+>>
+>> Using device lifecycle managed functions to register the rproc
+>> (devm_rproc_add()), bailing out with an error code will work.
+>>
+>>> assumptions that either both or no rproc should be initialized. E.g.,
+>>> this could cause the first core to be available but not the second one,
+>>> leading to crashes on its shutdown later on while trying to dereference
+>>> that second instance.
+>>>
+>>> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up
+>>> before powering up core1")
+>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>> ---
+>>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 3 ++-
+>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>> index 39a47540c590..eb09d2e9b32a 100644
+>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>> @@ -1332,7 +1332,7 @@ static int k3_r5_cluster_rproc_init(struct
+>>> platform_device *pdev)
+>>>                dev_err(dev,
+>>>                    "Timed out waiting for %s core to power up!\n",
+>>>                    rproc->name);
+>>> -            return ret;
+>>> +            goto err_powerup;
+>>>            }
+>>>        }
+>>>    @@ -1348,6 +1348,7 @@ static int k3_r5_cluster_rproc_init(struct
+>>> platform_device *pdev)
+>>>            }
+>>>        }
+>>>    +err_powerup:
+>>>        rproc_del(rproc);
+>>
+>> Please use devm_rproc_add() to avoid having to do rproc_del() manually
+>> here.
+> This is just be the tip of the iceberg. The whole code needs to be
+> reworked accordingly so that we can drop these goto, not just this one.
 
-greg k-h
+
+You are correct. Unfortunately, the organic growth of this driver has 
+resulted in a need to refactor. I plan on doing this and post the 
+refactoring soon. This should be part of the overall refactoring as 
+suggested by Mathieu[2]. But for the immediate problem, your fix does 
+patch things up.. hence:
+
+Acked-by: Beleswar Padhi <b-padhi@ti.com>
+
+[2]: https://lore.kernel.org/all/Zr4w8Vj0mVo5sBsJ@p14s/
+
+> Just look at k3_r5_reserved_mem_init. Your change in [1] was also too
+> early in this regard, breaking current error handling additionally.
+
+
+
+Curious, Could you point out how does the change in [1] breaks current 
+error handling?
+
+>
+> I'll stop my whac-a-mole. Someone needs to sit down and do that for the
+> complete code consistently. And test the error cases.
+>
+> Jan
+>
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
+>
+>>>    err_add:
+>>>        k3_r5_reserved_mem_exit(kproc);
 
