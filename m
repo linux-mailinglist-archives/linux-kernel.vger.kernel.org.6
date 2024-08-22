@@ -1,94 +1,150 @@
-Return-Path: <linux-kernel+bounces-296315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C83795A903
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:41:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECD395A905
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F7141C20DF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:41:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0A2AB214FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CC6168C7;
-	Thu, 22 Aug 2024 00:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C35A933;
+	Thu, 22 Aug 2024 00:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJOYzkF6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jKGTLBdw"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215EA125DE;
-	Thu, 22 Aug 2024 00:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFB66FB6;
+	Thu, 22 Aug 2024 00:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724287240; cv=none; b=md6kNCpjOuIhIC+R5xIl4477YGSZxAXRn67wET9af7Dc7bJt89OfSyDJvhgQbKOmsPe5VfB0duyVN72K63BzK85dDsn5fNap4OvYxdbxOgvx8JrLSeKn0pxTrzOuUI2/FyD0HFBqlp2vBHjyp/z9RbHFT2j0cGRAh+IJU9/MpuQ=
+	t=1724287267; cv=none; b=DlUmMnaod4pmcwU4aXXa6hqTgBNTOaIkxyKpjgzuM6u338PiX9zChEuzAacK9K8VB1wZFh45GBaRZBOosnOEyHkG/zA0rDD0m/DaKvkzlCt3haIH2iiEKjTRXaP6cqrn9no41RmUCmMC/xyV+YHWSc6Ax3ggIAhgKQPNZgXpZ+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724287240; c=relaxed/simple;
-	bh=b7nUoUlvVoGjFMH8+Uiil1I9wpRRS3dQOPm1lZtrews=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KwJ2n7XVMhaW4IrScwaqdKqenBLGNqwNcKJyhA54nyxv4z7/K7L1rZrrTYsBVg28CR+FhbGx9KCwKpo41uMERxWVh/QqnJU7urCU3D475rtFGD3RSJlcjSAQisZYGQa2fCJLKT+7ZmWhynhbhgN3r07P9rqtsyg95tAy8Gfuih8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJOYzkF6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 977F6C32782;
-	Thu, 22 Aug 2024 00:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724287239;
-	bh=b7nUoUlvVoGjFMH8+Uiil1I9wpRRS3dQOPm1lZtrews=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fJOYzkF6UhEYzPqWyAMtc92qi8xEjU+8pzsZ23VfzMA/zIxAoErM7QgGS4NJYBAVZ
-	 FrTOmW4cwabqjemEQ4UtlrF3pPG7oT/FqYqkDBefRkatByooVhl5ZAtkKkLgAEGL30
-	 sfDvpE5qlr1G2IQ6k/b80G3Ekyse523RHmjo2yH0VxiDEpNF8kvLX3k42qXlq//F3y
-	 yisPzPfFr6/+wklKW8RddBw9+EHVj2q9bauyJYV4DgqmtWdcvkU3J8a4p/tmG0CSwd
-	 zW/K9etD5ud9+66uYd2SmH2CM7QOzQj0Q60SbwuYJQ/GMk9JGQkx2lKhVZJxsZuGzS
-	 RbxysRyc2RoBw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E303804CAB;
-	Thu, 22 Aug 2024 00:40:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724287267; c=relaxed/simple;
+	bh=jeP+XLfDddClKwlEdsbMg7Bm6b5gsxyaxuLCFEJxoaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpSKjQ+X1NlQz2KMqiCkuWD6xnlUfAWohJiRKu3TCXcbfPH2WnyUsfEyBIjlsCPYIg/W1cxUChOwLXj1+nEzs9usvULjs4z0o2W+DrGe/SAkGDaZtsJXCGGZe+3XU2WxVzTOlqLDk/iux58Xs2g0N0tb88rH5IYtiadOHAGoONY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jKGTLBdw; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0acCXEga1tQ2jZR5fgXnw/FdPHpNodKENtiisHdpxw4=; b=jKGTLBdwj3fFgLZkRC60luLhi1
+	4mG1GykwToQy3IZWydYIP2FcoCvnzp5pECwqKgQP+4SzrYo5VzWg9VsKwJ0HMgXlVQ1HAI5pT8H7b
+	Hs4wui+i0UG6vPYP0RD84wivQITSHBswvrBCdvBboAg/Np7CpNeiAmcAVyw0Gi7oMumD6hbKRRW0n
+	oXceYt/XFgCN/AkDonBLo4Kkbo4rlltdDaCEy3ZCU5UYIgwesFAZTXWxVc+cYTAlXD+Fvn8ByO7qD
+	eAexgTXmMeJD4Fm3taq66TKe1QLp+ONJ+NqSx4ACn0kmuMmKctmFSlq/Kp01pyqTzHvD4MklplUVO
+	kY1KEGdw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sgvsr-00000003wQe-2eP6;
+	Thu, 22 Aug 2024 00:41:01 +0000
+Date: Thu, 22 Aug 2024 01:41:01 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 2/3] lift grabbing path into caller of do_dentry_open()
+Message-ID: <20240822004101.GQ504335@ZenIV>
+References: <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
+ <20240807070552.GW5334@ZenIV>
+ <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV>
+ <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+ <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+ <20240807124348.GY5334@ZenIV>
+ <20240807203814.GA5334@ZenIV>
+ <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
+ <20240822003359.GO504335@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] ice: Fix a 32bit bug
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172428723899.1872412.15704401811722513523.git-patchwork-notify@kernel.org>
-Date: Thu, 22 Aug 2024 00:40:38 +0000
-References: <ddc231a8-89c1-4ff4-8704-9198bcb41f8d@stanley.mountain>
-In-Reply-To: <ddc231a8-89c1-4ff4-8704-9198bcb41f8d@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: junfeng.guo@intel.com, anthony.l.nguyen@intel.com,
- przemyslaw.kitszel@intel.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, qi.z.zhang@intel.com,
- marcin.szycik@linux.intel.com, ahmed.zaki@intel.com,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822003359.GO504335@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello:
+... and do that after the call.  Legitimate, since no ->open()
+instance tries to modify ->f_path.  Never had been promised to
+work, never had been done by any such instance, now it's clearly
+forbidden.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ Documentation/filesystems/porting.rst |  9 +++++++++
+ fs/open.c                             | 10 +++++++---
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-On Tue, 20 Aug 2024 16:43:46 +0300 you wrote:
-> BIT() is unsigned long but ->pu.flg_msk and ->pu.flg_val are u64 type.
-> On 32 bit systems, unsigned long is a u32 and the mismatch between u32
-> and u64 will break things for the high 32 bits.
-> 
-> Fixes: 9a4c07aaa0f5 ("ice: add parser execution main loop")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] ice: Fix a 32bit bug
-    https://git.kernel.org/netdev/net-next/c/0ce054f2b891
-
-You are awesome, thank you!
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index 92bffcc6747a..34f83613ad6f 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -1141,3 +1141,12 @@ pointer are gone.
+ 
+ set_blocksize() takes opened struct file instead of struct block_device now
+ and it *must* be opened exclusive.
++
++
++---
++
++**mandatory**
++
++do not even think of modifying ->f_path in ->open() instance; it never had
++been expected to work and nobody had been insane enough to try it.  Now
++it is explicitly forbidden.
+diff --git a/fs/open.c b/fs/open.c
+index 2bda3aadfa24..0ec2e9a33856 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -912,7 +912,6 @@ static int do_dentry_open(struct file *f,
+ 	struct inode *inode = f->f_path.dentry->d_inode;
+ 	int error;
+ 
+-	path_get(&f->f_path);
+ 	f->f_inode = inode;
+ 	f->f_mapping = inode->i_mapping;
+ 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
+@@ -1015,7 +1014,6 @@ static int do_dentry_open(struct file *f,
+ 	fops_put(f->f_op);
+ 	put_file_access(f);
+ cleanup_file:
+-	path_put(&f->f_path);
+ 	f->f_path.mnt = NULL;
+ 	f->f_path.dentry = NULL;
+ 	f->f_inode = NULL;
+@@ -1042,10 +1040,14 @@ static int do_dentry_open(struct file *f,
+ int finish_open(struct file *file, struct dentry *dentry,
+ 		int (*open)(struct inode *, struct file *))
+ {
++	int err;
+ 	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
+ 
+ 	file->f_path.dentry = dentry;
+-	return do_dentry_open(file, open);
++	err = do_dentry_open(file, open);
++	if (file->f_mode & FMODE_OPENED)
++		path_get(&file->f_path);
++	return err;
+ }
+ EXPORT_SYMBOL(finish_open);
+ 
+@@ -1095,6 +1097,8 @@ int vfs_open(const struct path *path, struct file *file)
+ 		 */
+ 		fsnotify_open(file);
+ 	}
++	if (file->f_mode & FMODE_OPENED)
++		path_get(&file->f_path);
+ 	return ret;
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
 
