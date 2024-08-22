@@ -1,113 +1,148 @@
-Return-Path: <linux-kernel+bounces-296329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCF395A94F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A8A95A952
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 03:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD341F21B37
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:03:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABE1D1F2330B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09646AD2C;
-	Thu, 22 Aug 2024 01:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034B7B673;
+	Thu, 22 Aug 2024 01:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZxEyhtN"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hgEFdKyA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9DF6FC7;
-	Thu, 22 Aug 2024 01:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDCE6FB6;
+	Thu, 22 Aug 2024 01:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724288617; cv=none; b=fQhox9AewM7CToWlUBSd0GpVy53SnjP2ol9TVOojFypO1djXJRHZNqzIiCZfdw3CQBlV502L1wBXnC2MoxqgAKGiJINues54IoUmyO9RIyAEdk+sK77jZLwVyR+7xdRzYqC4xJ1JVGEqT8nC+ocmyxOMumCylEWIPwsl13s4UZw=
+	t=1724288686; cv=none; b=f2HR/aYY4D1CkhghNizNNjXUNM+yfZqICWM5UTffek5Lj9NpyiHLP7r5qWJq1W3b/MB+7DUV15KFNdT0oSv21dt2VlE2Jka20yJ4Q+CoJqRjanHf0er2jPoftzqtnKYDIHn+Sc2sqbUOEjQtKDPmnWHlM2k7g8okNWnOO8HDtvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724288617; c=relaxed/simple;
-	bh=r7R9se5rg7N5lEUpA8br65l66pmINbKJy+1PiA1DI34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k/YqMnHO1fQo3p0R95cZfoFhT2djcmoKNvvgHCOEkxjP28eYnl2APn+UcSyeOQMRurNomsqSdtx9MBO6fbSNyLKlXG+QeiofeZ/vMuH6As+tANMnAkjShjju7KaX4ti+uHcxo8Fz9nBuw8pMbVOG3H/jcbAhNeE+1iQCLS7uogY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZxEyhtN; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-429e29933aaso1285705e9.0;
-        Wed, 21 Aug 2024 18:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724288614; x=1724893414; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7R9se5rg7N5lEUpA8br65l66pmINbKJy+1PiA1DI34=;
-        b=hZxEyhtNIeLYDW7e4UwOyO5F8/tl6uwoi4QzIjrhgfnH5r2eZ/8W77zyE81tO862ZZ
-         bvh8OsfanZWXl2zFTWsqBrHNt6kpepo0wXE5QOQjrlWHe1LcVb7RegNeZC22+OlLTihX
-         Za9yK37vyhYEo7CiTqVsOh52ys/r+dxVlGTsJUuhuyGJ749NQk7egSE2gWrvFXFrLC+T
-         G4+ssxQ17Kf/nUz4GJoXjUSl8D6T9EnLfDi9eCMiHhcYEf0nX4X2Sko0ZgTzqyTxCfpP
-         J35mn0z13kg1wT9yHRZf+u77Kv+GUOrYCbwZORfqII3KIeGgHljPsjYRqh8uH7SzAh9o
-         ivkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724288614; x=1724893414;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r7R9se5rg7N5lEUpA8br65l66pmINbKJy+1PiA1DI34=;
-        b=pq8/15fRUpNnLceA3pN0yTzD+K4LLKxwewRrOP9yqKs5EcTaGo4S3gbhuon7dPdhMk
-         p+VfyVyvFQorKWgeCr8/cx5HLg3nuctfi3/g3RU0LJIVQeEcM3ZhhB9rwhJoXrFNIgzG
-         gMH6QbyKGzct+WLCBSyxC2/foWbrFCrLzCWGwCZAKijKPlF4PR8chPqAaFBiQUgcRlUG
-         E4uNMcoBsuIIi+96D+gCY2D1RUk0cWNWWezA4er7jkHGIPvFvHIpIzvRDyDIToZHLlnk
-         sXgDy849QqNSZF+OCupzoTJ4Ywu2exwuSnVWJqwNpLlCQex5AEPaxO0K9+z9y9gbh+Fz
-         /WOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtDU7Ei39Bt4jEOGFPr5KiNcWPpvFtPZsl/68dSEWd7l1jOrO8ZIAjNYpnZnvUbz1jP05q1NIInU0Xa3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8QVH/vJ0+iDYmfxALyK3qLKL1kkO+rgjCqbo+5xPjoa1/weWF
-	HGSnalAJyNfO72WSlV5wBOfTh2DY86+yXJDfzjoFmAwVoo+4+YQqtumd7zMrCJNLj9dT7BFowaK
-	st9mCGZaIMvNZYjDPHnGXuAWKcy8=
-X-Google-Smtp-Source: AGHT+IH1fBTAXa00b57fsi2XRIpPb6JDnEyKgiEwWgWBIxbyUdvujpWQoO3He3Ae+dHnrFmksMRmeFlX3wCeCGgx6Kg=
-X-Received: by 2002:a05:600c:4ed2:b0:428:f650:6a4e with SMTP id
- 5b1f17b1804b1-42ac5637557mr1666365e9.23.1724288613271; Wed, 21 Aug 2024
- 18:03:33 -0700 (PDT)
+	s=arc-20240116; t=1724288686; c=relaxed/simple;
+	bh=AeKay7+vF2IjbP5yvEpOYTK1WKff6VqqnR4t+ssa4CE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=u4+Fdl1YEc5br6CHd9yatRa5sZ7RDa6drXN8VG43kDRWnypCtfIxik+DC2Sdyj7AEiSyoACZvGwKWS/rp5+1nkt9WU/7iraFUvBB5BRm6vObqjHx40mwgw7/WE+WfbhPHgv5PRqtJpRbzDwJJHEQisQSFxGChsQioYVMm1M6OPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hgEFdKyA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724288673;
+	bh=IiEkrzRFj2+Y25pkO0PTxjkfssFPYLYZdbTA6zjJwfM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hgEFdKyAGDmDuH2lAjsNp8Lzj+gp9PwwLNOIzK6+di04IrCuv68Ty94jCeqO/f9bk
+	 bzkFJge3nXmmgxaVweVYLGeuJ4G6YhTOTNcMx284+/lwds+MV1K2NWR95bq1XJ5nFd
+	 xGIQSxjAv/lw6L1CmbFb8Hr99ZnQdjzNSnkw+A9W8GHdLduzlGjmuMTv4N1+lnNXyd
+	 Fd5ZDZVxpiJAwwtqtVQTwUys8eZST1R500tUikHH3yWwWrF7ScCy5fPVB9r5DrBo+w
+	 xYYlwC4fyAmPPAoe9VScR+UptPY4AxQXWYxPd3tKKznUnvpE0WAJmxvgK/OQVA/uY3
+	 yzNZ3vzwsbOFQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wq4jX1k30z4wbp;
+	Thu, 22 Aug 2024 11:04:30 +1000 (AEST)
+Date: Thu, 22 Aug 2024 11:04:30 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Ido Schimmel <idosch@nvidia.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Petr Machata <petrm@nvidia.com>, "Rafael J.
+ Wysocki" <rafael.j.wysocki@intel.com>
+Subject: linux-next: manual merge of the net-next tree with the pm tree
+Message-ID: <20240822110430.08a98b0d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com> <8a4c117b-7cab-4149-a9e7-c6214d6d92ad@wanadoo.fr>
-In-Reply-To: <8a4c117b-7cab-4149-a9e7-c6214d6d92ad@wanadoo.fr>
-From: Stuart <stuart.a.hayhurst@gmail.com>
-Date: Thu, 22 Aug 2024 02:03:22 +0100
-Message-ID: <CALTg27kBYb5+GOwBz4a1-xeM-21DrbUh7eQyNkW9K_m6TdSwNQ@mail.gmail.com>
-Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family driver
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
-	Markus Elfring <Markus.Elfring@web.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/pqNQbOzY1C__6DwWVedZgZO";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-> Maybe is_wired could be close to other bools below, to improve avoid
-> holes in the structure?
+--Sig_/pqNQbOzY1C__6DwWVedZgZO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Possibly, I put `name`, `is_wired` and `sidetone_max` together, since
-they only depend on the device model and are set once.
+Hi all,
 
-> Missing newline.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Done
+  drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
 
-> I'm not familiar with the hid_hw_raw_request() API, but I think that a
-> kfree(send_buf) is missing here.
+between commit:
 
-The `__free(kfree)` on the declaration should take care of that
+  019c393b17cb ("mlxsw: core_thermal: Use the .should_bind() thermal zone c=
+allback")
 
-> Nitpick: No need to init.
+from the pm tree and commit:
 
-Thanks, but that `ret` won't be in the next revision anyway
+  fb76ea1d4b12 ("mlxsw: core_thermal: Make mlxsw_thermal_module_{init, fini=
+} symmetric")
 
-> You could save 2 lines if ret was initialized when declared.
+from the net-next tree.
 
-Could I? Wouldn't it get overwritten by `hid_hw_raw_request`?
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-> devm_kasprintf() would simplify this.
+--=20
+Cheers,
+Stephen Rothwell
 
-Well that's a lot simpler...
+diff --cc drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+index 0c50a0cc316d,303d2ce4dc1e..000000000000
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+@@@ -389,12 -450,8 +388,9 @@@ mlxsw_thermal_module_init(struct mlxsw_
+  			  struct mlxsw_thermal_area *area, u8 module)
+  {
+  	struct mlxsw_thermal_module *module_tz;
+ +	int i;
+ =20
+  	module_tz =3D &area->tz_module_arr[module];
+- 	/* Skip if parent is already set (case of port split). */
+- 	if (module_tz->parent)
+- 		return;
+  	module_tz->module =3D module;
+  	module_tz->slot_index =3D area->slot_index;
+  	module_tz->parent =3D thermal;
+@@@ -404,8 -461,8 +400,10 @@@
+  	       sizeof(thermal->trips));
+  	memcpy(module_tz->cooling_states, default_cooling_states,
+  	       sizeof(thermal->cooling_states));
+ +	for (i =3D 0; i < MLXSW_THERMAL_NUM_TRIPS; i++)
+ +		module_tz->trips[i].priv =3D &module_tz->cooling_states[i];
++=20
++ 	return mlxsw_thermal_module_tz_init(module_tz);
+  }
+ =20
+  static void mlxsw_thermal_module_fini(struct mlxsw_thermal_module *module=
+_tz)
 
-Thanks,
-Stuart
+--Sig_/pqNQbOzY1C__6DwWVedZgZO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbGjp4ACgkQAVBC80lX
+0GwHNAf+Iy3T0p/3cMdZTXi6t0jw9b1P4kYg7XtHi46A9ehRr1Vd7L34rNWoLSvk
+hbHnBHGzrBM4owRw+/RuRRmIbWNl5uz6wVA04aKHqX1vhjY3x+jMWRRzNXyTn3xi
+8E1u4OgsqRX/X89q4QZz41/UZUMtBefRLrSH1jIGVt60u730Ellqiz2AJFJu8Q0U
+h4RdYe1EhOb13mupVTs9ZPUX2yaKEwCAnoIVWrJ89vnzMZjASD4s/zj8we45huNz
+pZtEcKCwKj8bz2dZAZFwpxaYSBbXsnjo+lpSgkRFF3G4mfvGIIesXUUFWm20jH5e
+lNbTmu00dPwMXW7x8KjDDaLHt1B73w==
+=iOz1
+-----END PGP SIGNATURE-----
+
+--Sig_/pqNQbOzY1C__6DwWVedZgZO--
 
