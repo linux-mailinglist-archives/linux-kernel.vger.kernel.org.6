@@ -1,204 +1,94 @@
-Return-Path: <linux-kernel+bounces-297764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1CD95BD68
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:36:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC1695BD65
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 19:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1BE41F23DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:36:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE8B5B24680
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFDB1CF28B;
-	Thu, 22 Aug 2024 17:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDABC1CF2AD;
+	Thu, 22 Aug 2024 17:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZD8erRH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dks3aFY8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53ED487AE;
-	Thu, 22 Aug 2024 17:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D0E1CCB36;
+	Thu, 22 Aug 2024 17:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348189; cv=none; b=Qgk1V4aO+sjQza8N6nkrBpD7mDQi4/jEjf2n/IGoyH+C3CNeWMQV2QPym6qaagARBYPDFRRh8F8Y6iOM04B/C+jjQBhHB4pVvmKNRwkXNVM1s+gw9gRV4l2VTtMsdHoRtthy5PAkhvkXYYnIrb9dL6aRAo2mut5THZQAdbWIjCs=
+	t=1724348158; cv=none; b=uErhHfBKuOOe5nZR4YCYSgSES/LnSRt84+kz1U1AlD0Yv26Tm9SYwKRlqQrvMM5/c3MOBNYs/0sQdfnmoNvfDH2DxLYscjxO1sLsL4mxQ5WyBYk+xYzN2TRRed/1NVB0l0nVqy7Wi50sE3CsC+oazXGUQnMOdVdtsX8S0iVmD9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348189; c=relaxed/simple;
-	bh=ALLrNEBz2lBvoCSYyf3SnpzNRa2dr0JSZGzm5i/Z76k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyLsT2Q/k/JpcoVb6kH2O1b3flT89P25vGL7m26AQxHXPG/PqCd97TDS1rUWRkSm0gVksYhzylNboOt9SFOycPIUANgapdvqASbv/0Zlh8klo+bCSbmoFyemcqoS+m3X2rpehL2/b4z0cZKUecuZE6N+5TovJ/rtsNeDZJCM0RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZD8erRH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733C7C4AF12;
-	Thu, 22 Aug 2024 17:36:28 +0000 (UTC)
+	s=arc-20240116; t=1724348158; c=relaxed/simple;
+	bh=DqqCnDF00rsr59sEZNT81erTVMO+b9kOBdJ5Qphzw+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ftl5q8yYeZKWJmfG7LRWnBJDqcWt7ugArHNKErDDokSrah1HcIANxFTUTlPYRZbih008eMbCCx7BjSlUYCnw7NHIyB4QPfF40+8bKgbuqUtjBTRcorNWPvKOZcMXMMHJGNzzKmzk19s5iVAtg9SKYX+xxO7EJwH2gAZueshO5Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dks3aFY8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF83C32782;
+	Thu, 22 Aug 2024 17:35:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724348188;
-	bh=ALLrNEBz2lBvoCSYyf3SnpzNRa2dr0JSZGzm5i/Z76k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aZD8erRHGDh2nsjbCAbpiKFU4MOXC9oNfSIo6ZKseA4+ou0A+f0ZtcCH1INMc43ZT
-	 Wr1HW9ygEpnPX0pOoRH3XQVWzWxnJSrH5ibPiWBwBFs9j25kp9PdrNVOyFVyzcTYew
-	 Pzafe7Nq8MN8kacxxBd3bTf8uhgyxKqfoE3+pY661X2C2QhIqyEHsbIyHBv77TADip
-	 1BFyTIQudGsdtaJuIfQdc4+3Ugr8mAseZ9VKvKlLai6wNi7ZJ1ZYvK0QCJcSczIsrC
-	 f8xHPce9Xc+zn7IMXX0Fi3NlyrFNKLUbaCj4ndWDdvo4EH+hOS2fzl/+dygXG0K7ER
-	 Q6WsBD9aQXEDg==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5343617fdddso769391e87.0;
-        Thu, 22 Aug 2024 10:36:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQ7mAN2XA50aKSW4GTF6YnkvrcdwA1Ta5lqsq4BUlbVTs8OOFnFqMvmLi0Bg5XP9mQGPP5BB/ewDRHEi4FGyh/swsZ@vger.kernel.org, AJvYcCVqzYKI2tx1luqGb4n0Ab80Bnh3r6Gsx4pa45o9f7GIk+SH4V0ItaUuOkBUv7eENAyz/fjqkZlauiHBPxs=@vger.kernel.org, AJvYcCVwnkpBANgRRAVm79xNL6WWLLKVgHLW0MZmluWn6hd0hHut6/CKwonLrC5TMCINhsE5n+ITOWeGDObRIA9OEA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI2mZlipsXQCH/TQ+T40xfEbjQWYK7OoT8XQ0q4Tt+0KYAVHPL
-	kwUBj2boe1A/F17ukumVMoPf/MsRsZNaUtg4Yj3ESc5u1JRES0uMjebQKpEk7zd0qE8GF2QBUu3
-	3lX+SY+npwRBWj/oKXRN+iYjeS2w=
-X-Google-Smtp-Source: AGHT+IHjEo7S6pVlNBC7rLTzZt9ouBtvu4VbscK/zAkryHKCVDTjtRFouTb6icvjUG0NC9wW6KL1KWWdDDUarh5FSRg=
-X-Received: by 2002:a05:6512:1111:b0:52f:cd03:a84a with SMTP id
- 2adb3069b0e04-5334fd4cdd0mr2460609e87.39.1724348187091; Thu, 22 Aug 2024
- 10:36:27 -0700 (PDT)
+	s=k20201202; t=1724348157;
+	bh=DqqCnDF00rsr59sEZNT81erTVMO+b9kOBdJ5Qphzw+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dks3aFY8w6JgcV63GfhP2nZSNecUArb8lQKOzFG9G++J5vCe06GYk+onavFVOS4pS
+	 F6LtVNN+eHzqtQc7F5B69q8zQhgXNP5lQRx4Gze4tyZ5GSjKhJWZ08v9oY7OlQdrc1
+	 Qpccr26s7GHyxMUnbxevTX8aRoZROsmXjS2xvlQ1R+51rI6fPMyvhljn5ndwkbRhlZ
+	 d5RYMyVfEskQqbULCS8Fy1e28D7qvkzltX/Htz1PWT7EYsdDAsKZJSXVXF9SPvH3OE
+	 QJXLfZV7+hdLUfU7waRek9n7NGkuzqn8yKgroIl8gDExIbq8SRJ8v8woox7oTxIw0K
+	 leF0Y1I7tA1vg==
+Date: Thu, 22 Aug 2024 10:35:57 -0700
+From: Kees Cook <kees@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: kent.overstreet@linux.dev, gustavoars@kernel.org,
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] bcachefs: Annotate struct bucket_array with
+ __counted_by()
+Message-ID: <202408221035.5464B1E0@keescook>
+References: <20240821162921.86767-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821040700.1919317-1-kris.van.hees@oracle.com> <20240821040700.1919317-3-kris.van.hees@oracle.com>
-In-Reply-To: <20240821040700.1919317-3-kris.van.hees@oracle.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 23 Aug 2024 02:35:50 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR3Vkubuv7Rb2eeRE45Yycs9DJLRUatBb=9--VPT80aQw@mail.gmail.com>
-Message-ID: <CAK7LNAR3Vkubuv7Rb2eeRE45Yycs9DJLRUatBb=9--VPT80aQw@mail.gmail.com>
-Subject: Re: [PATCH v7 3/4] scripts: add verifier script for builtin module
- range data
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821162921.86767-2-thorsten.blum@toblux.com>
 
-On Wed, Aug 21, 2024 at 1:11=E2=80=AFPM Kris Van Hees <kris.van.hees@oracle=
-.com> wrote:
->
-> The modules.builtin.ranges offset range data for builtin modules is
-> generated at compile time based on the list of built-in modules and
-> the vmlinux.map and vmlinux.o.map linker maps.  This data can be used
-> to determine whether a symbol at a particular address belongs to
-> module code that was configured to be compiled into the kernel proper
-> as a built-in module (rather than as a standalone module).
->
-> This patch adds a script that uses the generated modules.builtin.ranges
-> data to annotate the symbols in the System.map with module names if
-> their address falls within a range that belongs to one or more built-in
-> modules.
->
-> It then processes the vmlinux.map (and if needed, vmlinux.o.map) to
-> verify the annotation:
->
->   - For each top-level section:
->      - For each object in the section:
->         - Determine whether the object is part of a built-in module
->           (using modules.builtin and the .*.cmd file used to compile
->            the object as suggested in [0])
->         - For each symbol in that object, verify that the built-in
->           module association (or lack thereof) matches the annotation
->           given to the symbol.
->
-> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
-> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+On Wed, Aug 21, 2024 at 06:29:22PM +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> bucket to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 > ---
->     Changes since v6:
->      - Applied Masahiro Yamada's suggestions to the AWK script.
->
->     Changes since v5:
->      - Added optional 6th argument to specify kernel build directory.
->      - Report error and exit if .*.o.cmd files cannot be read.
->
->     Changes since v4:
->      - New patch in the series
-> ---
->  scripts/verify_builtin_ranges.awk | 356 ++++++++++++++++++++++++++++++
->  1 file changed, 356 insertions(+)
->  create mode 100755 scripts/verify_builtin_ranges.awk
->
-> diff --git a/scripts/verify_builtin_ranges.awk b/scripts/verify_builtin_r=
-anges.awk
-> new file mode 100755
-> index 000000000000..93f66e9a8802
-> --- /dev/null
-> +++ b/scripts/verify_builtin_ranges.awk
-> @@ -0,0 +1,356 @@
-> +#!/usr/bin/gawk -f
-> +# SPDX-License-Identifier: GPL-2.0
-> +# verify_builtin_ranges.awk: Verify address range data for builtin modul=
-es
-> +# Written by Kris Van Hees <kris.van.hees@oracle.com>
-> +#
-> +# Usage: verify_builtin_ranges.awk modules.builtin.ranges System.map \
-> +#                                 modules.builtin vmlinux.map vmlinux.o.=
-map \
-> +#                                 [ <build-dir> ]
-> +#
-> +
-> +# Return the module name(s) (if any) associated with the given object.
-> +#
-> +# If we have seen this object before, return information from the cache.
-> +# Otherwise, retrieve it from the corresponding .cmd file.
-> +#
-> +function get_module_info(fn, mod, obj, s) {
-> +       if (fn in omod)
-> +               return omod[fn];
-> +
-> +       if (match(fn, /\/[^/]+$/) =3D=3D 0)
-> +               return "";
-> +
-> +       obj =3D fn;
-> +       mod =3D "";
-> +       fn =3D kdir "/" substr(fn, 1, RSTART) "." substr(fn, RSTART + 1) =
-".cmd";
-> +       if (getline s <fn =3D=3D 1) {
-> +               if (match(s, /DKBUILD_MODFILE=3D['"]+[^'"]+/) > 0) {
-> +                       mod =3D substr(s, RSTART + 16, RLENGTH - 16);
-> +                       gsub(/['"]/, "", mod);
-> +               }
-> +       } else {
-> +               print "ERROR: Failed to read: " fn "\n\n" \
-> +                     "  Invalid kernel build directory (" kdir ")\n" \
-> +                     "  or its content does not match " ARGV[1] >"/dev/s=
-tderr";
-> +               close(fn);
-> +               total =3D 0;
-> +               exit(1);
-> +       }
-> +       close(fn);
-> +
-> +       # A single module (common case) also reflects objects that are no=
-t part
-> +       # of a module.  Some of those objects have names that are also a =
-module
-> +       # name (e.g. core).  We check the associated module file name, an=
-d if
-> +       # they do not match, the object is not part of a module.
-> +       if (mod !~ / /) {
-> +               if (!(mod in mods))
-> +                       mod =3D "";
-> +       }
-> +
-> +       gsub(/([^/ ]*\/)+/, "", mod);
-> +       gsub(/-/, "_", mod);
-> +
-> +       # At this point, mod is a single (valid) module name, or a list o=
-f
-> +       # module names (that do not need validation).
-> +       omod[obj] =3D mod;
-> +       close(fn);
+>  fs/bcachefs/buckets_types.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/buckets_types.h b/fs/bcachefs/buckets_types.h
+> index c9698cdf866f..a19460a1bb7c 100644
+> --- a/fs/bcachefs/buckets_types.h
+> +++ b/fs/bcachefs/buckets_types.h
+> @@ -24,7 +24,7 @@ struct bucket_array {
+>  	u16			first_bucket;
+>  	size_t			nbuckets;
+>  	size_t			nbuckets_minus_first;
+> -	struct bucket		b[];
+> +	struct bucket		b[] __counted_by(nbuckets);
+>  };
+>  
+>  struct bucket_gens {
 
+I only see this being allocated in one place and nbuckets is immediately
+assigned to the count of "b" elements, so this looks correct to me.
 
-Same as 2/4.
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+-- 
+Kees Cook
 
