@@ -1,263 +1,117 @@
-Return-Path: <linux-kernel+bounces-297106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D59E95B32D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:47:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34B395B331
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502781C22DB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:47:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110511C22E0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7107183CB5;
-	Thu, 22 Aug 2024 10:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F44183CB4;
+	Thu, 22 Aug 2024 10:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lxnHzB6g"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hck3XNUs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADFC558BB;
-	Thu, 22 Aug 2024 10:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8676317CA16;
+	Thu, 22 Aug 2024 10:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724323658; cv=none; b=aQInq6s7cjqPs1KExfzyODVsKzwEJ+hi791nhda82ucnEw19VYnOdAQvEbopbwk0DSknuxUqGvwdw6ofP6nwkmgpYyuoNXnS5bjZtPQFX26a6+OGJsvWkyxwDB9OkcxMJKxn7XX9ackpYwUr42mul4R1Mn5W22d4s4Rj4o7YLTc=
+	t=1724323745; cv=none; b=An//fE5zmScyXYaqf90qYvat1q8ZsXvzXdYRL8YGqnxc8FRJvKFYpw8cIEdtPGJN+gsRyowc5nigfvK453w+Ciz0288bPvElZwBjZVcTdT5kq0f37mo0RlUR5C5OGWeSRIyPaLXZOogkI+19XkzauLouO1XehNTq5piL25FP5NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724323658; c=relaxed/simple;
-	bh=8FE+Slja7T2opibI3fLh7zUjj7kDj46Q+C35YeibAS8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=tOCh/vRqjrk37sME3jlAOoBXc/n0waUK4R22UrKqnKofEaGACmuK20dq07g5ffotqO5rkzgSihmKKvGLfYuxsFjTExi53HC28SU5ueRDag6vHGBUTGZp+cYgdkEQVcUPHjkwW9i8KcKp6r9ivzIyeq1Qmln1jdWp6yiTbmwkav4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lxnHzB6g; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MAJ8Yf001040;
-	Thu, 22 Aug 2024 10:47:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9KwZVggQh6/ZFCFEZQZLa7LN9QDjViyAbeRFxV/gUJY=; b=lxnHzB6g/TfhW7+7
-	eVArbArMRuQKz0Gko29aXOgJtNodIX+7kK014x+q40F/tapCJADPcehxFAmg9eEQ
-	2phidq1YBOzYifEbUCRN3m1Pe3s7YfEHRT2jgUjUoeS2Xz7/cJjtTvAxZmwo3xqg
-	EToUp1+cjjz4YBHwErN40T/e1sSMttRW9t8ZwD9dAJyQxruDNCNeSr9fI1+GSKH3
-	iMn2hE8UdU5pIf+iuMBurF/lVCiOg7cm+yZ6Ft1DrZqIQDif7abIhAGsnWaN8uOk
-	T4xgRjrbYKkREChA7NwKzPbD6FV+lVLk86YdFteoJmRfY/mZOUzY9N8VBcMqQqYk
-	KAWCEA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415nrrt28b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 10:47:33 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MAlXLO022093
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 10:47:33 GMT
-Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
- 2024 03:47:29 -0700
-Message-ID: <2b6b43b3-c99b-4aac-b1fb-24f6e5e562ce@quicinc.com>
-Date: Thu, 22 Aug 2024 16:17:25 +0530
+	s=arc-20240116; t=1724323745; c=relaxed/simple;
+	bh=pcJbZbqHKck86vA7euPkLTW0Qpjz3e4EM8AdEqVYB54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GLvaQRvATc/eOAy4OtpprkNurEuAdsULUzsT8s6QT+Ze7W6RvhZaxdBNZAiezKDRabvTCjwC9gRSIjdi/VLzCTRwltjPJy6Ov9CMHjdoyqSan4wxVR1Y1cpXOPwdBtNZiv6z9UArZA47sH5+DWsWDmxvYTx+AhrfAjzd+7UhPeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hck3XNUs; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724323744; x=1755859744;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pcJbZbqHKck86vA7euPkLTW0Qpjz3e4EM8AdEqVYB54=;
+  b=hck3XNUsgE03t3tSwE5tHyEhGG1GExxH5hcQgbSBFncj8ATqRILX4Dvm
+   A1dqb3QW+1NTAsRBKDMm8wkGxqW4hjru/G+N/wofDfsskJp2iDJOBrdag
+   fEBPP9cej0jjwg0d82GmbXUpEsk1lcOzWkJtc/udcRSVqwPtaYv2hQ2rA
+   Eaox/7/7gjA2MSb7BjkhBl9DC5Keyz7A7q/4I59ZbRWgaj4J2Mu27R+qi
+   J+VD2EngpyM9bObwVIhutOcvQttMhUyX38pbsele9178ZMrYYchZv58xa
+   3BjbM+hdIbaEfKptNQC1N/QosnpwOVSeZ4LBxmg0W5gLUjGMAaiVOekHX
+   w==;
+X-CSE-ConnectionGUID: iizzxVfzSfSxXkgCphoIbw==
+X-CSE-MsgGUID: uW+/zczrTBKxIvkYMEWypA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="26595941"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="26595941"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 03:49:03 -0700
+X-CSE-ConnectionGUID: U1qYWecDT1+euIBUjlvmdA==
+X-CSE-MsgGUID: zB+4lPy8QGegn0qmUqp0zA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="84575188"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 22 Aug 2024 03:49:02 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sh5ND-000CgG-2c;
+	Thu, 22 Aug 2024 10:48:59 +0000
+Date: Thu, 22 Aug 2024 18:48:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Vipin Sharma <vipinsh@google.com>
+Subject: Re: [PATCH 1/1] KVM: selftestsi: Create KVM selftests runnner to run
+ interesting tests
+Message-ID: <202408221838.XU8LHJDm-lkp@intel.com>
+References: <20240821223012.3757828-2-vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon based
- WCSS secure PIL
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	<q@krzk-bin.smtp.subspace.kernel.org>
-CC: <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
- <20240820085517.435566-2-quic_gokulsri@quicinc.com>
- <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
-Content-Language: en-US
-In-Reply-To: <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: z5L7TtWNtUYYUZB1Jw_vRjI0AjdX2aQN
-X-Proofpoint-GUID: z5L7TtWNtUYYUZB1Jw_vRjI0AjdX2aQN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_03,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- bulkscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 malwarescore=0
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408220080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821223012.3757828-2-vipinsh@google.com>
 
+Hi Vipin,
 
-On 8/20/2024 4:50 PM, Krzysztof Kozlowski wrote:
-> On Tue, Aug 20, 2024 at 02:25:14PM +0530, Gokul Sriram Palanisamy wrote:
->> From: Manikanta Mylavarapu<quic_mmanikan@quicinc.com>
->>
->> Add new binding document for hexagon based WCSS secure PIL remoteproc.
->> IPQ5332, IPQ9574 follows secure PIL remoteproc.
->>
->> Signed-off-by: Manikanta Mylavarapu<quic_mmanikan@quicinc.com>
->> Signed-off-by: Gokul Sriram Palanisamy<quic_gokulsri@quicinc.com>
->> ---
->>   .../remoteproc/qcom,wcss-sec-pil.yaml         | 125 ++++++++++++++++++
->>   1 file changed, 125 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->> new file mode 100644
->> index 000000000000..c69401b6cec1
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->> @@ -0,0 +1,125 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id:http://devicetree.org/schemas/remoteproc/qcom,wcss-sec-pil.yaml#
->> +$schema:http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm WCSS Secure Peripheral Image Loader
-> ...
->
->> +
->> +maintainers:
->> +  - Manikanta Mylavarapu<quic_mmanikan@quicinc.com>
->> +
->> +description:
->> +  WCSS Secure Peripheral Image Loader loads firmware and power up QDSP6
-> What is WCSS? Don't add random acronyms without any explanation.
+kernel test robot noticed the following build warnings:
 
-WCSS/WCNSS - Wireless Connectivity subsystem.
+[auto build test WARNING on de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed]
 
-will update.
+url:    https://github.com/intel-lab-lkp/linux/commits/Vipin-Sharma/KVM-selftestsi-Create-KVM-selftests-runnner-to-run-interesting-tests/20240822-063157
+base:   de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+patch link:    https://lore.kernel.org/r/20240821223012.3757828-2-vipinsh%40google.com
+patch subject: [PATCH 1/1] KVM: selftestsi: Create KVM selftests runnner to run interesting tests
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240822/202408221838.XU8LHJDm-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221838.XU8LHJDm-lkp@intel.com/reproduce)
 
->> +  remoteproc's on the Qualcomm IPQ9574, IPQ5332 SoC.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,ipq5332-wcss-sec-pil
->> +      - qcom,ipq9574-wcss-sec-pil
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  firmware-name:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description: Firmware name for the Hexagon core
-> No, look how other bindings are doing it.
->
-> It looks like you develop patches on some old kernel, so please start
-> from scratch on newest kernel.
-will update.
->> +
->> +  interrupts:
->> +    items:
->> +      - description: Watchdog interrupt
->> +      - description: Fatal interrupt
->> +      - description: Ready interrupt
->> +      - description: Handover interrupt
->> +      - description: Stop acknowledge interrupt
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: wdog
->> +      - const: fatal
->> +      - const: ready
->> +      - const: handover
->> +      - const: stop-ack
->> +
->> +  clocks:
->> +    items:
->> +      - description: IM SLEEP clock
-> What is IM? Explain all acronyms.
->
-> What is SLEEP?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408221838.XU8LHJDm-lkp@intel.com/
 
-IM_SLEEP_CLK - Internal Module sleep clock needed for Q6 reset.
+All warnings (new ones prefixed by >>):
 
-SLEEP is not an acronym here.
+   tools/testing/selftests/arm64/tags/.gitignore: warning: ignored by one of the .gitignore files
+   tools/testing/selftests/arm64/tags/Makefile: warning: ignored by one of the .gitignore files
+   tools/testing/selftests/arm64/tags/tags_test.c: warning: ignored by one of the .gitignore files
+   tools/testing/selftests/kvm/.gitignore: warning: ignored by one of the .gitignore files
+   tools/testing/selftests/kvm/Makefile: warning: ignored by one of the .gitignore files
+   tools/testing/selftests/kvm/config: warning: ignored by one of the .gitignore files
+>> tools/testing/selftests/kvm/runner.py: warning: ignored by one of the .gitignore files
+   tools/testing/selftests/kvm/settings: warning: ignored by one of the .gitignore files
+>> tools/testing/selftests/kvm/tests.json: warning: ignored by one of the .gitignore files
 
->> +
->> +  clock-names:
->> +    items:
->> +      - const: im_sleep
-> sleep? Are there different sleep clocks here?
-
-We have different branches of sleep clk each enabled separately.
-
-im_sleep is one of those branches that q6 uses.
-
->> +
->> +  qcom,smem-states:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description: States used by the AP to signal the remote processor
->> +    items:
->> +      - description: Shutdown Q6
->> +      - description: Stop Q6
->> +
-> Do not introduce other order. First stop, then shutdown.
-will update
->> +  qcom,smem-state-names:
->> +    description:
->> +      Names of the states used by the AP to signal the remote processor
->> +    items:
->> +      - const: shutdown
->> +      - const: stop
-> The same.
-will update.
->> +
->> +  memory-region:
->> +    items:
->> +      - description: Q6 reserved region
->> +
->> +  glink-edge:
->> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
->> +    description:
->> +      Qualcomm G-Link subnode which represents communication edge, channels
->> +      and devices related to the Modem.
->> +    unevaluatedProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - firmware-name
->> +  - reg
->> +  - interrupts
->> +  - interrupt-names
->> +  - qcom,smem-states
->> +  - qcom,smem-state-names
->> +  - memory-region
-> Keep the same order as in properties.
-ok.
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
->> +    q6v5_wcss: remoteproc@d100000 {
-> Drop unused label.
-
-ok.
-
-Regards,
-
-Gokul
-
->> +      compatible = "qcom,ipq5332-wcss-sec-pil";
->> +      reg = <0xd100000 0x4040>;
->> +      firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
->> +      interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
->> +                            <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
->> +                            <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
-> Best regards,
-> Krzysztof
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
