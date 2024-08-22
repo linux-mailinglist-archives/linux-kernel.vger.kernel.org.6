@@ -1,241 +1,174 @@
-Return-Path: <linux-kernel+bounces-296460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0797295AB31
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:47:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9439795AB3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 04:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B337B286BBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2649A1F23E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 02:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A564A23775;
-	Thu, 22 Aug 2024 02:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gAuc9z1N"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010052.outbound.protection.outlook.com [52.101.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA552557A;
+	Thu, 22 Aug 2024 02:52:08 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA26E2032D;
-	Thu, 22 Aug 2024 02:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724294767; cv=fail; b=Y7s5ru+OjGeIp6GPkQWK7kqBy+JSJpQkxOjALnfkaZSMcLQ5PZXnZWovhBTxfF5Br0IaNaI9E+3RDMbUh0E31GSTG4l85k6pTTAqgkyhV+g3xLM0P0ujfGqclQi5BJKz/XRGeFlfpMl+8A+lzn3kVGbvmBbU3OGzmm0cO0hC/bM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724294767; c=relaxed/simple;
-	bh=AUcbWRJyX/KS3Ws9OciL51ZTK70vhp9hbv+hL3TvZL0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cUABnLt2+62eaarjUfnG845ZEpCwWipjMpA+wgKe1yaw/wgcSie8dRfpzw00/pqOQcY+WgMLcGL9o2G5lodJeu7HPXpJnD4kC8K/HwKrFpdaSLH1wVdy8n/E26LqqHtRkxEcAit1tHrUZEoQF412Wxr/nV5T9XHj8UvXT1K3hbQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gAuc9z1N; arc=fail smtp.client-ip=52.101.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YjBBCZ+qYL/yTONyv5txzgLAQxVoxzkn32+E3+An96cnlQBOqwJoGDvRPrpnad+/B6Itl9yH0Fu3+bxZd/3QptQ6AnGP5OYsJJ5WC44b7XsCCfl9Ebl0Xs6AibU/upfd/jcczf1X0v4HfkzYY85EdYtnwww4AhpJsPU0P1I/XwHMptnsUWWX9hmQDVwUQS5SibW+Gqd20EyY4tMu8+k6tyDb7owMMYdk6ZDPaSQ0ea+YnsSMj542c9MRqfZKKqSgnO6CJT3XR/Y5GUDcnvNRVK5Iibt/Q+QOZJ+2l9jf0h7IIJHVj+63wCVgKuzgpVRthSlzI8CwTv0MsJ+NRLYDRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W2ULIVXpAzio+ADZwMZY5qULO0cNMxoxV2fGQf6oqPg=;
- b=KTrnbKgTIkBcG8HXOEyLorsUrcol5Rf1Cevv3Ee/Tf8wp5hqWK+pROct82c7NP2vW+R2ubpY0dO9Zl2D0NZOhZeJd//A9u6OWYnLZ+lNNfOAtkAZl8C1BArCzOHnGhOjWdXNqjE8m37/6+ACV3KDRZSodQkzIXTjtKVegUke/SCjzUfz2aGGKG4YZt2Qt9L1BCEEV29Td9tgOIqogiXo4WxrtzTkLQ1/oqaQGuGuvpy+zo+LlifCUrsoWyevTGshCM+1x993oC+pCuVkJK9p9vC+Dmz2Bu9AA9Q9OsGQoK5/rx7Sl5zWcnbHvrJom/+BD7yxaC88IR78THtBg2CZgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W2ULIVXpAzio+ADZwMZY5qULO0cNMxoxV2fGQf6oqPg=;
- b=gAuc9z1Nv11qaqlzDdNY7cTO3sd6KxCw/hyTnJ6iLoTQJ94GR4o1uQ2Bjn6szLlW9SYx8wNDe+APNT4P5rW/58tt5i/0iwl7MoJsw3kEz35dU3QSoOuWwOISa2aIMcOm3SBwDdvopQ4xkeNk47EEk+FbbJLNQPcAorT2+hGBIwUre14QjmjLSuZr1uc8vZXOREeFadJhcLiXaGia4e6Oz7hfhSIheNv+15tbgY22LwYn6xu28CF6BIGYHfQsuy9zr2to4Rb7P6ASUwD2dfG04GRH8AypTpk2QolNDXZisbpDvCL8sNQ4JErEMzdwQCuJHM8zqHyT6/k7F1ufdCpzVg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by KL1PR06MB6259.apcprd06.prod.outlook.com (2603:1096:820:d9::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Thu, 22 Aug
- 2024 02:46:00 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%4]) with mapi id 15.20.7875.023; Thu, 22 Aug 2024
- 02:45:59 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: alexandre.belloni@bootlin.com
-Cc: liaoyuanhong@vivo.com,
-	linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: [PATCH] rtc:rtc-at91rm9200:Use devm_clk_get_enabled() helpers
-Date: Thu, 22 Aug 2024 10:44:24 +0800
-Message-Id: <20240822024425.13092-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240821092846.20138-3-liaoyuanhong@vivo.com>
-References: <20240821092846.20138-3-liaoyuanhong@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0004.jpnprd01.prod.outlook.com (2603:1096:404::16)
- To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69851CAA6;
+	Thu, 22 Aug 2024 02:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724295127; cv=none; b=rjaTFyNPBit72gQVcEH7sfJ7OEjbZJ2oSV1dWrxrly5ykAPurDheNhA3UlFaF4doMY6P3ZYN4iECPsUtSzShzLOMb+vRNFMYfIpcfJETPm00SYEt5HynTRnOINn94fNunvyinmbogvlFk0cVsuBpx72EF9XjSZEJQDw+dkrHe+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724295127; c=relaxed/simple;
+	bh=JA6XERccpD+o/FJfLu+KgGrJe3Am2n5/TXceJgsnIB4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OJ3Aj+VG7Ts/MnJEB/67+z+P8vcOisHLYONzLBMrUvz6KGDiJk2Drz4q4hdiklP0qJk9WdGxzYiGlWAyTu6a+bX6hSHtzqcu71jaevf6f8aAClZ+yo9JbQFYrXGyatAoUgsTnUh2hqeQaCRhpAtGTCwBPqZbxdmyQBs5GPDoJkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wq75F60dbz4f3jdl;
+	Thu, 22 Aug 2024 10:51:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 117411A0359;
+	Thu, 22 Aug 2024 10:52:00 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAXPoTNp8ZmyXl2CQ--.42363S4;
+	Thu, 22 Aug 2024 10:51:59 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	mariusz.tkaczyk@linux.intel.com,
+	l@damenly.org,
+	xni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH md-6.12 00/41] md/md-bitmap: introduce bitmap_operations and make structure internel
+Date: Thu, 22 Aug 2024 10:46:37 +0800
+Message-Id: <20240822024718.2158259-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|KL1PR06MB6259:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f4fb4ee-2b8b-4c72-3231-08dcc2548ded
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Cs99VRJEF4iyl57HHGeXjFs5L5lPoLT4fEJscce3/0uOCJCLv7dCTzUIlmAA?=
- =?us-ascii?Q?07vWdPX8h3hqEVQ5zUEOSGNhjZ8oGubEGwhrc7JtkzST0JNmPsVq3ycX6ERp?=
- =?us-ascii?Q?L8IkygtjptCM8W2d03FX2yFDSSQRYAs8HtY9REB9o8PYzG5uf5ovx4hja3x6?=
- =?us-ascii?Q?wV7J5ORb1endjovlomcGft4xQEJs/TS8n8+LrIJZc/TsD1NNtUMz3Ytv0ZX7?=
- =?us-ascii?Q?yf+EIn4rEFnqO6DN/I5x1yRzP9CFimNkHRUWh2rwPHvpaS+Kzy60LCC7OjSy?=
- =?us-ascii?Q?CISgD0Rx5FqNkiZPpUSg3UVRUB2CNEeztbo/Q6k6RK3BrUWYOU7yo1ADW3lC?=
- =?us-ascii?Q?9ZpaKGxMJ3ZoxnMfwEQ6NvTdjoGBjjT+xYiVBi0DfpVm8GxA+QadghcmPWTs?=
- =?us-ascii?Q?9g9SntmFc6AAPL4H9p9oCCuMe5pPZujdf3Ailft6Hme/9oV5HycSggIzV2DJ?=
- =?us-ascii?Q?QUElFTVzAI53Donry1PYBhfMUe2fYyH7wUGrOe1LcAu4fQunEA+qOia0LVom?=
- =?us-ascii?Q?z/SAXvOZJQOrsazbMJCSOU01vfvs41tt3bJYJ2OlGwLgxl2+plV9y+aXW76j?=
- =?us-ascii?Q?9JhN4ovYRkp6hpH7kVBoZxBOpCae7Wg7aL+zhiQi8AgYhZKo6Zq/b1hL2k7O?=
- =?us-ascii?Q?Vs5wMpM5YzXAMtbXVn863BpPLVwJr89M7jLNtNemFD3cYJI6k+f4SjI5r531?=
- =?us-ascii?Q?t+0N07vuenKCv5zafvv9uXYiHM6VpzGLWG8dIVR7fl4xrwRJSUVImsHarf6V?=
- =?us-ascii?Q?002ZZzKdAKKBnaX0z3KTFd2C88to5m7D5goqA78M7b3GW3M1ezdfWuyFdXBp?=
- =?us-ascii?Q?y97lvs06xp6HP2D9wrMaByMSNHzvpnufaFnlGmsBQHsif7KgncmDZ/S3eO2/?=
- =?us-ascii?Q?aelURflcOjMNWeeFQ/7OHRuuDMnlU/BX7cZjAGCw3fRbxpr+hH/P8zwI5M/p?=
- =?us-ascii?Q?KJigIkeydkJbzh0S+K7JFqzhQbnBEvge7h1/+rYD17TVo7r9WlXHFP16XWtd?=
- =?us-ascii?Q?RpxjSdlFv5q9m5E5HLXNhmeQ4mzYj9oufxkcyvYByOmkkxuf6bTUtJX2DB29?=
- =?us-ascii?Q?x2vD8k0LKU/dyl7TIU1CvzAA6H9elfuSn/RGPdMqK7WT3D8fOUrnFyIRVj5n?=
- =?us-ascii?Q?rdiCRv28eIhEH0ODyBXijtcMwaErxYwiRRE2Czp832NXHqbbAPgD5k3ypXUk?=
- =?us-ascii?Q?VTecIE0mn3joLXks+iyNEWIM62qxDxvpQsCtfnBp23eG8s2/wLe7trUrgPx9?=
- =?us-ascii?Q?q1Z6ASp4ayH8gGY8R6lR75LhJoYOEiDtOHEDtV4PPPiyRV0i1aFZ9foQpLTf?=
- =?us-ascii?Q?Lz9orhPzs+PmW12EOB4RDN23i0zgWn83M4g1asNkO4VH8wPJOLBo7GqGLIWt?=
- =?us-ascii?Q?xjApqKGzF4PCHJ8pogGMaJbWBYdaE7zUN7qv+w7jfY9IyeiDTw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?v+kcHw1e/wzXSzQTGQKyPJkNL0LNC5aXW2y1DasxYucGTjEXmeVZ3DC2Ezto?=
- =?us-ascii?Q?xdf9iNF7Upbip/iDN6KG/2keg5tQVHTuLsmHPtpxzYFDnqIJNDoBRt/07dLa?=
- =?us-ascii?Q?lNWed80hVHVKljACw/Mku7gEw6Pgi+h+ZLpU7zCBZKiCJjfWfyP30vGTwNCf?=
- =?us-ascii?Q?tuN+EWFBTHsdXpWsG4qZwBXaEFezpdfxC2gxoh/WJGoJca+6Ys6hegSLe3yL?=
- =?us-ascii?Q?VekcZGsVbf1B0b3Ul2QsAaFmDeroAQfrrMhwx73x7IxlKwqF5zhQkjdy6sJ5?=
- =?us-ascii?Q?Yomj8JW3mVg/OpAQbASCHloVJ8myUh6+wCvzbT8fUHCTRtL/Hg08nZ5WOITC?=
- =?us-ascii?Q?bMi9Utpy9C4AXYGTxsjMTVnATo9gGtLMuOpPt2JMWkXKLgcrW7OmzoPgJHTD?=
- =?us-ascii?Q?712LBcUKRBNxlRxtUOPs4J0UyPGQN6YhvV+SGX8BTmqzqv1Ck5rrsg5oOHGa?=
- =?us-ascii?Q?tG+AlfFUZVAfDnV/kZ+ngBv7euy+SXogmavbGDBHUbTISepuYsf4pb9bJjZa?=
- =?us-ascii?Q?wMtJVgTR5mrfmMG1H+/HDdZbB2SIxTHOq/gwrdeUN+hn/rf4zQS1qRgkVIDX?=
- =?us-ascii?Q?sD0tHlY0guWbM+HN5F+XfsFKZbNJ5uxlZJIqcrhIuU6OzDZ2aE/YZUu4YFn/?=
- =?us-ascii?Q?8Wmu7OH21oMOv/jjnDyrPCDGlbOooIQz3dl8gpNWwUg2J/IipCY0TxG7qHY9?=
- =?us-ascii?Q?L5ITKZFAzGPgGK9ogkJZVSxfqlORM6vGwdFodWkxxaaYTOyqihBhVU3nnx8V?=
- =?us-ascii?Q?6U85AmR6K9ugvdex+Pn7UaZefQoNwEtRWO8NGj8pVB1gYjtO4v1a8WICCA9b?=
- =?us-ascii?Q?dMV0Ue7WbTRQkQQadmp01hAQhkaukD3o8TZ60ZXDUQ94uaHVIVNgKeOA0+d+?=
- =?us-ascii?Q?B/K+n1vSTIYBWBAUZcyL6VPAjaOT2k2zO8/SQJnl/gDHHEv2+wLjvi190H9N?=
- =?us-ascii?Q?XUa6ZFPTSA9i6JBYEZ5KeXSlCSfTLmKj4C9VIrIt5s3ePwFM9rxZjVFvX7su?=
- =?us-ascii?Q?SWAii0P++PdTYAeKEFQTxcNGs6K0FGxbmxGC+Q2sorz1D4L9cHWov5/9R5g8?=
- =?us-ascii?Q?ZxS5ExubykYr1dCD0KHFKbsdvHjGsru15NulcClvr2HWSoa5A9o/q6HeohAX?=
- =?us-ascii?Q?S4f50CxPK+KvUCRlb4ecVTrKsX25Pjv8ynUA1Q4Iody9U8/TUhtvVTei2tWD?=
- =?us-ascii?Q?f2T54pRw/3Qgv2HW7LS+ReBCi3zXkBSoAh6rxfIINLYPIj0dYEXN3HBAaB68?=
- =?us-ascii?Q?2V6E2/4Lh0T6UR32YtaSNcllC8LtGThuBWT2L78RMoXFOtyoOlq0mKS0de1A?=
- =?us-ascii?Q?XvTWAEqqya1GiUpJSFfwN3qbjbrmxPZFS2DH49ibYqtkq9VAPmnjVmg2sxi1?=
- =?us-ascii?Q?BvKoKtUOe+gxKC782cc1xKe4+4pf1zBxMze/hVVICotZdvLO9RHBWNb/Orhx?=
- =?us-ascii?Q?+cC+1hoAaeCUlPBy+9JZ9Ax8p6VFSDggxd4LYU5qZerVQ4ukXFhL5gDivJc/?=
- =?us-ascii?Q?IxHZc7MG7xRls9QVzpY5h1Ba0AJBAp2B42opo9kgbMfRMsk9HUzjkkUs/5Ey?=
- =?us-ascii?Q?b7giGaMoXg1f8CuargEXHhw1H5aZq5U5qy8MmRZj?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f4fb4ee-2b8b-4c72-3231-08dcc2548ded
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 02:45:59.6360
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aeQeazW7htP+JBumQJCwlCke2apNnn/8vv9QcXR2JVoHbiLxq0CegHwEtYdMAJeFsq2BzsCHdsH15eZspf9UUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6259
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXPoTNp8ZmyXl2CQ--.42363S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWfWF1DZrW8Xw1DJw1fJFb_yoWrZFWxpF
+	WDK345Ww43JFs3Ww15CryvyFyrtr1ktwsrKr1fCw1rCFyDAF9xXr48W3WIy34Igry7JFsx
+	Xr15tr18Ww17XFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Use devm_clk_get_enabled() instead of clk functions in rtc-at91rm9200.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
-v2:remove the global sclk variable.
----
- drivers/rtc/rtc-at91rm9200.c | 20 ++++----------------
- 1 file changed, 4 insertions(+), 16 deletions(-)
+Changes from RFC v1:
+ - add patch 1-8 to prevent dereference bitmap directly, and the last
+ patch to make bitmap structure internel.
+ - use plain function alls "bitmap_ops->xxx()" directly;
 
-diff --git a/drivers/rtc/rtc-at91rm9200.c b/drivers/rtc/rtc-at91rm9200.c
-index c16fe711a0d9..7be8a257829e 100644
---- a/drivers/rtc/rtc-at91rm9200.c
-+++ b/drivers/rtc/rtc-at91rm9200.c
-@@ -104,7 +104,6 @@ static bool suspended;
- static DEFINE_SPINLOCK(suspended_lock);
- static unsigned long cached_events;
- static u32 at91_rtc_imr;
--static struct clk *sclk;
- 
- static void at91_rtc_write_ier(u32 mask)
- {
-@@ -471,6 +470,7 @@ static int __init at91_rtc_probe(struct platform_device *pdev)
- 	struct rtc_device *rtc;
- 	struct resource *regs;
- 	int ret = 0;
-+	struct clk *sclk;
- 
- 	at91_rtc_config = of_device_get_match_data(&pdev->dev);
- 	if (!at91_rtc_config)
-@@ -498,14 +498,9 @@ static int __init at91_rtc_probe(struct platform_device *pdev)
- 		return PTR_ERR(rtc);
- 	platform_set_drvdata(pdev, rtc);
- 
--	sclk = devm_clk_get(&pdev->dev, NULL);
-+	sclk = devm_clk_get_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(sclk))
- 		return PTR_ERR(sclk);
--
--	ret = clk_prepare_enable(sclk);
--	if (ret) {
--		dev_err(&pdev->dev, "Could not enable slow clock\n");
--		return ret;
- 	}
- 
- 	at91_rtc_write(AT91_RTC_CR, 0);
-@@ -521,7 +516,7 @@ static int __init at91_rtc_probe(struct platform_device *pdev)
- 			       "at91_rtc", pdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "IRQ %d already in use.\n", irq);
--		goto err_clk;
-+		return ret;
- 	}
- 
- 	/* cpu init code should really have flagged this device as
-@@ -539,7 +534,7 @@ static int __init at91_rtc_probe(struct platform_device *pdev)
- 	rtc->range_max = RTC_TIMESTAMP_END_2099;
- 	ret = devm_rtc_register_device(rtc);
- 	if (ret)
--		goto err_clk;
-+		return ret;
- 
- 	/* enable SECEV interrupt in order to initialize at91_rtc_upd_rdy
- 	 * completion.
-@@ -548,11 +543,6 @@ static int __init at91_rtc_probe(struct platform_device *pdev)
- 
- 	dev_info(&pdev->dev, "AT91 Real Time Clock driver.\n");
- 	return 0;
--
--err_clk:
--	clk_disable_unprepare(sclk);
--
--	return ret;
- }
- 
- /*
-@@ -564,8 +554,6 @@ static void __exit at91_rtc_remove(struct platform_device *pdev)
- 	at91_rtc_write_idr(AT91_RTC_ACKUPD | AT91_RTC_ALARM |
- 					AT91_RTC_SECEV | AT91_RTC_TIMEV |
- 					AT91_RTC_CALEV);
--
--	clk_disable_unprepare(sclk);
- }
- 
- static void at91_rtc_shutdown(struct platform_device *pdev)
+Changes from RFC v2:
+ - some coding style.
+
+The background is that currently bitmap is using a global spin_lock,
+cauing lock contention and huge IO performance degration for all raid
+levels.
+
+However, it's impossible to implement a new lock free bitmap with
+current situation that md-bitmap exposes the internal implementation
+with lots of exported apis. Hence bitmap_operations is invented, to
+describe bitmap core implementation, and a new bitmap can be introduced
+with a new bitmap_operations, we only need to switch to the new one
+during initialization.
+
+And with this we can build bitmap as kernel module, but that's not
+our concern for now.
+
+This version was tested with mdadm tests. There are still few failed
+tests in my VM, howerver, it's the test itself need to be fixed and
+we're working on it.
+
+Yu Kuai (41):
+  md/raid1: use md_bitmap_wait_behind_writes() in raid1_read_request()
+  md/md-bitmap: replace md_bitmap_status() with a new helper
+    md_bitmap_get_stats()
+  md: use new helper md_bitmap_get_stats() in update_array_info()
+  md/md-bitmap: add 'events_cleared' into struct md_bitmap_stats
+  md/md-bitmap: add 'sync_size' into struct md_bitmap_stats
+  md/md-bitmap: add 'file_pages' into struct md_bitmap_stats
+  md/md-bitmap: add 'behind_writes' and 'behind_wait' into struct
+    md_bitmap_stats
+  md/md-cluster: use helper md_bitmap_get_stats() to get pages in
+    resize_bitmaps()
+  md/md-bitmap: add a new helper md_bitmap_set_pages()
+  md/md-bitmap: introduce struct bitmap_operations
+  md/md-bitmap: simplify md_bitmap_create() + md_bitmap_load()
+  md/md-bitmap: merge md_bitmap_create() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_load() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_destroy() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_flush() into bitmap_operations
+  md/md-bitmap: make md_bitmap_print_sb() internal
+  md/md-bitmap: merge md_bitmap_update_sb() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_status() into bitmap_operations
+  md/md-bitmap: remove md_bitmap_setallbits()
+  md/md-bitmap: merge bitmap_write_all() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_dirty_bits() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_startwrite() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_endwrite() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_start_sync() into bitmap_operations
+  md/md-bitmap: remove the parameter 'aborted' for md_bitmap_end_sync()
+  md/md-bitmap: merge md_bitmap_end_sync() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_close_sync() into bitmap_operations
+  md/md-bitmap: mrege md_bitmap_cond_end_sync() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_sync_with_cluster() into
+    bitmap_operations
+  md/md-bitmap: merge md_bitmap_unplug_async() into md_bitmap_unplug()
+  md/md-bitmap: merge bitmap_unplug() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_daemon_work() into bitmap_operations
+  md/md-bitmap: pass in mddev directly for md_bitmap_resize()
+  md/md-bitmap: merge md_bitmap_resize() into bitmap_operations
+  md/md-bitmap: merge get_bitmap_from_slot() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_copy_from_slot() into struct
+    bitmap_operation.
+  md/md-bitmap: merge md_bitmap_set_pages() into struct
+    bitmap_operations
+  md/md-bitmap: merge md_bitmap_free() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_wait_behind_writes() into
+    bitmap_operations
+  md/md-bitmap: merge md_bitmap_enabled() into bitmap_operations
+  md/md-bitmap: make in memory structure internal
+
+ drivers/md/dm-raid.c     |   7 +-
+ drivers/md/md-bitmap.c   | 560 +++++++++++++++++++++++++++++----------
+ drivers/md/md-bitmap.h   | 268 ++++---------------
+ drivers/md/md-cluster.c  |  91 ++++---
+ drivers/md/md.c          | 155 +++++++----
+ drivers/md/md.h          |   3 +-
+ drivers/md/raid1-10.c    |   9 +-
+ drivers/md/raid1.c       |  78 +++---
+ drivers/md/raid10.c      |  73 ++---
+ drivers/md/raid5-cache.c |   8 +-
+ drivers/md/raid5.c       |  62 ++---
+ 11 files changed, 752 insertions(+), 562 deletions(-)
+
 -- 
-2.25.1
+2.39.2
 
 
