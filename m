@@ -1,123 +1,104 @@
-Return-Path: <linux-kernel+bounces-297558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A1F95BAC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4955995BAC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 17:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E5E1C237AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F991C233ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 15:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DBC1CCB50;
-	Thu, 22 Aug 2024 15:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABABD1CC8BB;
+	Thu, 22 Aug 2024 15:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6EzmFV2"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxbWdEEc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB66E1CB33B;
-	Thu, 22 Aug 2024 15:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7076FB9;
+	Thu, 22 Aug 2024 15:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341351; cv=none; b=OZb+X6A/gO8CRTCmUd0mx2VQ5KSYdPl7AfsGfVyDBcAfuiFOkTtuXNs4IpNQgvt0IM8htX3DK7ZfcT07pwKpFjm1YpTXsyYRePNYA9Jp2z7F2ijjt/RVLGHXK/mS1oVPI2zx0LT3RAUQUj9UwSTZz/eY6JC8zcLQZP3ic7t/PxU=
+	t=1724341420; cv=none; b=NpwmENTwTIOx0ksVrAvVO/RBjzli7iTL626aM9CRCIH7LBo4cVESlErDZ19iKbCdqzwRm59CVKvo1nDC4MaNgbPgeV7xLg98MbV/Rdmc5jec1P7IAXR1X0TnvoMtgoG+OV7XFvJUgnq6tjmUujc12SVDEHB/XwY2uJ84Wc3J+YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341351; c=relaxed/simple;
-	bh=srQv0vhfpJ7TuVF5UATQEzYC7ABOs0mfT8jGWJNhfog=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CZYSqIXUO/Xcq1LGXULqwF4HrkT7kTJnaaLT9ODs5qL5zCVW2bwsXfwf06eYhYKJWOFl0/9lkXC+PyItt5VpZ6RaSnq5w8ABFHgV1CyKhS2Rzf9wqZTYPVDyNulS7vOyOb+AOQjvXbuRoYIFoWg4wUeeP0GWLos1+WEaxCM3SYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6EzmFV2; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f4f2868783so964641fa.2;
-        Thu, 22 Aug 2024 08:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724341348; x=1724946148; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KKuRHz3dN9ycQVjAWBxa5fGvRl8U6lvrA2n927jgmHQ=;
-        b=e6EzmFV2U6Sb7n4Hg+YCdXqBdPVILXVrtuhWqJjH76W5Qg8Ds2YxbsqlIGUVGBFJWH
-         nzIWdJgKNX9FmoGTFNd1/JCA6bNU0Zia+rjZY9ciKSBqi9+8NWzkx8VdgldakRQuEWaN
-         dhdFqZmYiuNvu450SBOFeEXbIuRtZNeqZk0GJDvhLXF8dbUgqZmAibf3Zu78jzx9s+GV
-         GGKedTYPfm1TzTQhObVD4Djwx5dVlh1up0g6b5x8Dt3LZXPnXVWHitysNn1aRo6cZ/QW
-         jck1MduAHzDW3xN0gWHI1KXj2ZPZzUbczSBg4hRZ2Kgr4k1njBkAWGvRc4OlzNEBDS56
-         8seQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724341348; x=1724946148;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KKuRHz3dN9ycQVjAWBxa5fGvRl8U6lvrA2n927jgmHQ=;
-        b=NdJbGmRvv9iHGGoxvqsmWKmS0M68IizQin09p2akd0WIsE1ozI2/88wRxlz1rsm5U3
-         BqxaWZAIe0W/F7sW+HiauatKH0CnVyg9IO763henTtXjgs0Mx+6b34VlMknAXW/EIQVH
-         cw+/yaKypG+J8z23v6ZjEcRvSZd9iL+N18/xZnkRQSroB2iKv6W+/Mz0oISRbt7Psgdv
-         KwEhu80YgcMyPjplkOqssJhzUY8XEDGomDstSwRjg3z/XxZT8sCt1d/sbMH47Inhwft/
-         0MdfmayZzxDmYWZNcEQLISWhYuRKF3aQXFbYIE/8kw8PXu54fUr26Uf7Uswm1SZo+HZY
-         Ws7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVbWVMO7zaJDW1O4bc7qontmzlXsOSoLgXBT95zK9+R6iZnWlpvdpxx8AemoePwMGPBFhiXYqIL6UoIYXM=@vger.kernel.org, AJvYcCVbs6YEg4Qa01UMzXhJ34X7dE58w5K9eY5k3EZ3cdBLwvEVwyjeL4rbXUB3eSB4ukxqlh1YJ7oiy3Nx3A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO/MKzxVae63+0xk3TtKYyn5LXvJuL1gMdarv8i0aubmYLW3tB
-	v8g2xy1bnf6LZWBtgWVGUAEbBMefnyR54Ljt/ZwhPbg9bvJqRoct
-X-Google-Smtp-Source: AGHT+IHbrtS+R0RFzaXyAy2XKC8PLf3HwKp357wuUBM0qJBbr8MasTdsFXLPMzhkZ7GcbK3rwCcqoQ==
-X-Received: by 2002:a2e:8781:0:b0:2f3:e795:3e6f with SMTP id 38308e7fff4ca-2f3f8953568mr35059981fa.45.1724341347345;
-        Thu, 22 Aug 2024 08:42:27 -0700 (PDT)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3cbdeasm1050253a12.33.2024.08.22.08.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 08:42:26 -0700 (PDT)
-Message-ID: <04306da77d74e16edab1d682a8602f61b35025a3.camel@gmail.com>
-Subject: Re: [PATCH v2 0/2] scsi: ufs: introduce a callback to override OCS
- value
-From: Bean Huo <huobean@gmail.com>
-To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-  bvanassche@acm.org, jejb@linux.ibm.com, martin.petersen@oracle.com, 
- beanhuo@micron.com, adrian.hunter@intel.com, h10.kim@samsung.com, 
- hy50.seo@samsung.com, sh425.lee@samsung.com, kwangwon.min@samsung.com, 
- junwoo80.lee@samsung.com, wkon.kim@samsung.com
-Date: Thu, 22 Aug 2024 17:42:25 +0200
-In-Reply-To: <cover.1724325280.git.kwmad.kim@samsung.com>
-References: 
-	<CGME20240822111247epcas2p2d3051255f42af05fd049b7247c395da4@epcas2p2.samsung.com>
-	 <cover.1724325280.git.kwmad.kim@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1724341420; c=relaxed/simple;
+	bh=QAENrNB7k/EGZOnXra0Px3DH9MHblScnhf7MbfgT3g8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWgTTEjFEbPpsEXxcI1oOnJ17h1gI4ukrsXENNkbyvYRQ0UNJJiF02JFbpUUPMI+nfiD4yaV0MnDRZ/i9lxosp4bggD2Hnw3rhHHmJJ23BUdNQU2UbZFxhOYFaDFNUCC/4DY2ngDSImFIwyKXOf40vFIYRDDOCn9l1jZzYhk91E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxbWdEEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3D3C32782;
+	Thu, 22 Aug 2024 15:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724341419;
+	bh=QAENrNB7k/EGZOnXra0Px3DH9MHblScnhf7MbfgT3g8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cxbWdEEcN/mxIeJSMtf9zmuQyZkp7GKN0lpJLvn8tVLlH/lSXTy6PFUBizPvtIdZA
+	 jPlbETVE9l7aJFFtHZSR+rk1usQXRvDINSCPnG7av9q31FLhATSO+/4ahSawVDLSLK
+	 VPVKCRTmzJV4TPI4q5LjrHZx3V2C0KKOLpZXPzftKib3DVgsXVckyw7xsmfIdCO9QK
+	 GPa6aJgJbABJXTbGoPzDso38qrKtDABWNqGsxMYA4OAQhcDZy9rR43WIWzBC0HuawP
+	 6eHpBEqX86jivK8Xv6dsT8AyGWg63FbfyP1Vz8kZ2HEwSq2eiwPjWD/am+ZqxFolDz
+	 F1YwQ5ds6DA9A==
+Date: Thu, 22 Aug 2024 16:43:35 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-crypto@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: crypto: fsl,sec-v4.0: add second
+ register space for rtic
+Message-ID: <20240822-android-retiree-d0e0f9e55494@spud>
+References: <20240821192135.578126-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-On Thu, 2024-08-22 at 20:15 +0900, Kiwoong Kim wrote:
-> Kiwoong Kim (2):
-> =C2=A0 scsi: ufs: core: introduce override_cqe_ocs
-> =C2=A0 scsi: ufs: ufs-exynos: implement override_cqe_ocs
-
-
-Hi Kiwoong Kim,
-
-I didn't see your patch email,just post your second patch here, and
-provide my comments:
-
-=20
-+static enum utp_ocs exynos_ufs_override_cqe_ocs(enum utp_ocs ocs)
-+{
-+	if (ocs =3D=3D OCS_ABORTED)
-+		ocs =3D OCS_INVALID_COMMAND_STATUS;
-+	return ocs;
-+}
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/SBX+pNmwevHPmmq"
+Content-Disposition: inline
+In-Reply-To: <20240821192135.578126-1-Frank.Li@nxp.com>
 
 
-I wonder if you have considered the case where the command is aborted
-by the host software or by the device itself?
+--/SBX+pNmwevHPmmq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you change OCS to OCS_INVALID_COMMAND_STATUS, there will report a
-DID_REQUEUE to SCSI.
+On Wed, Aug 21, 2024 at 03:20:48PM -0400, Frank Li wrote:
+> Add two description for register space of rtic. There are two register
+> space, one is for control and status, the other optional space is
+> recoverable error indication register space.
+>=20
+> Fix below CHECK_DTBS error:
+> arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dtb: crypto@1700000: rtic@=
+60000:reg: [[393216, 256], [396800, 24]] is too long
+>         from schema $id: http://devicetree.org/schemas/crypto/fsl,sec-v4.=
+0.yaml#
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Kind regards,
-Bean
+--/SBX+pNmwevHPmmq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsdcpwAKCRB4tDGHoIJi
+0uH0AQDLYQpXI217BsXs4RFEYT9LJSATdPlo8dmk2fDeniMmtgEAq7MXxoVcXBg9
+ocWh6q4QrjHasrLNJo0zCqPvjVv1IgI=
+=3EPs
+-----END PGP SIGNATURE-----
+
+--/SBX+pNmwevHPmmq--
 
