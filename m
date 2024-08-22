@@ -1,273 +1,102 @@
-Return-Path: <linux-kernel+bounces-296991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE3895B1A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:28:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F1395B1A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B21031C22C9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:28:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C897B24048
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 09:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A509B17BB19;
-	Thu, 22 Aug 2024 09:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3CD4CE05;
+	Thu, 22 Aug 2024 09:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H4nZiA28"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEdBqw5d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B68517C7DF
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 09:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4831C6B5;
+	Thu, 22 Aug 2024 09:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724318886; cv=none; b=lyvY+O8dH6IHLTo8rXg6W4LxucqE2yVxUfSNtlZMVnXMJKKw6aXv1zcEWQnXQYaAB35Tsl22PsOwiMM5eNQ7k4q7f5VDqubJLceKcd/9qzjhBlmsq3zf/iJOfvU6p91qGgyGP9msIS1/wRINpqExSscZKmk3UdqSTAsz+dBSOZw=
+	t=1724318822; cv=none; b=iEtbkIk9yKIrE5xDRltyFioKqLe9fTmMIhvmsBhst0oWg2y1g/XHDVNVFvMUx55eKKWAX3zXb0o/4zMws1/CDRnSgJ2fc0fG9ppFHx/5QCkFSQbj/NWDcrtK4JamDvbxMNaeI+l0nwJqtXxJv9EPuR8fau9wh4PfngdORzcR4Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724318886; c=relaxed/simple;
-	bh=nlZScaTrGwKship0z+lXTgDsPGh1Ywve0c6RRdSRLZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VAnuf/H/svCwCp3WlEnihguj8cr5R4M3KANASntQqJWRyowQ8EP6aso6JWwr34N6SuSZ/14BWYKQN/BLhFlycB8z50ArZQfFkCLRDWfx/JYqvqz1xO4Jmzx1NY+9iaYi4nEbzJ3ZQIy5GrXxjUdm8jQBavzgr7gRUmij4B2vzZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H4nZiA28; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724318885; x=1755854885;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nlZScaTrGwKship0z+lXTgDsPGh1Ywve0c6RRdSRLZg=;
-  b=H4nZiA28U2+PN8wEie6Q20fNUCWVyEdJcBwEC8duEvNS6idW+Pyqr9IR
-   I7P4jc3soT5FbhDLKnmyHXji+dUMvYdIFOodQyBkDh7F+zkV3hzUHzK4V
-   H3O5cXuNF0rfe9tvb5eMrM/uXMLFf8d6/UgcIMqi+FlZgYGqa8qjQMJRW
-   kNhB0Yq8z3qQXUsg/MkLxdWAoQ5fcVmNttHI4te2E/LaBtyLxidZK9loM
-   +csSqLece6tXzw/wH5pX0Pb7ZoBCiOqB4XkulxfqodW1X/SSvNRPFBaw/
-   XBkmYd6nQ2onRFtDSVEKLIw1k6tUCcXluqr50QtqThDFGLT8Nc8+6tlxL
-   Q==;
-X-CSE-ConnectionGUID: yJWq7w0sTx2jHvgc5oN1hA==
-X-CSE-MsgGUID: pCJNY7/TQ/m40ZsGboAqrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22892107"
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="22892107"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 02:28:04 -0700
-X-CSE-ConnectionGUID: UT1P0CR8QaKnNEUkDDv+4w==
-X-CSE-MsgGUID: cZ9XR265RGKO6NCTGgFwvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
-   d="scan'208";a="98882337"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 22 Aug 2024 02:28:00 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sh46n-000CdC-28;
-	Thu, 22 Aug 2024 09:27:57 +0000
-Date: Thu, 22 Aug 2024 17:26:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Qi Zheng <zhengqi.arch@bytedance.com>, david@redhat.com,
-	hughd@google.com, willy@infradead.org, muchun.song@linux.dev,
-	vbabka@kernel.org, akpm@linux-foundation.org, rppt@kernel.org,
-	vishal.moola@gmail.com, peterx@redhat.com, ryan.roberts@arm.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: Re: [PATCH 08/14] mm: copy_pte_range() use
- pte_offset_map_maywrite_nolock()
-Message-ID: <202408221703.ioeASthY-lkp@intel.com>
-References: <05c311498fc8e7e9b2143c7b5fef6dc624cfc49f.1724226076.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1724318822; c=relaxed/simple;
+	bh=TaiVPQ5rR0ZNBImhsJxgRxIyaRggKmWmQwltsR1CBdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TdgiaDs/uwVBMLegnGp/zgj4aC4YyrIOvzAh3Z0wYi0u698O8oLEm/Q4vzBZOXHlRR2nuEiJ+GRIZVTjc0ohpltWp11eM5gMPrgjZwmPlbNHfXO3FMzXO0LBdBuEuZgiH48Ik5iA8QWqF4x0PlvmN0X+WBRTqMIdh1U7lnBKS/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MEdBqw5d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A0B0C32782;
+	Thu, 22 Aug 2024 09:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724318822;
+	bh=TaiVPQ5rR0ZNBImhsJxgRxIyaRggKmWmQwltsR1CBdA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MEdBqw5dkKnsocx8AkDPu1PP0tAOCi3zCH+AUcGE13seAk4jJ/NP226G8X/ya/Wih
+	 Q2t0RQIJiPgDIsaWxVrAC2jkf0V+/9pFC/oMXnRTLkl+45G0yhbK+29675uvP93gWF
+	 1CdQDCm919jHgzsfCbPTyVcB1iPbK85PrLhidLQUNBfplsQkuV/MPQCl7CE+B1y7TG
+	 mzzoIJRGQM2XRDcUj2LLfS8JQa5UaLMb3SSM+Vy+rxmiLwy4p2QoNCmDlR19OY31XI
+	 fcz9njyFu0yyIct1KUUs1i/mcZ+ZEuS+qu+EbzZXNcGNMw2/TB6ZKVVhA8ienMxwfe
+	 ScDDmWaTvH2Zw==
+Message-ID: <f3d2c9ca-7b46-4546-af87-9f9127c1e178@kernel.org>
+Date: Thu, 22 Aug 2024 18:27:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05c311498fc8e7e9b2143c7b5fef6dc624cfc49f.1724226076.git.zhengqi.arch@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drivers:block:Fix the NULL vs IS_ERR() bug for
+ debugfs_create_dir()
+To: Yang Ruibin <11162571@vivo.com>, linux-block@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240821064932.6592-1-11162571@vivo.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240821064932.6592-1-11162571@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Qi,
+On 8/21/24 15:49, Yang Ruibin wrote:
+> The debugfs_create_dir() function returns error pointers.
+> It never returns NULL. So use IS_ERR() to check it.
 
-kernel test robot noticed the following build warnings:
+...to check its return value.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on powerpc/next powerpc/fixes linus/master v6.11-rc4 next-20240822]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+And the patch title could be better. May be something like:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Qi-Zheng/mm-pgtable-introduce-pte_offset_map_-readonly-maywrite-_nolock/20240821-162312
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/05c311498fc8e7e9b2143c7b5fef6dc624cfc49f.1724226076.git.zhengqi.arch%40bytedance.com
-patch subject: [PATCH 08/14] mm: copy_pte_range() use pte_offset_map_maywrite_nolock()
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240822/202408221703.ioeASthY-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408221703.ioeASthY-lkp@intel.com/reproduce)
+pktcdvd: Use IS_ERR() to check debugfs_create_dir() return value
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408221703.ioeASthY-lkp@intel.com/
+> 
+> Signed-off-by: Yang Ruibin <11162571@vivo.com>
 
-All warnings (new ones prefixed by >>):
+This needs a Fixes tag.
 
-   mm/memory.c: In function 'copy_pte_range':
->> mm/memory.c:1086:15: warning: unused variable 'pmdval' [-Wunused-variable]
-    1086 |         pmd_t pmdval;
-         |               ^~~~~~
-
-
-vim +/pmdval +1086 mm/memory.c
-
-  1076	
-  1077	static int
-  1078	copy_pte_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
-  1079		       pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
-  1080		       unsigned long end)
-  1081	{
-  1082		struct mm_struct *dst_mm = dst_vma->vm_mm;
-  1083		struct mm_struct *src_mm = src_vma->vm_mm;
-  1084		pte_t *orig_src_pte, *orig_dst_pte;
-  1085		pte_t *src_pte, *dst_pte;
-> 1086		pmd_t pmdval;
-  1087		pte_t ptent;
-  1088		spinlock_t *src_ptl, *dst_ptl;
-  1089		int progress, max_nr, ret = 0;
-  1090		int rss[NR_MM_COUNTERS];
-  1091		swp_entry_t entry = (swp_entry_t){0};
-  1092		struct folio *prealloc = NULL;
-  1093		int nr;
-  1094	
-  1095	again:
-  1096		progress = 0;
-  1097		init_rss_vec(rss);
-  1098	
-  1099		/*
-  1100		 * copy_pmd_range()'s prior pmd_none_or_clear_bad(src_pmd), and the
-  1101		 * error handling here, assume that exclusive mmap_lock on dst and src
-  1102		 * protects anon from unexpected THP transitions; with shmem and file
-  1103		 * protected by mmap_lock-less collapse skipping areas with anon_vma
-  1104		 * (whereas vma_needs_copy() skips areas without anon_vma).  A rework
-  1105		 * can remove such assumptions later, but this is good enough for now.
-  1106		 */
-  1107		dst_pte = pte_alloc_map_lock(dst_mm, dst_pmd, addr, &dst_ptl);
-  1108		if (!dst_pte) {
-  1109			ret = -ENOMEM;
-  1110			goto out;
-  1111		}
-  1112		src_pte = pte_offset_map_maywrite_nolock(src_mm, src_pmd, addr, NULL,
-  1113							 &src_ptl);
-  1114		if (!src_pte) {
-  1115			pte_unmap_unlock(dst_pte, dst_ptl);
-  1116			/* ret == 0 */
-  1117			goto out;
-  1118		}
-  1119		spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
-  1120		orig_src_pte = src_pte;
-  1121		orig_dst_pte = dst_pte;
-  1122		arch_enter_lazy_mmu_mode();
-  1123	
-  1124		do {
-  1125			nr = 1;
-  1126	
-  1127			/*
-  1128			 * We are holding two locks at this point - either of them
-  1129			 * could generate latencies in another task on another CPU.
-  1130			 */
-  1131			if (progress >= 32) {
-  1132				progress = 0;
-  1133				if (need_resched() ||
-  1134				    spin_needbreak(src_ptl) || spin_needbreak(dst_ptl))
-  1135					break;
-  1136			}
-  1137			ptent = ptep_get(src_pte);
-  1138			if (pte_none(ptent)) {
-  1139				progress++;
-  1140				continue;
-  1141			}
-  1142			if (unlikely(!pte_present(ptent))) {
-  1143				ret = copy_nonpresent_pte(dst_mm, src_mm,
-  1144							  dst_pte, src_pte,
-  1145							  dst_vma, src_vma,
-  1146							  addr, rss);
-  1147				if (ret == -EIO) {
-  1148					entry = pte_to_swp_entry(ptep_get(src_pte));
-  1149					break;
-  1150				} else if (ret == -EBUSY) {
-  1151					break;
-  1152				} else if (!ret) {
-  1153					progress += 8;
-  1154					continue;
-  1155				}
-  1156				ptent = ptep_get(src_pte);
-  1157				VM_WARN_ON_ONCE(!pte_present(ptent));
-  1158	
-  1159				/*
-  1160				 * Device exclusive entry restored, continue by copying
-  1161				 * the now present pte.
-  1162				 */
-  1163				WARN_ON_ONCE(ret != -ENOENT);
-  1164			}
-  1165			/* copy_present_ptes() will clear `*prealloc' if consumed */
-  1166			max_nr = (end - addr) / PAGE_SIZE;
-  1167			ret = copy_present_ptes(dst_vma, src_vma, dst_pte, src_pte,
-  1168						ptent, addr, max_nr, rss, &prealloc);
-  1169			/*
-  1170			 * If we need a pre-allocated page for this pte, drop the
-  1171			 * locks, allocate, and try again.
-  1172			 */
-  1173			if (unlikely(ret == -EAGAIN))
-  1174				break;
-  1175			if (unlikely(prealloc)) {
-  1176				/*
-  1177				 * pre-alloc page cannot be reused by next time so as
-  1178				 * to strictly follow mempolicy (e.g., alloc_page_vma()
-  1179				 * will allocate page according to address).  This
-  1180				 * could only happen if one pinned pte changed.
-  1181				 */
-  1182				folio_put(prealloc);
-  1183				prealloc = NULL;
-  1184			}
-  1185			nr = ret;
-  1186			progress += 8 * nr;
-  1187		} while (dst_pte += nr, src_pte += nr, addr += PAGE_SIZE * nr,
-  1188			 addr != end);
-  1189	
-  1190		arch_leave_lazy_mmu_mode();
-  1191		pte_unmap_unlock(orig_src_pte, src_ptl);
-  1192		add_mm_rss_vec(dst_mm, rss);
-  1193		pte_unmap_unlock(orig_dst_pte, dst_ptl);
-  1194		cond_resched();
-  1195	
-  1196		if (ret == -EIO) {
-  1197			VM_WARN_ON_ONCE(!entry.val);
-  1198			if (add_swap_count_continuation(entry, GFP_KERNEL) < 0) {
-  1199				ret = -ENOMEM;
-  1200				goto out;
-  1201			}
-  1202			entry.val = 0;
-  1203		} else if (ret == -EBUSY) {
-  1204			goto out;
-  1205		} else if (ret ==  -EAGAIN) {
-  1206			prealloc = folio_prealloc(src_mm, src_vma, addr, false);
-  1207			if (!prealloc)
-  1208				return -ENOMEM;
-  1209		} else if (ret < 0) {
-  1210			VM_WARN_ON_ONCE(1);
-  1211		}
-  1212	
-  1213		/* We've captured and resolved the error. Reset, try again. */
-  1214		ret = 0;
-  1215	
-  1216		if (addr != end)
-  1217			goto again;
-  1218	out:
-  1219		if (unlikely(prealloc))
-  1220			folio_put(prealloc);
-  1221		return ret;
-  1222	}
-  1223	
+> ---
+>  drivers/block/pktcdvd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+> index 7cece5884b9c..030b7a063a0b 100644
+> --- a/drivers/block/pktcdvd.c
+> +++ b/drivers/block/pktcdvd.c
+> @@ -498,7 +498,7 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
+>  	if (!pkt_debugfs_root)
+>  		return;
+>  	pd->dfs_d_root = debugfs_create_dir(pd->disk->disk_name, pkt_debugfs_root);
+> -	if (!pd->dfs_d_root)
+> +	if (IS_ERR(pd->dfs_d_root))
+>  		return;
+>  
+>  	pd->dfs_f_info = debugfs_create_file("info", 0444, pd->dfs_d_root,
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Damien Le Moal
+Western Digital Research
+
 
