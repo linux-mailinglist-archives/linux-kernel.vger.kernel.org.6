@@ -1,97 +1,95 @@
-Return-Path: <linux-kernel+bounces-297993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB73395C021
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54BF295C024
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8245284B08
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:23:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122F9284A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC62E1D0DFA;
-	Thu, 22 Aug 2024 21:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0401D172B;
+	Thu, 22 Aug 2024 21:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Vph5YRI/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3ekiuWiF"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080A6171A7;
-	Thu, 22 Aug 2024 21:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C2171A7;
+	Thu, 22 Aug 2024 21:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724361794; cv=none; b=jyYtFkcgGZJtc7m+j87cjntLLqDK7c6yxYczYIXBnc2ZoSm2WtTXHxDqo/Wy9U//huZwx+FPcDdrLWihJLd1kb8Zh2DfjnY94hlGXpy+kGsbRfeEyqg8NRx4BKQdH/Ju61T4TzldgOd5cun3q6inayii1GQNprEdMPaQ2dkj06U=
+	t=1724361832; cv=none; b=G5VBo4PUFP6e9XPguWDTkvStNCnVUWVytFESe3cpR7TxL9z30ac5vNqJYbByFNiW2f8W4WEJ3rtrfDh82LTk2vUBEZEQ09eA8B+RCqc+NwHkW/emH9GqFkovU6CUaAHOE3xTkGFEwIqH1hLvgJASsdO8VaZ+shUpiNDkPSFjCpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724361794; c=relaxed/simple;
-	bh=o4T68hABPyXoAz7WcmkxuyV3FACgeRb6m561lZBh90g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TaHmHPsh+cn5TWnt6rw+N2uuvVHi0QuFFBFP3AtTpzLNS3SnW3E3E/DbwIGvZ7ChbpXS4ehB0h4e/VXUBhK/DwO3mdSL1ZnjOxk4jvhBHVYy6w659su1X3KYHIsybqEm6aLUoHEUewyXuwy7PJxj6U5+1L9OUWZhlgQvIKnqqh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Vph5YRI/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724361783;
-	bh=g7aDHAmlf0/qsD9hy7RVSmKhFLYdThdwneLTu8SwEfg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Vph5YRI/BywoREOIiQmZfzvVJwymwzy8ZdMACnzeaLu52ss5atpBoSN7U34JvxXn3
-	 QJzOHKRTkamolzZuZ7qc+Qi5B2tdq2s0zB9fzGnK54+mDLu1nbMc+TuRfpJYp3PhFD
-	 WP9fBrHLQPX66Xg1RCzNUk9NI8EBocUTSu91X8NprpUoHEBhTJLA/yKO40lUxBjyws
-	 h8TxRcRqcWNBfLFBTCfu2V/pTRK4CTE4QIMOsYqljnKAuI3N4alTFHMlcITmxrljwj
-	 PQgiDcIc/UIpCQQ8JpA8kih7bDi3Y79qGgSrl3T8uWSCJjcoPE4LRZDo9zSMDJ7N+m
-	 Tzj8fuphZvrsg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WqblW469zz4wcp;
-	Fri, 23 Aug 2024 07:23:03 +1000 (AEST)
-Date: Fri, 23 Aug 2024 07:23:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the bcachefs tree
-Message-ID: <20240823072302.7b471ace@canb.auug.org.au>
+	s=arc-20240116; t=1724361832; c=relaxed/simple;
+	bh=HN1xBVZLE3f1sAjk8xE5JEoHDgbt0F1gZsiaf4ullkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=usIdeL+TlesZGmmBW5e9+bHlR2uPPYs5XXfDQjZDCawMSzcTLDZ3NLFI0DaZE734UO1cS38WYtWnQBr1Rv8UyNR2dyjarJ97fV0pWQFgPNRY9hr0y9AR8Zb0nHp2vgtxiN6riMb5yw/nbO9qUb2CW7pTjdCW+ZIUybQIsnkesdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3ekiuWiF; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OvL0cDQRRZcsjqitDDNhwyuFsI+775ltV1T5OI53uko=; b=3ekiuWiFd1cyQXu09+aZB8desx
+	MdgicvngIggXnCHUlmvJWT44SmXVmzDwNgo3KErf8cBlbVctfEy4ZR0623bvubOgNTKh3wrHrjS+A
+	Dm5P8OEbvCp7nd8tbvqjungtvDzhVMbQ9Ubmun5qws+oeLX5eAG68mHwxf6eKvb2ed7Q4dQbyTG2Y
+	lLxkXQNwbhiabt++fmczf+PZ6b/++ZGdVRdYz3RJZo57iAwpR913ThIENwQ8gK11ajbeHLafcsUk8
+	+iKNgkQh4D+p1baO2PW8AXkNsgy2FVWHxBOrxWjc7MSdZXojzKCdWbM03duSoRcEbj6FHKLap8wYS
+	i4ulvt6A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1shFHW-0000000ELWk-1g5D;
+	Thu, 22 Aug 2024 21:23:46 +0000
+Date: Thu, 22 Aug 2024 14:23:46 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, gost.dev@samsung.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+	Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	willy@infradead.org, john.g.garry@oracle.com,
+	cl@os.amperecomputing.com, p.raghav@samsung.com,
+	ryan.roberts@arm.com, mcgrof@kernel.org
+Subject: Re: [PATCH v13 00/10] enable bs > ps in XFS
+Message-ID: <ZsesYqVivEAToPUI@bombadil.infradead.org>
+References: <20240822135018.1931258-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ULZ1J_fLrEy.qsJOswu=9Uc";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822135018.1931258-1-kernel@pankajraghav.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
---Sig_/ULZ1J_fLrEy.qsJOswu=9Uc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 22, 2024 at 03:50:08PM +0200, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> This is the 13th version of the series that enables block size > page size
+> (Large Block Size) experimental support in XFS. Please consider this for
+> the inclusion in 6.12.
 
-Hi all,
+Christian, Andrew,
 
-Commit
+we believe this is ready for integration, and at the last XFS BoF we
+were wondering what tree this should go through. I see fs-next is
+actually just a branch on linux-next with the merge of a few select
+trees [0], but this touches mm, so its not clear what tree would be be
+most appropriate to consider.
 
-  0c8ad34451a2 ("bcachefs: Refactor bch2_bset_fix_lookup_table")
+Please let us know what you think, it would be great to get this into
+fs-next somehow to get more exposure / testing.
 
-is missing a Signed-off-by from its committer.
+[0] https://lore.kernel.org/all/20240528091629.3b8de7e0@canb.auug.org.au/
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ULZ1J_fLrEy.qsJOswu=9Uc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbHrDYACgkQAVBC80lX
-0Gy7igf9EUKasiq6eETcLbj6LFCq1QJ+ud7Aruz0x3xzOlrX0mO0NvmfiW2frMvy
-0fs2h4Utxxq0ulEmtceqRQgnTXNTUnqLbAWEUg30PCjra9RrPxOxAugNpPZpG4vc
-C/g78c2jiE62yn/ypNcFziRa7e+dwxRQEQdmW25WAC5DYQtHHL/EYponmhEbjT/U
-Mb668Nd03zIHcJapcg+77mTHesibdUwhClLQPMVFvWNzkh2sR02csdJzGdqDZ7Y5
-9DZioAGEk9YDQUi4PYH3yM3jmXW2q6t1r10kuE9B1/Y52Whg3VYeK5VZVQzPfeuc
-on7F9ne4pwsnvjrKkbvow/ffOgn9lg==
-=3WSE
------END PGP SIGNATURE-----
-
---Sig_/ULZ1J_fLrEy.qsJOswu=9Uc--
+  Luis
 
