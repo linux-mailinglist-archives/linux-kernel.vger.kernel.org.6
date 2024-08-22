@@ -1,127 +1,349 @@
-Return-Path: <linux-kernel+bounces-297143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851FC95B3AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8026F95B3B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 13:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7DE21C21463
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A58701C2284C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 11:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C411C93B8;
-	Thu, 22 Aug 2024 11:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE30F1C93BE;
+	Thu, 22 Aug 2024 11:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LDaiJ1+B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="I+AGRzXm"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96641779BB
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B77514A0B8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 11:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724325660; cv=none; b=KcUP88hfu/CEAVHXhLzPsLc79iFmZeefZZQRzMiQmQUt8KBnSNSw8hKkLIbmDEOpI08YU1pEGdZlVnaJMt5jTmSnCs9nokFqxPAKoQvyho1ecJ1SnJGF0djy5t+MngvXx/fogDIeXdNtCggZGut6FyiJPpIFzxEsVLQge0mRabs=
+	t=1724326040; cv=none; b=rled4yoF7G7FHY6UulW5tpqG5wqibHQvaFMHMedAwEzRckerUU/dnkFZuQANzvPYLEuxHhQDH7I6u2Q1Vt3St0klO+CpIVoZMxax4NjcdLGqjbv4UlogJallKyRVp5Leu3jEu/5v1Bxp1532jCnHsqLlGgIJhBWSCLsEdHLagB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724325660; c=relaxed/simple;
-	bh=A5P24p2SL0yOnJjyVxIhUhB7QdMcqUPOS6cz8vm8YhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTRicRQ8vn4VD9EbozPSovfRWDVBgT+HPo69y7HlmhIOCxYt6PII9cepl8IuVloXS4aYafwvD3csmkuFefdndTDcO7vg1w/hEeAGZTuFnai4EaBpwVCK45VllFaNbXT5spcxju6zUBzuGclvMJ/Q/38Rt7F9InZ5IDQsoJsPI8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LDaiJ1+B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724325657;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bpCy6dO0uqqF5xDxQyyJx28AB3JYQF66yHgVSJxJxvM=;
-	b=LDaiJ1+BdqZcWoFrH1JM9GpIsXv+angqTKRcLfKOaDqDzIkb+6fcqJTGYMxccAGFO/jhvt
-	nIRHB+Yye9n+BMjG506X1Y0juYDR61hBeYjMcywOq3w9ToTQ9a6rnV4OEciOHwUrU1s0C5
-	wFRF4dkM0LdFQy1pfSnOuZbRPwc7c/Q=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-aJBKaDvTMCmqgZqPHvDigA-1; Thu,
- 22 Aug 2024 07:20:55 -0400
-X-MC-Unique: aJBKaDvTMCmqgZqPHvDigA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A45BC1979062;
-	Thu, 22 Aug 2024 11:20:54 +0000 (UTC)
-Received: from localhost (unknown [10.22.32.39])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EECED19560AD;
-	Thu, 22 Aug 2024 11:20:53 +0000 (UTC)
-Date: Thu, 22 Aug 2024 08:20:52 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: tglozar@redhat.com, linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jkacur@redhat.com
-Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
- timerlat_fd_release
-Message-ID: <ZscfFFUM6pBuwpGZ@uudg.org>
-References: <20240820130001.124768-1-tglozar@redhat.com>
- <20240821160316.02c03c44@gandalf.local.home>
+	s=arc-20240116; t=1724326040; c=relaxed/simple;
+	bh=0egdaud3XJnLrHOfKJR02AkJ9G1kwMRfcILmqDKOvbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q9UmmUYtY1+JJfOMn+A7PTnScmhrr5kEyh7jQUkwMp+s+Ix05GZvwM67eNvT2pU7u3sWmwYtzZQPbTHYA/mjTviMXzI26SU04uqFMkKgR3lHgCanG1COVMMucpCUCsHuEtafdPicHNuQgyeW4/2kY/fiUL4EeFrpudUyAKwbxSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=I+AGRzXm; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f3f90295a9so6827511fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 04:27:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1724326034; x=1724930834; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OdcrbgUwYZCbvTxgX6hl7dn8mDljxmv7MhBnsCIJfOc=;
+        b=I+AGRzXm8LJ07LPiI2Y6KctwlfnF0wefl83XokyCP5SfwVPnPAoJVZPbE6o5vEC/AP
+         Eiip3H4W30vxtlxg+LbywQyCh6+oxgdQawGMM08tew1Ilxqt5g0/zTImTLFW5yaIBBP/
+         aBbvAa6SjCgQKOeC6YylMOlrp5t9+XfeZl5tO1KHc6HoiWGV77MDgJ9sC/NyMBc846Mj
+         RztnlxbeFd28laXSluC8PN9sUkyR5gi3WrYM75+/W3ue0LsSeN6wlkn/OsELoIzpceI4
+         le7ZUeQt3b8Jbb3PShxTYwIucpb1Y9o95d5AWgM8cn3tnRzO3Pmco9Q+IJQGTSZWLNoW
+         WL/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724326034; x=1724930834;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OdcrbgUwYZCbvTxgX6hl7dn8mDljxmv7MhBnsCIJfOc=;
+        b=GbtiPl9tGKIfcZoyn/r6q+kJnQFhvmevj5Q64yQDtQyR4G7VytHQEIHxThUhJiIh+t
+         0u28y17lNvCyA+QSCU3I7/JYg4HVX+93W7f7+qjLr2cRbAj4CP0agNKRJG73XMDuAfYP
+         jeBySJMjw96iRCCQZj23j1Wv/R52n0d63HTvTBoMEFzLh1vZetpO2ENdb4TGjDktl90W
+         mFOom+g5Ht8xtOZ/4qTNy7Ig4ZFwTrDavvWkAi3+Irne921z0Yow69TTTse5DA4Vp7vr
+         UimUkoOSXdZAdBcjYqBt8cW8+U56hatqhnVbkG3SNtYO+f3ReRClMI0wenkCmMa07vjy
+         NpUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGgJZTpov4ddIzUpBntuhEum5mO1YJgWGYUFOZhLDeiJD4QWDlwzCkMRae6TZHotbKrzPZuv7qfcCaweI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygUSBTp52AeJsi2B7xtsrTeJognl18cl5S2QiMgBgB6wmlFQVs
+	C8vF+jf5TgYBApam8wEJMFOH2CbXWKJa79ss5PEQVEeS3npiD6jFpmyKueXFkcg=
+X-Google-Smtp-Source: AGHT+IHAU8FDGqmIJEUfnfRLVt+aTgE3s5SHVaHgmnI/b3XT2WX5U2lY1l6UDcY90CmnGCCqaxafaQ==
+X-Received: by 2002:a2e:f19:0:b0:2ef:2d3a:e70a with SMTP id 38308e7fff4ca-2f3f883066amr30830081fa.18.1724326033653;
+        Thu, 22 Aug 2024 04:27:13 -0700 (PDT)
+Received: from localhost ([2a02:8071:8280:d6e0:e324:b080:c95e:f348])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddbccbsm803653a12.11.2024.08.22.04.27.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 04:27:13 -0700 (PDT)
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>,
+	Hugh Dickins <hughd@google.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: swapfile: fix SSD detection with swapfile on btrfs
+Date: Thu, 22 Aug 2024 13:24:58 +0200
+Message-ID: <20240822112707.351844-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821160316.02c03c44@gandalf.local.home>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 21, 2024 at 04:03:16PM -0400, Steven Rostedt wrote:
-> On Tue, 20 Aug 2024 15:00:01 +0200
-> tglozar@redhat.com wrote:
-> 
-> > From: Tomas Glozar <tglozar@redhat.com>
-> > 
-> > When running timerlat with a userspace workload (NO_OSNOISE_WORKLOAD),
-> > NULL pointer dereference can be triggered by sending consequent SIGINT
-> > and SIGTERM signals to the workload process. That then causes
-> > timerlat_fd_release to be called twice in a row, and the second time,
-> > hrtimer_cancel is called on a zeroed hrtimer struct, causing the NULL
-> > dereference.
-> > 
-> > This can be reproduced using rtla:
-> > ```
-> > $ while true; do rtla timerlat top -u -q & PID=$!; sleep 5; \
-> >  kill -INT $PID; sleep 0.001; kill -TERM $PID; wait $PID; done
-> > [1] 1675
-> > [1]+  Aborted (SIGTERM)      rtla timerlat top -u -q
-> > [1] 1688
-> > client_loop: send disconnect: Broken pipe
-> > ```
-> > triggering the bug:
-> 
-> I'm able to reproduce this with the above. Unfortunately, I can still
-> reproduce it after applying this patch :-(
+We've been noticing a trend of significant lock contention in the swap
+subsystem as core counts have been increasing in our fleet. It turns
+out that our swapfiles on btrfs on flash were in fact using the old
+swap code for rotational storage.
 
-We were able to mitigate the problem (triggered by that command line) simply
-by handling SIGTERM in the userspace tool the same way it handles SIGINT. That
-was one of the factors that helped the "closing the file descriptor twice"
-theory.
+This turns out to be a detection issue in the swapon sequence: btrfs
+sets si->bdev during swap activation, which currently happens *after*
+swapon's SSD detection and cluster setup. Thus, none of the SSD
+optimizations and cluster lock splitting are enabled for btrfs swap.
 
-Would you mind sharing the backtrace you got? That would also help us
-investigating.
+Rearrange the swapon sequence so that filesystem activation happens
+*before* determining swap behavior based on the backing device.
 
-> Looking at the code, the logic for handling the kthread seems off. I'll
-> spend a little time to see if I can figure it out.
+Afterwards, the nonrotational drive is detected correctly:
 
-You mean the 
+- Adding 2097148k swap on /mnt/swapfile.  Priority:-3 extents:1 across:2097148k
++ Adding 2097148k swap on /mnt/swapfile.  Priority:-3 extents:1 across:2097148k SS
 
-+	if (!tlat_var->kthread) {
-+		/* the fd has been closed already */
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ mm/swapfile.c | 165 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 86 insertions(+), 79 deletions(-)
 
-bit or the kthread handling in rtla itself?
+Changes since RFC:
+o walk badpages[] instead of [0, maxpages] for faster swapon (thanks Ying!)
 
-As Tomas already said, thank you for testing and reviewing the suggested fix!
-
-Luis
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index c1638a009113..aff73a3d0ead 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3196,29 +3196,15 @@ static unsigned long read_swap_header(struct swap_info_struct *si,
+ static int setup_swap_map_and_extents(struct swap_info_struct *si,
+ 					union swap_header *swap_header,
+ 					unsigned char *swap_map,
+-					struct swap_cluster_info *cluster_info,
+ 					unsigned long maxpages,
+ 					sector_t *span)
+ {
+-	unsigned int j, k;
+ 	unsigned int nr_good_pages;
++	unsigned long i;
+ 	int nr_extents;
+-	unsigned long nr_clusters = DIV_ROUND_UP(maxpages, SWAPFILE_CLUSTER);
+-	unsigned long col = si->cluster_next / SWAPFILE_CLUSTER % SWAP_CLUSTER_COLS;
+-	unsigned long i, idx;
+ 
+ 	nr_good_pages = maxpages - 1;	/* omit header page */
+ 
+-	INIT_LIST_HEAD(&si->free_clusters);
+-	INIT_LIST_HEAD(&si->full_clusters);
+-	INIT_LIST_HEAD(&si->discard_clusters);
+-
+-	for (i = 0; i < SWAP_NR_ORDERS; i++) {
+-		INIT_LIST_HEAD(&si->nonfull_clusters[i]);
+-		INIT_LIST_HEAD(&si->frag_clusters[i]);
+-		si->frag_cluster_nr[i] = 0;
+-	}
+-
+ 	for (i = 0; i < swap_header->info.nr_badpages; i++) {
+ 		unsigned int page_nr = swap_header->info.badpages[i];
+ 		if (page_nr == 0 || page_nr > swap_header->info.last_page)
+@@ -3226,25 +3212,11 @@ static int setup_swap_map_and_extents(struct swap_info_struct *si,
+ 		if (page_nr < maxpages) {
+ 			swap_map[page_nr] = SWAP_MAP_BAD;
+ 			nr_good_pages--;
+-			/*
+-			 * Haven't marked the cluster free yet, no list
+-			 * operation involved
+-			 */
+-			inc_cluster_info_page(si, cluster_info, page_nr);
+ 		}
+ 	}
+ 
+-	/* Haven't marked the cluster free yet, no list operation involved */
+-	for (i = maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i++)
+-		inc_cluster_info_page(si, cluster_info, i);
+-
+ 	if (nr_good_pages) {
+ 		swap_map[0] = SWAP_MAP_BAD;
+-		/*
+-		 * Not mark the cluster free yet, no list
+-		 * operation involved
+-		 */
+-		inc_cluster_info_page(si, cluster_info, 0);
+ 		si->max = maxpages;
+ 		si->pages = nr_good_pages;
+ 		nr_extents = setup_swap_extents(si, span);
+@@ -3257,8 +3229,70 @@ static int setup_swap_map_and_extents(struct swap_info_struct *si,
+ 		return -EINVAL;
+ 	}
+ 
++	return nr_extents;
++}
++
++static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
++						union swap_header *swap_header,
++						unsigned long maxpages)
++{
++	unsigned long nr_clusters = DIV_ROUND_UP(maxpages, SWAPFILE_CLUSTER);
++	unsigned long col = si->cluster_next / SWAPFILE_CLUSTER % SWAP_CLUSTER_COLS;
++	struct swap_cluster_info *cluster_info;
++	unsigned long i, j, k, idx;
++	int cpu, err = -ENOMEM;
++
++	cluster_info = kvcalloc(nr_clusters, sizeof(*cluster_info), GFP_KERNEL);
+ 	if (!cluster_info)
+-		return nr_extents;
++		goto err;
++
++	for (i = 0; i < nr_clusters; i++)
++		spin_lock_init(&cluster_info[i].lock);
++
++	si->cluster_next_cpu = alloc_percpu(unsigned int);
++	if (!si->cluster_next_cpu)
++		goto err_free;
++
++	/* Random start position to help with wear leveling */
++	for_each_possible_cpu(cpu)
++		per_cpu(*si->cluster_next_cpu, cpu) =
++		get_random_u32_inclusive(1, si->highest_bit);
++
++	si->percpu_cluster = alloc_percpu(struct percpu_cluster);
++	if (!si->percpu_cluster)
++		goto err_free;
++
++	for_each_possible_cpu(cpu) {
++		struct percpu_cluster *cluster;
++
++		cluster = per_cpu_ptr(si->percpu_cluster, cpu);
++		for (i = 0; i < SWAP_NR_ORDERS; i++)
++			cluster->next[i] = SWAP_NEXT_INVALID;
++	}
++
++	/*
++	 * Mark unusable pages as unavailable. The clusters aren't
++	 * marked free yet, so no list operations are involved yet.
++	 *
++	 * See setup_swap_map_and_extents(): header page, bad pages,
++	 * and the EOF part of the last cluster.
++	 */
++	inc_cluster_info_page(si, cluster_info, 0);
++	for (i = 0; i < swap_header->info.nr_badpages; i++)
++		inc_cluster_info_page(si, cluster_info,
++				      swap_header->info.badpages[i]);
++	for (i = maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i++)
++		inc_cluster_info_page(si, cluster_info, i);
++
++	INIT_LIST_HEAD(&si->free_clusters);
++	INIT_LIST_HEAD(&si->full_clusters);
++	INIT_LIST_HEAD(&si->discard_clusters);
++
++	for (i = 0; i < SWAP_NR_ORDERS; i++) {
++		INIT_LIST_HEAD(&si->nonfull_clusters[i]);
++		INIT_LIST_HEAD(&si->frag_clusters[i]);
++		si->frag_cluster_nr[i] = 0;
++	}
+ 
+ 	/*
+ 	 * Reduce false cache line sharing between cluster_info and
+@@ -3281,7 +3315,13 @@ static int setup_swap_map_and_extents(struct swap_info_struct *si,
+ 			list_add_tail(&ci->list, &si->free_clusters);
+ 		}
+ 	}
+-	return nr_extents;
++
++	return cluster_info;
++
++err_free:
++	kvfree(cluster_info);
++err:
++	return ERR_PTR(err);
+ }
+ 
+ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+@@ -3377,6 +3417,17 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		goto bad_swap_unlock_inode;
+ 	}
+ 
++	error = swap_cgroup_swapon(si->type, maxpages);
++	if (error)
++		goto bad_swap_unlock_inode;
++
++	nr_extents = setup_swap_map_and_extents(si, swap_header, swap_map,
++						maxpages, &span);
++	if (unlikely(nr_extents < 0)) {
++		error = nr_extents;
++		goto bad_swap_unlock_inode;
++	}
++
+ 	if (si->bdev && bdev_stable_writes(si->bdev))
+ 		si->flags |= SWP_STABLE_WRITES;
+ 
+@@ -3384,63 +3435,19 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		si->flags |= SWP_SYNCHRONOUS_IO;
+ 
+ 	if (si->bdev && bdev_nonrot(si->bdev)) {
+-		int cpu, i;
+-		unsigned long ci, nr_cluster;
+-
+ 		si->flags |= SWP_SOLIDSTATE;
+-		si->cluster_next_cpu = alloc_percpu(unsigned int);
+-		if (!si->cluster_next_cpu) {
+-			error = -ENOMEM;
+-			goto bad_swap_unlock_inode;
+-		}
+-		/*
+-		 * select a random position to start with to help wear leveling
+-		 * SSD
+-		 */
+-		for_each_possible_cpu(cpu) {
+-			per_cpu(*si->cluster_next_cpu, cpu) =
+-				get_random_u32_inclusive(1, si->highest_bit);
+-		}
+-		nr_cluster = DIV_ROUND_UP(maxpages, SWAPFILE_CLUSTER);
+ 
+-		cluster_info = kvcalloc(nr_cluster, sizeof(*cluster_info),
+-					GFP_KERNEL);
+-		if (!cluster_info) {
+-			error = -ENOMEM;
++		cluster_info = setup_clusters(si, swap_header, maxpages);
++		if (IS_ERR(cluster_info)) {
++			error = PTR_ERR(cluster_info);
++			cluster_info = NULL;
+ 			goto bad_swap_unlock_inode;
+ 		}
+-
+-		for (ci = 0; ci < nr_cluster; ci++)
+-			spin_lock_init(&((cluster_info + ci)->lock));
+-
+-		si->percpu_cluster = alloc_percpu(struct percpu_cluster);
+-		if (!si->percpu_cluster) {
+-			error = -ENOMEM;
+-			goto bad_swap_unlock_inode;
+-		}
+-		for_each_possible_cpu(cpu) {
+-			struct percpu_cluster *cluster;
+-
+-			cluster = per_cpu_ptr(si->percpu_cluster, cpu);
+-			for (i = 0; i < SWAP_NR_ORDERS; i++)
+-				cluster->next[i] = SWAP_NEXT_INVALID;
+-		}
+ 	} else {
+ 		atomic_inc(&nr_rotate_swap);
+ 		inced_nr_rotate_swap = true;
+ 	}
+ 
+-	error = swap_cgroup_swapon(si->type, maxpages);
+-	if (error)
+-		goto bad_swap_unlock_inode;
+-
+-	nr_extents = setup_swap_map_and_extents(si, swap_header, swap_map,
+-		cluster_info, maxpages, &span);
+-	if (unlikely(nr_extents < 0)) {
+-		error = nr_extents;
+-		goto bad_swap_unlock_inode;
+-	}
+-
+ 	if ((swap_flags & SWAP_FLAG_DISCARD) &&
+ 	    si->bdev && bdev_max_discard_sectors(si->bdev)) {
+ 		/*
+-- 
+2.46.0
 
 
