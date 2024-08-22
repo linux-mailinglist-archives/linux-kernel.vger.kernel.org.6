@@ -1,141 +1,255 @@
-Return-Path: <linux-kernel+bounces-297455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C4F95B87F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:33:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E6D95B878
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D811F21E78
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:33:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40591C241BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528071CC175;
-	Thu, 22 Aug 2024 14:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6837B1CC148;
+	Thu, 22 Aug 2024 14:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MmE2IZpm"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KlMgK1+Z"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDF11CC170;
-	Thu, 22 Aug 2024 14:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469931CBE86
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 14:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337204; cv=none; b=NbujshkLVxrtN12jV0Gjn4dvL17++eDdV8642IAXilzIZHaEONhiFEcUrmIR+4pwRGMTNOil1DW8ijywMD7yMTxUbgg8WXk0hGqXDMu8wTknWLUDIHuv6IbwbJuP96gjamShc3KKn9ggsiy5QhJyv2kY9e7Wda7jkCNf/tfhaWQ=
+	t=1724337197; cv=none; b=OfQj37gkEdr3qDAweAIgSMoLS7kD09OrI1eJ6gz7ywweiV2WI30uVfo4hk5QJuPGykN+1wQJF8C7VAOT5YbQYdE8ouKbn6OyonVpJkJwNeO6bOsNWXhLpqohEsUN21PbhohevU0M/MCpQCIZcIhPF1xqMzu/8elw/WBWBsCIF5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337204; c=relaxed/simple;
-	bh=ul7PizNZdzC7kUZvz7lhJEslbAa1y6aQFceRLhnnaPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOtCMSsT0/KxDgZle3Ply6fhEk7zmBSDV1BxsMeEC1G2XJ+ap3EoJblRk3ehPGlOGaIdqN5PkYP9wtuFOO3i5o7LoCnLqdkoK7AT92INXk2OutniGipNA6NLh9g0kW6Uarmjm4XWlXWX9LfHizACDRmUrrK+DcSn8e/tH8SVgDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MmE2IZpm; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D6BBF1C0002;
-	Thu, 22 Aug 2024 14:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724337199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=28KjxeZ01+p9nDVnGtXx9KfJaHBczSdiwVjl2vmbphI=;
-	b=MmE2IZpmpKFJ4A+9lsXAKU6W/E6Whvpbyy4BTW/u9jMcZ/kVKNoKCfgBmi6FUpl9ngeq2T
-	jY4JhCs28GxODWc7Ckqrhcu9ZytXED4ifDTkMbDd+4INaZ9enWDSxSfPNhlqy/Xmfv5w9X
-	aIXpRI0K3ER1hNzFuCfUbPGXnGLY/nMTaI0chcba5QUSnTcnEeN0SH/GSHVIJ1A9b3mjo0
-	gnPZOYtCJ+fuTZm7aIiPfHP1iKEYzuI6rEUSb5d52Ugs37TTubxvW1Pk36T5hkKzmoRE26
-	sQMCRp4IUvgBMPgmPEnOyQtwlHW4Y7tmuo/RCjTgySkhgK9eJhmohngZfX0Xvw==
-Date: Thu, 22 Aug 2024 16:33:16 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Richard GENOUD <richard.genoud@bootlin.com>,
-	Lei Liu <liulei.rjpt@vivo.com>,
-	Paul Cercueil <paul@crapouillou.net>,
+	s=arc-20240116; t=1724337197; c=relaxed/simple;
+	bh=lJiyZmPpFea0ifOYh7ueNldJecB7Zjvj1rYiFraP0eY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mJTTgP7Otlxh2en3MrnR/bjfZsuEEZxvT9adtuwFoIPOyH5ob4BgWqs//eyHCx3J9JVE+Lx74O+ksPLAQRoHpktt02ZBhMeRv0GqTAG7zBor+bL0Yy3XTe9AJ69tiJJB0BW7GrtCw86q6kCclLck5YT+51nOJYdoVFqpHGi5ucQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KlMgK1+Z; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53349d3071eso1159174e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 07:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724337193; x=1724941993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u+CLCXO1loNtRQ1zQxG3QmaE354XOPvXqx3+a/56H5k=;
+        b=KlMgK1+ZJX2PwEjc15lymt9JjPEEkJLEpJ5Jbh0XYP1aCy4sKK8iu0d7fNB2hfHG5q
+         BSEFRBHH3N/KqFGaCjF4x6sHeB3XZpGEP1x630+kuFZwpqR8UPj6fwx5/xWe5pqIs8Ki
+         aR0do2b0QAngexNeJpL3b+PAKvzqvx2XqJtR+gnElIOdIt2bE+8Bbp7BVp6WdhuXK1vp
+         H5Gg+4MpJthkwgwAPRO/bnshHgeTggRao+NqNasZaQd8xq0RGVI1thyC11M4NUfGQnO9
+         aP9rSQfv72u7mmOMDuAlCcarbqqPnX0nnTA5lhAvmBu1GqCpdIGG5f2EI/8o2HS2rw7l
+         7SLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724337193; x=1724941993;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+CLCXO1loNtRQ1zQxG3QmaE354XOPvXqx3+a/56H5k=;
+        b=PTfPdVIDJ2luElwzmfrj7dnpnTdJLEdmURh5/FnyaDgVjHihFG83SAOWSYsCSYVFRA
+         u8Ovi9PoY+TBlM+hzrjnxvpVROsr+sSZxqYICVF0t0PNLH1l7ZK/tyr+T/x9tYeg+8hu
+         0lVNdG4BVJdY7uAEQmYASRX1Yh8VgQluicRpD6+NN+5DmgHH9VaqKrNBc5rao0w2VwTd
+         k0bKJSB3YSj+HpREM/ZJEacdNg+LHEH99axdvMwOmXjX8yKngqPz+p3SUlA0j/VvetID
+         dZdsHLnps0SRoE85TVzEW4v5GDhsFRXZR2WNTtCdzKCVnZh/+Zugpu2TfPHd90lAsP1u
+         F5WA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfy5cbIFnsq3seSU+rf+8XRjk8Nl9LbhQs4/ryd8hrDVPCJqhirDbMcdwfGHH921+Ve6QtiWdmy/zZ5Tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/ZW0rWQg1AjSJlcm193xlRXD56dNNCr5dJriouSRrsIdm92q2
+	UOoDWcSvPF8StS9/SrSFSAEoIsUUfDrcpF+3K26jq1x1210bWz2ELDZONHaal1Q=
+X-Google-Smtp-Source: AGHT+IHoBb72Bk0r3OFdWAjawuoYWFCtIMjCbazUFrv8zVo0YW75cua2rVkEy/AiDyfokhDrVrMdgw==
+X-Received: by 2002:a05:6512:159d:b0:52c:9906:fa33 with SMTP id 2adb3069b0e04-53348592143mr3936405e87.43.1724337192756;
+        Thu, 22 Aug 2024 07:33:12 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f222af5sm128629666b.41.2024.08.22.07.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 07:33:12 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 22 Aug 2024 16:33:18 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
 	Nicolas Ferre <nicolas.ferre@microchip.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZsdMLgf2U-CRpnH4@apocalypse>
+Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Valentin Caron <valentin.caron@foss.st.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Erwan Le Ray <erwan.leray@foss.st.com>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH 4/8] tty: atmel_serial: Use devm_clk_get_enabled() helpers
-Message-ID: <202408221433165841f563@mail.local>
-References: <20240822033924.32397-1-liulei.rjpt@vivo.com>
- <20240822033924.32397-5-liulei.rjpt@vivo.com>
- <c54434e3-1fb8-4491-b24f-2167786fe84c@bootlin.com>
- <Zsc-ZNg_S8uT9gpR@smile.fi.intel.com>
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <400486cd-e23c-4501-98c0-aa999aa45f75@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zsc-ZNg_S8uT9gpR@smile.fi.intel.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <400486cd-e23c-4501-98c0-aa999aa45f75@kernel.org>
 
-On 22/08/2024 16:34:28+0300, Andy Shevchenko wrote:
-> On Thu, Aug 22, 2024 at 03:28:40PM +0200, Richard GENOUD wrote:
-> > Le 22/08/2024 à 05:39, Lei Liu a écrit :
-> > > The devm_clk_get_enabled() helpers:
-> > >      - call devm_clk_get()
-> > >      - call clk_prepare_enable() and register what is needed in order to
-> > >       call clk_disable_unprepare() when needed, as a managed resource.
-> > > 
-> > > This simplifies the code and avoids calls to clk_disable_unprepare().
+Hi Krzysztof,
+
+On 16:20 Wed 21 Aug     , Krzysztof Kozlowski wrote:
+> On 21/08/2024 10:38, Krzysztof Kozlowski wrote:
+> > On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
 > 
 > ...
 > 
-> > >   	 * The peripheral clock can now safely be disabled till the port
-> > >   	 * is used
-> > >   	 */
-> > > -	clk_disable_unprepare(atmel_port->clk);
-> > > -
-> > Why removing this ?
-> > This is not an error path.
+> >>  drivers/misc/Kconfig                  |   1 +
+> >>  drivers/misc/Makefile                 |   1 +
+> >>  drivers/misc/rp1/Kconfig              |  20 ++
+> >>  drivers/misc/rp1/Makefile             |   3 +
+> >>  drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
+> >>  drivers/misc/rp1/rp1-pci.dtso         |   8 +
+> >>  drivers/pci/quirks.c                  |   1 +
+> >>  include/linux/pci_ids.h               |   3 +
+> >>  10 files changed, 524 insertions(+)
+> >>  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+> >>  create mode 100644 drivers/misc/rp1/Kconfig
+> >>  create mode 100644 drivers/misc/rp1/Makefile
+> >>  create mode 100644 drivers/misc/rp1/rp1-pci.c
+> >>  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index 67f460c36ea1..1359538b76e8 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -19119,9 +19119,11 @@ F:	include/uapi/linux/media/raspberrypi/
+> >>  RASPBERRY PI RP1 PCI DRIVER
+> >>  M:	Andrea della Porta <andrea.porta@suse.com>
+> >>  S:	Maintained
+> >> +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
+> >>  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> >>  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >>  F:	drivers/clk/clk-rp1.c
+> >> +F:	drivers/misc/rp1/
+> >>  F:	drivers/pinctrl/pinctrl-rp1.c
+> >>  F:	include/dt-bindings/clock/rp1.h
+> >>  F:	include/dt-bindings/misc/rp1.h
+> >> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> >> new file mode 100644
+> >> index 000000000000..d80178a278ee
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> >> @@ -0,0 +1,152 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> >> +
+> >> +#include <dt-bindings/gpio/gpio.h>
+> >> +#include <dt-bindings/interrupt-controller/irq.h>
+> >> +#include <dt-bindings/clock/rp1.h>
+> >> +#include <dt-bindings/misc/rp1.h>
+> >> +
+> >> +/dts-v1/;
+> >> +/plugin/;
+> >> +
+> >> +/ {
+> >> +	fragment@0 {
+> >> +		target-path="";
+> >> +		__overlay__ {
+> >> +			#address-cells = <3>;
+> >> +			#size-cells = <2>;
+> >> +
+> >> +			rp1: rp1@0 {
+> >> +				compatible = "simple-bus";
+> >> +				#address-cells = <2>;
+> >> +				#size-cells = <2>;
+> >> +				interrupt-controller;
+> >> +				interrupt-parent = <&rp1>;
+> >> +				#interrupt-cells = <2>;
+> >> +
+> >> +				// ranges and dma-ranges must be provided by the includer
+> >> +				ranges = <0xc0 0x40000000
+> >> +					  0x01/*0x02000000*/ 0x00 0x00000000
+> >> +					  0x00 0x00400000>;
+> > 
+> > Are you 100% sure you do not have here dtc W=1 warnings?
 > 
-> Good point, I wouldn't apply this patch as well as a few others in this series
-> due to this reason.
-> 
-> Instead it might make sense to add a comment on top of devm_clk_get() to
-> explain why _enabled() variant is *not* used.
+> One more thing, I do not see this overlay applied to any target, which
+> means it cannot be tested. You miss entry in Makefile.
+>
 
-Or maybe stop doing brainded conversions to new APIs.
+The dtso is intended to be built from driver/misc/rp1/Makefile as it will
+be included in the driver obj:
 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+--- /dev/null
++++ b/drivers/misc/rp1/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++rp1-pci-objs                   := rp1-pci.o rp1-pci.dtbo.o
++obj-$(CONFIG_MISC_RP1)         += rp1-pci.o
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+and not as part of the dtb system, hence it's m issing in
+arch/arm64/boot/dts/broadcom/Makefile.
+
+On the other hand:
+
+#> make W=1 CHECK_DTBS=y broadcom/rp1.dtbo
+  DTC     arch/arm64/boot/dts/broadcom/rp1.dtbo
+arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+
+seems to do the checks, unless I'm missing something.
+
+Thanks,
+Andrea
+
+> Best regards,
+> Krzysztof
+> 
 
