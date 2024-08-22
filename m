@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-297290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634D495B576
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:54:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A3195B57C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 14:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0FD4B22876
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:54:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0F62846C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 12:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B121C9DF6;
-	Thu, 22 Aug 2024 12:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TrGogDpB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD541C9DED;
+	Thu, 22 Aug 2024 12:56:31 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DE01C9DD5;
-	Thu, 22 Aug 2024 12:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716701C93D4
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 12:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724331239; cv=none; b=Hla/wULghjp1kttZHS361hoTVX2BdD1T2kgoTsVZwdzGuOOW47ZdndcmL8lXfSSFpXHBoYQaZY4XfsshlwPfFkrUpvAx77SpeccZydcazmduE+Ar1dUHRFID8NLj4D5tN5QFf153pK2ecJiSUnN/cauzNISh6nSV5PoYslD7rLQ=
+	t=1724331390; cv=none; b=rpmfiJUff+mWnjeAPjTzhY0sKYpbHmPnZMXZMzur63IutZHYyXCtjoKXNgJTmsQ/19ojODg58kNy6ZZKrFYb7dV6VRPsWmFdgzAp6pnxc7yp/pXn+pO6ACJryMsRwySjmLFO22qXDUKTWodHa5LGHILX2vQvU/79LcCR/jok2e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724331239; c=relaxed/simple;
-	bh=lXfQj2ixlufIrGTlDs+DNtXFGog9eo66LzDYym0DNL4=;
+	s=arc-20240116; t=1724331390; c=relaxed/simple;
+	bh=VvngIUKtbPcRiyndIMGrmlcDBJTAHeu5snYICi/jOIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVi0D00in6do73NLMJi7YiMUqDEJI7phPd8n1xZOeuzfsUYMbo0V5tKWvprTcJA/TLYwt6ZtLaa00nhVG9Ksmr8GiM3m8KULSVN8inwps8ASrgVHWUNr48trn8XHzkZDewtQb9iXX5Ky0zP34NYY+erKIik0rO7bVj2fJVnJzeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TrGogDpB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A23C32782;
-	Thu, 22 Aug 2024 12:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724331239;
-	bh=lXfQj2ixlufIrGTlDs+DNtXFGog9eo66LzDYym0DNL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TrGogDpBLxwTxdeFy+UZreiAuTkPm/RlTtlzzb+QWPzc1COWQvGQ2/LkiPJ7Ion9g
-	 GfydYguMqxzpZ1elCzdYmUBu2aeGZalzSLxlRZVTTJ2FGBulWhiRiihfh2rnZ7n2B6
-	 mEAE66dvZ5ufi+6Vg3z5WYTRQ8OptjypkYCTCrSaBYZqrHIDBNaqzVYRRm4/QCNgtY
-	 H4KaXt7gNcExCJueXDRajBNDHhcJePoQsHFtRpziaX+pSeKux5A8sJ/hKK08qJo8D+
-	 Y1pGqhFnMbi8TFBiy/v/kO5icUEKbM0BnzPScrzaz/gQ5WNEarJ+bTM/srXr9JXrjt
-	 jmxNcC8iEAGPg==
-Date: Thu, 22 Aug 2024 13:53:55 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yang Ruibin <11162571@vivo.com>
-Cc: Chris Snook <chris.snook@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] drivers:atlx:Use max macro
-Message-ID: <20240822125355.GP2164@kernel.org>
-References: <20240822075004.1367899-1-11162571@vivo.com>
- <3f994754-2005-420d-9be4-33d7288bc811@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+UB1MU16SU6KqssH1uCCywMiZfU0G2mmclpknUWIlJYfQIo1GhiHipWkaWKCbcErigkHK0JT47WHRe993DrXPJvYBRzufwe3pYtEDGRSRcRrkrwHUnrAvgks3BlhPBRU94sxhXtChgJ6fQnlJawDRj4D6fo+AkKMwoju/4Oevg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sh7MY-00051F-O0; Thu, 22 Aug 2024 14:56:26 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sh7MX-002Fme-Rr; Thu, 22 Aug 2024 14:56:25 +0200
+Received: from sha by dude02.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sh7MX-007vXj-2Y;
+	Thu, 22 Aug 2024 14:56:25 +0200
+Date: Thu, 22 Aug 2024 14:56:25 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvalo@kernel.org, johannes@sipsolutions.net,
+	briannorris@chromium.org, francesco@dolcini.it,
+	tsung-hsien.hsieh@nxp.com, kernel@pengutronix.de
+Subject: Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to support iw61x
+Message-ID: <Zsc1efkBHDXdZtfJ@pengutronix.de>
+References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f994754-2005-420d-9be4-33d7288bc811@vivo.com>
+In-Reply-To: <20240809094533.1660-1-yu-hao.lin@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2024 at 05:40:28PM +0800, Yang Ruibin wrote:
-> Sorry, please ignore this patch.
-> Because the corresponding header file is not included, there may be
-> compilation errors.
-
-Hi Yang Ruibin,
-
-Thanks for your patch.
-
-Some feedback from a process point of view, for future reference.
-
-1. Please do not top-post in emails to Kernel mailing lists.
-
-2. As a Networking patch, that is not a bug fix, it should
-   be explicitly targeted at net-next.
-
-   Subject: [PATCH net-next] ...
-
-3. Looking at git history, it looks like 'net: atheros: ' would be an
-   appropriate prefix for this patch.
-
-   Subject: [PATCH net-next] net: atheros: ...
-
-Please consider reading
-https://docs.kernel.org/process/maintainer-netdev.html
-
-And please, if you do post a new version, allow 24h to pass since the you
-posted this version (as described in the link above).
-
+On Fri, Aug 09, 2024 at 05:44:50PM +0800, David Lin wrote:
+> This series adds support for IW61x which is a new family of 2.4/5 GHz
+> dual-band 1x1 Wi-Fi 6, Bluetooth/Bluetooth Low Energy 5.2 and 15.4
+> tri-radio single chip by NXP. These devices support 20/40/80MHz
+> single spatial stream in both STA and AP mode. Communication to the
+> IW61x is done via SDIO interface
 > 
-> 在 2024/8/22 15:50, Yang Ruibin 写道:
-> > Instead of using the max() implementation of
-> > the ternary operator, use real macros.
-> > 
-> > Signed-off-by: Yang Ruibin <11162571@vivo.com>
-> > ---
-> >   drivers/net/ethernet/atheros/atlx/atl2.c | 5 +----
-> >   1 file changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
-> > index fa9a4919f..3ff669e72 100644
-> > --- a/drivers/net/ethernet/atheros/atlx/atl2.c
-> > +++ b/drivers/net/ethernet/atheros/atlx/atl2.c
-> > @@ -2971,10 +2971,7 @@ static void atl2_check_options(struct atl2_adapter *adapter)
-> >   #endif
-> >   	/* init RXD Flow control value */
-> >   	adapter->hw.fc_rxd_hi = (adapter->rxd_ring_size / 8) * 7;
-> > -	adapter->hw.fc_rxd_lo = (ATL2_MIN_RXD_COUNT / 8) >
-> > -		(adapter->rxd_ring_size / 12) ? (ATL2_MIN_RXD_COUNT / 8) :
-> > -		(adapter->rxd_ring_size / 12);
-> > -
-> > +	adapter->hw.fc_rxd_lo = max(ATL2_MIN_RXD_COUNT / 8, adapter->rxd_ring_size / 12);
-
-Networking code still prefers lines to be 80 colimns wide or less.
-In this case, I would suggest:
-
-	adapter->hw.fc_rxd_lo = max(ATL2_MIN_RXD_COUNT / 8,
-				    adapter->rxd_ring_size / 12);
-
-> >   	/* Interrupt Moderate Timer */
-> >   	opt.type = range_option;
-> >   	opt.name = "Interrupt Moderate Timer";
+> This driver is a derivative of existing Mwifiex [1] and based on similar
+> full-MAC architecture [2]. It has been tested with i.MX8M Mini evaluation
+> kits in both AP and STA mode.
 > 
+> All code passes sparse and checkpatch
+> 
+> Data sheet (require registration):
+> https://www.nxp.com/products/wireless-connectivity/wi-fi-plus-bluetooth-
+> plus-802-15-4/2-4-5-ghz-dual-band-1x1-wi-fi-6-802-11ax-plus-bluetooth-5-
+> 4-plus-802-15-4-tri-radio-solution:IW612
+> 
+> Known gaps to be addressed in the following patches,
+>   - Enable 11ax capabilities. This initial patch support up to 11ac.
+>   - Support DFS channel. This initial patch doesn't support DFS channel in
+>     both AP/STA mode.
+> 
+> This patch is presented as a request for comment with the intention of being
+> made into a patch after initial feedbacks are addressed
+> 
+> [1] We had considered adding IW61x to mwifiex driver, however due to
+>     FW architecture, host command interface and supported features are
+>     significantly different, we have to create the new nxpwifi driver.
+>     Subsequent NXP chipsets will be added and sustained in this new driver.
+
+I added IW61x support to the mwifiex driver and besides the VDLL
+handling which must be added I didn't notice any differences. There
+might be other differences, but I doubt that these can't be integrated
+into the mwifiex driver.
+
+Honestly I don't think adding a new driver is a good ideai, given how big
+wifi drivers are and how limited the review bandwidth is.
+
+What we'll end up with is that we'll receive the same patches for both
+drivers, or worse, only for one driver while the other stays unpatched.
+
+I even found some of the bugs and deficiencies I am just fixing for the
+mwifiex driver in the nxpwifi driver as well. So please direct your
+effort to improving the existing driver rather than putting more burden
+to the maintainers by adding a new driver. I am sure this is the faster
+path to get the necessary changes upstream, plus users of the mwifiex
+driver will profit from these changes as well.
+
+Of course I don't have to decide this. The wifi maintainer(s) will have
+the final word, but these are my 2 cents on this topic.
+
+Sascha
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
