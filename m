@@ -1,76 +1,97 @@
-Return-Path: <linux-kernel+bounces-298005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7182695C04C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:37:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AF595C058
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 23:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DC21C23212
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:37:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775E91C21A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 21:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A731D1752;
-	Thu, 22 Aug 2024 21:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC78E1D1757;
+	Thu, 22 Aug 2024 21:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tpaz0k2p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IyhLNEty"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E4F1D172E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 21:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824BAA933;
+	Thu, 22 Aug 2024 21:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724362630; cv=none; b=CU6VZxXOSDu+hsSCLjzqhZtJpZvCNfzUy3T+2ExmhZjFXta+FnXhD9VnMV1HUv8HBCQQVdTneZnC1c26/4AQwABLfbEmHv19UWKMuZprG0F0PhBj74Lhat4RXeB5KrHwzPinCtE+LPRzWUEX7KKN6TM3bLKHS4pjHrCNWcxXA9k=
+	t=1724362758; cv=none; b=SkVWiBTY2+wmnOd3ShkMB3Au+YBX9OBPlZ21IkZSg+DUsP2B/lZq5N+o62oc2IZjoD1Ja+9pucdDX8+q1Mwe9Ch/HeNhjFthXUIBNWU6uuWDKcwD31zYtL/uZlK+oxRudg5v/aOyXNvtop0N0CimEkqZpbZx1UDzOvCyxEaniE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724362630; c=relaxed/simple;
-	bh=icQnrCzDD/QHiymbI340Kuyyn1Ca7Gddfa0MRaGXDZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jsJMTlwxQl8CKWT+Jkr/sD5pzAA9ajLXW1qt/IRcxg57i9tpU8PyXYrkCmmXq6zPAvqcS6127lrbXJVJYAF1kOAGk/itZA1WpXuHdpaQqVTtu+hq5deSayKOIA9mcoh6N8fdFgfXd6L7oAvGGrDqYLEAz61Dtkpy05rDACOzRV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tpaz0k2p; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724362627; x=1755898627;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=icQnrCzDD/QHiymbI340Kuyyn1Ca7Gddfa0MRaGXDZI=;
-  b=Tpaz0k2p/lp+dzutk4Lh+B+jqss4AoKZGCmAvL5hjwY6YBfmoLhDojCb
-   CYaVEFOmhv/wfONmxCevMOf+EZ86ztfqUeZQDDu7HPRgTS7X4+ReLUTec
-   P6CYKRqn1nnSPS1xOdwIbWsufqObjRcq2UGhxv2ieQdiUhHXsx7pCy2u6
-   /BlDvb+KgLx7MayIRPZDQvp0kJXr3f+pkIncbgkRtmd1D7yJrRPp+jwVO
-   AzQ7/LftdjEaxB1BAp7GMMFTtdZB/sUyOTWvReq5Lkkw+3Qd16HjWLtWL
-   Q1JLkFk0PufqaTsyRIJGSLmdWFb6wnrhIk4zoloovegiHl0PnsTJ5rhyo
-   w==;
-X-CSE-ConnectionGUID: KoIXWBvSR5Wwd+0M0ui3bg==
-X-CSE-MsgGUID: UEjoVyPCRAW7e7L3QHNH2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22973251"
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="22973251"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 14:37:07 -0700
-X-CSE-ConnectionGUID: 2ffUV8QAQHuprfxMizfYwQ==
-X-CSE-MsgGUID: RQy+U63LR4mpzcCdL5sW/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="66487955"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 22 Aug 2024 14:37:05 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shFUM-000DD6-0d;
-	Thu, 22 Aug 2024 21:37:02 +0000
-Date: Fri, 23 Aug 2024 05:36:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yue Haibing <yuehaibing@huawei.com>, anup@brainfault.org,
-	tglx@linutronix.de, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, ruanjinjie@huawei.com, bjorn@rivosinc.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, yuehaibing@huawei.com
-Subject: Re: [PATCH -next] irqchip/riscv-aplic: Fix NULL vs IS_ERR() bug
-Message-ID: <202408230558.er4j09Nd-lkp@intel.com>
-References: <20240820132857.247679-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1724362758; c=relaxed/simple;
+	bh=+39veRksgq9Q04CTRb52aRC0jGhyFgQuRQSLZwaTmY0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PxD5KIE0AN1paqWTSlz73dgGxxXXVEc8135tHnEaNxBY3/qF41RLrPveBj7DZOCq9VTgwsk+H5Zj6o42I+9OnVX8mvqW7rMFhuEpJcUJTHbptiDDlTbU7tK375/+lad/UWiva/IoNAZtuAEBqJlW/wjuaI6+cKcwlMzS+YZyhdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IyhLNEty; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7bcf8077742so934014a12.0;
+        Thu, 22 Aug 2024 14:39:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724362756; x=1724967556; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lapMsfxqEHGeVn8F/nOKzcEtprNP+KFTP6KpIca0dc=;
+        b=IyhLNEtyWdoLCIRIGv/+8iLplWqiyB8kgODtehKAgLGoLfTcMUfC9N/nx69Fgizws9
+         95sVkads7Di/CGo1sKkistOmgM4h7oQteZ44DhMAwWoCvpWm7LSVfV8u1c3Hqp+5HCIk
+         LqTp2L9vCjwTYqerIxydIR9HidBMdbjGHnsdnGKM7Zir0pHxwgl/9ZVwSYUSHqASGxbP
+         H16nq551WfAXYJYDaqfiemvSqyhZWBkNiZB0hSRhfOZ3zhBAMjrTeQrzM/oCIkygC91u
+         Tpgds3uuRzcn/7jUJeacpZsZzZH+cbLlOxnQbVzK5VXNOHb/VP87gNZRLXVbtkcqwZql
+         IAqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724362756; x=1724967556;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4lapMsfxqEHGeVn8F/nOKzcEtprNP+KFTP6KpIca0dc=;
+        b=oIzJiauqsh3upcsKd3Si+MzhjObiyDF90tjzdPL3Q0IVeCoP7iG7l6D++6cVqqE1MF
+         OQv88QJmENpvjj4pr3hPEbtKmE4zcOMAW/3C+lOg61jeS7AsG/6Wr+QMIaU1u58eVm13
+         8nvwzKn46NDOeo8s+Pa9Qsxhf10ScHuQj89fYRJYSy5l7+ACWwZFNHRqmRnfvDyQsjzl
+         SCqLtinJfkWDZi87haJbC/2TPOBXuZ3S8EShiaiLpb8ne4sLxhxvygNULCa1pOHFZoM2
+         0tvtWAKe2CcIlA0bQXPDsuJyf+Y7Rt6Kux/GEodShc7nEuWHsqpF5aDpWyzs2Ja1s9TS
+         q0Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxszB6yxUOMXikt+d814EX9je2k2lm4qKEX/NpuMgpITBEk3FhQY+LmXRG89420KJVhy2N/v4Ra8gq@vger.kernel.org, AJvYcCWP1YGtLFQ+qCXho1IPr+W3U5k6x0YsmD4FxKHanntRJoLyyRy/waUzMRYdizPvHIBQWEAVCoZTu61LSEz5@vger.kernel.org, AJvYcCXIe/Kqbr+NZi7RHIQs9wBQmnwXzbN6DGfInM+JjuhSzh4JEebT/fH0PA/uMVyOY7oI4rF/fJ8YPnLo5w==@vger.kernel.org, AJvYcCXud81Ik1puSbhcZRs6L/NLuvML9ohPtD7Wxrhisr9stW90TG7M+0rZRYhZhWFzS8IIG9In9J1qdujZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPd942kkeztXTkMAlRghvmBkRFiIgoAWQwuvg9W6AKm0iwmAGz
+	bWK77Er5CTNX0IxzPT6f0A2pR5ZOlONkdHpn/6i9LUl1bMo9dEwE
+X-Google-Smtp-Source: AGHT+IEOtp11CIsD6bvJ9HhdPD7yo7y8zut7NgWkbt/YY3g8PaQOXy2xj43HqtE9c5QlyIIaVo8m0A==
+X-Received: by 2002:a05:6a20:2d13:b0:1c6:ed5e:24f with SMTP id adf61e73a8af0-1cc89d7dde9mr472696637.23.1724362755692;
+        Thu, 22 Aug 2024 14:39:15 -0700 (PDT)
+Received: from fan ([2601:646:8f03:9fee:3cd4:f45f:79d:1096])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714343405f6sm1822047b3a.186.2024.08.22.14.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 14:39:15 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Thu, 22 Aug 2024 14:39:12 -0700
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: Re: [PATCH v3 14/25] cxl/events: Split event msgnum configuration
+ from irq setup
+Message-ID: <ZsewAA6VxM4U4inw@fan>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-14-7c9b96cba6d7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,117 +100,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240820132857.247679-1-yuehaibing@huawei.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-14-7c9b96cba6d7@intel.com>
 
-Hi Yue,
+On Fri, Aug 16, 2024 at 09:44:22AM -0500, Ira Weiny wrote:
+> Dynamic Capacity Devices (DCD) require event interrupts to process
+> memory addition or removal.  BIOS may have control over non-DCD event
+> processing.  DCD interrupt configuration needs to be separate from
+> memory event interrupt configuration.
+> 
+> Split cxl_event_config_msgnums() from irq setup in preparation for
+> separate DCD interrupts configuration.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-[auto build test ERROR on next-20240820]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yue-Haibing/irqchip-riscv-aplic-Fix-NULL-vs-IS_ERR-bug/20240820-213521
-base:   next-20240820
-patch link:    https://lore.kernel.org/r/20240820132857.247679-1-yuehaibing%40huawei.com
-patch subject: [PATCH -next] irqchip/riscv-aplic: Fix NULL vs IS_ERR() bug
-config: riscv-allnoconfig (https://download.01.org/0day-ci/archive/20240823/202408230558.er4j09Nd-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408230558.er4j09Nd-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408230558.er4j09Nd-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/irqchip/irq-riscv-aplic-main.c: In function 'aplic_probe':
->> drivers/irqchip/irq-riscv-aplic-main.c:178:9: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
-     178 |         if (IS_ERR(regs))
-         |         ^~
-   drivers/irqchip/irq-riscv-aplic-main.c:180:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
-     180 |                 return PTR_ERR(regs);
-         |                 ^~~~~~
->> drivers/irqchip/irq-riscv-aplic-main.c:174:13: warning: unused variable 'rc' [-Wunused-variable]
-     174 |         int rc;
-         |             ^~
->> drivers/irqchip/irq-riscv-aplic-main.c:172:14: warning: unused variable 'msi_mode' [-Wunused-variable]
-     172 |         bool msi_mode = false;
-         |              ^~~~~~~~
-   drivers/irqchip/irq-riscv-aplic-main.c: At top level:
->> drivers/irqchip/irq-riscv-aplic-main.c:187:9: warning: data definition has no type or storage class
-     187 |         msi_mode = of_property_present(to_of_node(dev->fwnode), "msi-parent");
-         |         ^~~~~~~~
->> drivers/irqchip/irq-riscv-aplic-main.c:187:9: error: type defaults to 'int' in declaration of 'msi_mode' [-Wimplicit-int]
-   In file included from drivers/irqchip/irq-riscv-aplic-main.c:10:
->> include/linux/of.h:168:9: error: braced-group within expression allowed only inside a function
-     168 |         ({                                                              \
-         |         ^
-   drivers/irqchip/irq-riscv-aplic-main.c:187:40: note: in expansion of macro 'to_of_node'
-     187 |         msi_mode = of_property_present(to_of_node(dev->fwnode), "msi-parent");
-         |                                        ^~~~~~~~~~
->> drivers/irqchip/irq-riscv-aplic-main.c:188:9: error: expected identifier or '(' before 'if'
-     188 |         if (msi_mode)
-         |         ^~
->> drivers/irqchip/irq-riscv-aplic-main.c:190:9: error: expected identifier or '(' before 'else'
-     190 |         else
-         |         ^~~~
-   drivers/irqchip/irq-riscv-aplic-main.c:192:9: error: expected identifier or '(' before 'if'
-     192 |         if (rc)
-         |         ^~
-   In file included from include/linux/device.h:15,
-                    from include/linux/platform_device.h:13,
-                    from drivers/irqchip/irq-riscv-aplic-main.c:12:
->> include/linux/dev_printk.h:111:10: error: expected identifier or '(' before ')' token
-     111 |         })
-         |          ^
-   include/linux/dev_printk.h:154:9: note: in expansion of macro 'dev_printk_index_wrap'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   drivers/irqchip/irq-riscv-aplic-main.c:193:17: note: in expansion of macro 'dev_err'
-     193 |                 dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mode ? "MSI" : "direct");
-         |                 ^~~~~~~
->> drivers/irqchip/irq-riscv-aplic-main.c:195:9: error: expected identifier or '(' before 'return'
-     195 |         return rc;
-         |         ^~~~~~
->> drivers/irqchip/irq-riscv-aplic-main.c:196:1: error: expected identifier or '(' before '}' token
-     196 | }
-         | ^
-
-
-vim +187 drivers/irqchip/irq-riscv-aplic-main.c
-
-2333df5ae51ead Anup Patel  2024-03-07  168  
-2333df5ae51ead Anup Patel  2024-03-07  169  static int aplic_probe(struct platform_device *pdev)
-2333df5ae51ead Anup Patel  2024-03-07  170  {
-2333df5ae51ead Anup Patel  2024-03-07  171  	struct device *dev = &pdev->dev;
-2333df5ae51ead Anup Patel  2024-03-07 @172  	bool msi_mode = false;
-2333df5ae51ead Anup Patel  2024-03-07  173  	void __iomem *regs;
-2333df5ae51ead Anup Patel  2024-03-07 @174  	int rc;
-2333df5ae51ead Anup Patel  2024-03-07  175  
-2333df5ae51ead Anup Patel  2024-03-07  176  	/* Map the MMIO registers */
-2333df5ae51ead Anup Patel  2024-03-07  177  	regs = devm_platform_ioremap_resource(pdev, 0);
-bb109b384dab1e Yue Haibing 2024-08-20 @178  	if (IS_ERR(regs))
-2333df5ae51ead Anup Patel  2024-03-07  179  		dev_err(dev, "failed map MMIO registers\n");
-bb109b384dab1e Yue Haibing 2024-08-20  180  		return PTR_ERR(regs);
-2333df5ae51ead Anup Patel  2024-03-07  181  	}
-2333df5ae51ead Anup Patel  2024-03-07  182  
-2333df5ae51ead Anup Patel  2024-03-07  183  	/*
-2333df5ae51ead Anup Patel  2024-03-07  184  	 * If msi-parent property is present then setup APLIC MSI
-2333df5ae51ead Anup Patel  2024-03-07  185  	 * mode otherwise setup APLIC direct mode.
-2333df5ae51ead Anup Patel  2024-03-07  186  	 */
-2333df5ae51ead Anup Patel  2024-03-07 @187  	msi_mode = of_property_present(to_of_node(dev->fwnode), "msi-parent");
-2333df5ae51ead Anup Patel  2024-03-07 @188  	if (msi_mode)
-ca8df97fe6798a Anup Patel  2024-03-07  189  		rc = aplic_msi_setup(dev, regs);
-2333df5ae51ead Anup Patel  2024-03-07 @190  	else
-2333df5ae51ead Anup Patel  2024-03-07  191  		rc = aplic_direct_setup(dev, regs);
-2333df5ae51ead Anup Patel  2024-03-07  192  	if (rc)
-2333df5ae51ead Anup Patel  2024-03-07  193  		dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mode ? "MSI" : "direct");
-2333df5ae51ead Anup Patel  2024-03-07  194  
-2333df5ae51ead Anup Patel  2024-03-07 @195  	return rc;
-2333df5ae51ead Anup Patel  2024-03-07 @196  }
-2333df5ae51ead Anup Patel  2024-03-07  197  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  drivers/cxl/pci.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index f7f03599bc83..17bea49bbf4d 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -698,35 +698,31 @@ static int cxl_event_config_msgnums(struct cxl_memdev_state *mds,
+>  	return cxl_event_get_int_policy(mds, policy);
+>  }
+>  
+> -static int cxl_event_irqsetup(struct cxl_memdev_state *mds)
+> +static int cxl_event_irqsetup(struct cxl_memdev_state *mds,
+> +			      struct cxl_event_interrupt_policy *policy)
+>  {
+>  	struct cxl_dev_state *cxlds = &mds->cxlds;
+> -	struct cxl_event_interrupt_policy policy;
+>  	int rc;
+>  
+> -	rc = cxl_event_config_msgnums(mds, &policy);
+> -	if (rc)
+> -		return rc;
+> -
+> -	rc = cxl_event_req_irq(cxlds, policy.info_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->info_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Info log\n");
+>  		return rc;
+>  	}
+>  
+> -	rc = cxl_event_req_irq(cxlds, policy.warn_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->warn_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Warn log\n");
+>  		return rc;
+>  	}
+>  
+> -	rc = cxl_event_req_irq(cxlds, policy.failure_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->failure_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Failure log\n");
+>  		return rc;
+>  	}
+>  
+> -	rc = cxl_event_req_irq(cxlds, policy.fatal_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->fatal_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Fatal log\n");
+>  		return rc;
+> @@ -745,7 +741,7 @@ static bool cxl_event_int_is_fw(u8 setting)
+>  static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  			    struct cxl_memdev_state *mds, bool irq_avail)
+>  {
+> -	struct cxl_event_interrupt_policy policy;
+> +	struct cxl_event_interrupt_policy policy = { 0 };
+>  	int rc;
+>  
+>  	/*
+> @@ -773,11 +769,15 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  		return -EBUSY;
+>  	}
+>  
+> +	rc = cxl_event_config_msgnums(mds, &policy);
+> +	if (rc)
+> +		return rc;
+> +
+>  	rc = cxl_mem_alloc_event_buf(mds);
+>  	if (rc)
+>  		return rc;
+>  
+> -	rc = cxl_event_irqsetup(mds);
+> +	rc = cxl_event_irqsetup(mds, &policy);
+>  	if (rc)
+>  		return rc;
+>  
+> 
+> -- 
+> 2.45.2
+> 
 
