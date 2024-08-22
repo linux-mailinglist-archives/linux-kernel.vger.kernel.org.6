@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-297605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-297606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196C495BB60
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:08:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C4195BB5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 18:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0618B28DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:07:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661781C22C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 16:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273A91CCB35;
-	Thu, 22 Aug 2024 16:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840BA1CCECF;
+	Thu, 22 Aug 2024 16:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="IiOdQCtl"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlzsDJsS"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBB31CCB54;
-	Thu, 22 Aug 2024 16:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724342818; cv=fail; b=sCcl/GnYDDV6czL3TDCcITGq6LT+L8Ne67kT3G1LdqgvtxNUHcAUmB2lun+ixoJO/h3bUYuWxP7xoUWktvBbLXfWhJ7oP4KxTbqJTgvyYB5+6CC+8JY13uJQOsrSSq1IpAl2bktVDT0z3LmjdEefrN/POo7FuReEUvzgwOErumQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724342818; c=relaxed/simple;
-	bh=szhiMziUhwaGgaXmBpgFym+971vjqi0D7Sei4IljdYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mS7UypqSe9zGG9vlGOErHVe01Mc0sRSkrLvM2cX0+GUOIVOKVXR9wliHmpdYbn5gec4FxIpoV1mJGBaseqCzxrACfbNvtm0pWpThVjyMlWOWtL5pHGJOok7TTo2fi0T+JE+Sx9CfaCfyzCv1FTjJ5OKb/hN9minYP1GqCePXoXQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=fail (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=IiOdQCtl reason="signature verification failed"; arc=fail smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: angelogioacchino.delregno@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724342797; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OhKSG5vD8zTqFxCWiUl939PMcq1y48WA22QvvGEuDbpgijj5N2ppSwWR4N4F2Rr+30HtzvJSK2cUgdlddAXK3+aGm7Y1N9znVNNbl/aZydonZeTHopWdaBhLN9ncVlHV2ljQAuKOHgAPTWvXJEPUn90+uj3IgACEFeyO62ULfww=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724342797; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=87tmlEsafAzofaY1NSGv3qtcgJLjPPfLzmQEl9/8F0A=; 
-	b=jhF31cqoR7O8s++GB+a2HDMnjCnOQH9ETIcdtn3PcjmlesTGzGbdCtPyYhdDtQ9H8gt1YqniUSjEiZtmpLgnLfdWJp3YdG9eM36wEt8yojHSxDg9FKIWRd6YtQ5nUtFWtutv/kf5XLj042qo/8NWTUDZBs1MHkAAAOp/SCq8TU0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
-	dmarc=pass header.from=<nfraprado@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724342797;
-	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=87tmlEsafAzofaY1NSGv3qtcgJLjPPfLzmQEl9/8F0A=;
-	b=IiOdQCtl4ydhm6JZ17+vy+2AW34dFmBecENcFxD+RkyMDd0bUHMCglExIoeTChTu
-	lphYP9EC7nOoXwTf/9xC3ND/TOyvdx9JE+mmrdxrHLPPWG4+UENuRMezwCIvR7XHw2I
-	85qNfHVQ6eb2WS8Bt+WuLi37hlCMKbWAVEOKa7Aw=
-Received: by mx.zohomail.com with SMTPS id 1724342794590410.25595519500223;
-	Thu, 22 Aug 2024 09:06:34 -0700 (PDT)
-Date: Thu, 22 Aug 2024 12:06:31 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Rohit Agarwal <rohiagar@chromium.org>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
-	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, ck.hu@mediatek.com,
-	jitao.shi@mediatek.com, dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/3] arm64: dts: mediatek: mt8186: Add svs node
-Message-ID: <545e9e80-5b38-40f5-9a23-ff5112b13917@notapiano>
-References: <20240822064650.1473930-1-rohiagar@chromium.org>
- <20240822064650.1473930-4-rohiagar@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5791CCB32;
+	Thu, 22 Aug 2024 16:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724342873; cv=none; b=SXyKAZGwqJWhMt6/PNA9nHr2EYiT1a2+kBNQkNqqX0knUNflH1BBILxsouHNNEgMW1Uj0Ra0teA82CWYt+T81GZ+0iTsfhsYVb6SWKISaHOwfPWuAU1brLMbiJjq4QVz7monyQMbeRrW8T+UhOsQFCkQPWuwnLKxD3i+9gGKsFE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724342873; c=relaxed/simple;
+	bh=cUzKD+tbdq4LCnt/hKs7v+W/NuTP44c3Dn9kHLS0iE4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RCCRxIyprG9nVJGbWn70l7yyfE+fJ+fxrUwBknfSXTxlPx6vgq+b5pua2kUwLbpMtHJMKSwgCBrWboxsVDUaAnHwwMdJuZNsJbREM8XVzJif8mq8CHyHrUXm8cPu+CnP2mK5uA1rWUbVdPFj9g/1Db5/zp+MYWwGMn6x4SIOTnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlzsDJsS; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bf006f37daso1680271a12.1;
+        Thu, 22 Aug 2024 09:07:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724342870; x=1724947670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IEbh7R+lyfHz4shEop2PmKNu/aR/WKGPaVWFITmcvSs=;
+        b=RlzsDJsShzecQDul2EyWbgMQSI/Nol9RKu93SOonmHaVgnjQ+KtlLl1wZ3L0alNqMz
+         UsQM5uZnLhP6lAPyTTeWLppOdV+937A+88FyaBSJ51DRpJ0d0Lr3md30x9vFI5AdVMCR
+         5yDa1J+TbD8OwHESkI4g6NWsVcPumr6tOoPNF4ZmSMx8WJzPBpMILykedhaTptawgfLC
+         fWzofLcU2nrwy8rt36RffDI7iLd7aDgVGF7d6mE9X49x4p3nJgiBh2XKry6zXLYxcljQ
+         /g8rWs/RNBJqA3bg2yzUSbZvbDjWPIXRHwLQOFTgUeqNAXMSYJYKog5j3KW+cbxPsbxz
+         v/mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724342870; x=1724947670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IEbh7R+lyfHz4shEop2PmKNu/aR/WKGPaVWFITmcvSs=;
+        b=n+zbU3Pn+aVaTq7oV1zA5jbDv5bzIlaUfRTf4R9x7gQ7cmNjshs2LjHlygVjivT+lx
+         kR1TSAZxM8BD4u9TZzunmP48VdPmNZ3CLqCA/DALLSBl7ZSXi7fabFO89UtDUdIUFeMQ
+         mwVvTtKnxMfoUl+w+OUkZfywkdODAoGEdi9LBg4fKUry2ewsig3hv6OMmfZuvPYU0YaW
+         dl4l6FuqJrHp04IvzRD/OowsJDT4AnPFqIXSIVAMDNrvSp+n8/ljMCrMgxWxRjTwIVUr
+         J/iS1RtTdA8C2tCEsXpJYtB3BWwd76nrq0CRYN8RuBzc4FwAvZ93h9qOiVG7DFsbtC2+
+         7riQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmVr9v09/M4DkpDsXD9rviw2hVgftGJ/8OJ36kQKuVY1HLtpuEOK9EADPgcGDkyV3mS3KhGdEZtHVlnA==@vger.kernel.org, AJvYcCXjOdaHhL+nyjfptqlQZRIbr/qhBCTnmIT2hPI3NAhRtlRaNTg8tzR8AUxHkdJ/tFoIov1vX3QCHuv6g3kU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8bMTmoDOgtxkwNmkByd+q2favdgiDuwQd1vu8AKdHjwXZQKY4
+	83fJL8AjocDdR8jF27woK9odADCU/Xpfc6JkFdSCchr+DUscXNFW
+X-Google-Smtp-Source: AGHT+IEQK0DXEj0cR9UbP/9Q3VS+SCXUX+hL3q26r9MJ66k5phO/X/TjOVexBqoVQB5Hw9KG2Ba+qQ==
+X-Received: by 2002:a05:6402:26c7:b0:58c:b2b8:31b2 with SMTP id 4fb4d7f45d1cf-5bf2c032b11mr3590049a12.17.1724342870286;
+        Thu, 22 Aug 2024 09:07:50 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3eac85sm1070680a12.48.2024.08.22.09.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 09:07:49 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: uclogic: make const read-only array touch_ring_model_params_buf static
+Date: Thu, 22 Aug 2024 17:07:49 +0100
+Message-Id: <20240822160749.635225-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240822064650.1473930-4-rohiagar@chromium.org>
-X-ZohoMailClient: External
 
-On Thu, Aug 22, 2024 at 06:46:50AM +0000, Rohit Agarwal wrote:
-> Add clock/irq/efuse setting in svs nodes for mt8186 SoC.
-> 
-> Signed-off-by: Rohit Agarwal <rohiagar@chromium.org>
-> ---
->  arch/arm64/boot/dts/mediatek/mt8186.dtsi | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8186.dtsi b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-> index e27c69ec8bdd..a51f3d8ce745 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-> @@ -1361,6 +1361,18 @@ spi0: spi@1100a000 {
->  			status = "disabled";
->  		};
->  
-> +		svs: svs@1100b000 {
+Don't populate the const read-only array touch_ring_model_params_buf on
+the stack at run time, instead make it static const.
 
-There's already another node at address 1100b000:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/hid/hid-uclogic-params.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-		lvts: thermal-sensor@1100b000
+diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
+index 5bab006ec165..d5277d2fd229 100644
+--- a/drivers/hid/hid-uclogic-params.c
++++ b/drivers/hid/hid-uclogic-params.c
+@@ -842,7 +842,7 @@ static int uclogic_params_huion_init(struct uclogic_params *params,
+ 	__u8 *params_ptr = NULL;
+ 	size_t params_len = 0;
+ 	/* Parameters string descriptor of a model with touch ring (HS610) */
+-	const __u8 touch_ring_model_params_buf[] = {
++	static const __u8 touch_ring_model_params_buf[] = {
+ 		0x13, 0x03, 0x70, 0xC6, 0x00, 0x06, 0x7C, 0x00,
+ 		0xFF, 0x1F, 0xD8, 0x13, 0x03, 0x0D, 0x10, 0x01,
+ 		0x04, 0x3C, 0x3E
+-- 
+2.39.2
 
-You should set the starting address of the SVS to 1100bc00 and decrease the
-iospace for lvts to avoid intersection. See this commit for a similar change on
-mt8195:
-https://lore.kernel.org/all/20231121125044.78642-21-angelogioacchino.delregno@collabora.com/
-
-Thanks,
-Nícolas
 
