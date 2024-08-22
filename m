@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-296652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6478695AD43
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:14:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E7F95AD44
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF842849F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DF561C22729
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 06:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBD5137930;
-	Thu, 22 Aug 2024 06:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D5B1369B6;
+	Thu, 22 Aug 2024 06:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mJ20HHwm"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TpbQDpsA"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06455136354
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A389713A244
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 06:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724307270; cv=none; b=SsyY9IIMrqjesGl27nJ1LoItXXXh1aezbLrlqJ8Hz/SnJdua2/OxHEiCxlZV3+Ot8lBl6XibGHO2qLxO963XOANOg/cx9LbhdmF3C5iqMHbm630EIe3Pwnp1nVuJh7D+zglWQQ8MyGcFOMvsXK9NF+NgXG7yxQZPkOGi2bn7IRc=
+	t=1724307277; cv=none; b=SCprq0OK9SoVpvABZqHkQqn5V3fdPCXiu3PIiEJgS6Dc0dcyU9Xtef+irSJeEeC9mf8tmjPdMobh5hWw6Gm1qNpfOQHRlmQtrTHKh/O2S11deWax54YtkC8bpzZDIDq2+gIqjDGSe3HgLjNWVJ0OmHlngi6zTpDjMqTnpPaEhRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724307270; c=relaxed/simple;
-	bh=X/AcZ0iF6xFu4GrGSjyIJXtGgZILgu9A7UJpP3PiaXI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P+twKY4W9F+l8fC6an+CP65tq2rpVIS2QsTK/Q452tcTthPo9fQXz5NUSny2tNg/oHVmfqFhKAblt/wCSDARcudNzQZy/YdOL/bPTb1Av10ZVoQ3+FGn+ZmphGW/aSOO2nNVXxPleoDco4O65rHJ3eFXTT5QD2Ojc0F4Pt/nyvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mJ20HHwm; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a864574429aso70963166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:14:28 -0700 (PDT)
+	s=arc-20240116; t=1724307277; c=relaxed/simple;
+	bh=/rSdYOdYMeRqOaO+TMmGEdD7Qe8n8BJwDT81AivhzJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObfQPL90w9qu5qCMNGyVaH63/ImdkcBjFnvBGFzogFX6ZxnSBJuuR+a5CXwitfS/OSCwllb/6lVUhSE31Df/MZZI1vSIEWvTQXJxyYYMhbL/zhnBAZy75jathEV18ASX2ofd+y73vRvLiCv0SeDKxMnh17eTlmTwDZ4RrnRtmUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TpbQDpsA; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86910caf9cso51055766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:14:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724307267; x=1724912067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gHVY5A23Y8dwzOpFT0v9pVJprbgTbddkPeBrxq5dkIA=;
-        b=mJ20HHwmH3Wi7ktyk38Vi4OG0lYhoMeZ0X1DGlQWCNbAVZa6fNeYPplen6RQ9LuCMT
-         WNk/pEZ+PZGU8m/LruwN2z6rlJOHfW1ZMcG2tjbN1AUqi9RQaZQYTG6FGsqBvhbR5iF6
-         CfZs8crGHgwgkoIb2EGCcWxk0O0kq9YH8dj7uqxQIrlDyGpWUNT7/UlH7XnzFr9e/RmZ
-         PisclOgYOTvc8ot8BVaHuZL430KgNuwX2Gv6M7/qcALfJI4eth8eq0mM6P7sVTOVfMlw
-         fgjIZji7RWTWspubB0QgTaTt5YKr2ZhOOvqwwL+IglOKESPSD2M0tcHlO8NSasQOi9Yt
-         gN3Q==
+        d=suse.com; s=google; t=1724307273; x=1724912073; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZPEC44IJXWEDzAV+m0lCiYSNN0EEVhCrFU2ANliNvBA=;
+        b=TpbQDpsAal9HUVUJqmR2wWYipfddmUCry88vrgQ101+nogjbGRd2gDnabNAE1BAIOA
+         18NPJigdlBeF5awisoTBien3c3a7FLCFTSJKKpFj5SNpIhq0hoo9uLljqvKmUFeH+wD3
+         Q4QoMe+O6bs0zXZRyTsxG7SRpVQdJWp7p/SVX6AtP4jztOCBfC04J9P1XB55TTvo6zgi
+         HMHzSd5Z9YKejPIr8tToYLRyaj7ngAIS2VIg+ojEv4OfJw/nzlbEpks7tOSvHy82ucha
+         Q7DaBBir8PUfRgtqvQ9P3kwHqAqlA8VASADiOkZw0hiuMOuPIAsj2ewqZ6+AOS78XYIV
+         k3Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724307267; x=1724912067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gHVY5A23Y8dwzOpFT0v9pVJprbgTbddkPeBrxq5dkIA=;
-        b=NKVNWAqzdfgOZnzqadd5c26FjcguDGCml+82uUkGzZvrJ7KWJVq8pDjtdDvGOq+yYc
-         anyzIqmTjQ1zdDM7Odafzz4Kt/cc6cNN0C39ODr+dnSMj9Lr/ErUvpb/yVe8MnTbe4U0
-         w/iRv7H3sAoevurOp4CEgD6M7le8bcyuvl7JAbsUDuntPFTZyZDzXy7SMOjgIlRfPC/m
-         sy0l0ieN++9ka5ZGLzVbokDaxnZBK4utXkzZ9Q62IRBEvJwxNwbEqJ1S2CCtiQaSvGx8
-         jNOdeCmrGPIyaJu8CYqHoqdYj2pMPKUVFMvOlioJ451A/2smogCSqFPgflsWs8Efwbr8
-         08pg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/gOKYC7kkRpDlSkQexEhCL/So7hJYnbMn+BSPjM1+4PjN3y0j+jQzVMKg12YeJMMO71yp/LDwsXdUtk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ5w7ZQ02DQJZ0UPaWypC3rLRPt4TYHPELtwQ+7dE/NDL6Ygun
-	crWoRDN5jjuRAOyX16ZW8eXS7BoFtkVrLmiFTiC9ZNMU53Zx/k+DJM+QLJw3cMM4IP+DL10GoQ4
-	FO8WUtsqqu8Uv8iUKWQJaOkXk6DkAnP1hshJI
-X-Google-Smtp-Source: AGHT+IGkLdWFXeWBo7YlNuCirWCunCos803uCba1zpN6dzXrFxr17xPZiWKxAd6Tc75MZT0p4qHJOxRwWMdf0abf0H8=
-X-Received: by 2002:a17:907:7d9f:b0:a72:9d25:8ad3 with SMTP id
- a640c23a62f3a-a8691abaf76mr63888666b.9.1724307266605; Wed, 21 Aug 2024
- 23:14:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724307273; x=1724912073;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZPEC44IJXWEDzAV+m0lCiYSNN0EEVhCrFU2ANliNvBA=;
+        b=swEf+o/xc+Z/QK53hJS6jtH5Ny4gji5sN4dxiCAqsbXH7SNBuStGTYXh/M4291nwo6
+         sHN2B93VvKbvILAeb39o6ByZ6b++Y/ydb+0Fxco0NHUGqUrTzrc1YnqeoV/gHPC4Cu1u
+         eG5Z3hAcCKOdUcPCoIW4SPtG0f7/Jk1YsQwqFBWGmFfhkvTetGNhiH2GHT/OFxc5N3GM
+         TPkqN5Ar6nLx9FGi9H8gshAk0RxWexKh/VR1y1mIvgmVTw/Clw0hNk4lasKUQSuEiYXX
+         aibJI1zMqVUSqyGDiSKjM1pEU21g05NrcSD5Ak4FH44xt3sE97ETsD6VQB69DZuyR5wJ
+         lkOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3km4eOAwZEGfPYo7OTZ1VJHDSs9Ggi/zOPUyZwz/FFGa1F411eiIFqHCA1ab898Kzkkj0mCsSooB9vQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl11yFnojzMk4iK77ihDwrhocdlVzvk1jpbq7z/TZF1wYk/wDN
+	D0qdXPm0SyGvlSIvi+aUl80jq6hWR2bcUa1f7wtPgJqGwU3PFWKi4rZrRN3i6+Hpo2ecYamrzVj
+	8
+X-Google-Smtp-Source: AGHT+IGoLzPDcFTYqAS6S4eK/IBENCXHYmzic40/YCA5fIAJ5izoag2uuC/jERmcYTsVI2KRI/6zOw==
+X-Received: by 2002:a17:907:7f25:b0:a80:c0ed:2145 with SMTP id a640c23a62f3a-a868a7dd834mr186424866b.2.1724307272752;
+        Wed, 21 Aug 2024 23:14:32 -0700 (PDT)
+Received: from localhost (109-81-92-13.rct.o2.cz. [109.81.92.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f48a5d0sm65466566b.159.2024.08.21.23.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 23:14:32 -0700 (PDT)
+Date: Thu, 22 Aug 2024 08:14:31 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Nhat Pham <nphamcs@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"yosryahmed@google.com" <yosryahmed@google.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"Zou, Nanhai" <nanhai.zou@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v1] mm: Defines obj_cgroup_get() if CONFIG_MEMCG is not
+ defined.
+Message-ID: <ZsbXR6NKM7yOLODb@tiehlicka>
+References: <20240820195005.5941-1-kanchana.p.sridhar@intel.com>
+ <CAKEwX=N-xuQume6C+xq0LfhVNOaK9rOiz_0c39GfoBB-4+6eng@mail.gmail.com>
+ <SJ0PR11MB5678BCBBA46F1AA205A274F2C98E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822033243.38443-1-xuiagnh@gmail.com>
-In-Reply-To: <20240822033243.38443-1-xuiagnh@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 22 Aug 2024 08:14:15 +0200
-Message-ID: <CANn89iLbLv0P_cw99MiXVjZ1N2xOqzTemPxFkhBgtoWHty7otQ@mail.gmail.com>
-Subject: Re: [PATCH] net: dpaa:reduce number of synchronize_net() calls
-To: Xi Huang <xuiagnh@gmail.com>
-Cc: madalin.bucur@nxp.com, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SJ0PR11MB5678BCBBA46F1AA205A274F2C98E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
 
-On Thu, Aug 22, 2024 at 5:32=E2=80=AFAM Xi Huang <xuiagnh@gmail.com> wrote:
->
-> In the function dpaa_napi_del(), we execute the netif_napi_del()
-> for each cpu, which is actually a high overhead operation
-> because each call to netif_napi_del() contains a synchronize_net(),
-> i.e. an RCU operation. In fact, it is only necessary to call
->  __netif_napi_del and use synchronize_net() once outside of the loop.
-> like commit 2543a6000e,5198d545db.
+On Wed 21-08-24 19:40:42, Sridhar, Kanchana P wrote:
+> 
+> > -----Original Message-----
+> > From: Nhat Pham <nphamcs@gmail.com>
+> > Sent: Wednesday, August 21, 2024 12:24 PM
+> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > hannes@cmpxchg.org; yosryahmed@google.com; ryan.roberts@arm.com;
+> > Huang, Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
+> > foundation.org; Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
+> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [PATCH v1] mm: Defines obj_cgroup_get() if CONFIG_MEMCG is
+> > not defined.
+> > 
+> > On Tue, Aug 20, 2024 at 3:50 PM Kanchana P Sridhar
+> > <kanchana.p.sridhar@intel.com> wrote:
+> > >
+> > > This resolves an issue with obj_cgroup_get() not being defined
+> > > if CONFIG_MEMCG is not defined. This causes build errors if
+> > > obj_cgroup_get() is called from code that is agnostic of CONFIG_MEMCG.
+> > >
+> > > The patch resolves this.
+> > >
+> > > Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> > > ---
+> > 
+> > This is only exposed because of your zswap mTHP patch series right?
+> > Could you include this patch as part of that series (since we don't
+> > need this without that patch series), or make it clear in the change
+> > log?
+> 
+> That's correct, Nhat. Although, it might be useful to have obj_cgroup_get()
+> defined in the case where CONFIG_MEMCG is not defined. memcontrol.h
+> handles obj_cgroup_put() similarly. Would it be Ok if I included a reference
+> to the zswap mTHP patch series in the change log?
 
-Correct way of citing commits is to use 12+ chars of sha1 ("patch title") a=
-s in
-commit 2543a6000e59 ("gro_cells: reduce number of synchronize_net() calls")
-
-Quoting Documentation/dev-tools/checkpatch.rst :
-
-  **GIT_COMMIT_ID**
-    The proper way to reference a commit id is:
-    commit <12+ chars of sha1> ("<title line>")
-
-    An example may be::
-
-      Commit e21d2170f36602ae2708 ("video: remove unnecessary
-      platform_set_drvdata()") removed the unnecessary
-      platform_set_drvdata(), but left the variable "dev" unused,
-      delete it.
-
-    See: https://www.kernel.org/doc/html/latest/process/submitting-patches.=
-html#describe-your-changes
-
-
-> here is the function definition:
->  static inline void netif_napi_del(struct napi_struct * napi)
-> {
->         __netif_napi_del(napi).
->         synchronize_net();
-> }
-
-You do not need to include netif_napi_del() in this changelog.
-
-Please send a V2 in ~24 hours and add this :
-
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-
-Thank you.
+I would just fold it into the patch which exposes use without
+CONFIG_MEMCG. We currently do not have any such user. That's why I've
+asked what is this patch based on.
+-- 
+Michal Hocko
+SUSE Labs
 
