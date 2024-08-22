@@ -1,230 +1,125 @@
-Return-Path: <linux-kernel+bounces-296898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD66E95B058
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BFD95B05D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 10:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960342860A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:29:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FAF51F27B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 08:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB20170853;
-	Thu, 22 Aug 2024 08:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FC517D374;
+	Thu, 22 Aug 2024 08:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lH262RGk"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RQ6gMGZb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F7D1802E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2960B17CA0A
+	for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 08:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315275; cv=none; b=hwiAMyrP03yo8wJeBug08PW6Mrs8KI2i2OEeA9k35jIgb7cD1oM2VrrtV7QGACRt2vuwiqYZIP1+jFDt40VvbwAFcK4IcW0PUYevNTrx3UR98UmuHXKnnpmSGRILz0/W8yELWPPPU/rp2gy5FahM/W47d3NIqLBlu+Bn76uESdY=
+	t=1724315325; cv=none; b=Ll1JeDE5S4NQLHXtvlJX4B6LD/lStooJCqzLCye4pWhKkqL/GJkqaGB1h3hkWCEaZy4a8nEFgNF1y0ux7kGDA1V8zaU5K7bk018qbQrwe+HmK55hxe4kQLDMCUfCXv3UB5/rrA9+GqQPW9J9b6pt/pX8t1jszuwTh/oBClkrpb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315275; c=relaxed/simple;
-	bh=og3NIvSOIoKdvipONUeqYAf06vS2yXGsaeon7ZmWOKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lHmYT/GTd40cA3ylR18SsbPT8kB9BotVQ9TXX82WdDyb7Tl5Fw+YAm5GpaukV6UKF9bol7QJ4WdQqLorR7cy8EnJ/ej1JHWyj/bb9ATz+N74HG6sHOMTmYvHJrHxB6mZZJqqB2epp4dOndOb1LR18bzx5N7ihWRk6NKMRLsDJHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lH262RGk; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47M2Tcr2014551;
-	Thu, 22 Aug 2024 08:27:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:content-transfer-encoding
-	:mime-version; s=pp1; bh=PTAb5d4Vpd++S+Dv5zEYlfGd0bYQOo+j+VNFeS4
-	uFgU=; b=lH262RGkd0pTiff5WST6bOEAdBm9oco2i+/stiMQrqYmlkmsM7bxmnG
-	wmuicP5CfX4C6MpjOoPZOfiTZA4uk69FTQV/Zj084xhgCm3KcJ8X+3f/2IFrFUdT
-	vt48YKS8wOfyc5sNF7yrVjBdRiHOWYpdLn/sJ8Z8iYz0xLRGyIqcKZkkQuZcdFIu
-	5OVA/LvfrCqLwnQHmm1MPESKhG2ZCwKsJkl7l4G59qCG2JblVbD2VPuJamJxwmag
-	UZLRgbbU3Efvnl0Tw+Zcde1q2Jol8my5fUiVxhq2RA9BbEcNHavGrQW3F6pAqjZN
-	a7MQLIU1yp9YbyRu/29dxOClhLoxtXA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcyp5ba-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 08:27:37 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47M8RbTY032156;
-	Thu, 22 Aug 2024 08:27:37 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcyp5b7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 08:27:37 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47M5VfA9013499;
-	Thu, 22 Aug 2024 08:27:36 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41366uc2b6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 08:27:36 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47M8RV3K35062418
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Aug 2024 08:27:33 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4047520043;
-	Thu, 22 Aug 2024 08:27:31 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8FEE620040;
-	Thu, 22 Aug 2024 08:27:29 +0000 (GMT)
-Received: from ltcrain34-lp2.aus.stglabs.ibm.com (unknown [9.3.101.41])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 22 Aug 2024 08:27:29 +0000 (GMT)
-From: Narayana Murty N <nnmlinux@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com,
-        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-Subject: [PATCH v1] powerpc/pseries/eeh: Fix pseries_eeh_err_inject
-Date: Thu, 22 Aug 2024 03:27:13 -0500
-Message-ID: <20240822082713.529982-1-nnmlinux@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: V0tSynJ_D0JzD_QQbc2ORwkwYdlvxKIN
-X-Proofpoint-GUID: vq96KG1Zr96WURlRY5Cc3UkdQDAYYqmz
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1724315325; c=relaxed/simple;
+	bh=17uaz+cE2JgBv5H3Dvg0wnIYqRe9KhFU1bSLVIOsUqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+YxdTtlVpSmSDt8qedDSjR9GVV+0zi2r5h4VZRpeWzmYQwwwFYLEpFvRitgeDZCa9hUusB6AXkyU0GyVUfRaVpP7cZYJu2DFhtylsCddmijhYa9vTzsFjt0kVXYoJ3wmNyXcRPnM+2sFD8WSvbaEEqOC7P2OpCF8ebUkSZbFA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RQ6gMGZb; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724315325; x=1755851325;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=17uaz+cE2JgBv5H3Dvg0wnIYqRe9KhFU1bSLVIOsUqs=;
+  b=RQ6gMGZbf2z78OZW7UwfBKxU+INFKl+QMX4PaajCMYjvcRM5KFT5mpCQ
+   f18KuOmQTz3yrRxB8d+BiWOmqFd6sWVuEeuBZ9GIT6i6YiL60kkYxQqbX
+   4NoGvSXtOorCE/Y8Zuw4iRVJb5ZLVAoRhJqLJ4qQ7mhrdPZVk3CQTkSaW
+   KVnR0M/h7wBRtNF71l77LwhygM/5y4H4UMiIZSnHa37KyLJcTzZtt22bW
+   kmQLGWDTdBW6DDe5GsM52L8NaOeHBuyVWAJMLFWt14m5sYsrZusNyLpg4
+   wX47Yk3ru572E4aXAbmhhxyJRjs9htQERxdvaxVrT3LZjiw45gbA9x35z
+   g==;
+X-CSE-ConnectionGUID: ET9jt4rWRPeJgnZAGE1yEw==
+X-CSE-MsgGUID: J4HRSceeTNaxONAdDxthcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="33282172"
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="33282172"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 01:28:37 -0700
+X-CSE-ConnectionGUID: DKvT1eLtRcWKhD0H/FBu4w==
+X-CSE-MsgGUID: tu/arhuVTVScQIqt2ipkBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,166,1719903600"; 
+   d="scan'208";a="61903695"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 22 Aug 2024 01:28:15 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id C1D0849F; Thu, 22 Aug 2024 11:28:14 +0300 (EEST)
+Date: Thu, 22 Aug 2024 11:28:14 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
+	decui@microsoft.com, John.Starks@microsoft.com
+Subject: Re: [PATCH v4 6/6] x86/tdx: Implement movs for MMIO
+Message-ID: <tcngnuglju2mnpfa4o2hw3fpwdkk4ryso5dq2zjfi2wn4yr5yd@2iij74o7ugaf>
+References: <cover.1723807851.git.legion@kernel.org>
+ <cover.1724248680.git.legion@kernel.org>
+ <9320e721e609e55a020d3eb98f48fc856371c561.1724248680.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_03,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 clxscore=1011
- suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408220059
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9320e721e609e55a020d3eb98f48fc856371c561.1724248680.git.legion@kernel.org>
 
-VFIO_EEH_PE_INJECT_ERR ioctl is currently failing on pseries
-due to missing implementation of err_inject eeh_ops for pseries.
-This patch implements pseries_eeh_err_inject in eeh_ops/pseries
-eeh_ops. Implements support for injecting MMIO load/store error
-for testing from user space.
+On Wed, Aug 21, 2024 at 04:24:38PM +0200, Alexey Gladkov wrote:
+> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+> 
 
-The check on PCI error type code is moved to platform code, since
-the eeh_pe_inject_err can be allowed to more error types depending
-on platform requirement.
+Please capitalize MOVS in the subject.
 
-Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
----
+> Add emulation of the MOVS instruction on MMIO regions. MOVS emulation
+> consists of dividing it into a series of read and write operations,
+> which in turn will be validated separately.
 
-Testing:
--------
-vfio-test [1] by Alex Willamson, was forked and updated to add
-support inject error on pSeries guest and used to test this
-patch[2].
+Commit message is pretty sparse. I think we need to elaborate on the
+similarities and differences with SEV implementation. Locking context
+difference is important.
 
-References:
-----------
-[1] https://github.com/awilliam/tests
-[2] https://github.com/nnmwebmin/vfio-ppc-tests/tree/vfio-ppc-ex
----
- arch/powerpc/include/asm/eeh.h               |  1 +
- arch/powerpc/kernel/eeh.c                    |  6 +--
- arch/powerpc/platforms/pseries/eeh_pseries.c | 39 +++++++++++++++++++-
- 3 files changed, 40 insertions(+), 6 deletions(-)
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> index a75a07f4931f..45136b1b02cc 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -503,6 +503,10 @@ struct thread_struct {
+>  	struct thread_shstk	shstk;
+>  #endif
+>  
+> +#ifdef CONFIG_INTEL_TDX_GUEST
+> +	unsigned long		mmio_emul;
+> +#endif
+> +
+>  	/* Floating point and extended processor state */
+>  	struct fpu		fpu;
+>  	/*
 
-diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
-index 91a9fd53254f..96445e1eb28e 100644
---- a/arch/powerpc/include/asm/eeh.h
-+++ b/arch/powerpc/include/asm/eeh.h
-@@ -308,6 +308,7 @@ int eeh_pe_reset(struct eeh_pe *pe, int option, bool include_passed);
- int eeh_pe_configure(struct eeh_pe *pe);
- int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
- 		      unsigned long addr, unsigned long mask);
-+int eeh_debugfs_break_device(struct pci_dev *pdev);
- 
- /**
-  * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index d03f17987fca..8db11edd65fb 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -1537,10 +1537,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
- 	if (!eeh_ops || !eeh_ops->err_inject)
- 		return -ENOENT;
- 
--	/* Check on PCI error type */
--	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
--		return -EINVAL;
--
- 	/* Check on PCI error function */
- 	if (func < EEH_ERR_FUNC_MIN || func > EEH_ERR_FUNC_MAX)
- 		return -EINVAL;
-@@ -1731,7 +1727,7 @@ static const struct file_operations eeh_dev_check_fops = {
- 	.read   = eeh_debugfs_dev_usage,
- };
- 
--static int eeh_debugfs_break_device(struct pci_dev *pdev)
-+int eeh_debugfs_break_device(struct pci_dev *pdev)
- {
- 	struct resource *bar = NULL;
- 	void __iomem *mapped;
-diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
-index b1ae0c0d1187..5ce1e11ca42f 100644
---- a/arch/powerpc/platforms/pseries/eeh_pseries.c
-+++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
-@@ -782,6 +782,43 @@ static int pseries_notify_resume(struct eeh_dev *edev)
- 
- 	return 0;
- }
-+
-+/**
-+ * pseries_eeh_err_inject - Inject specified error to the indicated PE
-+ * @pe: the indicated PE
-+ * @type: error type
-+ * @func: specific error type
-+ * @addr: address
-+ * @mask: address mask
-+ * The routine is called to inject specified error, which is
-+ * determined by @type and @func, to the indicated PE
-+ */
-+static int pseries_eeh_err_inject(struct eeh_pe *pe, int type, int func,
-+				  unsigned long addr, unsigned long mask)
-+{
-+	struct	eeh_dev	*pdev;
-+
-+	/* Check on PCI error type */
-+	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
-+		return -EINVAL;
-+
-+	switch (func) {
-+	case EEH_ERR_FUNC_LD_MEM_ADDR:
-+	case EEH_ERR_FUNC_LD_MEM_DATA:
-+	case EEH_ERR_FUNC_ST_MEM_ADDR:
-+	case EEH_ERR_FUNC_ST_MEM_DATA:
-+		/* injects a MMIO error for all pdev's belonging to PE */
-+		pci_lock_rescan_remove();
-+		list_for_each_entry(pdev, &pe->edevs, entry)
-+			eeh_debugfs_break_device(pdev->pdev);
-+		pci_unlock_rescan_remove();
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
-+
-+	return 0;
-+}
- #endif
- 
- static struct eeh_ops pseries_eeh_ops = {
-@@ -792,7 +829,7 @@ static struct eeh_ops pseries_eeh_ops = {
- 	.reset			= pseries_eeh_reset,
- 	.get_log		= pseries_eeh_get_log,
- 	.configure_bridge       = pseries_eeh_configure_bridge,
--	.err_inject		= NULL,
-+	.err_inject		= pseries_eeh_err_inject,
- 	.read_config		= pseries_eeh_read_config,
- 	.write_config		= pseries_eeh_write_config,
- 	.next_error		= NULL,
+Hm. Do we need to track exact target address in the thread struct?
+Wouldn't be single bit be enough to allow MMIO to userspace address from a
+kernel regs->ip?
+
+There is space for the flag next to iopl_warn.
+
 -- 
-2.45.2
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
