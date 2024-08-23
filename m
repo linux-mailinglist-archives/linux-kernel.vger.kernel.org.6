@@ -1,229 +1,158 @@
-Return-Path: <linux-kernel+bounces-298736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2272395CAC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:48:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D5295CAEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 954421F27859
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:48:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891B71C21D60
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BDA38389;
-	Fri, 23 Aug 2024 10:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1536018733C;
+	Fri, 23 Aug 2024 10:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ibkeJOep"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0vSUsdy"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F2A13D521;
-	Fri, 23 Aug 2024 10:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0458E376F5;
+	Fri, 23 Aug 2024 10:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724410081; cv=none; b=Ka3M4TYHy+lAoj9/1JoUaWezzRQnSwbjGvuXtkopieaAEWUHJ+Yvnz6TTsEH41utnL1j0jFaCIRy81Dak+eTca1zJ/dfJfPTasqbpaLMRxrTau+eVp2Geom7ZfuLywW1kPgNyvGQUQNJKUonDsqM+eGfZuNvkNfNoFJYjp73tck=
+	t=1724410227; cv=none; b=HHbTZd85D8WZlfo5gu18xu0AQEpk/7oU0UndeNrfKGRP+PTJqu/jExqOSsFqCkACJcyeFFPpOBFHUl6+nhagi6j8jmh//EvmkjaW/ljfopDfqlc6KAyQhVHCdeZNPTVEyiMmUG0ybRXoZtltm/arJpruM9B+jgs670LDH9hIyjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724410081; c=relaxed/simple;
-	bh=NKm3f1B9QJ6K69xxHvh7IgtXJY+ohX6aX8m8wLn6acU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GHnse7EalOTmIHnUBZMW03GzqmPtPMMRv315jmuAjiXCVxANJhYHLtte3q4AvPxiImeVA/b7ilGrw9rbYNSAXf2MGqesYxhwK4rBUQqnv2vU9PJXQ/5DAmfEie5n8YE+V9IRO+VgCbBbcKJ9EZafDcvzcUh74B6Y50ndFH9oO3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ibkeJOep; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724410079; x=1755946079;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=NKm3f1B9QJ6K69xxHvh7IgtXJY+ohX6aX8m8wLn6acU=;
-  b=ibkeJOep4an6MlghVnhbHorUzTXDSxAf77Bo/OfLI3QiGOdosEuAIpKF
-   d+Td0TsqCc72OiPA3zHppliAk03UBRi+yYgnhyGgZvWs/QkhT6Riwr7xL
-   70pL2RjcvbumQWA9A9vQ8NbscSVfWfKMTmEI2Ut95c9UGNrc0PBPn6UYI
-   TpiGXdtXME0l5w6NsLQCMLReYHxJB1Jrs4m/Y+hS+fQjRJKe2vGg1i7M5
-   Rlefj5l03VwBubx5+V6z0LgZ/cPG76UTFkoIn8mW+tCqgLFAZSNin4SjW
-   +Sq3ZxvGYERWHHULgczB3tRs9P5khDSFwtUXbAsItEzLO74E6oVYbX2F/
-   g==;
-X-CSE-ConnectionGUID: u3Fs8ddgSrSjQt97crT28A==
-X-CSE-MsgGUID: mqmkBf7aSWeWKnH2Eia70Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22394220"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="22394220"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:47:58 -0700
-X-CSE-ConnectionGUID: ddgtkcR0TCGB+IRDQ/XVzw==
-X-CSE-MsgGUID: 0DsskcZgShOrlbVorBl7sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="65969012"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:47:55 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 23 Aug 2024 13:47:51 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-    Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, 
-    Fenghua Yu <fenghua.yu@intel.com>
-Subject: Re: [PATCH v2 3/3] kselftest: Provide __cpuid_count() stub on non-x86
- archs
-In-Reply-To: <cd09f5e0-2353-4223-b02c-aa8461c1dbe5@intel.com>
-Message-ID: <3f75d979-44f9-6386-85df-e45214f7da7e@linux.intel.com>
-References: <20240822081114.4695-1-ilpo.jarvinen@linux.intel.com> <20240822081114.4695-4-ilpo.jarvinen@linux.intel.com> <cd09f5e0-2353-4223-b02c-aa8461c1dbe5@intel.com>
+	s=arc-20240116; t=1724410227; c=relaxed/simple;
+	bh=eHLTjM14fde6NkJpntHo51SxtoLIKLfNnhcjDWuZli0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XkvTLLipFtdeeAP0BXn51z6wzwXktOWhz6X+SdkapC809/jK3RkUv4FWdf7WqDqUWatUZ4wwUVWleKsN4yZ8DklZFNg51WjGvqQrN0y+ZHg0XNwhDFHEWFVeLTG75S0ck1MWsHkaAaKd0vtRRxKjnto1I3G5pJJmStJozPGsZ4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0vSUsdy; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d3e44b4613so1358732a91.3;
+        Fri, 23 Aug 2024 03:50:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724410225; x=1725015025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TeTUUU2VJ4eR8fsXtsB0pqfptdqJDznJpOdQQ9te0Uc=;
+        b=l0vSUsdyzPABLVpyH4WdeXrDPTNFVOXvOM0eyzGcvSr/aeBl8lGCgU+XfK0+/yY5RP
+         nh3u+2DbHetvdHP1rRbnHxXYVwTt0z38b22N9rk6nlZ/oqVlBhx5AfwsAyDXFcgNB+ki
+         GqpYUtEVyur9bN8XJ+6MSTJVrGitK4JtpkbfPLJVWdyrR30blRpSv+CxVQo3QVmGgz9v
+         w/FWbZ69lZBLz+zAbpShmRVGwjva7pzm8AFs/AhMdPn+h0T/fA5eR0o8PqWGDvZD8qHS
+         6iX3wIIfD+uG5ONjOVq0BMK8Ow4xrgLX62uQYhfRsvD5+LYET7YbkKCVDRsU9JjrgeiU
+         iKxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724410225; x=1725015025;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TeTUUU2VJ4eR8fsXtsB0pqfptdqJDznJpOdQQ9te0Uc=;
+        b=Dotc6ClEGDcyZVeczI8jz1o5K30/bZfA5fmj1x2s4QoXkqChwLVTPBGyjcjmDzZojb
+         fwxQcs3T+7dg69Sw3/an7kRO2zWWoWiBI3cC6qNnVwxLdCuZAGe5vJHJnAHlATkrQDha
+         6RJL+SQ6Z+hX3yprBMj2z3ZKrY1mnC977Bmi52Z9bo5+7LZyA4Tss9IVytPv35umfn57
+         23PtC8JojqDYAPISuci3jn2WTtj6ZlMxBk+coto7TTdPMc7LNIk1amiRG2ubkhEfq2+J
+         oNR3E7qdzqttY7Wkbciiunj8v48Fn07hRPvWF05QrAseqSr2dQYb6J7HLG6VCsWh5g8o
+         i3Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIHsJfOFOEX5qEidIyOJAvVocYWzmjq/5zpewDUBAwNfZCIklpjZQT2pEABzkhFy4XrDiiXzTIn6xd5tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydAkcrLeJzBDiMYAHkdDVsxrJfzUK5laUszvxsMO38/QCSHVPW
+	6R/805W2/plSOoeOps8LKawzIxm8Gbd4Vl6JavmIVIbpWIICAEnK
+X-Google-Smtp-Source: AGHT+IGJqWNwBZLbYT6vbePx8jWvkWRzrJYFIR3+4t2mkMpl1f2w1a8JNdXAYDwQYUAn9q5m5QJJuQ==
+X-Received: by 2002:a17:90a:b00b:b0:2c9:6278:27c9 with SMTP id 98e67ed59e1d1-2d646d5dc70mr1749587a91.38.1724410225029;
+        Fri, 23 Aug 2024 03:50:25 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d5eb8d235esm6074344a91.6.2024.08.23.03.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 03:50:24 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v6 0/7] net: stmmac: FPE via ethtool + tc
+Date: Fri, 23 Aug 2024 18:50:07 +0800
+Message-Id: <cover.1724409007.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1295042213-1724410012=:2230"
-Content-ID: <3f24d78d-0267-2b58-a6a0-321fe52b826b@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Move the Frame Preemption(FPE) over to the new standard API which uses
+ethtool-mm/tc-mqprio/tc-taprio.
 
---8323328-1295042213-1724410012=:2230
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <b1624f03-7646-ddf5-677a-9ae3886cbdc7@linux.intel.com>
+Changes in v6:
+  1. new FPE verification process based on Vladimir Oltean's proposal
+  2. embed ethtool_mm_state into stmmac_fpe_cfg
+  3. convert some bit ops to u32_replace_bits
+  4. register name and function name update to be more descriptive
+  5. split up stmmac_tc_ops of dwmac4+ and dwxgmac, they have different
+  implementations about mqprio
+  6. some code style fixes
 
-On Thu, 22 Aug 2024, Reinette Chatre wrote:
+Changes in v5:
+  1. fix typo in commit message
+  2. drop FPE capability check in tc-mqprio/tc-taprio
 
-> Hi Ilpo,
->=20
-> On 8/22/24 1:11 AM, Ilpo J=E4rvinen wrote:
-> > Building resctrl selftest fails on ARM because it uses __cpuid_count()
-> > that fails the build with error:
-> >=20
-> >    CC       resctrl_tests
-> > In file included from resctrl.h:24,
-> >                   from cat_test.c:11:
-> > In function 'arch_supports_noncont_cat',
-> >      inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
-> > ../kselftest.h:74:9: error: impossible constraint in 'asm'
-> >     74 |         __asm__ __volatile__ ("cpuid\n\t"       \
-> >        |         ^~~~~~~
-> > cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
-> >    301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-> >        |                 ^~~~~~~~~~~~~
-> > ../kselftest.h:74:9: error: impossible constraint in 'asm'
-> >     74 |         __asm__ __volatile__ ("cpuid\n\t"       \
-> >        |         ^~~~~~~
-> > cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
-> >    303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-> >        |                 ^~~~~~~~~~~~~
-> >=20
-> > The resctrl selftest would run that code only on Intel CPUs but
-> > as is, the code cannot be build at all.
-> >=20
-> > Provide an empty stub for __cpuid_count() if it is not supported to
-> > allow build to succeed. The stub casts its arguments to void to avoid
-> > causing variable unused warnings.
-> >=20
-> > Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT te=
-st")
-> > Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> > Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> > Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> > ---
-> >=20
-> > v2:
-> > - Removed RFC & added Fixes and Tested-by
-> > - Fixed the error message's line splits
-> > - Noted down the reason for void casts in the stub
-> > ---
-> >   tools/testing/selftests/kselftest.h | 6 ++++++
-> >   tools/testing/selftests/lib.mk      | 4 ++++
-> >   2 files changed, 10 insertions(+)
-> >=20
-> > diff --git a/tools/testing/selftests/kselftest.h
-> > b/tools/testing/selftests/kselftest.h
-> > index b8967b6e29d5..71593add1b39 100644
-> > --- a/tools/testing/selftests/kselftest.h
-> > +++ b/tools/testing/selftests/kselftest.h
-> > @@ -70,10 +70,16 @@
-> >    * have __cpuid_count().
-> >    */
-> >   #ifndef __cpuid_count
-> > +#ifdef HAVE_CPUID
-> >   #define __cpuid_count(level, count, a, b, c, d)
-> > \
-> >   =09__asm__ __volatile__ ("cpuid\n\t"=09=09=09=09\
-> >   =09=09=09      : "=3Da" (a), "=3Db" (b), "=3Dc" (c), "=3Dd" (d)=09\
-> >   =09=09=09      : "0" (level), "2" (count))
-> > +#else
-> > +#define __cpuid_count(level, count, a, b, c, d)=09do {
-> > \
-> > +=09(void)a; (void)b; (void)c; (void)d;=09=09=09=09\
->=20
-> The changelog states that this casting to void is done to avoid unused
-> variable warnings.
-> It is thus unexpected that not all parameters obtain the same casting
-> treatment. It looks
-> to me as though this only targets the resctrl selftest usage where the "l=
-evel"
-> and "count"
-> parameters are constants.
+Changes in v4:
+  1. reorder FPE-related declarations and definitions into clean groups
+  2. move mm_lock to stmmac_fpe_cfg.lock
+  3. protect user configurations across NIC up/down
+  4. block stmmac_set_mm() when fpe_task is in progress to finish
+  5. convert to ethtool_dev_mm_supported() to check FPE capability in
+  tc-mqprio/tc-taprio
+  6. silence FPE workqueue start/stop logs
 
-The reason is entirely separate from what resctrl selftest expects.=20
-a-d are output parameters for __cpuid_count(), they need this treatment=20
-because they are typically not initialized but set by __cpuid_count() so=20
-if __cpuid_count() is doing literally nothing, nothing touches those=20
-four variables leading to unused variable warning.
+Changes in v3:
+  1. avoid races among ISR, workqueue, link update and
+  register configuration.
+  2. update FPE verification retry logic, so it retries
+  and fails as expected.
 
-> This is intended as a general kselftest solution so
-> I believe
-> that all parameters would need this casting to handle the cases where "le=
-vel"
-> and/or
-> "count" are variables.
+Changes in v2:
+  1. refactor FPE verification process
+  2. suspend/resume and kselftest-ethtool_mm, all test cases passed
+  3. handle TC:TXQ remapping for DWMAC CORE4+
 
-No, the same issue does not exist for input parameters because it would be=
-=20
-a valid warning. Passing uninitialized (and thus unused) input variable=20
-is wrong so the calling logic is wrong. Thus, I don't see how the same=20
-error could ever occur in a legitimate case for those two parameters.
+Furong Xu (7):
+  net: stmmac: move stmmac_fpe_cfg to stmmac_priv data
+  net: stmmac: drop stmmac_fpe_handshake
+  net: stmmac: refactor FPE verification process
+  net: stmmac: configure FPE via ethtool-mm
+  net: stmmac: support fp parameter of tc-mqprio
+  net: stmmac: support fp parameter of tc-taprio
+  net: stmmac: silence FPE kernel logs
 
-> > +} while (0)
-> > +#endif
-> >   #endif
-> >     /* define kselftest exit codes */
-> > diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/l=
-ib.mk
-> > index d6edcfcb5be8..236db9b24037 100644
-> > --- a/tools/testing/selftests/lib.mk
-> > +++ b/tools/testing/selftests/lib.mk
-> > @@ -199,6 +199,10 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
-> >   # Build with _GNU_SOURCE by default
-> >   CFLAGS +=3D -D_GNU_SOURCE=3D
-> >   +ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
-> > +CFLAGS +=3D -DHAVE_CPUID=3D
-> > +endif
->=20
-> My earlier comment [1] when this work started remains. This technique dep=
-ends
-> on environment passing ARCH, which cannot be guaranteed. Looking at other
-> usages of ARCH in the kselftest Makefiles it seems that the pattern is to
-> initialize ARCH with "uname -m" if unset.
->=20
-> > +
-> >   # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
-> >   # make USERCFLAGS=3D-Werror USERLDFLAGS=3D-static
-> >   CFLAGS +=3D $(USERCFLAGS)
->=20
-> Reinette
->=20
-> [1]
-> https://lore.kernel.org/lkml/db16db55-5f68-484f-ba9f-3312b41bf426@intel.c=
-om/
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  10 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  |  92 +++++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  12 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  20 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  30 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |  85 ++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 274 ++++++++----------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 130 ++++++---
+ include/linux/stmmac.h                        |  28 --
+ 11 files changed, 452 insertions(+), 237 deletions(-)
 
-Ah, sorry. I'd missed that comment because it started mid-paragraph.
+-- 
+2.34.1
 
-I wonder if I can safely touch ARCH or if there are caveats and it would=20
-be better to use some other makefile variable.
-
---=20
- i.
---8323328-1295042213-1724410012=:2230--
 
