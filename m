@@ -1,209 +1,154 @@
-Return-Path: <linux-kernel+bounces-298910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEAA95CD1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:03:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DCA95CD54
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4381A282E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177CE1C2189D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDA91862B9;
-	Fri, 23 Aug 2024 13:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D0A187332;
+	Fri, 23 Aug 2024 13:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HVok9p74"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TcHSUsq3"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C881448E3;
-	Fri, 23 Aug 2024 13:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BC51865F1;
+	Fri, 23 Aug 2024 13:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724418201; cv=none; b=d22puWJhomoFUObNIyb0Polf9L/Bjh6qckgX7bdRVCt4rDuGGuuwgQ206lGcuQIjkhv/W+M0ag29XoRfTjNVasl+4/HmZ6wbVOLUKBk3T14oBdtGOV6oBMsNdLMlGTJ6sSqid7QQL3BSTFwOPbVE92zQRmuc/I+FC2+zmiFtIcY=
+	t=1724418604; cv=none; b=EuIC5S4YtxBEyrMLSVLOEXKJx3dIyl+7cIbe66dzvgfZv+uK68QI2v75RSSHuoZOn8X03+HuEo3QOpUIcblrLLrqFTJcVoLo2aAvJIodNF84Z3FHtjZUksIo3QA3myaujDLNEa7+GH2S/MeeD1rFUZTjm/bo/9d1YVhGusvHwUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724418201; c=relaxed/simple;
-	bh=kftPDIMou2j2K+rX+hqfHFHLY9B1r/w2V+XY9ebi6Ik=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=uLW/uHBSJn4IhzemTOhluwLFX93Dy7VZ+LHSqx/mBrJRLRrRE1mqWEa0Uu0+NIiSPNLZT2VWS+KmY7nRuN6mbiSKV/Tv1SVxUAINYORPYgl8m8zrEJV+vNfS/CNOHe5Rmmm3cgwmashNSifkfLv0JPiKTfstvP1h5a+iYwHqm3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HVok9p74; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724418200; x=1755954200;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=kftPDIMou2j2K+rX+hqfHFHLY9B1r/w2V+XY9ebi6Ik=;
-  b=HVok9p745i+ohqjxavg8UWL9cSB0lrE3tg8AnasAF9k8zMB0DdysjIm2
-   vEOrwLYKq06GW5DaHkLHaw4l1L6ln801eVKYlfgSPjCRkENiJlaOcvM5z
-   BoPKlBf7y+bDcAILHvKXtfp3YI35b02jo0XKr6mw03QQSK2J5w2AjL4jy
-   4K2wLnZoSfWwO1lRyOXN/rap64HfgpxCul83IyJwTNyM9FDdICm0FcrK6
-   DP7lQ9o0BiwRqeALVltnBMGZd8ogZ/ioGZHgIt5nGiA2h+RUkCO9hx8eM
-   3x8jt4WjeDeKED/cI18F3nijehu6msFs2G13IH1kwWRI/Ip5PlBnZm5GH
-   Q==;
-X-CSE-ConnectionGUID: VuuKUXQOTcSR04bq/4sjmQ==
-X-CSE-MsgGUID: 3ysZ16UOT5+BNG0mDgboQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23067641"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="23067641"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:03:19 -0700
-X-CSE-ConnectionGUID: vndR6h0URo2bn8zQZWaY7Q==
-X-CSE-MsgGUID: paIPwhL1SuyF/Qy62KEuQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="92583856"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:03:17 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 23 Aug 2024 16:03:13 +0300 (EEST)
-To: Tero Kristo <tero.kristo@linux.intel.com>
-cc: srinivas.pandruvada@linux.intel.com, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] platform/x86/intel-uncore-freq: Add efficiency
- latency control to sysfs interface
-In-Reply-To: <20240821131321.824326-4-tero.kristo@linux.intel.com>
-Message-ID: <4cf8d691-d00c-3603-6722-06394f00bdfc@linux.intel.com>
-References: <20240821131321.824326-1-tero.kristo@linux.intel.com> <20240821131321.824326-4-tero.kristo@linux.intel.com>
+	s=arc-20240116; t=1724418604; c=relaxed/simple;
+	bh=wb+VuNjiBFvQqo9wiUYegEmAHzTOE4dTmrmGfheD7iU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AXMwK22hiwB3vkgKV2HCl7JJmfKzAzX7hBDUsHeAhZcm9O98BQCchued07KaQoHOtdy6o+9GrV1WRS11NRI/3LOTElm5p2RsiXP65TTyaqXsLVcoHViyXKVo8KeFslE//tEL8PYIDIkEiCO9oeUOi0B/wLvE54NHUEdO7zcHDI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TcHSUsq3; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NAHUJW005497;
+	Fri, 23 Aug 2024 13:09:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=Vh5aCItZOd5/dSuzijCh6RX8nx
+	+0QnG2r83rtM+0yUI=; b=TcHSUsq3a72B++lznZvxN03J8AHhdThkhadXDghAsd
+	7no/pk/2DLHV9eI0nF0OQwEUmKoFdaVsBHnGWKd2lHNAZG/anEiHCX+HHBGaHCBD
+	8sZOFRxA9xOxbIUFkOS8xMvTvwV0QJA7YCjLtPm1fFsVR8/yMDhsCDw55f4xplIV
+	LrgbUwksMsQ3/EHBF9DA+kZj+3JSJRO29LkRcMNXrQxVqBvM+hiPCbWVadprK7jl
+	h9tcll/og1+7G8b/KacMBY32jwxYHkMmPDVFP6dWjJ4FkN0XX9+WBN0YvirDymUd
+	jWG0qvtra2ecZ52UtKrn4/aqpGRJzcHXcRfYTsmnUyOQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb650e4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:09:58 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47ND8kWY013601;
+	Fri, 23 Aug 2024 13:09:57 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb650dy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:09:57 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47NBjbBw018968;
+	Fri, 23 Aug 2024 13:09:56 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376qa07q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:09:56 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47ND9o5j55968070
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 Aug 2024 13:09:52 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BB7A12004D;
+	Fri, 23 Aug 2024 13:09:50 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6EB1620040;
+	Fri, 23 Aug 2024 13:09:50 +0000 (GMT)
+Received: from a46lp38.lnxne.boe (unknown [9.152.108.100])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 23 Aug 2024 13:09:50 +0000 (GMT)
+From: Hariharan Mari <hari55@linux.ibm.com>
+To: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, shuah@kernel.org,
+        frankja@linux.ibm.com, borntraeger@linux.ibm.com,
+        imbrenda@linux.ibm.com, david@redhat.com, pbonzini@redhat.com,
+        schlameuss@linux.ibm.com
+Subject: [PATCH v3 0/5] KVM: s390: selftests: Add regression tests for CPU subfunctions
+Date: Fri, 23 Aug 2024 15:05:03 +0200
+Message-ID: <20240823130947.38323-1-hari55@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1768064745-1724418193=:2230"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6qyFEgIB1D85gNWyVmgXaJ_yx2n15r4C
+X-Proofpoint-GUID: liNONXtUo5vNrMQOm5dV8s7jpn3qkwV2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_10,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ mlxlogscore=737 phishscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408230095
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This patch series introduces a set of regression tests for various s390x
+CPU subfunctions in KVM. The tests ensure that the KVM implementation accurately
+reflects the behavior of actual CPU instructions for these subfunctions.
 
---8323328-1768064745-1724418193=:2230
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+The series adds tests for a total of 15 instructions across five patches,
+covering a range of operations including sorting, compression, and various
+cryptographic functions. Each patch follows a consistent testing pattern:
 
-On Wed, 21 Aug 2024, Tero Kristo wrote:
+1. Obtain the KVM_S390_VM_CPU_MACHINE_SUBFUNC attribute for the VM.
+2. Execute the relevant asm instructions.
+3. Compare KVM-reported results with direct instruction execution results.
 
-> Add the TPMI efficiency latency control fields to the sysfs interface.
-> The sysfs files are mapped to the TPMI uncore driver via the registered
-> uncore_read and uncore_write driver callbacks. These fields are not
-> populated on older non TPMI hardware.
->=20
-> Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
-> ---
->  .../uncore-frequency-common.c                 | 42 ++++++++++++++++---
->  .../uncore-frequency-common.h                 | 13 +++++-
->  2 files changed, 49 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency=
--common.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-co=
-mmon.c
-> index 4e880585cbe4..e22b683a7a43 100644
-> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common=
-=2Ec
-> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common=
-=2Ec
-> @@ -60,11 +60,16 @@ static ssize_t show_attr(struct uncore_data *data, ch=
-ar *buf, enum uncore_index
->  static ssize_t store_attr(struct uncore_data *data, const char *buf, ssi=
-ze_t count,
->  =09=09=09  enum uncore_index index)
->  {
-> -=09unsigned int input;
-> +=09unsigned int input =3D 0;
->  =09int ret;
-> =20
-> -=09if (kstrtouint(buf, 10, &input))
-> -=09=09return -EINVAL;
-> +=09if (index =3D=3D UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE) {
-> +=09=09if (kstrtobool(buf, (bool *)&input))
-> +=09=09=09return -EINVAL;
-> +=09} else {
-> +=09=09if (kstrtouint(buf, 10, &input))
-> +=09=09=09return -EINVAL;
-> +=09}
-> =20
->  =09mutex_lock(&uncore_lock);
->  =09ret =3D uncore_write(data, input, index);
-> @@ -103,6 +108,18 @@ show_uncore_attr(max_freq_khz, UNCORE_INDEX_MAX_FREQ=
-);
-> =20
->  show_uncore_attr(current_freq_khz, UNCORE_INDEX_CURRENT_FREQ);
-> =20
-> +store_uncore_attr(elc_low_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_L=
-OW_THRESHOLD);
-> +store_uncore_attr(elc_high_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_=
-HIGH_THRESHOLD);
-> +store_uncore_attr(elc_high_threshold_enable,
-> +=09=09  UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
-> +store_uncore_attr(elc_floor_freq_khz, UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
-> +
-> +show_uncore_attr(elc_low_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_LO=
-W_THRESHOLD);
-> +show_uncore_attr(elc_high_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_H=
-IGH_THRESHOLD);
-> +show_uncore_attr(elc_high_threshold_enable,
-> +=09=09 UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
-> +show_uncore_attr(elc_floor_freq_khz, UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
-> +
->  #define show_uncore_data(member_name)=09=09=09=09=09\
->  =09static ssize_t show_##member_name(struct kobject *kobj,=09\
->  =09=09=09=09=09   struct kobj_attribute *attr, char *buf)\
-> @@ -146,7 +163,8 @@ show_uncore_data(initial_max_freq_khz);
-> =20
->  static int create_attr_group(struct uncore_data *data, char *name)
->  {
-> -=09int ret, freq, index =3D 0;
-> +=09int ret, index =3D 0;
-> +=09unsigned int val;
-> =20
->  =09init_attribute_rw(max_freq_khz);
->  =09init_attribute_rw(min_freq_khz);
-> @@ -168,10 +186,24 @@ static int create_attr_group(struct uncore_data *da=
-ta, char *name)
->  =09data->uncore_attrs[index++] =3D &data->initial_min_freq_khz_kobj_attr=
-=2Eattr;
->  =09data->uncore_attrs[index++] =3D &data->initial_max_freq_khz_kobj_attr=
-=2Eattr;
-> =20
-> -=09ret =3D uncore_read(data, &freq, UNCORE_INDEX_CURRENT_FREQ);
-> +=09ret =3D uncore_read(data, &val, UNCORE_INDEX_CURRENT_FREQ);
->  =09if (!ret)
->  =09=09data->uncore_attrs[index++] =3D &data->current_freq_khz_kobj_attr.=
-attr;
-> =20
-> +=09ret =3D uncore_read(data, &val, UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHO=
-LD);
-> +=09if (!ret) {
-> +=09=09init_attribute_rw(elc_low_threshold_percent);
-> +=09=09init_attribute_rw(elc_high_threshold_percent);
-> +=09=09init_attribute_rw(elc_high_threshold_enable);
-> +=09=09init_attribute_rw(elc_floor_freq_khz);
-> +
-> +=09=09data->uncore_attrs[index++] =3D &data->elc_low_threshold_percent_k=
-obj_attr.attr;
-> +=09=09data->uncore_attrs[index++] =3D &data->elc_high_threshold_percent_=
-kobj_attr.attr;
-> +=09=09data->uncore_attrs[index++] =3D
-> +=09=09=09&data->elc_high_threshold_enable_kobj_attr.attr;
-> +=09=09data->uncore_attrs[index++] =3D &data->elc_floor_freq_khz_kobj_att=
-r.attr;
-> +=09}
+Testing has been performed on s390x hardware with KVM support. All tests
+pass successfully, verifying the correct implementation of these
+subfunctions in KVM.
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+---
+v2: 
+* Fix facility_bit type from bool to int
+v3:
+* Global variable in the header is moved to facility.c file in selftests/kvm/lib/s390x/
+* Fixed the line length 
+* Fixed single line comments and multiline comments 
+* Renamed the PLO macro
+* Removed the unnecessary type cast where Implicit type promotion applies
+---
 
-But I have to say I'm not big fan of this function treating any error as=20
-an implicit indication of ELC not supported.
+Hariharan Mari (5):
+  KVM: s390: selftests: Add regression tests for SORTL and DFLTCC CPU
+    subfunctions
+  KVM: s390: selftests: Add regression tests for PRNO, KDSA and KMA
+    crypto subfunctions
+  KVM: s390: selftests: Add regression tests for KMCTR, KMF, KMO and PCC
+    crypto subfunctions
+  KVM: s390: selftests: Add regression tests for KMAC, KMC, KM, KIMD and
+    KLMD crypto subfunctions
+  KVM: s390: selftests: Add regression tests for PLO subfunctions
 
-Is that even going to be true after this:
+ tools/testing/selftests/kvm/Makefile          |   2 +
+ .../selftests/kvm/include/s390x/facility.h    |  50 +++
+ .../selftests/kvm/lib/s390x/facility.c        |  14 +
+ .../kvm/s390x/cpumodel_subfuncs_test.c        | 286 ++++++++++++++++++
+ 4 files changed, 352 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/include/s390x/facility.h
+ create mode 100644 tools/testing/selftests/kvm/lib/s390x/facility.c
+ create mode 100644 tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
 
-  https://patchwork.kernel.org/project/platform-driver-x86/patch/2024082020=
-4558.1296319-1-srinivas.pandruvada@linux.intel.com/
+-- 
+2.45.2
 
-=2E..as root_domain is eliminated for other reasons than ELC=20
-supported/not-supported (-ENODATA return path)?
-
---=20
- i.
---8323328-1768064745-1724418193=:2230--
 
