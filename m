@@ -1,146 +1,145 @@
-Return-Path: <linux-kernel+bounces-298961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC67695CE4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:46:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C5A95CE51
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7A8283D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92FE1F2505B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A6A18858D;
-	Fri, 23 Aug 2024 13:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543BB188591;
+	Fri, 23 Aug 2024 13:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HeVtSMUN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2XJh4Hp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260C91DA23;
-	Fri, 23 Aug 2024 13:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CC81DFE8;
+	Fri, 23 Aug 2024 13:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420796; cv=none; b=LtJ4X6R2wV2C6VZRLe6+Bkf/OqTH0ycsWEfbbyFxjp/2Lp6u27uVGY79LNTxvwVfMWXvEkFjgF7wI4OKBwlzWlG4nhFTSo48CfgJ/pMGyLSI34ugncG1plkzdvTYFMejtZb0bChb+3Ov32P4m9czIBYRKR+60hYw9rziyvcQlDs=
+	t=1724420870; cv=none; b=c6s73HY9UsqMXm9/CatlZqLHovfbwfqysOyh5P+FMSa2W+vN06/hYvV3DN3XwCJQ/2XthxAhaObLcNbTbzGxJWVZA1XXRQBWPQ/a14h0vAf4KkZgAMBNlxYMRNuuw3tfaM4cU9lCfWNAcZ1/pfLqLqMibH/1M71Zus6mk0gi/IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420796; c=relaxed/simple;
-	bh=oj4nyYMV4gB+mypoya7w5RGqytEUERznSMy5TvYxR6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rALshZsp2SDhpmr5K1Hle4xpWbsdr0XYaOStbih2uhLBN9QLj8ia5RKRTvnNhS++PAXdjjPzgstcsvmUcKitRx91vj2wmzzGh4TYLpHvElbRfgxeyl1/novGNHsvN4Hv0p/ct94oq/xYGZRVAKnPHtOsLao0ycBY2DeP87DkIzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HeVtSMUN; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724420795; x=1755956795;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=oj4nyYMV4gB+mypoya7w5RGqytEUERznSMy5TvYxR6Y=;
-  b=HeVtSMUNgveKSRtG1UIa0YX8ECUoUU1synEkhOMgpPi+Cce43Fzaddux
-   OUT66GJiGP2QDO4bvTsebq51rpIpd7yBt5hQGUoSmdZ7cnsYRbHp+1Kdf
-   gvX1wPV/8682yzQolWgIdCQjs8m9Zp4fGWp2wcJenorFwRhs3QLJ6AlX7
-   CNa/pNyvnQuRdGlHmbRN1Qj5VQ//qoZkgEyrv3D63FFizTMZj/flad/zi
-   miSYkkLS06Vx01Ah9mAwTLWXKYhyntkn5Sk15VsBSWytk5tFaXa/+6xmJ
-   k5LoQQykhjkcBvtKsiVeKtsxKvdwb/ubZ9QOeINgp5i3fgyxh7ZLPwwoS
-   Q==;
-X-CSE-ConnectionGUID: 0xZDNFumRPKusJN874HT/g==
-X-CSE-MsgGUID: kFDw9S11SOOSGqFzI8n/AQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33456386"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="33456386"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:46:34 -0700
-X-CSE-ConnectionGUID: WWhL323KQ3WR5KbQYnhSwA==
-X-CSE-MsgGUID: rYcEtennSpqHFKRmjZnPvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="66729372"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:46:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shUcV-00000000oDe-2JZj;
-	Fri, 23 Aug 2024 16:46:27 +0300
-Date: Fri, 23 Aug 2024 16:46:27 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v5 05/10] gpiolib: Add gpio_property_name_length()
-Message-ID: <ZsiSs-OrZRrDBplk@smile.fi.intel.com>
-References: <20240822092006.3134096-1-wenst@chromium.org>
- <20240822092006.3134096-6-wenst@chromium.org>
- <ZsdNA2b9CDRrtno2@smile.fi.intel.com>
- <CAGXv+5H0eGEjQU8qbKjua5qfbL2FaX2bMSyQg0PMVQrFfaiR8g@mail.gmail.com>
+	s=arc-20240116; t=1724420870; c=relaxed/simple;
+	bh=bXC2LfSkMhE/9jDJneZMl800SDYiBayRvK7YQTFG5M4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZ9GUQGU2n4FnYtDQ+ceU8PprOnsHAC5xYicXXWIq9ElVdkvAP6QnAuICldZGVIUGpCpin4dhJTmBXc58N6kaZPci8fTv6Aurh0UUxGcGwWZBs6ONWnc3mIymy+B8vPqRkHWiC3g6s9EzbzelH9HllaR2Ys4ZTZ8l4eCSoay8lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2XJh4Hp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13697C32786;
+	Fri, 23 Aug 2024 13:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724420870;
+	bh=bXC2LfSkMhE/9jDJneZMl800SDYiBayRvK7YQTFG5M4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G2XJh4HpqiQf/s3AFYsVLG2QaL45QMJuGIL/P5ZUh/yiqXyDPpwzJAMpB6Dy+e1LZ
+	 NSebxt64/XEO6Ns+/7cnWG9M7Lv/M1aHdzmoai0C7JJ+3kzSLzAb+h7Znji+LfefTi
+	 s1eJIO+eWW3EjRxQyuI8Lex0gEXoQQ7FzbyAhLg9bhkZRGq9873oRPhyR76j19IRoI
+	 e7cpj2gfHw9fh3I5JE4S/ATI1ldDARSh1afF8psjoD/M+c17abe2zAkUjsHQ+EJO1b
+	 CnbwaKCcCIrgua+XiBoYq/ZZA47dNFOgd+/AnjISNj++RzckXYHmQkK7PAqXn/QLyr
+	 WwaKDe3GKWNXA==
+Message-ID: <2a8c20ce-0c90-4e59-ab77-7c71de21e502@kernel.org>
+Date: Fri, 23 Aug 2024 15:47:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5H0eGEjQU8qbKjua5qfbL2FaX2bMSyQg0PMVQrFfaiR8g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon based
+ WCSS secure PIL
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>,
+	q@krzk-bin.smtp.subspace.kernel.org
+Cc: andersson@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com,
+ quic_mmanikan@quicinc.com, quic_varada@quicinc.com, quic_srichara@quicinc.com
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <20240820085517.435566-2-quic_gokulsri@quicinc.com>
+ <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
+ <2b6b43b3-c99b-4aac-b1fb-24f6e5e562ce@quicinc.com>
+ <7b8f488a-deac-4089-be7a-c0d76afca0fa@kernel.org>
+ <982ca02e-a0b0-4dac-9294-ae2c2fb3463f@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <982ca02e-a0b0-4dac-9294-ae2c2fb3463f@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 03:50:55PM +0800, Chen-Yu Tsai wrote:
-> On Thu, Aug 22, 2024 at 10:37 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Aug 22, 2024 at 05:19:58PM +0800, Chen-Yu Tsai wrote:
-
-...
-
-> > > +     len = strlen(str);
-> >
-> > If it has a thousands characters...?
+On 23/08/2024 11:47, Gokul Sriram P wrote:
 > 
-> Shouldn't matter much? I suppose using strrchr() as you suggested
-> requires one less pass.
-
-Yes, this is the point.
-
-...
-
-> > This can be combined with the above
-> >
-> >         for (const char *const *p = gpio_suffixes; *p; p++) {
-> >                 /*
-> >                  * Find right-most '-' and check if remainder matches suffix.
-> >                  * If no separator found, check for no-name cases.
-> >                  */
-> >                 dash = strrchr(propname, '-');
+> On 8/22/2024 5:00 PM, Krzysztof Kozlowski wrote:
+>>> IM_SLEEP_CLK - Internal Module sleep clock needed for Q6 reset.
+>>>
+>>> SLEEP is not an acronym here.
+>> Then probably you mean "Internal sleep", although "internal" is also
+>> confusing. Devices do not receive as input something which is internal
+>> to them.
+>>
+>>>>> +
+>>>>> +  clock-names:
+>>>>> +    items:
+>>>>> +      - const: im_sleep
+>>>> sleep? Are there different sleep clocks here?
+>>> We have different branches of sleep clk each enabled separately.
+>>>
+>>> im_sleep is one of those branches that q6 uses.
+>> So this device misses other branches? Then provide them. Otherwise it is
+>> just "sleep".
 > 
-> I believe this line could be moved out of the for-loop. Otherwise it
-> looks much more concise compared to my version. I'll omit the comment
-> though, as it is just rehashing the kerneldoc description, and now
-> that the function is so short, it shouldn't be hard to read.
+> ok, I shall keep it as simply "sleep" and move on? Other branches of 
+> sleep clk are irrelevant to remoteproc.
 
-Agree. And I put comment inside the loop, while it should be outside. But then,
-as you said, the function becomes so little that kernel-doc above does the job,
-hence no comment in the code needed.
+Then it is "sleep". The name here describes the clock input in this
+device, not the clock in other places.
 
-> I'll add you as "Suggested-by".
-
-Fine with me.
-
-> >                 if (!strcmp(dash ? dash + 1 : propname, *p))
-> >                         return i;
-> >         }
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Best regards,
+Krzysztof
 
 
