@@ -1,170 +1,111 @@
-Return-Path: <linux-kernel+bounces-299317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAF795D2E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AD495D2CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE0E1C224FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:16:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC5C11C231D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF04618C908;
-	Fri, 23 Aug 2024 16:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED54191F85;
+	Fri, 23 Aug 2024 16:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LiMDy7ao"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q7lF8JQx"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8618C1946A9
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE4F1922C5
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429581; cv=none; b=OmiBSHtK4r6jV41FE2+CenUxh1exJfUFdYK5THOWx+bJ4Lisbd9V/dNOXKoGzMovr3Y9q8CFaverDjZ8qhsiozW7FKyZYKZiHZkCXg1736seW3NkOSQbDErVDNsqxdnFr7l0pUKhOKYs49nknT1rm3VucBRzMYQiQs+9am/YqBI=
+	t=1724429559; cv=none; b=dNcrkf2s4PYJfvyaJgppJjOXTgNcBRIS6TUp0UZvmQUSZguH4irRu3lHAKh7Uau9xs4y1FSbeOPPAUFp+Oc7fRllvjrdrD/sM5F6TB6aA05XHsZJsnDAQKqousvoxzxiOJllmJJXkMxe7EpKbyudNghyeoq2gAJFHWSiq67tBtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429581; c=relaxed/simple;
-	bh=322L4Js8oYAVjx2uj/9TF8tJ9GbLwzzaYu3CG5Lh98w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cIq1MdJzlaBNFEU+q/MKEapye/9IvjFqgOke5OkEq/WEp9z0C6znPFDDcPUqJck0pQ1p43qSwCXeIqHBXd/cBRHIvEVqnqZDuzb+xXrJ9a7M/k9xEyOYPq5fUU11N85Nb6pQyA3+zkZVLHykQsMGZrbsgW7rROWI9AyekmNG/Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LiMDy7ao; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724429578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FBChvUZyQ988u9TYFlpOvF0mis7ud805n023OENZupc=;
-	b=LiMDy7aohSzh+N67LaZBlM0zc7Tfk/m4bNo4kF9O7wwfBFJwRLmDepliOFhw/S2MTxDVec
-	8jIid7spJSl3f8PJTsBr2XI845BONLnLmDN71yD2JD7wHJVFkC0zhp+7YBjhlqKdYDwReD
-	NW9LrGkaxaSrSZGs3Ofpgz8rFAgGMLw=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-HzxncWQrPICf3GrzTUMYmQ-1; Fri,
- 23 Aug 2024 12:12:49 -0400
-X-MC-Unique: HzxncWQrPICf3GrzTUMYmQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3CFB61954B02;
-	Fri, 23 Aug 2024 16:12:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 368AE19560A3;
-	Fri, 23 Aug 2024 16:12:43 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>
-Subject: [PATCH 5/5] cifs: Fix credit handling
-Date: Fri, 23 Aug 2024 17:12:06 +0100
-Message-ID: <20240823161209.434705-6-dhowells@redhat.com>
-In-Reply-To: <20240823161209.434705-1-dhowells@redhat.com>
-References: <20240823161209.434705-1-dhowells@redhat.com>
+	s=arc-20240116; t=1724429559; c=relaxed/simple;
+	bh=foDX8nSpdBE7Stl1C+tjFDYcGaddTLXx38TRzjSaijg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aNlwjdB0DQ/LoS13hQBzcu8454WUnKyv0jsvX5g7kOfD2Q9eoGPs6MCJxkpPhfm0cSWY+udGHOB9OEFjKoiINXAZgNOhcQGc+eVwWR8J8tOXJyTV4/mSxohOyTMKFIEk3JUEjQ1SKa4Wea6jzpOMoaP96D595W7dxCk8UofeZyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q7lF8JQx; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efdf02d13so3148091e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724429555; x=1725034355; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k1jmXMGgCEe3vyECBk95vJ+hBk5w1rZzr4yvt3CADUo=;
+        b=q7lF8JQx9kaMQYqIConQky3t+HpxtW3GmsnxciWj2X5f+e6FAQhKUEiPASxiYC9Ubs
+         ly45/guzT1gcKdyizYSAT+I/IgQ8qvv+Q8RZoow/GEAbxjdfeCaEZ7gS7eBzMA4O7icu
+         P2XGLCnVA4NBCsGjP7FkdPwtZvf0mS6bi8/A5U4k5qhOdqahRHDLuPa7aoHV1orSzX3w
+         m+OmPjQXNtDI70BapCyWG4wfxhl8/5n9YgOB2r5dTI/iCsvrqEFcapPRVpe6H2ZrmloI
+         kAmtTAUpoooM4By7rNfB21Lfd3kD/B4vBd+7fkUcTWvtZ3c0tgPd03mBXCXFCRfRi0j2
+         pClQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724429555; x=1725034355;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k1jmXMGgCEe3vyECBk95vJ+hBk5w1rZzr4yvt3CADUo=;
+        b=ZnV9GFXMH+5kQbAVKBiHbJmO3vrkGimrC9pBsMngbICMI+TAXeDejUhj2sHhElqt1c
+         ni+/a3VP2LGpVaiFe4xl0Se0V/jtH/G6srTmD0fUdrjT5u1oNZxX7O19sdAggcHQYVgR
+         IPjMQQ3lXMuI3HdA23zc3uFDGOW6eKtCgcsDn74/qpe2tpoRBqRgsuKkkFy/8OCTtzPD
+         7he52HOx/7ZIKnpIVMjNhlop/x0TXL7j2X1TtR6P+d1IqpJQPYNSXadFxPifVYECnKWQ
+         os5xOYH7Lpa3HBUY9+b/L/KhRP4GkY5uuWSat+JdqLOesHQKsK/FbsfFjhHshIVhmfLz
+         tpHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4QI2JUQjYN17COAKS8rQTb90l2Mo0ipDSI4zVmG3Y1e4vu1QXpV9rpSzdtbZZI0X6qYWK3Mw7KMRONQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk3lzLZxobeJGN8sE769Tyg40MjqRW9SHXI6csvWYKAZCubMR3
+	QS19fQLdj6cEnCU9OKZ+4ZxprE/DZmGdKFYyQC6RfjI5pgyIw75vOL84h2WvDpYf+bxQW1C/56Z
+	r098Yp6EVDB5FcLENAdn+lR5oPE+iOwrAP2eLyQ==
+X-Google-Smtp-Source: AGHT+IG7mSCIWYZ8bpH8IAQGda1ENwR9WbQciD7o/G7QbH41YO9wcFnvMe+Pbl1EVS7OeQRr0SFN9rrPBxhDD4ALEaE=
+X-Received: by 2002:a05:6512:b22:b0:52c:ddef:4eb7 with SMTP id
+ 2adb3069b0e04-53438846f4cmr2471437e87.20.1724429554337; Fri, 23 Aug 2024
+ 09:12:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240811-dt-bindings-serial-peripheral-props-v1-0-1dba258b7492@linaro.org>
+ <20240811-dt-bindings-serial-peripheral-props-v1-4-1dba258b7492@linaro.org>
+In-Reply-To: <20240811-dt-bindings-serial-peripheral-props-v1-4-1dba258b7492@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Aug 2024 18:12:23 +0200
+Message-ID: <CACRpkdbaHqJfK7989rx8OaS9mpmdYO2Hpna6dUty_fDgYa3chA@mail.gmail.com>
+Subject: Re: [PATCH 4/6] dt-bindings: gnss: reference serial-peripheral-props.yaml
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Johan Hovold <johan@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Daniel Kaehn <kaehndan@gmail.com>, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix some bits of credit handling:
+On Sun, Aug 11, 2024 at 8:17=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
- (1) Use the ->actual_len value rather than the total subrequest length in
-     smb2_adjust_credits() so that we don't trip the error message that we
-     don't have sufficient credits allocated in a retry.
+> The "current-speed" property is not a common property for all GNSS
+> devices, but only to these connected with serial.  Drop the property
+> from the common GNSS properties schema and instead reference common
+> serial properties schema (for children of UART controllers).
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
- (2) Set wdata->actual_len in writes as smb2_adjust_credits() now expects to
-     see it set.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
- (3) Reset the in_flight_check flag on a retry as we're doing a new read.
-
- (4) Add a missing credit resubmission trace.
-
-Fixes: 82d55e76bf2f ("cifs: Fix lack of credit renegotiation on read retry")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/file.c    | 9 +++++++++
- fs/smb/client/smb2ops.c | 2 +-
- fs/smb/client/trace.h   | 1 +
- 3 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 493c16e7c4ab..b94802438c62 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -111,6 +111,7 @@ static void cifs_issue_write(struct netfs_io_subrequest *subreq)
- 		goto fail;
- 	}
- 
-+	wdata->actual_len = wdata->subreq.len;
- 	rc = adjust_credits(wdata->server, wdata, cifs_trace_rw_credits_issue_write_adjust);
- 	if (rc)
- 		goto fail;
-@@ -227,6 +228,14 @@ static void cifs_req_issue_read(struct netfs_io_subrequest *subreq)
- 						   &rdata->credits);
- 		if (rc)
- 			goto out;
-+
-+		rdata->credits.in_flight_check = 1;
-+
-+		trace_smb3_rw_credits(rdata->rreq->debug_id,
-+				      rdata->subreq.debug_index,
-+				      rdata->credits.value,
-+				      server->credits, server->in_flight, 0,
-+				      cifs_trace_rw_credits_read_resubmit);
- 	}
- 
- 	if (req->cfile->invalidHandle) {
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 20e674990760..5090088ba727 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -301,7 +301,7 @@ smb2_adjust_credits(struct TCP_Server_Info *server,
- 		    unsigned int /*enum smb3_rw_credits_trace*/ trace)
- {
- 	struct cifs_credits *credits = &subreq->credits;
--	int new_val = DIV_ROUND_UP(subreq->subreq.len, SMB2_MAX_BUFFER_SIZE);
-+	int new_val = DIV_ROUND_UP(subreq->actual_len, SMB2_MAX_BUFFER_SIZE);
- 	int scredits, in_flight;
- 
- 	if (!credits->value || credits->value == new_val)
-diff --git a/fs/smb/client/trace.h b/fs/smb/client/trace.h
-index 0f0c10c7ada7..8e9964001e2a 100644
---- a/fs/smb/client/trace.h
-+++ b/fs/smb/client/trace.h
-@@ -30,6 +30,7 @@
- 	EM(cifs_trace_rw_credits_old_session,		"old-session") \
- 	EM(cifs_trace_rw_credits_read_response_add,	"rd-resp-add") \
- 	EM(cifs_trace_rw_credits_read_response_clear,	"rd-resp-clr") \
-+	EM(cifs_trace_rw_credits_read_resubmit,		"rd-resubmit") \
- 	EM(cifs_trace_rw_credits_read_submit,		"rd-submit  ") \
- 	EM(cifs_trace_rw_credits_write_prepare,		"wr-prepare ") \
- 	EM(cifs_trace_rw_credits_write_response_add,	"wr-resp-add") \
-
+Yours,
+Linus Walleij
 
