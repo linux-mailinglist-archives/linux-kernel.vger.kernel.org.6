@@ -1,192 +1,109 @@
-Return-Path: <linux-kernel+bounces-298933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2553695CDA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:19:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECDE95CDB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580E21C228A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:19:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B6C1F233E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC54186616;
-	Fri, 23 Aug 2024 13:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7884186E2E;
+	Fri, 23 Aug 2024 13:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="g0HtSX6i"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="As401vIt"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3076F18562A;
-	Fri, 23 Aug 2024 13:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419183; cv=pass; b=ciD03yCrPDZXJ2867FuT6VA4fSlSpB6U+8b9rPc+M9hHbhEo8Xgn2DQ86rjD364wiNqj6lQqR5lcnu/qzlfxMSf+TCteIBFjbQ6LI63o27fKniHjfnHnzZc6vNSDffeefBTWo+upLoDe4p38da+vT6VbLiYptuhF4A/q9q8E62Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419183; c=relaxed/simple;
-	bh=Vy6+x51p1S7kTEcTlXe6/7SsOO5i45PUg87sjGHGunE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SxzXw8BETrX4dzg40BhgaYc86XusL3oH56fFviw3q70n8nv3rr7LY+EuHsu1vnT82N0jwGbsiqvptzM2foKqgy9FfgyRWF5VONbr9Phsf6ERmxP1pQUcJYmg1q86fixvaNuZFXZGrBKh+gKk5bK1cnKdkMmE8aBqFvMVl9IYraU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=g0HtSX6i; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724419152; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CP6mR9nhLYaIveKpyLaeZ46q9sUT63lbSfiMIuaWfs7yx9M+FNNim+JoIotArBcgoed75YdHxptkraEtr19QO/CcqQArxJfW93c3amEoan5N/e/2pu1AsDKlPd6KKbMPLyvqkRzPPQPHjj5LMHrCtzV0dWyrkprbdJF5aUalctw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724419152; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=hZhy927uMS7MJX4gbRwhbG85sBlv12sTezrKNZF+Sjo=; 
-	b=a6JpAMOErhsOFMfZlM+H4x08BtZKGRkFsCGjhOiu3744h0qPwB4XIgU7hEEFkPdWm20KoJwNqK5sS4/v6xrzvuwa5weoFH5ICsohdVfuQvdoqMzod0YuzHhfSfEvHUXxnkI8mr/63f6w8AS2WL8TRBdTU5IWrf9EKSHXKkzLAIw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724419152;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=hZhy927uMS7MJX4gbRwhbG85sBlv12sTezrKNZF+Sjo=;
-	b=g0HtSX6iROSiuef6fVy/H2/AVyaw27pgU7AiuzuYnBVDsvfDHPdrlums9H7gC0tQ
-	PjS2YqPH00fG1/6Dha5knVdpJy9nUnISGH3CSCb3gE1LioE1z+x0hzBizXynA7a2Nwm
-	SnjueHAAxM5G9HSRGeXZj03yVaWJKXNV4GFcKe8M=
-Received: by mx.zohomail.com with SMTPS id 1724419149648671.8521035840524;
-	Fri, 23 Aug 2024 06:19:09 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v4 4/4] mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
-Date: Fri, 23 Aug 2024 09:20:50 -0400
-Message-ID: <5808226.DvuYhMxLoT@trenzalore>
-In-Reply-To: <26fe259f390a8015c3f08c6dc027711c@manjaro.org>
-References:
- <20240822212418.982927-1-detlev.casanova@collabora.com>
- <20240822212418.982927-5-detlev.casanova@collabora.com>
- <26fe259f390a8015c3f08c6dc027711c@manjaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A687518562A;
+	Fri, 23 Aug 2024 13:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724419329; cv=none; b=bBGl66z0YXsarVFmN7Lg3Z72tn5gqZjbWKBowkg4hYNAuhXvNbUS+S4nmWJhAtj4JYWSYqPuJQ3aU+BihI2ogW7HAnJuw9spSbMOcNF3Jc6+p17Q+OV8/IU9gdlgD97hZ9GRK9gcHgxwwlk1j+s3gkZa8QmnNk2fqcJFc+g41yA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724419329; c=relaxed/simple;
+	bh=rKQeq9bwcqO/L2Pc1fcDLl8VQQ0iK8rcr8CMjfMKesY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y4G3tl5fzJAmZ+fOcgGeXj5RiLDy+5HiEzGiPf9ISSHkgmvbQl4jnsDzM/D9glXqbZfsEe7uRARbQ6eQicJIQLO9VmH6cFkcLiMGSY7E6dW/MMKBHLieDAXp9AFe4o1vYgpLCsa5wJBdhdRT0ltNhzqZP0fV37eVhKS/qkQHrhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=As401vIt; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f4f2cda058so8505871fa.1;
+        Fri, 23 Aug 2024 06:22:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724419326; x=1725024126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rKQeq9bwcqO/L2Pc1fcDLl8VQQ0iK8rcr8CMjfMKesY=;
+        b=As401vIt6S3cGkGuIo5ksmamF2bihJh0dWesM9lt51/L1YiUEJTO0D+izmnntbkV2G
+         7y70sR7KmPXVqld0PSjJTg5/LBS0apZkEfK3tLA1lImboc7gqxg8/xeBucepONHx7QfJ
+         vL+lJEmDLLHiN3MVd9lp/wTIjvx0GkbhC1noQldqN9wJAzsMY47oZ7bzuzXiDlSOa2QB
+         AiAgJa+kph/Id8vuZ2adIJ1/Fc/mvVWFiYAJV68k+FmoLwzpn2p5hvP0gXaw0eoHSHFW
+         QSWJvPGcluSCdiHJCOgjUWBuhefHXlg8tbRYyteFzsEWohy+VG3TUGqnaq0KGPni/Uqr
+         i7Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724419326; x=1725024126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rKQeq9bwcqO/L2Pc1fcDLl8VQQ0iK8rcr8CMjfMKesY=;
+        b=k4a5QPXLz7CVR+s4Z9ICs9ivDDA5TPN9OKCkPQuHzikHwxbFjOJgNfQNe6g6zHZIZw
+         atXKn6UuLXr3QKbvXvITgMZBMwZ6lfFmxlSGkauUKuGIS3rqd8emb74kBeJHbc3Tsfpf
+         JlXLSu7LNf2eRY2j34cHu+wq525x/xKts1McxK0oH3pHoNos3LNNxUvu4G5ee0ehEmfD
+         OaHdMBG2PGwSM1HDHRMCq+ETQP3pxMxprDLyVS70OiEmaazdv9tVyJr5XIQBcvwx4II/
+         Pfuof00lY8CvczpIz/UhQn0b8Tw8CF0564Nck2TI3hTDPfcZ7B+9uLXNfR7o2lpp/fUA
+         8lpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAzl2Jq6IykgBHcTUmQP9oAqSdRxDEbHTCDa4y179lloGBKOE1TAysDjdRVHjrZoAdE1uiZ0F7ktU7rHbv@vger.kernel.org, AJvYcCWTLLyUrnoz5l+Oi26/IGxbwybsf3Z3aZVINhXXCLD7V4u0aRaZcbAFB2gAgxLZfzoZtnLavredAHbu6fIo@vger.kernel.org, AJvYcCXAMeN88oRz8VsWVi2UxCNhN9y/TqXk4//oUn4z6bnbfomE4Ndh3X/etPYhfTlqZGN5De6VID3oy/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOFf6xgGxSMpMt4ea/rpbcuasjfTNPJaYnAI2BG8NZ44F2R8Fw
+	kuVaeyRpMX+mMCdpPyGcnkfWUNcN3L4e+DmSkjVpPXESHy2RDbweUxyC0pRbqfQzwdAkiMVSc1C
+	xOpMtjMO7YL1XXWYGb/VvPc5gqUA=
+X-Google-Smtp-Source: AGHT+IEzM+VHYtlD/p1yI/jFgtHiWv1VA11NrUMshIJ18cFE55GPaqypnHWhkeG4F3ahbzmUNS+DF7kuUVxSigjUdzk=
+X-Received: by 2002:a2e:d19:0:b0:2f3:f39f:3714 with SMTP id
+ 38308e7fff4ca-2f4f491623amr8452071fa.13.1724419325227; Fri, 23 Aug 2024
+ 06:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+References: <20240802080756.7415-1-fancer.lancer@gmail.com> <n6grskuq722vnogwp5obiwzv4pxs5bbqddadesffezhvba5cjh@d6shcrvpxujg>
+In-Reply-To: <n6grskuq722vnogwp5obiwzv4pxs5bbqddadesffezhvba5cjh@d6shcrvpxujg>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 23 Aug 2024 16:21:24 +0300
+Message-ID: <CAHp75VdXqS6xqdsQCyhaMNLvzwkFn9HU8k9SLcT=KSwF9QPN4Q@mail.gmail.com>
+Subject: Re: [PATCH RFC] dmaengine: dw: Prevent tx-status calling desc
+ callback (Fix UART deadlock!)
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Viresh Kumar <vireshk@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	dmaengine@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dragan,
+On Fri, Aug 23, 2024 at 12:48=E2=80=AFPM Serge Semin <fancer.lancer@gmail.c=
+om> wrote:
+>
+> Hi folks
+>
+> Any comments or suggestion about the change? The kernel occasionally
+> _deadlocks_ without it for the DW UART + DW DMAC hardware setup.
 
-On Friday, 23 August 2024 03:00:57 EDT Dragan Simic wrote:
-> Hello Detlev,
-> 
-> Please see a comment below.
-> 
-> On 2024-08-22 23:15, Detlev Casanova wrote:
-> > On rk3576 the tunable clocks are inside the controller itself, removing
-> > the need for the "ciu-drive" and "ciu-sample" clocks.
-> > 
-> > That makes it a new type of controller that has its own dt_parse
-> > function.
-> > 
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> > 
-> >  drivers/mmc/host/dw_mmc-rockchip.c | 48 ++++++++++++++++++++++++++----
-> >  1 file changed, 43 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
-> > b/drivers/mmc/host/dw_mmc-rockchip.c
-> > index 1458cb5fd5c7..7c8ccf5e71bc 100644
-> > --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> > +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-[...]
-> > @@ -435,13 +451,25 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci
-> > *host)
-> > 
-> >  	if (IS_ERR(priv->sample_clk))
-> >  	
-> >  		dev_dbg(host->dev, "ciu-sample not available\n");
-> > 
-> > -	host->priv = priv;
-> > -
-> > 
-> >  	priv->internal_phase = false;
-> >  	
-> >  	return 0;
-> >  
-> >  }
-> > 
-> > +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
-> > +{
-> > +	struct dw_mci_rockchip_priv_data *priv;
-> > +	int err = dw_mci_common_parse_dt(host);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	priv = host->priv;
-> > +
-> > +	priv->internal_phase = true;
-> 
-> Defining priv, assigning it and using it seems rather redundant,
-> when all that's needed is simple "host->priv->internal_phase = true"
-> assignment instead.
+I have no time to look at that, but FWIW with a stress tests on older
+machines I have seen something similar from time to time (less than
+10% reproducibility ration IIRC).
 
-Yes, that's what I did at first, but host->priv is declared as void*, which 
-means it needs to be cast to struct dw_mci_rockchip_priv_data * and I felt 
-that 
+P.S. Is there is any possibility to have a step-by-step reproducer?
+Also can we utilise (and update if needed) the open source project
+https://github.com/cbrake/linux-serial-test?
 
-((struct dw_mci_rockchip_priv_data *)host->priv)->internal_phase = true;
-
-is not very pretty and harder to read.
-
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > 
-> >  static int dw_mci_rockchip_init(struct dw_mci *host)
-> >  {
-> >  
-> >  	int ret, i;
-> > 
-> > @@ -483,11 +511,21 @@ static const struct dw_mci_drv_data
-> > rk3288_drv_data = {
-> > 
-> >  	.init			= dw_mci_rockchip_init,
-> >  
-> >  };
-> > 
-> > +static const struct dw_mci_drv_data rk3576_drv_data = {
-> > +	.common_caps		= MMC_CAP_CMD23,
-> > +	.set_ios		= dw_mci_rk3288_set_ios,
-> > +	.execute_tuning		= dw_mci_rk3288_execute_tuning,
-> > +	.parse_dt		= dw_mci_rk3576_parse_dt,
-> > +	.init			= dw_mci_rockchip_init,
-> > +};
-> > +
-> > 
-> >  static const struct of_device_id dw_mci_rockchip_match[] = {
-> >  
-> >  	{ .compatible = "rockchip,rk2928-dw-mshc",
-> >  	
-> >  		.data = &rk2928_drv_data },
-> >  	
-> >  	{ .compatible = "rockchip,rk3288-dw-mshc",
-> >  	
-> >  		.data = &rk3288_drv_data },
-> > 
-> > +	{ .compatible = "rockchip,rk3576-dw-mshc",
-> > +		.data = &rk3576_drv_data },
-> > 
-> >  	{},
-> >  
-> >  };
-> >  MODULE_DEVICE_TABLE(of, dw_mci_rockchip_match);
-
-
-
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
