@@ -1,207 +1,168 @@
-Return-Path: <linux-kernel+bounces-299300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2569095D27E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:09:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5BF95D282
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ACD11C235C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:09:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA521C227C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378FA18A6DA;
-	Fri, 23 Aug 2024 16:09:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6463C18BC02;
+	Fri, 23 Aug 2024 16:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udKDD1EC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9408218593A;
-	Fri, 23 Aug 2024 16:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD5118BBA5;
+	Fri, 23 Aug 2024 16:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429372; cv=none; b=FRgaOc8l+KtQtbF0stmH3zW3tLNWPKc+4bT63aLhhlNPBg29jxGs2FMufppUo2slUkRtPCpWFj4y1ykj2Kc3q61vH8+0G3b9mEABS2Wl07a7wD6+RhKzyZzJV+khZkAoOvExoWxdfn+AoouOwTeePcqiH0zMywFJSDq+i9e8fbo=
+	t=1724429375; cv=none; b=awPghef2lK9FFrqzBRJvNXdfU0u62Pppa+oADnL9D7V1MLNEmqFjphqBWSdx/0G/bpp61N9P3cj05lV5S4mdFqqOfI1WeFbK5we4gBIeooS8gfuja3uovlcejw1ox15t7fiB+gCLSAdSBWNk7mCdM0zJ/0UZCVzXexb8/fLiEAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429372; c=relaxed/simple;
-	bh=CbAQlyU8fku3VCWy5333UtRcY2DrWTawVuVsOfKJuII=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6uAuGQ6GoZnluLCpCoXV6Jv9afcnlaX30rn+iqqKvgWinS7nsdh2XIA9x2lLq3eAEuL3bJX2u7kvgM5jMiK8+EgpYe+TUOuUuUa0Rgc3ZhBMB/Gr/pn1rvccAv07jLSI/xIzAcjbvmUJheKJ3FukjIVgVx5fz4ZmEtCB1Ip6Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wr4gX4g02z6K97G;
-	Sat, 24 Aug 2024 00:06:16 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id B415B140C72;
-	Sat, 24 Aug 2024 00:09:25 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 17:09:25 +0100
-Date: Fri, 23 Aug 2024 17:09:24 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
-	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
-	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
-Subject: Re: [PATCH v3 09/25] cxl/hdm: Add dynamic capacity size support to
- endpoint decoders
-Message-ID: <20240823170924.00002456@Huawei.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-9-7c9b96cba6d7@intel.com>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
-	<20240816-dcd-type2-upstream-v3-9-7c9b96cba6d7@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724429375; c=relaxed/simple;
+	bh=JOl3VeJVb7+4udev9KoJnFszscQS+ytPrFBBCJNeJzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KS4KY9z/dgrSaBrpP5I339oCxSYnq9OOY98FCNYeTZhyDr4Cutd6uEzc5qyUnVlkuxVTcb3LujWeqtrfXR2vz2Yx5fjQImEiNZR3V/fyIRTXA2loJ+JzMmGIgz/ZAx1Ju69P5wGhql4nK4MH3XFapsN1t7HkNawXOFDbwELxzVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udKDD1EC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A73C4AF15;
+	Fri, 23 Aug 2024 16:09:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724429375;
+	bh=JOl3VeJVb7+4udev9KoJnFszscQS+ytPrFBBCJNeJzI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=udKDD1ECZh77xirvKCpBf+xQldK6fi+u8b+vBdV0dRAxqbsQVNS4N5S4G1ibDmfF7
+	 uXGJPszwxa2h2NsLKcdezQGYbpShpWZy4gaGOuzKW9PygQBoFtXWaKIrL0Q4gPJslC
+	 fdqwMo1j0Qf/1ma8s805kDizssQnBmZ4Nm5dqnckknINhYiSduz5VpfEMMuruDARJS
+	 feDdrxQ61rXvstD/vNKiaTdOI4yNXDgncY0QjGwex6jtqANxZpPMcxCwCs2sdvCGAP
+	 SqLavNv3xLTl1s/+WEVJ3Rv47SSh4rjxHqZawU+sNxgnXnvGTuR32b4zjkChqs8Zqx
+	 N9Txwsd/NdTZA==
+Date: Fri, 23 Aug 2024 17:09:29 +0100
+From: Will Deacon <will@kernel.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Mostafa Saleh <smostafa@google.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 1/4] iommu/io-pgtable-arm: Make pgtable walker more
+ generic
+Message-ID: <20240823160929.GA851@willie-the-truck>
+References: <20240820171652.145673-1-robdclark@gmail.com>
+ <20240820171652.145673-2-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820171652.145673-2-robdclark@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, 16 Aug 2024 09:44:17 -0500
-ira.weiny@intel.com wrote:
-
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> To support Dynamic Capacity Devices (DCD) endpoint decoders will need to
-> map DC partitions (regions).  In addition to assigning the size of the
-> DC partition, the decoder must assign any skip value from the previous
-> decoder.  This must be done within a contiguous DPA space.
-> 
-> Two complications arise with Dynamic Capacity regions which did not
-> exist with Ram and PMEM partitions.  First, gaps in the DPA space can
-> exist between and around the DC partitions.  Second, the Linux resource
-> tree does not allow a resource to be marked across existing nodes within
-> a tree.
-> 
-> For clarity, below is an example of an 60GB device with 10GB of RAM,
-> 10GB of PMEM and 10GB for each of 2 DC partitions.  The desired CXL
-> mapping is 5GB of RAM, 5GB of PMEM, and 5GB of DC1.
-> 
->      DPA RANGE
->      (dpa_res)
-> 0GB        10GB       20GB       30GB       40GB       50GB       60GB
-> |----------|----------|----------|----------|----------|----------|
-> 
-> RAM         PMEM                  DC0                   DC1
->  (ram_res)  (pmem_res)            (dc_res[0])           (dc_res[1])
-> |----------|----------|   <gap>  |----------|   <gap>  |----------|
-> 
->  RAM        PMEM                                        DC1
-> |XXXXX|----|XXXXX|----|----------|----------|----------|XXXXX-----|
-> 0GB   5GB  10GB  15GB 20GB       30GB       40GB       50GB       60GB
-> 
-> The previous skip resource between RAM and PMEM was always a child of
-> the RAM resource and fit nicely [see (S) below].  Because of this
-> simplicity this skip resource reference was not stored in any CXL state.
-> On release the skip range could be calculated based on the endpoint
-> decoders stored values.
-> 
-> Now when DC1 is being mapped 4 skip resources must be created as
-> children.  One for the PMEM resource (A), two of the parent DPA resource
-> (B,D), and one more child of the DC0 resource (C).
-> 
-> 0GB        10GB       20GB       30GB       40GB       50GB       60GB
-> |----------|----------|----------|----------|----------|----------|
->                            |                     |
-> |----------|----------|    |     |----------|    |     |----------|
->         |          |       |          |          |
->        (S)        (A)     (B)        (C)        (D)
-> 	v          v       v          v          v
-> |XXXXX|----|XXXXX|----|----------|----------|----------|XXXXX-----|
->        skip       skip  skip        skip      skip
-> 
-> Expand the calculation of DPA free space and enhance the logic to
-> support this more complex skipping.  To track the potential of multiple
-> skip resources an xarray is attached to the endpoint decoder.  The
-> existing algorithm between RAM and PMEM is consolidated within the new
-> one to streamline the code even though the result is the storage of a
-> single skip resource in the xarray.
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-One query below + request to add a comment on it for when I've
-again completely forgotten how this works.
-
-Also a grumpy reviewer comment.
-
-> +static int cxl_reserve_dpa_skip(struct cxl_endpoint_decoder *cxled,
-> +				resource_size_t base, resource_size_t skipped)
-> +{
-> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> +	struct cxl_port *port = cxled_to_port(cxled);
-> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
-> +	resource_size_t skip_base = base - skipped;
-> +	struct device *dev = &port->dev;
-> +	resource_size_t skip_len = 0;
-> +	int rc, index;
-> +
-
-> +	index = dc_mode_to_region_index(cxled->mode);
-> +	for (int i = 0; i <= index; i++) {
-
-I'm not sure why this is <= so maybe a comment?
-
-> +		struct resource *dcr = &cxlds->dc_res[i];
-> +
-> +		if (skip_base < dcr->start) {
-> +			skip_len = dcr->start - skip_base;
-> +			rc = cxl_request_skip(cxled, skip_base, skip_len);
-> +			if (rc)
-> +				return rc;
-> +			skip_base += skip_len;
-> +		}
-> +
-> +		if (skip_base == base) {
-> +			dev_dbg(dev, "skip done DC region %d!\n", i);
-> +			break;
-> +		}
-> +
-> +		if (resource_size(dcr) && skip_base <= dcr->end) {
-> +			if (skip_base > base) {
-> +				dev_err(dev, "Skip error DC region %d; skip_base %pa; base %pa\n",
-> +					i, &skip_base, &base);
-> +				return -ENXIO;
-> +			}
-> +
-> +			skip_len = dcr->end - skip_base + 1;
-> +			rc = cxl_request_skip(cxled, skip_base, skip_len);
-> +			if (rc)
-> +				return rc;
-> +			skip_base += skip_len;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-> @@ -466,8 +588,8 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
+On Tue, Aug 20, 2024 at 10:16:44AM -0700, Rob Clark wrote:
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index f5d9fd1f45bf..b4bc358740e0 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -747,33 +747,31 @@ static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
+>  }
 >  
->  int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+>  struct io_pgtable_walk_data {
+> -	struct iommu_dirty_bitmap	*dirty;
+> +	void				*data;
+> +	int (*visit)(struct io_pgtable_walk_data *walk_data, int lvl,
+> +		     arm_lpae_iopte pte, size_t size);
+>  	unsigned long			flags;
+>  	u64				addr;
+>  	const u64			end;
+>  };
+>  
+> -static int __arm_lpae_iopte_walk_dirty(struct arm_lpae_io_pgtable *data,
+> -				       struct io_pgtable_walk_data *walk_data,
+> -				       arm_lpae_iopte *ptep,
+> -				       int lvl);
+> +static int __arm_lpae_iopte_walk(struct arm_lpae_io_pgtable *data,
+> +				 struct io_pgtable_walk_data *walk_data,
+> +				 arm_lpae_iopte *ptep,
+> +				 int lvl);
+>  
+> -static int io_pgtable_visit_dirty(struct arm_lpae_io_pgtable *data,
+> -				  struct io_pgtable_walk_data *walk_data,
+> -				  arm_lpae_iopte *ptep, int lvl)
+> +static int io_pgtable_visit(struct arm_lpae_io_pgtable *data,
+> +			    struct io_pgtable_walk_data *walk_data,
+> +			    arm_lpae_iopte *ptep, int lvl)
 >  {
-> -	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	resource_size_t free_ram_start, free_pmem_start;
-> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+>  	struct io_pgtable *iop = &data->iop;
+>  	arm_lpae_iopte pte = READ_ONCE(*ptep);
+>  
+>  	if (iopte_leaf(pte, lvl, iop->fmt)) {
+>  		size_t size = ARM_LPAE_BLOCK_SIZE(lvl, data);
+> -
+> -		if (iopte_writeable_dirty(pte)) {
+> -			iommu_dirty_bitmap_record(walk_data->dirty,
+> -						  walk_data->addr, size);
+> -			if (!(walk_data->flags & IOMMU_DIRTY_NO_CLEAR))
+> -				iopte_set_writeable_clean(ptep);
+> -		}
+> +		int ret = walk_data->visit(walk_data, lvl, pte, size);
+> +		if (ret)
+> +			return ret;
+>  		walk_data->addr += size;
+>  		return 0;
+>  	}
+> @@ -782,13 +780,13 @@ static int io_pgtable_visit_dirty(struct arm_lpae_io_pgtable *data,
+>  		return -EINVAL;
+>  
+>  	ptep = iopte_deref(pte, data);
+> -	return __arm_lpae_iopte_walk_dirty(data, walk_data, ptep, lvl + 1);
+> +	return __arm_lpae_iopte_walk(data, walk_data, ptep, lvl + 1);
+>  }
+>  
+> -static int __arm_lpae_iopte_walk_dirty(struct arm_lpae_io_pgtable *data,
+> -				       struct io_pgtable_walk_data *walk_data,
+> -				       arm_lpae_iopte *ptep,
+> -				       int lvl)
+> +static int __arm_lpae_iopte_walk(struct arm_lpae_io_pgtable *data,
+> +				 struct io_pgtable_walk_data *walk_data,
+> +				 arm_lpae_iopte *ptep,
+> +				 int lvl)
+>  {
+>  	u32 idx;
+>  	int max_entries, ret;
+> @@ -803,7 +801,7 @@ static int __arm_lpae_iopte_walk_dirty(struct arm_lpae_io_pgtable *data,
+>  
+>  	for (idx = ARM_LPAE_LVL_IDX(walk_data->addr, lvl, data);
+>  	     (idx < max_entries) && (walk_data->addr < walk_data->end); ++idx) {
+> -		ret = io_pgtable_visit_dirty(data, walk_data, ptep + idx, lvl);
+> +		ret = io_pgtable_visit(data, walk_data, ptep + idx, lvl);
+>  		if (ret)
+>  			return ret;
+>  	}
+> @@ -811,6 +809,20 @@ static int __arm_lpae_iopte_walk_dirty(struct arm_lpae_io_pgtable *data,
+>  	return 0;
+>  }
+>  
+> +static int visit_dirty(struct io_pgtable_walk_data *walk_data, int lvl,
+> +		       arm_lpae_iopte pte, size_t size)
+> +{
+> +	struct iommu_dirty_bitmap *dirty = walk_data->data;
+> +
+> +	if (iopte_writeable_dirty(pte)) {
+> +		iommu_dirty_bitmap_record(dirty, walk_data->addr, size);
+> +		if (!(walk_data->flags & IOMMU_DIRTY_NO_CLEAR))
+> +			iopte_set_writeable_clean(&pte);
 
-Patch noise.  Put it back where it was! (assuming I haven't failed to spot the difference)
+Are you sure that's correct? I suspect we really want to update the actual
+page-table in this case, so we probably want to pass the pointer in instead
+of the pte value.
 
->  	struct cxl_port *port = cxled_to_port(cxled);
->  	struct cxl_dev_state *cxlds = cxlmd->cxlds;
->  	struct device *dev = &cxled->cxld.dev;
+Will
 
