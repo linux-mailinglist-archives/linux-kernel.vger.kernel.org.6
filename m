@@ -1,194 +1,150 @@
-Return-Path: <linux-kernel+bounces-299273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCBD695D234
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA2D95D23C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D8B1F24CF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:59:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC072820BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFA51898EE;
-	Fri, 23 Aug 2024 15:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="geEc4Zc/"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3072918BBA3;
+	Fri, 23 Aug 2024 15:59:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C091885BE
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2FB189535;
+	Fri, 23 Aug 2024 15:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428749; cv=none; b=Ye7QUeB+fyNZFF7vnwUfT3MVcPM+Z/PECKRcjdgPQSDrewu5XusMzLAHd8KXe5Do3GGYyC78xP0usgEXvr1hoKZiDzHJrYcFltDcIWJKADkNGtk7SEUVorDqk28jcoOTEnmSALbZ2lpslo9CfHRrVXBgyDUKGrDjiccg7SfsVSM=
+	t=1724428760; cv=none; b=Ha3sJI0A4EAEBlngAZBusI0R5miEhdRwj0ynJeVq3tZtP8dXS37jktwO9KMGqnR5FD06YDKN4DpJIrZwklmpI/U3EUfywb5AK6t1oyMGP1q9NrXAjjMki8AA0OP5GhyE/lPY5VZK8JyP/AjSCNzmN6F5KDsZ0eHi6nmtzIYkL34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428749; c=relaxed/simple;
-	bh=/RB4+DUzcecCj6IUIH7XJGwYAxA5ZOCcrqRxptpdQeQ=;
+	s=arc-20240116; t=1724428760; c=relaxed/simple;
+	bh=yTzD+B1z/7Em4lUy5BYRbkbEdL3Ho0yTaWOm/CmXCIw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AXkyMQXOcoB25VSp2XWCXszoO7ZoxPSgztONiyv4YC0T2DmYTK/cwnSpbQmWqxtY99Ji7Al1fpnN0tNW5M7f03tXs4pu07Qird5iBM1766BQ5f/FWIaf1oGlSGoDaKa1Kr1p3r5KuCXg+11T0fvgV5eUighZu6gJfokv5emU250=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=geEc4Zc/; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7142e4dddbfso1747640b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724428747; x=1725033547; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UIGDnb5A+GtrVAQeuej4pnC1dpMb2EWNsJHPeGHtTlI=;
-        b=geEc4Zc/pUh/poRV7WU+JxhSFgwNQxCe1d2cmOJfGRtPP/+cZbI/17D2V6He98ZNZ7
-         iheKHTiOsq/arjVyfEZGbDolLPEd8yKcBmMTh7K189m102Pj6TTx34BI7j8PyYN0XRUu
-         sdAwqz5UXI0CJoSCl/XYZ4wiwUvVhd018E3XCToJwoDmUaC4aoWzmlmoLKaxUKpe0zIO
-         1AQoPitWC6iFAi5VsBWzhQ84/rPAwQKf8NAl9X1Eq22EHh3mtWhQAQvmmMAjN+n5jFA3
-         set6LJw3ptZ1ZMQy0OR9qBMhhek9g1oGXS6Bt06+BH5k2lZiXFv3smRV+oEyTERn5bwE
-         Ewtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724428747; x=1725033547;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UIGDnb5A+GtrVAQeuej4pnC1dpMb2EWNsJHPeGHtTlI=;
-        b=ZpUL6EEgT+pjYbnxf+vM3lyfhCvGd5jSQNs2/SKnc/a/QX1mhxqAbkV7CI76O8mqf3
-         QrHabJADF74Eowbd/K3uQc0zvIyZnKsz3EEEHSok5I019nfCJI9GY/WNqpHP5PaidFOG
-         3fAGRx/8SHSdLmrliXlVCSZgNbAIW/VkpdQAFubCJ5XIEx/dg1g1jWHkxjCu7GmXhBj+
-         CpqV0lE48ka4As/3nBf5YB0lqSzWR2Z/5n1C97DQQkMEerBXuEGk8jA9YHMXwRWr/Q3b
-         cpi0MXX1e08Cswb5SGH8lGM4WYyHUBUWUO+44oVLsSL2m0C8LtWXAVG1CXpihYxkQNXI
-         /0wA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6RN2unqS4sJeVAij1WPlbwcnKYeni8bMtfT7bVrNNAM0O24FL3zfG9LNQ2ozrLYW7P/J28Qq8wva4dLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4GPebIrKrKNC8x1e4MSCNP5Uw2vz7BBuwjUEtyc3A/JRQOCNK
-	0JY8RnM8AAm/5I11VxL01v+ppkWLM3S9hhG+MxzK8IIa1046sQoqHu2cW0Ockw==
-X-Google-Smtp-Source: AGHT+IH+oOTSFwrhIWkuhR20LUl8VdF/2I2KKHEVR/Ox6j4FQ8Mp23CMn5lXfDqRfKQW0VyKmRnOvQ==
-X-Received: by 2002:a05:6a21:4603:b0:1c4:a1f4:3490 with SMTP id adf61e73a8af0-1cc8b5d8f90mr2850586637.39.1724428747347;
-        Fri, 23 Aug 2024 08:59:07 -0700 (PDT)
-Received: from thinkpad ([120.60.50.97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e2194sm3188056b3a.126.2024.08.23.08.59.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 08:59:07 -0700 (PDT)
-Date: Fri, 23 Aug 2024 21:29:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: kvalo@kernel.org, jjohnson@kernel.org
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] wifi: ath12k: Set IRQ affinity hint after requesting
- all shared IRQs
-Message-ID: <20240823155903.eqswl5ds4h2eynhp@thinkpad>
-References: <20240823155502.57333-1-manivannan.sadhasivam@linaro.org>
- <20240823155502.57333-3-manivannan.sadhasivam@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJMCOE2izDzMywFqc3DbRIF8HbFWhSd2S3sL1R/vtoV2S8ranaIPxMXOkwznXRYRAmXwEZZxuy+i9FIBZSQkaElZSidVXivOcMpBnQ15o/dmMZcKP3xIVBocsyLa1LvIUNHXgOf+jYDkWfV/85OmhOoggz/uFupLOnYW3yNq+9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7C1C32786;
+	Fri, 23 Aug 2024 15:59:14 +0000 (UTC)
+Date: Fri, 23 Aug 2024 16:59:11 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 25/39] arm64/signal: Expose GCS state in signal frames
+Message-ID: <Zsixz6Y9xWxqaQaV@arm.com>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-25-41b81947ecb5@kernel.org>
+ <ZshYTyNbveD7WMyJ@arm.com>
+ <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823155502.57333-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
 
-On Fri, Aug 23, 2024 at 09:25:01PM +0530, Manivannan Sadhasivam wrote:
-> If a shared IRQ is used by the driver due to platform limitation, then the
-> IRQ affinity hint is set right after the allocation of IRQ vectors in
-> ath11k_pci_alloc_msi(). This does no harm unless one of the functions
-> requesting the IRQ fails and attempt to free the IRQ.
+On Fri, Aug 23, 2024 at 11:25:30AM +0100, Mark Brown wrote:
+> On Fri, Aug 23, 2024 at 10:37:19AM +0100, Catalin Marinas wrote:
+> > On Thu, Aug 22, 2024 at 02:15:28AM +0100, Mark Brown wrote:
 > 
-> This may end up with a warning from the IRQ core that is expecting the
-> affinity hint to be cleared before freeing the IRQ:
+> > > +	gcs_preserve_current_state();
+> > > +	gcspr = current->thread.gcspr_el0 - 8;
 > 
-> kernel/irq/manage.c:
+> > > +	__put_user_error(gcspr, &ctx->gcspr, err);
 > 
-> 	/* make sure affinity_hint is cleaned up */
-> 	if (WARN_ON_ONCE(desc->affinity_hint))
-> 		desc->affinity_hint = NULL;
+> > Do we actually need to store the gcspr value after the cap token has
+> > been pushed or just the value of the interrupted context? If we at some
+> > point get a sigaltshadowstack() syscall, the saved GCS wouldn't point to
+> > the new stack but rather the original one. Unwinders should be able to
+> > get the actual GCSPR_EL0 register, no need for the sigcontext to point
+> > to the new shadow stack.
 > 
-> So to fix this, let's set the IRQ affinity hint after requesting all the
-> shared IRQ. This will make sure that the affinity hint gets cleared in the
-> error path before freeing the IRQ.
-> 
+> We could store either the cap token or the interrupted GCSPR_EL0 (the
+> address below the cap token).  It felt more joined up to go with the cap
+> token since notionally signal return is consuming the cap token but
+> either way would work, we could just add an offset when looking at the
+> pointer.
 
-Apparently, I missed adding the fixes tag:
+In a hypothetical sigaltshadowstack() scenario, would the cap go on the
+new signal shadow stack or on the old one? I assume on the new one but
+in sigcontext we'd save the original GCSPR_EL0. In such hypothetical
+case, the original GCSPR_EL0 would not need 8 subtracted.
 
-Fixes: a3012f206d07 ("wifi: ath12k: set IRQ affinity to CPU0 in case of one MSI vector")
+I need to think some more about this. The gcs_restore_signal() function
+makes sense, it starts with the current GCSPR_EL0 on the signal stack
+and consumes the token, adds 8 to the shadow stack pointer. The
+restore_gcs_context() one is confusing as it happens before consuming
+the cap token and assumes that the GCSPR_EL0 value actually points to
+the signal stack. If we ever implement an alternative shadow stack, the
+original GCSPR_EL0 of the interrupted context would be lost. I know it's
+not planned for now but the principles should be the same. The
+sigframe.uc should store the interrupted state.
 
-- Mani
+To me the order for sigreturn should be first to consume the cap token,
+validate it etc. and then restore GCSPR_EL0 to whatever was saved in the
+sigframe.uc prior to the signal being delivered.
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/net/wireless/ath/ath12k/pci.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+> > Also in gcs_signal_entry() in the previous patch, we seem to subtract 16
+> > rather than 8.
 > 
-> diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
-> index 9e0b9e329bda..f265c1b8ce4e 100644
-> --- a/drivers/net/wireless/ath/ath12k/pci.c
-> +++ b/drivers/net/wireless/ath/ath12k/pci.c
-> @@ -1446,16 +1446,10 @@ static int ath12k_pci_probe(struct pci_dev *pdev,
->  	if (ret)
->  		goto err_pci_msi_free;
->  
-> -	ret = ath12k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
-> -	if (ret) {
-> -		ath12k_err(ab, "failed to set irq affinity %d\n", ret);
-> -		goto err_pci_msi_free;
-> -	}
-> -
->  	ret = ath12k_mhi_register(ab_pci);
->  	if (ret) {
->  		ath12k_err(ab, "failed to register mhi: %d\n", ret);
-> -		goto err_irq_affinity_cleanup;
-> +		goto err_pci_msi_free;
->  	}
->  
->  	ret = ath12k_hal_srng_init(ab);
-> @@ -1476,6 +1470,12 @@ static int ath12k_pci_probe(struct pci_dev *pdev,
->  		goto err_ce_free;
->  	}
->  
-> +	ret = ath12k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
-> +	if (ret) {
-> +		ath12k_err(ab, "failed to set irq affinity %d\n", ret);
-> +		goto err_free_irq;
-> +	}
-> +
->  	/* kernel may allocate a dummy vector before request_irq and
->  	 * then allocate a real vector when request_irq is called.
->  	 * So get msi_data here again to avoid spurious interrupt
-> @@ -1484,16 +1484,19 @@ static int ath12k_pci_probe(struct pci_dev *pdev,
->  	ret = ath12k_pci_config_msi_data(ab_pci);
->  	if (ret) {
->  		ath12k_err(ab, "failed to config msi_data: %d\n", ret);
-> -		goto err_free_irq;
-> +		goto err_irq_affinity_cleanup;
->  	}
->  
->  	ret = ath12k_core_init(ab);
->  	if (ret) {
->  		ath12k_err(ab, "failed to init core: %d\n", ret);
-> -		goto err_free_irq;
-> +		goto err_irq_affinity_cleanup;
->  	}
->  	return 0;
->  
-> +err_irq_affinity_cleanup:
-> +	ath12k_pci_set_irq_affinity_hint(ab_pci, NULL);
-> +
->  err_free_irq:
->  	ath12k_pci_free_irq(ab);
->  
-> @@ -1509,9 +1512,6 @@ static int ath12k_pci_probe(struct pci_dev *pdev,
->  err_pci_msi_free:
->  	ath12k_pci_msi_free(ab_pci);
->  
-> -err_irq_affinity_cleanup:
-> -	ath12k_pci_set_irq_affinity_hint(ab_pci, NULL);
-> -
->  err_pci_free_region:
->  	ath12k_pci_free_region(ab_pci);
->  
-> -- 
-> 2.25.1
+> We need to not only place a cap but also a GCS frame for the sigreturn
+> trampoline, the sigreturn trampoline isn't part of the interrupted
+> context so isn't included in the signal frame but it needs to have a
+> record on the GCS so that the signal handler doesn't just generate a GCS
+> fault if it tries to return to the trampoline.  This means that the
+> GCSPR_EL0 that is set for the signal handler needs to move two entries,
+> one for the cap token and one for the trampoline.
+
+Yes, this makes sense.
+
+> > What I find confusing is that both restore_gcs_context() and
+> > gcs_restore_signal() seem to touch current->thread.gcspr_el0 and the
+> > sysreg. Which one takes priority? I should probably check the branch out
+> > to see the end result.
 > 
+> restore_gcs_context() is loading values from the signal frame in memory
+> (which will only happen if a GCS context is present) then
+> gcs_restore_signal() consumes the token at the top of the stack.  The
+> split is because userspace can skip the restore_X_context() functions
+> for the optional signal frame elements by removing them from the context
+> but we want to ensure that we always consume a token.
+
+I agree we should always consume a token but this should be done from
+the actual hardware GCSPR_EL0 value on the sigreturn call rather than
+the one restored from sigframe.uc. The restoring should be the last
+step.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Catalin
 
