@@ -1,72 +1,124 @@
-Return-Path: <linux-kernel+bounces-298847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCBA95CC24
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:10:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B379195CC26
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF03E1C240C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:10:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65EB1C2414E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3918C15382E;
-	Fri, 23 Aug 2024 12:10:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7FF185925;
+	Fri, 23 Aug 2024 12:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrPOfWxv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042F414B966;
-	Fri, 23 Aug 2024 12:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA8C61FFC;
+	Fri, 23 Aug 2024 12:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724415014; cv=none; b=GoJ5/sUtx0GkZIneU4YUssUmf6GXdcxbENpD1aAWJ+mH833hldV5IJecYxbYOqxIwWnwYBuq9T2UzaHYKfZ69CfQcAau9rWtk+799q5asxW9oKTYjs2Ca8x6KpfcLsYzdz1UaTP1jJtD7zmcCyeiyPEEpPTbxGsfO555WXItwk0=
+	t=1724415036; cv=none; b=NKz5WnW4Oq6kDXHLZMwT9zY07LUUfLjqiGcmmOeP3tm2BuNINV8bUx+PRpzqLtOOEOmHwqYWkKoWEv7hj5sW0O7HSWqbacJ/jEbe5voUeXVDpH5q34P82yMdzNyOGhsxW8QcAcQcQeC9HY23amoWxdjYaEGRwBhVoRLMBRaAtHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724415014; c=relaxed/simple;
-	bh=mL0TNnStVp45XvgIhp8zHsfeHhdI3Gb3XPYP/1d11Bw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H/s9lO2ev8QebLNCMbSjvhPoFdQXrO2CDa1hNGyUt7kus1pL5DOaWXvl9G6IpYUEP57VYEVCGCdfqDWAktAph0Rmw6JtWw3eH+vWbn3WH/KfSGBYO4bDxIgSBDJxfUZ4hTlSSUDuG4E8bUXqAwFkRj4C1oUHl9Cn6eutlc6SvsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WqzLn1Dszz6G9N1;
-	Fri, 23 Aug 2024 20:06:25 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2EFE3140594;
-	Fri, 23 Aug 2024 20:10:10 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 13:10:09 +0100
-Date: Fri, 23 Aug 2024 13:10:08 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-CC: <vkoul@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] dma:uniphier-mdmac:Use devm_clk_get_enabled()
- helpers
-Message-ID: <20240823131008.00004b13@Huawei.com>
-In-Reply-To: <20240823101933.9517-7-liaoyuanhong@vivo.com>
-References: <20240823101933.9517-1-liaoyuanhong@vivo.com>
-	<20240823101933.9517-7-liaoyuanhong@vivo.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724415036; c=relaxed/simple;
+	bh=pKfHgATmqSK7seazo5mDVuSTEke8rFJFn5HddZgvvO0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=HdLgxV9JdPunONoH1LKcA8s68yVSObwdiMoSdz1rzb1v5YhJ0I85raGhleBwjMRlFpx1PgZ6sVtRDvoic2qIUANytmvrGFb8a+6+LjqooHmHsIifffDRS+UYPV8h4eMSK+odvSH/EhQT4492KgHpvYCbYke0Quwfe48pClybWQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrPOfWxv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE5F1C4AF09;
+	Fri, 23 Aug 2024 12:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724415035;
+	bh=pKfHgATmqSK7seazo5mDVuSTEke8rFJFn5HddZgvvO0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=lrPOfWxvYJn89G8sixWzWn/bUQdiEKtMGgFoKGr4jgFtsw/mkEKxaWsnqhd1yuvG4
+	 AiH3unq8t6tq1c6LHgPXCs9SBBcF69SbdgEUm3MF6x8AW/vp1794CmfWTBsqjTJyox
+	 G9/a6E0V0Qtjjl3HbkWKEsP8ovixDCfbAQs/tkY82hO4eKUFA0WCPIlYgpNUuDxzpS
+	 mgDHbfnhHg6dWotNdPxtBWBSwfRYPmNWSJ+4uFICG5dyoy0sIom77g1tUpmCquKjAX
+	 GMN9ZMuW6NZt/C/WNNyg7Ov7QC/C0cCGmaciymzBz7Y22q3rHgJolT/W1hOYrnkqWz
+	 66H20BuYHRySA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFC93804CB0;
+	Fri, 23 Aug 2024 12:10:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v18 00/13] Introduce PHY listing and link_topology
+ tracking
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172441503552.2944490.10143291093709397459.git-patchwork-notify@kernel.org>
+Date: Fri, 23 Aug 2024 12:10:35 +0000
+References: <20240821151009.1681151-1-maxime.chevallier@bootlin.com>
+In-Reply-To: <20240821151009.1681151-1-maxime.chevallier@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, andrew@lunn.ch, kuba@kernel.org,
+ edumazet@google.com, pabeni@redhat.com, linux@armlinux.org.uk,
+ linux-arm-kernel@lists.infradead.org, christophe.leroy@csgroup.eu,
+ herve.codina@bootlin.com, f.fainelli@gmail.com, hkallweit1@gmail.com,
+ vladimir.oltean@nxp.com, kory.maincent@bootlin.com,
+ jesse.brandeburg@intel.com, kabel@kernel.org, piergiorgio.beruto@gmail.com,
+ o.rempel@pengutronix.de, nicveronese@gmail.com, horms@kernel.org,
+ mwojtas@chromium.org, nathan@kernel.org, atenart@kernel.org,
+ mkl@pengutronix.de, dan.carpenter@linaro.org, romain.gantois@bootlin.com
 
-On Fri, 23 Aug 2024 18:19:33 +0800
-Liao Yuanhong <liaoyuanhong@vivo.com> wrote:
+Hello:
 
-> Use devm_clk_get_enabled() instead of clk functions in uniphier-mdmac.
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Wed, 21 Aug 2024 17:09:54 +0200 you wrote:
+> Hello everyone,
 > 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> This is V18 of the phy_link_topology series, aiming at improving support
+> for multiple PHYs being attached to the same MAC.
+> 
+> V18 is a simple rebase of the V17 on top of net-next, gathering the
+> tested-by and reviewed-by tags from Christophe (thanks !).
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v18,01/13] net: phy: Introduce ethernet link topology representation
+    https://git.kernel.org/netdev/net-next/c/384968786909
+  - [net-next,v18,02/13] net: sfp: pass the phy_device when disconnecting an sfp module's PHY
+    https://git.kernel.org/netdev/net-next/c/4d76f115ab91
+  - [net-next,v18,03/13] net: phy: add helpers to handle sfp phy connect/disconnect
+    https://git.kernel.org/netdev/net-next/c/b2db6f4ace72
+  - [net-next,v18,04/13] net: sfp: Add helper to return the SFP bus name
+    https://git.kernel.org/netdev/net-next/c/0a2f7de0f3b9
+  - [net-next,v18,05/13] net: ethtool: Allow passing a phy index for some commands
+    https://git.kernel.org/netdev/net-next/c/c15e065b46dc
+  - [net-next,v18,06/13] netlink: specs: add phy-index as a header parameter
+    https://git.kernel.org/netdev/net-next/c/9af0e89d6c24
+  - [net-next,v18,07/13] net: ethtool: Introduce a command to list PHYs on an interface
+    https://git.kernel.org/netdev/net-next/c/17194be4c8e1
+  - [net-next,v18,08/13] netlink: specs: add ethnl PHY_GET command set
+    https://git.kernel.org/netdev/net-next/c/d3d9a3e48a63
+  - [net-next,v18,09/13] net: ethtool: plca: Target the command to the requested PHY
+    https://git.kernel.org/netdev/net-next/c/02180fb525ba
+  - [net-next,v18,10/13] net: ethtool: pse-pd: Target the command to the requested PHY
+    https://git.kernel.org/netdev/net-next/c/31748765bed3
+  - [net-next,v18,11/13] net: ethtool: cable-test: Target the command to the requested PHY
+    https://git.kernel.org/netdev/net-next/c/3688ff3077d3
+  - [net-next,v18,12/13] net: ethtool: strset: Allow querying phy stats by index
+    https://git.kernel.org/netdev/net-next/c/e96c93aa4be9
+  - [net-next,v18,13/13] Documentation: networking: document phy_link_topology
+    https://git.kernel.org/netdev/net-next/c/db31e09d517b
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
