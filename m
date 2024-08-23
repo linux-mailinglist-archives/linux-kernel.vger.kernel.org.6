@@ -1,322 +1,178 @@
-Return-Path: <linux-kernel+bounces-298704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B808395CA65
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:21:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2740895C9E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5952843D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:21:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 285AFB2262C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304F5149C40;
-	Fri, 23 Aug 2024 10:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C5216EB4B;
+	Fri, 23 Aug 2024 10:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dSAVNjjj"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="fAEg2xCK"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2070.outbound.protection.outlook.com [40.107.215.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911F16DEDF
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724408495; cv=none; b=dJIT5YPErG3uzBAdrVhOcw9UhVaNKyg/K64c1TdcYk8SF4m/QrN2FPcCytxlC/TQ0IlnfhDrc4uPTaNqsK60jVs/G8JQ0lEnlfniRiomhBuxiDggG3dBpu+rfPFOhkIdg7tt60mlM7F3WJ5BebUlurlPWlUKVhJmfHiEHvWK+yU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724408495; c=relaxed/simple;
-	bh=wDw2GrU+mZYcRmTdJ3qd7qyGbvFGP3vTu6hsDr93i3s=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2mx6BUUCPWkDFUjXr9k58A6Kl1kZDqzIu9pizVKQ5j89FK4oStOt5gzzQBMO5eWG4f23t8uPJS9RFnvqyaqGi8T+pz1Z3tGYOu5JIMB/pVlXFa0G4StSw0BpSBxTJlHB4Y/hQY6LYCerjncsuco3q7Qt0QFlVTN78cpeCxi4M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dSAVNjjj; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8657900fc1so284852166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724408490; x=1725013290; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uy9tQ1TYcZbcuxiuWon4EXX8Ukt9Xc78KSZT2kpFAzw=;
-        b=dSAVNjjj9V9KUVn2jvCxZfZAt/LqYbO24HHYYHwNhsE7z7K3sfXjgiuiTSSBvUsQxE
-         jMe/3gyvIZWsn3QwqhqLQ0QxC6UQDb/HyYyYYd7RMXeC4GX+gWPGScTvXujcS+N46yE7
-         bexwmWVwKj2A5JlpOdhPLuX8uxrn22D8rhm4N+mrQ1LYWs6jLeaEII5N7o+rkGqPX7Nh
-         dWI37kup0B8XPBmSMb+hqFj233pyC8QnZP2KE2lhbcDg5aDWjiTir+2TVmmSM+EGqC92
-         hZPYfrE4sO8UEFg7llX5mezmQXiND1uN4853HvqIMYHy/Zh/QlVMaKaJrZSNauZHDA2V
-         aufQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724408490; x=1725013290;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uy9tQ1TYcZbcuxiuWon4EXX8Ukt9Xc78KSZT2kpFAzw=;
-        b=pCOGw3KuL967kHFMJvbP8gfS2T5h+RfOVw+m+GtvfkbtyJiWiTi2xMTu6pnaVnTVYe
-         PZXV6hg69vjeXUs++mFVkBGwdQV2H4VWs+EF5ztgBBeO/H9bmQyKF73eOJsa4MK91IPb
-         6w/Nc22DeVW0s6mgg4Ybrd1UlFFk+RDyYaClLb1EK3TztjsSyQaLKl5lEXeVzklIAqWT
-         HmKQkLL6iqJPW8K4rvffGdQ4BOgnfEBt/TbZAkOjlIGOZPISKiVGsYgAkxbuA2NY6ZbK
-         eG4gHaUv3JshxhrXd3x42Co3LRHZZ3quaGGlgRBhOwdEZqT0dA0YoPctToJQaVAbbWVC
-         Kkww==
-X-Forwarded-Encrypted: i=1; AJvYcCXqoL4y0rsN/NvmifRXTOqd+twnKJ9gtgBYn/RGbC7F9M5H6PzLpeu3hZnvfoiCkgtbEZWHaYXxe0dmeFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIz6sNUiTCA6rjtPBthXTIFXeBnGNCsL7GKpSFVOQWZRlotWSr
-	r8OsYYsoQhJXLaAYdIhlayCpPkPfYrDc0cNaXrotHV9k7pdaWcZli5dhJCyHzH0=
-X-Google-Smtp-Source: AGHT+IEsqzlf61vWm+813vG7vMkMePBztenb+9XkV5XyCVO9mztSFfT2RcUPMSZK6WV+NNZgP3DJpQ==
-X-Received: by 2002:a17:907:7e95:b0:a86:94e2:2a47 with SMTP id a640c23a62f3a-a86a51b24b5mr152679166b.15.1724408490036;
-        Fri, 23 Aug 2024 03:21:30 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436322sm240714966b.117.2024.08.23.03.21.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 03:21:29 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 23 Aug 2024 12:21:36 +0200
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <ZshisKww97hhGh-Y@apocalypse>
-Mail-Followup-To: Bjorn Helgaas <helgaas@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <20240821165541.GA254124@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BB314D718
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724407636; cv=fail; b=bZCdMQnUHtV6G6LEaDdYr5fvz6UxpRWvqaPh4V7w+bYhlFiDD/qT51pc14YEtX6QM6znO9jtFrikIPxbQT9XdlHQN+1gt6CxChoWJ+WMyhotvnyxicAm06W/+1FQ1ImzTwKiUKATnO3/NNsCIFZBFRWBsBteOoAGkxllOg+8geo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724407636; c=relaxed/simple;
+	bh=ejI8B1Tu52m8uhSqvYDQFQXtjbhlUVqcJQv7eGKizlM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nGQUtmL+5ZysxMkenUXCqC1ByobQnNKbYDJgZW3lLsf5AzFYFKVhESWWlpoemJVqgphybf6mF+Be2Fp+R016oqqM15e0uRi6QPJkRodgOo7LKFBtekqzHC888tOXvsyFwMRE9nkD9SYnxEsAfJTHhv+fypntmVKFM6LSrw/E53s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=fAEg2xCK; arc=fail smtp.client-ip=40.107.215.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MN/lXssxAadKFNttY6ar4OVEDLbSGHwhYahKmQR607UTezeEGDpXgXv0eurXg8hhVvoJhWpKVj2SbK4votteqx2VcAyFgpGfZyDDt5JTXODlcpu7etgcNL5YHJKzprSzv4oRqu9g0NnKjylBmvJL7mkZdQusKwMzz+LxqS3Xv9MUYOP0RhBZ+1p/12JoUyoSJiM4BoIDa+/d7fa8NM9EJUO98IsUYESE8+KTHb9+Au+/9uBsHb15YHJrVDhpYnc9X+5F8GOfQ04Z3nyp8P6DPzwjus3NDtTeszcYBSRzQqL8TY2mEF9NfxvOh16jrvvxWvYYpzGYp+gRWMU1oo0qcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1EHUn24YG36cLVjG5O/14gIB0agEy14wH49NLOISuHQ=;
+ b=GwfTGKbUDZbUVuZCcUY3EmQ9EnckJaOLTTHz7CjBhB2Y2k9nlmIkGEfxkbwQkYv4O5HYA9ktuykFcXyx9AhCbr7oRIxFJZy5k2+9pGjTaHVOh8szttHJTM/zKFfGIhZ5rLRg/4flCgQWx+k3qLiye5wPIw0nHNNIFNeRDVO25aa7vlQZIWucgoogD0xecTEHxsllTZ0JuDZRZnUtG4W1T4N3EoCHX0DOgzKu1wVKFi+uMW7OIis7azRgKbkWlsjGPKi5Q7lLa+4Jg4+V2fc5SeEeiQbxL6olZOxXIET6sSkhke532IkH25/fqExYQXHp1bt0c+/E7us/ZUJ7D3o8PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1EHUn24YG36cLVjG5O/14gIB0agEy14wH49NLOISuHQ=;
+ b=fAEg2xCKybCskWsdnBftw4FzMtDGvlRTxYDfAimssnp3DHKDTYT03yILP2GXvdCtkEws0R0LekO9+7Fb3LrG4nX1Uc0RwObXPaqGlt3Wkhct1tG2Rq4NXKC/OdRtfu+P+s6FFvucZQNL+qq7OBtklnWY6X9FMu0DDHADsAZQJf+4jhpnLT+wHAnlSMtJD9ROl00m4GQcyUqYpON9Dn2QBXdHORyUsZ9KwV6xQDQ+3NNvvbiK9O1eLmbrP7MVlTmoZRaTNATGvc2TP0A3sCLHAL4ZfIknpEjImTDUNqwStxQSUsZTOS09XpRisP+w8Zfo1PaDwbvDgnIPzSKRNMzSYQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
+ by SEZPR06MB7176.apcprd06.prod.outlook.com (2603:1096:101:225::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.17; Fri, 23 Aug
+ 2024 10:07:11 +0000
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5%6]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
+ 10:07:11 +0000
+From: Wu Bo <bo.wu@vivo.com>
+To: linux-kernel@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Wu Bo <bo.wu@vivo.com>
+Subject: [PATCH 1/2] bus: imx-weim: support compile test
+Date: Fri, 23 Aug 2024 04:22:10 -0600
+Message-Id: <6afc96fc30403966d9be783c659b422186000a86.1724408198.git.bo.wu@vivo.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0022.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::16) To PSAPR06MB4486.apcprd06.prod.outlook.com
+ (2603:1096:301:89::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821165541.GA254124@bhelgaas>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|SEZPR06MB7176:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f142688-c93e-420a-3920-08dcc35b5afe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ijweLMkDK3qsll3oRPq3C+JlpUY8LHS6jFLmpvRq+kh1aP6Lldng28bSUGZ3?=
+ =?us-ascii?Q?pFqdGHE59H57JZ4Nt3x2SrpdBdVZ+cOz+hOFIdxqrNxlefvTyjBYDNjYxBC/?=
+ =?us-ascii?Q?rqFn6PScM1BWqMWDBfUEFB4AhOFeyTZe7TuHiSLtfMMAqSigjLI4kOAlT/ID?=
+ =?us-ascii?Q?VobIf2YDl+2YglQLtcKJvMUVvYiEaz4W8J5yTwsExTj09RIjh6lILZXm6NL/?=
+ =?us-ascii?Q?GJeuwuY0IA/TgeL4WIHciipwLOG3nC6dF/O63U81rwpKY2eAv8nIfKBMM96N?=
+ =?us-ascii?Q?wcApJJNE///Vonxn5BSacF2LhIfdf6ub+Tuija0ZFWTxS2RtrRLdBVF2wSu+?=
+ =?us-ascii?Q?VwLF6e9c+F1ozHf5tu2ZS6Df5v+yPmP8BgbdPHlAr8kJEKLYN0lKoRYFqkVK?=
+ =?us-ascii?Q?+l3j+3v4Xu8OREhtNpE3fW1a7cSh4B6KOck7LfGwKjoAuqQgZ7jyU3b3kCTJ?=
+ =?us-ascii?Q?9LYCEji0nCmQpwqAueh6BijnIbCcrdjWDE5cL8R4UHcLzwRZ2awX28z3TYOh?=
+ =?us-ascii?Q?MGaCog4oQSw3X5W7tEfz5VNFq9+Yn0u7fM4JbFAJ0IFzfyUfLBNfeQ/eSL6K?=
+ =?us-ascii?Q?54U8geD7RCq/ddqsCSCKMClK57BpISw1jZ7FyqL+DXsQv9Nio9a6FJEoho1m?=
+ =?us-ascii?Q?QTcrMZQsowZv720cyYW2+oht3o7klahG+TdGRuKkqICo39rwPPTr+nZ7kGzD?=
+ =?us-ascii?Q?ctCdU61aLZP1p20gCyoglBcL50MycNUUnwvbnkhnH5YArTGsenbnMdy3Ffuk?=
+ =?us-ascii?Q?1JvI4C8ODinlm7imzVLdRRfQedldKcHSBSp9HWFSAhF+HIgE7p0phtRpxWR/?=
+ =?us-ascii?Q?NSYT9siJC2Ls9A4CQenbYiQT0e4sCV5669myPLjrl7o5MUtJOBSBvZ2WA9U9?=
+ =?us-ascii?Q?6C3aqxN/sw6WbXnTWD/v6ANb29o3YWuxaLwhz8LuNsj2GN1nhzanzAO0KHSi?=
+ =?us-ascii?Q?xCGtjWIgZyw8Z8T4sfVvPSsxaUJsXbNchM/88NkSOqbg7tBhaIBsCcIXUQAA?=
+ =?us-ascii?Q?pB3fapTEvQNr1Es3JT2DeQ0NAbWkD4URxNo5GfHPtXZPu2k8pAOFZcePRZSp?=
+ =?us-ascii?Q?zx6UneYsoteitinYtLnOE2k+7qSwTwj2pgka2Kr1WsTZfAGIKpakdoLMP0H1?=
+ =?us-ascii?Q?k82LvPNmA6sLOoaiFg17r+O2VI7ppGSFT0zN+0xn0mqPxIpOaRw+nEEoEzOs?=
+ =?us-ascii?Q?wTefSNENhSKhZTFW6wvp+iz0i5MjwFhok6VFvgeIECpareeSHY/q3uP5N81b?=
+ =?us-ascii?Q?qqPJ+U/KNZ+QIfjqtIJnqHJa9AVIGDA5r+G3S0V54nyLH2l1HitZ/X4B2wlo?=
+ =?us-ascii?Q?N0FFaYP5/1e8+LBKepg9sPQdrZirf9fcqWcHEICaaRyee7xYGBQK3cLqwkv1?=
+ =?us-ascii?Q?b1XxYQtPAWVJySS60MexFJXK/znrF3RIiqKltNqwITco5IDJeA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9j9xekhoHPeMfQv1BByZbM1tOFrSZThGiDkZ1YvA50SzU4DTsiEK3UiZabh1?=
+ =?us-ascii?Q?38gKTAeS7xmsRfywe/h+blmJRBWKyUjc4KCohLR2MiZWibtbyE9oToCr8von?=
+ =?us-ascii?Q?IWFSMpCBcXBHSkQtds2ZV/Rq1C5vF+dZ5/ymDmL5XVw4fQLUpjHGxsCOG03E?=
+ =?us-ascii?Q?5E8knmke2wkb6LUO5t4zqjADE4ZnF8Vh5puseVMpcC7WtaJLOitbYUwn/GB4?=
+ =?us-ascii?Q?2yMogpBkZrqbxC0rc0LfxbjXf8MTXC+DxKKhZ7MDx/0SsfQt9VeHAJrkpKuS?=
+ =?us-ascii?Q?Q6RhVQUch+hTxp2TXDKBzQAJ1EfHgevt/15+HP1yE0jTJS58lV72gNG9hJJe?=
+ =?us-ascii?Q?Va+5gfziRR1h6RKmVADeaLzmOsjO+nzL7WjHHwMk5ybu8nBHgfAKT2cEJvN/?=
+ =?us-ascii?Q?w/2DzRFCeDDMXJOA3WeYODs+oSfVoHzK4zUko+WqvaVtfcxEYkVhYqQmgazd?=
+ =?us-ascii?Q?LGibpAF74+DJCpyTcLw9ah0SHDVkQoMpGi96n/atkUziN7UEQrmoq95TrsSw?=
+ =?us-ascii?Q?W8HS1a/6zf86NnGCJgsbaIRBvlGRquA0uyryuJHynSpEWy6CqgyrFIB7DqsJ?=
+ =?us-ascii?Q?ADeGV+JwrIlDGPKOhq3Xsawfl3b9/mT07fByLvu1t6UYRHnDSn+ZsmE4EWak?=
+ =?us-ascii?Q?FkqbMs2iXTOkLbOPKzKmi4TZdW6dXUeshLJMXF53REwElX7fG5NYh/33IwEE?=
+ =?us-ascii?Q?96ML4eq62fJruWPL2jqK4ub6Wu86SEm8lLmkqJqqX8OYd3U+Iv6HTkEpHNDI?=
+ =?us-ascii?Q?hs58y5wndVeyVx3EvTjelZsMV3dtdvQQLDyXFWJB08jnbkKMSysUXTb4EoFN?=
+ =?us-ascii?Q?t5+fNB6E++UmIH1ebtrFb14AxEc5rK8mn8HtjNhrQZRA9IvOPUqslDg8YFF6?=
+ =?us-ascii?Q?d89qdyDKAl7iy+iqPzeNNmCG5Tz5ILAps63SfYyYCHOMDo2/IKEvaHdMvDZw?=
+ =?us-ascii?Q?SAAzBuJUQGDbftgvLZzzez3h7A96L0nTgaz1XZYxBH0QAbCe/zg3gLskKbhe?=
+ =?us-ascii?Q?bcyl9LsJkCqAfEETtS+3geW1Gem3RVrrRecrPAyqXQZxE5JKNZ1i86PjnOtL?=
+ =?us-ascii?Q?OCuRB81Wle5ovYNb81yLb1h0o7i25TvPK0fHQtATNe+aqyxHQ+KrVf2f7YhS?=
+ =?us-ascii?Q?r0+M9v0KwBvLZ2TRo2hSXRISbwJTX6NXcoV5/SKaIrbHhmDKUxziiF2j7YiX?=
+ =?us-ascii?Q?LTNKsbWeSHZxaFQ4n8GrzHT+rsWmRgVIReSi3nH51xzE/v/Fwy25YRAnnz2j?=
+ =?us-ascii?Q?boT0D5F3a5h7eo5UIQZLfb8xK9xG6hbCEkI0wIWPG+uLuGO/gc739BA/oCQs?=
+ =?us-ascii?Q?ZubwX5Qh2AqsjB349/ZmVYMl8U/w+mV2gamAAxrVWc1rLX+39811yl9rdDhZ?=
+ =?us-ascii?Q?X09zhNcZIuduOkrLZom42GYqMMRk37mfZShB8+TkplQHH4ko7j/yd9M3oY1I?=
+ =?us-ascii?Q?BMeOan63e66qR+OUJUVW5WFMJuL4UZhjzujRPWLdxnj19v6KKqh1YS0nYjUh?=
+ =?us-ascii?Q?u68KlEuCsXZFPNPYN+h+kKhia2UfNF3z15+YL8/C71zrDAEIiMuTYu0lguzo?=
+ =?us-ascii?Q?YHMx4znrhdgqdG0mDfpC9+vx5OKcvQHOMETQzK2p?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f142688-c93e-420a-3920-08dcc35b5afe
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 10:07:11.8516
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wkTJpDmaNEWxPHzQGJPfOQoq4CDrRKc7czkHf0/Ibb1XBsFRlL/bYzhcCCkct20pBUTLAOju0+O4xASq2l0Pgg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7176
 
-On 11:55 Wed 21 Aug     , Bjorn Helgaas wrote:
-> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
-> > The RaspberryPi RP1 is ia PCI multi function device containing
-> 
-> s/ia/a/
-> 
-> > peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > and others.
-> 
-> Add blank lines between paragraphs.
-> 
-> > Implement a bare minimum driver to operate the RP1, leveraging
-> > actual OF based driver implementations for the on-borad peripherals
-> 
-> s/on-borad/on-board/
-> 
-> > by loading a devicetree overlay during driver probe.
-> > The peripherals are accessed by mapping MMIO registers starting
-> > from PCI BAR1 region.
-> > As a minimum driver, the peripherals will not be added to the
-> > dtbo here, but in following patches.
-> 
-> > +config MISC_RP1
-> > +        tristate "RaspberryPi RP1 PCIe support"
-> > +        depends on PCI && PCI_QUIRKS
-> > +        select OF
-> > +        select OF_OVERLAY
-> > +        select IRQ_DOMAIN
-> > +        select PCI_DYNAMIC_OF_NODES
-> > +        help
-> > +          Support for the RP1 peripheral chip found on Raspberry Pi 5 board.
-> > +          This device supports several sub-devices including e.g. Ethernet controller,
-> > +          USB controller, I2C, SPI and UART.
-> > +          The driver is responsible for enabling the DT node once the PCIe endpoint
-> > +          has been configured, and handling interrupts.
-> > +          This driver uses an overlay to load other drivers to support for RP1
-> > +          internal sub-devices.
-> 
-> s/support for/support/
-> 
-> Add blank lines between paragraphs.  Consider wrapping to fit in 80
-> columns.  Current width of 86 seems random.
-> 
-> > diff --git a/drivers/misc/rp1/Makefile b/drivers/misc/rp1/Makefile
-> > new file mode 100644
-> > index 000000000000..e83854b4ed2c
-> > --- /dev/null
-> > +++ b/drivers/misc/rp1/Makefile
-> > @@ -0,0 +1,3 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +rp1-pci-objs			:= rp1-pci.o rp1-pci.dtbo.o
-> > +obj-$(CONFIG_MISC_RP1)		+= rp1-pci.o
-> > diff --git a/drivers/misc/rp1/rp1-pci.c b/drivers/misc/rp1/rp1-pci.c
-> > new file mode 100644
-> > index 000000000000..a6093ba7e19a
-> > --- /dev/null
-> > +++ b/drivers/misc/rp1/rp1-pci.c
-> > @@ -0,0 +1,333 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2018-22 Raspberry Pi Ltd.
-> 
-> s/22/24/ ?
-> 
-> > +#define RP1_B0_CHIP_ID		0x10001927
-> > +#define RP1_C0_CHIP_ID		0x20001927
-> 
-> Drop; both unused.
-> 
-> > +#define RP1_PLATFORM_ASIC	BIT(1)
-> > +#define RP1_PLATFORM_FPGA	BIT(0)
-> 
-> Drop; both unused.
-> 
-> > +#define RP1_SYSCLK_RATE		200000000
-> > +#define RP1_SYSCLK_FPGA_RATE	60000000
-> 
-> Drop; both unused.
-> 
-> > +enum {
-> > +	SYSINFO_CHIP_ID_OFFSET	= 0,
-> > +	SYSINFO_PLATFORM_OFFSET	= 4,
-> > +};
-> 
-> Drop; unused.
-> 
-> > +/* MSIX CFG registers start at 0x8 */
-> 
-> s/MSIX/MSI-X/
-> 
-> > +#define MSIX_CFG_TEST           BIT(1)
-> 
-> Unused.
-> 
-> > +#define INTSTATL		0x108
-> > +#define INTSTATH		0x10c
-> 
-> Drop; both unused.
-> 
-> > +static void dump_bar(struct pci_dev *pdev, unsigned int bar)
-> > +{
-> > +	dev_info(&pdev->dev,
-> > +		 "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
-> 
-> %pR does most of this for you.
-> 
-> > +static int rp1_irq_set_type(struct irq_data *irqd, unsigned int type)
-> > +{
-> > +	struct rp1_dev *rp1 = irqd->domain->host_data;
-> > +	unsigned int hwirq = (unsigned int)irqd->hwirq;
-> > +	int ret = 0;
-> > +
-> > +	switch (type) {
-> > +	case IRQ_TYPE_LEVEL_HIGH:
-> > +		dev_dbg(rp1->dev, "MSIX IACK EN for irq %d\n", hwirq);
-> > +		msix_cfg_set(rp1, hwirq, MSIX_CFG_IACK_EN);
-> > +		rp1->level_triggered_irq[hwirq] = true;
-> > +	break;
-> > +	case IRQ_TYPE_EDGE_RISING:
-> > +		msix_cfg_clr(rp1, hwirq, MSIX_CFG_IACK_EN);
-> > +		rp1->level_triggered_irq[hwirq] = false;
-> > +		break;
-> > +	default:
-> > +		ret = -EINVAL;
-> 
-> If you "return -EINVAL" directly here, I think you can drop "ret" and
-> just "return 0" below.
-> 
-> > +		break;
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> 
-> > +static int rp1_irq_xlate(struct irq_domain *d, struct device_node *node,
-> > +			 const u32 *intspec, unsigned int intsize,
-> > +			 unsigned long *out_hwirq, unsigned int *out_type)
-> > +{
-> > +	struct rp1_dev *rp1 = d->host_data;
-> > +	struct irq_data *pcie_irqd;
-> > +	unsigned long hwirq;
-> > +	int pcie_irq;
-> > +	int ret;
-> > +
-> > +	ret = irq_domain_xlate_twocell(d, node, intspec, intsize,
-> > +				       &hwirq, out_type);
-> > +	if (!ret) {
-> > +		pcie_irq = pci_irq_vector(rp1->pdev, hwirq);
-> > +		pcie_irqd = irq_get_irq_data(pcie_irq);
-> > +		rp1->pcie_irqds[hwirq] = pcie_irqd;
-> > +		*out_hwirq = hwirq;
-> > +	}
-> > +
-> > +	return ret;
-> 
->   if (ret)
->     return ret;
-> 
->   ...
->   return 0;
-> 
-> would make this easier to read and unindent the normal path.
-> 
-> > +	rp1->bar1 = pci_iomap(pdev, 1, 0);
-> 
-> pcim_iomap()
-> 
-> > +	if (!rp1->bar1) {
-> > +		dev_err(&pdev->dev, "Cannot map PCI bar\n");
-> 
-> s/bar/BAR/
-> 
-> > +#define PCI_VENDOR_ID_RPI		0x1de4
-> > +#define PCI_DEVICE_ID_RP1_C0		0x0001
-> 
-> Device ID should include "RPI" as well.
+Add COMPILE_TEST to support code compile test
 
-Ack to all suggestions. Fixed in the next release, thanks.
+Signed-off-by: Wu Bo <bo.wu@vivo.com>
+---
+ drivers/bus/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Andrea
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index 64cd2ee03aa3..ff669a8ccad9 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -89,7 +89,7 @@ config HISILICON_LPC
+ 
+ config IMX_WEIM
+ 	bool "Freescale EIM DRIVER"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || COMPILE_TEST
+ 	help
+ 	  Driver for i.MX WEIM controller.
+ 	  The WEIM(Wireless External Interface Module) works like a bus.
+-- 
+2.25.1
+
 
