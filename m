@@ -1,515 +1,219 @@
-Return-Path: <linux-kernel+bounces-299115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B64595D04F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1606295D050
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096F1286228
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B90032863B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8639F18859A;
-	Fri, 23 Aug 2024 14:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37B418890D;
+	Fri, 23 Aug 2024 14:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b="J/LrY7np"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="Bo349JDv";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="eK6AIFQc"
+Received: from smtpout148.security-mail.net (smtpout148.security-mail.net [85.31.212.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E3F1CD3D
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC586186E5E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.148
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424387; cv=pass; b=D10e3CEPCa7d9tESyIgE2yWeKFolBmU7UCz893s3eQIW/oyzQXYIDSM7chL512IBbbjVVyc/PxmaJmoMJX66nLIqLeLjtJ3vON0J66LnFR0jjaWxlT6iHbY8b0it4G5p9DBQw4fwhG7A7uuxNut55TZsvSprHtVNQz9mEv4nV0Y=
+	t=1724424390; cv=fail; b=I1qiXxLCGw9l01ShDSFKFOJsy1sK5KCArfedGOXy+2w+PoI/Lk9fGft54KrigQ6jJhl/5+hLY+S8E2pSBd2lYVTci0hP1/Oyg6pHfhG4D1SUFnuhUEatgxlDJmoSD+H/3qPiKxgy3WZnOklPYfOGlbLEJR7+ObXWlGS2pXGrtQk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424387; c=relaxed/simple;
-	bh=h7wFVtfec0cJoG3pDka9JFgayvd0Dlk0JZqiTv0Nau0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=milgYJ/ioFsHJQpYtmAEGamqNMgP8pbwpxUqT2RXSJK3MhTUs/HD3Wla7ua4zKEKgELbrrqqz0aCsb5qgn/MhegsoBpl8Uap8fjf67oBQHLv8TPRgWADaZcPY2p8/9ITbXbClm5+eCGpxZrWy5XPk9RrowaB58iHLdoaLYfoBy4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b=J/LrY7np; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: daniel.almeida@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724424376; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FyJt/XplByzSzcGfkfkD0L9FmOE+Tf9DwgmeEwZrZybPGYsormWIH3L8sBZWgwTdKw5vDBc0OGWP0qM/zQEmIXmtT4v1b7d61fF+NsMujs0Ex66vqsf27WXYWgOb0W3LSAprn7naUGctp6b0Z9Uhw8KCLO0rCxiG6qKXpjzJwZM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724424376; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=r1beJeiKHlCI5PJay8A3Wq7xubHfoG7hWD8CtIsNlbU=; 
-	b=gl47rt2kr19eDaAEkv8aP6/7huwGNdPm8Z5Gk3s8bf++fISiOo0E+lCXakVB4OZQfIU8A66u0+IHl4efKqyy1aUwt2gjEx/9vYHAfHZ8TgPBGRKwH+IEdqDOP2spQNfRPbNOzYHYd+Xxp334vtRgIwxF98GOjEAsba5tPyVrX2M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=boris.brezillon@collabora.com;
-	dmarc=pass header.from=<boris.brezillon@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724424376;
-	s=zohomail; d=collabora.com; i=boris.brezillon@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=r1beJeiKHlCI5PJay8A3Wq7xubHfoG7hWD8CtIsNlbU=;
-	b=J/LrY7npamXK8cxlDyfZAGEZHKCQlZ/l89JVGNEfzZXbJQhhixgS1m3l8AUT5NR0
-	fIMifyno9J0A3mqseOCfA63n9Lx9lyPrILlOz0x9mLiTlCAfYxIOJSLjwu4jymf4+7Q
-	L9ocGbI0//zmMzXl7fjkTyCEeLMgQSVCtknVIksU=
-Received: by mx.zohomail.com with SMTPS id 1724424374353762.6549573697081;
-	Fri, 23 Aug 2024 07:46:14 -0700 (PDT)
-Date: Fri, 23 Aug 2024 16:46:08 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: liviu.dudau@arm.com, steven.price@arm.com, carsten.haitzler@arm.com,
- robh@kernel.org, faith.ekstrand@collabora.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 RESEND 2/5] drm: panthor: add devcoredump support
-Message-ID: <20240823164608.3cbfb5c4@collabora.com>
-In-Reply-To: <20240821143826.3720-3-daniel.almeida@collabora.com>
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
-	<20240821143826.3720-1-daniel.almeida@collabora.com>
-	<20240821143826.3720-3-daniel.almeida@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724424390; c=relaxed/simple;
+	bh=MA4FpcITsarkJKHGv5XpnJVVHGRj7ESr2femTqJuJcE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fh96Dju/xqi74zP8CRDMVZ4vqjQ5QBAOBX8S5/P9VXALuSdTgM/gqi53f9a4UkIaXnKjY6M+FA6eYSG03xDAYBJPWvFxa84AAod+TFVz5mCo2/H8+cfLqg7c/Xn70hQeFAA4GlbTsI7jy9AaoSCuVYn1bus/nKa7UIW53Pecjfk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=Bo349JDv; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=eK6AIFQc reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (fx408.security-mail.net [127.0.0.1])
+	by fx408.security-mail.net (Postfix) with ESMTP id 0DDD7322BCE
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:46:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1724424386;
+	bh=MA4FpcITsarkJKHGv5XpnJVVHGRj7ESr2femTqJuJcE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Bo349JDvbwXDQ1Hqzz9j3rY3gMJYVG+jBD9734aYyDLyB2ckY+IGDPNtWc5rCl2lE
+	 rbYqDNWSXTb/q25czef2TJrlEVwN5vKfnM3mPBgZU0Me1ockSFv8ozO40tmSuzJjm5
+	 k4w8iLVPpfp2NVfP3eujuXp4zlixJ6KIi8pNScBY=
+Received: from fx408 (fx408.security-mail.net [127.0.0.1]) by
+ fx408.security-mail.net (Postfix) with ESMTP id D6D4C322BEC; Fri, 23 Aug
+ 2024 16:46:25 +0200 (CEST)
+Received: from PAUP264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17011027.outbound.protection.outlook.com
+ [40.93.76.27]) by fx408.security-mail.net (Postfix) with ESMTPS id
+ 5A18B322BE6; Fri, 23 Aug 2024 16:46:25 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by PASP264MB5124.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:43d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 14:46:23 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7897.014; Fri, 23 Aug
+ 2024 14:46:23 +0000
+X-Secumail-id: <97d9.66c8a0c1.57a35.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F4cihW2hPzYzGneD/2EJJv+0xbAAJiJL0llcDYUfIaofrYZApNJLmJCT8/N+Dts6meTmrH8QnfCBeRA2Nmx5tWWnEaFylfP0SmA1J6TsxXlcCz5Kayzeb0V+VRhJkm3xKxh31hBo/xYIGQGIYDaltNe7ZnV9IkpDinrTf5yF1TcN9hUTExTa7xLEl9h+VA9dzsjsemkKAaPFqvL1f5Ef5UapNEWLSJLJY76XJxPLQ14AIYxr+kpTbAhCXftruj22dKGqQqlXjRBoxBNAllsZfjS3LhYTvE2RGcc8JTRmBPTEqtMU7p9R5odJpK1FmX+gnDa/psTd1zd/2R5X3smeQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4u3jbhOPEUFG/XttDhtCtgVYo2CQxezdFYBa/1xd4Y8=;
+ b=YySducs9KKfLPDZ0RbrWYpvGeyY1nezwdkv+c7pZcPEEbTAzTlhazLz2eFIzVZKK2zch1WIDPlicyF0wGeSEnKqWhjhxhaDAqEnmDW+1aeMa6DhHqSLbYRpjn7snn5fNIk/MLxh38m/oHSqCWwRPp/+c1OipFQdqmO8vL7LTbxT0f5unLoQlV6RD9GK2QzpatcMcqY1uyUN65NF0BfKH/ucDO12rlzW7W/2ghZvf4Hwnb8C09odJ8Gvj+bj9vWwaZTLgA714nik0VZ9BeaeHsJ/znCva7/BAtJb63D/GGDqAYchesU14DWTVyYDAckqWNBE9jZ7uv7H6G71QmLq8/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4u3jbhOPEUFG/XttDhtCtgVYo2CQxezdFYBa/1xd4Y8=;
+ b=eK6AIFQchd8MHok5JXVIjBWw5nhceNC9f4d8wTjbsjYs5NwoD/0+uhVHzG+BFRQmmp/rAwD92cs4HJM9qST1VueLKH++Eqpvf4f0LFy3TffLVGSclbVEz5sOgHKN7LhjgMfhZilsGtaoNlR8Pa5hwzfujnJzmq90NZaqLnsMpDlKUo+iKzLjxnrvPiv/gdPPPHhBUWQkIasgnZZQ6UPXyNa41R/eJ/dtCpymAv4nhLhQdYKnKTwBeNkzWq3Xath0jvk3i7zVjg93uUgAKfxrWeK7GGeD9Wl5uTC+BbLBv0lYHJgH9hpuwbmLBzlIdpHCxvlel2WC6qltTSnK6gMobA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <42e7d388-a4c8-42f9-bf2f-001871a7d948@kalrayinc.com>
+Date: Fri, 23 Aug 2024 16:46:21 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 35/37] kvx: Add IPI driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
+ <jvetter@kalrayinc.com>, Clement Leger <clement@clement-leger.fr>, Guillaume
+ Thouvenin <thouveng@gmail.com>, Luc Michel <luc@lmichel.fr>, Jules Maselbas
+ <jmaselbas@zdiv.net>, bpf@vger.kernel.org
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-36-ysionneau@kalrayinc.com>
+ <cbd74fa5-d4ad-4ed0-a680-6ff5e3b8ff84@kernel.org>
+Content-Language: en-us, fr
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+In-Reply-To: <cbd74fa5-d4ad-4ed0-a680-6ff5e3b8ff84@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PAZP264CA0050.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:1fc::10) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PASP264MB5124:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4b53bea-47b8-4f4b-ebdc-08dcc3825b52
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: tUmcaDXdeE031X2N5FAMvl/a9asuqDrTr2+gZRcphDhjrW9TYUl3kPAqg1ob8eHfWDipOGw/S/EdFnsf0E5C7CsRHNChf3Iy+ZIHHCHmafs/ghTGkoynbn8asmnc57UWCPzqbLTehi1kOyB0q90JPvv5z+wLVWkBKlofiaX4CwMCS59UbkNf9cNp8t4zq/yk2Bj1lLTQbwjt2Nnq0TCGyz8osDac2ICo0RrFAxedJNGbPhCVaS84fj3MxbQ8teV7Zqbp9++6qjwaMTq71T1lXqVha0+GSlroBexvjQYldHf9V0IBv2VMelUFLZNhN4BjXHLTaRhZXjv/z3Imobyhpw3wBqwQdDlnIyZLlHNy1m/NcNcZG6Ve4WOYqSsFM2gbesa1X5alYVUGPdXP3wCnRPp88eyaXmOZnij7sLCP0CP/5aO/DKHiVd79r7jnf31j08RKYmKs6vmNU2JXcPA4jqtuz9XOjnlfIzqKH91LWWcwLl+1FhR/3TIGkxf+fFt3kHleefCBAeMgpHzZxRiwLs7izUCrdfc9PvjVBU1Zq+nlIfaTruFONB5EtyxEwbnEsinuO0XmN8KaLBD80GxrUclp6sOQ+13SCCL19SKAAxJwg+iQjmWB7LZDEZMeOWD5N6Gn2LyjKG40X/pS97Xcn5gXFtelPYRR0E71cJRBsVUD9sYYT/xpuqFcV/TEEjOmueMURpJVmxfsa1blCAD9/1+EaGhB+rf0nFQrgWj4nvYk+6ahHuei4A1EBioeHPW3Pjz2n6j/1JiWSDEP+LnmB+zesXAgUKJrtIsQwPWrskf2m3H1HgWxOwd1s7xbNk/uxNEJWgiqJWoMJyx2iCZkUrLhZfZhSJCq5Xd7TwSUVb4M7Hhj70RLmYTx6j310ahVrN6UvdCA7DqsvRDvjk1K70Udb50zANtvSl/cXeJV5Z0arAHiJTvM3vEr8kOeEewoNXK
+ 1ztk+4DbrZodzqHFOP+T33fhchAGWzCrxuFncJMGaWdAFpUr0Hf6Q6HshFaB8skQX5rH5ljGRa0qJWxolyT+DC5eD/YiB5CWKc4Mfxk7JFrG0DMhi0p4lywxKYWapG3wKrs1dhDiljsxUJ8TecXU5i32+EH681Bya0qSJgLOjS6QXqyVIT1VDsHU1RPZm/T8maE/gDi/qGLo9iYUetFLbnRK1g0kVPYE+b8HeqL61AbkxGHHrwXVZ1FCBDzFWfEExElH1ppRU/LoMDbA/0uzbOgLG0EXv4kk5b4TIUWfWCkZLVIN7Ws3zljb2A355edDRPC6fCFPJtCraSOumkfU/2IZHKVTvQzsNxUoSeRIx4EJkt4kbAsSNIZMaz6u8TQuehJvcKjT7/uMkZAueWg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: BwY5FePfCpVY7sYbZG94+n1o+07Nv5o2hUlXHOh+rVZX+ZiLGff3a2ORXxNAuy4HTJrVzWqc9oBkXqFmqmf1qDFfDW3AqlVSiFbQybVDAzMWYcO4fpLiGGmfiWgGq4evJHQDm7YDtEks+sZPVR6Xm1YTFPZ4nmejqsBTY4I0TZfebyTeYESWQWYsoW8lnV5n/0M1uoPIXC2o7kN/K4S7HsRDzv9tTLiPPVKox6ZQ3hwVDIQp/SCRKwyyamOeukbYJer9fMrsuF7VsDLBl4MPliiuRoTvrbElZ/GAbAN9VvMymPwAwYa3q8LIHZDP9G0pG4k9vMlzR2uZIOSgHiLLkL1DoID9MhSi5jBvinbKulvhDmPH0lJvKc4+Zm4wdly9jZhQncWXxw+0GNy4mX/yNEffP8RieaTyz/nyqeSXbOZGeiVmfEUj5H6FusE0E2U+WR+gPAQO/w37CMw6EnT7XlX66D8/Molt25SZ9adHyXyIpluFmxZPrW1l7WlO6qeVLLNRlInR6qvZNGc1Bm3rjWGDyLO48vNXbPFCZaGzchOXD2mMJWtOUfNWCkGQEdA+v9opr/nNDuOfnNhBSYtpWAemz/515PkMeNENwBXgkhZOmY9hTli3c4gQjXSzm8hPmmfpzEdTYeChKIc6oaUC1h9pU3w0PZyc/kAJop4X4rhwIP/SL9QiJtHuGf5cK0MzU2CImwYrzBglrW2obl2HlWmDTkmpw8enHpkOQtzQvds3YgdFM0qwpl2BUkBM5MuPqn4fpHSvEAXrARwRzJNdEVC6PsnCxTY0WUgFss23HloUj8wRRSPIrbIKXx+9dfNANerL42jXhTMbR4ZUZoCLip01exg+bv72pOVrC40V2rWYY2bSW2dnPG8oKcZf0F3Hwx4nX/yHLY7eSO20s4bd1hpO/Jj4SZz3hgxLpUS7nIvpWTXP8kjgr5Nk62cyDFjg
+ rQ7AjG+4UvkLy5tGAr6JBm1izzEoqQQnVYqe3Mffwj+jLmeJaXiYvzZ7qS8JbYu2XgG6mb7nyJUgIym3l+SneHZyOZZIXPv9iSQgAqyuALdDWNusNAeqbpqFhabsgtloGmkHwe3dinswRqVte8sqmUMe09qKdZQ0mRx2S5Uen6NWys90lOBykRrKfeDsfyU7E/0KdjaQ8qAWtacpaHs3nLXrBHgbhIFaVplMWkJtvQlIWF9FhGuJrRrJ7MgjYXiKVC/ZU7sfMLU6khPT8pp6LYVXP2qZsF2uzR4h0Q3oexFaheuyUlaQvA09ToViXpdOugdNwWTiIW5YnuIsGxqQQcwxN9aye4LxLD6RaRPenCJeZVCjQoTpYV1o2qwICXLVegyuc/oog99ZYAqL39npKrN+xiSfTn7IFn5txQDab2XCJBd4KmB+cUhQ8M9bl7TD9LfA85sTpwKJPosb2dVD+evbrQLIjdToYFr95OR+HdwQ0QpBU9ZlMVbaHpulL3gKrN3yZSiT4/PTcPk73fSxj8gFvRDFdXTqhexzvJ1BJS9Ov9PtSI/QLYhKPHAfFtzaEu4VpCq+okUTUbRfNP9aAa0TzLuC0QJ1kT71TbMXEdF/AL0/CcZLsexskZ7cEA6ldJdxXLQkYsxF5Q6+0TMvaRIzx6DXtcdti8YCJ8FlsQ813Qkx6U9WdaSIXO/NiYH4snvGnpzksRXBr4ChZ9/QmA==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4b53bea-47b8-4f4b-ebdc-08dcc3825b52
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 14:46:23.2896
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rURPureeU5fDP13H0WQ6ikgcIcKzQT5ViMics9v0d+MfkxhlNTeI0NYJG60FIxlFR98Sf3aNKd+fAr/i7ggqqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB5124
+X-ALTERMIMEV2_out: done
 
-Hi Daniel
+Hello Krzysztof,
 
-On Wed, 21 Aug 2024 11:37:28 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
+On 22/07/2024 14:39, Krzysztof Kozlowski wrote:
+> On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
+>> From: Yann Sionneau <ysionneau@kalrayinc.com>
+>>
+>> [...]
+>> +
+>> +int __init kvx_ipi_ctrl_init(struct device_node *node,
+>> +			     struct device_node *parent)
+>> +{
+>> +	int ret;
+>> +	unsigned int ipi_irq;
+>> +	void __iomem *ipi_base;
+>> +
+>> +	BUG_ON(!node);
+> Fix your code instead.
 
-[...]
+I am not sure I understand your comment here, I don't have the control over what the kernel passes to my driver, do I?
 
-> +static void *alloc_bytes(struct dump_allocator *alloc, size_t size)
-> +{
-> +	void *ret;
-> +
-> +	if (alloc->pos + size > alloc->capacity)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = alloc->curr;
+On the other hand, "node" being the node that matches the compatible, maybe it can never be NULL, is that what you're saying?
 
-Hm, I suspect we might want to enforce some kind of alignment to make
-sure things can be directly dereferenced without having to copy stuff.
+After doing some archeology in our old code base it seems indeed this line is an artefact of this previous code snippet:
 
-> +	alloc->curr += size;
-> +	alloc->pos += size;
-> +	return ret;
-> +}
-> +
-> +static struct drm_panthor_dump_header *
-> +alloc_header(struct dump_allocator *alloc, u32 type, size_t size)
-> +{
-> +	struct drm_panthor_dump_header *hdr;
-> +	int header_size = sizeof(*hdr);
-> +
-> +	hdr = alloc_bytes(alloc, header_size);
-> +	if (IS_ERR(hdr))
-> +		return hdr;
-> +
-> +	hdr->magic = PANT_DUMP_MAGIC;
-> +	hdr->header_type = type;
-> +	hdr->header_size = header_size;
-> +	hdr->data_size = size;
-> +	return hdr;
-> +}
-> +
-> +static int dump_bo(struct panthor_device *ptdev, u8 *dst,
-> +		   struct drm_gem_object *obj, int offset, int size)
-> +{
-> +	struct iosys_map map = {};
-> +	int ret;
-> +
-> +	ret = drm_gem_vmap_unlocked(obj, &map);
+```
 
-This drm_gem_vmap_unlocked() call will be problematic as soon as you
-call the dump logic from any of the scheduler work which are part of
-the dma fence signalling path (see [1] for more details). TLDR; in this
-path you're not allowed to block on a dma_resv_lock(), which
-drm_gem_vmap_unlocked() does. You also can't call the locked variant,
-otherwise you're breaking the lock_held assumption.
+np = of_find_compatible_node(NULL, NULL, "kalray,coolidge-ipi-ctrl");
+BUG_ON(!np);
 
-I had a quick look at the Xe driver which has a similar architecture
-and implements devcoredump, and they do the dumping in 2 steps to
-work around this:
+```
 
-1. In the fault path, they collect VA regions and their associated BOs
-(they call that a VM snapshot) and a bunch of other information you
-only have at fault time (other kind of snapshots) and might disappear if
-you don't save them somewhere. All allocations in this path are done
-with GFP_NOWAIT (see below for an explanation). They then use
-dev_coredumpm() instead of dev_coredumpv(), so they don't have to
-allocate memory for the final dump, and instead stream the dump when
-userspace reads the core file.
+Now that this is a real driver declared via IRQCHIP_DECLARE(), I guess that this check isn't needed anymore.
 
-2. In their xe_devcoredump_read() function, they can dump the BO content
-because we're allowed to take the resv lock in that path. Not to
-mention we no longer duplicate the BO data: it just leaves in the
-original BO and is streamed when userspace reads the coredump file.
+>
+>> +
+>> +	ipi_base = of_iomap(node, 0);
+>> +	BUG_ON(!ipi_base);
+> No, handle it by returning.
+Ack
+>
+>> +
+>> +	kvx_ipi_controller.regs = ipi_base;
+>> +
+>> +	/* Init mask for interrupts to PE0 -> PE15 */
+>> +	writel(KVX_IPI_CPU_MASK, kvx_ipi_controller.regs + IPI_MASK_OFFSET);
+>> +
+>> +	ipi_irq = irq_of_parse_and_map(node, 0);
+>> +	if (!ipi_irq) {
+>> +		pr_err("Failed to parse irq: %d\n", ipi_irq);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ret = request_percpu_irq(ipi_irq, ipi_irq_handler,
+>> +						"kvx_ipi", &kvx_ipi_controller);
+>> +	if (ret) {
+>> +		pr_err("can't register interrupt %d (%d)\n",
+>> +						ipi_irq, ret);
+>> +		return ret;
+>> +	}
+>> +	kvx_ipi_controller.ipi_irq = ipi_irq;
+>> +
+>> +	ret = cpuhp_setup_state(CPUHP_AP_IRQ_KVX_STARTING,
+>> +				"kvx/ipi:online",
+>> +				kvx_ipi_starting_cpu,
+>> +				kvx_ipi_dying_cpu);
+>> +	if (ret < 0) {
+>> +		pr_err("Failed to setup hotplug state");
+>> +		return ret;
+>> +	}
+>> +
+>> +	set_smp_cross_call(kvx_ipi_send);
+>> +	pr_info("controller probed\n");
+> Drop this simple probe successes. This is not the way to trace system
+> bootup. Keep only reasonable amount, not every driver printing that its
+> initcall started.
+Ack.
 
-> +	if (ret)
-> +		return ret;
-> +
-> +	drm_dbg(&ptdev->base, "dumping bo %p, offset %d, size %d\n", obj,
-> +		offset, size);
-> +
-> +	memcpy(dst, map.vaddr + offset, size);
-> +	drm_gem_vunmap_unlocked(obj, &map);
-> +	return ret;
-> +}
-> +
-
-[...]
-
-> +
-> +int panthor_core_dump(struct panthor_core_dump_args *args)
-> +{
-> +	u8 *mem;
-> +	int dump_size;
-> +	int ret = 0;
-> +	struct dump_allocator alloc = {};
-> +	struct vm_dump_count va_count = {};
-> +	struct drm_panthor_dump_header *hdr;
-> +	struct drm_panthor_dump_version *version;
-> +	struct drm_panthor_gpu_info *gpu_info;
-> +	struct drm_panthor_csif_info *csif_info;
-> +	struct drm_panthor_fw_info *fw_info;
-> +	struct queue_count group_and_q_cnt = {};
-> +	struct dump_va_args dump_va_args = {};
-> +	struct drm_panthor_dump_group_info group_info;
-> +	struct dump_group_args dump_group_args;
-> +
-> +	panthor_vm_foreach_va(args->group_vm, count_va_cb, &va_count);
-> +
-> +	panthor_sched_get_groupinfo(args->group, &group_info);
-> +
-> +	count_queues(&group_and_q_cnt, &group_info);
-> +
-> +	dump_size = compute_dump_size(&va_count, &group_and_q_cnt);
-> +
-> +	mem = vzalloc(dump_size);
-
-The dumper will be called in a path where it can't block on allocation,
-because blocking/non-failable allocations might trigger the future
-panthor shrinker that might in turn wait on fences that can't be
-signalled because we're blocked waiting on devcoredump to complete its
-dump.
-
-You should use kvzalloc(GFP_NOWAIT) in this path.
-
-> +	if (!mem)
-> +		return ret;
-> +
-> +	alloc = (struct dump_allocator){
-> +		.start = mem,
-> +		.curr = mem,
-> +		.pos = 0,
-> +		.capacity = dump_size,
-> +	};
-> +
-> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION,
-> +			   sizeof(struct drm_panthor_dump_version));
-> +	if (IS_ERR(hdr)) {
-> +		ret = PTR_ERR(hdr);
-> +		goto free_valloc;
-> +	}
-> +
-> +	version = alloc_bytes(&alloc, sizeof(*version));
-> +	if (IS_ERR(version)) {
-> +		ret = PTR_ERR(version);
-> +		goto free_valloc;
-> +	}
-> +
-> +	*version = (struct drm_panthor_dump_version){
-> +		.major = PANT_DUMP_MAJOR,
-> +		.minor = PANT_DUMP_MINOR,
-> +	};
-> +
-> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO,
-> +			   sizeof(args->ptdev->gpu_info));
-> +	if (IS_ERR(hdr)) {
-> +		ret = PTR_ERR(hdr);
-> +		goto free_valloc;
-> +	}
-> +
-> +	gpu_info = alloc_bytes(&alloc, sizeof(*gpu_info));
-> +	if (IS_ERR(gpu_info)) {
-> +		ret = PTR_ERR(gpu_info);
-> +		goto free_valloc;
-> +	}
-> +
-> +	*gpu_info = args->ptdev->gpu_info;
-> +
-> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO,
-> +			   sizeof(args->ptdev->csif_info));
-> +	if (IS_ERR(hdr)) {
-> +		ret = PTR_ERR(hdr);
-> +		goto free_valloc;
-> +	}
-> +
-> +	csif_info = alloc_bytes(&alloc, sizeof(*csif_info));
-> +	if (IS_ERR(csif_info)) {
-> +		ret = PTR_ERR(csif_info);
-> +		goto free_valloc;
-> +	}
-> +
-> +	*csif_info = args->ptdev->csif_info;
-> +
-> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO,
-> +			   sizeof(args->ptdev->fw_info));
-> +	if (IS_ERR(hdr)) {
-> +		ret = PTR_ERR(hdr);
-> +		goto free_valloc;
-> +	}
-> +
-> +	fw_info = alloc_bytes(&alloc, sizeof(*fw_info));
-> +	if (IS_ERR(fw_info)) {
-> +		ret = PTR_ERR(fw_info);
-> +		goto free_valloc;
-> +	}
-> +
-> +	*fw_info = args->ptdev->fw_info;
-> +
-> +	dump_va_args.ptdev = args->ptdev;
-> +	dump_va_args.alloc = &alloc;
-> +	ret = panthor_vm_foreach_va(args->group_vm, dump_va_cb, &dump_va_args);
-> +	if (ret)
-> +		goto free_valloc;
-> +
-> +	dump_group_args =
-> +		(struct dump_group_args){ args->ptdev, &alloc, args->group };
-> +	panthor_sched_get_groupinfo(args->group, &group_info);
-> +	dump_group_info(&dump_group_args, &group_info);
-> +
-> +	if (alloc.pos < dump_size)
-> +		drm_warn(&args->ptdev->base,
-> +			 "dump size mismatch: expected %d, got %zu\n",
-> +			 dump_size, alloc.pos);
-> +
-> +	dev_coredumpv(args->ptdev->base.dev, alloc.start, alloc.pos,
-> +		      GFP_KERNEL);
-> +
-> +	return ret;
-> +
-> +free_valloc:
-> +	vfree(mem);
-> +	return ret;
-> +}
-
-[...]
-
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> index e235cf452460..82ec0f20c49e 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -969,6 +969,130 @@ struct drm_panthor_tiler_heap_destroy {
->  	__u32 pad;
->  };
->  
-> +/**
-> + * enum drm_panthor_dump_header_type - Identifies the type of data that follows
-> + * in a panthor core dump.
-> + */
-> +enum drm_panthor_dump_header_type {
-> +	DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION = 0,
-> +	/**
-> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO: Gpu information.
-> +	 */
-> +	DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO = 1,
-> +	/**
-> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO: Command stream interface information.
-> +	 */
-> +	DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO = 2,
-> +	/**
-> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO: Information about the firmware.
-> +	 */
-> +	DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO = 3,
-> +	/**
-> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_VM: A dump of the VM for the context.
-> +	 */
-> +	DRM_PANTHOR_DUMP_HEADER_TYPE_VM = 4,
-> +	/**
-> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO: Describes a group. A dump can
-> +	 * contain either the faulty group, or all groups for the DRM FD.
-
-Let's decide on one. Given getting back to a drm_file from a faulty job
-is not easy, I think we should focus on dumping the faulty group only
-for now.
-
-> +	 */
-> +	DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO = 5,
-> +	/**
-> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO: Describes a faulty queue. This
-> +	 * will immediately follow a group info.
-> +	 */
-> +	DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO = 6,
-
-Given a group has a maximum of 32 queues (see MAX_CS_PER_CSG), I'm not
-sure we should split the group and queue info into 2 different
-sections. Just add a
-
-	struct drm_panthor_dump_queue_info queues[32];
-
-field to drm_panthor_dump_queue_info and you should be good.
-
-> +};
-> +
-> +/**
-> + * struct drm_panthor_dump_header - A header that describes a section of a panthor core dump.
-> + */
-> +struct drm_panthor_dump_header {
-
-I would call that one dump_section or dump_section_header.
-
-> +	/** @magic: Always set to PANT (0x544e4150). */
-> +	__u32 magic;
-
-Not convinced we need to repeat the magic for each header. Having one
-in the coredump entry should probably be enough.
-
-> +
-> +	/** @header_type: Identifies the type of data in the following section of the
-
-For multiline doc headers, we use the following format:
-
-	/**
-	 * @xxx: blabla
-	 *
-	 * ...
-
-> +	 * core dump file
-> +	 */
-> +	enum drm_panthor_dump_header_type header_type;
-> +
-> +	/** @header_size: The size of the header.
-> +	 *
-> +	 * This is for backward-compatibility purposes in case this structure is
-> +	 * augmented in the future. It allows userspace to skip over the header and
-> +	 * access the actual data it describes.
-> +	 */
-> +	__u32 header_size;
-
-Feels like the section itself could embed the extra information needed,
-with a new header_type so the old version keeps working. Not convinced
-we will ever need anything more in the header that couldn't be
-expressed through other means to be honest. There's one interesting
-purpose for this field though: enforcing alignment of the following
-data. Another way of doing that would be to split the headers and
-content, and have the headers provide an explicit data_offset.
-
-> +
-> +	/** @data_size: The size of the following section */
-> +	__u32 data_size;
-
-If we want to make that future-proof, we should probably use an u64
-here.
-
-> +};
-> +
-> +/**
-> + * struct drm_panthor_dump_version - Version information for a Panthor GPU dump.
-> + *
-> + * This structure is used to hold version information when performing a dump of
-> + * the state of a Panthor GPU.
-> + */
-> +struct drm_panthor_dump_version {
-
-I would move the magic here and call that one drm_panthor_dump_header.
-
-> +	/** @major: Versioning information for backwards compatibility */
-> +	__u32 major;
-
-Please add an blank line between each field definition.
-
-> +	/** @minor: Versioning information for backwards compatibility */
-> +	__u32 minor;
-> +};
-> +
-> +/**
-> + * struct drm_panthor_dump_group_info - Group information for a Panthor GPU
-> + * dump.
-> + *
-> + * This structure is used to hold information about a group when performing a
-> + * dump of the state of a Panthor GPU.
-> + */
-> +struct drm_panthor_dump_group_info {
-> +	/** @queue_count: The number of queues in the group. */
-> +	__u32 queue_count;
-> +	/** @faulty_queues: A bitmask denoting the faulty queues */
-> +	__u32 faulty_bitmask;
-> +};
-> +
-> +#define DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_FAULTY	(1 << 0)
-> +
-> +/**
-> + * struct drm_panthor_dump_queue_info - Queue information for a Panthor GPU
-> + * dump.
-> + *
-> + * This structure is used to hold information about a queue when performing a
-> + * dump of the state of a Panthor GPU.
-> + */
-> +struct drm_panthor_dump_queue_info {
-> +	/** See DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_XXX */
-> +	u32 flags;
-> +	/** @cs_id: The ID of the command stream. */
-> +	__s32 cs_id;
-> +	/** @faulty: Whether this queue has faulted */
-
-There's no field defined, just the doc.
-
-> +	/** @ringbuf_gpuva: The GPU virtual address of the ring buffer. */
-> +	__u64 ringbuf_gpuva;
-> +	/** @ringbuf_insert: The insert point (i.e.: offset) in the ring buffer. This
-> +	 * is where a instruction would be inserted next by the CPU.
-> +	 */
-> +	__u64 ringbuf_insert;
-> +	/** @ringbuf_extract: The extract point (i.e.: offset) in the ring buffer.
-> +	 * This is where the GPU would read the next instruction.
-> +	 */
-> +	__u64 ringbuf_extract;
-
-Is it not encoding the current ring buffer position, rather than the
-next one? For instance, I would expect us to pass
-ringbuf_gpuva + (ringbuf_extract % ringbuf_size) to the userspace
-decoder if we want to follow the flow of instructions that lead to the
-GPU fault.
-
-> +	/** @ringbuf_size: The size of the ring buffer */
-> +	__u64 ringbuf_size;
-
-I think it's also interesting to dump
-panthor_fw_cs_output_iface::status_cmd_ptr so we know exactly which CS
-instruction was being executed when the crash happened (I can imagine
-the faulty instruction being pointed at in pandecode). Actually, I think
-pretty much everything in panthor_fw_cs_output_iface is interesting to
-have. Beware that most of the information in panthor_fw_cs_output_iface
-are only valid after a STATUS_UPDATE or SUSPEND operation, so probably
-something to look at when you take the faulty group snapshot.
-
-> +};
-> +
-> +/**
-> + * struct drm_panthor_dump_gpuva - Describes a GPU VA range in the dump.
-> + */
-> +struct drm_panthor_dump_gpuva {
-> +	/** @addr: The start address for the mapping */
-> +	__u64 addr;
-> +	/** @range: The range covered by the VA mapping */
-> +	__u64 range;
-> +};
-> +
->  #if defined(__cplusplus)
->  }
->  #endif
-
-That's it for now. I didn't focus much on the implementation as I think
-the redesign I suggested will significantly change it.
+Thanks for the review!
 
 Regards,
 
-Boris
+-- 
 
-[1]https://elixir.bootlin.com/linux/v6.10.4/source/drivers/dma-buf/dma-fence.c#L195
+Yann
+
+
+
+
+
 
