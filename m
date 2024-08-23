@@ -1,122 +1,142 @@
-Return-Path: <linux-kernel+bounces-299229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF1495D1CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C7395D1D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E201C2205E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:42:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B6151C205E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B0E18BBA4;
-	Fri, 23 Aug 2024 15:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F50E18E029;
+	Fri, 23 Aug 2024 15:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqSYtbNP"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GG+jAER6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A366F188A31;
-	Fri, 23 Aug 2024 15:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF4E18C90C;
+	Fri, 23 Aug 2024 15:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427634; cv=none; b=gDeAAKt4xYs+IwXOSBU7TcpFbZZyE1K6YKUYAOTk8g73VgvT7nLubfirlfjE9duaXLvUGshntiye3PUCljsrHbyfXCmTdt9Nk0DFJeWfQJZPARLqFDAw8X8JguGMSPKySpVmKEs7xTg9NbIh8o8/lYNafEbDo4k085r4GBDKHk8=
+	t=1724427637; cv=none; b=d3eK3pERbThOlOmzRveMQ+q300zaZSIHmf34NQk/lPQN8mSM2ewuCaLph7SK12UtOh2VHBSY2xYBgl8AVA5Mz7Vlnn1MxL9KKT/1ljAUCrbYAIGyLmVwdd0An7Ge6cLur/LwbgQ8WHOtz8iExtbXZ5slYQvezypl7FlZESTqWLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427634; c=relaxed/simple;
-	bh=EYvc2z4r8KJhwvuvfuWGqLDVrQzw5Yu1hQDrRK9pVEE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=eKOTs4MksvS0jRwYxL4ggDZx4WajUVWkGo22NBgvNZq2hziUx4g1HmVGVGOuisrDZzrQTX971A5nqw5aAOlMMJ0pyGU0FInK9wUymmKz1c4tDSqBzsDTyNfuDVjketiFEuReErJCPEug0ButWjlAXjasw7AAWbDBYHESALzkmyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqSYtbNP; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso2870359e87.2;
-        Fri, 23 Aug 2024 08:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724427631; x=1725032431; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hEQWqn8dp7u94ekJxLvXBoQKV3m1QuVREmUZLs3WBBM=;
-        b=fqSYtbNPu/ttthEtDnjCup3QJ36bBD41UpxOKkNRkm7wcJQc9tD5+NUjdl7xrrNtSn
-         gVUbK8vqRXP37KBXXzaSW8ocajqi5aiI1DhRgBljgMqnb4Vhv8KyV4CCX3tSynR0R+lJ
-         WHjNVnxLnwvZownVLIg+hfoxgz/f/wxf/mF6ofTgWxBRuox3elhpPX7ZGOhOOEYUP7yk
-         2vWCLnN/yGpGPzT2AgSEu8Wk7fY1gyd+Czy9VokI3NirNWeKqAhK7Tl8tTAesBDlRZd0
-         eE0uJ34ME+BD2c1HXGINi9swCv9DalgJDBqYf7X37bqnEwTM30K5c16t1ueu4dW+ktzZ
-         4Pqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427631; x=1725032431;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hEQWqn8dp7u94ekJxLvXBoQKV3m1QuVREmUZLs3WBBM=;
-        b=xLOM2o9JtiJ/OvZOZm5LTxk0KmB53yVpuoy/oU3cjUrE5/v0KHHaRRRP87QigJN0mO
-         RnGPUu7E92RaKsSY3W+AaLOT9hzOVqUhjkKK+qY+padhKWcLUhqyeo72mahwZtpeyIng
-         T2cuQhPDBDnJrvmz3MsYYqvJo/1oWCBPUNBQs2QayZykwbZA0Q+BuEZ5YjVsXiiMGAFC
-         8T02HxNR7cIUzzShq0yB8jxMYs2U4gM/aftEV++TmaXGEzrN7oY/v3k71D+qgEaCwnrK
-         qJ0Kp5bOwpO68rqTPI/AUh2QmptXcRoThRUesjoj647wstV3ITvv24OeRNxJulRmPt+q
-         Fp+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQKznjhCa20X01iQpQO3g5L/nBFJ4BzDDNyQc3T014UNDaLz5XRlypxgzzLjoEel7tzICTHwcb8CaB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrdraNDdpkPaxDK6LWhDQHY5D6SScMjr/rH8sxBqAS6HS9iNlh
-	Wwb4jeKFYnxUNEX+BKpYFkNRTlcJVjj2xMY0n9v4iw7otwydXnLltxV1LSW8FnByisaJ4KUjb+P
-	UPdnResfuGtfoIneS7ge9wox9dGA=
-X-Google-Smtp-Source: AGHT+IHXgBJIKmGWqRJ6OLaLBSrjtRW1IRK7+JR/h33CfVMHutDvWZaNeElHHORP/C0HxYcY5bHZuZOAz26vnul0DF4=
-X-Received: by 2002:a05:6512:10d6:b0:52c:d819:517e with SMTP id
- 2adb3069b0e04-53438783b45mr1717743e87.30.1724427630352; Fri, 23 Aug 2024
- 08:40:30 -0700 (PDT)
+	s=arc-20240116; t=1724427637; c=relaxed/simple;
+	bh=+H7Ob5CgTXkHeBCxTLSQpzmV08rXUMJJgwpIEqFFOvg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TIQTyOasAWhMSl2vmqk/H1i2Y03edrZNfm+H5SAIEIcn17MO/93MDB41wFvv7J3kWOpvGGR/DWHg3Bx5+EaW9U6Ea+u6EeUEfgaF5wgkN8TNZegdUMuUlbGzrjA2LD86+LfApdVFd8P/hMiNh9i6Zecz2CpjJMqgqK59Gy+4Y/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GG+jAER6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2BE2C4AF0B;
+	Fri, 23 Aug 2024 15:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724427637;
+	bh=+H7Ob5CgTXkHeBCxTLSQpzmV08rXUMJJgwpIEqFFOvg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GG+jAER6ctB5/V6Z2V5KpqNiXc8BAI63lz/sWVKXjjaaKjhoyxuL3QIJJGTP91bxw
+	 PvEe4VWzoNPb1M8ggfa3/wCiQIAO3owRWJ6tQxPRSbampjPCVzkM/6PHJ1uWo+efpB
+	 uQ6gBZqBzmm0q94MuFl9KdnDo7x8W1E0Tovg6ryrpIOqgRXJEEC73Lv8t3ALBWMXUH
+	 /MbKsFj27S/yVHaa3hnQkFYSMVlHOrS8+TvfqxaM1aQAAJ+OlJn3VdjCywIbG/PkKs
+	 IHLEwvqBNB9O5GGbr5u2IPYf5iXUmMWM3aNs0yNwY/P3ctGpQsJtvKH5CPlDDzhi+c
+	 KSD4Uoub0/mnQ==
+From: Mario Limonciello <superm1@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>,
+	Gary Li <Gary.Li@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in pci_dev_wait()
+Date: Fri, 23 Aug 2024 10:40:20 -0500
+Message-ID: <20240823154023.360234-3-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240823154023.360234-1-superm1@kernel.org>
+References: <20240823154023.360234-1-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 23 Aug 2024 10:40:19 -0500
-Message-ID: <CAH2r5muykPAu=GaXaHRsfK2nU0jkREv4Pqd6cM5joLDbT+pZTA@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Please pull the following changes since commit
-47ac09b91befbb6a235ab620c32af719f8208399:
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+If a dock is plugged in at the same time as autosuspend delay then this
+can cause malfunctions in the USB4 stack. This happens because the
+device is still in D3cold at the time that the PCI core handed
+control back to the USB4 stack.
 
-are available in the Git repository at:
+A device that has gone through a reset may return a value in PCI_COMMAND
+but that doesn't mean it's finished transitioning to D0.  For evices that
+support power management explicitly check PCI_PM_CTRL on everything but
+system resume to ensure the transition happened.
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.11-rc4-client-fixes
+Devices that don't support power management and system resume will
+continue to use PCI_COMMAND.
 
-for you to fetch changes up to 5e51224d2afbda57f33f47485871ee5532145e18:
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+v4->v5:
+ * Fix misleading indentation
+ * Amend commit message
+---
+ drivers/pci/pci.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-  smb/client: fix typo: GlobalMid_Sem -> GlobalMid_Lock (2024-08-22
-15:44:19 -0500)
-
-----------------------------------------------------------------
-Four cifs.ko client fixes
-- fix refcount leak (can cause rmmod fail)
-- fix byte range locking problem with cached reads
-- fix for mount failure if reparse point unrecognized
-- minor typo
-----------------------------------------------------------------
-ChenXiaoSong (1):
-      smb/client: fix typo: GlobalMid_Sem -> GlobalMid_Lock
-
-Paulo Alcantara (1):
-      smb: client: ignore unhandled reparse tags
-
-Steve French (2):
-      smb3: fix broken cached reads when posix locks
-      smb3: fix problem unloading module due to leaked refcount on shutdown
-
- fs/smb/client/cifsfs.c   |  6 +++---
- fs/smb/client/cifsglob.h |  6 +++---
- fs/smb/client/connect.c  |  3 +++
- fs/smb/client/file.c     |  4 +---
- fs/smb/client/ioctl.c    |  2 ++
- fs/smb/client/link.c     |  1 +
- fs/smb/client/reparse.c  | 11 +++++++----
- 7 files changed, 20 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 1e219057a5069..f032a4aaec268 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1309,21 +1309,33 @@ static int pci_dev_wait(struct pci_dev *dev, enum pci_reset_type reset_type, int
+ 	 * the read (except when CRS SV is enabled and the read was for the
+ 	 * Vendor ID; in that case it synthesizes 0x0001 data).
+ 	 *
+-	 * Wait for the device to return a non-CRS completion.  Read the
+-	 * Command register instead of Vendor ID so we don't have to
+-	 * contend with the CRS SV value.
++	 * Wait for the device to return a non-CRS completion.  On devices
++	 * that support PM control and on waits that aren't part of system
++	 * resume read the PM control register to ensure the device has
++	 * transitioned to D0.  On devices that don't support PM control,
++	 * or during system resume read the command register to instead of
++	 * Vendor ID so we don't have to contend with the CRS SV value.
+ 	 */
+ 	for (;;) {
+-		u32 id;
+-
+ 		if (pci_dev_is_disconnected(dev)) {
+ 			pci_dbg(dev, "disconnected; not waiting\n");
+ 			return -ENOTTY;
+ 		}
+ 
+-		pci_read_config_dword(dev, PCI_COMMAND, &id);
+-		if (!PCI_POSSIBLE_ERROR(id))
+-			break;
++		if (dev->pm_cap && reset_type != PCI_DEV_WAIT_RESUME) {
++			u16 pmcsr;
++
++			pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
++			if (!PCI_POSSIBLE_ERROR(pmcsr) &&
++			    (pmcsr & PCI_PM_CTRL_STATE_MASK) == PCI_D0)
++				break;
++		} else {
++			u32 id;
++
++			pci_read_config_dword(dev, PCI_COMMAND, &id);
++			if (!PCI_POSSIBLE_ERROR(id))
++				break;
++		}
+ 
+ 		if (delay > timeout) {
+ 			pci_warn(dev, "not ready %dms after %s; giving up\n",
 -- 
-Thanks,
+2.43.0
 
-Steve
 
