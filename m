@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-299539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3AC95D604
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C3495D60A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BCD11C22278
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E44B284BC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35F2192588;
-	Fri, 23 Aug 2024 19:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECA4192595;
+	Fri, 23 Aug 2024 19:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c19U/iiO"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QwVj9nkw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0F38F6B
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8774D8F6B;
+	Fri, 23 Aug 2024 19:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724440822; cv=none; b=ECNzSap1OGiVLPnVeBFtCIz39jh1beK3YJQA6/U4LRS2dDfWe01CkL8JPIXcQ/oHXajhfSMIURY8XNPJmE6cotXc8A9hKUJc5ePO5UdwOZD8UVfQ5RAwNVMVK4N91FGj0RJ6+0q4nKkNp/1n6M/XcZC3KgFfMvLHkj7gBphllGU=
+	t=1724441117; cv=none; b=Xjd5uVljwrR7hMV2yGA7llSfMxtEfZAN1coOlZwcvxU+iP2o+sYHNnxNzU8xM5yaP83qsG8tHn8gf2T6ZiuyItp+NpEx3VwvTd4jdpO4k/HmjTUmqDlnVcj94g50vcytWFFJAnkfte0qAjAaB07Os8AKzFVzB4VMnCZcOEeiXDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724440822; c=relaxed/simple;
-	bh=iDD9lSaT3Sp0xg/rTdH0q+pzugBKBUX9sq197L43Yik=;
+	s=arc-20240116; t=1724441117; c=relaxed/simple;
+	bh=DFlFWR7lXMyjsZyyLCuvccHNpt67WGrdixy/Ulp6tTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbFRU6N72g/rYG/fCS10TkEq0vc1HzAtsE6tVsvDhzXHYhZc2mOQ6xClzA8MuJfGec0TamiCtN3e2TSaF4Sk83suxSxcK77BP6hUSkfAWlcL18OanKjdz+rfsF++BPE70VR2DlTqYpOnfwDIqS6VHk2XyKThN1WX6KGr+0v5Er4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c19U/iiO; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-201f2b7fe0dso22744015ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724440820; x=1725045620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KHQMvvb6+dnevxicO8q1f4XJW8/KeupnupjXeQ3/3ms=;
-        b=c19U/iiOklGiV1g0o2Wt/rGii86ZQ3DRpvjYDfvXcwNhqk0rO2eg37Atn8WmS/oXe9
-         VSDYDxNMeRIlH+CU+6xRGGdniJV1yeNDC4Ri6bje2Czfi2c6u8haoaUU1zEQlmB4wYhB
-         imONtcpWIPucVzsyQYf5z6NxPAFwdnYcq+xi8//UkS2TsQBTUhD1y8czrj/tyhyLzckA
-         8DzkLTrLrBQPjCMiRuiYKOzlPyxneCZrgJilfQod3SHuLAmOp/Pu3C/2Ur9gf1Awa3+n
-         PSEGSJdm6uUXLInH9n3B3FWEMGb/gNM9jdjzpBflGE23bCLjXV/jp6I6RcQ9adhiD5C7
-         nAYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724440820; x=1725045620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KHQMvvb6+dnevxicO8q1f4XJW8/KeupnupjXeQ3/3ms=;
-        b=H1DfDGtpyCqjSmx3/7jBSelodX5lR3RejHBt1uxoqPqfzcHacDx5ffdYyTeQLqOm0X
-         RNq7rMoHOkELRdUPvOWfB5rO5Z05J3I/Qh3YApBkgy5x9g1ZswSBbszOWAlJ42eIcc8x
-         4veGQOgSaUM5XnvAo9M5uZX8/QibQ4gfWaXjVzGd0AdDhl1gg4mq5hVEqkkOWF9MziKl
-         s4Sai17jooWa6vqSX7H4d44YOuyiADGFX5CZzXMRa37HGjh+FlbyaTpzWcEDbibPDAPe
-         fSptE6WKxutGtxY3oBPxHPWg1hnZJU6rtfydUbTfeI/JbzgHsBO9R1dud53law0sf1bC
-         mMLw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8lDsloO8r+uA2Y3+tm7LwiXqW6nrzeXA4r+Hk/FYdORPx2GFkKf8jkF+T34B+X0uAcET1BfHFvGhkWNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym0lj89xfwt+J+ZVr/ruZN49Dq8+teCCpw/ZkO+GIEqqBcOduO
-	qID93jj4A1mZe0sKmK1lH4Bozi+evgW1q8YxuVd1zebccNw7JlCH
-X-Google-Smtp-Source: AGHT+IGf9H6iSBiIl0snsQoF9GORan39gQhJJ+wnKZDo4HMcBbPaX041pwm7d/h24FLq1fAfZe8esQ==
-X-Received: by 2002:a17:902:c407:b0:203:a0ea:5f93 with SMTP id d9443c01a7336-203a0ea614bmr33702805ad.0.1724440820106;
-        Fri, 23 Aug 2024 12:20:20 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385fcff06sm31794305ad.308.2024.08.23.12.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 12:20:19 -0700 (PDT)
-Date: Fri, 23 Aug 2024 12:20:17 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Valentin Schneider <vschneid@redhat.com>,
-	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [RFC PATCH v1 1/6] lib: Clarify comment on top of
- find_next_andnot_bit
-Message-ID: <Zsjg8YiiwM16e_-6@yury-ThinkPad>
-References: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
- <20240823185946.418340-2-mathieu.desnoyers@efficios.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3yPFzRI5aStpTZulRVIo3EVaGl5uDAHLq9K3yWBbMvmFvsRAzD4B047mpWT5MCMIxGvDV9JjwB+vDUt3gf7206sUyw+AdI/Ehw+23R3bzGPGtU+vbumXUL+0HmqtuANKI4XNVyP7mtLF0IlPfIZ1K7aO5LkQ4oQYOVsHxLpaGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QwVj9nkw; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724441116; x=1755977116;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DFlFWR7lXMyjsZyyLCuvccHNpt67WGrdixy/Ulp6tTA=;
+  b=QwVj9nkwzvTCPI0pj6fbnAstJAobG740cmkAtXTNnp1rvJwPoxFa0ZhH
+   gTsB1byGtuuiKU9rN9u9igSDCfYqd03WqQaz8kQDjP1gvSbOuAZiuQYEF
+   wtjzRhQgf2jak5+98cVupwfW2Kv/3Jh1WSUq04BSHyhwrllRi1ZAGBzSR
+   UNjpNSnT3qBI7Ja+i8QEuYO30tY2xwv3/B963BMP9irpxHw6/ZqkjwnT5
+   fCTYI81F0Ddab/E3bBV33tTSUDHSGNDLMeWsa96QVeIKJxXlv6IiwJwYu
+   8oYpxVyyO7o5jWIao3BYpsnqGwUHS4y8nDIg/mv/s4ozC/Q/ak5SsxtVE
+   w==;
+X-CSE-ConnectionGUID: MtKvJTP0RjCBNl1DVvulfQ==
+X-CSE-MsgGUID: nroJss6hSPO5glxeYYU1vw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="25821208"
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="25821208"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:25:10 -0700
+X-CSE-ConnectionGUID: uPUZA1ArRSi0UnqKNpqUJA==
+X-CSE-MsgGUID: sX/8HsmNTFq89skPVLyMbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="66699466"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:25:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shZu9-000000010IY-2PdN;
+	Fri, 23 Aug 2024 22:25:01 +0300
+Date: Fri, 23 Aug 2024 22:25:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <ZsjiDaZjcA-oopWB@smile.fi.intel.com>
+References: <20240823181714.64545-1-vassilisamir@gmail.com>
+ <20240823181714.64545-5-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,45 +83,206 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823185946.418340-2-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20240823181714.64545-5-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 23, 2024 at 02:59:41PM -0400, Mathieu Desnoyers wrote:
-> Make the comment on top of find_next_andnot_bit clearer by discussing in
-> terms of "cleared bits" rather than "excluding bits".
+On Fri, Aug 23, 2024 at 08:17:11PM +0200, Vasileios Amoiridis wrote:
+> This commit adds forced mode support in sensors BMP28x, BME28x, BMP3xx
+> and BMP58x. Sensors BMP18x and BMP085 are old and do not support this
+> feature so their operation is not affected at all.
 > 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Yury Norov <yury.norov@gmail.com>
-> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-
-Acked-by: Yury Norov <yury.norov@gmail.com>
-
-> ---
->  include/linux/find.h | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+> Essentially, up to now, the rest of the sensors were used in normal mode
+> all the time. This means that they are continuously doing measurements
+> even though these measurements are not used. Even though the sensor does
+> provide PM support, to cover all the possible use cases, the sensor needs
+> to go into sleep mode and wake up whenever necessary.
 > 
-> diff --git a/include/linux/find.h b/include/linux/find.h
-> index 5dfca4225fef..8a170aa55634 100644
-> --- a/include/linux/find.h
-> +++ b/include/linux/find.h
-> @@ -102,15 +102,14 @@ unsigned long find_next_and_bit(const unsigned long *addr1,
->  
->  #ifndef find_next_andnot_bit
->  /**
-> - * find_next_andnot_bit - find the next set bit in *addr1 excluding all the bits
-> - *                        in *addr2
-> + * find_next_andnot_bit - find the next set bit in *addr1, cleared in *addr2
->   * @addr1: The first address to base the search on
->   * @addr2: The second address to base the search on
->   * @size: The bitmap size in bits
->   * @offset: The bitnumber to start searching at
->   *
-> - * Returns the bit number for the next set bit
-> - * If no bits are set, returns @size.
-> + * Returns the bit number for the next bit set in *addr1, cleared in *addr2.
-> + * If no such bits are found, returns @size.
->   */
->  static inline
->  unsigned long find_next_andnot_bit(const unsigned long *addr1,
-> -- 
-> 2.39.2
+> This commit, adds sleep and forced mode support. Essentially, the sensor
+> sleeps all the time except for when a measurement is requested. When there
+> is a request for a measurement, the sensor is put into forced mode, starts
+> the measurement and after it is done we read the output and we put it again
+> in sleep mode.
+> 
+> For really fast and more deterministic measurements, the triggered buffer
+> interface can be used, since the sensor is still used in normal mode for
+> that use case.
+> 
+> This commit does not add though support for DEEP STANDBY, Low Power NORMAL
+> and CONTINUOUS modes, supported only by the BMP58x version.
+
+...
+
+> +static const u8 bmp280_operation_mode[] = { BMP280_MODE_SLEEP,
+> +					    BMP280_MODE_FORCED,
+> +					    BMP280_MODE_NORMAL };
+
+Better style is
+
+static const u8 bmp280_operation_mode[] = {
+	BMP280_MODE_SLEEP, BMP280_MODE_FORCED, BMP280_MODE_NORMAL,
+};
+
+Also note comma at the end.
+
+...
+
+> +static int bmp280_wait_conv(struct bmp280_data *data)
+> +{
+> +	unsigned int reg;
+> +	int ret, meas_time;
+> +
+> +	meas_time = BMP280_MEAS_OFFSET;
+> +
+> +	/* Check if we are using a BME280 device */
+> +	if (data->oversampling_humid)
+> +		meas_time += (1 << data->oversampling_humid) * BMP280_MEAS_DUR +
+
+		BIT(data->oversampling_humid)
+
+> +			       BMP280_PRESS_HUMID_MEAS_OFFSET;
+
+> +	/* Pressure measurement time */
+> +	meas_time += (1 << data->oversampling_press) * BMP280_MEAS_DUR +
+
+Ditto.
+
+> +		      BMP280_PRESS_HUMID_MEAS_OFFSET;
+
+> +	/* Temperature measurement time */
+> +	meas_time += (1 << data->oversampling_temp) * BMP280_MEAS_DUR;
+
+Ditto.
+
+> +	usleep_range(meas_time, meas_time * 12 / 10);
+
+fsleep() ?
+
+> +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to read status register\n");
+> +		return ret;
+> +	}
+> +	if (reg & BMP280_REG_STATUS_MEAS_BIT) {
+> +		dev_err(data->dev, "Measurement cycle didn't complete\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static const u8 bmp380_operation_mode[] = { BMP380_MODE_SLEEP,
+> +					    BMP380_MODE_FORCED,
+> +					    BMP380_MODE_NORMAL };
+
+As per above.
+
+...
+
+> +static int bmp380_wait_conv(struct bmp280_data *data)
+> +{
+
+As per above comments against bmp280_wait_conv().
+
+> +	ret = regmap_read(data->regmap, BMP380_REG_STATUS, &reg);
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to read status register\n");
+> +		return ret;
+> +	}
+
+> +
+
+Choose one style (with or without blank line), as in the above you have no
+blank line in the similar situation.
+
+> +	if (!(reg & BMP380_STATUS_DRDY_PRESS_MASK) ||
+> +	    !(reg & BMP380_STATUS_DRDY_TEMP_MASK)) {
+> +		dev_err(data->dev, "Measurement cycle didn't complete.\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +		usleep_range(data->start_up_time, data->start_up_time + 500);
+
+fsleep() ? Comment?
+
+...
+
+> +static const u8 bmp580_operation_mode[] = { BMP580_MODE_SLEEP,
+> +					    BMP580_MODE_FORCED,
+> +					    BMP580_MODE_NORMAL };
+
+As per above.
+
+...
+
+> +	switch (mode) {
+> +	case BMP280_SLEEP:
+> +		break;
+> +	case BMP280_FORCED:
+> +		ret = regmap_set_bits(data->regmap, BMP580_REG_DSP_CONFIG,
+> +				      BMP580_DSP_IIR_FORCED_FLUSH);
+> +		if (ret) {
+> +			dev_err(data->dev,
+> +				"Could not flush IIR filter constants.\n");
+> +			return ret;
+> +		}
+> +		break;
+> +	case BMP280_NORMAL:
+> +		break;
+
+Can be unified with _SLEEP case.
+
+> +	default:
+> +		return -EINVAL;
+> +	}
+
+...
+
+> +static int bmp580_wait_conv(struct bmp280_data *data)
+> +{
+> +	/*
+> +	 * Taken from datasheet, Section 2 "Specification, Table 3 "Electrical
+> +	 * characteristics
+
+Missing period.
+
+> +	 */
+> +	static const int time_conv_press[] = { 0, 1050, 1785, 3045, 5670, 10920, 21420,
+> +					42420, 84420};
+> +	static const int time_conv_temp[] = { 0, 1050, 1105, 1575, 2205, 3465, 6090,
+> +				       11340, 21840};
+
+Please, start values on the next line after {. Also make }; to be on a separate line.
+
+> +	int meas_time;
+> +
+> +	meas_time = 4000 + time_conv_temp[data->oversampling_temp] +
+> +			   time_conv_press[data->oversampling_press];
+
+4 * USEC_PER_MSEC ?
+
+> +	usleep_range(meas_time, meas_time * 12 / 10);
+
+Comment? fsleep() ?
+
+> +	return 0;
+> +}
+
+...
+
+> +	usleep_range(2500, 3000);
+
+fsleep() ?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
