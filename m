@@ -1,89 +1,134 @@
-Return-Path: <linux-kernel+bounces-298275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC3E95C508
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:53:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B5B95C510
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3A3283674
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3C4281E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D7854720;
-	Fri, 23 Aug 2024 05:53:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A2C74BE1;
+	Fri, 23 Aug 2024 05:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wQPaHuAL"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C6B55894
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A839048CCC
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724392385; cv=none; b=fu2L+R/GvaVKxidXxOO+/SbKPMxaTJ1lyHh+ZTta2pC4kbc7f5zJNAcAmXjFtbTPeAHrLgn9LLGciONLN/FAHTzk0wb5bHuYygRpLRKw0DGzaAqTShvxfeNvPjGnUzKikdqINjjEO3Xnt2NijGIDto6DFN2hNTfZIK9gupafJ7Y=
+	t=1724392575; cv=none; b=j+NzFwxATBcpjvDA8/H1syBVRBdxrRkaU20myl+I6Xcjk6/0nO3blVaBqTnBKvcvwFtxi5HlWpafczrY/9y+cSwUaW2bdDcC/OPue7RSA386jiRDtalNMD/3xTtMqGdKG7d/sVt1r79o/R/6S6Umc/2sv1ks/dGewul+FMKBRRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724392385; c=relaxed/simple;
-	bh=7fYojFIbsaHWi/MPrCeyJY7dOEwgt/wS6FavyyDB/os=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IbwxwqAVzubCkXouTEUGBauv/SlmlK0FOGjLb/44elGRRuQEe/alC+3li7LA1lGQm81tMoWvuFwrBQru0Vu9BcKFfgAXhkxJZsoRQj5jnu9e0H/DenfjfwFBLT6sHuWPHP8sf4cXmFFwMH6yNMtC9PK3qA7F+CsjLJBWKG+pv8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-827878b991aso35450639f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:53:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724392384; x=1724997184;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nufm0EeJmJrT9B+QzjrObr8K2T8pjUVPdDUNg1IooMk=;
-        b=DNE7jkI/MmG0BbskQK9OTpSHHrpUV1o2NlgK25Z9ma8drkqBCHSdByMXrB3jqRcv74
-         BkzCy5fCH4gi6XqAbUOOdRRfuwTTjiOPbzhSTJQQKVqYpMsCkSn9x65sFCAba8cP0nnc
-         d8r0aGRvRSqv509gNtsl25Ce6g/tA+p/qJcYVQ+IfsTczZSMvYmL9xc4Bhrii7gXcNmc
-         2234d/rFjfH4sMpqSR8HMlvI54hcIdn8Vfq2ilbu6eHo8CnK59houLMZzS1UNvQPgaJ+
-         YMiAhOZkDoUwJn0/8/9s715DFZ0BVtMuXLKD7qMbtIZlVODDrMWfw7DVwOHCT1jZZApg
-         9M0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGavfj2+oKBUcRIX1dQnbKvBknKcRhjU899pQCo9MlCNtn67rGUv8wyItNq1H2+wvx7/fRb2kNNY62dzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Zhk+4oJn2MbNPEygOX4IHtjMv1Gf7VUWnTU29VxH37u7+TU+
-	Nup60BiKcU2YnSmxqCcUvCu3NSOs6OzNoEyVu7ea/MYLLqDb+iyVcZmxHSwNrIYN7yTdjXn7+Ut
-	J2EXHg7cY7Xxo2vBnHJKzWZwSD0fDZ2MLMYBpuJ60Afsm0sPpPP+gj48=
-X-Google-Smtp-Source: AGHT+IFJuWCnmSeurqVLgjZeeBETebT4+t/ol63sSxNVGkmz6gWKfC/FvobnL82v6FTz6VO2Dj6DtydEs8XWdNeCbQPn5YFGlDCR
+	s=arc-20240116; t=1724392575; c=relaxed/simple;
+	bh=UH/845C3CKqyzAbizs/Nu/leaga8purHzb9PP0avFys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AptvWbI6dlKYpezdWwh4okSEsWwosefpn+sJ1I5htldS+nxaZoB1jSXU9mo/iiLV0xcfg4xeTfX1kGn+siF2vnqTLCkvgJ+UFhjA80DGsXuKitIlXvbgYz4a1rVeZ00QYvt9kWukz+DuX8mg8pxcdtnA+tTOJ81uRzNWsCz9ATM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wQPaHuAL; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <70f73586-670e-43d0-adf4-0950a9b3940d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724392570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X4VR43m38UmF4fnbqpzcLCBIxvAClHFKLB7ul2q3ync=;
+	b=wQPaHuALIFdCW4qTRlYfHw74flRHn/b7xx0uFq3raDuJb2dLDad+2jdqLdaZjDCbcEAaKO
+	MyVZZoIkY8I17v2cv3G4BXW/qFjDj1mGRz3xc+UIey2Tse3mHDQ0Tw2HhZx5jMlAE1QvQQ
+	k7u+Svvf2DM07yq2qsH4t27rWkvK/Fg=
+Date: Fri, 23 Aug 2024 13:56:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:862a:b0:4c2:9573:49af with SMTP id
- 8926c6da1cb9f-4ce82b6b605mr55394173.6.1724392383741; Thu, 22 Aug 2024
- 22:53:03 -0700 (PDT)
-Date: Thu, 22 Aug 2024 22:53:03 -0700
-In-Reply-To: <d6c8db71ce8d64d93c21811a0b7490cfc1abf16f.camel@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007c913906205363ee@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
-From: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
-To: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-failed to apply patch:
-checking file fs/inode.c
-Hunk #1 FAILED at 723.
-1 out of 1 hunk FAILED
+Subject: Re: [PATCH 1/3] RDMA/rxe: Use sizeof instead of hard code number
+To: zhenwei pi <pizhenwei@bytedance.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zyjzyj2000@gmail.com, leonro@nvidia.com
+References: <20240822065223.1117056-1-pizhenwei@bytedance.com>
+ <20240822065223.1117056-2-pizhenwei@bytedance.com>
+ <d933e865-2b6b-41c1-a0f2-46f8fef3cc17@linux.dev>
+ <20240822123649.GP3773488@nvidia.com>
+ <CABoGonKvG9AyuVPMG29b3q5bGr7ZAH5RsGg7TOtkcaAZm9F-Dg@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <CABoGonKvG9AyuVPMG29b3q5bGr7ZAH5RsGg7TOtkcaAZm9F-Dg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
+在 2024/8/23 10:30, zhenwei pi 写道:
+>
+> On 8/22/24 20:36, Jason Gunthorpe wrote:
+> > On Thu, Aug 22, 2024 at 07:59:32PM +0800, Zhu Yanjun wrote:
+> >> 在 2024/8/22 14:52, zhenwei pi 写道:
+> >>> Use 'sizeof(union rdma_network_hdr)' instead of hard code GRH length
+> >>> for GSI and UD.
+> >>>
+> >>> Signed-off-by: zhenwei pi
+> >>> ---
+> >>> drivers/infiniband/sw/rxe/rxe_resp.c | 2 +-
+> >>> 1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c 
+> b/drivers/infiniband/sw/rxe/rxe_resp.c
+> >>> index 6596a85723c9..bf8f4bc8c5c8 100644
+> >>> --- a/drivers/infiniband/sw/rxe/rxe_resp.c
+> >>> +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+> >>> @@ -351,7 +351,7 @@ static enum resp_states 
+> rxe_resp_check_length(struct rxe_qp *qp,
+> >>> for (i = 0; i < qp->resp.wqe->dma.num_sge; i++)
+> >>> recv_buffer_len += qp->resp.wqe->dma.sge[i].length;
+> >>> - if (payload + 40 > recv_buffer_len) {
+> >>> + if (payload + sizeof(union rdma_network_hdr) > recv_buffer_len) {
+> >>
+> >> The definition of union rdma_network_hdr is as below
+> >>
+> >> 797 union rdma_network_hdr {
+> >> 798 struct ib_grh ibgrh;
+> >> 799 struct {
+> >> 800 /* The IB spec states that if it's IPv4, the header
+> >> 801 * is located in the last 20 bytes of the header.
+> >> 802 */
+> >> 803 u8 reserved[20];
+> >> 804 struct iphdr roce4grh;
+> >> 805 };
+> >> 806 };
+> >>
+> >> The length is 40 byte.
+> >
+> > This looks like the right struct to me if this is talking about the
+> > special 40 byte blob that is placed in front of UD verbs completions.
+> >
+> > Jason
+>
+> Yes, this is the front part(40 bytes) of UD/GSI verbs completion.
+>
+When running, you can print the value of the front part (40 bytes) of 
+UD/GSI to confirm that these 40 bytes are the union rdma_network_hdr.
 
-Tested on:
+If these 40 bytes are the union rdma_network_hdr,
 
-commit:         d30d0e49 Merge tag 'net-6.10-rc3' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=399230c250e8119c
-dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1151ddd5980000
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+
+Best Regards,
+
+Zhu Yanjun
+
+>
+> -- 
+> zhenwei pi
+>
+-- 
+Best Regards,
+Yanjun.Zhu
 
 
