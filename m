@@ -1,168 +1,365 @@
-Return-Path: <linux-kernel+bounces-299099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7DA95D00F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:36:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CCB95D014
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1121E1F21C39
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D571F28183C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1471991D8;
-	Fri, 23 Aug 2024 14:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2A11993A9;
+	Fri, 23 Aug 2024 14:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="keKFFM17"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BEEBZI7b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFA61922D5
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724423300; cv=none; b=PHnijqsCMlq2//OsyRFDVo6VEG/QEk3GG7yKNVXH79gLqLZfspsM8McNA9913gBwjqw6tXCYbEdmW0hdI4MCmeAN+egX8J8IOhImSCjN0kkdcnhHsIP9yB5dlpSmCMQxBUNZtTFCUBA2H71XY02rlZDWPCqK40msaP+L+xqnOEE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724423300; c=relaxed/simple;
-	bh=SnDFux/fhi3cwvYLU3j8zed/L+ZbGvV9LI0yhVV3hWw=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=SCk3UmNYbSpHNlJX+VFIcklpWUcroVahK8Hbgw5SWCEbwoytbiVAcQrbmn37Dczv8Qx391Qd8TXIVtVBXdTx0zxwrYhGe3EAEHRAY49qnedGZghr3LAom0ixPeWK4+KwIq/Q6xxx5Vl1PGmKAXJ7fudeepW/R4HegRT9s9eyaOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=keKFFM17; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240823142815euoutp011970434ef60b40b33957273f17663922~uYdnRySSW3058330583euoutp01e
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:28:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240823142815euoutp011970434ef60b40b33957273f17663922~uYdnRySSW3058330583euoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724423295;
-	bh=HD4eE7vwtLj4VX61TxbKyJfyLQL/SBGyzduGVy2uWOA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=keKFFM17vPqDm1eaw8xYE7JRG0/l59OhO0usm1UEVctkMZbkFUDXYyVseLKt3VhJn
-	 78yq5sW3Rh/P46gTKlg8HJi6OcfhXQKIXu8qOMxf6tvVjSy9MbRYjy7ORxKtsUjMsF
-	 JPgzsmO86O/jDQLV7PJAxhRSVN3Hzd3IegYu1kjk=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240823142815eucas1p10a765bab122ef20b1b7f33758bf4a83a~uYdnFuhKi0068100681eucas1p16;
-	Fri, 23 Aug 2024 14:28:15 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id C9.38.09875.F7C98C66; Fri, 23
-	Aug 2024 15:28:15 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240823142814eucas1p205260ffd9afdfe778edd673f4a2ddb66~uYdmq6Iwc1349113491eucas1p2G;
-	Fri, 23 Aug 2024 14:28:14 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240823142814eusmtrp10cb34f9fdd7693a767bc4c24984ae978~uYdmqHIob1695816958eusmtrp1l;
-	Fri, 23 Aug 2024 14:28:14 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-b1-66c89c7f8fc9
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E1.78.08810.E7C98C66; Fri, 23
-	Aug 2024 15:28:14 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240823142814eusmtip2d67332f8577a3ad73bb9df0292d9e1dd~uYdmX3zj12278322783eusmtip2o;
-	Fri, 23 Aug 2024 14:28:14 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 23 Aug 2024 15:28:14 +0100
-Date: Fri, 23 Aug 2024 16:28:13 +0200
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-CC: <linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<petr.pavlu@suse.com>, <samitolvanen@google.com>, <kris.van.hees@oracle.com>
-Subject: Re: [PATCH] MAINTAINERS: scale modules with more reviewers
-Message-ID: <20240823142813.5s3xjaqftznddwje@AALNPWDAGOMEZ1.aal.scsc.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30AE19924E;
+	Fri, 23 Aug 2024 14:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724423312; cv=fail; b=artWGnAD0Q5rcaGoQpVnq+n688paBe2i6cTEfAIhx3qWgTWMxMKOpwhvaSofvSxSfUR1kf06d5Aq5FkX8MTetl4aClobzwTWyu5nua13NnteS6jeZnZjnnrVPhSxChkIZKxMiztg68gMIJeaWtJg74nptpSJ25XspDFXPuYpqVo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724423312; c=relaxed/simple;
+	bh=+bqXqm8TO/1uAhI6HZz6CP02YMkyTd0DTu6+iA3v+V8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OLSoV4BWRzG6UxdCaTA5O+b8eq73ANSvM7s7AuY+/HZ/wZHeC7jrHeOkK7Io9U3FIa0KtM/u9yMC/nMvbcLu33PRFv3VLRrg9IrVxaCqwgllzUpC9GDOYt/P0jPQvhgawACJ3+SO3bQdQ8brNAC/vOJ8/5TWwoIohHhcRjamqJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BEEBZI7b; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724423309; x=1755959309;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=+bqXqm8TO/1uAhI6HZz6CP02YMkyTd0DTu6+iA3v+V8=;
+  b=BEEBZI7bEtRMH76xAU6f+5DJUxgU8OR/CGVfWN5guUVEQ2XuJmsF2xLY
+   SA9/GJ7C8ZaaoS736sPQBZ/n7SRsPugm+lmD5C8wkUwFnA2NOtQygQU7q
+   UNC+6bLfVTLhbNA0bw1nlOpbZAt8Uo5M/zAHVaa13BZPmeEkfHr6E3F49
+   XbRElZrRtiNileTtUSPcqhUyjmNrEqJpJu6X53iNGbHHoa8Zb05RzYl20
+   psmC/ASd9q94d5YK/uozyYEryGU73rEjeH478v6WkWaywxFpmb8KsoLDJ
+   0n5xnm9mu+xMBxghaIbKkwN49iZ/kH+3rgX0l5LNM4HZ8aGBLcVdcbdkr
+   w==;
+X-CSE-ConnectionGUID: owFnMNucSoWuTDmZfr78PA==
+X-CSE-MsgGUID: 2LVW8dY4QI27F3WOtGkKuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23062359"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23062359"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:28:28 -0700
+X-CSE-ConnectionGUID: 0lDiLbkTRASPsC2gRtZr7w==
+X-CSE-MsgGUID: ZuNFI1bhSh2ZfLCloTrtkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="66130882"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Aug 2024 07:28:28 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 23 Aug 2024 07:28:27 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 23 Aug 2024 07:28:27 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 23 Aug 2024 07:28:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NnSXQUuGZMreaPh0CRZnadBym6pkkk2Y0nPIaA/97qLb5BZg09ftbMtuQsqFK4QbQoFU/YVbsc5oEJDD2tKsXRuWwBTfmBoxltD2peWiccOkPxZmWqEY9m5VFEDqV0YHzHFobv5oAU3q0ykUjnhXV2dMNxDeMoSaTnkSeyaSQer4Q8CpEyW4Ael/KnMuLBTlCTukgY45rI329YFlTAiZbplMUSMzr1X/o5dtM/7brlKGA8tMGz8lN6Edipx9LgYc7mYWG+I/0L2VRPtATVsI/iZVq9qcXEKEvlpkbKgedFIl20wTG+k9KiSuFTR725aTn7z+xI+C7lZ8aOV8qeT6rA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dh3Tn04uXu8EDZC7eVeQWfEsTVJR3oHgAUsh1pDKYqQ=;
+ b=sXgXluy9RsU8I2fiHMpHCNWywtymvJCjPimhzJfIS9xDnd6h2I90IDtPM+rveosqGkYQo816kBr4RyLpF4U92TKdGTDjGPYC11vEriouUvOVVLVM92Mw/Eb8MH+nRK3hCULYUlDyl9qJ5tBpm4Ky1QNgp0YClzLV0uyaRibUboii3m8+9B4ImWSxAdFp+yU1w3Bnclc9Ijgr2neP5vNlYYQ2N+QEQyRnvUciEXKusSZNzgjAo8qjvAOkasq/xg53KqgrS+Y6gj6cBieOBFIBmS53t7z+rSou/AXeiBIIshfqOCOe+Cgkk1f1t4Y3344qe52vtAUr5vTeNUQfo0K5ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SJ0PR11MB4783.namprd11.prod.outlook.com (2603:10b6:a03:2af::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 14:28:21 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
+ 14:28:21 +0000
+Date: Fri, 23 Aug 2024 09:28:13 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Dave Jiang <dave.jiang@intel.com>, <ira.weiny@intel.com>, Fan Ni
+	<fan.ni@samsung.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	"Navneet Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef
+ Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
+	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+CC: Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
+	<dave@stgolabs.net>, Alison Schofield <alison.schofield@intel.com>, "Vishal
+ Verma" <vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH v3 21/25] dax/region: Create resources on sparse DAX
+ regions
+Message-ID: <66c89c7d2c9ae_1719d294d8@iweiny-mobl.notmuch>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-21-7c9b96cba6d7@intel.com>
+ <9b441d16-703d-4626-8707-29f4fcde2853@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9b441d16-703d-4626-8707-29f4fcde2853@intel.com>
+X-ClientProxiedBy: MW4PR03CA0258.namprd03.prod.outlook.com
+ (2603:10b6:303:b4::23) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240821174021.2371547-1-mcgrof@kernel.org>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmleLIzCtJLcpLzFFi42LZduzned36OSfSDHqW8Fic//qX2eLyrjls
-	Fg2zv7Na3JjwlNFi6Zd3zBZLV7xldWDzWLCp1GPTqk42j49Pb7F4rN9ylcXj8ya5ANYoLpuU
-	1JzMstQifbsEroz7f74yFTzmrOjs2sTUwPiKvYuRk0NCwERix+pbLF2MXBxCAisYJb59fscM
-	4XxhlDhx5RgrhPOZUeLYjc9sMC0vty9khEgsZ5Q41drKCFc1e/IWqP7NjBJfWzrAtrAIqEp8
-	WnyHBcRmE9CU2HdyE1hcREBDYt+EXiaQBmaByYwSvTcWgxUJCzhLnHz5CWgsBwevgLfE98PG
-	IGFeAUGJkzOfgJUwC+hILNj9iQ2khFlAWmL5Pw6QMKeApUTzz+nMEJcqSsyYuJIFwq6VOLXl
-	FtgqCYEnHBKXm/qgEi4Sk1fugLKFJV4d3wINGRmJ05N7oOLpEkvWzYKyCyT23J7FCrJXQsBa
-	ou9MDkTYUWLLzG9MEGE+iRtvBSGu5JOYtA3kHJAwr0RHmxBEtZrE6ntvWCYwKs9C8tcsJH/N
-	QvhrASPzKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMD0cvrf8S87GJe/+qh3iJGJg/EQ
-	owQHs5IIb9K9o2lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT5FOFBNITS1KzU1MLUotgskwc
-	nFINTBu9K3UCbuX1LWhZebj06BaZsCCesD/R/Ze3BU1kvc0oOz289ecpBoHLq/tS1oQxb9sm
-	zfj/p4jI+lNT2wRl5bZ/c5n2NjE0wrVn7UapY1sSPxk/tqs5c9c2iHVChMMHe5Z26Rq50OKo
-	NaGNwnlcm9rfqp9Peq5VLynZun8nlybXhGa96YvfKM2r21A/69HSM8Irz+d2SdZsnzC9PnP7
-	F1m928IK8+19lrlnXfzz57J0/LOsyx7c0z9dEkyW1X3laCyTVyxjW7R/bUT+qSKR18ZtWpce
-	bgm5fYevOC9lQmTkhJ8Gtiv/+Vgk66kbsT/7I9Z5/FKMa0XeF+1m41u+VdZRXnbh/huvn5oi
-	urxXiaU4I9FQi7moOBEAf3vfFp4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsVy+t/xe7p1c06kGXzfqWFx/utfZovLu+aw
-	WTTM/s5qcWPCU0aLpV/eMVssXfGW1YHNY8GmUo9NqzrZPD4+vcXisX7LVRaPz5vkAlij9GyK
-	8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLu//nKVPCY
-	s6KzaxNTA+Mr9i5GTg4JAROJl9sXMnYxcnEICSxllNh74gUzREJGYuOXq6wQtrDEn2tdbBBF
-	Hxkl1t25zQaSEBLYzCgx6asxiM0ioCrxafEdFhCbTUBTYt/JTWAbRAQ0JPZN6GUCaWYWmMwo
-	0XtjMViRsICzxMmXn4BWc3DwCnhLfD9sDLGgh1Gic0I/I0gNr4CgxMmZT8DqmQV0JBbs/sQG
-	Us8sIC2x/B8HSJhTwFKi+ed0qKMVJWZMXMkCYddKfP77jHECo/AsJJNmIZk0C2HSAkbmVYwi
-	qaXFuem5xYZ6xYm5xaV56XrJ+bmbGIFxtu3Yz807GOe9+qh3iJGJg/EQowQHs5IIb9K9o2lC
-	vCmJlVWpRfnxRaU5qcWHGE2BQTGRWUo0OR8Y6Xkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLp
-	iSWp2ampBalFMH1MHJxSDUxtmjclY95XarwWEDiyKd1QQ2xG0gmduBnb6+frTYhYcUdZ8HqY
-	9DLZtJurouRz6tf8XV1X9YxD78i5Wd/P2CpWngwPbtljUyO+/uqfCxXn/+yzPdU/d0/8Er6z
-	EWvfzVmmddln1ru2H+ravx/cKZiXtvzIrsMy6zxqytWU85bvPD9tu0fUhr+8qwLWRN8VD6id
-	sPigrlrCfT4jtZ7nDHWT0oVUn8Tc+qyg7PP/aNCm7Oot9UUb1j+wC5MMCpYqlg79KrVTqjiX
-	fWayECPXg3/MH090L/ymF2poXrQr86Vx3jpu3nvGx2dsnOGz5IRtj+as/9/tNl53P5FYfJWr
-	JkNRPuvapoN7KjT3zX6mWSusxFKckWioxVxUnAgALnom2DwDAAA=
-X-CMS-MailID: 20240823142814eucas1p205260ffd9afdfe778edd673f4a2ddb66
-X-Msg-Generator: CA
-X-RootMTR: 20240821174031eucas1p227ee9e3d67c1b52aca8603f73e7d30dc
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240821174031eucas1p227ee9e3d67c1b52aca8603f73e7d30dc
-References: <CGME20240821174031eucas1p227ee9e3d67c1b52aca8603f73e7d30dc@eucas1p2.samsung.com>
-	<20240821174021.2371547-1-mcgrof@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SJ0PR11MB4783:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33fc5fd1-bcf2-4c22-9a34-08dcc37fd691
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?LVUrKeBp1F0UaQWH5fPpvIj6socKEvJ000PNWHWb2ZTTqKU7RYNU1NW8mmxg?=
+ =?us-ascii?Q?2T5K2w0zGjlivJwxLjEFcMeg8q4zvV+ooutK5HmHEjKkFqbOjKqYqjoP1XfA?=
+ =?us-ascii?Q?xkxBxCpt5wcDu5PXPQ3R8X1vA19Cx4lJ5XS1nWXhWBPQi3q8/4OXmCrr8w0D?=
+ =?us-ascii?Q?3GuRYJ/oNe+bpaLFqEiiy3F4JcmVDdG5C3VdKgxefG2vfrDhzBXtJMYDm+SS?=
+ =?us-ascii?Q?Ai7spu9twb0Ysr7qfUPfMNrZdE+aNlnarQaBQ2M1k3V1ULRrlwdbdEQuTRMz?=
+ =?us-ascii?Q?AXeVO5DoXGjmeF9Ou58u96Fh99XxeO/6D41JBdMI3ozKVxiA5HrryvqYyv4G?=
+ =?us-ascii?Q?QEb03GVnp6xCyiPCiZh39SPhpcrPThnBsous8GCIaa+qndAActmKl59wp6HH?=
+ =?us-ascii?Q?9lQ/Pa1MrMmVtOLvO8f88x7hF/oPSKzp38vSDgFAB1NJUYJQCXGTzY8FayPb?=
+ =?us-ascii?Q?y8LdxNW2lVlkMCMp4FGGEEyS+WEZ+TkzjWToZP9oK3ho3ANqoOV1yZpYXabo?=
+ =?us-ascii?Q?dq2AhAstVes8S0PbgxuqxpzpCgVJ3AiD45E+U7a/zkkGRpmzfUwN6qP77Bt9?=
+ =?us-ascii?Q?uNyHlGfSUqkMq1lK2sNvTstCLvlCcmPvaiuPSh3qVGKgHqHnvlL16ir5B2bW?=
+ =?us-ascii?Q?+vfxmY41LB3S11MYyYhtz59XU4X4rjR9539/W+qhyemwLTKZA9QX7NIvtc2Z?=
+ =?us-ascii?Q?jZcRUIQGftL9YyAucO3BYHVmomMCuoSadhpcMkz/aWOrqVlkC98+wzKtV7J8?=
+ =?us-ascii?Q?zkVTtrXcMLJ6ot+eE0EM9YFBEnDl3EFTK5wvydfbkJDW2YoICTlUTBk0psBM?=
+ =?us-ascii?Q?sBXXmGc4fBvioihYQ7qmB8VkAIySyw9g3DTa7RN7KIhFHF/1AuthPcAg5IE6?=
+ =?us-ascii?Q?MA3YwIEdsLC5P7sDF2+6o3ItHfdAcUQtZx2ije1s9Px0zxPjlHhWqStwuXjl?=
+ =?us-ascii?Q?bWYVCKUQqA8BarQARrXHhxH2WqG4kogL0HYYqJFsXV7o+mWVMziuM8y5j8pl?=
+ =?us-ascii?Q?F1h6TdZ5I4Uxo/taBM/BZfZBz93MydpPcOTjpA58mWezGEFZBQXJXjDkk5wW?=
+ =?us-ascii?Q?WMNcUvci+eRV9cOCUFzpIoTnVOXht8XvO6DDMCGwxygTWldy951V6Y6X9/jE?=
+ =?us-ascii?Q?aaSdZEfnMufmK4cOVQZQC87dC2cnXc+6eP618pT8wUC2DEvrrlAPet7kCK2T?=
+ =?us-ascii?Q?5b82s9WJtVYBzld0gUDHHDG/+9CNPNRmSa1bCptKXjDfEQu6jepAIhER312J?=
+ =?us-ascii?Q?yKpzHfnV2VbDaaQK8cE/b5Z6nGyqSXIM7X0iU+ExF2tzC11Ms9/Y0nG2w8ME?=
+ =?us-ascii?Q?EY+xVkkgN83bMuGrqXchjg5WYTjpljb64JUGyUj64Mv17IJCUBKEzwoMJZ8l?=
+ =?us-ascii?Q?dwgBJ6/D9UQa0vXs2qk+ZENU+/eQ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qNu2cYMvRFh9b0yJ+4iibSA8mut32hm+nNnocSktdDBmHWpyUhgjaZB0yu5F?=
+ =?us-ascii?Q?JkibWuXbHsEKEYP/NlkLh8eb6759uoV7RMgDGIV+qqyOjx1nzqzYeYbK37iN?=
+ =?us-ascii?Q?NH4qwbf94RZfY2b0lTJ87kMAyUXUp4Lds644AYMsM3OXXXpeyIoGf/i+L0e7?=
+ =?us-ascii?Q?1+yVzZrgyVuEas4d2Xk7NlMqWfYg1fFXj05eLSWS6MR23NLHA/sn2ISoQP4I?=
+ =?us-ascii?Q?mPGKtWxjxfWrjVC8c1Q/YF0mjTWbrJBa2aT93lcdyZekMjpGae4c41rQJ72a?=
+ =?us-ascii?Q?SsYf7dQNe5CIs9ZmuwNQmjRi+oU4oAWvl+U/hRlqTalNwhLu+QB4/Y8JanpE?=
+ =?us-ascii?Q?cvkfi7+dY2NRXvF+OH6bvadwxkiqDaRBdAZG4q2/OwuHjGWJn4p5xlegvUF9?=
+ =?us-ascii?Q?ZWOnklmceyFlqv7SKx/Jw/oyLZlrUIu+T6WNUaFPP555w5JwLP9ytShyF7Vf?=
+ =?us-ascii?Q?aiENeqceliL7GctDD5g8GkVJaFgZytqm6KO1JhhFLNgAFPwo2ik6bsR+EM1O?=
+ =?us-ascii?Q?dfhYr2wfamJQ2qhv2smZJftiNzdykPD9rz6qkODQY6zMwGQz5I7/uDFIW2Rc?=
+ =?us-ascii?Q?vyv3PlW4ux1mTG4l04vZ1n3KTo//CwP3mmMWkuk0PEttFzK9XKk8dBUICE7G?=
+ =?us-ascii?Q?WLk/IdO/u5V+oOrn+Ki+R3DJYzP/pM3HMTqqq089dpxTQtrofxc92eVx9IVO?=
+ =?us-ascii?Q?MA8JrLpLS+xYtWOaz5H1gEGntcL5uxtsEf+oMXu0PPifuJ9GRxONW8jCObax?=
+ =?us-ascii?Q?tlSb5srrZV3rz52bxJB1pQwfF2J7l7kaGsDGHSCBp9M0Mzc6ZUdaCw93O4s0?=
+ =?us-ascii?Q?bTWCeM+wyJ3yFmRQS3Ax2dbT7GZzmgjUZaqSY2sQn0s5oDUsfq5ty8Cvn0jy?=
+ =?us-ascii?Q?IRx1T6WJfOkbsgn/QePfFzRtx8589qddUkiFsJ0XN5mHagN1fDyim6MAVc6t?=
+ =?us-ascii?Q?fVUzlXdfqRHxqlZ8enfFYBhMunnwQIDD5M+7hpoUG5VqWFCBBO3Bbo0P+JPf?=
+ =?us-ascii?Q?NTLCHHF5bwQZ1BAR2mY3+i18uWpStJzgLocBJYy/kfJaAKbXjEziwyTeIaxX?=
+ =?us-ascii?Q?YDTzkcq2j4b5rC4pvghHzswRgcZl6MRqu7xUo/lqLarboQ/UC8Gq1EqNDv6I?=
+ =?us-ascii?Q?s6MMQIkxMaPxLYr9QQplbzmdXlAOGQIdeFfuTfJfWsQhZgfcoRYnw+ig15MO?=
+ =?us-ascii?Q?WO4cRMuQF91JUhojVkO6ouFkqKi7Sn7ChftYazNU9A5AIpv8QJMYBvDCjrpD?=
+ =?us-ascii?Q?qaBwOsrzaf1LUTbGn8r0l4XYP/7buKVYaJ1liMk9aHVOeblb/ZOf7m5XrCNH?=
+ =?us-ascii?Q?qovHWs/MSZb+4l9/i/R7k2t5+ap+TEJd/XBftBjqkgWeQKUghV9Fi6AjuJxG?=
+ =?us-ascii?Q?L/sDs0Bm3C4oXsUAR+H6/myCEEG0y/E8gopvgu3B+0PTr5xko9810eIIWRRc?=
+ =?us-ascii?Q?MeCtKKn8uqwg6j9xvvLkOX3fD+OahaHVpd7W4IrePtgDFtl8/P2m/1wPjEcq?=
+ =?us-ascii?Q?9CdxJ1ar8FGQT2JjkWdMXOd4GkOMcGz9y11TXOOuvoCgqxekyCcNzGrWLCgh?=
+ =?us-ascii?Q?OXWbq863M0c5oJFPtR7+ALr37ppK9bnSvQ/E7G7n?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33fc5fd1-bcf2-4c22-9a34-08dcc37fd691
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 14:28:21.0653
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M3XBdo1ZqolItpA9+KX0+TJy15e/EeTBjIMgdl6/ZH2tKgdBvMODH/zMsS4uXY4tX8zF7FRUkUJ/HSPHW7fuRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4783
+X-OriginatorOrg: intel.com
 
-On Wed, Aug 21, 2024 at 10:40:21AM -0700, Luis Chamberlain wrote:
-> We're looking to add Rust module support, and I don't speak
-> Rust yet. The compromise was reached that in order to scale we'd
-> get volunteers committed from the Rust community willing to review
-> both Rust and C code for modules so we can ensure we get proper
-> reviews for both parts of the code and so that we can scale.
+Dave Jiang wrote:
 > 
-> Add those who have stepped up to help.
 > 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
+> On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
+> > From: Navneet Singh <navneet.singh@intel.com>
+> > 
 
-Acked-by: Daniel Gomez <da.gomez@samsung.com>
+[snip]
 
-Daniel
+> > diff --git a/drivers/cxl/core/extent.c b/drivers/cxl/core/extent.c
+> > index d7d526a51e2b..103b0bec3a4a 100644
+> > --- a/drivers/cxl/core/extent.c
+> > +++ b/drivers/cxl/core/extent.c
+> > @@ -271,20 +271,67 @@ static void calc_hpa_range(struct cxl_endpoint_decoder *cxled,
+> >  	hpa_range->end = hpa_range->start + range_len(dpa_range) - 1;
+> >  }
+> >  
+> > +static int cxlr_notify_extent(struct cxl_region *cxlr, enum dc_event event,
+> > +			      struct region_extent *region_extent)
+> > +{
+> > +	struct cxl_dax_region *cxlr_dax;
+> > +	struct device *dev;
+> > +	int rc = 0;
+> > +
+> > +	cxlr_dax = cxlr->cxlr_dax;
+> > +	dev = &cxlr_dax->dev;
+> > +	dev_dbg(dev, "Trying notify: type %d HPA %par\n",
+> > +		event, &region_extent->hpa_range);
+> > +
+> > +	/*
+> > +	 * NOTE the lack of a driver indicates a notification has failed.  No
+> > +	 * user space coordiantion was possible.
+> > +	 */
+> > +	device_lock(dev);
+> > +	if (dev->driver) {
+> > +		struct cxl_driver *driver = to_cxl_drv(dev->driver);
+> > +		struct cxl_notify_data notify_data = (struct cxl_notify_data) {
+> > +			.event = event,
+> > +			.region_extent = region_extent,
+> > +		};
+> > +
+> > +		if (driver->notify) {
+> > +			dev_dbg(dev, "Notify: type %d HPA %par\n",
+> > +				event, &region_extent->hpa_range);
+> > +			rc = driver->notify(dev, &notify_data);
+> > +		}
+> > +	}
+> > +	device_unlock(dev);
+> 
+> Maybe a cleaner version:
+> 	guard(device)(dev);
+> 	if (!dev->driver || !dev->driver->notify)
+> 		return 0;
+
+There is no dev->driver->notify.  But this works.
+
+        if (!dev->driver)
+                return 0;
+        driver = to_cxl_drv(dev->driver);
+        if (!driver->notify)
+                return 0;
+
+Not quite as clean but I did miss the use of guard.
 
 > 
-> First order of business, please help review Kris Van Hees's patches with
-> Rust in mind!
+> 	dev_dbg(...);
+> 	return driver->notify(dev, &notify_data);
+>
+
+I've cleaned it up.
+
+[snip]
+
+> > +
+> > +int dax_region_add_resource(struct dax_region *dax_region,
+> > +			    struct device *device,
+> > +			    resource_size_t start, resource_size_t length)
+> >
+> kdoc header?
+
+Because dax_region_add_resource() is part of the DAX private interfaces
+and not intended to be used outside the DAX subsystem I skipped the kdoc
+here even though the function must be exported.  Same for
+dax_region_rm_resource() and dax_avail_size().
+
+This is similar to run_dax() in that it is designed as a 'generic
+operation' within the dax subsystem but not generally useful to the
+kernel.
+
+For now I'll move their declarations in dax-private.h and make a similar
+comment.
+
+Ira
+
 > 
->  MAINTAINERS | 3 +++
->  1 file changed, 3 insertions(+)
+>  +{
+> > +	struct resource *new_resource;
+> > +	int rc;
+> > +
+> > +	struct dax_resource *dax_resource __free(kfree) =
+> > +				kzalloc(sizeof(*dax_resource), GFP_KERNEL);
+> > +	if (!dax_resource)
+> > +		return -ENOMEM;
+> > +
+> > +	guard(rwsem_write)(&dax_region_rwsem);
+> > +
+> > +	dev_dbg(dax_region->dev, "DAX region resource %pr\n", &dax_region->res);
+> > +	new_resource = __request_region(&dax_region->res, start, length, "extent", 0);
+> > +	if (!new_resource) {
+> > +		dev_err(dax_region->dev, "Failed to add region s:%pa l:%pa\n",
+> > +			&start, &length);
+> > +		return -ENOSPC;
+> > +	}
+> > +
+> > +	dev_dbg(dax_region->dev, "add resource %pr\n", new_resource);
+> > +	dax_resource->region = dax_region;
+> > +	dax_resource->res = new_resource;
+> > +	dev_set_drvdata(device, dax_resource);
+> > +	rc = devm_add_action_or_reset(device, dax_release_resource,
+> > +				      no_free_ptr(dax_resource));
+> > +	/*  On error; ensure driver data is cleared under semaphore */
+> > +	if (rc)
+> > +		dev_set_drvdata(device, NULL);
+> > +	return rc;
+> > +}
+> > +EXPORT_SYMBOL_GPL(dax_region_add_resource);
+> > +
+> > +int dax_region_rm_resource(struct dax_region *dax_region,
+> > +			   struct device *dev)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f328373463b0..7e2cf251427d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15454,6 +15454,9 @@ F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
->  
->  MODULE SUPPORT
->  M:	Luis Chamberlain <mcgrof@kernel.org>
-> +R:	Petr Pavlu <petr.pavlu@suse.com>
-> +R:	Sami Tolvanen <samitolvanen@google.com>
-> +R:	Daniel Gomez <da.gomez@samsung.com>
->  L:	linux-modules@vger.kernel.org
->  L:	linux-kernel@vger.kernel.org
->  S:	Maintained
-> -- 
-> 2.43.0
+> kdoc header
+> > +{
+> > +	struct dax_resource *dax_resource;
+> > +
+> > +	guard(rwsem_write)(&dax_region_rwsem);
+> > +
+> > +	dax_resource = dev_get_drvdata(dev);
+> > +	if (!dax_resource)
+> > +		return 0;
+> > +
+> > +	if (dax_resource->use_cnt)
+> > +		return -EBUSY;
+> > +
+> > +	/* avoid races with users trying to use the extent */
+> > +	__dax_release_resource(dax_resource);
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(dax_region_rm_resource);
+> > +
+> >  bool static_dev_dax(struct dev_dax *dev_dax)
+> >  {
+> >  	return is_static(dev_dax->region);
+> > @@ -296,19 +373,44 @@ static ssize_t region_align_show(struct device *dev,
+> >  static struct device_attribute dev_attr_region_align =
+> >  		__ATTR(align, 0400, region_align_show, NULL);
+> >  
+> > +#define for_each_child_resource(extent, res) \
+> > +	for (res = (extent)->child; res; res = res->sibling)
+> > +
+> > +resource_size_t
+> > +dax_avail_size(struct resource *dax_resource)
+> kdoc header
 > 
+> DJ
+> 
+
+[snip]
 
