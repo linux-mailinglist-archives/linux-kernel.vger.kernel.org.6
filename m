@@ -1,198 +1,247 @@
-Return-Path: <linux-kernel+bounces-299535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC1695D5FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:18:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15B495D602
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 955671C22CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:18:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1791F2359C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D63192589;
-	Fri, 23 Aug 2024 19:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA32B192594;
+	Fri, 23 Aug 2024 19:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNwAW4UR"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rwv38XcE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8100B8F6B
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5C018592E;
+	Fri, 23 Aug 2024 19:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724440723; cv=none; b=JaaVRgKGlgdOaAZxaPVYFUQGSsxR1EtbHAT5vIDz1kiFrn/NC0jg9PxSU1l0D7kWOCuA4PEhxzykPNOGnQqO87LY0901ybZmNA1+2KKgajx8nJFJaTthXMUwuUT+5TsFmb4A/UZ3SqwH6eO3Y7P76TlQcqUkUtAUOjdqR5Pk/eA=
+	t=1724440762; cv=none; b=qhr7qU5GQEKDTjckgMUJhgZ/vAXFmc6apvkL+ccUoZgFWBOGUgo+PpdtaLEOiFF0hwQAtVc+9UL37YIHE7GiSwBNS70Bs1x6o6caeOsqv18gOYonMgKnaL27xK6xNj4FhdPo8wWreZcxOsUycR/uIs+ek8CzBjRGR0hGsRgG4ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724440723; c=relaxed/simple;
-	bh=h05tDNb/w9/s2t4k6+FJ+qk72QG3Jl8OzoskMkOmMG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=etc+whB82BPoe+0gtGNUxbQwr4Qq3wNkMsb1HpN2SwvOK5ZWQMum/JkHW/Rn0J6Uy02Ttgpr+b4F+XcSU74/7ZrK3+hQbq3B5cmBeVwdbUqVCzzLNyD/MuN8tqvWdoKcwymyvbo9OAyJIisriW0XQSiwoPMrOxJJFA3loQKRw4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNwAW4UR; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so1746210b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724440722; x=1725045522; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VAI7U9+JMkiX53cBLbSTqP0FHZ0ZkqWJgaffwJcUIz8=;
-        b=JNwAW4URsBaUWIotPurBxxvKjbZiSdO3y5xrGou47XzSXLfjunECRzwUtSRwo56Kpb
-         0dpIDlP7WtPm1YpRJ6glGkbBM1dM1gLstsVjGQqV2WR/DUEvPgOvwqroWNQL7ic0TCqC
-         jYmkxIhXN6N++mvsHo6dRovaW72X1y1T3YCOZ11zfDRAbcgQMBsTSV9DUxvolWkT8NQ9
-         lnfp5vfdDm3L+au/D4z6qTvgVjFNhQsOQI9k+cThJX2dnoSXjA0m+euz3EQNsj8GfCU+
-         UnkaBP8Jm8464iLFlXyeYJO5DAErpNDOSuxRtMt5Cx3KORJZwj/iHi4Y0a8KjOP2NSpe
-         LD4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724440722; x=1725045522;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VAI7U9+JMkiX53cBLbSTqP0FHZ0ZkqWJgaffwJcUIz8=;
-        b=Ny8MVHvEpyTb4PnB+dKHepK3KidpRsCINzkuf8j5c0MDXHkY6E+j+x4Ldf3F6JQFka
-         WYV/NgqqSfp4AKvISzGdyMnzsfJP8Elem/m0GMvWVNa6oLDoGAANoMhbeF3mi1d3XsqE
-         CfEVmlMSoegn5xk2ZCuWzXGtZpc8yprkt1HElLq0R5rBzadK1kKx1KUoI3sbm4yAEd6Y
-         JkhuXosshvnplfv3BI6KK7+HfPt+YzLVZwfQvGv8Bmw08vvixarfqIZr8rZMhnu2I3Bw
-         8Em0Xet1I185UquKhMgmPmLDPY4zAy8QVE6KVmWlnYjdQkICYbTWoV34dCmFdWxldUex
-         R4rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqHX/4WfQVVG/byw47abjL2B9vBKn44L5RNT2o84x8T1qy73bUBKZCZ3/rMQTIAL5BvCdZU0LOCTd0KZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvafOg52xdOakarKQqw1vZ4vifENkm48ZO15HnW/pgnNn2+XF5
-	6NgwUtLGUMmTxdisZymDd5aQp5pyii8d1njK1bYBDYcvirYHVv8ERQU9luXx
-X-Google-Smtp-Source: AGHT+IG+uxStVBCvZMGuYVvSAEzznTm/nzsR/hczIylts491KxTnNIz1nb/XmKKacwo9SgkoOlAdeg==
-X-Received: by 2002:a05:6a00:91d0:b0:714:10d2:baae with SMTP id d2e1a72fcca58-714457d3456mr3663894b3a.14.1724440721588;
-        Fri, 23 Aug 2024 12:18:41 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143431a239sm3507575b3a.179.2024.08.23.12.18.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 12:18:41 -0700 (PDT)
-Date: Fri, 23 Aug 2024 12:18:38 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Valentin Schneider <vschneid@redhat.com>,
-	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [RFC PATCH v1 3/6] cpumask: Implement
- cpumask_{first,next}_{nor,andnot}
-Message-ID: <Zsjgjh1V3wf0gwbd@yury-ThinkPad>
-References: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
- <20240823185946.418340-4-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1724440762; c=relaxed/simple;
+	bh=RbGqazl7YKAeTpEJJ80ong+xPNKwnei0GOQGoLCf5TQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IHDqrWLzBzA1Zp1znTIqYyzch/oifXCKbYBAXWwHYz/rfg3l/hbucEGTkG+iusvGQv7IRD1pkIsi27R6vwxiCpxfQu30bADxAY4lGjTROTz5NshC17DT+PZRJCAhXkqn99j+mqpESO5BDHdUX149YA/Jg9KSfEO2GVt3NTU5JjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rwv38XcE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C7DC32786;
+	Fri, 23 Aug 2024 19:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724440761;
+	bh=RbGqazl7YKAeTpEJJ80ong+xPNKwnei0GOQGoLCf5TQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Rwv38XcEbVeSkRTN8TuW94mP+kgGA6MUqWxTQnfxdTfqotynofwEw5/nqKesQY+gB
+	 1wRD4JGTX7HhdcFUbLo0VOH4piINa1Sd10k0SlYLiSns/XuoZjYtrvYO8r3udJ0GeW
+	 5hcM9alwbbAUl1rEElrWbzzA/K6v6XACsYlVcOZV8UtfgD35CtRlc+vjV1tUPxFC/S
+	 es+0qPJKEgXzk7yQzWCCxM0V0pv+cqUqFx/3BFh9Ninrpt2DLPvbLo9lQAOglIPAJC
+	 gZ6DrLDB1Sm0z5ue3PdDMy+CnkFCl7JyDu4RL7inSF0Xz+s3kDe2A6DYSNsdXremxA
+	 55Phphkt9sxyA==
+Date: Fri, 23 Aug 2024 20:19:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Alexandru Ardelean <aardelean@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org,
+ lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
+Subject: Re: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18}
+ parts
+Message-ID: <20240823201913.5bded18f@jic23-huawei>
+In-Reply-To: <20240819064721.91494-8-aardelean@baylibre.com>
+References: <20240819064721.91494-1-aardelean@baylibre.com>
+	<20240819064721.91494-8-aardelean@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823185946.418340-4-mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 02:59:43PM -0400, Mathieu Desnoyers wrote:
-> Allow finding the first or next bit within two input cpumasks which is
-> either:
-> 
-> - both zero and zero,
-> - respectively one and zero.
-> 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Yury Norov <yury.norov@gmail.com>
-> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
-> Changes since v0:
-> - Rename "notandnot" to "nor".
-> - Use __always_inline.
-> ---
->  include/linux/cpumask.h | 60 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
-> 
-> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-> index 23686bed441d..5573e75c13ec 100644
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -204,6 +204,32 @@ unsigned int cpumask_first_and_and(const struct cpumask *srcp1,
->  				      cpumask_bits(srcp3), small_cpumask_bits);
->  }
->  
-> +/**
-> + * cpumask_first_andnot - return the first cpu from *srcp1 & ~*srcp2
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static __always_inline
-> +unsigned int cpumask_first_andnot(const struct cpumask *srcp1, const struct cpumask *srcp2)
+On Mon, 19 Aug 2024 09:47:17 +0300
+Alexandru Ardelean <aardelean@baylibre.com> wrote:
+
+> The AD7606C-16 and AD7606C-18 are pretty similar with the AD7606B.
+> The main difference between AD7606C-16 & AD7606C-18 is the precision in
+> bits (16 vs 18).
+> Because of that, some scales need to be defined for the 18-bit variants, =
+as
+> they need to be computed against 2**18 (vs 2**16 for the 16 bit-variants).
+>=20
+> Because the AD7606C-16,18 also supports bipolar & differential channels,
+> for SW-mode, the default range of 10 V or =C2=B110V should be set at prob=
+e.
+> On reset, the default range (in the registers) is set to value 0x3 which
+> corresponds to '=C2=B110 V single-ended range', regardless of bipolar or
+> differential configuration.
+>=20
+> Aside from the scale/ranges, the AD7606C-16 is similar to the AD7606B.
+>=20
+> And the AD7606C-18 variant offers 18-bit precision. The unfortunate effect
+> of this 18-bit sample size, is that there is no simple/neat way to get the
+> samples into a 32-bit array without having to do a home-brewed bit-buffer.
+> The ADC must read all samples (from all 8 channels) in order to get the
+> N-th sample (this could be reworked to do up-to-N-th sample for scan-dire=
+ct).
+> There doesn't seem to be any quick-trick to be usable to pad the samples
+> up to at least 24 bits.
+> Even the optional status-header is 8-bits, which would mean 26-bits of da=
+ta
+> per sample.
+> That means that when using a simple SPI controller (which can usually read
+> 8 bit multiples) a simple bit-buffer trick is required.
+>=20
+> Datasheet links:
+>   https://www.analog.com/media/en/technical-documentation/data-sheets/ad7=
+606c-16.pdf
+>   https://www.analog.com/media/en/technical-documentation/data-sheets/ad7=
+606c-18.pdf
+>=20
+> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+
+A few minor things. If we can just start with 18 bit word spi controllers o=
+nly
+maybe that's worth doing to make things simpler.
+
+> +static int ad7606c_sw_mode_setup_channels(struct iio_dev *indio_dev,
+> +					  ad7606c_chan_setup_cb_t chan_setup_cb)
 > +{
-> +	return find_first_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
+> +	unsigned int num_channels =3D indio_dev->num_channels - 1;
+> +	struct ad7606_state *st =3D iio_priv(indio_dev);
+> +	bool chan_configured[AD760X_MAX_CHANNELS];
+=3D {};
+and drop the memset.
+
+> +	struct device *dev =3D st->dev;
+> +	int ret;
+> +	u32 ch;
+> +
+> +	/* We need to hook this first */
+> +	ret =3D st->bops->sw_mode_config(indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	indio_dev->info =3D &ad7606c_info_sw_mode;
+> +
+> +	memset(chan_configured, 0, sizeof(chan_configured));
+> +
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		bool bipolar, differential;
+> +
+> +		ret =3D fwnode_property_read_u32(child, "reg", &ch);
+> +		if (ret)
+> +			continue;
+> +
+> +		if (ch >=3D num_channels) {
+> +			dev_warn(st->dev,
+> +				 "Invalid channel number (ignoring): %d\n", ch);
+> +			continue;
+> +		}
+> +
+> +		bipolar =3D fwnode_property_present(child, "bipolar");
+> +		differential =3D fwnode_property_present(child, "diff-channel");
+> +
+> +		chan_setup_cb(st, ch, bipolar, differential);
+> +		chan_configured[ch] =3D true;
+> +	}
+> +
+> +	/* Apply default configuration to unconfigured (via DT) channels */
+> +	for (ch =3D 0; ch < num_channels; ch++) {
+> +		struct ad7606_chan_scale *cs;
+> +		unsigned int *scale_avail_show;
+> +		int i;
+> +
+> +		if (!chan_configured[ch])
+> +			chan_setup_cb(st, ch, false, false);
+> +
+> +		/* AD7606C supports different scales per channel */
+> +		cs =3D &st->chan_scales[ch];
+> +
+> +		scale_avail_show =3D devm_kcalloc(st->dev, cs->num_scales * 2,
+> +						sizeof(*scale_avail_show),
+> +						GFP_KERNEL);
+
+Maybe just make it big enough for worst case and stick it in st always?
+How big can it get?
 
 
-Here should be a small_cpumask_bits. This is better optimized for
-NR_CPUS < BITS_PER_LONG.
 
-> +}
+> +		if (!scale_avail_show)
+> +			return -ENOMEM;
 > +
-> +/**
-> + * cpumask_first_nor - return the first cpu from ~(*srcp1 | *srcp2)
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static __always_inline
-> +unsigned int cpumask_first_nor(const struct cpumask *srcp1, const struct cpumask *srcp2)
+> +		/* Generate a scale_avail list for showing to userspace */
+> +		for (i =3D 0; i < cs->num_scales; i++) {
+> +			scale_avail_show[i * 2] =3D 0;
+> +			scale_avail_show[i * 2 + 1] =3D cs->scale_avail[i];
+> +		}
+> +
+> +		cs->scale_avail_show =3D scale_avail_show;
+> +	}
+> +
+> +	return 0;
+> +}
+>
+
+> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+> index dd0075c97c24..73a7b0007bf8 100644
+> --- a/drivers/iio/adc/ad7606_spi.c
+> +++ b/drivers/iio/adc/ad7606_spi.c
+> @@ -45,6 +45,8 @@
+
+> =20
+> +static int ad7606_spi_read_block18to32(struct device *dev,
+> +				       int count, void *buf)
 > +{
-> +	return find_first_nor_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
-> +}
+> +	struct spi_device *spi =3D to_spi_device(dev);
+> +	u32 i, bit_buffer, buf_size, bit_buf_size;
+> +	u32 *data =3D buf;
+> +	u8 *bdata =3D buf;
+> +	int j, ret;
 > +
->  /**
->   * cpumask_last - get the last CPU in a cpumask
->   * @srcp:	- the cpumask pointer
-> @@ -246,6 +272,40 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
->  	return find_next_zero_bit(cpumask_bits(srcp), small_cpumask_bits, n+1);
->  }
->  
-> +/**
-> + * cpumask_next_andnot - return the next cpu from *srcp1 & ~*srcp2
-> + * @n: the cpu prior to the place to search (ie. return will be > @n)
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static __always_inline
-> +unsigned int cpumask_next_andnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
-> +{
-> +	/* -1 is a legal arg here. */
-> +	if (n != -1)
-> +		cpumask_check(n);
-> +	return find_next_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
-> +}
+> +	/**
+Not kernel doc.  /*
+> +	 * With the 18 bit ADC variants (here) is that we can't assume that all
+> +	 * SPI controllers will pad 18-bit sequences into 32-bit arrays,
+> +	 * so we need to do a bit of buffer magic here.
+> +	 * Alternatively, we can have a variant of this function that works
+> +	 * for SPI controllers that can pad 18-bit samples into 32-bit arrays.
+> +	 */
 > +
-> +/**
-> + * cpumask_next_nor - return the next cpu from ~(*srcp1 | *srcp2)
-> + * @n: the cpu prior to the place to search (ie. return will be > @n)
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static __always_inline
-> +unsigned int cpumask_next_nor(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
-> +{
-> +	/* -1 is a legal arg here. */
-> +	if (n != -1)
-> +		cpumask_check(n);
-> +	return find_next_nor_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
-> +}
+> +	/* Write 'count' bytes to the right, to not overwrite samples */
+> +	bdata +=3D count;
 > +
->  #if NR_CPUS == 1
->  /* Uniprocessor: there is only one valid CPU */
->  static inline unsigned int cpumask_local_spread(unsigned int i, int node)
-> -- 
-> 2.39.2
+> +	/* Read 24 bits only, as we'll only get samples of 18 bits each */
+> +	buf_size =3D count * 3;
+> +	ret =3D spi_read(spi, bdata, buf_size);
+> +	if (ret < 0) {
+> +		dev_err(&spi->dev, "SPI read error\n");
+> +		return ret;
+> +	}
+> +
+> +	bit_buffer =3D 0;
+> +	bit_buf_size =3D 0;
+> +	for (j =3D 0, i =3D 0; i < buf_size; i++) {
+> +		u32 sample;
+> +
+> +		bit_buffer =3D (bit_buffer << 8) | bdata[i];
+> +		bit_buf_size +=3D 8;
+> +
+> +		if (bit_buf_size < 18)
+> +			continue;
+> +
+> +		bit_buf_size -=3D 18;
+> +		sample =3D (bit_buffer >> bit_buf_size) & AD7606C_18_SAMPLE_MASK;
+> +		data[j++] =3D sign_extend32(sample, 17);
+> +
+> +		if (j =3D=3D count)
+> +			break;
+> +	}
+> +
+> +	return 0;
+> +}
+
 
