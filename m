@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-299392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0047295D3EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:03:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD46695D3F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D3D0B256BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE491C21787
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF46A18F2C4;
-	Fri, 23 Aug 2024 17:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D3518BC34;
+	Fri, 23 Aug 2024 17:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAuvaj4O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VREJfoRV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB0818BB97;
-	Fri, 23 Aug 2024 17:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5014C18BB97;
+	Fri, 23 Aug 2024 17:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724432553; cv=none; b=uUqEOkQlalENipqC1TIhYw/9Ev8BjVyVHCkggWNLS2B4kUsMHY03JlEh4Z6hIaxDywVtGiEMqYHsPsjcEdfnomFgHnEwOhq0Pc2XThRijSbY6b68fHjBZW2hF5cUx/MoEB8+YfYlOg1CU9Ksp/9kd0mj2uVjfOwHddnK5MxNAIs=
+	t=1724432556; cv=none; b=F3BoEF152Lb8K+QsIvqNT9I7cpMLTwrzFrEXjOrW2BCHYzDA/wMM9pX4IwNjH2coGfP24tfPTaWKg7Ue7GiFMmptr99fG2UPNHes2w6PYgSTSi4gKERHj+oE0teOG+/HLrmFGI3wD8B3aqEr4m+0zh+v5PsWnH7a509a6IS8hbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724432553; c=relaxed/simple;
-	bh=PAwsiU4bIYX3E0qYsbmM9AuaSPSKSbzpsu5/n9Ejdz0=;
+	s=arc-20240116; t=1724432556; c=relaxed/simple;
+	bh=KTOqkWcx4VJ3PzktD2qDUCcUOUY9+HIU+QUcTAXO0s4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IOesmWwXZ0/JTg9clASQ2Mp5GUB2czfdXf17HhR7YscTKR8Loiz2wj/R2PEGk6dRpFTyFnZyDMfvoHZ561MQwgFjeb3FevqjSE/be2jY8qtgj5swnf8nlFgP+lpfW0UaQu+RBEhL3+VEAcrZtnDFhCOjsqC43J8JgmtMp718VoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAuvaj4O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31F8C4AF0B;
-	Fri, 23 Aug 2024 17:02:27 +0000 (UTC)
+	 MIME-Version:Content-Type; b=XY8JHPuCCeu+qBxSLiFbWfDOgx2maLCJMY782S7LNo7YA6B2/pa7NSiAGNOc8YtLNPdxdAgxsad05kwISzFCnCH0cZJfdeuf9de+JUr946r/LcsF91aefmGk/+fBSL0sW1grLQ9HbEs+EcIcJhpRX5k090n6IG5LNOKrraI0Mwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VREJfoRV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 146ADC32786;
+	Fri, 23 Aug 2024 17:02:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724432551;
-	bh=PAwsiU4bIYX3E0qYsbmM9AuaSPSKSbzpsu5/n9Ejdz0=;
+	s=k20201202; t=1724432555;
+	bh=KTOqkWcx4VJ3PzktD2qDUCcUOUY9+HIU+QUcTAXO0s4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lAuvaj4O5YFi+PNVvflM3EUNpqLg9HPhJ2aCnLCVZi+UkyK3bgCaeSAgzU1Gi4Ar4
-	 8UZGRsb1+gvmvM2qjy9jYd8/UWg+u7VWqSbBr+eoqDw9DvnbbmgPfHXKakktuD1Lgr
-	 tIgc+rdSB/62ycS19erazueEwi2xS2tCll8oAPeWrAqMU2hLcnxdmZX8pw2xy+isYZ
-	 zELLrbprZ/tqr9Xc2U2mpKlstKnYX/iWwt5mz1wP32lkwqLaKlJBahPd1LPzR52di6
-	 TRbsCB9eKmGjUCGUWNoE7XIwGKHXVbyGUlttSh9g8O6ZEOeiA1uuWKcMAL80qcItOm
-	 JCC41QF5DCKNQ==
+	b=VREJfoRVY97Dv8b1g+75FarIAmgTQalQ8zeeaU5A5NTBdBFRP1QLr7LfxvbtFlwZK
+	 ORqPD854lMYLJxFRiFuaAkYYceJSA6hdCVJ2rixtDC7OKSDL2AF4VG5+hkzp5qMscZ
+	 QfV1KRgn3/zLCWwf5XKg9nG6e4TPkLxzqNXmMBmGbJYKbAHsHNG2KPS9RO5n1znY0i
+	 Q7Znl+a3XtIPSICWAgno0ad+MI4Me5VmYSVCqZVXn8hDz51kF4DBuoJFMosFbzwQM9
+	 Ykg1bkmJGxTwfTouNR7aX22JRlhEwXPloE4uayV6b+REwl0bh9h0gJlqFX+AYRv112
+	 qJ4Wx3Q6Z0vng==
 From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Douglas Anderson <dianders@chromium.org>
-Cc: kernel-team@android.com,
+To: Rob Clark <robdclark@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marc Gonzalez <mgonzalez@freebox.fr>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	Yu Zhao <yuzhao@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Misono Tomohiro <misono.tomohiro@fujitsu.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Sumit Garg <sumit.garg@linaro.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	James Morse <james.morse@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Kees Cook <kees@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
+	iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] arm64: smp: smp_send_stop() and crash_smp_send_stop() should try non-NMI first
-Date: Fri, 23 Aug 2024 18:02:10 +0100
-Message-Id: <172441009653.1922898.7572192517928205189.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Arnaud Vrac <avrac@freebox.fr>,
+	Pierre-Hugues Husson <phhusson@freebox.fr>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Caleb Connolly <caleb.connolly@linaro.org>
+Subject: Re: [PATCH v3] iommu/arm-smmu-qcom: hide last LPASS SMMU context bank from linux
+Date: Fri, 23 Aug 2024 18:02:11 +0100
+Message-Id: <172442858770.2796746.16801443724407766952.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240821145353.v3.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
-References: <20240821145353.v3.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
+In-Reply-To: <20240820-smmu-v3-1-2f71483b00ec@freebox.fr>
+References: <20240820-smmu-v3-1-2f71483b00ec@freebox.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,20 +77,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 21 Aug 2024 14:53:57 -0700, Douglas Anderson wrote:
-> When testing hard lockup handling on my sc7180-trogdor-lazor device
-> with pseudo-NMI enabled, with serial console enabled and with kgdb
-> disabled, I found that the stack crawls printed to the serial console
-> ended up as a jumbled mess. After rebooting, the pstore-based console
-> looked fine though. Also, enabling kgdb to trap the panic made the
-> console look fine and avoided the mess.
+On Tue, 20 Aug 2024 15:27:19 +0200, Marc Gonzalez wrote:
+> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
+> (base address 0x05100000) produces a system freeze & reboot.
+> 
+> The hardware/hypervisor reports 13 context banks for the LPASS SMMU
+> on msm8998, but only the first 12 are accessible...
+> Override the number of context banks
 > 
 > [...]
 
-Applied to arm64 (for-next/misc), thanks!
+Applied to will (for-joerg/arm-smmu/updates), thanks!
 
-[1/1] arm64: smp: smp_send_stop() and crash_smp_send_stop() should try non-NMI first
-      https://git.kernel.org/arm64/c/fdfa588124b6
+[1/1] iommu/arm-smmu-qcom: hide last LPASS SMMU context bank from linux
+      https://git.kernel.org/will/c/3a8990b8a778
 
 Cheers,
 -- 
