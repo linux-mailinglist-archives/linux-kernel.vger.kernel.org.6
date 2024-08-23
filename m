@@ -1,82 +1,70 @@
-Return-Path: <linux-kernel+bounces-299593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AEF95D753
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589B895D7AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF461F24516
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F8C285F1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A27193061;
-	Fri, 23 Aug 2024 20:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPrd2Mdu"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1A61A0B1B;
+	Fri, 23 Aug 2024 20:13:21 +0000 (UTC)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95722629D;
-	Fri, 23 Aug 2024 20:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE2193406;
+	Fri, 23 Aug 2024 20:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724443478; cv=none; b=L1QNBJc/8qFRZ2o4qOZqYF+IE3pGt5KYy92Px2jBd49AEWra+32ci6sKwhhkvJ99xIq+OOyQW/FxC6INvtM0qMHiBrEHsONlFB/li0CPeW84u6+z8okiw5i8TJQ/7O3ko7t7nVl/nq/9xWL8mqi6GmJJ1IXF8zSafNMxD8/msdg=
+	t=1724444000; cv=none; b=Fd3f7e9EmNo8TRxA2gSLOaEGtJAsC9m5U6OUeln44M22Ap4LLKPrL+vVhnxqdcuE+aVBhpusn6ueLAVEI7hMskISLc45vVoheClMRpXS0GuIPY5bsRPWgN2B4l4NjYNxcJB2uA59/fVcAjcQfKSLbwa/y1ow5tBnTrkSRTWkvro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724443478; c=relaxed/simple;
-	bh=vBMFW3S6/emgLYIA/pyWgD6xA2AxQPFZFD52j7NNL94=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W5CGDYNEBH98PC17XWnjczh4sl/5B4dq8W+AQ66rpiD60i4GheKdKMungWnaaNEdMMWd8X0vPteqg4FpYlby7RvCYG7xKlZ/Gi6IXo1zto7aB/4PFTCJxenZ5NlkvpHKnJ+q7XMo86NHFv81D/5tGOpiaou49FEw9FiXu/AMBjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPrd2Mdu; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1724444000; c=relaxed/simple;
+	bh=RCs8061MAHw1Hf3jXWEZ6peQlwmgcoa6k+irlbDKSno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=owNlT4W4b8wD2aZF0N2v4tbs+dZ/GBaCLAM598wTsVX42Y+bs4+WQ6VWKSAD5FU2EXFYgMIeKdUjqZrpY3xhruNfWhSns9cmBLYHEWT4dzPUxZPYkxJC0Otq5MhloUibare5KAq/lzDmoXzomOutiTxyQs87iFxFMR5/tfuBysE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d3c05dc63eso1873621a91.0;
-        Fri, 23 Aug 2024 13:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724443476; x=1725048276; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=biUs/757bH5NsZ4eSYz1JE5GQhX8t4jdTgh1Ue+Vau0=;
-        b=JPrd2Mdu/9nXRVMI2ZUMH0fmpXr7Lz7K4G5Kba4LN3rBhbZ6cJC74YXsxpVmHmt7vI
-         uQF/pFNYfEhpsQ2yHgguqleIsKEN1bEWAmiqx7GIKDdbAR+oUMB8QR7g4Qgh6VbEDbi0
-         BvqpsovEw3GEzp866sRKWAHrDh+nKWKfhoW7Jw3+WruaRBTnwgewZOwcPeB9oqvpvj5C
-         TgbiNPhNZyma13cdTkkza6D0yLFAARagRW9SYxKI/1+y6O4G/y/Rmumw6kvMba4qgt+o
-         3Zu3R0HRE/tFd/5L6hDucj+/pOZnRMww3SfEthIWnXik7ZzTkc/NljW93ELvVD52D+7u
-         CiYw==
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e117059666eso2383315276.3;
+        Fri, 23 Aug 2024 13:13:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724443476; x=1725048276;
+        d=1e100.net; s=20230601; t=1724443998; x=1725048798;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=biUs/757bH5NsZ4eSYz1JE5GQhX8t4jdTgh1Ue+Vau0=;
-        b=At4Q/9u2BDZ/KRFoYl4/88WNYm7BRTigw0O8R+++iW2nT7W5kMAACEkhHTAmjPPFaj
-         qoQ9/XJcOO3aXEdsMGkyNT74P+IMwYin00fp8zddey6CEmjPWo82bnG/1Fmptgj2RMv8
-         t/cXP5zTLxkK45WBJimbs/4mo+P8XNQ/zfi882aHzbsVE32QxDVQ2HXCUFcd7RzyyKDw
-         GsjyHYSlIHJdI3bn9bcV66CtSanS6vpOWgyGxH6/MBUy8fJGZGaYeaH1DkQG7sHmqZNN
-         uYwlSEouE9Fe37p9Arvv8wPZ04oMCoICryz2D2K71TD7IEFkgbPlRu0+TKL1FREe6Bt4
-         BDCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUx1n9WcHL+3ceZdv2L7HKY6WbZrmT/eeNDaIWIi4MVbwQaREAi7vqFvtNCrekLac09Zxa2nwtoL9xFiQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHTCzO46NfoaDGfMUQqknENLIzySuuRAqWFBaLyQBeXqLSRb5s
-	C/Paah2c/UUkUNrEK+HAOrx3g6hIvWUDaem+Iyo8U7Eljt9H9ZxDbWrLZA==
-X-Google-Smtp-Source: AGHT+IGksbuUqVXKmHwr9EnBTGnKLIQjTNZSeuXT6qn5maGz7TOHNpL16d99Jikjl24oKoVew1NA+g==
-X-Received: by 2002:a17:90a:4cc7:b0:2cd:2992:e8dc with SMTP id 98e67ed59e1d1-2d646bd1741mr3470448a91.5.1724443475600;
-        Fri, 23 Aug 2024 13:04:35 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbb007csm6852366a91.44.2024.08.23.13.04.34
+        bh=6HRLvSVYoUA3QBwpU3cDmJZgLCkpfSlO1Oln5B6eEg8=;
+        b=YM+OjLf+Cm9RNkyZgyAfMoreDNyuLX7/YTYZJLAh/42vWXh3jSIOQRwnuDjxDIr7Hh
+         Dbcfhbf9TcZR+AnPQ6jBPjvHfurBuea4oS9l0vpcnbAHYoBJRhxkmfSF8AzL/KGP09Cl
+         Tnj5Tn/Qwj8iFW/MM3b0P/m09Xn5cF5wAOqaUmefcDeI68LoPTeUz5SyQ80tg/0d7e5K
+         BLwppqjSNzVNQzrWlx0eXmMUsV8vzEYHeLoIH30ZkEGa5PCrT5U2ywv2lUUi+7tQM2A8
+         OBSTI/xCILnloPLloO85Ez1EIuheQdzfRvwmHJFabKOXdOUVmFJOOlnuf6FnlP7LdI1R
+         X24A==
+X-Forwarded-Encrypted: i=1; AJvYcCWLC6S32R4zYkwzhQekmd8M+Tu0FpZZQXDU649WxN0iKiNTj/CyCHzZqqRlz+bAiY5a7IRegV/2@vger.kernel.org, AJvYcCWppu7gmtFSNJCDg1Hcyjo/PSKCaHhAszX5oztUtWe/YUkgisCXj+2n3KbEJzfwajzUC9oLfymwSgzTEq1t@vger.kernel.org, AJvYcCXm8bOSKxU18v6xmXAZ5mnqL+4hX43MY8b1Y9aMojoKAvQC2aAQdX97+AlNppK4A0MjTBItpj36EgmvPhydUhNP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ92RxbKGbZYcnzdhYZLe7De7ERucZIz3mxvR+jNLw7XwqeIOZ
+	zbJYhHO85yyLWTDVzUca7st9SWwDd/ghr1K5I8Ya3hcjX96SNTjZ
+X-Google-Smtp-Source: AGHT+IECOE6SN1Kqu7ax53usnoRUpUNPDXenmgckuF/+9zJtSPaJ7fp0Cm2UMgwaXQvFr9ULitx0QA==
+X-Received: by 2002:a05:6902:1b06:b0:e11:7578:ffbb with SMTP id 3f1490d57ef6-e17a864e010mr3309054276.36.1724443998254;
+        Fri, 23 Aug 2024 13:13:18 -0700 (PDT)
+Received: from localhost (fwdproxy-frc-004.fbsv.net. [2a03:2880:21ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4638e6sm780134276.20.2024.08.23.13.13.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 13:04:35 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
+        Fri, 23 Aug 2024 13:13:17 -0700 (PDT)
+From: Joshua@web.codeaurora.org, Hahn@web.codeaurora.org,
+	joshua.hahn6@gmail.com
+To: tj@kernel.org
+Cc: lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	shuah@kernel.org,
+	cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de
-Subject: [PATCHv2 net-next] net: ag71xx: add missing reset_control_put
-Date: Fri, 23 Aug 2024 13:04:18 -0700
-Message-ID: <20240823200433.7542-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 0/2] Exposing nice CPU usage to userspace
+Date: Fri, 23 Aug 2024 13:05:16 -0700
+Message-ID: <20240823201317.156379-1-joshua.hahn6@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,70 +73,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The original downstream driver used devm instead of of. The latter
-requires reset_control_put to be called in all return paths.
+From: Joshua Hahn <joshua.hahn6@gmail.com>
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v2: don't call after ag71xx_mdio_probe. Already done.
- drivers/net/ethernet/atheros/ag71xx.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+Niced CPU usage is a metric reported in host-level /proc/stat, but is
+not reported in cgroup-level statistics in cpu.stat. However, when a
+host contains multiple tasks across different workloads, it becomes
+difficult to gauage how much of the task is being spent on niced
+processes based on /proc/stat alone, since host-level metrics do not
+provide this cgroup-level granularity.
 
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index 89cd001b385f..7fbe95108067 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -722,8 +722,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
- 	mnp = of_get_child_by_name(np, "mdio");
- 	err = devm_of_mdiobus_register(dev, mii_bus, mnp);
- 	of_node_put(mnp);
--	if (err)
-+	if (err) {
-+		reset_control_put(ag->mdio_reset);
- 		return err;
-+	}
- 
- 	return 0;
- }
-@@ -1924,12 +1926,14 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	err = ag71xx_phylink_setup(ag);
- 	if (err) {
- 		netif_err(ag, probe, ndev, "failed to setup phylink (%d)\n", err);
-+		reset_control_put(ag->mdio_reset);
- 		return err;
- 	}
- 
- 	err = devm_register_netdev(&pdev->dev, ndev);
- 	if (err) {
- 		netif_err(ag, probe, ndev, "unable to register net device\n");
-+		reset_control_put(ag->mdio_reset);
- 		platform_set_drvdata(pdev, NULL);
- 		return err;
- 	}
-@@ -1941,6 +1945,14 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void ag71xx_remove(struct platform_device *pdev)
-+{
-+	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct ag71xx *ag = ag = netdev_priv(ndev);
-+
-+	reset_control_put(ag->mdio_reset);
-+}
-+
- static const u32 ar71xx_fifo_ar7100[] = {
- 	0x0fff0000, 0x00001fff, 0x00780fff,
- };
-@@ -2025,6 +2037,7 @@ static const struct of_device_id ag71xx_match[] = {
- 
- static struct platform_driver ag71xx_driver = {
- 	.probe		= ag71xx_probe,
-+	.remove_new	= ag71xx_remove,
- 	.driver = {
- 		.name	= "ag71xx",
- 		.of_match_table = ag71xx_match,
+Exposing this metric will allow load balancers to correctly probe the
+niced CPU metric for each workload, and make more informed decisions
+when directing higher priority tasks.
+
+Joshua Hahn (2):
+  Tracking cgroup-level niced CPU time
+  Selftests for niced CPU statistics
+
+ include/linux/cgroup-defs.h               |  1 +
+ kernel/cgroup/rstat.c                     | 16 ++++-
+ tools/testing/selftests/cgroup/test_cpu.c | 72 +++++++++++++++++++++++
+ 3 files changed, 86 insertions(+), 3 deletions(-)
+
 -- 
-2.46.0
+2.43.5
 
 
