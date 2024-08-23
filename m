@@ -1,202 +1,233 @@
-Return-Path: <linux-kernel+bounces-299727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34AFC95D951
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:38:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E7A95D953
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 662E1B223A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3245B1C21A1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608CC1C8FB6;
-	Fri, 23 Aug 2024 22:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD251C8FD7;
+	Fri, 23 Aug 2024 22:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="euEpsW/R"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yt6aVqzW"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2E31C825C;
-	Fri, 23 Aug 2024 22:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E27F1C6F77
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 22:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724452671; cv=none; b=DIQblYY/lm8xNjtQcUGEQv7ShvxKJvXZ2i1Nb7cBIyDk5baNDFcNuoLXrS322TcblkhpsGVkIvPP1atkX9HJ19oI9N3n2T+2L/9ygzLWOKbfZ4UC1enieYZb4wXfOfq4XosOFeveCHyGrAJ+8nmLDnrluM6oSPgartTosff5/iM=
+	t=1724452689; cv=none; b=ZGabFhtgn3WZdrzXa7YCB66T2PWe0QkHFyTgxpG83vx+3XFCnC/743FwAwQSMLyE8LfycN685Y06gIKbLamHeriOlgOvUWw5E3wtFkXAQPtp/rw3dglZOi0TaZdk08BGen4BOwlsjWKDg0f1GLT9tqIwR8RCY90Nb6fkiJFjS6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724452671; c=relaxed/simple;
-	bh=5lJMjkVy2tm5qnlzq9NMC4tzlBZKbVFvZMcYoZY640g=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=Lr4l6+kayPJSymXNERsArksHsG9M8aiboXq22YXU8gZ9XSGeg8JFXMuoVtG6hFcMlm3YTbjh1Xh5c2NKOCsznuWkcnHi7o2xwvv4eTwZHRQCUy+4Fg8i4Yi3h5qZwj9D4tSBaOS2AgffaukSiM3yknwjisB8RfTh9usOO5sgFR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=euEpsW/R; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240823223740euoutp02f94f307961b576faf3625d7f885e0bef~ufI7mAKbF2371223712euoutp02a;
-	Fri, 23 Aug 2024 22:37:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240823223740euoutp02f94f307961b576faf3625d7f885e0bef~ufI7mAKbF2371223712euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724452660;
-	bh=la+dmPvqL+EWy5obzmiWKZwg6xJbELHXa4/+KgHJQwI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=euEpsW/Rvuc6d+ZRYsoU9kpXOZqIO++KiBbHwjcWs7/27Epw182ChL8xMtFKb95fM
-	 TQHtpAcTSWP2lKpO4EGch0IhOeIey6GRhieK5D8Sg0YzyRPcbkwQs7IbGBtdSyoIw9
-	 vuLKEyuiOhE1azL29fu+Is0jX1o9WBP/kZSc662U=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240823223739eucas1p1d2e2fdb71acba6555e61a19e652330fd~ufI6vhsU00738507385eucas1p1H;
-	Fri, 23 Aug 2024 22:37:39 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id E1.39.09875.33F09C66; Fri, 23
-	Aug 2024 23:37:39 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240823223738eucas1p267239cadb138dd98aca9726a2730f898~ufI51jkkR2704127041eucas1p2c;
-	Fri, 23 Aug 2024 22:37:38 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240823223738eusmtrp19f8d1b50dbf15807756173e179310203~ufI50aIvc0353703537eusmtrp1W;
-	Fri, 23 Aug 2024 22:37:38 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-5f-66c90f334884
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id C3.02.09010.23F09C66; Fri, 23
-	Aug 2024 23:37:38 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240823223738eusmtip2280dc31c1420e8cf3bd6b408a3157d73~ufI5guU1S2640326403eusmtip2Q;
-	Fri, 23 Aug 2024 22:37:38 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 23 Aug 2024 23:37:38 +0100
-Date: Sat, 24 Aug 2024 00:37:36 +0200
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
-	<nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi
-	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, William Hubbs
-	<w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser
-	<kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul
-	Moore <paul@paul-moore.com>, Stephen Smalley
-	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James
-	Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, Nick
-	Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
-	<linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
-	<intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
-	<speakup@linux-speakup.org>, "selinux@vger.kernel.org"
-	<selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
- (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
-	<gost.dev@samsung.com>, Nick Desaulniers <nick.desaulniers@gmail.com>
-Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
-Message-ID: <20240823223736.mosqrdcwqanvdpmd@AALNPWDAGOMEZ1.aal.scsc.local>
+	s=arc-20240116; t=1724452689; c=relaxed/simple;
+	bh=YhT6sdc4+kGrsxvXVGZjTuTgwTTR6fDKBgQ74KqzVrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLAbXmse9Mi0UTXNvxNXVB8E4rZ1mG3+Hok2HF5OiPwIXlxTp5HSbdF5F75JKu9nsfcykx/OabLenDv7rLyyuRtyxEpxA43UKOB0mu7JvLNbEeq67cZKxKcNX3e2qn0vAgk9xaeFc+rG/bZ7bR+Bq1ISuPp1XufBb2FBWpoSB4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yt6aVqzW; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-202018541afso31665ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724452687; x=1725057487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=67SkyJsl/iWoGiV4vOIFiOAGuN0Lng8flO08TUKRykU=;
+        b=yt6aVqzW/WJ4EY0VU/T40zGL5lNQ8O+OCg17R5d1P1UG08ujZdiFko90voaYzdIGNT
+         x/D5pStyAxmlJCWrXXl2GtsI7NygYB5h3kj1pudG8PNQxo6i5a6d3HoyGEMjwU/1GW5Y
+         pl0ku75uVjrZAw2Q2e+4mwVbwJwL3XCGtu3y2YO9GeCFSzFNKMrkS+BIMWIXAOI7xw3K
+         I5W2EeohaNxbluIF/MPxmjy8CNq1dT7SgnG7EZ1CcQbUQbR3lX75rec1De5HcSL38yBW
+         qqUoALVqHK15IN4/EKAkSSAFl9CWrzxpBn+ZuyNCuFvuXl/E2ryaCvw5hrKmmEK4G7U2
+         ZSLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724452687; x=1725057487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=67SkyJsl/iWoGiV4vOIFiOAGuN0Lng8flO08TUKRykU=;
+        b=AECJhqokwnIt/roKC+4iPvex9IiZRh9yzhmSIIyVr8tGT1jtXhLfoYm4QhYB6UHGXY
+         Y8mbISTYDEfD2echexkX6aUwCv8T47kc18TKpZ4I5+vdAtFKsNqaDaRzonpH6G3EvzSk
+         e4fFkq5cG9wWSWYIhYmmQStWYNRg6bIDwBJZrERL7iBhEW8Da2BUHD1sHwjP+Iuz6Mkc
+         SYtBdiF8PLsla8YVK1Rvcu7QYbp5eTlSkGv5bPiDRaJcMqDI+b0dh8WlXvN84qQ02nzk
+         j0YlipeJIBbouTteL0yv1yqaYGi56zgqnWADldExpMlF8fyAyZm+Bs6xVd+hwpCOSENd
+         8wpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFjb14ecfmTlzykSBNcC7Wh6zUOii3r5Wit4L/BtfsDCDYag1d6HrLKx4PNZC5y2lcoCbGoKm+iYqYayU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4wg37mMaGIYautYtA1+JH9P1WivYdcqNsQBI+BKDCdbpjDo90
+	RZpFEgYRNhD+l6jEidfgEJic2a1VWdx9W6SJO428rlcO2590Onx6+MVCInz/VA==
+X-Google-Smtp-Source: AGHT+IFpfavPcBPprGtWGC73E5dDeBeGQmqT4yNrvSoTORu6KeMugQQYzHlHE+HxJGyoCV4tG78cZA==
+X-Received: by 2002:a17:902:e74e:b0:202:445:3c82 with SMTP id d9443c01a7336-203b2bf6c7amr1003465ad.4.1724452686407;
+        Fri, 23 Aug 2024 15:38:06 -0700 (PDT)
+Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143422ebe7sm3633392b3a.14.2024.08.23.15.38.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 15:38:05 -0700 (PDT)
+Date: Fri, 23 Aug 2024 15:38:00 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
+ MMU under MMU read lock
+Message-ID: <20240823223800.GB678289.vipinsh@google.com>
+References: <20240812171341.1763297-1-vipinsh@google.com>
+ <20240812171341.1763297-3-vipinsh@google.com>
+ <Zr_i3caXmIZgQL0t@google.com>
+ <20240819173453.GB2210585.vipinsh@google.com>
+ <ZsPDWqOiv_g7Wh_H@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024080758-dedicator-smoky-44be@gregkh>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0ybZRTG9363FkbZRyHjDQwd6DCTjbkB+i4iilv0S6bgosaoiVrHR0e4
-	NS0IU4lMkNtg497RjVKKtFyHKwVLudQh0FXGiMFsMCybGbchdxgXR1YpZbr/fuc5zzk5z5u8
-	XJy/QrlxI2LiWHGMIMqLsieae9b7D/rtMoW/tHoOouu3lRiaU2UD1FMziaNWixlHluY8HP3x
-	cI5CKRUNFFprnMTQ3Q41hmZL96Di2goKyX83EWhK+yuBNPdvkWhDr8PQgP4yhW5U5HDQaKGB
-	QmP3VRQqX2gi0F/3BknUctlEovaGAQppBpZIlJapIlF69RiF5nMtGNIb1gk03n6dREXr0xSa
-	ye3moOF8KYEMslscVLUmBajf2MNBzbo+gCb6CwAqGR4G6G/d5mbtdB6JlGmvoNQ/A9BQ5U+c
-	N3yYOnkdYNp6+iimfUVBMPrORoppkZk5jEITz6R2zZBMRdsDjNHUZFKMPFOOMZaceyTTZVFy
-	mPLkIpyRm04yhtI6DnP3nBF7D35iHxjGRkV8xYoPBX1hf7rYLBKtOiQOjv2AJ4Nq+yzA5ULa
-	HyoLhVnAjsunqwBs1T2TBew3eRnA9DtNmK1YAvDqL3LM6rIOlFy4BGwNNYANRaOc/1zm6lLS
-	VjQC2GvoJ60jBL0Pds1Lt5ii98MOk4ZjZRfaD17ok21N4/TNXVAlndsyOdOvwUl1G2VlHn0C
-	muVl2+wETSWjhJVx+gBUtC5S1hA47Q7Vj7lW2Y4OgBlT2YTtVE94Ma96m5Pgb9o7W3kgXbsT
-	PjQ1k7bGcajQDnFs7AynjNpt3gN7C54sEsIfr8i2WQTbhmWk7fFehedvRNnkYDittOayyo5w
-	cMbJdqUjzG+W4jaZBzPS+Da3N6wdmSZywXOyp3LJnsol+z+XAuA1wJWNl0QLWcmRGDbBVyKI
-	lsTHCH1PxUZrwObX6H1sXNYB9dSCbyfAuKATQC7u5cL7cqQ7nM8LE5z5mhXHfi6Oj2IlncCd
-	S3i58vaFPcvyaaEgjo1kWRErftLFuHZuyVjG2XEdC/K/l8jU1MTk1fp5mX71Y8ek4haqcsRf
-	4Hl0h2Xc4+VDq94NL7ydcD4lOCMgZKn+/Y7ZgLqI7H8+Gkq4krT4YdCRWvNgXBlv7gOfadeg
-	R/z67zx2pKhCVHuzNhZ3xpXnOCRqXPTjmXo/V/9jvsszIcVVUZ8tB35z8Xb7NZfG4LV3Z5YX
-	HaoHnfannyp4/dHs2QCT4Zq7QrI7sm7kuE/Z4pnynyVpR59X8ss7tSsHdn8L8Xfy2rGmhZS2
-	roORiVme3VWfJiHlVKv3xoTfA4XnpVDpzbHKbudYcXxKodBdYtmbXSwykr6TxsOpG6GNHoEb
-	4aYTuW+edAvNZ3vXat/yIiSnBYdfxMUSwb8QAe+siQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTZxTG8957e29hdNwVFl8+lkCNW0QtFCi8bAjO6XYJy7It2bLgDFa4
-	ghEoa6mbc1vqVEYRQnETRoWKMMAyEC0fKQgSO2hphBFF0AX5GtQB5UOEoTCka8Vl/vdLnvM8
-	5+Tk4eL8AtKbezgtg5WlSVIEpCtxc908vCPY3XIoaHnZC3XdLcPQfGUOQKbqSRxdsw/hyN6U
-	j6M7f8+T6GR5HYme1E9iaOR6FYbmSnxRwa/lJNLeshBouuE3AunHBzhorcWAob6WYhJ1l+dS
-	aOKndhJZxytJdHGhkUBjo/c4qLnYwkFtdX0k0vctclCmqpKDftBZSfRQbcdQS/sKgR60dXHQ
-	uZUZEs2qOyk0eLaQQO2aAQpdelIIUK/ZRKEmQw9Af/X+CFDR4CBANoMjuWEmn4PKMsPRqfti
-	9EfFFWrXNqZGWwOYVlMPybQtlxJMi7GeZJo1QxRTqlcwpzpmOUx56xTG6KtVJKNVaTHGnjvK
-	YTrsZRRzUXkOZ7SWj5j2khqKGTljxj6EccJImVSRwfolS+UZOwX7RChYKIpAwuDQCKEoJHz/
-	m8FiQWBUZCKbcvgoKwuMOiBMLhhKT3/s9tU962lcCXSu2cCFC+lQWJR3HmQDVy6frgDw+74b
-	YEPwhVeX+jkb7AHXBrLJjaEFANutq5hT4NP1ABad5DqZoLfAjoeFzwwkvRVet+gpJ3vSITCv
-	R0M5zTj9uzssWe3HnYIHvRNOVrWSTubRsXBIe+H5hkYM3skaABvCK9BSNEE4Gae3w9JrjxxD
-	XAf7wKr1Z4tdaDHMms4hNi71hz/n657zt3Dx6QOgBh6aF5I0LyRp/k8qBXg18GQV8tSkVHmw
-	UC5JlSvSkoQJ0lQ9cBS0ybTSYAC66QWhEWBcYASQiws8eQeHOw/xeYmSY1+zMmm8TJHCyo1A
-	7PhFPu79aoLU0fC0jHhRWJBYFBoWESSOCAsRbOLFpGdJ+HSSJIM9wrLprOw/H8Z18VZiKYb3
-	x6h3s+bss9rFHM8xYmq04gOf1yv9extd8+QJzae73jprEH53w91avv1qa0fivi+83Ibf89nN
-	+PIeKXcdBwdG1v+piP445LMTl+t180dVNrPSVhKUu5moxZsUMdLxy8baz93QiCRaGRXuV2OP
-	nou/sPU19Z7GhaR3bq8YOKvdZ9jdzXsks0vjv2BeR3h8lfmTgxSjjvx0aXSLyG43ztxsi/Gb
-	zTPF3SquIsbd9sCqx6rN5223bZENWlOdJDt2Ymr/peU4c+2oba//1HDA2v2XYt7I1xUdf0pu
-	utKssL58TG8Q9Qb9mf2ldEdgf+zdbQSZ0s2P6DwxrM58+5vlALGAkCdLRAG4TC75F3l4CCUp
-	BAAA
-X-CMS-MailID: 20240823223738eucas1p267239cadb138dd98aca9726a2730f898
-X-Msg-Generator: CA
-X-RootMTR: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
-	<CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
-	<2024080753-debug-roulette-8cb1@gregkh>
-	<3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
-	<2024080758-dedicator-smoky-44be@gregkh>
+In-Reply-To: <ZsPDWqOiv_g7Wh_H@google.com>
 
-On Wed, Aug 07, 2024 at 04:19:42PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Aug 07, 2024 at 01:56:38PM +0000, Daniel Gomez wrote:
-> > On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
-> > > On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay wrote:
-> > > > This patch set allows for building the Linux kernel for arm64 in macOS with
-> > > > LLVM.
-> > > 
-> > > Is this a requirement somewhere that this must work?  It seems like an
-> > > odd request, what workflows require cross-operating-system builds like
-> > > this?
-> > 
-> > This isn't a requirement, but it would, for example, support workflows for QEMU
-> > users and developers on macOS. They could build/compile the kernel natively and
-> > use it to launch QEMU instances, simplifying their process.
+On 2024-08-19 15:12:42, Sean Christopherson wrote:
+> On Mon, Aug 19, 2024, Vipin Sharma wrote:
+> > On 2024-08-16 16:38:05, Sean Christopherson wrote:
+> > In this patch, tdp_mmu_zap_sp() has been modified to retry failures,
+> > which is similar to other retry mechanism in TDP MMU. Won't it be the
+> > same issue with other TDP MMU retry flows?
 > 
-> But that's not a real workload of anyone?  How often does this ever come
-> up?  Who is going to maintain this cross-build functionality over time?
-
-The delta is becoming very small thanks to the latest patches from Masahiro.
-Earlier this week (next-20240820) [1] I rebased the work with all the feedback
-and the patch series has been reduced to 7.
-
-For the maintenance part, I suggest keeping a CI to build and boot the lastest
-linux-next tag available. I can set this up here [2] and take the responsability
-for maintaining that. But I would be convenient to add documentation for it in
-the LLVM section and mark this as 'experimental'. If that's okay, I will prepare
-a v2 with this.
-
-[1] https://github.com/SamsungDS/linux/commits/b4/macos-build-support/
-[2] https://github.com/SamsungDS/linux
-
+> Similar, but not exactly the same.  The other flows are guarnateed to make forward
+> progress, as they'll never revisit a SPTE.  I.e. once a SPTE is observed to be
+> !shadow-present, that SPTE will never again be processed.
 > 
-> thanks,
+> This is spinning on a pre-computed variable, and waiting until that many SPs have
+> been zapped.  The early break if the list is empty mostly protects against an
+> infinite loop, but it's theoretically possible other tasks could keep adding and
+> deleting from the list, in perpetuity.
+
+Got it.
+
+> What about something like this?  If the shadow page can't be zapped because
+> something else was modifying it, just move on and deal with it next time.
+
+This sounds good. I was trying to force zapping "to_zap" times
+shadow pages to make it similar to existing NX huge page recovery
+approach.
+
+> But jumping back to the "we actually can [hold tdp_mmu_pages_lock]", if the zap
+> is split into the actually CMPXCHG vs. handle_removed_pt() call, then the lock
+> can be held while walking+zapping.  And it's quite straightforward, if we're
+> willing to forego the sanity checks on the old_spte, which would require wrapping
+> the sp in a struct to create a tuple.
 > 
-> greg k-h
+> The only part that gives me pause is the fact that it's not super obvious that,
+> ignoring the tracepoint, handle_changed_spte() is just a fat wrapper for
+> handle_removed_pt() when zapping a SP.
+> 
+> Huh.  Actually, after a lot of fiddling and staring, there's a simpler solution,
+> and it would force us to comment/document an existing race that's subly ok.
+> 
+> For the dirty logging case, the result of kvm_mmu_sp_dirty_logging_enabled() is
+> visible to the NX recovery thread before the memslot update task is guaranteed
+> to finish (or even start) kvm_mmu_zap_collapsible_sptes().  I.e. KVM could
+> unaccount an NX shadow page before it is zapped, and that could lead to a vCPU
+> replacing the shadow page with an NX huge page.
+> 
+> Functionally, that's a-ok, because the accounting doesn't provide protection
+> against iTLB multi-hit bug, it's there purely to prevent KVM from bouncing a gfn
+> between an NX hugepage and an execute small page.  The only downside to the vCPU
+> doing the replacement is that the vCPU will get saddle with tearing down all the
+> child SPTEs.  But this should be a very rare race, so I can't imagine that would
+> be problematic in practice.
+
+I am worried that whenever this happens it might cause guest jitter
+which we are trying to avoid as handle_changed_spte() might be keep a
+vCPU busy for sometime.
+
+> static bool tdp_mmu_zap_possible_nx_huge_page(struct kvm *kvm,
+> 					      struct kvm_mmu_page *sp)
+> {
+> 	/*
+> 	 * If a different task modified the SPTE, then it should be impossible
+> 	 * for the SPTE to still be used for the to-be-zapped SP.  Non-leaf
+> 	 * SPTEs don't have Dirty bits, KVM always sets the Accessed bit when
+> 	 * creating non-leaf SPTEs, and all other bits are immutable for non-
+> 	 * leaf SPTEs, i.e. the only legal operations for non-leaf SPTEs are
+> 	 * zapping and replacement.
+> 	 */
+> 	if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE)) {
+> 		WARN_ON_ONCE(sp->spt == spte_to_child_pt(iter.old_spte, iter.level));
+
+I responded in another patch before reading all this here. This looks
+good.
+
+> void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm, unsigned long to_zap)
+> 
+> 		/*
+> 		 * Unaccount the shadow page before zapping its SPTE so as to
+> 		 * avoid bouncing tdp_mmu_pages_lock() more than is necessary.
+> 		 * Clearing nx_huge_page_disallowed before zapping is safe, as
+> 		 * the flag doesn't protect against iTLB multi-hit, it's there
+> 		 * purely to prevent bouncing the gfn between an NX huge page
+> 		 * and an X small spage.  A vCPU could get stuck tearing down
+> 		 * the shadow page, e.g. if it happens to fault on the region
+> 		 * before the SPTE is zapped and replaces the shadow page with
+> 		 * an NX huge page and get stuck tearing down the child SPTEs,
+> 		 * but that is a rare race, i.e. shouldn't impact performance.
+> 		 */
+> 		unaccount_nx_huge_page(kvm, sp);
+
+Might cause jitter. A long jitter might cause an escalation.
+
+What if I do not unaccount in the beginning, and  move page to the end
+of the list only if it is still in the list? If zapping failed because
+some other flow might be removing this page but it still in the
+possible_nx_huge_pages list, then just move it to the end. The thread
+which is removing will remove it from the list eventually.
+
+for ( ; to_zap; --to_zap) {
+	spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+	if (list_empty(&kvm->arch.possible_tdp_mmu_nx_huge_pages)) {
+		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+		break;
+	}
+
+	sp = list_first_entry(&kvm->arch.possible_tdp_mmu_nx_huge_pages,
+			      struct kvm_mmu_page,
+			      possible_nx_huge_page_link);
+
+	WARN_ON_ONCE(!sp->nx_huge_page_disallowed);
+	WARN_ON_ONCE(!sp->role.direct);
+
+	spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+
+
+	/*
+	 * Don't bother zapping shadow pages if the memslot is being
+	 * dirty logged, as the relevant pages would just be faulted
+	 * back in as 4KiB pages.  Potential NX Huge Pages in this slot
+	 * will be recovered, along with all the other huge pages in
+	 * the slot, when dirty logging is disabled.
+	 */
+	if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp)) {
+		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+		unaccount_nx_huge_page(kvm, sp);
+		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+	} else if (tdp_mmu_zap_possible_nx_huge_page(kvm, sp)) {
+		flush = true;
+		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+	} else {
+		/*
+		 * Try again in future if the page is still in the
+		 * list
+		 */
+		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+		if (!list_empty(&sp->possible_nx_huge_page_link))
+			list_move_tail(&sp->possible_nx_huge_page_link,
+			kvm-> &kvm->arch.possible_nx_huge_pages);
+		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+	}
+
+	/* Resched code below */
+}
 
