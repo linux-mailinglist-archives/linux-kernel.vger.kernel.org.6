@@ -1,398 +1,255 @@
-Return-Path: <linux-kernel+bounces-298639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0B595C9B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:54:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DC295C983
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B34461C24137
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:54:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5974728600E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066E87346D;
-	Fri, 23 Aug 2024 09:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747B617E00B;
+	Fri, 23 Aug 2024 09:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6Z6EuYG"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="S2jrY8wf"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013046.outbound.protection.outlook.com [52.101.67.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11441156C6A;
-	Fri, 23 Aug 2024 09:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724406726; cv=none; b=cK2KAGawdjRj3mcB6md3gVTKL8mMeTpTM4LVUp2b+MpzB85lVOFBu9t7GoecZvjakdd2mllOMh5JXL7VeXucPFxVIDsgc7lREtdVq7rA6nkboQ9G6eDOZaCvGFrSLjxCAiIknIuZQz7Sr3uLBSMG6+Ik3jA+2HqWdeyQ3yNwu3s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724406726; c=relaxed/simple;
-	bh=l7yJBmBJaUXRDvUA/wvOnInGRqHbvu8UAxKW1P23waY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KgV+I3HTC5eaC4BwXCMCENOEBDCo2Lllie6zuPN1C0tKyO22cqteesTmGJZdt+cSHfclJwJyguyE4/9iyTxk5lwBo9/wFdjdqwbdb338dwVGVBenOmdZAeqotd67ZXE5z6y6huSvmCd5hZW6UW7aKmiiBzQAachnikSGGkyvpnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6Z6EuYG; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a1dac7f0b7so106476885a.0;
-        Fri, 23 Aug 2024 02:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724406724; x=1725011524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KF+oKewm8qGzODrWrtagmzMY3xL2amYeuybX44SPuqA=;
-        b=K6Z6EuYGwks/1HN1BWjWP9CPXlJqDvPwbrfGJ1TSRlJxN7I9RsF2qSNI7dbziKHAdB
-         q14PZlidud1REzSRT3xU3i1a73F8c1rBZYFnqAyTGQocsTTSE0gpOuNT8ox0wFZAWal6
-         lgnrOQ9tKJTZlYk1JAXB+DLOA1VoqcdNSHBWdqfk+WYqE5QKNqRY7C/WXXuen8pSmgmk
-         yrP0CN4jHqeijIXTewy4iDjldfgGI4t66Afvd62vGERHRdTPmrWzdofVzeOUXFGgIzV4
-         1UZU86lmC2Eq+gRaKU37mgVcy1bxFGN4pf38/RQDNyiEf4O11E9XskT12ktosYgjgzQM
-         2UfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724406724; x=1725011524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KF+oKewm8qGzODrWrtagmzMY3xL2amYeuybX44SPuqA=;
-        b=kDaQBDmWnK+1AX/47T11EYMUCXfMQTBq48nkSQSd9fZWHsBjZG5MyxfdrxXfQYsHDd
-         +OgMIzK/W47odYnjioMDRVDOJObeoljNe/LqEsigAonkwfsTQlXqe4/ePVRhYv2WW1SN
-         Al8pgnHihl2XY8lo7IDENIcrPejaD2Zq+2GFQlRaNzjiJDKhvEHgqeZXvcQQsmn8IuTu
-         uvJhGo0nMzYcwpjNGoJ7HRbtvcZZ098CYNQl+I3RH11aI82ccgvUrvpYk20UKf2yEUQo
-         Mz6Q3drGdpnH4ZtRbQ8bel+DWWgPeRqXYTpDC5Ea6WDvcyNdShK7I3JEsLRjUe5von28
-         flZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8iGX/Tk0M2POKKWDIptMOBLONkf05hXdv9EVwEJx5RKWJlGfQrc0fYCOYwMnam0RyfX6WR+nj3MnK0JA=@vger.kernel.org, AJvYcCVyx1/MNYGllEqk0s9k21eU/xhn9bsLr+rVSrZWQ51zVC1sRiCGVgGUqU+yCxhJrnlZcJPIVOUAu0xB/bH4EA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiDnD0OJL0EmGC+p47uJrAyPL5VmwT/Yf9NY3sl6WXJpawiKlu
-	mHMZDqAATp0UTpVxZaTf4+cHjon8eSEKSK1xEgMpdXrmvfP4fGUmmnzDdOPwXwsJdKc0abhVA/J
-	p8B58mS/VpxtURM2SmtRTzFXm7y8=
-X-Google-Smtp-Source: AGHT+IE+9MBFTTaSe+4WuRyxsnhB5OGDZHuXsre4gh9ylJWGjTQWe1eUjoCdyr6dNFddSWm3li6jfQEPQduY+civgcE=
-X-Received: by 2002:a05:620a:2547:b0:7a2:c2a:c9f8 with SMTP id
- af79cd13be357-7a6896e3b1fmr170597485a.1.1724406723456; Fri, 23 Aug 2024
- 02:52:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4850E14F9D4;
+	Fri, 23 Aug 2024 09:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724406281; cv=fail; b=JimWG0yKh3dBXjICzekVFmimHTWtuGf4Cl6iE2A2RKZFJbAXfrD1Qx4ZZU+iAHbg3iG3sHlCTzEirgre94eYnrB7Qv6xK6BESxxpzxa2myFrJiJg233uIEEPkvqlwolyxcgSC4vrs9wF1U3E5Bjv+GMjUbGr3zBvFHzRXBYf8X4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724406281; c=relaxed/simple;
+	bh=kZUj6aN9KcQYSiNDizf4idUZbYz6TWD2wnpy1nsvetI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UJKlifXtk8KzVxfLuj1xqiqLLqsxE+t3CirhGmsai0DFuEi1bbd3J80Ax8+FFKLQUEhLbKMUgtathxPQ6z2EvvgsOpIuis5vVzMGLVYBgip2JgarpVsGwZjc8psSErBlpW8FpvIQJkFIMZu4s0ptWkhnh/x3t6j2HsioU82YK5M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=S2jrY8wf; arc=fail smtp.client-ip=52.101.67.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xH6/AtfKh1yJqIHInmfR+I10nexpVc3DCDL28wPZkRLvG01zGthq1k0TieeeVP9RFxs0vA9isJ1dW6MnuUnP3hThguEs9UK5mQvg6Gfv0EE8MNOcwgsOelM20oZSapa6FcnsyhxeL0JaA/H8kr5VZF4BA82hkosZR0e9vyzoRD6fO1gHxvfUG73acBhR6TPDoKbGjFqFEVM6xIjlYvpWLAXEVcVHVWHXA75O1/NkEUe79fnAhHj5yEhMVLjtaVkBq6xvf1JQiR/rElgFRBB21nh8ED18oY7DlY1G6yrblm1h0aIoVfMLEM+RdbU02NOaivUGV9rVsLVpYc3low1yrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z6BTvz66Q9bjs88/uwi2TQVU6CESaYwylM1S6sMG4AU=;
+ b=kcNIfUy9UwFd+mpJcFyU8CAMoRSXpqMS3dJaj6FMzwy2mi6xCy9iNIqMS0I10X8AeZkdmGMLlmcHI7D6XGE85qViRzBh1d9yy4hGQw5MXXHvYmSqx/pnz9lf59H676/v/lbNq52ZHmcffZ5nv7sG5YMwOZwUNeFuzrhv66fxevpaWQc1Bjv8yMpFPXY+ZscZlELWsaYwGzi/IAOuF4VNmA2CAuJVg+qM5aTSAbNSK+1xnpdAXAloutYICR10JcfMAkbCnNWrMKE28kOFKahHomMMuhfk8cDm4qo7Le+7nJc8mXjGL+jJ29EtwoUURcO9t19V0AaSI6FyY58Gxn5AMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z6BTvz66Q9bjs88/uwi2TQVU6CESaYwylM1S6sMG4AU=;
+ b=S2jrY8wf/uMsKk0hDzKrpkNXNZzCsDu5XGoy6GRI9pQtBfif7OrMurv+M/4mh+H8jHRVk8pdBPhoIqQwXUUUvFoHrmNS3yVH10y/68o5moZIpuCA+X3nMAwfAhctCuYJmiIp+aoyC7EbyMXpqXCICja/14/xzzMh/lzAwZKsDBeNCtw5pxNpgtKIY91DbQM3rW/pBxdkOu7vqhm9uLhkc1LB2qduEvh1OOzul5yH5gbJ8N3jf9bz+ZRvDACCspn5Kbv+rdJjnlqfJcEl7aTvcD01RqQtojWi7uZJsOiMkGGAADL1C4JNE18WhM89joIQguRdwl+sh2Ks385I/AlpPA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by GV1PR04MB9087.eurprd04.prod.outlook.com (2603:10a6:150:22::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Fri, 23 Aug
+ 2024 09:44:33 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
+ 09:44:33 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: ulf.hansson@linaro.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de
+Cc: kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	victor.liu@nxp.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] pmdomain: imx: imx93-blk-ctrl: fix power up domain fail during early noriq resume
+Date: Fri, 23 Aug 2024 17:53:19 +0800
+Message-Id: <20240823095319.3917639-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0076.apcprd02.prod.outlook.com
+ (2603:1096:4:90::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 23 Aug 2024 11:51:52 +0200
-Message-ID: <CAOQ4uxgbbadOC_LCYRk-muFKYH3QNVnD+ZEH+si-V1i3En66Bw@mail.gmail.com>
-Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
-To: Fei Lv <feilv@asrmicro.com>
-Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lianghuxu@asrmicro.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV1PR04MB9087:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b9d9d41-ac14-465d-3d89-08dcc35830aa
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?otV//TdjLkYvYXanm1IEpk4qKbEx4AEPVOAwZ82hofWmXoB170xrk/AGLYvc?=
+ =?us-ascii?Q?lkI0BTMy1vC6YjdmTHXYb1KqERS7Lv3EQew2gx5WElSEbK57JQG2aqAWayq0?=
+ =?us-ascii?Q?IrLj5PhPrTSFkxLuI7HFyJcB0aBDfah4Uxgx2Rat02XKvqYci5JayTm/3ahF?=
+ =?us-ascii?Q?d2pu5ILDgUNP37SVcTfoit9nzPI+808aJ4icyFydRbzAT1RnKCpDvqHh18In?=
+ =?us-ascii?Q?dqm5W6EsXtxBdmZvxJB71sr1CTAvxFwM9z8OQrP35sbpX704XLYH/j/iHO0c?=
+ =?us-ascii?Q?dfAjmDzx15g/xTd0L0MqN9/TwsLt991UqTGaPifjCznSQZUrLi4HKlzzcO0R?=
+ =?us-ascii?Q?ALd2U5YCiDKRriTccRiD6mLiHqp9H5FYtp7uW7iv6+MxWv0XemSVNUtjwtMo?=
+ =?us-ascii?Q?28uEa13D0PD69wCCJ5orCJD+dgOMX+T/WzAuX2Hx4gD/1j8xh+hpEBx0RBT5?=
+ =?us-ascii?Q?CnMtagw5WAa+D42DasD8BvrMyXbNvKwVEE6lFKpEi2zgDWPqElW16PhGvrLh?=
+ =?us-ascii?Q?+PcRqDid84dZS5S2NzCdAQwO5DjKo8K/4hUXfH1Rtz1PkA6k6YB9U0gjQIoi?=
+ =?us-ascii?Q?76NyaOgmhSlre7PS8n9vk+L5Fgfaya0HKWDB0kAM35cM0MZqkF9ZxDPxOdyp?=
+ =?us-ascii?Q?yn/kyB5WDWLl4hLs/ZeQNhzInIm8miPKhzy5/1b1Y4C9dvyGD4fVgyWUxjZX?=
+ =?us-ascii?Q?CGhwUgxb/NllVg41nOpETf5uAb90PIHcNoA2WQMsbWiH9p3Wm1qhUQcPkV2x?=
+ =?us-ascii?Q?1TvOmEjDC3VtEcfouAyIN+2Ry47t/uWxSQZWvkfxijwR7UMEK+jPxmb+ZkC8?=
+ =?us-ascii?Q?/cUlF384OpRjVyq4GwKFsIOt+s32nn8Cav0NSmfBRY5gBrOlxs03T/O72vgq?=
+ =?us-ascii?Q?jqaTFSAhBaR3rHiCEkKUEyOl0I6NfD+j6NpYcYcYes/DNLj0dUELkyzyXT+N?=
+ =?us-ascii?Q?dxNVK7Nshgs2fucNXEaVn/R40EJlmxQHojFRYlBRCPFf9D4/3odE7M5qneXS?=
+ =?us-ascii?Q?YssEaNOhc6WC2ui5IRdDTv2KSURuV6QT8ARDqXL33zh1z+QrHCAZxlU2C8VQ?=
+ =?us-ascii?Q?uwDlF8aY5zJCReXufD/ud+T3fiGajO/15LxOmce/h0blpFPd69gvCnNoP0ny?=
+ =?us-ascii?Q?9ZZ3QPAPS4k6Q6BHEw0Qh6ktwLvREvfm14TgfVFwQ7N7eUW5JXpHnDiG7K7L?=
+ =?us-ascii?Q?HlQKaJyXNnbRjSNywR72B1Am0l0SwICyAfvqBEqT6EqwulylB5aa2ah6YD0e?=
+ =?us-ascii?Q?idcfBRwHzldTWISMbQ+p8IrnTm16O/WNfaJYcAyGcvvq2d4hCzy255gT8fU0?=
+ =?us-ascii?Q?kTEMJJ8UisQKANFaUTlbi9/w9zQ2rWSXMmPNgCEPVFUvtQ/u6lC5qYsX6Ehn?=
+ =?us-ascii?Q?QHzDl4M3bg8A7BTdWE7E/znC+x96yjjyxMY7x/bpFKql0dE9aw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?e4D7IWfvSV3SoIf/okzGckmllZce2NxRYZ6nL5NhHCtEObApmd/0euvdrjiA?=
+ =?us-ascii?Q?aNrwVJkAzxW/QrbMqbKs5mZ5kzOiIq45FS9G/G6LNegbF8f0q2zRh5kjqPVj?=
+ =?us-ascii?Q?MjsmTgbooInY/zCR4zvuiW301t4M1gCw5Dsl0E7S78/FZcGb1MD9dmbW4Sov?=
+ =?us-ascii?Q?nFbWJcTY3ytyzYRXKul1/q5gZAHUY2KI5BpYfXwlGRVfbfDwIH+8KtaAsMlu?=
+ =?us-ascii?Q?ctiRYs9HyO/uog8ZRUa0Qj/1Df8RIl/oXcS7DigcEzmikzGhq/t+03FXUC4F?=
+ =?us-ascii?Q?2sdACOGCDDN1aIGYIeM9ltf+sozx+EXX25W77+MJcqDcxcNJL5Xe03E9Xx4H?=
+ =?us-ascii?Q?+LKe3jJmIXTQkHizM7lADXIlNJ17D9OUJMQJl5K+IHN2r2xo8eMg7QpBexqn?=
+ =?us-ascii?Q?+Ik5U8GYjCwg8h7NjxsU1gQ65KbqyCbzZJdWHxdib/YgYvy7EMYC3JcEwSSF?=
+ =?us-ascii?Q?WnlT+CgKoLWUoKunVC9EUKNsX3FI9Fx4dLfyO5PW1QBj0u2JmZs2hmpLSOAX?=
+ =?us-ascii?Q?zdFaeIzQMcgOJMLzwb1kvI3UG2BwlrohSwg4KE4sn71qBqFgYAUKugRq4rm4?=
+ =?us-ascii?Q?tbRynZ8DWVJt58Ruyb8fDEpBnSr/Z6EUMiU0rorEjuGj4ISA8jnbdEpk/ZFK?=
+ =?us-ascii?Q?2egib5WFpIfGq+mfkQ7ATsLrbOocs5FBmJEMyMCGXgzoS2TgeTm3V78Wo0CG?=
+ =?us-ascii?Q?F0+/lhxTGVS7A7vvxG4C9HHmHasFCiC6+FeFHR34xaNoYiHMnogsnWJXpbxX?=
+ =?us-ascii?Q?rj9fjvJgGwWdho6okC1wqDpBsst4vLj2di5JyYhpH+pTMs2Z8JXRUkSO983w?=
+ =?us-ascii?Q?zoq3kse50CVcFJ6D/s+9Kb2AgnhWNim1YzegbYMJfRV6aZNOltYnf/Q6kptK?=
+ =?us-ascii?Q?IfwaacWe94cpd0QYDcqw1YgRKN3+LmwPb55kk/0CL+0HpSTwNbE8EWe2eWHI?=
+ =?us-ascii?Q?GZq6eMuT5PJIrUYkSqODQyR0FoprITlg3DAo4wdQdQjkQ9KX2x0itZoCVjhM?=
+ =?us-ascii?Q?YZ117PriD58tYJo92c2cOpQlMLitf+ndq3kaI+CVO+cTiN5Fk9XDFkjyFR/I?=
+ =?us-ascii?Q?YgMngBvv9WIvrCFeUYKfHm9PsacS7zz7KyNUaLJMckrkISF8zVld5t8rHXlA?=
+ =?us-ascii?Q?jGlsWhdr6PO+w98rOamXK/7XVoMXHuZPuR5foYkg9mEJtse22lRqRlsVXtlB?=
+ =?us-ascii?Q?7CZXWfYWyB6fzdiyPeFcz19lu+omziAgwTbv/1bSNphFzcJJ5UsmvQZgAVJA?=
+ =?us-ascii?Q?70zC6qnWhIO1wuxFbhKsWsbI5Lo6QI7LDsfUk9faDzyiMO+9zhIvstcEBmZF?=
+ =?us-ascii?Q?bTFXUMZ7IxJbiJaQn4IAI05zMmqbuI6TmvgAL6d1NSsxYBf5bJbHCiQxkduo?=
+ =?us-ascii?Q?UCIXMEJJSr+XPPzyh6DzF+/74fORdkbhKr0fQuBpqtKkP3EP6A8yDkS4z3D9?=
+ =?us-ascii?Q?wgQEQLt8PxAv8Cd0+Ew/hqC5utp+555oFwavL6y9g5JZTBdvyfWghxqRqV+P?=
+ =?us-ascii?Q?JLWrseQ8D3qgP7mcpMuFQBZj67IaH5uokZcFv8cix8ZJcUehjA89L/Yye1/F?=
+ =?us-ascii?Q?T/luRFxPxkWXbwXY5h1mYylHPbWxx6cTXwQJCwPB?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b9d9d41-ac14-465d-3d89-08dcc35830aa
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 09:44:33.6921
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: czRBtE2M7QN8jKBbfcZLtTo5meg6PICm/VH4Bzwdd27z78JpaQHGzG0zB9SsGGU/+qgjil1K75Y+HTu6IHcL8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9087
 
-On Mon, Jul 22, 2024 at 3:56=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Mon, Jul 22, 2024 at 1:14=E2=80=AFPM Fei Lv <feilv@asrmicro.com> wrote=
-:
-> >
-> > For upper filesystem which does not enforce ordering on storing of
-> > metadata changes(e.g. ubifs), when overlayfs file is modified for
-> > the first time, copy up will create a copy of the lower file and
-> > its parent directories in the upper layer. Permission lost of the
-> > new upper parent directory was observed during power-cut stress test.
-> >
-> > Fix by adding new mount opion "fsync=3Dstrict", make sure data/metadata=
- of
-> > copied up directory written to disk before renaming from tmp to final
-> > destination.
-> >
-> > Signed-off-by: Fei Lv <feilv@asrmicro.com>
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
->
-> but I'd also like to wait for an ACK from Miklos on this feature.
->
-> As for timing, we are in the middle of the merge window for 6.11-rc1,
-> so we have some time before this can be considered for 6.12.
-> I will be on vacation for most of this development cycle, so either
-> Miklos will be able to queue it for 6.12 or I may be able to do
-> near the end of the 6.11 cycle.
->
+From: Dong Aisheng <aisheng.dong@nxp.com>
 
-Miklos,
+After disabling PXP and having no displays connected, we met the following
+suspend/resume hang issue on MX93 EVK board.
 
-Please let me know what you think of this approach to handle ubifs upper.
-If you like it, I can queue this up for v6.12.
+ Enabling non-boot CPUs ...
+ Detected VIPT I-cache on CPU1
+ GICv3: CPU1: found redistributor 100 region 0:0x0000000048060000
+ CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+ CPU1 is up
+ imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
+ imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
+ imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
+...
 
-Thanks,
-Amir.
+The issue was introduced since the commit c24efa673278
+("PM: runtime: Capture device status before disabling runtime PM")
+which will also check the power.last_status must be RPM_ACTIVE before
+pm_runtime_get_sync() can return 1 (means already active) even pm_runtime
+is disabled during no_irq resume stage.
 
->
-> > ---
-> > V1 -> V2:
-> >  1. change open flags from "O_LARGEFILE | O_WRONLY" to "O_RDONLY".
-> >  2. change mount option to "fsync=3Dordered/strict/volatile".
-> >  3. ovl_should_sync_strict() implies ovl_should_sync().
-> >  4. remove redundant ovl_should_sync_strict from ovl_copy_up_meta_inode=
-_data.
-> >  5. update commit log.
-> >  6. update documentation overlayfs.rst.
-> >
-> >  Documentation/filesystems/overlayfs.rst | 39 +++++++++++++++++++++++++
-> >  fs/overlayfs/copy_up.c                  | 18 ++++++++++++
-> >  fs/overlayfs/ovl_entry.h                | 20 +++++++++++--
-> >  fs/overlayfs/params.c                   | 33 ++++++++++++++++++---
-> >  fs/overlayfs/super.c                    |  2 +-
-> >  5 files changed, 105 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/fi=
-lesystems/overlayfs.rst
-> > index 165514401441..a783e57bdb57 100644
-> > --- a/Documentation/filesystems/overlayfs.rst
-> > +++ b/Documentation/filesystems/overlayfs.rst
-> > @@ -742,6 +742,45 @@ controlled by the "uuid" mount option, which suppo=
-rts these values:
-> >      mounted with "uuid=3Don".
-> >
-> >
-> > +Durability and copy up
-> > +----------------------
-> > +
-> > +The fsync(2) and fdatasync(2) system calls ensure that the metadata an=
-d
-> > +data of a file, respectively, are safely written to the backing
-> > +storage, which is expected to guarantee the existence of the informati=
-on post
-> > +system crash.
-> > +
-> > +Without the fdatasync(2) call, there is no guarantee that the observed
-> > +data after a system crash will be either the old or the new data, but
-> > +in practice, the observed data after crash is often the old or new dat=
-a or a
-> > +mix of both.
-> > +
-> > +When overlayfs file is modified for the first time, copy up will creat=
-e
-> > +a copy of the lower file and its parent directories in the upper layer=
-.
-> > +In case of a system crash, if fdatasync(2) was not called after the
-> > +modification, the upper file could end up with no data at all (i.e.
-> > +zeros), which would be an unusual outcome.  To avoid this experience,
-> > +overlayfs calls fsync(2) on the upper file before completing the copy =
-up with
-> > +rename(2) to make the copy up "atomic".
-> > +
-> > +Depending on the backing filesystem (e.g. ubifs), fsync(2) before
-> > +rename(2) may not be enough to provide the "atomic" copy up behavior
-> > +and fsync(2) on the copied up parent directories is required as well.
-> > +
-> > +Overlayfs can be tuned to prefer performance or durability when storin=
-g
-> > +to the underlying upper layer.  This is controlled by the "fsync" moun=
-t
-> > +option, which supports these values:
-> > +
-> > +- "ordered": (default)
-> > +    Call fsync(2) on upper file before completion of copy up.
-> > +- "strict":
-> > +    Call fsync(2) on upper file and directories before completion of c=
-opy up.
-> > +- "volatile": [*]
-> > +    Prefer performance over durability (see `Volatile mount`_)
-> > +
-> > +[*] The mount option "volatile" is an alias to "fsync=3Dvolatile".
-> > +
-> > +
-> >  Volatile mount
-> >  --------------
-> >
-> > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> > index a5ef2005a2cc..d99a18afceb8 100644
-> > --- a/fs/overlayfs/copy_up.c
-> > +++ b/fs/overlayfs/copy_up.c
-> > @@ -243,6 +243,21 @@ static int ovl_verify_area(loff_t pos, loff_t pos2=
-, loff_t len, loff_t totlen)
-> >         return 0;
-> >  }
-> >
-> > +static int ovl_copy_up_sync(struct path *path)
-> > +{
-> > +       struct file *new_file;
-> > +       int err;
-> > +
-> > +       new_file =3D ovl_path_open(path, O_RDONLY);
-> > +       if (IS_ERR(new_file))
-> > +               return PTR_ERR(new_file);
-> > +
-> > +       err =3D vfs_fsync(new_file, 0);
-> > +       fput(new_file);
-> > +
-> > +       return err;
-> > +}
-> > +
-> >  static int ovl_copy_up_file(struct ovl_fs *ofs, struct dentry *dentry,
-> >                             struct file *new_file, loff_t len)
-> >  {
-> > @@ -701,6 +716,9 @@ static int ovl_copy_up_metadata(struct ovl_copy_up_=
-ctx *c, struct dentry *temp)
-> >                 err =3D ovl_set_attr(ofs, temp, &c->stat);
-> >         inode_unlock(temp->d_inode);
-> >
-> > +       if (!err && ovl_should_sync_strict(ofs))
-> > +               err =3D ovl_copy_up_sync(&upperpath);
-> > +
-> >         return err;
-> >  }
-> >
-> > diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> > index cb449ab310a7..7f6d2effd5f1 100644
-> > --- a/fs/overlayfs/ovl_entry.h
-> > +++ b/fs/overlayfs/ovl_entry.h
-> > @@ -5,6 +5,12 @@
-> >   * Copyright (C) 2016 Red Hat, Inc.
-> >   */
-> >
-> > +enum {
-> > +       OVL_FSYNC_ORDERED,
-> > +       OVL_FSYNC_STRICT,
-> > +       OVL_FSYNC_VOLATILE,
-> > +};
-> > +
-> >  struct ovl_config {
-> >         char *upperdir;
-> >         char *workdir;
-> > @@ -18,7 +24,7 @@ struct ovl_config {
-> >         int xino;
-> >         bool metacopy;
-> >         bool userxattr;
-> > -       bool ovl_volatile;
-> > +       int fsync_mode;
-> >  };
-> >
-> >  struct ovl_sb {
-> > @@ -120,7 +126,17 @@ static inline struct ovl_fs *OVL_FS(struct super_b=
-lock *sb)
-> >
-> >  static inline bool ovl_should_sync(struct ovl_fs *ofs)
-> >  {
-> > -       return !ofs->config.ovl_volatile;
-> > +       return ofs->config.fsync_mode !=3D OVL_FSYNC_VOLATILE;
-> > +}
-> > +
-> > +static inline bool ovl_should_sync_strict(struct ovl_fs *ofs)
-> > +{
-> > +       return ofs->config.fsync_mode =3D=3D OVL_FSYNC_STRICT;
-> > +}
-> > +
-> > +static inline bool ovl_is_volatile(struct ovl_config *config)
-> > +{
-> > +       return config->fsync_mode =3D=3D OVL_FSYNC_VOLATILE;
-> >  }
-> >
-> >  static inline unsigned int ovl_numlower(struct ovl_entry *oe)
-> > diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-> > index 4860fcc4611b..c4aac288b7e0 100644
-> > --- a/fs/overlayfs/params.c
-> > +++ b/fs/overlayfs/params.c
-> > @@ -58,6 +58,7 @@ enum ovl_opt {
-> >         Opt_xino,
-> >         Opt_metacopy,
-> >         Opt_verity,
-> > +       Opt_fsync,
-> >         Opt_volatile,
-> >  };
-> >
-> > @@ -139,6 +140,23 @@ static int ovl_verity_mode_def(void)
-> >         return OVL_VERITY_OFF;
-> >  }
-> >
-> > +static const struct constant_table ovl_parameter_fsync[] =3D {
-> > +       { "ordered",    OVL_FSYNC_ORDERED  },
-> > +       { "strict",     OVL_FSYNC_STRICT   },
-> > +       { "volatile",   OVL_FSYNC_VOLATILE },
-> > +       {}
-> > +};
-> > +
-> > +static const char *ovl_fsync_mode(struct ovl_config *config)
-> > +{
-> > +       return ovl_parameter_fsync[config->fsync_mode].name;
-> > +}
-> > +
-> > +static int ovl_fsync_mode_def(void)
-> > +{
-> > +       return OVL_FSYNC_ORDERED;
-> > +}
-> > +
-> >  const struct fs_parameter_spec ovl_parameter_spec[] =3D {
-> >         fsparam_string_empty("lowerdir",    Opt_lowerdir),
-> >         fsparam_string("lowerdir+",         Opt_lowerdir_add),
-> > @@ -154,6 +172,7 @@ const struct fs_parameter_spec ovl_parameter_spec[]=
- =3D {
-> >         fsparam_enum("xino",                Opt_xino, ovl_parameter_xin=
-o),
-> >         fsparam_enum("metacopy",            Opt_metacopy, ovl_parameter=
-_bool),
-> >         fsparam_enum("verity",              Opt_verity, ovl_parameter_v=
-erity),
-> > +       fsparam_enum("fsync",               Opt_fsync, ovl_parameter_fs=
-ync),
-> >         fsparam_flag("volatile",            Opt_volatile),
-> >         {}
-> >  };
-> > @@ -617,8 +636,11 @@ static int ovl_parse_param(struct fs_context *fc, =
-struct fs_parameter *param)
-> >         case Opt_verity:
-> >                 config->verity_mode =3D result.uint_32;
-> >                 break;
-> > +       case Opt_fsync:
-> > +               config->fsync_mode =3D result.uint_32;
-> > +               break;
-> >         case Opt_volatile:
-> > -               config->ovl_volatile =3D true;
-> > +               config->fsync_mode =3D OVL_FSYNC_VOLATILE;
-> >                 break;
-> >         case Opt_userxattr:
-> >                 config->userxattr =3D true;
-> > @@ -802,9 +824,9 @@ int ovl_fs_params_verify(const struct ovl_fs_contex=
-t *ctx,
-> >                 config->index =3D false;
-> >         }
-> >
-> > -       if (!config->upperdir && config->ovl_volatile) {
-> > +       if (!config->upperdir && ovl_is_volatile(config)) {
-> >                 pr_info("option \"volatile\" is meaningless in a non-up=
-per mount, ignoring it.\n");
-> > -               config->ovl_volatile =3D false;
-> > +               config->fsync_mode =3D ovl_fsync_mode_def();
-> >         }
-> >
-> >         if (!config->upperdir && config->uuid =3D=3D OVL_UUID_ON) {
-> > @@ -997,8 +1019,11 @@ int ovl_show_options(struct seq_file *m, struct d=
-entry *dentry)
-> >         if (ofs->config.metacopy !=3D ovl_metacopy_def)
-> >                 seq_printf(m, ",metacopy=3D%s",
-> >                            ofs->config.metacopy ? "on" : "off");
-> > -       if (ofs->config.ovl_volatile)
-> > +       if (ovl_is_volatile(&ofs->config))
-> >                 seq_puts(m, ",volatile");
-> > +       else if (ofs->config.fsync_mode !=3D ovl_fsync_mode_def())
-> > +               seq_printf(m, ",fsync=3D%s",
-> > +                          ovl_fsync_mode(&ofs->config));
-> >         if (ofs->config.userxattr)
-> >                 seq_puts(m, ",userxattr");
-> >         if (ofs->config.verity_mode !=3D ovl_verity_mode_def())
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index 06a231970cb5..824cbcf40523 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -750,7 +750,7 @@ static int ovl_make_workdir(struct super_block *sb,=
- struct ovl_fs *ofs,
-> >          * For volatile mount, create a incompat/volatile/dirty file to=
- keep
-> >          * track of it.
-> >          */
-> > -       if (ofs->config.ovl_volatile) {
-> > +       if (ovl_is_volatile(&ofs->config)) {
-> >                 err =3D ovl_create_volatile_dirty(ofs);
-> >                 if (err < 0) {
-> >                         pr_err("Failed to create volatile/dirty file.\n=
-");
-> >
-> > base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> > --
-> > 2.45.2
-> >
+However, the pm_runtime_set_active() we called ahead of
+pm_runtime_get_sync() will not update power.last_status which probably like
+a upstream kernel issue. But that's another issue which may worth an
+extra fix.
+
+This patch refers to the solution in the exist similar imx8m blkctrl
+driver[1] that it will power up upstream domains during blkctl suspend
+first in order to make sure the power.last_status to be RPM_ACTIVE. Then we
+can support calling pm_runtime_get_sync in noirq resume stage.
+
+After fixing, no need extra calling of pm_runtime_set_active() ahead.
+
+1. drivers/pmdomain/imx/imx8m-blk-ctrl.c
+
+Fixes: e9aa77d413c9 ("soc: imx: add i.MX93 media blk ctrl driver")
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/pmdomain/imx/imx93-blk-ctrl.c | 29 +++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/drivers/pmdomain/imx/imx93-blk-ctrl.c b/drivers/pmdomain/imx/imx93-blk-ctrl.c
+index 904ffa55b8f4..34ac7b722b90 100644
+--- a/drivers/pmdomain/imx/imx93-blk-ctrl.c
++++ b/drivers/pmdomain/imx/imx93-blk-ctrl.c
+@@ -424,6 +424,34 @@ static const struct imx93_blk_ctrl_data imx93_media_blk_ctl_dev_data = {
+ 	.reg_access_table = &imx93_media_blk_ctl_access_table,
+ };
+ 
++static int imx93_blk_ctrl_suspend(struct device *dev)
++{
++	struct imx93_blk_ctrl *bc = dev_get_drvdata(dev);
++
++	/*
++	 * This may look strange, but is done so the generic PM_SLEEP code
++	 * can power down our domains and more importantly power them up again
++	 * after resume, without tripping over our usage of runtime PM to
++	 * control the upstream GPC domains. Things happen in the right order
++	 * in the system suspend/resume paths due to the device parent/child
++	 * hierarchy.
++	 */
++	return pm_runtime_resume_and_get(bc->dev);
++}
++
++static int imx93_blk_ctrl_resume(struct device *dev)
++{
++	struct imx93_blk_ctrl *bc = dev_get_drvdata(dev);
++
++	pm_runtime_put(bc->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops imx93_blk_ctrl_pm_ops = {
++	SYSTEM_SLEEP_PM_OPS(imx93_blk_ctrl_suspend, imx93_blk_ctrl_resume)
++};
++
+ static const struct of_device_id imx93_blk_ctrl_of_match[] = {
+ 	{
+ 		.compatible = "fsl,imx93-media-blk-ctrl",
+@@ -439,6 +467,7 @@ static struct platform_driver imx93_blk_ctrl_driver = {
+ 	.remove_new = imx93_blk_ctrl_remove,
+ 	.driver = {
+ 		.name = "imx93-blk-ctrl",
++		.pm = pm_sleep_ptr(&imx93_blk_ctrl_pm_ops),
+ 		.of_match_table = imx93_blk_ctrl_of_match,
+ 	},
+ };
+-- 
+2.37.1
+
 
