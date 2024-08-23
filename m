@@ -1,93 +1,110 @@
-Return-Path: <linux-kernel+bounces-298111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664A295C294
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:46:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0A195C296
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23288284AB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F9A2850BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9D512E7F;
-	Fri, 23 Aug 2024 00:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F5812B6C;
+	Fri, 23 Aug 2024 00:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1TPkt5m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="v891LZUR"
+Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3FCC2FC;
-	Fri, 23 Aug 2024 00:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D553B171BD
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724373963; cv=none; b=EauJAJDXIsBx5df1FwUSnxz2Xr3JUTHmcjNup+L3+ck1b0FtWGIdetdo1WS1W8jXDFvywfq+8sOorRNWbjeft5ZcX1gKoJqcUaE68Zopm3IJU5Dxz+fQvPuvASH593HwMSXkA3o1YT/hNs0AVHy1um5Ti+NSEoxNlvKHzCu2goI=
+	t=1724373998; cv=none; b=Bop1y0a9xyCaIvDtMWa+NFWsjZ6hpuq/xHEzKi7i7rjlSZ4vH/puiFXMttRplKvXb0tmwWug9OVTDmaO3jAgbnCdir0cCBZdMVlGsuyKpty7p14C6rt3mmGRaDot9Glxslv+r3wlgCYL6JCfajiWPry3FBedhI1J5f/8V4kUpAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724373963; c=relaxed/simple;
-	bh=fnZBUB96igyMIbXpv/ZMYmsJZ5S05wAISgC14EO7dvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AXdcfOHfJy1pu8Ai3SREiEe6VI04OqtjSvvfKsMO9k7adSjfg4bMq+e+lEsEIsXj9SNYpn8zMFP1QcLcldncpraOj72vTYTCSyCCAvcPLv5aLKAXlCfpAIPrxpo4QQuy8vqBOb0zlZONj0Q77i4BYnwU6R2Na7dXY6P6Yfq8zkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1TPkt5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D506CC32782;
-	Fri, 23 Aug 2024 00:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724373963;
-	bh=fnZBUB96igyMIbXpv/ZMYmsJZ5S05wAISgC14EO7dvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a1TPkt5mcqVTFyJbTA1R8g4a7HYS1iuVTGrLxlyL9Rj+8Rf8ZPycMgMjVdOf1E1lC
-	 ReYPYnRKIjetSYH4btGeRNrRfzrh4xnSaa2Pvl7vI+WIoBA5T+ow65M4P6QhSBUuVn
-	 mN3DavOAYhXqDvJsV0y7N5R23uo1AJCBbYxommrZCVatnz0fQmLg00/Cm/WZyr/60z
-	 zfEj53780BtHA7cb5uX5tKn8fROCDPYaiTM0lMf/Px64yDTdqRqC5CJdhvHcyUnwQF
-	 6+zQPGF1aiSPLJHv9qVhO25b5uHDS30vGImg0Op0i+jE8GaCxGNZIiqSNbisBw0HF3
-	 1B3Kw5Pwa4iow==
-Date: Fri, 23 Aug 2024 02:45:58 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com, 
-	Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>
-Subject: Re: [PATCH v1 0/5] i2c: designware: Cleanups (part 2)
-Message-ID: <oo2wbjxoe5acqeamjmnngnu2n4e2fsmclepnwvra4hmc5nn64l@q7rnxilvtebu>
-References: <20240822180411.2298991-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1724373998; c=relaxed/simple;
+	bh=O9yoUAC9U3HTcaZO5oCRTm/Xv0FNLEQl2U7b5acSDAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RlRsjA1eDirPfkLTK4EDV4NkbdcgXRFwjMW5P/en0y8g1+J2hC1w2DTnxJF2vBo6whazN75FBSV3nvxbYgU51gixIGDatuMR2QOGm3uBxqM9O6crKj+urA+6+acvY5QU1tEVme6xedRZp/jEdzj48z7lVcOL/mVAuJ5RCRJoRjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=v891LZUR; arc=none smtp.client-ip=17.58.6.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724373996;
+	bh=jud5zcJEFcAFMQrtEXNZK48wCk4punyShcIaYQqM4Ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=v891LZUR8I1HokDTlTSbSSWG1bPOtNHrsRJEvZ57LBnbXQ7EL/klbkdKqE9WfTDuZ
+	 4sTgx8TXgOVHLebqG5IjQfnJuDTfGQ/OCS104bc2u7lYu9lIIaHtkt7MEW8PA7FrM7
+	 qrZxaYC4hmBKfi2Vs3nMlPGPC4NP3G4j33BRO323xLTb9Ibx+XxLNJQ3woAG1BdLpI
+	 OS1Khd2gIlzn9aPB7wGqkVAXE6KD/nz905roCx5CAKDOTVINHgWkM2W5giQLMpjDvS
+	 8Ut9VrP/N/gMbczWTHWG7v2wZpYAhLpLZsKRpQgXDQZDlqu+MmTy+sHkdM7pxG49ld
+	 0bqWlMnBGMIFA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id 25161DC0096;
+	Fri, 23 Aug 2024 00:46:31 +0000 (UTC)
+Message-ID: <04c58410-13c8-4e50-a009-5715af0cded3@icloud.com>
+Date: Fri, 23 Aug 2024 08:46:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822180411.2298991-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
+ __device_attach()
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
+References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
+ <ZsfRqT9d6Qp_Pva5@google.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <ZsfRqT9d6Qp_Pva5@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: h1_urtemGm9ii2t2ftknkctfK09QeLGu
+X-Proofpoint-GUID: h1_urtemGm9ii2t2ftknkctfK09QeLGu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-22_17,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=501 clxscore=1015 malwarescore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408230004
 
-Hi Andy,
-
-On Thu, Aug 22, 2024 at 08:58:36PM GMT, Andy Shevchenko wrote:
-> This is the subset of the patches [1] that should not affect any
-> functionality. Here are:
-> - consolidation of FW parsing and configuring code 
-> - some function renaming / dropping
-> - switching to export namespace
+On 2024/8/23 08:02, Dmitry Torokhov wrote:
+> Hi,
 > 
-> In any case this is Cc'ed to AMD who reported a problem in [1]
-> presumably in the patch that is *not* included here.
+> On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> An uninitialized variable @data.have_async may be used as analyzed
+>> by the following inline comments:
+>>
+>> static int __device_attach(struct device *dev, bool allow_async)
+>> {
+>> 	// if @allow_async is true.
+>>
+>> 	...
+>> 	struct device_attach_data data = {
+>> 		.dev = dev,
+>> 		.check_async = allow_async,
+>> 		.want_async = false,
+>> 	};
+>> 	// @data.have_async is not initialized.
 > 
-> Link: https://lore.kernel.org/linux-i2c/20231207141653.2785124-1-andriy.shevchenko@linux.intel.com/ [1]
+> No, in the presence of a structure initializer fields not explicitly
+> initialized will be set to 0 by the compiler.
 > 
-> Andy Shevchenko (5):
->   i2c: designware: Rename dw_i2c_of_configure() -> i2c_dw_of_configure()
->   i2c: designware: Consolidate firmware parsing and configuring code
->   i2c: designware: Unify the firmware type checks
->   i2c: designware: Move exports to I2C_DW namespaces
->   i2c: designware: Remove ->disable() callback
+really?
+do all C compilers have such behavior ?
 
-I merged these patches in i2c/i2c-host. Normally I leave patches
-a bit longer in the list, but they have been reviewed and
-discussed.
+> There is no issue here.
+> 
+> Thanks.
+> 
 
-If there will come some observations from others, we are in time
-to change them.
-
-Thanks,
-Andi
 
