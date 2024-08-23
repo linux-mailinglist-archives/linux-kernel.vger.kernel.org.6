@@ -1,176 +1,148 @@
-Return-Path: <linux-kernel+bounces-299363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B255595D3A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:39:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C415B95D3A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E441C23555
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816FB284131
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7BB18BC06;
-	Fri, 23 Aug 2024 16:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA15718BC10;
+	Fri, 23 Aug 2024 16:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLzAZCMr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQmHvxqb"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3143D12B6C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6343818A6C7;
+	Fri, 23 Aug 2024 16:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724431146; cv=none; b=E7tzHv1mSVEXj/8J6Wa+ultWQjInwfDQyq7PkauqH5xzle7gj3mMRO9g80Yw9bRAHLcqn1WWpQxcuPebpOltriQ58LoijgvuQiI+WYEMV3IkKU+Ub+82anMvFOrLc2YQ1anczZ3BXK3HfxGbj9RLMJt64GmCR0Yz0PRODBhEgPA=
+	t=1724431155; cv=none; b=s2n6ptisuyIQ4PIVlYpdExPARDImcGqSH7l0c9DoBxDit1TDvLc6sZOBd1WTttIHtKE+h65lUpn8QppyLPvdfsw9IM0unRpOFwaTXi09rAVIKpstSk3PLGG/eoaCEvEfTHJYr4HA1gR51uzzk5iQUFxMKDlCqHekeI1R/Xp0VJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724431146; c=relaxed/simple;
-	bh=3p8llYLNGonqe/IaVeJEcH5mcj6ObfdWOb687aPPufY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rw5sQQUCAvTmh2x+aoyeMA/Y+w8KpJiDFO22E3fsfu1GHuxz78OEqkBj6DjgJNqtd2xDYNx8fbY8izrqNzsACCTCELJtufuSqPaYLi2ZopUqOkv3GFEmOhbTEbRC6VPsVFX1uAT2yiagy6qyYV5UyiU4Co+IAVwp3sD2WM23E7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLzAZCMr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71EBC32786;
-	Fri, 23 Aug 2024 16:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724431145;
-	bh=3p8llYLNGonqe/IaVeJEcH5mcj6ObfdWOb687aPPufY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gLzAZCMr758Wfe7rerx8L/j7HBp9WuiLFR2vp6//h1SNLXunTnx6ZMmW6yzHUPRjq
-	 fAruazKxC4HfkFYAJm0zGC7aFZCn1+N4YVc/UKd29QWzFNVs/z7uWxpPIc4yYBCfus
-	 rcWi77/LJDLfGbLjlTV8LxxCIgGQRJi28YoQXwUfn7xDzIiyYW1D+DZyWP5iQfiC74
-	 q6mUzs+1hVDNGQSaLuK7bQ+EHVOVd16GSPEkBX1JsbAZdPF025yDvNTgn4IA9c1ksI
-	 A0L3WwKEvwkjAXKu6eBy/8RKVbQGAyBK12Y95dC8I2JE1w1FoxWXvmJQinZmfJF8iE
-	 5CResWhSOrOsQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1shXJX-006KwE-Dn;
-	Fri, 23 Aug 2024 17:39:03 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Richard Weinberger <richard@nod.at>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <petr@tesarici.cz>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH] scripts: Fix gfp-translate after ___GFP_*_BITS conversion to an enum
-Date: Fri, 23 Aug 2024 17:38:50 +0100
-Message-Id: <20240823163850.3791201-1-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724431155; c=relaxed/simple;
+	bh=37bNjvVUVCnwm4dabjuxz+DsxHpI2MJeGgPnKPYD6eg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0dovCjxwUbEMLNSJu1vEcx4/xvvU2buDaoEQsvfJiRH/fqlJ2CqRnFLV89EdX5/y8GgVrV8wCJL2b1v3fnbAejkjF/tdasm22yKkdYlbZhgIu2haJ9cvtoTGMbWP2si3Ko3wEb1IL9nqzmj+rlu0rxW1aKcC+32xOL3YmsCVxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQmHvxqb; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso3542657e87.0;
+        Fri, 23 Aug 2024 09:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724431151; x=1725035951; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2WRjvniXybxQWI+iJ2ujBTSF1lPf98KW9vC1KUIKZrI=;
+        b=DQmHvxqbMZeuoOWaVdOOVVQYxUgZllenoCH7ZZ/AB9xAdVg7N5K/gt8+ERdzqZC8TE
+         wdnZgUfarh4+N8hJtAAS2USf4YqHTmIMpIVnMsTbHJZZYYU0W62c4vrAd4yqWuDlVqot
+         Ptj9uWZHAVHVdJZ3uWMR1bCon/BYlrktyi3dKYQeacQTeSipIZdA5aHqgry+qkhj2LjR
+         JtkMa6yFKqZXy1fWgoc9BWOoNBNZ4xNVaR0FGrxi1VsBzG4hYBz3jPVU0pEPi0wfK4rA
+         cwdhgTnUTUxHfBGV1nktuxyadO6ou5IJtJzxX+fT5PkZIHs2yWO41H7Glx2GEq5Fc1Qb
+         zdrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724431151; x=1725035951;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2WRjvniXybxQWI+iJ2ujBTSF1lPf98KW9vC1KUIKZrI=;
+        b=Vu+aW09CpPXo26MTIsGQVNESPy5SucRZWD+RxebrpIdirVuh9q2+3zlo+DWjv2HHkk
+         uEqfIY6VgCXtu5qeCM3VqVDHKsowMnfiDGoOyAJDAAtbpVXgAiX5BDgZwOwItkFcqOg5
+         +R+siZXXnIutz0ARizB6nDhOFgeGVz35hRfkvPTfNYgw5vnz5a8hsxv5qp+CE8qNA2Nr
+         izOgU0ih2+RByvEaurN2FPQesKYeSWae9UjDgC5LqwtgHJPoVHZqP9DGZFmxaZaJIeMl
+         fTW7cFZK+4LOBt3nCvlUG3FzNZYj1fSMQR8VnGxigYDQlKyxS+R1LmyuHFdMwwgMzJfB
+         sIvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSTWbxQRwrlrw7YukxOS14IhSejq4s/ZpwQWiU1J4Mz7NpoBJtfLFkSxTwK2u4jT5WadbEVjO9mIeWyeul@vger.kernel.org, AJvYcCUwyd1O1UQQ1Q8MC7ertWGZ+HsluP2JY5ywgtfgteQWAY32xg9QBrJ3k+7QdfnHPKsNdc2OEaKS4J629uF2@vger.kernel.org, AJvYcCV5qRYVDXBEmXrpo1uh6Ua2t515nI0I0THRoEd7MIIR6hi0opex6OOrtPUSKFz/drdaeAxg5Une3nQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgDDTh2LfdR+sj/FxYA/+yEQZUCf/Wm9eZqj5dSQucjqI1YOnu
+	72cVZcJpE8Cx1aVfCRHVCq9mB+HtkEAjmBcCN6lVA8VNO80ZuLqF
+X-Google-Smtp-Source: AGHT+IGiGfLhmgN/ZEt1qGQRBjLYK4n4/sf9dIyAH2LAsgYySPXwh7hMCdqr9AL1FkYv2kkstxYUqA==
+X-Received: by 2002:a05:6512:318f:b0:52c:d834:4f2d with SMTP id 2adb3069b0e04-5343877ab14mr1678549e87.18.1724431150764;
+        Fri, 23 Aug 2024 09:39:10 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5940asm607500e87.159.2024.08.23.09.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 09:39:10 -0700 (PDT)
+Date: Fri, 23 Aug 2024 19:39:07 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Viresh Kumar <vireshk@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	dmaengine@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] dmaengine: dw: Prevent tx-status calling desc
+ callback (Fix UART deadlock!)
+Message-ID: <mdyifrhjufjwp2tko54gfw34riepov5bo4a4tefhrtfmuystao@wpjfsgikebki>
+References: <20240802080756.7415-1-fancer.lancer@gmail.com>
+ <n6grskuq722vnogwp5obiwzv4pxs5bbqddadesffezhvba5cjh@d6shcrvpxujg>
+ <CAHp75VdXqS6xqdsQCyhaMNLvzwkFn9HU8k9SLcT=KSwF9QPN4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, richard@nod.at, akpm@linux-foundation.org, petr@tesarici.cz, surenb@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+In-Reply-To: <CAHp75VdXqS6xqdsQCyhaMNLvzwkFn9HU8k9SLcT=KSwF9QPN4Q@mail.gmail.com>
 
-Richard reports that since 772dd0342727c ("mm: enumerate all gfp flags"),
-gfp-translate is broken, as the bit numbers are implicit, leaving
-the shell script unable to extract them. Even more, some bits are now at
-a variable location, making it double extra hard to parse using a simple
-shell script.
+Hi Andy
 
-Use a brute-force approach to the problem by generating a small C stub
-that will use the enum to dump the interesting bits.
+On Fri, Aug 23, 2024 at 04:21:24PM +0300, Andy Shevchenko wrote:
+> On Fri, Aug 23, 2024 at 12:48 PM Serge Semin <fancer.lancer@gmail.com> wrote:
+> >
+> > Hi folks
+> >
+> > Any comments or suggestion about the change? The kernel occasionally
+> > _deadlocks_ without it for the DW UART + DW DMAC hardware setup.
+> 
+> I have no time to look at that, but FWIW with a stress tests on older
+> machines I have seen something similar from time to time (less than
+> 10% reproducibility ration IIRC).
 
-As an added bonus, we are now able to identify invalid bits for
-a given configuration. As an added drawback, we cannot parse include
-files that predate this change anymore. Tough luck.
+Thanks for the response. I also used to have the system hanging up at
+the very rare occasion, but after I decreased the size of the Rx
+DMA-buffer (to fix a platform-specific problem) and sped up the port
+the deadlock probability dramatically increased so I managed to debug
+the hanging ups.
 
-Fixes: 772dd0342727c ("mm: enumerate all gfp flags")
-Reported-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Petr Tesařík <petr@tesarici.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>
----
- scripts/gfp-translate | 66 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 49 insertions(+), 17 deletions(-)
+> 
+> P.S. Is there is any possibility to have a step-by-step reproducer?
 
-diff --git a/scripts/gfp-translate b/scripts/gfp-translate
-index 6c9aed17cf56..8385ae0d5af9 100755
---- a/scripts/gfp-translate
-+++ b/scripts/gfp-translate
-@@ -62,25 +62,57 @@ if [ "$GFPMASK" = "none" ]; then
- fi
- 
- # Extract GFP flags from the kernel source
--TMPFILE=`mktemp -t gfptranslate-XXXXXX` || exit 1
--grep -q ___GFP $SOURCE/include/linux/gfp_types.h
--if [ $? -eq 0 ]; then
--	grep "^#define ___GFP" $SOURCE/include/linux/gfp_types.h | sed -e 's/u$//' | grep -v GFP_BITS > $TMPFILE
--else
--	grep "^#define __GFP" $SOURCE/include/linux/gfp_types.h | sed -e 's/(__force gfp_t)//' | sed -e 's/u)/)/' | grep -v GFP_BITS | sed -e 's/)\//) \//' > $TMPFILE
--fi
-+TMPFILE=`mktemp -t gfptranslate-XXXXXX.c` || exit 1
- 
--# Parse the flags
--IFS="
--"
- echo Source: $SOURCE
- echo Parsing: $GFPMASK
--for LINE in `cat $TMPFILE`; do
--	MASK=`echo $LINE | awk '{print $3}'`
--	if [ $(($GFPMASK&$MASK)) -ne 0 ]; then
--		echo $LINE
--	fi
--done
- 
--rm -f $TMPFILE
-+(
-+    cat <<EOF
-+#include <stdint.h>
-+#include <stdio.h>
-+
-+// Try to fool compiler.h into not including extra stuff
-+#define __ASSEMBLY__	1
-+
-+#include <generated/autoconf.h>
-+#include <linux/gfp_types.h>
-+
-+static const char *masks[] = {
-+EOF
-+
-+    sed -nEe 's/^[[:space:]]+(___GFP_.*)_BIT,.*$/\1/p' $SOURCE/include/linux/gfp_types.h |
-+	while read b; do
-+	    cat <<EOF
-+#if defined($b) && ($b > 0)
-+	[${b}_BIT]	= "$b",
-+#endif
-+EOF
-+	done
-+
-+    cat <<EOF
-+};
-+
-+int main(int argc, char *argv[])
-+{
-+	unsigned long long mask = $GFPMASK;
-+
-+	for (int i = 0; i < sizeof(mask) * 8; i++) {
-+		unsigned long long bit = 1ULL << i;
-+		if (mask & bit)
-+			printf("\t%-25s0x%llx\n",
-+			       (i < ___GFP_LAST_BIT && masks[i]) ?
-+					masks[i] : "*** INVALID ***",
-+			       bit);
-+	}
-+
-+	return 0;
-+}
-+EOF
-+) > $TMPFILE
-+
-+${CC:-gcc} -Wall -o ${TMPFILE}.bin -I $SOURCE/include $TMPFILE && ${TMPFILE}.bin
-+
-+rm -f $TMPFILE ${TMPFILE}.bin
-+
- exit 0
--- 
-2.39.2
+There is a good chance that my approach might be platform-specific
+(but the problem is general for sure), but here is what I did to
+make the deadlock reproducible at the reasonable time:
+1. Revert the patch in the subject (if it's applied)
+2. Decrease the Rx DMA-buffer size:
+drivers/tty/serial/8250/8250_dma.c: dma->rx_size = SZ_512;
+3. Increase the serial communication baud-rate:
+stty -F /dev/ttyS1 1500000 raw -echo -echok -echoe;
+4. Loopback the ttyS1 interface: connect Tx and Rx pins.
+5. Start pushing data to the ttS1 interface by the chunks someway
+greater than 512 bytes. Like this:
+while :; do echo -n "-"; head -c 65536 /dev/zero > /dev/ttyS1; done
 
+In my case the system almost always hangs up after 10-50-100-200
+iterations of the one-liner above.
+
+> Also can we utilise (and update if needed) the open source project
+> https://github.com/cbrake/linux-serial-test?
+
+I guess the utility can be used to reproduce the problem, but the
+data integrity check wasn't required in my case. I am also not sure
+whether the loopback-test is required to reproduce the denoted
+deadlock, since only the Rx code-path causes it. So most likely the
+heavy inbound traffic shall be enough.
+
+-Serge(y)
+
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
