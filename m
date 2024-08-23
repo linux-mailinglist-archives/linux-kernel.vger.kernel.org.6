@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-298293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D929995C555
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:21:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EE895C55A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A6C41F23F27
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC7E1F242BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13786F2FE;
-	Fri, 23 Aug 2024 06:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dpEap9qM"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C157C6F2FE;
+	Fri, 23 Aug 2024 06:23:06 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E5C3D994
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B824A08;
+	Fri, 23 Aug 2024 06:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724394077; cv=none; b=NQp2YP0bxzKbqBNibWmviljjcIrQhHeume6yeR2akgychm7rt4acMXQxJ1aVwE88GJuGxenzFwRdQfXRsuvaQkuZN7mvK8gtJmJZY7EV+VOIAAVdGEE9AjPBv5Bw6G/d/8dv3XZiQ1Npito+3f6+tCsRbNiLaZlGsNAIR49nOP4=
+	t=1724394186; cv=none; b=opFZZq6RLWiUlGAyv4i8egVeoxdX/5n/F335V7UQ1VDB5Idffbs7mgxdhylI7WdLiUM6z+W8yMLx7aycgs8E+Zegyj5AcHFVaX8JTkzlGg47IV5F9n9dpQied0A6irb0u/TvkV4f+5/CAdwkk19XM6HJUYLZEKoE6Gw+N/6m+38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724394077; c=relaxed/simple;
-	bh=mGGcx9FbBMYK5oO+D4u2W2uRIgvqYmfnpAUS3Rhj7AI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ePPHccDsjNWqyt/NEkjgj/GeBxMVpoqlfydbId7SlWL3XChb1RfsKq6OtEYJyBMS489xjfkYNAmMLWXC07Rd/Hmy51iPYZFi4JgadD89VBqe783nGAEcnz4ZdirY2mEI62xEfkbF4DSxcpvVQGRCeK7tRJKDyyE3sfeCjD62IJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dpEap9qM; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724394071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IaLM4r9F0h2ORPAVWBkvfTjggq9qCherBRJzxkFeUE8=;
-	b=dpEap9qMcxSRukFGYOSK/BUA0w+Jn01PBwnuCRlDTxbMd0pa732PBGJbPJO0hFsgLeQGMq
-	YY6ziKvt2jDkfkPZX0f6QvIzfo7EWVPBMALQRnSbIK4ppBE+TxSfRHNk2Zme/g+dee2Sc7
-	1m0ohJ3jCynxnaTQ4yWekBGiG7wxb2I=
-From: Hao Ge <hao.ge@linux.dev>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	kent.overstreet@linux.dev,
-	linmiaohe@huawei.com,
-	nao.horiguchi@gmail.com,
-	pasha.tatashin@soleen.com,
-	surenb@google.com
-Cc: hao.ge@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Hao Ge <gehao@kylinos.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] codetag: debug: mark codetags for poisoned page as empty
-Date: Fri, 23 Aug 2024 14:20:02 +0800
-Message-Id: <20240823062002.21165-1-hao.ge@linux.dev>
-In-Reply-To: <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev>
-References: <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev>
+	s=arc-20240116; t=1724394186; c=relaxed/simple;
+	bh=0OqjkaZgAp+SRqHna8hMrEs/8r/Kx3RZTRTuanY1NoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sjfOqFjApVo7avS+fcJp21sXO9Iti2VelbiqV26TlGXp/tXSoKCAbpQ5DJ24tJ7ImhreT6IFqrXvaulJ1aqeawARx2tYXSuiqazgLVvcFdmJMTXcXR0a3HBTlgdAxHURlzHrIZ0gWmhEge85TYXZEGen/ARN/DHHqqRQa8vEFOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wqqjk4t4CzyQQ8;
+	Fri, 23 Aug 2024 14:22:18 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4EBDD140137;
+	Fri, 23 Aug 2024 14:23:00 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 Aug 2024 14:22:59 +0800
+Message-ID: <765ccc96-a48c-8a7a-ebf4-344fec67d95f@huawei.com>
+Date: Fri, 23 Aug 2024 14:22:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next] spi: stm32-qspi: Simpify resource lookup
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>
+CC: <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+	<linux-spi@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240820123707.1788370-1-ruanjinjie@huawei.com>
+ <ZsdR-G9S5nYbQX4s@finisterre.sirena.org.uk>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZsdR-G9S5nYbQX4s@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-From: Hao Ge <gehao@kylinos.cn>
 
-The PG_hwpoison page will be caught and isolated on the entrance to
-the free buddy page pool.
 
-But for poisoned pages which software injected errors,
-we can reclaim it through unpoison_memory.
+On 2024/8/22 22:58, Mark Brown wrote:
+> On Tue, Aug 20, 2024 at 08:37:07PM +0800, Jinjie Ruan wrote:
+>> Use the devm_platform_ioremap_resource_byname() helper instead of
+>> calling platform_get_resource_byname() and devm_ioremap_resource()
+>> separately.
+> 
+> This breaks boot on the Avenger96 board, it causes a NULL pointer
+> dereference:
+> 
+> [    2.350480] Unable to handle kernel NULL pointer dereference at virtual address 00000000 when read
+> 
+> ...
+> 
+> [    2.695787] Call trace:
+> [    2.695807]  stm32_qspi_probe from platform_probe+0x5c/0xb0
+> [    2.703914]  platform_probe from really_probe+0xc8/0x2c8
+> [    2.709284]  really_probe from __driver_probe_device+0x88/0x19c
+> [    2.715145]  __driver_probe_device from driver_probe_device+0x30/0x104
+> 
+> https://lava.sirena.org.uk/scheduler/job/650792
+> 
+>> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qspi");
+>> -	qspi->io_base = devm_ioremap_resource(dev, res);
+>> +	qspi->io_base = devm_platform_ioremap_resource_byname(pdev, "qspi");
+>>  	if (IS_ERR(qspi->io_base))
+>>  		return PTR_ERR(qspi->io_base);
+>>  
+>>  	qspi->phys_base = res->start;
+>>  
+>> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qspi_mm");
+>> -	qspi->mm_base = devm_ioremap_resource(dev, res);
+>> +	qspi->mm_base = devm_platform_ioremap_resource_byname(pdev, "qspi_mm");
+>>  	if (IS_ERR(qspi->mm_base))
+>>  		return PTR_ERR(qspi->mm_base);
+> 
+> I can't identify any obvious error here, these look like a direct
+> subsitution - the implementation of devm_platform_ioremap_resource_byname()
+> looks to be the same as the replaced code and dev is set to &pdev->dev
+> but I'm seeing the above behaviour.
 
-So mark codetags for it as empty,just like when a page
-is first added to the buddy system.
-
-It was detected by [1] and the following WARN occurred:
-
-[  113.930443][ T3282] ------------[ cut here ]------------
-[  113.931105][ T3282] alloc_tag was not set
-[  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
-[  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_man4
-[  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loaded Tainted: G        W          6.11.0-rc4-dirty #18
-[  113.943003][ T3282] Tainted: [W]=WARN
-[  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
-[  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
-[  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
-[  113.946706][ T3282] sp : ffff800087093a10
-[  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: ffff80008249f0a0
-[  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0000000000000000
-[  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0000000000000000
-[  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: ffffffffffffffff
-[  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081746210
-[  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5b5d353031313339
-[  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 00000000ffffffd0
-[  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c0000000ffff7fff
-[  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0000000000000001
-[  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0000000000000000
-[  113.957962][ T3282] Call trace:
-[  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
-[  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
-[  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
-[  113.960096][ T3282]  __folio_put+0xd4/0x120
-[  113.960614][ T3282]  folio_put+0x24/0x50
-[  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
-[  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
-[  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
-[  113.963183][ T3282]  simple_attr_write+0x38/0x48
-[  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
-[  113.964330][ T3282]  full_proxy_write+0x68/0x98
-[  113.964880][ T3282]  vfs_write+0xdc/0x4d0
-[  113.965372][ T3282]  ksys_write+0x78/0x100
-[  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
-[  113.966440][ T3282]  invoke_syscall+0x7c/0x104
-[  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
-[  113.967652][ T3282]  do_el0_svc+0x2c/0x38
-[  113.968893][ T3282]  el0_svc+0x3c/0x1b8
-[  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
-[  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
-[  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
-
-Link [1]: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise11.c
-
-Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper function")
-Cc: stable@vger.kernel.org # v6.10
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- mm/page_alloc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index c565de8f48e9..7ccd2157d092 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1054,6 +1054,14 @@ __always_inline bool free_pages_prepare(struct page *page,
- 		reset_page_owner(page, order);
- 		page_table_check_free(page, order);
- 		pgalloc_tag_sub(page, 1 << order);
-+
-+		/*
-+		 * For poisoned pages which software injected errors,
-+		 * we can reclaim it through unpoison_memory.
-+		 * so mark codetags for it as empty,
-+		 * just like when a page is first added to the buddy system.
-+		 */
-+		clear_page_tag_ref(page);
- 		return false;
- 	}
- 
--- 
-2.25.1
+Sorry, from lkp@intel.com，I identify that the "res" returned by
+platform_get_resource_byname() is used by "qspi->phys_base =
+res->start;" later，so the devm_platform_ioremap_resource_byname() is not
+inapplicable here.
 
 
