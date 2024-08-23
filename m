@@ -1,75 +1,73 @@
-Return-Path: <linux-kernel+bounces-298872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6CF95CC6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F3C95CC74
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED881C21810
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:34:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA70B1C2257B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6773B185B40;
-	Fri, 23 Aug 2024 12:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E88185B5C;
+	Fri, 23 Aug 2024 12:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1oDYwBqT"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgD5VoXW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A371850AF;
-	Fri, 23 Aug 2024 12:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621339457;
+	Fri, 23 Aug 2024 12:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724416489; cv=none; b=WY1Whutiie7HGGwIuQRZyPQjJ7ZJh7QjdSF6XZ8ElgxwonuTw7EwsL3Dv2UuC/LmKKP7pmNW5/6Brz09EtLOOQlV/IbusjklikxMBFB8vRM5um1lObNn6GHR4eN1RJO72w7I1r9OoKUMCmCUFFG3i03Wb3heImKQx55KBIBHnFE=
+	t=1724416620; cv=none; b=hzi+oJz4rB74a+3lPhg2Qp36/nXK9kUKVuuo8btmiFiFhIX3lCvdeXXgLU9ZVo95dFFd4g5OIu+Z+eaDAlFXizg4g8aH2cqx4RzvnDj/cNAhTnCaV9igyGu3+l/jOTZoocq/ZWBokqT81fqMu88S3VuT6vw7KohLMAjd10B200Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724416489; c=relaxed/simple;
-	bh=SbZ2XwhxXiEK21m52VQejON5kHLWb7eAOFmyH/wPO2c=;
+	s=arc-20240116; t=1724416620; c=relaxed/simple;
+	bh=wJm/cK61ICsrxHTxRJLxc2PoHQxXnV6Nne6+HqDiJW4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CL73DuxoudeHWVwWkApBu7w0rvV1Z+RYoloh5fVe/jXGSq+ow7XPqNtCJtSkX8ze0rJmM70ldX6viFQMuRhS54GsbZVKp/x141CB6JdEkoMOXPKEhZCWtxz6+CsuIzGKAyzcW2EVc2X9WHMe/og1Z4hd+dYhvducuJqseZYK7pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1oDYwBqT; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IL8m+tZRH0NH7TTs3Y3T6ZKZMW0ktdt17CP3zTeJE78=; b=1oDYwBqTlDD8oyW4lxmsQ9JX+q
-	x7WCVI6a0TNOq4R9fUha8rmSOcrIMYtWYy6oQCcAcZ65ECjJ8dCFNShmnRQZ9HePbHH8DbFo016zj
-	P4p4SWA4pqWDABOpjRQmiEsOzoc+ZQhHChjzSu4SeaHHFdqno2zo3eOwn51icxBAs9MqndcQprx0D
-	M9ttVQXXcCzkxtxV7GuUydx6y6J1N4uv9tbxUfAkVsfaQ+jXPjE/Jt8AMcZPyeMCdzkngCv5yQ5Hy
-	7AE65LRbU2KJBuE+rhnQ5JkA4EacOp8qqx1Yc2Z0nMIect6BU2G735I28DsEzOqLbYqUZunKPk4PB
-	wWSCtrww==;
-Received: from i5e861933.versanet.de ([94.134.25.51] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1shTV2-0004zK-0B; Fri, 23 Aug 2024 14:34:40 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-kernel@vger.kernel.org
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	kernel@collabora.com,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 0/4] Add pinctrl support for rk3576
-Date: Fri, 23 Aug 2024 14:34:37 +0200
-Message-ID: <172441646605.877570.8075942261050000.b4-ty@sntech.de>
+	 MIME-Version:Content-Type; b=CgEm23S2YuUNdb87zk9MnUO+nNvHLHm6huIoosEUuRPZ9Hv4RN8XUxvX4907a8c4njIzv010JG19pT9ehGG1zCHBwKL0PHra2xH2ED+oFMVuZ99FKPB/AjjeLrtb9IZE3jvhlfZo6F1jdHuYpq9phMGWvcKSMnPlkJLeA7dnPn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgD5VoXW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72DE4C32786;
+	Fri, 23 Aug 2024 12:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724416620;
+	bh=wJm/cK61ICsrxHTxRJLxc2PoHQxXnV6Nne6+HqDiJW4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QgD5VoXWbeZLTru9Tt25aCYhK02rbbQac4qidyVHfGzE+bV8LU4NPLi4BMcFJEsSV
+	 Mja9oOTr8okQXOVansqh1krU3Cdl0UkXQ++CuZqDD7wNa7LEQMqfo1uq9OTEiVMqLG
+	 6XCFsnL4xDGQi3XY77gs5evZpPZn1oWkCHRKqKjeLUJ550XFskgHz+Nngj497f8GsC
+	 YNwH43SjXX7y4e/I/AHcpp8/0sf/Ze2I/tdzCQjx2h6eKRwg/I0bNiYx3MdTPoxX8L
+	 s6RwuOf9mnw/xOXzbBtTUBcWJj28i/GZYwqXsXfHwVZF5Ur2JSlw5ytJE1Gqb1tD8U
+	 yS1VVo76yrUHA==
+From: Christian Brauner <brauner@kernel.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	Luis Chamberlain <mcgrof@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	chandan.babu@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org,
+	hare@suse.de,
+	gost.dev@samsung.com,
+	linux-xfs@vger.kernel.org,
+	hch@lst.de,
+	david@fromorbit.com,
+	Zi Yan <ziy@nvidia.com>,
+	yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org,
+	john.g.garry@oracle.com,
+	cl@os.amperecomputing.com,
+	p.raghav@samsung.com,
+	ryan.roberts@arm.com,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH v13 00/10] enable bs > ps in XFS
+Date: Fri, 23 Aug 2024 14:36:42 +0200
+Message-ID: <20240823-anstieg-nachwachsen-be47155a7797@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240822195706.920567-1-detlev.casanova@collabora.com>
-References: <20240822195706.920567-1-detlev.casanova@collabora.com>
+In-Reply-To: <20240822135018.1931258-1-kernel@pankajraghav.com>
+References: <20240822135018.1931258-1-kernel@pankajraghav.com> <ZsesYqVivEAToPUI@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,26 +75,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2513; i=brauner@kernel.org; h=from:subject:message-id; bh=wJm/cK61ICsrxHTxRJLxc2PoHQxXnV6Nne6+HqDiJW4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdaIrLviV+VlbhcaZ103ODmJXf29vOvTnKV1taYex2c v1Ng/8KHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABORfsPwP2zF82efLh7WelQn lbx56vdLCzYlJnn5PpzyUPTTMY+0HU8ZGf7mBDRzz3s+SaMhbUlH7MLY1pjVd4XCnkzdJpH4wGP +Ik4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Aug 2024 15:53:35 -0400, Detlev Casanova wrote:
-> Add support for the pinctrl core on the rk3576 SoC.
-> The patch from downstream has been rebased.
+On Thu, 22 Aug 2024 15:50:08 +0200, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> The grf driver is added support for the rk3576 default values:
-> - enable i3c weakpull SW control
-> - disable jtag on sdmmc IO lines
+> This is the 13th version of the series that enables block size > page size
+> (Large Block Size) experimental support in XFS. Please consider this for
+> the inclusion in 6.12.
+> 
+> The context and motivation can be seen in cover letter of the RFC v1 [0].
+> We also recorded a talk about this effort at LPC [1], if someone would
+> like more context on this effort.
 > 
 > [...]
 
-Applied, thanks!
+I've rebased this onto v6.11-rc1 and did a test compile for each commit
+and ran xfstests for xfs. Looks good so far. Should show up in fs-next
+tomorrow.
 
-[1/4] dt-bindings: soc: rockchip: Add rk3576 syscon compatibles
-      commit: 4261b5804661f75408a8e2b63038308d2aae1f31
-[2/4] grf: rk3576: Add default GRF values
-      commit: e1aaecacfa135cd264a0db331d3ab8b2a04a54a3
+---
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Applied to the vfs.blocksize branch of the vfs/vfs.git tree.
+Patches in the vfs.blocksize branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.blocksize
+
+[01/10] fs: Allow fine-grained control of folio sizes
+        https://git.kernel.org/vfs/vfs/c/e8201b314c01
+[02/10] filemap: allocate mapping_min_order folios in the page cache
+        https://git.kernel.org/vfs/vfs/c/c104d25f8c49
+[03/10] readahead: allocate folios with mapping_min_order in readahead
+        https://git.kernel.org/vfs/vfs/c/7949d4e70aef
+[04/10] mm: split a folio in minimum folio order chunks
+        https://git.kernel.org/vfs/vfs/c/fd031210c9ce
+[05/10] filemap: cap PTE range to be created to allowed zero fill in folio_map_range()
+        https://git.kernel.org/vfs/vfs/c/e9f3b433acd0
+[06/10] iomap: fix iomap_dio_zero() for fs bs > system page size
+        https://git.kernel.org/vfs/vfs/c/d940b3b7b76b
+[07/10] xfs: use kvmalloc for xattr buffers
+        https://git.kernel.org/vfs/vfs/c/13c9f3c68405
+[08/10] xfs: expose block size in stat
+        https://git.kernel.org/vfs/vfs/c/4e70eedd93ae
+[09/10] xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+        https://git.kernel.org/vfs/vfs/c/f8b794f50725
+[10/10] xfs: enable block size larger than page size support
+        https://git.kernel.org/vfs/vfs/c/0ab3ca31b012
 
