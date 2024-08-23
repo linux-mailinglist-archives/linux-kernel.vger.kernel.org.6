@@ -1,209 +1,100 @@
-Return-Path: <linux-kernel+bounces-299132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC47A95D0A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:01:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF04D95D103
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02046B249E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99200288A12
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0928D186E4A;
-	Fri, 23 Aug 2024 15:00:37 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC51018BC10;
+	Fri, 23 Aug 2024 15:06:52 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C73185B4B
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F1918BBAF;
+	Fri, 23 Aug 2024 15:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425236; cv=none; b=CEBp1Iz84fDlGd7A7k/M1wCoBUnjHXzU/+NhcNtgFmSqtYXxCt8JjOqM+uV0njCfrFZwAIUuBcP721Yj1eT9XWXZvy4ZQFzL7gGhSbAowZLWK/nIm8rxTFbuUi8DDl1tQRNPIdRsW0fU9E1eRu54CWCxNGWqC7184/Kb0A535Og=
+	t=1724425612; cv=none; b=P8oaYBTTY804EdN9hGsHcnKMNiLvkmyZeC9BERUrkUIhga20zUtmvUUj8H3EpkYFREftN4If51/ZLFgujn7jQXT086RE323tvgXjaqFYwWzoE8yC8+a3KZ9PDnMoG4o0B/OiB47kf2hNK9vSe9N2wUlvL5I73hXSjlFcAtsW6jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724425236; c=relaxed/simple;
-	bh=lTSYk0aSBm+RSaAVpLAUX1s/SyMt+z40moaxC4zmCn0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=u7JAV9aakf9Z6VRJp/Z1IZtXjjqXeL+NGQVm3E5rvc6ooxCpZG8cxiZJK9GHC8JUqKmyajO7nex9NODDq+5FtN7ka4fFZaDDa9CRR00lA4YWM22DGrKmkVVxDl/r7dVgkFmb7I181hf8FirmU+zBop328kC0BYjnnbjws7XaUW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d5101012eso22265485ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:00:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724425234; x=1725030034;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RI3HAji1S8GHcEXYCAvXs5ujaFu4BOoJcjauiukabaE=;
-        b=mUarkqtGbSPGHBnYC8OwS1vYJSx5xY9TQ327GHKLR3Ta3H3Xp14Pek7BlQiCfcvzJ+
-         sf4X8q65rulq/gTS6TPoxC+baHMhEyZL0dhNH7trDncWUnecy7ymURTRfauXpeUrk1BZ
-         0F8L62Gc9jXBD1U5bu47TRGQvFYowsKpMvCEUi3zjZs0AGA4pENu1PNWChwTT7WVF1JN
-         3yQMQx+bNutgnHr2SlDiUT/zrQa+Yh35D9m7MsBANdpk205GRsGyvCb1OM3HAe1oc9Cw
-         D8swmJcRHXPKaMBSXQWdqMJrE6dGA6DoJ56CJjP4+KmecGu5fFwCBKf4/4dwrtkWuipb
-         ysNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAb74NfshWbsUWV4y5TYxRU2HQM77EOvgrUljLyZ8yLaampI2jmUz3D4+1ohS5KnkUtBTCGSuf110Xlr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO05cVD/jsXiuuGdro3j/MANxjaDwbcn0wpxgClL3+EeBLs9Kl
-	88eCUJmvzNwJ0qpyZTNRi+j7TiNtMQuw6amyGrloI0bkgt2pVF16EOiLHKrrSkMKJbQZlFMTtXj
-	0cHTa0w1djg9Vgr0MZzJXCMWJttSJWlcQwVh3fvp7RQJHHatJ3ErWK3M=
-X-Google-Smtp-Source: AGHT+IEs6Coo4V5Nq4hy9dv4eQsH/oRKWFJmdi/tqT6t3qOb37rUi+gyzJGB77h6NA2LsVYl1rEUe1R5FgQEOI8nR3w3EePkrzrd
+	s=arc-20240116; t=1724425612; c=relaxed/simple;
+	bh=dHvCfZAm6hCueHk7ulU2hHUANS1hcdYEg9zAj0OZjSg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O/NTaHEr0c9INjzrgj1WvtPTOC2E5hmv5RtxIe5X4i1oSV1ZN5CoydzcnVW+bjpKuuge/3/cfroSmS/N8UToa8CblL0m8Lp5DWzUEVhRBLj7RoYYvhnXiXMvoAEcAa+bQ/C+Aff3B87VUsqVR1t6JinLNC5edBv9L1LhrfAkC08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wr3Lq0Mr8z1j6QT;
+	Fri, 23 Aug 2024 23:06:43 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id F278E14013B;
+	Fri, 23 Aug 2024 23:06:47 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 Aug 2024 23:06:47 +0800
+From: Yunsheng Lin <linyunsheng@huawei.com>
+To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
+	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>, Andrew
+ Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
+Subject: [PATCH net-next v14 06/11] mm: page_frag: use __alloc_pages() to replace alloc_pages_node()
+Date: Fri, 23 Aug 2024 23:00:34 +0800
+Message-ID: <20240823150040.1567062-7-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20240823150040.1567062-1-linyunsheng@huawei.com>
+References: <20240823150040.1567062-1-linyunsheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4c:b0:39a:e909:29f6 with SMTP id
- e9e14a558f8ab-39e3c8db574mr1907405ab.0.1724425233858; Fri, 23 Aug 2024
- 08:00:33 -0700 (PDT)
-Date: Fri, 23 Aug 2024 08:00:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000819c1d06205b0926@google.com>
-Subject: [syzbot] [fs?] KASAN: stack-out-of-bounds Read in proc_pid_stack (2)
-From: syzbot <syzbot+f499adf92735b1da225e@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hello,
+It seems there is about 24Bytes binary size increase for
+__page_frag_cache_refill() after refactoring in arm64 system
+with 64K PAGE_SIZE. By doing the gdb disassembling, It seems
+we can have more than 100Bytes decrease for the binary size
+by using __alloc_pages() to replace alloc_pages_node(), as
+there seems to be some unnecessary checking for nid being
+NUMA_NO_NODE, especially when page_frag is part of the mm
+system.
 
-syzbot found the following issue on:
-
-HEAD commit:    c562ba719df5 riscv: kexec: Avoid deadlock in kexec crash p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=1568d6e9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d1a27c56011377
-dashboard link: https://syzkaller.appspot.com/bug?extid=f499adf92735b1da225e
-compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: riscv64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-c562ba71.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d9afe016b0e4/vmlinux-c562ba71.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cd6f9ae3bf94/Image-c562ba71.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f499adf92735b1da225e@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: stack-out-of-bounds in walk_stackframe+0x3f0/0x452 arch/riscv/kernel/stacktrace.c:66
-Read of size 8 at addr ff20000002fab5e8 by task syz.0.1927/19558
-
-CPU: 1 PID: 19558 Comm: syz.0.1927 Not tainted 6.10.0-rc6-syzkaller-gc562ba719df5 #0
-Hardware name: riscv-virtio,qemu (DT)
-Call Trace:
-[<ffffffff8000f6fc>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
-[<ffffffff85c33fac>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
-[<ffffffff85c8ddfa>] __dump_stack lib/dump_stack.c:88 [inline]
-[<ffffffff85c8ddfa>] dump_stack_lvl+0x122/0x196 lib/dump_stack.c:114
-[<ffffffff85c3e31c>] print_address_description mm/kasan/report.c:377 [inline]
-[<ffffffff85c3e31c>] print_report+0x288/0x596 mm/kasan/report.c:488
-[<ffffffff8091ece8>] kasan_report+0xec/0x118 mm/kasan/report.c:601
-[<ffffffff80920b80>] __asan_report_load8_noabort+0x12/0x1a mm/kasan/report_generic.c:381
-[<ffffffff8000f5ec>] walk_stackframe+0x3f0/0x452 arch/riscv/kernel/stacktrace.c:66
-[<ffffffff85c90236>] arch_stack_walk+0x1c/0x26 arch/riscv/kernel/stacktrace.c:163
-[<ffffffff8030832e>] stack_trace_save_tsk+0x16c/0x1f6 kernel/stacktrace.c:150
-[<ffffffff80bd1a68>] proc_pid_stack+0x176/0x27e fs/proc/base.c:458
-[<ffffffff80bd2df8>] proc_single_show+0xf0/0x224 fs/proc/base.c:778
-[<ffffffff80a61004>] seq_read_iter+0x454/0x1020 fs/seq_file.c:230
-[<ffffffff80a61e5c>] seq_read+0x28c/0x350 fs/seq_file.c:162
-[<ffffffff809becf6>] vfs_read+0x1b0/0x85c fs/read_write.c:474
-[<ffffffff809c098e>] ksys_read+0x12a/0x270 fs/read_write.c:619
-[<ffffffff809c0b42>] __do_sys_read fs/read_write.c:629 [inline]
-[<ffffffff809c0b42>] __se_sys_read fs/read_write.c:627 [inline]
-[<ffffffff809c0b42>] __riscv_sys_read+0x6e/0x94 fs/read_write.c:627
-[<ffffffff8000e204>] syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:90
-[<ffffffff85c900b4>] do_trap_ecall_u+0x14c/0x214 arch/riscv/kernel/traps.c:330
-[<ffffffff85cb3264>] ret_from_exception+0x0/0x64 arch/riscv/kernel/entry.S:112
-
-The buggy address belongs to the virtual mapping at
- [ff20000002fa8000, ff20000002fad000) created by:
- kernel_clone+0x11e/0x946 kernel/fork.c:2797
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xacd50
-memcg:ff60000015c3cf82
-flags: 0xffe000000000000(node=0|zone=0|lastcpupid=0x7ff)
-raw: 0ffe000000000000 0000000000000000 0000000000000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff ff60000015c3cf82
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x102dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 19550, tgid 19550 (syz.0.1925), ts 6742314481100, free_ts 6709608225100
- __set_page_owner+0xa2/0x70c mm/page_owner.c:320
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0xec/0x1e4 mm/page_alloc.c:1473
- prep_new_page mm/page_alloc.c:1481 [inline]
- get_page_from_freelist+0x123c/0x27e8 mm/page_alloc.c:3425
- __alloc_pages_noprof+0x1f0/0x213e mm/page_alloc.c:4683
- alloc_pages_mpol_noprof+0xf8/0x48c mm/mempolicy.c:2265
- alloc_pages_noprof+0x174/0x2f0 mm/mempolicy.c:2336
- vm_area_alloc_pages mm/vmalloc.c:3575 [inline]
- __vmalloc_area_node mm/vmalloc.c:3651 [inline]
- __vmalloc_node_range_noprof+0x99a/0x11d6 mm/vmalloc.c:3832
- alloc_thread_stack_node kernel/fork.c:309 [inline]
- dup_task_struct kernel/fork.c:1115 [inline]
- copy_process+0x2c3c/0x6b22 kernel/fork.c:2220
- kernel_clone+0x11e/0x946 kernel/fork.c:2797
- __do_sys_clone+0xe4/0x118 kernel/fork.c:2940
- __se_sys_clone kernel/fork.c:2908 [inline]
- __riscv_sys_clone+0xa0/0x10e kernel/fork.c:2908
- syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:90
- do_trap_ecall_u+0x14c/0x214 arch/riscv/kernel/traps.c:330
- ret_from_exception+0x0/0x64 arch/riscv/kernel/entry.S:112
-page last free pid 19445 tgid 19439 stack trace:
- __reset_page_owner+0x8c/0x400 mm/page_owner.c:297
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1093 [inline]
- free_unref_page+0x59c/0xe9c mm/page_alloc.c:2588
- __free_pages+0x13a/0x1ba mm/page_alloc.c:4770
- vfree+0x1c6/0xb9e mm/vmalloc.c:3355
- kcov_put kernel/kcov.c:429 [inline]
- kcov_put kernel/kcov.c:425 [inline]
- kcov_close+0x44/0x72 kernel/kcov.c:525
- __fput+0x37c/0xa12 fs/file_table.c:422
- ____fput+0x1a/0x24 fs/file_table.c:450
- task_work_run+0x16a/0x25e kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0x9ee/0x2896 kernel/exit.c:874
- do_group_exit+0xd4/0x26c kernel/exit.c:1023
- get_signal+0x1e1c/0x232a kernel/signal.c:2909
- arch_do_signal_or_restart+0x8bc/0x1172 arch/riscv/kernel/signal.c:437
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x2a6/0x31e kernel/entry/common.c:218
- do_trap_ecall_u+0x8e/0x214 arch/riscv/kernel/traps.c:345
- ret_from_exception+0x0/0x64 arch/riscv/kernel/entry.S:112
-
-Memory state around the buggy address:
- ff20000002fab480: f1 f1 f1 f1 00 00 00 00 00 00 00 00 00 00 00 f3
- ff20000002fab500: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
->ff20000002fab580: 00 00 00 00 f1 f1 f1 f1 f1 f1 00 00 00 00 00 f3
-                                                          ^
- ff20000002fab600: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
- ff20000002fab680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
+CC: Alexander Duyck <alexander.duyck@gmail.com>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ mm/page_frag_cache.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+index 2865bff7199d..b3053a0f38aa 100644
+--- a/mm/page_frag_cache.c
++++ b/mm/page_frag_cache.c
+@@ -29,11 +29,11 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+ #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+ 	gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
+ 		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+-	page = alloc_pages_node(NUMA_NO_NODE, gfp_mask,
+-				PAGE_FRAG_CACHE_MAX_ORDER);
++	page = __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
++			     numa_mem_id(), NULL);
+ #endif
+ 	if (unlikely(!page)) {
+-		page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
++		page = __alloc_pages(gfp, 0, numa_mem_id(), NULL);
+ 		if (unlikely(!page)) {
+ 			nc->encoded_page = 0;
+ 			return NULL;
+-- 
+2.33.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
