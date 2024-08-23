@@ -1,106 +1,232 @@
-Return-Path: <linux-kernel+bounces-299784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2050595DA0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:59:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506A795D9E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2222812F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:59:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FE71C22BAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA7E1CF2A1;
-	Fri, 23 Aug 2024 23:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877B01C93B0;
+	Fri, 23 Aug 2024 23:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oajxsVtB"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d/xNKJQE"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28961CC889
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2018B179AA
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724457522; cv=none; b=hLDl7lNAWMwSm0I+iFXRtf+JXg1JJuuoj4hapJ5HD78N9sbbgUHTwYHjWS9x0OtZpLxOP2EtL7daSgKYS5z34XDuagDUID2dq24KKqJHsjyMuu7arMdpnHj603ezQAjWP0ZVpRI05Mb34sp8mFP7k17WkuUp2chxUCBwpXahil0=
+	t=1724456996; cv=none; b=CTboOA03rKg0Ee3QtZwWxW2vliFep2g41KuLSsbwkGtLDX4Ww0TkwhRmuTJ6EJM89hbe+zEhqdsWCLbdJ3rE+rg2WsyDdoQtlW8rtNt0xUMDK0QsGjAcyo1sXdUDOC507B78MHpKsOEZgAvuIaV4WPHEDGc4ZzsGW/FXMTSQa/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724457522; c=relaxed/simple;
-	bh=EZnDiP+H4EwOKgX7qkLqjYtgAGsjgTHhpEH2SYUK4xw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BXfUqUjBD2iks648SR8vpwAJnHenMcboqqkuqoTdHlJhqvnO0dxo88TXalMkCAs2vpW+zDxO8OXo4zQrKNOnkl+S0FhbwSjP6E9qo/cyHUel0WM49B0hi4M/68vugWSEpVr7XKrxr7WUNCYSu++u4NYi3Cm0KJli252VOJ0IdyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oajxsVtB; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1724456996; c=relaxed/simple;
+	bh=5ocuxDCZOw3ZIFqYLiWdmWuds8/rDOyOjJDZjhds/iQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fPP1ui1y7sGXemuAvZQMyHZfz/Nvv9AUoYz/pkgHlZlD8SmuytNOa0W7UEcu83Js2gsD5iIDEOZvtGdP9H+jum/PTzwdK8MY65vVCUkKczNM13AnRna/AcKuAPmfzpWW2vA0HZdT3rdG2gWgaA5pfnjBqXLVPfLOODS93mMy0sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d/xNKJQE; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-201e7b422ffso19951295ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:58:40 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-201fed75b38so40455ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724457520; x=1725062320; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rR0a1BvyppOzWFu9WKacrQqpVmdl/25JJw93CQIjilE=;
-        b=oajxsVtBhdj1US0x2DYYzAbsBJE7pEi7e5Tp8BzI5My1ncjd3rIbINYZEQrSeN3DRI
-         TaAF3OvyomQOyI+nWb9FVOr+hwIuKCjvRRSAjdUd+6SXbIVxUw2DgPvjTpZi1jbncE4a
-         06ztmhZNOXgOFPCc30tNXnuajZjuFfbvtj2Nh1WaX/h1aKbFHtBR8UsUQZ5JXBa5hdOo
-         Fhm8oVIaDaAPBK6vXOFuRVl6kecXQx50JaNlc3+ygEgnb2CpIMEBmJKDeF1RKl8JVGBu
-         8VJNWsCnd6yXP/AsU2kPy4qoGZXyHhN8KSWdkpxPEAwEgM0uiAsjBZopBQTWbPBqTM6N
-         UciA==
+        d=google.com; s=20230601; t=1724456994; x=1725061794; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GL+ZvkphrtYI2AGt7Cux2hCNmAwRaDUiXvbeUWnxfz0=;
+        b=d/xNKJQEBJLjI9E7IJ8c1mtjszFkh7N1+JfQUhdIkl6ldDIWk2l4jSHZ97kpL2OnAV
+         p30QBJ9aEhVWm5KqZpeZzMOPL4CbOUzkqHxWnyuW9f+QDa+KOCMiuu3HkEJAIFrGZOXq
+         HI9xKdm2uBMOBimhWi84msPTQSX5xWKRSJM/Oeb08dWKaKJanFkiqR12NfVA6zN7/88t
+         meqSzl/sBfsxu36gePRx3XXOkaOSxkrbtUArunDhHEz0VgaMNYeHWCUBKmULwUEEIBDq
+         a3nJ8sNjU5qZwSVttAw+QfsHHMpbii5xBcx6EQPvigbMzSwq+xBQhmctDoST4KM+gsZg
+         umBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724457520; x=1725062320;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rR0a1BvyppOzWFu9WKacrQqpVmdl/25JJw93CQIjilE=;
-        b=g/rhHkBkim4phGuzCuaXlB4OtP2GqcYaDhr6StXN/uMAIGrwMekmWr468mnHTCE9cv
-         pxa/1F+8AZ0p7zzWnXykJre5wOLpt4kMo/vLqdAdt92fTYy0vME0yRBT9NTwt4d/UX88
-         /ytr1qnSzqMgjLGJmCurtwMoMCvx0o1suxJsM3Q14XUUy9AfEzBztosiQum+Gl5qIRdX
-         eIeH9BTwKw689br9hfHEJZTw6ElQdNpQx/SCgpP5oKB4UsHJnBrhqU0N+LLEPctqxWTs
-         /chM/KO9EkkOqSUMPvL9YXTIHkHhAgO3P3AE2MiDh7woWv1sMD4RpaSBjtn21+cAedFL
-         SRyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWrA/4E0MjdQfmhbGPKmKbFe1UpalVY0eOrJEkL+h8K/qC2EYdinV8WUPyULIAwxdi/g0L/1uoPqN7DyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG+ShjALXLm8pikDJ6TnXOp4Ej1EyccpgHf8tNkRHqjfxTzuOF
-	RvdqbMj3L8hCSBRB5RT8SVOIfMrR8zNhW3iwD6Z7mYHf0Y0J9OMzugNtYfk1kdLcQMswIS/TJsb
-	nAg==
-X-Google-Smtp-Source: AGHT+IG5VtW+JpePTOa8v1oWLzCJ3MY+DXJlX9JgMVSjvzgFJr+VY3CC4ZhaQ8GeVnaLr8IUKRsezzzkiFg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:d50d:b0:203:616a:8673 with SMTP id
- d9443c01a7336-2039e4d5cdfmr3410755ad.5.1724457520203; Fri, 23 Aug 2024
- 16:58:40 -0700 (PDT)
-Date: Fri, 23 Aug 2024 16:48:09 -0700
-In-Reply-To: <20240816130124.286226-1-vkuznets@redhat.com>
+        d=1e100.net; s=20230601; t=1724456994; x=1725061794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GL+ZvkphrtYI2AGt7Cux2hCNmAwRaDUiXvbeUWnxfz0=;
+        b=fh7N6jQwSdba1GrOQnrMI8+1bJdcMMOAsjplD8uarfbjZW9WqmmwY7jhWoQcbSnOsY
+         AF1xRPuFDqb73IO5v0qLAD2RJUxWpQ4jTzPlZasijxeSN5JfYod+yTlNesq2PyRAEzsK
+         c6mEj1z23rHFVanQXUZsNMGsMZttSE9VYsXH/T3J2eG+wyvHQdwVWJMg8q28puUYnmU/
+         ygtk7aJtLmBiADORtWy03sNH76tFvpYmwwurGGCibanZmoSdidpwie66SUI4hkMWCwUU
+         gDTD/iQi45v+R748EbZ1EfUhrJSIGpwaG0/ln5RCsDMl88uZpv/u9J78/w21NOArB52e
+         DZug==
+X-Forwarded-Encrypted: i=1; AJvYcCUuwHgurE4+y9apUoQMQ7rez1W1hmqXU8Kx41NzSjB8fx+g2PlNr32jTxT+Rk8qDaMZUURxtVh276F0a3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXCqVTsRpi6hAN45b+A/vifXU32/DM6alyrOTV1g3XaUM3eCU6
+	uOAup6g8G73KruJrgfKCFLATkEv4O2xzmh+wIPp9CLBojMrY5wv/+vqdb9/Tf3o0L6cF6uYI14v
+	kWrxj8LGkIxt04E0smvOIZIaLvd66/NYYvZzI
+X-Google-Smtp-Source: AGHT+IH7T/D3OPq+qArINfDflUCiD4Co7XCZAblkw1IcaBGIpd7ZEREuAv1eIqhjattHtSVnZ24/kUO+/gnJwo1h8TQ=
+X-Received: by 2002:a17:902:ce86:b0:201:e2db:7bd1 with SMTP id
+ d9443c01a7336-203b6d972e0mr511015ad.19.1724456994054; Fri, 23 Aug 2024
+ 16:49:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240816130124.286226-1-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <172443886668.4129032.11970184788806787426.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: VMX: hyper-v: Prevent impossible NULL pointer
- dereference in evmcs_load()
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240823185323.2563194-1-jmattson@google.com> <20240823185323.2563194-5-jmattson@google.com>
+ <26e72673-350c-a02d-7b77-ebfd42612ae6@amd.com> <Zsj2anWub8v9kwBA@google.com>
+ <59449778-ad4e-69c6-d1dc-73dacb538e02@amd.com> <CALMp9eTNX7=siC=DtBOSDLr6Aswzsq0d6UAHQpEdTd2J8xXHuQ@mail.gmail.com>
+In-Reply-To: <CALMp9eTNX7=siC=DtBOSDLr6Aswzsq0d6UAHQpEdTd2J8xXHuQ@mail.gmail.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 23 Aug 2024 16:49:42 -0700
+Message-ID: <CALMp9eQsekeoT_vm-oGTf4mja6UxsVg_WnvneT=M00rox2e+NA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Sandipan Das <sandipan.das@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Venkatesh Srinivas <venkateshs@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 16 Aug 2024 15:01:24 +0200, Vitaly Kuznetsov wrote:
-> GCC 12.3.0 complains about a potential NULL pointer dereference in
-> evmcs_load() as hv_get_vp_assist_page() can return NULL. In fact, this
-> cannot happen because KVM verifies (hv_init_evmcs()) that every CPU has a
-> valid VP assist page and aborts enabling the feature otherwise. CPU
-> onlining path is also checked in vmx_hardware_enable().
-> 
-> To make the compiler happy and to future proof the code, add a KVM_BUG_ON()
-> sentinel. It doesn't seem to be possible (and logical) to observe
-> evmcs_load() happening without an active vCPU so it is presumed that
-> kvm_get_running_vcpu() can't return NULL.
-> 
-> [...]
+On Fri, Aug 23, 2024 at 3:48=E2=80=AFPM Jim Mattson <jmattson@google.com> w=
+rote:
+>
+> On Fri, Aug 23, 2024 at 3:12=E2=80=AFPM Tom Lendacky <thomas.lendacky@amd=
+.com> wrote:
+> >
+> > On 8/23/24 15:51, Sean Christopherson wrote:
+> > > On Fri, Aug 23, 2024, Tom Lendacky wrote:
+> > >> On 8/23/24 13:53, Jim Mattson wrote:
+> > >>> From Intel's documention [1], "CPUID.(EAX=3D07H,ECX=3D0):EDX[26]
+> > >>> enumerates support for indirect branch restricted speculation (IBRS=
+)
+> > >>> and the indirect branch predictor barrier (IBPB)." Further, from [2=
+],
+> > >>> "Software that executed before the IBPB command cannot control the
+> > >>> predicted targets of indirect branches (4) executed after the comma=
+nd
+> > >>> on the same logical processor," where footnote 4 reads, "Note that
+> > >>> indirect branches include near call indirect, near jump indirect an=
+d
+> > >>> near return instructions. Because it includes near returns, it foll=
+ows
+> > >>> that **RSB entries created before an IBPB command cannot control th=
+e
+> > >>> predicted targets of returns executed after the command on the same
+> > >>> logical processor.**" [emphasis mine]
+> > >>>
+> > >>> On the other hand, AMD's IBPB "may not prevent return branch
+> > >>> predictions from being specified by pre-IBPB branch targets" [3].
+> > >>>
+> > >>> However, some AMD processors have an "enhanced IBPB" [terminology
+> > >>> mine] which does clear the return address predictor. This feature i=
+s
+> > >>> enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
+> > >>>
+> > >>> Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CP=
+UID
+> > >>> accordingly.
+> > >>>
+> > >>> [1] https://www.intel.com/content/www/us/en/developer/articles/tech=
+nical/software-security-guidance/technical-documentation/cpuid-enumeration-=
+and-architectural-msrs.html
+> > >>> [2] https://www.intel.com/content/www/us/en/developer/articles/tech=
+nical/software-security-guidance/technical-documentation/speculative-execut=
+ion-side-channel-mitigations.html#Footnotes
+> > >>> [3] https://www.amd.com/en/resources/product-security/bulletin/amd-=
+sb-1040.html
+> > >>> [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech=
+-docs/programmer-references/24594.pdf
+> > >>>
+> > >>> Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and feat=
+ures as derived in generic x86 code")
+> > >>> Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
+> > >>> Signed-off-by: Jim Mattson <jmattson@google.com>
+> > >>> ---
+> > >>>  arch/x86/kvm/cpuid.c | 6 +++++-
+> > >>>  1 file changed, 5 insertions(+), 1 deletion(-)
+> > >>>
+> > >>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > >>> index ec7b2ca3b4d3..c8d7d928ffc7 100644
+> > >>> --- a/arch/x86/kvm/cpuid.c
+> > >>> +++ b/arch/x86/kvm/cpuid.c
+> > >>> @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
+> > >>>     kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
+> > >>>     kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
+> > >>>
+> > >>> -   if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_=
+IBRS))
+> > >>> +   if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
+> > >>> +       boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
+> > >>> +       boot_cpu_has(X86_FEATURE_AMD_IBRS))
+> > >>>             kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
+> > >>>     if (boot_cpu_has(X86_FEATURE_STIBP))
+> > >>>             kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
+> > >>> @@ -759,6 +761,8 @@ void kvm_set_cpu_caps(void)
+> > >>>      * arch/x86/kernel/cpu/bugs.c is kind enough to
+> > >>>      * record that in cpufeatures so use them.
+> > >>>      */
+> > >>> +   if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
+> > >>> +           kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+> > >>
+> > >> If SPEC_CTRL is set, then IBPB is set, so you can't have AMD_IBPB_RE=
+T
+> > >> without AMD_IBPB, but it just looks odd seeing them set with separat=
+e
+> > >> checks with no relationship dependency for AMD_IBPB_RET on AMD_IBPB.
+> > >> That's just me, though, not worth a v4 unless others feel the same.
+> > >
+> > > You thinking something like this (at the end, after the dust settles)=
+?
+> > >
+> > >       if (WARN_ON_ONCE(kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB_RET) &&
+> > >                        !kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB)))
+> > >               kvm_cpu_cap_clear(X86_FEATURE_AMD_IBPB_RET);
+> >
+> > I was just thinking more along the lines of:
+> >
+> >         if (boot_cpu_has(X86_FEATURE_IBPB)) {
+> >                 kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
+> >                 if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
+> >                         kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+> >         }
+>
+> AFAICT, there are just two reasons that X86_FEATURE_IBPB gets set:
+> 1. The CPU reports CPUID.(EAX=3D7,ECX=3D0):EDX[bit 26] (aka X86_FEATURE_S=
+PEC_CTRL)
+> 2. The CPU reports CPUID Fn8000_0008_EBX[IBPB] (aka X86_FEATURE_AMD_IBPB)
+>
+> Clearly, in the second case, the KVM cpu capability for AMD_IBPB will
+> already be set, since it's specified in the mask for
+> CPUID_8000_0008_EBX.
+>
+> If this block of code is just trying to populate CPUID Fn8000_0008_EBX
+> on Intel processors, I'd rather change all of the predicates to test
+> for Intel features, rather than vendor-neutral features, so that the
+> derivation is clear. But maybe this block of code is also trying to
+> populate CPUID Fn8000_0008_EBX on AMD processors that may have some of
+> these features, but don't enumerate them via CPUID?
 
-Applied to kvm-x86 vmx, thanks!
+There's another argument for just nuking these cross-vendor
+derivations. How do we factor in CVE-2022-26373 (Post-barrier Return
+Stack Buffer Predictions)?
+Intel CPUs without IA32_ARCH_CAPABILITIES.PBRSB_NO[bit 24] have a
+weaker IBPB than AMD CPUs with CPUID Fn8000_0008_EBX[IBPB_RET], and
+probably should not be enumerating that CPUID bit.
 
-[1/1] KVM: VMX: hyper-v: Prevent impossible NULL pointer dereference in evmcs_load()
-      https://github.com/kvm-x86/linux/commit/2ab637df5f68
+Trying to derive cross-vendor mitigation equivalence is just going to
+end in tears.
 
---
-https://github.com/kvm-x86/linux/tree/next
+> > Thanks,
+> > Tom
+> >
+> > >>
+> > >
+> > >> Thanks,
+> > >> Tom
+> > >>
+> > >>>     if (boot_cpu_has(X86_FEATURE_IBPB))
+> > >>>             kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
+> > >>>     if (boot_cpu_has(X86_FEATURE_IBRS))
 
