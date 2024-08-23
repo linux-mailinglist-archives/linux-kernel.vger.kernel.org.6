@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-298411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6B695C6E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:46:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CF695C6E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CA81F21DCE
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE3BCB2204A
 	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784C913DDB9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8740E13DDBD;
 	Fri, 23 Aug 2024 07:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X2ZzyKj8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DJRb4xhw"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0EEE56E;
-	Fri, 23 Aug 2024 07:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F7D1304B0;
+	Fri, 23 Aug 2024 07:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724399183; cv=none; b=pU6rEs6e2HtTmvUHGmybgWn+FR0fggY90GWnGRHhjshSpf+QDFT2O10F8ErBUEJZ/smW901ASOtKsNh9CYURnoNTaOge4Vsa6MUk/dXzWSmEhbDPSKk2ez6C4j5PMWrML/uGrJO0t77/OJ/FlLU2X+8bPpoPDR4C3gkNV4iLn2g=
+	t=1724399183; cv=none; b=ohBOi1Ae5tM6vEVysl43tE/LziKS0eBP2ruIDbvFVGVnjSnJo5wQ3ju6kBY0M7RibKukH7lCaBe/NgQ/LjcHpoliDfAD+rkaeFo5q5dX07nmVmLGEebdKdMCm3e/EjgQuDB3kRkxd8n1LyWIsdjvkBHUxn5ZSDEjjOaaSmw6780=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724399183; c=relaxed/simple;
-	bh=1khzek1mpOyskhV/WZJAoR8W6Qt/xyLFvHy3BHVUR0U=;
+	bh=fAFSa1046tLaQ2J5k9hk59fp/d6a1Ubet9Edv7wJS/4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=LxMxe7Cp0cODkpr9CReSJBw0UsPyp6/a8TzSvQBE11emAFiU9GHo1ecGT+tu2cJ1nCVsZ15vF3PztS86gvMchC3lK/zcu+GTSkjPZaxaOl6hLBaX9ArRl1sk7ilMTyMRXSRqDXFXpif+AjR/CZ9ZLsrMdiMoGc5q2HyvoAqLMA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X2ZzyKj8; arc=none smtp.client-ip=217.70.183.197
+	 In-Reply-To:To; b=lAqbYLtHR8L/oDM5p0DBJO91aom4sHyS70Dd36EXShqVRPsXAcaLkBDgJJ4VjPBGbyyn6B2GUhhIObklP9uMfHyMhbCj7zlIRVEegkf/CPqX1vSa62gNGx+oAwfgGqBxwlt4RCIZj7im54uH2JVz5FlGTAzrHtOSliIrKS1cJOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DJRb4xhw; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0C4B61C0009;
-	Fri, 23 Aug 2024 07:46:18 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 986E51C0003;
+	Fri, 23 Aug 2024 07:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724399179;
+	t=1724399180;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7KUdMPyYR+5v/qbEBCxK1PceiwD8jwTiahptQXtojpk=;
-	b=X2ZzyKj8urvzrqsk6k+8Gco8lshbdru3Cfe4yOA2RoURFXfJ/9fAPEqeh2epkG+7JNLFNf
-	Vy6Z6XEgKmuCCl7xJhjJZDhvasgkbqiofJhPxILOyTKvDeqzRWuXzbwy0claYJh1skvIeB
-	QCeAuf8UGy6wIpqdAvc1t7oZOsfrpr2K+ih56NJbH5kuhGegf+MupS200bkCgNYUFv7B3r
-	o1K2eUYwGQDsqFo8RLleqw1xcUiGLkdHNLLPzXnZUzCcB4xkcjPZ08OXK8aLf5i4ZbfShI
-	D4xwR94TGnFYjZvttpLDLT/z1UAhdlFtMzGQRM5S/7yB1eGb6XQPVP2Aez6n/A==
+	bh=8caC1Z562fBuPuBKeXYHWprDTaCdN40rYBd8+JqzFkQ=;
+	b=DJRb4xhwqGH3ZIvBOG0cPUKSe+Z9+6OYj7xmc05kycLr89/mTQO1P1tocyJa0/IoFmOt0G
+	wiUqfJklM0VHj+jIiTE6KnUu36rJI2wViHDLjNTOhuhrpWmYPeE7LVwIG0NPyvW5CYtarZ
+	AlJzmMoUKx/wMGL+SJGEl1iEK7KQ5+E9DfBnjz1VqZ9PcAGA+i/BB9tGq1AhhtKXLP/1we
+	8QAT1410hFCMEJLSg6th5lmU/9CNSDvQyJQEpKts8BJ8SSsYx0rSMqCbWSCMiWqUQ5kpTV
+	pON0PFvNqQ5KgDCcN1qVz9GC5SzpdKAkBa83HabnOXtqv4ZHvxe6Vn+BAlWfpA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 23 Aug 2024 09:45:59 +0200
-Subject: [PATCH RESEND 1/3] ASoC: dapm-graph: remove the "ROOT" cluster
+Date: Fri, 23 Aug 2024 09:46:00 +0200
+Subject: [PATCH RESEND 2/3] ASoC: dapm-graph: visualize component On/Off
+ bias level
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-dapm-graph-v1-1-989a47308c4c@bootlin.com>
+Message-Id: <20240823-dapm-graph-v1-2-989a47308c4c@bootlin.com>
 References: <20240823-dapm-graph-v1-0-989a47308c4c@bootlin.com>
 In-Reply-To: <20240823-dapm-graph-v1-0-989a47308c4c@bootlin.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
@@ -65,76 +66,68 @@ To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
 X-Mailer: b4 0.14.1
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Widgets not belonging to any component are currently represented inside a
-cluster labeled "ROOT". This is not a correct representation of the actual
-structure, as these widgets are not necessarily related to each other as
-the ones inside actual components are.
-
-Improve the graphical representation by not adding a cluster around these
-widgets. Now a dot cluster represents a card component faithfully. This
-will be particularly important with the upcoming improvements which will
-visualize the component bias_level.
+Read the bias_level debugfs files (ignored so far) and visualize the On/Off
+state of each component using different graphic attributes in the generated
+graph.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- tools/sound/dapm-graph | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ tools/sound/dapm-graph | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/tools/sound/dapm-graph b/tools/sound/dapm-graph
-index 57d78f6df041..205783d124d3 100755
+index 205783d124d3..4e90883912d0 100755
 --- a/tools/sound/dapm-graph
 +++ b/tools/sound/dapm-graph
-@@ -150,29 +150,32 @@ process_dapm_widget()
- #
- # $1 = temporary work dir
- # $2 = component directory
--# $3 = forced component name (extracted for path if empty)
-+# $3 = "ROOT" for the root card directory, empty otherwise
- process_dapm_component()
- {
-     local tmp_dir="${1}"
-     local c_dir="${2}"
-     local c_name="${3}"
-+    local is_component=0
+@@ -8,6 +8,8 @@
+ 
+ set -eu
+ 
++STYLE_COMPONENT_ON="color=dodgerblue;style=bold"
++STYLE_COMPONENT_OFF="color=gray40;style=filled;fillcolor=gray90"
+ STYLE_NODE_ON="shape=box,style=bold,color=green4"
+ STYLE_NODE_OFF="shape=box,style=filled,color=gray30,fillcolor=gray95"
+ 
+@@ -159,6 +161,7 @@ process_dapm_component()
+     local is_component=0
      local dot_file="${tmp_dir}/main.dot"
      local links_file="${tmp_dir}/links.dot"
++    local c_attribs=""
  
      if [ -z "${c_name}" ]; then
-+	is_component=1
-+
+ 	is_component=1
+@@ -166,16 +169,28 @@ process_dapm_component()
  	# Extract directory name into component name:
  	#   "./cs42l51.0-004a/dapm" -> "cs42l51.0-004a"
  	c_name="$(basename $(dirname "${c_dir}"))"
++    fi
 +
-+	echo ""                           >> "${dot_file}"
-+	echo "  subgraph \"${c_name}\" {" >> "${dot_file}"
-+	echo "    cluster = true"         >> "${dot_file}"
-+	echo "    label = \"${c_name}\""  >> "${dot_file}"
-+	echo "    color=dodgerblue"       >> "${dot_file}"
++    dbg_echo " * Component: ${c_name}"
++
++    if [ ${is_component} = 1 ]; then
++	if [ -f "${c_dir}/bias_level" ]; then
++	    c_onoff=$(sed -n -e 1p "${c_dir}/bias_level" | awk '{print $1}')
++	    dbg_echo "   - bias_level: ${c_onoff}"
++	    if [ "$c_onoff" = "On" ]; then
++		c_attribs="${STYLE_COMPONENT_ON}"
++	    elif [ "$c_onoff" = "Off" ]; then
++		c_attribs="${STYLE_COMPONENT_OFF}"
++	    fi
++	fi
+ 
+ 	echo ""                           >> "${dot_file}"
+ 	echo "  subgraph \"${c_name}\" {" >> "${dot_file}"
+ 	echo "    cluster = true"         >> "${dot_file}"
+ 	echo "    label = \"${c_name}\""  >> "${dot_file}"
+-	echo "    color=dodgerblue"       >> "${dot_file}"
++	echo "    ${c_attribs}"           >> "${dot_file}"
      fi
  
-     dbg_echo " * Component: ${c_name}"
- 
--    echo ""                           >> "${dot_file}"
--    echo "  subgraph \"${c_name}\" {" >> "${dot_file}"
--    echo "    cluster = true"         >> "${dot_file}"
--    echo "    label = \"${c_name}\""  >> "${dot_file}"
--    echo "    color=dodgerblue"       >> "${dot_file}"
+-    dbg_echo " * Component: ${c_name}"
 -
      # Create empty file to ensure it will exist in all cases
      >"${links_file}"
  
-@@ -181,7 +184,9 @@ process_dapm_component()
- 	process_dapm_widget "${tmp_dir}" "${c_name}" "${w_file}"
-     done
- 
--    echo "  }" >> "${dot_file}"
-+    if [ ${is_component} = 1 ]; then
-+	echo "  }" >> "${dot_file}"
-+    fi
- 
-     cat "${links_file}" >> "${dot_file}"
- }
 
 -- 
 2.34.1
