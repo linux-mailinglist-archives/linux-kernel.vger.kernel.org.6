@@ -1,276 +1,127 @@
-Return-Path: <linux-kernel+bounces-299672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C3F595D872
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6AB195D871
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8D8283969
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035291C217F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F76C1C8228;
-	Fri, 23 Aug 2024 21:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD9F1C8228;
+	Fri, 23 Aug 2024 21:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="ViMTctkb"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J4IdGAEe"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FE680C02;
-	Fri, 23 Aug 2024 21:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC86180C02
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 21:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724448537; cv=none; b=OPZqkT23t1yScp+Mwys9nmiYMmaTKI404qq+8R3DTWnUrsraHxlLBG3Gwi8vHaHwzyE92eTV51Dsqh5eCUl1ZfX5FudDNLSNipmrGLBQJseKkujSJrri9/EjwiS72a9Aie1nRIYylebC7BmupFvgnCnHtkvsqx6j6JQR292LK8U=
+	t=1724448525; cv=none; b=Tp46bSO8wJkijeo2666oDWj0+oIjWPuvi7npYnimUm+HNj9O/XwAwQIg4K684LSsE/gshPT8tApftYfFYj3FEnzqbAKwNzpPHa6wz4ca7IbVxD3dWp7dGXPd2JIFy8pWManuezjcMsNAPMdRfNF66ehRamtFB64yXfKPxaRuvOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724448537; c=relaxed/simple;
-	bh=c6xNW/TpQ5HUK0dj7qEfNUUIV3frhNM4wz6s9pjFjmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sWZuF/saHDTyeru4szjnyo6QnoS2fmjdQB9HO6MRZkemLGPD7G+2flNLNvGA8LAVn5+OHYiXsCsNBbHEY8lQvju+Bi8B6uiJZ0dEDoM+VtjPs9xoQ0NxPaDxQ+uH2EKtVANmjS41mAitx2X0F4WgU8K3R2yjnC7HM4KaDoAMSFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=ViMTctkb; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1724448522; x=1725053322; i=wahrenst@gmx.net;
-	bh=qkcGHdvyKCjnVC+LFjxQrSYxAZeZkbhPu1QmpJJSbQM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ViMTctkbFvrQPwsHewwRCGychyIdb/U7VRuLFyiyEnFTdYlPMyFXlpd/eOm6JPN6
-	 JRHswhs/F13/kfcTlntA3G1+LHZdSirlEsAuUOnZ7kjvzrjfwAhxa+IOYXJ0xYfC0
-	 LQcaaLLUP2DBbejTv9M+Wmp+akVL9My8zUj1UrFdhI1jw9oWSkqKeVbZyBAd/KEfE
-	 7mu9aHY0QeNMs27GZcFrDckXLLayLnQwMGufVQjE1kl9PGF4CS3MTJsjfTAEgawfH
-	 pAMKyxhoFRgwKDTOWUBHLdYC/RXjDkU6zJpR9cE3BRsYynkh3NKTIRNyrxwtvS3j9
-	 CMxcBWs3Rf+t/Ls73g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MMXUN-1sRrKv18kB-00LWPH; Fri, 23
- Aug 2024 23:28:42 +0200
-Message-ID: <bb55e4cb-245f-4e12-b4df-e9cdd06d2f67@gmx.net>
-Date: Fri, 23 Aug 2024 23:28:40 +0200
+	s=arc-20240116; t=1724448525; c=relaxed/simple;
+	bh=UDYnajIV2KOYW/jm/93SAiBCM+8IKtae0Uxn7ZsdlkY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fa0295KmUWqoB2MAACOycV9GQ1ovqipQchM7i8ZlYpIUCKWL5kGBlmvBaoiAQ9ZPJYZWYTs6p2hJNCIhj9XXrz61WVcJKhlL6B6aWioSVaWy3oxjWm2A7EibXAOvvEv7PNqAWeoZV7Jhs+BWU11lbcPP0uR0dOL7vGa6VxPYO7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J4IdGAEe; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-202146e93f6so25308965ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724448523; x=1725053323; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x6yyPOjZiqt8OBw3MWeKPxceSdJUt3buN6TZjEitZlA=;
+        b=J4IdGAEeuVnja/EstDLaW/oJ3oXvVX65vnxZXdRx2ci7U7Gc2wKVYuJ76p1a0Dxrdb
+         Qk+cIWfY6mii5p3CpuBpFugUucOWruCrt1KKcMV88m5hnPF0iQ9YH3Wv/qlzzGN4c7zI
+         SdanKZtVawi2qCwrdUiNg8b3P6keSaAOKV34c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724448523; x=1725053323;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6yyPOjZiqt8OBw3MWeKPxceSdJUt3buN6TZjEitZlA=;
+        b=HoCXf9t9JjUc6xyz+kAxwk8CHvzfw64x6cZ+BjnbOSIGWLPhLvOY+vIELi7eS85J9p
+         8Q+u0DZBV1kwjLhQxa/UzCepoQRyQ4XL+3p+dWQPvdcRLFBWExVQRmV3nTsGs70F6Hj8
+         xeVDjpE3Q/H+2C86L1T+gOV9wH/rnGxy7a39EKOkDSGTxurw9HaWhmGezljZPKZiRahQ
+         piakWfc1lx/UWGTb0Dt6v7WD5Id69QcZF7NZBA9uBcjupvtFVNgD8zA+3l5KJTJdjyqw
+         GzPcEDJO4gDCm6f9NmBL7YXVLb9Xwcm+cpt8vKZSVyp7gZOd+TCCtrojAiYw8zxPw+8V
+         BMqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9BCYI5Le+2dZ/XdxiNV/3T+QVfsNYxxIRh/cE6a7US6afW87LH3clVBjjvxU+DKVbfKMPEiXor8dfYzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7vyapxlxxoWWZOX+fZHGAqbBaNIyB5SfR/jfMzkXTcFYDB3n/
+	u0CdsuR8pXL2zlWEFgGOXN1SMz1fy6KelKiR3IedUMGqSCjietBbSaOcPgUIWA==
+X-Google-Smtp-Source: AGHT+IEyiELvUQ08sRXKAsH1w4lS8Mpljm5W6KidIpNO/oUI/CTnm9GKW1kRt4ARb+bsEYqhFyMDeQ==
+X-Received: by 2002:a17:903:1c6:b0:202:100f:7b9b with SMTP id d9443c01a7336-2039e4ca62amr43391485ad.35.1724448522990;
+        Fri, 23 Aug 2024 14:28:42 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:9d43:7af7:9970:8219])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20385594057sm32605055ad.119.2024.08.23.14.28.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 14:28:42 -0700 (PDT)
+Date: Fri, 23 Aug 2024 14:28:40 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
+	Jon Lin <jon.lin@rock-chips.com>, broonie@kernel.org,
+	heiko@sntech.de, linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	shengfei Xu <xsf@rock-chips.com>
+Subject: Re: [PATCH v3 5/6] spi: rockchip: Suspend and resume the bus during
+ NOIRQ_SYSTEM_SLEEP_PM ops
+Message-ID: <Zsj_CJR56TcahXBO@google.com>
+References: <20220216014028.8123-1-jon.lin@rock-chips.com>
+ <20220216014028.8123-6-jon.lin@rock-chips.com>
+ <20220621154218.sau54jeij4bunf56@core>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] staging: vchiq: Factor out bulk transfer for
- VCHIQ_BULK_MODE_WAITING
-To: Umang Jain <umang.jain@ideasonboard.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Phil Elwell <phil@raspberrypi.com>
-References: <20240823-to_sent2-v1-0-8bc182a0adaf@ideasonboard.com>
- <20240823-to_sent2-v1-1-8bc182a0adaf@ideasonboard.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240823-to_sent2-v1-1-8bc182a0adaf@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WtY7zDdVfG5+xRbIlLZQ78ZvTDIMAoP2in784yEQWdzWiT0+CZ+
- fMFQvWIpimr7X7saucfHtBi/7eGMCMO/G3abhKy0iQXDgsy0X5Wvyse1Rd7eZmGOaeFrJTt
- kjigikNBFJBWc0ewhJdpTNFvzJLQWTdkLiGSbV4qxWErH4a6sJyap1l/elarN82VeAGdIno
- phWPW7/Z6QD0VQ+kSwDsg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FpgBXQeSYpw=;8aZTMK2Mo4D9wMPi7CBUGgfTA91
- 8lvbKF0pDBKVpWPM6ut/9oIZ7EH+yfjDT3eYRHBPAk6o1gXIfucwFf0Y5gXKNheUTKk1x1pUN
- z1FvT18I1wMH7jVPoZlq7JMtNRa0fafYC5fY50lfsQSZD7hCZGkbVDkUXzhSaZPRhCJFc7dTA
- AX76h8gY1NgGy8cMSZlWjviTukLrvszzzzeqhZEvNKAub4M+uf/pjfuftcLMk9ojFQC+SqcI4
- a2XdUgikWaUoBuxdp6kHO358XmMxJt/xv8JFt1nkLH97AKnA6SUTK6I+HIyEznqJHDVuLOiaW
- F5zZ70LXudkrnSjLQSsvvvw/O4fmskZee6T6eBQ20SfzGw1mNZYWu/x+6njfe8SeKUEGzYvmj
- t+BeyIPhTUoNGyJCVg8W8DGg9o5l1yvXuqQkvZW94ma0jmXW3qkSjOp8aavEQxbdWH5O99pGx
- OJ3ob5N4dDVUfH8VR4HeNOLH9KRD/LbM2MWt561Mq4c9xHZEg9WygEeNMubePIAas7nA9MxU+
- ZhFHN9meokc4bZrc04/55PgY7G51YWEYLCDBX4lC9Y25NC9FfxuqGRUf+j1IH3KNzOy8zWt2+
- xKXfdmXKuyZDj64wkHwnfRA2oqjeoN/QXh+luTQsC3FqgP7FeEIoDaiyUzMisBSEEh929dgMI
- pDkyZEzVElKNL7lCCAG+bEShBVqvUCpL1h809lcvdFauYJqyL6ofY7IQNOCMulLOleJMcBH7v
- +55/9YwcbCE5GiSu6hNNpmcV4QFJRS7eHkJVyqLos0eDU7BKkjfvZo55ypl1q1CqifI8M1eO8
- 3OPXpzmPlTkkhfUvXvN21t0A==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220621154218.sau54jeij4bunf56@core>
 
-Hi Umang,
+On Tue, Jun 21, 2022 at 05:42:18PM +0200, Ondřej Jirman wrote:
+> On Wed, Feb 16, 2022 at 09:40:27AM +0800, Jon Lin wrote:
+> > From: shengfei Xu <xsf@rock-chips.com>
+> > 
+> > the wakeup interrupt handler which is guaranteed not to run while
+> > @resume noirq() is being executed. the patch can help to avoid the
+> > wakeup source try to access spi when the spi is in suspend mode.
+> 
+> This patch causes oops on suspend every single time, because it tries to disable
+> already disabled clocks (one disable in runtime PM suspend, and other one in
+> system suspend). It also fails to properly handle errors from clk_prepare_enable
+> in rockchip_spi_resume, potentially causing even more clock enable/disable
+> imballance issues.
+> 
+> Please send a revert and figure out a better fix for the original issue.
 
-Am 23.08.24 um 17:14 schrieb Umang Jain:
-> The bulk transfer is VCHIQ_BULK_MODE_WAITING is used by VCHIQ ioctl
-> interface. It is factored out to a separate function from
-> vchiq_bulk_transfer() to bulk_xfer_waiting_interruptible().
->
-> This is a part of vchiq_bulk_transfer refactoring. Each bulk mode
-> will have their dedicated functions to execute bulk transfers.
-> Each mode will be handled separately in subsequent patches.
->
-> bulk_xfer_waiting_interruptible() is suffixed with "_interruptible"
-> to denote that it can be interrupted when a signal is received.
-> -EAGAIN maybe returned in those cases, similar to what
-> vchiq_bulk_transfer() does.
->
-> Adjust the vchiq_irq_queue_bulk_tx_rx() in the vchiq-dev.c to call
-> bulk_xfer_waiting_interruptible() for waiting mode. A temporary
-> goto label has been introduced to jump the call execution over
-> vchiq_bulk_transfer() for waiting mode only. When all dedicated bulk
-> transfer calls are introduced, this label shall be dropped.
->
-> No function changes intended in this patch.
->
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-> ---
->   .../vc04_services/interface/vchiq_arm/vchiq_core.c | 52 ++++++++++++++=
-+++++---
->   .../vc04_services/interface/vchiq_arm/vchiq_core.h |  4 ++
->   .../vc04_services/interface/vchiq_arm/vchiq_dev.c  |  5 +++
->   3 files changed, 56 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
-e.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index 50af04b217f4..228a41ecf90c 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -3023,10 +3023,6 @@ int vchiq_bulk_transfer(struct vchiq_instance *in=
-stance, unsigned int handle,
->   		bulk_waiter->actual =3D 0;
->   		bulk_waiter->bulk =3D NULL;
->   		break;
-> -	case VCHIQ_BULK_MODE_WAITING:
-> -		bulk_waiter =3D userdata;
-> -		bulk =3D bulk_waiter->bulk;
-> -		goto waiting;
->   	default:
->   		goto error_exit;
->   	}
-> @@ -3115,7 +3111,6 @@ int vchiq_bulk_transfer(struct vchiq_instance *ins=
-tance, unsigned int handle,
->   		state->id, service->localport, dir_char, queue->local_insert,
->   		queue->remote_insert, queue->process);
->
-> -waiting:
->   	vchiq_service_put(service);
->
->   	status =3D 0;
-> @@ -3143,6 +3138,53 @@ int vchiq_bulk_transfer(struct vchiq_instance *in=
-stance, unsigned int handle,
->   	return status;
->   }
->
-> +/*
-> + * This function is called by VCHIQ ioctl interface and is interruptibl=
-e.
-> + * It may receive -EAGAIN to indicate that a signal has been received
-> + * and the call should be retried after being returned to user context.
-> + */
-> +int
-> +bulk_xfer_waiting_interruptible(struct vchiq_instance *instance, unsign=
-ed int handle,
-> +				void *userdata)
-> +{
-> +	struct vchiq_service *service =3D find_service_by_handle(instance, han=
-dle);
-> +	struct bulk_waiter *bulk_waiter =3D NULL;
-I think there is no need to init bulk_waiter with NULL
-> +	struct vchiq_bulk *bulk;
-> +	int status =3D -EINVAL;
-> +
-> +	if (!service)
-> +		goto error_exit;
-> +
-> +	if (!userdata)
-> +		goto error_exit;
-> +
-> +	if (service->srvstate !=3D VCHIQ_SRVSTATE_OPEN)
-> +		goto error_exit;
-> +
-> +	if (vchiq_check_service(service))
-> +		goto error_exit;
-> +
-> +	bulk_waiter =3D userdata;
-> +	bulk =3D bulk_waiter->bulk;
-> +
-> +	vchiq_service_put(service);
-> +
-> +	status =3D 0;
-> +
-> +	bulk_waiter->bulk =3D bulk;
-Maybe i missed something, but before vchiq_service_put() we already
-assigned the other way around.
-> +	if (wait_for_completion_interruptible(&bulk_waiter->event))
-> +		status =3D -EAGAIN;
-> +	else if (bulk_waiter->actual =3D=3D VCHIQ_BULK_ACTUAL_ABORTED)
-> +		status =3D -EINVAL;
-> +
-> +	return status;
-How about return the return code directly at these 3 places? This would
-improve readability.
+Did anyone ever resolve this? I still see this issue on 6.10.6.
 
-Best regards
-> +
-> +error_exit:
-> +	if (service)
-> +		vchiq_service_put(service);
-> +	return status;
-> +}
-> +
->   int
->   vchiq_queue_message(struct vchiq_instance *instance, unsigned int hand=
-le,
->   		    ssize_t (*copy_callback)(void *context, void *dest,
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
-e.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> index 77cc4d7ac077..1fda8631d1b6 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> @@ -470,6 +470,10 @@ vchiq_shutdown_internal(struct vchiq_state *state, =
-struct vchiq_instance *instan
->   extern void
->   remote_event_pollall(struct vchiq_state *state);
->
-> +extern int
-> +bulk_xfer_waiting_interruptible(struct vchiq_instance *instance, unsign=
-ed int handle,
-> +				void *userdata);
-> +
->   extern int
->   vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int hand=
-le, void *offset,
->   		    void __user *uoffset, int size, void *userdata, enum vchiq_bulk_=
-mode mode,
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev=
-.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> index 9cd2a64dce5e..445b7938eea3 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> @@ -324,6 +324,10 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_=
-instance *instance,
->   		dev_dbg(service->state->dev, "arm: found bulk_waiter %pK for pid %d\=
-n",
->   			waiter, current->pid);
->   		userdata =3D &waiter->bulk_waiter;
-> +
-> +		status =3D bulk_xfer_waiting_interruptible(instance, args->handle, us=
-erdata);
-> +
-> +		goto bulk_transfer_handled;
->   	} else {
->   		userdata =3D args->userdata;
->   	}
-> @@ -331,6 +335,7 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_i=
-nstance *instance,
->   	status =3D vchiq_bulk_transfer(instance, args->handle, NULL, args->da=
-ta, args->size,
->   				     userdata, args->mode, dir);
->
-> +bulk_transfer_handled:
->   	if (!waiter) {
->   		ret =3D 0;
->   		goto out;
->
+IIUC, we can actually do a partial revert -- we *should* be using
+pm_runtime_force_{suspend,resume}() (so that we coordinate clk-disable,
+etc. with the runtime PM state), but we also want to run in the noirq
+phase.
 
+If I don't see anyone else's solution or input, I'll plan on submitting
+a partial revert, which seems to test out OK for me.
+
+Brian
+
+P.S. One can work around this problem by disabling runtime PM for the
+controllers:
+
+for i in /sys/bus/platform/drivers/rockchip-spi/*/power/control; do
+  echo on >$i
+done
+
+But obviously that's not ideal.
 
