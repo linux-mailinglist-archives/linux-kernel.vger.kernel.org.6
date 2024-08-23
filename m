@@ -1,85 +1,73 @@
-Return-Path: <linux-kernel+bounces-299376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4347F95D3C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:53:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88B395D3DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF28F28526D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:53:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C638B231E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C8618BC24;
-	Fri, 23 Aug 2024 16:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62FF18BC2B;
+	Fri, 23 Aug 2024 17:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KYvmJyY/"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2056.outbound.protection.outlook.com [40.107.20.56])
+	dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b="A70FbLCS"
+Received: from eu-smtp-delivery-197.mimecast.com (eu-smtp-delivery-197.mimecast.com [185.58.86.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE5018CBE4
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724432002; cv=fail; b=tO+OYlUmXLsUPJlL/1MfiQveg9ajV/BX6Vd20Ta2g1z0NXWMY/jO/eouW1osHvkDdg/qh0lwAdNcUJSHS2GOfR4/p1/XtiklFKgoeOGvyE5z3mFCOCbyi40Nhazb4ai40xdFU8X2Wz/aGm+cWTRGG6BhdVWKP/db5hDkXtMA/O0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724432002; c=relaxed/simple;
-	bh=1NI6gifuqKy7oqZHeu8nKT5LY9C4Z4ddm6qLqa2zTks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NonweHXpVa5g3Z+KYqg8ALoZtuYo0Ew16ceGp5tUY0Egn61vw3Q+DRQX0Mkd45R6TartCOndRUssqsMqvsIsrGDkh552mZLhPlkqKpx/gHSKCAi7DNQwnVhQQH6a/9WIBeHaYvareu/a/qUzjksnifx3TpTqM5ZswbXT/21snog=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KYvmJyY/ reason="signature verification failed"; arc=fail smtp.client-ip=40.107.20.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FmYiLy5VVP5xn1qbj/2Kkp+6YaaxcewUG2C7K79rRLIOlpfqvDK7V6Ho68BfkkNrpTl0QDjfcrZNKwzJlBg68N5N1A3Qi02/ytOM0qZl0m7QKGu7shxYq2wiVIs/RsaVvPaxnWWqXqFu2GypyjVwPn4ezi/J1LnB6lhmTdI9nr8uGRULk89hEJecLDS1SeWFr6euqldpNT/wNobK2Kb8AwzG1b1aqRbMm20H3rMKJb04yx1HtaV9v0csIkTsCEsFPNP+B/feiNmkGAkGPlyTdu3+uZArfnZOirqarTa/xHyB0SKRpGC6wIlSqYXLAtZUYEJbnytE2dwXc97bCSzi3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iv/KU7R+Odg8DZQ6VTZ30nAdDP2Y4+Mz5Rkz9nwvpG4=;
- b=iIqrAp9ongLWdhvOcP0Brh4GWqsBwD9veiJT2/dMTLBOiw6OwsDCja+XS0eKeULtJ6t3Cic2Wk8vlBehemolnFW0jCUXGbXdZgrdYeyNTjWrFude9bNrvsQrpZ0CjWwDq+E2jazmcvD1TfwALin8I62a3FcGBxd9rwAIs27zPluLsvsYSZbLUNzysGHy4wif6Bi6ieNunkJF1x6bx3wdYKsllPG1XaCuT2EpXsDQVXZ4kSl1AZMbrHHUO3ji5R8okM39481lo69U4Yh3euWnn+KPsuNHlCQQK//VGIQOqYtT9+Y4iVB5C421BcaWh83wM2+459siaGwAVcNLScX+0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iv/KU7R+Odg8DZQ6VTZ30nAdDP2Y4+Mz5Rkz9nwvpG4=;
- b=KYvmJyY/2xf7dBhLWJVIQhpyTP0bRXkeuvuqe+8UoM8F4hh7Ot+9FyUl01GcX7bWKK9jrgSSksPJXVQ+I5WeNW4aUkL1kbYx0WKpgSQGYQlk72OCpEIFAitvmJNX5xlcaATnNdUT3iVVjNC4olKx+QWuUiDAoalrywVkB0zv6SzQmarjpkFNlXD8/p8bqWYG9D9RpKH84JOyt14wjru0MhFgjiLzaOUlEUbS9ykQ1wA64kGBJzCU/BM8st5SIzM4gh7ra3Mz08jbPofuEDsUn5FYSHvI3GZPoCe3o/psJViemyHVWgE8Sh8K013wIzMQs6/wKpwle6wXcFbNq5uOMw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB8884.eurprd04.prod.outlook.com (2603:10a6:20b:42f::12) with
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58283185B66
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724432404; cv=none; b=mdqJ8ARNIdIQrjO2ThGa1l54MVOgCJDmYt+G/RKHetMca2OMDnNbCbulUWM6M0JHr/bAS4Bgc9sxzvmjGoFAKVzzQSyIr5gf0XAqra+vCI7d3+U08QyABg0S3D/L8eHv2zi95mOnQT6xWEDK4djvyeenItpAZE34KOHN/Q6+w0E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724432404; c=relaxed/simple;
+	bh=71aSqMyY+8n4Hsz11U1n1pKQlpKRxMK97gdfHxV8das=;
+	h=Message-ID:Date:From:Subject:To:CC:MIME-Version:Content-Type; b=dDD0L3EAqTVbvUO3NYlvnY1h9tAPmuw6Ekc0dtL+Pe4cSMdpSPRJxcdyK0nVF7tGUxB9Jcoe7pmUnowZFt3b2am5+O48N3YoVzOKqAsTMwjoaAQ/VbwEtV9VJXJ6zJiuRNR+oSqpTZVYmTQ6k13MkzBWMTC2y6k93fbi9u6rmFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com; spf=pass smtp.mailfrom=camlingroup.com; dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b=A70FbLCS; arc=none smtp.client-ip=185.58.86.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=camlingroup.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=camlingroup.com;
+	s=mimecast20210310; t=1724432400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+7xb2Zyyu8QWyvP6ycd464RZ4gf+jReIhx99MhLGDi4=;
+	b=A70FbLCSN/rFtljzDxbDARnh3H0CzyHsV8Z6ZhhhC4B16A0m8Hypla5oXZRtkz0zBP9Ucf
+	0nKT9ZScxCinJk7waMu6+OrN1ugo/WWeyr8XFDedjePJGLn5fmHE6LEvze3qGoI50E4pRH
+	Jlz6ijzQxS/AZe16imrubCJrw52BB8M=
+Received: from GBR01-CWX-obe.outbound.protection.outlook.com
+ (mail-cwxgbr01lp2045.outbound.protection.outlook.com [104.47.85.45]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ uk-mta-248-ahZbjC_pMVybcvxgj-9SYA-1; Fri, 23 Aug 2024 17:53:17 +0100
+X-MC-Unique: ahZbjC_pMVybcvxgj-9SYA-1
+Received: from LO4P123MB5272.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:20b::7)
+ by LO2P123MB6200.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:268::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Fri, 23 Aug
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
  2024 16:53:15 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
+Received: from LO4P123MB5272.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::55a9:7dae:8812:f567]) by LO4P123MB5272.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::55a9:7dae:8812:f567%5]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
  16:53:15 +0000
-Date: Fri, 23 Aug 2024 12:53:06 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Parshuram Thombare <pthombar@cadence.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Conor Culhane <conor.culhane@silvaco.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v3 09/11] i3c: master: svc: use spinlock_saveirq at
- svc_i3c_master_ibi_work()
-Message-ID: <Zsi+ckEN/5Lt4fOS@lizhi-Precision-Tower-5810>
-References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
- <20240819-i3c_fix-v3-9-7d69f7b0a05e@nxp.com>
- <20240823181927.7a003c36@xps-13>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823181927.7a003c36@xps-13>
-X-ClientProxiedBy: SJ0PR13CA0183.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::8) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+Message-ID: <7deb753f-bf86-47ce-89bf-8277aca4293e@camlingroup.com>
+Date: Fri, 23 Aug 2024 18:53:13 +0200
+User-Agent: Mozilla Thunderbird
+From: Lech Perczak <lech.perczak@camlingroup.com>
+Subject: [PATCH v3 0/3] serial: sc16is7xx: cosmetic cleanup
+To: linux-serial@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>, Andy Shevchenko <andy@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Drobi=C5=84ski?= <k.drobinski@camlintechnologies.com>,
+ =?UTF-8?Q?Pawe=C5=82_Lenkow?= <pawel.lenkow@camlingroup.com>,
+ Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
+X-ClientProxiedBy: BEXP281CA0001.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10::11)
+ To LO4P123MB5272.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:20b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,184 +75,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8884:EE_
-X-MS-Office365-Filtering-Correlation-Id: c78456d2-bec1-4213-be4f-08dcc3941501
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: LO4P123MB5272:EE_|LO2P123MB6200:EE_
+X-MS-Office365-Filtering-Correlation-Id: e94db93d-e480-4da0-ad97-08dcc39414b6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?iso-8859-1?Q?JprYkRfx9LtbMlHWgP2qtS+/54S+CwYwwYEA1A0K2DWpHm+F3q0LwFn1u/?=
- =?iso-8859-1?Q?76kc5u50SIHP61hLteyBQQwEPiRspTsvSKMS0MGY8Li9DnyRRZGuHlCWDB?=
- =?iso-8859-1?Q?ogIAnqBG/qC9x7YYBzlNPiuA1Qqf/p6eUEJc0sK9vaz2BmDN8EeEinpa8p?=
- =?iso-8859-1?Q?hOvIn73RHMLETqHPqeOQkkgD9wxYFQ0Hi/B2SoWZOO9dKYbHGwTgJrsEQB?=
- =?iso-8859-1?Q?g1wQfjvJUHLLtYbsOrcWXUzjI5KaiNAV1jrUoKvBAf7bRT1nt5F46pnVT6?=
- =?iso-8859-1?Q?cRlFmgrjbT3m81NlSfovgT7LjWWnzY02+KJVNJ7QP808HPTwTCOd1VtjWR?=
- =?iso-8859-1?Q?y+Al6ytxKcV4mv7d/IplJWs3QxsMiUS87DOQd/l1HKkoYq6Ip3l8IXcGPI?=
- =?iso-8859-1?Q?yPqXi4J9ksbWq4TTDcU3HoBnPVcpSrLi+ywJKd6xAl1cv4nyi4HpxS7zki?=
- =?iso-8859-1?Q?zpHfhp04CVGGeq8N2xyPGrD9T5C+mvpuVoLmNHAqm3ElDj/A4nzcz4JfpZ?=
- =?iso-8859-1?Q?sUktFs1Oq/7O2aCK8hhnXZNSN8KyoBJq+HH+jFmw3ZIaVpGx0awMBlYo8h?=
- =?iso-8859-1?Q?0byTMathwNoWYB2b/It1NNYsp/3oGE6pBRNIe03lETWzohFEnajWuq3pic?=
- =?iso-8859-1?Q?2pNJkAhmO5gwKqsh7jEuSuJFE9sGobif9V6Agrk5P/KR56Kng51Gy6sdo1?=
- =?iso-8859-1?Q?VEW6r+Bep3IVyGle6Kj7sUb77nJZp8XPggbd3B6gWdrUoF/0S0nJrYMWPT?=
- =?iso-8859-1?Q?QHhOl5y9lAd0A6kB+PTvnMXXV6u0xOUsSfDkyHrsghLiYQq72eOjEq7xIr?=
- =?iso-8859-1?Q?NebNazCdUWGECTkuwVqy6iykRrClIrHpaWDiAXsKwsN51k/zW6QvWTcOve?=
- =?iso-8859-1?Q?whcQevVfx5KHzhvsi90kEifGFCZ6SK+ODHAbZr7Cih+9/8aaXcnsdsmqoP?=
- =?iso-8859-1?Q?+08FSvKkGBuYw3rtBA/O7LZBoNWcb3t+Ffwl1gfeLQkzhA3GkU+qoikxEp?=
- =?iso-8859-1?Q?saJtzVObO+mqSTB0nMolHqnWTiCEaOszV+FuKpVHEZblCc4bkHt11oSXxK?=
- =?iso-8859-1?Q?nMEAvFcaHicwoTOTFdoO49QZlEMh+2GCjRv4b97QjmQVuSEcwyF6vuNOsF?=
- =?iso-8859-1?Q?IlkCLWAbIvjyTHdxQ+6vD7BON9ZwWJhLEPYFFJPirSeOH74LSpNPMgomR3?=
- =?iso-8859-1?Q?yjUpJ55EDCVUhkw5fAjrzRRrKe+DpdGUcguHWyplqoloXiZUCzXGe0Wb38?=
- =?iso-8859-1?Q?oknQw2reZwxonDsTazBl6rqgey3HetLLKGLLZSSDH/IkHJKlJKLB4AbbqF?=
- =?iso-8859-1?Q?w/u/kyZ/pcZECTZucUb8/7O51F3fVQO9Jd0qwY9+eFvpXNWjZ9HZC0tv7r?=
- =?iso-8859-1?Q?+UUmFGMNnWbN0K0vN8nSi7KJ+W86N3UK0ONhDHTG2/K+CI67N7gomHptJ7?=
- =?iso-8859-1?Q?igYubRmftPUgYYARzLKImfX48K2fSRQUpVwJsw=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?v+sypVwJ/gZmWOXMNxHiqmZuUkPk3Py3HvlueaB3uYHui3qcOJk15Le5pax/?=
+ =?us-ascii?Q?azJgGM902HLDs/7kQ3k5HXz7/P7iPAwxf6TWzsuMHNqGNc66KpYlOkRIH4fq?=
+ =?us-ascii?Q?hO2quhuoTwBp/SvEwntouMVhr5DsUXOAM4nVNa6PrBh31cGy+9HYHhoqDtCG?=
+ =?us-ascii?Q?WjTvSOclS1DZyydrFCZ+Nd91+rD4I06lLkCBZtKyAev+MGFYRB8dbn22r8au?=
+ =?us-ascii?Q?5W88znDXyAAsgdVYiZLMDIt1JuY++WjT6naZlRiAalcPgzP9Lw3kEyD4sueE?=
+ =?us-ascii?Q?47RbkmN/NlxlufQ3Rg89wFrUFPp9fiz9QiiYhsOPjglrF1aLteeitove0iHn?=
+ =?us-ascii?Q?9z9fIxWepajXyGy4FBME+RTrze0bKtWxHGFJzkInSeHyfUQLLjDu0A+ggH7m?=
+ =?us-ascii?Q?6hgJ8KV8gA93SBN5jXO31FVotc9e6OYH54gpFJbXqdFjWfDFnBOKyKpfXmAA?=
+ =?us-ascii?Q?FmMg+2mLAVxQ1snrxsPD36u272Y+ZF3Qd5QiqFd3CT9xTSL45ZHl7IGMOJvF?=
+ =?us-ascii?Q?6goFMlujVmaqdChXxJDrbgXRMf/Sd69i6jDkCl62KAFwiQa9zVYDXZOffL1B?=
+ =?us-ascii?Q?27E2XkHkVK4SK8W1437PHJhSjOpUY+mQ+V1kk5HNgMnA4/2c36QvWg8R/TvO?=
+ =?us-ascii?Q?4dLxpAh3q5FtfNlfpDXAhO8HZKwQqPBIOKDt3OMCO4xenrk+ntI8M3DqX5iB?=
+ =?us-ascii?Q?jDD2ycRDBJV2f8i6PvwgNA88TnmC8EljFFZ9SMIhAqiP16JNkxV1oqPkn+cn?=
+ =?us-ascii?Q?VxPZhyGGAlk2yFOiiLzrmiGNzDxDVhgbwMPgWhydVXZqvQ0ANLumD969CC0b?=
+ =?us-ascii?Q?y1dCCIxjW2sI+4I9YPFzj9be+fLOC9RczMi7unVL+vahJoJtI7676992hoZO?=
+ =?us-ascii?Q?0U14tJW8MSBapxumQwF1GHqz3ttl6KeQKNMcYZxf0jOtnkh9oKjIEzXgBpX0?=
+ =?us-ascii?Q?0nao/rQ2Y4JEvFtO3SJj8iXM4aP0TqqM8NvT7fc3nmNIAK/r/vMSNpPG2oyj?=
+ =?us-ascii?Q?QdeKlZ1hv6xozsKfhwHGcHsEiYkYQL5UNLE2HkaaY/WyYmI+mWjC448FBFkp?=
+ =?us-ascii?Q?/1cSxxsEildKBA5VS2aQB4Nr6ok7g34IUjxwKkUO2mTFKL+kpKOi04TWKz7N?=
+ =?us-ascii?Q?eb7/RzPoA47CZUBGPH41kEKp1UFhQVmQDhBu0nQJZPXxVL7ZWa01n3FNNoG0?=
+ =?us-ascii?Q?5KArnFLlqCRMqIGuPXHtllsGh1CEwupmfFb6i3WJEK/8EL+RiOdJ8SZkLmo4?=
+ =?us-ascii?Q?ZAfTsfcPNyF0nB22HZkQj6S80A2DS7Pn9FFkkiwrPa2sRIif4uOG+ozelTx4?=
+ =?us-ascii?Q?7hHtS55sKJdIOSnMqNTTXiygaczGFg9CcdaIr9iTf4RVAg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO4P123MB5272.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?iso-8859-1?Q?Muw8BjFpSe0ohVYNS+Ke1Q0waBsK3K+NvlY7L7gx3Ir1imMOci/2gc/aun?=
- =?iso-8859-1?Q?VGviPNuSDPWl+VBMqhBkLB1JL+ZpLFfj0k11yERcS4MRJQCRaH90mhCaCO?=
- =?iso-8859-1?Q?Rbs3vN9ZNRaE9ZtVmsvyqRu7ZZm09j5GHX9ice1Jo7EQ/A8VibOGtn4S2G?=
- =?iso-8859-1?Q?xnzTbNVXI5mNM6kQ+eHjVtTFB1mtbO73qhU8Tgi0pJ96uAb9tBdyRexyoo?=
- =?iso-8859-1?Q?Q1YwMWGPFXogUFQzJhULZdwZBD8o93fjfabKB43j7B9UppFzQ6AJMBYjlY?=
- =?iso-8859-1?Q?V2OuApeeCeSFs7H0hwtpvNeCSD/9yhIBVyeXij0eWRa7okmfdljl1Yskhp?=
- =?iso-8859-1?Q?sjjiowBy+WUE+eSV5DOZrF4ixO52EgBJk1Kf5HgxBpNJy+U7g8q6M7UZGe?=
- =?iso-8859-1?Q?jtFZ/J15Gx/AsFcwJdE0xw7tNBh0YJS2rLKG7NvFkH103iru/c9NAgy2+8?=
- =?iso-8859-1?Q?e20bnJ14fCHDnhaLjisySXzfTdDZP3R6hMixADTCuS6+oZDcjkKC4ehziP?=
- =?iso-8859-1?Q?0oqk6fZOAb1+I136UXFUJjgtMdp+BTY7yMv1O8bH8xPfBjdnsR8EVeRnr9?=
- =?iso-8859-1?Q?7DYpWDcqwarV9ksVGPRsTzM+DPq8lSUf2+a9zMKYrzT+MKLeW2ZkCBJIPI?=
- =?iso-8859-1?Q?nYk9WNmnB9yaCufzAU/6ALDNOcvru4aUEqla7/y/+/aFecTC+hr8IftBP+?=
- =?iso-8859-1?Q?UZPahNrn4jO50lHYP4yx0dqcvNPnmdnrJMALsEKTvKO/qetRyVRI1icgAN?=
- =?iso-8859-1?Q?+JsFccG9sTYMSnRdFPCKbCEj8OKSmdh37mZoD6Hcu4ht2zOUd+pefPDt87?=
- =?iso-8859-1?Q?dA2cOHh9ebPeKaXEAOt/0d87tkoGNkjxvTCFUniNsVMGrKSDdzY/ORH8Nb?=
- =?iso-8859-1?Q?hl+zBfDNDFrM2agxAi1/+quplZ+wl9XtDCf8TixsOmCxfX0ZbsxbXp0FHv?=
- =?iso-8859-1?Q?YhAMFY7oJzjaezl1/TjQvSh2QGYdBwB24oHv86mWKEqAHh8pI5G7uo51Mv?=
- =?iso-8859-1?Q?uFD7ptCK7+3e8dNwVgNvoFddCcv38lNZYH2z/2v7LGlIvUe66WpoIn5kte?=
- =?iso-8859-1?Q?KDJEl38bxqkACTPwUetQzc9uwa+n5JSVwkTwCNZbjOwG5+MVftGH3xTTE3?=
- =?iso-8859-1?Q?Pq7BeV3WSjttol44R37oogqf4CuBtKvgNEc73Tu2OrVYvhmQczcnBRdXeF?=
- =?iso-8859-1?Q?UIZmppKMGNhBlDX98Onrw5P5e3Lrruha5AAfnbfWf/bnVY/WxT9THfALhr?=
- =?iso-8859-1?Q?JfZsdeJxIRKFZor26Iy8rR2f7B9Ar0pSK57XxkkmcMMRXtpb/jZd+yWX2/?=
- =?iso-8859-1?Q?YbZ1PET5zCgy5X8Aefa0VZJQTDFFE2a7XPIf5UhZPO0jOjAFYzmIqj+0if?=
- =?iso-8859-1?Q?E1Nxb3JaG8GZ4jFNkcAZahDDLjO85vCtm7wevDBZr0PpGsWZo9B56Li4+r?=
- =?iso-8859-1?Q?99cjiWJ4vvWptsTyfaOl21Amv7Dhzh02MoXFGfCDPZmI2Hlo9QHJI1EyU0?=
- =?iso-8859-1?Q?qi7nz268hCoFHImIwe9xJpa/lbiX0nHeE1GI7uEYtYI3E3C2Tn2fwofOqB?=
- =?iso-8859-1?Q?p/OuNBmdTScMcrAglVkCXiO3mMQ5OLBr5h663T0W5luEJd786DvesHQq4I?=
- =?iso-8859-1?Q?y6VfCwI/5GHG9mw1ExYzDeJ9Os425t44QF?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c78456d2-bec1-4213-be4f-08dcc3941501
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?akPB2H2e+wYacU2KRgmCD10EvZbhU8creXg9BaP1agHALDg9KPGfc99P8N1k?=
+ =?us-ascii?Q?R6XjRp97lh4JKES34tI+oHi5DYrqF3Pe5EyJZTZ5yS1bc0Ru0cUCo/f+REG0?=
+ =?us-ascii?Q?QLRMLEjSy5H8XpeDVdlyClRGncuI5uw4HmSsHSmThR+V8UkpBiVCV/R3SkX9?=
+ =?us-ascii?Q?oYuvNvH5j9sFEY+SwkBB8seRJrysXkvwGe1ES461FrA/CJmNNj2v0LqmEZhI?=
+ =?us-ascii?Q?JzGrAtSX6UhMmODhwnA9NLq99CXc1Q48Xide6G9Pi+fgoEZsW95bud7LBNCJ?=
+ =?us-ascii?Q?EdrfETIqRhppe0pl+wH5BSRgIwx9wCUD3IfLaUhngU0aawQ5mIQgaaTJ+4/q?=
+ =?us-ascii?Q?2A4+8hUvI3H9r4hcHFoDg5zd/uzMM1RKe8lACQ2zfw62T+y93V9a68JQJXIx?=
+ =?us-ascii?Q?qt930w2Nh8Na4Tih5jLJpl+f4nvTj/ou+aXIvhSzWCgM2MqtA/Rv8QAOawfO?=
+ =?us-ascii?Q?cFjK99ur5agzqKHV4xNvLfCDgUyEZLzCIFKGAgNQVlHmNA75d0drlYsQ99x1?=
+ =?us-ascii?Q?+bvai6IzUaqW0i6z9LOhaZr/Dih23xZjwITsoQ+o+jFKP3GAsKbtbJi4ApyU?=
+ =?us-ascii?Q?QYC1ETSI3zla7epuL+AqxYjXC2gNP7Mtl0f9uImltqPL3nE9kF0hOyDMUIQE?=
+ =?us-ascii?Q?y7KQBN4rCukGI0B2q+/qOoe1a3JWQZg+DJ6W0bzuYrG1nOBvfuJw4A9HTC2b?=
+ =?us-ascii?Q?KREWeKZJHZq1Inz+SgPFZrcmIW6LpfR0As2kNdDOM0OpZF5ZOosrkdOz1ZjU?=
+ =?us-ascii?Q?ZHMQgayl4Kms9XcqFnXLk/u79m27J0lJM7msnDkfZMEkAEVjtKDXanTRg9ys?=
+ =?us-ascii?Q?HMyLJIj72KusfRu/OotmGISkf6iQqATrp9JGoDTKTl0yupsNW6lDzXjmZHs9?=
+ =?us-ascii?Q?OQnlCD30uVv1K6UUtZjATpwLRfk3DcienSfjLTgOYGKaCKlJh4W9e31VcuHC?=
+ =?us-ascii?Q?pBufZvZ+B9fw5sxy3c6hV132mRgjkjtgYwAbvJHDlA0jWK2Y4K1c68wSm2HQ?=
+ =?us-ascii?Q?HYY4+1fHqkiiDn7w21rgLqFAC4KkHi0wZEfldw8wnZeo9TmkuVj7exbETrM4?=
+ =?us-ascii?Q?teCRY0Z1ZewvZ8Ml8iAscWdNcGnFdNWwFeH5squkn4Nw52HbMNTnD83KQsZJ?=
+ =?us-ascii?Q?4q3KzuH+GTGf3kJx8EOAhYTFIZy3UUpiyFuRSujzo2ADCXH/INqo8CCvv9G/?=
+ =?us-ascii?Q?C+riCzZ0A1mWW5Cnj0s/rWrI4aRrk13YdAOVoq++AVf+iVHQtQaHrwRaWuFP?=
+ =?us-ascii?Q?FxKqKy6tBa0x3ksL02M5DIBNaGfvqenIpiH4EuXwrSC3qfalXfp1saj2FeHG?=
+ =?us-ascii?Q?JDxEoCTGFIL/jBMn7KC8VC4bY5Q7dMBMyteZWxLORk9yQqEbSFzmLajhLgs2?=
+ =?us-ascii?Q?udwOC4jN9VOj9boI1RUdrj6vYjtqGI02ZZAsfbqCTcZN//5wX06CPMN3iVve?=
+ =?us-ascii?Q?PbH61Lkf+W60UbSc+BrjXxYBrjQfq5UNXWbhGLGF5AkshRmX4Dly0LDeNlED?=
+ =?us-ascii?Q?N8F51CbaNIhLxtxBuuW8w6Ni9GpYxuY5oZDJ+TvLMjebubplbU8mdbyTOlQC?=
+ =?us-ascii?Q?i6YIXqmRMJJAHTgJooRrMDpJawCFZJhVFKplA5DoxHbVwGmq35atdwhi9ppQ?=
+ =?us-ascii?Q?Uh2U+VSH18+UoVtoVJan9hkgoy5WQO0wnkhASmv1a38TqcXUZX8dt4kJI56d?=
+ =?us-ascii?Q?TadDQQ=3D=3D?=
+X-OriginatorOrg: camlingroup.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e94db93d-e480-4da0-ad97-08dcc39414b6
+X-MS-Exchange-CrossTenant-AuthSource: LO4P123MB5272.GBRP123.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 16:53:15.6135
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 16:53:15.1805
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: fd4b1729-b18d-46d2-9ba0-2717b852b252
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: btXpVWV4iyuAu8tyIE9qRaozeJMVy1gl9d8h+0arANJryb/9jjCJpmGb7iEA0jTu/pKk+bejBVk8lq7ygRFPoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8884
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4KQYZ+Lygi0SkHyv54gEY3P9AKKWSmEqYYILQnk6lWkDi7eebzDPwYp5D2uiP4lEAZvIeKhBEnLR0MueZ6yPAYhzRjDJAHGzv2cZvPRTmls=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P123MB6200
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: camlingroup.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 06:19:27PM +0200, Miquel Raynal wrote:
-> Hi Frank,
->
-> Frank.Li@nxp.com wrote on Mon, 19 Aug 2024 12:02:03 -0400:
->
-> > According to I3C spec ver 1.1, 09-Jun-2021, section 5.1.2.5:
-> >
-> > The I3C Controller shall hold SCL Low while the Bus is in I3C/I2C Transfer,
->
-> 				    low				    transfer
->
-> > ACK/NACK Phase. But maximum stall time is 100us. We have to disable irq and
->
-> and/or (I'm not sure)				the IRQs
->
-> > schedule during whole I3C transaction, otherwise, I3C bus timeout will
->
-> prevnet scheduling during the whole 		the      may
-> timeout.
->
-> > happen if any irq or schedule happen during transaction.
-> >
-> > Replace mutex with spinlock_saveirq() to make sure finish whole i3c
->
-> 			wrong name	to avoid stalling SCL...
->
-> > transaction without stall SCL more than 100us.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
->
-> Yes, 100us is low, and that's why I initially did my best to enforce
-> auto ack/nack. We cannot make sure this limit will not be crossed, and
-> when it's the case, we need to handle the consequences.
+When submitting previous, functional fixes, Tomasz Mo=C5=84 omitted those
+two cosmetic patches, that kept lurking in our company tree - likely
+by oversight. Let's submit them.
 
-Only IBI use auto ack/nack. hardware can't handle it for HJ and CR, which
-have to manually send out.
+Signed-off-by: Lech Perczak <lech.perczak@camlingroup.com>
+---
+v3:
+No code changes in patches 1 and 2.
+- Pick up Reviewed-by from Andy in patch 1
+- Adjust commit message in patch 2
+- Perform further cleanup in bit constants,
+  use GENMASK for SC16IS7XX_IIR_* and reuse bit definitions in
+  SC16IS7XX_LSR_BRK_ERROR_MASK in patch 3.
+
+v2:
+- Converted bitmask definitions to use BIT macro
+  (thanks Jiri Slaby for the idea)
+- Removed redundant comments in patch 2 altogether
+- Fixed commit messages (thanks Andy Shevchenko for
+  thorough review)
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>
+Cc: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Cc: Andy Shevchenko <andy@kernel.org>
+
+Lech Perczak (3):
+  serial: sc16is7xx: remove SC16IS7XX_MSR_DELTA_MASK
+  serial: sc16is7xx: fix copy-paste errors in EFR_SWFLOWx_BIT constants
+  serial: sc16is7xx: convert bitmask definitions to use BIT() macro
+
+ drivers/tty/serial/sc16is7xx.c | 181 +++++++++++++++++----------------
+ 1 file changed, 92 insertions(+), 89 deletions(-)
 
 
->
-> > ---
-> >  drivers/i3c/master/svc-i3c-master.c | 14 +++++++++++---
-> >  1 file changed, 11 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-> > index 161ccd824443b..fbb6cef405577 100644
-> > --- a/drivers/i3c/master/svc-i3c-master.c
-> > +++ b/drivers/i3c/master/svc-i3c-master.c
-> > @@ -432,7 +432,16 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
-> >  	u32 status, val;
-> >  	int ret;
-> >
-> > -	mutex_lock(&master->lock);
->
-> Don't you still need this lock for other concurrency reasons?
->
-> > +	/*
-> > +	 * According to I3C spec ver 1.1, 09-Jun-2021, section 5.1.2.5:
-> > +	 *
-> > +	 * The I3C Controller shall hold SCL Low while the Bus is in I3C/I2C Transfer, ACK/NACK
-> > +	 * Phase. But maximum stall time is 100us. We have to disable irq and schedule during whole
-> > +	 * I3C transaction, otherwise, I3C bus timeout will happen if any irq or schedule happen
-> > +	 * between transaction..
-> > +	 */
-> > +	guard(spinlock_irqsave)(&master->xferqueue.lock);
-> > +
-> >  	/*
-> >  	 * IBIWON may be set before SVC_I3C_MCTRL_REQUEST_AUTO_IBI, causing
-> >  	 * readl_relaxed_poll_timeout() to return immediately. Consequently,
-> > @@ -452,7 +461,7 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
-> >  	       master->regs + SVC_I3C_MCTRL);
-> >
-> >  	/* Wait for IBIWON, should take approximately 100us */
-> > -	ret = readl_relaxed_poll_timeout(master->regs + SVC_I3C_MSTATUS, val,
-> > +	ret = readl_relaxed_poll_timeout_atomic(master->regs + SVC_I3C_MSTATUS, val,
-> >  					 SVC_I3C_MSTATUS_IBIWON(val), 0, 1000);
->
-> This means you lock one CPU for 100us doing nothing every time you send
-> a frame, that's not possible. Actually the delay was already very small
-> (could have been set to ~10 maybe) but this is not possible.
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+--=20
+2.34.1
 
-It happen only at error case. Most time should wait for only 9th SCL.
-I think original comment is wrong.
-
-Hardware set IBIWON at 8th SCL.
-
-Frank
-
->
-> >  	if (ret) {
-> >  		dev_err(master->dev, "Timeout when polling for IBIWON\n");
-> > @@ -525,7 +534,6 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
-> >
-> >  reenable_ibis:
-> >  	svc_i3c_master_enable_interrupts(master, SVC_I3C_MINT_SLVSTART);
-> > -	mutex_unlock(&master->lock);
-> >  }
-> >
-> >  static irqreturn_t svc_i3c_master_irq_handler(int irq, void *dev_id)
-> >
->
->
-> Thanks,
-> Miquèl
 
