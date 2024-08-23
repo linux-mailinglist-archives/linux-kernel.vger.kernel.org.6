@@ -1,129 +1,269 @@
-Return-Path: <linux-kernel+bounces-299716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489E895D91A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F42695D91C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7CAD1F2337E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86121F235F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F0A1C8706;
-	Fri, 23 Aug 2024 22:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7901C870D;
+	Fri, 23 Aug 2024 22:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ghjmg0XJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QSxw98S4"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F69189B89;
-	Fri, 23 Aug 2024 22:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724451025; cv=none; b=kqjU1RDNvSy4hreKXbCt9I7SjLUWVdo6lnYogAyEqKzKo2pMV5SUmqeaczoX320EBa63pY1qka/JdWMQWw51q2iUnQmOOmE3XUG7UQ9VGVSq94uL8QHRMBE6Z4RPGo6MHYLzQDPyTocdhI6RItb255AOv/mGyaNdKbwUc9q3qYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724451025; c=relaxed/simple;
-	bh=NJcXayjTbzsChmOeToGMlIG/vnfPC/xi03r9HY6Yrxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=cv7PUm6CWkklg6baJrM8MzkEycJjKfKz9pJwvcXWlYJErFlZli0HiXiUwog6EU1slizSG9fzCvN9cOJFEmBu5MeEgjdmA7WpoaJaOdndkfkTeMrg37RRmnLqeMSbGtcSYor/j36uITPhliqS85gPURX2TEOBwoON+o1E/+7zv24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ghjmg0XJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E729C32786;
-	Fri, 23 Aug 2024 22:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724451023;
-	bh=NJcXayjTbzsChmOeToGMlIG/vnfPC/xi03r9HY6Yrxs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Ghjmg0XJOEfV2A1r6aMLzQkNkE2pbaKSoildozqPY0Lhm1EmbH4Vmk2/W6H72WTH5
-	 2hCEXZLy4IGjD378d1MWwIRT80Xiw45MW82LcM4czSR4T4F/oBAooJGALPjRYVk7xe
-	 jSPCtEXPlF8zPojUPSMjNlyJVfcZIMz4Cge4hh5x14ulioeV4HYXOFZSeaYm+Fst1y
-	 qqRtto+2aGWOFyGCc0PadpPzc3wFK3z6t4rwHPzg4u+sPFSxpQLdfX35a32uf3KJ60
-	 LRxI9uKGMpWEEbPp//hrrZbJizydFJs3f9W85BQQ7FtmuD9Kqn99ZBdHXpasA4PRnb
-	 1s9/hI9avZ4+w==
-Date: Fri, 23 Aug 2024 17:10:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 1/2] PCI: don't rely on of_platform_depopulate() for
- reused OF-nodes
-Message-ID: <20240823221021.GA388724@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E767195;
+	Fri, 23 Aug 2024 22:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724451164; cv=fail; b=eY5Nfp7Y49DbSwxwMZBucE0OKEr+S3tYLOgCh/bHgrBJmd+SeM6Mr8hdTa9xU8QJJ3ynJOLpTcxK8z1WJcTKwtj+jJc/Mb60s0a7UBOHJPpuv1TfWs7J3dk9EP89dppFVrQeDjZxB0erbMSBLUNV+4uYej7XtPn3sJnEt/wiVdM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724451164; c=relaxed/simple;
+	bh=+gs0ajvs1dAdWe98iP2AOuUBYdTIM98fmrm/MXrLzAE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=U2EmC5nqCO0MQR1k9aRq+SrBXTiDI+A/RtuRIiGz4RAW4YpNDGlZU18CLlH2pQLTldp6OB/cxdvtxdp6glK8k81bJuTsAYAOXRJIJskufPbEHEjPHNadRcS1BCW4gfntkQS/FyJkmIy+RL+MR/f7DLOsppgiHFcyEOQlXEBcJok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QSxw98S4; arc=fail smtp.client-ip=40.107.237.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nbkW3sBhfL3187y36H63dncgb5AXB6u8PT3bXaAX5O3RCv4oiBqi/rN3dAtbZepC80w7R7SfQZx9lodtr6SNNgi4MJZlrh5GDMcLRxXRunBqkH1Sv7UyKanCnr3nHLB+r6kzDEA4+zVPbsGz/OviPXwAqg89R8Xz9gJQLxh/0YojG5ibGOSibeBWCW9dU39g4Suuafnn+ud6tSAu0RpBUcMceJZxCdwUArytxsjCjrYkqv2VB7l8SOIp50Q7muXhgMYwfwrg9sIkRgORHwLGdy827wQdDKWiaS0Fmh+V4ysoJbRihf++5p7zx93Kjz6LxgAECzeeiS+TKFag5OW8DQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gp5r77ATFaoae72AgQjGsi88QOtMf8xwi6WvB69PjtU=;
+ b=tEislHvb0wGd9djROSs0FkI53LWZOpeqV/Y/MN9G1scmy4mbD8K1xNACAl3To/mcMcHx1O+AiR3Ja7LPOpT6jekpfw98rNSY8J+nDQwBZfuqzscCVBqVqVjk7r39vzFB133pG8TRBugCcRtoCGQefv/BTFpCK/Hb8zxll8iHmgHoomFi7Nf0xHHyW1+todW3oWmD4n25Oyr/lyjcahfotLn7A4OP/gS/Vd4d6HwzQgSqPsB34rFwcO1GEKD6mpY0FqnUJZI03ykpwQox/uhORzyTrKyl0swczuogs2h5/6JFpUwx635S7V7ZoydsQAfZ+Z1CZK3RU27Geh4BRNVEcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gp5r77ATFaoae72AgQjGsi88QOtMf8xwi6WvB69PjtU=;
+ b=QSxw98S4nT7yE7j2Z+U/WR41MMMruaHxXgy3IsHWaQWUXiHvmpe3fPei9S5w3Ks3JZZB74BQvtK6aKUrdTsuNIqwgDQQ/7dSDlpkzO8mAiL8h1RhWEmL8snZXut3w2yOGCV6P9iF33KDglxOL5+lFT3PlPYPtILeNfgQ3Vg6A64=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by BY5PR12MB4322.namprd12.prod.outlook.com (2603:10b6:a03:20a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 22:12:38 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
+ 22:12:37 +0000
+Message-ID: <59449778-ad4e-69c6-d1dc-73dacb538e02@amd.com>
+Date: Fri, 23 Aug 2024 17:12:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 4/4] KVM: x86: AMD's IBPB is not equivalent to Intel's
+ IBPB
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>
+Cc: Jim Mattson <jmattson@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Sandipan Das <sandipan.das@amd.com>,
+ Kai Huang <kai.huang@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ Venkatesh Srinivas <venkateshs@chromium.org>
+References: <20240823185323.2563194-1-jmattson@google.com>
+ <20240823185323.2563194-5-jmattson@google.com>
+ <26e72673-350c-a02d-7b77-ebfd42612ae6@amd.com> <Zsj2anWub8v9kwBA@google.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <Zsj2anWub8v9kwBA@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0182.namprd11.prod.outlook.com
+ (2603:10b6:806:1bc::7) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823093323.33450-2-brgl@bgdev.pl>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BY5PR12MB4322:EE_
+X-MS-Office365-Filtering-Correlation-Id: 623052b1-9eaa-46f6-95f8-08dcc3c0b2a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SHA3WXkyREFVbkhZb2lTeFpXOEpFaEpHTXNxc2M3dmFicWFFODNkV2J2MklO?=
+ =?utf-8?B?U1JpZG5HYWtnT1QwQm1Da2V5MlI0UEUwNXM5eFRZZlVrVE12bTB4MzNjKzNr?=
+ =?utf-8?B?UDVYYnpkNCtQaEJHR2R6TWViSWlDVnY5QTVnTThKa1hxK0x5SzJLMUpTZFdM?=
+ =?utf-8?B?M05sUXFSRGNTdlZIa1dHMzk0bUYxN2RSQjBJRUIvdTQ3eTRyWG5FdGFCMi85?=
+ =?utf-8?B?NHlpUldPbStvS3dKbkx3SnJSakEvLy9JRzF6VG4zTk9pc2tWZU8welZBK2RU?=
+ =?utf-8?B?cWJFTGRRcjhGUktmQk8zMFJoTHlIVi9mbCs2L3pyZmJqL3BVNURRcGNhVE9T?=
+ =?utf-8?B?M3FTRVVuNFlEMUZVUFdyU0FpZWUwWDd3cEl3citoWDN2UVI0VUhrQm15NnYx?=
+ =?utf-8?B?K053OWFqMFkvR1RRT0p2cGtIS29sb3gwejhVOTJSNHovYllzTVF5Sy9FZEFR?=
+ =?utf-8?B?RFBXRmc0UzJsZmxVdjhrNk9mVENwMzJFLzRiUWoxWU1EbGRuYUh2UEMzWE9a?=
+ =?utf-8?B?aFZ3b1R4ZHdZVEJUVm44a0h4WTN0dS83alJHVVBONVRkSno0bFJvbHNyUFZH?=
+ =?utf-8?B?ai9TbnNSd1hyaUNsbFZHODFsaFZDWWZISi9QbUF2RERNVUpRd2QxYzMwNDFo?=
+ =?utf-8?B?eHlDaVdRYi82bCtEcGxNNks3cER2blhEWUMzSWlWUUZibks1dFB3K1JBWDBz?=
+ =?utf-8?B?QzZwVmlvYTI5b0RUUzVGT2ROUFpSTzNNVkJMOUthWFVGQVFqeFhDMDZKem9S?=
+ =?utf-8?B?K1FEMkI5dThTUWZJTWJUampLSGMwQ3N6K3k2ekk4MWRmT3FxMVFrM21LS1JS?=
+ =?utf-8?B?dEI4MjBaMTFVbWIvbDM4aWxlc211UWdEZ2NTMDlWT0lFK0lpQ1ZpRVA2bU1u?=
+ =?utf-8?B?VjRuRkVydDNLU2NzcXp1OFBDbDhaeEtsN1dldExPSFJDS3hhQ3VuN3gxZHNF?=
+ =?utf-8?B?UWZrdm5PU0FHS2luVHVVU24rcTVjb0lzajRYWmVadFByVTE1eGRuKzFDTnlS?=
+ =?utf-8?B?Szl2QXBrMUJNbS9PdzB2cFk2YXJWRjlwejhNZmRMNUt6ajh5NEMyZXoxbkJp?=
+ =?utf-8?B?MzFHSVdvT3p3VEU0bStWRStxQnBZNVdwdE5pTGhqL3pjZkMxZXBzcnJnWUVR?=
+ =?utf-8?B?bG5YL0t1SmlxOGJQM2lobEk5bkdrcEtBcHZrOUlFRHY2ZFpHcHQ5RDdneHhh?=
+ =?utf-8?B?NFlmTDY5bGV1cmt6L2ZOSGZpNm9wRDBQTit1QlRKL253YjNLdUlIMndubFVw?=
+ =?utf-8?B?MzI0SHdLM1V4RHRhb1F3QW1SdWxZb0RIcXNmRGVxbitaWkwzenhMck13NTVy?=
+ =?utf-8?B?R1lFUC94ekRYY0tCTWJ6Mzd5bUtsanBtS0xWNlpXMktNN3BhbVA1NGRqNm5k?=
+ =?utf-8?B?TzlRcW9FRTZXUy95dGQzRGhUcDlWd0pPR2JRR3J1eHF3bm0vOHVqVlNoOXdk?=
+ =?utf-8?B?YklXb0dXTEYrTU5CTFZ3U1ErL2UwL1I0SElleG5MTzQ5Sks4bWlSbFVzNEhz?=
+ =?utf-8?B?OGtTdmtlWTJreXBBQ2lQY0Y3TkZWQWpoN0tWM2trTDNTMzczNFJqWHEyTnRI?=
+ =?utf-8?B?RDNHVzcyMmlwSkhKRXVHOTNaa0dneGlKQnhUUmNXZVZZeTEvc2hlRlFTaktU?=
+ =?utf-8?B?OGVwTnVSMDlaQ1ZaclpDL2hlVlY2TmVId1lLZGdKeEtFK1l3L0hLVXVTdTF0?=
+ =?utf-8?B?RkpIaDN6WUI2TzhOazdockEybmhLSk9idmlhR2VMdUF6TmtmVmxUOXR6SzY3?=
+ =?utf-8?Q?NSBllrK4UtRbof+3wr5LINCRMJYkiRo91+s5Uec?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?alU2dmlGYXhaMmpHR3FHK3pBTHkzWTFXaGVhMlJMRVg4eTM1Zm04NzMxZS94?=
+ =?utf-8?B?R3JqQ0R3NFhlTk55QkNFMG9UdUl4WHpHa28ydEg1MFNGeEJHd3hzWFZSREl6?=
+ =?utf-8?B?UzVJTHBFaThReGZlNDAzTDdhKzdlS2gyeFo5blI4aXJRQjk3Y1N3L3FtZHY1?=
+ =?utf-8?B?SmpPSDY3L1lIdXlEZFdGZ24yU0t0OXVKREx6V0F5aGdNMmRNKzhkNUh1dTQv?=
+ =?utf-8?B?bWZEN3A0Wk9mU2xkZ0p1VFJJWG55YWZlTGorbkhCaXcwZVZkR2hMa1FNT21z?=
+ =?utf-8?B?K2orUlRkVGNISXBhTXcxS1YrdDJydFhvKy9BV2lmTmhmUnVJU3BOaW05ajBK?=
+ =?utf-8?B?cU1ObW9XVmFJcFZNbjF4ejVqL2V5dldCdlBjbmNUUmZjU1JMaE1hckErT0Vr?=
+ =?utf-8?B?OFpXV3IyTENTc3ZMZGFSWXpCWUxXUHFCYnc1MGUraXFtQUc5VGk2VVQvOStR?=
+ =?utf-8?B?QnRXZ3Y0WHpVVThVZlh0bXNFQzJkc3ZZL3VNUGJFZ0IzZ2ZRNUpNQ09JT1ZV?=
+ =?utf-8?B?T1RiR09JcFpLbHgvemh1UTNROXBYQ3dXQXJpanB1RXF5SkU5S2RGTkdLK1U2?=
+ =?utf-8?B?akxQVkxRcWJvdm1ITlowZ0M4TE8zUE4wSU5jSXcxbDdNbXUxYVViWnZhVnFa?=
+ =?utf-8?B?cmJ4RXFsQXVpR0p5ZDd5Z05GMVN0TTUrT01WY3RWVkl1d1ZPdGpiMFJ3ZWor?=
+ =?utf-8?B?Qk5Rcmw4VE1OZ1FuLzFHaDBaZ1o2L1ZSZ01iaHJqVnl2ZzNKMTFpaHBCaFlF?=
+ =?utf-8?B?SkhUamlmck5XWFpWVFI0ZUd5QzRXZUVyNE5ub0lzdXU4QUNjN0xCeEw3MnlL?=
+ =?utf-8?B?UFpFb0o3ZkdsRy84R0JScVFic2JockJSM3Bib1pVOGd5eEo2L0ErTktyN0o4?=
+ =?utf-8?B?L3lpUUxrZHN3UXdlNFFOTXZ3akhRWGtFVlhmalVoaGx2cTF0cmdqV0tlQkVs?=
+ =?utf-8?B?OW1WSHFpL1V6bmVUbGdha1VJbk12MXBoQURVRHBtYWlwelBsN2xreTBlaUdY?=
+ =?utf-8?B?Yi91R09qVk9BWTRsSmZsbnhtcEFjdmZSNWNrU0o2R2REYVBSMkhUdm5mamp0?=
+ =?utf-8?B?OHFWZ2l3VUV6ZlljR3VFU0tOTUFrdldQMktyNlU2aWlqK2RzenU2cldqSnpL?=
+ =?utf-8?B?OWhNQ0Zid3BXSGpINkNycWR0cjlqaHR3U3NrRFdrYlBQbUJMTmtGcHM2RWRq?=
+ =?utf-8?B?UnFmdlo2eTBvNGtjWE5EMGJiNmZva2pMK0s2cEhoSW1FU0hmUGZoRC91cEVo?=
+ =?utf-8?B?cU9HSm1lSzcycVh1MWxaTjNuUmZrc3hmNHVWR2o0VDJQeVZTQUk3dW50Tjhy?=
+ =?utf-8?B?YW5zM2s3ZE0wTThXR0NTU1JPR3JPRUFPQ2VxQUVhRWFuU0o0RmpQMXdPbFpB?=
+ =?utf-8?B?WEIrUGQ0YVNpMWpHTld5NUFRS09CL1VqQkh4bE81dmRJLytjQ3gvM3ZGSHhl?=
+ =?utf-8?B?ZndUWlBBa0lsYzFEL0dzR1dLZ1BiOXpOZTYzZkQvdEw3RmZLbzI4WS9oVjc2?=
+ =?utf-8?B?Lzl4VllZODVEU2F5a3RPOHVaL25RRU8yclJYZFIzbVFkYUY1YjEzU0tVZkZv?=
+ =?utf-8?B?YkpIOHp0N2hwYTlHSFd4eEZDVGRjbElLbFEveE5QTi9BZTdMTW16c1JGdUFC?=
+ =?utf-8?B?MVh2MlA0Q2xBTWpleDV6UkMzSG4wS251RnRiT1oyekNXY09zQVlPcGxsSnlV?=
+ =?utf-8?B?YldtTHUrVlNkaUordFNMRUpsWm0rdGc2K2JQamtkNXpWeDlrTHg1WWZ6Y3ZP?=
+ =?utf-8?B?SndmWUJ5T1Y3L1hLQ3lIbnp6NVp5SmxhajZ1dWkxNHdJaDhUemk5R2lUaU5P?=
+ =?utf-8?B?MCtySFdiRlhNU1JxVXk1YUhMQVd2TFZGTnp5bFBkNkhPV1RFcDg5dmJyRnI3?=
+ =?utf-8?B?SE5LYi80RlFNSVdKa3JHejJXNVEwc1Y1bWtIMTUrOXlRVkRJTWR6TkY2MmdG?=
+ =?utf-8?B?c0JzY2IxQXNZc0tHVTMyKzRsclJRZGlyYm0vRmdpT3RUcHpJTnEzWHhYYVhk?=
+ =?utf-8?B?TkdGemRBbnQxOHArQ0pmNmRqQnNEZkR0L1hyZUtHMGxtRWZUb1pWQVliMmxK?=
+ =?utf-8?B?azBQV3dnWm9kcG1YL3c3MUFST3ZkbDlmVnN1TG9GTGJuSG1VL0R0SnJPRHFE?=
+ =?utf-8?Q?Usdac+SSwOqukEED28HMvbaIL?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 623052b1-9eaa-46f6-95f8-08dcc3c0b2a5
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 22:12:37.9160
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gi3xcoi1jkXFl9YY2V7K9qnbxkokqi549NlIrr2KVs5aXqUIu0AL6mfuOUfkVdjZfZ7xs0sB9ZZKk48dJmYuHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4322
 
-[+to Rob]
-
-On Fri, Aug 23, 2024 at 11:33:22AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 8/23/24 15:51, Sean Christopherson wrote:
+> On Fri, Aug 23, 2024, Tom Lendacky wrote:
+>> On 8/23/24 13:53, Jim Mattson wrote:
+>>> From Intel's documention [1], "CPUID.(EAX=07H,ECX=0):EDX[26]
+>>> enumerates support for indirect branch restricted speculation (IBRS)
+>>> and the indirect branch predictor barrier (IBPB)." Further, from [2],
+>>> "Software that executed before the IBPB command cannot control the
+>>> predicted targets of indirect branches (4) executed after the command
+>>> on the same logical processor," where footnote 4 reads, "Note that
+>>> indirect branches include near call indirect, near jump indirect and
+>>> near return instructions. Because it includes near returns, it follows
+>>> that **RSB entries created before an IBPB command cannot control the
+>>> predicted targets of returns executed after the command on the same
+>>> logical processor.**" [emphasis mine]
+>>>
+>>> On the other hand, AMD's IBPB "may not prevent return branch
+>>> predictions from being specified by pre-IBPB branch targets" [3].
+>>>
+>>> However, some AMD processors have an "enhanced IBPB" [terminology
+>>> mine] which does clear the return address predictor. This feature is
+>>> enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
+>>>
+>>> Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
+>>> accordingly.
+>>>
+>>> [1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/cpuid-enumeration-and-architectural-msrs.html
+>>> [2] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/speculative-execution-side-channel-mitigations.html#Footnotes
+>>> [3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1040.html
+>>> [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf
+>>>
+>>> Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features as derived in generic x86 code")
+>>> Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
+>>> Signed-off-by: Jim Mattson <jmattson@google.com>
+>>> ---
+>>>  arch/x86/kvm/cpuid.c | 6 +++++-
+>>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+>>> index ec7b2ca3b4d3..c8d7d928ffc7 100644
+>>> --- a/arch/x86/kvm/cpuid.c
+>>> +++ b/arch/x86/kvm/cpuid.c
+>>> @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
+>>>  	kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
+>>>  	kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
+>>>  
+>>> -	if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
+>>> +	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
+>>> +	    boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
+>>> +	    boot_cpu_has(X86_FEATURE_AMD_IBRS))
+>>>  		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
+>>>  	if (boot_cpu_has(X86_FEATURE_STIBP))
+>>>  		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
+>>> @@ -759,6 +761,8 @@ void kvm_set_cpu_caps(void)
+>>>  	 * arch/x86/kernel/cpu/bugs.c is kind enough to
+>>>  	 * record that in cpufeatures so use them.
+>>>  	 */
+>>> +	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
+>>> +		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+>>
+>> If SPEC_CTRL is set, then IBPB is set, so you can't have AMD_IBPB_RET
+>> without AMD_IBPB, but it just looks odd seeing them set with separate
+>> checks with no relationship dependency for AMD_IBPB_RET on AMD_IBPB.
+>> That's just me, though, not worth a v4 unless others feel the same.
 > 
-> of_platform_depopulate() doesn't play nice with reused OF nodes - it
-> ignores the ones that are not marked explicitly as populated and it may
-> happen that the PCI device goes away before the platform device in which
-> case the PCI core clears the OF_POPULATED bit. We need to
-> unconditionally unregister the platform devices for child nodes when
-> stopping the PCI device.
-
-Rob, any concerns with this?
-
-> Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nodes of the port node")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/pci/remove.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
+> You thinking something like this (at the end, after the dust settles)?
 > 
-> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-> index 910387e5bdbf..4770cb87e3f0 100644
-> --- a/drivers/pci/remove.c
-> +++ b/drivers/pci/remove.c
-> @@ -1,7 +1,10 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <linux/pci.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +
->  #include "pci.h"
->  
->  static void pci_free_resources(struct pci_dev *dev)
-> @@ -14,12 +17,25 @@ static void pci_free_resources(struct pci_dev *dev)
->  	}
->  }
->  
-> +static int pci_pwrctl_unregister(struct device *dev, void *data)
-> +{
-> +	struct device_node *pci_node = data, *plat_node = dev_of_node(dev);
-> +
-> +	if (dev_is_platform(dev) && plat_node && plat_node == pci_node) {
-> +		of_device_unregister(to_platform_device(dev));
-> +		of_node_clear_flag(plat_node, OF_POPULATED);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void pci_stop_dev(struct pci_dev *dev)
->  {
->  	pci_pme_active(dev, false);
->  
->  	if (pci_dev_is_added(dev)) {
-> -		of_platform_depopulate(&dev->dev);
-> +		device_for_each_child(dev->dev.parent, dev_of_node(&dev->dev),
-> +				      pci_pwrctl_unregister);
->  		device_release_driver(&dev->dev);
->  		pci_proc_detach_device(dev);
->  		pci_remove_sysfs_dev_files(dev);
-> -- 
-> 2.43.0
+> 	if (WARN_ON_ONCE(kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB_RET) &&
+> 			 !kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB)))
+> 		kvm_cpu_cap_clear(X86_FEATURE_AMD_IBPB_RET);		
+
+I was just thinking more along the lines of:
+
+	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
+		if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
+			kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+	}
+
+Thanks,
+Tom
+
+>>
 > 
+>> Thanks,
+>> Tom
+>>
+>>>  	if (boot_cpu_has(X86_FEATURE_IBPB))
+>>>  		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
+>>>  	if (boot_cpu_has(X86_FEATURE_IBRS))
 
