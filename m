@@ -1,157 +1,276 @@
-Return-Path: <linux-kernel+bounces-298373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFCBA95C661
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:16:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACF795C65D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5F51F2747E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1791F2741E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3D412EBCA;
-	Fri, 23 Aug 2024 07:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA3F13AD26;
+	Fri, 23 Aug 2024 07:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mw+6YZ1N"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="EJ6dHGqr"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9DB13B7BC;
-	Fri, 23 Aug 2024 07:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039AB6E2AE;
+	Fri, 23 Aug 2024 07:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724397396; cv=none; b=tjW98l4AWXe7gj1k4+Ssi1mhHqlGEpXH3dXkOqGpmG+UqHpPP7Wm806KjUOghb/tb24Qe/6pwm+mHMn50bYSa52YssFwC933F6z/It38yv48nuEO7caSyZU+Ku9qgS23a+XkDnRztY32VBDMxo1qk6KCI7/I9Yrqol1Lb9ZTCIA=
+	t=1724397391; cv=none; b=RZZVV49Z7hz+I2vjUqm7GXE2+9KKNVd9Z4Sq1rNPGw0govg5XIv20PgpKqwN9MOGVLrSWwFiIvNZbcvS7GwC60NcHcWZdezOVGyPfMKSTiFknv+6qoXv2s9LXgfSgyNtoEonpOcJybmzZ+ag2IPWC3puM0WWYAhrs8DMo2LbB/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724397396; c=relaxed/simple;
-	bh=SmD2pAgg2Cga/t5bFDBOFnKZxjdDUcoMeuUuhKrJUN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UcMvcc11ZmZMOWgLBiq7wArKKtiFkIlJNravfPzaey2RCg6uDxH0Ii/KSB/ahJ+8C9bPymaVFE1/Azvd00JJhE6qnrj3x1ccq9EGBXcpHL4ySh+l0rZXXSY6+ulXlwb9FagjMejCNTzoHQkG0mYv9+brhnY2zqWLwaX4nYS7REs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mw+6YZ1N; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N0q4wX001725;
-	Fri, 23 Aug 2024 07:16:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pvvmRzjjGmzJRu2QtaD2yqG7o8BFSxdAfyKmQ8OGQcs=; b=Mw+6YZ1N8M8rR9Jf
-	X8NPvg30YWIm0tHNwHZvEUkQ+IKOcKW+6n5qnurlXoSM9/9RLC+ER1cDDdOP4NH/
-	sR9P/86A1MTReubX3cLFbk7J48xoc671SOrEEYT6ljwZCydeKuJbDxWCHEmuuGqX
-	qCAQj/dfromoGUbp9JV8rglWvbeLloiUy1kVgaiMzy5ChFcFC4x3zuxMqSsCUUnM
-	LBwRet/APr+IlYv3HdLpoIlL+UV4oTEIl+I5prdGkZM1q/b5WbgWm9/57g5ZxEbh
-	rl+dzuzgyzhsdzMgOaaS1qos9kE5cKplrH7k/dsUqHGV3iqu4s1XkY34w8ot3Djb
-	c51yMw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pdn2fdd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 07:16:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47N7GD8O029109
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 07:16:13 GMT
-Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 Aug
- 2024 00:16:10 -0700
-Message-ID: <13ac63cb-8ef8-41e4-8758-82635cbfade4@quicinc.com>
-Date: Fri, 23 Aug 2024 15:16:07 +0800
+	s=arc-20240116; t=1724397391; c=relaxed/simple;
+	bh=l4qRphXzx3k4dAvC2xAgBVCblSVt7e1tB7WBcYH6I2A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ErVlkI2a88Bt3IvvdXBaSLasaAKf9irUXNmelmkA0OsL7/xzjfdeebcmI9HO1buBNSHms0cb5htUalKe1UINUD/7BsR0OQO4gOrZdMo1dNtpGIu7Ug5SxdfLlJJpJiRS9A9cTWtFtHSJaq7D+6Z3qwtNfsbHKz+0RWNCeIVTvkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=EJ6dHGqr; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=l7IPZ3AaL3TYIUYzSS0Hq6JrLJlHTIOmiTWkTNBFYJI=; t=1724397387; x=1725002187; 
+	b=EJ6dHGqrf9Da1agdqiVRpH68TQG3a5C/uNnYiTSzXk1fNL/YzZXD1BRIlptJuTOJfRMArWJ2gzh
+	2VR8rimisQ0aBNkMcgzK8djYmZNkk/yAc0pNdZ3zYJ323cEjPGKgX1GQhw//aDk8fTS41BwfAITQC
+	/mOwBps+c+rloxATmTQj31eF5UF2pb59p0oqe/BFGLD/SWRCx/9sxjP+1w3JBBsGO0WrDBO+99ylA
+	OMc3QQnovTltlthcrwNaXvTEs9ZS2E6AOagwLdsGhD9HCaixXulus6MiFP1OARtccbC5BvM2GN3JK
+	yLTxOL1dRRliM/ImJq/XOY0WG+YvMrDZAM3w==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1shOWy-00000002p5y-3SYy; Fri, 23 Aug 2024 09:16:20 +0200
+Received: from p5b13a2bf.dip0.t-ipconnect.de ([91.19.162.191] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1shOWy-0000000256e-2Oml; Fri, 23 Aug 2024 09:16:20 +0200
+Message-ID: <c74e24213fd98b252a2a1ff02a107005e50f4f7b.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH linux-next v3 05/14] crash: clean up kdump related
+ config items
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Dave Vasilevsky <dave@vasilevsky.ca>, Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
+ kexec@lists.infradead.org, debian-powerpc@lists.debian.org, x86@kernel.org,
+  linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-mips@vger.kernel.org,  linux-riscv@lists.infradead.org,
+ loongarch@lists.linux.dev,  akpm@linux-foundation.org,
+ ebiederm@xmission.com, hbathini@linux.ibm.com,  piliu@redhat.com,
+ viro@zeniv.linux.org.uk, Sam James <sam@gentoo.org>
+Date: Fri, 23 Aug 2024 09:16:19 +0200
+In-Reply-To: <768dfe3e-c437-40cc-96a5-6c5b34b2d19d@vasilevsky.ca>
+References: <20240124051254.67105-1-bhe@redhat.com>
+	 <20240124051254.67105-6-bhe@redhat.com>
+	 <a9d9ecd1ed8d62eae47ec26257093495e6cbd44a.camel@physik.fu-berlin.de>
+	 <ZscCMLfNbj2MDiaB@MiWiFi-R3L-srv>
+	 <c5e9996e4d2ba2a0849d65f68e3dce94fffc5828.camel@physik.fu-berlin.de>
+	 <ZsfR9rdMt8yn1+Bz@MiWiFi-R3L-srv>
+	 <768dfe3e-c437-40cc-96a5-6c5b34b2d19d@vasilevsky.ca>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: Add qcom,qmi-id for remote etm
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Alexander
- Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20240822064122.5231-1-quic_jinlmao@quicinc.com>
- <20240822064122.5231-2-quic_jinlmao@quicinc.com>
- <x45dqaramqjwqjmwf5fbagzsrzb4f4qaohpaaohrdfjkmq2oil@x3sz4jeqnmj5>
-Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <x45dqaramqjwqjmwf5fbagzsrzb4f4qaohpaaohrdfjkmq2oil@x3sz4jeqnmj5>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OyOa49kwiLNuUPASs-1kIOjy-lAoPgOG
-X-Proofpoint-GUID: OyOa49kwiLNuUPASs-1kIOjy-lAoPgOG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_04,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1011
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408230051
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+On Thu, 2024-08-22 at 20:41 -0400, Dave Vasilevsky wrote:
+> From d6e5fe3a45f46f1aa01914648c443291d956de9e Mon Sep 17 00:00:00 2001
+> From: Dave Vasilevsky <dave@vasilevsky.ca>
+> Date: Thu, 22 Aug 2024 20:13:46 -0400
+> Subject: [PATCH] powerpc: Default to CRASH_DUMP=3Dn when Open Firmware bo=
+ot is
+>  likely
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=3DUTF-8
+> Content-Transfer-Encoding: 8bit
+>=20
+> Open Firmware is unable to boot a kernel where PHYSICAL_START is
+> non-zero, which occurs when CRASH_DUMP is on.
+>=20
+> On PPC_BOOK3S_32, the most common way of booting is Open Firmware, so
+> most users probably don't want CRASH_DUMP. Users booting via some
+> other mechanism can turn it on explicitly.
+>=20
+> Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
+> Reported-by: Reimar D=C3=B6ffinger <Reimar.Doeffinger@gmx.de>
+> Fixes: 75bc255a7444
+> ---
+>  arch/arm/Kconfig       | 3 +++
+>  arch/arm64/Kconfig     | 3 +++
+>  arch/loongarch/Kconfig | 3 +++
+>  arch/mips/Kconfig      | 3 +++
+>  arch/powerpc/Kconfig   | 4 ++++
+>  arch/riscv/Kconfig     | 3 +++
+>  arch/s390/Kconfig      | 3 +++
+>  arch/sh/Kconfig        | 3 +++
+>  arch/x86/Kconfig       | 3 +++
+>  kernel/Kconfig.kexec   | 2 +-
+>  10 files changed, 29 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 54b2bb817a7f..200995052690 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1597,6 +1597,9 @@ config ATAGS_PROC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config AUTO_ZRELADDR
+>  	bool "Auto calculation of the decompressed kernel image address" if !AR=
+CH_MULTIPLATFORM
+>  	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index a2f8ff354ca6..43e08cc8204f 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1558,6 +1558,9 @@ config ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+>  	def_bool CRASH_RESERVE
+> =20
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 70f169210b52..ce232ddcd27d 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -599,6 +599,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SELECTS_CRASH_DUMP
+>  	def_bool y
+>  	depends on CRASH_DUMP
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 60077e576935..b547f4304d0c 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -2881,6 +2881,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config PHYSICAL_START
+>  	hex "Physical address where the kernel is loaded"
+>  	default "0xffffffff84000000"
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index d7b09b064a8a..0f3c1f958eac 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -682,6 +682,10 @@ config RELOCATABLE_TEST
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	bool
+> +	default y if !PPC_BOOK3S_32
+> +
+>  config ARCH_SELECTS_CRASH_DUMP
+>  	def_bool y
+>  	depends on CRASH_DUMP
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0f3cd7c3a436..eb247b5ee569 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -880,6 +880,9 @@ config ARCH_SUPPORTS_KEXEC_PURGATORY
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+>  	def_bool CRASH_RESERVE
+> =20
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index a822f952f64a..05a1fb408471 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -275,6 +275,9 @@ config ARCH_SUPPORTS_CRASH_DUMP
+>  	  This option also enables s390 zfcpdump.
+>  	  See also <file:Documentation/arch/s390/zfcpdump.rst>
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  menu "Processor type and features"
+> =20
+>  config HAVE_MARCH_Z10_FEATURES
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 1aa3c4a0c5b2..3a6338962636 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -549,6 +549,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool BROKEN_ON_SMP
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SUPPORTS_KEXEC_JUMP
+>  	def_bool y
+> =20
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 007bab9f2a0e..aa4666bb9e9c 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2087,6 +2087,9 @@ config ARCH_SUPPORTS_KEXEC_JUMP
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool X86_64 || (X86_32 && HIGHMEM)
+> =20
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SUPPORTS_CRASH_HOTPLUG
+>  	def_bool y
+> =20
+> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+> index 6c34e63c88ff..4d111f871951 100644
+> --- a/kernel/Kconfig.kexec
+> +++ b/kernel/Kconfig.kexec
+> @@ -97,7 +97,7 @@ config KEXEC_JUMP
+> =20
+>  config CRASH_DUMP
+>  	bool "kernel crash dumps"
+> -	default y
+> +	default ARCH_DEFAULT_CRASH_DUMP
+>  	depends on ARCH_SUPPORTS_CRASH_DUMP
+>  	depends on KEXEC_CORE
+>  	select VMCORE_INFO
 
+It should be disabled on m68k and sh by default as well.
 
-On 2024/8/22 15:41, Krzysztof Kozlowski wrote:
-> On Wed, Aug 21, 2024 at 11:41:18PM -0700, Mao Jinlong wrote:
->> qcom,qmi-id is the instance id used by qmi API to communicate with
->> remote processor.
->>
->> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
->> ---
->>   .../bindings/arm/qcom,coresight-remote-etm.yaml        | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
->> index 4fd5752978cd..27e5f18bfedf 100644
->> --- a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
->> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
->> @@ -20,6 +20,13 @@ properties:
->>     compatible:
->>       const: qcom,coresight-remote-etm
->>   
->> +  qcom,qmi-id:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description:
->> +      This id is used by qmi API to communicate with remote processor for
->> +      enabling and disabling remote etm. Each processor has its unique instance
->> +      id.
->> +
->>     out-ports:
->>       $ref: /schemas/graph.yaml#/properties/ports
->>       additionalProperties: false
->> @@ -31,6 +38,7 @@ properties:
->>   
->>   required:
->>     - compatible
->> +  - qcom,qmi-id
-> 
-> That's an ABI break.
-> 
-> Best regards,
-> Krzysztof
-Hi Krzysztof,
+Adrian
 
-Sorry, I didn't get your point.
-Could you please share more details ?
-
-Thanks
-Jinlong Mao
-
-> 
-> 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
