@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-298221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9449D95C3FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:57:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33EB95C487
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFE4FB21AF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:57:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D00FE1C22173
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8123FBB2;
-	Fri, 23 Aug 2024 03:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724DC4D8A9;
+	Fri, 23 Aug 2024 05:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M2eFpk+f"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="U3IO2ifS"
+Received: from mail-m1039.netease.com (mail-m1039.netease.com [154.81.10.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097B54D8B7;
-	Fri, 23 Aug 2024 03:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC59522EEF;
+	Fri, 23 Aug 2024 05:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724385403; cv=none; b=irR76G2yirtix75wINtYFT4KGeLSuwFH6aYSEigxaebAvfbh0B1YA7sRraNnPOeOHeYtziKe4ucE69qCz2mcIvsNk4IZmCopQEJrUfWEm/wdmbpKSQbWXxPyqk9sr2RXjRpv97aaT7bUf3N8WIXHG+Z9QVWec5/MeyyQpTf1yyE=
+	t=1724389338; cv=none; b=NUcew9esLjdDS+VHo85xvySS6MFEFxUh13AlSpG1+ob0Auo9TmbsSYvjiXDBBTE2xLq5cnYinf0qY/29Jw6h+tHV2jo7Q95SfVJHNsXgSj59zNQm0d7A4pLmidLBG0blPNIFRWNc1y8v1sBRloAWDRX68fJdDF4IiQ+rmqqYD3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724385403; c=relaxed/simple;
-	bh=edJX4QIhH5dn6aLwk3qYBmyyaoJ0cZ1vmSvykWhGLIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=erp7J0JkVyng5TR6SXoiitCMktcJMZJ3fgHHica+X5J/5Q85OVYNiu3INcgyYSphKnpetMjD5cKUfApmdjm7aEQ+FRNwlsCbA8Mzgq3sciJRXHXXMXAheD+LzJ78AzTjqqBZ6enwRL5eZtsPO7MvzHIdwpYNhpWI0UiwNs7Q1RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=M2eFpk+f; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724385398;
-	bh=79Gy4NGKtaK6VJHrFyAiB5AivMIucE5yU+Cgg26IwNk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M2eFpk+fkcMkf/EF5Z18X+W4R3WdOY0NBCVvwhoNSFdur3Teu2LOL7l5imQSnjZZE
-	 K0da39AIsKtpxvUTdauywQrhg6IfqXmz7Xx203wIYz5ghUACk5RITNjr2woZmJvnll
-	 2ImBAOrMXk7xfSGRK5T1udSvL8HDNC4fljWEKDAy44Gtn0fv4kvH98462LlLqQt6Sp
-	 CLqydZVtAbo18B/8WJmKiR6ealyF4GL+X3TTLrHfPgaca8FIbMivCOa6j3NH0ZRZja
-	 nS2Yet5T4b61MN2uDzHyBXFVVCch1CyBnBdOsL6sJywMOtSMTUViOhYGhK56CpCVx6
-	 Q8NAUuoYgN0dg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WqmTd6G7Wz4x8V;
-	Fri, 23 Aug 2024 13:56:37 +1000 (AEST)
-Date: Fri, 23 Aug 2024 13:56:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
- <johan.hedberg@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the bluetooth tree
-Message-ID: <20240823135637.1fb15534@canb.auug.org.au>
-In-Reply-To: <20240819110126.440e7031@canb.auug.org.au>
-References: <20240819110126.440e7031@canb.auug.org.au>
+	s=arc-20240116; t=1724389338; c=relaxed/simple;
+	bh=U6EnM8BEPvbVip7JrWNu2UhZAytitRU596asDYnBXSc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=j/vPrDDNwGpGhr+M6gb8Z9QleaUyvwRrnpDsdCDA4jXw+HdCWr8KHfIFJGtT4xioewsvWO5mINAiaQt68egXKkqLbrsf+/cLDyLf8007yj+N0WXvNqHj9iIoFStkjsVpc8/0Jcqjn3qoHghF1ueP9nJTGQfaGkzuCdvUHmc4tPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=U3IO2ifS; arc=none smtp.client-ip=154.81.10.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=U3IO2ifS7bZblh3ncfTheL87g+du6/V6JCW4kDK4mo0x8c9l1ZUFVVk9k7JaNuHnvk9D7ySpglR/VmbqGhDZSrWVhiJsJQZ4vLpcDlZ1YMCknJMKqa5obU3+ngZURhD+yH36/58ZkzqjjNqyDEaPjPjQ9ukB6EhTP/aSrtQsyeU=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=RWY1mGIMsLUT7JW6qJplDPglts8Ocj6h19INpsPBB+E=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id CBE9A7E039B;
+	Fri, 23 Aug 2024 11:45:03 +0800 (CST)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Ye Zhang <ye.zhang@rock-chips.com>
+Subject: [PATCH v2] gpio: rockchip: fix debounce calculate
+Date: Fri, 23 Aug 2024 11:43:08 +0800
+Message-Id: <20240823034314.62305-6-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zG0.GfbqpA_6cnAYzLUo_rT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhgfHVYaGU9LSExCT01KGB9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a917d56782309cfkunmcbe9a7e039b
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PhA6Cgw4CTIrQywfCTY4TgkC
+	EDkKCwNVSlVKTElPSENPTEtOS0tOVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUJOTDcG
 
---Sig_/zG0.GfbqpA_6cnAYzLUo_rT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The previous configuration ensured that signals with a duration greater
+than the debounce value would always be detected, while signals with a
+duration less than debounce / 2 would always not be detected. After the
+modification, it is changed to ensure that signals with a duration greater
+than 2 * debounce will always be detected, while signals with a duration
+less than debounce/2 will still not be detected.
 
-Hi all,
+Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/gpio/gpio-rockchip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Mon, 19 Aug 2024 11:01:26 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> The following commits are also in the net tree as different commits
-> (but the same patches):
->=20
->   01bcdf3cfddb ("Bluetooth: SMP: Fix assumption of Central always being I=
-nitiator")
->   7285ef081977 ("Bluetooth: MGMT: Add error handling to pair_device()")
->   8ccaf1a2bf4a ("Bluetooth: HCI: Invert LE State quirk to be opt-out rath=
-er then opt-in")
->   96ddcf0e9e5b ("Bluetooth: hci_core: Fix LE quote calculation")
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index c3a87d075908..c246f116a3b5 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -209,13 +209,13 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ 		freq = clk_get_rate(bank->db_clk);
+ 		if (!freq)
+ 			return -EINVAL;
+-		div = (u64)(GENMASK(23, 0) + 1) * 2 * 1000000;
++		div = (u64)(GENMASK(23, 0) + 1) * 1000000;
+ 		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
+ 		if (debounce > max_debounce)
+ 			return -EINVAL;
+ 
+ 		div = (u64)debounce * freq;
+-		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
++		div_reg = DIV_ROUND_CLOSEST_ULL(div, USEC_PER_SEC) - 1;
+ 	}
+ 
+ 	raw_spin_lock_irqsave(&bank->slock, flags);
+-- 
+2.34.1
 
-These are now also in Linus' tree.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zG0.GfbqpA_6cnAYzLUo_rT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbICHUACgkQAVBC80lX
-0Gzjbwf7BwX3D4V+zDk/rQwrT/FB/pY2BitEGuuZq1CqWGhhojMPHO2h6PzUv/rl
-kSjtTRvfO+4EmT7JGnGxWO8+sC3AUGQwUr9Oe2KY0VYDGU2djqokWTAgRn+wi9A2
-fbEjSuRa2ZLFMT84mCEVm/Ke+wxTEexEUOr+Zg+mQH7tpw4SqCXU70ADfdaP5/v1
-3L957ZkYnlblZfJT2yFYt2E3ZJ8Wav7irXX8cbIqqd5JgWLgBvqsMK1JP7KHOLnn
-ZePOcTjA5CRBOpjxjejidUjcG0bUht3EVaK/iO1KiAhycAU3KV3lWa7MJce/GI69
-uodTSGSnGH2G4YKOyLOalwUgTtFTTg==
-=8I0K
------END PGP SIGNATURE-----
-
---Sig_/zG0.GfbqpA_6cnAYzLUo_rT--
 
