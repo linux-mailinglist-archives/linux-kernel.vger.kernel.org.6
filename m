@@ -1,182 +1,178 @@
-Return-Path: <linux-kernel+bounces-298696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1370295CA4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:19:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1946495CA51
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 920282819E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4BBC282D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B3516DEA9;
-	Fri, 23 Aug 2024 10:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59B61514E4;
+	Fri, 23 Aug 2024 10:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XrrroSvo"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="PiG7tpIU"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2077.outbound.protection.outlook.com [40.107.117.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E271BF3A
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724408359; cv=none; b=m9gAIAPQ2TYHU7odAsjXoPIAIcQkOjrh+dHiTxIWflWQMnOhH1jeEynN3zq0BhkkKjfvoiYBD6wPb7hyPj6d4gYXwWIeOZpBJ+K1WCkO13MW7WcgydIfJkfeNZ3lo0vq14WyLAhPtv+vvAAYsIpMMaUoKeN2pLrk6JcjKlLzIso=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724408359; c=relaxed/simple;
-	bh=X/D/qMiiuGO0ronE509FN5+oXDtqy5xTneS7ccPkNeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljNNk0AYleV2CYkynG0Wfc2U7uXXDi6LEcYZj6Vjk5JTPfIkQUXdObLqno0zvzxU3+aKf3PQ+jtIpaB28qs8P/j/cx9mvjPLS0/FDikm8s4DjSAbRUVADX4e4RvBmgmmeWKiGxysXLCFrlGi2LOmJ2rHALtUTP0JvZxcWdAdRpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XrrroSvo; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8695cc91c8so186542266b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:19:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724408356; x=1725013156; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+OwBGXAKI3slwnu8cHyC1RBirAmeMtlNDQazpCvmqs=;
-        b=XrrroSvouHdnc4FMwEZS/VxxmUFEQu0rqml7+0fvmbc+p6n4Mzmw8CV1yK8BOvjALX
-         lYU0JUF4JxC4D3hQoW80gcn7Lv1DqLTJ0da32nJy/LqzJlZt1ZTjylO5uLobjAp43Ijh
-         cVZmh2T2f05Cd4b6zu8UHFUfHi4oKOXqZPMNlYt33MgT62KHhGgvytkQ+Gdb14+Ax7G8
-         oH1h1KEwXlGMTNQy31mRY2kf0hLuRZI3FtsoHLUJu3g3HFudkgElPQWsT745xJGy6Axs
-         k5SzSafv86fcuAlDy4IE95NHClexeyuby+Es5JSiDQXMpSyX9qxrHDeBVPwjIHGuYt0o
-         SBgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724408356; x=1725013156;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+OwBGXAKI3slwnu8cHyC1RBirAmeMtlNDQazpCvmqs=;
-        b=POi8zYfeY5j+GoM7jNClCDSEtUY9roR5/Q7aioVl3QgQKJgX/615caggPdwFt/Buye
-         UBiQ1QW/lDYW/6fkh/ZGrfxUZ/j34D6fSUj/2WYxnX2J74Q3gQbMDtzjGqBOIrfmPKvp
-         szl810fTpLJI9s2zHz2NlWKXpbrHxwFvcm1hiQAvmD9UCEc5/6FrVtfNpOcAK523DzaW
-         7Qlhp5imub6+uT57uPetVlaCLQ5G3CUfrq8ok6cbRDYoyoiOgYW1Gk8KC4bIID1YwbS3
-         6pPMOybm3uOFFGkj8p1O7DCGwmhVARwbOZ7gBk55mB0iKAyGwVxgtPc1bm11lNVu2XkV
-         8GpA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7RYHB37pQHSLXdk/g6JLH6S3FDWjpt508WVgxE1Z654dygO9LOaW5boxxHTZ2YlrkBM9d8t6nt9+QYA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztensBRoYKooHWdpPICArB3Aw2+pwx9oxZYbRLqVAMyX7K21bK
-	/gHlfGGQ8ikmVCZ9gtJ372odihDHBA3kjphYqrB5T6yVAWSrKmYY2+tikJzPlNV92+a+XuSkCHy
-	x
-X-Google-Smtp-Source: AGHT+IEo30GnXKdJ4sC1bDm/LneYdoi1ivUXSW/M9AGDE0GOCSZOUVWi8eIabw3msHPiiEAsNm0NTw==
-X-Received: by 2002:a17:907:971d:b0:a86:8f2c:5cfa with SMTP id a640c23a62f3a-a86a518a3c8mr123988666b.14.1724408355739;
-        Fri, 23 Aug 2024 03:19:15 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f62f1sm239092266b.218.2024.08.23.03.19.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 03:19:15 -0700 (PDT)
-Date: Fri, 23 Aug 2024 12:19:13 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Derek Barbosa <debarbos@redhat.com>
-Cc: pmaldek@suse.com, williams@redhat.com, john.ogness@linutronix.de,
-	tglx@linutronix.de, linux-rt-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: test 1: was: Re: A Comparison of printk between upstream and
- linux-rt-devel
-Message-ID: <ZshiIdUFQs4CKW2t@pathway.suse.cz>
-References: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C641BF3A;
+	Fri, 23 Aug 2024 10:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724408393; cv=fail; b=X8LR0lUGSysbwQjWCDjSotpPrcCiif1xK5FPAKulL87UboDB3J8osvdCRjyNcWRUjEd6YOMlkxrq+/v+bW3tQ82jAvLZczCgDjDULod4Qb0bbYPp3acK5aRy3wI/p6u0hog5GjnJmDm6snvwWnCDddF4jByflHrcW6hryk7UBX8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724408393; c=relaxed/simple;
+	bh=btm2JgdSLGnftlhe1Xs8q1GCqCXt0nDV9CkkktaAy7w=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=BZQ5uqHyY0/cXC0rK0xILxA/XGhnPWJC1VMcmlJNMn9qcPLgaeBWVoDmHlI7R53BxE9xE8y7CaKdBAsZ4VHyKLEMXAvLSyv8LcszsHqlhrE5wq3AKxocJF3/EDi5JvC1+Ly7AQAlj+pO16fDFE6gXpdW5xKtor1G8xnJ67DsIFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=PiG7tpIU; arc=fail smtp.client-ip=40.107.117.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cGqsFhCIW95YGhVnLVYiBis6YW8dm0rJ5VLeRo3xU5qgiW/M8ycDcFbxtCeaHtO8eD/moCoCtxRePGbTUOgjp1YM661gRtfB1e1ZTaiYRYNM0VOV4T1re0bpq1ADbP0f6VpGo56fMeWGgxs1yKWrdjBxkmpgXNHzKBROdnb9Aa6FA8RiRx5XWntkpHS1TMPJ3fIrR5oIIkHrewI94BP+jbmI3lCIa57CmDTBH049Fh5CE33qKnYQD6vmlNIBWMyCVDugQ49orzcoGfIg/scXDRiHZBUTtKv1R4KkvdOQBG5UJIrwaismHY12OCqh/EMglnkZH/cdULKepM9XmF1+ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=toT7Y0rXFSpz0QJijd+CyvrL8ZdHRq0i8XED9aPmhV4=;
+ b=fQ2w3468WNPNhittyW9r6E11dMGM/jyfSVT8pb/JM3lMu7z2Rk2Nt6tOzbhP/PxXGqylNIWmeC1MCN12vs/3cvNU72eTMJAk8Wexo9uLP+vQlD7blH9zGrEYJt6CYmOWa6tGZoSqnnuM3LKHUibixNtva/9Ae/nlw7J2tMSmScLNSieszH5Od0l1pNFsr2G68GnH1kG+EBc0DOXNywFL5tHcOaHoYRuGfqPAyDoouNqJgKBLSScPrzGrYds8FicgXiPMHtjdr4w8ca2gIl4bd3w+mIn1sErV+wQI67eJIqyQrmKOkzgZ+30o1dYGvUmLnrGQsO4FLq/BZPR5Oviu+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=toT7Y0rXFSpz0QJijd+CyvrL8ZdHRq0i8XED9aPmhV4=;
+ b=PiG7tpIUjGxHlmIFM8pFaGI+cVDu82uUCvIjJOa6z9epH/I3y8rLoV7RqERmRG+gHItb1KE7DwycJDuRgWqShTpQUzoc/mhgVTQ27vp/nuDsZotbax/oJga/Q+RX4E4e3PN90P00TJRY+UiPyIGJDilLAzmJ2yxB0oOcGGrS9xtCgONcTL9RwOmjA3qqKiC4PK7msgEKjXPLRTNY8gRGYACbR4kys6RG0GZwAQPAv9rxiyaGae0Dp4gr6h1rNweP/CnGmj3s0y8YJQSblOTSLIq+hjocxYl/4KYUIAzyMnaa7WZ+YCZhPrzO2XISa03f0fRB18GrHI0GzMdTJLtdBw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TYUPR06MB5873.apcprd06.prod.outlook.com (2603:1096:400:345::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 23 Aug
+ 2024 10:19:44 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%4]) with mapi id 15.20.7875.023; Fri, 23 Aug 2024
+ 10:19:44 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: vkoul@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH 0/6] dma:Use devm_clk_get_enabled() helpers
+Date: Fri, 23 Aug 2024 18:19:27 +0800
+Message-Id: <20240823101933.9517-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0024.jpnprd01.prod.outlook.com (2603:1096:404::36)
+ To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYUPR06MB5873:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9536f5bf-bf85-4ed9-47b3-08dcc35d1b7d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Fb9EsEgdcqF3Wau8Tfbmop0VTbeclyhigiT6Ve6KeNHEh7t8LAMj92LEvcj3?=
+ =?us-ascii?Q?dYVMmXHHFZUCDwVIwzVjaNI+diP66ZoEYpvlRDldXsaC1nvMeGjBIRkIjj8f?=
+ =?us-ascii?Q?Rwk4nl9lDY4Dy5g6T9brMeXAru8dAPR6ELPOrfVjRn0SmKP3AByjvad+5gUW?=
+ =?us-ascii?Q?Rj+/tFPDz/DPthWcz7LOazwYz4uQYMNAqaQJ3F6CTM8Dr5xzpa49gJ6LZe7V?=
+ =?us-ascii?Q?I1CKQMYsXo7wPzOo4hGRTSjV/MaYz2NJmxqJkvjXPxhJ4EzLtuobLQC4NbNI?=
+ =?us-ascii?Q?FBuUYI4dqVzb0fMnXd50qrlgNcwBj3crUc+mDS3h9RKd446h1DLOkrw0ikBi?=
+ =?us-ascii?Q?w5Ibfi0HAkqLx33bojRlESD09g5GVyg1bUyYlPcRuVM4WU1dhrIj5IG+C1Ut?=
+ =?us-ascii?Q?2R2h5862jfRbyFJdOjn+cerLl9dhvZ+E6AwB94pn8G14bvhQjxPC6uyMvIN6?=
+ =?us-ascii?Q?2T+3hcyKwRz6JPW4YOoSNgAFqetn2wfMAHweub5+bjvNN+fM3g3gC80CcYXm?=
+ =?us-ascii?Q?UbevxHO6m48JL6q8EITZMJne7xU6mIz2hgNyAtIioQ2x/XuHNzwNP6yUcNrm?=
+ =?us-ascii?Q?Pyw674FROhpPTElwfE9R9uzjvUqBx2lvZpAbuyyguSWBux4tOa1IkGksu9kU?=
+ =?us-ascii?Q?FpxfG6DCYjJurv93bPlI9qNzAjFwZ4LKx1mLg7laut8LsCVer4V6VlIwMqgJ?=
+ =?us-ascii?Q?EzXTwiogQ+94smN5VGK0N+QCGvEbkH2eqOGs6o1BZxp3SJhCgGFf2EgZn9l9?=
+ =?us-ascii?Q?AY3nrHtlqbYRegDG1SQgX1nGJo1Jz/62CXjyxFy8lfnlK0vp69cW7LxZNqZS?=
+ =?us-ascii?Q?rvfOxYHmUV3naoybbzdpWUd4WhoMJOoS99qpaXlz9BvRfQlZIvN9UW3vxDRR?=
+ =?us-ascii?Q?y8fwsmjwGy9QKhizXkxaJloiI4NQmitjwI4borM1/qR0pp6NDxLA21C7L3Um?=
+ =?us-ascii?Q?ZPwRPAXS4kXAQL+IY3gIjvdmv8sRmD1CAoW+zHKvadcscrj9DoQJ2HeBU3i0?=
+ =?us-ascii?Q?yGiPIlI6p63FQyzWQIGBxj0oxgsPH52eKW5AFIZnwfEHSiEvArNws/1YAJWZ?=
+ =?us-ascii?Q?6YAk751R+JXBrfjOvjk+M5YYoq54IlvvZ7UPQ15EqJfvKkYXmq0+66Ll4rqp?=
+ =?us-ascii?Q?E/+YsUQsCkHh4MMkKPyTXO6Lxx4YV18tJ+yKpbn40BWoL+03CHjZ1vlT/2ES?=
+ =?us-ascii?Q?6mrXLPqW1MkDeu7DdMGgCVcjWki4sKdIxdBGnH+OtVCNarORJoRRfumkp9sL?=
+ =?us-ascii?Q?ZGgwQqI3CbJxcvpMwCEsjvDe1kBR0K+nKjwX1NvzIS4PBUxheI04l0sm8+fY?=
+ =?us-ascii?Q?mGgjyRYlJLxiJEffh1RjMRgVKHd8RHhkmOYKxKxrBfIY6Dg39uk6MKgWDXh2?=
+ =?us-ascii?Q?hdpYyOAshL6HaDF62wFi6d+7dA9rbrR6BgLIPhkDUmCHaE9xIg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sleilQM94avwQ7khvzIMRTlK1Xym+Bj9MmtxzQkvp1vcLXHevj2oOPbNa7pg?=
+ =?us-ascii?Q?RiQKGsHsa1GQhuN/jpoeMKncaWFMQ+VoMS7Vm25SHKtyQyPIF/uEdPI3EfPI?=
+ =?us-ascii?Q?+M1T1UVumo31DpFFwX1Y/aJ4UzbQtcKdC+rAla9DbwbfNGSaS8R1aFVNlod+?=
+ =?us-ascii?Q?eBtcpFnVMAxRSbWy5qYd1/91mxKnjTVo/n4WIWNhk7i3JM32bAkRvXql1aXk?=
+ =?us-ascii?Q?Gqi7nKGOFcR3azRp0Sv2+d6ukVhQlJU0gJuRfhNh5TNG4Qutvti4iQAmU2b1?=
+ =?us-ascii?Q?uuaBtI3o2z726OFgv3p8zYpWQd5ENvCrc0MjT5CPxOYcvNrmmisssejTgc5h?=
+ =?us-ascii?Q?BXDHZbrqNxOwimzjHIjlkNoBJAAcpD+lagBSCG8n6xTMiZfSFGhsEZ9RaQuA?=
+ =?us-ascii?Q?UqOgKP0aowWfAiSb/HNr+z5uIOWXxSHIEg5akvt49c/YdMgg7/6HyITduLnw?=
+ =?us-ascii?Q?kbPrrhBHpdESDJATxiarNFruG+rIj6teC8VsgUqGNLw/AveGxLJVP6Y0Vw25?=
+ =?us-ascii?Q?ZsNPrlEdg8EUa17AGFdMXyH4dKk+ULmTfZiCPcc+QAe2pP599W+dB30t0Swh?=
+ =?us-ascii?Q?kK5i+XKYoRfTvehbpvFLNQpLNQK6NMAJZl2TKtuoK7CQVyuF4CDOSq2nhmm7?=
+ =?us-ascii?Q?64NhC1Hx9I4JHcXvwh22ChE1FCz0bwxHxcYJcMhvOSZ4aNkuwr+me8VfutMO?=
+ =?us-ascii?Q?oCglJJhk++qBrbu2Ys4s+r4Gk5BCD2e9ir0PaNernyRl79d/DUTngn91Ub6w?=
+ =?us-ascii?Q?IHtOBonHjzcJB1Q5XrzBGix1Dmw07DdJaY5foE3TfejC/LuDCC0+tD/Ic7Jr?=
+ =?us-ascii?Q?bjQrvdj9lO9Htl18rVohJgjGWWpeX7u1gOwkVQeyekwRQy5r5gd2g9rgeDin?=
+ =?us-ascii?Q?FqDZZCWNDkHumkjdm/OT4EW2vNdWy6hGUIGia1s/8z+CNDy0GrmofRzHj9nU?=
+ =?us-ascii?Q?X3oHWwC+B7RdZDr+nAp6JK/jkbzGihTGImiD0JT6sEdYsohZVxJ6tFrafiP8?=
+ =?us-ascii?Q?QfyRXWcXjWOYqAbT85KGRJ0fEgeB9pChadcw/8FuKHuVvdhsECDI1nH+2OX3?=
+ =?us-ascii?Q?7ozc3EA72saflR/v1s8tylH9llOoT/ERwLkXhXDXNCoBt9SR1TKM2SKAJunx?=
+ =?us-ascii?Q?VZIN4dJ/WsV6eJ4MhOGMgkq8mkhOx+GqyxH2rXvr0lqhqObVQnqEv5LoALee?=
+ =?us-ascii?Q?RtXfWgaAwWl+Q4OIIMa3lhffEo79PJ/SSLmmyeSRfqFQTD09BZ+gMdrxMoLX?=
+ =?us-ascii?Q?Hpov1dMjWZebvZeXFf6rigrJ+Db7f7vRt5spfzfD0kcWEsN4KtXbLD5V3WUE?=
+ =?us-ascii?Q?IzCn7MaBqA6XpmXww+kP1JjYidhg3JF9qIZCcK7HCYkRepgsG7Del23wDCUr?=
+ =?us-ascii?Q?fr0S3bAM8r/7FlqeLT7HOuY9d9Pj2U3g7XCqslp2RI7hajx5Ob/JWwYZlZqV?=
+ =?us-ascii?Q?jBu/iBWc+DjT5UQCX3qPlAkTUOAv7EMM442/o9Ip280onNOkFPcCQFAqmazN?=
+ =?us-ascii?Q?PxXGaOq3PyYzbWyWb5xgoZSF+U7lXXFV8JlJxwQtL5hoYZYE3YIPicSdqTA/?=
+ =?us-ascii?Q?mFj0FS1Kik+nqgQ5w1ejpgnThFUGdpWg/Foh67PG?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9536f5bf-bf85-4ed9-47b3-08dcc35d1b7d
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 10:19:44.3002
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k87pS+b5jg9kSEqMhMW4R/JYfZ0KMPY59WmOYlyqMELKsKD9FHcFvQzmwH74LPs19N59EiiPmmOGyUnUdPFTog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB5873
 
-On Thu 2024-08-22 12:32:15, Derek Barbosa wrote:
-> Hi,
-> 
-> TLDR: plain, vanilla 6.11.0-0.rc3 is slower on flush and 
-> does not print traces in panic/crash context consistently.
-> 
-> 
-> The purpose of this email is to share some findings with regards to the latest
-> available printk changes, in comparison to what is currently available in the
-> "mainline" upstream torvalds tree.
-> 
-> Specifically, there was concern regarding flushing, flushing speed, and ensuring
-> that viable information can be displayed to the user in critical context. This
-> email also assumes that [0] (and the rest of the thread) has been previously read.
-> 
-> Moving on, I've been testing the printk code present in the linux-rt-devel tree
-> for some time, and have been honing in on comparing behaviors/interactions
-> between a stock, regular kernel and the linux-rt-devel tree. 
-> 
-> The kernels in question are the following:
-> 
-> 1. a stock torvalds kernel, 6.11.0-0.rc3 
-> 2. a linux-rt-devel kernel, 6.11.0-0.rc3-rt2, which has the "newer" printk code
-> 
-> As a note, 6.11.0-0.rc3-rt2 DOES NOT HAVE CONFIG_PREEMPT_RT ENABLED.
-> 
-> I will refer to these kernels as "new printk" vs "stock printk".
-> 
-> I've also attached the configs for these kernels.
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-Could you please also share the kernel command line? I can't find it
-anywhere.
+This simplifies the code and avoids the calls to clk_disable_unprepare().
 
-Especially I am interested whether it:
+Liao Yuanhong (6):
+  dma:at_hdmac:Use devm_clk_get_enabled() helpers
+  dma:dma-jz4780:Use devm_clk_get_enabled() helpers
+  dma:imx-dma:Use devm_clk_get_enabled() helpers
+  dma:imx-sdma:Use devm_clk_get_enabled() helpers
+  dma:milbeaut-hdmac:Use devm_clk_get_enabled() helpers
+  dma:uniphier-mdmac:Use devm_clk_get_enabled() helpers
 
-  + wanted to show backtraces on all CPUs via "panic_print" parameter.
-  + did a crashdump or a reboot.
-  + used also another console (graphics).
+ drivers/dma/at_hdmac.c       | 22 ++++----------
+ drivers/dma/dma-jz4780.c     | 18 ++++--------
+ drivers/dma/imx-dma.c        | 38 ++++++++----------------
+ drivers/dma/imx-sdma.c       | 57 ++++--------------------------------
+ drivers/dma/milbeaut-hdmac.c | 20 ++++---------
+ drivers/dma/uniphier-mdmac.c | 20 ++++---------
+ 6 files changed, 41 insertions(+), 134 deletions(-)
 
-> --- Test 1: John Ogness' Console Blast. ---
-> 
-> This test uses a script which calls itself to create a pinned process for each CPU. Those
-> child processes will run in infinite loops of show-task-states via
-> /proc/sysrq-trigger. This generates lots of contention on the console. After
-> some time, we use the sysrq-trigger to crash the machine. 
-> 
-> The success condition would be to be able to view the full crash backtrace via
-> the serial console. 
-> 
-> For each of the kernels, 10 back-to-back trials were performed. 
-> 
-> In the 6.11.0-0.rc3 stock kernel, we did *not* observe a trace on crash. There were various
-> other traces scattered/nested throughout the show-task-state noise, but no full
-> crash backtrace. At times, there were upwards of 13k dropped messages.
+-- 
+2.25.1
 
-Do you miss the backtrace from the panic-CPU or non-panic-CPUs or
-both?
-
-The dump of the backtraces on non-panic-CPUs might have been affected
-by the regression fixed earlier this week via
-https://lore.kernel.org/r/20240812072703.339690-1-takakura@valinux.co.jp
-
-Did the system reboot in the end?
-Or does it got stuck somewhere?
-
-> In the 6.11.0-0.rc3-rt2 "new printk" kernel, we observed the success condition on each run. At
-> the "end" of the test (the crash), the full call trace was visible and presented
-> to us via the serial console.
-
-I guess that it is not the problem with the non-panic CPUs because
-v6.11-rc3-rt2 in rt/linux-rt-devel.git seems to have the same regression.
-
-It is great to see that the serial console driver transformed into
-the new nbcon console is so reliable.
-
-Still, it is strange that the stock kernel is so bad in this test.
-console_flush_on_panic() ignores both console_lock and port->lock.
-There should be a good chance to see the messages. It might break
-"only" when the console driver has been stopped on a non-panic
-CPU in a state which would prevent the panic CPU use the driver
-even when locks are ignored. Well, the chance of a breakage
-is likely bigger when the messages are flushed also on
-the graphics console.
-
-Anyway, thanks a lot for the testing and sharing the results.
-
-Best Regards,
-Petr
-
-PS: I still have to think about the other results. But they seem to
-    be less surprising. I am most curious about the so bad behavior
-    of the stock kernel in the first test. I hope that we did not
-    break something in the patch handling the legacy consoles.
 
