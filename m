@@ -1,127 +1,170 @@
-Return-Path: <linux-kernel+bounces-298946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DAB95CDF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:32:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D1F95CDF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D14287516
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ADEF1C240F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C320618755F;
-	Fri, 23 Aug 2024 13:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845DE18787F;
+	Fri, 23 Aug 2024 13:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KR/MTyvd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="brZY86nX"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9168C185B61;
-	Fri, 23 Aug 2024 13:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419909; cv=none; b=Ljheo6IpH4ph3WEVcm4LiM/Th0XFiJiba5F7gTeNzk7QoDwmYcOQy9c23j44Frn50NnEYNgggZKm9NTXRuu74+aCKu42So3DW/oBfe+YJLwSf+Y3Xq/B+ZprJyO1Y/KFoS47PstkhJcwrQ3O+gvq4TwuzyQglIaVRb13xxPqGTA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419909; c=relaxed/simple;
-	bh=y35YyC4z7k4CZp108Eln+wMKCgxODdiZtk/ee/GHJhQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC6814387B;
+	Fri, 23 Aug 2024 13:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724419944; cv=pass; b=ABG2nhIV/6ttA/qAskDUlTNE/5rJkBt1halMMtTHjQp5wmM3NqnZXEQuElTgnbEgjJglRvW6673xbSJwIzQxs+Yyy7pN8JPB4Ot/1FppHjM3kCK5LrlIm4afLJXCcHQ1l05SftFrUQY6ho+nnGqR7fhzeiO0spteO8kXKuv7Hzo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724419944; c=relaxed/simple;
+	bh=4GVfqZ9yOekn4tnZ0CwmT/G8IupJRVl+CvpU1zQpgwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSHIK7CjiVi1pHHoAJUfqJL9cqtS+JiNRVZDv+nikqFHgtzCh9a8e3wh+H2y0DzqCmW4zu0yXUJ5dLnhChhvyv0Hh9K7yRB7tVZ8aTDXeInY8bu3/r8haglKvb5lHXhzIxweNZDzMnaU/g6mO5hRNaYZxOsDRzEEM016ItGJ2BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KR/MTyvd; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724419907; x=1755955907;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=y35YyC4z7k4CZp108Eln+wMKCgxODdiZtk/ee/GHJhQ=;
-  b=KR/MTyvdqMUG869JBV90c1Urghw62Ucs8sMSP5pZOL6bgWJ1iJeJyggQ
-   rQHokf9nzzyzkTFRfxFuaywInC6s0KzqKz2QX0uHQflxrVKSEP9LRBIWL
-   +QuVIHqjHLVkluWArJXzBw4ZtNNPQOCNwVCrKGfaM73NkCblErSYMmvdd
-   k1AEMma/EbUzq/kec9TCIEtB2Ufb0eJ13thcPTKFoM97M3jJ/BOIaXkYQ
-   zqm51minlcLWnklWBPC+fCd35TuI3D1b5B0LfbpvKjcFU9pSsKAK+EAZy
-   M9jVQXcSy/+elnS73kJaAONxHTsKclB/Hb1kUbU28QBazXGbzrW+32RUa
-   Q==;
-X-CSE-ConnectionGUID: J3957KAVRcWo7Zdo2lg6PQ==
-X-CSE-MsgGUID: T2aXldjPSlqxn1DxXz7WDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33511081"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="33511081"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:31:45 -0700
-X-CSE-ConnectionGUID: uCdDVu2aQ9qldzwRYO/wtA==
-X-CSE-MsgGUID: r1TwYEVRTgKOwvGuxQ7Qjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="62315873"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:31:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shUO9-00000000nzf-3ycu;
-	Fri, 23 Aug 2024 16:31:37 +0300
-Date: Fri, 23 Aug 2024 16:31:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
-	Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>
-Subject: Re: [PATCH v1 0/5] i2c: designware: Cleanups (part 2)
-Message-ID: <ZsiPOQ_xEXdh9b4Z@smile.fi.intel.com>
-References: <20240822180411.2298991-1-andriy.shevchenko@linux.intel.com>
- <oo2wbjxoe5acqeamjmnngnu2n4e2fsmclepnwvra4hmc5nn64l@q7rnxilvtebu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJ9J1wfLcV3B0pGj6b56PaNQo9TtPZQyuWgInFXWrpwKCCASAYZuesOMUGMOk+wgzp+ZK51wxMwGmelZLXEvJESuQWFC7ZWj2QrNyONdRwz8ZVKithHSlBDURlkvQH8ZDlXemaQTGlwuYJwMFLo3t0VZ4YnXYei6qwnj6TsuHW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=brZY86nX; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: detlev.casanova@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724419928; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KPAyQPg5eTVOLlCTUyJVq1JaBUlGmOOewxA+F0jfoYKiejNzjEzAFuw3xEOHTrrVA0mNYOCiBoDwxDfC9GYqyOnUE9nu2PSYg10NvmWorAAoZIl8ZeiKnSJf+JpQn7aVn9MwO8WmB7vJU+rPoy0Do2TDUA7HEIYUQ6Sznyzp/70=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724419928; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=36+a1glbwxcI0a2i+ISO16XDr0TPQCW8/sEg2TiO13k=; 
+	b=TXxIwHfmoj2KuqJfrKd99zhFQ2LWlnQxKppEhaU4UJqckb1e+uYa/fQW600Vt2+Z8VdrWvXLfo5q3jXzVwhtbsbxxnqx3UPK/OyCdFp+Be3EbaeuQZJgzd0mE1NpmILrWLAJPRzbJJzJxcBTFEKozgNUYP2YzCdzs7LSGy+Deu0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724419928;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=36+a1glbwxcI0a2i+ISO16XDr0TPQCW8/sEg2TiO13k=;
+	b=brZY86nXo+B9PwbZJ+W2OizsPGsYK2O/CIryusHuS/EvssKKSXAkAzfGLqiQCQRU
+	NXWK6RpGiVr2agI2aie/kPcL5t6QGlOLLt5QdthlvXmAWJCG33IyRFM2uyjX5dnXkr/
+	uQAqjPazjh7QKY6XcL9r6eU8979HuuDTUAs92QhU=
+Received: by mx.zohomail.com with SMTPS id 1724419926661174.78715179759513;
+	Fri, 23 Aug 2024 06:32:06 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 3A8581060533; Fri, 23 Aug 2024 15:32:01 +0200 (CEST)
+Date: Fri, 23 Aug 2024 15:32:01 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, 
+	andriy.shevchenko@linux.intel.com, tao.huang@rock-chips.com, finley.xiao@rock-chips.com, 
+	tim.chen@rock-chips.com, elaine.zhang@rock-chips.com, detlev.casanova@collabora.com
+Subject: Re: [PATCH v2] gpio: rockchip: support new version gpio
+Message-ID: <c6mvxcgono3s2jtotks6sfqojenj2nmvf4b5fau5uc6gmlmerb@oi34wxnqna4n>
+References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+ <20240823034314.62305-9-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kvez7yto2c3wu2kd"
+Content-Disposition: inline
+In-Reply-To: <20240823034314.62305-9-ye.zhang@rock-chips.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/224.322.35
+X-ZohoMailClient: External
+
+
+--kvez7yto2c3wu2kd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <oo2wbjxoe5acqeamjmnngnu2n4e2fsmclepnwvra4hmc5nn64l@q7rnxilvtebu>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 02:45:58AM +0200, Andi Shyti wrote:
-> On Thu, Aug 22, 2024 at 08:58:36PM GMT, Andy Shevchenko wrote:
-> > This is the subset of the patches [1] that should not affect any
-> > functionality. Here are:
-> > - consolidation of FW parsing and configuring code 
-> > - some function renaming / dropping
-> > - switching to export namespace
-> > 
-> > In any case this is Cc'ed to AMD who reported a problem in [1]
-> > presumably in the patch that is *not* included here.
-> > 
-> > Link: https://lore.kernel.org/linux-i2c/20231207141653.2785124-1-andriy.shevchenko@linux.intel.com/ [1]
-> > 
-> > Andy Shevchenko (5):
-> >   i2c: designware: Rename dw_i2c_of_configure() -> i2c_dw_of_configure()
-> >   i2c: designware: Consolidate firmware parsing and configuring code
-> >   i2c: designware: Unify the firmware type checks
-> >   i2c: designware: Move exports to I2C_DW namespaces
-> >   i2c: designware: Remove ->disable() callback
-> 
-> I merged these patches in i2c/i2c-host.
+Hi,
 
-Thank you!
+On Fri, Aug 23, 2024 at 11:43:11AM GMT, Ye Zhang wrote:
+> The next version gpio controller on SoCs like rk3576 which support four
+> OS operation and four interrupts
+>=20
+> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+> ---
+>  drivers/gpio/gpio-rockchip.c | 40 ++++++++++++++++++++++++------------
+>  1 file changed, 27 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+> index 25ddf6a82c09..5289c94d5c60 100644
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
+> @@ -29,6 +29,7 @@
+>  #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
+>  #define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
+>  #define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
+> +#define GPIO_TYPE_V2_2		(0x010219C8)  /* GPIO Version ID 0x010219C8 */
 
-> Normally I leave patches a bit longer in the list, but they have been
-> reviewed and discussed.
+The comments for anything but the V1 define are redundant.
 
-FWIW, there is no change done to them except rebasing to avoid that suspicious
-PM patch to be included.
+[...]
 
-> If there will come some observations from others, we are in time
-> to change them.
+> @@ -648,13 +655,20 @@ static int rockchip_get_bank_data(struct rockchip_p=
+in_bank *bank)
+> =20
+>  	id =3D readl(bank->reg_base + gpio_regs_v2.version_id);
+> =20
+> -	/* If not gpio v2, that is default to v1. */
+> -	if (id =3D=3D GPIO_TYPE_V2 || id =3D=3D GPIO_TYPE_V2_1) {
+> +	switch (id) {
+> +	case GPIO_TYPE_V2:
+> +	case GPIO_TYPE_V2_1:
+>  		bank->gpio_regs =3D &gpio_regs_v2;
+>  		bank->gpio_type =3D GPIO_TYPE_V2;
+> -	} else {
+> +		break;
+> +	case GPIO_TYPE_V2_2:
+> +		bank->gpio_regs =3D &gpio_regs_v2;
+> +		bank->gpio_type =3D GPIO_TYPE_V2_2;
+> +		break;
 
-Yes, I am here to help.
+Can't this just be handled like GPIO_TYPE_V2_1 (i.e. reusing the V2
+case)? Also it looks risky to use >=3D on gpio_type. GPIO_TYPE_V2_2
+looks like a simple enum, but it contains the ID. Is it guranteed to
+be increasing? In that case any ID > GPIO_TYPE_V2_2 should not
+default to GPIO_TYPE_V1?
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +	default:
+>  		bank->gpio_regs =3D &gpio_regs_v1;
+>  		bank->gpio_type =3D GPIO_TYPE_V1;
+> +		pr_info("Note: Use default GPIO_TYPE_V1!\n");
 
+Can we have a list of valid V1 IDs and default to -ENODEV?
 
+Greetings,
+
+-- Sebastian
+
+--kvez7yto2c3wu2kd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbIj0YACgkQ2O7X88g7
++po2CRAAqG5J+F5LRYbd+YUt4EK3DRMoN2w4n0P/DMq1lXgeH555/OJOW4pncyrR
+6/wkI8KYwKLLEZSbRbgo3PCOiobC6GlEtyX9p0h9ZDl8ioLAymUIbHT0EOkVtj7N
+PlgLcAu/bZRH1IucSOP7ks474ePpdePiCLw6101pqWpjLpVrQZryq6iEA5YJU60f
+VpaSLcNp3HF5nAyo5tlfyUexgEJEDMhMDpzf/Rrm4Z6o5yJxbGjn+tSkGJm64atu
+EkGmFX96ACW+9HtGrX6Oc7FModh1mPwDJBc9VIvxTCbhvvrZ4BTUcPbdRxHUdKNs
+kfSYmZ6t2HMEVG+madk+4IJgFHRdd8IeD9i1XDfpSni9lv/qQNgBQibYd6CVGvc2
+bMk6h/WmLv/Mc1mSQ/CLPahSjoYRjKzbWrvg96aZkLejBOU6UcY4fO3/CpSTXGp/
+HNWe/TSfY1B2ErSdKp4Izw5SbXC93SrZZvPf45FGX/iUUkw9RdhvirVRaTbV/jmI
+J3Ih00t+XHPsIuwRnuRglAlloHPPkJp2TUMv9WkpI5dTuAzh3TO5JABsxNx0WwF0
+UtJBEEuYtV9bDwVDWsvG+aI4cf5zmxAriWbAZljpu5hbruVjmX00YZXWxyj3FxjU
+5EnhBWyiLQHGHakN5okQj7BC2Z0pDc6UXVcZPvrGNGMa8nySYN4=
+=xJ6l
+-----END PGP SIGNATURE-----
+
+--kvez7yto2c3wu2kd--
 
