@@ -1,204 +1,235 @@
-Return-Path: <linux-kernel+bounces-299767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4768D95D9D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:46:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7502295D9D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08081F21CC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4D3284559
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D281C8FBD;
-	Fri, 23 Aug 2024 23:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDB61C9458;
+	Fri, 23 Aug 2024 23:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="ri91hZKe"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11022102.outbound.protection.outlook.com [40.93.195.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NZJ3KtQ6"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAE2149019
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724456784; cv=fail; b=U6acECHWZuRQRJbPuWk0G5gxuTwgKsDTnzhhvBoX2iIK8LfQU/G2NOPL+CliRp1d3iCj2e7fB+r2cbpI0oDu0Xte2NVNOFhcTHHxjVFITJ9Tj3TOFMRxlLHnA2Z/wYZseB4GKPTTE0jVPtQfB2p9zasxHBZdiooTGmw+rNZEPqE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724456784; c=relaxed/simple;
-	bh=rhUjFGtQedQifpeC8ZAXYyKKhY8UldI4Y8Rbv2zm1JE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 Content-Type:MIME-Version; b=g5IjPtqr8cGzjgZX2aK1ddabcxIVVu6uXedU+qb7NVA9Hryy8A9MPqPQA8YAOC2WaHrtE9GmEVMH0cII3i6pkqR89qobjwa1n1XxGeS/xFOTlhABsGitydw+yfYxWLsPzby5FucoYlZhsyzuFKtngUybjYXJeg4lTr4mUojCKRs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=ri91hZKe; arc=fail smtp.client-ip=40.93.195.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sA+4nTnS2+kLrIzf3XNrAMaOHwMTSzbIdZSGsy/ldZs1aFWsQvr3LOWNFvWnesI/FKauldlQymj75dHbsmjuebT1RhiPVqPyHvXCYka7RG5g4yNo1+3uGZX3xDnDyb4h4P0RoWrmQqQIWorVQIxl4dJykFs2jqS+A4vhNj4+9gwnBhXfEaWRHNSRy29rQtBDlaR1KFmp4ytBmLeJsgP6PjLtmCQxEK8ukjHHxS7MNDMSLvDfSCtF65EcFb7AanGvh0wxugmYMC4ORtmktzujT1sZFK4SPRQ5gtTbp15vmN/oDxG8eOnRGZBn2ZSgvXe/OpXAkcQb+DO54RGoHnbjSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xF3eGrhQW2kXxZOBKcYlkbdLQFi5HjIISBW22hzWY9k=;
- b=H5jDnIkvuTSvN9tylkwa1NaZiW5MTCe0JREMu+50qxbPedl5RBTTpA0bKmBF+IOo00uCX+zvPkqAyy44SgouP55JuTtprCTsjIoJYQOl1BmlX0H/wYN6kfG4n2lGEIN0GkW6D/KTgEoxLmUKcXlocvpVeuYT53ioeRiBc7MvnoxZg29WNbhitGeAXaENSexvPc1mvElEiiXd7V1I8HFE+azdTzWVfnln0hN7jlF6OuAPreXFoa0aytMtKtHPKCOSlSqfrZa1op0OQ6xB5tvJ8rYR1Z85PzAz0D1CRkYLlRRJNuNOazJIy2HNRBST2F0i5prs0O6F1Gb8hwXpFTHyHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B131C149019
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724456807; cv=none; b=RAq2J5c4D0nYcIRTQFPr+/sO1w0gwt5FQ0StQQHWR0s5EkmOpGWwfF/18ci1l9Qf5qP1VpskRmfn/3iaXZ5nTEUvrYFg4+HfO2fE9GdunhFiT9jzrJ/8ASCX8tGc3HpOFkbxCBbEJhYZrYZKP1xxI/wpRDE2Y6ryOD3brlKy4rU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724456807; c=relaxed/simple;
+	bh=dHOchrkL6fAecNkuUUXA3/+o41T9FjUdMVi/uBBrCmw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=h6SfLiDfRPNG7P+h2Yo9O6evcHgkXWh+0Ud1YCmiXoEZIDCK3z9UuG3s7UFd0dth6JRxPGw/XYAphzScLlm6TwnKLascBXJ3ZXolx42KSc5uE89mpOz0aoF2160FMqYy+KhIJS1lJXnB5P8yhrzdlzCNMpIxbQeqT+KPebRh6mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NZJ3KtQ6; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ac83a71d45so43254687b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xF3eGrhQW2kXxZOBKcYlkbdLQFi5HjIISBW22hzWY9k=;
- b=ri91hZKesiNrE3tslN+lUlOLjykti46sFFonhoC0goVl9AJalvEHsVE6sqbdiqPJRQNXikpKRIQMJVXQNsjI9zevORVCvGLi+6MBI1tF0zCj3ykv0F8v6foKB2xSayVx6EvPv5EY6YnV3Eq9a41dLMFxMqgbJ4rz1p7unGb354g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- SJ0PR01MB6112.prod.exchangelabs.com (2603:10b6:a03:2a2::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.21; Fri, 23 Aug 2024 23:46:20 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%5]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 23:46:20 +0000
-Date: Fri, 23 Aug 2024 16:46:15 -0700 (PDT)
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: Mark Rutland <mark.rutland@arm.com>
-cc: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-    ilkka@os.amperecomputing.com
-Subject: Re: [PATCH 6/8] perf/arm-cmn: Refactor DTC PMU register access
-In-Reply-To: <ZsRgjV8vUQ6AuaLK@J2N7QTR9R3>
-Message-ID: <cca7ed8-db8-d626-e4e8-6c485b6cf34@os.amperecomputing.com>
-References: <cover.1723229941.git.robin.murphy@arm.com> <e1aac7d482e6f4a75819edcde1fd3198099a658c.1723229941.git.robin.murphy@arm.com> <Zr8p96jwMHepFeq7@J2N7QTR9R3> <4854a6b2-805a-4705-b2d2-df723cfc1311@arm.com> <ZsRgjV8vUQ6AuaLK@J2N7QTR9R3>
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-ClientProxiedBy: BN9PR03CA0468.namprd03.prod.outlook.com
- (2603:10b6:408:139::23) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+        d=google.com; s=20230601; t=1724456805; x=1725061605; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3H6wXI36PqvYyb5KsmlapRLwsCWfbVGz3QYy6oSpQU=;
+        b=NZJ3KtQ62Bh99lMs79hLZE49yvL7zSQzSYaLmRdqGwyeU+dVt3Q3XVVT2l0Jt3h749
+         3euknddmk95cT0L3LtJjFoasxe5Y35/00YUgyS6NjEToCM/EM8LqAkwGU8AvnRlyTUT7
+         1kl1U53+7G0NkUTX9+WZY7VsU67M0BHdAVOs3kax0ts6ABkQ0DfJiPIg8WrhZMNeVni8
+         xwtAhLXxQGDag/oIWbQtYP0HTLC2nbOfVFps4NeLuKpRnpsb7V0PDghjq1BkWf6vZK5S
+         xuTT1sNDNDhM7VODpWPASeB6nVvYrTzwAhKwN9ZVse6i8f3ZYWDRrVv/IM1q5WFu8KCG
+         h1uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724456805; x=1725061605;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3H6wXI36PqvYyb5KsmlapRLwsCWfbVGz3QYy6oSpQU=;
+        b=LBkySPTkjn/4mtC8Fx/z/Er5Xe+2XjgkSfwoCzRYPU+W5pfMMVh1VYdhn6StDFwTSd
+         gx9A6FMZ1hoZ5TMtXZt7xPkVbV7M5H4IMpMbzlaSwm3JBHKTWTZmQkF1Vxvk6xUiGnpN
+         4+gK75PazGwQzj5DGiJZnt6Pjse/ba6ok8XlDicJLmv5PNGVTwUwDjjL2xl9ewSpRm4L
+         V/KwmRy9pmwf95aGlpyr0N6h+Z9Os6Eqq+h6+By858MGvKvJ1oTuXgU2xa7P/Cbbj2y5
+         qeRN8UToU81+GaD3mjMePWpslaaAPtguPTZowNSxp6IwYuSY4QoJIXMpUdWYvYt0xJgn
+         8HMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTdzYiGgVp+lW7xmw2ffZ2J5gKzBbUQvJUYEJnyg7NKAm71yfZ6bLlUWsJLpVfpn5SZxZf7cim35etlKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTMERFdpv6O/UMiLENLOgL5QgN2+33L7uJ5CXzs1L2XGwPTXDC
+	ExbD1qQ8JMBmJiqaos72KFsgeccJ+V4OHO/HxcEqEfWarniMkXynJdAygqxEH/mWfIuXpps3Qaf
+	Yhw==
+X-Google-Smtp-Source: AGHT+IHdhH8ITRv9cW8KgH5/tqkfKTR20I9VNYg2JDiGnFwPr7gUYlsI7lzp5a8sI4DElo4dVOJ70r/0NWw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:2a92:b0:62d:1142:83a5 with SMTP id
+ 00721157ae682-6c62943b009mr76967b3.8.1724456804696; Fri, 23 Aug 2024 16:46:44
+ -0700 (PDT)
+Date: Fri, 23 Aug 2024 16:46:43 -0700
+In-Reply-To: <ZsfaMes4Atc3-O7h@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|SJ0PR01MB6112:EE_
-X-MS-Office365-Filtering-Correlation-Id: 178d0b86-77a0-4f2e-b77e-08dcc3cdc9e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ES+wEDWU2/DA5L/nM3PKvF7OmXxRhGSs1w4FnrNU9nDUkufDlqxEYpGM5/5d?=
- =?us-ascii?Q?mjqanlv7AnC+XGKhdBOBO1mLWTRcSE6vXp55S02JRCVa9qahgZz/wV0WMXtf?=
- =?us-ascii?Q?77dlb6LXKIZT6lGGYhODtggZZz/K+cDfqFtu0VSDgZhAGiccVqA7GqbiZPjq?=
- =?us-ascii?Q?gblLmGtidCBVRRR4tuFGQKdDTCWYbef9BfXBmrsi1qBL20jJvibqVNWVon2A?=
- =?us-ascii?Q?IgMWs7ewACJf9WaWjmXtyUEI5+J3wJOh1pcXl6W+c1NFIUM7rsbPQ518YUh2?=
- =?us-ascii?Q?Fx0e9S9moJjhIkOpM/nHefjfQfcdU4P2PCJSeUcNECyFTWJIfjOj/8MlfnXc?=
- =?us-ascii?Q?mVUzADulGk5cVhFWVc8TcxjDeDrbJU0UwiDXhzCFTcdGlrsfTDbYZCjTYIAp?=
- =?us-ascii?Q?ZFjyxnTg9YFWp4DiCwckSQh9TPGt6bDWTY5pnhyvfs37h5gPZJhKqIrGVrt3?=
- =?us-ascii?Q?8241E+XZMHoBNQan8TY2Ge7GW5EOCJ8O+BVpvoyqpT7TO9u3ytiosEUVrFQu?=
- =?us-ascii?Q?gk3Hem+quDKTpCgSyBuQOnDeCdBRWwdbvqPLvtGoA2U0R9xofhtX9Z+HbnJo?=
- =?us-ascii?Q?NKq7M6ehYwLMAlRSJ7RUgPDnxTZRHbspzbVJvlmBKP7uBf5ZneD7vJukObrF?=
- =?us-ascii?Q?xYKqwnW9zlx4cg+dbW8aR+YLg3o3429gQ1LNDP6O3PvoCUeFNwstoEoch08E?=
- =?us-ascii?Q?Amxlnhh2icgaZmo8RYnKihdZT8k7XtXJhUgfLd9Txh8MtCIj7QCMnnWmSXsp?=
- =?us-ascii?Q?WYwhjnOeic0oz3zwkLIIDv/4sNvBdvEYjUZK/qUo0peY+PdSL7Yyrk+ip1wD?=
- =?us-ascii?Q?o0ZykIR/LiVnIQ8TgkGnrdMa6gx5b9AvSndtqTlKtmN4Lls+Q3xu3IPGJPIw?=
- =?us-ascii?Q?ANeuYBJkhFM2e3zrr6Nsyk9ZilRZP97EAuEdBlYpEBXFxCkJ96FM8Q0AawZZ?=
- =?us-ascii?Q?x4ZEWJZWi/OieHflGY7El1R8tf5x5+iCJRVw1lF/qqtyk/BRM59apo/LwUdk?=
- =?us-ascii?Q?uMffdoUToSqK1fE0b0cqvIo0CxEgRZuTgWzVnm0v7dRZD18zhcQLmp96VbbU?=
- =?us-ascii?Q?cMymQA6Y3G5yNzIlzVjjwQ1nq03TWHa+ZqZt83cdca4noFKHb3O1VE14aTau?=
- =?us-ascii?Q?LJq4ShbZzfI2zwDpxhRvrLiWN9wW59am749IJpoyivxa+k3ism/vDEG7FPKA?=
- =?us-ascii?Q?zwoKXS1GksjE6oh51je9moECvMxzbZwRyeeRK1lom/XoRLevkAy7S1zlX18T?=
- =?us-ascii?Q?JGF9AaFNtu/zivkUGo8CmT2KXOezfpFXlwP6qxNyLHVzd9PoyfxY47TxEaHE?=
- =?us-ascii?Q?tJ7j/Yc4NLkm841mdJwJaaTu3nOMZjYNU7GIl4AH7YyjET5Exd1Lek0ffz1e?=
- =?us-ascii?Q?GYi3VsMpjIHTw9jsozGvymh7WtOyhUHMrm2EnqyIzpDx09aDHw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oPztKR7H7kH9hZDPxMW9pOweCSGqHjxmrj0XY+Pc+S0CtmDge866tKzmHKJa?=
- =?us-ascii?Q?MHtFaVlK4+pmIQvYa6nPA6eO4MOr7uPJCr0zWHpfbXJ8+PrzzlbYv7SNO1zt?=
- =?us-ascii?Q?V+xw6Wv09IoVKMr0H8J7TJ9ez5ENbwH7U0AWp2n/wheuMDB6UrzsZsvjGX17?=
- =?us-ascii?Q?8nJA8NRElKJw404aKma+ArfhnJR7i4xqSfYAk6ZKNR5asKNZWBNj2ZmG4uTL?=
- =?us-ascii?Q?TQNOf5gKU+t92PWvoxeP366TsZhRU+WSeVEbs2SA1+7BIz4xefR745paSHDZ?=
- =?us-ascii?Q?QYQSeWtTSKGTrU8KKpwVpy7d9hPEu3vk4ePLWel8cGcwXDQWts0xoElYkGgo?=
- =?us-ascii?Q?TU0dXjTK8KeY668tzrc0mSe9J76bzOkwgmLkmw7vbLnH1L+Gw5xmdVMd/FsU?=
- =?us-ascii?Q?cMgc6X3lmvGBgJYuUcb1d0jB2uDwrNgYsYTwN8T5cqpR4y8o9cDdU+Ue072I?=
- =?us-ascii?Q?XQZc2UZu/updUHBFHPx149nIeGD5lhpKB4eXj7q1ySUUCncwNhIOov+ly8Zh?=
- =?us-ascii?Q?ed/cVzIQL8mrg46Uo769o50uweE08YbvOchWceEtqOx7NLZWzwm8iNYoJXy0?=
- =?us-ascii?Q?3caW/qr5Fm8hUpc4PltFqpauBqYBZynTy+i7oux7T5UeI5ecPqsoZ/IPu6a2?=
- =?us-ascii?Q?1J68CHFCSQGyPL58ScM0bS0iA8Xr7bjLmiRSHmRUo6EWAMmVt5GP4OwkWAvW?=
- =?us-ascii?Q?CL7SvUzHwJOx0kPg/S6SHykoV+jhizvZFyY+b5ab2+nkVNb9JHqZvtyHvypt?=
- =?us-ascii?Q?mwB/3adv5uQ8UoXOMHPO4tWLXcUKcURyZ5/6UHjvsMT4DQi/OPamS4KWSYTy?=
- =?us-ascii?Q?+Sl6iBn9ogweIRbh2cgPZ+XmRnfWKjdBtkrvRWWhTiUxaOVJBhC1sHBiDk8U?=
- =?us-ascii?Q?mMlkhhxSd8fFBieQRzB1VNhGpXzJP97BgI0+tR2S0db9IDUPXLt2xlFyjjJI?=
- =?us-ascii?Q?ouql2LyqvxxDDJ1akGY5lLNkja7k8eEdGPy2LV9W+5U4FHAyHx1kE9PtcRE+?=
- =?us-ascii?Q?1NtrRHSaDEZ+lfTtrMs7Uja4lqp6ynxYOerSeoJt/sTJNEfCusct48TSJUo/?=
- =?us-ascii?Q?sOK4U/NnHREsJ/mHHdgyF8gn230Ppz4gvlNIH5BMs0EzGZe1msNnuYigcN1p?=
- =?us-ascii?Q?UpfxCMuAfeXOP1SqYJQYDo/M+jhwMhr4anMuslITDTkYTNL7FiCxZzThzCL3?=
- =?us-ascii?Q?2PLuXzvg24AsaZ3O9Gf3st+DHOOxCrYx9wd/CXjYxiHrg3LvdYH8lzhvHj35?=
- =?us-ascii?Q?moMl/FTpoyNllPZ7PhqxF/hmV8UXYMbEzsmIcwh28/duNcgc7qtocS/T2Kyr?=
- =?us-ascii?Q?5Xek+acY+Cn91ti6Xx4RaTD2ATNHaVPqt64JQLpTCMBSZ3fqgzw5OClxE0mq?=
- =?us-ascii?Q?kGnwD1HIE7i4AbV/R3ij8p7ZbtZ/4+sYnuvSeMS/UkjgI6mY6YpR7z3q7trB?=
- =?us-ascii?Q?DSAJ+bjyVjaum/pPSmxkB1R30ls8MFjQbEg3vLefXlCIDO5+2XutakGzCEzH?=
- =?us-ascii?Q?KzppBLmFWLu66VTWzueRKsivLF2gCpN2ROPH9kgytwHUt/6bcHjLb5UN+PgF?=
- =?us-ascii?Q?YQE7QRbWTp2dfyWGEJSY+Tznk/5jM9+pVxUnhmsPgyx/aQFfr4+SN1Y6AIBa?=
- =?us-ascii?Q?QTuq68DSo4L6MXPQealanZI=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 178d0b86-77a0-4f2e-b77e-08dcc3cdc9e8
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 23:46:20.4295
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xVkF7om40rEC/jl6HVjD8wLPZi/6Uplg9asl/b80N/Xz8g2lo0a/Wrs/PUnh/75wYx5pRf9ykKRH2IlT6DEIczBkwfqZP8TiV1AR5BqTFfjuS6nXsDIo+7dOJ1ouQEnn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB6112
+Mime-Version: 1.0
+References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-5-seanjc@google.com>
+ <20240814142256.7neuthobi7k2ilr6@yy-desk-7060> <6fsgci4fceoin7fp3ejeulbaybaitx3yo3nylzecanoba5gvhd@3ubrvlykgonn>
+ <ZsfaMes4Atc3-O7h@google.com>
+Message-ID: <ZskfY2XOken50etZ@google.com>
+Subject: Re: [PATCH 04/22] KVM: x86/mmu: Skip emulation on page fault iff 1+
+ SPs were unprotected
+From: Sean Christopherson <seanjc@google.com>
+To: Yao Yuan <yaoyuan0329os@gmail.com>
+Cc: Yuan Yao <yuan.yao@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Gonda <pgonda@google.com>, 
+	Michael Roth <michael.roth@amd.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Ackerly Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="us-ascii"
+
+On Thu, Aug 22, 2024, Sean Christopherson wrote:
+> On Fri, Aug 16, 2024, Yao Yuan wrote:
+> > On Wed, Aug 14, 2024 at 10:22:56PM GMT, Yuan Yao wrote:
+> > > On Fri, Aug 09, 2024 at 12:03:01PM -0700, Sean Christopherson wrote:
+> > > > When doing "fast unprotection" of nested TDP page tables, skip emulation
+> > > > if and only if at least one gfn was unprotected, i.e. continue with
+> > > > emulation if simply resuming is likely to hit the same fault and risk
+> > > > putting the vCPU into an infinite loop.
+> > > >
+> > > > Note, it's entirely possible to get a false negative, e.g. if a different
+> > > > vCPU faults on the same gfn and unprotects the gfn first, but that's a
+> > > > relatively rare edge case, and emulating is still functionally ok, i.e.
+> > > > the risk of putting the vCPU isn't an infinite loop isn't justified.
+> > > >
+> > > > Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > > ---
+> > > >  arch/x86/kvm/mmu/mmu.c | 28 ++++++++++++++++++++--------
+> > > >  1 file changed, 20 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > > > index e3aa04c498ea..95058ac4b78c 100644
+> > > > --- a/arch/x86/kvm/mmu/mmu.c
+> > > > +++ b/arch/x86/kvm/mmu/mmu.c
+> > > > @@ -5967,17 +5967,29 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> > > >  	bool direct = vcpu->arch.mmu->root_role.direct;
+> > > >
+> > > >  	/*
+> > > > -	 * Before emulating the instruction, check if the error code
+> > > > -	 * was due to a RO violation while translating the guest page.
+> > > > -	 * This can occur when using nested virtualization with nested
+> > > > -	 * paging in both guests. If true, we simply unprotect the page
+> > > > -	 * and resume the guest.
+> > > > +	 * Before emulating the instruction, check to see if the access may be
+> > > > +	 * due to L1 accessing nested NPT/EPT entries used for L2, i.e. if the
+> > > > +	 * gfn being written is for gPTEs that KVM is shadowing and has write-
+> > > > +	 * protected.  Because AMD CPUs walk nested page table using a write
+> > 
+> > Hi Sean,
+> > 
+> > I Just want to consult how often of this on EPT:
+> > 
+> > The PFERR_GUEST_PAGE_MASK is set when EPT violation happens
+> > in middle of walking the guest CR3 page table, and the guest
+> > CR3 page table page is write-protected on EPT01, are these
+> > guest CR3 page table pages also are EPT12 page table pages
+> > often?  I just think most of time they should be data page
+> > on guest CR3 table for L1 to access them by L1 GVA, if so
+> > the PFERR_GUEST_FINAL_MASK should be set but not
+> > PFERR_GUEST_PAGE_MASK.
+> 
+> Hmm, now I'm confused too.  I thought this was handling the case where L1 is
+> accessing EPT12/NTP12 entries, but as you say, that doesn't make sense because
+> those accesses would be PFERR_GUEST_FINAL_MASK.  And the EPT12/NPT12 entries
+> should never be used by hardware.
+> 
+> The only thing that I can think of is if L1 stops using the pages for EPT/NPT
+> entries, and instead reallocates them for IA32 page tables.  But that doesn't
+> make much sense either, because KVM's write-flooding detection should kick in
+> when L1 repurposes the page for its own page tables, before L1 actually starts
+> using the page tables.
+> 
+> I'll try to reproduce the excessive emulation that this code is handling, because
+> I think I'm missing something too.
+
+*sigh*
+
+After poking for an hour and never being able to hit that error code, _period_,
+even if without the vcpu->arch.mmu->root_role.direct guard, I came to the conclusion
+that the only way to hit this is if L1 is reusing its own page tables for L2.
+
+And then I finally wised up and went hunting on lore, and indeed that appears to
+be what this is trying to handle[1]:
+
+ : I think this patch is necessary for functional reasons (not just perf),
+ : because we added the other patch to look at the GPA and stop walking the
+ : guest page tables on a NPF.
+ : 
+ : The issue I think was that hardware has taken an NPF because the page
+ : table is marked RO, and it saves the GPA in the VMCB.  KVM was then
+ : going and emulating the instruction and it saw that a GPA was available.
+ : But that GPA was not the GPA of the instruction it is emulating, since
+ : it was the GPA of the tablewalk page that had the fault. It was debugged
+ : that at the time and realized that emulating the instruction was
+ : unnecessary so we added this new code in there which fixed the functional
+ : issue and helps perf.
+ : 
+ : I don't have any data on how much perf, as I recall it was most effective
+ : when the L1 guest page tables and L2 nested page tables were exactly the
+ : same.  In that case, it avoided emulations for code that L1 executes which
+ : I think could be as much as one emulation per 4kb code page.
+
+To muddy the waters more, the vcpu->arch.mmu->root_role.direct was a proactive
+suggestion from Paolo[2], i.e. not in response to an actual failure that someone
+encountered.
+
+Further adding to the confusion was Paolo's commit that extended the behavior
+to Intel CPUs.  The AuthorDate vs. CommitDate is particularly interesting, as
+it suggests that Paolo wrote the patch in response to the SVM series being
+posted:
+
+  Subject: [PATCH v2 1/3] kvm: svm: Add support for additional SVM NPF error codes
+  Date: Wed, 23 Nov 2016 12:01:38 -0500	[thread overview]
+
+  commit eebed2438923f8df465c27f8fa41303771fdb2e8
+  Author:     Paolo Bonzini <pbonzini@redhat.com>
+  AuthorDate: Mon Nov 28 14:39:58 2016 +0100
+
+and then commited after asking many of the same questions we just asked, with
+Brijesh's reply[1] coming just a few days before:
+
+  Subject: Re: [PATCH v2 1/3] kvm: svm: Add support for additional SVM NPF error codes
+  Date: Wed, 2 Aug 2017 12:42:20 +0200	[thread overview]
 
 
+  Commit:     Paolo Bonzini <pbonzini@redhat.com>
+  CommitDate: Thu Aug 10 16:44:04 2017 +0200
 
-On Tue, 20 Aug 2024, Mark Rutland wrote:
+    kvm: nVMX: Add support for fast unprotection of nested guest page tables
+    
+    This is the same as commit 147277540bbc ("kvm: svm: Add support for
+    additional SVM NPF error codes", 2016-11-23), but for Intel processors.
+    In this case, the exit qualification field's bit 8 says whether the
+    EPT violation occurred while translating the guest's final physical
+    address or rather while translating the guest page tables.
 
-> On Mon, Aug 19, 2024 at 05:41:30PM +0100, Robin Murphy wrote:
->> On 16/08/2024 11:29 am, Mark Rutland wrote:
->>> On Fri, Aug 09, 2024 at 08:15:45PM +0100, Robin Murphy wrote:
->>>> Annoyingly, we're soon going to have to cope with PMU registers moving
->>>> about. This will mostly be straightforward, except for the hard-coding
->>>> of CMN_PMU_OFFSET for the DTC PMU registers. As a first step, refactor
->>>> those accessors to allow for encapsulating a variable offset without
->>>> making a big mess all over.
->>>>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>> ---
->>>>   drivers/perf/arm-cmn.c | 64 ++++++++++++++++++++++++------------------
->>>>   1 file changed, 36 insertions(+), 28 deletions(-)
->>>
->>> Aside from a minoe comment below this looks fine to me.
->>>
->>>>   struct arm_cmn_dtc {
->>>>   	void __iomem *base;
->>>> +	void __iomem *pmu_base;
->>>>   	int irq;
->>>> -	int irq_friend;
->>>> +	s8 irq_friend;
->>>
->>> Unrelated change?
->>>
->>> AFAICT there's no reason for 'irq_friend' to change from 'int' to 's8',
->>> and nothing in the commit message explains it.
->>
->> Oops, I had meant to note in the commit message that this is a little
->> structure repacking where there was a hole already, to compensate for adding
->> the new member... I shall un-forget that for v2.
->
-> Cool, with that:
->
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
->
-> Mark.
->
 
-With the change, the patch looks good to me too
+  Subject: [PATCH v2 1/3] kvm: svm: Add support for additional SVM NPF error codes
+  Date: Wed, 23 Nov 2016 12:01:38 -0500	[thread overview]
 
-Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Intel support is especially misleading, because sharing page tables between EPT
+and IA32 is rather nonsensical due to them having different formats.  I.e. I doubt
+Paolo had a use case for the VMX changes, and was just providing parity with SVM.
+Of course, reusing L1's page tables as the NPT tables for L2 is quite crazy too,
+but at least the PTE formats are identical. 
 
-Cheers, Ilkka
+Given that the patches were original posted as part the SEV enabling series[3],
+my best guest is that the AMD folks were doing some prototyping or emulation
+hackery that involved running a nested guest by simply reusing CR3 as hCR3.
 
+So, I'll rewrite the comment to make it clear that practically speaking, this
+scenario can be hit if and only if L1 is reusing its own page tables for L2's NPT.
+
+[1] https://lore.kernel.org/all/f8a2c258-0b53-b33c-1dae-a6f6e0e68239@amd.com
+[2] https://lore.kernel.org/all/21b9f4db-f929-80f6-6ad2-6fa3b77f82c0@redhat.com
+[3] https://lore.kernel.org/all/147190822443.9523.7814744422402462127.stgit__43469.155036337$1471909238$gmane$org@brijesh-build-machine
 
