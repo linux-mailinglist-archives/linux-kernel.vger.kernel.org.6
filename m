@@ -1,158 +1,75 @@
-Return-Path: <linux-kernel+bounces-299245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2707F95D1F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:46:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584A895D217
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70C0282A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:46:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06F50B2A81E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8CF18BB8B;
-	Fri, 23 Aug 2024 15:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="HfrO7R0+"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE9C18BBB7;
+	Fri, 23 Aug 2024 15:45:49 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590F6189B87;
-	Fri, 23 Aug 2024 15:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427943; cv=pass; b=dALhG4i2ezRHNNUWUhXND02eE/oqlZCKwo37lGrn2bIcfRyUf+4WQbU2nGEyiGUG95jdNeSI8wQwNgtmKQRzYe4HPQ9M6H0k4sNlNRoriTSrNCfcsu3NSRp7kiKOHitGVphQnBgUei0J8Av4LhTkCD+7+17RBojsxjdVg95m5wI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427943; c=relaxed/simple;
-	bh=SbTZ5jUd18sDORERkkplbV0CCxMr8pO8Ee8Ao1aiFd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2u7YbWInSB8ZXEEXR0NGikaiSDsVgc0y8r526BQ3zR8VnmzTuBEG7K++gnQCAcEc69RP/ObVTDS7ti2VZftD5uW98WWKlgA+hryvlrv5BBTDVHGUbI1OGTvJPrXs2tWv61PdJJdZFgxowwdlGj7NXhkWVF3lMiM5rZhQ5ikgzY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=HfrO7R0+; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: nfraprado@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724427930; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZpWRIXfx5JAWcNDBsiSv5hE91EAiPNui/gKAuJZKKA5w94+WDufEL/6AgUh7oavRIguleCu+x0/bio5oiDe/WGLW3pH1/p5VQZQnv00KDmcGgpm5WUPoXeRAa71adpdFOfLewqzDc023l9Z4CFylaGXytzdsZFWfZW2vyn/ifRY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724427930; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jjRlTDki3GkTErS0Ge0MuLopk0eojhlCbmXkL45WmuQ=; 
-	b=Xv6xEqOSLx9VHjLCOb9OW3yiC8NHjTkq/xyIkjMuRIaJU0o9XeSK05arJCIJhDuzO8ZlMcLIGuPbjBLuDnJj4g/Cn73VFX9K/GCkyvtytPSCgc5FZwG1a3gHSqQIvEFJybwYmTYlkeV/UyVaLJm5AajIHMUwRLX5ctHzxV+mMSg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724427930;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=jjRlTDki3GkTErS0Ge0MuLopk0eojhlCbmXkL45WmuQ=;
-	b=HfrO7R0+qzI9ALPjs4zyDBXi0KETzRfCfuVdVVksD43xuiO/KM4hAti+yxXZef9d
-	9xGB0yAzY3APNfmRPxxLpHQqwngodEuQW287/xHtIYSkt8PwtPia+J8EXIQzSiCZuK3
-	hs0inY0Z8J4JSeTc5AVlvO5FUf6NmH/wmNYLncUs=
-Received: by mx.zohomail.com with SMTPS id 1724427929068728.6124036633798;
-	Fri, 23 Aug 2024 08:45:29 -0700 (PDT)
-Date: Fri, 23 Aug 2024 17:45:23 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Nathan Hebert <nhebert@chromium.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Hsin-Yi Wang <hsinyi@chromium.org>,
-	Fritz Koenig <frkoenig@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v4 0/7] media: mediatek: vcodec: fix
- v4l2_ctrl_request_complete fail
-Message-ID: <20240823154523.fucqvc4cnqk5jrlg@basti-XPS-13-9310>
-References: <20240807082444.21280-1-yunfei.dong@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C80C18BB86
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724427948; cv=none; b=ba5WdF3hIsNed5QMBnPNy7CGis60dvQ4JuqlOomxy9Wx82VaRVDBMGU2RDwU/357Uv73MGxcZdPbtUl5MZYc+vZBX1b1mribdRM/rA6yhc4JbmuK8pvBtXuDBh3OZhYzKhbnG7IxLclTEIdoG9JOIyeiae/QxjgzYlQPh/4JSwE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724427948; c=relaxed/simple;
+	bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=GaRsWxK6Ne+Dq87isqNQKTxCXDlC4SynZ98SPSwI9GawhgMjOJHIYLFHhhgYT66mu8xd7NjAH24jObRO8c7Y+niId8hbvGuKvYZ6HNHeHCg1LBaMoj9lHUNeIlyt+GQj53r1XNKvJoLfyKAHzs4KH+3kyP1skhT4u1QMqBcJliY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d52097234so24539315ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:45:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724427946; x=1725032746;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
+        b=Tq49bDQbxYgsLyQd4HFvKZihKryJmCqJlLvv00SMCXBfaavnrJJ0r63e+xWAIpP4hN
+         MxwaBGyZNg3hIEzxBwpIomKivSLk339maDzFk/Dhn14JskreS/ZK823HVsCXgsaeOaPB
+         oyGvw3/zsxFrj+mzHJOCIle40wr2oRdmf8c/8EdQD4e98LkUwdt3oQ5P+zf5i8W2IwC5
+         GH0NCr7b1NpL0ezoulXs0uRDUQ5H0pFtdGZ49Mdbr8e87TLF8laTHGl1NvN77MQZ8xT8
+         WzD14TpbtHstyMep/CbgBN5k3NgCOY4t1i5IIS6g6EEJibJPgoCRC8NlmcJEp6sV0deT
+         cOrw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7RfgkbR5LgcD/rOos+hRSdmtzSBsDSeq4+Hqa5MGF/BUguGyUzPh8wfRlsfBvWcPAfMoQ0nDd2Zd1dxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf+VPR0shQFYJcVCfS4rja+9h+l99qIw9AQKRLSFWYhV78OEuk
+	Fr0TbK9b2a0tTFKRnyjcNXrD2W2+4PSfcqQ69OBOMOxNlCcJYae2YJoHkgwQftxu3lQt3OpNhY6
+	PE2twLSTxkrO2PRc3vto6ZliERUAi9Nx+AwoVyPSzkhZORTFnoPNCKsU=
+X-Google-Smtp-Source: AGHT+IFEZHsmAvk7csTdVtC+zhVGRhBw68um4kIpRvc4X+Ny0f4KfNFAl4LZVsNjRgN3dQPsY/h0EplkXt07wQmGHSkrjXzaXaiC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240807082444.21280-1-yunfei.dong@mediatek.com>
-X-ZohoMailClient: External
+X-Received: by 2002:a05:6e02:1523:b0:39d:376b:20e4 with SMTP id
+ e9e14a558f8ab-39e3ca01d88mr1773075ab.5.1724427946415; Fri, 23 Aug 2024
+ 08:45:46 -0700 (PDT)
+Date: Fri, 23 Aug 2024 08:45:46 -0700
+In-Reply-To: <f923326c8f484e30b05391b463305fe0@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002fec0206205bab01@google.com>
+Subject: Re: possible deadlock in ni_fiemap
+From: syzbot <syzbot+c300ab283ba3bc072439@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com
+Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hey Yunfei,
+> #syz test:https://github.com/Paragon-Software-Group/linux-ntfs3.git master
 
-given this new series by Hans:
-https://patchwork.linuxtv.org/project/linux-media/list/?series=13427
+unknown command "test:https://github.com/Paragon-Software-Group/linux-ntfs3.git"
 
-we might actually be able to find a more performant solution of the
-problem, I'll work on that a bit and give you feedback.
-
-Regards,
-Sebastian
-
-On 07.08.2024 16:24, Yunfei Dong wrote:
->v4l2_m2m_buf_done is called in lat work queue, v4l2_ctrl_request_complete
->is called in core queue. The request status of output queue will be set to
->MEDIA_REQUEST_STATE_COMPLETE when v4l2_m2m_buf_done is called, leading to
->output queue request complete fail. Must move v4l2_ctrl_request_complete
->in front of v4l2_m2m_buf_done.
->
->Patch 1 setting request complete before buffer done
->Patch 2 change flush decode order when stream off
->Patch 3 flush decoder before stream off
->Patch 4 using input information to get vb2 buffer
->Patch 5 store source vb2 buffer
->Patch 6 replace v4l2_m2m_next_src_buf with v4l2_m2m_src_buf_remove
->Patch 7 remove media request checking
->
->---
->compared with v3:
->- fix flush decoder issue when userspace stream off capture queue firstly
->- fluster test result same with v3
->
->compared with v2:
->- add patch 5/6/7 to fix decode again issue
->- add fluster test result with mt8195 platform(same with no changed):
->  1> ./fluster.py run -d GStreamer-VP8-V4L2SL-Gst1.0 -j1 -t 90
->     VP8-TEST-VECTORS 59/61
->  2> ./fluster.py run -d GStreamer-VP9-V4L2SL-Gst1.0 -j1 -t 90
->     VP9-TEST-VECTORS 276/305
->  3> ./fluster.py run -d GStreamer-AV1-V4L2SL-Gst1.0 -j1 -t 90
->     AV1-TEST-VECTORS 237/239
->  4> ./fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -j1 -t 90
->     JVT-AVC_V1       95/135
->  5> ./fluster.py run -d GStreamer-H.265-V4L2SL-Gst1.0 -j1 -t 90
->     JCT-VC-HEVC_V1   142/147
->
->compared with v1:
->- add patch 2/3/4 to fix timing issue.
->---
->Yunfei Dong (7):
->  media: mediatek: vcodec: setting request complete before buffer done
->  media: mediatek: vcodec: change flush decode order when stream off
->  media: mediatek: vcodec: flush decoder before stream off
->  media: mediatek: vcodec: using input information to get vb2 buffer
->  media: mediatek: vcodec: store source vb2 buffer
->  media: mediatek: vcodec: replace v4l2_m2m_next_src_buf with
->    v4l2_m2m_src_buf_remove
->  media: mediatek: vcodec: remove media request checking
->
-> .../mediatek/vcodec/decoder/mtk_vcodec_dec.c  | 44 ++++++++---------
-> .../vcodec/decoder/mtk_vcodec_dec_drv.h       |  4 +-
-> .../vcodec/decoder/mtk_vcodec_dec_stateless.c | 48 ++++++++++++++-----
-> .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c | 18 +++----
-> .../decoder/vdec/vdec_h264_req_multi_if.c     |  4 +-
-> .../decoder/vdec/vdec_hevc_req_multi_if.c     |  4 +-
-> .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 19 ++++----
-> .../mediatek/vcodec/decoder/vdec_msg_queue.h  |  4 +-
-> 8 files changed, 85 insertions(+), 60 deletions(-)
->
->-- 
->2.46.0
->
 >
 
