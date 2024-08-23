@@ -1,85 +1,50 @@
-Return-Path: <linux-kernel+bounces-298604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39CE95C94E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A1B95C9AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E99EE1C2339D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A6AE1C23518
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2673170A0C;
-	Fri, 23 Aug 2024 09:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GProBBiS"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FACC13A86C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FC91514E4;
+	Fri, 23 Aug 2024 09:51:40 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4D9156C69;
+	Fri, 23 Aug 2024 09:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724405620; cv=none; b=tZdQQmosKaS3C+pRSw+EzhB/wpV1h5WEd/rzvIur51i2vJbjXzrNE2loD4SPJQJkWeudQ8S7EAjyKXjv7Y0v/Haj7g9rL+YH1RUzORvBA3yS+GgUb2jN/dY5nuY/fbz/bR4owDwJMLkwR7zZ6QvcYgMFo88czu/Ui6EVRSvb8L0=
+	t=1724406699; cv=none; b=oAXl+Gz5FlcAeTpdlck3clEqzReCOLm2EmZGkX230ac/qZVyk6thhSfOTg/qD0X1YoGYCVPVghSNXU/l/gH5zdP/ZHKh11hmwHY/4rh+ct7MTz7nVrHz7APdlLhBBkaTt2DiZsQhGgo4Z5g3IzvGptcowG9gketkuBhDCSw66Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724405620; c=relaxed/simple;
-	bh=VlEWS+I2qBUoAZu3MZiZFqikaq4uXZWuP6/ITJZxiQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lc9xBrGy2JJQp+XCMgR177RS1mOCxH+U7aDhvmyuIQGe/vnd4+pzVIIy21e1+1tHM3FQupf2G6/uFNYs9WT7jYYJAC/3aixSqWLlrLp2cwB1LdnAUKXorRfTGjoW7IduIQuGjWgeOElgvFgzvPSIOaXIPZDAVK21icNHBq6niMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GProBBiS; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso17572545e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724405616; x=1725010416; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ns4EUZZ3nTL5odSKliuQhTwD1CbjvkOmQ7rToMzAA/s=;
-        b=GProBBiSE10kSUudTPOUq83MZLnurR8SZLXlzMtQjWYn72Hd1C5o+Mh2ZhzBxYv6Oj
-         xYhVMCxw8k4i8pZSc9UR7DH+gqgAzm4PoD5u9EMumGDFsVghYtxe6CzAuOWiBk54dXTu
-         EC/GZ6XHOU/eQ32Oh+5NtVeVbmzdX2SMkSM2vGni1Zo+TvpiXpuuGB2NkcWUO8pN0J0U
-         E8k0dYTuIKoz27Q1GOH3B3jpo7kb8kPCCmDRA+ZVz7L/hhQPZF6PVoruCRbAkNmIHRZT
-         uY1szmYClOEf8D3+xXi3Aq+HNnn5rA+/gHKpR0tkP+aBfr4nQBZBLobu6Dxx1HEdd7rt
-         Gy0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724405616; x=1725010416;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ns4EUZZ3nTL5odSKliuQhTwD1CbjvkOmQ7rToMzAA/s=;
-        b=e7hrgC2FJC3y/cHceM/n9jcwmMNkWfLzLNjwVR44iX8JT1/JE5MX/3fxsB4G63e3Hl
-         EZRymVwnt1VH+AftHd7zVfQpfcwMQMTBtbeS6HTtRtofSEGy76GVV/yi30ffW5RDGc+r
-         Kfg83uzumINQgIFqwevsg3oub+oHQfmNafHpZIW0uSCeDdHczxnHNDXDlJbJuq63doN7
-         d+7DgKSfzFqq61j5DJN1bQ6CYqlpBoDJq+bot3W9NdsGJqsEEcdPwl9HWRkQjpjtzi8b
-         ipdxpnVbiAJ3qqZ6CZuPiEIU+uYZR18qKW4ZXyfqlHq3AHOmLN97UZwu9fUx8gL6oLzO
-         n0gA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgDER3ronQ2BJ94pX22i/qoSqrm+PnAF+6A4VmadFQJsGfDuHhxeeMwNNbA92lJ0ItnJAUS6CT280v2w8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcU80vp10hPvowKpbXTS0adUcEgB5zAqEKewFRiBqgZ0C+hZaN
-	dOcjIZXpGatlcDAKIqRFG+s6HwktHyTaigYqKLJsdn4zWZQQInwUXLR7Qy0QuTE=
-X-Google-Smtp-Source: AGHT+IFDN6ciVAxxG2thf6jNJ/OndV0vdP06G8DkZr6xUCbixfP6dzAPR8cgPbEm9FRU4nH0OyFf6g==
-X-Received: by 2002:a05:600c:35cd:b0:428:15b0:c8dd with SMTP id 5b1f17b1804b1-42acd57c113mr12461705e9.20.1724405615130;
-        Fri, 23 Aug 2024 02:33:35 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:58fc:2464:50b0:90c5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abee86d5esm87612035e9.15.2024.08.23.02.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 02:33:33 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [PATCH v3 2/2] PCI/pwrctl: put the bus rescan on a different thread
-Date: Fri, 23 Aug 2024 11:33:23 +0200
-Message-ID: <20240823093323.33450-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240823093323.33450-1-brgl@bgdev.pl>
-References: <20240823093323.33450-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1724406699; c=relaxed/simple;
+	bh=C8gCDi4bx7K5dvL9d6JMbn5lWQebebIemiNddyZcteg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QOspu8OqE/2rA8OPgTZ1pirkM1zIvbV3bog2EI88ME7kk4R9rL1NpjiZRlImk7/ASdL9+gGWjzJbpruv9NBE5fP0j29ixymkJQJvxBxOeWoVNrKczu1ffYTDVI6OaLh79LQBwEFSQNALl4+c/neprAp6RMxuA3jaxTVObv5oSPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.185])
+	by gateway (Coremail) with SMTP id _____8AxSZqmW8hmCEodAA--.25019S3;
+	Fri, 23 Aug 2024 17:51:34 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.185])
+	by front1 (Coremail) with SMTP id qMiowMCxC2ekW8hm2SsfAA--.39816S2;
+	Fri, 23 Aug 2024 17:51:32 +0800 (CST)
+From: Xianglai Li <lixianglai@loongson.cn>
+To: linux-kernel@vger.kernel.org
+Cc: Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Xianglai li <lixianglai@loongson.cn>
+Subject: [[PATCH V2 00/10] Added Interrupt controller emulation for loongarch kvm
+Date: Fri, 23 Aug 2024 17:33:54 +0800
+Message-Id: <20240823093404.204450-1-lixianglai@loongson.cn>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,108 +52,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxC2ekW8hm2SsfAA--.39816S2
+X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Before this, the interrupt controller simulation has been completed
+in the user mode program. In order to reduce the loss caused by frequent
+switching of the virtual machine monitor from kernel mode to user mode
+when the guest accesses the interrupt controller, we add the interrupt
+controller simulation in kvm.
 
-If we trigger the bus rescan from sysfs, we'll try to lock the PCI
-rescan mutex recursively and deadlock - the platform device will be
-populated and probed on the same thread that handles the sysfs write.
+The following is a virtual machine simulation diagram of interrupted
+connections:
+  +-----+    +---------+     +-------+
+  | IPI |--> | CPUINTC | <-- | Timer |
+  +-----+    +---------+     +-------+
+                 ^
+                 |
+           +---------+
+           | EIOINTC |
+           +---------+
+            ^       ^
+            |       |
+     +---------+ +---------+
+     | PCH-PIC | | PCH-MSI |
+     +---------+ +---------+
+       ^      ^          ^
+       |      |          |
++--------+ +---------+ +---------+
+| UARTs  | | Devices | | Devices |
++--------+ +---------+ +---------+
 
-Add a workqueue to the pwrctl code on which we schedule the rescan for
-controlled PCI devices. While at it: add a new interface for
-initializing the pwrctl context where we'd now assign the parent device
-address and initialize the workqueue.
+In this series of patches, we mainly realized the simulation of
+IPI EXTIOI PCH-PIC interrupt controller.
 
-Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-Reported-by: Konrad Dybcio <konradybcio@kernel.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pci/pwrctl/core.c              | 26 +++++++++++++++++++++++---
- drivers/pci/pwrctl/pci-pwrctl-pwrseq.c |  2 +-
- include/linux/pci-pwrctl.h             |  3 +++
- 3 files changed, 27 insertions(+), 4 deletions(-)
+The simulation of IPI EXTIOI PCH-PIC interrupt controller mainly
+completes the creation simulation of the interrupt controller,
+the register address space read and write simulation,
+and the interface with user mode to obtain and set the interrupt
+controller state for the preservation,
+recovery and migration of virtual machines.
 
-diff --git a/drivers/pci/pwrctl/core.c b/drivers/pci/pwrctl/core.c
-index feca26ad2f6a..01d913b60316 100644
---- a/drivers/pci/pwrctl/core.c
-+++ b/drivers/pci/pwrctl/core.c
-@@ -48,6 +48,28 @@ static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
- 	return NOTIFY_DONE;
- }
- 
-+static void rescan_work_func(struct work_struct *work)
-+{
-+	struct pci_pwrctl *pwrctl = container_of(work, struct pci_pwrctl, work);
-+
-+	pci_lock_rescan_remove();
-+	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
-+	pci_unlock_rescan_remove();
-+}
-+
-+/**
-+ * pci_pwrctl_init() - Initialize the PCI power control context struct
-+ *
-+ * @pwrctl: PCI power control data
-+ * @dev: Parent device
-+ */
-+void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev)
-+{
-+	pwrctl->dev = dev;
-+	INIT_WORK(&pwrctl->work, rescan_work_func);
-+}
-+EXPORT_SYMBOL_GPL(pci_pwrctl_init);
-+
- /**
-  * pci_pwrctl_device_set_ready() - Notify the pwrctl subsystem that the PCI
-  * device is powered-up and ready to be detected.
-@@ -74,9 +96,7 @@ int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl)
- 	if (ret)
- 		return ret;
- 
--	pci_lock_rescan_remove();
--	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
--	pci_unlock_rescan_remove();
-+	schedule_work(&pwrctl->work);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-index c7a113a76c0c..f07758c9edad 100644
---- a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-+++ b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-@@ -50,7 +50,7 @@ static int pci_pwrctl_pwrseq_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	data->ctx.dev = dev;
-+	pci_pwrctl_init(&data->ctx, dev);
- 
- 	ret = devm_pci_pwrctl_device_set_ready(dev, &data->ctx);
- 	if (ret)
-diff --git a/include/linux/pci-pwrctl.h b/include/linux/pci-pwrctl.h
-index 45e9cfe740e4..0d23dddf59ec 100644
---- a/include/linux/pci-pwrctl.h
-+++ b/include/linux/pci-pwrctl.h
-@@ -7,6 +7,7 @@
- #define __PCI_PWRCTL_H__
- 
- #include <linux/notifier.h>
-+#include <linux/workqueue.h>
- 
- struct device;
- struct device_link;
-@@ -41,8 +42,10 @@ struct pci_pwrctl {
- 	/* Private: don't use. */
- 	struct notifier_block nb;
- 	struct device_link *link;
-+	struct work_struct work;
- };
- 
-+void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev);
- int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl);
- void pci_pwrctl_device_unset_ready(struct pci_pwrctl *pwrctl);
- int devm_pci_pwrctl_device_set_ready(struct device *dev,
+IPI simulation implementation reference:
+https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongson-3A5000-usermanual-EN/inter-processor-interrupts-and-communication
+
+EXTIOI simulation implementation reference:
+https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongson-3A5000-usermanual-EN/io-interrupts/extended-io-interrupts
+
+PCH-PIC simulation implementation reference:
+https://github.com/loongson/LoongArch-Documentation/blob/main/docs/Loongson-7A1000-usermanual-EN/interrupt-controller.adoc
+
+For PCH-MSI, we used irqfd mechanism to send the interrupt signal
+generated by user state to kernel state and then to EXTIOI without
+maintaining PCH-MSI state in kernel state.
+
+You can easily get the code from the link below:
+the kernel:
+https://github.com/lixianglai/linux
+the branch is: interrupt
+
+the qemu:
+https://github.com/lixianglai/qemu
+the branch is: interrupt
+
+Please note that the code above is regularly updated based on community
+reviews.
+
+change log:
+V1->V2:
+1.Remove redundant blank lines according to community comments
+2.Remove simplified redundant code
+3.Adds 16 bits of read/write interface to the extioi iocsr address space
+4.Optimize user - and kernel-mode data access interfaces: Access
+fixed length data each time to prevent memory overruns
+5.Added virtual extioi, where interrupts can be routed to cpus other than cpu 4
+
+Cc: Bibo Mao <maobibo@loongson.cn> 
+Cc: Huacai Chen <chenhuacai@kernel.org> 
+Cc: kvm@vger.kernel.org 
+Cc: loongarch@lists.linux.dev 
+Cc: Paolo Bonzini <pbonzini@redhat.com> 
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn> 
+Cc: WANG Xuerui <kernel@xen0n.name> 
+Cc: Xianglai li <lixianglai@loongson.cn> 
+
+Xianglai Li (10):
+  LoongArch: KVM: Add iocsr and mmio bus simulation in kernel
+  LoongArch: KVM: Add IPI device support
+  LoongArch: KVM: Add IPI read and write function
+  LoongArch: KVM: Add IPI user mode read and write function
+  LoongArch: KVM: Add EXTIOI device support
+  LoongArch: KVM: Add EXTIOI read and write functions
+  LoongArch: KVM: Add PCHPIC device support
+  LoongArch: KVM: Add PCHPIC read and write functions
+  LoongArch: KVM: Add PCHPIC user mode read and write functions
+  LoongArch: KVM: Add irqfd support
+
+ arch/loongarch/include/asm/kvm_extioi.h  |  122 +++
+ arch/loongarch/include/asm/kvm_host.h    |   30 +
+ arch/loongarch/include/asm/kvm_ipi.h     |   52 ++
+ arch/loongarch/include/asm/kvm_pch_pic.h |   61 ++
+ arch/loongarch/include/uapi/asm/kvm.h    |   19 +
+ arch/loongarch/kvm/Kconfig               |    3 +
+ arch/loongarch/kvm/Makefile              |    4 +
+ arch/loongarch/kvm/exit.c                |   86 +-
+ arch/loongarch/kvm/intc/extioi.c         | 1056 ++++++++++++++++++++++
+ arch/loongarch/kvm/intc/ipi.c            |  510 +++++++++++
+ arch/loongarch/kvm/intc/pch_pic.c        |  521 +++++++++++
+ arch/loongarch/kvm/irqfd.c               |   87 ++
+ arch/loongarch/kvm/main.c                |   18 +-
+ arch/loongarch/kvm/vcpu.c                |    3 +
+ arch/loongarch/kvm/vm.c                  |   53 +-
+ include/linux/kvm_host.h                 |    1 +
+ include/trace/events/kvm.h               |   35 +
+ include/uapi/linux/kvm.h                 |    8 +
+ 18 files changed, 2641 insertions(+), 28 deletions(-)
+ create mode 100644 arch/loongarch/include/asm/kvm_extioi.h
+ create mode 100644 arch/loongarch/include/asm/kvm_ipi.h
+ create mode 100644 arch/loongarch/include/asm/kvm_pch_pic.h
+ create mode 100644 arch/loongarch/kvm/intc/extioi.c
+ create mode 100644 arch/loongarch/kvm/intc/ipi.c
+ create mode 100644 arch/loongarch/kvm/intc/pch_pic.c
+ create mode 100644 arch/loongarch/kvm/irqfd.c
+
+
+base-commit: 872cf28b8df9c5c3a1e71a88ee750df7c2513971
 -- 
-2.43.0
+2.39.1
 
 
