@@ -1,86 +1,81 @@
-Return-Path: <linux-kernel+bounces-298563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB7095C8DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFC995C907
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A7DA1C21B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:10:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154EC1F21C69
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75374149E05;
-	Fri, 23 Aug 2024 09:10:35 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59E97F486
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E4F14A4C3;
+	Fri, 23 Aug 2024 09:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="zi0p0Yg4"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF2F13B5A1
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724404235; cv=none; b=UGNizjtv2wsWAKgp/5NZ0QWHIVCPi8QEfLRZ6yqHEB7vf6hsuUDV1BkFIc3TqzPeqgGZLPIzwiEZyMkJWNQ/VtU1BmnuT8ex76p5Vo8e0WKMN1I7HdQ018snReWAGm6MMojpUZI7Mz/8p9r/u0s0e4AFLUWwNodN4e6CsG+EtYY=
+	t=1724404698; cv=none; b=GDW2BhqXnndIMxlPoymTv9uKRBHoE17w+QEfyyadvhtu/rhoV3SN6AZE7mZoMp4KKM+6sgJx2hifMuCNXBeN0Jr0mKW8Tb1yox0WOJ872vWeZT3Uhpmulty1AJtdwfWJeh7pxvspwMwBMO7DVk1xub5njqP2yct6ZX8qr0h3KUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724404235; c=relaxed/simple;
-	bh=verS6Q6ybnhk3Ow9LlHSviHyjL0VdMQaHKsEKUEhUTw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=etbcyc4BAlM8bA9FZHAIxzj+IGaTzNk0++p7cW1UQxuIaZgaFm83b8ceXB2wvVn3sSKdksVamfFqRj3w0A1CBYD2SVzC1nMDStY+63Sn5xbdMCgwxBZNqQHfHswGat8XnLSKlLcrmH3fjWdgevKQpqVHpozay6GXh0lkwNeuUVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WqvPS1TSPzhYBK;
-	Fri, 23 Aug 2024 17:08:28 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id AE4EF14011F;
-	Fri, 23 Aug 2024 17:10:29 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
- (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 17:10:29 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>
-CC: <lihongbo22@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] kernel/trace: Replace printk and WARN_ON by WARN
-Date: Fri, 23 Aug 2024 17:18:03 +0800
-Message-ID: <20240823091803.2953933-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724404698; c=relaxed/simple;
+	bh=/lPWVL30lzbw2Z/KCenJf+gD3M11QjZxo9FsS4BrDZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U5Eiz+SORPOcaweME+KwT5nWVUOJhoAS9XjK/+4g2uxnkrPHJ/vh7440XxccCVEYjubSJZmqpymD1UOOE+iclvIWzhM5LZE4pAJG++AamX0GBbPtVpwcJOt5j8rNX+pO671SuHl+DW7TClO9/X2mHb1by/jPi5GO3sPAZEXrsmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=zi0p0Yg4; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (pd9fe9dd8.dip0.t-ipconnect.de [217.254.157.216])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id D80AA2A7BA5;
+	Fri, 23 Aug 2024 11:18:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1724404694;
+	bh=/lPWVL30lzbw2Z/KCenJf+gD3M11QjZxo9FsS4BrDZk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zi0p0Yg46Jc5JyxW6ZtXW0XrW9sV+zqiJjzdD3wPHd2pPUKAWSf2tgAphLvYvX8On
+	 k0IToqDinkFx8FRhrgB+sPoekPbJdSPnq477y6tTXrnxPD/jYj73YMzk4mheka5bD5
+	 4YvaWAfQMA30JTj5qYRl41SbekWlYNzJ/w8AekOfzlNC4UwlK2mM1Cx1SDEGZo8kDC
+	 /n0DMkQqDp+/PfWSr/PHnG3H9pudGfvNa4VtCfv5Yeu8A62AmZFTbLLuHCt6DB1hqQ
+	 Fn7LPR2BJZay+BqHa8Pu4aSrlVrZtMzN/n1JkCutMZO8wvXmOETZBRgRt25orwVCvx
+	 i8zkQYGVrRcwA==
+Date: Fri, 23 Aug 2024 11:18:13 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	robin.murphy@arm.com, vasant.hegde@amd.com, jon.grimm@amd.com,
+	santosh.shukla@amd.com, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH V2] iommu/amd: Update PASID, GATS, GLX, SNPAVICSUP
+ feature related macros
+Message-ID: <ZshT1dXiXZR3qkGT@8bytes.org>
+References: <20240816221650.62295-1-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816221650.62295-1-suravee.suthikulpanit@amd.com>
 
-Use WARN instead of printk + WARN_ON as reported from coccinelle:
-  SUGGESTION: printk + WARN_ON can be just WARN
-Let's fix it and simplify the code.
+On Fri, Aug 16, 2024 at 10:16:50PM +0000, Suravee Suthikulpanit wrote:
+> Clean up and reorder them according to the bit index. There is no
+> functional change.
+> 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> ---
+>  drivers/iommu/amd/amd_iommu.h       |  5 -----
+>  drivers/iommu/amd/amd_iommu_types.h | 16 ++++++----------
+>  drivers/iommu/amd/init.c            |  8 +++-----
+>  3 files changed, 9 insertions(+), 20 deletions(-)
 
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
- kernel/trace/trace.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 833e7d654325..5f385c55499f 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2138,9 +2138,7 @@ static int run_tracer_selftest(struct tracer *type)
- 	/* the test is responsible for resetting too */
- 	tr->current_trace = saved_tracer;
- 	if (ret) {
--		printk(KERN_CONT "FAILED!\n");
--		/* Add the warning after printing 'FAILED' */
--		WARN_ON(1);
-+		WARN(1, "FAILED!\n");
- 		return -1;
- 	}
- 	/* Only reset on passing, to avoid touching corrupted buffers */
--- 
-2.34.1
-
+Applied, thanks.
+> 
 
