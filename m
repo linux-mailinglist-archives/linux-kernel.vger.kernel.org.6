@@ -1,50 +1,55 @@
-Return-Path: <linux-kernel+bounces-299685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C5C95D8A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:46:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C098A95D8A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC5D9B2202F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:46:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11381C21890
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D1E1C825E;
-	Fri, 23 Aug 2024 21:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C251C8232;
+	Fri, 23 Aug 2024 21:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="hAq6NSUF"
-Received: from pv50p00im-ztdg10012101.me.com (pv50p00im-ztdg10012101.me.com [17.58.6.49])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="JPzu+vVM"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1932F139D00
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 21:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925691922E0;
+	Fri, 23 Aug 2024 21:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724449552; cv=none; b=cxyWr3dfPWEZqSteAW8IW75T0Q+C13qx0VYPwXbXUOcLpsOzs2IbCKSOVT08rObk/IUo8Zp0ugw6InwdtZ1M6e8pNiEA47Yhv1kgPd0FH2TjU8Gxx7YPEbdIixM0KgmuICCzNmz5vXqSdzRVqLUvVF8wrcZYn1h4/kdsbD6rCdg=
+	t=1724449651; cv=none; b=f81QLwsZYQ7bimswBKvjx1DhqN9E9b3KLXSju5xTqp+WvGVW3TRNUDYNSmKhOdD4W4w0j3qVks043Q/SEHERxfm+zZ3DYdjjKx0sXUGTmr2Vwag8C5dVJlS8Mg++nVsUVvDYFaJDktNbIIx1lg1tbporur94N2GS+aW5jI7JSJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724449552; c=relaxed/simple;
-	bh=E2PfdCUWQrf2uDP/LGPSZ+Tax04937a7xG2LwQ2/Qt4=;
+	s=arc-20240116; t=1724449651; c=relaxed/simple;
+	bh=PCDnMC8slProdj/MUscZCihbWNlAfgo5Fz3MCr1lm84=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JaaE1wzOi8eQPW0djumdLTGWXU6MgPa6Qp5kVYMmciHkM5JjaiIIg+QCs3hcdXNGpIoXWUUDm0RWgnHZ/2mQhw0qGoGSfEKU9j0pyFq2hWyH21v99lHGztizWIWtq05RiigJVTW4QSJT2vtbkxr8WhDeLlFXnDGYT9u+xQJ7K/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=hAq6NSUF; arc=none smtp.client-ip=17.58.6.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724449549;
-	bh=DZT9D0YL+MfAjwfIKWBNhTFYdAQCL09UUBbtbCTuoh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=hAq6NSUF5jOF4WXIIC1s1EIKI8wgKLkEYvh7umYCdZ/XRzo2b93E8q86oKqzvF5sd
-	 DQTNxPNHnAbmLfzk33IzhGgrapIqe/fZjn0fh/LRiD2Vg/Ff5v5VzRQdGy4hI59INn
-	 MP3iXSL56f+96Bv48hP+RoLtHyAnJH2r/7ELdZZnXBTbsE/nmq+Rqo2+nbxLD8+Uxt
-	 gJru1GCaaJMa5gyvk7XU7whC58FvNzd0muIIvzLWgQ+XQnMAyY7SbEINgtlus22GVa
-	 MtD4sCegmgH8Tp1bdEcOVo/onBiL8mCt79modaONriIr9mslBbj2EQ/X2jhci5mY8d
-	 UnB5qkME5FEhQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10012101.me.com (Postfix) with ESMTPSA id CE61B740123;
-	Fri, 23 Aug 2024 21:45:42 +0000 (UTC)
-Message-ID: <dcddaabd-8a8a-4ccc-ba38-02088a4134a4@icloud.com>
-Date: Sat, 24 Aug 2024 05:45:39 +0800
+	 In-Reply-To:Content-Type; b=TRt2mWJ8wMOB1uYos5qQLihY7xr343sd0guKPVEPUGrP2+/0fWD004XCcnfsS7RJIanm/3ies5B3DrokHxZ0RdyC9JqERegC1lBj9D5IyJ6HdL7tNkhho6Uom9FZ+iathcSYcM9ZE8kLsgjGxayHNjmE0LIMH0tGxpJPwOWqCJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=JPzu+vVM; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1724449636; x=1725054436; i=wahrenst@gmx.net;
+	bh=xYO6QiXJmcSTMu9xVAlZbnC04DXri0/+K49HCyQdjZE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=JPzu+vVMQAeqxu8rEyBzOi08mbdwkPbweGG0CvC0aFXonuSZgx41P98OM61moe3T
+	 4jdEC59QvlNFDSOvxnfUXgnDX0gjgHYagY+Bh1gGTdt6hMBd2hbgsje6LA87oSstY
+	 rlsQS8YRFetksoyBi7FSvkjuHHeeFidI6raf5Dmk8FEulyP/61agF5t1A3yKQMc5t
+	 +08bEkiIKPc7ikPXthiSl0LR8UZSqqtNDqnJPFxYZH35i3aPeINMhacw5PRCG2219
+	 vs704ebLrOgF1obqedlAXWv+Rbwfbpek7Q9JuPQY9iGfD3FBdVjGMopIpaQn4POiO
+	 HXYgRGuQ9w6aT9jGww==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1McH9Y-1s7T1k1SXc-00e0mN; Fri, 23
+ Aug 2024 23:47:16 +0200
+Message-ID: <437e7171-097d-43b0-876e-c6343518197d@gmx.net>
+Date: Fri, 23 Aug 2024 23:47:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,194 +57,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] driver core: Make parameter check consistent for
- API cluster device_(for_each|find)_child()
-To: Ira Weiny <ira.weiny@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
- <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
- <20240815-const_dfc_prepare-v2-1-8316b87b8ff9@quicinc.com>
- <66c491c32091d_2ddc24294e8@iweiny-mobl.notmuch>
- <2b9fc661-e061-4699-861b-39af8bf84359@icloud.com>
- <66c4a4e15302b_2f02452943@iweiny-mobl.notmuch>
- <e30eac3b-4244-460d-ab0b-baaa659999fe@icloud.com>
- <66c8c4a0633e9_a87cd294f6@iweiny-mobl.notmuch>
+Subject: Re: [PATCH 6/7] staging: vchiq_core: Remove unused function argument
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Phil Elwell <phil@raspberrypi.com>
+References: <20240823-to_sent2-v1-0-8bc182a0adaf@ideasonboard.com>
+ <20240823-to_sent2-v1-6-8bc182a0adaf@ideasonboard.com>
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <66c8c4a0633e9_a87cd294f6@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: f32q2jKvmmVMqFEqfpaAeRCwDZQtvNnD
-X-Proofpoint-GUID: f32q2jKvmmVMqFEqfpaAeRCwDZQtvNnD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 malwarescore=0
- adultscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 phishscore=0
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408230162
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240823-to_sent2-v1-6-8bc182a0adaf@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kxKESK5O9T5ZHHdcIqK0azc3AdJmyxeIVDCOHvftSDizZljLdyZ
+ +4J0SOSCWT8pt1ra27t/T0zs1gFnA6phyMUf+TcXWQYhM9mbIDeQOmJxj96qZW2ZV6L2JDN
+ igvGr5R6NTEmkDBMDDftCE3YwUh6O7hYHQIG8bQt+ivs2ZvjoPZedR2c0HuFlvC4Xjx/HNn
+ 3t1a0Ly01cH/nFtQ6MSQA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FtAPsWoh1Vs=;jV+TrRVLOBHjH0hXXVTUp1iswk0
+ hQBFSpO7pERdwLKcu4M+i10aXLSNCcU9euWruAzlXZroaheHaUrRMBPpmrYaeYsJnOxmdtld2
+ ypk3YUWk+Hyo09QMd0DYJc+3PMZijy7Ci3oAPRHfg6S9JDGf3pOsVn4jvkinM3FEW3HauG6zs
+ 7y3GbzJiG6tkZHBbBZd1FqbnfKe9m4LTs5142vyCXbrKuw4p0UI9w3QJQiA6EtHXU3aydCvEt
+ SGDSQJJD05KhxUlBxEBhA64bzy5ROZ1j1/rbbdYk2ETOQQLBN1OMNMCMRErn5+GYJ/Jk12LVD
+ JvW1YIR+O451A9iVMpSubeCSmXVEDLIbE+Al0aTREvUzEUUpyLsDDkJfAIZH3DAIdhISkLv/k
+ Goq2X1vi/0Q/7ZGHs/VH80bnt1UlMIBZ+pxUPDX6lyeW36mRs0pZ2gBl+fj42/IFhlsmOcihZ
+ C4fEOU67LP1ayUpskrSOc+yV3o2/IgzD8rScVMFczzcuSAP5McB4UdELRiaet7AQRIZxRCPCT
+ fkqEq6jD4Egp5JMmiYOagUTl4EEboxuH1vPiIHMpqmiGnAUgv5wG+hQDDfbEG7IWEjZITrJ1p
+ CIwlGJ8YNd+cPprDvf1cUgtjSuK3XitxZ6ygVyN35K+ZQbzfCgJl9GAOZ3Hh2+IHq0L2vQ3wj
+ mFx0gNiAua85fP8fmPYx/MMvrAjVHjWwhDY8N9IlszMgQ5Vn+V2VbLQOoopYYOT14iBL9ZIQ1
+ HQL6I0SNausN4hCVMzws00ROd7amaoYCteIp/QvGnw/0cPUjMlbxpHRvduwdGwBb22r0wDc+v
+ q28GIXviJmEsRxik4Cgp2R9Q==
 
-On 2024/8/24 01:19, Ira Weiny wrote:
-> Zijun Hu wrote:
->> On 2024/8/20 22:14, Ira Weiny wrote:
->>> Zijun Hu wrote:
->>>> On 2024/8/20 20:53, Ira Weiny wrote:
->>>>> Zijun Hu wrote:
->>>>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>>>
->>>>>> The following API cluster takes the same type parameter list, but do not
->>>>>> have consistent parameter check as shown below.
->>>>>>
->>>>>> device_for_each_child(struct device *parent, ...)  // check (!parent->p)
->>>>>> device_for_each_child_reverse(struct device *parent, ...) // same as above
->>>>>> device_find_child(struct device *parent, ...)      // check (!parent)
->>>>>>
->>>>>
->>>>> Seems reasonable.
->>>>>
->>>>> What about device_find_child_by_name()?
->>>>>
->>>>
->>>> Plan to simplify this API implementation by * atomic * API
->>>> device_find_child() as following:
->>>>
->>>> https://lore.kernel.org/all/20240811-simply_api_dfcbn-v2-1-d0398acdc366@quicinc.com
->>>> struct device *device_find_child_by_name(struct device *parent,
->>>>  					 const char *name)
->>>> {
->>>> 	return device_find_child(parent, name, device_match_name);
->>>> }
->>>
->>> Ok.  Thanks.
->>>
->>>>
->>>>>> Fixed by using consistent check (!parent || !parent->p) for the cluster.
->>>>>>
->>>>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>>> ---
->>>>>>  drivers/base/core.c | 6 +++---
->>>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
->>>>>> index 1688e76cb64b..b1dd8c5590dc 100644
->>>>>> --- a/drivers/base/core.c
->>>>>> +++ b/drivers/base/core.c
->>>>>> @@ -4004,7 +4004,7 @@ int device_for_each_child(struct device *parent, void *data,
->>>>>>  	struct device *child;
->>>>>>  	int error = 0;
->>>>>>  
->>>>>> -	if (!parent->p)
->>>>>> +	if (!parent || !parent->p)
->>>>>>  		return 0;
->>>>>>  
->>>>>>  	klist_iter_init(&parent->p->klist_children, &i);
->>>>>> @@ -4034,7 +4034,7 @@ int device_for_each_child_reverse(struct device *parent, void *data,
->>>>>>  	struct device *child;
->>>>>>  	int error = 0;
->>>>>>  
->>>>>> -	if (!parent->p)
->>>>>> +	if (!parent || !parent->p)
->>>>>>  		return 0;
->>>>>>  
->>>>>>  	klist_iter_init(&parent->p->klist_children, &i);
->>>>>> @@ -4068,7 +4068,7 @@ struct device *device_find_child(struct device *parent, void *data,
->>>>>>  	struct klist_iter i;
->>>>>>  	struct device *child;
->>>>>>  
->>>>>> -	if (!parent)
->>>>>> +	if (!parent || !parent->p)
->>>>>
->>>>> Perhaps this was just a typo which should have been.
->>>>>
->>>>> 	if (!parent->p)
->>>>> ?
->>>>>
->>>> maybe, but the following device_find_child_by_name() also use (!parent).
->>>>
->>>>> I think there is an expectation that none of these are called with a NULL
->>>>> parent.
->>>>>
->>>>
->>>> this patch aim is to make these atomic APIs have consistent checks as
->>>> far as possible, that will make other patches within this series more
->>>> acceptable.
->>>>
->>>> i combine two checks to (!parent || !parent->p) since i did not know
->>>> which is better.
->>>
->>> I'm not entirely clear either.  But checking the member p makes more sense
->>> to me than the parent parameter.  I would expect that iterating the
->>> children of a device must be done only when the parent device is not NULL.
->>>
->>> parent->p is more subtle.  I'm unclear why the API would need to allow
->>> that to run without error.
->>>
->> i prefer (!parent || !parent->p) with below reasons:
->>
->> 1)
->> original API authors have such concern that either (!parent) or
->> (!parent->p) maybe happen since they are checked, all their concerns
->> can be covered by (!parent || !parent->p).
->>
->> 2)
->> It is the more robust than either (!parent) or (!parent->p)
->>
->> 3)
->> it also does not have any negative effect.
-> 
-> It adds code and instructions to all paths calling these functions.
-> 
-such slight impacts can be ignored if a machine run linux OS.
-
-right?
-
-> What is the reason to allow?
-> 
-1)
-it allow to use device_for_each_child() without misgiving.
-
-2)
-there are many many existing APIs which have similar checks such as
-get_device(), kfree()...
-
-> void foo() {
-> ...
-> 	device_for_each_child(NULL, ...);
-> ...
-> }
-> 
-> What are we finding the child of in that case?
+Am 23.08.24 um 17:14 schrieb Umang Jain:
+> The argument 'is_blocking' in queue_message_sync() is not
+> used in the function. Drop it.
 >
-similar usage as device_find_child(NULL, ...) which have check (!parent).
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+Good catch!
 
-both device_for_each_child() and device_find_child() iterates over its
-child.
-
-original author's concern (!parent->p) for device_for_each_child() is
-applicable for the other.
-
-original author's concern (!parent) for device_find_child() is
-applicable for the other as well.
-
-so i use (!parent || !parent->p).
-
-> Ira
-> 
->>
->>> Ira
->>
-> 
-> 
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+> ---
+>   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c | 6 +++=
+=2D--
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
+e.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> index 43c6a214be86..84631878f77d 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> @@ -1146,7 +1146,7 @@ queue_message_sync(struct vchiq_state *state, stru=
+ct vchiq_service *service,
+>   		   int msgid,
+>   		   ssize_t (*copy_callback)(void *context, void *dest,
+>   					    size_t offset, size_t maxsize),
+> -		   void *context, int size, int is_blocking)
+> +		   void *context, int size)
+>   {
+>   	struct vchiq_shared_state *local;
+>   	struct vchiq_header *header;
+> @@ -1524,7 +1524,7 @@ parse_open(struct vchiq_state *state, struct vchiq=
+_header *header)
+>   		/* Acknowledge the OPEN */
+>   		if (service->sync) {
+>   			if (queue_message_sync(state, NULL, openack_id, memcpy_copy_callbac=
+k,
+> -					       &ack_payload, sizeof(ack_payload), 0) =3D=3D -EAGAIN)
+> +					       &ack_payload, sizeof(ack_payload)) =3D=3D -EAGAIN)
+>   				goto bail_not_ready;
+>
+>   			/* The service is now open */
+> @@ -3150,7 +3150,7 @@ vchiq_queue_message(struct vchiq_instance *instanc=
+e, unsigned int handle,
+>   		break;
+>   	case VCHIQ_SRVSTATE_OPENSYNC:
+>   		status =3D queue_message_sync(service->state, service, data_id,
+> -					    copy_callback, context, size, 1);
+> +					    copy_callback, context, size);
+>   		break;
+>   	default:
+>   		status =3D -EINVAL;
+>
 
 
