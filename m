@@ -1,182 +1,153 @@
-Return-Path: <linux-kernel+bounces-299117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CC895D053
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:47:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C51C95D057
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381A51C226E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5941F23412
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD79A1885BB;
-	Fri, 23 Aug 2024 14:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22981885B9;
+	Fri, 23 Aug 2024 14:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SI3gDaio"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r49CN/aQ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D1C186E42;
-	Fri, 23 Aug 2024 14:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CE91865ED;
+	Fri, 23 Aug 2024 14:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424410; cv=none; b=KuryEVD0ltyV7Uci2O79j+8lWFj1K5uoMFToXKZf4ycwV7Pi5XgsB0/W4yroTQD/gdTYae312ba3zPyFLVaHcdJLvpb5PvyMd59ZRLmguJfRpvFdo7tF/rT7qx0wjQXrJW8yBSkdIvmOor1Z54q94GXx+ySAEYEXLyPrWrx374s=
+	t=1724424463; cv=none; b=DN9TlWcgY10Hgtp1k33nWTmRIPtFTzwqCtyLf5NiW7oZj+phmErPphGsGvB6SBgk1OglHh2Cgwj0kRc6tS5t6aFQbgZT7/tcDteL+QZSBsGD5O82vZXwZK7iz/DyUDZBxucCt0wtJ3uhhOuAT8RQyT/yU+nO57vGY9RGzzmqUB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424410; c=relaxed/simple;
-	bh=deyOJueAFpuhe063rld2qyysTukBb27gXAkYpa4SJhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cspBxzr4Mteo15jUaYeLvzwY0qThbLMbnBHvXgV8Co2MGh7TXmLhgDDxZ5VebpOe4BXeje/DgUG4fXxNHW5vE1lAJBD8IOS+gynIyLvnprC8ZDL7H7YrFrLHQIhilqBzf6qZe5ikb1+MPV4SsUACZa4ytasWhe4gwnSAGHPZiGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SI3gDaio; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 97D2B497;
-	Fri, 23 Aug 2024 16:45:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724424342;
-	bh=deyOJueAFpuhe063rld2qyysTukBb27gXAkYpa4SJhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SI3gDaioeU0mv7qbdTb66rf4ZmIVLfJtsoOv3BReTKdiqfr7QaeT1B1rNABEuo9vQ
-	 WM4GVcdT2S4g8SyeqVUdP7N/1sDSyeBUTefll/FG1aPI879Mf7qnpj+iwRca28T229
-	 rdYhMAFjQOU7b4TLTqvz0T/7dC6KFrcbm8+7Nxro=
-Date: Fri, 23 Aug 2024 17:46:43 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
-Subject: Re: =?utf-8?B?5Zue5aSNOiDlm57lpI06IOWbng==?=
- =?utf-8?B?5aSNOiDlm57lpI06IOWbnuWkjTogW1BBVENI?= =?utf-8?Q?=5D?= staging:
- media: starfive: Add multiple resolution support
-Message-ID: <20240823144643.GM26098@pendragon.ideasonboard.com>
-References: <20240809095738.GG5833@pendragon.ideasonboard.com>
- <ZQ0PR01MB1302CAAE59FA0358E7FE6BD0F2BA2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <20240809132624.GB1435@pendragon.ideasonboard.com>
- <ZQ0PR01MB13029DA731711FAA57BD13A4F2852@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <20240812103357.GB18729@pendragon.ideasonboard.com>
- <ZQ0PR01MB130236FA891A04350CBC4245F2852@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <20240819001327.GK29465@pendragon.ideasonboard.com>
- <ZQ0PR01MB1302CE9D6EC726D3FBE8D6EDF28C2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <20240819081953.GM29465@pendragon.ideasonboard.com>
- <ZQ0PR01MB130204B8D11C2D13E3248870F28C2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1724424463; c=relaxed/simple;
+	bh=QkVDrRG+bwVo2Que5A45k+H96lRpMPjMgglMy/BFh4Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:From:Cc:
+	 References:In-Reply-To; b=dqWP07Z56W1vPlJzfr9yKDc8uiExV+qyHX/BOw5Jzneer43VEPZyknwiYu202gp3PmRIWsyEweL40YxNtkeUiVBYGqLC76fzxJliBqmkGG7uzOcXzNg6sF05XDpwquWCvO0ksWW6hXBXyytKWarBIVp7k01CHrKUWdtMMx5iAPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r49CN/aQ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NEdgVV013718;
+	Fri, 23 Aug 2024 14:47:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	mime-version:content-transfer-encoding:content-type:date
+	:message-id:to:subject:from:cc:references:in-reply-to; s=pp1;
+	 bh=UHCoi8H9SkJyWN+bg3VEga0aQtVxmmJrvg/q91th08M=; b=r49CN/aQWgqY
+	j2AUdWjl8Ngjr8AZ1IWoV3IxsWoUTlYa6x0Yrp4msTsicTm3fDxuVNKfGiP2pyaN
+	28OgaytO3CI2ocOYtFgGAa9pT5NRvYtOYRiCfBY9SAsbwSQPDqhWtlpH9vtGpPPb
+	X73kqh3BXJ1j+Nk3FCtJckZcAwFiNYcHWkeX5Tb53SSSolMsZFbSplcQQRYy/x95
+	iGIiJeJfLgX4ynn0rrhWequtQZUAHhNSF3K0Czs6Xm+nAYNKNR9RhK58N3L0h/4s
+	1Y8EN1SyaFhG3YWHTMdR+ulR8o/gkPMcsFB+WjT2hdtWRvtPwK91NGvTaH32Y5YI
+	1IHgvG+5Jg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vc6r0yr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 14:47:31 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47NElVtM028079;
+	Fri, 23 Aug 2024 14:47:31 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vc6r0yk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 14:47:31 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47NB61Wc019044;
+	Fri, 23 Aug 2024 14:47:29 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376qaayf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 14:47:29 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47NElOUZ54591752
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 Aug 2024 14:47:26 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 14A7D20043;
+	Fri, 23 Aug 2024 14:47:24 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DF5B320040;
+	Fri, 23 Aug 2024 14:47:23 +0000 (GMT)
+Received: from darkmoore (unknown [9.171.45.196])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 23 Aug 2024 14:47:23 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZQ0PR01MB130204B8D11C2D13E3248870F28C2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 23 Aug 2024 16:47:18 +0200
+Message-Id: <D3NDG2T6LAPQ.2NWIY72YYTM3F@linux.ibm.com>
+To: "Hariharan Mari" <hari55@linux.ibm.com>, <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] KVM: s390: selftests: Add regression tests for
+ SORTL and DFLTCC CPU subfunctions
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <shuah@kernel.org>,
+        <frankja@linux.ibm.com>, <borntraeger@linux.ibm.com>,
+        <imbrenda@linux.ibm.com>, <david@redhat.com>, <pbonzini@redhat.com>
+X-Mailer: aerc 0.17.0
+References: <20240823130947.38323-1-hari55@linux.ibm.com>
+ <20240823130947.38323-2-hari55@linux.ibm.com>
+In-Reply-To: <20240823130947.38323-2-hari55@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: joBWqXu38rRWeSJVLAbCt0vd2B5HOrnU
+X-Proofpoint-GUID: feQMs60FA9k7UMgDuvCz7jUoq6a6etmR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_10,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ mlxlogscore=593 suspectscore=0 priorityscore=1501 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408230107
 
-On Mon, Aug 19, 2024 at 01:18:01PM +0000, Changhuang Liang wrote:
-> > On Mon, Aug 19, 2024 at 01:37:30AM +0000, Changhuang Liang wrote:
-> > > > On Mon, Aug 12, 2024 at 12:13:03PM +0000, Changhuang Liang wrote:
-> > > > > > On Mon, Aug 12, 2024 at 09:43:47AM +0000, Changhuang Liang wrote:
-> > > > > > > > On Fri, Aug 09, 2024 at 12:12:01PM +0000, Changhuang Liang wrote:
-> > > > > > > > > > On Fri, Apr 19, 2024 at 01:19:55AM -0700, Changhuang Liang wrote:
-> > > > > > > > > > > Add multiple resolution support for video "capture_raw" device.
-> > > > > > > > > > > Otherwise it will capture the wrong image data if the width is not 1920.
-> > > > > > > > > > >
-> > > > > > > > > > > Fixes: e080f339c80a ("media: staging: media: starfive: camss: Add capture driver")
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > >  drivers/staging/media/starfive/camss/stf-capture.c | 5 ++++-
-> > > > > > > > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git
-> > > > > > > > > > > a/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > > > b/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > > > index ec5169e7b391..9e853ff2596a 100644
-> > > > > > > > > > > --- a/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > > > +++ b/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > > > @@ -177,9 +177,12 @@ static void stf_channel_set(struct stfcamss_video *video)  {
-> > > > > > > > > > >  	struct stf_capture *cap = to_stf_capture(video);
-> > > > > > > > > > >  	struct stfcamss *stfcamss = cap->video.stfcamss;
-> > > > > > > > > > > +	struct v4l2_pix_format *pix;
-> > > > > > > > > >
-> > > > > > > > > > This variable can be const as you don't modify the format.
-> > > > > > > > > >
-> > > > > > > > > > >  	u32 val;
-> > > > > > > > > > >
-> > > > > > > > > > >  	if (cap->type == STF_CAPTURE_RAW) {
-> > > > > > > > > > > +		pix = &video->active_fmt.fmt.pix;
-> > > > > > > > > >
-> > > > > > > > > > And it can be declared and initialized here:
-> > > > > > > > > >
-> > > > > > > > > > 		const struct v4l2_pix_format *pix = &video->active_fmt.fmt.pix;
-> > > > > > > > > >
-> > > > > > > > > > > +
-> > > > > > > > > > >  		val = stf_syscon_reg_read(stfcamss, VIN_CHANNEL_SEL_EN);
-> > > > > > > > > > >  		val &= ~U0_VIN_CHANNEL_SEL_MASK;
-> > > > > > > > > > >  		val |= CHANNEL(0);
-> > > > > > > > > > > @@ -193,7 +196,7 @@ static void stf_channel_set(struct stfcamss_video *video)
-> > > > > > > > > > >  		val |= PIXEL_HEIGH_BIT_SEL(0);
-> > > > > > > > > > >
-> > > > > > > > > > >  		val &= ~U0_VIN_PIX_CNT_END_MASK;
-> > > > > > > > > > > -		val |= PIX_CNT_END(IMAGE_MAX_WIDTH / 4 - 1);
-> > > > > > > > > > > +		val |= PIX_CNT_END(pix->width / 4 - 1);
-> > > > > > > > > >
-> > > > > > > > > > Is there no need to consider the image height as well ?
-> > > > > > > > > > How does the driver prevent buffer overflows if the
-> > > > > > > > > > sensor sends more data than expected ?
-> > > > > > > > >
-> > > > > > > > > Our hardware will confirm a frame of data through vblank
-> > > > > > > > > signal, so there is no image height configuration.
-> > > > > > > >
-> > > > > > > > What happens if the system expects, for instance, a 1920x1080
-> > > > > > > > RAW8 image, and allocates a buffer of of 1920x1080 bytes,
-> > > > > > > > but the sensor outputs more lines ? Does the camera hardware
-> > > > > > > > in the SoC offer an option to prevent buffer overruns ?
-> > > > > > >
-> > > > > > > The hardware can confirm the image height by using the VSYNC signal.
-> > > > > > >
-> > > > > > > Image will transfer when VSYNC is high.
-> > > > > > >
-> > > > > > > VSYNC time = (width + h_blank) * height;
-> > > > > >
-> > > > > > What I'm trying to understand is what happens if the ISP is configured for
-> > > > > > 1080 lines, but the camera sensor sends more than 1080 lines
-> > > > > > (the VSYNC signal is active for more than 1080 lines). Where in
-> > > > > > the driver is the hardware configure with the 1080 lines
-> > > > > > limit to avoid buffer overflows ?
-> > > > >
-> > > > > If is "capture_raw" video device, no image height can be configured.
-> > > >
-> > > > In that case what happens if the camera sensor sends more lines than
-> > > > expected ? Will the raw video device write past the end of the buffer ?
-> > >
-> > > Yes, the buffer will overflows, so we will use the software restrictions.
-> > > Implement .link_validate hooks for the CSI2RX subdev and
-> > > "capture_raw" video device.
-> > 
-> > Is there an IOMMU in the system that could help preventing buffer overflows
-> > to reach system memory ?
-> 
-> JH7110 SoC has no IOMMU.
+On Fri Aug 23, 2024 at 3:05 PM CEST, Hariharan Mari wrote:
+> Introduce new regression tests to verify the ASM inline block in the SORT=
+L
+> and DFLTCC CPU subfunctions for the s390x architecture. These tests ensur=
+e
+> that future changes to the ASM code are properly validated.
+>
+> The test procedure:
+>
+> 1. Create a VM and request the KVM_S390_VM_CPU_MACHINE_SUBFUNC attribute
+>    from the KVM_S390_VM_CPU_MODEL group for this VM. This SUBFUNC attribu=
+te
+>    contains the results of all CPU subfunction instructions.
+> 2. For each tested subfunction (SORTL and DFLTCC), execute the
+>    corresponding ASM instruction and capture the result array.
+> 3. Perform a memory comparison between the results stored in the SUBFUNC
+>    attribute (obtained in step 1) and the ASM instruction results (obtain=
+ed
+>    in step 2) for each tested subfunction.
+>
+> This process ensures that the KVM implementation accurately reflects the
+> behavior of the actual CPU instructions for the tested subfunctions.
+>
+> Suggested-by: Janosch Frank <frankja@linux.ibm.com>
+> Signed-off-by: Hariharan Mari <hari55@linux.ibm.com>
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 
-Thank you for the information.
+LGTM
 
-Based on this, the best we can do is hoping that the video source will
-never send more lines than expected. In most cases there will be no
-issue, but signal glitches or other hardware glitches on the sensor side
-may cause memory corruption. That sounds like a worrying hardware
-vulnerability :-(
+Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
 
-> > > > If so, is there a way to guard against that ?
-> > > >
-> > > > > If is "capture_yuv" video device, it will be set by stf_isp_config_crop.
-> > > >
-> > > > Thank you, that's the information I was looking for.
+> ---
+>  tools/testing/selftests/kvm/Makefile          |   2 +
+>  .../selftests/kvm/include/s390x/facility.h    |  50 +++++++++
+>  .../selftests/kvm/lib/s390x/facility.c        |  14 +++
+>  .../kvm/s390x/cpumodel_subfuncs_test.c        | 105 ++++++++++++++++++
+>  4 files changed, 171 insertions(+)
+>  create mode 100644 tools/testing/selftests/kvm/include/s390x/facility.h
+>  create mode 100644 tools/testing/selftests/kvm/lib/s390x/facility.c
+>  create mode 100644 tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_t=
+est.c
 
--- 
-Regards,
-
-Laurent Pinchart
+[...]
 
