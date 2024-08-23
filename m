@@ -1,295 +1,187 @@
-Return-Path: <linux-kernel+bounces-298150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8750E95C319
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:03:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878D895C31B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABE051C21EBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:03:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7D31C223A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8751DA3D;
-	Fri, 23 Aug 2024 02:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QrHwwfIG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549941B974;
+	Fri, 23 Aug 2024 02:05:36 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576C029406;
-	Fri, 23 Aug 2024 02:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724378570; cv=fail; b=cSG2M2KEySE1Id5QE/Fpf5z5YpdE0LsMisoJAXRvzJC3un0nKn6UmHACDBlw90BONZ0TobYTQRfjlN8l8OhIcr9VDY6EGiMF4InVTBt808XqMG0YLWQpeavOE2oL9zk1P7WACzb3I2vTpsA6p7x4X5s/iT/a31llVCk4+MLH5s8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724378570; c=relaxed/simple;
-	bh=g701McdicLVUh7MsqjixghLHqQk+7jHpSdCSyroqM60=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uxuWARmBrackH3KOPqbaeHnPMUlvPN0ovB3qiZy3ooIZ8mDacL64Ih7Ws7zPg1f0JGdIkcyUIb1uCFSWMNbOFdNEOlmUMRhaBUD/phTguh94xiL/qJWhH8FTKhyNtLT8A9zO5u6PmjbbcgaqFgbW9ulINhntafngG5gRn9TceUQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QrHwwfIG; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724378568; x=1755914568;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=g701McdicLVUh7MsqjixghLHqQk+7jHpSdCSyroqM60=;
-  b=QrHwwfIGZi2T/tgKro+Q7d1hetPc9apusBzjajUInNcF03G4mL6xRp7k
-   zkM4Ugprm0D/jKXmIzZvnqHK+ge0aybUu4FuNBGzQABlXK2xD4nOixbAc
-   +H4ZmhEZpdniR1jxMCqkQDR7O0TTZWFs2RLaEqQP1RjNxfdr88HkxGIQk
-   IbFv5mkavYCq8XUzaL2KM2DWClut4xs1JDX6fuABWyXMmysC4Adi97Lt9
-   rkp5iWgfLvqTX4MeU6qlHUklNP77wl0JOixFTeBEq9ybM2jwGZQFnLGLZ
-   WNHu0MEa3RqRWNALQnYoTJXNiPB1RTTTP6slwKRrscI3fWX0kt7lcTobg
-   Q==;
-X-CSE-ConnectionGUID: cqFcMFniQJy13ZTfThdWqQ==
-X-CSE-MsgGUID: gZmUI+uiQmS0kcla44TGBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33493872"
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="33493872"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 19:02:47 -0700
-X-CSE-ConnectionGUID: UwEZM//oRNydqexCykl0JQ==
-X-CSE-MsgGUID: GS1w8FZMSdO3KlZjLQD0UA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,168,1719903600"; 
-   d="scan'208";a="66473171"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Aug 2024 19:02:47 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 22 Aug 2024 19:02:46 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 22 Aug 2024 19:02:46 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.47) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 22 Aug 2024 19:02:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DM0JLG002D6Y+5SNJluBjwqjuXyV5OcocfvbpOCQ/gZYAC3M+iMKekkiatnIQp6w58ZouRaIZC7Uy8oU2JMt5JpR2OUOj7dvnbfqMlGEIX1SixrRvaa57+3pTuHEEQZG1BskP1TH5WmO0CXijxmARPlPigOLidhV38301R6/5b8k6FHORpfHa+XmivEn8hPZIPgdkvd91pSAusmXqpNvGvG5ph2O5o7Y1ckGPSFXMO9fYDUNhqF/aF8hzvuRbFOKrmMew+Gy6Fwhen7LtIGeWgb3jPS4S6iFs0Kbf99IEmFxFYukXWSRXV75GojyENnISKdNteB/x7TdKenOEZoRZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mXm8X5/VrTQYAYRa8Sb7eNvTW9hFOw9ww41gl910Mm4=;
- b=QY1ODDJ+vFiuQr/j0A8DK+eNxrVBy5sGn4aERgvq+UnJy71q8w2YOXUDw447MlpMm293SMVZ64cq40u5nh/eS1JAN7B5Chpw3EhQjdCPq6GLFSJq7bc+1HV69UK2dro71H3m4GjcJQPRQa7rJWWWthp0GuN/k1yy/L4MupJcHkzvBdW+XJREnNkeBzkZi26LSX9Ph1h2axS3npASWQcqWhRbS1RGOlVwst5+RAClOiY0ehvUGA7W2iQDqz2f6Gdjbl67tg8lqBzR8+a5sAMHF0/jOQey35+gRNLgpd+VRbc1oUlumLH2n2ZIUDNMI/lyc6ZjaXHDu3sP2jHcsqDKOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by PH8PR11MB6804.namprd11.prod.outlook.com (2603:10b6:510:1bc::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Fri, 23 Aug
- 2024 02:02:42 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 02:02:42 +0000
-Date: Thu, 22 Aug 2024 21:02:35 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Fan Ni <nifan.cxl@gmail.com>, Dave Jiang <dave.jiang@intel.com>
-CC: <ira.weiny@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, "Josef
- Bacik" <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
-	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>, "Li, Ming"
-	<ming4.li@intel.com>
-Subject: Re: [PATCH v3 06/25] cxl/mem: Read dynamic capacity configuration
- from the device
-Message-ID: <66c7edbbbbccb_1719d2942d@iweiny-mobl.notmuch>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-6-7c9b96cba6d7@intel.com>
- <1ce9afe3-6f24-4471-8a10-5f4ea503e685@intel.com>
- <ZsTL1QQgYjVdfzqj@fan>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZsTL1QQgYjVdfzqj@fan>
-X-ClientProxiedBy: MW4PR04CA0232.namprd04.prod.outlook.com
- (2603:10b6:303:87::27) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855D6A934
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724378735; cv=none; b=WDL9gkgQGS+nDvpc/vtprv1i8Fz4hj7MO6T08BDovj2dqEoqsRR2++i3R0c3oA+QlR+0nvVaOUZIFKdZDun0y5VnekUlqnaU82ZKVfaEyqxjUwF4hPUssQ1nGlqDFxs7v7TVI3Q/LqUZrvJmFJU10YCSxm0W3bUdNZErS4gyW6c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724378735; c=relaxed/simple;
+	bh=hIy+stY5OX73HLJyBpa7mSSeygjenyJGuk6G56kQY0c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T7NeeHQZLRIzF7v2zkwOvuRTGddH4loDImNxG9+tZ7BDm8RCutZ66wpkPRqBC3mj3S8Q/EMxdhCXjSo2bxiVa6d19LlG912GVJ2za0nwgDxNUSbiQjpLffcEzmaTe9oCg+mSWZuyrMFSrkjA5uxqNulsEMCG5dpxqw6csQZWZpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 2479d9a660f411efa216b1d71e6e1362-20240823
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
+	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:5c323620-3870-4129-9d0e-6f41e4f965dc,IP:25,
+	URL:0,TC:0,Content:0,EDM:0,RT:12,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:22
+X-CID-INFO: VERSION:1.1.38,REQID:5c323620-3870-4129-9d0e-6f41e4f965dc,IP:25,UR
+	L:0,TC:0,Content:0,EDM:0,RT:12,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:22
+X-CID-META: VersionHash:82c5f88,CLOUDID:7e5ed1af1bca4fb18767e347eb49b346,BulkI
+	D:240823100231TLMFDBFW,BulkQuantity:1,Recheck:0,SF:64|66|24|17|19|44|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,
+	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: 2479d9a660f411efa216b1d71e6e1362-20240823
+X-User: liuye@kylinos.cn
+Received: from localhost.localdomain [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <liuye@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 493916128; Fri, 23 Aug 2024 10:05:17 +0800
+From: liuye <liuye@kylinos.cn>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	liuye@kylinos.cn
+Subject: Re: Re: Re: [PATCH] mm/vmscan: Fix hard LOCKUP in function isolate_lru_folios
+Date: Fri, 23 Aug 2024 10:04:43 +0800
+Message-Id: <20240823020443.7379-1-liuye@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240815025226.8973-1-liuye@kylinos.cn>
+References: <20240815025226.8973-1-liuye@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|PH8PR11MB6804:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43c09d37-bd8a-413e-2496-08dcc317ac0a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?i3AbNfkRO+Ku9P/1YzUM2v9PdK5UakbBUnJVNziinjG7lMDITDZapSFU68RZ?=
- =?us-ascii?Q?sF/678f6SpLu59YbSx5Vu8cuVcn14ZAf76ZyENvaNhBNH1ZSYcaKGrVaL8zK?=
- =?us-ascii?Q?fte+XlzdpLR4NQujwvzQ0JsA0+SPzP1c71BnIkjYjkkb4s2bkAe1FUDHyQqz?=
- =?us-ascii?Q?3G5DKbbdf+/ynIcl+iT4wMssMcqaN7OU1r5ceNDO2of12+nNqeCaEodpjNYG?=
- =?us-ascii?Q?ZfiVZG7dg7/N7s4IK2At99QpzjNhqlr4XBoPOAjv1qxEPDlvnAt3u99nVJi6?=
- =?us-ascii?Q?rhKgI2xDSzbJsBWCB+b0M9Qp+vApJkupkzmJNUusmCl19qLwZhZrhZXAoWUd?=
- =?us-ascii?Q?P2hktElqMjBiTW7tw1s9L4LMyXYnB0psEcLPrglycmhzjcc7qQco5MIv3dBz?=
- =?us-ascii?Q?GoaA1p0zbPzAsCXmO1AiqSXTwK2Rgn5AOPUBv+jbyr39hJH3n5KOKM9L1qcY?=
- =?us-ascii?Q?kFMNQkMbxOfnN4Sqai2LaYgIuvzCm7grD3p6Lat26iM48UP+2eaKOl5fLyLi?=
- =?us-ascii?Q?zzRU3x7Mn2vKdUYVXhJGoU+kyq6se8N/bMdUTyfYl15t5+iw8aUjGKZDKAS+?=
- =?us-ascii?Q?PGr8XEBoSqPJ4qzURWofi/xphPtMZfDxk5n7VXL2zdxRZl9JvYciKylfSWN7?=
- =?us-ascii?Q?gr3jpiY7sg1V018TIRbqW9y3o9yLQinQbLIAihhdKQPFWzLPYTT75zdVkLnL?=
- =?us-ascii?Q?41+8SCBdGX+/yFlxYuyFJlCmVfCKrWp+cRYWoHUq8AC9wSknDNpR1801fD9p?=
- =?us-ascii?Q?K08E6WPIGnpfb51kIGVEHWXZcQNv0t1hgXJLH0ARyDrzgtngRUNZ0Tk1KiZZ?=
- =?us-ascii?Q?GkrW/vcZYHWj+SajebpjZ2TdrXdXLhkUDKDB7U+P/a3LtAJeUMXJZKtEffAy?=
- =?us-ascii?Q?QrB7GFsFinZVnkMpv1CfEVoTpFZA6LCf5NTeTsLFcvq4EUNAAhHROdtpSPDd?=
- =?us-ascii?Q?2XSbqDDJ08ATzgSqPKHG9vUrUwwP+5GDPO6wP8RhLtzxbgKRd26LjMlZvaEs?=
- =?us-ascii?Q?Ftyyz7RU6y6UagTrBUyqA2joTvNk/eFVerIrziOB7GGRqlahIaAweRBIC7Tx?=
- =?us-ascii?Q?QzFrcPKKfVwgSi+8WgtS/CkQs4wMLJQtyFKO+VOjvx9VipaHyP8KI/sRnGBq?=
- =?us-ascii?Q?8mYqmEfA9ltdruRgZ0aR3GI7WuonTDQvyMhUlmIOjHS+qMII9Nkd1k4qRmD8?=
- =?us-ascii?Q?wAUBJp/Jk1X0ISMyUmaBfQBjrlvsTL3ac127e+ML92j3WVgQ4OfF53kx1MTe?=
- =?us-ascii?Q?Y3802bW2CtyOQjVZtIyPszN7DM/lYDdfJNRTWJ1Plhog5/laBCqOLusFDM5q?=
- =?us-ascii?Q?gb7Fj6cEWS0gO/J3MJtUlgUbR4dygs9XJ+cMzdUvEgXedw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2Kjm5iK8+FX7xPENpIC/HZs56NkX/TgPyZm3Kb8VnFeJ/k/rjQvnqrU7hWIV?=
- =?us-ascii?Q?OAT3XhtYm0TyRBwc+HW7UcssJ46L5Y0PdqEE0a9lMJlZPvlj/Lrsr38bqRgr?=
- =?us-ascii?Q?dxS/GOU4A4flqRBDGHKL424ijCZO95bbgRnGDhVGh2nQt5LoAo/QgDw8otFF?=
- =?us-ascii?Q?dRIfBhrk/oLigNu/lVHife4E4GSpdloOMSh0dCAQQS7WNgYSJ9o3lAM4n7dz?=
- =?us-ascii?Q?yMS2sBw//tGLTJdFO/opBk3F6NeQ9ZR6f5phCcoOQBCD2XM1gAzH2TawnVTT?=
- =?us-ascii?Q?xJhZsdkak/D8Z0Odr2h/UKBnk/uxc9OHPv1Mo3EhMzVKi/6llKVJb947t2Wk?=
- =?us-ascii?Q?b+2ut68dXBs7ZX/sWorR6gdtKyHA1aXqWmsEQUl0FZr4CW2Q+Q9V91GTBHZT?=
- =?us-ascii?Q?ruBKqI0lY8EQf2qAsbjnuUGc31TpRMupPWPW3m6bzn4qvRKasCpTYwiMH2bf?=
- =?us-ascii?Q?5OKd8L9G9peakFzy5/gNg1R6uWBaBZwX77bLSdLm63Sqofls4c2B7C4t66c7?=
- =?us-ascii?Q?uUCiLQ4jJNqMCC2qd7QGks9OMtKFCJfsjHra4bqY1jOBZOZhCbAcrWU1XUzm?=
- =?us-ascii?Q?oGPDSJiekyqXeiEjpyLUniexRAcH5wBBEpZqS1IuNBMPGymCLhPFcwzHoQPl?=
- =?us-ascii?Q?py53/bcmoBf8BTTvjzJvk4bZeEw/bLbBoqZmSYqtiAvxjr+dZKaH/7V6el8L?=
- =?us-ascii?Q?+hZE0ADn57TCohC+pNGGzFtQKuhN1i5DqRFSOezRQ56G2LdDTl6Ad4B7k6VU?=
- =?us-ascii?Q?Pxjpny4biUmRqrAIj5YXbOO2mIlnW58IltkjsuLau0hA6xer30xWTLgAkq/1?=
- =?us-ascii?Q?h4Sw7QYkrQcDC2DrRwdnUB4fRLwL/z1+pIAKCJ0D4H3pC+XeQ0SeEmSZMKUw?=
- =?us-ascii?Q?VjDzJsKut9VA7NHJnVs3W/oitKhbolKvr4pnJxjNtaVIB0/UCRgZCT1OUNgU?=
- =?us-ascii?Q?t3HtgHJSNkkHqjSUZHBAUFW2mSGLSSgpnFzO3Pn8GWCB3E0Hpc8oWs69Jc5W?=
- =?us-ascii?Q?JI6Ku0G1xHxKlTv+Y7bQx0PXVV49umqGmYc385EgD/g1RECkgVdUgUlCguMo?=
- =?us-ascii?Q?EimTUBA3eOyFSG5Q9mbHHERDgstOQ4ucuzIdbEWefSsWdq+t4uJffYISXpfp?=
- =?us-ascii?Q?DDLet/Zf9f49CEfpPDdq6eWKeS4B+ZGYq+0qMaq6Vnu6jzI+/8iL3tOpSsCg?=
- =?us-ascii?Q?I6nWe6qq+Grnn9HW+/ZXkltNnMerrvCcUP+elKQLSmOJn9HihG8AiH3Ixjgq?=
- =?us-ascii?Q?VQAdGrsdXRPbjqF+FYllLcVqvqZ27cm5jNtnPB9YXSMG1zJmhFPGr4ba9TaF?=
- =?us-ascii?Q?xT4D7o4VKFsClHauUUA4qCeSTqv2IfheiqstmfDUoU6vyk8vP8eVTnYltQQb?=
- =?us-ascii?Q?gB3A1Feq8cwzqjVZyXHKed2PNxUFLZzxDs4QL6YE3jTVoqPkGOBttZAVV3xZ?=
- =?us-ascii?Q?RaHe+MRkvYry7CKShksyNovSnmzNDCrpy2GWHYkPMzhaJF77hYik5WufLamf?=
- =?us-ascii?Q?3YtAShldG0SnCkSx+InddivSLnl5AFhjgURkGmZat+OEbV293oIsp/0GVrVt?=
- =?us-ascii?Q?bmGyjUenoFQvvw586Q0Icq2ieZo65CrRf7D2XZr0?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43c09d37-bd8a-413e-2496-08dcc317ac0a
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 02:02:41.9382
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vtAFdsyie08e4BUfplw35zxIeEftX8/h2Au9KLHQCzr2U43Btwx55Yhd/ly9BVWwY8NZe4WkRyGTeQlofv+mEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6804
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Fan Ni wrote:
-> On Fri, Aug 16, 2024 at 02:45:47PM -0700, Dave Jiang wrote:
+I'm sorry to bother you about that, but it looks like the following email send 7 days ago, 
+did not receive a response from you. Do you mind having a look at this 
+when you have a bit of free time please?
 
-[snip]
-
-> > > +
-> > > +/**
-> > > + * cxl_dev_dynamic_capacity_identify() - Reads the dynamic capacity
-> > > + *					 information from the device.
-> > > + * @mds: The memory device state
-> > > + *
-> > > + * Read Dynamic Capacity information from the device and populate the state
-> > > + * structures for later use.
-> > > + *
-> > > + * Return: 0 if identify was executed successfully, -ERRNO on error.
-> > > + */
-> > > +int cxl_dev_dynamic_capacity_identify(struct cxl_memdev_state *mds)
-> > > +{
-> > > +	size_t dc_resp_size = mds->payload_size;
-> > > +	struct device *dev = mds->cxlds.dev;
-> > > +	u8 start_region, i;
-> > > +
-> > > +	for (i = 0; i < CXL_MAX_DC_REGION; i++)
-> > > +		snprintf(mds->dc_region[i].name, CXL_DC_REGION_STRLEN, "<nil>");
-> > > +
-> > > +	if (!cxl_dcd_supported(mds)) {
-> > > +		dev_dbg(dev, "DCD not supported\n");
-> > > +		return 0;
-> > > +	}
+> > > Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node basis")
 > > 
-> > This should happen before you pre-format the name string? I would assume that if DCD is not supported then the dcd name sysfs attribs would be not be visible?
+> > Merged in 2016.
 > > 
-
-No this string is not used for sysfs.  It is used to label the dpa
-resources...  That said in review I don't recall why it was necessary to
-add the '<nil>' to them by default.  I'm actually going to remove that and
-continue testing and if I recall where this was showing up I might add it
-back in.
-
-> > > +
-> > > +	struct cxl_mbox_get_dc_config_out *dc_resp __free(kfree) =
-> > > +					kvmalloc(dc_resp_size, GFP_KERNEL);
-> > > +	if (!dc_resp)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	start_region = 0;
-> > > +	do {
-> > > +		int rc, j;
-> > > +
-> > > +		rc = cxl_get_dc_config(mds, start_region, dc_resp, dc_resp_size);
-> > > +		if (rc < 0) {
-> > > +			dev_dbg(dev, "Failed to get DC config: %d\n", rc);
-> > > +			return rc;
-> > > +		}
-> > > +
-> > > +		mds->nr_dc_region += rc;
-> > > +
-> > > +		if (mds->nr_dc_region < 1 || mds->nr_dc_region > CXL_MAX_DC_REGION) {
-> > > +			dev_err(dev, "Invalid num of dynamic capacity regions %d\n",
-> > > +				mds->nr_dc_region);
-> > > +			return -EINVAL;
-> > > +		}
-> > > +
-> > > +		for (i = start_region, j = 0; i < mds->nr_dc_region; i++, j++) {
-> > 
-> > This should be 'j < mds->nr_dc_region'? Otherwise if your start region say is '3' and you have '2' DC regions, you never enter the loop. Or does that not happen? I also wonder if you need to check if 'start_region + mds->nr_dc_region > CXL_MAX_DC_REGION'.
-> > 
-> That can not happen, start_region was updated to the number of regions
-> has returned till now (not counting the current call), while
-> nr_dc_region is the total number of regions returned till now (including
-> the current call) as we update it above, so start_region should never be larger
-> than nr_dc_region.
-
-Yep.
-
+> > Under what circumstances does it occur?  
 > 
-> > > +			rc = cxl_dc_save_region_info(mds, i, &dc_resp->region[j]);
-> > > +			if (rc) {
-> > > +				dev_dbg(dev, "Failed to save region info: %d\n", rc);
+> User processe are requesting a large amount of memory and keep page active.
+> Then a module continuously requests memory from ZONE_DMA32 area.
+> Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm reached.
+> However pages in the LRU(active_anon) list are mostly from 
+> the ZONE_NORMAL area.
 > 
-> I am not sure why we sometimes use dev_err and sometimes we use dev_dbg
-> here, if dcd is supported, error from getting dc configuration is an
-> error to me.
-
-We are trying to reduce the dev_err() use.  cxl_dc_save_region_info() has
-dev_err() which is much more specific as to the error.  At worse this is
-just redundant as a debug.
-
-I'll remove it because the debug output is pretty verbose too.
-
-Ira
-
+> > Can you please describe how to reproduce this?  
 > 
-> Fan
+> Terminal 1: Construct to continuously increase pages active(anon). 
+> mkdir /tmp/memory
+> mount -t tmpfs -o size=1024000M tmpfs /tmp/memory
+> dd if=/dev/zero of=/tmp/memory/block bs=4M
+> tail /tmp/memory/block
+> 
+> Terminal 2:
+> vmstat -a 1
+> active will increase.
+> procs -----------memory---------- ---swap-- -----io---- -system-- -------cpu-------
+>  r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st gu
+>  1  0      0 1445623076 45898836 83646008    0    0     0     0 1807 1682  0  0 100  0  0  0
+>  1  0      0 1445623076 43450228 86094616    0    0     0     0 1677 1468  0  0 100  0  0  0
+>  1  0      0 1445623076 41003480 88541364    0    0     0     0 1985 2022  0  0 100  0  0  0
+>  1  0      0 1445623076 38557088 90987756    0    0     0     4 1731 1544  0  0 100  0  0  0
+>  1  0      0 1445623076 36109688 93435156    0    0     0     0 1755 1501  0  0 100  0  0  0
+>  1  0      0 1445619552 33663256 95881632    0    0     0     0 2015 1678  0  0 100  0  0  0
+>  1  0      0 1445619804 31217140 98327792    0    0     0     0 2058 2212  0  0 100  0  0  0
+>  1  0      0 1445619804 28769988 100774944    0    0     0     0 1729 1585  0  0 100  0  0  0
+>  1  0      0 1445619804 26322348 103222584    0    0     0     0 1774 1575  0  0 100  0  0  0
+>  1  0      0 1445619804 23875592 105669340    0    0     0     4 1738 1604  0  0 100  0  0  0
+> 
+> cat /proc/meminfo | head
+> Active(anon) increase.
+> MemTotal:       1579941036 kB
+> MemFree:        1445618500 kB
+> MemAvailable:   1453013224 kB
+> Buffers:            6516 kB
+> Cached:         128653956 kB
+> SwapCached:            0 kB
+> Active:         118110812 kB
+> Inactive:       11436620 kB
+> Active(anon):   115345744 kB   
+> Inactive(anon):   945292 kB
+> 
+> When the Active(anon) is 115345744 kB, insmod module triggers the ZONE_DMA32 watermark.
+> 
+> perf show nr_scanned=28835844. 
+> 28835844 * 4k = 115343376KB approximately equal to 115345744 kB.
+> 
+> perf record -e vmscan:mm_vmscan_lru_isolate -aR
+> perf script
+> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=2 nr_skipped=2 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=0 nr_skipped=0 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=28835844 nr_skipped=28835844 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=28835844 nr_skipped=28835844 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=29 nr_skipped=29 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=0 nr_skipped=0 nr_taken=0 lru=active_anon
+> 
+> If increase Active(anon) to 1000G then insmod module triggers the ZONE_DMA32 watermark. hard lockup will occur.
+> 
+> In my device nr_scanned = 0000000003e3e937 when hard lockup. Convert to memory size 0x0000000003e3e937 * 4KB = 261072092 KB.
+> 
+> #5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
+>     ffffc90006fb7c30: 0000000000000020 0000000000000000 
+>     ffffc90006fb7c40: ffffc90006fb7d40 ffff88812cbd3000 
+>     ffffc90006fb7c50: ffffc90006fb7d30 0000000106fb7de8 
+>     ffffc90006fb7c60: ffffea04a2197008 ffffea0006ed4a48 
+>     ffffc90006fb7c70: 0000000000000000 0000000000000000 
+>     ffffc90006fb7c80: 0000000000000000 0000000000000000 
+>     ffffc90006fb7c90: 0000000000000000 0000000000000000 
+>     ffffc90006fb7ca0: 0000000000000000 0000000003e3e937 
+>     ffffc90006fb7cb0: 0000000000000000 0000000000000000 
+>     ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812cbd3000 
+> 
+> > Why do you think it took eight years to be discovered?
+> 
+> The problem requires the following conditions to occur:
+> 1. The device memory should be large enough.
+> 2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL area.
+> 3. The memory in ZONE_DMA32 needs to reach the watermark.
+> 
+> If the memory is not large enough, or if the usage design of ZONE_DMA32 area memory is reasonable, this problem is difficult to detect.
+> 
+> notes:
+> The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL, but other suitable scenarios may also trigger the problem.
+> 
+> > It looks like that will fix, but perhaps something more fundamental
+> > needs to be done - we're doing a tremendous amount of pretty pointless
+> > work here.  Answers to my above questions will help us resolve this.
+> > 
+> > Thanks.
+> 
+> Please refer to the above explanation for details.
+> 
+> Thanks.
 
-[snip]
+Thanks.
 
