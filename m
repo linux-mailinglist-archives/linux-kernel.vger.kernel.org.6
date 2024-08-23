@@ -1,173 +1,120 @@
-Return-Path: <linux-kernel+bounces-299332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F4395D319
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:20:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCE495D31E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1206328AA29
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:20:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7C21C226E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4C018BC04;
-	Fri, 23 Aug 2024 16:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040E1189BAE;
+	Fri, 23 Aug 2024 16:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ce/wQMO2"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjcWYOkP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1590D18BBB1
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4191412B6C;
+	Fri, 23 Aug 2024 16:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429973; cv=none; b=tsJ7Z1ykQ19sEu1Yj5AvCQTy8soknQsYokONMhqtnkZO9ubyTSwHx8quyZp3Xv9es3D4ZbmaMl4ycAuOZ9gLGcgc2vyDTba72Z846Q/hF2ym4r1DnO9m7rgO/XWm12/i+/fsM05k5gAxlnIVwZxrdqhZygXSFO9R+odeAhXy3LM=
+	t=1724430073; cv=none; b=mcCyB7QdaFr4IyGofz3dk2l96ElRujqwec+uH0J9ITQlmNbWc4cGZU5vQ8PVyIYBR3Dy2OFDu/6RdKrASyaJzFyULcfH2ooLYwfz1sZ6reON0wA6c8LsrzXYpIDtB3c8JOCxqfQYzEhp24QKH6hKwg9fe9W2MSeFAnuKr6gGsGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429973; c=relaxed/simple;
-	bh=35F4cwD/nlOTdqpbRF/g2qwU6A/s/jWVS/PZIIxYZQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dgsPu8W86bl7EafxHcVCq52RB+v9yaKc1n864d/KloaRy46dG9oTBiklblj99c8U70GxCNtS1eo24+sC86LRhBdzI/xoP3CEr1Wb70jDVrvVIL+1gTXxdF2DE1JDsO96pTkYxOElpDgW1GoNcotpsnkBKHX9+JDBEla2hNKeDBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ce/wQMO2; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DDA2F20003;
-	Fri, 23 Aug 2024 16:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724429968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dGoYbKzQa3GXqZypdwCwdebcsHe5jiKHQseAXFC7eXA=;
-	b=Ce/wQMO2CzuqN1Dc8v4VbnCV0r4T7/QWH7RsVeZUsdzvKgXpc4PlA027pYZ7uTOGQT2jSB
-	c0Ma/QM87/jNcTN+2Lv3le8a3qzHTC/PS0ZmmE+Xi3WRJL3gIIMepAE1V5boJd0+Xd8+Ra
-	x2HifcNejGNRn8+nAV4P7nQhMG3rObXBdOcxKo1IENnpcX08lWnUGW1pUBHi7REDjmWoIj
-	uluPSUS74agLT93+u3XQPnGTowm8X+WYKOOjMIjZoZ+Z+XUsEOBFY05rcjZonHoZq09vhj
-	EsmYTeHXehCvZBLzaUkMttE+0D0BV21gzcJUieIqkH+sd5IfdnfosZKjgBYNWw==
-Date: Fri, 23 Aug 2024 18:19:27 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Boris Brezillon
- <boris.brezillon@collabora.com>, Parshuram Thombare <pthombar@cadence.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon
- <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Conor Culhane
- <conor.culhane@silvaco.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v3 09/11] i3c: master: svc: use spinlock_saveirq at
- svc_i3c_master_ibi_work()
-Message-ID: <20240823181927.7a003c36@xps-13>
-In-Reply-To: <20240819-i3c_fix-v3-9-7d69f7b0a05e@nxp.com>
-References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
-	<20240819-i3c_fix-v3-9-7d69f7b0a05e@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724430073; c=relaxed/simple;
+	bh=6ZTDNhXDl6c05tRMKVf0ZhASXXuFxe9MockPdGhtLGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6NraCdsR2nALLvRnR7W2oc11QxysUavu+gjzJkulejr35w661gapKQ/9ilyBD6B946atnQoODDxl8GLY0hg+oyqsD38ancWB2HPvZIlohiGEUh+Txcc5nfu7P1Qy/fGNWolTTHr+HcW8ZNF/o1K5alRYF50rD4qzcq2mBFx0tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjcWYOkP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D3BC4AF0B;
+	Fri, 23 Aug 2024 16:21:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724430072;
+	bh=6ZTDNhXDl6c05tRMKVf0ZhASXXuFxe9MockPdGhtLGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PjcWYOkPAFkyGjdeYpW4eIPySk7PHr3dIaj9ezimM4dN54GrYqyRCMoB2cq70YB0F
+	 JMMPr5X2dU1EuC93uvE8fPe6wfSQNucRsW8HNZKV56HHcwz9L2mNc0exp+TTxBQ35b
+	 s9M96AkVX0X/5lAuPGas5aP5EdUXEY03EU7Ail7fD1GicxT0Xbfre8FW+4agZK2TGQ
+	 7AkAcnzeax+uyGsIhs0yF8ugZs8eC+ymckeQzDmxEZDc+DT9GTuLrdkbewve9kNivb
+	 pAzQiHtpG4HUdSUmm2by3fv46d+BsINV/8l80JgNvrYfTVB8HJUOCN4vbu///aKm8D
+	 bP4aJHQfE5New==
+Date: Fri, 23 Aug 2024 17:21:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, alexandre.belloni@bootlin.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 7/8] dt-bindings: arm: rockchip: Add Relfor Saib
+Message-ID: <20240823-lark-regime-0d3ab4215d69@spud>
+References: <20240823153528.3863993-1-karthikeyan@linumiz.com>
+ <20240823153528.3863993-8-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KudtDxnQkUzFHTIL"
+Content-Disposition: inline
+In-Reply-To: <20240823153528.3863993-8-karthikeyan@linumiz.com>
+
+
+--KudtDxnQkUzFHTIL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Frank,
-
-Frank.Li@nxp.com wrote on Mon, 19 Aug 2024 12:02:03 -0400:
-
-> According to I3C spec ver 1.1, 09-Jun-2021, section 5.1.2.5:
+On Fri, Aug 23, 2024 at 09:05:27PM +0530, Karthikeyan Krishnasamy wrote:
+> Add devicetree binding documentation for Relfor Saib
+> board which uses Rockchip RV1109 SoC
 >=20
-> The I3C Controller shall hold SCL Low while the Bus is in I3C/I2C Transfe=
-r,
-
-				    low				    transfer
-
-> ACK/NACK Phase. But maximum stall time is 100us. We have to disable irq a=
-nd
-
-and/or (I'm not sure)				the IRQs
-
-> schedule during whole I3C transaction, otherwise, I3C bus timeout will
-
-prevnet scheduling during the whole 		the      may
-timeout.
-
-> happen if any irq or schedule happen during transaction.
->=20
-> Replace mutex with spinlock_saveirq() to make sure finish whole i3c
-
-			wrong name	to avoid stalling SCL...
-
-> transaction without stall SCL more than 100us.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-
-Yes, 100us is low, and that's why I initially did my best to enforce
-auto ack/nack. We cannot make sure this limit will not be crossed, and
-when it's the case, we need to handle the consequences.
-
+> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 > ---
->  drivers/i3c/master/svc-i3c-master.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 >=20
-> diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc=
--i3c-master.c
-> index 161ccd824443b..fbb6cef405577 100644
-> --- a/drivers/i3c/master/svc-i3c-master.c
-> +++ b/drivers/i3c/master/svc-i3c-master.c
-> @@ -432,7 +432,16 @@ static void svc_i3c_master_ibi_work(struct work_stru=
-ct *work)
->  	u32 status, val;
->  	int ret;
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Docume=
+ntation/devicetree/bindings/arm/rockchip.yaml
+> index 1ef09fbfdfaf..29f7e09ae443 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> @@ -848,6 +848,12 @@ properties:
+>                - radxa,zero-3w
+>            - const: rockchip,rk3566
 > =20
-> -	mutex_lock(&master->lock);
+> +      - description: Relfor SAIB board
+> +        items:
+> +          - const: relfor,saib
+> +          - enum:
+> +              - rockchip,rv1109
 
-Don't you still need this lock for other concurrency reasons?
+This does not make sense to me. Why do you have an enum for the SoC
+model, implying that this SAIB board would have more than one possible=20
+SoC? I'd expect to see - const: rockvhip,rv1109
 
-> +	/*
-> +	 * According to I3C spec ver 1.1, 09-Jun-2021, section 5.1.2.5:
-> +	 *
-> +	 * The I3C Controller shall hold SCL Low while the Bus is in I3C/I2C Tr=
-ansfer, ACK/NACK
-> +	 * Phase. But maximum stall time is 100us. We have to disable irq and s=
-chedule during whole
-> +	 * I3C transaction, otherwise, I3C bus timeout will happen if any irq o=
-r schedule happen
-> +	 * between transaction..
-> +	 */
-> +	guard(spinlock_irqsave)(&master->xferqueue.lock);
 > +
->  	/*
->  	 * IBIWON may be set before SVC_I3C_MCTRL_REQUEST_AUTO_IBI, causing
->  	 * readl_relaxed_poll_timeout() to return immediately. Consequently,
-> @@ -452,7 +461,7 @@ static void svc_i3c_master_ibi_work(struct work_struc=
-t *work)
->  	       master->regs + SVC_I3C_MCTRL);
-> =20
->  	/* Wait for IBIWON, should take approximately 100us */
-> -	ret =3D readl_relaxed_poll_timeout(master->regs + SVC_I3C_MSTATUS, val,
-> +	ret =3D readl_relaxed_poll_timeout_atomic(master->regs + SVC_I3C_MSTATU=
-S, val,
->  					 SVC_I3C_MSTATUS_IBIWON(val), 0, 1000);
-
-This means you lock one CPU for 100us doing nothing every time you send
-a frame, that's not possible. Actually the delay was already very small
-(could have been set to ~10 maybe) but this is not possible.
-
->  	if (ret) {
->  		dev_err(master->dev, "Timeout when polling for IBIWON\n");
-> @@ -525,7 +534,6 @@ static void svc_i3c_master_ibi_work(struct work_struc=
-t *work)
-> =20
->  reenable_ibis:
->  	svc_i3c_master_enable_interrupts(master, SVC_I3C_MINT_SLVSTART);
-> -	mutex_unlock(&master->lock);
->  }
-> =20
->  static irqreturn_t svc_i3c_master_irq_handler(int irq, void *dev_id)
+>        - description: Rikomagic MK808 v1
+>          items:
+>            - const: rikomagic,mk808
+> --=20
+> 2.39.2
 >=20
 
+--KudtDxnQkUzFHTIL
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Miqu=C3=A8l
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsi29AAKCRB4tDGHoIJi
+0j3UAP9CtNVsmtseZB0iEvfn9Gf/ujRFza/6humZZ8Ai8A2hZgD8C0uTkuqwGngk
+Pk0WERcvKysuRMSFVF8tl3kXhq+UkAo=
+=MkK7
+-----END PGP SIGNATURE-----
+
+--KudtDxnQkUzFHTIL--
 
