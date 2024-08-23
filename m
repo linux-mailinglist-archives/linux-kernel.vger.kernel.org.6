@@ -1,509 +1,265 @@
-Return-Path: <linux-kernel+bounces-299446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F04D95D4BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:55:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E10995D4BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8D5284164
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:55:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1031F231AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808CD190675;
-	Fri, 23 Aug 2024 17:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E28318D64F;
+	Fri, 23 Aug 2024 17:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k20cIOi2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fcssoHQN"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2087.outbound.protection.outlook.com [40.107.104.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51187188A1E;
-	Fri, 23 Aug 2024 17:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724435710; cv=none; b=ma1DoGUQBzKKlEVRf1kx6Mcv1umZDCdooAb4ab5ZssNNkkMlVmGFX/M0PBs97NgDfEiEGEJaE4BSuWw1Fc9kqgoD9zKK9UTD/vuR1CIL6L4CxdoTMYhAsLe7wLlbxN6v1yu1Pho9p3cfG1Hs7nCl5VBEVzvtEtQ98xhKnk+2gV0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724435710; c=relaxed/simple;
-	bh=UOxjvt9pGASK1dIWt41XAXbmntqOAXtF5gBonB4kaaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HL/CcmZ3Ql5oM0iMfJIQQeb+IJzsX3BdXZ7caetZ9aB0KG3E/lwhnzys0ipYnTgQrWy101R0cNcz8/8n8d95EpU6krqcEB58eHDv4lac2Ti6788zNF03hMMiL+UI5ThLY6HVgWdpLHhJWIZpIVaUVzC2KexkNtEb6/j3oOemOOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k20cIOi2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 995E8C4AF09;
-	Fri, 23 Aug 2024 17:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724435709;
-	bh=UOxjvt9pGASK1dIWt41XAXbmntqOAXtF5gBonB4kaaw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k20cIOi2NsiNke0cyddJDXA0709XN9pkSxbL2o1Vy3SuDhl8wRPkzd2shvqW1sWZi
-	 AGwMfKRGimshpYyE6f+2Qv794mt0dhVi7TGTUsXJsrbqcD0BPCqUXpt5TXsy7tXRBk
-	 h8A5jSPnk3C8LkFrMhVKqCBtWswamPdnAIX0IKRcmSZYu3qW4yMv82o991IaA3tzXw
-	 F1F56619cVMh7ZOxS4YCK9t85BF+QdAM7yuxE0rC26qf8pEIV0+GoWs7wt3BnnaNuy
-	 LLXqCin2JqQGnmmgSG3w68vBXNz3fFzJ+v9N1s8aYrh2qUGkaaqHO5YLx8lEnhCrda
-	 ZmLoeuJS6rUgg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334c4d6829so2994736e87.2;
-        Fri, 23 Aug 2024 10:55:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7S5MVbycc7XNfSmC+yf1xgbYCkZGBFqmmpMz/zm4NdLNR3PhmggbnRCMBLFnmOHVobxS/bUknjDXUEQQ=@vger.kernel.org, AJvYcCXE6nMhQLy1BJnQi3dXhc6os8uriCHVcIuzt1XDLvc63xikjE8C5/C6ipXFWIVnEX/ptFeao/6rHmhP5Ck0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMl+FMeliJir5W+hKX3UHKgYWP0g528H/9HvRPRBIWNgky+x9T
-	xW5PBciBmU9A6Ae+bEiMfupGa2xs+h/VOaSR5ivy6zas8AxPNexvJvvBCYYBkSboo88vebxhiDy
-	diQOurSNXi5xU28qp9FNDW9tk6Zg=
-X-Google-Smtp-Source: AGHT+IFPjZ8XOKb8LplakpJoEmjuYPSajrf1IroJYlFFS+eIZFbY+UJ53iYMccc/F7YlTZs0fk3qI5M6CHDST2SHyiA=
-X-Received: by 2002:a05:6512:3d8d:b0:52e:97dd:327b with SMTP id
- 2adb3069b0e04-5343877a93dmr2257515e87.23.1724435708200; Fri, 23 Aug 2024
- 10:55:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DDF19047C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724435730; cv=fail; b=un4HZGh39wsXUYPSsFGNm/THW9X6DLR3UIbUAjdN/sxkOthoho/p+5jXmuH1q6JcDO8gJA28i5JhPdXDDV/MS4FUAQvq5CRxtdK3UQnNU2fBCufGWBdlmk2pt0PAW322R3tDvFpyRMJpKaern5ONJmDBtS/7YFfnyCpi+Q2pqf8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724435730; c=relaxed/simple;
+	bh=uHFQCZx+HsNJZl3ir8aZC0WYRo/CjAZKAKvDOyGcZi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=IGgZqzIu+hL+xLxjlJdX7U5FCFHz5QebtOojv8rHPkpvGkS1rykBwI4iDbxW11496J5SCh8zPYTJZQqvT637pj7T8B/nO8MshjSl0Q9A2CqB00blvpbVMeUXsGDn791HwD1gZN7Oe6/LFaCmx8vIMQ0JoRe8rADHP11o6QehsPM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fcssoHQN reason="signature verification failed"; arc=fail smtp.client-ip=40.107.104.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KvcYTsUtWvYQkuC2twTEXXcTXli0AWxoYC8mHiBYE+GeZTsVfpZrrBO/QDnP+OfO7mWm+3FRLuMcYlqhn3npW8W8QHUwEqp2kbVu5VGbOwKVp6rAye0gQb0hsUdKhRVkRamH4pbz/eOqgA1D+k8/iLurF5avG+nQpH6DvWAmYBStCyk17FJOjJ0+9Rs0Rlp8EqmR7cPmExFWvPzHTafql1NBLUsiz14E3TEV1m2bxlfxFd9saxqPteuWiYQWFIE1aMN8DItI+NN2so5oYboLNSu7uLj6Df9LQYsCnMxLMBbuclV9BYyUf6MP8bx1iQvKZmE94qx1SI9Z8AkpfSfZQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hklHQZtPSPNpJ42GGt3CN2zyKbQzab51teaz5hs5suY=;
+ b=Qeaf03dUTwZ8wYF3UVJNGJ9qP5hps+eZh4AjOtVnK/L6ieHbG6BGpf7coNuw3b9atxfkKiBVE6GOBxWrDZGkvyub+N8b6BL6y68Q54UGR0XNYiLgZt8ZvRpkLxXChh53OsCP8gaMb0QUqimjgb+edIMCPU81kIlv753EAC5gVuJjAal1HqoxPTyTjIYwit8A9G0ryIlyncdN8xxWWmYARGCsmkQqDmEuaQe07tv1nPs5AxV5NI0eIeVkUhjGVP325JFzY/K/ctFaGjpwgn/fMMaQZ1TTIJCtTfK3SO6WldR+Biq6CDz9eQgDTQQ+FVH9Twqe9nKM4qNPJM4ZR4oYCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hklHQZtPSPNpJ42GGt3CN2zyKbQzab51teaz5hs5suY=;
+ b=fcssoHQN2xhGsN1YmEuy2+0gEwtJH20S1gpIDC+1oCU6CzaAH0Q8IwYXfmQogaxLnw1IN3kjgT13UCmLNLl6ud4STBU2zNgNDcSIinoxaw5+BoJ1P1TsWEQW/qlI+UgrwnNVsoOjbs9n5LdH9mrRdwyW3JZ4xf1yvg3UfbrBDqD5tmkUMDtDGdfBvQSbvRzgZ/n2v26zAW6ZsF+5lL9o4osCZ4d0pY0DgKDqYq/JCMNUPAaixpdCrLJ36GEwkLaa/em7Njo118KQDUeLKBW+4axUWWx6oUj8Ut6dV182lyLwHVnWhslIJpaDrlRIClfmhyYugAcI8DKaAhiwUsrXtA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA4PR04MB7869.eurprd04.prod.outlook.com (2603:10a6:102:c4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 23 Aug
+ 2024 17:55:23 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
+ 17:55:23 +0000
+Date: Fri, 23 Aug 2024 13:55:15 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Parshuram Thombare <pthombar@cadence.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Conor Culhane <conor.culhane@silvaco.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v3 03/11] i3c: master: Extend address status bit to 4 and
+ add I3C_ADDR_SLOT_EXT_INIT
+Message-ID: <ZsjNA9JV0UKONV32@lizhi-Precision-Tower-5810>
+References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
+ <20240819-i3c_fix-v3-3-7d69f7b0a05e@nxp.com>
+ <20240823180426.056ac093@xps-13>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240823180426.056ac093@xps-13>
+X-ClientProxiedBy: BYAPR11CA0088.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823034455.3593819-1-mcgrof@kernel.org>
-In-Reply-To: <20240823034455.3593819-1-mcgrof@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 24 Aug 2024 02:54:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT79Vgo4f335_XAfS36xqNcTm08=oz8aNqkj0LiJFbn4Q@mail.gmail.com>
-Message-ID: <CAK7LNAT79Vgo4f335_XAfS36xqNcTm08=oz8aNqkj0LiJFbn4Q@mail.gmail.com>
-Subject: Re: [RFC] kconfig: add optional selective yaml output support
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: kdevops@lists.linux.dev, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7869:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97a3dc3d-dd5e-4ea6-4f14-08dcc39cc2f2
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?iso-8859-1?Q?TzaOH2oEA3UJAP0Ru9mEuizgFTiBk6d0Umrv1p32JhTTh/DXdWYVNjlb1j?=
+ =?iso-8859-1?Q?sLuTdYVk+/JvTdS3W82MO7eOLBGK038vc8XHoVYuf0S5qVVj4nU2DvsQiX?=
+ =?iso-8859-1?Q?dJpt8HtgaeGf5ApWnd8SmuSVnWmkZnD5LKyOgMxLmO2x8BdEWss0t+P6In?=
+ =?iso-8859-1?Q?e1FuC8lx0XF6oW390XcnS2YQbTgcFnpqIqJdDSzbSkM7Zjs1WKx5v+y1/L?=
+ =?iso-8859-1?Q?FDCX/39VUaQrSw8Mfadi235JKF+vuMjAHYiXOhEmk07ZtjXtMK7bWhV7zL?=
+ =?iso-8859-1?Q?mznT2ylD/xUaUD7cgTNI6nERmkBegI6eEjfFC+aaoNd/dZDHQhEkQ0lOEE?=
+ =?iso-8859-1?Q?5ktaEB1tj5/mTjffw2kzJO2JChA054AG1pKUUL7LjO5GpzeLNNofNc7CVs?=
+ =?iso-8859-1?Q?9MMFIq47MJrBpU85bFpdxIrI4f9VZeqHQUAXVTdB9a7GZp1D3iPhaCT1VY?=
+ =?iso-8859-1?Q?JmwOW8tNvtUgt2c9/vrYKaXEnmfIkcsGtlAksZIgH/CNZz+OkvLSfmCrx4?=
+ =?iso-8859-1?Q?zHqYtL+j5u3E90xwaPyaKtkLTdOB80wcNkEOWLs0yZlsuErMxmNGeO1soK?=
+ =?iso-8859-1?Q?Lv4ktoAfORNaMMMi9CU1hNgUp16KDa5McvlG1sGBvltMUAZl9k7RA/A1C9?=
+ =?iso-8859-1?Q?PgzIAs6T7j+mMAPMplvJZAOrG6dTGHlFTbgQjhyBCXs50EzJRMjtAQw2aN?=
+ =?iso-8859-1?Q?e/SELQctd5OqeDoZ0w9g0udbtUt2oEZRNjGrxnxJwUoqwfUZzLitmOK1zh?=
+ =?iso-8859-1?Q?21yPI4toaWCnpg8B4z22wY/KHh1ymZDALJQbzqEx+DtgI0qgQ7LiNPkjFk?=
+ =?iso-8859-1?Q?YUjmzBSrInOYm854TNii6i3XcgxvjHeK7iC5Vi2RDcDwJs6AHoExce7t4k?=
+ =?iso-8859-1?Q?+AvMfJk87Gn4RUZ/wd05Js609HBRgF0yzZl01u9Dg29QOIdOrrooXnPOFG?=
+ =?iso-8859-1?Q?0HWU7yXh4or1dKUlEVO5l67UnEeUCS60SLVzZAxxoPp7Dtzv76KubV77VF?=
+ =?iso-8859-1?Q?7APOi07FZIKO/vj5pdPTAV9it6noZDYzwS4VzKxoWcRNODAJnfqUBW5nqy?=
+ =?iso-8859-1?Q?1lscfhYw3cRxDcHQffmRFChbtHJmbdYCKQ5p8LK4z9qhHOBhqsgm6iTnpA?=
+ =?iso-8859-1?Q?WNa3k4kDGNqGqweLjpRde8A0X6JdSwkt/AfvO/0r1ozYQBSNPma5CPwstw?=
+ =?iso-8859-1?Q?GsquPJwUKiuxrlQWB2q0lZjNLZPsbqaqwiOm0pzImATA6UnyT85AKLdEXO?=
+ =?iso-8859-1?Q?FsgQh6Z7RrWjeKC5cj1TQHTlFYv+GwmeuC8J6oW98yXFH4sH7GeC6x9yI/?=
+ =?iso-8859-1?Q?nE1aIlTysgl1RFgF2wvv1Jb8nZsNb8TAHLiBLQNEj/P4TOdn9zIgcHVJ5w?=
+ =?iso-8859-1?Q?ucJws7Yfqu/L48mPoTB4+ssIK6SvwMpB5YudDxbCJcyA4zVOmvIeZOXurU?=
+ =?iso-8859-1?Q?ikRpfv0JZMyO8tSTjuU6jHMwye1kpCNUHX7V3w=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?iso-8859-1?Q?bVdDU8kRlweCgSl8ULpMyrDuIIcE5omy5Bx3aFd4huOYAEMHpKvIp1W8bG?=
+ =?iso-8859-1?Q?WdRf5npLSJUJ8r7dzTSfq/jWU31nr5JMWiwnO2t1VovG69THTyljtNSHjO?=
+ =?iso-8859-1?Q?Zqw7Tjdvxkd9I1UhMoSqyW3eR24QSjiQFI+p1o+lRVEgLs4M9RWu5YBilh?=
+ =?iso-8859-1?Q?q9oOObczW+RzqacXKhmBEmqxFQmRSalhrHS0tiEoaZfvRm95hTB2qrtV0C?=
+ =?iso-8859-1?Q?CW82RCkM344c2uqFIJmNYYQMdNSYqYrDn75s6vu3OLtrDSzoWioPa9iudN?=
+ =?iso-8859-1?Q?RFoxdgArnlDRWPHuDiReSuElJUXnAkj6eEmI7zRcqdgK+pFJjBpv0qsfgX?=
+ =?iso-8859-1?Q?+KzbhC10udDtVVVs0ns4zKmxd4tA4UNWYjZQX/EDOuUTW05bpWkaDUk6uR?=
+ =?iso-8859-1?Q?fne4IGPiyeeCebpboxb4r2tnH8uQqD2ebOS6ICe4A/Ks89AEudL12pLdmp?=
+ =?iso-8859-1?Q?HZ5KoBzeEQRrm8BYyCReSKeZ44a56kguog6aQJFhF5seuKilA0heCx6LFD?=
+ =?iso-8859-1?Q?2mVR0RPz0E+0T1fFcXRZefMefGMeZJbq0kp+hGtSftShUp9xm+sftudPBU?=
+ =?iso-8859-1?Q?cCFaV8Cbl8C8KZ7VNJ4rj8vFhdImqr+/z+gBVJ6KLcAexhu0mSYIWhRg4i?=
+ =?iso-8859-1?Q?liaBh4B61voGDZ4VkQ1nbuHKOyIcZxaJWZ6zqJ1VyS1JF474Nj9QqiZ8Sj?=
+ =?iso-8859-1?Q?UIkx/M3EPKQstSRiS4cdV4D6z5XDkYs3+F1G90jUxLaAfM+/AuQw5+zpK+?=
+ =?iso-8859-1?Q?TPjbhwri3pXIMZm5anQFtTUhYqouIj04jDF93Ej8X0LQM83pbw1ePBI+w1?=
+ =?iso-8859-1?Q?72DhLiPjKb8KY+iz22Sei5lPd97i5y4qgVaptWQT1qu9fGK3XKXqSf0d3D?=
+ =?iso-8859-1?Q?tsKxr6C5R2G2NyaMHXsfOw11gh9RQDnb2e66ASaqM43wR4tXp4s9MrZLHg?=
+ =?iso-8859-1?Q?kWguk5z0XSrr0xO+n1jzllMRwshjNeaOIhTsY8tNR+dfatk19W9eb+qPQm?=
+ =?iso-8859-1?Q?Blq5CEFIZQYZcsq2u9AWjNzn4vlmnX7oMv5wxiXL4AVhjW7SPFL2lZg5+D?=
+ =?iso-8859-1?Q?yBnqXu4UQqUwKVnqs4e6lIoCm8u20PfK1lk6dlHbAuNUnKiVCOIoNCd4mj?=
+ =?iso-8859-1?Q?zW6W4LtsLdXYQieslYJ0MnGxeuCthIUJEcpCZZiVPTLrDp3tiFYKtvQW3X?=
+ =?iso-8859-1?Q?UGYBSfyKFcDHJJ7+ysPOdDcXloqbQen+jcxYgi8aiInNqGw8IGGN5AUBnY?=
+ =?iso-8859-1?Q?7dJ4hZ0B1oRkmcf08gSr2Lkig5ui4qiO/9X0cSaGjpt02jhsq2OTglvaVZ?=
+ =?iso-8859-1?Q?2qPkMLl/LCCpXMxVs9M75gA/Xokgtlrs2LD1+YmZKwkQtSK62/EgnEJmT5?=
+ =?iso-8859-1?Q?6Zn0vXVZMRcJDuQE5FbpaR2zaWTbH7bC6GA90iLqQ8Cm2dP5z1yOFI1EK4?=
+ =?iso-8859-1?Q?9hvhlA8X0mM/CA+KisSFz1FUYxDYEAB6IkzQPtGNQW3No0C7iYLWpzFucd?=
+ =?iso-8859-1?Q?CjZyAHLVqzUhNjovUTJ5iG1LQEikuO77LOXtDfoQ50/KPDkBPQlre2pv1i?=
+ =?iso-8859-1?Q?W1aU9cFz/Nv1LZ5LyxcHf8iENzOesGFbHiXgjtrwC1LR7HfHJzB8pLEq2l?=
+ =?iso-8859-1?Q?ajmxeWB++GS20=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97a3dc3d-dd5e-4ea6-4f14-08dcc39cc2f2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 17:55:23.3818
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6Vib10h3sANJuq84TbZLv4dDVWvl+JGimLHc0EW2jGcH4WpzYEPwTxl8rRrDK7zp3p1ospZT7RKX0dP19A+xdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7869
 
-On Fri, Aug 23, 2024 at 12:45=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.or=
-g> wrote:
+On Fri, Aug 23, 2024 at 06:04:26PM +0200, Miquel Raynal wrote:
+> Hi Frank,
 >
-> kconfig is used outside of Linux, and one of the uses of Kconfig is to
-> also allow kconfig to be used for automation on kdevops by leveraging
-> a smaller subset of variables for yaml run time for ansible runs.
-> There is no need to clutter a full yaml file with every single config
-> we have as we do in the kernel, and so this lets users decide if they
-> want all or just a few select key symbols as part of the yaml output.
 >
-> What this will do is save us the pain of doing the selective transformati=
-on
-> we currently do and let's us only annotate what we need for runtime with
-> ansible.
+> >  static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
+> >  {
+> >  	enum i3c_addr_slot_status status;
+> > @@ -388,6 +405,14 @@ static int i3c_bus_get_free_addr(struct i3c_bus *bus, u8 start_addr)
+> >  	enum i3c_addr_slot_status status;
+> >  	u8 addr;
+> >
+> > +	/* try find an address, which have not pre-allocated by assigned-address */
 >
-> You can test with the Linux kernel config (that's not what we use):
+> 	Try	to find			has   been
 >
-> export KCONFIG_YAMLCFG=3D".yaml"
-> export KCONFIG_YAMLCFG_ALL=3D"y"
-> rm -f .config .yaml
-> make defconfig
-> head -10 .yaml
-> ---
-> cc_version_text: "gcc (Debian 13.3.0-1) 13.3.0"
-> cc_is_gcc: True
-> gcc_version: 130300
-> clang_version: 0
-> as_is_gnu: True
-> as_version: 24250
-> ld_is_bfd: True
-> ld_version: 24250
-> lld_version: 0
+> pre-allocated?
 >
-> You can also use the selective mechanism "output yaml" on any symbol,
-> so that we only output those. This also paves the way to let us later
-> use kconfig for direct json transformations directly from the same
-> kconfig logic.
+> > +	for (addr = start_addr; addr < I3C_MAX_ADDR; addr++) {
+> > +		status = i3c_bus_get_addr_slot_status_ext(bus, addr);
+> > +		if (status == I3C_ADDR_SLOT_FREE)
+> > +			return addr;
+> > +	}
+> > +
+> > +	/* use pre-allocoated by assigned-address because such device was removed at bus*/
 >
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
+> 	  Use      allocated
 >
-> Long ago, I envisioned we could do this so to simplify the addition of
-> new workflows and remove all the stupid Makefile transformations we have
-> in kdevops today to generate extra_vars.yaml.
+> pre-allocated or assigned?
 >
-> Feedback welcome.
+> I guess the logic should be:
+> - try the assigned-address
+> - look for a free slot
+> - look for an already in use slot that must concern a disconnected
+>   device
 >
-> I completley understand if this is not desirable upstream.
+> But the comments are not precise enough IMHO. Can you rephrase them?
 
+How about:
 
-Agree.
-Not desirable upstream.
+Follow the steps below to obtain the I3C dynamic address:
 
+1. Retrieve the assigned-address from the device tree (DT).
+2. Look for an available slot address.
+3. Look for an address that is pre-reserved by another device with
+assigned-address in DT, but where the device is currently offline.
 
-
-> However
-> kdevops does aim to track kconfig upstream using a git sub tree already,
-> it follows linux-next, and so getting support upstream is easier rather
-> than going with a branch for our git subtree.
 >
-> The only puzzle I have is why when we use the selective method, we end
-> up with tons of empty lines.. Any ideas? Example of how one can use this
-> this on random symbols in case it is not clear, with the selective
-> method:
+> >  	for (addr = start_addr; addr < I3C_MAX_ADDR; addr++) {
+> >  		status = i3c_bus_get_addr_slot_status(bus, addr);
+> >  		if (status == I3C_ADDR_SLOT_FREE)
+> > @@ -1906,9 +1931,9 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
+> >  			goto err_rstdaa;
+> >  		}
+> >
+> > -		i3c_bus_set_addr_slot_status(&master->bus,
+> > -					     i3cboardinfo->init_dyn_addr,
+> > -					     I3C_ADDR_SLOT_I3C_DEV);
+> > +		i3c_bus_set_addr_slot_status_ext(&master->bus,
+> > +						 i3cboardinfo->init_dyn_addr,
+> > +						 I3C_ADDR_SLOT_I3C_DEV | I3C_ADDR_SLOT_EXT_INIT);
+> >
+> >  		/*
+> >  		 * Only try to create/attach devices that have a static
+> > diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
+> > index 4601b6957f799..c923b76bbc321 100644
+> > --- a/include/linux/i3c/master.h
+> > +++ b/include/linux/i3c/master.h
+> > @@ -284,6 +284,8 @@ enum i3c_bus_mode {
+> >   * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
+> >   * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
+> >   * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
+> > + * @I3C_ADDR_SLOT_EXT_INIT: the bit mask display of addresses is preferred by some devices,
 >
-> If we use this for example:
+> I'm sorry, but I don't understand what "bit mask display of addresses"
+> means.
 >
->   diff --git a/fs/efivarfs/Kconfig b/fs/efivarfs/Kconfig
->   index edec8a19c894..2faf651725dc 100644
->   --- a/fs/efivarfs/Kconfig
->   +++ b/fs/efivarfs/Kconfig
->   @@ -3,6 +3,7 @@ config EFIVAR_FS
->         tristate "EFI Variable filesystem"
->         depends on EFI
->         default m
->   +     output yaml
->         help
->           efivarfs is a replacement filesystem for the old EFI
->           variable support via sysfs, as it doesn't suffer from the
+> > + *			    such as the "assigned-address" in device tree source (dts).
+> >   *
+> >   * On an I3C bus, addresses are assigned dynamically, and we need to know which
+> >   * addresses are free to use and which ones are already assigned.
+> > @@ -297,9 +299,11 @@ enum i3c_addr_slot_status {
+> >  	I3C_ADDR_SLOT_I2C_DEV,
+> >  	I3C_ADDR_SLOT_I3C_DEV,
+> >  	I3C_ADDR_SLOT_STATUS_MASK = 3,
+> > +	I3C_ADDR_SLOT_EXT_STATUS_MASK = 7,
+> > +	I3C_ADDR_SLOT_EXT_INIT = BIT(2),
+> >  };
+> >
+> > -#define I3C_ADDR_SLOT_BITS 2
+> > +#define I3C_ADDR_SLOT_BITS 4
+> >
+> >  /**
+> >   * struct i3c_bus - I3C bus object
+> >
 >
-> In this case we'd end up with just:
 >
-> export KCONFIG_YAMLCFG=3D".yaml"
-> unset KCONFIG_YAMLCFG_ALL
-> rm -f .config .yaml
-> make defconfig
-> cat .yaml | cat -s
-> ---
->
-> efivar_fs: m
->
-> Thoughts?
->
->  scripts/kconfig/confdata.c | 152 ++++++++++++++++++++++++++++++++++++-
->  scripts/kconfig/expr.h     |   1 +
->  scripts/kconfig/lexer.l    |   2 +
->  scripts/kconfig/parser.y   |  11 +++
->  4 files changed, 163 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 76193ce5a792..78d188320040 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -233,6 +233,20 @@ static const char *conf_get_rustccfg_name(void)
->         return name ? name : "include/generated/rustc_cfg";
->  }
->
-> +static bool conf_yaml_enable_all(void)
-> +{
-> +       char *name =3D getenv("KCONFIG_YAMLCFG_ALL");
-> +
-> +       return name ? true: false;
-> +}
-> +
-> +static const char *conf_get_yaml_config_name(void)
-> +{
-> +       char *name =3D getenv("KCONFIG_YAMLCFG");
-> +
-> +       return name ? name : NULL;
-> +}
-> +
->  static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, =
-char *p)
->  {
->         char *p2;
-> @@ -623,9 +637,103 @@ static void __print_symbol(FILE *fp, struct symbol =
-*sym, enum output_n output_n,
->         free(escaped);
->  }
->
-> -static void print_symbol_for_dotconfig(FILE *fp, struct symbol *sym)
-> +static char *conf_name_to_yaml(struct symbol *sym)
-> +{
-> +       const char *name =3D sym->name;
-> +       size_t len =3D strlen(name);
-> +       size_t i, j =3D 0;
-> +       char *yaml_name =3D (char *) malloc(len + 1);
-> +
-> +       if (!yaml_name)
-> +               return NULL;
-> +
-> +       for (i =3D 0; i < len; i++) {
-> +               if (name[i] =3D=3D '_')
-> +                       yaml_name[j++] =3D '_';
-> +               else
-> +                       yaml_name[j++] =3D tolower(name[i]);
-> +       }
-> +
-> +       yaml_name[j] =3D '\0';
-> +
-> +    return yaml_name;
-> +}
-> +
-> +static char *conf_value_to_yaml(struct symbol *sym, const char *val)
-> +{
-> +       char *yaml_value =3D NULL;
-> +
-> +       switch (sym->type) {
-> +       case S_INT:
-> +               yaml_value =3D strdup(val);
-> +               break;
-> +       case S_HEX:
-> +            asprintf(&yaml_value, "0x%s", val);
-> +            break;
-> +        case S_STRING:
-> +           /* Wrap strings in quotes */
-> +            asprintf(&yaml_value, "\"%s\"", val);
-> +            break;
-> +        case S_BOOLEAN:
-> +        case S_TRISTATE:
-> +               if (strcmp(val, "y") =3D=3D 0)
-> +                       yaml_value =3D strdup("True");
-> +               else if (strcmp(val, "n") =3D=3D 0)
-> +                       yaml_value =3D strdup("False");
-> +               else
-> +                       yaml_value =3D strdup(val); /* m in tristate */
-> +               break;
-> +        default:
-> +               /* In case type is unknown */
-> +               yaml_value =3D strdup(val);
-> +               break;
-> +       }
-> +
-> +       return yaml_value;
-> +}
-> +
-> +static void __print_yaml_symbol(FILE *fp, struct symbol *sym,
-> +                               enum output_n output_n,
-> +                               bool escape_string)
-> +{
-> +       const char *val;
-> +       char *yaml_config =3D NULL;
-> +       char *yaml_config_value =3D NULL;
-> +
-> +       if (!fp || sym->type =3D=3D S_UNKNOWN)
-> +               return;
-> +       if (!conf_yaml_enable_all() && !(sym->flags & SYMBOL_YAML))
-> +               return;
-> +
-> +       val =3D sym_get_string_value(sym);
-> +
-> +       yaml_config =3D conf_name_to_yaml(sym);
-> +       if (!yaml_config)
-> +               return;
-> +
-> +       yaml_config_value =3D conf_value_to_yaml(sym, val);
-> +       if (!yaml_config_value) {
-> +               free(yaml_config);
-> +               return;
-> +       }
-> +
-> +       if ((sym->type =3D=3D S_BOOLEAN || sym->type =3D=3D S_TRISTATE) &=
-&
-> +           output_n !=3D OUTPUT_N && *val =3D=3D 'n') {
-> +               if (output_n =3D=3D OUTPUT_N_AS_UNSET && conf_yaml_enable=
-_all())
-> +                       fprintf(fp, "# %s: False\n", yaml_config);
-> +               return;
-> +       }
-> +
-> +       fprintf(fp, "%s: %s\n", yaml_config, yaml_config_value);
-> +
-> +       free(yaml_config);
-> +       free(yaml_config_value);
-> +}
-> +
-> +static void print_symbol_for_dotconfig(FILE *fp, FILE *yaml, struct symb=
-ol *sym)
->  {
->         __print_symbol(fp, sym, OUTPUT_N_AS_UNSET, true);
-> +       __print_yaml_symbol(yaml, sym, OUTPUT_N_AS_UNSET, true);
->  }
->
->  static void print_symbol_for_autoconf(FILE *fp, struct symbol *sym)
-> @@ -748,11 +856,24 @@ int conf_write_defconfig(const char *filename)
->         struct symbol *sym;
->         struct menu *menu;
->         FILE *out;
-> +       FILE *yaml_out =3D NULL;
-> +       const char *yaml_config =3D NULL;
-> +
-> +       yaml_config =3D conf_get_yaml_config_name();
->
->         out =3D fopen(filename, "w");
->         if (!out)
->                 return 1;
->
-> +       if (yaml_config) {
-> +               yaml_out =3D fopen(yaml_config, "w");
-> +               if (!yaml_out) {
-> +                       fclose(out);
-> +                       return 1;
-> +               }
-> +               fprintf(yaml_out, "---\n");
-> +       }
-> +
->         sym_clear_all_valid();
->
->         menu_for_each_entry(menu) {
-> @@ -783,21 +904,25 @@ int conf_write_defconfig(const char *filename)
->                         if (sym =3D=3D ds && sym_get_tristate_value(sym) =
-=3D=3D yes)
->                                 continue;
->                 }
-> -               print_symbol_for_dotconfig(out, sym);
-> +               print_symbol_for_dotconfig(out, yaml_out, sym);
->         }
->         fclose(out);
-> +       if (yaml_out)
-> +               fclose(yaml_out);
->         return 0;
->  }
->
->  int conf_write(const char *name)
->  {
->         FILE *out;
-> +       FILE *yaml_out =3D NULL;
->         struct symbol *sym;
->         struct menu *menu;
->         const char *str;
->         char tmpname[PATH_MAX + 1], oldname[PATH_MAX + 1];
->         char *env;
->         bool need_newline =3D false;
-> +       const char *yaml_config;
->
->         if (!name)
->                 name =3D conf_get_configname();
-> @@ -815,18 +940,33 @@ int conf_write(const char *name)
->         if (make_parent_dir(name))
->                 return -1;
->
-> +       yaml_config =3D conf_get_yaml_config_name();
-> +
->         env =3D getenv("KCONFIG_OVERWRITECONFIG");
->         if (env && *env) {
->                 *tmpname =3D 0;
->                 out =3D fopen(name, "w");
-> +               if (yaml_config)
-> +                       yaml_out =3D fopen(yaml_config, "w");
->         } else {
->                 snprintf(tmpname, sizeof(tmpname), "%s.%d.tmp",
->                          name, (int)getpid());
->                 out =3D fopen(tmpname, "w");
-> +               if (yaml_config)
-> +                       yaml_out =3D fopen(yaml_config, "w");
->         }
->         if (!out)
->                 return 1;
->
-> +       if (yaml_config) {
-> +               if (!yaml_out) {
-> +                       fclose(out);
-> +                       return 1;
-> +               }
-> +               fprintf(yaml_out, "---\n");
-> +       }
-> +
-> +
->         conf_write_heading(out, &comment_style_pound);
->
->         if (!conf_get_changed())
-> @@ -852,9 +992,11 @@ int conf_write(const char *name)
->                         if (need_newline) {
->                                 fprintf(out, "\n");
->                                 need_newline =3D false;
-> +                               if (yaml_config)
-> +                                       fprintf(yaml_out, "\n");
->                         }
->                         sym->flags |=3D SYMBOL_WRITTEN;
-> -                       print_symbol_for_dotconfig(out, sym);
-> +                       print_symbol_for_dotconfig(out, yaml_out, sym);
->                 }
->
->  next:
-> @@ -879,6 +1021,8 @@ int conf_write(const char *name)
->                 }
->         }
->         fclose(out);
-> +       if (yaml_out)
-> +               fclose(yaml_out);
->
->         for_all_symbols(sym)
->                 sym->flags &=3D ~SYMBOL_WRITTEN;
-> @@ -898,6 +1042,8 @@ int conf_write(const char *name)
->         }
->
->         conf_message("configuration written to %s", name);
-> +       if (yaml_config)
-> +               conf_message("yaml configuration written to %s", yaml_con=
-fig);
->
->         conf_set_changed(false);
->
-> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-> index 2bc96cd28253..88e8a2a06f67 100644
-> --- a/scripts/kconfig/expr.h
-> +++ b/scripts/kconfig/expr.h
-> @@ -132,6 +132,7 @@ struct symbol {
->  #define SYMBOL_CHECK      0x0008  /* used during dependency checking */
->  #define SYMBOL_VALID      0x0080  /* set when symbol.curr is calculated =
-*/
->  #define SYMBOL_WRITE      0x0200  /* write symbol to file (KCONFIG_CONFI=
-G) */
-> +#define SYMBOL_YAML       0x0400  /* write symbol to file (KCONFIG_YAMLC=
-FG) */
->  #define SYMBOL_WRITTEN    0x0800  /* track info to avoid double-write to=
- .config */
->  #define SYMBOL_CHECKED    0x2000  /* used during dependency checking */
->  #define SYMBOL_WARNED     0x8000  /* warning has been issued */
-> diff --git a/scripts/kconfig/lexer.l b/scripts/kconfig/lexer.l
-> index 8dd597c4710d..190937070fb1 100644
-> --- a/scripts/kconfig/lexer.l
-> +++ b/scripts/kconfig/lexer.l
-> @@ -120,6 +120,7 @@ n   [A-Za-z0-9_-]
->  "menuconfig"           return T_MENUCONFIG;
->  "modules"              return T_MODULES;
->  "on"                   return T_ON;
-> +"output"               return T_OUTPUT;
->  "prompt"               return T_PROMPT;
->  "range"                        return T_RANGE;
->  "select"               return T_SELECT;
-> @@ -127,6 +128,7 @@ n   [A-Za-z0-9_-]
->  "string"               return T_STRING;
->  "tristate"             return T_TRISTATE;
->  "visible"              return T_VISIBLE;
-> +"yaml"                 return T_YAML;
->  "||"                   return T_OR;
->  "&&"                   return T_AND;
->  "=3D"                    return T_EQUAL;
-> diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
-> index 61900feb4254..f298f052dddc 100644
-> --- a/scripts/kconfig/parser.y
-> +++ b/scripts/kconfig/parser.y
-> @@ -69,6 +69,7 @@ struct menu *current_menu, *current_entry, *current_cho=
-ice;
->  %token T_MODULES
->  %token T_ON
->  %token T_OPEN_PAREN
-> +%token T_OUTPUT
->  %token T_PLUS_EQUAL
->  %token T_PROMPT
->  %token T_RANGE
-> @@ -77,6 +78,7 @@ struct menu *current_menu, *current_entry, *current_cho=
-ice;
->  %token T_STRING
->  %token T_TRISTATE
->  %token T_VISIBLE
-> +%token T_YAML
->  %token T_EOL
->  %token <string> T_ASSIGN_VAL
->
-> @@ -234,6 +236,15 @@ config_option: T_MODULES T_EOL
->         modules_sym =3D current_entry->sym;
->  };
->
-> +/* When we want to output symbols as part of an additional output format=
-s */
-> +
-> +config_option: T_OUTPUT T_YAML T_EOL
-> +{
-> +       printd(DEBUG_PARSE, "%s will be part of the yaml output file %s:%=
-d:\n",
-> +              current_entry->sym->name, cur_filename, cur_lineno);
-> +       current_entry->sym->flags |=3D SYMBOL_YAML;
-> +};
-> +
->  /* choice entry */
->
->  choice: T_CHOICE T_EOL
-> --
-> 2.43.0
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+> Thanks,
+> Miquèl
 
