@@ -1,260 +1,187 @@
-Return-Path: <linux-kernel+bounces-298749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1E695CB0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:54:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051CC95CB16
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686011F23AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:54:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B71D8B250A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D701862B2;
-	Fri, 23 Aug 2024 10:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C62187340;
+	Fri, 23 Aug 2024 10:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EmciLw9H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="QsIXcZv5"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2041.outbound.protection.outlook.com [40.107.117.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3DD37144;
-	Fri, 23 Aug 2024 10:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724410432; cv=none; b=psaWx0C7Rf+nwHIlmab5PJDi5fhwCKYH6ylI2b6RKwqvqeU2wDAJCJRoAie6eDh5Du5HRZEY7OOkD2al98IsEGGw/fkm3bZoiIMcHDoz/Zl0ukazbk0tAdowxz92HyN6Gnk/qdqO8/kHVB3ueB15AhBQ39z3T6RjxyjCxHsaRMU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724410432; c=relaxed/simple;
-	bh=iGkLY/v6ghXA1OxL7cIoBgQyjf7ERgHHew9RY/Ed3fM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=L2xLv/OAVsJozmHOSLc8hXtEpEHvBxuCEImkYHH34vOyWryvoDShwBoMypoVANlEOMWmrQCEJFqdBJ554mp685RRLFDRxZfY8MBs6Q2usd6yNLM/7hh+SJ65IaNdHuQBBLeyq715hBAEJYoWjK0nIEm/QFbXQNXt/n7HE1ID15E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EmciLw9H; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724410431; x=1755946431;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=iGkLY/v6ghXA1OxL7cIoBgQyjf7ERgHHew9RY/Ed3fM=;
-  b=EmciLw9HL9GWMkXidTQCvRmeZyCUC0BFBhleMKKIDVgzxI89rJzZzxyQ
-   A5qsvR1a+QB+VPB3nccNp9L7aEKebr9W/MJ39bTdpINecCc2EDdYuH3/w
-   3oMtI0L45dPmMpWtMPcWpfjCTjDg+WaOHJaN/g/yzYIWrEa5Qu6jsn8qI
-   KtSPJQGdRx2QEh5DoTHiTTkD0QRmYl1ftumceSOkK5Jzl4Mof2WPA/ffN
-   y3A57EtjmCc2mKcNZyypamAN6I0bLsUpMcNkw900yuYIJDG9CmYra8JxQ
-   UXcUeXIwEs2DPgm4qBt8wV5w4ACTzEV1Adlq+AWrtIFMNZUNmpX3lNQ0J
-   A==;
-X-CSE-ConnectionGUID: 4yb7JnttR4q4uLFUvK+orw==
-X-CSE-MsgGUID: gAXhFwR4TTiLCVQgIS/y3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23044432"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="23044432"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:53:50 -0700
-X-CSE-ConnectionGUID: Wl5cllhrRJGRNFkTG7pLpg==
-X-CSE-MsgGUID: UyYMN4NLTda+PYeMUiQl/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="61913835"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:53:46 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 23 Aug 2024 13:53:42 +0300 (EEST)
-To: Shijith Thotton <sthotton@marvell.com>
-cc: bhelgaas@google.com, Jonathan.Cameron@Huawei.com, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, scott@os.amperecomputing.com, 
-    jerinj@marvell.com, schalla@marvell.com, vattunuru@marvell.com
-Subject: Re: [PATCH v2] PCI: hotplug: Add OCTEON PCI hotplug controller
- driver
-In-Reply-To: <20240823052251.1087505-1-sthotton@marvell.com>
-Message-ID: <a4a8a1f9-3b9c-7827-3e98-44009d8d440d@linux.intel.com>
-References: <PH0PR18MB442535D2828B701CD84A3994D98E2@PH0PR18MB4425.namprd18.prod.outlook.com> <20240823052251.1087505-1-sthotton@marvell.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103791862B2;
+	Fri, 23 Aug 2024 10:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724410511; cv=fail; b=X07I+elVIF6N78cqZlM0o2fnV7iFJYctFChJAS7PqYdT4SiHjlkvFlNqOlV8nmL9mVfGqO/TlRLMDFdEth5wP4F7wrqumLWaoQC0nzDt4EfnZ7jP+sHkJQKnJhX9gq2cezUSeT+57oj7gYz4qy/5DMxL50HxsXTqmldZbzsNre0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724410511; c=relaxed/simple;
+	bh=MsYaZ5fmkkxh+h4675Zeu1py/2TmqPQezVzHrQKGXs8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=qXPxbqvnU0J4p6sS9FdYy3vS0QVX0Yc4rgYMmjs/Gm7yYolP5BhUhjshl37SsJYMdyqNMgS2cWC6wW6lqPwlpBWJ4wxiFHgBqinlEHR0+0xoalt5JgduPv5i+V5FD1bxKUZrATQxjkkI9MnIaQuMk/jK5zgSZJiiCU76JEG5IvQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=QsIXcZv5; arc=fail smtp.client-ip=40.107.117.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vZoiz+q5QcB085LIFC3rwSPjILCfcMO01DoO0U9bhNQPXkwEQzKRfRgZKUqUDrkmYfxECZCPPhDoYmKuzzb1C4Z60N5QLQYtvXAyjZkmwF0RIKlzCbmNs87fjMrqNqmpOzhfmrQzV5z02L0bF/h5NASjaV5CeSc7CnIJqiAA8gsPEVRr2MHKBiB5+Syv/fa3Y+BgPpyco0//dLw6Ajt0tntrMUl0LZqXmfyjx9UmX0kXv1DahnaqVqXzGqfWnuzpTxOm2LMBUX5dbD7alTPME7l4s6xRBZNy9F9AlIuVuWxEoKN7kK1DIiPcfoFTv1yYO3eYpEcLcoa70ojl+24OGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KiGFwbDZfuwpSJhsyxvqIwSiUpBdjrwy6gk/YICbLPk=;
+ b=cIObwxT6eerQ8tF3pTo6ZYiCKtFpBMU/qx75K2OLSpn8M/nl5XnmlZumnVbcVxfkdBHJZztW7usHqDtHoLMxsg845e7fDiFziKSH4nAQMSz5CkmuAQ9H1X4HO3h5TR0oiICDbzpxhLqpnm90SFP58CQAKgL6+lJQY+XDh/MFjtwa4Z3VPV5HaLLW9q740rYWjCpH0AMS6vdhnFn3OGzl/SkkbfSH0I9g/ecVjA/PTy0oM1NreEhQ4oO4DjfIzIiY+mPIhCv2JqFPPw1s928RlEdEWJq8oTgQN6gftZxe+xyvUUy25/Pf8nGnuk5Lymiv8Hg+waQ/xPYJd24inIYgkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KiGFwbDZfuwpSJhsyxvqIwSiUpBdjrwy6gk/YICbLPk=;
+ b=QsIXcZv5whWByzPNKyPxWr0AGiTwnsii+eN5M40jdSl7zHQdYrSBanoHiEGK8iMm6nnhM7vTnv/pHos3tzz7yT8yNdQMJJOWVu8mJV+K+Or0l1DWrN5ru88F/i4lIo3yPBouS7eIFr1JHiL6oTXRFaqBeqQoYHzSzA4TNb82PePh8OnvCNvlNVTCfbMAekL+6a+kv5olZVzFdb0thqO2k4JpMtpNfQ52ciMQxunJU1NXvOUKypgZpwNnEOU2yUe9w3JRmmMj0EHcoHbm8coD3PJV86Jife3XB+/UQK0CJiL16wAcqno6ifi9obJEqyNmiT9/vlzOCxNqRRa6500mvg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by TYZPR06MB5685.apcprd06.prod.outlook.com (2603:1096:400:283::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 10:55:06 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
+ 10:55:05 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: aisheng.dong@nxp.com,
+	festevam@gmail.com,
+	shawnguo@kernel.org,
+	ping.bai@nxp.com,
+	linus.walleij@linaro.org,
+	s.hauer@pengutronix.de
+Cc: kernel@pengutronix.de,
+	linux-gpio@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kerenl@vivo.com,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v2] pinctrl: freescale: imx-scmi: Use kmemdup_array instead of kmemdup for multiple allocation
+Date: Fri, 23 Aug 2024 18:54:21 +0800
+Message-Id: <20240823105421.50017-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0055.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::16) To SEZPR06MB5899.apcprd06.prod.outlook.com
+ (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYZPR06MB5685:EE_
+X-MS-Office365-Filtering-Correlation-Id: 091223b5-41c3-433d-7114-08dcc3620bcb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gUATSa9xDXe1Sc/hXcg6xNFrhJkSV2nQp0C8ePo/6eAOjWmuIwyUFVMoYP0B?=
+ =?us-ascii?Q?FkfG5krUas0Hr9rOXUeN2Rl3F6vDMAlWCA0eSRXxDj6FRsO62UDEh5kTkcmg?=
+ =?us-ascii?Q?FGpr5NXVIEbVRaQ9W1V0DZ7TvnwPQB7CQnPS36RzG+vRrxq2i2BIYLspPuMK?=
+ =?us-ascii?Q?IauXEZSHGWPccj8aTMz4CPPLfFd1Q15mAAbzHriAlTe9WFtwHOLIpzmW3EZs?=
+ =?us-ascii?Q?7wQ+Ub5Lc52rvKu44cJQH2h6YPZ3ggE/Iryun+Ff/zikXyaCxzpjV9OdN5OL?=
+ =?us-ascii?Q?drfs/a2ol2TfkmjWYr84nWdnV8AN3SEMr9c5qj+aGqrVY1l/mAySsOH0PMIU?=
+ =?us-ascii?Q?Dj802AqaER12fRZdXDq+FZuOZlPQ1ysjzLKqRAaPxWhqpGnoVThbMKIqvoEu?=
+ =?us-ascii?Q?a6nzCUwxpu3hgqaCj7ZCFThPyl0YmBqlexW/+0dZeJHTDy3+3+riA2uR/VMz?=
+ =?us-ascii?Q?L5ppgNXRf+L/MJ2oLv1y8lXXloNpDKC3nWndAjGhp1dIuWo9BKPsCYwCsD1X?=
+ =?us-ascii?Q?/T2uvXc0UMuPvP5g4+DGJ1am+XuzZJ9hdghWZzkxhBBgGCGk/fDVUezFgHir?=
+ =?us-ascii?Q?dExynTlYGA/+ZdHg4Sa27Jdq22CHJW6UyApfgtWNhhTKIrX6IttG1sU1sVLI?=
+ =?us-ascii?Q?EVdWV4CVrKtNNOK2RtGqV4BwiXYk4nWCsBZQoZA7a0/Ln2D1WdJSrFbIqRpN?=
+ =?us-ascii?Q?FWs+JQsFZ4L1nujWmubVxoVYa6HNnX797Yjy/GWCivNdxu+7YIgSTNMHhdh5?=
+ =?us-ascii?Q?+Bny4/MkOCgvrz+zWgKKDEf30Fmtk6Zhs5YwRoYJO+UWrHHNeED8JgUAp3x/?=
+ =?us-ascii?Q?OmQZAoiAAZH+dpThbmxT7h2a3hxMJvmc6mfIPSxalGrMAvcidnXIxB4bd8Go?=
+ =?us-ascii?Q?5vD+mSJTRErzukZ+b3ziNQNB1XiRxaPQ1yw14aQUKu4xHnN1jX+Kv5jOZadA?=
+ =?us-ascii?Q?PjUaxu1O79BC3rhHyjYnQhbnTsaWN0PLo+jkBlmcJzkK2F5dAXkTH8WvgYRr?=
+ =?us-ascii?Q?k0XX2fdpzISVC3piDTxIQ00kMM32OMfBOJ8M2/MJQJKbmbNvzCdhbHJHm8JE?=
+ =?us-ascii?Q?8o+0M8/vfoMTfGqyJDq+AdiYZm5BoCgV1itIMpfIQIas9Cy9iMvNJtNx7FOM?=
+ =?us-ascii?Q?Obk2jAImONwZXB5CvFrPquBK3uCrfV7sSswguTmLy3AfFuiaC+fU+7RQ5/kB?=
+ =?us-ascii?Q?YP352KZkpoWUc+mSFaOiKm5oT26sMtNmveWk6EOOVZwj/y3G/YWnBMygK3w9?=
+ =?us-ascii?Q?nff+iwyvAAX2Dk3Zkezw40eecNmmNbIAlkngf5m0bbRP417Ilzmm6/Ob98Nd?=
+ =?us-ascii?Q?Yz2lgGJwNwZ9+QoshEwxB026GJ8WwuW3eAeKxBX8lH52hfkLb2z5pEz5ZOxS?=
+ =?us-ascii?Q?r3EIsUN3ylfGq7CTI8V6DYJDZDLnb08J0pEl9TZoaq4wRw5oJg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mOIAGj3msE0zsp5ljMmtz+Q4S2R4VuNPlGcom5Oy6mFLaX4TGOPzAJZ8MGw9?=
+ =?us-ascii?Q?tAs2CrD9OOW9Ur/E8J7rYysRlUErsFnTI/nsJdbMPoK3jkW/yEnN6SDBpluq?=
+ =?us-ascii?Q?R/URbuAhD5V93CrxFSKMDvS/A4JZGspx8aQd6VuAPSA71ycxmaCN93rxvr0p?=
+ =?us-ascii?Q?gLlStF1DOpFXv7vFRSebAIAcDonuGy52CBga2dCcYs/0SPgp50N/sdumKUz6?=
+ =?us-ascii?Q?WTl/qdUTuAKfm0soOw/ufKqIrVZMcdm3QYqd5ZN/dTU2KJIFxwjkoClRCXvB?=
+ =?us-ascii?Q?mkanSdx2we2nVt6YhpNx/0OtAWNrBB1m5SoRfjx1J/yIvd/64w/OAT1j0qOD?=
+ =?us-ascii?Q?IYCZHZif+qfU9F63EeXpSxHK0GNBz2CEW7R3echPA1WH1BeGAz7BrCVCyWd/?=
+ =?us-ascii?Q?Ko8JyiPTFyoORNeM9d4H7rMs/fY1BuPLygs7RE6856hms/HD/yj7ppL4aVVR?=
+ =?us-ascii?Q?0gBJCNGCPIs+D/ucEnksnuyn9qJvujpWrw7Tfpo+B6rl6EP43SZFhfsaE+Tr?=
+ =?us-ascii?Q?HhlGiqjC/Rz84k/pGTlFUOKWU4B5XqYF6hg0OkbvDtyTtTDRusUf0QyPrYac?=
+ =?us-ascii?Q?glKs79uma6QMKUKj6zeZf+jRZQadu7Ne1OWbkgFodPXllJ3E9EQFmnigbL1L?=
+ =?us-ascii?Q?IuAD3qk6eWlOQrKxjBMPPKxznzVMSnfW6CUT6NdJN91hmuHbiDhQBwa56dGJ?=
+ =?us-ascii?Q?ffAP2ChKtBPMG6tijjVKtG+qONyox7PcD6UbNkDzAJkXK493rBpq6jzyrlXK?=
+ =?us-ascii?Q?E6lD30v9SBE6Mtpoxx2LH9B4an4+lpG6hKzS8utk1UQLnSMx2kn0FmTPHZLM?=
+ =?us-ascii?Q?HRUsmISDRMzMendNwEG3RDdjXAHpm8GDweZsONl5OhmeQxIIwi318r0+eh8o?=
+ =?us-ascii?Q?skFsADIYqbH6YmI+PrAygFIFpkBhFXanBA+/WeLuoRQyZP3Qeh9Ovk4GFwaD?=
+ =?us-ascii?Q?/cMLLlAEjUNL5z/eSbfk3/HcGzYS+3McLrFBlXHyEQRMzJepB9/ziH+DCWFc?=
+ =?us-ascii?Q?aYC8Xz1vXV/2XYWZ89CSyupkWf27qtep1aGFA2S+DO3FtUMXDbuEpDlq88br?=
+ =?us-ascii?Q?yqYsGzrwAm7DCJRonUk3QXmYtyJYwNS/EmmbVcew9ez8swklaqUMJUPkNa5r?=
+ =?us-ascii?Q?VadfVpksHBlYGIu4UhDq/vV9i17VfbDWKIPMbUQn280DDwHAEdvYYxZZ4rJi?=
+ =?us-ascii?Q?l/8fPSAxBa6SzJiOAIxMXcyb/WLvoiE/t8rLaVYkqk7eZq3gRlzfqfDkel3G?=
+ =?us-ascii?Q?TvWvNt4HcsIec6pRgc3JS4JI59CS+yF0PCvd9eOqi2vW/Oyf7qsj94I/c6nn?=
+ =?us-ascii?Q?GvEmqWj7WIdxwwcYBL1Ywpr5EQS+8HNoBIoW7w8q7wT26Zv7iX70xddmI1KS?=
+ =?us-ascii?Q?szEE6vIX99vN2KZwW0VPD2fNAOhoZwUf0GTHkaBMpNumJ2LmptR2pNMwseRo?=
+ =?us-ascii?Q?2f7Btct1h2W4CI9LOQyI0SYbbhFQyu0rGbGmsGXV0/obyDVlTU2SJaPjXlcE?=
+ =?us-ascii?Q?SLsJoxJF27HxAKrCgGnofdqNzx/U58gSKPycvUf2ix3kPT7alrCm9JaRvJrY?=
+ =?us-ascii?Q?kMyn2m0q0GiH96niQV2gvud8bjVS2Jhi8wGBUx8i?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 091223b5-41c3-433d-7114-08dcc3620bcb
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 10:55:05.4206
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: maIAheEOpduQQfnuTvgsJp/36abHf/1pXP7z+RSX/CiaP49Dxt9oVL4zJQRaaw9pxPjSWcHCW27nx1r/7LIiQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5685
 
-On Fri, 23 Aug 2024, Shijith Thotton wrote:
+Let the kmemdup_array() take care about multiplication
+and possible overflows.
 
-> This patch introduces a PCI hotplug controller driver for the OCTEON
-> PCIe device, a multi-function PCIe device where the first function acts
-> as a hotplug controller. It is equipped with MSI-x interrupts to notify
-> the host of hotplug events from the OCTEON firmware.
-> 
-> The driver facilitates the hotplugging of non-controller functions
-> within the same device. During probe, non-controller functions are
-> removed and registered as PCI hotplug slots. The slots are added back
-> only upon request from the device firmware. The driver also allows the
-> enabling and disabling of the slots via sysfs slot entries, provided by
-> the PCI hotplug framework.
-> 
-> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
-> Co-developed-by: Vamsi Attunuru <vattunuru@marvell.com>
-> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
-> ---
-> 
-> This patch introduces a PCI hotplug controller driver for OCTEON PCIe hotplug
-> controller. The OCTEON PCIe device is a multi-function device where the first
-> function acts as a PCI hotplug controller.
-> 
->               +--------------------------------+
->               |           Root Port            |
->               +--------------------------------+
->                               |
->                              PCIe
->                               |
-> +---------------------------------------------------------------+
-> |              OCTEON PCIe Multifunction Device                 |
-> +---------------------------------------------------------------+
->             |                    |              |            |
->             |                    |              |            |
-> +---------------------+  +----------------+  +-----+  +----------------+
-> |      Function 0     |  |   Function 1   |  | ... |  |   Function 7   |
-> | (Hotplug controller)|  | (Hotplug slot) |  |     |  | (Hotplug slot) |
-> +---------------------+  +----------------+  +-----+  +----------------+
->             |
->             |
-> +-------------------------+
-> |   Controller Firmware   |
-> +-------------------------+
-> 
-> The hotplug controller driver facilitates the hotplugging of non-controller
-> functions in the same device. During the probe of the driver, the non-controller
-> function are removed and registered as PCI hotplug slots. They are added back
-> only upon request from the device firmware. The driver also allows the user to
-> enable/disable the functions using sysfs slot entries provided by PCI hotplug
-> framework.
-> 
-> This solution adopts a hardware + software approach for several reasons:
-> 
-> 1. To reduce hardware implementation cost. Supporting complete hotplug
->    capability within the card would require a PCI switch implemented within.
-> 
-> 2. In the multi-function device, non-controller functions can act as emulated
->    devices. The firmware can dynamically enable or disable them at runtime.
-> 
-> 3. Not all root ports support PCI hotplug. This approach provides greater
->    flexibility and compatibility across different hardware configurations.
-> 
-> The hotplug controller function is lightweight and is equipped with MSI-x
-> interrupts to notify the host about hotplug events. Upon receiving an
-> interrupt, the hotplug register is read, and the required function is enabled
-> or disabled.
-> 
-> This driver will be beneficial for managing PCI hotplug events on the OCTEON
-> PCIe device without requiring complex hardware solutions.
-> 
-> Changes in v2:
-> - Added missing include files.
-> - Used dev_err_probe() for error handling.
-> - Used guard() for mutex locking.
-> - Splited cleanup actions and added per-slot cleanup action.
-> - Fixed coding style issues.
-> - Added co-developed-by tag.
-> 
->  MAINTAINERS                    |   6 +
->  drivers/pci/hotplug/Kconfig    |  10 +
->  drivers/pci/hotplug/Makefile   |   1 +
->  drivers/pci/hotplug/octep_hp.c | 412 +++++++++++++++++++++++++++++++++
->  4 files changed, 429 insertions(+)
->  create mode 100644 drivers/pci/hotplug/octep_hp.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 42decde38320..7b5a618eed1c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13677,6 +13677,12 @@ R:	schalla@marvell.com
->  R:	vattunuru@marvell.com
->  F:	drivers/vdpa/octeon_ep/
->  
-> +MARVELL OCTEON HOTPLUG CONTROLLER DRIVER
-> +R:	Shijith Thotton <sthotton@marvell.com>
-> +R:	Vamsi Attunuru <vattunuru@marvell.com>
-> +S:	Supported
-> +F:	drivers/pci/hotplug/octep_hp.c
-> +
->  MATROX FRAMEBUFFER DRIVER
->  L:	linux-fbdev@vger.kernel.org
->  S:	Orphan
-> diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
-> index 1472aef0fb81..2e38fd25f7ef 100644
-> --- a/drivers/pci/hotplug/Kconfig
-> +++ b/drivers/pci/hotplug/Kconfig
-> @@ -173,4 +173,14 @@ config HOTPLUG_PCI_S390
->  
->  	  When in doubt, say Y.
->  
-> +config HOTPLUG_PCI_OCTEONEP
-> +	bool "OCTEON PCI device Hotplug controller driver"
-> +	depends on HOTPLUG_PCI
-> +	help
-> +	  Say Y here if you have an OCTEON PCIe device with a hotplug
-> +	  controller. This driver enables the non-controller functions of the
-> +	  device to be registered as hotplug slots.
-> +
-> +	  When in doubt, say N.
-> +
->  endif # HOTPLUG_PCI
-> diff --git a/drivers/pci/hotplug/Makefile b/drivers/pci/hotplug/Makefile
-> index 240c99517d5e..40aaf31fe338 100644
-> --- a/drivers/pci/hotplug/Makefile
-> +++ b/drivers/pci/hotplug/Makefile
-> @@ -20,6 +20,7 @@ obj-$(CONFIG_HOTPLUG_PCI_RPA)		+= rpaphp.o
->  obj-$(CONFIG_HOTPLUG_PCI_RPA_DLPAR)	+= rpadlpar_io.o
->  obj-$(CONFIG_HOTPLUG_PCI_ACPI)		+= acpiphp.o
->  obj-$(CONFIG_HOTPLUG_PCI_S390)		+= s390_pci_hpc.o
-> +obj-$(CONFIG_HOTPLUG_PCI_OCTEONEP)	+= octep_hp.o
->  
->  # acpiphp_ibm extends acpiphp, so should be linked afterwards.
->  
-> diff --git a/drivers/pci/hotplug/octep_hp.c b/drivers/pci/hotplug/octep_hp.c
-> new file mode 100644
-> index 000000000000..3ac90ffff564
-> --- /dev/null
-> +++ b/drivers/pci/hotplug/octep_hp.c
-> @@ -0,0 +1,412 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (C) 2024 Marvell. */
-> +
-> +#include <linux/cleanup.h>
-> +#include <linux/container_of.h>
-> +#include <linux/delay.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io-64-nonatomic-lo-hi.h>
-> +#include <linux/kernel.h>
-> +#include <linux/list.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/pci.h>
-> +#include <linux/pci_hotplug.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/workqueue.h>
-> +
-> +#define OCTEP_HP_INTR_OFFSET(x) (0x20400 + ((x) << 4))
-> +#define OCTEP_HP_INTR_VECTOR(x) (16 + (x))
-> +#define OCTEP_HP_DRV_NAME "octep_hp"
-> +
-> +/*
-> + * Type of MSI-X interrupts.
-> + * The macros OCTEP_HP_INTR_VECTOR and OCTEP_HP_INTR_OFFSET are used to
-> + * generate the vector and offset for an interrupt type.
-> + */
-> +enum octep_hp_intr_type {
-> +	OCTEP_HP_INTR_INVALID = -1,
-> +	OCTEP_HP_INTR_ENA,
-> +	OCTEP_HP_INTR_DIS,
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+---
+V1->V2: Change subject prefix to "pinctrl: freescale: imx-scmi:"
+---
+ drivers/pinctrl/freescale/pinctrl-imx-scmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Making these numbers explicit (since they cannot be just any numbers) fell 
-through cracks.
-
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+index 2991047535bc..8f15c4c4dc44 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+@@ -130,7 +130,7 @@ static int pinctrl_scmi_imx_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 			cfg[j++] = pinconf_to_config_packed(IMX_SCMI_PIN_DAISY_CFG, input_val);
+ 		}
+ 
+-		configs = kmemdup(cfg, ncfg * sizeof(unsigned long), GFP_KERNEL);
++		configs = kmemdup_array(cfg, ncfg, sizeof(unsigned long), GFP_KERNEL);
+ 
+ 		new_map[i].type = PIN_MAP_TYPE_CONFIGS_PIN;
+ 		new_map[i].data.configs.group_or_pin = pin_get_name(pctldev, pin_id);
 -- 
- i.
+2.17.1
 
 
