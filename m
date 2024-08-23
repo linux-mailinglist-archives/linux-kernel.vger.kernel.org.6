@@ -1,99 +1,88 @@
-Return-Path: <linux-kernel+bounces-299736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C4395D96B
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:57:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2632495D971
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C551C21C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:57:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6CBC1F236E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C831CC889;
-	Fri, 23 Aug 2024 22:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cm+YnwkL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D7E1C8FCD;
+	Fri, 23 Aug 2024 23:01:09 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9592E1C8FDD;
-	Fri, 23 Aug 2024 22:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9365695
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724453842; cv=none; b=Lv7176+r+2IDLiGSvIrz6vhRjcdK+hLf5Q4E9y76NIXd+XiKQNtHcWZKgorZAnZH2DlXrVETPnvwjq5xC/qtgMl9/y6H5ZP3nGg8JBH9PSDbJOGpRou/HZjxdGn1X3gJzfuIsuKA8+df/xL8w8cPvlRyzQR5MbpaoUwnTHO5pa8=
+	t=1724454069; cv=none; b=CjlxhyYGXUiQfqUfmLe5Yead6q1f0unW4lhRxALpJty4/ioHZuZVEr/yrnbNzsLFOQllNEuQO7aXE/ZNKkCCK1QC4VIY7pZTPEV+RMQ2mgEq1wZC7v+ai2CRFq1IBA0Zkt/Hkuu6nBKAhZOCfOVQCorazmBMQXJF7D0Gvvlap44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724453842; c=relaxed/simple;
-	bh=n/mUAtQFjE4JPk6hyRDQWvCtSI8173z0B+A3NP4ZAmc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ISDSTZeRCnnaIMbdBnVAvZEWI5VDuc2AAdoJIS1mXSK7mhWx7a2gpYbe/44HCVbBsnujzaG+wttNqHrFPm+9/HL9K9sKWs0BH1zuCo7oeoM2/YRH1HTlTExyvVY+TajxwIC8vsTVW0ATZ09GgQvRTD6GWQvpa1gulL2mm2nrj8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cm+YnwkL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF8AC4AF09;
-	Fri, 23 Aug 2024 22:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724453842;
-	bh=n/mUAtQFjE4JPk6hyRDQWvCtSI8173z0B+A3NP4ZAmc=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=cm+YnwkLGmnty2v3d0rec8Lj5dGUCwZI0jJA1gl9g5iThygB7r5cgYes3UBrIFY6b
-	 AcsPH2dVn2ycn6NuiRfWOD4hSh7PBMNlqg3/W/B9IS+U6jgUPdsv10W/rha7GxWkPD
-	 y3Sn2SJ04/GdhoCF1IfAw8cXLrtTMmPcEgBli/W6nuUEC3szjKBnurwzaJhpkAy1wO
-	 7rTPqCSaEtpx/SWF6REiQ+ZFQB0eo7srFTm4OSFT52mcDtylCh7YdemUBF6axcEivf
-	 uXbB0ySLFbLVfzG++0Hzwm3r67xW0wewcCsFttgmwHlNq7iScKkQM9EepWTilKH2AP
-	 vE5B+y12XqKlA==
-From: Mark Brown <broonie@kernel.org>
-To: william.zhang@broadcom.com, kursad.oney@broadcom.com, 
- jonas.gorski@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
- anand.gore@broadcom.com, florian.fainelli@broadcom.com, rafal@milecki.pl, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240820124011.1788479-1-ruanjinjie@huawei.com>
-References: <20240820124011.1788479-1-ruanjinjie@huawei.com>
-Subject: Re: [PATCH -next] spi: bcmbca-hsspi: Simpify resource lookup
-Message-Id: <172445383901.842317.11362631915105690405.b4-ty@kernel.org>
-Date: Fri, 23 Aug 2024 23:57:19 +0100
+	s=arc-20240116; t=1724454069; c=relaxed/simple;
+	bh=AVIpfvn849D1vJHJPPsy57XFDWFL8ivNTHcOwmrjbMQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LGeKFyUuq30ooKBNG8bqY220AnZiDYxgoPKkyyEqS+Plm0ZE2ycetzHPqxP05UBVrDdpMipVio1DwJV7nGOlpRmpds6ajCFk31ks5x0t/ZcXr9nual0IG0bQKDDbsxDXNkbJGvo1v6NLkvH3p3kA3sNzKUaWvYMLpPrGSZ1c+Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id 8fc8dad0-61a3-11ef-8ebd-005056bdf889;
+	Sat, 24 Aug 2024 02:00:59 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v1 1/1] iio: accel: bmc150: use fwnode_irq_get_byname()
+Date: Sat, 24 Aug 2024 02:00:56 +0300
+Message-ID: <20240823230056.745872-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
 
-On Tue, 20 Aug 2024 20:40:11 +0800, Jinjie Ruan wrote:
-> Instead of calling platform_get_resource_byname() and
-> devm_ioremap_resource(), simplify the code by simply calling
-> devm_platform_ioremap_resource_byname().
-> 
-> 
+Use the generic fwnode_irq_get_byname() in place of of_irq_get_byname()
+to get the IRQ number from the interrupt pin.
 
-Applied to
+Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/iio/accel/bmc150-accel-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: bcmbca-hsspi: Simpify resource lookup
-      commit: 91232b00b1a5d2486770c72c51a752a77c7601b2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
+index 03121d020470..14ce03c70ab5 100644
+--- a/drivers/iio/accel/bmc150-accel-core.c
++++ b/drivers/iio/accel/bmc150-accel-core.c
+@@ -10,9 +10,9 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/acpi.h>
+-#include <linux/of_irq.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
++#include <linux/property.h>
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+ #include <linux/iio/buffer.h>
+@@ -514,7 +514,7 @@ static void bmc150_accel_interrupts_setup(struct iio_dev *indio_dev,
+ 	 */
+ 	irq_info = bmc150_accel_interrupts_int1;
+ 	if (data->type == BOSCH_BMC156 ||
+-	    irq == of_irq_get_byname(dev->of_node, "INT2"))
++	    irq == fwnode_irq_get_byname(dev_fwnode(dev), "INT2"))
+ 		irq_info = bmc150_accel_interrupts_int2;
+ 
+ 	for (i = 0; i < BMC150_ACCEL_INTERRUPTS; i++)
+-- 
+2.46.0
 
 
