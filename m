@@ -1,153 +1,147 @@
-Return-Path: <linux-kernel+bounces-299203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0D295D17E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF6C95D17B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73295B25580
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A80280D52
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C06918859D;
-	Fri, 23 Aug 2024 15:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1E188A2D;
+	Fri, 23 Aug 2024 15:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZEo05le5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LuCKmjhE"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CFB187FFD;
-	Fri, 23 Aug 2024 15:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A136718800E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427230; cv=none; b=Wo0mHf4GJZ6SIQhnGTJpVlC3ugVNO5fGJXCkxKDihYYTTBblDKClm+qdee2nun8MPTSWKEyfcavs5Mq8frYmFuXJOWezArhJZgihavgw50PpWmVgsHSXEHuwyauke+suH5T2aNBaFo9uI8ziZgr4ggKbPY9k9kJkdEvarz1dB4A=
+	t=1724427264; cv=none; b=GRSL1E9Ar7NQEwrCyoCS0yiZu9jPVuop9Vt27iFm0emEdr4cvZBA9z0hI0+h9Q/N7G2KRbCp1BOkkLrIEOkDSqwQI6wbzqwohempIwOB+ONL+xe4dGGnqN4eQZ/lmrujjHnm/ovfw2INUqnv4gqGKzZPj3HvOu4XuOg0diK3xnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427230; c=relaxed/simple;
-	bh=3BbBDobsZnzKQsmNrxzJR5bd1l54D7ceI2SoF0It+SM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=knvKVX4elX9dCY1zdN+/5pIYrRV6pHFbS+MMGK2M542SPuzvrjelbXXUVMZKaHWwmWKn7BjvXAvRVdpoVNPoSJm3cwuoTanycLjl0wp46E/4Q8DCmNZBJO0dToFLC7iLShcDEn/lzrHm7kcPCM012NkYlaBLXFDEh+uNVtwLIDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZEo05le5; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724427229; x=1755963229;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3BbBDobsZnzKQsmNrxzJR5bd1l54D7ceI2SoF0It+SM=;
-  b=ZEo05le5OwxeKHBKIt5PFOKcpBtl/3gl5ODIrdOegIPh0zPhBG6x6ANf
-   /fiFogWmqtjIC4QlHgfdnxW3QYb7WtT+c/oZgYJ2/u4JyJLV2vj9R6BcI
-   HH2hNwkb3hp8Y1cJQThSjSsziNIawyDO70i8tpZ+W6Pu/UdKtNz77NZfO
-   LhwPi4qJwnHbLk4HJyId6O0lSY8D6Vhe+bDzr9zJq3G2AepcDamrYvTdh
-   2OnkbDMQOcU7eiOp5VnkoeV1RNCXfWgK3yfT2Pr/Va887AYtuS1WPhirY
-   wY1eT4eBTyuCGSrhVdfkLYrCffnOrwUQgiTQRhZ0xuS3MysIiKXzfwhZ4
-   Q==;
-X-CSE-ConnectionGUID: KPFCnwMzRI+IkiCD0CSYmw==
-X-CSE-MsgGUID: nGzo63FVQj2Mvq49OaUpRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23081594"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="23081594"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 08:33:48 -0700
-X-CSE-ConnectionGUID: x5FJ2yfcRb6Znr+8tyXYKQ==
-X-CSE-MsgGUID: mEJxqwWvRIGGgDB+fUosKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="61847840"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 23 Aug 2024 08:33:46 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D8E55209; Fri, 23 Aug 2024 18:33:44 +0300 (EEST)
-Date: Fri, 23 Aug 2024 18:33:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: biju.das.jz@bp.renesas.com,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v3 3/4] i2c: jz4780: Use devm_clk_get_enabled() helpers
-Message-ID: <Zsir2Lo5TM8YKKrY@black.fi.intel.com>
-References: <20240823035116.21590-1-rongqianfeng@vivo.com>
- <20240823035116.21590-4-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1724427264; c=relaxed/simple;
+	bh=9a2e+v3FT14bhuAj+QqfdFafJhUg0z4MjKBWadxqB0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H49rOAMl4mo7NuJoThRWI2FpFXmBDQpVL79Wlo+kTAqivddLNZ/eGq/mRiQcHDWW/61twYlBPK0k1JVY2AsfahHRlRbGv0iAu0uG5OM5H5D3NF1ku2lWDD158EPVIs8uja0HbsbuhtTO8iHIijC1PDukAm3tj16jQeT6AJHoWek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LuCKmjhE; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d3c08541cdso1655653a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:34:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724427262; x=1725032062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvYT3UWBCKLp8ogLPWqf/Z+jzZrJA9UrUg3fh9E7FtM=;
+        b=LuCKmjhE/j+phnODv2C3uOE5+gd3Y4rnL6NG1ooYs/7ZdPqq18HxejHKIb3RVyBbRl
+         Z/OWN+KuPZ/iOwEgWC5l66Dc4hbIadIaO+4UoRltw8mug9mIObHcRommoJDBuU6JAKN/
+         qayGGXoYQkcz37XfoxKQXvtnUkbDWkAiTwrdmeO8ZZkHPEqbzXgOB/39hc6x3HKIEF6t
+         NNkgvwt+5YFiL0dhWu6fi2HjmqND1nvQ9b3z51CV1ZgAIARYmSFGuDOSaf8JFRRnoAmD
+         d3bEUgndDlOH5UdFGAE/bWHkXkFOuEKrZnBcDjftV//khdVr1sqqQJMP5xrXEqWVaYzc
+         RxCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724427262; x=1725032062;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IvYT3UWBCKLp8ogLPWqf/Z+jzZrJA9UrUg3fh9E7FtM=;
+        b=B5lfX0sqpQR0ViLr6U3vg79zgrvH/NgbPsiZN0PMPnLLL5nQWkQimDRMEP4aLIyK0f
+         CoCsNikMyaJB4my/wOLInE5MC7/c/yux0fnuQ3QKxogOOxaJCms/YP/pyxWSSezw/uEN
+         CoFdd1vK8cm/h/CbM5nVYsrx63t9hdPa5gR2rWsP/gfdzAS7VPds1bY9Vb/G9aDCv0MZ
+         2o11ObJNgGI6revYwFcxY7+d+emMb1wSeeqoeQjE5pderZYLtmuplOfooSfYKKL0YceI
+         CXuLCYaF/yYa2Hek3Qm6EaP/xLGNJxkS2jOoIEEOzS/yIBnZwLEJqeO3oFQzzl+32zm0
+         ZENA==
+X-Forwarded-Encrypted: i=1; AJvYcCUb2LbmgWQWdrtKxJNUPPYnDp27JXSMPw3EIoVuMZQmz7aRjmpp3GA4pTwQhcE+JrJgzezwSefmJD1/0f0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCaG9SP9Ne7A0VFOZiBkGaFVs8R+CsTkc1P9dvxs8Lg6abDBRu
+	ds3qxg+2BMXh9yE9/8OaKqLpJEJkUvXUX/yVai2S8PgWMessiSqr
+X-Google-Smtp-Source: AGHT+IFd1+TQM65D80wpYcq/4gnpICwdY2KG3PE3VutyDwjVB0LL6tzDDULZQp/CxaGN9r8zIiKXjg==
+X-Received: by 2002:a17:90a:77c5:b0:2d0:d82:60ae with SMTP id 98e67ed59e1d1-2d646d6f656mr2630453a91.37.1724427261685;
+        Fri, 23 Aug 2024 08:34:21 -0700 (PDT)
+Received: from embed-PC.. ([106.222.233.87])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb913460sm6550531a91.21.2024.08.23.08.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 08:34:21 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: tdavies@darkphysics.net,
+	philipp.g.hortmann@gmail.com,
+	garyrookard@fastmail.org,
+	linux-staging@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	dan.carpenter@linaro.org,
+	christophe.jaillet@wanadoo.fr,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: rtl8192e: Replace strcpy with strcat in rtl819x_translate_scan
+Date: Fri, 23 Aug 2024 21:04:11 +0530
+Message-Id: <20240823153411.74142-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823035116.21590-4-rongqianfeng@vivo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 11:51:15AM +0800, Rong Qianfeng wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
-> 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> 
-> While at it, no more special handling needed here, remove the goto
-> label "err:".
+Replace strcpy() with strcat() in rtl819x_translate_scan()
+Also Fix proto_name[] buffer size issue to accommodate all
+network modes.
 
-...
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+Changes in v2:
+- Revert the use of strscpy and replaced it with strcat.
+- Remove the 'pname' and replace it's usage with direct
+operations on 'proto_name' buffer.
 
->  	ret = of_property_read_u32(pdev->dev.of_node, "clock-frequency",
->  				   &clk_freq);
+ drivers/staging/rtl8192e/rtllib_wx.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-(side note: this driver should use i2c_timings and respective I2C core
-APIs instead of this)
+diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192e/rtllib_wx.c
+index fbd4ec824084..ec0c4c5bade7 100644
+--- a/drivers/staging/rtl8192e/rtllib_wx.c
++++ b/drivers/staging/rtl8192e/rtllib_wx.c
+@@ -23,14 +23,14 @@ static const char * const rtllib_modes[] = {
+ };
 
->  	if (ret) {
->  		dev_err(&pdev->dev, "clock-frequency not specified in DT\n");
-> -		goto err;
-> +		return ret;
-
-While at it,
-
-		return dev_err_probe(...);
-
->  	}
-
->  	i2c->speed = clk_freq / 1000;
-
-(side note: this should be HZ_PER_KHZ from units.h)
-
->  	if (i2c->speed == 0) {
->  		ret = -EINVAL;
->  		dev_err(&pdev->dev, "clock-frequency minimum is 1000\n");
-> -		goto err;
-> +		return ret;
-
-		return dev_err_probe(...);
-
->  	}
-
-...
-
->  	ret = platform_get_irq(pdev, 0);
->  	if (ret < 0)
-> -		goto err;
-> +		return ret;
->  	i2c->irq = ret;
-
-I would add a blank line here.
-
->  	ret = devm_request_irq(&pdev->dev, i2c->irq, jz4780_i2c_irq, 0,
->  			       dev_name(&pdev->dev), i2c);
->  	if (ret)
-> -		goto err;
-> +		return ret;
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+ #define MAX_CUSTOM_LEN 64
++#define MAX_PROTO_NAME_LEN 10
+ static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
+ 					   char *start, char *stop,
+ 					   struct rtllib_network *network,
+ 					   struct iw_request_info *info)
+ {
+ 	char custom[MAX_CUSTOM_LEN];
+-	char proto_name[6];
+-	char *pname = proto_name;
++	char proto_name[MAX_PROTO_NAME_LEN];
+ 	char *p;
+ 	struct iw_event iwe;
+ 	int i, j;
+@@ -59,13 +59,12 @@ static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
+ 	}
+ 	/* Add the protocol name */
+ 	iwe.cmd = SIOCGIWNAME;
++	/* Initialise proto_name as an empty string*/
++	memset(proto_name, '\0', sizeof(proto_name));
+ 	for (i = 0; i < ARRAY_SIZE(rtllib_modes); i++) {
+-		if (network->mode & BIT(i)) {
+-			strcpy(pname, rtllib_modes[i]);
+-			pname += strlen(rtllib_modes[i]);
++		if (network->mode & BIT(i))
++			strcat(proto_name, rtllib_modes[i]);
+ 		}
+-	}
+-	*pname = '\0';
+ 	snprintf(iwe.u.name, IFNAMSIZ, "IEEE802.11%s", proto_name);
+ 	start = iwe_stream_add_event(info, start, stop, &iwe, IW_EV_CHAR_LEN);
+ 	/* Add mode */
+--
+2.34.1
 
 
