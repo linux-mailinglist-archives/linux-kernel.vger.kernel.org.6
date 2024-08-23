@@ -1,320 +1,213 @@
-Return-Path: <linux-kernel+bounces-298522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D73F95C85F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:47:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7EE95C860
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B56B1F23747
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D021C21BAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C7C149003;
-	Fri, 23 Aug 2024 08:47:49 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86391482F0;
+	Fri, 23 Aug 2024 08:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8xYP4k3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14AB13D524
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D232244C76;
+	Fri, 23 Aug 2024 08:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724402868; cv=none; b=K1rKWjr2NMKTKuf7Ucgsk2hQ4wtiIr7Pv168iG3Rt6RqPlx5T8vyssukKpUSMUp8a1o9KZ8bcZwVDT+kwACrOZDaXLqQBXjdF7Q1YEvnEpqXvuNQHVOCQwGTxWztb3AYZYzi5tMbIW+IMlFHxASdKTLN0Nh/t6PggCaQRycEEKM=
+	t=1724402968; cv=none; b=J2e/2FnJKzA6eNyTaAl3eRJKZ5COAvvyVzY7l7qdJe6BOFsZUFzWfQLJqD9zbq4M5fG04y8jyoeKo9YXLhgFmPDZ8BMqrdkq9FSoChptZpm3Ge0O87FYqp2s/wO+sI7HruquKkOmZXT4UaekgPoXd7oITm8jTItCDaErXoo50Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724402868; c=relaxed/simple;
-	bh=0iAZL4MenZSvAN+fqXvndBZJ8gEAVWH9xQiCDL9XD2U=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ieqenhQZfC8+p4+hb/32XVBHXpqEGUtuURZCy2GNi0VYi4uOfD05c+aHV0WfGgcZbIe1FUcCD9trd8j7ZbeN3qR8elHm0rrbu1wo+lY7UOqnCR+cM6WJ/YYXtDO/7kGc2bbp1BU14qE4ZdBFp2dAN3ZbL6l3hx+gYxczbqZ+RDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WqtsB52zRz689JV;
-	Fri, 23 Aug 2024 16:43:58 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 44B5914065B;
-	Fri, 23 Aug 2024 16:47:43 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 09:47:42 +0100
-Date: Fri, 23 Aug 2024 09:47:41 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Huisong Li <lihuisong@huawei.com>
-CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
-	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
-Subject: Re: [PATCH v2 5/6] soc: hisilicon: kunpeng_hccs: Add used HCCS
- types sysfs
-Message-ID: <20240823094741.0000084d@Huawei.com>
-In-Reply-To: <20240823031059.32579-6-lihuisong@huawei.com>
-References: <20240718071134.31155-1-lihuisong@huawei.com>
-	<20240823031059.32579-1-lihuisong@huawei.com>
-	<20240823031059.32579-6-lihuisong@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724402968; c=relaxed/simple;
+	bh=zCE2kZSuqOPFejVfzIWBbTQf/qt0/VX9kCnDZTFKx2Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GxbEYGCyBA4P5VNPX8EmD6OBtCPtEjDV69w+rKFcJFM78HTEPHabA8An0RqyiEWR41I/Zmqg98DsF0NSwlA8RBv2bPWoqP73g0pzWvr7me2aztGbJ8oiLtV3JakqXvn4L3jnhThFm5gqSi8yAOFnNtMNnspPXJnzqOkTbwClVvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8xYP4k3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BCCFC32786;
+	Fri, 23 Aug 2024 08:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724402968;
+	bh=zCE2kZSuqOPFejVfzIWBbTQf/qt0/VX9kCnDZTFKx2Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=i8xYP4k3ewj6fE4mQ+/VBWhzCjnSPwmNYTT4N81gCesGnl05TVs7xarsdMDTEhsua
+	 WrQETnlwpTX8Uzjzo9d0Ez1otntpVCMyp10pxmCDz4RwHLpMp5oSqxjr4U/1V1kyYD
+	 PNOu5j9E56plxGGMvIqPZ5AT9+2jhN+mUiaFGMSYbPWWWBfp2FPdI6IMVwacvfGVfl
+	 FjGp41usHf/BBtikuakb0zBMszV/+TfNy9PuUSyBqwzK/oP+5fS2WkHf80VV4pLorU
+	 ZxcCsUdHX2A0fMZQ1+rdPmLoFCQ8cAddOVxQUt5Jp9+6YJBwbe81vbt7V0FYLCnk9f
+	 QDtEvaVyThBOg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1shPz3-006Bvc-Vn;
+	Fri, 23 Aug 2024 09:49:26 +0100
+Date: Fri, 23 Aug 2024 09:49:25 +0100
+Message-ID: <86zfp3wrmy.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Kunkun Jiang <jiangkunkun@huawei.com>
+Cc: 	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse
+ <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui
+ Yu <yuzenghui@huawei.com>,
+	"open list:IRQ\
+ SUBSYSTEM" <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM SMMU\
+ DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	kvmarm@lists.linux.dev,
+	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
+	nizhiqiang1@huawei.com,
+	"tangnianyao@huawei.com" <tangnianyao@huawei.com>,
+	wangzhou1@hisilicon.com
+Subject: Re: [bug report] GICv4.1: multiple vpus execute vgic_v4_load at the same time will greatly increase the time consumption
+In-Reply-To: <87o75kgspg.ffs@tglx>
+References: <a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com>
+	<86msl6xhu2.wl-maz@kernel.org>
+	<f1574274-efd8-eb56-436b-5a1dd7620f2c@huawei.com>
+	<867cc9x8si.wl-maz@kernel.org>
+	<bd3c3103-a6d7-a91b-911d-5bc5f2382dae@huawei.com>
+	<864j7cybay.wl-maz@kernel.org>
+	<87o75kgspg.ffs@tglx>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, jiangkunkun@huawei.com, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, wanghaibin.wang@huawei.com, nizhiqiang1@huawei.com, tangnianyao@huawei.com, wangzhou1@hisilicon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 23 Aug 2024 11:10:58 +0800
-Huisong Li <lihuisong@huawei.com> wrote:
+On Thu, 22 Aug 2024 22:20:43 +0100,
+Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> On Thu, Aug 22 2024 at 13:47, Marc Zyngier wrote:
+> > On Thu, 22 Aug 2024 11:59:50 +0100,
+> > Kunkun Jiang <jiangkunkun@huawei.com> wrote:
+> >> > but that will eat a significant portion of your stack if your kernel is
+> >> > configured for a large number of CPUs.
+> >> > 
+> >> 
+> >> Currently CONFIG_NR_CPUS=4096,each `struct cpumask` occupies 512 bytes.
+> >
+> > This seems crazy. Why would you build a kernel with something *that*
+> > big, specially considering that you have a lot less than 1k CPUs?
+> 
+> That's why CONFIG_CPUMASK_OFFSTACK exists, but that does not help in
+> that context. :)
+>
+> >> > The removal of this global lock is the only option in my opinion.
+> >> > Either the cpumask becomes a stack variable, or it becomes a static
+> >> > per-CPU variable. Both have drawbacks, but they are not a bottleneck
+> >> > anymore.
+> >> 
+> >> I also prefer to remove the global lock. Which variable do you think is
+> >> better?
+> >
+> > Given the number of CPUs your system is configured for, there is no
+> > good answer. An on-stack variable is dangerously large, and a per-CPU
+> > cpumask results in 2MB being allocated, which I find insane.
+> 
+> Only if there are actually 4096 CPUs enumerated. The per CPU magic is
+> smart enough to limit the damage to the actual number of possible CPUs
+> which are enumerated at boot time. It still will over-allocate due to
+> NR_CPUS being insanely large but on a 4 CPU machine this boils down to
+> 2k of memory waste unless Aaarg64 is stupid enough to allocate for
+> NR_CPUS instead of num_possible_cpus()...
 
-> Current, to find which HCC types are used on the platform the user needs
-> to scan the type attribute of all ports, which is unfriendly to the user.
-> So add the sysfs to show all HCCS types used on the platform.
-
-Really minor point, but it might be nice to add a little info here on
-the sort of changes that occur in the interface between versions?
-Even if that's just a reference to next patch which shows that the
-HCCS-V2 has power control that original version didn't.
-
-That will help motivate the patch. 
-
-Also good to argue why it is worth aggregating this info in one attribute
-rather than just letting user space search for it in the topology below
-this point.  (Something about global controls I guess?)
-
-Also, for future, the hcc_unregister_pcc_channel() would be nicely
-handled with a devm_add_action_or_reset() removing the need
-for the various gotos in probe.
-
-Similar applied to hcc_remove_top_dirs and remove() callback can 
-go away entirely which would be an added bonus.
-
-Jonathan
-
+No difference between arm64 and xyz85.999 here.
 
 > 
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> ---
->  .../sysfs-devices-platform-kunpeng_hccs       |   8 ++
->  drivers/soc/hisilicon/kunpeng_hccs.c          | 102 +++++++++++++++++-
->  drivers/soc/hisilicon/kunpeng_hccs.h          |  15 +++
->  3 files changed, 124 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-> index 1666340820f7..d4c355e0e0bb 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-> +++ b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-> @@ -79,3 +79,11 @@ Description:
->  			           indicates a lane.
->  		crc_err_cnt:  (RO) CRC err count on this port.
->  		============= ==== =============================================
-> +
-> +What:		/sys/devices/platform/HISI04Bx:00/used_types
-> +Date:		August 2024
-> +KernelVersion:	6.12
-> +Contact:	Huisong Li <lihuisong@huawei.com>
-> +Description:
-> +		This interface is used to show all HCCS types used on the
-> +		platform, like, HCCS-v1, HCCS-v2 and so on.
-> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
-> index 418e4ee5d9e5..623e7b7ed39a 100644
-> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
-> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
-> @@ -21,11 +21,14 @@
->   *    - if all enabled ports are in linked
->   *    - if all linked ports are in full lane
->   *    - CRC error count sum
-> + *
-> + * - Retrieve all HCCS types used on the platform.
->   */
->  #include <linux/acpi.h>
->  #include <linux/iopoll.h>
->  #include <linux/platform_device.h>
->  #include <linux/sysfs.h>
-> +#include <linux/types.h>
->  
->  #include <acpi/pcc.h>
->  
-> @@ -53,6 +56,15 @@ static struct hccs_chip_info *kobj_to_chip_info(struct kobject *k)
->  	return container_of(k, struct hccs_chip_info, kobj);
->  }
->  
-> +static struct hccs_dev *device_kobj_to_hccs_dev(struct kobject *k)
-> +{
-> +	struct device *dev = container_of(k, struct device, kobj);
-> +	struct platform_device *pdev =
-> +			container_of(dev, struct platform_device, dev);
-> +
-> +	return platform_get_drvdata(pdev);
-> +}
-> +
->  struct hccs_register_ctx {
->  	struct device *dev;
->  	u8 chan_id;
-> @@ -670,6 +682,55 @@ static int hccs_get_hw_info(struct hccs_dev *hdev)
->  	return 0;
->  }
->  
-> +static u16 hccs_calc_used_type_num(struct hccs_dev *hdev,
-> +				   unsigned long *hccs_ver)
-> +{
-> +	struct hccs_chip_info *chip;
-> +	struct hccs_port_info *port;
-> +	struct hccs_die_info *die;
-> +	u16 used_type_num = 0;
-> +	u16 i, j, k;
-> +
-> +	for (i = 0; i < hdev->chip_num; i++) {
-> +		chip = &hdev->chips[i];
-> +		for (j = 0; j < chip->die_num; j++) {
-> +			die = &chip->dies[j];
-> +			for (k = 0; k < die->port_num; k++) {
-> +				port = &die->ports[k];
-> +				set_bit(port->port_type, hccs_ver);
-> +			}
-> +		}
-> +	}
-> +
-> +	for_each_set_bit(i, hccs_ver, HCCS_IP_MAX + 1)
-> +		used_type_num++;
-> +
-> +	return used_type_num;
-> +}
-> +
-> +static int hccs_init_type_name_maps(struct hccs_dev *hdev)
-> +{
-> +	DECLARE_BITMAP(hccs_ver, HCCS_IP_MAX + 1) = {};
-> +	unsigned int i;
-> +	u16 idx = 0;
-> +
-> +	hdev->used_type_num = hccs_calc_used_type_num(hdev, hccs_ver);
-> +	hdev->type_name_maps = devm_kcalloc(hdev->dev, hdev->used_type_num,
-> +					    sizeof(struct hccs_type_name_map),
-> +					    GFP_KERNEL);
-> +	if (!hdev->type_name_maps)
-> +		return -ENOMEM;
-> +
-> +	for_each_set_bit(i, hccs_ver, HCCS_IP_MAX + 1) {
-> +		hdev->type_name_maps[idx].type = i;
-> +		sprintf(hdev->type_name_maps[idx].name,
-> +			"%s%u", HCCS_IP_PREFIX, i);
-> +		idx++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int hccs_query_port_link_status(struct hccs_dev *hdev,
->  				       const struct hccs_port_info *port,
->  				       struct hccs_link_status *link_status)
-> @@ -830,7 +891,7 @@ static ssize_t type_show(struct kobject *kobj, struct kobj_attribute *attr,
->  {
->  	const struct hccs_port_info *port = kobj_to_port_info(kobj);
->  
-> -	return sysfs_emit(buf, "HCCS-v%u\n", port->port_type);
-> +	return sysfs_emit(buf, "%s%u\n", HCCS_IP_PREFIX, port->port_type);
->  }
->  static struct kobj_attribute hccs_type_attr = __ATTR_RO(type);
->  
-> @@ -1134,6 +1195,33 @@ static const struct kobj_type hccs_chip_type = {
->  	.default_groups = hccs_chip_default_groups,
->  };
->  
-> +
-> +static ssize_t used_types_show(struct kobject *kobj,
-> +			       struct kobj_attribute *attr, char *buf)
-> +{
-> +	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
-> +	int len = 0;
-> +	u16 i;
-> +
-> +	for (i = 0; i < hdev->used_type_num - 1; i++)
-> +		len += sysfs_emit(&buf[len], "%s ", hdev->type_name_maps[i].name);
-> +	len += sysfs_emit(&buf[len], "%s\n", hdev->type_name_maps[i].name);
-> +
-> +	return len;
-> +}
-> +static struct kobj_attribute used_types_attr =
-> +		__ATTR(used_types, 0444, used_types_show, NULL);
-> +
-> +static void hccs_remove_misc_sysfs(struct hccs_dev *hdev)
-> +{
-> +	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
-> +}
-> +
-> +static int hccs_add_misc_sysfs(struct hccs_dev *hdev)
-> +{
-> +	return sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
-> +}
-> +
->  static void hccs_remove_die_dir(struct hccs_die_info *die)
->  {
->  	struct hccs_port_info *port;
-> @@ -1168,6 +1256,8 @@ static void hccs_remove_topo_dirs(struct hccs_dev *hdev)
->  
->  	for (i = 0; i < hdev->chip_num; i++)
->  		hccs_remove_chip_dir(&hdev->chips[i]);
-> +
-> +	hccs_remove_misc_sysfs(hdev);
->  }
->  
->  static int hccs_create_hccs_dir(struct hccs_dev *hdev,
-> @@ -1263,6 +1353,12 @@ static int hccs_create_topo_dirs(struct hccs_dev *hdev)
->  		}
->  	}
->  
-> +	ret = hccs_add_misc_sysfs(hdev);
-> +	if (ret) {
-> +		dev_err(hdev->dev, "create misc sysfs interface failed, ret = %d\n", ret);
-> +		goto err;
-> +	}
-> +
->  	return 0;
->  err:
->  	for (k = 0; k < id; k++)
-> @@ -1313,6 +1409,10 @@ static int hccs_probe(struct platform_device *pdev)
->  	if (rc)
->  		goto unregister_pcc_chan;
->  
-> +	rc = hccs_init_type_name_maps(hdev);
-> +	if (rc)
-> +		goto unregister_pcc_chan;
-> +
->  	rc = hccs_create_topo_dirs(hdev);
->  	if (rc)
->  		goto unregister_pcc_chan;
-> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.h b/drivers/soc/hisilicon/kunpeng_hccs.h
-> index 5e12a1e1474e..401df4694aec 100644
-> --- a/drivers/soc/hisilicon/kunpeng_hccs.h
-> +++ b/drivers/soc/hisilicon/kunpeng_hccs.h
-> @@ -10,6 +10,19 @@
->   * | P0 | P1 | P2 | P3 | P0 | P1 | P2 | P3 | P0 | P1 | P2 | P3 |P0 | P1 | P2 | P3 |
->   */
->  
-> +enum hccs_port_type {
-> +	HCCS_V1 = 1,
-> +	HCCS_V2,
-> +};
-> +
-> +#define HCCS_IP_PREFIX	"HCCS-v"
-> +#define HCCS_IP_MAX		255
-> +#define HCCS_NAME_MAX_LEN	9
-> +struct hccs_type_name_map {
-> +	u8 type;
-> +	char name[HCCS_NAME_MAX_LEN + 1];
-> +};
-> +
->  /*
->   * This value cannot be 255, otherwise the loop of the multi-BD communication
->   * case cannot end.
-> @@ -74,6 +87,8 @@ struct hccs_dev {
->  	u64 caps;
->  	u8 chip_num;
->  	struct hccs_chip_info *chips;
-> +	u16 used_type_num;
-> +	struct hccs_type_name_map *type_name_maps;
->  	u8 chan_id;
->  	struct mutex lock;
->  	struct hccs_mbox_client_info cl_info;
+> That said, on a real 4k CPU system 2M of memory should be the least of
+> your worries.
 
+Don't underestimate the general level of insanity!
+
+> 
+> > You'll have to pick your own poison and convince Thomas of the
+> > validity of your approach.
+> 
+> As this is an operation which is really not suitable for on demand
+> or large stack allocations the per CPU approach makes sense.
+
+Right, so let's shoot for that. Kunkun, can you please give the
+following hack a go with your workload?
+
+Thanks,
+
+	M.
+
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index dd53298ef1a5..b6aa259ac749 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -224,15 +224,16 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+ 	struct irq_desc *desc = irq_data_to_desc(data);
+ 	struct irq_chip *chip = irq_data_get_irq_chip(data);
+ 	const struct cpumask  *prog_mask;
++	struct cpumask *tmp_mask;
+ 	int ret;
+ 
+-	static DEFINE_RAW_SPINLOCK(tmp_mask_lock);
+-	static struct cpumask tmp_mask;
++	static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+ 
+ 	if (!chip || !chip->irq_set_affinity)
+ 		return -EINVAL;
+ 
+-	raw_spin_lock(&tmp_mask_lock);
++	tmp_mask = this_cpu_ptr(&__tmp_mask);
++
+ 	/*
+ 	 * If this is a managed interrupt and housekeeping is enabled on
+ 	 * it check whether the requested affinity mask intersects with
+@@ -258,11 +259,11 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+ 
+ 		hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
+ 
+-		cpumask_and(&tmp_mask, mask, hk_mask);
+-		if (!cpumask_intersects(&tmp_mask, cpu_online_mask))
++		cpumask_and(tmp_mask, mask, hk_mask);
++		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
+ 			prog_mask = mask;
+ 		else
+-			prog_mask = &tmp_mask;
++			prog_mask = tmp_mask;
+ 	} else {
+ 		prog_mask = mask;
+ 	}
+@@ -272,16 +273,14 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+ 	 * unless we are being asked to force the affinity (in which
+ 	 * case we do as we are told).
+ 	 */
+-	cpumask_and(&tmp_mask, prog_mask, cpu_online_mask);
+-	if (!force && !cpumask_empty(&tmp_mask))
+-		ret = chip->irq_set_affinity(data, &tmp_mask, force);
++	cpumask_and(tmp_mask, prog_mask, cpu_online_mask);
++	if (!force && !cpumask_empty(tmp_mask))
++		ret = chip->irq_set_affinity(data, tmp_mask, force);
+ 	else if (force)
+ 		ret = chip->irq_set_affinity(data, mask, force);
+ 	else
+ 		ret = -EINVAL;
+ 
+-	raw_spin_unlock(&tmp_mask_lock);
+-
+ 	switch (ret) {
+ 	case IRQ_SET_MASK_OK:
+ 	case IRQ_SET_MASK_OK_DONE:
+
+-- 
+Without deviation from the norm, progress is not possible.
 
