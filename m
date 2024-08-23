@@ -1,235 +1,176 @@
-Return-Path: <linux-kernel+bounces-299362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D3595D3A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:37:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B255595D3A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06FBD284DCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E441C23555
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86B118BC2B;
-	Fri, 23 Aug 2024 16:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7BB18BC06;
+	Fri, 23 Aug 2024 16:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ouJYmfLI"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazolkn19010019.outbound.protection.outlook.com [52.103.2.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLzAZCMr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1497A185E7B;
-	Fri, 23 Aug 2024 16:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724431048; cv=fail; b=qH+6r0CWFuF97vB/vgkyv0eSkACVcmpGZv9rwd2Wbjcm7qcbcd4i7K6vqwCMtSrhcOBtahm11/8b5cUnT4MbmanDVV7CvP1/XZuKDZiM/892xhmQtG4E1LFIPMApuLYEAqakZFMN5BdtquJMjmHisk77PCcYPUWQ0MUl6YC7cwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724431048; c=relaxed/simple;
-	bh=MWP0yqaxyhGLyquekPHDjDrgqmtJjbwa1LURlAUPB2U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MGxGu4IAjdRtUydDax6oJ64syzOILm+0c9WrHGkyMJOA+iwVLDeXnBQU+o3G5Almuc4AxljcH/xpjOHGCG2aYruV3/lrvuFJseULpHjpW+gXM+XqzZZMg0Nj4lyJjSS6habN8rq2l+XeZ9mwHxAWDu1V2gBkw7/ICa9Kb+Pm8KE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ouJYmfLI; arc=fail smtp.client-ip=52.103.2.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o4EDbxD/j+ObV4LMz8FJekJrN9zkvOLMY40yWARpx1zs5tF+4APMsjLQgVDPyGcFPqzN6u5C7DQiGs3mEkOdHpXRdt+MLWMaFSm1Pwsf3oRRjDYQHAwDRG5FNoF/lmL02c6aMurrjyXKAVhZ5JNfNCGvGOtBBhd0dauy5PvFwOV5fO3a3psIbEJp90Ei+4+3beJAxWlsPzmdITztBTsPiu0VfmNBg3GDAFuQgn0OZAGcAmjJOCUMAuv+zWzDWUO64pjVOxYwqE7YF17UQZ8kyvCGtfSlhwb9VqRwJ/Qk2bGZQF/EKr6rYcVTpknve1rs/pL383bkiwGJbouhRpI++w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5H5JkeEdkSvrLVnJmaY4Mb4lnHiIlv3GW5kHz2W/moY=;
- b=Qq4H7bJrah9JyqUYsAN3ve/k/ly9q1qxVwmTs0DJu36Yiafv5BVbxc/lgQa80PhPS2IYauUQJMlDhOIFgcaf8rzRpnRHuzFLU+xA9c2p4JK+oHCVAkbFvQBAeo3SexyxPNQonS5gWzURQIw2EGzvUkk0VCrqTbRrO3IpbQEJrEHaKiNt+xQckI8ouH+y/9e7gJSUZ4Wu00BY2rpFiENGgkMFGaX/6WzG/HTJgITwxq9kFO63K4CbCd+xvDVszFRMnfVPQMvvGOrbK3P245Sk4tUDSb838xBshPHb8/UsS0M/utOPyWbXKbZHCIw/s3K+/ImJE12yvmagoABxjLnyaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5H5JkeEdkSvrLVnJmaY4Mb4lnHiIlv3GW5kHz2W/moY=;
- b=ouJYmfLIC0U5nEb+ajiigxkSQHNNVWpgVnJptSEcSgZSOxK5b+WDnCOOJjLNH2ozpPkIO0AETtn7JSAhtz/yToduEetYipyTMiXUUYdiZ2zA5zKgPg/o+HJvc3hJGpFVTWcyH56c0MsJSLWfilxnP8W+w6lVJmyDYSbzNz+4XgyWDaJOSP4alY84RYmgIm8qi3Y+AatqkAipxmuXNBNI6XHsRRia9WXRhBRb1mQfwq9N9qq/4Bo2JGd4auqIGfRqWNCqap8pMqQ1fULGH1vyQW7V3nVuE02n1MrcyKwT+8JPB7KPKbC39EywhW50k1tCk1agtg98NZlzvyHvPttwOw==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CO6PR02MB7747.namprd02.prod.outlook.com (2603:10b6:303:a1::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
- 2024 16:37:23 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Fri, 23 Aug 2024
- 16:37:17 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, "kys@microsoft.com"
-	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
-	<decui@microsoft.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "ernis@microsoft.com" <ernis@microsoft.com>
-Subject: RE: [PATCH v3] net: netvsc: Update default VMBus channels
-Thread-Topic: [PATCH v3] net: netvsc: Update default VMBus channels
-Thread-Index: AQHa9KTvo39C2dg7aUWe6oSNngL4P7I1BxSg
-Date: Fri, 23 Aug 2024 16:37:17 +0000
-Message-ID:
- <SN6PR02MB415769AD9CC9B1C9398DCC6CD4882@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <1724339168-20913-1-git-send-email-ernis@linux.microsoft.com>
-In-Reply-To: <1724339168-20913-1-git-send-email-ernis@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [wKntug/duKgSvzr14Xw5b+boN2MyBdU8]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CO6PR02MB7747:EE_
-x-ms-office365-filtering-correlation-id: e3044b23-5d5a-43c2-2a7e-08dcc391d9e8
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|8060799006|15080799003|461199028|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- +FR33NXlQdRVKOSEI1kbrEsnLabukklCm7gUSCd6RrcnUS6cGFMONH7TOgnxpeI5T7YMT+Q9O4ws+CYNFX7AQU0ZR0/Xbm7hdmT6DGOa+lwtZMG6h59BA5nzuotCyuQrD4nsqZxKZFZBGpTgQlT0i0qPe9oQydbCssE9WrPst8z+TrFIr2vOLMH7DhyMUf275Sr6dSQZMFqyNCPrILn/SedDzhzsxs08hXJ/R/RBaNv6J/U6fLamKfR7bjQBwnRoL16vMGUui/KDoEAzsmfwsj7MuKPorrdqNb9p0wgebNZyl2bAwBh9zG1TAibNTHRlOWmkrKAeTzWFBgpNU6TEvqFYsZgLbPhb3bVU3/Yin5cDJCi29nmsazH2QViYOKN1IhIOGUQqPF5yuarEwb+aaMBEvJRlTjSStcd9oIvBXTjD3H6zsK12EN/A15P2hQHAP6cUSRrdCPloWDPyBJ9EnCdHoX9h4hjqUuClFc3W9GfEpJKBikE6AHaK+ceJwl9Y0Ct+KY7CmccL1SWjYJ0GaxnWCP81Ds/9vrXOf+qU8AuGlbYq80K2fhK0CawdV1qZWAuJswuI0SnjLaL1EJnGfWKVgLvqlk4fVfi6FINDgn2av3znwO/XS7oK/yTCsXm4E07fpK5lOGEUjI3/THdJPBiqIZ/rayxXqC6y8pzCGFBBAM4E6TD/+i3vH8hbRLN2
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ZGSqwtjxrFnU1cVvGFwFq0bN0uRriCUXbBpgujaToBSCvL9wjVIeQuYTtASW?=
- =?us-ascii?Q?9QM2ZtDU0lPRWTdq+wiWxlM/q5EKBlhhzck1M5tet/X1cpVbftiqZ6s8cItt?=
- =?us-ascii?Q?FgFxHbIuWm7rTxPTwo/BIXOUq/Vjs07Jlopbd26nkBDroakjBXwcetX4fnwV?=
- =?us-ascii?Q?vpaFdo8TUtF+ltZxONXetkbnmfF+vPSZcUwU9ZV7UqWtGsiIiaYK/SWiXfsX?=
- =?us-ascii?Q?ODV8i1hTTOZV/k4/Wa91lJlZ+RflgiJHV6aXN+QdQtB+K2fU67kYlG7qOCAr?=
- =?us-ascii?Q?PIGcLt7w7MFugotLjT4aF1o7T0VPo+Z+AEZlRQoK0Qr8S658800CqkaSZ4Qh?=
- =?us-ascii?Q?t2HNZW6kDnKOm+GDARHKGG4BMzBhok+ZzhQ1cSfAyoWzDV4ZWO5q9auDToXx?=
- =?us-ascii?Q?SZqOSLp6EwTbSCPwqv3lRQCMpnNKwVWrOjUq7DoSUKZhA9S1KTVsEnyGXtZ6?=
- =?us-ascii?Q?mz3REjIr+JIZHZvkZeekFtYRx+6mQYOBHqH+YSCMa975jDSYZUspz1oZiBtj?=
- =?us-ascii?Q?QNvzaAawKmLj6x/6i17k4+DQ5jE7U4ANstWqxHwyQ+6G1cDJbe5pT/OkJ8zU?=
- =?us-ascii?Q?8Ld8dX2/aOV3NM6JJ7CGPgHI8w3zmXNXwUTerHCadqemc8VO1+Mv6U8uQz+8?=
- =?us-ascii?Q?p7wY76QOqT8ZPMc1gKsrAQk3Xf7zx/NrxjvGZVy0Y1y658j2tYtBixZ6RMnp?=
- =?us-ascii?Q?mEh1I5LUv+lOBFIApTF/WgKZ5tHRYJhchoZaTwxYp5whjO1zNGYeQE7ZKv13?=
- =?us-ascii?Q?NgWs5bA72j+X1eiz/OELFY/dVsA2I/lFRPHsMzaI41i7f/wqZuZDhmOaFxdb?=
- =?us-ascii?Q?9yGDwv/OgLky6v1b7D/0TuPHczXtbVQ+qozNC2zVyLqff+R2zYjA+/fAfnvY?=
- =?us-ascii?Q?L7jO06mRXPFm8bFLHxmr/RMHxHzYNT3IVrxZryuQ1o/O6cjPeXhiTocVw4oy?=
- =?us-ascii?Q?ohlTtE/02gBc04Mf2SgKClnoCs0XEdvO4J2o7BDVOadvkpyw6xqbOBxILRmP?=
- =?us-ascii?Q?s8p9tNjKLrHTwTY1E4FC3us0bBKN/0dHKzWuU5aJ8QxjVEmzAznA1aNWCN5d?=
- =?us-ascii?Q?KXwb6//fwVaNJfsTTJyJQ+R3kmNhG5te/+mCXCaaRMIQC/UNJwUTGSt/B+3x?=
- =?us-ascii?Q?97lfFMoYQJ4fyjTYTk+7SI7hrrzF4v8BGEnybQURdi5LZ0jS3xHYZub34pF8?=
- =?us-ascii?Q?3kfpO20ZjNiDWwIlkgI91dICbPwuVgPFUDQ00nkbBhfeJiDcVOreG0vqwmE?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3143D12B6C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724431146; cv=none; b=E7tzHv1mSVEXj/8J6Wa+ultWQjInwfDQyq7PkauqH5xzle7gj3mMRO9g80Yw9bRAHLcqn1WWpQxcuPebpOltriQ58LoijgvuQiI+WYEMV3IkKU+Ub+82anMvFOrLc2YQ1anczZ3BXK3HfxGbj9RLMJt64GmCR0Yz0PRODBhEgPA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724431146; c=relaxed/simple;
+	bh=3p8llYLNGonqe/IaVeJEcH5mcj6ObfdWOb687aPPufY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rw5sQQUCAvTmh2x+aoyeMA/Y+w8KpJiDFO22E3fsfu1GHuxz78OEqkBj6DjgJNqtd2xDYNx8fbY8izrqNzsACCTCELJtufuSqPaYLi2ZopUqOkv3GFEmOhbTEbRC6VPsVFX1uAT2yiagy6qyYV5UyiU4Co+IAVwp3sD2WM23E7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLzAZCMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71EBC32786;
+	Fri, 23 Aug 2024 16:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724431145;
+	bh=3p8llYLNGonqe/IaVeJEcH5mcj6ObfdWOb687aPPufY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gLzAZCMr758Wfe7rerx8L/j7HBp9WuiLFR2vp6//h1SNLXunTnx6ZMmW6yzHUPRjq
+	 fAruazKxC4HfkFYAJm0zGC7aFZCn1+N4YVc/UKd29QWzFNVs/z7uWxpPIc4yYBCfus
+	 rcWi77/LJDLfGbLjlTV8LxxCIgGQRJi28YoQXwUfn7xDzIiyYW1D+DZyWP5iQfiC74
+	 q6mUzs+1hVDNGQSaLuK7bQ+EHVOVd16GSPEkBX1JsbAZdPF025yDvNTgn4IA9c1ksI
+	 A0L3WwKEvwkjAXKu6eBy/8RKVbQGAyBK12Y95dC8I2JE1w1FoxWXvmJQinZmfJF8iE
+	 5CResWhSOrOsQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1shXJX-006KwE-Dn;
+	Fri, 23 Aug 2024 17:39:03 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Richard Weinberger <richard@nod.at>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <petr@tesarici.cz>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH] scripts: Fix gfp-translate after ___GFP_*_BITS conversion to an enum
+Date: Fri, 23 Aug 2024 17:38:50 +0100
+Message-Id: <20240823163850.3791201-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3044b23-5d5a-43c2-2a7e-08dcc391d9e8
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2024 16:37:17.2700
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR02MB7747
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, richard@nod.at, akpm@linux-foundation.org, petr@tesarici.cz, surenb@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com> Sent: Thursday, Au=
-gust 22, 2024 8:06 AM
->=20
-> Change VMBus channels macro (VRSS_CHANNEL_DEFAULT) in
-> Linux netvsc from 8 to 16 to align with Azure Windows VM
-> and improve networking throughput.
->=20
-> For VMs having less than 16 vCPUS, the channels depend
-> on number of vCPUs. Between 16 to 64 vCPUs, the channels
-> default to VRSS_CHANNEL_DEFAULT. For greater than 64 vCPUs,
-> set the channels to number of physical cores / 2 returned by
-> netif_get_num_default_rss_queues() as a way to optimize CPU
-> resource utilization and scale for high-end processors with
-> many cores. Due to hyper-threading, the number of
-> physical cores =3D vCPUs/2.
+Richard reports that since 772dd0342727c ("mm: enumerate all gfp flags"),
+gfp-translate is broken, as the bit numbers are implicit, leaving
+the shell script unable to extract them. Even more, some bits are now at
+a variable location, making it double extra hard to parse using a simple
+shell script.
 
-But note that a given physical processor may or may not support
-hyper-threading. For example, the physical processor used for
-ARM64 VMs in Azure does not have hyper-threading. And even
-if the physical processor supports hyper-threading, the VM might
-not see hyper-threading as enabled. Many Azure GPU-based VM
-sizes see only full cores, with no hyper-threading. It's also possible
-to boot Linux with hyper-threading disabled even if the VM sees
-hyper-threaded cores (the "nosmt" or "smt=3D1" kernel boot option).
+Use a brute-force approach to the problem by generating a small C stub
+that will use the enum to dump the interesting bits.
 
-Your code below probably isn't affected when hyper-threading
-isn't present. But in the interest of accuracy, the discussion here
-in the commit message should qualify the use of "vCPU/4" as
-the number of channels. It might be "vCPU/2" when
-hyper-threading isn't present or is disabled, and for vCPU
-counts between 16 and 64, you'll get more than 16 channels.
+As an added bonus, we are now able to identify invalid bits for
+a given configuration. As an added drawback, we cannot parse include
+files that predate this change anymore. Tough luck.
 
-> Maximum number of channels are by default set to 64.
->=20
-> Based on this change the channel creation would change as follows:
->=20
-> -------------------------------------------------------------
-> | No. of vCPU	|  dev_info->num_chn	| channels created  |
-> -------------------------------------------------------------
-> |  0-16		|       16		|       vCPU        |
+Fixes: 772dd0342727c ("mm: enumerate all gfp flags")
+Reported-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Petr Tesařík <petr@tesarici.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>
+---
+ scripts/gfp-translate | 66 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 49 insertions(+), 17 deletions(-)
 
-Nit: Presumably we won't ever have 0 vCPUs.  :-)
-
-> | >16 & <=3D64	|       16		|       16          |
-> | >64 & <=3D256	|       vCPU/4		|       vCPU/4      |
-> | >256		|       vCPU/4		|       64          |
-> -------------------------------------------------------------
->=20
-> Performance tests showed significant improvement in throughput:
-> - 0.54% for 16 vCPUs
-> - 0.83% for 32 vCPUs
-> - 0.86% for 48 vCPUs
-> - 9.72% for 64 vCPUs
-> - 13.57% for 96 vCPUs
->=20
-> Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> ---
-> Changes in v3:
-> * Use netif_get_num_default_rss_queues() to set channels
-> * Change terminology for channels in commit message
-> ---
-> Changes in v2:
-> * Set dev_info->num_chn based on vCPU count.
-> ---
->  drivers/net/hyperv/hyperv_net.h | 2 +-
->  drivers/net/hyperv/netvsc_drv.c | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_=
-net.h
-> index 810977952f95..e690b95b1bbb 100644
-> --- a/drivers/net/hyperv/hyperv_net.h
-> +++ b/drivers/net/hyperv/hyperv_net.h
-> @@ -882,7 +882,7 @@ struct nvsp_message {
->=20
->  #define VRSS_SEND_TAB_SIZE 16  /* must be power of 2 */
->  #define VRSS_CHANNEL_MAX 64
-> -#define VRSS_CHANNEL_DEFAULT 8
-> +#define VRSS_CHANNEL_DEFAULT 16
->=20
->  #define RNDIS_MAX_PKT_DEFAULT 8
->  #define RNDIS_PKT_ALIGN_DEFAULT 8
-> diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_=
-drv.c
-> index 44142245343d..a6482afe4217 100644
-> --- a/drivers/net/hyperv/netvsc_drv.c
-> +++ b/drivers/net/hyperv/netvsc_drv.c
-> @@ -987,7 +987,8 @@ struct netvsc_device_info *netvsc_devinfo_get(struct =
-netvsc_device *nvdev)
->  			dev_info->bprog =3D prog;
->  		}
->  	} else {
-> -		dev_info->num_chn =3D VRSS_CHANNEL_DEFAULT;
-> +		dev_info->num_chn =3D max(VRSS_CHANNEL_DEFAULT,
-> +					netif_get_num_default_rss_queues());
->  		dev_info->send_sections =3D NETVSC_DEFAULT_TX;
->  		dev_info->send_section_size =3D NETVSC_SEND_SECTION_SIZE;
->  		dev_info->recv_sections =3D NETVSC_DEFAULT_RX;
-> --
-> 2.34.1
->=20
+diff --git a/scripts/gfp-translate b/scripts/gfp-translate
+index 6c9aed17cf56..8385ae0d5af9 100755
+--- a/scripts/gfp-translate
++++ b/scripts/gfp-translate
+@@ -62,25 +62,57 @@ if [ "$GFPMASK" = "none" ]; then
+ fi
+ 
+ # Extract GFP flags from the kernel source
+-TMPFILE=`mktemp -t gfptranslate-XXXXXX` || exit 1
+-grep -q ___GFP $SOURCE/include/linux/gfp_types.h
+-if [ $? -eq 0 ]; then
+-	grep "^#define ___GFP" $SOURCE/include/linux/gfp_types.h | sed -e 's/u$//' | grep -v GFP_BITS > $TMPFILE
+-else
+-	grep "^#define __GFP" $SOURCE/include/linux/gfp_types.h | sed -e 's/(__force gfp_t)//' | sed -e 's/u)/)/' | grep -v GFP_BITS | sed -e 's/)\//) \//' > $TMPFILE
+-fi
++TMPFILE=`mktemp -t gfptranslate-XXXXXX.c` || exit 1
+ 
+-# Parse the flags
+-IFS="
+-"
+ echo Source: $SOURCE
+ echo Parsing: $GFPMASK
+-for LINE in `cat $TMPFILE`; do
+-	MASK=`echo $LINE | awk '{print $3}'`
+-	if [ $(($GFPMASK&$MASK)) -ne 0 ]; then
+-		echo $LINE
+-	fi
+-done
+ 
+-rm -f $TMPFILE
++(
++    cat <<EOF
++#include <stdint.h>
++#include <stdio.h>
++
++// Try to fool compiler.h into not including extra stuff
++#define __ASSEMBLY__	1
++
++#include <generated/autoconf.h>
++#include <linux/gfp_types.h>
++
++static const char *masks[] = {
++EOF
++
++    sed -nEe 's/^[[:space:]]+(___GFP_.*)_BIT,.*$/\1/p' $SOURCE/include/linux/gfp_types.h |
++	while read b; do
++	    cat <<EOF
++#if defined($b) && ($b > 0)
++	[${b}_BIT]	= "$b",
++#endif
++EOF
++	done
++
++    cat <<EOF
++};
++
++int main(int argc, char *argv[])
++{
++	unsigned long long mask = $GFPMASK;
++
++	for (int i = 0; i < sizeof(mask) * 8; i++) {
++		unsigned long long bit = 1ULL << i;
++		if (mask & bit)
++			printf("\t%-25s0x%llx\n",
++			       (i < ___GFP_LAST_BIT && masks[i]) ?
++					masks[i] : "*** INVALID ***",
++			       bit);
++	}
++
++	return 0;
++}
++EOF
++) > $TMPFILE
++
++${CC:-gcc} -Wall -o ${TMPFILE}.bin -I $SOURCE/include $TMPFILE && ${TMPFILE}.bin
++
++rm -f $TMPFILE ${TMPFILE}.bin
++
+ exit 0
+-- 
+2.39.2
 
 
