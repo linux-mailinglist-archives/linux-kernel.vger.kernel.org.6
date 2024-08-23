@@ -1,434 +1,246 @@
-Return-Path: <linux-kernel+bounces-298314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8121A95C5A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:40:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14A4E95C5A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71EE284EFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:40:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977FF1F23C61
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BC213D51C;
-	Fri, 23 Aug 2024 06:40:00 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48007FBA2;
-	Fri, 23 Aug 2024 06:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724395199; cv=none; b=Zzo5eZ/7L8/n/0pZCeCANWootgMcHAWEuAyDwO2yIMQXwzj6vmvObu4WjllrL4COlv1TfrZkxhLqEUgHOc4sWA/iGJtG+IYOagvfk50ApKtMD95JqIBeIS8wm8Uo7UMFOaC4q8y/nzmhTOnKfQSPbdGVfRehXwSXe1HyrThzlII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724395199; c=relaxed/simple;
-	bh=2WE8tNAY4l3j3plr6RRxNNoOJpg+mXRJv0dWP7228kM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F0vJLp0jXI/sIZsMdC9i+YJd+n9o4CrbOThF7gohvoqnM/QFjVEBDUN55LQ6FK2IKA0RCGhXtWRMSI+9PZCWcg0EzyK+Kuw8pVn690i7HZhXKkf3uLMb/ccbhvx7+4cLkfrLr3KiT1miriQeZmpjXUeciTXqTD43NTuPpGh5wc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Dxupq5Lshm2B8dAA--.24811S3;
-	Fri, 23 Aug 2024 14:39:53 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMDxnWevLshmUPoeAA--.41360S5;
-	Fri, 23 Aug 2024 14:39:51 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	x86@kernel.org,
-	Song Gao <gaosong@loongson.cn>
-Subject: [PATCH v7 3/3] irqchip/loongson-eiointc: Add extioi virt extension support
-Date: Fri, 23 Aug 2024 14:39:43 +0800
-Message-Id: <20240823063943.2618675-4-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240823063943.2618675-1-maobibo@loongson.cn>
-References: <20240823063943.2618675-1-maobibo@loongson.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE357137932;
+	Fri, 23 Aug 2024 06:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="CaEtgm55"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2054.outbound.protection.outlook.com [40.107.117.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924867640D;
+	Fri, 23 Aug 2024 06:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724395227; cv=fail; b=DvUsoe16D8FQy2Lkc04eGlkoSjSmLV90GbUYh97BvPxrkIHZV8LUAP00Jlg3VMGrdcHlMO1VTzKDd+MLU0JvZDrU+iaJQ9i1al5ZV3gOhCpau31MRpiUbtLDhU8NsG2l1+iO39hk2hzlFfY/mXydizJZz9mK9bgKe21ehwUgj24=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724395227; c=relaxed/simple;
+	bh=VYTm+OknIWZt0b1HjpiD+UQmriQrxTmx7b0hlHt4nks=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OD7mc3+3xpZze2xHwUmPVgRNlgV2xFqfFKuN7Q5GkZSlB9e48KjlIE6RPC88+div3VRwLcuN7XPniBemLeedlLcxDu6/i+Ity7TvSI4NBALreRZnFjViwerLgRvBZxx3683C14k1mYVykHtAwDxwoWhJbA8fOZNfOOIUCXk4MQU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=CaEtgm55; arc=fail smtp.client-ip=40.107.117.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hi9QsfXxhuEApRADGk2odI9MIoLKrj5i4WbdtKvY0JdIGhS19v26HGOwPMHg4mJVNHlRqN1eiu5/U6jenJpVJ+LsZr/JFDm7SAJyT/FK73JqI9NdtRqShCNtcE+Ogcv6dkzsQNhA38ZENaXyZPd5ULkpSCfLMCCbo89mDtE3iGFbXRaj/nqbkAxUG1A6MlldisEuNiNCjqo+rJscYoTK2WU8MzKB9dkWs9bfxEdDGF9MxZzk142fTLsA5yQ0bsSNiklvOVYAZXEoVZ2CP0lxtpwN+YdXscam1FaBJnzSoueomrYYdolNaRN8Qg8sQCr1kWmqAzqyOaMbOGVzc+m7Tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VYTm+OknIWZt0b1HjpiD+UQmriQrxTmx7b0hlHt4nks=;
+ b=JrRRNfcg2kNRDE2S14RPzW6hGLnuwL6IZ477fhpPK68IY0HQmr5dTJg4qFvrJh0T83tWoo9tTVd+RDSn/TZ00SzrUia1zvRQgPTPWsj6nVkZNdxOjXSHJ9yA4kek34zlxSuHLigfmuSorlIdc8X9DEx9IWlMTa3+ja/4ZSdZX2gVVvflJtmeuJMpGjc2Mu3vMiVuYMN4LoP1ppYG7xnYrTJQlNJ8UZacDZMOtg6PUjfF52pH9W2SivXQ6PWOmEPizjNCMsGhHVbtOfN9D2biDBignJIMsO6+qAwDN7ikBNbkaNswbODu2UfQpb6SJ1eRlTaQ3uVOE/eRjKW3hEQedA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VYTm+OknIWZt0b1HjpiD+UQmriQrxTmx7b0hlHt4nks=;
+ b=CaEtgm55v+sQ6C55LpFNv+ZQqNYVb/NhHKFnUdSdEJmLSPqBYKJS4k6/0VdqnkISm9VDpnQs/ZcRqDFi6c3zFzvyUtabZUj6OnAd92MEkhaitR7JnJ1NJ72xfTn5eu6tX0PaK6M6tNvemBc16BxGptvzkvgWXwdkfVg0U8O09i5BFvyfdaytsEZUJgBvA+872S9DIUUSQQNUg0vPo4//vhJyg8wdhn09SDp9M0+McvTHs43UCmdXnjF9ih/B6V4JomaBT1PHGgOeL3GP2lo351GsWhZ+kgk9nKzYnOXXj/BPxcIhd7JT51vCrkBWNfrwBqo5gxqom0zw20e+4cOCdg==
+Received: from TYUPR06MB6217.apcprd06.prod.outlook.com (2603:1096:400:358::7)
+ by JH0PR06MB6343.apcprd06.prod.outlook.com (2603:1096:990:18::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 23 Aug
+ 2024 06:40:18 +0000
+Received: from TYUPR06MB6217.apcprd06.prod.outlook.com
+ ([fe80::c18d:f7c6:7590:64fe]) by TYUPR06MB6217.apcprd06.prod.outlook.com
+ ([fe80::c18d:f7c6:7590:64fe%4]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
+ 06:40:18 +0000
+From: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: Prashanth K <quic_prashk@quicinc.com>, "quic_jjohnson@quicinc.com"
+	<quic_jjohnson@quicinc.com>, "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, opensource.kernel
+	<opensource.kernel@vivo.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, Michael Nazzareno Trimarchi
+	<michael@amarulasolutions.com>
+Subject:
+ =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjZdIHVzYjogZ2FkZ2V0OiB1X3NlcmlhbDogQWRk?=
+ =?utf-8?B?IG51bGwgcG9pbnRlciBjaGVjayBpbiBnc19yZWFkX2NvbXBsZXRlICYgZ3Nf?=
+ =?utf-8?Q?write=5Fcomplete?=
+Thread-Topic: [PATCH v6] usb: gadget: u_serial: Add null pointer check in
+ gs_read_complete & gs_write_complete
+Thread-Index: Adr0Om++URnaGaVeQfyA+J7u99KqHgALztYAAAgn/bA=
+Date: Fri, 23 Aug 2024 06:40:18 +0000
+Message-ID:
+ <TYUPR06MB62176043F3E6D6B6675301D3D2882@TYUPR06MB6217.apcprd06.prod.outlook.com>
+References:
+ <TYUPR06MB62171A7BF25AB6963CBA07FED28F2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024082251-grief-profanity-b0da@gregkh>
+In-Reply-To: <2024082251-grief-profanity-b0da@gregkh>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYUPR06MB6217:EE_|JH0PR06MB6343:EE_
+x-ms-office365-filtering-correlation-id: 9500b526-97a3-42d3-9ff4-08dcc33e740f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?ZU0zbnZhK2NDTnlOQXVhUm9WMTNyZWdacjdVbm9QRk5HRmZLc1oveEZFWXl2?=
+ =?utf-8?B?RnFoM1Z2V2pFbUxrRlc2OGRmUDd2eUlpbDdoTkFkb3A4NCsxK1huR2haNFJi?=
+ =?utf-8?B?VEJTb2xXOUFPeUprUlIwdDhsb2p6NlB2YTBpa2Erc01QbXpqYmlVeHdJRzdK?=
+ =?utf-8?B?UXJrU2lxVVd3OVdPc0VuNHFhTXQwQ1lDcDYyWUxEWFIzQnhzNnNDSTNHZkRi?=
+ =?utf-8?B?YXd6a3hSSjZpbzN5NEN0ZHowQm1hTTF6NFlJL3d2UUNPYVhKaU1JS0IwbUJM?=
+ =?utf-8?B?STNMY2NESVBKeGRPbDFZYStVVDNmcjZCYTZPbDVna0Z3b1F4SXFyKzdJZ2E2?=
+ =?utf-8?B?QWJuYkhMRXJvNnNBdTNEOUVFL1p5R1d2NEZiZUc3Q25MZ1lHR1E2aVUxNDNt?=
+ =?utf-8?B?aE9PUlZqcHI1K013MXBtYXRRQ1FEMkpZTWhuRzBGU0FoNmJITlBIZldVa2lD?=
+ =?utf-8?B?OW91dER4T0p4QWl4ak95bmZ4amF1VHBPRkxCS2lndWc1Rjg4Wi93VHdQdThz?=
+ =?utf-8?B?V3hITzlVNXhpTC9YeElBQlVlZHJxb1BteTc5aThUNi8wcURHM0cyS2xNalBE?=
+ =?utf-8?B?MXFFMjNyellOZ29aajRDTmFDQTFsckVOY3RCNDB5V1hYWFo2M3F0MGlVL1N2?=
+ =?utf-8?B?bVJIdm05UXROcFZsOUVaa0FEZE9aY0pxQlN1Zk42KytEaGdRek40MC9QcXJu?=
+ =?utf-8?B?akdtTWJnUkFIWEsrUU9GWEpRR2hHVlBrOUZIUG5zdFl5R2hjTTh5V1pteHJt?=
+ =?utf-8?B?RHMxUWwrK1RYdGJXWHNpaTRHYTFwalVSWERiaGlYVGJsUGwydS9IYWVucHNG?=
+ =?utf-8?B?dlczbVU5Z0RHaHpJNXQzZGpoVkRyNkxnRWVnSjBqY2c5Y0FuV3VMWlJaSmdp?=
+ =?utf-8?B?V2Q4V1BCbGtJb3FLOWNkV21OZzFaTkVxaUl1SUc4VVJ4R3FjT1dMcEFhSkVB?=
+ =?utf-8?B?RHpMR3pEQ25tV1VCUER5eEFIUWJsVmZYamM0blp3R256RHZuMGxWQmVKMGxY?=
+ =?utf-8?B?VEdqbnIvc2oxeVExUGU1YklrRW1XeHBIOFFmc2pnZ2o3NUdSN0JYdDNlaXEy?=
+ =?utf-8?B?TXVPVGRsZEJWREFRNkc4cm9BeVBxN2d0WnZUWkhzSHRPMTlOY0ppZzBkNEFG?=
+ =?utf-8?B?MS84eUxwZ2Uwd2s5VFN5bm9JMkJtVUtReHBCcFc0blA4ak9WNkQ4TXpFUVFS?=
+ =?utf-8?B?WEZKUCtOYzk0a1BUcHAwc2pVZ1REWVBxODVLcVpnckNyV1NqRWJlN0ZYb3FK?=
+ =?utf-8?B?QmU3TWxraTNXbzJaR05xc1lITnJyellxK0NMN3kyNE1WWUpBSjdsK1c4YnBD?=
+ =?utf-8?B?OFJZYzUrZVBFWGxOcnVLTENFUDVnbUgxeWhhWjdWbUt3bGZQS1lFWTZrODNM?=
+ =?utf-8?B?a1h1MmxhaU56TGgvUEhCYWhIaUF2RjdNem9EWG9lQjRUNXViNmlsM0pjZ2ll?=
+ =?utf-8?B?Mm1EN1FsaXVOZ3JjN211SHpHK3IzYnN4aTA5L2o3Q05xZW8zdXg5YTlxai9F?=
+ =?utf-8?B?ampqRGRPMERvbEpHVkc3NktibFJmOGNrMUxJTUQ4dE8vVGpRZUdkVW9qWU9l?=
+ =?utf-8?B?ci9tSVZid29pZGUvNnNHemV5ejBEaG1JYkZGMlE3aUw5eXd4NXV5MzhodXpm?=
+ =?utf-8?B?NzFjVUpMNFRJb21XYWJJcktVY0FiZmszekpSSTNrMVBZNUswcUxqamNaRHRG?=
+ =?utf-8?B?eW9ETDJ4aEFIbG5acWkzenlkT244dVB3K09yY2VNYU95ZHFwaFVKczJmVDhv?=
+ =?utf-8?B?dE5JcnE4UG1KSHZleUNKNDQyaTlON0xVYmFTM21hVjFQUVVxYVZMRERNZ0JL?=
+ =?utf-8?B?N2swYzNSSUNkNDJXbW1lTVRMQThzWi9nOWVvTjhQaEJwYmxUUkc4bDMwazRN?=
+ =?utf-8?B?czkwSlJrbCtwNE0vUlczSHlzY1l3N3p1WFpnR1krd0JhT2c9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYUPR06MB6217.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?QVhiUHY4SlErT3lqL1BINmppQ1NGcVkyUFV6K2hpcWxta0l5Z3hiVjdrNHZL?=
+ =?utf-8?B?aUtxMVpZVE4rSE1kNGdtQ215dzBQWUZzRjNFN29Va2NTbWJKcWRKRVdyNXE4?=
+ =?utf-8?B?Y2o2TVpySm1PRWhmcDVwMWdXLzUzdjZCOENCMU9CbXBURXdyZEJWZlhJZGY0?=
+ =?utf-8?B?MkRtWDg4dGtSOVBKUzF4d2FUc1Q0OERBL0tUa1hqWUVZTGNtQS9KVGh6Y29L?=
+ =?utf-8?B?cFZaS0tUQmpaUndTanZNZVZiRzZBaXRPL0MxODJIbzJjeUdYMlpYMkFMam9o?=
+ =?utf-8?B?Qmx3Qzg1cEZGNXNUQkVla0dnVjFwbkpRenhTZlRMSHcyNGxJdUFnb25xNFQx?=
+ =?utf-8?B?WWdmWVJQbmdXWWZuM2dYcm1QMTZLQ0ZpNy9kT1NHTU9UcHcrM3IxRVFkSkZk?=
+ =?utf-8?B?UVk3cmJPWjI5eTducHFtMlFXdWwxeWFQVitMWjJVRVZYcE1adXUveFM4c0g3?=
+ =?utf-8?B?MzdVazZ0bEU0NEkvKzNzNlEzdVNtZ3R6bG9ZWEJDRzdQSml6elJjelNZS1J5?=
+ =?utf-8?B?TDdQZXFuOElWT1phc1JYeGlpL3lUd3ZmVHJsYno0YmtPT1VPUmVkSi80aHdo?=
+ =?utf-8?B?ZS9paHNmVGZGMjB0MUxHaWJtS1ZtSHUycVVhN2lkaTF6cTFpbnNiQlBPVzFR?=
+ =?utf-8?B?RTBtajgxWVRNZ001Q2lSU04wNmptMzVna2NTSEFjTGd3bEdMbkFFVSt5WUt3?=
+ =?utf-8?B?aWRkWHVRU3dlazhSQy8yR09ZYmEyV2o2ckN4dVR3V2tmNjROTGtSQldpaXUz?=
+ =?utf-8?B?TU1oczRKMVRTVWt1U3VHa3p5UmFsRzhvRFpBQVRjQ0NLNW83RGh5WDVpYWdS?=
+ =?utf-8?B?bjh6bGFBN1k3ZkIwVHpTc3JtNlp4WTJlSVpuTWVGTXNoaWsxeGNsN2tpaEFr?=
+ =?utf-8?B?MG13QVZabXAyTm0xZlljVmlGMVkySmdiTURKSnFGZlZsaDZ3RERDQlc3bGNy?=
+ =?utf-8?B?SXAyeGxWV1dRbkdJMXFySkl3RlVYeWlYUnl2UERtOHJZVmFLUDNnY0o3RWll?=
+ =?utf-8?B?K0F3amoyUklWLzlyUFo1dUV3M2ZGT09kNFA3dE51TmJEZ0Fja1FzM1F4UFhB?=
+ =?utf-8?B?Z0p4bHNTTk5IQzNVSTg1cTVOUDE0NWRHSmxuZnBYMVhHR1pzcjVCRWliTG8x?=
+ =?utf-8?B?eUVPclYxVFFUeUJSTExsaXpwOTFvZmF5dnpWUUIrVWl4TTNISS9hZitnRUx5?=
+ =?utf-8?B?cG4vdDg5cUNON2RieE93UFJMVDkzNExxZEN4MlVlMTNWRmNEM253V1YzWHFj?=
+ =?utf-8?B?ZlRwdkpOUXAyQjJJUTBibWRzdFpEeThHRE1mYzlaN3dZVW9sYkZBd3JWYmxV?=
+ =?utf-8?B?cEhLV1dpeGJmM1l0SmlCM0hWT1d6VWlwQVdzdk84YXkrdzczTmlCWXY0QndM?=
+ =?utf-8?B?b1VlQVdQbC9qWnQ4MUVFMWNQSXVjNUJGSCt2S2htQVVwWkZ3c3ZlY1BXQlhx?=
+ =?utf-8?B?RlFxZHFoS1BoTTdEYURGc3pvUldwRDJKVTVXdnY0bVFlYVNpVEptcVcyZ1RW?=
+ =?utf-8?B?Zy9uUmVPVkE2QXROYXlqRWVGSkcrem80L3JZSVpPUDhoVzU5K3VZb2xMYUZn?=
+ =?utf-8?B?VUVJelVMaHhEWEVZTjRNYTB0TWJkUzcxUkFtZE5SdHlUSUlia0JOak9PN0dX?=
+ =?utf-8?B?R2t1R013SUdqMnB0cW52anFWSWpUOHg5K0wwaExsUzNJeE8rV2NRVVZHTml4?=
+ =?utf-8?B?NkNIOGRqZ3dEOWx2U1NkWmRjeWN1MHJUOHpxVVgwT3ZZTkNmZHhtMTAxZDlt?=
+ =?utf-8?B?enY3RjhLcFJDL205ZEJlM20rb2JnbEdHSDBNSmtrVjV6RGVzODU1YUJReFpZ?=
+ =?utf-8?B?VTI2UmtOakdrd1BDT1AvTFZhZHpnWmhSS2tTcEo2enFRdkN5RXRVSm1NdTZS?=
+ =?utf-8?B?Qy9Tc2RwcEtSME5EN3FvbHNZdGdnZ1VhSHZjMlg3QTdxTGVmdGxSV1QxaE5D?=
+ =?utf-8?B?ME9nSk04eG1TeU43emJqT0VvK0lQcm5JWWxsdzBLOWpyYkFuemdrS0Z1NCsz?=
+ =?utf-8?B?M2loNExxTkFOTlNzWWJ6bnFGbERWMzdVblU4enExdjFna0sxWUxkaVZseWlE?=
+ =?utf-8?B?bWVBZHIxV2VPcjQvR25qd3NicjhwcGdhWWp2VE9ORngwazA2VjhqVFZ3V0J0?=
+ =?utf-8?Q?NLRg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxnWevLshmUPoeAA--.41360S5
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYUPR06MB6217.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9500b526-97a3-42d3-9ff4-08dcc33e740f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2024 06:40:18.2297
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xzrWwULaI4lTfkEnrGsnIM1ENs+FI9zPYY3pVafZSnA07Vb6PbBX9RAJN1OWSMlUY1SJmTwPUyZfSoLEXKU77Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6343
 
-Interrupts can be routed to maximal four virtual CPUs with one HW
-EIOINTC interrupt controller model, since interrupt routing is encoded with
-CPU bitmap and EIOINTC node combined method. Here add the EIOINTC virt
-extension support so that interrupts can be routed to 256 vCPUs on
-hypervisor mode. CPU bitmap is replaced with normal encoding and EIOINTC
-node type is removed, so there are 8 bits for cpu selection, at most 256
-vCPUs are supported for interrupt routing.
-
-Co-developed-by: Song Gao <gaosong@loongson.cn>
-Signed-off-by: Song Gao <gaosong@loongson.cn>
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- .../arch/loongarch/irq-chip-model.rst         |  64 +++++++++++
- .../zh_CN/arch/loongarch/irq-chip-model.rst   |  55 +++++++++
- arch/loongarch/include/asm/irq.h              |   1 +
- drivers/irqchip/irq-loongson-eiointc.c        | 106 ++++++++++++++----
- 4 files changed, 205 insertions(+), 21 deletions(-)
-
-diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
-index 7988f4192363..d2350780ad1d 100644
---- a/Documentation/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/arch/loongarch/irq-chip-model.rst
-@@ -85,6 +85,70 @@ to CPUINTC directly::
-     | Devices |
-     +---------+
- 
-+Virtual extended IRQ model
-+==========================
-+
-+In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt
-+go to CPUINTC directly, CPU UARTS interrupts go to PCH-PIC, while all other
-+devices interrupts go to PCH-PIC/PCH-MSI and gathered by V-EIOINTC (Virtual
-+Extended I/O Interrupt Controller), and then go to CPUINTC directly::
-+
-+       +-----+    +-------------------+     +-------+
-+       | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
-+       +-----+    +-------------------+     +-------+
-+                            ^
-+                            |
-+                      +-----------+
-+                      | V-EIOINTC |
-+                      +-----------+
-+                       ^         ^
-+                       |         |
-+                +---------+ +---------+
-+                | PCH-PIC | | PCH-MSI |
-+                +---------+ +---------+
-+                  ^      ^          ^
-+                  |      |          |
-+           +--------+ +---------+ +---------+
-+           | UARTs  | | Devices | | Devices |
-+           +--------+ +---------+ +---------+
-+
-+
-+Description
-+-----------
-+V-EIOINTC (Virtual Extended I/O Interrupt Controller) is an extension of
-+EIOINTC, it only works in VM mode which runs in KVM hypervisor. Interrupts can
-+be routed to up to four vCPUs via standard EIOINTC, however with V-EIOINTC
-+interrupts can be routed to up to 256 virtual cpus.
-+
-+With standard EIOINTC, interrupt routing setting includes two parts: eight
-+bits for CPU selection and four bits for CPU IP (Interrupt Pin) selection.
-+For CPU selection there is four bits for EIOINTC node selection, four bits
-+for EIOINTC CPU selection. Bitmap method is used for CPU selection and
-+CPU IP selection, so interrupt can only route to CPU0 - CPU3 and IP0-IP3 in
-+one EIOINTC node.
-+
-+With V-EIOINTC it supports to route more CPUs and CPU IP (Interrupt Pin),
-+there are two newly added registers with V-EIOINTC.
-+
-+EXTIOI_VIRT_FEATURES
-+--------------------
-+This register is read-only register, which indicates supported features with
-+V-EIOINTC. Feature EXTIOI_HAS_INT_ENCODE and EXTIOI_HAS_CPU_ENCODE is added.
-+
-+Feature EXTIOI_HAS_INT_ENCODE is part of standard EIOINTC. If it is 1, it
-+indicates that CPU Interrupt Pin selection can be normal method rather than
-+bitmap method, so interrupt can be routed to IP0 - IP15.
-+
-+Feature EXTIOI_HAS_CPU_ENCODE is entension of V-EIOINTC. If it is 1, it
-+indicates that CPU selection can be normal method rather than bitmap method,
-+so interrupt can be routed to CPU0 - CPU255.
-+
-+EXTIOI_VIRT_CONFIG
-+------------------
-+This register is read-write register, for compatibility intterupt routed uses
-+the default method which is the same with standard EIOINTC. If the bit is set
-+with 1, it indicated HW to use normal method rather than bitmap method.
-+
- ACPI-related definitions
- ========================
- 
-diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-index f1e9ab18206c..d696bd394c02 100644
---- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-@@ -87,6 +87,61 @@ PCH-LPC/PCH-MSI，然后被EIOINTC统一收集，再直接到达CPUINTC::
-     | Devices |
-     +---------+
- 
-+虚拟扩展IRQ模型
-+===============
-+
-+在这种模型里面, IPI(Inter-Processor Interrupt) 和CPU本地时钟中断直接发送到CPUINTC,
-+CPU串口 (UARTs) 中断发送到PCH-PIC, 而其他所有设备的中断则分别发送到所连接的PCH_PIC/
-+PCH-MSI, 然后V-EIOINTC统一收集，再直接到达CPUINTC::
-+
-+        +-----+    +-------------------+     +-------+
-+        | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
-+        +-----+    +-------------------+     +-------+
-+                             ^
-+                             |
-+                       +-----------+
-+                       | V-EIOINTC |
-+                       +-----------+
-+                        ^         ^
-+                        |         |
-+                 +---------+ +---------+
-+                 | PCH-PIC | | PCH-MSI |
-+                 +---------+ +---------+
-+                   ^      ^          ^
-+                   |      |          |
-+            +--------+ +---------+ +---------+
-+            | UARTs  | | Devices | | Devices |
-+            +--------+ +---------+ +---------+
-+
-+V-EIOINTC 是EIOINTC的扩展, 仅工作在hyperisor模式下, 中断经EIOINTC最多可个路由到４个
-+虚拟cpu. 但中断经V-EIOINTC最多可个路由到256个虚拟cpu.
-+
-+传统的EIOINTC中断控制器，中断路由分为两个部分：8比特用于控制路由到哪个CPU，
-+4比特用于控制路由到特定CPU的哪个中断管脚.控制CPU路由的8比特前4比特用于控制
-+路由到哪个EIOINTC节点，后4比特用于控制此节点哪个CPU。中断路由在选择CPU路由
-+和CPU中断管脚路由时，使用bitmap编码方式而不是正常编码方式，所以对于一个
-+EIOINTC中断控制器节点，中断只能路由到CPU0 - CPU3，中断管教IP0-IP3。
-+
-+V-EIOINTC新增了两个寄存器，支持中断路由到更多CPU个和中断管脚。
-+
-+V-EIOINTC功能寄存器
-+-------------------
-+功能寄存器是只读寄存器，用于显示V-EIOINTC支持的特性，目前两个支持两个特性
-+EXTIOI_HAS_INT_ENCODE 和 EXTIOI_HAS_CPU_ENCODE。
-+
-+特性EXTIOI_HAS_INT_ENCODE是传统EIOINTC中断控制器的一个特性，如果此比特为1，
-+显示CPU中断管脚路由方式支持正常编码，而不是bitmap编码，所以中断可以路由到
-+管脚IP0 - IP15。
-+
-+特性EXTIOI_HAS_CPU_ENCODE是V-EIOINTC新增特性，如果此比特为1，表示CPU路由
-+方式支持正常编码，而不是bitmap编码，所以中断可以路由到CPU0 - CPU255。
-+
-+V-EIOINTC配置寄存器
-+-------------------
-+配置寄存器是可读写寄存器，为了兼容性考虑，如果不写此寄存器，中断路由采用
-+和传统EIOINTC相同的路由设置。如果对应比特设置为1，表示采用正常路由方式而
-+不是bitmap编码的路由方式。
-+
- ACPI相关的定义
- ==============
- 
-diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/asm/irq.h
-index 480418bc5071..ce85d4c7d225 100644
---- a/arch/loongarch/include/asm/irq.h
-+++ b/arch/loongarch/include/asm/irq.h
-@@ -54,6 +54,7 @@ extern struct acpi_vector_group pch_group[MAX_IO_PICS];
- extern struct acpi_vector_group msi_group[MAX_IO_PICS];
- 
- #define CORES_PER_EIO_NODE	4
-+#define CORES_PER_VEIO_NODE	256
- 
- #define LOONGSON_CPU_UART0_VEC		10 /* CPU UART0 */
- #define LOONGSON_CPU_THSENS_VEC		14 /* CPU Thsens */
-diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
-index b1f2080be2be..bc54f81ec129 100644
---- a/drivers/irqchip/irq-loongson-eiointc.c
-+++ b/drivers/irqchip/irq-loongson-eiointc.c
-@@ -14,6 +14,7 @@
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/kernel.h>
-+#include <linux/kvm_para.h>
- #include <linux/syscore_ops.h>
- #include <asm/numa.h>
- 
-@@ -24,15 +25,37 @@
- #define EIOINTC_REG_ISR		0x1800
- #define EIOINTC_REG_ROUTE	0x1c00
- 
-+#define EXTIOI_VIRT_FEATURES           0x40000000
-+#define  EXTIOI_HAS_VIRT_EXTENSION     BIT(0)
-+#define  EXTIOI_HAS_ENABLE_OPTION      BIT(1)
-+#define  EXTIOI_HAS_INT_ENCODE         BIT(2)
-+#define  EXTIOI_HAS_CPU_ENCODE         BIT(3)
-+#define EXTIOI_VIRT_CONFIG             0x40000004
-+#define  EXTIOI_ENABLE                 BIT(1)
-+#define  EXTIOI_ENABLE_INT_ENCODE      BIT(2)
-+#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(3)
-+
- #define VEC_REG_COUNT		4
- #define VEC_COUNT_PER_REG	64
- #define VEC_COUNT		(VEC_REG_COUNT * VEC_COUNT_PER_REG)
- #define VEC_REG_IDX(irq_id)	((irq_id) / VEC_COUNT_PER_REG)
- #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
- #define EIOINTC_ALL_ENABLE	0xffffffff
-+#define EIOINTC_ALL_ENABLE_VEC_MASK(vector)	(EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1F))
-+#define EIOINTC_REG_ENABLE_VEC(vector)		(EIOINTC_REG_ENABLE + ((vector >> 5) << 2))
-+#define EIOINTC_USE_CPU_ENCODE			BIT(0)
- 
- #define MAX_EIO_NODES		(NR_CPUS / CORES_PER_EIO_NODE)
- 
-+/*
-+ * Routing registers are 32bit, and there is 8-bit route setting for every
-+ * interrupt vector. So one Route register contains four vectors routing
-+ * information.
-+ */
-+#define EIOINTC_REG_ROUTE_VEC(vector)		(EIOINTC_REG_ROUTE + (vector & ~0x03))
-+#define EIOINTC_REG_ROUTE_VEC_SHIFT(vector)	((vector & 0x03) << 3)
-+#define EIOINTC_REG_ROUTE_VEC_MASK(vector)	(0xff << EIOINTC_REG_ROUTE_VEC_SHIFT(vector))
-+
- static int nr_pics;
- 
- struct eiointc_priv {
-@@ -42,6 +65,7 @@ struct eiointc_priv {
- 	cpumask_t		cpuspan_map;
- 	struct fwnode_handle	*domain_handle;
- 	struct irq_domain	*eiointc_domain;
-+	int			flags;
- };
- 
- static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
-@@ -57,7 +81,13 @@ static void eiointc_enable(void)
- 
- static int cpu_to_eio_node(int cpu)
- {
--	return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
-+	int cores;
-+
-+	if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
-+		cores = CORES_PER_VEIO_NODE;
-+	else
-+		cores = CORES_PER_EIO_NODE;
-+	return cpu_logical_map(cpu) / cores;
- }
- 
- #ifdef CONFIG_SMP
-@@ -89,6 +119,16 @@ static void eiointc_set_irq_route(int pos, unsigned int cpu, unsigned int mnode,
- 
- static DEFINE_RAW_SPINLOCK(affinity_lock);
- 
-+static void virt_extioi_set_irq_route(unsigned int vector, unsigned int cpu)
-+{
-+	unsigned long reg = EIOINTC_REG_ROUTE_VEC(vector);
-+	u32 data = iocsr_read32(reg);
-+
-+	data &= ~EIOINTC_REG_ROUTE_VEC_MASK(vector);
-+	data |= cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_VEC_SHIFT(vector);
-+	iocsr_write32(data, reg);
-+}
-+
- static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *affinity, bool force)
- {
- 	unsigned int cpu;
-@@ -105,18 +145,24 @@ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *af
- 	}
- 
- 	vector = d->hwirq;
--	regaddr = EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
--
--	/* Mask target vector */
--	csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
--			0x0, priv->node * CORES_PER_EIO_NODE);
--
--	/* Set route for target vector */
--	eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
--
--	/* Unmask target vector */
--	csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
--			0x0, priv->node * CORES_PER_EIO_NODE);
-+	regaddr = EIOINTC_REG_ENABLE_VEC(vector);
-+
-+	if (priv->flags & EIOINTC_USE_CPU_ENCODE) {
-+		iocsr_write32(EIOINTC_ALL_ENABLE_VEC_MASK(vector), regaddr);
-+		virt_extioi_set_irq_route(vector, cpu);
-+		iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
-+	} else {
-+		/* Mask target vector */
-+		csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector),
-+			     0x0, priv->node * CORES_PER_EIO_NODE);
-+
-+		/* Set route for target vector */
-+		eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
-+
-+		/* Unmask target vector */
-+		csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
-+			     0x0, priv->node * CORES_PER_EIO_NODE);
-+	}
- 
- 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
- 
-@@ -140,17 +186,23 @@ static int eiointc_index(int node)
- 
- static int eiointc_router_init(unsigned int cpu)
- {
--	int i, bit;
--	uint32_t data;
--	uint32_t node = cpu_to_eio_node(cpu);
--	int index = eiointc_index(node);
-+	int i, bit, cores, index, node;
-+	unsigned int data;
-+
-+	node = cpu_to_eio_node(cpu);
-+	index = eiointc_index(node);
- 
- 	if (index < 0) {
- 		pr_err("Error: invalid nodemap!\n");
--		return -1;
-+		return -EINVAL;
- 	}
- 
--	if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) == 0) {
-+	if (eiointc_priv[index]->flags & EIOINTC_USE_CPU_ENCODE)
-+		cores = CORES_PER_VEIO_NODE;
-+	else
-+		cores = CORES_PER_EIO_NODE;
-+
-+	if ((cpu_logical_map(cpu) % cores) == 0) {
- 		eiointc_enable();
- 
- 		for (i = 0; i < eiointc_priv[0]->vec_count / 32; i++) {
-@@ -166,7 +218,9 @@ static int eiointc_router_init(unsigned int cpu)
- 
- 		for (i = 0; i < eiointc_priv[0]->vec_count / 4; i++) {
- 			/* Route to Node-0 Core-0 */
--			if (index == 0)
-+			if (eiointc_priv[index]->flags & EIOINTC_USE_CPU_ENCODE)
-+				bit = cpu_logical_map(0);
-+			else if (index == 0)
- 				bit = BIT(cpu_logical_map(0));
- 			else
- 				bit = (eiointc_priv[index]->node << 4) | 1;
-@@ -370,7 +424,7 @@ static int __init acpi_cascade_irqdomain_init(void)
- static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
- 			       u64 node_map)
- {
--	int i;
-+	int i, val;
- 
- 	node_map = node_map ? node_map : -1ULL;
- 	for_each_possible_cpu(i) {
-@@ -390,6 +444,16 @@ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
- 		return -ENOMEM;
- 	}
- 
-+	if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI)) {
-+		val = iocsr_read32(EXTIOI_VIRT_FEATURES);
-+		if (val & EXTIOI_HAS_CPU_ENCODE) {
-+			val = iocsr_read32(EXTIOI_VIRT_CONFIG);
-+			val |= EXTIOI_ENABLE_CPU_ENCODE;
-+			iocsr_write32(val, EXTIOI_VIRT_CONFIG);
-+			priv->flags = EIOINTC_USE_CPU_ENCODE;
-+		}
-+	}
-+
- 	eiointc_priv[nr_pics++] = priv;
- 	eiointc_router_init(0);
- 	irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
--- 
-2.39.3
-
+SGVsbG8gbGludXggY29tbXVuaXR5IGV4cGVydDoNCg0KPj4gRml4ZXM6IGMxZGNhNTYyYmU4YSAo
+InVzYiBnYWRnZXQ6IHNwbGl0IG91dCBzZXJpYWwgY29yZSIpDQo+PiBDYzogc3RhYmxlQHZnZXIu
+a2VybmVsLm9yZw0KPj4gU2lnbmVkLW9mZi1ieTogTGlhbnFpbiBIdSA8aHVsaWFucWluQHZpdm8u
+Y29tPg0KPj4gLS0tDQo+PiB2NjoNCj4+ICAgLSBVcGRhdGUgdGhlIGNvbW1pdCB0ZXh0DQo+PiAg
+IC0gQWRkIHRoZSBGaXhlcyB0YWcNCj4+ICAgLSBDQyBzdGFibGUga2VybmVsDQo+PiAgIC0gQWRk
+IHNlcmlhbF9wb3J0X2xvY2sgcHJvdGVjdGlvbiB3aGVuIGNoZWNraW5nIHBvcnQgcG9pbnRlcg0K
+Pj4gICAtIE9wdGltaXplIGNvZGUgY29tbWVudHMNCj4+ICAgLSBEZWxldGUgbG9nIHByaW50aW5n
+DQoNCj5Zb3UgbmVlZCB0byBsaXN0IEFMTCBvZiB0aGUgdmVyc2lvbnMgaGVyZSwgSSBzZWVtIHRv
+IGhhdmUgbWlzc2VkIHY0IGFuZA0KPnY1IHNvbWV3aGVyZSBzbyBJIGRvbid0IGtub3cgd2hhdCBj
+aGFuZ2VkIHRoZXJlLg0KDQogVjQ6IEFkZCBjYyBzdGFibGUga2VybmVsICAgICA+PiBDYzogc3Rh
+YmxlQHZnZXIua2VybmVsLm9yZw0KIFY1OiBBZGQgdGhlIEZpeGVzIHRhZyAgICAgICA+PiBGaXhl
+czogYzFkY2E1NjJiZThhICgidXNiIGdhZGdldDogc3BsaXQgb3V0IHNlcmlhbCBjb3JlIikNCj5Z
+b3UgY2FuIGFsc28gYWRkIHRoZSBGaXhlcyB0YWcgYW5kIENDIHN0YWJsZSBrZXJuZWwsIHNvIHRo
+YXQgaXQgY2FuIGJlDQo+YmFja3BvcnRlZCB0byBvbGRlciBrZXJuZWxzIChzdWNoIGFzIDUuMTUp
+IGFsc28uDQogICAtLS0tLS0tLS0gIFRoZSBhYm92ZSB0d28gbGluZXMgYXJlIGZyb20gUHJhc2hh
+bnRoIEsncyBjb21tZW50DQoNCj4+ICBzdGF0aWMgdm9pZCBnc19yZWFkX2NvbXBsZXRlKHN0cnVj
+dCB1c2JfZXAgKmVwLCBzdHJ1Y3QgdXNiX3JlcXVlc3QgDQo+PiAqcmVxKSAgew0KPj4gLQlzdHJ1
+Y3QgZ3NfcG9ydAkqcG9ydCA9IGVwLT5kcml2ZXJfZGF0YTsNCj4+ICsJc3RydWN0IGdzX3BvcnQJ
+KnBvcnQ7DQo+PiArCXVuc2lnbmVkIGxvbmcgIGZsYWdzOw0KPj4gKw0KPj4gKwlzcGluX2xvY2tf
+aXJxc2F2ZSgmc2VyaWFsX3BvcnRfbG9jaywgZmxhZ3MpOw0KPj4gKwlwb3J0ID0gZXAtPmRyaXZl
+cl9kYXRhOw0KPj4gKw0KPj4gKwkvKiBXaGVuIHBvcnQgaXMgTlVMTCwgcmV0dXJuIHRvIGF2b2lk
+IHBhbmljLiAqLw0KDQo+VGhpcyBjb21tZW50IGlzIG5vdCBuZWVkZWQsIGl0J3Mgb2J2aW91cyB0
+aGF0IHlvdSBjaGVjayBiZWZvcmUgZGVyZWZlcmVuY2UuDQogT0ssIEkgd2lsbCBkZWxldGUgdGhp
+cyBjb21tZW50IGluIHRoZSBuZXcgcGF0Y2guDQoNCj5CVVQgeW91IGNhbiBtZW50aW9uIHRoYXQg
+eW91IGFyZSB0cnlpbmcgdG8gY2hlY2sgd2l0aCB0aGUgcmFjZSBzb21ld2hlcmUgZWxzZSwgcmln
+aHQ/ICBQbGVhc2UgZG8gdGhhdCwgYW5kIGRvY3VtZW50IGhlcmUgd2hlcmUgdGhhdCByYWNlIGlz
+IGF0IHRoYXQgeW91IGFyZSBkb2luZyB0aGlzIGV4dHJhIGxvY2tpbmcgZm9yLg0KIEkgZG9uJ3Qg
+ZnVsbHkgdW5kZXJzdGFuZCB3aGF0IHlvdSBtZWFuLiBBcmUgeW91IGFza2luZyB3aGljaCBsb2dp
+YyBpcyBpbiBjb21wZXRpdGlvbiB3aXRoIHRoaXMgb25lLCBjYXVzaW5nIHRoaXMgcG9ydCB0byBi
+ZSBudWxsPw0KICANCg0KPj4gKwlpZiAoIXBvcnQpIHsNCj4+ICsJCXNwaW5fdW5sb2NrX2lycXJl
+c3RvcmUoJnNlcmlhbF9wb3J0X2xvY2ssIGZsYWdzKTsNCj4+ICsJCXJldHVybjsNCj4+ICsJfQ0K
+Pj4gIA0KPj4gLQkvKiBRdWV1ZSBhbGwgcmVjZWl2ZWQgZGF0YSB1bnRpbCB0aGUgdHR5IGxheWVy
+IGlzIHJlYWR5IGZvciBpdC4gKi8NCj4+ICAJc3Bpbl9sb2NrKCZwb3J0LT5wb3J0X2xvY2spOw0K
+Pj4gKwlzcGluX3VubG9jaygmc2VyaWFsX3BvcnRfbG9jayk7DQoNCj5uZXN0ZWQgc3BpbmxvY2tz
+LCB3aHk/ICBEaWQgeW91IHJ1biB0aGlzIHdpdGggbG9ja2RlcCBlbmFibGVkIHRvIHZlcmlmeSB5
+b3UgYXJlbid0IGhpdHRpbmcgYSBkaWZmZXJlbnQgYnVnIG5vdz8NCiBCZWNhdXNlIHRoZXJlIGlz
+IGEgY29tcGV0aXRpb24gcmVsYXRpb25zaGlwIGJldHdlZW4gdGhpcyBmdW5jdGlvbiBhbmQgdGhl
+IGdzZXJpYWxfZGlzY29ubmVjdCBmdW5jdGlvbiwgDQogdGhlIGdzZXJpYWxfZGlzY29ubmVjdCBm
+dW5jdGlvbiBmaXJzdCBvYnRhaW5zIHNlcmlhbF9wb3J0X2xvY2sgYW5kIHRoZW4gb2J0YWlucyBw
+b3J0LT5wb3J0X2xvY2suIA0KIFRoZSBwdXJwb3NlIG9mIG5lc3RpbmcgaXMgdG8gZW5zdXJlIHRo
+YXQgd2hlbiBnc19yZWFkX2NvbXBsZXRlIGlzIGV4ZWN1dGVkLCBpdCBjYW4gYmUgc3VjY2Vzc2Z1
+bGx5IGV4ZWN1dGVkIGFmdGVyIG9idGFpbmluZyBzZXJpYWxfcG9ydF9sb2NrLg0KIGdzZXJpYWxf
+ZGlzY29ubmVjdCguLikNCiB7DQoJc3RydWN0IGdzX3BvcnQJKnBvcnQgPSBnc2VyLT5pb3BvcnQ7
+DQoJLi4uDQoJc3Bpbl9sb2NrX2lycXNhdmUoJnNlcmlhbF9wb3J0X2xvY2ssIGZsYWdzKTsNCglz
+cGluX2xvY2soJnBvcnQtPnBvcnRfbG9jayk7DQoJLi4uDQoJZ3Nlci0+aW9wb3J0ID0gTlVMTDsg
+ICAtLS0+IHBvcnQgPSBOVUxMOw0KCS4uLg0KCXNwaW5fdW5sb2NrKCZwb3J0LT5wb3J0X2xvY2sp
+Ow0KCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnNlcmlhbF9wb3J0X2xvY2ssIGZsYWdzKTsNCiB9
+DQoNCkFmdGVyIGVuYWJsaW5nIHRoZSBsb2NrZGVwIGZ1bmN0aW9uIChDT05GSUdfREVCVUdfTE9D
+S19BTExPQz15KSwgdGhlcmUgaXMgbm8gbG9ja2RlcC1yZWxhdGVkIHdhcm5pbmcgaW5mb3JtYXRp
+b24uDQoNCj5BbmQgd2h5IGlzIG9uZSBpcnFzYXZlIGFuZCBvbmUgbm90PyAgVGhhdCBmZWVscyBv
+ZGQsIGl0IG1pZ2h0IGJlIHJpZ2h0LCBidXQgeW91IG5lZWQgdG8gZG9jdW1lbnQgaGVyZSB3aHkg
+dGhlIGRpZmZlcmVuY2UuDQogQWZ0ZXIgdGhlIGdzX3JlYWRfY29tcGxldGUgZnVuY3Rpb24gaXMg
+ZXhlY3V0ZWQsIHNwaW5fdW5sb2NrX2lycXJlc3RvcmUgaXMgdXNlZCB0byByZXN0b3JlIHRoZSBw
+cmV2aW91cyBzdGF0Ze+8jA0KLQkvKiBRdWV1ZSBhbGwgcmVjZWl2ZWQgZGF0YSB1bnRpbCB0aGUg
+dHR5IGxheWVyIGlzIHJlYWR5IGZvciBpdC4gKi8NCiAJc3Bpbl9sb2NrKCZwb3J0LT5wb3J0X2xv
+Y2spOw0KKwlzcGluX3VubG9jaygmc2VyaWFsX3BvcnRfbG9jayk7DQorDQorCS8qIFF1ZXVlIGFs
+bCByZWNlaXZlZCBkYXRhIHVudGlsIHRoZSB0dHkgbGF5ZXIgaXMgcmVhZHkgZm9yIGl0LiAqLw0K
+IAlsaXN0X2FkZF90YWlsKCZyZXEtPmxpc3QsICZwb3J0LT5yZWFkX3F1ZXVlKTsNCiAJc2NoZWR1
+bGVfZGVsYXllZF93b3JrKCZwb3J0LT5wdXNoLCAwKTsNCi0Jc3Bpbl91bmxvY2soJnBvcnQtPnBv
+cnRfbG9jayk7DQorCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnBvcnQtPnBvcnRfbG9jaywgZmxh
+Z3MpOyAgIC0tLT4gSGVyZSB3ZSB1c2Ugc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSB0byByZXN0b3Jl
+IHRoZSBzdGF0ZQ0KIH0NCg0KVGhhbmtzDQo=
 
