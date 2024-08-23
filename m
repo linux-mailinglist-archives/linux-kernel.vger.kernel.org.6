@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-298446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBAA95C771
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:08:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9338C95C770
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4426B1F25E7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504642821A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12851474D7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C31144D1A;
 	Fri, 23 Aug 2024 08:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U8r8HRX+"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AA513DDC3
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DFD14375C;
+	Fri, 23 Aug 2024 08:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724400455; cv=none; b=dbSrIu6Bq/dN4PCuhfgME5n9NQ5Pbc7nDzIR/ffLx7bwciPph9EAofGMLWZTyDfLwGhTCB79N45r/jTCNwr3WaUY2zms8aPcqdlXT579sFv69pBC/BhHbJd+bTjXKKsgeyuTkt5/pf4/NGynms3CfKnA6RKGFGe7BQwwGYIWjqU=
+	t=1724400455; cv=none; b=VaatSjeRAwxh43c9DyRbpiYX9yzQmcsYyA7d5YF7kVd5IZ4NPLJWFea/uKHodcroNoPGhED6YccZbqjhL+jnKEDBDCocbo+vSnPtV/cON+nz0ZiLBcw+ZcEd4Sfk4KX2UFMMbwqDGBXtM5Wb1uncU3I3NLQgaj+VFPamNGc8azc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724400455; c=relaxed/simple;
-	bh=QURK93jpnDhdkzPAI21Rp1v/Jku3+w+7UPOptIm0Uro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kjufNnT7mbnh6AXmXwTEca5EZQ+HxhZgWmWRyl367x8gP7aEzizui6+yEDpPTtY5OJ/PrTGjDIfrm7UoyIQX5RGHjm85UGlWApuJRf0/vK89Y+/jgh8zFhvr7hcwfbmQeOmCReHkCmgjIxmof+n7KJotynh5Jw1leGvJhyrGNeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U8r8HRX+; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724400450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=q06oqOIsnlBXOPeX9QmHFvGk4DIwl/omFgxTtDgtIdY=;
-	b=U8r8HRX+MecBuIaubX7KG/DiqadhPH9bhKB6ZsqgHjrqEPmVNOcWeKKALOFqm+jJJJ5q2q
-	NM1/DahPLSsLPc8CzzmlNNtXKZE92L65cA5hYLe/8lLlZtSHhkPDuCExOrVEgE88ldZ671
-	qe6c9qxPO+zPKVJx0llqA0qAevsRhfU=
-From: Kunwu Chan <kunwu.chan@linux.dev>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kunwu Chan <chentao@kylinos.cn>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] gpu: host1x: Make host1x_context_device_bus_type constant
-Date: Fri, 23 Aug 2024 16:07:24 +0800
-Message-ID: <20240823080724.148423-1-kunwu.chan@linux.dev>
+	bh=iaVis5EOXLHuAzc69GKY+AXC6mY9Fh7fkPD7OQFy5IY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jRI9ctrMhTWNZdtHD//7wc+JRtqnmCcmQFYzNnlIamrklBcbflaeNfo04x4VEKvxvdNsVS6Q2CosfpL2QFlcE4SrB5w0GQkdLKzVg6DcKU1YNJ2699ntY4MxvmxMNNcBPIhagfGCxduNCE7RwIjy7vAAAKC+ioYzvaIWdbg9DBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wqt3848YZz9sRr;
+	Fri, 23 Aug 2024 10:07:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id zRbH_MPjVkb3; Fri, 23 Aug 2024 10:07:32 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wqt382zJtz9rvV;
+	Fri, 23 Aug 2024 10:07:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 55EAF8B77D;
+	Fri, 23 Aug 2024 10:07:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id hzwVDzL1ZAvs; Fri, 23 Aug 2024 10:07:32 +0200 (CEST)
+Received: from [192.168.233.10] (PO24418.IDSI0.si.c-s.fr [192.168.233.10])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BB8488B763;
+	Fri, 23 Aug 2024 10:07:31 +0200 (CEST)
+Message-ID: <add9adba-dd8c-4c90-b0c1-eb9509b0e4df@csgroup.eu>
+Date: Fri, 23 Aug 2024 10:07:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 19/36] soc: fsl: cpm1: qmc: Fix blank line and spaces
+To: Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240808071132.149251-1-herve.codina@bootlin.com>
+ <20240808071132.149251-20-herve.codina@bootlin.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240808071132.149251-20-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Kunwu Chan <chentao@kylinos.cn>
 
-Since commit d492cc2573a0 ("driver core: device.h: make struct
-bus_type a const *"), the driver core can properly handle constant
-struct bus_type, move the host1x_context_device_bus_type variable
-to be a constant structure as well, placing it into read-only memory
-which can not be modified at runtime.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
----
- drivers/gpu/host1x/context_bus.c   | 2 +-
- include/linux/host1x_context_bus.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Le 08/08/2024 à 09:11, Herve Codina a écrit :
+> checkpatch.pl raises the following issues
+>    CHECK: Please don't use multiple blank lines
+>    CHECK: Alignment should match open parenthesis
+> 
+> Fix them.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
-index d9421179d7b4..7cd0e1a5edd1 100644
---- a/drivers/gpu/host1x/context_bus.c
-+++ b/drivers/gpu/host1x/context_bus.c
-@@ -6,7 +6,7 @@
- #include <linux/device.h>
- #include <linux/of.h>
- 
--struct bus_type host1x_context_device_bus_type = {
-+const struct bus_type host1x_context_device_bus_type = {
- 	.name = "host1x-context",
- };
- EXPORT_SYMBOL_GPL(host1x_context_device_bus_type);
-diff --git a/include/linux/host1x_context_bus.h b/include/linux/host1x_context_bus.h
-index 72462737a6db..c928cb432680 100644
---- a/include/linux/host1x_context_bus.h
-+++ b/include/linux/host1x_context_bus.h
-@@ -9,7 +9,7 @@
- #include <linux/device.h>
- 
- #ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
--extern struct bus_type host1x_context_device_bus_type;
-+extern const struct bus_type host1x_context_device_bus_type;
- #endif
- 
- #endif
--- 
-2.41.0
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
+
+> ---
+>   drivers/soc/fsl/qe/qmc.c | 10 ++++------
+>   1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+> index e2ac3e59bb79..44bd9b949770 100644
+> --- a/drivers/soc/fsl/qe/qmc.c
+> +++ b/drivers/soc/fsl/qe/qmc.c
+> @@ -274,7 +274,6 @@ static void qmc_setbits32(void __iomem *addr, u32 set)
+>   	qmc_write32(addr, qmc_read32(addr) | set);
+>   }
+>   
+> -
+>   int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info)
+>   {
+>   	struct tsa_serial_info tsa_info;
+> @@ -1411,7 +1410,7 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
+>   		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE, 0x00000080);
+>   		qmc_write16(chan->s_param + QMC_SPE_MFLR, 60);
+>   		qmc_write16(chan->s_param + QMC_SPE_CHAMR,
+> -			QMC_SPE_CHAMR_MODE_HDLC | QMC_SPE_CHAMR_HDLC_IDLM);
+> +			    QMC_SPE_CHAMR_MODE_HDLC | QMC_SPE_CHAMR_HDLC_IDLM);
+>   	}
+>   
+>   	/* Do not enable interrupts now. They will be enabled later */
+> @@ -1604,7 +1603,6 @@ static int qmc_probe(struct platform_device *pdev)
+>   	if (IS_ERR(qmc->scc_regs))
+>   		return PTR_ERR(qmc->scc_regs);
+>   
+> -
+>   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "scc_pram");
+>   	if (!res)
+>   		return -EINVAL;
+> @@ -1650,7 +1648,7 @@ static int qmc_probe(struct platform_device *pdev)
+>   	 */
+>   	qmc->bd_size = (nb_chans * (QMC_NB_TXBDS + QMC_NB_RXBDS)) * sizeof(cbd_t);
+>   	qmc->bd_table = dmam_alloc_coherent(qmc->dev, qmc->bd_size,
+> -		&qmc->bd_dma_addr, GFP_KERNEL);
+> +					    &qmc->bd_dma_addr, GFP_KERNEL);
+>   	if (!qmc->bd_table) {
+>   		dev_err(qmc->dev, "Failed to allocate bd table\n");
+>   		ret = -ENOMEM;
+> @@ -1663,7 +1661,7 @@ static int qmc_probe(struct platform_device *pdev)
+>   	/* Allocate the interrupt table */
+>   	qmc->int_size = QMC_NB_INTS * sizeof(u16);
+>   	qmc->int_table = dmam_alloc_coherent(qmc->dev, qmc->int_size,
+> -		&qmc->int_dma_addr, GFP_KERNEL);
+> +					     &qmc->int_dma_addr, GFP_KERNEL);
+>   	if (!qmc->int_table) {
+>   		dev_err(qmc->dev, "Failed to allocate interrupt table\n");
+>   		ret = -ENOMEM;
+> @@ -1711,7 +1709,7 @@ static int qmc_probe(struct platform_device *pdev)
+>   
+>   	/* Enable interrupts */
+>   	qmc_write16(qmc->scc_regs + SCC_SCCM,
+> -		SCC_SCCE_IQOV | SCC_SCCE_GINT | SCC_SCCE_GUN | SCC_SCCE_GOV);
+> +		    SCC_SCCE_IQOV | SCC_SCCE_GINT | SCC_SCCE_GUN | SCC_SCCE_GOV);
+>   
+>   	ret = qmc_finalize_chans(qmc);
+>   	if (ret < 0)
 
