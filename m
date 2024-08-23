@@ -1,110 +1,515 @@
-Return-Path: <linux-kernel+bounces-299114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB7B95D04D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:46:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B64595D04F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12699B259A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096F1286228
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4641885A0;
-	Fri, 23 Aug 2024 14:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8639F18859A;
+	Fri, 23 Aug 2024 14:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GBADjkRx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b="J/LrY7np"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E971581E5;
-	Fri, 23 Aug 2024 14:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424363; cv=none; b=E6OaiZv01F0lPhRauCdGzq+l2aMkAkOYoRyJFiOLLKyy4QUjVGl+mWpRckESLLDM9f1nb/UUFAgqScz0E7gAMHhhk4KXIqHTjQ3TuuzeChJP2LEy9/nt9KWG3uM2oRZ1nTm25OhlLFj2QxZ56oI0GY5KGy7LgvC3ET5OAw5cus0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424363; c=relaxed/simple;
-	bh=KP7pzsC70WkagQf4cPqKhy6qm2cgrVoiu8S8ZLGfn3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o6lsqe1oWFVRJlvq9dqNVWYq+GoT4jcD1+KoIknaA8zVVqmu5rRkTnUyXaW60uvwG6JKFMiz6D0oMs+1YsAFtERbDA84UDTaOY6rOVAvPM+l7I+/swqDqv3LOpAhhG+ZswrKaEDKV6RMpeOkbhrLGhoFb3KKm71z9Itu7n9DRp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GBADjkRx; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724424362; x=1755960362;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KP7pzsC70WkagQf4cPqKhy6qm2cgrVoiu8S8ZLGfn3w=;
-  b=GBADjkRxkJpsi2d0g1vdspXK2yJYqJkPQmVZDIYqFKuCD/wgG242N5KM
-   jcwQcatPRcXiyO+uELFFvXsxa7gEJgppIMTDel4mGbBi251kJ7/ot1+PN
-   j9+wGgsU8tF6bRB67SFUR3exwyyaFiXj4G/ogtyNRHiz6mM5zNO+758bb
-   RluZpgkUJ6i8mrzuW2PY2Hu5ZEyXLxclMpQsPgf1g74z0rqVj7iF/oogJ
-   pCc2k+2G/4pKR03Pvxg5m8w1Fjg184I1OHnGotijQA+7GFMtz3TEtD/XZ
-   cqCN2fW0vxgRQDzQ0K2mwOafYhYZ4gn3cvFEFybNkdWr34bzSPlXszFqp
-   A==;
-X-CSE-ConnectionGUID: JWjqakVTT3qjZvuvclygww==
-X-CSE-MsgGUID: PevFm/GvSfOsrETEnEFVDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23065719"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="23065719"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:46:01 -0700
-X-CSE-ConnectionGUID: b8WRW3v4R0eSlb7fm7+bEA==
-X-CSE-MsgGUID: +5wlqm5bTWG6dtp60iGNtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="66134472"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:45:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shVY3-00000000pBz-0Q58;
-	Fri, 23 Aug 2024 17:45:55 +0300
-Date: Fri, 23 Aug 2024 17:45:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v2] gpio: rockchip: avoid division by zero
-Message-ID: <ZsigomgMVH76ACZH@smile.fi.intel.com>
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
- <20240823034314.62305-2-ye.zhang@rock-chips.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E3F1CD3D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724424387; cv=pass; b=D10e3CEPCa7d9tESyIgE2yWeKFolBmU7UCz893s3eQIW/oyzQXYIDSM7chL512IBbbjVVyc/PxmaJmoMJX66nLIqLeLjtJ3vON0J66LnFR0jjaWxlT6iHbY8b0it4G5p9DBQw4fwhG7A7uuxNut55TZsvSprHtVNQz9mEv4nV0Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724424387; c=relaxed/simple;
+	bh=h7wFVtfec0cJoG3pDka9JFgayvd0Dlk0JZqiTv0Nau0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=milgYJ/ioFsHJQpYtmAEGamqNMgP8pbwpxUqT2RXSJK3MhTUs/HD3Wla7ua4zKEKgELbrrqqz0aCsb5qgn/MhegsoBpl8Uap8fjf67oBQHLv8TPRgWADaZcPY2p8/9ITbXbClm5+eCGpxZrWy5XPk9RrowaB58iHLdoaLYfoBy4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b=J/LrY7np; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: daniel.almeida@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724424376; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FyJt/XplByzSzcGfkfkD0L9FmOE+Tf9DwgmeEwZrZybPGYsormWIH3L8sBZWgwTdKw5vDBc0OGWP0qM/zQEmIXmtT4v1b7d61fF+NsMujs0Ex66vqsf27WXYWgOb0W3LSAprn7naUGctp6b0Z9Uhw8KCLO0rCxiG6qKXpjzJwZM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724424376; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=r1beJeiKHlCI5PJay8A3Wq7xubHfoG7hWD8CtIsNlbU=; 
+	b=gl47rt2kr19eDaAEkv8aP6/7huwGNdPm8Z5Gk3s8bf++fISiOo0E+lCXakVB4OZQfIU8A66u0+IHl4efKqyy1aUwt2gjEx/9vYHAfHZ8TgPBGRKwH+IEdqDOP2spQNfRPbNOzYHYd+Xxp334vtRgIwxF98GOjEAsba5tPyVrX2M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=boris.brezillon@collabora.com;
+	dmarc=pass header.from=<boris.brezillon@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724424376;
+	s=zohomail; d=collabora.com; i=boris.brezillon@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=r1beJeiKHlCI5PJay8A3Wq7xubHfoG7hWD8CtIsNlbU=;
+	b=J/LrY7npamXK8cxlDyfZAGEZHKCQlZ/l89JVGNEfzZXbJQhhixgS1m3l8AUT5NR0
+	fIMifyno9J0A3mqseOCfA63n9Lx9lyPrILlOz0x9mLiTlCAfYxIOJSLjwu4jymf4+7Q
+	L9ocGbI0//zmMzXl7fjkTyCEeLMgQSVCtknVIksU=
+Received: by mx.zohomail.com with SMTPS id 1724424374353762.6549573697081;
+	Fri, 23 Aug 2024 07:46:14 -0700 (PDT)
+Date: Fri, 23 Aug 2024 16:46:08 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: liviu.dudau@arm.com, steven.price@arm.com, carsten.haitzler@arm.com,
+ robh@kernel.org, faith.ekstrand@collabora.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 RESEND 2/5] drm: panthor: add devcoredump support
+Message-ID: <20240823164608.3cbfb5c4@collabora.com>
+In-Reply-To: <20240821143826.3720-3-daniel.almeida@collabora.com>
+References: <20240710225011.275153-1-daniel.almeida@collabora.com>
+	<20240821143826.3720-1-daniel.almeida@collabora.com>
+	<20240821143826.3720-3-daniel.almeida@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823034314.62305-2-ye.zhang@rock-chips.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Fri, Aug 23, 2024 at 11:43:04AM +0800, Ye Zhang wrote:
-> If the clk_get_rate return '0', it will happen division by zero.
+Hi Daniel
 
-At the abstraction level this is good to avoid 0 division and return an error,
-but...
+On Wed, 21 Aug 2024 11:37:28 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
->  		freq = clk_get_rate(bank->db_clk);
-> +		if (!freq)
-> +			return -EINVAL;
+[...]
 
-...do you this the absence of debounce here is a fatal error?
-(Yes, I see it's a fatal when it's bigger than maximum.)
+> +static void *alloc_bytes(struct dump_allocator *alloc, size_t size)
+> +{
+> +	void *ret;
+> +
+> +	if (alloc->pos + size > alloc->capacity)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ret = alloc->curr;
 
->  		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
->  		if (debounce > max_debounce)
->  			return -EINVAL;
+Hm, I suspect we might want to enforce some kind of alignment to make
+sure things can be directly dereferenced without having to copy stuff.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +	alloc->curr += size;
+> +	alloc->pos += size;
+> +	return ret;
+> +}
+> +
+> +static struct drm_panthor_dump_header *
+> +alloc_header(struct dump_allocator *alloc, u32 type, size_t size)
+> +{
+> +	struct drm_panthor_dump_header *hdr;
+> +	int header_size = sizeof(*hdr);
+> +
+> +	hdr = alloc_bytes(alloc, header_size);
+> +	if (IS_ERR(hdr))
+> +		return hdr;
+> +
+> +	hdr->magic = PANT_DUMP_MAGIC;
+> +	hdr->header_type = type;
+> +	hdr->header_size = header_size;
+> +	hdr->data_size = size;
+> +	return hdr;
+> +}
+> +
+> +static int dump_bo(struct panthor_device *ptdev, u8 *dst,
+> +		   struct drm_gem_object *obj, int offset, int size)
+> +{
+> +	struct iosys_map map = {};
+> +	int ret;
+> +
+> +	ret = drm_gem_vmap_unlocked(obj, &map);
 
+This drm_gem_vmap_unlocked() call will be problematic as soon as you
+call the dump logic from any of the scheduler work which are part of
+the dma fence signalling path (see [1] for more details). TLDR; in this
+path you're not allowed to block on a dma_resv_lock(), which
+drm_gem_vmap_unlocked() does. You also can't call the locked variant,
+otherwise you're breaking the lock_held assumption.
 
+I had a quick look at the Xe driver which has a similar architecture
+and implements devcoredump, and they do the dumping in 2 steps to
+work around this:
+
+1. In the fault path, they collect VA regions and their associated BOs
+(they call that a VM snapshot) and a bunch of other information you
+only have at fault time (other kind of snapshots) and might disappear if
+you don't save them somewhere. All allocations in this path are done
+with GFP_NOWAIT (see below for an explanation). They then use
+dev_coredumpm() instead of dev_coredumpv(), so they don't have to
+allocate memory for the final dump, and instead stream the dump when
+userspace reads the core file.
+
+2. In their xe_devcoredump_read() function, they can dump the BO content
+because we're allowed to take the resv lock in that path. Not to
+mention we no longer duplicate the BO data: it just leaves in the
+original BO and is streamed when userspace reads the coredump file.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	drm_dbg(&ptdev->base, "dumping bo %p, offset %d, size %d\n", obj,
+> +		offset, size);
+> +
+> +	memcpy(dst, map.vaddr + offset, size);
+> +	drm_gem_vunmap_unlocked(obj, &map);
+> +	return ret;
+> +}
+> +
+
+[...]
+
+> +
+> +int panthor_core_dump(struct panthor_core_dump_args *args)
+> +{
+> +	u8 *mem;
+> +	int dump_size;
+> +	int ret = 0;
+> +	struct dump_allocator alloc = {};
+> +	struct vm_dump_count va_count = {};
+> +	struct drm_panthor_dump_header *hdr;
+> +	struct drm_panthor_dump_version *version;
+> +	struct drm_panthor_gpu_info *gpu_info;
+> +	struct drm_panthor_csif_info *csif_info;
+> +	struct drm_panthor_fw_info *fw_info;
+> +	struct queue_count group_and_q_cnt = {};
+> +	struct dump_va_args dump_va_args = {};
+> +	struct drm_panthor_dump_group_info group_info;
+> +	struct dump_group_args dump_group_args;
+> +
+> +	panthor_vm_foreach_va(args->group_vm, count_va_cb, &va_count);
+> +
+> +	panthor_sched_get_groupinfo(args->group, &group_info);
+> +
+> +	count_queues(&group_and_q_cnt, &group_info);
+> +
+> +	dump_size = compute_dump_size(&va_count, &group_and_q_cnt);
+> +
+> +	mem = vzalloc(dump_size);
+
+The dumper will be called in a path where it can't block on allocation,
+because blocking/non-failable allocations might trigger the future
+panthor shrinker that might in turn wait on fences that can't be
+signalled because we're blocked waiting on devcoredump to complete its
+dump.
+
+You should use kvzalloc(GFP_NOWAIT) in this path.
+
+> +	if (!mem)
+> +		return ret;
+> +
+> +	alloc = (struct dump_allocator){
+> +		.start = mem,
+> +		.curr = mem,
+> +		.pos = 0,
+> +		.capacity = dump_size,
+> +	};
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION,
+> +			   sizeof(struct drm_panthor_dump_version));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	version = alloc_bytes(&alloc, sizeof(*version));
+> +	if (IS_ERR(version)) {
+> +		ret = PTR_ERR(version);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*version = (struct drm_panthor_dump_version){
+> +		.major = PANT_DUMP_MAJOR,
+> +		.minor = PANT_DUMP_MINOR,
+> +	};
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO,
+> +			   sizeof(args->ptdev->gpu_info));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	gpu_info = alloc_bytes(&alloc, sizeof(*gpu_info));
+> +	if (IS_ERR(gpu_info)) {
+> +		ret = PTR_ERR(gpu_info);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*gpu_info = args->ptdev->gpu_info;
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO,
+> +			   sizeof(args->ptdev->csif_info));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	csif_info = alloc_bytes(&alloc, sizeof(*csif_info));
+> +	if (IS_ERR(csif_info)) {
+> +		ret = PTR_ERR(csif_info);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*csif_info = args->ptdev->csif_info;
+> +
+> +	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO,
+> +			   sizeof(args->ptdev->fw_info));
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto free_valloc;
+> +	}
+> +
+> +	fw_info = alloc_bytes(&alloc, sizeof(*fw_info));
+> +	if (IS_ERR(fw_info)) {
+> +		ret = PTR_ERR(fw_info);
+> +		goto free_valloc;
+> +	}
+> +
+> +	*fw_info = args->ptdev->fw_info;
+> +
+> +	dump_va_args.ptdev = args->ptdev;
+> +	dump_va_args.alloc = &alloc;
+> +	ret = panthor_vm_foreach_va(args->group_vm, dump_va_cb, &dump_va_args);
+> +	if (ret)
+> +		goto free_valloc;
+> +
+> +	dump_group_args =
+> +		(struct dump_group_args){ args->ptdev, &alloc, args->group };
+> +	panthor_sched_get_groupinfo(args->group, &group_info);
+> +	dump_group_info(&dump_group_args, &group_info);
+> +
+> +	if (alloc.pos < dump_size)
+> +		drm_warn(&args->ptdev->base,
+> +			 "dump size mismatch: expected %d, got %zu\n",
+> +			 dump_size, alloc.pos);
+> +
+> +	dev_coredumpv(args->ptdev->base.dev, alloc.start, alloc.pos,
+> +		      GFP_KERNEL);
+> +
+> +	return ret;
+> +
+> +free_valloc:
+> +	vfree(mem);
+> +	return ret;
+> +}
+
+[...]
+
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index e235cf452460..82ec0f20c49e 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -969,6 +969,130 @@ struct drm_panthor_tiler_heap_destroy {
+>  	__u32 pad;
+>  };
+>  
+> +/**
+> + * enum drm_panthor_dump_header_type - Identifies the type of data that follows
+> + * in a panthor core dump.
+> + */
+> +enum drm_panthor_dump_header_type {
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION = 0,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO: Gpu information.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO = 1,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO: Command stream interface information.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO = 2,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO: Information about the firmware.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO = 3,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_VM: A dump of the VM for the context.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_VM = 4,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO: Describes a group. A dump can
+> +	 * contain either the faulty group, or all groups for the DRM FD.
+
+Let's decide on one. Given getting back to a drm_file from a faulty job
+is not easy, I think we should focus on dumping the faulty group only
+for now.
+
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO = 5,
+> +	/**
+> +	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO: Describes a faulty queue. This
+> +	 * will immediately follow a group info.
+> +	 */
+> +	DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO = 6,
+
+Given a group has a maximum of 32 queues (see MAX_CS_PER_CSG), I'm not
+sure we should split the group and queue info into 2 different
+sections. Just add a
+
+	struct drm_panthor_dump_queue_info queues[32];
+
+field to drm_panthor_dump_queue_info and you should be good.
+
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_header - A header that describes a section of a panthor core dump.
+> + */
+> +struct drm_panthor_dump_header {
+
+I would call that one dump_section or dump_section_header.
+
+> +	/** @magic: Always set to PANT (0x544e4150). */
+> +	__u32 magic;
+
+Not convinced we need to repeat the magic for each header. Having one
+in the coredump entry should probably be enough.
+
+> +
+> +	/** @header_type: Identifies the type of data in the following section of the
+
+For multiline doc headers, we use the following format:
+
+	/**
+	 * @xxx: blabla
+	 *
+	 * ...
+
+> +	 * core dump file
+> +	 */
+> +	enum drm_panthor_dump_header_type header_type;
+> +
+> +	/** @header_size: The size of the header.
+> +	 *
+> +	 * This is for backward-compatibility purposes in case this structure is
+> +	 * augmented in the future. It allows userspace to skip over the header and
+> +	 * access the actual data it describes.
+> +	 */
+> +	__u32 header_size;
+
+Feels like the section itself could embed the extra information needed,
+with a new header_type so the old version keeps working. Not convinced
+we will ever need anything more in the header that couldn't be
+expressed through other means to be honest. There's one interesting
+purpose for this field though: enforcing alignment of the following
+data. Another way of doing that would be to split the headers and
+content, and have the headers provide an explicit data_offset.
+
+> +
+> +	/** @data_size: The size of the following section */
+> +	__u32 data_size;
+
+If we want to make that future-proof, we should probably use an u64
+here.
+
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_version - Version information for a Panthor GPU dump.
+> + *
+> + * This structure is used to hold version information when performing a dump of
+> + * the state of a Panthor GPU.
+> + */
+> +struct drm_panthor_dump_version {
+
+I would move the magic here and call that one drm_panthor_dump_header.
+
+> +	/** @major: Versioning information for backwards compatibility */
+> +	__u32 major;
+
+Please add an blank line between each field definition.
+
+> +	/** @minor: Versioning information for backwards compatibility */
+> +	__u32 minor;
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_group_info - Group information for a Panthor GPU
+> + * dump.
+> + *
+> + * This structure is used to hold information about a group when performing a
+> + * dump of the state of a Panthor GPU.
+> + */
+> +struct drm_panthor_dump_group_info {
+> +	/** @queue_count: The number of queues in the group. */
+> +	__u32 queue_count;
+> +	/** @faulty_queues: A bitmask denoting the faulty queues */
+> +	__u32 faulty_bitmask;
+> +};
+> +
+> +#define DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_FAULTY	(1 << 0)
+> +
+> +/**
+> + * struct drm_panthor_dump_queue_info - Queue information for a Panthor GPU
+> + * dump.
+> + *
+> + * This structure is used to hold information about a queue when performing a
+> + * dump of the state of a Panthor GPU.
+> + */
+> +struct drm_panthor_dump_queue_info {
+> +	/** See DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_XXX */
+> +	u32 flags;
+> +	/** @cs_id: The ID of the command stream. */
+> +	__s32 cs_id;
+> +	/** @faulty: Whether this queue has faulted */
+
+There's no field defined, just the doc.
+
+> +	/** @ringbuf_gpuva: The GPU virtual address of the ring buffer. */
+> +	__u64 ringbuf_gpuva;
+> +	/** @ringbuf_insert: The insert point (i.e.: offset) in the ring buffer. This
+> +	 * is where a instruction would be inserted next by the CPU.
+> +	 */
+> +	__u64 ringbuf_insert;
+> +	/** @ringbuf_extract: The extract point (i.e.: offset) in the ring buffer.
+> +	 * This is where the GPU would read the next instruction.
+> +	 */
+> +	__u64 ringbuf_extract;
+
+Is it not encoding the current ring buffer position, rather than the
+next one? For instance, I would expect us to pass
+ringbuf_gpuva + (ringbuf_extract % ringbuf_size) to the userspace
+decoder if we want to follow the flow of instructions that lead to the
+GPU fault.
+
+> +	/** @ringbuf_size: The size of the ring buffer */
+> +	__u64 ringbuf_size;
+
+I think it's also interesting to dump
+panthor_fw_cs_output_iface::status_cmd_ptr so we know exactly which CS
+instruction was being executed when the crash happened (I can imagine
+the faulty instruction being pointed at in pandecode). Actually, I think
+pretty much everything in panthor_fw_cs_output_iface is interesting to
+have. Beware that most of the information in panthor_fw_cs_output_iface
+are only valid after a STATUS_UPDATE or SUSPEND operation, so probably
+something to look at when you take the faulty group snapshot.
+
+> +};
+> +
+> +/**
+> + * struct drm_panthor_dump_gpuva - Describes a GPU VA range in the dump.
+> + */
+> +struct drm_panthor_dump_gpuva {
+> +	/** @addr: The start address for the mapping */
+> +	__u64 addr;
+> +	/** @range: The range covered by the VA mapping */
+> +	__u64 range;
+> +};
+> +
+>  #if defined(__cplusplus)
+>  }
+>  #endif
+
+That's it for now. I didn't focus much on the implementation as I think
+the redesign I suggested will significantly change it.
+
+Regards,
+
+Boris
+
+[1]https://elixir.bootlin.com/linux/v6.10.4/source/drivers/dma-buf/dma-fence.c#L195
 
