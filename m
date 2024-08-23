@@ -1,254 +1,276 @@
-Return-Path: <linux-kernel+bounces-299166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C3495D120
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A8095D123
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ECD81C23C47
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CFD1C23C4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B002188A0F;
-	Fri, 23 Aug 2024 15:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="huwcS2DW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2990D188A0F;
+	Fri, 23 Aug 2024 15:13:36 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF68186E4A
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12E93BBC0
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425956; cv=none; b=nCdq7ZOeeb758GoQRLkxuEtsbHnRFu2tcjNnyipmkv+eLBSb7N4uYqkUH/orH8Hv9tiSRKmqL3QDexdxZMCw89zXQbMSNFgMM0+T0JasOg73j1XbVtW8vWm/8Tfqidwk7F5/2j7HZ5k3ju8dud+2fbrFt5Rs4UchVV8VBVuRtcU=
+	t=1724426015; cv=none; b=R9uMqLM/B1b1Y4/3Te5x3m6QiNddWwYoVtxAg150anaMvdmgRgoaPoj+wJiWcJjUhdtdZt/ceOJlucW8Xs1PcGi9PyQ4Mnpxw+2YFC/l+ixkSLtLQpPh4iDVVj5rEBuByIJUXCeAloKeYsBTjKr4gXW3fA0wDRcLBXs/x4wzHFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724425956; c=relaxed/simple;
-	bh=4gtdQqtCFuAhiErcVOJdYNhZ62ZagUdQ3AaOrDAmOKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kuUrnmSFmHiQXnMNnntQAisVhaSBHmcj3cDAl4V5cMVDB0MKU6cGZumisdEWjOB2rneQYLCRTHtWbwAfB93emqPf6Z0v9DQzv0mVKSlbU69uVggCvmxtcmVbwE6M26/3uOxn1o6YndM5ZLNFknxxMg+3WRTj1g5AaSr7SjWm+TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=huwcS2DW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NF9JlA014479;
-	Fri, 23 Aug 2024 15:12:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:content-transfer-encoding
-	:mime-version; s=pp1; bh=ehYtOPwpL+7EbLCFZzDY05S020zqMOSSQsxSjNu
-	1MTM=; b=huwcS2DW6JqyaAwfbX9wJs/oKXRhu0bN5NqTOPQ3UaQ3Ljhhc14zLZw
-	+mx8v69wPcP9hBSJOhLuGQ6le//fTMOkOX5JVbf8KtFs2aALwZ97Twje+5Yx+Cr7
-	PttqSK3XxWsc+4mCOBZrboUwbjyxCijkTfuWZDdPq04cknbDx6todkBj0glc+4t8
-	uo34iM3xLY9baeLamMh62r4M4/idTXHo3SnQoBOX4SniFInV1HjjgX7ipInQ84WC
-	/33BImRDP45lNvg3dTZyqzkqKxzx0hXhXKtkmvWhu2nUWbUP8ZfdMyHGUXY7GPLk
-	ZrlVGzMZ9ShaDQYJBFArt/jAzwv45Ww==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vtj80ad-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 15:12:19 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47NFCJbf020043;
-	Fri, 23 Aug 2024 15:12:19 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vtj80a9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 15:12:19 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47NBHc0i019050;
-	Fri, 23 Aug 2024 15:12:18 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376qae0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 15:12:18 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47NFCBCu53477710
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 15:12:13 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 85E9A2004F;
-	Fri, 23 Aug 2024 15:12:11 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B251520043;
-	Fri, 23 Aug 2024 15:12:09 +0000 (GMT)
-Received: from ltcrain34-lp2.aus.stglabs.ibm.com (unknown [9.3.101.41])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 Aug 2024 15:12:09 +0000 (GMT)
-From: Narayana Murty N <nnmlinux@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com,
-        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-Subject: [PATCH v2] powerpc/pseries/eeh: Fix pseries_eeh_err_inject
-Date: Fri, 23 Aug 2024 10:11:58 -0500
-Message-ID: <20240823151158.92602-1-nnmlinux@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: vWGBd6PpRxzd7zd1iZIda1yibW-5n0xf
-X-Proofpoint-GUID: B6dA0RuJ8B3SvHhveRONLaaB-VQYHN9u
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1724426015; c=relaxed/simple;
+	bh=IePRQnnPlG7oh9AIN1/YtOZwzR1l2c59YbI/WTzUi7U=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qPwhJZVok3dFMiNxQWBgyuKS/42z6UIp8xMl3XNNLXvgKRYaoi0QKPk2DOrMqJwZXJZkmVggfou/yzb341LS/AXYVv5d8HvLrrlajuoQv5MYbER3dz7CIfiEz8o/LPDCXOVk6b+wrHS1wAUvcetmsDvQBg+TL1koWoxLCkdv8Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81faf98703eso217553539f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:13:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724426013; x=1725030813;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jyNYaEO283QBpS1opOSD/KF5NHRnbT90DG//xeHXTl4=;
+        b=SGGRnq1T18Rr+lflXWQYbrve+A0EisOkX9YuVPmGQHuNdzxVjz2axsgL9wKuv4yEWV
+         eL4Pb9Z5zjaaNc448mfyABUWs7dya7g/RVKpoZV97bT924gXFGMBiuQAodijRiIYKrup
+         xAyNKVhFL6sblFMQkfdOtXmBTx8v8D8uMx8S/wRMlEsqcIdExsRDz7V6YY9b7nQ4EaP3
+         FTq2QM2JsPe1dv2LzQV0CYdPOJC5M26qxEwuuuIRmPAQ/T4lKbgqjzRXqTxv3SP/Jr/Q
+         Pt8GvYMQOgGBCxzNeTbCOn+La1+h7mmeL7uVzZw4RgBDozAyW+pH9dTv+HCT7x0qdawk
+         WtOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGnKezChes+GoOhcuFEv5PIFDlexwMxLnr2lA2cG+sdJdr83UB8Jc0NvdkiXKZhIxlnVpIL9t7soYJexo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+THULvtHNO21JBUZ/gzPkPTsT/czm/x7QOtOP3E50U35aGwmf
+	2mhVnyY7GRgY7rH97r08hrCXdtroO09D93QMuUtj1+AFvOJWgKV8KEKkZTXpXBOfzF905Lt12y4
+	hexH1MvvJ/b6ZrFU/r7fVNGcKLTSb2WHJtQe2l9Gi64ndmrQ2+ELxeG0=
+X-Google-Smtp-Source: AGHT+IF98di3hc2TZwYlK1+8jyWaf7gy+z2D5ODb1vdcEs38yGGqHxpnVveNk1Vv49etUhsRCcPA1PltkG2AjKpp+hGY8KpRw0WG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_11,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 mlxlogscore=999 clxscore=1015
- suspectscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408230111
+X-Received: by 2002:a05:6e02:b4c:b0:39b:3bae:1f44 with SMTP id
+ e9e14a558f8ab-39e3c9f0462mr1648965ab.3.1724426012838; Fri, 23 Aug 2024
+ 08:13:32 -0700 (PDT)
+Date: Fri, 23 Aug 2024 08:13:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000efdd2c06205b37bc@google.com>
+Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in hci_cmd_work
+From: syzbot <syzbot+430996d5d5a2ca4b7d07@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-VFIO_EEH_PE_INJECT_ERR ioctl is currently failing on pseries
-due to missing implementation of err_inject eeh_ops for pseries.
-This patch implements pseries_eeh_err_inject in eeh_ops/pseries
-eeh_ops. Implements support for injecting MMIO load/store error
-for testing from user space.
+Hello,
 
-The check on PCI error type code is moved to platform code, since
-the eeh_pe_inject_err can be allowed to more error types depending
-on platform requirement.
+syzbot found the following issue on:
 
-Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+HEAD commit:    d67978318827 Merge tag 'x86_cpu_for_v6.11_rc1' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17409785980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c27e4a218c759511
+dashboard link: https://syzkaller.appspot.com/bug?extid=430996d5d5a2ca4b7d07
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4c2b69e5e6e3/disk-d6797831.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4723bc702146/vmlinux-d6797831.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ad0798383ba0/bzImage-d6797831.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+430996d5d5a2ca4b7d07@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: slab-use-after-free in refcount_read include/linux/refcount.h:136 [inline]
+BUG: KASAN: slab-use-after-free in skb_unref include/linux/skbuff.h:1222 [inline]
+BUG: KASAN: slab-use-after-free in __kfree_skb_reason net/core/skbuff.c:1195 [inline]
+BUG: KASAN: slab-use-after-free in kfree_skb_reason+0x36/0x210 net/core/skbuff.c:1222
+Read of size 4 at addr ffff888067541c24 by task kworker/u9:2/5086
+
+CPU: 0 PID: 5086 Comm: kworker/u9:2 Not tainted 6.10.0-syzkaller-01155-gd67978318827 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: hci0 hci_cmd_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ refcount_read include/linux/refcount.h:136 [inline]
+ skb_unref include/linux/skbuff.h:1222 [inline]
+ __kfree_skb_reason net/core/skbuff.c:1195 [inline]
+ kfree_skb_reason+0x36/0x210 net/core/skbuff.c:1222
+ kfree_skb include/linux/skbuff.h:1257 [inline]
+ hci_send_cmd_sync net/bluetooth/hci_core.c:4090 [inline]
+ hci_cmd_work+0x63e/0x710 net/bluetooth/hci_core.c:4111
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 5086:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4002 [inline]
+ kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4009
+ skb_clone+0x190/0x3f0 net/core/skbuff.c:2052
+ hci_send_cmd_sync net/bluetooth/hci_core.c:4091 [inline]
+ hci_cmd_work+0x66a/0x710 net/bluetooth/hci_core.c:4111
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Freed by task 12745:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object+0xf7/0x160 mm/kasan/common.c:240
+ __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2196 [inline]
+ slab_free mm/slub.c:4438 [inline]
+ kmem_cache_free+0x12f/0x3a0 mm/slub.c:4513
+ kfree_skbmem+0x10e/0x200 net/core/skbuff.c:1131
+ __kfree_skb net/core/skbuff.c:1188 [inline]
+ kfree_skb_reason+0x138/0x210 net/core/skbuff.c:1223
+ kfree_skb include/linux/skbuff.h:1257 [inline]
+ __hci_req_sync+0x61d/0x980 net/bluetooth/hci_request.c:184
+ hci_req_sync+0x97/0xd0 net/bluetooth/hci_request.c:206
+ hci_inquiry+0x3ea/0x950 net/bluetooth/hci_core.c:383
+ hci_sock_ioctl+0x2bb/0x880 net/bluetooth/hci_sock.c:1153
+ sock_do_ioctl+0x116/0x280 net/socket.c:1222
+ sock_ioctl+0x22e/0x6c0 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888067541b40
+ which belongs to the cache skbuff_head_cache of size 240
+The buggy address is located 228 bytes inside of
+ freed 240-byte region [ffff888067541b40, ffff888067541c30)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x67541
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000000 ffff88801929a780 ffffea0001fe0ac0 dead000000000004
+raw: 0000000000000000 00000000000c000c 00000001ffffefff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 11673, tgid 11673 (syz-executor), ts 518110047408, free_ts 516558045102
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1473
+ prep_new_page mm/page_alloc.c:1481 [inline]
+ get_page_from_freelist+0x1353/0x2e50 mm/page_alloc.c:3425
+ __alloc_pages_noprof+0x22b/0x2460 mm/page_alloc.c:4683
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x56/0x110 mm/slub.c:2265
+ allocate_slab mm/slub.c:2428 [inline]
+ new_slab+0x84/0x260 mm/slub.c:2481
+ ___slab_alloc+0xdac/0x1870 mm/slub.c:3667
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3757
+ __slab_alloc_node mm/slub.c:3810 [inline]
+ slab_alloc_node mm/slub.c:3990 [inline]
+ kmem_cache_alloc_noprof+0x2a7/0x2f0 mm/slub.c:4009
+ skb_clone+0x190/0x3f0 net/core/skbuff.c:2052
+ __netlink_deliver_tap_skb net/netlink/af_netlink.c:300 [inline]
+ __netlink_deliver_tap net/netlink/af_netlink.c:325 [inline]
+ netlink_deliver_tap+0xab3/0xd90 net/netlink/af_netlink.c:338
+ netlink_deliver_tap_kernel net/netlink/af_netlink.c:347 [inline]
+ netlink_unicast_kernel net/netlink/af_netlink.c:1334 [inline]
+ netlink_unicast+0x604/0x820 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ __sys_sendto+0x47f/0x4e0 net/socket.c:2204
+ __do_sys_sendto net/socket.c:2216 [inline]
+ __se_sys_sendto net/socket.c:2212 [inline]
+ __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2212
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 12063 tgid 12059 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1093 [inline]
+ free_unref_folios+0x991/0x1310 mm/page_alloc.c:2637
+ folios_put_refs+0x487/0x6d0 mm/swap.c:1024
+ free_pages_and_swap_cache+0x45f/0x510 mm/swap_state.c:332
+ __tlb_batch_free_encoded_pages+0xf9/0x290 mm/mmu_gather.c:136
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu mm/mmu_gather.c:373 [inline]
+ tlb_finish_mmu+0x168/0x7b0 mm/mmu_gather.c:465
+ exit_mmap+0x3d1/0xb20 mm/mmap.c:3354
+ __mmput+0x12a/0x480 kernel/fork.c:1340
+ mmput+0x62/0x70 kernel/fork.c:1362
+ exit_mm kernel/exit.c:567 [inline]
+ do_exit+0x9b7/0x2ba0 kernel/exit.c:863
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1025
+ get_signal+0x25fb/0x2770 kernel/signal.c:2917
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888067541b00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+ ffff888067541b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888067541c00: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+                               ^
+ ffff888067541c80: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888067541d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
+==================================================================
+
+
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Testing:
-========
-vfio-test [1] by Alex Willamson, was forked and updated to add
-support inject error on pSeries guest and used to test this
-patch[2].
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-References:
-===========
-[1] https://github.com/awilliam/tests
-[2] https://github.com/nnmwebmin/vfio-ppc-tests/tree/vfio-ppc-ex
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-================
-Changelog:
-V1:https://lore.kernel.org/all/20240822082713.529982-1-nnmlinux@linux.ibm.com/
-- Resolved build issues for ppc64|le_defconfig by moving the
-pseries_eeh_err_inject() definition outside of the CONFIG_PCI_IOV
-code block.
-- New eeh_pe_inject_mmio_error wrapper function added to avoid
-CONFIG_EEH is not set.
----
- arch/powerpc/include/asm/eeh.h               |  6 ++-
- arch/powerpc/kernel/eeh.c                    |  9 +++--
- arch/powerpc/platforms/pseries/eeh_pseries.c | 39 +++++++++++++++++++-
- 3 files changed, 48 insertions(+), 6 deletions(-)
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
-index 91a9fd53254f..8da6b047a4fe 100644
---- a/arch/powerpc/include/asm/eeh.h
-+++ b/arch/powerpc/include/asm/eeh.h
-@@ -308,7 +308,7 @@ int eeh_pe_reset(struct eeh_pe *pe, int option, bool include_passed);
- int eeh_pe_configure(struct eeh_pe *pe);
- int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
- 		      unsigned long addr, unsigned long mask);
--
-+int eeh_pe_inject_mmio_error(struct pci_dev *pdev);
- /**
-  * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
-  *
-@@ -338,6 +338,10 @@ static inline int eeh_check_failure(const volatile void __iomem *token)
- 	return 0;
- }
- 
-+static inline int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
-+{
-+	return -ENXIO;
-+}
- #define eeh_dev_check_failure(x) (0)
- 
- static inline void eeh_addr_cache_init(void) { }
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index d03f17987fca..49ab11a287a3 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -1537,10 +1537,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
- 	if (!eeh_ops || !eeh_ops->err_inject)
- 		return -ENOENT;
- 
--	/* Check on PCI error type */
--	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
--		return -EINVAL;
--
- 	/* Check on PCI error function */
- 	if (func < EEH_ERR_FUNC_MIN || func > EEH_ERR_FUNC_MAX)
- 		return -EINVAL;
-@@ -1851,6 +1847,11 @@ static const struct file_operations eeh_dev_break_fops = {
- 	.read   = eeh_debugfs_dev_usage,
- };
- 
-+int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
-+{
-+	return eeh_debugfs_break_device(pdev);
-+}
-+
- static ssize_t eeh_dev_can_recover(struct file *filp,
- 				   const char __user *user_buf,
- 				   size_t count, loff_t *ppos)
-diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
-index b1ae0c0d1187..1893f66371fa 100644
---- a/arch/powerpc/platforms/pseries/eeh_pseries.c
-+++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
-@@ -784,6 +784,43 @@ static int pseries_notify_resume(struct eeh_dev *edev)
- }
- #endif
- 
-+/**
-+ * pseries_eeh_err_inject - Inject specified error to the indicated PE
-+ * @pe: the indicated PE
-+ * @type: error type
-+ * @func: specific error type
-+ * @addr: address
-+ * @mask: address mask
-+ * The routine is called to inject specified error, which is
-+ * determined by @type and @func, to the indicated PE
-+ */
-+static int pseries_eeh_err_inject(struct eeh_pe *pe, int type, int func,
-+				  unsigned long addr, unsigned long mask)
-+{
-+	struct	eeh_dev	*pdev;
-+
-+	/* Check on PCI error type */
-+	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
-+		return -EINVAL;
-+
-+	switch (func) {
-+	case EEH_ERR_FUNC_LD_MEM_ADDR:
-+	case EEH_ERR_FUNC_LD_MEM_DATA:
-+	case EEH_ERR_FUNC_ST_MEM_ADDR:
-+	case EEH_ERR_FUNC_ST_MEM_DATA:
-+		/* injects a MMIO error for all pdev's belonging to PE */
-+		pci_lock_rescan_remove();
-+		list_for_each_entry(pdev, &pe->edevs, entry)
-+			eeh_pe_inject_mmio_error(pdev->pdev);
-+		pci_unlock_rescan_remove();
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
-+
-+	return 0;
-+}
-+
- static struct eeh_ops pseries_eeh_ops = {
- 	.name			= "pseries",
- 	.probe			= pseries_eeh_probe,
-@@ -792,7 +829,7 @@ static struct eeh_ops pseries_eeh_ops = {
- 	.reset			= pseries_eeh_reset,
- 	.get_log		= pseries_eeh_get_log,
- 	.configure_bridge       = pseries_eeh_configure_bridge,
--	.err_inject		= NULL,
-+	.err_inject		= pseries_eeh_err_inject,
- 	.read_config		= pseries_eeh_read_config,
- 	.write_config		= pseries_eeh_write_config,
- 	.next_error		= NULL,
--- 
-2.45.2
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
