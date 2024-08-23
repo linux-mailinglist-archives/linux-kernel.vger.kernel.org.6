@@ -1,307 +1,128 @@
-Return-Path: <linux-kernel+bounces-299721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7076B95D92D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:19:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8296595D93C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2805828473B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7871C22288
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B691C870D;
-	Fri, 23 Aug 2024 22:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="mUN+84QF"
-Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56051C8FB6;
+	Fri, 23 Aug 2024 22:26:13 +0000 (UTC)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A55192590
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 22:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19786191F6B;
+	Fri, 23 Aug 2024 22:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724451554; cv=none; b=d5cL86d6uayIlKm9IS1A1eph1yJxakLaKHZp8SZdCGI0RiPXDitFjC5zhZgDofm+fRqdjRlUPzOX7uWRZIwKjQiMjQTsHgRs0BlQ5Z3snXZfrx/MBQXzKVVJ5F4ZYpGTH5KJh0phgN8oI2M+LHVqEi9KuvSOMRDCWqzppwqerCg=
+	t=1724451973; cv=none; b=c/43JJ0/dT1cHLr1r1wlooE/OZOo2WqJQyyOI80MJzjO3hqfBQ1ruBu2zylpVUxWcRRlxcW256JKoPMU/OC/gIGwrNHb1tUeDAixGGsinSSsnuu2xlq69tp2zE/Pe5CXOSxPdM5PfN4HfmRjfB1J9qGZeAdo14GGC1hiDWyvRBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724451554; c=relaxed/simple;
-	bh=wE5MeZ/TfiicdYafgD6Teglz+CEKSXVRhEU2cDL5wL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IGyBwfrCvhd+bjbaW+bRaQaNLyE8UrLpjc+OOgegjgAsuAh5G7GoPemzFT1kaziU/PY4Cm3wTQd6djtc0RUIlYdn3lJUzp+8GQyZvVEDvIuRMMG0DxIeJZiIMvI/UvEI78wWeGE9Ui0EhxTPGP1klW/NTa+aPu7XrIsqHZm9EbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=mUN+84QF; arc=none smtp.client-ip=17.58.6.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724451552;
-	bh=hK2bUFwzHVU9grr2BqVFrLx3aTZWAKPQfP4qaJ8H2Fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=mUN+84QFaZuSrBcDE9KTp4A3/ubk9jWcEov5iVmtmM6h6xBwf15zvolDvSXWWLtrQ
-	 86vqzxGJBjJw5uh5FD1QaLq7tSgHIot/gj/g1gw4r0w9OTHDHjvsN5l8zCG+ZptDla
-	 sqVSCNZ6AAsBFy7e+qsxnYI4QWtra5UUK53dKpKOIb4in98eSAzWfSCuMyhWJ+O12i
-	 N2ky9emoOvUF9PnJG/PK6FWe9KSxfQts+Tm+bqrOFuZREKUSE4kOw1hS17SH595Bqw
-	 /KuoC9kaJYtAnQc5nZtgFeerd64r96WvjibGPj99vGbm0YSBRZ4ALz2BDHyiseci2a
-	 VQO8sYNphLOHw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id E7E2BDC024C;
-	Fri, 23 Aug 2024 22:19:01 +0000 (UTC)
-Message-ID: <9030e7e9-7255-497e-be4c-5bba3a373a54@icloud.com>
-Date: Sat, 24 Aug 2024 06:18:56 +0800
+	s=arc-20240116; t=1724451973; c=relaxed/simple;
+	bh=eLCmEV3ljwLRxFocwTohCv1knJB6UKK5vBItWzRmJxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZrR0u6+5ltt1SCN67tBfkf1xRRkyRiyuwKIASOGlPflkaX+84CK7YS8WvT9EzKIonjzBy588gpjG19s95UyYLubnAwO1xWAHBAJPZJWN/by/zsxyruz+/rEHlrWYN/bQzC5JiTI8j6HbFRMu+I46dm81zCPULhQNG+kXrnYah80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so2044856b3a.3;
+        Fri, 23 Aug 2024 15:26:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724451971; x=1725056771;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FdNQRWy4m/f1LqMofqJHKv4N0JPmy7Ex46RigXKn8ow=;
+        b=sXPHWUJ4/iBLIQ85zWjRcS8i8TG4unMBOfXLUqzVxXAm7Wgs0hxkLiztweOy1w3VVw
+         bZr9nelOHzGNQleBi807wOGGyslIAcbY94atvqAyJrFz7SmmZ+v+iGqxQ2sBdPHutf88
+         AdUrJddM18tptOrQuI11qc3e+8DPyaWjPQDLZbJEAlIfJmv7Yt1AUkkrW1a/iY4wbZg7
+         Y7qXzNVvZA9jTlr2wLVjDNhj/buBDlWXIxg4zHcNYKybpy3Ah4t66jbKy37dd1ozL99C
+         PDXG9pagM2gNTkmBxmupo9P7cYTleH5xX+PlvZBzFIfeAFdIHcxJVRZuciplDwJqhZWh
+         94Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqGqhB6hN5eI5qLjMyA7MGI3ARgYITGTEs64n+tTIayKSYoIfzaom6CW+/QDehm3FGZoj5ROlluGpPqAn4@vger.kernel.org, AJvYcCWP3opiNunMo1UwdxCTW8rgPAXzDB1JAKNpOvpZaXSjO9EYKLxehKVDeOPJX700yP96LWmWZJ6tP+mYhmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb0kUoXRH1euaytZyOxbEVANJXfRhasK3RZNdvdNnZO1gNGpC0
+	hcRhvKoqBmJmQVr2VdtKG3TG5RqjktiACGmwV4rIDzIgBR5C8mEo
+X-Google-Smtp-Source: AGHT+IHTY/45MOums/RrhmNxfIyjTZwPcT5SCZcRi5tBmMVFKliYHXyvHq9qcDI0G+8KI7zWdBwFTg==
+X-Received: by 2002:a05:6a21:1191:b0:1c0:f5fa:cbe6 with SMTP id adf61e73a8af0-1cc89d7dca6mr3857291637.22.1724451971112;
+        Fri, 23 Aug 2024 15:26:11 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9aca1193sm3222434a12.6.2024.08.23.15.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 15:26:10 -0700 (PDT)
+Date: Fri, 23 Aug 2024 22:26:01 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/hyperv: use helpers to read control registers in
+ hv_snp_boot_ap()
+Message-ID: <ZskMeWQfjQ00BTVm@liuwe-devbox-debian-v2>
+References: <20240805201247.427982-1-yosryahmed@google.com>
+ <CAJD7tkZTFNm3k3OM9G1qtd8-FyjKDvj5C-CPKvuS3AipKb7x8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] cxl/region: Prevent device_find_child() from
- modifying caller's match data
-To: Ira Weiny <ira.weiny@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
- <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
- <20240815-const_dfc_prepare-v2-2-8316b87b8ff9@quicinc.com>
- <66c4a136d9764_2ddc2429435@iweiny-mobl.notmuch>
- <dec374a6-073d-4b7f-9e83-adcfcf672852@icloud.com>
- <66c8d0a7eddc5_a87cd294e1@iweiny-mobl.notmuch>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <66c8d0a7eddc5_a87cd294e1@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: OEcYKCeKl2lrSiKKOvGo38JYgj9Rul2W
-X-Proofpoint-GUID: OEcYKCeKl2lrSiKKOvGo38JYgj9Rul2W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1015 spamscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408230165
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkZTFNm3k3OM9G1qtd8-FyjKDvj5C-CPKvuS3AipKb7x8Q@mail.gmail.com>
 
-On 2024/8/24 02:10, Ira Weiny wrote:
-> Zijun Hu wrote:
->> On 2024/8/20 21:59, Ira Weiny wrote:
->>> Zijun Hu wrote:
->>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>
->>>> To prepare for constifying the following old driver core API:
->>>>
->>>> struct device *device_find_child(struct device *dev, void *data,
->>>> 		int (*match)(struct device *dev, void *data));
->>>> to new:
->>>> struct device *device_find_child(struct device *dev, const void *data,
->>>> 		int (*match)(struct device *dev, const void *data));
->>>>
->>>> The new API does not allow its match function (*match)() to modify
->>>> caller's match data @*data, but match_free_decoder() as the old API's
->>>> match function indeed modifies relevant match data, so it is not
->>>> suitable for the new API any more, fixed by implementing a equivalent
->>>> cxl_device_find_child() instead of the old API usage.
->>>
->>> Generally it seems ok but I think some name changes will make this more
->>> clear.  See below.
->>>
->>
->> okay.
->>
->>> Also for those working on CXL I'm questioning the use of ID here and the
->>> dependence on the id's being added to the parent in order.  Is that a
->>> guarantee?
->>>
->>>>
->>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->>>> ---
->>>>  drivers/cxl/core/region.c | 36 +++++++++++++++++++++++++++++++++++-
->>>>  1 file changed, 35 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->>>> index 21ad5f242875..8d8f0637f7ac 100644
->>>> --- a/drivers/cxl/core/region.c
->>>> +++ b/drivers/cxl/core/region.c
->>>> @@ -134,6 +134,39 @@ static const struct attribute_group *get_cxl_region_access1_group(void)
->>>>  	return &cxl_region_access1_coordinate_group;
->>>>  }
->>>>  
->>>> +struct cxl_dfc_data {
->>>
->>> struct cxld_match_data
->>>
->>> 'cxld' == cxl decoder in our world.
->>>
->>
->> make sense.
->>
->>>> +	int (*match)(struct device *dev, void *data);
->>>> +	void *data;
->>>> +	struct device *target_device;
->>>> +};
->>>> +
->>>> +static int cxl_dfc_match_modify(struct device *dev, void *data)
->>>
->>> Why not just put this logic into match_free_decoder?
->>>
->>
->> Actually, i ever considered solution B as you suggested in the end.
->>
->> For this change, namely, solution A:
->> 1) this change is clearer and easier to understand.
->> 2) this change does not touch any existing cxld logic
->>
->> For solution B:
->> it is more reasonable
->>
->> i finally select A since it can express my concern and relevant solution
->> clearly.
+On Wed, Aug 14, 2024 at 04:54:32PM -0700, Yosry Ahmed wrote:
+> On Mon, Aug 5, 2024 at 1:12 PM Yosry Ahmed <yosryahmed@google.com> wrote:
+> >
+> > Use native_read_cr*() helpers to read control registers into vmsa->cr*
+> > instead of open-coded assembly.
+> >
+> > No functional change intended, unless there was a purpose to specifying
+> > rax.
+> >
+> > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> > ---
+> >
+> > v1 -> v2:
+> > - Fixed a silly bug that overwrote vmsa->cr3 instead of reading
+> >   vmsa->cr0.
+> >
+> > ---
 > 
-> Understood.
-> 
->>
->>>> +{
->>>> +	struct cxl_dfc_data *dfc_data = data;
->>>> +	int res;
->>>> +
->>>> +	res = dfc_data->match(dev, dfc_data->data);
->>>> +	if (res && get_device(dev)) {
->>>> +		dfc_data->target_device = dev;
->>>> +		return res;
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +/*
->>>> + * I have the same function as device_find_child() but allow to modify
->>>> + * caller's match data @*data.
->>>> + */
->>>
->>> No need for this comment after the new API is established.
->>>
->>
->> i have given up the idea within v1 to introduce a new API which *should
->> ONLY* be used by this patch series, so it is not worthy of a new API
->> even if it can bring convenient for this patch series.
-> 
-> I'm not clear on this.  Are you still proposing to change the parameter to
-> const?
-> 
-yes.
->>
->>>> +static struct device *cxl_device_find_child(struct device *parent, void *data,
->>>> +					    int (*match)(struct device *dev, void *data))
->>>> +{
->>>> +	struct cxl_dfc_data dfc_data = {match, data, NULL};
->>>> +
->>>> +	device_for_each_child(parent, &dfc_data, cxl_dfc_match_modify);
->>>> +	return dfc_data.target_device;
->>>> +}
->>>> +
->>>>  static ssize_t uuid_show(struct device *dev, struct device_attribute *attr,
->>>>  			 char *buf)
->>>>  {
->>>> @@ -849,7 +882,8 @@ cxl_region_find_decoder(struct cxl_port *port,
->>>>  		dev = device_find_child(&port->dev, &cxlr->params,
->>>>  					match_auto_decoder);
->>>>  	else
->>>> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
->>>> +		dev = cxl_device_find_child(&port->dev, &id,
->>>> +					    match_free_decoder);
->>>
->>> This is too literal.  How about the following (passes basic cxl-tests).
->>>
->>
->> it is reasonable.
->>
->> do you need me to submit that you suggest in the end and add you as
->> co-developer ?
-> 
-> You can submit it with Suggested-by:
-> 
-okay.
->>
->> OR
->>
->> you submit it by yourself ?
->>
->> either is okay for me.
->>
->>> Ira
->>>
->>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c              
->>> index 21ad5f242875..c1e46254efb8 100644                                         
->>> --- a/drivers/cxl/core/region.c                                                 
->>> +++ b/drivers/cxl/core/region.c                                                 
->>> @@ -794,10 +794,15 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
->>>         return rc;                                                              
->>>  }                                                                              
->>>                                                                                 
->>> +struct cxld_match_data {                                                       
->>> +       int id;                                                                 
->>> +       struct device *target_device;                                           
->>> +};                                                                             
->>> +                                                                               
->>>  static int match_free_decoder(struct device *dev, void *data)                  
->>>  {                                                                              
->>> +       struct cxld_match_data *match_data = data;                              
->>>         struct cxl_decoder *cxld;                                               
->>> -       int *id = data;                                                         
->>>                                                                                 
->>>         if (!is_switch_decoder(dev))                                            
->>>                 return 0;                                                       
->>> @@ -805,17 +810,30 @@ static int match_free_decoder(struct device *dev, void *data)
->>>         cxld = to_cxl_decoder(dev);                                             
->>>                                                                                 
->>>         /* enforce ordered allocation */                                        
->>> -       if (cxld->id != *id)                                                    
->>> +       if (cxld->id != match_data->id)                                         
->>>                 return 0;                                                       
->>>                                                                                 
->>> -       if (!cxld->region)                                                      
->>> +       if (!cxld->region && get_device(dev)) {                                 
->>
->> get_device(dev) failure may cause different logic against existing
->> but i think it should be impossible to happen normally.
-> 
-> Indeed this is slightly different.  :-/
-> 
-> Move the get_device() to find_free_decoder()?
-> 
-i think we can keep your change. so ignore this slight difference.
-i also notice that you have done some verification for this change.
-> Ira
-> 
->>
->>> +               match_data->target_device = dev;                                
->>>                 return 1;                                                       
->>> +       }                                                                       
->>>                                                                                 
->>> -       (*id)++;                                                                
->>> +       match_data->id++;                                                       
->>>                                                                                 
->>>         return 0;                                                               
->>>  }                                                                              
->>>                                                                                 
->>> +static struct device *find_free_decoder(struct device *parent)                 
->>> +{                                                                              
->>> +       struct cxld_match_data match_data = {                                   
->>> +               .id = 0,                                                        
->>> +               .target_device = NULL,                                          
->>> +       };                                                                      
->>> +                                                                               
->>> +       device_for_each_child(parent, &match_data, match_free_decoder);         
->>> +       return match_data.target_device;                                        
->>> +}                                                                              
->>> +                                                                               
-> 
-> [snip]
+> Friendly ping on this, any thoughts?
 
+Applied to hyperv-next. Thanks.
+
+> 
+> >  arch/x86/hyperv/ivm.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
+> > index b4a851d27c7cb..60fc3ed728304 100644
+> > --- a/arch/x86/hyperv/ivm.c
+> > +++ b/arch/x86/hyperv/ivm.c
+> > @@ -321,9 +321,9 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
+> >
+> >         vmsa->efer = native_read_msr(MSR_EFER);
+> >
+> > -       asm volatile("movq %%cr4, %%rax;" : "=a" (vmsa->cr4));
+> > -       asm volatile("movq %%cr3, %%rax;" : "=a" (vmsa->cr3));
+> > -       asm volatile("movq %%cr0, %%rax;" : "=a" (vmsa->cr0));
+> > +       vmsa->cr4 = native_read_cr4();
+> > +       vmsa->cr3 = __native_read_cr3();
+> > +       vmsa->cr0 = native_read_cr0();
+> >
+> >         vmsa->xcr0 = 1;
+> >         vmsa->g_pat = HV_AP_INIT_GPAT_DEFAULT;
+> > --
+> > 2.46.0.rc2.264.g509ed76dc8-goog
+> >
 
