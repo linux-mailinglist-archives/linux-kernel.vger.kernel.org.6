@@ -1,213 +1,147 @@
-Return-Path: <linux-kernel+bounces-299688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5709195D8B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7498A95D8BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D3F1C213C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A57731C20985
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9241C86E3;
-	Fri, 23 Aug 2024 21:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrOdndM5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE401C86E2;
+	Fri, 23 Aug 2024 21:51:56 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9BF1C8247;
-	Fri, 23 Aug 2024 21:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FF91A08A9;
+	Fri, 23 Aug 2024 21:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724449864; cv=none; b=qbZmKOpl5fHfVI5OWDMdu1fPkCUGHaVfQGpyZCsAKNluCHxcOGfi1V+KdmmrkJNq4U9DCsEZEmgM8iyNE/O3oc1mBEck6gql95usSSlJM3oe7MQNWSlK5yEBlpLEwAp9f2SW4A4yQnsThQxuiIYeps1lyl8SV5LQjoGsmYONvYs=
+	t=1724449916; cv=none; b=k3q0kaVnNVMeymL7Hy2XYDzL846Dc03XY40gJMwveE9pW3ROqN6ou3r9obiDC5vgMYT/FyIZtH+0diaO3cp2IcZYSybx6ZhRagTONsIctZI8eeQGqsh07RlsmbFe1FW6JusG9X3PIqo7C3T7ns89dRctDt+VS1wRnSLB9akAKYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724449864; c=relaxed/simple;
-	bh=Cz3cCa2BHALOPXHUPz6ztXTjjN3N+BY/mhnupI2R9OE=;
+	s=arc-20240116; t=1724449916; c=relaxed/simple;
+	bh=s5oPW1oBmBq/8RYHCHsStuTjDtxc02x0k0pmuf7BEIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvX/ycf/4Yn8zRspb6Mnk/ordDRE/eUrbMdCHR0U6vDg9jvp7IuWmW0OltPH99eO84bC58XOy0a3nRe883fgqSKnEj+mAZ/9yLhRwUumOSKK4J2xg2+1l87eB/gsIoAmC4/uqhExQr9ml+3gkweNDOyJ6TMRB1NYoLHXPdmrlYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrOdndM5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E41C32786;
-	Fri, 23 Aug 2024 21:51:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724449863;
-	bh=Cz3cCa2BHALOPXHUPz6ztXTjjN3N+BY/mhnupI2R9OE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=GrOdndM5daJ8vIoyILR85j9V/8nNQh3VIPuLUUJTtwZTAvgq7s+tdEDHezVMVU7aW
-	 GHeSj5xr2VXHv/reg7CtjIkV5RJJ3OOJyyBLqStw0+wgbefDWRjHG0vq9uQ6KWSite
-	 gx5FX9NtBas/OY0NVLM6UpqhVWQbFsTDzxc89XGFDuFe99EDhwtCTn4/UY1IMS/ej5
-	 o4HWxjs1IK4XtDtbA/RZIE6vRF1K/SE0DOGN1TU351A3TqVkQHS8a18LbCsFzJuqQc
-	 G5DNSzR4LwQP0+5lgVNj6Kqwh6xsCED2cbHZDYQdRtx8qhLjVRNUciYvHH/aLEGLhI
-	 LUcfszLbqoDzg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6C165CE0D9B; Fri, 23 Aug 2024 14:51:03 -0700 (PDT)
-Date: Fri, 23 Aug 2024 14:51:03 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <a122efbe-fd81-471d-89b7-e9257bf3ce49@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20240823074705.GB12053@noisy.programming.kicks-ass.net>
- <eb929d94-6f0b-44a9-b408-feb81b228ff0@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t90hJYYUD6qFyPM+8gRKKBqeczj1cLaZUIOKaH0scGXRV3HxYOZQx9DovPJiJaAF9UvIgLS+melognxeGE5y4DE/qyXNpb4KpxeXFkLFQSX/MJf73SOWCO4GO6GFSqpNDVdwGcMTVv/bwnWgstS5lqfSTERfVNmD3qsUq+43RZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2020ac89cabso23838535ad.1;
+        Fri, 23 Aug 2024 14:51:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724449914; x=1725054714;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t48CfquwWHoE3xe3InKKDn2gYoOie8sw4tO5E5NyLfk=;
+        b=G9Z5lKtUlbRxgYQ2fJDLhG61KSIIsQW0u09TlOtevRiJRPLyFbSdB1HXeSdYpVo0UD
+         2YW5wtbuu7U6ULhbqgB9iTtM0YxTgwXUaPKZKs7F7YEdEiMOscxwilQTiqOSYBt06LHB
+         SMAcwtZhuf1qDyRPKt/m386aul/CsAKlT1ZlK3Vli29sSAdy3i7s3+dC0ndv4yF2ge8J
+         r4UHPLr04We8aOejAWUVZWLEhOd6nDAvQVHHuM/dGJCg/KcL5LvEf4+++VJRChXRQqup
+         WtjqHg+yzoG22Dpd7eamkZWpyHPd99mkAXNjimGYX3h2lTk2WGQ7xG3dYP8IDzZsb20R
+         2bdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaMngvEMSXtZQy0Vl7WbxkWZaaS3L+g5VmxkXdPW7PR6GH4I2TZnqiEFLOATW7/m1InJSjC2tNtuMLCZo=@vger.kernel.org, AJvYcCWftnNpLbGjm2Re0B7lhzldmH/3AyQUR2EvgKXPHiX/WZUWvnj7kvGMf/s91iQ98WwDHi+YwZYt+0l7gvxO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqhV38fdGBU/MbAMrTTAVAT4peo+kSRuqDg7eCjah2urWtAfEF
+	Sv46cQbzwqjvtaLXYmskPgXMc0+OaIji0nPPDNMyL2/rKIlYGyBM
+X-Google-Smtp-Source: AGHT+IF0Wi35Mm0OqbrfmaSoGOq4sUeiomEljmZv+JqzeRQScxXbHI0OS3QuIPAB6+kI22yWnChHlQ==
+X-Received: by 2002:a17:902:f546:b0:202:17eb:2e8b with SMTP id d9443c01a7336-2039e4aa80fmr29689925ad.28.1724449913564;
+        Fri, 23 Aug 2024 14:51:53 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855df602sm32860805ad.149.2024.08.23.14.51.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 14:51:52 -0700 (PDT)
+Date: Fri, 23 Aug 2024 21:51:44 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Wei Liu <wei.liu@kernel.org>, Roman Kisel <romank@linux.microsoft.com>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] x86/hyperv: Set X86_FEATURE_TSC_KNOWN_FREQ when
+ Hyper-V provides frequency
+Message-ID: <ZskEcN2e6-aY4kQV@liuwe-devbox-debian-v2>
+References: <20240606025559.1631-1-mhklinux@outlook.com>
+ <226804eb-af9d-4a56-aef5-e3045e83b551@linux.microsoft.com>
+ <Zq1wkyTkWCrdYx2-@liuwe-devbox-debian-v2>
+ <SN6PR02MB4157E061956EF4D394E587D8D4BF2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb929d94-6f0b-44a9-b408-feb81b228ff0@paulmck-laptop>
+In-Reply-To: <SN6PR02MB4157E061956EF4D394E587D8D4BF2@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Fri, Aug 23, 2024 at 05:46:59AM -0700, Paul E. McKenney wrote:
-> On Fri, Aug 23, 2024 at 09:47:05AM +0200, Peter Zijlstra wrote:
-> > On Wed, Aug 21, 2024 at 02:57:16PM -0700, Paul E. McKenney wrote:
+On Tue, Aug 06, 2024 at 02:01:55AM +0000, Michael Kelley wrote:
+> From: Wei Liu <wei.liu@kernel.org> Sent: Friday, August 2, 2024 4:50 PM
 > > 
-> > > 2e0199df252a ("sched/fair: Prepare exit/cleanup paths for delayed_dequeue")
-> > > 
-> > > The preceding commit is very reliable.
-> > > 
-> > > Only instead of (or maybe as well as?) introducing the dequeue_rt_stack()
-> > > bug, the 2e0199df252a commit introduced a build bug:
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > In file included from kernel/sched/fair.c:54:
-> > > kernel/sched/fair.c: In function ‘switched_from_fair’:
-> > > kernel/sched/sched.h:2154:58: error: ‘__SCHED_FEAT_DELAY_ZERO’ undeclared (first use in this function); did you mean ‘__SCHED_FEAT_LATENCY_WARN’?
-> > >  2154 | #define sched_feat(x) !!(sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
-> > >       |                                                          ^~~~~~~~~~~~~
-> > > kernel/sched/fair.c:12878:21: note: in expansion of macro ‘sched_feat’
-> > > 12878 |                 if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-> > >       |                     ^~~~~~~~~~
-> > > kernel/sched/sched.h:2154:58: note: each undeclared identifier is reported only once for each function it appears in
-> > >  2154 | #define sched_feat(x) !!(sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
-> > >       |                                                          ^~~~~~~~~~~~~
-> > > kernel/sched/fair.c:12878:21: note: in expansion of macro ‘sched_feat’
-> > > 12878 |                 if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-> > >       |                     ^~~~~~~~~~
-> > > 
+> > On Tue, Jun 11, 2024 at 07:51:48AM -0700, Roman Kisel wrote:
+> > >
+> > >
+> > > On 6/5/2024 7:55 PM, mhkelley58@gmail.com wrote:
+> > > > From: Michael Kelley <mhklinux@outlook.com>
+> > > >
+> > > > A Linux guest on Hyper-V gets the TSC frequency from a synthetic MSR, if
+> > > > available. In this case, set X86_FEATURE_TSC_KNOWN_FREQ so that Linux
+> > > > doesn't unnecessarily do refined TSC calibration when setting up the TSC
+> > > > clocksource.
+> > > >
+> > > > With this change, a message such as this is no longer output during boot
+> > > > when the TSC is used as the clocksource:
+> > > >
+> > > > [    1.115141] tsc: Refined TSC clocksource calibration: 2918.408 MHz
+> > > >
+> > > > Furthermore, the guest and host will have exactly the same view of the
+> > > > TSC frequency, which is important for features such as the TSC deadline
+> > > > timer that are emulated by the Hyper-V host.
+> > > >
+> > > > Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> > > > ---
+> > > >   arch/x86/kernel/cpu/mshyperv.c | 1 +
+> > > >   1 file changed, 1 insertion(+)
+> > > >
+> > > > diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> > > > index e0fd57a8ba84..c3e38eaf6d2f 100644
+> > > > --- a/arch/x86/kernel/cpu/mshyperv.c
+> > > > +++ b/arch/x86/kernel/cpu/mshyperv.c
+> > > > @@ -424,6 +424,7 @@ static void __init ms_hyperv_init_platform(void)
+> > > >   	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
+> > > >   		x86_platform.calibrate_tsc = hv_get_tsc_khz;
+> > > >   		x86_platform.calibrate_cpu = hv_get_tsc_khz;
+> > > > +		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+> > > >   	}
+> > > >   	if (ms_hyperv.priv_high & HV_ISOLATION) {
+> > >
+> > > LGTM
+> > >
+> > > Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
 > > 
-> > Oh gawd, last minute back-merges :/
+> > Applied to hyperv-fixes. Thanks!
 > 
-> I know that feeling!  ;-)
+> Wei --
 > 
-> > Does the below help any? That's more or less what it was before Valentin
-> > asked me why it was weird like that :-)
-> > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 6be618110885..5757dd50b02f 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -13107,7 +13107,6 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
-> >  	 * and we cannot use DEQUEUE_DELAYED.
-> >  	 */
-> >  	if (p->se.sched_delayed) {
-> > -		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
-> >  		p->se.sched_delayed = 0;
-> >  		p->se.rel_deadline = 0;
-> >  		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-> 
-> Removing that line from 2e0199df252a still gets me the complaint about
-> __SCHED_FEAT_DELAY_ZERO being undefined.  To my naive eyes, it appears
-> that this commit:
-> 
-> 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-> 
-> Need to be placed before 2e0199df252a.  Of course, when I try it, I
-> get conflicts.  So I took just this hunk:
-> 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-> index 97fb2d4920898..6c5f5424614d4 100644
-> --- a/kernel/sched/features.h
-> +++ b/kernel/sched/features.h
-> @@ -28,6 +28,11 @@ SCHED_FEAT(NEXT_BUDDY, false)
->   */
->  SCHED_FEAT(CACHE_HOT_BUDDY, true)
->  
-> +/*
-> + * DELAY_ZERO clips the lag on dequeue (or wakeup) to 0.
-> + */
-> +SCHED_FEAT(DELAY_ZERO, true)
-> +
->  /*
->   * Allow wakeup-time preemption of the current task:
->   */
-> 
-> ------------------------------------------------------------------------
-> 
-> That makes the build error go away.  Maybe even legitimately?
-> 
-> Just to pick on the easy one, I took a look at the complaint about
-> cfs_rq being unused and the complaint about __SCHED_FEAT_DELAY_ZERO
-> being undefined.  This variable was added here:
-> 
-> 781773e3b680 ("sched/fair: Implement ENQUEUE_DELAYED")
-> 
-> And its first use was added here:
-> 
-> 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-> 
-> Which matches my experience.
-> 
-> So left to myself, I would run on these commits with the above hunk:
-> 
-> 54a58a7877916 sched/fair: Implement DELAY_ZERO
-> 152e11f6df293 sched/fair: Implement delayed dequeue
-> e1459a50ba318 sched: Teach dequeue_task() about special task states
-> a1c446611e31c sched,freezer: Mark TASK_FROZEN special
-> 781773e3b6803 sched/fair: Implement ENQUEUE_DELAYED
-> f12e148892ede sched/fair: Prepare pick_next_task() for delayed dequeue
-> 2e0199df252a5 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-> e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-> 
-> And where needed, remove the unused cfs_rq local variable.
-> 
-> Would that likely work?
-> 
-> In the meantime, SIGFOOD!
+> hyperv-fixes isn't showing this patch, or any of the others that your
+> emails said you applied last Friday.  Hence the patches aren't in
+> linux-next either.  Did something go awry?
 
-Hearing no objections...
+The push was not successful. They should show up now.
 
-Given two patches each of which might or might not need to be applied to a
-given commit, I chose to rebase as follows:
+Sorry for the delay.
 
-e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-8aed87410a695 EXP sched/fair: Provide DELAY_ZERO definition
-	I took this from 54a58a7877916 sched/fair: Implement DELAY_ZERO.
-49575c0087bc0 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-14c3207fd2456 sched/fair: Prepare pick_next_task() for delayed dequeue
-be567af45dd04 sched/fair: Implement ENQUEUE_DELAYED
-	I dropped the unused cfs_rq local variable from requeue_delayed_entity()
-ed28f7b3ac3f4 sched,freezer: Mark TASK_FROZEN special
-48d541847b4a6 sched: Teach dequeue_task() about special task states
-ef3b9c5d038dc sched/fair: Implement delayed dequeue
-	--- First bad commit with dequeue_rt_stack() failures.
-876c99c058219 sched/fair: Implement DELAY_ZERO
-	I added the cfs_rq local variable to requeue_delayed_entity()
+Thanks,
+Wei.
 
-This is on -rcu branch peterz.2024.08.23b.
-
-I ran 50*TREE05 in a bisection, which converged on be567af45dd04, but only
-one run of the 50 had a complaint, and that was in enqueue_dl_entry(),
-not the dequeue_rt_stack() that I have been chasing.  I ran three
-additional 50*TREE05 runs on its predecessor (14c3207fd2456) with no
-failures.  I then ran 50*TREE03 on each of ed28f7b3ac3f4, 48d541847b4a6,
-and ef3b9c5d038dc.  Only this last ("ef3b9c5d038dc sched/fair: Implement
-delayed dequeue") had failure, and they were all the dequeue_rt_stack()
-failures I am chasing.  One of the runs also hung.
-
-I am currently running 1000*TREE03 on 48d541847b4a6 to see if I can
-reproduce the enqueue_dl_entry() issue.
-
-Thoughts?
-
-							Thanx, Paul
+> 
+> Michael
 
