@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-298464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A9B95C7A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:12:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95E395C7AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CFC5B23D00
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:12:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38C45B2728D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286F7143880;
-	Fri, 23 Aug 2024 08:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQ/JGAJD"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E009F14386D;
+	Fri, 23 Aug 2024 08:13:01 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2363142E76;
-	Fri, 23 Aug 2024 08:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1776013DDC3;
+	Fri, 23 Aug 2024 08:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724400695; cv=none; b=bUi0jRmzEcpcCPc786INGo+bHlUickUZQ5iRWg92oopoYo93nundg4pu5rRE/oD/eE+P2EzKxRxSrm7RRhyFNM+WFGNMsRheROnMjJnuMxaKrnRuRlv7Jm1JWhZeF0m9QQyRise/IBhGwP6I0jA2YPh8JGO0ERYa892yAdexLTU=
+	t=1724400781; cv=none; b=qfIt4nvG0qDTjf2RxksgRs5AepGnmQ6ISRHTkWsyyc2AjbLxN0ODPPM7LsX3Bz6yacDa2/xelyx3T3yq+W6leGTi3kBC4NG2PZyxfOgVbQ54A+uSEjM+OtwrXzBpS2fu9qyymyYjVPzMmu11EQfbXUTK50ont7xkz83KZfRNvEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724400695; c=relaxed/simple;
-	bh=VhHPy1791sBAtIkxnc0cQsBzjzb0bd38en4YIw5aT9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SZ3II2fTrPDQNr4BOxphzEqvt7WlfUpDxeFvILwjctMcmpfOCtStfMnRSDK6USY6d6Bxtvh1XhUU1n6BOrTMgpM100g8cg8Q54WwPkeWCvez1u3mFmZJOsnAzJkPQnaPSRqWBgj6iU5b3ZllH7yeyyXLI9HogkHn8InndUDZ/bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQ/JGAJD; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5becfd14353so1991790a12.1;
-        Fri, 23 Aug 2024 01:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724400692; x=1725005492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VhHPy1791sBAtIkxnc0cQsBzjzb0bd38en4YIw5aT9o=;
-        b=mQ/JGAJDtxFNnBo+6XAW6mAdfZ017A4vfQlECJn0vfMO7lJfHlBd5X6naYpQ8g6ArB
-         QQKgsQcTjL4zWtqQy9fixfqllxgjy2U+qjnh4jBRj8RGcZDoFqt08ZtlKh6l8Uby7jqy
-         cslKyuYhy82kAxfyZgp0GRhSkyEaFK90eEKvqbOFNOzNZ+/D/u3ET+xTd55Uo1Hd/cx/
-         PvHRMGBepWdcI9+rHkoXZXHeB0fxBjHXsLMGOI82v8ypMhF2+M/I1ouSGXRvto3Bm60+
-         lcTr2t6Za8QeK8dRxZR1blZ3qcKMf6Pw8Nrgll3iMnrNoIZ8rLGlM61UbaHQC1wjnl78
-         VwKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724400692; x=1725005492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VhHPy1791sBAtIkxnc0cQsBzjzb0bd38en4YIw5aT9o=;
-        b=mhbW1FvUrlO7E4KjItjiOnLeYFfIROs8axYjqGcRF4S6JgOqGkUCgSWnPIWs9dl3NM
-         CBZy9e6Xpqs0jB2fXoc0tPN6KCH0+8OP8LZs189hzqqm8Qn7Sibb6EPRmQ9Ma7v+9wNZ
-         ez6mXpdKV+CtYQaaT0JTFkU/TD4CSWbCTRCgNWtkoJTo0AmrOazankksMNs4GnPEQ0G/
-         Nk1a/zmLUfRZ5jVExmSmXbAGnSgjlGH1WRLayGY6o/hy3GAzAh8TdmtUAsOuvg+1WMr5
-         ZVyF78HiMhOJPYEMtF/O/CKWO0qdRO2+qQCVshNcWlvx9bvXtiattDR20aY2rvUwR4wG
-         esPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmF10vO1htZGV0bcZ7sinJOwuH1Qbx/kVQ6TbmL97sj7vfd81qct0tjPiNBrTSwZ2Vln0D2FS9ZPP7DSQ=@vger.kernel.org, AJvYcCUvXgL/MJ7ry0yVVJDmFfFpPBcPoOAjtkOcjwHW+GiWwvIDP2/IrSb/b+6Ax9KFhrMOmI/S+StsyVfLQTzbBVZp3A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys8eW0nJjdmEVUHyR4sf5eomBlLjMqGO4CE+Tqm3murgQ/x+bT
-	vrlCdxqt108LtxguM3nEp0jUPGKx66Ee3foAqMggz8Jy3VyEEexmPX/PSNrYbArp4fQJYOSSgWY
-	xWKiq6P/h8SVIEQaf08zBCMLUDVzTZg==
-X-Google-Smtp-Source: AGHT+IHFfyUv0ZEnCDnC4iFFwHVQ8zCLg2njN2QqtDJKhkZx735DkXAfXdqtX62YUB5hiMm9blrR4h2+RXFEYRQA6SQ=
-X-Received: by 2002:a05:6402:2110:b0:5bb:9ae0:4a48 with SMTP id
- 4fb4d7f45d1cf-5c089158dabmr854262a12.5.1724400691451; Fri, 23 Aug 2024
- 01:11:31 -0700 (PDT)
+	s=arc-20240116; t=1724400781; c=relaxed/simple;
+	bh=KZi/jmFP/beZZsjoRh27npco9APo6qBS1WmX2iBF+h4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fstbwzjty4oesNaTsOiJ060Lh0Lh0Ctfq4hSsHYTo4JOQGp9yaV+lC0DzIDoh6HFM0dOMq8cqfKJ/GACRHeyhOOUtDvJ1KK5sIK4CKfKBnfl5an3hSvqdxyq9/RyJR+ggrBLLef1ZRjBmvVhvvkV+LUFY2L5IGPqwNOsG/U/uLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wqt9Q2XVYz9sRr;
+	Fri, 23 Aug 2024 10:12:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5yr2tWc3yfXO; Fri, 23 Aug 2024 10:12:58 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wqt9Q1gWyz9rvV;
+	Fri, 23 Aug 2024 10:12:58 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 28C4B8B77D;
+	Fri, 23 Aug 2024 10:12:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 2VydmTKCVB_P; Fri, 23 Aug 2024 10:12:58 +0200 (CEST)
+Received: from [192.168.233.10] (PO24418.IDSI0.si.c-s.fr [192.168.233.10])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9C9468B763;
+	Fri, 23 Aug 2024 10:12:57 +0200 (CEST)
+Message-ID: <48882839-ebb0-43c7-8011-660cd64524a8@csgroup.eu>
+Date: Fri, 23 Aug 2024 10:12:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822-imx_rproc-v3-0-6d943723945d@nxp.com> <20240822-imx_rproc-v3-2-6d943723945d@nxp.com>
-In-Reply-To: <20240822-imx_rproc-v3-2-6d943723945d@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 23 Aug 2024 11:12:20 +0300
-Message-ID: <CAEnQRZD8sEAZ94W3qawxgb=31C-XGGg29L9WRKmdzqjYkxT6uQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] remoteproc: imx_rproc: Add support for poweroff
- and reboot
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
-	Marek Vasut <marex@denx.de>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 28/36] soc: fsl: cpm1: qmc: Rename qmc_chan_command()
+To: Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240808071132.149251-1-herve.codina@bootlin.com>
+ <20240808071132.149251-29-herve.codina@bootlin.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240808071132.149251-29-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 4:40=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.co=
-m> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> On some NXP platforms (e.g i.MX7ULP) the poweroff and reboot operations
-> are done via a separate remote core.
->
-> Typically Linux needs to send a message to the remote core and requests
-> for poweroff or reboot.
->
-> By default the communication between Linux core and the remote core is
-> is done via a blocking mailbox mechanism but Linux doesn't allow blocking
-> operations in the system off (reboot, power off) handlers.
->
-> So, we need to make sure the mailbox message send operations do not block
-> for this specific operations. Fortunately, Linux allows us to register
-> handlers that are called in preparation of the system off operations.
->
-> Thus, before carrying the power off or reboot preparations, just destroy
-> the existing mailboxes and create them as non-blocking.
->
-> Note that power off and restart are totally different operations and are
-> not complementary.
->
-> We introduce a new flag in the imx remoteproc per device data which tells
-> us when a device needs this special setup. For now, only imx7ulp needs it=
-.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+
+Le 08/08/2024 à 09:11, Herve Codina a écrit :
+> Current code handles CPM1 version of QMC and qmc_chan_command() is
+> clearly CPM1 specific.
+> 
+> In order to prepare the support for the QUICC Engine (QE) version,
+> rename qmc_chan_command() to reflect that point.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+>   drivers/soc/fsl/qe/qmc.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+> index b95227378f97..272da250a763 100644
+> --- a/drivers/soc/fsl/qe/qmc.c
+> +++ b/drivers/soc/fsl/qe/qmc.c
+> @@ -794,7 +794,7 @@ static int qmc_chan_setup_tsa_rx(struct qmc_chan *chan, bool enable)
+>   	return qmc_chan_setup_tsa_32rx(chan, &info, enable);
+>   }
+>   
+> -static int qmc_chan_command(struct qmc_chan *chan, u8 qmc_opcode)
+> +static int qmc_chan_cpm1_command(struct qmc_chan *chan, u8 qmc_opcode)
+>   {
+>   	return cpm_command(chan->id << 2, (qmc_opcode << 4) | 0x0E);
+>   }
+> @@ -813,7 +813,7 @@ static int qmc_chan_stop_rx(struct qmc_chan *chan)
+>   	}
+>   
+>   	/* Send STOP RECEIVE command */
+> -	ret = qmc_chan_command(chan, 0x0);
+> +	ret = qmc_chan_cpm1_command(chan, 0x0);
+>   	if (ret) {
+>   		dev_err(chan->qmc->dev, "chan %u: Send STOP RECEIVE failed (%d)\n",
+>   			chan->id, ret);
+> @@ -850,7 +850,7 @@ static int qmc_chan_stop_tx(struct qmc_chan *chan)
+>   	}
+>   
+>   	/* Send STOP TRANSMIT command */
+> -	ret = qmc_chan_command(chan, 0x1);
+> +	ret = qmc_chan_cpm1_command(chan, 0x1);
+>   	if (ret) {
+>   		dev_err(chan->qmc->dev, "chan %u: Send STOP TRANSMIT failed (%d)\n",
+>   			chan->id, ret);
 
