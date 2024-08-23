@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-299061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA7F95CF96
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:25:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8B895CFCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D89D1F26E04
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:25:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA003B28113
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305AE1AD418;
-	Fri, 23 Aug 2024 14:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977F31AD3F1;
+	Fri, 23 Aug 2024 14:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXfJQIlH"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXsqcDmD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093101917DB;
-	Fri, 23 Aug 2024 14:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAF2188A08;
+	Fri, 23 Aug 2024 14:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421975; cv=none; b=t6YW/zKDcwEXGomlunKHblJgSlR9WRvxQDfsQ/mE/F724tfo9dap817BV0uqjtG9FLfuA1UNlpPSsC/CPMDJdl3rXL8o5gxGOK3D1iJC+9SZWVRGHNj0mbB+9N4MKihB9e3z0wtoCxiZ7X4XDUal1MzPEYKe5yRlzswdt5IPBEk=
+	t=1724421974; cv=none; b=juPbRBnItVO/N64jiYGOI19pv9mTRPkBAOAucjqlGUimtOfkucv4g83bvzKdQGewbAxZcUwa5HGBcAdJad6WQMmqeoQv9CG2L90NqpZPYP87AyLhRWHK7nNVUtL4aX9VBzyRHqXLovDfFM4pC3f8FDAarfgnCSaAUa7CqvUIBkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421975; c=relaxed/simple;
-	bh=+ZiMBXzO2Qnkx4P3z6BE0MLKmZndlbkPBcBXSumtrsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LvEM25WsNF+Ai4jPVPilj98DfHVVPp833cKb7fQWP5oxyzq3BaXiT+DQzAwMzKambOcGskkKH/26tDR+DTc/PD09cF7f2TLV+RHwnAyQAkJLLG/0uM6vrOS4cFXWFYnKMTZzuOf75Uz+kkb3rUUBrlUiB6jQjYK5WHowtB+Tz5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aXfJQIlH; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4fce2c0707bso654856e0c.2;
-        Fri, 23 Aug 2024 07:06:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724421973; x=1725026773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rYTTxKQGNaBBwgbRWUpxwLKWCThHX0EOM71weT9u2Ys=;
-        b=aXfJQIlHGr9znEKuHCm3JjnmLUDayn9XNtVQA1BkQSQRvYTwVpqhjtkdQVbuNnR/nb
-         RQemvU9JShyYvN0FLUOpXcBlVMlIV0sgm9UF7XwrgQko/b6pjUCT46BnNqNi/lpGqo3g
-         9ATUPSCORc18MdCMuumzDvUc3en4zQPH7hhLZeXMUfSh6kngS4S+qPDy2RSVEq4WvmRk
-         gGprrWiRkjM2HPmWMCv2w2LpgRRQTjaKbFNSg5yCv+sb9WDfwjHsd5YiT8VZJB9fG57O
-         OUJ23aJ2vg7uq/jYdhKiA/Gz5Bh2RhL9cG7GLw2ni8pAB28crIaKWEfgxADHpCTt9FTQ
-         xW/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724421973; x=1725026773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rYTTxKQGNaBBwgbRWUpxwLKWCThHX0EOM71weT9u2Ys=;
-        b=RRksNn/Lup+8klPKYLQgIBei40b8HIpkLMJotP9sdLOvb4KnJq1Wg0/TLuZ6AeepCZ
-         RfM73mnnuv9lVYr4kvWkSk19dFdYLTiMZOkN+DYXFAqWlEX7CT2ddG3C5XGEzF1AxIAc
-         Z1lfl3idRPVTAg+7Qo7313BTsgj+mRpcHWtI8VT2tliJmRZeoiAd8yiqtDoV/Kxjw3TZ
-         UYZKv/7+pF2ti3vZdY/xYZrpjAxaHgaFmu8StB5PCz1cVnpUac5jYEBtoY2UAFHfuyhQ
-         oDh8azInejp8K8zIXwURStCJvRyTTi/AKfF7mdqbQbD79dhYLgCXENbJdsyiz3P+DVV3
-         Ck1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Lc6iOQOj04fLXJY5GcfFfhtQL8VMmOJWIDfDsVzftGr4yaGvQMdsD2iymcnK53F8Q5MXOc5B2VAr@vger.kernel.org, AJvYcCU5tmAwSN2SDLSSn6h5ivl4JJY6zh/TLMjSRY/jtK33ui/Q/1zsmYiBq2IfbxqItXpxQIAZCEgbVu31nDaA@vger.kernel.org, AJvYcCWmGGXVC5MucqEP5HlFBgY8JW4lim17jFTfgdiIxz6j1+jtGsGyq90UvlBiO0QfYJ3bybTGDDPCBnTQQVAMjoL+bLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxawubEXO7ziXyawkDc2IHdlJxhy1Iz0gzfS8Zbcq8TNRnrjLhW
-	PYy7z6q8oJPeLTe6rj0hDLcCX2GkoXc8dMlJqLemFZiEI7Zr/M98WyKDXw9mCgMepDZgstrscgv
-	ofWvtSy0CYGlHBwfAFADLNJnyyiE=
-X-Google-Smtp-Source: AGHT+IEw8NSACQTt79yaANCMagkmS9EW93UoRdofnZRrQ2gS1Np9VXCynWo7/EzOW+D4kXESy9FONeDOeJCe+tzKzGI=
-X-Received: by 2002:a05:6122:1d4b:b0:4ef:65b6:f3b5 with SMTP id
- 71dfb90a1353d-4fd1acd19f8mr2710149e0c.10.1724421972312; Fri, 23 Aug 2024
- 07:06:12 -0700 (PDT)
+	s=arc-20240116; t=1724421974; c=relaxed/simple;
+	bh=i6H85g7iWTCKvOl28Kd9R/lEDQAsUzGltT4u0pdJOT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pe1J5Zk3GSuC3SqRLB7+REJu6szwj6YgZC4i0uGwL7bEti1IWMujaRAzlgCHcxMdnIBcbnAPwPAuJSM/RM1uLZyAFGKi8AxqS/OVx2cOi0UF7hBxCo3cchgK9diDAk0aNlmCvA5930JSrElUPLYrorinu+TPA2Ne+UebGKT//4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXsqcDmD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBB4C32786;
+	Fri, 23 Aug 2024 14:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724421974;
+	bh=i6H85g7iWTCKvOl28Kd9R/lEDQAsUzGltT4u0pdJOT8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nXsqcDmDowOO8eY+NYxukQdCfYP5iQsGUNXZs5g/BGCJTUI1Xx89SVO5uipaPcQht
+	 f77vKUX/KdkXVcM38lO49iLDLiYYjCK/43TNNoqasDtSDxmCVxOuQ7N+jnVjweihJT
+	 A81vAXD6AedsAdI+BFZqdBl8r0Cyip5UY1MKMDDBZ6FhGGddiEwO1KVsXbnvKVxihg
+	 9qinMupRTQPU7fKAtaDnQaOmWJiHYt0gE53KJNvmpC2cftl7+5/fxP6WgpO171p3Ns
+	 JMyoJc+GKKXTrBLIS5wh2nK0XiBI5yEoiC/q2NvomfPRPXhatRzJMTTp+ayQdJuM8B
+	 gRgGSFUL4ggRg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Oliver Neukum <oneukum@suse.com>,
+	Foster Snowhill <forst@pen.gy>,
+	Georgi Valkov <gvalkov@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Sasha Levin <sashal@kernel.org>,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 1/7] usbnet: ipheth: race between ipheth_close and error handling
+Date: Fri, 23 Aug 2024 10:05:56 -0400
+Message-ID: <20240823140611.1975950-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822230104.707812-1-andy.shevchenko@gmail.com>
-In-Reply-To: <20240822230104.707812-1-andy.shevchenko@gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 23 Aug 2024 15:05:46 +0100
-Message-ID: <CA+V-a8v6saYEP-WUA4mT2vBsiqw6aH0xKSyFzchvHZJNwmMqnA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] pinctrl: renesas: rzg2l: Replace
- of_node_to_fwnode() with more suitable API
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.282
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 12:42=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> of_node_to_fwnode() is a IRQ domain specific implementation of
-> of_fwnode_handle(). Replace the former with more suitable API.
->
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
->  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-Cheers,
-Prabhakar
+[ Upstream commit e5876b088ba03a62124266fa20d00e65533c7269 ]
 
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/re=
-nesas/pinctrl-rzg2l.c
-> index 5e3d735a8570..73b55e096106 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of.h>
->  #include <linux/of_irq.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
->  #include <linux/seq_file.h>
->  #include <linux/spinlock.h>
->
-> @@ -2624,7 +2625,7 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl=
- *pctrl)
->
->         girq =3D &chip->irq;
->         gpio_irq_chip_set_chip(girq, &rzg2l_gpio_irqchip);
-> -       girq->fwnode =3D of_node_to_fwnode(np);
-> +       girq->fwnode =3D dev_fwnode(pctrl->dev);
->         girq->parent_domain =3D parent_domain;
->         girq->child_to_parent_hwirq =3D rzg2l_gpio_child_to_parent_hwirq;
->         girq->populate_parent_alloc_arg =3D rzg2l_gpio_populate_parent_fw=
-spec;
-> --
-> 2.46.0
->
->
+ipheth_sndbulk_callback() can submit carrier_work
+as a part of its error handling. That means that
+the driver must make sure that the work is cancelled
+after it has made sure that no more URB can terminate
+with an error condition.
+
+Hence the order of actions in ipheth_close() needs
+to be inverted.
+
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Foster Snowhill <forst@pen.gy>
+Tested-by: Georgi Valkov <gvalkov@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/usb/ipheth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/usb/ipheth.c b/drivers/net/usb/ipheth.c
+index 73ad78f47763c..7814856636907 100644
+--- a/drivers/net/usb/ipheth.c
++++ b/drivers/net/usb/ipheth.c
+@@ -353,8 +353,8 @@ static int ipheth_close(struct net_device *net)
+ {
+ 	struct ipheth_device *dev = netdev_priv(net);
+ 
+-	cancel_delayed_work_sync(&dev->carrier_work);
+ 	netif_stop_queue(net);
++	cancel_delayed_work_sync(&dev->carrier_work);
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
+
 
