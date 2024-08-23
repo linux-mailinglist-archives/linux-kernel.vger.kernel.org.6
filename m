@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-299510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FE895D5AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C33B95D5B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F6D1F23258
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3240F1F23743
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589B4191F8F;
-	Fri, 23 Aug 2024 19:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137DC13A41A;
+	Fri, 23 Aug 2024 19:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="DXTDm14o"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="CyZAz0WI"
 Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455A913A41A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455F018BBA2
 	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724439648; cv=none; b=TzkHM2OvkmgIU7P1LZPipVvvsb4OY+MWtyE3nmn3IVvgmxg1ZjTwhfrHbqNaehaO40qn9iAXTy0swDDtv1bJr6ib2gUkYTrqBR7/hNsgCywyc9HFgbmHYmnT6pxMunFafyBzgAuFgngRj9QtnCzdv+7sNSWwrWXnoiakwNz8G1I=
+	t=1724439651; cv=none; b=TPMN/iMgRXOztjGozaPvvZaQFciNPGMImx7vf/yDkufDwUX/+/756Dtyy/ADxlLBHKteUGlmzeeQ7fXU8D9rOfsVAqX1Gl+fyxMcf5qlKfeyvv232NjN7A3QDdAZw3lkWwVH4NbtC77L2t8iJIW4IqEmtFHM1hNST80+fhSvXEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724439648; c=relaxed/simple;
-	bh=W+5VmIikTKi6G06raMu37WIu8vfdB5bKtHFw5m06HzU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nFz8JPeruUFXilja2arYXwBu0rpwQjxFS0y3TyUaQj5vAkHcQLmDJ3nbv0YYV5I92lQ8YSx6d+ck9nJi1FckC55PpGU072U3YVpAw+b2GXnlbh5wAA51VD0oUGibqoOiEC4UDcC7+CS/GZ6npU79xSnvYEXXMMe+5uDNP+TvF1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=DXTDm14o; arc=none smtp.client-ip=167.114.26.122
+	s=arc-20240116; t=1724439651; c=relaxed/simple;
+	bh=iKticH+hVtk0Jsn+Z4/9YfNt/Gnnukcx5t9hJyZ9KVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RWCwE7gDP91vKdBX5CdIyitopt4MY/7MEyGkTUkJ2Ce1T4WmWcRDbSyqVtW88wStQ8Mzn0e8BlFHioiYE6TGEeLUQdtRWdKKhYmi+qGegicDwmzE6IavL2aDnL5znjrbn0CGQVH2FIfSJFXoePqXqfmzdbOVb98IIsjbuo431do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=CyZAz0WI; arc=none smtp.client-ip=167.114.26.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
 	s=smtpout1; t=1724439621;
-	bh=W+5VmIikTKi6G06raMu37WIu8vfdB5bKtHFw5m06HzU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DXTDm14o08zOw6811vX2MtW8gLefO4lC/MShbkDXvdLTzE17lDh4aCFwoqrr6qfJU
-	 W+fLA4Y55zF/jk+N8TJkNdgQnid7V7KX5IjnKY05M/d3/By3Gy1+BqDItC0r+pYGMk
-	 5/dPuczzhC9RBKnX2EpfIzSrw3KjuyQwMJBryLsjUenlyt6y+pCpIgRIgBWar4uNpb
-	 TAQ/wmnkeHsFZ7c8rzj8NDMDvpW2nNyWA3RfjeGbUh625PSgIHxtQgghObcDXq/J2b
-	 eC9RxM3qfBVXI+9PTFmvikGwjvC7X7r1l2d3nc/aP5hyXMPgvZUTGyDX3GVv1W0QGZ
-	 xj/O/MydetB7Q==
+	bh=iKticH+hVtk0Jsn+Z4/9YfNt/Gnnukcx5t9hJyZ9KVg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CyZAz0WIV5x2VKCuTn/N3QmZJ+nn4Ykk3Ks6/eOlBC1I91BwfI2OJmZKcCsQUtaEx
+	 UWUiEUeyvmVYeYBRLEitBQP65nX8wxKmHlqYZdWEwLOFqNMV8wnjRiaq8FglxO994B
+	 +rhIUpNbVX6WHnf90xMdvRN8Q22eHDv8goQy7bSyDM+hxVel3oWQscMj/YrQtCQsDE
+	 OGuLldOmyuJTWECy6OfDbRRUpKL1hVFSp364rICykk0YTDqloUAaDszcELbJ3M4/JF
+	 0nBUIxgpHJyfy5qQiqkXqQ/w1QpvgG4Hi02IfjqjTYQtgJ1t1Cg7Xl+loRpO7WHb6M
+	 GP3Cu2qGeZ2+g==
 Received: from thinkos.internal.efficios.com (unknown [IPv6:2606:6d00:100:4000:b243:804e:3bbd:91c9])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Wr8XP4Sytz1Hbk;
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Wr8XP5g0xz1J2p;
 	Fri, 23 Aug 2024 15:00:21 -0400 (EDT)
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
@@ -56,10 +57,12 @@ Cc: linux-kernel@vger.kernel.org,
 	Yury Norov <yury.norov@gmail.com>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Shuah Khan <skhan@linuxfoundation.org>
-Subject: [RFC PATCH v1 0/6] sched: NUMA-aware concurrency IDs
-Date: Fri, 23 Aug 2024 14:59:40 -0400
-Message-Id: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH v1 1/6] lib: Clarify comment on top of find_next_andnot_bit
+Date: Fri, 23 Aug 2024 14:59:41 -0400
+Message-Id: <20240823185946.418340-2-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
+References: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,65 +71,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The issue addressed by this series is the non-locality of NUMA accesses
-to data structures indexed by concurrency IDs: for example, in a
-scenario where a process has two threads, and they periodically run one
-after the other on different NUMA nodes, each will be assigned mm_cid=0.
-As a consequence, they will end up accessing the same pages, and thus at
-least one of the threads will need to perform remote NUMA accesses,
-which is inefficient.
+Make the comment on top of find_next_andnot_bit clearer by discussing in
+terms of "cleared bits" rather than "excluding bits".
 
-Solve this by making the rseq concurrency ID (mm_cid) NUMA-aware. On
-NUMA systems, when a NUMA-aware concurrency ID is observed by user-space
-to be associated with a NUMA node, guarantee that it never changes NUMA
-node unless either a kernel-level NUMA configuration change happens, or
-scheduler migrations end up migrating tasks across NUMA nodes.
-
-There is a tradeoff between NUMA locality and compactness of the
-concurrency ID allocation. Favor compactness over NUMA locality when
-the scheduler migrates tasks across NUMA nodes, as this does not cause
-the frequent remote NUMA accesses behavior. This is done by limiting the
-concurrency ID range to minimum between the number of threads belonging
-to the process and the number of allowed CPUs.
-
-This series applies on top of v6.10.6.
-
-Changes since v0: applied the changes requested by Yury Norov, and added
-Reviewed-by tag from Shuah Khan for selftests changes. Rebased on
-v6.10.6.
-
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Ben Segall <bsegall@google.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Yury Norov <yury.norov@gmail.com>
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
+---
+ include/linux/find.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Mathieu Desnoyers (6):
-  lib: Clarify comment on top of find_next_andnot_bit
-  lib: Implement find_{first,next,nth}_nor_bit, find_first_andnot_bit
-  cpumask: Implement cpumask_{first,next}_{nor,andnot}
-  sched: NUMA-aware per-memory-map concurrency IDs
-  selftests/rseq: x86: Implement rseq_load_u32_u32
-  selftests/rseq: Implement NUMA node id vs mm_cid invariant test
-
- include/linux/cpumask.h                       |  60 ++++++++
- include/linux/find.h                          | 119 ++++++++++++++-
- include/linux/mm_types.h                      |  57 ++++++-
- kernel/sched/core.c                           |  10 +-
- kernel/sched/sched.h                          | 139 +++++++++++++++--
- lib/find_bit.c                                |  36 +++++
- tools/testing/selftests/rseq/.gitignore       |   1 +
- tools/testing/selftests/rseq/Makefile         |   2 +-
- .../testing/selftests/rseq/basic_numa_test.c  | 144 ++++++++++++++++++
- tools/testing/selftests/rseq/rseq-x86-bits.h  |  43 ++++++
- tools/testing/selftests/rseq/rseq.h           |  14 ++
- 11 files changed, 604 insertions(+), 21 deletions(-)
- create mode 100644 tools/testing/selftests/rseq/basic_numa_test.c
-
+diff --git a/include/linux/find.h b/include/linux/find.h
+index 5dfca4225fef..8a170aa55634 100644
+--- a/include/linux/find.h
++++ b/include/linux/find.h
+@@ -102,15 +102,14 @@ unsigned long find_next_and_bit(const unsigned long *addr1,
+ 
+ #ifndef find_next_andnot_bit
+ /**
+- * find_next_andnot_bit - find the next set bit in *addr1 excluding all the bits
+- *                        in *addr2
++ * find_next_andnot_bit - find the next set bit in *addr1, cleared in *addr2
+  * @addr1: The first address to base the search on
+  * @addr2: The second address to base the search on
+  * @size: The bitmap size in bits
+  * @offset: The bitnumber to start searching at
+  *
+- * Returns the bit number for the next set bit
+- * If no bits are set, returns @size.
++ * Returns the bit number for the next bit set in *addr1, cleared in *addr2.
++ * If no such bits are found, returns @size.
+  */
+ static inline
+ unsigned long find_next_andnot_bit(const unsigned long *addr1,
 -- 
 2.39.2
+
 
