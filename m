@@ -1,116 +1,193 @@
-Return-Path: <linux-kernel+bounces-299503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE10F95D59C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E36095D5A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18851C227FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:55:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCFE1C22987
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABDC19258E;
-	Fri, 23 Aug 2024 18:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46F31925A9;
+	Fri, 23 Aug 2024 18:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oVfviTlK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+nzFChjE"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cqmz/Ojv"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC154192588;
-	Fri, 23 Aug 2024 18:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A2842A90
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724439243; cv=none; b=MwTSzrJA5MhswPwBepVU25ewr22DT9DRmo7BIJwbbyZyILeJmXYyPdKrZJzT1NtxJOqn/snjvm0NHQV6fracME3oogvR561fNg3eXxuCf3EQpuWZB5Siuh5RVT0imIhDIvR7eUdwOrr0CEl6PEGMpGnhllOUnDgUtQZCilmjoY0=
+	t=1724439282; cv=none; b=NcI236CLR0Q/f70WgB175e8C7gQ1LEY17FBvAtB/MHyk/NAsJBiQZr7J0LoZJ88iuMPOIXc/zgxgMIhpPYREBy43rhhJKGvRWL1tS3rQHwETCz91OQeyK+qzy8I+9hzVU2rlSzyYIqUpTabefSPzlmUV7tVbfqfb8XJ2oOVsSts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724439243; c=relaxed/simple;
-	bh=chJn+kVoLlDK5e+6EVGOogrD6JGxvm9hwQ/8Df81fdE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aWRJqEIIeo2fLGWgUCw8OtfoQHWo56B7l1KjVghgW1q2DvQtUFdJuFrc1w7enPpPt1+O4EIfedowSsCUcsITfVwnltUnxKI3zBsq6SUYLxw6TQo7K/TLZh6G4YOIEndXpjWB/G6b4BMr7+YWtAND4bgF9N0RZr4O0shMa32XKJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oVfviTlK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+nzFChjE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 23 Aug 2024 18:53:59 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724439240;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eX/wVScsZ4rTrV/m4Tck4sj2Li35EnjINVp6aocqQps=;
-	b=oVfviTlKHux1aw1lWT/trUvDczi4x5uD70JMPMxrt61viHWMDT0K+aqsLRAH2ghzYG8aKw
-	8gdQvf0KnqDHh9/BAGhQ9UrYEIGlRFzehF/xS9nwkkTpR4jZt5bdnRUUqUnIZQE/UemPGu
-	X1+AVLH9Oe+4hVwsPF6nCYHtNQ310wPmj/TQf6N1TDvybPZJJLEN2F03gmnpqkhWTvjbw1
-	lSgsiF+6iaZdiKE5f6jY0Wetlv84d/BY3GTv9N94RarKXC7lDNh4z1EGEHAnWJMg17VVy/
-	zX/eZXZCFyZBs+abtdc9z/Y8bzaorFwuemZaudmDFNDGZ57WuchLjS/pKgPK0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724439240;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eX/wVScsZ4rTrV/m4Tck4sj2Li35EnjINVp6aocqQps=;
-	b=+nzFChjEUqtLZKV7LV4Zk132VHNUYcYg1Yn+p5LRqqMcgrEiXPgTy5LgHRU4ZzHPqzlgoh
-	4vlMyYaZ7vENS9Dw==
-From: "tip-bot2 for Costa Shulyupin" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq: Fix typo in struct comment
-Cc: Costa Shulyupin <costa.shul@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240822123205.2186221-1-costa.shul@redhat.com>
-References: <20240822123205.2186221-1-costa.shul@redhat.com>
+	s=arc-20240116; t=1724439282; c=relaxed/simple;
+	bh=/DdMYTjwstrBylwKPuC2pFIafnNcMvM2MnZ06dk1UmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tDG01NmRzSw7U+IZyxPYLxT9CP4lburKWIkpuxHGNkRCv5J19aFQRF91HEyyV0W2JD5Xq7gfG/b15YSsftipc3uSGFht+EuwiiDwkB8tCSK1+5n0a230ZwRJQ8CAkBxL+mPE3OAKXBqRqMw7qmq9QA20GeLm66Cz6exJ5aKiukg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cqmz/Ojv; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 23 Aug 2024 14:54:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724439278;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ewITys7TI497HKJmvYcop9fBCsPv2oU9A0QT2PIx4Fg=;
+	b=cqmz/OjvP1l+Xib5cy4oiaIfcB6/Rs/rVysfV9o7gtjxxbfAxgym6KR3GqknhZxrLxWN/6
+	GzdnGfMpZYva7Le5atWFC5Vmpc/vBMzKhw4wU9nkwP0hsSr7beC1DQMV89+ABmgrnyijPQ
+	ooDOJSAvhFBJxNbJf77rq/vtNC7Caxg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.11-rc5
+Message-ID: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172443923970.2215.1313137188853169807.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Linus, big one this time...
 
-Commit-ID:     17e28a9aeae40d2de3c1ea3b94819ed94bfd6392
-Gitweb:        https://git.kernel.org/tip/17e28a9aeae40d2de3c1ea3b94819ed94bfd6392
-Author:        Costa Shulyupin <costa.shul@redhat.com>
-AuthorDate:    Thu, 22 Aug 2024 15:31:58 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 23 Aug 2024 20:50:19 +02:00
+no more bug reports related to the disk accounting rewrite, things are
+looking good over here as far as regressions go
 
-genirq: Fix typo in struct comment
+The following changes since commit 0e49d3ff12501adaafaf6fdb19699f021d1eda1c:
 
-Remove redundant "e" in "assign(e)ments".
+  bcachefs: Fix locking in __bch2_trans_mark_dev_sb() (2024-08-16 20:45:15 -0400)
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240822123205.2186221-1-costa.shul@redhat.com
+are available in the Git repository at:
 
----
- include/linux/interrupt.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-08-23
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 694de61..457151f 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -276,7 +276,7 @@ struct irq_affinity_notify {
- #define	IRQ_AFFINITY_MAX_SETS  4
- 
- /**
-- * struct irq_affinity - Description for automatic irq affinity assignements
-+ * struct irq_affinity - Description for automatic irq affinity assignments
-  * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
-  *			the MSI(-X) vector space
-  * @post_vectors:	Don't apply affinity to @post_vectors at end of
+for you to fetch changes up to 4d8ead60ffd937a73b50f42f6bd776b6a7919dde:
+
+  bcachefs: key cache can now allocate from pending (2024-08-22 11:51:55 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.11-rc5
+
+Lots of little fixes and two big items, which were orgiinally slated for
+the 6.12 merge window but turned out to be pretty important.
+
+The little stuff includes assorted syzbot fixes and some upgrade fixes
+for old (pre 1.0) filesystems, and a fix for moving data off a device
+that was switched to durability=0 after data had been written to it.
+
+The big items are:
+- rhashtable conversion for VFS inodes cache
+  Thas was slated for the 6.12 merge window, but a deadlock was
+  uncovered in __wait_for_freeing_inode(); bcachefs inverts the usual
+  locking between the VFS inode cache and on disk (btree) locking, with
+  some advantages and some extra trickyness. The result was that we were
+  waiting (via __wait_for_freeing_inode()) on the evict -> clear_inode()
+  path with btree locks held, which was a rare deadlock but undoubtedly
+  also one of the sources of the SRCU warnings.
+
+- new data structure for managing freelists in btree key cache
+  This eliminates the btree key cache lock, and associated lock
+  contention. User feedback is that this resolves the main source of the
+  SRCU warnings we've been seeing - which means that on some of the big
+  multithreaded workloads people are running the lock contention was
+  really bad (threads piling up and causing O(n^2) wait times), if it
+  was able to trigger a 10 second delay warning.
+
+On the test reported by
+https://lore.kernel.org/linux-bcachefs/CAGudoHGenxzk0ZqPXXi1_QDbfqQhGHu+wUwzyS6WmfkUZ1HiXA@mail.gmail.com/
+
+We're now 4x faster than xfs on creatrees, roughly even on walktrees,
+with consistent run to run performance; dominant factor in profiles is
+lru lock contention.
+
+----------------------------------------------------------------
+Kent Overstreet (34):
+      bcachefs: Reallocate table when we're increasing size
+      bcachefs: fix field-spanning write warning
+      bcachefs: Fix incorrect gfp flags
+      bcachefs: Extra debug for data move path
+      bcachefs: bch2_data_update_init() cleanup
+      bcachefs: Fix "trying to move an extent, but nr_replicas=0"
+      bcachefs: setting bcachefs_effective.* xattrs is a noop
+      bcachefs: Fix failure to relock in btree_node_get()
+      bcachefs: Fix bch2_trigger_alloc assert
+      bcachefs: Fix bch2_bucket_gens_init()
+      bcachefs: fix time_stats_to_text()
+      bcachefs: fix missing bch2_err_str()
+      bcachefs: unlock_long() before resort in journal replay
+      bcachefs: fix failure to relock in bch2_btree_node_mem_alloc()
+      bcachefs: fix failure to relock in btree_node_fill()
+      bcachefs: Fix locking in bch2_ioc_setlabel()
+      bcachefs: Fix replay_now_at() assert
+      bcachefs: Fix missing validation in bch2_sb_journal_v2_validate()
+      fs/super.c: improve get_tree() error message
+      bcachefs: Fix warning in bch2_fs_journal_stop()
+      bcachefs: Fix compat issue with old alloc_v4 keys
+      bcachefs: Fix refcounting in discard path
+      bcachefs: clear path->should_be_locked in bch2_btree_key_cache_drop()
+      bcachefs: add missing inode_walker_exit()
+      bcachefs: don't use rht_bucket() in btree_key_cache_scan()
+      inode: make __iget() a static inline
+      bcachefs: switch to rhashtable for vfs inodes hash
+      bcachefs: Fix deadlock in __wait_on_freeing_inode()
+      bcachefs: journal_entry_replicas_not_marked is now autofix
+      lib/generic-radix-tree.c: genradix_ptr_inlined()
+      lib/generic-radix-tree.c: add preallocation
+      bcachefs: rcu_pending
+      bcachefs: Rip out freelists from btree key cache
+      bcachefs: key cache can now allocate from pending
+
+Yuesong Li (1):
+      bcachefs: Fix double assignment in check_dirent_to_subvol()
+
+ fs/bcachefs/Makefile                      |   1 +
+ fs/bcachefs/acl.c                         |   2 +-
+ fs/bcachefs/alloc_background.c            |  66 ++--
+ fs/bcachefs/alloc_background_format.h     |   1 +
+ fs/bcachefs/bcachefs.h                    |   1 +
+ fs/bcachefs/btree_cache.c                 |  25 ++
+ fs/bcachefs/btree_cache.h                 |   2 +
+ fs/bcachefs/btree_iter.h                  |   9 +
+ fs/bcachefs/btree_key_cache.c             | 426 ++++++---------------
+ fs/bcachefs/btree_key_cache_types.h       |  18 +-
+ fs/bcachefs/btree_types.h                 |   3 +-
+ fs/bcachefs/btree_update_interior.c       |  46 +--
+ fs/bcachefs/buckets_waiting_for_journal.c |   4 +-
+ fs/bcachefs/data_update.c                 | 209 ++++++-----
+ fs/bcachefs/extents.c                     |   2 +
+ fs/bcachefs/fs-io-buffered.c              |   4 +-
+ fs/bcachefs/fs-io-direct.c                |   2 +-
+ fs/bcachefs/fs-io.c                       |   6 +-
+ fs/bcachefs/fs-ioctl.c                    |   7 +-
+ fs/bcachefs/fs.c                          | 234 ++++++++----
+ fs/bcachefs/fs.h                          |  18 +-
+ fs/bcachefs/fsck.c                        |   6 +-
+ fs/bcachefs/inode.c                       |   2 +-
+ fs/bcachefs/journal.c                     |   2 +-
+ fs/bcachefs/journal_sb.c                  |  15 +
+ fs/bcachefs/rcu_pending.c                 | 603 ++++++++++++++++++++++++++++++
+ fs/bcachefs/rcu_pending.h                 |  25 ++
+ fs/bcachefs/recovery.c                    |   9 +-
+ fs/bcachefs/replicas.c                    |   3 +-
+ fs/bcachefs/sb-errors_format.h            |   2 +-
+ fs/bcachefs/subvolume_types.h             |   3 +-
+ fs/bcachefs/super.c                       |   2 +
+ fs/bcachefs/util.c                        |   1 -
+ fs/bcachefs/xattr.c                       |  14 +-
+ fs/inode.c                                |   8 -
+ fs/super.c                                |   4 +-
+ include/linux/fs.h                        |   9 +-
+ include/linux/generic-radix-tree.h        | 106 +++++-
+ lib/generic-radix-tree.c                  |  80 +---
+ 39 files changed, 1309 insertions(+), 671 deletions(-)
+ create mode 100644 fs/bcachefs/rcu_pending.c
+ create mode 100644 fs/bcachefs/rcu_pending.h
 
