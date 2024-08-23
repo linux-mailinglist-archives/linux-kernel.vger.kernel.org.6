@@ -1,53 +1,57 @@
-Return-Path: <linux-kernel+bounces-298096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F417195C21E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:14:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4EC95C220
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5785FB2472A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86155284F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7133C36;
-	Fri, 23 Aug 2024 00:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091471FA3;
+	Fri, 23 Aug 2024 00:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CM8/L7yq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1eH4Sa4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9E115BB;
-	Fri, 23 Aug 2024 00:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEEBEDC;
+	Fri, 23 Aug 2024 00:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724372051; cv=none; b=VT+cbDyjcNaUFveh/ATQy4laLC/KJDYe+p3u9IruG8rF/4N9qae9THvshsdWhTgk+pXR2l02Ui4IV6KfKN2HL8GAswYIwOzeeRlxqj8zctDmj7k48svTftKDO9o5lx8sg1ZxlnoRxjvivDi8LRma6ht1itfpRgEnRD0CZDxZEZw=
+	t=1724372057; cv=none; b=mBMBNIlPB7aDvAc67wnwMc4PvLRTVCjQhX8GW0UTYGcG5A1bcObJ+N0VNUn5TUoNHq4YFuYlGe+Nn36hxMNpegSqI5HhnTHSwb1OCi0rwq0/YPTdh00aWBJBhqgJv3pm+KjEVOAJX6NHubMm3RqIBX9ExaL5vKId8v+k606JfFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724372051; c=relaxed/simple;
-	bh=iDmaBG6z6YoiKpM23bepku69gBSFtObY8NshOuaeQkI=;
+	s=arc-20240116; t=1724372057; c=relaxed/simple;
+	bh=meO8NYG/0DI1pJK9vfEpszXIYCnr9inA4xoCf3jcfXY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aqStKmRVNeVcvm5tPZJBle+lSu+QTq3mRLyKh1PU0L7aeC0iBsXHti4ZviAtAIP0jjqYPoKmycHKGalvPEKlWFiiF9ARt9THG0QfwaQVtfpOk305wlCfDGw2UZC4WJW7ZJe5j/ushyMCTFR7n+F2oRfXVQW5xQacR7kKF+gnm1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CM8/L7yq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0590CC4AF0B;
-	Fri, 23 Aug 2024 00:14:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724372051;
-	bh=iDmaBG6z6YoiKpM23bepku69gBSFtObY8NshOuaeQkI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=JhQbwGm75yBvFx+AydimHHyBLETKZv/c1xwlZD+Eu5F/6Rme7mIq5lWprawnmr8MVMXifgz9E4+22KUjvwSJkF/x5rd6eM78olGiCByLWG7zXyGdb2pm357Xrx1o8DzPtYnDW93xoApDR/huAd/Nc6XrcIquwEgNl8jN12rll6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1eH4Sa4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3118C4AF09;
+	Fri, 23 Aug 2024 00:14:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724372056;
+	bh=meO8NYG/0DI1pJK9vfEpszXIYCnr9inA4xoCf3jcfXY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CM8/L7yqOFfhSsrSWhEx/MMfSAX7/RreTVztlmHG0BBxmbI+PZ1WVhquBzTYGbLea
-	 n8oZhMj2lE6CWgvUsMIidO82t1FfXjCVdmSnYLDcvLCtDlg/Oi7XC/BSPWEjQ3tmU3
-	 pG99JxaKgrDX/E1wFoDqDeUC+TElnP1KmSvLWxnU=
-Date: Fri, 23 Aug 2024 08:14:08 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
- __device_attach()
-Message-ID: <2024082315-capably-broiler-b4e6@gregkh>
-References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
+	b=d1eH4Sa4L+UzeLInQKU4pRBhyc+98WZAR36gCuvWkt9NUmTRzfyzvwgjfbwMBYeto
+	 To2mimmiFyMWLLu6okO5gp+hqWza/f1hbG1xsL2lvFlisv82N7chnOnK7n4FXuwlQQ
+	 SITPe9Ahjrdo+8hBTNZDuYX7MixksxdbgPxeXQ4rZ7Kvgbw9ctg0xv55fwFVTulKmc
+	 PyjkieTRtr/2pu7HI8J9iXeIXIq9JuCAB5pD0V1ES58aa/5fChFyoiC6GVBlI4xY5y
+	 5AXJG8RTo+B8eH3Wa/GtAJ3/K/pvMNUcfMdHB9TVCr13Lt3gaT7BvrALXfM1vZ42rg
+	 M497XnzNC9fEg==
+Date: Thu, 22 Aug 2024 17:14:16 -0700
+From: Kees Cook <kees@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] leds: gpio: Set num_leds after allocation
+Message-ID: <202408221713.77EF78D1@keescook>
+References: <20240716212455.work.809-kees@kernel.org>
+ <c16715ff-1e47-4a73-8fcb-87462069b5ca@embeddedor.com>
+ <20240725102240.GE501857@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,30 +60,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
+In-Reply-To: <20240725102240.GE501857@google.com>
 
-On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Thu, Jul 25, 2024 at 11:22:40AM +0100, Lee Jones wrote:
+> On Tue, 16 Jul 2024, Gustavo A. R. Silva wrote:
 > 
-> An uninitialized variable @data.have_async may be used as analyzed
-> by the following inline comments:
+> > 
+> > 
+> > On 16/07/24 15:24, Kees Cook wrote:
+> > > With the new __counted_by annotation, the "num_leds" variable needs to
+> > > valid for accesses to the "leds" array. This requirement is not met in
+> > > gpio_leds_create(), since "num_leds" starts at "0", so "leds" index "0"
+> > > will not be considered valid (num_leds would need to be "1" to access
+> > > index "0").
+> > > 
+> > > Fix this by setting the allocation size after allocation, and then update
+> > > the final count based on how many were actually added to the array.
+> > > 
+> > > Fixes: 52cd75108a42 ("leds: gpio: Annotate struct gpio_leds_priv with __counted_by")
+> > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > 
+> > Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> > 
+> > Thanks
+> > -- 
 > 
-> static int __device_attach(struct device *dev, bool allow_async)
-> {
-> 	// if @allow_async is true.
-> 
-> 	...
-> 	struct device_attach_data data = {
-> 		.dev = dev,
-> 		.check_async = allow_async,
-> 		.want_async = false,
-> 	};
-> 	// @data.have_async is not initialized.
+> Using the signature tag in the middle of an email turns the remainder of
+> the body into a signature block, which is odd to say the least.  By all
+> means sign-off in the middle of a mail, but please refrain from
+> converting the rest of the mail.
 
-As Dmitry said, this is incorrect, please fix your broken code analysis
-tool, it is obviously not working properly :(
+Ping. Shall I take this via the hardening tree?
 
-thanks,
+-Kees
 
-greg k-h
+-- 
+Kees Cook
 
