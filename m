@@ -1,245 +1,223 @@
-Return-Path: <linux-kernel+bounces-298966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4647A95CE5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:49:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4987A95CE61
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 718B6B2394E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:49:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B394BB2642A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CB818859E;
-	Fri, 23 Aug 2024 13:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EEF188594;
+	Fri, 23 Aug 2024 13:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIunKEcd"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nw6Xsnmh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED0518660E;
-	Fri, 23 Aug 2024 13:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E70C1EA71;
+	Fri, 23 Aug 2024 13:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420947; cv=none; b=h3SFvwhiowrPhdb626OFj4c6xSBozOSZIvJbXxW/zcAgm6bvNYQEsZ2KwgXWms8S1QuNyyxZ9qCnwJgMixTMdwfoCDodrobgKqM0au06CZbqc+pVjnFU7Zl07sJl9kf4hyRvjK49sG7OX93NyUEXkvn/7milo7qkumEsMNCRXVU=
+	t=1724421002; cv=none; b=B29awluULT9qajD5ApI3WqfnTX9Bw4Tm0xM57Mgt0vilBJK9kIyKZc17zYkbeswNyWtGOdKlyOH4hntprldqyZLwznRFSjJHW2IxvaFHzq6RUFNLA4LpjaHMU8g9PnwOUK+M8iFK1Cyux8+QwxzfucXu3YMcm8U0NRNj/znEO1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420947; c=relaxed/simple;
-	bh=YMftd6XZeiGQUSkzplX6UUjBW8Ul0425anmLA1D6RN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzgpuKGLGlzRi9pJAYjlKpWLbngLlg3CniZ5UuZhptmHtK3eKbukTkiBjX8pP5yHHvYOyDvV77kdI/LFVXeZQXEOPvtOKBaW56y4kwg9mzF4MhfuARFjBU+ANEoXEFASVSk9LHDkKjXLm8XDXKhWbWfX+/5bqvKhFjfAF80lAB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIunKEcd; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334e41c30bso2129126e87.0;
-        Fri, 23 Aug 2024 06:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724420944; x=1725025744; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j0rAa/Diw1/WxbqtV5SQj80lVWGH9itqJcEAREaEyNk=;
-        b=DIunKEcd1ob5AAb5Nfiz2nS5nPjvi4Y7EqbJkgzqodeEIHWprD74+N19inFWb0sKN1
-         3XoaJoDsu9j2a8mEu17U/sJHoscLcDt5jXFeRIRzGqawSLY4ZwMCDFJOfJAMWzHyYPm3
-         HfhbkNLvvKuF0sCtSNXIivE1i3PM5+Jnq3jn6ThTg01rmHqs3A//Gzwkpb0XG7E4Mr3y
-         NpY+OycSsVN9oHh0Lm4sDYn5FxLzAHgEWkdpZvO3+U1gqio3SEXywaZUhun5kne1e8Cv
-         d/HnqUBgqA2x2iqAe2QxoqVkjK8V5fRMxe+47k5+e6JVwDCNkUMaPrwURzY3kUVNSo7i
-         sOKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724420944; x=1725025744;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0rAa/Diw1/WxbqtV5SQj80lVWGH9itqJcEAREaEyNk=;
-        b=ZyvDLfw7t1ym4GZa3x/xfmtUjA9KkW/7neGAeSN9BtbWmvWbw5pzyMQiOUfRyZFKZt
-         xK0TPm55t7KwROx13TwSXuvw4uAodbbw0RrbHeutvEZcvy8PndPVgZ6ThgaklXCMslxG
-         tioMjoO5Mi7FBefo6qjh99HuxIMwuYy/e66THFxSc3k+GOy/3GYwPTaUORiOYYCrtKNa
-         Zl3RGDU4x2X4debpgvtW4tqAUu+hTyQBlUAtCrZr7LqyIkcFJwmePp6qmYj0VWYXglrv
-         wsl13pV2SWeO5TCcsiEZSC3BXj7r+7A8LJv3Q7ssZp0UwrK3duZymqyWmOyWz1tXBb3q
-         6C0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzzT5n3yvMXBlWZmCtXuKhmY3pg3PfPPBY9J28fVgSiCfthERI+BQsZL0htv/ZM+rnHk=@vger.kernel.org, AJvYcCVP3j62TB3Dz3UCiUvbTc+n/VpSG86r3B3sIXYrFygTMhG2Gp3loG/QxF6q+2wlXNiEqtqKr8nvciKwOnNV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO7MqeyWzOs2O0xt5VjdeLWEjE4tOWGm7+XyEqBWsv0X6Az4fk
-	TRHGGubGEUbZz6jKoZfHU4tcQ++LPYTyh5wTo1nIXjBjk6Rxca4o
-X-Google-Smtp-Source: AGHT+IGm6RnZflH6pQQEhkfwEn48Hiaxow66a2JnEtfny/y8K7ryKkohPurdHVQhp41PUetWoXRf4A==
-X-Received: by 2002:a05:6512:39c5:b0:533:46cc:a736 with SMTP id 2adb3069b0e04-534387be65emr1558356e87.37.1724420943446;
-        Fri, 23 Aug 2024 06:49:03 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea36c0esm544064e87.98.2024.08.23.06.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 06:49:03 -0700 (PDT)
-Date: Fri, 23 Aug 2024 16:48:59 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: jitendra.vegiraju@broadcom.com
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
-	john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, ahalaney@redhat.com, 
-	xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, Jianheng.Zhang@synopsys.com, 
-	leong.ching.swee@intel.com, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, 
-	andrew@lunn.ch, linux@armlinux.org.uk, horms@kernel.org, 
-	florian.fainelli@broadcom.com
-Subject: Re: [net-next v4 3/5] net: stmmac: Integrate dw25gmac into stmmac
- hwif handling
-Message-ID: <vxpwwstbvbruaafcatq5zyi257hf25x5levct3y7s7ympcsqvh@b6wmfkd4cxfy>
-References: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
- <20240814221818.2612484-4-jitendra.vegiraju@broadcom.com>
+	s=arc-20240116; t=1724421002; c=relaxed/simple;
+	bh=k4rvCOfdpa/cQJJJHfpTU8bpKskfwdaDid0vcv43haY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VP5bOeCcSgP2sFS30JbbLrCnDxmYR+QbKUMYo51JOBNybGHuuDawPyCG8lWcLBRHZTWyJGAxe+M9bQIOg38tN5F0bC1I3OlhhiWJGEPASAIyk0SnwjlvcBLT/K59T6iXWs/oUQrZs0so2YYvpYGqj7nFk+xA9/tfRuqYio7DLE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nw6Xsnmh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NBFYXt030929;
+	Fri, 23 Aug 2024 13:49:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	biT9ksv6sV8h7VGM7zpO4Z6vpU8PzWezN7Boxoy7F9o=; b=nw6XsnmhL097+PxU
+	LrcXG4NzGDFBWI8dtwekaFPFbTR88VXeO2nggXS4oqgM5VfbykO+zZu2K3W8U58a
+	jO8vZJe10MlVKxHIMMTpKQxQb0PgmMjwGqqCKBs/7VEV078CKgMcTVpiL95Xdbt4
+	fUaq5IK2ymPBQoCJfMm5JO5bcOOE9kBH0h6c077ZnuF7WW3oHCvRAM8be5Oq8fDd
+	zQiu9EOlw4oC+04b3wgc4Ct1IsFBx8aKiCIP5WQCRFulR1BrBbIkMF7OO9z83mKY
+	21Stg2ygWrKD4+jI+JDXTN52FzYSzvrTryjK7+ERHWwkH/GAm+uACaKuMUUbajo0
+	LP04Aw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415ck9fucp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:49:41 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47NDnewC017394
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:49:40 GMT
+Received: from [10.216.54.20] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 Aug
+ 2024 06:49:34 -0700
+Message-ID: <22d1bd64-934f-49f1-bb82-1367f4a43f40@quicinc.com>
+Date: Fri, 23 Aug 2024 19:19:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814221818.2612484-4-jitendra.vegiraju@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+Content-Language: en-US
+To: Christian Loehle <christian.loehle@arm.com>,
+        Bart Van Assche
+	<bvanassche@acm.org>,
+        Sandeep Dhavale <dhavale@google.com>,
+        Dietmar Eggemann
+	<dietmar.eggemann@arm.com>
+CC: Qais Yousef <qyousef@layalina.io>, <axboe@kernel.dk>, <mingo@kernel.org>,
+        <peterz@infradead.org>, <vincent.guittot@linaro.org>,
+        <linux-block@vger.kernel.org>, <sudeep.holla@arm.com>,
+        Jaegeuk Kim
+	<jaegeuk@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, <kailash@google.com>,
+        <tkjos@google.com>, <bvanassche@google.com>,
+        <quic_nitirawa@quicinc.com>, <quic_cang@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_narepall@quicinc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <3feb5226-7872-432b-9781-29903979d34a@arm.com>
+ <20240805020748.d2tvt7c757hi24na@airbuntu>
+ <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
+ <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
+ <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
+ <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
+ <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
+ <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
+ <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
+ <12a6f001-813e-4bc4-90c2-9f9ef7dc72e6@acm.org>
+ <688ead11-c1c0-48b2-b4d1-feeb1278c692@quicinc.com>
+ <1a95a60c-730a-4bb7-80c9-98b8a70f6521@acm.org>
+ <66912a22-540d-4b9a-bd06-cce55b9ad304@quicinc.com>
+ <3d37e8ba-25a8-45c2-93a3-02888dad2c9e@arm.com>
+From: MANISH PANDEY <quic_mapa@quicinc.com>
+In-Reply-To: <3d37e8ba-25a8-45c2-93a3-02888dad2c9e@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lCJmfioFxfOZff3RxZ71MYSmlPxwWsKI
+X-Proofpoint-ORIG-GUID: lCJmfioFxfOZff3RxZ71MYSmlPxwWsKI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_10,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
+ suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408230101
 
-Hi Jitendra
 
-On Wed, Aug 14, 2024 at 03:18:16PM -0700, jitendra.vegiraju@broadcom.com wrote:
-> From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+
+On 8/23/2024 5:33 PM, Christian Loehle wrote:
+> On 8/23/24 08:57, MANISH PANDEY wrote:
+>>
+>>
+>> On 8/22/2024 7:54 PM, Bart Van Assche wrote:
+>>> On 8/22/24 3:46 AM, MANISH PANDEY wrote:
+>>>> On 8/21/2024 10:52 PM, Bart Van Assche wrote:
+>>>>> What is the performance impact of the above change?
+>>>   >
+>>>> No impact at all
+>>> Is this a good summary of this email thread?
+>>> * The first email in this thread reports an important performance
+>>>     regression.
+>>> * In your previous email there is a candidate fix for the performance
+>>>     regression.
+>>> * Above I read that the proposed fix has no performance impact at all
+>>>     on any setup.
+>>>
+>>> Is this a good summary of this email thread? If so, do you agree that
+>>> this must be confusing everyone who is following this email thread?
+>>>
+>>> Thanks,
+>>>
+>>> Bart.
+>>
+>> Hi Bart,
+>>
+>> Performance impact due to addition of cpu capacity check (https://lore.kernel.org/all/20240223155749.2958009-3-qyousef@layalina.io/) ...[1]
+>> is already mentioned in the first email.
+>>
+>> But let me summarize it again:
+>>
+>> We are not able to get advantage of affining the IRQ in different capacity CPU(s)/clusters and complete the request in higher cluster cpu(s), even though the LLC is shared between these clusters as it is causing the block completion to happen on SOFTIRQ context, if requester and completion clusters are different.
+>>
+>> Below is the performance impact with the current patch [1]
+>>
+>> 1. For MCQ capable UFS host (paired with UFS 4.x), we are observing ~20% random R/W performance drop.
+>>
+>> 2. For single doorbell ufs hosts (paired with UFS 2.x/ UFS 3.x), we are observing ~7-10% random R/W performance drop.
+>>
 > 
-> Integrate dw25gmac support into stmmac hardware interface handling.
-> Added a new entry to the stmmac_hw table in hwif.c.
-> Define new macros DW25GMAC_CORE_4_00 and DW25GMAC_ID to identify 25GMAC
-> device.
-> Since BCM8958x is an early adaptor device, the synopsis_id reported in HW
-> is 0x32 and device_id is DWXGMAC_ID. Provide override support by defining
-> synopsys_dev_id member in struct stmmac_priv so that driver specific setup
-> functions can override the hardware reported values.
+> If you do decide to write your proposal up as a patch, a description of the
+> topology would be helpful as well.
 > 
-> Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/common.h |  2 ++
->  drivers/net/ethernet/stmicro/stmmac/hwif.c   | 25 ++++++++++++++++++--
->  drivers/net/ethernet/stmicro/stmmac/stmmac.h |  1 +
->  3 files changed, 26 insertions(+), 2 deletions(-)
+Thanks Christian for meaningful discussions and suggestions.
+We would mention the same in the commit text description in the patch.
+
+>>
+>> Also in previous emails on this thread, below were few suggestions to add check for equal or greater capacity cpus by @Christian Loehle
+>> https://lore.kernel.org/all/3feb5226-7872-432b-9781-29903979d34a@arm.com/
+>>
+>>> From: Christian Loehle @ 2024-08-02  9:03 UTC (permalink / raw)
+>>> [......]
+>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>> index e3c3c0c21b55..a4a2500c4ef6 100644
+>>> --- a/block/blk-mq.c
+>>> +++ b/block/blk-mq.c
+>>> @@ -1164,7 +1164,7 @@ static inline bool
+>>> blk_mq_complete_need_ipi(struct request *rq)
+>>>          if (cpu == rq->mq_ctx->cpu ||
+>>>              (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
+>>>               cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
+>>> -            cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
+>>> +            arch_scale_cpu_capacity(cpu) >=
+>>>                arch_scale_cpu_capacity(rq->mq_ctx->cpu)))
+>>>                  return false;
+>>>
+>>>         /* don't try to IPI to an offline CPU */
+>>
+>>
+>> There can be SoCs with different CPU cluster configurations and to have optimal IO load balancing or to avoid contention b/w submission path and completion path, we may need to complete IO request of large capacity CPU(s) on small cluster cpus. So the above propose solution may not be suffice to all the use cases.
+>>
+>> Hence with below proposed solution, we are trying to propose a new rq flag QUEUE_FLAG_CPU_CAPACITY. The proposed solution will provide us a way such that users who are benefited with CPU capacity check [1] would be able to use the fix as it is, and if a user (including us) want to bypass cpu capacity fix [1], they can set rq_affinity to 3 and would be able to retain performance drop as mentioned in first email. This would give flexibility to user to choose what's the best for their system.
+>>
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-> index 684489156dce..46edbe73a124 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-> @@ -38,9 +38,11 @@
->  #define DWXGMAC_CORE_2_10	0x21
->  #define DWXGMAC_CORE_2_20	0x22
->  #define DWXLGMAC_CORE_2_00	0x20
-> +#define DW25GMAC_CORE_4_00	0x40
->  
->  /* Device ID */
->  #define DWXGMAC_ID		0x76
-> +#define DW25GMAC_ID		0x55
->  #define DWXLGMAC_ID		0x27
->  
->  #define STMMAC_CHAN0	0	/* Always supported and default for all chips */
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> index 29367105df54..97e5594ddcda 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> @@ -278,6 +278,27 @@ static const struct stmmac_hwif_entry {
->  		.est = &dwmac510_est_ops,
->  		.setup = dwxlgmac2_setup,
->  		.quirks = stmmac_dwxlgmac_quirks,
-
-> +	}, {
-> +		.gmac = false,
-> +		.gmac4 = false,
-> +		.xgmac = true,
-> +		.min_id = DW25GMAC_CORE_4_00,
-> +		.dev_id = DW25GMAC_ID,
-> +		.regs = {
-> +			.ptp_off = PTP_XGMAC_OFFSET,
-> +			.mmc_off = MMC_XGMAC_OFFSET,
-> +			.est_off = EST_XGMAC_OFFSET,
-> +		},
-> +		.desc = &dwxgmac210_desc_ops,
-> +		.dma = &dw25gmac400_dma_ops,
-> +		.mac = &dwxgmac210_ops,
-> +		.hwtimestamp = &stmmac_ptp,
-> +		.mode = NULL,
-> +		.tc = &dwmac510_tc_ops,
-> +		.mmc = &dwxgmac_mmc_ops,
-> +		.est = &dwmac510_est_ops,
-> +		.setup = dwxgmac2_setup,
-> +		.quirks = NULL,
->  	},
-
-This can be replaced with just:
-
-+	}, {
-+		.gmac = false,
-+		.gmac4 = false,
-+		.xgmac = true,
-+		.min_id = DW25GMAC_CORE_4_00,
-+		.dev_id = DWXGMAC_ID, /* Early DW 25GMAC IP-core had XGMAC ID */
-+		.regs = {
-+			.ptp_off = PTP_XGMAC_OFFSET,
-+			.mmc_off = MMC_XGMAC_OFFSET,
-+			.est_off = EST_XGMAC_OFFSET,
-+		},
-+		.desc = &dwxgmac210_desc_ops,
-+		.dma = &dw25gmac400_dma_ops,
-+		.mac = &dwxgmac210_ops,
-+		.hwtimestamp = &stmmac_ptp,
-+		.mode = NULL,
-+		.tc = &dwmac510_tc_ops,
-+		.mmc = &dwxgmac_mmc_ops,
-+		.est = &dwmac510_est_ops,
-+		.setup = dw25gmac_setup,
-+		.quirks = NULL,
-	}
-
-and you won't need to pre-define the setup() method in the
-glue driver. Instead you can define a new dw25xgmac_setup() method in
-the dwxgmac2_core.c as it's done for the DW XGMAC/LXGMAC IP-cores.
-
-Note if your device is capable to work with up to 10Gbps speed, then
-just set the plat_stmmacenet_data::max_speed field to SPEED_10000.
-Alternatively if you really need to specify the exact MAC
-capabilities, then you can implement what Russell suggested here
-sometime ago:
-https://lore.kernel.org/netdev/Zf3ifH%2FCjyHtmXE3@shell.armlinux.org.uk/
-
-If you also have a DW 25GMAC-based device with 0x55 device ID, then
-just add another stmmac_hw[] array entry.
-
->  };
->  
-> @@ -304,7 +325,7 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
->  
->  	/* Save ID for later use */
->  	priv->synopsys_id = id;
-> -
-> +	priv->synopsys_dev_id = dev_id;
->  	/* Lets assume some safe values first */
->  	priv->ptpaddr = priv->ioaddr +
->  		(needs_gmac4 ? PTP_GMAC4_OFFSET : PTP_GMAC3_X_OFFSET);
-> @@ -339,7 +360,7 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
->  		/* Use synopsys_id var because some setups can override this */
->  		if (priv->synopsys_id < entry->min_id)
->  			continue;
-> -		if (needs_xgmac && (dev_id ^ entry->dev_id))
-> +		if (needs_xgmac && (priv->synopsys_dev_id ^ entry->dev_id))
->  			continue;
->  
->  		/* Only use generic HW helpers if needed */
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> index b23b920eedb1..9784bbaf9a51 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> @@ -282,6 +282,7 @@ struct stmmac_priv {
->  	struct stmmac_counters mmc;
->  	int hw_cap_support;
->  	int synopsys_id;
-
-> +	int synopsys_dev_id;
-
-With the suggestion above implemented you won't need this.
-
--Serge(y)
-
->  	u32 msg_enable;
->  	int wolopts;
->  	int wol_irq;
-> -- 
-> 2.34.1
+> FWIW I'd agree with introducing a new queue_flag that behaves like
+> QUEUE_FLAG_SAME_COMP before commit af550e4c9682 ("block/blk-mq: Don't complete locally if capacities are different").
+> Equal capacity makes sense as the default behavior for
+> QUEUE_FLAG_SAME_COMP, but is limiting, there might be just one
+> CPU of that capacity and that might be fully utilized by submission
+> (and related work), so completing locally makes sense.
 > 
+> So QUEUE_FLAG_SAME_COMP I'd leave as-is and introduce
+> QUEUE_FLAG_SAME_LLC that actually just checks LLC.
+> 
+> Regards,
+> Christian
+> 
+
+Hi Christian,
+while making the patch, i figured out that queue_flags is unsigned long 
+type and we already reached up to 32 flags as of now.
+
+So we need to figure out some other way.
+Please let us know if you have some suggestions for the solution, which 
+can provide flexibility of with and without cpu capacity check.
+
+
+Regards
+Manish
+
 
