@@ -1,173 +1,147 @@
-Return-Path: <linux-kernel+bounces-299371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD6B95D3B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:47:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B2395D3B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38DDF1C209FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8494A2851AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CE918BC05;
-	Fri, 23 Aug 2024 16:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4C2188A25;
+	Fri, 23 Aug 2024 16:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XpCDmHtN"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fkLCnrsG"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131082D7B8
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E82712B6C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724431642; cv=none; b=cghF006r67WjjCclPLvxSrB2vCnHMfczp5ndjGK8+3s6e3xQY4NUWFHab/2RqI7JeGi1uWJLz63Sz/CWXIa1hNJq2JWbW1uz9QsCSd05BBG6lA7lynvLqSPcr4GfKkz90hqNFRdPWo9QdwVwJ+g0KrnfXHydcoZIPGsSRc3x7RM=
+	t=1724431804; cv=none; b=IjQZKc+yaINNUbyvDzfW5F4VGAn7s/BJBQ+owWMPbNHjW1h8/+dddTHVZ5e5HYhfsNls9K6HP9YFL3mTGb9MV1ngdi1/y4DvdVbi1cESn0AmRpIW/ndtZ4IpuLTBccatG0eCbY/Cz491c4g+uhxFuGKNh8bqCGwfuoMxx0qlcD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724431642; c=relaxed/simple;
-	bh=B9a2nvCk/b6jYxq3i7iYlRBJSSSlom6CcxjJsnY/1no=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E4Pyy5pdFnQdaAzotjlmhJ7I43G1S758dSzCaPFAPQKsutRGnq2yIOwAEQ+7o2Js5/Im3X2OhQ7rE9x6oyzYQtVmgb7KMt7dnAS3+k/CBgCKMpDPDc4tCt9x2dznbwU0PfqZ3mQ0RRtb9F1rMpeLrQ6xZOTYOnD/pw4J719t3Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XpCDmHtN; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1724431804; c=relaxed/simple;
+	bh=NRAzFhxhICWfQx+6HTK86ljw76LNHKDYb4ARkPeKleU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OighiLZzPyB8NdtU9ItgbAv/SWsUJRgDsbV2fmj4l6lUxQHOhfClI8t80h3uE9/dfygoGn8os7HKNJsrf1QNWDuRlvNhp9/J4BOQ6IA9H1V5rRD9NBAuUwVPY2objSFPkjmWA/5IWa67414mWDlwU3rZJ44Q1GHqx1Dti8N27Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fkLCnrsG; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71433cba1b7so1780694b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:47:20 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6bf8b41b34dso10854426d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724431640; x=1725036440; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3mv/oyOLtOBEK37rEmxAvpwCAziAwz2vzc2YGWuhlgo=;
-        b=XpCDmHtNOHkTUmNSb5GEfSAoYeFTaTof6rvVdbF6uDlHDHyq8+li6+wsIhcLEqHwPr
-         cib3zEiRb6re1vVlx5FpTZkQYnwC6DNe7Nlt3Na0lVE+fVpd5v5czXA2ku59oECKChxS
-         NwB0YKRfUW0geMcW+DnVNatfrXUTVGpGWulTQ=
+        d=chromium.org; s=google; t=1724431800; x=1725036600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YF7d6zgK96oUF/UdvRet8Wq1EsEpokqSbVExBvPEI58=;
+        b=fkLCnrsGwMW3T7/scHkg0PkFP1mu+g+nylstaFl3f5Yre4aRyJcU3CYcVvWXIaDuLa
+         tQ/BR8zHo9l5g01K2nMx+J4njCxa0zeC8fkmm7xGzD4PMmk6QZES99QBTOjUpSLRG5r/
+         ZU3EHXQv9wG7CxdSXKY9jFxBh0GMi0NzJPzQk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724431640; x=1725036440;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3mv/oyOLtOBEK37rEmxAvpwCAziAwz2vzc2YGWuhlgo=;
-        b=Kt8rl4p5KkXZhqTpjnnXaSuqCpUY02B/KhWzc+Lk/6YbIJ0OJdkmSbaiOeJGyTd6O2
-         WXfroIMUODKwxNCgIFD4P2oV68iZGQ4SixoSPoG4r+cwY3s+U9rnhjKX81Dll7TbqpEJ
-         b+V9QsSbOWndj4o2U1ipMYF8F+u88TmCEXvedWAQUA8IUuA1eVM1CynOaIlDbuHU7whp
-         d+hPn5GjHeRFLFmgi59sV1fKfZmZexjQa5HEiqCEyYg9mbxk8sb/rOgSjrCGZZPzH+8r
-         ZZsaps3UuahOnlHcw24qUGyZAKcam0W/c8uWf9eiWFS8bNX5FwL2ZeUlFDrcyRz7bdj+
-         wW4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9X6X0O5DwPlooWMQyn/+ZzIR+RDO3evyV8Fu3wqxM2QKqyxxZR5inALq2IHtS0eB/kpD5lAsjEm03ZL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGLrKe1XOnJTW6G8kttQ5CmwYQeBGoyngYwL+ENcWwlakpvGRn
-	kWE2yPUEy7/wBEkrJI5l1QebQGlDvAV5qAhAvCRR6pQZ4dR1X6jccXQxHLfsQQ==
-X-Google-Smtp-Source: AGHT+IH7zP7L6mQKYMZ9U79V104103JG2VbXyLaj6sT+aQeh63DXvNsQeerZsvjYbweGFso6yIQlKw==
-X-Received: by 2002:a05:6300:42:b0:1c2:a722:92b2 with SMTP id adf61e73a8af0-1cc8a080524mr3700593637.45.1724431640327;
-        Fri, 23 Aug 2024 09:47:20 -0700 (PDT)
-Received: from [10.0.2.15] (c-67-182-156-18.hsd1.wa.comcast.net. [67.182.156.18])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714343403b1sm3222603b3a.211.2024.08.23.09.47.19
+        d=1e100.net; s=20230601; t=1724431800; x=1725036600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YF7d6zgK96oUF/UdvRet8Wq1EsEpokqSbVExBvPEI58=;
+        b=My2wisbWrE2k0IUGlCrhfPMGyPl7rTvnv5MPnrgOb1+7y5fRFkczpIfE31cr1zBHXW
+         nydLlaQAKvYQ2i2+3zor8lOqERLydqjVe6Dc4Jis4+RRqAJE9ORwXlEyLDoODq0rhwbj
+         P0xIGwCqEPqgSHZcEyzDp2MBOyQLcSAbBubHT6YQXEIM2GjIIgrptqCCM/SRCk3aqrSm
+         OMk4iV1YbudhhkL97nU14+BIVxjgpDkbkL2Y4jLrp7RjWdjbqvd8yUiGh3XQeTprqUKo
+         i5bziU3pbPoqYJgkXv3avpOZlsHIf9V4LSBrefE3CYbyYm4mPhwlCaIQylbMy2f0dE9X
+         tGYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaELNa+p7wmpOsKXyjL574BKMWJMAYYY2xb9Mf++ObWYWvAvk0ZzninIhj5Oq10K0oRSZEYb+fapl3DbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLQSiynnyY4VfQvjXO6dhnFCnT4MTfIoCMD77/NWN6RLIsbWpf
+	Si2hdKsvhwZshSWzKkdzYgxjW2bElC/9a2DKX9JbEjDzoC9vGQXUaljVmUR7YSwDpzhQChGB5oo
+	=
+X-Google-Smtp-Source: AGHT+IHxmoNzQDyKekbVELK+tOI84pAbHA3ZOr5JCA6kT8SDHx0lmqV1iazFV0U4zvlhQ4t3U1IApg==
+X-Received: by 2002:a05:6214:3f8f:b0:6bf:89fd:90f with SMTP id 6a1803df08f44-6c16dc21690mr34688516d6.3.1724431799601;
+        Fri, 23 Aug 2024 09:49:59 -0700 (PDT)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d4a003sm20311806d6.35.2024.08.23.09.49.58
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 09:47:20 -0700 (PDT)
-Message-ID: <e5fe6cad-9304-479c-944a-8d8456fcdefa@chromium.org>
-Date: Fri, 23 Aug 2024 16:47:17 +0000
+        Fri, 23 Aug 2024 09:49:58 -0700 (PDT)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1e4c75488so130990185a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:49:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVjY4BpiPCKgNp5qZsU25B6dyKg9i3mrq+JsvqRNRducQ+/rdlCloswc4yyEs2EFfb1EOQF3y+ypAHq5mQ=@vger.kernel.org
+X-Received: by 2002:a05:6214:4199:b0:6b9:5fb9:113f with SMTP id
+ 6a1803df08f44-6c16dc6309emr28510476d6.27.1724431798162; Fri, 23 Aug 2024
+ 09:49:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] KVM: x86: AMD's IBPB is not equivalent to Intel's
- IBPB
-To: Sean Christopherson <seanjc@google.com>, Jim Mattson <jmattson@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20240816182533.2478415-1-jmattson@google.com>
- <20240816182533.2478415-2-jmattson@google.com> <ZseOvjOSfvTwmr-6@google.com>
-Content-Language: en-US
-From: Venkatesh Srinivas <venkateshs@chromium.org>
-In-Reply-To: <ZseOvjOSfvTwmr-6@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240823163513.4344-1-hanchunchao@inspur.com>
+In-Reply-To: <20240823163513.4344-1-hanchunchao@inspur.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 23 Aug 2024 09:49:46 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X_a2NzAi6L3N-Bgta4Vn7uSd3DPZ355LBg1gpd=A7H+w@mail.gmail.com>
+Message-ID: <CAD=FV=X_a2NzAi6L3N-Bgta4Vn7uSd3DPZ355LBg1gpd=A7H+w@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: himax-hx83102: Add NULL pointer check in hx83102_get_modes
+To: Charles Han <hanchunchao@inspur.com>
+Cc: neil.armstrong@linaro.org, yangcong5@huaqin.corp-partner.google.com, 
+	quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, liuyanming@ieisystem.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Aug 23, 2024 at 9:35=E2=80=AFAM Charles Han <hanchunchao@inspur.com=
+> wrote:
+>
+> In hx83102_get_modes(), the return value of drm_mode_duplicate()
+> is assigned to mode, which will lead to a possible NULL pointer
+> dereference on failure of drm_mode_duplicate(). Even though a
+> small allocation failing is basically impossible, kernel policy
+> is still to check for NULL so add the check.
+>
+> Fixes: 0ef94554dc40 ("drm/panel: himax-hx83102: Break out as separate dri=
+ver")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> ---
+>  drivers/gpu/drm/panel/panel-himax-hx83102.c | 2 ++
+>  1 file changed, 2 insertions(+)
+
+FWIW, this looks to be v4 of your patch, right? The subject line
+should include a version number and you should be providing version
+history "after the cut" in your patch. Tools like "b4" and "patman"
+can help you get this correct [1]. If you plan to continue posting
+patches you'll need to start getting this right. The next version of
+your patch would be v5.
+
+[1] https://sched.co/1aBGS
+
+I see:
+
+v1: https://lore.kernel.org/r/20240821095039.15282-1-hanchunchao@inspur.com
+v2: https://lore.kernel.org/r/20240822093442.4262-1-hanchunchao@inspur.com
+v3: https://lore.kernel.org/r/20240823083657.7100-1-hanchunchao@inspur.com
 
 
+> diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/dr=
+m/panel/panel-himax-hx83102.c
+> index 6e4b7e4644ce..e67555323d3b 100644
+> --- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
+> +++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
+> @@ -565,6 +565,8 @@ static int hx83102_get_modes(struct drm_panel *panel,
+>         struct drm_display_mode *mode;
+>
+>         mode =3D drm_mode_duplicate(connector->dev, m);
+> +       if (!mode)
+> +               return -EINVAL;
 
-On 8/22/24 19:17, Sean Christopherson wrote:
-> On Fri, Aug 16, 2024, Jim Mattson wrote:
->> >From Intel's documention [1], "CPUID.(EAX=07H,ECX=0):EDX[26]
->> enumerates support for indirect branch restricted speculation (IBRS)
->> and the indirect branch predictor barrier (IBPB)." Further, from [2],
->> "Software that executed before the IBPB command cannot control the
->> predicted targets of indirect branches (4) executed after the command
->> on the same logical processor," where footnote 4 reads, "Note that
->> indirect branches include near call indirect, near jump indirect and
->> near return instructions. Because it includes near returns, it follows
->> that **RSB entries created before an IBPB command cannot control the
->> predicted targets of returns executed after the command on the same
->> logical processor.**" [emphasis mine]
->>
->> On the other hand, AMD's IBPB "may not prevent return branch
->> predictions from being specified by pre-IBPB branch targets" [3].
->>
->> However, some AMD processors have an "enhanced IBPB" [terminology
->> mine] which does clear the return address predictor. This feature is
->> enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
->>
->> Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
->> accordingly.
->>
->> [1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/cpuid-enumeration-and-architectural-msrs.html
->> [2] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/speculative-execution-side-channel-mitigations.html#Footnotes
->> [3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1040.html
->> [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf
->>
->> Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features as derived in generic x86 code")
->> Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
->> Signed-off-by: Jim Mattson <jmattson@google.com>
-> 
-> Venkatesh, can I grab a review from you on this?   You know this way better than
-> I do, and I honestly don't feel like reading mitigation disclosures right now :-)
+I would have returned -ENOMEM since drm_mode_duplicate() is defined to
+allocate memory copy the mode (like strdup does for strings) and it
+should be clear that the only failure case is failure to allocate
+memory. Other callers convert a NULL return as -ENOMEM.
 
-Got lost in my mailbox!
-
-Reviewed-by: Venkatesh Srinivas <venkateshs@chromium.org>
-
-> 
->> ---
->>   v2: Use IBPB_RET to identify semantic equality (Venkatesh)
->>
->>   arch/x86/kvm/cpuid.c | 8 ++++++--
->>   1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->> index 2617be544480..044bdc9e938b 100644
->> --- a/arch/x86/kvm/cpuid.c
->> +++ b/arch/x86/kvm/cpuid.c
->> @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
->>   	kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
->>   	kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
->>   
->> -	if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
->> +	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
->> +	    boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
->> +	    boot_cpu_has(X86_FEATURE_AMD_IBRS))
->>   		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
->>   	if (boot_cpu_has(X86_FEATURE_STIBP))
->>   		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
->> @@ -759,8 +761,10 @@ void kvm_set_cpu_caps(void)
->>   	 * arch/x86/kernel/cpu/bugs.c is kind enough to
->>   	 * record that in cpufeatures so use them.
->>   	 */
->> -	if (boot_cpu_has(X86_FEATURE_IBPB))
->> +	if (boot_cpu_has(X86_FEATURE_IBPB)) {
->>   		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
->> +		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
->> +	}
->>   	if (boot_cpu_has(X86_FEATURE_IBRS))
->>   		kvm_cpu_cap_set(X86_FEATURE_AMD_IBRS);
->>   	if (boot_cpu_has(X86_FEATURE_STIBP))
->> -- 
->> 2.46.0.184.g6999bdac58-goog
->>
+-Doug
 
