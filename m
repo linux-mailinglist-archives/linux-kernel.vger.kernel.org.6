@@ -1,108 +1,319 @@
-Return-Path: <linux-kernel+bounces-298186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EBB95C3A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:14:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F60B95C3A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7882F1C21D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D3F128478B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD3A381BE;
-	Fri, 23 Aug 2024 03:14:30 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444D037144;
+	Fri, 23 Aug 2024 03:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sRqJLCG4"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED4C3717F;
-	Fri, 23 Aug 2024 03:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2501EA73
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724382869; cv=none; b=rINtcSl5i+4ZGlePvGXOI8tHyir20E+WsONhDffvGGDSb+3JwT86vTpdOeKj4Az+rSQwyubDoMQyV13fK78w7entePBRk2bJjJfljeNhd7QsMNihJIWBXHnkUje6KpXBQvVxNnbdQJbDRYdvJe/ZZIgnUPipjufFBeFyqXP3/ZI=
+	t=1724383218; cv=none; b=B/QSyw6iOxttOSMw7OVdGrkC9J45MQ+RkYi6ajwe5Gr0i//dBWfRU+YWPtVi1GN3ODUufGcOvBhXVm8N9Um8UyANku4znxC2+fBqzsCNU86XEiuBOtddFoLCE+xHq1dHf8kQ3O8fc/wrlwrt1ccR/POUxGMYpEQ3xcocpimd60A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724382869; c=relaxed/simple;
-	bh=Dik13fO6l+IddL8N5N3a5FAK8zIEEnxnqYxZ5d68gYI=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=c1ZMzxmeyQhplx9JpRZaGKVNCw65Lur8NJ26KgIV/3/pU5Y4+Z5UERz1d9x/nHZWEsbKdDGaUtaalrkhSNlsgT6W3xTuZKvAJU+jdprJSoV7SXTPZL9y5T1rNm1M/t6ZdymcTX8m+kaa3Vv/0hpVbYBx0n3wCGUHKfBBdKSLK8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WqlW6156mzpStK;
-	Fri, 23 Aug 2024 11:12:50 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 167AE18005F;
-	Fri, 23 Aug 2024 11:14:24 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 23 Aug 2024 11:14:22 +0800
-Message-ID: <81cbefc2-1cf1-4684-b4b1-5610ee02a8a2@huawei.com>
-Date: Fri, 23 Aug 2024 11:14:21 +0800
+	s=arc-20240116; t=1724383218; c=relaxed/simple;
+	bh=eB58hHDqk1em9OZVfRdeIxjwv+XgL7FEdMCZMChYpC0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ELDVzR8a17ykkgZ+jmlbGkCj62SLtCdlQ+YPJpmLkUdINPjVV1oqKkHiXKN7mnaWaWb+GUJH99p1F7sRC6SvWaVuv2CkAjhbgVD82S9P6bBJ9I5Mgp3ItzUJ+Cd8otBh/GhioRUvtxNX0CfFy99rfVrLH/iP0odBo2vVYFOQqTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sRqJLCG4; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724383213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1G+1z+3fDUC9nUFepNnbT58XaeAXVmyPg6wTBI+VKAg=;
+	b=sRqJLCG4+1Tvv4Dq4Gd2MAePGR1kXtnbcI3lB3FtHuK5LsfX5fP157Kl5OJRWxiNhm2gMT
+	Ub1tP5uzZP1/nFprc6kWnUQ32gE7yHZ3ZISMrq47pwCOYM5bUumXW9VN1Pcit32TCrdlaW
+	2vFCtF/G1Jc5ApSXNAlmyP8mb7m0xsw=
+From: Youling Tang <youling.tang@linux.dev>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	youling.tang@linux.dev,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: [PATCH] bcachefs: Remove the handling of bch2_trans_iter_exit() in __bch2_bkey_get_iter()
+Date: Fri, 23 Aug 2024 11:19:55 +0800
+Message-Id: <20240823031955.202795-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 net-next 02/11] net: hibmcge: Add read/write registers
- supported through the bar space
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20240822093334.1687011-1-shaojijie@huawei.com>
- <20240822093334.1687011-3-shaojijie@huawei.com>
- <2548f41a-4910-4b60-9433-87714f594e82@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <2548f41a-4910-4b60-9433-87714f594e82@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+From: Youling Tang <tangyouling@kylinos.cn>
 
-on 2024/8/23 0:04, Andrew Lunn wrote:
->>   static int hbg_pci_init(struct pci_dev *pdev)
->>   {
->> @@ -56,10 +62,15 @@ static int hbg_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>   	if (ret)
->>   		return ret;
->>   
->> +	ret = hbg_init(priv);
->> +	if (ret)
->> +		return ret;
->> +
->>   	ret = devm_register_netdev(dev, netdev);
->>   	if (ret)
->>   		return dev_err_probe(dev, ret, "failed to register netdev\n");
->>   
->> +	set_bit(HBG_NIC_STATE_INITED, &priv->state);
-> There is a potential race here. Before devm_register_netdev() even
-> returns, the linux stack could be sending packets. You need to ensure
-> nothing actual needs HBG_NIC_STATE_INITED when the interface is
-> operating, because it might not be set yet.
->
-> In general, such state variables are not needed. If registration
-> failed, probe failed, and the driver will be unloaded. If registration
-> succeeded and other functions are being used, registration must of
-> been successful.
->
-> 	Andrew
+- Reduces bkey_err() calls.
+- Avoid redundant calls to bch2_trans_iter_exit() in some functions.
 
-HBG_NIC_STATE_INITED is not used in TX or RX.
-We want to be able to use it in function reset and FLR(not including in this patch set).
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+---
+ fs/bcachefs/alloc_background.c | 9 +++++----
+ fs/bcachefs/btree_iter.h       | 5 ++---
+ fs/bcachefs/fsck.c             | 5 +++--
+ fs/bcachefs/inode.c            | 4 ++--
+ fs/bcachefs/io_write.c         | 2 +-
+ fs/bcachefs/lru.c              | 2 +-
+ fs/bcachefs/move.c             | 4 +++-
+ fs/bcachefs/movinggc.c         | 3 ++-
+ fs/bcachefs/quota.c            | 3 ++-
+ fs/bcachefs/subvolume.c        | 5 +++--
+ 10 files changed, 24 insertions(+), 18 deletions(-)
 
-There is a time gap between pci_init and register_netdev.
-Therefore, HBG_NIC_STATE_INITED is introduced to judge whether probe is complete.
-
-	Jijie Shao
+diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
+index fd3a2522bc3e..9ac5c0a62041 100644
+--- a/fs/bcachefs/alloc_background.c
++++ b/fs/bcachefs/alloc_background.c
+@@ -460,7 +460,7 @@ bch2_trans_start_alloc_update_noupdate(struct btree_trans *trans, struct btree_i
+ 					       BTREE_ITER_intent);
+ 	int ret = bkey_err(k);
+ 	if (unlikely(ret))
+-		return ERR_PTR(ret);
++		goto err;
+ 
+ 	struct bkey_i_alloc_v4 *a = bch2_alloc_to_v4_mut_inlined(trans, k);
+ 	ret = PTR_ERR_OR_ZERO(a);
+@@ -693,7 +693,7 @@ static int bch2_bucket_do_index(struct btree_trans *trans,
+ 			     BTREE_ITER_intent);
+ 	ret = bkey_err(old);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 
+ 	if (ca->mi.freespace_initialized &&
+ 	    c->curr_recovery_pass > BCH_RECOVERY_PASS_check_alloc_info &&
+@@ -738,7 +738,7 @@ static noinline int bch2_bucket_gen_update(struct btree_trans *trans,
+ 			       BTREE_ITER_with_updates);
+ 	ret = bkey_err(k);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	if (k.k->type != KEY_TYPE_bucket_gens) {
+ 		bkey_bucket_gens_init(&g->k_i);
+@@ -750,6 +750,7 @@ static noinline int bch2_bucket_gen_update(struct btree_trans *trans,
+ 	g->v.gens[offset] = gen;
+ 
+ 	ret = bch2_trans_update(trans, &iter, &g->k_i, 0);
++out:
+ 	bch2_trans_iter_exit(trans, &iter);
+ 	return ret;
+ }
+@@ -1373,7 +1374,7 @@ static noinline_for_stack int bch2_check_discard_freespace_key(struct btree_tran
+ 	alloc_k = bch2_bkey_get_iter(trans, &alloc_iter, BTREE_ID_alloc, pos, 0);
+ 	ret = bkey_err(alloc_k);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	if (fsck_err_on(!bch2_dev_bucket_exists(c, pos),
+ 			trans, need_discard_freespace_key_to_invalid_dev_bucket,
+diff --git a/fs/bcachefs/btree_iter.h b/fs/bcachefs/btree_iter.h
+index dca62375d7d3..7fbc5a796c4c 100644
+--- a/fs/bcachefs/btree_iter.h
++++ b/fs/bcachefs/btree_iter.h
+@@ -552,8 +552,7 @@ static inline struct bkey_s_c __bch2_bkey_get_iter(struct btree_trans *trans,
+ 
+ 	if (!bkey_err(k) && type && k.k->type != type)
+ 		k = bkey_s_c_err(-BCH_ERR_ENOENT_bkey_type_mismatch);
+-	if (unlikely(bkey_err(k)))
+-		bch2_trans_iter_exit(trans, iter);
++
+ 	return k;
+ }
+ 
+@@ -586,9 +585,9 @@ static inline int __bch2_bkey_get_val_typed(struct btree_trans *trans,
+ 		memcpy(val, k.v, b);
+ 		if (unlikely(b < sizeof(*val)))
+ 			memset((void *) val + b, 0, sizeof(*val) - b);
+-		bch2_trans_iter_exit(trans, &iter);
+ 	}
+ 
++	bch2_trans_iter_exit(trans, &iter);
+ 	return ret;
+ }
+ 
+diff --git a/fs/bcachefs/fsck.c b/fs/bcachefs/fsck.c
+index 9138944c5ae6..83a343f1e186 100644
+--- a/fs/bcachefs/fsck.c
++++ b/fs/bcachefs/fsck.c
+@@ -930,7 +930,7 @@ static int check_inode_dirent_inode(struct btree_trans *trans, struct bkey_s_c i
+ 	struct bkey_s_c_dirent d = inode_get_dirent(trans, &dirent_iter, inode, &inode_snapshot);
+ 	int ret = bkey_err(d);
+ 	if (ret && !bch2_err_matches(ret, ENOENT))
+-		return ret;
++		goto err;
+ 
+ 	if (fsck_err_on(ret,
+ 			trans, inode_points_to_missing_dirent,
+@@ -955,6 +955,7 @@ static int check_inode_dirent_inode(struct btree_trans *trans, struct bkey_s_c i
+ 	}
+ 
+ 	ret = 0;
++err:
+ fsck_err:
+ 	bch2_trans_iter_exit(trans, &dirent_iter);
+ 	printbuf_exit(&buf);
+@@ -1971,7 +1972,7 @@ static int check_dirent_to_subvol(struct btree_trans *trans, struct btree_iter *
+ 					 0, subvolume);
+ 	ret = bkey_err(s.s_c);
+ 	if (ret && !bch2_err_matches(ret, ENOENT))
+-		return ret;
++		goto out;
+ 
+ 	if (ret) {
+ 		if (fsck_err(trans, dirent_to_missing_subvol,
+diff --git a/fs/bcachefs/inode.c b/fs/bcachefs/inode.c
+index 2be6be33afa3..6cb4028f6f60 100644
+--- a/fs/bcachefs/inode.c
++++ b/fs/bcachefs/inode.c
+@@ -343,7 +343,7 @@ int bch2_inode_peek_nowarn(struct btree_trans *trans,
+ 			       flags|BTREE_ITER_cached);
+ 	ret = bkey_err(k);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 
+ 	ret = bkey_is_inode(k.k) ? 0 : -BCH_ERR_ENOENT_inode;
+ 	if (ret)
+@@ -1081,7 +1081,7 @@ static int may_delete_deleted_inode(struct btree_trans *trans,
+ 	k = bch2_bkey_get_iter(trans, &inode_iter, BTREE_ID_inodes, pos, BTREE_ITER_cached);
+ 	ret = bkey_err(k);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	ret = bkey_is_inode(k.k) ? 0 : -BCH_ERR_ENOENT_inode;
+ 	if (fsck_err_on(!bkey_is_inode(k.k),
+diff --git a/fs/bcachefs/io_write.c b/fs/bcachefs/io_write.c
+index 1d4761d15002..3ba374b47f4b 100644
+--- a/fs/bcachefs/io_write.c
++++ b/fs/bcachefs/io_write.c
+@@ -219,7 +219,7 @@ static inline int bch2_extent_update_i_size_sectors(struct btree_trans *trans,
+ 			      BTREE_ITER_cached);
+ 	int ret = bkey_err(k);
+ 	if (unlikely(ret))
+-		return ret;
++		goto err;
+ 
+ 	/*
+ 	 * varint_decode_fast(), in the inode .invalid method, reads up to 7
+diff --git a/fs/bcachefs/lru.c b/fs/bcachefs/lru.c
+index 96f2f4f8c397..40bc732e996f 100644
+--- a/fs/bcachefs/lru.c
++++ b/fs/bcachefs/lru.c
+@@ -91,7 +91,7 @@ int bch2_lru_check_set(struct btree_trans *trans,
+ 					   time), 0);
+ 	int ret = bkey_err(lru_k);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 
+ 	if (lru_k.k->type != KEY_TYPE_set) {
+ 		ret = bch2_btree_write_buffer_maybe_flush(trans, referring_k, last_flushed);
+diff --git a/fs/bcachefs/move.c b/fs/bcachefs/move.c
+index 7d3920e03742..4148fc312ab2 100644
+--- a/fs/bcachefs/move.c
++++ b/fs/bcachefs/move.c
+@@ -439,8 +439,10 @@ int bch2_move_get_io_opts_one(struct btree_trans *trans,
+ 			       SPOS(0, extent_k.k->p.inode, extent_k.k->p.snapshot),
+ 			       BTREE_ITER_cached);
+ 	ret = bkey_err(k);
+-	if (bch2_err_matches(ret, BCH_ERR_transaction_restart))
++	if (bch2_err_matches(ret, BCH_ERR_transaction_restart)) {
++		bch2_trans_iter_exit(trans, &iter);
+ 		return ret;
++	}
+ 
+ 	if (!ret && bkey_is_inode(k.k)) {
+ 		struct bch_inode_unpacked inode;
+diff --git a/fs/bcachefs/movinggc.c b/fs/bcachefs/movinggc.c
+index deef4f024d20..7ee2e74eb7fc 100644
+--- a/fs/bcachefs/movinggc.c
++++ b/fs/bcachefs/movinggc.c
+@@ -88,7 +88,7 @@ static int bch2_bucket_is_movable(struct btree_trans *trans,
+ 			       b->k.bucket, BTREE_ITER_cached);
+ 	ret = bkey_err(k);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	a = bch2_alloc_to_v4(k, &_a);
+ 	b->k.gen	= a->gen;
+@@ -98,6 +98,7 @@ static int bch2_bucket_is_movable(struct btree_trans *trans,
+ 		a->fragmentation_lru &&
+ 		a->fragmentation_lru <= time;
+ 
++out:
+ 	bch2_trans_iter_exit(trans, &iter);
+ 	return ret;
+ }
+diff --git a/fs/bcachefs/quota.c b/fs/bcachefs/quota.c
+index c32a05e252e2..504d39a9da65 100644
+--- a/fs/bcachefs/quota.c
++++ b/fs/bcachefs/quota.c
+@@ -828,7 +828,7 @@ static int bch2_set_quota_trans(struct btree_trans *trans,
+ 			       BTREE_ITER_slots|BTREE_ITER_intent);
+ 	ret = bkey_err(k);
+ 	if (unlikely(ret))
+-		return ret;
++		goto err;
+ 
+ 	if (k.k->type == KEY_TYPE_quota)
+ 		new_quota->v = *bkey_s_c_to_quota(k).v;
+@@ -844,6 +844,7 @@ static int bch2_set_quota_trans(struct btree_trans *trans,
+ 		new_quota->v.c[Q_INO].hardlimit = cpu_to_le64(qdq->d_ino_hardlimit);
+ 
+ 	ret = bch2_trans_update(trans, &iter, &new_quota->k_i, 0);
++err:
+ 	bch2_trans_iter_exit(trans, &iter);
+ 	return ret;
+ }
+diff --git a/fs/bcachefs/subvolume.c b/fs/bcachefs/subvolume.c
+index dbe834cb349f..c5358f452fc1 100644
+--- a/fs/bcachefs/subvolume.c
++++ b/fs/bcachefs/subvolume.c
+@@ -419,12 +419,13 @@ static int __bch2_subvolume_delete(struct btree_trans *trans, u32 subvolid)
+ 	bch2_fs_inconsistent_on(bch2_err_matches(ret, ENOENT), trans->c,
+ 				"missing subvolume %u", subvolid);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 
+ 	snapid = le32_to_cpu(subvol.v->snapshot);
+ 
+ 	ret =   bch2_btree_delete_at(trans, &iter, 0) ?:
+ 		bch2_snapshot_node_set_deleted(trans, snapid);
++err:
+ 	bch2_trans_iter_exit(trans, &iter);
+ 	return ret;
+ }
+@@ -648,7 +649,7 @@ static int __bch2_fs_upgrade_for_subvolumes(struct btree_trans *trans)
+ 			       SPOS(0, BCACHEFS_ROOT_INO, U32_MAX), 0);
+ 	ret = bkey_err(k);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 
+ 	if (!bkey_is_inode(k.k)) {
+ 		bch_err(trans->c, "root inode not found");
+-- 
+2.34.1
 
 
