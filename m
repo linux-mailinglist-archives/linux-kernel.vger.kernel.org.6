@@ -1,127 +1,195 @@
-Return-Path: <linux-kernel+bounces-299199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679C995D170
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:32:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CD395CEE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8F41F23C9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A20286724
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D3018953D;
-	Fri, 23 Aug 2024 15:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EED11891A9;
+	Fri, 23 Aug 2024 14:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Y846mzsG"
-Received: from mail-m19731125.qiye.163.com (mail-m19731125.qiye.163.com [220.197.31.125])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="jlaDrOju"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E50188920;
-	Fri, 23 Aug 2024 15:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3FA194125;
+	Fri, 23 Aug 2024 14:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427144; cv=none; b=kiYGTLrDgJqdKSRwbFDqT4H/kRvcTu/Gitvbcv/mTnw2v/9oLG3s8k+OSiX09Ci0/Rx8Us1Y49ASAnOy6nJo7JGk1UM8rwnGaCQwI3RMdzP0n5QLo7NrUqPY25MebHqCkjTJuad76zYvMgbq7lG2t3gXaHcibotcZCeKBxEOe8g=
+	t=1724421766; cv=none; b=oZwlgX/hUL86LTfG+ihJ5+h2toyurHJA4Bw25Cu1cwWkamrAPXDDUf76CC3stE1KqJF8B7k0BTogJc99AmRt0EjR1+nrRZNP2fGlbKftmatg9Y4L+qEOVJ4jfQ5VWRMZE4FqOL5qhYBmNhqub8Wq2/mNf777wTQ2jv93aMgikXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427144; c=relaxed/simple;
-	bh=tfaCEzlZ1LhNiIKfeFVTZb7lDH70RxZS7nJf7Bmy8lc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sktty+zia/BrQx31CZFalClGlytjv473SwKocoskaLh35ZrHIdu7Qjm18Y778KcVlfo7lu/7GSKPizl8ApCVTRpq8YHDxOXSOwr/UP6egCN4CAON2dVKliSd7JQtY+m79r4M+4dG7f4K3/fM+aHihhWxmcCrcahuYA4pY8MxMP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Y846mzsG; arc=none smtp.client-ip=220.197.31.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=Y846mzsGjepE5I9zVGhtEOkuo/VziAacg1VazjQ73SxbNO8es21Y8Wk7eQ+FsBKIpOVQV6e2JMBk1Z7e/U0kfnZYFx2pwbO2Z831PHwqbhl63jt43mvlIwZziWq0FHlIq0oZY0LYMQajFgOuWcGClgoFtZkGhkBDYGxRWSUpb+U=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=L9GlpNjSE4nJJrkD+TrY66Rr2oSAqGgJJBgFwS4eF04=;
-	h=date:mime-version:subject:message-id:from;
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 1C02E7E03CC;
-	Fri, 23 Aug 2024 11:45:05 +0800 (CST)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	Ye Zhang <ye.zhang@rock-chips.com>
-Subject: [PATCH v2] gpio: rockchip: Update debounce config function
-Date: Fri, 23 Aug 2024 11:43:09 +0800
-Message-Id: <20240823034314.62305-7-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1724421766; c=relaxed/simple;
+	bh=M/+JW3B4fr1FmeAODEX3e/e8p10B2hMp1V9Fr4Rz+m8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gEkKThaWTeQXAxKhrEkn97f3g+gOlXTHUSHQ6ILz9FaFqVqFQvBhZgtqL4wYgNCHEgONhpj1gk6mVhSIumt/xeHx9M/Fo6Cqfp6tjGbfRxqGBgv3gB3Z7A+jbahve2vIu2atD45UJH1OWgTCy8tAy7OHFFVAEOKNySPs1I5SzPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=jlaDrOju; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GxF+gOMi88g9BBo9JOx0m3wME02pBHhU7ugsa7eOpAg=; b=jlaDrOjuTijwmuVnD8iWgRrncU
+	6yxUlbz5CLacwjZ/oDiZadhRopTWse3LShl6LJNsxsgLSFr0zGrM3Hkq5Zk0hjA4XzEqXkWjWGBHU
+	StiWyIjZnctjVoag7pCR5VuNRVG6gN7Z1nLNe1lakLkpkNfawtrRzvOvFJW6EOJBhzCQDoqM+T6jn
+	DDRX/xlE56lRGtQrcKP/M23Ce9q1hLSNiCoAU8GMrtSw3AQ5pVgNSH//3CrYKjfQqRviXTr972oQA
+	qtclx9AEU/BInPyQEzE88xiZ3RMPMpD2mGWgavURamvAV9llfwL87qE4uXgFx1QlPs79MMA2AsAtY
+	feutIWwQ==;
+Received: from [2001:9e8:9f5:ff01:6f0:21ff:fe91:394] (port=45454 helo=bergen)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1shUpT-000BrH-4G;
+	Fri, 23 Aug 2024 15:59:51 +0200
+Date: Fri, 23 Aug 2024 15:59:46 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH] kbuild: pahole-version: avoid errors if executing fails
+Message-ID: <ZsiV0V5-UYFGkxPE@bergen>
+References: <20240728125527.690726-1-ojeda@kernel.org>
+ <CAK7LNARhR=GGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhpIGlYaGkNISx5DHkweHkNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a917d567d1e09cfkunm1c02e7e03cc
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MzI6FRw6SDI8EixIGTYzTgge
-	VksaCitVSlVKTElPSENPTEtNSUxNVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSElCTDcG
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yO3YVrUfbWxrxaQH"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARhR=GGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.gmail.com>
+X-Operating-System: Debian GNU/Linux 12.6
+Jabber-ID: nicolas@jabber.no
 
-In the GPIO with version number 0x01000C2B, debounce configuration is
-already supported.
 
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+--yO3YVrUfbWxrxaQH
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index c246f116a3b5..aff8bec79062 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -250,6 +250,8 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 			clk_prepare_enable(bank->db_clk);
- 		else
- 			clk_disable_unprepare(bank->db_clk);
-+	} else {
-+		return -ENOTSUPP;
- 	}
- 
- 	return 0;
-@@ -278,22 +280,11 @@ static int rockchip_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 				  unsigned long config)
- {
- 	enum pin_config_param param = pinconf_to_config_param(config);
-+	unsigned int debounce = pinconf_to_config_argument(config);
- 
- 	switch (param) {
- 	case PIN_CONFIG_INPUT_DEBOUNCE:
--		rockchip_gpio_set_debounce(gc, offset, true);
--		/*
--		 * Rockchip's gpio could only support up to one period
--		 * of the debounce clock(pclk), which is far away from
--		 * satisftying the requirement, as pclk is usually near
--		 * 100MHz shared by all peripherals. So the fact is it
--		 * has crippled debounce capability could only be useful
--		 * to prevent any spurious glitches from waking up the system
--		 * if the gpio is conguired as wakeup interrupt source. Let's
--		 * still return -ENOTSUPP as before, to make sure the caller
--		 * of gpiod_set_debounce won't change its behaviour.
--		 */
--		return -ENOTSUPP;
-+		return rockchip_gpio_set_debounce(gc, offset, debounce);
- 	default:
- 		return -ENOTSUPP;
- 	}
--- 
-2.34.1
+On Fri 23 Aug 2024 02:28:28 GMT, Masahiro Yamada wrote:
+> Date: Fri, 23 Aug 2024 02:28:28 +0900
+> From: Masahiro Yamada <masahiroy@kernel.org>
+> To: Miguel Ojeda <ojeda@kernel.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+>  <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+>  Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song L=
+iu
+>  <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabe=
+nd
+>  <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+>  Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+>  <jolsa@kernel.org>, bpf@vger.kernel.org, Nathan Chancellor
+>  <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+>  linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+>  patches@lists.linux.dev
+> Subject: Re: [PATCH] kbuild: pahole-version: avoid errors if executing fa=
+ils
+> X-Mailing-List: linux-kbuild@vger.kernel.org
+> Message-ID: <CAK7LNARhR=3DGGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.g=
+mail.com>
+>=20
+> On Sun, Jul 28, 2024 at 9:55=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> w=
+rote:
+> >
+> > Like patch "rust: suppress error messages from
+> > CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT" [1], do not assume the file existi=
+ng
+> > and being executable implies executing it will succeed. Instead, bail
+> > out if executing it fails for any reason.
+> >
+> > For instance, `pahole` may be built for another architecture, may be a
+> > program we do not expect or may be completely broken:
+> >
+> >     $ echo 'bad' > bad-pahole
+> >     $ chmod u+x bad-pahole
+> >     $ make PAHOLE=3D./bad-pahole defconfig
+> >     ...
+> >     ./bad-pahole: 1: bad: not found
+> >     init/Kconfig:112: syntax error
+> >     init/Kconfig:112: invalid statement
+>=20
+>=20
+>=20
+> Even with this patch applied, a syntax error can happen.
+>=20
+> $ git log --oneline -1
+> dd1c54d77f11 kbuild: pahole-version: avoid errors if executing fails
+> $ echo 'echo' > bad-pahole
+> $ chmod u+x bad-pahole
+> $ make PAHOLE=3D./bad-pahole defconfig
+> *** Default configuration is based on 'x86_64_defconfig'
+> init/Kconfig:114: syntax error
+> init/Kconfig:114: invalid statement
+> make[2]: *** [scripts/kconfig/Makefile:95: defconfig] Error 1
+> make[1]: *** [/home/masahiro/workspace/linux-kbuild/Makefile:680:
+> defconfig] Error 2
+> make: *** [Makefile:224: __sub-make] Error 2
+>=20
 
+Do we have to catch all possibilities?  Then, what about this:
+
+
+#!/bin/sh
+trap "echo 0; exit 1" EXIT
+set -e
+
+output=3D$("$@" --version 2>/dev/null)
+
+output=3D$(echo "${output}" |  sed -nE 's/^v([0-9]+)\.([0-9][0-9])$/\1\2/p')
+if [ -z "${output}" ]; then
+	echo "warning: pahole binary '$1' outputs incompatible version number, pah=
+ole will not be used." >&2
+	exit 1
+fi
+
+echo "${output}"
+trap EXIT
+
+
+
+Kind regards,
+Nicolas
+
+--yO3YVrUfbWxrxaQH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmbIlcYACgkQB1IKcBYm
+EmlIXhAAw5al6h44X2UnA31bKgo8H+OA3wzHIF1UTZOMe02NkAtVFidcpkKqxLih
+n5bOp6VjVr5KRcp7O45TAIWJ4Bm3G4PHX52MrohtW5GXABeoVRQTsCTdS1BB1PTh
+9nZZIvKF3ONqHGDSfYXHP72bfW1bVn1pzgMj/FA6GhRkv1n4AQVfO1Ohyacrn4go
+AT+6hu3gWwtj0CqeYJVBJ66GNDBCC9eoc++79WB0BQipZRNr3sHHznb7pOA+3M57
+iRhDdiVDIwmUcQTfj7oS/H/hlTLW5BeYhmXUyLDQaq3yAgcnKyQPCfdftVNmlmyN
+hI+jPJKnhYLGvB8UPj63GJudRqW/RNqE7ewZF2aOvC7+IaZwdRhaduOrCkBU+pNY
+/YYDOkEElGNRKHW9J5zFDuPQwlFDaLfCZ4hezgXYpiZTN7NggYKHa/ba32BgGPjr
+DR7OPk+lR2FArLTbzJa9I0KYmPdrKi6KNE0loghDcnLXySLHCStwahKwg7BZ+/US
+o5hgWMaeeNw9NuuscNYmHryKzKMAhGjtEE5wWJfdpyyOsqyiohCI/Mx0jKSOysGW
+mhgOynT2Tnq8sOPYg3vbIjYECabONecL1Q79TeJGVV5e879B3nTkZVAgV6cX5xP5
+6rZK7XWdqSaR/RxNulPl3wy+eJIEWI1D4j4ogbGfm0xWNmqr1TI=
+=aokD
+-----END PGP SIGNATURE-----
+
+--yO3YVrUfbWxrxaQH--
 
