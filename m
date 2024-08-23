@@ -1,93 +1,121 @@
-Return-Path: <linux-kernel+bounces-299342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7904E95D331
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:24:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9837D95D33D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0C2286017
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CF328510E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D8818A6DA;
-	Fri, 23 Aug 2024 16:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABE218BB83;
+	Fri, 23 Aug 2024 16:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lb12S9uU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JpFgaCA3"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847DB18893B;
-	Fri, 23 Aug 2024 16:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6262F1586D3;
+	Fri, 23 Aug 2024 16:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724430289; cv=none; b=XO6EJxtBcfzPAKZeHwQr1ZKGn7l7FdEASNwNaq66JVyI3fe+UpxBWJrHD0uiIjmCajM2wqZ0yKfu+b25489/KSCJxFGrw54J13x1q/uOp8jw6MEQZZfa0HNnhxe4lS9+lr42Ulo72xfOIcgMIC2valAD824b00j8kk2RpfcRDYM=
+	t=1724430382; cv=none; b=XhTrfuyK+pZ8WlbXsuo5lfsMXAUXWFCYyMny67l0DUs4kLgE8krOu0CLo8Z8FMrVpmM6QqGC16+zGWxzDi3o7Ws9FryjCjHNdxaVm9igSvWwDxHuP/v7MPKe4/7g+3OiUZgpzlomB76RwbTo+bK6U4ZmoRR3N8J6wI+IjcPZgvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724430289; c=relaxed/simple;
-	bh=TqRnUiE/xdVg1tvwkdwMgIZPeAZqU1OchS7C11W338g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=saAdY9hJ/wF7CN2uPM5N8D5zAIQmAMqaiUA8hy5pnH9PswUUGZ4elopIWu+OJtkimCqxz5nNgxsmYo3wLxsFPwfoaoRZMzpRNClUFJdXd/uLy4QQ5zSqIfT6L2qGi3GWCeDeSQL68UwLIj7Y3mFD/wP8NpPlFGPsx+KR4Ha1OWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lb12S9uU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26484C32786;
-	Fri, 23 Aug 2024 16:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724430289;
-	bh=TqRnUiE/xdVg1tvwkdwMgIZPeAZqU1OchS7C11W338g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lb12S9uUXo52XJC4u1NIMjE70+xhMeoEPldGQHVd9wilYEp4Ij6cepdZDuMvQPje5
-	 VS28NV5mUyM6R5q6EgVa9TSpm+kIj4tgSVvWzCwz8aAMVrYYTbdQ1WjnA6Ra1wNBM7
-	 Rn1jW17DRvtDKe6qej5hwlxq0hHVvqhAik3QEpGAKhXdfxYCFQLfJNuwq6JQqb7cFm
-	 b2TqxYbALK3e64Ko67xBUeaMXxZNbHpn0+Z82hAyJbnPhlRg8fjBCmrzlXthItjmCx
-	 H7ji1MJMFwBccy7fxknkLSHqWbfz+twvIHrz/KXYHxrN4+CJgAmLI9kA7sTZu+raty
-	 aFr8ZIjycpltA==
-Date: Fri, 23 Aug 2024 17:24:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heiko@sntech.de, alexandre.belloni@bootlin.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 5/8] Documentation: bindings: rtc: add clock-cells
- property
-Message-ID: <20240823-custody-earache-1396c4b236cf@spud>
-References: <20240823153528.3863993-1-karthikeyan@linumiz.com>
- <20240823153528.3863993-6-karthikeyan@linumiz.com>
+	s=arc-20240116; t=1724430382; c=relaxed/simple;
+	bh=jQO3BUCwwd7loSkWxfYR+E/d+c3DO7vteMbYJziMD0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H3R9xTD6ddylUKJm9qrBw0ttbHzDqT/Nc7Yl5eFiGq1XVqBpBKIHbQAz3oh4GhpQhMvxN1+wu2VOGp/gwdvnrS9OWbL3VhPbXmSv+YGHS6YYlmIEaPZyt9ZdKBTEyMEzRGeJWTy/CVc5c5QIwFX73msNpiSJ7qJDTD2VPBF5Bkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JpFgaCA3; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C6E820008;
+	Fri, 23 Aug 2024 16:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724430378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dZSZ4ZWkj6nN5cffjKGJ15MFqfbm3AdMyv45FOgL9lo=;
+	b=JpFgaCA32WqOAE3V0avi6VMRNuexZVaIWTSYeFl+0wgVveqM/f8XnfTjdFcSomsT3BDCKi
+	0Hh30CESmpUDky3nmmbKHKTd3/FYNC67cupzeYCQdrWMXHbHlZvNHTbCX8xOXRv3G92xhv
+	FmfEpg24mUCZNK/Nkb7CGqfpHDEAZEbbkVH5Hy2LtG7rd9/wPbnLHDPLGwy0ZUTj1l4VEZ
+	2ppZ3j7o66upZ+wP+dGi41RfTvb5TavNh/t8/NvDOcVij0SEDtRzMIvQE2Pr7fKRvgS78e
+	rDoh1VviE+kBhlSbxDgHf7B4cE11WmrgL3suG9gviol32opZCBDPI0VXULmqkQ==
+Date: Fri, 23 Aug 2024 18:26:16 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>
+Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+ esben@geanix.com, linux-arm-kernel@lists.infradead.org,
+ linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: mtd: nuvoton,ma35d1-nand: add new
+ bindings
+Message-ID: <20240823182616.5a85e1ae@xps-13>
+In-Reply-To: <20240821071132.281018-2-hpchen0nvt@gmail.com>
+References: <20240821071132.281018-1-hpchen0nvt@gmail.com>
+	<20240821071132.281018-2-hpchen0nvt@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Q3Nd/m88OgL6Pptl"
-Content-Disposition: inline
-In-Reply-To: <20240823153528.3863993-6-karthikeyan@linumiz.com>
-
-
---Q3Nd/m88OgL6Pptl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Fri, Aug 23, 2024 at 09:05:25PM +0530, Karthikeyan Krishnasamy wrote:
-> consume clkout from rv3028 rtc which is able to provide
-> different clock frequency upon configuration
+Hi,
+
+hpchen0nvt@gmail.com wrote on Wed, 21 Aug 2024 07:11:31 +0000:
+
+> Add dt-bindings for the Nuvoton MA35 SoC NAND Controller.
 >=20
-> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/mtd/nuvoton,ma35d1-nand.yaml     | 93 +++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-=
+nand.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.ya=
+ml b/Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
+> new file mode 100644
+> index 000000000000..152784e73263
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
+> @@ -0,0 +1,93 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mtd/nuvoton,ma35d1-nand.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton MA35D1 NAND Flash Interface (NFI) Controller
+> +
+> +maintainers:
+> +  - Hui-Ping Chen <hpchen0nvt@gmail.com>
+> +
+> +allOf:
+> +  - $ref: nand-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nuvoton,ma35d1-nand
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Can we please use the -nand-controller suffix. A NAND is a the common
+name for a chip with storage inside. You are describing a host
+controller that can be connected to in order to talk to a NAND.
 
---Q3Nd/m88OgL6Pptl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsi3zAAKCRB4tDGHoIJi
-0nEfAQDGHakq7Gztov/swTcRsjry/zCl6l1+C5wXiAppsCVOMwEAgBb1+RDwUKTU
-TWVZ+CJ7ab62HdTar1ADD15iu7r6+gQ=
-=LfDy
------END PGP SIGNATURE-----
-
---Q3Nd/m88OgL6Pptl--
+Thanks,
+Miqu=C3=A8l
 
