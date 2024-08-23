@@ -1,230 +1,205 @@
-Return-Path: <linux-kernel+bounces-299366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4388095D3A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:40:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACAB95D3AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78BAB284A67
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FD9CB235C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBAD18BC14;
-	Fri, 23 Aug 2024 16:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2E618BC0C;
+	Fri, 23 Aug 2024 16:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u79x3eCk"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ASfwDdNv";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HwTz1WMI"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F118BC09
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724431185; cv=none; b=msKs2x0RJ9uFwrNJiHH89/7DvQeVCU22bp5co/IVqw9g5ypumyvfGbW0oxUDpp+nxZ4DAbpqFMZglVKy7m0B0jQb/CeWDRkikCuwI8wLntr2RoN62MW+oEg7EAxp/nHtd1iLYVLam+U/eZFg0GSRgHTQI2PsUOjPCY9cN6hz6q8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724431185; c=relaxed/simple;
-	bh=KaCmjrABe49GNzvbAm6OT6hfcDxVLHDDU0KNQEzpicA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Myn4FmtMFbg4VNsrwSClaOX3GgtO+KNY8peD/0UqlocVN6oA4FwHl7X3C886vXnVjh0CWZUVzsZARqIZvcx2JwIUY1qB4/FVPNo00giy94y6ru6T1n9A2AEjhuie9kQiA2EhqHBiYEmyj1WI/l6XSbBBofM2Fo89qVzki3LUGM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u79x3eCk; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4518d9fa2f4so3131cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:39:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFBB187FFC;
+	Fri, 23 Aug 2024 16:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724431257; cv=fail; b=lsHEe1o7t4O6FdTEy/iOqN4HaCYZSomRAL+2f1+CFAXxBqILmAIevr3CZHv5s7Es0MyvokXdM1oSSRUEls8FUf6o8IzvtZPwXh7uezWYIUns8bprwDpqEHCaxFu0oSv7GBQFsDMu18rEd2zVcMgzYZJxc0nZ5+5Vd81VjarX6sw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724431257; c=relaxed/simple;
+	bh=loVEZJBMwWST2EN2EPrdKWAl/KqZ8iKx6mpC5slO7H0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tArk21QcyMJUzYYeWY5JBYD0W4vJMwkoEVvKUJrJ0npJkuIBRWpClpFdA34DYuVICH7WyJcVXiJMa8yGkBNbkqF7h+wOVdUdVLoAROMocB25A+fJC8qsnMhHYllGpfmztzGjOQMJQeDYybFsNG5W1Y6ggig/z8+MDn0cAVlLkbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ASfwDdNv; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HwTz1WMI; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NFMUej010015;
+	Fri, 23 Aug 2024 16:40:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=zln5S3CQyabH7ev
+	vEg5Z/zjZEPcvLGFY+XiPjAIuEq8=; b=ASfwDdNviSUMaunTBSf7eYyORcbwxSA
+	gHUvFGOyJ1fWYXBkzgifArpVtf8rnDNAMqprg7F6HPBMZQGeCrbHL6KxOJ/CrVFq
+	8g3UQSja47BzJdnuAgVSmhs1fzJQjFXKNciHBZiNOCDQCXUpWiVFxNDH6+tY8P9S
+	D6T8xEXcTorbVFc3jK98PiJmTtT7by0LSgmwmLiI2/HcDGIubexmwZL81Pgx5Qdi
+	ejVo+PZ8mjy4SUnqmDukqUyzGbQ5z18iKpvb5m1vzW0LeyNAFKC0BNlnQ2XS5PbW
+	3cHDpkuq3Xa66/rZ1DSsz9Bnl8smX+BdLw9DhKXfD+0+Z0i9DwTRH+g==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m67mm6p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 Aug 2024 16:40:27 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47NFT7o3011111;
+	Fri, 23 Aug 2024 16:39:42 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 416w3wtu2t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 Aug 2024 16:39:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=smbw+zC2VzzML/0bO92WqTB5A4k6pbmtvEFhkHjqfYo53i/FFhnumuC8bTau9V0BYr74zJ4TjkkeQQ7y6KtcuCjZqrkUFZxC7S47JroN0HUMmvFBtolHjUgHlEtHloUMEf/dIz2pMd4D/6xfEFzVNh94C805tGwKH0lPUAqFxblusW+l3iFxBoWxRp//fFEcXD5wqOz6fqrZG0Ian4+m/JDuZHN8F93EvM1wIABf8oSWTI0qonOqDwZYtK9M+myMRXnSxrjoQHF0W0ceYsv9t4mezWgIs1ViDu2wkIQ+vR+yK+CuAnjgRKjpAlNKhiv39jcUJxQekDCcf58Wb9O1dA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zln5S3CQyabH7evvEg5Z/zjZEPcvLGFY+XiPjAIuEq8=;
+ b=NqQT1aK0t8O6eckz6Q6poH28e1QnW4WZHQVhsHz3yL/RF0ElpQasXFY9RncbKLpAc7zo9hafmxabUn/t5m/be2Np66zuNtd1FlYBARR0or/VHgWQIUspwt/2w17Wp8U2zBCdJv2nb+uIXgSo8Kx4tbSRwCEdnQhQ8sSi2j8ROD/WSmEo15zJ23rel1dhzlu2eCuB4qfLfGhkDSpgPKSlMwHXvSZV/uGJhneN//9cFCbQTlix7qOwGl79XPdc4LJ2otCbIQtVcbi/KFriyquad48APcj2w0En35JtT0UmmOha9v66P5+alT3QokbNeQhkOGDIJZL7TPlp+02ERmh68Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724431182; x=1725035982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OWCZVGAlZgiRQ76TnTfciwWkaeUiO7Q9jJrOr7a++YM=;
-        b=u79x3eCkyXKVdsaq0hmfcH0OSrNOOoZTgqkgJvsIDp8ph/gw7eALwHaGrpBNKBAh4/
-         WKoVEZ7wuWt9L5yyms44SVPrK96/fxCYlw2qBQ3OKNKHUhOzjEL6+tLTYN9XK+u0NwuI
-         i4wu5XMVc5c+Dmp6KEhMrSDGx8hZz8ag11JiEYC7+ZczNPOpCa7QFVvTtTCpGkeA34DE
-         88kB60+2qHHH/qaMOLmO+ZrjQkgsWlmxHJzU0zCJusLI+b58eSzHDjFG8+z7qjefVs+n
-         uNrMNNb19Tmg9RifouIzylqHgKkW6xDWZFJmqaa4/zMqZ6/cu68Cqe45TvHPW6G4a2vp
-         eMkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724431182; x=1725035982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OWCZVGAlZgiRQ76TnTfciwWkaeUiO7Q9jJrOr7a++YM=;
-        b=KuryF1I+0GRdZoa2VkCt3EGU2s3EvLPpsh7HTdbs76uoQ4HRAAY2Fl4D7LcE+qa3TE
-         fdEZcBezNVEmqyUhifbQ7hSqUwcn2lnI6QPkDIqvMBugdnJ4fxgNUpTqML26ddPaOkxN
-         rhdlbkDLLleLPUkJ9FJDagH0hVb0lPIC3LTrRoGe01/c3filtm7KQCrbdRJNiRAGCYmV
-         GyrP3WKt7Yq/v22bxlRc11cR991nACTxlLWl+4sztLD8nY6uoCA/dz6X3i5/Rx3mlSuu
-         OE7WXtZbLM9m51zcVkLuPIH4RcAqZjgACe3eZi+2ayOo3r7O4/LAzLbSu83cROOTuoNm
-         zHUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6+bMVSddUpD7XC0NpA/rT5K+AJjfOL0wL6bH5b8zX7Yg3ksgvDEs8I2fGnV/iSzq3djAWndGdrdITU9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGqakh/yWfO5p1k1fAdr8qtWXVhoCqI2WJHLHy5OxYae2YNqO5
-	NQpcorozcTK4Ri18Bl4guoStbc1UZuOhpAA1MXFUu8xk8eXVor5qjU//YGYuzzFrYSVel7foV2w
-	8QCYfU5LfzYrG6A2OQaEEqvOe719nwRpPpS4v
-X-Google-Smtp-Source: AGHT+IFoUZAQeCvqN+NjxXRErz71IIQZhTN00AkX1g1s0tHX14bey0qIKs+NzKWVaf59WcugpqvHyCzlUGndZY5N0uE=
-X-Received: by 2002:ac8:5a8a:0:b0:44f:e12e:3015 with SMTP id
- d75a77b69052e-45509ebc0demr3093081cf.25.1724431181755; Fri, 23 Aug 2024
- 09:39:41 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zln5S3CQyabH7evvEg5Z/zjZEPcvLGFY+XiPjAIuEq8=;
+ b=HwTz1WMIxwsMXH/ehYh47zSXP91Ir5kY57HRedNmGRnbfF9yiqfiCwMs0+ZjfErCDLzaWYqBVW776FzFCFZuhCzgOhNR7UAa8FKAwC0Fu5L61at85N6wCVskeV+pEEA+FFRT9q/I3sEwFBqbRuHN+7mzxAWa+KQOhZBXeoMZzSw=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by BLAPR10MB4993.namprd10.prod.outlook.com (2603:10b6:208:334::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 16:39:41 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7918.006; Fri, 23 Aug 2024
+ 16:39:40 +0000
+Date: Fri, 23 Aug 2024 12:39:37 -0400
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Li Lingfeng <lilingfeng3@huawei.com>
+Cc: trondmy@kernel.org, anna@kernel.org, jlayton@kernel.org, neilb@suse.de,
+        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com,
+        yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Subject: Re: [PATCH 4/4] nfsd: remove unused parameter of
+ nfsd_file_mark_find_or_create
+Message-ID: <Zsi7SdpLsqtIUkx9@tissot.1015granger.net>
+References: <20240823070049.3499625-1-lilingfeng3@huawei.com>
+ <20240823070049.3499625-5-lilingfeng3@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823070049.3499625-5-lilingfeng3@huawei.com>
+X-ClientProxiedBy: CH2PR17CA0006.namprd17.prod.outlook.com
+ (2603:10b6:610:53::16) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev> <20240823062002.21165-1-hao.ge@linux.dev>
-In-Reply-To: <20240823062002.21165-1-hao.ge@linux.dev>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 23 Aug 2024 09:39:30 -0700
-Message-ID: <CAJuCfpH9BB0axRGphPWUdhamyhnhiK8MOQYLa55W7RmnBPASjA@mail.gmail.com>
-Subject: Re: [PATCH] codetag: debug: mark codetags for poisoned page as empty
-To: Hao Ge <hao.ge@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, kent.overstreet@linux.dev, 
-	linmiaohe@huawei.com, nao.horiguchi@gmail.com, pasha.tatashin@soleen.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Hao Ge <gehao@kylinos.cn>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|BLAPR10MB4993:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50d3b69d-67eb-4240-0ec5-08dcc3922f6c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?m57kjKH5o+KjGCe9dF8Hd3UsIWDv8+H73hA9s3tLbbZlW4EeQDhWzAommlXr?=
+ =?us-ascii?Q?jUYUIBgnXJOn9TJjJKVXlewqTst08nz8Wo42S/7bT5h4uFnENxJAr3WzlgKo?=
+ =?us-ascii?Q?umc+h3+5pYeI2yKoGeRtrR1h0Y4jm2jiPVOT1EQIUJhV/b6056hCdiXX3752?=
+ =?us-ascii?Q?10MGFcxBkcHqR+fOs5iYbNs3Qm6IqfWqtStyGs6D1lJ3mBmiV1AC0MSinfQ6?=
+ =?us-ascii?Q?LUfAC4wKbTYWmKfD8ogTxleD3KTpbj7KGwBLFP7xfzAzrsE5KgPez4tBfjZY?=
+ =?us-ascii?Q?y23euKSd9g9DNWcDyImHlrgDx/Q6N8xHJ0CbI5lCeO34DRSbtVomHHei8sX+?=
+ =?us-ascii?Q?mhKMkUBhn/tyrhN4WZrLb81JObOV1ooE0ac3t85bV8SKoCf05p5XhlO2mJmB?=
+ =?us-ascii?Q?vXCxJzQx3exmNSqrGrvUerZN/Dny9AJxje8umixPgyFC9q573whMuSfNvBvW?=
+ =?us-ascii?Q?gGFdnuxxkZUcqd1LRrYsr0Uz1u/FjVng9rPaanF91vx1NAQms8ghoI2ePML+?=
+ =?us-ascii?Q?yIde1CQe7VZ3ZSD4QTjqgneWLvgCPsE8golqqVfVbtt/ykSn1l9Y1SrKWMPW?=
+ =?us-ascii?Q?yN2spfQwGlkBSH48P1WhfjB6p1dlCyxokQJ9VSeqJaJJLL3YweSIqdWKFoVN?=
+ =?us-ascii?Q?ifqQmpGjErqJSXYmnmVxKuJ83BrjwprlIftghM2MKmpMFF6wnz1e94CcUE8Q?=
+ =?us-ascii?Q?R1QUjDXJdJWTL2fF/pj3ZYCbBCSafyRHHRE+jZ5522FfDkvS26jcyTzIlJ43?=
+ =?us-ascii?Q?pUgfDDyLyweGzzTJ5Mz1E/vL9UCFO0Ce5uyG65rqmBygYojHS8r42wTNXjRr?=
+ =?us-ascii?Q?qwgqYGZpEL2ryosTWBHuTepAHOXroMtwd5Gp8kVgdjQSsSaUzLZOYJez7lKd?=
+ =?us-ascii?Q?2XLrzgC/M3FoZGO+t8ipnHpuBf6LNhN48fRUwBwe+rtLP1zQ+pXyGRCQr1E0?=
+ =?us-ascii?Q?uFuyZ5oD+a9lpL2yDr0xlfz8a4tm/LjDmsZrglRhGNOkr3+Aq2kaftpbq1J6?=
+ =?us-ascii?Q?gKrT7b2FTjneJu6UyASNc3l3G4S69MHml9VxVJxVCgYzYCk7e5tIx9BKWsGo?=
+ =?us-ascii?Q?2lq7B5i5DVmefsW9sOu6xEng539SEEt0ahAfNUfK3a/chNMm6auRq8vTNXr4?=
+ =?us-ascii?Q?pzwWl3FZKuOVLKy4kPBPZb+Dx9urrfJzGzuwQ99T/8UWowhKUGp6VnZ4UnJH?=
+ =?us-ascii?Q?0dfxeOlJoqd3fON6qRcYvaMKMvRdFpRXqXH1RkKB1vJRTKdsqEQXBWV3cM4N?=
+ =?us-ascii?Q?grSDoM6qp2E3xmFNZwFRAhdCk2YeCbH0esMIX3ACYY2C3x3B205SAQernFTJ?=
+ =?us-ascii?Q?vs4nYAy9ksJ6Mr/KRXmV5mASAxIOs7Cj6ExR7TC7wycBkQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sstMqZcmqegAo5gWna4LBfOe0XjO5U5+jJ/pwsN41H7GPKB8uBlvtO4gkmUJ?=
+ =?us-ascii?Q?0jL3g85tjD+AXekQA4FygQ01WBJam29LL3pTxp9kPu+n5pWkGGfXIlIZF1SZ?=
+ =?us-ascii?Q?iqqTucOp5T/dNpDVAlhHchDpSkMGSvk56hnRSdOywwQhyR7KB3qS+n5d2SdM?=
+ =?us-ascii?Q?rJTrbjW0f10hSRsqnMRSfWj9iGaDeVGVZDPEw+hYZehWDfHo+tEiZcNTfWXn?=
+ =?us-ascii?Q?chbwKDeTNR5Eyg+6ecBg16D5/55KOALu/0PTlYtc9skhR2p1tJGwUZ1pUOub?=
+ =?us-ascii?Q?oJm/m8MAowScRpE1/shu7+wGxHB9iQqjh6bXnAaZz/Z6FtFzGSOmATLXocEN?=
+ =?us-ascii?Q?0QW23T8UUq+lPYBPBMZ6G1AfcT2j14sZhKmQWBmJaGxY3VDzKLZpO6+8+zky?=
+ =?us-ascii?Q?uxZVtHiIUz1kJ6BCWA6xp7BBjvi6KkChMH5kQuQAQWNYc4zfyu609688DBpD?=
+ =?us-ascii?Q?slQXAN0pmwr3DYiyNNfwjbPDph5oKUCt3SCJwHUCQ4/maiuuRZ1Me6xS0+AO?=
+ =?us-ascii?Q?QlExsEhG8eisu7ypOskAf9ErSJ/ODMiDZFM0axtnmGZ+fr1WanOYZMMDQ7ym?=
+ =?us-ascii?Q?ndiK1olIIUp/1wb0VT0AsPpsgff7YZEbMbOeRvJn86y77guthbkVrbVFhs7X?=
+ =?us-ascii?Q?EfNAxPtRKpvKnf2FoBxCf7QngzStUtGTPy/Eo6IgsrK6dIqgci08HY3Ywb4o?=
+ =?us-ascii?Q?Kkx3tfnoF7qN0GTgvA+MMD0mv0lJJlFd9LCHiG1Uemk+3xxXuVaS+WX3Pz35?=
+ =?us-ascii?Q?QPuJ1b6OI0s/bBI82ZHbYisAH1ITlsuX+8JPNkm68a9KA1zMqUDZPp+46Jos?=
+ =?us-ascii?Q?SVaq1YXoe25U/5jla8moUgwnhyVh96ognf4Ai78PFER1gWT3qXWAd+Ixlg8+?=
+ =?us-ascii?Q?eWtr61EeUSinpm9ocusgowA8erZKz1LDs4c8EYn9SmykTudcNleZPO8FLWgU?=
+ =?us-ascii?Q?fQbFlBvXXvrIihK8zuo5Ggotkvc/xHTp+W0+81gzAUi54OQGoCi69W6pF/zq?=
+ =?us-ascii?Q?IjA/gybpMHUYZ4lqsb79e/4YgjdjRkN9dvQwIXQcoWhZgV48i6iU+idNj8hq?=
+ =?us-ascii?Q?KeqKLsl5TL7ZY3CvCTU8riMRl5FGm2B7JOzwGhrFL6LkTZUdbO20xGHtaKsZ?=
+ =?us-ascii?Q?evZG8T6Vo99otPih+SFo7L2NvaDlR6BwBEecWOB8k8yFXMyqt5cBD0yK63aW?=
+ =?us-ascii?Q?6Yi8+41XdevJzHvifPriyFqUNmPdXTXKWhlDN8XQV6vg8SLqXrTVitj3yXjp?=
+ =?us-ascii?Q?g0yKA/hMt8vJVOTZd4T3ctTaVUBucHTn3YV13tOEGdrO/73SUVm85uNwhGXJ?=
+ =?us-ascii?Q?f/nhJXsR6tDwH893YVSSUi+R7BlQjuMSVEAghQ3HsHEqKZdeU9tRTjPvlSmQ?=
+ =?us-ascii?Q?1ODHGVQGNSV6mpPVhmQcLB0Q+kRuq3V78yV94FLN42hU2oPfiitRkgVSY/6f?=
+ =?us-ascii?Q?Z9HBLUFpaYah4ZWlcaVeV0jwWB9dbismd0LdfkZ0FBhFeA5mXTRVAzms6z3G?=
+ =?us-ascii?Q?BGcNkUtdCCj2SfCkGYvpSnPbQrHEbBqMxVbDeM7IZdZOnRIUt/YcLxiW4SEn?=
+ =?us-ascii?Q?n1ed+h20BQoCsr+iTFZtk1f4xPv1pJKK75kGTbpO?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	5yuBc1yriQ1DJLtJ9MldJyYu8tLjYlJU/egqO4+r3z2sRj2MCYsJVVaFopy3Lk/EE5GMT2mJKVzHWUFT5p3IxdtTlBheR5uSoga8jD9pg2f2G1ltUjO6amMMy41j6o0ItHBjP2ZEl8TARb3lenbp1yNJ5ry4dqbovueUTwLTG5l4CcZnx9oMBz1970TtIHm5jK58oCRSf7/gi1lUKK2Nm4nZEaWkySb2T/j5hC1XlPHT2BzctF3pWPl93pHjP0YwW7Hxu03INDTk936yI1sPhtKouaRLIrvS0x8KHVnYcBS+ps5wFP6jPV8lvEOXcNxw9RQsIDd9jYrxTixytYV7G0oisfY68Qnh2ZbbDHH8K/ShgAhrMU5/vQo3EnCboAoAhzbnDlDxQaAxRRSNr0BC5usVRICuNd5oE/Asyyc2+kk8gbM29FL110U+K2psWB1Hs4CRYzemnY1v/lxB44dT4MgBl0olvwJw5Ov7ONoMNIy9fZWYOipjjyFbCcMwSvtD7qJB9icIEsE104YjoyidVYB0sPcO9lo87+CVF/brbaCSBXy5XQbU4d5nVKc56MkKjOqf9DY2fSn0iUJwD5p3J0108mWxAsLKHAKZ9rw2ocA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50d3b69d-67eb-4240-0ec5-08dcc3922f6c
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 16:39:40.8935
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nj4FeU75FONefkxeq+zawlzgE7Bl0Drty60i0J4AIuQ5w6Ac1Wg7UbdXgUOC66LzXuOmdAA0WZXEBBE91AHBXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4993
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_13,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=972
+ suspectscore=0 adultscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2408230123
+X-Proofpoint-ORIG-GUID: XjafXaStSDjhruwiNeBNwNCRuJSF28nU
+X-Proofpoint-GUID: XjafXaStSDjhruwiNeBNwNCRuJSF28nU
 
-On Thu, Aug 22, 2024 at 11:21=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
->
-> From: Hao Ge <gehao@kylinos.cn>
->
-> The PG_hwpoison page will be caught and isolated on the entrance to
-> the free buddy page pool.
->
-> But for poisoned pages which software injected errors,
-> we can reclaim it through unpoison_memory.
->
-> So mark codetags for it as empty,just like when a page
-> is first added to the buddy system.
->
-> It was detected by [1] and the following WARN occurred:
+On Fri, Aug 23, 2024 at 03:00:49PM +0800, Li Lingfeng wrote:
+> Commit 427f5f83a319 ("NFSD: Ensure nf_inode is never dereferenced") passes
+> inode directly to nfsd_file_mark_find_or_create instead of getting it from
+> nf, so there is no need to pass nf.
+> 
+> [...]
 
-Hi Hao,
-Thanks for fixing this. I find this description a bit unclear. How
-about something like this:
+Applied to nfsd-next for v6.12, thanks!
 
-When PG_hwpoison pages are freed, they are treated differently in
-free_pages_prepare() and instead of being released they are isolated.
-Page allocation tag counters are decremented at this point since the
-page is considered not in use. Later on when such pages are released
-by unpoison_memory(), the allocation tag counters will be decremented
-again and the following warning gets reported:
+[4/4] nfsd: remove unused parameter of nfsd_file_mark_find_or_create
+      commit: c78a662dfe4ea208e05c7ba78949a239e31c360d
 
->
-> [  113.930443][ T3282] ------------[ cut here ]------------
-> [  113.931105][ T3282] alloc_tag was not set
-> [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc=
-_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfil=
-ter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtab=
-le_nat ebtable_broute ip6table_nat ip6table_man4
-> [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loa=
-ded Tainted: G        W          6.11.0-rc4-dirty #18
-> [  113.943003][ T3282] Tainted: [W]=3DWARN
-> [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unkn=
-own 2/2/2022
-> [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -S=
-SBS BTYPE=3D--)
-> [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.946706][ T3282] sp : ffff800087093a10
-> [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: f=
-fff80008249f0a0
-> [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0=
-000000000000000
-> [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0=
-000000000000000
-> [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: f=
-fffffffffffffff
-> [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: f=
-fff800081746210
-> [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5=
-b5d353031313339
-> [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 0=
-0000000ffffffd0
-> [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c=
-0000000ffff7fff
-> [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0=
-000000000000001
-> [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0=
-000000000000000
-> [  113.957962][ T3282] Call trace:
-> [  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
-> [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
-> [  113.960096][ T3282]  __folio_put+0xd4/0x120
-> [  113.960614][ T3282]  folio_put+0x24/0x50
-> [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
-> [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
-> [  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
-> [  113.963183][ T3282]  simple_attr_write+0x38/0x48
-> [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
-> [  113.964330][ T3282]  full_proxy_write+0x68/0x98
-> [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
-> [  113.965372][ T3282]  ksys_write+0x78/0x100
-> [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
-> [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
-> [  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
-> [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
-> [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
-> [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
-> [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
-> [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
->
-> Link [1]: https://github.com/linux-test-project/ltp/blob/master/testcases=
-/kernel/syscalls/madvise/madvise11.c
-
-To fix this, clear the page tag reference after the page got isolated
-and accounted for.
-
->
-> Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper fu=
-nction")
-
-This would be more appropriate:
-Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages
-as empty")
-
-> Cc: stable@vger.kernel.org # v6.10
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> ---
->  mm/page_alloc.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index c565de8f48e9..7ccd2157d092 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1054,6 +1054,14 @@ __always_inline bool free_pages_prepare(struct pag=
-e *page,
->                 reset_page_owner(page, order);
->                 page_table_check_free(page, order);
->                 pgalloc_tag_sub(page, 1 << order);
-> +
-> +               /*
-> +                * For poisoned pages which software injected errors,
-
-Not sure what you mean by "which software injected errors". Maybe it's
-a typo and should be "with software injected errors"?
-
-> +                * we can reclaim it through unpoison_memory.
-> +                * so mark codetags for it as empty,
-> +                * just like when a page is first added to the buddy syst=
-em.
-> +                */
-
-I think you can simply say here that:
-/*
- * The page is isolated and accounted for. Mark the codetag as empty to avo=
-id
- * accounting error when the page is freed by unpoison_memory().
- */
-
-> +               clear_page_tag_ref(page);
->                 return false;
->         }
->
-> --
-> 2.25.1
->
+-- 
+Chuck Lever
 
