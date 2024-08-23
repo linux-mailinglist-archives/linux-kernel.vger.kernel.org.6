@@ -1,121 +1,283 @@
-Return-Path: <linux-kernel+bounces-298147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E4295C306
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C989795C30C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A1B284A00
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1331C22392
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AB81CAB1;
-	Fri, 23 Aug 2024 01:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3021CAA2;
+	Fri, 23 Aug 2024 01:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MJCXrCIE"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cgBGb+JT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A581CD00;
-	Fri, 23 Aug 2024 01:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAC91BDD0
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724378211; cv=none; b=d6dJClOxSI58B7jSHh/W1UfmTJgWU49A+LlNw1uF4ZHBAnBigcxBlaG9IKw6iujqMKfhs1GmOqRvOo/3Xnovn2gU8uWtoX2fXbQTc8tZl5S/V6Dq002PRUDcIFubUxqzSZAu59izjOqNCijr7peIUFS8Jbt41Ka+4e9Q4/z56lM=
+	t=1724378348; cv=none; b=tqeHUcfZOOwWrBc2WIdFe6XHNs0EA+wbjriRPLuveUSlQ9XieYJSLiL0RhpQonGn+dlj1AuSz57lNgOXOFtm8GxTgdgjtliPg7iCMhmCcefDr2c9SYiCPYKQlOOQ8owyfw+9wgniTo8Y4WXm3iU+Prwli9Pb0JIOJByD2lutuZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724378211; c=relaxed/simple;
-	bh=78ppxU2DrcTP4h2rajHNIVga77Utrr1L21C0Cez+C5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uUTUQ5TNpsB53OKF+JIcSjD0BA0oqIl8ZFy0JQRLTd0R+U2vstFQzgyFSyKkpwtNtHvyaEyz8lPBFHCS1lCSVPx1wS/Vse29G288S+lzHZtA1GaLeHfpyW+N8amzByAiN2GM334SWJSw45kRBxI72tSpjxAhA9n4VBeEyHs9OY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MJCXrCIE; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N0BUZw026907;
-	Fri, 23 Aug 2024 01:56:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=
-	corp-2023-11-20; bh=V5djnhEUpPQwDTbcUtQo9lJiA5uCN1pFKUt6h7Xfgp4=; b=
-	MJCXrCIEpJyw2g4vWRu5JrBf3urS66r1Hh5suuyaWukiZ53HeD9ZggsBJcaut8wn
-	AYnyFmL8cZE/pYnlgWyA/2jUCYVxIQkVJRVyPID8f5Lplx304cEIlNmc9gZXvbPZ
-	uGvzJm2h2G8f/j3z36Oqd1YnjabgkkRRQZ6fMC/eQyPbB3f5MfuNBih3II+3xf3u
-	2Aa8vv+pchuKS+KOvmkeGAuo06eE4kbikZoOaKtvrb5zphCE9UePgBS7o1P7aGF5
-	x5ZKBxpiipU5Oxc6nbsCc7RyWT3Gi/Mrc03YfDjpdF2+tWEgv5cSKo3IsFlvPnAn
-	1EUbMxZvRJMCHjre2v00fA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m2dke88-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 01:56:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47N0Y9WZ012035;
-	Fri, 23 Aug 2024 01:56:44 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 416g0e9qnf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 01:56:44 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47N1ugAu033471;
-	Fri, 23 Aug 2024 01:56:43 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 416g0e9qmh-2;
-	Fri, 23 Aug 2024 01:56:43 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: james.smart@broadcom.com, dick.kennedy@broadcom.com,
-        James.Bottomley@HansenPartnership.com,
-        Sherry Yang <sherry.yang@oracle.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: lpfc: fix overflow build issue
-Date: Thu, 22 Aug 2024 21:56:03 -0400
-Message-ID: <172437814913.4018943.7804520176988407566.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240821065131.1180791-1-sherry.yang@oracle.com>
-References: <20240821065131.1180791-1-sherry.yang@oracle.com>
+	s=arc-20240116; t=1724378348; c=relaxed/simple;
+	bh=KAOIasN/hhonSibrWmd5NGn4sRRLCj6E3rhDNzfzvcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vl2TOipz+EDu3Ve4FoxJmx1fjM1dkJs0uG0RcjF11mVCvoDHf0v7JmMbsgY3Vp5LlYHd8B9zaC95nee141STbHeSH+VxX8qYPhVyWTe4baJOQIVn7iF9jkEwaP9dmsVP4RImEdhdacJ8nRGqB6O/eciSPguHcdMt9kUPgtTGkyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cgBGb+JT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724378345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vptUsTTd+Ahgj+G0OF7GYw9gEl0AVQwqRfpIh4Og1O8=;
+	b=cgBGb+JTqUh0bWXozDUPuCa2UhTui6fWXP22nbY5qeRtJ582WHwikyeTgwqr+3amNjniCF
+	B/vhC6w/6NrTCPDsjfIsryHM55A9b26S5Xt4CGgU9IwOfW3ZYUqTTpU0HCk9AlVRS7pChO
+	v4t8PTBWPUB5X6Y3daKKng9QJjnCtl0=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-soz-U4RROwaHLeJV3p9How-1; Thu,
+ 22 Aug 2024 21:59:02 -0400
+X-MC-Unique: soz-U4RROwaHLeJV3p9How-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E6A61955D45;
+	Fri, 23 Aug 2024 01:58:58 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.51])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2E2AD1956053;
+	Fri, 23 Aug 2024 01:58:54 +0000 (UTC)
+Date: Fri, 23 Aug 2024 09:58:49 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Vasilevsky <dave@vasilevsky.ca>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+	kexec@lists.infradead.org, debian-powerpc@lists.debian.org,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-riscv@lists.infradead.org, loongarch@lists.linux.dev,
+	akpm@linux-foundation.org, ebiederm@xmission.com,
+	hbathini@linux.ibm.com, piliu@redhat.com, viro@zeniv.linux.org.uk,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH linux-next v3 05/14] crash: clean up kdump related config
+ items
+Message-ID: <Zsfs2VhE0lTY2tpO@MiWiFi-R3L-srv>
+References: <20240124051254.67105-1-bhe@redhat.com>
+ <20240124051254.67105-6-bhe@redhat.com>
+ <a9d9ecd1ed8d62eae47ec26257093495e6cbd44a.camel@physik.fu-berlin.de>
+ <ZscCMLfNbj2MDiaB@MiWiFi-R3L-srv>
+ <c5e9996e4d2ba2a0849d65f68e3dce94fffc5828.camel@physik.fu-berlin.de>
+ <ZsfR9rdMt8yn1+Bz@MiWiFi-R3L-srv>
+ <768dfe3e-c437-40cc-96a5-6c5b34b2d19d@vasilevsky.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_01,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 adultscore=0
- malwarescore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408230010
-X-Proofpoint-GUID: oOU0im97jwUWzAICyTrndUHYVFxPameN
-X-Proofpoint-ORIG-GUID: oOU0im97jwUWzAICyTrndUHYVFxPameN
+In-Reply-To: <768dfe3e-c437-40cc-96a5-6c5b34b2d19d@vasilevsky.ca>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, 20 Aug 2024 23:51:31 -0700, Sherry Yang wrote:
-
-> Build failed while enabling "CONFIG_GCOV_KERNEL=y" and
-> "CONFIG_GCOV_PROFILE_ALL=y" with following error:
+On 08/22/24 at 08:41pm, Dave Vasilevsky wrote:
+> On 2024-08-22 20:04, Baoquan He wrote:
+> > If so, below patch possiblly can fix it. Can you help check if it's OK?
 > 
-> BUILDSTDERR: drivers/scsi/lpfc/lpfc_bsg.c: In function 'lpfc_get_cgnbuf_info':
-> BUILDSTDERR: ./include/linux/fortify-string.h:114:33: error: '__builtin_memcpy' accessing 18446744073709551615 bytes at offsets 0 and 0 overlaps 9223372036854775807 bytes at offset -9223372036854775808 [-Werror=restrict]
-> BUILDSTDERR:   114 | #define __underlying_memcpy     __builtin_memcpy
-> BUILDSTDERR:       |                                 ^
-> BUILDSTDERR: ./include/linux/fortify-string.h:637:9: note: in expansion of macro '__underlying_memcpy'
-> BUILDSTDERR:   637 |         __underlying_##op(p, q, __fortify_size);                        \
-> BUILDSTDERR:       |         ^~~~~~~~~~~~~
-> BUILDSTDERR: ./include/linux/fortify-string.h:682:26: note: in expansion of macro '__fortify_memcpy_chk'
-> BUILDSTDERR:   682 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-> BUILDSTDERR:       |                          ^~~~~~~~~~~~~~~~~~~~
-> BUILDSTDERR: drivers/scsi/lpfc/lpfc_bsg.c:5468:9: note: in expansion of macro 'memcpy'
-> BUILDSTDERR:  5468 |         memcpy(cgn_buff, cp, cinfosz);
-> BUILDSTDERR:       |         ^~~~~~
+> That removes the possibility of enabling CRASH_DUMP on PPC_BOOK3S_32, even when booting via other mechanisms. Maybe it would be best to just make it not-default? Please take a look at this patch:
 > 
-> [...]
 
-Applied to 6.11/scsi-fixes, thanks!
+This is a good mimic of ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG and the
+correspondent KEXEC_IMAGE_VERIFY_SIG. It looks good to me, as long as no
+one complain we introduce too many knobs.
 
-[1/1] scsi: lpfc: fix overflow build issue
-      https://git.kernel.org/mkp/scsi/c/3417c9574e36
+Can you post this formally so that people can review it?
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> 
+> From d6e5fe3a45f46f1aa01914648c443291d956de9e Mon Sep 17 00:00:00 2001
+> From: Dave Vasilevsky <dave@vasilevsky.ca>
+> Date: Thu, 22 Aug 2024 20:13:46 -0400
+> Subject: [PATCH] powerpc: Default to CRASH_DUMP=n when Open Firmware boot is
+>  likely
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> Open Firmware is unable to boot a kernel where PHYSICAL_START is
+> non-zero, which occurs when CRASH_DUMP is on.
+> 
+> On PPC_BOOK3S_32, the most common way of booting is Open Firmware, so
+> most users probably don't want CRASH_DUMP. Users booting via some
+> other mechanism can turn it on explicitly.
+> 
+> Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
+> Reported-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
+> Fixes: 75bc255a7444
+> ---
+>  arch/arm/Kconfig       | 3 +++
+>  arch/arm64/Kconfig     | 3 +++
+>  arch/loongarch/Kconfig | 3 +++
+>  arch/mips/Kconfig      | 3 +++
+>  arch/powerpc/Kconfig   | 4 ++++
+>  arch/riscv/Kconfig     | 3 +++
+>  arch/s390/Kconfig      | 3 +++
+>  arch/sh/Kconfig        | 3 +++
+>  arch/x86/Kconfig       | 3 +++
+>  kernel/Kconfig.kexec   | 2 +-
+>  10 files changed, 29 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 54b2bb817a7f..200995052690 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1597,6 +1597,9 @@ config ATAGS_PROC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config AUTO_ZRELADDR
+>  	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
+>  	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index a2f8ff354ca6..43e08cc8204f 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1558,6 +1558,9 @@ config ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+>  	def_bool CRASH_RESERVE
+>  
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 70f169210b52..ce232ddcd27d 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -599,6 +599,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SELECTS_CRASH_DUMP
+>  	def_bool y
+>  	depends on CRASH_DUMP
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 60077e576935..b547f4304d0c 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -2881,6 +2881,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config PHYSICAL_START
+>  	hex "Physical address where the kernel is loaded"
+>  	default "0xffffffff84000000"
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index d7b09b064a8a..0f3c1f958eac 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -682,6 +682,10 @@ config RELOCATABLE_TEST
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	bool
+> +	default y if !PPC_BOOK3S_32
+> +
+>  config ARCH_SELECTS_CRASH_DUMP
+>  	def_bool y
+>  	depends on CRASH_DUMP
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0f3cd7c3a436..eb247b5ee569 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -880,6 +880,9 @@ config ARCH_SUPPORTS_KEXEC_PURGATORY
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+>  	def_bool CRASH_RESERVE
+>  
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index a822f952f64a..05a1fb408471 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -275,6 +275,9 @@ config ARCH_SUPPORTS_CRASH_DUMP
+>  	  This option also enables s390 zfcpdump.
+>  	  See also <file:Documentation/arch/s390/zfcpdump.rst>
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  menu "Processor type and features"
+>  
+>  config HAVE_MARCH_Z10_FEATURES
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 1aa3c4a0c5b2..3a6338962636 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -549,6 +549,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool BROKEN_ON_SMP
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SUPPORTS_KEXEC_JUMP
+>  	def_bool y
+>  
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 007bab9f2a0e..aa4666bb9e9c 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2087,6 +2087,9 @@ config ARCH_SUPPORTS_KEXEC_JUMP
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool X86_64 || (X86_32 && HIGHMEM)
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SUPPORTS_CRASH_HOTPLUG
+>  	def_bool y
+>  
+> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+> index 6c34e63c88ff..4d111f871951 100644
+> --- a/kernel/Kconfig.kexec
+> +++ b/kernel/Kconfig.kexec
+> @@ -97,7 +97,7 @@ config KEXEC_JUMP
+>  
+>  config CRASH_DUMP
+>  	bool "kernel crash dumps"
+> -	default y
+> +	default ARCH_DEFAULT_CRASH_DUMP
+>  	depends on ARCH_SUPPORTS_CRASH_DUMP
+>  	depends on KEXEC_CORE
+>  	select VMCORE_INFO
+> -- 
+> 2.34.1
+> 
+
 
