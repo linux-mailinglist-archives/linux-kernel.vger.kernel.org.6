@@ -1,389 +1,200 @@
-Return-Path: <linux-kernel+bounces-298913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839A995CD28
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D147295CD64
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B01928285B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899402846A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E6D1865E6;
-	Fri, 23 Aug 2024 13:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B059C18859E;
+	Fri, 23 Aug 2024 13:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="KFbJSSd+"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="A3fZgpMo";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="CfjLNQfk"
+Received: from smtpout35.security-mail.net (smtpout35.security-mail.net [85.31.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C5C183061;
-	Fri, 23 Aug 2024 13:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889A9186601
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.35
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724418423; cv=fail; b=u0C1omDaDa4CMSpBKip52DK0lSSCNTZLBHanjv7aMSMx42YIILTeLy7ZRFvw2nh5598oUbSvzJrtdQqBKwBwSA90gOcUc2SHiqgwR6NSWx9qnM7Zdti9oDuUaNMMcjESfmB84O7J+l2nrCkapnLW3TMOxmK1CPPYr6E9QNdPCG4=
+	t=1724418606; cv=fail; b=I4DIW4wJaMhLrXfWYJUUlubvVp8u2Fx8N895zQiE5HvlftBSI0tFhDAY0Urchbnu1lUHHrTQ5FlNvW9GgQdaidU3qJRTBkKq83Qi0f60WDn/JRpUsaiCDQT9m9F27QMzemVHR1UEPYtUSxPGQQh8A12o3TSX5CcxrUmDnTHxUSc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724418423; c=relaxed/simple;
-	bh=+Ookx95eZ505GT9t0a3ITF2o8VuEEAktJPzyQ/IcGpY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GuW8CIXZKd6GjUU9YtC3amU+t6+9B9gcOAfwbmKY8NNo7imC0wKIJWBmYCH8Wa2AjnBNXgoIUCZ/ISe6dDinWQlM7SnqBVPbv0OYywkLrawPg8XOlK2KvXMYnauH2ZSDbz2kGShOK1ntkCOuaJH/QDhadXkOA0lywRsfVzDoibs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=KFbJSSd+; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N9vO8X024604;
-	Fri, 23 Aug 2024 06:06:39 -0700
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 416r8g8hvf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 06:06:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qfjgxTttFUKGNbsxmEnPuUxyPltJopUafTX4zMbpJuqtMPaeuudczrqiO88zgJZSMx7NwTmY8WM+5XQqgx0VllCKgrfRseePNzZGH3859hC1y4qFfbWwJZ/OI8dsMoNl52P2rRMNxgp24mupB8R/PNwCF8ta7+U3ufP93D8iD67LNpOVpiAh1J5ft9IPowAXBI0xtJax0JzfUBG0+3TCTjldAIxnq/d1D7uANm3qTBOdorKNhP7qtYq9xUOovMN7dvth7Kf0WDV2G1uC8w5GHWdcpj6FDjxMyNEaZrgnw6qWcC+8cE98BJNr63Lp23QrnnheB1XbxhClwlR87ILa0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q/sdfl92a672r94KFvYac/zgOG1H9euu+spIg8LOgP8=;
- b=LFi9xyt635IrUugusFGPrz3/A732imBGBKSj3hIhgcF7bqP8ULerjZc1P7mdkRFKTrPjGkcE3AfJBNJVGIWDJqmyaQdKzyycFBjp710ENk/nilymVSm6sHpxShnj3sfJqgh6xIWxn3uxmcMzH3sDfj6OMUiT1XJJO8ot9kvOuQILcgzGUAyWmM42XSahWZ1oos7KqWsOIumJ6gqE+fFe6Wju7kvNkLZ7K4DdIhCU2bA8ajwT1p+BQTMPsy4/B7Wy1m9Tp9oWMLVg+3QwF8m+BvBJeqfLGTqtwm0hxBX5grnJu3sJcpLucA4YsOIjv0Fj4qBNZOjEDEmirhiJU+aJNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q/sdfl92a672r94KFvYac/zgOG1H9euu+spIg8LOgP8=;
- b=KFbJSSd+wM9OtuZh3iVqJHBP2g+NJ8xO+1GaQHofZjiPTeezEWWvbYd+HnYM+FZY1ZLOM9JMGl95ooZHcz+LCmU2Z3XKpJlhuwczudRZEmcnBYHCva7SrSPbr07ltSrauWHO7SZtZouc3Boi6wAU9TyzjWjRyjyFpS9bhwAc2g4=
-Received: from PH0PR18MB4425.namprd18.prod.outlook.com (2603:10b6:510:ef::13)
- by SJ0PR18MB4105.namprd18.prod.outlook.com (2603:10b6:a03:2c8::7) with
+	s=arc-20240116; t=1724418606; c=relaxed/simple;
+	bh=d54QEFwMi8MrhPUnpgOnoZDMXuP50fcC7UxoSmp+Z7w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kx9hrFdjvyHOunOECzU5O2hfgF0G72LnEW+nc62UdSYXdOAY4gogvmPag0Za2os22+LqrW4V33OEreDH7DWin245+CcOpJIUVR4Io9hAqIallAtezTJ/IB9LmQ0B7eXfvZw1glaRGsCFdJKoEv5PypnwF+FVCx+KfzbiiqTFagA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=A3fZgpMo; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=CfjLNQfk reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (fx305.security-mail.net [127.0.0.1])
+	by fx305.security-mail.net (Postfix) with ESMTP id A82D730ED5B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:07:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1724418448;
+	bh=d54QEFwMi8MrhPUnpgOnoZDMXuP50fcC7UxoSmp+Z7w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=A3fZgpMoaEijoSB0NiVRw/A7eFp4xk01gTIj5P1QP0vKhMAbmOudzraApuDhDImU7
+	 RmA4SGv29dQ5t1gp9Qn5A2nupm2FhluCw9KcETAIr7M6q/zGjqyqTmcvaZLo7/NFB8
+	 MZfza8WDKD2nZSwpqJDbP8y8Jd5xWjLOKk9igkMY=
+Received: from fx305 (fx305.security-mail.net [127.0.0.1]) by
+ fx305.security-mail.net (Postfix) with ESMTP id 5F14730EC70; Fri, 23 Aug
+ 2024 15:07:28 +0200 (CEST)
+Received: from PR0P264CU014.outbound.protection.outlook.com
+ (mail-francecentralazlp17012055.outbound.protection.outlook.com
+ [40.93.76.55]) by fx305.security-mail.net (Postfix) with ESMTPS id
+ AEDFE30EB22; Fri, 23 Aug 2024 15:07:27 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by PR0P264MB1660.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:166::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
- 2024 13:06:35 +0000
-Received: from PH0PR18MB4425.namprd18.prod.outlook.com
- ([fe80::424f:7fcf:ce0d:45c4]) by PH0PR18MB4425.namprd18.prod.outlook.com
- ([fe80::424f:7fcf:ce0d:45c4%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 13:06:35 +0000
-From: Shijith Thotton <sthotton@marvell.com>
-To: =?iso-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Jonathan.Cameron@Huawei.com"
-	<Jonathan.Cameron@Huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Rafael J. Wysocki"
-	<rafael@kernel.org>,
-        "scott@os.amperecomputing.com"
-	<scott@os.amperecomputing.com>,
-        Jerin Jacob <jerinj@marvell.com>,
-        Srujana
- Challa <schalla@marvell.com>,
-        Vamsi Krishna Attunuru <vattunuru@marvell.com>
-Subject: Re: [PATCH v2] PCI: hotplug: Add OCTEON PCI hotplug controller driver
-Thread-Topic: [PATCH v2] PCI: hotplug: Add OCTEON PCI hotplug controller
- driver
-Thread-Index: AQHa9V1HKzg8Mse8M0W9s210uffo1A==
-Date: Fri, 23 Aug 2024 13:06:34 +0000
-Message-ID:
- <PH0PR18MB4425E0F2E295B8EAEDCD942CD9882@PH0PR18MB4425.namprd18.prod.outlook.com>
-References:
- <PH0PR18MB442535D2828B701CD84A3994D98E2@PH0PR18MB4425.namprd18.prod.outlook.com>
- <20240823052251.1087505-1-sthotton@marvell.com>
- <a4a8a1f9-3b9c-7827-3e98-44009d8d440d@linux.intel.com>
-In-Reply-To: <a4a8a1f9-3b9c-7827-3e98-44009d8d440d@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB4425:EE_|SJ0PR18MB4105:EE_
-x-ms-office365-filtering-correlation-id: d1fdeaf4-5e2c-476c-4d7d-08dcc3746a77
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?CHZBr5WGIpo258FXlWeaVPfGZDOoNEvaoR7KcTTMwaDGYtjEMJytmOoHvB?=
- =?iso-8859-1?Q?WZzhPBR2P68DK9nDUfXwmsor820cQMhyl6s1zmTxbKCN+t6HWTJo3qMaqk?=
- =?iso-8859-1?Q?g0Dk+vEYKBeI0oxBt1/CNw52HPKaM8Ho91EXXSkqQk6s7VNc+s759u713/?=
- =?iso-8859-1?Q?8R0MO5pZPKUQuVu+6+ntheeoNhz8hD7EGHwyuGa1VSnx1rksNSQNROA49l?=
- =?iso-8859-1?Q?2Rxfq85AGnqE4iMlpVme/HRPy7caFEXbkPlcV9aL6nZUUp0a+vc6hNXcvf?=
- =?iso-8859-1?Q?1H8ERUNJJttUSd6IvjAPCAXXCdIjNOwDBeFVecPqGd90KEJ/A01bK9utRI?=
- =?iso-8859-1?Q?28MqxpOnUToJzEZy3GC1FCNTg0csI3Hc49qNJfDHvK+ruYFjOCc8Z2gURE?=
- =?iso-8859-1?Q?e8Qqz1HThrdpjOn1LSsjy91sfYRvN8eB24dA2GZcTaWLidZ1PmNkt43XVW?=
- =?iso-8859-1?Q?EQZWHfGjDW/QSwOuFa+BmpR9p1WMDDXMksZhs3FOlDi1g6k3zip0RT28Qo?=
- =?iso-8859-1?Q?Q3zN3pH7k4t1zsmv0UeLtq26g8P49wsGUmqIGvpu2ARZDRjGMYghIwNSwR?=
- =?iso-8859-1?Q?u07e5v6VMqKG6EtRDV+58oPZRb2orgJ5PBiwMDSrw0Ie5y22h99bV7S3Hl?=
- =?iso-8859-1?Q?9BMfbCUcH1UcddiOzgmRukApBrKdE/yos2Uvl6+dw0KW6z769LAolgUPJo?=
- =?iso-8859-1?Q?S6sRMi9eYkD8gtqZ+KTlfwyTydQN2tHPwsrUSLdWodpUi8Vb8aQYU7eeNg?=
- =?iso-8859-1?Q?e5kbvrwhRlDHDIxvA01UmTstd4gf43BXjVa1V0yndD4CdDzUfumhDgmYKS?=
- =?iso-8859-1?Q?WSBNyeLIke2BxqG+1w2KzBgP23gyUjWlF26f3g4LdtVaMX5ItJKidCVrG1?=
- =?iso-8859-1?Q?5+ZW8WxZEjcbe+ofot68YyyEHhiRlccUtT1E2UbyRU6dxKccO1rcq7iL7d?=
- =?iso-8859-1?Q?FsOUgusf1aRlk6Wv/4ZSNPl//11E8b8NQyMCxpn2yVXNHRGtATCAgmrAqy?=
- =?iso-8859-1?Q?5jdAhJXVfaVPbAvpeZ948R0dtTZ4PKg+zn3yhnIB5K48opkMUeJHLhi+Xc?=
- =?iso-8859-1?Q?jA/78zzcdVAJbj8qBonR0LsoCoqBRbYQ2bYSlo+KoZTjxABsbmKzGpBWZY?=
- =?iso-8859-1?Q?MhtyCLGxAPSz8h9zeByb1WJlOWDETKWqjviZ8euShqxyx8VTmsaTXYgCbb?=
- =?iso-8859-1?Q?Kqec7nCgkiglAgJ2MKKoDzDMktoOIVFsqtV9LHI8nYcVlY2Ox2Q2FmRXus?=
- =?iso-8859-1?Q?5KimogLyRekLWVXTsdOw5nOmh8xwEn5n67ypWrvlLRazqPkzYcRQ363jLo?=
- =?iso-8859-1?Q?LeVgRzDkERuxI5zvTkUIA4Y6Z3PoJghFcR34q9V//o8gdhjGBmgna1B1RY?=
- =?iso-8859-1?Q?Q/le2LZlCHzdVp7OetS0zOzpRyS04r6IPpUKFiMnxEzrEiN2cxIDOnhfY5?=
- =?iso-8859-1?Q?DlBuN4B+RQ5iO5Sh+DaOYGss5aCg3ZfnCIEqwA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR18MB4425.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?3gebflY9w74XIoSj7qeVsapIL6MATaiG3Ttbu80/gNjYWCol1l6GNQT0fR?=
- =?iso-8859-1?Q?7KWwmSFXvfBAPBL2zW3umJiPK1lH7PAyqxaNyv1Fn++H81kCXOzgC8V/bV?=
- =?iso-8859-1?Q?Waon5dYh5R5uoSAYlGE7p6aMdsP4jjpMJ/CCXGt/XIiXFqcOg73bdAq9Ck?=
- =?iso-8859-1?Q?jjyuyz02AQ12V3WteGMEA2x7cruEKL0PvpiJzIlo+7yCegGi1M1y1sYuaC?=
- =?iso-8859-1?Q?0UGgD0srAAtBQOpCwimX1Eg7HcTrA9O99jYUNkTRjo6EvqsMdiWqG7uc4r?=
- =?iso-8859-1?Q?CyS06gVBgXlqwxbbLx2ijk8snsRsJ5xUPTNw4Fyh7My1Z0gZq+OHcyU7gh?=
- =?iso-8859-1?Q?gdt0wtyqSnosw7F/qin8qAP72wjMD5vqEZPOuFDujiXaojsR1FihJwFTZD?=
- =?iso-8859-1?Q?mNNaOWW/FGCaEgTk/2DHraIfIqVU0cxoNs8ef6mTU8ZjIWp1u21xOULwp9?=
- =?iso-8859-1?Q?pc0jGeaC5Rc/35oogDjE9Qy8duOjX0KDUvGpTUKMWYADf6udp+sTPuqraG?=
- =?iso-8859-1?Q?pSSxW1ckByZ5z9zOooiE/Wfa+fEoMJbpQlKThJGTWVlQ52tHwxBdlOjlHX?=
- =?iso-8859-1?Q?MO1nLtDZQj5TVUC8xNaWL0qjhfkza2NsovBTLNyAef36GCOks0/7haalr7?=
- =?iso-8859-1?Q?2VXSkB1DWyxA376i7ZzdZuh+aOgKUFYVCaNw+rQF4YXT/sLQDoaTdB2bQq?=
- =?iso-8859-1?Q?XeniMYQ5xky9u0ysr6/LXDxDgSJ00sg/mv6M4Js1xiCG6Emo0kA8+LHBmd?=
- =?iso-8859-1?Q?Jv2MqsJLBaKuLdFh6yxIaXuK2MYcL1TO6drMVjUCE3roznRuXKwxVhXvfd?=
- =?iso-8859-1?Q?2pVmNQQhm5Z8wUz3CslPMx1EFilqbjGhzh/fDd5KnhPA8POhHAMt3V5Ku8?=
- =?iso-8859-1?Q?JUIlecKRuK7+7RN2BhrpPixmlJ5OCzmM7vwkJ4vjrmCS0PVpX7pcHuFUKQ?=
- =?iso-8859-1?Q?QUzbgv7dEzBUUlwdqyWM0yZSWsB5tqLzbfKYzQ82zjBeuqV4hE3obJW/aF?=
- =?iso-8859-1?Q?rj6BzyL2ddjfrSpUKzO3lQbVVuuad+HNWiB9LTEyrPdMYzBPLM4ddFmnNv?=
- =?iso-8859-1?Q?zHjCEllcqsysH1DjmDpLx04crGjXN427pzTYIERrAF2O4j33pw5JURyJ9e?=
- =?iso-8859-1?Q?x0wdMUiEL0s88c/cNHzSv+7NDkm6A3RyRDoOpbS+TUIOMhjFL9ZazMCdlm?=
- =?iso-8859-1?Q?Tz9sMjG6QbokJFrCyi7ZKxsejXngn07uEMOrUq47CO6zmrq22QbqYH9HDx?=
- =?iso-8859-1?Q?/2Fl9/YwiGlO0DI5xdlY3UvpstMW69JTs7IUKVPUa9c1KP+PK8kqvduzi3?=
- =?iso-8859-1?Q?wMJ/h67ciSwG5pRJ08mriz1gw1Gg7KTRWy0d9x12diKHbQXqCEZJQSjT4q?=
- =?iso-8859-1?Q?3gJUFXzMS7VW2xTccp0hkWVewQPm1wMcH4q3Plxrkpf7mkeXPxhLqE9/Jj?=
- =?iso-8859-1?Q?y/O0H/4Xe3fDxk1wYA2QXHiOj/oxzPm3yPdfV2GhF+Tad3Ljae8wEPwq8K?=
- =?iso-8859-1?Q?XIeplddaiGznbF2Mmsb3m+1a5j0Tqe0oyWWytMT8n9mitmTepAkSbNaaOC?=
- =?iso-8859-1?Q?wna4xcjN7+luawrmndbijI3uRtC/E6a1MyxZB5FejJ4zDLz+oxyu4mbFW0?=
- =?iso-8859-1?Q?8/aF2Cvk0lzppGQbOcPvqyEr0QdC08wT2y?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ 2024 13:07:26 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7897.014; Fri, 23 Aug
+ 2024 13:07:26 +0000
+X-Secumail-id: <b852.66c8898f.ad4a2.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OZNT2ZFu+YBPV7FSUIrO5WLxB5qpgwlio7jQZNxQwHIiqrRRkvLuX1/gSZSi+V1mkpDfnRf7JL+dUqDrogwFLxhqF4XVH+uTm4zXY/XvJ2z+XlpxHxHpJI1h8M3BT0TRXSiEiDVCl+kNsfdlRav/6SFB19nCTZ7c3ELuKdFWU1F566d41UoboqwQekzRdiSO5Cm7KZcT7XlccKbNA9Xfr2SQvSv2E84todSYI6NPT3qYFNAFsimAc2YeFWHg8/Hd/GHBwQc+/RcOj5/3Hy48PCXkz32NzWapqTwv1nI5VpxdE9dtcpgFPib/0LU6SQ2xiNF3OpHj+hHXoI7dNg5Wog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3d1zCg9mRTmTg419Q/7OqAYndqtBVKrCO5xjrLfAvB4=;
+ b=ysPpJ/BSrqKag7CqltK6Z/Nlki15aNS7RBu3dx+fra/DEi6AXF8tNSgvnPsIF82YS6laB/ym4TUUVyWpHfBQeh53LBBJNTOTGWrERV1UXmxyHWmxpbIBJTT4jrKqfWvxYwVvYB6XYhHVNHeYnEa5y4MnM8AOcOTOlVxiWCvHWQZTyb/Vp4WtiI6jT7sL5zjhFmlm6yZ4wp8/KYTrUq8ePy5yAzCw49X+N2yJWkYJCGYQH86aa8Adhj+9kyLHCZK7kJ0NoV8Coc9GiEL2cwfEFnd3ckzfTcvvAWNjzF8EKDCUCfuUjto0T6yl3bPzzqZqfZkMuF+wRhb7ywOpPPT2KA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3d1zCg9mRTmTg419Q/7OqAYndqtBVKrCO5xjrLfAvB4=;
+ b=CfjLNQfk4UrxLnO9lyko5GDIYIYDNqHPY3TL7WG/b3gy0wb2xn5V1PUnq8txrivkWG9E6aFMeFW55HuSWWPH5UdpnWVWIaPOnxA7qRVnu8dR5nkbdMx0WJUpNbMQPdM9u5fC1yl/Ftrd2UM/X3GM0K4ntuCNyxVj8fs4oaz6Vpexeeuve3FLYkV/8ae/YS8BGhDu/HJ9xkIHS/1yakaGmgeqrDR1O9u6vkL7/LrRMZhT7xYzp0ais4t1l5I+kwhLq2gGmiCHV7gRm3IglHhYU+OVj3zL+jpG0cyU6x84Cfo1ADFpUlS0ZTImOcir1NoKRX3fGfG6d6tsckAd+9XTCA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <4ac2f7d0-11f4-4cb9-b0f8-2961caca9c2f@kalrayinc.com>
+Date: Fri, 23 Aug 2024 15:07:24 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 34/37] kvx: Add power controller driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
+ <jvetter@kalrayinc.com>, Clement Leger <clement@clement-leger.fr>, Louis
+ Morhet <lmorhet@kalrayinc.com>, Marius Gligor <mgligor@kalrayinc.com>, Jules
+ Maselbas <jmaselbas@zdiv.net>, bpf@vger.kernel.org
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-35-ysionneau@kalrayinc.com>
+ <daa59ab0-08d6-4a65-9367-c34bb42b8ad8@kernel.org>
+Content-Language: en-us, fr
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+In-Reply-To: <daa59ab0-08d6-4a65-9367-c34bb42b8ad8@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PA7P264CA0055.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:34a::15) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PR0P264MB1660:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30e945a5-aab0-418a-50d3-08dcc374889d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: MZe3LJclmILlKVzvPSUcnFyWi/QRtO+ZHFI5fwFDgGJuhLNzN9GGybZ+CXyt4VHIl8HufbaPrGESiDeegAv1HKXzAKf4rVKddwsQdDdq8/W2GGIuXK3jaBPsaSjkPgBxpzlGg0RFe31fM62eXlntrYKLWcxb2t8htJRL/4BggyQ2uMZe4mGUREC5RH6M3vZxBb07bkquv1iFK6ZGz5NG0K4kuE88Fe4T8+zf0MXdbqV0GLIX5wSix8tZuAGOyM0GTJFj2yJZiDk/3nyka+OYiM0SwJO/W7JvNxIZgw/eUDmB73tSF1cfmNZrMuBnZ/icXDk93vl/yBgTK7l+Wxyd1DAYcgnbK7jYCJInDH6KG1B86T9IPproZMLFafPkz/SPt4TV2R2NfRj8lUIdHvNosVznT0hA5ssAFQ7MesN5KXdABVB+eFLiPPV0mCyTlMeI7Gc5reZthxHxQ+nmDaST6XuSv8BrOc3CrN2xocIVaoXytmkYmkCVjN8V63k1abV2LG/U0XbhQGiZXL4iCob63HJaHyt+C4Rg7ydgLsq0lfFAfzhIg6J6hC56w6SDT6q7Auc9JE7cA2V+iV6yvrarJZHzrbKYXvks7dKIcZIZDL+IEB8yJl//kph/lveuBHh6V1ZBZn7UZmqYNhvwmeggrMTiA9N1rrLWo0viN+vPrx4UoApDutBX/G2ozBfQXS6ewJ3i4YSA31940pyr7NBwjSZuZ5J1FpD8Zw3j6O5cN2Kl/R1+hTz8y/+o9xvLN2Qa9zUCFG+PC4W0/uMR10EzxY1RJcsl10DYK5L/Ob2nZsP+Ln3ge5SdMTMPeYbSA4/FeTc9OSh1SwOS/fwjOZBMviqehKWyOcZdBIIYHFoUQ1KYlDmzbpoya7qgQXDx0zvzvBxzwit9pf5eibjkY7NiZV0jpvXSyKmNcJzYol9uTe5DeP2AWs9BG+Pp8bgGMeftT3j
+ TvrE7tr6PdPHGSXNfo4/GUL578QOAwo2Ac8Zp7R0t3P8tRWB76Iy1R2PInK1xKabOlFLD5kicsK4hKiTuqiN6KTc0sOYPW7l8ZcBSVcHeV/+AYg146w9dGnqrkVupXQpqdYP+W9FYpqVC8hc8R46OYBKpqkU6wRyN6m3GZksXYUOBJQn11tiy/5ew0sh3rbuu4Z56BFKzCSs92Rs6HiRHKXCY7e8Y6eI7ND9OVaXRJRi8MSNFW7sGUIyUxu6xxH8i+1AkN9aG2YML4vcbDnsE5HMKIJwdYYb9qnNQI+J4rcRNvgbxoUOkzzkk7v0xklcCe4me08ClLOHgOdG2Rhw8NP01UXaoI5ZUGxEh46NGQYevNY0CDX53cI6AnGgggDP3fgnUbiM5kSk/98Esvw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: TJrsGdVW8BNAbKBpBCDUyL9si028GVHIZx47ouC5LKYaqz3awO8C4QiqiyjzjTLW3Zzso+nclXWfeLSN8YF0o8iFUiIYJ49YCVUoye2hfxsRIDPNgjUoO7XvA1LoAg7iC3yHQpFN71kZRHGjSMhqx6RjoBVlvh+X3rzKoyrvxzNHm7sbAQq+TU4ZVLTD2gkAeArY5GmULv2AKMPOf4G30RbWFFMW3HwFbnmGY8OGy3w1iDW1lKcNGEQUuqG8/Ts1l5UPLi2BKacaw/JHos0rI5mdPEmMbSVPF2LM7n3AZFGrFiDVhY82woR5oTCR5acrxos//R92ZFvCLlYuN8/73yxIHPYKjOFsp8fve1bumb9Txia5UKbXltcYPF1kqtuS+RiOh0cL06qnJRfJ8xx+ATYjWiwvo3H5klz9YjBaycVM137EnXl+SbGZS5lNqZY1mT8CCuK04/VA7bi0SKsxV+DCSw952G1YKbOJmrEsFfTl2w5f3ELZD2LMld2XIg9w6bIeF6jGNLkGw/XyuODDVLdU4jQyVyRYrkMFasnk3+ckPIjPd+1733b/mThuQ4AtKkQRnblr+ThETFEst905dSCSnBdXTKuqXccv+moJgciXlVDF48vaeda06wU9Qd7JQxYBpNKYPROMCKFaT+YXN/dGDW949k4P26rpWzrd8lhWXLU+OD/qM0PMVAb4MmX9e++6lVpzH6bvuc13Ka4eYc/XJoEzgmlt7WfvkbNRglT+0cXoN2sp5juea4WmqYmUT6cJ5uNjeEtUpU/xtNTCGz5OoNdiaBg6yRgaGidXsgHuk1qRgMS6fEh5CWRbvz379g2Jkxiq+AaxdWxfwh9lcpXZDanoBXD6M2TwL5Qbq6CkH/uFFlrwDTC/YQWmZYZvwu6gs7vE9Oxcdo4JGMOg1lsK6s0t3bgnu6AcS0YlYfDlt0JOScgjN+4Ky1XEd5wn
+ 8x6S54i02ABQIkXW+GWmcQJSC1Evu0ieMk0wUvH0lJyoEcS2yR45zIl8oaKjarSYTGsnhkGLLkXSXilwq8NIIPrgn04uh71u5SvJb5olQKG3ixCJzw2E2b27JbH3K94ZNXaZ95Mhh+OZ/+4V0KnjGv2b52C7mtVByGm93oDLAwQfPEmdxDn9Mr40hS5hfsuwoMxJqQBoPnfi3PIGjJF1qBzYRx7xn4MG//v9IjX6bM5k1AfofqiPje32o2yUoqMhKpmd4znnVDqEw1r5dFSyS6qwjNoimm6ywEdwZlKmRGv6/M9u8yPJIhEFibgRPDBi8i9GQRxfIXuxpVZ6Vzt+U11mkWdThPHk2YbkHeDHkLq6XGJ8qLPP3d+wK3vJktxSHyfxZ/KTpBdx7Uki1dnp5K48ONm9GKmcq3ra8UmaLwv4LMP/50skvftzTn2HUt/c3XYPuxUURHBdL84sLO86wKppfeqi/Ij3SN9BanQLVCFm8wjvPVpID7VWum1BQDDbtdSqRSzMz7VNfqUxu6Hyh87KX9P1xEXjeXTS7zUGnZdJ6zEgnG6RnkHmo0OPiTkVf737TVdVPU/6TwBivunYHBS8C1o2L6BIqGq3St7QA8kQuwxSnkTdKwQVD3qhf709JjtWOtID2Cpm90NPPa1txIGVGXeydeXAaa7PRsTMpQD6jw4ROrwa32HwNVYDHOxAKoCCa5FPKAsL5dZXIQqyaA==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30e945a5-aab0-418a-50d3-08dcc374889d
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4425.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1fdeaf4-5e2c-476c-4d7d-08dcc3746a77
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2024 13:06:34.9089
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 13:07:25.9500
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2h0mJoTd6iGlNoTm6rp9p3XnNTE9eCJgIhxSoPpdqlBE/KTyn4/1vIBKa6J+9xkLF5sNUpJOA2gGRV5LzP92ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR18MB4105
-X-Proofpoint-GUID: qbczg2SuBUL03BqQvakNBJPoCjK8kk-6
-X-Proofpoint-ORIG-GUID: qbczg2SuBUL03BqQvakNBJPoCjK8kk-6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_10,2024-08-22_01,2024-05-17_01
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pRn9FZpdBQHsVT4zZi0qePFi+u4wfLPj1Z9QcfpFe1sIuoy4Ptk+uPYYc27/ggUnNSLUfbdd1dBPVrDRP+jJjw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR0P264MB1660
+X-ALTERMIMEV2_out: done
 
+Hello Krzysztof,
 
->> This patch introduces a PCI hotplug controller driver for the OCTEON
->> PCIe device, a multi-function PCIe device where the first function acts
->> as a hotplug controller. It is equipped with MSI-x interrupts to notify
->> the host of hotplug events from the OCTEON firmware.
+On 22/07/2024 14:37, Krzysztof Kozlowski wrote:
+> On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
+>> From: Yann Sionneau <ysionneau@kalrayinc.com>
 >>
->> The driver facilitates the hotplugging of non-controller functions
->> within the same device. During probe, non-controller functions are
->> removed and registered as PCI hotplug slots. The slots are added back
->> only upon request from the device firmware. The driver also allows the
->> enabling and disabling of the slots via sysfs slot entries, provided by
->> the PCI hotplug framework.
->>
->> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
->> Co-developed-by: Vamsi Attunuru <vattunuru@marvell.com>
->> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
->> ---
->>
->> This patch introduces a PCI hotplug controller driver for OCTEON PCIe ho=
-tplug
->> controller. The OCTEON PCIe device is a multi-function device where the =
-first
->> function acts as a PCI hotplug controller.
->>
->>               +--------------------------------+
->>               |           Root Port            |
->>               +--------------------------------+
->>                               |
->>                              PCIe
->>                               |
->> +---------------------------------------------------------------+
->> |              OCTEON PCIe Multifunction Device                 |
->> +---------------------------------------------------------------+
->>             |                    |              |            |
->>             |                    |              |            |
->> +---------------------+  +----------------+  +-----+  +----------------+
->> |      Function 0     |  |   Function 1   |  | ... |  |   Function 7   |
->> | (Hotplug controller)|  | (Hotplug slot) |  |     |  | (Hotplug slot) |
->> +---------------------+  +----------------+  +-----+  +----------------+
->>             |
->>             |
->> +-------------------------+
->> |   Controller Firmware   |
->> +-------------------------+
->>
->> The hotplug controller driver facilitates the hotplugging of non-control=
-ler
->> functions in the same device. During the probe of the driver, the non-
->controller
->> function are removed and registered as PCI hotplug slots. They are added
->back
->> only upon request from the device firmware. The driver also allows the u=
-ser
->to
->> enable/disable the functions using sysfs slot entries provided by PCI ho=
-tplug
->> framework.
->>
->> This solution adopts a hardware + software approach for several reasons:
->>
->> 1. To reduce hardware implementation cost. Supporting complete hotplug
->>    capability within the card would require a PCI switch implemented wit=
-hin.
->>
->> 2. In the multi-function device, non-controller functions can act as emu=
-lated
->>    devices. The firmware can dynamically enable or disable them at runti=
-me.
->>
->> 3. Not all root ports support PCI hotplug. This approach provides greate=
-r
->>    flexibility and compatibility across different hardware configuration=
-s.
->>
->> The hotplug controller function is lightweight and is equipped with MSI-=
-x
->> interrupts to notify the host about hotplug events. Upon receiving an
->> interrupt, the hotplug register is read, and the required function is en=
-abled
->> or disabled.
->>
->> This driver will be beneficial for managing PCI hotplug events on the OC=
-TEON
->> PCIe device without requiring complex hardware solutions.
->>
->> Changes in v2:
->> - Added missing include files.
->> - Used dev_err_probe() for error handling.
->> - Used guard() for mutex locking.
->> - Splited cleanup actions and added per-slot cleanup action.
->> - Fixed coding style issues.
->> - Added co-developed-by tag.
->>
->>  MAINTAINERS                    |   6 +
->>  drivers/pci/hotplug/Kconfig    |  10 +
->>  drivers/pci/hotplug/Makefile   |   1 +
->>  drivers/pci/hotplug/octep_hp.c | 412
->+++++++++++++++++++++++++++++++++
->>  4 files changed, 429 insertions(+)
->>  create mode 100644 drivers/pci/hotplug/octep_hp.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 42decde38320..7b5a618eed1c 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13677,6 +13677,12 @@ R:	schalla@marvell.com
->>  R:	vattunuru@marvell.com
->>  F:	drivers/vdpa/octeon_ep/
->>
->> +MARVELL OCTEON HOTPLUG CONTROLLER DRIVER
->> +R:	Shijith Thotton <sthotton@marvell.com>
->> +R:	Vamsi Attunuru <vattunuru@marvell.com>
->> +S:	Supported
->> +F:	drivers/pci/hotplug/octep_hp.c
+>> The Power Controller (pwr-ctrl) controls cores reset and wake-up
+>> procedure.
+>> [...]
 >> +
->>  MATROX FRAMEBUFFER DRIVER
->>  L:	linux-fbdev@vger.kernel.org
->>  S:	Orphan
->> diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
->> index 1472aef0fb81..2e38fd25f7ef 100644
->> --- a/drivers/pci/hotplug/Kconfig
->> +++ b/drivers/pci/hotplug/Kconfig
->> @@ -173,4 +173,14 @@ config HOTPLUG_PCI_S390
->>
->>  	  When in doubt, say Y.
->>
->> +config HOTPLUG_PCI_OCTEONEP
->> +	bool "OCTEON PCI device Hotplug controller driver"
->> +	depends on HOTPLUG_PCI
->> +	help
->> +	  Say Y here if you have an OCTEON PCIe device with a hotplug
->> +	  controller. This driver enables the non-controller functions of the
->> +	  device to be registered as hotplug slots.
+>> +static bool pwr_ctrl_not_initialized = true;
+> Do not use inverted meanings.
+Ack, I will fix this.
+>
 >> +
->> +	  When in doubt, say N.
->> +
->>  endif # HOTPLUG_PCI
->> diff --git a/drivers/pci/hotplug/Makefile b/drivers/pci/hotplug/Makefile
->> index 240c99517d5e..40aaf31fe338 100644
->> --- a/drivers/pci/hotplug/Makefile
->> +++ b/drivers/pci/hotplug/Makefile
->> @@ -20,6 +20,7 @@ obj-$(CONFIG_HOTPLUG_PCI_RPA)		+=3D
->rpaphp.o
->>  obj-$(CONFIG_HOTPLUG_PCI_RPA_DLPAR)	+=3D rpadlpar_io.o
->>  obj-$(CONFIG_HOTPLUG_PCI_ACPI)		+=3D acpiphp.o
->>  obj-$(CONFIG_HOTPLUG_PCI_S390)		+=3D s390_pci_hpc.o
->> +obj-$(CONFIG_HOTPLUG_PCI_OCTEONEP)	+=3D octep_hp.o
->>
->>  # acpiphp_ibm extends acpiphp, so should be linked afterwards.
->>
->> diff --git a/drivers/pci/hotplug/octep_hp.c b/drivers/pci/hotplug/octep_=
-hp.c
->> new file mode 100644
->> index 000000000000..3ac90ffff564
->> --- /dev/null
->> +++ b/drivers/pci/hotplug/octep_hp.c
->> @@ -0,0 +1,412 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/* Copyright (C) 2024 Marvell. */
->> +
->> +#include <linux/cleanup.h>
->> +#include <linux/container_of.h>
->> +#include <linux/delay.h>
->> +#include <linux/dev_printk.h>
->> +#include <linux/init.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io-64-nonatomic-lo-hi.h>
->> +#include <linux/kernel.h>
->> +#include <linux/list.h>
->> +#include <linux/module.h>
->> +#include <linux/mutex.h>
->> +#include <linux/pci.h>
->> +#include <linux/pci_hotplug.h>
->> +#include <linux/slab.h>
->> +#include <linux/spinlock.h>
->> +#include <linux/workqueue.h>
->> +
->> +#define OCTEP_HP_INTR_OFFSET(x) (0x20400 + ((x) << 4))
->> +#define OCTEP_HP_INTR_VECTOR(x) (16 + (x))
->> +#define OCTEP_HP_DRV_NAME "octep_hp"
->> +
->> +/*
->> + * Type of MSI-X interrupts.
->> + * The macros OCTEP_HP_INTR_VECTOR and OCTEP_HP_INTR_OFFSET are
->used to
->> + * generate the vector and offset for an interrupt type.
+>> +/**
+>> + * kvx_pwr_ctrl_cpu_poweron() - Wakeup a cpu
+>> + * @cpu: cpu to wakeup
 >> + */
->> +enum octep_hp_intr_type {
->> +	OCTEP_HP_INTR_INVALID =3D -1,
->> +	OCTEP_HP_INTR_ENA,
->> +	OCTEP_HP_INTR_DIS,
+>> +int __init kvx_pwr_ctrl_cpu_poweron(unsigned int cpu)
+>> +{
+>> +	int ret = 0;
+>> +
+>> +	if (pwr_ctrl_not_initialized) {
+>> +		pr_err("KVX power controller not initialized!\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	/* Set PE boot address */
+>> +	writeq((unsigned long long)kvx_start,
+> Addresses use kernel_ulong_t
+Ack, I will fix this.
 >
->Making these numbers explicit (since they cannot be just any numbers) fell
->through cracks.
+>> +			kvx_pwr_controller.regs + KVX_PWR_CTRL_RESET_PC_OFFSET);
+>> +	/* Wake up processor ! */
+>> +	writeq(1ULL << cpu,
+> That's BIT
+Ack, I will fix this and replace with BITULL(cpu).
 >
+>> +	       kvx_pwr_controller.regs + PWR_CTRL_WUP_SET_OFFSET);
+>> +	/* Then clear wakeup to allow processor to sleep */
+>> +	writeq(1ULL << cpu,
+> BIT
+Ack.
+>
+>> +	       kvx_pwr_controller.regs + PWR_CTRL_WUP_CLEAR_OFFSET);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct smp_operations coolidge_smp_ops __initconst = {
+>> +	.smp_boot_secondary = kvx_pwr_ctrl_cpu_poweron,
+>> +};
+>> +
+>> +static int __init kvx_pwr_ctrl_probe(void)
+> That's not a probe, please rename to avoid confusion. Or make it a
+> proper device driver.
 
-The functionality of the code is good since the enum values are automatical=
-ly
-sequential. The values we need for the interrupt types are OCTEP_HP_INTR_EN=
-A as
-0 and OCTEP_HP_INTR_DIS as 1. I will include the explicit assignments in v3=
-.
+Ok, I will probably rename it kvx_pwr_ctrl_init()
 
-Thanks,
-Shijith
+Thanks!
+
+-- 
+
+Yann
+
+
+
+
+
+
 
