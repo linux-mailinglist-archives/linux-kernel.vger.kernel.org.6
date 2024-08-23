@@ -1,170 +1,93 @@
-Return-Path: <linux-kernel+bounces-299397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DF095D3FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:04:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD1D95D3F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428D81C20BAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4BC1C20DBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1CD18C929;
-	Fri, 23 Aug 2024 17:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sL8jc1Up"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055E318C337;
+	Fri, 23 Aug 2024 17:04:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80D018BB97;
-	Fri, 23 Aug 2024 17:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F883189B93
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724432655; cv=none; b=Va2o1dXLG75U25oPirP5Pmg2fuKGn33fmZmLUqOje3zASCvCQygnKjbDQb9Jg98wojyHemEQd9lv1NGVNdITGVJf3/Zkkw9eRFVOFxMnOfyzu4WgAumfdEa2UeprQQsAcAGTfSfMVXPfC0hm615Wv/8Dyvb2kAG1DaaReOcJGg4=
+	t=1724432645; cv=none; b=uQpfzQXmopiGHVw33bZAXEUk1T+UkwEckWh0sV3gv6+xJZfe+3x2EQ8MQ3d5pzDThIBODckWEOQiDORAQ0mgS7NvbNAs+INUiZ6Mtrz6EdSz6TapyyMUpgOXFsNNZH86p9IMuVYb17nCXPuERQs0zvV3sr5AP21OlbICZ77w8P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724432655; c=relaxed/simple;
-	bh=gPop/UVhlz7Wrcp5Tuthp7RNQzQjH8WZPkpvf7yD3tU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MfEJtXZUj6Tv9mJ1IbkPahid35SRseyPtVQ4C4KfbPKHYESBbYx9+PhcN243ZLrB9RBeAy0Lz/7SaTKgOyhdQpJIO4L+qore/bDqKQEfasEc0Vqf5ByyR4jd7xDZlvXK6/FNvj2qY0tkcGDLc6iWaHknYkGUMovFJLJ6rXm1AYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sL8jc1Up; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7931BC4AF0B;
-	Fri, 23 Aug 2024 17:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724432654;
-	bh=gPop/UVhlz7Wrcp5Tuthp7RNQzQjH8WZPkpvf7yD3tU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sL8jc1UpWeDz0x2Qlcy8Xyq94AiGFAVkCxvIRrjj+Qccy02w9GmAHaDr427wWDHsb
-	 BbgpECe2XAXwVs2O3e7Y6AO0UzfI37cybVrsQAddQceBdi7GxUWQrOwh7W1ytnOH7P
-	 mN1cP2GruonaXTeKUJ/H9NzOCA4IZTMvo3ThWfLGeEn6MbQlhhPKNIzF6qQsmTOpek
-	 0fPLSQFp39cx9Vplig2kmpDb3e+LuMjvpge4s7uuhnAUaIDyZYT8awK7rbSxH3xSGT
-	 73VWtyvLKBi5jlLpyvGCpS7J9CJsrs/dwkU5PreXXnOYODXK3yNep9bvkpBpyE5Ia1
-	 AD+QxR0OYfXQg==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-27051f63018so1553716fac.3;
-        Fri, 23 Aug 2024 10:04:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWIMGIgYJapFgwT2OtQ+Sg2IjEF5Oj0VMSAbB+tX73TX2TY6yOGvdmcMnjlk882GpRSKoNEnZJne3sr1o=@vger.kernel.org, AJvYcCWX/hTCuocrZ5bijB3FnEALjQqeYfMa/umDQSiIkdy8TyGWj4RvCpgmemhBEV1VlSd5JwZXCT5vUUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YximPAAdHv1ajkK098YYuKb544aeAvM/ShYFKkoD+EZiSehCnpW
-	XUdgLEbFXjFzbWgBFvAsEnSwy/rOHiNEJ/wu5quiqCnIah+S5/erXBuoQZ4Uyht90XWGkAzdFhw
-	U8NxKvvpK5SK9FwuCZfKthemjXQ0=
-X-Google-Smtp-Source: AGHT+IFvfuY5PSYq4C0JygpVUbW7Ga5Qce5crGO5quW3xdzsBfgWGH2H7IvUoFRlXKNu8h5FEWs58XSGsXpyNdaJXhY=
-X-Received: by 2002:a05:6871:725:b0:260:f9e4:1fc with SMTP id
- 586e51a60fabf-273e64d9609mr2930005fac.20.1724432653808; Fri, 23 Aug 2024
- 10:04:13 -0700 (PDT)
+	s=arc-20240116; t=1724432645; c=relaxed/simple;
+	bh=d52yvE/GYjtRqH/BG615idReOKNPIC0NfKnLvSUl/fE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CT74gkvd5E8M74YJxHgGlubEoSOoJ8g9ZHlw+EmYe6X4+5HzkLcIQmyh6krgdsajssw0UfuTLUI24+fK8r5Ih1ezv6DI5Pe9UNCuiUy619P3ugbOvIBr/MvYHnDU5C45C+OE1y/ZpBg4cT/zrolbCq0/8b5ex+0oPNqBAzg4qFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-827878b991aso84874139f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:04:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724432643; x=1725037443;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C90LATNSBhaqimddlz2BNPSUAb4V88NW5KBiyu/pYlU=;
+        b=TCjvGYzlJakMCXGyL8M0igUun8v2l0x7dPu7LlRyNQMi41jb4vYB8HokZDryjSZJ2Y
+         3Tsl5eueeDUUPgyVkNR3m9nj9hbdgkWqqsON8Qd21pjdDTqQ5YT+flxlUlZJxs7ZhTl8
+         TqfLqv4Ux7PnVLteEAIpvepGKYrrwkYrVFh6qtJlUW5QzpSdJ9+bjjEGxTKKAJvJ1MBB
+         JoxkWh472nC8Pi1Ew9E2pfGJ/qMv1VGtAm66xSJumG5+q2UJOthvyhX0UNNu5Yvh5r4c
+         bA5RnhENZYvrVmrz5lkm/3rcFWu5N1w6qzNS2fNdrkE9DKZhWW6FgjcuCxEb/+2MpHvE
+         6V/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKQgVxIlYgWhluUyT6wEOhqL/vIwj2PIr9wstI49DCWEoqPp25Gah8TM/4ozX1JVSPgluHRGjwswjR9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6WylVlPJFkO4SrBQ3uhnquNpZ04VW2z5alhePgTHGQgSon2Z1
+	KnAGOb5mVyLerTwpUmj6GzGqX01jKbdfUocEzcPIkEE5tI2RxOEs6T83ozY0wUj3VaIfrrukcGp
+	mSf/QSugGJm9w4P/2KvOAymE+eibnSzZpwkKOWasrhWty3b3YW0Drxvw=
+X-Google-Smtp-Source: AGHT+IFBmAADJdsN/l27OcD/H0mOuFBLnQi6NU+2NsX5l5JnMIqU8dE4kd+bP1rm4UI0idvL8U9MYnxvlEdHE4Mrr7LAnFzOJE4j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3331194.44csPzL39Z@rjwysocki.net> <7719509.EvYhyI6sBW@rjwysocki.net>
- <cb8bbde9-1b13-4c63-960d-5846a319f5ea@linaro.org> <CAJZ5v0g-NNKeXh_m-O+mAL=w3Roae_EMUWA5fbBvi49jhZM07A@mail.gmail.com>
-In-Reply-To: <CAJZ5v0g-NNKeXh_m-O+mAL=w3Roae_EMUWA5fbBvi49jhZM07A@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 Aug 2024 19:04:02 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hyYNCiZ5ESsiLHmKzbHypMuqMC3mi-Pnf8Ws6B8k6Gcw@mail.gmail.com>
-Message-ID: <CAJZ5v0hyYNCiZ5ESsiLHmKzbHypMuqMC3mi-Pnf8Ws6B8k6Gcw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] thermal: sysfs: Add sanity checks for trip
- temperature and hysteresis
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, =?UTF-8?Q?Peter_K=C3=A4stle?= <peter@piie.net>
+X-Received: by 2002:a05:6602:6185:b0:824:d7b5:451 with SMTP id
+ ca18e2360f4ac-8278711c99fmr8095039f.0.1724432643468; Fri, 23 Aug 2024
+ 10:04:03 -0700 (PDT)
+Date: Fri, 23 Aug 2024 10:04:03 -0700
+In-Reply-To: <199d972e9c5748a3b18a88feff01aa0b@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000273ff006205cc30b@google.com>
+Subject: Re: [syzbot] [ntfs3?] UBSAN: array-index-out-of-bounds in decompress_lznt
+From: syzbot <syzbot+39b2fb0f2638669008ec@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 6:39=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Fri, Aug 23, 2024 at 5:26=E2=80=AFPM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> >
-> > On 22/08/2024 21:48, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > Add sanity checks for new trip temperature and hysteresis values to
-> > > trip_point_temp_store() and trip_point_hyst_store() to prevent trip
-> > > point thresholds from falling below THERMAL_TEMP_INVALID.
-> > >
-> > > However, still allow user space to pass THERMAL_TEMP_INVALID as the
-> > > new trip temperature value to invalidate the trip if necessary.
-> > >
-> > > Fixes: be0a3600aa1e ("thermal: sysfs: Rework the handling of trip poi=
-nt updates")
-> > > Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >   drivers/thermal/thermal_sysfs.c |   38 ++++++++++++++++++++++++++--=
-----------
-> > >   1 file changed, 26 insertions(+), 12 deletions(-)
-> > >
-> > > Index: linux-pm/drivers/thermal/thermal_sysfs.c
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > --- linux-pm.orig/drivers/thermal/thermal_sysfs.c
-> > > +++ linux-pm/drivers/thermal/thermal_sysfs.c
-> > > @@ -111,18 +111,25 @@ trip_point_temp_store(struct device *dev
-> > >
-> > >       mutex_lock(&tz->lock);
-> > >
-> > > -     if (temp !=3D trip->temperature) {
-> > > -             if (tz->ops.set_trip_temp) {
-> > > -                     ret =3D tz->ops.set_trip_temp(tz, trip, temp);
-> > > -                     if (ret)
-> > > -                             goto unlock;
-> > > -             }
-> > > +     if (temp =3D=3D trip->temperature)
-> > > +             goto unlock;
-> > >
-> > > -             thermal_zone_set_trip_temp(tz, trip, temp);
-> > > +     if (temp !=3D THERMAL_TEMP_INVALID &&
-> > > +         temp <=3D trip->hysteresis + THERMAL_TEMP_INVALID) {
-> >
-> > It seems to me the condition is hard to understand.
->
-> That's not the key consideration here though.
->
-> >
-> >    temp <=3D trip->hysteresis + THERMAL_TEMP_INVALID
->
-> This cannot overflow because trip->hysteresis is non-negative.
->
-> >
-> >           =3D=3D>
-> >
-> >    temp - trip->hysteresis <=3D THERMAL_TEMP_INVALID
->
-> But this can.
+Hello,
 
-Well, I think I should add a comment there to point that out or people
-will try to "clean it up".
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
 
-Also note that in the hysteresis case the condition can be
+2024/08/23 17:03:34 ignoring optional flag "sandboxArg"="0"
+2024/08/23 17:03:35 parsed 1 programs
+2024/08/23 17:03:35 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
+mkdir(/syzcgroup) failed: 17
+mount(binfmt_misc) failed: 16
+SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
+ (errno 16: Device or resource busy)
 
-if (trip->temperature - hyst <=3D THERMAL_TEMP_INVALID) {
 
-because trip->temperature is never below THERMAL_TEMP_INVALID there.
+Tested on:
 
-Moreover, setting the hysteresis when the temperature is
-THERMAL_TRIP_INVALID does not make much sense.
+commit:         7529036a fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e2bc7b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=500271480f7d801c
+dashboard link: https://syzkaller.appspot.com/bug?extid=39b2fb0f2638669008ec
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I'll send a v2.
-
-> >
-> >
-> > Could be the test below simpler to understand ?
-> >
-> >         if (trip->hysteresis &&
-> >             temp - trip->hysteresis < THERMAL_TEMP_INVALID))
-> >
-> > I think more sanity check may be needed also.
-> >
-> >         if (temp < THERMAL_TEMP_INVALID)
->
-> With my version of the check above this is not necessary (unless I'm
-> missing something}.
->
-> > > +             ret =3D -EINVAL;
-> > > +             goto unlock;
-> > > +     }
+Note: no patches were applied.
 
