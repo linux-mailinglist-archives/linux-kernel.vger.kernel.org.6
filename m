@@ -1,177 +1,99 @@
-Return-Path: <linux-kernel+bounces-298088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1D595C1E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A8095C1EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A282F1F2449C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AC21C22BA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8BF800;
-	Fri, 23 Aug 2024 00:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC60A21;
+	Fri, 23 Aug 2024 00:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ON0z/daj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTVZz4YE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4FD1E480
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAB117C;
+	Fri, 23 Aug 2024 00:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724371466; cv=none; b=FXPqy92UOjFJ5CJbpnwhv4j3YZICZolK/crf0o/QsfCK+c1X0+oR1nO55MolQmvtVw/24LqHXxa8pEW72pxAU1GJXJ27C8/QTEKldRvh7HahSa4+fHw57z9zqmCslObuGKZpnt+EPgJk+0JbFsvHrPuX44YICiRrwgcvV0UxKgE=
+	t=1724371527; cv=none; b=D2Uwh4Hw3FcbAHPR5syVCrx8/0XJHSf3vuTu3dow05xHpFHsmygp2bGHUBkOaAQgcObvKPa2FwoXy91azHiMCHSKgh/5kOY5JenmtlpjNrUlkZy/G5Cueo0NvTQdHzFFO4hERGiMb+v8ncqZDwT824QUWSoWS7+1TzQ6SSUNYj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724371466; c=relaxed/simple;
-	bh=3QnAdixYo6jA5LfHGge4JAkNB7yoXQF4pxxURUN8JXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOhPLyCkm0GBQZEYjSg2qU0s1PlVnZt2b0dewlAC9QzQ+4QerDID/lV2fqzwl9RfuhbgN4PLx+oR3b99R2pGrBnYJbU6nnugNsJ85mPaVptjOZ7KvXz1c2vK50G/ia3wDm2Ga2Q18Fx8w9G5WIqVKux1GvzVRkeTbeE+ys9FUjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ON0z/daj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724371463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HHqbq1AQSOY5EcS479bGVBSadv/yHMIWF28e/YV8WdA=;
-	b=ON0z/dajkrSyPS5QqkOqQfNn8q70Dpr3pIAGQukIfCsgKn9vxlcwBezFraob/MG0BXnKcm
-	reC5GvpSUeJ1N0ZfLqtZyvi9pg1JvVSLyWkM1H3S/zDRvwcoP+XLB5xfDCZ+UlA0Wu7yem
-	qTBCFaKfR0TQhGJOyQUeGj/Ewjo+z1k=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-Q2zfLi0YMr2QKG2BabfBhQ-1; Thu,
- 22 Aug 2024 20:04:18 -0400
-X-MC-Unique: Q2zfLi0YMr2QKG2BabfBhQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0352B1955BF4;
-	Fri, 23 Aug 2024 00:04:14 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.51])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ACCC819560A3;
-	Fri, 23 Aug 2024 00:04:10 +0000 (UTC)
-Date: Fri, 23 Aug 2024 08:04:06 +0800
-From: Baoquan He <bhe@redhat.com>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: linux-kernel@vger.kernel.org, Dave Vasilevsky <dave@vasilevsky.ca>,
-	Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
-	debian-powerpc@lists.debian.org, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-	loongarch@lists.linux.dev, akpm@linux-foundation.org,
-	ebiederm@xmission.com, hbathini@linux.ibm.com, piliu@redhat.com,
-	viro@zeniv.linux.org.uk, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH linux-next v3 05/14] crash: clean up kdump related config
- items
-Message-ID: <ZsfR9rdMt8yn1+Bz@MiWiFi-R3L-srv>
-References: <20240124051254.67105-1-bhe@redhat.com>
- <20240124051254.67105-6-bhe@redhat.com>
- <a9d9ecd1ed8d62eae47ec26257093495e6cbd44a.camel@physik.fu-berlin.de>
- <ZscCMLfNbj2MDiaB@MiWiFi-R3L-srv>
- <c5e9996e4d2ba2a0849d65f68e3dce94fffc5828.camel@physik.fu-berlin.de>
+	s=arc-20240116; t=1724371527; c=relaxed/simple;
+	bh=aVeJe/7KLuyfzsfAXhhlrtTjGT4oThY97aPYWYhQF0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NQzrI+PEhoFjdHHbfvNQlsTiqMrjaeIDh2WZIST8Ry9DSCD0QUhyHhWd3+nKbnY6/HWuNWCxWGT6vgQIpRjyYBZAA6W42Hlt3zW3VVFhyvmSoSG+gx3NXp5HW+J+nIdBp4LUp+r77YD9BFgLICM1wxP5osw57rxEAxu2h7zAXWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTVZz4YE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2CBFC32782;
+	Fri, 23 Aug 2024 00:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724371526;
+	bh=aVeJe/7KLuyfzsfAXhhlrtTjGT4oThY97aPYWYhQF0A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jTVZz4YEPR8OkLTX3s51yozSUOWo5LbCs2D16ppX7+fj+iG2YuA+B87To7r58lA/k
+	 9OIjL+7Ux/j4+/3EoQknaz11d+/CkSau4jgiimojc0cVPUCcXrxTCQVc6kYDk44Ivp
+	 ZEauXX+xUq6LPl0VYYGRbw9Tkv2VYowwFtRp1pxfwP1lCPUWuFtKn/B+zAr2MSG+Hu
+	 gGnbm+EGaK1Z4bfr1fYnmLadDrsTz4tAVCSv4R04rhdtkpSzV4Jkrr082CrxmEjp5f
+	 0717RoIpRCOyxcCHFkNQdFYcEV6FYdgAoWol+bwdzMlvGuzPYbKH4eEahkxcqhhZbp
+	 rK6ghTimYPnCQ==
+From: Kees Cook <kees@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Cc: Justin Stitt <justinstitt@google.com>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Hao Luo <haoluo@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-sparse@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Bill Wendling <morbo@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] string: Check for "nonstring" attribute on strscpy() arguments
+Date: Thu, 22 Aug 2024 17:05:22 -0700
+Message-Id: <172437152070.4121900.7735546714762971895.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240805214340.work.339-kees@kernel.org>
+References: <20240805214340.work.339-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5e9996e4d2ba2a0849d65f68e3dce94fffc5828.camel@physik.fu-berlin.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 08/22/24 at 11:37am, John Paul Adrian Glaubitz wrote:
-> Hi Baoquan,
+On Mon, 05 Aug 2024 14:43:44 -0700, Kees Cook wrote:
+> GCC already checks for arguments that are marked with the "nonstring"[1]
+> attribute when used on standard C String API functions (e.g. strcpy). Gain
+> this compile-time checking also for the kernel's primary string copying
+> function, strscpy().
 > 
-> On Thu, 2024-08-22 at 17:17 +0800, Baoquan He wrote:
-> > > The change to enable CONFIG_CRASH_DUMP by default apparently broke the boot
-> > > on 32-bit Power Macintosh systems which fail after GRUB with:
-> > > 
-> > > 	"Error: You can't boot a kdump kernel from OF!"
-> > > 
-> > > We may have to turn this off for 32-bit Power Macintosh systems.
-> > > 
-> > > See this thread on debian-powerpc ML: https://lists.debian.org/debian-powerpc/2024/07/msg00001.html
-> > 
-> > If so, fix need be made.
-> > 
-> > We may need change in ARCH_SUPPORTS_CRASH_DUMP of ppc, can you or anyone
-> > post a patch? I don't know how to identify 32-bit Power Macintosh.
-> > 
-> > arch/powerpc/Kconfig:
-> > ===
-> > config ARCH_SUPPORTS_CRASH_DUMP
-> >         def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
-> >         
-> > config ARCH_SELECTS_CRASH_DUMP
-> >         def_bool y
-> >         depends on CRASH_DUMP
-> >         select RELOCATABLE if PPC64 || 44x || PPC_85xx
-> > ......
-> > config PHYSICAL_START
-> >         hex "Physical address where the kernel is loaded" if PHYSICAL_START_BOOL
-> >         default "0x02000000" if PPC_BOOK3S && CRASH_DUMP && !NONSTATIC_KERNEL
-> >         default "0x00000000"
+> Note that Clang has neither "nonstring" nor __builtin_has_attribute().
 > 
-> I think the architecture does support crash dumps, but I think the kernel has to
-> be booted from kexec in this case. Booting a kernel with CRASH_DUMP enabled won't
-> work from Open Firmware. So, I think CRASH_DUMP should just be disabled for
-> PPC_BOOK3S_32 by default and users who want to use it on these systems, will have to
-> enable it explicitly.
+> [...]
 
-If so, below patch possiblly can fix it. Can you help check if it's OK?
+Applied to for-next/hardening, thanks!
 
-From dd5318dc5dcd66521b31214f0e5921f258532ef8 Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Fri, 23 Aug 2024 07:37:38 +0800
-Subject: [PATCH] powerpc/crash: do not default to enable CRASH_DUMP for
- PPC_BOOK3S_32 system
-Content-type: text/plain
+[1/1] string: Check for "nonstring" attribute on strscpy() arguments
+      https://git.kernel.org/kees/c/559048d156ff
 
-Recently it's reported that PowerPC macMini system failed to boot up.
-It's because CONFIG_CRASH_DUMP=y is set by default on the system since
-kernel 6.9, and that makes CONFIG_PHYSICAL_START not equaling 0 any
-more and causes failure of normal kernel bootup.
+Take care,
 
-The link of error report can be found here:
-
-https://lists.debian.org/debian-powerpc/2024/07/msg00001.html
-
-And copy the code snippet here for reference:
-arch/powerpc/Kconfig:
-==================
-config KERNEL_START
-        hex "Virtual address of kernel base" if KERNEL_START_BOOL
-        default PAGE_OFFSET if PAGE_OFFSET_BOOL
-        default "0xc2000000" if CRASH_DUMP && !NONSTATIC_KERNEL
-        default "0xc0000000"
-
-So let's stop enabling CRASH_DUMP by default on PPC_BOOK3S_32.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- arch/powerpc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index d7b09b064a8a..dc5ca58be1d6 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -680,7 +680,7 @@ config RELOCATABLE_TEST
- 	  relocation code.
- 
- config ARCH_SUPPORTS_CRASH_DUMP
--	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
-+	def_bool PPC64 || PPC_85xx || (44x && !SMP)
- 
- config ARCH_SELECTS_CRASH_DUMP
- 	def_bool y
 -- 
-2.41.0
+Kees Cook
 
 
