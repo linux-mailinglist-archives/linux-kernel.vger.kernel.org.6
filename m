@@ -1,183 +1,135 @@
-Return-Path: <linux-kernel+bounces-298168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF1795C352
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:36:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA6695C356
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57271284CBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:36:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF9F1C21EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0783E22EEF;
-	Fri, 23 Aug 2024 02:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ojl5+3gA"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2075.outbound.protection.outlook.com [40.107.215.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EC028DA5;
+	Fri, 23 Aug 2024 02:37:08 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B520BA46
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724380590; cv=fail; b=tsFYf024Y68e3P/3gpbzNWoU2PFe6SrUQ+5w9MTLmU2oWUrZQfIxLu+av5o1Mv0E0CPw6PZFcJ4rh/7v70wFP5H7XsUzrkk3r9Fgu/jInBYRWMuSjHxNbsCTGPZR4Wx4cEUt7ZxzxT2cEfF3oRSW+0FI/t4FSt4Q/9tFroEEEHI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724380590; c=relaxed/simple;
-	bh=Cm88KncqT8YmBQ+Gt5lYopN8IRRuxu5/r7CMxJoUZRE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=INkRMY0SIRzVwwxkHE7Q8JhGM3YhXxFTXD7XJNtN1ZusNiEdVw4y7/D/NXnfRbDshcY45skXMeBTvVXqqz+TeZrTevzq1cOZygQVbR8WczDYEz3LcASNNthI+Ad+2GwbPScog/3zm3QZI0GQuEnlsbQnhq9VP99v3eo8K+VyiQ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ojl5+3gA; arc=fail smtp.client-ip=40.107.215.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w3+ZygNVWTTq5naniBqCUkFKY+opW2S/FuPuj9ogQ6Neq1uZKSaX0mZFM5EZqA1mjFP/FyD98omz/4SJl/XNEb/a35diFQMVg3c3oabbmXjKnfnF6bqSwFWW/QgWzlBn3O3RItpvDf/OeAS/GcVg2amH3taJMOigb6E0egFUafxEZPJ0GhZmcXCnNIVTlzku1X1+BZlZPyyxJ0VL929L1tZgyQJ2hpXkpnWL8kHuh+GnUSqNl/OvWzhV8X6KlBALXStOXxQ3SuVoutnq5HYW1oVpQt44rWQzmcpA/dHGUZKDrrdNeZvHMaDIBhi1kaxVA/a8S2/RbT/kxPPdBI3cjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b+fefF8yYEUR+3HhQK3Lqk+6TZXvM0Q/BP9K/p3yjBk=;
- b=hCTkWWkvax1f2hn3KcVeHa+eJac6rudq7Dq4X7mBjKFIKltrcqCRaBEmY9pr4onlcugzefT0iNzdNTAcugb3GkrRAR1+O5MDq+YhgYSoZlHjxF6HN5PwGMcu/g6YeYoAROUffRppQB0CB+IZeWm8dWlIx5/M7EPFF+Dvpbi5CJkhwGJB1PBLbm77ihTJtgyORr6Rt4w46lOUz0QBg/jMREWXGa1H2g7tEMu8NaSWiVoqTsRezIXYgbZqx/oijH+eMy69dkDO+8rPWikWYSkVKkBKE3mVyKRINgdq1UQTqCAqjWNrFdcwYYAwKeZtAKAKzRwHVaUPl9zKkJinKU7W+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b+fefF8yYEUR+3HhQK3Lqk+6TZXvM0Q/BP9K/p3yjBk=;
- b=Ojl5+3gAh4Ct0CE69WYHR4NawhZ3j7+yHWtAf36DhaU4xXgBiyO8v9Oe73gqwIyMSWQULMNz7ngO5RPvEhtCuSdRZl2D0ae93ymFMwP8iVz7tTcQH8qbTyca1yKzLpGnLjwLXTVoTTrxttYr451ffuU6Gguel3y02b+n3m8vmg5Tjk8XnliIpLoZSbRyzvRQgrX8KLzS/q/pF8vaWcJojCFd6ySEfsY+EWHor5DLquWbi87zBWlOFsbddK+njUDeIIUmVwLzFKzqiYSuJGP5ISTOV0m0PbWcpQQs8GA4vXRbixqzydenqX+dpupNbcpNW2G1dwD3K0J3p0npyzOHyw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5724.apcprd06.prod.outlook.com (2603:1096:301:f4::9)
- by SG2PR06MB5309.apcprd06.prod.outlook.com (2603:1096:4:1df::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
- 2024 02:36:23 +0000
-Received: from PUZPR06MB5724.apcprd06.prod.outlook.com
- ([fe80::459b:70d3:1f01:e1d6]) by PUZPR06MB5724.apcprd06.prod.outlook.com
- ([fe80::459b:70d3:1f01:e1d6%3]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 02:36:23 +0000
-From: Yuesong Li <liyuesong@vivo.com>
-To: jani.nikula@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6691D364AB;
+	Fri, 23 Aug 2024 02:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724380627; cv=none; b=hH3IkQWM8d+eIwjpT0mACXwZK8MtaXdSs878+1Z5OebMgOCbksoXQB8OJXLColQd0vH6VP+jNjNqWyqtrzfdXif6fbpOH1iyctmqyYAzCTNkdVxm+xYdQozrl+cvaYM/ShCBfdYFhvkNfG5nCfhPO6eu7j6faw8TypLWx5EUq2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724380627; c=relaxed/simple;
+	bh=9KBRN+uaalolKKdODoaz7qP+X19sfZ0ncDoTDYrTJ5w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JWXJu4CtGhU5j1Q9FWMiu9/kIo0gQe9xlE0nNcF3Lw7kEPFGddII6tJqHwiE7/TnCP+GgQw9dICF4HI6dH+70ooG4FNoNhym/5ouHcC0hiRWDBBAQbM2sgh2xkUpRHKI0gL6ICpYM9qkFAoM1ghZ0KZDx76z7x2ZW79LkLyJ5pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAC3vUm89cdmPBV6CQ--.44906S2;
+	Fri, 23 Aug 2024 10:36:55 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: akpm@linux-foundation.org
+Cc: haojian.zhuang@linaro.org,
+	linus.walleij@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yuesong Li <liyuesong@vivo.com>
-Subject: [PATCH v1] drm/i915/dp: Remove double assignment in intel_dp_compute_as_sdp()
-Date: Fri, 23 Aug 2024 10:36:12 +0800
-Message-Id: <20240823023612.3027849-1-liyuesong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0053.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b5::12) To PUZPR06MB5724.apcprd06.prod.outlook.com
- (2603:1096:301:f4::9)
+	linux-omap@vger.kernel.org,
+	make24@iscas.ac.cn,
+	stable@vger.kernel.org,
+	tony@atomide.com
+Subject: Re: [PATCH RESEND] pinctrl: single: fix potential NULL dereference in pcs_get_function()
+Date: Fri, 23 Aug 2024 10:36:44 +0800
+Message-Id: <20240823023644.1778013-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240821151604.7fbb834fa1503d11b373212b@linux-foundation.org>
+References: <20240821151604.7fbb834fa1503d11b373212b@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5724:EE_|SG2PR06MB5309:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5206b79f-c266-408d-aa00-08dcc31c60e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MwGdoKY9bU33Ag8lLKL9xeNpuGGMb8TYJf5PArPM50yvhGHxuyT7MPOM8p4i?=
- =?us-ascii?Q?kSZrtHMFEk6ft1v5uKR9HUCvqYo+qu9Nbg9mKkJCo5ISMSP61zx6KqKApqFi?=
- =?us-ascii?Q?3w+w75v5HqvnGavKv2XfDPXy3aA2JZELyrtRt9GjfBLjZaKBoxN6n9wLBu5O?=
- =?us-ascii?Q?/YjwMbmSx4ehpCyvHLPJ/5kYBGG8gSso13bmjgDsZly3TgEtbMQ8bs8WR5MZ?=
- =?us-ascii?Q?UPDJOvC/RsTDX7joWetTK1Lf6v+wHfuXoGe+x4/OeZPKH/+XNzQ/Mg4I3++Y?=
- =?us-ascii?Q?FQ7TWd/mg/4PQ9Rjzgd+5mdpH/m1qllUe7wzbrW1W9MozJ9wqC9jlFJTPJR3?=
- =?us-ascii?Q?AXf/pGZxwYB/65EIa7NFpcV96AO5WI340/4BtC76NGs1SrgrG2PemZYoOf1o?=
- =?us-ascii?Q?EvHNppGXBpsxb7Zn4UXRvxASnVZohefcdzj9SoTKJxeZKLNw82OnwFwwxHw5?=
- =?us-ascii?Q?NKkYeyPTeiCT7TZErvO3gN6LDcLXrF6Vae6Zw0NvcSwdUjnfUGu2y2JdN+hy?=
- =?us-ascii?Q?s87lbcRCmquzw1SvgxcsFnN97CAMN4qvi5jTu9UYGoKanYtO4KzcjM17gzSV?=
- =?us-ascii?Q?0NN6ElaccbgGm8GRw3Jf3Z175BCeICkO+JYMFdHw4gf/vwvl21tOeaR90VI2?=
- =?us-ascii?Q?N+WxZlR9AYJV8ABRP6/xPWbj0sX3F6muFJnurm3dQkQbq/ZDz9foGlyyBSzo?=
- =?us-ascii?Q?VoVLlAVI4UqWr6wkmmjKmm1JROPlfXMXCypYPnMt+Xlb3PiwacxxHNJ2S48a?=
- =?us-ascii?Q?cmBJ/pWrIXFxE6pc+C0mw5kD8Lu9ebNhekXQVixV0+0Rz8jwEDiySamk5KvZ?=
- =?us-ascii?Q?xIw9CqNfMRY150WpqG+8htyqabS/oM/RlwBk6SINQlJqHBZ+04YVGg/oOX/+?=
- =?us-ascii?Q?eRPCZCCjPX4Mv8lRVU+PvebmGRhkkcym9psQSy4a6ykn5aq36Bk9eLTUi5IV?=
- =?us-ascii?Q?rMTTVqk2Il6TWSSMZhvJXQZF6Dcr1x1Mvp+4t5XCBwvm22sjQf9789V/0RKu?=
- =?us-ascii?Q?lXrhlnsvKm+RCLdbiOZk+ItFyAtCcjhFgH75V1x29a0eO/SKfmMy9M2E5PBL?=
- =?us-ascii?Q?tLSmB83iZs0+PNJM0EUocUzChvQeN0Sbmvw26C7WRbm5FiIdGrymkl9WN73+?=
- =?us-ascii?Q?6fzziGncEQ7uaCRnPdGzsJtADcR2uEV6ZkbomdJ13Z8TRazexezmID8Bu8Oa?=
- =?us-ascii?Q?gTZK1cywm6yjsPoVviTBPQs903na9BEADkmk2Jc1eQuePXvK0tHTl9VFoB1Q?=
- =?us-ascii?Q?uuHmMR8Kg/rMwgPEwV2j6L8Q5vitkJq2zPiUX+uW4u8522dfOoJBS8M4/ct2?=
- =?us-ascii?Q?oRFELIapc8CQF8u2krHBGkQJ4ISu4Rs0pe/e1sQxkBNdH1DzSXqTASbEElTb?=
- =?us-ascii?Q?nJAvck9NM7JTYAdv4B23NB1LQGvn+AyVrrkk3J1HOOPUNEMq0g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5724.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IPUOIgEGjXYFx9bzpEDlRozdHRdhc4iekt72sX+tm7WKD3mhSgeyKHZEPm8b?=
- =?us-ascii?Q?uZxZhz4Qo9Ubc7nWmAmRmG+FR43/64iJwFuxBvNYRYAMUGMdXA5iHya4WlHW?=
- =?us-ascii?Q?TTfYr5HdJd8/wZ17gLj2ueCa/ij4hsLetlCe6ozM94BfwKUZQi9FoU+mz+aW?=
- =?us-ascii?Q?+o4TMzWa+mBCyqEBkKMHMki3PAYfn4ebsFVyM4kN6dm9u5KVkWKhbDsOsd5K?=
- =?us-ascii?Q?skFJL01Jd0xBmI9d9ykws7oKqoXVV58xyHfrp3dz7TvLOyRaEiBpXHHog0Fo?=
- =?us-ascii?Q?qHZSGl8uB5Ripbb4fu384yw3X8glrLQScc+OZoG5gQcRbOYKnuFkvOFAOTix?=
- =?us-ascii?Q?EOdinJmsXAcTatrJLp4ZQKfC3ciaHievA5UtjM3RcEevFovQfVDJW8Qpz9W1?=
- =?us-ascii?Q?CCab4w/JdwfTpoSXg7nddM1f2Y/UL4sNTXXibjmOORj83elBSfth/sl/riwa?=
- =?us-ascii?Q?ypC/wcpwTddPpy91X/FyEfDlnR3HyaIq27uNY/LSDZ0rpseSt2O+V55TgELN?=
- =?us-ascii?Q?TkPu4JzRtoqV8UJFJhGRXsiNkeHyhlOd7JOZwgF7c77MLI1AQliiiAVk+3jv?=
- =?us-ascii?Q?jukMIhKQ7QIkjJF0D7/Jf5vjJz6U8Rbr1e0IhniSKYyVRwGMzF1UlzBFEvsj?=
- =?us-ascii?Q?cIXvMANRUNIUzZAPv9dFWo2u8b6/cZp58dpo6pKOgVMFS3FveT83Q7Sb25VB?=
- =?us-ascii?Q?3XTVCw8n0cMzRVILp+RYjD4DMm90aH54PLtN9xy8B/koLGexLc6SW17T/CCc?=
- =?us-ascii?Q?2t9b37jsC7ukk/5ugs6sqDZF6PpCicJsxZFdQA93pZgLMd94lKFRZ8cqzDJn?=
- =?us-ascii?Q?9ukqg8vR9JJyz684JVaDK7RGjf2k2QAN3Sl9G1H6HDtps3/EhL0Hrx0/ub6t?=
- =?us-ascii?Q?Iv468p5BhsklFNfv+CWuFq6OlmfK4MYoMrGlc/B8PmqZWfmMnA0+00WSrMFE?=
- =?us-ascii?Q?E2+Q2rAEDHJRkJLwk18qeEAnezSN6znnSMfU76REF75yTPR0/aUJKILTSLYU?=
- =?us-ascii?Q?OOrZWdytZdpJenfP8/NiCxVPMPVbUNGsjY496t3i7z3ZdV9Z2vdft6weaCx4?=
- =?us-ascii?Q?G3QZaMMSnKaoq0Kx7JOrBdJvqbpMs1AT63VeJGCKHgzHMgyMcm9Zm4XPGl/Q?=
- =?us-ascii?Q?IFYGDqdofKso+GyPTLKZGy9y4jrTw14q+fdM9xKQBUAliAst/jzujHJP8E8g?=
- =?us-ascii?Q?/0LjdjYW6Ep0Agft5Hk5IDhv+FnRuFz5DpNCYnSDExoFXcGzs+P7dOoKKGsd?=
- =?us-ascii?Q?840rdpEsSiaEqj94f1KnHTa/2UJnH2kcliCKPzqUMiG429w+bKuSnYSGm6OC?=
- =?us-ascii?Q?A+Vw1W4aifWYjVsbRys9HaNnj1VJognFnOKIlnP9IEIcs6Nri9pne2DEuVtr?=
- =?us-ascii?Q?RV4n+MFocXPTQn13oy8tHPIU+DUhDE2jEgX1KVtqi4OmB9YqKIAxciCtI9zh?=
- =?us-ascii?Q?gedmkO3Fk5Ib0TobJlO5a7DllImDpeoBqOhHoclBL1JZSIK8AVo2WNdeAkQB?=
- =?us-ascii?Q?iBRAN48a+GzJBRav8KXFcYVKa6VBoUWRR6PJgYBz2Bscg9BMsOFqwsiD7iCU?=
- =?us-ascii?Q?QPPbmjEuVzJNoTPDzczcum+7emKyiEK9/Qnqiyjs?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5206b79f-c266-408d-aa00-08dcc31c60e9
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5724.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 02:36:23.4506
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UGibiekkkGH5JRc6hJs+JH+n1oQdClL5LyeqonrxepCo4oDWILCwgZRK2MzJMydcoXMe3qTx7dT/Gw4GNV82Jw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5309
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:qwCowAC3vUm89cdmPBV6CQ--.44906S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1xWr47Zry3KF4fuw4rXwb_yoW8AF1fpa
+	yfAry5CrW5tF48JryUJw4rCFy7Ww4xJFyfGa4kKryqva15WF1DtFWDKr1q9a1vkrW8CrW0
+	v3W3XF909ryDAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20x
+	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIx
+	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAI
+	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+	IEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-cocci report a double assignment warning. 'as_sdp->duration_incr_ms'
-was assigned twice in intel_dp_compute_as_sdp().
-
-Signed-off-by: Yuesong Li <liyuesong@vivo.com>
----
- drivers/gpu/drm/i915/display/intel_dp.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-index 6a0c7ae654f4..229c87be4402 100644
---- a/drivers/gpu/drm/i915/display/intel_dp.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp.c
-@@ -2730,7 +2730,6 @@ static void intel_dp_compute_as_sdp(struct intel_dp *intel_dp,
- 	as_sdp->sdp_type = DP_SDP_ADAPTIVE_SYNC;
- 	as_sdp->length = 0x9;
- 	as_sdp->duration_incr_ms = 0;
--	as_sdp->duration_incr_ms = 0;
- 
- 	if (crtc_state->cmrr.enable) {
- 		as_sdp->mode = DP_AS_SDP_FAVT_TRR_REACHED;
--- 
-2.34.1
+Andrew Morton<akpm@linux-foundation.org> wrote:=0D
+> On Wed, 21 Aug 2024 14:21:32 +0800 Ma Ke <make24@iscas.ac.cn> wrote:=0D
+> =0D
+> > pinmux_generic_get_function() can return NULL and the pointer 'function=
+'=0D
+> > was dereferenced without checking against NULL. Add checking of pointer=
+=0D
+> > 'function' in pcs_get_function().=0D
+> > =0D
+> > Found by code review.=0D
+> > =0D
+> > ...=0D
+> >=0D
+> > --- a/drivers/pinctrl/pinctrl-single.c=0D
+> > +++ b/drivers/pinctrl/pinctrl-single.c=0D
+> > @@ -345,6 +345,8 @@ static int pcs_get_function(struct pinctrl_dev *pct=
+ldev, unsigned pin,=0D
+> >  		return -ENOTSUPP;=0D
+> >  	fselector =3D setting->func;=0D
+> >  	function =3D pinmux_generic_get_function(pctldev, fselector);=0D
+> > +	if (!function)=0D
+> > +		return -EINVAL;=0D
+> >  	*func =3D function->data;=0D
+> >  	if (!(*func)) {=0D
+> >  		dev_err(pcs->dev, "%s could not find function%i\n",=0D
+> =0D
+> Maybe.  Or maybe pinmux_generic_get_function() must always return a=0D
+> valid pointer, in which case=0D
+> =0D
+> 	BUG_ON(!function);=0D
+> =0D
+> is an appropriate thing.  But a null-pointer deref gives us the same=0D
+> info, so no change is needed.=0D
+> =0D
+> btw, pinmux_generic_get_function() is funny:=0D
+> =0D
+> 	if (!function)=0D
+> 		return NULL;=0D
+> =0D
+> 	return function;=0D
+Thank you for your response to the vulnerability I submitted. Yes, we =0D
+believe there is a similar issue. As described in [1], =0D
+pinmux_generic_get_function() could return as NULL and lead to a d=0D
+ereferencing problem, and a similar issue exists in this code. It is better=
+=0D
+to add checking of pointer 'function' in pcs_get_function(). The discovery =
+=0D
+of this problem was confirmed through manual review of the code and =0D
+compilation testing.=0D
+=0D
+[1] https://lore.kernel.org/linux-arm-kernel/CACRpkdYwBNjGzODYqvz+oScsO3u=
+=3DR0dXMkP4UfqmosDugPFWRA@mail.gmail.com/T/=0D
+=0D
+--=0D
+Regards,=0D
+=0D
+Ma Ke=
 
 
