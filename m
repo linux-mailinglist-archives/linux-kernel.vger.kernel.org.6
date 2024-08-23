@@ -1,67 +1,87 @@
-Return-Path: <linux-kernel+bounces-299618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C3A95D7A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:21:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D377F95D7B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9657F1F233E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:21:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B0A8B21E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F951A08D6;
-	Fri, 23 Aug 2024 20:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FA4192D6B;
+	Fri, 23 Aug 2024 20:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c2cL3/nI"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjAbOOgP"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B58193406;
-	Fri, 23 Aug 2024 20:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26334192D76
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 20:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724443979; cv=none; b=IzBHqMFhvMAov+x50gPba8tWJSFxJOpvdA0UGunBKyRWKVCRGb3ZQUhSR2q1Nq712cyBEeQR7gtZPOGe1vBKTcwEgj9Qgo9viSOc4sfcGM6xTEOy6EtXmmHa3FslG80OApKF1uz5JF0e5IH3jC2d5cDuynHTZsaHQfpG466dghY=
+	t=1724444094; cv=none; b=IQN1N74zTpQqi0QWIpZ0a/gaqveT4glBINV7TLbKD+iCaPHjIgHTfdfj+YKRw9xuOgc6othniq9RpWm0zH++BD3Q5oHP6YptJ52rA8KMF370F1lpiB26uKIp2FhZdL4suGULf6mnKNgn+RRBMls/xGQ5P/7oBTTdHSXDUz989m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724443979; c=relaxed/simple;
-	bh=e5lS3vPzKsBpQRZEa76gnk065x/jmm7jG3irunJlXX8=;
+	s=arc-20240116; t=1724444094; c=relaxed/simple;
+	bh=+Vm3qvk0NHvRMc87oPOrkYfGOmGZxU4opat5zBcurtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3662/dCUBjUkHqDAfNkZ/EtTEl7vJ9vPVZ8OkpyND7IRQQAt7Y1k3wDUqjC4h8a3c1bZJTkRttXOHle0ZhgLzC5Yp7OnrQORiQHIF4XFt8Bkh8/UgyZzVJXmZpD0z4C8k3FVfR3zGWydrmqXN380ONz1dwpUtVxpHOgHn/37zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c2cL3/nI; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JsVlpGeKYbg4pM/Q7waOkd0NZPoyLhoXi4BOdIXNLpY=; b=c2cL3/nIR787l++dJM5LnaWXeW
-	5dJMUyI901WBryZBvo6lRG2cxhxydHjFy3QTpizCQwEC/54YFz67jxnF/I5qszT9dqo0dsCCv4bhA
-	dEMDmoaTGmh5pW4lvMOjCT91apPyQE4b24ZkMYKZ/FNipFwrhETEx8OgNkQFTi5jLsCgTVFQ3QDbd
-	FM2OqcrPBsmNW/FsNsoGQn3qZNhtl0oRKzR3YOuY8XFJb2NKoje+ZfRlO+UrdlPKSiBRRywGoWFES
-	NA0RleWtfD87vB2hp7AObXu6t74Rjpsc6agZ6/B/bIYAzbDXZ0pQnzK28mFgU+JbZqvvFGoQCjhP0
-	r9Y6Rv8Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1shaeH-0000000C8f0-18u9;
-	Fri, 23 Aug 2024 20:12:41 +0000
-Date: Fri, 23 Aug 2024 21:12:41 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Steve French <sfrench@samba.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvfL4LLLuIWH7jNbczvyFA0b9UC3dVSdwxpotnZUs66YvFrntQWWOQyiLi7HhO8baOm4jo4FrrRwcO27dV7KFxbSOvTn7Wn1vcTJS/17Mf4y/7uUsiYyFqGJrkDYnnqsoWID3ZChx2Am5byKBx1jpFAeifTSPIM44Ft/SOHFKsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjAbOOgP; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-202508cb8ebso17255135ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:14:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724444092; x=1725048892; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYQzSMz6zS5VJiOY1cNxgEf0zBFVgF3RmEdhGw7bsks=;
+        b=hjAbOOgPXodXRFQybGGxu74i7+oi+GIppYHvy7jzsoRkLIWdC4H+PkeNESmE6UU5Qv
+         X6LukHB0m2gSpse1SxgUZma9hZIresuUVKOyvRqG3b7L+xfwMzZrDsiFLukYsPhfzEz4
+         rsPa5MKfjSHcnzas/tbFMW/WWwcnZ92YFKgObkFW3iRhI+CbnSwFbl/ISBk4KtDpzXNz
+         /8vtiZVqKK1kgvNB9rHktlxwNRAKsu1vc6q+mXZXoVI9ang0MeOsrhJvdinYhHUDIVoW
+         KL/kJmakVxRgi42sYcgiOphjfCiuKYJtfgWFpdDvZo8hH4lRHrcdugJlD8klrfcam8nx
+         OcTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724444092; x=1725048892;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pYQzSMz6zS5VJiOY1cNxgEf0zBFVgF3RmEdhGw7bsks=;
+        b=seNBDmKhDtScSW69z46dYcjK0e8hDTT4u1ntEP1rrZx1epOhTF70mcBotgEHAPEWmr
+         lbrWe07IN7+4g686cyfrRv5mMcGWFVTEKnG27qe7Eit5CcO/UmfqCHycX4fAxtV6H2IX
+         f+59GHWbJCEnn3mpJmuvgUqSBJ26kJf1F/AzN+gBNg74JBd1slKYMWQ10CFYK99wQP45
+         hWEriKOWStBEjt3ywnXKigvsOfK8I4k42E7YhEd6C826+q+vJcikqoBNTNI0G8GNiTQE
+         8XpjJigBEHZQvtXchyPpQOhJ8GvxndByUCAVGoUpgwDre7/4TMNnl9wdCQD20nlbt5Mm
+         hY7w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9hODDEbJGYcDz8rZ+NUnTBw62jCian9mMll3Z70VH7DlBOnfJudA0tbSRR2C1eFrlCBC/oBWuGfNxwH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9FE+GvBjSvMBldj7i/w9bzEozpYozddoTLz1kQVhXv1apJi0Q
+	kzUM2SUvqpR0OVPaq1doJ+MIbEth5C6sthZK8G26FxXaqRBIRTRJ
+X-Google-Smtp-Source: AGHT+IHGHpInpaZxYNi+LuoNgksFQT5m/rKhEYd5Q7NZdSEJaCPo+OY5E4yW8rroDGwG7jsuuxL+Bw==
+X-Received: by 2002:a17:902:ec84:b0:1fd:9a23:90c4 with SMTP id d9443c01a7336-2039e6be9b2mr37448325ad.65.1724444092309;
+        Fri, 23 Aug 2024 13:14:52 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20393f37480sm20867725ad.187.2024.08.23.13.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 13:14:51 -0700 (PDT)
+Date: Fri, 23 Aug 2024 13:14:49 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: Re: [PATCH 1/9] mm: Fix missing folio invalidation calls during
- truncation
-Message-ID: <ZsjtOVMD2dxRw68H@casper.infradead.org>
-References: <20240823200819.532106-1-dhowells@redhat.com>
- <20240823200819.532106-2-dhowells@redhat.com>
+	Valentin Schneider <vschneid@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [RFC PATCH v1 4/6] sched: NUMA-aware per-memory-map concurrency
+ IDs
+Message-ID: <ZsjtuTsKuS1k1RK_@yury-ThinkPad>
+References: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
+ <20240823185946.418340-5-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,22 +90,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823200819.532106-2-dhowells@redhat.com>
+In-Reply-To: <20240823185946.418340-5-mathieu.desnoyers@efficios.com>
 
-On Fri, Aug 23, 2024 at 09:08:09PM +0100, David Howells wrote:
-> When AS_RELEASE_ALWAYS is set on a mapping, the ->release_folio() and
-> ->invalidate_folio() calls should be invoked even if PG_private and
-> PG_private_2 aren't set.  This is used by netfslib to keep track of the
-> point above which reads can be skipped in favour of just zeroing pagecache
-> locally.
+On Fri, Aug 23, 2024 at 02:59:44PM -0400, Mathieu Desnoyers wrote:
+> The issue addressed by this change is the non-locality of NUMA accesses
+> to data structures indexed by concurrency IDs: for example, in a
+> scenario where a process has two threads, and they periodically run one
+> after the other on different NUMA nodes, each will be assigned mm_cid=0.
+> As a consequence, they will end up accessing the same pages, and thus at
+> least one of the threads will need to perform remote NUMA accesses,
+> which is inefficient.
 > 
-> There are a couple of places in truncation in which invalidation is only
-> called when folio_has_private() is true.  Fix these to check
-> folio_needs_release() instead.
+> That being said, the same issue theoretically exists due to false
+> sharing of cache lines by threads running on after another on different
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+running one after another you mean?
 
-I think we also want to change the folio_has_private() call in
-mapping_evict_folio() to folio_test_private().  Same for the one
-in migrate_vma_check_page().
+> cores/CPUs within a single NUMA node, but the extent of the performance
+> impact is lesser than remote NUMA accesses.
+> 
+> Solve this by making the rseq concurrency ID (mm_cid) NUMA-aware. On
+> NUMA systems, when a NUMA-aware concurrency ID is observed by user-space
+> to be associated with a NUMA node, guarantee that it never changes NUMA
+> node unless either a kernel-level NUMA configuration change happens, or
+> scheduler migrations end up migrating tasks across NUMA nodes.
+> 
+> There is a tradeoff between NUMA locality and compactness of the
+> concurrency ID allocation. Favor compactness over NUMA locality when
+> the scheduler migrates tasks across NUMA nodes, as this does not cause
+> the frequent remote NUMA accesses behavior. This is done by limiting the
+> concurrency ID range to minimum between the number of threads belonging
+> to the process and the number of allowed CPUs.
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Ben Segall <bsegall@google.com>
+> ---
+> Changes since v0:
+> - Rename "notandnot" to "nor".
 
