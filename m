@@ -1,144 +1,183 @@
-Return-Path: <linux-kernel+bounces-299493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F53895D57C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:49:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8A895D582
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4EB28259F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A03411C226BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9BC1917EC;
-	Fri, 23 Aug 2024 18:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCEA1925A4;
+	Fri, 23 Aug 2024 18:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F2yFm2Qv"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGLGGcdN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B566F2FA
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABA0191F9C;
+	Fri, 23 Aug 2024 18:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724438942; cv=none; b=mJSDv297ELKeJJalXezy3gblJKVsfgZ4ITuxRjwbrT1k/VCDotSHBXxIwh9E7T+sLI9qA/nV+WgeN0wisqkFvXA2wPc0kbwROD0PUmLjtvY7RANZDAd7rMqtWaMGmOtpWrLpDGtz75/muWAZTlFmVjNq+rviWE9Zzs/ZUywWA7Q=
+	t=1724438943; cv=none; b=u+Ja05d1N+hRB3fF7ARehEvNXdOFFTELnEYYONToAXTgRc4ZukzeHmKypBgAd1q6SCO5n7KaKFxKHRq57h5xFx7rfquz58hp9PQtkGustPd8M9YF9FoF+5/E0Q8rVxWuaaeNJDy+AlPEZa6tgue9bj9oqpA8Xyn188HZdo4uP2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724438942; c=relaxed/simple;
-	bh=TWL2MIVefQ12GZaOVVcxANHWJfwsKZKQd+xYbDghpiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qtBgSOLxnhndHqbsNWUowWLE8wSvqZxVa4nyard63/7+6uNbms2EUUaJXqbAhgu6MUTmOvqxsWAppF7VMiUWFev5iYmYjZE1vpRedylHLsb5SojJmYdqv2AxBpddO9r4LPJ6XfEIr+BvrmQQFYq/uvRDVQvrX7qIlYKSo6u4byM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F2yFm2Qv; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <173d3b06-57ed-4e2e-9034-91b99f41512b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724438937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kby6+9RbR1DnjNM7kKUPdGTyp1MYuWl6dZurQYumurk=;
-	b=F2yFm2QvU5rc+5438dpysGUn5wuWo5E6kpKequitYiGHDDAdJf6n3IMxeof1Xb7/zufXQ9
-	U4dvfko5NgzPYBaeVLGPJzjS0ZKaaEjOHRKWWyrHBGEKfxJujlUTxrbMy8JaFNzOAbLASG
-	WaxOrtb0paeYf6nHQR60qaGU/1B/wEc=
-Date: Fri, 23 Aug 2024 11:48:44 -0700
+	s=arc-20240116; t=1724438943; c=relaxed/simple;
+	bh=cWy2nEWs2KrRrBfFk6UIt2HinYabtHMMjbnzuXOfPTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=leyuaK2xjhS9n9t7BM7uqM68fJnem2PCF5/OL9ao0YfHDrSpxy6AwuuG2bwKfzidOTeNC8/Jk8HeBqSroMPwHkaGua4VSGkDQ9nnEgV2YgSTnpm89EfNvRh1tMGGMJlM/L45EyAoyUFh8fKCH4rfciIXL9dhJbjstZw2F+jw9LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGLGGcdN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6232BC32786;
+	Fri, 23 Aug 2024 18:48:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724438942;
+	bh=cWy2nEWs2KrRrBfFk6UIt2HinYabtHMMjbnzuXOfPTE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YGLGGcdNOYByD/L4LqRodK1g8dRV4Omux2+3/oOEqULY3Kj9vpeNXx+Gnp9l3KJGd
+	 7jxeSblyJiTM/lKFyA+TfQJcRk0nxViWPJa4b7HsUNUA2w29lohsyqSis4BvAqwGnX
+	 0PembGsW/I6+bSVzttrD9tN2Jt5H8okFx+XSO5rPR8FOcMP4V+EiGF8+7XxVFm2zzT
+	 5YUMfvXx9gtKg3rBo2n3UhQRqs/mtUNgAxC4xxkU7/fEZx7ACiINV6LZ2nljHRIWY4
+	 NIBKflCPwxAH/RTA0mbuYeRCkjjGS3OcNgKNX3tDioR8Ydjdl8hcbs3xyZxzaFHggb
+	 qdj6U0P1LT2hQ==
+Date: Fri, 23 Aug 2024 19:48:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Trevor Gamblin <tgamblin@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, David
+ Lechner <dlechner@baylibre.com>, Uwe Kleine-Konig
+ <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: adc: ad7625: add driver
+Message-ID: <20240823194852.4d855eb3@jic23-huawei>
+In-Reply-To: <20240819-ad7625_r1-v3-2-75d5217c76b5@baylibre.com>
+References: <20240819-ad7625_r1-v3-0-75d5217c76b5@baylibre.com>
+	<20240819-ad7625_r1-v3-2-75d5217c76b5@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2] bpf: Fix bpf_get/setsockopt to tos not take
- effect when TCP over IPv4 via INET6 API
-To: Eric Dumazet <edumazet@google.com>, Feng zhou <zhoufeng.zf@bytedance.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, dsahern@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
-References: <20240823085313.75419-1-zhoufeng.zf@bytedance.com>
- <CANn89i+ZsktuirATK0nhUmJu+TiqB9Kbozh+HhmCiP3qdnW3Ew@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <CANn89i+ZsktuirATK0nhUmJu+TiqB9Kbozh+HhmCiP3qdnW3Ew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 8/23/24 6:35 AM, Eric Dumazet wrote:
-> On Fri, Aug 23, 2024 at 10:53 AM Feng zhou <zhoufeng.zf@bytedance.com> wrote:
->>
->> From: Feng Zhou <zhoufeng.zf@bytedance.com>
->>
->> when TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
->> fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
->> take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
->> use ip_queue_xmit, inet_sk(sk)->tos.
->>
->> So bpf_get/setsockopt needs add the judgment of this case. Just check
->> "inet_csk(sk)->icsk_af_ops == &ipv6_mapped".
->>
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202408152034.lw9Ilsj6-lkp@intel.com/
->> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
->> ---
->> Changelog:
->> v1->v2: Addressed comments from kernel test robot
->> - Fix compilation error
->> Details in here:
->> https://lore.kernel.org/bpf/202408152058.YXAnhLgZ-lkp@intel.com/T/
->>
->>   include/net/tcp.h   | 2 ++
->>   net/core/filter.c   | 6 +++++-
->>   net/ipv6/tcp_ipv6.c | 6 ++++++
->>   3 files changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/net/tcp.h b/include/net/tcp.h
->> index 2aac11e7e1cc..ea673f88c900 100644
->> --- a/include/net/tcp.h
->> +++ b/include/net/tcp.h
->> @@ -493,6 +493,8 @@ struct request_sock *cookie_tcp_reqsk_alloc(const struct request_sock_ops *ops,
->>                                              struct tcp_options_received *tcp_opt,
->>                                              int mss, u32 tsoff);
->>
->> +bool is_tcp_sock_ipv6_mapped(struct sock *sk);
->> +
->>   #if IS_ENABLED(CONFIG_BPF)
->>   struct bpf_tcp_req_attrs {
->>          u32 rcv_tsval;
->> diff --git a/net/core/filter.c b/net/core/filter.c
->> index ecf2ddf633bf..02a825e35c4d 100644
->> --- a/net/core/filter.c
->> +++ b/net/core/filter.c
->> @@ -5399,7 +5399,11 @@ static int sol_ip_sockopt(struct sock *sk, int optname,
->>                            char *optval, int *optlen,
->>                            bool getopt)
->>   {
->> -       if (sk->sk_family != AF_INET)
->> +       if (sk->sk_family != AF_INET
->> +#if IS_BUILTIN(CONFIG_IPV6)
->> +           && !is_tcp_sock_ipv6_mapped(sk)
->> +#endif
->> +           )
->>                  return -EINVAL;
+On Mon, 19 Aug 2024 10:11:44 -0400
+Trevor Gamblin <tgamblin@baylibre.com> wrote:
+
+> Add a driver for the AD762x and AD796x family of ADCs. These are
+> pin-compatible devices using an LVDS interface for data transfer,
+> capable of sampling at rates of 6 (AD7625), 10 (AD7626), and 5
+> (AD7960/AD7961) MSPS, respectively. They also feature multiple voltage
+> reference options based on the configuration of the EN1/EN0 pins, which
+> can be set in the devicetree.
 > 
-> This does not look right to me.
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+Hi Trevor
+A few really minor things in here.  Given we are waiting on the 
+PWM set anyway, I haven't just tidied them up whilst applying.
+> ---
+>  MAINTAINERS              |   1 +
+>  drivers/iio/adc/Kconfig  |  15 ++
+>  drivers/iio/adc/Makefile |   1 +
+>  drivers/iio/adc/ad7625.c | 688 +++++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 705 insertions(+)
 > 
-> I would remove the test completely.
-> 
-> SOL_IP socket options are available on AF_INET6 sockets just fine.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2361f92751dd..a90972e1c5c5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1268,6 +1268,7 @@ S:	Supported
+>  W:	https://ez.analog.com/linux-software-drivers
+>  W:	http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html
+>  F:	Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+> +F:	drivers/iio/adc/ad7625.c
+>  
+>  ANALOG DEVICES INC AD7768-1 DRIVER
+>  M:	Michael Hennerich <Michael.Hennerich@analog.com>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index f60fe85a30d5..e25fb505f545 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -219,6 +219,21 @@ config AD7606_IFACE_SPI
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called ad7606_spi.
+>  
+> +config AD7625
+> +        tristate "Analog Devices AD7625/AD7626 High Speed ADC driver"
+> +        select IIO_BACKEND
+> +        help
+> +          Say yes here to build support for Analog Devices:
+> +	  * AD7625 16-Bit, 6 MSPS PulSAR Analog-to-Digital Converter
+Looks like some tabs mixed in with otherwise spaces.
+Should be tabs + spaces as per entry above.
+> +	  * AD7626 16-Bit, 10 MSPS PulSAR Analog-to-Digital Converter
+> +	  * AD7960 18-Bit, 5 MSPS PulSAR Analog-to-Digital Converter
+> +	  * AD7961 16-Bit, 5 MSPS PulSAR Analog-to-Digital Converter
+> +
+> +          The driver requires the assistance of the AXI ADC IP core to operate.
+> +
+> +          To compile this driver as a module, choose M here: the module will be
+> +          called ad7625.
+> +
+>  config AD7766
+>  	tristate "Analog Devices AD7766/AD7767 ADC driver"
+>  	depends on SPI_MASTER
 
-Good point on the SOL_IP options.
+> diff --git a/drivers/iio/adc/ad7625.c b/drivers/iio/adc/ad7625.c
+> new file mode 100644
+> index 000000000000..3ac3c56d43eb
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad7625.c
+> @@ -0,0 +1,688 @@
 
-The sk could be neither AF_INET nor AF_INET6. e.g. the bpf_get/setsockopt 
-calling from the bpf_lsm's socket_post_create). so the AF_INET test is still needed.
+> +
+> +struct ad7625_chip_info {
+> +	const char *name;
+> +	const unsigned int max_sample_rate_hz;
+> +	const struct ad7625_timing_spec *timing_spec;
+> +	const struct iio_chan_spec chan_spec;
+> +	const bool has_power_down_state;
+> +	const bool has_bandwidth_control;
+> +	const bool has_internal_vref;
+Not sure I'd bother marking these bools const. Unlikely the compiler
+can do anything with that info it can't do without it. I guess it does no
+real harm thowever.
+> +};
 
-Adding "&& sk->sk_family != AF_INET6" should do. From ipv6_setsockopt, I think 
-it also needs to consider the "sk->sk_type != SOCK_RAW".
 
-Please add a test in the next re-spin.
+> +static int ad7625_probe(struct platform_device *pdev)
+> +{
 
-pw-bot: cr
+...
+
+> +	/*
+> +	 * Set the initial sampling frequency to the maximum, unless the
+> +	 * AD796x device is limited to narrow bandwidth by EN2 == 1, in
+> +	 * which case the sampling frequency should be limited to 2MSPS
+> +	 */
+> +	if (!st->info->has_bandwidth_control) {
+> +		default_sample_freq = st->info->max_sample_rate_hz;
+> +	} else {
+> +		default_sample_freq = !st->can_wide_bandwidth ?
+
+Flip the logic.
+		default_sample_freq = st->can_wide_bandwidth ?
+				      st->info->max_sample_rate_hz :
+				      AD7960_MAX_NBW_FREQ;
+
+seems simpler or set a default and override it.
+	default_sample_freq = st->info_max_sample_rate_hz;
+	if (st->info->has_bandwidth_control &&
+	    !st->can_wide_bandwidth)
+		default_sampling_freq = AD7960_MAX_NBW_FREQ;
+		
+
+> +				      AD7960_MAX_NBW_FREQ :
+> +				      st->info->max_sample_rate_hz;
+> +	}
 
