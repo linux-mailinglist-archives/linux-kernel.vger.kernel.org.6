@@ -1,160 +1,128 @@
-Return-Path: <linux-kernel+bounces-299530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F1495D5EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AB595D5EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0311F2354D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:14:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9862D1F237FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5D4193068;
-	Fri, 23 Aug 2024 19:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B653919341E;
+	Fri, 23 Aug 2024 19:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G47bSehk"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MF+Of4PT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD5C192B65
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7156F193072;
+	Fri, 23 Aug 2024 19:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724440443; cv=none; b=U65YQTiXpHVpzUZLtKhupvhT7ZMye6LFvg7UBEYNDrsm/6Ouzk26MNRtvuti+l+WIaMMpafcC3JhcffjVdrVNSRHw4f0Mo1d9vlNxLgyjUEJBX7dP6yJIHa+PeKmRDX0r07lJEssMA88ffA8AtM2yZku3KpDtGL4L9cSnYPtbsw=
+	t=1724440446; cv=none; b=uPMogyW0BMQr+rqRiewUG/PI98hrXjQ3qB5KU81vziormHvOU1EeB9aBq4LKz3Nl93hKWDCEt3LWztk88c2xEjWjNNLowwGhVrqV3oXBNoJjL3Z+XPG7v9I2hkviUnzSrpVML4aK0Hq4eQEpUfDOni4eJEuNhubL8IkPlaiAunw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724440443; c=relaxed/simple;
-	bh=cdOzM3rsvHcnzUArd40Rm9cxgyuFYjxWAuX6AqH1qKs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CqLv+JkxlbdnoGyzTjB3WUfyg4yfFdEWZ5b3kkem8Fv2kj/PYj1KzQmde2V0QDHTyEg64qkAEOQ9rHDO503TumYuYzDofhHSRqS13Fok9TGssYx6muYTaZ8LkYLyGW9gLBTYksm2dOYkSN8FU5qlB7u3jxOfqOoy2DymCK2FToY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G47bSehk; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2d45935fed4so2690355a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724440441; x=1725045241; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=yI1z4uCFmAkM0sDj6QIO1l+MqKKyzx7UyA4O1UMvJKo=;
-        b=G47bSehkkb7/InYBY0XqKXqso1w7rnhX2PCbZ8EuHAs/bO+LJHl269vih9w3kT4OcA
-         Tmdo/lPy6PtmSR5q2YY80M6Nm+fK+jfkKu9nCmwknY1XiOaCHXOFprLspREaWJMA5XqZ
-         b5S+DXV151DrkDZs+zgSZ7O+IbO2A81EOZmkmT+S1E+2FAPhyCzG71Auw3esU0aB9tkx
-         AtQUlPGkcs1nhPMgzg+Ud3/uZIdyJlk+1hYboBnzFyR8vQ+9G6++V/hiWeLcrMDKQ1no
-         otR4LpFtfzgHWTt9NyXHZ4zIhql4HMrF4uh0UjUHRROTXpwyJsTQB4nVc9C83zZg8WB3
-         Jgsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724440441; x=1725045241;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yI1z4uCFmAkM0sDj6QIO1l+MqKKyzx7UyA4O1UMvJKo=;
-        b=ZZ7Iy1H8k8/QT74nmGDQzUyaVbApl5+Yf49ulUL/TvBSK9Muum+dMqN6BUJcvStSJH
-         NFoXojwcfugDV3NT8y6UHGW+HfrXoccmHRklnWW1JT6znRN3lQJROOwmugzMryjSyn3X
-         APHHxm8qm+JkUVxfAgK1XlY9nXZHgeQnbzsKGwckudZUcHm6CuwEwJHoDp0bHSDbkUl8
-         czmRC+lIa3PgLGKuzskHtF5hdFiyLymrKWhBknCj2TixmIsJrDgHo2TMbZ7862gcx2h0
-         LAmA73nlafu6aU57cyeyRdKItDWy7bPK83IwFSDF0r1zT80/d9ZbgruzuLlkykohGJ9n
-         g+Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWghy+e0XiPyyz7yhGDq4hUmrfD0vVrc9m6k8aK53LYIu849WwenbPtmt1YbNm7q8KAUV/vUvc0isOR+jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbbRji9P3HlEF/0W+NuwxoUv50lo3A2aprlIqg7DCdiYVlm/uI
-	6tLSD2mcFN3md4D0DZVGlkkpI0dfoSFdt2NJxAvFXMmoD5Dbi7jsJIymrH/2hgl0HlstfHyh3Tj
-	WZg==
-X-Google-Smtp-Source: AGHT+IH49IoEI0t5rMhPSFXLwE7VljKjMosdxqKhbbOkcpez1wXrr3Af1H7qUWXNPubHQ2mYtm5XMUDA7H0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:688e:b0:2cf:c2d3:714c with SMTP id
- 98e67ed59e1d1-2d646d0eabamr38494a91.4.1724440441269; Fri, 23 Aug 2024
- 12:14:01 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 23 Aug 2024 12:13:54 -0700
-In-Reply-To: <20240823191354.4141950-1-seanjc@google.com>
+	s=arc-20240116; t=1724440446; c=relaxed/simple;
+	bh=yHeI6cJVsQpHy3FEAWL2NUyHUh+xPNNDxdHPfT1Jcdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQFKQR6l64DntDH2F2FEoB817qS+tBLl8BAfODBZ+Vd9NHw5jxLQ87dIwKGGwrFiKeudby8t+eb1iIVk9/eC13nVJqdqdD8AEFwSQsl+2Csn/WfahEI6SP3BxhBrUzYNLkAFi51j9+CYsqk4j+nPizjwL1nT2QoiewFD6n2DFCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MF+Of4PT; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724440444; x=1755976444;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yHeI6cJVsQpHy3FEAWL2NUyHUh+xPNNDxdHPfT1Jcdk=;
+  b=MF+Of4PTDUs48XU9ndjIY8RnXIXmlx4RZ9bOVSaP/xxIjGpdJ9YbnRGP
+   PBVD5nvj4RKibfk9eBsWpLKPqzB39umqpvZbOap6bIhDn6g0uaPL+UQRa
+   KcmrSQyWLXwdSJmPgey33uRhxCGHPn4ym4nms00ZzbQHYqJmJ7TCnlOcJ
+   106rzZG22xdatjVj8B/REsYdvkGtOQtKkXDeAOZsF7saHSXxs3lXNbbBn
+   MIspEyQZfr8W6bZCDRshd1RmSpEM1cur6VO/uyymlaHQoLJ2nsye9qZS+
+   pPaNT/wm5rXpa6pwbtqbzAM++1e3wJtTKv4QYoVd4lCX3I5ih+uy0p6qQ
+   Q==;
+X-CSE-ConnectionGUID: CLxOy75dTPizGa+xipbBrQ==
+X-CSE-MsgGUID: JdMpgkjNSGSwJ+uTVcIylQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33549407"
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="33549407"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:14:04 -0700
+X-CSE-ConnectionGUID: QTX1HO55QSeg9Z0VGC4E/g==
+X-CSE-MsgGUID: vQnduMpbQze5nqMSU6ZePQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="92681951"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:14:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shZjR-0000000107a-1ta6;
+	Fri, 23 Aug 2024 22:13:57 +0300
+Date: Fri, 23 Aug 2024 22:13:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] iio: pressure: bmp280: Add support for bmp280
+ soft reset
+Message-ID: <ZsjfdRWRl4fMJP0Y@smile.fi.intel.com>
+References: <20240823181714.64545-1-vassilisamir@gmail.com>
+ <20240823181714.64545-3-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240823191354.4141950-1-seanjc@google.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240823191354.4141950-3-seanjc@google.com>
-Subject: [PATCH 2/2] KVM: Clean up coalesced MMIO ring full check
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ilias Stamatis <ilstam@amazon.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Anup Patel <anup@brainfault.org>, 
-	Sean Christopherson <seanjc@google.com>, Paul Durrant <paul@xen.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823181714.64545-3-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Fold coalesced_mmio_has_room() into its sole caller, coalesced_mmio_write(),
-as it's really just a single line of code, has a goofy return value, and
-is unnecessarily brittle.
+On Fri, Aug 23, 2024 at 08:17:09PM +0200, Vasileios Amoiridis wrote:
+> The BM(P/E)28x devices have an option for soft reset which is also
+> recommended by the Bosch Sensortech BME2 Sensor API to be used before the
+> initial configuration of the device.
 
-E.g. if coalesced_mmio_has_room() were to check ring->last directly, or
-the caller failed to use READ_ONCE(), KVM would be susceptible to TOCTOU
-attacks from userspace.
+...
 
-Opportunistically add a comment explaining why on earth KVM leaves one
-entry free, which may not be obvious to readers that aren't famailiar with
-ring buffers.
+> +static int bmp280_preinit(struct bmp280_data *data)
+> +{
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	ret = regmap_write(data->regmap, BMP280_REG_RESET, BMP280_RST_SOFT_CMD);
+> +	if (ret)
+> +		return dev_err_probe(data->dev, ret,
+> +				     "Failed to reset device.\n");
 
-No functional change intended.
+> +	usleep_range(data->start_up_time, data->start_up_time + 500);
 
-Cc: Ilias Stamatis <ilstam@amazon.com>
-Cc: Paul Durrant <paul@xen.org>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- virt/kvm/coalesced_mmio.c | 29 ++++++++---------------------
- 1 file changed, 8 insertions(+), 21 deletions(-)
+Seems long enough to warrant the comment. Also, why not fsleep()?
 
-diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
-index 184c5c40c9c1..375d6285475e 100644
---- a/virt/kvm/coalesced_mmio.c
-+++ b/virt/kvm/coalesced_mmio.c
-@@ -40,25 +40,6 @@ static int coalesced_mmio_in_range(struct kvm_coalesced_mmio_dev *dev,
- 	return 1;
- }
- 
--static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
--{
--	struct kvm_coalesced_mmio_ring *ring;
--
--	/* Are we able to batch it ? */
--
--	/* last is the first free entry
--	 * check if we don't meet the first used entry
--	 * there is always one unused entry in the buffer
--	 */
--	ring = dev->kvm->coalesced_mmio_ring;
--	if ((last + 1) % KVM_COALESCED_MMIO_MAX == READ_ONCE(ring->first)) {
--		/* full */
--		return 0;
--	}
--
--	return 1;
--}
--
- static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
- 				struct kvm_io_device *this, gpa_t addr,
- 				int len, const void *val)
-@@ -72,9 +53,15 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
- 
- 	spin_lock(&dev->kvm->ring_lock);
- 
-+	/*
-+	 * last is the index of the entry to fill.  Verify userspace hasn't
-+	 * set last to be out of range, and that there is room in the ring.
-+	 * Leave one entry free in the ring so that userspace can differentiate
-+	 * between an empty ring and a full ring.
-+	 */
- 	insert = READ_ONCE(ring->last);
--	if (!coalesced_mmio_has_room(dev, insert) ||
--	    insert >= KVM_COALESCED_MMIO_MAX) {
-+	if (insert >= KVM_COALESCED_MMIO_MAX ||
-+	    (insert + 1) % KVM_COALESCED_MMIO_MAX == READ_ONCE(ring->first)) {
- 		spin_unlock(&dev->kvm->ring_lock);
- 		return -EOPNOTSUPP;
- 	}
+> +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
+> +	if (ret)
+> +		return dev_err_probe(data->dev, ret,
+> +				     "Failed to read status register.\n");
+> +
+> +	if (reg & BMP280_REG_STATUS_IM_UPDATE)
+> +		return dev_err_probe(data->dev, ret,
+> +				     "Failed to copy NVM contents.\n");
+> +
+> +	return 0;
+> +}
+
+
 -- 
-2.46.0.295.g3b9ea8a38a-goog
+With Best Regards,
+Andy Shevchenko
+
 
 
