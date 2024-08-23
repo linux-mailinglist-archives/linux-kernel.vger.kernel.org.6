@@ -1,136 +1,392 @@
-Return-Path: <linux-kernel+bounces-298395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DD195C6AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:38:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EFC95C6B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB0851C21626
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA781F2724E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E0713C827;
-	Fri, 23 Aug 2024 07:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYvKz/xc"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9A513E8A5;
+	Fri, 23 Aug 2024 07:38:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEBB26AC1
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C793C13D8A4
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724398644; cv=none; b=Y0z6nPj8kehwEMLzQ2zqT/Y18uekb2TOPjNIOFB58bjDnKk4O41aA7AWyIRe4rprxkq6yl7bX4Abj9gARmd5X/mCPezqGLjS8LjsZ1Fr7UIVXqJepw4Y1cJyyDiiQA2ADUpFTE27THGd0rf6RRG/bfbYXJ3Vi5ka547KP9XNS8k=
+	t=1724398683; cv=none; b=P9EJ6kLc8wr31L1zRgP7GFBiJEUPhErYbd+OHLqkdc24z+PnuU3UQBDpFerAt2GCr7NKM85MSJcCup8n2KGbrs5Fg6cyxxZrXxhRnajXGi340SJ0l/FAdolLaZL9J0mIMHUrNde83nKUCltKFlt5rvy8+mmcNLwg0QNLf45t0hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724398644; c=relaxed/simple;
-	bh=G+V4EEePfeLVgzmqyuUsKexrHd+H4A4sfrV318W5QD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uuXRP22gMzcdQun+Vln92aSo5l9bkN3fp4JufJrb05XHEn4SWnNIVGM7pUdUueBMEBRwleBpebFTmwhz2ftJjPsTlw79v86aSrLq9T/ZAZ4AYYQPRbpBDM4IKdukEMSBQ3Pxbr92G7Gdzq6Y2iWObKP74C9B7mvnzqxnNVUi2gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYvKz/xc; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20227ba378eso15074465ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724398642; x=1725003442; darn=vger.kernel.org;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IwdGusPFdheswVn42reak48rV6CoMS6cSkMLL55sAus=;
-        b=gYvKz/xcSFVFNkyg/KIt3/0XbhxdtJ7FUmFzfb/YvGb+Yvs+KyEhVGC+GPrDbqOV/y
-         Ct31GW8ogkdlgwXlcbfzWOQj0zTMyBgEO6YB1v5RhoN7+6/OwM7SRWEK4e9x9I/1/TwG
-         LugXrKTBGohRYRf4nzlTl31s97zTJf+BKZXLoYOH2PTw5Xl7onLu9OQCEpsG1RMrwPFz
-         2FPEF8GNM+983Vm22BXe8SwustHNyHzJt+SSjfNWGVUtGoGSQP1o+YDHryZxAoT2/9lw
-         F2vmzzh4H+RvafYZ7FbQKNv/VtNvYfcwUT+iHb7DMWOWMA+QhvhSlRNKndB/9PEDtREW
-         WuZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724398642; x=1725003442;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IwdGusPFdheswVn42reak48rV6CoMS6cSkMLL55sAus=;
-        b=nHuSnqoCwuiW3yzZeDA4CSq5RSSBOQ65pmnOZlkdB4QexpDIS6VyarThZzqOdE7cI7
-         82/SIbjriW8OoJ9AdVbro9YlwDGffTzkrfiv/ktfJjIp4QYGXF1/Y4OvdN+c5djIJ8hD
-         4c3sIfrAPGunzcHs6A/gDgqm2difvNSoWw4hXLkM9QHGjNDfIJ16PTKc17NgJVy9AmrZ
-         iyxaaauzNEIHgsB80AeoDW2NSQ3YV9uLmxQPW822fl4+6DHIRDD59w9F50aAX3rL3UNf
-         HJlfumSAZKmUfTINwYLFt5VcSVyCxTdpa7dVMWXBq+RsNhFvvOoKz97ZSWS4WrOVqZ6C
-         4M4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWmmCNcesuXqBNS44upuVaFpgPSxQO9M44tprLU/BMn3nyA4ZdbtfefI37uQX4drk4dckgoqiGRKl/ejOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw12XaCTe7iKA/UiFvFIZcdYIDph2yRJsFkoizOKrUxWRHQm6Qu
-	kID86niyco4Kcz6hzvYAcFpEVFcDqr5U2kkr75ghDLG6q3ztIVyp
-X-Google-Smtp-Source: AGHT+IFPmO8ObNG7L/0IxjwHyS1ESRZJe1yyTGzbcnUCkT8bWbcp1Qww/ORuUHG1xrFv7pJzmQjVRg==
-X-Received: by 2002:a17:902:e804:b0:202:3432:230c with SMTP id d9443c01a7336-2039e46a37fmr11633475ad.18.1724398642421;
-        Fri, 23 Aug 2024 00:37:22 -0700 (PDT)
-Received: from systemsresearch.io ([2a01:7e03::f03c:91ff:fe02:b162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385ae4f62sm22979485ad.256.2024.08.23.00.37.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 00:37:21 -0700 (PDT)
-Date: Fri, 23 Aug 2024 07:37:19 +0000
-From: Hao Li <haoli.tcs@gmail.com>
-To: Liam.Howlett@oracle.com
-Cc: akpm@linux-foundation.org, maple-tree@lists.infradead.org,
-	haoli.tcs@gmail.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] maple_tree: simplify mas_wr_node_walk for improved
- readability
-Message-ID: <20240823073719.GA18274@systemsresearch.io>
+	s=arc-20240116; t=1724398683; c=relaxed/simple;
+	bh=egKHUZlmytHXwTivCp/yeSvrli/L3WSL3K8qWnOP3so=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QIo8Zt8eTdPdo/uXTKE2COYJ7f/13B4vIUsAZ4YpuQlIibLAwmWPQc6tRgKyXnweWp6Dj4aXx+AFNIuEsD57X1PfXrCsKGqoeFLwPfFg3nOqlzHaFbq/N9e0RkQc2cdNM91zIeCJXqOwA57QXUvge57JzTQeYSU0G9iWvJTt/Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1shOro-0004iZ-2K; Fri, 23 Aug 2024 09:37:52 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1shOrn-002R4d-He; Fri, 23 Aug 2024 09:37:51 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1shOrn-001YWA-1M;
+	Fri, 23 Aug 2024 09:37:51 +0200
+Date: Fri, 23 Aug 2024 09:37:51 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH v7 2/3] net/9p/usbg: Add new usb gadget function transport
+Message-ID: <Zsg8T4HgshCpVqd8@pengutronix.de>
+References: <20240116-ml-topic-u9p-v7-0-3a1eeef77fbe@pengutronix.de>
+ <20240116-ml-topic-u9p-v7-2-3a1eeef77fbe@pengutronix.de>
+ <82f03be5-b8b1-4df2-8b4b-0cae5d6d67ba@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="31YaXo8OCBXodDG2"
 Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <82f03be5-b8b1-4df2-8b4b-0cae5d6d67ba@suse.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Refactor mas_wr_node_walk to make the code more clear and easier to
-understand. The main changes are:
 
-1. Replace the forward-iterating loop with a backward-iterating loop.
-   This simplifies the logic for determining the correct range
-   containing mas->index.
+--31YaXo8OCBXodDG2
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2. Eliminate the ternary operator.
+Hi Oliver,
 
-The new implementation maintains the same functionality as before, but
-with improved readability. The performance characteristics remain
-essentially the same, as we cannot predict which interval mas->index
-will fall into.
+Thanks for your feedback!
 
-Signed-off-by: Hao Li <haoli.tcs@gmail.com>
----
- lib/maple_tree.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+Based on your feedback I just send v9:
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index fe1b01b29..a180f54f5 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -2213,16 +2213,14 @@ static inline void mas_wr_node_walk(struct ma_wr_state *wr_mas)
- 
- 	wr_mas->node = mas_mn(wr_mas->mas);
- 	wr_mas->pivots = ma_pivots(wr_mas->node, wr_mas->type);
--	count = mas->end = ma_data_end(wr_mas->node, wr_mas->type,
-+	mas->end = ma_data_end(wr_mas->node, wr_mas->type,
- 				       wr_mas->pivots, mas->max);
--	offset = mas->offset;
--
--	while (offset < count && mas->index > wr_mas->pivots[offset])
--		offset++;
--
--	wr_mas->r_max = offset < count ? wr_mas->pivots[offset] : mas->max;
--	wr_mas->r_min = mas_safe_min(mas, wr_mas->pivots, offset);
--	wr_mas->offset_end = mas->offset = offset;
-+	wr_mas->r_max = mas->max;
-+	idx = mas->end - 1;
-+	while (idx >= mas->offset && wr_mas->pivots[idx] >= mas->index)
-+		wr_mas->r_max = wr_mas->pivots[idx--];
-+	wr_mas->offset_end = mas->offset = idx + 1;
-+	wr_mas->r_min = mas_safe_min(mas, wr_mas->pivots, mas->offset);
- }
- 
- /*
--- 
-2.21.0
+https://lore.kernel.org/r/20240116-ml-topic-u9p-v9-0-93d73f47b76b@pengutron=
+ix.de
 
+
+On Mon, Jul 22, 2024 at 10:49:49AM +0200, Oliver Neukum wrote:
+>On 22.07.24 00:08, Michael Grzeschik wrote:
+>
+>>+
+>>+static int usb9pfs_queue_tx(struct f_usb9pfs *usb9pfs, struct usb_reques=
+t *req,
+>>+			    gfp_t gfp_flags)
+>>+{
+>>+	struct usb_composite_dev *cdev =3D usb9pfs->function.config->cdev;
+>>+	int ret =3D -ENOMEM;
+>
+>No need. This will be overwritten.
+
+Right.
+
+>>+
+>>+	if (!(usb9pfs->p9_tx_req->tc.size % usb9pfs->in_ep->maxpacket))
+>>+		req->zero =3D 1;
+>>+
+>>+	req->buf =3D usb9pfs->p9_tx_req->tc.sdata;
+>>+	req->length =3D usb9pfs->p9_tx_req->tc.size;
+>>+
+>>+	dev_dbg(&cdev->gadget->dev, "%s usb9pfs send --> %d/%d, zero: %d\n",
+>>+		usb9pfs->in_ep->name, req->actual, req->length, req->zero);
+>>+
+>>+	ret =3D usb_ep_queue(usb9pfs->in_ep, req, gfp_flags);
+>>+
+>>+	dev_dbg(&cdev->gadget->dev, "tx submit --> %d\n", ret);
+>>+
+>>+	return ret;
+>>+}
+>>+
+>>+static int usb9pfs_queue_rx(struct f_usb9pfs *usb9pfs, struct usb_reques=
+t *req,
+>>+			    gfp_t gfp_flags)
+>>+{
+>>+	struct usb_composite_dev *cdev =3D usb9pfs->function.config->cdev;
+>>+	int ret =3D -ENOMEM;
+>
+>Overwritten in literally the next statement.
+
+Right.
+
+>>+	ret =3D usb_ep_queue(usb9pfs->out_ep, req, gfp_flags);
+>>+
+>>+	dev_dbg(&cdev->gadget->dev, "rx submit --> %d\n", ret);
+>>+
+>>+	return ret;
+>>+}
+>>+
+>>+static int usb9pfs_transmit(struct f_usb9pfs *usb9pfs)
+>>+{
+>>+	struct p9_req_t *p9_req =3D NULL;
+>>+	unsigned long flags;
+>>+	int ret =3D 0;
+>>+
+>>+	spin_lock_irqsave(&usb9pfs->lock, flags);
+>>+	if (usb9pfs->p9_tx_req) {
+>>+		spin_unlock_irqrestore(&usb9pfs->lock, flags);
+>>+		return -EBUSY;
+>>+	}
+>>+
+>>+	p9_req =3D list_first_entry_or_null(&usb9pfs->tx_req_list,
+>>+					  struct p9_req_t, req_list);
+>>+	if (!p9_req) {
+>>+		spin_unlock_irqrestore(&usb9pfs->lock, flags);
+>>+		return -ENOENT;
+>>+	}
+>>+
+>>+	list_del(&p9_req->req_list);
+>
+>You have deleted it from the list
+>
+>>+	usb9pfs->p9_tx_req =3D p9_req;
+>>+
+>>+	p9_req_get(usb9pfs->p9_tx_req);
+>>+
+>>+	ret =3D usb9pfs_queue_tx(usb9pfs, usb9pfs->in_req, GFP_ATOMIC);
+>
+>This means that if this function returns an error, the deletion
+>from the list may or may not have happened.
+
+I refactored this.
+
+>>+	spin_unlock_irqrestore(&usb9pfs->lock, flags);
+>>+
+>>+	return ret;
+>>+}
+>>+
+>>+static void usb9pfs_tx_complete(struct usb_ep *ep, struct usb_request *r=
+eq)
+>>+{
+>>+	struct f_usb9pfs *usb9pfs =3D ep->driver_data;
+>>+	struct usb_composite_dev *cdev =3D usb9pfs->function.config->cdev;
+>>+	int ret =3D 0;
+>>+
+>>+	if (req->status) {
+>>+		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+>>+			ep->name, req->status, req->actual, req->length);
+>>+		return;
+>>+	}
+>>+
+>>+	/* reset zero packages */
+>>+	req->zero =3D 0;
+>>+
+>>+	dev_dbg(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+>>+		ep->name, req->status, req->actual, req->length);
+>>+
+>>+	WRITE_ONCE(usb9pfs->p9_tx_req->status, REQ_STATUS_SENT);
+>>+
+>>+	p9_req_put(usb9pfs->client, usb9pfs->p9_tx_req);
+>>+
+>>+	ret =3D usb9pfs_queue_rx(usb9pfs, usb9pfs->out_req, GFP_ATOMIC);
+>>+	if (ret)
+>>+		return;
+>
+>Ehhh ? Could you explain the error handling here?
+
+Yeah, not much to explain here. It is just worthless.
+Also I was not thinking through how to handle an errornous transfer
+to the upper vfs layer if some tx/rx path wath broken.
+
+I now have fixed this by not calling any enqueue from the complete
+handlers but am using the wait_for_complete functions to directly
+expect finished transfers and response to them. This makes error
+handling much easier and is also easier on the eye to read and
+understand what is actually going on. It also solves most of
+the request locking issues I had to begin with.
+
+>>+
+>>+	return;
+>>+}
+>>+
+>>+static struct p9_req_t *usb9pfs_rx_header(struct f_usb9pfs *usb9pfs, voi=
+d *buf)
+>>+{
+>>+	struct p9_req_t *p9_rx_req;
+>>+	struct p9_fcall	rc;
+>>+	int ret;
+>>+
+>>+	/* start by reading header */
+>>+	rc.sdata =3D buf;
+>>+	rc.offset =3D 0;
+>>+	rc.capacity =3D P9_HDRSZ;
+>>+	rc.size =3D P9_HDRSZ;
+>>+
+>>+	p9_debug(P9_DEBUG_TRANS, "mux %p got %zu bytes\n", usb9pfs,
+>>+		 rc.capacity - rc.offset);
+>>+
+>>+	ret =3D p9_parse_header(&rc, &rc.size, NULL, NULL, 0);
+>>+	if (ret) {
+>>+		p9_debug(P9_DEBUG_ERROR,
+>>+			 "error parsing header: %d\n", ret);
+>>+		return NULL;
+>>+	}
+>>+
+>>+	p9_debug(P9_DEBUG_TRANS,
+>>+		 "mux %p pkt: size: %d bytes tag: %d\n",
+>>+		 usb9pfs, rc.size, rc.tag);
+>>+
+>>+	p9_rx_req =3D p9_tag_lookup(usb9pfs->client, rc.tag);
+>>+	if (!p9_rx_req || p9_rx_req->status !=3D REQ_STATUS_SENT) {
+>>+		p9_debug(P9_DEBUG_ERROR, "Unexpected packet tag %d\n", rc.tag);
+>>+		return NULL;
+>>+	}
+>>+
+>>+	if (rc.size > p9_rx_req->rc.capacity) {
+>>+		p9_debug(P9_DEBUG_ERROR,
+>>+			 "requested packet size too big: %d for tag %d with capacity %zd\n",
+>>+			 rc.size, rc.tag, p9_rx_req->rc.capacity);
+>>+		p9_req_put(usb9pfs->client, p9_rx_req);
+>>+		return NULL;
+>>+	}
+>>+
+>>+	if (!p9_rx_req->rc.sdata) {
+>>+		p9_debug(P9_DEBUG_ERROR,
+>>+			 "No recv fcall for tag %d (req %p), disconnecting!\n",
+>>+			 rc.tag, p9_rx_req);
+>>+		p9_req_put(usb9pfs->client, p9_rx_req);
+>>+		return NULL;
+>>+	}
+>>+
+>>+	return p9_rx_req;
+>>+}
+>>+
+>>+static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *r=
+eq)
+>>+{
+>>+	struct f_usb9pfs *usb9pfs =3D ep->driver_data;
+>>+	struct usb_composite_dev *cdev =3D usb9pfs->function.config->cdev;
+>>+	struct p9_req_t *p9_rx_req;
+>>+	unsigned long flags;
+>>+
+>>+	if (req->status) {
+>>+		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+>>+			ep->name, req->status, req->actual, req->length);
+>>+		return;
+>>+	}
+>>+
+>>+	p9_rx_req =3D usb9pfs_rx_header(usb9pfs, req->buf);
+>>+	if (!p9_rx_req)
+>>+		return;
+>>+
+>>+	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
+>>+
+>>+	p9_rx_req->rc.size =3D req->actual;
+>>+
+>>+	p9_client_cb(usb9pfs->client, p9_rx_req, REQ_STATUS_RCVD);
+>>+	p9_req_put(usb9pfs->client, p9_rx_req);
+>>+
+>>+	spin_lock_irqsave(&usb9pfs->lock, flags);
+>>+	usb9pfs->p9_tx_req =3D NULL;
+>>+
+>>+	spin_unlock_irqrestore(&usb9pfs->lock, flags);
+>
+>Why can usb9pfs_tx_complete() touch this without taking the spinlock?
+
+I fixed that.
+
+>>+
+>>+	usb9pfs_transmit(usb9pfs);
+>
+>This can fail. What happens then?
+
+
+This won't fail here anymore, due to the change I explained above.
+
+>>+
+>>+	return;
+>>+}
+>>+
+>
+>
+>[..]
+>
+>>+static int p9_usbg_cancel(struct p9_client *client, struct p9_req_t *req)
+>
+>This ought to be boolean
+
+It can't for now since it is an 9p callback, which is currently
+expecting int.
+
+>>+{
+>>+	struct f_usb9pfs *usb9pfs =3D client->trans;
+>>+	unsigned long flags;
+>>+	int ret =3D 1;
+>>+
+>>+	p9_debug(P9_DEBUG_TRANS, "client %p req %p\n", client, req);
+>>+
+>>+	spin_lock_irqsave(&usb9pfs->lock, flags);
+>>+
+>>+	if (req->status =3D=3D REQ_STATUS_UNSENT) {
+>>+		list_del(&req->req_list);
+>>+		WRITE_ONCE(req->status, REQ_STATUS_FLSHD);
+>>+		p9_req_put(client, req);
+>>+		ret =3D 0;
+>>+	}
+>>+	spin_unlock_irqrestore(&usb9pfs->lock, flags);
+>>+
+>>+	return ret;
+>>+}
+>
+>	Regards
+>		Oliver
+>
+>
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--31YaXo8OCBXodDG2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbIPEoACgkQC+njFXoe
+LGT2rxAAlUrNbz/B7Ppej4PJSoCQeQXV/gu0gi8ViB21aYim1CMiQNs49n9OAhH9
+soMvuFEVLbsT6cP2S9Deeln8hnGB4bZk/Bi0E9C8BOhB0UVF8KHrBJ08/vqfQBrn
+vhSVHVJPx30iG0ywzEi7IUcjGELm2rD/+5YcMZO7smZfeRALZBVVfrBY8hG8gfBI
+TuJZ/u9xEVWGIDlsEBVMCIwenVmwpdgBmGXmowJki0Q965bCiZGR+hnH1bKzL2Zf
+diFJSXSZaoRGjxBff924nZsY95CA2JL51ieP6lG3yuGiIpg8/Hh2ogHOUs/0eR2q
+5mGUMfjaSdbWndjG6mnkyS/3BKOH1uqSkg2LuZzIYEeRt2zWbgbpw1gxrWq6Xzsf
+Zs9wLF/n5HUgq4yxw9U1ynxWZ2QcyL4lSGV6IBngnsOh7jxkPawWuBycW9k3OqME
+pDxaqBor3AVOlHVNuWcwgkA+ljYUc7OZyxXyb8t0KWPGRFpzJvrwC+aZozYhI5Y4
+dJCg5jJYunES4lJrjL/FgUWi5Yeqn9Ye+AWzuvMx/zS1Ne8UDyA8ZQOMY++xP0cG
+Hib/6pZv6xF1zc7Ryxn4JkN1DbIcwh0DBKKTV3Ra3WoZfIfW+XrRhwQxQrOZTs9Y
+pTGjYifkq+hBqCaqmStcLA4Lc3PWRLQ12aqiMP3Log/w1Bc+8zk=
+=oiQm
+-----END PGP SIGNATURE-----
+
+--31YaXo8OCBXodDG2--
 
