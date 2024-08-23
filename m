@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-298853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA1A95CC36
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EEA95CC37
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C711C215C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983281C23645
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369F4185945;
-	Fri, 23 Aug 2024 12:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59D8185949;
+	Fri, 23 Aug 2024 12:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="UyR6++HB"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1Skkx5s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EACF3A28D;
-	Fri, 23 Aug 2024 12:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BF3358A7;
+	Fri, 23 Aug 2024 12:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724415334; cv=none; b=PkWnAlsJXw1UiEq6hbHvR2B/Sw+lD3K0+mA8vYEyNxb4Uh2w5hDjGluwAbwKaN7SPjaEICaJzge2s7jD+lMWmMp+mRt/nRrzmNeyrxGCL8yqcRblbcZEZdbISkk/m6DutBcb5FKwo9rgcQ++mw+mlXxf3L48bHXP2h6sTq+C8sI=
+	t=1724415343; cv=none; b=j03TXI1cCYNrRqLf6J7AxXlk2ayIMdSR+yfx2VE+5iEsggBF7317TUlM2XbWAXq0s2YjAexuZ8STiVBrcbgtofp9OqlqzCSLPDYgFK+4R+bWGoeE8t2ngVZHRniQn1A4QsgRAoacPD5xtxzvqWoQngKgmyRg2CArglz/p2NUgk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724415334; c=relaxed/simple;
-	bh=1v/8KbfeGCwfvhavOFD9X3prZgd/g3pYHdW7NHM/4h0=;
+	s=arc-20240116; t=1724415343; c=relaxed/simple;
+	bh=QSwBy/mtxU5PQEV0qc+NWWpaKehQRcAiGZXxDif/GcM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ah/m+y8ZgN6QEx1bY/Xd06yxjbxjeRMwSQJ7KT8lYu7hlgYsboDDeq53NAJ+8IFDfowD3csfBvqPuNJWR715MPfHU2ZD9a/+l7lcon5hb2har23JhsDxxh5cjG1pAtFqM1oMwEbGjF1GB8s3y2KdUaoxaJU1lZrVI/qD4ercOmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=UyR6++HB; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1724415316; x=1725020116; i=j.neuschaefer@gmx.net;
-	bh=h0BQB0MX4qUA3/Dn+xSqWXZtaezatHOedl+Kg5HoD1c=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UyR6++HBhq6qq43EyD0NdghBR9fobTpWMSvyT34NWlTQBtODLblFUm9CuMFKv3JS
-	 XvygoTUbydjTgTX4t98hXwetY/rtkQzfKswfbUQWG4XUKbc6nhaiJytqrUicOsZHl
-	 5eJLJ+wrcaWSRvnd3aK9BPKuSLciQOjCmK6jPSSMcCHya9RxFbTJm2gq1D640334d
-	 CDeEiq8GjM5EcJ2+Z3odyvYndGFwLPopKXN8RRoj7aNZo7t4B4sKhiceWb4MvezDn
-	 T6DO6S9WN4G48lB1Fv8SM830sk/8XYpadz5rS7RrZ929n1rOIsOg6jfnZLe7EH7ac
-	 zl6b5YqoX1MSxlpU4Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([84.44.134.213]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5QF5-1siq6j37zx-008Cax; Fri, 23
- Aug 2024 14:15:16 +0200
-Date: Fri, 23 Aug 2024 14:15:12 +0200
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: j.neuschaefer@gmx.net, broonie@kernel.org, openbmc@lists.ozlabs.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] spi: wpcm-fiu: Use
- devm_platform_ioremap_resource_byname()
-Message-ID: <Zsh9UA4iXvMzm2HW@probook>
-References: <20240820123518.1788294-1-ruanjinjie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcyoL9xt4X65P/YcK7HtvUnIrhmFV8zVhPhkGktHC7lsd0QdJ6bod9wFNmZ9cGttND9B52DyT9x3hvoqDcY8Lae9Y91T8DCPC1rf95tutODGe8hon4zhk4spf1GUfG8rkeS2S576cV/tym73e0ale331/rpVfpxDmbxMzytffM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1Skkx5s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A489AC32786;
+	Fri, 23 Aug 2024 12:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724415342;
+	bh=QSwBy/mtxU5PQEV0qc+NWWpaKehQRcAiGZXxDif/GcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T1Skkx5sYt3Grbjh67xETdslEani4TBJqgeWd8AajJv1OcyeopWDTUF5qG6K8oUjB
+	 YQIVyWcZSTdxcLJOq+O/6XQ2dftgK8y0xfTGr5eQUbkZMrj32Wv26HILtebpX56Rlv
+	 tAIZkaYSevVNBWAHtso7keRAbAOUbaTmmlcQRbVpgrIvUkS6MkI1yuHvnPp+5FGbEO
+	 FZjaHQ7uwIKk4neNvmNVkkezJbd+zLqg5YNMVRk2jK9ummmJTqUAU3YVBnzcy9qDKd
+	 UlcNU8NTLr9kYROzDZgxeecu2c/Synb91cfNu2g129MDCGQ0ybQY8YZ97Pn1alLBXb
+	 7xS1jQRvqNo1A==
+Date: Fri, 23 Aug 2024 13:15:38 +0100
+From: Will Deacon <will@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks
+ when possible
+Message-ID: <20240823121538.GA32110@willie-the-truck>
+References: <20240802191617.312752-1-seanjc@google.com>
+ <20240820154150.GA28750@willie-the-truck>
+ <ZsS_OmxwFzrqDcfY@google.com>
+ <20240820163213.GD28750@willie-the-truck>
+ <ZsTM-Olv8aT2rql6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240820123518.1788294-1-ruanjinjie@huawei.com>
-X-Provags-ID: V03:K1:K7cBbWoIShlD66049cmP2FqksWnx3SN+H5lXc21nFVbBvdqE/B9
- U2bnn5C7QchLuXPugvq4JJViBCFCyxJVwHaoue/jLmBmuHzBDQbssFZnv4pHZM8RoBmDBH7
- zYba+W1Q8G4bz9sj80cnVv94dxzFMArr6ng489n+Yf4GvsaFn7tehUrcGCpgtbCGe3bbFnS
- SSHutCmO/PK8eo7gE2wmA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Lh+VwlgWObU=;GJNmrYaMKTYmGGyPde2c8PtyC89
- d0XquKzpM3w9sQ3Ttun4EdmGS+2Yxr5xXHDiANRgVImt4CbvTqGf3qQsZIX7mJXXg5IOifawD
- 4OasJRwKY7Qn1t01Lb5/BFZT4ZO21IKpCgwVMAXll7DMMn7njL41+g7ZkBnF7gDZjJ4z9emsn
- QLWXhoY4nh1hoBrdejLylxJptP6U1SekHXLHeFOSHt00rxWdq2fBgqhPAkXKdV2yax1U3l273
- YUSRzIfpK4mcuRjIBDLKPgaLirpchLDi35azvucT2uG85qO1ukyTLwU3oNwTH2jMT9mryxfsC
- /tm4VR0xaQ9PUDttUlqpzGHZotLvYvcF8z0zEPeJL9CKh51gZNeuF0jaRqEXD3K4ufHrI3CZ4
- 9TkgrOE4BkMjxOEnC0z6zXsWGGCSA3sksmwUwpHihqBjswjTjGHrmf4GH0bB3d7N7U3/erXyY
- rr1tyNqtwiHwx10f85cM1aiXTc6948AdjWOZdq6N7MUWbsO14aG2ArpaG9MxQa4Ip1cNREU1d
- SGhSa+W/HsTWiyJV1MfHQ9vIqia/Xlb275mCwSoCj2Rci9FYAEKHGWiODzLT7Rgu05VYhs1Ei
- tGjKqpapt8ygNCIpDNuxNn2glVgY65WjCUbk16Qov4IwWPIqgQLaQe4fp3stI/4jz1xW7RczA
- PQg8MDYf353lSeUOtweKLYEJZ7GS6kB2fA3f5o/9eP647J2bZ6l//CnmDyHvHUzzvKtA8ddGI
- nDIVs7ZTsmCXdiv21wGj9YFhGYT8CJNxoly9+KHSa/iirJ9p6Pz46TvpfVe9yjtES7zNSWgZP
- grZSzqK6ygRvC5IW3lTkx2vg==
+In-Reply-To: <ZsTM-Olv8aT2rql6@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Aug 20, 2024 at 08:35:18PM +0800, Jinjie Ruan wrote:
-> Use the devm_platform_ioremap_resource_byname() helper instead of
-> calling platform_get_resource_byname() and devm_ioremap_resource()
-> separately.
->
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+On Tue, Aug 20, 2024 at 10:06:00AM -0700, Sean Christopherson wrote:
+> On Tue, Aug 20, 2024, Will Deacon wrote:
+> > On Tue, Aug 20, 2024 at 09:07:22AM -0700, Sean Christopherson wrote:
+> > > On Tue, Aug 20, 2024, Will Deacon wrote:
+> > > > handler could do the invalidation as part of its page-table walk (for
+> > > > example, it could use information about the page-table structure such
+> > > > as the level of the leaves to optimise the invalidation further), but
+> > > > this does at least avoid zapping the whole VMID on CPUs with range
+> > > > support.
+> > > > 
+> > > > My only slight concern is that, should clear_flush_young() be extended
+> > > > to operate on more than a single page-at-a-time in future, this will
+> > > > silently end up invalidating the entire VMID for each memslot unless we
+> > > > teach kvm_arch_flush_remote_tlbs_range() to return !0 in that case.
+> > > 
+> > > I'm not sure I follow the "entire VMID for each memslot" concern.  Are you
+> > > worried about kvm_arch_flush_remote_tlbs_range() failing and triggering a VM-wide
+> > > flush?
+> > 
+> > The arm64 implementation of kvm_arch_flush_remote_tlbs_range()
+> > unconditionally returns 0, so we could end up over-invalidating pretty
+> > badly if that doesn't change. It should be straightforward to fix, but
+> > I just wanted to point it out because it would be easy to miss too!
+> 
+> Sorry, I'm still not following.  0==success, and gfn_range.{start,end} is scoped
+> precisely to the overlap between the memslot and hva range.  Regardless of the
+> number of pages that are passed into clear_flush_young(), KVM should naturally
+> flush only the exact range being aged.  The only hiccup would be if the hva range
+> straddles multiple memslots, but if userspace creates multiple memslots for a
+> single vma, then that's a userspace problem.
 
-Looks good to me, thanks!
+Fair enough, but it's not a lot of effort to fix this (untested diff
+below) and if the code were to change in future so that
+__kvm_handle_hva_range() was more commonly used to span multiple
+memslots we probably wouldn't otherwise notice the silent
+over-invalidation for a while.
 
-Reviewed-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+Will
 
-> ---
->  drivers/spi/spi-wpcm-fiu.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/spi/spi-wpcm-fiu.c b/drivers/spi/spi-wpcm-fiu.c
-> index 886d6d7771d4..47e485fd8f84 100644
-> --- a/drivers/spi/spi-wpcm-fiu.c
-> +++ b/drivers/spi/spi-wpcm-fiu.c
-> @@ -448,8 +448,7 @@ static int wpcm_fiu_probe(struct platform_device *pd=
-ev)
->  	fiu =3D spi_controller_get_devdata(ctrl);
->  	fiu->dev =3D dev;
->
-> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "control");
-> -	fiu->regs =3D devm_ioremap_resource(dev, res);
-> +	fiu->regs =3D devm_platform_ioremap_resource_byname(pdev, "control");
->  	if (IS_ERR(fiu->regs)) {
->  		dev_err(dev, "Failed to map registers\n");
->  		return PTR_ERR(fiu->regs);
-> @@ -459,8 +458,7 @@ static int wpcm_fiu_probe(struct platform_device *pd=
-ev)
->  	if (IS_ERR(fiu->clk))
->  		return PTR_ERR(fiu->clk);
->
-> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "memory");
-> -	fiu->memory =3D devm_ioremap_resource(dev, res);
-> +	fiu->memory =3D devm_platform_ioremap_resource_byname(pdev, "memory");
->  	fiu->memory_size =3D min_t(size_t, resource_size(res), MAX_MEMORY_SIZE=
-_TOTAL);
->  	if (IS_ERR(fiu->memory)) {
->  		dev_err(dev, "Failed to map flash memory window\n");
-> --
-> 2.34.1
->
+--->8
+
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index 6981b1bc0946..1e34127f79b0 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -175,6 +175,9 @@ int kvm_arch_flush_remote_tlbs(struct kvm *kvm)
+ int kvm_arch_flush_remote_tlbs_range(struct kvm *kvm,
+                                      gfn_t gfn, u64 nr_pages)
+ {
++       if (!system_supports_tlb_range())
++               return -EOPNOTSUPP;
++
+        kvm_tlb_flush_vmid_range(&kvm->arch.mmu,
+                                gfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
+        return 0;
+
 
