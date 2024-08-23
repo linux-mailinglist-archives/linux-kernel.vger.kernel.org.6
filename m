@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-299538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E319E95D603
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3AC95D604
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DE231C23713
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BCD11C22278
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDE51922FD;
-	Fri, 23 Aug 2024 19:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35F2192588;
+	Fri, 23 Aug 2024 19:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzEPuB8C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c19U/iiO"
 Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF6818592E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0F38F6B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724440793; cv=none; b=LnmFB4zAi4NtTdjSb6wmCXp2D4K9SYA7H4Rz5rQNOvFcuZDj4GSnAvZF4dhcCmtcMYT7hMNjRVEgWim3BAO80esOeAUSfBai79OjraPPW0mccRHw5/yWyMs/kz7xFSr9lXRWleDt5Mmc9p6JElq7KGSKBT7bEWo8DGUc/2P4EiE=
+	t=1724440822; cv=none; b=ECNzSap1OGiVLPnVeBFtCIz39jh1beK3YJQA6/U4LRS2dDfWe01CkL8JPIXcQ/oHXajhfSMIURY8XNPJmE6cotXc8A9hKUJc5ePO5UdwOZD8UVfQ5RAwNVMVK4N91FGj0RJ6+0q4nKkNp/1n6M/XcZC3KgFfMvLHkj7gBphllGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724440793; c=relaxed/simple;
-	bh=OiAJ4KI4U+CJXqXTu0tXFeMTtLG5KNHNpmK4EMC9wbI=;
+	s=arc-20240116; t=1724440822; c=relaxed/simple;
+	bh=iDD9lSaT3Sp0xg/rTdH0q+pzugBKBUX9sq197L43Yik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQWxxBw1tySqpZLZU+cB3LptgvHm6F4jtZbYhXLZZscdJUPKMA5Uw+54LT55ZH8RvwlggYuTujd9iATBiwD/4FDZgulWFfYmtjcnYMgPJwkq1wSTWPsFn6N4fBJ3YhfJJhYUzzfiCRJeUoX1FHH/sXQMfMKyzXnKui1boeJZn40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hzEPuB8C; arc=none smtp.client-ip=209.85.214.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbFRU6N72g/rYG/fCS10TkEq0vc1HzAtsE6tVsvDhzXHYhZc2mOQ6xClzA8MuJfGec0TamiCtN3e2TSaF4Sk83suxSxcK77BP6hUSkfAWlcL18OanKjdz+rfsF++BPE70VR2DlTqYpOnfwDIqS6VHk2XyKThN1WX6KGr+0v5Er4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c19U/iiO; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-201fbd0d7c2so21940625ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:19:51 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-201f2b7fe0dso22744015ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:20:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724440791; x=1725045591; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724440820; x=1725045620; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SKe53yYKAtf8X48idbSAyfjC8S77ztYgY49MEq1yc6g=;
-        b=hzEPuB8CUc0jpiNxqcDS8shueNhU98I8Bu00/uqq7l521CFQk8OIkp98wpsszMtlpx
-         +Q7qj5Y0VNHCGGyOHyLzu0qatpJrDQbzq8GX0QH8+TspyQ09EbtI/Vn+WyCk/8+EVJzU
-         CX+uC7MWfOSVdqF6S7jAxEvpM9eIK63FeYoSlDOJKNk0pPPFpA9mnuxSeFUWSh+ooqjD
-         cqUwxk3fSjU0gdPri//PjbKXJODYn5NxTphi9Q9ofliBoFMuVX88nxKBeYBjmNyZ+oAe
-         uwyStO9Yxu5FwnCqUU6rrbGjyMijP4wEQRT25zyPGPTDYDRgM228CQ3w+o9UB8QWtJIf
-         nCsg==
+        bh=KHQMvvb6+dnevxicO8q1f4XJW8/KeupnupjXeQ3/3ms=;
+        b=c19U/iiOklGiV1g0o2Wt/rGii86ZQ3DRpvjYDfvXcwNhqk0rO2eg37Atn8WmS/oXe9
+         VSDYDxNMeRIlH+CU+6xRGGdniJV1yeNDC4Ri6bje2Czfi2c6u8haoaUU1zEQlmB4wYhB
+         imONtcpWIPucVzsyQYf5z6NxPAFwdnYcq+xi8//UkS2TsQBTUhD1y8czrj/tyhyLzckA
+         8DzkLTrLrBQPjCMiRuiYKOzlPyxneCZrgJilfQod3SHuLAmOp/Pu3C/2Ur9gf1Awa3+n
+         PSEGSJdm6uUXLInH9n3B3FWEMGb/gNM9jdjzpBflGE23bCLjXV/jp6I6RcQ9adhiD5C7
+         nAYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724440791; x=1725045591;
+        d=1e100.net; s=20230601; t=1724440820; x=1725045620;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SKe53yYKAtf8X48idbSAyfjC8S77ztYgY49MEq1yc6g=;
-        b=xFJOPA1F+TrNqnnIazsnFkp6mdQQ5jsYboHQJ8erg8k6B6nAqxk+QInvsU/jfXR6+J
-         SJRHhsY3eRfOCHYoyICjwXjGZJzONAAkZYyUJSkmJqgpTi6qjXXWxQC19/nuMD1Cac2X
-         y3GGy9rJQVuPeUV1T0u7Xzxl4xmAa7OTznSMcNdTfBslDVfIQmZYXcYn3X3tn3DtdsMo
-         94+J54sl8lhmxZwyWisI6s16sxRtt0xWiFy1+ElzdcKSeF6QvYwuYNeVJb92PatTwM0n
-         aYRULrhlh4n2Jkt+K/PaCGCJAkdGAMCDNi3/N3LGrRgNwRZRAuo8rF99FCdxtfWTmcBB
-         qknw==
-X-Forwarded-Encrypted: i=1; AJvYcCX60/9bXc766Xyl1o7P24KbQR8Kp3WnU0c9Ok954DfAcgE/+692GBGqsAI3Ih0nCldmrEz05uiYhXdGflg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/IdKcYVur3NbjB2nPdBl5pIrFSIxkHfPAuNwiD7Qf0rcSowrv
-	PlEr9L27mjJjIbDTfWRJSuEuBWcel3g6jNRFfyjWSDXjM1LwIy0Y
-X-Google-Smtp-Source: AGHT+IEQ8YWtIUlSKq/2sobIINxB/L0KI5p3/KjjBc4uXIyybctCA4UGajgqBcmBkuhG5s7fJWbEEw==
-X-Received: by 2002:a17:902:e80f:b0:202:38ea:f61a with SMTP id d9443c01a7336-2039e4d963amr44946665ad.19.1724440791158;
-        Fri, 23 Aug 2024 12:19:51 -0700 (PDT)
+        bh=KHQMvvb6+dnevxicO8q1f4XJW8/KeupnupjXeQ3/3ms=;
+        b=H1DfDGtpyCqjSmx3/7jBSelodX5lR3RejHBt1uxoqPqfzcHacDx5ffdYyTeQLqOm0X
+         RNq7rMoHOkELRdUPvOWfB5rO5Z05J3I/Qh3YApBkgy5x9g1ZswSBbszOWAlJ42eIcc8x
+         4veGQOgSaUM5XnvAo9M5uZX8/QibQ4gfWaXjVzGd0AdDhl1gg4mq5hVEqkkOWF9MziKl
+         s4Sai17jooWa6vqSX7H4d44YOuyiADGFX5CZzXMRa37HGjh+FlbyaTpzWcEDbibPDAPe
+         fSptE6WKxutGtxY3oBPxHPWg1hnZJU6rtfydUbTfeI/JbzgHsBO9R1dud53law0sf1bC
+         mMLw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8lDsloO8r+uA2Y3+tm7LwiXqW6nrzeXA4r+Hk/FYdORPx2GFkKf8jkF+T34B+X0uAcET1BfHFvGhkWNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym0lj89xfwt+J+ZVr/ruZN49Dq8+teCCpw/ZkO+GIEqqBcOduO
+	qID93jj4A1mZe0sKmK1lH4Bozi+evgW1q8YxuVd1zebccNw7JlCH
+X-Google-Smtp-Source: AGHT+IGf9H6iSBiIl0snsQoF9GORan39gQhJJ+wnKZDo4HMcBbPaX041pwm7d/h24FLq1fAfZe8esQ==
+X-Received: by 2002:a17:902:c407:b0:203:a0ea:5f93 with SMTP id d9443c01a7336-203a0ea614bmr33702805ad.0.1724440820106;
+        Fri, 23 Aug 2024 12:20:20 -0700 (PDT)
 Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385580810sm31712885ad.105.2024.08.23.12.19.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385fcff06sm31794305ad.308.2024.08.23.12.20.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 12:19:50 -0700 (PDT)
-Date: Fri, 23 Aug 2024 12:19:48 -0700
+        Fri, 23 Aug 2024 12:20:19 -0700 (PDT)
+Date: Fri, 23 Aug 2024 12:20:17 -0700
 From: Yury Norov <yury.norov@gmail.com>
 To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
@@ -77,11 +77,11 @@ Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Ben Segall <bsegall@google.com>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [RFC PATCH v1 2/6] lib: Implement find_{first,next,nth}_nor_bit,
- find_first_andnot_bit
-Message-ID: <Zsjg1H_V8eq3-grK@yury-ThinkPad>
+Subject: Re: [RFC PATCH v1 1/6] lib: Clarify comment on top of
+ find_next_andnot_bit
+Message-ID: <Zsjg8YiiwM16e_-6@yury-ThinkPad>
 References: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
- <20240823185946.418340-3-mathieu.desnoyers@efficios.com>
+ <20240823185946.418340-2-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,16 +90,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823185946.418340-3-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20240823185946.418340-2-mathieu.desnoyers@efficios.com>
 
-On Fri, Aug 23, 2024 at 02:59:42PM -0400, Mathieu Desnoyers wrote:
-> Allow finding the first, next, or nth bit within two input bitmasks
-> which is zero in both masks.
-> 
-> Allow fiding the first bit within two input bitmasks which is set in
-> first mask and cleared in the second mask. find_next_andnot_bit and
-> find_nth_andnot_bit already exist, so find the first bit appears to be
-> missing.
+On Fri, Aug 23, 2024 at 02:59:41PM -0400, Mathieu Desnoyers wrote:
+> Make the comment on top of find_next_andnot_bit clearer by discussing in
+> terms of "cleared bits" rather than "excluding bits".
 > 
 > Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 > Cc: Yury Norov <yury.norov@gmail.com>
@@ -107,235 +102,33 @@ On Fri, Aug 23, 2024 at 02:59:42PM -0400, Mathieu Desnoyers wrote:
 
 Acked-by: Yury Norov <yury.norov@gmail.com>
 
-If it comes to v2, can you also add some sanity tests for the new API?
-
 > ---
-> Changes since v0:
-> - Rename "notandnot" to "nor", document equivalence.
-> - Move comment cleanups to a separate patch.
-> - Use __always_inline.
-> ---
->  include/linux/find.h | 112 +++++++++++++++++++++++++++++++++++++++++++
->  lib/find_bit.c       |  36 ++++++++++++++
->  2 files changed, 148 insertions(+)
+>  include/linux/find.h | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
 > diff --git a/include/linux/find.h b/include/linux/find.h
-> index 8a170aa55634..b1394ba92654 100644
+> index 5dfca4225fef..8a170aa55634 100644
 > --- a/include/linux/find.h
 > +++ b/include/linux/find.h
-> @@ -14,6 +14,8 @@ unsigned long _find_next_and_bit(const unsigned long *addr1, const unsigned long
->  					unsigned long nbits, unsigned long start);
->  unsigned long _find_next_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
->  					unsigned long nbits, unsigned long start);
-> +unsigned long _find_next_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
-> +					unsigned long nbits, unsigned long start);
->  unsigned long _find_next_or_bit(const unsigned long *addr1, const unsigned long *addr2,
->  					unsigned long nbits, unsigned long start);
->  unsigned long _find_next_zero_bit(const unsigned long *addr, unsigned long nbits,
-> @@ -24,11 +26,17 @@ unsigned long __find_nth_and_bit(const unsigned long *addr1, const unsigned long
->  				unsigned long size, unsigned long n);
->  unsigned long __find_nth_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
->  					unsigned long size, unsigned long n);
-> +unsigned long __find_nth_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
-> +					unsigned long size, unsigned long n);
->  unsigned long __find_nth_and_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
->  					const unsigned long *addr3, unsigned long size,
->  					unsigned long n);
->  extern unsigned long _find_first_and_bit(const unsigned long *addr1,
->  					 const unsigned long *addr2, unsigned long size);
-> +extern unsigned long _find_first_andnot_bit(const unsigned long *addr1,
-> +					 const unsigned long *addr2, unsigned long size);
-> +extern unsigned long _find_first_nor_bit(const unsigned long *addr1,
-> +					 const unsigned long *addr2, unsigned long size);
->  unsigned long _find_first_and_and_bit(const unsigned long *addr1, const unsigned long *addr2,
->  				      const unsigned long *addr3, unsigned long size);
->  extern unsigned long _find_first_zero_bit(const unsigned long *addr, unsigned long size);
-> @@ -130,6 +138,35 @@ unsigned long find_next_andnot_bit(const unsigned long *addr1,
->  }
->  #endif
+> @@ -102,15 +102,14 @@ unsigned long find_next_and_bit(const unsigned long *addr1,
 >  
-> +/**
-> + * find_next_nor_bit - find the next bit cleared in both *addr1 and *addr2
-> + * @addr1: The first address to base the search on
-> + * @addr2: The second address to base the search on
-> + * @size: The bitmap size in bits
-> + * @offset: The bitnumber to start searching at
-> + *
-> + * Returns the bit number for the next bit cleared in both *addr1 and *addr2.
-> + * If no such bits are found, returns @size.
-> + * The bitwise operation nor ~(A | B) is equivalent to (~A & ~B).
-> + */
-> +static __always_inline
-> +unsigned long find_next_nor_bit(const unsigned long *addr1,
-> +		const unsigned long *addr2, unsigned long size,
-> +		unsigned long offset)
-> +{
-> +	if (small_const_nbits(size)) {
-> +		unsigned long val;
-> +
-> +		if (unlikely(offset >= size))
-> +			return size;
-> +
-> +		val = ~(*addr1 | *addr2) & GENMASK(size - 1, offset);
-> +		return val ? __ffs(val) : size;
-> +	}
-> +
-> +	return _find_next_nor_bit(addr1, addr2, size, offset);
-> +}
-> +
->  #ifndef find_next_or_bit
+>  #ifndef find_next_andnot_bit
 >  /**
->   * find_next_or_bit - find the next set bit in either memory regions
-> @@ -291,6 +328,33 @@ unsigned long find_nth_andnot_bit(const unsigned long *addr1, const unsigned lon
->  	return __find_nth_andnot_bit(addr1, addr2, size, n);
->  }
->  
-> +/**
-> + * find_nth_nor_bit - find N'th cleared bit in 2 memory regions.
-> + * @addr1: The 1st address to start the search at
-> + * @addr2: The 2nd address to start the search at
-> + * @size: The maximum number of bits to search
-> + * @n: The number of set bit, which position is needed, counting from 0
-> + *
-> + * Returns the bit number of the N'th bit cleared in the two regions.
-> + * If no such, returns @size.
-> + * The bitwise operation nor ~(A | B) is equivalent to (~A & ~B).
-> + */
-> +static __always_inline
-> +unsigned long find_nth_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
-> +				unsigned long size, unsigned long n)
-> +{
-> +	if (n >= size)
-> +		return size;
-> +
-> +	if (small_const_nbits(size)) {
-> +		unsigned long val = ~(*addr1 | *addr2) & GENMASK(size - 1, 0);
-> +
-> +		return val ? fns(val, n) : size;
-> +	}
-> +
-> +	return __find_nth_nor_bit(addr1, addr2, size, n);
-> +}
-> +
->  /**
->   * find_nth_and_andnot_bit - find N'th set bit in 2 memory regions,
->   *			     excluding those set in 3rd region
-> @@ -346,6 +410,54 @@ unsigned long find_first_and_bit(const unsigned long *addr1,
->  }
->  #endif
->  
-> +/**
-> + * find_first_andnot_bit - find the first set bit in 2 memory regions,
-> + *                         flipping bits in 2nd region.
-> + * @addr1: The first address to base the search on
-> + * @addr2: The second address to base the search on
-> + * @size: The bitmap size in bits
-> + *
-> + * Returns the bit number for the next set bit.
-> + * If no bits are set, returns @size.
-> + */
-> +static __always_inline
-> +unsigned long find_first_andnot_bit(const unsigned long *addr1,
-> +				 const unsigned long *addr2,
-> +				 unsigned long size)
-> +{
-> +	if (small_const_nbits(size)) {
-> +		unsigned long val = *addr1 & (~*addr2) & GENMASK(size - 1, 0);
-> +
-> +		return val ? __ffs(val) : size;
-> +	}
-> +
-> +	return _find_first_andnot_bit(addr1, addr2, size);
-> +}
-> +
-> +/**
-> + * find_first_nor_bit - find the first cleared bit in 2 memory regions
-> + * @addr1: The first address to base the search on
-> + * @addr2: The second address to base the search on
-> + * @size: The bitmap size in bits
-> + *
-> + * Returns the bit number for the next cleared bit.
-> + * If no bits are set, returns @size.
-> + * The bitwise operation nor ~(A | B) is equivalent to (~A & ~B).
-> + */
-> +static __always_inline
-> +unsigned long find_first_nor_bit(const unsigned long *addr1,
-> +				 const unsigned long *addr2,
-> +				 unsigned long size)
-> +{
-> +	if (small_const_nbits(size)) {
-> +		unsigned long val = ~(*addr1 | *addr2) & GENMASK(size - 1, 0);
-> +
-> +		return val ? __ffs(val) : size;
-> +	}
-> +
-> +	return _find_first_nor_bit(addr1, addr2, size);
-> +}
-> +
->  /**
->   * find_first_and_and_bit - find the first set bit in 3 memory regions
+> - * find_next_andnot_bit - find the next set bit in *addr1 excluding all the bits
+> - *                        in *addr2
+> + * find_next_andnot_bit - find the next set bit in *addr1, cleared in *addr2
 >   * @addr1: The first address to base the search on
-> diff --git a/lib/find_bit.c b/lib/find_bit.c
-> index 0836bb3d76c5..8050bc7c7ede 100644
-> --- a/lib/find_bit.c
-> +++ b/lib/find_bit.c
-> @@ -116,6 +116,28 @@ unsigned long _find_first_and_bit(const unsigned long *addr1,
->  EXPORT_SYMBOL(_find_first_and_bit);
->  #endif
->  
-> +/*
-> + * Find the first set bit in two memory regions, flipping bits in 2nd region.
-> + */
-> +unsigned long _find_first_andnot_bit(const unsigned long *addr1,
-> +				  const unsigned long *addr2,
-> +				  unsigned long size)
-> +{
-> +	return FIND_FIRST_BIT(addr1[idx] & ~addr2[idx], /* nop */, size);
-> +}
-> +EXPORT_SYMBOL(_find_first_andnot_bit);
-> +
-> +/*
-> + * Find the first cleared bit in two memory regions.
-> + */
-> +unsigned long _find_first_nor_bit(const unsigned long *addr1,
-> +				  const unsigned long *addr2,
-> +				  unsigned long size)
-> +{
-> +	return FIND_FIRST_BIT(~(addr1[idx] | addr2[idx]), /* nop */, size);
-> +}
-> +EXPORT_SYMBOL(_find_first_nor_bit);
-> +
->  /*
->   * Find the first set bit in three memory regions.
+>   * @addr2: The second address to base the search on
+>   * @size: The bitmap size in bits
+>   * @offset: The bitnumber to start searching at
+>   *
+> - * Returns the bit number for the next set bit
+> - * If no bits are set, returns @size.
+> + * Returns the bit number for the next bit set in *addr1, cleared in *addr2.
+> + * If no such bits are found, returns @size.
 >   */
-> @@ -167,6 +189,13 @@ unsigned long __find_nth_andnot_bit(const unsigned long *addr1, const unsigned l
->  }
->  EXPORT_SYMBOL(__find_nth_andnot_bit);
->  
-> +unsigned long __find_nth_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
-> +				 unsigned long size, unsigned long n)
-> +{
-> +	return FIND_NTH_BIT(~(addr1[idx] | addr2[idx]), size, n);
-> +}
-> +EXPORT_SYMBOL(__find_nth_nor_bit);
-> +
->  unsigned long __find_nth_and_andnot_bit(const unsigned long *addr1,
->  					const unsigned long *addr2,
->  					const unsigned long *addr3,
-> @@ -194,6 +223,13 @@ unsigned long _find_next_andnot_bit(const unsigned long *addr1, const unsigned l
->  EXPORT_SYMBOL(_find_next_andnot_bit);
->  #endif
->  
-> +unsigned long _find_next_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
-> +					unsigned long nbits, unsigned long start)
-> +{
-> +	return FIND_NEXT_BIT(~(addr1[idx] | addr2[idx]), /* nop */, nbits, start);
-> +}
-> +EXPORT_SYMBOL(_find_next_nor_bit);
-> +
->  #ifndef find_next_or_bit
->  unsigned long _find_next_or_bit(const unsigned long *addr1, const unsigned long *addr2,
->  					unsigned long nbits, unsigned long start)
+>  static inline
+>  unsigned long find_next_andnot_bit(const unsigned long *addr1,
 > -- 
 > 2.39.2
 
