@@ -1,166 +1,464 @@
-Return-Path: <linux-kernel+bounces-298280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1114995C51A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E79895C514
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06CB281E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2007A1F254DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860BA6CDC8;
-	Fri, 23 Aug 2024 05:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDC36A332;
+	Fri, 23 Aug 2024 05:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C0yZSCzD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ApB8UPw/"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECA16F305;
-	Fri, 23 Aug 2024 05:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B69D4207A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724392669; cv=none; b=hwKJo9Zo0lw78n+5o7HEpJ1vBQzSGZ5/tHYQFXe2851JtsO1T9lvtvcSyJPpowDHu7r1oLlZhTOmzFOTzO6Ed5MVUlivIcJuRbv6gWpkP9ZDFCdVKSIwf7Dhpij4f6drj6m7Kg1OaE4g+h8OV9vqL0De8ELCEx5LTxqcD2Wqm2s=
+	t=1724392640; cv=none; b=SRpeFR7OZP6VTnShPevAksYIlLftZ4137ZKBBizNwFgIHALqG6TuggqcMbTgoLCte/dbpmhHMpwitZX8LREpsbtpz346YVDqtCZ6iQBbGxkZlnypyHInu8B1d7ULzP9114crpNfwkZfgsv2ZA7TaNEhTSG4hv+sgr8fvJ9bhNmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724392669; c=relaxed/simple;
-	bh=qKOTiMwnAcsaXcsYIeN5NCeYSDdkBUGq4qsXHEk3XmI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G/VZsVdwSjRQih9NBB6ngC/mh5j49uYyBCKH0tli+Gpbek1D0aHJyNcijKInoPZ8taS2nl+NUtS27HpJURMCSPwYYzCuCvog5IQCd7U0sdwv7ObAULjSMkP1+AvkxF9AEvQrcQDEK5O6YUViZLd9OZaNvrluW6NDGVqN8VTgCO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C0yZSCzD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N2msbo007676;
-	Fri, 23 Aug 2024 05:57:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=V//feCbavFR0yiNBSQY8IK+/h95Nfvq1hfMd0arRUKw=; b=C0
-	yZSCzDMRED6m0TkyjZk8W19cruJP5LqIAF5K5iI9a9f6zrtKBPUyYMBNKfKneyZ5
-	vfhe3/NzB5n1dEc2nDOaeQx2BK9So0+4mEgnUNcLjRCGoGugbEcQiIeiFRy+8FUF
-	tcttUeYiNQWlNRgFqaI+NrXj6bxv1tccdblaGbpEveSRnsg+k84hwgIrzGiipWgO
-	8C6yd2D49+JsIMJnlH6Rg7Pni3At49uGngBi7/alBo21wDZ3aumVuXMem9GjPKjJ
-	1fhJHZJ76ryHlaAuI9F44G/Jb+HUEb22+9ejpAJLJ3Wpeo2bGbo+FB5vXbXmC737
-	+7O8M8/5E/lHrnnqx83Q==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4159yjf355-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 05:57:38 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47N5v3ZM023796
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 05:57:03 GMT
-Received: from hu-uaggarwa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 22 Aug 2024 22:57:01 -0700
-From: Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        "Uttkarsh
- Aggarwal" <quic_uaggarwa@quicinc.com>
-Subject: [PATCH] usb: dwc3: core: Set GUCTL1[29] to ignore single SE0 glitch for FS/LS operation
-Date: Fri, 23 Aug 2024 11:26:42 +0530
-Message-ID: <20240823055642.27638-1-quic_uaggarwa@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1724392640; c=relaxed/simple;
+	bh=kUHEIOvi4sJoJiMmBCKNNKxjIrAPbKGwCVYTRdnJ0GU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdE7q3ulGUlbJ9TktWdfJKG8LNplm618ccdj6V7lBX1v8emOPe4Ap7JozccDWUMz9SMm5NxeGhKA4JNSOyF8PMcwdv2GYy+EQc5oHQa9hh9NwXKyIhRFOvP5QiYYpX/xjGDDyZQuZVmIQnMbyTzRw3jAQyT+puF9PKcN1Z312OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ApB8UPw/; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d3c5f769d6so1148443a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724392636; x=1724997436; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B2JNYeuyllRPoSIRsU2AqZAQtPgOIzgDgHNYGOF4FQ0=;
+        b=ApB8UPw/nro2FH+v0Rj27gW0108li+W4JXaOTuKkE4GZNUXyKqBVSufovLjLjnJcvD
+         AvX6wz5in6UCcr1flDhzx/lYV1oMuJWaB5NaUanrpCk6li+KccIddLxEkfkJPhJPDhug
+         AdDTdpbl4kGufNlmTcijzHeOMPeUUYLcgaJzGmJc3nFrvzIHDNxbzA6jIVd1jKBoIuF/
+         t4nm0S8zbte+NlXExuRgiN07Ul+btAHDATxnyfDQIpQE4vpF7B6yayAoOLxW7UbhHYfk
+         Fp8J62yyAnQO0VriRAfGcEmxYr06WFKg9ff+g9ly0GqPZqJmslORBdOp5m4KfwbMBUB8
+         uK+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724392636; x=1724997436;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B2JNYeuyllRPoSIRsU2AqZAQtPgOIzgDgHNYGOF4FQ0=;
+        b=GV5JhjpoKytpdceV/PVs1EPxPEOirU54EIt82Ri34Z8l2VzvHkC1qfMmtb1cANkMhs
+         jLiKKlD8iCiULBo2jO0TXjNDv8JMNYBf2YGh/4HB8H8EnSbFkK48hTAJN9w4SthCK5Lz
+         /qVnsmL1EGcYufJvVRuTncePItJfAw2HP+GlqoZlVqdKIobdpD9l1iatRKA/tSje37kZ
+         JcmktJug72gM5O4085BA7C0t/vnZeWQScKGSO4pKV1zKbBc+2Wptiq9U1coTXnv+6Cer
+         S9o1C8T93kfdzY3ZO3rnGpvEtelxlyKbD12XL9hEbJLvWFRgcWatQM8e57pUvkXv/UV2
+         t89g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhW0mtLx/VJ7zPL8ll1AkK9v/NX6wqmEw/RWdmGiHcDuSx6YUwnEUPkQROwL4xOqHNmH+v9tcefAbZZMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG1gma7/uuIV4LTKpkMWISPRmGfdTqxo8fmHvaoJyL6f+ve7df
+	1XvnaXfUiFQCP9IIzpYCOr6crBssV84+4vivjaNH5oT6N8jJ85Zb2fslJtJSHWQ=
+X-Google-Smtp-Source: AGHT+IFhAROETxX2TthfeT2Mhztm1JSkms/8ZDmt9phs4NUMtjlR+WSgKXUQhpFYiG+pAi3qOKfquw==
+X-Received: by 2002:a17:90a:12c2:b0:2c9:69cc:3a6f with SMTP id 98e67ed59e1d1-2d646d0c2f3mr1093506a91.31.1724392636070;
+        Thu, 22 Aug 2024 22:57:16 -0700 (PDT)
+Received: from ghost ([2601:647:6700:64d0:32df:35ec:8dbd:978c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eba23d78sm5318174a91.29.2024.08.22.22.57.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 22:57:15 -0700 (PDT)
+Date: Thu, 22 Aug 2024 22:57:12 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, rsworktech@outlook.com,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] riscv: mm: Use hint address in mmap if available
+Message-ID: <ZsgkuO5qbnC+79H1@ghost>
+References: <mhng-7d9e2b27-a53d-4579-b78e-0aec038290fb@palmer-ri-x1c9>
+ <tencent_86551D71707162B243861AC9F8EC0573B409@qq.com>
+ <ZsgSgm0zEE2t/9tK@ghost>
+ <tencent_B65111F737A62A64BBD1900F5F1040DBC805@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: c4n8LsMcm8ejfNBv0jfF7xUBnhFrEQAB
-X-Proofpoint-GUID: c4n8LsMcm8ejfNBv0jfF7xUBnhFrEQAB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_03,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 phishscore=0 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 adultscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408230041
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_B65111F737A62A64BBD1900F5F1040DBC805@qq.com>
 
-Currently in few of Qualcomm chips USB LS mouse not detected
-showing following errors:
+On Fri, Aug 23, 2024 at 01:28:18PM +0800, Yangyu Chen wrote:
+> 
+> 
+> > On Aug 23, 2024, at 12:39, Charlie Jenkins <charlie@rivosinc.com> wrote:
+> > 
+> > On Thu, Aug 22, 2024 at 10:51:54AM +0800, Yangyu Chen wrote:
+> >> 
+> >> 
+> >>> On Aug 22, 2024, at 06:17, Palmer Dabbelt <palmer@dabbelt.com> wrote:
+> >>> 
+> >>> On Mon, 19 Aug 2024 18:58:18 PDT (-0700), rsworktech@outlook.com wrote:
+> >>>> On 2024-08-20 01:00, Charlie Jenkins wrote:
+> >>>>> On Mon, Aug 19, 2024 at 01:55:57PM +0800, Levi Zim wrote:
+> >>>>>> On 2024-03-22 22:06, Palmer Dabbelt wrote:
+> >>>>>>> On Thu, 01 Feb 2024 18:28:06 PST (-0800), Charlie Jenkins wrote:
+> >>>>>>>> On Wed, Jan 31, 2024 at 11:59:43PM +0800, Yangyu Chen wrote:
+> >>>>>>>>> On Wed, 2024-01-31 at 22:41 +0800, Yangyu Chen wrote:
+> >>>>>>>>>> On Tue, 2024-01-30 at 17:07 -0800, Charlie Jenkins wrote:
+> >>>>>>>>>>> On riscv it is guaranteed that the address returned by mmap is less
+> >>>>>>>>>>> than
+> >>>>>>>>>>> the hint address. Allow mmap to return an address all the way up to
+> >>>>>>>>>>> addr, if provided, rather than just up to the lower address space.
+> >>>>>>>>>>>>> This provides a performance benefit as well, allowing
+> >>>>>>>>> mmap to exit
+> >>>>>>>>>>> after
+> >>>>>>>>>>> checking that the address is in range rather than searching for a
+> >>>>>>>>>>> valid
+> >>>>>>>>>>> address.
+> >>>>>>>>>>>>> It is possible to provide an address that uses at most the same
+> >>>>>>>>>>> number
+> >>>>>>>>>>> of bits, however it is significantly more computationally expensive
+> >>>>>>>>>>> to
+> >>>>>>>>>>> provide that number rather than setting the max to be the hint
+> >>>>>>>>>>> address.
+> >>>>>>>>>>> There is the instruction clz/clzw in Zbb that returns the highest
+> >>>>>>>>>>> set
+> >>>>>>>>>>> bit
+> >>>>>>>>>>> which could be used to performantly implement this, but it would
+> >>>>>>>>>>> still
+> >>>>>>>>>>> be slower than the current implementation. At worst case, half of
+> >>>>>>>>>>> the
+> >>>>>>>>>>> address would not be able to be allocated when a hint address is
+> >>>>>>>>>>> provided.
+> >>>>>>>>>>>>> Signed-off-by: Charlie Jenkins<charlie@rivosinc.com>
+> >>>>>>>>>>> ---
+> >>>>>>>>>>> arch/riscv/include/asm/processor.h | 27 +++++++++++---------------
+> >>>>>>>>>>> -
+> >>>>>>>>>>> 1 file changed, 11 insertions(+), 16 deletions(-)
+> >>>>>>>>>>>>> diff --git a/arch/riscv/include/asm/processor.h
+> >>>>>>>>>>> b/arch/riscv/include/asm/processor.h
+> >>>>>>>>>>> index f19f861cda54..8ece7a8f0e18 100644
+> >>>>>>>>>>> --- a/arch/riscv/include/asm/processor.h
+> >>>>>>>>>>> +++ b/arch/riscv/include/asm/processor.h
+> >>>>>>>>>>> @@ -14,22 +14,16 @@
+> >>>>>>>>>>> 
+> >>>>>>>>>>> #include <asm/ptrace.h>
+> >>>>>>>>>>> 
+> >>>>>>>>>>> -#ifdef CONFIG_64BIT
+> >>>>>>>>>>> -#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
+> >>>>>>>>>>> -#define STACK_TOP_MAX        TASK_SIZE_64
+> >>>>>>>>>>> -
+> >>>>>>>>>>> #define arch_get_mmap_end(addr, len, flags)            \
+> >>>>>>>>>>> ({                                \
+> >>>>>>>>>>>     unsigned long
+> >>>>>>>>>>> mmap_end;                    \
+> >>>>>>>>>>>     typeof(addr) _addr = (addr);                \
+> >>>>>>>>>>> -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
+> >>>>>>>>>>> is_compat_task())) \
+> >>>>>>>>>>> +    if ((_addr) == 0 ||                    \
+> >>>>>>>>>>> +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
+> >>>>>>>>>>> +        ((_addr + len) > BIT(VA_BITS -
+> >>>>>>>>>>> 1)))            \
+> >>>>>>>>>>>         mmap_end = STACK_TOP_MAX;            \
+> >>>>>>>>>>> -    else if ((_addr) >= VA_USER_SV57) \
+> >>>>>>>>>>> -        mmap_end = STACK_TOP_MAX;            \
+> >>>>>>>>>>> -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
+> >>>>>>>>>>> VA_BITS_SV48)) \
+> >>>>>>>>>>> -        mmap_end = VA_USER_SV48;            \
+> >>>>>>>>>>>     else                            \
+> >>>>>>>>>>> -        mmap_end = VA_USER_SV39;            \
+> >>>>>>>>>>> +        mmap_end = (_addr + len);            \
+> >>>>>>>>>>>     mmap_end;                        \
+> >>>>>>>>>>> })
+> >>>>>>>>>>> 
+> >>>>>>>>>>> @@ -39,17 +33,18 @@
+> >>>>>>>>>>>     typeof(addr) _addr = (addr);                \
+> >>>>>>>>>>>     typeof(base) _base = (base);                \
+> >>>>>>>>>>>     unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base);    \
+> >>>>>>>>>>> -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
+> >>>>>>>>>>> is_compat_task())) \
+> >>>>>>>>>>> +    if ((_addr) == 0 ||                    \
+> >>>>>>>>>>> +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
+> >>>>>>>>>>> +        ((_addr + len) > BIT(VA_BITS -
+> >>>>>>>>>>> 1)))            \
+> >>>>>>>>>>>         mmap_base = (_base);                \
+> >>>>>>>>>>> -    else if (((_addr) >= VA_USER_SV57) && (VA_BITS >=
+> >>>>>>>>>>> VA_BITS_SV57)) \
+> >>>>>>>>>>> -        mmap_base = VA_USER_SV57 - rnd_gap; \
+> >>>>>>>>>>> -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
+> >>>>>>>>>>> VA_BITS_SV48)) \
+> >>>>>>>>>>> -        mmap_base = VA_USER_SV48 - rnd_gap; \
+> >>>>>>>>>>>     else                            \
+> >>>>>>>>>>> -        mmap_base = VA_USER_SV39 - rnd_gap; \
+> >>>>>>>>>>> +        mmap_base = (_addr + len) - rnd_gap; \
+> >>>>>>>>>>>     mmap_base;                        \
+> >>>>>>>>>>> })
+> >>>>>>>>>>> 
+> >>>>>>>>>>> +#ifdef CONFIG_64BIT
+> >>>>>>>>>>> +#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
+> >>>>>>>>>>> +#define STACK_TOP_MAX        TASK_SIZE_64
+> >>>>>>>>>>> #else
+> >>>>>>>>>>> #define DEFAULT_MAP_WINDOW    TASK_SIZE
+> >>>>>>>>>>> #define STACK_TOP_MAX        TASK_SIZE
+> >>>>>>>>>>>>> I have carefully tested your patch on qemu with sv57. A
+> >>>>>>>>> bug that
+> >>>>>>>>>> needs
+> >>>>>>>>>> to be solved is that mmap with the same hint address without
+> >>>>>>>>>> MAP_FIXED
+> >>>>>>>>>> set will fail the second time.
+> >>>>>>>>>>> Userspace code to reproduce the bug:
+> >>>>>>>>>>> #include <sys/mman.h>
+> >>>>>>>>>> #include <stdio.h>
+> >>>>>>>>>> #include <stdint.h>
+> >>>>>>>>>>> void test(char *addr) {
+> >>>>>>>>>>    char *res = mmap(addr, 4096, PROT_READ | PROT_WRITE,
+> >>>>>>>>>> MAP_ANONYMOUS
+> >>>>>>>>>>> MAP_PRIVATE, -1, 0);
+> >>>>>>>>>>    printf("hint %p got %p.\n", addr, res);
+> >>>>>>>>>> }
+> >>>>>>>>>>> int main (void) {
+> >>>>>>>>>>    test(1<<30);
+> >>>>>>>>>>    test(1<<30);
+> >>>>>>>>>>    test(1<<30);
+> >>>>>>>>>>    return 0;
+> >>>>>>>>>> }
+> >>>>>>>>>>> output:
+> >>>>>>>>>>> hint 0x40000000 got 0x40000000.
+> >>>>>>>>>> hint 0x40000000 got 0xffffffffffffffff.
+> >>>>>>>>>> hint 0x40000000 got 0xffffffffffffffff.
+> >>>>>>>>>>> output on x86:
+> >>>>>>>>>>> hint 0x40000000 got 0x40000000.
+> >>>>>>>>>> hint 0x40000000 got 0x7f9171363000.
+> >>>>>>>>>> hint 0x40000000 got 0x7f9171362000.
+> >>>>>>>>>>> It may need to implement a special arch_get_unmapped_area and
+> >>>>>>>>>> arch_get_unmapped_area_topdown function.
+> >>>>>>>>>> 
+> >>>>>>>>> This is because hint address < rnd_gap. I have tried to let mmap_base =
+> >>>>>>>>> min((_addr + len), (base) + TASK_SIZE - DEFAULT_MAP_WINDOW). However it
+> >>>>>>>>> does not work for bottom-up while ulimit -s is unlimited. You said this
+> >>>>>>>>> behavior is expected from patch v2 review. However it brings a new
+> >>>>>>>>> regression even on sv39 systems.
+> >>>>>>>>> 
+> >>>>>>>>> I still don't know the reason why use addr+len as the upper-bound. I
+> >>>>>>>>> think solution like x86/arm64/powerpc provide two address space switch
+> >>>>>>>>> based on whether hint address above the default map window is enough.
+> >>>>>>>>> 
+> >>>>>>>> Yep this is expected. It is up to the maintainers to decide.
+> >>>>>>> Sorry I forgot to reply to this, I had a buffer sitting around somewhere
+> >>>>>>> but I must have lost it.
+> >>>>>>> 
+> >>>>>>> I think Charlie's approach is the right way to go.  Putting my userspace
+> >>>>>>> hat on, I'd much rather have my allocations fail rather than silently
+> >>>>>>> ignore the hint when there's memory pressure.
+> >>>>>>> 
+> >>>>>>> If there's some real use case that needs these low hints to be silently
+> >>>>>>> ignored under VA pressure then we can try and figure something out that
+> >>>>>>> makes those applications work.
+> >>>>>> I could confirm that this patch has broken chromium's partition allocator on
+> >>>>>> riscv64. The minimal reproduction I use is chromium-mmap.c:
+> >>>>>> 
+> >>>>>> #include <stdio.h>
+> >>>>>> #include <sys/mman.h>
+> >>>>>> 
+> >>>>>> int main() {
+> >>>>>>    void* expected = (void*)0x400000000;
+> >>>>>>    void* addr = mmap(expected, 17179869184, PROT_NONE,
+> >>>>>> MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+> >>>>>>    if (addr != expected) {
+> >>>>> It is not valid to assume that the address returned by mmap will be the
+> >>>>> hint address. If the hint address is not available, mmap will return a
+> >>>>> different address.
+> >>>> 
+> >>>> Oh, sorry I didn't make it clear what is the expected behavior.
+> >>>> The printf here is solely for debugging purpose and I don't mean that
+> >>>> chromium expect it will get the hint address. The expected behavior is
+> >>>> that both the two mmap calls will succeed.
+> >>>> 
+> >>>>>>        printf("Not expected address: %p != %p\n", addr, expected);
+> >>>>>>    }
+> >>>>>>    expected = (void*)0x3fffff000;
+> >>>>>>    addr = mmap(expected, 17179873280, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS,
+> >>>>>> -1, 0);
+> >>>>>>    if (addr != expected) {
+> >>>>>>        printf("Not expected address: %p != %p\n", addr, expected);
+> >>>>>>    }
+> >>>>>>    return 0;
+> >>>>>> }
+> >>>>>> 
+> >>>>>> The second mmap fails with ENOMEM. Manually reverting this commit fixes the
+> >>>>>> issue for me. So I think it's clearly a regression and breaks userspace.
+> >>>>>> 
+> >>>>> The issue here is that overlapping memory is being requested. This
+> >>>>> second mmap will never be able to provide an address at 0x3fffff000 with
+> >>>>> a size of 0x400001000 since mmap just provided an address at 0x400000000
+> >>>>> with a size of 0x400000000.
+> >>>>> 
+> >>>>> Before this patch, this request causes mmap to return a completely
+> >>>>> arbitrary value. There is no reason to use a hint address in this manner
+> >>>>> because the hint can never be respected. Since an arbitrary address is
+> >>>>> desired, a hint of zero should be used.
+> >>>>> 
+> >>>>> This patch causes the behavior to be more deterministic. Instead of
+> >>>>> providing an arbitrary address, it causes the address to be less than or
+> >>>>> equal to the hint address. This allows for applications to make
+> >>>>> assumptions about the returned address.
+> >>>> 
+> >>>> About the overlap, of course the partition allocator's request for
+> >>>> overlapped vma seems unreasonable.
+> >>>> 
+> >>>> But I still don't quite understand why mmap cannot use an address higher
+> >>>> than the hint address.
+> >>>> The hint address, after all, is a hint, not a requirement.
+> >>>> 
+> >>>> Quoting the man page:
+> >>>> 
+> >>>>>  If another mapping already exists there, the kernel picks
+> >>>>>       a new address that may or may not depend on the hint.  The
+> >>>>>       address of the new mapping is returned as the result of the call.
+> >>>> 
+> >>>> So for casual programmers that only reads man page but not architecture
+> >>>> specific kernel documentation, the current behavior of mmap on riscv64
+> >>>> failing on overlapped address ranges are quite surprising IMO.
+> >>>> 
+> >>>> And quoting the man page again about the errno:
+> >>>> 
+> >>>>>      ENOMEM No memory is available.
+> >>>>> 
+> >>>>>      ENOMEM The process's maximum number of mappings would have been
+> >>>>>             exceeded.  This error can also occur for munmap(), when
+> >>>>>             unmapping a region in the middle of an existing mapping,
+> >>>>>             since this results in two smaller mappings on either side
+> >>>>>             of the region being unmapped.
+> >>>>> 
+> >>>>>      ENOMEM (since Linux 4.7) The process's RLIMIT_DATA limit,
+> >>>>>             described in getrlimit(2), would have been exceeded.
+> >>>>> 
+> >>>>>      ENOMEM We don't like addr, because it exceeds the virtual address
+> >>>>>             space of the CPU.
+> >>>>> 
+> >>>> 
+> >>>> There's no matching description for the ENOMEM returned here.
+> >>>> I would suggest removing "because it exceeds the virtual address
+> >>>> space of the CPU." from the last item if the ENOMEM behavior here
+> >>>> is expected.
+> >>>> 
+> >>>>> This code is unfortunately relying on the previously mostly undefined
+> >>>>> behavior of the hint address in mmap.
+> >>>> 
+> >>>> Although I haven't read the code of chromium's partition allocator to
+> >>>> judge whether it should
+> >>>> be improved or fixed for riscv64, I do know that the kernel "don't break
+> >>>> userspace" and "never EVER blame the user programs".
+> >>> 
+> >>> Ya, sorry for breaking stuff.
+> >>> 
+> >>> The goal here was to move to the mmap flag behavor similar to what arm64 and x86 have, as that was done in a way that didn't appear to break userspace -- or at least any real userspace programs.  IIRC that first test was pretty broken (it actually depended on the hint address), but sounds like that's not the case.
+> >>> 
+> >>> I think maybe this is just luck: we didn't chunk the address space up, we're just hinting on every bit, so we're just more likely to hit the exhaustion.  Doesn't really matter, though, as if it's breaking stuff so we've got to deal with it.
+> >>> 
+> >>> Charlie and I are just talking, and best we can come up with is to move to the behavior where we fall back to larger allocation regions when there's no space in the smaller allocation region. 
+> >> 
+> >> 
+> >> For this solution, the only difference from the mmap behavior of
+> >> x86 and aarch64 is that we will first try to allocate some memory
+> >> from an address less or equal to the request address + size. But
+> >> for most cases, I think there is no need to do that, especially for
+> >> those addresses < BIT(47), as most program works fine on x86-64,
+> >> which has 47bit available userspace address space to use. And for
+> >> that program that wants an address < BIT(32), we already have
+> >> MAP_32BIT now.
+> >> 
+> >> I think we can just fix like that patch:
+> >> https://lore.kernel.org/lkml/tencent_B2D0435BC011135736262764B511994F4805@qq.com/
+> > 
+> > This patch does not satisfy the requirement of having the ability to guarantee
+> > that mmap returns an address that is less than the hint address.
+> 
+> Indeed. My intuition is to remove it and align it with x86 and aarch64.
+> 
+> > This
+> > patch only allows an address to be less than the DEFAULT_MAP_WINDOW
+> > which is 32 bits on sv32, 39 bits on sv39, and 48 bits on sv48 or sv57.
+> > 
+> > This patch also again falls into the trap of using the hint address to
+> > forcefully restrict the address space.
+> 
+> Indeed. However, x86 and aarch64 also use this behavior to restrict
+> va >= BIT(47) by default unless we have the hint address larger
+> than BIT(47).
+> 
+> > I agree with Levi that it is not
+> > very good behavior to have a "hint" cause mmap to fail if conforming to
+> > the hint isn't possible. Instead, I believe it to be more logical to try
+> > to allocate at the hint address, otherwise give a random address.
+> > 
+> 
+> I also agree with this.
+> 
+> > The current behavior can then be maintained through the flag
+> > MAP_BELOW_HINT. This way the user explicitly selects that they want mmap
+> > to fail if an address could not be found within the hint address
+> > constraints.
+> > 
+> 
+> I think restricting the addresses with the MAP_BELOW_HINT flag
+> would be the best choice. However, it remains a problem: What should
+> the behavior be when there is no MAP_BELOW_HINT? I think we can
+> fallback to Sv48 on the Sv57 machine by default to align with x86
+> and aarch64.
 
-[ 81.585361] usb 1-1: Device not responding to setup address.
-[ 81.798676] usb 1-1: device not accepting address 2, error -71
-[ 81.928378] usb 1-1: new low-speed USB device number 3 using xhci-hcd
-[ 82.076248] usb 1-1: Device not responding to setup address.
-[ 82.290630] usb 1-1: Device not responding to setup address.
-[ 82.503877] usb 1-1: device not accepting address 3, error -71
-[ 82.512548] usb usb1-port1: attempt power cycle
+Although that is the behavior on other architectures, I am hesitant to
+follow it because it is a somewhat arbitrary restriction. With a generic
+flag that can force mmap to provide exactly the number of bits that an
+application needs, there is no need for this restriction on riscv. It
+may cause problems for applications running on sv57 hardware, however:
 
-Based on the Logic analyzer waveforms, It has been identified that
-there is skew of about 8nS b/w DP & DM linestate signals
-(o/p of PHY & i/p to controller) at the UTMI interface,
-Due to this controller is seeing SE0 glitch condition,
-this is causing controller to pre-maturely assume that PHY
-has sent all the data & is initiating next packet much early,
-though in reality PHY is still busy sending previous packets.
+1. sv57 hardware does not exist yet
 
-Enabling the GUCTL1.FILTER_SE0_FSLS_EOP bit29 allows the controller
-to ignore single SE0 glitches on the linestate during transmission.
-Only two or more SE0 signals are recognized as a valid EOP.
+2. A hint address would still be required if following the same behavior
+as other architectures.
+	a. It would aid in the porting of an application to sv57
+	hardware, but I am not sure that forcing this restriction is
+	worth having this one piece of parity. Applications using the
+	proposed generic flag would work as expected on all
+	architectures as well.
 
-When this feature is activated, SE0 signals on the linestate
-are validated over two consecutive UTMI/ULPI clock edges for EOP detection.
-
-Device mode (FS): If GUCTL1.FILTER_SE0_FSLS_EOP is set,
-then for device LPM handshake, the controller ignores single
-SE0 glitch on the linestate during transmit. Only two or more
-SE0 is considered as a valid EOP on FS port.
-
-Host mode (FS/LS): If GUCTL1.FILTER_SE0_FSLS_EOP is set, then
-the controller ignores single SE0 glitch on the linestate during transmit.
-Only two or more SE0 is considered as a valid EOP on FS/LS port.
-
-Signed-off-by: Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
----
- drivers/usb/dwc3/core.c | 10 ++++++++++
- drivers/usb/dwc3/core.h |  1 +
- 2 files changed, 11 insertions(+)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 3e55838c0001..1edb16d2940c 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -194,6 +194,16 @@ static void __dwc3_set_mode(struct work_struct *work)
- 
- 	switch (desired_dr_role) {
- 	case DWC3_GCTL_PRTCAP_HOST:
-+
-+		/*
-+		 * Setting GUCTL1 bit 29 so that controller
-+		 * will ignore single SE0 glitch on the linestate
-+		 * during transmit.
-+		 */
-+		reg = dwc3_readl(dwc->regs, DWC3_GUCTL1);
-+		reg |= DWC3_GUCTL1_FILTER_SE0_FSLS_EOP;
-+		dwc3_writel(dwc->regs, DWC3_GUCTL1, reg);
-+
- 		ret = dwc3_host_init(dwc);
- 		if (ret) {
- 			dev_err(dwc->dev, "failed to initialize host\n");
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index e3eea965e57b..73e90daafecf 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -271,6 +271,7 @@
- #define DWC3_GUCTL1_PARKMODE_DISABLE_SS		BIT(17)
- #define DWC3_GUCTL1_PARKMODE_DISABLE_HS		BIT(16)
- #define DWC3_GUCTL1_RESUME_OPMODE_HS_HOST	BIT(10)
-+#define DWC3_GUCTL1_FILTER_SE0_FSLS_EOP		BIT(29)
- 
- /* Global Status Register */
- #define DWC3_GSTS_OTG_IP	BIT(10)
--- 
-2.17.1
-
+> 
+> > - Charlie
+> > 
+> >> 
+> >>> Charlie's going to try and throw together a patch for that, hopefully it'll sort things out.
+> >>> 
+> >>>>> The goal of this patch is to help
+> >>>>> developers have more consistent mmap behavior, but maybe it is necessary
+> >>>>> to hide this behavior behind an mmap flag.
+> >>>> 
+> >>>> Thank you for helping to shape a more consistent mmap behavior.
+> >>>> I think this should be fixed ASAP either by allowing the hint address to
+> >>>> be ignored
+> >>>> (as suggested by the Linux man page), or hide this behavior behind an
+> >>>> mmap flag as you said.
+> >>>> 
+> >>>>> - Charlie
+> >>>>> 
+> >>>>>> See alsohttps://github.com/riscv-forks/electron/issues/4
+> >>>>>> 
+> >>>>>>>> - Charlie
+> >>>>>> Sincerely,
+> >>>>>> Levi
+> >>>>>> 
+> >>>> 
+> >>>> I accidentally introduced some HTML into this reply so this reply is
+> >>>> resent as plain text.
+> >>>> 
+> >>>> Sincerely,
+> >>>> Levi
+> 
+> 
 
