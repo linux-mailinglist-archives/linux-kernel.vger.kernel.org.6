@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-299243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277E895D1ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:46:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 103D495D1EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A3491C20401
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:46:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B00280FCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E115E185E7B;
-	Fri, 23 Aug 2024 15:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xsASl65Y"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD7018953E;
+	Fri, 23 Aug 2024 15:45:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0C91891BA
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A26145B00;
+	Fri, 23 Aug 2024 15:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427872; cv=none; b=G0aCzp8aKpQ8ILKcBWLzdY0BIBzQN95ag/K9tB8Em4ag4n0RyhC8kUNEObAguXik66T2xBVU+A9ViIA0bEzzb63bPgDUx3jss1O07om46QAEfBVw+6dLLEDkr10J2FAs5KYU82Wf0I7/tE4YPXXQxdnkB7SN1VuaDd0w1zVHUdw=
+	t=1724427925; cv=none; b=QlQVPLGVm7XI0a4qrXLMUGDA7I949fKFlkn+qETCY/OruqRfT/qnTq0o18sMUM2Go38bTpG71i4JC96PguAZNXWXxqEbQ0+adHAK2lJ31vzR0p+ezhhe5TvDdxqn1//hVgwEcvpsJhzsmid2aqCPPMRqfz4pD8SSFkORsufF8pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427872; c=relaxed/simple;
-	bh=rUKpTbjTMGO6d8DrZaKlv/gPDbWH6oSJzFoDGFB2HMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X+GWjXQjLjqsa6+xrV2biODhbFE8FdjrgxSg58OZgQdCvncRMIG88cZ5ZJKgfJkK9XVazfvCi6MzoiS9umLkNCjw7uLvRSVwi9DOQjsEXlg9CwcfU+7hQFDbRUWBKKqCrQBai7XBdh3UvUlgk/6N9pMwLRmDQo1jK4c10/zzylQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xsASl65Y; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5334c4d6829so2806381e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:44:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724427869; x=1725032669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rUKpTbjTMGO6d8DrZaKlv/gPDbWH6oSJzFoDGFB2HMI=;
-        b=xsASl65YiaxZ1u4wcidXYbqB1nBXXGivXoslhNTd+IMod+/68aeNZhRcXLPN6iik/q
-         X1pMlnCLi7PJYiGyUdKeawqSALQHyu/8+8inlOFknr62SHHp2J5LiMJsBtMmz2uzd3go
-         6QWXKMcgPWpCpYt0XlcqDK2btWh49s/k7cDGT2Lt80nsLKZn6ftj4GXPsQPt/joxkc7M
-         nMKVLobt2MXe7C9rg6BWyKWkU2VAg7uNtYNWmaEwbste0kKZt4uFk5alVCe26ELvaaHm
-         lqidpXmpof/ydEv3ONSMSgT+a37gzQBvktA7vwufn3nGM8BoHCSS5ZFkc6CAz21q7exx
-         LZ/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427869; x=1725032669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rUKpTbjTMGO6d8DrZaKlv/gPDbWH6oSJzFoDGFB2HMI=;
-        b=mgSB3MBW19bNWCnZFDPaGOob+Fm27PPR1RXsv/X81/BZFLLFhoRLc206b/hWOgPMp+
-         YNLhSXrg0/ial8Eyb0FZqSgaNVQEGLsABEsZOIjhWoNNiV2YHrpiKIg0hZErMmz0Ar39
-         PMWyxEEcROGWnLSEPNZpgdEFdK4sKtrZmiLEMoIc3zErFh4qheBiM8s0fkPpE7CwuakU
-         OlPZR7wbo+r8p5Hub0f9rjT/9TgQzx7R6NbpGonl9P1unHXeNEto+VapYjcbveGNUSLK
-         nwmk/duAHwT+dsPGMxug8o6zIbn2EAqtXZeOH5CE1pQpsj6sSofdmqejijMOrLHgn/HB
-         dk5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUXHpF7bcSc/Yw1D+JOM1/C3Qlx9EVfr2hVqYVvUhHsTmb2GeJ3pdQf3UpBzzYgDOws6V4ep5stNdsv24U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygqXDgy5yALVJziApp6aGuuh41S35eIkFqdpRmT0PzlstQ5NJ7
-	w8tszsusj7t9YWsjsU2C2f+HJCAMDJAVOuDK7JRvt9T5p/hykm78v/kBqqGM1xJ6Ksx7fKHD7lY
-	iIUuWt66VQgUc0D/E7JZJd3Gqf3OYzQ/3bke0pg==
-X-Google-Smtp-Source: AGHT+IGLphY6wmw4p3puKJ7pV1BhETJaO8yEFBVUQMStXaSJMfBctlVKM+lBdvBVLSNIacxc9U5SyjAaRt7G1oWZN4M=
-X-Received: by 2002:a05:6512:3191:b0:533:44d7:c055 with SMTP id
- 2adb3069b0e04-5343876c109mr1889079e87.5.1724427868274; Fri, 23 Aug 2024
- 08:44:28 -0700 (PDT)
+	s=arc-20240116; t=1724427925; c=relaxed/simple;
+	bh=CzupNLRF1vQTFUxTcn/lPPkKvPVSkSGp3Lg+piaVSrA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M8Zc/khRkwvh09HGHpiFxXmTDkWXXxYmwX4dRg29MMEBl3Phigw8o1mNQS1etUbtu1dp5A6RaVpbZmpZLDuDAoNEjJWW4+aC6g5+8YCrPNfyYcSrHqQd4b4f3HtqItbp9Yiu4xaPWfx5jzLNLxd5oTWXATP02WNW1iyr+xJq8WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wr47p1Xvcz6K5mK;
+	Fri, 23 Aug 2024 23:42:14 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1A4C014065B;
+	Fri, 23 Aug 2024 23:45:19 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 16:45:18 +0100
+Date: Fri, 23 Aug 2024 16:45:17 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
+	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
+	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>, "Li, Ming"
+	<ming4.li@intel.com>
+Subject: Re: [PATCH v3 06/25] cxl/mem: Read dynamic capacity configuration
+ from the device
+Message-ID: <20240823164517.00001d11@Huawei.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-6-7c9b96cba6d7@intel.com>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+	<20240816-dcd-type2-upstream-v3-6-7c9b96cba6d7@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <IA1PR20MB4953DC78BB0FE0C57EA94F91BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
-In-Reply-To: <IA1PR20MB4953DC78BB0FE0C57EA94F91BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 23 Aug 2024 17:44:17 +0200
-Message-ID: <CACRpkdbaDW2=R881G9C=r1iW4YNdYpRZ2kHaN63T7EX1A0xVrA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] riscv: sophgo: Add pinctrl support for CV1800
- series SoC
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Drew Fustini <dfustini@baylibre.com>, Haylen Chu <heylenay@outlook.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, Aug 2, 2024 at 2:34=E2=80=AFAM Inochi Amaoto <inochiama@outlook.com=
-> wrote:
+On Fri, 16 Aug 2024 09:44:14 -0500
+ira.weiny@intel.com wrote:
 
-> Add basic pinctrl driver for Sophgo CV1800 series SoCs.
-> This patch series aims to replace the previous patch from Jisheng [1].
-> Since the pinctrl of cv1800 has nested mux and its pin definination
-> is discrete, it is not suitable to use "pinctrl-single" to cover the
-> pinctrl device.
->
-> This patch require another patch [2] that provides standard attribute
-> "input-schmitt-microvolt"
->
-> Note: As current documentation is not enough to guess the pin
-> configuration of Huashan Pi, only the pinctrl node is added.
->
-> [1] https://lore.kernel.org/linux-riscv/20231113005702.2467-1-jszhang@ker=
-nel.org/
-> [2] https://lore.kernel.org/all/IA1PR20MB495346246245074234D337A6BBAC2@IA=
-1PR20MB4953.namprd20.prod.outlook.com/
->
-> Changed from v3:
-> 1. binding: drop unnecessary type
-> 2. binding: use right ref for pin node.
-> 3. binding: remove mixed spaces and tabs.
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> Devices which optionally support Dynamic Capacity (DC) are configured
+> via mailbox commands.  CXL 3.1 requires the host to issue the Get DC
+> Configuration command in order to properly configure DCDs.  Without the
+> Get DC Configuration command DCD can't be supported.
+> 
+> Implement the DC mailbox commands as specified in CXL 3.1 section
+> 8.2.9.9.9 (opcodes 48XXh) to read and store the DCD configuration
+> information.  Disable DCD if DCD is not supported.  Leverage the Get DC
+> Configuration command supported bit to indicate if DCD support.
+> 
+> Linux has no use for the trailing fields of the Get Dynamic Capacity
+> Configuration Output Payload (Total number of supported extents, number
+> of available extents, total number of supported tags, and number of
+> available tags).  Avoid defining those fields to use the more useful
+> dynamic C array.
+> 
+> Cc: "Li, Ming" <ming4.li@intel.com>
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+LGTM
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+If you can get rid of the <nil> thing even better.
 
-This v4 looks good to me and has necessary ACKs.
 
-It contains device tree patches which I am icky to merge but
-I can merge the rest and give you an immutable branch in the
-pinctrl tree that the ARM SoC maintainers can pull in to
-merge the device trees, does this work for you?
 
-Yours,
-Linus Walleij
 
