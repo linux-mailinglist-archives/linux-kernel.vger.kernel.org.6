@@ -1,75 +1,73 @@
-Return-Path: <linux-kernel+bounces-298484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9831895C7F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:23:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D5195C7F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D139BB24D92
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30EFD283933
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A96142904;
-	Fri, 23 Aug 2024 08:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF7143736;
+	Fri, 23 Aug 2024 08:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yYx8GKtq"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="W4N/Pu/o"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3271C47773
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00375144D1A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724401383; cv=none; b=UP2IS+pcDRRS2VagzYGelihJREuAD9KvYMmyJm67nBcsc/iw6EMe12v+0zHexDR4soQXjWlmCUfxW3b+JAOmFroYBt5jwHKk8cl/YGq8ZfMjwaTO95lYvGaMdfIkCAducWVkH7z3Df0kQzU8WEvqmr6t9QB+5iKZRShRK8oLHz4=
+	t=1724401390; cv=none; b=Hvq3kuDrcTLoeyU2cfYg++dOlpjpcTFG55t5rj/qZlkoty5etyD3avCFGXRpO80o7wyy1gZTjogNytY1MKQ2homiy8BmpdyRaBGhjuB9bgZ5gp8FjvTSL3jot67IUkyua4D1qqa7YVsXbA7fKFruAU7A9bGarFZCCrACyl6676E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724401383; c=relaxed/simple;
-	bh=meKlzzHsUw73VS4maSYzZ1ZNSe9fG9pNTCuxgTqSwmo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=flMtTUujD//kQ0faFEj+ySliZCpJs+rU6urEc76XmomuSjWjYeAtMzUVi2T/QMZ751mZ6VxIElQllTJgNCResOcTtKKtDUMOKx76WUtyrtGJLCz2BKcOHWKclVSlY1rTgSovLVM9yW68Svk5VDVcuEtRwhhivhCAVydBqYP/D7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yYx8GKtq; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428119da952so13115885e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:23:01 -0700 (PDT)
+	s=arc-20240116; t=1724401390; c=relaxed/simple;
+	bh=QGXTkaPruYvdbAjEYNBUg1LJfj52vBR9dyr8zH2c8GA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d3FE2HzjtOY5UU9WpPOwk2Siawj/ILmUHe4xmdav9jj1wtRysSzW1d83sdcPsXck6kyewJQxZzXvJvv4Uuo28OQllhLRtFusuKr9oCGPj1Qa2GChQX5L0F3/Cw9xyOb6ayQFV5QqZLtke3x8JI9QZlBa6fi9yebOA3rDPVeBi2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=W4N/Pu/o; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-714287e4083so1541652b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724401380; x=1725006180; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qc4wLUWi1Q+2Pe5opNOMu1JRII1BPT5sStPy3UveR5g=;
-        b=yYx8GKtqnIhcuKM2Gizuid8/bjCMJlBoO/jtnDYiViayGGqGYUhFCDB3S0CFxfEygr
-         AK8k5iJXji2xsvBVG5Ps2IZQS9768NutZ8Q+w9zYTFpJ77+jw4VwRHWOzCTdEQ6t8hgD
-         FEqa7ChKYesDthv+AexgFPk91ZXvv7d9jVtppKK+NcuPhZoJXfeYuveyTpmbefsb3+Rc
-         Yxod6p27sUBXLkJhb2v/i14cIK1NTOIo4iwcn0yQdPKt3dEShkb28lZxNyUrQsQrzOtJ
-         pGl3450PCDrDhzeJIFIff7CxtHMeoqWaQ+46hY72YWP0hgHkTig18hhQ2SvGUYE5mayu
-         bJvg==
+        d=bytedance.com; s=google; t=1724401387; x=1725006187; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vLOOU3c4VgtE0aDSrc85n2LEe1ifnEKISK8CfLWyb9w=;
+        b=W4N/Pu/opcXL7LyHwvi1ImA+i2chAOpKR7hURBYUpGwvXMIwaqpSJKsss/pnX4juut
+         RkZUKAE3UHIJqLPQp9aeU53MM5ZCsT1UF7GFQfB/Q3omfwtaQjmcinUrXaQvIKkpixtG
+         e8Mx8jNpA5gegMxmeX+4XhjyYrLqBCdVtna39naINiD8sO/Vcc6qNpTVZ9AXhPAswli9
+         NytCDjaHDlJDflVH5mjky+Qrx2HGUfRMIEM7ZR6AQIWNQC8CigSTFhPUeTd4OCFlktOU
+         lKOovNKifjNj4T9r1YjIIYjLlCnMrKvt4PdzKQ5UltMPQX4gyMAC5dFmatAvMErF+WE0
+         Glhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724401380; x=1725006180;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Qc4wLUWi1Q+2Pe5opNOMu1JRII1BPT5sStPy3UveR5g=;
-        b=FzgWqaAFp83DQCiM14AL9M/wM5/1+8O3V+PR2bxrhXbsS8PrB+Ygw+5MlM6QWb5Eoy
-         PfTacaSTVKg3jCOPomHhHrfRt5u4nGWuYx4nFuT2Qv2Pg8SYM1xeG1FhBdntkJbSApFL
-         8awFSFEsDU2PaW71Y8Lyt+j4k0p4ePJ525lyKVBhbHrJOwz+E3jUBY0X3k3xU35JFhCm
-         6cR+AvWa3GVmLEbZN+dUHSRKOKQASWbct8/6L0DlNn6DoB/VG2CeahrXiCWcBjZxAPAY
-         5IdIMO6iAllRviY+WUm+2Zcqs6waPXCm5jflNwrlufZv5ORjiK5IgUtWB3i4BjwcJ+pP
-         qheg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvQszylFggbJ+AtE1nlgq+/c8p5K/WeENp2LfiaGV5bssn45MRbXSiXwK3Fx7GXOWVL9B4gzYNstb+Ygk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS6QINdCykjTlkBYG6Me0Swh0noEQphL667NCB5xnyn/Pagmys
-	IGnNWsqjhSSLYfjXrOovHN1q93qxJ/hBR0KdOvhpMsjvsBZH2LUPJLznpZm+8Mk=
-X-Google-Smtp-Source: AGHT+IGsJclyRKt8iDBR8hUT5br0NSiyxooWh2o8K/cqt5NhzX54de3+f5WlTDDBrQXur1IMfj43hA==
-X-Received: by 2002:a05:600c:cc5:b0:426:54c9:dfed with SMTP id 5b1f17b1804b1-42acc9f66d1mr10896105e9.28.1724401379995;
-        Fri, 23 Aug 2024 01:22:59 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:995c:3fea:6b19:4a51? ([2a01:e0a:982:cbb0:995c:3fea:6b19:4a51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac516251fsm50749625e9.25.2024.08.23.01.22.59
+        d=1e100.net; s=20230601; t=1724401387; x=1725006187;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vLOOU3c4VgtE0aDSrc85n2LEe1ifnEKISK8CfLWyb9w=;
+        b=lb2Fln/6KcaLi7BZfAhPn5+vQgIOtYgydNP+arje3uXgTcqXCtQ7kZBpin2NfB9Uk/
+         oTpchESHpVyP03kvyTYUwVTWPnZCTrcIJFU4v8bqvteGqmL/bC8406ZmAED7TtgXH3iZ
+         v+HWevYZDeK2+dT2+bEueBOoEOnoP5m8uOiwcsjWmBxxq+VgAJyqenPokRyJ16i8+QGf
+         Zc4Wi+3EQ+fvlW3HdTyRj2xdOhb91unpR+yKlBswXRwZ/GLMBaNtIUhJMHngh6WsZ1Sf
+         XygJg4wxCtSndVqdPmkA5o334ICjG81Q7qZwD9JMvmfLurnof27QHwvk0YAFGAR6NmM1
+         j9dg==
+X-Forwarded-Encrypted: i=1; AJvYcCXx3u+xQ+IA4t11JjyLPZn/Vxa6c1eOvQvYjiWfYOH0GzHxTw2MhE8OHjRO52zpMWx/sjnCCtSs85N8iYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1cYqbwACmjSTuNaOqkv4vZJjid3an8vXfwm++9h6olvgm6Yh/
+	HI4VjudxjK5NOZ9Zw89MYu2WcnAmtW+8gqwGeFb8eqxxftpuPr+fnhNhqGShf08=
+X-Google-Smtp-Source: AGHT+IENUdm5rdulS34yR6Dz4GxtOM56EQg6Uz6YqEoQQmXnbINbba9NJhcmEsBLNkaKSiTGTT2x8g==
+X-Received: by 2002:a05:6a20:b598:b0:1c4:b931:e2c4 with SMTP id adf61e73a8af0-1cc8b4bd8bamr1515408637.26.1724401387170;
+        Fri, 23 Aug 2024 01:23:07 -0700 (PDT)
+Received: from [10.3.43.196] ([61.213.176.10])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac99d0csm2221623a12.12.2024.08.23.01.23.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 01:22:59 -0700 (PDT)
-Message-ID: <95f0517a-ed86-4905-85e5-a123880c6fa8@linaro.org>
-Date: Fri, 23 Aug 2024 10:22:58 +0200
+        Fri, 23 Aug 2024 01:23:06 -0700 (PDT)
+Message-ID: <10810dec-37b5-463f-bc7b-f88d2e4385d9@bytedance.com>
+Date: Fri, 23 Aug 2024 16:23:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,104 +75,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/7] Preemption support for A7XX
-To: Antonino Maniscalco <antomani103@gmail.com>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Sharat Masetty <smasetty@codeaurora.org>
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+Subject: Re: Re: [PATCH 1/3] RDMA/rxe: Use sizeof instead of hard code number
+To: Zhu Yanjun <yanjun.zhu@linux.dev>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, zyjzyj2000@gmail.com, leonro@nvidia.com
+References: <20240822065223.1117056-1-pizhenwei@bytedance.com>
+ <20240822065223.1117056-2-pizhenwei@bytedance.com>
+ <d933e865-2b6b-41c1-a0f2-46f8fef3cc17@linux.dev>
+ <20240822123649.GP3773488@nvidia.com>
+ <CABoGonKvG9AyuVPMG29b3q5bGr7ZAH5RsGg7TOtkcaAZm9F-Dg@mail.gmail.com>
+ <70f73586-670e-43d0-adf4-0950a9b3940d@linux.dev>
+Content-Language: en-US
+From: zhenwei pi <pizhenwei@bytedance.com>
+In-Reply-To: <70f73586-670e-43d0-adf4-0950a9b3940d@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 15/08/2024 20:26, Antonino Maniscalco wrote:
-> This series implements preemption for A7XX targets, which allows the GPU to
-> switch to an higher priority ring when work is pushed to it, reducing latency
-> for high priority submissions.
-> 
-> This series enables L1 preemption with skip_save_restore which requires
-> the following userspace patches to function:
-> 
-> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
-> 
-> A flag is added to `msm_gem_submit` to only allow submissions from compatible
-> userspace to be preempted, therefore maintaining compatibility.
-> 
-> Some commits from this series are based on a previous series to enable
-> preemption on A6XX targets:
-> 
-> https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
-> 
-> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> ---
-> Antonino Maniscalco (7):
->        drm/msm: Fix bv_fence being used as bv_rptr
->        drm/msm: Add submitqueue setup and close
->        drm/msm: Add a `preempt_record_size` field
->        drm/msm/A6xx: Implement preemption for A7XX targets
->        drm/msm/A6xx: Add traces for preemption
->        drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
->        drm/msm/A6xx: Enable preemption for A7xx targets
-> 
->   drivers/gpu/drm/msm/Makefile              |   1 +
->   drivers/gpu/drm/msm/adreno/a6xx_catalog.c |   3 +
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 339 ++++++++++++++++++++++-
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
->   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 441 ++++++++++++++++++++++++++++++
->   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |   1 +
->   drivers/gpu/drm/msm/msm_gpu.h             |   7 +
->   drivers/gpu/drm/msm/msm_gpu_trace.h       |  28 ++
->   drivers/gpu/drm/msm/msm_ringbuffer.h      |   8 +
->   drivers/gpu/drm/msm/msm_submitqueue.c     |  10 +
->   include/uapi/drm/msm_drm.h                |   5 +-
->   11 files changed, 995 insertions(+), 16 deletions(-)
-> ---
-> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-> change-id: 20240815-preemption-a750-t-fcee9a844b39
-> 
-> Best regards,
 
-For what is worth, I've tested it on the SM8650 QRD with the Mesa 30544 MR & vkcube
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+On 8/23/24 13:56, Zhu Yanjun wrote:
+> 
+> 在 2024/8/23 10:30, zhenwei pi 写道:
+>>
+>> On 8/22/24 20:36, Jason Gunthorpe wrote:
+>> > On Thu, Aug 22, 2024 at 07:59:32PM +0800, Zhu Yanjun wrote:
+>> >> 在 2024/8/22 14:52, zhenwei pi 写道:
+>> >>> Use 'sizeof(union rdma_network_hdr)' instead of hard code GRH length
+>> >>> for GSI and UD.
+>> >>>
+>> >>> Signed-off-by: zhenwei pi
+>> >>> ---
+>> >>> drivers/infiniband/sw/rxe/rxe_resp.c | 2 +-
+>> >>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>> >>>
+>> >>> diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/ 
+>> infiniband/sw/rxe/rxe_resp.c
+>> >>> index 6596a85723c9..bf8f4bc8c5c8 100644
+>> >>> --- a/drivers/infiniband/sw/rxe/rxe_resp.c
+>> >>> +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+>> >>> @@ -351,7 +351,7 @@ static enum resp_states 
+>> rxe_resp_check_length(struct rxe_qp *qp,
+>> >>> for (i = 0; i < qp->resp.wqe->dma.num_sge; i++)
+>> >>> recv_buffer_len += qp->resp.wqe->dma.sge[i].length;
+>> >>> - if (payload + 40 > recv_buffer_len) {
+>> >>> + if (payload + sizeof(union rdma_network_hdr) > recv_buffer_len) {
+>> >>
+>> >> The definition of union rdma_network_hdr is as below
+>> >>
+>> >> 797 union rdma_network_hdr {
+>> >> 798 struct ib_grh ibgrh;
+>> >> 799 struct {
+>> >> 800 /* The IB spec states that if it's IPv4, the header
+>> >> 801 * is located in the last 20 bytes of the header.
+>> >> 802 */
+>> >> 803 u8 reserved[20];
+>> >> 804 struct iphdr roce4grh;
+>> >> 805 };
+>> >> 806 };
+>> >>
+>> >> The length is 40 byte.
+>> >
+>> > This looks like the right struct to me if this is talking about the
+>> > special 40 byte blob that is placed in front of UD verbs completions.
+>> >
+>> > Jason
+>>
+>> Yes, this is the front part(40 bytes) of UD/GSI verbs completion.
+>>
+> When running, you can print the value of the front part (40 bytes) of 
+> UD/GSI to confirm that these 40 bytes are the union rdma_network_hdr.
+> 
+> If these 40 bytes are the union rdma_network_hdr,
+> 
+> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+> 
+> Best Regards,
+> 
+> Zhu Yanjun
+> 
 
-If you think of more tests to run, please tell me.
+Hi Yanjun,
 
-Neil
+I test on mlx-cx5 by command: ibv_ud_pingpong -d mlx5_2 -g 3 -r 1 -n 1
+
+Dump the front 64 bytes:
+00000000000000000000000000000000000000004502043436f340000111448c
+0a0b73120a0b73107b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b
+
+Byte[0, 20) (rdma_network_hdr::reserved[20]) are filled by zero, 
+byte[20,40) (rdma_network_hdr::roce4grh) are filled by IPv4 header.
+
+>>
+>> -- 
+>> zhenwei pi
+>>
+
 
