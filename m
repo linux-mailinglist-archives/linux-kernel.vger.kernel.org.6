@@ -1,141 +1,295 @@
-Return-Path: <linux-kernel+bounces-298142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D0395C2EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:44:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEA895C2FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DAE284829
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B33C31C22393
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E66118B14;
-	Fri, 23 Aug 2024 01:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B742AD04;
+	Fri, 23 Aug 2024 01:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NUBI5Xpy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BrKD1gz4"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8CE1755C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A69718E3F
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724377437; cv=none; b=Xjy5pUaKNFbD7xlPGT1Ek3AMO1yvHZ88t9AMSnWEWLEgKmel+jOIIWC6NNBcYHSQ13HtYt8OCd8XUDH1k5Meu6Uczj/B5jNRTwQ6Xli1TJlShyZJWsjKjQqZIR8OOFuOniK+3BbU/ZKDTH6PXCSDbarNHDgBBZvwju8d5Kcq/vU=
+	t=1724377708; cv=none; b=dCzrN+9R6SbpJ/GXCOUQe5oWFylPiO7VZ0BELTKeGbRCDhXJX8Dym9YAXBrfg6yOAe9B1Fhz/WiccjgoLCKCR3pq5DtvRSl7bDLOoNoAHe7TXxYmuVdnyIWeLKLC6g6Fks29FBQ8RcBn60dSJJ4LuALLAQ5yVXfVS3lKExucQYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724377437; c=relaxed/simple;
-	bh=NgVcCQ/knzm/n00VC2EBeQ+6MU+SmFAQYqMr2MBwrVA=;
+	s=arc-20240116; t=1724377708; c=relaxed/simple;
+	bh=ulJS3WCxd0O+3BESe7sSlzB3OfiVnjDv+NjQB84lSFE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jc5EweP+g8QgTAwvge/VHEgpmcy9ARV4vhxL+hNutZSY9juigeTOEGsnQNMNF0dC9VBV5f3aGQijUP1kZiUxPUAjSURNbAiTinGRxHpH/UgubVVcxCVPdCG7i03ztQB+qcf7a5StUz1xtkqzvbA+VKkz8is0FpfWEn6GpV2s3CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NUBI5Xpy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724377434;
+	 In-Reply-To:Content-Type; b=vGGk0RPlsJjpUul+laWZU2JJkjeZ7q7uk+RsnEYKC46y99dePAm5Wx98c/bFFkFUZxj3aw8WKiuA6uSwU9Fs6aAW53nYoh+RMBypaGY5X4dbaRo/2G4RGZIH448V+n/2M0C0uuT/wbPdgT6RinvYfEFCNWK18Cw8QyzEs8dQ9qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BrKD1gz4; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <eb021308-76f4-216f-77e2-1de8ab72b083@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724377703;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZiebQTQXIquzH5uU+5vCbj/ZQSVrIFh3t9Pwy/5cYBk=;
-	b=NUBI5XpyfMqlexnkhzlBG5/gbyCkjol7ozgF6oHjqF5yxK722QVGrwjjOchyvuvjF4UQuy
-	XAjmO/T0fGQFjS2V67mcRbnIwQCjyBp1KaqQ7dHu6SgzrgYum5+iXTVdMeh1qNJAInRmkg
-	nfEaskpnjsU8nbRPRHZUOmdLg91ctOE=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-100-jC9LHR58Ok2l8LcU_7jeOQ-1; Thu, 22 Aug 2024 21:43:53 -0400
-X-MC-Unique: jC9LHR58Ok2l8LcU_7jeOQ-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-7cd849a6077so1293122a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 18:43:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724377432; x=1724982232;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZiebQTQXIquzH5uU+5vCbj/ZQSVrIFh3t9Pwy/5cYBk=;
-        b=L5ZMz4ysuQ7PQBjg+Jt6H5/XBxArAyGvXiF2Wmo/ntXVUMY9qEansf2JjjUSE1cdPn
-         /RqjZ7ZoBSIiYdVWEq6c0YgeEUadvt+JSvVAgKilG3tQXvmvdn/23psj6Xn7AAyardyd
-         PrsFccd2f9B1FYojUB/WM1AIdpAEn7bmMnnEOipUCcQYqA7ixutEEppGs/vdxXuyQlIv
-         p8c3Yu9ZjHQ12tLEOwp+uQc0V72YXN/1v9hVTRL4UczJOaRobH/8MuNtQlAyRLgAYNvM
-         qa+rF7RgjHXN7y+LBn2Bv/164gqmg+ayVR9gehHuk8ZPvqdBmqpfKeFBrbUqInr1o2xz
-         LMfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdS6NdyAIAjNsmnS0syMmLgPRw+pHOAgJ6rDgmZF9NeOWv8ami/soo+iKaKi6/whuJrFRaSy+IJTN1H5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzURp3QRhN1WY2yX/oDBDjrCSNahzZrE2xjWiPSboULu4asxaUZ
-	Gf7viQiCok48isOJX4/76/L3giSKzAlFEWOPrW9ztbkR7/0ACgdl8GRtMA17oCql3QnTzF1co1M
-	6rF+krQP6zNNx9q32vzwZ1Xi8H1RDPS/QhlUj77hqwSmuTR5xLrlep5E5/Ln49DLONLIsjJq3
-X-Received: by 2002:a17:902:ce0d:b0:202:4317:79a4 with SMTP id d9443c01a7336-2039e4c5ac3mr7035515ad.33.1724377431977;
-        Thu, 22 Aug 2024 18:43:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEHCXpQkFKJj4TZLiD84ye/nQAAmTg7vAgIcp25w8JTbA2w+iIvVhCFxfBP0wCjLwUvW5ZLg==
-X-Received: by 2002:a17:902:ce0d:b0:202:4317:79a4 with SMTP id d9443c01a7336-2039e4c5ac3mr7035335ad.33.1724377431600;
-        Thu, 22 Aug 2024 18:43:51 -0700 (PDT)
-Received: from [10.72.112.8] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385fcf6besm18584435ad.304.2024.08.22.18.43.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 18:43:49 -0700 (PDT)
-Message-ID: <1f8da693-4996-4a3a-9a50-4f757402d76a@redhat.com>
-Date: Fri, 23 Aug 2024 09:43:46 +0800
+	bh=PPHOSUo6pnc3jr4Qd3Swu3bDszK2Mgq0Ytsd6c+xHpQ=;
+	b=BrKD1gz42LUEASz7L+8rKbtq+XlDFRkk4D1TCgjNBVRPOazJXuHlF7T4pllpd3mout0hoK
+	Xl27UDDvh1dDNkVj6QuzRA+jYafp7d2GpVlgAmkHlTE6yJTHU9xlg9DWWmwelQB0h1+asQ
+	wlTZMZVcxZemHQ89wMSUftvGufZe1NI=
+Date: Fri, 23 Aug 2024 09:47:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ceph: Convert to use jiffies macro
-To: Chen Yufan <chenyufan@vivo.com>, Ilya Dryomov <idryomov@gmail.com>,
- ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240822095541.121094-1-chenyufan@vivo.com>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20240822095541.121094-1-chenyufan@vivo.com>
+Subject: Re: [PATCH] codetag: debug: mark codetags for pages which
+ transitioned from being poison to unpoison as empty
+To: Suren Baghdasaryan <surenb@google.com>, Miaohe Lin <linmiaohe@huawei.com>
+Cc: kent.overstreet@linux.dev, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>,
+ stable@vger.kernel.org, nao.horiguchi@gmail.com, akpm@linux-foundation.org,
+ pasha.tatashin@soleen.com, david@redhat.com
+References: <20240822025800.13380-1-hao.ge@linux.dev>
+ <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
+ <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev>
+ <CAJuCfpHUZBkGtu8CL=5cxNMtJa4iNyJ8gBVu2Ho_WOXCRzzfTA@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpHUZBkGtu8CL=5cxNMtJa4iNyJ8gBVu2Ho_WOXCRzzfTA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+
+Hi Suren and Miaohe
 
 
-On 8/22/24 17:55, Chen Yufan wrote:
-> Use time_after_eq macro instead of using
-> jiffies directly to handle wraparound.
-> The modifications made compared to the previous version are as follows:
-> 1. Remove extra '+' in the header.
->
-> Signed-off-by: Chen Yufan <chenyufan@vivo.com>
-> ---
->   fs/ceph/caps.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 808c9c048..6a55825c3 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -17,6 +17,7 @@
->   #include "crypto.h"
->   #include <linux/ceph/decode.h>
->   #include <linux/ceph/messenger.h>
-> +#include <linux/jiffies.h>
->   
->   /*
->    * Capability management
-> @@ -4659,7 +4660,7 @@ unsigned long ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
->   		 * slowness doesn't block mdsc delayed work,
->   		 * preventing send_renew_caps() from running.
->   		 */
-> -		if (jiffies - loop_start >= 5 * HZ)
-> +		if (time_after_eq(jiffies, loop_start + 5 * HZ))
->   			break;
->   	}
->   	spin_unlock(&mdsc->cap_delay_lock);
-Hi Yufan,
+Thank you all for taking the time to discuss this issue.
 
-Thanks for your patch and this LGTM.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+On 8/23/24 06:50, Suren Baghdasaryan wrote:
+> On Thu, Aug 22, 2024 at 2:46 AM Hao Ge <hao.ge@linux.dev> wrote:
+>> Hi Miaohe
+>>
+>>
+>> Thank you for taking the time to review this patch.
+>>
+>>
+>> On 8/22/24 16:04, Miaohe Lin wrote:
+>>> On 2024/8/22 10:58, Hao Ge wrote:
+>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>
+>>> Thanks for your patch.
+>>>
+>>>> The PG_hwpoison page will be caught and isolated on the entrance to
+>>>> the free buddy page pool. so,when we clear this flag and return it
+>>>> to the buddy system,mark codetags for pages as empty.
+>>>>
+>>> Is below scene cause the problem?
+>>>
+>>> 1. Pages are allocated. pgalloc_tag_add() will be called when prep_new_page().
+>>>
+>>> 2. Pages are hwpoisoned. memory_failure() will set PG_hwpoison flag and pgalloc_tag_sub()
+>>> will be called when pages are caught and isolated on the entrance to buddy.
+> Hi Folks,
+> Thanks for reporting this! Could you please describe in more details
+> how memory_failure() ends up calling pgalloc_tag_sub()? It's not
+> obvious to me which path leads to pgalloc_tag_sub(), so I must be
+> missing something.
 
-Will apply to the 'testing' branch with an adjustment of the header 
-files order.
+
+OK,Let me describe the scenario I encountered.
+
+In the Link [1] I mentioned,here is the logic behind it:
+
+It performed the following operations:
+
+madvise(ptrs[num_alloc], pagesize, MADV_SOFT_OFFLINE)
+
+and then the kernel's call stack looks like this:
+
+do_madvise
+
+soft_offline_page
+
+page_handle_poison
+
+__folio_put
+
+free_unref_page
+
+It will set a flag within the following function and then release the page.
+
+https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/memory-failure.c#L206
+
+and and then,because you set the PG_hwpoison flag, so the page will be 
+caught and isolated on the
+
+entrance to the free buddy page pool. look here:
+
+https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/page_alloc.c#L1052
+
+At this very moment, we call pgalloc_tag_sub.
+
+So,when we callunpoison_memoryclear this flag and return the page to the 
+buddy system, the problem arises.
+
+
+> On a conceptual level I want to understand if the page isolated in
+> this manner should be considered freed or not. If it shouldn't be
+> considered free then I think the right fix would be to avoid
+> pgalloc_tag_sub() when this isolation happens.
+> Thanks,
+> Suren.
+
+In my understanding, the purpose of unpoison_memory is to reclaim 
+poisoned pages.
+
+I dug up the patch that introduced this function back then
+
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/mm/memory-failure.c?id=847ce401df392b0704369fd3f75df614ac1414b4
+
+Therefore, this is reasonable.
 
 Thanks
 
-- Xiubo
+Best regards
 
+Hao
+
+>
+>>> 3. unpoison_memory cleared flags and sent the pages to buddy. pgalloc_tag_sub() will be
+>>> called again in free_pages_prepare().
+>>>
+>>> So there is a imbalance that pgalloc_tag_add() is called once and pgalloc_tag_sub() is called twice?
+>> As you said, that's exactly the case.
+>>> If so, let's think about more complicated scene:
+>>>
+>>> 1. Same as above.
+>>>
+>>> 2. Pages are hwpoisoned. But memory_failure() fails to handle it. So PG_hwpoison flag is set
+>>> but pgalloc_tag_sub() is not called (pages are not sent to buddy).
+>>>
+>>> 3. unpoison_memory cleared flags and calls clear_page_tag_ref() without calling pgalloc_tag_sub()
+>>> first. Will this cause problem?
+>>>
+>>> Though this should be really rare...
+>>>
+>>> Thanks.
+>>> .
+>> Great, I didn't anticipate this scenario.
+>>
+>> When we call clear_page_tag_ref() without calling pgalloc_tag_sub(),
+>>
+>> It will cause exceptions in|tag->counters->bytes|and|tag->counters->calls|.
+>>
+>> We can add a layer of protection to handle it
+>>
+>> The pseudocode is as follows:
+>>
+>> if (mem_alloc_profiling_enabled()) {
+>>           union codetag_ref *ref = get_page_tag_ref(page);
+>>
+>>           if (ref) {
+>>               if( ref->ct != NULL && !is_codetag_empty(ref))
+>>               {
+>>                   tag = ct_to_alloc_tag(ref->ct);
+>>                   this_cpu_sub(tag->counters->bytes, bytes);
+>>                   this_cpu_dec(tag->counters->calls);
+>>               }
+>>               set_codetag_empty(ref);
+>>               put_page_tag_ref(ref);
+>>           }
+>> }
+>>
+>> Hi Suren and Kent
+>>
+>> Do you have any suggestions for this? If it's okay, I'll add comments
+>> and include this pseudocode in|clear_page_tag_ref|.
+>>
+>>>> It was detected by [1] and the following WARN occurred:
+>>>>
+>>>> [  113.930443][ T3282] ------------[ cut here ]------------
+>>>> [  113.931105][ T3282] alloc_tag was not set
+>>>> [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
+>>>> [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_man4
+>>>> [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loaded Tainted: G        W          6.11.0-rc4-dirty #18
+>>>> [  113.943003][ T3282] Tainted: [W]=WARN
+>>>> [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
+>>>> [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>>> [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
+>>>> [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
+>>>> [  113.946706][ T3282] sp : ffff800087093a10
+>>>> [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: ffff80008249f0a0
+>>>> [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0000000000000000
+>>>> [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0000000000000000
+>>>> [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: ffffffffffffffff
+>>>> [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081746210
+>>>> [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5b5d353031313339
+>>>> [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 00000000ffffffd0
+>>>> [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c0000000ffff7fff
+>>>> [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0000000000000001
+>>>> [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0000000000000000
+>>>> [  113.957962][ T3282] Call trace:
+>>>> [  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
+>>>> [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
+>>>> [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
+>>>> [  113.960096][ T3282]  __folio_put+0xd4/0x120
+>>>> [  113.960614][ T3282]  folio_put+0x24/0x50
+>>>> [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
+>>>> [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
+>>>> [  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
+>>>> [  113.963183][ T3282]  simple_attr_write+0x38/0x48
+>>>> [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
+>>>> [  113.964330][ T3282]  full_proxy_write+0x68/0x98
+>>>> [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
+>>>> [  113.965372][ T3282]  ksys_write+0x78/0x100
+>>>> [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
+>>>> [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
+>>>> [  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
+>>>> [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
+>>>> [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
+>>>> [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
+>>>> [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
+>>>> [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
+>>>>
+>>>> Link [1]: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise11.c
+>>>>
+>>>> Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper function")
+>>>> Cc: stable@vger.kernel.org # v6.10
+>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>>> ---
+>>>>    mm/memory-failure.c | 6 ++++++
+>>>>    1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>>> index 7066fc84f351..570388c41532 100644
+>>>> --- a/mm/memory-failure.c
+>>>> +++ b/mm/memory-failure.c
+>>>> @@ -2623,6 +2623,12 @@ int unpoison_memory(unsigned long pfn)
+>>>>
+>>>>               folio_put(folio);
+>>>>               if (TestClearPageHWPoison(p)) {
+>>>> +                    /* the PG_hwpoison page will be caught and isolated
+>>>> +                     * on the entrance to the free buddy page pool.
+>>>> +                     * so,when we clear this flag and return it to the buddy system,
+>>>> +                     * clear it's codetag
+>>>> +                     */
+>>>> +                    clear_page_tag_ref(p);
+>>>>                       folio_put(folio);
+>>>>                       ret = 0;
+>>>>               }
+>>>>
+>>>>
+>> Thanks
+>>
+>> BR
+>>
+>> Hao
+>>
 
