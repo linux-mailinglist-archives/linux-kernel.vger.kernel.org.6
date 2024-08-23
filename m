@@ -1,117 +1,103 @@
-Return-Path: <linux-kernel+bounces-298155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F2495C32E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBD495C330
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9C81F23C5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:21:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372091F23B78
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB0321345;
-	Fri, 23 Aug 2024 02:21:10 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AF321350;
+	Fri, 23 Aug 2024 02:22:32 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFF71BDD0;
-	Fri, 23 Aug 2024 02:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4675E1C694;
+	Fri, 23 Aug 2024 02:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724379669; cv=none; b=rH47h5i14D5A/OTWBYHESaOB9oQx1xFiy6thiKZMWhpSWo7gzDwiKO3TxQmAyrkWZXDvmzC+EBjQ2B4ZjnoMDsvsvgQ4J6hNId7nTVKO1wgYQMzUdEeJcvz+GbEHvI8DVMGzDMKO1yWV45n4rn4rgHVgD81hQgtOeDjSxR45Woo=
+	t=1724379751; cv=none; b=jhSM85t1JdL9zsppfYtsSXbc0BtEag3Br5zrV9ckEGQhOUqRIOwXkoNa9KhD2XUvRaK8g+SYl0OfcsIaDsLo5dCBml5PzPBrRX7hKjtO/TixdXt65Kc8FsW9beMVqMuZ6kSXWAC+WaRHvVF7UpSlUIfYlrIYpegf+wONMBzqBXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724379669; c=relaxed/simple;
-	bh=+CzMAqyESps2Nlf43Au9f38lBI4mQgp+HawBJzeZ28w=;
+	s=arc-20240116; t=1724379751; c=relaxed/simple;
+	bh=nOrZuPeyf18ibAl5wa652ja7uIfj/AZd/RJZ40Y0MEA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iONuLTeoVMJjnDJTMLebJJCPjZqnXv7HiGqX9dz7Qvi6yZW/yNn+OZ5jJhRWyA1q0SLPl0aRyGVZLbpjjJmKX2tktrQSIyuiPFlh5jy7V6NMR+AM+xxTa9bzi7+guqnLRz713GAv8kUHA4JxIBAFhlw3ueJXuBwDsYmx3RzuccE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+	 In-Reply-To:Content-Type; b=YXyK8ZPN1rGgWjYceEMS9GzEi4dKzWC/w343voJx8qOiqFsiCIgXxHkOZ+O753kPv2i4sqrNC0cfOgNyzQ5rJEZho4sJlkiUnyFNJXxy2DzY3cjD2wY47LrLicVyXNZKJleG0IRj3tCc899MuIwTvgt1bN3T+HAsHpSOAdQb3kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WqkM92r1vz1S87j;
-	Fri, 23 Aug 2024 10:20:53 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 644E218001B;
-	Fri, 23 Aug 2024 10:20:58 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 23 Aug 2024 10:20:57 +0800
-Message-ID: <f1842060-0613-db53-a8c6-d0704d500f98@huawei.com>
-Date: Fri, 23 Aug 2024 10:20:56 +0800
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WqkHN1zYxzQqMs;
+	Fri, 23 Aug 2024 10:17:36 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id 313241800D2;
+	Fri, 23 Aug 2024 10:22:20 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
+ (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 10:22:19 +0800
+Message-ID: <6ba9afc8-fa95-478c-8ed2-a4ad10b3c520@huawei.com>
+Date: Fri, 23 Aug 2024 10:22:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next] net: dsa: Simplify with scoped for each OF child
- loop
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: No need to continue when the number of entries is 1
+To: Theodore Ts'o <tytso@mit.edu>, Edward Adam Davis <eadavis@qq.com>
+CC: <syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com>,
+	<adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+References: <00000000000075a135061c0480d0@google.com>
+ <tencent_BE7AEE6C7C2D216CB8949CE8E6EE7ECC2C0A@qq.com>
+ <172433877725.370733.2330809797744892142.b4-ty@mit.edu>
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-CC: <andrew@lunn.ch>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240820065804.560603-1-ruanjinjie@huawei.com>
- <20240821171817.3b935a9d@kernel.org>
- <2d67e112-75a0-3111-3f3a-91e6a982652f@huawei.com>
- <d44d2e53-6684-4fe5-bcc3-60d387044b63@kernel.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <d44d2e53-6684-4fe5-bcc3-60d387044b63@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <172433877725.370733.2330809797744892142.b4-ty@mit.edu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
-
-
-On 2024/8/22 22:39, Krzysztof Kozlowski wrote:
-> On 22/08/2024 04:07, Jinjie Ruan wrote:
+On 2024/8/22 23:00, Theodore Ts'o wrote:
+> On Mon, 01 Jul 2024 22:25:03 +0800, Edward Adam Davis wrote:
+>> When the number of entries mapped is 1, there is no need to split it.
 >>
 >>
->> On 2024/8/22 8:18, Jakub Kicinski wrote:
->>> On Tue, 20 Aug 2024 14:58:04 +0800 Jinjie Ruan wrote:
->>>> Use scoped for_each_available_child_of_node_scoped() when iterating over
->>>> device nodes to make code a bit simpler.
->>>
->>> Could you add more info here that confirms this works with gotos?
->>> I don't recall the details but I thought sometimes the scoped
->>> constructs don't do well with gotos. I checked 5 random uses
->>> of this loop and 4 of them didn't have gotos.
->>
->> Hi, Jakub
->>
->> >From what I understand, for_each_available_child_of_node_scoped() is not
->> related to gotos, it only let the iterating child node self-declared and
->> automatic release, so the of_node_put(iterating_child_node) can be removed.
->>
->> For example, the following use case has goto and use this macro:
->>
->> Link:
->> https://lore.kernel.org/all/20240813-b4-cleanup-h-of-node-put-other-v1-6-cfb67323a95c@linaro.org/
-> 
-> Jinjie,
-> You started this after me, shortly after my series, taking the commit
-> msgs and subjects, and even using my work as reference or explanation of
-> your patches. Basically you just copy-paste. That's ok, thouogh, but you
-> could at least Cc me to tell me that you are doing it to avoid
-> duplication. That would be nice... And you could *try to* understand
-> what you are doing, so you can answer to such concerns as Jakub raised.
-> Otherwise how can we know that your code is correct?
-
-Thank you very much, I'll Cc you for other patches.
-
-> 
-> Jakub,
-> Scoped uses in-place variable declarations, thus earlier jumps over it
-> are not allowed. The code I was converting did not have such jumps, so
-> was fine. Not sure if this is the case here, because Jinjie Ruan should
-> have checked it and explained that it is safe.
-> 
+> Applied, thanks!
+>
+> [1/1] ext4: No need to continue when the number of entries is 1
+>        commit: b2b81e122b5616890ba6657adeb8aa5ca1f05fe2
+>
 > Best regards,
-> Krzysztof
-> 
+
+Hi Ted,
+
+I think this patch is wrong and it will hide the real problem.
+
+The maximum length of a filename is 255 and the minimum block size is 1024,
+so it is always guaranteed that the number of entries is greater than or
+equal to 2 when do_split() is called.
+
+The problem reported by syzbot was actually caused by a missing check in
+make_indexed_dir(). The issue has been fixed:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=50ea741def58
+
+So unless ext4_dx_add_entry() and make_indexed_dir(), or some other function
+has a bug, 'split == 0' will not occur.
+
+If we want to defend against future changes that introduce bugs, I think
+it's better to add a WARN_ON_ONCE to make sure that the problem isn't hidden
+and that it doesn't trigger serious bugs like out-of-bounds access.
+
+continued = WARN_ON_ONCE(split == 0) ? 0 : hash2 == map[split - 1].hash;
+
+-- 
+With Best Regards,
+Baokun Li
+
 
