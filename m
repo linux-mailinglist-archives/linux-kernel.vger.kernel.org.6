@@ -1,168 +1,169 @@
-Return-Path: <linux-kernel+bounces-299345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E439095D345
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD4D95D349
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229841C226E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:27:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0BA1C2284D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17F418BBB1;
-	Fri, 23 Aug 2024 16:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D7F18BB84;
+	Fri, 23 Aug 2024 16:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VFlzcOjW"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="PMK7RTWW"
+Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8FE18A6A9
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C93918A6C0
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724430410; cv=none; b=J1Z1uPPQvxGrPMmt+hE1VzWKPRsmrXpTUXptftSFTpoWPzxzdf6fh9JA2llRhNLYX04pzrT6DRRnH4WASAKN3RgrIC35mAiyFLO5HhJR8U8TgEmWVjaO+a2DI9dtNw8miHe0WFraRRuQ5oEv/BOL6x85NNXk+NqzohH9+qVHnYU=
+	t=1724430440; cv=none; b=bb/DsT25Z0MgJvKsqEb8pHWFUixlIYmuP3qDaBDRhxlkYqHUDruD/P1XrHyL30oS5Wip5bJHNExklRqg2qEOC8+CMo+UO7tH5p/iiIr/C6ONG/tvBVDl3QijrNW8r+r8ELbocPxKK/wF0IYWwK/h6r8OByD9GTiO8X0BDW3O1Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724430410; c=relaxed/simple;
-	bh=n8ZGaQpMVmAooqMlUbx9CPaYIP1qo2CpAVV9NzwgAek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KK5H6bzTi8+2RChz445nKTH7m8cLMGaGrAcOtkT+x0oSCwWyRRX74l+1Qb0PGGZShJfMUReHfba507mlP9Kzo7kLj64E2odeyDOH1+k3uUq4c2ZVhB3SFQl9HqXovO5Wep+hObsbU0KYez6GPV3Kj9+b55JhddKFiVFf1L/f4wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VFlzcOjW; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f3f90295a9so23036471fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:26:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724430406; x=1725035206; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZWSBeG+QwbjFSDvLyDhLEv05keKw5jJM6jqldDdTU5o=;
-        b=VFlzcOjW/uHGZCpOk3JJ34p935zH3b2AIvvKPRkHSI7LdThpBMwcNTibmN5DZfbT8P
-         hzWewDPMl0EyQ9Fv71GKcYcm7OS/NPJSWh8e4AdosCPvnjJcQOzWPju+338y/1bLKMJe
-         MI17+LzIVUDt2SaKDr/Fz1+mBoauwVhaUj9mMxMw8umSV7ms0FkjScPGFcN/fWj2YoRo
-         H0WnD+i8t9oIWBTae44omGcdAv+YPjiV77LRPIHTRZVjsVabOk4Qoo59x86EVoOpxvkv
-         Tsj6ak3a/+oehUefI9xcoLdf9ENb+K+YeG5b/0NFLsIH97vS4bhCHJcljBPH/hzr5ufC
-         VZEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724430406; x=1725035206;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZWSBeG+QwbjFSDvLyDhLEv05keKw5jJM6jqldDdTU5o=;
-        b=w719Vxcp3q8V9Jx33gvcMbUDRHjk5Y1VS5WRz0+DpVOfgYdRzS/zK79veLFZqPDGyg
-         pfokNWUrQbzDwOH+Qai/iJpurYcWSLzT/qJm2ZNYBPmSh9lKuXzLD1wUOkKiB1M7bBXv
-         ekZRUhaQSLGlN9IJPeGeMSnJXaoODNkmN1f4lEZXRradtt96A+/jeQNMcAks4S1DiCM3
-         cHt6BRO0a7lIubqRtmRjdKgnoYybGJ0s5EqgSwPMjDTMlMV+V1xmuPu2TaPzVJnhJKyl
-         86ahZVaYtEMlCsqq6nopBxvpWxT/MXZEfvgSFym9ciQwx94WxHABiaBIXa2EFk3lY9qi
-         CQmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwJ9mvQ011TT4hgGr9rVO6rAuEatn25lkv94N2mKczl/6vZMcH5UIAQ+pBqbrSUyKoLXRZqgxLDDNLDEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUg1Ssuf2nferFNtl20OyrpFXt1JycOV1EfAqQqfZJapOQumEN
-	2icmra9V+n1IOzNe7fLhHmJd9lZzzeR9j3RLcOR2KY9BNOACT2ntJGWQj1waMdc=
-X-Google-Smtp-Source: AGHT+IGq9Z87mcKzdsOfA4Kh7hIWO8zyssaqdNEEpmiVif++gK9Zdc/x8LpKsPD+5iPCumWhJubVcQ==
-X-Received: by 2002:a2e:9996:0:b0:2f2:9a2e:c257 with SMTP id 38308e7fff4ca-2f4f4941e50mr16465901fa.41.1724430405344;
-        Fri, 23 Aug 2024 09:26:45 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3ea610sm2309974a12.51.2024.08.23.09.26.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 09:26:44 -0700 (PDT)
-Message-ID: <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
-Date: Fri, 23 Aug 2024 19:26:42 +0300
+	s=arc-20240116; t=1724430440; c=relaxed/simple;
+	bh=ffKM+8huncSUY8KqXLjU/DT6jLHtBI7/F4U3axGJqJI=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CQTF4TP/I7fgn5KKShZd9cc8FGJTkLRQNbQkuq+PmGvYOY4yTsaH0RHI7JuZzbAd70FKKgrTLrVAIG/vZop7FYCl5HxRLT3u87ZkIO9w+0Jn3QHPAIJPUGzyfxskPpv19LKar5vkiOWBXGUIXWlxjFB2NBGk3d1Z6dX4K2xqIyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=PMK7RTWW; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
+	s=protonmail; t=1724430429; x=1724689629;
+	bh=7LV5wuij5UHvq2TzSAXYR/Fp+ylFof5gSswrfbA2tBU=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=PMK7RTWWQ6HcUw0ixQgF0emg4ra1NhSx9KpxtrQMlLZYDWnFBZy0RQO1CwCmjCMQM
+	 OnmXPC9rN66VxdZYrhN3DKTzN4R+aIATv5/e9Y+eA3XhN7o/7n/WUm99K54f0Zro2+
+	 n+VEfPQ4vl2CnM4RCh6qFXzfZSJkwrkHfFM46H01QfwvgAPY7GPMn+BMRyzfQR1anh
+	 QJtwfmfojLVv+CQ0DKU0Xkf+3/CTbaqJLJP6pygG6H+efzD49m6AfgSu0UjpdvuT+I
+	 VwiD9tCmdJVex+RBKf02uM5qASyWyHPvBP38SXprzDIo0iNEc3K29ltQOZ23schN7d
+	 zN915e3f1w1Zw==
+Date: Fri, 23 Aug 2024 16:27:06 +0000
+To: linux-kernel@vger.kernel.org
+From: Mike Yuan <me@yhndnzj.com>
+Cc: Mike Yuan <me@yhndnzj.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, =?utf-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, stable@vger.kernel.org
+Subject: [PATCH v3 1/3] mm/memcontrol: respect zswap.writeback setting from parent cg too
+Message-ID: <20240823162506.12117-1-me@yhndnzj.com>
+Feedback-ID: 102487535:user:proton
+X-Pm-Message-ID: 1aeab9fed9e0166d41ca57d11d544d5490bc3859
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
- #reset-cells for RZ/G3S
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
- magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
- sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
- biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
- <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
- <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
- <20240823-plywood-unfixed-d8d8a2d93f14@spud>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240823-plywood-unfixed-d8d8a2d93f14@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Currently, the behavior of zswap.writeback wrt.
+the cgroup hierarchy seems a bit odd. Unlike zswap.max,
+it doesn't honor the value from parent cgroups. This
+surfaced when people tried to globally disable zswap writeback,
+i.e. reserve physical swap space only for hibernation [1] -
+disabling zswap.writeback only for the root cgroup results
+in subcgroups with zswap.writeback=3D1 still performing writeback.
+
+The inconsistency became more noticeable after I introduced
+the MemoryZSwapWriteback=3D systemd unit setting [2] for
+controlling the knob. The patch assumed that the kernel would
+enforce the value of parent cgroups. It could probably be
+workarounded from systemd's side, by going up the slice unit
+tree and inheriting the value. Yet I think it's more sensible
+to make it behave consistently with zswap.max and friends.
+
+[1] https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate=
+#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
+[2] https://github.com/systemd/systemd/pull/31734
+
+Changes in v3:
+- Additionally drop inheritance of zswap.writeback setting
+  on cgroup creation, which is no longer needed
+Link to v2: https://lore.kernel.org/linux-kernel/20240816144344.18135-1-me@=
+yhndnzj.com/
+
+Changes in v2:
+- Actually base on latest tree (is_zswap_enabled() -> zswap_is_enabled())
+- Update Documentation/admin-guide/cgroup-v2.rst to reflect the change
+Link to v1: https://lore.kernel.org/linux-kernel/20240814171800.23558-1-me@=
+yhndnzj.com/
+
+Cc: Nhat Pham <nphamcs@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Koutn=C3=BD <mkoutny@suse.com>
+
+Fixes: 501a06fe8e4c ("zswap: memcontrol: implement zswap writeback disablin=
+g")
+Cc: <stable@vger.kernel.org>
+
+Signed-off-by: Mike Yuan <me@yhndnzj.com>
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Acked-by: Yosry Ahmed <yosryahmed@google.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst |  7 ++++---
+ mm/memcontrol.c                         | 12 +++++++++---
+ 2 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-=
+guide/cgroup-v2.rst
+index 86311c2907cd..95c18bc17083 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1717,9 +1717,10 @@ The following nested keys are defined.
+ =09entries fault back in or are written out to disk.
+=20
+   memory.zswap.writeback
+-=09A read-write single value file. The default value is "1". The
+-=09initial value of the root cgroup is 1, and when a new cgroup is
+-=09created, it inherits the current value of its parent.
++=09A read-write single value file. The default value is "1".
++=09Note that this setting is hierarchical, i.e. the writeback would be
++=09implicitly disabled for child cgroups if the upper hierarchy
++=09does so.
+=20
+ =09When this is set to 0, all swapping attempts to swapping devices
+ =09are disabled. This included both zswap writebacks, and swapping due
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index f29157288b7d..d563fb515766 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3613,8 +3613,7 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *pare=
+nt_css)
+ =09memcg1_soft_limit_reset(memcg);
+ #ifdef CONFIG_ZSWAP
+ =09memcg->zswap_max =3D PAGE_COUNTER_MAX;
+-=09WRITE_ONCE(memcg->zswap_writeback,
+-=09=09!parent || READ_ONCE(parent->zswap_writeback));
++=09WRITE_ONCE(memcg->zswap_writeback, true);
+ #endif
+ =09page_counter_set_high(&memcg->swap, PAGE_COUNTER_MAX);
+ =09if (parent) {
+@@ -5320,7 +5319,14 @@ void obj_cgroup_uncharge_zswap(struct obj_cgroup *ob=
+jcg, size_t size)
+ bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
+ {
+ =09/* if zswap is disabled, do not block pages going to the swapping devic=
+e */
+-=09return !zswap_is_enabled() || !memcg || READ_ONCE(memcg->zswap_writebac=
+k);
++=09if (!zswap_is_enabled())
++=09=09return true;
++
++=09for (; memcg; memcg =3D parent_mem_cgroup(memcg))
++=09=09if (!READ_ONCE(memcg->zswap_writeback))
++=09=09=09return false;
++
++=09return true;
+ }
+=20
+ static u64 zswap_current_read(struct cgroup_subsys_state *css,
+
+base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+--=20
+2.46.0
 
 
-
-On 23.08.2024 19:18, Conor Dooley wrote:
-> On Fri, Aug 23, 2024 at 10:54:06AM +0300, claudiu beznea wrote:
->> Hi, Conor,
->>
->> On 22.08.2024 19:42, Conor Dooley wrote:
->>> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> The RZ/G3S System controller has registers to control signals that need
->>>> to be de-asserted/asserted before/after different SoC areas are power
->>>> on/off. This signals are implemented as reset signals. For this document
->>>> the #reset-cells property.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> ---
->>>>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 ++++++++++++++++
->>>>  1 file changed, 16 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
->>>> index 4386b2c3fa4d..6b0bb34485d9 100644
->>>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
->>>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
->>>> @@ -42,12 +42,28 @@ properties:
->>>>        - const: cm33stbyr_int
->>>>        - const: ca55_deny
->>>>  
->>>> +  "#reset-cells":
->>>> +    const: 1
->>>> +
->>>>  required:
->>>>    - compatible
->>>>    - reg
->>>>  
->>>>  additionalProperties: false
->>>>  
->>>> +allOf:
->>>> +  - if:
->>>> +      properties:
->>>> +        compatible:
->>>> +          contains:
->>>> +            const: renesas,r9a08g045-sysc
->>>> +    then:
->>>> +      required:
->>>> +        - "#reset-cells"
->>>
->>> Given this is new required property on an existing platform, I'd expect
->>> some mention of why it used to be okay to not have this but is now
->>> required. Did firmware or a bootloader stage take things out of reset?
->>
->> On previous SoCs the SYS controller has no support for controlling the
->> signals going to different peripherals (USB, PCIE in case of RZ/G3S).
->> I'll add a note about this on next version.
-> 
-> My initial thought here wasn't about previous SoCs though, it was
-> because you didn't add the compatible in this series for /this/ SoC.
-
-RZ/G3S compatible is already present in this file:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml#n26
-
-Thank you,
-Claudiu Beznea
-
-> What's worth noting isn't about the prior SoCs, it is about what makes
-> it okay for this one.
 
