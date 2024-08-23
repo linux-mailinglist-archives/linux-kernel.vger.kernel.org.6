@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-298860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFBC95CC4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:24:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E2695CC4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CD71F247BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:24:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C641C241A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9477A185951;
-	Fri, 23 Aug 2024 12:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0881118593E;
+	Fri, 23 Aug 2024 12:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ls5/LtwE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dVXSfg5B"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1D01514CE;
-	Fri, 23 Aug 2024 12:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37CF14B95F;
+	Fri, 23 Aug 2024 12:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724415872; cv=none; b=W+J7kaA65kgwdoSVZ8cs2L358mm9232/1ZOXlWXf/iEZvhOtg+Jeosmbc2d342fTjnWDZVdQT9ooNY/KpeQSEVz9wpkNcF61YFs07qau5sWnZ/hbtS/KEHXuAUnxr9r0E/bVcMGKQyjjl58ksyAHdU3qAwozBvIpjsEi4j34Wmo=
+	t=1724415927; cv=none; b=I11TBNGDZhh/UJgpoZDsvVqhqXI/jR6E4f4jWhHZWa7s3lGZe+zn6lG+VkP7Q8kdx9Ladoxq3IRLU4AcAXo5ymHqhfGyZhZvHHD+t/mIOBcL3ytCteCy6ot90Abi0ydLMVt7HD1vGMTl9HIJsO89iNTCui4WoG50sQEzgPYBDyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724415872; c=relaxed/simple;
-	bh=8a6EIa44OOJDxbLB2ztVoJlWqzWC+VF2rEZMS8UZcXg=;
+	s=arc-20240116; t=1724415927; c=relaxed/simple;
+	bh=XFTWX1pLHBO3yIEceFWVjik1x5+gnZCCIJKXfr2+hg0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jyMLFgYXbBc3wfPR/Ezz3fiBkRwfdykmgpXOezsTF+GNDUL9qhcgew8UdsbE85nSrFTunJfjS5qL6mp4UXX0OvaxeS6RtxukpZ6ZT9ZFdmE54jm+mJP7YzIaQNass/SphWCKm3JlOsdJhGe0hB7DNaTlS+NkEkaSwXBbEzL/8gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ls5/LtwE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB63AC32786;
-	Fri, 23 Aug 2024 12:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724415872;
-	bh=8a6EIa44OOJDxbLB2ztVoJlWqzWC+VF2rEZMS8UZcXg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbckAXAzMr17ltnCJO3m928LKyNIu8TIUPfK7VvITHusmjtfiyVwqyHhT5p2kJ1Yx1fKfYmOcb6uHnhoLX1ObADabFAyHm9QbEU05T+fOw30pLtLStoHWCuO7bCSf3MLHhaVtwWxTMWMmOaPDQ+xf5KhYi81Pbm+ISsDDvWCSmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dVXSfg5B; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 107BE40E0184;
+	Fri, 23 Aug 2024 12:25:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3qJXJgsvUomD; Fri, 23 Aug 2024 12:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724415908; bh=E4zWIpk6FvgD5mnWHXs0S3A5EiMqdeJuHJBPRfHRdbU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ls5/LtwEmVBoo0uvKo9yzL/3KY62jz6z7v/qU4DLNiSpQDoWpsFNwon/L4bptD+mj
-	 2g1EXECOknp85t2VSHc8kvJg8LGeBE+2XalbNl0xUgX4o2DQSlu94azseId+xfiyT+
-	 ahxX9yQaK6UncPCIKSfeXOVkUYwCkRiHVzpQhow7EhPpUs4d830vi8Y28nK0jQbnkU
-	 2LHiSLVg3owUTqHTT+W9aI5ZZspWUb83sufwjFb06nFChOn2lTa486lpP4YlDylyOH
-	 TiBsQduJIpJz4QxIkL7YJ9srrEob3Hm77m6QQcZiJFV97qwoMvh8w3OE9Gwk/17Fwx
-	 Gn8t/3V/aNgQA==
-Date: Fri, 23 Aug 2024 13:24:24 +0100
-From: Will Deacon <will@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
-Message-ID: <20240823122423.GB32110@willie-the-truck>
-References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
- <20240820143503.GD28338@willie-the-truck>
- <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
+	b=dVXSfg5Bpj8ji9O4e8fRQb6cArQSER5WXdLpHAYTDzX2O8Y8Lh5a4GJuM35xevU6j
+	 65P7ylNsTTA6Zo132ea3h58UEoAcGRDlbdFky3/lGZ9dkH+wbf4WOy4TqzcaiDxPM4
+	 zvx5s4dX6Wk3qCJKMAUvVF6Wd4fkQixDFz7V4xXH4IPWEyQPS0bORF/JqjQ2sr4YIc
+	 TMvNFq20MNgT50lG/K3GxwLosKFZSnqCCqjbeyiRqPrOcBqjFy5qtzCIHbhT9MBLrr
+	 W7YqqGMvUJmhRu6U9qyrg+P7jrUz5OH3d40IwU5OxeQCEEAvdeqMSN7FpwzM05J5si
+	 54t91IsG/t2xW3nN7Un4paqomgC3ft94XqOGBo++9Yn05/DHX144Vf6fhQa6XKUqYt
+	 U1y1WHABFY2dzxRUnLKBpEoNZWwLWshY/fkV2/y6C1XWPOZ3QDuTNJgo8BZOMRzSmr
+	 4pzi7A0U5uc1ZJfpomRvIFqJWQRDnjtBPWZmiFsysNJNg3E0M4JWVu3u3GKqH8FBEH
+	 5dWu0pbQOK81uUUwga3+d6Ap5eHk5eFIQ+PQq3dxzxaOAqP+77Fm7BxpKW7RqhRg66
+	 8zpg2QP94GwZ8RtoBnJy8XrJKJ7OIiNWe4D5QdjjyDC4/9DHB98tOGpHv5czV45O3W
+	 BvFk8JX9GarUf1VyVPwmkzWM=
+Received: from nazgul.tnic (unknown [IPv6:2a02:3038:208:7949:9e4e:36ff:fe9e:77ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EBD9040E01A8;
+	Fri, 23 Aug 2024 12:25:01 +0000 (UTC)
+Date: Fri, 23 Aug 2024 14:25:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yang Ruibin <11162571@vivo.com>
+Cc: Tony Luck <tony.luck@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v3] drivers:ras:Use IS_ERR() to check
+ debugfs_create_dir() return value
+Message-ID: <20240823122557.GAZsh_1fb3lYpQ3zj1@fat_crate.local>
+References: <20240823120147.3950878-1-11162571@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,99 +77,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240823120147.3950878-1-11162571@vivo.com>
 
-On Tue, Aug 20, 2024 at 05:13:58PM +0200, Alice Ryhl wrote:
-> On Tue, Aug 20, 2024 at 4:35 PM Will Deacon <will@kernel.org> wrote:
-> > On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
-> > > diff --git a/init/Kconfig b/init/Kconfig
-> > > index fe76c5d0a72e..d857f6f90885 100644
-> > > --- a/init/Kconfig
-> > > +++ b/init/Kconfig
-> > > @@ -1909,7 +1909,7 @@ config RUST
-> > >       depends on !MODVERSIONS
-> > >       depends on !GCC_PLUGINS
-> > >       depends on !RANDSTRUCT
-> > > -     depends on !SHADOW_CALL_STACK
-> > > +     depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
-> >
-> > Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_INTO_SCS is
-> > specific to arm64 and the only other architecture selecting
-> > ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but feel it would
-> > be cleaner to move this logic into the arch code selecting HAVE_RUST.
-> >
-> > That is, it's up to the architecture to make sure that it has whatever
-> > it needs for SCS to work with Rust if it claims to support Rust.
-> >
-> > What do you think?
+On Fri, Aug 23, 2024 at 08:01:47PM +0800, Yang Ruibin wrote:
+> The debugfs_create_dir() function returns error pointers.It
+> never returns NULL. So use IS_ERR() to check its return value.
 > 
-> The `select RUST if ...` is going to get really complicated if we
-> apply that rule in general. Having options here allows us to split
-> them across several `depends on` clauses. I'm not sure it will even
-> work, I had issues with cyclic Kconfig errors previously. I also don't
-> think it's unreasonable for the architecture to say it supports both
-> options when it really does support both; they are just mutually
-> exclusive. I also think there is value in having all of the options
-> that Rust doesn't work with in one place.
+> Fixes: 011d82611172 ("RAS: Add a Corrected Errors Collector")
 
-I'm not sure I follow why this will get really complicated. Isn't it as
-straightforward as the diff below, or did I miss something?
+Nope, can't be that one:
 
-Will
+$ git show 011d82611172:fs/debugfs/inode.c
+...
+struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+{
+        struct dentry *dentry = start_creating(name, parent);
+        struct inode *inode;
 
---->8
+        if (IS_ERR(dentry))
+                return NULL;
+		       ^^^^
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2f8ff354ca6..2f5702cb9dac 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -231,7 +231,7 @@ config ARM64
-        select HAVE_FUNCTION_ARG_ACCESS_API
-        select MMU_GATHER_RCU_TABLE_FREE
-        select HAVE_RSEQ
--       select HAVE_RUST if CPU_LITTLE_ENDIAN
-+       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
-        select HAVE_STACKPROTECTOR
-        select HAVE_SYSCALL_TRACEPOINTS
-        select HAVE_KPROBES
-@@ -265,6 +265,11 @@ config ARM64
-        help
-          ARM 64-bit (AArch64) Linux support.
- 
-+config RUSTC_SUPPORTS_ARM64
-+       bool
-+       depends on CPU_LITTLE_ENDIAN
-+       depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SC
-+
- config CLANG_SUPPORTS_DYNAMIC_FTRACE_WITH_ARGS
-        def_bool CC_IS_CLANG
-        # https://github.com/ClangBuiltLinux/linux/issues/1507
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 0f3cd7c3a436..93858dbfefc0 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -172,7 +172,7 @@ config RISCV
-        select HAVE_REGS_AND_STACK_ACCESS_API
-        select HAVE_RETHOOK if !XIP_KERNEL
-        select HAVE_RSEQ
--       select HAVE_RUST if 64BIT
-+       select HAVE_RUST if 64BIT && !SHADOW_CALL_STACK
-        select HAVE_SAMPLE_FTRACE_DIRECT
-        select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
-        select HAVE_STACKPROTECTOR
-diff --git a/init/Kconfig b/init/Kconfig
-index 5783a0b87517..3ada33b1d681 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1902,7 +1902,6 @@ config RUST
-        depends on !MODVERSIONS
-        depends on !GCC_PLUGINS
-        depends on !RANDSTRUCT
--       depends on !SHADOW_CALL_STACK
-        depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
-        help
-          Enables Rust support in the kernel.
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
