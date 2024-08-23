@@ -1,238 +1,322 @@
-Return-Path: <linux-kernel+bounces-298703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D88A95CA5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:21:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B808395CA65
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0591F2121F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5952843D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED4D17E8E2;
-	Fri, 23 Aug 2024 10:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304F5149C40;
+	Fri, 23 Aug 2024 10:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="BgW7C4+F"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2069.outbound.protection.outlook.com [40.107.215.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dSAVNjjj"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFDE18786C;
-	Fri, 23 Aug 2024 10:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724408409; cv=fail; b=rH4iwCUdvIOip09XZKyLqxgYbOMHuLfbUq8DrFpOPPFrDX7YPVTFNkPvZ1A27LGfJmmsohq1267AVmblWLiwicGYCvo7e/9VDi57c3vBFvtUWJct3m2IvWWeLwfzpMNyY8vNFh/5XtA1liMQyekF2nF7rK44FIhpimubBElcTkI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724408409; c=relaxed/simple;
-	bh=vcilT1fgufl/wmnpBoZD1a8ZfdOgQgFNPE/9IcSNOus=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WjELSPYDiSPLs8Pacj78CezeGtfiMtCZLbcG62NVBnFzTdvw2BDHR0PEitiqz8j1PUxfo0XxUlnnnPKlGvIw92XJOvPOLwMmTjacaBzr3FY0qoTHD33MdvVQ08dlSn6wQUJCVeLVK+dnsDX8V2assnx1sYYAvY6i1CsV33x0+ZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=BgW7C4+F; arc=fail smtp.client-ip=40.107.215.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pbDmUH8HZ5pOEEYK2Wgttrrv73d83TjAKacwe8n6AgsVkebqPrjzvwYfE7LMoiIpFebJrOEISVHnr2oV4UsxINd0xG29o/L2o6Uo/uvUQ+FJWBgtdCgecCb2CB5Pob4qymS4d2CtU8PIvgDav0+UYwwDdHZVDjboc7DSmvbmjrKyDa4I2B21WXW3f+uSAZFVY6KNOmnXjqvEsHT4EpBE4dHECcS6Ka/0aEWBYkZB5uWsTknFOr1VURYzAvZVKOQ6kD5hby2OFS+QBTPFQa3WfbiR0W+92/Vw162TLypofX7vGWU6tF1L2PYgIMH+j9c7/Xdg+UxhyFa+S2iypuy7PA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nAIiRvIi1lOxnG91KjnyRmAZG4cwJZ1EK/A8vbDAN40=;
- b=c2xlQTsAtg7i9e29TODRuQYoprLR3Ru4bW0+xspl0nkzaYNFSWT3iaGfn8cyUydQLLGE0BCY7DLHX8rgGECCghf8DuVXJhA4CfAUWoaQJ2ZynUKwIshEeW/Xvt6ngFXS9q11tuW7wImr/zVgrRO+3D+smBBcpPnlVbFNMIHq/4OL3IuG34VchL27JTWTv6nKstgiGBUWq1uSAJrUMeldAu+KqgakH1FhCK9W6pMCOPMZthXkWwlnAd4MFf4/Hl+pd9hKqW5PESK5hZks2t5t24hXRiblA7D0uz6ZL3V7u0Jj5Fk/jvImhMh8RmEYU+J3/ilZ6KPWjbGhyh6FzkNr5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nAIiRvIi1lOxnG91KjnyRmAZG4cwJZ1EK/A8vbDAN40=;
- b=BgW7C4+FphXMINOIfGOLRvBt4uHROHZb0nUPzbKg+Tf9rX1F/SHbsxEw0roscECLXhIHf6cLz1mIsNABNdvAki8RdVJE6vClLI7hKjoZ7roTr/OCUriOrZI4oEZu0eV7U2rd7AycmTy+W/Pg2Imq0H3wVBAtTxCuXhRdDSY8eCC+uyxT57D0QtVrWFORDFcuOW0zyqyNcg3zGMYbPTySDU0pA0N3+/FTtrBJUpQZKVGJ5ftu5sMnZQf7FRP9W/3hTu5IsHCsKX4tlWSWw1b+AHFIRywf+v182wA3GDaF+xK/h6qGESxizQgxUbGSd8FucQp5TdIX0nuKXDyLBHGaTg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TYUPR06MB5873.apcprd06.prod.outlook.com (2603:1096:400:345::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 23 Aug
- 2024 10:20:04 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%4]) with mapi id 15.20.7875.023; Fri, 23 Aug 2024
- 10:20:04 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: vkoul@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH 6/6] dma:uniphier-mdmac:Use devm_clk_get_enabled() helpers
-Date: Fri, 23 Aug 2024 18:19:33 +0800
-Message-Id: <20240823101933.9517-7-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240823101933.9517-1-liaoyuanhong@vivo.com>
-References: <20240823101933.9517-1-liaoyuanhong@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0024.jpnprd01.prod.outlook.com (2603:1096:404::36)
- To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911F16DEDF
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724408495; cv=none; b=dJIT5YPErG3uzBAdrVhOcw9UhVaNKyg/K64c1TdcYk8SF4m/QrN2FPcCytxlC/TQ0IlnfhDrc4uPTaNqsK60jVs/G8JQ0lEnlfniRiomhBuxiDggG3dBpu+rfPFOhkIdg7tt60mlM7F3WJ5BebUlurlPWlUKVhJmfHiEHvWK+yU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724408495; c=relaxed/simple;
+	bh=wDw2GrU+mZYcRmTdJ3qd7qyGbvFGP3vTu6hsDr93i3s=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2mx6BUUCPWkDFUjXr9k58A6Kl1kZDqzIu9pizVKQ5j89FK4oStOt5gzzQBMO5eWG4f23t8uPJS9RFnvqyaqGi8T+pz1Z3tGYOu5JIMB/pVlXFa0G4StSw0BpSBxTJlHB4Y/hQY6LYCerjncsuco3q7Qt0QFlVTN78cpeCxi4M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dSAVNjjj; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8657900fc1so284852166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724408490; x=1725013290; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uy9tQ1TYcZbcuxiuWon4EXX8Ukt9Xc78KSZT2kpFAzw=;
+        b=dSAVNjjj9V9KUVn2jvCxZfZAt/LqYbO24HHYYHwNhsE7z7K3sfXjgiuiTSSBvUsQxE
+         jMe/3gyvIZWsn3QwqhqLQ0QxC6UQDb/HyYyYYd7RMXeC4GX+gWPGScTvXujcS+N46yE7
+         bexwmWVwKj2A5JlpOdhPLuX8uxrn22D8rhm4N+mrQ1LYWs6jLeaEII5N7o+rkGqPX7Nh
+         dWI37kup0B8XPBmSMb+hqFj233pyC8QnZP2KE2lhbcDg5aDWjiTir+2TVmmSM+EGqC92
+         hZPYfrE4sO8UEFg7llX5mezmQXiND1uN4853HvqIMYHy/Zh/QlVMaKaJrZSNauZHDA2V
+         aufQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724408490; x=1725013290;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uy9tQ1TYcZbcuxiuWon4EXX8Ukt9Xc78KSZT2kpFAzw=;
+        b=pCOGw3KuL967kHFMJvbP8gfS2T5h+RfOVw+m+GtvfkbtyJiWiTi2xMTu6pnaVnTVYe
+         PZXV6hg69vjeXUs++mFVkBGwdQV2H4VWs+EF5ztgBBeO/H9bmQyKF73eOJsa4MK91IPb
+         6w/Nc22DeVW0s6mgg4Ybrd1UlFFk+RDyYaClLb1EK3TztjsSyQaLKl5lEXeVzklIAqWT
+         HmKQkLL6iqJPW8K4rvffGdQ4BOgnfEBt/TbZAkOjlIGOZPISKiVGsYgAkxbuA2NY6ZbK
+         eG4gHaUv3JshxhrXd3x42Co3LRHZZ3quaGGlgRBhOwdEZqT0dA0YoPctToJQaVAbbWVC
+         Kkww==
+X-Forwarded-Encrypted: i=1; AJvYcCXqoL4y0rsN/NvmifRXTOqd+twnKJ9gtgBYn/RGbC7F9M5H6PzLpeu3hZnvfoiCkgtbEZWHaYXxe0dmeFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIz6sNUiTCA6rjtPBthXTIFXeBnGNCsL7GKpSFVOQWZRlotWSr
+	r8OsYYsoQhJXLaAYdIhlayCpPkPfYrDc0cNaXrotHV9k7pdaWcZli5dhJCyHzH0=
+X-Google-Smtp-Source: AGHT+IEsqzlf61vWm+813vG7vMkMePBztenb+9XkV5XyCVO9mztSFfT2RcUPMSZK6WV+NNZgP3DJpQ==
+X-Received: by 2002:a17:907:7e95:b0:a86:94e2:2a47 with SMTP id a640c23a62f3a-a86a51b24b5mr152679166b.15.1724408490036;
+        Fri, 23 Aug 2024 03:21:30 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436322sm240714966b.117.2024.08.23.03.21.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 03:21:29 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 23 Aug 2024 12:21:36 +0200
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZshisKww97hhGh-Y@apocalypse>
+Mail-Followup-To: Bjorn Helgaas <helgaas@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <20240821165541.GA254124@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYUPR06MB5873:EE_
-X-MS-Office365-Filtering-Correlation-Id: 07dd6941-805c-4a5d-ba8d-08dcc35d2796
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uF6iNjdvX3qkVom5zpfZoQdPPjaAWCdQlusT7UNquvme0b/AiYaMfq1TIlDB?=
- =?us-ascii?Q?jgZkEVwDQsP7OwYKJuaAUo38VH2vsfKh8bH11B2tlEp8h5BEilD5zvSQNJQd?=
- =?us-ascii?Q?KA4SSvYISH0K8Z/3xkZLyVx8/EsDnsc8w/9bZBePwXVeaSd9TFSWYjdAOp6T?=
- =?us-ascii?Q?wOAltTLFPC+dIPdxlP/XVh2g7bGRABojaRgGR20yI951pfbGxdJNby6eiAJn?=
- =?us-ascii?Q?Yrb9FN0hKFVroCRJzlU7tPcUQACk00yWW7patQ3V8gdG6iiHKXJJpsEEUwbP?=
- =?us-ascii?Q?R9echqlHRW03dEDukE1XXt7JS0UQWSkBnk01+DN0kK6/5CIyHfHXl6YqlVVu?=
- =?us-ascii?Q?ZcNUnbOql6HAuZMkgmyqlNhj5QT9uHme3HR9S7dqdcwlJMRn41JrQgKBMGBS?=
- =?us-ascii?Q?2Be0+wicRtZikoj04nMp8e+ub91xKJexNqypnEtChby/QeIGCJhdlSCHyQLU?=
- =?us-ascii?Q?9f8oRSvl18mGpjKms3H+yrT05G5rfu578Rzr2KlMiHz0ypOU511YYDQhPE8u?=
- =?us-ascii?Q?4WmTLZvGUX0NTJJ1hWxM//zmXxfSUH1FBS1UZh2meJbO38a6IKmX6smLbpja?=
- =?us-ascii?Q?J06KMqnTJ29YXU0B1UiCAqLZq0YGnLl+Xbe7QD7BJ8g98RictrjpPWsUvshe?=
- =?us-ascii?Q?PfVCMn9HCzewIZvvflNcd4rnH3oPyureU4COv3QEbvZAo4dfk/sxmIkVob23?=
- =?us-ascii?Q?rkhfRW8m2S13MNDevGprY2CLv55lES3z49rSwxRPmYbndpLtzGcUMZ2tvzBc?=
- =?us-ascii?Q?U5Iw6uCQ3QZ5SbnSuUnH9koqGZIEtm/LBJziagR5uFx12MSgRyquPD/Q041D?=
- =?us-ascii?Q?TseAq1rOgcHy9KNeWRD50MsmVug1wg1Y8Y32eSttVt+nqPLkVH1ckV6b/6wk?=
- =?us-ascii?Q?HE8prWdkJzn6MpXwY7VH27r40VL73HeMxlsOHo0VFySm74ZkeidYMPyEG7KB?=
- =?us-ascii?Q?X2OOGG5al7Ni7LYjuN3rFnEtTZnPYon/SCVkCrkVeN5a0b9ET4o1rWj4QXel?=
- =?us-ascii?Q?iLXfjYfADgVEYvmCi4Vx6JeoM2SGmu+eoO5KMYfPZ9CV5xvYOclCnEZxVsfO?=
- =?us-ascii?Q?2XQdPly28rO1uYAT+iNaE81lFI1q8ZoruOV1Lfs1oXkpDpQ36X5Xb+Ob2rfM?=
- =?us-ascii?Q?MTEp+Yj+tROA/7XhF+oC898urh1JioAO4MLSrirkqPLqlahndJdHXb/wNy/2?=
- =?us-ascii?Q?mO2VQAsZUTI/c25XXEz0AggsBC/61tcI58CzDCTimUtZZyBCfoeN+RSd0JTu?=
- =?us-ascii?Q?aOwyWe48/+XFJ3t8NJpxKwhnyBBlPt13TASlZSkhp/vOVafonW9cShOP758B?=
- =?us-ascii?Q?4S9519iNe+EEK2OHFqaMTwejawi8+Jr037bxwOxOIJwnvHKQRjeYanFUmEgn?=
- =?us-ascii?Q?KA5TnWu3H3bqeMc906mSGSsfb47o7vSckcgwlKRmOjZJseB/Rg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QSXd/SvfOAZc527PlfUYXrHxBNO2M6Fw50DL6ANKjK9hJqpcwAMWSTN4d6QW?=
- =?us-ascii?Q?1RtXOtVsZgYtDoi9zuiiR0qaI62flrMnuZmnPgVttCApUsslwAcNN0RyCAhr?=
- =?us-ascii?Q?uvG0C32zMum/plUqX3BrYsxB6Ifw74OYdItz/tJO/QixqlhaLYroqfIU++Vq?=
- =?us-ascii?Q?S0uZ9PX9BYoMzdMH25saoNMxpmskJs8Z5RERWRxi5bxstNJKWXcekrDwjWic?=
- =?us-ascii?Q?AyR5vs4gRAI1+rfBhMYKcIFp15u0Ntx4uY1kYo45WHRJXNSM1AEertq6QgAX?=
- =?us-ascii?Q?z5s5DwB0nCJ8PlMj1bptm7KK3QGqevjmuFVIarxt9J9gevN3D23hwoUkImmQ?=
- =?us-ascii?Q?kTkIiwgmOzrkWD/vKJIw3WbZCSfXQmvZIuBnrRye36yOb15ife44nexiWkSQ?=
- =?us-ascii?Q?1uVhYmksJi/G/yJ79kQ7w5VdY+n57J3P26X3rjFMl0SM/Jw3P6WtfEAlnZ9l?=
- =?us-ascii?Q?NMVZPUXD4NR+N9Hc9WfFM/VGAvOD5RFJoT/JWe2LsHFHZKQ2DPISNZbi8m88?=
- =?us-ascii?Q?T4e5xmaJSWfLFfpX+hAbMiiHXB12j2bRtD6LG57k5bK+wRv4Iy0Bex41+VLt?=
- =?us-ascii?Q?E/Syqyoc2m3ztsQwtCRTwxriU1PXIXS7ks/yui8V7J7PL1eBiW/Vqm0s7Fp8?=
- =?us-ascii?Q?E+sbhVhfEmhEUdHO3DSSYNq1Bmn6ZACXfY/zOaLW4WDRcUH7VhV19/fFMWom?=
- =?us-ascii?Q?3ibiiVsq/4b6D6aoON/4BUUjhuR5iHJYl0ZkwpgSjANQjtg6ihf6AhiOSXqN?=
- =?us-ascii?Q?8TOJeyj1nq1U6TSyicm3G9atD9EAE6dHxWpC/AVLoiBgIRireCTfV3wROs+y?=
- =?us-ascii?Q?ZDO1NlK94I9udDtOz0L8BefV0udL5vPo4mK43/CMOpTifyHmdODtNRWjSIh2?=
- =?us-ascii?Q?uofyjYQUvlXGVWNp/zyDkaJZJSuCg1v9sI1B4lY4o2GqlNXtfA/n7XIU4EM6?=
- =?us-ascii?Q?HJQGu9z4lAJTIwS+wXhehjeoz4eCC1Ptg6DhHxStpDEW+U6GPJlLWut1TgAp?=
- =?us-ascii?Q?7GDlrhO+wOzUwhYuvYNHoXIIrWf+sn18UL/TDq62pnDOfiQJfASzRmBrl3Ox?=
- =?us-ascii?Q?PoYzbfDuQynA2ZWbr7QeLWsrglTHL3d7+oqlaex5BRp1zH1e1aNtuzCNtF1H?=
- =?us-ascii?Q?sIZi2DjfMLeUTSaMZ19TXm8V1YwyhJPheb15/yaUVwaof/3Q/Cfs7nlhBavA?=
- =?us-ascii?Q?IkWEomiTRB8M/3Nqxac55knF4fjyJ2mxmTW0kUn7NiOATz5nNuYFwpdCp1CL?=
- =?us-ascii?Q?0pN9n91Ws04zhInlLfVvF2asxj8l3/f8cu4zS2o5poh0/OxYqNZ4AjAz/TAh?=
- =?us-ascii?Q?+uzbYWPrP+eJwZXvELqeu77NNRcl+o5owhY8BSHgi4t1k+eZ4bmCRU2w2X08?=
- =?us-ascii?Q?i0XYwVTaVuLENTuveVjXR5dZSZQMO7rdeno3rCawEz2Oq4FaWmmKoYFjMSSq?=
- =?us-ascii?Q?soEZn5t6qxJDxv5t96l1RsRrPlACJmpMeowLpPn+SSpiRLpZxvhyiuyR6dYC?=
- =?us-ascii?Q?BqLpLUxpkhfJrE7WJiLadQBODEsZOpjwmB2YUK/+4TMTGeVo/xPoFFLkZExo?=
- =?us-ascii?Q?rrS5OmogAlk6MOZ3gp8riX1TA66dWgiXxkXe/g7K?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07dd6941-805c-4a5d-ba8d-08dcc35d2796
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 10:20:04.5187
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6ezNzFy/r+Mb7tnI2iGa/wNVECQY45slT6XNImwYsxCbi+rtSgQI8Je9xjgZa+8rd5SA6DfHdvgUodYUAKzLyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB5873
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821165541.GA254124@bhelgaas>
 
-Use devm_clk_get_enabled() instead of clk functions in uniphier-mdmac.
+On 11:55 Wed 21 Aug     , Bjorn Helgaas wrote:
+> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+> > The RaspberryPi RP1 is ia PCI multi function device containing
+> 
+> s/ia/a/
+> 
+> > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > and others.
+> 
+> Add blank lines between paragraphs.
+> 
+> > Implement a bare minimum driver to operate the RP1, leveraging
+> > actual OF based driver implementations for the on-borad peripherals
+> 
+> s/on-borad/on-board/
+> 
+> > by loading a devicetree overlay during driver probe.
+> > The peripherals are accessed by mapping MMIO registers starting
+> > from PCI BAR1 region.
+> > As a minimum driver, the peripherals will not be added to the
+> > dtbo here, but in following patches.
+> 
+> > +config MISC_RP1
+> > +        tristate "RaspberryPi RP1 PCIe support"
+> > +        depends on PCI && PCI_QUIRKS
+> > +        select OF
+> > +        select OF_OVERLAY
+> > +        select IRQ_DOMAIN
+> > +        select PCI_DYNAMIC_OF_NODES
+> > +        help
+> > +          Support for the RP1 peripheral chip found on Raspberry Pi 5 board.
+> > +          This device supports several sub-devices including e.g. Ethernet controller,
+> > +          USB controller, I2C, SPI and UART.
+> > +          The driver is responsible for enabling the DT node once the PCIe endpoint
+> > +          has been configured, and handling interrupts.
+> > +          This driver uses an overlay to load other drivers to support for RP1
+> > +          internal sub-devices.
+> 
+> s/support for/support/
+> 
+> Add blank lines between paragraphs.  Consider wrapping to fit in 80
+> columns.  Current width of 86 seems random.
+> 
+> > diff --git a/drivers/misc/rp1/Makefile b/drivers/misc/rp1/Makefile
+> > new file mode 100644
+> > index 000000000000..e83854b4ed2c
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/Makefile
+> > @@ -0,0 +1,3 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +rp1-pci-objs			:= rp1-pci.o rp1-pci.dtbo.o
+> > +obj-$(CONFIG_MISC_RP1)		+= rp1-pci.o
+> > diff --git a/drivers/misc/rp1/rp1-pci.c b/drivers/misc/rp1/rp1-pci.c
+> > new file mode 100644
+> > index 000000000000..a6093ba7e19a
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/rp1-pci.c
+> > @@ -0,0 +1,333 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018-22 Raspberry Pi Ltd.
+> 
+> s/22/24/ ?
+> 
+> > +#define RP1_B0_CHIP_ID		0x10001927
+> > +#define RP1_C0_CHIP_ID		0x20001927
+> 
+> Drop; both unused.
+> 
+> > +#define RP1_PLATFORM_ASIC	BIT(1)
+> > +#define RP1_PLATFORM_FPGA	BIT(0)
+> 
+> Drop; both unused.
+> 
+> > +#define RP1_SYSCLK_RATE		200000000
+> > +#define RP1_SYSCLK_FPGA_RATE	60000000
+> 
+> Drop; both unused.
+> 
+> > +enum {
+> > +	SYSINFO_CHIP_ID_OFFSET	= 0,
+> > +	SYSINFO_PLATFORM_OFFSET	= 4,
+> > +};
+> 
+> Drop; unused.
+> 
+> > +/* MSIX CFG registers start at 0x8 */
+> 
+> s/MSIX/MSI-X/
+> 
+> > +#define MSIX_CFG_TEST           BIT(1)
+> 
+> Unused.
+> 
+> > +#define INTSTATL		0x108
+> > +#define INTSTATH		0x10c
+> 
+> Drop; both unused.
+> 
+> > +static void dump_bar(struct pci_dev *pdev, unsigned int bar)
+> > +{
+> > +	dev_info(&pdev->dev,
+> > +		 "bar%d len 0x%llx, start 0x%llx, end 0x%llx, flags, 0x%lx\n",
+> 
+> %pR does most of this for you.
+> 
+> > +static int rp1_irq_set_type(struct irq_data *irqd, unsigned int type)
+> > +{
+> > +	struct rp1_dev *rp1 = irqd->domain->host_data;
+> > +	unsigned int hwirq = (unsigned int)irqd->hwirq;
+> > +	int ret = 0;
+> > +
+> > +	switch (type) {
+> > +	case IRQ_TYPE_LEVEL_HIGH:
+> > +		dev_dbg(rp1->dev, "MSIX IACK EN for irq %d\n", hwirq);
+> > +		msix_cfg_set(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > +		rp1->level_triggered_irq[hwirq] = true;
+> > +	break;
+> > +	case IRQ_TYPE_EDGE_RISING:
+> > +		msix_cfg_clr(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > +		rp1->level_triggered_irq[hwirq] = false;
+> > +		break;
+> > +	default:
+> > +		ret = -EINVAL;
+> 
+> If you "return -EINVAL" directly here, I think you can drop "ret" and
+> just "return 0" below.
+> 
+> > +		break;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> 
+> > +static int rp1_irq_xlate(struct irq_domain *d, struct device_node *node,
+> > +			 const u32 *intspec, unsigned int intsize,
+> > +			 unsigned long *out_hwirq, unsigned int *out_type)
+> > +{
+> > +	struct rp1_dev *rp1 = d->host_data;
+> > +	struct irq_data *pcie_irqd;
+> > +	unsigned long hwirq;
+> > +	int pcie_irq;
+> > +	int ret;
+> > +
+> > +	ret = irq_domain_xlate_twocell(d, node, intspec, intsize,
+> > +				       &hwirq, out_type);
+> > +	if (!ret) {
+> > +		pcie_irq = pci_irq_vector(rp1->pdev, hwirq);
+> > +		pcie_irqd = irq_get_irq_data(pcie_irq);
+> > +		rp1->pcie_irqds[hwirq] = pcie_irqd;
+> > +		*out_hwirq = hwirq;
+> > +	}
+> > +
+> > +	return ret;
+> 
+>   if (ret)
+>     return ret;
+> 
+>   ...
+>   return 0;
+> 
+> would make this easier to read and unindent the normal path.
+> 
+> > +	rp1->bar1 = pci_iomap(pdev, 1, 0);
+> 
+> pcim_iomap()
+> 
+> > +	if (!rp1->bar1) {
+> > +		dev_err(&pdev->dev, "Cannot map PCI bar\n");
+> 
+> s/bar/BAR/
+> 
+> > +#define PCI_VENDOR_ID_RPI		0x1de4
+> > +#define PCI_DEVICE_ID_RP1_C0		0x0001
+> 
+> Device ID should include "RPI" as well.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/dma/uniphier-mdmac.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+Ack to all suggestions. Fixed in the next release, thanks.
 
-diff --git a/drivers/dma/uniphier-mdmac.c b/drivers/dma/uniphier-mdmac.c
-index ad7125f6e2ca..6b3570440b70 100644
---- a/drivers/dma/uniphier-mdmac.c
-+++ b/drivers/dma/uniphier-mdmac.c
-@@ -66,7 +66,6 @@ struct uniphier_mdmac_chan {
- 
- struct uniphier_mdmac_device {
- 	struct dma_device ddev;
--	struct clk *clk;
- 	void __iomem *reg_base;
- 	struct uniphier_mdmac_chan channels[];
- };
-@@ -383,6 +382,7 @@ static int uniphier_mdmac_probe(struct platform_device *pdev)
- 	struct uniphier_mdmac_device *mdev;
- 	struct dma_device *ddev;
- 	int nr_chans, ret, i;
-+	struct clk *clk;
- 
- 	nr_chans = platform_irq_count(pdev);
- 	if (nr_chans < 0)
-@@ -401,16 +401,12 @@ static int uniphier_mdmac_probe(struct platform_device *pdev)
- 	if (IS_ERR(mdev->reg_base))
- 		return PTR_ERR(mdev->reg_base);
- 
--	mdev->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(mdev->clk)) {
-+	clk = devm_clk_get_enabled(dev, NULL);
-+	if (IS_ERR(clk)) {
- 		dev_err(dev, "failed to get clock\n");
--		return PTR_ERR(mdev->clk);
-+		return PTR_ERR(clk);
- 	}
- 
--	ret = clk_prepare_enable(mdev->clk);
--	if (ret)
--		return ret;
--
- 	ddev = &mdev->ddev;
- 	ddev->dev = dev;
- 	dma_cap_set(DMA_PRIVATE, ddev->cap_mask);
-@@ -429,12 +425,12 @@ static int uniphier_mdmac_probe(struct platform_device *pdev)
- 	for (i = 0; i < nr_chans; i++) {
- 		ret = uniphier_mdmac_chan_init(pdev, mdev, i);
- 		if (ret)
--			goto disable_clk;
-+			return ret;
- 	}
- 
- 	ret = dma_async_device_register(ddev);
- 	if (ret)
--		goto disable_clk;
-+		return ret;
- 
- 	ret = of_dma_controller_register(dev->of_node, of_dma_xlate_by_chan_id,
- 					 ddev);
-@@ -447,9 +443,6 @@ static int uniphier_mdmac_probe(struct platform_device *pdev)
- 
- unregister_dmac:
- 	dma_async_device_unregister(ddev);
--disable_clk:
--	clk_disable_unprepare(mdev->clk);
--
- 	return ret;
- }
- 
-@@ -482,7 +475,6 @@ static void uniphier_mdmac_remove(struct platform_device *pdev)
- 
- 	of_dma_controller_free(pdev->dev.of_node);
- 	dma_async_device_unregister(&mdev->ddev);
--	clk_disable_unprepare(mdev->clk);
- }
- 
- static const struct of_device_id uniphier_mdmac_match[] = {
--- 
-2.25.1
-
+Andrea
 
