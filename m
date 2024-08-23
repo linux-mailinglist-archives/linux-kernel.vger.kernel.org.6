@@ -1,151 +1,173 @@
-Return-Path: <linux-kernel+bounces-298972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D5395CE7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:56:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61D795CE7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3721F23480
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9C01C22F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2791B18859E;
-	Fri, 23 Aug 2024 13:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C9E188598;
+	Fri, 23 Aug 2024 13:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e48TG8FI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fenniak.net header.i=@fenniak.net header.b="N+a0pMmj"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E436D188586;
-	Fri, 23 Aug 2024 13:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359EB46556
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421373; cv=none; b=D2QR31Azbop+8ixPaERmdZUvReW93xZM/GnRX+AhlmJfdEOsjclt6Z1NKY9feVil2OUKh6S/KJmtBqSyfkb/TB9gDZHnlQi8ozpWDZ9RkmjqN7Ai9yDYQV1MAB5FpGS0OwYH1bBDqg9mPKvQRdkhMyN+SRF0sQh8D8ci3hBX3F0=
+	t=1724421432; cv=none; b=ujLcq6l+LC6cogtUO6pe7tUzi+w+AvY85smEc6na/a6tNARToAbJSdtGhfterJqY6har5h/m/wFVa4kK+7qyq76t+W8wdgHclLdoLdVqnhIMjjiLoSbpSGeBuXxbzSTeFUOVoOT1DTa4fP9Idf+kxQQKuR3mr3iAmobd6O4HqMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421373; c=relaxed/simple;
-	bh=gndjyeqaytEaKYf1kOK8jLLgaJjwQwTw8djDulGw++U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cx70Gp3+U1l1RIOo5JpDHWGAjLHHsdTaPvwJ/ftzhn4gr0UBg5W/FJag2lFoRYWzHlEjwBFURg25GoXe1A755xDg831G4EVsENfejGWS3VFTQ/FynUpapoyHL9xmP3mqdi1BAcdWbujkv9KskTS3iYAHmWLw0fqgyokWcynE3dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e48TG8FI; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724421372; x=1755957372;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=gndjyeqaytEaKYf1kOK8jLLgaJjwQwTw8djDulGw++U=;
-  b=e48TG8FIs9pvwDdpP6MAFtI8hjEhC/wXyoOyJRUktA37zhlsZW7D9srF
-   YiessI4lG813oTE4L0jjQ0e0zHUPsMb6hY/Tn9uLvA1JmeipCrIfF/lHB
-   2925rsU0voC5p+cjFSw7SKNfTa0Tt+j7x+NajbiUuZYLDUJgB7PBEk4jB
-   uYek/eW/ODhTjsjPt8eu7+cU+hcqpORNfIBTDK+oN7ggHFX2u7awd80/+
-   rO5GanvqSIp42v+G9np59DvYvigmMEh+8PEOPABmM93edMi1xoLAQXtZP
-   wmprKUiyWx2UhRRQSe01LrTzVVwAnHZJBidpr4iKMytD4HND9Q0qjxokG
-   Q==;
-X-CSE-ConnectionGUID: KuqTbGDKSnec/xNA4ApV+g==
-X-CSE-MsgGUID: PV9oQ55WTCChIMNSy7FhuQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33513410"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="33513410"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:56:10 -0700
-X-CSE-ConnectionGUID: qYpLNdWxRbOic97zRlbH/g==
-X-CSE-MsgGUID: M4YCAqa4Q1u89Ebl/F3u5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="62104859"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:56:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shUln-00000000oMz-1Rih;
-	Fri, 23 Aug 2024 16:56:03 +0300
-Date: Fri, 23 Aug 2024 16:56:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v5 07/10] i2c: of-prober: Add regulator support
-Message-ID: <ZsiU81fYfy8WTk_5@smile.fi.intel.com>
-References: <20240822092006.3134096-1-wenst@chromium.org>
- <20240822092006.3134096-8-wenst@chromium.org>
- <ZsdGlMyq4pwWAOk4@smile.fi.intel.com>
- <CAGXv+5FWaN4gGksCF7k3emuDyCmAtx7+DBwHHbFhf_FLpP+=aw@mail.gmail.com>
+	s=arc-20240116; t=1724421432; c=relaxed/simple;
+	bh=Hct+fFSW9c9vUbZKkWYHlkYkWzjV+myTSNDEd8GyNZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gyw+w3jCbkPBbv0XrDaSJ1GPkIbhzCiWcj2aCpLkgQSj57OHW74WrdtrbjMJOIoQvyWfAS53nbaRiil6NJQc24ePHVQuKc9BFk9wJUB8FfYClTNNx6C0W9X2Jqxv+PybSGY4R/0xQ8ZwK5dXWWkXYBe/AudGxYZtd+Dwbj7J7KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fenniak.net; spf=pass smtp.mailfrom=fenniak.net; dkim=pass (2048-bit key) header.d=fenniak.net header.i=@fenniak.net header.b=N+a0pMmj; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fenniak.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fenniak.net
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3bae081efso1569840a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fenniak.net; s=google; t=1724421429; x=1725026229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=35XQX7bIYPMcCPaB6P3F7Jnu4KwL6KW54O+hnKmNXUc=;
+        b=N+a0pMmjj/BxypeU+scxrfL54OLRS1wdzmJx7uUnULDz+n7L2WvHHPyCRjIK4v8/f/
+         P2veucSxhknoADw/hxuHt/5bpYpjePpMLfGWKnPRRPqhmL3i2Yk5W63kkTeztQ9Of7Mx
+         lAi3A1XilbBJJPxoLg71hWmW2vOhME5zpUd+QHOfEuEISiERP1ZEljEY5J0pNRc7kjnA
+         XUkRb1gWyfgAb0U41ixQ3bN7Q7Rz3wrr27vZ1vOvNc6JINq5lklAeMkCcxhR9o0VgJ4f
+         7Aq0bFy+d2fJNjk5Unos45vfvA6rrAqFeVKcnGaESz6tUQrfYObQv81mfg28Wtrb1J7+
+         RbXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724421429; x=1725026229;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=35XQX7bIYPMcCPaB6P3F7Jnu4KwL6KW54O+hnKmNXUc=;
+        b=Ibc2LnAsBG9FTGVKC9c0FYu8Jcws0y7YOb/1hZz4qpUjchUXZVvaV3pnofiGsWNGeR
+         bHjii+jnDhKeaxC4sQTC5Jmy4rRS5KPrGMSTLicrxBMjunNPL4JIN7w75G8GG41/LUCE
+         ATYW5PHbffpqDxL0orqOfhDAr0e8ePFYfeNSax2mbcB4k04xq1jP5Ob8fOb6cyCIRAzY
+         kegFiJcAqeta0zOcgL2+2U95pIc4DfEL+/3+GNQyoBkr2CiQ06qo7bW9fJarUhQYDUJU
+         8UIoW+kbVwx9reuQNEknWDUK3v7QhXgMRRFHnLqeh753gSloN6LDyZbW3v3E3pPZW1SY
+         eZ+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXJkBwpIsQZphYBRS9okGfgVKRW7sqs0SFUK4nEA6rA2dILsBk7/O+IvAYU/WjTfbCXJ1ueYHd8Gf6UwwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr6f6jZ+t0ndJuNbAErDIV5y82/rg8ekcvUMMlF5X6rJuklpw2
+	lavTPEoMWU3hPHJYctvik6+EhlrbojI4WgiiSargOcSlXPmYlEZ/g2crNPGy+Fw=
+X-Google-Smtp-Source: AGHT+IGiBAWiVmuhaMRuDYBJY9TDgplLBlPfGGbZIGjwQ+hUM0XWf5CO11KnFeBGhUQCjD46P9Y3Yw==
+X-Received: by 2002:a17:90a:4cc2:b0:2d3:b93d:ba48 with SMTP id 98e67ed59e1d1-2d646bd1a27mr2594098a91.8.1724421429460;
+        Fri, 23 Aug 2024 06:57:09 -0700 (PDT)
+Received: from zenbook-nixos.tail73afb.ts.net (d104-205-214-17.abhsia.telus.net. [104.205.214.17])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d613a5c550sm4126103a91.30.2024.08.23.06.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 06:57:09 -0700 (PDT)
+From: Mathieu Fenniak <mathieu@fenniak.net>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Mathieu Fenniak <mathieu@fenniak.net>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D. Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] platform/x86: asus-wmi: Fix spurious rfkill on UX8406MA
+Date: Fri, 23 Aug 2024 15:56:28 +0200
+Message-ID: <20240823135630.128447-1-mathieu@fenniak.net>
+X-Mailer: git-send-email 2.44.1
+In-Reply-To: <45764fd3-f715-c461-1f6f-071bad742460@linux.intel.com>
+References: <45764fd3-f715-c461-1f6f-071bad742460@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5FWaN4gGksCF7k3emuDyCmAtx7+DBwHHbFhf_FLpP+=aw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 23, 2024 at 05:35:59PM +0800, Chen-Yu Tsai wrote:
-> On Thu, Aug 22, 2024 at 10:09 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Aug 22, 2024 at 05:20:00PM +0800, Chen-Yu Tsai wrote:
+The Asus Zenbook Duo (UX8406MA) has a keyboard which can be
+placed on the laptop to connect it via USB, or can be removed from the
+laptop to reveal a hidden secondary display in which case the keyboard
+operates via Bluetooth.
 
-...
+When it is placed on the secondary display to connect via USB, it emits
+a keypress for a wireless disable. This causes the rfkill system to be
+activated disconnecting the current wifi connection, which doesn't
+reflect the user's true intention.
 
-> > Hmm... why not
-> >
-> > static int i2c_of_probe_get_res(struct device *dev, struct device_node *node,
-> >                                 struct i2c_of_probe_data *data)
-> > {
-> >         struct property *prop;
-> >         int ret;
-> >
-> >         ret = i2c_of_probe_get_regulator(dev, node, data);
-> >         if (ret < 0) {
-> >                 i2c_of_probe_free_res(data);
-> >                 return dev_err_probe(dev, ret, "Failed to get regulator supplies from %pOF\n", node);
-> >         }
-> >
-> >         return 0;
-> > }
-> 
-> That would be more churn in the next patch, which introduces another
-> error condition requiring the same cleanup.
+Detect this hardware and suppress any wireless switches from the
+keyboard; this keyboard does not have a wireless toggle capability so
+these presses are always spurious.
 
-OK!
+Signed-off-by: Mathieu Fenniak <mathieu@fenniak.net>
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/platform/x86/asus-nb-wmi.c | 20 +++++++++++++++++++-
+ drivers/platform/x86/asus-wmi.h    |  1 +
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-...
-
-> > > +     /* largest post-power-on pre-reset-deassert delay seen among drivers */
-> > > +     msleep(500);
-> >
-> > How would we monitor if any [new] driver wants to use bigger timeout?
-> 
-> The assumption is that the person doing the integration should test for
-> this. This prober doesn't get called everywhere. It needs a driver to
-> call it, and that driver is written by someone for some specific platform.
-> Maybe I should explicitly spell that out in the function description?
-> Or even make it a parameter?
-> 
-> Also, having an arbitrarily large number here doesn't help platforms that
-> want to minimize boot time. On that front I'm also thinking about whether
-> it is possible to do a handover to the actual driver so that the latter
-> doesn't have to go through the whole power sequence again.
-
-Yeah, I think the best effort is to have a parameter.
-
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index fceffe2082ec..ed3633c5955d 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -145,6 +145,10 @@ static struct quirk_entry quirk_asus_ignore_fan = {
+ 	.wmi_ignore_fan = true,
+ };
+ 
++static struct quirk_entry quirk_asus_zenbook_duo_kbd = {
++	.ignore_key_wlan = true,
++};
++
+ static int dmi_matched(const struct dmi_system_id *dmi)
+ {
+ 	pr_info("Identified laptop model '%s'\n", dmi->ident);
+@@ -516,6 +520,15 @@ static const struct dmi_system_id asus_quirks[] = {
+ 		},
+ 		.driver_data = &quirk_asus_ignore_fan,
+ 	},
++	{
++		.callback = dmi_matched,
++		.ident = "ASUS Zenbook Duo UX8406MA",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "UX8406MA"),
++		},
++		.driver_data = &quirk_asus_zenbook_duo_kbd,
++	},
+ 	{},
+ };
+ 
+@@ -630,7 +643,12 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_driver *asus_wmi, int *code,
+ 	case 0x32: /* Volume Mute */
+ 		if (atkbd_reports_vol_keys)
+ 			*code = ASUS_WMI_KEY_IGNORE;
+-
++		break;
++	case 0x5D: /* Wireless console Toggle */
++	case 0x5E: /* Wireless console Enable */
++	case 0x5F: /* Wireless console Disable */
++		if (quirks->ignore_key_wlan)
++			*code = ASUS_WMI_KEY_IGNORE;
+ 		break;
+ 	}
+ }
+diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
+index cc30f1853847..d02f15fd3482 100644
+--- a/drivers/platform/x86/asus-wmi.h
++++ b/drivers/platform/x86/asus-wmi.h
+@@ -40,6 +40,7 @@ struct quirk_entry {
+ 	bool wmi_force_als_set;
+ 	bool wmi_ignore_fan;
+ 	bool filter_i8042_e1_extended_codes;
++	bool ignore_key_wlan;
+ 	enum asus_wmi_tablet_switch_mode tablet_switch_mode;
+ 	int wapf;
+ 	/*
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.44.1
 
 
