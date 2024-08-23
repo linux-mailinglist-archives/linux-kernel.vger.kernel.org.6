@@ -1,109 +1,116 @@
-Return-Path: <linux-kernel+bounces-298821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F8895CBE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:59:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BF495CBE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D351C2403D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:59:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A909B20E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AA9188011;
-	Fri, 23 Aug 2024 11:59:49 +0000 (UTC)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B602184520;
+	Fri, 23 Aug 2024 12:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="QE3iWVki"
+Received: from ms11p00im-qufo17291601.me.com (ms11p00im-qufo17291601.me.com [17.58.38.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E96E187870;
-	Fri, 23 Aug 2024 11:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DD5183CCB
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.38.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414389; cv=none; b=JJLNQDmR80jDGVlFdQqkYgwFhX6C5e+a2YZrf0eTDvc2+bWIG8lRTNz9C0osGGdDfjtSqyDaTmnKzl9XzKm7ozaHQUcJDwgYOWfEKhJ8AjS7fWuLv4AIEn/eWe05c2K21FX43revwQchSC8bC6AYIdosTZhPl1ZtEWTN3ncL2OY=
+	t=1724414451; cv=none; b=UL9SDb1x5xQV5PMlbPEXoVkqYMp60/FTiVT00rHHpPV4qmC/jmOQRxxqeSLWjvnlh3GBmeowCHtIJzpJ8PWR79TL6+ExFa5onfz+YBYE6R6Mc23DnjErT+/MzcnkkHzyKiFa7fHD3cBjhQ1knGT34Kj6uiGwkYgh/m51vkqEwqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414389; c=relaxed/simple;
-	bh=/CPw1pDZrC6g/4GmnuKCceuMMGgwprttVSIiasmIHCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NXmQLI3v55pkVwoeoGUGZGR/iRmJ4PEQv9vgxiNmMfBCpAZuwh5Z4gjIUBasUPjAgRYf3Fpsw7jf6WpBKVg7CVsznQmdJqM1IAwnoq4BVcPL9cP+AZrb0olHM/ADX9mzyo+JOMFDRCZ0Zo+b0xvOVAHH6HuV5BxotDVWrFgS5Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e1161ee54f7so2110331276.2;
-        Fri, 23 Aug 2024 04:59:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724414383; x=1725019183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MzZuOhd6IiwfDB2MD4HsU7/YgBssJRdCGAc62Roc+3s=;
-        b=w/AUAFLaQvzL2dy2rqFNhVGqKcaEK/kAKeh+geXMEQ9WbzQHcX7BiNGW3Sqi2yMF7m
-         e3zcVkqUhIs5MOMzjcwgxKqm5lHmXCISXslIEORPYqMBG4fYNIBmakUFnmmeveLzX7JZ
-         r1W1rrxZPT2wj5l2qOgC+i7p9rPqTpIP1Bpzk2urm8GCA/6rhOoBhdQmhG2Eb9qiQZPQ
-         iNCUvcvRvc0XBZnfLX2wZHrq3pOIqVK83mkJ+Zjwl3xDQ730qUiCu+HCIQWitwz3OpAJ
-         PeHvpcO8R3VaaUoBR5mEA94GIzDZL9Q107EkDBumV5qNoC/9BpQTuieomb/hcaYwWF7J
-         lcCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQJMz02vub4AJJJS90LE1gtZzgCQkhtRlIpy5IdSNH3rC75eM9ts/ajA0LF5WzPo+7n9IgS4UOoPvL@vger.kernel.org, AJvYcCW29MKm3L4tWI1c4Yg4xuNoxlOzsJYxrnk8gEwAYt/Ff5FIwFj5jAfaX5aT9edLRAFo+H5zLgM2BLb4du6I@vger.kernel.org, AJvYcCXLmJ+okTzaiyfTJln677xFEwEtgW9MrUan6eEExwQusX7ay5Zi3vh7sg9I89Z2xzmq/BWfClxj+Oyu@vger.kernel.org, AJvYcCXtF9bPpPkQUbKx7cUIcsapMX7He6k+TBbjSnmOrGtWgp0BoRLAMWKP+ii2uIXwrGBdwgMcwb9G77y+3FKoGJU16xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEz/U7OrxovWw38GZUxYHpcH2LUnf1pl57Objv0GTnxMfTsxih
-	Zk5POjNX2stg9absri+6o6gVU66DhIG27cj9Y3KW5HciIrCEFJJXh/C00FOX
-X-Google-Smtp-Source: AGHT+IG36/VvuCtY5jBhV3XKgyBM4ayDIVLcjNNPBaWoSxmajD8RvispiHO7s/+fZng4ajmD//hzlQ==
-X-Received: by 2002:a05:6902:e0f:b0:e13:dc31:ea5c with SMTP id 3f1490d57ef6-e17a86802d0mr2220405276.52.1724414383049;
-        Fri, 23 Aug 2024 04:59:43 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4b3d38sm628803276.35.2024.08.23.04.59.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 04:59:42 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-699ac6dbf24so18732617b3.3;
-        Fri, 23 Aug 2024 04:59:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUsubRnzu/Kr04BYaZunGN5d2ywXk0wLCn0NQJVJE3GatE1xgDQrBcRPG7SE2/55kVkiM1on/N/lljLMfDq@vger.kernel.org, AJvYcCWH64JOV+ZZg9mWxXLLgWTGDhUa46XaagnfWlyAOKfn0Kf059hWa6PJGBuS2+vdfQqdP+q/3aKODl6O@vger.kernel.org, AJvYcCX7Im41hwvtNwyfupzxvXRJNSSCinNVUxWxCI2UCaeWtJ+WD6jDJMdaovHWON7jlldfqK3ABhUgarBpeg4uduwwK+4=@vger.kernel.org, AJvYcCXOajhJm6139OBg7lgldNcmc0qb0wpI68zlWlSzeF8wPeTR9oGFCY623zJ7QvrfnXxs2nIVKIS78qXC@vger.kernel.org
-X-Received: by 2002:a05:690c:fcb:b0:65f:d27d:3f6a with SMTP id
- 00721157ae682-6c6249dd335mr24327327b3.7.1724414381983; Fri, 23 Aug 2024
- 04:59:41 -0700 (PDT)
+	s=arc-20240116; t=1724414451; c=relaxed/simple;
+	bh=ihJl2T4szNiGlkfRGvcFms2GN7nRy6jUyPjj4h7nxqg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rXtq9LkIwy2PUaZ0AgHaDub1ai7XhWxkT/BXEhi7/S43zOLlEynd2kRzOPEFlro8suQhd2Z2PbItdXbK682qrvOE8M21qUZgnxiUKyeHquqZvB8bk/LlXpZNMucWnwYYoxe83Fl8xiUAiG8ECEBtT38CrwsRJYPuvnF0Zec1+yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=QE3iWVki; arc=none smtp.client-ip=17.58.38.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724414449;
+	bh=IDkE8juXFbdUf6c43DEcrUFF7oF41us3ySr7r561+Nc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=QE3iWVkixFuiB2PoGSFr8h5MEx/uScsbXk/dcgWr9GmqzroBFDvjGK6rs7ULv+8Ov
+	 otKqlE2BBdn+9WoHocyEDm+ZV+Yem9cFXCSdkqDtd4sQCN52XikZdrpKVam+mvGOj3
+	 f63kO611u0wD02bvPudQDmcq/MPkQ1ZwOGy/CzjBR2llqDRxTg4J/v2pUpGNu00riz
+	 6lRMt+NeUaCqdTZpMVuDbAPcF5VNw66fY7sLJ7LS8y0kGuJsimMU1BbYO8P8nMPrCV
+	 7JUPZSek2GcNbALUsj/iha9hUUdwFvZpdHWxWbPzegBFkQmt2OybjLkFx9mo7eL0gq
+	 /hVd/TYEXv4SQ==
+Received: from [192.168.1.26] (ms11p00im-dlb-asmtpmailmevip.me.com [17.57.154.19])
+	by ms11p00im-qufo17291601.me.com (Postfix) with ESMTPSA id 5E3F83A0242;
+	Fri, 23 Aug 2024 12:00:45 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Fri, 23 Aug 2024 20:00:14 +0800
+Subject: [PATCH v2] driver core: Explicitly initialize struct member
+ @data.have_async in __device_attach()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820101918.2384635-1-claudiu.beznea.uj@bp.renesas.com> <20240820101918.2384635-12-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240820101918.2384635-12-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Aug 2024 13:59:30 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUx4v6MYOv8cQ2mrKqDdk3+k5XhmfZnnW7vs+vX=1QTqA@mail.gmail.com>
-Message-ID: <CAMuHMdUx4v6MYOv8cQ2mrKqDdk3+k5XhmfZnnW7vs+vX=1QTqA@mail.gmail.com>
-Subject: Re: [PATCH v5 11/11] arm64: dts: renesas: rzg3s-smarc-som: Enable
- i2c1 node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	p.zabel@pengutronix.de, wsa+renesas@sang-engineering.com, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240823-fix_have_async-v2-1-ed1039527365@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAM15yGYC/3WMwQ7CIBAFf6XZs5guUFI9+R+maYCi7EFaQYlNw
+ 7+LvXuclzezQXKRXIJzs0F0mRLNoQI/NGC9DnfHaKoMvOWy7blgN/qMXmc36rQGy4RG0SnspxM
+ aqNISXX3swetQ2VN6zXHd+xl/699URoZMCi06aZRCaS7PN1kK9mjnBwyllC8ueeEIrgAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-GUID: Rbn4VpEl-3YLvM48shNQjtPh0ELEZ0ZR
+X-Proofpoint-ORIG-GUID: Rbn4VpEl-3YLvM48shNQjtPh0ELEZ0ZR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_08,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
+ clxscore=1015 malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0
+ adultscore=0 mlxlogscore=796 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2408230087
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On Tue, Aug 20, 2024 at 12:19=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable i2c1 node.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.12.
+__device_attach() relies on compiler to implicitly initialize struct
+member @data.have_async to avoid the member is used before initialization
+but readers may not understand that, solved by explicitly initializing
+@data.have_async as well as existing @data.want_async.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Remove both fix and stable tag
+- Correct both title and commit messages
+- Link to v1: https://lore.kernel.org/r/20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com
+---
+ drivers/base/dd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 9b745ba54de1..b0c44b0846aa 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -1021,6 +1021,7 @@ static int __device_attach(struct device *dev, bool allow_async)
+ 			.dev = dev,
+ 			.check_async = allow_async,
+ 			.want_async = false,
++			.have_async = false,
+ 		};
+ 
+ 		if (dev->parent)
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+---
+base-commit: 87ee9981d1f86ee9b1623a46c7f9e4ac24461fe4
+change-id: 20240823-fix_have_async-3a135618d91b
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
