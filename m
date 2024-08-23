@@ -1,163 +1,91 @@
-Return-Path: <linux-kernel+bounces-299124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FD095D069
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:51:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B4295D06E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01BD2B224A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:51:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4921C2203A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122EC1885A1;
-	Fri, 23 Aug 2024 14:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79762188903;
+	Fri, 23 Aug 2024 14:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="JresqEmc"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XURnp9Mk"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1AC18859A
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DA51865F3
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424689; cv=none; b=jSADEG7mZA4sOkvUaoKJfNiWbOrVLznWwZ0nxAd7DQIU7NsAcJeTb7B06ZpApo1Qy3rdEzyXpvoskQJWzYvamQNpWEakVyKe7YapxrxpIZnF5tdXwPHN/rbzyKQH0A3X/+MBCrKuk6RbSRAS2yaQf0F2QwhW/WujaMlczNcjTdM=
+	t=1724424722; cv=none; b=IBk5XN7KCzje5tIkPwB76dLlcAScS9D0BQ7NTTwO6KDmRiLYzrFeWvfLjLGSzamUHsE2GIHE4gA6LXDrHX9PucGcK57XAZAM/sf6AhUFTRKGiaBfn78CmBEfw3L05/8ney79hp2BPyFrzVn4EKWTmNkN/QwLfqe5SSs9CRL+nPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424689; c=relaxed/simple;
-	bh=b4C+Oy37DV2Kzj7Jrf0dTC698njLjd23JNwPJG1/FcU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fW4vSJBoZF3LDkREASkopishJAtAl0pxojYiDsNKQcwkdtoZpnS4b6PyLcmh8KkTUO6V71/BByUFvgFX+0dF38V2gM7od2JEG/CGyOmQFMnywqqLfhI1eR6Y5Kfo9iNthHyBR3sYjYY9C1/bRHtHW10vPOgzzu1Rq4iSQbyp0rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=JresqEmc; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e116a5c3922so2027656276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:51:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google; t=1724424687; x=1725029487; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=b4C+Oy37DV2Kzj7Jrf0dTC698njLjd23JNwPJG1/FcU=;
-        b=JresqEmchm4QsXu/uyAZnt1107TGahPZDwlpVIfE/KV+eifVwEf5tOJ+0/Fm90ncEx
-         vpbFABNXjFN0A2sRpDkqymTkGccw7Cs7f9ai34NBnaJXtC6n1uHjT9vdoHFIcEkpGVJV
-         CnUsjWycyOffaA+2uhL0NAvA8nhO3aUrncIpI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724424687; x=1725029487;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b4C+Oy37DV2Kzj7Jrf0dTC698njLjd23JNwPJG1/FcU=;
-        b=tUN6JwCamS8Xz9kV+kcRbliMyxvrhTaqpvLBKclFQwd8pY95KPPuT5NpEy3OFCVc6M
-         hL/CaaVVY8/1tk5rP1nwcYX6cu5b25bavSBFyHNxJimuZxcNrua6jiEm+0L3rJ5WdCc/
-         I1Pg5GaxsvayXa5DYBKuFXMjg3XgzSxvRb5z6/JIQ6EU919XBXOvHoASRiQV7WZXFiR6
-         NgJIzcnrxNy0OMXQQIjlAU81/eeMmEpZB7H2VN0b9+POEcp+anOGAe9qRBBkcDSbUsOa
-         1W1+DjgLXviZqO/BrAxwYRs+ExPN6B+f2oL3ZkE3bExsikp+/QzBCbA1yIUj6fpEPhXz
-         uR1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWjuS47HfPywKr7F02kYYnwL0nZC8YhzzqxlxY5wLFd360ozx6O7DSIYyWIPY0ZYiUGk3k9NRFMZQFsWJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwctcioGeXIpkt+1PEqClcDoLu7h2PIyTmN5lXgds8ad4uwrUl/
-	wSnh4kokM2UaXnsNlZGWNUPeIGV4KL/Aqq/f+wHbZNHyuFHDJA/QHo3vudRw6mA=
-X-Google-Smtp-Source: AGHT+IG6JLoQwXGBZb5kz/05HTW1+oRlGRg0Y8dCBjJ8Cxj2vuoaOWbYxxL+QDFhLPXt07y77oLlWw==
-X-Received: by 2002:a05:6902:1109:b0:e16:6b7e:94b5 with SMTP id 3f1490d57ef6-e17a86a517emr3398358276.48.1724424686570;
-        Fri, 23 Aug 2024 07:51:26 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:45f:f211:3a7c:9377? ([2603:8080:7400:36da:45f:f211:3a7c:9377])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e46361csm707782276.19.2024.08.23.07.51.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 07:51:26 -0700 (PDT)
-Message-ID: <e7ba91a7-2ba6-4532-a59a-03c2023309c6@digitalocean.com>
-Date: Fri, 23 Aug 2024 09:51:24 -0500
+	s=arc-20240116; t=1724424722; c=relaxed/simple;
+	bh=jBxJz9+YDXMC8ppQtIEHlqXpXj+BGCaWCPgK8rMC6mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0tedSwb1rcT9QhnBVrlc2sN0NUJg3d+u1v+xpEhIqhpOKLBrO4lAihKkFieomO30ZZYx88ax87YQEmbgDNNvrWIl2P8pvZd5PE8Yfzoj9dnHclP4W7JlK5qrszFZ/ZaERfwDLEKlmWbuJ4kA8ibeXkHclWqLS9rhjsiPxK1BmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XURnp9Mk; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 23 Aug 2024 10:51:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724424716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Nw0oeKC0c/lBdFIV3nEBnSjrIyK4atBlPc1mqLkoE8=;
+	b=XURnp9MktKyMwmSb7xBxlZKY6HVgt7UImuZ0j3/GEMFhzalohhkPaVwqytnT1UQ4VuN/ui
+	e+3GLnLQPDdHJbh2MiZvOzrinR1d+auuCaonhqYeCtQPx3eB6oVn4eqiDUrQDNLx0FcYZq
+	402yC6RIidVYubJdphuFHYtGvPemyVs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH] bcachefs: Remove the handling of bch2_trans_iter_exit()
+ in __bch2_bkey_get_iter()
+Message-ID: <dcutapnlzvglzlbta2tzcvch26g2nnptluykgz5gabcoolxywu@fwq3u7jzd3y2>
+References: <20240823031955.202795-1-youling.tang@linux.dev>
+ <f2uohiy7zaaiv33r7xhofaprv6tk5mumvzzf7plvagdtavrini@3orfgcehid7q>
+ <f9f50184-364c-4082-bf19-ea953c3c1429@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] vDPA: Trying to make sense of config data
-From: Carlos Bilbao <cbilbao@digitalocean.com>
-To: virtualization@lists.linux-foundation.org, mst@redhat.com,
- jasowang@redhat.com
-Cc: kvm@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <4f4572c8-1d8c-4ec6-96a1-fb74848475af@digitalocean.com>
-Content-Language: en-US
-In-Reply-To: <4f4572c8-1d8c-4ec6-96a1-fb74848475af@digitalocean.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9f50184-364c-4082-bf19-ea953c3c1429@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Hello again, 
+On Fri, Aug 23, 2024 at 02:07:20PM GMT, Youling Tang wrote:
+> On 23/08/2024 11:55, Kent Overstreet wrote:
+> > On Fri, Aug 23, 2024 at 11:19:55AM GMT, Youling Tang wrote:
+> > > From: Youling Tang <tangyouling@kylinos.cn>
+> > > 
+> > > - Reduces bkey_err() calls.
+> > > - Avoid redundant calls to bch2_trans_iter_exit() in some functions.
+> > no, a function that returns an error should clean up after itself
+> Yes, functions should self-clean when they fail.
+> 
+> However, there are repeated calls to bch2_trans_iter_exit in
+> some functions, take lookup_inode() as an example,
+> 
+> When bkey_err(k) returns a non-zero, call bch2_trans_iter_exit()
+> once in bch2_bkey_get_iter(). It is then called again in
+> lookup_inode() via 'goto err'. (We can correct it by simply changing
+> it to 'return ret', but there are many similar cases.)
 
-Answering my own question:
+I'm aware, but I'm not looking to microoptimize at the expense of making
+the code more fragile and less clear, especially right now when the
+priority is stabilizing and fixing bugs.
 
-https://elixir.bootlin.com/linux/v6.10.2/source/include/uapi/linux/virtio_net.h#L92
-
-Thanks, Carlos
-
-On 8/22/24 1:21 PM, Carlos Bilbao wrote:
-> Hello folks,
->
-> I'm using the code below to retrieve configuration data for my vDPA file
-> via ioctl. I get as output:
->
-> Configuration data (24 bytes):
-> 5a c3 5f 68 48 a9 01 00 08 00 dc 05 00 00 00 00
-> 00 00 00 00 00 00 00 00
-> ASCII representation:
-> Z._hH...................
->
-> Could a good Samaritan point me in the right direction for the docs I need
-> to understand these values and convert them to a human-readable format?
-> hank you in advance!
->
-> Regards,
-> Carlos
->
-> ---
->
-> void check_config(int fd) {
->
->     uint32_t size;
->     struct vhost_vdpa_config *config;
->     uint8_t *buf;
->
->     if (ioctl(fd, VHOST_VDPA_GET_CONFIG_SIZE, &size) < 0) {
->         perror("ioctl failed");
->         return;
->     }
->
->     config = malloc(sizeof(struct vhost_vdpa_config) + size);
->     if (!config) {
->         perror("malloc failed");
->         return;
->     }
->
->     memset(config, 0, sizeof(struct vhost_vdpa_config) + size);
->     config->len = size;
->     config->off = 0;
->
->     buf = config->buf;
->
->     if (ioctl(fd, VHOST_VDPA_GET_CONFIG, config) < 0) {
->         perror("ioctl failed");
->     } else {
->         printf("Configuration data (%u bytes):\n", size);
->
->         /* Print the data in a human-readable format */
->         for (unsigned int i = 0; i < size; i++) {
->             if (i % 16 == 0 && i != 0) printf("\n");
->             printf("%02x ", buf[i]);
->         }
->         printf("\n");
->
->         printf("ASCII representation:\n");
->         for (unsigned int i = 0; i < size; i++) {
->             if (buf[i] >= 32 && buf[i] <= 126) {
->                 printf("%c", buf[i]);
->             } else {
->                 printf(".");
->             }
->         }
->         printf("\n");
->     }
->
->     free(config);
-> }
+If you were also doing performance testing and could show that it
+makes a measurable difference I'd consider it. Did you even look at the
+assembly output for any of these functions? CSE might be optimizing away
+the redundant calls.
 
