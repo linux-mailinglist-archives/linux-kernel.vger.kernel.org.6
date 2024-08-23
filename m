@@ -1,96 +1,50 @@
-Return-Path: <linux-kernel+bounces-298663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8D295CA04
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:10:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F1995CA0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF581C22F9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:10:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCE71C2160D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43082188925;
-	Fri, 23 Aug 2024 10:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KnyYpVUe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF85187345;
+	Fri, 23 Aug 2024 10:09:01 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2461BF3A;
-	Fri, 23 Aug 2024 10:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C369016A938;
+	Fri, 23 Aug 2024 10:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724407697; cv=none; b=SD/Z+vlhCutB9NgAaJgi4g/kHYbsweeaT9DPsmmPtdFMRce6jtMB4SgOrkuZg4yXKkSJ6Zx54pn9FbmD6u43quZSyoWYAQ3cfqg9bugDrlIuz7RdjBx9dNO4umMuAKQwF8v0Ltwl3hkJPzx1IET73E6I8x3WXUaEPzaC4uxqnYo=
+	t=1724407740; cv=none; b=u8hm+anJ0vZByKQodNwCfh1gKxbyZQ/orfi2kC+Xbfd87BmnPV4up+7OJ+SGihQksDIcEH6/9XlqoRovekaA5Ac0mZYSzOTAvlVyWWopiqAPcA9tIHd9bxrq/NphZQ2v0ny7lMk+pYq/acrlOEyEkuwDPL3XuMSjOKu7x2O8IiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724407697; c=relaxed/simple;
-	bh=pPZzUi92RCPmXkYRAwLn62bmcZwB1cpvraqBFYr+I68=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uZ2/VaMiXwMkIa9IZHJnGn5v/gF01a6uLwKz8Vgbz79A3bpW+zXv1R9mDvdecYo6ipdomd1Nh5P+qfLdg2lo0HARgAvS+dGL1WU8QsYoxJWLKOlXEjjRlah4cJBPsMk5aQ0cGwmkK+0haz5YaoMDnmdy9UKWo9MuHg/z07tDgXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KnyYpVUe; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724407696; x=1755943696;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pPZzUi92RCPmXkYRAwLn62bmcZwB1cpvraqBFYr+I68=;
-  b=KnyYpVUezHKsdjKbMU95FSjguR9/vTD8+YH+bfTREOKiSmdb8LEJ9B+Q
-   SAVuoUMsIY/iMgLUW/1TTkMQYBDWJpw4dwVHSQaOpplCF8CLbcALsYlI8
-   4j7UhnLJ7g7tatpCrNYWS6QKHuNuIjEEoeCUkbdSosQcdn3fb70A2iW5N
-   SvKK+/5f0WSKy/ku99iyGcnA31PNb2N0SWo89rxdSI53m0GfWdxf+VLJN
-   Xf2MD2Xvekls5NxzdvQTVT6I9Py8WM3H8OO3DL9Y9tK0ZTP5v3S0v/u5w
-   PIuKHH7C/QNobqLWa6p6DDkMyTE0lPkx3utbkGtUy1t3Y72LVtL2Ym1wb
-   g==;
-X-CSE-ConnectionGUID: kr57NMNcTxqIEvb079kI8g==
-X-CSE-MsgGUID: Cvq0ItDRQZmEiA/pvvCUWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="34285079"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="34285079"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:08:15 -0700
-X-CSE-ConnectionGUID: 58cZOUOOQIek5SMcwl17xw==
-X-CSE-MsgGUID: LYBAkeKxQ+y7kAoyMW2llQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="62479138"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa008.jf.intel.com with ESMTP; 23 Aug 2024 03:08:10 -0700
-Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 71C9D33BD5;
-	Fri, 23 Aug 2024 11:08:07 +0100 (IST)
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: intel-wired-lan@lists.osuosl.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>
-Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	magnus.karlsson@intel.com,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Wojciech Drewek <wojciech.drewek@intel.com>,
-	Amritha Nambiar <amritha.nambiar@intel.com>,
-	przemyslaw.kitszel@intel.com,
-	anirudh.venkataramanan@intel.com,
-	sridhar.samudrala@intel.com,
-	Chandan Kumar Rout <chandanx.rout@intel.com>
-Subject: [PATCH iwl-net v4 6/6] ice: do not bring the VSI up, if it was down before the XDP setup
-Date: Fri, 23 Aug 2024 11:59:31 +0200
-Message-ID: <20240823095933.17922-7-larysa.zaremba@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240823095933.17922-1-larysa.zaremba@intel.com>
-References: <20240823095933.17922-1-larysa.zaremba@intel.com>
+	s=arc-20240116; t=1724407740; c=relaxed/simple;
+	bh=dcIZ9N3Q4RDbipIsgRCDwaZnSqntAVxJ29yUtwRsgaM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X7cwWHd8O0iHQfzEHS7t6HkORoAMyUf2344U+43zMPS0XIxSeNDA+8LaIkdv63sX2Tk6zAKPy9alnwBiJugr3KwPZBYPhtI4WQSgazf+dkiD1/aLm0PNfN15PJ7KNowQjGq4Tcp6TE79FXDh08s16rzWlPPSVZx2WBNgn2T5nfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wqwdj6G9tzQqQ5;
+	Fri, 23 Aug 2024 18:04:09 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2128F1401F1;
+	Fri, 23 Aug 2024 18:08:54 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 23 Aug
+ 2024 18:08:53 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <mkoutny@suse.com>, <chenridong@huawei.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 -next 00/11] cgroup:cpuset:separate legacy cgroup v1 code and put under config option
+Date: Fri, 23 Aug 2024 10:00:59 +0000
+Message-ID: <20240823100110.472120-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,51 +52,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-After XDP configuration is completed, we bring the interface up
-unconditionally, regardless of its state before the call to .ndo_bpf().
+Cgroups v2 have been around for a while and many users have fully adopted
+them, so they never use cgroups v1 features and functionality. Yet they
+have to "pay" for the cgroup v1 support anyway:
+1) the kernel binary contains an unused cgroup v1 code,
+2) some code paths have additional checks which are not needed,
+3) some common structures like task_struct and mem_cgroup contain unused
+   cgroup v1-specific members.
 
-Preserve the information whether the interface had to be brought down and
-later bring it up only in such case.
+Cgroup memory controller has already separated legacy code to
+memory-v1.c. So it is time to do the same thing for cpuset controller.
 
-Fixes: efc2214b6047 ("ice: Add support for XDP")
-Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Chandan Kumar Rout <chandanx.rout@intel.com>
-Acked-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
----
- drivers/net/ethernet/intel/ice/ice_main.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+This patchset aims to do:
+1) moving cgroup v1-specific cpuset code to the new cpuset-v1.c file,
+2) putting definitions shared by cpuset.c and cpuset-v1.c into the
+   cpuset-internal.h header,
+3) introducing the CONFIG_CPUSETS_V1 config option, turned off by default,
+4) making cpuset-v1.c to compile only if CONFIG_CPUSETS_V1 is set.
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index a718763d2370..d3277d5d3bd2 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -2984,8 +2984,8 @@ ice_xdp_setup_prog(struct ice_vsi *vsi, struct bpf_prog *prog,
- 		   struct netlink_ext_ack *extack)
- {
- 	unsigned int frame_size = vsi->netdev->mtu + ICE_ETH_PKT_HDR_PAD;
--	bool if_running = netif_running(vsi->netdev);
- 	int ret = 0, xdp_ring_err = 0;
-+	bool if_running;
- 
- 	if (prog && !prog->aux->xdp_has_frags) {
- 		if (frame_size > ice_max_xdp_frame_size(vsi)) {
-@@ -3002,8 +3002,11 @@ ice_xdp_setup_prog(struct ice_vsi *vsi, struct bpf_prog *prog,
- 		return 0;
- 	}
- 
-+	if_running = netif_running(vsi->netdev) &&
-+		     !test_and_set_bit(ICE_VSI_DOWN, vsi->state);
-+
- 	/* need to stop netdev while setting up the program for Rx rings */
--	if (if_running && !test_and_set_bit(ICE_VSI_DOWN, vsi->state)) {
-+	if (if_running) {
- 		ret = ice_down(vsi);
- 		if (ret) {
- 			NL_SET_ERR_MSG_MOD(extack, "Preparing device for XDP attach failed");
+This patchset is based on -next commit c79c85875f1a ("Add linux-next
+specific files for 20240823") and assumes that "Some optimizations about
+cpuset" series are merged, which are applied to cgroup/for-6.12.
+
+
+Chen Ridong (11):
+  cgroup/cpuset: introduce cpuset-v1.c
+  cgroup/cpuset: move common code to cpuset-internal.h
+  cgroup/cpuset: move memory_pressure to cpuset-v1.c
+  cgroup/cpuset: move relax_domain_level to cpuset-v1.c
+  cgroup/cpuset: move memory_spread to cpuset-v1.c
+  cgroup/cpuset: add callback_lock helper
+  cgroup/cpuset: move legacy hotplug update to cpuset-v1.c
+  cgroup/cpuset: move validate_change_legacy to cpuset-v1.c
+  cgroup/cpuset: move v1 interfaces to cpuset-v1.c
+  cgroup/cpuset: guard cpuset-v1 code under CONFIG_CPUSETS_V1
+  cgroup/cpuset: add sefltest for cpuset v1
+
+ MAINTAINERS                                   |   3 +
+ include/linux/cpuset.h                        |   8 +-
+ init/Kconfig                                  |  13 +
+ kernel/cgroup/Makefile                        |   1 +
+ kernel/cgroup/cpuset-internal.h               | 307 +++++++
+ kernel/cgroup/cpuset-v1.c                     | 565 ++++++++++++
+ kernel/cgroup/cpuset.c                        | 850 +-----------------
+ .../selftests/cgroup/test_cpuset_v1_base.sh   |  77 ++
+ 8 files changed, 987 insertions(+), 837 deletions(-)
+ create mode 100644 kernel/cgroup/cpuset-internal.h
+ create mode 100644 kernel/cgroup/cpuset-v1.c
+ create mode 100755 tools/testing/selftests/cgroup/test_cpuset_v1_base.sh
+
 -- 
-2.43.0
+2.34.1
 
 
