@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-298289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2859395C540
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD4895C554
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BE64B2272B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:14:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701DD1C23FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FDA7E765;
-	Fri, 23 Aug 2024 06:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lfHDNevy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B15768EC;
+	Fri, 23 Aug 2024 06:20:13 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA647345B;
-	Fri, 23 Aug 2024 06:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78324AEF6;
+	Fri, 23 Aug 2024 06:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724393678; cv=none; b=KgO0OSi7rQ1CXb7p1DYS3pQ2sKlliG+g3lMqQXZQhE5ym4yyvfecugrI6jV+CVcnD+aUa+o1WG26UT2wgF3zqZyhCVGxCTFAgJdUXcAOBu8+4++wPzvTfuodneI7zO5u5/T+S2srAPhUqpek2pmZT4JzwxYancUymHV4dwRXBYw=
+	t=1724394012; cv=none; b=gwHGiEzD/9FyAB/xtpKE1Pl39aAzkB25FhfKGEue5okwRSs2ez/wJWA4Uzb0ss6ETdzEjdHMKwJ2z5IElzRIJ+3OUbcI6AFaz85SWY4ZxaLF9aCHiGxOWsm0rpCzrwkZZ6yXONOt+HVn9bsqxE5JqjyXSYGjPy5znZkuUv+Ie4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724393678; c=relaxed/simple;
-	bh=7+O/QT9OMuw+bvc3dHqfZlrxUk8r/29ACuYuoGeKbW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUt5HRT8ThLH5w0CYF1j5XVSC3mdfkF7s4WP2vE/JJHT+LQij8oGbYC1BvIUCo9zgPQNzepdREejQzhib5QBxlIvQ5kJfQN7RZ598dK9ag+yxMxV32NwgUGurCbkA7X1rWDIeaE7HthO3NOrnnfmpafgDh/Q+pcWTuxRuIbcucc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lfHDNevy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B496AC32786;
-	Fri, 23 Aug 2024 06:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724393678;
-	bh=7+O/QT9OMuw+bvc3dHqfZlrxUk8r/29ACuYuoGeKbW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lfHDNevyPmsrYzPialk455WsSVsEVhY2O1Exk8rW1to8EAoe1jJXdemwSKNDbe6QA
-	 TRsUqy5bHORrghkKqpcJeb2SpN+ZiI74jmFR0uhmnDLgxK6Qzt0SftHHogta64il9X
-	 L0RbuFLT21ISiKIOJcG4UMdDJ3zcJMLhqrpL6XKs=
-Date: Fri, 23 Aug 2024 14:14:35 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Faisal Hassan <quic_faisalh@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: dwc3: qcom: fix NULL pointer dereference on
- dwc3_qcom_read_usb2_speed
-Message-ID: <2024082315-astride-footrest-ab04@gregkh>
-References: <20240813111847.31062-1-quic_faisalh@quicinc.com>
- <ZscgKygXTFON3lKk@hovoldconsulting.com>
- <a3facdb7-e38e-4ef0-aff6-3e6aff0f9d88@quicinc.com>
+	s=arc-20240116; t=1724394012; c=relaxed/simple;
+	bh=ULRbx2jnc4yTbYjPxK7xDHYGjcHglRvCqTTaxx9Ufjc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XIv40NJLNNl9xJ5HI9Rwz8F2seGrxT/2y0HOGDaufqHIsclMjSp9q0thVWvi1XycKfyX2xvUr7QVRxmSPQqR7aOFnGNIMDPB9Gi9P2VC3+he195MEnubyKRmcHE7yAqp/BUusvqoOoj7HRRcmZCqJjv6NuvGW/UrgU7aJLHq9JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WqqYd0XlNzQqNt;
+	Fri, 23 Aug 2024 14:15:17 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2715C180106;
+	Fri, 23 Aug 2024 14:20:01 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 23 Aug
+ 2024 14:20:00 +0800
+From: yangyun <yangyun50@huawei.com>
+To: <jefflexu@linux.alibaba.com>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lixiaokeng@huawei.com>, <miklos@szeredi.hu>, <yangyun50@huawei.com>
+Subject: Re: [PATCH] fuse: add fast path for fuse_range_is_writeback
+Date: Fri, 23 Aug 2024 14:19:13 +0800
+Message-ID: <20240823061913.3921169-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <8e235c73-faac-4cb7-bc6a-e1eea5075cbe@linux.alibaba.com>
+References: <8e235c73-faac-4cb7-bc6a-e1eea5075cbe@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3facdb7-e38e-4ef0-aff6-3e6aff0f9d88@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-On Fri, Aug 23, 2024 at 09:26:18AM +0530, Faisal Hassan wrote:
+Sorry for the late reply.
+
+On Wed, Aug 14, 2024 at 05:56:06PM +0800, Jingbo Xu wrote:
 > 
 > 
-> On 8/22/2024 4:55 PM, Johan Hovold wrote:
-> > On Tue, Aug 13, 2024 at 04:48:47PM +0530, Faisal Hassan wrote:
-> >> Null pointer dereference occurs when accessing 'hcd' to detect speed
-> >> from dwc3_qcom_suspend after the xhci-hcd is unbound.
+> On 8/14/24 5:36 PM, yangyun wrote:
+> > In some cases, the fi->writepages may be empty. And there is no need
+> > to check fi->writepages with spin_lock, which may have an impact on
+> > performance due to lock contention. For example, in scenarios where
+> > multiple readers read the same file without any writers, or where
+> > the page cache is not enabled.
 > > 
-> > Why are you unbinding the xhci driver?
+> > Also remove the outdated comment since commit 6b2fb79963fb ("fuse:
+> > optimize writepages search") has optimize the situation by replacing
+> > list with rb-tree.
 > > 
+> > Signed-off-by: yangyun <yangyun50@huawei.com>
+> > ---
+> >  fs/fuse/file.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index f39456c65ed7..59c911b61000 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -448,9 +448,6 @@ static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+> >  
+> >  /*
+> >   * Check if any page in a range is under writeback
+> > - *
+> > - * This is currently done by walking the list of writepage requests
+> > - * for the inode, which can be pretty inefficient.
+> >   */
+> >  static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+> >  				   pgoff_t idx_to)
+> > @@ -458,6 +455,9 @@ static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+> >  	struct fuse_inode *fi = get_fuse_inode(inode);
+> >  	bool found;
+> >  
+> > +	if (RB_EMPTY_ROOT(&fi->writepages))
+> > +		return false;
 > 
-> On our automotive platforms, when preparing for suspend, a script
-> unbinds the xhci driver to remove all devices, ensuring the platform
-> reaches the lowest power state.
+> fi->lock is held when inserting wpa into fi->writepages rbtree (see
+> fuse_writepage_add()).  I doubt if there is race condition when checking
+> if fi->writepages rbtree is empty without fi->lock held.
 
-That used to be the case a decade or so ago, but shouldn't be needed
-anymore if your hardware is "sane" and can properly go to sleep.  Why
-not just fix the driver to correctly sleep instead of unloading
-everything?  This would require you to go through the whole
-initialization sequence again when waking up and that can be a long time
-overall, right?
+The code can make sure that there are no race conditions because:
+1. For O_DIRECT and FOPEN_DIRECT_IO with fc->direct_io_allow_mmap, the `filemap_write_and_wait_range` before can make the insert operation to be happend before the check operation.
+2. For other cases, there are no pagecache operaions so the fi->writepages is always empty.
 
-thanks,
-
-greg k-h
+In my usercase, the fi->writepages is usually empty but the spin_lock associated with it contributes a great impact on the performace of my filesystem due to lock contention. So optimize it.
+> 
+> -- 
+> Thanks,
+> Jingbo
 
