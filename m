@@ -1,147 +1,149 @@
-Return-Path: <linux-kernel+bounces-299205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF6C95D17B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE5E95D17F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A80280D52
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:34:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067841F239EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1E188A2D;
-	Fri, 23 Aug 2024 15:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FAC188A3E;
+	Fri, 23 Aug 2024 15:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LuCKmjhE"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnA3+tSe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A136718800E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0251188920;
+	Fri, 23 Aug 2024 15:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427264; cv=none; b=GRSL1E9Ar7NQEwrCyoCS0yiZu9jPVuop9Vt27iFm0emEdr4cvZBA9z0hI0+h9Q/N7G2KRbCp1BOkkLrIEOkDSqwQI6wbzqwohempIwOB+ONL+xe4dGGnqN4eQZ/lmrujjHnm/ovfw2INUqnv4gqGKzZPj3HvOu4XuOg0diK3xnc=
+	t=1724427276; cv=none; b=Wb0Z+WsjbCfBx71bXSyllbqqdQUAViO9iSzxrQG2lkS/SeCvDVNh0NVrKtryUJOceol+3453+DmQ/Er1m//Yi4XcFzcfZYzcyFZlAnqc7+9rKXTyUi3RDGQhcj4If86LM/AVVQzyjjILQBTL/1eXuUMlR21aNE0h5NBnmzQtW0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427264; c=relaxed/simple;
-	bh=9a2e+v3FT14bhuAj+QqfdFafJhUg0z4MjKBWadxqB0k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H49rOAMl4mo7NuJoThRWI2FpFXmBDQpVL79Wlo+kTAqivddLNZ/eGq/mRiQcHDWW/61twYlBPK0k1JVY2AsfahHRlRbGv0iAu0uG5OM5H5D3NF1ku2lWDD158EPVIs8uja0HbsbuhtTO8iHIijC1PDukAm3tj16jQeT6AJHoWek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LuCKmjhE; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d3c08541cdso1655653a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724427262; x=1725032062; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IvYT3UWBCKLp8ogLPWqf/Z+jzZrJA9UrUg3fh9E7FtM=;
-        b=LuCKmjhE/j+phnODv2C3uOE5+gd3Y4rnL6NG1ooYs/7ZdPqq18HxejHKIb3RVyBbRl
-         Z/OWN+KuPZ/iOwEgWC5l66Dc4hbIadIaO+4UoRltw8mug9mIObHcRommoJDBuU6JAKN/
-         qayGGXoYQkcz37XfoxKQXvtnUkbDWkAiTwrdmeO8ZZkHPEqbzXgOB/39hc6x3HKIEF6t
-         NNkgvwt+5YFiL0dhWu6fi2HjmqND1nvQ9b3z51CV1ZgAIARYmSFGuDOSaf8JFRRnoAmD
-         d3bEUgndDlOH5UdFGAE/bWHkXkFOuEKrZnBcDjftV//khdVr1sqqQJMP5xrXEqWVaYzc
-         RxCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427262; x=1725032062;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IvYT3UWBCKLp8ogLPWqf/Z+jzZrJA9UrUg3fh9E7FtM=;
-        b=B5lfX0sqpQR0ViLr6U3vg79zgrvH/NgbPsiZN0PMPnLLL5nQWkQimDRMEP4aLIyK0f
-         CoCsNikMyaJB4my/wOLInE5MC7/c/yux0fnuQ3QKxogOOxaJCms/YP/pyxWSSezw/uEN
-         CoFdd1vK8cm/h/CbM5nVYsrx63t9hdPa5gR2rWsP/gfdzAS7VPds1bY9Vb/G9aDCv0MZ
-         2o11ObJNgGI6revYwFcxY7+d+emMb1wSeeqoeQjE5pderZYLtmuplOfooSfYKKL0YceI
-         CXuLCYaF/yYa2Hek3Qm6EaP/xLGNJxkS2jOoIEEOzS/yIBnZwLEJqeO3oFQzzl+32zm0
-         ZENA==
-X-Forwarded-Encrypted: i=1; AJvYcCUb2LbmgWQWdrtKxJNUPPYnDp27JXSMPw3EIoVuMZQmz7aRjmpp3GA4pTwQhcE+JrJgzezwSefmJD1/0f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCaG9SP9Ne7A0VFOZiBkGaFVs8R+CsTkc1P9dvxs8Lg6abDBRu
-	ds3qxg+2BMXh9yE9/8OaKqLpJEJkUvXUX/yVai2S8PgWMessiSqr
-X-Google-Smtp-Source: AGHT+IFd1+TQM65D80wpYcq/4gnpICwdY2KG3PE3VutyDwjVB0LL6tzDDULZQp/CxaGN9r8zIiKXjg==
-X-Received: by 2002:a17:90a:77c5:b0:2d0:d82:60ae with SMTP id 98e67ed59e1d1-2d646d6f656mr2630453a91.37.1724427261685;
-        Fri, 23 Aug 2024 08:34:21 -0700 (PDT)
-Received: from embed-PC.. ([106.222.233.87])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb913460sm6550531a91.21.2024.08.23.08.34.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 08:34:21 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: tdavies@darkphysics.net,
-	philipp.g.hortmann@gmail.com,
-	garyrookard@fastmail.org,
-	linux-staging@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	dan.carpenter@linaro.org,
-	christophe.jaillet@wanadoo.fr,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: rtl8192e: Replace strcpy with strcat in rtl819x_translate_scan
-Date: Fri, 23 Aug 2024 21:04:11 +0530
-Message-Id: <20240823153411.74142-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724427276; c=relaxed/simple;
+	bh=7Vr6P3VkT/qk39oMWJkJ0VkShl1bY6v2wyuJA+/bppk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gdtZXz6upCORljKVw+ZaSvhajVDAAkC8xN2umfVeVoWtAPNK8YOfV7uETfxDrjpPyPr/CX+ZKkIrERfbtakgB32mjkza75xFur+Lf5CcdgMKTD5qAKZrim80u7bjayde+GY4X/9lZcmyzi66F3pecU8j3NTvE2c4eUpBcMRmzOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnA3+tSe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B63C4AF0B;
+	Fri, 23 Aug 2024 15:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724427276;
+	bh=7Vr6P3VkT/qk39oMWJkJ0VkShl1bY6v2wyuJA+/bppk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gnA3+tSeMJ2IqGzesp7ePQLpRBg9Li+oDYImoDYiPhNTA+eVILkWR+4jGhLlHTRts
+	 /0+XSmqDpvj0cwITX0AkaeIxQYak7NOMMZnLHz91QvjXkl7G5r0ceFAVPJO2YH2n4N
+	 GMfEM8HfwCHkJSrxZic9Mmju9hFEQinWKEmR0Mfy4YuYitLgcPgMrC7TCz4U6qnZph
+	 a1bU5Vw1trjyxoxW6umQRnt9YelvTjbpdNtpT9KmeHM5+Jf2E2BpwSsiznwUfN2IzM
+	 UHreZyuuwaq81y8OAYIuoKRuEcfxs/OEzmL+cX7IP8vpc1bTGayBRft9AO7GiW/ajB
+	 dFTIwLEJwgrWw==
+Date: Fri, 23 Aug 2024 16:34:32 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc: Hal Feng <hal.feng@starfivetech.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v6] clk: starfive: jh7110-sys: Fix lower rate of CPUfreq
+ by setting PLL0 rate to 1.5GHz
+Message-ID: <20240823-able-subtype-4e9a2049c114@spud>
+References: <20240603020607.25122-1-xingyu.wu@starfivetech.com>
+ <CAJM55Z-_sOvRnaa8BuGcupsUksaK=tuTbTmF=AtzmzkCo7y5jA@mail.gmail.com>
+ <NTZPR01MB09563DBA6F76281EB06914859FB92@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <20240818-flip-excusably-c89021683d20@spud>
+ <ZQ2PR01MB13073EF3BD7A64F2C098AA8FE6882@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+ <NTZPR01MB0956ABB5D9B0D087E085EF8B9F882@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gaJrXFVHKEWAo6Pd"
+Content-Disposition: inline
+In-Reply-To: <NTZPR01MB0956ABB5D9B0D087E085EF8B9F882@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
 
-Replace strcpy() with strcat() in rtl819x_translate_scan()
-Also Fix proto_name[] buffer size issue to accommodate all
-network modes.
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
----
-Changes in v2:
-- Revert the use of strscpy and replaced it with strcat.
-- Remove the 'pname' and replace it's usage with direct
-operations on 'proto_name' buffer.
+--gaJrXFVHKEWAo6Pd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/staging/rtl8192e/rtllib_wx.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+On Fri, Aug 23, 2024 at 08:34:55AM +0000, Xingyu Wu wrote:
+> On 23.08.24 11:42, Hal Feng wrote:
+> > > > >
+> > > > > I'm still not a fan of hardcoding cpu frequencies in the driver.
+> > > > > You've added the notifiers exactly so that we can use the standard
+> > > > > device
+> > > tree settings for this.
+> > > > >
+> > > > > In other words I much prefer v5 of this patchset.
+> > > > >
+> > > > > /Emil
+> > > > >
+> > > >
+> > > > Thanks, Emil.
+> > > >
+> > > > Hi Conor, what do you think about this issue?
+> > >
+> > > Apologies for the delay replying, I didn't realise there was a
+> > > question here directed at me. My only real thought on the patchset is
+> > > that what is done should not cause problems when the same devicetree
+> > > is used for both U-Boot and for the kernel. As long as that's
+> > > satisfied, I don't mind how you choose to implement it.
+> >=20
+> > Actually VF2 U-Boot can run at 1.5GHz. It will work if the PMIC sets th=
+e CPU
+> > power supply voltage to 1.04V. The reason why we run VF2 U-Boot at 1.0G=
+Hz is
+> > that the default voltage supplied by the PMIC is 0.9V which only suppor=
+ts JH7110
+> > cores running at 1.0GHz.
+> >=20
+> > So v5 of this patchset won't cause problems if the VF2 U-Boot makes some
+> > changes to support running at 1.5GHz. And I will make these changes whe=
+n I
+> > implement OF_UPSTREAM for VF2 U-Boot.
+> >=20
+> > BTW, if v5 is applied, the patch 2 of v5 should be rebased on the new m=
+ainline
+> > since jh7110-common.dtsi has been created.
+> >=20
+>=20
+> Good news. Thanks Hal.
+>=20
+> Hi Conor,=20
+>=20
+> According to Hal, U-Boot can also run 1.5G so that the dts from kernel
+> can be used on the U-Boot and could not cause any problems. So the way of
+> Patch v5[1] works which Emil agreed.
+> [1]: https://lore.kernel.org/all/20240507065319.274976-1-xingyu.wu@starfi=
+vetech.com/
+>=20
+> If you agree, I will submit a new patchset soon and modify it for the new=
+ jh7110-common.dtsi.
 
-diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192e/rtllib_wx.c
-index fbd4ec824084..ec0c4c5bade7 100644
---- a/drivers/staging/rtl8192e/rtllib_wx.c
-+++ b/drivers/staging/rtl8192e/rtllib_wx.c
-@@ -23,14 +23,14 @@ static const char * const rtllib_modes[] = {
- };
+That's great, thanks for working on it guys.
 
- #define MAX_CUSTOM_LEN 64
-+#define MAX_PROTO_NAME_LEN 10
- static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
- 					   char *start, char *stop,
- 					   struct rtllib_network *network,
- 					   struct iw_request_info *info)
- {
- 	char custom[MAX_CUSTOM_LEN];
--	char proto_name[6];
--	char *pname = proto_name;
-+	char proto_name[MAX_PROTO_NAME_LEN];
- 	char *p;
- 	struct iw_event iwe;
- 	int i, j;
-@@ -59,13 +59,12 @@ static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
- 	}
- 	/* Add the protocol name */
- 	iwe.cmd = SIOCGIWNAME;
-+	/* Initialise proto_name as an empty string*/
-+	memset(proto_name, '\0', sizeof(proto_name));
- 	for (i = 0; i < ARRAY_SIZE(rtllib_modes); i++) {
--		if (network->mode & BIT(i)) {
--			strcpy(pname, rtllib_modes[i]);
--			pname += strlen(rtllib_modes[i]);
-+		if (network->mode & BIT(i))
-+			strcat(proto_name, rtllib_modes[i]);
- 		}
--	}
--	*pname = '\0';
- 	snprintf(iwe.u.name, IFNAMSIZ, "IEEE802.11%s", proto_name);
- 	start = iwe_stream_add_event(info, start, stop, &iwe, IW_EV_CHAR_LEN);
- 	/* Add mode */
---
-2.34.1
+Cheers,
+Conor.
 
+--gaJrXFVHKEWAo6Pd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsisCAAKCRB4tDGHoIJi
+0pjsAQDeAipeLg6CA9GMChrk2MgvUa9f281/mf0Gu4TZozoPBAEA/ryiJbJMX/OO
+Tw8+CwZ5FG5D+MBqZstxClLUoqYD5Qk=
+=4qCZ
+-----END PGP SIGNATURE-----
+
+--gaJrXFVHKEWAo6Pd--
 
