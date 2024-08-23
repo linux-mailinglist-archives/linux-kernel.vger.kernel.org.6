@@ -1,68 +1,56 @@
-Return-Path: <linux-kernel+bounces-299715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7515295D918
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:08:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489E895D91A
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64631C226B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7CAD1F2337E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947CC1C93B6;
-	Fri, 23 Aug 2024 22:07:41 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F0A1C8706;
+	Fri, 23 Aug 2024 22:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ghjmg0XJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75E91C8710;
-	Fri, 23 Aug 2024 22:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F69189B89;
+	Fri, 23 Aug 2024 22:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724450861; cv=none; b=nkLxX/e0KlPdOkfyt5YvUaWo3CncKMqGC/uymCiTRhQr9n6q61dCSlkdrqgrrayH4wbrpOZkr3bs+UV0O8kpwajmQwwuqOgVrostL9ekQFXig8m0DCu+gqTpTN2pVitmU+3tE2AVg8/nqj5C6by9zcCQ5TYBFQ+y474nLW0UjIo=
+	t=1724451025; cv=none; b=kqjU1RDNvSy4hreKXbCt9I7SjLUWVdo6lnYogAyEqKzKo2pMV5SUmqeaczoX320EBa63pY1qka/JdWMQWw51q2iUnQmOOmE3XUG7UQ9VGVSq94uL8QHRMBE6Z4RPGo6MHYLzQDPyTocdhI6RItb255AOv/mGyaNdKbwUc9q3qYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724450861; c=relaxed/simple;
-	bh=nhRlDWMQCj+ktJ2ndbsrWC+ftREmn+E37vTnSKUdttA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tW5VP6VOsGdKGgMr1m9Y/9Yq93y7podwDIsZrZjjSVw8V+py3J7nCOYgIG30vwcPHe1/2gIN1PWGawatAJ7sWpeLqL2a1Odz8aBTlXvr8irKIY6gMR44Pg/UTXgVZWinoM5YGcRiK3J//j+Y5WULqf6Eeo5R3/qAQBEoTNQdOCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-201fbd0d7c2so23119785ad.0;
-        Fri, 23 Aug 2024 15:07:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724450859; x=1725055659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lx14RFvFquZwCE6JEdkv7nfD3UeOkrrj4hHkO9Ux71s=;
-        b=HntnX5x9nW7B43Ob+sCz/uk2xf/Xq0uOkXb7b/hc8E5G9tdzczBpO60XF/ijJQGRs/
-         fMMee7kwdq0vpzeCOWE/lKDfSULKwePmYIbMKEIfwSQ9kUkJO8ow9sgrV9BC3y1jzpkM
-         XtJLrIRov6C69Zb6gqzpvFOcpDbKEtApVonjE93FKKzku6sqRCahqZTPyIOSdA6IVvZn
-         hceFL6tvdZaJMsDSxAY0MsQnds+YNtoe1zLCOErQV+dvyh1jRR5O/JbceBN6Bhg4eWxZ
-         ZTiKBYus1ZhQUm6FxEKV8EIZzk6SL1R4KxukTrMaltrLLoDhKeO70aeJh9EnNTN39zXl
-         MPHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWO5IOZ6ub8uWo9NpxcIuLPdkDytNNyE3R+qSrW991t0SNDDcGxWQwpG1/MP3W7GbwpHb0uEutNwclM8qU=@vger.kernel.org, AJvYcCXYHrtDLMT5LuL/Uok4HSC1HdWzS+mlaOtrIgwLGn8RODovvaXf5w0qSP3fuT3LyzNfuBNl1DmP0Y06CXL/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5NV/xTFo5/UfxWElfZgE6iuzCYDM/qigdXMWvNxOenqsRyHkQ
-	X1ih6Sfv6g+jKqKR9p/ACDmvVM9S0v4OHp1eSljhBCnyH7sXjczB
-X-Google-Smtp-Source: AGHT+IEYIq/+Zv8ajVjqto4m2Z7oR79R0nXjkMCMmZ37InQdYDcEbqVL/UZ89TuCFK4VZ73MdUJagQ==
-X-Received: by 2002:a17:902:ea0d:b0:1fb:8f72:d5ea with SMTP id d9443c01a7336-2039e57036cmr40315225ad.50.1724450858787;
-        Fri, 23 Aug 2024 15:07:38 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560a4b7sm32821575ad.197.2024.08.23.15.07.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 15:07:38 -0700 (PDT)
-Date: Fri, 23 Aug 2024 22:07:29 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
-	srivatsa@csail.mit.edu
-Subject: Re: [PATCH v3] Drivers: hv: vmbus: Optimize boot time by concurrent
- execution of hv_synic_init()
-Message-ID: <ZskIIcu-LHGn6cAZ@liuwe-devbox-debian-v2>
-References: <1722488136-6223-1-git-send-email-ssengar@linux.microsoft.com>
+	s=arc-20240116; t=1724451025; c=relaxed/simple;
+	bh=NJcXayjTbzsChmOeToGMlIG/vnfPC/xi03r9HY6Yrxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=cv7PUm6CWkklg6baJrM8MzkEycJjKfKz9pJwvcXWlYJErFlZli0HiXiUwog6EU1slizSG9fzCvN9cOJFEmBu5MeEgjdmA7WpoaJaOdndkfkTeMrg37RRmnLqeMSbGtcSYor/j36uITPhliqS85gPURX2TEOBwoON+o1E/+7zv24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ghjmg0XJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E729C32786;
+	Fri, 23 Aug 2024 22:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724451023;
+	bh=NJcXayjTbzsChmOeToGMlIG/vnfPC/xi03r9HY6Yrxs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Ghjmg0XJOEfV2A1r6aMLzQkNkE2pbaKSoildozqPY0Lhm1EmbH4Vmk2/W6H72WTH5
+	 2hCEXZLy4IGjD378d1MWwIRT80Xiw45MW82LcM4czSR4T4F/oBAooJGALPjRYVk7xe
+	 jSPCtEXPlF8zPojUPSMjNlyJVfcZIMz4Cge4hh5x14ulioeV4HYXOFZSeaYm+Fst1y
+	 qqRtto+2aGWOFyGCc0PadpPzc3wFK3z6t4rwHPzg4u+sPFSxpQLdfX35a32uf3KJ60
+	 LRxI9uKGMpWEEbPp//hrrZbJizydFJs3f9W85BQQ7FtmuD9Kqn99ZBdHXpasA4PRnb
+	 1s9/hI9avZ4+w==
+Date: Fri, 23 Aug 2024 17:10:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 1/2] PCI: don't rely on of_platform_depopulate() for
+ reused OF-nodes
+Message-ID: <20240823221021.GA388724@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,23 +59,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1722488136-6223-1-git-send-email-ssengar@linux.microsoft.com>
+In-Reply-To: <20240823093323.33450-2-brgl@bgdev.pl>
 
-On Wed, Jul 31, 2024 at 09:55:36PM -0700, Saurabh Sengar wrote:
-> Currently on a very large system with 1780 CPUs, hv_acpi_init() takes
-> around 3 seconds to complete. This is because of sequential synic
-> initialization for each CPU performed by hv_synic_init().
-> 
-> Schedule these tasks parallelly so that each CPU executes hv_synic_init()
-> in parallel to take full advantage of multiple CPUs.
-> 
-> This solution saves around 2 seconds of boot time on a 1780 CPU system,
-> which is around 66% improvement in the existing logic.
-> 
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Reviewed-by: Srivatsa S. Bhat (Microsoft) <srivatsa@csail.mit.edu>
-> Reviewed-by: Dexuan Cui <decui@microsoft.com>
+[+to Rob]
 
-Applied to hyperv-next. Thanks.
+On Fri, Aug 23, 2024 at 11:33:22AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> of_platform_depopulate() doesn't play nice with reused OF nodes - it
+> ignores the ones that are not marked explicitly as populated and it may
+> happen that the PCI device goes away before the platform device in which
+> case the PCI core clears the OF_POPULATED bit. We need to
+> unconditionally unregister the platform devices for child nodes when
+> stopping the PCI device.
+
+Rob, any concerns with this?
+
+> Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nodes of the port node")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/pci/remove.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
+> index 910387e5bdbf..4770cb87e3f0 100644
+> --- a/drivers/pci/remove.c
+> +++ b/drivers/pci/remove.c
+> @@ -1,7 +1,10 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <linux/pci.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+>  #include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+>  #include "pci.h"
+>  
+>  static void pci_free_resources(struct pci_dev *dev)
+> @@ -14,12 +17,25 @@ static void pci_free_resources(struct pci_dev *dev)
+>  	}
+>  }
+>  
+> +static int pci_pwrctl_unregister(struct device *dev, void *data)
+> +{
+> +	struct device_node *pci_node = data, *plat_node = dev_of_node(dev);
+> +
+> +	if (dev_is_platform(dev) && plat_node && plat_node == pci_node) {
+> +		of_device_unregister(to_platform_device(dev));
+> +		of_node_clear_flag(plat_node, OF_POPULATED);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static void pci_stop_dev(struct pci_dev *dev)
+>  {
+>  	pci_pme_active(dev, false);
+>  
+>  	if (pci_dev_is_added(dev)) {
+> -		of_platform_depopulate(&dev->dev);
+> +		device_for_each_child(dev->dev.parent, dev_of_node(&dev->dev),
+> +				      pci_pwrctl_unregister);
+>  		device_release_driver(&dev->dev);
+>  		pci_proc_detach_device(dev);
+>  		pci_remove_sysfs_dev_files(dev);
+> -- 
+> 2.43.0
+> 
 
