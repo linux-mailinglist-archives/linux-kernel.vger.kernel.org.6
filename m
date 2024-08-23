@@ -1,193 +1,78 @@
-Return-Path: <linux-kernel+bounces-299762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1EA95D9C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:43:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8FE95D9CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4581284171
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:43:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90B71F2478E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B3E1C86F0;
-	Fri, 23 Aug 2024 23:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2A21C945D;
+	Fri, 23 Aug 2024 23:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MH141oXz"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8GX6W7K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3141448ED
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEF71C93B4;
+	Fri, 23 Aug 2024 23:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724456606; cv=none; b=Apx0rImWYZpGIX0iIpOfLhwoiN0Pw3ZXZ1D4R8AlZzCC2kPaYjac1HNoQDy5m7gaevilDN3+58glXl4DBRiMVIfT3qs3KXGcVYRD/G0f6OZNKV4kJ4jeTa3rKgTrp0DrIO8Mkfl5NYAhmWzo/Qslz+pyrw28M/pACF3D0GemcKw=
+	t=1724456722; cv=none; b=C+AoX7MBgBKaArpK3PsXLY1u6klYUvP8AsNwRtVxojggM08i5HGtd7M5gZkyKeBT73YT9deh9I/L8QjJK994TGxdd6zTGbtsQquUTA7V470AkQLi4zHAgDnaASjPutbYbxeR53GcEztvSpMC79k7Znr5cpOSHSLuxJYCYti0UNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724456606; c=relaxed/simple;
-	bh=YOg/jB7ng9Pg4C5FxhkAA+bHBNHnoTpo/cxYHVtJNIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=USqKsdaP0wRoOsCEbA7ZrSaXqnwgdhMnaFMmbCjKUQ1hP0FyV/ztlTibZl9yEOdFv9DI525YtMauriaq2aAQZOvUGydzJNDE04XIEfhhLamH5aMKx9jW0Aj2W/X7X9eklSvOqfC3btrAvshYBoUOO8UZgtQwoaxvJCuHRsVA8To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MH141oXz; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c07eebf29eso1039819a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724456603; x=1725061403; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R7I1uBnhEhOKBlQUhS7kHGTlUcfRgLn9WhZ/VYd/7F0=;
-        b=MH141oXzcDaD2cOZZDkGCADiY/9ZVcR4qCIIapI+CmkN0pBB+KvsjuiId+eHgvwdNA
-         4fhU5RvfLUccg0DISp8UPPAZh3PnVrjFVOx4IWaym0UyYSNpkVndXdWhKmAaUHmHd/mI
-         /FvUlJpmE+jUZVu8rmnAFfb5UZplLmVUy2OPVv03JipqBHQfb+I8EOIpdnULFd5cqk9U
-         fTdlZNf1pmwPm4OxUGR2JHsN5QLKJ+gUXh0rHgWhFmYGxmNUc/4RZ15Z60UMDxf1+Ygu
-         OH/BciExo/AEK/dizTMX63upbmDJPzBuImNVq4+MWVZPTnvTXHjfoE4dv+f+r9a0QoKi
-         S1Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724456603; x=1725061403;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7I1uBnhEhOKBlQUhS7kHGTlUcfRgLn9WhZ/VYd/7F0=;
-        b=Ty5CnvsPDbp0dPCpp0yuAgT02/1VH1wuSI2LRjocfJw5MKtXh7MgCcMrD90ZipCpXr
-         pSl3BKVLwMBRfDTTQgK7ZJN+2ykslqI87MbEIordE0FgS4AGrr2w/h0UYHXmKnnOMYVI
-         thHSYB5thf5fyJPahOVbnh26C/uHUincj7ZnfJs/oEZQ0+yS30ATEjZorcBPtM6AqbMp
-         eS4OVaFqRRyJXsEagONZrY2bBwLDY+2ZuK3HoAl1bs8K12oj0cKOAfoP+qyhWcV+eEd+
-         D+JF7vlMEI6qpJ9icDOUq5H3ez2EbP3eHbiVJiqJSwV3FNsxqXdmMGX3meQAt7ececQK
-         jB0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVumclue2OyBEXWfk8Mds9SjK30u6Imot9x58Uq/rogHvUBAqUELpLYT38oXVp1IhsSviaNwg9iBKnqTaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBlB+ZJ4Oi6ZkHS9GJF6YaTAPwFf+ojJJx85I7g3QqtPzm3xic
-	g+dW5Evh+5ACpjJ0JAzEs6HoBs7g6WYzmEmC6758MTBdn0ZOwhC8
-X-Google-Smtp-Source: AGHT+IHzF6G4QSBC0eUfzD5aTYYLgTzEdHxc9asDp8KMSoScnuOpfvySF2Fd0lo+2DSjcM42JyCD5g==
-X-Received: by 2002:a05:6402:1ec8:b0:5bf:1f8:9493 with SMTP id 4fb4d7f45d1cf-5c0891a8338mr3118257a12.29.1724456602855;
-        Fri, 23 Aug 2024 16:43:22 -0700 (PDT)
-Received: from shift.daheim (p200300d5ff191e0050f496fffe46beef.dip0.t-ipconnect.de. [2003:d5:ff19:1e00:50f4:96ff:fe46:beef])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3e89ebsm2617845a12.43.2024.08.23.16.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 16:43:22 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1])
-	by shift.daheim with esmtp (Exim 4.98)
-	(envelope-from <chunkeey@gmail.com>)
-	id 1shdw2-00000002QcG-206q;
-	Sat, 24 Aug 2024 01:43:21 +0200
-Message-ID: <90b971f6-16d6-4a9a-9dc5-40b291376952@gmail.com>
-Date: Sat, 24 Aug 2024 01:43:21 +0200
+	s=arc-20240116; t=1724456722; c=relaxed/simple;
+	bh=YZ7B+h+ctI0YdPLpK9id50AuFg2bLLAtUi1/9abrzxY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IFrp9R+ymvdAfWg/K7yfSj6B2YKFrdfWwu27ilFofMNQTNG5WTZz8hpdB5eHPKPETiHg0GzUAIi4KrVv45Y+aGKhIqTaAiE3wA6EesllVbJ2sy/f8c6rwGNkUoYdf5M7ykl6mbKbnOJO5Swdj5Eu/2KvUuknvOrMcuNd23zKxJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8GX6W7K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC76FC32786;
+	Fri, 23 Aug 2024 23:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724456721;
+	bh=YZ7B+h+ctI0YdPLpK9id50AuFg2bLLAtUi1/9abrzxY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=K8GX6W7Kle6KahdSuXi+stDBZmANtz+PEEmxr1oxLb6MOjvPDMZB0lnr9rBAcCLAL
+	 ADihmB2K9WMRylR78Ntzi4rxsoEz5S4D2lK/3WyxtNpNIh6yb2tXQ9rB4BQ27iN7oL
+	 ph+ngsaUhI8mBRYv5FSyaazHtHbosj9gRJpNuIkCIKqgligMM/HFeU9vNYekvM8rPk
+	 SWtB4PZa76j2R73ZKT7CBUUypoH2HMjko1SuxTI0ylc7esh5qNfedA80Ee/klWoMD+
+	 AY920eGEZ+8U2rDe/fEF+qmx1GNn0nGBfUuSW0Kpx/+gWzr95sontij/zMQNcDffDk
+	 +9j3s0roT3Zfw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE09B3804C87;
+	Fri, 23 Aug 2024 23:45:22 +0000 (UTC)
+Subject: Re: [GIT PULL] ACPI fix for v6.11-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0hJobeqPY7fZCQAiZg-fP=Vyeak-6mEt5Rt2cdat5ChvQ@mail.gmail.com>
+References: <CAJZ5v0hJobeqPY7fZCQAiZg-fP=Vyeak-6mEt5Rt2cdat5ChvQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-acpi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0hJobeqPY7fZCQAiZg-fP=Vyeak-6mEt5Rt2cdat5ChvQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.11-rc5
+X-PR-Tracked-Commit-Id: 5c7bb62cb8f53de71d8ab3d619be22740da0b837
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b09f6ca99c46e4a561ac943253aca9beae8c1146
+Message-Id: <172445672130.3112782.2943562548215395003.pr-tracker-bot@kernel.org>
+Date: Fri, 23 Aug 2024 23:45:21 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in
- kernel mode
-To: Segher Boessenkool <segher@kernel.crashing.org>,
- Christoph Hellwig <hch@lst.de>
-Cc: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Stan Johnson <userm57@yahoo.com>, Finn Thain <fthain@linux-m68k.org>
-References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu>
- <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de>
- <9dbf73fe-a459-4956-8dbc-e919d9728f5e@cs-soprasteria.com>
- <20240822053238.GA2028@lst.de>
- <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com>
- <20240823130600.GI28254@gate.crashing.org> <20240823135459.GA28487@lst.de>
- <20240823191924.GK28254@gate.crashing.org>
-Content-Language: en-US
-From: Christian Lamparter <chunkeey@gmail.com>
-In-Reply-To: <20240823191924.GK28254@gate.crashing.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 8/23/24 9:19 PM, Segher Boessenkool wrote:
-> Hi!
-> 
-> On Fri, Aug 23, 2024 at 03:54:59PM +0200, Christoph Hellwig wrote:
->> On Fri, Aug 23, 2024 at 08:06:00AM -0500, Segher Boessenkool wrote:
->>> What does "uncached memory" even mean here?  Literally it would be
->>> I=1 memory (uncachEABLE memory), but more likely you want M=0 memory
->>> here ("non-memory memory", "not well-behaved memory", MMIO often).
->>
->> Regular kernel memory vmapped with pgprot_noncached().
-> 
-> So, I=1 (and G=1).  Caching inhibited and guarded.  But M=1 (memory
-> coherence required) as with any other real memory :-)
-> 
->>> If memset() is expected to be used with M=0, you cannot do any serious
->>> optimisations to it at all.  If memset() is expected to be used with I=1
->>> it should use a separate code path for it, probably the caller should
->>> make the distinction.
->>
->> DMA coherent memory which uses uncached memory for platforms that
->> do not provide hardware dma coherence can end up just about anywhere
->> in the kernel.  We could use special routines for a few places in
->> the DMA subsystem, but there might be plenty of others.
-> 
-> Yeah.  It will just be plenty slow, as we see here, that's what the
-> warning is for; but it works just fine :-)
-> 
-> The memset() code itself could chech for the storage attributes, but
-> that is probably more expensive than just assuming the happy case.
-> Maybe someone could try it out though!
+The pull request you sent on Fri, 23 Aug 2024 16:32:56 +0200:
 
-Hmm, Ok! For what's worth I can at least test memset with dcbz+trap and
-what it was in 2015, without dcbz in the code path. How about that?
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.11-rc5
 
-I figured out of all the offenders (ethernet, crypto and sata).
-The sata/hard drive would be the most sensitive device to measure any
-performance difference. the MyBook Live already had an harddrive
-(Seagate ST380815AS (very old)) installed... so I went with that.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b09f6ca99c46e4a561ac943253aca9beae8c1146
 
-I test with OpenWrt, since it has a fully working PowerPC images for
-the device, I can use initramfs (so HDD/SDD is idle) and provides a
-very bare minimum the hdparm -t "benchmark".
-(hdparm -t ... just reads for three seconds and tells you how much it read).
+Thank you!
 
-the unmodified 6.6.47 kernel scored:
-
-| Timing buffered disk reads: 220 MB in  3.02 seconds =  72.93 MB/sec
-| Timing buffered disk reads: 222 MB in  3.02 seconds =  73.50 MB/sec
-| Timing buffered disk reads: 216 MB in  3.00 seconds =  71.94 MB/sec
-
-from what I can tell, each hdparm -t /dev/sda causes ~77000 fix_alignment traps.
-(/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size says it's 32 and
-type is obviously "Data". If I'm not mistaken this means ~2400KiB of emulated
-dcbz by the trap.)
-
-For the test, I added the "old" memset from
-<https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/lib/copy_32.S?id=df087e450d7ddc0b15bd8824206d964720b4f5e4#n120>
-and replaced 6.6.47's memset in dma_pool_alloc() with it
-<https://elixir.bootlin.com/linux/v6.6.47/source/mm/dmapool.c#L435>
-
-now no WARNINGS are triggered and hdparm -t /dev/sda produces:
-
-| Timing buffered disk reads: 220 MB in  3.00 seconds =  73.32 MB/sec
-| Timing buffered disk reads: 218 MB in  3.02 seconds =  72.28 MB/sec
-| Timing buffered disk reads: 224 MB in  3.03 seconds =  74.02 MB/sec
-
-virtually no benefit?! Well, the HDD could be too slow. Let's try an old SSD:
-Samsung 840 Evo 120 GB. This one manages to read 1276 MB in 3.06 seconds = ~416 MB/sec
-in the same hdparm -t test on a reasonably modern PC when connected via a
-usb3<->sata adapter.
-
-unmodified 6.6.47 kernel:
-
-| Timing buffered disk reads: 356 MB in  3.00 seconds = 118.61 MB/sec
-| Timing buffered disk reads: 358 MB in  3.01 seconds = 119.12 MB/sec
-| Timing buffered disk reads: 358 MB in  3.01 seconds = 119.03 MB/sec
-
-modified 6.6.47 kernel:
-
-| Timing buffered disk reads: 380 MB in  3.01 seconds = 126.30 MB/sec
-| Timing buffered disk reads: 374 MB in  3.00 seconds = 124.61 MB/sec
-| Timing buffered disk reads: 382 MB in  3.02 seconds = 126.62 MB/sec
-
-Ok! There's something there. ~4%.
-
-Cheers,
-Christian
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
