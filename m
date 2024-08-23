@@ -1,100 +1,193 @@
-Return-Path: <linux-kernel+bounces-298330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE22995C5D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C9895C5F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577F91F23820
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:51:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AADB1F2385D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E294C13D503;
-	Fri, 23 Aug 2024 06:50:55 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86839139CEC;
+	Fri, 23 Aug 2024 07:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="NDs+9ZSx"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C616D13BC0C;
-	Fri, 23 Aug 2024 06:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D747110953;
+	Fri, 23 Aug 2024 07:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724395855; cv=none; b=fOJfa9mUENQ7OfoLTqkbDl5nt82PCjy5sydZJpoyJ78eaz/kn3BOQ6s+zImzPg/VkeBfKdpxsSHgmreOv4zCPvCG3ZVe2Au4Gwq5ibJhEPnknZvZItvYZUuLWeuxELAa19M932mXMMicKZFIXx7U421un4IuR3dfTk7rH+UcSTI=
+	t=1724396462; cv=none; b=Fld3gaqIk+JdKQE++MBuyJX31mKzJUXEqEGyqZShtzKpxd+FBgN9xBHXl2gzs5BDKbI4TckJx0gT+mjMrKeFMNuC6QwWFgPo6WijRETLJ/PI8hz8+oVexjgXyGInY0wKlj3940mteaO8r3cMIiefQcra92dTArZ5BgpyH15hz/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724395855; c=relaxed/simple;
-	bh=P8ofQWwvbmIBj7URDzUe93HadsqjXVJpPxv/wn3f9Xw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cPO6LJwRPRxtlyvvCSPPUwNCAUyZEoKrhmkh4HbUbUTB+EjDBmM4T1uAppBMgO5mHpt08WJc6NDXo6a6DKutmhZeda7WQrfIZxQeT/Nmz5tNWJGOItGSPCTMtysSLentUOayWJvFzlIjU0t0AfdzF32n2sEEi3eEwEdITb7Cse0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WqrJR6SgRz1xvpr;
-	Fri, 23 Aug 2024 14:48:55 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3CB9318001B;
-	Fri, 23 Aug 2024 14:50:51 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 23 Aug
- 2024 14:50:49 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
-	<jlayton@kernel.org>, <neilb@suse.de>, <kolga@netapp.com>,
-	<Dai.Ngo@oracle.com>, <tom@talpey.com>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH 4/4] nfsd: remove unused parameter of nfsd_file_mark_find_or_create
-Date: Fri, 23 Aug 2024 15:00:49 +0800
-Message-ID: <20240823070049.3499625-5-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240823070049.3499625-1-lilingfeng3@huawei.com>
-References: <20240823070049.3499625-1-lilingfeng3@huawei.com>
+	s=arc-20240116; t=1724396462; c=relaxed/simple;
+	bh=jGshhhvgJvPItJvLyz9xeVPpG2akmVY+mzhE2S2mbXI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HM0BzLgD8PsnDi7IyzUQDTnqNdZC5PQSEQI6282YA8SXME8AxM0kZ5dmVd0twz1Kqc/7QR2P1jJd3hnZNPmYTG/3QjQ6zN1Y4FAZBP4xpS9ODRg5pYGovwm98nUrV9qcXKO9HCAPYy4biKMf3PihxGppUsRyR+wlXSI60CfhtIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=NDs+9ZSx; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1724396457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FPZmmM60tSAujVzmtKbajvXbMMgpiHTPo/2dvKyDtNI=;
+	b=NDs+9ZSxY/ek6dPLsXqeuOJwsBeoXV7+MBLiCrJILOstP+qpC9oJCnYApU8E9VQTBKQTiA
+	SzzLCqknuhMjQaZOfkGQ7OymI3u66L7WTuHgNAKkBtGF+6DOujeCaz/il9mGWaVfxFs7rd
+	4+mKHEVDbJeWypUJeELQzBCMCLgB5a9OZ77fBuVt9A+5smmmVU0+qDKMe2ABjTFasXzpEN
+	oYUBKaEn2f49AYOvIVXEYRU64f6GeFPpE09zT/vsfq0SYbiv/xgb4maPHljXE+f32M6HBI
+	4xJQo+08F2rxCgrrVe71jq8S9XMc4AHxKFaRKQ6GyN0BODyvntXF9iFChi42FA==
+Date: Fri, 23 Aug 2024 09:00:57 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Jaehoon
+ Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v4 4/4] mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
+In-Reply-To: <20240822212418.982927-5-detlev.casanova@collabora.com>
+References: <20240822212418.982927-1-detlev.casanova@collabora.com>
+ <20240822212418.982927-5-detlev.casanova@collabora.com>
+Message-ID: <26fe259f390a8015c3f08c6dc027711c@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Commit 427f5f83a319 ("NFSD: Ensure nf_inode is never dereferenced") passes
-inode directly to nfsd_file_mark_find_or_create instead of getting it from
-nf, so there is no need to pass nf.
+Hello Detlev,
 
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfsd/filecache.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please see a comment below.
 
-diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-index f4704f5d4086..376ec62e7794 100644
---- a/fs/nfsd/filecache.c
-+++ b/fs/nfsd/filecache.c
-@@ -151,7 +151,7 @@ nfsd_file_mark_put(struct nfsd_file_mark *nfm)
- }
- 
- static struct nfsd_file_mark *
--nfsd_file_mark_find_or_create(struct nfsd_file *nf, struct inode *inode)
-+nfsd_file_mark_find_or_create(struct inode *inode)
- {
- 	int			err;
- 	struct fsnotify_mark	*mark;
-@@ -1074,7 +1074,7 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 
- open_file:
- 	trace_nfsd_file_alloc(nf);
--	nf->nf_mark = nfsd_file_mark_find_or_create(nf, inode);
-+	nf->nf_mark = nfsd_file_mark_find_or_create(inode);
- 	if (nf->nf_mark) {
- 		if (file) {
- 			get_file(file);
--- 
-2.31.1
+On 2024-08-22 23:15, Detlev Casanova wrote:
+> On rk3576 the tunable clocks are inside the controller itself, removing
+> the need for the "ciu-drive" and "ciu-sample" clocks.
+> 
+> That makes it a new type of controller that has its own dt_parse 
+> function.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  drivers/mmc/host/dw_mmc-rockchip.c | 48 ++++++++++++++++++++++++++----
+>  1 file changed, 43 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
+> b/drivers/mmc/host/dw_mmc-rockchip.c
+> index 1458cb5fd5c7..7c8ccf5e71bc 100644
+> --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+> @@ -410,7 +410,7 @@ static int dw_mci_rk3288_execute_tuning(struct
+> dw_mci_slot *slot, u32 opcode)
+>  	return ret;
+>  }
+> 
+> -static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
+> +static int dw_mci_common_parse_dt(struct dw_mci *host)
+>  {
+>  	struct device_node *np = host->dev->of_node;
+>  	struct dw_mci_rockchip_priv_data *priv;
+> @@ -420,13 +420,29 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci 
+> *host)
+>  		return -ENOMEM;
+> 
+>  	if (of_property_read_u32(np, "rockchip,desired-num-phases",
+> -					&priv->num_phases))
+> +				 &priv->num_phases))
+>  		priv->num_phases = 360;
+> 
+>  	if (of_property_read_u32(np, "rockchip,default-sample-phase",
+> -					&priv->default_sample_phase))
+> +				 &priv->default_sample_phase))
+>  		priv->default_sample_phase = 0;
+> 
+> +	host->priv = priv;
+> +
+> +	return 0;
+> +}
+> +
+> +static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
+> +{
+> +	struct dw_mci_rockchip_priv_data *priv;
+> +	int err;
+> +
+> +	err = dw_mci_common_parse_dt(host);
+> +	if (err)
+> +		return err;
+> +
+> +	priv = host->priv;
+> +
+>  	priv->drv_clk = devm_clk_get(host->dev, "ciu-drive");
+>  	if (IS_ERR(priv->drv_clk))
+>  		dev_dbg(host->dev, "ciu-drive not available\n");
+> @@ -435,13 +451,25 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci 
+> *host)
+>  	if (IS_ERR(priv->sample_clk))
+>  		dev_dbg(host->dev, "ciu-sample not available\n");
+> 
+> -	host->priv = priv;
+> -
+>  	priv->internal_phase = false;
+> 
+>  	return 0;
+>  }
+> 
+> +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
+> +{
+> +	struct dw_mci_rockchip_priv_data *priv;
+> +	int err = dw_mci_common_parse_dt(host);
+> +	if (err)
+> +		return err;
+> +
+> +	priv = host->priv;
+> +
+> +	priv->internal_phase = true;
 
+Defining priv, assigning it and using it seems rather redundant,
+when all that's needed is simple "host->priv->internal_phase = true"
+assignment instead.
+
+> +
+> +	return 0;
+> +}
+> +
+>  static int dw_mci_rockchip_init(struct dw_mci *host)
+>  {
+>  	int ret, i;
+> @@ -483,11 +511,21 @@ static const struct dw_mci_drv_data 
+> rk3288_drv_data = {
+>  	.init			= dw_mci_rockchip_init,
+>  };
+> 
+> +static const struct dw_mci_drv_data rk3576_drv_data = {
+> +	.common_caps		= MMC_CAP_CMD23,
+> +	.set_ios		= dw_mci_rk3288_set_ios,
+> +	.execute_tuning		= dw_mci_rk3288_execute_tuning,
+> +	.parse_dt		= dw_mci_rk3576_parse_dt,
+> +	.init			= dw_mci_rockchip_init,
+> +};
+> +
+>  static const struct of_device_id dw_mci_rockchip_match[] = {
+>  	{ .compatible = "rockchip,rk2928-dw-mshc",
+>  		.data = &rk2928_drv_data },
+>  	{ .compatible = "rockchip,rk3288-dw-mshc",
+>  		.data = &rk3288_drv_data },
+> +	{ .compatible = "rockchip,rk3576-dw-mshc",
+> +		.data = &rk3576_drv_data },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, dw_mci_rockchip_match);
 
