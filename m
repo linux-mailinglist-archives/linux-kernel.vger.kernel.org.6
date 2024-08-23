@@ -1,214 +1,169 @@
-Return-Path: <linux-kernel+bounces-299188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D23A95D14F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D48795D154
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89DD285526
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466AB285693
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259FC189509;
-	Fri, 23 Aug 2024 15:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB35188A2D;
+	Fri, 23 Aug 2024 15:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tNhVr/cN"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JcuhpfdY"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C5185E65;
-	Fri, 23 Aug 2024 15:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724426709; cv=fail; b=k4dHYNy8XC1NskyS2cAlO51qBoOjEhgv1hi/ZqK11aHsYg77+40DG/nh96A+/Ql+U0oQ+FaMhvb1ibrb2OZ9Jc7VMKpPryhZVLLVrwhrqSwadlqtngKIgyKmpSUKs/ZuunLXBRDE+ztxOx2syJVA7UQIT1LEO5szXjgC2Yucj1Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724426709; c=relaxed/simple;
-	bh=8s4ZR2Bt4jbghJdcXsT6UQiCbJkYkGynB8jPceoC4a4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=vAHtjef6DVxnqaoL10OD+5Va+FwXgDdwwGXDij46zTht/NZx3YIYVDMcrm3bU4/42xikUTvQQ6wxyN1izrUYK3xg4V8J0Sg6ptEIeCsHSshS/lEY3xIk3PF+F1iPtu2/TdWs4/6GMZcrVamqSZErnR0zE+s/QWzE52G5Jb13eG8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tNhVr/cN; arc=fail smtp.client-ip=40.107.243.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ISe3qHvUkjFVtVrW5uXlSA1eek996rdZ+ZuUdCAyiszMSziARRfTZh4yHwc+QMM8yOSZGDirL3dvSrlBL5RLClG9sM1X5S3A2uFRwfOWGdKV2peNK8rMpMn2MCPlR/OLu0GcE9K2zZc7azVx7eKA+INWImOVcFNU5XA1iXmXZsmwrbpsc7wIiyzZbt7XK/1V8AS2PjT1Q/aUDFAQIO5D6b40ZN16ylXrdM5kAP7WuRfhjgmlNgY75rhGlnsFMSOr5svxLwuaBiYNASnfL4xrTeo8CarZXLHaesiKr3x/m+JXhCggFCC3hXupwNkQ/dilZZCVRq61Ud9YGtg4NBdW3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O+hqEY/T5xzEncM6ip5syM+M+HFGqyz1EFV36mQn/5w=;
- b=LVk692fOLFYdMjXl+42KsA53rKkc14ax897XKe4cnXC8CGjnqRxbuGZ4hXyT7G5bEXRlGwtEeGdvNIu7ZMXsoeMbypOghxwjyG7WfVeCaKRZyAT7yKG9WrAe0PGbjxyfRZ3nYixGZKNXBBuQEY+iIZtCi7EJ4qU2WaGMDC8Q47VJ/PPbZYX4rv2e6aH8+KJAbBLcQ384kBtv4M5B1ChnmMiR3spllCCS3nyYfEBhi/IBm4Xb8rhRnLOXrnW2RDyuu6cLCcvZ+511f+CF1LJ80FxwP7jFf1goJmJjpEKWG3b9SOthME4gKV1yG1eKQyjJ+9uO4kCX+q9e+PR3gtFFng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O+hqEY/T5xzEncM6ip5syM+M+HFGqyz1EFV36mQn/5w=;
- b=tNhVr/cN2htoo+j57QpHrsASkh6ch1EWa5DiOLsaW24TldQsaq8VP9XQZK6egbDBdNAjpvKyxegAWQ2lI+8dkQCMkfB73Kl5kn+sSuqf7eJM9FEJaGr4V0vu3NsRuBZHQtxspjcNz+jb0/8PnlcJkhfTFUJvAp5x+HUHs2B3C7JLv3WxRLGAINIbZgNRK8bbZTOJ7XZGG306yNIZ2iZOtyK0KKoEvKDo2gFWnBTHUqSf5HveUGtHpu+ZWyn3En2D3E0TeYKqcNhY3bv55o6Obdv3ihNFcZ2jFZxVZACp5jn+A4a0WGgRpeFFzJJzf3Fp19+rM+sERVIk0jlhh6YcNQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
- by DS0PR12MB7608.namprd12.prod.outlook.com (2603:10b6:8:13b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
- 2024 15:25:02 +0000
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 15:25:02 +0000
-Date: Fri, 23 Aug 2024 12:25:01 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: leon@kernel.org, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 for-next 1/3] RDMA/core: Provide
- rdma_user_mmap_disassociate() to disassociate mmap pages
-Message-ID: <20240823152501.GB2342875@nvidia.com>
-References: <20240812125640.1003948-1-huangjunxian6@hisilicon.com>
- <20240812125640.1003948-2-huangjunxian6@hisilicon.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812125640.1003948-2-huangjunxian6@hisilicon.com>
-X-ClientProxiedBy: BL1PR13CA0158.namprd13.prod.outlook.com
- (2603:10b6:208:2bd::13) To CH3PR12MB7763.namprd12.prod.outlook.com
- (2603:10b6:610:145::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2908C188A1B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724426777; cv=none; b=iazFLfgB9rwgetDUCf29y8DmW6K9dHFXNvq6zin6ik2KwJf+9S3WtWzePgcM7DXUCjJ2YHmloBf9MaMT9l8dv8Xyq8xwk2yByhP/FElYAVdVRzhSylXCryPyMVsOVsiMXY38vgjh0/8QHJ2VbrP97qiOoQ6laXwNaKg6CxqGDmQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724426777; c=relaxed/simple;
+	bh=2GYOLw30+luEJg/tFmrxHlNaXFRBGL5NLd68jN4yGL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DiZFgNAPxHwpfvEQ9lYJrcTIA0+CuzOGlGIoWVZmaVJZeSgOpsI5a0lMMbu4+UixatMqTFM6PIASKhqrJJlEXkVSXqS4J47ppBFCORjcT+zULZNBhHOdBtqcN04q1rMlYKN+ipq6BAySGOglRte5DufPsEUwVj7HbhEK7NMCBl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JcuhpfdY; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-533488ffaddso2726459e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724426773; x=1725031573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Szc69PtQ71Cbgpu7+pqMqmqQ4A3cQ2x6GOUbmqVp4eo=;
+        b=JcuhpfdY4syLc1pht8M8nFc19b4AXN2lHLVuM+CX8JRmAG1CPBCPa1ChRDCa1DNYVG
+         QK5ydrx4jUEKrqyh6PFsVM4g7b5WnWqsgLoeNmIW5i7zM5c4Zj4eDwydfeT8d4blPj57
+         Mya3lZOD5m6SnrxH6IGK87OJWaQIqM1alR+20=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724426773; x=1725031573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Szc69PtQ71Cbgpu7+pqMqmqQ4A3cQ2x6GOUbmqVp4eo=;
+        b=qs60HILJIfc6fZv6FdWmREofgj4DhvFAp8TMk0FSyT550PqfFD+Vv/Z5kFem4TZ8zW
+         c8RnK1jfwbNXNc2TqE4sl8Nz7aE0j1M02rOtJqgAx578uQePjDwnIvFQg6J2NiCC/O2K
+         AISklF/jhUKMoTcwJR414Gqn1dx2sm8NGxTI3eN/IiOLlRlsGzmGMTWrPgFIiD04RkI/
+         0xP5OqjZVejT5bImki3u++ci/SPqzJ3Ho5CApx0K4iUNzoOzVndGUhdl41HM/PMRkoAv
+         hJqken7iCllHCbEQRAUF00OqWTyflH5vqkBdEM6ywFTpOJlDXanzOlNv0KP3BzPupmM7
+         xdtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOUQqikQiLhQDZYQ81upf312dEZnpYeLTMyEpF5ke42SmYbT1rUUifPJHBRyKNZ76wp208jNbWiV3r+E8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/LhYG6LK+kpd7EPCkgrAjjxZLVdM9v3z50oyxAXvvQpTOyRNU
+	ENMkBqTs3itetcvQunkboQurnMOV10YvamIAOR8wdQzt84qxkcoQswzTD6uekiC8bbmp7WQJfxQ
+	VSuHE6Q==
+X-Google-Smtp-Source: AGHT+IF+ZNLUOYwTjulaQv59XAx/KrP842PZShvNersTqrIUe1FvI82lVUvg6Oy4nieTBP5n3UpmUA==
+X-Received: by 2002:a05:6512:3191:b0:52c:df3d:4e9d with SMTP id 2adb3069b0e04-534387bc61dmr1837805e87.37.1724426772416;
+        Fri, 23 Aug 2024 08:26:12 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea8903bsm572125e87.277.2024.08.23.08.26.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 08:26:11 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f3edb2d908so21483211fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:26:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXzMlg9FfVcUpVEsukdQMVDdXMpgr0mMnBR/Nrt3SVc/NKLkXp69Mk2IYAx5lY3QDfnUycS86UloX9dbao=@vger.kernel.org
+X-Received: by 2002:a2e:9c55:0:b0:2ef:2883:2746 with SMTP id
+ 38308e7fff4ca-2f4f4965089mr17361201fa.48.1724426771254; Fri, 23 Aug 2024
+ 08:26:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|DS0PR12MB7608:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a4ba929-d8a0-42bf-0d1b-08dcc387c241
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OIOT6agjeTqSJbIthmUQWERFJUmeucarzhauxv9pp6AhHUDYziO+C4G57/7N?=
- =?us-ascii?Q?Dv+n6zSvvcp8tzzyX2HfDKkcJZ+zFjwiJA4SQ5gc0zsHTSPTNn5hX9CScn12?=
- =?us-ascii?Q?MQ7r38J7T4RmLtBjCu5HYINsB3pqaGglAm/l/DNThl8hj/55eSPbOiTrRON2?=
- =?us-ascii?Q?ShHL5pdsvMaVjcG+tc6EjKFrVGso16oXQ2+UDMus1nZcTp4C2B/WjpiL76Cu?=
- =?us-ascii?Q?5wuQ2mWwt6mYwq4hw6PEZ1bVxQvfEWKJEe2FNhN7JoPi1zQIlLgK8S5Ie1kQ?=
- =?us-ascii?Q?LORVIjmkopWf2wwacZXe9QU//nWrKknGxX4SDmOipqabqUQ8WC/7Jslu2Axx?=
- =?us-ascii?Q?C7QCsdCAI88t7TIrT7o7goNgMn0vJpU5VK+fqRZsA/OPGuTcSD43uRetJBNu?=
- =?us-ascii?Q?786eENtsk6hWl0AlrX4F5ag0JPYIIBFnej8fxMRuWgh8Z7HKPVgWzyONazvz?=
- =?us-ascii?Q?W+VuYHKactIpMkRjgeSyd6ocHVrRbGHA2RiBAlD3J49Kcybt7rJBngzMcdGQ?=
- =?us-ascii?Q?R7BXVh9/hEKYWU5gFwL2YxwhV02SGFr9OE4JctZ8Y4mdumikz5qTnCvwdI7S?=
- =?us-ascii?Q?EZb0Y/VgUU87iZefxzoBiFpe+u31BtYcWK0/AOWGWahhNL1iyNhMHqQUO6Lk?=
- =?us-ascii?Q?27qE0ttEdQz3VDPHtUAF+xuojla4iDtFDJjeOgUATUEtoeeOxORwU+eb6hsr?=
- =?us-ascii?Q?R/XYF6uM8A5h24DMEyBKtZ5OIzCc98oPXLW9vVnYtEF/918OB5srL2wowPVz?=
- =?us-ascii?Q?+PAYYxt8QT5WTkvSzMN/ZlrFZ8H72vTzbyfqBurUanMjyLF4IHaxNvDw//LX?=
- =?us-ascii?Q?GYeJs7Tsg+7Fe1BmyaBxngffpdtQuIQPh/bEgTbmm96KK0t3obhRTKlqNfHO?=
- =?us-ascii?Q?ZRLHpR7WQTGeDljkj5HUD8lewAJxapwO6xGI3qP4CVLfVgG6CIFPnxmjs7jI?=
- =?us-ascii?Q?Ea6er7K1fSdtMUe0LjVbDK07Uj2xeVCTe3P3WskijqBhvwiq+PQn0Lglkhl5?=
- =?us-ascii?Q?coMC5iyyqXSuG6QZjbc1YUKT2RY37n7XTX76XiinvUJPsSkW8QLrlrD2NvxS?=
- =?us-ascii?Q?TRMJpAkUTNEinUJcxqOn1xMJ7nsfxKc4zhbRrtC81FklKJiGGsLx3oSHWcua?=
- =?us-ascii?Q?Kj0M3mArOJaKOot3FOnm2/Ap5xO6d+axjt+LvcSbiHsEgzWCMv0meYhAUhcg?=
- =?us-ascii?Q?IMZFabqM2RsOrx+UR9bk78jYvsqjJvBNaI7P6kkwS3vC191r5/+lb+jMR8xx?=
- =?us-ascii?Q?JH3mb1nl17RENz8jtrNk2KvEHVT1/yoFjg4l7awHrAb9tBxyTFI584a/Zklt?=
- =?us-ascii?Q?0uhUS0wLdDmshb8qYv5N0LznrW+Mg3NRi0SvZBmtNc+zew=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6R+En9ly3dXJcKcLWPMzunmv8BCU5YHhyCymqaNOZzs6A/uRNSJ65KKMOsgx?=
- =?us-ascii?Q?Dxvob0rw7Tfw5q+T70HgLSfcCoe9DSMy/+pNAmD7Z2lIR9+QDuHQvTGNHcFO?=
- =?us-ascii?Q?Hb9HnijelDd4b95RzYgLOjntPIwIMu7EmHd+Sm2d8miunnrgf4YsHE7dvIxe?=
- =?us-ascii?Q?VH1me2z0mVnGpl1l51o3injDWL60OUcHMDn8qp7wIkoBEDk4GRbVA7Gbjxhx?=
- =?us-ascii?Q?VcIXxlEGYnGwtxx7HntWOaa2DPjvwo3zXquz9zZDyb2UfW7gURkbgJuGdqYl?=
- =?us-ascii?Q?pqflFyjge263TYS9Fl5XjDaFjogEsTM84rCjleSB3baINS5687Kru2/JJ6K7?=
- =?us-ascii?Q?eOYQFqCvJloE1t1jSKrvWyC8RuIHC58AtTnICUSjzji4J3cDCis5hqBmzFjK?=
- =?us-ascii?Q?My8RFeDzxVM2/DbjZkYmPARKfbyYEQCmeSYWfX+vHH8+FZpbOqsDeHO7ecdv?=
- =?us-ascii?Q?36HPdut8sDfXENuLWV4njbUmM5hs1nW9J4nlXh2/sRVyrVeeFvUrFy74AqQJ?=
- =?us-ascii?Q?mV5AWAfR3LZ+HfmtZd69tjbO4wROsoZC9Gj/QdavJ/I94RRpBYudfWb7da1T?=
- =?us-ascii?Q?cRVBarnuDUTzxutlioMdcCo1lff3/9unvzpJgOYBhp84Fg9uub/HQ1PAef7W?=
- =?us-ascii?Q?gedTHW+r6aE0huLTvuOGdUkcZqROBN/izKACPWP+9S2RI0+dei6aqHEbxtNY?=
- =?us-ascii?Q?e6jl3zytnJ+07R7FIUBnmWxbjv0LhOX+B/QXvK5LiGcUO6IM8rOs+yHV1UXT?=
- =?us-ascii?Q?z7Px5MDw5nQvMkPSMg5tuCY9wI+IMT1a5bqyLVMGPKmngBxhyml6GIQIC9AW?=
- =?us-ascii?Q?K9hmkKIfmdhVHOgQ139IDlspsnc3Sgd5uZQmJ3blocq4RaetnVIFKW7kEwLa?=
- =?us-ascii?Q?2fQnPEdhRUtkmsPvbq9332M2sLwj3kc3F6VZDBlK5SfqVLSQndh+Mq9BoV4j?=
- =?us-ascii?Q?hO82UufPIkLzdCFbn3aMge2BBVuKooxW7hyaLBJYhbEmSoZlgETGeH2h3lQj?=
- =?us-ascii?Q?rfd54WjDHvknX/Ig5WQZcugO9HGfhoYuxpdEQ/qB+dGOj1x9if+zfOek83+X?=
- =?us-ascii?Q?DbK77ZfjSzE6DxxjVeGnqXi6A4LN3/19rbp/+EHAZgGzdR13Z6XQCKjhDtDS?=
- =?us-ascii?Q?vuqHMNvU0hNZ5B7VMH121L4VNiZlxoHejcMXqCbi/kK60yGOGEn66BoMySfI?=
- =?us-ascii?Q?OTgk5sMgj1UJ20aqbpIKHcYwrkG9PWjRknVFQrPTBszeYGUbAwW2IUwkhb6T?=
- =?us-ascii?Q?JFJviq1+il3EnojjsbktV49AYsebdgm5T7pQmL6R6LHk0zSnWWDWOr3G1gC9?=
- =?us-ascii?Q?KFZilYJCZT2A6qd0T4T0a9yb1zLzgYpraiPFuBQbPpQJPTew1h6oQQ9Z3M1K?=
- =?us-ascii?Q?nEjebynUwsc+40fasydYjvkrt/lPLgamwDIvwAJHk7kvUd4450B1Ediur1e6?=
- =?us-ascii?Q?/oO6oP5mybhlOi9fqTjmvsY48I1I81IFMH9/atUm1FfUFjAlTs0p/iz7zx3A?=
- =?us-ascii?Q?s6CXcrsH4BVjHeOeuZ6xqV6nwIugaTh7kYMMO4bPqMuQvgBS9icW4xy2Dsk+?=
- =?us-ascii?Q?41FLACaH78NWlym5eUqmjaipoL1bZhy7H1ryrnec?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a4ba929-d8a0-42bf-0d1b-08dcc387c241
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 15:25:02.7962
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XjjRZQ2wcMqXE9iYJLvCG/eNTTZroB0wQTD2F9/JAkf2ijIvlXBF6+kCMF5zd1SD
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7608
+References: <20240822131542.785546-1-mjguzik@gmail.com> <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
+ <CAGudoHEjjuGOwf=KkZjNUTPXSr6E8w8Dvz6=_CiKVHsUOY8KeA@mail.gmail.com>
+In-Reply-To: <CAGudoHEjjuGOwf=KkZjNUTPXSr6E8w8Dvz6=_CiKVHsUOY8KeA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Aug 2024 23:25:54 +0800
+X-Gmail-Original-Message-ID: <CAHk-=wh84ATUBUZG4DtoY-=Jo-WKwDcfNUdOGw0_PzEr85rLqw@mail.gmail.com>
+Message-ID: <CAHk-=wh84ATUBUZG4DtoY-=Jo-WKwDcfNUdOGw0_PzEr85rLqw@mail.gmail.com>
+Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 08:56:38PM +0800, Junxian Huang wrote:
-> From: Chengchang Tang <tangchengchang@huawei.com>
-> 
-> Provide a new api rdma_user_mmap_disassociate() for drivers to
-> disassociate mmap pages for ucontext.
-> 
-> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> ---
->  drivers/infiniband/core/uverbs_main.c | 21 +++++++++++++++++++++
->  include/rdma/ib_verbs.h               |  1 +
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-> index bc099287de9a..00dab5bfb78c 100644
-> --- a/drivers/infiniband/core/uverbs_main.c
-> +++ b/drivers/infiniband/core/uverbs_main.c
-> @@ -880,6 +880,27 @@ void uverbs_user_mmap_disassociate(struct ib_uverbs_file *ufile)
->  	}
->  }
->  
-> +/**
-> + * rdma_user_mmap_disassociate() - disassociate the mmap from the ucontext.
-> + *
-> + * @ucontext: associated user context.
-> + *
-> + * This function should be called by drivers that need to disable mmap for
-> + * some ucontexts.
-> + */
-> +void rdma_user_mmap_disassociate(struct ib_ucontext *ucontext)
-> +{
-> +	struct ib_uverbs_file *ufile = ucontext->ufile;
-> +
-> +	/* Racing with uverbs_destroy_ufile_hw */
-> +	if (!down_read_trylock(&ufile->hw_destroy_rwsem))
-> +		return;
+On Fri, 23 Aug 2024 at 20:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> On Fri, Aug 23, 2024 at 2:06=E2=80=AFAM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> >
+> > Yes, it is rarely actually written to and as such can be "mostly
+> > read-only", but since it is both read and written next to refcounts,
+> > why do that?
+> >
+> > Did I miss some common use?
+> >
+>
+> It gets looked at every time you grab a ref.
 
-This is not quite right here, in the other cases lock failure is
-aborting an operation that is about to start, in this case we are must
-ensure the zap completed otherwise we break the contract of no mmaps
-upon return.
+Mateusz - read my email. That's what I daid.
 
-So at least this needs to be a naked down_read()
+But the *ref* is already in cacheline 0. With your change it looked like th=
+is:
 
-But..
+   struct cred {
+        atomic_long_t   usage;
+        struct rcu_head rcu;            /* RCU deletion hook */
 
-That lock lockdep assertion in uverbs_user_mmap_disassociate() I think
-was supposed to say the write side is held, which we can't actually
-get here.
+and if you had kept the union with that 'struct rcu_head', then
+'non_rcu' would be RIGHT THERE.
 
-This is because the nasty algorithm works by pulling things off the
-list, if we don't have a lock then one thread could be working on an
-item while another thread is unaware which will also break the
-contract.
+> Thus consumers which grab the ref and then look at the most commonly
+> used fields get the non_rcu + rest combo "for free".
 
-You may need to add a dedicated mutex inside
-uverbs_user_mmap_disassociate() and not try to re-use
-hw_destroy_rwsem.
+They'd get it for free JUST BECAUSE IT'S NEXT TO THE REF. In cacheline
+0 - that is already dirtied by the reference count. Which makes a
+*store* cheaper.
 
-Jason
+And you also wouldn't waste separate space for it.
+
+> consumers which already had a ref don't suffer any extra misses
+
+Consumers that already had a ref don't touch 'non_rcu' at all as far
+as I can see, so they have no reason to have it next to those "most
+commonly used fields".
+
+See my argument? You seem to have pointlessly separated out the
+'non_rcu' from being together with the rcu_head, and thus wasted
+potentially useful space in the structure.
+
+Your own email even had that:
+
+>        bool                       non_rcu;              /*   100     1 */
+>
+>        /* XXX 3 bytes hole, try to pack */
+
+which would have been a /* 4 byte hole, try to pack */
+
+A 4-byte hole is more useful than a 3-byte one. A 3-byte one is much
+harder to use.
+
+In fact, even without the union, I think your current cacheline 0 ends
+up having a 3-byte hole due to that
+
+        unsigned char   jit_keyring;    /* default keyring to attach reques=
+ted
+
+with CONFIG_KEYS.
+
+Without CONFIG_KEYS, you have something like a 40-byte hole there due to th=
+e
+
+    kuid_t uid ____cacheline_aligned_in_smp;
+
+which seems very wasteful, but I guess CONFIG_KEYS is the common case.
+
+So I repeat: what did I miss?
+
+       Linus
 
